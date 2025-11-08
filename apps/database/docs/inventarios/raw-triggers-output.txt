@@ -1,0 +1,73 @@
+=== INVENTARIO DE TRIGGERS POR SCHEMA ===
+
+Schema: audit_logging (1 triggers)
+  - 01-trg_system_alerts_updated_at
+
+Schema: auth_management (6 triggers)
+  - 02-trg_memberships_updated_at
+  - 03-trg_audit_profile_changes
+  - 04-trg_initialize_user_stats
+  - 05-trg_profiles_updated_at
+  - 06-trg_tenants_updated_at
+  - 07-trg_user_roles_updated_at
+
+Schema: content_management (3 triggers)
+  - 08-trg_content_templates_updated_at
+  - 09-trg_marie_curie_content_updated_at
+  - 10-trg_media_files_updated_at
+
+Schema: educational_content (4 triggers)
+  - 11-trg_assessment_rubrics_updated_at
+  - 12-trg_exercises_updated_at
+  - 13-trg_media_resources_updated_at
+  - 14-trg_modules_updated_at
+
+Schema: gamification_system (7 triggers)
+  - 15-trg_achievements_updated_at
+  - 16-trg_comodines_inventory_updated_at
+  - 17-missions_updated_at
+  - 18-notifications_updated_at
+  - 18-trg_recalculate_level_on_xp_change
+  - 19-trg_user_ranks_updated_at
+  - 20-trg_user_stats_updated_at
+
+Schema: progress_tracking (3 triggers)
+  - 21-trg_update_user_stats_on_exercise
+  - 22-exercise_submissions_updated_at
+  - 23-trg_module_progress_updated_at
+
+Schema: public (21 triggers)
+  - 01-trg_assignment_classrooms_updated_at
+  - 02-trg_assignment_exercises_updated_at
+  - 03-trg_assignment_students_updated_at
+  - 04-trg_assignment_submissions_updated_at
+  - 05-trg_assignments_updated_at
+  - 06-trg_classroom_students_updated_at
+  - 07-trg_classrooms_updated_at
+  - 08-trg_notifications_updated_at
+  - 09-trg_teacher_notes_updated_at
+  - 10-trg_assignment_audit_creation
+  - 11-trg_assignment_submissions_publish
+  - 21-trg_update_user_stats_on_exercise
+  - 22-exercise_submissions_updated_at
+  - 23-trg_module_progress_updated_at
+  - 24-trg_classroom_members_updated_at
+  - 25-trg_update_classroom_count
+  - 26-trg_classrooms_updated_at
+  - 27-trg_schools_updated_at
+  - 28-trg_teams_updated_at
+  - 29-trg_feature_flags_updated_at
+  - 30-trg_system_settings_updated_at
+
+Schema: social_features (5 triggers)
+  - 24-trg_classroom_members_updated_at
+  - 25-trg_update_classroom_count
+  - 26-trg_classrooms_updated_at
+  - 27-trg_schools_updated_at
+  - 28-trg_teams_updated_at
+
+Schema: system_configuration (2 triggers)
+  - 29-trg_feature_flags_updated_at
+  - 30-trg_system_settings_updated_at
+
+=== TOTAL: 52 triggers ===

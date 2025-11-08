@@ -1,0 +1,6996 @@
+{
+  "timestamp": "2025-11-03T05:56:12.239676Z",
+  "files_analyzed": 351,
+  "type_files_analyzed": 213,
+  "enums": [
+    {
+      "name": "NotificationType",
+      "type": "enum",
+      "values": [
+        "ACHIEVEMENT",
+        "MISSION",
+        "REWARD",
+        "SYSTEM",
+        "SOCIAL",
+        "EDUCATIONAL"
+      ],
+      "value_mapping": {
+        "ACHIEVEMENT": "achievement",
+        "MISSION": "mission",
+        "REWARD": "reward",
+        "SYSTEM": "system",
+        "SOCIAL": "social",
+        "EDUCATIONAL": "educational"
+      },
+      "file": "modules/notifications/entities/notification.entity.ts"
+    },
+    {
+      "name": "MissionType",
+      "type": "enum",
+      "values": [
+        "DAILY",
+        "WEEKLY",
+        "SPECIAL"
+      ],
+      "value_mapping": {
+        "DAILY": "daily",
+        "WEEKLY": "weekly",
+        "SPECIAL": "special"
+      },
+      "file": "modules/missions/entities/mission.entity.ts"
+    },
+    {
+      "name": "MissionStatus",
+      "type": "enum",
+      "values": [
+        "ACTIVE",
+        "IN_PROGRESS",
+        "COMPLETED",
+        "CLAIMED",
+        "EXPIRED"
+      ],
+      "value_mapping": {
+        "ACTIVE": "active",
+        "IN_PROGRESS": "in_progress",
+        "COMPLETED": "completed",
+        "CLAIMED": "claimed",
+        "EXPIRED": "expired"
+      },
+      "file": "modules/missions/entities/mission.entity.ts"
+    },
+    {
+      "name": "PowerupType",
+      "type": "enum",
+      "values": [
+        "PISTAS",
+        "VISION_LECTORA",
+        "SEGUNDA_OPORTUNIDAD"
+      ],
+      "value_mapping": {
+        "PISTAS": "pistas",
+        "VISION_LECTORA": "vision_lectora",
+        "SEGUNDA_OPORTUNIDAD": "segunda_oportunidad"
+      },
+      "file": "modules/powerups/entities/comodines-inventory.entity.ts"
+    },
+    {
+      "name": "MissionTypeEnum",
+      "type": "enum",
+      "values": [
+        "DAILY",
+        "WEEKLY",
+        "SPECIAL"
+      ],
+      "value_mapping": {
+        "DAILY": "daily",
+        "WEEKLY": "weekly",
+        "SPECIAL": "special"
+      },
+      "file": "modules/gamification/entities/mission.entity.ts"
+    },
+    {
+      "name": "MissionStatusEnum",
+      "type": "enum",
+      "values": [
+        "ACTIVE",
+        "IN_PROGRESS",
+        "COMPLETED",
+        "CLAIMED",
+        "EXPIRED"
+      ],
+      "value_mapping": {
+        "ACTIVE": "active",
+        "IN_PROGRESS": "in_progress",
+        "COMPLETED": "completed",
+        "CLAIMED": "claimed",
+        "EXPIRED": "expired"
+      },
+      "file": "modules/gamification/entities/mission.entity.ts"
+    },
+    {
+      "name": "ErrorCode",
+      "type": "enum",
+      "values": [
+        "UNAUTHORIZED",
+        "INVALID_TOKEN",
+        "TOKEN_EXPIRED",
+        "INVALID_CREDENTIALS",
+        "EMAIL_EXISTS",
+        "ACCOUNT_INACTIVE",
+        "ACCOUNT_SUSPENDED",
+        "FORBIDDEN",
+        "BAD_REQUEST",
+        "VALIDATION_ERROR",
+        "WEAK_PASSWORD",
+        "NOT_FOUND",
+        "ALREADY_EXISTS",
+        "INSUFFICIENT_FUNDS",
+        "INTERNAL_ERROR",
+        "DATABASE_ERROR"
+      ],
+      "value_mapping": {
+        "UNAUTHORIZED": "UNAUTHORIZED",
+        "INVALID_TOKEN": "INVALID_TOKEN",
+        "TOKEN_EXPIRED": "TOKEN_EXPIRED",
+        "INVALID_CREDENTIALS": "INVALID_CREDENTIALS",
+        "EMAIL_EXISTS": "EMAIL_EXISTS",
+        "ACCOUNT_INACTIVE": "ACCOUNT_INACTIVE",
+        "ACCOUNT_SUSPENDED": "ACCOUNT_SUSPENDED",
+        "FORBIDDEN": "FORBIDDEN",
+        "BAD_REQUEST": "BAD_REQUEST",
+        "VALIDATION_ERROR": "VALIDATION_ERROR",
+        "WEAK_PASSWORD": "WEAK_PASSWORD",
+        "NOT_FOUND": "NOT_FOUND",
+        "ALREADY_EXISTS": "ALREADY_EXISTS",
+        "INSUFFICIENT_FUNDS": "INSUFFICIENT_FUNDS",
+        "INTERNAL_ERROR": "INTERNAL_ERROR",
+        "DATABASE_ERROR": "DATABASE_ERROR"
+      },
+      "file": "shared/types/index.ts"
+    },
+    {
+      "name": "AuthProviderEnum",
+      "type": "enum",
+      "values": [
+        "LOCAL",
+        "GOOGLE",
+        "FACEBOOK",
+        "APPLE",
+        "MICROSOFT",
+        "GITHUB"
+      ],
+      "value_mapping": {
+        "LOCAL": "local",
+        "GOOGLE": "google",
+        "FACEBOOK": "facebook",
+        "APPLE": "apple",
+        "MICROSOFT": "microsoft",
+        "GITHUB": "github"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "SubscriptionTierEnum",
+      "type": "enum",
+      "values": [
+        "FREE",
+        "BASIC",
+        "PROFESSIONAL",
+        "ENTERPRISE"
+      ],
+      "value_mapping": {
+        "FREE": "free",
+        "BASIC": "basic",
+        "PROFESSIONAL": "professional",
+        "ENTERPRISE": "enterprise"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "UserStatusEnum",
+      "type": "enum",
+      "values": [
+        "ACTIVE",
+        "INACTIVE",
+        "SUSPENDED",
+        "PENDING"
+      ],
+      "value_mapping": {
+        "ACTIVE": "active",
+        "INACTIVE": "inactive",
+        "SUSPENDED": "suspended",
+        "PENDING": "pending"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "SecurityEventSeverityEnum",
+      "type": "enum",
+      "values": [
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "CRITICAL"
+      ],
+      "value_mapping": {
+        "LOW": "low",
+        "MEDIUM": "medium",
+        "HIGH": "high",
+        "CRITICAL": "critical"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "ThemeEnum",
+      "type": "enum",
+      "values": [
+        "LIGHT",
+        "DARK",
+        "AUTO"
+      ],
+      "value_mapping": {
+        "LIGHT": "light",
+        "DARK": "dark",
+        "AUTO": "auto"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "LanguageEnum",
+      "type": "enum",
+      "values": [
+        "ES",
+        "EN"
+      ],
+      "value_mapping": {
+        "ES": "es",
+        "EN": "en"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "DeviceTypeEnum",
+      "type": "enum",
+      "values": [
+        "DESKTOP",
+        "MOBILE",
+        "TABLET"
+      ],
+      "value_mapping": {
+        "DESKTOP": "desktop",
+        "MOBILE": "mobile",
+        "TABLET": "tablet"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "MembershipRoleEnum",
+      "type": "enum",
+      "values": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER",
+        "GUEST"
+      ],
+      "value_mapping": {
+        "OWNER": "owner",
+        "ADMIN": "admin",
+        "MEMBER": "member",
+        "GUEST": "guest"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "MembershipStatusEnum",
+      "type": "enum",
+      "values": [
+        "ACTIVE",
+        "PENDING",
+        "SUSPENDED",
+        "REVOKED"
+      ],
+      "value_mapping": {
+        "ACTIVE": "active",
+        "PENDING": "pending",
+        "SUSPENDED": "suspended",
+        "REVOKED": "revoked"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "DifficultyLevelEnum",
+      "type": "enum",
+      "values": [
+        "BEGINNER",
+        "INTERMEDIATE",
+        "ADVANCED",
+        "VERY_EASY",
+        "EASY",
+        "MEDIUM",
+        "HARD",
+        "VERY_HARD"
+      ],
+      "value_mapping": {
+        "BEGINNER": "beginner",
+        "INTERMEDIATE": "intermediate",
+        "ADVANCED": "advanced",
+        "VERY_EASY": "very_easy",
+        "EASY": "easy",
+        "MEDIUM": "medium",
+        "HARD": "hard",
+        "VERY_HARD": "very_hard"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "MayaRank",
+      "type": "enum",
+      "values": [
+        "AJAW",
+        "NACOM",
+        "AH_KIN",
+        "HALACH_UINIC",
+        "KUKUKULKAN"
+      ],
+      "value_mapping": {
+        "AJAW": "Ajaw",
+        "NACOM": "Nacom",
+        "AH_KIN": "Ah K\\",
+        "HALACH_UINIC": "Halach Uinic",
+        "KUKUKULKAN": "K\\"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "MayaRankEnum",
+      "type": "enum",
+      "values": [
+        "NACOM",
+        "BATAB",
+        "HOLCATTE",
+        "GUERRERO",
+        "MERCENARIO"
+      ],
+      "value_mapping": {
+        "NACOM": "nacom",
+        "BATAB": "batab",
+        "HOLCATTE": "holcatte",
+        "GUERRERO": "guerrero",
+        "MERCENARIO": "mercenario"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "ComodinTypeEnum",
+      "type": "enum",
+      "values": [
+        "PISTAS",
+        "VISION_LECTORA",
+        "SEGUNDA_OPORTUNIDAD"
+      ],
+      "value_mapping": {
+        "PISTAS": "pistas",
+        "VISION_LECTORA": "vision_lectora",
+        "SEGUNDA_OPORTUNIDAD": "segunda_oportunidad"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "TransactionTypeEnum",
+      "type": "enum",
+      "values": [
+        "EARNED_EXERCISE",
+        "EARNED_ACHIEVEMENT",
+        "EARNED_DAILY_BONUS",
+        "EARNED_RANK_PROMOTION",
+        "SPENT_HINT",
+        "SPENT_UNLOCK_CONTENT",
+        "SPENT_CUSTOMIZATION",
+        "REFUND",
+        "ADMIN_ADJUSTMENT",
+        "GIFT"
+      ],
+      "value_mapping": {
+        "EARNED_EXERCISE": "earned_exercise",
+        "EARNED_ACHIEVEMENT": "earned_achievement",
+        "EARNED_DAILY_BONUS": "earned_daily_bonus",
+        "EARNED_RANK_PROMOTION": "earned_rank_promotion",
+        "SPENT_HINT": "spent_hint",
+        "SPENT_UNLOCK_CONTENT": "spent_unlock_content",
+        "SPENT_CUSTOMIZATION": "spent_customization",
+        "REFUND": "refund",
+        "ADMIN_ADJUSTMENT": "admin_adjustment",
+        "GIFT": "gift"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "AchievementCategoryEnum",
+      "type": "enum",
+      "values": [
+        "PROGRESS",
+        "STREAK",
+        "COMPLETION",
+        "SOCIAL",
+        "SPECIAL",
+        "MASTERY",
+        "EXPLORATION"
+      ],
+      "value_mapping": {
+        "PROGRESS": "progress",
+        "STREAK": "streak",
+        "COMPLETION": "completion",
+        "SOCIAL": "social",
+        "SPECIAL": "special",
+        "MASTERY": "mastery",
+        "EXPLORATION": "exploration"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "AchievementTypeEnum",
+      "type": "enum",
+      "values": [
+        "BADGE",
+        "MILESTONE",
+        "SPECIAL",
+        "RANK_PROMOTION"
+      ],
+      "value_mapping": {
+        "BADGE": "badge",
+        "MILESTONE": "milestone",
+        "SPECIAL": "special",
+        "RANK_PROMOTION": "rank_promotion"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "NotificationTypeEnum",
+      "type": "enum",
+      "values": [
+        "INFO",
+        "SUCCESS",
+        "WARNING",
+        "ERROR",
+        "ACHIEVEMENT",
+        "PROGRESS",
+        "SOCIAL",
+        "REMINDER"
+      ],
+      "value_mapping": {
+        "INFO": "info",
+        "SUCCESS": "success",
+        "WARNING": "warning",
+        "ERROR": "error",
+        "ACHIEVEMENT": "achievement",
+        "PROGRESS": "progress",
+        "SOCIAL": "social",
+        "REMINDER": "reminder"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "NotificationChannelEnum",
+      "type": "enum",
+      "values": [
+        "IN_APP",
+        "EMAIL",
+        "PUSH",
+        "SMS"
+      ],
+      "value_mapping": {
+        "IN_APP": "in_app",
+        "EMAIL": "email",
+        "PUSH": "push",
+        "SMS": "sms"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "ContentStatusEnum",
+      "type": "enum",
+      "values": [
+        "DRAFT",
+        "PUBLISHED",
+        "ARCHIVED",
+        "REVIEWING"
+      ],
+      "value_mapping": {
+        "DRAFT": "draft",
+        "PUBLISHED": "published",
+        "ARCHIVED": "archived",
+        "REVIEWING": "reviewing"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "ModuleStatusEnum",
+      "type": "enum",
+      "values": [
+        "DRAFT",
+        "PUBLISHED",
+        "ARCHIVED",
+        "UNDER_REVIEW"
+      ],
+      "value_mapping": {
+        "DRAFT": "draft",
+        "PUBLISHED": "published",
+        "ARCHIVED": "archived",
+        "UNDER_REVIEW": "under_review"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "ContentTypeEnum",
+      "type": "enum",
+      "values": [
+        "VIDEO",
+        "TEXT",
+        "INTERACTIVE",
+        "QUIZ",
+        "GAME",
+        "SIMULATION"
+      ],
+      "value_mapping": {
+        "VIDEO": "video",
+        "TEXT": "text",
+        "INTERACTIVE": "interactive",
+        "QUIZ": "quiz",
+        "GAME": "game",
+        "SIMULATION": "simulation"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "MediaTypeEnum",
+      "type": "enum",
+      "values": [
+        "IMAGE",
+        "VIDEO",
+        "AUDIO",
+        "DOCUMENT",
+        "INTERACTIVE",
+        "ANIMATION"
+      ],
+      "value_mapping": {
+        "IMAGE": "image",
+        "VIDEO": "video",
+        "AUDIO": "audio",
+        "DOCUMENT": "document",
+        "INTERACTIVE": "interactive",
+        "ANIMATION": "animation"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "ProcessingStatusEnum",
+      "type": "enum",
+      "values": [
+        "UPLOADING",
+        "PROCESSING",
+        "READY",
+        "ERROR",
+        "OPTIMIZING"
+      ],
+      "value_mapping": {
+        "UPLOADING": "uploading",
+        "PROCESSING": "processing",
+        "READY": "ready",
+        "ERROR": "error",
+        "OPTIMIZING": "optimizing"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "ExerciseTypeEnum",
+      "type": "enum",
+      "values": [
+        "CRUCIGRAMA",
+        "LINEA_TIEMPO",
+        "SOPA_LETRAS",
+        "MAPA_CONCEPTUAL",
+        "EMPAREJAMIENTO",
+        "DETECTIVE_TEXTUAL",
+        "CONSTRUCCION_HIPOTESIS",
+        "PREDICCION_NARRATIVA",
+        "PUZZLE_CONTEXTO",
+        "RUEDA_INFERENCIAS",
+        "TRIBUNAL_OPINIONES",
+        "DEBATE_DIGITAL",
+        "ANALISIS_FUENTES",
+        "PODCAST_ARGUMENTATIVO",
+        "MATRIZ_PERSPECTIVAS",
+        "VERIFICADOR_FAKE_NEWS",
+        "INFOGRAFIA_INTERACTIVA",
+        "QUIZ_TIKTOK",
+        "NAVEGACION_HIPERTEXTUAL",
+        "ANALISIS_MEMES",
+        "DIARIO_MULTIMEDIA",
+        "COMIC_DIGITAL",
+        "VIDEO_CARTA",
+        "COMPRENSION_AUDITIVA",
+        "COLLAGE_PRENSA",
+        "TEXTO_MOVIMIENTO",
+        "CALL_TO_ACTION",
+        "VERDADERO_FALSO",
+        "COMPLETAR_ESPACIOS",
+        "DIARIO_INTERACTIVO",
+        "RESUMEN_VISUAL"
+      ],
+      "value_mapping": {
+        "CRUCIGRAMA": "crucigrama",
+        "LINEA_TIEMPO": "linea_tiempo",
+        "SOPA_LETRAS": "sopa_letras",
+        "MAPA_CONCEPTUAL": "mapa_conceptual",
+        "EMPAREJAMIENTO": "emparejamiento",
+        "DETECTIVE_TEXTUAL": "detective_textual",
+        "CONSTRUCCION_HIPOTESIS": "construccion_hipotesis",
+        "PREDICCION_NARRATIVA": "prediccion_narrativa",
+        "PUZZLE_CONTEXTO": "puzzle_contexto",
+        "RUEDA_INFERENCIAS": "rueda_inferencias",
+        "TRIBUNAL_OPINIONES": "tribunal_opiniones",
+        "DEBATE_DIGITAL": "debate_digital",
+        "ANALISIS_FUENTES": "analisis_fuentes",
+        "PODCAST_ARGUMENTATIVO": "podcast_argumentativo",
+        "MATRIZ_PERSPECTIVAS": "matriz_perspectivas",
+        "VERIFICADOR_FAKE_NEWS": "verificador_fake_news",
+        "INFOGRAFIA_INTERACTIVA": "infografia_interactiva",
+        "QUIZ_TIKTOK": "quiz_tiktok",
+        "NAVEGACION_HIPERTEXTUAL": "navegacion_hipertextual",
+        "ANALISIS_MEMES": "analisis_memes",
+        "DIARIO_MULTIMEDIA": "diario_multimedia",
+        "COMIC_DIGITAL": "comic_digital",
+        "VIDEO_CARTA": "video_carta",
+        "COMPRENSION_AUDITIVA": "comprension_auditiva",
+        "COLLAGE_PRENSA": "collage_prensa",
+        "TEXTO_MOVIMIENTO": "texto_movimiento",
+        "CALL_TO_ACTION": "call_to_action",
+        "VERDADERO_FALSO": "verdadero_falso",
+        "COMPLETAR_ESPACIOS": "completar_espacios",
+        "DIARIO_INTERACTIVO": "diario_interactivo",
+        "RESUMEN_VISUAL": "resumen_visual"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "ProgressStatusEnum",
+      "type": "enum",
+      "values": [
+        "NOT_STARTED",
+        "IN_PROGRESS",
+        "COMPLETED",
+        "REVIEWED",
+        "MASTERED"
+      ],
+      "value_mapping": {
+        "NOT_STARTED": "not_started",
+        "IN_PROGRESS": "in_progress",
+        "COMPLETED": "completed",
+        "REVIEWED": "reviewed",
+        "MASTERED": "mastered"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "AttemptResultEnum",
+      "type": "enum",
+      "values": [
+        "CORRECT",
+        "INCORRECT",
+        "PARTIAL",
+        "SKIPPED"
+      ],
+      "value_mapping": {
+        "CORRECT": "correct",
+        "INCORRECT": "incorrect",
+        "PARTIAL": "partial",
+        "SKIPPED": "skipped"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "FriendshipStatusEnum",
+      "type": "enum",
+      "values": [
+        "PENDING",
+        "ACCEPTED",
+        "REJECTED",
+        "BLOCKED"
+      ],
+      "value_mapping": {
+        "PENDING": "pending",
+        "ACCEPTED": "accepted",
+        "REJECTED": "rejected",
+        "BLOCKED": "blocked"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "ClassroomMemberStatusEnum",
+      "type": "enum",
+      "values": [
+        "ACTIVE",
+        "INACTIVE",
+        "WITHDRAWN",
+        "COMPLETED"
+      ],
+      "value_mapping": {
+        "ACTIVE": "active",
+        "INACTIVE": "inactive",
+        "WITHDRAWN": "withdrawn",
+        "COMPLETED": "completed"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "EnrollmentMethodEnum",
+      "type": "enum",
+      "values": [
+        "TEACHER_INVITE",
+        "SELF_ENROLL",
+        "ADMIN_ADD",
+        "BULK_IMPORT"
+      ],
+      "value_mapping": {
+        "TEACHER_INVITE": "teacher_invite",
+        "SELF_ENROLL": "self_enroll",
+        "ADMIN_ADD": "admin_add",
+        "BULK_IMPORT": "bulk_import"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "TeamMemberRoleEnum",
+      "type": "enum",
+      "values": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "value_mapping": {
+        "OWNER": "owner",
+        "ADMIN": "admin",
+        "MEMBER": "member"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "TeamChallengeStatusEnum",
+      "type": "enum",
+      "values": [
+        "ACTIVE",
+        "IN_PROGRESS",
+        "COMPLETED",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "value_mapping": {
+        "ACTIVE": "active",
+        "IN_PROGRESS": "in_progress",
+        "COMPLETED": "completed",
+        "FAILED": "failed",
+        "CANCELLED": "cancelled"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "ClassroomRoleEnum",
+      "type": "enum",
+      "values": [
+        "TEACHER",
+        "STUDENT",
+        "ASSISTANT"
+      ],
+      "value_mapping": {
+        "TEACHER": "teacher",
+        "STUDENT": "student",
+        "ASSISTANT": "assistant"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "SocialEventTypeEnum",
+      "type": "enum",
+      "values": [
+        "COMPETITION",
+        "COLLABORATION",
+        "CHALLENGE",
+        "TOURNAMENT",
+        "WORKSHOP"
+      ],
+      "value_mapping": {
+        "COMPETITION": "competition",
+        "COLLABORATION": "collaboration",
+        "CHALLENGE": "challenge",
+        "TOURNAMENT": "tournament",
+        "WORKSHOP": "workshop"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "GamilityRoleEnum",
+      "type": "enum",
+      "values": [
+        "STUDENT",
+        "ADMIN_TEACHER",
+        "SUPER_ADMIN"
+      ],
+      "value_mapping": {
+        "STUDENT": "student",
+        "ADMIN_TEACHER": "admin_teacher",
+        "SUPER_ADMIN": "super_admin"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "AlertSeverityEnum",
+      "type": "enum",
+      "values": [
+        "INFO",
+        "WARNING",
+        "ERROR",
+        "CRITICAL"
+      ],
+      "value_mapping": {
+        "INFO": "info",
+        "WARNING": "warning",
+        "ERROR": "error",
+        "CRITICAL": "critical"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "AggregationPeriodEnum",
+      "type": "enum",
+      "values": [
+        "DAILY",
+        "WEEKLY",
+        "MONTHLY",
+        "QUARTERLY",
+        "YEARLY"
+      ],
+      "value_mapping": {
+        "DAILY": "daily",
+        "WEEKLY": "weekly",
+        "MONTHLY": "monthly",
+        "QUARTERLY": "quarterly",
+        "YEARLY": "yearly"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "MetricTypeEnum",
+      "type": "enum",
+      "values": [
+        "ENGAGEMENT",
+        "PERFORMANCE",
+        "COMPLETION",
+        "TIME_SPENT",
+        "ACCURACY",
+        "STREAK",
+        "SOCIAL_INTERACTION"
+      ],
+      "value_mapping": {
+        "ENGAGEMENT": "engagement",
+        "PERFORMANCE": "performance",
+        "COMPLETION": "completion",
+        "TIME_SPENT": "time_spent",
+        "ACCURACY": "accuracy",
+        "STREAK": "streak",
+        "SOCIAL_INTERACTION": "social_interaction"
+      },
+      "file": "shared/constants/enums.constants.ts"
+    },
+    {
+      "name": "UserRole",
+      "type": "enum",
+      "values": [
+        "STUDENT",
+        "TEACHER",
+        "ADMIN",
+        "SUPER_ADMIN"
+      ],
+      "value_mapping": {
+        "STUDENT": "student",
+        "TEACHER": "teacher",
+        "ADMIN": "admin",
+        "SUPER_ADMIN": "super_admin"
+      },
+      "file": "shared/utils/html-sanitizer.util.ts"
+    },
+    {
+      "name": "Permission",
+      "type": "enum",
+      "values": [
+        "USERS_READ",
+        "USERS_WRITE",
+        "USERS_DELETE",
+        "USERS_MANAGE",
+        "CONTENT_READ",
+        "CONTENT_WRITE",
+        "CONTENT_DELETE",
+        "CONTENT_PUBLISH",
+        "CONTENT_MANAGE",
+        "GAMIFICATION_READ",
+        "GAMIFICATION_WRITE",
+        "GAMIFICATION_MANAGE",
+        "ADMIN_ACCESS",
+        "ADMIN_SETTINGS",
+        "ADMIN_SYSTEM",
+        "ANALYTICS_READ",
+        "ANALYTICS_EXPORT",
+        "TEACHER_ACCESS",
+        "TEACHER_CLASSROOM",
+        "TEACHER_ASSIGNMENTS",
+        "TEACHER_GRADING"
+      ],
+      "value_mapping": {
+        "USERS_READ": "users:read",
+        "USERS_WRITE": "users:write",
+        "USERS_DELETE": "users:delete",
+        "USERS_MANAGE": "users:manage",
+        "CONTENT_READ": "content:read",
+        "CONTENT_WRITE": "content:write",
+        "CONTENT_DELETE": "content:delete",
+        "CONTENT_PUBLISH": "content:publish",
+        "CONTENT_MANAGE": "content:manage",
+        "GAMIFICATION_READ": "gamification:read",
+        "GAMIFICATION_WRITE": "gamification:write",
+        "GAMIFICATION_MANAGE": "gamification:manage",
+        "ADMIN_ACCESS": "admin:access",
+        "ADMIN_SETTINGS": "admin:settings",
+        "ADMIN_SYSTEM": "admin:system",
+        "ANALYTICS_READ": "analytics:read",
+        "ANALYTICS_EXPORT": "analytics:export",
+        "TEACHER_ACCESS": "teacher:access",
+        "TEACHER_CLASSROOM": "teacher:classroom",
+        "TEACHER_ASSIGNMENTS": "teacher:assignments",
+        "TEACHER_GRADING": "teacher:grading"
+      },
+      "file": "shared/decorators/permissions.decorator.ts"
+    }
+  ],
+  "const_enums": [
+    {
+      "name": "DB_SCHEMAS",
+      "type": "const_object",
+      "values": [
+        "AUTH",
+        "GAMIFICATION",
+        "EDUCATIONAL",
+        "PROGRESS",
+        "SOCIAL",
+        "CONTENT",
+        "AUDIT",
+        "GAMILIT"
+      ],
+      "value_mapping": {
+        "AUTH": "auth_management",
+        "GAMIFICATION": "gamification_system",
+        "EDUCATIONAL": "educational_content",
+        "PROGRESS": "progress_tracking",
+        "SOCIAL": "social_features",
+        "CONTENT": "content_management",
+        "AUDIT": "audit_logging",
+        "GAMILIT": "gamilit"
+      },
+      "file": "shared/constants/database.constants.ts"
+    }
+  ],
+  "interfaces": [
+    {
+      "name": "UserPreferencesSchema",
+      "properties": [
+        {
+          "name": "theme",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "language",
+          "type": "LanguageEnum",
+          "optional": true
+        },
+        {
+          "name": "timezone",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "sound_enabled",
+          "type": "boolean",
+          "optional": true
+        },
+        {
+          "name": "notifications_enabled",
+          "type": "boolean",
+          "optional": true
+        },
+        {
+          "name": "email_notifications",
+          "type": "boolean",
+          "optional": true
+        },
+        {
+          "name": "push_notifications",
+          "type": "boolean",
+          "optional": true
+        },
+        {
+          "name": "key",
+          "type": "string]: any",
+          "optional": false
+        }
+      ],
+      "file": "modules/auth/dto/user-preferences.schema.ts"
+    },
+    {
+      "name": "NotificationData",
+      "properties": [
+        {
+          "name": "achievementId",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "missionId",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "rewardType",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "amount",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "icon",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "url",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "params",
+          "type": "Record<string, any>",
+          "optional": true
+        }
+      ],
+      "file": "modules/notifications/entities/notification.entity.ts"
+    },
+    {
+      "name": "MissionObjective",
+      "properties": [
+        {
+          "name": "type",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "target",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "current",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "optional": true
+        }
+      ],
+      "file": "modules/missions/entities/mission.entity.ts"
+    },
+    {
+      "name": "MissionRewards",
+      "properties": [
+        {
+          "name": "ml_coins",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "xp",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "item_id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "quantity",
+          "type": "number",
+          "optional": false
+        }
+      ],
+      "file": "modules/missions/entities/mission.entity.ts"
+    },
+    {
+      "name": "InventoryMetadata",
+      "properties": [
+        {
+          "name": "powerupType",
+          "type": "PowerupType",
+          "optional": false
+        },
+        {
+          "name": "timestamp",
+          "type": "Date",
+          "optional": false
+        },
+        {
+          "name": "amount",
+          "type": "number",
+          "optional": false
+        }
+      ],
+      "file": "modules/powerups/entities/comodines-inventory.entity.ts"
+    },
+    {
+      "name": "MissionObjective",
+      "properties": [
+        {
+          "name": "type",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "target",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "current",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "optional": true
+        }
+      ],
+      "file": "modules/gamification/entities/mission.entity.ts"
+    },
+    {
+      "name": "MissionRewards",
+      "properties": [
+        {
+          "name": "ml_coins",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "xp",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "quantity",
+          "type": "number",
+          "optional": false
+        }
+      ],
+      "file": "modules/gamification/entities/mission.entity.ts"
+    },
+    {
+      "name": "RankProgressDto",
+      "properties": [
+        {
+          "name": "current_rank",
+          "type": "MayaRank",
+          "optional": false
+        },
+        {
+          "name": "next_rank",
+          "type": "MayaRank | null",
+          "optional": false
+        },
+        {
+          "name": "progress_percentage",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "xp_current",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "xp_required",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "xp_remaining",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "ml_coins_bonus_on_promotion",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "is_max_rank",
+          "type": "boolean",
+          "optional": false
+        }
+      ],
+      "file": "modules/gamification/services/ranks.service.ts"
+    },
+    {
+      "name": "RankMetadataDto",
+      "properties": [
+        {
+          "name": "rank",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "xp_min",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "xp_max",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "ml_coins_bonus",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "order",
+          "type": "number",
+          "optional": false
+        }
+      ],
+      "file": "modules/gamification/controllers/ranks.controller.ts"
+    },
+    {
+      "name": "User",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "encrypted_password",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "role",
+          "type": "'student' | 'admin_teacher' | 'super_admin'",
+          "optional": false
+        },
+        {
+          "name": "raw_user_meta_data",
+          "type": "any",
+          "optional": true
+        },
+        {
+          "name": "created_at",
+          "type": "Date",
+          "optional": false
+        },
+        {
+          "name": "updated_at",
+          "type": "Date",
+          "optional": false
+        },
+        {
+          "name": "last_sign_in_at",
+          "type": "Date",
+          "optional": true
+        },
+        {
+          "name": "email_confirmed_at",
+          "type": "Date",
+          "optional": true
+        },
+        {
+          "name": "confirmation_token",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "confirmation_sent_at",
+          "type": "Date",
+          "optional": true
+        },
+        {
+          "name": "recovery_token",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "recovery_sent_at",
+          "type": "Date",
+          "optional": true
+        },
+        {
+          "name": "email_change_token_new",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "email_change",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "email_change_sent_at",
+          "type": "Date",
+          "optional": true
+        },
+        {
+          "name": "phone",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "phone_confirmed_at",
+          "type": "Date",
+          "optional": true
+        },
+        {
+          "name": "phone_change",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "phone_change_token",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "phone_change_sent_at",
+          "type": "Date",
+          "optional": true
+        },
+        {
+          "name": "reauthentication_token",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "reauthentication_sent_at",
+          "type": "Date",
+          "optional": true
+        },
+        {
+          "name": "is_sso_user",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "deleted_at",
+          "type": "Date",
+          "optional": true
+        }
+      ],
+      "file": "shared/types/index.ts"
+    },
+    {
+      "name": "UserProfile",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "user_id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "tenant_id",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "full_name",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "first_name",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "last_name",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "display_name",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "avatar_url",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "bio",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "phone",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "student_id",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "grade_level",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "school_id",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "preferences",
+          "type": "any",
+          "optional": true
+        },
+        {
+          "name": "metadata",
+          "type": "any",
+          "optional": true
+        },
+        {
+          "name": "created_at",
+          "type": "Date",
+          "optional": false
+        },
+        {
+          "name": "updated_at",
+          "type": "Date",
+          "optional": false
+        }
+      ],
+      "file": "shared/types/index.ts"
+    },
+    {
+      "name": "AuthUser",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "rank",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "tenant_id",
+          "type": "string",
+          "optional": true
+        }
+      ],
+      "file": "shared/types/index.ts"
+    },
+    {
+      "name": "AuthRequest",
+      "properties": [
+        {
+          "name": "user",
+          "type": "AuthUser",
+          "optional": true
+        },
+        {
+          "name": "userPermissions",
+          "type": "readonly string[]",
+          "optional": true
+        },
+        {
+          "name": "dbClient",
+          "type": "PoolClient",
+          "optional": true
+        }
+      ],
+      "file": "shared/types/index.ts"
+    },
+    {
+      "name": "PaginationParams",
+      "properties": [
+        {
+          "name": "page",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "limit",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "sortBy",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "order",
+          "type": "'asc' | 'desc'",
+          "optional": true
+        }
+      ],
+      "file": "shared/types/index.ts"
+    },
+    {
+      "name": "UserStats",
+      "properties": [
+        {
+          "name": "user_id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "ml_coins",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "ml_coins_earned_total",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "ml_coins_spent_total",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "total_xp",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "current_level",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "current_rank",
+          "type": "'Ajaw' | 'Nacom' | 'Ah K\\'in' | 'Halach Uinic' | 'K\\'uk\\'ulkan'",
+          "optional": false
+        },
+        {
+          "name": "rank_progress",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "streak_days",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "longest_streak",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "last_login_at",
+          "type": "Date",
+          "optional": true
+        },
+        {
+          "name": "total_exercises_completed",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "perfect_scores",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "average_score",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "created_at",
+          "type": "Date",
+          "optional": false
+        },
+        {
+          "name": "updated_at",
+          "type": "Date",
+          "optional": false
+        }
+      ],
+      "file": "shared/types/index.ts"
+    },
+    {
+      "name": "Achievement",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "category",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "icon",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "rarity",
+          "type": "'common' | 'rare' | 'epic' | 'legendary'",
+          "optional": false
+        },
+        {
+          "name": "ml_coins_reward",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "xp_reward",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "conditions",
+          "type": "any",
+          "optional": true
+        },
+        {
+          "name": "is_secret",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "created_at",
+          "type": "Date",
+          "optional": false
+        }
+      ],
+      "file": "shared/types/index.ts"
+    },
+    {
+      "name": "UserAchievement",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "user_id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "achievement_id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "unlocked_at",
+          "type": "Date",
+          "optional": false
+        },
+        {
+          "name": "progress",
+          "type": "number",
+          "optional": false
+        }
+      ],
+      "file": "shared/types/index.ts"
+    },
+    {
+      "name": "MLCoinsTransaction",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "user_id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "amount",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "transaction_type",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "reason",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "reference_id",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "balance_after",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "created_at",
+          "type": "Date",
+          "optional": false
+        }
+      ],
+      "file": "shared/types/index.ts"
+    },
+    {
+      "name": "ProgressData",
+      "properties": [
+        {
+          "name": "current",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "total",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "percentage",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "status",
+          "type": "'not_started' | 'in_progress' | 'completed'",
+          "optional": false
+        }
+      ],
+      "file": "shared/utils/progress.util.ts"
+    },
+    {
+      "name": "ScoreCalculationOptions",
+      "properties": [
+        {
+          "name": "baseScore",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "difficulty",
+          "type": "'easy' | 'medium' | 'hard'",
+          "optional": false
+        },
+        {
+          "name": "timeSpent",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "maxTime",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "hintsUsed",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "accuracy",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "isPerfect",
+          "type": "boolean",
+          "optional": true
+        },
+        {
+          "name": "isFirstAttempt",
+          "type": "boolean",
+          "optional": true
+        }
+      ],
+      "file": "shared/utils/scoring.util.ts"
+    },
+    {
+      "name": "ScoreResult",
+      "properties": [
+        {
+          "name": "total",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "base",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "difficulty",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "time",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "accuracy",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "hints",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "perfect",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "firstAttempt",
+          "type": "number",
+          "optional": false
+        }
+      ],
+      "file": "shared/utils/scoring.util.ts"
+    },
+    {
+      "name": "RequestUser",
+      "properties": [
+        {
+          "name": "sub",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "roles",
+          "type": "string[]",
+          "optional": true
+        },
+        {
+          "name": "tenantId",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "iat",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "exp",
+          "type": "number",
+          "optional": true
+        }
+      ],
+      "file": "shared/decorators/current-user.decorator.ts"
+    },
+    {
+      "name": "RateLimitConfig",
+      "properties": [
+        {
+          "name": "windowMs",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "maxRequests",
+          "type": "number",
+          "optional": false
+        }
+      ],
+      "file": "shared/services/rate-limiter.service.ts"
+    },
+    {
+      "name": "RateLimiter",
+      "properties": [
+        {
+          "name": "key",
+          "type": "string): boolean",
+          "optional": false
+        },
+        {
+          "name": "userId",
+          "type": "string, resourceId: string): Promise<void>",
+          "optional": false
+        },
+        {
+          "name": "key",
+          "type": "string): void",
+          "optional": false
+        }
+      ],
+      "file": "shared/services/rate-limiter.service.ts"
+    },
+    {
+      "name": "RateLimitRequest",
+      "properties": [
+        {
+          "name": "ip",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "path",
+          "type": "string",
+          "optional": false
+        }
+      ],
+      "file": "shared/services/rate-limiter.service.ts"
+    },
+    {
+      "name": "RateLimitResponse",
+      "properties": [
+        {
+          "name": "code",
+          "type": "number): RateLimitResponse",
+          "optional": false
+        },
+        {
+          "name": "data",
+          "type": "unknown): void",
+          "optional": false
+        }
+      ],
+      "file": "shared/services/rate-limiter.service.ts"
+    }
+  ],
+  "types": [
+    {
+      "name": "EnvConfig",
+      "definition": "ReturnType<typeof envConfig>",
+      "file": "config/env.config.ts"
+    },
+    {
+      "name": "DbSchema",
+      "definition": "(typeof DB_SCHEMAS)[keyof typeof DB_SCHEMAS]",
+      "file": "shared/constants/database.constants.ts"
+    },
+    {
+      "name": "AuthTable",
+      "definition": "(typeof DB_TABLES.AUTH)[keyof typeof DB_TABLES.AUTH]",
+      "file": "shared/constants/database.constants.ts"
+    },
+    {
+      "name": "GamificationTable",
+      "definition": "(typeof DB_TABLES.GAMIFICATION)[keyof typeof DB_TABLES.GAMIFICATION]",
+      "file": "shared/constants/database.constants.ts"
+    },
+    {
+      "name": "EducationalTable",
+      "definition": "(typeof DB_TABLES.EDUCATIONAL)[keyof typeof DB_TABLES.EDUCATIONAL]",
+      "file": "shared/constants/database.constants.ts"
+    },
+    {
+      "name": "ProgressTable",
+      "definition": "(typeof DB_TABLES.PROGRESS)[keyof typeof DB_TABLES.PROGRESS]",
+      "file": "shared/constants/database.constants.ts"
+    },
+    {
+      "name": "SocialTable",
+      "definition": "(typeof DB_TABLES.SOCIAL)[keyof typeof DB_TABLES.SOCIAL]",
+      "file": "shared/constants/database.constants.ts"
+    },
+    {
+      "name": "ContentTable",
+      "definition": "(typeof DB_TABLES.CONTENT)[keyof typeof DB_TABLES.CONTENT]",
+      "file": "shared/constants/database.constants.ts"
+    },
+    {
+      "name": "ProgressCallback",
+      "definition": "(data: ProgressData) => void",
+      "file": "shared/utils/progress.util.ts"
+    },
+    {
+      "name": "NextFunction",
+      "definition": "() => void",
+      "file": "shared/services/rate-limiter.service.ts"
+    },
+    {
+      "name": "RateLimitMiddleware",
+      "definition": "( req: RateLimitRequest, res: RateLimitResponse, next: NextFunction ) => void",
+      "file": "shared/services/rate-limiter.service.ts"
+    }
+  ],
+  "dtos": [
+    {
+      "name": "CreateModuleProgressDto",
+      "properties": [
+        {
+          "name": "status",
+          "type": "ProgressStatusEnum",
+          "decorators": [
+            "@IsOptional()",
+            "@IsEnum(ProgressStatusEnum)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "progress_percentage",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)",
+            "@Max(100)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "completed_exercises",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "total_exercises",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "classroom_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID('4')"
+          ],
+          "optional": true
+        },
+        {
+          "name": "assignment_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID('4')"
+          ],
+          "optional": true
+        },
+        {
+          "name": "deadline",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDateString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "allow_retry",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "sequential_completion",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "adaptive_difficulty",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "learning_path",
+          "type": "any[]",
+          "decorators": [
+            "@IsOptional()",
+            "@IsArray()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "student_notes",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "teacher_notes",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "metadata",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@IsOptional()",
+            "@IsObject()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/progress/dto/create-module-progress.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "ExerciseSubmissionResponseDto",
+      "properties": [],
+      "file": "modules/progress/dto/exercise-submission-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "ExerciseAttemptResponseDto",
+      "properties": [],
+      "file": "modules/progress/dto/exercise-attempt-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "ScheduledMissionResponseDto",
+      "properties": [],
+      "file": "modules/progress/dto/scheduled-mission-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateExerciseAttemptDto",
+      "properties": [
+        {
+          "name": "attempt_number",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(1)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "is_correct",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "score",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "time_spent_seconds",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "hints_used",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "comodines_used",
+          "type": "string[]",
+          "decorators": [
+            "@IsOptional()",
+            "@IsArray()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "xp_earned",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "ml_coins_earned",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "submitted_at",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDateString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "metadata",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@IsOptional()",
+            "@IsObject()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/progress/dto/create-exercise-attempt.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "LearningSessionResponseDto",
+      "properties": [],
+      "file": "modules/progress/dto/learning-session-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateExerciseSubmissionDto",
+      "properties": [
+        {
+          "name": "is_correct",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "score",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "max_score",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "feedback",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "hint_used",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "hints_count",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "comodines_used",
+          "type": "string[]",
+          "decorators": [
+            "@IsOptional()",
+            "@IsArray()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "ml_coins_spent",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "time_spent_seconds",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "attempt_number",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(1)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()",
+            "@IsIn(['draft', 'submitted', 'graded', 'reviewed'])"
+          ],
+          "optional": true
+        },
+        {
+          "name": "started_at",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDateString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "submitted_at",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDateString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "graded_at",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDateString()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/progress/dto/create-exercise-submission.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "CreateScheduledMissionDto",
+      "properties": [
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "bonus_xp",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "bonus_coins",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/progress/dto/create-scheduled-mission.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "ModuleProgressResponseDto",
+      "properties": [],
+      "file": "modules/progress/dto/module-progress-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateLearningSessionDto",
+      "properties": [
+        {
+          "name": "tenant_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID('4')"
+          ],
+          "optional": true
+        },
+        {
+          "name": "session_token",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "session_type",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()",
+            "@IsIn(['learning', 'practice', 'assessment', 'review'])"
+          ],
+          "optional": true
+        },
+        {
+          "name": "module_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID('4')"
+          ],
+          "optional": true
+        },
+        {
+          "name": "exercise_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID('4')"
+          ],
+          "optional": true
+        },
+        {
+          "name": "classroom_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID('4')"
+          ],
+          "optional": true
+        },
+        {
+          "name": "started_at",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDateString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "device_info",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@IsOptional()",
+            "@IsObject()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "browser_info",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@IsOptional()",
+            "@IsObject()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "connection_quality",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()",
+            "@IsIn(['excellent', 'good', 'fair', 'poor'])"
+          ],
+          "optional": true
+        },
+        {
+          "name": "metadata",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@IsOptional()",
+            "@IsObject()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/progress/dto/create-learning-session.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "MarieCurieContentResponseDto",
+      "properties": [],
+      "file": "modules/content/dto/marie-curie-content-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "MediaFileResponseDto",
+      "properties": [],
+      "file": "modules/content/dto/media-file-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "ContentTemplateResponseDto",
+      "properties": [],
+      "file": "modules/content/dto/content-template-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateMediaFileDto",
+      "properties": [],
+      "file": "modules/content/dto/create-media-file.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateMarieCurieContentDto",
+      "properties": [],
+      "file": "modules/content/dto/create-marie-curie-content.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateContentTemplateDto",
+      "properties": [],
+      "file": "modules/content/dto/create-content-template.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "SchoolResponseDto",
+      "properties": [],
+      "file": "modules/social/dto/school-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "UpdateFriendshipStatusDto",
+      "properties": [],
+      "file": "modules/social/dto/update-friendship-status.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "ClassroomMemberResponseDto",
+      "properties": [],
+      "file": "modules/social/dto/classroom-member-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateTeamDto",
+      "properties": [
+        {
+          "name": "classroom_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID('4')"
+          ],
+          "optional": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "motto",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "color_primary",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "color_secondary",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "avatar_url",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "banner_url",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "badges",
+          "type": "any[]",
+          "decorators": [
+            "@IsOptional()",
+            "@IsArray()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "leader_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID('4')"
+          ],
+          "optional": true
+        },
+        {
+          "name": "team_code",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "max_members",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(1)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "is_public",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "allow_join_requests",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "require_approval",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "is_verified",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "founded_at",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDateString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "metadata",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@IsOptional()",
+            "@IsObject()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/social/dto/create-team.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "TeamChallengeResponseDto",
+      "properties": [],
+      "file": "modules/social/dto/team-challenge-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateClassroomDto",
+      "properties": [
+        {
+          "name": "school_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID('4')"
+          ],
+          "optional": true
+        },
+        {
+          "name": "code",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "grade_level",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "section",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "subject",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "academic_year",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "semester",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/social/dto/create-classroom.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "CreateTeamMemberDto",
+      "properties": [
+        {
+          "name": "role",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsEnum(TeamMemberRoleEnum)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "joined_at",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDateString()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/social/dto/create-team-member.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "CreateSchoolDto",
+      "properties": [
+        {
+          "name": "code",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "short_name",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "address",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "city",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "region",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "country",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "postal_code",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "phone",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "website",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "principal_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID('4')"
+          ],
+          "optional": true
+        },
+        {
+          "name": "administrative_contact_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID('4')"
+          ],
+          "optional": true
+        },
+        {
+          "name": "academic_year",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "semester_system",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/social/dto/create-school.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "UpdateClassroomMemberStatusDto",
+      "properties": [
+        {
+          "name": "withdrawal_date",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDateString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "withdrawal_reason",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/social/dto/update-classroom-member-status.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "CreateClassroomMemberDto",
+      "properties": [
+        {
+          "name": "enrollment_date",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDateString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "enrollment_method",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsEnum(EnrollmentMethodEnum)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "enrolled_by",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID('4')"
+          ],
+          "optional": true
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsEnum(ClassroomMemberStatusEnum)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "student_number",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "final_grade",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsNumber()",
+            "@Min(0)",
+            "@Max(10)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "attendance_percentage",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsNumber()",
+            "@Min(0)",
+            "@Max(100)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "permissions",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@IsOptional()",
+            "@IsObject()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "teacher_notes",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "parent_contact_info",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@IsOptional()",
+            "@IsObject()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "metadata",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@IsOptional()",
+            "@IsObject()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/social/dto/create-classroom-member.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "CreateFriendshipDto",
+      "properties": [
+        {
+          "name": "status",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsEnum(FriendshipStatusEnum)"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/social/dto/create-friendship.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "TeamResponseDto",
+      "properties": [],
+      "file": "modules/social/dto/team-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "TeamMemberResponseDto",
+      "properties": [],
+      "file": "modules/social/dto/team-member-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "FriendshipResponseDto",
+      "properties": [],
+      "file": "modules/social/dto/friendship-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateTeamChallengeDto",
+      "properties": [
+        {
+          "name": "status",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsEnum(TeamChallengeStatusEnum)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "started_at",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDateString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "completed_at",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDateString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "score",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/social/dto/create-team-challenge.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "ClassroomResponseDto",
+      "properties": [],
+      "file": "modules/social/dto/classroom-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "RequestPasswordResetDto",
+      "properties": [],
+      "file": "modules/auth/dto/request-password-reset.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "AssignRoleDto",
+      "properties": [],
+      "file": "modules/auth/dto/assign-role.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "UpdateTenantDto",
+      "properties": [],
+      "file": "modules/auth/dto/update-tenant.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateAuthAttemptDto",
+      "properties": [
+        {
+          "name": "user_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID('4')"
+          ],
+          "optional": true
+        },
+        {
+          "name": "ip_address",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsIP()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "user_agent",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()",
+            "@MaxLength(500)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "failure_reason",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()",
+            "@MaxLength(255)"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/auth/dto/create-auth-attempt.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "ResetPasswordDto",
+      "properties": [],
+      "file": "modules/auth/dto/reset-password.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreatePasswordResetTokenDto",
+      "properties": [],
+      "file": "modules/auth/dto/create-password-reset-token.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "UpdateProfileDto",
+      "properties": [],
+      "file": "modules/auth/dto/update-profile.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "AuthAttemptResponseDto",
+      "properties": [],
+      "file": "modules/auth/dto/auth-attempt-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "VerifyEmailDto",
+      "properties": [],
+      "file": "modules/auth/dto/verify-email.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "TenantResponseDto",
+      "properties": [],
+      "file": "modules/auth/dto/tenant-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "PasswordResetTokenResponseDto",
+      "properties": [],
+      "file": "modules/auth/dto/password-reset-token-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateUserSessionDto",
+      "properties": [
+        {
+          "name": "device_name",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()",
+            "@MaxLength(255)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "ip_address",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsIP()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "user_agent",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()",
+            "@MaxLength(500)"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/auth/dto/create-user-session.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "CreateMembershipDto",
+      "properties": [],
+      "file": "modules/auth/dto/create-membership.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateProfileDto",
+      "properties": [
+        {
+          "name": "display_name",
+          "type": "string",
+          "decorators": [
+            "@IsString()",
+            "@IsOptional()",
+            "@MaxLength(255)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "full_name",
+          "type": "string",
+          "decorators": [
+            "@IsString()",
+            "@IsOptional()",
+            "@MaxLength(255)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "first_name",
+          "type": "string",
+          "decorators": [
+            "@IsString()",
+            "@IsOptional()",
+            "@MaxLength(100)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "last_name",
+          "type": "string",
+          "decorators": [
+            "@IsString()",
+            "@IsOptional()",
+            "@MaxLength(100)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "avatar_url",
+          "type": "string",
+          "decorators": [
+            "@IsUrl()",
+            "@IsOptional()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "message",
+          "type": "'La biografía no puede exceder 500 caracteres',",
+          "decorators": [
+            "@IsString()",
+            "@IsOptional()",
+            "@MaxLength(500, {"
+          ],
+          "optional": false
+        }
+      ],
+      "file": "modules/auth/dto/create-profile.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "MembershipResponseDto",
+      "properties": [],
+      "file": "modules/auth/dto/membership-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateTenantDto",
+      "properties": [],
+      "file": "modules/auth/dto/create-tenant.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "EmailVerificationTokenResponseDto",
+      "properties": [],
+      "file": "modules/auth/dto/email-verification-token-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "RefreshTokenDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Refresh token para generar nuevo access token',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "type",
+          "type": "String,",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/auth/dto/refresh-token.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "UpdateUserSessionDto",
+      "properties": [
+        {
+          "name": "last_activity_at",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDateString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "expires_at",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDateString()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/auth/dto/update-user-session.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "UserResponseDto",
+      "properties": [
+        {
+          "name": "email_confirmed_at",
+          "type": "Date",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "last_sign_in_at",
+          "type": "Date",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/auth/dto/user-response.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "RegisterUserDto",
+      "properties": [],
+      "file": "modules/auth/dto/register-user.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateAuthProviderDto",
+      "properties": [],
+      "file": "modules/auth/dto/create-auth-provider.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "UpdateMembershipDto",
+      "properties": [],
+      "file": "modules/auth/dto/update-membership.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "AuthProviderResponseDto",
+      "properties": [],
+      "file": "modules/auth/dto/auth-provider-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateUserDto",
+      "properties": [],
+      "file": "modules/auth/dto/create-user.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "LoginDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Email del usuario',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'usuario@example.com',",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "type",
+          "type": "String,",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/auth/dto/login.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "UserSessionResponseDto",
+      "properties": [],
+      "file": "modules/auth/dto/user-session-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "UpdateUserDto",
+      "properties": [],
+      "file": "modules/auth/dto/update-user.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateEmailVerificationTokenDto",
+      "properties": [],
+      "file": "modules/auth/dto/create-email-verification-token.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "UserRoleResponseDto",
+      "properties": [],
+      "file": "modules/auth/dto/user-role-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "ProfileResponseDto",
+      "properties": [],
+      "file": "modules/auth/dto/profile-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "NotificationResponseDto",
+      "properties": [
+        {
+          "name": "example",
+          "type": "'123e4567-e89b-12d3-a456-426614174000',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "description",
+          "type": "'Notification ID',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/notifications/dto/notification-response.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "CreateNotificationDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'User ID to send notification to',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'123e4567-e89b-12d3-a456-426614174000',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/notifications/dto/create-notification.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "GetNotificationsQueryDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Filter by notification type',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "enum",
+          "type": "NotificationType,",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "required",
+          "type": "false,",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/notifications/dto/get-notifications-query.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "PaginatedNotificationsDto",
+      "properties": [
+        {
+          "name": "type",
+          "type": "[NotificationResponseDto],",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "description",
+          "type": "'Array of notifications',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/notifications/dto/paginated-notifications.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "RejectContentDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Reason for rejecting the content (required)',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'Contains factual errors in the historical context section. Please review and correct.',",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "maxLength",
+          "type": "1000,",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/admin/dto/content/reject-content.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "ApproveContentDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Optional notes or feedback from the admin upon approval',",
+          "decorators": [
+            "@ApiPropertyOptional({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'Excellent content, approved for publication',",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "maxLength",
+          "type": "500,",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/admin/dto/content/approve-content.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "ListContentDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Filter by content type',",
+          "decorators": [
+            "@ApiPropertyOptional({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "enum",
+          "type": "['module', 'exercise', 'template'],",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'module',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/admin/dto/content/list-content.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "PaginatedContentDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Array of content items',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "type",
+          "type": "[ContentDto],",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/admin/dto/content/paginated-content.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "ContentDto",
+      "properties": [],
+      "file": "modules/admin/dto/content/content.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "UpdateOrganizationDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Organization name',",
+          "decorators": [
+            "@ApiPropertyOptional({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'Universidad Nacional Autónoma de México',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/admin/dto/organizations/update-organization.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "ListOrganizationsDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Search by organization name or slug',",
+          "decorators": [
+            "@ApiPropertyOptional({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'universidad',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/admin/dto/organizations/list-organizations.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "PaginatedOrganizationsDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Array of organizations',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "type",
+          "type": "[OrganizationDto],",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/admin/dto/organizations/paginated-organizations.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "OrganizationStatsDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Organization ID',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'abc123...',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/admin/dto/organizations/organization-stats.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "OrganizationDto",
+      "properties": [],
+      "file": "modules/admin/dto/organizations/organization.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateOrganizationDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Organization name',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'Universidad Nacional Autónoma de México',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/admin/dto/organizations/create-organization.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "UpdateSystemConfigDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Enable maintenance mode',",
+          "decorators": [
+            "@ApiPropertyOptional({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "false,",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/admin/dto/system/update-system-config.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "PaginatedAuditLogDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Array of audit log entries',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "type",
+          "type": "[AuditLogDto],",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/admin/dto/system/paginated-audit-log.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "SystemMetricsDto",
+      "properties": [],
+      "file": "modules/admin/dto/system/system-metrics.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "DatabaseHealthDto",
+      "properties": [],
+      "file": "modules/admin/dto/system/system-health.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "RedisHealthDto",
+      "properties": [],
+      "file": "modules/admin/dto/system/system-health.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "SystemHealthDto",
+      "properties": [],
+      "file": "modules/admin/dto/system/system-health.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "AuditLogDto",
+      "properties": [],
+      "file": "modules/admin/dto/system/audit-log.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "SystemConfigDto",
+      "properties": [],
+      "file": "modules/admin/dto/system/system-config.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "AuditLogQueryDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Filter by user ID',",
+          "decorators": [
+            "@ApiPropertyOptional({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'abc123...',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/admin/dto/system/audit-log-query.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "SuspendUserDto",
+      "properties": [
+        {
+          "name": "reason",
+          "type": "string",
+          "decorators": [
+            "@IsString()",
+            "@IsNotEmpty()"
+          ],
+          "optional": false
+        }
+      ],
+      "file": "modules/admin/dto/users/suspend-user.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "UserStatsDto",
+      "properties": [
+        {
+          "name": "total_users",
+          "type": "number",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "active_users",
+          "type": "number",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "suspended_users",
+          "type": "number",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "pending_verification",
+          "type": "number",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "students",
+          "type": "number",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "teachers",
+          "type": "number",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "admins",
+          "type": "number",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "users_last_30_days",
+          "type": "number",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/admin/dto/users/user-stats.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "PaginatedUsersDto",
+      "properties": [
+        {
+          "name": "data",
+          "type": "UserDetailsDto[]",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "total",
+          "type": "number",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "page",
+          "type": "number",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "limit",
+          "type": "number",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "total_pages",
+          "type": "number",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/admin/dto/users/paginated-users.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "ListUsersDto",
+      "properties": [
+        {
+          "name": "search",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "role",
+          "type": "GamilityRoleEnum",
+          "decorators": [
+            "@IsOptional()",
+            "@IsEnum(GamilityRoleEnum)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "status",
+          "type": "UserStatusEnum",
+          "decorators": [
+            "@IsOptional()",
+            "@IsEnum(UserStatusEnum)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "page",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@Type(() => Number)",
+            "@IsInt()",
+            "@Min(1)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "limit",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@Type(() => Number)",
+            "@IsInt()",
+            "@Min(1)"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/admin/dto/users/list-users.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "UpdateUserDto",
+      "properties": [
+        {
+          "name": "email",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsEmail()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "role",
+          "type": "GamilityRoleEnum",
+          "decorators": [
+            "@IsOptional()",
+            "@IsEnum(GamilityRoleEnum)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "status",
+          "type": "UserStatusEnum",
+          "decorators": [
+            "@IsOptional()",
+            "@IsEnum(UserStatusEnum)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "email_verified",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "raw_user_meta_data",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@IsOptional()",
+            "@IsObject()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/admin/dto/users/update-user.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "UserDetailsDto",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": false
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": false
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": false
+        },
+        {
+          "name": "tenant_id",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": false
+        },
+        {
+          "name": "email_verified",
+          "type": "boolean",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": false
+        },
+        {
+          "name": "email_confirmed_at",
+          "type": "Date",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "last_sign_in_at",
+          "type": "Date",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "raw_user_meta_data",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": false
+        },
+        {
+          "name": "created_at",
+          "type": "Date",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": false
+        },
+        {
+          "name": "updated_at",
+          "type": "Date",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": false
+        }
+      ],
+      "file": "modules/admin/dto/users/user-details.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "MissionResponseDto",
+      "properties": [],
+      "file": "modules/missions/dto/mission-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "UpdateMissionProgressDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Mission ID',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'123e4567-e89b-12d3-a456-426614174000',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/missions/dto/update-mission-progress.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "ClaimMissionRewardsDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Mission ID to claim rewards from',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'123e4567-e89b-12d3-a456-426614174000',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/missions/dto/claim-mission-rewards.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "ClaimRewardsResponseDto",
+      "properties": [],
+      "file": "modules/missions/dto/claim-mission-rewards.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "PowerupCatalogItemDto",
+      "properties": [
+        {
+          "name": "enum",
+          "type": "PowerupType,",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "PowerupType.PISTAS,",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "description",
+          "type": "'Powerup type',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/powerups/dto/powerups-catalog.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "PowerupsCatalogDto",
+      "properties": [
+        {
+          "name": "type",
+          "type": "[PowerupCatalogItemDto],",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "description",
+          "type": "'Array of available powerups',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/powerups/dto/powerups-catalog.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "UsePowerupDto",
+      "properties": [
+        {
+          "name": "enum",
+          "type": "PowerupType,",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "description",
+          "type": "'Type of powerup to use',",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "PowerupType.PISTAS,",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/powerups/dto/use-powerup.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "UsePowerupResponseDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Whether powerup was used successfully',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "true,",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/powerups/dto/use-powerup.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "PowerupInventoryItemDto",
+      "properties": [
+        {
+          "name": "enum",
+          "type": "PowerupType,",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "PowerupType.PISTAS,",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "description",
+          "type": "'Type of powerup',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/powerups/dto/powerups-inventory.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "PowerupsInventoryDto",
+      "properties": [
+        {
+          "name": "example",
+          "type": "'123e4567-e89b-12d3-a456-426614174000',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "description",
+          "type": "'Inventory ID',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/powerups/dto/powerups-inventory.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "PurchasePowerupDto",
+      "properties": [
+        {
+          "name": "enum",
+          "type": "PowerupType,",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "description",
+          "type": "'Type of powerup to purchase',",
+          "decorators": [],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "PowerupType.PISTAS,",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/powerups/dto/purchase-powerup.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "PurchasePowerupResponseDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Whether purchase was successful',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "true,",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/powerups/dto/purchase-powerup.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "ModuleResponseDto",
+      "properties": [
+        {
+          "name": "tenant_id",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "subtitle",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "summary",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "module_code",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "learning_objectives",
+          "type": "string[]",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "competencies",
+          "type": "string[]",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "skills_developed",
+          "type": "string[]",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "prerequisites",
+          "type": "string[]",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "prerequisite_skills",
+          "type": "string[]",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "maya_rank_required",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "maya_rank_granted",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "published_at",
+          "type": "Date",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "archived_at",
+          "type": "Date",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "version_notes",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "created_by",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "reviewed_by",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "approved_by",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "keywords",
+          "type": "string[]",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "tags",
+          "type": "string[]",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "thumbnail_url",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "cover_image_url",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/educational/dto/modules/module-response.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "CreateModuleDto",
+      "properties": [
+        {
+          "name": "tenant_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "subtitle",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "summary",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/educational/dto/modules/create-module.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "UploadMediaDto",
+      "properties": [
+        {
+          "name": "tenant_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "alt_text",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "file_format",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "file_size_bytes",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsNumber()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "thumbnail_url",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "cdn_url",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "width",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsNumber()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "height",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsNumber()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "duration_seconds",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsNumber()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "resolution",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "category",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/educational/dto/media/upload-media.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "MediaResponseDto",
+      "properties": [
+        {
+          "name": "tenant_id",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "alt_text",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "file_format",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "file_size_bytes",
+          "type": "number",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "thumbnail_url",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "cdn_url",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "width",
+          "type": "number",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "height",
+          "type": "number",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "duration_seconds",
+          "type": "number",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "resolution",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "category",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "tags",
+          "type": "string[]",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "keywords",
+          "type": "string[]",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "used_in_modules",
+          "type": "string[]",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "used_in_exercises",
+          "type": "string[]",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "created_by",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "copyright_info",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "license",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "attribution",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/educational/dto/media/media-response.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "CreateRubricDto",
+      "properties": [
+        {
+          "name": "exercise_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "module_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/educational/dto/rubrics/create-rubric.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "RubricResponseDto",
+      "properties": [
+        {
+          "name": "exercise_id",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "module_id",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "feedback_template",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "created_by",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/educational/dto/rubrics/rubric-response.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "ExerciseResponseDto",
+      "properties": [
+        {
+          "name": "subtitle",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "instructions",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "solution",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "rubric",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "time_limit_minutes",
+          "type": "number",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "hints",
+          "type": "string[]",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "version_notes",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "created_by",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "reviewed_by",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "prerequisites",
+          "type": "string[]",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/educational/dto/exercises/exercise-response.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "CreateExerciseDto",
+      "properties": [
+        {
+          "name": "subtitle",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "instructions",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "config",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@IsOptional()",
+            "@IsObject()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/educational/dto/exercises/create-exercise.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "AchievementResponseDto",
+      "properties": [
+        {
+          "name": "tenant_id",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "unlock_message",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "instructions",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "tips",
+          "type": "string[]",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "created_by",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/gamification/dto/achievements/achievement-response.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "CreateAchievementDto",
+      "properties": [
+        {
+          "name": "tenant_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "icon",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "rarity",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "difficulty_level",
+          "type": "DifficultyLevelEnum",
+          "decorators": [
+            "@IsOptional()",
+            "@IsEnum(DifficultyLevelEnum)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "rewards",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@IsOptional()",
+            "@IsObject()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "ml_coins_reward",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "is_secret",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "is_repeatable",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "order_index",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "points_value",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "unlock_message",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "instructions",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/gamification/dto/achievements/create-achievement.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "UpdateAchievementDto",
+      "properties": [
+        {
+          "name": "name",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "icon",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "category",
+          "type": "AchievementCategoryEnum",
+          "decorators": [
+            "@IsOptional()",
+            "@IsEnum(AchievementCategoryEnum)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "rarity",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "difficulty_level",
+          "type": "DifficultyLevelEnum",
+          "decorators": [
+            "@IsOptional()",
+            "@IsEnum(DifficultyLevelEnum)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "conditions",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@IsOptional()",
+            "@IsObject()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "rewards",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@IsOptional()",
+            "@IsObject()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "ml_coins_reward",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "is_secret",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "is_repeatable",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "order_index",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "points_value",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "unlock_message",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "instructions",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/gamification/dto/achievements/update-achievement.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "NotificationResponseDto",
+      "properties": [],
+      "file": "modules/gamification/dto/notifications/notification-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateNotificationDto",
+      "properties": [],
+      "file": "modules/gamification/dto/notifications/create-notification.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "MarkReadDto",
+      "properties": [],
+      "file": "modules/gamification/dto/notifications/mark-read.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "UpdateMissionDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Objetivos actualizados',",
+          "decorators": [
+            "@ApiPropertyOptional({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "type",
+          "type": "[MissionObjectiveDto],",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/gamification/dto/missions/update-mission.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "MissionResponseDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'ID de la misión',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'880e8400-e29b-41d4-a716-446655440000',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/gamification/dto/missions/mission-response.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "MissionObjectiveDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Tipo de objetivo',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'complete_exercises',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/gamification/dto/missions/create-mission.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "MissionRewardsDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'ML Coins otorgados',",
+          "decorators": [
+            "@ApiPropertyOptional({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "100,",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/gamification/dto/missions/create-mission.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "CreateMissionDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'ID del usuario asignado',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'550e8400-e29b-41d4-a716-446655440000',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/gamification/dto/missions/create-mission.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "UserAchievementResponseDto",
+      "properties": [],
+      "file": "modules/gamification/dto/user-achievements/user-achievement-response.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "GrantAchievementDto",
+      "properties": [],
+      "file": "modules/gamification/dto/user-achievements/grant-achievement.dto.ts",
+      "parsed": false
+    },
+    {
+      "name": "CreateTransactionDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'ID del usuario que realiza la transacción',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'550e8400-e29b-41d4-a716-446655440000',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/gamification/dto/ml-coins/create-transaction.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "TransactionResponseDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'ID de la transacción',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'770e8400-e29b-41d4-a716-446655440000',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/gamification/dto/ml-coins/transaction-response.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "LeaderboardEntryDto",
+      "properties": [
+        {
+          "name": "username",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "avatar_url",
+          "type": "string | null",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "maya_rank",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "total_ml_coins",
+          "type": "number",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "current_streak",
+          "type": "number",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "total_achievements",
+          "type": "number",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "metadata",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/gamification/dto/leaderboard/leaderboard-entry.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "UpdateUserRankDto",
+      "properties": [
+        {
+          "name": "current_rank",
+          "type": "MayaRank",
+          "decorators": [
+            "@IsOptional()",
+            "@IsEnum(MayaRank)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "previous_rank",
+          "type": "MayaRank",
+          "decorators": [
+            "@IsOptional()",
+            "@IsEnum(MayaRank)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "rank_progress_percentage",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)",
+            "@Max(100)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "modules_required_for_next",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "modules_completed_for_rank",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "xp_required_for_next",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "xp_earned_for_rank",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "ml_coins_bonus",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "certificate_url",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "badge_url",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "achieved_at",
+          "type": "Date",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDate()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "previous_rank_achieved_at",
+          "type": "Date",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDate()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "is_current",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "rank_metadata",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@IsOptional()",
+            "@IsObject()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/gamification/dto/user-ranks/update-user-rank.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "UserRankResponseDto",
+      "properties": [
+        {
+          "name": "tenant_id",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "previous_rank",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "modules_required_for_next",
+          "type": "number",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "xp_required_for_next",
+          "type": "number",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "certificate_url",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "badge_url",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "achieved_at",
+          "type": "Date",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "previous_rank_achieved_at",
+          "type": "Date",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/gamification/dto/user-ranks/user-rank-response.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "CreateUserRankDto",
+      "properties": [
+        {
+          "name": "tenant_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "previous_rank",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "rank_progress_percentage",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)",
+            "@Max(100)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "modules_required_for_next",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "modules_completed_for_rank",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "xp_required_for_next",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "xp_earned_for_rank",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "ml_coins_bonus",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "certificate_url",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "badge_url",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "achieved_at",
+          "type": "Date",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDate()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "previous_rank_achieved_at",
+          "type": "Date",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDate()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "is_current",
+          "type": "boolean",
+          "decorators": [
+            "@IsOptional()",
+            "@IsBoolean()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "rank_metadata",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@IsOptional()",
+            "@IsObject()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/gamification/dto/user-ranks/create-user-rank.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "ComodinItemDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'Tipo de comodín',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'pistas',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/gamification/dto/comodines/inventory-response.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "InventoryResponseDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'ID del inventario',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'990e8400-e29b-41d4-a716-446655440000',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/gamification/dto/comodines/inventory-response.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "UseComodinDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'ID del usuario que usa el comodín',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'550e8400-e29b-41d4-a716-446655440000',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/gamification/dto/comodines/use-comodin.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "PurchaseComodinDto",
+      "properties": [
+        {
+          "name": "description",
+          "type": "'ID del usuario que compra',",
+          "decorators": [
+            "@ApiProperty({"
+          ],
+          "optional": false
+        },
+        {
+          "name": "example",
+          "type": "'550e8400-e29b-41d4-a716-446655440000',",
+          "decorators": [],
+          "optional": false
+        }
+      ],
+      "file": "modules/gamification/dto/comodines/purchase-comodin.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "UserStatsResponseDto",
+      "properties": [
+        {
+          "name": "tenant_id",
+          "type": "string",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "last_ml_coins_reset",
+          "type": "Date",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "streak_started_at",
+          "type": "Date",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "average_score",
+          "type": "number",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "global_rank_position",
+          "type": "number",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "class_rank_position",
+          "type": "number",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "school_rank_position",
+          "type": "number",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "last_activity_at",
+          "type": "Date",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "last_login_at",
+          "type": "Date",
+          "decorators": [
+            "@Expose()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/gamification/dto/user-stats/user-stats-response.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "CreateUserStatsDto",
+      "properties": [
+        {
+          "name": "tenant_id",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsUUID()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/gamification/dto/user-stats/create-user-stats.dto.ts",
+      "parsed": true
+    },
+    {
+      "name": "UpdateUserStatsDto",
+      "properties": [
+        {
+          "name": "level",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(1)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "total_xp",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "xp_to_next_level",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "current_rank",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "rank_progress",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsNumber()",
+            "@Min(0)",
+            "@Max(100)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "ml_coins",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "ml_coins_earned_total",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "ml_coins_spent_total",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "ml_coins_earned_today",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "last_ml_coins_reset",
+          "type": "Date",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDate()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "current_streak",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "max_streak",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "streak_started_at",
+          "type": "Date",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDate()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "days_active_total",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "exercises_completed",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "modules_completed",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "total_score",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "average_score",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsNumber()",
+            "@Min(0)",
+            "@Max(100)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "perfect_scores",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "achievements_earned",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "certificates_earned",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "total_time_spent",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "weekly_time_spent",
+          "type": "string",
+          "decorators": [
+            "@IsOptional()",
+            "@IsString()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "sessions_count",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "weekly_xp",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "monthly_xp",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "weekly_exercises",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(0)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "global_rank_position",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(1)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "class_rank_position",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(1)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "school_rank_position",
+          "type": "number",
+          "decorators": [
+            "@IsOptional()",
+            "@IsInt()",
+            "@Min(1)"
+          ],
+          "optional": true
+        },
+        {
+          "name": "last_activity_at",
+          "type": "Date",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDate()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "last_login_at",
+          "type": "Date",
+          "decorators": [
+            "@IsOptional()",
+            "@IsDate()"
+          ],
+          "optional": true
+        },
+        {
+          "name": "metadata",
+          "type": "Record<string, any>",
+          "decorators": [
+            "@IsOptional()",
+            "@IsObject()"
+          ],
+          "optional": true
+        }
+      ],
+      "file": "modules/gamification/dto/user-stats/update-user-stats.dto.ts",
+      "parsed": true
+    }
+  ],
+  "summary": {
+    "total_enums": 46,
+    "total_const_enums": 1,
+    "total_interfaces": 26,
+    "total_types": 11,
+    "total_dtos": 139,
+    "problematic_files": 0,
+    "by_category": {
+      "total_all_types": 223,
+      "by_module": 11
+    }
+  },
+  "problematic_files": [],
+  "module_analysis": {
+    "admin": {
+      "enums": 0,
+      "interfaces": 0,
+      "types": 0,
+      "dtos": 26,
+      "total_types": 26,
+      "files_count": 24
+    },
+    "auth": {
+      "enums": 0,
+      "interfaces": 1,
+      "types": 0,
+      "dtos": 31,
+      "total_types": 32,
+      "files_count": 32
+    },
+    "content": {
+      "enums": 0,
+      "interfaces": 0,
+      "types": 0,
+      "dtos": 6,
+      "total_types": 6,
+      "files_count": 6
+    },
+    "educational": {
+      "enums": 0,
+      "interfaces": 0,
+      "types": 0,
+      "dtos": 8,
+      "total_types": 8,
+      "files_count": 8
+    },
+    "gamification": {
+      "enums": 2,
+      "interfaces": 4,
+      "types": 0,
+      "dtos": 26,
+      "total_types": 32,
+      "files_count": 26
+    },
+    "missions": {
+      "enums": 2,
+      "interfaces": 2,
+      "types": 0,
+      "dtos": 4,
+      "total_types": 8,
+      "files_count": 4
+    },
+    "notifications": {
+      "enums": 1,
+      "interfaces": 1,
+      "types": 0,
+      "dtos": 4,
+      "total_types": 6,
+      "files_count": 5
+    },
+    "powerups": {
+      "enums": 1,
+      "interfaces": 1,
+      "types": 0,
+      "dtos": 8,
+      "total_types": 10,
+      "files_count": 5
+    },
+    "progress": {
+      "enums": 0,
+      "interfaces": 0,
+      "types": 0,
+      "dtos": 10,
+      "total_types": 10,
+      "files_count": 10
+    },
+    "shared": {
+      "enums": 0,
+      "interfaces": 0,
+      "types": 10,
+      "dtos": 0,
+      "total_types": 10,
+      "files_count": 3
+    },
+    "social": {
+      "enums": 0,
+      "interfaces": 0,
+      "types": 0,
+      "dtos": 16,
+      "total_types": 16,
+      "files_count": 16
+    }
+  }
+}

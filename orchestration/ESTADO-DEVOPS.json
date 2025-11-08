@@ -1,0 +1,18 @@
+{
+  "perfil": "NEXUS-DEVOPS",
+  "version": "1.0",
+  "ultima_actualizacion": "2025-11-02T00:00:00Z",
+  "estado_general": "inicializado",
+  "ciclo_actual": null,
+  "microciclo_actual": null,
+  "tareas_completadas": 0,
+  "tareas_en_progreso": 0,
+  "tareas_pendientes": 0,
+  "subagentes_lanzados": 0,
+  "metricas": {
+    "archivos_creados": 0,
+    "archivos_modificados": 0,
+    "tests_creados": 0,
+    "coverage_actual": 0
+  }
+}

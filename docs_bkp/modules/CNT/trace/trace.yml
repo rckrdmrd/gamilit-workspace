@@ -1,0 +1,91 @@
+module: M-CNT
+version: '2.0'
+owners:
+- '@tech-lead'
+- '@dev-team'
+last_updated: '2025-11-07'
+status: migrated
+req:
+- id: M-CNT-REQ-001
+  title: 'M-CNT-REQ-001: Gestión de Contenido y Media'
+  status: implemented
+  links:
+    spec:
+    - M-CNT-ET-001
+    plan: []
+    tests: []
+    objs: []
+- id: M-CNT-REQ-002
+  title: 'M-CNT-REQ-002: Tipos de Media y Procesamiento Específico'
+  status: implemented
+  links:
+    spec:
+    - M-CNT-ET-002
+    plan: []
+    tests: []
+    objs: []
+- id: M-CNT-REQ-003
+  title: 'M-CNT-REQ-003: Storage y Distribución mediante CDN'
+  status: implemented
+  links:
+    spec:
+    - M-CNT-ET-003
+    plan: []
+    tests: []
+    objs: []
+spec:
+- id: M-CNT-ET-001
+  title: 'M-CNT-ET-001: Gestión de Media - Especificación Técnica'
+  status: implemented
+  derives_from:
+  - M-CNT-REQ-001
+  implements:
+    objs: []
+- id: M-CNT-ET-002
+  title: 'M-CNT-ET-002: Especificación Técnica - Tipos de Media y Procesamiento'
+  status: implemented
+  derives_from:
+  - M-CNT-REQ-002
+  implements:
+    objs: []
+- id: M-CNT-ET-003
+  title: 'M-CNT-ET-003: Especificación Técnica - Storage y CDN'
+  status: implemented
+  derives_from:
+  - M-CNT-REQ-003
+  implements:
+    objs: []
+tests: []
+objects:
+  db:
+  - OBJ-DB-CNT-IDX-IDX-MARIE-CONTENT-GRADE-LEVELS-GIN
+  - OBJ-DB-CNT-IDX-IDX-MARIE-CONTENT-KEYWORDS-GIN
+  - OBJ-DB-CNT-UNKN-01-POLICIES
+  - OBJ-DB-CNT-TRG-CONTENT-TEMPLATES
+  - OBJ-DB-CNT-TRG-MARIE-CURIE-CONTENT
+  - OBJ-DB-CNT-TRG-MEDIA-FILES
+  - OBJ-DB-CNT-IDX-CONTENT-VERSIONS
+  - OBJ-DB-CNT-IDX-FOR
+  - OBJ-DB-CNT-TRG-TRG-CONTENT-TEMPLATES-UPDATED-AT
+  - OBJ-DB-CNT-TRG-TRG-MARIE-CURIE-CONTENT-UPDATED-AT
+  - OBJ-DB-CNT-TRG-TRG-MEDIA-FILES-UPDATED-AT
+  backend:
+  - OBJ-BE-CNT-CTRL-CONTENT-TEMPLATES-CONTROLLER
+  - OBJ-BE-CNT-CTRL-MARIE-CURIE-CONTENT-CONTROLLER
+  - OBJ-BE-CNT-CTRL-MEDIA-FILES-CONTROLLER
+  - OBJ-BE-CNT-SVC-CONTENT-TEMPLATES-SERVICE
+  - OBJ-BE-CNT-SVC-MARIE-CURIE-CONTENT-SERVICE
+  - OBJ-BE-CNT-SVC-MEDIA-FILES-SERVICE
+  - OBJ-BE-CNT-ENT-CONTENT-TEMPLATE-ENTITY
+  - OBJ-BE-CNT-ENT-MARIE-CURIE-CONTENT-ENTITY
+  - OBJ-BE-CNT-ENT-MEDIA-FILE-ENTITY
+  frontend: []
+dependencies: []
+metrics:
+  req_count: 3
+  spec_count: 3
+  test_count: 0
+  obj_count: 20
+  coverage_req_to_spec: 100.0
+  coverage_req_to_test: 0
+  coverage_req_to_obj: 666.7

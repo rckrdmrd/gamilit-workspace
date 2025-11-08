@@ -1,0 +1,408 @@
+{
+  "metadata": {
+    "backup_id": "backup_20251021_183639",
+    "backup_timestamp": "2025-10-21T18:36:39.000Z",
+    "verified_timestamps": {
+      "schema_file": "2025-10-21T18:36:39.945630711-06:00",
+      "data_file": "2025-10-21T18:37:25.698404425-06:00"
+    },
+    "analysis_date": "2025-11-02T16:18:02.000Z",
+    "backup_location": "/home/isem/workspace/docs/projects/glit/database/backups/backup_20251021_183639/",
+    "backup_type": "COMPLETE_SPLIT_DDL_AND_DATA",
+    "database_version": "PostgreSQL 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)",
+    "dump_tool_version": "pg_dump version 16.10"
+  },
+  "backup_files": {
+    "total_files": 2,
+    "files": [
+      {
+        "name": "schema.sql",
+        "size_bytes": 159000,
+        "size_mb": 159,
+        "line_count": 7164,
+        "content_type": "DDL (Data Definition Language)",
+        "created_timestamp": "2025-10-21T18:36:39.945630711-06:00"
+      },
+      {
+        "name": "data.sql",
+        "size_bytes": 221000,
+        "size_mb": 221,
+        "line_count": 589,
+        "content_type": "DML (Data Manipulation Language)",
+        "created_timestamp": "2025-10-21T18:37:25.698404425-06:00"
+      }
+    ]
+  },
+  "backup_classification": {
+    "is_complete_backup": true,
+    "is_sql_dump": true,
+    "contains_ddl": true,
+    "contains_data": true,
+    "is_split_format": true,
+    "ddl_in_separate_file": true,
+    "data_in_separate_file": true,
+    "contains_schema_definitions": true,
+    "contains_data_inserts": true
+  },
+  "schemas": {
+    "total_schemas": 10,
+    "schemas": [
+      "audit_logging",
+      "auth",
+      "auth_management",
+      "content_management",
+      "educational_content",
+      "gamification_system",
+      "gamilit",
+      "progress_tracking",
+      "social_features",
+      "system_configuration"
+    ]
+  },
+  "enums_and_types": {
+    "total_enum_types": 24,
+    "enum_types": [
+      "achievement_category",
+      "achievement_type",
+      "aggregation_period",
+      "alert_severity",
+      "attempt_result",
+      "classroom_role",
+      "comodin_type",
+      "content_status",
+      "content_type",
+      "difficulty_level",
+      "exercise_type",
+      "gamilit_role",
+      "maya_rank",
+      "media_type",
+      "metric_type",
+      "module_status",
+      "notification_channel",
+      "notification_type",
+      "processing_status",
+      "progress_status",
+      "rango_maya",
+      "social_event_type",
+      "transaction_type",
+      "user_status"
+    ]
+  },
+  "database_objects": {
+    "tables": {
+      "total": 41,
+      "by_schema": {
+        "audit_logging": [
+          "audit_logs",
+          "performance_metrics",
+          "system_alerts",
+          "system_logs",
+          "user_activity_logs"
+        ],
+        "auth": [
+          "users"
+        ],
+        "auth_management": [
+          "auth_attempts",
+          "email_verification_tokens",
+          "memberships",
+          "password_reset_tokens",
+          "profiles",
+          "security_events",
+          "tenants",
+          "user_roles",
+          "user_sessions"
+        ],
+        "content_management": [
+          "content_templates",
+          "marie_curie_content",
+          "media_files"
+        ],
+        "educational_content": [
+          "assessment_rubrics",
+          "exercises",
+          "media_resources",
+          "modules"
+        ],
+        "gamification_system": [
+          "achievements",
+          "comodines_inventory",
+          "leaderboard_metadata",
+          "missions",
+          "ml_coins_transactions",
+          "notifications",
+          "user_achievements",
+          "user_ranks",
+          "user_stats"
+        ],
+        "progress_tracking": [
+          "exercise_attempts",
+          "exercise_submissions",
+          "learning_sessions",
+          "module_progress"
+        ],
+        "social_features": [
+          "classroom_members",
+          "classrooms",
+          "schools",
+          "teams"
+        ],
+        "system_configuration": [
+          "feature_flags",
+          "system_settings"
+        ]
+      }
+    },
+    "indexes": {
+      "total": 191,
+      "description": "Comprehensive set of indexes for query optimization across all tables"
+    },
+    "functions": {
+      "total": 20,
+      "by_schema": {
+        "gamification_system": [
+          "award_ml_coins",
+          "calculate_level_from_xp",
+          "calculate_xp_for_next_level",
+          "get_user_rank_requirements",
+          "spend_ml_coins",
+          "update_missions_updated_at",
+          "update_notifications_updated_at"
+        ],
+        "gamilit": [
+          "audit_profile_changes",
+          "get_current_user_id",
+          "get_current_user_role",
+          "initialize_user_stats",
+          "is_admin",
+          "now_mexico",
+          "update_classroom_member_count",
+          "update_updated_at",
+          "update_updated_at_column",
+          "update_user_stats_on_exercise_complete"
+        ],
+        "progress_tracking": [
+          "calculate_module_progress",
+          "get_user_progress_summary",
+          "update_exercise_submissions_updated_at"
+        ]
+      }
+    },
+    "triggers": {
+      "total": 30,
+      "description": "Triggers for maintaining updated_at timestamps, cascading updates, and business logic enforcement"
+    },
+    "materialized_views": {
+      "total": 4,
+      "views": [
+        "gamification_system.leaderboard_coins",
+        "gamification_system.leaderboard_global",
+        "gamification_system.leaderboard_streaks",
+        "gamification_system.leaderboard_xp"
+      ]
+    },
+    "views": {
+      "total": 1,
+      "views": [
+        "progress_tracking.user_progress_summary"
+      ]
+    }
+  },
+  "tables_with_data": {
+    "total_tables_with_data": 41,
+    "tables": [
+      "audit_logging.audit_logs",
+      "audit_logging.performance_metrics",
+      "audit_logging.system_alerts",
+      "audit_logging.system_logs",
+      "audit_logging.user_activity_logs",
+      "auth.users",
+      "auth_management.auth_attempts",
+      "auth_management.email_verification_tokens",
+      "auth_management.memberships",
+      "auth_management.password_reset_tokens",
+      "auth_management.profiles",
+      "auth_management.security_events",
+      "auth_management.tenants",
+      "auth_management.user_roles",
+      "auth_management.user_sessions",
+      "content_management.content_templates",
+      "content_management.marie_curie_content",
+      "content_management.media_files",
+      "educational_content.assessment_rubrics",
+      "educational_content.exercises",
+      "educational_content.media_resources",
+      "educational_content.modules",
+      "gamification_system.achievements",
+      "gamification_system.comodines_inventory",
+      "gamification_system.leaderboard_metadata",
+      "gamification_system.missions",
+      "gamification_system.ml_coins_transactions",
+      "gamification_system.notifications",
+      "gamification_system.user_achievements",
+      "gamification_system.user_ranks",
+      "gamification_system.user_stats",
+      "progress_tracking.exercise_attempts",
+      "progress_tracking.exercise_submissions",
+      "progress_tracking.learning_sessions",
+      "progress_tracking.module_progress",
+      "social_features.classroom_members",
+      "social_features.classrooms",
+      "social_features.schools",
+      "social_features.teams",
+      "system_configuration.feature_flags",
+      "system_configuration.system_settings"
+    ]
+  },
+  "comparison_with_other_sources": {
+    "comparison_date": "2025-11-02T16:18:02.000Z",
+    "sources_compared": [
+      "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/backup_before_migration_20251027_203226/",
+      "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/"
+    ],
+    "findings": {
+      "status": "DIFFERENCES_FOUND",
+      "critical_findings": [
+        {
+          "type": "MISSING_TABLES",
+          "severity": "HIGH",
+          "count": 3,
+          "tables": [
+            {
+              "name": "social_features.team_members",
+              "schema": "social_features",
+              "status": "FOUND_IN_NEWER_DDL",
+              "found_in_backup_20251021": false,
+              "found_in_latest_ddl": true,
+              "created_after_backup": true
+            },
+            {
+              "name": "social_features.team_challenges",
+              "schema": "social_features",
+              "status": "FOUND_IN_NEWER_DDL",
+              "found_in_backup_20251021": false,
+              "found_in_latest_ddl": true,
+              "created_after_backup": true
+            },
+            {
+              "name": "social_features.friendships",
+              "schema": "social_features",
+              "status": "FOUND_IN_NEWER_DDL",
+              "found_in_backup_20251021": false,
+              "found_in_latest_ddl": true,
+              "created_after_backup": true
+            }
+          ]
+        },
+        {
+          "type": "MISSING_FUNCTIONS",
+          "severity": "MEDIUM",
+          "count": 1,
+          "functions": [
+            {
+              "name": "log_audit_event",
+              "schema": "audit_logging",
+              "status": "FOUND_IN_NEWER_DDL",
+              "found_in_backup_20251021": false,
+              "found_in_latest_ddl": true,
+              "description": "Audit logging helper function"
+            }
+          ]
+        },
+        {
+          "type": "FUNCTION_ENHANCEMENTS",
+          "severity": "MEDIUM",
+          "count": 8,
+          "functions": [
+            {
+              "name": "Multiple functions in auth_management schema",
+              "schema": "auth_management",
+              "status": "ENHANCED_IN_NEWER_VERSION",
+              "examples": [
+                "assign_role_to_user",
+                "get_user_role",
+                "revoke_role_from_user",
+                "user_has_permission"
+              ],
+              "found_in_backup_20251021": false,
+              "found_in_latest_ddl": true
+            },
+            {
+              "name": "Multiple functions in educational_content schema",
+              "schema": "educational_content",
+              "status": "NEW_IN_NEWER_VERSION",
+              "examples": [
+                "calculate_learning_path",
+                "get_recommended_missions"
+              ],
+              "found_in_backup_20251021": false,
+              "found_in_latest_ddl": true
+            },
+            {
+              "name": "Multiple functions in gamification_system schema",
+              "schema": "gamification_system",
+              "status": "NEW_IN_NEWER_VERSION",
+              "examples": [
+                "apply_xp_boost",
+                "calculate_mission_reward",
+                "check_and_grant_achievements",
+                "cleanup_expired_boosts",
+                "get_leaderboard_position",
+                "update_user_level"
+              ],
+              "found_in_backup_20251021": false,
+              "found_in_latest_ddl": true
+            },
+            {
+              "name": "Multiple functions in social_features schema",
+              "schema": "social_features",
+              "status": "NEW_IN_NEWER_VERSION",
+              "found_in_backup_20251021": false,
+              "found_in_latest_ddl": true
+            }
+          ]
+        }
+      ],
+      "matching_objects": {
+        "status": "COMPLETE_MATCH",
+        "objects_matching": 50,
+        "notes": "Core schema structure, schemas, enums, and most tables match between backup_20251021 and latest DDL"
+      }
+    }
+  },
+  "critical_objects": {
+    "authentication_tables": [
+      "auth.users",
+      "auth_management.profiles",
+      "auth_management.tenants",
+      "auth_management.memberships"
+    ],
+    "gamification_core": [
+      "gamification_system.user_stats",
+      "gamification_system.user_ranks",
+      "gamification_system.user_achievements",
+      "gamification_system.ml_coins_transactions"
+    ],
+    "educational_core": [
+      "educational_content.modules",
+      "educational_content.exercises",
+      "progress_tracking.module_progress",
+      "progress_tracking.exercise_submissions"
+    ]
+  },
+  "summary": {
+    "backup_completeness": "COMPLETE",
+    "backup_quality": "PRODUCTION_GRADE",
+    "contains_seed_data": false,
+    "data_rows_status": "MINIMAL_TEST_DATA",
+    "test_users_found": 5,
+    "test_data_notes": "Contains test users: admin@glit.com, teacher@glit.com, student@glit.com, usuario-final@glit.com, rckrdmrd@gmail.com",
+    "recommendations": [
+      "Backup is comprehensive with all schema definitions",
+      "Tables team_members, team_challenges, and friendships were added after this backup",
+      "Additional functions for gamification and education were added in later versions",
+      "Consider updating to latest schema if using team features or enhanced gamification functions",
+      "Core tables and functionality are complete and functional in this backup"
+    ]
+  }
+}

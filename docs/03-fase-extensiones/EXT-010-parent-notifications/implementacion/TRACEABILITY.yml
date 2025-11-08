@@ -1,0 +1,44 @@
+# TRACEABILITY.yml - EXT-010: Parent Notifications (Parcial)
+
+epic_code: EXT-010
+epic_name: Parent Portal & Notifications
+phase: 3
+budget_mxn: 6000
+story_points: 20
+status: partial
+completion: 35%
+
+implementation:
+  database:
+    tables:
+      - name: parent_accounts
+        type: new
+        status: completed
+        description: Cuentas de padres
+
+      - name: parent_student_links
+        type: new
+        status: completed
+        description: Links padre-estudiante
+
+  backend:
+    module: parent-portal
+    status: partial
+    services:
+      - parent-account.service.ts (✅ completed)
+      - parent-notifications.service.ts (⚪ pending)
+      - parent-reports.service.ts (⚪ pending)
+
+completed_features:
+  - Parent account creation
+  - Parent-student linking
+  - Data model completo
+
+pending_features:
+  - Parent portal UI
+  - Progress notifications
+  - Weekly/monthly reports
+  - Alert configuration
+
+status:
+  completion: 35%

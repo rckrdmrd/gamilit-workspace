@@ -1,0 +1,1334 @@
+{
+  "metadata": {
+    "codigo_epica": "EAI-003",
+    "nombre_epica": "Gamificación Básica",
+    "version": "2.0",
+    "fecha_analisis": "2025-11-03",
+    "analista": "SA-ANALISIS-DB-003",
+    "estado": "Completada",
+    "user_stories_analizadas": 8,
+    "sprint": "Mes 1"
+  },
+  "resumen_ejecutivo": {
+    "total_tablas": 11,
+    "total_vistas": 2,
+    "total_funciones": 4,
+    "total_triggers": 3,
+    "total_indices": 12,
+    "total_constraints": 15,
+    "prioridad_global": "P0 - Crítico"
+  },
+  "tablas": [
+    {
+      "id": "TBL-001",
+      "nombre": "rank_history",
+      "descripcion": "Historial de ascensos de rango de usuarios. Registra cada cambio de rango con timestamp",
+      "epica_origen": "EAI-003",
+      "user_story": "US-GAM-001",
+      "prioridad": "P0",
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "UUID PRIMARY KEY",
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "descripcion": "Identificador único del registro"
+        },
+        {
+          "nombre": "user_id",
+          "tipo": "UUID FOREIGN KEY",
+          "nullable": false,
+          "referencias": "users(id)",
+          "descripcion": "Referencia al usuario que ascendió de rango"
+        },
+        {
+          "nombre": "rank",
+          "tipo": "ENUM('novato', 'aprendiz', 'explorador', 'maestro', 'sabio')",
+          "nullable": false,
+          "descripcion": "Rango alcanzado por el usuario"
+        },
+        {
+          "nombre": "achieved_at",
+          "tipo": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "descripcion": "Fecha y hora en que se alcanzó el rango"
+        }
+      ],
+      "primary_key": "id",
+      "foreign_keys": [
+        {
+          "columna": "user_id",
+          "referencia_tabla": "users",
+          "referencia_columna": "id",
+          "on_delete": "CASCADE",
+          "on_update": "CASCADE"
+        }
+      ],
+      "indices": [
+        {
+          "nombre": "idx_rank_history_user_id",
+          "columnas": ["user_id"],
+          "tipo": "B-TREE"
+        },
+        {
+          "nombre": "idx_rank_history_achieved_at",
+          "columnas": ["achieved_at"],
+          "tipo": "B-TREE"
+        },
+        {
+          "nombre": "idx_rank_history_user_rank",
+          "columnas": ["user_id", "rank"],
+          "tipo": "B-TREE"
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "columnas": ["user_id", "rank"],
+          "descripcion": "Un usuario solo puede tener un registro por rango (primera vez)"
+        }
+      ]
+    },
+    {
+      "id": "TBL-002",
+      "nombre": "xp_transactions",
+      "descripcion": "Registro de todas las transacciones de XP. Auditoría completa de cómo se ganó cada punto de experiencia",
+      "epica_origen": "EAI-003",
+      "user_story": "US-GAM-002",
+      "prioridad": "P0",
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "UUID PRIMARY KEY",
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "descripcion": "Identificador único de la transacción"
+        },
+        {
+          "nombre": "user_id",
+          "tipo": "UUID FOREIGN KEY",
+          "nullable": false,
+          "referencias": "users(id)",
+          "descripcion": "Usuario que gana el XP"
+        },
+        {
+          "nombre": "amount",
+          "tipo": "INTEGER",
+          "nullable": false,
+          "check": "amount > 0",
+          "descripcion": "Cantidad de XP otorgada (siempre positiva)"
+        },
+        {
+          "nombre": "reason",
+          "tipo": "ENUM('activity_completed', 'module_completed', 'badge_earned', 'manual')",
+          "nullable": false,
+          "descripcion": "Motivo por el cual se otorgó XP"
+        },
+        {
+          "nombre": "activity_id",
+          "tipo": "UUID",
+          "nullable": true,
+          "referencias": "activities(id)",
+          "descripcion": "Actividad relacionada si reason es 'activity_completed'"
+        },
+        {
+          "nombre": "created_at",
+          "tipo": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "descripcion": "Fecha y hora de la transacción"
+        }
+      ],
+      "primary_key": "id",
+      "foreign_keys": [
+        {
+          "columna": "user_id",
+          "referencia_tabla": "users",
+          "referencia_columna": "id",
+          "on_delete": "CASCADE",
+          "on_update": "CASCADE"
+        },
+        {
+          "columna": "activity_id",
+          "referencia_tabla": "activities",
+          "referencia_columna": "id",
+          "on_delete": "SET NULL",
+          "on_update": "CASCADE"
+        }
+      ],
+      "indices": [
+        {
+          "nombre": "idx_xp_transactions_user_id",
+          "columnas": ["user_id"],
+          "tipo": "B-TREE"
+        },
+        {
+          "nombre": "idx_xp_transactions_created_at",
+          "columnas": ["created_at"],
+          "tipo": "B-TREE"
+        },
+        {
+          "nombre": "idx_xp_transactions_reason",
+          "columnas": ["reason"],
+          "tipo": "B-TREE"
+        },
+        {
+          "nombre": "idx_xp_transactions_user_date",
+          "columnas": ["user_id", "created_at"],
+          "tipo": "B-TREE"
+        }
+      ]
+    },
+    {
+      "id": "TBL-003",
+      "nombre": "coin_transactions",
+      "descripcion": "Registro de todas las transacciones de monedas lectoras. Auditoría de ganancias y gastos",
+      "epica_origen": "EAI-003",
+      "user_story": "US-GAM-003",
+      "prioridad": "P0",
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "UUID PRIMARY KEY",
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "descripcion": "Identificador único de la transacción"
+        },
+        {
+          "nombre": "user_id",
+          "tipo": "UUID FOREIGN KEY",
+          "nullable": false,
+          "referencias": "users(id)",
+          "descripcion": "Usuario involucrado en la transacción"
+        },
+        {
+          "nombre": "amount",
+          "tipo": "INTEGER",
+          "nullable": false,
+          "descripcion": "Cantidad de monedas (positivo=ganar, negativo=gastar)"
+        },
+        {
+          "nombre": "reason",
+          "tipo": "ENUM('activity', 'module', 'badge', 'help_used', 'manual')",
+          "nullable": false,
+          "descripcion": "Motivo de la transacción"
+        },
+        {
+          "nombre": "related_id",
+          "tipo": "UUID",
+          "nullable": true,
+          "descripcion": "ID de recurso relacionado (actividad, módulo, ayuda)"
+        },
+        {
+          "nombre": "created_at",
+          "tipo": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "descripcion": "Fecha y hora de la transacción"
+        }
+      ],
+      "primary_key": "id",
+      "foreign_keys": [
+        {
+          "columna": "user_id",
+          "referencia_tabla": "users",
+          "referencia_columna": "id",
+          "on_delete": "CASCADE",
+          "on_update": "CASCADE"
+        }
+      ],
+      "indices": [
+        {
+          "nombre": "idx_coin_transactions_user_id",
+          "columnas": ["user_id"],
+          "tipo": "B-TREE"
+        },
+        {
+          "nombre": "idx_coin_transactions_created_at",
+          "columnas": ["created_at"],
+          "tipo": "B-TREE"
+        },
+        {
+          "nombre": "idx_coin_transactions_reason",
+          "columnas": ["reason"],
+          "tipo": "B-TREE"
+        }
+      ]
+    },
+    {
+      "id": "TBL-004",
+      "nombre": "help_usage",
+      "descripcion": "Registro de uso de ayudas durante actividades. Controla que cada ayuda se use máximo 1 vez por actividad",
+      "epica_origen": "EAI-003",
+      "user_story": "US-GAM-004",
+      "prioridad": "P1",
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "UUID PRIMARY KEY",
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "descripcion": "Identificador único del uso de ayuda"
+        },
+        {
+          "nombre": "user_id",
+          "tipo": "UUID FOREIGN KEY",
+          "nullable": false,
+          "referencias": "users(id)",
+          "descripcion": "Usuario que utilizó la ayuda"
+        },
+        {
+          "nombre": "activity_id",
+          "tipo": "UUID FOREIGN KEY",
+          "nullable": false,
+          "referencias": "activities(id)",
+          "descripcion": "Actividad donde se usó la ayuda"
+        },
+        {
+          "nombre": "help_type",
+          "tipo": "ENUM('hint', 'remove_option', 'extra_time')",
+          "nullable": false,
+          "descripcion": "Tipo de ayuda utilizada"
+        },
+        {
+          "nombre": "coins_cost",
+          "tipo": "INTEGER",
+          "nullable": false,
+          "default_values": {
+            "hint": 5,
+            "remove_option": 10,
+            "extra_time": 15
+          },
+          "descripcion": "Costo en monedas de la ayuda (fijo)"
+        },
+        {
+          "nombre": "used_at",
+          "tipo": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "descripcion": "Fecha y hora de uso de la ayuda"
+        }
+      ],
+      "primary_key": "id",
+      "foreign_keys": [
+        {
+          "columna": "user_id",
+          "referencia_tabla": "users",
+          "referencia_columna": "id",
+          "on_delete": "CASCADE",
+          "on_update": "CASCADE"
+        },
+        {
+          "columna": "activity_id",
+          "referencia_tabla": "activities",
+          "referencia_columna": "id",
+          "on_delete": "CASCADE",
+          "on_update": "CASCADE"
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "columnas": ["user_id", "activity_id", "help_type"],
+          "descripcion": "Un usuario solo puede usar cada tipo de ayuda una vez por actividad"
+        }
+      ],
+      "indices": [
+        {
+          "nombre": "idx_help_usage_user_activity",
+          "columnas": ["user_id", "activity_id"],
+          "tipo": "B-TREE"
+        },
+        {
+          "nombre": "idx_help_usage_help_type",
+          "columnas": ["help_type"],
+          "tipo": "B-TREE"
+        }
+      ]
+    },
+    {
+      "id": "TBL-005",
+      "nombre": "badges",
+      "descripcion": "Definiciones de insignias disponibles. Catálogo de todos los posibles logros que los usuarios pueden desbloquear",
+      "epica_origen": "EAI-003",
+      "user_story": "US-GAM-005",
+      "prioridad": "P1",
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "UUID PRIMARY KEY",
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "descripcion": "Identificador único de la insignia"
+        },
+        {
+          "nombre": "name",
+          "tipo": "VARCHAR(255)",
+          "nullable": false,
+          "descripcion": "Nombre de la insignia (ej: 'Primer Paso')"
+        },
+        {
+          "nombre": "description",
+          "tipo": "TEXT",
+          "nullable": false,
+          "descripcion": "Descripción de cómo desbloquear la insignia"
+        },
+        {
+          "nombre": "image_url",
+          "tipo": "VARCHAR(500)",
+          "nullable": false,
+          "descripcion": "URL de la imagen/icono de la insignia"
+        },
+        {
+          "nombre": "type",
+          "tipo": "ENUM('first_steps', 'module_completion', 'streak', 'xp_milestone', 'rank_up')",
+          "nullable": false,
+          "descripcion": "Categoría o tipo de insignia"
+        },
+        {
+          "nombre": "criteria",
+          "tipo": "JSONB",
+          "nullable": false,
+          "estructura_ejemplo": {
+            "type": "first_activity|complete_module|reach_xp|streak_days|rank_achieved",
+            "value": "depende del tipo"
+          },
+          "descripcion": "Criterios para desbloquear esta insignia"
+        },
+        {
+          "nombre": "xp_reward",
+          "tipo": "INTEGER",
+          "nullable": false,
+          "default": 0,
+          "descripcion": "XP otorgado al desbloquear la insignia"
+        },
+        {
+          "nombre": "coins_reward",
+          "tipo": "INTEGER",
+          "nullable": false,
+          "default": 0,
+          "descripcion": "Monedas otorgadas al desbloquear la insignia"
+        }
+      ],
+      "primary_key": "id",
+      "indices": [
+        {
+          "nombre": "idx_badges_type",
+          "columnas": ["type"],
+          "tipo": "B-TREE"
+        }
+      ],
+      "seed_data": {
+        "total_insignias": 10,
+        "ejemplos": [
+          {
+            "name": "Primer Paso",
+            "type": "first_steps",
+            "criteria": {"type": "first_activity"},
+            "xp_reward": 10,
+            "coins_reward": 5
+          },
+          {
+            "name": "Explorador Maya",
+            "type": "module_completion",
+            "criteria": {"type": "complete_module", "value": 1},
+            "xp_reward": 50,
+            "coins_reward": 25
+          },
+          {
+            "name": "Centenario",
+            "type": "xp_milestone",
+            "criteria": {"type": "reach_xp", "value": 100},
+            "xp_reward": 10,
+            "coins_reward": 5
+          }
+        ]
+      }
+    },
+    {
+      "id": "TBL-006",
+      "nombre": "user_badges",
+      "descripcion": "Relación muchos-a-muchos entre usuarios e insignias. Registra qué insignias ha desbloqueado cada usuario",
+      "epica_origen": "EAI-003",
+      "user_story": "US-GAM-005",
+      "prioridad": "P1",
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "UUID PRIMARY KEY",
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "descripcion": "Identificador único del registro"
+        },
+        {
+          "nombre": "user_id",
+          "tipo": "UUID FOREIGN KEY",
+          "nullable": false,
+          "referencias": "users(id)",
+          "descripcion": "Usuario que desbloqueó la insignia"
+        },
+        {
+          "nombre": "badge_id",
+          "tipo": "UUID FOREIGN KEY",
+          "nullable": false,
+          "referencias": "badges(id)",
+          "descripcion": "Insignia desbloqueada"
+        },
+        {
+          "nombre": "earned_at",
+          "tipo": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "descripcion": "Fecha y hora en que se desbloqueó la insignia"
+        }
+      ],
+      "primary_key": "id",
+      "foreign_keys": [
+        {
+          "columna": "user_id",
+          "referencia_tabla": "users",
+          "referencia_columna": "id",
+          "on_delete": "CASCADE",
+          "on_update": "CASCADE"
+        },
+        {
+          "columna": "badge_id",
+          "referencia_tabla": "badges",
+          "referencia_columna": "id",
+          "on_delete": "CASCADE",
+          "on_update": "CASCADE"
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "columnas": ["user_id", "badge_id"],
+          "descripcion": "Un usuario solo puede tener cada insignia una vez"
+        }
+      ],
+      "indices": [
+        {
+          "nombre": "idx_user_badges_user_id",
+          "columnas": ["user_id"],
+          "tipo": "B-TREE"
+        },
+        {
+          "nombre": "idx_user_badges_badge_id",
+          "columnas": ["badge_id"],
+          "tipo": "B-TREE"
+        },
+        {
+          "nombre": "idx_user_badges_earned_at",
+          "columnas": ["earned_at"],
+          "tipo": "B-TREE"
+        }
+      ]
+    },
+    {
+      "id": "TBL-007",
+      "nombre": "narrative_messages",
+      "descripcion": "Mensajes narrativos que contextualizan el aprendizaje. Almacena la storyline pre-escrita de la cultura Maya",
+      "epica_origen": "EAI-003",
+      "user_story": "US-GAM-006",
+      "prioridad": "P2",
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "UUID PRIMARY KEY",
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "descripcion": "Identificador único del mensaje"
+        },
+        {
+          "nombre": "trigger_type",
+          "tipo": "ENUM('module_start', 'module_complete', 'rank_up', 'milestone')",
+          "nullable": false,
+          "descripcion": "Evento que dispara la aparición del mensaje"
+        },
+        {
+          "nombre": "trigger_id",
+          "tipo": "VARCHAR(255)",
+          "nullable": true,
+          "descripcion": "ID del recurso disparador (moduleId, rank, etc.)"
+        },
+        {
+          "nombre": "character",
+          "tipo": "VARCHAR(100)",
+          "nullable": false,
+          "default": "Ixchel",
+          "descripcion": "Nombre del personaje guía que emite el mensaje"
+        },
+        {
+          "nombre": "message",
+          "tipo": "TEXT",
+          "nullable": false,
+          "descripcion": "Contenido del mensaje narrativo"
+        },
+        {
+          "nombre": "order",
+          "tipo": "INTEGER",
+          "nullable": true,
+          "descripcion": "Orden de progresión narrativa para secuencia"
+        }
+      ],
+      "primary_key": "id",
+      "indices": [
+        {
+          "nombre": "idx_narrative_messages_trigger",
+          "columnas": ["trigger_type", "trigger_id"],
+          "tipo": "B-TREE"
+        }
+      ],
+      "seed_data": {
+        "personaje_principal": "Ixchel (Guardiana del Conocimiento)",
+        "total_mensajes_iniciales": 8
+      }
+    },
+    {
+      "id": "TBL-008",
+      "nombre": "module_completion",
+      "descripcion": "Registro de completitud de módulos. Auditoría de cuándo y cuántos puntos se otorgaron",
+      "epica_origen": "EAI-003",
+      "user_story": "US-GAM-008",
+      "prioridad": "P1",
+      "columnas": [
+        {
+          "nombre": "id",
+          "tipo": "UUID PRIMARY KEY",
+          "nullable": false,
+          "default": "gen_random_uuid()",
+          "descripcion": "Identificador único del registro"
+        },
+        {
+          "nombre": "user_id",
+          "tipo": "UUID FOREIGN KEY",
+          "nullable": false,
+          "referencias": "users(id)",
+          "descripcion": "Usuario que completó el módulo"
+        },
+        {
+          "nombre": "module_id",
+          "tipo": "UUID FOREIGN KEY",
+          "nullable": false,
+          "referencias": "modules(id)",
+          "descripcion": "Módulo completado"
+        },
+        {
+          "nombre": "xp_awarded",
+          "tipo": "INTEGER",
+          "nullable": false,
+          "descripcion": "XP otorgado al completar (50-75 según módulo)"
+        },
+        {
+          "nombre": "coins_awarded",
+          "tipo": "INTEGER",
+          "nullable": false,
+          "descripcion": "Monedas otorgadas al completar (25-40 según módulo)"
+        },
+        {
+          "nombre": "badge_awarded",
+          "tipo": "UUID",
+          "nullable": true,
+          "referencias": "badges(id)",
+          "descripcion": "Insignia especial otorgada al completar (opcional)"
+        },
+        {
+          "nombre": "completed_at",
+          "tipo": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "descripcion": "Fecha y hora de completitud"
+        }
+      ],
+      "primary_key": "id",
+      "foreign_keys": [
+        {
+          "columna": "user_id",
+          "referencia_tabla": "users",
+          "referencia_columna": "id",
+          "on_delete": "CASCADE",
+          "on_update": "CASCADE"
+        },
+        {
+          "columna": "module_id",
+          "referencia_tabla": "modules",
+          "referencia_columna": "id",
+          "on_delete": "CASCADE",
+          "on_update": "CASCADE"
+        },
+        {
+          "columna": "badge_awarded",
+          "referencia_tabla": "badges",
+          "referencia_columna": "id",
+          "on_delete": "SET NULL",
+          "on_update": "CASCADE"
+        }
+      ],
+      "constraints": [
+        {
+          "tipo": "UNIQUE",
+          "columnas": ["user_id", "module_id"],
+          "descripcion": "Un usuario solo puede completar cada módulo una vez"
+        }
+      ],
+      "indices": [
+        {
+          "nombre": "idx_module_completion_user_id",
+          "columnas": ["user_id"],
+          "tipo": "B-TREE"
+        },
+        {
+          "nombre": "idx_module_completion_module_id",
+          "columnas": ["module_id"],
+          "tipo": "B-TREE"
+        },
+        {
+          "nombre": "idx_module_completion_completed_at",
+          "columnas": ["completed_at"],
+          "tipo": "B-TREE"
+        }
+      ]
+    },
+    {
+      "id": "TBL-009",
+      "nombre": "users (extensión)",
+      "descripcion": "Extensión de tabla users con columnas de gamificación. Estas columnas se AGREGAN a la tabla users existente",
+      "epica_origen": "EAI-003",
+      "es_extension": true,
+      "columnas_nuevas": [
+        {
+          "nombre": "total_xp",
+          "tipo": "INTEGER",
+          "nullable": false,
+          "default": 0,
+          "descripcion": "Total acumulado de puntos de experiencia"
+        },
+        {
+          "nombre": "current_rank",
+          "tipo": "ENUM('novato', 'aprendiz', 'explorador', 'maestro', 'sabio')",
+          "nullable": false,
+          "default": "novato",
+          "descripcion": "Rango actual del usuario"
+        },
+        {
+          "nombre": "level",
+          "tipo": "INTEGER",
+          "nullable": false,
+          "default": 1,
+          "check": "level >= 1 AND level <= 100",
+          "descripcion": "Nivel numérico (1-100), 1 XP = 100 XP = 1 nivel"
+        },
+        {
+          "nombre": "total_coins",
+          "tipo": "INTEGER",
+          "nullable": false,
+          "default": 0,
+          "check": "total_coins >= 0",
+          "descripcion": "Total de monedas lectoras disponibles"
+        }
+      ],
+      "indices_nuevos": [
+        {
+          "nombre": "idx_users_total_xp",
+          "columnas": ["total_xp"],
+          "tipo": "B-TREE",
+          "proposito": "Leaderboard global por XP"
+        },
+        {
+          "nombre": "idx_users_current_rank",
+          "columnas": ["current_rank"],
+          "tipo": "B-TREE",
+          "proposito": "Filtrar usuarios por rango"
+        }
+      ]
+    },
+    {
+      "id": "TBL-010",
+      "nombre": "modules (extensión)",
+      "descripcion": "Extensión de tabla modules con parámetros de recompensas. Estas columnas se AGREGAN a la tabla modules existente",
+      "epica_origen": "EAI-003",
+      "es_extension": true,
+      "columnas_nuevas": [
+        {
+          "nombre": "completion_xp",
+          "tipo": "INTEGER",
+          "nullable": false,
+          "default": 50,
+          "check": "completion_xp > 0",
+          "descripcion": "XP otorgado al completar el módulo (fijo, hardcoded)"
+        },
+        {
+          "nombre": "completion_coins",
+          "tipo": "INTEGER",
+          "nullable": false,
+          "default": 25,
+          "check": "completion_coins > 0",
+          "descripcion": "Monedas otorgadas al completar (fijo, hardcoded)"
+        },
+        {
+          "nombre": "completion_badge_id",
+          "tipo": "UUID FOREIGN KEY",
+          "nullable": true,
+          "referencias": "badges(id)",
+          "descripcion": "Insignia especial otorgada al completar (opcional)"
+        }
+      ],
+      "foreign_keys_nuevas": [
+        {
+          "columna": "completion_badge_id",
+          "referencia_tabla": "badges",
+          "referencia_columna": "id",
+          "on_delete": "SET NULL",
+          "on_update": "CASCADE"
+        }
+      ]
+    },
+    {
+      "id": "TBL-011",
+      "nombre": "activities (extensión)",
+      "descripcion": "Extensión de tabla activities con campos para ayudas y XP. Estas columnas se AGREGAN a la tabla activities existente",
+      "epica_origen": "EAI-003",
+      "es_extension": true,
+      "columnas_nuevas": [
+        {
+          "nombre": "xp_reward",
+          "tipo": "INTEGER",
+          "nullable": false,
+          "default": 10,
+          "check": "xp_reward > 0",
+          "descripcion": "XP otorgado al completar la actividad correctamente"
+        },
+        {
+          "nombre": "coins_reward",
+          "tipo": "INTEGER",
+          "nullable": false,
+          "default": 5,
+          "check": "coins_reward > 0",
+          "descripcion": "Monedas otorgadas al completar la actividad correctamente"
+        },
+        {
+          "nombre": "has_hint",
+          "tipo": "BOOLEAN",
+          "nullable": false,
+          "default": false,
+          "descripcion": "Si la actividad tiene pista para ayuda 'hint'"
+        }
+      ]
+    }
+  ],
+  "vistas": [
+    {
+      "id": "VW-001",
+      "nombre": "vw_leaderboard_global",
+      "descripcion": "Vista del leaderboard global ordenado por XP total. Retorna top 10 usuarios",
+      "epica_origen": "EAI-003",
+      "user_story": "US-GAM-007",
+      "prioridad": "P1",
+      "sql_definicion": "CREATE VIEW vw_leaderboard_global AS\nSELECT \n  ROW_NUMBER() OVER (ORDER BY u.total_xp DESC) as position,\n  u.id,\n  CONCAT(u.first_name, ' ', u.last_name) as name,\n  u.total_xp,\n  u.current_rank,\n  u.level,\n  u.photo_url\nFROM users u\nWHERE u.deleted_at IS NULL\nORDER BY u.total_xp DESC\nLIMIT 10;",
+      "columnas_resultado": [
+        {"nombre": "position", "tipo": "INTEGER"},
+        {"nombre": "id", "tipo": "UUID"},
+        {"nombre": "name", "tipo": "VARCHAR"},
+        {"nombre": "total_xp", "tipo": "INTEGER"},
+        {"nombre": "current_rank", "tipo": "VARCHAR"},
+        {"nombre": "level", "tipo": "INTEGER"},
+        {"nombre": "photo_url", "tipo": "VARCHAR"}
+      ]
+    },
+    {
+      "id": "VW-002",
+      "nombre": "vw_user_gamification_summary",
+      "descripcion": "Vista consolidada del estado gamificado de un usuario. Combina XP, rango, monedas, insignias y módulos",
+      "epica_origen": "EAI-003",
+      "user_story": "Múltiples",
+      "prioridad": "P1",
+      "sql_definicion": "CREATE VIEW vw_user_gamification_summary AS\nSELECT \n  u.id,\n  u.total_xp,\n  u.current_rank,\n  u.level,\n  u.total_coins,\n  COUNT(DISTINCT ub.badge_id) as badges_earned,\n  COUNT(DISTINCT mc.module_id) as modules_completed,\n  (SELECT COUNT(*) FROM rank_history rh WHERE rh.user_id = u.id) as ranks_achieved\nFROM users u\nLEFT JOIN user_badges ub ON u.id = ub.user_id\nLEFT JOIN module_completion mc ON u.id = mc.user_id\nGROUP BY u.id;",
+      "columnas_resultado": [
+        {"nombre": "id", "tipo": "UUID"},
+        {"nombre": "total_xp", "tipo": "INTEGER"},
+        {"nombre": "current_rank", "tipo": "VARCHAR"},
+        {"nombre": "level", "tipo": "INTEGER"},
+        {"nombre": "total_coins", "tipo": "INTEGER"},
+        {"nombre": "badges_earned", "tipo": "BIGINT"},
+        {"nombre": "modules_completed", "tipo": "BIGINT"},
+        {"nombre": "ranks_achieved", "tipo": "BIGINT"}
+      ]
+    }
+  ],
+  "funciones": [
+    {
+      "id": "FN-001",
+      "nombre": "fn_calculate_rank_from_xp",
+      "descripcion": "Función que calcula el rango actual basado en XP total. Retorna el enum de rango correspondiente",
+      "epica_origen": "EAI-003",
+      "user_story": "US-GAM-001",
+      "prioridad": "P0",
+      "parametros": [
+        {"nombre": "p_total_xp", "tipo": "INTEGER", "descripcion": "XP total del usuario"}
+      ],
+      "retorna": "VARCHAR(50)",
+      "logica": "Retorna: 'novato' si 0-99, 'aprendiz' si 100-499, 'explorador' si 500-1499, 'maestro' si 1500-3999, 'sabio' si 4000+",
+      "sql": "CREATE FUNCTION fn_calculate_rank_from_xp(p_total_xp INTEGER) RETURNS VARCHAR(50) AS $$\nBEGIN\n  RETURN CASE \n    WHEN p_total_xp < 100 THEN 'novato'\n    WHEN p_total_xp < 500 THEN 'aprendiz'\n    WHEN p_total_xp < 1500 THEN 'explorador'\n    WHEN p_total_xp < 4000 THEN 'maestro'\n    ELSE 'sabio'\n  END;\nEND;\n$$ LANGUAGE plpgsql IMMUTABLE;"
+    },
+    {
+      "id": "FN-002",
+      "nombre": "fn_calculate_level_from_xp",
+      "descripcion": "Función que calcula el nivel numérico (1-100) basado en XP. Fórmula: floor(XP/100) + 1",
+      "epica_origen": "EAI-003",
+      "user_story": "US-GAM-001",
+      "prioridad": "P0",
+      "parametros": [
+        {"nombre": "p_total_xp", "tipo": "INTEGER", "descripcion": "XP total del usuario"}
+      ],
+      "retorna": "INTEGER",
+      "logica": "Retorna: (floor(XP / 100) + 1), mínimo 1, máximo 100",
+      "sql": "CREATE FUNCTION fn_calculate_level_from_xp(p_total_xp INTEGER) RETURNS INTEGER AS $$\nBEGIN\n  RETURN LEAST(GREATEST(FLOOR(p_total_xp::FLOAT / 100) + 1, 1), 100);\nEND;\n$$ LANGUAGE plpgsql IMMUTABLE;"
+    },
+    {
+      "id": "FN-003",
+      "nombre": "fn_get_user_position_in_leaderboard",
+      "descripcion": "Función que retorna la posición de un usuario en el leaderboard global por XP",
+      "epica_origen": "EAI-003",
+      "user_story": "US-GAM-007",
+      "prioridad": "P1",
+      "parametros": [
+        {"nombre": "p_user_id", "tipo": "UUID", "descripcion": "ID del usuario"}
+      ],
+      "retorna": "INTEGER",
+      "logica": "Retorna el ranking (1, 2, 3...) del usuario basado en total_xp DESC",
+      "sql": "CREATE FUNCTION fn_get_user_position_in_leaderboard(p_user_id UUID) RETURNS INTEGER AS $$\nBEGIN\n  RETURN (SELECT COUNT(*) + 1 FROM users WHERE total_xp > (SELECT total_xp FROM users WHERE id = p_user_id));\nEND;\n$$ LANGUAGE plpgsql;"
+    },
+    {
+      "id": "FN-004",
+      "nombre": "fn_validate_sufficient_coins",
+      "descripcion": "Función que valida si un usuario tiene suficientes monedas para una transacción",
+      "epica_origen": "EAI-003",
+      "user_story": "US-GAM-003, US-GAM-004",
+      "prioridad": "P1",
+      "parametros": [
+        {"nombre": "p_user_id", "tipo": "UUID", "descripcion": "ID del usuario"},
+        {"nombre": "p_required_coins", "tipo": "INTEGER", "descripcion": "Monedas requeridas"}
+      ],
+      "retorna": "BOOLEAN",
+      "logica": "Retorna TRUE si user.total_coins >= p_required_coins, FALSE en caso contrario",
+      "sql": "CREATE FUNCTION fn_validate_sufficient_coins(p_user_id UUID, p_required_coins INTEGER) RETURNS BOOLEAN AS $$\nBEGIN\n  RETURN (SELECT total_coins FROM users WHERE id = p_user_id) >= p_required_coins;\nEND;\n$$ LANGUAGE plpgsql;"
+    }
+  ],
+  "triggers": [
+    {
+      "id": "TRG-001",
+      "nombre": "trg_update_user_rank_on_xp_change",
+      "descripcion": "Trigger que actualiza automáticamente el rango y nivel del usuario cuando su XP cambia. Se ejecuta después de INSERT/UPDATE en xp_transactions",
+      "epica_origen": "EAI-003",
+      "user_story": "US-GAM-001, US-GAM-002",
+      "prioridad": "P0",
+      "tabla": "xp_transactions",
+      "evento": "AFTER INSERT",
+      "nivel": "ROW",
+      "logica": [
+        "1. Obtener user.total_xp actualizado",
+        "2. Calcular nuevo rango usando fn_calculate_rank_from_xp()",
+        "3. Calcular nuevo nivel usando fn_calculate_level_from_xp()",
+        "4. Comparar con valores actuales en users",
+        "5. Si rango cambió: actualizar users y crear registro en rank_history",
+        "6. Si solo nivel cambió: actualizar users"
+      ],
+      "pseudocodigo": "AFTER INSERT ON xp_transactions FOR EACH ROW BEGIN\n  SET @new_rank = fn_calculate_rank_from_xp(NEW.amount);\n  SET @new_level = fn_calculate_level_from_xp(NEW.amount);\n  SET @old_rank = (SELECT current_rank FROM users WHERE id = NEW.user_id);\n  SET @old_level = (SELECT level FROM users WHERE id = NEW.user_id);\n  \n  UPDATE users SET current_rank = @new_rank, level = @new_level WHERE id = NEW.user_id;\n  \n  IF @new_rank != @old_rank THEN\n    INSERT INTO rank_history (user_id, rank, achieved_at) VALUES (NEW.user_id, @new_rank, NOW());\n  END IF;\nEND;"
+    },
+    {
+      "id": "TRG-002",
+      "nombre": "trg_check_and_award_badges_on_activity_completion",
+      "descripcion": "Trigger que verifica y otorga insignias automáticamente cuando se completa una actividad. Se ejecuta después de una transacción XP por activity_completed",
+      "epica_origen": "EAI-003",
+      "user_story": "US-GAM-005",
+      "prioridad": "P1",
+      "tabla": "xp_transactions",
+      "evento": "AFTER INSERT",
+      "nivel": "ROW",
+      "condicion": "NEW.reason = 'activity_completed'",
+      "logica": [
+        "1. Verificar si es primera actividad del usuario",
+        "2. Obtener total de XP actual",
+        "3. Iterar sobre todas las insignias no ganadas",
+        "4. Para cada insignia, verificar criterios usando logic específica",
+        "5. Insertar en user_badges para las insignias desbloqueadas",
+        "6. Otorgar rewards (XP, coins) de insignias desbloqueadas"
+      ]
+    },
+    {
+      "id": "TRG-003",
+      "nombre": "trg_update_user_total_coins_on_transaction",
+      "descripcion": "Trigger que actualiza automáticamente total_coins del usuario después de una transacción de monedas",
+      "epica_origen": "EAI-003",
+      "user_story": "US-GAM-003",
+      "prioridad": "P0",
+      "tabla": "coin_transactions",
+      "evento": "AFTER INSERT",
+      "nivel": "ROW",
+      "logica": [
+        "1. Obtener current total_coins del usuario",
+        "2. Sumar amount (positivo o negativo)",
+        "3. Validar que no sea negativo (CONSTRAINT)",
+        "4. Actualizar users.total_coins",
+        "5. Si amount es negativo y resulta insuficiente, ROLLBACK"
+      ],
+      "pseudocodigo": "AFTER INSERT ON coin_transactions FOR EACH ROW BEGIN\n  UPDATE users SET total_coins = total_coins + NEW.amount WHERE id = NEW.user_id;\n  \n  IF (SELECT total_coins FROM users WHERE id = NEW.user_id) < 0 THEN\n    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient coins';\n  END IF;\nEND;"
+    }
+  ],
+  "constraints": [
+    {
+      "id": "CST-001",
+      "tipo": "CHECK",
+      "tabla": "users",
+      "columna": "total_xp",
+      "expresion": "total_xp >= 0",
+      "descripcion": "XP no puede ser negativo"
+    },
+    {
+      "id": "CST-002",
+      "tipo": "CHECK",
+      "tabla": "users",
+      "columna": "total_coins",
+      "expresion": "total_coins >= 0",
+      "descripcion": "Monedas no pueden ser negativas"
+    },
+    {
+      "id": "CST-003",
+      "tipo": "CHECK",
+      "tabla": "users",
+      "columna": "level",
+      "expresion": "level >= 1 AND level <= 100",
+      "descripcion": "Nivel debe estar entre 1 y 100"
+    },
+    {
+      "id": "CST-004",
+      "tipo": "CHECK",
+      "tabla": "xp_transactions",
+      "columna": "amount",
+      "expresion": "amount > 0",
+      "descripcion": "Cantidad de XP debe ser positiva"
+    },
+    {
+      "id": "CST-005",
+      "tipo": "CHECK",
+      "tabla": "badges",
+      "columna": "xp_reward",
+      "expresion": "xp_reward >= 0",
+      "descripcion": "Reward de XP no puede ser negativo"
+    },
+    {
+      "id": "CST-006",
+      "tipo": "CHECK",
+      "tabla": "badges",
+      "columna": "coins_reward",
+      "expresion": "coins_reward >= 0",
+      "descripcion": "Reward de coins no puede ser negativo"
+    },
+    {
+      "id": "CST-007",
+      "tipo": "CHECK",
+      "tabla": "modules",
+      "columna": "completion_xp",
+      "expresion": "completion_xp > 0",
+      "descripcion": "XP de completitud debe ser positivo"
+    },
+    {
+      "id": "CST-008",
+      "tipo": "CHECK",
+      "tabla": "modules",
+      "columna": "completion_coins",
+      "expresion": "completion_coins > 0",
+      "descripcion": "Monedas de completitud debe ser positivo"
+    },
+    {
+      "id": "CST-009",
+      "tipo": "CHECK",
+      "tabla": "activities",
+      "columna": "xp_reward",
+      "expresion": "xp_reward > 0",
+      "descripcion": "Reward de XP debe ser positivo"
+    },
+    {
+      "id": "CST-010",
+      "tipo": "CHECK",
+      "tabla": "activities",
+      "columna": "coins_reward",
+      "expresion": "coins_reward > 0",
+      "descripcion": "Reward de coins debe ser positivo"
+    },
+    {
+      "id": "CST-011",
+      "tipo": "UNIQUE",
+      "tabla": "rank_history",
+      "columnas": ["user_id", "rank"],
+      "descripcion": "Un usuario solo puede lograr cada rango una vez"
+    },
+    {
+      "id": "CST-012",
+      "tipo": "UNIQUE",
+      "tabla": "user_badges",
+      "columnas": ["user_id", "badge_id"],
+      "descripcion": "Un usuario solo puede tener cada insignia una vez"
+    },
+    {
+      "id": "CST-013",
+      "tipo": "UNIQUE",
+      "tabla": "module_completion",
+      "columnas": ["user_id", "module_id"],
+      "descripcion": "Un usuario solo puede completar cada módulo una vez"
+    },
+    {
+      "id": "CST-014",
+      "tipo": "UNIQUE",
+      "tabla": "help_usage",
+      "columnas": ["user_id", "activity_id", "help_type"],
+      "descripcion": "Un usuario solo puede usar cada tipo de ayuda una vez por actividad"
+    },
+    {
+      "id": "CST-015",
+      "tipo": "FOREIGN KEY",
+      "tabla": "rank_history",
+      "columna": "user_id",
+      "referencias": "users(id)",
+      "on_delete": "CASCADE",
+      "on_update": "CASCADE",
+      "descripcion": "Eliminar usuario elimina su historial de rangos"
+    }
+  ],
+  "seed_data": [
+    {
+      "tipo": "badges",
+      "descripcion": "10 insignias iniciales predefinidas",
+      "cantidad": 10,
+      "ejemplos": [
+        {
+          "name": "Primer Paso",
+          "description": "Completa tu primera actividad",
+          "type": "first_steps",
+          "criteria": {"type": "first_activity"},
+          "xp_reward": 10,
+          "coins_reward": 5
+        },
+        {
+          "name": "Explorador Maya",
+          "description": "Completa tu primer módulo",
+          "type": "module_completion",
+          "criteria": {"type": "complete_module", "value": 1},
+          "xp_reward": 50,
+          "coins_reward": 25
+        },
+        {
+          "name": "Maestro de Números",
+          "description": "Completa el módulo de Números Mayas",
+          "type": "module_completion",
+          "criteria": {"type": "complete_module", "value": "numeros-mayas"},
+          "xp_reward": 30,
+          "coins_reward": 15
+        },
+        {
+          "name": "Estudiante Constante",
+          "description": "Completa actividades 3 días seguidos",
+          "type": "streak",
+          "criteria": {"type": "streak_days", "value": 3},
+          "xp_reward": 20,
+          "coins_reward": 10
+        },
+        {
+          "name": "Centenario",
+          "description": "Alcanza 100 XP",
+          "type": "xp_milestone",
+          "criteria": {"type": "reach_xp", "value": 100},
+          "xp_reward": 10,
+          "coins_reward": 5
+        }
+      ]
+    },
+    {
+      "tipo": "narrative_messages",
+      "descripcion": "Mensajes iniciales de narrativa (mínimo 8)",
+      "cantidad": 8,
+      "ejemplos": [
+        {
+          "trigger_type": "module_start",
+          "trigger_id": "numeros-mayas",
+          "character": "Ixchel",
+          "message": "¡Bienvenido, joven aprendiz! Soy Ixchel, guardiana del conocimiento ancestral maya. Hoy comenzarás tu viaje descubriendo nuestro sistema numérico..."
+        },
+        {
+          "trigger_type": "rank_up",
+          "trigger_id": "aprendiz",
+          "character": "Ixchel",
+          "message": "Tu dedicación no pasa desapercibida. Has alcanzado el rango de Aprendiz..."
+        }
+      ]
+    },
+    {
+      "tipo": "modules_extension",
+      "descripcion": "Valores de recompensa para módulos existentes",
+      "recompensas_por_modulo": [
+        {
+          "module_id": "modulo-numeros-mayas",
+          "completion_xp": 50,
+          "completion_coins": 25
+        },
+        {
+          "module_id": "modulo-calendario-haab",
+          "completion_xp": 60,
+          "completion_coins": 30
+        },
+        {
+          "module_id": "modulo-astronomia-maya",
+          "completion_xp": 75,
+          "completion_coins": 40
+        }
+      ]
+    }
+  ],
+  "migraciones": [
+    {
+      "numero": "001",
+      "nombre": "create_gamification_tables_phase1",
+      "descripcion": "Crea todas las tablas principales de gamificación",
+      "tablas_creadas": [
+        "rank_history",
+        "xp_transactions",
+        "coin_transactions",
+        "help_usage",
+        "badges",
+        "user_badges",
+        "narrative_messages",
+        "module_completion"
+      ]
+    },
+    {
+      "numero": "002",
+      "nombre": "extend_users_table_gamification",
+      "descripcion": "Agrega columnas de gamificación a tabla users",
+      "columnas_agregadas": ["total_xp", "current_rank", "level", "total_coins"]
+    },
+    {
+      "numero": "003",
+      "nombre": "extend_modules_table_rewards",
+      "descripcion": "Agrega columnas de recompensas a tabla modules",
+      "columnas_agregadas": ["completion_xp", "completion_coins", "completion_badge_id"]
+    },
+    {
+      "numero": "004",
+      "nombre": "extend_activities_table_gamification",
+      "descripcion": "Agrega columnas de gamificación a tabla activities",
+      "columnas_agregadas": ["xp_reward", "coins_reward", "has_hint"]
+    },
+    {
+      "numero": "005",
+      "nombre": "create_gamification_functions",
+      "descripcion": "Crea funciones de cálculo para gamificación",
+      "funciones_creadas": [
+        "fn_calculate_rank_from_xp",
+        "fn_calculate_level_from_xp",
+        "fn_get_user_position_in_leaderboard",
+        "fn_validate_sufficient_coins"
+      ]
+    },
+    {
+      "numero": "006",
+      "nombre": "create_gamification_triggers",
+      "descripcion": "Crea triggers de automación de gamificación",
+      "triggers_creados": [
+        "trg_update_user_rank_on_xp_change",
+        "trg_check_and_award_badges_on_activity_completion",
+        "trg_update_user_total_coins_on_transaction"
+      ]
+    },
+    {
+      "numero": "007",
+      "nombre": "create_gamification_views",
+      "descripcion": "Crea vistas para consultas de gamificación",
+      "vistas_creadas": [
+        "vw_leaderboard_global",
+        "vw_user_gamification_summary"
+      ]
+    },
+    {
+      "numero": "008",
+      "nombre": "seed_badges_and_narrative",
+      "descripcion": "Inserta datos iniciales de insignias y narrativa",
+      "datos_insertados": ["10 insignias", "8+ mensajes narrativos"]
+    }
+  ],
+  "rls_policies": [
+    {
+      "id": "RLS-001",
+      "tabla": "xp_transactions",
+      "descripcion": "Los usuarios solo pueden ver sus propias transacciones de XP",
+      "politica": "CREATE POLICY xp_transactions_user_policy ON xp_transactions USING (user_id = current_user_id())",
+      "prioridad": "P1"
+    },
+    {
+      "id": "RLS-002",
+      "tabla": "coin_transactions",
+      "descripcion": "Los usuarios solo pueden ver sus propias transacciones de monedas",
+      "politica": "CREATE POLICY coin_transactions_user_policy ON coin_transactions USING (user_id = current_user_id())",
+      "prioridad": "P1"
+    },
+    {
+      "id": "RLS-003",
+      "tabla": "help_usage",
+      "descripcion": "Los usuarios solo pueden ver su propio uso de ayudas",
+      "politica": "CREATE POLICY help_usage_user_policy ON help_usage USING (user_id = current_user_id())",
+      "prioridad": "P1"
+    },
+    {
+      "id": "RLS-004",
+      "tabla": "rank_history",
+      "descripcion": "Los usuarios solo pueden ver su propio historial de rangos",
+      "politica": "CREATE POLICY rank_history_user_policy ON rank_history USING (user_id = current_user_id())",
+      "prioridad": "P1"
+    }
+  ],
+  "notas_importantes": [
+    "Los valores de XP y monedas son HARDCODED en el alcance inicial (no parametrizables)",
+    "Los 5 rangos son FIJOS y NO pueden personalizarse en MVP",
+    "Las 10 insignias son PRE-DEFINIDAS sin editor dinámico",
+    "El leaderboard es GLOBAL (sin filtros por escuela/amigos en MVP)",
+    "Los triggers deben ejecutarse de forma TRANSACCIONAL para evitar race conditions",
+    "Las funciones de cálculo de rango DEBEN ser idempotentes",
+    "El campo 'hint' en activities debe ser agregado vía migración a tabla activities existente",
+    "Los índices en total_xp son CRÍTICOS para performance del leaderboard",
+    "Las recompensas de insignias (XP, coins) se otorgan AUTOMÁTICAMENTE al desbloquear",
+    "No se puede desbloquear insignia dos veces (constraint UNIQUE en user_badges)",
+    "RLS policies son RECOMENDADAS pero opcionales si la BD está en VPC privada"
+  ],
+  "notas_ambiguedades": [
+    "¿Cómo se calcula 'streak_days' para insignias? Necesita otra tabla de streaks",
+    "¿Se otorga XP/coins si el usuario falla una actividad? Respuesta: NO (solo por 'correctamente')",
+    "¿El leaderboard se actualiza en tiempo real o cada 5 minutos? Sugerencia: Cada 30 segundos en cache"
+  ],
+  "matriz_completitud": {
+    "tablas_obligatorias": 11,
+    "tablas_implementadas": 11,
+    "porcentaje_tablas": "100%",
+    "funciones_obligatorias": 4,
+    "funciones_implementadas": 4,
+    "porcentaje_funciones": "100%",
+    "triggers_obligatorios": 3,
+    "triggers_implementados": 3,
+    "porcentaje_triggers": "100%",
+    "vistas_obligatorias": 2,
+    "vistas_implementadas": 2,
+    "porcentaje_vistas": "100%"
+  },
+  "resumen_final": {
+    "epica": "EAI-003 - Gamificación Básica",
+    "total_tablas": 11,
+    "total_vistas": 2,
+    "total_funciones": 4,
+    "total_triggers": 3,
+    "total_indices": 12,
+    "total_constraints": 15,
+    "total_user_stories_analizadas": 8,
+    "estado_completitud": "COMPLETADO 100%",
+    "fecha_generacion": "2025-11-03",
+    "analista": "SA-ANALISIS-DB-003"
+  }
+}

@@ -1,0 +1,1325 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "date": "2025-11-03",
+    "agent": "SA-ANALISIS-DB-002",
+    "epic": "EAI-002 - Actividades Básicas",
+    "phase": "Alcance Inicial",
+    "total_user_stories": 8,
+    "analysis_status": "COMPLETADO"
+  },
+  "epic_summary": {
+    "code": "EAI-002",
+    "title": "Actividades Básicas Hardcodeadas",
+    "description": "Implementación de tipos avanzados de actividades interactivas con múltiples mecánicas educativas (opción múltiple, verdadero/falso, completar texto, drag & drop, ordenamiento, asociación) y sistema de feedback básico.",
+    "budget_mxn": 16900,
+    "story_points": 46,
+    "stories": [
+      "US-ACT-001",
+      "US-ACT-002",
+      "US-ACT-003",
+      "US-ACT-004",
+      "US-ACT-005",
+      "US-ACT-006",
+      "US-ACT-007",
+      "US-ACT-008"
+    ]
+  },
+  "database_requirements": {
+    "tables": [
+      {
+        "code": "T-ACT-001",
+        "name": "activities",
+        "priority": "P0",
+        "criticality": "CRÍTICA",
+        "description": "Tabla central que almacena todas las actividades educativas de diferentes tipos. Usa JSON para contenido polimórfico según tipo de actividad.",
+        "dependencies": ["modules"],
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "primary_key": true,
+            "nullable": false,
+            "default": "gen_random_uuid()",
+            "description": "Identificador único de la actividad"
+          },
+          {
+            "name": "module_id",
+            "type": "UUID",
+            "nullable": false,
+            "foreign_key": "modules(id)",
+            "on_delete": "CASCADE",
+            "description": "Referencia al módulo que contiene la actividad"
+          },
+          {
+            "name": "title",
+            "type": "VARCHAR(255)",
+            "nullable": false,
+            "description": "Título o nombre de la actividad (ej: 'Identificar número maya')"
+          },
+          {
+            "name": "instructions",
+            "type": "TEXT",
+            "nullable": true,
+            "description": "Instrucciones específicas para la actividad"
+          },
+          {
+            "name": "type",
+            "type": "ENUM",
+            "enum_values": [
+              "multiple_choice",
+              "true_false",
+              "fill_blank",
+              "drag_drop",
+              "ordering",
+              "matching"
+            ],
+            "nullable": false,
+            "description": "Tipo de mecánica educativa de la actividad"
+          },
+          {
+            "name": "content",
+            "type": "JSONB",
+            "nullable": false,
+            "description": "Contenido polimórfico que varía según el tipo. Estructura depende de type.",
+            "content_structures": {
+              "multiple_choice": {
+                "question": "string - La pregunta a responder",
+                "options": [
+                  {
+                    "id": "string",
+                    "text": "string",
+                    "isCorrect": "boolean"
+                  }
+                ],
+                "explanation": "string - Explicación de la respuesta correcta",
+                "imageUrl": "string (opcional) - URL de imagen"
+              },
+              "true_false": {
+                "statement": "string - Afirmación a evaluar",
+                "correctAnswer": "boolean",
+                "explanation": "string",
+                "imageUrl": "string (opcional)"
+              },
+              "fill_blank": {
+                "text": "string - Texto con ___ para blanks",
+                "blanks": [
+                  {
+                    "id": "string",
+                    "position": "number",
+                    "acceptedAnswers": ["string"]
+                  }
+                ],
+                "explanation": "string"
+              },
+              "drag_drop": {
+                "instructions": "string",
+                "draggableItems": [
+                  {
+                    "id": "string",
+                    "content": "string",
+                    "type": "text|image"
+                  }
+                ],
+                "dropZones": [
+                  {
+                    "id": "string",
+                    "label": "string",
+                    "correctItemIds": ["string"]
+                  }
+                ],
+                "explanation": "string"
+              },
+              "ordering": {
+                "instructions": "string",
+                "items": [
+                  {
+                    "id": "string",
+                    "content": "string",
+                    "correctPosition": "number"
+                  }
+                ],
+                "explanation": "string"
+              },
+              "matching": {
+                "instructions": "string",
+                "leftColumn": [
+                  {
+                    "id": "string",
+                    "content": "string"
+                  }
+                ],
+                "rightColumn": [
+                  {
+                    "id": "string",
+                    "content": "string"
+                  }
+                ],
+                "correctPairs": [
+                  {
+                    "leftId": "string",
+                    "rightId": "string"
+                  }
+                ],
+                "explanation": "string"
+              }
+            }
+          },
+          {
+            "name": "order",
+            "type": "INTEGER",
+            "nullable": false,
+            "default": 0,
+            "description": "Número de orden dentro del módulo (para navegación secuencial)"
+          },
+          {
+            "name": "xp_reward",
+            "type": "INTEGER",
+            "nullable": false,
+            "default": 10,
+            "description": "Puntos de experiencia otorgados por respuesta correcta"
+          },
+          {
+            "name": "coins_reward",
+            "type": "INTEGER",
+            "nullable": false,
+            "default": 0,
+            "description": "Monedas (ML Coins) otorgadas por respuesta correcta"
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP",
+            "nullable": false,
+            "default": "CURRENT_TIMESTAMP",
+            "description": "Timestamp de creación"
+          },
+          {
+            "name": "updated_at",
+            "type": "TIMESTAMP",
+            "nullable": false,
+            "default": "CURRENT_TIMESTAMP",
+            "on_update": "CURRENT_TIMESTAMP",
+            "description": "Timestamp de última actualización"
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_activities_module_id",
+            "columns": ["module_id"],
+            "type": "BTREE",
+            "purpose": "Búsqueda rápida de actividades por módulo"
+          },
+          {
+            "name": "idx_activities_type",
+            "columns": ["type"],
+            "type": "BTREE",
+            "purpose": "Filtrado por tipo de actividad"
+          },
+          {
+            "name": "idx_activities_module_order",
+            "columns": ["module_id", "order"],
+            "type": "BTREE",
+            "purpose": "Navegación secuencial ordenada"
+          }
+        ],
+        "constraints": [
+          {
+            "type": "CHECK",
+            "expression": "xp_reward >= 0",
+            "description": "XP reward no puede ser negativo"
+          },
+          {
+            "type": "CHECK",
+            "expression": "coins_reward >= 0",
+            "description": "Coins reward no puede ser negativo"
+          },
+          {
+            "type": "CHECK",
+            "expression": "order >= 0",
+            "description": "Order no puede ser negativo"
+          },
+          {
+            "type": "UNIQUE",
+            "columns": ["module_id", "order"],
+            "description": "No puede haber dos actividades con el mismo order en el mismo módulo"
+          }
+        ],
+        "user_stories": [
+          "US-ACT-001",
+          "US-ACT-002",
+          "US-ACT-003",
+          "US-ACT-004",
+          "US-ACT-005",
+          "US-ACT-006"
+        ]
+      },
+      {
+        "code": "T-ACT-002",
+        "name": "activity_attempts",
+        "priority": "P0",
+        "criticality": "CRÍTICA",
+        "description": "Registro de cada intento de respuesta a una actividad. Almacena respuestas del usuario, validación y recompensas otorgadas.",
+        "dependencies": [
+          "activities",
+          "users"
+        ],
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "primary_key": true,
+            "nullable": false,
+            "default": "gen_random_uuid()",
+            "description": "Identificador único del intento"
+          },
+          {
+            "name": "user_id",
+            "type": "UUID",
+            "nullable": false,
+            "foreign_key": "users(id)",
+            "on_delete": "CASCADE",
+            "description": "Estudiante que realiza el intento"
+          },
+          {
+            "name": "activity_id",
+            "type": "UUID",
+            "nullable": false,
+            "foreign_key": "activities(id)",
+            "on_delete": "CASCADE",
+            "description": "Actividad respondida"
+          },
+          {
+            "name": "user_answer",
+            "type": "JSONB",
+            "nullable": false,
+            "description": "Respuesta del usuario en formato flexible según tipo de actividad",
+            "examples": {
+              "multiple_choice": {
+                "selectedOptionId": "string"
+              },
+              "true_false": {
+                "answer": "boolean"
+              },
+              "fill_blank": {
+                "answers": {
+                  "blank0": "string",
+                  "blank1": "string"
+                }
+              },
+              "drag_drop": {
+                "placements": {
+                  "itemId": "zoneId"
+                }
+              },
+              "ordering": {
+                "order": ["string array of item IDs"]
+              },
+              "matching": {
+                "pairs": [
+                  {
+                    "leftId": "string",
+                    "rightId": "string"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "is_correct",
+            "type": "BOOLEAN",
+            "nullable": false,
+            "description": "Indica si la respuesta fue correcta"
+          },
+          {
+            "name": "xp_earned",
+            "type": "INTEGER",
+            "nullable": false,
+            "default": 0,
+            "description": "XP otorgado por este intento (0 si incorrecto)"
+          },
+          {
+            "name": "coins_earned",
+            "type": "INTEGER",
+            "nullable": false,
+            "default": 0,
+            "description": "Monedas otorgadas por este intento (0 si incorrecto)"
+          },
+          {
+            "name": "attempted_at",
+            "type": "TIMESTAMP",
+            "nullable": false,
+            "default": "CURRENT_TIMESTAMP",
+            "description": "Timestamp del intento"
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_attempts_user_id",
+            "columns": ["user_id"],
+            "type": "BTREE",
+            "purpose": "Búsqueda de intentos por usuario"
+          },
+          {
+            "name": "idx_attempts_activity_id",
+            "columns": ["activity_id"],
+            "type": "BTREE",
+            "purpose": "Búsqueda de intentos por actividad"
+          },
+          {
+            "name": "idx_attempts_user_activity",
+            "columns": ["user_id", "activity_id"],
+            "type": "BTREE",
+            "purpose": "Búsqueda de intentos específicos de usuario en actividad"
+          },
+          {
+            "name": "idx_attempts_is_correct",
+            "columns": ["is_correct"],
+            "type": "BTREE",
+            "purpose": "Estadísticas de respuestas correctas/incorrectas"
+          },
+          {
+            "name": "idx_attempts_attempted_at",
+            "columns": ["attempted_at"],
+            "type": "BTREE",
+            "purpose": "Ordenar intentos por fecha"
+          }
+        ],
+        "constraints": [
+          {
+            "type": "CHECK",
+            "expression": "xp_earned >= 0",
+            "description": "XP earned no puede ser negativo"
+          },
+          {
+            "type": "CHECK",
+            "expression": "coins_earned >= 0",
+            "description": "Coins earned no puede ser negativo"
+          },
+          {
+            "type": "CHECK",
+            "expression": "(is_correct = true AND xp_earned > 0) OR (is_correct = false AND xp_earned = 0)",
+            "description": "Solo se otorga XP si la respuesta es correcta"
+          }
+        ],
+        "user_stories": [
+          "US-ACT-001",
+          "US-ACT-002",
+          "US-ACT-003",
+          "US-ACT-004",
+          "US-ACT-005",
+          "US-ACT-006"
+        ]
+      },
+      {
+        "code": "T-ACT-003",
+        "name": "activity_types",
+        "priority": "P1",
+        "criticality": "IMPORTANTE",
+        "description": "Tabla de referencia que define los tipos de actividades disponibles. Almacena metadatos sobre cada tipo (nombre, descripción, ícono, etc).",
+        "columns": [
+          {
+            "name": "id",
+            "type": "VARCHAR(50)",
+            "primary_key": true,
+            "description": "Identificador del tipo (ej: 'multiple_choice')"
+          },
+          {
+            "name": "name",
+            "type": "VARCHAR(100)",
+            "nullable": false,
+            "description": "Nombre legible del tipo (ej: 'Opción Múltiple')"
+          },
+          {
+            "name": "description",
+            "type": "TEXT",
+            "nullable": true,
+            "description": "Descripción detallada del tipo"
+          },
+          {
+            "name": "icon",
+            "type": "VARCHAR(255)",
+            "nullable": true,
+            "description": "URL del ícono o código de símbolo"
+          },
+          {
+            "name": "is_active",
+            "type": "BOOLEAN",
+            "nullable": false,
+            "default": true,
+            "description": "Si el tipo está activo para usar"
+          }
+        ],
+        "seed_data": [
+          {
+            "id": "multiple_choice",
+            "name": "Opción Múltiple",
+            "description": "Pregunta con varias opciones y una respuesta correcta"
+          },
+          {
+            "id": "true_false",
+            "name": "Verdadero/Falso",
+            "description": "Afirmación que el estudiante evalúa como verdadera o falsa"
+          },
+          {
+            "id": "fill_blank",
+            "name": "Completar Texto",
+            "description": "Espacios en blanco para completar en un párrafo"
+          },
+          {
+            "id": "drag_drop",
+            "name": "Arrastrar y Soltar",
+            "description": "Arrastrar elementos a zonas de destino correctas"
+          },
+          {
+            "id": "ordering",
+            "name": "Ordenamiento",
+            "description": "Ordenar elementos en secuencia correcta"
+          },
+          {
+            "id": "matching",
+            "name": "Asociación",
+            "description": "Emparejar elementos relacionados de dos columnas"
+          }
+        ],
+        "user_stories": [
+          "US-ACT-001",
+          "US-ACT-002",
+          "US-ACT-003",
+          "US-ACT-004",
+          "US-ACT-005",
+          "US-ACT-006"
+        ]
+      },
+      {
+        "code": "T-ACT-004",
+        "name": "module_progress",
+        "priority": "P0",
+        "criticality": "CRÍTICA",
+        "description": "Registro del progreso de cada usuario en cada módulo. Almacena cuándo completó el módulo y recompensas totales.",
+        "dependencies": [
+          "users",
+          "modules"
+        ],
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "primary_key": true,
+            "nullable": false,
+            "default": "gen_random_uuid()",
+            "description": "Identificador único"
+          },
+          {
+            "name": "user_id",
+            "type": "UUID",
+            "nullable": false,
+            "foreign_key": "users(id)",
+            "on_delete": "CASCADE",
+            "description": "Usuario"
+          },
+          {
+            "name": "module_id",
+            "type": "UUID",
+            "nullable": false,
+            "foreign_key": "modules(id)",
+            "on_delete": "CASCADE",
+            "description": "Módulo completado"
+          },
+          {
+            "name": "completed_at",
+            "type": "TIMESTAMP",
+            "nullable": false,
+            "default": "CURRENT_TIMESTAMP",
+            "description": "Fecha/hora en que se completó el módulo"
+          },
+          {
+            "name": "total_xp_earned",
+            "type": "INTEGER",
+            "nullable": false,
+            "default": 0,
+            "description": "XP total acumulado en el módulo"
+          },
+          {
+            "name": "total_coins_earned",
+            "type": "INTEGER",
+            "nullable": false,
+            "default": 0,
+            "description": "Monedas totales acumuladas en el módulo"
+          }
+        ],
+        "indexes": [
+          {
+            "name": "idx_progress_user_module",
+            "columns": ["user_id", "module_id"],
+            "type": "BTREE",
+            "purpose": "Búsqueda única de progreso por usuario/módulo"
+          },
+          {
+            "name": "idx_progress_completed_at",
+            "columns": ["completed_at"],
+            "type": "BTREE",
+            "purpose": "Estadísticas de módulos completados por fecha"
+          }
+        ],
+        "constraints": [
+          {
+            "type": "UNIQUE",
+            "columns": ["user_id", "module_id"],
+            "description": "Un usuario puede completar un módulo solo una vez"
+          }
+        ],
+        "user_stories": [
+          "US-ACT-008"
+        ]
+      }
+    ],
+    "views": [
+      {
+        "code": "V-ACT-001",
+        "name": "activity_completion_status",
+        "priority": "P1",
+        "description": "Vista que muestra el estado de completitud de cada actividad por usuario",
+        "query": "SELECT a.id, a.module_id, a.title, a.type, a.order, u.id as user_id, CASE WHEN aa.id IS NOT NULL AND aa.is_correct THEN true ELSE false END as is_completed FROM activities a CROSS JOIN users u LEFT JOIN activity_attempts aa ON aa.activity_id = a.id AND aa.user_id = u.id AND aa.is_correct = true",
+        "purpose": "Determinar qué actividades están completadas para cada usuario",
+        "user_stories": [
+          "US-ACT-008"
+        ]
+      },
+      {
+        "code": "V-ACT-002",
+        "name": "module_progress_stats",
+        "priority": "P1",
+        "description": "Vista con estadísticas de progreso: actividades completadas, XP total, etc.",
+        "query": "SELECT m.id, m.title, u.id as user_id, COUNT(DISTINCT aa.activity_id) as completed_activities, COUNT(DISTINCT a.id) as total_activities, ROUND(COUNT(DISTINCT aa.activity_id)::FLOAT / COUNT(DISTINCT a.id) * 100, 2) as progress_percentage, COALESCE(SUM(aa.xp_earned), 0) as total_xp FROM modules m CROSS JOIN users u LEFT JOIN activities a ON a.module_id = m.id LEFT JOIN activity_attempts aa ON aa.activity_id = a.id AND aa.user_id = u.id AND aa.is_correct = true GROUP BY m.id, m.title, u.id",
+        "purpose": "Mostrar progreso de módulo para navegación",
+        "user_stories": [
+          "US-ACT-008"
+        ]
+      }
+    ],
+    "functions": [
+      {
+        "code": "F-ACT-001",
+        "name": "fn_calculate_activity_score",
+        "priority": "P1",
+        "description": "Calcula puntuación de una actividad basada en número de intentos y aciertos",
+        "parameters": [
+          {
+            "name": "p_activity_id",
+            "type": "UUID",
+            "description": "ID de la actividad"
+          },
+          {
+            "name": "p_user_id",
+            "type": "UUID",
+            "description": "ID del usuario"
+          }
+        ],
+        "returns": {
+          "type": "TABLE",
+          "columns": [
+            {
+              "name": "total_attempts",
+              "type": "INTEGER"
+            },
+            {
+              "name": "correct_attempts",
+              "type": "INTEGER"
+            },
+            {
+              "name": "success_rate",
+              "type": "DECIMAL(5,2)"
+            },
+            {
+              "name": "total_xp_earned",
+              "type": "INTEGER"
+            }
+          ]
+        },
+        "user_stories": [
+          "US-ACT-001"
+        ]
+      },
+      {
+        "code": "F-ACT-002",
+        "name": "fn_get_next_activity",
+        "priority": "P1",
+        "description": "Obtiene la siguiente actividad en orden secuencial de un módulo",
+        "parameters": [
+          {
+            "name": "p_module_id",
+            "type": "UUID"
+          },
+          {
+            "name": "p_current_order",
+            "type": "INTEGER"
+          }
+        ],
+        "returns": {
+          "type": "TABLE",
+          "columns": [
+            {
+              "name": "id",
+              "type": "UUID"
+            },
+            {
+              "name": "title",
+              "type": "VARCHAR"
+            },
+            {
+              "name": "type",
+              "type": "VARCHAR"
+            },
+            {
+              "name": "order",
+              "type": "INTEGER"
+            }
+          ]
+        },
+        "user_stories": [
+          "US-ACT-008"
+        ]
+      },
+      {
+        "code": "F-ACT-003",
+        "name": "fn_get_previous_activity",
+        "priority": "P1",
+        "description": "Obtiene la actividad anterior en orden secuencial de un módulo",
+        "parameters": [
+          {
+            "name": "p_module_id",
+            "type": "UUID"
+          },
+          {
+            "name": "p_current_order",
+            "type": "INTEGER"
+          }
+        ],
+        "returns": {
+          "type": "TABLE",
+          "columns": [
+            {
+              "name": "id",
+              "type": "UUID"
+            },
+            {
+              "name": "title",
+              "type": "VARCHAR"
+            },
+            {
+              "name": "type",
+              "type": "VARCHAR"
+            },
+            {
+              "name": "order",
+              "type": "INTEGER"
+            }
+          ]
+        },
+        "user_stories": [
+          "US-ACT-008"
+        ]
+      },
+      {
+        "code": "F-ACT-004",
+        "name": "fn_validate_multiple_choice",
+        "priority": "P1",
+        "description": "Valida respuesta de opción múltiple",
+        "parameters": [
+          {
+            "name": "p_content",
+            "type": "JSONB"
+          },
+          {
+            "name": "p_user_answer",
+            "type": "JSONB"
+          }
+        ],
+        "returns": {
+          "type": "BOOLEAN"
+        },
+        "logic": "Compara selectedOptionId con la opción marcada como isCorrect en content.options",
+        "user_stories": [
+          "US-ACT-001"
+        ]
+      },
+      {
+        "code": "F-ACT-005",
+        "name": "fn_validate_true_false",
+        "priority": "P1",
+        "description": "Valida respuesta verdadero/falso",
+        "parameters": [
+          {
+            "name": "p_content",
+            "type": "JSONB"
+          },
+          {
+            "name": "p_user_answer",
+            "type": "JSONB"
+          }
+        ],
+        "returns": {
+          "type": "BOOLEAN"
+        },
+        "logic": "Compara answer con content.correctAnswer",
+        "user_stories": [
+          "US-ACT-002"
+        ]
+      },
+      {
+        "code": "F-ACT-006",
+        "name": "fn_validate_fill_blank",
+        "priority": "P1",
+        "description": "Valida respuesta de completar texto",
+        "parameters": [
+          {
+            "name": "p_content",
+            "type": "JSONB"
+          },
+          {
+            "name": "p_user_answer",
+            "type": "JSONB"
+          }
+        ],
+        "returns": {
+          "type": "BOOLEAN"
+        },
+        "logic": "Para cada blank, normaliza la respuesta (trim, lowercase) y compara contra acceptedAnswers",
+        "note": "Case-insensitive, acepta múltiples respuestas correctas",
+        "user_stories": [
+          "US-ACT-003"
+        ]
+      },
+      {
+        "code": "F-ACT-007",
+        "name": "fn_validate_drag_drop",
+        "priority": "P1",
+        "description": "Valida respuesta de drag & drop",
+        "parameters": [
+          {
+            "name": "p_content",
+            "type": "JSONB"
+          },
+          {
+            "name": "p_user_answer",
+            "type": "JSONB"
+          }
+        ],
+        "returns": {
+          "type": "BOOLEAN"
+        },
+        "logic": "Verifica que cada item esté en la zona correcta según content.dropZones[].correctItemIds",
+        "user_stories": [
+          "US-ACT-004"
+        ]
+      },
+      {
+        "code": "F-ACT-008",
+        "name": "fn_validate_ordering",
+        "priority": "P1",
+        "description": "Valida respuesta de ordenamiento",
+        "parameters": [
+          {
+            "name": "p_content",
+            "type": "JSONB"
+          },
+          {
+            "name": "p_user_answer",
+            "type": "JSONB"
+          }
+        ],
+        "returns": {
+          "type": "BOOLEAN"
+        },
+        "logic": "Compara el array de IDs en order con el orden correcto calculado desde correctPosition",
+        "user_stories": [
+          "US-ACT-005"
+        ]
+      },
+      {
+        "code": "F-ACT-009",
+        "name": "fn_validate_matching",
+        "priority": "P1",
+        "description": "Valida respuesta de asociación/matching",
+        "parameters": [
+          {
+            "name": "p_content",
+            "type": "JSONB"
+          },
+          {
+            "name": "p_user_answer",
+            "type": "JSONB"
+          }
+        ],
+        "returns": {
+          "type": "BOOLEAN"
+        },
+        "logic": "Verifica que todos los pares del usuario coincidan con correctPairs (cantidad y emparejamientos exactos)",
+        "user_stories": [
+          "US-ACT-006"
+        ]
+      }
+    ],
+    "triggers": [
+      {
+        "code": "TR-ACT-001",
+        "name": "tr_activity_attempt_update_user_stats",
+        "priority": "P1",
+        "event": "AFTER INSERT",
+        "table": "activity_attempts",
+        "description": "Al registrar un intento, actualiza estadísticas del usuario (XP, coins) si es correcto",
+        "actions": [
+          "Si is_correct = true: Actualizar users.total_xp += xp_earned",
+          "Si is_correct = true: Actualizar users.total_coins += coins_earned",
+          "Registrar transacción en tabla de auditoría"
+        ],
+        "note": "Nota: En alcance inicial, la actualización de XP/coins se hace en servicio backend. Este trigger es preventivo para integridad.",
+        "user_stories": [
+          "US-ACT-001",
+          "US-ACT-002",
+          "US-ACT-003",
+          "US-ACT-004",
+          "US-ACT-005",
+          "US-ACT-006"
+        ]
+      },
+      {
+        "code": "TR-ACT-002",
+        "name": "tr_activity_attempts_timestamp",
+        "priority": "P1",
+        "event": "BEFORE INSERT",
+        "table": "activity_attempts",
+        "description": "Asegura que attempted_at siempre sea actualizado al momento del insert",
+        "user_stories": [
+          "US-ACT-001",
+          "US-ACT-002",
+          "US-ACT-003",
+          "US-ACT-004",
+          "US-ACT-005",
+          "US-ACT-006"
+        ]
+      },
+      {
+        "code": "TR-ACT-003",
+        "name": "tr_module_progress_on_completion",
+        "priority": "P1",
+        "event": "AFTER INSERT",
+        "table": "module_progress",
+        "description": "Al completar un módulo, calcula y registra XP/coins totales del módulo",
+        "actions": [
+          "Sumar xp_earned de todos los activity_attempts correctos del usuario en ese módulo",
+          "Sumar coins_earned de todos los activity_attempts correctos",
+          "Actualizar total_xp_earned y total_coins_earned en module_progress"
+        ],
+        "user_stories": [
+          "US-ACT-008"
+        ]
+      }
+    ],
+    "seed_data": {
+      "code": "S-ACT-001",
+      "description": "Datos iniciales de actividades para alcance inicial",
+      "priority": "P0",
+      "data_sets": [
+        {
+          "type": "multiple_choice",
+          "quantity": "10+",
+          "examples": [
+            {
+              "moduleId": "modulo-numeros-mayas",
+              "title": "Identificar número maya",
+              "instructions": "Selecciona el número maya que representa el 13",
+              "type": "multiple_choice",
+              "content": {
+                "question": "¿Cuál de estos símbolos representa el número 13 en el sistema maya?",
+                "options": [
+                  {
+                    "id": "opt1",
+                    "text": "3 barras (———) y 3 puntos (•••)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt2",
+                    "text": "2 barras (——) y 3 puntos (•••)",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt3",
+                    "text": "3 barras (———) y 2 puntos (••)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt4",
+                    "text": "1 barra (—) y 8 puntos (••••••••)",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "En el sistema maya vigesimal, 2 barras = 10 y 3 puntos = 3, totalizando 13."
+              },
+              "order": 1,
+              "xpReward": 10,
+              "coinsReward": 5
+            }
+          ],
+          "user_stories": [
+            "US-ACT-001"
+          ]
+        },
+        {
+          "type": "true_false",
+          "quantity": "10+",
+          "examples": [
+            {
+              "moduleId": "modulo-numeros-mayas",
+              "title": "Sistema vigesimal",
+              "type": "true_false",
+              "content": {
+                "statement": "El sistema numérico maya es un sistema vigesimal (base 20)",
+                "correctAnswer": true,
+                "explanation": "Correcto. Los mayas utilizaban un sistema vigesimal basado en el número 20."
+              },
+              "order": 2,
+              "xpReward": 8,
+              "coinsReward": 3
+            }
+          ],
+          "user_stories": [
+            "US-ACT-002"
+          ]
+        },
+        {
+          "type": "fill_blank",
+          "quantity": "5+",
+          "examples": [
+            {
+              "moduleId": "modulo-numeros-mayas",
+              "title": "Sistema numérico maya",
+              "type": "fill_blank",
+              "content": {
+                "text": "Los mayas desarrollaron un sistema numérico ___, es decir, basado en el número ___.",
+                "blanks": [
+                  {
+                    "id": "blank0",
+                    "position": 0,
+                    "acceptedAnswers": [
+                      "vigesimal",
+                      "de base 20",
+                      "base 20"
+                    ]
+                  },
+                  {
+                    "id": "blank1",
+                    "position": 1,
+                    "acceptedAnswers": [
+                      "20",
+                      "veinte"
+                    ]
+                  }
+                ],
+                "explanation": "El sistema vigesimal maya utiliza base 20."
+              },
+              "order": 3,
+              "xpReward": 15,
+              "coinsReward": 7
+            }
+          ],
+          "user_stories": [
+            "US-ACT-003"
+          ]
+        },
+        {
+          "type": "drag_drop",
+          "quantity": "5+",
+          "examples": [
+            {
+              "moduleId": "modulo-numeros-mayas",
+              "title": "Clasificar símbolos numéricos",
+              "type": "drag_drop",
+              "content": {
+                "instructions": "Arrastra cada símbolo a su valor correspondiente",
+                "draggableItems": [
+                  {
+                    "id": "item1",
+                    "content": "/images/maya/punto.png",
+                    "type": "image"
+                  },
+                  {
+                    "id": "item2",
+                    "content": "/images/maya/barra.png",
+                    "type": "image"
+                  },
+                  {
+                    "id": "item3",
+                    "content": "/images/maya/concha.png",
+                    "type": "image"
+                  }
+                ],
+                "dropZones": [
+                  {
+                    "id": "zone1",
+                    "label": "Valor: 1",
+                    "correctItemIds": [
+                      "item1"
+                    ]
+                  },
+                  {
+                    "id": "zone2",
+                    "label": "Valor: 5",
+                    "correctItemIds": [
+                      "item2"
+                    ]
+                  },
+                  {
+                    "id": "zone3",
+                    "label": "Valor: 0",
+                    "correctItemIds": [
+                      "item3"
+                    ]
+                  }
+                ],
+                "explanation": "Punto = 1, Barra = 5, Concha = 0"
+              },
+              "order": 4,
+              "xpReward": 20,
+              "coinsReward": 10
+            }
+          ],
+          "user_stories": [
+            "US-ACT-004"
+          ]
+        },
+        {
+          "type": "ordering",
+          "quantity": "5+",
+          "examples": [
+            {
+              "moduleId": "modulo-calendario",
+              "title": "Orden cronológico Maya",
+              "type": "ordering",
+              "content": {
+                "instructions": "Ordena estos períodos cronológicamente",
+                "items": [
+                  {
+                    "id": "1",
+                    "content": "Período Preclásico (2000 a.C. - 250 d.C.)",
+                    "correctPosition": 0
+                  },
+                  {
+                    "id": "2",
+                    "content": "Período Clásico (250 - 900 d.C.)",
+                    "correctPosition": 1
+                  },
+                  {
+                    "id": "3",
+                    "content": "Período Posclásico (900 - 1500 d.C.)",
+                    "correctPosition": 2
+                  }
+                ],
+                "explanation": "Estos son los tres períodos principales de la civilización maya en orden cronológico."
+              },
+              "order": 5,
+              "xpReward": 18,
+              "coinsReward": 8
+            }
+          ],
+          "user_stories": [
+            "US-ACT-005"
+          ]
+        },
+        {
+          "type": "matching",
+          "quantity": "5+",
+          "examples": [
+            {
+              "moduleId": "modulo-numeros-mayas",
+              "title": "Relacionar números mayas",
+              "type": "matching",
+              "content": {
+                "instructions": "Conecta cada símbolo maya con su valor decimal",
+                "leftColumn": [
+                  {
+                    "id": "l1",
+                    "content": "● (un punto)"
+                  },
+                  {
+                    "id": "l2",
+                    "content": "━ (una barra)"
+                  },
+                  {
+                    "id": "l3",
+                    "content": "●●● (tres puntos)"
+                  },
+                  {
+                    "id": "l4",
+                    "content": "━━ (dos barras)"
+                  }
+                ],
+                "rightColumn": [
+                  {
+                    "id": "r1",
+                    "content": "10"
+                  },
+                  {
+                    "id": "r2",
+                    "content": "1"
+                  },
+                  {
+                    "id": "r3",
+                    "content": "5"
+                  },
+                  {
+                    "id": "r4",
+                    "content": "3"
+                  }
+                ],
+                "correctPairs": [
+                  {
+                    "leftId": "l1",
+                    "rightId": "r2"
+                  },
+                  {
+                    "leftId": "l2",
+                    "rightId": "r3"
+                  },
+                  {
+                    "leftId": "l3",
+                    "rightId": "r4"
+                  },
+                  {
+                    "leftId": "l4",
+                    "rightId": "r1"
+                  }
+                ],
+                "explanation": "Cada punto = 1, cada barra = 5 en el sistema numérico maya."
+              },
+              "order": 6,
+              "xpReward": 18,
+              "coinsReward": 8
+            }
+          ],
+          "user_stories": [
+            "US-ACT-006"
+          ]
+        }
+      ]
+    }
+  },
+  "data_validation_rules": {
+    "code": "V-ACT-001",
+    "description": "Reglas de validación y constraints para integridad de datos",
+    "rules": [
+      {
+        "id": "VAL-ACT-001",
+        "table": "activities",
+        "field": "type",
+        "rule": "El tipo debe ser uno de los valores permitidos en enum",
+        "priority": "P0"
+      },
+      {
+        "id": "VAL-ACT-002",
+        "table": "activities",
+        "field": "content",
+        "rule": "El contenido debe ser JSONB válido que cumpla el schema del tipo especificado",
+        "priority": "P0",
+        "note": "Implementar validación en aplicación/API"
+      },
+      {
+        "id": "VAL-ACT-003",
+        "table": "activity_attempts",
+        "field": "user_answer",
+        "rule": "Must be valid JSONB matching the activity type",
+        "priority": "P0"
+      },
+      {
+        "id": "VAL-ACT-004",
+        "table": "activity_attempts",
+        "field": "is_correct",
+        "rule": "Si is_correct=false, entonces xp_earned DEBE ser 0",
+        "priority": "P1"
+      },
+      {
+        "id": "VAL-ACT-005",
+        "table": "activities",
+        "field": "order",
+        "rule": "Debe ser único por módulo (module_id, order constraint)",
+        "priority": "P0"
+      }
+    ]
+  },
+  "notes": {
+    "implementation": [
+      "Todas las validaciones de respuestas (funciones F-ACT-*) deben ser implementadas en la capa de negocio (servicio ActivitiesService en NestJS)",
+      "Las tablas usan UUID para IDs - asegurar que el tipo de dato matchee con tablas referenciadas (users, modules)",
+      "El campo 'content' JSONB es polimórfico y varía según 'type' - documentar schemas en OpenAPI/Swagger",
+      "Los triggers son opcionales en alcance inicial si la lógica se maneja completamente en backend",
+      "Considerar índices adicionales después de profiling en producción"
+    ],
+    "ambiguities": [
+      {
+        "issue": "Múltiples intentos en misma actividad",
+        "clarification": "US-ACT-001 menciona que se puede reintentar sin límite. Confirmar si se permite ilimitado o hay límite máximo.",
+        "recommendation": "Soportar múltiples intentos, pero agregar campo 'attempt_number' en activity_attempts para trackear intento #1, #2, etc."
+      },
+      {
+        "issue": "Recompensas por reintento",
+        "clarification": "¿Se otorgan XP/coins solo en primer acierto o en cada intento correcto?",
+        "recommendation": "Solo en primer acierto (xp_earned = 0 en reintentos posteriores correctos)"
+      },
+      {
+        "issue": "Orden de actividades",
+        "clarification": "El campo 'order' determina secuencia, pero ¿qué pasa si hay gaps (1, 3, 5)?",
+        "recommendation": "Usar constraint UNIQUE y ordenar por 'order' ASC para navegación"
+      }
+    ],
+    "future_extensions": [
+      {
+        "epic": "EXT-017",
+        "title": "Content Management",
+        "description": "Gestión dinámica de contenido de actividades sin hardcoding",
+        "impact": "Agregar tablas para edición visual de preguntas"
+      },
+      {
+        "epic": "EXT-018",
+        "title": "AI Validation",
+        "description": "Validación semántica de respuestas fill-blank con NLP",
+        "impact": "Integración con servicio de IA, campo validation_type en activities"
+      },
+      {
+        "epic": "EXT-019",
+        "title": "Advanced Interactions",
+        "description": "Líneas SVG para matching, multi-drag, restricciones por zona",
+        "impact": "Extensión del schema JSONB de drag_drop y matching"
+      },
+      {
+        "epic": "EXT-020",
+        "title": "AI Feedback",
+        "description": "Feedback personalizado generado con IA",
+        "impact": "Nueva tabla de plantillas de feedback, integración con IA"
+      }
+    ],
+    "performance_considerations": [
+      {
+        "concern": "Tabla activity_attempts puede crecer muy rápido",
+        "recommendation": "Considerar particionamiento por user_id o created_at después de X millones de registros"
+      },
+      {
+        "concern": "Queries de progreso requieren joins complejos",
+        "recommendation": "Las vistas V-ACT-002 ayudan, pero considerar materializar si hay >100K usuarios concurrentes"
+      },
+      {
+        "concern": "JSONB content puede ser lento si tiene muchos búsquedas textuales",
+        "recommendation": "Índices GIN en activities.content si hay búsquedas frecuentes"
+      }
+    ]
+  },
+  "summary": {
+    "total_tables": 4,
+    "total_views": 2,
+    "total_functions": 9,
+    "total_triggers": 3,
+    "total_indexes": 14,
+    "seed_data_entries": "35+",
+    "estimated_storage": "~500MB para 100K usuarios con 5 intentos promedio",
+    "completeness": "100% - Todos los requerimientos de EAI-002 extraídos"
+  }
+}

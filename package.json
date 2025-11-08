@@ -1,0 +1,43 @@
+{
+  "name": "@gamilit/monorepo",
+  "version": "1.0.0",
+  "description": "GAMILIT Platform - Monorepo Root",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "sync:enums": "ts-node apps/devops/scripts/sync-enums.ts",
+    "validate:constants": "ts-node apps/devops/scripts/validate-constants-usage.ts",
+    "validate:api-contract": "ts-node apps/devops/scripts/validate-api-contract.ts",
+    "validate:all": "npm run sync:enums && npm run validate:constants && npm run validate:api-contract",
+    "postinstall": "npm run sync:enums",
+    "backend:dev": "cd apps/backend && npm run dev",
+    "backend:build": "cd apps/backend && npm run build",
+    "backend:test": "cd apps/backend && npm run test",
+    "frontend:dev": "cd apps/frontend && npm run dev",
+    "frontend:build": "cd apps/frontend && npm run build",
+    "frontend:test": "cd apps/frontend && npm run test",
+    "dev": "concurrently \"npm run backend:dev\" \"npm run frontend:dev\"",
+    "build": "npm run backend:build && npm run frontend:build",
+    "test": "npm run backend:test && npm run frontend:test",
+    "lint": "npm run backend:lint && npm run frontend:lint",
+    "format": "npm run backend:format && npm run frontend:format",
+    "backend:lint": "cd apps/backend && npm run lint",
+    "backend:format": "cd apps/backend && npm run format",
+    "frontend:lint": "cd apps/frontend && npm run lint",
+    "frontend:format": "cd apps/frontend && npm run format"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "concurrently": "^8.2.2"
+  },
+  "workspaces": [
+    "apps/backend",
+    "apps/frontend"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

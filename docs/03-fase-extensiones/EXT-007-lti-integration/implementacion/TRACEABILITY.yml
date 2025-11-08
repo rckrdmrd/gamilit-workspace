@@ -1,0 +1,45 @@
+# TRACEABILITY.yml - EXT-007: LTI Integration (Parcial)
+
+epic_code: EXT-007
+epic_name: LTI Integration
+phase: 3
+budget_mxn: 12000
+story_points: 45
+status: partial
+completion: 40%
+
+implementation:
+  database:
+    tables:
+      - name: lti_consumers
+        type: new
+        status: partial
+        description: LTI consumers registrados
+
+      - name: lti_sessions
+        type: new
+        status: partial
+        description: Sesiones LTI activas
+
+  backend:
+    module: lti
+    status: partial
+    services:
+      - lti-auth.service.ts (✅ completed)
+      - lti-launch.service.ts (✅ completed)
+      - lti-deep-linking.service.ts (⚪ pending)
+      - lti-grade-passback.service.ts (⚪ pending)
+
+completed_features:
+  - LTI 1.3 authentication
+  - Basic launch flow
+  - Tool registration
+
+pending_features:
+  - Deep linking
+  - Grade passback (AGS)
+  - NRPS integration
+
+status:
+  completion: 40%
+  next_steps: Requiere contratos enterprise para continuar

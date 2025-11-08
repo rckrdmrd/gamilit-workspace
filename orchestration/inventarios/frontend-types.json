@@ -1,0 +1,1899 @@
+{
+  "timestamp": "2025-11-02T00:00:00Z",
+  "analysis_metadata": {
+    "analyzer": "SA-VAL-003",
+    "purpose": "TypeScript types inventory for Frontend React",
+    "execution_time_seconds": 45,
+    "files_scanned": 102
+  },
+  "enums": [
+    {
+      "name": "AuthProviderEnum",
+      "values": [
+        "local",
+        "google",
+        "facebook",
+        "apple",
+        "microsoft",
+        "github"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Auth Management",
+      "description": "Proveedores de autenticación OAuth/Social"
+    },
+    {
+      "name": "SubscriptionTierEnum",
+      "values": [
+        "free",
+        "basic",
+        "professional",
+        "enterprise"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Auth Management",
+      "description": "Niveles de suscripción de tenant"
+    },
+    {
+      "name": "UserStatusEnum",
+      "values": [
+        "active",
+        "inactive",
+        "suspended",
+        "pending"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Auth Management",
+      "description": "Estados de cuenta de usuario"
+    },
+    {
+      "name": "SecurityEventSeverityEnum",
+      "values": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Auth Management",
+      "description": "Severidad de eventos de seguridad"
+    },
+    {
+      "name": "ThemeEnum",
+      "values": [
+        "light",
+        "dark",
+        "auto"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Auth Management",
+      "description": "Temas visuales de la aplicación"
+    },
+    {
+      "name": "LanguageEnum",
+      "values": [
+        "es",
+        "en"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Auth Management",
+      "description": "Idiomas soportados"
+    },
+    {
+      "name": "DeviceTypeEnum",
+      "values": [
+        "desktop",
+        "mobile",
+        "tablet"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Auth Management",
+      "description": "Tipos de dispositivos"
+    },
+    {
+      "name": "MembershipRoleEnum",
+      "values": [
+        "owner",
+        "admin",
+        "member",
+        "guest"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Auth Management",
+      "description": "Roles en memberships (multi-tenant)"
+    },
+    {
+      "name": "MembershipStatusEnum",
+      "values": [
+        "active",
+        "pending",
+        "suspended",
+        "revoked"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Auth Management",
+      "description": "Estados de memberships"
+    },
+    {
+      "name": "DifficultyLevelEnum",
+      "values": [
+        "beginner",
+        "intermediate",
+        "advanced",
+        "very_easy",
+        "easy",
+        "medium",
+        "hard",
+        "very_hard"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Gamification",
+      "description": "Niveles de dificultad para ejercicios"
+    },
+    {
+      "name": "MayaRank",
+      "values": [
+        "Ajaw",
+        "Nacom",
+        "Ah K'in",
+        "Halach Uinic",
+        "K'uk'ulkan"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Gamification",
+      "description": "Rangos jerárquicos mayas del sistema de gamificación (Progresión: Ajaw → Nacom → Ah K'in → Halach Uinic → K'uk'ulkan)",
+      "deprecated": false,
+      "version": "1.0"
+    },
+    {
+      "name": "MayaRankEnum",
+      "values": [
+        "nacom",
+        "batab",
+        "holcatte",
+        "guerrero",
+        "mercenario"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Gamification",
+      "description": "Rangos mayas legacy",
+      "deprecated": true,
+      "note": "Use MayaRank instead. Will be removed in v2.0"
+    },
+    {
+      "name": "ComodinTypeEnum",
+      "values": [
+        "pistas",
+        "vision_lectora",
+        "segunda_oportunidad"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Gamification",
+      "description": "Tipos de comodines (power-ups)"
+    },
+    {
+      "name": "TransactionTypeEnum",
+      "values": [
+        "earned_exercise",
+        "earned_achievement",
+        "earned_daily_bonus",
+        "earned_rank_promotion",
+        "spent_hint",
+        "spent_unlock_content",
+        "spent_customization",
+        "refund",
+        "admin_adjustment",
+        "gift"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Gamification",
+      "description": "Tipos de transacciones de ML Coins"
+    },
+    {
+      "name": "AchievementCategoryEnum",
+      "values": [
+        "progress",
+        "streak",
+        "completion",
+        "social",
+        "special",
+        "mastery",
+        "exploration"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Gamification",
+      "description": "Categorías de logros (achievements)"
+    },
+    {
+      "name": "AchievementTypeEnum",
+      "values": [
+        "badge",
+        "milestone",
+        "special",
+        "rank_promotion"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Gamification",
+      "description": "Tipos de logros"
+    },
+    {
+      "name": "NotificationTypeEnum",
+      "values": [
+        "info",
+        "success",
+        "warning",
+        "error",
+        "achievement",
+        "progress",
+        "social",
+        "reminder"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Gamification",
+      "description": "Tipos de notificaciones"
+    },
+    {
+      "name": "NotificationChannelEnum",
+      "values": [
+        "in_app",
+        "email",
+        "push",
+        "sms"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Gamification",
+      "description": "Canales de notificación"
+    },
+    {
+      "name": "ContentStatusEnum",
+      "values": [
+        "draft",
+        "published",
+        "archived",
+        "reviewing"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Educational Content",
+      "description": "Estados del ciclo de vida del contenido"
+    },
+    {
+      "name": "ModuleStatusEnum",
+      "values": [
+        "draft",
+        "published",
+        "archived",
+        "under_review"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Educational Content",
+      "description": "Estados de módulos educativos"
+    },
+    {
+      "name": "ContentTypeEnum",
+      "values": [
+        "video",
+        "text",
+        "interactive",
+        "quiz",
+        "game",
+        "simulation"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Educational Content",
+      "description": "Tipos de contenido educativo"
+    },
+    {
+      "name": "MediaTypeEnum",
+      "values": [
+        "image",
+        "video",
+        "audio",
+        "document",
+        "interactive",
+        "animation"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Educational Content",
+      "description": "Tipos de archivos multimedia"
+    },
+    {
+      "name": "ProcessingStatusEnum",
+      "values": [
+        "uploading",
+        "processing",
+        "ready",
+        "error",
+        "optimizing"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Educational Content",
+      "description": "Estados de procesamiento de archivos multimedia"
+    },
+    {
+      "name": "ExerciseTypeEnum",
+      "values": [
+        "crucigrama",
+        "linea_tiempo",
+        "sopa_letras",
+        "mapa_conceptual",
+        "emparejamiento",
+        "detective_textual",
+        "construccion_hipotesis",
+        "prediccion_narrativa",
+        "puzzle_contexto",
+        "rueda_inferencias",
+        "tribunal_opiniones",
+        "debate_digital",
+        "analisis_fuentes",
+        "podcast_argumentativo",
+        "matriz_perspectivas",
+        "verificador_fake_news",
+        "infografia_interactiva",
+        "quiz_tiktok",
+        "navegacion_hipertextual",
+        "analisis_memes",
+        "diario_multimedia",
+        "comic_digital",
+        "video_carta",
+        "comprension_auditiva",
+        "collage_prensa",
+        "texto_movimiento",
+        "call_to_action",
+        "verdadero_falso",
+        "completar_espacios",
+        "diario_interactivo",
+        "resumen_visual"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Educational Content",
+      "description": "Tipos de ejercicios (31 mecánicas diferentes)",
+      "note": "Module 1: Comprensión Literal (5), Module 2: Comprensión Inferencial (5), Module 3: Comprensión Crítica (5), Module 4: Lectura Digital (5), Module 5: Producción Lectora (3), Auxiliares (8)"
+    },
+    {
+      "name": "ProgressStatusEnum",
+      "values": [
+        "not_started",
+        "in_progress",
+        "completed",
+        "reviewed",
+        "mastered"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Progress Tracking",
+      "description": "Estados de progreso de aprendizaje"
+    },
+    {
+      "name": "AttemptResultEnum",
+      "values": [
+        "correct",
+        "incorrect",
+        "partial",
+        "skipped"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Progress Tracking",
+      "description": "Resultados de intentos de ejercicio"
+    },
+    {
+      "name": "ClassroomRoleEnum",
+      "values": [
+        "teacher",
+        "student",
+        "assistant"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Social Features",
+      "description": "Roles en aulas virtuales"
+    },
+    {
+      "name": "SocialEventTypeEnum",
+      "values": [
+        "competition",
+        "collaboration",
+        "challenge",
+        "tournament",
+        "workshop"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "Social Features",
+      "description": "Tipos de eventos sociales"
+    },
+    {
+      "name": "GamilityRoleEnum",
+      "values": [
+        "student",
+        "admin_teacher",
+        "super_admin"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "System",
+      "description": "Roles principales del sistema Gamilit"
+    },
+    {
+      "name": "AlertSeverityEnum",
+      "values": [
+        "info",
+        "warning",
+        "error",
+        "critical"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "System",
+      "description": "Niveles de severidad de alertas"
+    },
+    {
+      "name": "AggregationPeriodEnum",
+      "values": [
+        "daily",
+        "weekly",
+        "monthly",
+        "quarterly",
+        "yearly"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "System",
+      "description": "Períodos de agregación para métricas"
+    },
+    {
+      "name": "MetricTypeEnum",
+      "values": [
+        "engagement",
+        "performance",
+        "completion",
+        "time_spent",
+        "accuracy",
+        "streak",
+        "social_interaction"
+      ],
+      "file": "shared/constants/enums.constants.ts",
+      "category": "System",
+      "description": "Tipos de métricas"
+    },
+    {
+      "name": "DifficultyLevel",
+      "values": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "file": "shared/types/educational.types.ts",
+      "category": "Educational",
+      "description": "Difficulty Level Enum (local to educational types)"
+    },
+    {
+      "name": "ExerciseType",
+      "values": [
+        "multiple_choice",
+        "code_completion",
+        "true_false",
+        "fill_in_blank",
+        "coding_challenge",
+        "matching"
+      ],
+      "file": "shared/types/educational.types.ts",
+      "category": "Educational",
+      "description": "Exercise Type Enum (local to educational types)"
+    },
+    {
+      "name": "ProgressStatus",
+      "values": [
+        "not_started",
+        "in_progress",
+        "completed",
+        "mastered"
+      ],
+      "file": "shared/types/progress.types.ts",
+      "category": "Progress",
+      "description": "Progress Status Enum"
+    },
+    {
+      "name": "AchievementCategory",
+      "values": [
+        "progress",
+        "streak",
+        "completion",
+        "social",
+        "special",
+        "mastery",
+        "exploration"
+      ],
+      "file": "shared/types/achievement.types.ts",
+      "category": "Achievements",
+      "description": "Achievement Categories"
+    },
+    {
+      "name": "AchievementType",
+      "values": [
+        "badge",
+        "milestone",
+        "special",
+        "rank_promotion"
+      ],
+      "file": "shared/types/achievement.types.ts",
+      "category": "Achievements",
+      "description": "Achievement Types"
+    },
+    {
+      "name": "AchievementStatus",
+      "values": [
+        "locked",
+        "in_progress",
+        "earned",
+        "claimed"
+      ],
+      "file": "shared/types/achievement.types.ts",
+      "category": "Achievements",
+      "description": "Achievement Status"
+    },
+    {
+      "name": "LeaderboardType",
+      "values": [
+        "global",
+        "school",
+        "classroom"
+      ],
+      "file": "shared/types/leaderboard.types.ts",
+      "category": "Leaderboard",
+      "description": "Leaderboard Type Enum"
+    },
+    {
+      "name": "MayaRank",
+      "values": [
+        "novice",
+        "apprentice",
+        "adept",
+        "expert",
+        "master",
+        "legend"
+      ],
+      "file": "shared/types/leaderboard.types.ts",
+      "category": "Leaderboard",
+      "description": "Maya Rank Enum (local to leaderboard types) - Note: Conflicts with MayaRank from enums.constants.ts"
+    },
+    {
+      "name": "LeaderboardTimePeriod",
+      "values": [
+        "all_time",
+        "this_month",
+        "this_week",
+        "today"
+      ],
+      "file": "shared/types/leaderboard.types.ts",
+      "category": "Leaderboard",
+      "description": "Time Period for Leaderboard"
+    }
+  ],
+  "const_enums": [
+    {
+      "name": "ACHIEVEMENT_CATEGORY_COLORS",
+      "type": "Record<AchievementCategory, string>",
+      "file": "shared/types/achievement.types.ts",
+      "description": "Category-specific color mappings for UI",
+      "entries": 7
+    },
+    {
+      "name": "ACHIEVEMENT_CATEGORY_LABELS",
+      "type": "Record<AchievementCategory, string>",
+      "file": "shared/types/achievement.types.ts",
+      "description": "Category display names (Spanish)",
+      "entries": 7
+    },
+    {
+      "name": "ACHIEVEMENT_RARITY_COLORS",
+      "type": "Record<string, string>",
+      "file": "shared/types/achievement.types.ts",
+      "description": "Rarity color mappings for UI",
+      "entries": 4
+    },
+    {
+      "name": "RANK_ICONS",
+      "type": "Record<MayaRank, string>",
+      "file": "shared/types/leaderboard.types.ts",
+      "description": "SVG paths or icon names for each rank",
+      "entries": 6
+    },
+    {
+      "name": "RANK_COLORS",
+      "type": "Record<MayaRank, string>",
+      "file": "shared/types/leaderboard.types.ts",
+      "description": "Color scheme for each rank",
+      "entries": 6
+    },
+    {
+      "name": "RANK_LABELS",
+      "type": "Record<MayaRank, string>",
+      "file": "shared/types/leaderboard.types.ts",
+      "description": "Rank Display Names (Spanish)",
+      "entries": 6
+    },
+    {
+      "name": "LEADERBOARD_TYPE_LABELS",
+      "type": "Record<LeaderboardType, string>",
+      "file": "shared/types/leaderboard.types.ts",
+      "description": "Leaderboard Type Labels (Spanish)",
+      "entries": 3
+    },
+    {
+      "name": "TIME_PERIOD_LABELS",
+      "type": "Record<LeaderboardTimePeriod, string>",
+      "file": "shared/types/leaderboard.types.ts",
+      "description": "Time Period Labels (Spanish)",
+      "entries": 4
+    },
+    {
+      "name": "API_ENDPOINTS",
+      "type": "const",
+      "file": "shared/constants/api-endpoints.ts",
+      "description": "API Endpoints Constants - Organized by module (Auth, Users, Gamification, Educational, Progress, Social, Content, Health)",
+      "modules": [
+        "AUTH",
+        "USERS",
+        "GAMIFICATION",
+        "EDUCATIONAL",
+        "PROGRESS",
+        "SOCIAL",
+        "CONTENT",
+        "HEALTH"
+      ]
+    },
+    {
+      "name": "colors",
+      "type": "const",
+      "file": "shared/constants/colors.ts",
+      "description": "Color palette for the application (synchronized with Tailwind CSS)",
+      "color_schemes": [
+        "primary",
+        "secondary",
+        "success",
+        "warning",
+        "danger",
+        "info",
+        "gray",
+        "white",
+        "black",
+        "transparent"
+      ]
+    },
+    {
+      "name": "breakpoints",
+      "type": "const",
+      "file": "shared/constants/breakpoints.ts",
+      "description": "Responsive breakpoints (synchronized with Tailwind CSS)",
+      "breakpoints": [
+        "sm",
+        "md",
+        "lg",
+        "xl",
+        "2xl"
+      ]
+    },
+    {
+      "name": "mediaQueries",
+      "type": "const",
+      "file": "shared/constants/breakpoints.ts",
+      "description": "Media query strings for responsive design",
+      "variants": [
+        "min-width",
+        "max-width"
+      ]
+    }
+  ],
+  "interfaces": [
+    {
+      "name": "User",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "email_verified",
+          "type": "boolean",
+          "optional": false
+        }
+      ],
+      "file": "shared/types/auth.types.ts",
+      "category": "Auth"
+    },
+    {
+      "name": "LoginCredentials",
+      "properties": [
+        {
+          "name": "email",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "password",
+          "type": "string",
+          "optional": false
+        }
+      ],
+      "file": "shared/types/auth.types.ts",
+      "category": "Auth"
+    },
+    {
+      "name": "RegisterData",
+      "properties": [
+        {
+          "name": "email",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "password",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "first_name",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "last_name",
+          "type": "string",
+          "optional": true
+        }
+      ],
+      "file": "shared/types/auth.types.ts",
+      "category": "Auth",
+      "extends": "LoginCredentials"
+    },
+    {
+      "name": "AuthResponse",
+      "properties": [
+        {
+          "name": "access_token",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "refresh_token",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "user",
+          "type": "User",
+          "optional": true
+        }
+      ],
+      "file": "shared/types/auth.types.ts",
+      "category": "Auth"
+    },
+    {
+      "name": "AuthState",
+      "properties": [
+        {
+          "name": "user",
+          "type": "User | null",
+          "optional": false
+        },
+        {
+          "name": "isAuthenticated",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "isLoading",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "error",
+          "type": "string | null",
+          "optional": false
+        }
+      ],
+      "file": "shared/types/auth.types.ts",
+      "category": "Auth"
+    },
+    {
+      "name": "AuthContextType",
+      "properties": [
+        {
+          "name": "user",
+          "type": "User | null",
+          "optional": false
+        },
+        {
+          "name": "isAuthenticated",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "isLoading",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "error",
+          "type": "string | null",
+          "optional": false
+        },
+        {
+          "name": "login",
+          "type": "function",
+          "optional": false
+        },
+        {
+          "name": "register",
+          "type": "function",
+          "optional": false
+        },
+        {
+          "name": "logout",
+          "type": "function",
+          "optional": false
+        },
+        {
+          "name": "refreshUser",
+          "type": "function",
+          "optional": false
+        },
+        {
+          "name": "clearError",
+          "type": "function",
+          "optional": false
+        }
+      ],
+      "file": "shared/types/auth.types.ts",
+      "category": "Auth",
+      "extends": "AuthState"
+    },
+    {
+      "name": "Module",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "difficulty",
+          "type": "DifficultyLevel",
+          "optional": false
+        },
+        {
+          "name": "thumbnail_url",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "order_index",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "estimated_time_minutes",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "learning_objectives",
+          "type": "string[]",
+          "optional": false
+        },
+        {
+          "name": "tags",
+          "type": "string[]",
+          "optional": false
+        },
+        {
+          "name": "is_published",
+          "type": "boolean",
+          "optional": false
+        }
+      ],
+      "file": "shared/types/educational.types.ts",
+      "category": "Educational"
+    },
+    {
+      "name": "Exercise",
+      "properties_count": 45,
+      "key_properties": [
+        "id",
+        "module_id",
+        "title",
+        "type",
+        "config",
+        "content",
+        "solution",
+        "auto_gradable",
+        "difficulty",
+        "max_score",
+        "passing_score",
+        "max_attempts",
+        "allow_retry",
+        "hints",
+        "enable_hints",
+        "comodines_allowed",
+        "xp_reward",
+        "ml_coins_reward",
+        "is_active",
+        "is_optional",
+        "version",
+        "adaptive_difficulty",
+        "metadata"
+      ],
+      "file": "shared/types/educational.types.ts",
+      "category": "Educational",
+      "note": "Comprehensive exercise with 45+ fields from Backend/Database for full feature parity"
+    },
+    {
+      "name": "ExerciseContent",
+      "properties": [
+        {
+          "name": "question",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "options",
+          "type": "string[]",
+          "optional": true
+        },
+        {
+          "name": "correct_answer",
+          "type": "string | string[]",
+          "optional": true
+        },
+        {
+          "name": "code_template",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "test_cases",
+          "type": "TestCase[]",
+          "optional": true
+        }
+      ],
+      "file": "shared/types/educational.types.ts",
+      "category": "Educational"
+    },
+    {
+      "name": "TestCase",
+      "properties": [
+        {
+          "name": "input",
+          "type": "any",
+          "optional": false
+        },
+        {
+          "name": "expected_output",
+          "type": "any",
+          "optional": false
+        },
+        {
+          "name": "is_hidden",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "optional": true
+        }
+      ],
+      "file": "shared/types/educational.types.ts",
+      "category": "Educational"
+    },
+    {
+      "name": "ModuleWithProgress",
+      "properties": [
+        {
+          "name": "progress",
+          "type": "object",
+          "optional": true
+        }
+      ],
+      "file": "shared/types/educational.types.ts",
+      "category": "Educational",
+      "extends": "Module"
+    },
+    {
+      "name": "ModuleProgress",
+      "properties_count": 35,
+      "key_properties": [
+        "id",
+        "user_id",
+        "module_id",
+        "status",
+        "progress_percentage",
+        "completed_exercises",
+        "total_score",
+        "total_xp_earned",
+        "total_ml_coins_earned",
+        "time_spent",
+        "sessions_count",
+        "attempts_count",
+        "hints_used_total",
+        "comodines_used_total",
+        "started_at",
+        "completed_at",
+        "classroom_id",
+        "assignment_id",
+        "allow_retry",
+        "adaptive_difficulty",
+        "learning_path",
+        "performance_analytics",
+        "metadata"
+      ],
+      "file": "shared/types/progress.types.ts",
+      "category": "Progress",
+      "note": "Comprehensive module progress with 35+ fields from Backend/Database"
+    },
+    {
+      "name": "ProgressSummary",
+      "properties": [
+        {
+          "name": "user_id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "total_modules",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "modules_completed",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "total_exercises_completed",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "total_time_spent_seconds",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "average_score",
+          "type": "number",
+          "optional": false
+        }
+      ],
+      "file": "shared/types/progress.types.ts",
+      "category": "Progress"
+    },
+    {
+      "name": "LearningSession",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "user_id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "module_id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "exercise_id",
+          "type": "string | null",
+          "optional": false
+        },
+        {
+          "name": "session_start",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "duration_seconds",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "activities_count",
+          "type": "number",
+          "optional": false
+        }
+      ],
+      "file": "shared/types/progress.types.ts",
+      "category": "Progress"
+    },
+    {
+      "name": "ExerciseAttempt",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "user_id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "exercise_id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "attempt_number",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "score",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "time_spent_seconds",
+          "type": "number",
+          "optional": false
+        }
+      ],
+      "file": "shared/types/progress.types.ts",
+      "category": "Progress"
+    },
+    {
+      "name": "ExerciseSubmission",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "attempt_id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "user_id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "exercise_id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "submission_data",
+          "type": "Record<string, any>",
+          "optional": false
+        },
+        {
+          "name": "is_correct",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "feedback",
+          "type": "string | null",
+          "optional": false
+        }
+      ],
+      "file": "shared/types/progress.types.ts",
+      "category": "Progress"
+    },
+    {
+      "name": "AchievementCondition",
+      "properties": [
+        {
+          "name": "type",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "target",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "current",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "optional": false
+        }
+      ],
+      "file": "shared/types/achievement.types.ts",
+      "category": "Achievements"
+    },
+    {
+      "name": "AchievementReward",
+      "properties": [
+        {
+          "name": "xp",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "mlCoins",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "items",
+          "type": "string[]",
+          "optional": true
+        },
+        {
+          "name": "rankPromotion",
+          "type": "string",
+          "optional": true
+        }
+      ],
+      "file": "shared/types/achievement.types.ts",
+      "category": "Achievements"
+    },
+    {
+      "name": "Achievement",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "icon",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "category",
+          "type": "AchievementCategory",
+          "optional": false
+        },
+        {
+          "name": "type",
+          "type": "AchievementType",
+          "optional": false
+        },
+        {
+          "name": "conditions",
+          "type": "AchievementCondition[]",
+          "optional": false
+        },
+        {
+          "name": "rewards",
+          "type": "AchievementReward",
+          "optional": false
+        },
+        {
+          "name": "isHidden",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "rarity",
+          "type": "'common' | 'rare' | 'epic' | 'legendary'",
+          "optional": true
+        }
+      ],
+      "file": "shared/types/achievement.types.ts",
+      "category": "Achievements"
+    },
+    {
+      "name": "UserAchievement",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "userId",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "achievementId",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "progress",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "earnedAt",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "claimedAt",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "achievement",
+          "type": "Achievement",
+          "optional": false
+        },
+        {
+          "name": "status",
+          "type": "AchievementStatus",
+          "optional": false
+        }
+      ],
+      "file": "shared/types/achievement.types.ts",
+      "category": "Achievements"
+    },
+    {
+      "name": "AchievementFilter",
+      "properties": [
+        {
+          "name": "category",
+          "type": "AchievementCategory | 'all'",
+          "optional": true
+        },
+        {
+          "name": "status",
+          "type": "AchievementStatus | 'all'",
+          "optional": true
+        },
+        {
+          "name": "sortBy",
+          "type": "'name' | 'progress' | 'earnedDate' | 'rarity'",
+          "optional": true
+        },
+        {
+          "name": "sortOrder",
+          "type": "'asc' | 'desc'",
+          "optional": true
+        },
+        {
+          "name": "searchQuery",
+          "type": "string",
+          "optional": true
+        }
+      ],
+      "file": "shared/types/achievement.types.ts",
+      "category": "Achievements"
+    },
+    {
+      "name": "AchievementSummary",
+      "properties": [
+        {
+          "name": "total",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "earned",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "claimed",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "inProgress",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "locked",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "completionPercentage",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "recentlyEarned",
+          "type": "UserAchievement[]",
+          "optional": false
+        }
+      ],
+      "file": "shared/types/achievement.types.ts",
+      "category": "Achievements"
+    },
+    {
+      "name": "LeaderboardEntry",
+      "properties": [
+        {
+          "name": "rank",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "userId",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "username",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "firstName",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "lastName",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "avatar",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "totalXP",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "level",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "currentRank",
+          "type": "MayaRank",
+          "optional": false
+        },
+        {
+          "name": "streak",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "achievementCount",
+          "type": "number",
+          "optional": false
+        }
+      ],
+      "file": "shared/types/leaderboard.types.ts",
+      "category": "Leaderboard"
+    },
+    {
+      "name": "LeaderboardResponse",
+      "properties": [
+        {
+          "name": "type",
+          "type": "LeaderboardType",
+          "optional": false
+        },
+        {
+          "name": "entries",
+          "type": "LeaderboardEntry[]",
+          "optional": false
+        },
+        {
+          "name": "totalEntries",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "currentUserEntry",
+          "type": "LeaderboardEntry",
+          "optional": true
+        },
+        {
+          "name": "lastUpdated",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "timePeriod",
+          "type": "LeaderboardTimePeriod",
+          "optional": true
+        }
+      ],
+      "file": "shared/types/leaderboard.types.ts",
+      "category": "Leaderboard"
+    },
+    {
+      "name": "LeaderboardFilterOptions",
+      "properties": [
+        {
+          "name": "type",
+          "type": "LeaderboardType",
+          "optional": false
+        },
+        {
+          "name": "limit",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "offset",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "timePeriod",
+          "type": "LeaderboardTimePeriod",
+          "optional": true
+        },
+        {
+          "name": "schoolId",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "classroomId",
+          "type": "string",
+          "optional": true
+        }
+      ],
+      "file": "shared/types/leaderboard.types.ts",
+      "category": "Leaderboard"
+    },
+    {
+      "name": "CurrentUserPosition",
+      "properties": [
+        {
+          "name": "rank",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "totalXP",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "level",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "currentRank",
+          "type": "MayaRank",
+          "optional": false
+        },
+        {
+          "name": "percentile",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "xpToNextRank",
+          "type": "number",
+          "optional": true
+        }
+      ],
+      "file": "shared/types/leaderboard.types.ts",
+      "category": "Leaderboard"
+    },
+    {
+      "name": "UserPreferences",
+      "properties": [
+        {
+          "name": "theme",
+          "type": "'light' | 'dark' | 'detective'",
+          "optional": false
+        },
+        {
+          "name": "language",
+          "type": "'es' | 'en'",
+          "optional": false
+        },
+        {
+          "name": "timezone",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "sound_enabled",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "notifications_enabled",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "email_notifications",
+          "type": "boolean",
+          "optional": true
+        },
+        {
+          "name": "push_notifications",
+          "type": "boolean",
+          "optional": true
+        },
+        {
+          "name": "sms_notifications",
+          "type": "boolean",
+          "optional": true
+        }
+      ],
+      "file": "shared/types/profile.types.ts",
+      "category": "Profile"
+    },
+    {
+      "name": "Profile",
+      "properties_count": 25,
+      "key_properties": [
+        "id",
+        "tenant_id",
+        "user_id",
+        "email",
+        "display_name",
+        "full_name",
+        "first_name",
+        "last_name",
+        "avatar_url",
+        "bio",
+        "grade_level",
+        "student_id",
+        "school_id",
+        "role",
+        "status",
+        "email_verified",
+        "preferences",
+        "metadata",
+        "created_at",
+        "updated_at"
+      ],
+      "file": "shared/types/profile.types.ts",
+      "category": "Profile",
+      "note": "Complete user profile synced with Database auth_management.profiles table"
+    },
+    {
+      "name": "ProfileWithStats",
+      "properties": [
+        {
+          "name": "stats",
+          "type": "object",
+          "optional": true,
+          "stat_fields": [
+            "total_xp",
+            "current_rank",
+            "coins_balance",
+            "modules_completed",
+            "achievements_count",
+            "streak_days",
+            "average_score"
+          ]
+        }
+      ],
+      "file": "shared/types/profile.types.ts",
+      "category": "Profile",
+      "extends": "Profile"
+    },
+    {
+      "name": "CreateProfileDto",
+      "properties": [
+        {
+          "name": "tenant_id",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "role",
+          "type": "GamilityRoleEnum",
+          "optional": true
+        },
+        {
+          "name": "first_name",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "preferences",
+          "type": "Partial<UserPreferences>",
+          "optional": true
+        }
+      ],
+      "file": "shared/types/profile.types.ts",
+      "category": "Profile"
+    },
+    {
+      "name": "UpdateProfileDto",
+      "properties": [
+        {
+          "name": "display_name",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "full_name",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "avatar_url",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "bio",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "preferences",
+          "type": "Partial<UserPreferences>",
+          "optional": true
+        },
+        {
+          "name": "metadata",
+          "type": "Record<string, any>",
+          "optional": true
+        }
+      ],
+      "file": "shared/types/profile.types.ts",
+      "category": "Profile"
+    },
+    {
+      "name": "AuthProviderProps",
+      "properties": [
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "optional": false
+        }
+      ],
+      "file": "app/providers/AuthContext.tsx",
+      "category": "Provider",
+      "note": "Props for AuthProvider component"
+    }
+  ],
+  "types": [
+    {
+      "name": "ColorShade",
+      "definition": "50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900",
+      "file": "shared/constants/colors.ts",
+      "category": "Design"
+    },
+    {
+      "name": "ColorName",
+      "definition": "'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' | 'gray'",
+      "file": "shared/constants/colors.ts",
+      "category": "Design"
+    },
+    {
+      "name": "Breakpoint",
+      "definition": "keyof typeof breakpoints",
+      "file": "shared/constants/breakpoints.ts",
+      "category": "Design"
+    },
+    {
+      "name": "ApiEndpoint",
+      "definition": "string | ((...args: string[]) => string)",
+      "file": "shared/constants/api-endpoints.ts",
+      "category": "API"
+    }
+  ],
+  "shared_types_with_backend": {
+    "status": "SYNCED",
+    "note": "Frontend reutiliza muchos tipos del Backend mediante monorepo",
+    "shared_enums": [
+      "AuthProviderEnum",
+      "SubscriptionTierEnum",
+      "UserStatusEnum",
+      "SecurityEventSeverityEnum",
+      "ThemeEnum",
+      "LanguageEnum",
+      "DeviceTypeEnum",
+      "MembershipRoleEnum",
+      "MembershipStatusEnum",
+      "DifficultyLevelEnum",
+      "MayaRank",
+      "ComodinTypeEnum",
+      "TransactionTypeEnum",
+      "AchievementCategoryEnum",
+      "AchievementTypeEnum",
+      "NotificationTypeEnum",
+      "NotificationChannelEnum",
+      "ContentStatusEnum",
+      "ModuleStatusEnum",
+      "ContentTypeEnum",
+      "MediaTypeEnum",
+      "ProcessingStatusEnum",
+      "ExerciseTypeEnum",
+      "ProgressStatusEnum",
+      "AttemptResultEnum",
+      "ClassroomRoleEnum",
+      "SocialEventTypeEnum",
+      "GamilityRoleEnum",
+      "AlertSeverityEnum",
+      "AggregationPeriodEnum",
+      "MetricTypeEnum"
+    ],
+    "shared_interfaces": [
+      "User",
+      "Module",
+      "Exercise",
+      "ExerciseContent",
+      "TestCase",
+      "ModuleProgress",
+      "ProgressSummary",
+      "LearningSession",
+      "ExerciseAttempt",
+      "ExerciseSubmission"
+    ],
+    "note_duplicate_enums": "Existe conflicto: MayaRank se define en 2 lugares con valores diferentes - enums.constants.ts vs leaderboard.types.ts"
+  },
+  "summary": {
+    "total_enums": 38,
+    "total_const_enums": 12,
+    "total_interfaces": 37,
+    "total_types": 4,
+    "total_type_definitions": 93,
+    "files_analyzed": 102,
+    "main_type_files": 7,
+    "monorepo_status": "CONFIRMED - Frontend comparte tipos con Backend",
+    "notes": [
+      "Frontend tiene 102 archivos TypeScript en total",
+      "7 archivos principales de tipos en shared/types/ y shared/constants/",
+      "Se encontró duplicación: MayaRank existe en 2 enumeraciones con valores diferentes",
+      "Frontend reutiliza 31+ ENUMs del Backend a través de enums.constants.ts",
+      "Sistema complejo de gamificación con 31 tipos de ejercicios",
+      "Soporte multiidioma: Español (es) e Inglés (en)",
+      "Arquitectura sincronizada: Frontend-Backend mediante shared constants",
+      "API_ENDPOINTS constantizado para evitar hardcoding de URLs",
+      "Estructura de tipos organizados por dominios: Auth, Education, Progress, Achievements, Leaderboard, Profile"
+    ]
+  }
+}

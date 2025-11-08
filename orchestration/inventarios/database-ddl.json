@@ -1,0 +1,784 @@
+{
+  "timestamp": "2025-11-03T00:00:15.478255Z",
+  "schemas_analyzed": [
+    "admin_dashboard",
+    "audit_logging",
+    "auth",
+    "auth_management",
+    "content_management",
+    "educational_content",
+    "gamification_system",
+    "gamilit",
+    "progress_tracking",
+    "public",
+    "social_features",
+    "storage",
+    "system_configuration"
+  ],
+  "total_files": 319,
+  "enums": [
+    {
+      "schema": "auth",
+      "name": "aal_level",
+      "values": [
+        "aal1",
+        "aal2",
+        "aal3"
+      ],
+      "file": "auth/enums/aal_level.sql"
+    },
+    {
+      "schema": "auth",
+      "name": "code_challenge_method",
+      "values": [
+        "s256",
+        "plain"
+      ],
+      "file": "auth/enums/code_challenge_method.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "maya_rank",
+      "values": [
+        "Ajaw",
+        "Nacom",
+        "Ah K'in",
+        "Halach Uinic",
+        "K'uk'ulkan"
+      ],
+      "file": "gamification_system/enums/maya_rank.sql"
+    },
+    {
+      "schema": "public",
+      "name": "achievement_category",
+      "values": [
+        "progress",
+        "streak",
+        "completion",
+        "social",
+        "special",
+        "mastery",
+        "exploration"
+      ],
+      "file": "public/enums/achievement_category.sql"
+    },
+    {
+      "schema": "public",
+      "name": "achievement_type",
+      "values": [
+        "badge",
+        "milestone",
+        "special",
+        "rank_promotion"
+      ],
+      "file": "public/enums/achievement_type.sql"
+    },
+    {
+      "schema": "public",
+      "name": "aggregation_period",
+      "values": [
+        "daily",
+        "weekly",
+        "monthly",
+        "quarterly",
+        "yearly"
+      ],
+      "file": "public/enums/aggregation_period.sql"
+    },
+    {
+      "schema": "public",
+      "name": "alert_severity",
+      "values": [
+        "info",
+        "warning",
+        "error",
+        "critical"
+      ],
+      "file": "public/enums/alert_severity.sql"
+    },
+    {
+      "schema": "public",
+      "name": "attempt_result",
+      "values": [
+        "correct",
+        "incorrect",
+        "partial",
+        "skipped"
+      ],
+      "file": "public/enums/attempt_result.sql"
+    },
+    {
+      "schema": "public",
+      "name": "classroom_role",
+      "values": [
+        "teacher",
+        "student",
+        "assistant"
+      ],
+      "file": "public/enums/classroom_role.sql"
+    },
+    {
+      "schema": "public",
+      "name": "comodin_type",
+      "values": [
+        "pistas",
+        "vision_lectora",
+        "segunda_oportunidad"
+      ],
+      "file": "public/enums/comodin_type.sql"
+    },
+    {
+      "schema": "public",
+      "name": "content_status",
+      "values": [
+        "draft",
+        "published",
+        "archived",
+        "reviewing"
+      ],
+      "file": "public/enums/content_status.sql"
+    },
+    {
+      "schema": "public",
+      "name": "content_type",
+      "values": [
+        "video",
+        "text",
+        "interactive",
+        "quiz",
+        "game",
+        "simulation"
+      ],
+      "file": "public/enums/content_type.sql"
+    },
+    {
+      "schema": "public",
+      "name": "difficulty_level",
+      "values": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "file": "public/enums/difficulty_level.sql"
+    },
+    {
+      "schema": "public",
+      "name": "exercise_type",
+      "values": [
+        "crucigrama",
+        "linea_tiempo",
+        "mapa_conceptual",
+        "emparejamiento",
+        "sopa_letras",
+        "detective_textual",
+        "construccion_hipotesis",
+        "prediccion_narrativa",
+        "puzzle_contexto",
+        "rueda_inferencias",
+        "tribunal_opiniones",
+        "debate_digital",
+        "analisis_fuentes",
+        "podcast_argumentativo",
+        "matriz_perspectivas",
+        "verificador_fake_news",
+        "infografia_interactiva",
+        "quiz_tiktok",
+        "navegacion_hipertextual",
+        "analisis_memes",
+        "diario_interactivo",
+        "resumen_visual",
+        "capsula_tiempo",
+        "comprension_auditiva",
+        "collage_digital",
+        "texto_movimiento",
+        "call_to_action"
+      ],
+      "file": "public/enums/exercise_type.sql"
+    },
+    {
+      "schema": "public",
+      "name": "gamilit_role",
+      "values": [
+        "student",
+        "admin_teacher",
+        "super_admin"
+      ],
+      "file": "public/enums/gamilit_role.sql"
+    },
+    {
+      "schema": "public",
+      "name": "maya_rank",
+      "values": [
+        "NACOM",
+        "BATAB",
+        "HOLCATTE",
+        "GUERRERO",
+        "MERCENARIO"
+      ],
+      "file": "public/enums/maya_rank.sql"
+    },
+    {
+      "schema": "public",
+      "name": "media_type",
+      "values": [
+        "image",
+        "video",
+        "audio",
+        "document",
+        "interactive",
+        "animation"
+      ],
+      "file": "public/enums/media_type.sql"
+    },
+    {
+      "schema": "public",
+      "name": "metric_type",
+      "values": [
+        "engagement",
+        "performance",
+        "completion",
+        "time_spent",
+        "accuracy",
+        "streak",
+        "social_interaction"
+      ],
+      "file": "public/enums/metric_type.sql"
+    },
+    {
+      "schema": "public",
+      "name": "module_status",
+      "values": [
+        "draft",
+        "published",
+        "archived",
+        "under_review"
+      ],
+      "file": "public/enums/module_status.sql"
+    },
+    {
+      "schema": "public",
+      "name": "notification_channel",
+      "values": [
+        "in_app",
+        "email",
+        "push",
+        "sms"
+      ],
+      "file": "public/enums/notification_channel.sql"
+    },
+    {
+      "schema": "public",
+      "name": "notification_type",
+      "values": [
+        "info",
+        "success",
+        "warning",
+        "error",
+        "achievement",
+        "progress",
+        "social",
+        "reminder"
+      ],
+      "file": "public/enums/notification_type.sql"
+    },
+    {
+      "schema": "public",
+      "name": "processing_status",
+      "values": [
+        "uploading",
+        "processing",
+        "ready",
+        "error",
+        "optimizing"
+      ],
+      "file": "public/enums/processing_status.sql"
+    },
+    {
+      "schema": "public",
+      "name": "progress_status",
+      "values": [
+        "not_started",
+        "in_progress",
+        "completed",
+        "reviewed",
+        "mastered"
+      ],
+      "file": "public/enums/progress_status.sql"
+    },
+    {
+      "schema": "public",
+      "name": "rango_maya",
+      "values": [
+        "nacom",
+        "batab",
+        "holcatte",
+        "guerrero",
+        "mercenario"
+      ],
+      "file": "public/enums/rango_maya.sql"
+    },
+    {
+      "schema": "public",
+      "name": "social_event_type",
+      "values": [
+        "competition",
+        "collaboration",
+        "challenge",
+        "tournament",
+        "workshop"
+      ],
+      "file": "public/enums/social_event_type.sql"
+    },
+    {
+      "schema": "public",
+      "name": "transaction_type",
+      "values": [
+        "earned_exercise",
+        "earned_achievement",
+        "earned_daily_bonus",
+        "earned_rank_promotion",
+        "spent_hint",
+        "spent_unlock_content",
+        "spent_customization",
+        "refund",
+        "admin_adjustment",
+        "gift"
+      ],
+      "file": "public/enums/transaction_type.sql"
+    },
+    {
+      "schema": "public",
+      "name": "user_status",
+      "values": [
+        "active",
+        "inactive",
+        "suspended",
+        "pending"
+      ],
+      "file": "public/enums/user_status.sql"
+    },
+    {
+      "schema": "storage",
+      "name": "buckettype",
+      "values": [
+        "STANDARD",
+        "ANALYTICS"
+      ],
+      "file": "storage/enums/buckettype.sql"
+    }
+  ],
+  "tables": [
+    {
+      "schema": "audit_logging",
+      "name": "audit_logs",
+      "file": "audit_logging/tables/01-audit_logs.sql"
+    },
+    {
+      "schema": "audit_logging",
+      "name": "performance_metrics",
+      "file": "audit_logging/tables/02-performance_metrics.sql"
+    },
+    {
+      "schema": "audit_logging",
+      "name": "system_alerts",
+      "file": "audit_logging/tables/03-system_alerts.sql"
+    },
+    {
+      "schema": "audit_logging",
+      "name": "system_logs",
+      "file": "audit_logging/tables/04-system_logs.sql"
+    },
+    {
+      "schema": "audit_logging",
+      "name": "user_activity_logs",
+      "file": "audit_logging/tables/05-user_activity_logs.sql"
+    },
+    {
+      "schema": "audit_logging",
+      "name": "user_activity",
+      "file": "audit_logging/tables/06-user_activity.sql"
+    },
+    {
+      "schema": "auth",
+      "name": "users",
+      "file": "auth/tables/01-users.sql"
+    },
+    {
+      "schema": "auth_management",
+      "name": "tenants",
+      "file": "auth_management/tables/01-tenants.sql"
+    },
+    {
+      "schema": "auth_management",
+      "name": "auth_attempts",
+      "file": "auth_management/tables/02-auth_attempts.sql"
+    },
+    {
+      "schema": "auth_management",
+      "name": "profiles",
+      "file": "auth_management/tables/03-profiles.sql"
+    },
+    {
+      "schema": "auth_management",
+      "name": "user_roles",
+      "file": "auth_management/tables/04-roles.sql"
+    },
+    {
+      "schema": "auth_management",
+      "name": "auth_providers",
+      "file": "auth_management/tables/05-auth_providers.sql"
+    },
+    {
+      "schema": "auth_management",
+      "name": "email_verification_tokens",
+      "file": "auth_management/tables/06-email_verification_tokens.sql"
+    },
+    {
+      "schema": "auth_management",
+      "name": "password_reset_tokens",
+      "file": "auth_management/tables/07-password_reset_tokens.sql"
+    },
+    {
+      "schema": "auth_management",
+      "name": "security_events",
+      "file": "auth_management/tables/08-security_events.sql"
+    },
+    {
+      "schema": "auth_management",
+      "name": "user_preferences",
+      "file": "auth_management/tables/09-user_preferences.sql"
+    },
+    {
+      "schema": "auth_management",
+      "name": "memberships",
+      "file": "auth_management/tables/10-memberships.sql"
+    },
+    {
+      "schema": "auth_management",
+      "name": "user_sessions",
+      "file": "auth_management/tables/11-user_sessions.sql"
+    },
+    {
+      "schema": "auth_management",
+      "name": "user_suspensions",
+      "file": "auth_management/tables/12-user_suspensions.sql"
+    },
+    {
+      "schema": "content_management",
+      "name": "content_templates",
+      "file": "content_management/tables/01-content_templates.sql"
+    },
+    {
+      "schema": "content_management",
+      "name": "marie_curie_content",
+      "file": "content_management/tables/02-marie_curie_content.sql"
+    },
+    {
+      "schema": "content_management",
+      "name": "media_files",
+      "file": "content_management/tables/03-media_files.sql"
+    },
+    {
+      "schema": "content_management",
+      "name": "content_versions",
+      "file": "content_management/tables/04-content_versions.sql"
+    },
+    {
+      "schema": "content_management",
+      "name": "flagged_content",
+      "file": "content_management/tables/05-flagged_content.sql"
+    },
+    {
+      "schema": "educational_content",
+      "name": "modules",
+      "file": "educational_content/tables/01-modules.sql"
+    },
+    {
+      "schema": "educational_content",
+      "name": "exercises",
+      "file": "educational_content/tables/02-exercises.sql"
+    },
+    {
+      "schema": "educational_content",
+      "name": "assessment_rubrics",
+      "file": "educational_content/tables/03-assessment_rubrics.sql"
+    },
+    {
+      "schema": "educational_content",
+      "name": "media_resources",
+      "file": "educational_content/tables/04-media_resources.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "user_stats",
+      "file": "gamification_system/tables/01-user_stats.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "user_ranks",
+      "file": "gamification_system/tables/02-user_ranks.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "achievements",
+      "file": "gamification_system/tables/03-achievements.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "user_achievements",
+      "file": "gamification_system/tables/04-user_achievements.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "ml_coins_transactions",
+      "file": "gamification_system/tables/05-ml_coins_transactions.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "missions",
+      "file": "gamification_system/tables/06-missions.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "comodines_inventory",
+      "file": "gamification_system/tables/07-comodines_inventory.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "notifications",
+      "file": "gamification_system/tables/08-notifications.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "leaderboard_metadata",
+      "file": "gamification_system/tables/09-leaderboard_metadata.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "achievement_categories",
+      "file": "gamification_system/tables/10-achievement_categories.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "active_boosts",
+      "file": "gamification_system/tables/11-active_boosts.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "inventory_transactions",
+      "file": "gamification_system/tables/12-inventory_transactions.sql"
+    },
+    {
+      "schema": "progress_tracking",
+      "name": "module_progress",
+      "file": "progress_tracking/tables/01-module_progress.sql"
+    },
+    {
+      "schema": "progress_tracking",
+      "name": "learning_sessions",
+      "file": "progress_tracking/tables/02-learning_sessions.sql"
+    },
+    {
+      "schema": "progress_tracking",
+      "name": "exercise_attempts",
+      "file": "progress_tracking/tables/03-exercise_attempts.sql"
+    },
+    {
+      "schema": "progress_tracking",
+      "name": "exercise_submissions",
+      "file": "progress_tracking/tables/04-exercise_submissions.sql"
+    },
+    {
+      "schema": "progress_tracking",
+      "name": "scheduled_missions",
+      "file": "progress_tracking/tables/05-scheduled_missions.sql"
+    },
+    {
+      "schema": "public",
+      "name": "assignment_classrooms",
+      "file": "public/tables/assignment_classrooms.sql"
+    },
+    {
+      "schema": "public",
+      "name": "assignment_exercises",
+      "file": "public/tables/assignment_exercises.sql"
+    },
+    {
+      "schema": "public",
+      "name": "assignment_students",
+      "file": "public/tables/assignment_students.sql"
+    },
+    {
+      "schema": "public",
+      "name": "assignment_submissions",
+      "file": "public/tables/assignment_submissions.sql"
+    },
+    {
+      "schema": "public",
+      "name": "assignments",
+      "file": "public/tables/assignments.sql"
+    },
+    {
+      "schema": "public",
+      "name": "classroom_students",
+      "file": "public/tables/classroom_students.sql"
+    },
+    {
+      "schema": "public",
+      "name": "classrooms",
+      "file": "public/tables/classrooms.sql"
+    },
+    {
+      "schema": "public",
+      "name": "notifications",
+      "file": "public/tables/notifications.sql"
+    },
+    {
+      "schema": "public",
+      "name": "teacher_notes",
+      "file": "public/tables/teacher_notes.sql"
+    },
+    {
+      "schema": "social_features",
+      "name": "friendships",
+      "file": "social_features/tables/01-friendships.sql"
+    },
+    {
+      "schema": "social_features",
+      "name": "schools",
+      "file": "social_features/tables/02-schools.sql"
+    },
+    {
+      "schema": "social_features",
+      "name": "classrooms",
+      "file": "social_features/tables/03-classrooms.sql"
+    },
+    {
+      "schema": "social_features",
+      "name": "classroom_members",
+      "file": "social_features/tables/04-classroom_members.sql"
+    },
+    {
+      "schema": "social_features",
+      "name": "teams",
+      "file": "social_features/tables/05-teams.sql"
+    },
+    {
+      "schema": "social_features",
+      "name": "team_members",
+      "file": "social_features/tables/06-team_members.sql"
+    },
+    {
+      "schema": "social_features",
+      "name": "team_challenges",
+      "file": "social_features/tables/07-team_challenges.sql"
+    },
+    {
+      "schema": "system_configuration",
+      "name": "system_settings",
+      "file": "system_configuration/tables/01-system_settings.sql"
+    },
+    {
+      "schema": "system_configuration",
+      "name": "feature_flags",
+      "file": "system_configuration/tables/02-feature_flags.sql"
+    },
+    {
+      "schema": "system_configuration",
+      "name": "notification_settings",
+      "file": "system_configuration/tables/03-notification_settings.sql"
+    }
+  ],
+  "views": [
+    {
+      "schema": "admin_dashboard",
+      "name": "moderation_queue",
+      "file": "admin_dashboard/views/moderation_queue.sql"
+    },
+    {
+      "schema": "admin_dashboard",
+      "name": "organization_stats_summary",
+      "file": "admin_dashboard/views/organization_stats_summary.sql"
+    },
+    {
+      "schema": "admin_dashboard",
+      "name": "recent_admin_actions",
+      "file": "admin_dashboard/views/recent_admin_actions.sql"
+    },
+    {
+      "schema": "admin_dashboard",
+      "name": "user_stats_summary",
+      "file": "admin_dashboard/views/user_stats_summary.sql"
+    },
+    {
+      "schema": "progress_tracking",
+      "name": "user_progress_summary",
+      "file": "progress_tracking/views/user_progress_summary.sql"
+    },
+    {
+      "schema": "public",
+      "name": "assignment_submission_stats",
+      "file": "public/views/01-assignment_submission_stats.sql"
+    },
+    {
+      "schema": "public",
+      "name": "classroom_overview",
+      "file": "public/views/02-classroom_overview.sql"
+    },
+    {
+      "schema": "public",
+      "name": "for",
+      "file": "public/views/03-for.sql"
+    }
+  ],
+  "materialized_views": [
+    {
+      "schema": "gamification_system",
+      "name": "mv_global_leaderboard",
+      "file": "gamification_system/materialized-views/01-mv_global_leaderboard.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "mv_classroom_leaderboard",
+      "file": "gamification_system/materialized-views/02-mv_classroom_leaderboard.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "mv_weekly_leaderboard",
+      "file": "gamification_system/materialized-views/03-mv_weekly_leaderboard.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "mv_mechanic_leaderboard",
+      "file": "gamification_system/materialized-views/04-mv_mechanic_leaderboard.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "leaderboard_coins",
+      "file": "gamification_system/views/01-leaderboard_coins.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "leaderboard_global",
+      "file": "gamification_system/views/02-leaderboard_global.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "leaderboard_streaks",
+      "file": "gamification_system/views/03-leaderboard_streaks.sql"
+    },
+    {
+      "schema": "gamification_system",
+      "name": "leaderboard_xp",
+      "file": "gamification_system/views/04-leaderboard_xp.sql"
+    }
+  ],
+  "composite_types": [],
+  "summary": {
+    "total_enums": 28,
+    "total_tables": 64,
+    "total_views": 8,
+    "total_mvs": 8,
+    "total_types": 0
+  }
+}

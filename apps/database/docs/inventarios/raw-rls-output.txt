@@ -1,0 +1,43 @@
+=== INVENTARIO DE RLS POLICIES POR SCHEMA ===
+
+Schema: audit_logging (1 policies)
+  - 01-policies
+
+Schema: auth_management (1 policies)
+  - 01-policies
+
+Schema: content_management (1 policies)
+  - 01-policies
+
+Schema: educational_content (2 policies)
+  - 01-enable-rls
+  - 02-modules-exercises-policies
+
+Schema: gamification_system (8 policies)
+  - 01-enable-rls
+  - 02-ml-coins-policies
+  - 02-policies
+  - 03-achievements-policies
+  - 03-grants
+  - 04-user-stats-policies
+  - 05-inventory-missions-policies
+  - 06-notifications-leaderboard-policies
+
+Schema: progress_tracking (2 policies)
+  - 01-enable-rls
+  - 02-progress-policies
+
+Schema: social_features (8 policies)
+  - 01-enable-rls
+  - 02-policies
+  - 02-schools-policies
+  - 03-classrooms-policies
+  - 03-grants
+  - 04-classroom-members-policies
+  - 05-friendships-policies
+  - 06-teams-policies
+
+Schema: system_configuration (1 policies)
+  - 01-policies
+
+=== TOTAL: 24 RLS policies ===

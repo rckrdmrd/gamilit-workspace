@@ -1,0 +1,35 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      '@shared': path.resolve(__dirname, './src/shared'),
+      '@components': path.resolve(__dirname, './src/shared/components'),
+      '@hooks': path.resolve(__dirname, './src/shared/hooks'),
+      '@utils': path.resolve(__dirname, './src/shared/utils'),
+      '@types': path.resolve(__dirname, './src/shared/types'),
+      '@services': path.resolve(__dirname, './src/services'),
+      '@app': path.resolve(__dirname, './src/app'),
+      '@features': path.resolve(__dirname, './src/features'),
+      '@pages': path.resolve(__dirname, './src/pages'),
+    },
+  },
+  server: {
+    port: 3005,
+    host: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3006',
+        changeOrigin: true,
+      },
+    },
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: true,
+  },
+});

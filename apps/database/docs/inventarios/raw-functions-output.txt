@@ -1,0 +1,82 @@
+=== INVENTARIO DE FUNCIONES POR SCHEMA ===
+
+Schema: audit_logging (1 funciones)
+  - log_audit_event
+
+Schema: auth (1 funciones)
+  - get_current_user_id
+
+Schema: auth_management (6 funciones)
+  - 01-assign_role_to_user
+  - 02-get_user_role
+  - 03-verify_user_permission
+  - 04-remove_role_from_user
+  - 05-hash_token
+  - 06-update_user_preferences
+
+Schema: educational_content (2 funciones)
+  - calculate_learning_path
+  - get_recommended_missions
+
+Schema: gamification_system (23 funciones)
+  - 06-update_missions_updated_at
+  - 07-update_notifications_updated_at
+  - 08-recalculate_level_on_xp_change
+  - apply_xp_boost
+  - award_ml_coins
+  - calculate_level_from_xp
+  - calculate_user_rank
+  - check_and_award_achievements
+  - claim_achievement_reward
+  - consume_comodin
+  - get_user_comodines
+  - get_user_current_rank
+  - get_user_inventory
+  - get_user_inventory_summary
+  - get_user_rank_progress
+  - get_user_rank_requirements
+  - grant_achievement
+  - process_exercise_completion
+  - redeem_comodin
+  - update_leaderboard_coins
+  - update_leaderboard_global
+  - update_leaderboard_streaks
+  - update_user_rank
+
+Schema: gamilit (13 funciones)
+  - 01-audit_profile_changes
+  - 02-get_current_user_id
+  - 03-get_current_user_role
+  - 04-initialize_user_stats
+  - 05-is_admin
+  - 08-now_mexico
+  - 09-set_profile_defaults
+  - 09-update_updated_at_column
+  - 10-update_classroom_member_count
+  - 11-update_user_last_login
+  - 12-validate_email_format
+  - 13-validate_username
+  - 14-update_user_stats_on_exercise_complete
+
+Schema: progress_tracking (7 funciones)
+  - 01-calculate_module_progress
+  - 02-check_mechanic_completion
+  - 03-get_user_progress
+  - 04-record_exercise_attempt
+  - 05-get_classroom_analytics
+  - 06-update_mission_progress
+  - 07-update_exercise_submissions_updated_at
+
+Schema: public (7 funciones)
+  - 01-cleanup_old_system_logs
+  - 02-cleanup_old_user_activity
+  - 03-is_feature_enabled
+  - 04-log_system_event
+  - 05-send_notification
+  - 06-update_feature_flag
+  - 07-validate_date_range
+
+Schema: social_features (1 funciones)
+  - cleanup_old_notifications
+
+=== TOTAL: 61 funciones ===

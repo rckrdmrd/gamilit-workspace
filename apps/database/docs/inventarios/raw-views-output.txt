@@ -1,0 +1,29 @@
+=== INVENTARIO DE VISTAS POR SCHEMA ===
+
+Schema: admin_dashboard/views (4 vistas)
+  - moderation_queue
+  - organization_stats_summary
+  - recent_admin_actions
+  - user_stats_summary
+
+Schema: gamification_system/views (4 vistas)
+  - 01-leaderboard_coins
+  - 02-leaderboard_global
+  - 03-leaderboard_streaks
+  - 04-leaderboard_xp
+
+Schema: gamification_system/materialized-views (4 vistas)
+  - 01-mv_global_leaderboard
+  - 02-mv_classroom_leaderboard
+  - 03-mv_weekly_leaderboard
+  - 04-mv_mechanic_leaderboard
+
+Schema: progress_tracking/views (1 vistas)
+  - user_progress_summary
+
+Schema: public/views (3 vistas)
+  - 01-assignment_submission_stats
+  - 02-classroom_overview
+  - 03-for
+
+=== TOTAL: 16 vistas ===

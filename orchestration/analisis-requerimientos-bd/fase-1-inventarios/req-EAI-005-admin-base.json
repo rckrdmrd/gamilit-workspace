@@ -1,0 +1,1349 @@
+{
+  "metadata": {
+    "epicCode": "EAI-005",
+    "epicName": "Plataforma Maestro Básica",
+    "epicPhase": "Alcance Inicial",
+    "analysisAgent": "SA-ANALISIS-DB-005",
+    "analysisDate": "2025-11-03",
+    "totalUserStories": 7,
+    "analysisStatus": "COMPLETADO"
+  },
+  "summary": {
+    "tablesRequired": 10,
+    "functionsRequired": 4,
+    "triggersRequired": 0,
+    "viewsRequired": 0,
+    "indexesRequired": 12,
+    "rlsPoliciesRequired": 6
+  },
+  "tables": [
+    {
+      "tableId": "TBL-ADM-001",
+      "tableName": "classrooms",
+      "description": "Tabla principal de aulas virtuales. Almacena la información básica de cada aula creada por un profesor",
+      "criticality": "P0",
+      "sourceStory": "US-ADM-001, US-ADM-002, US-ADM-004, US-ADM-006",
+      "columns": [
+        {
+          "columnName": "id",
+          "dataType": "UUID",
+          "constraints": ["PRIMARY KEY", "NOT NULL", "DEFAULT gen_random_uuid()"],
+          "description": "Identificador único del aula"
+        },
+        {
+          "columnName": "name",
+          "dataType": "VARCHAR(100)",
+          "constraints": ["NOT NULL"],
+          "description": "Nombre del aula (ej: 'Matemáticas 6A'). Máximo 100 caracteres"
+        },
+        {
+          "columnName": "description",
+          "dataType": "VARCHAR(500)",
+          "constraints": ["NULL"],
+          "description": "Descripción opcional del aula. Máximo 500 caracteres"
+        },
+        {
+          "columnName": "level",
+          "dataType": "VARCHAR(50)",
+          "constraints": ["NOT NULL", "CHECK (level IN ('primaria', 'secundaria', 'preparatoria'))"],
+          "description": "Nivel educativo: primaria, secundaria, preparatoria"
+        },
+        {
+          "columnName": "grade",
+          "dataType": "INTEGER",
+          "constraints": ["NOT NULL", "CHECK (grade >= 1 AND grade <= 6)"],
+          "description": "Grado/año (1-6 para primaria, 1-3 para secundaria/preparatoria)"
+        },
+        {
+          "columnName": "school_year",
+          "dataType": "VARCHAR(50)",
+          "constraints": ["NOT NULL"],
+          "description": "Ciclo escolar (ej: '2024-2025')"
+        },
+        {
+          "columnName": "teacher_id",
+          "dataType": "UUID",
+          "constraints": ["NOT NULL", "FOREIGN KEY REFERENCES users(id) ON DELETE CASCADE"],
+          "description": "ID del profesor propietario del aula"
+        },
+        {
+          "columnName": "created_at",
+          "dataType": "TIMESTAMP",
+          "constraints": ["NOT NULL", "DEFAULT CURRENT_TIMESTAMP"],
+          "description": "Fecha y hora de creación"
+        },
+        {
+          "columnName": "updated_at",
+          "dataType": "TIMESTAMP",
+          "constraints": ["NOT NULL", "DEFAULT CURRENT_TIMESTAMP", "ON UPDATE CURRENT_TIMESTAMP"],
+          "description": "Fecha y hora de última actualización"
+        }
+      ],
+      "primaryKey": "id",
+      "foreignKeys": [
+        {
+          "column": "teacher_id",
+          "referencesTable": "users",
+          "referencesColumn": "id",
+          "onDelete": "CASCADE",
+          "onUpdate": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "indexName": "idx_classrooms_teacher_id",
+          "columns": ["teacher_id"],
+          "type": "BTREE",
+          "description": "Búsqueda rápida de aulas por profesor"
+        },
+        {
+          "indexName": "idx_classrooms_teacher_created",
+          "columns": ["teacher_id", "created_at"],
+          "type": "BTREE",
+          "description": "Ordering de aulas por profesor y fecha de creación"
+        },
+        {
+          "indexName": "idx_classrooms_level",
+          "columns": ["level"],
+          "type": "BTREE",
+          "description": "Filtro por nivel educativo"
+        }
+      ],
+      "rls": [
+        {
+          "policyName": "classrooms_select_own",
+          "operation": "SELECT",
+          "description": "Los profesores solo pueden ver sus propias aulas",
+          "rule": "auth.uid()::text = teacher_id"
+        },
+        {
+          "policyName": "classrooms_insert_own",
+          "operation": "INSERT",
+          "description": "Los profesores solo pueden crear aulas como propietarios",
+          "rule": "auth.uid()::text = teacher_id"
+        },
+        {
+          "policyName": "classrooms_update_own",
+          "operation": "UPDATE",
+          "description": "Los profesores solo pueden actualizar sus propias aulas",
+          "rule": "auth.uid()::text = teacher_id"
+        },
+        {
+          "policyName": "classrooms_delete_own",
+          "operation": "DELETE",
+          "description": "Los profesores solo pueden eliminar sus propias aulas",
+          "rule": "auth.uid()::text = teacher_id"
+        }
+      ],
+      "constraints": [
+        {
+          "type": "CHECK",
+          "name": "check_level_valid",
+          "condition": "level IN ('primaria', 'secundaria', 'preparatoria')"
+        },
+        {
+          "type": "CHECK",
+          "name": "check_grade_range",
+          "condition": "grade >= 1 AND grade <= 6"
+        },
+        {
+          "type": "UNIQUE",
+          "name": "uc_classroom_teacher_name",
+          "columns": ["teacher_id", "name"],
+          "description": "NOTA: Se permite nombres duplicados en diferentes aulas, por lo que NO hay unique constraint. Validar en aplicación."
+        }
+      ],
+      "seedData": "No requerido en alcance inicial. Se crean dinámicamente mediante formulario."
+    },
+    {
+      "tableId": "TBL-ADM-002",
+      "tableName": "classroom_students",
+      "description": "Tabla de relación muchos-a-muchos entre aulas y estudiantes. Maneja la matriculación de estudiantes en aulas",
+      "criticality": "P0",
+      "sourceStory": "US-ADM-002",
+      "columns": [
+        {
+          "columnName": "id",
+          "dataType": "UUID",
+          "constraints": ["PRIMARY KEY", "NOT NULL", "DEFAULT gen_random_uuid()"],
+          "description": "Identificador único del registro de relación"
+        },
+        {
+          "columnName": "classroom_id",
+          "dataType": "UUID",
+          "constraints": ["NOT NULL", "FOREIGN KEY REFERENCES classrooms(id) ON DELETE CASCADE"],
+          "description": "ID del aula"
+        },
+        {
+          "columnName": "student_id",
+          "dataType": "UUID",
+          "constraints": ["NOT NULL", "FOREIGN KEY REFERENCES students(id) ON DELETE CASCADE"],
+          "description": "ID del estudiante"
+        },
+        {
+          "columnName": "added_at",
+          "dataType": "TIMESTAMP",
+          "constraints": ["NOT NULL", "DEFAULT CURRENT_TIMESTAMP"],
+          "description": "Fecha y hora en que el estudiante fue agregado al aula"
+        }
+      ],
+      "primaryKey": "id",
+      "uniqueKey": "UNIQUE(classroom_id, student_id)",
+      "foreignKeys": [
+        {
+          "column": "classroom_id",
+          "referencesTable": "classrooms",
+          "referencesColumn": "id",
+          "onDelete": "CASCADE",
+          "onUpdate": "CASCADE"
+        },
+        {
+          "column": "student_id",
+          "referencesTable": "students",
+          "referencesColumn": "id",
+          "onDelete": "CASCADE",
+          "onUpdate": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "indexName": "idx_classroom_students_classroom_id",
+          "columns": ["classroom_id"],
+          "type": "BTREE",
+          "description": "Búsqueda de estudiantes por aula"
+        },
+        {
+          "indexName": "idx_classroom_students_student_id",
+          "columns": ["student_id"],
+          "type": "BTREE",
+          "description": "Búsqueda de aulas por estudiante"
+        },
+        {
+          "indexName": "idx_classroom_students_added_at",
+          "columns": ["classroom_id", "added_at"],
+          "type": "BTREE",
+          "description": "Ordenamiento de estudiantes por fecha de ingreso"
+        }
+      ],
+      "constraints": [
+        {
+          "type": "UNIQUE",
+          "name": "uc_classroom_student_pair",
+          "columns": ["classroom_id", "student_id"],
+          "description": "Evita agregar el mismo estudiante dos veces a la misma aula"
+        },
+        {
+          "type": "CHECK",
+          "name": "check_max_students_per_classroom",
+          "condition": "Validar en aplicación: máximo 100 estudiantes por aula",
+          "enforced": false,
+          "description": "NOTA: El límite de 100 debe validarse en la lógica de negocio, no en BD"
+        }
+      ]
+    },
+    {
+      "tableId": "TBL-ADM-003",
+      "tableName": "groups",
+      "description": "Tabla de grupos dentro de aulas. Permite organizar estudiantes en subgrupos para actividades colaborativas",
+      "criticality": "P1",
+      "sourceStory": "US-ADM-005",
+      "columns": [
+        {
+          "columnName": "id",
+          "dataType": "UUID",
+          "constraints": ["PRIMARY KEY", "NOT NULL", "DEFAULT gen_random_uuid()"],
+          "description": "Identificador único del grupo"
+        },
+        {
+          "columnName": "classroom_id",
+          "dataType": "UUID",
+          "constraints": ["NOT NULL", "FOREIGN KEY REFERENCES classrooms(id) ON DELETE CASCADE"],
+          "description": "ID del aula a la que pertenece el grupo"
+        },
+        {
+          "columnName": "name",
+          "dataType": "VARCHAR(50)",
+          "constraints": ["NOT NULL"],
+          "description": "Nombre del grupo (ej: 'Equipo A', 'Grupo 1'). Máximo 50 caracteres"
+        },
+        {
+          "columnName": "color",
+          "dataType": "VARCHAR(7)",
+          "constraints": ["NOT NULL", "DEFAULT '#3b82f6'", "CHECK (color ~ '^#[0-9A-Fa-f]{6}$')"],
+          "description": "Color hexadecimal identificador del grupo (formato: #RRGGBB)"
+        },
+        {
+          "columnName": "created_at",
+          "dataType": "TIMESTAMP",
+          "constraints": ["NOT NULL", "DEFAULT CURRENT_TIMESTAMP"],
+          "description": "Fecha y hora de creación del grupo"
+        }
+      ],
+      "primaryKey": "id",
+      "foreignKeys": [
+        {
+          "column": "classroom_id",
+          "referencesTable": "classrooms",
+          "referencesColumn": "id",
+          "onDelete": "CASCADE",
+          "onUpdate": "CASCADE"
+        }
+      ],
+      "uniqueKey": "UNIQUE(classroom_id, name)",
+      "indexes": [
+        {
+          "indexName": "idx_groups_classroom_id",
+          "columns": ["classroom_id"],
+          "type": "BTREE",
+          "description": "Búsqueda de grupos por aula"
+        },
+        {
+          "indexName": "idx_groups_classroom_created",
+          "columns": ["classroom_id", "created_at"],
+          "type": "BTREE",
+          "description": "Ordenamiento de grupos por fecha de creación"
+        }
+      ],
+      "constraints": [
+        {
+          "type": "UNIQUE",
+          "name": "uc_group_name_per_classroom",
+          "columns": ["classroom_id", "name"],
+          "description": "Nombres únicos de grupos dentro de cada aula"
+        },
+        {
+          "type": "CHECK",
+          "name": "check_color_format",
+          "condition": "color ~ '^#[0-9A-Fa-f]{6}$'",
+          "description": "Validar formato hexadecimal de color"
+        }
+      ]
+    },
+    {
+      "tableId": "TBL-ADM-004",
+      "tableName": "group_students",
+      "description": "Tabla de relación muchos-a-muchos entre grupos y estudiantes. Un estudiante puede estar en múltiples grupos",
+      "criticality": "P1",
+      "sourceStory": "US-ADM-005",
+      "columns": [
+        {
+          "columnName": "id",
+          "dataType": "UUID",
+          "constraints": ["PRIMARY KEY", "NOT NULL", "DEFAULT gen_random_uuid()"],
+          "description": "Identificador único del registro"
+        },
+        {
+          "columnName": "group_id",
+          "dataType": "UUID",
+          "constraints": ["NOT NULL", "FOREIGN KEY REFERENCES groups(id) ON DELETE CASCADE"],
+          "description": "ID del grupo"
+        },
+        {
+          "columnName": "student_id",
+          "dataType": "UUID",
+          "constraints": ["NOT NULL", "FOREIGN KEY REFERENCES students(id) ON DELETE CASCADE"],
+          "description": "ID del estudiante"
+        }
+      ],
+      "primaryKey": "id",
+      "uniqueKey": "UNIQUE(group_id, student_id)",
+      "foreignKeys": [
+        {
+          "column": "group_id",
+          "referencesTable": "groups",
+          "referencesColumn": "id",
+          "onDelete": "CASCADE",
+          "onUpdate": "CASCADE"
+        },
+        {
+          "column": "student_id",
+          "referencesTable": "students",
+          "referencesColumn": "id",
+          "onDelete": "CASCADE",
+          "onUpdate": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "indexName": "idx_group_students_group_id",
+          "columns": ["group_id"],
+          "type": "BTREE",
+          "description": "Búsqueda de estudiantes por grupo"
+        },
+        {
+          "indexName": "idx_group_students_student_id",
+          "columns": ["student_id"],
+          "type": "BTREE",
+          "description": "Búsqueda de grupos por estudiante"
+        }
+      ],
+      "constraints": [
+        {
+          "type": "UNIQUE",
+          "name": "uc_group_student_pair",
+          "columns": ["group_id", "student_id"],
+          "description": "Evita duplicados de estudiante en el mismo grupo"
+        }
+      ]
+    },
+    {
+      "tableId": "TBL-ADM-005",
+      "tableName": "classroom_modules",
+      "description": "Tabla de relación muchos-a-muchos entre aulas y módulos. Maneja la asignación de contenido educativo a aulas",
+      "criticality": "P0",
+      "sourceStory": "US-ADM-004",
+      "columns": [
+        {
+          "columnName": "id",
+          "dataType": "UUID",
+          "constraints": ["PRIMARY KEY", "NOT NULL", "DEFAULT gen_random_uuid()"],
+          "description": "Identificador único del registro de asignación"
+        },
+        {
+          "columnName": "classroom_id",
+          "dataType": "UUID",
+          "constraints": ["NOT NULL", "FOREIGN KEY REFERENCES classrooms(id) ON DELETE CASCADE"],
+          "description": "ID del aula"
+        },
+        {
+          "columnName": "module_id",
+          "dataType": "UUID",
+          "constraints": ["NOT NULL", "FOREIGN KEY REFERENCES modules(id) ON DELETE CASCADE"],
+          "description": "ID del módulo"
+        },
+        {
+          "columnName": "assigned_at",
+          "dataType": "TIMESTAMP",
+          "constraints": ["NOT NULL", "DEFAULT CURRENT_TIMESTAMP"],
+          "description": "Fecha y hora de asignación del módulo"
+        }
+      ],
+      "primaryKey": "id",
+      "uniqueKey": "UNIQUE(classroom_id, module_id)",
+      "foreignKeys": [
+        {
+          "column": "classroom_id",
+          "referencesTable": "classrooms",
+          "referencesColumn": "id",
+          "onDelete": "CASCADE",
+          "onUpdate": "CASCADE"
+        },
+        {
+          "column": "module_id",
+          "referencesTable": "modules",
+          "referencesColumn": "id",
+          "onDelete": "CASCADE",
+          "onUpdate": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "indexName": "idx_classroom_modules_classroom_id",
+          "columns": ["classroom_id"],
+          "type": "BTREE",
+          "description": "Búsqueda de módulos por aula"
+        },
+        {
+          "indexName": "idx_classroom_modules_module_id",
+          "columns": ["module_id"],
+          "type": "BTREE",
+          "description": "Búsqueda de aulas que usan un módulo"
+        },
+        {
+          "indexName": "idx_classroom_modules_assigned_at",
+          "columns": ["classroom_id", "assigned_at"],
+          "type": "BTREE",
+          "description": "Ordenamiento de módulos por fecha de asignación"
+        }
+      ],
+      "constraints": [
+        {
+          "type": "UNIQUE",
+          "name": "uc_classroom_module_pair",
+          "columns": ["classroom_id", "module_id"],
+          "description": "Evita asignar el mismo módulo dos veces a la misma aula"
+        }
+      ],
+      "note": "No hay límite de módulos por aula en alcance inicial"
+    },
+    {
+      "tableId": "TBL-ADM-006",
+      "tableName": "classroom_settings",
+      "description": "Tabla de configuraciones específicas de cada aula. Almacena fechas, visibilidad de contenido y estado de gamificación",
+      "criticality": "P1",
+      "sourceStory": "US-ADM-006",
+      "columns": [
+        {
+          "columnName": "id",
+          "dataType": "UUID",
+          "constraints": ["PRIMARY KEY", "NOT NULL", "DEFAULT gen_random_uuid()"],
+          "description": "Identificador único de la configuración"
+        },
+        {
+          "columnName": "classroom_id",
+          "dataType": "UUID",
+          "constraints": ["NOT NULL", "UNIQUE", "FOREIGN KEY REFERENCES classrooms(id) ON DELETE CASCADE"],
+          "description": "ID del aula (relación 1-a-1)"
+        },
+        {
+          "columnName": "start_date",
+          "dataType": "DATE",
+          "constraints": ["NULL"],
+          "description": "Fecha de inicio del aula (opcional)"
+        },
+        {
+          "columnName": "end_date",
+          "dataType": "DATE",
+          "constraints": ["NULL"],
+          "description": "Fecha de fin del aula (opcional)"
+        },
+        {
+          "columnName": "modules_visible",
+          "dataType": "BOOLEAN",
+          "constraints": ["NOT NULL", "DEFAULT true"],
+          "description": "Flag: ¿los módulos son visibles para los estudiantes?"
+        },
+        {
+          "columnName": "gamification_enabled",
+          "dataType": "BOOLEAN",
+          "constraints": ["NOT NULL", "DEFAULT true"],
+          "description": "Flag: ¿la gamificación está activa (XP, niveles, logros)?"
+        },
+        {
+          "columnName": "updated_at",
+          "dataType": "TIMESTAMP",
+          "constraints": ["NOT NULL", "DEFAULT CURRENT_TIMESTAMP", "ON UPDATE CURRENT_TIMESTAMP"],
+          "description": "Fecha y hora de última actualización"
+        }
+      ],
+      "primaryKey": "id",
+      "foreignKeys": [
+        {
+          "column": "classroom_id",
+          "referencesTable": "classrooms",
+          "referencesColumn": "id",
+          "onDelete": "CASCADE",
+          "onUpdate": "CASCADE"
+        }
+      ],
+      "indexes": [
+        {
+          "indexName": "idx_classroom_settings_classroom_id",
+          "columns": ["classroom_id"],
+          "type": "BTREE",
+          "description": "Búsqueda de configuración por aula (aunque es 1-a-1)"
+        }
+      ],
+      "constraints": [
+        {
+          "type": "CHECK",
+          "name": "check_date_order",
+          "condition": "end_date IS NULL OR start_date IS NULL OR end_date > start_date",
+          "description": "La fecha de fin debe ser posterior a la fecha de inicio (si ambas se proporcionan)"
+        },
+        {
+          "type": "UNIQUE",
+          "name": "uc_classroom_id_unique",
+          "columns": ["classroom_id"],
+          "description": "Una sola configuración por aula"
+        }
+      ],
+      "seedData": "Las configuraciones se crean automáticamente al crear un aula con valores por defecto (modules_visible=true, gamification_enabled=true)"
+    },
+    {
+      "tableId": "TBL-ADM-007",
+      "tableName": "modules",
+      "description": "Tabla de módulos educativos. Contiene el catálogo de contenido disponible (hardcodeado en alcance inicial)",
+      "criticality": "P0",
+      "sourceStory": "US-ADM-004",
+      "columns": [
+        {
+          "columnName": "id",
+          "dataType": "UUID",
+          "constraints": ["PRIMARY KEY", "NOT NULL", "DEFAULT gen_random_uuid()"],
+          "description": "Identificador único del módulo"
+        },
+        {
+          "columnName": "name",
+          "dataType": "VARCHAR(255)",
+          "constraints": ["NOT NULL"],
+          "description": "Nombre del módulo (ej: 'Fracciones Básicas')"
+        },
+        {
+          "columnName": "description",
+          "dataType": "TEXT",
+          "constraints": ["NOT NULL"],
+          "description": "Descripción del contenido del módulo"
+        },
+        {
+          "columnName": "subject",
+          "dataType": "VARCHAR(50)",
+          "constraints": ["NOT NULL", "CHECK (subject IN ('matematicas', 'español', 'ciencias', 'historia', 'ingles', 'educacion_fisica', 'artes'))"],
+          "description": "Materia (matemáticas, español, ciencias, historia, inglés, educación física, artes)"
+        },
+        {
+          "columnName": "level",
+          "dataType": "VARCHAR(50)",
+          "constraints": ["NOT NULL", "CHECK (level IN ('primaria', 'secundaria', 'preparatoria'))"],
+          "description": "Nivel educativo recomendado"
+        },
+        {
+          "columnName": "recommended_grades",
+          "dataType": "INTEGER[]",
+          "constraints": ["NOT NULL"],
+          "description": "Array de grados recomendados [4, 5, 6] para primaria, [1, 2, 3] para secundaria/preparatoria"
+        },
+        {
+          "columnName": "estimated_duration",
+          "dataType": "VARCHAR(50)",
+          "constraints": ["NOT NULL"],
+          "description": "Duración estimada (ej: '4 horas')"
+        },
+        {
+          "columnName": "created_at",
+          "dataType": "TIMESTAMP",
+          "constraints": ["NOT NULL", "DEFAULT CURRENT_TIMESTAMP"],
+          "description": "Fecha de creación"
+        }
+      ],
+      "primaryKey": "id",
+      "indexes": [
+        {
+          "indexName": "idx_modules_subject",
+          "columns": ["subject"],
+          "type": "BTREE",
+          "description": "Filtro por materia"
+        },
+        {
+          "indexName": "idx_modules_level",
+          "columns": ["level"],
+          "type": "BTREE",
+          "description": "Filtro por nivel"
+        },
+        {
+          "indexName": "idx_modules_subject_level",
+          "columns": ["subject", "level"],
+          "type": "BTREE",
+          "description": "Búsqueda combinada por materia y nivel"
+        }
+      ],
+      "constraints": [
+        {
+          "type": "CHECK",
+          "name": "check_subject_valid",
+          "condition": "subject IN ('matematicas', 'español', 'ciencias', 'historia', 'ingles', 'educacion_fisica', 'artes')"
+        },
+        {
+          "type": "CHECK",
+          "name": "check_level_valid",
+          "condition": "level IN ('primaria', 'secundaria', 'preparatoria')"
+        }
+      ],
+      "seedData": "REQUERIDO. Se deben cargar módulos hardcodeados en alcance inicial. Ejemplo:\n- Fracciones Básicas (Matemáticas, Primaria, grados 4-6)\n- Suma de Fracciones (Matemáticas, Primaria)\n- Geometría Básica (Matemáticas, Primaria)\n- Comprensión Lectora (Español, Primaria)\n- Etc. (mínimo 15 módulos por materia)"
+    },
+    {
+      "tableId": "TBL-ADM-008",
+      "tableName": "students",
+      "description": "Tabla de estudiantes. Almacena información de perfil de estudiantes creados o importados al sistema",
+      "criticality": "P0",
+      "sourceStory": "US-ADM-002",
+      "note": "Tabla existente de EAI-001 (Fundamentos). Se documenta aquí por completitud.",
+      "columns": [
+        {
+          "columnName": "id",
+          "dataType": "UUID",
+          "constraints": ["PRIMARY KEY", "NOT NULL"],
+          "description": "Identificador único"
+        },
+        {
+          "columnName": "user_id",
+          "dataType": "UUID",
+          "constraints": ["NOT NULL", "UNIQUE", "FOREIGN KEY REFERENCES users(id) ON DELETE CASCADE"],
+          "description": "Relación a tabla de usuarios"
+        },
+        {
+          "columnName": "name",
+          "dataType": "VARCHAR(255)",
+          "constraints": ["NOT NULL"],
+          "description": "Nombre completo del estudiante"
+        },
+        {
+          "columnName": "email",
+          "dataType": "VARCHAR(255)",
+          "constraints": ["NULL", "UNIQUE"],
+          "description": "Email del estudiante (opcional pero debe ser único si se proporciona)"
+        },
+        {
+          "columnName": "avatar_url",
+          "dataType": "TEXT",
+          "constraints": ["NULL"],
+          "description": "URL del avatar/foto de perfil"
+        }
+      ],
+      "foreignKeys": [
+        {
+          "column": "user_id",
+          "referencesTable": "users",
+          "referencesColumn": "id",
+          "onDelete": "CASCADE"
+        }
+      ]
+    },
+    {
+      "tableId": "TBL-ADM-009",
+      "tableName": "users",
+      "description": "Tabla de usuarios del sistema (profesores y estudiantes). Tabla existente de EAI-001",
+      "criticality": "P0",
+      "sourceStory": "Usada por todas las US",
+      "note": "Tabla existente. Se documenta aquí para referencia de relaciones."
+    },
+    {
+      "tableId": "TBL-ADM-010",
+      "tableName": "activities",
+      "description": "Tabla de actividades educativas dentro de módulos. Tabla existente de EAI-002",
+      "criticality": "P0",
+      "sourceStory": "US-ADM-004, US-ADM-007",
+      "note": "Tabla existente. Se documenta para referencia. Necesaria para estadísticas de módulos.",
+      "columns": [
+        {
+          "columnName": "id",
+          "dataType": "UUID",
+          "constraints": ["PRIMARY KEY"],
+          "description": "Identificador único"
+        },
+        {
+          "columnName": "module_id",
+          "dataType": "UUID",
+          "constraints": ["NOT NULL", "FOREIGN KEY REFERENCES modules(id)"],
+          "description": "Módulo al que pertenece la actividad"
+        },
+        {
+          "columnName": "name",
+          "dataType": "VARCHAR(255)",
+          "constraints": ["NOT NULL"],
+          "description": "Nombre de la actividad"
+        }
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "functionId": "FNC-ADM-001",
+      "functionName": "count_classroom_students",
+      "description": "Calcula el número de estudiantes activos en un aula",
+      "sourceStory": "US-ADM-001, US-ADM-003",
+      "criticality": "P1",
+      "parameters": [
+        {
+          "paramName": "p_classroom_id",
+          "dataType": "UUID",
+          "description": "ID del aula"
+        }
+      ],
+      "returns": "INTEGER",
+      "logic": "SELECT COUNT(DISTINCT student_id) FROM classroom_students WHERE classroom_id = p_classroom_id",
+      "performance": "Considerar materializar vista si se usa frecuentemente",
+      "sql": "CREATE FUNCTION count_classroom_students(p_classroom_id UUID) RETURNS INTEGER AS $$ BEGIN RETURN (SELECT COUNT(DISTINCT student_id) FROM classroom_students WHERE classroom_id = p_classroom_id); END; $$ LANGUAGE plpgsql;"
+    },
+    {
+      "functionId": "FNC-ADM-002",
+      "functionName": "count_classroom_modules",
+      "description": "Calcula el número de módulos asignados a un aula",
+      "sourceStory": "US-ADM-001, US-ADM-003",
+      "criticality": "P1",
+      "parameters": [
+        {
+          "paramName": "p_classroom_id",
+          "dataType": "UUID",
+          "description": "ID del aula"
+        }
+      ],
+      "returns": "INTEGER",
+      "logic": "SELECT COUNT(DISTINCT module_id) FROM classroom_modules WHERE classroom_id = p_classroom_id",
+      "sql": "CREATE FUNCTION count_classroom_modules(p_classroom_id UUID) RETURNS INTEGER AS $$ BEGIN RETURN (SELECT COUNT(DISTINCT module_id) FROM classroom_modules WHERE classroom_id = p_classroom_id); END; $$ LANGUAGE plpgsql;"
+    },
+    {
+      "functionId": "FNC-ADM-003",
+      "functionName": "validate_classroom_student_limit",
+      "description": "Valida que el aula no exceda el límite de 100 estudiantes",
+      "sourceStory": "US-ADM-002",
+      "criticality": "P1",
+      "parameters": [
+        {
+          "paramName": "p_classroom_id",
+          "dataType": "UUID",
+          "description": "ID del aula"
+        }
+      ],
+      "returns": "BOOLEAN",
+      "logic": "Retorna true si el aula tiene menos de 100 estudiantes",
+      "sql": "CREATE FUNCTION validate_classroom_student_limit(p_classroom_id UUID) RETURNS BOOLEAN AS $$ BEGIN RETURN (SELECT COUNT(student_id) FROM classroom_students WHERE classroom_id = p_classroom_id) < 100; END; $$ LANGUAGE plpgsql;"
+    },
+    {
+      "functionId": "FNC-ADM-004",
+      "functionName": "get_module_stats",
+      "description": "Obtiene estadísticas de un módulo en un aula (estudiantes iniciados, completados, promedio de progreso)",
+      "sourceStory": "US-ADM-004",
+      "criticality": "P1",
+      "parameters": [
+        {
+          "paramName": "p_classroom_id",
+          "dataType": "UUID",
+          "description": "ID del aula"
+        },
+        {
+          "paramName": "p_module_id",
+          "dataType": "UUID",
+          "description": "ID del módulo"
+        }
+      ],
+      "returns": "TABLE (students_started INTEGER, students_completed INTEGER, total_students INTEGER, average_progress NUMERIC)",
+      "note": "Esta función requiere tabla de progreso de estudiantes que debería existir en EAI-002 o EAI-003"
+    }
+  ],
+  "triggers": [],
+  "views": [],
+  "sequences": [],
+  "indexes": [
+    {
+      "indexId": "IDX-ADM-001",
+      "indexName": "idx_classrooms_teacher_id",
+      "tableReference": "TBL-ADM-001",
+      "columns": ["teacher_id"],
+      "type": "BTREE",
+      "uniqueness": false,
+      "description": "Búsqueda rápida de aulas por profesor"
+    },
+    {
+      "indexId": "IDX-ADM-002",
+      "indexName": "idx_classrooms_teacher_created",
+      "tableReference": "TBL-ADM-001",
+      "columns": ["teacher_id", "created_at"],
+      "type": "BTREE",
+      "uniqueness": false,
+      "description": "Ordering de aulas por profesor y fecha (para listar en orden DESC)"
+    },
+    {
+      "indexId": "IDX-ADM-003",
+      "indexName": "idx_classroom_students_classroom_id",
+      "tableReference": "TBL-ADM-002",
+      "columns": ["classroom_id"],
+      "type": "BTREE",
+      "uniqueness": false,
+      "description": "Búsqueda de estudiantes por aula"
+    },
+    {
+      "indexId": "IDX-ADM-004",
+      "indexName": "idx_classroom_students_student_id",
+      "tableReference": "TBL-ADM-002",
+      "columns": ["student_id"],
+      "type": "BTREE",
+      "uniqueness": false,
+      "description": "Búsqueda de aulas por estudiante"
+    },
+    {
+      "indexId": "IDX-ADM-005",
+      "indexName": "idx_groups_classroom_id",
+      "tableReference": "TBL-ADM-003",
+      "columns": ["classroom_id"],
+      "type": "BTREE",
+      "uniqueness": false,
+      "description": "Búsqueda de grupos por aula"
+    },
+    {
+      "indexId": "IDX-ADM-006",
+      "indexName": "idx_group_students_group_id",
+      "tableReference": "TBL-ADM-004",
+      "columns": ["group_id"],
+      "type": "BTREE",
+      "uniqueness": false,
+      "description": "Búsqueda de estudiantes por grupo"
+    },
+    {
+      "indexId": "IDX-ADM-007",
+      "indexName": "idx_classroom_modules_classroom_id",
+      "tableReference": "TBL-ADM-005",
+      "columns": ["classroom_id"],
+      "type": "BTREE",
+      "uniqueness": false,
+      "description": "Búsqueda de módulos por aula"
+    },
+    {
+      "indexId": "IDX-ADM-008",
+      "indexName": "idx_classroom_modules_module_id",
+      "tableReference": "TBL-ADM-005",
+      "columns": ["module_id"],
+      "type": "BTREE",
+      "uniqueness": false,
+      "description": "Búsqueda de aulas que usan un módulo"
+    },
+    {
+      "indexId": "IDX-ADM-009",
+      "indexName": "idx_modules_subject_level",
+      "tableReference": "TBL-ADM-007",
+      "columns": ["subject", "level"],
+      "type": "BTREE",
+      "uniqueness": false,
+      "description": "Búsqueda de módulos por materia y nivel (filtros del catálogo)"
+    },
+    {
+      "indexId": "IDX-ADM-010",
+      "indexName": "idx_classroom_settings_classroom_id",
+      "tableReference": "TBL-ADM-006",
+      "columns": ["classroom_id"],
+      "type": "BTREE",
+      "uniqueness": false,
+      "description": "Acceso rápido a configuración por aula"
+    },
+    {
+      "indexId": "IDX-ADM-011",
+      "indexName": "idx_classroom_students_added_at",
+      "tableReference": "TBL-ADM-002",
+      "columns": ["classroom_id", "added_at"],
+      "type": "BTREE",
+      "uniqueness": false,
+      "description": "Ordering de estudiantes por fecha de ingreso"
+    },
+    {
+      "indexId": "IDX-ADM-012",
+      "indexName": "idx_classroom_modules_assigned_at",
+      "tableReference": "TBL-ADM-005",
+      "columns": ["classroom_id", "assigned_at"],
+      "type": "BTREE",
+      "uniqueness": false,
+      "description": "Ordering de módulos por fecha de asignación"
+    }
+  ],
+  "rlsPolicies": [
+    {
+      "policyId": "RLS-ADM-001",
+      "tableName": "classrooms",
+      "policyName": "classrooms_select_own",
+      "operation": "SELECT",
+      "expression": "auth.uid()::text = teacher_id",
+      "description": "Los profesores solo pueden ver sus propias aulas",
+      "criticality": "P0"
+    },
+    {
+      "policyId": "RLS-ADM-002",
+      "tableName": "classrooms",
+      "policyName": "classrooms_insert_own",
+      "operation": "INSERT",
+      "expression": "auth.uid()::text = teacher_id",
+      "description": "Los profesores solo pueden crear aulas como propietarios",
+      "criticality": "P0"
+    },
+    {
+      "policyId": "RLS-ADM-003",
+      "tableName": "classrooms",
+      "policyName": "classrooms_update_own",
+      "operation": "UPDATE",
+      "expression": "auth.uid()::text = teacher_id",
+      "description": "Los profesores solo pueden actualizar sus propias aulas",
+      "criticality": "P0"
+    },
+    {
+      "policyId": "RLS-ADM-004",
+      "tableName": "classrooms",
+      "policyName": "classrooms_delete_own",
+      "operation": "DELETE",
+      "expression": "auth.uid()::text = teacher_id",
+      "description": "Los profesores solo pueden eliminar sus propias aulas",
+      "criticality": "P0"
+    },
+    {
+      "policyId": "RLS-ADM-005",
+      "tableName": "groups",
+      "policyName": "groups_access_via_classroom",
+      "operation": "SELECT, UPDATE, DELETE",
+      "expression": "EXISTS (SELECT 1 FROM classrooms WHERE classrooms.id = groups.classroom_id AND classrooms.teacher_id = auth.uid()::text)",
+      "description": "Los profesores solo pueden acceder a grupos de sus propias aulas",
+      "criticality": "P0"
+    },
+    {
+      "policyId": "RLS-ADM-006",
+      "tableName": "classroom_settings",
+      "policyName": "settings_access_via_classroom",
+      "operation": "SELECT, UPDATE",
+      "expression": "EXISTS (SELECT 1 FROM classrooms WHERE classrooms.id = classroom_settings.classroom_id AND classrooms.teacher_id = auth.uid()::text)",
+      "description": "Los profesores solo pueden actualizar configuración de sus propias aulas",
+      "criticality": "P0"
+    }
+  ],
+  "migrations": [
+    {
+      "migrationId": "MIG-ADM-001",
+      "description": "Crear tabla classrooms con columnas básicas, FK a users, índices y RLS",
+      "dependencies": ["EAI-001 (tabla users)"],
+      "tables": ["classrooms"]
+    },
+    {
+      "migrationId": "MIG-ADM-002",
+      "description": "Crear tabla classroom_students (relación M-M entre classrooms y students)",
+      "dependencies": ["MIG-ADM-001", "EAI-001 (tabla students)"],
+      "tables": ["classroom_students"]
+    },
+    {
+      "migrationId": "MIG-ADM-003",
+      "description": "Crear tabla groups con FK a classrooms",
+      "dependencies": ["MIG-ADM-001"],
+      "tables": ["groups"]
+    },
+    {
+      "migrationId": "MIG-ADM-004",
+      "description": "Crear tabla group_students (relación M-M entre groups y students)",
+      "dependencies": ["MIG-ADM-003", "EAI-001 (tabla students)"],
+      "tables": ["group_students"]
+    },
+    {
+      "migrationId": "MIG-ADM-005",
+      "description": "Crear tabla modules con catálogo hardcodeado de contenido educativo",
+      "dependencies": [],
+      "tables": ["modules"],
+      "seedData": "Cargar módulos de prueba por materia"
+    },
+    {
+      "migrationId": "MIG-ADM-006",
+      "description": "Crear tabla classroom_modules (relación M-M entre classrooms y modules)",
+      "dependencies": ["MIG-ADM-001", "MIG-ADM-005"],
+      "tables": ["classroom_modules"]
+    },
+    {
+      "migrationId": "MIG-ADM-007",
+      "description": "Crear tabla classroom_settings (configuración 1-a-1 de aulas)",
+      "dependencies": ["MIG-ADM-001"],
+      "tables": ["classroom_settings"]
+    },
+    {
+      "migrationId": "MIG-ADM-008",
+      "description": "Crear funciones de lógica de negocio (count_students, count_modules, validate_limits)",
+      "dependencies": ["MIG-ADM-001", "MIG-ADM-002", "MIG-ADM-005", "MIG-ADM-006"],
+      "functions": ["count_classroom_students", "count_classroom_modules", "validate_classroom_student_limit", "get_module_stats"]
+    },
+    {
+      "migrationId": "MIG-ADM-009",
+      "description": "Crear índices para optimización de queries (búsquedas y ordering)",
+      "dependencies": ["MIG-ADM-001", "MIG-ADM-002", "MIG-ADM-003", "MIG-ADM-004", "MIG-ADM-005", "MIG-ADM-006", "MIG-ADM-007"],
+      "indexes": ["12 índices de BTREE"]
+    },
+    {
+      "migrationId": "MIG-ADM-010",
+      "description": "Crear políticas RLS para control de acceso por profesor",
+      "dependencies": ["MIG-ADM-001", "MIG-ADM-003", "MIG-ADM-007"],
+      "rlsPolicies": ["6 políticas RLS"]
+    }
+  ],
+  "constraints": [
+    {
+      "constraintId": "CST-ADM-001",
+      "tableReference": "TBL-ADM-001",
+      "constraintName": "check_level_valid",
+      "type": "CHECK",
+      "condition": "level IN ('primaria', 'secundaria', 'preparatoria')",
+      "description": "Validar que el nivel sea uno de los valores permitidos"
+    },
+    {
+      "constraintId": "CST-ADM-002",
+      "tableReference": "TBL-ADM-001",
+      "constraintName": "check_grade_range",
+      "type": "CHECK",
+      "condition": "grade >= 1 AND grade <= 6",
+      "description": "El grado debe estar entre 1 y 6"
+    },
+    {
+      "constraintId": "CST-ADM-003",
+      "tableReference": "TBL-ADM-002",
+      "constraintName": "uc_classroom_student_pair",
+      "type": "UNIQUE",
+      "columns": ["classroom_id", "student_id"],
+      "description": "Evita agregar el mismo estudiante dos veces a la misma aula"
+    },
+    {
+      "constraintId": "CST-ADM-004",
+      "tableReference": "TBL-ADM-003",
+      "constraintName": "uc_group_name_per_classroom",
+      "type": "UNIQUE",
+      "columns": ["classroom_id", "name"],
+      "description": "Los nombres de grupos deben ser únicos dentro de cada aula"
+    },
+    {
+      "constraintId": "CST-ADM-005",
+      "tableReference": "TBL-ADM-003",
+      "constraintName": "check_color_format",
+      "type": "CHECK",
+      "condition": "color ~ '^#[0-9A-Fa-f]{6}$'",
+      "description": "El color debe ser un hexadecimal válido (#RRGGBB)"
+    },
+    {
+      "constraintId": "CST-ADM-006",
+      "tableReference": "TBL-ADM-004",
+      "constraintName": "uc_group_student_pair",
+      "type": "UNIQUE",
+      "columns": ["group_id", "student_id"],
+      "description": "Un estudiante no puede estar dos veces en el mismo grupo"
+    },
+    {
+      "constraintId": "CST-ADM-007",
+      "tableReference": "TBL-ADM-005",
+      "constraintName": "uc_classroom_module_pair",
+      "type": "UNIQUE",
+      "columns": ["classroom_id", "module_id"],
+      "description": "No se puede asignar el mismo módulo dos veces a la misma aula"
+    },
+    {
+      "constraintId": "CST-ADM-008",
+      "tableReference": "TBL-ADM-006",
+      "constraintName": "check_date_order",
+      "type": "CHECK",
+      "condition": "end_date IS NULL OR start_date IS NULL OR end_date > start_date",
+      "description": "La fecha de fin debe ser posterior a la fecha de inicio"
+    },
+    {
+      "constraintId": "CST-ADM-009",
+      "tableReference": "TBL-ADM-006",
+      "constraintName": "uc_classroom_id_unique",
+      "type": "UNIQUE",
+      "columns": ["classroom_id"],
+      "description": "Una sola configuración por aula (relación 1-a-1)"
+    },
+    {
+      "constraintId": "CST-ADM-010",
+      "tableReference": "TBL-ADM-007",
+      "constraintName": "check_subject_valid",
+      "type": "CHECK",
+      "condition": "subject IN ('matematicas', 'español', 'ciencias', 'historia', 'ingles', 'educacion_fisica', 'artes')",
+      "description": "Validar materia permitida"
+    },
+    {
+      "constraintId": "CST-ADM-011",
+      "tableReference": "TBL-ADM-007",
+      "constraintName": "check_level_valid",
+      "type": "CHECK",
+      "condition": "level IN ('primaria', 'secundaria', 'preparatoria')",
+      "description": "Validar nivel educativo"
+    }
+  ],
+  "businessRules": [
+    {
+      "ruleId": "BR-ADM-001",
+      "title": "Límite de 20 aulas por profesor",
+      "description": "Un profesor no puede tener más de 20 aulas activas",
+      "sourceStory": "US-ADM-001",
+      "enforcement": "APLICACIÓN",
+      "note": "No implementar en BD (constraint), sino en lógica de negocio (validación en servicio)"
+    },
+    {
+      "ruleId": "BR-ADM-002",
+      "title": "Límite de 100 estudiantes por aula",
+      "description": "Un aula no puede tener más de 100 estudiantes matriculados",
+      "sourceStory": "US-ADM-002",
+      "enforcement": "APLICACIÓN",
+      "note": "Validar en servicio antes de insertar en classroom_students"
+    },
+    {
+      "ruleId": "BR-ADM-003",
+      "title": "Nombres únicos de grupos por aula",
+      "description": "No pueden existir dos grupos con el mismo nombre en la misma aula",
+      "sourceStory": "US-ADM-005",
+      "enforcement": "BASE DE DATOS",
+      "implementedAs": "UNIQUE(classroom_id, name)"
+    },
+    {
+      "ruleId": "BR-ADM-004",
+      "title": "Un estudiante por aula es único",
+      "description": "Un estudiante no puede estar matriculado dos veces en la misma aula",
+      "sourceStory": "US-ADM-002",
+      "enforcement": "BASE DE DATOS",
+      "implementedAs": "UNIQUE(classroom_id, student_id)"
+    },
+    {
+      "ruleId": "BR-ADM-005",
+      "title": "Control de acceso de profesor a aula",
+      "description": "Un profesor solo puede ver, modificar y eliminar sus propias aulas",
+      "sourceStory": "US-ADM-001 a US-ADM-007",
+      "enforcement": "BASE DE DATOS + APLICACIÓN",
+      "implementedAs": "RLS policy: teacher_id = auth.uid()"
+    },
+    {
+      "ruleId": "BR-ADM-006",
+      "title": "Control de acceso de profesor a grupos",
+      "description": "Un profesor solo puede gestionar grupos en sus propias aulas",
+      "sourceStory": "US-ADM-005",
+      "enforcement": "BASE DE DATOS",
+      "implementedAs": "RLS policy: verificar que el grupo pertenece a aula del profesor"
+    },
+    {
+      "ruleId": "BR-ADM-007",
+      "title": "Validación de fechas de aula",
+      "description": "La fecha de fin debe ser posterior a la fecha de inicio (si ambas se proporcionan)",
+      "sourceStory": "US-ADM-006",
+      "enforcement": "BASE DE DATOS",
+      "implementedAs": "CHECK (end_date > start_date)"
+    },
+    {
+      "ruleId": "BR-ADM-008",
+      "title": "Módulo no se elimina al remover de aula",
+      "description": "Al remover un módulo de un aula, el módulo no se elimina (solo la asignación). El progreso de estudiantes se mantiene",
+      "sourceStory": "US-ADM-004",
+      "enforcement": "APLICACIÓN",
+      "implementedAs": "DELETE FROM classroom_modules (no cascada a modules)"
+    },
+    {
+      "ruleId": "BR-ADM-009",
+      "title": "Estudiante no se elimina al remover de aula",
+      "description": "Al remover un estudiante de un aula, el estudiante no se elimina (solo la relación). Su cuenta y progreso se mantienen",
+      "sourceStory": "US-ADM-002",
+      "enforcement": "APLICACIÓN",
+      "implementedAs": "DELETE FROM classroom_students (no cascada a students)"
+    },
+    {
+      "ruleId": "BR-ADM-010",
+      "title": "Estudiante puede estar en múltiples grupos",
+      "description": "Un estudiante puede pertenecer a varios grupos dentro de la misma aula",
+      "sourceStory": "US-ADM-005",
+      "enforcement": "BASE DE DATOS",
+      "implementedAs": "group_students es M-M, no hay exclusividad"
+    }
+  ],
+  "performanceConsiderations": [
+    {
+      "id": "PERF-ADM-001",
+      "concern": "Búsqueda lenta de aulas por profesor",
+      "mitigation": "Índice BTREE en (teacher_id, created_at) para listar y ordenar rápido",
+      "expectedQueryTime": "< 100ms para profesor con 20 aulas"
+    },
+    {
+      "id": "PERF-ADM-002",
+      "concern": "Conteo de estudiantes en aula (JOIN con students)",
+      "mitigation": "Función SQL optimizada count_classroom_students() o materializar en caché",
+      "expectedQueryTime": "< 50ms"
+    },
+    {
+      "id": "PERF-ADM-003",
+      "concern": "Filtrado y búsqueda en catálogo de módulos",
+      "mitigation": "Índices en (subject, level) para búsqueda rápida",
+      "expectedQueryTime": "< 100ms para catálogo de 100+ módulos"
+    },
+    {
+      "id": "PERF-ADM-004",
+      "concern": "Estadísticas de módulos (estudiantes iniciados/completados)",
+      "mitigation": "Función get_module_stats() requiere join con tabla de progreso (de EAI-002/EAI-003). Considerar caché if bottleneck",
+      "expectedQueryTime": "< 200ms"
+    },
+    {
+      "id": "PERF-ADM-005",
+      "concern": "Validación de límites (20 aulas, 100 estudiantes)",
+      "mitigation": "Usar COUNT queries simples con índices en teacher_id y classroom_id",
+      "expectedQueryTime": "< 50ms"
+    }
+  ],
+  "securityConsiderations": [
+    {
+      "id": "SEC-ADM-001",
+      "concern": "Profesores accediendo aulas de otros",
+      "mitigation": "RLS Policies en classrooms con condición teacher_id = auth.uid()",
+      "criticality": "P0"
+    },
+    {
+      "id": "SEC-ADM-002",
+      "concern": "Profesores modificando configuración de aulas de otros",
+      "mitigation": "RLS Policies en classroom_settings verificando acceso via classrooms",
+      "criticality": "P0"
+    },
+    {
+      "id": "SEC-ADM-003",
+      "concern": "Revelación de datos de estudiantes entre profesores",
+      "mitigation": "RLS en classroom_students y group_students (acceso indirecto vía classrooms)",
+      "criticality": "P1"
+    },
+    {
+      "id": "SEC-ADM-004",
+      "concern": "Límites de aulas/estudiantes se pueden bypassear",
+      "mitigation": "Validar en aplicación (backend), no solo en BD",
+      "criticality": "P1"
+    },
+    {
+      "id": "SEC-ADM-005",
+      "concern": "Datos sensibles en módulos (hardcodeados)",
+      "mitigation": "Módulos de prueba no contienen datos reales. Seeds deben auditarse",
+      "criticality": "P2"
+    }
+  ],
+  "notes": {
+    "dependenciesOnOtherEpics": [
+      "EAI-001 (Fundamentos): Tablas users, students, autenticación y guards",
+      "EAI-002 (Actividades): Tabla modules, activities, contenido educativo",
+      "EAI-003 (Gamificación): Tabla de progreso de estudiantes (para estadísticas de módulos)"
+    ],
+    "ambiguities": [
+      "Límite de 20 aulas por profesor: documentación menciona 'hardcodeado' pero no hay constraint BD. Validar en aplicación.",
+      "Nombres duplicados en aulas: documentación dice 'pueden repetirse', pero en US-ADM-005 se menciona 'nombre único dentro del aula'. Se interpreta que names son únicos DENTRO de aula, no globalmente.",
+      "Estadísticas de módulos (estudiantes iniciados/completados): requiere tabla de progreso que no existe en EAI-005. Asumiendo que viene de EAI-002/EAI-003."
+    ],
+    "futureExtensions": [
+      "EXT-001 (Portal Maestros Completo): Soft delete, archivado, clonación de aulas, co-profesores, importación CSV",
+      "EXT-005 (Reportes Avanzados): Heatmaps, análisis de patrones, métricas de engagement",
+      "Campos adicionales de aula: horario, aula física, color, código de clase para auto-registro"
+    ],
+    "implementationOrder": [
+      "1. MIG-ADM-001: classrooms (P0)",
+      "2. MIG-ADM-002: classroom_students (P0)",
+      "3. MIG-ADM-005: modules + seeds (P0)",
+      "4. MIG-ADM-006: classroom_modules (P0)",
+      "5. MIG-ADM-003: groups (P1)",
+      "6. MIG-ADM-004: group_students (P1)",
+      "7. MIG-ADM-007: classroom_settings (P1)",
+      "8. MIG-ADM-008: funciones SQL (P1)",
+      "9. MIG-ADM-009: índices (P1)",
+      "10. MIG-ADM-010: RLS policies (P0)"
+    ]
+  },
+  "summary_by_user_story": {
+    "US-ADM-001": {
+      "title": "Gestión de Aulas (CRUD)",
+      "tables": ["classrooms"],
+      "functions": ["count_classroom_students", "count_classroom_modules"],
+      "indexes": ["idx_classrooms_teacher_id", "idx_classrooms_teacher_created"],
+      "rls": ["classrooms_select_own", "classrooms_insert_own", "classrooms_update_own", "classrooms_delete_own"]
+    },
+    "US-ADM-002": {
+      "title": "Gestión de Estudiantes en Aula",
+      "tables": ["classroom_students"],
+      "functions": ["count_classroom_students", "validate_classroom_student_limit"],
+      "constraints": ["UNIQUE(classroom_id, student_id)", "CHECK max 100 estudiantes"],
+      "indexes": ["idx_classroom_students_classroom_id", "idx_classroom_students_added_at"]
+    },
+    "US-ADM-003": {
+      "title": "Dashboard de Maestro",
+      "tables": ["classrooms", "classroom_students", "classroom_modules"],
+      "functions": ["count_classroom_students", "count_classroom_modules"],
+      "note": "Requiere queries de agregación en applicación"
+    },
+    "US-ADM-004": {
+      "title": "Asignación de Módulos",
+      "tables": ["classroom_modules", "modules"],
+      "functions": ["get_module_stats"],
+      "constraints": ["UNIQUE(classroom_id, module_id)"],
+      "indexes": ["idx_classroom_modules_classroom_id", "idx_modules_subject_level"]
+    },
+    "US-ADM-005": {
+      "title": "Gestión de Grupos",
+      "tables": ["groups", "group_students"],
+      "constraints": ["UNIQUE(classroom_id, name)", "UNIQUE(group_id, student_id)", "CHECK color format"],
+      "indexes": ["idx_groups_classroom_id", "idx_group_students_group_id"],
+      "rls": ["groups_access_via_classroom"]
+    },
+    "US-ADM-006": {
+      "title": "Configuración Básica de Aula",
+      "tables": ["classroom_settings"],
+      "constraints": ["CHECK end_date > start_date", "UNIQUE(classroom_id)"],
+      "rls": ["settings_access_via_classroom"]
+    },
+    "US-ADM-007": {
+      "title": "Vista de Actividad del Aula",
+      "tables": ["Requiere activity_logs de EAI-002/EAI-003"],
+      "functions": ["Funciones para contar estudiantes activos, módulos en progreso"],
+      "note": "No introduce nuevas tablas en EAI-005, pero requiere activity tracking"
+    }
+  }
+}

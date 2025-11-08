@@ -1,0 +1,108 @@
+name: Validate Constants SSOT
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  validate-constants:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install Backend dependencies
+        run: cd apps/backend && npm ci
+
+      - name: Install Frontend dependencies
+        run: cd apps/frontend && npm ci
+
+      - name: Sync ENUMs (Backend → Frontend)
+        run: npm run sync:enums
+
+      - name: Validate Constants Usage (No Hardcoding)
+        run: npm run validate:constants
+
+      - name: Validate API Contract (Backend ↔ Frontend)
+        run: npm run validate:api-contract
+
+      - name: Check ENUMs Synchronization
+        run: |
+          if ! diff apps/backend/src/shared/constants/enums.constants.ts \
+                    apps/frontend/src/shared/constants/enums.constants.ts; then
+            echo "❌ ERROR: ENUMs are not synchronized between Backend and Frontend"
+            echo ""
+            echo "Backend ENUMs differ from Frontend ENUMs."
+            echo "This usually happens when:"
+            echo "  1. Backend enums.constants.ts was modified manually"
+            echo "  2. Frontend enums.constants.ts was modified manually (should never happen)"
+            echo "  3. sync:enums script was not run after Backend changes"
+            echo ""
+            echo "To fix:"
+            echo "  1. Run: npm run sync:enums"
+            echo "  2. Commit the changes to Frontend enums.constants.ts"
+            echo "  3. Push again"
+            exit 1
+          fi
+          echo "✅ ENUMs are properly synchronized"
+
+      - name: Report Success
+        if: success()
+        run: |
+          echo "╔══════════════════════════════════════════════════════════════╗"
+          echo "║                                                              ║"
+          echo "║  ✅ Constants SSOT Validation PASSED                         ║"
+          echo "║                                                              ║"
+          echo "║  All validations completed successfully:                     ║"
+          echo "║  • No hardcoding detected                                    ║"
+          echo "║  • API contract synchronized (Backend ↔ Frontend)            ║"
+          echo "║  • ENUMs synchronized (Backend ↔ Frontend)                   ║"
+          echo "║                                                              ║"
+          echo "║  Your PR is ready for code review! 🚀                        ║"
+          echo "║                                                              ║"
+          echo "╚══════════════════════════════════════════════════════════════╝"
+
+      - name: Report Failure
+        if: failure()
+        run: |
+          echo "╔══════════════════════════════════════════════════════════════╗"
+          echo "║                                                              ║"
+          echo "║  ❌ Constants SSOT Validation FAILED                         ║"
+          echo "║                                                              ║"
+          echo "║  Your PR has violations that must be fixed:                  ║"
+          echo "║                                                              ║"
+          echo "║  Check the logs above for specific errors.                   ║"
+          echo "║                                                              ║"
+          echo "║  Common issues:                                              ║"
+          echo "║  • P0 violations (hardcoded schemas/tables/routes)           ║"
+          echo "║  • API contract mismatch (Backend vs Frontend routes)        ║"
+          echo "║  • ENUMs not synchronized                                    ║"
+          echo "║                                                              ║"
+          echo "║  How to fix:                                                 ║"
+          echo "║  1. Read the error messages above                            ║"
+          echo "║  2. Fix violations in your code                              ║"
+          echo "║  3. Run locally: npm run validate:all                        ║"
+          echo "║  4. Commit and push fixes                                    ║"
+          echo "║                                                              ║"
+          echo "║  Documentation:                                              ║"
+          echo "║  • docs/CONSTANTS-ARCHITECTURE.md                            ║"
+          echo "║  • docs/POLITICA-CONSTANTS-SSOT.md                           ║"
+          echo "║                                                              ║"
+          echo "╚══════════════════════════════════════════════════════════════╝"
+          exit 1

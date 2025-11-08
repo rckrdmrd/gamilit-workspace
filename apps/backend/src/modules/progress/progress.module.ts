@@ -1,0 +1,89 @@
+import { Module as NestModule } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { DB_SCHEMAS } from '@/shared/constants';
+import * as entities from './entities';
+import * as services from './services';
+import * as controllers from './controllers';
+import { PendingActivitiesService } from './services/pending-activities.service';
+import { RecentActivityService } from './services/recent-activity.service';
+import { Module as EducationalModule } from '../educational/entities/module.entity';
+import { Exercise } from '../educational/entities/exercise.entity';
+
+/**
+ * ProgressModule
+ *
+ * @description Módulo de Progress Tracking para gestión de progreso de estudiantes.
+ *
+ * Responsabilidades:
+ * - Tracking de progreso por módulo educativo
+ * - Gestión de sesiones de aprendizaje
+ * - Registro de intentos y envíos de ejercicios
+ * - Misiones programadas para aulas (classroom-based)
+ * - Analytics y estadísticas de aprendizaje
+ *
+ * Entidades (5):
+ * - ModuleProgress: Progreso de estudiantes por módulo
+ * - LearningSession: Sesiones de aprendizaje con tracking de tiempo
+ * - ExerciseAttempt: Intentos individuales de ejercicios
+ * - ExerciseSubmission: Envíos finales y calificaciones
+ * - ScheduledMission: Misiones programadas con deadlines
+ *
+ * Services (5):
+ * - ModuleProgressService: 11 métodos CRUD + analytics
+ * - LearningSessionService: 8 métodos de tracking de sesiones
+ * - ExerciseAttemptService: 12 métodos de intentos y scoring
+ * - ExerciseSubmissionService: 13 métodos de submissions y grading
+ * - ScheduledMissionService: 13 métodos de misiones colectivas
+ *
+ * Controllers (5):
+ * - ModuleProgressController: 10 endpoints REST
+ * - LearningSessionController: 8 endpoints REST
+ * - ExerciseAttemptController: 9 endpoints REST
+ * - ExerciseSubmissionController: 11 endpoints REST
+ * - ScheduledMissionController: 9 endpoints REST
+ *
+ * Total: 47 endpoints REST API
+ *
+ * @see /docs/02-especificaciones-tecnicas/apis/progress-api/README.md
+ */
+@NestModule({
+  imports: [
+    // Connection 'progress' handles schema 'progress_tracking'
+    TypeOrmModule.forFeature(
+      [
+        entities.ModuleProgress,
+        entities.LearningSession,
+        entities.ExerciseAttempt,
+        entities.ExerciseSubmission,
+        entities.ScheduledMission,
+      ],
+      'progress',
+    ),
+    // Import Module and Exercise entities from educational schema
+    TypeOrmModule.forFeature([EducationalModule, Exercise], 'educational'),
+  ],
+  providers: [
+    services.ModuleProgressService,
+    services.LearningSessionService,
+    services.ExerciseAttemptService,
+    services.ExerciseSubmissionService,
+    services.ScheduledMissionService,
+    PendingActivitiesService,
+    RecentActivityService,
+  ],
+  controllers: [
+    controllers.ModuleProgressController,
+    controllers.LearningSessionController,
+    controllers.ExerciseAttemptController,
+    controllers.ExerciseSubmissionController,
+    controllers.ScheduledMissionController,
+  ],
+  exports: [
+    services.ModuleProgressService,
+    services.LearningSessionService,
+    services.ExerciseAttemptService,
+    services.ExerciseSubmissionService,
+    services.ScheduledMissionService,
+  ],
+})
+export class ProgressModule {}

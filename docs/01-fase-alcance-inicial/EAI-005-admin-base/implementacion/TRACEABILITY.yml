@@ -1,0 +1,18 @@
+epic_code: EAI-005
+epic_name: Administración Base
+phase: 1
+budget_mxn: 16800
+story_points: 42
+status: completed
+
+# NOTA: US-ADM-003 (Dashboard Maestro, 8 SP) fue movida a EXT-001 como US-PM-000
+# Ya que pertenece al alcance v2 (Portal Maestros) y no al alcance inicial v1
+# EAI-005 ahora contiene 6 User Stories: US-ADM-001, US-ADM-002, US-ADM-004, US-ADM-005, US-ADM-006, US-ADM-007
+
+implementation:
+  database:
+    schemas: [admin_dashboard, auth_management]
+  backend:
+    module: admin
+  frontend:
+    features: [admin/dashboard, admin/users]

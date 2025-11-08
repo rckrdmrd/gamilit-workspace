@@ -1,0 +1,118 @@
+module: M-AUTH
+version: '2.0'
+owners:
+- '@tech-lead'
+- '@dev-team'
+last_updated: '2025-11-07'
+status: migrated
+req:
+- id: M-AUTH-REQ-001
+  title: 'M-AUTH-REQ-001: Sistema de Roles de Usuario'
+  status: implemented
+  links:
+    spec:
+    - M-AUTH-ET-001
+    plan: []
+    tests: []
+    objs: []
+- id: M-AUTH-REQ-002
+  title: 'M-AUTH-REQ-002: Estados de Cuenta de Usuario'
+  status: implemented
+  links:
+    spec:
+    - M-AUTH-ET-002
+    plan: []
+    tests: []
+    objs: []
+- id: M-AUTH-REQ-003
+  title: 'M-AUTH-REQ-003: Proveedores de Autenticación OAuth'
+  status: implemented
+  links:
+    spec:
+    - M-AUTH-ET-003
+    plan: []
+    tests: []
+    objs: []
+spec:
+- id: M-AUTH-ET-001
+  title: 'M-AUTH-ET-001: RBAC (Role-Based Access Control)'
+  status: implemented
+  derives_from:
+  - M-AUTH-REQ-001
+  implements:
+    objs: []
+- id: M-AUTH-ET-002
+  title: 'M-AUTH-ET-002: Gestión de Estados de Cuenta'
+  status: implemented
+  derives_from:
+  - M-AUTH-REQ-002
+  implements:
+    objs: []
+- id: M-AUTH-ET-003
+  title: 'M-AUTH-ET-003: OAuth 2.0 Providers'
+  status: implemented
+  derives_from:
+  - M-AUTH-REQ-003
+  implements:
+    objs: []
+tests: []
+objects:
+  db:
+  - OBJ-DB-AUTH-ENUM-AAL-LEVEL
+  - OBJ-DB-AUTH-ENUM-CODE-CHALLENGE-METHOD
+  - OBJ-DB-AUTH-IDX-USERS
+  - OBJ-DB-AUTH-FN-ASSIGN-ROLE-TO-USER
+  - OBJ-DB-AUTH-FN-GET-USER-ROLE
+  - OBJ-DB-AUTH-FN-USER-HAS-PERMISSION
+  - OBJ-DB-AUTH-FN-REVOKE-ROLE-FROM-USER
+  - OBJ-DB-AUTH-FN-HASH-TOKEN
+  - OBJ-DB-AUTH-FN-UPDATE-USER-PREFERENCES
+  - OBJ-DB-AUTH-IDX-IDX-USER-PREFERENCES-THEME
+  - OBJ-DB-AUTH-IDX-IDX-USER-ROLES-PERMISSIONS-GIN
+  - OBJ-DB-AUTH-UNKN-01-POLICIES
+  - OBJ-DB-AUTH-TRG-TENANTS
+  - OBJ-DB-AUTH-IDX-AUTH-ATTEMPTS
+  - OBJ-DB-AUTH-TRG-PROFILES
+  - OBJ-DB-AUTH-TRG-USER-ROLES
+  - OBJ-DB-AUTH-TRG-AUTH-PROVIDERS
+  - OBJ-DB-AUTH-IDX-EMAIL-VERIFICATION-TOKENS
+  - OBJ-DB-AUTH-IDX-PASSWORD-RESET-TOKENS
+  - OBJ-DB-AUTH-IDX-SECURITY-EVENTS
+  - OBJ-DB-AUTH-TRG-USER-PREFERENCES
+  - OBJ-DB-AUTH-TRG-MEMBERSHIPS
+  - OBJ-DB-AUTH-IDX-USER-SESSIONS
+  - OBJ-DB-AUTH-IDX-FOR
+  - OBJ-DB-AUTH-TRG-TRG-MEMBERSHIPS-UPDATED-AT
+  - OBJ-DB-AUTH-TRG-TRG-AUDIT-PROFILE-CHANGES
+  - OBJ-DB-AUTH-TRG-TRG-INITIALIZE-USER-STATS
+  - OBJ-DB-AUTH-TRG-TRG-PROFILES-UPDATED-AT
+  - OBJ-DB-AUTH-TRG-TRG-TENANTS-UPDATED-AT
+  - OBJ-DB-AUTH-TRG-TRG-USER-ROLES-UPDATED-AT
+  backend:
+  - OBJ-BE-AUTH-CTRL-AUTH-CONTROLLER
+  - OBJ-BE-AUTH-CTRL-PASSWORD-CONTROLLER
+  - OBJ-BE-AUTH-SVC-AUTH-SERVICE
+  - OBJ-BE-AUTH-SVC-EMAIL-VERIFICATION-SERVICE
+  - OBJ-BE-AUTH-SVC-PASSWORD-RECOVERY-SERVICE
+  - OBJ-BE-AUTH-SVC-SECURITY-SERVICE
+  - OBJ-BE-AUTH-SVC-SESSION-MANAGEMENT-SERVICE
+  - OBJ-BE-AUTH-ENT-AUTH-ATTEMPT-ENTITY
+  - OBJ-BE-AUTH-ENT-AUTH-PROVIDER-ENTITY
+  - OBJ-BE-AUTH-ENT-EMAIL-VERIFICATION-TOKEN-ENTITY
+  - OBJ-BE-AUTH-ENT-MEMBERSHIP-ENTITY
+  - OBJ-BE-AUTH-ENT-PASSWORD-RESET-TOKEN-ENTITY
+  - OBJ-BE-AUTH-ENT-PROFILE-ENTITY
+  - OBJ-BE-AUTH-ENT-TENANT-ENTITY
+  - OBJ-BE-AUTH-ENT-USER-ROLE-ENTITY
+  - OBJ-BE-AUTH-ENT-USER-SESSION-ENTITY
+  - OBJ-BE-AUTH-ENT-USER-ENTITY
+  frontend: []
+dependencies: []
+metrics:
+  req_count: 3
+  spec_count: 3
+  test_count: 0
+  obj_count: 47
+  coverage_req_to_spec: 100.0
+  coverage_req_to_test: 0
+  coverage_req_to_obj: 1566.7

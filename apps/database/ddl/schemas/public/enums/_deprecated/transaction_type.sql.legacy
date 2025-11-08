@@ -1,0 +1,17 @@
+-- Nombre: transaction_type
+-- Descripción: Tipos de transacciones de ML Coins
+-- Schema: public
+-- Fuente: SA-DB-005
+
+CREATE TYPE public.transaction_type AS ENUM (
+    'earned_exercise',
+    'earned_achievement',
+    'earned_daily_bonus',
+    'earned_rank_promotion',
+    'spent_hint',
+    'spent_unlock_content',
+    'spent_customization',
+    'refund',
+    'admin_adjustment',
+    'gift'
+);

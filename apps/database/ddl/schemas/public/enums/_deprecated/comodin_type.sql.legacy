@@ -1,0 +1,6 @@
+-- Nombre: comodin_type
+-- Descripción: Tipos de comodines disponibles para ayuda en ejercicios
+-- Schema: public
+-- Fuente: SA-DB-003
+
+CREATE TYPE public.comodin_type AS ENUM ('pistas', 'vision_lectora', 'segunda_oportunidad');

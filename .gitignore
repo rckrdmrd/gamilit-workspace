@@ -1,0 +1,230 @@
+# GAMILIT Monorepo - .gitignore
+# Generado: 2025-11-01 (RFC-0001)
+
+# === NODE.JS ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# === TYPESCRIPT ===
+*.tsbuildinfo
+dist/
+build/
+*.js.map
+
+# === ANGULAR / NX ===
+.angular/
+.nx/cache/
+.nx/workspace-data/
+
+# === NESTJS ===
+/apps/backend/dist/
+/apps/backend/build/
+
+# === ENVIRONMENT FILES ===
+# IMPORTANTE: Nunca commitear secrets reales
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+.env.test
+
+# Archivos de configuración con secrets
+config/secrets.json
+config/credentials.json
+**/*secrets*.json
+**/*credentials*.json
+
+# === DATABASES ===
+# PostgreSQL
+*.sql.backup
+*.dump
+*.pgdata
+
+# Local database files
+*.sqlite
+*.sqlite3
+*.db
+
+# Database connection strings (excepción: ejemplos con .example)
+database.config.ts
+!database.config.example.ts
+
+# === LOGS ===
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# PM2 logs
+pm2-logs/
+*.pm2.log
+
+# === TESTING ===
+coverage/
+.nyc_output/
+*.lcov
+
+# Jest
+jest-cache/
+
+# Cypress
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
+
+# E2E reports
+e2e-reports/
+test-results/
+
+# === IDEs and EDITORS ===
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+.idea_modules/
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# === OS FILES ===
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+.directory
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# === DOCKER ===
+# No ignorar Dockerfiles, solo archivos temporales
+docker-compose.override.yml
+.dockerignore.local
+
+# === BUILD ARTIFACTS ===
+/apps/*/dist/
+/apps/*/build/
+/libs/*/dist/
+
+# Webpack
+.webpack/
+
+# === DEPLOYMENT ===
+# PM2
+ecosystem.config.js.local
+pm2.config.js.local
+
+# Deploy keys (excepción: .example files)
+*.pem
+*.key
+!*.example.pem
+!*.example.key
+
+# SSL certificates (excepción: self-signed para dev)
+*.crt
+*.cer
+!dev-cert.crt
+
+# === TEMP FILES ===
+tmp/
+temp/
+*.tmp
+*.temp
+*.cache
+
+# === ARTIFACTS (parcial) ===
+# Mantener reportes importantes, ignorar temporales
+/artifacts/temp/
+/artifacts/cache/
+/artifacts/**/*.tmp
+
+# === CLAUDE CODE ===
+# No ignorar configuración, solo archivos temporales
+/.claude/cache/
+/.claude/temp/
+
+# === MIGRATION (temporal) ===
+# Durante migración, mantener docs de análisis
+# Descomentar después de migración completa:
+# /docs-analysis/
+
+# === ARCHIVOS ESPECÍFICOS GRANDES ===
+# Si hay archivos markdown extremadamente grandes (>50MB), considerarlos para LFS
+# *.large.md
+
+# === PACKAGE MANAGERS ===
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
+# PNPM
+.pnpm-store/
+
+# === MONITORING ===
+# Application monitoring
+newrelic_agent.log
+.monitors/
+
+# === MISC ===
+# Backups
+*.backup
+*.bak
+*.old
+
+# Compressed files (si no son assets del proyecto)
+*.zip
+*.tar.gz
+*.rar
+!assets/**/*.zip

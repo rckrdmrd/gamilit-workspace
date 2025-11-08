@@ -1,0 +1,58 @@
+module: M-NOT
+version: '2.0'
+owners:
+- '@tech-lead'
+- '@dev-team'
+last_updated: '2025-11-07'
+status: migrated
+req:
+- id: M-NOT-REQ-001
+  title: 'M-NOT-REQ-001: Tipos de Notificaciones'
+  status: implemented
+  links:
+    spec:
+    - M-NOT-ET-001
+    plan: []
+    tests: []
+    objs: []
+- id: M-NOT-REQ-002
+  title: 'M-NOT-REQ-002: Preferencias de Notificaciones'
+  status: implemented
+  links:
+    spec:
+    - M-NOT-ET-002
+    plan: []
+    tests: []
+    objs: []
+spec:
+- id: M-NOT-ET-001
+  title: 'M-NOT-ET-001: Implementación del Sistema de Notificaciones'
+  status: implemented
+  derives_from:
+  - M-NOT-REQ-001
+  implements:
+    objs: []
+- id: M-NOT-ET-002
+  title: 'M-NOT-ET-002: Preferencias de Notificaciones - Especificación Técnica'
+  status: implemented
+  derives_from:
+  - M-NOT-REQ-002
+  implements:
+    objs: []
+tests: []
+objects:
+  db: []
+  backend:
+  - OBJ-BE-NOT-CTRL-NOTIFICATIONS-CONTROLLER
+  - OBJ-BE-NOT-SVC-NOTIFICATIONS-SERVICE
+  - OBJ-BE-NOT-ENT-NOTIFICATION-ENTITY
+  frontend: []
+dependencies: []
+metrics:
+  req_count: 2
+  spec_count: 2
+  test_count: 0
+  obj_count: 3
+  coverage_req_to_spec: 100.0
+  coverage_req_to_test: 0
+  coverage_req_to_obj: 150.0

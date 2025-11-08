@@ -1,0 +1,1373 @@
+{
+  "timestamp": "2025-11-08T04:26:29.034Z",
+  "platform": "GAMILIT Frontend",
+  "baseDirectory": "/apps/frontend/src/features/",
+  "modules": {
+    "admin": {
+      "simcoModule": "ADM",
+      "features": {
+        "api": {
+          "path": "/features/admin/api",
+          "simcoModule": "ADM",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "__tests__": {
+          "path": "/features/admin/components/__tests__",
+          "simcoModule": "ADM",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        }
+      },
+      "stats": {
+        "totalComponents": 0,
+        "totalTypes": 0,
+        "totalSchemas": 0,
+        "totalMockData": 0
+      }
+    },
+    "auth": {
+      "simcoModule": "AUTH",
+      "features": {
+        "__tests__": {
+          "path": "/features/auth/__tests__",
+          "simcoModule": "AUTH",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "api": {
+          "path": "/features/auth/api",
+          "simcoModule": "AUTH",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "components": {
+          "path": "/features/auth/components",
+          "simcoModule": "AUTH",
+          "components": [
+            "/auth/components/EmailInput.tsx",
+            "/auth/components/FormErrorDisplay.tsx",
+            "/auth/components/LoginForm.tsx",
+            "/auth/components/PasswordInput.tsx",
+            "/auth/components/PasswordStrengthMeter.tsx",
+            "/auth/components/PermissionMatrix.tsx",
+            "/auth/components/RegisterForm.tsx",
+            "/auth/components/RoleSelector.tsx",
+            "/auth/components/SecurityEventsList.tsx",
+            "/auth/components/SessionTimeoutWarning.tsx",
+            "/auth/components/SessionsList.tsx",
+            "/auth/components/UserTable.tsx"
+          ],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 12,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "examples": {
+          "path": "/features/auth/examples",
+          "simcoModule": "AUTH",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "hooks": {
+          "path": "/features/auth/hooks",
+          "simcoModule": "AUTH",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "mocks": {
+          "path": "/features/auth/mocks",
+          "simcoModule": "AUTH",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "providers": {
+          "path": "/features/auth/providers",
+          "simcoModule": "AUTH",
+          "components": [
+            "/auth/providers/AuthProvider.tsx"
+          ],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "schemas": {
+          "path": "/features/auth/schemas",
+          "simcoModule": "AUTH",
+          "components": [],
+          "types": [],
+          "schemas": [
+            "/auth/schemas/authSchemas.ts"
+          ],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 1,
+            "mockDataCount": 0
+          }
+        },
+        "store": {
+          "path": "/features/auth/store",
+          "simcoModule": "AUTH",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "types": {
+          "path": "/features/auth/types",
+          "simcoModule": "AUTH",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        }
+      },
+      "stats": {
+        "totalComponents": 13,
+        "totalTypes": 0,
+        "totalSchemas": 1,
+        "totalMockData": 0
+      }
+    },
+    "content": {
+      "simcoModule": "CNT",
+      "features": {
+        "api": {
+          "path": "/features/content/api",
+          "simcoModule": "CNT",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        }
+      },
+      "stats": {
+        "totalComponents": 0,
+        "totalTypes": 0,
+        "totalSchemas": 0,
+        "totalMockData": 0
+      }
+    },
+    "education": {
+      "simcoModule": "EDU",
+      "features": {
+        "root": {
+          "path": "/features/education",
+          "simcoModule": "EDU",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        }
+      },
+      "stats": {
+        "totalComponents": 0,
+        "totalTypes": 0,
+        "totalSchemas": 0,
+        "totalMockData": 0
+      }
+    },
+    "exercises": {
+      "simcoModule": "EDU",
+      "features": {
+        "components": {
+          "path": "/features/exercises/components",
+          "simcoModule": "EDU",
+          "components": [
+            "/exercises/components/DragDropActivity.tsx",
+            "/exercises/components/ExerciseFeedback.tsx",
+            "/exercises/components/ExerciseHeader.tsx",
+            "/exercises/components/FillBlankActivity.tsx",
+            "/exercises/components/MatchingActivity.tsx",
+            "/exercises/components/MultipleChoiceActivity.tsx",
+            "/exercises/components/OrderingActivity.tsx",
+            "/exercises/components/TrueFalseActivity.tsx"
+          ],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 8,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "hooks": {
+          "path": "/features/exercises/hooks",
+          "simcoModule": "EDU",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "types": {
+          "path": "/features/exercises/types",
+          "simcoModule": "EDU",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        }
+      },
+      "stats": {
+        "totalComponents": 8,
+        "totalTypes": 0,
+        "totalSchemas": 0,
+        "totalMockData": 0
+      }
+    },
+    "gamification": {
+      "simcoModule": "GAM",
+      "features": {
+        "api": {
+          "path": "/features/gamification/social/api",
+          "simcoModule": "GAM",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "components": {
+          "path": "/features/gamification/social/components",
+          "simcoModule": "GAM",
+          "components": [
+            "/gamification/social/components/Achievements/AchievementCard.tsx",
+            "/gamification/social/components/Achievements/AchievementNotification.tsx",
+            "/gamification/social/components/Achievements/AchievementUnlockModal.tsx",
+            "/gamification/social/components/Achievements/AchievementsList.tsx",
+            "/gamification/social/components/Achievements/ProgressTreeVisualizer.tsx",
+            "/gamification/social/components/Achievements/TrophyRoom.tsx",
+            "/gamification/social/components/Friends/ActivityFeed.tsx",
+            "/gamification/social/components/Friends/AddFriend.tsx",
+            "/gamification/social/components/Friends/FriendCard.tsx",
+            "/gamification/social/components/Friends/FriendRecommendations.tsx",
+            "/gamification/social/components/Friends/FriendRequests.tsx",
+            "/gamification/social/components/Friends/FriendSearch.tsx",
+            "/gamification/social/components/Friends/FriendsList.tsx",
+            "/gamification/social/components/Guilds/GuildCard.tsx",
+            "/gamification/social/components/Guilds/GuildChallenges.tsx",
+            "/gamification/social/components/Guilds/GuildCreation.tsx",
+            "/gamification/social/components/Guilds/GuildDashboard.tsx",
+            "/gamification/social/components/Guilds/GuildLeaderboard.tsx",
+            "/gamification/social/components/Guilds/GuildManagement.tsx",
+            "/gamification/social/components/Guilds/GuildMembersList.tsx",
+            "/gamification/social/components/Guilds/GuildSettings.tsx",
+            "/gamification/social/components/Guilds/GuildsList.tsx",
+            "/gamification/social/components/Leaderboards/AdvancedLeaderboardTable.tsx",
+            "/gamification/social/components/Leaderboards/EnhancedLeaderboardTabs.tsx",
+            "/gamification/social/components/Leaderboards/FriendsLeaderboard.tsx",
+            "/gamification/social/components/Leaderboards/GlobalLeaderboard.tsx",
+            "/gamification/social/components/Leaderboards/GradeLeaderboard.tsx",
+            "/gamification/social/components/Leaderboards/LeaderboardEntry.tsx",
+            "/gamification/social/components/Leaderboards/LeaderboardFilters.tsx",
+            "/gamification/social/components/Leaderboards/LeaderboardLayout.tsx",
+            "/gamification/social/components/Leaderboards/LeaderboardPodium.tsx",
+            "/gamification/social/components/Leaderboards/LeaderboardTabs.tsx",
+            "/gamification/social/components/Leaderboards/RankChangeIndicator.tsx",
+            "/gamification/social/components/Leaderboards/SchoolLeaderboard.tsx",
+            "/gamification/social/components/Leaderboards/SeasonSelector.tsx",
+            "/gamification/social/components/Leaderboards/UserPositionCard.tsx",
+            "/gamification/social/components/PowerUps/ActivePowerUps.tsx",
+            "/gamification/social/components/PowerUps/CooldownTimer.tsx",
+            "/gamification/social/components/PowerUps/PowerUpCard.tsx",
+            "/gamification/social/components/PowerUps/PowerUpInventory.tsx",
+            "/gamification/social/components/PowerUps/PowerUpShop.tsx",
+            "/gamification/social/components/PowerUps/PowerUpUsageModal.tsx"
+          ],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 42,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "hooks": {
+          "path": "/features/gamification/social/hooks",
+          "simcoModule": "GAM",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "mockData": {
+          "path": "/features/gamification/social/mockData",
+          "simcoModule": "GAM",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [
+            "/gamification/social/mockData/achievementsMockData.ts",
+            "/gamification/social/mockData/friendsMockData.ts",
+            "/gamification/social/mockData/guildsMockData.ts",
+            "/gamification/social/mockData/leaderboardsMockData.ts",
+            "/gamification/social/mockData/powerUpsMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 5
+          }
+        },
+        "schemas": {
+          "path": "/features/gamification/social/schemas",
+          "simcoModule": "GAM",
+          "components": [],
+          "types": [],
+          "schemas": [
+            "/gamification/social/schemas/socialSchemas.ts"
+          ],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 1,
+            "mockDataCount": 0
+          }
+        },
+        "store": {
+          "path": "/features/gamification/social/store",
+          "simcoModule": "GAM",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "types": {
+          "path": "/features/gamification/social/types",
+          "simcoModule": "GAM",
+          "components": [],
+          "types": [
+            "/gamification/social/types/achievementsTypes.ts",
+            "/gamification/social/types/friendsTypes.ts",
+            "/gamification/social/types/guildsTypes.ts",
+            "/gamification/social/types/leaderboardsTypes.ts",
+            "/gamification/social/types/powerUpsTypes.ts"
+          ],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 5,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "leaderboard": {
+          "path": "/features/gamification/leaderboard",
+          "simcoModule": "GAM",
+          "components": [
+            "/gamification/leaderboard/LiveLeaderboard.tsx"
+          ],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "utils": {
+          "path": "/features/gamification/social/utils",
+          "simcoModule": "GAM",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        }
+      },
+      "stats": {
+        "totalComponents": 71,
+        "totalTypes": 8,
+        "totalSchemas": 3,
+        "totalMockData": 8
+      }
+    },
+    "mechanics": {
+      "simcoModule": "EDU",
+      "features": {
+        "CallToAction": {
+          "path": "/features/mechanics/auxiliar/CallToAction",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/auxiliar/CallToAction/CallToActionExercise.tsx"
+          ],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "CollagePrensa": {
+          "path": "/features/mechanics/auxiliar/CollagePrensa",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/auxiliar/CollagePrensa/CollagePrensaExercise.tsx"
+          ],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "ComprensiónAuditiva": {
+          "path": "/features/mechanics/auxiliar/ComprensiónAuditiva",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/auxiliar/ComprensiónAuditiva/ComprensiónAuditivaExercise.tsx"
+          ],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "TextoEnMovimiento": {
+          "path": "/features/mechanics/auxiliar/TextoEnMovimiento",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/auxiliar/TextoEnMovimiento/TextoEnMovimientoExercise.tsx"
+          ],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "CompletarEspacios": {
+          "path": "/features/mechanics/module1/CompletarEspacios",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module1/CompletarEspacios/CompletarEspaciosExercise.tsx"
+          ],
+          "types": [
+            "/mechanics/module1/CompletarEspacios/completarEspaciosTypes.ts"
+          ],
+          "schemas": [],
+          "mockData": [
+            "/mechanics/module1/CompletarEspacios/completarEspaciosMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 1,
+            "schemasCount": 0,
+            "mockDataCount": 1
+          }
+        },
+        "Crucigrama": {
+          "path": "/features/mechanics/module1/Crucigrama",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module1/Crucigrama/CrucigramaClue.tsx",
+            "/mechanics/module1/Crucigrama/CrucigramaExercise.tsx",
+            "/mechanics/module1/Crucigrama/CrucigramaGrid.tsx"
+          ],
+          "types": [
+            "/mechanics/module1/Crucigrama/crucigramaTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module1/Crucigrama/crucigramaSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module1/Crucigrama/crucigramaMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 3,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "Emparejamiento": {
+          "path": "/features/mechanics/module1/Emparejamiento",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module1/Emparejamiento/EmparejamientoExercise.tsx",
+            "/mechanics/module1/Emparejamiento/EmparejamientoExerciseDragDrop.tsx",
+            "/mechanics/module1/Emparejamiento/MatchingCard.tsx",
+            "/mechanics/module1/Emparejamiento/MatchingDragDrop.tsx"
+          ],
+          "types": [
+            "/mechanics/module1/Emparejamiento/emparejamientoTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module1/Emparejamiento/emparejamientoSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module1/Emparejamiento/emparejamientoMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 4,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "MapaConceptual": {
+          "path": "/features/mechanics/module1/MapaConceptual",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module1/MapaConceptual/ConceptNode.tsx",
+            "/mechanics/module1/MapaConceptual/ConnectionLine.tsx",
+            "/mechanics/module1/MapaConceptual/MapaConceptualExercise.tsx"
+          ],
+          "types": [
+            "/mechanics/module1/MapaConceptual/mapaConceptualTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module1/MapaConceptual/mapaConceptualSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module1/MapaConceptual/mapaConceptualMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 3,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "SopaLetras": {
+          "path": "/features/mechanics/module1/SopaLetras",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module1/SopaLetras/SopaLetrasExercise.tsx",
+            "/mechanics/module1/SopaLetras/SopaLetrasGrid.tsx",
+            "/mechanics/module1/SopaLetras/WordList.tsx"
+          ],
+          "types": [
+            "/mechanics/module1/SopaLetras/sopaLetrasTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module1/SopaLetras/sopaLetrasSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module1/SopaLetras/sopaLetrasMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 3,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "Timeline": {
+          "path": "/features/mechanics/module1/Timeline",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module1/Timeline/TimelineDragDrop.tsx",
+            "/mechanics/module1/Timeline/TimelineEvent.tsx",
+            "/mechanics/module1/Timeline/TimelineExercise.tsx"
+          ],
+          "types": [
+            "/mechanics/module1/Timeline/timelineTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module1/Timeline/timelineSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module1/Timeline/timelineMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 3,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "VerdaderoFalso": {
+          "path": "/features/mechanics/module1/VerdaderoFalso",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module1/VerdaderoFalso/VerdaderoFalsoExercise.SECURE.tsx",
+            "/mechanics/module1/VerdaderoFalso/VerdaderoFalsoExercise.tsx"
+          ],
+          "types": [
+            "/mechanics/module1/VerdaderoFalso/verdaderoFalsoTypes.ts"
+          ],
+          "schemas": [],
+          "mockData": [
+            "/mechanics/module1/VerdaderoFalso/verdaderoFalsoMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 2,
+            "typesCount": 1,
+            "schemasCount": 0,
+            "mockDataCount": 1
+          }
+        },
+        "ConstruccionHipotesis": {
+          "path": "/features/mechanics/module2/ConstruccionHipotesis",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module2/ConstruccionHipotesis/AIValidator.tsx",
+            "/mechanics/module2/ConstruccionHipotesis/ConstruccionHipotesisExercise.tsx",
+            "/mechanics/module2/ConstruccionHipotesis/HypothesisBuilder.tsx",
+            "/mechanics/module2/ConstruccionHipotesis/VariableSelector.tsx"
+          ],
+          "types": [
+            "/mechanics/module2/ConstruccionHipotesis/construccionHipotesisTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module2/ConstruccionHipotesis/construccionHipotesisSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module2/ConstruccionHipotesis/construccionHipotesisMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 4,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "DetectiveTextual": {
+          "path": "/features/mechanics/module2/DetectiveTextual",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module2/DetectiveTextual/AIHintSystem.tsx",
+            "/mechanics/module2/DetectiveTextual/DetectiveTextualExercise.tsx",
+            "/mechanics/module2/DetectiveTextual/EvidenceBoard.tsx",
+            "/mechanics/module2/DetectiveTextual/MagnifyingGlass.tsx"
+          ],
+          "types": [
+            "/mechanics/module2/DetectiveTextual/detectiveTextualTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module2/DetectiveTextual/detectiveTextualSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module2/DetectiveTextual/detectiveTextualMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 4,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "PrediccionNarrativa": {
+          "path": "/features/mechanics/module2/PrediccionNarrativa",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module2/PrediccionNarrativa/PrediccionNarrativaExercise.tsx"
+          ],
+          "types": [
+            "/mechanics/module2/PrediccionNarrativa/prediccionNarrativaTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module2/PrediccionNarrativa/prediccionNarrativaSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module2/PrediccionNarrativa/prediccionNarrativaMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "PuzzleContexto": {
+          "path": "/features/mechanics/module2/PuzzleContexto",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module2/PuzzleContexto/PuzzleContextoExercise.tsx"
+          ],
+          "types": [
+            "/mechanics/module2/PuzzleContexto/puzzleContextoTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module2/PuzzleContexto/puzzleContextoSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module2/PuzzleContexto/puzzleContextoMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "RuedaInferencias": {
+          "path": "/features/mechanics/module2/RuedaInferencias",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module2/RuedaInferencias/RuedaInferenciasExercise.tsx"
+          ],
+          "types": [
+            "/mechanics/module2/RuedaInferencias/ruedaInferenciasTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module2/RuedaInferencias/ruedaInferenciasSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module2/RuedaInferencias/ruedaInferenciasMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "AnalisisFuentes": {
+          "path": "/features/mechanics/module3/AnalisisFuentes",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module3/AnalisisFuentes/AnalisisFuentesExercise.tsx"
+          ],
+          "types": [
+            "/mechanics/module3/AnalisisFuentes/analisisFuentesTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module3/AnalisisFuentes/analisisFuentesSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module3/AnalisisFuentes/analisisFuentesMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "DebateDigital": {
+          "path": "/features/mechanics/module3/DebateDigital",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module3/DebateDigital/DebateDigitalExercise.tsx"
+          ],
+          "types": [
+            "/mechanics/module3/DebateDigital/debateDigitalTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module3/DebateDigital/debateDigitalSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module3/DebateDigital/debateDigitalMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "MatrizPerspectivas": {
+          "path": "/features/mechanics/module3/MatrizPerspectivas",
+          "simcoModule": "EDU",
+          "components": [],
+          "types": [
+            "/mechanics/module3/MatrizPerspectivas/matrizPerspectivasTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module3/MatrizPerspectivas/matrizPerspectivasSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module3/MatrizPerspectivas/matrizPerspectivasMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "PodcastArgumentativo": {
+          "path": "/features/mechanics/module3/PodcastArgumentativo",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module3/PodcastArgumentativo/PodcastArgumentativoExercise.tsx"
+          ],
+          "types": [
+            "/mechanics/module3/PodcastArgumentativo/podcastArgumentativoTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module3/PodcastArgumentativo/podcastArgumentativoSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module3/PodcastArgumentativo/podcastArgumentativoMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "TribunalOpiniones": {
+          "path": "/features/mechanics/module3/TribunalOpiniones",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module3/TribunalOpiniones/TribunalOpinionesExercise.tsx"
+          ],
+          "types": [
+            "/mechanics/module3/TribunalOpiniones/tribunalOpinionesTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module3/TribunalOpiniones/tribunalOpinionesSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module3/TribunalOpiniones/tribunalOpinionesMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "AnalisisMemes": {
+          "path": "/features/mechanics/module4/AnalisisMemes",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module4/AnalisisMemes/AnalisisMemesExercise.tsx",
+            "/mechanics/module4/AnalisisMemes/AnnotationMarker.tsx",
+            "/mechanics/module4/AnalisisMemes/MemeAnnotator.tsx"
+          ],
+          "types": [
+            "/mechanics/module4/AnalisisMemes/analisisMemesTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module4/AnalisisMemes/analisisMemesSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module4/AnalisisMemes/analisisMemesMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 3,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "ChatLiterario": {
+          "path": "/features/mechanics/module4/ChatLiterario",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module4/ChatLiterario/ChatLiterarioExercise.tsx"
+          ],
+          "types": [
+            "/mechanics/module4/ChatLiterario/chatLiterarioTypes.ts"
+          ],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 1,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "EmailFormal": {
+          "path": "/features/mechanics/module4/EmailFormal",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module4/EmailFormal/EmailFormalExercise.tsx"
+          ],
+          "types": [
+            "/mechanics/module4/EmailFormal/emailFormalTypes.ts"
+          ],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 1,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "EnsayoArgumentativo": {
+          "path": "/features/mechanics/module4/EnsayoArgumentativo",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module4/EnsayoArgumentativo/EnsayoArgumentativoExercise.tsx"
+          ],
+          "types": [
+            "/mechanics/module4/EnsayoArgumentativo/ensayoArgumentativoTypes.ts"
+          ],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 1,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "InfografiaInteractiva": {
+          "path": "/features/mechanics/module4/InfografiaInteractiva",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module4/InfografiaInteractiva/DataVisualization.tsx",
+            "/mechanics/module4/InfografiaInteractiva/InfografiaInteractivaExercise.tsx",
+            "/mechanics/module4/InfografiaInteractiva/InteractiveCard.tsx"
+          ],
+          "types": [
+            "/mechanics/module4/InfografiaInteractiva/infografiaInteractivaTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module4/InfografiaInteractiva/infografiaInteractivaSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module4/InfografiaInteractiva/infografiaInteractivaMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 3,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "NavegacionHipertextual": {
+          "path": "/features/mechanics/module4/NavegacionHipertextual",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module4/NavegacionHipertextual/HypertextDocument.tsx",
+            "/mechanics/module4/NavegacionHipertextual/NavegacionHipertextualExercise.tsx",
+            "/mechanics/module4/NavegacionHipertextual/NavigationBreadcrumbs.tsx"
+          ],
+          "types": [
+            "/mechanics/module4/NavegacionHipertextual/navegacionHipertextualTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module4/NavegacionHipertextual/navegacionHipertextualSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module4/NavegacionHipertextual/navegacionHipertextualMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 3,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "QuizTikTok": {
+          "path": "/features/mechanics/module4/QuizTikTok",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module4/QuizTikTok/QuizTikTokExercise.tsx",
+            "/mechanics/module4/QuizTikTok/SwipeGesture.tsx",
+            "/mechanics/module4/QuizTikTok/TikTokCard.tsx"
+          ],
+          "types": [
+            "/mechanics/module4/QuizTikTok/quizTikTokTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module4/QuizTikTok/quizTikTokSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module4/QuizTikTok/quizTikTokMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 3,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "ResenaCritica": {
+          "path": "/features/mechanics/module4/ResenaCritica",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module4/ResenaCritica/ResenaCriticaExercise.tsx"
+          ],
+          "types": [
+            "/mechanics/module4/ResenaCritica/resenaCriticaTypes.ts"
+          ],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 1,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "VerificadorFakeNews": {
+          "path": "/features/mechanics/module4/VerificadorFakeNews",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module4/VerificadorFakeNews/ArticleParser.tsx",
+            "/mechanics/module4/VerificadorFakeNews/FactCheckDashboard.tsx",
+            "/mechanics/module4/VerificadorFakeNews/VerificadorFakeNewsExercise.tsx"
+          ],
+          "types": [
+            "/mechanics/module4/VerificadorFakeNews/verificadorFakeNewsTypes.ts"
+          ],
+          "schemas": [
+            "/mechanics/module4/VerificadorFakeNews/verificadorFakeNewsSchemas.ts"
+          ],
+          "mockData": [
+            "/mechanics/module4/VerificadorFakeNews/verificadorFakeNewsMockData.ts"
+          ],
+          "stats": {
+            "componentCount": 3,
+            "typesCount": 1,
+            "schemasCount": 1,
+            "mockDataCount": 1
+          }
+        },
+        "ComicDigital": {
+          "path": "/features/mechanics/module5/ComicDigital",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module5/ComicDigital/ComicDigitalExercise.tsx"
+          ],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "DiarioMultimedia": {
+          "path": "/features/mechanics/module5/DiarioMultimedia",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module5/DiarioMultimedia/DiarioMultimediaExercise.tsx"
+          ],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "VideoCarta": {
+          "path": "/features/mechanics/module5/VideoCarta",
+          "simcoModule": "EDU",
+          "components": [
+            "/mechanics/module5/VideoCarta/VideoCartaExercise.tsx"
+          ],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 1,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "api": {
+          "path": "/features/mechanics/shared/api",
+          "simcoModule": "EDU",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "hooks": {
+          "path": "/features/mechanics/shared/hooks",
+          "simcoModule": "EDU",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        }
+      },
+      "stats": {
+        "totalComponents": 60,
+        "totalTypes": 26,
+        "totalSchemas": 20,
+        "totalMockData": 22
+      }
+    },
+    "missions": {
+      "simcoModule": "GAM",
+      "features": {
+        "store": {
+          "path": "/features/missions/store",
+          "simcoModule": "GAM",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        }
+      },
+      "stats": {
+        "totalComponents": 0,
+        "totalTypes": 0,
+        "totalSchemas": 0,
+        "totalMockData": 0
+      }
+    },
+    "notifications": {
+      "simcoModule": "NOT",
+      "features": {
+        "components": {
+          "path": "/features/notifications/components",
+          "simcoModule": "NOT",
+          "components": [
+            "/notifications/components/NotificationBell.tsx",
+            "/notifications/components/NotificationDropdown.tsx"
+          ],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 2,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "hooks": {
+          "path": "/features/notifications/hooks",
+          "simcoModule": "NOT",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "store": {
+          "path": "/features/notifications/store",
+          "simcoModule": "NOT",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        }
+      },
+      "stats": {
+        "totalComponents": 2,
+        "totalTypes": 0,
+        "totalSchemas": 0,
+        "totalMockData": 0
+      }
+    },
+    "progress": {
+      "simcoModule": "EDU",
+      "features": {
+        "api": {
+          "path": "/features/progress/api",
+          "simcoModule": "EDU",
+          "components": [],
+          "types": [
+            "/progress/api/progressTypes.ts"
+          ],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 1,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        },
+        "examples": {
+          "path": "/features/progress/examples",
+          "simcoModule": "EDU",
+          "components": [],
+          "types": [],
+          "schemas": [],
+          "mockData": [],
+          "stats": {
+            "componentCount": 0,
+            "typesCount": 0,
+            "schemasCount": 0,
+            "mockDataCount": 0
+          }
+        }
+      },
+      "stats": {
+        "totalComponents": 0,
+        "totalTypes": 1,
+        "totalSchemas": 0,
+        "totalMockData": 0
+      }
+    }
+  }
+}

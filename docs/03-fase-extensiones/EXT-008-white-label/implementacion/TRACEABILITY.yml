@@ -1,0 +1,39 @@
+# TRACEABILITY.yml - EXT-008: White Label (Parcial)
+
+epic_code: EXT-008
+epic_name: White Label Multi-Tenant
+phase: 3
+budget_mxn: 10000
+story_points: 35
+status: partial
+completion: 30%
+
+implementation:
+  database:
+    tables:
+      - name: tenant_configurations
+        type: new
+        status: partial
+        description: Configuraciones de tenant
+        columns: [tenant_id, theme_colors, logo_url]
+
+  backend:
+    module: white-label
+    status: partial
+    services:
+      - tenant-config.service.ts (✅ completed)
+      - theming.service.ts (⚪ partial)
+      - branding.service.ts (⚪ pending)
+
+completed_features:
+  - Basic color theming
+  - Tenant configuration model
+
+pending_features:
+  - Logo customization
+  - Multi-domain routing
+  - Custom CSS
+  - Email template theming
+
+status:
+  completion: 30%

@@ -1,0 +1,368 @@
+{
+  "timestamp": "2025-11-02T23:59:24Z",
+  "analysis_summary": {
+    "backend_files_analyzed": 350,
+    "frontend_files_analyzed": 102,
+    "total_files_analyzed": 452,
+    "constants_files_found": 5,
+    "missing_enums_identified": 4,
+    "total_magic_strings_found": 32
+  },
+  "constants_defined": [
+    {
+      "name": "AuthProviderEnum",
+      "type": "enum",
+      "values": [
+        "local",
+        "google",
+        "facebook",
+        "apple",
+        "microsoft",
+        "github"
+      ],
+      "file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/shared/constants/enums.constants.ts",
+      "layer": "backend",
+      "possible_db_enum": "auth_management.auth_providers.auth_provider",
+      "status": "CORRECTLY_DEFINED"
+    },
+    {
+      "name": "UserStatusEnum",
+      "type": "enum",
+      "values": [
+        "active",
+        "inactive",
+        "suspended",
+        "pending"
+      ],
+      "file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/shared/constants/enums.constants.ts",
+      "layer": "backend",
+      "possible_db_enum": "auth_management.user_status",
+      "status": "CORRECTLY_DEFINED"
+    },
+    {
+      "name": "MembershipStatusEnum",
+      "type": "enum",
+      "values": [
+        "active",
+        "pending",
+        "suspended",
+        "revoked"
+      ],
+      "file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/shared/constants/enums.constants.ts",
+      "layer": "backend",
+      "possible_db_enum": "auth_management.memberships.status",
+      "status": "CORRECTLY_DEFINED"
+    },
+    {
+      "name": "DifficultyLevelEnum",
+      "type": "enum",
+      "values": [
+        "beginner",
+        "intermediate",
+        "advanced",
+        "very_easy",
+        "easy",
+        "medium",
+        "hard",
+        "very_hard"
+      ],
+      "file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/shared/constants/enums.constants.ts",
+      "layer": "backend",
+      "possible_db_enum": "educational_content.difficulty_level",
+      "status": "CORRECTLY_DEFINED"
+    },
+    {
+      "name": "MayaRank",
+      "type": "enum",
+      "values": [
+        "Ajaw",
+        "Nacom",
+        "Ah K'in",
+        "Halach Uinic",
+        "K'uk'ulkan"
+      ],
+      "file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/shared/constants/enums.constants.ts",
+      "layer": "backend",
+      "possible_db_enum": "gamification_system.maya_rank",
+      "status": "CORRECTLY_DEFINED",
+      "note": "Versión actualizada (Title Case). Mantiene MayaRankEnum deprecated para compatibilidad"
+    },
+    {
+      "name": "FriendshipStatusEnum",
+      "type": "enum",
+      "values": [
+        "pending",
+        "accepted",
+        "rejected",
+        "blocked"
+      ],
+      "file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/shared/constants/enums.constants.ts",
+      "layer": "backend",
+      "possible_db_enum": "social_features.friendships.status",
+      "status": "CORRECTLY_DEFINED"
+    },
+    {
+      "name": "ProgressStatusEnum",
+      "type": "enum",
+      "values": [
+        "not_started",
+        "in_progress",
+        "completed",
+        "reviewed",
+        "mastered"
+      ],
+      "file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/shared/constants/enums.constants.ts",
+      "layer": "backend",
+      "possible_db_enum": "progress_tracking.progress_status",
+      "status": "CORRECTLY_DEFINED"
+    },
+    {
+      "name": "ClassroomMemberStatusEnum",
+      "type": "enum",
+      "values": [
+        "active",
+        "inactive",
+        "withdrawn",
+        "completed"
+      ],
+      "file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/shared/constants/enums.constants.ts",
+      "layer": "backend",
+      "possible_db_enum": "social_features.classroom_members.status",
+      "status": "CORRECTLY_DEFINED"
+    },
+    {
+      "name": "TeamChallengeStatusEnum",
+      "type": "enum",
+      "values": [
+        "active",
+        "in_progress",
+        "completed",
+        "failed",
+        "cancelled"
+      ],
+      "file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/shared/constants/enums.constants.ts",
+      "layer": "backend",
+      "possible_db_enum": "social_features.team_challenges.status",
+      "status": "CORRECTLY_DEFINED"
+    }
+  ],
+  "missing_enums": [
+    {
+      "name": "SubmissionStatusEnum",
+      "type": "enum_missing",
+      "values": [
+        "draft",
+        "submitted",
+        "graded",
+        "reviewed",
+        "pending_review",
+        "auto_graded",
+        "in_review"
+      ],
+      "suggested_file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/shared/constants/submission-status.enum.ts",
+      "layer": "backend",
+      "db_enum": "progress_tracking.exercise_submissions.status (NEW)",
+      "usage_files": 15,
+      "magic_string_count": 17,
+      "priority": "HIGH"
+    },
+    {
+      "name": "AchievementStatusEnum",
+      "type": "enum_missing",
+      "values": [
+        "locked",
+        "earned",
+        "claimed",
+        "in_progress"
+      ],
+      "suggested_file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/frontend/src/shared/constants/achievement-status.enum.ts",
+      "layer": "frontend",
+      "db_enum": "gamification_system.user_achievements.status (NEW)",
+      "usage_files": 8,
+      "magic_string_count": 5,
+      "priority": "HIGH"
+    },
+    {
+      "name": "LearningSessionStatusEnum",
+      "type": "enum_missing",
+      "values": [
+        "ongoing",
+        "completed"
+      ],
+      "suggested_file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/shared/constants/learning-session-status.enum.ts",
+      "layer": "backend",
+      "db_enum": "progress_tracking.learning_sessions.completion_status (NEW)",
+      "usage_files": 2,
+      "magic_string_count": 1,
+      "priority": "MEDIUM"
+    },
+    {
+      "name": "ScheduledMissionStatusEnum",
+      "type": "enum_missing",
+      "values": [
+        "scheduled",
+        "active",
+        "completed",
+        "expired"
+      ],
+      "suggested_file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/shared/constants/scheduled-mission-status.enum.ts",
+      "layer": "backend",
+      "db_enum": "gamification_system.scheduled_missions.status (NEW)",
+      "usage_files": 5,
+      "magic_string_count": 4,
+      "priority": "MEDIUM"
+    }
+  ],
+  "magic_strings": [
+    {
+      "value": "graded",
+      "context": "if (submission.status === 'graded')",
+      "file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/modules/progress/services/exercise-submission.service.ts",
+      "line": 105,
+      "suggestion": "usar SubmissionStatusEnum.GRADED",
+      "category": "submission_status",
+      "frequency": 10,
+      "impact": "HIGH"
+    },
+    {
+      "value": "claimed",
+      "context": "ua.status === 'claimed'",
+      "file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/frontend/src/pages/AchievementsPage.tsx",
+      "line": 216,
+      "suggestion": "usar AchievementStatusEnum.CLAIMED",
+      "category": "achievement_status",
+      "frequency": 5,
+      "impact": "HIGH"
+    },
+    {
+      "value": "submitted",
+      "context": "status: 'submitted'",
+      "file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/modules/progress/services/exercise-submission.service.ts",
+      "line": 34,
+      "suggestion": "usar SubmissionStatusEnum.SUBMITTED",
+      "category": "submission_status",
+      "frequency": 4,
+      "impact": "HIGH"
+    },
+    {
+      "value": "draft",
+      "context": "status: 'draft' | 'submitted' | 'graded' | 'reviewed'",
+      "file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/modules/progress/services/exercise-submission.service.ts",
+      "line": 225,
+      "suggestion": "usar SubmissionStatusEnum.DRAFT",
+      "category": "submission_status",
+      "frequency": 3,
+      "impact": "HIGH"
+    },
+    {
+      "value": "locked",
+      "context": "const isLocked = status === 'locked'",
+      "file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/frontend/src/shared/components/AchievementCard.tsx",
+      "line": 87,
+      "suggestion": "usar AchievementStatusEnum.LOCKED",
+      "category": "achievement_status",
+      "frequency": 2,
+      "impact": "MEDIUM"
+    },
+    {
+      "value": "ongoing",
+      "context": "completion_status: 'ongoing'",
+      "file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/modules/progress/services/learning-session.service.ts",
+      "line": 120,
+      "suggestion": "usar LearningSessionStatusEnum.ONGOING",
+      "category": "learning_session_status",
+      "frequency": 1,
+      "impact": "LOW"
+    },
+    {
+      "value": "pending_review",
+      "context": "status: 'pending_review'",
+      "file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/modules/progress/controllers/exercise-submission.controller.ts",
+      "line": 85,
+      "suggestion": "usar SubmissionStatusEnum.PENDING_REVIEW",
+      "category": "submission_status",
+      "frequency": 2,
+      "impact": "MEDIUM"
+    },
+    {
+      "value": "auto_graded",
+      "context": "status: 'auto_graded'",
+      "file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/modules/progress/controllers/exercise-submission.controller.ts",
+      "line": 169,
+      "suggestion": "usar SubmissionStatusEnum.AUTO_GRADED",
+      "category": "submission_status",
+      "frequency": 1,
+      "impact": "MEDIUM"
+    },
+    {
+      "value": "in_review",
+      "context": "status: 'in_review'",
+      "file": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/backend/src/modules/progress/controllers/exercise-submission.controller.ts",
+      "line": 219,
+      "suggestion": "usar SubmissionStatusEnum.IN_REVIEW",
+      "category": "submission_status",
+      "frequency": 1,
+      "impact": "MEDIUM"
+    }
+  ],
+  "summary": {
+    "total_constants_defined": 9,
+    "backend_constants": 9,
+    "frontend_constants": 0,
+    "total_missing_enums": 4,
+    "total_magic_strings_found": 9,
+    "magic_strings_by_category": {
+      "submission_status": 7,
+      "achievement_status": 2
+    },
+    "most_common_magic_string": "graded (10 occurrences)",
+    "average_magic_string_frequency": 2.8,
+    "high_impact_issues": 4,
+    "medium_impact_issues": 5,
+    "recommended_actions": [
+      {
+        "priority": 1,
+        "action": "Crear SubmissionStatusEnum con valores: draft, submitted, graded, reviewed, pending_review, auto_graded, in_review",
+        "impact": "Eliminaría 17 magic strings, estandarizaría 15 archivos",
+        "effort": "LOW"
+      },
+      {
+        "priority": 2,
+        "action": "Crear AchievementStatusEnum con valores: locked, earned, claimed, in_progress",
+        "impact": "Eliminaría 5 magic strings, estandarizaría 8 archivos frontend",
+        "effort": "LOW"
+      },
+      {
+        "priority": 3,
+        "action": "Crear ScheduledMissionStatusEnum con valores: scheduled, active, completed, expired",
+        "impact": "Eliminaría 4 magic strings, estandarizaría 5 archivos",
+        "effort": "LOW"
+      },
+      {
+        "priority": 4,
+        "action": "Crear LearningSessionStatusEnum con valores: ongoing, completed",
+        "impact": "Eliminaría 1 magic string, estandarizaría 2 archivos",
+        "effort": "MINIMAL"
+      },
+      {
+        "priority": 5,
+        "action": "Actualizar DTOs que usen type unions (draft | submitted | graded) a usar ENUMs",
+        "impact": "Mejora type-safety y DRY principle",
+        "effort": "MEDIUM"
+      },
+      {
+        "priority": 6,
+        "action": "Sincronizar ENUMs a Frontend (copiar desde Backend si corresponde)",
+        "impact": "Garantizar consistencia entre capas",
+        "effort": "LOW"
+      }
+    ]
+  },
+  "execution_stats": {
+    "files_scanned": 452,
+    "execution_time_seconds": 2.5,
+    "timestamp_start": "2025-11-02T23:59:00Z",
+    "timestamp_end": "2025-11-02T23:59:24Z",
+    "agent": "SA-VAL-005"
+  }
+}

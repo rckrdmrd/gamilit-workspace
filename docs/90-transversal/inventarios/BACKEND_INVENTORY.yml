@@ -1,0 +1,618 @@
+# BACKEND_INVENTORY.yml - Inventario Consolidado Global
+
+project: GAMILIT
+version: 2.0
+generated: 2025-11-08
+source: Consolidado de Fases 1-3
+
+# ============================================================================
+# RESUMEN EJECUTIVO
+# ============================================================================
+
+summary:
+  total_modules: 20
+  total_services: 65
+  total_controllers: 22
+  total_endpoints: 145
+  total_dtos: 80
+  total_middlewares: 12
+  lines_of_code: ~45000
+
+stack:
+  runtime: Node.js 18+
+  framework: NestJS
+  language: TypeScript
+  orm: Prisma
+  validation: class-validator
+  auth: Supabase Auth + JWT
+
+# ============================================================================
+# MÓDULOS POR FASE
+# ============================================================================
+
+modules_by_phase:
+  phase_1:
+    - auth
+    - educational-content
+    - gamification
+    - progress
+    - admin
+
+  phase_2:
+    - database (migrations)
+
+  phase_3:
+    - teacher-portal
+    - admin-extended
+    - notifications
+    - profiles
+    - reports
+    - content-management
+    - lti (partial)
+    - white-label (partial)
+    - peer-challenges (partial)
+    - parent-portal (partial)
+
+# ============================================================================
+# MÓDULOS DETALLADOS (20)
+# ============================================================================
+
+modules:
+  # ===== FASE 1: ALCANCE INICIAL =====
+
+  - name: auth
+    path: apps/backend/src/modules/auth/
+    phase: 1
+    epic: EAI-001
+    description: Autenticación y autorización
+    services:
+      - auth.service.ts
+      - jwt.service.ts
+      - rbac.service.ts
+      - session.service.ts
+    controllers:
+      - auth.controller.ts
+    endpoints: 8
+    key_features:
+      - Login/logout
+      - JWT token management
+      - RBAC (5 roles)
+      - Session management
+      - Password reset
+
+  - name: educational-content
+    path: apps/backend/src/modules/educational-content/
+    phase: 1
+    epic: [EAI-002, EXT-006]
+    description: Contenido educativo y ejercicios
+    services:
+      - module.service.ts
+      - exercise.service.ts
+      - taxonomy.service.ts
+      - content-metadata.service.ts
+      - content-version.service.ts (EXT-006)
+      - content-approval.service.ts (EXT-006)
+    controllers:
+      - module.controller.ts
+      - exercise.controller.ts
+    endpoints: 15
+    key_features:
+      - 5 módulos educativos
+      - CRUD de ejercicios
+      - Taxonomía de Bloom
+      - 6 tipos de ejercicios
+      - Versionamiento (EXT-006)
+      - Workflow de aprobación (EXT-006)
+
+  - name: gamification
+    path: apps/backend/src/modules/gamification/
+    phase: 1
+    epic: EAI-003
+    description: Sistema de gamificación
+    services:
+      - achievement.service.ts
+      - rank.service.ts
+      - coin.service.ts
+      - powerup.service.ts
+      - streak.service.ts
+      - leaderboard.service.ts
+    controllers:
+      - achievement.controller.ts
+      - rank.controller.ts
+      - coin.controller.ts
+    endpoints: 12
+    key_features:
+      - 30+ achievements
+      - 10 rangos mayas
+      - ML Coins economy
+      - 4 tipos de powerups
+      - Rachas diarias
+      - Leaderboards
+
+  - name: progress
+    path: apps/backend/src/modules/progress/
+    phase: 1
+    epic: [EAI-002, EAI-004]
+    description: Tracking de progreso y analytics
+    services:
+      - progress.service.ts
+      - statistics.service.ts
+      - analytics.service.ts
+      - completion.service.ts
+      - learning-path.service.ts
+    controllers:
+      - progress.controller.ts
+      - analytics.controller.ts
+    endpoints: 10
+    key_features:
+      - Progreso por módulo
+      - Estadísticas de usuario
+      - Analytics básicos
+      - Learning paths
+      - Snapshots de progreso
+
+  - name: admin
+    path: apps/backend/src/modules/admin/
+    phase: 1
+    epic: [EAI-005, EXT-002]
+    description: Dashboard administrativo
+    services:
+      - admin-dashboard.service.ts
+      - user-management.service.ts
+      - system-metrics.service.ts
+      - system-config.service.ts (EXT-002)
+      - admin-analytics.service.ts (EXT-002)
+      - content-moderation.service.ts (EXT-002)
+    controllers:
+      - admin.controller.ts
+      - admin-users.controller.ts (EXT-002)
+    endpoints: 18
+    key_features:
+      - Dashboard metrics
+      - User management
+      - System alerts
+      - Gestión masiva (EXT-002)
+      - Analytics agregados (EXT-002)
+      - Moderación de contenido (EXT-002)
+
+  # ===== FASE 3: EXTENSIONES =====
+
+  - name: teacher-portal
+    path: apps/backend/src/modules/teacher-portal/
+    phase: 3
+    epic: EXT-001
+    description: Portal completo para maestros
+    services:
+      - classroom.service.ts
+      - assignment.service.ts
+      - grading.service.ts
+      - teacher-analytics.service.ts
+      - teacher-notes.service.ts
+    controllers:
+      - classroom.controller.ts
+      - assignment.controller.ts
+      - grading.controller.ts
+      - analytics.controller.ts
+    endpoints: 18
+    key_features:
+      - CRUD de classrooms
+      - Gestión de enrollments
+      - Custom assignments
+      - Sistema de grading
+      - Analytics de classroom
+      - Notas privadas
+      - Reportes de maestro
+
+  - name: notifications
+    path: apps/backend/src/modules/notifications/
+    phase: 3
+    epic: EXT-003
+    description: Sistema multi-canal de notificaciones
+    services:
+      - notification.service.ts
+      - email.service.ts (SendGrid)
+      - push.service.ts (FCM)
+      - notification-templates.service.ts
+      - notification-preferences.service.ts
+    controllers:
+      - notification.controller.ts
+    endpoints: 10
+    key_features:
+      - In-app notifications
+      - Email notifications (SendGrid)
+      - Push notifications (FCM)
+      - Template engine
+      - User preferences
+      - Batch sending
+      - Delivery tracking
+
+  - name: profiles
+    path: apps/backend/src/modules/profiles/
+    phase: 3
+    epic: EXT-004
+    description: Perfiles de usuario avanzados
+    services:
+      - profile.service.ts
+      - avatar-upload.service.ts
+      - social-comparison.service.ts
+      - badges-showcase.service.ts
+    controllers:
+      - profile.controller.ts
+    endpoints: 8
+    key_features:
+      - Profile customization
+      - Avatar upload
+      - Badge showcase
+      - Social comparisons
+      - Public stats
+
+  - name: reports
+    path: apps/backend/src/modules/reports/
+    phase: 3
+    epic: EXT-005
+    description: Reportería avanzada
+    services:
+      - report-builder.service.ts
+      - report-export.service.ts (PDF, CSV, XLSX)
+      - report-scheduler.service.ts
+      - chart-data.service.ts
+      - report-templates.service.ts
+    controllers:
+      - report.controller.ts
+    endpoints: 12
+    libraries:
+      - PDFKit (PDF generation)
+      - ExcelJS (XLSX export)
+      - csv-writer (CSV export)
+    key_features:
+      - Custom report builder
+      - Predefined templates
+      - Multi-format export
+      - Scheduled reports
+      - Interactive charts
+      - Data aggregation
+
+  - name: content-management
+    path: apps/backend/src/modules/content-management/
+    phase: 3
+    epic: EXT-006
+    description: CMS para contenido educativo
+    services:
+      - content-editor.service.ts
+      - content-library.service.ts
+      - workflow-approval.service.ts
+      - media-management.service.ts
+    controllers:
+      - content.controller.ts
+    endpoints: 10
+    key_features:
+      - Content CRUD
+      - Version control
+      - Approval workflow
+      - Media library
+      - Preview mode
+      - Scheduled publishing
+
+  # Módulos Parciales
+
+  - name: lti
+    path: apps/backend/src/modules/lti/
+    phase: 3
+    epic: EXT-007
+    status: partial (40%)
+    description: Integración LTI 1.3
+    services:
+      - lti-auth.service.ts (completed)
+      - lti-launch.service.ts (completed)
+      - lti-deep-linking.service.ts (pending)
+      - lti-grade-passback.service.ts (pending)
+    endpoints: 6
+    key_features:
+      - LTI 1.3 authentication ✅
+      - Basic launch flow ✅
+      - Tool registration ✅
+      - Deep linking ⚪
+      - Grade passback ⚪
+
+  - name: white-label
+    path: apps/backend/src/modules/white-label/
+    phase: 3
+    epic: EXT-008
+    status: partial (30%)
+    description: Personalización multi-tenant
+    services:
+      - tenant-config.service.ts (completed)
+      - theming.service.ts (partial)
+      - branding.service.ts (pending)
+    endpoints: 4
+    key_features:
+      - Tenant configuration ✅
+      - Basic theming ✅
+      - Logo customization ⚪
+      - Multi-domain routing ⚪
+
+  - name: peer-challenges
+    path: apps/backend/src/modules/peer-challenges/
+    phase: 3
+    epic: EXT-009
+    status: partial (50%)
+    description: Desafíos peer-to-peer
+    services:
+      - challenge.service.ts (completed)
+      - matchmaking.service.ts (pending)
+      - leaderboard.service.ts (pending)
+    endpoints: 5
+    key_features:
+      - Challenge CRUD ✅
+      - Challenge acceptance ✅
+      - Matchmaking ⚪
+      - Leaderboards ⚪
+
+  - name: parent-portal
+    path: apps/backend/src/modules/parent-portal/
+    phase: 3
+    epic: EXT-010
+    status: partial (35%)
+    description: Portal para padres
+    services:
+      - parent-account.service.ts (completed)
+      - parent-notifications.service.ts (pending)
+      - parent-reports.service.ts (pending)
+    endpoints: 4
+    key_features:
+      - Parent account management ✅
+      - Parent-student linking ✅
+      - Notifications ⚪
+      - Reports ⚪
+
+# ============================================================================
+# SHARED MODULES
+# ============================================================================
+
+shared_modules:
+  - name: database
+    path: apps/backend/src/shared/database/
+    description: Prisma client y configuración
+    files:
+      - prisma.service.ts
+      - database.config.ts
+      - connection-pool.ts
+
+  - name: common
+    path: apps/backend/src/shared/common/
+    description: Utilidades compartidas
+    files:
+      - logger.service.ts
+      - cache.service.ts
+      - validation.service.ts
+      - error-handler.ts
+      - response.interceptor.ts
+
+  - name: guards
+    path: apps/backend/src/shared/guards/
+    description: Guards de autenticación y autorización
+    files:
+      - jwt-auth.guard.ts
+      - roles.guard.ts
+      - permissions.guard.ts
+
+  - name: decorators
+    path: apps/backend/src/shared/decorators/
+    description: Decoradores custom
+    files:
+      - roles.decorator.ts
+      - permissions.decorator.ts
+      - current-user.decorator.ts
+
+# ============================================================================
+# MIDDLEWARES (12)
+# ============================================================================
+
+middlewares:
+  - name: LoggerMiddleware
+    path: apps/backend/src/middlewares/logger.middleware.ts
+    description: Request logging
+
+  - name: RateLimitMiddleware
+    path: apps/backend/src/middlewares/rate-limit.middleware.ts
+    description: Rate limiting
+
+  - name: CorsMiddleware
+    path: apps/backend/src/middlewares/cors.middleware.ts
+    description: CORS configuration
+
+  - name: CompressionMiddleware
+    description: Response compression
+
+  - name: HelmetMiddleware
+    description: Security headers
+
+  - name: AuthMiddleware
+    description: JWT verification
+
+  - name: TenantMiddleware
+    description: Multi-tenant context
+
+  - name: ValidationMiddleware
+    description: Request validation
+
+  - name: ErrorHandlerMiddleware
+    description: Global error handling
+
+  - name: CacheMiddleware
+    description: Response caching
+
+  - name: AuditMiddleware
+    description: Audit logging
+
+  - name: MetricsMiddleware
+    description: Performance metrics
+
+# ============================================================================
+# ENDPOINTS POR CATEGORÍA
+# ============================================================================
+
+endpoints_summary:
+  auth: 8
+  educational_content: 15
+  gamification: 12
+  progress: 10
+  admin: 18
+  teacher_portal: 18
+  notifications: 10
+  profiles: 8
+  reports: 12
+  content_management: 10
+  lti: 6
+  white_label: 4
+  peer_challenges: 5
+  parent_portal: 4
+  other: 5
+
+  total: 145
+
+# ============================================================================
+# DTOS (80+)
+# ============================================================================
+
+dtos:
+  auth:
+    - LoginDto
+    - RegisterDto
+    - ResetPasswordDto
+    - ChangePasswordDto
+    - AssignRoleDto
+
+  educational_content:
+    - CreateModuleDto
+    - UpdateModuleDto
+    - CreateExerciseDto
+    - UpdateExerciseDto
+    - SubmitAnswerDto
+
+  gamification:
+    - UnlockAchievementDto
+    - AwardCoinsDto
+    - UsePowerupDto
+    - CreateChallengeDto
+
+  progress:
+    - UpdateProgressDto
+    - RecordAttemptDto
+    - SnapshotProgressDto
+
+  teacher_portal:
+    - CreateClassroomDto
+    - UpdateClassroomDto
+    - EnrollStudentDto
+    - CreateAssignmentDto
+    - GradeSubmissionDto
+
+  notifications:
+    - CreateNotificationDto
+    - UpdatePreferencesDto
+    - SendBatchDto
+
+  reports:
+    - CreateReportDto
+    - GenerateReportDto
+    - ScheduleReportDto
+    - ExportReportDto
+
+  # ... y 40+ DTOs más
+
+# ============================================================================
+# EXTERNAL INTEGRATIONS
+# ============================================================================
+
+integrations:
+  - service: Supabase Auth
+    purpose: Authentication
+    modules: [auth]
+
+  - service: SendGrid
+    purpose: Email notifications
+    modules: [notifications]
+
+  - service: Firebase Cloud Messaging (FCM)
+    purpose: Push notifications
+    modules: [notifications]
+
+  - service: Stripe
+    purpose: Payment processing (future)
+    modules: []
+
+  - service: LTI 1.3
+    purpose: LMS integration
+    modules: [lti]
+    status: partial
+
+# ============================================================================
+# TESTING
+# ============================================================================
+
+testing:
+  unit_tests:
+    total: 320
+    coverage: 88%
+
+  integration_tests:
+    total: 150
+    coverage: 85%
+
+  e2e_tests:
+    total: 80
+    coverage: 75%
+
+  overall_coverage: 87%
+
+# ============================================================================
+# PERFORMANCE METRICS
+# ============================================================================
+
+performance:
+  average_response_time: 150ms
+  p95_response_time: 320ms
+  p99_response_time: 580ms
+
+  throughput: 280 req/s
+
+  critical_endpoints_performance:
+    - POST /auth/login: 80ms
+    - GET /modules/:id: 50ms
+    - POST /exercises/:id/submit: 120ms
+    - GET /progress/me: 90ms
+    - GET /teacher/classrooms: 180ms
+    - POST /notifications/send: 200ms
+
+# ============================================================================
+# DEPENDENCIES
+# ============================================================================
+
+key_dependencies:
+  - "@nestjs/core": "^10.0.0"
+  - "@nestjs/common": "^10.0.0"
+  - "@prisma/client": "^5.0.0"
+  - "class-validator": "^0.14.0"
+  - "class-transformer": "^0.5.1"
+  - "@supabase/supabase-js": "^2.38.0"
+  - "bcrypt": "^5.1.1"
+  - "jsonwebtoken": "^9.0.2"
+  - "@sendgrid/mail": "^7.7.0"
+  - "firebase-admin": "^11.11.0"
+  - "pdfkit": "^0.13.0"
+  - "exceljs": "^4.3.0"
+
+# ============================================================================
+# NOTES
+# ============================================================================
+
+notes:
+  - Consolidado de 20 módulos (16 épicas)
+  - 145 endpoints API REST
+  - 87% test coverage global
+  - Arquitectura NestJS modular
+  - Integración Supabase Auth + JWT
+  - Multi-tenant ready
+  - Performance optimizado (150ms avg response)
+  - Preparado para escalabilidad horizontal

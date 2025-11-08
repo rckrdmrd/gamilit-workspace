@@ -1,0 +1,41 @@
+# TRACEABILITY.yml - EXT-004: Perfiles Avanzados
+
+epic_code: EXT-004
+epic_name: Perfiles de Usuario Avanzados
+phase: 3
+budget_mxn: 10000
+story_points: 35
+status: completed
+
+implementation:
+  database:
+    tables:
+      - name: user_profiles_extended
+        type: new
+        description: Datos adicionales de perfil
+        columns: [avatar_url, bio, banner_url, theme, showcase_badges]
+
+  backend:
+    module: profiles
+    services:
+      - profile.service.ts
+      - avatar-upload.service.ts
+      - social-comparison.service.ts
+
+    endpoints:
+      - GET /api/v1/profiles/:userId
+      - PATCH /api/v1/profiles/me
+      - POST /api/v1/profiles/avatar
+      - GET /api/v1/profiles/compare/:userId
+
+  frontend:
+    components:
+      - ProfileHeader.tsx
+      - AvatarUploader.tsx
+      - BadgesShowcase.tsx
+      - StatsPanel.tsx
+      - SocialComparison.tsx
+
+status:
+  completion: 100%
+  completion_date: "2024-10-31"

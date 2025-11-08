@@ -1,0 +1,46 @@
+=== INVENTARIO DE ENUMs POR SCHEMA ===
+
+Schema: auth (2 ENUMs)
+  - aal_level
+  - code_challenge_method
+
+Schema: gamification_system (1 ENUMs)
+  - maya_rank
+
+Schema: public (31 ENUMs)
+  - achievement_category
+  - achievement_type
+  - aggregation_period
+  - alert_severity
+  - alert_status
+  - attempt_result
+  - attempt_status
+  - audit_action
+  - classroom_role
+  - cognitive_level
+  - comodin_type
+  - content_status
+  - content_type
+  - difficulty_level
+  - exercise_type
+  - friendship_status
+  - gamilit_role
+  - log_level
+  - media_type
+  - metric_type
+  - module_status
+  - notification_channel
+  - notification_priority
+  - notification_type
+  - processing_status
+  - progress_status
+  - setting_type
+  - social_event_type
+  - team_role
+  - transaction_type
+  - user_status
+
+Schema: storage (1 ENUMs)
+  - buckettype
+
+=== TOTAL: 35 ENUMs ===

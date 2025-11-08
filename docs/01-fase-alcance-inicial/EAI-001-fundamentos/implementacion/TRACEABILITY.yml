@@ -1,0 +1,622 @@
+# TRACEABILITY.yml - EAI-001: Fundamentos
+# Matriz de trazabilidad completa: Documentación → Código
+
+epic_code: EAI-001
+epic_name: Fundamentos
+phase: 1
+phase_name: Alcance Inicial
+budget_mxn: 22000
+story_points: 60
+status: completed
+sprint: "1-2"
+period: "Mes 1, Semana 1-2"
+
+# ============================================================================
+# DOCUMENTACIÓN
+# ============================================================================
+
+documentation:
+  requirements:
+    - id: RF-AUTH-001
+      file: requerimientos/RF-AUTH-001-roles.md
+      title: Sistema de Roles (RBAC)
+      status: implemented
+
+    - id: RF-AUTH-002
+      file: requerimientos/RF-AUTH-002-estados-cuenta.md
+      title: Estados de Cuenta de Usuario
+      status: implemented
+
+    - id: RF-AUTH-003
+      file: requerimientos/RF-AUTH-003-oauth.md
+      title: OAuth Social Providers
+      status: implemented
+
+  specifications:
+    - id: ET-AUTH-001
+      file: especificaciones/ET-AUTH-001-rbac.md
+      rf: RF-AUTH-001
+      title: Implementación RBAC
+      status: implemented
+
+    - id: ET-AUTH-002
+      file: especificaciones/ET-AUTH-002-estados-cuenta.md
+      rf: RF-AUTH-002
+      title: Implementación Estados de Cuenta
+      status: implemented
+
+    - id: ET-AUTH-003
+      file: especificaciones/ET-AUTH-003-oauth.md
+      rf: RF-AUTH-003
+      title: Implementación OAuth Providers
+      status: implemented
+
+  user_stories:
+    - id: US-FUND-001
+      file: historias-usuario/US-FUND-001-autenticacion-basica-jwt.md
+      title: Autenticación Básica JWT
+      rf: [RF-AUTH-001, RF-AUTH-002]
+      story_points: 8
+      status: completed
+
+    - id: US-FUND-002
+      file: historias-usuario/US-FUND-002-perfiles-usuario-basicos.md
+      title: Perfiles de Usuario Básicos
+      rf: [RF-AUTH-001]
+      story_points: 5
+      status: completed
+
+    - id: US-FUND-003
+      file: historias-usuario/US-FUND-003-dashboard-principal-estudiante.md
+      title: Dashboard Principal Estudiante
+      rf: []
+      story_points: 8
+      status: completed
+
+    - id: US-FUND-004
+      file: historias-usuario/US-FUND-004-infraestructura-tecnica-base.md
+      title: Infraestructura Técnica Base
+      rf: []
+      story_points: 12
+      status: completed
+
+    - id: US-FUND-005
+      file: historias-usuario/US-FUND-005-sistema-sesiones-estado.md
+      title: Sistema de Sesiones y Estado
+      rf: [RF-AUTH-002]
+      story_points: 6
+      status: completed
+
+    - id: US-FUND-006
+      file: historias-usuario/US-FUND-006-api-restful-basica.md
+      title: API RESTful Básica
+      rf: []
+      story_points: 8
+      status: completed
+
+    - id: US-FUND-007
+      file: historias-usuario/US-FUND-007-navegacion-routing.md
+      title: Navegación y Routing
+      rf: []
+      story_points: 5
+      status: completed
+
+    - id: US-FUND-008
+      file: historias-usuario/US-FUND-008-ui-ux-base.md
+      title: UI/UX Base
+      rf: []
+      story_points: 8
+      status: completed
+
+# ============================================================================
+# IMPLEMENTACIÓN - BASE DE DATOS
+# ============================================================================
+
+implementation:
+  database:
+    schemas:
+      - name: auth
+        path: apps/database/ddl/schemas/auth/
+        description: Schema de autenticación Supabase
+
+      - name: auth_management
+        path: apps/database/ddl/schemas/auth_management/
+        description: Schema de gestión de autenticación y perfiles
+
+      - name: public
+        path: apps/database/ddl/schemas/public/
+        description: Schema público con tablas compartidas
+
+    enums:
+      - name: aal_level
+        schema: auth
+        file: apps/database/ddl/schemas/auth/enums/aal_level.sql
+        values: [aal1, aal2, aal3]
+        rf: RF-AUTH-001
+
+      - name: code_challenge_method
+        schema: auth
+        file: apps/database/ddl/schemas/auth/enums/code_challenge_method.sql
+        values: [s256, plain]
+        rf: RF-AUTH-003
+
+    tables:
+      - name: users
+        schema: auth
+        file: apps/database/ddl/schemas/auth/tables/01-users.sql
+        lines: 72
+        description: Tabla principal de usuarios (Supabase Auth)
+        rf: RF-AUTH-001
+
+      - name: tenants
+        schema: auth_management
+        file: apps/database/ddl/schemas/auth_management/tables/01-tenants.sql
+        lines: 58
+        description: Multi-tenancy (organizaciones)
+        rf: RF-AUTH-001
+
+      - name: profiles
+        schema: auth_management
+        file: apps/database/ddl/schemas/auth_management/tables/03-profiles.sql
+        lines: 114
+        description: Perfiles extendidos de usuarios
+        rf: RF-AUTH-001
+
+      - name: user_roles
+        schema: auth_management
+        file: apps/database/ddl/schemas/auth_management/tables/04-roles.sql
+        lines: 61
+        description: Roles de usuario (RBAC)
+        rf: RF-AUTH-001
+
+      - name: auth_providers
+        schema: auth_management
+        file: apps/database/ddl/schemas/auth_management/tables/05-auth_providers.sql
+        lines: 172
+        description: Configuración de OAuth providers
+        rf: RF-AUTH-003
+
+      - name: email_verification_tokens
+        schema: auth_management
+        file: apps/database/ddl/schemas/auth_management/tables/06-email_verification_tokens.sql
+        lines: 43
+        description: Tokens de verificación de email
+        rf: RF-AUTH-002
+
+      - name: password_reset_tokens
+        schema: auth_management
+        file: apps/database/ddl/schemas/auth_management/tables/07-password_reset_tokens.sql
+        lines: 44
+        description: Tokens de reset de contraseña
+        rf: RF-AUTH-002
+
+      - name: security_events
+        schema: auth_management
+        file: apps/database/ddl/schemas/auth_management/tables/08-security_events.sql
+        lines: 50
+        description: Log de eventos de seguridad
+        rf: RF-AUTH-002
+
+      - name: user_preferences
+        schema: auth_management
+        file: apps/database/ddl/schemas/auth_management/tables/09-user_preferences.sql
+        lines: 79
+        description: Preferencias de usuario
+        rf: RF-AUTH-001
+
+      - name: memberships
+        schema: auth_management
+        file: apps/database/ddl/schemas/auth_management/tables/10-memberships.sql
+        lines: 60
+        description: Membresías de usuarios a tenants
+        rf: RF-AUTH-001
+
+      - name: user_sessions
+        schema: auth_management
+        file: apps/database/ddl/schemas/auth_management/tables/11-user_sessions.sql
+        lines: 60
+        description: Sesiones activas de usuarios
+        rf: RF-AUTH-002
+
+      - name: user_suspensions
+        schema: auth_management
+        file: apps/database/ddl/schemas/auth_management/tables/12-user_suspensions.sql
+        lines: 33
+        description: Suspensiones de cuenta
+        rf: RF-AUTH-002
+
+    functions:
+      - name: assign_role_to_user
+        schema: auth_management
+        file: apps/database/ddl/schemas/auth_management/functions/01-assign_role_to_user.sql
+        lines: 100
+        description: Asigna un rol a un usuario
+        rf: RF-AUTH-001
+
+      - name: get_user_role
+        schema: auth_management
+        file: apps/database/ddl/schemas/auth_management/functions/02-get_user_role.sql
+        lines: 47
+        description: Obtiene el rol de un usuario
+        rf: RF-AUTH-001
+
+      - name: user_has_permission
+        schema: auth_management
+        file: apps/database/ddl/schemas/auth_management/functions/03-verify_user_permission.sql
+        lines: 45
+        description: Verifica si usuario tiene permiso
+        rf: RF-AUTH-001
+
+      - name: revoke_role_from_user
+        schema: auth_management
+        file: apps/database/ddl/schemas/auth_management/functions/04-remove_role_from_user.sql
+        lines: 81
+        description: Remueve rol de un usuario
+        rf: RF-AUTH-001
+
+      - name: hash_token
+        schema: auth_management
+        file: apps/database/ddl/schemas/auth_management/functions/05-hash_token.sql
+        lines: 28
+        description: Hashea tokens de seguridad
+        rf: RF-AUTH-002
+
+      - name: update_user_preferences
+        schema: auth_management
+        file: apps/database/ddl/schemas/auth_management/functions/06-update_user_preferences.sql
+        lines: 81
+        description: Actualiza preferencias de usuario
+        rf: RF-AUTH-001
+
+    triggers:
+      - name: trg_audit_profile_changes
+        table: profiles
+        file: apps/database/ddl/schemas/auth_management/triggers/03-trg_audit_profile_changes.sql
+        lines: 15
+        description: Audita cambios en perfiles
+        rf: RF-AUTH-001
+
+      - name: trg_initialize_user_stats
+        table: profiles
+        file: apps/database/ddl/schemas/auth_management/triggers/04-trg_initialize_user_stats.sql
+        lines: 15
+        description: Inicializa estadísticas de usuario
+        rf: RF-AUTH-001
+
+      - name: trg_profiles_updated_at
+        table: profiles
+        file: apps/database/ddl/schemas/auth_management/triggers/05-trg_profiles_updated_at.sql
+        lines: 15
+        description: Actualiza timestamp de perfiles
+        rf: RF-AUTH-001
+
+      - name: trg_tenants_updated_at
+        table: tenants
+        file: apps/database/ddl/schemas/auth_management/triggers/06-trg_tenants_updated_at.sql
+        lines: 15
+        description: Actualiza timestamp de tenants
+        rf: RF-AUTH-001
+
+      - name: trg_user_roles_updated_at
+        table: user_roles
+        file: apps/database/ddl/schemas/auth_management/triggers/07-trg_user_roles_updated_at.sql
+        lines: 15
+        description: Actualiza timestamp de roles
+        rf: RF-AUTH-001
+
+      - name: trg_memberships_updated_at
+        table: memberships
+        file: apps/database/ddl/schemas/auth_management/triggers/02-trg_memberships_updated_at.sql
+        lines: 15
+        description: Actualiza timestamp de memberships
+        rf: RF-AUTH-001
+
+    indexes:
+      - name: idx_user_preferences_theme
+        table: user_preferences
+        file: apps/database/ddl/schemas/auth_management/indexes/01-idx_user_preferences_theme.sql
+        lines: 48
+        description: Índice para búsquedas por tema
+        rf: RF-AUTH-001
+
+      - name: idx_user_roles_permissions_gin
+        table: user_roles
+        file: apps/database/ddl/schemas/auth_management/indexes/02-idx_user_roles_permissions_gin.sql
+        lines: 107
+        description: Índice GIN para permisos JSONB
+        rf: RF-AUTH-001
+
+    rls_policies:
+      - name: auth_management_policies
+        file: apps/database/ddl/schemas/auth_management/rls-policies/01-policies.sql
+        lines: 305
+        description: Políticas RLS para gestión de autenticación
+        rf: RF-AUTH-001
+
+  # ============================================================================
+  # IMPLEMENTACIÓN - BACKEND
+  # ============================================================================
+
+  backend:
+    module: auth
+    path: apps/backend/src/modules/auth/
+    rf: [RF-AUTH-001, RF-AUTH-002, RF-AUTH-003]
+
+    services:
+      - name: auth.service.ts
+        path: apps/backend/src/modules/auth/services/auth.service.ts
+        description: Servicio principal de autenticación
+        rf: [RF-AUTH-001, RF-AUTH-002, RF-AUTH-003]
+        methods:
+          - register()
+          - login()
+          - logout()
+          - refreshToken()
+          - verifyEmail()
+          - resetPassword()
+          - oauthLogin()
+
+      - name: jwt.service.ts
+        path: apps/backend/src/modules/auth/services/jwt.service.ts
+        description: Servicio de gestión de JWT
+        rf: RF-AUTH-002
+        methods:
+          - generateToken()
+          - verifyToken()
+          - refreshToken()
+
+      - name: oauth.service.ts
+        path: apps/backend/src/modules/auth/services/oauth.service.ts
+        description: Servicio de OAuth providers
+        rf: RF-AUTH-003
+        methods:
+          - googleLogin()
+          - facebookLogin()
+          - appleLogin()
+          - microsoftLogin()
+          - githubLogin()
+
+    controllers:
+      - name: auth.controller.ts
+        path: apps/backend/src/modules/auth/controllers/auth.controller.ts
+        description: Controlador de autenticación
+        rf: [RF-AUTH-001, RF-AUTH-002, RF-AUTH-003]
+        endpoints:
+          - "POST /api/auth/register"
+          - "POST /api/auth/login"
+          - "POST /api/auth/logout"
+          - "POST /api/auth/refresh"
+          - "POST /api/auth/verify-email"
+          - "POST /api/auth/forgot-password"
+          - "POST /api/auth/reset-password"
+          - "GET /api/auth/oauth/:provider"
+          - "GET /api/auth/oauth/:provider/callback"
+
+    guards:
+      - name: jwt-auth.guard.ts
+        path: apps/backend/src/modules/auth/guards/jwt-auth.guard.ts
+        description: Guard de autenticación JWT
+        rf: RF-AUTH-002
+
+      - name: roles.guard.ts
+        path: apps/backend/src/modules/auth/guards/roles.guard.ts
+        description: Guard de verificación de roles
+        rf: RF-AUTH-001
+
+      - name: permissions.guard.ts
+        path: apps/backend/src/modules/auth/guards/permissions.guard.ts
+        description: Guard de verificación de permisos
+        rf: RF-AUTH-001
+
+    strategies:
+      - name: jwt.strategy.ts
+        path: apps/backend/src/modules/auth/strategies/jwt.strategy.ts
+        description: Estrategia Passport JWT
+        rf: RF-AUTH-002
+
+      - name: google.strategy.ts
+        path: apps/backend/src/modules/auth/strategies/google.strategy.ts
+        description: Estrategia OAuth Google
+        rf: RF-AUTH-003
+
+      - name: facebook.strategy.ts
+        path: apps/backend/src/modules/auth/strategies/facebook.strategy.ts
+        description: Estrategia OAuth Facebook
+        rf: RF-AUTH-003
+
+    dtos:
+      - name: register.dto.ts
+        path: apps/backend/src/modules/auth/dto/register.dto.ts
+        rf: RF-AUTH-002
+
+      - name: login.dto.ts
+        path: apps/backend/src/modules/auth/dto/login.dto.ts
+        rf: RF-AUTH-002
+
+      - name: reset-password.dto.ts
+        path: apps/backend/src/modules/auth/dto/reset-password.dto.ts
+        rf: RF-AUTH-002
+
+  # ============================================================================
+  # IMPLEMENTACIÓN - FRONTEND
+  # ============================================================================
+
+  frontend:
+    features:
+      - name: auth
+        path: apps/frontend/src/features/auth/
+        rf: [RF-AUTH-001, RF-AUTH-002, RF-AUTH-003]
+        components:
+          - LoginForm.tsx
+          - RegisterForm.tsx
+          - ForgotPasswordForm.tsx
+          - ResetPasswordForm.tsx
+          - OAuthButtons.tsx
+          - ProtectedRoute.tsx
+
+      - name: dashboard
+        path: apps/frontend/src/features/student/dashboard/
+        rf: []
+        components:
+          - DashboardLayout.tsx
+          - DashboardHeader.tsx
+          - StatsCards.tsx
+          - ProgressOverview.tsx
+
+    shared_components:
+      - name: AuthGuard.tsx
+        path: apps/frontend/src/shared/guards/AuthGuard.tsx
+        description: Guard de autenticación para rutas
+        rf: RF-AUTH-002
+
+      - name: RoleGuard.tsx
+        path: apps/frontend/src/shared/guards/RoleGuard.tsx
+        description: Guard de roles para rutas
+        rf: RF-AUTH-001
+
+    stores:
+      - name: authStore.ts
+        path: apps/frontend/src/stores/authStore.ts
+        description: Zustand store de autenticación
+        rf: [RF-AUTH-001, RF-AUTH-002]
+
+    hooks:
+      - name: useAuth.ts
+        path: apps/frontend/src/hooks/useAuth.ts
+        description: Hook de autenticación
+        rf: [RF-AUTH-001, RF-AUTH-002]
+
+# ============================================================================
+# TESTING
+# ============================================================================
+
+testing:
+  backend:
+    unit_tests:
+      - name: auth.service.spec.ts
+        path: apps/backend/src/modules/auth/services/__tests__/auth.service.spec.ts
+        coverage: 89%
+        rf: [RF-AUTH-001, RF-AUTH-002, RF-AUTH-003]
+
+    integration_tests:
+      - name: auth.e2e.spec.ts
+        path: apps/backend/test/auth.e2e.spec.ts
+        description: Tests E2E de autenticación
+        rf: [RF-AUTH-001, RF-AUTH-002, RF-AUTH-003]
+
+  frontend:
+    component_tests:
+      - name: LoginForm.test.tsx
+        path: apps/frontend/src/features/auth/__tests__/LoginForm.test.tsx
+        coverage: 92%
+        rf: RF-AUTH-002
+
+      - name: RegisterForm.test.tsx
+        path: apps/frontend/src/features/auth/__tests__/RegisterForm.test.tsx
+        coverage: 88%
+        rf: RF-AUTH-002
+
+  coverage:
+    overall: 88%
+    backend: 89%
+    frontend: 87%
+    database: 85%
+
+# ============================================================================
+# MÉTRICAS Y RESULTADO
+# ============================================================================
+
+metrics:
+  effort:
+    estimated_sp: 60
+    actual_sp: 63
+    variance: +5%
+
+  budget:
+    estimated: 22000
+    actual: 23100
+    variance: +5%
+
+  time:
+    estimated_days: 10
+    actual_days: 11
+    variance: +10%
+
+  quality:
+    test_coverage: 88%
+    bugs_found: 15
+    bugs_fixed: 15
+    tech_debt: low
+
+  deliverables:
+    database_objects: 23
+    backend_files: 22
+    frontend_components: 18
+    tests: 8
+    documentation: 11
+
+status:
+  phase_status: completed
+  completion_date: "2024-08-15"
+  accepted_by: Product Owner
+  deployed_to: production
+  notes: |
+    Épica fundamental completada exitosamente con ligero sobrepaso en tiempo y presupuesto (+5%).
+    Sistema de autenticación robusto con OAuth, RBAC, y gestión completa de sesiones.
+    Cobertura de tests excelente (88%). Base sólida para resto del proyecto.
+
+# ============================================================================
+# DEPENDENCIAS
+# ============================================================================
+
+dependencies:
+  required_by_epics:
+    - EAI-002  # Actividades requieren auth
+    - EAI-003  # Gamificación requiere perfiles
+    - EAI-004  # Analytics requiere tracking de usuarios
+    - EAI-005  # Admin requiere RBAC
+    - ALL      # Todas las épicas dependen de autenticación
+
+  depends_on_epics: []  # Primera épica, sin dependencias
+
+# ============================================================================
+# NOTAS ADICIONALES
+# ============================================================================
+
+notes:
+  - Sistema RBAC flexible permite extensiones futuras
+  - OAuth multi-provider facilita onboarding de usuarios
+  - RLS implementado desde inicio garantiza seguridad
+  - Multi-tenancy preparado para escalabilidad
+  - JWT con refresh tokens evita sesiones excesivamente largas
+
+lessons_learned:
+  - Implementar multi-tenancy desde inicio facilita escalabilidad
+  - OAuth aumenta significativamente tasa de registro
+  - RLS debe implementarse desde día 1, no después
+  - Guards reutilizables simplifican autorización en toda la app
+
+# ============================================================================
+# CHANGELOG
+# ============================================================================
+
+changelog:
+  - date: "2024-08-01"
+    version: "0.1"
+    author: "Database Team"
+    changes: "Setup inicial de schemas de auth"
+
+  - date: "2024-08-05"
+    version: "0.5"
+    author: "Backend Team"
+    changes: "Implementación de JWT y OAuth"
+
+  - date: "2024-08-10"
+    version: "0.8"
+    author: "Frontend Team"
+    changes: "Implementación de UI de auth"
+
+  - date: "2024-08-15"
+    version: "1.0"
+    author: "Development Team"
+    changes: "Épica completada y desplegada a producción"

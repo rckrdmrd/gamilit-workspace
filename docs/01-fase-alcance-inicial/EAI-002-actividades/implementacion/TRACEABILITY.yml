@@ -1,0 +1,40 @@
+# TRACEABILITY.yml - EAI-002: Actividades
+
+epic_code: EAI-002
+epic_name: Actividades y Contenido Educativo
+phase: 1
+budget_mxn: 22000
+story_points: 45
+status: completed
+
+documentation:
+  requirements:
+    - {id: RF-EDU-001, file: requerimientos/RF-EDU-001-mecanicas-ejercicios.md}
+    - {id: RF-EDU-002, file: requerimientos/RF-EDU-002-niveles-dificultad.md}
+    - {id: RF-EDU-003, file: requerimientos/RF-EDU-003-taxonomia-bloom.md}
+
+implementation:
+  database:
+    schemas: [educational_content, progress_tracking]
+    key_tables:
+      - exercises
+      - exercise_attempts
+      - modules
+      - module_progress
+
+  backend:
+    module: educational
+    path: apps/backend/src/modules/educational/
+    key_services:
+      - exercise.service.ts
+      - module.service.ts
+      - progress.service.ts
+
+  frontend:
+    feature: student/learning
+    path: apps/frontend/src/features/student/learning/
+    key_components:
+      - ExerciseRenderer.tsx
+      - MultipleChoice.tsx
+      - TrueFalse.tsx
+      - DragAndDrop.tsx

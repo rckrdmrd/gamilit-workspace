@@ -1,0 +1,559 @@
+{
+  "schemas": [
+    {
+      "name": "admin_dashboard",
+      "objects": {
+        "tables": {"count": 0, "files": []},
+        "functions": {"count": 0, "files": []},
+        "enums": {"count": 0, "files": []},
+        "views": {
+          "count": 4,
+          "files": [
+            "moderation_queue.sql",
+            "organization_stats_summary.sql",
+            "recent_admin_actions.sql",
+            "user_stats_summary.sql"
+          ]
+        },
+        "materialized_views": {"count": 0, "files": []},
+        "triggers": {"count": 0, "files": []},
+        "rls_policies": {"count": 0, "files": []}
+      }
+    },
+    {
+      "name": "audit_logging",
+      "objects": {
+        "tables": {
+          "count": 6,
+          "files": [
+            "01-audit_logs.sql",
+            "02-performance_metrics.sql",
+            "03-system_alerts.sql",
+            "04-system_logs.sql",
+            "05-user_activity_logs.sql",
+            "06-user_activity.sql"
+          ]
+        },
+        "functions": {
+          "count": 1,
+          "files": [
+            "log_audit_event.sql"
+          ]
+        },
+        "enums": {"count": 0, "files": []},
+        "views": {"count": 0, "files": []},
+        "materialized_views": {"count": 0, "files": []},
+        "triggers": {
+          "count": 1,
+          "files": [
+            "01-trg_system_alerts_updated_at.sql"
+          ]
+        },
+        "rls_policies": {
+          "count": 1,
+          "files": [
+            "01-policies.sql"
+          ]
+        }
+      }
+    },
+    {
+      "name": "auth",
+      "objects": {
+        "tables": {
+          "count": 1,
+          "files": [
+            "01-users.sql"
+          ]
+        },
+        "functions": {
+          "count": 0,
+          "files": [
+          ]
+        },
+        "enums": {
+          "count": 2,
+          "files": [
+            "aal_level.sql",
+            "code_challenge_method.sql"
+          ]
+        },
+        "views": {"count": 0, "files": []},
+        "materialized_views": {"count": 0, "files": []},
+        "triggers": {"count": 0, "files": []},
+        "rls_policies": {"count": 0, "files": []}
+      }
+    },
+    {
+      "name": "auth_management",
+      "objects": {
+        "tables": {
+          "count": 12,
+          "files": [
+            "01-tenants.sql",
+            "02-auth_attempts.sql",
+            "03-profiles.sql",
+            "04-roles.sql",
+            "05-auth_providers.sql",
+            "06-email_verification_tokens.sql",
+            "07-password_reset_tokens.sql",
+            "08-security_events.sql",
+            "09-user_preferences.sql",
+            "10-memberships.sql",
+            "11-user_sessions.sql",
+            "12-user_suspensions.sql"
+          ]
+        },
+        "functions": {
+          "count": 6,
+          "files": [
+            "01-assign_role_to_user.sql",
+            "02-get_user_role.sql",
+            "03-verify_user_permission.sql",
+            "04-remove_role_from_user.sql",
+            "05-hash_token.sql",
+            "06-update_user_preferences.sql"
+          ]
+        },
+        "enums": {"count": 0, "files": []},
+        "views": {"count": 0, "files": []},
+        "materialized_views": {"count": 0, "files": []},
+        "triggers": {
+          "count": 6,
+          "files": [
+            "02-trg_memberships_updated_at.sql",
+            "03-trg_audit_profile_changes.sql",
+            "04-trg_initialize_user_stats.sql",
+            "05-trg_profiles_updated_at.sql",
+            "06-trg_tenants_updated_at.sql",
+            "07-trg_user_roles_updated_at.sql"
+          ]
+        },
+        "rls_policies": {
+          "count": 1,
+          "files": [
+            "01-policies.sql"
+          ]
+        }
+      }
+    },
+    {
+      "name": "content_management",
+      "objects": {
+        "tables": {
+          "count": 5,
+          "files": [
+            "01-content_templates.sql",
+            "02-marie_curie_content.sql",
+            "03-media_files.sql",
+            "04-content_versions.sql",
+            "05-flagged_content.sql"
+          ]
+        },
+        "functions": {"count": 0, "files": []},
+        "enums": {"count": 0, "files": []},
+        "views": {"count": 0, "files": []},
+        "materialized_views": {"count": 0, "files": []},
+        "triggers": {
+          "count": 3,
+          "files": [
+            "08-trg_content_templates_updated_at.sql",
+            "09-trg_marie_curie_content_updated_at.sql",
+            "10-trg_media_files_updated_at.sql"
+          ]
+        },
+        "rls_policies": {
+          "count": 1,
+          "files": [
+            "01-policies.sql"
+          ]
+        }
+      }
+    },
+    {
+      "name": "educational_content",
+      "objects": {
+        "tables": {
+          "count": 4,
+          "files": [
+            "01-modules.sql",
+            "02-exercises.sql",
+            "03-assessment_rubrics.sql",
+            "04-media_resources.sql"
+          ]
+        },
+        "functions": {
+          "count": 2,
+          "files": [
+            "calculate_learning_path.sql",
+            "get_recommended_missions.sql"
+          ]
+        },
+        "enums": {
+          "count": 0,
+          "files": [
+          ]
+        },
+        "views": {"count": 0, "files": []},
+        "materialized_views": {"count": 0, "files": []},
+        "triggers": {
+          "count": 4,
+          "files": [
+            "11-trg_assessment_rubrics_updated_at.sql",
+            "12-trg_exercises_updated_at.sql",
+            "13-trg_media_resources_updated_at.sql",
+            "14-trg_modules_updated_at.sql"
+          ]
+        },
+        "rls_policies": {
+          "count": 2,
+          "files": [
+            "01-enable-rls.sql",
+            "02-modules-exercises-policies.sql"
+          ]
+        }
+      }
+    },
+    {
+      "name": "gamification_system",
+      "objects": {
+        "tables": {
+          "count": 13,
+          "files": [
+            "01-user_stats.sql",
+            "02-user_ranks.sql",
+            "03-achievements.sql",
+            "04-user_achievements.sql",
+            "05-ml_coins_transactions.sql",
+            "06-missions.sql",
+            "07-comodines_inventory.sql",
+            "08-notifications.sql",
+            "09-leaderboard_metadata.sql",
+            "10-achievement_categories.sql",
+            "11-active_boosts.sql",
+            "12-inventory_transactions.sql",
+            "13-maya_ranks.sql"
+          ]
+        },
+        "functions": {
+          "count": 23,
+          "files": [
+            "06-update_missions_updated_at.sql",
+            "07-update_notifications_updated_at.sql",
+            "08-recalculate_level_on_xp_change.sql",
+            "apply_xp_boost.sql",
+            "award_ml_coins.sql",
+            "calculate_level_from_xp.sql",
+            "calculate_user_rank.sql",
+            "check_and_award_achievements.sql",
+            "claim_achievement_reward.sql",
+            "consume_comodin.sql",
+            "get_user_comodines.sql",
+            "get_user_current_rank.sql",
+            "get_user_inventory.sql",
+            "get_user_inventory_summary.sql",
+            "get_user_rank_progress.sql",
+            "get_user_rank_requirements.sql",
+            "grant_achievement.sql",
+            "process_exercise_completion.sql",
+            "redeem_comodin.sql",
+            "update_leaderboard_coins.sql",
+            "update_leaderboard_global.sql",
+            "update_leaderboard_streaks.sql",
+            "update_user_rank.sql"
+          ]
+        },
+        "enums": {
+          "count": 2,
+          "files": [
+            "maya_rank.sql",
+            "transaction_type.sql"
+          ]
+        },
+        "views": {
+          "count": 4,
+          "files": [
+            "01-leaderboard_coins.sql",
+            "02-leaderboard_global.sql",
+            "03-leaderboard_streaks.sql",
+            "04-leaderboard_xp.sql"
+          ]
+        },
+        "materialized_views": {
+          "count": 4,
+          "files": [
+            "01-mv_global_leaderboard.sql",
+            "02-mv_classroom_leaderboard.sql",
+            "03-mv_weekly_leaderboard.sql",
+            "04-mv_mechanic_leaderboard.sql"
+          ]
+        },
+        "triggers": {
+          "count": 7,
+          "files": [
+            "15-trg_achievements_updated_at.sql",
+            "16-trg_comodines_inventory_updated_at.sql",
+            "17-missions_updated_at.sql",
+            "18-notifications_updated_at.sql",
+            "18-trg_recalculate_level_on_xp_change.sql",
+            "19-trg_user_ranks_updated_at.sql",
+            "20-trg_user_stats_updated_at.sql"
+          ]
+        },
+        "rls_policies": {
+          "count": 8,
+          "files": [
+            "01-enable-rls.sql",
+            "02-ml-coins-policies.sql",
+            "02-policies.sql",
+            "03-achievements-policies.sql",
+            "03-grants.sql",
+            "04-user-stats-policies.sql",
+            "05-inventory-missions-policies.sql",
+            "06-notifications-leaderboard-policies.sql"
+          ]
+        }
+      }
+    },
+    {
+      "name": "gamilit",
+      "objects": {
+        "tables": {"count": 0, "files": []},
+        "functions": {
+          "count": 13,
+          "files": [
+            "01-audit_profile_changes.sql",
+            "02-get_current_user_id.sql",
+            "03-get_current_user_role.sql",
+            "04-initialize_user_stats.sql",
+            "05-is_admin.sql",
+            "08-now_mexico.sql",
+            "09-set_profile_defaults.sql",
+            "09-update_updated_at_column.sql",
+            "10-update_classroom_member_count.sql",
+            "11-update_user_last_login.sql",
+            "12-validate_email_format.sql",
+            "13-validate_username.sql",
+            "14-update_user_stats_on_exercise_complete.sql"
+          ]
+        },
+        "enums": {"count": 0, "files": []},
+        "views": {"count": 0, "files": []},
+        "materialized_views": {"count": 0, "files": []},
+        "triggers": {"count": 0, "files": []},
+        "rls_policies": {"count": 0, "files": []}
+      }
+    },
+    {
+      "name": "progress_tracking",
+      "objects": {
+        "tables": {
+          "count": 5,
+          "files": [
+            "01-module_progress.sql",
+            "02-learning_sessions.sql",
+            "03-exercise_attempts.sql",
+            "04-exercise_submissions.sql",
+            "05-scheduled_missions.sql"
+          ]
+        },
+        "functions": {
+          "count": 7,
+          "files": [
+            "01-calculate_module_progress.sql",
+            "03-get_user_progress.sql",
+            "04-record_exercise_attempt.sql",
+            "05-get_classroom_analytics.sql",
+            "06-update_mission_progress.sql",
+            "07-update_exercise_submissions_updated_at.sql",
+            "02-check_mechanic_completion.sql"
+          ]
+        },
+        "enums": {
+          "count": 0,
+          "files": [
+          ]
+        },
+        "views": {
+          "count": 1,
+          "files": [
+            "user_progress_summary.sql"
+          ]
+        },
+        "materialized_views": {"count": 0, "files": []},
+        "triggers": {
+          "count": 3,
+          "files": [
+            "21-trg_update_user_stats_on_exercise.sql",
+            "22-exercise_submissions_updated_at.sql",
+            "23-trg_module_progress_updated_at.sql"
+          ]
+        },
+        "rls_policies": {
+          "count": 2,
+          "files": [
+            "01-enable-rls.sql",
+            "02-progress-policies.sql"
+          ]
+        }
+      }
+    },
+    {
+      "name": "public",
+      "objects": {
+        "tables": {
+          "count": 6,
+          "files": [
+            "assignment_classrooms.sql",
+            "assignment_exercises.sql",
+            "assignment_students.sql",
+            "assignment_submissions.sql",
+            "assignments.sql",
+            "teacher_notes.sql"
+          ]
+        },
+        "functions": {
+          "count": 7,
+          "files": [
+            "01-cleanup_old_system_logs.sql",
+            "02-cleanup_old_user_activity.sql",
+            "03-is_feature_enabled.sql",
+            "04-log_system_event.sql",
+            "05-send_notification.sql",
+            "06-update_feature_flag.sql",
+            "07-validate_date_range.sql"
+          ]
+        },
+        "enums": {
+          "count": 5,
+          "files": [
+            "aggregation_period.sql",
+            "attempt_result.sql",
+            "content_type.sql",
+            "metric_type.sql",
+            "social_event_type.sql"
+          ]
+        },
+        "views": {
+          "count": 3,
+          "files": [
+            "01-assignment_submission_stats.sql",
+            "02-classroom_overview.sql",
+            "03-for.sql"
+          ]
+        },
+        "materialized_views": {"count": 0, "files": []},
+        "triggers": {
+          "count": 8,
+          "files": [
+            "01-trg_assignment_classrooms_updated_at.sql",
+            "02-trg_assignment_exercises_updated_at.sql",
+            "03-trg_assignment_students_updated_at.sql",
+            "04-trg_assignment_submissions_updated_at.sql",
+            "05-trg_assignments_updated_at.sql",
+            "09-trg_teacher_notes_updated_at.sql",
+            "10-trg_assignment_audit_creation.sql",
+            "11-trg_assignment_submissions_publish.sql"
+          ]
+        },
+        "rls_policies": {"count": 0, "files": []}
+      }
+    },
+    {
+      "name": "social_features",
+      "objects": {
+        "tables": {
+          "count": 7,
+          "files": [
+            "01-friendships.sql",
+            "02-schools.sql",
+            "03-classrooms.sql",
+            "04-classroom_members.sql",
+            "05-teams.sql",
+            "06-team_members.sql",
+            "07-team_challenges.sql"
+          ]
+        },
+        "functions": {
+          "count": 1,
+          "files": [
+            "cleanup_old_notifications.sql"
+          ]
+        },
+        "enums": {"count": 0, "files": []},
+        "views": {"count": 0, "files": []},
+        "materialized_views": {"count": 0, "files": []},
+        "triggers": {
+          "count": 5,
+          "files": [
+            "24-trg_classroom_members_updated_at.sql",
+            "25-trg_update_classroom_count.sql",
+            "26-trg_classrooms_updated_at.sql",
+            "27-trg_schools_updated_at.sql",
+            "28-trg_teams_updated_at.sql"
+          ]
+        },
+        "rls_policies": {
+          "count": 8,
+          "files": [
+            "01-enable-rls.sql",
+            "02-policies.sql",
+            "02-schools-policies.sql",
+            "03-classrooms-policies.sql",
+            "03-grants.sql",
+            "04-classroom-members-policies.sql",
+            "05-friendships-policies.sql",
+            "06-teams-policies.sql"
+          ]
+        }
+      }
+    },
+    {
+      "name": "storage",
+      "objects": {
+        "tables": {"count": 0, "files": []},
+        "functions": {"count": 0, "files": []},
+        "enums": {
+          "count": 1,
+          "files": [
+            "buckettype.sql"
+          ]
+        },
+        "views": {"count": 0, "files": []},
+        "materialized_views": {"count": 0, "files": []},
+        "triggers": {"count": 0, "files": []},
+        "rls_policies": {"count": 0, "files": []}
+      }
+    },
+    {
+      "name": "system_configuration",
+      "objects": {
+        "tables": {
+          "count": 3,
+          "files": [
+            "01-system_settings.sql",
+            "02-feature_flags.sql",
+            "03-notification_settings.sql"
+          ]
+        },
+        "functions": {"count": 0, "files": []},
+        "enums": {"count": 0, "files": []},
+        "views": {"count": 0, "files": []},
+        "materialized_views": {"count": 0, "files": []},
+        "triggers": {
+          "count": 2,
+          "files": [
+            "29-trg_feature_flags_updated_at.sql",
+            "30-trg_system_settings_updated_at.sql"
+          ]
+        },
+        "rls_policies": {
+          "count": 1,
+          "files": [
+            "01-policies.sql"
+          ]
+        }
+      }
+    }
+  ]
+}

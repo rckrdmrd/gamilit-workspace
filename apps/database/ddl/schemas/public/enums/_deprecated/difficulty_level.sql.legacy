@@ -1,0 +1,16 @@
+-- Nombre: difficulty_level
+-- Descripción: Niveles de dificultad para contenido educativo
+-- Schema: public
+-- Fuente: SA-DB-003
+-- Actualizado: 2025-11-04 (P0-1: Enum sync - agregados 5 valores)
+
+CREATE TYPE public.difficulty_level AS ENUM (
+  'very_easy',
+  'easy',
+  'beginner',
+  'medium',
+  'intermediate',
+  'hard',
+  'advanced',
+  'very_hard'
+);

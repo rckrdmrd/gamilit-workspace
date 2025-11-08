@@ -1,0 +1,1077 @@
+{
+  "timestamp": "2025-11-03T00:04:37.461429Z",
+  "total_enums_db": 28,
+  "total_enums_backend": 46,
+  "enums_analyzed": 28,
+  "matching_perfect": 0,
+  "matching_with_case_diff": 17,
+  "missing_in_backend": 5,
+  "missing_in_database": 25,
+  "values_mismatch": 6,
+  "discrepancies": [
+    {
+      "enum_db": "auth.aal_level",
+      "enum_backend": null,
+      "issue": "missing_in_backend",
+      "db_values": [
+        "aal1",
+        "aal2",
+        "aal3"
+      ],
+      "backend_values": null,
+      "severity": "critical",
+      "recommendation": "Create AalLevelEnum in Backend"
+    },
+    {
+      "enum_db": "auth.code_challenge_method",
+      "enum_backend": null,
+      "issue": "missing_in_backend",
+      "db_values": [
+        "s256",
+        "plain"
+      ],
+      "backend_values": null,
+      "severity": "critical",
+      "recommendation": "Create CodeChallengeMethodEnum in Backend"
+    },
+    {
+      "enum_db": "gamification_system.maya_rank",
+      "enum_backend": "MayaRank",
+      "issue": "values_mismatch",
+      "db_values": [
+        "Ajaw",
+        "Nacom",
+        "Ah K'in",
+        "Halach Uinic",
+        "K'uk'ulkan"
+      ],
+      "backend_values": [
+        "AJAW",
+        "NACOM",
+        "AH_KIN",
+        "HALACH_UINIC",
+        "KUKUKULKAN"
+      ],
+      "missing_in_backend": [
+        "ah k'in",
+        "halach uinic",
+        "k'uk'ulkan"
+      ],
+      "missing_in_db": [
+        "kukukulkan",
+        "halach_uinic",
+        "ah_kin"
+      ],
+      "severity": "high",
+      "recommendation": "Sync values between DB and Backend. Missing in Backend: {\"ah k'in\", 'halach uinic', \"k'uk'ulkan\"}. Extra in Backend: {'kukukulkan', 'halach_uinic', 'ah_kin'}"
+    },
+    {
+      "enum_db": "public.achievement_category",
+      "enum_backend": "AchievementCategoryEnum",
+      "issue": "case_mismatch",
+      "db_values": [
+        "progress",
+        "streak",
+        "completion",
+        "social",
+        "special",
+        "mastery",
+        "exploration"
+      ],
+      "backend_values": [
+        "PROGRESS",
+        "STREAK",
+        "COMPLETION",
+        "SOCIAL",
+        "SPECIAL",
+        "MASTERY",
+        "EXPLORATION"
+      ],
+      "severity": "low",
+      "recommendation": "Normalize case sensitivity between DB and Backend"
+    },
+    {
+      "enum_db": "public.achievement_type",
+      "enum_backend": "AchievementTypeEnum",
+      "issue": "case_mismatch",
+      "db_values": [
+        "badge",
+        "milestone",
+        "special",
+        "rank_promotion"
+      ],
+      "backend_values": [
+        "BADGE",
+        "MILESTONE",
+        "SPECIAL",
+        "RANK_PROMOTION"
+      ],
+      "severity": "low",
+      "recommendation": "Normalize case sensitivity between DB and Backend"
+    },
+    {
+      "enum_db": "public.aggregation_period",
+      "enum_backend": "AggregationPeriodEnum",
+      "issue": "case_mismatch",
+      "db_values": [
+        "daily",
+        "weekly",
+        "monthly",
+        "quarterly",
+        "yearly"
+      ],
+      "backend_values": [
+        "DAILY",
+        "WEEKLY",
+        "MONTHLY",
+        "QUARTERLY",
+        "YEARLY"
+      ],
+      "severity": "low",
+      "recommendation": "Normalize case sensitivity between DB and Backend"
+    },
+    {
+      "enum_db": "public.alert_severity",
+      "enum_backend": "AlertSeverityEnum",
+      "issue": "case_mismatch",
+      "db_values": [
+        "info",
+        "warning",
+        "error",
+        "critical"
+      ],
+      "backend_values": [
+        "INFO",
+        "WARNING",
+        "ERROR",
+        "CRITICAL"
+      ],
+      "severity": "low",
+      "recommendation": "Normalize case sensitivity between DB and Backend"
+    },
+    {
+      "enum_db": "public.attempt_result",
+      "enum_backend": "AttemptResultEnum",
+      "issue": "case_mismatch",
+      "db_values": [
+        "correct",
+        "incorrect",
+        "partial",
+        "skipped"
+      ],
+      "backend_values": [
+        "CORRECT",
+        "INCORRECT",
+        "PARTIAL",
+        "SKIPPED"
+      ],
+      "severity": "low",
+      "recommendation": "Normalize case sensitivity between DB and Backend"
+    },
+    {
+      "enum_db": "public.classroom_role",
+      "enum_backend": "ClassroomRoleEnum",
+      "issue": "case_mismatch",
+      "db_values": [
+        "teacher",
+        "student",
+        "assistant"
+      ],
+      "backend_values": [
+        "TEACHER",
+        "STUDENT",
+        "ASSISTANT"
+      ],
+      "severity": "low",
+      "recommendation": "Normalize case sensitivity between DB and Backend"
+    },
+    {
+      "enum_db": "public.comodin_type",
+      "enum_backend": "ComodinTypeEnum",
+      "issue": "case_mismatch",
+      "db_values": [
+        "pistas",
+        "vision_lectora",
+        "segunda_oportunidad"
+      ],
+      "backend_values": [
+        "PISTAS",
+        "VISION_LECTORA",
+        "SEGUNDA_OPORTUNIDAD"
+      ],
+      "severity": "low",
+      "recommendation": "Normalize case sensitivity between DB and Backend"
+    },
+    {
+      "enum_db": "public.content_status",
+      "enum_backend": "ContentStatusEnum",
+      "issue": "case_mismatch",
+      "db_values": [
+        "draft",
+        "published",
+        "archived",
+        "reviewing"
+      ],
+      "backend_values": [
+        "DRAFT",
+        "PUBLISHED",
+        "ARCHIVED",
+        "REVIEWING"
+      ],
+      "severity": "low",
+      "recommendation": "Normalize case sensitivity between DB and Backend"
+    },
+    {
+      "enum_db": "public.content_type",
+      "enum_backend": "ContentStatusEnum",
+      "issue": "values_mismatch",
+      "db_values": [
+        "video",
+        "text",
+        "interactive",
+        "quiz",
+        "game",
+        "simulation"
+      ],
+      "backend_values": [
+        "DRAFT",
+        "PUBLISHED",
+        "ARCHIVED",
+        "REVIEWING"
+      ],
+      "missing_in_backend": [
+        "simulation",
+        "game",
+        "video",
+        "interactive",
+        "quiz",
+        "text"
+      ],
+      "missing_in_db": [
+        "reviewing",
+        "published",
+        "archived",
+        "draft"
+      ],
+      "severity": "high",
+      "recommendation": "Sync values between DB and Backend. Missing in Backend: {'simulation', 'game', 'video', 'interactive', 'quiz', 'text'}. Extra in Backend: {'reviewing', 'published', 'archived', 'draft'}"
+    },
+    {
+      "enum_db": "public.difficulty_level",
+      "enum_backend": "DifficultyLevelEnum",
+      "issue": "values_mismatch",
+      "db_values": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "backend_values": [
+        "BEGINNER",
+        "INTERMEDIATE",
+        "ADVANCED",
+        "VERY_EASY",
+        "EASY",
+        "MEDIUM",
+        "HARD",
+        "VERY_HARD"
+      ],
+      "missing_in_backend": [],
+      "missing_in_db": [
+        "medium",
+        "easy",
+        "hard",
+        "very_easy",
+        "very_hard"
+      ],
+      "severity": "high",
+      "recommendation": "Sync values between DB and Backend. Missing in Backend: set(). Extra in Backend: {'medium', 'easy', 'hard', 'very_easy', 'very_hard'}"
+    },
+    {
+      "enum_db": "public.exercise_type",
+      "enum_backend": "ExerciseTypeEnum",
+      "issue": "values_mismatch",
+      "db_values": [
+        "crucigrama",
+        "linea_tiempo",
+        "mapa_conceptual",
+        "emparejamiento",
+        "sopa_letras",
+        "detective_textual",
+        "construccion_hipotesis",
+        "prediccion_narrativa",
+        "puzzle_contexto",
+        "rueda_inferencias",
+        "tribunal_opiniones",
+        "debate_digital",
+        "analisis_fuentes",
+        "podcast_argumentativo",
+        "matriz_perspectivas",
+        "verificador_fake_news",
+        "infografia_interactiva",
+        "quiz_tiktok",
+        "navegacion_hipertextual",
+        "analisis_memes",
+        "diario_interactivo",
+        "resumen_visual",
+        "capsula_tiempo",
+        "comprension_auditiva",
+        "collage_digital",
+        "texto_movimiento",
+        "call_to_action"
+      ],
+      "backend_values": [
+        "CRUCIGRAMA",
+        "LINEA_TIEMPO",
+        "SOPA_LETRAS",
+        "MAPA_CONCEPTUAL",
+        "EMPAREJAMIENTO",
+        "DETECTIVE_TEXTUAL",
+        "CONSTRUCCION_HIPOTESIS",
+        "PREDICCION_NARRATIVA",
+        "PUZZLE_CONTEXTO",
+        "RUEDA_INFERENCIAS",
+        "TRIBUNAL_OPINIONES",
+        "DEBATE_DIGITAL",
+        "ANALISIS_FUENTES",
+        "PODCAST_ARGUMENTATIVO",
+        "MATRIZ_PERSPECTIVAS",
+        "VERIFICADOR_FAKE_NEWS",
+        "INFOGRAFIA_INTERACTIVA",
+        "QUIZ_TIKTOK",
+        "NAVEGACION_HIPERTEXTUAL",
+        "ANALISIS_MEMES",
+        "DIARIO_MULTIMEDIA",
+        "COMIC_DIGITAL",
+        "VIDEO_CARTA",
+        "COMPRENSION_AUDITIVA",
+        "COLLAGE_PRENSA",
+        "TEXTO_MOVIMIENTO",
+        "CALL_TO_ACTION",
+        "VERDADERO_FALSO",
+        "COMPLETAR_ESPACIOS",
+        "DIARIO_INTERACTIVO",
+        "RESUMEN_VISUAL"
+      ],
+      "missing_in_backend": [
+        "capsula_tiempo",
+        "collage_digital"
+      ],
+      "missing_in_db": [
+        "comic_digital",
+        "verdadero_falso",
+        "diario_multimedia",
+        "collage_prensa",
+        "completar_espacios",
+        "video_carta"
+      ],
+      "severity": "high",
+      "recommendation": "Sync values between DB and Backend. Missing in Backend: {'capsula_tiempo', 'collage_digital'}. Extra in Backend: {'comic_digital', 'verdadero_falso', 'diario_multimedia', 'collage_prensa', 'completar_espacios', 'video_carta'}"
+    },
+    {
+      "enum_db": "public.gamilit_role",
+      "enum_backend": null,
+      "issue": "missing_in_backend",
+      "db_values": [
+        "student",
+        "admin_teacher",
+        "super_admin"
+      ],
+      "backend_values": null,
+      "severity": "critical",
+      "recommendation": "Create GamilitRoleEnum in Backend"
+    },
+    {
+      "enum_db": "public.maya_rank",
+      "enum_backend": "MayaRank",
+      "issue": "values_mismatch",
+      "db_values": [
+        "NACOM",
+        "BATAB",
+        "HOLCATTE",
+        "GUERRERO",
+        "MERCENARIO"
+      ],
+      "backend_values": [
+        "AJAW",
+        "NACOM",
+        "AH_KIN",
+        "HALACH_UINIC",
+        "KUKUKULKAN"
+      ],
+      "missing_in_backend": [
+        "holcatte",
+        "mercenario",
+        "guerrero",
+        "batab"
+      ],
+      "missing_in_db": [
+        "kukukulkan",
+        "halach_uinic",
+        "ajaw",
+        "ah_kin"
+      ],
+      "severity": "high",
+      "recommendation": "Sync values between DB and Backend. Missing in Backend: {'holcatte', 'mercenario', 'guerrero', 'batab'}. Extra in Backend: {'kukukulkan', 'halach_uinic', 'ajaw', 'ah_kin'}"
+    },
+    {
+      "enum_db": "public.media_type",
+      "enum_backend": "MediaTypeEnum",
+      "issue": "case_mismatch",
+      "db_values": [
+        "image",
+        "video",
+        "audio",
+        "document",
+        "interactive",
+        "animation"
+      ],
+      "backend_values": [
+        "IMAGE",
+        "VIDEO",
+        "AUDIO",
+        "DOCUMENT",
+        "INTERACTIVE",
+        "ANIMATION"
+      ],
+      "severity": "low",
+      "recommendation": "Normalize case sensitivity between DB and Backend"
+    },
+    {
+      "enum_db": "public.metric_type",
+      "enum_backend": "MetricTypeEnum",
+      "issue": "case_mismatch",
+      "db_values": [
+        "engagement",
+        "performance",
+        "completion",
+        "time_spent",
+        "accuracy",
+        "streak",
+        "social_interaction"
+      ],
+      "backend_values": [
+        "ENGAGEMENT",
+        "PERFORMANCE",
+        "COMPLETION",
+        "TIME_SPENT",
+        "ACCURACY",
+        "STREAK",
+        "SOCIAL_INTERACTION"
+      ],
+      "severity": "low",
+      "recommendation": "Normalize case sensitivity between DB and Backend"
+    },
+    {
+      "enum_db": "public.module_status",
+      "enum_backend": "ModuleStatusEnum",
+      "issue": "case_mismatch",
+      "db_values": [
+        "draft",
+        "published",
+        "archived",
+        "under_review"
+      ],
+      "backend_values": [
+        "DRAFT",
+        "PUBLISHED",
+        "ARCHIVED",
+        "UNDER_REVIEW"
+      ],
+      "severity": "low",
+      "recommendation": "Normalize case sensitivity between DB and Backend"
+    },
+    {
+      "enum_db": "public.notification_channel",
+      "enum_backend": "NotificationChannelEnum",
+      "issue": "case_mismatch",
+      "db_values": [
+        "in_app",
+        "email",
+        "push",
+        "sms"
+      ],
+      "backend_values": [
+        "IN_APP",
+        "EMAIL",
+        "PUSH",
+        "SMS"
+      ],
+      "severity": "low",
+      "recommendation": "Normalize case sensitivity between DB and Backend"
+    },
+    {
+      "enum_db": "public.notification_type",
+      "enum_backend": "NotificationType",
+      "issue": "values_mismatch",
+      "db_values": [
+        "info",
+        "success",
+        "warning",
+        "error",
+        "achievement",
+        "progress",
+        "social",
+        "reminder"
+      ],
+      "backend_values": [
+        "ACHIEVEMENT",
+        "MISSION",
+        "REWARD",
+        "SYSTEM",
+        "SOCIAL",
+        "EDUCATIONAL"
+      ],
+      "missing_in_backend": [
+        "success",
+        "reminder",
+        "info",
+        "warning",
+        "progress",
+        "error"
+      ],
+      "missing_in_db": [
+        "educational",
+        "reward",
+        "mission",
+        "system"
+      ],
+      "severity": "high",
+      "recommendation": "Sync values between DB and Backend. Missing in Backend: {'success', 'reminder', 'info', 'warning', 'progress', 'error'}. Extra in Backend: {'educational', 'reward', 'mission', 'system'}"
+    },
+    {
+      "enum_db": "public.processing_status",
+      "enum_backend": "ProcessingStatusEnum",
+      "issue": "case_mismatch",
+      "db_values": [
+        "uploading",
+        "processing",
+        "ready",
+        "error",
+        "optimizing"
+      ],
+      "backend_values": [
+        "UPLOADING",
+        "PROCESSING",
+        "READY",
+        "ERROR",
+        "OPTIMIZING"
+      ],
+      "severity": "low",
+      "recommendation": "Normalize case sensitivity between DB and Backend"
+    },
+    {
+      "enum_db": "public.progress_status",
+      "enum_backend": "ProgressStatusEnum",
+      "issue": "case_mismatch",
+      "db_values": [
+        "not_started",
+        "in_progress",
+        "completed",
+        "reviewed",
+        "mastered"
+      ],
+      "backend_values": [
+        "NOT_STARTED",
+        "IN_PROGRESS",
+        "COMPLETED",
+        "REVIEWED",
+        "MASTERED"
+      ],
+      "severity": "low",
+      "recommendation": "Normalize case sensitivity between DB and Backend"
+    },
+    {
+      "enum_db": "public.rango_maya",
+      "enum_backend": null,
+      "issue": "missing_in_backend",
+      "db_values": [
+        "nacom",
+        "batab",
+        "holcatte",
+        "guerrero",
+        "mercenario"
+      ],
+      "backend_values": null,
+      "severity": "critical",
+      "recommendation": "Create RangoMayaEnum in Backend"
+    },
+    {
+      "enum_db": "public.social_event_type",
+      "enum_backend": "SocialEventTypeEnum",
+      "issue": "case_mismatch",
+      "db_values": [
+        "competition",
+        "collaboration",
+        "challenge",
+        "tournament",
+        "workshop"
+      ],
+      "backend_values": [
+        "COMPETITION",
+        "COLLABORATION",
+        "CHALLENGE",
+        "TOURNAMENT",
+        "WORKSHOP"
+      ],
+      "severity": "low",
+      "recommendation": "Normalize case sensitivity between DB and Backend"
+    },
+    {
+      "enum_db": "public.transaction_type",
+      "enum_backend": "TransactionTypeEnum",
+      "issue": "case_mismatch",
+      "db_values": [
+        "earned_exercise",
+        "earned_achievement",
+        "earned_daily_bonus",
+        "earned_rank_promotion",
+        "spent_hint",
+        "spent_unlock_content",
+        "spent_customization",
+        "refund",
+        "admin_adjustment",
+        "gift"
+      ],
+      "backend_values": [
+        "EARNED_EXERCISE",
+        "EARNED_ACHIEVEMENT",
+        "EARNED_DAILY_BONUS",
+        "EARNED_RANK_PROMOTION",
+        "SPENT_HINT",
+        "SPENT_UNLOCK_CONTENT",
+        "SPENT_CUSTOMIZATION",
+        "REFUND",
+        "ADMIN_ADJUSTMENT",
+        "GIFT"
+      ],
+      "severity": "low",
+      "recommendation": "Normalize case sensitivity between DB and Backend"
+    },
+    {
+      "enum_db": "public.user_status",
+      "enum_backend": "UserStatusEnum",
+      "issue": "case_mismatch",
+      "db_values": [
+        "active",
+        "inactive",
+        "suspended",
+        "pending"
+      ],
+      "backend_values": [
+        "ACTIVE",
+        "INACTIVE",
+        "SUSPENDED",
+        "PENDING"
+      ],
+      "severity": "low",
+      "recommendation": "Normalize case sensitivity between DB and Backend"
+    },
+    {
+      "enum_db": "storage.buckettype",
+      "enum_backend": null,
+      "issue": "missing_in_backend",
+      "db_values": [
+        "STANDARD",
+        "ANALYTICS"
+      ],
+      "backend_values": null,
+      "severity": "critical",
+      "recommendation": "Create BuckettypeEnum in Backend"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "AuthProviderEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "LOCAL",
+        "GOOGLE",
+        "FACEBOOK",
+        "APPLE",
+        "MICROSOFT",
+        "GITHUB"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if AuthProviderEnum should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "ClassroomMemberStatusEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "ACTIVE",
+        "INACTIVE",
+        "WITHDRAWN",
+        "COMPLETED"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if ClassroomMemberStatusEnum should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "TeamMemberRoleEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if TeamMemberRoleEnum should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "TeamChallengeStatusEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "ACTIVE",
+        "IN_PROGRESS",
+        "COMPLETED",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if TeamChallengeStatusEnum should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "DeviceTypeEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "DESKTOP",
+        "MOBILE",
+        "TABLET"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if DeviceTypeEnum should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "EnrollmentMethodEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "TEACHER_INVITE",
+        "SELF_ENROLL",
+        "ADMIN_ADD",
+        "BULK_IMPORT"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if EnrollmentMethodEnum should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "SecurityEventSeverityEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "CRITICAL"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if SecurityEventSeverityEnum should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "NotificationTypeEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "INFO",
+        "SUCCESS",
+        "WARNING",
+        "ERROR",
+        "ACHIEVEMENT",
+        "PROGRESS",
+        "SOCIAL",
+        "REMINDER"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if NotificationTypeEnum should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "GamilityRoleEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "STUDENT",
+        "ADMIN_TEACHER",
+        "SUPER_ADMIN"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if GamilityRoleEnum should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "Permission",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "USERS_READ",
+        "USERS_WRITE",
+        "USERS_DELETE",
+        "USERS_MANAGE",
+        "CONTENT_READ",
+        "CONTENT_WRITE",
+        "CONTENT_DELETE",
+        "CONTENT_PUBLISH",
+        "CONTENT_MANAGE",
+        "GAMIFICATION_READ",
+        "GAMIFICATION_WRITE",
+        "GAMIFICATION_MANAGE",
+        "ADMIN_ACCESS",
+        "ADMIN_SETTINGS",
+        "ADMIN_SYSTEM",
+        "ANALYTICS_READ",
+        "ANALYTICS_EXPORT",
+        "TEACHER_ACCESS",
+        "TEACHER_CLASSROOM",
+        "TEACHER_ASSIGNMENTS",
+        "TEACHER_GRADING"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if Permission should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "UserRole",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "STUDENT",
+        "TEACHER",
+        "ADMIN",
+        "SUPER_ADMIN"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if UserRole should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "ThemeEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "LIGHT",
+        "DARK",
+        "AUTO"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if ThemeEnum should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "ErrorCode",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "UNAUTHORIZED",
+        "INVALID_TOKEN",
+        "TOKEN_EXPIRED",
+        "INVALID_CREDENTIALS",
+        "EMAIL_EXISTS",
+        "ACCOUNT_INACTIVE",
+        "ACCOUNT_SUSPENDED",
+        "FORBIDDEN",
+        "BAD_REQUEST",
+        "VALIDATION_ERROR",
+        "WEAK_PASSWORD",
+        "NOT_FOUND",
+        "ALREADY_EXISTS",
+        "INSUFFICIENT_FUNDS",
+        "INTERNAL_ERROR",
+        "DATABASE_ERROR"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if ErrorCode should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "ContentTypeEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "VIDEO",
+        "TEXT",
+        "INTERACTIVE",
+        "QUIZ",
+        "GAME",
+        "SIMULATION"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if ContentTypeEnum should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "MembershipStatusEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "ACTIVE",
+        "PENDING",
+        "SUSPENDED",
+        "REVOKED"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if MembershipStatusEnum should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "LanguageEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "ES",
+        "EN"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if LanguageEnum should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "FriendshipStatusEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "PENDING",
+        "ACCEPTED",
+        "REJECTED",
+        "BLOCKED"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if FriendshipStatusEnum should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "MissionType",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "DAILY",
+        "WEEKLY",
+        "SPECIAL"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if MissionType should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "MissionStatus",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "ACTIVE",
+        "IN_PROGRESS",
+        "COMPLETED",
+        "CLAIMED",
+        "EXPIRED"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if MissionStatus should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "SubscriptionTierEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "FREE",
+        "BASIC",
+        "PROFESSIONAL",
+        "ENTERPRISE"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if SubscriptionTierEnum should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "MissionTypeEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "DAILY",
+        "WEEKLY",
+        "SPECIAL"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if MissionTypeEnum should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "PowerupType",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "PISTAS",
+        "VISION_LECTORA",
+        "SEGUNDA_OPORTUNIDAD"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if PowerupType should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "MayaRankEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "NACOM",
+        "BATAB",
+        "HOLCATTE",
+        "GUERRERO",
+        "MERCENARIO"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if MayaRankEnum should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "MissionStatusEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "ACTIVE",
+        "IN_PROGRESS",
+        "COMPLETED",
+        "CLAIMED",
+        "EXPIRED"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if MissionStatusEnum should be added to Database"
+    },
+    {
+      "enum_db": null,
+      "enum_backend": "MembershipRoleEnum",
+      "issue": "missing_in_database",
+      "db_values": null,
+      "backend_values": [
+        "OWNER",
+        "ADMIN",
+        "MEMBER",
+        "GUEST"
+      ],
+      "severity": "medium",
+      "recommendation": "Verify if MembershipRoleEnum should be added to Database"
+    }
+  ],
+  "summary": {
+    "total_discrepancies": 53,
+    "critical": 5,
+    "high": 6,
+    "medium": 25,
+    "low": 17
+  },
+  "recommendations": [
+    "Create 5 ENUMs in Backend that exist in Database",
+    "Normalize case in 17 ENUMs between DB and Backend",
+    "Sync values in 6 ENUMs",
+    "Review 25 Backend ENUMs to determine if they should be added to Database"
+  ]
+}

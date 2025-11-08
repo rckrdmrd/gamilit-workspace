@@ -1,0 +1,250 @@
+# TRACEABILITY.yml - EAI-006: Configuración del Sistema
+# Matriz de trazabilidad: Documentación → Código
+
+epic_code: EAI-006
+epic_name: Configuración del Sistema
+phase: 1
+phase_name: Alcance Inicial
+budget_mxn: 0  # Implementado sin presupuesto asignado (infraestructura)
+story_points: 0  # Documentación retroactiva
+status: completed
+sprint: "N/A"
+period: "Implementado antes de documentación formal"
+
+# ============================================================================
+# DOCUMENTACIÓN
+# ============================================================================
+
+documentation:
+  requirements:
+    - id: RF-SYS-001
+      file: requerimientos/RF-SYS-001-settings.md
+      title: Sistema de Configuración Global
+      status: implemented
+      note: "Documentación retroactiva - Implementado previamente"
+
+    - id: RF-SYS-002
+      file: requerimientos/RF-SYS-002-feature-flags.md
+      title: Sistema de Feature Flags
+      status: implemented
+      note: "Documentación retroactiva - Implementado previamente"
+
+    - id: RF-SYS-003
+      file: requerimientos/RF-SYS-003-notifications.md
+      title: Configuración de Notificaciones
+      status: implemented
+      note: "Documentación retroactiva - Implementado previamente"
+
+  specifications:
+    - id: ET-SYS-001
+      file: especificaciones/ET-SYS-001-database-schema.md
+      rf: [RF-SYS-001, RF-SYS-002, RF-SYS-003]
+      title: Schema de Base de Datos para Configuración
+      status: pending
+      note: "Pendiente de crear"
+
+  user_stories:
+    note: "No se crearon US formales - Funcionalidad de infraestructura"
+
+# ============================================================================
+# IMPLEMENTACIÓN - BASE DE DATOS
+# ============================================================================
+
+implementation:
+  database:
+    schemas:
+      - name: system_configuration
+        path: apps/database/ddl/schemas/system_configuration/
+        description: Configuración del sistema (settings, feature flags, notificaciones)
+        rf: [RF-SYS-001, RF-SYS-002, RF-SYS-003]
+
+    tables:
+      - name: system_settings
+        schema: system_configuration
+        file: apps/database/ddl/schemas/system_configuration/tables/01-system_settings.sql
+        lines: 150+
+        description: Configuraciones globales clave-valor de la plataforma
+        rf: RF-SYS-001
+        columns:
+          - setting_key (TEXT UNIQUE)
+          - setting_category (TEXT) - general|gamification|security|email|storage|analytics|integrations
+          - setting_value (TEXT)
+          - value_type (TEXT) - string|number|boolean|json|array
+          - is_public (BOOLEAN)
+          - is_readonly (BOOLEAN)
+          - validation_rules (JSONB)
+          - min_value, max_value (NUMERIC)
+
+      - name: feature_flags
+        schema: system_configuration
+        file: apps/database/ddl/schemas/system_configuration/tables/02-feature_flags.sql
+        lines: 100+
+        description: Feature flags para activación gradual de funcionalidades
+        rf: RF-SYS-002
+        columns:
+          - feature_key (TEXT UNIQUE)
+          - is_enabled (BOOLEAN)
+          - rollout_percentage (INTEGER 0-100)
+          - target_users (UUID[])
+          - target_roles (gamilit_role[])
+          - starts_at, ends_at (TIMESTAMPTZ)
+
+      - name: notification_settings
+        schema: system_configuration
+        file: apps/database/ddl/schemas/system_configuration/tables/03-notification_settings.sql
+        lines: 100+
+        description: Configuración de notificaciones por usuario y canal
+        rf: RF-SYS-003
+        columns:
+          - user_id (UUID NOT NULL)
+          - notification_type (TEXT)
+          - channel (TEXT) - email|sms|push|in_app|webhook
+          - frequency (TEXT) - immediate|daily|weekly|never
+          - quiet_hours_start, quiet_hours_end (TIME)
+          - max_per_day (INTEGER)
+
+    triggers:
+      - name: trg_system_settings_updated_at
+        table: system_settings
+        file: apps/database/ddl/schemas/system_configuration/triggers/30-trg_system_settings_updated_at.sql
+        description: Actualiza updated_at automáticamente
+        rf: RF-SYS-001
+        function_used: gamilit.update_updated_at_column()
+
+      - name: trg_feature_flags_updated_at
+        table: feature_flags
+        file: apps/database/ddl/schemas/system_configuration/triggers/29-trg_feature_flags_updated_at.sql
+        description: Actualiza updated_at automáticamente
+        rf: RF-SYS-002
+        function_used: gamilit.update_updated_at_column()
+
+    rls_policies:
+      - name: system_configuration_policies
+        file: apps/database/ddl/schemas/system_configuration/rls-policies/01-policies.sql
+        description: Políticas RLS para configuración del sistema
+        rf: [RF-SYS-001, RF-SYS-002, RF-SYS-003]
+        policies:
+          - system_settings: Solo admins pueden modificar, lectura pública para is_public=true
+          - feature_flags: Solo admins pueden modificar, lectura pública
+          - notification_settings: Usuarios solo ven/modifican sus propias configuraciones
+
+    indexes:
+      note: "Índices creados inline en archivos de tablas"
+      - system_settings: idx_system_settings_key (UNIQUE)
+      - system_settings: idx_system_settings_category
+      - feature_flags: idx_feature_flags_key (UNIQUE)
+      - feature_flags: idx_feature_flags_enabled
+      - notification_settings: UNIQUE(user_id, notification_type, channel)
+
+  # ============================================================================
+  # IMPLEMENTACIÓN - BACKEND
+  # ============================================================================
+
+  backend:
+    module: config
+    path: apps/backend/src/modules/config/
+    rf: [RF-SYS-001, RF-SYS-002, RF-SYS-003]
+    status: pending_documentation
+    note: "Módulo implementado pero no documentado formalmente"
+
+    services:
+      - name: settings.service.ts
+        description: Gestión de configuraciones del sistema
+        rf: RF-SYS-001
+        status: pending_documentation
+
+      - name: feature-flags.service.ts
+        description: Gestión de feature flags
+        rf: RF-SYS-002
+        status: pending_documentation
+
+      - name: notifications-config.service.ts
+        description: Gestión de configuraciones de notificaciones
+        rf: RF-SYS-003
+        status: pending_documentation
+
+  # ============================================================================
+  # IMPLEMENTACIÓN - FRONTEND
+  # ============================================================================
+
+  frontend:
+    features:
+      - name: admin/settings
+        path: apps/frontend/src/features/admin/settings/
+        rf: [RF-SYS-001, RF-SYS-002]
+        status: pending_documentation
+        note: "Panel de administración de configuraciones"
+
+# ============================================================================
+# TESTING
+# ============================================================================
+
+testing:
+  status: pending_documentation
+  note: "Tests existentes pero no documentados en TRACEABILITY"
+
+# ============================================================================
+# MÉTRICAS
+# ============================================================================
+
+metrics:
+  effort:
+    implementation: "Implementado previamente"
+    documentation: "4 horas"
+
+  deliverables:
+    database_objects: 7  # 3 tablas + 2 triggers + 1 RLS + 1 schema
+    documentation_files: 4  # 3 RF + 1 TRACEABILITY
+
+status:
+  phase_status: completed
+  implementation_date: "2025-10-27"  # Según comentarios en SQL
+  documentation_date: "2025-11-08"
+  accepted_by: "Documentación retroactiva"
+  notes: |
+    Schema implementado sin documentación formal previa.
+    Documentación creada retroactivamente para completar trazabilidad.
+    Backend y Frontend tienen implementaciones pero requieren documentación.
+
+# ============================================================================
+# DEPENDENCIAS
+# ============================================================================
+
+dependencies:
+  required_by_epics:
+    - ALL  # Todas las épicas pueden usar configuraciones
+
+  depends_on_epics:
+    - EAI-001  # Requiere autenticación para permisos de admin
+
+# ============================================================================
+# NOTAS ADICIONALES
+# ============================================================================
+
+notes:
+  - Schema crítico para operación de la plataforma
+  - Feature flags permiten despliegues seguros
+  - Configuraciones reducen hard-coding de valores
+  - Notification settings mejoran experiencia de usuario
+  - Implementado antes de documentación formal (technical debt)
+
+lessons_learned:
+  - Documentar requirements ANTES de implementar
+  - Schema de configuración es fundamental desde día 1
+  - Feature flags facilitan rollouts graduales
+  - RLS policies críticas para seguridad de configuraciones
+
+# ============================================================================
+# CHANGELOG
+# ============================================================================
+
+changelog:
+  - date: "2025-10-27"
+    version: "1.0"
+    author: "Database Team"
+    changes: "Implementación inicial del schema"
+
+  - date: "2025-11-08"
+    version: "1.1"
+    author: "Claude Code"
+    changes: "Documentación retroactiva creada (RF-SYS-001, RF-SYS-002, RF-SYS-003, TRACEABILITY.yml)"

@@ -1,0 +1,14 @@
+epic_code: EAI-004
+epic_name: Analytics y Métricas
+phase: 1
+budget_mxn: 22000
+story_points: 35
+status: completed
+
+implementation:
+  database:
+    schemas: [progress_tracking, admin_dashboard]
+  backend:
+    module: analytics
+  frontend:
+    features: [student/dashboard, admin/analytics]

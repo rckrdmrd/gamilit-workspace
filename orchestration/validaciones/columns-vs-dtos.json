@@ -1,0 +1,1722 @@
+{
+  "timestamp": "2025-11-03T06:07:26.431108Z",
+  "dtos_analyzed": 139,
+  "dtos_with_issues": 27,
+  "total_decorator_issues": 114,
+  "issues": [
+    {
+      "dto": "AchievementResponseDto",
+      "property": "tenant_id",
+      "ts_type": "string",
+      "inferred_db_type": "uuid",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsUUID()"
+      ],
+      "severity": "high",
+      "issue": "Falta patrón decorador ['@IsUUID']",
+      "fix": "Agregar @IsUUID()"
+    },
+    {
+      "dto": "MediaResponseDto",
+      "property": "tenant_id",
+      "ts_type": "string",
+      "inferred_db_type": "uuid",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsUUID()"
+      ],
+      "severity": "high",
+      "issue": "Falta patrón decorador ['@IsUUID']",
+      "fix": "Agregar @IsUUID()"
+    },
+    {
+      "dto": "ModuleResponseDto",
+      "property": "tenant_id",
+      "ts_type": "string",
+      "inferred_db_type": "uuid",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsUUID()"
+      ],
+      "severity": "high",
+      "issue": "Falta patrón decorador ['@IsUUID']",
+      "fix": "Agregar @IsUUID()"
+    },
+    {
+      "dto": "RubricResponseDto",
+      "property": "exercise_id",
+      "ts_type": "string",
+      "inferred_db_type": "uuid",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsUUID()"
+      ],
+      "severity": "high",
+      "issue": "Falta patrón decorador ['@IsUUID']",
+      "fix": "Agregar @IsUUID()"
+    },
+    {
+      "dto": "RubricResponseDto",
+      "property": "module_id",
+      "ts_type": "string",
+      "inferred_db_type": "uuid",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsUUID()"
+      ],
+      "severity": "high",
+      "issue": "Falta patrón decorador ['@IsUUID']",
+      "fix": "Agregar @IsUUID()"
+    },
+    {
+      "dto": "UserDetailsDto",
+      "property": "id",
+      "ts_type": "string",
+      "inferred_db_type": "uuid",
+      "optional": false,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsUUID()"
+      ],
+      "severity": "high",
+      "issue": "Falta patrón decorador ['@IsUUID']",
+      "fix": "Agregar @IsUUID()"
+    },
+    {
+      "dto": "UserDetailsDto",
+      "property": "tenant_id",
+      "ts_type": "string",
+      "inferred_db_type": "uuid",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsUUID()"
+      ],
+      "severity": "high",
+      "issue": "Falta patrón decorador ['@IsUUID']",
+      "fix": "Agregar @IsUUID()"
+    },
+    {
+      "dto": "UserDetailsDto",
+      "property": "email_verified",
+      "ts_type": "boolean",
+      "inferred_db_type": "boolean",
+      "optional": false,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsBoolean()"
+      ],
+      "severity": "high",
+      "issue": "Falta patrón decorador ['@IsBoolean']",
+      "fix": "Agregar @IsBoolean()"
+    },
+    {
+      "dto": "UserRankResponseDto",
+      "property": "tenant_id",
+      "ts_type": "string",
+      "inferred_db_type": "uuid",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsUUID()"
+      ],
+      "severity": "high",
+      "issue": "Falta patrón decorador ['@IsUUID']",
+      "fix": "Agregar @IsUUID()"
+    },
+    {
+      "dto": "UserStatsResponseDto",
+      "property": "tenant_id",
+      "ts_type": "string",
+      "inferred_db_type": "uuid",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsUUID()"
+      ],
+      "severity": "high",
+      "issue": "Falta patrón decorador ['@IsUUID']",
+      "fix": "Agregar @IsUUID()"
+    },
+    {
+      "dto": "CreateClassroomMemberDto",
+      "property": "final_grade",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsNumber()",
+        "@Min(0)",
+        "@Max(10)"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "CreateClassroomMemberDto",
+      "property": "attendance_percentage",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsNumber()",
+        "@Min(0)",
+        "@Max(100)"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "ExerciseResponseDto",
+      "property": "time_limit_minutes",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "LeaderboardEntryDto",
+      "property": "total_ml_coins",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "LeaderboardEntryDto",
+      "property": "current_streak",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "LeaderboardEntryDto",
+      "property": "total_achievements",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "MediaResponseDto",
+      "property": "file_size_bytes",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "MediaResponseDto",
+      "property": "width",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "MediaResponseDto",
+      "property": "height",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "MediaResponseDto",
+      "property": "duration_seconds",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "ModuleResponseDto",
+      "property": "published_at",
+      "ts_type": "Date",
+      "inferred_db_type": "timestamp",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsISO8601() o @IsDateString()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsDate', '@IsISO8601', '@IsDateString']",
+      "fix": "Agregar @IsISO8601() o @IsDateString()"
+    },
+    {
+      "dto": "ModuleResponseDto",
+      "property": "archived_at",
+      "ts_type": "Date",
+      "inferred_db_type": "timestamp",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsISO8601() o @IsDateString()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsDate', '@IsISO8601', '@IsDateString']",
+      "fix": "Agregar @IsISO8601() o @IsDateString()"
+    },
+    {
+      "dto": "UpdateUserStatsDto",
+      "property": "rank_progress",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsNumber()",
+        "@Min(0)",
+        "@Max(100)"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "UpdateUserStatsDto",
+      "property": "average_score",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsNumber()",
+        "@Min(0)",
+        "@Max(100)"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "UploadMediaDto",
+      "property": "file_size_bytes",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsNumber()",
+        "@Min(0)"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "UploadMediaDto",
+      "property": "width",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsNumber()"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "UploadMediaDto",
+      "property": "height",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsNumber()"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "UploadMediaDto",
+      "property": "duration_seconds",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsNumber()",
+        "@Min(0)"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "UserDetailsDto",
+      "property": "email_confirmed_at",
+      "ts_type": "Date",
+      "inferred_db_type": "timestamp",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsISO8601() o @IsDateString()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsDate', '@IsISO8601', '@IsDateString']",
+      "fix": "Agregar @IsISO8601() o @IsDateString()"
+    },
+    {
+      "dto": "UserDetailsDto",
+      "property": "last_sign_in_at",
+      "ts_type": "Date",
+      "inferred_db_type": "timestamp",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsISO8601() o @IsDateString()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsDate', '@IsISO8601', '@IsDateString']",
+      "fix": "Agregar @IsISO8601() o @IsDateString()"
+    },
+    {
+      "dto": "UserDetailsDto",
+      "property": "created_at",
+      "ts_type": "Date",
+      "inferred_db_type": "timestamp",
+      "optional": false,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsISO8601() o @IsDateString()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsDate', '@IsISO8601', '@IsDateString']",
+      "fix": "Agregar @IsISO8601() o @IsDateString()"
+    },
+    {
+      "dto": "UserDetailsDto",
+      "property": "updated_at",
+      "ts_type": "Date",
+      "inferred_db_type": "timestamp",
+      "optional": false,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsISO8601() o @IsDateString()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsDate', '@IsISO8601', '@IsDateString']",
+      "fix": "Agregar @IsISO8601() o @IsDateString()"
+    },
+    {
+      "dto": "UserRankResponseDto",
+      "property": "modules_required_for_next",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "UserRankResponseDto",
+      "property": "xp_required_for_next",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "UserRankResponseDto",
+      "property": "achieved_at",
+      "ts_type": "Date",
+      "inferred_db_type": "timestamp",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsISO8601() o @IsDateString()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsDate', '@IsISO8601', '@IsDateString']",
+      "fix": "Agregar @IsISO8601() o @IsDateString()"
+    },
+    {
+      "dto": "UserRankResponseDto",
+      "property": "previous_rank_achieved_at",
+      "ts_type": "Date",
+      "inferred_db_type": "timestamp",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsISO8601() o @IsDateString()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsDate', '@IsISO8601', '@IsDateString']",
+      "fix": "Agregar @IsISO8601() o @IsDateString()"
+    },
+    {
+      "dto": "UserResponseDto",
+      "property": "email_confirmed_at",
+      "ts_type": "Date",
+      "inferred_db_type": "timestamp",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsISO8601() o @IsDateString()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsDate', '@IsISO8601', '@IsDateString']",
+      "fix": "Agregar @IsISO8601() o @IsDateString()"
+    },
+    {
+      "dto": "UserResponseDto",
+      "property": "last_sign_in_at",
+      "ts_type": "Date",
+      "inferred_db_type": "timestamp",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsISO8601() o @IsDateString()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsDate', '@IsISO8601', '@IsDateString']",
+      "fix": "Agregar @IsISO8601() o @IsDateString()"
+    },
+    {
+      "dto": "UserStatsResponseDto",
+      "property": "last_ml_coins_reset",
+      "ts_type": "Date",
+      "inferred_db_type": "timestamp",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsISO8601() o @IsDateString()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsDate', '@IsISO8601', '@IsDateString']",
+      "fix": "Agregar @IsISO8601() o @IsDateString()"
+    },
+    {
+      "dto": "UserStatsResponseDto",
+      "property": "streak_started_at",
+      "ts_type": "Date",
+      "inferred_db_type": "timestamp",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsISO8601() o @IsDateString()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsDate', '@IsISO8601', '@IsDateString']",
+      "fix": "Agregar @IsISO8601() o @IsDateString()"
+    },
+    {
+      "dto": "UserStatsResponseDto",
+      "property": "average_score",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "UserStatsResponseDto",
+      "property": "global_rank_position",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "UserStatsResponseDto",
+      "property": "class_rank_position",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "UserStatsResponseDto",
+      "property": "school_rank_position",
+      "ts_type": "number",
+      "inferred_db_type": "integer",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsInt()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsInt']",
+      "fix": "Agregar @IsInt()"
+    },
+    {
+      "dto": "UserStatsResponseDto",
+      "property": "last_activity_at",
+      "ts_type": "Date",
+      "inferred_db_type": "timestamp",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsISO8601() o @IsDateString()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsDate', '@IsISO8601', '@IsDateString']",
+      "fix": "Agregar @IsISO8601() o @IsDateString()"
+    },
+    {
+      "dto": "UserStatsResponseDto",
+      "property": "last_login_at",
+      "ts_type": "Date",
+      "inferred_db_type": "timestamp",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsISO8601() o @IsDateString()"
+      ],
+      "severity": "medium",
+      "issue": "Falta patrón decorador ['@IsDate', '@IsISO8601', '@IsDateString']",
+      "fix": "Agregar @IsISO8601() o @IsDateString()"
+    },
+    {
+      "dto": "AchievementResponseDto",
+      "property": "description",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "AchievementResponseDto",
+      "property": "unlock_message",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "AchievementResponseDto",
+      "property": "instructions",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "AchievementResponseDto",
+      "property": "created_by",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateAuthAttemptDto",
+      "property": "ip_address",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsIP()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateClassroomMemberDto",
+      "property": "enrollment_date",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsDateString()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateClassroomMemberDto",
+      "property": "enrollment_method",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsEnum(EnrollmentMethodEnum)"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateClassroomMemberDto",
+      "property": "enrolled_by",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsUUID('4')"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateClassroomMemberDto",
+      "property": "status",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsEnum(ClassroomMemberStatusEnum)"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateExerciseAttemptDto",
+      "property": "submitted_at",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsDateString()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateExerciseSubmissionDto",
+      "property": "started_at",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsDateString()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateExerciseSubmissionDto",
+      "property": "submitted_at",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsDateString()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateExerciseSubmissionDto",
+      "property": "graded_at",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsDateString()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateFriendshipDto",
+      "property": "status",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsEnum(FriendshipStatusEnum)"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateLearningSessionDto",
+      "property": "started_at",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsDateString()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateModuleProgressDto",
+      "property": "deadline",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsDateString()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateProfileDto",
+      "property": "avatar_url",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsUrl()",
+        "@IsOptional()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateTeamChallengeDto",
+      "property": "status",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsEnum(TeamChallengeStatusEnum)"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateTeamChallengeDto",
+      "property": "started_at",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsDateString()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateTeamChallengeDto",
+      "property": "completed_at",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsDateString()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateTeamDto",
+      "property": "founded_at",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsDateString()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateTeamMemberDto",
+      "property": "role",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsEnum(TeamMemberRoleEnum)"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateTeamMemberDto",
+      "property": "joined_at",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsDateString()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "CreateUserSessionDto",
+      "property": "ip_address",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@IsOptional()",
+        "@IsIP()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "ExerciseResponseDto",
+      "property": "subtitle",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "ExerciseResponseDto",
+      "property": "description",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "ExerciseResponseDto",
+      "property": "instructions",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "ExerciseResponseDto",
+      "property": "version_notes",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "ExerciseResponseDto",
+      "property": "created_by",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "ExerciseResponseDto",
+      "property": "reviewed_by",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "LeaderboardEntryDto",
+      "property": "username",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "LeaderboardEntryDto",
+      "property": "maya_rank",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "MediaResponseDto",
+      "property": "description",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "MediaResponseDto",
+      "property": "alt_text",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "MediaResponseDto",
+      "property": "file_format",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "MediaResponseDto",
+      "property": "thumbnail_url",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "MediaResponseDto",
+      "property": "cdn_url",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "MediaResponseDto",
+      "property": "resolution",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "MediaResponseDto",
+      "property": "category",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "MediaResponseDto",
+      "property": "created_by",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "MediaResponseDto",
+      "property": "copyright_info",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "MediaResponseDto",
+      "property": "license",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "MediaResponseDto",
+      "property": "attribution",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "ModuleResponseDto",
+      "property": "subtitle",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "ModuleResponseDto",
+      "property": "description",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "ModuleResponseDto",
+      "property": "summary",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "ModuleResponseDto",
+      "property": "module_code",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "ModuleResponseDto",
+      "property": "maya_rank_required",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "ModuleResponseDto",
+      "property": "maya_rank_granted",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "ModuleResponseDto",
+      "property": "version_notes",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "ModuleResponseDto",
+      "property": "created_by",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "ModuleResponseDto",
+      "property": "reviewed_by",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "ModuleResponseDto",
+      "property": "approved_by",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    },
+    {
+      "dto": "ModuleResponseDto",
+      "property": "thumbnail_url",
+      "ts_type": "string",
+      "inferred_db_type": "text",
+      "optional": true,
+      "current_decorators": [
+        "@Expose()"
+      ],
+      "expected_decorators": [
+        "@IsString()"
+      ],
+      "severity": "low",
+      "issue": "Falta patrón decorador ['@IsString']",
+      "fix": "Agregar @IsString()"
+    }
+  ],
+  "summary": {
+    "critical": 0,
+    "high": 10,
+    "medium": 36,
+    "low": 68,
+    "dtos_perfect": 112,
+    "coverage": "81%"
+  },
+  "dtos_with_most_issues": [
+    {
+      "dto": "MediaResponseDto",
+      "issues": 16
+    },
+    {
+      "dto": "ModuleResponseDto",
+      "issues": 15
+    },
+    {
+      "dto": "UserDetailsDto",
+      "issues": 10
+    },
+    {
+      "dto": "UserStatsResponseDto",
+      "issues": 9
+    },
+    {
+      "dto": "UserRankResponseDto",
+      "issues": 8
+    },
+    {
+      "dto": "ExerciseResponseDto",
+      "issues": 7
+    },
+    {
+      "dto": "CreateClassroomMemberDto",
+      "issues": 6
+    },
+    {
+      "dto": "RubricResponseDto",
+      "issues": 5
+    },
+    {
+      "dto": "AchievementResponseDto",
+      "issues": 5
+    },
+    {
+      "dto": "LeaderboardEntryDto",
+      "issues": 5
+    }
+  ],
+  "most_missing_decorators": [
+    {
+      "type": "Falta patrón decorador ['@IsString']",
+      "count": 68
+    },
+    {
+      "type": "Falta patrón decorador ['@IsInt']",
+      "count": 22
+    },
+    {
+      "type": "Falta patrón decorador ['@IsDate', '@IsI",
+      "count": 14
+    },
+    {
+      "type": "Falta patrón decorador ['@IsUUID']",
+      "count": 9
+    },
+    {
+      "type": "Falta patrón decorador ['@IsBoolean']",
+      "count": 1
+    }
+  ],
+  "recommendations": [
+    "CRÍTICO: Corregir 10 decoradores de tipo incorrecto (@IsString en ENUMs/UUIDs)",
+    "IMPORTANTE: Revisar 36 propiedades con decoradores faltantes"
+  ]
+}

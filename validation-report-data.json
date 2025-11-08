@@ -1,0 +1,2796 @@
+{
+  "analyzed_objects": [
+    {
+      "file": "02-profiles.sql",
+      "object_type": "TABLE",
+      "object_name": "auth_management.profiles",
+      "size_bytes": 4386,
+      "lines": 94,
+      "dependencies": [
+        "auth.users",
+        "jsonb",
+        "auth_management.tenants",
+        "gamilit.initialize_user_stats",
+        "gamilit.get_current_user_id",
+        "auth_management.profiles",
+        "auth_management.tenants",
+        "gen_random_uuid",
+        "UNIQUE",
+        "gamilit.is_admin"
+      ],
+      "referenced_tables": [
+        "auth.users",
+        "jsonb",
+        "auth_management.tenants"
+      ],
+      "referenced_functions": [
+        "gamilit.initialize_user_stats",
+        "gamilit.get_current_user_id",
+        "auth_management.profiles",
+        "auth_management.tenants",
+        "gen_random_uuid"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "auth_management",
+        "auth",
+        "9"
+      ],
+      "has_rls": true,
+      "has_grants": true,
+      "has_triggers": true,
+      "content_preview": "-- =====================================================\n-- Table: auth_management.profiles\n-- Description: Perfiles de usuario con información básica, rol y configuraciones\n-- Dependencies: auth_management.tenants, auth.users\n-- Created: 2025-10-27\n-- =====================================================\n\nSET search_path TO auth_management, public;\n\nDROP TABLE IF EXISTS auth_management.profiles CASCADE;\n\nCREATE TABLE auth_management.profiles (\n    id uuid DEFAULT gen_random_uuid() NOT NULL,\n   ",
+      "schema": "auth_management",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/tables/02-profiles.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/table/02-profiles.sql"
+    },
+    {
+      "file": "03-user_roles.sql",
+      "object_type": "TABLE",
+      "object_name": "auth_management.user_roles",
+      "size_bytes": 2475,
+      "lines": 55,
+      "dependencies": [
+        "auth_management.profiles",
+        "auth_management.tenants",
+        "auth_management.profiles",
+        "auth_management.tenants",
+        "gen_random_uuid",
+        "auth_management.user_roles",
+        "UNIQUE",
+        "btree",
+        "gamilit.now_mexico",
+        "KEY"
+      ],
+      "referenced_tables": [
+        "auth_management.profiles",
+        "auth_management.tenants"
+      ],
+      "referenced_functions": [
+        "auth_management.profiles",
+        "auth_management.tenants",
+        "gen_random_uuid",
+        "auth_management.user_roles",
+        "UNIQUE"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "auth_management"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": true,
+      "content_preview": "-- =====================================================\n-- Table: auth_management.user_roles\n-- Description: Asignaciones de roles a usuarios con permisos específicos\n-- Dependencies: auth_management.profiles, auth_management.tenants\n-- Created: 2025-10-27\n-- =====================================================\n\nSET search_path TO auth_management, public;\n\nDROP TABLE IF EXISTS auth_management.user_roles CASCADE;\n\nCREATE TABLE auth_management.user_roles (\n    id uuid DEFAULT gen_random_uuid() N",
+      "schema": "auth_management",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/tables/03-user_roles.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/table/03-user_roles.sql"
+    },
+    {
+      "file": "04-memberships.sql",
+      "object_type": "TABLE",
+      "object_name": "auth_management.memberships",
+      "size_bytes": 2866,
+      "lines": 60,
+      "dependencies": [
+        "auth_management.tenants",
+        "auth_management.profiles",
+        "auth_management.memberships",
+        "auth_management.tenants",
+        "gen_random_uuid",
+        "auth_management.profiles",
+        "UNIQUE",
+        "ANY",
+        "btree",
+        "gamilit.now_mexico"
+      ],
+      "referenced_tables": [
+        "auth_management.tenants",
+        "auth_management.profiles"
+      ],
+      "referenced_functions": [
+        "auth_management.memberships",
+        "auth_management.tenants",
+        "gen_random_uuid",
+        "auth_management.profiles",
+        "UNIQUE"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "auth_management"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": true,
+      "content_preview": "-- =====================================================\n-- Table: auth_management.memberships\n-- Description: Relaciones usuario-tenant con permisos y restricciones\n-- Dependencies: auth_management.profiles, auth_management.tenants\n-- Created: 2025-10-27\n-- =====================================================\n\nSET search_path TO auth_management, public;\n\nDROP TABLE IF EXISTS auth_management.memberships CASCADE;\n\nCREATE TABLE auth_management.memberships (\n    id uuid DEFAULT gen_random_uuid() N",
+      "schema": "auth_management",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/tables/04-memberships.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/table/04-memberships.sql"
+    },
+    {
+      "file": "05-auth_attempts.sql",
+      "object_type": "TABLE",
+      "object_name": "auth_management.auth_attempts",
+      "size_bytes": 1870,
+      "lines": 41,
+      "dependencies": [
+        "gen_random_uuid",
+        "btree",
+        "None",
+        "gamilit.now_mexico",
+        "KEY",
+        "auth_management.auth_attempts"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "gen_random_uuid",
+        "btree",
+        "None",
+        "gamilit.now_mexico",
+        "KEY"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "auth_management"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Table: auth_management.auth_attempts\n-- Description: Registro de intentos de autenticación para seguridad y auditoría\n-- Dependencies: None (tabla de auditoría independiente)\n-- Created: 2025-10-27\n-- =====================================================\n\nSET search_path TO auth_management, public;\n\nDROP TABLE IF EXISTS auth_management.auth_attempts CASCADE;\n\nCREATE TABLE auth_management.auth_attempts (\n    id uuid DEFAULT gen_random_uu",
+      "schema": "auth_management",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/tables/05-auth_attempts.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/table/05-auth_attempts.sql"
+    },
+    {
+      "file": "06-user_sessions.sql",
+      "object_type": "TABLE",
+      "object_name": "auth_management.user_sessions",
+      "size_bytes": 2771,
+      "lines": 60,
+      "dependencies": [
+        "auth_management.tenants",
+        "auth_management.profiles",
+        "auth_management.tenants",
+        "auth_management.profiles",
+        "gen_random_uuid",
+        "UNIQUE",
+        "auth_management.user_sessions",
+        "ANY",
+        "btree",
+        "gamilit.now_mexico"
+      ],
+      "referenced_tables": [
+        "auth_management.tenants",
+        "auth_management.profiles"
+      ],
+      "referenced_functions": [
+        "auth_management.tenants",
+        "auth_management.profiles",
+        "gen_random_uuid",
+        "UNIQUE",
+        "auth_management.user_sessions"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "auth_management"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Table: auth_management.user_sessions\n-- Description: Sesiones activas de usuarios con información de dispositivo y ubicación\n-- Dependencies: auth_management.profiles, auth_management.tenants\n-- Created: 2025-10-27\n-- =====================================================\n\nSET search_path TO auth_management, public;\n\nDROP TABLE IF EXISTS auth_management.user_sessions CASCADE;\n\nCREATE TABLE auth_management.user_sessions (\n    id uuid DEFA",
+      "schema": "auth_management",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/tables/06-user_sessions.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/table/06-user_sessions.sql"
+    },
+    {
+      "file": "07-email_verification_tokens.sql",
+      "object_type": "TABLE",
+      "object_name": "auth_management.email_verification_tokens",
+      "size_bytes": 1934,
+      "lines": 43,
+      "dependencies": [
+        "auth.users",
+        "gen_random_uuid",
+        "UNIQUE",
+        "btree",
+        "varying",
+        "KEY",
+        "auth.users",
+        "auth_management.email_verification_tokens"
+      ],
+      "referenced_tables": [
+        "auth.users"
+      ],
+      "referenced_functions": [
+        "gen_random_uuid",
+        "UNIQUE",
+        "btree",
+        "varying",
+        "KEY"
+      ],
+      "referenced_schemas": [
+        "auth_management",
+        "auth"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Table: auth_management.email_verification_tokens\n-- Description: Almacena tokens de verificación de email para registro de nuevos usuarios\n-- Dependencies: auth.users\n-- Created: 2025-10-27\n-- =====================================================\n\nSET search_path TO auth_management, public;\n\nDROP TABLE IF EXISTS auth_management.email_verification_tokens CASCADE;\n\nCREATE TABLE auth_management.email_verification_tokens (\n    id uuid DEFAU",
+      "schema": "auth_management",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/tables/07-email_verification_tokens.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/table/07-email_verification_tokens.sql"
+    },
+    {
+      "file": "08-password_reset_tokens.sql",
+      "object_type": "TABLE",
+      "object_name": "auth_management.password_reset_tokens",
+      "size_bytes": 1942,
+      "lines": 44,
+      "dependencies": [
+        "auth.users",
+        "gen_random_uuid",
+        "UNIQUE",
+        "btree",
+        "varying",
+        "KEY",
+        "auth.users",
+        "auth_management.password_reset_tokens"
+      ],
+      "referenced_tables": [
+        "auth.users"
+      ],
+      "referenced_functions": [
+        "gen_random_uuid",
+        "UNIQUE",
+        "btree",
+        "varying",
+        "KEY"
+      ],
+      "referenced_schemas": [
+        "auth_management",
+        "auth"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Table: auth_management.password_reset_tokens\n-- Description: Almacena tokens de restablecimiento de contraseña para recuperación de usuario\n-- Dependencies: auth.users\n-- Created: 2025-10-27\n-- =====================================================\n\nSET search_path TO auth_management, public;\n\nDROP TABLE IF EXISTS auth_management.password_reset_tokens CASCADE;\n\nCREATE TABLE auth_management.password_reset_tokens (\n    id uuid DEFAULT gen_",
+      "schema": "auth_management",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/tables/08-password_reset_tokens.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/table/08-password_reset_tokens.sql"
+    },
+    {
+      "file": "09-security_events.sql",
+      "object_type": "TABLE",
+      "object_name": "auth_management.security_events",
+      "size_bytes": 2283,
+      "lines": 48,
+      "dependencies": [
+        "auth.users",
+        "gen_random_uuid",
+        "event",
+        "ANY",
+        "btree",
+        "auth_management.security_events",
+        "varying",
+        "KEY",
+        "CHECK",
+        "auth.users"
+      ],
+      "referenced_tables": [
+        "auth.users"
+      ],
+      "referenced_functions": [
+        "gen_random_uuid",
+        "event",
+        "ANY",
+        "btree",
+        "auth_management.security_events"
+      ],
+      "referenced_schemas": [
+        "auth_management",
+        "auth",
+        "e"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Table: auth_management.security_events\n-- Description: Log de auditoría para eventos relacionados con seguridad\n-- Dependencies: auth.users (opcional, puede ser NULL)\n-- Created: 2025-10-27\n-- =====================================================\n\nSET search_path TO auth_management, public;\n\nDROP TABLE IF EXISTS auth_management.security_events CASCADE;\n\nCREATE TABLE auth_management.security_events (\n    id uuid DEFAULT gen_random_uuid()",
+      "schema": "auth_management",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/tables/09-security_events.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/table/09-security_events.sql"
+    },
+    {
+      "file": "10-user_preferences.sql",
+      "object_type": "TABLE",
+      "object_name": "auth_management.user_preferences",
+      "size_bytes": 3796,
+      "lines": 79,
+      "dependencies": [
+        "auth_management.profiles",
+        "JSONB",
+        "OWNER",
+        "TO",
+        "USING",
+        "ON",
+        "FOR",
+        "CASCADE",
+        "IS",
+        "gamilit.get_current_user_id"
+      ],
+      "referenced_tables": [
+        "auth_management.profiles",
+        "JSONB",
+        "OWNER",
+        "TO",
+        "USING"
+      ],
+      "referenced_functions": [
+        "gamilit.get_current_user_id",
+        "auth_management.profiles",
+        "JSON",
+        "gamilit.is_admin",
+        "en"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "auth_management"
+      ],
+      "has_rls": true,
+      "has_grants": true,
+      "has_triggers": true,
+      "content_preview": "-- =====================================================\n-- Table: auth_management.user_preferences\n-- Description: Preferencias de usuario (tema, idioma, notificaciones, sonido, tutorial)\n-- Dependencies: auth_management.profiles\n-- Created: 2025-10-28\n-- Modified: 2025-10-28\n-- =====================================================\n\nSET search_path TO auth_management, public;\n\nDROP TABLE IF EXISTS auth_management.user_preferences CASCADE;\n\nCREATE TABLE IF NOT EXISTS auth_management.user_prefere",
+      "schema": "auth_management",
+      "priority": "ALTA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/tables/10-user_preferences.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/table/10-user_preferences.sql"
+    },
+    {
+      "file": "06-user_has_permission.sql",
+      "object_type": "FUNCTION",
+      "object_name": "auth_management.user_has_permission",
+      "size_bytes": 1304,
+      "lines": 45,
+      "dependencies": [
+        "auth_management.user_roles",
+        "auth_management.user_has_permission",
+        "gamilit.is_super_admin",
+        "EXISTS"
+      ],
+      "referenced_tables": [
+        "auth_management.user_roles"
+      ],
+      "referenced_functions": [
+        "auth_management.user_has_permission",
+        "gamilit.is_super_admin",
+        "EXISTS"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "auth_management",
+        "ur"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Function: auth_management.user_has_permission\n-- Description: Verifica si un usuario tiene un permiso específico\n-- Priority: CRITICAL - Authorization requirement\n-- Created: 2025-10-27\n-- =====================================================\n\nCREATE OR REPLACE FUNCTION auth_management.user_has_permission(\n    p_user_id uuid,\n    p_permission text\n)\nRETURNS boolean\nLANGUAGE plpgsql\nSTABLE\nSECURITY DEFINER\nAS $$\nDECLARE\n    v_has_permiss",
+      "schema": "auth_management",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/functions/06-user_has_permission.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/function/06-user_has_permission.sql"
+    },
+    {
+      "file": "07-get_user_role.sql",
+      "object_type": "FUNCTION",
+      "object_name": "auth_management.get_user_role",
+      "size_bytes": 1389,
+      "lines": 47,
+      "dependencies": [
+        "auth_management.user_roles",
+        "gamilit.get_current_user_id",
+        "role",
+        "auth_management.get_user_role"
+      ],
+      "referenced_tables": [
+        "auth_management.user_roles"
+      ],
+      "referenced_functions": [
+        "gamilit.get_current_user_id",
+        "role",
+        "auth_management.get_user_role"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "auth_management"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Function: auth_management.get_user_role\n-- Description: Obtiene el rol más privilegiado de un usuario\n-- Priority: CRITICAL - RLS policies dependency\n-- Created: 2025-10-27\n-- =====================================================\n\nCREATE OR REPLACE FUNCTION auth_management.get_user_role(p_user_id uuid DEFAULT NULL)\nRETURNS gamilit_role\nLANGUAGE plpgsql\nSTABLE\nSECURITY DEFINER\nAS $$\nDECLARE\n    v_role gamilit_role;\n    v_user_id uuid;\nBE",
+      "schema": "auth_management",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/functions/07-get_user_role.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/function/07-get_user_role.sql"
+    },
+    {
+      "file": "08-assign_role_to_user.sql",
+      "object_type": "FUNCTION",
+      "object_name": "auth_management.assign_role_to_user",
+      "size_bytes": 2488,
+      "lines": 100,
+      "dependencies": [
+        "auth_management.profiles",
+        "auth_management.user_roles",
+        "gamilit.get_current_user_id",
+        "auth_management.user_roles",
+        "audit_logging.log_audit_event",
+        "jsonb_build_object",
+        "auth_management.assign_role_to_user",
+        "VALUES",
+        "uuid_generate_v4",
+        "gamilit.is_super_admin"
+      ],
+      "referenced_tables": [
+        "auth_management.profiles",
+        "auth_management.user_roles"
+      ],
+      "referenced_functions": [
+        "gamilit.get_current_user_id",
+        "auth_management.user_roles",
+        "audit_logging.log_audit_event",
+        "jsonb_build_object",
+        "auth_management.assign_role_to_user"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "auth_management",
+        "audit_logging"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Function: auth_management.assign_role_to_user\n-- Description: Asigna un rol a un usuario con validaciones\n-- Priority: HIGH - Role management\n-- Created: 2025-10-27\n-- =====================================================\n\nCREATE OR REPLACE FUNCTION auth_management.assign_role_to_user(\n    p_user_id uuid,\n    p_role gamilit_role,\n    p_permissions jsonb DEFAULT '{}'::jsonb,\n    p_assigned_by uuid DEFAULT NULL\n)\nRETURNS uuid\nLANGUAGE plp",
+      "schema": "auth_management",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/functions/08-assign_role_to_user.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/function/08-assign_role_to_user.sql"
+    },
+    {
+      "file": "09-revoke_role_from_user.sql",
+      "object_type": "FUNCTION",
+      "object_name": "auth_management.revoke_role_from_user",
+      "size_bytes": 2312,
+      "lines": 81,
+      "dependencies": [
+        "auth_management.user_roles",
+        "gamilit.get_current_user_id",
+        "to_jsonb",
+        "audit_logging.log_audit_event",
+        "jsonb_build_object",
+        "auth_management.revoke_role_from_user",
+        "usuario",
+        "gamilit.is_super_admin",
+        "role"
+      ],
+      "referenced_tables": [
+        "auth_management.user_roles"
+      ],
+      "referenced_functions": [
+        "gamilit.get_current_user_id",
+        "to_jsonb",
+        "audit_logging.log_audit_event",
+        "jsonb_build_object",
+        "auth_management.revoke_role_from_user"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "auth_management",
+        "audit_logging"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Function: auth_management.revoke_role_from_user\n-- Description: Revoca un rol de un usuario con validaciones\n-- Priority: HIGH - Role management\n-- Created: 2025-10-27\n-- =====================================================\n\nCREATE OR REPLACE FUNCTION auth_management.revoke_role_from_user(\n    p_user_id uuid,\n    p_role gamilit_role,\n    p_revoked_by uuid DEFAULT NULL\n)\nRETURNS boolean\nLANGUAGE plpgsql\nSECURITY DEFINER\nAS $$\nDECLARE\n  ",
+      "schema": "auth_management",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/functions/09-revoke_role_from_user.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/function/09-revoke_role_from_user.sql"
+    },
+    {
+      "file": "01-enable-rls.sql",
+      "object_type": "UNKNOWN",
+      "object_name": null,
+      "size_bytes": 2089,
+      "lines": 33,
+      "dependencies": [
+        "28"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "28"
+      ],
+      "referenced_schemas": [
+        "auth_management"
+      ],
+      "has_rls": true,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Enable RLS for auth_management tables\n-- Created: 2025-10-27\n-- Updated: 2025-10-28 (Agent 3 - Comprehensive RLS Integration)\n-- Description: Habilita Row Level Security en todas las tablas\n--              de gestión de autenticación\n-- =====================================================\n\n-- Enable Row Level Security on all auth_management tables\n-- Schema: auth_management\n-- Tables: 9 tables with RLS protection\n\nALTER TABLE auth_mana",
+      "schema": "auth_management",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/rls-policies/01-enable-rls.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/rls-policy/01-enable-rls.sql"
+    },
+    {
+      "file": "02-policies.sql",
+      "object_type": "RLS POLICY",
+      "object_name": "profiles_read_own",
+      "size_bytes": 11826,
+      "lines": 305,
+      "dependencies": [
+        "social_features.classroom_members",
+        "social_features.classrooms",
+        "auth_management.user_roles",
+        "0",
+        "access",
+        "policies",
+        "28",
+        "USING",
+        "IN",
+        "2"
+      ],
+      "referenced_tables": [
+        "social_features.classroom_members",
+        "social_features.classrooms",
+        "auth_management.user_roles"
+      ],
+      "referenced_functions": [
+        "0",
+        "access",
+        "policies",
+        "28",
+        "USING"
+      ],
+      "referenced_schemas": [
+        "ur",
+        "auth_management",
+        "social_features",
+        "app",
+        "cm",
+        "c"
+      ],
+      "has_rls": true,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- RLS Policies for auth_management schema\n-- Description: Políticas de seguridad para gestión de autenticación\n-- Created: 2025-10-27\n-- Updated: 2025-10-28 (Agent 3 - 18 policies integrated)\n-- =====================================================\n--\n-- Security Strategy:\n-- - Multi-tenant isolation via tenant_id\n-- - Role-based access (super_admin, admin_teacher, student)\n-- - Self-service access for user's own data\n-- - Teacher access ",
+      "schema": "auth_management",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/rls-policies/02-policies.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/rls-policy/02-policies.sql"
+    },
+    {
+      "file": "03-grants.sql",
+      "object_type": "UNKNOWN",
+      "object_name": null,
+      "size_bytes": 1632,
+      "lines": 33,
+      "dependencies": [
+        "profiles"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "profiles"
+      ],
+      "referenced_schemas": [
+        "auth_management"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Grants and Permissions for auth_management\n-- Created: 2025-10-27\n-- Description: Permisos de acceso al schema de autenticación\n-- =====================================================\n\n-- Schema permissions\nGRANT USAGE ON SCHEMA auth_management TO gamilit_user;\n\n-- Table permissions\nGRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA auth_management TO gamilit_user;\nGRANT TRUNCATE, REFERENCES, TRIGGER ON ALL TABLES IN SCHEMA a",
+      "schema": "auth_management",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/rls-policies/03-grants.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/rls-policy/03-grants.sql"
+    },
+    {
+      "file": "04-user_roles-rls.sql",
+      "object_type": "RLS POLICY",
+      "object_name": null,
+      "size_bytes": 3222,
+      "lines": 93,
+      "dependencies": [
+        "auth_management.profiles",
+        "gamilit.get_current_user_id",
+        "gamilit.is_admin",
+        "AND",
+        "USING",
+        "NOT",
+        "CHECK",
+        "gamilit.is_super_admin"
+      ],
+      "referenced_tables": [
+        "auth_management.profiles"
+      ],
+      "referenced_functions": [
+        "gamilit.get_current_user_id",
+        "gamilit.is_admin",
+        "AND",
+        "USING",
+        "NOT"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "auth_management"
+      ],
+      "has_rls": true,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- RLS Policies: auth_management.user_roles\n-- Description: Row Level Security para proteger roles de usuario\n-- Priority: CRITICAL - Security requirement\n-- Created: 2025-10-27\n-- =====================================================\n\n-- Enable RLS\nALTER TABLE auth_management.user_roles ENABLE ROW LEVEL SECURITY;\n\n-- =====================================================\n-- SELECT Policies\n-- ===============================================",
+      "schema": "auth_management",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/rls-policies/04-user_roles-rls.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/rls-policy/04-user_roles-rls.sql"
+    },
+    {
+      "file": "05-tenants-rls.sql",
+      "object_type": "RLS POLICY",
+      "object_name": null,
+      "size_bytes": 3422,
+      "lines": 101,
+      "dependencies": [
+        "auth_management.profiles",
+        "gamilit.get_current_user_id",
+        "gamilit.is_admin",
+        "USING",
+        "CHECK",
+        "gamilit.is_super_admin"
+      ],
+      "referenced_tables": [
+        "auth_management.profiles"
+      ],
+      "referenced_functions": [
+        "gamilit.get_current_user_id",
+        "gamilit.is_admin",
+        "USING",
+        "CHECK",
+        "gamilit.is_super_admin"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "auth_management"
+      ],
+      "has_rls": true,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- RLS Policies: auth_management.tenants\n-- Description: Row Level Security para multi-tenancy\n-- Priority: CRITICAL - Multi-tenancy requirement\n-- Created: 2025-10-27\n-- =====================================================\n\n-- Enable RLS\nALTER TABLE auth_management.tenants ENABLE ROW LEVEL SECURITY;\n\n-- =====================================================\n-- SELECT Policies\n-- =====================================================\n\n-- Po",
+      "schema": "auth_management",
+      "priority": "ALTA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/rls-policies/05-tenants-rls.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/rls-policy/05-tenants-rls.sql"
+    },
+    {
+      "file": "01-idx_user_roles_permissions_gin.sql",
+      "object_type": "INDEX",
+      "object_name": "IF",
+      "size_bytes": 950,
+      "lines": 27,
+      "dependencies": [
+        "auth_management.user_roles",
+        "permissions",
+        "GIN",
+        "permission"
+      ],
+      "referenced_tables": [
+        "auth_management.user_roles"
+      ],
+      "referenced_functions": [
+        "permissions",
+        "GIN",
+        "permission"
+      ],
+      "referenced_schemas": [
+        "auth_management"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- GIN Index: idx_user_roles_permissions_gin\n-- Table: auth_management.user_roles\n-- Column: permissions (JSONB)\n-- Description: Índice GIN para búsqueda eficiente de permisos específicos\n-- Priority: HIGH - Performance optimization\n-- Created: 2025-10-27\n-- =====================================================\n\nCREATE INDEX IF NOT EXISTS idx_user_roles_permissions_gin\nON auth_management.user_roles\nUSING GIN (permissions jsonb_path_ops);\n\n",
+      "schema": "auth_management",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/indexes/01-idx_user_roles_permissions_gin.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/index/01-idx_user_roles_permissions_gin.sql"
+    },
+    {
+      "file": "01-user_sessions_indexes.sql",
+      "object_type": "INDEX",
+      "object_name": "CONCURRENTLY",
+      "size_bytes": 4077,
+      "lines": 125,
+      "dependencies": [
+        "auth_management.user_sessions",
+        "user_sessions",
+        "Index",
+        "periódico",
+        "auth_management.user_sessions",
+        "sessions",
+        "session",
+        "Archivado",
+        "soon",
+        "índice"
+      ],
+      "referenced_tables": [
+        "auth_management.user_sessions",
+        "user_sessions"
+      ],
+      "referenced_functions": [
+        "Index",
+        "periódico",
+        "auth_management.user_sessions",
+        "sessions",
+        "session"
+      ],
+      "referenced_schemas": [
+        "auth_management"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Indexes for: auth_management.user_sessions\n-- Created: 2025-10-28\n-- Description: Índices para optimización de gestión de sesiones activas\n-- =====================================================\n\n-- ========================================\n-- PARTIAL INDEXES - Created 2025-10-28\n-- ========================================\n\n-- Index: idx_user_sessions_active\n-- Purpose: Optimiza búsquedas de sesiones activas por usuario\n-- Type: BTREE P",
+      "schema": "auth_management",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/indexes/01-user_sessions_indexes.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/index/01-user_sessions_indexes.sql"
+    },
+    {
+      "file": "02-user_preferences_indexes.sql",
+      "object_type": "INDEX",
+      "object_name": "IF",
+      "size_bytes": 1452,
+      "lines": 30,
+      "dependencies": [
+        "USING",
+        "IS",
+        "ON",
+        "auth_management.user_preferences",
+        "GIN",
+        "completado",
+        "JSON"
+      ],
+      "referenced_tables": [
+        "USING",
+        "IS",
+        "ON"
+      ],
+      "referenced_functions": [
+        "auth_management.user_preferences",
+        "GIN",
+        "completado",
+        "JSON"
+      ],
+      "referenced_schemas": [
+        "auth_management"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Indexes: auth_management.user_preferences\n-- Description: Índices para optimizar consultas de preferencias de usuario\n-- Table: auth_management.user_preferences\n-- Created: 2025-10-28\n-- =====================================================\n\n-- Index: Preferencias por tema\nCREATE INDEX IF NOT EXISTS idx_user_preferences_theme\n    ON auth_management.user_preferences(theme);\n\n-- Index: Preferencias por idioma\nCREATE INDEX IF NOT EXISTS id",
+      "schema": "auth_management",
+      "priority": "BAJA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth_management/indexes/02-user_preferences_indexes.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth_management/index/02-user_preferences_indexes.sql"
+    },
+    {
+      "file": "01-award_ml_coins.sql",
+      "object_type": "FUNCTION",
+      "object_name": "gamification_system.award_ml_coins",
+      "size_bytes": 3164,
+      "lines": 90,
+      "dependencies": [
+        "gamification_system.user_stats",
+        "gamification_system.user_ranks",
+        "gamification_system.award_ml_coins",
+        "jsonb_build_object",
+        "gamification_system.ml_coins_transactions",
+        "gamilit.now_mexico",
+        "FLOOR",
+        "VALUES",
+        "DECIMAL"
+      ],
+      "referenced_tables": [
+        "gamification_system.user_stats",
+        "gamification_system.user_ranks"
+      ],
+      "referenced_functions": [
+        "gamification_system.award_ml_coins",
+        "jsonb_build_object",
+        "gamification_system.ml_coins_transactions",
+        "gamilit.now_mexico",
+        "FLOOR"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "gamification_system",
+        "1",
+        "2"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Function: gamification_system.award_ml_coins\n-- Description: Otorga ML Coins al usuario aplicando multiplicador de rango basado en current_rank y registra la transacción\n-- Parameters: p_user_id uuid, p_amount integer, p_transaction_type text, p_description text, p_reference_id uuid, p_reference_type text\n-- Returns: uuid\n-- Created: 2025-10-27\n-- =====================================================\n\nCREATE OR REPLACE FUNCTION gamifica",
+      "schema": "gamification_system",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamification_system/functions/01-award_ml_coins.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamification_system/function/01-award_ml_coins.sql"
+    },
+    {
+      "file": "02-calculate_level_from_xp.sql",
+      "object_type": "FUNCTION",
+      "object_name": "gamification_system.calculate_level_from_xp",
+      "size_bytes": 659,
+      "lines": 20,
+      "dependencies": [
+        "FLOOR",
+        "gamification_system.calculate_level_from_xp",
+        "SQRT"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "FLOOR",
+        "gamification_system.calculate_level_from_xp",
+        "SQRT"
+      ],
+      "referenced_schemas": [
+        "gamification_system",
+        "100"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Function: gamification_system.calculate_level_from_xp\n-- Description: Calcula el nivel del usuario basado en XP total\n-- Parameters: p_xp integer\n-- Returns: integer\n-- Created: 2025-10-27\n-- =====================================================\n\nCREATE OR REPLACE FUNCTION gamification_system.calculate_level_from_xp(p_xp integer)\n RETURNS integer\n LANGUAGE plpgsql\n IMMUTABLE\nAS $function$\nBEGIN\n    RETURN FLOOR(SQRT(p_xp::numeric / 100.",
+      "schema": "gamification_system",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamification_system/functions/02-calculate_level_from_xp.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamification_system/function/02-calculate_level_from_xp.sql"
+    },
+    {
+      "file": "03-calculate_xp_for_next_level.sql",
+      "object_type": "FUNCTION",
+      "object_name": "gamification_system.calculate_xp_for_next_level",
+      "size_bytes": 775,
+      "lines": 20,
+      "dependencies": [
+        "RETURN",
+        "gamification_system.calculate_xp_for_next_level"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "RETURN",
+        "gamification_system.calculate_xp_for_next_level"
+      ],
+      "referenced_schemas": [
+        "gamification_system"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Function: gamification_system.calculate_xp_for_next_level\n-- Description: Calcula XP necesaria para alcanzar el siguiente nivel\n-- Parameters: p_current_level integer\n-- Returns: integer\n-- Created: 2025-10-27\n-- =====================================================\n\nCREATE OR REPLACE FUNCTION gamification_system.calculate_xp_for_next_level(p_current_level integer)\n RETURNS integer\n LANGUAGE plpgsql\n IMMUTABLE\nAS $function$\nBEGIN\n    RE",
+      "schema": "gamification_system",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamification_system/functions/03-calculate_xp_for_next_level.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamification_system/function/03-calculate_xp_for_next_level.sql"
+    },
+    {
+      "file": "04-get_user_rank_requirements.sql",
+      "object_type": "FUNCTION",
+      "object_name": "gamification_system.get_user_rank_requirements",
+      "size_bytes": 1785,
+      "lines": 49,
+      "dependencies": [
+        "TABLE",
+        "gamification_system.get_user_rank_requirements"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "TABLE",
+        "gamification_system.get_user_rank_requirements"
+      ],
+      "referenced_schemas": [
+        "gamification_system"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Function: gamification_system.get_user_rank_requirements\n-- Description: Obtiene requisitos para el siguiente rango maya\n-- Parameters: p_current_rank rango_maya\n-- Returns: record\n-- Created: 2025-10-27\n-- =====================================================\n\nCREATE OR REPLACE FUNCTION gamification_system.get_user_rank_requirements(p_current_rank rango_maya)\n RETURNS TABLE(next_rank rango_maya, modules_required integer, xp_required in",
+      "schema": "gamification_system",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamification_system/functions/04-get_user_rank_requirements.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamification_system/function/04-get_user_rank_requirements.sql"
+    },
+    {
+      "file": "05-spend_ml_coins.sql",
+      "object_type": "FUNCTION",
+      "object_name": "gamification_system.spend_ml_coins",
+      "size_bytes": 2278,
+      "lines": 65,
+      "dependencies": [
+        "gamification_system.user_stats",
+        "gamification_system.ml_coins_transactions",
+        "gamilit.now_mexico",
+        "VALUES",
+        "gamification_system.spend_ml_coins"
+      ],
+      "referenced_tables": [
+        "gamification_system.user_stats"
+      ],
+      "referenced_functions": [
+        "gamification_system.ml_coins_transactions",
+        "gamilit.now_mexico",
+        "VALUES",
+        "gamification_system.spend_ml_coins"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "gamification_system"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Function: gamification_system.spend_ml_coins\n-- Description: Gasta ML Coins con validación de fondos suficientes\n-- Parameters: p_user_id uuid, p_amount integer, p_transaction_type text, p_description text, p_reference_id uuid, p_reference_type text\n-- Returns: uuid\n-- Created: 2025-10-27\n-- =====================================================\n\nCREATE OR REPLACE FUNCTION gamification_system.spend_ml_coins(p_user_id uuid, p_amount integ",
+      "schema": "gamification_system",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamification_system/functions/05-spend_ml_coins.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamification_system/function/05-spend_ml_coins.sql"
+    },
+    {
+      "file": "02-achievement_categories_indexes.sql",
+      "object_type": "INDEX",
+      "object_name": "IF",
+      "size_bytes": 1225,
+      "lines": 25,
+      "dependencies": [
+        "gamification_system.achievement_categories"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "gamification_system.achievement_categories"
+      ],
+      "referenced_schemas": [
+        "gamification_system"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Indexes: gamification_system.achievement_categories\n-- Description: Índices para optimizar consultas de categorías de logros\n-- Table: gamification_system.achievement_categories\n-- Created: 2025-10-28\n-- =====================================================\n\n-- Index: Categorías activas\nCREATE INDEX IF NOT EXISTS idx_achievement_categories_active\n    ON gamification_system.achievement_categories(is_active)\n    WHERE is_active = true;\n\n-",
+      "schema": "gamification_system",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamification_system/indexes/02-achievement_categories_indexes.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamification_system/index/02-achievement_categories_indexes.sql"
+    },
+    {
+      "file": "02-user_stats_indexes.sql",
+      "object_type": "INDEX",
+      "object_name": "CONCURRENTLY",
+      "size_bytes": 2720,
+      "lines": 78,
+      "dependencies": [
+        "user_stats",
+        "gamification_system.user_stats",
+        "gamification_system.user_stats",
+        "ROW_NUMBER",
+        "Leaderboard",
+        "OVER"
+      ],
+      "referenced_tables": [
+        "user_stats",
+        "gamification_system.user_stats"
+      ],
+      "referenced_functions": [
+        "gamification_system.user_stats",
+        "ROW_NUMBER",
+        "Leaderboard",
+        "OVER"
+      ],
+      "referenced_schemas": [
+        "gamification_system"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Indexes for: gamification_system.user_stats\n-- Created: 2025-10-28\n-- Description: Índices para optimización de leaderboards y rankings\n-- =====================================================\n\n-- ========================================\n-- PERFORMANCE INDEXES - Created 2025-10-28\n-- ========================================\n\n-- Index: idx_user_stats_xp_desc\n-- Purpose: Optimiza queries de leaderboard ordenados por XP\n-- Type: BTREE DESC",
+      "schema": "gamification_system",
+      "priority": "ALTA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamification_system/indexes/02-user_stats_indexes.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamification_system/index/02-user_stats_indexes.sql"
+    },
+    {
+      "file": "03-active_boosts_indexes.sql",
+      "object_type": "INDEX",
+      "object_name": "IF",
+      "size_bytes": 1756,
+      "lines": 37,
+      "dependencies": [
+        "expiración",
+        "gamification_system.active_boosts",
+        "tipo"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "expiración",
+        "gamification_system.active_boosts",
+        "tipo"
+      ],
+      "referenced_schemas": [
+        "gamification_system"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Indexes: gamification_system.active_boosts\n-- Description: Índices para optimizar consultas de boosts activos\n-- Table: gamification_system.active_boosts\n-- Created: 2025-10-28\n-- =====================================================\n\n-- Index: Boosts por usuario\nCREATE INDEX IF NOT EXISTS idx_active_boosts_user\n    ON gamification_system.active_boosts(user_id);\n\n-- Index: Boosts por fecha de expiración (solo activos)\nCREATE INDEX IF NO",
+      "schema": "gamification_system",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamification_system/indexes/03-active_boosts_indexes.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamification_system/index/03-active_boosts_indexes.sql"
+    },
+    {
+      "file": "03-notifications_indexes.sql",
+      "object_type": "INDEX",
+      "object_name": "CONCURRENTLY",
+      "size_bytes": 2055,
+      "lines": 56,
+      "dependencies": [
+        "gamification_system.notifications",
+        "notifications",
+        "Index",
+        "leídas",
+        "usuario",
+        "gamification_system.notifications",
+        "user"
+      ],
+      "referenced_tables": [
+        "gamification_system.notifications",
+        "notifications"
+      ],
+      "referenced_functions": [
+        "Index",
+        "leídas",
+        "usuario",
+        "gamification_system.notifications",
+        "user"
+      ],
+      "referenced_schemas": [
+        "gamification_system"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Indexes for: gamification_system.notifications\n-- Created: 2025-10-28\n-- Description: Índices para optimización de consultas de notificaciones\n-- =====================================================\n\n-- ========================================\n-- PARTIAL INDEXES - Created 2025-10-28\n-- ========================================\n\n-- Index: idx_notifications_user_unread\n-- Purpose: Optimiza queries de notificaciones no leídas por usuario\n-",
+      "schema": "gamification_system",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamification_system/indexes/03-notifications_indexes.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamification_system/index/03-notifications_indexes.sql"
+    },
+    {
+      "file": "04-inventory_transactions_indexes.sql",
+      "object_type": "INDEX",
+      "object_name": "IF",
+      "size_bytes": 2130,
+      "lines": 39,
+      "dependencies": [
+        "JSON",
+        "gamification_system.inventory_transactions",
+        "item",
+        "GIN",
+        "fecha"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "JSON",
+        "gamification_system.inventory_transactions",
+        "item",
+        "GIN",
+        "fecha"
+      ],
+      "referenced_schemas": [
+        "gamification_system"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Indexes: gamification_system.inventory_transactions\n-- Description: Índices para optimizar consultas de transacciones de inventario\n-- Table: gamification_system.inventory_transactions\n-- Created: 2025-10-28\n-- =====================================================\n\n-- Index: Transacciones por usuario\nCREATE INDEX IF NOT EXISTS idx_inventory_transactions_user\n    ON gamification_system.inventory_transactions(user_id);\n\n-- Index: Transacc",
+      "schema": "gamification_system",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamification_system/indexes/04-inventory_transactions_indexes.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamification_system/index/04-inventory_transactions_indexes.sql"
+    },
+    {
+      "file": "99-refresh-schedule.sql",
+      "object_type": "UNKNOWN",
+      "object_name": null,
+      "size_bytes": 6931,
+      "lines": 192,
+      "dependencies": [
+        "cron.job",
+        "cron.job_run_details",
+        "pg_available_extensions",
+        "Medium",
+        "schedule",
+        "cron.unschedule",
+        "Leaderboard",
+        "IN",
+        "extension",
+        "job"
+      ],
+      "referenced_tables": [
+        "cron.job",
+        "cron.job_run_details",
+        "pg_available_extensions"
+      ],
+      "referenced_functions": [
+        "Medium",
+        "schedule",
+        "cron.unschedule",
+        "Leaderboard",
+        "IN"
+      ],
+      "referenced_schemas": [
+        "gamification_system",
+        "cron"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- MATERIALIZED VIEWS REFRESH SCHEDULE\n-- =====================================================\n-- Description: Automatic refresh configuration for all materialized views using pg_cron\n-- Purpose: Maintain data freshness in materialized views without manual intervention\n-- Requirements: pg_cron extension must be installed\n-- Installation: CREATE EXTENSION IF NOT EXISTS pg_cron;\n-- System Requirements:\n--   - PostgreSQL 12+\n--   - pg_cron e",
+      "schema": "gamification_system",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamification_system/materialized-views/99-refresh-schedule.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamification_system/materialized-view/99-refresh-schedule.sql"
+    },
+    {
+      "file": "check-mv-freshness.sql",
+      "object_type": "UNKNOWN",
+      "object_name": null,
+      "size_bytes": 8066,
+      "lines": 277,
+      "dependencies": [
+        "gamification_system.mv_mechanic_leaderboard",
+        "pg_stat_user_indexes",
+        "gamification_system.mv_global_leaderboard",
+        "cron.job",
+        "gamification_system.mv_classroom_leaderboard",
+        "pg_available_extensions",
+        "psql",
+        "cron.job_run_details",
+        "gamification_system.mv_weekly_leaderboard",
+        "pg_matviews"
+      ],
+      "referenced_tables": [
+        "gamification_system.mv_mechanic_leaderboard",
+        "pg_stat_user_indexes",
+        "gamification_system.mv_global_leaderboard",
+        "cron.job",
+        "gamification_system.mv_classroom_leaderboard"
+      ],
+      "referenced_functions": [
+        "Distribution",
+        "Runs",
+        "numeric",
+        "active",
+        "status"
+      ],
+      "referenced_schemas": [
+        "freshness",
+        "jr",
+        "cron",
+        "gamification_system",
+        "mvs",
+        "j"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- CHECK MATERIALIZED VIEWS FRESHNESS\n-- =====================================================\n-- Description: Verify when materialized views were last refreshed and their current status\n-- Purpose: Monitor data staleness and ensure refresh jobs are running properly\n-- Usage: Execute this script to check MV freshness and health\n-- Created: 2025-10-28\n-- Modified: 2025-10-28\n-- =====================================================\n\n\\echo ''",
+      "schema": "gamification_system",
+      "priority": "BAJA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamification_system/materialized-views/check-mv-freshness.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamification_system/materialized-view/check-mv-freshness.sql"
+    },
+    {
+      "file": "rebuild-all-mvs.sql",
+      "object_type": "MATERIALIZED VIEW",
+      "object_name": null,
+      "size_bytes": 10472,
+      "lines": 299,
+      "dependencies": [
+        "gamification_system.mv_mechanic_leaderboard",
+        "auth_management.profiles",
+        "gamification_system.mv_global_leaderboard",
+        "social_features.classroom_members",
+        "cron.job",
+        "gamification_system.user_achievements",
+        "gamification_system.mv_classroom_leaderboard",
+        "gamification_system.missions",
+        "gamification_system.user_ranks",
+        "progress_tracking.scheduled_missions"
+      ],
+      "referenced_tables": [
+        "gamification_system.mv_mechanic_leaderboard",
+        "auth_management.profiles",
+        "gamification_system.mv_global_leaderboard",
+        "social_features.classroom_members",
+        "cron.job"
+      ],
+      "referenced_functions": [
+        "OK",
+        "gamification_system.mv_mechanic_leaderboard",
+        "mv_classroom_leaderboard",
+        "necessary",
+        "gamification_system.mv_global_leaderboard"
+      ],
+      "referenced_schemas": [
+        "sm",
+        "ur",
+        "progress_tracking",
+        "auth_management",
+        "p",
+        "cron",
+        "us",
+        "ua",
+        "gamification_system",
+        "m",
+        "cm",
+        "social_features",
+        "mvs"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- REBUILD ALL MATERIALIZED VIEWS\n-- =====================================================\n-- Description: Drop and recreate all materialized views with their indexes\n-- Purpose: Complete rebuild when schema changes or major issues occur\n-- WARNING: This will temporarily make MVs unavailable during rebuild\n-- Usage: Execute only when necessary (schema changes, corruption, major updates)\n-- Execution Time: ~30-60 seconds total (depends on d",
+      "schema": "gamification_system",
+      "priority": "BAJA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamification_system/materialized-views/rebuild-all-mvs.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamification_system/materialized-view/rebuild-all-mvs.sql"
+    },
+    {
+      "file": "refresh-all-mvs.sql",
+      "object_type": "UNKNOWN",
+      "object_name": null,
+      "size_bytes": 4386,
+      "lines": 135,
+      "dependencies": [
+        "gamification_system.mv_mechanic_leaderboard",
+        "gamification_system.mv_global_leaderboard",
+        "gamification_system.mv_classroom_leaderboard",
+        "psql",
+        "gamification_system.mv_weekly_leaderboard",
+        "total",
+        "needed",
+        "Leaderboard"
+      ],
+      "referenced_tables": [
+        "gamification_system.mv_mechanic_leaderboard",
+        "gamification_system.mv_global_leaderboard",
+        "gamification_system.mv_classroom_leaderboard",
+        "psql",
+        "gamification_system.mv_weekly_leaderboard"
+      ],
+      "referenced_functions": [
+        "total",
+        "needed",
+        "Leaderboard"
+      ],
+      "referenced_schemas": [
+        "gamification_system",
+        "mvs",
+        "e"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- MANUAL REFRESH: All Materialized Views\n-- =====================================================\n-- Description: Manually refresh all leaderboard materialized views\n-- Purpose: On-demand refresh when needed (e.g., after bulk data updates, troubleshooting)\n-- Usage: Execute this script when you need to force-refresh all MVs\n-- Execution Time: ~10-20 seconds total (depends on data volume)\n-- Created: 2025-10-28\n-- Modified: 2025-10-28\n-- =",
+      "schema": "gamification_system",
+      "priority": "BAJA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamification_system/materialized-views/refresh-all-mvs.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamification_system/materialized-view/refresh-all-mvs.sql"
+    },
+    {
+      "file": "01-schools.sql",
+      "object_type": "TABLE",
+      "object_name": "social_features.schools",
+      "size_bytes": 4301,
+      "lines": 152,
+      "dependencies": [
+        "auth_management.profiles",
+        "auth_management.tenants",
+        "database",
+        "auth_management.profiles",
+        "auth_management.tenants",
+        "gen_random_uuid",
+        "UNIQUE",
+        "btree",
+        "gamilit.now_mexico",
+        "16.10"
+      ],
+      "referenced_tables": [
+        "auth_management.profiles",
+        "auth_management.tenants",
+        "database"
+      ],
+      "referenced_functions": [
+        "auth_management.profiles",
+        "auth_management.tenants",
+        "gen_random_uuid",
+        "UNIQUE",
+        "btree"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "16",
+        "auth_management",
+        "0ubuntu0",
+        "04",
+        "social_features"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": true,
+      "content_preview": "--\n-- PostgreSQL database dump\n--\n\n\\restrict p4E1DqUh5koUE2iTbc2LIFCSCHDZpMxCLEZPFQ9jBCzdpiS4oKm6NR3zMLa9yfp\n\n-- Dumped from database version 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)\n-- Dumped by pg_dump version 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)\n\nSET statement_timeout = 0;\nSET lock_timeout = 0;\nSET idle_in_transaction_session_timeout = 0;\nSET client_encoding = 'UTF8';\nSET standard_conforming_strings = on;\nSELECT pg_catalog.set_config('search_path', '', false);\nSET check_function_bodies = false;",
+      "schema": "social_features",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/social_features/tables/01-schools.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/social_features/table/01-schools.sql"
+    },
+    {
+      "file": "02-classrooms.sql",
+      "object_type": "TABLE",
+      "object_name": "social_features.classrooms",
+      "size_bytes": 5563,
+      "lines": 185,
+      "dependencies": [
+        "auth_management.profiles",
+        "auth_management.tenants",
+        "social_features.classroom_members",
+        "database",
+        "social_features.schools",
+        "gamilit.get_current_user_id",
+        "auth_management.profiles",
+        "auth_management.tenants",
+        "gen_random_uuid",
+        "UNIQUE"
+      ],
+      "referenced_tables": [
+        "auth_management.profiles",
+        "auth_management.tenants",
+        "social_features.classroom_members",
+        "database",
+        "social_features.schools"
+      ],
+      "referenced_functions": [
+        "gamilit.get_current_user_id",
+        "auth_management.profiles",
+        "auth_management.tenants",
+        "gen_random_uuid",
+        "UNIQUE"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "16",
+        "auth_management",
+        "0ubuntu0",
+        "04",
+        "cm",
+        "social_features",
+        "classrooms"
+      ],
+      "has_rls": true,
+      "has_grants": true,
+      "has_triggers": true,
+      "content_preview": "--\n-- PostgreSQL database dump\n--\n\n\\restrict ZWD7eFxolIbKXGLzhJpg7Jv7hW0TpZdh1eZz5KcK03ZFR7rvI6uxDA0OQKUNhBq\n\n-- Dumped from database version 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)\n-- Dumped by pg_dump version 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)\n\nSET statement_timeout = 0;\nSET lock_timeout = 0;\nSET idle_in_transaction_session_timeout = 0;\nSET client_encoding = 'UTF8';\nSET standard_conforming_strings = on;\nSELECT pg_catalog.set_config('search_path', '', false);\nSET check_function_bodies = false;",
+      "schema": "social_features",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/social_features/tables/02-classrooms.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/social_features/table/02-classrooms.sql"
+    },
+    {
+      "file": "03-classroom_members.sql",
+      "object_type": "TABLE",
+      "object_name": "social_features.classroom_members",
+      "size_bytes": 6763,
+      "lines": 190,
+      "dependencies": [
+        "social_features.classrooms",
+        "database",
+        "auth_management.profiles",
+        "numeric",
+        "gamilit.is_admin",
+        "gamilit.update_classroom_member_count",
+        "16.10",
+        "KEY",
+        "gamilit.update_updated_at_column",
+        "auth_management.profiles"
+      ],
+      "referenced_tables": [
+        "social_features.classrooms",
+        "database",
+        "auth_management.profiles"
+      ],
+      "referenced_functions": [
+        "numeric",
+        "gamilit.is_admin",
+        "gamilit.update_classroom_member_count",
+        "16.10",
+        "KEY"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "16",
+        "auth_management",
+        "social_features",
+        "0ubuntu0",
+        "04",
+        "c",
+        "classroom_members"
+      ],
+      "has_rls": true,
+      "has_grants": true,
+      "has_triggers": true,
+      "content_preview": "--\n-- PostgreSQL database dump\n--\n\n\\restrict h626hMccX4FrcHg534sgHNHX1gB7MAZU3xaXXGSCb4qU45zKGpTSaKSBKga7wQe\n\n-- Dumped from database version 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)\n-- Dumped by pg_dump version 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)\n\nSET statement_timeout = 0;\nSET lock_timeout = 0;\nSET idle_in_transaction_session_timeout = 0;\nSET client_encoding = 'UTF8';\nSET standard_conforming_strings = on;\nSELECT pg_catalog.set_config('search_path', '', false);\nSET check_function_bodies = false;",
+      "schema": "social_features",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/social_features/tables/03-classroom_members.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/social_features/table/03-classroom_members.sql"
+    },
+    {
+      "file": "04-teams.sql",
+      "object_type": "TABLE",
+      "object_name": "social_features.teams",
+      "size_bytes": 5192,
+      "lines": 181,
+      "dependencies": [
+        "social_features.classrooms",
+        "auth_management.tenants",
+        "auth_management.profiles",
+        "database",
+        "auth_management.profiles",
+        "auth_management.tenants",
+        "gen_random_uuid",
+        "UNIQUE",
+        "social_features.teams",
+        "btree"
+      ],
+      "referenced_tables": [
+        "social_features.classrooms",
+        "auth_management.tenants",
+        "auth_management.profiles",
+        "database"
+      ],
+      "referenced_functions": [
+        "auth_management.profiles",
+        "auth_management.tenants",
+        "gen_random_uuid",
+        "UNIQUE",
+        "social_features.teams"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "16",
+        "auth_management",
+        "0ubuntu0",
+        "04",
+        "social_features"
+      ],
+      "has_rls": true,
+      "has_grants": true,
+      "has_triggers": true,
+      "content_preview": "--\n-- PostgreSQL database dump\n--\n\n\\restrict AVkh11wxJU1xQZUEkt14ZM1e1ddrRBjX1z3ynl1VDfHzdppS7VfgyOAgbp1BFzT\n\n-- Dumped from database version 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)\n-- Dumped by pg_dump version 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)\n\nSET statement_timeout = 0;\nSET lock_timeout = 0;\nSET idle_in_transaction_session_timeout = 0;\nSET client_encoding = 'UTF8';\nSET standard_conforming_strings = on;\nSELECT pg_catalog.set_config('search_path', '', false);\nSET check_function_bodies = false;",
+      "schema": "social_features",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/social_features/tables/04-teams.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/social_features/table/04-teams.sql"
+    },
+    {
+      "file": "05-team_members.sql",
+      "object_type": "TABLE",
+      "object_name": "social_features.team_members",
+      "size_bytes": 3394,
+      "lines": 115,
+      "dependencies": [
+        "auth.users",
+        "social_features.teams",
+        "database",
+        "gen_random_uuid",
+        "UNIQUE",
+        "ANY",
+        "btree",
+        "social_features.teams",
+        "varying",
+        "gamilit.now_mexico"
+      ],
+      "referenced_tables": [
+        "auth.users",
+        "social_features.teams",
+        "database"
+      ],
+      "referenced_functions": [
+        "gen_random_uuid",
+        "UNIQUE",
+        "ANY",
+        "btree",
+        "social_features.teams"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "16",
+        "auth",
+        "0ubuntu0",
+        "04",
+        "social_features"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "--\n-- PostgreSQL database dump\n--\n\n\\restrict FDdTzV8JI3U2pNHSEoCOcHtwue30lpFka1CJNnE1gaO6JblfcZpED1nCnhyvqLa\n\n-- Dumped from database version 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)\n-- Dumped by pg_dump version 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)\n\nSET statement_timeout = 0;\nSET lock_timeout = 0;\nSET idle_in_transaction_session_timeout = 0;\nSET client_encoding = 'UTF8';\nSET standard_conforming_strings = on;\nSELECT pg_catalog.set_config('search_path', '', false);\nSET check_function_bodies = false;",
+      "schema": "social_features",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/social_features/tables/05-team_members.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/social_features/table/05-team_members.sql"
+    },
+    {
+      "file": "01-cleanup_old_notifications.sql",
+      "object_type": "FUNCTION",
+      "object_name": "social_features.cleanup_old_notifications",
+      "size_bytes": 1299,
+      "lines": 42,
+      "dependencies": [
+        "social_features.notifications",
+        "social_features.cleanup_old_notifications",
+        "mantener",
+        "social_features.cleanup_old_notifications",
+        "TABLE"
+      ],
+      "referenced_tables": [
+        "social_features.notifications",
+        "social_features.cleanup_old_notifications"
+      ],
+      "referenced_functions": [
+        "mantener",
+        "social_features.cleanup_old_notifications",
+        "TABLE"
+      ],
+      "referenced_schemas": [
+        "social_features"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- Function: social_features.cleanup_old_notifications\n-- Description: Limpia notificaciones leídas más antiguas que el período especificado\n-- Parameters:\n--   - p_days_to_keep: INTEGER - Número de días a mantener (default 30)\n-- Returns: TABLE (deleted_count, oldest_kept_date)\n-- Example:\n--   SELECT * FROM social_features.cleanup_old_notifications(30);\n-- Dependencies: social_features.notifications\n-- Created: 2025-10-28\n-- Modified: 2025-10-28\n\nCREATE OR REPLACE FUNCTION social_features.clea",
+      "schema": "social_features",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/social_features/functions/01-cleanup_old_notifications.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/social_features/function/01-cleanup_old_notifications.sql"
+    },
+    {
+      "file": "01-friendships_indexes.sql",
+      "object_type": "INDEX",
+      "object_name": "CONCURRENTLY",
+      "size_bytes": 3717,
+      "lines": 109,
+      "dependencies": [
+        "friendships",
+        "social_features.friendships",
+        "received",
+        "o",
+        "friends",
+        "list",
+        "OR",
+        "social_features.friendships",
+        "EXISTS",
+        "user"
+      ],
+      "referenced_tables": [
+        "friendships",
+        "social_features.friendships"
+      ],
+      "referenced_functions": [
+        "received",
+        "o",
+        "friends",
+        "list",
+        "OR"
+      ],
+      "referenced_schemas": [
+        "social_features"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Indexes for: social_features.friendships\n-- Created: 2025-10-28\n-- Description: Índices para optimización de relaciones de amistad\n-- =====================================================\n\n-- ========================================\n-- BIDIRECTIONAL FRIENDSHIP INDEXES\n-- ========================================\n\n-- Index: idx_friendships_user1_status\n-- Purpose: Optimiza búsquedas de amistades iniciadas por el usuario\n-- Type: BTREE Com",
+      "schema": "social_features",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/social_features/indexes/01-friendships_indexes.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/social_features/index/01-friendships_indexes.sql"
+    },
+    {
+      "file": "02-classroom_members_indexes.sql",
+      "object_type": "INDEX",
+      "object_name": "CONCURRENTLY",
+      "size_bytes": 2975,
+      "lines": 93,
+      "dependencies": [
+        "social_features.classroom_members",
+        "social_features.classrooms",
+        "classroom_members",
+        "social_features.classroom_members",
+        "history",
+        "actual",
+        "EXISTS",
+        "classrooms"
+      ],
+      "referenced_tables": [
+        "social_features.classroom_members",
+        "social_features.classrooms",
+        "classroom_members"
+      ],
+      "referenced_functions": [
+        "social_features.classroom_members",
+        "history",
+        "actual",
+        "EXISTS",
+        "classrooms"
+      ],
+      "referenced_schemas": [
+        "INDEXES",
+        "cm",
+        "social_features",
+        "c"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Indexes for: social_features.classroom_members\n-- Created: 2025-10-28\n-- Description: Índices para optimización de membresías de aulas\n-- =====================================================\n\n-- ========================================\n-- PERFORMANCE INDEXES - Created 2025-10-28\n-- ========================================\n\n-- Index: idx_classroom_members_student\n-- Purpose: Optimiza búsquedas de aulas por estudiante y estado\n-- Type: B",
+      "schema": "social_features",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/social_features/indexes/02-classroom_members_indexes.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/social_features/index/02-classroom_members_indexes.sql"
+    },
+    {
+      "file": "03-schools_indexes.sql",
+      "object_type": "INDEX",
+      "object_name": "CONCURRENTLY",
+      "size_bytes": 2963,
+      "lines": 100,
+      "dependencies": [
+        "social_features.schools",
+        "schools",
+        "tenant",
+        "Security",
+        "schools",
+        "current_tenant_id",
+        "social_features.schools",
+        "EXISTS"
+      ],
+      "referenced_tables": [
+        "social_features.schools",
+        "schools"
+      ],
+      "referenced_functions": [
+        "tenant",
+        "Security",
+        "schools",
+        "current_tenant_id",
+        "social_features.schools"
+      ],
+      "referenced_schemas": [
+        "social_features"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Indexes for: social_features.schools\n-- Created: 2025-10-28\n-- Description: Índices para optimización de multi-tenancy y gestión de escuelas\n-- =====================================================\n\n-- ========================================\n-- MULTI-TENANCY INDEXES - Created 2025-10-28\n-- ========================================\n\n-- Index: idx_schools_tenant\n-- Purpose: Optimiza búsquedas de escuelas por tenant (multi-tenancy)\n-- Type",
+      "schema": "social_features",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/social_features/indexes/03-schools_indexes.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/social_features/index/03-schools_indexes.sql"
+    },
+    {
+      "file": "02-get_user_progress_summary.sql",
+      "object_type": "FUNCTION",
+      "object_name": "progress_tracking.get_user_progress_summary",
+      "size_bytes": 1583,
+      "lines": 31,
+      "dependencies": [
+        "progress_tracking.exercise_attempts",
+        "SUM",
+        "progress_tracking.module_progress",
+        "FILTER",
+        "TABLE",
+        "NUMERIC",
+        "progress_tracking.get_user_progress_summary"
+      ],
+      "referenced_tables": [
+        "progress_tracking.exercise_attempts",
+        "SUM",
+        "progress_tracking.module_progress"
+      ],
+      "referenced_functions": [
+        "FILTER",
+        "TABLE",
+        "NUMERIC",
+        "progress_tracking.get_user_progress_summary"
+      ],
+      "referenced_schemas": [
+        "progress_tracking",
+        "mp",
+        "ea"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Function: progress_tracking.get_user_progress_summary\n-- Description: Retorna resumen completo de progreso del usuario\n-- Parameters: p_user_id uuid\n-- Returns: record\n-- Created: 2025-10-27\n-- =====================================================\n\nCREATE OR REPLACE FUNCTION progress_tracking.get_user_progress_summary(p_user_id uuid)\n RETURNS TABLE(total_modules integer, completed_modules integer, in_progress_modules integer, total_exer",
+      "schema": "progress_tracking",
+      "priority": "ALTA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/progress_tracking/functions/02-get_user_progress_summary.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/progress_tracking/function/02-get_user_progress_summary.sql"
+    },
+    {
+      "file": "03-update_exercise_submissions_updated_at.sql",
+      "object_type": "FUNCTION",
+      "object_name": "progress_tracking.update_exercise_submissions_updated_at",
+      "size_bytes": 487,
+      "lines": 18,
+      "dependencies": [
+        "progress_tracking.update_exercise_submissions_updated_at"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "progress_tracking.update_exercise_submissions_updated_at"
+      ],
+      "referenced_schemas": [
+        "progress_tracking",
+        "NEW"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Function: progress_tracking.update_exercise_submissions_updated_at\n-- Description: No description available\n-- Parameters: None\n-- Returns: trigger\n-- Created: 2025-10-27\n-- =====================================================\n\nCREATE OR REPLACE FUNCTION progress_tracking.update_exercise_submissions_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\nBEGIN\n  NEW.updated_at = NOW();\n  RETURN NEW;\nEND;\n$function$;\n",
+      "schema": "progress_tracking",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/progress_tracking/functions/03-update_exercise_submissions_updated_at.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/progress_tracking/function/03-update_exercise_submissions_updated_at.sql"
+    },
+    {
+      "file": "04-check_mechanic_completion.sql",
+      "object_type": "FUNCTION",
+      "object_name": "progress_tracking.check_mechanic_completion",
+      "size_bytes": 1921,
+      "lines": 56,
+      "dependencies": [
+        "educational_content.mechanics",
+        "progress_tracking.mechanic_progress",
+        "progress_tracking.check_mechanic_completion",
+        "TABLE",
+        "NUMERIC",
+        "progress_tracking.check_mechanic_completion"
+      ],
+      "referenced_tables": [
+        "educational_content.mechanics",
+        "progress_tracking.mechanic_progress",
+        "progress_tracking.check_mechanic_completion"
+      ],
+      "referenced_functions": [
+        "TABLE",
+        "NUMERIC",
+        "progress_tracking.check_mechanic_completion"
+      ],
+      "referenced_schemas": [
+        "progress_tracking",
+        "educational_content",
+        "mp",
+        "0"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- Function: progress_tracking.check_mechanic_completion\n-- Description: Verifica el estado de completitud de una mecánica para un usuario\n-- Parameters:\n--   - p_user_id: UUID - ID del usuario\n--   - p_mechanic_id: UUID - ID de la mecánica\n-- Returns: TABLE (is_completed, completion_percentage, exercises_completed, exercises_total, xp_earned, completed_at)\n-- Example:\n--   SELECT * FROM progress_tracking.check_mechanic_completion('123e4567-e89b-12d3-a456-426614174000', 'mechanic-uuid');\n-- Depe",
+      "schema": "progress_tracking",
+      "priority": "ALTA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/progress_tracking/functions/04-check_mechanic_completion.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/progress_tracking/function/04-check_mechanic_completion.sql"
+    },
+    {
+      "file": "06-grant_mission_completion_rewards.sql",
+      "object_type": "FUNCTION",
+      "object_name": "progress_tracking.grant_mission_completion_rewards",
+      "size_bytes": 3107,
+      "lines": 92,
+      "dependencies": [
+        "gamification_system.calculate_mission_reward",
+        "progress_tracking.grant_mission_completion_rewards",
+        "gamification_system.check_and_grant_achievements",
+        "educational_content.missions",
+        "gamification_system.user_stats",
+        "gamification_system.update_user_level",
+        "gamification_system.calculate_mission_reward",
+        "GREATEST",
+        "jsonb_build_object",
+        "progress_tracking.grant_mission_completion_rewards"
+      ],
+      "referenced_tables": [
+        "gamification_system.calculate_mission_reward",
+        "progress_tracking.grant_mission_completion_rewards",
+        "gamification_system.check_and_grant_achievements",
+        "educational_content.missions",
+        "gamification_system.user_stats"
+      ],
+      "referenced_functions": [
+        "gamification_system.calculate_mission_reward",
+        "GREATEST",
+        "jsonb_build_object",
+        "progress_tracking.grant_mission_completion_rewards",
+        "gamification_system.ml_coins_transactions"
+      ],
+      "referenced_schemas": [
+        "progress_tracking",
+        "educational_content",
+        "gamification_system",
+        "v_mission"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- Function: progress_tracking.grant_mission_completion_rewards\n-- Description: Otorga todas las recompensas y procesa logros al completar una misión\n-- Parameters:\n--   - p_user_id: UUID - ID del usuario\n--   - p_mission_id: UUID - ID de la misión completada\n-- Returns: TABLE (xp_granted, coins_granted, achievements_unlocked, level_ups)\n-- Example:\n--   SELECT * FROM progress_tracking.grant_mission_completion_rewards('123e4567-e89b-12d3-a456-426614174000', 'mission-uuid');\n-- Dependencies: educ",
+      "schema": "progress_tracking",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/progress_tracking/functions/06-grant_mission_completion_rewards.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/progress_tracking/function/06-grant_mission_completion_rewards.sql"
+    },
+    {
+      "file": "01-user_progress_summary.sql",
+      "object_type": "VIEW",
+      "object_name": "progress_tracking.user_progress_summary",
+      "size_bytes": 1027,
+      "lines": 30,
+      "dependencies": [
+        "gamification_system.user_stats"
+      ],
+      "referenced_tables": [
+        "gamification_system.user_stats"
+      ],
+      "referenced_functions": [],
+      "referenced_schemas": [
+        "progress_tracking",
+        "gamification_system"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- View: progress_tracking.user_progress_summary\n-- Type: Normal View\n-- Description: Vista resumen del progreso del usuario, consolidando estadísticas de gamificación\n-- Purpose: Proporciona un resumen completo de las métricas de progreso de cada usuario\n-- Created: 2025-10-27\n-- =====================================================\n\nDROP VIEW IF EXISTS progress_tracking.user_progress_summary CASCADE;\n\nCREATE VIEW progress_tracking.user_p",
+      "schema": "progress_tracking",
+      "priority": "ALTA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/progress_tracking/views/01-user_progress_summary.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/progress_tracking/view/01-user_progress_summary.sql"
+    },
+    {
+      "file": "02-policies.sql",
+      "object_type": "RLS POLICY",
+      "object_name": "exercise_attempts_insert_own",
+      "size_bytes": 9698,
+      "lines": 235,
+      "dependencies": [
+        "social_features.classroom_members",
+        "social_features.classrooms",
+        "gamilit.get_current_user_id",
+        "gamilit.is_admin",
+        "AND",
+        "gamilit.get_current_user_role",
+        "USING",
+        "CHECK",
+        "gamilit.is_super_admin",
+        "EXISTS"
+      ],
+      "referenced_tables": [
+        "social_features.classroom_members",
+        "social_features.classrooms"
+      ],
+      "referenced_functions": [
+        "gamilit.get_current_user_id",
+        "gamilit.is_admin",
+        "AND",
+        "gamilit.get_current_user_role",
+        "USING"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "progress_tracking",
+        "learning_sessions",
+        "c",
+        "exercise_attempts",
+        "module_progress",
+        "cm",
+        "social_features"
+      ],
+      "has_rls": true,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- RLS Policies for progress_tracking schema\n-- Description: Políticas de seguridad para seguimiento de progreso\n-- Created: 2025-10-27\n-- =====================================================\n\n-- =====================================================\n-- TABLE: progress_tracking.exercise_attempts\n-- =====================================================\n\n-- Drop existing policies\nDROP POLICY IF EXISTS exercise_attempts_insert_own ON progress",
+      "schema": "progress_tracking",
+      "priority": "ALTA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/progress_tracking/rls-policies/02-policies.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/progress_tracking/rls-policy/02-policies.sql"
+    },
+    {
+      "file": "03-grants.sql",
+      "object_type": "UNKNOWN",
+      "object_name": null,
+      "size_bytes": 1121,
+      "lines": 25,
+      "dependencies": [],
+      "referenced_tables": [],
+      "referenced_functions": [],
+      "referenced_schemas": [
+        "progress_tracking"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Grants and Permissions for progress_tracking\n-- Created: 2025-10-27\n-- Description: Permisos de acceso al schema de seguimiento de progreso\n-- =====================================================\n\n-- Schema permissions\nGRANT USAGE ON SCHEMA progress_tracking TO gamilit_user;\n\n-- Table permissions\nGRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA progress_tracking TO gamilit_user;\nGRANT TRUNCATE, REFERENCES, TRIGGER ON ALL TA",
+      "schema": "progress_tracking",
+      "priority": "ALTA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/progress_tracking/rls-policies/03-grants.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/progress_tracking/rls-policy/03-grants.sql"
+    },
+    {
+      "file": "01-scheduled_missions_indexes.sql",
+      "object_type": "INDEX",
+      "object_name": "IF",
+      "size_bytes": 2187,
+      "lines": 42,
+      "dependencies": [
+        "progress_tracking.scheduled_missions",
+        "fechas"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "progress_tracking.scheduled_missions",
+        "fechas"
+      ],
+      "referenced_schemas": [
+        "progress_tracking"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Indexes: progress_tracking.scheduled_missions\n-- Description: Índices para optimizar consultas de misiones programadas\n-- Table: progress_tracking.scheduled_missions\n-- Created: 2025-10-28\n-- =====================================================\n\n-- Index: Misiones por mission_id\nCREATE INDEX IF NOT EXISTS idx_scheduled_missions_mission\n    ON progress_tracking.scheduled_missions(mission_id);\n\n-- Index: Misiones por classroom_id\nCREATE ",
+      "schema": "progress_tracking",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/progress_tracking/indexes/01-scheduled_missions_indexes.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/progress_tracking/index/01-scheduled_missions_indexes.sql"
+    },
+    {
+      "file": "01-calculate_learning_path.sql",
+      "object_type": "FUNCTION",
+      "object_name": "educational_content.calculate_learning_path",
+      "size_bytes": 3448,
+      "lines": 99,
+      "dependencies": [
+        "progress_tracking.mission_progress",
+        "incomplete_missions",
+        "gamification_system.user_stats",
+        "progress_tracking.module_progress",
+        "incomplete_modules",
+        "gamification_system.user_ranks",
+        "educational_content.missions",
+        "educational_content.calculate_learning_path",
+        "educational_content.modules",
+        "NUMERIC"
+      ],
+      "referenced_tables": [
+        "progress_tracking.mission_progress",
+        "incomplete_missions",
+        "gamification_system.user_stats",
+        "progress_tracking.module_progress",
+        "incomplete_modules"
+      ],
+      "referenced_functions": [
+        "NUMERIC",
+        "VARCHAR",
+        "FROM",
+        "AS",
+        "educational_content.calculate_learning_path"
+      ],
+      "referenced_schemas": [
+        "mi",
+        "ur",
+        "progress_tracking",
+        "educational_content",
+        "us",
+        "gamification_system",
+        "mp",
+        "m",
+        "i"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- Function: educational_content.calculate_learning_path\n-- Description: Calcula ruta de aprendizaje personalizada basada en progreso del usuario\n-- Parameters:\n--   - p_user_id: UUID - ID del usuario\n--   - p_max_items: INTEGER - Número máximo de items a retornar (default 5)\n-- Returns: TABLE (item_type, item_id, item_name, difficulty_level, estimated_time_minutes, xp_reward, priority_score)\n-- Example:\n--   SELECT * FROM educational_content.calculate_learning_path('123e4567-e89b-12d3-a456-4266",
+      "schema": "educational_content",
+      "priority": "ALTA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/educational_content/functions/01-calculate_learning_path.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/educational_content/function/01-calculate_learning_path.sql"
+    },
+    {
+      "file": "02-get_recommended_missions.sql",
+      "object_type": "FUNCTION",
+      "object_name": "educational_content.get_recommended_missions",
+      "size_bytes": 2734,
+      "lines": 73,
+      "dependencies": [
+        "progress_tracking.mission_progress",
+        "educational_content.get_recommended_missions",
+        "gamification_system.user_ranks",
+        "educational_content.missions",
+        "gamification_system.user_stats",
+        "educational_content.get_recommended_missions",
+        "AND",
+        "ABS",
+        "VARCHAR",
+        "IN"
+      ],
+      "referenced_tables": [
+        "progress_tracking.mission_progress",
+        "educational_content.get_recommended_missions",
+        "gamification_system.user_ranks",
+        "educational_content.missions",
+        "gamification_system.user_stats"
+      ],
+      "referenced_functions": [
+        "educational_content.get_recommended_missions",
+        "AND",
+        "ABS",
+        "VARCHAR",
+        "IN"
+      ],
+      "referenced_schemas": [
+        "ur",
+        "progress_tracking",
+        "educational_content",
+        "us",
+        "gamification_system",
+        "mp",
+        "m"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- Function: educational_content.get_recommended_missions\n-- Description: Obtiene misiones recomendadas basadas en nivel y progreso del usuario\n-- Parameters:\n--   - p_user_id: UUID - ID del usuario\n--   - p_limit: INTEGER - Número de misiones a retornar (default 3)\n-- Returns: TABLE (mission_id, mission_title, difficulty_level, xp_reward, ml_coins_reward, estimated_time_minutes, recommendation_reason)\n-- Example:\n--   SELECT * FROM educational_content.get_recommended_missions('123e4567-e89b-12d",
+      "schema": "educational_content",
+      "priority": "ALTA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/educational_content/functions/02-get_recommended_missions.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/educational_content/function/02-get_recommended_missions.sql"
+    },
+    {
+      "file": "02-policies.sql",
+      "object_type": "RLS POLICY",
+      "object_name": "exercises_all_admin",
+      "size_bytes": 6193,
+      "lines": 160,
+      "dependencies": [
+        "gamilit.get_current_user_id",
+        "gamilit.is_admin",
+        "AND",
+        "USING",
+        "gamilit.is_super_admin"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "gamilit.get_current_user_id",
+        "gamilit.is_admin",
+        "AND",
+        "USING",
+        "gamilit.is_super_admin"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "educational_content"
+      ],
+      "has_rls": true,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- RLS Policies for educational_content schema\n-- Description: Políticas de seguridad para contenido educativo\n-- Created: 2025-10-27\n-- =====================================================\n\n-- =====================================================\n-- TABLE: educational_content.exercises\n-- =====================================================\n\n-- Drop existing policies\nDROP POLICY IF EXISTS exercises_all_admin ON educational_content.exerc",
+      "schema": "educational_content",
+      "priority": "ALTA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/educational_content/rls-policies/02-policies.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/educational_content/rls-policy/02-policies.sql"
+    },
+    {
+      "file": "03-grants.sql",
+      "object_type": "UNKNOWN",
+      "object_name": null,
+      "size_bytes": 1208,
+      "lines": 26,
+      "dependencies": [],
+      "referenced_tables": [],
+      "referenced_functions": [],
+      "referenced_schemas": [
+        "educational_content"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Grants and Permissions for educational_content\n-- Created: 2025-10-27\n-- Description: Permisos de acceso al schema de contenido educativo\n-- =====================================================\n\n-- Schema permissions\nGRANT USAGE ON SCHEMA educational_content TO gamilit_user;\n\n-- Table permissions\nGRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA educational_content TO gamilit_user;\nGRANT TRUNCATE, REFERENCES, TRIGGER ON ALL ",
+      "schema": "educational_content",
+      "priority": "ALTA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/educational_content/rls-policies/03-grants.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/educational_content/rls-policy/03-grants.sql"
+    },
+    {
+      "file": "01-log_audit_event.sql",
+      "object_type": "FUNCTION",
+      "object_name": "audit_logging.log_audit_event",
+      "size_bytes": 1800,
+      "lines": 73,
+      "dependencies": [
+        "auth_management.profiles",
+        "user",
+        "audit_logging.log_audit_event",
+        "uuid_generate_v4",
+        "VALUES",
+        "audit_logging.system_logs"
+      ],
+      "referenced_tables": [
+        "auth_management.profiles",
+        "user"
+      ],
+      "referenced_functions": [
+        "audit_logging.log_audit_event",
+        "uuid_generate_v4",
+        "VALUES",
+        "audit_logging.system_logs"
+      ],
+      "referenced_schemas": [
+        "auth_management",
+        "audit_logging"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Function: audit_logging.log_audit_event\n-- Description: Registra eventos de auditoría en system_logs\n-- Priority: CRITICAL - Compliance requirement\n-- Created: 2025-10-27\n-- =====================================================\n\nCREATE OR REPLACE FUNCTION audit_logging.log_audit_event(\n    p_user_id uuid,\n    p_action text,\n    p_table_name text,\n    p_record_id uuid DEFAULT NULL,\n    p_old_data jsonb DEFAULT NULL,\n    p_new_data jsonb ",
+      "schema": "audit_logging",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/audit_logging/functions/01-log_audit_event.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/audit_logging/function/01-log_audit_event.sql"
+    },
+    {
+      "file": "01-enable-rls.sql",
+      "object_type": "UNKNOWN",
+      "object_name": null,
+      "size_bytes": 1147,
+      "lines": 21,
+      "dependencies": [],
+      "referenced_tables": [],
+      "referenced_functions": [],
+      "referenced_schemas": [
+        "audit_logging"
+      ],
+      "has_rls": true,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Enable RLS for audit_logging tables\n-- Created: 2025-10-27\n-- Description: Habilita Row Level Security en todas las\n--              tablas del schema audit_logging\n-- =====================================================\n\n-- Tablas con RLS habilitado\nALTER TABLE audit_logging.audit_logs ENABLE ROW LEVEL SECURITY;\nALTER TABLE audit_logging.performance_metrics ENABLE ROW LEVEL SECURITY;\nALTER TABLE audit_logging.system_alerts ENABLE ROW L",
+      "schema": "audit_logging",
+      "priority": "ALTA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/audit_logging/rls-policies/01-enable-rls.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/audit_logging/rls-policy/01-enable-rls.sql"
+    },
+    {
+      "file": "02-policies.sql",
+      "object_type": "RLS POLICY",
+      "object_name": "audit_logs_select_admin",
+      "size_bytes": 6549,
+      "lines": 166,
+      "dependencies": [
+        "gamilit.get_current_user_id",
+        "métricas",
+        "gamilit.is_admin",
+        "USING",
+        "CHECK",
+        "gamilit.is_super_admin"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "gamilit.get_current_user_id",
+        "métricas",
+        "gamilit.is_admin",
+        "USING",
+        "CHECK"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "audit_logging"
+      ],
+      "has_rls": true,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- RLS Policies for audit_logging schema\n-- Description: Políticas de seguridad para auditoría y logs\n-- Created: 2025-10-27\n-- =====================================================\n\n-- =====================================================\n-- TABLE: audit_logging.audit_logs\n-- =====================================================\n\n-- Drop existing policies\nDROP POLICY IF EXISTS audit_logs_select_admin ON audit_logging.audit_logs;\nDROP POLI",
+      "schema": "audit_logging",
+      "priority": "ALTA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/audit_logging/rls-policies/02-policies.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/audit_logging/rls-policy/02-policies.sql"
+    },
+    {
+      "file": "03-grants.sql",
+      "object_type": "UNKNOWN",
+      "object_name": null,
+      "size_bytes": 1138,
+      "lines": 27,
+      "dependencies": [],
+      "referenced_tables": [],
+      "referenced_functions": [],
+      "referenced_schemas": [
+        "audit_logging"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Grants and Permissions for audit_logging\n-- Created: 2025-10-27\n-- Description: Permisos de acceso al schema de auditoría\n-- =====================================================\n\n-- Schema permissions\nGRANT USAGE ON SCHEMA audit_logging TO gamilit_user;\n\n-- Table permissions\nGRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA audit_logging TO gamilit_user;\nGRANT TRUNCATE, REFERENCES, TRIGGER ON ALL TABLES IN SCHEMA audit_loggi",
+      "schema": "audit_logging",
+      "priority": "ALTA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/audit_logging/rls-policies/03-grants.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/audit_logging/rls-policy/03-grants.sql"
+    },
+    {
+      "file": "01-audit_logs_indexes.sql",
+      "object_type": "INDEX",
+      "object_name": "CONCURRENTLY",
+      "size_bytes": 4706,
+      "lines": 128,
+      "dependencies": [
+        "audit_logging.audit_logs",
+        "audit_logs",
+        "audit_logging.audit_logs",
+        "type",
+        "BTREE",
+        "DATE_TRUNC",
+        "report",
+        "grandes",
+        "BRIN",
+        "History"
+      ],
+      "referenced_tables": [
+        "audit_logging.audit_logs",
+        "audit_logs"
+      ],
+      "referenced_functions": [
+        "audit_logging.audit_logs",
+        "type",
+        "BTREE",
+        "DATE_TRUNC",
+        "report"
+      ],
+      "referenced_schemas": [
+        "audit_logging"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Indexes for: audit_logging.audit_logs\n-- Created: 2025-10-28\n-- Description: Índices para optimización de auditoría y búsquedas de logs\n-- =====================================================\n\n-- ========================================\n-- PERFORMANCE INDEXES - Created 2025-10-28\n-- ========================================\n\n-- Index: idx_audit_logs_user_created\n-- Purpose: Optimiza búsquedas de auditoría por usuario ordenadas por fecha",
+      "schema": "audit_logging",
+      "priority": "ALTA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/audit_logging/indexes/01-audit_logs_indexes.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/audit_logging/index/01-audit_logs_indexes.sql"
+    },
+    {
+      "file": "06-is_super_admin.sql",
+      "object_type": "FUNCTION",
+      "object_name": "gamilit.is_super_admin",
+      "size_bytes": 633,
+      "lines": 22,
+      "dependencies": [
+        "gamilit.is_super_admin",
+        "gamilit.get_current_user_role"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "gamilit.is_super_admin",
+        "gamilit.get_current_user_role"
+      ],
+      "referenced_schemas": [
+        "gamilit"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Function: gamilit.is_super_admin\n-- Description: Verifica si el usuario actual es super_admin\n-- Parameters: None\n-- Returns: boolean\n-- Created: 2025-10-28\n-- =====================================================\n\nCREATE OR REPLACE FUNCTION gamilit.is_super_admin()\n RETURNS boolean\n LANGUAGE plpgsql\n STABLE\nAS $function$\nBEGIN\n    RETURN gamilit.get_current_user_role() = 'super_admin';\nEND;\n$function$;\n\nCOMMENT ON FUNCTION gamilit.is_s",
+      "schema": "gamilit",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamilit/functions/06-is_super_admin.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamilit/function/06-is_super_admin.sql"
+    },
+    {
+      "file": "06-now_mexico.sql",
+      "object_type": "FUNCTION",
+      "object_name": "gamilit.now_mexico",
+      "size_bytes": 638,
+      "lines": 20,
+      "dependencies": [
+        "gamilit.now_mexico",
+        "México"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "gamilit.now_mexico",
+        "México"
+      ],
+      "referenced_schemas": [
+        "gamilit"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Function: gamilit.now_mexico\n-- Description: Retorna timestamp actual en zona horaria de México (America/Mexico_City)\n-- Parameters: None\n-- Returns: timestamp with time zone\n-- Created: 2025-10-27\n-- =====================================================\n\nCREATE OR REPLACE FUNCTION gamilit.now_mexico()\n RETURNS timestamp with time zone\n LANGUAGE plpgsql\n IMMUTABLE\nAS $function$\nBEGIN\n    RETURN NOW() AT TIME ZONE 'America/Mexico_City';\n",
+      "schema": "gamilit",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamilit/functions/06-now_mexico.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamilit/function/06-now_mexico.sql"
+    },
+    {
+      "file": "07-update_classroom_member_count.sql",
+      "object_type": "FUNCTION",
+      "object_name": "gamilit.update_classroom_member_count",
+      "size_bytes": 994,
+      "lines": 33,
+      "dependencies": [
+        "gamilit.update_classroom_member_count",
+        "GREATEST"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "gamilit.update_classroom_member_count",
+        "GREATEST"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "NEW",
+        "social_features",
+        "OLD"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Function: gamilit.update_classroom_member_count\n-- Description: Actualiza contador de miembros en aulas\n-- Parameters: None\n-- Returns: trigger\n-- Created: 2025-10-27\n-- =====================================================\n\nCREATE OR REPLACE FUNCTION gamilit.update_classroom_member_count()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\nBEGIN\n    IF TG_OP = 'INSERT' THEN\n        UPDATE social_features.classrooms\n        SET current_st",
+      "schema": "gamilit",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamilit/functions/07-update_classroom_member_count.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamilit/function/07-update_classroom_member_count.sql"
+    },
+    {
+      "file": "08-update_updated_at.sql",
+      "object_type": "FUNCTION",
+      "object_name": "gamilit.update_updated_at",
+      "size_bytes": 590,
+      "lines": 20,
+      "dependencies": [
+        "gamilit.update_updated_at",
+        "gamilit.now_mexico"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "gamilit.update_updated_at",
+        "gamilit.now_mexico"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "NEW"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Function: gamilit.update_updated_at\n-- Description: Trigger function to automatically update updated_at field\n-- Parameters: None\n-- Returns: trigger\n-- Created: 2025-10-27\n-- =====================================================\n\nCREATE OR REPLACE FUNCTION gamilit.update_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\nBEGIN\n    NEW.updated_at = gamilit.now_mexico();\n    RETURN NEW;\nEND;\n$function$;\n\nCOMMENT ON FUNCTION ga",
+      "schema": "gamilit",
+      "priority": "ALTA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamilit/functions/08-update_updated_at.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamilit/function/08-update_updated_at.sql"
+    },
+    {
+      "file": "10-update_user_stats_on_exercise_complete.sql",
+      "object_type": "FUNCTION",
+      "object_name": "gamilit.update_user_stats_on_exercise_complete",
+      "size_bytes": 1361,
+      "lines": 35,
+      "dependencies": [
+        "gamilit.update_user_stats_on_exercise_complete",
+        "gamilit.now_mexico"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "gamilit.update_user_stats_on_exercise_complete",
+        "gamilit.now_mexico"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "gamification_system",
+        "NEW"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Function: gamilit.update_user_stats_on_exercise_complete\n-- Description: Actualiza estadísticas de usuario al completar un ejercicio\n-- Parameters: None\n-- Returns: trigger\n-- Created: 2025-10-27\n-- =====================================================\n\nCREATE OR REPLACE FUNCTION gamilit.update_user_stats_on_exercise_complete()\n RETURNS trigger\n LANGUAGE plpgsql\nAS $function$\nBEGIN\n    -- ALWAYS update stats, regardless of is_correct st",
+      "schema": "gamilit",
+      "priority": "CRITICA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/gamilit/functions/10-update_user_stats_on_exercise_complete.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/gamilit/function/10-update_user_stats_on_exercise_complete.sql"
+    },
+    {
+      "file": "01-enable-rls.sql",
+      "object_type": "UNKNOWN",
+      "object_name": null,
+      "size_bytes": 879,
+      "lines": 17,
+      "dependencies": [],
+      "referenced_tables": [],
+      "referenced_functions": [],
+      "referenced_schemas": [
+        "content_management"
+      ],
+      "has_rls": true,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Enable RLS for content_management tables\n-- Created: 2025-10-27\n-- Description: Habilita Row Level Security en todas las\n--              tablas del schema content_management\n-- =====================================================\n\n-- Tablas con RLS habilitado\nALTER TABLE content_management.content_templates ENABLE ROW LEVEL SECURITY;\nALTER TABLE content_management.marie_curie_content ENABLE ROW LEVEL SECURITY;\nALTER TABLE content_manag",
+      "schema": "content_management",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/content_management/rls-policies/01-enable-rls.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/content_management/rls-policy/01-enable-rls.sql"
+    },
+    {
+      "file": "02-policies.sql",
+      "object_type": "RLS POLICY",
+      "object_name": "marie_content_all_admin",
+      "size_bytes": 4747,
+      "lines": 119,
+      "dependencies": [
+        "gamilit.get_current_user_id",
+        "gamilit.is_admin",
+        "gamilit.get_current_user_role",
+        "USING",
+        "CHECK",
+        "gamilit.is_super_admin"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "gamilit.get_current_user_id",
+        "gamilit.is_admin",
+        "gamilit.get_current_user_role",
+        "USING",
+        "CHECK"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "content_management"
+      ],
+      "has_rls": true,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- RLS Policies for content_management schema\n-- Description: Políticas de seguridad para contenido Marie Curie\n-- Created: 2025-10-27\n-- =====================================================\n\n-- =====================================================\n-- TABLE: content_management.marie_curie_content\n-- =====================================================\n\n-- Drop existing policies\nDROP POLICY IF EXISTS marie_content_all_admin ON content_man",
+      "schema": "content_management",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/content_management/rls-policies/02-policies.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/content_management/rls-policy/02-policies.sql"
+    },
+    {
+      "file": "03-grants.sql",
+      "object_type": "UNKNOWN",
+      "object_name": null,
+      "size_bytes": 1119,
+      "lines": 25,
+      "dependencies": [],
+      "referenced_tables": [],
+      "referenced_functions": [],
+      "referenced_schemas": [
+        "content_management"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Grants and Permissions for content_management\n-- Created: 2025-10-27\n-- Description: Permisos de acceso al schema de gestión de contenido\n-- =====================================================\n\n-- Schema permissions\nGRANT USAGE ON SCHEMA content_management TO gamilit_user;\n\n-- Table permissions\nGRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA content_management TO gamilit_user;\nGRANT TRUNCATE, REFERENCES, TRIGGER ON ALL TA",
+      "schema": "content_management",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/content_management/rls-policies/03-grants.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/content_management/rls-policy/03-grants.sql"
+    },
+    {
+      "file": "01-enable-rls.sql",
+      "object_type": "UNKNOWN",
+      "object_name": null,
+      "size_bytes": 703,
+      "lines": 15,
+      "dependencies": [],
+      "referenced_tables": [],
+      "referenced_functions": [],
+      "referenced_schemas": [
+        "system_configuration"
+      ],
+      "has_rls": true,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Enable RLS for system_configuration tables\n-- Created: 2025-10-27\n-- Description: Habilita Row Level Security en todas las\n--              tablas del schema system_configuration\n-- =====================================================\n\n-- Tablas con RLS habilitado\nALTER TABLE system_configuration.feature_flags ENABLE ROW LEVEL SECURITY;\nALTER TABLE system_configuration.system_settings ENABLE ROW LEVEL SECURITY;\n\n-- Comentarios\nCOMMENT O",
+      "schema": "system_configuration",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/system_configuration/rls-policies/01-enable-rls.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/system_configuration/rls-policy/01-enable-rls.sql"
+    },
+    {
+      "file": "02-policies.sql",
+      "object_type": "RLS POLICY",
+      "object_name": "system_settings_all_admin",
+      "size_bytes": 2934,
+      "lines": 70,
+      "dependencies": [
+        "gamilit.is_admin",
+        "gamilit.is_super_admin",
+        "gamilit.get_current_user_id",
+        "USING"
+      ],
+      "referenced_tables": [],
+      "referenced_functions": [
+        "gamilit.is_admin",
+        "gamilit.is_super_admin",
+        "gamilit.get_current_user_id",
+        "USING"
+      ],
+      "referenced_schemas": [
+        "gamilit",
+        "system_configuration"
+      ],
+      "has_rls": true,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- RLS Policies for system_configuration schema\n-- Description: Políticas de seguridad para configuración del sistema\n-- Created: 2025-10-28\n-- =====================================================\n\n-- =====================================================\n-- TABLE: system_configuration.system_settings\n-- =====================================================\n\n-- Drop existing policies\nDROP POLICY IF EXISTS system_settings_all_admin ON syste",
+      "schema": "system_configuration",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/system_configuration/rls-policies/02-policies.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/system_configuration/rls-policy/02-policies.sql"
+    },
+    {
+      "file": "03-grants.sql",
+      "object_type": "UNKNOWN",
+      "object_name": null,
+      "size_bytes": 1005,
+      "lines": 24,
+      "dependencies": [],
+      "referenced_tables": [],
+      "referenced_functions": [],
+      "referenced_schemas": [
+        "system_configuration"
+      ],
+      "has_rls": false,
+      "has_grants": true,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Grants and Permissions for system_configuration\n-- Created: 2025-10-27\n-- Description: Permisos de acceso al schema de configuración del sistema\n-- =====================================================\n\n-- Schema permissions\nGRANT USAGE ON SCHEMA system_configuration TO gamilit_user;\n\n-- Table permissions\nGRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA system_configuration TO gamilit_user;\nGRANT TRUNCATE, REFERENCES, TRIGGE",
+      "schema": "system_configuration",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/system_configuration/rls-policies/03-grants.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/system_configuration/rls-policy/03-grants.sql"
+    },
+    {
+      "file": "01-auth-helpers.sql",
+      "object_type": "FUNCTION",
+      "object_name": "auth.get_current_user_id",
+      "size_bytes": 5426,
+      "lines": 169,
+      "dependencies": [
+        "session",
+        "auth_management.user_roles",
+        "auth.get_current_user_id",
+        "auth.is_student",
+        "auth.is_admin",
+        "auth.uid",
+        "settings",
+        "auth.get_current_user_role",
+        "USING",
+        "auth.get_current_tenant_id"
+      ],
+      "referenced_tables": [
+        "session",
+        "auth_management.user_roles"
+      ],
+      "referenced_functions": [
+        "auth.get_current_user_id",
+        "auth.is_student",
+        "auth.is_admin",
+        "auth.uid",
+        "settings"
+      ],
+      "referenced_schemas": [
+        "app",
+        "auth",
+        "auth_management"
+      ],
+      "has_rls": false,
+      "has_grants": false,
+      "has_triggers": false,
+      "content_preview": "-- =====================================================\n-- Auth Helper Functions for RLS Policies\n-- Created: 2025-10-28\n-- Description: Helper functions to retrieve current user context\n--              Used by RLS policies across all schemas\n-- =====================================================\n--\n-- These functions provide a consistent interface for RLS policies\n-- to access current user authentication context via application\n-- settings (app.current_user_id, app.current_tenant_id, etc.)\n-",
+      "schema": "auth",
+      "priority": "MEDIA",
+      "source_path": "/home/isem/workspace/workspace-gamilit/projects/gamilit-docs/03-desarrollo/base-de-datos/backup-ddl/gamilit_platform/schemas/auth/functions/01-auth-helpers.sql",
+      "dest_path": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/auth/function/01-auth-helpers.sql"
+    }
+  ],
+  "dependency_levels": [
+    [
+      "progress_tracking.user_progress_summary"
+    ],
+    [
+      "auth_management.profiles",
+      "auth_management.user_roles",
+      "auth_management.memberships",
+      "auth_management.auth_attempts",
+      "auth_management.user_sessions",
+      "auth_management.email_verification_tokens",
+      "auth_management.password_reset_tokens",
+      "auth_management.security_events",
+      "auth_management.user_preferences",
+      "auth_management.user_has_permission",
+      "auth_management.get_user_role",
+      "auth_management.assign_role_to_user",
+      "auth_management.revoke_role_from_user",
+      "profiles_read_own",
+      "IF",
+      "CONCURRENTLY",
+      "IF",
+      "gamification_system.award_ml_coins",
+      "gamification_system.calculate_level_from_xp",
+      "gamification_system.calculate_xp_for_next_level",
+      "gamification_system.get_user_rank_requirements",
+      "gamification_system.spend_ml_coins",
+      "IF",
+      "CONCURRENTLY",
+      "IF",
+      "CONCURRENTLY",
+      "IF",
+      "social_features.schools",
+      "social_features.classrooms",
+      "social_features.classroom_members",
+      "social_features.teams",
+      "social_features.team_members",
+      "social_features.cleanup_old_notifications",
+      "CONCURRENTLY",
+      "CONCURRENTLY",
+      "CONCURRENTLY",
+      "progress_tracking.get_user_progress_summary",
+      "progress_tracking.update_exercise_submissions_updated_at",
+      "progress_tracking.check_mechanic_completion",
+      "progress_tracking.grant_mission_completion_rewards",
+      "exercise_attempts_insert_own",
+      "IF",
+      "educational_content.calculate_learning_path",
+      "educational_content.get_recommended_missions",
+      "exercises_all_admin",
+      "audit_logging.log_audit_event",
+      "audit_logs_select_admin",
+      "CONCURRENTLY",
+      "gamilit.is_super_admin",
+      "gamilit.now_mexico",
+      "gamilit.update_classroom_member_count",
+      "gamilit.update_updated_at",
+      "gamilit.update_user_stats_on_exercise_complete",
+      "marie_content_all_admin",
+      "system_settings_all_admin",
+      "auth.get_current_user_id"
+    ]
+  ],
+  "conflicts": [],
+  "checklist": {
+    "pre_migration": [
+      {
+        "item": "Verificar conexión a base de datos de desarrollo",
+        "command": "psql -d gamilit_platform -c \"SELECT version();\"",
+        "critical": true
+      },
+      {
+        "item": "Crear backup completo de base de datos actual",
+        "command": "pg_dump -Fc gamilit_platform > backup_pre_migration_$(date +%Y%m%d).dump",
+        "critical": true
+      },
+      {
+        "item": "Verificar schemas destino existen",
+        "command": "psql -d gamilit_platform -c \"SELECT schema_name FROM information_schema.schemata WHERE schema_name NOT IN ('pg_catalog', 'information_schema');\"",
+        "critical": true
+      },
+      {
+        "item": "Validar que no hay sesiones activas en tablas a migrar",
+        "command": "psql -d gamilit_platform -c \"SELECT * FROM pg_stat_activity WHERE datname = 'gamilit_platform';\"",
+        "critical": false
+      },
+      {
+        "item": "Verificar espacio en disco (requiere ~211.1 KB)",
+        "command": "df -h",
+        "critical": false
+      }
+    ],
+    "during_migration": [
+      {
+        "level": 0,
+        "item": "Migrar nivel 0 de dependencias (1 objetos)",
+        "objects": [
+          "progress_tracking.user_progress_summary"
+        ],
+        "critical": true
+      },
+      {
+        "level": 1,
+        "item": "Migrar nivel 1 de dependencias (56 objetos)",
+        "objects": [
+          "auth_management.profiles",
+          "auth_management.user_roles",
+          "auth_management.memberships",
+          "auth_management.auth_attempts",
+          "auth_management.user_sessions"
+        ],
+        "critical": false
+      }
+    ],
+    "post_migration": [
+      {
+        "item": "Verificar integridad referencial",
+        "command": "psql -d gamilit_platform -c \"\nSELECT conrelid::regclass AS table_name,\n       conname AS constraint_name,\n       pg_get_constraintdef(oid) AS definition\nFROM pg_constraint\nWHERE contype = 'f'\nORDER BY conrelid::regclass::text;\"",
+        "critical": true
+      },
+      {
+        "item": "Verificar RLS policies aplicadas",
+        "command": "psql -d gamilit_platform -c \"\nSELECT schemaname, tablename, rowsecurity\nFROM pg_tables\nWHERE schemaname NOT IN ('pg_catalog', 'information_schema')\nORDER BY schemaname, tablename;\"",
+        "critical": true
+      },
+      {
+        "item": "Verificar funciones compiladas sin errores",
+        "command": "psql -d gamilit_platform -c \"\nSELECT n.nspname as schema, p.proname as function\nFROM pg_proc p\nJOIN pg_namespace n ON p.pronamespace = n.oid\nWHERE n.nspname NOT IN ('pg_catalog', 'information_schema')\nORDER BY schema, function;\"",
+        "critical": true
+      },
+      {
+        "item": "Ejecutar tests de funcionalidad",
+        "command": "npm test",
+        "critical": true
+      },
+      {
+        "item": "Verificar seed data cargado correctamente",
+        "command": "psql -d gamilit_platform -c \"\nSELECT 'modules' as table_name, COUNT(*) FROM educational_content.modules\nUNION ALL\nSELECT 'achievements', COUNT(*) FROM gamification_system.achievements\nUNION ALL\nSELECT 'maya_ranks', COUNT(*) FROM gamification_system.maya_ranks;\"",
+        "critical": true
+      }
+    ]
+  },
+  "summary": {
+    "total_objects": 73,
+    "total_size_bytes": 216138,
+    "by_priority": {
+      "CRITICA": 29,
+      "ALTA": 17,
+      "MEDIA": 23,
+      "BAJA": 4
+    },
+    "conflicts_count": 0
+  }
+}

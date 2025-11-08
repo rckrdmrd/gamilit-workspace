@@ -1,0 +1,187 @@
+================================================================================
+GAMILIT BACKEND - MODULOS QUICK REFERENCE
+================================================================================
+
+ESTADISTICAS GLOBALES:
+  Total Modulos:         17
+  Total Controllers:     34
+  Total Services:        45  
+  Total Entities:        47
+  Total DTOs:            146
+  Total Archivos TS:     272
+
+================================================================================
+MÓDULOS ORGANIZADOS POR CATEGORIA SIMCO
+================================================================================
+
+[AUTH] - AUTENTICACIÓN Y AUTORIZACIÓN (1 modulo)
+  - auth
+    Controllers: 2 (auth, password)
+    Services:    5 (auth, email-verification, password-recovery, security, session-management)
+    Entities:    10 (user, profile, tenant, user-role, auth-attempt, auth-provider, user-session, membership, email-verification-token, password-reset-token)
+    DTOs:        31
+
+[GAM] - GAMIFICACIÓN (3 modulos)
+  - gamification
+    Controllers: 5 (achievements, leaderboard, ml-coins, ranks, user-stats)
+    Services:    5 (achievements, leaderboard, ml-coins, ranks, user-stats)
+    Entities:    11 (achievement, achievement-category, user-achievement, user-rank, user-stats, ml-coins-transaction, inventory-transaction, comodines-inventory, active-boost, mission, leaderboard-metadata)
+    DTOs:        23
+  
+  - missions
+    Controllers: 1 (missions)
+    Services:    1 (missions)
+    Entities:    1 (mission)
+    DTOs:        3
+  
+  - powerups
+    Controllers: 1 (powerups)
+    Services:    1 (powerups)
+    Entities:    1 (comodines-inventory)
+    DTOs:        4
+
+[EDU] - EDUCACIÓN (2 modulos)
+  - educational
+    Controllers: 3 (exercises, media, modules)
+    Services:    3 (exercises, media, modules)
+    Entities:    4 (module, exercise, media-resource, assessment-rubric)
+    DTOs:        8
+  
+  - tasks
+    Controllers: 0
+    Services:    2 (missions-cron, notifications-cron)
+    Entities:    0
+    DTOs:        0
+
+[PRG] - PROGRESO ESTUDIANTIL (1 modulo)
+  - progress
+    Controllers: 5 (exercise-attempt, exercise-submission, learning-session, module-progress, scheduled-mission)
+    Services:    7 (exercise-attempt, exercise-submission, learning-session, module-progress, pending-activities, recent-activity, scheduled-mission)
+    Entities:    5 (learning-session, exercise-attempt, exercise-submission, module-progress, scheduled-mission)
+    DTOs:        12
+
+[SOC] - SOCIAL (1 modulo)
+  - social
+    Controllers: 7 (classrooms, classroom-members, teams, team-members, team-challenges, friendships, schools)
+    Services:    7 (classrooms, classroom-members, teams, team-members, team-challenges, friendships, schools)
+    Entities:    7 (classroom, classroom-member, team, team-member, team-challenge, friendship, school)
+    DTOs:        16
+
+[NOT] - NOTIFICACIONES (3 modulos)
+  - mail
+    Controllers: 0
+    Services:    0
+    Entities:    0
+    DTOs:        0
+  
+  - notifications
+    Controllers: 1 (notifications)
+    Services:    1 (notifications)
+    Entities:    1 (notification)
+    DTOs:        4
+  
+  - websocket
+    Controllers: 0
+    Services:    0
+    Entities:    0
+    DTOs:        0
+
+[CNT] - CONTENIDO (1 modulo)
+  - content
+    Controllers: 3 (content-templates, marie-curie-content, media-files)
+    Services:    3 (content-templates, marie-curie-content, media-files)
+    Entities:    3 (content-template, marie-curie-content, media-file)
+    DTOs:        6
+
+[AUD] - AUDITORÍA (1 modulo)
+  - audit
+    Controllers: 0
+    Services:    1 (audit)
+    Entities:    1 (audit-log)
+    DTOs:        1
+
+[TCH] - HERRAMIENTAS PROFESOR (1 modulo)
+  - teacher
+    Controllers: 1 (teacher)
+    Services:    4 (teacher-dashboard, analytics, grading, student-progress)
+    Entities:    0
+    DTOs:        4
+
+[ADM] - ADMINISTRACIÓN (2 modulos)
+  - admin
+    Controllers: 4 (admin-content, admin-organizations, admin-system, admin-users)
+    Services:    4 (admin-content, admin-organizations, admin-system, admin-users)
+    Entities:    0
+    DTOs:        30
+  
+  - core
+    Controllers: 0
+    Services:    0
+    Entities:    0
+    DTOs:        0
+
+[ASG] - ASIGNACIONES (1 modulo)
+  - assignments
+    Controllers: 1 (assignments)
+    Services:    1 (assignments)
+    Entities:    3 (assignment, assignment-classroom, assignment-submission)
+    DTOs:        4
+
+================================================================================
+PATRONES ARQUITECTÓNICOS IDENTIFICADOS
+================================================================================
+
+1. SEPARACIÓN POR RESPONSABILIDADES
+   - Controllers:  Manejo de rutas HTTP
+   - Services:    Lógica de negocio
+   - Entities:    Modelos de datos (TypeORM)
+   - DTOs:        Validación de entrada/salida
+
+2. MODULOS CON MAYOR COMPLEJIDAD
+   - AUTH:        5 services (seguridad, sesiones, verificación)
+   - SOCIAL:      7 controllers + 7 services + 7 entities
+   - GAMIFICATION: 5 controllers + 5 services + 11 entities
+   - PROGRESS:    5 controllers + 7 services + 5 entities
+   - ADMIN:       4 controllers + 4 services + 30 DTOs
+
+3. MODULOS CON MENOR COMPLEJIDAD
+   - AUDIT:       Solo service + entity + 1 DTO
+   - TASKS:       Solo 2 services (cron jobs)
+   - CORE:        Vacío (en desarrollo)
+
+4. DTOs POR MODULO (Validación)
+   - AUTH:        31 DTOs (mayor volumen - complejidad de auth)
+   - ADMIN:       30 DTOs (gestión de múltiples recursos)
+   - GAMIFICATION: 23 DTOs (múltiples tipos de transacciones)
+   - SOCIAL:      16 DTOs (6 entidades)
+   - PROGRESS:    12 DTOs (5 entidades)
+
+================================================================================
+RUTAS DE ARCHIVO CLAVE
+================================================================================
+
+Módulos:           /apps/backend/src/modules/
+Inventario JSON:   /modules_inventory.json
+Inventario CSV:    /modules_inventory.csv
+Este archivo:      /MODULES_QUICK_REFERENCE.txt
+Documentación:     /MODULES_INVENTORY.md
+
+================================================================================
+NOTAS ARQUITECTÓNICAS
+================================================================================
+
+- Cada módulo sigue patrón modular de NestJS
+- Validación mediante class-validator en DTOs
+- Persistencia con TypeORM
+- 11 categorías SIMCO para organización lógica
+- Controllers especializados por dominio de negocio
+- Services concentran lógica de negocio
+- Entities representan tablas de base de datos
+
+Módulos más complejos: AUTH, SOCIAL, GAMIFICATION, PROGRESS
+Módulos más simples:   AUDIT, TASKS, CORE
+Módulo más documentado: ADMIN (30 DTOs)
+
+================================================================================
+Fecha de Generación: 2025-11-07
+================================================================================

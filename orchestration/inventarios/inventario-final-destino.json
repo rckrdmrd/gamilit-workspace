@@ -1,0 +1,167 @@
+{
+  "fecha": "2025-11-02",
+  "microciclo": "M8",
+  "ruta_base": "/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas/",
+  "schemas": {
+    "public": {
+      "enums": 24,
+      "tables": 9,
+      "indexes": 64,
+      "functions": 7,
+      "views": 3,
+      "materialized_views": 0,
+      "triggers": 21,
+      "rls_policies": 0,
+      "total": 128
+    },
+    "auth": {
+      "enums": 2,
+      "tables": 1,
+      "indexes": 0,
+      "functions": 1,
+      "views": 0,
+      "materialized_views": 0,
+      "triggers": 0,
+      "rls_policies": 0,
+      "total": 4
+    },
+    "storage": {
+      "enums": 1,
+      "tables": 0,
+      "indexes": 0,
+      "functions": 0,
+      "views": 0,
+      "materialized_views": 0,
+      "triggers": 0,
+      "rls_policies": 0,
+      "total": 1
+    },
+    "auth_management": {
+      "enums": 0,
+      "tables": 12,
+      "indexes": 2,
+      "functions": 6,
+      "views": 0,
+      "materialized_views": 0,
+      "triggers": 6,
+      "rls_policies": 1,
+      "total": 27
+    },
+    "content_management": {
+      "enums": 0,
+      "tables": 5,
+      "indexes": 2,
+      "functions": 0,
+      "views": 0,
+      "materialized_views": 0,
+      "triggers": 3,
+      "rls_policies": 1,
+      "total": 11
+    },
+    "audit_logging": {
+      "enums": 0,
+      "tables": 6,
+      "indexes": 0,
+      "functions": 1,
+      "views": 0,
+      "materialized_views": 0,
+      "triggers": 1,
+      "rls_policies": 1,
+      "total": 9
+    },
+    "system_configuration": {
+      "enums": 0,
+      "tables": 3,
+      "indexes": 0,
+      "functions": 0,
+      "views": 0,
+      "materialized_views": 0,
+      "triggers": 2,
+      "rls_policies": 1,
+      "total": 6
+    },
+    "gamification_system": {
+      "enums": 1,
+      "tables": 12,
+      "indexes": 4,
+      "functions": 23,
+      "views": 4,
+      "materialized_views": 4,
+      "triggers": 7,
+      "rls_policies": 8,
+      "total": 63
+    },
+    "progress_tracking": {
+      "enums": 0,
+      "tables": 5,
+      "indexes": 2,
+      "functions": 6,
+      "views": 1,
+      "materialized_views": 0,
+      "triggers": 3,
+      "rls_policies": 2,
+      "total": 19
+    },
+    "gamilit": {
+      "enums": 0,
+      "tables": 0,
+      "indexes": 0,
+      "functions": 11,
+      "views": 0,
+      "materialized_views": 0,
+      "triggers": 0,
+      "rls_policies": 0,
+      "total": 11
+    },
+    "educational_content": {
+      "enums": 0,
+      "tables": 4,
+      "indexes": 0,
+      "functions": 2,
+      "views": 0,
+      "materialized_views": 0,
+      "triggers": 4,
+      "rls_policies": 2,
+      "total": 12
+    },
+    "social_features": {
+      "enums": 0,
+      "tables": 7,
+      "indexes": 0,
+      "functions": 1,
+      "views": 0,
+      "materialized_views": 0,
+      "triggers": 5,
+      "rls_policies": 8,
+      "total": 21
+    },
+    "admin_dashboard": {
+      "enums": 0,
+      "tables": 0,
+      "indexes": 0,
+      "functions": 0,
+      "views": 4,
+      "materialized_views": 0,
+      "triggers": 0,
+      "rls_policies": 0,
+      "total": 4
+    }
+  },
+  "totales_por_tipo": {
+    "enums": 28,
+    "tables": 64,
+    "indexes": 74,
+    "functions": 58,
+    "views": 12,
+    "materialized_views": 4,
+    "triggers": 52,
+    "rls_policies": 24
+  },
+  "total_objetos": 316,
+  "total_archivos_map": 44,
+  "comparacion_inicial": {
+    "objetos_antes_m4": 49,
+    "objetos_despues_m7": 605,
+    "objetos_implementados_microciclos": 316
+  }
+}

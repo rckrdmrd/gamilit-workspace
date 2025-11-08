@@ -1,0 +1,267 @@
+================================================================================
+GAMILIT FRONTEND - AUTH FORMS FILE STRUCTURE
+================================================================================
+
+apps/frontend/
+│
+├── INTEGRATION_GUIDE.md          ← Complete integration guide
+├── AUTH_FORMS_README.md          ← Quick reference guide
+├── QUICK_START.sh                ← Automated setup script
+│
+├── package.json
+│   └── dependencies:
+│       ✅ react-hook-form (7.49.2)
+│       ✅ react-router-dom (6.21.0)
+│       ✅ lucide-react (0.300.0)
+│       ✅ tailwindcss (3.4.0)
+│       ❌ zod (MISSING - install required)
+│       ❌ @hookform/resolvers (MISSING - install required)
+│
+└── src/
+    │
+    ├── App.tsx                   ← UPDATE THIS (see App.example.tsx)
+    ├── App.example.tsx           ← Complete routing example ⭐
+    │
+    ├── features/
+    │   └── auth/
+    │       └── components/
+    │           ├── LoginForm.tsx          (307 LOC) ⭐
+    │           │   ├── Email/password inputs
+    │           │   ├── Show/hide password toggle
+    │           │   ├── Remember me checkbox
+    │           │   ├── Forgot password link
+    │           │   ├── Form validation (Zod)
+    │           │   ├── Error handling (AuthContext)
+    │           │   ├── Loading states
+    │           │   └── Auto-redirect
+    │           │
+    │           ├── RegisterForm.tsx       (524 LOC) ⭐
+    │           │   ├── Email/password/confirm inputs
+    │           │   ├── Password strength indicator
+    │           │   ├── Full name (optional)
+    │           │   ├── Role selection (optional)
+    │           │   ├── Terms checkbox
+    │           │   ├── Form validation (Zod)
+    │           │   ├── Auto-login after signup
+    │           │   └── Real-time strength updates
+    │           │
+    │           └── index.ts               (Barrel exports)
+    │
+    ├── pages/
+    │   └── auth/
+    │       ├── LoginPage.tsx              (143 LOC) ⭐
+    │       │   ├── Centered card layout
+    │       │   ├── GAMILIT branding
+    │       │   ├── LoginForm integration
+    │       │   ├── Social login placeholders
+    │       │   ├── Link to /register
+    │       │   └── Responsive design
+    │       │
+    │       ├── RegisterPage.tsx           (96 LOC) ⭐
+    │       │   ├── Centered card layout
+    │       │   ├── GAMILIT branding
+    │       │   ├── RegisterForm integration
+    │       │   ├── Link to /login
+    │       │   └── Responsive design
+    │       │
+    │       ├── ForgotPasswordPage.tsx     (226 LOC) ⭐
+    │       │   ├── Email input form
+    │       │   ├── Success state
+    │       │   ├── Link back to login
+    │       │   └── UI only (API pending)
+    │       │
+    │       └── index.ts                   (Barrel exports)
+    │
+    ├── shared/
+    │   ├── schemas/
+    │   │   ├── auth.schemas.ts            (238 LOC) ⭐
+    │   │   │   ├── loginSchema
+    │   │   │   ├── registerSchema
+    │   │   │   ├── forgotPasswordSchema
+    │   │   │   ├── resetPasswordSchema
+    │   │   │   ├── calculatePasswordStrength()
+    │   │   │   └── TypeScript types
+    │   │   │
+    │   │   └── index.ts                   (Barrel exports)
+    │   │
+    │   └── components/
+    │       └── ProtectedRoute.tsx         (EXISTING)
+    │           ├── Auth check
+    │           ├── Role-based access
+    │           └── Redirect to /login
+    │
+    ├── app/
+    │   └── providers/
+    │       └── AuthContext.tsx            (EXISTING)
+    │           ├── login() method
+    │           ├── register() method
+    │           ├── logout() method
+    │           ├── refreshUser() method
+    │           └── Error handling
+    │
+    └── lib/
+        └── api/
+            └── auth.api.ts                (EXISTING)
+                ├── POST /auth/login
+                ├── POST /auth/register
+                ├── GET /auth/profile
+                ├── POST /auth/logout
+                └── POST /auth/refresh
+
+================================================================================
+INTEGRATION POINTS
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                 │
+│  User visits /login                                             │
+│         ↓                                                       │
+│  LoginPage renders                                              │
+│         ↓                                                       │
+│  LoginForm validates with loginSchema                           │
+│         ↓                                                       │
+│  Form submits → useAuth().login()                               │
+│         ↓                                                       │
+│  AuthContext calls authApi.login()                              │
+│         ↓                                                       │
+│  API returns token + user data                                  │
+│         ↓                                                       │
+│  Token stored in localStorage                                   │
+│         ↓                                                       │
+│  User state updated in AuthContext                              │
+│         ↓                                                       │
+│  Auto-redirect to /dashboard                                    │
+│         ↓                                                       │
+│  ProtectedRoute allows access                                   │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+================================================================================
+VALIDATION FLOW
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                 │
+│  User types email                                               │
+│         ↓                                                       │
+│  Zod schema validates on blur                                   │
+│         ↓                                                       │
+│  Invalid? → Show error message                                  │
+│         ↓                                                       │
+│  User types password                                            │
+│         ↓                                                       │
+│  Password strength calculated (register only)                   │
+│         ↓                                                       │
+│  Strength indicator updates (weak/medium/strong)                │
+│         ↓                                                       │
+│  User clicks submit                                             │
+│         ↓                                                       │
+│  Zod validates all fields                                       │
+│         ↓                                                       │
+│  Valid? → Submit to API                                         │
+│  Invalid? → Show all errors                                     │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+================================================================================
+ROUTES OVERVIEW
+================================================================================
+
+Public Routes:
+  /login                → LoginPage
+  /register             → RegisterPage
+  /forgot-password      → ForgotPasswordPage
+
+Protected Routes (require authentication):
+  /dashboard            → Dashboard (wrapped in ProtectedRoute)
+  /profile              → Profile (wrapped in ProtectedRoute)
+  /admin                → Admin (ProtectedRoute + role check)
+
+Default Route:
+  /                     → Redirect to /login
+
+404 Route:
+  *                     → Redirect to /login
+
+================================================================================
+COMPONENT HIERARCHY
+================================================================================
+
+App (BrowserRouter)
+ └── AuthProvider
+      ├── Routes
+      │    ├── Route /login
+      │    │    └── LoginPage
+      │    │         └── LoginForm
+      │    │              ├── Email input
+      │    │              ├── Password input
+      │    │              └── Submit button
+      │    │
+      │    ├── Route /register
+      │    │    └── RegisterPage
+      │    │         └── RegisterForm
+      │    │              ├── Email input
+      │    │              ├── Password input
+      │    │              ├── Confirm password
+      │    │              ├── Password strength
+      │    │              ├── Full name
+      │    │              ├── Role select
+      │    │              ├── Terms checkbox
+      │    │              └── Submit button
+      │    │
+      │    ├── Route /forgot-password
+      │    │    └── ForgotPasswordPage
+      │    │         └── Email form
+      │    │
+      │    └── Route /dashboard
+      │         └── ProtectedRoute
+      │              └── Dashboard
+      │                   └── User info + Logout
+      │
+      └── (AuthContext provides useAuth hook to all children)
+
+================================================================================
+DATA FLOW
+================================================================================
+
+Component → useAuth() → AuthContext → authApi → Backend API
+                ↓
+         localStorage (tokens)
+                ↓
+          User state management
+
+Validation:
+Form Input → Zod Schema → Error Messages → UI Feedback
+
+================================================================================
+CREATED FILES SUMMARY
+================================================================================
+
+⭐ NEW FILES (9 total):
+   1. src/shared/schemas/auth.schemas.ts           (238 LOC)
+   2. src/features/auth/components/LoginForm.tsx   (307 LOC)
+   3. src/features/auth/components/RegisterForm.tsx (524 LOC)
+   4. src/pages/auth/LoginPage.tsx                 (143 LOC)
+   5. src/pages/auth/RegisterPage.tsx              (96 LOC)
+   6. src/pages/auth/ForgotPasswordPage.tsx        (226 LOC)
+   7. src/features/auth/components/index.ts
+   8. src/pages/auth/index.ts
+   9. src/shared/schemas/index.ts
+
+📚 DOCUMENTATION (3 files):
+   1. INTEGRATION_GUIDE.md                         (Complete guide)
+   2. AUTH_FORMS_README.md                         (Quick reference)
+   3. QUICK_START.sh                               (Setup script)
+
+🔧 EXAMPLES (1 file):
+   1. src/App.example.tsx                          (Routing example)
+
+✅ EXISTING FILES (used by new components):
+   - src/app/providers/AuthContext.tsx
+   - src/lib/api/auth.api.ts
+   - src/shared/components/ProtectedRoute.tsx
+
+================================================================================
+TOTAL DELIVERABLES: 13 files, 1,534 LOC
+================================================================================
+

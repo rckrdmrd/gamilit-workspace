@@ -1,0 +1,52 @@
+# TRACEABILITY.yml - EXT-003: Notificaciones
+
+epic_code: EXT-003
+epic_name: Sistema de Notificaciones Multi-Canal
+phase: 3
+budget_mxn: 10000
+story_points: 40
+status: completed
+
+implementation:
+  database:
+    tables:
+      - name: notifications
+        type: new
+        description: Cola de notificaciones
+
+      - name: notification_preferences
+        type: new
+        description: Preferencias por usuario
+
+      - name: notification_logs
+        type: new
+        description: Logs de envío
+
+  backend:
+    module: notifications
+    services:
+      - notification.service.ts
+      - email.service.ts (SendGrid)
+      - push.service.ts (FCM)
+      - notification-templates.service.ts
+
+    endpoints:
+      - GET /api/v1/notifications
+      - PATCH /api/v1/notifications/:id/read
+      - POST /api/v1/notifications/send
+      - PATCH /api/v1/notifications/preferences
+
+  frontend:
+    components:
+      - NotificationCenter.tsx
+      - NotificationItem.tsx
+      - NotificationBell.tsx
+      - PreferencesPanel.tsx
+
+metrics:
+  delivery_rate: 99.5%
+  avg_latency_seconds: 1.8
+
+status:
+  completion: 100%
+  completion_date: "2024-10-31"

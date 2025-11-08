@@ -1,0 +1,35 @@
+module: M-ADM
+version: '2.0'
+owners:
+- '@tech-lead'
+- '@dev-team'
+last_updated: '2025-11-07'
+status: migrated
+req: []
+spec: []
+tests: []
+objects:
+  db:
+  - OBJ-DB-ADM-VIEW-MODERATION-QUEUE
+  - OBJ-DB-ADM-VIEW-ORGANIZATION-STATS-SUMMARY
+  - OBJ-DB-ADM-VIEW-RECENT-ADMIN-ACTIONS
+  - OBJ-DB-ADM-VIEW-USER-STATS-SUMMARY
+  backend:
+  - OBJ-BE-ADM-CTRL-ADMIN-CONTENT-CONTROLLER
+  - OBJ-BE-ADM-CTRL-ADMIN-ORGANIZATIONS-CONTROLLER
+  - OBJ-BE-ADM-CTRL-ADMIN-SYSTEM-CONTROLLER
+  - OBJ-BE-ADM-CTRL-ADMIN-USERS-CONTROLLER
+  - OBJ-BE-ADM-SVC-ADMIN-CONTENT-SERVICE
+  - OBJ-BE-ADM-SVC-ADMIN-ORGANIZATIONS-SERVICE
+  - OBJ-BE-ADM-SVC-ADMIN-SYSTEM-SERVICE
+  - OBJ-BE-ADM-SVC-ADMIN-USERS-SERVICE
+  frontend: []
+dependencies: []
+metrics:
+  req_count: 0
+  spec_count: 0
+  test_count: 0
+  obj_count: 12
+  coverage_req_to_spec: 0
+  coverage_req_to_test: 0
+  coverage_req_to_obj: 0

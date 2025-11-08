@@ -1,0 +1,1082 @@
+{
+  "epic_metadata": {
+    "epic_id": "EAI-004",
+    "epic_name": "Analytics e Investigación - Analytics Básico",
+    "phase": "Alcance Inicial",
+    "analysis_date": "2025-11-03",
+    "analyzed_by": "SA-ANALISIS-DB-004",
+    "total_user_stories": 6,
+    "story_points": 44,
+    "priority": "High"
+  },
+  "tables": [
+    {
+      "table_id": "TBL-ANA-001",
+      "table_name": "activity_logs",
+      "description": "Registro granular de todas las actividades de usuarios (completadas, iniciadas, logros) para investigación y tracking",
+      "priority": "P0",
+      "user_stories": ["US-ANA-001", "US-ANA-005", "US-ANA-006"],
+      "schema": {
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "pk": true,
+            "nullable": false,
+            "default": "gen_random_uuid()",
+            "description": "Primary key único para el log"
+          },
+          {
+            "name": "type",
+            "type": "VARCHAR(50)",
+            "nullable": false,
+            "description": "Tipo de actividad: 'activity_completed', 'module_started', 'level_up', 'achievement_unlocked'",
+            "enum_values": ["activity_completed", "module_started", "level_up", "achievement_unlocked"]
+          },
+          {
+            "name": "student_id",
+            "type": "UUID",
+            "fk": true,
+            "fk_table": "students",
+            "fk_column": "id",
+            "nullable": false,
+            "description": "Referencia al estudiante que realizó la actividad"
+          },
+          {
+            "name": "classroom_id",
+            "type": "UUID",
+            "fk": true,
+            "fk_table": "classrooms",
+            "fk_column": "id",
+            "nullable": false,
+            "description": "Referencia al aula donde se registró la actividad"
+          },
+          {
+            "name": "module_id",
+            "type": "UUID",
+            "fk": true,
+            "fk_table": "modules",
+            "fk_column": "id",
+            "nullable": true,
+            "description": "Módulo relacionado (opcional para algunos tipos de actividad)"
+          },
+          {
+            "name": "activity_id",
+            "type": "UUID",
+            "fk": true,
+            "fk_table": "activities",
+            "fk_column": "id",
+            "nullable": true,
+            "description": "Actividad completada (null si es logro o cambio de módulo)"
+          },
+          {
+            "name": "timestamp",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "nullable": false,
+            "default": "CURRENT_TIMESTAMP",
+            "description": "Fecha y hora exacta del evento"
+          },
+          {
+            "name": "metadata",
+            "type": "JSONB",
+            "nullable": true,
+            "description": "Datos adicionales: xpEarned, score, newLevel, achievementName, achievementIcon, etc."
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "nullable": false,
+            "default": "CURRENT_TIMESTAMP",
+            "description": "Auditoria: cuándo se insertó el registro"
+          }
+        ],
+        "primary_key": ["id"],
+        "foreign_keys": [
+          {
+            "columns": ["student_id"],
+            "references": "students(id)",
+            "on_delete": "CASCADE"
+          },
+          {
+            "columns": ["classroom_id"],
+            "references": "classrooms(id)",
+            "on_delete": "CASCADE"
+          },
+          {
+            "columns": ["module_id"],
+            "references": "modules(id)",
+            "on_delete": "SET NULL"
+          },
+          {
+            "columns": ["activity_id"],
+            "references": "activities(id)",
+            "on_delete": "SET NULL"
+          }
+        ]
+      },
+      "indexes": [
+        {
+          "index_name": "idx_activity_logs_classroom_timestamp",
+          "columns": ["classroom_id", "timestamp"],
+          "unique": false,
+          "description": "Buscar actividades recientes por aula (US-ANA-001, US-ANA-005)"
+        },
+        {
+          "index_name": "idx_activity_logs_student_timestamp",
+          "columns": ["student_id", "timestamp"],
+          "unique": false,
+          "description": "Buscar última actividad del estudiante (US-ANA-003, US-ANA-006)"
+        },
+        {
+          "index_name": "idx_activity_logs_type",
+          "columns": ["type"],
+          "unique": false,
+          "description": "Filtrar por tipo de actividad en US-ANA-005"
+        },
+        {
+          "index_name": "idx_activity_logs_classroom_student_timestamp",
+          "columns": ["classroom_id", "student_id", "timestamp"],
+          "unique": false,
+          "description": "Query combinada para analytics complejos (US-ANA-006)"
+        }
+      ],
+      "constraints": [
+        {
+          "type": "CHECK",
+          "name": "chk_activity_logs_type",
+          "condition": "type IN ('activity_completed', 'module_started', 'level_up', 'achievement_unlocked')"
+        },
+        {
+          "type": "CHECK",
+          "name": "chk_activity_logs_timestamp",
+          "condition": "timestamp <= CURRENT_TIMESTAMP"
+        }
+      ],
+      "partitioning": {
+        "strategy": "RANGE",
+        "column": "timestamp",
+        "reason": "Tabla de rápido crecimiento, particionar por mes para mejor performance"
+      }
+    },
+    {
+      "table_id": "TBL-ANA-002",
+      "table_name": "student_progress",
+      "description": "Estado actual del progreso de cada estudiante en cada módulo (denormalizado para performance)",
+      "priority": "P0",
+      "user_stories": ["US-ANA-001", "US-ANA-002", "US-ANA-003", "US-ANA-004", "US-ANA-006"],
+      "schema": {
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "pk": true,
+            "nullable": false,
+            "default": "gen_random_uuid()",
+            "description": "Primary key"
+          },
+          {
+            "name": "student_id",
+            "type": "UUID",
+            "fk": true,
+            "fk_table": "students",
+            "fk_column": "id",
+            "nullable": false,
+            "description": "Estudiante"
+          },
+          {
+            "name": "classroom_id",
+            "type": "UUID",
+            "fk": true,
+            "fk_table": "classrooms",
+            "fk_column": "id",
+            "nullable": false,
+            "description": "Aula donde el estudiante está"
+          },
+          {
+            "name": "module_id",
+            "type": "UUID",
+            "fk": true,
+            "fk_table": "modules",
+            "fk_column": "id",
+            "nullable": false,
+            "description": "Módulo del progreso"
+          },
+          {
+            "name": "percentage",
+            "type": "DECIMAL(5,2)",
+            "nullable": false,
+            "default": "0",
+            "description": "Porcentaje de completitud del módulo (0-100)"
+          },
+          {
+            "name": "completed_activities",
+            "type": "INTEGER",
+            "nullable": false,
+            "default": "0",
+            "description": "Número de actividades completadas"
+          },
+          {
+            "name": "total_activities",
+            "type": "INTEGER",
+            "nullable": false,
+            "default": "0",
+            "description": "Total de actividades en el módulo"
+          },
+          {
+            "name": "status",
+            "type": "VARCHAR(20)",
+            "nullable": false,
+            "default": "'not_started'",
+            "description": "Estado: 'not_started', 'in_progress', 'completed'",
+            "enum_values": ["not_started", "in_progress", "completed"]
+          },
+          {
+            "name": "last_activity_date",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "nullable": true,
+            "description": "Última vez que el estudiante trabajó en este módulo"
+          },
+          {
+            "name": "started_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "nullable": true,
+            "description": "Cuándo el estudiante comenzó este módulo"
+          },
+          {
+            "name": "completed_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "nullable": true,
+            "description": "Cuándo el estudiante completó este módulo"
+          },
+          {
+            "name": "updated_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "nullable": false,
+            "default": "CURRENT_TIMESTAMP",
+            "description": "Última actualización del registro"
+          }
+        ],
+        "primary_key": ["id"],
+        "unique_constraints": [
+          {
+            "name": "uq_student_progress_student_classroom_module",
+            "columns": ["student_id", "classroom_id", "module_id"],
+            "description": "Un registro de progreso por cada combinación estudiante-aula-módulo"
+          }
+        ],
+        "foreign_keys": [
+          {
+            "columns": ["student_id"],
+            "references": "students(id)",
+            "on_delete": "CASCADE"
+          },
+          {
+            "columns": ["classroom_id"],
+            "references": "classrooms(id)",
+            "on_delete": "CASCADE"
+          },
+          {
+            "columns": ["module_id"],
+            "references": "modules(id)",
+            "on_delete": "CASCADE"
+          }
+        ]
+      },
+      "indexes": [
+        {
+          "index_name": "idx_student_progress_student_classroom",
+          "columns": ["student_id", "classroom_id"],
+          "unique": false,
+          "description": "Obtener todos los módulos del estudiante en una clase (US-ANA-002, US-ANA-003)"
+        },
+        {
+          "index_name": "idx_student_progress_classroom_module",
+          "columns": ["classroom_id", "module_id"],
+          "unique": false,
+          "description": "Obtener estudiantes agrupados por módulo para reportes (US-ANA-004)"
+        },
+        {
+          "index_name": "idx_student_progress_status",
+          "columns": ["status"],
+          "unique": false,
+          "description": "Filtrar por estado de progreso"
+        }
+      ],
+      "constraints": [
+        {
+          "type": "CHECK",
+          "name": "chk_student_progress_percentage",
+          "condition": "percentage >= 0 AND percentage <= 100"
+        },
+        {
+          "type": "CHECK",
+          "name": "chk_student_progress_completed_activities",
+          "condition": "completed_activities >= 0 AND completed_activities <= total_activities"
+        },
+        {
+          "type": "CHECK",
+          "name": "chk_student_progress_status",
+          "condition": "status IN ('not_started', 'in_progress', 'completed')"
+        }
+      ]
+    },
+    {
+      "table_id": "TBL-ANA-003",
+      "table_name": "student_sessions",
+      "description": "Sesiones de uso para calcular métricas de tiempo (inicio/fin de sesión)",
+      "priority": "P1",
+      "user_stories": ["US-ANA-003", "US-ANA-006"],
+      "schema": {
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "pk": true,
+            "nullable": false,
+            "default": "gen_random_uuid()",
+            "description": "Primary key"
+          },
+          {
+            "name": "student_id",
+            "type": "UUID",
+            "fk": true,
+            "fk_table": "students",
+            "fk_column": "id",
+            "nullable": false,
+            "description": "Estudiante en sesión"
+          },
+          {
+            "name": "classroom_id",
+            "type": "UUID",
+            "fk": true,
+            "fk_table": "classrooms",
+            "fk_column": "id",
+            "nullable": false,
+            "description": "Aula donde ocurre la sesión"
+          },
+          {
+            "name": "started_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "nullable": false,
+            "description": "Inicio de sesión"
+          },
+          {
+            "name": "ended_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "nullable": true,
+            "description": "Fin de sesión (null si aún activa)"
+          },
+          {
+            "name": "duration_seconds",
+            "type": "INTEGER",
+            "nullable": true,
+            "description": "Duración en segundos (calculada cuando se termina sesión)"
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "nullable": false,
+            "default": "CURRENT_TIMESTAMP",
+            "description": "Auditoría"
+          }
+        ],
+        "primary_key": ["id"],
+        "foreign_keys": [
+          {
+            "columns": ["student_id"],
+            "references": "students(id)",
+            "on_delete": "CASCADE"
+          },
+          {
+            "columns": ["classroom_id"],
+            "references": "classrooms(id)",
+            "on_delete": "CASCADE"
+          }
+        ]
+      },
+      "indexes": [
+        {
+          "index_name": "idx_student_sessions_student_classroom",
+          "columns": ["student_id", "classroom_id"],
+          "unique": false,
+          "description": "Obtener sesiones de un estudiante (US-ANA-003)"
+        },
+        {
+          "index_name": "idx_student_sessions_started_at",
+          "columns": ["started_at"],
+          "unique": false,
+          "description": "Queries por rango de fecha"
+        }
+      ],
+      "constraints": [
+        {
+          "type": "CHECK",
+          "name": "chk_student_sessions_dates",
+          "condition": "started_at <= COALESCE(ended_at, CURRENT_TIMESTAMP)"
+        }
+      ]
+    },
+    {
+      "table_id": "TBL-ANA-004",
+      "table_name": "classroom_metrics_daily",
+      "description": "Métricas agregadas diarias por aula (tabla de agregación para reportes y dashboards)",
+      "priority": "P1",
+      "user_stories": ["US-ANA-001", "US-ANA-004", "US-ANA-005"],
+      "schema": {
+        "columns": [
+          {
+            "name": "id",
+            "type": "UUID",
+            "pk": true,
+            "nullable": false,
+            "default": "gen_random_uuid()",
+            "description": "Primary key"
+          },
+          {
+            "name": "classroom_id",
+            "type": "UUID",
+            "fk": true,
+            "fk_table": "classrooms",
+            "fk_column": "id",
+            "nullable": false,
+            "description": "Aula"
+          },
+          {
+            "name": "date",
+            "type": "DATE",
+            "nullable": false,
+            "description": "Fecha del día de la métrica"
+          },
+          {
+            "name": "total_activities_completed",
+            "type": "INTEGER",
+            "nullable": false,
+            "default": "0",
+            "description": "Total de actividades completadas ese día"
+          },
+          {
+            "name": "active_students_count",
+            "type": "INTEGER",
+            "nullable": false,
+            "default": "0",
+            "description": "Número de estudiantes únicos activos ese día"
+          },
+          {
+            "name": "modules_started",
+            "type": "INTEGER",
+            "nullable": false,
+            "default": "0",
+            "description": "Módulos nuevos iniciados ese día"
+          },
+          {
+            "name": "levels_unlocked",
+            "type": "INTEGER",
+            "nullable": false,
+            "default": "0",
+            "description": "Niveles desbloqueados ese día"
+          },
+          {
+            "name": "achievements_unlocked",
+            "type": "INTEGER",
+            "nullable": false,
+            "default": "0",
+            "description": "Logros desbloqueados ese día"
+          },
+          {
+            "name": "created_at",
+            "type": "TIMESTAMP WITH TIME ZONE",
+            "nullable": false,
+            "default": "CURRENT_TIMESTAMP",
+            "description": "Cuándo se calculó la métrica"
+          }
+        ],
+        "primary_key": ["id"],
+        "unique_constraints": [
+          {
+            "name": "uq_classroom_metrics_daily_classroom_date",
+            "columns": ["classroom_id", "date"],
+            "description": "Un registro por aula por día"
+          }
+        ],
+        "foreign_keys": [
+          {
+            "columns": ["classroom_id"],
+            "references": "classrooms(id)",
+            "on_delete": "CASCADE"
+          }
+        ]
+      },
+      "indexes": [
+        {
+          "index_name": "idx_classroom_metrics_daily_classroom_date",
+          "columns": ["classroom_id", "date"],
+          "unique": false,
+          "description": "Obtener métricas de un aula por rango de fechas (US-ANA-005)"
+        }
+      ]
+    }
+  ],
+  "views": [
+    {
+      "view_id": "VW-ANA-001",
+      "view_name": "v_classroom_dashboard_metrics",
+      "type": "materialized",
+      "refresh_strategy": "INCREMENTAL",
+      "refresh_interval_minutes": 5,
+      "priority": "P0",
+      "user_stories": ["US-ANA-001"],
+      "description": "Vista materializada con métricas agregadas del dashboard de clase",
+      "definition": {
+        "select_columns": [
+          "c.id as classroom_id",
+          "c.name as classroom_name",
+          "COUNT(DISTINCT s.id) as total_students",
+          "COALESCE(AVG(s.overall_progress), 0) as average_progress",
+          "COALESCE(AVG(s.level), 0) as average_level",
+          "COALESCE(SUM(s.xp), 0) as total_xp",
+          "NOW()::TIMESTAMP as last_updated"
+        ],
+        "from": "classrooms c",
+        "joins": [
+          "LEFT JOIN students s ON c.id = s.classroom_id"
+        ],
+        "group_by": ["c.id", "c.name"],
+        "where": "c.deleted_at IS NULL"
+      }
+    },
+    {
+      "view_id": "VW-ANA-002",
+      "view_name": "v_module_completion_by_classroom",
+      "type": "regular",
+      "priority": "P0",
+      "user_stories": ["US-ANA-001", "US-ANA-004"],
+      "description": "Agregación de completitud de módulos por aula",
+      "definition": {
+        "select_columns": [
+          "c.id as classroom_id",
+          "m.id as module_id",
+          "m.name as module_name",
+          "SUM(CASE WHEN sp.status = 'completed' THEN 1 ELSE 0 END) as completed_count",
+          "SUM(CASE WHEN sp.status = 'in_progress' THEN 1 ELSE 0 END) as in_progress_count",
+          "SUM(CASE WHEN sp.status = 'not_started' THEN 1 ELSE 0 END) as not_started_count",
+          "COALESCE(AVG(sp.percentage), 0) as average_progress"
+        ],
+        "from": "classrooms c",
+        "joins": [
+          "CROSS JOIN modules m",
+          "LEFT JOIN student_progress sp ON c.id = sp.classroom_id AND m.id = sp.module_id"
+        ],
+        "group_by": ["c.id", "m.id", "m.name"]
+      }
+    },
+    {
+      "view_id": "VW-ANA-003",
+      "view_name": "v_student_activity_summary",
+      "type": "regular",
+      "priority": "P0",
+      "user_stories": ["US-ANA-002", "US-ANA-003", "US-ANA-006"],
+      "description": "Resumen de actividad reciente de cada estudiante",
+      "definition": {
+        "select_columns": [
+          "s.id as student_id",
+          "s.classroom_id",
+          "MAX(al.timestamp) as last_activity_timestamp",
+          "EXTRACT(DAY FROM NOW() - MAX(al.timestamp)) as days_inactive",
+          "COUNT(DISTINCT CASE WHEN al.type = 'activity_completed' THEN al.id END) as total_activities_completed"
+        ],
+        "from": "students s",
+        "joins": [
+          "LEFT JOIN activity_logs al ON s.id = al.student_id"
+        ],
+        "group_by": ["s.id", "s.classroom_id"]
+      }
+    },
+    {
+      "view_id": "VW-ANA-004",
+      "view_name": "v_at_risk_students",
+      "type": "materialized",
+      "refresh_strategy": "INCREMENTAL",
+      "refresh_interval_minutes": 30,
+      "priority": "P1",
+      "user_stories": ["US-ANA-006"],
+      "description": "Vista materializada de estudiantes en riesgo con cálculo de nivel de riesgo",
+      "definition": {
+        "select_columns": [
+          "s.id as student_id",
+          "s.name",
+          "s.classroom_id",
+          "COALESCE(s.overall_progress, 0) as progress_percentage",
+          "EXTRACT(DAY FROM NOW() - COALESCE(MAX(al.timestamp), s.created_at)) as days_inactive",
+          "CASE WHEN (EXTRACT(DAY FROM NOW() - COALESCE(MAX(al.timestamp), s.created_at)) > 7 OR COALESCE(s.overall_progress, 0) < 30) THEN 'critical' WHEN (EXTRACT(DAY FROM NOW() - COALESCE(MAX(al.timestamp), s.created_at)) >= 3 AND EXTRACT(DAY FROM NOW() - COALESCE(MAX(al.timestamp), s.created_at)) <= 7) OR (COALESCE(s.overall_progress, 0) >= 30 AND COALESCE(s.overall_progress, 0) <= 50) THEN 'warning' ELSE 'active' END as risk_level"
+        ],
+        "from": "students s",
+        "joins": [
+          "LEFT JOIN activity_logs al ON s.id = al.student_id"
+        ],
+        "group_by": ["s.id", "s.name", "s.classroom_id", "s.overall_progress", "s.created_at"],
+        "where": "s.deleted_at IS NULL"
+      }
+    },
+    {
+      "view_id": "VW-ANA-005",
+      "view_name": "v_activity_timeline_with_metadata",
+      "type": "regular",
+      "priority": "P0",
+      "user_stories": ["US-ANA-005"],
+      "description": "Timeline de actividades enriquecida con información del estudiante y módulo",
+      "definition": {
+        "select_columns": [
+          "al.id",
+          "al.type",
+          "al.student_id",
+          "s.name as student_name",
+          "s.avatar_url as student_avatar_url",
+          "al.classroom_id",
+          "al.module_id",
+          "m.name as module_name",
+          "al.activity_id",
+          "a.name as activity_name",
+          "al.timestamp",
+          "al.metadata"
+        ],
+        "from": "activity_logs al",
+        "joins": [
+          "INNER JOIN students s ON al.student_id = s.id",
+          "LEFT JOIN modules m ON al.module_id = m.id",
+          "LEFT JOIN activities a ON al.activity_id = a.id"
+        ],
+        "where": "al.deleted_at IS NULL",
+        "order_by": "al.timestamp DESC"
+      }
+    }
+  ],
+  "functions": [
+    {
+      "function_id": "FN-ANA-001",
+      "function_name": "fn_calculate_student_overall_progress",
+      "language": "PL/pgSQL",
+      "priority": "P0",
+      "user_stories": ["US-ANA-001", "US-ANA-002", "US-ANA-003", "US-ANA-004", "US-ANA-006"],
+      "description": "Calcula el progreso general de un estudiante en su clase (promedio de todos los módulos)",
+      "parameters": [
+        {
+          "name": "p_student_id",
+          "type": "UUID",
+          "description": "ID del estudiante"
+        },
+        {
+          "name": "p_classroom_id",
+          "type": "UUID",
+          "description": "ID del aula"
+        }
+      ],
+      "returns": "DECIMAL(5,2)",
+      "logic": "SELECT COALESCE(AVG(percentage), 0) FROM student_progress WHERE student_id = p_student_id AND classroom_id = p_classroom_id AND status != 'not_started'"
+    },
+    {
+      "function_id": "FN-ANA-002",
+      "function_name": "fn_get_student_risk_level",
+      "language": "PL/pgSQL",
+      "priority": "P1",
+      "user_stories": ["US-ANA-006"],
+      "description": "Calcula el nivel de riesgo de un estudiante basado en inactividad y progreso",
+      "parameters": [
+        {
+          "name": "p_student_id",
+          "type": "UUID",
+          "description": "ID del estudiante"
+        },
+        {
+          "name": "p_classroom_id",
+          "type": "UUID",
+          "description": "ID del aula"
+        }
+      ],
+      "returns": "VARCHAR",
+      "logic": "Determina 'critical', 'warning', o 'active' basado en: (1) días sin actividad > 7 O progreso < 30% = crítico, (2) días 3-7 O progreso 30-50% = advertencia, (3) resto = activo"
+    },
+    {
+      "function_id": "FN-ANA-003",
+      "function_name": "fn_get_class_average_progress",
+      "language": "PL/pgSQL",
+      "priority": "P1",
+      "user_stories": ["US-ANA-001", "US-ANA-004"],
+      "description": "Calcula el progreso promedio de todos los estudiantes en una clase",
+      "parameters": [
+        {
+          "name": "p_classroom_id",
+          "type": "UUID",
+          "description": "ID del aula"
+        }
+      ],
+      "returns": "DECIMAL(5,2)",
+      "logic": "SELECT COALESCE(AVG(COALESCE(overall_progress, 0)), 0) FROM students WHERE classroom_id = p_classroom_id AND deleted_at IS NULL"
+    },
+    {
+      "function_id": "FN-ANA-004",
+      "function_name": "fn_get_student_time_metrics",
+      "language": "PL/pgSQL",
+      "priority": "P1",
+      "user_stories": ["US-ANA-003"],
+      "description": "Calcula métricas de tiempo: total invertido, promedio por sesión, número de sesiones, última sesión",
+      "parameters": [
+        {
+          "name": "p_student_id",
+          "type": "UUID",
+          "description": "ID del estudiante"
+        }
+      ],
+      "returns": "TABLE",
+      "logic": "SELECT SUM(duration_seconds) as total_time, AVG(duration_seconds) as avg_session_time, COUNT(*) as total_sessions, MAX(ended_at) as last_session_end FROM student_sessions WHERE student_id = p_student_id AND ended_at IS NOT NULL"
+    },
+    {
+      "function_id": "FN-ANA-005",
+      "function_name": "fn_get_recent_classroom_activities",
+      "language": "PL/pgSQL",
+      "priority": "P0",
+      "user_stories": ["US-ANA-001", "US-ANA-005"],
+      "description": "Obtiene las N actividades más recientes de una clase",
+      "parameters": [
+        {
+          "name": "p_classroom_id",
+          "type": "UUID",
+          "description": "ID del aula"
+        },
+        {
+          "name": "p_limit",
+          "type": "INTEGER",
+          "default": "10",
+          "description": "Número máximo de actividades a retornar"
+        }
+      ],
+      "returns": "TABLE",
+      "logic": "SELECT id, type, student_id, activity_id, module_id, timestamp FROM activity_logs WHERE classroom_id = p_classroom_id ORDER BY timestamp DESC LIMIT p_limit"
+    },
+    {
+      "function_id": "FN-ANA-006",
+      "function_name": "fn_get_module_progress_for_student",
+      "language": "PL/pgSQL",
+      "priority": "P0",
+      "user_stories": ["US-ANA-003"],
+      "description": "Obtiene el progreso detallado de un estudiante en todos los módulos de su clase",
+      "parameters": [
+        {
+          "name": "p_student_id",
+          "type": "UUID",
+          "description": "ID del estudiante"
+        },
+        {
+          "name": "p_classroom_id",
+          "type": "UUID",
+          "description": "ID del aula"
+        }
+      ],
+      "returns": "TABLE",
+      "logic": "SELECT module_id, percentage, completed_activities, total_activities, status FROM student_progress WHERE student_id = p_student_id AND classroom_id = p_classroom_id ORDER BY module_id"
+    },
+    {
+      "function_id": "FN-ANA-007",
+      "function_name": "fn_get_activity_by_day_range",
+      "language": "PL/pgSQL",
+      "priority": "P1",
+      "user_stories": ["US-ANA-005"],
+      "description": "Obtiene el recuento de actividades completadas por día en un rango de fechas",
+      "parameters": [
+        {
+          "name": "p_classroom_id",
+          "type": "UUID",
+          "description": "ID del aula"
+        },
+        {
+          "name": "p_start_date",
+          "type": "TIMESTAMP",
+          "description": "Fecha de inicio del rango"
+        },
+        {
+          "name": "p_end_date",
+          "type": "TIMESTAMP",
+          "description": "Fecha de fin del rango"
+        }
+      ],
+      "returns": "TABLE",
+      "logic": "SELECT DATE(timestamp) as date, COUNT(*) as activity_count FROM activity_logs WHERE classroom_id = p_classroom_id AND timestamp BETWEEN p_start_date AND p_end_date AND type = 'activity_completed' GROUP BY DATE(timestamp) ORDER BY date DESC"
+    }
+  ],
+  "triggers": [
+    {
+      "trigger_id": "TR-ANA-001",
+      "trigger_name": "trg_after_activity_log_update_progress",
+      "trigger_event": "INSERT ON activity_logs",
+      "priority": "P0",
+      "user_stories": ["US-ANA-001", "US-ANA-002", "US-ANA-003", "US-ANA-004"],
+      "description": "Actualiza student_progress y student_sessions cuando se inserta un activity_log",
+      "logic": {
+        "when_activity_completed": "Actualizar student_progress.completed_activities, percentage y status. Actualizar estudiante.overall_progress",
+        "when_module_started": "Crear o actualizar student_progress con status='in_progress' y started_at",
+        "when_level_up": "Actualizar student.level, student.last_level_up_date",
+        "when_achievement_unlocked": "Insertar en student_achievements table"
+      }
+    },
+    {
+      "trigger_id": "TR-ANA-002",
+      "trigger_name": "trg_after_activity_log_insert_daily_metrics",
+      "trigger_event": "INSERT ON activity_logs",
+      "priority": "P1",
+      "user_stories": ["US-ANA-001", "US-ANA-005"],
+      "description": "Actualiza classroom_metrics_daily cuando se inserta activity_log",
+      "logic": "Actualizar o insertar en classroom_metrics_daily el recuento de actividades del día"
+    },
+    {
+      "trigger_id": "TR-ANA-003",
+      "trigger_name": "trg_after_student_session_update_time_metrics",
+      "trigger_event": "UPDATE ON student_sessions WHEN (OLD.ended_at IS NULL AND NEW.ended_at IS NOT NULL)",
+      "priority": "P1",
+      "user_stories": ["US-ANA-003"],
+      "description": "Calcula duration_seconds cuando se cierra una sesión",
+      "logic": "NEW.duration_seconds = EXTRACT(EPOCH FROM (NEW.ended_at - NEW.started_at))"
+    }
+  ],
+  "materialized_views_refresh": [
+    {
+      "mvw_name": "v_classroom_dashboard_metrics",
+      "refresh_strategy": "SCHEDULED",
+      "refresh_frequency": "Every 5 minutes",
+      "refresh_query": "REFRESH MATERIALIZED VIEW CONCURRENTLY v_classroom_dashboard_metrics",
+      "indexes_needed": ["idx_v_classroom_dashboard_metrics_classroom_id"]
+    },
+    {
+      "mvw_name": "v_at_risk_students",
+      "refresh_strategy": "SCHEDULED",
+      "refresh_frequency": "Every 30 minutes",
+      "refresh_query": "REFRESH MATERIALIZED VIEW CONCURRENTLY v_at_risk_students",
+      "indexes_needed": ["idx_v_at_risk_students_classroom_risk_level"]
+    }
+  ],
+  "rls_policies": [
+    {
+      "policy_id": "RLS-ANA-001",
+      "table": "activity_logs",
+      "policy_name": "activity_logs_teacher_access",
+      "role": "teacher",
+      "using_clause": "EXISTS (SELECT 1 FROM classrooms c INNER JOIN teacher_classrooms tc ON c.id = tc.classroom_id WHERE c.id = activity_logs.classroom_id AND tc.teacher_id = auth.uid())",
+      "with_check_clause": "EXISTS (SELECT 1 FROM classrooms c INNER JOIN teacher_classrooms tc ON c.id = tc.classroom_id WHERE c.id = activity_logs.classroom_id AND tc.teacher_id = auth.uid())",
+      "priority": "P0",
+      "description": "Profesores solo ven actividades de sus aulas"
+    },
+    {
+      "policy_id": "RLS-ANA-002",
+      "table": "student_progress",
+      "policy_name": "student_progress_teacher_access",
+      "role": "teacher",
+      "using_clause": "EXISTS (SELECT 1 FROM classrooms c INNER JOIN teacher_classrooms tc ON c.id = tc.classroom_id WHERE c.id = student_progress.classroom_id AND tc.teacher_id = auth.uid())",
+      "with_check_clause": "EXISTS (SELECT 1 FROM classrooms c INNER JOIN teacher_classrooms tc ON c.id = tc.classroom_id WHERE c.id = student_progress.classroom_id AND tc.teacher_id = auth.uid())",
+      "priority": "P0",
+      "description": "Profesores solo ven progreso de estudiantes en sus aulas"
+    },
+    {
+      "policy_id": "RLS-ANA-003",
+      "table": "student_sessions",
+      "policy_name": "student_sessions_teacher_access",
+      "role": "teacher",
+      "using_clause": "EXISTS (SELECT 1 FROM classrooms c INNER JOIN teacher_classrooms tc ON c.id = tc.classroom_id WHERE c.id = student_sessions.classroom_id AND tc.teacher_id = auth.uid())",
+      "with_check_clause": "EXISTS (SELECT 1 FROM classrooms c INNER JOIN teacher_classrooms tc ON c.id = tc.classroom_id WHERE c.id = student_sessions.classroom_id AND tc.teacher_id = auth.uid())",
+      "priority": "P1",
+      "description": "Profesores solo ven sesiones de sus estudiantes"
+    }
+  ],
+  "data_seeds": [
+    {
+      "seed_id": "SEED-ANA-001",
+      "description": "Datos de prueba para activity_logs (actividades recientes de ejemplo)",
+      "table": "activity_logs",
+      "sample_records": 10,
+      "purpose": "Demostración del dashboard con datos históricos"
+    },
+    {
+      "seed_id": "SEED-ANA-002",
+      "description": "Datos de prueba para student_progress (progreso variado)",
+      "table": "student_progress",
+      "sample_records": "5 estudiantes × 3 módulos = 15 registros",
+      "purpose": "Demostración de tabla de estudiantes y reportes"
+    },
+    {
+      "seed_id": "SEED-ANA-003",
+      "description": "Datos de prueba para student_sessions",
+      "table": "student_sessions",
+      "sample_records": "3-4 sesiones por estudiante",
+      "purpose": "Demostración de métricas de tiempo"
+    }
+  ],
+  "dependencies": {
+    "required_tables": [
+      {
+        "table_name": "students",
+        "reason": "Foreign key en activity_logs, student_progress, student_sessions",
+        "epic": "EAI-001, EAI-003"
+      },
+      {
+        "table_name": "classrooms",
+        "reason": "Foreign key en actividad y progreso",
+        "epic": "EAI-001, EAI-005"
+      },
+      {
+        "table_name": "modules",
+        "reason": "Foreign key en activity_logs y student_progress",
+        "epic": "EAI-001"
+      },
+      {
+        "table_name": "activities",
+        "reason": "Foreign key en activity_logs",
+        "epic": "EAI-002"
+      }
+    ],
+    "required_fields_in_existing_tables": [
+      {
+        "table": "students",
+        "fields": [
+          {
+            "name": "overall_progress",
+            "type": "DECIMAL(5,2)",
+            "reason": "Denormalización para performance del dashboard"
+          },
+          {
+            "name": "level",
+            "type": "INTEGER",
+            "reason": "Cálculo de promedio de niveles en dashboard"
+          },
+          {
+            "name": "xp",
+            "type": "INTEGER",
+            "reason": "XP total acumulado para dashboard"
+          },
+          {
+            "name": "avatar_url",
+            "type": "VARCHAR",
+            "reason": "Mostrar avatares en UI de analytics"
+          }
+        ]
+      }
+    ],
+    "epics_blocked_by_this": [
+      {
+        "epic": "EXT-005",
+        "reason": "Reportes avanzados necesitan estas tablas base"
+      }
+    ],
+    "epics_required_for_this": [
+      {
+        "epic": "EAI-001",
+        "reason": "Sistema de autenticación, roles, usuarios base"
+      },
+      {
+        "epic": "EAI-002",
+        "reason": "Sistema de actividades completadas"
+      },
+      {
+        "epic": "EAI-003",
+        "reason": "Sistema de gamificación (XP, niveles, logros)"
+      },
+      {
+        "epic": "EAI-005",
+        "reason": "Gestión de aulas y asignación de módulos"
+      }
+    ]
+  },
+  "performance_considerations": [
+    {
+      "concern": "activity_logs crecerá rápidamente (miles de registros diarios)",
+      "solution": "Particionar por mes usando RANGE PARTITIONING en timestamp",
+      "priority": "P0",
+      "tables_affected": ["activity_logs"]
+    },
+    {
+      "concern": "Queries de dashboard con múltiples joins pueden ser lentos",
+      "solution": "Usar vistas materializadas con refresh cada 5 minutos",
+      "priority": "P0",
+      "tables_affected": ["v_classroom_dashboard_metrics", "v_module_completion_by_classroom"]
+    },
+    {
+      "concern": "Búsqueda de última actividad es frecuente",
+      "solution": "Índice compuesto (student_id, timestamp DESC)",
+      "priority": "P0",
+      "tables_affected": ["activity_logs"]
+    },
+    {
+      "concern": "Cálculo de progreso promedio por módulo requiere agregación compleja",
+      "solution": "Vista materializada v_module_completion_by_classroom",
+      "priority": "P1",
+      "tables_affected": ["student_progress", "modules"]
+    },
+    {
+      "concern": "Análisis de riesgo requiere calcular días inactivos para muchos estudiantes",
+      "solution": "Vista materializada v_at_risk_students con refresh cada 30 minutos",
+      "priority": "P1",
+      "tables_affected": ["students", "activity_logs"]
+    }
+  ],
+  "caching_strategy": [
+    {
+      "entity": "classroom_dashboard_metrics",
+      "cache_key": "dashboard:{classroom_id}",
+      "ttl_seconds": 300,
+      "invalidate_on": ["activity_log INSERT", "student_progress UPDATE"],
+      "reason": "Dashboard se actualiza cada 5 minutos en UI"
+    },
+    {
+      "entity": "class_average_progress",
+      "cache_key": "class_avg_progress:{classroom_id}",
+      "ttl_seconds": 300,
+      "invalidate_on": ["student_progress UPDATE"],
+      "reason": "Usado en múltiples vistas de analytics"
+    },
+    {
+      "entity": "at_risk_students",
+      "cache_key": "at_risk:{classroom_id}",
+      "ttl_seconds": 1800,
+      "invalidate_on": ["activity_log INSERT", "student_progress UPDATE"],
+      "reason": "Análisis de riesgo es costoso, pero puede ser un poco antiguo"
+    },
+    {
+      "entity": "activity_by_day",
+      "cache_key": "activity_by_day:{classroom_id}:{date_range}",
+      "ttl_seconds": 3600,
+      "invalidate_on": ["activity_log INSERT", "classroom_metrics_daily UPDATE"],
+      "reason": "Datos históricos cambian poco"
+    }
+  ],
+  "export_formats": [
+    {
+      "format": "CSV",
+      "used_in": ["US-ANA-004"],
+      "description": "Reporte de progreso exportable a CSV",
+      "encoding": "UTF-8 with BOM",
+      "fields": ["Módulo", "Completados", "En Progreso", "No Iniciados", "% Promedio"]
+    }
+  ],
+  "notes": [
+    "IMPORTANTE: La tabla student_progress es CRÍTICA para la performance del analytics. Debe mantenerse actualizada en tiempo casi real.",
+    "Las vistas materializadas v_classroom_dashboard_metrics y v_at_risk_students deben usar REFRESH MATERIALIZED VIEW CONCURRENTLY para evitar bloqueos.",
+    "El sistema de logging de actividades (activity_logs) debe ser extremadamente confiable ya que es la base de todos los reportes.",
+    "Considerar índices adicionales basados en patrones de query reales en producción.",
+    "El particionamiento de activity_logs debe implementarse pronto para evitar problemas de escalabilidad.",
+    "Las métricas de tiempo (student_sessions) son opcionales para MVP pero recomendadas para análisis completo.",
+    "RLS policies son críticas para garantizar que profesores solo vean datos de sus aulas.",
+    "Los triggers deben tener error handling robusto para no fallar silenciosamente."
+  ],
+  "summary": {
+    "total_tables": 4,
+    "total_views": 5,
+    "total_functions": 7,
+    "total_triggers": 3,
+    "materialized_views": 2,
+    "regular_views": 3,
+    "rls_policies": 3,
+    "critical_dependencies": 4,
+    "estimated_data_volume": {
+      "activity_logs": "Millones de registros (crecer rápidamente)",
+      "student_progress": "Miles de registros (estudiantes × módulos)",
+      "student_sessions": "Decenas de miles de registros",
+      "classroom_metrics_daily": "Miles de registros (1 por aula por día)"
+    }
+  }
+}

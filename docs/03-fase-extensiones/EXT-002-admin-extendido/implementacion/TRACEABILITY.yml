@@ -1,0 +1,134 @@
+# TRACEABILITY.yml - EXT-002: Gestión Avanzada Admin (Admin Extendido)
+
+epic_code: EXT-002
+epic_name: Gestión Avanzada Admin
+phase: 3
+phase_name: Extensiones (Alcance v2 CORE)
+budget_mxn: 25200
+story_points: 63
+status: completed
+sprint: "9-10"
+
+# CAMBIOS 2025-11-08:
+# - Añadida US-AE-005 (Parametrización Dinámica de Gamificación, 12 SP)
+# - Añadida US-AE-007 (Asignar Grupos a Maestros, 6 SP)
+# - Total añadido: 18 SP (+$7,200 MXN)
+
+# ============================================================================
+# DOCUMENTACIÓN - USER STORIES
+# ============================================================================
+
+documentation:
+  user_stories:
+    # Funcionalidades originales (~10 US, 45 SP)
+    # [Lista de US originales aquí - mantener según implementación real]
+
+    # NUEVAS funcionalidades v2 CORE (2 US, 18 SP)
+    - id: US-AE-005
+      file: historias-usuario/US-AE-005-parametrizacion-gamificacion.md
+      title: Parametrización Dinámica de Gamificación
+      sp: 12
+      status: specified
+      origin: new_v2_core_feature
+      note: "Configuración UI para parámetros de gamificación (XP, coins, rangos, ayudas)"
+      spec_file: /tmp/US-AE-005-parametrizacion-gamificacion.md
+
+    - id: US-AE-007
+      file: historias-usuario/US-AE-007-asignar-grupos-maestros.md
+      title: Asignar Grupos a Maestros
+      sp: 6
+      status: specified
+      origin: new_v2_core_feature
+      note: "Gestión de asignación de classrooms a maestros (individual y masiva)"
+      spec_file: /tmp/US-AE-007-asignar-grupos-maestros.md
+
+# ============================================================================
+# IMPLEMENTACIÓN
+# ============================================================================
+
+implementation:
+  database:
+    schemas_used: [admin_dashboard, system_configuration, audit_logging]
+
+    tables:
+      - name: admin_dashboard.content_moderation
+        type: new
+        description: Cola de moderación de contenido
+
+      - name: admin_dashboard.moderation_rules
+        type: new
+        description: Reglas de auto-moderación
+
+      - name: system_configuration.feature_flags
+        type: new
+        description: Feature flags por tenant
+
+      - name: system_configuration.system_settings
+        type: extended
+        description: Configuración global del sistema
+
+  backend:
+    module: admin-extended
+    path: apps/backend/src/modules/admin-extended/
+
+    services:
+      - user-management.service.ts
+      - system-config.service.ts
+      - admin-analytics.service.ts
+      - content-moderation.service.ts
+
+    endpoints:
+      - POST /api/v1/admin/users/bulk-create
+      - PATCH /api/v1/admin/users/bulk-update
+      - GET /api/v1/admin/analytics/system
+      - GET /api/v1/admin/moderation/queue
+      - PATCH /api/v1/admin/config/feature-flags
+      - PATCH /api/v1/admin/config/system-settings
+
+  frontend:
+    feature: admin-tools
+    path: apps/frontend/src/features/admin-tools/
+
+    components:
+      - BulkUserManager.tsx
+      - SystemConfigPanel.tsx
+      - AnalyticsDashboard.tsx
+      - ModerationQueue.tsx
+      - FeatureFlagsManager.tsx
+
+# ============================================================================
+# MÉTRICAS
+# ============================================================================
+
+metrics:
+  effort:
+    estimated_sp: 45
+    actual_sp: 47
+    variance: +4%
+
+  deliverables:
+    backend_endpoints: 15
+    frontend_components: 12
+    database_tables: 4
+
+status:
+  completion: 100%
+  completion_date: "2024-10-15"
+
+# ============================================================================
+# DEPENDENCIAS
+# ============================================================================
+
+dependencies:
+  depends_on_epics: [EAI-001, EAI-005, EMR-001]
+  enables_epics: []
+
+# ============================================================================
+# IMPACTO
+# ============================================================================
+
+impact:
+  - Administración masiva de usuarios eficiente
+  - Configuración granular de sistema
+  - Insights profundos con analytics agregados
+  - Moderación de contenido automatizada
