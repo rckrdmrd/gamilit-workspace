@@ -50,10 +50,10 @@ describe('SessionManagementService', () => {
       refresh_token: 'refresh-token-123',
       ip_address: '127.0.0.1',
       user_agent: 'Mozilla/5.0',
-      device_type: DeviceTypeEnum.WEB,
+      device_type: DeviceTypeEnum.DESKTOP,
       browser: 'Chrome',
       os: 'Windows',
-      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     };
 
     const mockSession = {
@@ -298,13 +298,13 @@ describe('SessionManagementService', () => {
     });
   });
 
-  describe('revokeAllUserSessions', () => {
+  describe('revokeAllSessions', () => {
     it('should revoke all active sessions for user', async () => {
       // Arrange
       mockSessionRepository.update.mockResolvedValue({ affected: 3 }); // 3 sessions revoked
 
       // Act
-      await service.revokeAllUserSessions('user-1');
+      await service.revokeAllSessions('user-1');
 
       // Assert
       expect(mockSessionRepository.update).toHaveBeenCalledWith(
@@ -318,7 +318,7 @@ describe('SessionManagementService', () => {
       mockSessionRepository.update.mockResolvedValue({ affected: 0 });
 
       // Act & Assert
-      await expect(service.revokeAllUserSessions('user-1')).resolves.not.toThrow();
+      await expect(service.revokeAllSessions('user-1')).resolves.not.toThrow();
     });
   });
 
@@ -326,7 +326,7 @@ describe('SessionManagementService', () => {
     const mockSessions = [
       {
         id: 'session-1',
-        device_type: DeviceTypeEnum.WEB,
+        device_type: DeviceTypeEnum.DESKTOP,
         browser: 'Chrome',
         os: 'Windows',
         ip_address: '127.0.0.1',

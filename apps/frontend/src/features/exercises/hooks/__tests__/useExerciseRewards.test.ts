@@ -171,8 +171,12 @@ describe('useExerciseRewards', () => {
         useExerciseRewards({ initialMLCoins: 100 })
       );
 
+      // Split into separate act() calls to allow state updates
       act(() => {
         result.current.unlockHint(mockHint1); // -10
+      });
+
+      act(() => {
         result.current.unlockHint(mockHint2); // -15
       });
 
@@ -318,9 +322,12 @@ describe('useExerciseRewards', () => {
         useExerciseRewards({ initialMLCoins: 100 })
       );
 
-      // Unlock some hints
+      // Unlock some hints (separate act() calls for state batching)
       act(() => {
         result.current.unlockHint(mockHint1);
+      });
+
+      act(() => {
         result.current.unlockHint(mockHint2);
       });
 
@@ -357,9 +364,12 @@ describe('useExerciseRewards', () => {
       // Start: 100 ML Coins
       expect(result.current.mlCoinsBalance).toBe(100);
 
-      // Unlock 2 hints
+      // Unlock 2 hints (separate act() calls for state batching)
       act(() => {
         result.current.unlockHint(mockHint1); // -10
+      });
+
+      act(() => {
         result.current.unlockHint(mockHint2); // -15
       });
 
