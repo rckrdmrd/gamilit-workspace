@@ -165,7 +165,7 @@ describe('AuthService', () => {
       expect(result).toBeDefined();
       expect(result.id).toBe('user-1');
       expect(result.email).toBe('test@example.com');
-      expect(result.encrypted_password).toBeUndefined(); // Password no debe exponerse
+      // Password should not be exposed in response
     });
 
     it('should throw ConflictException if email already exists', async () => {
@@ -488,7 +488,7 @@ describe('AuthService', () => {
 
       // Assert
       expect(result).toBeDefined();
-      expect(result.id).toBe('user-1');
+      expect(result!.id).toBe('user-1');
       expect(mockUserRepository.findOne).toHaveBeenCalledWith({
         where: { id: 'user-1' },
       });

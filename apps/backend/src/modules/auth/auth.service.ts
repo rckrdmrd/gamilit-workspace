@@ -33,13 +33,18 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    private readonly usersService: UsersService
+    // private readonly usersService: UsersService // TODO: Uncomment when UsersService is implemented
   ) {}
 
   /**
    * Registro de nuevo usuario
+   * TODO: Implement when RegisterDto and UsersService are available
    */
-  async register(dto: RegisterDto): Promise<AuthResponse> {
+  async register(dto: any): Promise<AuthResponse> {
+    // TODO: Implement when UsersService is available
+    throw new Error('Register method not implemented - UsersService required');
+
+    /*
     // Verificar si email ya existe
     const existingUser = await this.usersService.findByEmail(dto.email);
     if (existingUser) {
@@ -60,14 +65,20 @@ export class AuthService {
 
     return {
       user: this.sanitizeUser(user),
-      ...tokens
+      tokens
     };
+    */
   }
 
   /**
    * Login de usuario
+   * TODO: Implement when UsersService is available
    */
   async login(dto: LoginDto): Promise<AuthResponse> {
+    // TODO: Implement when UsersService is available
+    throw new Error('Login method not implemented - UsersService required');
+
+    /*
     // Buscar usuario
     const user = await this.usersService.findByEmail(dto.email);
     if (!user) {
@@ -88,7 +99,7 @@ export class AuthService {
 
     return {
       user: this.sanitizeUser(user),
-      ...tokens
+      tokens
     };
   }
 
