@@ -97,9 +97,9 @@ VALUES
         NOW()
     ),
     (
-        'parent_dashboard',
-        'Dashboard para Padres',
-        'Dashboard para padres de familia',
+        'content_marketplace',
+        'Marketplace de Contenido',
+        'Compra/venta de contenido educativo',
         false,
         0,
         '[]'::jsonb,
@@ -107,9 +107,39 @@ VALUES
         NOW()
     ),
     (
-        'content_marketplace',
-        'Marketplace de Contenido',
-        'Compra/venta de contenido educativo',
+        'lti_integration',
+        'Integración LTI 1.3',
+        'Integración con LMS externos (Canvas, Moodle, Blackboard)',
+        false,
+        0,
+        '[]'::jsonb,
+        NOW(),
+        NOW()
+    ),
+    (
+        'peer_challenges',
+        'Desafíos Peer-to-Peer',
+        'Sistema de desafíos entre estudiantes',
+        false,
+        0,
+        '[]'::jsonb,
+        NOW(),
+        NOW()
+    ),
+    (
+        'white_label',
+        'White Label',
+        'Multi-tenancy avanzado con branding personalizado',
+        false,
+        0,
+        '[]'::jsonb,
+        NOW(),
+        NOW()
+    ),
+    (
+        'parent_portal',
+        'Portal para Padres',
+        'Portal con notificaciones y reportes para padres',
         false,
         0,
         '[]'::jsonb,

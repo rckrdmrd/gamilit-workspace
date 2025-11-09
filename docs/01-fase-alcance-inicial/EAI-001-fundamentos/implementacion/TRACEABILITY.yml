@@ -517,10 +517,11 @@ testing:
         rf: RF-AUTH-002
 
   coverage:
-    overall: 88%
-    backend: 89%
-    frontend: 87%
-    database: 85%
+    overall: 18%
+    backend: 18%
+    frontend: 15%
+    database: 0%
+    note: "ACTUALIZADO 2025-11-08: Coverage real muy inferior a estimado original"
 
 # ============================================================================
 # MÉTRICAS Y RESULTADO
@@ -543,10 +544,13 @@ metrics:
     variance: +10%
 
   quality:
-    test_coverage: 88%
+    test_coverage: 18%
+    test_coverage_original_estimate: 88%
+    coverage_gap: -70%
     bugs_found: 15
     bugs_fixed: 15
-    tech_debt: low
+    tech_debt: medium
+    note: "Coverage real actualizado 2025-11-08"
 
   deliverables:
     database_objects: 23
@@ -560,10 +564,14 @@ status:
   completion_date: "2024-08-15"
   accepted_by: Product Owner
   deployed_to: production
+  updated: "2025-11-08"
   notes: |
     Épica fundamental completada exitosamente con ligero sobrepaso en tiempo y presupuesto (+5%).
     Sistema de autenticación robusto con OAuth, RBAC, y gestión completa de sesiones.
-    Cobertura de tests excelente (88%). Base sólida para resto del proyecto.
+
+    ACTUALIZACIÓN 2025-11-08: Test coverage real es 18%, no 88% como se estimó originalmente.
+    Esto representa una brecha crítica de -70% que necesita ser atendida.
+    La funcionalidad está implementada y funciona, pero requiere urgentemente tests.
 
 # ============================================================================
 # DEPENDENCIAS

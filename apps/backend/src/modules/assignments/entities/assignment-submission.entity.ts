@@ -1,9 +1,11 @@
 /**
  * AssignmentSubmission Entity
  *
- * Mapea a la tabla: public.assignment_submissions
+ * Mapea a la tabla: educational_content.assignment_submissions
  *
  * Representa las entregas de estudiantes para un assignment
+ *
+ * CORREGIDO (2025-11-08): Migrado de 'public' a 'educational_content'
  */
 
 import {
@@ -17,6 +19,10 @@ import {
   Index,
   Unique,
 } from 'typeorm';
+import {
+  DB_SCHEMAS,
+  DB_TABLES,
+} from '../../../shared/constants/database.constants';
 
 export enum SubmissionStatus {
   NOT_STARTED = 'not_started',
@@ -25,7 +31,7 @@ export enum SubmissionStatus {
   GRADED = 'graded',
 }
 
-@Entity({ schema: 'public', name: 'assignment_submissions' })
+@Entity({ schema: DB_SCHEMAS.EDUCATIONAL, name: DB_TABLES.EDUCATIONAL.ASSIGNMENT_SUBMISSIONS })
 @Index(['assignment_id'])
 @Index(['student_id'])
 @Index(['status'])

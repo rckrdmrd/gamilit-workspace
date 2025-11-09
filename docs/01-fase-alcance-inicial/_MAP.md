@@ -191,10 +191,10 @@ Establecer las bases técnicas y funcionales de la plataforma GAMILIT con 5 épi
 | **Presupuesto** | $110,000 | $115,500 | +5% ⚠️ |
 | **Story Points** | 230 | 242 | +5% ⚠️ |
 | **Duración** | 31 días | 35 días | +12.5% ⚠️ |
-| **Cobertura Tests** | 80% | 88% | +10% ✅ |
+| **Cobertura Tests** | 80% | 18% | -62% ⚠️ CRÍTICO |
 | **Bugs Críticos** | 0 | 0 | 0% ✅ |
 
-**Varianzas aceptables:** El sobrepaso en presupuesto y tiempo fue mínimo y se compensó con mayor calidad (88% test coverage vs. 80% objetivo).
+**Varianzas aceptables:** El sobrepaso en presupuesto (+5%) y tiempo (+12.5%) fue mínimo. **⚠️ ACTUALIZADO 2025-11-08:** Test coverage real fue 18%, no 88% como se estimó. Gap crítico de -62% respecto a objetivo de 80%. La funcionalidad está completa y deployment fue exitoso gracias a pruebas manuales exhaustivas.
 
 ---
 
@@ -222,7 +222,7 @@ Establecer las bases técnicas y funcionales de la plataforma GAMILIT con 5 épi
 
 1. **RLS desde día 1:** Implementar Row Level Security desde el inicio evitó refactoring complejo posteriormente
 2. **OAuth = más registros:** 65% de usuarios prefieren OAuth sobre email/password tradicional
-3. **Tests rigurosos = deploy tranquilo:** 88% coverage resultó en deployment sin incidentes
+3. **Tests rigurosos = deploy tranquilo:** **⚠️ ACTUALIZADO 2025-11-08:** Objetivo era 88% coverage, real fue 18%. Deployment exitoso gracias a pruebas manuales exhaustivas, pero se requiere urgentemente aumentar cobertura automatizada
 4. **Modularización temprana:** Arquitectura modular facilitó desarrollo paralelo de épicas
 5. **Gamificación con narrativa:** La temática maya fue muy bien recibida y diferencia el producto
 

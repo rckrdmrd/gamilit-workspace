@@ -41,7 +41,7 @@ CREATE TABLE educational_content.modules (
     maya_rank_granted gamification_system.maya_rank,
     xp_reward integer DEFAULT 100,
     ml_coins_reward integer DEFAULT 50,
-    status public.content_status DEFAULT 'draft'::public.content_status,
+    status educational_content.module_status DEFAULT 'draft'::educational_content.module_status,
     is_published boolean DEFAULT false,
     is_featured boolean DEFAULT false,
     is_free boolean DEFAULT true,
@@ -77,7 +77,7 @@ ALTER TABLE ONLY educational_content.modules
     ADD CONSTRAINT modules_module_code_key UNIQUE (module_code);
 
 -- Indexes
-CREATE INDEX idx_modules_active_published ON educational_content.modules USING btree (order_index) WHERE ((is_published = true) AND (status = 'published'::public.content_status));
+CREATE INDEX idx_modules_active_published ON educational_content.modules USING btree (order_index) WHERE ((is_published = true) AND (status = 'published'::educational_content.module_status));
 CREATE INDEX idx_modules_content_gin ON educational_content.modules USING gin (content);
 CREATE INDEX idx_modules_difficulty ON educational_content.modules USING btree (difficulty_level);
 CREATE INDEX idx_modules_order ON educational_content.modules USING btree (order_index);
@@ -115,7 +115,7 @@ ALTER TABLE ONLY educational_content.modules
 -- Row Level Security Policies
 CREATE POLICY modules_all_admin ON educational_content.modules USING (gamilit.is_admin());
 CREATE POLICY modules_select_admin ON educational_content.modules FOR SELECT USING (gamilit.is_admin());
-CREATE POLICY modules_select_published ON educational_content.modules FOR SELECT USING (((is_published = true) AND (status = 'published'::public.content_status)));
+CREATE POLICY modules_select_published ON educational_content.modules FOR SELECT USING (((is_published = true) AND (status = 'published'::educational_content.module_status)));
 
 -- Permissions
 GRANT ALL ON TABLE educational_content.modules TO gamilit_user;

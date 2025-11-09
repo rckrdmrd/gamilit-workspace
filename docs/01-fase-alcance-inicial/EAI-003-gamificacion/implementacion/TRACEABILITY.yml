@@ -565,10 +565,11 @@ testing:
         rf: RF-GAM-003
 
   coverage:
-    overall: 89%
-    backend: 91%
-    frontend: 87%
-    database: 85%
+    overall: 25%
+    backend: 35%
+    frontend: 15%
+    database: 0%
+    note: "ACTUALIZADO 2025-11-08: Solo módulo ranks tiene tests. Coverage real muy inferior a estimado"
 
 # ============================================================================
 # MÉTRICAS Y RESULTADO
@@ -591,10 +592,13 @@ metrics:
     variance: +10%
 
   quality:
-    test_coverage: 89%
+    test_coverage: 25%
+    test_coverage_original_estimate: 89%
+    coverage_gap: -64%
     bugs_found: 12
     bugs_fixed: 12
-    tech_debt: low
+    tech_debt: medium
+    note: "Coverage real actualizado 2025-11-08 - Solo ranks.service y ranks.controller tienen tests"
 
   deliverables:
     database_objects: 19
@@ -608,10 +612,17 @@ status:
   completion_date: "2024-09-15"
   accepted_by: Product Owner
   deployed_to: production
+  updated: "2025-11-08"
   notes: |
     Épica completada exitosamente con ligero sobrepaso en tiempo y presupuesto (+5%).
-    Cobertura de tests excelente (89%). Sistema de gamificación bien recibido por usuarios.
+    Sistema de gamificación bien recibido por usuarios.
     Narrativa maya agrega valor diferencial.
+
+    ACTUALIZACIÓN 2025-11-08: Test coverage real es 25%, no 89% como se estimó originalmente.
+    Solo ranks.service.spec.ts y ranks.controller.spec.ts tienen tests completos.
+    Los demás servicios (achievement, coin, powerup, streak, leaderboard) NO tienen tests.
+    Frontend gamification tiene 74 componentes implementados pero solo 1 test.
+    Brecha crítica de -64% que necesita ser atendida urgentemente.
 
 # ============================================================================
 # DEPENDENCIAS

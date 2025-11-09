@@ -30,13 +30,15 @@ SET default_table_access_method = heap;
 -- Table: ml_coins_transactions
 -- Schema: gamification_system
 -- Description: Registro de transacciones de ML Coins (ingresos y gastos)
--- Version: 2.0 (2025-11-07) - Convertido a usar ENUM transaction_type
--- Source of Truth: docs/02-especificaciones-tecnicas/tipos-compartidos/TYPES-GAMIFICATION.md
+-- Version: 2.0 (2025-11-08) - Convertido a usar ENUM transaction_type
+-- Source of Truth:
+--   - RF: docs/01-fase-alcance-inicial/EAI-003-gamificacion/requerimientos/RF-GAM-004-economia-ml-coins.md
+--   - ET: docs/01-fase-alcance-inicial/EAI-003-gamificacion/especificaciones/ET-GAM-004-tipos-compartidos-gamificacion.md
 --
 -- 📚 Documentación:
--- Requerimiento: docs/01-requerimientos/gamificacion/02-ECONOMIA-ML-COINS.md
--- Especificación: docs/02-especificaciones-tecnicas/02-gamificacion/ET-GAM-002-comodines.md
---   (Nota: Incluye economía ML Coins y sistema de comodines)
+-- Requerimiento: docs/01-fase-alcance-inicial/EAI-003-gamificacion/requerimientos/RF-GAM-004-economia-ml-coins.md
+-- Especificación (Tipos): docs/01-fase-alcance-inicial/EAI-003-gamificacion/especificaciones/ET-GAM-004-tipos-compartidos-gamificacion.md
+-- Especificación (Comodines): docs/01-fase-alcance-inicial/EAI-003-gamificacion/especificaciones/ET-GAM-002-comodines.md
 -- =====================================================================================
 
 CREATE TABLE gamification_system.ml_coins_transactions (
@@ -73,7 +75,7 @@ COMMENT ON TABLE gamification_system.ml_coins_transactions IS 'Registro de trans
 -- Name: COLUMN ml_coins_transactions.transaction_type; Type: COMMENT; Schema: gamification_system; Owner: postgres
 --
 
-COMMENT ON COLUMN gamification_system.ml_coins_transactions.transaction_type IS 'Tipo de transacción usando gamification_system.transaction_type ENUM (v2.0 - 14 tipos): 7 earned (ingresos), 3 spent (gastos), 4 admin/sistema. Ver TYPES-GAMIFICATION.md para especificación completa.';
+COMMENT ON COLUMN gamification_system.ml_coins_transactions.transaction_type IS 'Tipo de transacción usando gamification_system.transaction_type ENUM (v2.0 - 14 tipos): 7 earned (ingresos), 3 spent (gastos), 4 admin/sistema. Ver ET-GAM-004-tipos-compartidos-gamificacion.md para especificación completa.';
 
 
 --

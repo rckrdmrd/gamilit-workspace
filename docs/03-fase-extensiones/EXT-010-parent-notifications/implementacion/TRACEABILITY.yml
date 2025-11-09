@@ -10,16 +10,49 @@ completion: 35%
 
 implementation:
   database:
+    schema: auth_management
+    status: completed
+    last_update: "2025-11-08"
+    ddl_path: apps/database/ddl/schemas/auth_management/tables/
     tables:
       - name: parent_accounts
         type: new
         status: completed
-        description: Cuentas de padres
+        created: "2025-11-08"
+        file: apps/database/ddl/schemas/auth_management/tables/08-parent_accounts.sql
+        description: Cuentas de padres/tutores con configuraciones del portal
+        features:
+          - Notification frequency preferences
+          - Alert configuration
+          - Report format preferences
+          - Dashboard widgets customization
+          - Access level permissions
 
       - name: parent_student_links
         type: new
         status: completed
-        description: Links padre-estudiante
+        created: "2025-11-08"
+        file: apps/database/ddl/schemas/auth_management/tables/09-parent_student_links.sql
+        description: Vinculación N:M entre padres/tutores y estudiantes
+        features:
+          - Multiple relationship types
+          - Permission granularity
+          - Verification workflow
+          - Self-linking with verification codes
+          - Student approval for adults
+
+      - name: parent_notifications
+        type: new
+        status: completed
+        created: "2025-11-08"
+        file: apps/database/ddl/schemas/auth_management/tables/10-parent_notifications.sql
+        description: Notificaciones específicas para padres sobre progreso de hijos
+        features:
+          - Multiple notification types (daily, weekly, monthly, alerts)
+          - Multi-channel delivery (email, in-app, push)
+          - Student snapshot tracking
+          - Scheduled delivery support
+          - Priority levels
 
   backend:
     module: parent-portal

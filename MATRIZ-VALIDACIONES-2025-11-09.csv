@@ -1,0 +1,19 @@
+ID,Validación,Inventario,Real,Estado,Delta,Prioridad,Esfuerzo (hrs),Responsable,Acción Requerida
+V1,Total Schemas,14,14,✅ Correcto,0,-,-,-,Ninguna
+V2,Total Tablas,98,97,⚠️ Discrepancia,-1,P1,2,Database Team,Auditar schema por schema
+V3,ORM Backend,Prisma,TypeORM,❌ CRÍTICO,N/A,P0,0.1,Tech Lead,Corregir BACKEND_INVENTORY.yml línea 30
+V4,Total Entities,45,47,⚠️ Discrepancia,+2,P1,1,Backend Team,Listar y documentar 2 entities faltantes
+V5,Schemas en DB_SCHEMAS,14,8,⚠️ Incompleto,-6,P0,1,Backend Team,Agregar admin_dashboard/lti/public/storage/system_config/auth
+V6,Tablas EDUCATIONAL en DB_TABLES,15,8,⚠️ Incompleto,-7,P0,0.5,Backend Team,Agregar 7 tablas faltantes
+V7,Backend Test Coverage,18%,~5%,❌ CRÍTICO,-13pts,P0,0.5,QA Lead,Actualizar BACKEND_INVENTORY.yml
+V8,Frontend Test Coverage,13%,~5%,❌ CRÍTICO,-8pts,P0,0.3,QA Lead,Actualizar FRONTEND_INVENTORY.yml
+V9,Frontend Componentes,379,~387,✅ Aproximado,+8,-,-,-,Aceptable (diferencia normal)
+V10,Schema public limpio,0 tablas,0 tablas,✅ Correcto,0,-,-,-,Migración exitosa
+V11,Schema educational_content completo,15,15,✅ 100%,0,-,-,-,Implementación completa
+V12,ENUMs sincronizados,12,?,⚠️ Pendiente,?,P2,4,Backend Team,Validar schema por schema
+V13,Entities → Tablas mapeadas,N/A,N/A,✅ Correcto,N/A,-,-,-,Usan DB_SCHEMAS/DB_TABLES correctamente
+V14,Duplicidades de tablas,0,0,✅ Correcto,0,-,-,-,Migración assignments eliminó duplicados
+V15,TRACEABILITY.yml actualizado,Sí,Parcial,⚠️ Desactualizado,N/A,P2,8,Tech Lead,Auditar 9 épicas vs código real
+V16,Test coverage gamification,25%,~3%,❌ Sobrestimado,-22pts,P2,40,Backend+QA,Agregar tests a 5 servicios faltantes
+V17,Test coverage gamification (FE),15%,~1.4%,❌ Sobrestimado,-13.6pts,P2,40,Frontend+QA,Agregar tests a 73 componentes faltantes
+V18,Schemas vacíos documentados,No,3 vacíos,⚠️ Sin claridad,N/A,P1,4,Arquitecto,Decidir estrategia: consolidar/implementar/documentar

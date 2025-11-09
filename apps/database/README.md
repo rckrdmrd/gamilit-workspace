@@ -1,317 +1,170 @@
 # Database - GAMILIT
 
-**Fecha actualización:** 2025-11-07
-**Versión:** 2.1 - Inventario Completo
-**Estado:** 🚧 **DOCUMENTACIÓN COMPLETA** - Correcciones en paralelo
-**Sistema:** SIMCO (Sistema Indexado Modular por Contexto)
+Proyecto de base de datos PostgreSQL para la plataforma GAMILIT
 
----
-
-## 📊 Estadísticas Actuales
-
-### Objetos de Base de Datos
-
-| Tipo | Cantidad | Documentado | Estado |
-|------|----------|-------------|--------|
-| **Schemas** | 13 | 10 | ⚠️ 3 sin documentar |
-| **Tablas** | 64 | 48 | ⚠️ +16 no documentadas |
-| **ENUMs** | 35 | 24 | 🚨 **31 mal ubicados** (✅ 2 corregidos) |
-| **Funciones** | 61 | 0 | 📝 Sin documentar |
-| **Triggers** | 52 | 0 | 📝 Sin documentar |
-| **RLS Policies** | 24 | 0 | 📝 Sin documentar |
-| **Índices** | 74 | 0 | 🚨 **64 mal ubicados** |
-| **Vistas** | 16 | 12 | ⚠️ +4 no documentadas |
-| **Seeds** | 47 | 32 | ⚠️ +15 no documentados |
-| **TOTAL** | **386** | **126** | **260 requieren acción** |
-
----
-
-## 🚨 Problemas Críticos Identificados
-
-### Problema P0: Schema public Sobrecargado
-
-**128+ objetos mal ubicados en public:**
-- 31 ENUMs (89% del total) - ✅ 2 corregidos
-- 9 Tablas
-- 21 Triggers
-- 64 Índices (86% del total)
-- 7 Funciones
-- 3 Vistas
-
-**Impacto:** Rompe arquitectura modular, dificulta mantenimiento
-
-### Problema P0: Duplicaciones
-
-- **3 tablas duplicadas:** `classrooms`, `classroom_members`, `notifications` ⚠️ PENDIENTE
-- **2 ENUMs duplicados:** ~~`maya_rank`, `rango_maya`~~ ✅ CORREGIDO (2025-11-07)
-- **10 triggers duplicados** ⚠️ PENDIENTE
-
-**Impacto:** Riesgo de inconsistencia de datos
-
----
-
-## 📂 Estructura
+## Estructura
 
 ```
 apps/database/
-├── ddl/                        # Definiciones de esquema
-│   ├── schemas/                # 13 schemas implementados
-│   │   ├── auth/              # Autenticación base
-│   │   ├── auth_management/   # Gestión de usuarios (12 tablas)
-│   │   ├── gamilit/           # Utilidades (13 funciones)
-│   │   ├── gamification_system/  # Sistema de rangos maya (12 tablas)
-│   │   ├── educational_content/  # Contenido educativo (4 tablas)
-│   │   ├── progress_tracking/    # Seguimiento (5 tablas)
-│   │   ├── content_management/   # Gestión de contenido (5 tablas)
-│   │   ├── social_features/      # Social (7 tablas)
-│   │   ├── system_configuration/ # Configuración (3 tablas)
-│   │   ├── audit_logging/        # Auditoría (6 tablas)
-│   │   ├── admin_dashboard/      # Dashboard admin (4 vistas) ⚠️ NO DOC
-│   │   ├── storage/              # Storage (1 ENUM) ⚠️ NO DOC
-│   │   └── public/               # 🚨 130+ objetos MAL UBICADOS
-│   ├── functions/
-│   └── views/
-│
-├── seeds/                      # 47 seeds
-│   ├── dev/                    # 34 seeds de desarrollo
-│   ├── prod/                   # 5 seeds de producción
-│   ├── staging/                # 5 seeds de staging
-│   └── production/             # 3 seeds de producción
-│
-├── scripts/                    # Scripts operacionales
-│   ├── inventory/              # ✅ 8 scripts de inventario (NUEVOS)
-│   └── ...
-│
-└── docs/                       # 📚 DOCUMENTACIÓN (NUEVO)
-    ├── inventarios/            # Inventarios detallados
-    │   ├── 01-SCHEMAS-INVENTORY.md       (✅ 22 KB)
-    │   ├── 02-TABLES-INVENTORY.md        (✅ 17 KB)
-    │   ├── 03-ENUMS-INVENTORY.md         (✅ 25 KB)
-    │   └── INVENTORY-MASTER-REPORT.md    (✅ 19 KB)
-    │
-    ├── TRACKING-CORRECCIONES.md  # 🎯 Tracking de 142 correcciones
-    ├── PLAN-ACTUALIZACION-DOCUMENTACION.md  # Plan maestro
-    ├── PLAN-VALIDACION-COMPLETO.md
-    └── CRITERIOS-VALIDACION.md
+├── ddl/                     # Definiciones DDL (schemas, tablas, funciones, etc.)
+│   ├── 00-prerequisites.sql # Schemas + ENUMs base (ejecutar primero)
+│   └── schemas/             # 13 schemas con todos los objetos
+├── scripts/                 # Scripts operacionales
+│   ├── init-database.sh     # Inicializar BD completa
+│   ├── recreate-database.sh # Recrear BD desde cero
+│   ├── reset-database.sh    # Reset BD manteniendo usuario
+│   ├── inventory/           # Scripts para generar inventarios
+│   └── ...                  # Otros scripts de gestión
+├── seeds/                   # Datos iniciales por ambiente
+│   ├── dev/                 # Datos de desarrollo
+│   ├── staging/             # Datos de staging
+│   └── prod/                # Datos de producción
+├── migrations/              # Migraciones SQL para actualizar BD
+└── create-database.sh       # Script maestro de creación
 ```
 
----
+## Quick Start
 
-## 📚 Documentación
-
-### Inventarios Completos (Sistema SIMCO)
-
-#### ✅ Generados (83 KB de documentación)
-
-1. **[01-SCHEMAS-INVENTORY.md](./docs/inventarios/01-SCHEMAS-INVENTORY.md)** (22 KB)
-   - 13 schemas catalogados
-   - Análisis topológico de dependencias
-   - 3 schemas sin documentar identificados
-
-2. **[02-TABLES-INVENTORY.md](./docs/inventarios/02-TABLES-INVENTORY.md)** (17 KB)
-   - 64 tablas por schema
-   - Duplicaciones identificadas
-   - ERD relationships
-
-3. **[03-ENUMS-INVENTORY.md](./docs/inventarios/03-ENUMS-INVENTORY.md)** (25 KB)
-   - 37 ENUMs con valores
-   - 🚨 **33 ENUMs mal ubicados** (plan de migración incluido)
-   - Matriz de correcciones
-
-4. **[INVENTORY-MASTER-REPORT.md](./docs/inventarios/INVENTORY-MASTER-REPORT.md)** (19 KB)
-   - Consolidación de todos los inventarios
-   - Hallazgos críticos
-   - Plan de acción priorizado
-
-#### 📝 Pendientes (a crear después de correcciones)
-
-5. **04-FUNCTIONS-INVENTORY.md** - 61 funciones detalladas
-6. **05-TRIGGERS-INVENTORY.md** - 52 triggers detallados
-7. **06-RLS-POLICIES-INVENTORY.md** - 24 policies detalladas
-8. **07-INDEXES-INVENTORY.md** - 74 índices detallados
-9. **08-VIEWS-INVENTORY.md** - 16 vistas detalladas
-10. **09-SEEDS-INVENTORY.md** - 47 seeds detallados
-
-### Documento Maestro de Tracking
-
-**[TRACKING-CORRECCIONES.md](./docs/TRACKING-CORRECCIONES.md)** 🎯
-- **142 correcciones identificadas**
-- Dashboard de progreso
-- Checklist por prioridad (P0, P1, P2)
-- Templates de actualización
-- Búsqueda rápida: `[PENDIENTE]`, `[EN-PROGRESO]`, `[COMPLETADO]`
-
----
-
-## 🎯 Estado de Correcciones
-
-### Dashboard de Progreso
-
-| Tipo | Total | Pendiente | En Progreso | Completado | % |
-|------|-------|-----------|-------------|------------|---|
-| Schemas faltantes | 3 | 3 | 0 | 0 | 0% |
-| Duplicaciones | 13 | 11 | 0 | 2 | 15% |
-| ENUMs mal ubicados | 33 | 31 | 0 | 2 | 6% |
-| Tablas mal ubicadas | 9 | 9 | 0 | 0 | 0% |
-| Triggers duplicados | 10 | 10 | 0 | 0 | 0% |
-| Índices mal ubicados | 64 | 64 | 0 | 0 | 0% |
-| Funciones mal ubicadas | 7 | 7 | 0 | 0 | 0% |
-| Vistas mal ubicadas | 3 | 3 | 0 | 0 | 0% |
-| **TOTAL** | **142** | **140** | **0** | **2** | **1.4%** |
-
-**Ver detalles:** [TRACKING-CORRECCIONES.md](./docs/TRACKING-CORRECCIONES.md)
-**Última validación:** [REPORTE-VALIDACION-2025-11-07.md](./docs/REPORTE-VALIDACION-2025-11-07.md)
-
----
-
-## 🚀 Quick Start
-
-### Para Desarrolladores
-
-#### Consultar Inventarios
+### Opción 1: Crear Base de Datos Nueva (Recomendado)
 
 ```bash
-# Ver todos los schemas
-cat docs/inventarios/01-SCHEMAS-INVENTORY.md
+# Configurar DATABASE_URL
+export DATABASE_URL="postgresql://usuario:password@localhost:5432/gamilit"
 
-# Ver tablas por schema
-cat docs/inventarios/02-TABLES-INVENTORY.md
-
-# Ver ENUMs mal ubicados
-cat docs/inventarios/03-ENUMS-INVENTORY.md
-
-# Ver reporte maestro
-cat docs/inventarios/INVENTORY-MASTER-REPORT.md
+# Ejecutar script maestro
+./create-database.sh
 ```
 
-#### Regenerar Inventarios
+### Opción 2: Inicializar con Usuario y Seeds
 
 ```bash
-# Regenerar todos los inventarios raw
-bash scripts/inventory/generate-all-inventories.sh
+# Desarrollo
+./scripts/init-database.sh --env dev
 
-# Regenerar inventario específico
-bash scripts/inventory/list-tables.sh
-bash scripts/inventory/list-enums.sh
-bash scripts/inventory/list-functions.sh
+# Producción
+./scripts/init-database.sh --env prod
 ```
 
-#### Buscar Correcciones Pendientes
+### Opción 3: Recrear Completamente
 
 ```bash
-# Ver todas las correcciones pendientes
-grep "\[PENDIENTE\]" docs/TRACKING-CORRECCIONES.md
-
-# Ver solo correcciones críticas (P0)
-grep -A 2 "P0\|CRÍTICO" docs/TRACKING-CORRECCIONES.md
+# ADVERTENCIA: Elimina TODOS los datos
+./scripts/recreate-database.sh --env dev
 ```
 
-### Para Arquitectos/Tech Leads
+## Orden de Ejecución DDL
 
-1. **Revisar estado actual:**
-   ```bash
-   cat docs/inventarios/INVENTORY-MASTER-REPORT.md
-   ```
+El script `create-database.sh` ejecuta los archivos DDL en este orden:
 
-2. **Ver plan de correcciones:**
-   ```bash
-   cat docs/TRACKING-CORRECCIONES.md
-   ```
+1. **Prerequisites** - Schemas y ENUMs base
+2. **Gamilit Functions** - Funciones compartidas
+3. **Auth Schema** - Autenticación Supabase
+4. **Storage Schema** - Storage Supabase
+5. **Auth Management** - Gestión de usuarios
+6. **Educational Content** - Contenido educativo
+7. **Gamification System** - Sistema de gamificación
+8. **Progress Tracking** - Seguimiento de progreso
+9. **Social Features** - Características sociales
+10. **Content Management** - Gestión de contenido
+11. **Audit Logging** - Auditoría
+12. **System Configuration** - Configuración
+13. **Admin Dashboard** - Dashboard administrativo
 
-3. **Consultar plan maestro:**
-   ```bash
-   cat docs/PLAN-ACTUALIZACION-DOCUMENTACION.md
-   ```
+## Documentación Completa
+
+La documentación detallada del proyecto de base de datos está en:
+
+- **Inventarios de objetos DB**: `docs/90-transversal/inventarios-database/`
+- **Guía de creación**: `docs/95-guias-desarrollo/GUIA-CREAR-BASE-DATOS.md`
+- **Guía de referencias**: `docs/95-guias-desarrollo/GUIA-REFERENCIAS-SIMCO.md`
+
+## Scripts Disponibles
+
+### Gestión de Base de Datos
+
+| Script | Descripción |
+|--------|-------------|
+| `create-database.sh` | Crea BD nueva ejecutando todos los DDL |
+| `init-database.sh` | Inicializa BD con usuario y seeds |
+| `recreate-database.sh` | Elimina y recrea BD completamente |
+| `reset-database.sh` | Reset BD manteniendo usuario |
+| `manage-secrets.sh` | Gestión de credenciales |
+| `update-env-files.sh` | Actualiza archivos .env |
+
+### Inventarios y Utilidades
+
+| Script | Descripción |
+|--------|-------------|
+| `inventory/list-tables.sh` | Lista todas las tablas |
+| `inventory/list-enums.sh` | Lista todos los ENUMs |
+| `inventory/list-functions.sh` | Lista todas las funciones |
+| `inventory/generate-all-inventories.sh` | Genera todos los inventarios |
+
+Ver más detalles en [scripts/README.md](scripts/README.md)
+
+## Migraciones
+
+Las migraciones en `migrations/` se aplican a bases de datos existentes:
+
+```bash
+# Aplicar migración específica
+psql "$DATABASE_URL" -f migrations/2025-11-08-migrate-auth-provider-enum.sql
+```
+
+## Seeds
+
+Los seeds están organizados por ambiente:
+
+- **dev/**: Datos completos de desarrollo (usuarios demo, ejercicios, etc.)
+- **staging/**: Datos de staging
+- **prod/**: Datos mínimos de producción (configuración, providers)
+
+## Troubleshooting
+
+### Error: "psql: command not found"
+
+```bash
+# Ubuntu/Debian
+sudo apt-get install postgresql-client
+
+# macOS
+brew install postgresql
+```
+
+### Error: "connection refused"
+
+```bash
+# Verificar PostgreSQL está corriendo
+sudo systemctl status postgresql  # Linux
+brew services list                # macOS
+
+# Verificar DATABASE_URL
+echo $DATABASE_URL
+```
+
+### Ver logs de creación
+
+Cada ejecución de `create-database.sh` genera un log:
+
+```bash
+cat apps/database/create-database-YYYYMMDD_HHMMSS.log
+```
+
+## Mantenimiento
+
+- **Backups**: Los scripts de backup están en `orchestration/06-respaldos/`
+- **Validaciones**: Scripts de validación en `scripts/inventory/`
+- **Correcciones**: Scripts de corrección en `orchestration/scripts-correccion/database/`
+
+## Soporte
+
+Para problemas o preguntas:
+
+1. Revisar este README y los logs
+2. Consultar documentación en `docs/90-transversal/inventarios-database/`
+3. Revisar scripts específicos en `scripts/README.md`
 
 ---
 
-## 📋 Planes y Criterios
-
-### Documentos de Planificación
-
-- **[PLAN-ACTUALIZACION-DOCUMENTACION.md](./PLAN-ACTUALIZACION-DOCUMENTACION.md)**
-  - Plan completo de 5 fases
-  - Cronograma estimado (24 horas)
-  - Entregables por fase
-
-- **[PLAN-VALIDACION-COMPLETO.md](./PLAN-VALIDACION-COMPLETO.md)**
-  - 12 fases de validación
-  - Análisis topológico de dependencias
-  - Scripts de validación
-
-- **[CRITERIOS-VALIDACION.md](./CRITERIOS-VALIDACION.md)**
-  - 115 criterios de validación
-  - 5 tipos de validación
-  - Plantillas de reportes
-
----
-
-## 🔧 Scripts Disponibles
-
-### Scripts de Inventario (en `scripts/inventory/`)
-
-| Script | Propósito | Uso |
-|--------|-----------|-----|
-| `list-tables.sh` | Lista tablas por schema | `bash scripts/inventory/list-tables.sh` |
-| `list-enums.sh` | Lista ENUMs por schema | `bash scripts/inventory/list-enums.sh` |
-| `list-functions.sh` | Lista funciones por schema | `bash scripts/inventory/list-functions.sh` |
-| `list-triggers.sh` | Lista triggers por schema | `bash scripts/inventory/list-triggers.sh` |
-| `list-rls.sh` | Lista RLS policies por schema | `bash scripts/inventory/list-rls.sh` |
-| `list-indexes.sh` | Lista índices por schema | `bash scripts/inventory/list-indexes.sh` |
-| `list-views.sh` | Lista vistas por schema | `bash scripts/inventory/list-views.sh` |
-| `list-seeds.sh` | Lista seeds por environment | `bash scripts/inventory/list-seeds.sh` |
-| `generate-all-inventories.sh` | Genera todos los inventarios | `bash scripts/inventory/generate-all-inventories.sh` |
-
----
-
-## 📎 Referencias SIMCO
-
-**Este proyecto usa el sistema SIMCO (Sistema Indexado Modular por Contexto)**
-
-### Documentación Principal
-- **Schemas:** `docs/03-desarrollo/base-de-datos/schemas/`
-- **Inventarios:** `apps/database/docs/inventarios/`
-- **Tracking:** `apps/database/docs/TRACKING-CORRECCIONES.md`
-
-### Backend
-- **Constants:** `apps/backend/src/shared/constants/`
-- **Entities:** `apps/backend/src/modules/*/entities/`
-- **Sync ENUMs:** `apps/devops/scripts/sync-enums.ts`
-
-### Monorepo
-- **Plan Maestro:** `apps/database/PLAN-ACTUALIZACION-DOCUMENTACION.md`
-- **Scripts Validación:** `apps/database/scripts/validation/`
-
----
-
-## ⚠️ Importante - Trabajo en Paralelo
-
-**Estado actual:** Documentación completa + Correcciones en paralelo
-
-### Flujo de Trabajo
-
-1. **✅ COMPLETADO:** Documentación del estado actual (con problemas marcados)
-2. **🔧 EN CURSO:** Equipo corrige problemas en BD (en paralelo)
-3. **📝 PRÓXIMO:** Actualizar documentación conforme se corrigen problemas
-
-### Cómo Usar
-
-1. **Buscar qué corregir:** Ver [TRACKING-CORRECCIONES.md](./docs/TRACKING-CORRECCIONES.md)
-2. **Corregir en BD:** Aplicar migrations SQL
-3. **Actualizar tracking:** Cambiar `[PENDIENTE]` → `[COMPLETADO]`
-4. **Validar:** Regenerar inventarios y verificar cambios
-
----
-
-## 📞 Contacto
-
-**Preguntas sobre:**
-- Arquitectura de BD: Ver inventarios en `docs/inventarios/`
-- Correcciones pendientes: Ver `docs/TRACKING-CORRECCIONES.md`
-- Plan de trabajo: Ver `PLAN-ACTUALIZACION-DOCUMENTACION.md`
-
----
-
-**Última actualización:** 2025-11-07 (Post-validación de correcciones)
-**Sistema de documentación:** SIMCO v1.0
-**Estado:** 🚧 Documentación completa - Correcciones en progreso (2/142 completadas - 1.4%)
+**Última actualización:** 2025-11-08 (Post-purga)
+**Versión del proyecto:** 2.0

@@ -13,8 +13,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Assignment, AssignmentStatus } from '../entities/assignment.entity';
+import { Assignment } from '../entities/assignment.entity';
 import { AssignmentClassroom } from '../entities/assignment-classroom.entity';
+import { AssignmentExercise } from '../entities/assignment-exercise.entity';
+import { AssignmentStudent } from '../entities/assignment-student.entity';
 import { AssignmentSubmission } from '../entities/assignment-submission.entity';
 import { CreateAssignmentDto } from '../dto/create-assignment.dto';
 import { UpdateAssignmentDto } from '../dto/update-assignment.dto';
@@ -30,6 +32,10 @@ export class AssignmentsService {
     private readonly assignmentRepository: Repository<Assignment>,
     @InjectRepository(AssignmentClassroom, 'content')
     private readonly assignmentClassroomRepository: Repository<AssignmentClassroom>,
+    @InjectRepository(AssignmentExercise, 'content')
+    private readonly assignmentExerciseRepository: Repository<AssignmentExercise>,
+    @InjectRepository(AssignmentStudent, 'content')
+    private readonly assignmentStudentRepository: Repository<AssignmentStudent>,
     @InjectRepository(AssignmentSubmission, 'content')
     private readonly submissionRepository: Repository<AssignmentSubmission>,
   ) {}
@@ -38,18 +44,15 @@ export class AssignmentsService {
    * Create a new assignment
    */
   async create(createDto: CreateAssignmentDto, teacherId: string): Promise<Assignment> {
-    // Sanitize HTML in description and instructions
+    // Sanitize HTML in description
     const sanitizedDescription = this.sanitizeHtml(createDto.description);
-    const sanitizedInstructions = this.sanitizeHtml(createDto.instructions);
 
     const assignment = this.assignmentRepository.create({
       ...createDto,
       teacherId,
       description: sanitizedDescription,
-      instructions: sanitizedInstructions,
-      deadline: createDto.deadline ? new Date(createDto.deadline) : null,
-      status: AssignmentStatus.DRAFT,
-      isActive: true,
+      dueDate: createDto.deadline ? new Date(createDto.deadline) : null,
+      isPublished: false, // New assignments start as drafts
     });
 
     const saved = await this.assignmentRepository.save(assignment);
@@ -70,7 +73,7 @@ export class AssignmentsService {
     const queryBuilder = this.assignmentRepository
       .createQueryBuilder('assignment')
       .where('assignment.teacherId = :teacherId', { teacherId })
-      .andWhere('assignment.isActive = :isActive', { isActive: true });
+      .andWhere('assignment.isPublished = :isPublished', { isPublished: true });
 
     if (filters?.status) {
       queryBuilder.andWhere('assignment.status = :status', { status: filters.status });
@@ -99,7 +102,7 @@ export class AssignmentsService {
    */
   async findOne(id: string, teacherId: string): Promise<Assignment> {
     const assignment = await this.assignmentRepository.findOne({
-      where: { id, teacherId, isActive: true },
+      where: { id, teacherId, isPublished: true },
     });
 
     if (!assignment) {
@@ -135,15 +138,16 @@ export class AssignmentsService {
     if (updateDto.description !== undefined) {
       updateDto.description = this.sanitizeHtml(updateDto.description);
     }
-    if (updateDto.instructions !== undefined) {
-      updateDto.instructions = this.sanitizeHtml(updateDto.instructions);
-    }
+    // TODO: Handle instructions field if/when added to entity
+    // if (updateDto.instructions !== undefined) {
+    //   updateDto.instructions = this.sanitizeHtml(updateDto.instructions);
+    // }
 
     // Update fields
     Object.assign(assignment, updateDto);
 
     if (updateDto.deadline) {
-      assignment.deadline = new Date(updateDto.deadline);
+      assignment.dueDate = new Date(updateDto.deadline);
     }
 
     const updated = await this.assignmentRepository.save(assignment);
@@ -160,7 +164,7 @@ export class AssignmentsService {
   async remove(id: string, teacherId: string): Promise<void> {
     const assignment = await this.findOne(id, teacherId);
 
-    assignment.isActive = false;
+    assignment.isPublished = false;
     await this.assignmentRepository.save(assignment);
 
     this.logger.log(`Assignment soft deleted: ${id} by teacher ${teacherId}`);
@@ -273,13 +277,13 @@ export class AssignmentsService {
       throw new NotFoundException(`Submission with ID ${submissionId} not found`);
     }
 
-    // Verify teacher owns the assignment
-    await this.findOne(submission.assignmentId, teacherId);
+    // Verify teacher owns the assignment and get total points
+    const assignment = await this.findOne(submission.assignmentId, teacherId);
 
     // Validate score doesn't exceed max points
-    if (dto.score > submission.maxPoints) {
+    if (dto.score > assignment.totalPoints) {
       throw new UnprocessableEntityException(
-        `Score cannot exceed max points (${submission.maxPoints})`,
+        `Score cannot exceed max points (${assignment.totalPoints})`,
       );
     }
 
@@ -295,6 +299,213 @@ export class AssignmentsService {
     this.logger.log(`Submission graded: ${submissionId} by teacher ${teacherId}`);
 
     return graded;
+  }
+
+  /**
+   * Add exercises to an assignment
+   * Creates M2M relationships in assignment_exercises table
+   */
+  async addExercisesToAssignment(
+    assignmentId: string,
+    exerciseIds: Array<{
+      exerciseId: string;
+      orderIndex: number;
+      pointsOverride?: number;
+      isRequired?: boolean;
+    }>,
+    teacherId: string,
+  ): Promise<AssignmentExercise[]> {
+    // Verify ownership
+    await this.findOne(assignmentId, teacherId);
+
+    const createdExercises: AssignmentExercise[] = [];
+
+    for (const exerciseData of exerciseIds) {
+      // Check if already assigned
+      const existing = await this.assignmentExerciseRepository.findOne({
+        where: {
+          assignmentId,
+          exerciseId: exerciseData.exerciseId,
+        },
+      });
+
+      if (existing) {
+        this.logger.warn(
+          `Exercise ${exerciseData.exerciseId} already assigned to ${assignmentId}`,
+        );
+        continue;
+      }
+
+      const assignmentExercise = this.assignmentExerciseRepository.create({
+        assignmentId,
+        exerciseId: exerciseData.exerciseId,
+        orderIndex: exerciseData.orderIndex,
+        pointsOverride: exerciseData.pointsOverride || null,
+        isRequired: exerciseData.isRequired !== undefined ? exerciseData.isRequired : true,
+      });
+
+      const saved = await this.assignmentExerciseRepository.save(assignmentExercise);
+      createdExercises.push(saved);
+    }
+
+    this.logger.log(
+      `Added ${createdExercises.length} exercises to assignment ${assignmentId}`,
+    );
+
+    return createdExercises;
+  }
+
+  /**
+   * Remove exercise from assignment
+   */
+  async removeExerciseFromAssignment(
+    assignmentId: string,
+    exerciseId: string,
+    teacherId: string,
+  ): Promise<void> {
+    // Verify ownership
+    await this.findOne(assignmentId, teacherId);
+
+    const result = await this.assignmentExerciseRepository.delete({
+      assignmentId,
+      exerciseId,
+    });
+
+    if (result.affected === 0) {
+      throw new NotFoundException(
+        `Exercise ${exerciseId} not found in assignment ${assignmentId}`,
+      );
+    }
+
+    this.logger.log(`Removed exercise ${exerciseId} from assignment ${assignmentId}`);
+  }
+
+  /**
+   * Reorder exercises in an assignment
+   */
+  async reorderExercises(
+    assignmentId: string,
+    orderedExerciseIds: Array<{ exerciseId: string; orderIndex: number }>,
+    teacherId: string,
+  ): Promise<void> {
+    // Verify ownership
+    await this.findOne(assignmentId, teacherId);
+
+    for (const { exerciseId, orderIndex } of orderedExerciseIds) {
+      await this.assignmentExerciseRepository.update(
+        { assignmentId, exerciseId },
+        { orderIndex },
+      );
+    }
+
+    this.logger.log(`Reordered exercises for assignment ${assignmentId}`);
+  }
+
+  /**
+   * Get all exercises for an assignment
+   */
+  async getAssignmentExercises(
+    assignmentId: string,
+    teacherId: string,
+  ): Promise<AssignmentExercise[]> {
+    // Verify ownership
+    await this.findOne(assignmentId, teacherId);
+
+    return this.assignmentExerciseRepository.find({
+      where: { assignmentId },
+      order: { orderIndex: 'ASC' },
+    });
+  }
+
+  /**
+   * Assign assignment to individual students
+   * Used for remedial or advanced assignments
+   */
+  async assignToStudents(
+    assignmentId: string,
+    studentIds: string[],
+    teacherId: string,
+  ): Promise<{ success: number; failed: number }> {
+    // Verify ownership
+    await this.findOne(assignmentId, teacherId);
+
+    let successCount = 0;
+    let failedCount = 0;
+
+    for (const studentId of studentIds) {
+      try {
+        // Check if already assigned
+        const existing = await this.assignmentStudentRepository.findOne({
+          where: {
+            assignmentId,
+            studentId,
+          },
+        });
+
+        if (existing) {
+          failedCount++;
+          continue;
+        }
+
+        const assignmentStudent = this.assignmentStudentRepository.create({
+          assignmentId,
+          studentId,
+        });
+
+        await this.assignmentStudentRepository.save(assignmentStudent);
+        successCount++;
+      } catch (error) {
+        this.logger.error(`Failed to assign to student ${studentId}:`, error);
+        failedCount++;
+      }
+    }
+
+    this.logger.log(
+      `Assignment ${assignmentId} assigned to students: ${successCount} success, ${failedCount} failed`,
+    );
+
+    return { success: successCount, failed: failedCount };
+  }
+
+  /**
+   * Remove student from assignment
+   */
+  async removeStudentAssignment(
+    assignmentId: string,
+    studentId: string,
+    teacherId: string,
+  ): Promise<void> {
+    // Verify ownership
+    await this.findOne(assignmentId, teacherId);
+
+    const result = await this.assignmentStudentRepository.delete({
+      assignmentId,
+      studentId,
+    });
+
+    if (result.affected === 0) {
+      throw new NotFoundException(
+        `Student ${studentId} not assigned to ${assignmentId}`,
+      );
+    }
+
+    this.logger.log(`Removed student ${studentId} from assignment ${assignmentId}`);
+  }
+
+  /**
+   * Get all students assigned to an assignment
+   */
+  async getAssignedStudents(
+    assignmentId: string,
+    teacherId: string,
+  ): Promise<AssignmentStudent[]> {
+    // Verify ownership
+    await this.findOne(assignmentId, teacherId);
+
+    return this.assignmentStudentRepository.find({
+      where: { assignmentId },
+      order: { assignedAt: 'ASC' },
+    });
   }
 
   /**

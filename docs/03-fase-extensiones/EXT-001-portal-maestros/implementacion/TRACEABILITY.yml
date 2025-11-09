@@ -119,18 +119,25 @@ implementation:
   database:
     # NOTA: La implementación real difiere del diseño inicial documentado
     # Ver RF-TEACH-002 para documentación completa del sistema de assignments
+    # ACTUALIZADO (2025-11-08): Migrado de public a educational_content/social_features
 
     schemas_used:
       - name: social_features
-        description: Classrooms y enrollments
+        description: Classrooms, enrollments y assignment_classrooms
         tables_modified: 2
-        tables_new: 0
+        tables_new: 1
 
-      - name: public
-        description: Sistema de Assignments (6 tablas)
+      - name: educational_content
+        description: Sistema de Assignments (4 tablas)
         tables_modified: 0
-        tables_new: 6
-        note: "Implementación real usa public schema, no educational_content/progress_tracking"
+        tables_new: 4
+        note: "MIGRADO desde public (2025-11-08). Tablas: assignments, assignment_exercises, assignment_students, assignment_submissions"
+
+      - name: progress_tracking
+        description: Teacher notes
+        tables_modified: 0
+        tables_new: 1
+        note: "MIGRADO teacher_notes desde public (2025-11-08)"
 
     tables:
       # Tablas existentes extendidas
@@ -155,13 +162,16 @@ implementation:
         related_us: [US-PM-001b]
         related_rf: RF-TEACH-001
 
-      # Sistema de Assignments (6 tablas en schema public)
+      # Sistema de Assignments (6 tablas migradas a schemas específicos - 2025-11-08)
       # Ver: docs/03-fase-extensiones/EXT-001-portal-maestros/requerimientos/RF-TEACH-002-assignment-system.md
 
-      - name: public.assignments
+      - name: educational_content.assignments
         type: new
         description: Tabla principal de asignaciones creadas por maestros
-        file: apps/database/ddl/schemas/public/tables/assignments.sql
+        file: apps/database/ddl/schemas/educational_content/tables/assignments.sql
+        migrated_from: public.assignments (2025-11-08)
+        backend_entity: apps/backend/src/modules/assignments/entities/assignment.entity.ts
+        backend_status: ✅ IMPLEMENTADO
         columns:
           - id (UUID, PK)
           - teacher_id (UUID, FK a auth.users)
@@ -183,15 +193,25 @@ implementation:
         related_us: [US-PM-002a, US-PM-002b]
         related_rf: RF-TEACH-002
 
-      - name: public.assignment_exercises
+      - name: educational_content.assignment_exercises
         type: new
         description: M2M - Ejercicios incluidos en assignments
-        file: apps/database/ddl/schemas/public/tables/assignment_exercises.sql
+        file: apps/database/ddl/schemas/educational_content/tables/assignment_exercises.sql
+        migrated_from: public.assignment_exercises (2025-11-08)
+        backend_entity: apps/backend/src/modules/assignments/entities/assignment-exercise.entity.ts
+        backend_status: ✅ COMPLETO (2025-11-08) - Entidad y servicios implementados
+        backend_services:
+          - addExercisesToAssignment
+          - removeExerciseFromAssignment
+          - reorderExercises
+          - getAssignmentExercises
         columns:
           - id (UUID, PK)
-          - assignment_id (UUID, FK a public.assignments)
+          - assignment_id (UUID, FK a educational_content.assignments)
           - exercise_id (UUID, FK a educational_content.exercises)
           - order_index (INTEGER) - Orden de presentación
+          - points_override (DECIMAL) - Puntos personalizados
+          - is_required (BOOLEAN DEFAULT true)
           - created_at (TIMESTAMPTZ)
         indexes:
           - idx_assignment_exercises_assignment_id (btree)
@@ -201,16 +221,26 @@ implementation:
           - UNIQUE(assignment_id, exercise_id)
         related_us: [US-PM-002a]
         related_rf: RF-TEACH-002
-        note: "Reemplaza el diseño inicial de content_refs JSONB (mejor normalización)"
+        note: |
+          CORRECCIONES (2025-11-08):
+          - Entidad backend CREADA (antes NO existía - funcionalidad crítica faltante)
+          - Servicios CRUD completos implementados (4 métodos)
+          - Reemplaza el diseño inicial de content_refs JSONB (mejor normalización)
+          - Funcionalidad completa: agregar/eliminar/reordenar exercises
 
-      - name: public.assignment_classrooms
+      - name: social_features.assignment_classrooms
         type: new
         description: M2M - Assignments asignados a classrooms completos
-        file: apps/database/ddl/schemas/public/tables/assignment_classrooms.sql
+        file: apps/database/ddl/schemas/social_features/tables/assignment_classrooms.sql
+        migrated_from: public.assignment_classrooms (2025-11-08)
+        backend_entity: apps/backend/src/modules/assignments/entities/assignment-classroom.entity.ts
+        backend_status: ✅ IMPLEMENTADO
         columns:
           - id (UUID, PK)
-          - assignment_id (UUID, FK a public.assignments)
+          - assignment_id (UUID, FK a educational_content.assignments)
           - classroom_id (UUID, FK a social_features.classrooms)
+          - deadline_override (TIMESTAMPTZ)
+          - students_count (INTEGER)
           - assigned_at (TIMESTAMPTZ)
         indexes:
           - idx_assignment_classrooms_assignment_id (btree)
@@ -220,15 +250,24 @@ implementation:
         related_us: [US-PM-002b]
         related_rf: RF-TEACH-002
 
-      - name: public.assignment_students
+      - name: educational_content.assignment_students
         type: new
         description: M2M - Assignments asignados a estudiantes individuales
-        file: apps/database/ddl/schemas/public/tables/assignment_students.sql
+        file: apps/database/ddl/schemas/educational_content/tables/assignment_students.sql
+        migrated_from: public.assignment_students (2025-11-08)
+        backend_entity: apps/backend/src/modules/assignments/entities/assignment-student.entity.ts
+        backend_status: ✅ COMPLETO (2025-11-08) - Entidad y servicios implementados
+        backend_services:
+          - assignToStudents
+          - removeStudentAssignment
+          - getAssignedStudents
         columns:
           - id (UUID, PK)
-          - assignment_id (UUID, FK a public.assignments)
+          - assignment_id (UUID, FK a educational_content.assignments)
           - student_id (UUID, FK a auth.users)
           - assigned_at (TIMESTAMPTZ)
+          - deadline_override (TIMESTAMPTZ)
+          - is_required (BOOLEAN)
         indexes:
           - idx_assignment_students_assignment_id (btree)
           - idx_assignment_students_student_id (btree)
@@ -236,14 +275,23 @@ implementation:
           - UNIQUE(assignment_id, student_id)
         related_us: [US-PM-002b]
         related_rf: RF-TEACH-002
+        note: |
+          CORRECCIONES (2025-11-08):
+          - Entidad backend CREADA (antes NO existía)
+          - Servicios CRUD completos implementados (3 métodos)
+          - Funcionalidad completa: asignaciones remediales, refuerzos, estudiantes avanzados
+          - Permite asignación individual fuera del classroom
 
-      - name: public.assignment_submissions
+      - name: educational_content.assignment_submissions
         type: new
         description: Entregas y calificaciones de estudiantes
-        file: apps/database/ddl/schemas/public/tables/assignment_submissions.sql
+        file: apps/database/ddl/schemas/educational_content/tables/assignment_submissions.sql
+        migrated_from: public.assignment_submissions (2025-11-08)
+        backend_entity: apps/backend/src/modules/assignments/entities/assignment-submission.entity.ts
+        backend_status: ✅ IMPLEMENTADO
         columns:
           - id (UUID, PK)
-          - assignment_id (UUID, FK a public.assignments)
+          - assignment_id (UUID, FK a educational_content.assignments)
           - student_id (UUID, FK a auth.users)
           - submitted_at (TIMESTAMPTZ)
           - status (VARCHAR(50)) - not_started/in_progress/submitted/graded
@@ -266,10 +314,11 @@ implementation:
         related_us: [US-PM-002c, US-PM-003a, US-PM-003b]
         related_rf: RF-TEACH-002
 
-      - name: public.teacher_notes
+      - name: progress_tracking.teacher_notes
         type: new
         description: Notas privadas de maestros sobre estudiantes
-        file: apps/database/ddl/schemas/public/tables/teacher_notes.sql
+        file: apps/database/ddl/schemas/progress_tracking/tables/teacher_notes.sql
+        migrated_from: public.teacher_notes (2025-11-08)
         columns:
           - id (UUID, PK)
           - teacher_id (UUID, FK a auth.users)

@@ -46,7 +46,7 @@ CREATE TABLE gamification_system.achievements (
     icon text DEFAULT 'trophy'::text,
     category gamification_system.achievement_category NOT NULL,
     rarity text DEFAULT 'common'::text,
-    difficulty_level public.difficulty_level DEFAULT 'muy_facil'::public.difficulty_level,
+    difficulty_level educational_content.difficulty_level DEFAULT 'very_easy'::educational_content.difficulty_level,
     conditions jsonb DEFAULT '{"type": "progress", "requirements": {"exercises_completed": 10}}'::jsonb NOT NULL,
     rewards jsonb DEFAULT '{"xp": 100, "badge": null, "ml_coins": 50}'::jsonb,
     is_secret boolean DEFAULT false,

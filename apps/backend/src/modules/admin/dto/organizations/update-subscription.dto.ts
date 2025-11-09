@@ -3,13 +3,14 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { SubscriptionTierEnum } from '@shared/constants';
 
 export class UpdateSubscriptionDto {
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Subscription tier',
     enum: SubscriptionTierEnum,
     example: SubscriptionTierEnum.PROFESSIONAL,
   })
+  @IsOptional()
   @IsEnum(SubscriptionTierEnum)
-  subscription_tier!: SubscriptionTierEnum;
+  subscription_tier?: SubscriptionTierEnum;
 
   @ApiPropertyOptional({
     description: 'Maximum number of users allowed',

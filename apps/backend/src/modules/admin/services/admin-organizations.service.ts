@@ -298,7 +298,7 @@ export class AdminOrganizationsService {
     const data = memberships.map((membership) => ({
       user_id: membership.user_id,
       email: membership.user?.email || '',
-      full_name: membership.user?.profile?.full_name || undefined,
+      full_name: undefined, // TODO: Load profile relation separately if needed
       role: membership.user?.role || '',
       membership_role: membership.role,
       membership_status: membership.status,
@@ -342,7 +342,7 @@ export class AdminOrganizationsService {
     }
 
     if (updateDto.trial_ends_at !== undefined) {
-      tenant.trial_ends_at = updateDto.trial_ends_at;
+      tenant.trial_ends_at = new Date(updateDto.trial_ends_at);
     }
 
     const updated = await this.tenantRepo.save(tenant);

@@ -18,7 +18,7 @@ CREATE TABLE content_management.marie_curie_content (
     category text,
     content jsonb DEFAULT '{"quotes": [], "timeline": [], "key_points": [], "introduction": "", "main_content": ""}'::jsonb,
     target_grade_levels text[] DEFAULT ARRAY['6'::text, '7'::text, '8'::text],
-    difficulty_level public.difficulty_level DEFAULT 'muy_facil'::public.difficulty_level,
+    difficulty_level educational_content.difficulty_level DEFAULT 'very_easy'::educational_content.difficulty_level,
     reading_level text,
     learning_objectives text[],
     prerequisite_knowledge text[],
@@ -30,7 +30,7 @@ CREATE TABLE content_management.marie_curie_content (
     historical_period text,
     scientific_field text,
     cultural_context jsonb DEFAULT '{}'::jsonb,
-    status public.content_status DEFAULT 'draft'::public.content_status,
+    status content_management.content_status DEFAULT 'draft'::content_management.content_status,
     is_featured boolean DEFAULT false,
     is_interactive boolean DEFAULT false,
     created_by uuid,
@@ -78,7 +78,7 @@ ALTER TABLE ONLY content_management.marie_curie_content
 ALTER TABLE content_management.marie_curie_content ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY marie_content_all_admin ON content_management.marie_curie_content USING (gamilit.is_admin());
-CREATE POLICY marie_content_select_all ON content_management.marie_curie_content FOR SELECT USING ((status = 'published'::public.content_status));
+CREATE POLICY marie_content_select_all ON content_management.marie_curie_content FOR SELECT USING ((status = 'published'::content_management.content_status));
 
 -- Permissions
 GRANT ALL ON TABLE content_management.marie_curie_content TO gamilit_user;

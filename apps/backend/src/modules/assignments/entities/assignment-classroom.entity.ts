@@ -1,10 +1,11 @@
 /**
  * AssignmentClassroom Entity
  *
- * Mapea a la tabla: public.assignment_classrooms
+ * Mapea a la tabla: social_features.assignment_classrooms
  *
  * Tabla de join entre assignments y classrooms (many-to-many)
- * TODO: Migrar a schema 'assignments' en P2
+ *
+ * CORREGIDO (2025-11-08): Migrado de 'public' a 'social_features'
  */
 
 import {
@@ -16,8 +17,12 @@ import {
   JoinColumn,
   Index,
 } from 'typeorm';
+import {
+  DB_SCHEMAS,
+  DB_TABLES,
+} from '../../../shared/constants/database.constants';
 
-@Entity({ schema: 'public', name: 'assignment_classrooms' })
+@Entity({ schema: DB_SCHEMAS.SOCIAL, name: DB_TABLES.SOCIAL.ASSIGNMENT_CLASSROOMS })
 @Index(['assignment_id'])
 @Index(['classroom_id'])
 export class AssignmentClassroom {

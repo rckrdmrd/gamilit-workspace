@@ -2,8 +2,10 @@
 -- Enum: transaction_type
 -- Schema: gamification_system
 -- Description: Tipos de transacciones de ML Coins (Maya Learning Coins)
--- Versión: 2.0 (2025-11-07) - Sincronizado con documentación oficial
--- Fuente de Verdad: docs/02-especificaciones-tecnicas/tipos-compartidos/TYPES-GAMIFICATION.md
+-- Versión: 2.0 (2025-11-08) - Sincronizado con documentación oficial
+-- Fuente de Verdad:
+--   - RF: docs/01-fase-alcance-inicial/EAI-003-gamificacion/requerimientos/RF-GAM-004-economia-ml-coins.md
+--   - ET: docs/01-fase-alcance-inicial/EAI-003-gamificacion/especificaciones/ET-GAM-004-tipos-compartidos-gamificacion.md
 -- Responsable: SA-DB-005
 -- =====================================================================================
 
@@ -100,8 +102,9 @@ COMMENT ON TYPE gamification_system.transaction_type IS
 -- =====================================================================================
 --
 -- Documentación:
--- - Especificación: docs/02-especificaciones-tecnicas/tipos-compartidos/TYPES-GAMIFICATION.md
--- - Sección: 6.4.4 MLCoinsTransaction
+-- - Requerimiento: docs/01-fase-alcance-inicial/EAI-003-gamificacion/requerimientos/RF-GAM-004-economia-ml-coins.md
+-- - Especificación: docs/01-fase-alcance-inicial/EAI-003-gamificacion/especificaciones/ET-GAM-004-tipos-compartidos-gamificacion.md
+-- - Sección ET: 1. TransactionType (transaction_type)
 --
 -- Backend:
 -- - Constants: apps/backend/src/shared/constants/enums.constants.ts (TransactionTypeEnum)

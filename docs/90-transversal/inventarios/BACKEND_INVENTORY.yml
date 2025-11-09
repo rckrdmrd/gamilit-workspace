@@ -1,28 +1,33 @@
 # BACKEND_INVENTORY.yml - Inventario Consolidado Global
 
 project: GAMILIT
-version: 2.0
+version: 2.1
 generated: 2025-11-08
-source: Consolidado de Fases 1-3
+updated: 2025-11-08
+source: Consolidado de Fases 1-2 (Real Implementado)
+status: Actualizado con datos reales de implementación
 
 # ============================================================================
 # RESUMEN EJECUTIVO
 # ============================================================================
 
 summary:
-  total_modules: 20
-  total_services: 65
-  total_controllers: 22
-  total_endpoints: 145
-  total_dtos: 80
+  total_modules: 15
+  total_services: 46
+  total_controllers: 32
+  total_endpoints: 269
+  total_dtos: 139
+  total_entities: 47
+  total_guards: 6
+  total_interceptors: 5
   total_middlewares: 12
-  lines_of_code: ~45000
+  lines_of_code: ~53233
 
 stack:
   runtime: Node.js 18+
   framework: NestJS
   language: TypeScript
-  orm: Prisma
+  orm: TypeORM
   validation: class-validator
   auth: Supabase Auth + JWT
 
@@ -31,27 +36,34 @@ stack:
 # ============================================================================
 
 modules_by_phase:
-  phase_1:
+  phase_1_completed:
     - auth
-    - educational-content
+    - educational
     - gamification
     - progress
-    - admin
+    - admin (base)
 
-  phase_2:
+  phase_2_completed:
     - database (migrations)
 
-  phase_3:
-    - teacher-portal
-    - admin-extended
+  phase_3_partial:
+    - assignments
+    - audit
+    - content
+    - mail
     - notifications
-    - profiles
-    - reports
-    - content-management
-    - lti (partial)
-    - white-label (partial)
-    - peer-challenges (partial)
-    - parent-portal (partial)
+    - social
+    - tasks
+    - teacher
+    - websocket
+
+  phase_3_not_implemented:
+    - lti (planned, not implemented)
+    - white-label (planned, not implemented)
+    - peer-challenges (planned, not implemented)
+    - parent-portal (planned, not implemented)
+    - profiles-extended (planned, not implemented)
+    - reports-advanced (planned, not implemented)
 
 # ============================================================================
 # MÓDULOS DETALLADOS (20)
@@ -202,6 +214,51 @@ modules:
       - Analytics de classroom
       - Notas privadas
       - Reportes de maestro
+
+  - name: assignments
+    path: apps/backend/src/modules/assignments/
+    phase: 3
+    epic: EXT-001
+    status: complete (100% - Todas las entidades y servicios implementados)
+    description: Sistema de asignaciones para maestros
+    entities:
+      - assignment.entity.ts ✅
+      - assignment-classroom.entity.ts ✅
+      - assignment-exercise.entity.ts ✅ (CREADA 2025-11-08)
+      - assignment-student.entity.ts ✅ (CREADA 2025-11-08)
+      - assignment-submission.entity.ts ✅
+    services:
+      - assignments.service.ts (completo con 7 métodos nuevos)
+    controllers:
+      - assignments.controller.ts
+    endpoints: 8 (pendiente agregar endpoints para nuevos métodos)
+    schemas_migrated: ✅ Migrado de public a educational_content/social_features (2025-11-08)
+    key_features:
+      - CRUD de assignments ✅
+      - Asignación a classrooms ✅
+      - Submissions y grading ✅
+      - Vinculación con exercises ✅ (entidad y servicios completos)
+      - Asignación individual de estudiantes ✅ (entidad y servicios completos)
+    implemented_methods:
+      assignment_exercises:
+        - addExercisesToAssignment
+        - removeExerciseFromAssignment
+        - reorderExercises
+        - getAssignmentExercises
+      assignment_students:
+        - assignToStudents
+        - removeStudentAssignment
+        - getAssignedStudents
+    missing_implementation:
+      - Endpoints REST para los nuevos métodos (opcional - métodos disponibles programáticamente)
+    notes: |
+      CORRECCIONES APLICADAS (2025-11-08):
+      - P0: Migradas entidades de schema 'public' a 'educational_content'/'social_features'
+      - P0: Agregadas constantes ASSIGNMENT_EXERCISES y ASSIGNMENT_STUDENTS en DB_TABLES
+      - P1: Creada entidad AssignmentExercise + 4 métodos de servicio
+      - P1: Creada entidad AssignmentStudent + 3 métodos de servicio
+      - Todas las funcionalidades core están ahora implementadas
+      - Módulo completo al 100% en términos de entidades y servicios
 
   - name: notifications
     path: apps/backend/src/modules/notifications/
@@ -453,23 +510,21 @@ middlewares:
 # ============================================================================
 
 endpoints_summary:
-  auth: 8
-  educational_content: 15
-  gamification: 12
-  progress: 10
-  admin: 18
-  teacher_portal: 18
-  notifications: 10
-  profiles: 8
-  reports: 12
-  content_management: 10
-  lti: 6
-  white_label: 4
-  peer_challenges: 5
-  parent_portal: 4
-  other: 5
+  auth: 10
+  admin: 29
+  assignments: 8
+  content: 30
+  educational: 22
+  gamification: 24
+  notifications: 8
+  progress: 59
+  social: 70
+  teacher: 19
+  other: ~10
 
-  total: 145
+  total: ~269
+
+  note: "Estimado basado en análisis de decoradores HTTP en controllers"
 
 # ============================================================================
 # DTOS (80+)
@@ -550,21 +605,33 @@ integrations:
 # ============================================================================
 # TESTING
 # ============================================================================
+# ⚠️ CRÍTICO: Test coverage muy bajo - necesita mejora urgente
 
 testing:
   unit_tests:
-    total: 320
-    coverage: 88%
+    total: 2
+    coverage: 18%
+    note: "Solo módulo gamification/ranks tiene tests completos"
+    files_tested:
+      - gamification/services/ranks.service.spec.ts
+      - gamification/controllers/ranks.controller.spec.ts
+    modules_without_tests: 14
 
   integration_tests:
-    total: 150
-    coverage: 85%
+    total: 0
+    coverage: 0%
+    note: "No implementados"
 
   e2e_tests:
-    total: 80
-    coverage: 75%
+    total: 0
+    coverage: 0%
+    note: "No implementados"
 
-  overall_coverage: 87%
+  overall_coverage: 18%
+
+  coverage_goal: 70%
+  gap: -52%
+  priority: CRÍTICA
 
 # ============================================================================
 # PERFORMANCE METRICS

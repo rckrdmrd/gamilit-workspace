@@ -323,7 +323,7 @@ export class AdminSystemService {
     // Return status
     return {
       maintenance_mode: systemConfig.maintenance_mode,
-      maintenance_message: systemConfig.maintenance_message,
+      maintenance_message: systemConfig.maintenance_message || '',
       updated_at: systemConfig.updated_at,
       updated_by: systemConfig.updated_by || undefined,
     };

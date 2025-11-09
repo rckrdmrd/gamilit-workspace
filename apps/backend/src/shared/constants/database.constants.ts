@@ -24,6 +24,12 @@ export const DB_SCHEMAS = {
   CONTENT: 'content_management',
   AUDIT: 'audit_logging',
   GAMILIT: 'gamilit',
+  PUBLIC: 'public',
+  ADMIN_DASHBOARD: 'admin_dashboard',
+  SYSTEM_CONFIGURATION: 'system_configuration',
+  LTI_INTEGRATION: 'lti_integration',
+  STORAGE: 'storage',
+  AUTH_SUPABASE: 'auth', // Schema de Supabase Auth (diferente de auth_management)
 } as const;
 
 /**
@@ -78,6 +84,17 @@ export const DB_TABLES = {
     EXERCISES: 'exercises',
     ASSESSMENT_RUBRICS: 'assessment_rubrics',
     MEDIA_RESOURCES: 'media_resources',
+    ASSIGNMENTS: 'assignments',
+    ASSIGNMENT_EXERCISES: 'assignment_exercises',
+    ASSIGNMENT_STUDENTS: 'assignment_students',
+    ASSIGNMENT_SUBMISSIONS: 'assignment_submissions',
+    EXERCISE_OPTIONS: 'exercise_options',
+    EXERCISE_ANSWERS: 'exercise_answers',
+    CONTENT_METADATA: 'content_metadata',
+    MODULE_DEPENDENCIES: 'module_dependencies',
+    TAXONOMIES: 'taxonomies',
+    CONTENT_TAGS: 'content_tags',
+    CONTENT_APPROVALS: 'content_approvals',
   },
 
   /**
@@ -104,6 +121,7 @@ export const DB_TABLES = {
     TEAMS: 'teams',
     TEAM_MEMBERS: 'team_members',
     TEAM_CHALLENGES: 'team_challenges',
+    ASSIGNMENT_CLASSROOMS: 'assignment_classrooms',
   },
 
   /**

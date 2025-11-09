@@ -10,11 +10,46 @@ completion: 50%
 
 implementation:
   database:
+    schema: social_features
+    status: completed
+    last_update: "2025-11-08"
+    ddl_path: apps/database/ddl/schemas/social_features/tables/
     tables:
       - name: peer_challenges
         type: new
-        status: partial
-        description: Desafíos peer-to-peer
+        status: completed
+        created: "2025-11-08"
+        file: apps/database/ddl/schemas/social_features/tables/07-peer_challenges.sql
+        description: Desafíos peer-to-peer entre estudiantes para competir en ejercicios
+        features:
+          - Challenge types (1v1, multiplayer, tournament, leaderboard)
+          - Timing and participant limits
+          - Rewards configuration
+          - Status workflow
+
+      - name: challenge_participants
+        type: new
+        status: completed
+        created: "2025-11-08"
+        file: apps/database/ddl/schemas/social_features/tables/08-challenge_participants.sql
+        description: Participantes de peer challenges con progreso individual
+        features:
+          - Individual progress tracking
+          - Score and accuracy tracking
+          - Ranking and winner detection
+          - Rewards distribution
+
+      - name: challenge_results
+        type: new
+        status: completed
+        created: "2025-11-08"
+        file: apps/database/ddl/schemas/social_features/tables/09-challenge_results.sql
+        description: Resultados finales de peer challenges con leaderboards
+        features:
+          - Final rankings and winners
+          - Statistics aggregation
+          - Rewards distribution tracking
+          - Leaderboard JSONB storage
 
   backend:
     module: peer-challenges

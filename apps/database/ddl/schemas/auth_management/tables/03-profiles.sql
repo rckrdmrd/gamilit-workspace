@@ -57,8 +57,8 @@ CREATE TABLE auth_management.profiles (
 
     -- Foreign Keys
     CONSTRAINT profiles_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES auth_management.tenants(id) ON DELETE CASCADE,
-    CONSTRAINT profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
-    -- NOTE: school_id FK will be added when schools table is created
+    CONSTRAINT profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE,
+    CONSTRAINT profiles_school_id_fkey FOREIGN KEY (school_id) REFERENCES social_features.schools(id) ON DELETE SET NULL
 );
 
 -- Indexes

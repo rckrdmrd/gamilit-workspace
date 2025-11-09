@@ -1,696 +1,136 @@
 # FRONTEND_INVENTORY.yml - Inventario Consolidado Global
 
 project: GAMILIT
-version: 2.0
+version: 2.2
 generated: 2025-11-08
-source: Consolidado de Fases 1-3
+updated: 2025-11-08
+source: Inventario Real del Frontend Implementado
+status: Actualizado con análisis exhaustivo del código (2025-11-08)
+last_analysis: 2025-11-08 - Análisis completo de estructura y componentes
 
 # ============================================================================
 # RESUMEN EJECUTIVO
 # ============================================================================
 
 summary:
-  total_features: 15
-  total_pages: 35
-  total_components: 200+
-  total_hooks: 40
-  total_contexts: 8
-  total_utils: 25
-  lines_of_code: ~55000
+  total_files: 683
+  total_components: 379
+  total_hooks: 68
+  total_features: 10
+  total_pages: 13
+  total_stores: 11
+  total_api_services: 11
+  total_mechanics: 33
+  lines_of_code: ~85000
+
+  changes_from_v2_1:
+    total_files: +11
+    total_components: +6
+    total_hooks: +8
+    total_api_services: +1
+    note: "Ajustes basados en análisis exhaustivo de código real"
 
 stack:
-  framework: React 18
-  language: TypeScript
-  routing: React Router v6
-  state_management: Zustand + React Query
-  ui_library: TailwindCSS + Shadcn/ui
-  forms: React Hook Form
-  validation: Zod
-  charts: Chart.js
-  editor: TipTap
+  framework: React 19.2.0
+  build_tool: Vite 7.1.10
+  language: TypeScript 5.9.3
+  state_management: Zustand 5.0.8
+  routing: React Router DOM 7.9.4
+  styling: TailwindCSS 4.1.14
+  forms: React Hook Form 7.65.0
+  validation: Zod 4.1.12
+  http_client: Axios 1.12.2
+  websocket: Socket.io Client 4.8.1
+  icons: Lucide React 0.545.0
+  animations: Framer Motion 12.23.24
+  charts: Recharts 3.3.0
 
 # ============================================================================
-# FEATURES POR FASE
-# ============================================================================
-
-features_by_phase:
-  phase_1:
-    - auth
-    - modules
-    - exercises
-    - gamification
-    - progress
-    - admin-dashboard
-
-  phase_3:
-    - teacher-dashboard
-    - admin-tools
-    - notifications
-    - user-profile
-    - reports
-    - content-editor
-
-# ============================================================================
-# FEATURES DETALLADAS (15)
+# FEATURES IMPLEMENTADAS (10)
 # ============================================================================
 
 features:
-  # ===== FASE 1: ALCANCE INICIAL =====
-
   - name: auth
-    path: apps/frontend/src/features/auth/
+    path: src/features/auth/
     phase: 1
     epic: EAI-001
-    description: Autenticación y autorización
-    pages:
-      - Login.tsx
-      - Register.tsx
-      - ForgotPassword.tsx
-      - ResetPassword.tsx
-    components:
-      - LoginForm.tsx
-      - RegisterForm.tsx
-      - PasswordInput.tsx
-      - SocialLogin.tsx (Google, Facebook)
-    hooks:
-      - useAuth.ts
-      - useSession.ts
-    routes: 4
-    key_features:
-      - Login/logout
-      - Registro de usuarios
-      - Password reset
-      - Social login
-      - Role-based UI
-
-  - name: modules
-    path: apps/frontend/src/features/modules/
-    phase: 1
-    epic: EAI-002
-    description: Módulos educativos
-    pages:
-      - ModuleList.tsx
-      - ModuleDetail.tsx
-      - ModuleProgress.tsx
-    components:
-      - ModuleCard.tsx
-      - ModuleOverview.tsx
-      - ModuleNavigation.tsx
-      - DifficultyBadge.tsx
-      - LockIndicator.tsx
-    hooks:
-      - useModules.ts
-      - useModuleProgress.ts
-    routes: 3
-    key_features:
-      - 5 módulos educativos
-      - Navegación por módulos
-      - Progreso visual
-      - Desbloqueo secuencial
-
-  - name: exercises
-    path: apps/frontend/src/features/exercises/
-    phase: 1
-    epic: EAI-002
-    description: Ejercicios interactivos
-    pages:
-      - ExercisePlayer.tsx
-      - ExerciseResults.tsx
-    components:
-      - MultipleChoice.tsx
-      - TrueFalse.tsx
-      - FillBlank.tsx
-      - Matching.tsx
-      - Ordering.tsx
-      - Essay.tsx
-      - ExerciseTimer.tsx
-      - HintButton.tsx
-      - SkipButton.tsx
-      - FeedbackPanel.tsx
-    hooks:
-      - useExercise.ts
-      - useExerciseSubmit.ts
-      - usePowerups.ts
-    routes: 2
-    key_features:
-      - 6 tipos de ejercicios
-      - Timer por ejercicio
-      - Powerups (hint, skip)
-      - Feedback inmediato
-      - Auto-save de progreso
+    components: 16
+    hooks: 5
+    stores: 3
+    api_files: 3
+    types: 1
+    tests: 1
+    status: completed
 
   - name: gamification
-    path: apps/frontend/src/features/gamification/
+    path: src/features/gamification/
     phase: 1
     epic: EAI-003
-    description: Sistema de gamificación
-    pages:
-      - AchievementsGallery.tsx
-      - Leaderboard.tsx
-      - RankProgress.tsx
-      - CoinsShop.tsx
-    components:
-      - AchievementCard.tsx
-      - AchievementUnlockModal.tsx
-      - RankProgressBar.tsx
-      - RankBadge.tsx
-      - CoinBalance.tsx
-      - PowerupCard.tsx
-      - StreakTracker.tsx
-      - LeaderboardRow.tsx
-      - RankupAnimation.tsx
-    hooks:
-      - useAchievements.ts
-      - useRank.ts
-      - useCoins.ts
-      - usePowerups.ts
-      - useLeaderboard.ts
-    routes: 4
-    key_features:
-      - 30+ achievements
-      - 10 rangos mayas
-      - ML Coins economy
-      - Powerups shop
-      - Leaderboards
-      - Animaciones de unlock
+    components: 74
+    hooks: 15
+    stores: 11
+    api_files: 7
+    types: 8
+    tests: 1
+    status: completed
 
-  - name: progress
-    path: apps/frontend/src/features/progress/
+  - name: mechanics
+    path: src/features/mechanics/
     phase: 1
-    epic: [EAI-002, EAI-004]
-    description: Seguimiento de progreso
-    pages:
-      - MyProgress.tsx
-      - Statistics.tsx
-      - LearningPath.tsx
-    components:
-      - ProgressOverview.tsx
-      - ProgressChart.tsx (Chart.js)
-      - StatisticsCard.tsx
-      - TimeSpentChart.tsx
-      - CompletionRate.tsx
-      - StreakCalendar.tsx
-      - ModuleProgressList.tsx
-    hooks:
-      - useProgress.ts
-      - useStatistics.ts
-      - useLearningPath.ts
-    routes: 3
-    key_features:
-      - Progreso por módulo
-      - Estadísticas detalladas
-      - Gráficas interactivas
-      - Learning paths
-      - Calendario de actividad
-
-  - name: admin-dashboard
-    path: apps/frontend/src/features/admin/
-    phase: 1
-    epic: EAI-005
-    description: Dashboard administrativo
-    pages:
-      - AdminDashboard.tsx
-      - UserManagement.tsx
-      - SystemMetrics.tsx
-      - ContentModeration.tsx (EXT-002)
-    components:
-      - MetricsCard.tsx
-      - UserTable.tsx
-      - SystemHealthIndicator.tsx
-      - AlertsPanel.tsx
-      - QuickActions.tsx
-      - ActivityTimeline.tsx
-      - BulkUserActions.tsx (EXT-002)
-      - ModerationQueue.tsx (EXT-002)
-    hooks:
-      - useAdminDashboard.ts
-      - useUserManagement.ts
-      - useSystemMetrics.ts
-    routes: 4
-    key_features:
-      - Dashboard con métricas
-      - Gestión de usuarios
-      - System health monitoring
-      - Gestión masiva (EXT-002)
-      - Moderación de contenido (EXT-002)
-
-  # ===== FASE 3: EXTENSIONES =====
-
-  - name: teacher-dashboard
-    path: apps/frontend/src/features/teacher-dashboard/
-    phase: 3
-    epic: EXT-001
-    description: Dashboard para maestros
-    pages:
-      - TeacherDashboard.tsx
-      - ClassroomDetail.tsx
-      - AssignmentCreator.tsx
-      - GradingQueue.tsx
-      - ReportsPage.tsx
-    components:
-      - ClassroomList.tsx
-      - ClassroomCard.tsx
-      - StudentList.tsx
-      - StudentEnrollment.tsx
-      - AssignmentForm.tsx
-      - ContentSelector.tsx
-      - SubmissionList.tsx
-      - GradingInterface.tsx
-      - ProgressChart.tsx (Chart.js)
-      - TeacherNotes.tsx
-      - ClassroomAnalytics.tsx
-      - ReportGenerator.tsx
-      - EngagementMetrics.tsx
-      - QuickStats.tsx
-      - PendingGrading.tsx
-    hooks:
-      - useClassrooms.ts
-      - useAssignments.ts
-      - useGrading.ts
-      - useTeacherAnalytics.ts
-    routes: 5
-    key_features:
-      - Gestión de classrooms
-      - Custom assignments
-      - Sistema de grading
-      - Analytics de classroom
-      - Notas de maestro
-      - Reportes predefinidos
-
-  - name: admin-tools
-    path: apps/frontend/src/features/admin-tools/
-    phase: 3
-    epic: EXT-002
-    description: Herramientas administrativas extendidas
-    pages:
-      - BulkUserManagement.tsx
-      - SystemConfiguration.tsx
-      - AnalyticsDashboard.tsx
-      - ModerationCenter.tsx
-    components:
-      - BulkUserManager.tsx
-      - CSVImporter.tsx
-      - SystemConfigPanel.tsx
-      - FeatureFlagsManager.tsx
-      - AnalyticsChart.tsx
-      - ModerationQueue.tsx
-      - AutoModerationRules.tsx
-    hooks:
-      - useBulkOperations.ts
-      - useSystemConfig.ts
-      - useAdminAnalytics.ts
-    routes: 4
-    key_features:
-      - Gestión masiva de usuarios
-      - Import/export CSV
-      - Feature flags
-      - Analytics agregados
-      - Moderación de contenido
-
-  - name: notifications
-    path: apps/frontend/src/features/notifications/
-    phase: 3
-    epic: EXT-003
-    description: Centro de notificaciones
-    pages:
-      - NotificationsPage.tsx
-      - NotificationPreferences.tsx
-    components:
-      - NotificationCenter.tsx
-      - NotificationBell.tsx
-      - NotificationItem.tsx
-      - NotificationList.tsx
-      - PreferencesPanel.tsx
-      - ChannelToggle.tsx
-      - FrequencySelector.tsx
-    hooks:
-      - useNotifications.ts
-      - useNotificationPreferences.ts
-    routes: 2
-    key_features:
-      - Notification center
-      - Real-time updates (WebSocket)
-      - Read/unread status
-      - Bulk actions
-      - Preferences management
-      - Do not disturb mode
-
-  - name: user-profile
-    path: apps/frontend/src/features/user-profile/
-    phase: 3
-    epic: EXT-004
-    description: Perfiles de usuario avanzados
-    pages:
-      - ProfilePage.tsx
-      - ProfileSettings.tsx
-      - PublicProfile.tsx
-    components:
-      - ProfileHeader.tsx
-      - AvatarUploader.tsx
-      - BannerUploader.tsx
-      - BadgesShowcase.tsx
-      - StatsPanel.tsx
-      - SocialComparison.tsx
-      - BiographyEditor.tsx
-      - ThemeSelector.tsx
-    hooks:
-      - useProfile.ts
-      - useAvatarUpload.ts
-      - useSocialComparison.ts
-    routes: 3
-    key_features:
-      - Custom avatar/banner
-      - Biography editor
-      - Badges showcase
-      - Public statistics
-      - Social comparisons
-      - Theme customization
-
-  - name: reports
-    path: apps/frontend/src/features/reports/
-    phase: 3
-    epic: EXT-005
-    description: Reportería avanzada
-    pages:
-      - ReportsPage.tsx
-      - ReportBuilder.tsx
-      - ReportViewer.tsx
-      - ScheduledReports.tsx
-    components:
-      - ReportTemplates.tsx
-      - CustomReportBuilder.tsx
-      - FieldSelector.tsx
-      - FilterBuilder.tsx
-      - ChartRenderer.tsx (Chart.js)
-      - ExportPanel.tsx
-      - SchedulerConfig.tsx
-      - ReportPreview.tsx
-    hooks:
-      - useReports.ts
-      - useReportBuilder.ts
-      - useReportExport.ts
-    routes: 4
-    key_features:
-      - Custom report builder
-      - Predefined templates
-      - Interactive charts
-      - Multi-format export (PDF/CSV/Excel)
-      - Scheduled reports
-      - Drag & drop interface
-
-  - name: content-editor
-    path: apps/frontend/src/features/content-editor/
-    phase: 3
-    epic: EXT-006
-    description: Editor de contenido educativo
-    pages:
-      - ContentLibrary.tsx
-      - ContentEditor.tsx
-      - VersionHistory.tsx
-      - ApprovalWorkflow.tsx
-    components:
-      - WYSIWYGEditor.tsx (TipTap)
-      - ToolbarControls.tsx
-      - ContentBrowser.tsx
-      - ContentCard.tsx
-      - VersionCompare.tsx
-      - ApprovalStatusBadge.tsx
-      - CommentThread.tsx
-      - PreviewMode.tsx
-      - MediaEmbed.tsx
-    hooks:
-      - useContentEditor.ts
-      - useVersionControl.ts
-      - useApprovalWorkflow.ts
-    routes: 4
-    libraries:
-      - TipTap (WYSIWYG editor)
-    key_features:
-      - WYSIWYG editor
-      - Content library
-      - Version history
-      - Diff viewer
-      - Approval workflow
-      - Media embedding
-      - Preview mode
-
-# ============================================================================
-# SHARED COMPONENTS (50+)
-# ============================================================================
-
-shared_components:
-  layout:
-    - MainLayout.tsx
-    - Navbar.tsx
-    - Sidebar.tsx
-    - Footer.tsx
-    - Breadcrumbs.tsx
-    - PageHeader.tsx
-
-  ui:
-    - Button.tsx
-    - Input.tsx
-    - Select.tsx
-    - Checkbox.tsx
-    - Radio.tsx
-    - Switch.tsx
-    - Slider.tsx
-    - Textarea.tsx
-    - Modal.tsx
-    - Dropdown.tsx
-    - Tooltip.tsx
-    - Toast.tsx
-    - Alert.tsx
-    - Badge.tsx
-    - Card.tsx
-    - Tabs.tsx
-    - Accordion.tsx
-    - Progress.tsx
-    - Spinner.tsx
-    - Skeleton.tsx
-    - Avatar.tsx
-    - Divider.tsx
-
-  forms:
-    - Form.tsx
-    - FormField.tsx
-    - ErrorMessage.tsx
-    - FieldLabel.tsx
-
-  data:
-    - Table.tsx
-    - DataGrid.tsx
-    - Pagination.tsx
-    - SearchBar.tsx
-    - FilterPanel.tsx
-    - SortControls.tsx
-
-  feedback:
-    - EmptyState.tsx
-    - ErrorBoundary.tsx
-    - LoadingState.tsx
-    - SuccessMessage.tsx
-
-# ============================================================================
-# HOOKS GLOBALES (40)
-# ============================================================================
-
-global_hooks:
-  - useAuth.ts
-  - useUser.ts
-  - useApi.ts
-  - useDebounce.ts
-  - useLocalStorage.ts
-  - useMediaQuery.ts
-  - useOnClickOutside.ts
-  - useEventListener.ts
-  - usePrevious.ts
-  - useToggle.ts
-  - useCopyToClipboard.ts
-  - useWebSocket.ts
-  - useIntersectionObserver.ts
-  - useScrollLock.ts
-  - useKeyPress.ts
-  # ... y 25+ hooks más
-
-# ============================================================================
-# CONTEXTS (8)
-# ============================================================================
-
-contexts:
-  - AuthContext.tsx
-  - UserContext.tsx
-  - ThemeContext.tsx
-  - NotificationContext.tsx
-  - ModalContext.tsx
-  - ToastContext.tsx
-  - WebSocketContext.tsx
-  - TenantContext.tsx
-
-# ============================================================================
-# ROUTES (35+)
-# ============================================================================
-
-routes:
-  public:
-    - / (Landing)
-    - /login
-    - /register
-    - /forgot-password
-    - /reset-password
-
-  student:
-    - /dashboard
-    - /modules
-    - /modules/:id
-    - /exercises/:id
-    - /achievements
-    - /leaderboard
-    - /progress
-    - /profile
-    - /notifications
-
-  teacher:
-    - /teacher/dashboard
-    - /teacher/classrooms
-    - /teacher/classrooms/:id
-    - /teacher/assignments
-    - /teacher/grading
-    - /teacher/reports
-
-  admin:
-    - /admin/dashboard
-    - /admin/users
-    - /admin/analytics
-    - /admin/config
-    - /admin/moderation
-
-  content_creator:
-    - /content/library
-    - /content/editor
-    - /content/versions
-    - /content/approvals
-
-# ============================================================================
-# STATE MANAGEMENT
-# ============================================================================
-
-state_management:
-  global_stores:
-    - authStore (Zustand)
-    - userStore (Zustand)
-    - notificationStore (Zustand)
-    - themeStore (Zustand)
-
-  react_query:
-    queries: 60+
-    mutations: 40+
-    cached_keys: 100+
-
-# ============================================================================
-# STYLING
-# ============================================================================
-
-styling:
-  approach: TailwindCSS utility-first
-  ui_library: Shadcn/ui
-  animations: Framer Motion
-  icons: Lucide React
-
-  theme:
-    colors:
-      primary: "#3B82F6"
-      secondary: "#10B981"
-      accent: "#F59E0B"
-      danger: "#EF4444"
-      success: "#10B981"
-      warning: "#F59E0B"
-
-    fonts:
-      heading: "Inter"
-      body: "Inter"
-
-# ============================================================================
-# PERFORMANCE
-# ============================================================================
-
-performance:
-  bundle_size: 850KB (gzipped)
-  lighthouse_score: 92/100
-  first_contentful_paint: 1.2s
-  time_to_interactive: 2.8s
-
-  optimizations:
-    - Code splitting
-    - Lazy loading
-    - Image optimization
-    - Tree shaking
-    - Minification
-    - Compression
+    epic: EAI-002
+    components: 61
+    hooks: 1
+    api_files: 2
+    status: completed
+    total_mechanics: 33
 
 # ============================================================================
 # TESTING
 # ============================================================================
+# ⚠️ CRÍTICO: Test coverage muy bajo - necesita mejora urgente
 
 testing:
   unit_tests:
-    total: 280
-    coverage: 85%
-    framework: Vitest
+    total: 8
+    coverage: 13%
+    files_tested:
+      - apps/student/pages/__tests__/EmailVerificationPage.test.tsx
+      - apps/student/pages/__tests__/LoginPage.test.tsx
+      - apps/student/pages/__tests__/RegisterPage.test.tsx
+      - apps/student/pages/admin/__tests__/UserManagementPage.test.tsx
+      - features/admin/components/__tests__/DeactivateUserModal.test.tsx
+      - features/auth/__tests__/authStore.test.ts
+      - features/gamification/leaderboard/LiveLeaderboard.test.tsx
+      - shared/hooks/useSanitizedHTML.test.ts
 
-  component_tests:
-    total: 120
-    coverage: 80%
-    framework: React Testing Library
+  overall_coverage: 13%
+  coverage_goal: 40%
+  gap: -27%
+  priority: CRÍTICA
 
-  e2e_tests:
-    total: 80
-    coverage: 75%
-    framework: Playwright
-
-  overall_coverage: 83%
-
-# ============================================================================
-# ACCESSIBILITY
-# ============================================================================
-
-accessibility:
-  wcag_level: AA
-  aria_labels: Complete
-  keyboard_navigation: Full support
-  screen_reader: Optimized
+  untested:
+    components_without_tests: ~371
+    hooks_tested: 1 de 68 (1.5%)
+    stores_tested: 1 de 11 (9%)
+    apis_tested: 0 de 11 (0%)
+    e2e_tests: 0
 
 # ============================================================================
-# DEPENDENCIES
+# ESTADO DE IMPLEMENTACIÓN
 # ============================================================================
 
-key_dependencies:
-  - "react": "^18.2.0"
-  - "react-dom": "^18.2.0"
-  - "react-router-dom": "^6.20.0"
-  - "zustand": "^4.4.7"
-  - "@tanstack/react-query": "^5.13.0"
-  - "react-hook-form": "^7.49.0"
-  - "zod": "^3.22.4"
-  - "tailwindcss": "^3.4.0"
-  - "chart.js": "^4.4.0"
-  - "react-chartjs-2": "^5.2.0"
-  - "@tiptap/react": "^2.1.13"
-  - "framer-motion": "^10.16.16"
-  - "lucide-react": "^0.294.0"
+implementation_status:
+  completed:
+    - "✅ Sistema de autenticación completo"
+    - "✅ 33 mecánicas educativas implementadas"
+    - "✅ Sistema de gamificación robusto"
+    - "✅ Portal de estudiantes (core features)"
 
-# ============================================================================
-# NOTES
-# ============================================================================
+  partial:
+    - "⚠️ Portal de administración (básico)"
+    - "⚠️ Testing (solo 8 tests)"
+    - "⚠️ PWA (configurado pero no activado)"
 
-notes:
-  - Consolidado de 15 features (16 épicas)
-  - 200+ componentes React
-  - 35+ rutas configuradas
-  - 83% test coverage global
-  - Arquitectura component-driven
-  - State management con Zustand + React Query
-  - TailwindCSS + Shadcn/ui para UI
-  - Optimizado para performance (850KB bundle gzipped)
-  - WCAG AA compliant
-  - Responsive design mobile-first
+  not_implemented:
+    - "❌ Feature 'Education' (directorio vacío)"
+    - "❌ Exercise Player (placeholder)"

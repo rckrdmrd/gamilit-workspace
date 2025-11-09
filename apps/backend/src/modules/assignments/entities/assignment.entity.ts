@@ -1,9 +1,11 @@
 /**
  * Assignment Entity
  *
- * Mapea a la tabla: public.assignments
+ * Mapea a la tabla: educational_content.assignments
  *
  * Representa tareas, exámenes, prácticas y quizzes asignados por profesores
+ *
+ * CORREGIDO (2025-11-08): Migrado de 'public' a 'educational_content'
  */
 
 import {
@@ -17,6 +19,10 @@ import {
   JoinColumn,
   Index,
 } from 'typeorm';
+import {
+  DB_SCHEMAS,
+  DB_TABLES,
+} from '../../../shared/constants/database.constants';
 
 export enum AssignmentType {
   PRACTICE = 'practice',
@@ -25,7 +31,7 @@ export enum AssignmentType {
   HOMEWORK = 'homework',
 }
 
-@Entity({ schema: 'public', name: 'assignments' })
+@Entity({ schema: DB_SCHEMAS.EDUCATIONAL, name: DB_TABLES.EDUCATIONAL.ASSIGNMENTS })
 @Index(['teacher_id'])
 @Index(['is_published'])
 @Index(['assignment_type'])

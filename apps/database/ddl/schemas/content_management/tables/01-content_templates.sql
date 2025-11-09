@@ -22,7 +22,7 @@ CREATE TABLE content_management.content_templates (
     optional_fields text[],
     is_public boolean DEFAULT false,
     is_system_template boolean DEFAULT false,
-    difficulty_level public.difficulty_level,
+    difficulty_level educational_content.difficulty_level,
     usage_count integer DEFAULT 0,
     created_by uuid,
     metadata jsonb DEFAULT '{}'::jsonb,

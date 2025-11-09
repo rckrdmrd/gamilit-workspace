@@ -10,16 +10,44 @@ completion: 40%
 
 implementation:
   database:
+    schema: lti_integration
+    status: completed
+    last_update: "2025-11-08"
+    ddl_path: apps/database/ddl/schemas/lti_integration/tables/
     tables:
       - name: lti_consumers
         type: new
-        status: partial
-        description: LTI consumers registrados
+        status: completed
+        created: "2025-11-08"
+        file: apps/database/ddl/schemas/lti_integration/tables/01-lti_consumers.sql
+        description: Configuración de LMS externos (plataformas) que integran vía LTI 1.3
+        features:
+          - OAuth 2.0 / OIDC configuration
+          - Multi-tenant support
+          - LTI Advantage flags (Deep Linking, AGS, NRPS)
 
       - name: lti_sessions
         type: new
-        status: partial
-        description: Sesiones LTI activas
+        status: completed
+        created: "2025-11-08"
+        file: apps/database/ddl/schemas/lti_integration/tables/02-lti_sessions.sql
+        description: Sesiones activas de LTI - tracking de launches desde LMS externos
+        features:
+          - Launch ID tracking
+          - User context from LMS
+          - Resource link management
+          - Return URL support
+
+      - name: lti_grade_passback
+        type: new
+        status: completed
+        created: "2025-11-08"
+        file: apps/database/ddl/schemas/lti_integration/tables/03-lti_grade_passback.sql
+        description: Registro de envío de calificaciones a LMS vía AGS
+        features:
+          - Score passback to LMS
+          - Retry logic for failures
+          - Activity and grading progress tracking
 
   backend:
     module: lti

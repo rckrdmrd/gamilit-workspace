@@ -30,11 +30,12 @@ SET default_table_access_method = heap;
 -- Table: notifications
 -- Schema: gamification_system
 -- Description: Sistema de notificaciones para eventos de gamificación
--- Version: 3.0 (2025-11-08) - Agregada columna priority
+-- Version: 3.1 (2025-11-08) - Actualizada columna priority con 4 niveles
 -- Source of Truth: docs/02-especificaciones-tecnicas/tipos-compartidos/TYPES-NOTIFICATIONS.md
 -- =====================================================================================
 --
 -- CHANGELOG:
+-- v3.1 (2025-11-08): Actualizada priority a 4 niveles (agregado 'critical')
 -- v3.0 (2025-11-08): Agregada columna priority (notification_priority ENUM)
 -- v2.0 (2025-11-07): Actualizado para usar ENUM notification_type
 -- v1.0: Creación inicial
@@ -44,7 +45,7 @@ SET default_table_access_method = heap;
 CREATE TABLE gamification_system.notifications (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     user_id uuid NOT NULL,
-    type public.notification_type NOT NULL,
+    type gamification_system.notification_type NOT NULL,
     title text NOT NULL,
     message text NOT NULL,
     data jsonb,
@@ -68,7 +69,7 @@ COMMENT ON TABLE gamification_system.notifications IS 'User notifications for va
 -- Name: COLUMN notifications.type; Type: COMMENT; Schema: gamification_system; Owner: postgres
 --
 
-COMMENT ON COLUMN gamification_system.notifications.type IS 'Type of notification using public.notification_type ENUM (v2.0 - 11 types): achievement_unlocked, rank_up, friend_request, guild_invitation, mission_completed, level_up, message_received, system_announcement, ml_coins_earned, streak_milestone, exercise_feedback. See TYPES-NOTIFICATIONS.md for specifications.';
+COMMENT ON COLUMN gamification_system.notifications.type IS 'Type of notification using gamification_system.notification_type ENUM (v2.0 - 11 types): achievement_unlocked, rank_up, friend_request, guild_invitation, mission_completed, level_up, message_received, system_announcement, ml_coins_earned, streak_milestone, exercise_feedback. See TYPES-NOTIFICATIONS.md for specifications.';
 
 
 --
@@ -82,7 +83,7 @@ COMMENT ON COLUMN gamification_system.notifications.data IS 'Additional notifica
 -- Name: COLUMN notifications.priority; Type: COMMENT; Schema: gamification_system; Owner: postgres
 --
 
-COMMENT ON COLUMN gamification_system.notifications.priority IS 'Notification priority using gamification_system.notification_priority ENUM (v1.0 - 3 levels): low (informational), medium (standard, DEFAULT), high (urgent). Aligns with 05-realtime-notifications.md specification.';
+COMMENT ON COLUMN gamification_system.notifications.priority IS 'Notification priority using gamification_system.notification_priority ENUM (v1.1 - 4 levels): low (informational), medium (standard, DEFAULT), high (urgent), critical (system alerts/emergencies). Aligns with TYPES-NOTIFICATIONS.md specification.';
 
 
 --

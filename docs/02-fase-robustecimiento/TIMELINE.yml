@@ -8,6 +8,8 @@ end_date: "2024-09-30"
 budget_mxn: 50000
 story_points: 80
 status: completed
+last_updated: "2025-11-08"
+note: "Actualizado con métricas reales de implementación"
 
 # ============================================================================
 # ÉPICAS
@@ -48,9 +50,9 @@ milestones:
     milestone: Seguridad y funciones implementadas
     epic: EMR-001
     deliverables:
-      - 45 políticas RLS activas
-      - 28 funciones creadas
-      - 18 triggers implementados
+      - 24 políticas RLS activas (ACTUALIZADO: era 45 planificado, 24 implementado)
+      - 61 funciones creadas (ACTUALIZADO: superó objetivo de 28)
+      - 39 triggers implementados (ACTUALIZADO: superó objetivo de 18)
 
   - date: "2024-09-30"
     milestone: Deployment a producción (ZERO DOWNTIME)
@@ -146,7 +148,10 @@ metrics:
     data_integrity: 100
     zero_downtime: true
     performance_improvement: 65
-    test_coverage: 92
+    test_coverage: 18
+    test_coverage_planned: 92
+    test_coverage_gap: -74
+    note: "ACTUALIZADO 2025-11-08: Coverage real muy inferior a objetivo"
 
   technical_debt:
     before: high
@@ -190,29 +195,34 @@ database_objects:
 
   tables:
     before: 44
-    after: 89
+    after: 62
     migrated: 44
-    new: 45
+    new: 18
+    note: "ACTUALIZADO 2025-11-08: Fase 3 extensiones no completadas totalmente"
 
   indexes:
     before: 30
-    after: 127
-    created: 97
+    after: 74
+    created: 44
+    note: "ACTUALIZADO 2025-11-08: Optimizaciones planificadas pendientes"
 
   functions:
     before: 8
-    after: 28
-    created: 20
+    after: 61
+    created: 53
+    note: "ACTUALIZADO 2025-11-08: Más lógica en BD de lo planificado (MEJOR)"
 
   triggers:
     before: 5
-    after: 18
-    created: 13
+    after: 39
+    created: 34
+    note: "ACTUALIZADO 2025-11-08: Más automatización implementada (MEJOR)"
 
   rls_policies:
     before: 0
-    after: 45
-    created: 45
+    after: 24
+    created: 24
+    note: "ACTUALIZADO 2025-11-08: Cobertura parcial de seguridad"
 
 # ============================================================================
 # RIESGOS Y MITIGACIONES
@@ -254,7 +264,7 @@ lessons_learned:
 
   - lesson: Extensive testing prevents production issues
     impact: high
-    note: 92% test coverage caught all issues before production
+    note: "ACTUALIZADO 2025-11-08: Coverage objetivo era 92%, real fue 18%. Deployment exitoso gracias a pruebas manuales exhaustivas y validaciones de integridad de datos"
 
   - lesson: Modular schemas improve maintainability
     impact: high
@@ -283,5 +293,8 @@ notes:
   - 15 migraciones ejecutadas exitosamente
   - Todas reversibles con scripts de rollback
   - Data integrity 100% verificado
-  - 45 políticas RLS implementadas
+  - "ACTUALIZADO 2025-11-08: 24 políticas RLS implementadas (no 45 como se planificó)"
+  - "ACTUALIZADO 2025-11-08: 61 funciones y 39 triggers creados (SUPERÓ objetivos de 28 y 18)"
+  - "ACTUALIZADO 2025-11-08: 62 tablas totales (Fase 3 extensiones no completadas)"
+  - "ACTUALIZADO 2025-11-08: Test coverage real 18% (objetivo era 92%)"
   - Sistema ahora enterprise-ready para escalabilidad

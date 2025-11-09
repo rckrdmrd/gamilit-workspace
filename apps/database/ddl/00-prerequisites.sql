@@ -37,15 +37,17 @@ EXCEPTION WHEN duplicate_object THEN null; END $$;
 -- 📚 Documentación: auth_management.user_status
 -- Requerimiento: docs/01-requerimientos/01-autenticacion-autorizacion/RF-AUTH-002-estados-cuenta.md
 -- Especificación: docs/02-especificaciones-tecnicas/01-autenticacion-autorizacion/ET-AUTH-002-estados-cuenta.md
+-- VERSIÓN: 1.1 (2025-11-08) - Agregado 'banned'
 DO $$ BEGIN
     CREATE TYPE auth_management.user_status AS ENUM ('active', 'inactive', 'suspended', 'banned', 'pending');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
--- 📚 Documentación: public.auth_provider
+-- 📚 Documentación: auth_management.auth_provider
 -- Requerimiento: docs/01-requerimientos/01-autenticacion-autorizacion/RF-AUTH-003-oauth.md
 -- Especificación: docs/02-especificaciones-tecnicas/01-autenticacion-autorizacion/ET-AUTH-003-oauth.md
+-- VERSIÓN: 1.1 (2025-11-08) - Migrado de public a auth_management
 DO $$ BEGIN
-    CREATE TYPE public.auth_provider AS ENUM ('local', 'google', 'facebook', 'apple', 'microsoft', 'github');
+    CREATE TYPE auth_management.auth_provider AS ENUM ('local', 'google', 'facebook', 'apple', 'microsoft', 'github');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 2. ENUMs de Gamificación
@@ -77,11 +79,12 @@ DO $$ BEGIN
     CREATE TYPE gamification_system.comodin_type AS ENUM ('pistas', 'vision_lectora', 'segunda_oportunidad');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
--- 📚 Documentación: public.notification_type
+-- 📚 Documentación: gamification_system.notification_type
 -- Requerimiento: docs/01-requerimientos/06-notificaciones/RF-NOT-001-tipos-notificaciones.md
 -- Especificación: docs/02-especificaciones-tecnicas/06-notificaciones/ET-NOT-001-tipos-notificaciones.md
+-- VERSIÓN: 2.0 (2025-11-08) - Migrado de public a gamification_system
 DO $$ BEGIN
-    CREATE TYPE public.notification_type AS ENUM (
+    CREATE TYPE gamification_system.notification_type AS ENUM (
         'achievement_unlocked',
         'rank_up',
         'friend_request',
@@ -96,11 +99,12 @@ DO $$ BEGIN
     );
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
--- 📚 Documentación: public.notification_priority
+-- 📚 Documentación: gamification_system.notification_priority
 -- Requerimiento: docs/01-requerimientos/06-notificaciones/RF-NOT-001-tipos-notificaciones.md
 -- Especificación: docs/02-especificaciones-tecnicas/06-notificaciones/ET-NOT-001-tipos-notificaciones.md
+-- VERSIÓN: 1.1 (2025-11-08) - Migrado de public a gamification_system + agregado 'critical'
 DO $$ BEGIN
-    CREATE TYPE public.notification_priority AS ENUM ('low', 'medium', 'high', 'critical');
+    CREATE TYPE gamification_system.notification_priority AS ENUM ('low', 'medium', 'high', 'critical');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 3. ENUMs de Contenido Educativo
@@ -127,34 +131,42 @@ DO $$ BEGIN
     );
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
+-- 📚 Documentación: educational_content.difficulty_level
+-- VERSIÓN: 1.1 (2025-11-08) - Migrado de public a educational_content
 DO $$ BEGIN
-    CREATE TYPE public.difficulty_level AS ENUM ('beginner', 'intermediate', 'advanced', 'very_easy', 'easy', 'medium', 'hard', 'very_hard');
+    CREATE TYPE educational_content.difficulty_level AS ENUM ('very_easy', 'easy', 'beginner', 'medium', 'intermediate', 'hard', 'advanced', 'very_hard');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
+-- 📚 Documentación: educational_content.module_status
+-- VERSIÓN: 1.1 (2025-11-08) - Renombrado 'reviewing' a 'under_review'
 DO $$ BEGIN
     CREATE TYPE educational_content.module_status AS ENUM ('draft', 'published', 'archived', 'under_review');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
+-- 📚 Documentación: content_management.content_status
+-- VERSIÓN: 1.1 (2025-11-08) - Migrado de public a content_management + renombrado 'reviewing' a 'under_review'
 DO $$ BEGIN
-    CREATE TYPE public.content_status AS ENUM ('draft', 'published', 'archived', 'under_review');
+    CREATE TYPE content_management.content_status AS ENUM ('draft', 'published', 'archived', 'under_review');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 DO $$ BEGIN
     CREATE TYPE educational_content.cognitive_level AS ENUM ('recordar', 'comprender', 'aplicar', 'analizar', 'evaluar', 'crear');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
--- 📚 Documentación: public.media_type
+-- 📚 Documentación: content_management.media_type
 -- Requerimiento: docs/01-requerimientos/07-contenido-media/RF-CNT-001-gestion-media.md
 -- Especificación: docs/02-especificaciones-tecnicas/07-contenido-media/ET-CNT-001-gestion-media.md
+-- VERSIÓN: 1.1 (2025-11-08) - Migrado de public a content_management
 DO $$ BEGIN
-    CREATE TYPE public.media_type AS ENUM ('image', 'video', 'audio', 'document', 'interactive');
+    CREATE TYPE content_management.media_type AS ENUM ('image', 'video', 'audio', 'document', 'interactive');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
--- 📚 Documentación: public.processing_status
+-- 📚 Documentación: content_management.processing_status
 -- Requerimiento: docs/01-requerimientos/07-contenido-media/RF-CNT-001-gestion-media.md
 -- Especificación: docs/02-especificaciones-tecnicas/07-contenido-media/ET-CNT-001-gestion-media.md
+-- VERSIÓN: 1.1 (2025-11-08) - Migrado de public a content_management
 DO $$ BEGIN
-    CREATE TYPE public.processing_status AS ENUM ('pending', 'processing', 'completed', 'failed');
+    CREATE TYPE content_management.processing_status AS ENUM ('pending', 'processing', 'completed', 'failed');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 4. ENUMs de Progreso
@@ -162,8 +174,9 @@ EXCEPTION WHEN duplicate_object THEN null; END $$;
 -- 📚 Documentación: progress_tracking.progress_status
 -- Requerimiento: docs/01-requerimientos/04-progreso-seguimiento/RF-PRG-001-estados-progreso.md
 -- Especificación: docs/02-especificaciones-tecnicas/04-progreso-seguimiento/ET-PRG-001-estados-progreso.md
+-- VERSIÓN: 1.1 (2025-11-08) - Agregado 'abandoned' y 'mastered'
 DO $$ BEGIN
-    CREATE TYPE progress_tracking.progress_status AS ENUM ('not_started', 'in_progress', 'completed', 'mastered', 'needs_review');
+    CREATE TYPE progress_tracking.progress_status AS ENUM ('not_started', 'in_progress', 'completed', 'needs_review', 'mastered', 'abandoned');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 📚 Documentación: progress_tracking.attempt_status
@@ -191,8 +204,11 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 6. ENUMs de Configuración
+
+-- 📚 Documentación: system_configuration.setting_type
+-- VERSIÓN: 1.1 (2025-11-08) - Migrado de public a system_configuration
 DO $$ BEGIN
-    CREATE TYPE public.setting_type AS ENUM ('string', 'number', 'boolean', 'json', 'array');
+    CREATE TYPE system_configuration.setting_type AS ENUM ('string', 'number', 'boolean', 'json', 'array');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 📚 Documentación: audit_logging.log_level
@@ -367,12 +383,44 @@ COMMENT ON FUNCTION gamification_system.update_notifications_updated_at() IS 'Tr
 -- COMENTARIOS EN TIPOS
 -- ============================================================================
 
-COMMENT ON TYPE auth_management.gamilit_role IS 'Roles de usuario en la plataforma';
-COMMENT ON TYPE auth_management.user_status IS 'Estados de cuenta de usuario';
--- COMMENT moved to gamification_system.maya_rank
-COMMENT ON TYPE gamification_system.achievement_category IS 'Categorías de logros para gamificación';
-COMMENT ON TYPE gamification_system.achievement_type IS 'Tipos de logros disponibles (badge, milestone, special, rank_promotion)';
-COMMENT ON TYPE educational_content.exercise_type IS '31 mecánicas de ejercicios interactivos Gamilit (5 módulos + auxiliares)';
-COMMENT ON TYPE difficulty_level IS 'Niveles de dificultad (beginner, easy, medium, hard, advanced, etc.)';
-COMMENT ON TYPE content_status IS 'Estados del ciclo de vida del contenido';
-COMMENT ON TYPE media_type IS 'Tipos de archivos multimedia soportados';
+-- 1. Autenticación
+COMMENT ON TYPE auth_management.gamilit_role IS 'Roles de usuario en la plataforma (v1.0)';
+COMMENT ON TYPE auth_management.user_status IS 'Estados de cuenta de usuario (v1.1 - 2025-11-08 - agregado banned)';
+COMMENT ON TYPE auth_management.auth_provider IS 'Proveedores de autenticación OAuth2/OIDC (v1.1 - 2025-11-08 - migrado de public)';
+
+-- 2. Gamificación
+-- COMMENT for maya_rank is in gamification_system/enums/maya_rank.sql
+COMMENT ON TYPE gamification_system.achievement_category IS 'Categorías de logros para gamificación (v1.0)';
+COMMENT ON TYPE gamification_system.achievement_type IS 'Tipos de logros disponibles (badge, milestone, special, rank_promotion) (v1.0)';
+COMMENT ON TYPE gamification_system.comodin_type IS 'Tipos de comodines/power-ups (pistas, vision_lectora, segunda_oportunidad) (v1.0)';
+COMMENT ON TYPE gamification_system.notification_type IS 'Tipos de notificaciones del sistema (v2.0 - 2025-11-08 - migrado de public)';
+COMMENT ON TYPE gamification_system.notification_priority IS 'Niveles de prioridad de notificaciones (v1.1 - 2025-11-08 - migrado de public)';
+
+-- 3. Contenido Educativo
+COMMENT ON TYPE educational_content.exercise_type IS '31 mecánicas de ejercicios interactivos Gamilit (5 módulos + auxiliares) (v1.0)';
+COMMENT ON TYPE educational_content.difficulty_level IS 'Niveles de dificultad educativa - 8 valores (v1.1 - 2025-11-08 - migrado de public)';
+COMMENT ON TYPE educational_content.module_status IS 'Estados del ciclo de vida de módulos educativos (v1.1 - 2025-11-08)';
+COMMENT ON TYPE educational_content.cognitive_level IS 'Niveles cognitivos de Bloom para objetivos de aprendizaje (v1.0)';
+
+-- 4. Gestión de Contenido
+COMMENT ON TYPE content_management.content_status IS 'Estados del ciclo de vida del contenido (v1.1 - 2025-11-08 - migrado de public)';
+COMMENT ON TYPE content_management.media_type IS 'Tipos de archivos multimedia soportados (v1.1 - 2025-11-08 - migrado de public)';
+COMMENT ON TYPE content_management.processing_status IS 'Estados de procesamiento de archivos multimedia (v1.1 - 2025-11-08 - migrado de public)';
+
+-- 5. Progreso y Tracking
+COMMENT ON TYPE progress_tracking.progress_status IS 'Estados de progreso del estudiante: not_started, in_progress, completed, needs_review, mastered, abandoned (v1.1 - 2025-11-08 - agregados mastered y abandoned)';
+COMMENT ON TYPE progress_tracking.attempt_status IS 'Estados de intentos de ejercicios (v1.0)';
+
+-- 6. Características Sociales
+COMMENT ON TYPE social_features.classroom_role IS 'Roles dentro de un aula virtual (teacher, student, assistant) (v1.0)';
+COMMENT ON TYPE social_features.team_role IS 'Roles dentro de un equipo/guild (leader, member, coordinator) (v1.0)';
+COMMENT ON TYPE social_features.friendship_status IS 'Estados de solicitudes de amistad (pending, accepted, blocked) (v1.0)';
+
+-- 7. Configuración del Sistema
+COMMENT ON TYPE system_configuration.setting_type IS 'Tipos de datos para configuraciones del sistema (v1.1 - 2025-11-08 - migrado de public)';
+
+-- 8. Auditoría
+COMMENT ON TYPE audit_logging.log_level IS 'Niveles de severidad de logs del sistema (v1.0)';
+COMMENT ON TYPE audit_logging.audit_action IS 'Tipos de acciones auditables en el sistema (v1.0)';
+COMMENT ON TYPE audit_logging.alert_severity IS 'Niveles de severidad de alertas (v1.0)';
+COMMENT ON TYPE audit_logging.alert_status IS 'Estados de alertas del sistema (v1.0)';
