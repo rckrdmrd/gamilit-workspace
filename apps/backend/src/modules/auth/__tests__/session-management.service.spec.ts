@@ -77,7 +77,7 @@ describe('SessionManagementService', () => {
 
       // Assert
       expect(result).toBeDefined();
-      expect(result.id).toBe('session-1');
+      expect(result!.id).toBe('session-1');
       expect(mockSessionRepository.create).toHaveBeenCalled();
       expect(mockSessionRepository.save).toHaveBeenCalled();
     });
@@ -131,7 +131,7 @@ describe('SessionManagementService', () => {
       // Assert
       expect(mockSessionRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          refresh_token: expect.not.stringContaining(createSessionDto.refresh_token),
+          refresh_token: expect.not.stringContaining(createSessionDto.refresh_token || ''),
         }),
       );
     });
@@ -175,7 +175,7 @@ describe('SessionManagementService', () => {
 
       // Assert
       expect(result).toBeDefined();
-      expect(result.id).toBe('session-1');
+      expect(result!.id).toBe('session-1');
       expect(mockSessionRepository.findOne).toHaveBeenCalledWith({
         where: { id: 'session-1' },
       });
@@ -386,13 +386,13 @@ describe('SessionManagementService', () => {
     });
   });
 
-  describe('cleanupExpiredSessions', () => {
+  describe('cleanExpiredSessions', () => {
     it('should delete all expired sessions', async () => {
       // Arrange
       mockSessionRepository.delete.mockResolvedValue({ affected: 10 }); // 10 expired sessions
 
       // Act
-      const result = await service.cleanupExpiredSessions();
+      const result = await service.cleanExpiredSessions();
 
       // Assert
       expect(result).toBe(10);
@@ -406,7 +406,7 @@ describe('SessionManagementService', () => {
       mockSessionRepository.delete.mockResolvedValue({ affected: 0 });
 
       // Act
-      const result = await service.cleanupExpiredSessions();
+      const result = await service.cleanExpiredSessions();
 
       // Assert
       expect(result).toBe(0);

@@ -7,7 +7,7 @@
 -- Created: 2025-11-02
 -- =============================================================================
 
-CREATE OR REPLACE FUNCTION public.log_system_event(
+CREATE OR REPLACE FUNCTION audit_logging.log_system_event(
     p_event_type TEXT,
     p_event_source TEXT,
     p_event_data JSONB DEFAULT NULL,

@@ -7,7 +7,7 @@
 -- Created: 2025-11-02
 -- =============================================================================
 
-CREATE OR REPLACE FUNCTION public.cleanup_old_user_activity(
+CREATE OR REPLACE FUNCTION audit_logging.cleanup_old_user_activity(
     p_retention_days INTEGER DEFAULT 180
 )
 RETURNS TABLE(

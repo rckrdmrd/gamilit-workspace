@@ -7,7 +7,7 @@
 -- Created: 2025-11-02
 -- =============================================================================
 
-CREATE OR REPLACE FUNCTION public.validate_date_range(
+CREATE OR REPLACE FUNCTION gamilit.validate_date_range(
     p_start_date TIMESTAMP WITHOUT TIME ZONE,
     p_end_date TIMESTAMP WITHOUT TIME ZONE,
     p_max_range_days INTEGER DEFAULT 365

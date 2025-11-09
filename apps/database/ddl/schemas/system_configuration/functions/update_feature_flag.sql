@@ -7,7 +7,7 @@
 -- Created: 2025-11-02
 -- =============================================================================
 
-CREATE OR REPLACE FUNCTION public.update_feature_flag(
+CREATE OR REPLACE FUNCTION system_configuration.update_feature_flag(
     p_feature_key TEXT,
     p_enabled BOOLEAN,
     p_rollout_percentage INTEGER DEFAULT 100,

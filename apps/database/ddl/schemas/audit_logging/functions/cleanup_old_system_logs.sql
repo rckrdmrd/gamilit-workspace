@@ -7,7 +7,7 @@
 -- Created: 2025-11-02
 -- =============================================================================
 
-CREATE OR REPLACE FUNCTION public.cleanup_old_system_logs(
+CREATE OR REPLACE FUNCTION audit_logging.cleanup_old_system_logs(
     p_retention_days INTEGER DEFAULT 90
 )
 RETURNS TABLE(

@@ -8,7 +8,7 @@
 -- Modified: 2025-11-07 - Refactored to use global feature_flags table only (D4-A)
 -- =============================================================================
 
-CREATE OR REPLACE FUNCTION public.is_feature_enabled(
+CREATE OR REPLACE FUNCTION system_configuration.is_feature_enabled(
     p_feature_key TEXT,
     p_user_id UUID DEFAULT NULL
 )

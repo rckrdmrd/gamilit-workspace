@@ -7,7 +7,7 @@
 -- Created: 2025-11-02
 -- =============================================================================
 
-CREATE OR REPLACE FUNCTION public.send_notification(
+CREATE OR REPLACE FUNCTION gamification_system.send_notification(
     p_user_id UUID,
     p_title TEXT,
     p_message TEXT,
