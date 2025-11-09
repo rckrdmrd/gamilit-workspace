@@ -136,7 +136,7 @@ export const MatchingDragDrop: React.FC<MatchingDragDropProps> = ({
                     id={pair.id}
                     variant="matching"
                     isEmpty={isEmpty}
-                    onDrop={(itemAId) => handleDrop(itemAId, pair.id)}
+                    onDrop={(itemAId: string) => handleDrop(itemAId, pair.id)}
                     minHeight="60px"
                   >
                     {connectedPair && (

@@ -25,7 +25,7 @@ import {
   AlertTriangle,
   Users,
 } from 'lucide-react';
-import { SystemUser } from '../../types/users.types';
+import type { SystemUser } from '../../types';
 
 /**
  * Props interface for BulkActionsPanel component

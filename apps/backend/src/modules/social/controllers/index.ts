@@ -14,3 +14,5 @@ export { ClassroomMembersController } from './classroom-members.controller';
 export { TeamsController } from './teams.controller';
 export { TeamMembersController } from './team-members.controller';
 export { TeamChallengesController } from './team-challenges.controller';
+export { PeerChallengesController } from './peer-challenges.controller'; // ✨ NUEVO - P2 (Epic EXT-009)
+export { ChallengeParticipantsController } from './challenge-participants.controller'; // ✨ NUEVO - P2 (Epic EXT-009)

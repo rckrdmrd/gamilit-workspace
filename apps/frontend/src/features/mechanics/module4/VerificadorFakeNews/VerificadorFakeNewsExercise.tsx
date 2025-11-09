@@ -1,26 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
 import { Shield, CheckCircle, XCircle } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { ArticleParser } from './ArticleParser';
 import { FactCheckDashboard } from './FactCheckDashboard';
 import { mockArticles, mockFactCheckResults } from './verificadorFakeNewsMockData';
-import { Claim, FactCheckResult, ExerciseProps, VerificadorState } from './verificadorFakeNewsTypes';
+import { Claim, FactCheckResult, ExerciseProps, VerificadorState, NewsArticle } from './verificadorFakeNewsTypes';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import { saveProgress as saveProgressUtil, loadProgress, clearProgress } from '@/shared/utils/storage';
+import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 
 export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
-  moduleId,
-  lessonId,
   exerciseId,
-  userId,
   onComplete,
-  onExit,
   onProgressUpdate,
   initialData,
-  difficulty = 'medium',
   exercise,
 }) => {
   // State management
@@ -31,7 +24,7 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
 
-  const selectedArticle = exercise?.articles?.find((a) => a.id === selectedArticleId) || mockArticles.find((a) => a.id === selectedArticleId);
+  const selectedArticle = exercise?.articles?.find((a: NewsArticle) => a.id === selectedArticleId) || mockArticles.find((a: NewsArticle) => a.id === selectedArticleId);
   const articles = exercise?.articles || mockArticles;
 
   // Calculate progress
@@ -116,62 +109,6 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
     setFeedback(null);
     setShowFeedback(false);
   };
-
-  // Check/Verify handler
-  const handleCheck = () => {
-    const score = calculateScore();
-    const timeSpent = Math.floor(
-      (new Date().getTime() - startTime.getTime()) / 1000
-    );
-
-    if (claims.length === 0) {
-      setFeedback({
-        type: 'info',
-        title: 'Sin Afirmaciones',
-        message: 'Selecciona texto del artículo para extraer afirmaciones a verificar.',
-      });
-      setShowFeedback(true);
-      return;
-    }
-
-    if (results.length === 0) {
-      setFeedback({
-        type: 'error',
-        title: 'Sin Verificaciones',
-        message: 'Verifica al menos una afirmación antes de finalizar.',
-      });
-      setShowFeedback(true);
-      return;
-    }
-
-    const allVerified = results.length === claims.length;
-    const trueCount = results.filter((r) => r.verdict === 'true').length;
-    const falseCount = results.filter((r) => r.verdict === 'false').length;
-
-    setFeedback({
-      type: allVerified ? 'success' : 'partial',
-      title: allVerified ? '¡Verificación Completa!' : 'Verificación en Progreso',
-      message: allVerified
-        ? `¡Excelente trabajo! Has verificado todas las afirmaciones. ${trueCount} verdaderas, ${falseCount} falsas.`
-        : `Has verificado ${results.length} de ${claims.length} afirmaciones. Continúa verificando.`,
-      score: {
-        baseScore: score,
-        timeBonus: Math.max(0, 20 - timeSpent / 60),
-        accuracyBonus: allVerified ? 20 : 0,
-        totalScore: score,
-        mlCoins: Math.floor(score / 10),
-        xpGained: score * 2,
-      },
-      showConfetti: allVerified,
-    });
-    setShowFeedback(true);
-  };
-
-  // Actions ref for parent component
-  const actionsRef = useRef({
-    handleReset,
-    handleCheck,
-  });
 
   return (
     <>

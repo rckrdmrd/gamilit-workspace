@@ -7,9 +7,12 @@ import {
   Index,
   OneToOne,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { DB_TABLES, GamilityRoleEnum, UserStatusEnum } from '@shared/constants';
+import { Role } from './role.entity';
 
 /**
  * User Entity (auth.users)
@@ -136,6 +139,22 @@ export class User {
    */
   // @OneToOne(() => Profile, (profile) => profile.user)
   // profile?: Profile;
+
+  /**
+   * Roles del usuario (RBAC)
+   * Relación ManyToMany: Un usuario puede tener múltiples roles
+   * Tabla intermedia: auth_management.user_roles
+   *
+   * NOTA: Este es el sistema RBAC nuevo. El campo 'role' (enum) se mantiene por backwards compatibility.
+   */
+  @ManyToMany(() => Role, (role) => role.users)
+  @JoinTable({
+    name: 'user_roles',
+    schema: 'auth_management',
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' },
+  })
+  roles?: Role[];
 
   // Relaciones futuras:
   // @OneToMany(() => UserSession, (session) => session.user)

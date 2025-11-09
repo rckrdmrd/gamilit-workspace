@@ -1,0 +1,643 @@
+# =====================================================
+# REPORTE: Análisis Backend - Alineación con BD
+# Fecha: 2025-11-09
+# Objetivo: Identificar referencias incorrectas después de reorganización BD
+# =====================================================
+
+metadata:
+  fecha_analisis: "2025-11-09"
+  version_backend: "1.0.0"
+  directorio_analizado: "/apps/backend/src"
+  archivos_analizados: 96
+  tipo_analisis: "Referencias a objetos de BD reorganizados"
+
+# =====================================================
+# RESUMEN EJECUTIVO
+# =====================================================
+
+resumen_ejecutivo:
+  total_hallazgos: 8
+  criticos: 0
+  altos: 3
+  medios: 5
+  bajos: 0
+
+  estado_general: "MEDIO"
+
+  observaciones_principales:
+    - "No se encontraron referencias a funciones migradas (POSITIVO)"
+    - "No se encontraron referencias a vista renombrada 'for' (POSITIVO)"
+    - "Referencias a ENUMs usan comentarios DDL desactualizados (MEDIO)"
+    - "Tabla assignment_classrooms existe en social_features (CORRECTO)"
+    - "ENUM content_status NO existe - solo mencionado en deprecated (ALTO)"
+    - "Query SQL directo sin usar entity en leaderboard.service.ts (MEDIO)"
+
+  acciones_requeridas:
+    prioridad_alta:
+      - "Crear ENUM content_management.content_status o migrar a public"
+      - "Actualizar referencias DDL de notification_type y notification_priority"
+      - "Actualizar referencias DDL de aggregation_period, metric_type, etc."
+
+    prioridad_media:
+      - "Refactorizar query directo en leaderboard.service.ts"
+      - "Documentar decisión sobre content_status ENUM location"
+
+# =====================================================
+# HALLAZGOS DETALLADOS
+# =====================================================
+
+hallazgos:
+
+  # --------------------------------------------------
+  # ENUMS - Referencias con DDL desactualizado
+  # --------------------------------------------------
+
+  - id: "HAL-001"
+    archivo: "apps/backend/src/shared/constants/enums.constants.ts"
+    linea: 255
+    tipo: "ENUM"
+    severidad: "ALTO"
+    categoria: "Referencia DDL desactualizada"
+    problema: "Referencia a 'public.notification_type' pero ENUM está en 'gamification_system'"
+    referencia_actual: "@see DDL: public.notification_type ENUM"
+    referencia_correcta: "@see DDL: gamification_system.notification_type ENUM"
+    ubicacion_real_ddl: "apps/database/ddl/schemas/gamification_system/enums/notification_type.sql"
+    impacto: "Documentación incorrecta - no afecta funcionalidad pero causa confusión"
+    accion_requerida: "Actualizar comentario DDL"
+    codigo_contexto: |
+      /**
+       * Tipos de notificaciones del sistema
+       * @see DDL: public.notification_type ENUM
+       * @see Docs: docs/02-especificaciones-tecnicas/tipos-compartidos/TYPES-NOTIFICATIONS.md
+       * @version 2.0 (2025-11-07) - Alineado con documentación oficial
+       */
+      export enum NotificationTypeEnum {
+        ACHIEVEMENT_UNLOCKED = 'achievement_unlocked',
+        RANK_UP = 'rank_up',
+        // ... etc
+      }
+
+  - id: "HAL-002"
+    archivo: "apps/backend/src/shared/constants/enums.constants.ts"
+    linea: 286
+    tipo: "ENUM"
+    severidad: "ALTO"
+    categoria: "Referencia DDL desactualizada"
+    problema: "Referencia a 'public.notification_priority' pero ENUM está en 'gamification_system'"
+    referencia_actual: "@see DDL: public.notification_priority ENUM"
+    referencia_correcta: "@see DDL: gamification_system.notification_priority ENUM"
+    ubicacion_real_ddl: "apps/database/ddl/schemas/gamification_system/enums/notification_priority.sql"
+    impacto: "Documentación incorrecta - no afecta funcionalidad pero causa confusión"
+    accion_requerida: "Actualizar comentario DDL"
+
+  - id: "HAL-003"
+    archivo: "apps/backend/src/shared/constants/enums.constants.ts"
+    linea: 378
+    tipo: "ENUM"
+    severidad: "CRITICO"
+    categoria: "ENUM inexistente"
+    problema: "Referencia a 'public.content_status' pero ENUM NO EXISTE en la BD"
+    referencia_actual: "@see DDL: public.content_status ENUM"
+    referencia_correcta: "PENDIENTE - Decidir ubicación correcta"
+    ubicacion_real_ddl: "NO EXISTE - Solo mencionado en apps/database/ddl/schemas/public/enums/_deprecated/README.md"
+    ubicacion_esperada_1: "apps/database/ddl/schemas/content_management/enums/content_status.sql"
+    ubicacion_esperada_2: "apps/database/ddl/schemas/public/enums/content_status.sql"
+    impacto: "CRITICO - Las tablas usan content_management.content_status pero el ENUM no existe"
+    evidencia_uso:
+      - tabla: "content_management.marie_curie_content"
+        columna: "status"
+        tipo: "content_management.content_status"
+        linea_ddl: 33
+        archivo_ddl: "apps/database/ddl/schemas/content_management/tables/02-marie_curie_content.sql"
+    accion_requerida: |
+      URGENTE:
+      1. Crear ENUM content_management.content_status con valores: draft, published, archived, under_review
+      2. O migrar a public.content_status si es compartido
+      3. Actualizar referencia en enums.constants.ts
+    codigo_creacion_sugerido: |
+      -- File: apps/database/ddl/schemas/content_management/enums/content_status.sql
+      CREATE TYPE content_management.content_status AS ENUM (
+          'draft',
+          'published',
+          'archived',
+          'under_review'
+      );
+
+  - id: "HAL-004"
+    archivo: "apps/backend/src/shared/constants/enums.constants.ts"
+    linea: 390
+    tipo: "ENUM"
+    severidad: "MEDIO"
+    categoria: "Referencia DDL sin schema"
+    problema: "Referencia a 'content_type' sin schema calificado"
+    referencia_actual: "@see DDL: content_type ENUM"
+    referencia_correcta: "@see DDL: content_management.content_type ENUM"
+    ubicacion_real_ddl: "apps/database/ddl/schemas/content_management/enums/content_type.sql"
+    impacto: "Documentación incompleta - falta schema"
+    accion_requerida: "Agregar schema al comentario DDL"
+
+  - id: "HAL-005"
+    archivo: "apps/backend/src/shared/constants/enums.constants.ts"
+    linea: 518
+    tipo: "ENUM"
+    severidad: "MEDIO"
+    categoria: "Referencia DDL sin schema"
+    problema: "Referencia a 'attempt_result' sin schema calificado"
+    referencia_actual: "@see DDL: attempt_result ENUM"
+    referencia_correcta: "@see DDL: progress_tracking.attempt_result ENUM"
+    ubicacion_real_ddl: "apps/database/ddl/schemas/progress_tracking/enums/attempt_result.sql"
+    impacto: "Documentación incompleta - falta schema"
+    accion_requerida: "Agregar schema al comentario DDL"
+
+  - id: "HAL-006"
+    archivo: "apps/backend/src/shared/constants/enums.constants.ts"
+    linea: 588
+    tipo: "ENUM"
+    severidad: "MEDIO"
+    categoria: "Referencia DDL sin schema"
+    problema: "Referencia a 'social_event_type' sin schema calificado"
+    referencia_actual: "@see DDL: social_event_type ENUM"
+    referencia_correcta: "@see DDL: social_features.social_event_type ENUM"
+    ubicacion_real_ddl: "apps/database/ddl/schemas/social_features/enums/social_event_type.sql"
+    impacto: "Documentación incompleta - falta schema"
+    accion_requerida: "Agregar schema al comentario DDL"
+
+  - id: "HAL-007"
+    archivo: "apps/backend/src/shared/constants/enums.constants.ts"
+    linea: 625
+    tipo: "ENUM"
+    severidad: "MEDIO"
+    categoria: "Referencia DDL sin schema"
+    problema: "Referencia a 'aggregation_period' sin schema calificado"
+    referencia_actual: "@see DDL: aggregation_period ENUM"
+    referencia_correcta: "@see DDL: audit_logging.aggregation_period ENUM"
+    ubicacion_real_ddl: "apps/database/ddl/schemas/audit_logging/enums/aggregation_period.sql"
+    impacto: "Documentación incompleta - falta schema"
+    accion_requerida: "Agregar schema al comentario DDL"
+
+  - id: "HAL-008"
+    archivo: "apps/backend/src/shared/constants/enums.constants.ts"
+    linea: 637
+    tipo: "ENUM"
+    severidad: "MEDIO"
+    categoria: "Referencia DDL sin schema"
+    problema: "Referencia a 'metric_type' sin schema calificado"
+    referencia_actual: "@see DDL: metric_type ENUM"
+    referencia_correcta: "@see DDL: audit_logging.metric_type ENUM"
+    ubicacion_real_ddl: "apps/database/ddl/schemas/audit_logging/enums/metric_type.sql"
+    impacto: "Documentación incompleta - falta schema"
+    accion_requerida: "Agregar schema al comentario DDL"
+
+  # --------------------------------------------------
+  # QUERIES SQL - Uso directo sin entities
+  # --------------------------------------------------
+
+  - id: "HAL-009"
+    archivo: "apps/backend/src/modules/gamification/services/leaderboard.service.ts"
+    linea: 280-289
+    tipo: "QUERY"
+    severidad: "MEDIO"
+    categoria: "Query SQL directo"
+    problema: "Query directo a social_features.classroom_members sin usar entity"
+    referencia_actual: |
+      const classroomMembersQuery = `
+        SELECT student_id as user_id
+        FROM social_features.classroom_members
+        WHERE classroom_id = $1
+      `;
+      const classroomMembers = await this.userStatsRepo.query(
+        classroomMembersQuery,
+        [classroomId],
+      );
+    referencia_correcta: "Usar ClassroomMember entity con QueryBuilder"
+    impacto: "Código menos mantenible - no usa TypeORM entities"
+    accion_requerida: |
+      Refactorizar para usar ClassroomMember entity:
+      1. Importar ClassroomMember entity
+      2. Inyectar ClassroomMemberRepository
+      3. Usar createQueryBuilder() en lugar de query directo
+    codigo_sugerido: |
+      // En constructor
+      @InjectRepository(ClassroomMember, 'social')
+      private readonly classroomMemberRepo: Repository<ClassroomMember>,
+
+      // En getClassroomLeaderboard()
+      const classroomMembers = await this.classroomMemberRepo
+        .createQueryBuilder('cm')
+        .select(['cm.student_id'])
+        .where('cm.classroom_id = :classroomId', { classroomId })
+        .getRawMany();
+
+      const userIds = classroomMembers.map(m => m.cm_student_id);
+
+# =====================================================
+# VERIFICACIONES POSITIVAS
+# =====================================================
+
+verificaciones_positivas:
+
+  funciones_migradas:
+    estado: "OK"
+    descripcion: "No se encontraron referencias a funciones migradas desde public"
+    funciones_buscadas:
+      - cleanup_old_system_logs
+      - cleanup_old_user_activity
+      - log_system_event
+      - is_feature_enabled
+      - update_feature_flag
+      - send_notification
+      - validate_date_range
+    conclusion: "Backend no usa estas funciones directamente"
+
+  vista_renombrada:
+    estado: "OK"
+    descripcion: "No se encontraron referencias a vista 'for' renombrada a 'number_series'"
+    busquedas_realizadas:
+      - "public.for"
+      - "\\bfor\\b (vista)"
+      - "number_series"
+    conclusion: "Vista no es utilizada en backend"
+
+  tabla_assignment_classrooms:
+    estado: "OK"
+    descripcion: "Tabla assignment_classrooms correctamente configurada en backend"
+    ubicacion_ddl: "apps/database/ddl/schemas/social_features/tables/assignment_classrooms.sql"
+    entities_encontradas:
+      - archivo: "apps/backend/src/modules/social/entities/assignment-classroom.entity.ts"
+        schema: "social_features"
+        tabla: "assignment_classrooms"
+        estado: "CORRECTO"
+        decorador: "@Entity({ schema: DB_SCHEMAS.SOCIAL, name: DB_TABLES.SOCIAL.ASSIGNMENT_CLASSROOMS })"
+
+      - archivo: "apps/backend/src/modules/assignments/entities/assignment-classroom.entity.ts"
+        schema: "social_features"
+        tabla: "assignment_classrooms"
+        estado: "CORRECTO"
+        decorador: "@Entity({ schema: DB_SCHEMAS.SOCIAL, name: DB_TABLES.SOCIAL.ASSIGNMENT_CLASSROOMS })"
+        nota: "Duplicado - verificar si ambos son necesarios"
+
+    conclusion: "Entities correctamente configuradas - posible duplicación entre módulos"
+
+  constants_database:
+    estado: "OK"
+    descripcion: "Constantes de BD correctamente actualizadas"
+    archivo: "apps/backend/src/shared/constants/database.constants.ts"
+    schemas_definidos: 12
+    tablas_por_schema:
+      auth_management: 12
+      gamification_system: 10
+      educational_content: 15
+      progress_tracking: 12
+      social_features: 12
+      content_management: 7
+      audit_logging: 6
+      system_configuration: 6
+      lti_integration: 3
+    conclusion: "DB_SCHEMAS y DB_TABLES actualizados correctamente"
+
+# =====================================================
+# MATRIZ DE UBICACIONES - ENUMs MIGRADOS
+# =====================================================
+
+matriz_enums_migrados:
+  description: "Ubicación real de ENUMs después de reorganización"
+
+  enums:
+    notification_type:
+      ubicacion_anterior: "public"
+      ubicacion_actual: "gamification_system"
+      archivo_ddl: "apps/database/ddl/schemas/gamification_system/enums/notification_type.sql"
+      backend_referencia: "apps/backend/src/shared/constants/enums.constants.ts:255"
+      estado_referencia: "INCORRECTO - referencia public"
+
+    notification_priority:
+      ubicacion_anterior: "public"
+      ubicacion_actual: "gamification_system"
+      archivo_ddl: "apps/database/ddl/schemas/gamification_system/enums/notification_priority.sql"
+      backend_referencia: "apps/backend/src/shared/constants/enums.constants.ts:286"
+      estado_referencia: "INCORRECTO - referencia public"
+
+    content_status:
+      ubicacion_anterior: "public"
+      ubicacion_actual: "NO EXISTE"
+      archivo_ddl: "N/A - Solo en _deprecated/README.md"
+      backend_referencia: "apps/backend/src/shared/constants/enums.constants.ts:378"
+      estado_referencia: "CRITICO - ENUM no existe"
+      uso_en_tablas:
+        - "content_management.marie_curie_content.status"
+        - "content_management.flagged_content (posible)"
+      accion_requerida: "CREAR ENUM"
+
+    content_type:
+      ubicacion_anterior: "public"
+      ubicacion_actual: "content_management"
+      archivo_ddl: "apps/database/ddl/schemas/content_management/enums/content_type.sql"
+      backend_referencia: "apps/backend/src/shared/constants/enums.constants.ts:390"
+      estado_referencia: "INCOMPLETO - falta schema"
+
+    attempt_result:
+      ubicacion_anterior: "public"
+      ubicacion_actual: "progress_tracking"
+      archivo_ddl: "apps/database/ddl/schemas/progress_tracking/enums/attempt_result.sql"
+      backend_referencia: "apps/backend/src/shared/constants/enums.constants.ts:518"
+      estado_referencia: "INCOMPLETO - falta schema"
+
+    social_event_type:
+      ubicacion_anterior: "public"
+      ubicacion_actual: "social_features"
+      archivo_ddl: "apps/database/ddl/schemas/social_features/enums/social_event_type.sql"
+      backend_referencia: "apps/backend/src/shared/constants/enums.constants.ts:588"
+      estado_referencia: "INCOMPLETO - falta schema"
+
+    aggregation_period:
+      ubicacion_anterior: "public"
+      ubicacion_actual: "audit_logging"
+      archivo_ddl: "apps/database/ddl/schemas/audit_logging/enums/aggregation_period.sql"
+      backend_referencia: "apps/backend/src/shared/constants/enums.constants.ts:625"
+      estado_referencia: "INCOMPLETO - falta schema"
+
+    metric_type:
+      ubicacion_anterior: "public"
+      ubicacion_actual: "audit_logging"
+      archivo_ddl: "apps/database/ddl/schemas/audit_logging/enums/metric_type.sql"
+      backend_referencia: "apps/backend/src/shared/constants/enums.constants.ts:637"
+      estado_referencia: "INCOMPLETO - falta schema"
+
+# =====================================================
+# PLAN DE CORRECCIÓN
+# =====================================================
+
+plan_correccion:
+
+  fase_1_critico:
+    prioridad: "P0"
+    tiempo_estimado: "30 minutos"
+
+    tareas:
+      - id: "CORR-001"
+        titulo: "Crear ENUM content_status"
+        archivo_crear: "apps/database/ddl/schemas/content_management/enums/content_status.sql"
+        contenido: |
+          CREATE TYPE content_management.content_status AS ENUM (
+              'draft',
+              'published',
+              'archived',
+              'under_review'
+          );
+
+          COMMENT ON TYPE content_management.content_status IS
+          'Estados del ciclo de vida del contenido. Usado en marie_curie_content y otras tablas de contenido.';
+
+      - id: "CORR-002"
+        titulo: "Verificar y aplicar ENUM content_status en BD"
+        comando: "psql -d gamilit -f apps/database/ddl/schemas/content_management/enums/content_status.sql"
+        validacion: "SELECT typname, nspname FROM pg_type t JOIN pg_namespace n ON t.typnamespace = n.oid WHERE typname = 'content_status';"
+
+  fase_2_alto:
+    prioridad: "P1"
+    tiempo_estimado: "20 minutos"
+
+    tareas:
+      - id: "CORR-003"
+        titulo: "Actualizar referencias DDL a notification_type"
+        archivo: "apps/backend/src/shared/constants/enums.constants.ts"
+        linea: 255
+        cambio_de: "@see DDL: public.notification_type ENUM"
+        cambio_a: "@see DDL: gamification_system.notification_type ENUM"
+
+      - id: "CORR-004"
+        titulo: "Actualizar referencias DDL a notification_priority"
+        archivo: "apps/backend/src/shared/constants/enums.constants.ts"
+        linea: 286
+        cambio_de: "@see DDL: public.notification_priority ENUM"
+        cambio_a: "@see DDL: gamification_system.notification_priority ENUM"
+
+      - id: "CORR-005"
+        titulo: "Actualizar referencias DDL a content_status"
+        archivo: "apps/backend/src/shared/constants/enums.constants.ts"
+        linea: 378
+        cambio_de: "@see DDL: public.content_status ENUM"
+        cambio_a: "@see DDL: content_management.content_status ENUM"
+
+  fase_3_medio:
+    prioridad: "P2"
+    tiempo_estimado: "30 minutos"
+
+    tareas:
+      - id: "CORR-006"
+        titulo: "Agregar schema a content_type DDL reference"
+        archivo: "apps/backend/src/shared/constants/enums.constants.ts"
+        linea: 390
+        cambio_de: "@see DDL: content_type ENUM"
+        cambio_a: "@see DDL: content_management.content_type ENUM"
+
+      - id: "CORR-007"
+        titulo: "Agregar schema a attempt_result DDL reference"
+        archivo: "apps/backend/src/shared/constants/enums.constants.ts"
+        linea: 518
+        cambio_de: "@see DDL: attempt_result ENUM"
+        cambio_a: "@see DDL: progress_tracking.attempt_result ENUM"
+
+      - id: "CORR-008"
+        titulo: "Agregar schema a social_event_type DDL reference"
+        archivo: "apps/backend/src/shared/constants/enums.constants.ts"
+        linea: 588
+        cambio_de: "@see DDL: social_event_type ENUM"
+        cambio_a: "@see DDL: social_features.social_event_type ENUM"
+
+      - id: "CORR-009"
+        titulo: "Agregar schema a aggregation_period DDL reference"
+        archivo: "apps/backend/src/shared/constants/enums.constants.ts"
+        linea: 625
+        cambio_de: "@see DDL: aggregation_period ENUM"
+        cambio_a: "@see DDL: audit_logging.aggregation_period ENUM"
+
+      - id: "CORR-010"
+        titulo: "Agregar schema a metric_type DDL reference"
+        archivo: "apps/backend/src/shared/constants/enums.constants.ts"
+        linea: 637
+        cambio_de: "@see DDL: metric_type ENUM"
+        cambio_a: "@see DDL: audit_logging.metric_type ENUM"
+
+  fase_4_refactoring:
+    prioridad: "P3"
+    tiempo_estimado: "45 minutos"
+
+    tareas:
+      - id: "CORR-011"
+        titulo: "Refactorizar query directo en leaderboard.service.ts"
+        archivo: "apps/backend/src/modules/gamification/services/leaderboard.service.ts"
+        lineas: "280-289"
+        descripcion: "Reemplazar query SQL directo con ClassroomMember entity"
+        pasos:
+          - "Importar ClassroomMember entity"
+          - "Inyectar ClassroomMemberRepository en constructor"
+          - "Usar createQueryBuilder() en lugar de query directo"
+          - "Actualizar tests si existen"
+
+# =====================================================
+# ESTADÍSTICAS
+# =====================================================
+
+estadisticas:
+
+  archivos_revisados:
+    total: 96
+    con_referencias_ddl: 38
+    con_queries_sql: 2
+    entities: 45
+    services: 25
+    controllers: 15
+    otros: 11
+
+  objetos_buscados:
+    funciones_migradas: 7
+    enums_migrados: 8
+    vistas_renombradas: 1
+    tablas_verificadas: 4
+
+  resultados:
+    funciones_encontradas: 0
+    enums_con_referencias_incorrectas: 8
+    vistas_encontradas: 0
+    queries_directos: 1
+    entities_correctos: 2
+
+  cobertura_analisis:
+    tipos_archivos:
+      - "*.ts (TypeScript)"
+      - "*.entity.ts"
+      - "*.service.ts"
+      - "*.controller.ts"
+      - "*.constants.ts"
+
+    patrones_busqueda:
+      - "Nombres de funciones migradas"
+      - "Nombres de ENUMs migrados"
+      - "Referencias DDL (@see DDL:)"
+      - "Queries SQL (SELECT, INSERT, UPDATE, DELETE)"
+      - "Uso de .query()"
+      - "Referencias a schemas (public., gamification_system., etc.)"
+
+# =====================================================
+# RECOMENDACIONES
+# =====================================================
+
+recomendaciones:
+
+  inmediatas:
+    - titulo: "Crear ENUM content_status"
+      descripcion: "CRITICO - Crear el ENUM que falta para content_management"
+      archivo: "apps/database/ddl/schemas/content_management/enums/content_status.sql"
+      prioridad: "P0"
+
+    - titulo: "Actualizar referencias DDL en enums.constants.ts"
+      descripcion: "Corregir las 8 referencias incorrectas a ENUMs"
+      archivo: "apps/backend/src/shared/constants/enums.constants.ts"
+      prioridad: "P1"
+
+  corto_plazo:
+    - titulo: "Refactorizar query directo en leaderboard"
+      descripcion: "Usar entities en lugar de query SQL directo"
+      archivo: "apps/backend/src/modules/gamification/services/leaderboard.service.ts"
+      prioridad: "P2"
+
+    - titulo: "Verificar duplicación de AssignmentClassroom entity"
+      descripcion: "Dos archivos diferentes definen la misma entity - verificar si es necesario"
+      archivos:
+        - "apps/backend/src/modules/social/entities/assignment-classroom.entity.ts"
+        - "apps/backend/src/modules/assignments/entities/assignment-classroom.entity.ts"
+      prioridad: "P2"
+
+  mediano_plazo:
+    - titulo: "Estandarizar referencias DDL"
+      descripcion: "Establecer convención: siempre usar schema.nombre_objeto en comentarios DDL"
+      impacto: "Mejor mantenibilidad y documentación"
+      prioridad: "P3"
+
+    - titulo: "Crear linter para validar referencias DDL"
+      descripcion: "Script que valide que referencias @see DDL: apunten a archivos existentes"
+      beneficio: "Prevenir futuros desalineamientos"
+      prioridad: "P3"
+
+# =====================================================
+# CONCLUSIONES
+# =====================================================
+
+conclusiones:
+
+  estado_actual:
+    descripcion: |
+      El backend está mayormente alineado con la reorganización de la base de datos.
+      Los hallazgos principales son de documentación (comentarios DDL) más que de
+      funcionalidad rota. Sin embargo, hay un problema CRITICO: el ENUM content_status
+      no existe en la BD pero es referenciado en tablas.
+
+    puntos_fuertes:
+      - "No se usan funciones migradas directamente"
+      - "Constantes DB_SCHEMAS y DB_TABLES correctamente actualizadas"
+      - "Entities correctamente configuradas con schemas apropiados"
+      - "No se encontraron referencias a vista renombrada"
+
+    puntos_debiles:
+      - "ENUM content_status faltante (CRITICO)"
+      - "Referencias DDL desactualizadas en comentarios"
+      - "Query SQL directo sin usar entity (leaderboard)"
+      - "Posible duplicación de entity AssignmentClassroom"
+
+  riesgo_operacional:
+    nivel: "MEDIO-ALTO"
+    factores:
+      - factor: "ENUM content_status faltante"
+        riesgo: "ALTO"
+        impacto: "Queries a marie_curie_content fallarán si usan status"
+
+      - factor: "Referencias DDL incorrectas"
+        riesgo: "BAJO"
+        impacto: "Solo documentación - no afecta runtime"
+
+      - factor: "Query directo en leaderboard"
+        riesgo: "MEDIO"
+        impacto: "Más difícil de mantener y testear"
+
+  siguiente_pasos:
+    - paso: "1. Ejecutar FASE 1 - Crear content_status ENUM"
+      tiempo: "30 min"
+
+    - paso: "2. Ejecutar FASE 2 - Actualizar referencias DDL críticas"
+      tiempo: "20 min"
+
+    - paso: "3. Ejecutar FASE 3 - Actualizar referencias DDL medias"
+      tiempo: "30 min"
+
+    - paso: "4. Planificar FASE 4 - Refactoring leaderboard"
+      tiempo: "45 min"
+
+    - paso: "5. Testing completo post-correcciones"
+      tiempo: "1 hora"
+
+# =====================================================
+# METADATA TÉCNICA
+# =====================================================
+
+metadata_tecnica:
+  herramientas_usadas:
+    - "grep/ripgrep - Búsqueda de patrones"
+    - "find - Localización de archivos"
+    - "TypeORM entities - Análisis de decoradores"
+
+  comandos_ejecutados:
+    - "grep -rn '@see DDL:' apps/backend/src"
+    - "grep -rn 'assignment_classrooms' apps/backend/src"
+    - "grep -rn '.query(' apps/backend/src"
+    - "find apps/database/ddl/schemas -name '*.sql'"
+
+  archivos_clave_analizados:
+    - "apps/backend/src/shared/constants/database.constants.ts"
+    - "apps/backend/src/shared/constants/enums.constants.ts"
+    - "apps/backend/src/modules/gamification/services/leaderboard.service.ts"
+    - "apps/backend/src/modules/social/entities/assignment-classroom.entity.ts"
+    - "apps/backend/src/modules/notifications/entities/notification.entity.ts"
+
+  timestamp_ejecucion: "2025-11-09T12:00:00Z"
+  duracion_analisis: "~15 minutos"

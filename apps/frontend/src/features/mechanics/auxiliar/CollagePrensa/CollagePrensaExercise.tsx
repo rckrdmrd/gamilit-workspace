@@ -70,7 +70,7 @@ export const CollagePrensaExercise: React.FC = () => {
               <h1 className="text-3xl font-bold text-detective-text">Collage de Prensa</h1>
             </div>
             <ExportButton
-              onExport={(format) => alert(`Exportando como ${format}...`)}
+              onExport={(format: string) => alert(`Exportando como ${format}...`)}
               availableFormats={['png', 'jpg', 'pdf']}
             />
           </div>
@@ -104,9 +104,9 @@ export const CollagePrensaExercise: React.FC = () => {
               <FileUploader
                 acceptedTypes={['image/*']}
                 maxSizeMB={10}
-                onUpload={(files) => {
+                onUpload={(files: UploadedFile[]) => {
                   setUploadedImages(files);
-                  files.forEach(file => addImage(file));
+                  files.forEach((file: UploadedFile) => addImage(file));
                 }}
                 multiple
               />

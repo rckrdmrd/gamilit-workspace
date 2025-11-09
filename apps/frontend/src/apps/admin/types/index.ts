@@ -56,6 +56,9 @@ export interface MediaItem {
   size: number;
   uploadedBy: string;
   uploadedAt: string;
+  tags?: string[];
+  name?: string; // Alias for filename
+  mimeType?: string;
 }
 
 export interface ContentVersion {

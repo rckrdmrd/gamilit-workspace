@@ -739,7 +739,7 @@ export const updateMemberRole = async (
         joinedAt: new Date(),
         contributionScore: 0,
         lastActive: new Date(),
-        rank: 'Ajaw',
+        rank: 'batab',
         level: 1,
       };
     }
@@ -819,7 +819,7 @@ export const sendFriendRequest = async (userId: string): Promise<FriendRequest> 
         senderId: '1',
         senderName: 'You',
         senderAvatar: '',
-        senderRank: 'Ajaw',
+        senderRank: 'batab',
         senderLevel: 1,
         receiverId: userId,
         status: 'pending',
@@ -874,7 +874,7 @@ export const acceptFriendRequest = async (requestId: string): Promise<Friend> =>
         userId: requestId,
         username: 'New Friend',
         avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=friend',
-        rank: 'Ajaw',
+        rank: 'batab',
         level: 1,
         xp: 0,
         mlCoins: 0,

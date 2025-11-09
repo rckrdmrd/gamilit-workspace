@@ -19,6 +19,9 @@ import * as controllers from './controllers';
  * - Team: Equipos colaborativos
  * - TeamMember: Membresía de usuarios en equipos
  * - TeamChallenge: Desafíos asignados a equipos
+ * - AssignmentClassroom: Asignaciones asignadas a aulas completas
+ * - PeerChallenge: Desafíos peer-to-peer entre estudiantes (Epic EXT-009)
+ * - ChallengeParticipant: Participantes de peer challenges con rankings
  *
  * @services
  * - FriendshipsService: Gestión de amistades y bloqueos
@@ -37,8 +40,10 @@ import * as controllers from './controllers';
  * - TeamsController: 13 endpoints para equipos
  * - TeamMembersController: 8 endpoints para miembros de equipos
  * - TeamChallengesController: 9 endpoints para desafíos
+ * - PeerChallengesController: 16 endpoints para peer challenges (Epic EXT-009)
+ * - ChallengeParticipantsController: 15 endpoints para participantes (Epic EXT-009)
  *
- * @totalEndpoints 70 endpoints RESTful con documentación Swagger completa
+ * @totalEndpoints 101 endpoints RESTful con documentación Swagger completa
  */
 @Module({
   imports: [
@@ -52,6 +57,9 @@ import * as controllers from './controllers';
         entities.Team,
         entities.TeamMember,
         entities.TeamChallenge,
+        entities.AssignmentClassroom, // ✨ NUEVO - P2 (Assignments → Classrooms)
+        entities.PeerChallenge, // ✨ NUEVO - P2 (Epic EXT-009)
+        entities.ChallengeParticipant, // ✨ NUEVO - P2 (Epic EXT-009)
       ],
       'social',
     ),
@@ -64,6 +72,8 @@ import * as controllers from './controllers';
     services.TeamsService,
     services.TeamMembersService,
     services.TeamChallengesService,
+    services.PeerChallengesService, // ✨ NUEVO - P2 (Epic EXT-009)
+    services.ChallengeParticipantsService, // ✨ NUEVO - P2 (Epic EXT-009)
   ],
   controllers: [
     controllers.FriendshipsController,
@@ -73,6 +83,8 @@ import * as controllers from './controllers';
     controllers.TeamsController,
     controllers.TeamMembersController,
     controllers.TeamChallengesController,
+    controllers.PeerChallengesController, // ✨ NUEVO - P2 (Epic EXT-009)
+    controllers.ChallengeParticipantsController, // ✨ NUEVO - P2 (Epic EXT-009)
   ],
   exports: [
     services.FriendshipsService,
@@ -82,6 +94,8 @@ import * as controllers from './controllers';
     services.TeamsService,
     services.TeamMembersService,
     services.TeamChallengesService,
+    services.PeerChallengesService, // ✨ NUEVO - P2 (Epic EXT-009)
+    services.ChallengeParticipantsService, // ✨ NUEVO - P2 (Epic EXT-009)
   ],
 })
 export class SocialModule {}

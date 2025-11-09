@@ -3,6 +3,8 @@
  * Defines all types for the friend system
  */
 
+import type { RankType } from '@shared/components/base/RankBadge';
+
 export type FriendRequestStatus = 'pending' | 'accepted' | 'declined' | 'cancelled';
 export type ActivityType = 'achievement' | 'rankup' | 'exercise' | 'challenge' | 'guild';
 
@@ -10,7 +12,7 @@ export interface Friend {
   userId: string;
   username: string;
   avatar: string;
-  rank: string;
+  rank: RankType;
   level: number;
   xp: number;
   mlCoins: number;
@@ -26,7 +28,7 @@ export interface FriendRequest {
   senderId: string;
   senderName: string;
   senderAvatar: string;
-  senderRank: string;
+  senderRank: RankType;
   senderLevel: number;
   receiverId: string;
   sentAt: Date;
@@ -38,7 +40,7 @@ export interface FriendRecommendation {
   userId: string;
   username: string;
   avatar: string;
-  rank: string;
+  rank: RankType;
   level: number;
   reason: string;
   commonInterests: string[];
@@ -59,7 +61,7 @@ export interface FriendActivity {
     achievementName?: string;
     exerciseId?: string;
     exerciseName?: string;
-    newRank?: string;
+    newRank?: RankType;
     challengeId?: string;
   };
   praised: boolean;

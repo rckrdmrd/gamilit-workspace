@@ -98,6 +98,49 @@ cat artifacts/reports/METRICAS-ACTUALES.md
 
 ---
 
+## 🚢 Despliegue en Producción
+
+### Servidor de Producción
+
+- **IP:** 74.208.126.102
+- **Backend:** Puerto 3006 (2 instancias cluster)
+- **Frontend:** Puerto 3005 (1 instancia)
+- **Gestor:** PM2
+
+### Despliegue Rápido
+
+```bash
+# 1. Verificar que todo está listo
+./scripts/pre-deploy-check.sh
+
+# 2. Build para producción
+./scripts/build-production.sh
+
+# 3. Desplegar con PM2
+./scripts/deploy-production.sh
+```
+
+### URLs de Acceso
+
+- **Frontend:** http://74.208.126.102:3005
+- **Backend API:** http://74.208.126.102:3006/api
+- **API Docs:** http://74.208.126.102:3006/api/docs
+
+### Comandos PM2
+
+```bash
+pm2 status              # Ver estado de procesos
+pm2 logs                # Ver logs en tiempo real
+pm2 restart all         # Reiniciar todos los procesos
+pm2 monit              # Monitor interactivo
+```
+
+### Documentación Completa
+
+Ver la guía completa de despliegue en: [docs/95-guias-desarrollo/DEPLOYMENT-GUIDE.md](./docs/95-guias-desarrollo/DEPLOYMENT-GUIDE.md)
+
+---
+
 ## 📖 Documentación Principal
 
 | Documento | Descripción | Audiencia |

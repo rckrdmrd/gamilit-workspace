@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, CheckCircle, AlertTriangle, Send } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -6,18 +6,13 @@ import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { ExerciseProps, EmailFormalState, ToneAnalysis, EmailTemplate } from './emailFormalTypes';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import { saveProgress as saveProgressUtil, loadProgress, clearProgress } from '@/shared/utils/storage';
+import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 
 export const EmailFormalExercise: React.FC<ExerciseProps> = ({
-  moduleId,
-  lessonId,
   exerciseId,
-  userId,
   onComplete,
-  onExit,
   onProgressUpdate,
   initialData,
-  difficulty = 'medium',
   exercise,
 }) => {
   // State management
@@ -28,8 +23,7 @@ export const EmailFormalExercise: React.FC<ExerciseProps> = ({
 
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
-  const [feedback, setFeedback] = useState<FeedbackData | null>(null);
-  const [hintsUsed, setHintsUsed] = useState(0);
+  const [feedback] = useState<FeedbackData | null>(null);
 
   const templates: EmailTemplate[] = exercise?.templates || [
     {
@@ -122,60 +116,6 @@ export const EmailFormalExercise: React.FC<ExerciseProps> = ({
       setBody(`${template.greeting} Dr./Dra.,\n\n[Escribe tu mensaje aquí]\n\nAtentamente,\n[Tu nombre]`);
     }
   };
-
-  // Reset handler
-  const handleReset = () => {
-    setTo('');
-    setSubject('');
-    setBody('');
-    setAnalysis(null);
-    setFeedback(null);
-    setShowFeedback(false);
-  };
-
-  // Check/Verify handler
-  const handleCheck = () => {
-    if (!analysis) {
-      setFeedback({
-        type: 'info',
-        title: 'Analiza tu Email',
-        message: 'Primero debes analizar el tono y formalidad de tu email.',
-      });
-      setShowFeedback(true);
-      return;
-    }
-
-    const avgScore = Math.round(
-      (analysis.formality + analysis.clarity + analysis.professionalism) / 3
-    );
-    const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-
-    const isComplete = to && subject && body.length >= 50 && analysis.suggestions.length === 0;
-
-    setFeedback({
-      type: isComplete ? 'success' : 'partial',
-      title: isComplete ? '¡Email Perfecto!' : 'Email Completo',
-      message: isComplete
-        ? '¡Has redactado un email formal excelente!'
-        : 'Tu email está completo. Revisa las sugerencias para mejorar.',
-      score: {
-        baseScore: avgScore,
-        timeBonus: Math.max(0, 100 - timeSpent / 10),
-        accuracyBonus: isComplete ? 20 : 0,
-        totalScore: avgScore,
-        mlCoins: Math.floor(avgScore / 10),
-        xpGained: avgScore * 2,
-      },
-      showConfetti: isComplete,
-    });
-    setShowFeedback(true);
-  };
-
-  // Actions ref
-  const actionsRef = useRef({
-    handleReset,
-    handleCheck,
-  });
 
   const getMetricColor = (score: number) => {
     if (score >= 80) return 'text-detective-success';

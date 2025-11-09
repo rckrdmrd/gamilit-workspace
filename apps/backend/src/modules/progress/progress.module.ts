@@ -20,13 +20,17 @@ import { Exercise } from '../educational/entities/exercise.entity';
  * - Registro de intentos y envíos de ejercicios
  * - Misiones programadas para aulas (classroom-based)
  * - Analytics y estadísticas de aprendizaje
+ * - Notas de profesores sobre estudiantes
  *
- * Entidades (5):
+ * Entidades (8):
  * - ModuleProgress: Progreso de estudiantes por módulo
  * - LearningSession: Sesiones de aprendizaje con tracking de tiempo
  * - ExerciseAttempt: Intentos individuales de ejercicios
  * - ExerciseSubmission: Envíos finales y calificaciones
  * - ScheduledMission: Misiones programadas con deadlines
+ * - TeacherNote: Notas de profesores sobre estudiantes
+ * - EngagementMetrics: Métricas diarias de engagement
+ * - MasteryTracking: Seguimiento de dominio de temas
  *
  * Services (5):
  * - ModuleProgressService: 11 métodos CRUD + analytics
@@ -56,6 +60,13 @@ import { Exercise } from '../educational/entities/exercise.entity';
         entities.ExerciseAttempt,
         entities.ExerciseSubmission,
         entities.ScheduledMission,
+        entities.TeacherNote, // ✨ NUEVO - P0 (Notas del profesor)
+        entities.EngagementMetrics, // ✨ NUEVO - P2 (Analytics)
+        entities.MasteryTracking, // ✨ NUEVO - P2 (Adaptive Learning)
+        entities.LearningPath, // ✨ NUEVO - P2 (Rutas de aprendizaje)
+        entities.UserLearningPath, // ✨ NUEVO - P2 (Usuarios en rutas)
+        entities.ProgressSnapshot, // ✨ NUEVO - P2 (Snapshots históricos)
+        entities.SkillAssessment, // ✨ NUEVO - P2 (Evaluaciones de habilidades)
       ],
       'progress',
     ),

@@ -11,3 +11,6 @@ export * from './achievement.types';
 export * from './leaderboard.types';
 export * from './gamification.types';
 export * from './social.types';
+export * from './media.types';
+export * from './content.types';
+export * from './users.types';

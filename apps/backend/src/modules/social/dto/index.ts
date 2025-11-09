@@ -36,3 +36,12 @@ export { TeamMemberResponseDto } from './team-member-response.dto';
 // TeamChallenge DTOs
 export { CreateTeamChallengeDto } from './create-team-challenge.dto';
 export { TeamChallengeResponseDto } from './team-challenge-response.dto';
+
+// PeerChallenge DTOs ✨ NUEVO - P2 (Epic EXT-009)
+export { CreatePeerChallengeDto, ChallengeType } from './create-peer-challenge.dto';
+export { UpdatePeerChallengeDto } from './update-peer-challenge.dto';
+
+// ChallengeParticipant DTOs ✨ NUEVO - P2 (Epic EXT-009)
+export { AddChallengeParticipantDto } from './add-challenge-participant.dto';
+export { UpdateParticipantScoreDto } from './update-participant-score.dto';
+export { DistributeRewardsDto } from './distribute-rewards.dto';

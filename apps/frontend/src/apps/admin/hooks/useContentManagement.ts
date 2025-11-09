@@ -25,7 +25,7 @@ export interface Exercise {
   id: string;
   title: string;
   description: string;
-  difficulty: 'easy' | 'medium' | 'hard';
+  difficulty: 'facil' | 'medio' | 'dificil' | 'experto';
   points: number;
   type: string;
   instructions: string;
@@ -62,9 +62,11 @@ export interface UseMediaLibraryResult {
   fetchMedia: (page?: number, pageSize?: number) => Promise<void>;
   uploadFile: (file: File, tags?: string[]) => Promise<MediaItem>;
   deleteMedia: (id: string) => Promise<void>;
+  deleteFile: (id: string) => Promise<void>; // Alias for deleteMedia
   bulkDelete: (ids: string[]) => Promise<void>;
   setPage: (page: number) => void;
   setPageSize: (pageSize: number) => void;
+  updateFile?: (id: string, updates: Partial<MediaItem>) => Promise<MediaItem>;
 }
 
 export interface UseContentVersionsResult {
@@ -329,6 +331,7 @@ export function useMediaLibrary(): UseMediaLibraryResult {
     fetchMedia,
     uploadFile,
     deleteMedia,
+    deleteFile: deleteMedia, // Alias for backward compatibility
     bulkDelete,
     setPage,
     setPageSize,
@@ -401,6 +404,101 @@ export function useContentVersions(): UseContentVersionsResult {
     error,
     fetchVersions,
     createVersion,
+  };
+}
+
+// ============================================================================
+// APPROVALS HOOK
+// ============================================================================
+
+export interface ApprovalItem {
+  id: string;
+  type: 'exercise' | 'content' | 'media';
+  title: string;
+  submittedBy: string;
+  submittedAt: string;
+  status: 'pending' | 'approved' | 'rejected';
+}
+
+export interface UseApprovalsResult {
+  approvals: ApprovalItem[];
+  loading: boolean;
+  error: string | null;
+  approve: (id: string) => Promise<void>;
+  reject: (id: string, reason: string) => Promise<void>;
+  refresh: () => Promise<void>;
+}
+
+export function useApprovals(): UseApprovalsResult {
+  const [approvals, setApprovals] = useState<ApprovalItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchApprovals = useCallback(async (): Promise<void> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await apiClient.get('/admin/approvals');
+      const data = response.data.success ? response.data.data : response.data;
+      setApprovals(data.approvals || []);
+    } catch (err) {
+      console.error('Failed to fetch approvals:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch approvals');
+      setApprovals([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const approve = useCallback(
+    async (id: string): Promise<void> => {
+      setLoading(true);
+      setError(null);
+      try {
+        await apiClient.post(`/admin/approvals/${id}/approve`);
+        setApprovals((prev) => prev.filter((item) => item.id !== id));
+      } catch (err) {
+        console.error('Failed to approve item:', err);
+        const errorMsg = err instanceof Error ? err.message : 'Failed to approve item';
+        setError(errorMsg);
+        throw new Error(errorMsg);
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
+  const reject = useCallback(
+    async (id: string, reason: string): Promise<void> => {
+      setLoading(true);
+      setError(null);
+      try {
+        await apiClient.post(`/admin/approvals/${id}/reject`, { reason });
+        setApprovals((prev) => prev.filter((item) => item.id !== id));
+      } catch (err) {
+        console.error('Failed to reject item:', err);
+        const errorMsg = err instanceof Error ? err.message : 'Failed to reject item';
+        setError(errorMsg);
+        throw new Error(errorMsg);
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
+  useEffect(() => {
+    fetchApprovals();
+  }, []);
+
+  return {
+    approvals,
+    loading,
+    error,
+    approve,
+    reject,
+    refresh: fetchApprovals,
   };
 }
 

@@ -75,7 +75,7 @@ export const useFriendsStore = create<FriendsStore>((set) => ({
       senderId: 'current-user',
       senderName: 'Tú',
       senderAvatar: '/avatars/avatar-you.png',
-      senderRank: "Ah K'in",
+      senderRank: 'chilan',
       senderLevel: 18,
       receiverId: userId,
       sentAt: new Date(),

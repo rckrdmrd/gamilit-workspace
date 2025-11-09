@@ -14,3 +14,5 @@ export { ClassroomMembersService } from './classroom-members.service';
 export { TeamsService } from './teams.service';
 export { TeamMembersService } from './team-members.service';
 export { TeamChallengesService } from './team-challenges.service';
+export { PeerChallengesService } from './peer-challenges.service'; // ✨ NUEVO - P2 (Epic EXT-009)
+export { ChallengeParticipantsService } from './challenge-participants.service'; // ✨ NUEVO - P2 (Epic EXT-009)

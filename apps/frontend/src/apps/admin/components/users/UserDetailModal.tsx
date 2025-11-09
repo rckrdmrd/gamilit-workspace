@@ -54,7 +54,7 @@ export function UserDetailModal({
   isOpen,
   onClose,
   onUpdate,
-}: UserDetailModalProps): JSX.Element | null {
+}: UserDetailModalProps): React.ReactElement | null {
   // State
   const [activeTab, setActiveTab] = useState<TabType>('profile');
   const [isEditing, setIsEditing] = useState(false);

@@ -8,3 +8,5 @@
 export { ContentTemplatesController } from './content-templates.controller';
 export { MarieCurieContentController } from './marie-curie-content.controller';
 export { MediaFilesController } from './media-files.controller';
+export { ContentAuthorsController } from './content-authors.controller'; // ✨ NUEVO - P2
+export { ContentCategoriesController } from './content-categories.controller'; // ✨ NUEVO - P2

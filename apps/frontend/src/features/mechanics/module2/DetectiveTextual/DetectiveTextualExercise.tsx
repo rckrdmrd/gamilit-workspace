@@ -5,9 +5,7 @@ import { MagnifyingGlass } from './MagnifyingGlass';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import {
-  fetchInvestigation,
   validateConnection,
-  requestAIHint,
   submitSolution,
 } from './detectiveTextualAPI';
 import type {
@@ -22,15 +20,10 @@ import { calculateScore, saveProgress, FeedbackData } from '@shared/components/m
 import { mockInvestigation } from './detectiveTextualMockData';
 
 export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> = ({
-  moduleId,
-  lessonId,
   exerciseId,
-  userId,
   onComplete,
-  onExit,
   onProgressUpdate,
   initialData,
-  difficulty = 'medium',
   actionsRef,
 }) => {
   // Load exercise data based on exerciseId
@@ -44,9 +37,8 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
     timeSpent: initialData?.timeSpent || 0,
     score: initialData?.score || 0,
   });
-  const [loading, setLoading] = useState(false);
-  const [selectedEvidence, setSelectedEvidence] = useState<Evidence | null>(null);
-  const [availableCoins, setAvailableCoins] = useState(100);
+  const [loading] = useState(false);
+  const [selectedEvidence] = useState<Evidence | null>(null);
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
@@ -78,7 +70,6 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
   // Progress update callback
   useEffect(() => {
     if (onProgressUpdate && investigation) {
-      const progressPercentage = (progress.discoveredEvidence.length / investigation.availableEvidence.length) * 100;
       onProgressUpdate({
         currentStep: progress.discoveredEvidence.length,
         totalSteps: investigation.availableEvidence.length,
@@ -144,13 +135,6 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
       ...progress,
       connections: progress.connections.filter((c) => c.id !== connectionId),
     });
-  };
-
-  const handleRequestHint = async () => {
-    const hint = await requestAIHint(progress);
-    setProgress({ ...progress, hintsUsed: progress.hintsUsed + 1 });
-    setAvailableCoins((prev) => prev - 10);
-    return hint;
   };
 
   const handleSubmitSolution = async () => {
@@ -235,12 +219,6 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
       }
     };
   }, [actionsRef, getState, handleReset, handleSubmitSolution, handleDiscoverEvidence, handleCreateConnection]);
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
 
   if (loading) {
     return (

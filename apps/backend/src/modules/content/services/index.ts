@@ -8,3 +8,5 @@
 export { ContentTemplatesService } from './content-templates.service';
 export { MarieCurieContentService } from './marie-curie-content.service';
 export { MediaFilesService } from './media-files.service';
+export { ContentAuthorsService } from './content-authors.service'; // ✨ NUEVO - P2
+export { ContentCategoriesService } from './content-categories.service'; // ✨ NUEVO - P2

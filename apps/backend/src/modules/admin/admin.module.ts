@@ -7,6 +7,7 @@ import { AuthAttempt } from '@modules/auth/entities/auth-attempt.entity';
 import { Module as EducationalModule } from '@modules/educational/entities/module.entity';
 import { Exercise } from '@modules/educational/entities/exercise.entity';
 import { ContentTemplate } from '@modules/content/entities/content-template.entity';
+import { SystemSetting, FeatureFlag, NotificationSettings } from './entities'; // ✨ NUEVO - P1/P2 (System Configuration)
 import { AdminUsersController } from './controllers/admin-users.controller';
 import { AdminOrganizationsController } from './controllers/admin-organizations.controller';
 import { AdminContentController } from './controllers/admin-content.controller';
@@ -19,7 +20,7 @@ import { AdminGuard } from './guards/admin.guard';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Tenant, Membership, AuthAttempt], 'auth'),
+    TypeOrmModule.forFeature([User, Tenant, Membership, AuthAttempt, SystemSetting, FeatureFlag, NotificationSettings], 'auth'),
     TypeOrmModule.forFeature([EducationalModule, Exercise], 'educational'),
     TypeOrmModule.forFeature([ContentTemplate], 'content'),
   ],

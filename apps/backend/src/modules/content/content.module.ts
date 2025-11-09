@@ -6,6 +6,8 @@ import {
   ContentTemplate,
   MarieCurieContent,
   MediaFile,
+  ContentAuthor, // ✨ NUEVO - P2 (Autores de contenido)
+  ContentCategory, // ✨ NUEVO - P2 (Categorías jerárquicas)
 } from './entities';
 
 // Services
@@ -13,6 +15,8 @@ import {
   ContentTemplatesService,
   MarieCurieContentService,
   MediaFilesService,
+  ContentAuthorsService,
+  ContentCategoriesService,
 } from './services';
 
 // Controllers
@@ -20,6 +24,8 @@ import {
   ContentTemplatesController,
   MarieCurieContentController,
   MediaFilesController,
+  ContentAuthorsController,
+  ContentCategoriesController,
 } from './controllers';
 
 // Constants
@@ -45,6 +51,8 @@ import { DB_SCHEMAS } from '@/shared/constants';
  * - ContentTemplatesService
  * - MarieCurieContentService
  * - MediaFilesService
+ * - ContentAuthorsService (P2 - Gestión de perfiles de autores)
+ * - ContentCategoriesService (P2 - Categorías jerárquicas para contenido)
  */
 @Module({
   imports: [
@@ -54,6 +62,8 @@ import { DB_SCHEMAS } from '@/shared/constants';
         ContentTemplate,
         MarieCurieContent,
         MediaFile,
+        ContentAuthor, // ✨ NUEVO - P2 (Autores de contenido)
+        ContentCategory, // ✨ NUEVO - P2 (Categorías jerárquicas)
       ],
       'content',
     ),
@@ -62,16 +72,22 @@ import { DB_SCHEMAS } from '@/shared/constants';
     ContentTemplatesService,
     MarieCurieContentService,
     MediaFilesService,
+    ContentAuthorsService, // ✨ NUEVO - P2
+    ContentCategoriesService, // ✨ NUEVO - P2
   ],
   controllers: [
     ContentTemplatesController,
     MarieCurieContentController,
     MediaFilesController,
+    ContentAuthorsController, // ✨ NUEVO - P2
+    ContentCategoriesController, // ✨ NUEVO - P2
   ],
   exports: [
     ContentTemplatesService,
     MarieCurieContentService,
     MediaFilesService,
+    ContentAuthorsService, // ✨ NUEVO - P2
+    ContentCategoriesService, // ✨ NUEVO - P2
   ],
 })
 export class ContentModule {}

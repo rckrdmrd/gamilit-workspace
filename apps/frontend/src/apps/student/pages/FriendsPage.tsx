@@ -9,23 +9,19 @@
  * - Friend activities feed
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
   Users,
   UserPlus,
   Search,
-  Filter,
-  TrendingUp,
-  MessageCircle,
   UserCheck,
   UserX,
   Clock,
   Activity,
   Trophy,
   Sparkles,
-  Target,
   Star,
   Zap,
 } from 'lucide-react';
@@ -37,7 +33,6 @@ import { RankBadge } from '@shared/components/base/RankBadge';
 
 // Hooks & Store
 import { useFriends } from '@/features/gamification/social/hooks/useFriends';
-import type { Friend, FriendRequest, FriendActivity } from '@/features/gamification/social/types/friendsTypes';
 
 // Utils
 import { cn } from '@shared/utils/cn';
@@ -50,10 +45,8 @@ export default function FriendsPage() {
   // Hooks
   const {
     friends,
-    friendRequests,
     recommendations,
     activities,
-    onlineFriends,
     sendFriendRequest,
     acceptFriendRequest,
     declineFriendRequest,
@@ -68,7 +61,6 @@ export default function FriendsPage() {
   const [activeTab, setActiveTab] = useState<TabType>('friends');
   const [searchQuery, setSearchQuery] = useState('');
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
-  const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null);
 
   // Mock user data - in production this would come from auth context
   const user = {

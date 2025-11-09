@@ -378,7 +378,7 @@ export default function ModuleDetailPage() {
               Objetivos de Aprendizaje
             </h2>
             <ul className="space-y-2">
-              {module.learningObjectives.map((objective, idx) => (
+              {module.learningObjectives.map((objective: string, idx: number) => (
                 <li key={idx} className="flex items-start gap-2">
                   <Lightbulb className="w-4 h-4 text-detective-gold mt-0.5 flex-shrink-0" />
                   <span className="text-sm text-detective-text-secondary">{objective}</span>
@@ -416,7 +416,7 @@ export default function ModuleDetailPage() {
                 Habilidades Desarrolladas
               </h2>
               <ul className="space-y-1.5">
-                {module.skillsDeveloped.map((skill, idx) => (
+                {module.skillsDeveloped.map((skill: string, idx: number) => (
                   <li key={idx} className="flex items-start gap-1.5">
                     <span className="text-detective-purple mt-0.5 text-sm">•</span>
                     <span className="text-detective-text-secondary text-xs">{skill}</span>

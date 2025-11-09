@@ -11,23 +11,19 @@
  */
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
   ShoppingCart,
   Search,
-  Filter,
   Star,
   Sparkles,
   Crown,
   Palette,
   Users,
-  Zap,
   Package,
-  TrendingUp,
   Coins,
   Check,
-  X,
   ShoppingBag,
 } from 'lucide-react';
 
@@ -37,7 +33,6 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { Modal } from '@shared/components/common/Modal';
 
 // Hooks
-import { useShop } from '@/features/gamification/economy/hooks/useShop';
 import { useCoins } from '@/features/gamification/economy/hooks/useCoins';
 import type { ShopItem, ShopCategory, ItemRarity } from '@/features/gamification/economy/types/economyTypes';
 
@@ -94,9 +89,8 @@ export default function ShopPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'price_asc' | 'price_desc' | 'rarity'>('rarity');
   const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
-  const [showItemModal, setShowItemModal] = useState(false);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
-  const [cart, setCart] = useState<ShopItem[]>([]);
+  const [cart] = useState<ShopItem[]>([]);
 
   // Mock user data
   const user = {
@@ -162,19 +156,6 @@ export default function ShopPage() {
     // Show success message
     alert(`Successfully purchased ${selectedItem.name}!`);
   };
-
-  // Handle add to cart
-  const addToCart = (item: ShopItem) => {
-    if (!cart.find(i => i.id === item.id)) {
-      setCart([...cart, item]);
-    }
-  };
-
-  const removeFromCart = (itemId: string) => {
-    setCart(cart.filter(i => i.id !== itemId));
-  };
-
-  const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">

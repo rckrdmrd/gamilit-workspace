@@ -7,8 +7,8 @@ import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
 import { fetchSources, analyzeSource, checkClaim } from './analisisFuentesAPI';
 import type { Source } from './analisisFuentesTypes';
 import type { SourceCredibility, FactCheckResult } from '../../shared/aiTypes';
-import { calculateScore, calculateTimeBonus, calculateCompletionBonus } from '@/shared/utils/scoring';
-import { saveProgress as saveProgressUtil, loadProgress, clearProgress } from '@/shared/utils/storage';
+import { calculateTimeBonus, calculateCompletionBonus } from '@/shared/utils/scoring';
+import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 
 interface ExerciseProps {
   moduleId: number;
@@ -29,15 +29,10 @@ interface ExerciseState {
 }
 
 export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
-  moduleId,
-  lessonId,
   exerciseId,
-  userId,
   onComplete,
-  onExit,
   onProgressUpdate,
   initialData,
-  difficulty = 'medium'
 }) => {
   const [sources, setSources] = useState<Source[]>([]);
   const [selectedSource, setSelectedSource] = useState<Source | null>(null);
@@ -130,7 +125,6 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
   };
 
   const handleComplete = () => {
-    const finalScore = calculateFinalScore();
     setShowFeedback(true);
   };
 

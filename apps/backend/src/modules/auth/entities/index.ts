@@ -8,6 +8,7 @@
 export * from './user.entity';
 export * from './profile.entity';
 export * from './tenant.entity';
+export * from './role.entity'; // ✨ NUEVO - RBAC
 export * from './user-role.entity';
 export * from './auth-provider.entity';
 export * from './membership.entity';
@@ -15,3 +16,4 @@ export * from './auth-attempt.entity';
 export * from './user-session.entity';
 export * from './email-verification-token.entity';
 export * from './password-reset-token.entity';
+export * from './security-event.entity'; // ✨ NUEVO - P0 (Auditoría de seguridad)

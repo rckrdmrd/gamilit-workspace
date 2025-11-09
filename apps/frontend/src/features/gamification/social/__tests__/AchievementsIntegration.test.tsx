@@ -22,7 +22,7 @@
 
 import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useAchievementsStore } from '../store/achievementsStore';
 import { AchievementCard } from '../components/Achievements/AchievementCard';
@@ -176,7 +176,7 @@ describe('Achievements Integration Tests', () => {
     });
 
     it('should update UI when achievement is unlocked in store', async () => {
-      const { setAchievements, unlockAchievement } = useAchievementsStore.getState();
+      const { unlockAchievement } = useAchievementsStore.getState();
 
       const mockAchievement: Achievement = {
         id: 'ach-1',
@@ -210,7 +210,7 @@ describe('Achievements Integration Tests', () => {
     });
 
     it('should update UI when progress is updated in store', () => {
-      const { setAchievements, updateProgress } = useAchievementsStore.getState();
+      const { updateProgress } = useAchievementsStore.getState();
 
       const mockAchievement: Achievement = {
         id: 'ach-1',
@@ -247,8 +247,6 @@ describe('Achievements Integration Tests', () => {
     });
 
     it('should reflect store state changes immediately', () => {
-      const { setAchievements } = useAchievementsStore.getState();
-
       render(<AchievementsList />);
 
       // Initially empty
@@ -280,7 +278,7 @@ describe('Achievements Integration Tests', () => {
     });
 
     it('should handle multiple simultaneous state updates', () => {
-      const { setAchievements, unlockAchievement } = useAchievementsStore.getState();
+      const { unlockAchievement } = useAchievementsStore.getState();
 
       const achievements: Achievement[] = [
         {
@@ -328,7 +326,7 @@ describe('Achievements Integration Tests', () => {
 
   describe('Unlock Achievement Flow', () => {
     it('should complete full unlock flow: locked → unlock → notification → unlocked', () => {
-      const { setAchievements, unlockAchievement, dismissNotification } =
+      const { unlockAchievement, dismissNotification } =
         useAchievementsStore.getState();
 
       const mockAchievement: Achievement = {
@@ -370,7 +368,7 @@ describe('Achievements Integration Tests', () => {
     });
 
     it('should not unlock already unlocked achievement', () => {
-      const { setAchievements, unlockAchievement } = useAchievementsStore.getState();
+      const { unlockAchievement } = useAchievementsStore.getState();
 
       const mockAchievement: Achievement = {
         id: 'ach-1',
@@ -397,7 +395,7 @@ describe('Achievements Integration Tests', () => {
     });
 
     it('should update stats after unlocking achievement', () => {
-      const { setAchievements, unlockAchievement } = useAchievementsStore.getState();
+      const { unlockAchievement } = useAchievementsStore.getState();
 
       const achievements: Achievement[] = [
         {
@@ -458,7 +456,7 @@ describe('Achievements Integration Tests', () => {
     });
 
     it('should trigger UI notification when achievement unlocked', () => {
-      const { setAchievements, unlockAchievement } = useAchievementsStore.getState();
+      const { unlockAchievement } = useAchievementsStore.getState();
 
       const mockAchievement: Achievement = {
         id: 'ach-1',
@@ -496,7 +494,7 @@ describe('Achievements Integration Tests', () => {
 
   describe('Progress Update Flow', () => {
     it('should update progress and reflect in UI', () => {
-      const { setAchievements, updateProgress } = useAchievementsStore.getState();
+      const { updateProgress } = useAchievementsStore.getState();
 
       const mockAchievement: Achievement = {
         id: 'ach-1',
@@ -525,7 +523,7 @@ describe('Achievements Integration Tests', () => {
     });
 
     it('should auto-unlock when progress reaches requirement', () => {
-      const { setAchievements, updateProgress } = useAchievementsStore.getState();
+      const { updateProgress } = useAchievementsStore.getState();
 
       const mockAchievement: Achievement = {
         id: 'ach-1',
@@ -556,7 +554,7 @@ describe('Achievements Integration Tests', () => {
     });
 
     it('should handle incremental progress updates', () => {
-      const { setAchievements, updateProgress } = useAchievementsStore.getState();
+      const { updateProgress } = useAchievementsStore.getState();
 
       const mockAchievement: Achievement = {
         id: 'ach-1',
@@ -628,7 +626,7 @@ describe('Achievements Integration Tests', () => {
 
   describe('Notification Lifecycle', () => {
     it('should show notification after unlock', () => {
-      const { setAchievements, unlockAchievement } = useAchievementsStore.getState();
+      const { unlockAchievement } = useAchievementsStore.getState();
 
       const mockAchievement: Achievement = {
         id: 'ach-1',
@@ -658,7 +656,7 @@ describe('Achievements Integration Tests', () => {
 
     it('should dismiss notification on user action', async () => {
       const user = userEvent.setup();
-      const { setAchievements, unlockAchievement } = useAchievementsStore.getState();
+      const { unlockAchievement } = useAchievementsStore.getState();
 
       const mockAchievement: Achievement = {
         id: 'ach-1',
@@ -694,7 +692,7 @@ describe('Achievements Integration Tests', () => {
     });
 
     it('should handle multiple notifications', () => {
-      const { setAchievements, unlockAchievement } = useAchievementsStore.getState();
+      const { unlockAchievement } = useAchievementsStore.getState();
 
       const achievements: Achievement[] = [
         {
@@ -757,7 +755,7 @@ describe('Achievements Integration Tests', () => {
 
   describe('Stats Integration', () => {
     it('should display calculated stats in UI', () => {
-      const { setAchievements, unlockAchievement } = useAchievementsStore.getState();
+      const { unlockAchievement } = useAchievementsStore.getState();
 
       const achievements: Achievement[] = [
         {
@@ -825,7 +823,7 @@ describe('Achievements Integration Tests', () => {
     });
 
     it('should recalculate stats on each unlock', () => {
-      const { setAchievements, unlockAchievement } = useAchievementsStore.getState();
+      const { unlockAchievement } = useAchievementsStore.getState();
 
       const achievements: Achievement[] = Array.from({ length: 5 }, (_, i) => ({
         id: `ach-${i + 1}`,
@@ -869,7 +867,7 @@ describe('Achievements Integration Tests', () => {
 
   describe('Multi-Achievement Flow', () => {
     it('should handle unlocking multiple achievements at once', () => {
-      const { setAchievements, unlockAchievement } = useAchievementsStore.getState();
+      const { unlockAchievement } = useAchievementsStore.getState();
 
       const achievements: Achievement[] = [
         {
@@ -913,7 +911,7 @@ describe('Achievements Integration Tests', () => {
     });
 
     it('should filter achievements by category', () => {
-      const { setAchievements, filterByCategory } = useAchievementsStore.getState();
+      const { filterByCategory } = useAchievementsStore.getState();
 
       const achievements: Achievement[] = [
         {

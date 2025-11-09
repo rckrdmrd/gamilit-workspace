@@ -14,3 +14,6 @@ export { ClassroomMember } from './classroom-member.entity';
 export { Team } from './team.entity';
 export { TeamMember } from './team-member.entity';
 export { TeamChallenge } from './team-challenge.entity';
+export { AssignmentClassroom } from './assignment-classroom.entity'; // ✨ NUEVO - P2 (Assignments → Classrooms)
+export { PeerChallenge } from './peer-challenge.entity'; // ✨ NUEVO - P2 (Epic EXT-009)
+export { ChallengeParticipant } from './challenge-participant.entity'; // ✨ NUEVO - P2 (Epic EXT-009)

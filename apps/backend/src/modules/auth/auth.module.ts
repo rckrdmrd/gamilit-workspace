@@ -9,6 +9,7 @@ import {
   User,
   Profile,
   Tenant,
+  Role, // ✨ NUEVO - RBAC
   UserRole,
   Membership,
   AuthProvider,
@@ -16,6 +17,7 @@ import {
   UserSession,
   EmailVerificationToken,
   PasswordResetToken,
+  SecurityEvent, // ✨ NUEVO - P0 (Auditoría de seguridad)
 } from './entities';
 
 // Services
@@ -79,6 +81,7 @@ import { DB_SCHEMAS } from '@/shared/constants';
         User,
         Profile,
         Tenant,
+        Role, // ✨ NUEVO - RBAC
         UserRole,
         Membership,
         AuthProvider,
@@ -86,6 +89,7 @@ import { DB_SCHEMAS } from '@/shared/constants';
         UserSession,
         EmailVerificationToken,
         PasswordResetToken,
+        SecurityEvent, // ✨ NUEVO - P0 (Auditoría de seguridad)
       ],
       'auth',
     ),

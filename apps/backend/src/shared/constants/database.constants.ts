@@ -46,6 +46,7 @@ export const DB_TABLES = {
     USERS: 'users',
     PROFILES: 'profiles',
     USER_ROLES: 'user_roles',
+    ROLES: 'roles', // ✨ NUEVO - P0 CRÍTICO (RBAC)
     MEMBERSHIPS: 'memberships',
     AUTH_PROVIDERS: 'auth_providers',
     AUTH_ATTEMPTS: 'auth_attempts',
@@ -54,6 +55,10 @@ export const DB_TABLES = {
     PASSWORD_RESET_TOKENS: 'password_reset_tokens',
     SECURITY_EVENTS: 'security_events',
     USER_PREFERENCES: 'user_preferences',
+    USER_SUSPENSIONS: 'user_suspensions', // ✨ NUEVO - P0
+    PARENT_ACCOUNTS: 'parent_accounts', // ✨ NUEVO - P0 (Portal Padres)
+    PARENT_STUDENT_LINKS: 'parent_student_links', // ✨ NUEVO - P0 (Portal Padres)
+    PARENT_NOTIFICATIONS: 'parent_notifications', // ✨ NUEVO - P0 (Portal Padres)
   },
 
   /**
@@ -73,6 +78,9 @@ export const DB_TABLES = {
     ACHIEVEMENT_CATEGORIES: 'achievement_categories',
     ACTIVE_BOOSTS: 'active_boosts',
     INVENTORY_TRANSACTIONS: 'inventory_transactions',
+    MAYA_RANKS: 'maya_ranks', // ✨ NUEVO - P1 (Rankings Maya)
+    COMODIN_USAGE_LOG: 'comodin_usage_log', // ✨ NUEVO - P1 (Tracking comodines)
+    COMODIN_USAGE_TRACKING: 'comodin_usage_tracking', // ✨ NUEVO - P1 (Tracking comodines)
   },
 
   /**
@@ -107,6 +115,14 @@ export const DB_TABLES = {
     EXERCISE_ATTEMPTS: 'exercise_attempts',
     EXERCISE_SUBMISSIONS: 'exercise_submissions',
     SCHEDULED_MISSIONS: 'scheduled_missions',
+    TEACHER_NOTES: 'teacher_notes', // ✨ NUEVO - P0 (Notas del profesor)
+    ENGAGEMENT_METRICS: 'engagement_metrics', // ✨ NUEVO - P2
+    LEARNING_PATHS: 'learning_paths', // ✨ NUEVO - P2
+    MASTERY_TRACKING: 'mastery_tracking', // ✨ NUEVO - P2
+    MODULE_COMPLETION_TRACKING: 'module_completion_tracking', // ✨ NUEVO - P2
+    PROGRESS_SNAPSHOTS: 'progress_snapshots', // ✨ NUEVO - P2
+    SKILL_ASSESSMENTS: 'skill_assessments', // ✨ NUEVO - P2
+    USER_LEARNING_PATHS: 'user_learning_paths', // ✨ NUEVO - P2
   },
 
   /**
@@ -122,6 +138,13 @@ export const DB_TABLES = {
     TEAM_MEMBERS: 'team_members',
     TEAM_CHALLENGES: 'team_challenges',
     ASSIGNMENT_CLASSROOMS: 'assignment_classrooms',
+    PEER_CHALLENGES: 'peer_challenges', // ✨ NUEVO - P1 (Desafíos entre pares)
+    CHALLENGE_PARTICIPANTS: 'challenge_participants', // ✨ NUEVO - P1
+    CHALLENGE_RESULTS: 'challenge_results', // ✨ NUEVO - P1
+    DISCUSSION_THREADS: 'discussion_threads', // ✨ NUEVO - P2
+    SOCIAL_INTERACTIONS: 'social_interactions', // ✨ NUEVO - P2
+    TEACHER_CLASSROOMS: 'teacher_classrooms', // ✨ NUEVO - P2
+    USER_FOLLOWS: 'user_follows', // ✨ NUEVO - P2
   },
 
   /**
@@ -132,13 +155,56 @@ export const DB_TABLES = {
     CONTENT_TEMPLATES: 'content_templates',
     MARIE_CURIE_CONTENT: 'marie_curie_content',
     MEDIA_FILES: 'media_files',
+    CONTENT_AUTHORS: 'content_authors', // ✨ NUEVO - P2
+    CONTENT_CATEGORIES: 'content_categories', // ✨ NUEVO - P2
+    CONTENT_VERSIONS: 'content_versions', // ✨ NUEVO - P2
+    FLAGGED_CONTENT: 'flagged_content', // ✨ NUEVO - P2
+    MEDIA_METADATA: 'media_metadata', // ✨ NUEVO - P2
   },
 
   /**
    * Audit Logging Schema
-   * Tablas de auditoría y logs (no migradas aún)
+   * Tablas de auditoría y logs del sistema
    */
-  AUDIT: {},
+  AUDIT: {
+    AUDIT_LOGS: 'audit_logs', // ✨ NUEVO - P2
+    SYSTEM_LOGS: 'system_logs', // ✨ NUEVO - P2
+    USER_ACTIVITY_LOGS: 'user_activity_logs', // ✨ NUEVO - P2
+    PERFORMANCE_METRICS: 'performance_metrics', // ✨ NUEVO - P2
+    SYSTEM_ALERTS: 'system_alerts', // ✨ NUEVO - P2
+    USER_ACTIVITY: 'user_activity', // ✨ NUEVO - P2
+  },
+
+  /**
+   * System Configuration Schema
+   * Configuración dinámica del sistema
+   */
+  SYSTEM: {
+    SYSTEM_SETTINGS: 'system_settings', // ✨ NUEVO - P1 CRÍTICO
+    FEATURE_FLAGS: 'feature_flags', // ✨ NUEVO - P1 CRÍTICO
+    NOTIFICATION_SETTINGS: 'notification_settings', // ✨ NUEVO - P1
+    API_CONFIGURATION: 'api_configuration', // ✨ NUEVO - P2
+    ENVIRONMENT_CONFIG: 'environment_config', // ✨ NUEVO - P2
+    TENANT_CONFIGURATIONS: 'tenant_configurations', // ✨ NUEVO - P2
+  },
+
+  /**
+   * LTI Integration Schema
+   * Learning Tools Interoperability para integración con LMS externos
+   */
+  LTI: {
+    LTI_CONSUMERS: 'lti_consumers', // ✨ NUEVO - P3
+    LTI_SESSIONS: 'lti_sessions', // ✨ NUEVO - P3
+    LTI_GRADE_PASSBACK: 'lti_grade_passback', // ✨ NUEVO - P3
+  },
+
+  /**
+   * Auth Base Schema (Supabase)
+   * Tabla base de usuarios de Supabase (diferente de auth_management)
+   */
+  AUTH_BASE: {
+    USERS: 'users', // ✨ NUEVO - P0 (nota: puede no necesitar entidad si usamos Supabase directamente)
+  },
 
   /**
    * Gamilit Schema (público)
@@ -172,6 +238,11 @@ export type ProgressTable =
 export type SocialTable = (typeof DB_TABLES.SOCIAL)[keyof typeof DB_TABLES.SOCIAL];
 export type ContentTable =
   (typeof DB_TABLES.CONTENT)[keyof typeof DB_TABLES.CONTENT];
+export type AuditTable = (typeof DB_TABLES.AUDIT)[keyof typeof DB_TABLES.AUDIT]; // ✨ NUEVO
+export type SystemTable = (typeof DB_TABLES.SYSTEM)[keyof typeof DB_TABLES.SYSTEM]; // ✨ NUEVO
+export type LTITable = (typeof DB_TABLES.LTI)[keyof typeof DB_TABLES.LTI]; // ✨ NUEVO
+export type AuthBaseTable =
+  (typeof DB_TABLES.AUTH_BASE)[keyof typeof DB_TABLES.AUTH_BASE]; // ✨ NUEVO
 
 /**
  * Validación: Verificar que tabla existe en schema

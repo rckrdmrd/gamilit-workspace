@@ -1,23 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Star, BookOpen, CheckSquare, Clock, Award } from 'lucide-react';
+import { Star, BookOpen, CheckSquare } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { ExerciseProps, ResenaCriticaState, CriteriaState } from './resenaCriticaTypes';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import { saveProgress as saveProgressUtil, loadProgress, clearProgress } from '@/shared/utils/storage';
+import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 
 export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
-  moduleId,
-  lessonId,
   exerciseId,
-  userId,
   onComplete,
   onExit,
   onProgressUpdate,
   initialData,
-  difficulty = 'medium',
   exercise,
 }) => {
   // State management
@@ -39,7 +35,6 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
-  const [hintsUsed, setHintsUsed] = useState(0);
 
   const works = exercise?.works || [
     'Marie Curie: A Life - Susan Quinn',
@@ -165,12 +160,6 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
     setShowFeedback(true);
   };
 
-  // Actions ref for parent component
-  const actionsRef = useRef({
-    handleReset,
-    handleCheck,
-  });
-
   return (
     <>
       <DetectiveCard variant="default" padding="lg" className="mb-6">
@@ -200,7 +189,7 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
                 className="w-full px-4 py-2 border-2 border-detective-border-medium rounded-detective focus:border-detective-orange focus:outline-none transition-colors"
               >
                 <option value="">Selecciona una obra...</option>
-                {works.map((work, idx) => (
+                {works.map((work: string, idx: number) => (
                   <option key={idx} value={work}>
                     {work}
                   </option>

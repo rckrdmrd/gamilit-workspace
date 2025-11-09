@@ -1,25 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
 import { BookOpen, Navigation, CheckCircle } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { HypertextDocument } from './HypertextDocument';
 import { NavigationBreadcrumbs } from './NavigationBreadcrumbs';
-import { NavegacionHipertextualData, ExerciseProps } from './navegacionHipertextualTypes';
+import { ExerciseProps, HypertextNode } from './navegacionHipertextualTypes';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import { saveProgress as saveProgressUtil, loadProgress, clearProgress } from '@/shared/utils/storage';
+import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 
 export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
-  moduleId,
-  lessonId,
   exerciseId,
-  userId,
   onComplete,
-  onExit,
   onProgressUpdate,
   initialData,
-  difficulty = 'medium',
   exercise,
 }) => {
   // State management
@@ -29,7 +22,7 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
 
-  const currentNode = exercise?.nodes.find(n => n.id === currentNodeId);
+  const currentNode = exercise?.nodes.find((n: HypertextNode) => n.id === currentNodeId);
 
   // Calculate progress
   const calculateProgress = () => {
@@ -82,16 +75,6 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
     }
   };
 
-  // Reset handler
-  const handleReset = () => {
-    if (exercise) {
-      setCurrentNodeId(exercise.startNodeId);
-      setVisitedNodes([exercise.startNodeId]);
-      setFeedback(null);
-      setShowFeedback(false);
-    }
-  };
-
   // Check/Verify handler
   const handleCheck = () => {
     if (!exercise) return;
@@ -129,12 +112,6 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
     });
     setShowFeedback(true);
   };
-
-  // Actions ref for parent component
-  const actionsRef = useRef({
-    handleReset,
-    handleCheck,
-  });
 
   if (!exercise) {
     return (

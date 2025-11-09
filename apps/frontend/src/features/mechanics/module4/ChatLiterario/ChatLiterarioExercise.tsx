@@ -6,18 +6,13 @@ import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { ExerciseProps, ChatLiterarioState, Message } from './chatLiterarioTypes';
-import { saveProgress as saveProgressUtil, loadProgress, clearProgress } from '@/shared/utils/storage';
+import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 
 export const ChatLiterarioExercise: React.FC<ExerciseProps> = ({
-  moduleId,
-  lessonId,
   exerciseId,
-  userId,
   onComplete,
-  onExit,
   onProgressUpdate,
   initialData,
-  difficulty = 'medium',
   exercise,
 }) => {
   // State management
@@ -37,7 +32,7 @@ export const ChatLiterarioExercise: React.FC<ExerciseProps> = ({
   );
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
-  const [feedback, setFeedback] = useState<FeedbackData | null>(null);
+  const [feedback] = useState<FeedbackData | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const responses = {
@@ -120,64 +115,6 @@ export const ChatLiterarioExercise: React.FC<ExerciseProps> = ({
       setMessages(prev => [...prev, botMessage]);
     }, 1000);
   };
-
-  // Reset handler
-  const handleReset = () => {
-    setMessages([
-      {
-        id: '1',
-        sender: 'marie',
-        text: '¡Bonjour! Soy Marie Curie. Estoy trabajando en mi laboratorio investigando materiales radioactivos. ¿En qué puedo ayudarte hoy?',
-        timestamp: new Date(),
-      },
-    ]);
-    setInput('');
-    setActiveCharacter('marie');
-    setFeedback(null);
-    setShowFeedback(false);
-  };
-
-  // Check/Verify handler
-  const handleCheck = () => {
-    const score = calculateScore();
-    const timeSpent = Math.floor(
-      (new Date().getTime() - startTime.getTime()) / 1000
-    );
-    const userMessages = messages.filter(m => m.sender === 'user').length;
-    const minMessages = exercise?.minMessages || 5;
-
-    if (userMessages < minMessages) {
-      setFeedback({
-        type: 'info',
-        title: 'Conversación Incompleta',
-        message: `Has enviado ${userMessages} de ${minMessages} mensajes mínimos. Continúa conversando con los personajes.`,
-      });
-      setShowFeedback(true);
-      return;
-    }
-
-    setFeedback({
-      type: 'success',
-      title: '¡Conversación Exitosa!',
-      message: `¡Excelente! Has mantenido una conversación interesante con los personajes históricos. Total de mensajes: ${userMessages}.`,
-      score: {
-        baseScore: score,
-        timeBonus: Math.max(0, 10 - timeSpent / 120),
-        accuracyBonus: userMessages > minMessages * 1.5 ? 20 : 10,
-        totalScore: score,
-        mlCoins: Math.floor(score / 10),
-        xpGained: score * 2,
-      },
-      showConfetti: true,
-    });
-    setShowFeedback(true);
-  };
-
-  // Actions ref for parent component
-  const actionsRef = useRef({
-    handleReset,
-    handleCheck,
-  });
 
   const getAvatar = (sender: Message['sender']) => {
     if (sender === 'user') {
