@@ -252,7 +252,7 @@ export enum AchievementTypeEnum {
 
 /**
  * Tipos de notificaciones del sistema
- * @see DDL: public.notification_type ENUM
+ * @see DDL: gamification_system.notification_type ENUM
  * @see Docs: docs/02-especificaciones-tecnicas/tipos-compartidos/TYPES-NOTIFICATIONS.md
  * @version 2.0 (2025-11-07) - Alineado con documentación oficial
  *
@@ -283,7 +283,7 @@ export enum NotificationTypeEnum {
 
 /**
  * Prioridad de notificaciones (urgencia de visualización)
- * @see DDL: public.notification_priority ENUM
+ * @see DDL: gamification_system.notification_priority ENUM
  * @see Docs: docs/02-especificaciones-tecnicas/trazabilidad/05-realtime-notifications.md:240
  * @version 1.1 (2025-11-08) - Agregado 'critical' para alineación con BD
  *
@@ -375,7 +375,7 @@ export const NOTIFICATION_ICONS = {
 
 /**
  * Estados del ciclo de vida del contenido
- * @see DDL: public.content_status ENUM
+ * @see DDL: content_management.content_status ENUM
  * @version 1.1 (2025-11-08) - Cambiado 'reviewing' a 'under_review' para alineación con BD
  */
 export enum ContentStatusEnum {
@@ -387,7 +387,7 @@ export enum ContentStatusEnum {
 
 /**
  * Tipos de contenido educativo
- * @see DDL: content_type ENUM
+ * @see DDL: content_management.content_type ENUM
  */
 export enum ContentTypeEnum {
   VIDEO = 'video',
@@ -515,7 +515,7 @@ export enum ProgressStatusEnum {
 
 /**
  * Resultados de intentos de ejercicio
- * @see DDL: attempt_result ENUM
+ * @see DDL: progress_tracking.attempt_result ENUM
  */
 export enum AttemptResultEnum {
   CORRECT = 'correct',
@@ -585,7 +585,7 @@ export enum TeamChallengeStatusEnum {
 
 /**
  * Tipos de eventos sociales
- * @see DDL: social_event_type ENUM
+ * @see DDL: social_features.social_event_type ENUM
  */
 export enum SocialEventTypeEnum {
   COMPETITION = 'competition',
@@ -622,7 +622,7 @@ export enum AlertSeverityEnum {
 
 /**
  * Períodos de agregación para métricas
- * @see DDL: aggregation_period ENUM
+ * @see DDL: audit_logging.aggregation_period ENUM
  */
 export enum AggregationPeriodEnum {
   DAILY = 'daily',
@@ -634,7 +634,7 @@ export enum AggregationPeriodEnum {
 
 /**
  * Tipos de métricas
- * @see DDL: metric_type ENUM
+ * @see DDL: audit_logging.metric_type ENUM
  */
 export enum MetricTypeEnum {
   ENGAGEMENT = 'engagement',
