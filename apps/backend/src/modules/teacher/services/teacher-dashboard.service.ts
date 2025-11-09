@@ -218,7 +218,7 @@ export class TeacherDashboardService {
 
       // Check for low scores
       const submissions = await this.submissionRepository.find({
-        where: { user_id: student.user_id },
+        where: { user_id: student.user_id || undefined },
         order: { submitted_at: 'DESC' },
         take: 5,
       });
@@ -261,7 +261,7 @@ export class TeacherDashboardService {
 
     for (const student of students) {
       const submissions = await this.submissionRepository.find({
-        where: { user_id: student.user_id },
+        where: { user_id: student.user_id || undefined },
       });
 
       if (submissions.length === 0) continue;

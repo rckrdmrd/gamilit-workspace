@@ -66,7 +66,7 @@ export class AssignmentsService {
    * Get all assignments for a teacher
    */
   async findAll(teacherId: string, filters?: {
-    status?: AssignmentStatus;
+    isPublished?: boolean;
     assignmentType?: string;
     search?: string;
   }): Promise<Assignment[]> {
@@ -136,7 +136,7 @@ export class AssignmentsService {
 
     // Sanitize HTML fields if provided
     if (updateDto.description !== undefined) {
-      updateDto.description = this.sanitizeHtml(updateDto.description);
+      updateDto.description = this.sanitizeHtml(updateDto.description) || undefined;
     }
     // TODO: Handle instructions field if/when added to entity
     // if (updateDto.instructions !== undefined) {

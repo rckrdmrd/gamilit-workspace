@@ -144,7 +144,7 @@ export class StudentProgressService {
       current_level: 12, // TODO: Calculate from XP
       total_xp: 3450, // TODO: Get from gamification system
       total_ml_coins: 890, // TODO: Get from gamification system
-      avatar_url: profile.avatar_url,
+      avatar_url: profile.avatar_url || undefined,
       joined_date: profile.created_at,
       last_login: profile.last_sign_in_at || profile.created_at,
     };
@@ -164,12 +164,12 @@ export class StudentProgressService {
 
     // Get all submissions
     const submissions = await this.submissionRepository.find({
-      where: { user_id: profile.user_id },
+      where: { user_id: profile.user_id || undefined },
     });
 
     // Get module progress
     const moduleProgresses = await this.moduleProgressRepository.find({
-      where: { user_id: profile.user_id },
+      where: { user_id: profile.user_id || undefined },
     });
 
     const completedModules = moduleProgresses.filter(
@@ -218,7 +218,7 @@ export class StudentProgressService {
     }
 
     const moduleProgresses = await this.moduleProgressRepository.find({
-      where: { user_id: profile.user_id },
+      where: { user_id: profile.user_id || undefined },
     });
 
     // TODO: Join with actual module data to get names and details
@@ -232,7 +232,7 @@ export class StudentProgressService {
       ),
       average_score: Math.round(mp.progress_percentage * 0.8), // Estimate
       time_spent_minutes: 0, // TODO: Calculate from submissions
-      last_activity_date: mp.last_activity_at,
+      last_activity_date: mp.updated_at, // Using updated_at as proxy for last_activity
       status: this.calculateModuleStatus(mp.progress_percentage),
     }));
   }
@@ -307,7 +307,7 @@ export class StudentProgressService {
     }
 
     const submissions = await this.submissionRepository.find({
-      where: { user_id: profile.user_id },
+      where: { user_id: profile.user_id || undefined },
       order: { submitted_at: 'DESC' },
     });
 
@@ -455,7 +455,7 @@ export class StudentProgressService {
 
     // Get student user
     const studentUser = await this.userRepository.findOne({
-      where: { id: student.user_id },
+      where: { id: student.user_id || undefined },
     });
 
     if (!studentUser) {
@@ -518,7 +518,7 @@ export class StudentProgressService {
 
     // Get student user
     const studentUser = await this.userRepository.findOne({
-      where: { id: student.user_id },
+      where: { id: student.user_id || undefined },
     });
 
     if (!studentUser) {
