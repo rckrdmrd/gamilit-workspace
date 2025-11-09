@@ -12,6 +12,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/app/providers/AuthContext';
 import {
   Users,
   UserPlus,
@@ -62,12 +63,7 @@ export default function FriendsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
-  // Mock user data - in production this would come from auth context
-  const user = {
-    email: 'detective@glit.com',
-    full_name: 'Marie Curie',
-    id: 'user-1',
-  };
+  const { user } = useAuth();
 
   // Filter friends based on search and online status
   const filteredFriends = friends.filter(friend => {
@@ -115,7 +111,7 @@ export default function FriendsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={user} onLogout={() => navigate('/login')} />
+      <GamifiedHeader user={user ?? undefined} onLogout={() => navigate('/login')} />
 
       <main className="detective-container py-8">
         {/* Header */}

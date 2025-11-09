@@ -12,6 +12,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/app/providers/AuthContext';
 import {
   Settings as SettingsIcon,
   User,
@@ -44,13 +45,7 @@ type SettingsSection = 'profile' | 'account' | 'preferences' | 'privacy' | 'conn
 
 export default function SettingsPage() {
   const navigate = useNavigate();
-
-  // Mock user data
-  const user = {
-    email: 'detective@glit.com',
-    full_name: 'Marie Curie',
-    id: 'user-1',
-  };
+  const { user } = useAuth();
 
   // State
   const [activeSection, setActiveSection] = useState<SettingsSection>('profile');
@@ -59,14 +54,14 @@ export default function SettingsPage() {
 
   // Profile Settings
   const [profile, setProfile] = useState({
-    displayName: 'Marie Curie',
-    bio: 'Detective novato apasionado por la ciencia',
+    displayName: user?.displayName || user?.email?.split('@')[0] || '',
+    bio: '',
     avatar: '',
   });
 
   // Account Settings
   const [account, setAccount] = useState({
-    email: 'detective@glit.com',
+    email: user?.email || '',
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
@@ -124,7 +119,7 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-      <GamifiedHeader user={user} onLogout={() => navigate('/login')} />
+      <GamifiedHeader user={user ?? undefined} onLogout={() => navigate('/login')} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/app/providers/AuthContext';
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { RankBadge } from '@shared/components/base/RankBadge';
@@ -7,11 +8,7 @@ import { User, Mail, Calendar, Trophy, Target, Coins } from 'lucide-react';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-
-  const user = {
-    email: 'detective@glit.com',
-    full_name: 'Marie Curie',
-  };
+  const { user } = useAuth();
 
   const stats = [
     { label: 'ML Coins', value: '350', icon: Coins, color: 'text-detective-gold' },
@@ -21,7 +18,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={user} onLogout={() => navigate('/login')} />
+      <GamifiedHeader user={user ?? undefined} onLogout={() => navigate('/login')} />
 
       <main className="detective-container py-8">
         <h1 className="text-4xl font-bold text-detective-text mb-8">
@@ -37,11 +34,11 @@ export default function ProfilePage() {
                   <User className="w-12 h-12 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-detective-text mb-2">
-                  {user.full_name}
+                  {user?.displayName || user?.email?.split('@')[0] || 'Usuario'}
                 </h2>
                 <p className="text-detective-text-secondary mb-4 flex items-center gap-2">
                   <Mail className="w-4 h-4" />
-                  {user.email}
+                  {user?.email}
                 </p>
                 <RankBadge rank="nacom" showIcon={true} size="lg" />
                 <p className="text-detective-text-secondary text-sm mt-4 flex items-center gap-2">

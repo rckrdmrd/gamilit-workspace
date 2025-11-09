@@ -1,5 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/app/providers/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -144,11 +145,7 @@ export default function ExercisePage() {
   const [startTime] = useState(new Date());
   const [hints, setHints] = useState<Array<{ id: string; text: string; cost: number }>>([]);
 
-  // User data
-  const user = {
-    email: 'detective@glit.com',
-    full_name: 'Marie Curie',
-  };
+  const { user } = useAuth();
 
   // ============================================================================
   // DATA FETCHING
@@ -444,7 +441,7 @@ export default function ExercisePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-        <GamifiedHeader user={user} onLogout={() => navigate('/login')} />
+        <GamifiedHeader user={user ?? undefined} onLogout={() => navigate('/login')} />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <DetectiveCard hoverable={false}>
@@ -466,7 +463,7 @@ export default function ExercisePage() {
   if (!exercise || !MechanicComponent) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-        <GamifiedHeader user={user} onLogout={() => navigate('/login')} />
+        <GamifiedHeader user={user ?? undefined} onLogout={() => navigate('/login')} />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <motion.div
@@ -495,7 +492,7 @@ export default function ExercisePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
       {/* Header */}
-      <GamifiedHeader user={user} onLogout={() => navigate('/login')} />
+      <GamifiedHeader user={user ?? undefined} onLogout={() => navigate('/login')} />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

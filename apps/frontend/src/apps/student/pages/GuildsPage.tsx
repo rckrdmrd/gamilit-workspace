@@ -9,9 +9,10 @@
  * - Guild chat/activities
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/app/providers/AuthContext';
 import {
   Shield,
   Users,
@@ -21,14 +22,11 @@ import {
   Target,
   Trophy,
   TrendingUp,
-  Settings,
   LogOut as Leave,
   UserPlus,
   Star,
   Lock,
-  Unlock,
   Award,
-  Activity,
   Calendar,
   Zap,
 } from 'lucide-react';
@@ -56,8 +54,6 @@ export default function GuildsPage() {
     allGuilds,
     userGuild,
     guildMembers,
-    guildChallenges,
-    guildActivities,
     isInGuild,
     joinGuild,
     leaveGuild,
@@ -72,8 +68,6 @@ export default function GuildsPage() {
   const [activeTab, setActiveTab] = useState<TabType>(isInGuild ? 'my-guild' : 'discover');
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [selectedGuild, setSelectedGuild] = useState<Guild | null>(null);
-  const [showGuildDetails, setShowGuildDetails] = useState(false);
 
   // Create Guild Form
   const [newGuild, setNewGuild] = useState({
@@ -83,12 +77,7 @@ export default function GuildsPage() {
     minLevel: 1,
   });
 
-  // Mock user data
-  const user = {
-    email: 'detective@glit.com',
-    full_name: 'Marie Curie',
-    id: 'user-1',
-  };
+  const { user } = useAuth();
 
   // Filter guilds
   const publicGuilds = getPublicGuilds();
@@ -155,7 +144,7 @@ export default function GuildsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={user} onLogout={() => navigate('/login')} />
+      <GamifiedHeader user={user ?? undefined} onLogout={() => navigate('/login')} />
 
       <main className="detective-container py-8">
         {/* Header */}

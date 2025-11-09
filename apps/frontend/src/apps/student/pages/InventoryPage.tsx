@@ -9,21 +9,18 @@
  * - Rarity/stats display
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/app/providers/AuthContext';
 import {
   Package,
   Zap,
-  Star,
   Clock,
   Eye,
   Check,
   Sparkles,
   TrendingUp,
-  Shield,
-  Target,
-  Filter,
   Search,
   ShoppingBag,
   Coins,
@@ -35,8 +32,6 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { Modal } from '@shared/components/common/Modal';
 
 // Hooks
-import { useInventory } from '@/features/gamification/economy/hooks/useInventory';
-import { usePowerUps } from '@/features/gamification/social/hooks/usePowerUps';
 import type { ShopItem, ItemRarity, ShopCategory } from '@/features/gamification/economy/types/economyTypes';
 import type { PowerUp, ActivePowerUp } from '@/features/gamification/social/types/powerUpsTypes';
 
@@ -134,20 +129,14 @@ const mockActivePowerUps: ActivePowerUp[] = [
 
 export default function InventoryPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // State
   const [activeTab, setActiveTab] = useState<TabType>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItem, setSelectedItem] = useState<ShopItem | PowerUp | null>(null);
-  const [showItemModal, setShowItemModal] = useState(false);
+  const [, setShowItemModal] = useState(false);
   const [showUsePowerUpModal, setShowUsePowerUpModal] = useState(false);
-
-  // Mock user data
-  const user = {
-    email: 'detective@glit.com',
-    full_name: 'Marie Curie',
-    id: 'user-1',
-  };
 
   // Combine all items
   const allItems = [...mockInventoryItems, ...mockPowerUps];
@@ -214,7 +203,7 @@ export default function InventoryPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={user} onLogout={() => navigate('/login')} />
+      <GamifiedHeader user={user ?? undefined} onLogout={() => navigate('/login')} />
 
       <main className="detective-container py-8">
         {/* Header */}

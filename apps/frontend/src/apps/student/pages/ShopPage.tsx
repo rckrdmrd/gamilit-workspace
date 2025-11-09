@@ -13,6 +13,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/app/providers/AuthContext';
 import {
   ShoppingCart,
   Search,
@@ -80,6 +81,7 @@ const mockShopItems: ShopItem[] = [
 
 export default function ShopPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // Hooks
   const { balance } = useCoins();
@@ -91,13 +93,6 @@ export default function ShopPage() {
   const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [cart] = useState<ShopItem[]>([]);
-
-  // Mock user data
-  const user = {
-    email: 'detective@glit.com',
-    full_name: 'Marie Curie',
-    id: 'user-1',
-  };
 
   // Categories
   const categories: { value: ShopCategory | 'all'; label: string; icon: React.ElementType; color: string }[] = [
@@ -159,7 +154,7 @@ export default function ShopPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={user} onLogout={() => navigate('/login')} />
+      <GamifiedHeader user={user ?? undefined} onLogout={() => navigate('/login')} />
 
       <main className="detective-container py-8">
         {/* Header */}
