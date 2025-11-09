@@ -288,10 +288,83 @@ COMMENT ON POLICY user_roles_read_own ON auth_management.user_roles IS
     'Permite a los usuarios ver sus propios roles asignados';
 
 -- =====================================================
+-- TABLE: auth_management.user_suspensions
+-- Description: User suspensions - admin and self-read access
+-- Policies: 5 (SELECT: 2, INSERT: 1, UPDATE: 1, DELETE: 1)
+-- Added: 2025-11-09 (CRITICAL SECURITY FIX)
+-- =====================================================
+
+DROP POLICY IF EXISTS user_suspensions_select_admin ON auth_management.user_suspensions;
+DROP POLICY IF EXISTS user_suspensions_select_own ON auth_management.user_suspensions;
+DROP POLICY IF EXISTS user_suspensions_insert_admin ON auth_management.user_suspensions;
+DROP POLICY IF EXISTS user_suspensions_update_admin ON auth_management.user_suspensions;
+DROP POLICY IF EXISTS user_suspensions_delete_admin ON auth_management.user_suspensions;
+
+-- Policy: user_suspensions_select_admin
+-- Purpose: Admins and super_admins can view all suspensions
+CREATE POLICY user_suspensions_select_admin
+    ON auth_management.user_suspensions
+    AS PERMISSIVE
+    FOR SELECT
+    TO public
+    USING (gamilit.is_admin() OR gamilit.is_super_admin());
+
+COMMENT ON POLICY user_suspensions_select_admin ON auth_management.user_suspensions IS
+    'Permite a los administradores ver todas las suspensiones';
+
+-- Policy: user_suspensions_select_own
+-- Purpose: Users can view their own suspension (readonly)
+CREATE POLICY user_suspensions_select_own
+    ON auth_management.user_suspensions
+    AS PERMISSIVE
+    FOR SELECT
+    TO public
+    USING (user_id = gamilit.get_current_user_id());
+
+COMMENT ON POLICY user_suspensions_select_own ON auth_management.user_suspensions IS
+    'Permite a los usuarios ver su propia suspensión';
+
+-- Policy: user_suspensions_insert_admin
+-- Purpose: Only admins can create suspensions
+CREATE POLICY user_suspensions_insert_admin
+    ON auth_management.user_suspensions
+    AS PERMISSIVE
+    FOR INSERT
+    TO public
+    WITH CHECK (gamilit.is_admin() OR gamilit.is_super_admin());
+
+COMMENT ON POLICY user_suspensions_insert_admin ON auth_management.user_suspensions IS
+    'Solo administradores pueden crear suspensiones';
+
+-- Policy: user_suspensions_update_admin
+-- Purpose: Only admins can modify suspensions
+CREATE POLICY user_suspensions_update_admin
+    ON auth_management.user_suspensions
+    AS PERMISSIVE
+    FOR UPDATE
+    TO public
+    USING (gamilit.is_admin() OR gamilit.is_super_admin());
+
+COMMENT ON POLICY user_suspensions_update_admin ON auth_management.user_suspensions IS
+    'Solo administradores pueden modificar suspensiones';
+
+-- Policy: user_suspensions_delete_admin
+-- Purpose: Only super_admins can delete suspensions
+CREATE POLICY user_suspensions_delete_admin
+    ON auth_management.user_suspensions
+    AS PERMISSIVE
+    FOR DELETE
+    TO public
+    USING (gamilit.is_super_admin());
+
+COMMENT ON POLICY user_suspensions_delete_admin ON auth_management.user_suspensions IS
+    'Solo super_admins pueden eliminar suspensiones';
+
+-- =====================================================
 -- SUMMARY: auth_management schema
 -- =====================================================
--- Total policies: 18
--- Tables with policies: 9
+-- Total policies: 23 (updated from 18)
+-- Tables with policies: 10 (updated from 9)
 -- - profiles: 5 policies (3 SELECT, 2 UPDATE)
 -- - user_sessions: 1 policy (1 SELECT)
 -- - password_reset_tokens: 1 policy (1 SELECT)
@@ -301,4 +374,5 @@ COMMENT ON POLICY user_roles_read_own ON auth_management.user_roles IS
 -- - memberships: 1 policy (1 SELECT)
 -- - tenants: 1 policy (1 SELECT)
 -- - user_roles: 1 policy (1 SELECT)
+-- - user_suspensions: 5 policies (2 SELECT, 1 INSERT, 1 UPDATE, 1 DELETE) [NEW - 2025-11-09]
 -- =====================================================

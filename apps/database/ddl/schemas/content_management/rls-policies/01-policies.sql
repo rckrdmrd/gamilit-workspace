@@ -116,3 +116,76 @@ CREATE POLICY media_files_insert_teacher
 
 COMMENT ON POLICY media_files_insert_teacher ON content_management.media_files IS
     'Permite a los profesores y administradores subir archivos multimedia';
+
+-- =====================================================
+-- TABLE: content_management.flagged_content
+-- Description: Content moderation reports - admin and reporter access
+-- Policies: 5 (SELECT: 2, INSERT: 1, UPDATE: 1, DELETE: 1)
+-- Added: 2025-11-09 (CRITICAL SECURITY FIX)
+-- =====================================================
+
+DROP POLICY IF EXISTS flagged_content_select_admin ON content_management.flagged_content;
+DROP POLICY IF EXISTS flagged_content_select_own ON content_management.flagged_content;
+DROP POLICY IF EXISTS flagged_content_insert_authenticated ON content_management.flagged_content;
+DROP POLICY IF EXISTS flagged_content_update_admin ON content_management.flagged_content;
+DROP POLICY IF EXISTS flagged_content_delete_admin ON content_management.flagged_content;
+
+-- Policy: flagged_content_select_admin
+-- Purpose: Admins and moderators can view all reports
+CREATE POLICY flagged_content_select_admin
+    ON content_management.flagged_content
+    AS PERMISSIVE
+    FOR SELECT
+    TO public
+    USING (gamilit.is_admin() OR gamilit.is_super_admin());
+
+COMMENT ON POLICY flagged_content_select_admin ON content_management.flagged_content IS
+    'Permite a los administradores y moderadores ver todos los reportes';
+
+-- Policy: flagged_content_select_own
+-- Purpose: Users can view their own reports
+CREATE POLICY flagged_content_select_own
+    ON content_management.flagged_content
+    AS PERMISSIVE
+    FOR SELECT
+    TO public
+    USING (reported_by = gamilit.get_current_user_id());
+
+COMMENT ON POLICY flagged_content_select_own ON content_management.flagged_content IS
+    'Permite a los usuarios ver sus propios reportes';
+
+-- Policy: flagged_content_insert_authenticated
+-- Purpose: Any authenticated user can report content
+CREATE POLICY flagged_content_insert_authenticated
+    ON content_management.flagged_content
+    AS PERMISSIVE
+    FOR INSERT
+    TO public
+    WITH CHECK (gamilit.get_current_user_id() IS NOT NULL);
+
+COMMENT ON POLICY flagged_content_insert_authenticated ON content_management.flagged_content IS
+    'Permite a cualquier usuario autenticado reportar contenido';
+
+-- Policy: flagged_content_update_admin
+-- Purpose: Only admins can update (approve/reject) reports
+CREATE POLICY flagged_content_update_admin
+    ON content_management.flagged_content
+    AS PERMISSIVE
+    FOR UPDATE
+    TO public
+    USING (gamilit.is_admin() OR gamilit.is_super_admin());
+
+COMMENT ON POLICY flagged_content_update_admin ON content_management.flagged_content IS
+    'Solo administradores pueden revisar reportes';
+
+-- Policy: flagged_content_delete_admin
+-- Purpose: Only super_admins can delete reports
+CREATE POLICY flagged_content_delete_admin
+    ON content_management.flagged_content
+    AS PERMISSIVE
+    FOR DELETE
+    TO public
+    USING (gamilit.is_super_admin());
+
+COMMENT ON POLICY flagged_content_delete_admin ON content_management.flagged_content IS
+    'Solo super_admins pueden eliminar reportes';
