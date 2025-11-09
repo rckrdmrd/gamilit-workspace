@@ -43,10 +43,12 @@ export class ExercisesService {
    */
   async create(exerciseData: Partial<Exercise>): Promise<Exercise> {
     // Validar que el contenido JSONB sea válido según el tipo de ejercicio
-    this.validateContentByExerciseType(
-      exerciseData.exercise_type,
-      exerciseData.content,
-    );
+    if (exerciseData.exercise_type) {
+      this.validateContentByExerciseType(
+        exerciseData.exercise_type,
+        exerciseData.content,
+      );
+    }
 
     const exercise = this.exerciseRepo.create(exerciseData);
     return await this.exerciseRepo.save(exercise);
@@ -69,7 +71,11 @@ export class ExercisesService {
     }
 
     await this.exerciseRepo.update(id, exerciseData);
-    return await this.findById(id);
+    const updated = await this.findById(id);
+    if (!updated) {
+      throw new NotFoundException(`Exercise with ID ${id} not found after update`);
+    }
+    return updated;
   }
 
   /**
@@ -77,7 +83,7 @@ export class ExercisesService {
    */
   async delete(id: string): Promise<boolean> {
     const result = await this.exerciseRepo.delete(id);
-    return result.affected > 0;
+    return (result.affected ?? 0) > 0;
   }
 
   /**

@@ -76,7 +76,7 @@ export class AssessmentRubric {
    * Incluye niveles de logro con puntos y descripciones
    */
   @Column({ type: 'jsonb', default: {} })
-  criteria: Record<string, any>;
+  criteria: Record<string, any> = {};
 
   /**
    * Escala de puntuación en formato JSONB

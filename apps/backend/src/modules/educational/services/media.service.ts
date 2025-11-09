@@ -64,7 +64,11 @@ export class MediaService {
     }
 
     await this.mediaRepo.update(id, mediaData);
-    return await this.findById(id);
+    const updated = await this.findById(id);
+    if (!updated) {
+      throw new NotFoundException(`Media resource with ID ${id} not found after update`);
+    }
+    return updated;
   }
 
   /**
@@ -72,7 +76,7 @@ export class MediaService {
    */
   async delete(id: string): Promise<boolean> {
     const result = await this.mediaRepo.delete(id);
-    return result.affected > 0;
+    return (result.affected ?? 0) > 0;
   }
 
   /**
@@ -105,7 +109,11 @@ export class MediaService {
     }
 
     await this.mediaRepo.update(id, updateData);
-    return await this.findById(id);
+    const updated = await this.findById(id);
+    if (!updated) {
+      throw new NotFoundException(`Media resource with ID ${id} not found after update`);
+    }
+    return updated;
   }
 
   /**
