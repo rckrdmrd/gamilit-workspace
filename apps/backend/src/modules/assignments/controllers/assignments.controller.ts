@@ -48,7 +48,7 @@ export class AssignmentsController {
   async findAll(@Query() query: any, @Request() req: any) {
     const teacherId = req.user?.userId || req.user?.sub;
     return this.assignmentsService.findAll(teacherId, {
-      status: query.status,
+      isPublished: query.isPublished !== undefined ? query.isPublished === 'true' : undefined,
       assignmentType: query.type,
       search: query.search,
     });

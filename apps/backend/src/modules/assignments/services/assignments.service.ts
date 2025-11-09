@@ -72,11 +72,10 @@ export class AssignmentsService {
   }): Promise<Assignment[]> {
     const queryBuilder = this.assignmentRepository
       .createQueryBuilder('assignment')
-      .where('assignment.teacherId = :teacherId', { teacherId })
-      .andWhere('assignment.isPublished = :isPublished', { isPublished: true });
+      .where('assignment.teacherId = :teacherId', { teacherId });
 
-    if (filters?.status) {
-      queryBuilder.andWhere('assignment.status = :status', { status: filters.status });
+    if (filters?.isPublished !== undefined) {
+      queryBuilder.andWhere('assignment.isPublished = :isPublished', { isPublished: filters.isPublished });
     }
 
     if (filters?.assignmentType) {

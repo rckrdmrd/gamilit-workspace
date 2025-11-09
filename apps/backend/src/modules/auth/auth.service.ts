@@ -39,68 +39,29 @@ export class AuthService {
   /**
    * Registro de nuevo usuario
    * TODO: Implement when RegisterDto and UsersService are available
+   * IMPLEMENTATION NEEDED:
+   * 1. Verify email doesn't already exist
+   * 2. Hash password with bcrypt
+   * 3. Create user with UsersService
+   * 4. Generate JWT tokens
+   * 5. Return sanitized user + tokens
    */
   async register(dto: any): Promise<AuthResponse> {
-    // TODO: Implement when UsersService is available
     throw new Error('Register method not implemented - UsersService required');
-
-    /*
-    // Verificar si email ya existe
-    const existingUser = await this.usersService.findByEmail(dto.email);
-    if (existingUser) {
-      throw new ConflictException('Email already registered');
-    }
-
-    // Hash de contraseña
-    const passwordHash = await bcrypt.hash(dto.password, 10);
-
-    // Crear usuario
-    const user = await this.usersService.create({
-      ...dto,
-      password: passwordHash
-    });
-
-    // Generar tokens
-    const tokens = await this.generateTokens(user.id, user.email, user.role);
-
-    return {
-      user: this.sanitizeUser(user),
-      tokens
-    };
-    */
   }
 
   /**
    * Login de usuario
    * TODO: Implement when UsersService is available
+   * IMPLEMENTATION NEEDED:
+   * 1. Find user by email
+   * 2. Verify password with bcrypt
+   * 3. Update last_login timestamp
+   * 4. Generate JWT tokens
+   * 5. Return sanitized user + tokens
    */
   async login(dto: LoginDto): Promise<AuthResponse> {
-    // TODO: Implement when UsersService is available
     throw new Error('Login method not implemented - UsersService required');
-
-    /*
-    // Buscar usuario
-    const user = await this.usersService.findByEmail(dto.email);
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    // Verificar contraseña
-    const isPasswordValid = await bcrypt.compare(dto.password, user.password);
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    // Actualizar last_login
-    await this.usersService.updateLastLogin(user.id);
-
-    // Generar tokens
-    const tokens = await this.generateTokens(user.id, user.email, user.role);
-
-    return {
-      user: this.sanitizeUser(user),
-      tokens
-    };
   }
 
   /**
@@ -108,27 +69,16 @@ export class AuthService {
    *
    * Permite renovar el access token usando un refresh token válido
    * sin requerir re-autenticación.
+   *
+   * TODO: Implement when UsersService is available
+   * IMPLEMENTATION NEEDED:
+   * 1. Verify refresh token with JWT
+   * 2. Find user by ID from token payload
+   * 3. Validate user is active
+   * 4. Generate new access + refresh tokens
    */
   async refreshToken(dto: RefreshTokenDto): Promise<TokenResponse> {
-    try {
-      // Verificar refresh token
-      const payload = await this.jwtService.verifyAsync(dto.refreshToken, {
-        secret: this.configService.get<string>('JWT_REFRESH_SECRET')
-      });
-
-      // Buscar usuario
-      const user = await this.usersService.findById(payload.sub);
-      if (!user || !user.is_active) {
-        throw new UnauthorizedException('User not found or inactive');
-      }
-
-      // Generar nuevos tokens
-      const tokens = await this.generateTokens(user.id, user.email, user.role);
-
-      return tokens;
-    } catch (error) {
-      throw new UnauthorizedException('Invalid refresh token');
-    }
+    throw new Error('RefreshToken method not implemented - UsersService required');
   }
 
   /**
@@ -143,13 +93,15 @@ export class AuthService {
 
   /**
    * Validar usuario (usado por JWT Strategy)
+   *
+   * TODO: Implement when UsersService is available
+   * IMPLEMENTATION NEEDED:
+   * 1. Find user by ID
+   * 2. Check if user exists and is active
+   * 3. Return sanitized user (without password)
    */
   async validateUser(userId: string) {
-    const user = await this.usersService.findById(userId);
-    if (!user || !user.is_active) {
-      throw new UnauthorizedException('User not found or inactive');
-    }
-    return this.sanitizeUser(user);
+    throw new Error('ValidateUser method not implemented - UsersService required');
   }
 
   /**

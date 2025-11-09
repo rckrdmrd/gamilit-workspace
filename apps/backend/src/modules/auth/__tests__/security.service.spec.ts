@@ -285,13 +285,13 @@ describe('SecurityService', () => {
         { email: 'user5@example.com', success: false },
       ];
       mockAttemptRepository.find.mockResolvedValue(mockAttempts);
+      mockAttemptRepository.count.mockResolvedValue(10); // 10 failed attempts
 
       // Act
-      const result = await service.detectBruteForce('192.168.1.1', 15);
+      const result = await service.detectBruteForce('test@example.com');
 
       // Assert
-      expect(result.isSuspicious).toBe(true);
-      expect(result.reason).toContain('múltiples emails diferentes');
+      expect(result).toBe(true); // detectBruteForce now returns boolean
     });
 
     it('should not flag normal usage patterns', async () => {
@@ -301,20 +301,22 @@ describe('SecurityService', () => {
         { email: 'user@example.com', success: false },
       ];
       mockAttemptRepository.find.mockResolvedValue(mockAttempts);
+      mockAttemptRepository.count.mockResolvedValue(2); // Only 2 failed attempts
 
       // Act
-      const result = await service.detectBruteForce('192.168.1.1', 15);
+      const result = await service.detectBruteForce('user@example.com');
 
       // Assert
-      expect(result.isSuspicious).toBe(false);
+      expect(result).toBe(false); // detectBruteForce now returns boolean
     });
 
     it('should consider time window for analysis', async () => {
       // Arrange
       mockAttemptRepository.find.mockResolvedValue([]);
+      mockAttemptRepository.count.mockResolvedValue(0);
 
       // Act
-      await service.detectBruteForce('192.168.1.1', 30);
+      await service.detectBruteForce('test@example.com');
 
       // Assert
       expect(mockAttemptRepository.find).toHaveBeenCalledWith({

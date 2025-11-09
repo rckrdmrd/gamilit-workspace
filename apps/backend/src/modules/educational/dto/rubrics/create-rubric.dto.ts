@@ -65,7 +65,7 @@ export class CreateRubricDto {
    * Estructura: {"criteria_1": {"name": string, "levels": {}, "weight": number}}
    */
   @IsObject()
-  criteria: Record<string, any>;
+  criteria!: Record<string, any>;
 
   /**
    * Escala de puntuación en formato JSONB
