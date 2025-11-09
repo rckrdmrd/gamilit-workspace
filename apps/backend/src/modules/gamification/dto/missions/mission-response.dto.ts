@@ -65,7 +65,7 @@ export class MissionResponseDto {
       xp: 50,
     },
   })
-  rewards: MissionRewards;
+  rewards!: MissionRewards;
 
   @ApiProperty({
     description: 'Estado de la misión',
@@ -90,7 +90,7 @@ export class MissionResponseDto {
     description: 'Fecha de expiración',
     example: '2025-11-03T23:59:59Z',
   })
-  end_date: Date;
+  end_date!: Date;
 
   @ApiPropertyOptional({
     description: 'Fecha de completado',

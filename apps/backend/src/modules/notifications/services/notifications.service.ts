@@ -6,7 +6,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Notification, NotificationType } from '@shared/constants/enums.constants';
+import { NotificationTypeEnum } from '@shared/constants/enums.constants';
+import { Notification } from '../entities/notification.entity';
 import { NotificationResponseDto } from '../dto/notification-response.dto';
 import { CreateNotificationDto } from '../dto/create-notification.dto';
 import { GetNotificationsQueryDto } from '../dto/get-notifications-query.dto';
@@ -297,7 +298,7 @@ export class NotificationsService {
   async getUserNotificationStats(userId: string): Promise<{
     total: number;
     unread: number;
-    byType: Record<NotificationType, number>;
+    byType: Record<NotificationTypeEnum, number>;
   }> {
     const notifications = await this.notificationRepository.find({
       where: { userId },
@@ -305,25 +306,19 @@ export class NotificationsService {
 
     const unread = notifications.filter((n) => !n.read).length;
 
-    const byType = {
-      [NotificationType.ACHIEVEMENT]: notifications.filter(
-        (n) => n.type === NotificationType.ACHIEVEMENT,
-      ).length,
-      [NotificationType.MISSION]: notifications.filter(
-        (n) => n.type === NotificationType.MISSION,
-      ).length,
-      [NotificationType.REWARD]: notifications.filter(
-        (n) => n.type === NotificationType.REWARD,
-      ).length,
-      [NotificationType.SYSTEM]: notifications.filter(
-        (n) => n.type === NotificationType.SYSTEM,
-      ).length,
-      [NotificationType.SOCIAL]: notifications.filter(
-        (n) => n.type === NotificationType.SOCIAL,
-      ).length,
-      [NotificationType.EDUCATIONAL]: notifications.filter(
-        (n) => n.type === NotificationType.EDUCATIONAL,
-      ).length,
+    // Count notifications by type
+    const byType: Record<NotificationTypeEnum, number> = {
+      [NotificationTypeEnum.ACHIEVEMENT_UNLOCKED]: notifications.filter((n) => n.type === NotificationTypeEnum.ACHIEVEMENT_UNLOCKED).length,
+      [NotificationTypeEnum.RANK_UP]: notifications.filter((n) => n.type === NotificationTypeEnum.RANK_UP).length,
+      [NotificationTypeEnum.FRIEND_REQUEST]: notifications.filter((n) => n.type === NotificationTypeEnum.FRIEND_REQUEST).length,
+      [NotificationTypeEnum.GUILD_INVITATION]: notifications.filter((n) => n.type === NotificationTypeEnum.GUILD_INVITATION).length,
+      [NotificationTypeEnum.MISSION_COMPLETED]: notifications.filter((n) => n.type === NotificationTypeEnum.MISSION_COMPLETED).length,
+      [NotificationTypeEnum.LEVEL_UP]: notifications.filter((n) => n.type === NotificationTypeEnum.LEVEL_UP).length,
+      [NotificationTypeEnum.MESSAGE_RECEIVED]: notifications.filter((n) => n.type === NotificationTypeEnum.MESSAGE_RECEIVED).length,
+      [NotificationTypeEnum.SYSTEM_ANNOUNCEMENT]: notifications.filter((n) => n.type === NotificationTypeEnum.SYSTEM_ANNOUNCEMENT).length,
+      [NotificationTypeEnum.ML_COINS_EARNED]: notifications.filter((n) => n.type === NotificationTypeEnum.ML_COINS_EARNED).length,
+      [NotificationTypeEnum.STREAK_MILESTONE]: notifications.filter((n) => n.type === NotificationTypeEnum.STREAK_MILESTONE).length,
+      [NotificationTypeEnum.EXERCISE_FEEDBACK]: notifications.filter((n) => n.type === NotificationTypeEnum.EXERCISE_FEEDBACK).length,
     };
 
     return {

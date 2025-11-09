@@ -2,27 +2,33 @@
  * Missions Cron Service
  *
  * Scheduled tasks for automatic mission management
+ *
+ * TODO: Uncomment when missions module is implemented
  */
 
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { MissionsService } from '../../missions/services/missions.service';
-import { MissionType } from '../../missions/entities/mission.entity';
-import {
-  getRandomDailyTemplates,
-  getRandomWeeklyTemplates,
-} from '../../missions/missions.templates';
+// TODO: Uncomment when missions module is implemented
+// import { MissionsService } from '../../missions/services/missions.service';
+// import { MissionType } from '../../missions/entities/mission.entity';
+// import {
+//   getRandomDailyTemplates,
+//   getRandomWeeklyTemplates,
+// } from '../../missions/missions.templates';
 
 @Injectable()
 export class MissionsCronService {
   private readonly logger = new Logger(MissionsCronService.name);
 
   constructor(
-    private readonly missionsService: MissionsService,
+    // TODO: Uncomment when missions module is implemented
+    // private readonly missionsService: MissionsService,
   ) {}
 
+  // TODO: Uncomment all methods below when missions module is implemented
+
   /**
-   * Daily Missions Reset
+   * Daily Missions Reset (DISABLED - TODO: Enable when missions module is ready)
    *
    * Runs every day at 00:00 UTC
    * Cron: 0 0 * * *
@@ -31,11 +37,16 @@ export class MissionsCronService {
    * 1. Expire old daily missions
    * 2. Generate new daily missions for active users
    */
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
-    name: 'daily-missions-reset',
-    timeZone: 'UTC',
-  })
+  // @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
+  //   name: 'daily-missions-reset',
+  //   timeZone: 'UTC',
+  // })
   async handleDailyMissionsReset() {
+    // TODO: Uncomment when missions module is implemented
+    this.logger.log('[CRON] Daily missions reset disabled - missions module not yet implemented');
+    return;
+
+    /*
     try {
       this.logger.log('[CRON] Starting daily missions reset...');
 
@@ -104,10 +115,11 @@ export class MissionsCronService {
     } catch (error) {
       this.logger.error('[CRON] Error in daily missions reset:', error);
     }
+    */
   }
 
   /**
-   * Weekly Missions Reset
+   * Weekly Missions Reset (DISABLED - TODO: Enable when missions module is ready)
    *
    * Runs every Monday at 00:00 UTC
    * Cron: 0 0 * * 1
@@ -116,11 +128,16 @@ export class MissionsCronService {
    * 1. Expire old weekly missions
    * 2. Generate new weekly missions for active users
    */
-  @Cron(CronExpression.MONDAY_TO_FRIDAY_AT_10AM.replace('10', '0').replace('1-5', '1'), {
-    name: 'weekly-missions-reset',
-    timeZone: 'UTC',
-  })
+  // @Cron(CronExpression.MONDAY_TO_FRIDAY_AT_10AM.replace('10', '0').replace('1-5', '1'), {
+  //   name: 'weekly-missions-reset',
+  //   timeZone: 'UTC',
+  // })
   async handleWeeklyMissionsReset() {
+    // TODO: Uncomment when missions module is implemented
+    this.logger.log('[CRON] Weekly missions reset disabled - missions module not yet implemented');
+    return;
+
+    /*
     try {
       this.logger.log('[CRON] Starting weekly missions reset...');
 
@@ -196,10 +213,11 @@ export class MissionsCronService {
     } catch (error) {
       this.logger.error('[CRON] Error in weekly missions reset:', error);
     }
+    */
   }
 
   /**
-   * Check Missions Progress
+   * Check Missions Progress (DISABLED - TODO: Enable when missions module is ready)
    *
    * Runs every hour
    * Cron: 0 * * * *
@@ -208,11 +226,16 @@ export class MissionsCronService {
    * 1. Check all active missions
    * 2. Auto-complete missions that reached 100% progress
    */
-  @Cron(CronExpression.EVERY_HOUR, {
-    name: 'check-missions-progress',
-    timeZone: 'UTC',
-  })
+  // @Cron(CronExpression.EVERY_HOUR, {
+  //   name: 'check-missions-progress',
+  //   timeZone: 'UTC',
+  // })
   async handleCheckMissionsProgress() {
+    // TODO: Uncomment when missions module is implemented
+    this.logger.log('[CRON] Missions progress check disabled - missions module not yet implemented');
+    return;
+
+    /*
     try {
       this.logger.log('[CRON] Checking missions progress...');
 
@@ -248,10 +271,11 @@ export class MissionsCronService {
     } catch (error) {
       this.logger.error('[CRON] Error in check missions progress:', error);
     }
+    */
   }
 
   /**
-   * Cleanup Expired Missions
+   * Cleanup Expired Missions (DISABLED - TODO: Enable when missions module is ready)
    *
    * Runs every day at 03:00 UTC
    * Cron: 0 3 * * *
@@ -259,11 +283,16 @@ export class MissionsCronService {
    * Tasks:
    * 1. Delete expired missions older than 30 days
    */
-  @Cron(CronExpression.EVERY_DAY_AT_3AM, {
-    name: 'cleanup-expired-missions',
-    timeZone: 'UTC',
-  })
+  // @Cron(CronExpression.EVERY_DAY_AT_3AM, {
+  //   name: 'cleanup-expired-missions',
+  //   timeZone: 'UTC',
+  // })
   async handleCleanupExpiredMissions() {
+    // TODO: Uncomment when missions module is implemented
+    this.logger.log('[CRON] Cleanup expired missions disabled - missions module not yet implemented');
+    return;
+
+    /*
     try {
       this.logger.log('[CRON] Starting cleanup of expired missions...');
 
@@ -275,5 +304,6 @@ export class MissionsCronService {
     } catch (error) {
       this.logger.error('[CRON] Error in cleanup expired missions:', error);
     }
+    */
   }
 }

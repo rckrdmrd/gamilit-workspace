@@ -46,7 +46,7 @@ export class SessionManagementService {
     }
 
     // 4. Hashear refresh token
-    const hashedRefreshToken = this.hashToken(dto.refresh_token);
+    const hashedRefreshToken = dto.refresh_token ? this.hashToken(dto.refresh_token) : '';
 
     // 5. Crear sesión
     const session = this.sessionRepository.create({

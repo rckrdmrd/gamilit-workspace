@@ -40,5 +40,42 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    chunkSizeWarningLimit: 500,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Core React libraries
+          'vendor-react': [
+            'react',
+            'react-dom',
+            'react-router-dom',
+          ],
+          // State management & forms
+          'vendor-state': [
+            'zustand',
+            'react-hook-form',
+            '@hookform/resolvers',
+            'zod',
+          ],
+          // Charts & data visualization
+          'vendor-charts': [
+            'recharts',
+            'chart.js',
+            'react-chartjs-2',
+          ],
+          // UI & animations
+          'vendor-ui': [
+            'framer-motion',
+            'lucide-react',
+            'react-confetti',
+          ],
+          // Network & API
+          'vendor-network': [
+            'axios',
+            'socket.io-client',
+          ],
+        },
+      },
+    },
   },
 });

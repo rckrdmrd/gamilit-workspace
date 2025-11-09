@@ -147,7 +147,7 @@ export class CreateMissionDto {
     },
   })
   @IsObject()
-  rewards: MissionRewardsDto;
+  rewards!: MissionRewardsDto;
 
   @ApiPropertyOptional({
     description: 'Progreso inicial (0-100)',
@@ -175,5 +175,5 @@ export class CreateMissionDto {
   })
   @IsDate()
   @Type(() => Date)
-  end_date: Date;
+  end_date!: Date;
 }

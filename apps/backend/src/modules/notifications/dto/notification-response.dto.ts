@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { NotificationTypeEnum, NotificationData } from '@shared/constants/enums.constants';
 
 export class NotificationResponseDto {
@@ -16,7 +16,7 @@ export class NotificationResponseDto {
 
   @ApiProperty({
     enum: NotificationTypeEnum,
-    example: NotificationTypeEnum.MISSION,
+    example: NotificationTypeEnum.MISSION_COMPLETED,
     description: 'Type of notification',
   })
   type!: NotificationTypeEnum;
@@ -33,8 +33,7 @@ export class NotificationResponseDto {
   })
   message!: string;
 
-  @ApiProperty({
-    type: 'object',
+  @ApiPropertyOptional({
     nullable: true,
     example: {
       missionId: '123e4567-e89b-12d3-a456-426614174002',
@@ -47,23 +46,23 @@ export class NotificationResponseDto {
     },
     description: 'Additional notification data',
   })
-  data: NotificationData | null;
+  data!: NotificationData | null;
 
   @ApiProperty({
     example: false,
     description: 'Whether notification has been read',
   })
-  read: boolean;
+  read!: boolean;
 
   @ApiProperty({
     example: '2025-11-02T10:30:00.000Z',
     description: 'Creation timestamp',
   })
-  createdAt: Date;
+  createdAt!: Date;
 
   @ApiProperty({
     example: '2025-11-02T10:30:00.000Z',
     description: 'Last update timestamp',
   })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

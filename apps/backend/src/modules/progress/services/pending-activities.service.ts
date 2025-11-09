@@ -39,7 +39,6 @@ export class PendingActivitiesService {
     // Get user's module progress for incomplete modules
     const progressQuery = this.moduleProgressRepository
       .createQueryBuilder('progress')
-      .leftJoinAndSelect('progress.module', 'module')
       .where('progress.user_id = :userId', { userId })
       .andWhere('progress.status IN (:...statuses)', {
         statuses: ['not_started', 'in_progress'],
@@ -49,11 +48,24 @@ export class PendingActivitiesService {
 
     const progressData = await progressQuery.getMany();
 
+    // Load modules for progress
+    const moduleIds = progressData.map((p) => p.module_id);
+    if (moduleIds.length === 0) {
+      return [];
+    }
+
+    const modules = await this.moduleRepository
+      .createQueryBuilder('module')
+      .where('module.id IN (:...moduleIds)', { moduleIds })
+      .getMany();
+
+    const moduleMap = new Map(modules.map((m) => [m.id, m]));
+
     // Generate pending activities from incomplete modules
     const activities: PendingActivityDto[] = [];
 
     for (const progress of progressData) {
-      const module = progress.module;
+      const module = moduleMap.get(progress.module_id);
       if (!module) continue;
 
       // Calculate priority based on progress and deadline

@@ -20,7 +20,12 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -46,6 +51,7 @@
   },
   "devDependencies": {
     "@axe-core/react": "^4.8.4",
+    "@playwright/test": "^1.56.1",
     "@storybook/react": "^7.6.5",
     "@storybook/react-vite": "^7.6.5",
     "@tailwindcss/postcss": "^4.1.14",

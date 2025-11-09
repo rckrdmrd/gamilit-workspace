@@ -108,7 +108,7 @@ export class UserAchievement {
    * Ejemplo: ["25%", "50%", "75%"]
    */
   @Column({ type: 'text', array: true, nullable: true })
-  milestones_reached: string[] | null;
+  milestones_reached: string[] | null = null;
 
   /**
    * Metadata adicional en JSONB

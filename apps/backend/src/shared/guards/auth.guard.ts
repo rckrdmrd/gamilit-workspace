@@ -4,12 +4,13 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '@shared/decorators/public.decorator';
 import { logger } from '@shared/utils/logger.util';
+import { User } from '../../modules/auth/entities/user.entity';
 
 // Extend Express Request type
 declare global {
   namespace Express {
     interface Request {
-      user?: any;
+      user?: User | undefined;
     }
   }
 }

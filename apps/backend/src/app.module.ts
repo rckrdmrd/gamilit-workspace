@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CacheModule } from '@nestjs/cache-manager';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 
 // Configurations
@@ -35,6 +36,17 @@ import { RlsInterceptor } from './shared/interceptors/rls.interceptor';
       load: [appConfig, databaseConfig, jwtConfig, envConfig],
       envFilePath: ['.env.local', '.env'],
       cache: true,
+    }),
+
+    // Global cache configuration
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 60000, // Default TTL: 60 seconds (in milliseconds)
+      max: 100, // Maximum number of items in cache
+      // For production with Redis:
+      // store: redisStore,
+      // host: process.env.REDIS_HOST || 'localhost',
+      // port: parseInt(process.env.REDIS_PORT || '6379', 10),
     }),
 
     // Database connection for 'auth_management' schema

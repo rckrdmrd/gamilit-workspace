@@ -9,7 +9,6 @@ export class PaginatedNotificationsDto {
   data!: NotificationResponseDto[];
 
   @ApiProperty({
-    type: 'object',
     description: 'Pagination metadata',
     example: {
       total: 50,
@@ -20,7 +19,7 @@ export class PaginatedNotificationsDto {
       hasPreviousPage: false,
     },
   })
-  meta: {
+  meta!: {
     total: number;
     page: number;
     limit: number;

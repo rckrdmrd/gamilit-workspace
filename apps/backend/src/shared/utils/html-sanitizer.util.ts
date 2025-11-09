@@ -95,7 +95,7 @@ const SANITIZE_CONFIGS = {
       },
     },
     transformTags: {
-      a: (tagName, attribs) => ({
+      a: (tagName: string, attribs: Record<string, string>) => ({
         tagName,
         attribs: {
           ...attribs,
@@ -203,7 +203,7 @@ export function containsMaliciousCode(input: string): boolean {
  * Escapa caracteres especiales HTML
  */
 export function escapeHtml(text: string): string {
-  const map = {
+  const map: Record<string, string> = {
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
@@ -211,14 +211,14 @@ export function escapeHtml(text: string): string {
     "'": '&#039;',
   };
 
-  return text.replace(/[&<>"']/g, (char) => map[char]);
+  return text.replace(/[&<>"']/g, (char) => map[char] || char);
 }
 
 /**
  * Desescapa caracteres HTML
  */
 export function unescapeHtml(text: string): string {
-  const map = {
+  const map: Record<string, string> = {
     '&amp;': '&',
     '&lt;': '<',
     '&gt;': '>',
@@ -226,7 +226,7 @@ export function unescapeHtml(text: string): string {
     '&#039;': "'",
   };
 
-  return text.replace(/&(?:amp|lt|gt|quot|#039);/g, (entity) => map[entity]);
+  return text.replace(/&(?:amp|lt|gt|quot|#039);/g, (entity) => map[entity] || entity);
 }
 
 /**

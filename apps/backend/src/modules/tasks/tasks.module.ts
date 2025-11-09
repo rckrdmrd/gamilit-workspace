@@ -6,18 +6,25 @@
 
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
-import { MissionsModule } from '../missions/missions.module';
+// TODO: Uncomment when missions module is implemented
+// import { MissionsModule } from '../missions/missions.module';
 import { NotificationsModule } from '../notifications/notifications.module';
-import { MissionsCronService } from './services/missions-cron.service';
+// import { MissionsCronService } from './services/missions-cron.service';
 import { NotificationsCronService } from './services/notifications-cron.service';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    MissionsModule,
+    // MissionsModule, // TODO: Uncomment when missions module is implemented
     NotificationsModule,
   ],
-  providers: [MissionsCronService, NotificationsCronService],
-  exports: [MissionsCronService, NotificationsCronService],
+  providers: [
+    // MissionsCronService, // TODO: Uncomment when missions module is implemented
+    NotificationsCronService
+  ],
+  exports: [
+    // MissionsCronService, // TODO: Uncomment when missions module is implemented
+    NotificationsCronService
+  ],
 })
 export class TasksModule {}

@@ -266,7 +266,7 @@ export const API_ROUTES = {
     GET_TEAM_MEMBER: (teamId: string, userId: string) => `/social/team-members/teams/${teamId}/users/${userId}`,
     CREATE_TEAM_MEMBER: '/social/team-members',
     UPDATE_TEAM_MEMBER_ROLE: (id: string) => `/social/team-members/${id}/role`,
-    REMOVE_TEAM_MEMBER: (id: string) => `/social/team-members/${id}`,
+    DELETE_TEAM_MEMBER: (id: string) => `/social/team-members/${id}`,
     ACTIVE_TEAM_MEMBERS: (teamId: string) => `/social/team-members/teams/${teamId}/active`,
     TRANSFER_TEAM_OWNERSHIP: (teamId: string) => `/social/team-members/teams/${teamId}/transfer-ownership`,
 

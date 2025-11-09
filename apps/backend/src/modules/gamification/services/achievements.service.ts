@@ -58,7 +58,7 @@ export class AchievementsService {
    */
   async findByCategory(category: string): Promise<Achievement[]> {
     return await this.achievementRepo.find({
-      where: { category, is_active: true },
+      where: { category, is_active: true } as any,
       order: { order_index: 'ASC' },
     });
   }

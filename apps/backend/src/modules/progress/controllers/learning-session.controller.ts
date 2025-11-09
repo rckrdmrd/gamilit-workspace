@@ -288,9 +288,19 @@ export class LearningSessionController {
   })
   async updateEngagement(
     @Param('id') id: string,
-    @Body() body: { engagement_score: number },
+    @Body()
+    body: {
+      clicks_count?: number;
+      page_views?: number;
+      resource_downloads?: number;
+      exercises_attempted?: number;
+      exercises_completed?: number;
+      content_viewed?: number;
+      active_time?: string;
+      idle_time?: string;
+    },
   ) {
-    return await this.sessionService.updateEngagement(id, body.engagement_score);
+    return await this.sessionService.updateEngagement(id, body);
   }
 
   /**
@@ -394,9 +404,10 @@ export class LearningSessionController {
   })
   async getSessionStats(
     @Param('userId') userId: string,
-    @Query('period') period?: string,
+    @Query('period') period?: 'daily' | 'weekly' | 'monthly',
   ) {
-    return await this.sessionService.getSessionStats(userId, period);
+    const validPeriod = period || 'daily';
+    return await this.sessionService.getSessionStats(userId, validPeriod);
   }
 
   /**
@@ -465,6 +476,8 @@ export class LearningSessionController {
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
-    return await this.sessionService.findByDateRange(userId, startDate, endDate);
+    const start = startDate ? new Date(startDate) : new Date();
+    const end = endDate ? new Date(endDate) : new Date();
+    return await this.sessionService.findByDateRange(userId, start, end);
   }
 }

@@ -182,30 +182,37 @@ export class RecentActivityService {
 
     // Load modules for sessions
     if (recentSessions.length > 0) {
-      const moduleIds = recentSessions.map((s) => s.module_id);
-      const modules = await this.moduleRepository
-        .createQueryBuilder('module')
-        .where('module.id IN (:...moduleIds)', { moduleIds })
-        .getMany();
+      const moduleIds = recentSessions
+        .map((s) => s.module_id)
+        .filter((id): id is string => id !== undefined);
 
-      const moduleMap = new Map(modules.map((m) => [m.id, m]));
+      if (moduleIds.length > 0) {
+        const modules = await this.moduleRepository
+          .createQueryBuilder('module')
+          .where('module.id IN (:...moduleIds)', { moduleIds })
+          .getMany();
 
-      for (const session of recentSessions) {
-        const module = moduleMap.get(session.module_id);
-        if (module) {
-          activities.push({
-            id: `session-started-${session.id}`,
-            user_id: userId,
-            action: ActivityAction.STARTED_SESSION,
-            description: `Inició una sesión de estudio en "${module.title}"`,
-            entity_type: 'session',
-            entity_id: session.id,
-            entity_name: module.title,
-            metadata: {
-              duration_seconds: session.total_time_seconds,
-            },
-            created_at: session.started_at,
-          });
+        const moduleMap = new Map(modules.map((m) => [m.id, m]));
+
+        for (const session of recentSessions) {
+          if (!session.module_id) continue;
+
+          const module = moduleMap.get(session.module_id);
+          if (module) {
+            activities.push({
+              id: `session-started-${session.id}`,
+              user_id: userId,
+              action: ActivityAction.STARTED_SESSION,
+              description: `Inició una sesión de estudio en "${module.title}"`,
+              entity_type: 'session',
+              entity_id: session.id,
+              entity_name: module.title,
+              metadata: {
+                duration: session.duration || null,
+              },
+              created_at: session.started_at,
+            });
+          }
         }
       }
     }

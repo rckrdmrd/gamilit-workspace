@@ -166,7 +166,7 @@ export class Classroom {
    * Estructura: [{ day: "lunes", start_time: "08:00", end_time: "10:00" }, ...]
    */
   @Column({ type: 'jsonb', default: [] })
-  schedule: any[];
+  schedule: any[] = [];
 
   /**
    * URL de reunión virtual (Zoom, Meet, Teams, etc.)

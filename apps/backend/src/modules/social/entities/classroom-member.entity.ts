@@ -153,7 +153,7 @@ export class ClassroomMember {
    * Ejemplo: { can_post: true, can_comment: true, can_view_others: true }
    */
   @Column({ type: 'jsonb', default: {} })
-  permissions: Record<string, any>;
+  permissions: Record<string, any> = {};
 
   // =====================================================
   // NOTES & COMMENTS

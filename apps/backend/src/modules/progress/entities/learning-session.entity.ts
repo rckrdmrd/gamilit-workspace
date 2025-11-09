@@ -194,7 +194,7 @@ export class LearningSession {
    * Ejemplo: { type: 'mobile', os: 'iOS', model: 'iPhone 12' }
    */
   @Column({ type: 'jsonb', default: {} })
-  device_info: Record<string, any>;
+  device_info: Record<string, any> = {};
 
   /**
    * Información del navegador (JSONB)
@@ -218,7 +218,7 @@ export class LearningSession {
    * Cantidad de errores encontrados en la sesión
    */
   @Column({ type: 'integer', default: 0 })
-  errors_encountered: number;
+  errors_encountered: number = 0;
 
   // =====================================================
   // SESSION STATE
@@ -235,7 +235,7 @@ export class LearningSession {
    * Valores: ongoing, completed, abandoned, timed_out
    */
   @Column({ type: 'text', default: 'ongoing' })
-  completion_status: string;
+  completion_status: string = 'ongoing';
 
   // =====================================================
   // METADATA & AUDIT

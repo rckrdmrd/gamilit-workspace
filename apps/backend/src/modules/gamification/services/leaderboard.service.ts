@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 import { UserStats } from '../entities';
 import { Profile } from '@/modules/auth/entities';
 
@@ -24,6 +26,8 @@ export class LeaderboardService {
     private readonly userStatsRepo: Repository<UserStats>,
     @InjectRepository(Profile, 'auth')
     private readonly profileRepo: Repository<Profile>,
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
   ) {}
 
   /**
@@ -39,6 +43,15 @@ export class LeaderboardService {
     offset: number = 0,
     timePeriod?: string,
   ): Promise<any> {
+    // Cache key based on parameters
+    const cacheKey = `leaderboard:global:${limit}:${offset}:${timePeriod || 'all_time'}`;
+
+    // Try to get from cache first
+    const cachedData = await this.cacheManager.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
     // TODO: Implementar filtrado por time period (this_week, this_month, etc.)
     // Por ahora retornamos all_time
 
@@ -108,13 +121,18 @@ export class LeaderboardService {
     // Contar total de usuarios (para paginación)
     const totalEntries = await this.userStatsRepo.count();
 
-    return {
+    const result = {
       type: 'global',
       entries,
       totalEntries,
       lastUpdated: new Date().toISOString(),
       timePeriod: timePeriod || 'all_time',
     };
+
+    // Store in cache for 60 seconds (60000 ms)
+    await this.cacheManager.set(cacheKey, result, 60000);
+
+    return result;
   }
 
   /**
@@ -132,6 +150,15 @@ export class LeaderboardService {
     offset: number = 0,
     timePeriod?: string,
   ): Promise<any> {
+    // Cache key based on school and parameters
+    const cacheKey = `leaderboard:school:${schoolId}:${limit}:${offset}:${timePeriod || 'all_time'}`;
+
+    // Try to get from cache first
+    const cachedData = await this.cacheManager.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
     // Obtener usuarios de la escuela a través de profiles
     const schoolProfiles = await this.profileRepo
       .createQueryBuilder('profile')
@@ -215,7 +242,7 @@ export class LeaderboardService {
       };
     });
 
-    return {
+    const result = {
       type: 'school',
       entries,
       totalEntries: userIds.length,
@@ -223,6 +250,11 @@ export class LeaderboardService {
       timePeriod: timePeriod || 'all_time',
       schoolId,
     };
+
+    // Store in cache for 60 seconds
+    await this.cacheManager.set(cacheKey, result, 60000);
+
+    return result;
   }
 
   /**
@@ -349,6 +381,15 @@ export class LeaderboardService {
    * @returns Posición y datos del usuario
    */
   async getUserPosition(userId: string): Promise<any> {
+    // Cache key for user position
+    const cacheKey = `leaderboard:user:position:${userId}`;
+
+    // Try to get from cache first
+    const cachedData = await this.cacheManager.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
     const userStats = await this.userStatsRepo.findOne({
       where: { user_id: userId },
     });
@@ -367,11 +408,16 @@ export class LeaderboardService {
       )
       .getCount();
 
-    return {
+    const result = {
       rank: rank + 1,
       totalXP: userStats.total_xp,
       level: userStats.level,
       currentRank: userStats.current_rank,
     };
+
+    // Store in cache for 5 minutes (300000 ms) - position changes less frequently
+    await this.cacheManager.set(cacheKey, result, 300000);
+
+    return result;
   }
 }

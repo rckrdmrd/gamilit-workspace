@@ -278,7 +278,7 @@ export class ModuleProgress {
    * Observaciones del sistema (JSONB)
    */
   @Column({ type: 'jsonb', default: {} })
-  system_observations: Record<string, any>;
+  system_observations: Record<string, any> = {};
 
   // =====================================================
   // NOTES & FEEDBACK

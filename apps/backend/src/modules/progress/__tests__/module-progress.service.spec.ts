@@ -442,8 +442,9 @@ describe('ModuleProgressService', () => {
       const result = await service.updateProgressPercentage('progress-1', 60);
 
       // Assert
+      expect(result.last_accessed_at).toBeDefined();
       expect(result.last_accessed_at).not.toEqual(oldDate);
-      expect(result.last_accessed_at.getTime()).toBeGreaterThan(
+      expect(result.last_accessed_at!.getTime()).toBeGreaterThan(
         oldDate.getTime(),
       );
     });

@@ -43,7 +43,7 @@ export class ExercisesService {
    */
   async create(exerciseData: Partial<Exercise>): Promise<Exercise> {
     // Validar que el contenido JSONB sea válido según el tipo de ejercicio
-    if (exerciseData.exercise_type) {
+    if (exerciseData.exercise_type && exerciseData.content) {
       this.validateContentByExerciseType(
         exerciseData.exercise_type,
         exerciseData.content,

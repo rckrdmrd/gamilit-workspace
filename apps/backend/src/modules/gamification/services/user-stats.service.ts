@@ -105,7 +105,7 @@ export class UserStatsService {
       throw new BadRequestException(`Field ${field} is not numeric`);
     }
 
-    stats[field] = (currentValue as number) + amount;
+    (stats[field] as number) = (currentValue as number) + amount;
     return await this.userStatsRepo.save(stats);
   }
 

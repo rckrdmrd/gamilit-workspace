@@ -285,7 +285,7 @@ export class CreateExerciseDto {
 
   @ApiProperty({ description: 'Exercise content (type-specific)' })
   @IsNotEmpty()
-  content:
+  content!:
     | MultipleChoiceContentDto
     | TrueFalseContentDto
     | FillBlankContentDto

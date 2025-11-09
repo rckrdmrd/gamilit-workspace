@@ -228,7 +228,8 @@ describe('SessionManagementService', () => {
       const result = await service.validateSession('session-1');
 
       // Assert
-      expect(result.last_activity_at).not.toEqual(oldActivityDate);
+      expect(result).not.toBeNull();
+      expect(result!.last_activity_at).not.toEqual(oldActivityDate);
       expect(mockSessionRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({
           last_activity_at: expect.any(Date),

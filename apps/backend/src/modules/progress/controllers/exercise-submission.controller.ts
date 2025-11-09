@@ -353,11 +353,9 @@ export class ExerciseSubmissionController {
     @Param('id') id: string,
     @Body() body: { final_score: number; grader_id: string },
   ) {
-    return await this.submissionService.gradeSubmission(
-      id,
-      body.final_score,
-      body.grader_id,
-    );
+    // Note: gradeSubmission service method only accepts id
+    // final_score and grader_id are calculated/set internally
+    return await this.submissionService.gradeSubmission(id);
   }
 
   /**
@@ -466,7 +464,7 @@ export class ExerciseSubmissionController {
   })
   async updateStatus(
     @Param('id') id: string,
-    @Body() body: { status: string },
+    @Body() body: { status: 'draft' | 'submitted' | 'graded' | 'reviewed' },
   ) {
     return await this.submissionService.updateStatus(id, body.status);
   }
