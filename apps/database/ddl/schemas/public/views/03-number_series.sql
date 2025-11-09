@@ -1,26 +1,26 @@
 -- =============================================================================
--- VIEW: public.for (For-loop iterations query support)
+-- VIEW: public.number_series (Number series generator for SQL operations)
 -- =============================================================================
--- Purpose: Utility view to support iterative queries and FOR-EACH operations
+-- Purpose: Utility view to support iterative queries and batch operations
 -- Priority: P2 - Database utility view
 -- Responsibility: SA-DB-031
 -- Created: 2025-11-02
--- CAUTION: This appears to be a placeholder view - verify intended functionality
+-- Updated: 2025-11-09 - Renamed from 'for' (reserved SQL keyword)
 -- =============================================================================
 
--- NOTE: This view name suggests it may be used for loop iteration support
--- or batch processing queries. The actual implementation depends on specific
--- use cases in the system. Current implementation provides a base structure
--- for common iteration patterns.
+-- NOTE: This view generates a series of numbers useful for:
+-- - JOIN operations requiring iteration patterns
+-- - Cross-joins for batch processing
+-- - Testing and data generation
 
-CREATE OR REPLACE VIEW public.for AS
+CREATE OR REPLACE VIEW public.number_series AS
 SELECT
     generate_series(1, 1000, 1) AS iteration_number,
     NOW() AS generated_at,
     CURRENT_USER AS query_user;
 
 -- Documentation comment
-COMMENT ON VIEW public.for IS
+COMMENT ON VIEW public.number_series IS
 'Utility view for supporting iterative queries and loop-like operations in SQL.
 This view generates a series of numbers that can be used in JOIN operations for
 iteration patterns, cross-joins, or batch processing.
@@ -37,12 +37,10 @@ Current Columns:
   - query_user: Database user executing the query
 
 Usage Examples:
-  SELECT * FROM for LIMIT 10;
-  SELECT t.*, f.iteration_number FROM some_table t JOIN for f ON t.id = f.iteration_number;
-  SELECT * FROM for WHERE iteration_number <= 100;
+  SELECT * FROM number_series LIMIT 10;
+  SELECT t.*, ns.iteration_number FROM some_table t JOIN number_series ns ON t.id = ns.iteration_number;
+  SELECT * FROM number_series WHERE iteration_number <= 100;
 
-WARNING: This is a placeholder implementation. Verify the intended functionality
-before using in production, as the view name suggests a reserved word or
-non-standard naming convention.
+NOTE: Renamed from "for" to avoid SQL reserved keyword conflicts.
 
 See also: assign_sequence_numbers() function for proper iteration handling.';

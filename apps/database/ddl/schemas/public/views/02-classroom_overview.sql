@@ -20,7 +20,6 @@ SELECT
     COUNT(DISTINCT a.id) AS total_assignments,
     COUNT(DISTINCT CASE WHEN a.due_date > NOW() THEN a.id END) AS pending_assignments,
     COUNT(DISTINCT CASE WHEN a.due_date <= NOW() AND a.due_date > NOW() - INTERVAL '7 days' THEN a.id END) AS upcoming_deadline_assignments,
-    COUNT(DISTINCT ch.id) AS total_chapters,
     COUNT(DISTINCT ex.id) AS total_exercises,
     ROUND(AVG(CASE WHEN up.progress_percent IS NOT NULL THEN up.progress_percent ELSE 0 END), 2) AS avg_class_progress_percent,
     MAX(c.updated_at) AS last_updated,
@@ -31,12 +30,14 @@ SELECT
         ELSE 'INACTIVE'
     END AS classroom_status
 FROM
-    educational_content.classrooms c
-    LEFT JOIN gamilit.users t ON c.teacher_id = t.id
-    LEFT JOIN gamilit.users u ON u.classroom_id = c.id
-    LEFT JOIN educational_content.assignments a ON a.classroom_id = c.id AND a.is_deleted = FALSE
-    LEFT JOIN educational_content.chapters ch ON c.id = ch.classroom_id AND ch.is_deleted = FALSE
-    LEFT JOIN educational_content.exercises ex ON ch.id = ex.chapter_id AND ex.is_deleted = FALSE
+    social_features.classrooms c
+    LEFT JOIN auth_management.profiles t ON c.teacher_id = t.id
+    LEFT JOIN social_features.classroom_members cm ON c.id = cm.classroom_id
+    LEFT JOIN auth_management.profiles u ON cm.student_id = u.id
+    LEFT JOIN educational_content.assignments a ON a.classroom_id = c.id
+    LEFT JOIN educational_content.exercises ex ON ex.module_id IN (
+        SELECT id FROM educational_content.modules
+    )
     LEFT JOIN progress_tracking.user_progress up ON u.id = up.user_id
 WHERE
     c.is_deleted = FALSE
@@ -58,7 +59,6 @@ Columns:
   - total_assignments: Total number of assignments in the classroom
   - pending_assignments: Number of assignments with future due dates
   - upcoming_deadline_assignments: Assignments due in the next 7 days
-  - total_chapters: Total number of content chapters
   - total_exercises: Total number of exercises
   - avg_class_progress_percent: Average progress of the classroom
   - last_updated: Most recent update timestamp
