@@ -425,6 +425,9 @@ execute_ddl_tables() {
     local schemas=(
         "auth"
         "auth_management"
+        "gamilit"
+        "storage"
+        "admin_dashboard"
         "system_configuration"
         "gamification_system"
         "educational_content"
@@ -578,6 +581,7 @@ execute_views() {
         "admin_dashboard"
         "gamification_system"
         "progress_tracking"
+        "educational_content"
         "public"
     )
 
@@ -668,6 +672,8 @@ execute_indexes() {
         "auth_management"
         "content_management"
         "gamification_system"
+        "educational_content"
+        "audit_logging"
         "progress_tracking"
     )
 
@@ -888,8 +894,8 @@ validate_installation() {
     export PGPASSWORD="$DB_PASSWORD"
 
     local schema_count=$(psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -tAc \
-        "SELECT COUNT(*) FROM information_schema.schemata WHERE schema_name IN ('auth', 'auth_management', 'gamification_system', 'educational_content', 'content_management', 'social_features', 'progress_tracking', 'audit_logging', 'system_configuration');")
-    print_info "Schemas: $schema_count/9"
+        "SELECT COUNT(*) FROM information_schema.schemata WHERE schema_name IN ('auth', 'auth_management', 'gamilit', 'storage', 'admin_dashboard', 'gamification_system', 'educational_content', 'content_management', 'social_features', 'progress_tracking', 'audit_logging', 'system_configuration');")
+    print_info "Schemas: $schema_count/12"
 
     local table_count=$(psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -tAc \
         "SELECT COUNT(*) FROM pg_tables WHERE schemaname NOT IN ('pg_catalog', 'information_schema');")
@@ -922,8 +928,8 @@ validate_installation() {
     unset PGPASSWORD
 
     # Validación de completitud
-    if [ "$schema_count" -lt 9 ]; then
-        print_error "Faltan schemas (esperados: 9, encontrados: $schema_count)"
+    if [ "$schema_count" -lt 12 ]; then
+        print_error "Faltan schemas (esperados: 12, encontrados: $schema_count)"
         return 1
     fi
 
