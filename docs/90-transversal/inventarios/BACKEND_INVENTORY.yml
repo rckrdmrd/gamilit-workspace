@@ -1,11 +1,12 @@
 # BACKEND_INVENTORY.yml - Inventario Consolidado Global
 
 project: GAMILIT
-version: 2.2
+version: 2.3
 generated: 2025-11-09
 updated: 2025-11-09
-source: Validación Exhaustiva Post-Migración
+source: Validación Exhaustiva Post-Migración + Correcciones Cross-Database
 status: ⚠️ VALIDADO - 40% de cobertura de BD (39/97 tablas con entidad completa)
+changes_2_3: "Agregadas 9 entities P2, documentado patrón cross-database, removidas 17 relaciones TypeORM cross-schema"
 
 # ============================================================================
 # RESUMEN EJECUTIVO
@@ -18,11 +19,12 @@ summary:
   total_controllers: 32  # ✅ VALIDADO
   total_endpoints: 269  # ✅ VALIDADO
   total_dtos: 139  # ✅ VALIDADO
-  total_entities: 47  # ✅ VALIDADO (archivos .entity.ts contados)
+  total_entities: 56  # ✅ ACTUALIZADO (47 + 9 entities P2)
   total_guards: 6
   total_interceptors: 5
   total_middlewares: 12
   lines_of_code: ~53233
+  entities_with_cross_database_fixes: 17  # ⚠️ Relaciones @ManyToOne comentadas
 
   # COBERTURA DE BASE DE DATOS (2025-11-09)
   database_coverage:
@@ -45,11 +47,212 @@ summary:
 
 stack:
   runtime: Node.js 18+
-  framework: NestJS
-  language: TypeScript
-  orm: TypeORM
+  framework: NestJS 11.1.8
+  language: TypeScript 5.x
+  orm: TypeORM 0.3.x (multi-datasource)
   validation: class-validator
   auth: Supabase Auth + JWT
+  database: PostgreSQL 14+ (multi-schema architecture)
+
+# ============================================================================
+# ARQUITECTURA MULTI-DATASOURCE (TypeORM)
+# ============================================================================
+# CORRECCIONES APLICADAS: 2025-11-09
+# 17 entidades corregidas - Relaciones cross-schema comentadas
+
+multi_datasource_architecture:
+  description: |
+    TypeORM no soporta relaciones (@ManyToOne, @OneToMany, @OneToOne) entre
+    entidades que pertenecen a diferentes data sources (schemas en PostgreSQL).
+
+    Backend usa 6 conexiones TypeORM separadas:
+    - 'auth' → schemas: auth, auth_management
+    - 'educational' → schema: educational_content
+    - 'progress' → schema: progress_tracking
+    - 'social' → schema: social_features
+    - 'gamification' → schema: gamification_system
+    - 'content' → schema: content_management
+
+  datasources:
+    - name: auth
+      schemas: [auth, auth_management]
+      entities: 10
+      file: apps/backend/src/shared/database/data-source-auth.ts
+
+    - name: educational
+      schemas: [educational_content]
+      entities: 4
+      file: apps/backend/src/shared/database/data-source-educational.ts
+
+    - name: progress
+      schemas: [progress_tracking]
+      entities: 5
+      file: apps/backend/src/shared/database/data-source-progress.ts
+
+    - name: social
+      schemas: [social_features]
+      entities: 7
+      file: apps/backend/src/shared/database/data-source-social.ts
+
+    - name: gamification
+      schemas: [gamification_system]
+      entities: 11
+      file: apps/backend/src/shared/database/data-source-gamification.ts
+
+    - name: content
+      schemas: [content_management]
+      entities: 3
+      file: apps/backend/src/shared/database/data-source-content.ts
+
+  cross_database_pattern:
+    limitation: "TypeORM NO soporta @ManyToOne/@OneToMany entre diferentes data sources"
+
+    solution: |
+      Usar UUID foreign keys sin decoradores de relación TypeORM.
+      Hacer joins manuales en los services cuando sea necesario.
+
+    example_before: |
+      // ❌ NO FUNCIONA - Cruza data sources (progress → auth)
+      @ManyToOne(() => User, { onDelete: 'CASCADE' })
+      @JoinColumn({ name: 'teacher_id' })
+      teacher?: User;
+
+    example_after: |
+      // ✅ CORRECTO - Solo UUID, join manual en service
+      @Column({ type: 'uuid' })
+      teacher_id!: string;
+
+      // En el service:
+      const teacher = await this.authDataSource
+        .getRepository(User)
+        .findOne({ where: { id: note.teacher_id } });
+
+  entities_corrected_2025_11_09:
+    total: 17
+
+    progress_module:
+      - entity: TeacherNote
+        file: apps/backend/src/modules/progress/entities/teacher-note.entity.ts
+        relations_removed: 2
+        fields_affected: [teacher_id, student_id]
+
+      - entity: ExerciseSubmission
+        file: apps/backend/src/modules/progress/entities/exercise-submission.entity.ts
+        relations_removed: 1
+        fields_affected: [student_id]
+
+      - entity: ExerciseAttempt
+        file: apps/backend/src/modules/progress/entities/exercise-attempt.entity.ts
+        relations_removed: 1
+        fields_affected: [student_id]
+
+      - entity: LearningSession
+        file: apps/backend/src/modules/progress/entities/learning-session.entity.ts
+        relations_removed: 1
+        fields_affected: [student_id]
+
+      - entity: ModuleProgress
+        file: apps/backend/src/modules/progress/entities/module-progress.entity.ts
+        relations_removed: 1
+        fields_affected: [student_id]
+
+    assignments_module:
+      - entity: Assignment
+        file: apps/backend/src/modules/assignments/entities/assignment.entity.ts
+        relations_removed: 2
+        fields_affected: [created_by, tenant_id]
+
+      - entity: AssignmentClassroom
+        file: apps/backend/src/modules/assignments/entities/assignment-classroom.entity.ts
+        relations_removed: 2
+        fields_affected: [assignment_id, classroom_id]
+
+      - entity: AssignmentSubmission
+        file: apps/backend/src/modules/assignments/entities/assignment-submission.entity.ts
+        relations_removed: 2
+        fields_affected: [assignment_id, student_id]
+
+    content_module:
+      - entity: ContentTemplate
+        file: apps/backend/src/modules/content/entities/content-template.entity.ts
+        relations_removed: 1
+        fields_affected: [created_by]
+
+      - entity: MarieCurieContent
+        file: apps/backend/src/modules/content/entities/marie-curie-content.entity.ts
+        relations_removed: 1
+        fields_affected: [created_by]
+
+      - entity: MediaFile
+        file: apps/backend/src/modules/content/entities/media-file.entity.ts
+        relations_removed: 1
+        fields_affected: [uploaded_by]
+
+    social_module:
+      - entity: Classroom
+        file: apps/backend/src/modules/social/entities/classroom.entity.ts
+        relations_removed: 2
+        fields_affected: [created_by, tenant_id]
+
+      - entity: ClassroomMember
+        file: apps/backend/src/modules/social/entities/classroom-member.entity.ts
+        relations_removed: 1
+        fields_affected: [user_id]
+
+      - entity: Friendship
+        file: apps/backend/src/modules/social/entities/friendship.entity.ts
+        relations_removed: 2
+        fields_affected: [user_id, friend_id]
+
+      - entity: School
+        file: apps/backend/src/modules/social/entities/school.entity.ts
+        relations_removed: 1
+        fields_affected: [tenant_id]
+
+      - entity: Team
+        file: apps/backend/src/modules/social/entities/team.entity.ts
+        relations_removed: 2
+        fields_affected: [created_by, tenant_id]
+
+    gamification_module:
+      - entity: Notification
+        file: apps/backend/src/modules/gamification/entities/notification.entity.ts
+        relations_removed: 1
+        fields_affected: [user_id]
+
+  migration_guide:
+    when_to_apply: "Cuando una entidad necesita referenciar otra entidad en diferente schema"
+
+    steps:
+      1: "Comentar decoradores @ManyToOne/@OneToMany/@OneToOne"
+      2: "Mantener solo @Column({ type: 'uuid' }) para el foreign key"
+      3: "Agregar comentario explicativo sobre la limitación TypeORM"
+      4: "Modificar service para hacer join manual cuando se necesite la relación"
+      5: "Actualizar tests si es necesario"
+
+    example_service: |
+      // Service haciendo join manual entre progress y auth
+      async getTeacherNoteWithRelations(noteId: string) {
+        const note = await this.progressDataSource
+          .getRepository(TeacherNote)
+          .findOne({ where: { id: noteId } });
+
+        if (!note) return null;
+
+        // Join manual con teacher (auth schema)
+        const teacher = await this.authDataSource
+          .getRepository(User)
+          .findOne({ where: { id: note.teacher_id } });
+
+        return { ...note, teacher };
+      }
+
+  status:
+    entities_fixed: 17
+    build_errors: 0
+    compilation: "✅ Exitoso"
+    documentation: "✅ Completa en código y este inventario"
+    tests_updated: "⚠️ Pendiente - algunos tests pueden necesitar actualización"
 
 # ============================================================================
 # MÓDULOS POR FASE

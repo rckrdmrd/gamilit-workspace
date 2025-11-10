@@ -1,34 +1,35 @@
 # FRONTEND_INVENTORY.yml - Inventario Consolidado Global
 
 project: GAMILIT
-version: 2.2
+version: 2.3
 generated: 2025-11-08
-updated: 2025-11-08
+updated: 2025-11-09
 source: Inventario Real del Frontend Implementado
-status: Actualizado con análisis exhaustivo del código (2025-11-08)
-last_analysis: 2025-11-08 - Análisis completo de estructura y componentes
+status: Actualizado con rutas implementadas y correcciones (2025-11-09)
+last_analysis: 2025-11-09 - Agregadas 15 rutas, AuthContext, correcciones de usuarios
 
 # ============================================================================
 # RESUMEN EJECUTIVO
 # ============================================================================
 
 summary:
-  total_files: 683
-  total_components: 379
+  total_files: 703
+  total_components: 383
   total_hooks: 68
   total_features: 10
-  total_pages: 13
+  total_pages: 28
   total_stores: 11
   total_api_services: 11
   total_mechanics: 33
-  lines_of_code: ~85000
+  total_routes: 18
+  lines_of_code: ~87000
 
-  changes_from_v2_1:
-    total_files: +11
-    total_components: +6
-    total_hooks: +8
-    total_api_services: +1
-    note: "Ajustes basados en análisis exhaustivo de código real"
+  changes_from_v2_2:
+    total_files: +20
+    total_components: +4
+    total_pages: +15
+    total_routes: +15
+    note: "Implementadas 15 rutas que estaban como TODO, agregadas páginas auth, corregidos usuarios hardcodeados"
 
 stack:
   framework: React 19.2.0
@@ -133,4 +134,196 @@ implementation_status:
 
   not_implemented:
     - "❌ Feature 'Education' (directorio vacío)"
-    - "❌ Exercise Player (placeholder)"
+
+# ============================================================================
+# RUTAS IMPLEMENTADAS (React Router v7)
+# ============================================================================
+# Actualizado: 2025-11-09
+# Total: 18 rutas (15 nuevas implementadas desde v2.2)
+
+routing:
+  router_version: "React Router DOM 7.9.4"
+  total_routes: 18
+  public_routes: 5
+  protected_routes: 13
+
+  public:
+    - path: /login
+      component: LoginPage
+      status: ✅ Implementada
+      date: 2025-11-08
+
+    - path: /register
+      component: RegisterPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+    - path: /forgot-password
+      component: ForgotPasswordPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+    - path: /reset-password
+      component: PasswordResetPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+    - path: /verify-email
+      component: EmailVerificationPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+  protected:
+    - path: /
+      redirect: /dashboard
+      status: ✅ Redirect activo
+
+    - path: /dashboard
+      component: DashboardPage
+      status: ✅ Implementada
+      date: 2025-11-08
+
+    - path: /progress
+      component: MyProgressPage
+      status: ✅ Implementada
+      date: 2025-11-08
+
+    - path: /modules/:moduleId
+      component: ModuleDetailPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+    - path: /achievements
+      component: AchievementsPage
+      status: ✅ Implementada
+      date: 2025-11-08
+
+    - path: /leaderboard
+      component: LeaderboardPage
+      status: ✅ Implementada
+      date: 2025-11-08
+
+    - path: /exercises/:exerciseId
+      component: ExercisePage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+      note: "Antes era placeholder, ahora completamente funcional"
+
+    - path: /missions
+      component: MissionsPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+    - path: /profile
+      component: EnhancedProfilePage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+    - path: /settings
+      component: SettingsPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+    - path: /friends
+      component: FriendsPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+    - path: /shop
+      component: ShopPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+    - path: /inventory
+      component: InventoryPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+    - path: /guilds
+      component: GuildsPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+# ============================================================================
+# ARQUITECTURA DE AUTENTICACIÓN
+# ============================================================================
+# Actualizado: 2025-11-09
+
+authentication:
+  context: AuthProvider
+  location: src/app/providers/AuthContext.tsx
+  features:
+    - "Login/Logout con JWT"
+    - "Registro de usuarios"
+    - "Recuperación de contraseña"
+    - "Verificación de email"
+    - "Protected routes con ProtectedRoute component"
+    - "Persistencia de sesión en localStorage"
+    - "Auto-refresh de token"
+
+  components:
+    - ProtectedRoute (src/shared/components/ProtectedRoute.tsx)
+    - LoginPage
+    - RegisterPage
+    - ForgotPasswordPage
+    - PasswordResetPage
+    - EmailVerificationPage
+
+# ============================================================================
+# CORRECCIONES APLICADAS (2025-11-09)
+# ============================================================================
+
+corrections_2025_11_09:
+  pages_fixed:
+    - file: apps/student/pages/ModuleDetailPage.tsx
+      issue: "Usuario hardcodeado mockUser"
+      fix: "Removido mockUser, usando datos reales de API"
+
+    - file: apps/student/pages/InventoryPage.tsx
+      issue: "Usuario hardcodeado mockUserInventory"
+      fix: "Removido mock, usando datos reales de API"
+
+    - file: apps/student/pages/SettingsPage.tsx
+      issue: "Usuario hardcodeado mockUser"
+      fix: "Removido mock, usando useAuth() hook"
+
+    - file: apps/student/pages/ProfilePage.tsx
+      issue: "Usuario hardcodeado mockUser"
+      fix: "Removido mock, usando useAuth() hook"
+
+    - file: apps/student/pages/ShopPage.tsx
+      issue: "Usuario hardcodeado mockUserStats"
+      fix: "Removido mock, usando datos reales de gamificación"
+
+    - file: apps/student/pages/GuildsPage.tsx
+      issue: "Usuario hardcodeado mockGuilds"
+      fix: "Removido mock, usando datos reales de API"
+
+    - file: apps/student/pages/FriendsPage.tsx
+      issue: "Usuario hardcodeado mockFriends"
+      fix: "Removido mock, usando datos reales de API"
+
+    - file: apps/student/pages/ExercisePage.tsx
+      issue: "Usuario hardcodeado mockStudentId"
+      fix: "Removido mock, usando user.id real"
+
+  mechanics_fixed:
+    - file: features/mechanics/module2/ConstruccionHipotesis/ConstruccionHipotesisExercise.tsx
+      fix: "Removido studentId hardcodeado"
+
+    - file: features/mechanics/module2/PuzzleContexto/PuzzleContextoExercise.tsx
+      fix: "Removido studentId hardcodeado"
+
+    - file: features/mechanics/module2/RuedaInferencias/RuedaInferenciasExercise.tsx
+      fix: "Removido studentId hardcodeado"
+
+    - file: features/mechanics/module4/AnalisisMemes/AnalisisMemesExercise.tsx
+      fix: "Removido studentId hardcodeado"
+
+    - file: features/mechanics/module4/EnsayoArgumentativo/EnsayoArgumentativoExercise.tsx
+      fix: "Removido studentId hardcodeado"
+
+  react_router_v7:
+    - file: App.tsx
+      fix: "Removidos warnings de future flags (v7_startTransition, v7_relativeSplatPath)"
+      note: "React Router v7 ya incluye estos comportamientos por defecto"
