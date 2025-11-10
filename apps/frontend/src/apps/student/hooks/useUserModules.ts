@@ -45,11 +45,21 @@ export function useUserModules(): UseUserModulesReturn {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const fetchUserModules = useCallback(async (isRefresh = false) => {
+    console.log('🔍 [useUserModules] fetchUserModules called', {
+      isRefresh,
+      isAuthenticated,
+      userId: user?.id,
+      userEmail: user?.email,
+    });
+
     // Don't fetch if no user is authenticated
     if (!isAuthenticated || !user?.id) {
+      console.warn('⚠️ [useUserModules] No user authenticated, skipping fetch');
       setLoading(false);
       return;
     }
+
+    console.log('✅ [useUserModules] User authenticated, fetching modules for userId:', user.id);
 
     if (isRefresh) {
       setIsRefreshing(true);
@@ -60,7 +70,12 @@ export function useUserModules(): UseUserModulesReturn {
     setError(null);
 
     try {
+      console.log('📡 [useUserModules] Calling getUserModules API...');
       const data = await getUserModules(user.id);
+      console.log('✅ [useUserModules] API response received:', {
+        modulesCount: data.length,
+        firstModule: data[0],
+      });
 
       // Transform the data to match the expected UserModuleData interface
       const transformedData: UserModuleData[] = data.map((module: any) => ({
@@ -79,15 +94,17 @@ export function useUserModules(): UseUserModulesReturn {
         mlCoinsReward: module.mlCoinsReward || 50,
       }));
 
+      console.log('✅ [useUserModules] Data transformed, setting modules:', transformedData.length);
       setModules(transformedData);
     } catch (err) {
+      console.error('❌ [useUserModules] Error fetching user modules:', err);
       setError(err instanceof Error ? err : new Error('Failed to fetch user modules'));
-      console.error('Error fetching user modules:', err);
       // Set empty array on error instead of using mock data
       setModules([]);
     } finally {
       setLoading(false);
       setIsRefreshing(false);
+      console.log('🏁 [useUserModules] Fetch completed');
     }
   }, [user, isAuthenticated]);
 

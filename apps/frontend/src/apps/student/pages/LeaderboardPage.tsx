@@ -11,8 +11,8 @@
  * - Smooth animations
  */
 
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import {
   Trophy,
   TrendingUp,
@@ -20,12 +20,9 @@ import {
   Users,
   Award,
   Zap,
-  Crown,
-  ChevronDown,
   RefreshCw,
   ArrowUp,
   Sparkles,
-  Medal,
   BarChart3,
 } from 'lucide-react';
 
@@ -33,7 +30,6 @@ import {
 import { LeaderboardTabs } from '@/features/gamification/social/components/Leaderboards/LeaderboardTabs';
 import { SeasonSelector } from '@/features/gamification/social/components/Leaderboards/SeasonSelector';
 import { LeaderboardLayout } from '@/features/gamification/social/components/Leaderboards/LeaderboardLayout';
-import { LeaderboardEntry } from '@/features/gamification/social/components/Leaderboards/LeaderboardEntry';
 
 // Hooks & Types
 import { useLeaderboards } from '@/features/gamification/social/hooks/useLeaderboards';
@@ -53,7 +49,6 @@ export default function LeaderboardPage() {
     refreshLeaderboard,
     getUserEntry,
     getUserPosition,
-    getTopThree,
   } = useLeaderboards();
 
   // Local State
@@ -92,7 +87,6 @@ export default function LeaderboardPage() {
 
   const userEntry = getUserEntry();
   const userPosition = getUserPosition();
-  const topThree = getTopThree();
 
   // Calculate points to next position
   const pointsToNext = userEntry && userEntry.rank > 1

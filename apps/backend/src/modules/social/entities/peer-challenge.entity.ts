@@ -5,12 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-  ManyToOne,
-  JoinColumn,
   Check,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES, DifficultyLevelEnum } from '@shared/constants';
-import { Profile } from '../../auth/entities/profile.entity';
 
 /**
  * PeerChallenge Entity (social_features.peer_challenges)
@@ -220,31 +217,26 @@ export class PeerChallenge {
   // =====================================================
 
   /**
-   * Creador del desafío
-   * Relación ManyToOne: Muchos desafíos pueden ser creados por un usuario
-   * FK: peer_challenges.created_by → auth_management.profiles.id
+   * NOTA IMPORTANTE: Las relaciones a Profile, Module y Exercise no se pueden
+   * definir con @ManyToOne porque cruzan diferentes data sources:
+   * - created_by: social → auth (Profile)
+   * - module_id: social → educational (Module)
+   * - exercise_id: social → educational (Exercise)
    *
-   * NOTA: ON DELETE CASCADE - Si se elimina el creador, se eliminan sus desafíos
+   * TypeORM no soporta relaciones cross-database.
+   *
+   * En su lugar, usamos los campos UUID (created_by, module_id, exercise_id)
+   * y hacemos joins manuales en los services cuando sea necesario.
+   *
+   * FK en DDL:
+   * - peer_challenges.created_by → auth_management.profiles.id (ON DELETE CASCADE)
+   * - peer_challenges.module_id → educational_content.modules.id (ON DELETE SET NULL)
+   * - peer_challenges.exercise_id → educational_content.exercises.id (ON DELETE SET NULL)
+   *
+   * Para obtener datos relacionados:
+   * - Inyectar ProfileRepository desde 'auth' connection
+   * - Inyectar ModuleRepository desde 'educational' connection
+   * - Inyectar ExerciseRepository desde 'educational' connection
+   * - Hacer queries manuales en el service
    */
-  @ManyToOne(() => Profile, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
-  creator?: Profile;
-
-  /**
-   * Módulo asociado (opcional)
-   * FK: peer_challenges.module_id → educational_content.modules.id
-   * NOTA: ON DELETE SET NULL - Si se elimina el módulo, el desafío queda sin módulo
-   */
-  // @ManyToOne(() => Module, { nullable: true, onDelete: 'SET NULL' })
-  // @JoinColumn({ name: 'module_id', referencedColumnName: 'id' })
-  // module?: Module;
-
-  /**
-   * Ejercicio asociado (opcional)
-   * FK: peer_challenges.exercise_id → educational_content.exercises.id
-   * NOTA: ON DELETE SET NULL - Si se elimina el ejercicio, el desafío queda sin ejercicio
-   */
-  // @ManyToOne(() => Exercise, { nullable: true, onDelete: 'SET NULL' })
-  // @JoinColumn({ name: 'exercise_id', referencedColumnName: 'id' })
-  // exercise?: Exercise;
 }

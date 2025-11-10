@@ -2,11 +2,25 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from '@/app/providers/AuthContext';
 import { ProtectedRoute } from '@/shared/components/ProtectedRoute';
 import { LoginPage } from '@/pages/auth/LoginPage';
+import { RegisterPage } from '@/pages/auth/RegisterPage';
+import { ForgotPasswordPage } from '@/pages/auth/ForgotPasswordPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { MyProgressPage } from '@/pages/MyProgressPage';
 import { ModuleDetailsPage } from '@/pages/ModuleDetailsPage';
 import { AchievementsPage } from '@/pages/AchievementsPage';
 import { LeaderboardPage } from '@/pages/LeaderboardPage';
+import PasswordResetPage from '@/apps/student/pages/PasswordResetPage';
+import EmailVerificationPage from '@/apps/student/pages/EmailVerificationPage';
+import SettingsPage from '@/apps/student/pages/SettingsPage';
+import MissionsPage from '@/apps/student/pages/MissionsPage';
+import ExercisePage from '@/apps/student/pages/ExercisePage';
+import NotFoundPage from '@/apps/student/pages/NotFoundPage';
+import FriendsPage from '@/apps/student/pages/FriendsPage';
+import ShopPage from '@/apps/student/pages/ShopPage';
+import InventoryPage from '@/apps/student/pages/InventoryPage';
+import GuildsPage from '@/apps/student/pages/GuildsPage';
+import ModuleDetailPage from '@/apps/student/pages/ModuleDetailPage';
+import EnhancedProfilePage from '@/apps/student/pages/EnhancedProfilePage';
 
 /**
  * App Component
@@ -31,15 +45,14 @@ import { LeaderboardPage } from '@/pages/LeaderboardPage';
 function App() {
   return (
     <AuthProvider>
-      <Router
-        future={{
-          v7_startTransition: true,
-          v7_relativeSplatPath: true,
-        }}
-      >
+      <Router>
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<PasswordResetPage />} />
+          <Route path="/verify-email" element={<EmailVerificationPage />} />
 
           {/* Root redirect */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -92,52 +105,96 @@ function App() {
             }
           />
 
-          {/* TODO: Exercise Player (placeholder route) */}
+          {/* Exercise Player */}
           <Route
-            path="/exercises/:exerciseId/player"
+            path="/exercises/:exerciseId"
             element={
               <ProtectedRoute>
-                <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                  <div className="text-center">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-4">Exercise Player</h1>
-                    <p className="text-xl text-gray-600 mb-6">Coming Soon</p>
-                    <a
-                      href="/progress"
-                      className="inline-block px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
-                    >
-                      Back to Progress
-                    </a>
-                  </div>
-                </div>
+                <ExercisePage />
               </ProtectedRoute>
             }
           />
 
-          {/* TODO: Add more routes */}
-          {/* <Route path="/register" element={<RegisterPage />} /> */}
-          {/* <Route path="/missions" element={<ProtectedRoute><MissionsPage /></ProtectedRoute>} /> */}
-          {/* <Route path="/learning" element={<ProtectedRoute><LearningPage /></ProtectedRoute>} /> */}
-          {/* <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} /> */}
-          {/* <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} /> */}
-
-          {/* 404 - Not Found */}
+          {/* Missions Page */}
           <Route
-            path="*"
+            path="/missions"
             element={
-              <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="text-center">
-                  <h1 className="text-6xl font-bold text-gray-900 mb-4">404</h1>
-                  <p className="text-xl text-gray-600 mb-6">Page not found</p>
-                  <a
-                    href="/dashboard"
-                    className="inline-block px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
-                  >
-                    Go to Dashboard
-                  </a>
-                </div>
-              </div>
+              <ProtectedRoute>
+                <MissionsPage />
+              </ProtectedRoute>
             }
           />
+
+          {/* Module Detail Page */}
+          <Route
+            path="/modules/:moduleId"
+            element={
+              <ProtectedRoute>
+                <ModuleDetailPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Profile Pages */}
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <EnhancedProfilePage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Settings Page */}
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Social Features */}
+          <Route
+            path="/friends"
+            element={
+              <ProtectedRoute>
+                <FriendsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/guilds"
+            element={
+              <ProtectedRoute>
+                <GuildsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Shop & Inventory */}
+          <Route
+            path="/shop"
+            element={
+              <ProtectedRoute>
+                <ShopPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/inventory"
+            element={
+              <ProtectedRoute>
+                <InventoryPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* 404 - Not Found */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>
     </AuthProvider>

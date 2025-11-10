@@ -11,7 +11,6 @@ import {
   Check,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants';
-import { Profile } from '../../auth/entities/profile.entity';
 import { PeerChallenge } from './peer-challenge.entity';
 
 /**
@@ -189,24 +188,30 @@ export class ChallengeParticipant {
   // =====================================================
 
   /**
-   * Desafío asociado
+   * NOTA IMPORTANTE:
+   * - challenge → PeerChallenge: Relación INTERNA (social → social) ✅ PUEDE usar @ManyToOne
+   * - user → Profile: Relación CROSS-DATABASE (social → auth) ❌ NO PUEDE usar @ManyToOne
+   *
+   * TypeORM solo soporta relaciones dentro del mismo data source.
+   *
+   * FK en DDL:
+   * - challenge_participants.challenge_id → social_features.peer_challenges.id (ON DELETE CASCADE)
+   * - challenge_participants.user_id → auth_management.profiles.id (ON DELETE CASCADE)
+   */
+
+  /**
+   * Desafío asociado (relación interna en mismo schema)
    * Relación ManyToOne: Muchos participantes pueden pertenecer a un desafío
    * FK: challenge_participants.challenge_id → social_features.peer_challenges.id
-   *
-   * NOTA: ON DELETE CASCADE - Si se elimina el desafío, se eliminan sus participantes
    */
   @ManyToOne(() => PeerChallenge, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'challenge_id', referencedColumnName: 'id' })
   challenge?: PeerChallenge;
 
   /**
-   * Usuario participante
-   * Relación ManyToOne: Muchos registros de participación pueden pertenecer a un usuario
-   * FK: challenge_participants.user_id → auth_management.profiles.id
-   *
-   * NOTA: ON DELETE CASCADE - Si se elimina el usuario, se eliminan sus participaciones
+   * Usuario participante (relación cross-database, NO usar @ManyToOne)
+   * Para obtener datos del usuario:
+   * - Inyectar ProfileRepository desde 'auth' connection en el service
+   * - Hacer query manual: profileRepository.findOne({ where: { id: participant.user_id } })
    */
-  @ManyToOne(() => Profile, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user?: Profile;
 }

@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Image, Plus, Trash2, Save, CheckCircle } from 'lucide-react';
+import { Image, Plus, Trash2, Save } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { MemeAnnotator } from './MemeAnnotator';
 import { AnalisisMemesData, MemeAnnotation } from './analisisMemesTypes';
-import { calculateScore, saveProgress, FeedbackData, DifficultyLevel } from '@shared/components/mechanics/mechanicsTypes';
+import { calculateScore, saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 
 interface ExerciseProps {
-  moduleId: number;
-  lessonId: number;
   exerciseId: string;
   userId: string;
   onComplete?: (score: number, timeSpent: number) => void;
@@ -39,8 +37,6 @@ const defaultExercise: AnalisisMemesData = {
 };
 
 export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
-  moduleId,
-  lessonId,
   exerciseId,
   userId,
   onComplete,
@@ -52,12 +48,10 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
 }) => {
   const [annotations, setAnnotations] = useState<MemeAnnotation[]>(initialData?.annotations || []);
   const [isAdding, setIsAdding] = useState(false);
-  const [selectedAnnotation, setSelectedAnnotation] = useState<string | null>(null);
   const [editingAnnotation, setEditingAnnotation] = useState<MemeAnnotation | null>(null);
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
-  const [currentScore, setCurrentScore] = useState(0);
   const [timeSpent, setTimeSpent] = useState(0);
 
   const actionsRef = useRef<{
@@ -99,8 +93,6 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
   // Update progress
   useEffect(() => {
     const progress = calculateProgress();
-    const score = calculateCurrentScore();
-    setCurrentScore(score);
 
     const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     setTimeSpent(elapsed);
@@ -125,7 +117,6 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
   // Handle delete annotation
   const handleDeleteAnnotation = (id: string) => {
     setAnnotations(prev => prev.filter(a => a.id !== id));
-    setSelectedAnnotation(null);
     setEditingAnnotation(null);
   };
 
@@ -150,7 +141,6 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
     }
 
     const endTime = new Date();
-    const timeSpentSeconds = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
 
     const score = await calculateScore({
       exerciseId,

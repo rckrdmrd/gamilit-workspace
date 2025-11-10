@@ -5,7 +5,7 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { fetchInferenceWheel, getAISuggestions } from './ruedaInferenciasAPI';
 import type { InferenceWheel, InferenceNode } from './ruedaInferenciasTypes';
-import { calculateScore, saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { mockInferenceWheel } from './ruedaInferenciasMockData';
 
 interface ExerciseProps {
@@ -28,32 +28,20 @@ interface ExerciseState {
 }
 
 export const RuedaInferenciasExercise: React.FC<ExerciseProps> = ({
-  moduleId,
-  lessonId,
   exerciseId,
-  userId,
   onComplete,
-  onExit,
   onProgressUpdate,
   initialData,
-  difficulty = 'medium',
 }) => {
   const [wheel, setWheel] = useState<InferenceWheel | null>(null);
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [suggestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [startTime] = useState(new Date());
   const [timeSpent, setTimeSpent] = useState(initialData?.timeSpent || 0);
   const [score, setScore] = useState(initialData?.score || 0);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
-  const [hintsUsed, setHintsUsed] = useState(initialData?.hintsUsed || 0);
+  const [hintsUsed] = useState(initialData?.hintsUsed || 0);
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
-
-  // Track actions reference for parent component
-  const actionsRef = useRef({
-    handleReset: () => handleReset(),
-    handleCheck: () => handleSubmit(),
-  });
 
   useEffect(() => {
     if (!wheel) {
@@ -96,45 +84,6 @@ export const RuedaInferenciasExercise: React.FC<ExerciseProps> = ({
       });
     }
   }, [selectedNodes.length, wheel?.nodes.length, score, hintsUsed, timeSpent, onProgressUpdate]);
-
-  const loadWheel = async () => {
-    try {
-      const data = await fetchInferenceWheel();
-      setWheel(data);
-      const sug = await getAISuggestions(['evidence-1', 'evidence-2']);
-      setSuggestions(sug);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!wheel) return;
-
-    // Calculate score based on inferences identified
-    const attempt = {
-      exerciseId: wheel.id || '',
-      startTime,
-      endTime: new Date(),
-      answers: { selectedNodes },
-      correctAnswers: selectedNodes.length,
-      totalQuestions: wheel.nodes.length,
-      hintsUsed,
-      difficulty: wheel.difficulty || 'medio'
-    };
-
-    const calculatedScore = await calculateScore(attempt);
-    setScore(calculatedScore.totalScore);
-
-    setFeedback({
-      type: selectedNodes.length >= wheel.nodes.length ? 'success' : 'partial',
-      title: selectedNodes.length >= wheel.nodes.length ? '¡Excelente Análisis!' : 'Buen Progreso',
-      message: `Has identificado ${selectedNodes.length} de ${wheel.nodes.length} inferencias posibles.`,
-      score: calculatedScore,
-      showConfetti: selectedNodes.length >= wheel.nodes.length
-    });
-    setShowFeedback(true);
-  };
 
   const handleReset = () => {
     setSelectedNodes([]);

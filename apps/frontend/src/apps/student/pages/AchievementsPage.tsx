@@ -21,16 +21,11 @@ import {
   Award,
   Users,
   EyeOff,
-  Lock,
-  Unlock,
-  SortAsc,
-  Share2,
   ArrowUp,
   Sparkles,
   Coins,
   Zap,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 // Achievements Components
 import { AchievementCard } from '@/features/gamification/social/components/Achievements/AchievementCard';
@@ -57,8 +52,6 @@ const categories: { value: AchievementCategory | 'all'; label: string; icon: Rea
 ];
 
 export default function AchievementsPage() {
-  const navigate = useNavigate();
-
   // Auth State
   const { user } = useAuthStore();
 
@@ -176,14 +169,6 @@ export default function AchievementsPage() {
     setShowUnlockModal(false);
     if (recentUnlocks.length > 0) {
       dismissNotification(recentUnlocks[0].achievement.id);
-    }
-  };
-
-  const handleShareAchievement = (achievement: Achievement) => {
-    const shareUrl = `${window.location.origin}/achievements/${achievement.id}`;
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(shareUrl);
-      // TODO: Show toast notification
     }
   };
 

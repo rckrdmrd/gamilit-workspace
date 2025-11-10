@@ -109,4 +109,42 @@ export class ModulesService {
       .orderBy('module.order_index', 'ASC')
       .getMany();
   }
+
+  /**
+   * Obtener módulos con progreso del usuario
+   *
+   * @param userId - ID del usuario
+   * @returns Módulos con información de progreso incluida
+   */
+  async getUserModules(userId: string): Promise<any[]> {
+    const query = `
+      SELECT
+        m.id,
+        m.title,
+        m.description,
+        m.difficulty_level as difficulty,
+        m.estimated_duration_minutes as "estimatedTime",
+        m.xp_reward as "xpReward",
+        m.ml_coins_reward as "mlCoinsReward",
+        m.order_index,
+        m.thumbnail_url as icon,
+        m.subjects as category,
+        COALESCE(mp.progress_percentage, 0) as progress,
+        COALESCE(mp.completed_exercises, 0) as "completedExercises",
+        COALESCE(mp.total_exercises, 0) as "totalExercises",
+        CASE
+          WHEN mp.status = 'completed' THEN 'completed'
+          WHEN mp.status = 'in_progress' THEN 'in_progress'
+          WHEN mp.status IS NULL OR mp.status = 'not_started' THEN 'available'
+          ELSE 'available'
+        END as status
+      FROM educational_content.modules m
+      LEFT JOIN progress_tracking.module_progress mp
+        ON m.id = mp.module_id AND mp.user_id = $1
+      WHERE m.is_published = true
+      ORDER BY m.order_index ASC
+    `;
+
+    return await this.moduleRepo.query(query, [userId]);
+  }
 }

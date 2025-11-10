@@ -5,12 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-  ManyToOne,
-  JoinColumn,
   Unique,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants';
-import { User } from '../../auth/entities/user.entity';
 
 /**
  * ContentAuthor Entity (content_management.content_authors)
@@ -113,13 +110,18 @@ export class ContentAuthor {
   // =====================================================
 
   /**
-   * Usuario asociado al autor
-   * Relación ManyToOne: Un autor corresponde a un usuario
-   * FK: content_authors.user_id → auth.users.id
+   * NOTA IMPORTANTE: La relación a User no se puede definir con @ManyToOne
+   * porque cruza diferentes data sources (content → auth).
+   * TypeORM no soporta relaciones cross-database.
    *
-   * NOTA: ON DELETE CASCADE - Si se elimina el usuario, se elimina su perfil de autor
+   * En su lugar, usamos el campo user_id (UUID) y hacemos joins manuales
+   * en los services cuando sea necesario.
+   *
+   * FK en DDL:
+   * - content_authors.user_id → auth_management.users.id (ON DELETE CASCADE)
+   *
+   * Para obtener los datos del usuario:
+   * - Inyectar UserRepository desde 'auth' connection en el service
+   * - Hacer query manual: userRepository.findOne({ where: { id: contentAuthor.user_id } })
    */
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user?: User;
 }

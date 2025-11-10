@@ -190,6 +190,75 @@ export class ModulesController {
   }
 
   /**
+   * Obtiene módulos con progreso del usuario
+   *
+   * IMPORTANTE: Esta ruta debe ir ANTES de 'modules/:id' para evitar
+   * que 'user' sea capturado como un ID.
+   *
+   * @param userId - ID del usuario
+   * @returns Array de módulos con progreso incluido
+   *
+   * @example
+   * GET /api/v1/educational/modules/user/550e8400-e29b-41d4-a716-446655440000
+   * Response: [
+   *   {
+   *     "id": "module-uuid",
+   *     "title": "Marie Curie - Infancia",
+   *     "description": "Conoce la historia...",
+   *     "difficulty": "beginner",
+   *     "estimatedTime": 45,
+   *     "xpReward": 100,
+   *     "mlCoinsReward": 50,
+   *     "progress": 50,
+   *     "completedExercises": 3,
+   *     "totalExercises": 6,
+   *     "status": "in_progress"
+   *   }
+   * ]
+   */
+  @Get('modules/user/:userId')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Get user modules with progress',
+    description: 'Obtiene todos los módulos con información de progreso del usuario',
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'ID del usuario en formato UUID',
+    type: String,
+    required: true,
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de módulos con progreso del usuario',
+    schema: {
+      example: [
+        {
+          id: '550e8400-e29b-41d4-a716-446655440000',
+          title: 'Marie Curie - Infancia',
+          description: 'Conoce la historia de la infancia de Marie Curie',
+          difficulty: 'beginner',
+          estimatedTime: 45,
+          xpReward: 100,
+          mlCoinsReward: 50,
+          progress: 50,
+          completedExercises: 3,
+          totalExercises: 6,
+          status: 'in_progress',
+        },
+      ],
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Usuario no encontrado',
+  })
+  async getUserModules(@Param('userId') userId: string) {
+    return await this.modulesService.getUserModules(userId);
+  }
+
+  /**
    * Obtiene un módulo específico por ID
    *
    * IMPORTANTE: Esta ruta debe ir DESPUÉS de rutas más específicas

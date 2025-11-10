@@ -10,7 +10,7 @@
  * - Achievements showcase
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   User,
@@ -21,9 +21,7 @@ import {
   Coins,
   TrendingUp,
   Flame,
-  Award,
   Zap,
-  Clock,
   Star,
   ChevronRight,
   Activity,
@@ -31,8 +29,6 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
-  LineChart,
-  Line,
   AreaChart,
   Area,
   BarChart,
@@ -75,7 +71,6 @@ export default function EnhancedProfilePage() {
 
   // Local state
   const [selectedTab, setSelectedTab] = useState<'overview' | 'stats' | 'history' | 'achievements'>('overview');
-  const [showAllAchievements, setShowAllAchievements] = useState(false);
 
   // Load data
   useEffect(() => {

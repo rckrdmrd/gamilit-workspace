@@ -152,7 +152,7 @@ BEGIN
             'Marie ganó premios muy importantes en su carrera'
         ]::text[],
         true, 15,
-        ARRAY['pistas', 'vision_lectora', 'segunda_oportunidad']::comodin_type[],
+        ARRAY['pistas', 'vision_lectora', 'segunda_oportunidad']::gamification_system.comodin_type[],
         '{
             "pistas": {"enabled": true, "cost": 15},
             "vision_lectora": {"enabled": true, "cost": 25},
@@ -269,7 +269,7 @@ BEGIN
             'Ganó su primer Nobel en 1903 y el segundo en 1911'
         ]::text[],
         true, 15,
-        ARRAY['pistas', 'vision_lectora', 'segunda_oportunidad']::comodin_type[],
+        ARRAY['pistas', 'vision_lectora', 'segunda_oportunidad']::gamification_system.comodin_type[],
         '{
             "pistas": {"enabled": true, "cost": 15},
             "vision_lectora": {"enabled": true, "cost": 25},
@@ -346,7 +346,7 @@ BEGIN
             'RADIOACTIVIDAD es la palabra más larga (14 letras)'
         ]::text[],
         true, 10,
-        ARRAY['pistas', 'vision_lectora', 'segunda_oportunidad']::comodin_type[],
+        ARRAY['pistas', 'vision_lectora', 'segunda_oportunidad']::gamification_system.comodin_type[],
         '{
             "pistas": {"enabled": true, "cost": 15},
             "vision_lectora": {"enabled": true, "cost": 25},
@@ -464,7 +464,7 @@ BEGIN
             'Marie ganó dos Premios Nobel en diferentes disciplinas'
         ]::text[],
         true, 15,
-        ARRAY['pistas', 'vision_lectora', 'segunda_oportunidad']::comodin_type[],
+        ARRAY['pistas', 'vision_lectora', 'segunda_oportunidad']::gamification_system.comodin_type[],
         '{
             "pistas": {"enabled": true, "cost": 15},
             "vision_lectora": {"enabled": true, "cost": 25},
@@ -562,7 +562,7 @@ BEGIN
             'Ganó dos Nobel: uno en 1903 y otro en 1911'
         ]::text[],
         true, 10,
-        ARRAY['pistas', 'vision_lectora', 'segunda_oportunidad']::comodin_type[],
+        ARRAY['pistas', 'vision_lectora', 'segunda_oportunidad']::gamification_system.comodin_type[],
         '{
             "pistas": {"enabled": true, "cost": 15},
             "vision_lectora": {"enabled": true, "cost": 25},

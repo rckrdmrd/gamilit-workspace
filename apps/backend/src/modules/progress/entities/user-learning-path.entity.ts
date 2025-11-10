@@ -11,7 +11,6 @@ import {
   Check,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants';
-import { User } from '../../auth/entities/user.entity';
 import { LearningPath } from './learning-path.entity';
 
 /**
@@ -110,15 +109,10 @@ export class UserLearningPath {
   // =====================================================
 
   /**
-   * Usuario asignado a la ruta
-   * Relación ManyToOne: Muchas asignaciones pertenecen a un usuario
-   * FK: user_learning_paths.user_id → auth.users.id
-   *
-   * NOTA: ON DELETE CASCADE - Si se elimina el usuario, se eliminan sus rutas
+   * Usuario asignado a la ruta (cross-database, no @ManyToOne)
+   * FK en DDL: user_learning_paths.user_id → auth.users.id (ON DELETE CASCADE)
+   * Para obtener el usuario: inyectar UserRepository desde 'auth' connection
    */
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user?: User;
 
   /**
    * Ruta de aprendizaje asignada

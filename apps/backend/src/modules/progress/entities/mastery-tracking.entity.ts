@@ -5,14 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-  ManyToOne,
-  JoinColumn,
   Unique,
   Check,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants';
-import { User } from '../../auth/entities/user.entity';
-import { Module } from '../../educational/entities/module.entity';
 
 /**
  * MasteryTracking Entity (progress_tracking.mastery_tracking)
@@ -132,24 +128,14 @@ export class MasteryTracking {
   // =====================================================
 
   /**
-   * Usuario asociado a este tracking
-   * Relación ManyToOne: Muchos trackings pueden pertenecer a un usuario
-   * FK: mastery_tracking.user_id → auth.users.id
-   *
-   * NOTA: ON DELETE CASCADE - Si se elimina el usuario, se eliminan sus trackings
+   * Usuario asociado a este tracking (cross-database, no @ManyToOne)
+   * FK en DDL: mastery_tracking.user_id → auth.users.id (ON DELETE CASCADE)
+   * Para obtener el usuario: inyectar UserRepository desde 'auth' connection
    */
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user?: User;
 
   /**
-   * Módulo educativo asociado
-   * Relación ManyToOne: Muchos trackings pueden pertenecer a un módulo
-   * FK: mastery_tracking.module_id → educational_content.modules.id
-   *
-   * NOTA: ON DELETE CASCADE - Si se elimina el módulo, se eliminan sus trackings
+   * Módulo educativo asociado (cross-database, no @ManyToOne)
+   * FK en DDL: mastery_tracking.module_id → educational_content.modules.id (ON DELETE CASCADE)
+   * Para obtener el módulo: inyectar ModuleRepository desde 'educational' connection
    */
-  @ManyToOne(() => Module, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'module_id', referencedColumnName: 'id' })
-  module?: Module;
 }

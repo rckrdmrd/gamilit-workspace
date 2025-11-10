@@ -77,6 +77,34 @@ La documentación detallada del proyecto de base de datos está en:
 - **Inventarios de objetos DB**: `docs/90-transversal/inventarios-database/`
 - **Guía de creación**: `docs/95-guias-desarrollo/GUIA-CREAR-BASE-DATOS.md`
 - **Guía de referencias**: `docs/95-guias-desarrollo/GUIA-REFERENCIAS-SIMCO.md`
+- **Guía de carga de usuarios**: `docs/GUIA-CARGA-USUARIOS-Y-PERFILES.md` ⭐ NUEVO
+
+## Usuarios de Prueba
+
+Para cargar usuarios de prueba en ambientes de desarrollo/staging:
+
+```bash
+# Opción 1: Cargar usuarios automáticamente (recomendado)
+./scripts/load-users-and-profiles.sh
+
+# Opción 2: Verificar usuarios existentes
+./scripts/verify-users.sh
+
+# Opción 3: Corregir tablas faltantes (si hay errores)
+./scripts/fix-missing-gamification-tables.sh
+```
+
+**Credenciales disponibles después de la carga:**
+
+| Tipo | Email | Password | Cantidad |
+|------|-------|----------|----------|
+| Super Admin | admin@gamilit.com | Test1234 | 2 |
+| Teacher | teacher@gamilit.com | Test1234 | 2 |
+| Student | student@gamilit.com | Test1234 | 4 |
+
+**Total:** 8 usuarios de prueba
+
+📖 **Documentación completa:** Ver `docs/GUIA-CARGA-USUARIOS-Y-PERFILES.md` para detalles sobre problemas conocidos y soluciones.
 
 ## Scripts Disponibles
 
@@ -90,6 +118,14 @@ La documentación detallada del proyecto de base de datos está en:
 | `reset-database.sh` | Reset BD manteniendo usuario |
 | `manage-secrets.sh` | Gestión de credenciales |
 | `update-env-files.sh` | Actualiza archivos .env |
+
+### Usuarios y Perfiles ⭐ NUEVO
+
+| Script | Descripción |
+|--------|-------------|
+| `load-users-and-profiles.sh` | Carga usuarios y perfiles de prueba (8 usuarios) |
+| `verify-users.sh` | Verifica usuarios y perfiles cargados |
+| `fix-missing-gamification-tables.sh` | Crea tablas de gamificación faltantes |
 
 ### Inventarios y Utilidades
 

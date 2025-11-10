@@ -5,12 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-  ManyToOne,
-  JoinColumn,
   Unique,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants';
-import { User } from '../../auth/entities/user.entity';
 
 /**
  * EngagementMetrics Entity (progress_tracking.engagement_metrics)
@@ -131,13 +128,18 @@ export class EngagementMetrics {
   // =====================================================
 
   /**
-   * Usuario asociado a estas métricas
-   * Relación ManyToOne: Muchas métricas pueden pertenecer a un usuario
-   * FK: engagement_metrics.user_id → auth.users.id
+   * NOTA IMPORTANTE: La relación a User no se puede definir con @ManyToOne
+   * porque cruza diferentes data sources (progress → auth).
+   * TypeORM no soporta relaciones cross-database.
    *
-   * NOTA: ON DELETE CASCADE - Si se elimina el usuario, se eliminan sus métricas
+   * En su lugar, usamos el campo user_id (UUID) y hacemos joins manuales
+   * en los services cuando sea necesario.
+   *
+   * FK en DDL:
+   * - engagement_metrics.user_id → auth_management.users.id (ON DELETE CASCADE)
+   *
+   * Para obtener los datos del usuario:
+   * - Inyectar UserRepository desde 'auth' connection en el service
+   * - Hacer query manual: userRepository.findOne({ where: { id: engagementMetrics.user_id } })
    */
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user?: User;
 }

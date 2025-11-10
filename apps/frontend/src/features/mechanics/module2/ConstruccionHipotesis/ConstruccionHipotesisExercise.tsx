@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FlaskConical, Send, RotateCcw } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -7,22 +7,18 @@ import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { HypothesisBuilder } from './HypothesisBuilder';
 import { VariableSelector } from './VariableSelector';
 import { AIValidator } from './AIValidator';
-import { fetchHypothesisExercise, validateHypothesisSubmission } from './construccionHipotesisAPI';
+import { validateHypothesisSubmission } from './construccionHipotesisAPI';
 import type { HypothesisExercise, Hypothesis, Variable } from './construccionHipotesisTypes';
 import type { HypothesisValidation } from '../../shared/aiTypes';
 import { calculateScore, saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { mockExercise } from './construccionHipotesisMockData';
 
 interface ExerciseProps {
-  moduleId: number;
-  lessonId: number;
   exerciseId: string;
-  userId: string;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
   onProgressUpdate?: (progress: number) => void;
   initialData?: Partial<ExerciseState>;
-  difficulty?: 'easy' | 'medium' | 'hard';
 }
 
 interface ExerciseState {
@@ -33,15 +29,11 @@ interface ExerciseState {
 }
 
 export const ConstruccionHipotesisExercise: React.FC<ExerciseProps> = ({
-  moduleId,
-  lessonId,
   exerciseId,
-  userId,
   onComplete,
   onExit,
   onProgressUpdate,
   initialData,
-  difficulty = 'medium',
 }) => {
   const [exercise, setExercise] = useState<HypothesisExercise | null>(null);
   const [hypothesis, setHypothesis] = useState<Partial<Hypothesis>>(
@@ -58,13 +50,7 @@ export const ConstruccionHipotesisExercise: React.FC<ExerciseProps> = ({
   const [score, setScore] = useState(initialData?.score || 0);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
-  const [hintsUsed, setHintsUsed] = useState(initialData?.hintsUsed || 0);
-
-  // Track actions reference for parent component
-  const actionsRef = useRef({
-    handleReset: () => handleReset(),
-    handleCheck: () => handleSubmit(),
-  });
+  const [hintsUsed] = useState(initialData?.hintsUsed || 0);
 
   useEffect(() => {
     if (!exercise) {
@@ -104,17 +90,6 @@ export const ConstruccionHipotesisExercise: React.FC<ExerciseProps> = ({
       onProgressUpdate(progress);
     }
   }, [hypothesis, exercise, onProgressUpdate]);
-
-  const loadExercise = async () => {
-    try {
-      const data = await fetchHypothesisExercise('exercise-hypothesis-1');
-      setExercise(data);
-    } catch (error) {
-      console.error('Error loading exercise:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSelectVariable = (variable: Variable) => {
     setHypothesis({

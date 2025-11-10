@@ -5,12 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-  ManyToOne,
-  JoinColumn,
   Check,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants';
-import { User } from '../../auth/entities/user.entity';
 
 /**
  * LearningPath Entity (progress_tracking.learning_paths)
@@ -105,13 +102,9 @@ export class LearningPath {
   // =====================================================
 
   /**
-   * Usuario que creó la ruta de aprendizaje
-   * Relación ManyToOne: Muchas rutas pueden ser creadas por un usuario
-   * FK: learning_paths.created_by → auth.users.id
-   *
+   * Usuario que creó la ruta de aprendizaje (cross-database, no @ManyToOne)
+   * FK en DDL: learning_paths.created_by → auth.users.id (ON DELETE SET NULL)
    * NOTA: Nullable - Las rutas del sistema no tienen created_by
+   * Para obtener el creador: inyectar UserRepository desde 'auth' connection
    */
-  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
-  creator?: User;
 }

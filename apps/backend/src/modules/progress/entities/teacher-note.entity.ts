@@ -4,11 +4,8 @@ import {
   Column,
   CreateDateColumn,
   Index,
-  ManyToOne,
-  JoinColumn,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants';
-import { User } from '../../auth/entities/user.entity';
 
 /**
  * TeacherNote Entity (progress_tracking.teacher_notes)
@@ -73,26 +70,19 @@ export class TeacherNote {
   // =====================================================
 
   /**
-   * Profesor que creó la nota
-   * Relación ManyToOne: Muchas notas pueden pertenecer a un profesor
-   * FK: teacher_notes.teacher_id → auth.users.id
+   * NOTA IMPORTANTE: Las relaciones a User no se pueden definir con @ManyToOne
+   * porque cruzan diferentes data sources (progress → auth).
+   * TypeORM no soporta relaciones cross-database.
    *
-   * NOTA: La relación cruza schemas (progress_tracking → auth)
-   * NOTA: ON DELETE CASCADE - Si se elimina el profesor, se eliminan sus notas
-   */
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'teacher_id', referencedColumnName: 'id' })
-  teacher?: User;
-
-  /**
-   * Estudiante sobre el que se hace la nota
-   * Relación ManyToOne: Muchas notas pueden pertenecer a un estudiante
-   * FK: teacher_notes.student_id → auth.users.id
+   * En su lugar, usamos los campos teacher_id y student_id (UUID) y hacemos
+   * joins manuales en los services cuando sea necesario.
    *
-   * NOTA: La relación cruza schemas (progress_tracking → auth)
-   * NOTA: ON DELETE CASCADE - Si se elimina el estudiante, se eliminan sus notas
+   * FK en DDL:
+   * - teacher_notes.teacher_id → auth_management.users.id (ON DELETE CASCADE)
+   * - teacher_notes.student_id → auth_management.users.id (ON DELETE CASCADE)
+   *
+   * Para obtener los datos del profesor/estudiante:
+   * - Inyectar UserRepository desde 'auth' connection en el service
+   * - Hacer query manual: userRepository.findOne({ where: { id: teacherNote.teacher_id } })
    */
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'student_id', referencedColumnName: 'id' })
-  student?: User;
 }

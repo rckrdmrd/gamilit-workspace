@@ -5,13 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-  ManyToOne,
-  JoinColumn,
   Check,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants';
-import { User } from '../../auth/entities/user.entity';
-import { Module as EducationalModule } from '../../educational/entities/module.entity';
 
 /**
  * SkillAssessment Entity (progress_tracking.skill_assessments)
@@ -120,24 +116,15 @@ export class SkillAssessment {
   // =====================================================
 
   /**
-   * Usuario evaluado
-   * Relación ManyToOne: Muchas evaluaciones pertenecen a un usuario
-   * FK: skill_assessments.user_id → auth.users.id
-   *
-   * NOTA: ON DELETE CASCADE - Si se elimina el usuario, se eliminan sus evaluaciones
+   * Usuario evaluado (cross-database, no @ManyToOne)
+   * FK en DDL: skill_assessments.user_id → auth.users.id (ON DELETE CASCADE)
+   * Para obtener el usuario: inyectar UserRepository desde 'auth' connection
    */
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user?: User;
 
   /**
-   * Módulo que generó la evaluación (opcional)
-   * Relación ManyToOne: Muchas evaluaciones pueden ser generadas por un módulo
-   * FK: skill_assessments.assessed_by_module_id → educational_content.modules.id
-   *
+   * Módulo que generó la evaluación (opcional, cross-database, no @ManyToOne)
+   * FK en DDL: skill_assessments.assessed_by_module_id → educational_content.modules.id (ON DELETE SET NULL)
    * NOTA: Nullable - No todas las evaluaciones están ligadas a un módulo específico
+   * Para obtener el módulo: inyectar ModuleRepository desde 'educational' connection
    */
-  @ManyToOne(() => EducationalModule, { nullable: true, onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'assessed_by_module_id', referencedColumnName: 'id' })
-  assessed_by_module?: EducationalModule;
 }

@@ -2,9 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { FileText, CheckCircle, List, Lightbulb, Save } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
-import { calculateScore, saveProgress, FeedbackData, DifficultyLevel } from '@shared/components/mechanics/mechanicsTypes';
+import { calculateScore, saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 
 interface EssaySection {
   title: string;
@@ -35,12 +34,9 @@ interface ExerciseState {
 }
 
 export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
-  moduleId,
-  lessonId,
   exerciseId,
   userId,
   onComplete,
-  onExit,
   onProgressUpdate,
   initialData,
   difficulty = 'medium'
@@ -75,14 +71,6 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
     'Las mujeres en la ciencia: barreras y logros',
     'La importancia de la investigación científica básica',
     'Ética en la experimentación científica',
-  ];
-
-  const essayStructure = [
-    { section: 'Introducción', min: 100, color: 'bg-blue-100 border-blue-300' },
-    { section: 'Argumento 1', min: 80, color: 'bg-green-100 border-green-300' },
-    { section: 'Argumento 2', min: 80, color: 'bg-yellow-100 border-yellow-300' },
-    { section: 'Argumento 3', min: 80, color: 'bg-purple-100 border-purple-300' },
-    { section: 'Conclusión', min: 100, color: 'bg-orange-100 border-orange-300' },
   ];
 
   const countWords = (text: string) => {
@@ -157,8 +145,6 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
     }
 
     const endTime = new Date();
-    const timeSpentSeconds = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
-
     const score = await calculateScore({
       exerciseId,
       userId,

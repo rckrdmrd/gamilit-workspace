@@ -5,13 +5,9 @@ import {
   Lock,
   CheckCircle,
   Play,
-  Star,
   Clock,
   Target,
-  ArrowRight,
-  Award,
   Zap,
-  Coins,
   Gift,
   Trophy
 } from 'lucide-react';
@@ -379,9 +375,6 @@ export const ModulesSection: React.FC<ModulesSectionProps> = ({
 
   // Calculate summary stats
   const totalModules = modules.length;
-  const completedModules = modules.filter(m => m.status === 'completed').length;
-  const inProgressModules = modules.filter(m => m.status === 'in_progress').length;
-  const availableModules = modules.filter(m => m.status === 'available').length;
 
   return (
     <div className="space-y-6">

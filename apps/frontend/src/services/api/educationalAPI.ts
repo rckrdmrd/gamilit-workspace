@@ -308,17 +308,31 @@ export const checkModuleAccess = async (moduleId: string): Promise<boolean> => {
  */
 export const getUserModules = async (userId: string): Promise<Module[]> => {
   try {
+    console.log('📡 [educationalAPI] getUserModules called', {
+      userId,
+      useMockData: FEATURE_FLAGS.USE_MOCK_DATA,
+      endpoint: API_ENDPOINTS.educational.userModules(userId),
+    });
+
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
+      console.log('⚠️ [educationalAPI] Using MOCK DATA');
       await new Promise((resolve) => setTimeout(resolve, 500));
       return mockModules;
     }
 
+    console.log('📡 [educationalAPI] Making HTTP GET request to backend...');
     const { data } = await apiClient.get<ApiResponse<Module[]>>(
       API_ENDPOINTS.educational.userModules(userId)
     );
 
+    console.log('✅ [educationalAPI] Backend response received:', {
+      modulesCount: data.data?.length,
+      responseStatus: 'success',
+    });
+
     return data.data;
   } catch (error) {
+    console.error('❌ [educationalAPI] Error fetching user modules:', error);
     throw handleAPIError(error);
   }
 };

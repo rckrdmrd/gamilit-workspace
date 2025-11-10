@@ -4,12 +4,9 @@ import {
   Column,
   CreateDateColumn,
   Index,
-  ManyToOne,
-  JoinColumn,
   Unique,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants';
-import { User } from '../../auth/entities/user.entity';
 
 /**
  * ProgressSnapshot Entity (progress_tracking.progress_snapshots)
@@ -109,13 +106,8 @@ export class ProgressSnapshot {
   // =====================================================
 
   /**
-   * Usuario al que pertenece el snapshot
-   * Relación ManyToOne: Muchos snapshots pertenecen a un usuario
-   * FK: progress_snapshots.user_id → auth.users.id
-   *
-   * NOTA: ON DELETE CASCADE - Si se elimina el usuario, se eliminan sus snapshots
+   * Usuario al que pertenece el snapshot (cross-database, no @ManyToOne)
+   * FK en DDL: progress_snapshots.user_id → auth.users.id (ON DELETE CASCADE)
+   * Para obtener el usuario: inyectar UserRepository desde 'auth' connection
    */
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user?: User;
 }

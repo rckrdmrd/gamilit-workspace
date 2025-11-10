@@ -36,11 +36,11 @@ export enum Status {
 }
 
 @Entity({ schema: 'audit_logging', name: 'audit_logs' })
-@Index(['tenant_id'])
-@Index(['event_type'])
-@Index(['resource_type'])
-@Index(['actor_id'])
-@Index(['created_at'])
+@Index(['tenantId'])
+@Index(['eventType'])
+@Index(['resourceType'])
+@Index(['actorId'])
+@Index(['createdAt'])
 export class AuditLog {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

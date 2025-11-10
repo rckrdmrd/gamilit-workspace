@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, Reorder } from 'framer-motion';
 import { Puzzle, Check, GripVertical } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
-import { fetchPuzzleExercise, validateAssembly } from './puzzleContextoAPI';
+import { validateAssembly } from './puzzleContextoAPI';
 import type { PuzzleExercise, ContextPiece } from './puzzleContextoTypes';
 import { calculateScore, saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { mockPuzzle } from './puzzleContextoMockData';
@@ -36,32 +36,21 @@ interface ExerciseState {
 }
 
 export const PuzzleContextoExercise: React.FC<ExerciseProps> = ({
-  moduleId,
-  lessonId,
   exerciseId,
-  userId,
   onComplete,
   onExit,
   onProgressUpdate,
   initialData,
-  difficulty = 'medium',
 }) => {
   const [puzzle, setPuzzle] = useState<PuzzleExercise | null>(null);
   const [pieces, setPieces] = useState<ContextPiece[]>(initialData?.pieces || []);
-  const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [startTime] = useState(new Date());
   const [timeSpent, setTimeSpent] = useState(initialData?.timeSpent || 0);
   const [score, setScore] = useState(initialData?.score || 0);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
-  const [hintsUsed, setHintsUsed] = useState(initialData?.hintsUsed || 0);
-
-  // Track actions reference for parent component
-  const actionsRef = useRef({
-    handleReset: () => handleReset(),
-    handleCheck: () => handleValidate(),
-  });
+  const [hintsUsed] = useState(initialData?.hintsUsed || 0);
 
   useEffect(() => {
     if (!puzzle) {
@@ -109,16 +98,6 @@ export const PuzzleContextoExercise: React.FC<ExerciseProps> = ({
       });
     }
   }, [pieces.length, puzzle?.correctOrder, score, hintsUsed, timeSpent, onProgressUpdate]);
-
-  const loadPuzzle = async () => {
-    try {
-      const data = await fetchPuzzleExercise('puzzle-1');
-      setPuzzle(data);
-      setPieces(data.pieces);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleValidate = async () => {
     const assembled = pieces.map((p) => ({ id: p.id, content: p.content }));

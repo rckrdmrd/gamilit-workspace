@@ -1,18 +1,16 @@
-import React, { useState } from 'react';
-import { Search, User, TrendingUp, AlertCircle, Lightbulb } from 'lucide-react';
+import { useState } from 'react';
+import { User, TrendingUp, AlertCircle, Lightbulb } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { InputDetective } from '@shared/components/base/InputDetective';
 import { useStudentInsights } from '../../hooks/useAnalytics';
-import type { StudentPerformanceInsight } from '../../types';
 
 interface PerformanceInsightsPanelProps {
   classroomId: string;
   students: Array<{ id: string; full_name: string }>;
 }
 
-export function PerformanceInsightsPanel({ classroomId, students }: PerformanceInsightsPanelProps) {
+export function PerformanceInsightsPanel({ students }: PerformanceInsightsPanelProps) {
   const [selectedStudentId, setSelectedStudentId] = useState<string>('');
-  const { insights, loading, error } = useStudentInsights(selectedStudentId);
+  const { insights } = useStudentInsights(selectedStudentId);
 
   const getRiskColor = (level: string) => {
     switch (level) {
