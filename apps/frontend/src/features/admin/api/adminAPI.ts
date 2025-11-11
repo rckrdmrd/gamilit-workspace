@@ -55,12 +55,6 @@ const mapBackendUserToFrontend = (backendUser: any): User => {
     email: backendUser.email,
     fullName: fullName,
     role: backendUser.role || 'student',
-    emailVerified: backendUser.emailVerified || false,
-    isActive: backendUser.isActive ?? true,
-    avatar: backendUser.avatar,
-    createdAt: backendUser.createdAt,
-    updatedAt: backendUser.updatedAt,
-    tenantId: backendUser.tenantId,
   };
 };
 
@@ -137,7 +131,7 @@ const mockGetUsersList = async (filters?: UserListFilters): Promise<UserListResp
   if (filters?.search) {
     const searchLower = filters.search.toLowerCase();
     filtered = filtered.filter(u =>
-      u.fullName.toLowerCase().includes(searchLower) ||
+      (u.fullName ?? '').toLowerCase().includes(searchLower) ||
       u.email.toLowerCase().includes(searchLower)
     );
   }
@@ -175,10 +169,6 @@ const mockActivateUser = async (userId: string, request?: ActivateUserRequest): 
     email: 'user@glit.com',
     fullName: 'Test User',
     role: 'student',
-    emailVerified: true,
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
   };
 };
 
@@ -197,10 +187,6 @@ const mockDeactivateUser = async (userId: string, request: DeactivateUserRequest
     email: 'user@glit.com',
     fullName: 'Test User',
     role: 'student',
-    emailVerified: true,
-    isActive: false,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
   };
 };
 

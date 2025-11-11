@@ -68,6 +68,8 @@ export default function GuildsPage() {
   const [activeTab, setActiveTab] = useState<TabType>(isInGuild ? 'my-guild' : 'discover');
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [selectedGuild, setSelectedGuild] = useState<Guild | null>(null);
+  const [showGuildDetails, setShowGuildDetails] = useState(false);
 
   // Create Guild Form
   const [newGuild, setNewGuild] = useState({
@@ -460,7 +462,7 @@ export default function GuildsPage() {
                         <div>
                           <h3 className="font-bold text-detective-text">{member.username}</h3>
                           <div className="flex items-center gap-2">
-                            <RankBadge rank={member.rank} showIcon={false} size="sm" />
+                            <RankBadge rank={member.rank as any} showIcon={false} />
                             {member.role === 'leader' && (
                               <Crown className="w-4 h-4 text-detective-gold" />
                             )}

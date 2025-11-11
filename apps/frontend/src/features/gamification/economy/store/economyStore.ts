@@ -22,6 +22,7 @@ import type {
   EconomyStats,
 } from '../types/economyTypes';
 import { getBalance } from '../api/economyAPI';
+import { useAuth } from '@/shared/hooks/useAuth';
 
 /**
  * Economy Store State Interface
@@ -31,6 +32,7 @@ interface EconomyState {
   balance: MLCoinsBalance;
   transactions: Transaction[];
   inventory: ShopItem[];
+  shopItems?: ShopItem[];  // Legacy/alias for inventory
   cart: CartItem[];
   isLoading: boolean;
   error: string | null;
@@ -484,7 +486,13 @@ export const useEconomyStore = create<EconomyState>()(
       fetchBalance: async () => {
         set({ isLoading: true, error: null });
         try {
-          const balance = await getBalance();
+          // Get userId from auth store
+          const userId = useAuth.getState().user?.id;
+          if (!userId) {
+            throw new Error('User not authenticated. Please login first.');
+          }
+
+          const balance = await getBalance(userId);
           set({
             balance,
             isLoading: false,

@@ -6,14 +6,14 @@ Sistema de gamificación: logros, rangos, monedas ML, comodines, notificaciones
 
 - **tables/**: 15 archivos
 - **enums/**: 4 archivos
-- **functions/**: 21 archivos
-- **triggers/**: 9 archivos
-- **indexes/**: 22 archivos
+- **functions/**: 25 archivos
+- **triggers/**: 10 archivos
+- **indexes/**: 23 archivos  # ✨ DB-099: +1 (idx_ml_transactions_tenant_id)
 - **views/**: 4 archivos
 - **rls-policies/**: 8 archivos
 - **materialized-views/**: 4 archivos
 
-**Total:** 87 objetos
+**Total:** 93 objetos  # ✨ DB-099: +1 índice (tenant_id support)
 
 ## Contenido Detallado
 
@@ -46,7 +46,7 @@ notification_type.sql
 transaction_type.sql
 ```
 
-### functions/ (21 archivos)
+### functions/ (25 archivos)
 
 ```
 06-update_missions_updated_at.sql
@@ -57,21 +57,25 @@ award_ml_coins.sql
 calculate_level_from_xp.sql
 calculate_user_rank.sql
 check_and_award_achievements.sql
+check_rank_promotion.sql                    # ✨ NUEVO 2025-11-11 (GAP-2)
 claim_achievement_reward.sql
 consume_comodin.sql
+get_rank_benefits.sql                       # ✨ NUEVO 2025-11-11 (GAP-2)
+get_rank_multiplier.sql                     # ✨ NUEVO 2025-11-11 (GAP-2)
 get_user_comodines.sql
 get_user_inventory_summary.sql
 get_user_rank_progress.sql
 get_user_rank_requirements.sql
 process_exercise_completion.sql
+promote_to_next_rank.sql                    # ✨ NUEVO 2025-11-11 (GAP-2)
 send_notification.sql
 update_leaderboard_coins.sql
 update_leaderboard_global.sql
 update_leaderboard_streaks.sql
-update_user_rank.sql
+update_user_rank.sql                        # 🔄 REFACTORIZADO 2025-11-11 (GAP-2)
 ```
 
-### triggers/ (9 archivos)
+### triggers/ (10 archivos)
 
 ```
 01-trg_achievement_unlocked.sql
@@ -83,6 +87,7 @@ update_user_rank.sql
 19-trg_user_ranks_updated_at.sql
 20-trg_user_stats_updated_at.sql
 21-trg_recalculate_level_on_xp_change.sql
+trg_check_rank_promotion_on_xp_gain.sql     # ✨ NUEVO 2025-11-11 (GAP-2)
 ```
 
 ### indexes/ (22 archivos)
@@ -145,5 +150,16 @@ idx_user_stats_user_id.sql
 
 ---
 
-**Última actualización:** 2025-11-09
+**Última actualización:** 2025-11-11 (GAP-2: +4 funciones rangos maya, +1 trigger)
 **Reorganización:** 2025-11-09
+
+## Changelog
+
+### 2025-11-11 - GAP-2 Correcciones Rangos Maya
+- ✨ **4 funciones nuevas**: check_rank_promotion, get_rank_benefits, get_rank_multiplier, promote_to_next_rank
+- 🔄 **1 función refactorizada**: update_user_rank (migrado a maya_rank ENUM + lectura dinámica)
+- ✨ **1 trigger nuevo**: trg_check_rank_promotion_on_xp_gain (automático en UPDATE total_xp)
+- **Total objetos**: 87 → 92
+
+### 2025-11-09 - Reorganización DDL
+- Reorganización completa de estructura de schemas

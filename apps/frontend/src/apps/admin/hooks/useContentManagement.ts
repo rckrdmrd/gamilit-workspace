@@ -418,6 +418,8 @@ export interface ApprovalItem {
   submittedBy: string;
   submittedAt: string;
   status: 'pending' | 'approved' | 'rejected';
+  // Content data (varies by type)
+  content?: Record<string, any>;
 }
 
 export interface UseApprovalsResult {

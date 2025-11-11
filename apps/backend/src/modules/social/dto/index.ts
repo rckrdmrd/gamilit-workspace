@@ -45,3 +45,8 @@ export { UpdatePeerChallengeDto } from './update-peer-challenge.dto';
 export { AddChallengeParticipantDto } from './add-challenge-participant.dto';
 export { UpdateParticipantScoreDto } from './update-participant-score.dto';
 export { DistributeRewardsDto } from './distribute-rewards.dto';
+
+// DiscussionThread DTOs ✨ NUEVO - P0 (DB-100 Ciclo B.3 - 2025-11-11)
+export { CreateDiscussionThreadDto } from './create-discussion-thread.dto';
+export { UpdateDiscussionThreadDto } from './update-discussion-thread.dto';
+export { DiscussionThreadResponseDto } from './discussion-thread-response.dto';

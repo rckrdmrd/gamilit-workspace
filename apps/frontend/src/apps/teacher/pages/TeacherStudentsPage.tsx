@@ -13,13 +13,14 @@ export default function TeacherStudentsPage() {
   const { user, logout } = useAuth();
 
   // Mock gamification data - reemplazar con datos reales del API
+  // Format matches UserGamificationData from @shared/types
   const gamificationData = {
+    userId: user?.id || 'mock-teacher-id',
     level: 15,
-    xp: 2450,
-    xp_to_next: 3000,
-    ml: 1250,
+    totalXP: 2450,
+    mlCoins: 1250,
     rank: 'Mentor Experto',
-    badges: ['first_class', 'streak_master', '100_students'],
+    achievements: ['first_class', 'streak_master', '100_students'],
   };
 
   const handleLogout = () => {

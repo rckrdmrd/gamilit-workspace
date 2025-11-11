@@ -42,6 +42,7 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
+  const [availableCoins, setAvailableCoins] = useState(50); // Detective coins for hints/tools
 
   // Load investigation data on mount if needed
   useEffect(() => {
@@ -142,18 +143,21 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
       const result = await submitSolution(progress);
 
       // Calculate standardized score
+      const correctConnectionsCount = progress.connections.filter(c => c.isCorrect).length;
+      const totalConnectionsRequired = investigation?.correctConnections.length || 0;
+
       const attempt = {
         exerciseId: investigation?.id || '',
         startTime,
         endTime: new Date(),
         answers: { connections: progress.connections },
-        correctAnswers: progress.connections.filter(c => c.isCorrect).length,
-        totalQuestions: investigation?.correctConnections.length || 0,
+        correctAnswers: correctConnectionsCount,
+        totalQuestions: totalConnectionsRequired,
         hintsUsed: progress.hintsUsed,
         difficulty: investigation?.difficulty || 'medio'
       };
 
-      const score = await calculateScore(attempt);
+      const score = calculateScore(correctConnectionsCount, totalConnectionsRequired);
 
       setFeedback({
         type: result.completed ? 'success' : 'partial',

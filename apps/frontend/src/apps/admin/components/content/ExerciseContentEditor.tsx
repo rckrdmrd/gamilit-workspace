@@ -99,18 +99,18 @@ export const ExerciseContentEditor: React.FC = () => {
             <div className="flex items-center gap-2">
               <DetectiveButton
                 variant="blue"
-                size="sm"
+
                 icon={previewMode ? <Edit className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 onClick={() => setPreviewMode(!previewMode)}
               >
                 {previewMode ? 'Edit' : 'Preview'}
               </DetectiveButton>
-              <DetectiveButton variant="green" size="sm" icon={<Save className="w-4 h-4" />} onClick={handleSave}>
+              <DetectiveButton variant="green" icon={<Save className="w-4 h-4" />} onClick={handleSave}>
                 Save
               </DetectiveButton>
               <DetectiveButton
                 variant="primary"
-                size="sm"
+
                 icon={<X className="w-4 h-4" />}
                 onClick={() => setEditingExercise(null)}
               >
@@ -316,13 +316,13 @@ export const ExerciseContentEditor: React.FC = () => {
                   <div className="flex gap-2">
                     <DetectiveButton
                       variant="primary"
-                      size="sm"
+
                       onClick={() => handleDelete(exercise.id)}
                       className="bg-red-500 hover:bg-red-600"
                     >
                       Confirm Delete
                     </DetectiveButton>
-                    <DetectiveButton variant="primary" size="sm" onClick={() => setShowDeleteConfirm(null)}>
+                    <DetectiveButton variant="primary" onClick={() => setShowDeleteConfirm(null)}>
                       Cancel
                     </DetectiveButton>
                   </div>

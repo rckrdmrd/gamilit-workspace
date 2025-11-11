@@ -55,7 +55,7 @@ export const MatchingDragDrop: React.FC<MatchingDragDropProps> = ({
       {/* Columna A - Items para arrastrar */}
       <div className="space-y-4">
         <h4 className="font-semibold text-gray-800 flex items-center gap-2">
-          <CategoryBadge type="groupA" size="sm" />
+          <CategoryBadge type="groupA" />
           {groupALabel}
         </h4>
 
@@ -73,13 +73,13 @@ export const MatchingDragDrop: React.FC<MatchingDragDropProps> = ({
                 <DraggableItem
                   id={pair.id}
                   variant="blue"
-                  size="md"
+
                   isConnected={isConnected}
                   onDragStart={() => setDraggingItemId(pair.id)}
                   onDragEnd={() => setDraggingItemId(null)}
                 >
                   <div className="flex items-start gap-2">
-                    <CategoryBadge type="groupA" size="md" />
+                    <CategoryBadge type="groupA" />
                     <p className="text-sm text-gray-800 flex-1">{pair.itemA}</p>
                   </div>
                 </DraggableItem>
@@ -92,7 +92,7 @@ export const MatchingDragDrop: React.FC<MatchingDragDropProps> = ({
       {/* Columna B - Zonas de drop */}
       <div className="space-y-4">
         <h4 className="font-semibold text-gray-800 flex items-center gap-2">
-          <CategoryBadge type="groupB" size="sm" />
+          <CategoryBadge type="groupB" />
           {groupBLabel}
         </h4>
 
@@ -125,7 +125,7 @@ export const MatchingDragDrop: React.FC<MatchingDragDropProps> = ({
                   )}
                 >
                   <div className="flex items-start gap-2 mb-3">
-                    <CategoryBadge type="groupB" size="md" />
+                    <CategoryBadge type="groupB" />
                     <p className="text-sm text-gray-800 flex-1 font-medium">
                       {pair.itemB}
                     </p>
@@ -142,7 +142,7 @@ export const MatchingDragDrop: React.FC<MatchingDragDropProps> = ({
                     {connectedPair && (
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-start gap-2 flex-1">
-                          <CategoryBadge type="groupA" size="sm" />
+                          <CategoryBadge type="groupA" />
                           <p className="text-sm text-gray-700">
                             {connectedPair.itemA}
                           </p>

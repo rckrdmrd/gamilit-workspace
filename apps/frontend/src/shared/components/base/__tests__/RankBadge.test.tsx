@@ -199,7 +199,7 @@ describe('RankBadge', () => {
 
   describe('Size Variants', () => {
     it('should apply sm size styles', () => {
-      const { container } = render(<RankBadge rank="sargento" size="sm" />);
+      const { container } = render(<RankBadge rank="sargento" />);
 
       const badge = container.firstChild as HTMLElement;
       expect(badge.className).toContain('text-xs');
@@ -217,7 +217,7 @@ describe('RankBadge', () => {
     });
 
     it('should apply lg size styles', () => {
-      const { container } = render(<RankBadge rank="capitan" size="lg" />);
+      const { container } = render(<RankBadge rank="capitan" />);
 
       const badge = container.firstChild as HTMLElement;
       expect(badge.className).toContain('text-base');

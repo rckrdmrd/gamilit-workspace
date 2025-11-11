@@ -9,9 +9,9 @@
 | **Título** | Mecánicas de Ejercicios |
 | **Prioridad** | Crítica |
 | **Estado** | ✅ Implementado |
-| **Versión** | 1.0 |
+| **Versión** | 2.0 |
 | **Fecha Creación** | 2025-11-07 |
-| **Última Actualización** | 2025-11-07 |
+| **Última Actualización** | 2025-11-11 |
 | **Autor** | Database Team, Pedagogical Team |
 | **Stakeholders** | Product Owner, Content Team, UX Team, Backend Team, Frontend Team |
 
@@ -22,26 +22,37 @@
 ### Implementación DDL
 
 🗄️ **ENUM Canónico:**
-- **Ubicación:** `apps/database/ddl/00-prerequisites.sql:59-65`
-- **Tipo:** `educational_content.exercise_mechanic`
-- **Valores:** 31 mecánicas diferentes
+- **Ubicación:** `apps/database/ddl/00-prerequisites.sql:~85-120`
+- **Tipo:** `educational_content.exercise_type`
+- **Valores:** 35 mecánicas específicas GAMILIT
+- **Agrupación:** 5 módulos educativos (1-5) + 10 auxiliares
+
+🗄️ **Clasificación Pedagógica:**
+- **Tabla:** `educational_content.exercise_mechanic_mapping`
+- **Categorías:** 7 categorías universales (Vocabulario, Gramática, Lectura, Escritura, Audio, Pronunciación, Cultura)
+- **Subcategorías:** 31 mecánicas pedagógicas genéricas
+- **Propósito:** Mapear exercise_type a clasificación pedagógica estándar
 
 🗄️ **Tablas Relacionadas:**
 1. **`educational_content.exercises`**
-   - **Ubicación:** `apps/database/ddl/schemas/educational_content/tables/exercises.sql`
+   - **Ubicación:** `apps/database/ddl/schemas/educational_content/tables/02-exercises.sql`
    - **Columnas clave:**
-     - `mechanic` (ENUM exercise_mechanic)
+     - `exercise_type` (ENUM exercise_type) - Implementación GAMILIT
      - `difficulty` (ENUM difficulty_level)
-     - `content` (JSONB, estructura variable según mecánica)
+     - `content` (JSONB, estructura variable según tipo)
      - `answer_key` (JSONB)
      - `hints` (JSONB array)
 
-2. **`educational_content.exercise_templates`**
-   - **Ubicación:** `apps/database/ddl/schemas/educational_content/tables/exercise_templates.sql`
-   - **Propósito:** Plantillas reutilizables por mecánica
+2. **`educational_content.exercise_mechanic_mapping`** (NUEVA en v2.0)
+   - **Ubicación:** `apps/database/ddl/schemas/educational_content/tables/21-exercise_mechanic_mapping.sql`
    - **Columnas clave:**
-     - `mechanic` (ENUM exercise_mechanic)
-     - `template_structure` (JSONB)
+     - `mechanic_category` (VARCHAR) - Categoría pedagógica
+     - `mechanic_subcategory` (VARCHAR) - Subcategoría pedagógica
+     - `exercise_type` (ENUM exercise_type) - Mapeo a implementación
+     - `bloom_level` (VARCHAR) - Nivel de taxonomía de Bloom
+     - `cefr_level` (difficulty_level[]) - Niveles CEFR aplicables
+     - `pedagogical_purpose` (TEXT) - Propósito pedagógico
+     - `learning_objectives` (TEXT[]) - Objetivos de aprendizaje
 
 ### Especificación Técnica
 
@@ -62,37 +73,43 @@
 
 ### Propósito
 
-El **Sistema de Mecánicas de Ejercicios** define 31 tipos diferentes de ejercicios interactivos que cubren diversos aspectos del aprendizaje del idioma maya yucateco. Cada mecánica:
+El **Sistema de Mecánicas de Ejercicios** define 35 implementaciones específicas GAMILIT de ejercicios interactivos que cubren diversos aspectos del aprendizaje del idioma maya yucateco. Cada implementación:
 
-- Tiene una estructura de contenido específica
-- Requiere un tipo de respuesta diferente
+- Tiene una estructura de contenido específica (JSONB)
+- Requiere un tipo de interacción diferente
 - Valida respuestas con lógica única
 - Proporciona feedback adaptado
-- Se adapta a diferentes niveles de dificultad
+- Se adapta a diferentes niveles de dificultad (CEFR)
+- Se mapea a categorías pedagógicas universales
 
 ### Contexto Pedagógico
 
-Las 31 mecánicas se agrupan en **7 categorías** según el objetivo pedagógico:
+Las 35 **implementaciones GAMILIT** (exercise_type) se clasifican en **7 categorías pedagógicas**:
 
-| Categoría | Mecánicas | Objetivo |
-|-----------|-----------|----------|
-| **Vocabulario** | 6 mecánicas | Reconocimiento y memorización de palabras |
-| **Gramática** | 8 mecánicas | Comprensión y aplicación de reglas |
-| **Lectura** | 4 mecánicas | Comprensión de textos |
-| **Escritura** | 4 mecánicas | Producción escrita |
-| **Audio** | 3 mecánicas | Comprensión auditiva |
-| **Pronunciación** | 2 mecánicas | Producción oral |
-| **Cultura** | 4 mecánicas | Conocimiento cultural maya |
+| Categoría | Implementaciones GAMILIT | Objetivo | GAPs* |
+|-----------|--------------------------|----------|-------|
+| **Vocabulario** | crucigrama, sopa_letras, emparejamiento, flashcard, completar_espacios | Reconocimiento y memorización | 1 |
+| **Gramática** | - | Comprensión y aplicación de reglas | 8 |
+| **Lectura** | detective_textual, construccion_hipotesis, prediccion_narrativa, analisis_fuentes, puzzle_contexto | Comprensión de textos | 0 |
+| **Escritura** | ensayo_argumentativo, resena_critica, diario_multimedia, comic_digital, email_formal, chat_literario | Producción escrita | 0 |
+| **Audio** | comprension_auditiva, podcast_argumentativo | Comprensión auditiva | 1 |
+| **Pronunciación** | - | Producción oral | 2 |
+| **Cultura** | tribunal_opiniones, collage_prensa, call_to_action | Conocimiento cultural maya | 1 |
+
+**\* GAPs:** Mecánicas pedagógicas documentadas sin implementación GAMILIT específica (13 GAPs totales identificados en DB-112)
+
+**Nota:** El mapeo completo entre categorías pedagógicas e implementaciones GAMILIT se mantiene en la tabla `exercise_mechanic_mapping`. Ver ET-EDU-001 v2.0 para detalles del sistema dual.
 
 ### Alcance
 
 **Incluye:**
-- ✅ 31 mecánicas de ejercicios diferentes
+- ✅ 35 implementaciones específicas GAMILIT (exercise_type)
+- ✅ Mapeo a 7 categorías pedagógicas + 31 subcategorías
 - ✅ Estructura de contenido estandarizada (JSONB)
-- ✅ Validación de respuestas por mecánica
-- ✅ Sistema de hints (pistas) por mecánica
+- ✅ Validación de respuestas por implementación
+- ✅ Sistema de hints (pistas) configurable
 - ✅ Scoring y feedback automático
-- ✅ Adaptabilidad a diferentes dificultades
+- ✅ Adaptabilidad a 8 niveles CEFR
 
 **Excluye:**
 - ❌ Generación automática de contenido (se crea manualmente)
@@ -951,9 +968,14 @@ test('Fill in blank accepts valid variations', async () => {
 | Versión | Fecha | Autor | Cambios |
 |---------|-------|-------|---------|
 | 1.0 | 2025-11-07 | Database Team | Creación del documento |
+| 2.0 | 2025-11-11 | Database Team | **Reconciliación:** Actualizado ENUM canónico de exercise_mechanic a exercise_type. Documentado sistema de mapeo a categorías pedagógicas. 13 GAPs identificados para futuras implementaciones. Sistema dual con 35 implementaciones GAMILIT mapeadas a 7 categorías. |
 
 ---
 
-**Documento:** `docs/01-requerimientos/03-contenido-educativo/RF-EDU-001-mecanicas-ejercicios.md`
-**Propósito:** Requerimientos funcionales de las 31 mecánicas de ejercicios
-**Audiencia:** Product Owner, Content Team, Developers
+**Nota v2.0:** Este documento fue actualizado para reflejar la implementación real del sistema (DB-110, DB-111, DB-112). ENUM canónico actualizado a `exercise_type` (35 valores GAMILIT) con mapeo a categorías pedagógicas universales mediante tabla `exercise_mechanic_mapping`. Ver ET-EDU-001 v2.0 y ADR-008 para detalles técnicos.
+
+---
+
+**Documento:** `docs/01-fase-alcance-inicial/EAI-002-actividades/requerimientos/RF-EDU-001-mecanicas-ejercicios.md`
+**Propósito:** Requerimientos funcionales de las 35 implementaciones GAMILIT + sistema de mapeo pedagógico
+**Audiencia:** Product Owner, Content Team, Pedagogical Team, Developers

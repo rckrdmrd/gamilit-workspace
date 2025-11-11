@@ -1,6 +1,0 @@
--- Nombre: progress_status
--- Descripción: Estados de progreso de módulos y ejercicios
--- Schema: public
--- Fuente: SA-DB-003
-
-CREATE TYPE public.progress_status AS ENUM ('not_started', 'in_progress', 'completed', 'reviewed', 'mastered');

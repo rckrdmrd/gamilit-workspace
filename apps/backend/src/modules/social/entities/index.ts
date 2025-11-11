@@ -17,3 +17,4 @@ export { TeamChallenge } from './team-challenge.entity';
 export { AssignmentClassroom } from './assignment-classroom.entity'; // ✨ NUEVO - P2 (Assignments → Classrooms)
 export { PeerChallenge } from './peer-challenge.entity'; // ✨ NUEVO - P2 (Epic EXT-009)
 export { ChallengeParticipant } from './challenge-participant.entity'; // ✨ NUEVO - P2 (Epic EXT-009)
+export { DiscussionThread } from './discussion-thread.entity'; // ✨ NUEVO - P0 (DB-100 Ciclo B.3 - 2025-11-11)

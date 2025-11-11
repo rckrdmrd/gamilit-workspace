@@ -18,7 +18,7 @@ CREATE TABLE content_management.marie_curie_content (
     category text,
     content jsonb DEFAULT '{"quotes": [], "timeline": [], "key_points": [], "introduction": "", "main_content": ""}'::jsonb,
     target_grade_levels text[] DEFAULT ARRAY['6'::text, '7'::text, '8'::text],
-    difficulty_level educational_content.difficulty_level DEFAULT 'very_easy'::educational_content.difficulty_level,
+    difficulty_level educational_content.difficulty_level DEFAULT 'beginner'::educational_content.difficulty_level,
     reading_level text,
     learning_objectives text[],
     prerequisite_knowledge text[],

@@ -19,7 +19,12 @@ const AdvancedAdmin: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={{ email: 'admin@glit.com' }} />
+      <GamifiedHeader user={{
+        id: 'mock-admin-advancedadmin-id',
+        email: 'admin@gamilit.com',
+        role: 'super_admin',
+        displayName: 'Admin AdvancedAdmin'
+      }} />
 
       <main className="detective-container py-8">
         {/* Header */}

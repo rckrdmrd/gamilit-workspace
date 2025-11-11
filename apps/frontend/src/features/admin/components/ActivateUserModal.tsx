@@ -38,7 +38,7 @@ export const ActivateUserModal: React.FC<ActivateUserModalProps> = ({
       isOpen={isOpen}
       onClose={handleClose}
       title="Activar Usuario"
-      size="md"
+
       showCloseButton={!isLoading}
     >
       <form onSubmit={handleSubmit} className="space-y-6">

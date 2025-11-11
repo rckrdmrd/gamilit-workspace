@@ -27,6 +27,8 @@ export * from './ml-coins/transaction-response.dto';
 export * from './missions/create-mission.dto';
 export * from './missions/update-mission.dto';
 export * from './missions/mission-response.dto';
+export * from './missions/mission-stats.dto';
+export * from './missions/update-mission-progress.dto';
 
 // Comodines DTOs
 export * from './comodines/purchase-comodin.dto';

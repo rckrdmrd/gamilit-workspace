@@ -43,6 +43,9 @@ interface UseProgressionReturn {
   // Utilities
   canLevelUp: boolean;
   canRankUp: boolean;
+
+  // User progress data from store
+  userProgress?: any; // Type depends on store definition
 }
 
 /**

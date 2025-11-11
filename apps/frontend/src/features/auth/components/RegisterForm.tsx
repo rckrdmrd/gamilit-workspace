@@ -126,10 +126,12 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
       // Prepare registration data for API
       const registrationData = {
+        fullName: data.full_name || '',
         email: data.email,
         password: data.password,
-        ...(data.full_name && { full_name: data.full_name }),
-        ...(data.role && { role: data.role }),
+        confirmPassword: data.confirmPassword || data.password,
+        acceptTerms: data.terms_accepted || false,
+        ...(data.role && { role: data.role as any }),
       };
 
       // Attempt registration

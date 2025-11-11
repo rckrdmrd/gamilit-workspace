@@ -47,7 +47,7 @@ export const CoinWallet: React.FC = () => {
               <p className="text-white/80 text-detective-sm">{tierMessages[balanceTier]}</p>
             </div>
           </div>
-          <CoinBalanceWidget balance={balance.current} size="large" showLabel={false} />
+          <CoinBalanceWidget balance={balance.current} showLabel={false} />
         </div>
 
         <div className="grid grid-cols-3 gap-4 mt-6">

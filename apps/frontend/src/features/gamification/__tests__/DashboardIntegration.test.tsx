@@ -25,7 +25,7 @@ import { useAchievementsStore } from '../social/store/achievementsStore';
 import { useEconomyStore } from '../economy/store/economyStore';
 import { useRanksStore } from '../ranks/store/ranksStore';
 import type { Achievement } from '../social/types/achievementsTypes';
-import type { ShopItem } from '../economy/types/economyTypes';
+import type { ShopItem, ShopCategory } from '../economy/types/economyTypes';
 
 // Mock APIs
 vi.mock('../social/api/achievementsAPI');
@@ -113,7 +113,7 @@ describe('Dashboard Integration Tests', () => {
     category: 'progress',
     icon: '🎯',
     isUnlocked: false,
-    unlockedAt: null,
+    unlockedAt: undefined,
     progress: {
       current: 0,
       required: 1,
@@ -130,7 +130,7 @@ describe('Dashboard Integration Tests', () => {
     id: 'power-1',
     name: 'Power Up',
     description: 'Boost your performance',
-    category: 'power_ups',
+    category: 'premium' as ShopCategory,
     price: 100,
     icon: '⚡',
     rarity: 'common',
@@ -259,8 +259,8 @@ describe('Dashboard Integration Tests', () => {
       unlockAchievement('ach-1');
 
       // Simulate reward distribution
-      addCoins(mockAchievement.rewards.mlCoins, 'achievement');
-      addXP(mockAchievement.rewards.xp, 'achievement_unlock');
+      addCoins(mockAchievement.rewards!.mlCoins, 'achievement');
+      addXP(mockAchievement.rewards!.xp, 'achievement_unlock');
 
       // Verify all stores updated
       const achievementState = useAchievementsStore.getState();
@@ -318,10 +318,10 @@ describe('Dashboard Integration Tests', () => {
       unlockAchievement('ach-1');
 
       // Step 2: Grant coin reward
-      addCoins(mockAchievement.rewards.mlCoins, 'achievement');
+      addCoins(mockAchievement.rewards!.mlCoins, 'achievement');
 
       // Step 3: Grant XP reward
-      addXP(mockAchievement.rewards.xp, 'achievement_unlock');
+      addXP(mockAchievement.rewards!.xp, 'achievement_unlock');
 
       // Verify cascade
       const achState = useAchievementsStore.getState();
@@ -345,7 +345,7 @@ describe('Dashboard Integration Tests', () => {
       // Simultaneous updates
       unlockAchievement('ach-1');
       addCoins(100, 'bonus');
-      await addXP(50, 'activity');
+      await addXP(50, 'exercise_completion');
 
       // All updates should be reflected
       const achState = useAchievementsStore.getState();
@@ -440,7 +440,7 @@ describe('Dashboard Integration Tests', () => {
 
       unlockAchievement('ach-1');
       addCoins(100, 'test');
-      addXP(50, 'test');
+      addXP(50, 'daily_challenge');
 
       render(<ActivityFeed />);
 
@@ -599,7 +599,7 @@ describe('Dashboard Integration Tests', () => {
       const { addXP } = useRanksStore.getState();
 
       // Trigger level up
-      await addXP(100, 'test');
+      await addXP(100, 'daily_challenge');
 
       const ranksState = useRanksStore.getState();
 
@@ -650,7 +650,7 @@ describe('Dashboard Integration Tests', () => {
       expect(screen.getByTestId('current-level')).toHaveTextContent('1');
 
       const { addXP } = useRanksStore.getState();
-      await addXP(100, 'test');
+      await addXP(100, 'daily_challenge');
 
       rerender(<GamificationDashboard />);
 

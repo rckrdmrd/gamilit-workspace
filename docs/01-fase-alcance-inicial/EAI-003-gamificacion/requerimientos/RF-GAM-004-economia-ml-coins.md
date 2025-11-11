@@ -9,9 +9,9 @@
 | **Título** | Economía de ML Coins (Maya Learning Coins) |
 | **Prioridad** | Alta |
 | **Estado** | ✅ Implementado |
-| **Versión** | 2.0 |
+| **Versión** | 2.1 (DB-099: tenant_id support) |
 | **Fecha Creación** | 2025-11-08 |
-| **Última Actualización** | 2025-11-08 |
+| **Última Actualización** | 2025-11-11 (DB-099) |
 | **Autor** | Database Team |
 | **Stakeholders** | Product Owner, UX Team, Backend Team, Frontend Team, Game Designer |
 
@@ -37,6 +37,7 @@
    - **Columnas clave:**
      - `id` (UUID): ID único de transacción
      - `user_id` (UUID): Usuario que realiza la transacción
+     - `tenant_id` (UUID): ✨ **NUEVO DB-099** - ID del tenant (multi-tenancy support)
      - `amount` (INTEGER): Monto de la transacción (con multiplicador aplicado)
      - `balance_before` (INTEGER): Balance antes de la transacción
      - `balance_after` (INTEGER): Balance después de la transacción

@@ -63,7 +63,7 @@ END;
 $$ LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = public;
 
 -- Documentation comment
-COMMENT ON FUNCTION public.validate_date_range(TIMESTAMP WITHOUT TIME ZONE, TIMESTAMP WITHOUT TIME ZONE, INTEGER) IS
+COMMENT ON FUNCTION gamilit.validate_date_range(TIMESTAMP WITHOUT TIME ZONE, TIMESTAMP WITHOUT TIME ZONE, INTEGER) IS
 'Validates date ranges for logical correctness and ensures they don''t exceed maximum duration limits.
 Parameters:
   - p_start_date: Start date/timestamp of the range

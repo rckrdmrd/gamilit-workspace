@@ -75,7 +75,7 @@ describe('Leaderboards Integration Tests', () => {
         type: 'global',
         timePeriod: 'all-time',
         entries: [],
-        userRank: null,
+        userRank: undefined,
         totalParticipants: 0,
         lastUpdated: new Date(),
       },

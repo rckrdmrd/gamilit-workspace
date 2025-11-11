@@ -30,8 +30,17 @@ import { getColorSchemeByIndex, getColorSchemeById } from '@shared/utils/colorPa
 import { cn } from '@shared/utils/cn';
 import type { Exercise } from '@shared/types';
 
-// Difficulty labels (outside component)
+// Difficulty labels - CEFR standard (outside component)
 const DIFFICULTY_LABELS = {
+  beginner: 'Principiante (A1)',
+  elementary: 'Elemental (A2)',
+  pre_intermediate: 'Pre-Intermedio (B1)',
+  intermediate: 'Intermedio (B2)',
+  upper_intermediate: 'Intermedio Alto (C1)',
+  advanced: 'Avanzado (C2)',
+  proficient: 'Competente (C2+)',
+  native: 'Nativo',
+  // Legacy Spanish mapping (backward compatibility)
   facil: 'Fácil',
   medio: 'Medio',
   dificil: 'Difícil',
@@ -92,9 +101,13 @@ function ExerciseCardContent({ exercise }: ExerciseCardContentProps) {
           whileHover={{ scale: 1.05 }}
           className={cn(
             'px-2.5 py-1 rounded-lg text-xs font-bold border-2 shadow-sm',
-            exercise.difficulty === 'facil' ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 border-green-300' :
-            exercise.difficulty === 'medio' ? 'bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-700 border-yellow-300' :
-            exercise.difficulty === 'dificil' ? 'bg-gradient-to-r from-red-100 to-rose-100 text-red-700 border-red-300' :
+            // CEFR levels: beginner/elementary = easy, intermediate = medium, advanced+ = hard
+            (exercise.difficulty === 'beginner' || exercise.difficulty === 'elementary')
+              ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 border-green-300' :
+            (exercise.difficulty === 'pre_intermediate' || exercise.difficulty === 'intermediate')
+              ? 'bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-700 border-yellow-300' :
+            (exercise.difficulty === 'upper_intermediate' || exercise.difficulty === 'advanced')
+              ? 'bg-gradient-to-r from-red-100 to-rose-100 text-red-700 border-red-300' :
             'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border-purple-300'
           )}
         >
@@ -159,25 +172,37 @@ export default function ModuleDetailPage() {
     error,
   } = useModuleDetail(moduleId || '');
 
-  const difficultyColors = {
-    facil: 'text-green-600',
-    medio: 'text-yellow-600',
-    dificil: 'text-red-600',
-    experto: 'text-purple-600',
+  const difficultyColors: Record<string, string> = {
+    beginner: 'text-green-600',
+    elementary: 'text-green-600',
+    pre_intermediate: 'text-yellow-600',
+    intermediate: 'text-yellow-600',
+    upper_intermediate: 'text-orange-600',
+    advanced: 'text-red-600',
+    proficient: 'text-purple-600',
+    native: 'text-purple-600',
   };
 
-  const difficultyLabels = {
-    facil: 'Fácil',
-    medio: 'Medio',
-    dificil: 'Difícil',
-    experto: 'Experto',
+  const difficultyLabels: Record<string, string> = {
+    beginner: 'Principiante',
+    elementary: 'Elemental',
+    pre_intermediate: 'Pre-Intermedio',
+    intermediate: 'Intermedio',
+    upper_intermediate: 'Intermedio Alto',
+    advanced: 'Avanzado',
+    proficient: 'Competente',
+    native: 'Nativo',
   };
 
-  const difficultyBgColors = {
-    facil: 'bg-green-100',
-    medio: 'bg-yellow-100',
-    dificil: 'bg-red-100',
-    experto: 'bg-purple-100',
+  const difficultyBgColors: Record<string, string> = {
+    beginner: 'bg-green-100',
+    elementary: 'bg-green-100',
+    pre_intermediate: 'bg-yellow-100',
+    intermediate: 'bg-yellow-100',
+    upper_intermediate: 'bg-orange-100',
+    advanced: 'bg-red-100',
+    proficient: 'bg-purple-100',
+    native: 'bg-purple-100',
   };
 
   // Loading state
@@ -209,7 +234,7 @@ export default function ModuleDetailPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <DetectiveButton
             variant="blue"
-            size="sm"
+
             icon={<ArrowLeft className="w-4 h-4" />}
             onClick={() => navigate('/dashboard')}
             className="mb-6"
@@ -240,7 +265,7 @@ export default function ModuleDetailPage() {
   // Calculate progress percentage
   const progressPercentage = module.progressPercentage || module.progress || 0;
   const completedExercises = module.completedExercises || module.completed_exercises || 0;
-  const totalExercises = module.totalExercises || module.exercises_count || exercises.length;
+  const totalExercises = module.total_exercises || module.exercises_count || exercises.length;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
@@ -249,7 +274,7 @@ export default function ModuleDetailPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <DetectiveButton
           variant="blue"
-          size="sm"
+
           icon={<ArrowLeft className="w-4 h-4" />}
           onClick={() => navigate('/dashboard')}
           className="mb-6"
@@ -314,11 +339,11 @@ export default function ModuleDetailPage() {
         {/* Statistics Section with colorful cards - Compact */}
         <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mb-6">
           {/* Duration */}
-          {module.estimatedDurationMinutes && (
+          {module.estimated_duration_minutes && (
             <ColorfulCard index={0} hover={false} padding="sm" className="text-center">
               <Clock className="w-6 h-6 text-white mx-auto mb-1 p-1 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500" />
               <p className="text-lg font-bold text-gray-900">
-                {module.estimatedDurationMinutes}min
+                {module.estimated_duration_minutes}min
               </p>
               <p className="text-xs text-gray-600">Duración</p>
             </ColorfulCard>
@@ -336,22 +361,22 @@ export default function ModuleDetailPage() {
           )}
 
           {/* XP Reward */}
-          {module.xpReward && (
+          {module.xp_reward && (
             <ColorfulCard index={2} hover={false} padding="sm" className="text-center">
               <Trophy className="w-6 h-6 text-white mx-auto mb-1 p-1 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-400" />
               <p className="text-lg font-bold text-gray-900">
-                +{module.xpReward}
+                +{module.xp_reward}
               </p>
               <p className="text-xs text-gray-600">XP</p>
             </ColorfulCard>
           )}
 
           {/* ML Coins Reward */}
-          {module.mlCoinsReward && (
+          {module.ml_coins_reward && (
             <ColorfulCard index={3} hover={false} padding="sm" className="text-center">
               <Coins className="w-6 h-6 text-white mx-auto mb-1 p-1 rounded-lg bg-gradient-to-br from-teal-500 to-cyan-500" />
               <p className="text-lg font-bold text-gray-900">
-                +{module.mlCoinsReward}
+                +{module.ml_coins_reward}
               </p>
               <p className="text-xs text-gray-600">ML Coins</p>
             </ColorfulCard>
@@ -368,14 +393,14 @@ export default function ModuleDetailPage() {
         </div>
 
         {/* Learning Objectives Section - Compact */}
-        {module.learningObjectives && module.learningObjectives.length > 0 && (
+        {module.learning_objectives && module.learning_objectives.length > 0 && (
           <EnhancedCard variant="info" padding="sm" hover={false} className="mb-6">
             <h2 className="text-base font-bold text-detective-text mb-3 flex items-center gap-2">
               <Target className="w-4 h-4 text-detective-orange" />
               Objetivos de Aprendizaje
             </h2>
             <ul className="space-y-2">
-              {module.learningObjectives.map((objective: string, idx: number) => (
+              {module.learning_objectives.map((objective: string, idx: number) => (
                 <li key={idx} className="flex items-start gap-2">
                   <Lightbulb className="w-4 h-4 text-detective-gold mt-0.5 flex-shrink-0" />
                   <span className="text-sm text-detective-text-secondary">{objective}</span>
@@ -406,14 +431,14 @@ export default function ModuleDetailPage() {
           )}
 
           {/* Skills Developed */}
-          {module.skillsDeveloped && module.skillsDeveloped.length > 0 && (
+          {module.skills_developed && module.skills_developed.length > 0 && (
             <EnhancedCard variant="default" hover={false} padding="sm" className="lg:col-span-2">
               <h2 className="text-base font-bold text-detective-text mb-2 flex items-center gap-2">
                 <Brain className="w-4 h-4 text-detective-purple" />
                 Habilidades Desarrolladas
               </h2>
               <ul className="space-y-1.5">
-                {module.skillsDeveloped.map((skill: string, idx: number) => (
+                {module.skills_developed.map((skill: string, idx: number) => (
                   <li key={idx} className="flex items-start gap-1.5">
                     <span className="text-detective-purple mt-0.5 text-sm">•</span>
                     <span className="text-detective-text-secondary text-xs">{skill}</span>

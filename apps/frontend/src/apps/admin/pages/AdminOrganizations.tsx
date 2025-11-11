@@ -31,8 +31,10 @@ export default function AdminOrganizations() {
   });
 
   const user = {
+    id: 'mock-admin-orgs-id',
     email: 'admin@glit.com',
-    full_name: 'Super Admin',
+    name: 'Super Admin',
+    role: 'super_admin',
   };
 
   const handleCreateOrg = async () => {
@@ -272,7 +274,7 @@ export default function AdminOrganizations() {
             label="Nombre"
             name="name"
             value={formData.name}
-            onChange={(value) => setFormData({ ...formData, name: value })}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             placeholder="Ej: Colegio San José"
             required
           />
@@ -325,7 +327,7 @@ export default function AdminOrganizations() {
             label="Nombre"
             name="name"
             value={formData.name}
-            onChange={(value) => setFormData({ ...formData, name: value })}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
           <FormField
@@ -367,7 +369,7 @@ export default function AdminOrganizations() {
           setSelectedOrg(null);
         }}
         title={`Feature Flags - ${selectedOrg?.name}`}
-        size="md"
+
       >
         <div className="space-y-4">
           <p className="text-sm text-gray-400">
@@ -418,7 +420,7 @@ export default function AdminOrganizations() {
         message={`¿Estás seguro de que deseas eliminar "${selectedOrg?.name}"? Esta acción no se puede deshacer y eliminará todos los usuarios asociados.`}
         confirmText="Eliminar"
         cancelText="Cancelar"
-        type="danger"
+        variant="danger"
       />
     </div>
   );

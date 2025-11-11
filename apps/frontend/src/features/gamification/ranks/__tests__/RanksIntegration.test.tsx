@@ -23,7 +23,7 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { useRanksStore } from '../store/ranksStore';
-import type { UserRankProgress, XPSource } from '../types/ranksTypes';
+import type { UserRankProgress, XPSource, MultiplierSourceType } from '../types/ranksTypes';
 
 // Mock API
 vi.mock('../api/ranksAPI', () => ({
@@ -78,7 +78,10 @@ describe('Ranks Integration Tests', () => {
       },
       multiplierBreakdown: {
         base: 1.0,
+        rank: 0,
         sources: [],
+        hasExpiringSoon: false,
+        expiringSoon: [],
         total: 1.0,
       },
       progressionHistory: [],
@@ -116,7 +119,7 @@ describe('Ranks Integration Tests', () => {
 
       await addXP(30, 'exercise_completion');
       await addXP(40, 'achievement_unlock');
-      await addXP(25, 'daily_login');
+      await addXP(25, 'daily_challenge');
 
       const state = useRanksStore.getState();
       expect(state.userProgress.currentXP).toBe(95);
@@ -141,7 +144,7 @@ describe('Ranks Integration Tests', () => {
 
       // Add a multiplier source
       addMultiplierSource({
-        type: 'achievement_bonus',
+        type: 'rank' as MultiplierSourceType,
         name: 'Achievement bonus',
         value: 1.5,
         isPermanent: false,
@@ -168,7 +171,7 @@ describe('Ranks Integration Tests', () => {
       const { addXP, checkLevelUp } = useRanksStore.getState();
 
       // Add enough XP to level up (initial xpToNextLevel is 100)
-      await addXP(100, 'test');
+      await addXP(100, 'daily_challenge');
 
       const canLevelUp = checkLevelUp();
       // checkLevelUp is called automatically in addXP, which triggers levelUp
@@ -181,7 +184,7 @@ describe('Ranks Integration Tests', () => {
       const { addXP } = useRanksStore.getState();
 
       // addXP automatically checks and levels up
-      await addXP(100, 'test');
+      await addXP(100, 'daily_challenge');
 
       const state = useRanksStore.getState();
       expect(state.userProgress.currentLevel).toBe(2);
@@ -191,7 +194,7 @@ describe('Ranks Integration Tests', () => {
     it('should reset current XP after level up', async () => {
       const { addXP } = useRanksStore.getState();
 
-      await addXP(120, 'test'); // More than required (initial xpToNextLevel is 100)
+      await addXP(120, 'daily_challenge'); // More than required (initial xpToNextLevel is 100)
 
       const state = useRanksStore.getState();
       // After level up, current XP should be overflow (120 - 100 = 20)
@@ -378,7 +381,7 @@ describe('Ranks Integration Tests', () => {
       });
 
       addMultiplierSource({
-        type: 'prestige_bonus',
+        type: 'prestige' as MultiplierSourceType,
         name: 'Prestige bonus',
         value: 1.1,
         isPermanent: true,
@@ -394,7 +397,7 @@ describe('Ranks Integration Tests', () => {
       const { addMultiplierSource, updateMultipliers } = useRanksStore.getState();
 
       addMultiplierSource({
-        type: 'test1',
+        type: 'time' as MultiplierSourceType,
         name: 'Test 1',
         value: 1.2,
         isPermanent: false,
@@ -402,7 +405,7 @@ describe('Ranks Integration Tests', () => {
       });
 
       addMultiplierSource({
-        type: 'test2',
+        type: 'social' as MultiplierSourceType,
         name: 'Test 2',
         value: 1.1,
         isPermanent: false,
@@ -497,7 +500,7 @@ describe('Ranks Integration Tests', () => {
       expect(screen.getByTestId('current-xp')).toHaveTextContent('0');
 
       const { addXP } = useRanksStore.getState();
-      await addXP(150, 'test');
+      await addXP(150, 'daily_challenge');
 
       rerender(<RankDisplay />);
 
@@ -518,7 +521,7 @@ describe('Ranks Integration Tests', () => {
     it('should handle zero XP gracefully', async () => {
       const { addXP } = useRanksStore.getState();
 
-      await addXP(0, 'test');
+      await addXP(0, 'daily_challenge');
 
       const state = useRanksStore.getState();
       expect(state.userProgress.currentXP).toBe(0);
@@ -528,11 +531,11 @@ describe('Ranks Integration Tests', () => {
       const { addXP } = useRanksStore.getState();
 
       // Start with some XP first
-      await addXP(100, 'test');
+      await addXP(100, 'daily_challenge');
       const beforeXP = useRanksStore.getState().userProgress.currentXP;
 
       // Note: Store does NOT validate negative XP - it will subtract
-      await addXP(-50, 'test');
+      await addXP(-50, 'daily_challenge');
 
       const state = useRanksStore.getState();
       // XP will be reduced by 50

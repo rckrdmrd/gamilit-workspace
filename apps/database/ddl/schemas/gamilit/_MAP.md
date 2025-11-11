@@ -1,12 +1,13 @@
 # Schema: gamilit
 
-Funciones utilitarias del sistema GAMILIT
+Funciones y utilidades compartidas del sistema GAMILIT
 
 ## Estructura
 
 - **functions/**: 14 archivos
+- **views/**: 1 archivo
 
-**Total:** 14 objetos
+**Total:** 15 objetos
 
 ## Contenido Detallado
 
@@ -29,7 +30,25 @@ Funciones utilitarias del sistema GAMILIT
 validate_date_range.sql
 ```
 
+### views/ (1 archivo)
+
+```
+number_series.sql    (migrado desde public 2025-11-11)
+```
+
+## Descripción
+
+Funciones y vistas utilitarias reutilizables en todo el sistema:
+
+- **Funciones de auditoría**: audit_profile_changes
+- **Funciones de contexto**: get_current_user_id, get_current_user_role, is_admin
+- **Funciones de inicialización**: initialize_user_stats, set_profile_defaults
+- **Funciones de actualización**: update_*, set_*
+- **Funciones de validación**: validate_*
+- **Funciones de timestamp**: now_mexico (zona horaria Mexico City)
+- **Vistas utilitarias**: number_series (generador de números 1-1000)
+
 ---
 
-**Última actualización:** 2025-11-09
-**Reorganización:** 2025-11-09
+**Última actualización:** 2025-11-11
+**Reorganización:** 2025-11-11 (agregada vista number_series migrada desde public)

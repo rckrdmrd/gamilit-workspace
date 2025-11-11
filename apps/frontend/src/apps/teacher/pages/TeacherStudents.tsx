@@ -304,7 +304,7 @@ export default function TeacherStudents() {
           setSelectedStudent(null);
         }}
         title={`Detalle - ${selectedStudent?.student_name}`}
-        size="lg"
+
       >
         {selectedStudent && (
           <div className="space-y-6">

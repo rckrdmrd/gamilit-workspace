@@ -139,7 +139,7 @@ BEGIN
             ]
         }'::jsonb,
         '{"correctAnswers": [1, 1, 2], "totalQuestions": 3}'::jsonb,
-        'easy', 100, 70,
+        'elementary', 100, 70,
         5, 5,
         ARRAY[
             'Marie Curie era polaca',

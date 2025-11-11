@@ -37,7 +37,7 @@ CREATE TABLE educational_content.exercises (
     solution jsonb,
     rubric jsonb,
     auto_gradable boolean DEFAULT true,
-    difficulty_level educational_content.difficulty_level DEFAULT 'very_easy'::educational_content.difficulty_level,
+    difficulty_level educational_content.difficulty_level DEFAULT 'beginner'::educational_content.difficulty_level,
     max_points integer DEFAULT 100,
     passing_score integer DEFAULT 70,
     estimated_time_minutes integer DEFAULT 10,
@@ -74,7 +74,7 @@ CREATE TABLE educational_content.exercises (
     CONSTRAINT exercises_max_attempts_check CHECK ((max_attempts IS NULL OR max_attempts > 0))
 );
 
-ALTER TABLE educational_content.exercises OWNER TO postgres;
+ALTER TABLE educational_content.exercises OWNER TO gamilit_user;
 
 -- Primary Key
 ALTER TABLE ONLY educational_content.exercises

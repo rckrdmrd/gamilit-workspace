@@ -9,10 +9,11 @@
  * - Rarity/stats display
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/app/providers/AuthContext';
+import toast from 'react-hot-toast';
 import {
   Package,
   Zap,
@@ -24,6 +25,7 @@ import {
   Search,
   ShoppingBag,
   Coins,
+  Loader,
 } from 'lucide-react';
 
 // Components
@@ -35,97 +37,13 @@ import { Modal } from '@shared/components/common/Modal';
 import type { ShopItem, ItemRarity, ShopCategory } from '@/features/gamification/economy/types/economyTypes';
 import type { PowerUp, ActivePowerUp } from '@/features/gamification/social/types/powerUpsTypes';
 
+// API
+import { getPowerUpInventory, getActivePowerUps, usePowerUp } from '@/features/gamification/social/api/socialAPI';
+
 // Utils
 import { cn } from '@shared/utils/cn';
 
 type TabType = 'all' | 'cosmetics' | 'powerups' | 'active';
-
-// Mock inventory items
-const mockInventoryItems: ShopItem[] = [
-  {
-    id: '1',
-    name: 'Golden Detective Badge',
-    description: 'A premium badge showing your detective expertise',
-    category: 'cosmetics',
-    price: 500,
-    icon: '🏅',
-    rarity: 'legendary',
-    tags: ['badge', 'premium'],
-    isOwned: true,
-    isPurchasable: false,
-    metadata: {
-      effectDescription: 'Displays on your profile',
-      stackable: false,
-    },
-  },
-  {
-    id: '2',
-    name: 'Magnifying Glass Avatar',
-    description: 'Classic detective avatar frame',
-    category: 'profile',
-    price: 200,
-    icon: '🔍',
-    rarity: 'rare',
-    tags: ['avatar', 'frame'],
-    isOwned: true,
-    isPurchasable: false,
-  },
-];
-
-// Mock power-ups
-const mockPowerUps: PowerUp[] = [
-  {
-    id: 'p1',
-    name: 'XP Booster',
-    description: 'Double XP for 24 hours',
-    type: 'core',
-    price: 300,
-    icon: '⚡',
-    effect: {
-      type: 'multiplier',
-      value: 2,
-      description: '2x XP multiplier',
-    },
-    duration: 1440,
-    status: 'available',
-    owned: true,
-    quantity: 2,
-    usageCount: 0,
-  },
-  {
-    id: 'p2',
-    name: 'Hint System',
-    description: 'Get 3 hints for any exercise',
-    type: 'core',
-    price: 150,
-    icon: '💡',
-    effect: {
-      type: 'hint',
-      value: 3,
-      description: 'Reveals helpful hints',
-    },
-    status: 'available',
-    owned: true,
-    quantity: 1,
-    usageCount: 0,
-  },
-];
-
-// Mock active power-ups
-const mockActivePowerUps: ActivePowerUp[] = [
-  {
-    powerUpId: 'p1',
-    name: 'XP Booster',
-    icon: '⚡',
-    expiresAt: new Date(Date.now() + 3600000), // 1 hour from now
-    remainingTime: 3600,
-    effect: {
-      type: 'multiplier',
-      value: 2,
-      description: '2x XP multiplier',
-    },
-  },
-];
 
 export default function InventoryPage() {
   const navigate = useNavigate();
@@ -138,8 +56,71 @@ export default function InventoryPage() {
   const [, setShowItemModal] = useState(false);
   const [showUsePowerUpModal, setShowUsePowerUpModal] = useState(false);
 
+  // Data state
+  const [inventoryItems, setInventoryItems] = useState<ShopItem[]>([]);
+  const [powerUps, setPowerUps] = useState<PowerUp[]>([]);
+  const [activePowerUps, setActivePowerUps] = useState<ActivePowerUp[]>([]);
+  const [isLoadingInventory, setIsLoadingInventory] = useState(true);
+  const [isLoadingActive, setIsLoadingActive] = useState(true);
+  const [isUsingPowerUp, setIsUsingPowerUp] = useState(false);
+
+  // Fetch inventory and active power-ups on mount
+  useEffect(() => {
+    const fetchInventory = async () => {
+      try {
+        setIsLoadingInventory(true);
+        const inventory = await getPowerUpInventory();
+
+        // Transform owned power-ups to display format
+        const owned = inventory.owned || [];
+        const transformedPowerUps: PowerUp[] = owned.map((item: any) => ({
+          id: item.id || item.powerUpId,
+          name: item.name,
+          description: item.description,
+          type: item.type || 'core',
+          price: item.price || 0,
+          icon: item.icon || '⚡',
+          effect: item.effect,
+          duration: item.duration,
+          status: 'available',
+          owned: true,
+          quantity: item.quantity || 1,
+          usageCount: item.usageCount || 0,
+        }));
+
+        setPowerUps(transformedPowerUps);
+
+        // TODO: Fetch cosmetic items when API is available
+        setInventoryItems([]);
+      } catch (error) {
+        console.error('Failed to load inventory:', error);
+        toast.error('Error loading inventory. Please try again later.');
+        setPowerUps([]);
+        setInventoryItems([]);
+      } finally {
+        setIsLoadingInventory(false);
+      }
+    };
+
+    const fetchActivePowerUps = async () => {
+      try {
+        setIsLoadingActive(true);
+        const active = await getActivePowerUps();
+        setActivePowerUps(active || []);
+      } catch (error) {
+        console.error('Failed to load active power-ups:', error);
+        setActivePowerUps([]);
+      } finally {
+        setIsLoadingActive(false);
+      }
+    };
+
+    fetchInventory();
+    fetchActivePowerUps();
+  }, []);
+
   // Combine all items
-  const allItems = [...mockInventoryItems, ...mockPowerUps];
+  const allItems = [...inventoryItems, ...powerUps];
 
   // Filter items based on tab and search
   const filteredItems = allItems.filter(item => {
@@ -181,12 +162,36 @@ export default function InventoryPage() {
   const confirmUsePowerUp = async () => {
     if (!selectedItem || !isPowerUp(selectedItem)) return;
 
-    // Simulate usage
-    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      setIsUsingPowerUp(true);
 
-    setShowUsePowerUpModal(false);
-    setSelectedItem(null);
-    alert(`${selectedItem.name} activated!`);
+      // Call real API to use power-up
+      const activePowerUp = await usePowerUp(selectedItem.id);
+
+      // Add to active power-ups list
+      setActivePowerUps(prev => [...prev, activePowerUp]);
+
+      // Decrement quantity in inventory
+      setPowerUps(prev => prev.map(pu =>
+        pu.id === selectedItem.id
+          ? { ...pu, quantity: Math.max(0, (pu.quantity || 1) - 1) }
+          : pu
+      ));
+
+      setShowUsePowerUpModal(false);
+      setSelectedItem(null);
+
+      // Show success message
+      toast.success(`${selectedItem.name} activated!`, {
+        icon: '⚡',
+        duration: 4000,
+      });
+    } catch (error: any) {
+      console.error('Failed to use power-up:', error);
+      toast.error(error.message || 'Failed to activate power-up. Please try again.');
+    } finally {
+      setIsUsingPowerUp(false);
+    }
   };
 
   // Format time remaining
@@ -262,7 +267,7 @@ export default function InventoryPage() {
                 <Zap className="w-6 h-6 text-detective-orange" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-detective-text">{mockPowerUps.length}</p>
+                <p className="text-2xl font-bold text-detective-text">{powerUps.length}</p>
                 <p className="text-sm text-detective-text-secondary">Power-ups</p>
               </div>
             </div>
@@ -274,7 +279,7 @@ export default function InventoryPage() {
                 <Check className="w-6 h-6 text-green-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-detective-text">{mockActivePowerUps.length}</p>
+                <p className="text-2xl font-bold text-detective-text">{activePowerUps.length}</p>
                 <p className="text-sm text-detective-text-secondary">Active Now</p>
               </div>
             </div>
@@ -282,7 +287,7 @@ export default function InventoryPage() {
         </div>
 
         {/* Active Power-ups Banner */}
-        {mockActivePowerUps.length > 0 && (
+        {activePowerUps.length > 0 && (
           <DetectiveCard hoverable={false} className="mb-6 bg-gradient-to-r from-detective-orange to-orange-600 text-white">
             <div className="flex items-center justify-between">
               <div>
@@ -291,7 +296,7 @@ export default function InventoryPage() {
                   Active Power-ups
                 </h3>
                 <div className="flex flex-wrap gap-3">
-                  {mockActivePowerUps.map((powerup) => (
+                  {activePowerUps.map((powerup) => (
                     <div key={powerup.powerUpId} className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg flex items-center gap-2">
                       <span className="text-2xl">{powerup.icon}</span>
                       <div>
@@ -365,9 +370,19 @@ export default function InventoryPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
             >
-              {mockActivePowerUps.length > 0 ? (
+              {isLoadingActive ? (
+                <DetectiveCard hoverable={false}>
+                  <div className="text-center py-12">
+                    <Loader className="w-16 h-16 text-detective-orange mx-auto mb-4 animate-spin" />
+                    <h3 className="text-xl font-bold text-detective-text mb-2">Loading Active Power-ups...</h3>
+                    <p className="text-detective-text-secondary">
+                      Please wait while we fetch your active boosts
+                    </p>
+                  </div>
+                </DetectiveCard>
+              ) : activePowerUps.length > 0 ? (
                 <div className="space-y-4">
-                  {mockActivePowerUps.map((powerup) => (
+                  {activePowerUps.map((powerup) => (
                     <DetectiveCard key={powerup.powerUpId}>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
@@ -425,7 +440,17 @@ export default function InventoryPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
             >
-              {filteredItems.length > 0 ? (
+              {isLoadingInventory ? (
+                <DetectiveCard hoverable={false}>
+                  <div className="text-center py-12">
+                    <Loader className="w-16 h-16 text-detective-orange mx-auto mb-4 animate-spin" />
+                    <h3 className="text-xl font-bold text-detective-text mb-2">Loading Inventory...</h3>
+                    <p className="text-detective-text-secondary">
+                      Please wait while we fetch your items
+                    </p>
+                  </div>
+                </DetectiveCard>
+              ) : filteredItems.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {filteredItems.map((item, index) => (
                     <motion.div

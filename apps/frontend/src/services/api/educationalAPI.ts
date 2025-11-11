@@ -10,6 +10,7 @@ import { API_ENDPOINTS, FEATURE_FLAGS } from './apiConfig';
 import { handleAPIError } from './apiErrorHandler';
 import type { ApiResponse } from './apiTypes';
 import type { Module, Exercise } from '@shared/types';
+import { DifficultyLevel, ExerciseType } from '@shared/types/educational.types';
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -160,6 +161,7 @@ const mockModules: Module[] = [
     id: '1',
     title: 'Los Primeros Pasos de Marie Curie',
     description: 'Descubre los inicios de la carrera científica de Marie Curie',
+    order_index: 1,
     progress: 75,
     exercises_count: 20,
     completed_exercises: 15,
@@ -168,6 +170,7 @@ const mockModules: Module[] = [
     id: '2',
     title: 'Descubrimientos Científicos',
     description: 'Explora los grandes descubrimientos de Marie Curie',
+    order_index: 2,
     progress: 45,
     exercises_count: 18,
     completed_exercises: 8,
@@ -176,6 +179,7 @@ const mockModules: Module[] = [
     id: '3',
     title: 'El Nobel de Química',
     description: 'Conoce el camino hacia el Premio Nobel',
+    order_index: 3,
     progress: 20,
     exercises_count: 25,
     completed_exercises: 5,
@@ -184,19 +188,20 @@ const mockModules: Module[] = [
     id: '4',
     title: 'Legado y Contribuciones',
     description: 'El impacto de Marie Curie en la ciencia moderna',
+    order_index: 4,
     progress: 0,
     exercises_count: 15,
     completed_exercises: 0,
   },
 ];
 
-const mockExercises: Exercise[] = [
+const mockExercises: Partial<Exercise>[] = [
   {
     id: '1',
     module_id: '1',
     title: 'Crucigrama: Primeros Años',
-    type: 'crucigrama_cientifico',
-    difficulty: 'facil',
+    type: ExerciseType.CRUCIGRAMA, // Fixed: was 'crucigrama_cientifico'
+    difficulty: DifficultyLevel.BEGINNER, // A1 - Easy
     points: 100,
     completed: true,
     description: 'Resuelve el crucigrama sobre los primeros años de Marie Curie',
@@ -206,8 +211,8 @@ const mockExercises: Exercise[] = [
     id: '2',
     module_id: '1',
     title: 'Línea de Tiempo: Juventud',
-    type: 'linea_tiempo',
-    difficulty: 'medio',
+    type: ExerciseType.LINEA_TIEMPO, // Fixed: now uses enum
+    difficulty: DifficultyLevel.INTERMEDIATE, // B2 - Medium
     points: 150,
     completed: true,
     description: 'Ordena los eventos de la juventud de Marie Curie',
@@ -217,8 +222,8 @@ const mockExercises: Exercise[] = [
     id: '3',
     module_id: '1',
     title: 'Sopa de Letras: Conceptos Científicos',
-    type: 'sopa_letras',
-    difficulty: 'facil',
+    type: ExerciseType.SOPA_LETRAS, // Fixed: now uses enum
+    difficulty: DifficultyLevel.BEGINNER, // A1 - Easy
     points: 100,
     completed: false,
     description: 'Encuentra términos científicos importantes',
@@ -361,7 +366,7 @@ export const getExercises = async (filters?: {
         exercises = exercises.filter((e) => e.module_id === filters.moduleId);
       }
 
-      return exercises;
+      return exercises as Exercise[];
     }
 
     const { data } = await apiClient.get<ApiResponse<Exercise[]>>(
@@ -385,7 +390,7 @@ export const getModuleExercises = async (moduleId: string): Promise<Exercise[]> 
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 400));
-      return mockExercises.filter((e) => e.module_id === moduleId);
+      return mockExercises.filter((e) => e.module_id === moduleId) as Exercise[];
     }
 
     const { data } = await apiClient.get<ApiResponse<Exercise[]>>(
@@ -410,7 +415,7 @@ export const getExercise = async (exerciseId: string): Promise<Exercise> => {
       await new Promise((resolve) => setTimeout(resolve, 300));
       const exercise = mockExercises.find((e) => e.id === exerciseId);
       if (!exercise) throw new Error('Exercise not found');
-      return exercise;
+      return exercise as Exercise;
     }
 
     const { data } = await apiClient.get<ApiResponse<Exercise>>(

@@ -51,7 +51,7 @@ CREATE TABLE social_features.classroom_members (
 );
 
 
-ALTER TABLE social_features.classroom_members OWNER TO postgres;
+ALTER TABLE social_features.classroom_members OWNER TO gamilit_user;
 
 --
 -- Name: TABLE classroom_members; Type: COMMENT; Schema: social_features; Owner: postgres
@@ -131,7 +131,7 @@ ALTER TABLE ONLY social_features.classroom_members
 --
 
 ALTER TABLE ONLY social_features.classroom_members
-    ADD CONSTRAINT classroom_members_enrolled_by_fkey FOREIGN KEY (enrolled_by) REFERENCES auth_management.profiles(id);
+    ADD CONSTRAINT classroom_members_enrolled_by_fkey FOREIGN KEY (enrolled_by) REFERENCES auth_management.profiles(id) ON DELETE SET NULL;
 
 
 --

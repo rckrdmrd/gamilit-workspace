@@ -51,6 +51,7 @@ export const PuzzleContextoExercise: React.FC<ExerciseProps> = ({
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [hintsUsed] = useState(initialData?.hintsUsed || 0);
+  const [result, setResult] = useState<any>(null); // Validation result
 
   useEffect(() => {
     if (!puzzle) {
@@ -105,19 +106,8 @@ export const PuzzleContextoExercise: React.FC<ExerciseProps> = ({
     setResult(res);
 
     // Calculate standardized score
-    const attempt = {
-      exerciseId: puzzle?.id || '',
-      startTime,
-      endTime: new Date(),
-      answers: { pieces: assembled },
-      correctAnswers: res.correctCount || 0,
-      totalQuestions: pieces.length,
-      hintsUsed,
-      difficulty: puzzle?.difficulty || 'medio'
-    };
-
-    const calculatedScore = await calculateScore(attempt);
-    setScore(calculatedScore.totalScore);
+    const calculatedScore = calculateScore(res.correctCount || 0, pieces.length);
+    setScore(calculatedScore);
 
     setFeedback({
       type: res.isCorrect ? 'success' : 'partial',
@@ -197,7 +187,7 @@ export const PuzzleContextoExercise: React.FC<ExerciseProps> = ({
             {onExit && (
               <DetectiveButton
                 variant="secondary"
-                size="lg"
+
                 onClick={onExit}
               >
                 Salir
@@ -205,7 +195,7 @@ export const PuzzleContextoExercise: React.FC<ExerciseProps> = ({
             )}
             <DetectiveButton
               variant="gold"
-              size="lg"
+
               onClick={handleValidate}
               icon={<Check className="w-5 h-5" />}
             >

@@ -24,7 +24,7 @@ import { toast } from 'react-hot-toast';
  * Submission payload schema (matches backend DTO)
  */
 export const SubmitExerciseSchema = z.object({
-  answers: z.record(z.any()).refine(
+  answers: z.record(z.string(), z.any()).refine(
     (answers) => Object.keys(answers).length > 0,
     { message: 'At least one answer is required' }
   ),
@@ -45,7 +45,7 @@ export interface SubmissionResult {
   attemptId: string;
   score: number;
   isPerfect: boolean;
-  correctAnswers: number;
+  correctAnswersCount: number;
   totalQuestions: number;
   rewards: {
     mlCoins: number;

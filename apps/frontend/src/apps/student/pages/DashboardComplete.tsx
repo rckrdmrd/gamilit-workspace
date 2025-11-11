@@ -14,8 +14,16 @@ import { useUserModules } from '../hooks/useUserModules';
 import { useRecentActivities } from '../hooks/useRecentActivities';
 
 export default function DashboardComplete() {
+  console.log('🚀 [DashboardComplete] Component rendering...');
+
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  console.log('👤 [DashboardComplete] User from useAuth:', {
+    isAuthenticated: !!user,
+    userId: user?.id,
+    userEmail: user?.email,
+  });
 
   // Real data from backend
   const {

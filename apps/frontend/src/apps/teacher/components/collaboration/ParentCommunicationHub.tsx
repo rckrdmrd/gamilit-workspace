@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { MessageSquare, Send, FileText, Users } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -24,7 +25,10 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
 
   const handleSend = async () => {
     if (!subject || !body || selectedStudents.length === 0) {
-      alert('Complete todos los campos requeridos');
+      toast.error('Complete todos los campos requeridos', {
+        duration: 3000,
+        icon: '✉️',
+      });
       return;
     }
 
@@ -41,12 +45,17 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
           body,
         }),
       });
-      alert('Mensajes enviados exitosamente');
+      toast.success(`Mensajes enviados exitosamente a ${selectedStudents.length} padres`, {
+        duration: 4000,
+        icon: '✅',
+      });
       setSubject('');
       setBody('');
       setSelectedStudents([]);
     } catch (error) {
-      alert('Error al enviar mensajes');
+      toast.error('Error al enviar mensajes. Por favor, intenta de nuevo.', {
+        duration: 4000,
+      });
     } finally {
       setSending(false);
     }
@@ -161,7 +170,7 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
           </DetectiveCard>
 
           <div className="flex justify-end">
-            <DetectiveButton onClick={handleSend} disabled={sending} size="lg">
+            <DetectiveButton onClick={handleSend} disabled={sending}>
               <Send className="w-5 h-5" />
               {sending ? 'Enviando...' : 'Enviar Mensajes'}
             </DetectiveButton>

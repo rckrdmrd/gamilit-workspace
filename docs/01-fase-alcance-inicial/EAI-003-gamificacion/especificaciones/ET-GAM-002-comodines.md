@@ -9,9 +9,9 @@
 | **Título** | Implementación del Sistema de Comodines (Power-ups) |
 | **Prioridad** | Alta |
 | **Estado** | ✅ Implementado |
-| **Versión** | 1.0 |
+| **Versión** | 1.1 |
 | **Fecha Creación** | 2025-11-07 |
-| **Última Actualización** | 2025-11-07 |
+| **Última Actualización** | 2025-11-11 |
 | **Autor** | Database Team |
 | **Reviewers** | Backend Lead, Frontend Lead, QA Lead |
 
@@ -298,9 +298,9 @@ DECLARE
 BEGIN
     -- 1. Determinar costo por unidad
     CASE p_comodin_type
-        WHEN 'pistas' THEN v_cost_per_unit := 10;
-        WHEN 'vision_lectora' THEN v_cost_per_unit := 15;
-        WHEN 'segunda_oportunidad' THEN v_cost_per_unit := 20;
+        WHEN 'pistas' THEN v_cost_per_unit := 15;
+        WHEN 'vision_lectora' THEN v_cost_per_unit := 25;
+        WHEN 'segunda_oportunidad' THEN v_cost_per_unit := 40;
         ELSE RAISE EXCEPTION 'Invalid comodin type: %', p_comodin_type;
     END CASE;
 
@@ -617,9 +617,9 @@ export enum ComodinTypeEnum {
 }
 
 export const COMODIN_COSTS: Record<ComodinTypeEnum, number> = {
-  [ComodinTypeEnum.PISTAS]: 10,
-  [ComodinTypeEnum.VISION_LECTORA]: 15,
-  [ComodinTypeEnum.SEGUNDA_OPORTUNIDAD]: 20,
+  [ComodinTypeEnum.PISTAS]: 15,
+  [ComodinTypeEnum.VISION_LECTORA]: 25,
+  [ComodinTypeEnum.SEGUNDA_OPORTUNIDAD]: 40,
 };
 
 export const COMODIN_LIMITS: Record<ComodinTypeEnum, number> = {
@@ -976,21 +976,21 @@ export const ComodinShop: React.FC = () => {
             Recibe hasta 3 pistas progresivas por ejercicio
           </p>
           <div className="text-center mb-4">
-            <span className="text-2xl font-bold text-blue-600">10 ML Coins</span>
+            <span className="text-2xl font-bold text-blue-600">15 ML Coins</span>
           </div>
           <button
             onClick={() => handlePurchase(ComodinTypeEnum.PISTAS, 1)}
-            disabled={loading || mlCoins < 10}
+            disabled={loading || mlCoins < 15}
             className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
           >
             Comprar 1
           </button>
           <button
             onClick={() => handlePurchase(ComodinTypeEnum.PISTAS, 5)}
-            disabled={loading || mlCoins < 50}
+            disabled={loading || mlCoins < 75}
             className="w-full mt-2 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
           >
-            Comprar 5 (50 coins)
+            Comprar 5 (75 coins)
           </button>
         </div>
 
@@ -1004,11 +1004,11 @@ export const ComodinShop: React.FC = () => {
             Resalta oraciones clave en textos largos
           </p>
           <div className="text-center mb-4">
-            <span className="text-2xl font-bold text-purple-600">15 ML Coins</span>
+            <span className="text-2xl font-bold text-purple-600">25 ML Coins</span>
           </div>
           <button
             onClick={() => handlePurchase(ComodinTypeEnum.VISION_LECTORA, 1)}
-            disabled={loading || mlCoins < 15}
+            disabled={loading || mlCoins < 25}
             className="w-full py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:bg-gray-400"
           >
             Comprar 1
@@ -1025,11 +1025,11 @@ export const ComodinShop: React.FC = () => {
             Reintenta sin perder racha ni XP
           </p>
           <div className="text-center mb-4">
-            <span className="text-2xl font-bold text-green-600">20 ML Coins</span>
+            <span className="text-2xl font-bold text-green-600">40 ML Coins</span>
           </div>
           <button
             onClick={() => handlePurchase(ComodinTypeEnum.SEGUNDA_OPORTUNIDAD, 1)}
-            disabled={loading || mlCoins < 20}
+            disabled={loading || mlCoins < 40}
             className="w-full py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:bg-gray-400"
           >
             Comprar 1
@@ -1117,8 +1117,8 @@ test('User can purchase comodin with sufficient ML Coins', async () => {
   });
 
   expect(result.success).toBe(true);
-  expect(result.totalCost).toBe(30); // 10 * 3
-  expect(result.newBalance).toBe(70); // 100 - 30
+  expect(result.totalCost).toBe(45); // 15 * 3
+  expect(result.newBalance).toBe(55); // 100 - 45
 
   const inventory = await getComodinInventory(user.id);
   expect(inventory[ComodinTypeEnum.PISTAS].quantity).toBe(3);
@@ -1143,6 +1143,7 @@ CREATE INDEX idx_comodin_usage_log_user ON gamification_system.comodin_usage_log
 | Versión | Fecha | Autor | Cambios |
 |---------|-------|-------|---------|
 | 1.0 | 2025-11-07 | Database Team | Creación del documento |
+| 1.1 | 2025-11-11 | Database Team | Actualización de costos a valores DDL implementados (pistas: 15, vision_lectora: 25, segunda_oportunidad: 40) |
 
 ---
 

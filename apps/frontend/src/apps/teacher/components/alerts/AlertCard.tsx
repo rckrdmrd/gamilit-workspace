@@ -173,7 +173,7 @@ export function AlertCard({
           <div className="flex flex-wrap gap-2 pt-2 border-t border-detective-border">
             <DetectiveButton
               variant="secondary"
-              size="sm"
+
               onClick={() => onSendMessage?.(alert.id)}
             >
               <MessageSquare className="w-4 h-4" />
@@ -181,7 +181,7 @@ export function AlertCard({
             </DetectiveButton>
             <DetectiveButton
               variant="secondary"
-              size="sm"
+
               onClick={() => onAssignHelp?.(alert.id)}
             >
               <BookOpen className="w-4 h-4" />
@@ -189,14 +189,14 @@ export function AlertCard({
             </DetectiveButton>
             <DetectiveButton
               variant="secondary"
-              size="sm"
+
               onClick={() => onMarkForFollowUp?.(alert.id)}
             >
               Marcar Seguimiento
             </DetectiveButton>
             <DetectiveButton
               variant="primary"
-              size="sm"
+
               onClick={() => onResolve?.(alert.id)}
             >
               <CheckCircle className="w-4 h-4" />

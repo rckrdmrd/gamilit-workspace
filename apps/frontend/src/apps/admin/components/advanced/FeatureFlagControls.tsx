@@ -369,12 +369,12 @@ export const FeatureFlagControls: React.FC = () => {
 
               {/* Actions */}
               <div className="flex flex-col gap-2 ml-4">
-                <DetectiveButton variant="blue" size="sm" onClick={() => setEditingFlag(flag)}>
+                <DetectiveButton variant="blue" onClick={() => setEditingFlag(flag)}>
                   Edit
                 </DetectiveButton>
                 <DetectiveButton
                   variant="primary"
-                  size="sm"
+
                   icon={<History className="w-4 h-4" />}
                   onClick={() => setShowHistory(showHistory === flag.id ? null : flag.id)}
                 >

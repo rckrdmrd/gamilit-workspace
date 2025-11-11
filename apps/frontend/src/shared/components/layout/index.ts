@@ -7,12 +7,11 @@
 
 // Header
 export { GamifiedHeader } from './GamifiedHeader';
+// Re-export User and UserGamificationData from @shared/types for consistency
+export type { User, UserGamificationData } from '@shared/types';
 export type {
   GamifiedHeaderProps,
-  User,
-  UserGamificationData,
   Notification,
-  AchievementBadge,
 } from './GamifiedHeader';
 
 // Sidebar

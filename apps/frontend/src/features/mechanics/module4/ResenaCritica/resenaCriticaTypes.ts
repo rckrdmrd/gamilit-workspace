@@ -26,7 +26,8 @@ export interface ResenaCriticaData {
   minSummaryLength: number;
   minAnalysisLength: number;
   minRecommendationLength: number;
-  hints?: Array<{ id: string; text: string; cost: number }>;
+  // Backend returns hints as string[]
+  hints?: string[];
 }
 
 export interface ExerciseProgressUpdate {
@@ -57,3 +58,6 @@ export interface ResenaCriticaExerciseProps {
   exercise?: ResenaCriticaData;
   actionsRef?: React.MutableRefObject<ResenaCriticaActions | undefined>;
 }
+
+// Alias for generic import
+export type ExerciseProps = ResenaCriticaExerciseProps;

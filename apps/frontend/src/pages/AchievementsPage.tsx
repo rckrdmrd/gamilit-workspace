@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Trophy, AlertCircle, Loader } from 'lucide-react';
 import { useAuth } from '@/app/providers/AuthContext';
-import { DashboardLayout } from '@/shared/layouts/DashboardLayout';
+import { GamifiedHeader } from '@/shared/components/layout/GamifiedHeader';
 import { AchievementCard } from '@/shared/components/AchievementCard';
 import { AchievementFilter } from '@/shared/components/AchievementFilter';
 import { AchievementModal } from '@/shared/components/AchievementModal';
@@ -32,7 +32,7 @@ import type {
  * - Real-time filter/sort (client-side)
  */
 export const AchievementsPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   // State for data
   const [allAchievements, setAllAchievements] = useState<Achievement[]>([]);
@@ -286,9 +286,12 @@ export const AchievementsPage: React.FC = () => {
   const isLoading = isLoadingAchievements || isLoadingUserData;
 
   return (
-    <DashboardLayout>
-      {/* Page Header */}
-      <div className="mb-8">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
+      <GamifiedHeader user={user} onLogout={logout} />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Page Header */}
+        <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 flex items-center">
           <Trophy className="w-8 h-8 mr-3 text-yellow-600" />
           Logros
@@ -441,7 +444,8 @@ export const AchievementsPage: React.FC = () => {
           onClaimRewards={handleClaimRewards}
         />
       )}
-    </DashboardLayout>
+      </div>
+    </div>
   );
 };
 

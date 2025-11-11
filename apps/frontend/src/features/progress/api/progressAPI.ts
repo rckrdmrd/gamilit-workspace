@@ -36,7 +36,7 @@ export interface SubmitExerciseResponse {
   attemptId: string;
   score: number; // 0-100
   isPerfect: boolean;
-  correctAnswers: number;
+  correctAnswersCount: number;
   totalQuestions: number;
   rewards: {
     mlCoins: number;
@@ -235,7 +235,7 @@ const mockSubmitExercise = async (
     attemptId: `attempt_${Date.now()}`,
     score,
     isPerfect,
-    correctAnswers,
+    correctAnswersCount: correctAnswers,
     totalQuestions: 10,
     rewards: {
       mlCoins: isPerfect ? 30 : 20,

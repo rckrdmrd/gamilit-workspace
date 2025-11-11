@@ -30,7 +30,7 @@ import {
 } from './services';
 
 // Controllers
-import { AuthController, PasswordController } from './controllers';
+import { AuthController, PasswordController, UsersController } from './controllers';
 
 // Strategies
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -94,7 +94,7 @@ import { DB_SCHEMAS } from '@/shared/constants';
       'auth',
     ),
   ],
-  controllers: [AuthController, PasswordController],
+  controllers: [AuthController, PasswordController, UsersController],
   providers: [
     // Services
     AuthService,

@@ -181,17 +181,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
     const endTime = new Date();
     const timeSpentSeconds = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
 
-    const score = await calculateScore({
-      exerciseId,
-      userId,
-      startTime,
-      endTime,
-      answers: { cards },
-      correctAnswers: cards.length,
-      totalQuestions: cards.length,
-      hintsUsed: 0,
-      difficulty
-    });
+    const score = calculateScore(cards.length, cards.length);
 
     setFeedback({
       type: 'success',
@@ -205,7 +195,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
 
   // Handle reset
   const handleReset = () => {
-    setCards(exercise.cards);
+    setCards(currentExercise.cards);
     setFeedback(null);
     setShowFeedback(false);
   };
@@ -227,7 +217,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
   // Handle export
   const handleExport = () => {
     const exportData = {
-      title: exercise.title,
+      title: currentExercise.title,
       cards: cards.map(c => ({
         title: c.title,
         content: c.content,
@@ -284,10 +274,10 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
         <div className="bg-gradient-to-r from-detective-orange/10 to-detective-blue/10 p-6 rounded-detective mb-6">
           <div className="flex items-center gap-3 mb-4">
             <BarChart3 className="w-8 h-8 text-detective-orange" />
-            <h1 className="text-detective-3xl font-bold text-detective-text">{exercise.title}</h1>
+            <h1 className="text-detective-3xl font-bold text-detective-text">{currentExercise.title}</h1>
           </div>
           <p className="text-detective-text-secondary mb-4">
-            {exercise.description}
+            {currentExercise.description}
           </p>
           <div className="flex flex-wrap gap-3">
             <DetectiveButton variant="gold" icon={<Eye />} onClick={handleRevealAll}>

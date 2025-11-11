@@ -41,12 +41,14 @@ export enum SubscriptionTierEnum {
 
 /**
  * Estados de cuenta de usuario
- * @see DDL: user_status ENUM
+ * @see DDL: auth_management.user_status ENUM
+ * @version 1.1 (2025-11-08) - Agregado 'banned' para alineación con BD
  */
 export enum UserStatusEnum {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
   SUSPENDED = 'suspended',
+  BANNED = 'banned',      // v1.1: NUEVO - Usuario baneado permanentemente
   PENDING = 'pending',
 }
 
@@ -117,35 +119,35 @@ export enum MembershipStatusEnum {
  */
 
 /**
- * Niveles de dificultad para ejercicios y contenido educativo
+ * Niveles de dificultad CEFR para ejercicios y contenido educativo
  * @see DDL: educational_content.difficulty_level ENUM
- * @see Docs: docs/02-especificaciones-tecnicas/tipos-compartidos/TYPES-EDUCATIONAL.md
- * @version 1.0 (2025-11-08) - Migrado de public a educational_content
+ * @see Docs: docs/01-fase-alcance-inicial/EAI-002-actividades/especificaciones/ET-EDU-002-niveles-dificultad.md
+ * @version 2.0 (2025-11-11) - Migrado a estándar CEFR internacional
  *
  * IMPORTANTE:
  * - Este enum está sincronizado con el ENUM de PostgreSQL en educational_content schema
- * - Total: 8 niveles de dificultad
+ * - Total: 8 niveles de dificultad basados en CEFR (Common European Framework of Reference)
  * - Usado en: modules, exercises, content_templates, marie_curie_content
  *
- * ESCALA DE DIFICULTAD (menor a mayor):
- * 1. VERY_EASY ⭐ - Muy fácil, contenido introductorio básico
- * 2. EASY ⭐⭐ - Fácil, contenido simple
- * 3. BEGINNER ⭐⭐ - Principiante, para usuarios nuevos
- * 4. MEDIUM ⭐⭐⭐ - Medio, dificultad estándar
- * 5. INTERMEDIATE ⭐⭐⭐⭐ - Intermedio, requiere conocimiento previo
- * 6. HARD ⭐⭐⭐⭐ - Difícil, contenido desafiante
- * 7. ADVANCED ⭐⭐⭐⭐⭐ - Avanzado, para usuarios experimentados
- * 8. VERY_HARD ⭐⭐⭐⭐⭐ - Muy difícil, contenido experto
+ * ESCALA DE DIFICULTAD CEFR (menor a mayor):
+ * 1. BEGINNER (A1) ⭐ - Nivel básico de supervivencia (10-50 palabras)
+ * 2. ELEMENTARY (A2) ⭐⭐ - Nivel elemental (50-150 palabras)
+ * 3. PRE_INTERMEDIATE (B1) ⭐⭐ - Pre-intermedio (150-400 palabras)
+ * 4. INTERMEDIATE (B2) ⭐⭐⭐ - Intermedio (400-800 palabras)
+ * 5. UPPER_INTERMEDIATE (C1) ⭐⭐⭐⭐ - Intermedio avanzado (800-1500 palabras)
+ * 6. ADVANCED (C2) ⭐⭐⭐⭐ - Avanzado (1500-3000 palabras)
+ * 7. PROFICIENT (C2+) ⭐⭐⭐⭐⭐ - Competente (3000+ palabras)
+ * 8. NATIVE ⭐⭐⭐⭐⭐ - Nativo, dominio total del idioma
  */
 export enum DifficultyLevelEnum {
-  BEGINNER = 'beginner',
-  INTERMEDIATE = 'intermediate',
-  ADVANCED = 'advanced',
-  VERY_EASY = 'very_easy',
-  EASY = 'easy',
-  MEDIUM = 'medium',
-  HARD = 'hard',
-  VERY_HARD = 'very_hard',
+  BEGINNER = 'beginner',              // A1
+  ELEMENTARY = 'elementary',          // A2
+  PRE_INTERMEDIATE = 'pre_intermediate', // B1
+  INTERMEDIATE = 'intermediate',      // B2
+  UPPER_INTERMEDIATE = 'upper_intermediate', // C1
+  ADVANCED = 'advanced',              // C2
+  PROFICIENT = 'proficient',          // C2+
+  NATIVE = 'native',                  // Nativo
 }
 
 /**
@@ -250,7 +252,7 @@ export enum AchievementTypeEnum {
 
 /**
  * Tipos de notificaciones del sistema
- * @see DDL: public.notification_type ENUM
+ * @see DDL: gamification_system.notification_type ENUM
  * @see Docs: docs/02-especificaciones-tecnicas/tipos-compartidos/TYPES-NOTIFICATIONS.md
  * @version 2.0 (2025-11-07) - Alineado con documentación oficial
  *
@@ -283,18 +285,18 @@ export enum NotificationTypeEnum {
  * Prioridad de notificaciones (urgencia de visualización)
  * @see DDL: gamification_system.notification_priority ENUM
  * @see Docs: docs/02-especificaciones-tecnicas/trazabilidad/05-realtime-notifications.md:240
- * @version 1.0 (2025-11-08) - Implementación inicial
+ * @version 1.1 (2025-11-08) - Agregado 'critical' para alineación con BD
  *
  * IMPORTANTE:
- * - Este enum está sincronizado con el ENUM de PostgreSQL en gamification_system schema
- * - Total: 3 niveles de prioridad
+ * - Este enum está sincronizado con el ENUM de PostgreSQL
+ * - Total: 4 niveles de prioridad
  * - Valor por defecto en BD: 'medium'
- * - Alineado con especificación oficial (se eliminó 'critical' del legacy)
  */
 export enum NotificationPriorityEnum {
-  LOW = 'low',        // Prioridad baja: Notificaciones informativas, sin urgencia
-  MEDIUM = 'medium',  // Prioridad media: Notificaciones estándar (DEFAULT)
-  HIGH = 'high',      // Prioridad alta: Notificaciones urgentes que requieren atención inmediata
+  LOW = 'low',          // Prioridad baja: Notificaciones informativas, sin urgencia
+  MEDIUM = 'medium',    // Prioridad media: Notificaciones estándar (DEFAULT)
+  HIGH = 'high',        // Prioridad alta: Notificaciones urgentes que requieren atención inmediata
+  CRITICAL = 'critical', // v1.1: NUEVO - Prioridad crítica: Alertas del sistema, emergencias
 }
 
 /**
@@ -325,16 +327,18 @@ export const NOTIFICATION_TYPES = Object.values(NotificationTypeEnum);
 /**
  * Categorización de notificaciones por prioridad
  * Útil para determinar urgencia de entrega y visualización automáticamente según el tipo
- * @version 2.0 (2025-11-08) - Actualizado para usar NotificationPriorityEnum
+ * @version 2.1 (2025-11-08) - Agregado nivel CRITICAL
  */
 export const NOTIFICATION_PRIORITY_BY_TYPE = {
+  [NotificationPriorityEnum.CRITICAL]: [
+    NotificationTypeEnum.SYSTEM_ANNOUNCEMENT,  // Mensajes críticos del sistema
+  ],
   [NotificationPriorityEnum.HIGH]: [
-    NotificationTypeEnum.SYSTEM_ANNOUNCEMENT,
     NotificationTypeEnum.MESSAGE_RECEIVED,
+    NotificationTypeEnum.RANK_UP,
   ],
   [NotificationPriorityEnum.MEDIUM]: [
     NotificationTypeEnum.ACHIEVEMENT_UNLOCKED,
-    NotificationTypeEnum.RANK_UP,
     NotificationTypeEnum.MISSION_COMPLETED,
     NotificationTypeEnum.GUILD_INVITATION,
     NotificationTypeEnum.FRIEND_REQUEST,
@@ -371,18 +375,19 @@ export const NOTIFICATION_ICONS = {
 
 /**
  * Estados del ciclo de vida del contenido
- * @see DDL: content_status ENUM
+ * @see DDL: content_management.content_status ENUM
+ * @version 1.1 (2025-11-08) - Cambiado 'reviewing' a 'under_review' para alineación con BD
  */
 export enum ContentStatusEnum {
   DRAFT = 'draft',
   PUBLISHED = 'published',
   ARCHIVED = 'archived',
-  REVIEWING = 'reviewing',
+  UNDER_REVIEW = 'under_review',  // v1.1: RENOMBRADO de 'reviewing'
 }
 
 /**
  * Tipos de contenido educativo
- * @see DDL: content_type ENUM
+ * @see DDL: content_management.content_type ENUM
  */
 export enum ContentTypeEnum {
   VIDEO = 'video',
@@ -486,31 +491,35 @@ export enum ExerciseTypeEnum {
 /**
  * Estados de progreso para módulos y ejercicios
  * @see DDL: progress_tracking.progress_status ENUM
- * @version 1.0 (2025-11-08) - Migrado de public a progress_tracking schema
+ * @version 1.2 (2025-11-11) - Agregado 'abandoned' para sincronización con DDL
+ * @version 1.1 (2025-11-08) - Cambiado 'reviewed' a 'needs_review' para alineación con BD
  *
  * FLUJO DE ESTADOS:
  * 1. NOT_STARTED → Sin iniciar (estado inicial)
  * 2. IN_PROGRESS → En progreso (0% < progreso < 100%)
  * 3. COMPLETED → Completado (100%, cumple requisitos mínimos)
- * 4. REVIEWED → Revisado (revisado por docente/sistema)
+ * 4. NEEDS_REVIEW → Requiere revisión (pendiente de revisión por docente)
  * 5. MASTERED → Dominado (nivel de excelencia/maestría)
+ * 6. ABANDONED → Abandonado (estudiante dejó sin completar, tracking futuro)
  *
  * TRANSICIONES:
- * - Normal: not_started → in_progress → completed → reviewed → mastered
+ * - Normal: not_started → in_progress → completed → needs_review → mastered
  * - Autoestudio: not_started → in_progress → completed → mastered
  * - Reintento: completed → in_progress → completed
+ * - Abandono: in_progress → abandoned
  */
 export enum ProgressStatusEnum {
   NOT_STARTED = 'not_started',
   IN_PROGRESS = 'in_progress',
   COMPLETED = 'completed',
-  REVIEWED = 'reviewed',
+  NEEDS_REVIEW = 'needs_review',  // v1.1: RENOMBRADO de 'reviewed'
   MASTERED = 'mastered',
+  ABANDONED = 'abandoned',  // v1.2: AGREGADO para sincronización con DDL
 }
 
 /**
  * Resultados de intentos de ejercicio
- * @see DDL: attempt_result ENUM
+ * @see DDL: progress_tracking.attempt_result ENUM
  */
 export enum AttemptResultEnum {
   CORRECT = 'correct',
@@ -580,7 +589,7 @@ export enum TeamChallengeStatusEnum {
 
 /**
  * Tipos de eventos sociales
- * @see DDL: social_event_type ENUM
+ * @see DDL: social_features.social_event_type ENUM
  */
 export enum SocialEventTypeEnum {
   COMPETITION = 'competition',
@@ -617,7 +626,7 @@ export enum AlertSeverityEnum {
 
 /**
  * Períodos de agregación para métricas
- * @see DDL: aggregation_period ENUM
+ * @see DDL: audit_logging.aggregation_period ENUM
  */
 export enum AggregationPeriodEnum {
   DAILY = 'daily',
@@ -629,7 +638,7 @@ export enum AggregationPeriodEnum {
 
 /**
  * Tipos de métricas
- * @see DDL: metric_type ENUM
+ * @see DDL: audit_logging.metric_type ENUM
  */
 export enum MetricTypeEnum {
   ENGAGEMENT = 'engagement',

@@ -70,7 +70,7 @@ export const RankComparison: React.FC<RankComparisonProps> = ({
         <div className="flex flex-col items-center gap-3">
           <RankBadgeAdvanced
             rank={current.id}
-            size="xl"
+
             showGlow={false}
             animated={false}
           />
@@ -89,7 +89,7 @@ export const RankComparison: React.FC<RankComparisonProps> = ({
         <div className="flex flex-col items-center gap-3">
           <RankBadgeAdvanced
             rank={target.id}
-            size="xl"
+
             showGlow={true}
             animated={true}
           />

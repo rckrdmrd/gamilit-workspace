@@ -32,7 +32,7 @@ CREATE TABLE system_configuration.notification_settings (
     CONSTRAINT notification_settings_max_per_day_check CHECK ((max_per_day > 0))
 );
 
-ALTER TABLE system_configuration.notification_settings OWNER TO postgres;
+ALTER TABLE system_configuration.notification_settings OWNER TO gamilit_user;
 
 -- =====================================================
 -- Primary Key

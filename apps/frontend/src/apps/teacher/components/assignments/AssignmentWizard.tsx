@@ -283,7 +283,7 @@ export function AssignmentWizard({ modules, students, onComplete, onCancel }: As
                   <Users className="w-6 h-6 text-detective-orange" />
                   <h3 className="text-xl font-bold text-detective-text">Seleccionar Estudiantes</h3>
                 </div>
-                <DetectiveButton variant="secondary" size="sm" onClick={selectAllStudents}>
+                <DetectiveButton variant="secondary" onClick={selectAllStudents}>
                   Seleccionar Todos
                 </DetectiveButton>
               </div>

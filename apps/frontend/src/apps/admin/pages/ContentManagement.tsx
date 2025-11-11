@@ -19,7 +19,12 @@ const ContentManagement: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={{ email: 'admin@glit.com' }} />
+      <GamifiedHeader user={{
+        id: 'mock-admin-contentmanagement-id',
+        email: 'admin@gamilit.com',
+        role: 'super_admin',
+        displayName: 'Admin ContentManagement'
+      }} />
 
       <main className="detective-container py-8">
         {/* Header */}

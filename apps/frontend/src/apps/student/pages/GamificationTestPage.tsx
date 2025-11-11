@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useNewLeaderboardsStore } from '@/features/gamification/social/store/newLeaderboardsStore';
 import { useAchievementsStore } from '@/features/gamification/social/store/achievementsStore';
+import { useAuthStore } from '@/features/auth/store/authStore';
 import { useProgression } from '@/features/gamification/ranks/hooks/useProgression';
 import { StreakIndicator } from '@/features/gamification/components/StreakIndicator';
 import { cn } from '@shared/utils/cn';
@@ -34,6 +35,7 @@ interface TestResult {
 }
 
 export default function GamificationTestPage() {
+  const { user } = useAuthStore();
   const [testResults, setTestResults] = useState<TestResult[]>([]);
   const [isTestingAll, setIsTestingAll] = useState(false);
 
@@ -136,7 +138,7 @@ export default function GamificationTestPage() {
   const testAchievements = async () => {
     addResult('Achievements', 'running', 'Fetching achievements...');
     try {
-      await achievements.fetchAchievements();
+      await achievements.fetchAchievements(user?.id || '');
 
       if (achievements.achievements.length > 0) {
         addResult(

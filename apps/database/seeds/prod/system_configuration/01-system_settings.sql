@@ -1,98 +1,68 @@
--- ============================================================================
--- GAMILIT Platform - Production Seeds
--- Archivo: seeds/prod/system_configuration/01-system_settings.sql
--- Propósito: Configuración del sistema para producción
--- ============================================================================
+-- =====================================================
+-- Seed: system_configuration.system_settings (PROD)
+-- Description: Configuración global de la plataforma para producción
+-- Environment: PRODUCTION
+-- Dependencies: None
+-- Order: 01
+-- Created: 2025-11-11
+-- Version: 2.0 (reescrito para carga limpia)
+-- =====================================================
+--
+-- CAMBIOS v2.0:
+-- - CORREGIDO: key → setting_key
+-- - CORREGIDO: value → setting_value  
+-- - CORREGIDO: type → value_type
+-- - CORREGIDO: category → setting_category
+-- - Cambiado NOW() → gamilit.now_mexico()
+-- - Estructura alineada 100% con DDL
+--
+-- VALIDADO CONTRA:
+-- - DDL: ddl/schemas/system_configuration/tables/01-system_settings.sql
+--
+-- =====================================================
 
--- Configuración de ambiente
-INSERT INTO system_configuration.system_settings (key, value, type, category, is_public, description)
-VALUES
-    ('environment', 'production', 'string', 'system', false, 'Ambiente de ejecución'),
-    ('app_version', '1.0.0', 'string', 'system', true, 'Versión de la aplicación'),
-    ('maintenance_mode', 'false', 'boolean', 'system', true, 'Modo de mantenimiento'),
-    ('maintenance_message', 'Sistema en mantenimiento. Volveremos pronto.', 'string', 'system', true, 'Mensaje de mantenimiento')
-ON CONFLICT (key) DO UPDATE SET
-    value = EXCLUDED.value,
-    updated_at = NOW();
+SET search_path TO system_configuration, public;
 
--- Configuración de autenticación
-INSERT INTO system_configuration.system_settings (key, value, type, category, is_public, description)
-VALUES
-    ('registration_enabled', 'true', 'boolean', 'auth', true, 'Permitir registro de usuarios'),
-    ('email_verification_required', 'true', 'boolean', 'auth', false, 'Requiere verificación de email'),
-    ('max_login_attempts', '5', 'integer', 'auth', false, 'Máximo de intentos de login'),
-    ('session_timeout_minutes', '60', 'integer', 'auth', false, 'Timeout de sesión en minutos'),
-    ('jwt_expiration_hours', '24', 'integer', 'auth', false, 'Expiración de JWT en horas'),
-    ('refresh_token_days', '30', 'integer', 'auth', false, 'Duración de refresh token en días')
-ON CONFLICT (key) DO UPDATE SET
-    value = EXCLUDED.value,
-    updated_at = NOW();
+-- =====================================================
+-- INSERT: System Settings (PRODUCTION)
+-- =====================================================
 
--- Configuración de seguridad
-INSERT INTO system_configuration.system_settings (key, value, type, category, is_public, description)
-VALUES
-    ('enable_ssl', 'true', 'boolean', 'security', false, 'Habilitar SSL/TLS'),
-    ('enable_cors', 'true', 'boolean', 'security', false, 'Habilitar CORS'),
-    ('allowed_origins', 'https://gamilit.com,https://www.gamilit.com', 'string', 'security', false, 'Orígenes permitidos para CORS'),
-    ('enable_rate_limiting', 'true', 'boolean', 'security', false, 'Habilitar rate limiting'),
-    ('rate_limit_per_minute', '100', 'integer', 'security', false, 'Requests por minuto por IP')
-ON CONFLICT (key) DO UPDATE SET
-    value = EXCLUDED.value,
-    updated_at = NOW();
+INSERT INTO system_configuration.system_settings (
+    setting_key,
+    setting_category,
+    setting_value,
+    value_type,
+    display_name,
+    description,
+    is_public
+) VALUES
+-- General Settings
+('platform_name', 'general', 'GAMILIT', 'string', 'Nombre de la Plataforma', 'Nombre público de la plataforma', true),
+('platform_version', 'general', '2.3.0', 'string', 'Versión', 'Versión actual de la plataforma', true),
+('max_upload_size_mb', 'storage', '50', 'number', 'Tamaño Máximo de Archivo', 'Tamaño máximo de archivo en MB', false),
 
--- Configuración de logging
-INSERT INTO system_configuration.system_settings (key, value, type, category, is_public, description)
-VALUES
-    ('log_level', 'warning', 'string', 'logging', false, 'Nivel de logging (debug|info|warning|error)'),
-    ('log_requests', 'false', 'boolean', 'logging', false, 'Logear todas las requests'),
-    ('log_errors_only', 'true', 'boolean', 'logging', false, 'Logear solo errores'),
-    ('enable_performance_monitoring', 'true', 'boolean', 'logging', false, 'Monitor de performance')
-ON CONFLICT (key) DO UPDATE SET
-    value = EXCLUDED.value,
-    updated_at = NOW();
+-- Gamification Settings
+('daily_ml_coins_limit', 'gamification', '500', 'number', 'Límite Diario ML Coins', 'Máximo de ML Coins que un usuario puede ganar por día', true),
+('xp_multiplier', 'gamification', '1.0', 'number', 'Multiplicador XP', 'Multiplicador global de experiencia', false),
 
--- Configuración de features
-INSERT INTO system_configuration.system_settings (key, value, type, category, is_public, description)
-VALUES
-    ('enable_gamification', 'true', 'boolean', 'features', true, 'Habilitar gamificación'),
-    ('enable_social_features', 'true', 'boolean', 'features', true, 'Habilitar features sociales'),
-    ('enable_progress_tracking', 'true', 'boolean', 'features', true, 'Habilitar tracking de progreso'),
-    ('enable_assessments', 'true', 'boolean', 'features', true, 'Habilitar assessments'),
-    ('enable_analytics', 'true', 'boolean', 'features', false, 'Habilitar analytics')
-ON CONFLICT (key) DO UPDATE SET
-    value = EXCLUDED.value,
-    updated_at = NOW();
+-- Security Settings
+('session_timeout_minutes', 'security', '120', 'number', 'Timeout de Sesión', 'Minutos antes de cerrar sesión automáticamente', false),
+('max_login_attempts', 'security', '5', 'number', 'Intentos Máximos de Login', 'Intentos antes de bloquear cuenta', false)
 
--- Configuración de límites
-INSERT INTO system_configuration.system_settings (key, value, type, category, is_public, description)
-VALUES
-    ('max_file_upload_mb', '50', 'integer', 'limits', true, 'Tamaño máximo de archivo en MB'),
-    ('max_students_per_classroom', '50', 'integer', 'limits', true, 'Estudiantes máximos por aula'),
-    ('max_teams_per_classroom', '10', 'integer', 'limits', true, 'Teams máximos por aula'),
-    ('max_exercises_per_module', '100', 'integer', 'limits', false, 'Ejercicios máximos por módulo')
-ON CONFLICT (key) DO UPDATE SET
-    value = EXCLUDED.value,
-    updated_at = NOW();
+ON CONFLICT (setting_key) DO UPDATE SET
+    setting_value = EXCLUDED.setting_value,
+    display_name = EXCLUDED.display_name,
+    description = EXCLUDED.description,
+    updated_at = gamilit.now_mexico();
 
--- Configuración de notificaciones
-INSERT INTO system_configuration.system_settings (key, value, type, category, is_public, description)
-VALUES
-    ('enable_email_notifications', 'true', 'boolean', 'notifications', false, 'Habilitar notificaciones por email'),
-    ('enable_push_notifications', 'false', 'boolean', 'notifications', false, 'Habilitar notificaciones push'),
-    ('smtp_host', 'CONFIGURAR_EN_PRODUCCION', 'string', 'notifications', false, 'Host SMTP'),
-    ('smtp_port', '587', 'integer', 'notifications', false, 'Puerto SMTP'),
-    ('smtp_from_email', 'noreply@gamilit.com', 'string', 'notifications', false, 'Email remitente')
-ON CONFLICT (key) DO UPDATE SET
-    value = EXCLUDED.value,
-    updated_at = NOW();
+-- =====================================================
+-- Verification Query
+-- =====================================================
 
--- Verificación
-SELECT
-    key,
-    value,
-    type,
-    category,
-    is_public,
-    description
-FROM system_configuration.system_settings
-ORDER BY category, key;
+DO $$
+DECLARE
+    settings_count INTEGER;
+BEGIN
+    SELECT COUNT(*) INTO settings_count FROM system_configuration.system_settings;
+    RAISE NOTICE '✓ System settings insertados: % configuraciones', settings_count;
+END $$;

@@ -97,7 +97,7 @@ export const AchievementModal: React.FC<AchievementModalProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg">
+    <Modal isOpen={isOpen} onClose={onClose}>
       <div className="relative">
         {/* Close Button */}
         <button

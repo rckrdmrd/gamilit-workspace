@@ -20,6 +20,6 @@ BEGIN
     RETURN p_username ~ '^[A-Za-z0-9][A-Za-z0-9_-]{1,28}[A-Za-z0-9]$'
         OR p_username ~ '^[A-Za-z0-9]$';
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 COMMENT ON FUNCTION gamilit.validate_username(VARCHAR) IS 'Valida que el username tenga formato válido (3-30 chars, alfanumérico, guiones y guiones bajos)';

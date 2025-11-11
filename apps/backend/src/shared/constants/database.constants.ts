@@ -96,13 +96,13 @@ export const DB_TABLES = {
     ASSIGNMENT_EXERCISES: 'assignment_exercises',
     ASSIGNMENT_STUDENTS: 'assignment_students',
     ASSIGNMENT_SUBMISSIONS: 'assignment_submissions',
-    EXERCISE_OPTIONS: 'exercise_options',
-    EXERCISE_ANSWERS: 'exercise_answers',
     CONTENT_METADATA: 'content_metadata',
     MODULE_DEPENDENCIES: 'module_dependencies',
     TAXONOMIES: 'taxonomies',
     CONTENT_TAGS: 'content_tags',
     CONTENT_APPROVALS: 'content_approvals',
+    EXERCISE_MECHANIC_MAPPING: 'exercise_mechanic_mapping', // ✨ NUEVO - DB-113 (Sistema Dual - ADR-008)
+    // REMOVED: exercise_options, exercise_answers (legacy dual model - moved to JSONB puro)
   },
 
   /**

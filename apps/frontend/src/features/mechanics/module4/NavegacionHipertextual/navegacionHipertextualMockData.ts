@@ -1,10 +1,11 @@
 import { NavegacionHipertextualData } from './navegacionHipertextualTypes';
+import { DifficultyLevel } from '@shared/types/educational.types';
 
 export const mockNavegacionHipertextualExercises: NavegacionHipertextualData[] = [{
   id: 'nav-001',
   title: 'Navegación Hipertextual: Vida de Marie Curie',
   description: 'Explora la biografía de Marie Curie siguiendo enlaces',
-  difficulty: 'medio',
+  difficulty: DifficultyLevel.INTERMEDIATE,
   estimatedTime: 480,
   topic: 'Marie Curie - Biografía Interactiva',
   hints: [],

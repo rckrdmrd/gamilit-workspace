@@ -18,7 +18,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useRanksStore } from '../ranksStore';
-import type { UserRankProgress, MultiplierSource } from '../../types/ranksTypes';
+import type { UserRankProgress, MultiplierSource, MultiplierSourceType } from '../../types/ranksTypes';
 import * as ranksAPI from '../../api/ranksAPI';
 
 // Mock the API module
@@ -164,9 +164,9 @@ describe('RanksStore', () => {
     it('should accumulate multiple XP gains', async () => {
       const { addXP } = useRanksStore.getState();
 
-      await addXP(30, 'source1');
-      await addXP(20, 'source2');
-      await addXP(10, 'source3');
+      await addXP(30, 'exercise_completion');
+      await addXP(20, 'perfect_score');
+      await addXP(10, 'streak_bonus');
 
       const state = useRanksStore.getState();
       expect(state.userProgress.currentXP).toBe(60);
@@ -617,7 +617,7 @@ describe('RanksStore', () => {
       tomorrow.setHours(tomorrow.getHours() + 12); // 12 hours from now
 
       const expiringSource: MultiplierSource = {
-        type: 'temporary',
+        type: 'time' as MultiplierSourceType,
         name: 'Power Hour',
         value: 2.0,
         isPermanent: false,

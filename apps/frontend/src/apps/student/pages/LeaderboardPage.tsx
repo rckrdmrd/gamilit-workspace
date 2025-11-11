@@ -59,7 +59,7 @@ export default function LeaderboardPage() {
   // WebSocket Integration for real-time updates
   useEffect(() => {
     // TODO: Implement WebSocket connection
-    // const socket = io('http://localhost:3001', {
+    // const socket = io('http://localhost:3006', {
     //   auth: { token: getToken() }
     // });
 

@@ -156,7 +156,7 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                         {entry.rank && (
                           <RankBadgeAdvanced
                             rank={entry.rank}
-                            size="xs"
+
                             showPrestige={false}
                             animated={false}
                           />

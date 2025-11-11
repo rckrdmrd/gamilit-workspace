@@ -42,12 +42,12 @@ BEGIN
         ) VALUES (
             NEW.user_id,  -- Fixed: usar user_id en lugar de id
             NEW.tenant_id,
-            'Ajaw'::maya_rank
+            'Ajaw'::gamification_system.maya_rank
         );
 
         -- NEW: Initialize daily and weekly missions for new student
         -- This ensures missions are available immediately after registration
-        PERFORM gamilit.initialize_user_missions(NEW.user_id);
+        -- PERFORM gamilit.initialize_user_missions(NEW.user_id);  -- TODO: Implementar función
     END IF;
 
     RETURN NEW;

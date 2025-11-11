@@ -333,7 +333,7 @@ export const AdvancedLeaderboardTable: React.FC<AdvancedLeaderboardTableProps> =
                           <RankChangeIndicator
                             change={entry.change}
                             changeType={entry.changeType}
-                            size="md"
+
                           />
                         </div>
                       </td>

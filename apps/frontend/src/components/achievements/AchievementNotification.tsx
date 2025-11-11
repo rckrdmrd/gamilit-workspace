@@ -247,7 +247,7 @@ export const AchievementNotification: React.FC<AchievementNotificationProps> = (
       </div>
 
       {/* Confetti styles */}
-      <style jsx>{`
+      <style>{`
         @keyframes confetti-fall {
           0% {
             transform: translateY(-100%) rotate(0deg);

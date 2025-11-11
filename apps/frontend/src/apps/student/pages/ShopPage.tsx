@@ -10,10 +10,11 @@
  * - Transaction history
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/app/providers/AuthContext';
+import toast from 'react-hot-toast';
 import {
   ShoppingCart,
   Search,
@@ -26,6 +27,7 @@ import {
   Coins,
   Check,
   ShoppingBag,
+  Loader,
 } from 'lucide-react';
 
 // Components
@@ -37,62 +39,69 @@ import { Modal } from '@shared/components/common/Modal';
 import { useCoins } from '@/features/gamification/economy/hooks/useCoins';
 import type { ShopItem, ShopCategory, ItemRarity } from '@/features/gamification/economy/types/economyTypes';
 
+// API
+import { getPowerUps, purchasePowerUp } from '@/features/gamification/social/api/socialAPI';
+
 // Utils
 import { cn } from '@shared/utils/cn';
-
-// Mock items for demonstration
-const mockShopItems: ShopItem[] = [
-  {
-    id: '1',
-    name: 'Golden Detective Badge',
-    description: 'Show off your detective skills with this premium badge',
-    category: 'cosmetics',
-    price: 500,
-    icon: '🏅',
-    rarity: 'legendary',
-    tags: ['badge', 'premium', 'golden'],
-    isOwned: false,
-    isPurchasable: true,
-    metadata: {
-      effectDescription: 'Displays a golden badge on your profile',
-      stackable: false,
-      tradeable: false,
-    },
-  },
-  {
-    id: '2',
-    name: 'XP Booster',
-    description: 'Double XP for 24 hours',
-    category: 'premium',
-    price: 300,
-    icon: '⚡',
-    rarity: 'epic',
-    tags: ['booster', 'xp', 'powerup'],
-    isOwned: false,
-    isPurchasable: true,
-    metadata: {
-      effectDescription: '2x XP for 24 hours',
-      duration: 1,
-      stackable: true,
-    },
-  },
-  // Add more mock items as needed
-];
 
 export default function ShopPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
   // Hooks
-  const { balance } = useCoins();
+  const { balance, updateBalance } = useCoins();
 
   // State
+  const [shopItems, setShopItems] = useState<ShopItem[]>([]);
+  const [isLoadingItems, setIsLoadingItems] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<ShopCategory | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'price_asc' | 'price_desc' | 'rarity'>('rarity');
   const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [isPurchasing, setIsPurchasing] = useState(false);
   const [cart] = useState<ShopItem[]>([]);
+
+  // Fetch shop items on mount
+  useEffect(() => {
+    const fetchShopItems = async () => {
+      try {
+        setIsLoadingItems(true);
+        const powerUps = await getPowerUps();
+
+        // Transform power-ups to shop items format
+        const items: ShopItem[] = powerUps.map((powerUp: any) => ({
+          id: powerUp.id,
+          name: powerUp.name || powerUp.title,
+          description: powerUp.description,
+          category: powerUp.category || 'premium',
+          price: powerUp.cost || powerUp.price,
+          icon: powerUp.icon || '⚡',
+          rarity: powerUp.rarity || 'common',
+          tags: powerUp.tags || [],
+          isOwned: powerUp.isOwned || false,
+          isPurchasable: powerUp.isPurchasable !== false,
+          metadata: {
+            effectDescription: powerUp.effect?.description || powerUp.description,
+            duration: powerUp.duration,
+            stackable: powerUp.stackable !== false,
+            tradeable: powerUp.tradeable || false,
+          },
+        }));
+
+        setShopItems(items);
+      } catch (error) {
+        console.error('Failed to load shop items:', error);
+        toast.error('Error loading shop items. Please try again later.');
+        setShopItems([]);
+      } finally {
+        setIsLoadingItems(false);
+      }
+    };
+
+    fetchShopItems();
+  }, []);
 
   // Categories
   const categories: { value: ShopCategory | 'all'; label: string; icon: React.ElementType; color: string }[] = [
@@ -105,7 +114,7 @@ export default function ShopPage() {
   ];
 
   // Filter items
-  const filteredItems = mockShopItems.filter(item => {
+  const filteredItems = shopItems.filter(item => {
     const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           item.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -139,17 +148,38 @@ export default function ShopPage() {
     if (!selectedItem) return;
 
     if (balance.current < selectedItem.price) {
-      alert('Insufficient ML Coins!');
+      toast.error('Insufficient ML Coins! Complete more exercises to earn coins.');
       return;
     }
 
-    // Simulate purchase
-    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      setIsPurchasing(true);
 
-    setShowPurchaseModal(false);
-    setSelectedItem(null);
-    // Show success message
-    alert(`Successfully purchased ${selectedItem.name}!`);
+      // Call real API to purchase power-up
+      await purchasePowerUp(selectedItem.id, 1);
+
+      // Refresh balance after successful purchase
+      await updateBalance();
+
+      // Update local state - mark item as owned
+      setShopItems(prev => prev.map(item =>
+        item.id === selectedItem.id ? { ...item, isOwned: true } : item
+      ));
+
+      setShowPurchaseModal(false);
+      setSelectedItem(null);
+
+      // Show success message
+      toast.success(`Successfully purchased ${selectedItem.name}!`, {
+        icon: '🎉',
+        duration: 4000,
+      });
+    } catch (error: any) {
+      console.error('Purchase failed:', error);
+      toast.error(error.message || 'Purchase failed. Please try again.');
+    } finally {
+      setIsPurchasing(false);
+    }
   };
 
   return (
@@ -246,7 +276,17 @@ export default function ShopPage() {
         </DetectiveCard>
 
         {/* Items Grid */}
-        {filteredItems.length > 0 ? (
+        {isLoadingItems ? (
+          <DetectiveCard hoverable={false}>
+            <div className="text-center py-12">
+              <Loader className="w-16 h-16 text-detective-orange mx-auto mb-4 animate-spin" />
+              <h3 className="text-xl font-bold text-detective-text mb-2">Loading Shop Items...</h3>
+              <p className="text-detective-text-secondary">
+                Please wait while we fetch the latest items
+              </p>
+            </div>
+          </DetectiveCard>
+        ) : filteredItems.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredItems.map((item, index) => (
               <motion.div
@@ -384,21 +424,29 @@ export default function ShopPage() {
               <div className="flex gap-3 pt-4">
                 <button
                   onClick={() => setShowPurchaseModal(false)}
-                  className="flex-1 px-4 py-2 bg-gray-200 text-detective-text rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                  disabled={isPurchasing}
+                  className="flex-1 px-4 py-2 bg-gray-200 text-detective-text rounded-lg hover:bg-gray-300 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={confirmPurchase}
-                  disabled={balance.current < selectedItem.price}
+                  disabled={balance.current < selectedItem.price || isPurchasing}
                   className={cn(
-                    'flex-1 px-4 py-2 rounded-lg font-medium transition-colors',
-                    balance.current >= selectedItem.price
+                    'flex-1 px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2',
+                    balance.current >= selectedItem.price && !isPurchasing
                       ? 'bg-detective-orange text-white hover:bg-detective-orange-dark'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   )}
                 >
-                  Purchase
+                  {isPurchasing ? (
+                    <>
+                      <Loader className="w-4 h-4 animate-spin" />
+                      Purchasing...
+                    </>
+                  ) : (
+                    'Purchase'
+                  )}
                 </button>
               </div>
             </div>

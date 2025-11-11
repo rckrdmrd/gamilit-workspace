@@ -215,7 +215,7 @@ export const ErrorTrackingPanel: React.FC = () => {
                       {!error.resolved && (
                         <DetectiveButton
                           variant="green"
-                          size="sm"
+
                           icon={<CheckCircle className="w-4 h-4" />}
                           onClick={() => markAsResolved(error.id)}
                         >

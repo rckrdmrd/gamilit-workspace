@@ -122,19 +122,8 @@ export const ConstruccionHipotesisExercise: React.FC<ExerciseProps> = ({
       setValidation(result);
 
       // Calculate standardized score
-      const attempt = {
-        exerciseId: exercise?.id || '',
-        startTime,
-        endTime: new Date(),
-        answers: { hypothesis },
-        correctAnswers: result.isValid ? 1 : 0,
-        totalQuestions: 1,
-        hintsUsed,
-        difficulty: exercise?.difficulty || 'medio'
-      };
-
-      const calculatedScore = await calculateScore(attempt);
-      setScore(calculatedScore.totalScore);
+      const calculatedScore = calculateScore(result.isValid ? 1 : 0, 1);
+      setScore(calculatedScore);
 
       setFeedback({
         type: result.isValid ? 'success' : 'partial',
@@ -229,7 +218,7 @@ export const ConstruccionHipotesisExercise: React.FC<ExerciseProps> = ({
             {onExit && (
               <DetectiveButton
                 variant="secondary"
-                size="lg"
+
                 onClick={onExit}
               >
                 Salir
@@ -237,7 +226,7 @@ export const ConstruccionHipotesisExercise: React.FC<ExerciseProps> = ({
             )}
             <DetectiveButton
               variant="secondary"
-              size="lg"
+
               onClick={handleReset}
               icon={<RotateCcw className="w-5 h-5" />}
             >
@@ -245,7 +234,7 @@ export const ConstruccionHipotesisExercise: React.FC<ExerciseProps> = ({
             </DetectiveButton>
             <DetectiveButton
               variant="gold"
-              size="lg"
+
               onClick={handleSubmit}
               disabled={validating}
               loading={validating}

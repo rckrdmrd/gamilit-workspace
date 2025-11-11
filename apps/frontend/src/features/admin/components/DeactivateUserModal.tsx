@@ -55,7 +55,7 @@ export const DeactivateUserModal: React.FC<DeactivateUserModalProps> = ({
       isOpen={isOpen}
       onClose={handleClose}
       title="Desactivar Usuario"
-      size="md"
+
       showCloseButton={!isLoading}
     >
       <form onSubmit={handleSubmit} className="space-y-6">

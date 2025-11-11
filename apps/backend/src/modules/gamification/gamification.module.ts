@@ -27,6 +27,8 @@ import {
   MLCoinsService,
   RanksService,
   LeaderboardService,
+  MissionsService,
+  ComodinesService,
 } from './services';
 
 // Controllers
@@ -36,6 +38,8 @@ import {
   MLCoinsController,
   RanksController,
   LeaderboardController,
+  MissionsController,
+  ComodinesController,
 } from './controllers';
 
 // Constants
@@ -90,6 +94,8 @@ import { DB_SCHEMAS } from '@/shared/constants';
     MLCoinsService,
     RanksService,
     LeaderboardService,
+    MissionsService,
+    ComodinesService,
   ],
   controllers: [
     UserStatsController,
@@ -97,6 +103,8 @@ import { DB_SCHEMAS } from '@/shared/constants';
     MLCoinsController,
     RanksController,
     LeaderboardController,
+    MissionsController,
+    ComodinesController,
   ],
   exports: [
     UserStatsService,
@@ -104,6 +112,8 @@ import { DB_SCHEMAS } from '@/shared/constants';
     MLCoinsService,
     RanksService,
     LeaderboardService,
+    MissionsService,
+    ComodinesService,
   ],
 })
 export class GamificationModule {}

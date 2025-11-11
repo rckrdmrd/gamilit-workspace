@@ -57,7 +57,7 @@ const DashboardPage: React.FC = () => {
               </div>
               <div className="bg-white border border-gray-200 rounded-lg p-4">
                 <h3 className="font-semibold text-gray-900">Status</h3>
-                <p className="text-sm text-gray-600 mt-1">{user?.status}</p>
+                <p className="text-sm text-gray-600 mt-1">{user?.isActive ? 'Active' : 'Inactive'}</p>
               </div>
             </div>
           </div>

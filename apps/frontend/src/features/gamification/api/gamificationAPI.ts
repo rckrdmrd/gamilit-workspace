@@ -128,6 +128,12 @@ export interface Achievement {
   mlCoinsReward: number;
   xpReward: number;
   requirements?: Record<string, any>;
+  // Optional rewards object (may vary by context)
+  rewards?: {
+    mlCoins?: number;
+    xp?: number;
+    items?: string[];
+  };
 }
 
 /**

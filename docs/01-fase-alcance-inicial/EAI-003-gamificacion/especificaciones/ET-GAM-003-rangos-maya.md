@@ -9,9 +9,9 @@
 | **Título** | Sistema de Rangos Maya - Especificación Técnica |
 | **Prioridad** | Alta |
 | **Estado** | ✅ Implementado |
-| **Versión** | 1.0 |
+| **Versión** | 1.1 |
 | **Fecha Creación** | 2025-11-07 |
-| **Última Actualización** | 2025-11-07 |
+| **Última Actualización** | 2025-11-11 |
 | **Autor** | Backend Team |
 | **Stakeholders** | Backend Team, Frontend Team, Database Team |
 
@@ -86,10 +86,10 @@
 El **Sistema de Rangos Maya** implementa una progresión jerárquica basada en XP (Experience Points) que reconoce el avance de los estudiantes mediante 5 rangos inspirados en la civilización maya:
 
 1. **Ajaw** (0-999 XP) - Rango inicial
-2. **Nacom** (1,000-4,999 XP) - Capitán guerrero
-3. **Ah K'in** (5,000-19,999 XP) - Sacerdote del sol
-4. **Halach Uinic** (20,000-99,999 XP) - Hombre verdadero
-5. **K'uk'ulkan** (100,000+ XP) - Serpiente emplumada (máximo)
+2. **Nacom** (1,000-2,999 XP) - Capitán guerrero
+3. **Ah K'in** (3,000-5,999 XP) - Sacerdote del sol
+4. **Halach Uinic** (6,000-9,999 XP) - Hombre verdadero
+5. **K'uk'ulkan** (10,000+ XP) - Serpiente emplumada (máximo)
 
 ### Características Técnicas
 
@@ -134,10 +134,10 @@ Usuario completa ejercicio → Gana XP → total_xp actualizado
 
 CREATE TYPE gamification_system.maya_rank AS ENUM (
     'Ajaw',              -- Rango 1: 0-999 XP
-    'Nacom',             -- Rango 2: 1,000-4,999 XP
-    'Ah K''in',          -- Rango 3: 5,000-19,999 XP (nota: comilla escapada)
-    'Halach Uinic',      -- Rango 4: 20,000-99,999 XP
-    'K''uk''ulkan'       -- Rango 5: 100,000+ XP (rango máximo)
+    'Nacom',             -- Rango 2: 1,000-2,999 XP
+    'Ah K''in',          -- Rango 3: 3,000-5,999 XP (nota: comilla escapada)
+    'Halach Uinic',      -- Rango 4: 6,000-9,999 XP
+    'K''uk''ulkan'       -- Rango 5: 10,000+ XP (rango máximo)
 );
 
 COMMENT ON TYPE gamification_system.maya_rank IS
@@ -235,19 +235,19 @@ BEGIN
             END IF;
 
         WHEN 'Nacom' THEN
-            IF v_total_xp >= 5000 THEN
+            IF v_total_xp >= 3000 THEN
                 PERFORM gamification_system.promote_to_next_rank(p_user_id, 'Ah K''in');
                 v_promoted := true;
             END IF;
 
         WHEN 'Ah K''in' THEN
-            IF v_total_xp >= 20000 THEN
+            IF v_total_xp >= 6000 THEN
                 PERFORM gamification_system.promote_to_next_rank(p_user_id, 'Halach Uinic');
                 v_promoted := true;
             END IF;
 
         WHEN 'Halach Uinic' THEN
-            IF v_total_xp >= 100000 THEN
+            IF v_total_xp >= 10000 THEN
                 PERFORM gamification_system.promote_to_next_rank(p_user_id, 'K''uk''ulkan');
                 v_promoted := true;
             END IF;
@@ -1808,28 +1808,28 @@ describe('Rank System - Immutable History', () => {
 └─────────────────────────────────────────────────────────────┘
 
               🐉 K'uk'ulkan (Serpiente Emplumada)
-              ├─ 100,000+ XP
+              ├─ 10,000+ XP
               ├─ +20% XP bonus
               ├─ Puede contribuir ejercicios
               └─ Acceso a comunidad privada
                           ↑
                           │
               👑 Halach Uinic (Hombre Verdadero)
-              ├─ 20,000-99,999 XP
+              ├─ 6,000-9,999 XP
               ├─ +15% XP bonus
               ├─ Puede crear aulas
               └─ Aparece en Hall of Fame
                           ↑
                           │
               ☀️ Ah K'in (Sacerdote del Sol)
-              ├─ 5,000-19,999 XP
+              ├─ 3,000-5,999 XP
               ├─ +10% XP bonus
               ├─ Puede ser tutor
               └─ Biblioteca avanzada
                           ↑
                           │
               ⚔️ Nacom (Capitán Guerrero)
-              ├─ 1,000-4,999 XP
+              ├─ 1,000-2,999 XP
               ├─ +5% XP bonus
               ├─ Puede crear equipos
               └─ Ejercicios hard desbloqueados

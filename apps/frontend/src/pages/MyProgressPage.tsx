@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle, TrendingUp } from 'lucide-react';
 import { useAuth } from '@/app/providers/AuthContext';
-import { DashboardLayout } from '@/shared/layouts/DashboardLayout';
+import { GamifiedHeader } from '@/shared/components/layout/GamifiedHeader';
 import { ProgressCard } from '@/shared/components/ProgressCard';
 import { ProgressFilter, ProgressFilterState } from '@/shared/components/ProgressFilter';
 import { StatsOverview } from '@/shared/components/StatsOverview';
@@ -30,7 +30,7 @@ import type { ModuleProgress, ProgressSummary } from '@/shared/types/progress.ty
  * - getModules: All modules
  */
 export const MyProgressPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   // State
@@ -171,9 +171,12 @@ export const MyProgressPage: React.FC = () => {
   };
 
   return (
-    <DashboardLayout>
-      {/* Page Header */}
-      <div className="mb-8">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
+      <GamifiedHeader user={user} onLogout={logout} />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Page Header */}
+        <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">My Progress</h1>
         <p className="text-gray-600 mt-2">
           Track your learning journey and see how far you've come.
@@ -324,7 +327,8 @@ export const MyProgressPage: React.FC = () => {
           </div>
         </div>
       )}
-    </DashboardLayout>
+      </div>
+    </div>
   );
 };
 

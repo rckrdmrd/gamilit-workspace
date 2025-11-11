@@ -5,7 +5,7 @@ import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { HypertextDocument } from './HypertextDocument';
 import { NavigationBreadcrumbs } from './NavigationBreadcrumbs';
 import { ExerciseProps, HypertextNode } from './navegacionHipertextualTypes';
-import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { FeedbackData, normalizeProgressUpdate } from '@shared/components/mechanics/mechanicsTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 
 export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
@@ -46,7 +46,9 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
   // Progress tracking
   useEffect(() => {
     const progress = calculateProgress();
-    onProgressUpdate?.(progress);
+    onProgressUpdate?.(
+      normalizeProgressUpdate(progress, visitedNodes.length, exercise.nodes.length, 0, 0)
+    );
   }, [visitedNodes]);
 
   // Auto-save functionality
@@ -100,14 +102,7 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
       type: 'success',
       title: '¡Objetivo Alcanzado!',
       message: `¡Excelente navegación! Has explorado el hipertexto y encontrado el destino.`,
-      score: {
-        baseScore: score,
-        timeBonus: Math.max(0, 20 - timeSpent / 30),
-        accuracyBonus: uniqueVisited >= exercise.nodes.length ? 20 : 10,
-        totalScore: score,
-        mlCoins: Math.floor(score / 10),
-        xpGained: score * 2,
-      },
+      score: score,
       showConfetti: true,
     });
     setShowFeedback(true);

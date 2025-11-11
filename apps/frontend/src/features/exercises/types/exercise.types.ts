@@ -9,9 +9,19 @@
  */
 
 /**
- * Exercise difficulty levels
+ * Exercise difficulty levels (CEFR standard)
+ * @see DifficultyLevelEnum
+ * @version 2.0 (2025-11-11) - Migrado a CEFR (A1-C2+)
  */
-export type ExerciseDifficulty = 'very_easy' | 'easy' | 'medium' | 'hard' | 'very_hard';
+export type ExerciseDifficulty =
+  | 'beginner'            // A1
+  | 'elementary'          // A2
+  | 'pre_intermediate'    // B1
+  | 'intermediate'        // B2
+  | 'upper_intermediate'  // C1
+  | 'advanced'            // C2
+  | 'proficient'          // C2+
+  | 'native';             // Nativo
 
 /**
  * Exercise types/mechanics
@@ -114,18 +124,69 @@ export interface ExerciseSubmissionResult {
 
 /**
  * Exercise attempt history
+ * Synchronized with backend ExerciseAttempt entity
+ *
+ * Backend source: /src/modules/progress/entities/exercise-attempt.entity.ts
+ * Database table: progress_tracking.exercise_attempts
  */
 export interface ExerciseAttempt {
+  /** Attempt ID (UUID) */
   id: string;
+
+  /** User ID who made the attempt (FK → auth_management.profiles) */
+  user_id: string;
+
+  /** Exercise ID attempted (FK → educational_content.exercises) */
   exercise_id: string;
+
+  /** Attempt number (1, 2, 3, ...) */
   attempt_number: number;
-  answer: string | string[];
-  is_correct: boolean;
-  score_percentage: number;
+
+  /**
+   * Submitted answers by question ID (JSONB structure)
+   * Example: { "q1": "answer1", "q2": ["option1", "option2"] }
+   * This is the primary field for storing answers
+   */
+  submitted_answers: Record<string, any>;
+
+  /**
+   * Simple answer field (legacy/backward compatibility)
+   * @deprecated Use submitted_answers instead for structured data
+   */
+  answer?: string | string[];
+
+  /** Whether the attempt was correct (nullable until graded) */
+  is_correct?: boolean;
+
+  /** Score obtained (0-100, nullable until graded) */
+  score?: number;
+
+  /** Time spent on attempt in seconds (nullable) */
+  time_spent_seconds?: number;
+
+  /** Number of hints used during attempt */
+  hints_used: number;
+
+  /**
+   * Comodines (power-ups) used in this attempt
+   * Example: ["pistas", "vision_lectora", "segunda_oportunidad"]
+   */
+  comodines_used: string[];
+
+  /** XP earned in this attempt */
   xp_earned: number;
+
+  /** ML Coins earned in this attempt */
   ml_coins_earned: number;
-  time_spent_seconds: number;
+
+  /** When the attempt was submitted (ISO timestamp) */
   submitted_at: Date;
+
+  /**
+   * Additional metadata (browser, device_type, response_pattern, etc.)
+   * Example: { browser: "Chrome", device_type: "mobile", response_pattern: [...] }
+   */
+  metadata: Record<string, any>;
 }
 
 /**

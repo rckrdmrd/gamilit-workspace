@@ -1,10 +1,11 @@
 import { InfografiaInteractivaData } from './infografiaInteractivaTypes';
+import { DifficultyLevel } from '@shared/types/educational.types';
 
 export const mockInfografiaInteractivaExercises: InfografiaInteractivaData[] = [{
   id: 'info-001',
   title: 'Infografía Interactiva: Logros de Marie Curie',
   description: 'Explora los principales logros de Marie Curie haciendo clic en cada tarjeta',
-  difficulty: 'facil',
+  difficulty: DifficultyLevel.BEGINNER,
   estimatedTime: 360,
   topic: 'Marie Curie - Logros',
   hints: [],

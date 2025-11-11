@@ -55,8 +55,8 @@ export function useSystemMonitoring(): UseSystemMonitoringResult {
   const [isMonitoring, setIsMonitoring] = useState(false);
 
   // Refs
-  const healthIntervalRef = useRef<NodeJS.Timeout>();
-  const alertIntervalRef = useRef<NodeJS.Timeout>();
+  const healthIntervalRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const alertIntervalRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   // ============================================================================
   // API CALLS

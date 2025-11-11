@@ -166,7 +166,7 @@ export const RankUpModal: React.FC<RankUpModalProps> = ({ isOpen, onClose }) => 
                     <>
                       <RankBadgeAdvanced
                         rank={previousRank.id}
-                        size="lg"
+
                         prestigeLevel={prestigeLevel}
                         animated={false}
                       />
@@ -180,7 +180,7 @@ export const RankUpModal: React.FC<RankUpModalProps> = ({ isOpen, onClose }) => 
                   >
                     <RankBadgeAdvanced
                       rank={currentRank.id}
-                      size="xl"
+
                       prestigeLevel={prestigeLevel}
                       showGlow={true}
                     />

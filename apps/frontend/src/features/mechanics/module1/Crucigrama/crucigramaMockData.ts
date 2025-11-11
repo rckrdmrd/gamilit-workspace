@@ -1,4 +1,5 @@
 import { CrucigramaData } from './crucigramaTypes';
+import { DifficultyLevel } from '@shared/types/educational.types';
 
 // Helper function to create grid
 const createGrid = (rows: number, cols: number): CrucigramaData['grid'] => {
@@ -18,7 +19,7 @@ export const mockCrucigramaExercises: CrucigramaData[] = [
     id: 'crucigrama-001',
     title: 'Crucigrama Científico: Descubrimientos de Marie Curie',
     description: 'Resuelve este crucigrama de 15×15 sobre los descubrimientos científicos de Marie Curie. Basado en PDF oficial v3.0',
-    difficulty: 'medio',
+    difficulty: DifficultyLevel.INTERMEDIATE,
     estimatedTime: 600, // 10 minutos
     topic: 'Marie Curie - Módulo 1: Comprensión Literal',
     hints: [
@@ -143,7 +144,7 @@ export const mockCrucigramaExercises: CrucigramaData[] = [
     id: 'crucigrama-002',
     title: 'Crucigrama: Vida de Marie Curie',
     description: 'Completa este crucigrama sobre la biografía de Marie Curie',
-    difficulty: 'facil',
+    difficulty: DifficultyLevel.BEGINNER,
     estimatedTime: 480,
     topic: 'Marie Curie - Biografía',
     hints: [
@@ -222,7 +223,7 @@ export const mockCrucigramaExercises: CrucigramaData[] = [
     id: 'crucigrama-003',
     title: 'Crucigrama Avanzado: Legado Científico',
     description: 'Crucigrama desafiante sobre el impacto científico de Marie Curie',
-    difficulty: 'dificil',
+    difficulty: DifficultyLevel.ADVANCED,
     estimatedTime: 900,
     topic: 'Marie Curie - Legado',
     hints: [

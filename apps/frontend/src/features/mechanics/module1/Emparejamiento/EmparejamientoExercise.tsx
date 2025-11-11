@@ -56,9 +56,7 @@ export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({ 
     const matched = cards.filter(c => c.isMatched).length;
     const total = cards.length;
     const isComplete = matched === total;
-    const score = await calculateScore({
-      exerciseId: exercise.id, startTime, endTime: new Date(), answers: { cards }, correctAnswers: matched / 2, totalQuestions: total / 2, hintsUsed: 0, difficulty: exercise.difficulty
-    });
+    const score = calculateScore(matched / 2, total / 2);
 
     setFeedback({
       type: isComplete ? 'success' : 'error',

@@ -3,4 +3,4 @@
  * Barrel export file for all layout components
  */
 
-export { DashboardLayout } from './DashboardLayout';
+// DashboardLayout moved to _legacy - use TeacherLayout or AdminLayout instead

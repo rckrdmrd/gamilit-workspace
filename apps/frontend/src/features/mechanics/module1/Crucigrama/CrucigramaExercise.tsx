@@ -123,7 +123,7 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
         difficulty: exercise.difficulty
       };
 
-      const score = await calculateScore(attempt);
+      const score = calculateScore(completedClues.size, exercise.clues.length);
       setCurrentScore(score.totalScore);
 
       setFeedback({

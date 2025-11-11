@@ -70,8 +70,8 @@ export const CollagePrensaExercise: React.FC = () => {
               <h1 className="text-3xl font-bold text-detective-text">Collage de Prensa</h1>
             </div>
             <ExportButton
-              onExport={(format: string) => alert(`Exportando como ${format}...`)}
-              availableFormats={['png', 'jpg', 'pdf']}
+              data={{}}
+              filename="collage-prensa"
             />
           </div>
           <p className="text-detective-text-secondary">

@@ -58,7 +58,9 @@ export const useAuthStore = create<AuthState>()(
 
           // Save tokens to localStorage for API client
           localStorage.setItem('auth-token', response.token);
-          localStorage.setItem('refresh-token', response.refreshToken);
+          if (response.refreshToken) {
+            localStorage.setItem('refresh-token', response.refreshToken);
+          }
 
           set({
             user: response.user,
@@ -89,7 +91,9 @@ export const useAuthStore = create<AuthState>()(
 
           // Save tokens to localStorage for API client
           localStorage.setItem('auth-token', response.token);
-          localStorage.setItem('refresh-token', response.refreshToken);
+          if (response.refreshToken) {
+            localStorage.setItem('refresh-token', response.refreshToken);
+          }
 
           // Update state with registered user data
           set({

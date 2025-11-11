@@ -2,7 +2,7 @@ import { registerAs } from '@nestjs/config';
 
 const envConfig = registerAs('env', () => ({
   nodeEnv: process.env.NODE_ENV || 'development',
-  port: parseInt(process.env.PORT || '3000', 10),
+  port: parseInt(process.env.PORT || '3006', 10),
   apiPrefix: process.env.API_PREFIX || 'api',
 
   // Logger configuration

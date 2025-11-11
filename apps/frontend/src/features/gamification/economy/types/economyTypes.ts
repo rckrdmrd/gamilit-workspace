@@ -92,9 +92,9 @@ export interface ShopItem {
   icon: string;             // Lucide icon name or emoji
   image?: string;           // Optional image URL
   rarity: ItemRarity;
-  tags: string[];           // For search and filtering
-  isOwned: boolean;         // Whether user owns this item
-  isPurchasable: boolean;   // Whether can be purchased (not sold out, etc.)
+  tags?: string[];           // For search and filtering
+  isOwned?: boolean;         // Whether user owns this item
+  isPurchasable?: boolean;   // Whether can be purchased (not sold out, etc.)
   requirements?: ShopItemRequirements;
   previewData?: unknown;    // Category-specific preview data
   metadata?: {
@@ -103,6 +103,8 @@ export interface ShopItem {
     stackable?: boolean;          // Can own multiple
     tradeable?: boolean;          // Can trade with others
   };
+  stock?: number;        // Remaining stock (for limited items)
+  available?: boolean;   // Whether item is currently available
 }
 
 /**

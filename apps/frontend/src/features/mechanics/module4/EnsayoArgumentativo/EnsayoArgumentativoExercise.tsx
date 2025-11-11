@@ -145,17 +145,7 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
     }
 
     const endTime = new Date();
-    const score = await calculateScore({
-      exerciseId,
-      userId,
-      startTime,
-      endTime,
-      answers: { topic, thesis, introduction, argument1, argument2, argument3, conclusion },
-      correctAnswers: 5, // All 5 sections completed
-      totalQuestions: 5,
-      hintsUsed: 0,
-      difficulty
-    });
+    const score = calculateScore(5, 5);
 
     setFeedback({
       type: 'success',

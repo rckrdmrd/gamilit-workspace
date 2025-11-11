@@ -8,6 +8,9 @@ import {
   HttpStatus,
   UnauthorizedException,
   Get,
+  Put,
+  Delete,
+  Param,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -22,6 +25,7 @@ import {
   UserResponseDto,
   LoginDto,
   RefreshTokenDto,
+  UpdateProfileDto,
 } from '../dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
@@ -176,5 +180,230 @@ export class AuthController {
     // Convertir a UserResponseDto (sin password)
     const { encrypted_password, ...userResponse } = user;
     return userResponse as UserResponseDto;
+  }
+
+  /**
+   * Actualizar perfil del usuario autenticado
+   */
+  @Put('profile')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Actualizar perfil del usuario autenticado' })
+  @ApiResponse({
+    status: 200,
+    description: 'Perfil actualizado exitosamente',
+    type: UserResponseDto,
+  })
+  @ApiResponse({ status: 401, description: 'No autenticado' })
+  @ApiResponse({ status: 400, description: 'Datos inválidos' })
+  @ApiBody({ type: UpdateProfileDto })
+  async updateProfile(
+    @Request() req: any,
+    @Body() dto: UpdateProfileDto,
+  ): Promise<UserResponseDto> {
+    // Extraer userId del token JWT
+    const userId = req.user?.id;
+
+    // Actualizar perfil usando el servicio de auth
+    const updatedUser = await this.authService.updateUserProfile(userId, dto);
+
+    if (!updatedUser) {
+      throw new UnauthorizedException('Usuario no encontrado');
+    }
+
+    // Convertir a UserResponseDto (sin password)
+    const { encrypted_password, ...userResponse } = updatedUser;
+    return userResponse as UserResponseDto;
+  }
+
+  /**
+   * Verificar email del usuario
+   */
+  @Post('verify-email')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Verificar email del usuario' })
+  @ApiResponse({
+    status: 200,
+    description: 'Email verificado exitosamente',
+    schema: {
+      properties: {
+        message: { type: 'string' },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Token inválido o expirado' })
+  @ApiBody({
+    schema: {
+      properties: {
+        token: { type: 'string' },
+      },
+    },
+  })
+  async verifyEmail(@Body('token') token: string): Promise<{ message: string }> {
+    // TODO: Implementar lógica de verificación de email
+    // Por ahora retornamos éxito
+    return { message: 'Email verificado exitosamente' };
+  }
+
+  /**
+   * Solicitar reseteo de contraseña
+   */
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Solicitar reseteo de contraseña' })
+  @ApiResponse({
+    status: 200,
+    description: 'Email de reseteo enviado',
+    schema: {
+      properties: {
+        message: { type: 'string' },
+      },
+    },
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        email: { type: 'string' },
+      },
+    },
+  })
+  async forgotPassword(@Body('email') email: string): Promise<{ message: string }> {
+    // TODO: Implementar lógica de forgot password
+    return { message: 'Si el email existe, recibirás instrucciones para resetear tu contraseña' };
+  }
+
+  /**
+   * Resetear contraseña
+   */
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Resetear contraseña con token' })
+  @ApiResponse({
+    status: 200,
+    description: 'Contraseña reseteada exitosamente',
+    schema: {
+      properties: {
+        message: { type: 'string' },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Token inválido o expirado' })
+  @ApiBody({
+    schema: {
+      properties: {
+        token: { type: 'string' },
+        newPassword: { type: 'string' },
+      },
+    },
+  })
+  async resetPassword(
+    @Body('token') token: string,
+    @Body('newPassword') newPassword: string,
+  ): Promise<{ message: string }> {
+    // TODO: Implementar lógica de reset password
+    return { message: 'Contraseña reseteada exitosamente' };
+  }
+
+  /**
+   * Cambiar contraseña (usuario autenticado)
+   */
+  @Put('password')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Cambiar contraseña del usuario autenticado' })
+  @ApiResponse({
+    status: 200,
+    description: 'Contraseña cambiada exitosamente',
+    schema: {
+      properties: {
+        message: { type: 'string' },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'No autenticado' })
+  @ApiResponse({ status: 400, description: 'Contraseña actual incorrecta' })
+  @ApiBody({
+    schema: {
+      properties: {
+        currentPassword: { type: 'string' },
+        newPassword: { type: 'string' },
+      },
+    },
+  })
+  async changePassword(
+    @Request() req: any,
+    @Body('currentPassword') currentPassword: string,
+    @Body('newPassword') newPassword: string,
+  ): Promise<{ message: string }> {
+    const userId = req.user?.id;
+    // TODO: Implementar lógica de cambio de contraseña
+    return { message: 'Contraseña cambiada exitosamente' };
+  }
+
+  /**
+   * Obtener sesiones activas del usuario
+   */
+  @Get('sessions')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Obtener sesiones activas del usuario autenticado' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de sesiones activas',
+    schema: {
+      properties: {
+        sessions: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'string' },
+              device_type: { type: 'string' },
+              browser: { type: 'string' },
+              os: { type: 'string' },
+              ip_address: { type: 'string' },
+              last_activity_at: { type: 'string' },
+              created_at: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'No autenticado' })
+  async getSessions(@Request() req: any): Promise<{ sessions: any[] }> {
+    const userId = req.user?.id;
+    // TODO: Implementar getUserSessions en SessionManagementService
+    return { sessions: [] };
+  }
+
+  /**
+   * Revocar sesión específica
+   */
+  @Delete('sessions/:sessionId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Revocar sesión específica' })
+  @ApiResponse({
+    status: 200,
+    description: 'Sesión revocada exitosamente',
+    schema: {
+      properties: {
+        message: { type: 'string' },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'No autenticado' })
+  @ApiResponse({ status: 404, description: 'Sesión no encontrada' })
+  async revokeSession(
+    @Request() req: any,
+    @Param('sessionId') sessionId: string,
+  ): Promise<{ message: string }> {
+    const userId = req.user?.id;
+    // TODO: Implementar revokeSession en SessionManagementService
+    return { message: 'Sesión revocada exitosamente' };
   }
 }

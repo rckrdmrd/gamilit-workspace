@@ -11,6 +11,37 @@ export interface User {
   firstName?: string;
   lastName?: string;
   displayName?: string;
+  /**
+   * Computed full name from firstName/lastName/displayName
+   * Optional - may be computed client-side
+   */
+  fullName?: string;
+  /**
+   * Account creation timestamp
+   * May be returned by some API endpoints
+   */
+  createdAt?: string;
+  /**
+   * Whether the user account is active
+   * May be returned by some API endpoints
+   */
+  isActive?: boolean;
+  /**
+   * Tenant ID for multi-tenant systems
+   * May be returned by some API endpoints
+   */
+  tenantId?: string;
+  /**
+   * School ID - Links user to a school in social_features.schools
+   * From backend Profile entity (auth_management.profiles.school_id)
+   * May be returned by some API endpoints
+   */
+  schoolId?: string;
+  /**
+   * Email verification status
+   * May be returned by some API endpoints
+   */
+  emailVerified?: boolean;
 }
 
 /**
@@ -27,6 +58,108 @@ export interface UserExtended extends User {
   avatar?: string;       // TODO: Add to backend AuthResponse
   createdAt?: string;    // TODO: Add to backend AuthResponse
   updatedAt?: string;    // TODO: Add to backend AuthResponse
+}
+
+/**
+ * User preferences configuration
+ * Maps to JSONB column in auth_management.profiles.preferences
+ *
+ * Backend source: /src/modules/auth/entities/profile.entity.ts
+ */
+export interface PreferencesConfig {
+  theme?: string;
+  language?: string;
+  timezone?: string;
+  sound_enabled?: boolean;
+  notifications_enabled?: boolean;
+  [key: string]: any; // Allow additional dynamic preferences
+}
+
+/**
+ * Profile type definition - Synchronized with backend Profile entity
+ * Represents complete user profile data from auth_management.profiles table
+ *
+ * Backend source: /src/modules/auth/entities/profile.entity.ts
+ * Database table: auth_management.profiles
+ *
+ * This interface maps 1:1 to the backend Profile entity with 25 fields.
+ * Used for profile management, settings, and user data beyond basic auth.
+ */
+export interface Profile {
+  /** Primary key UUID */
+  id: string;
+
+  /** Multi-tenancy: Links to auth_management.tenants */
+  tenant_id: string;
+
+  /** Links to auth.users (Supabase auth) - may be null for profiles without auth */
+  user_id: string | null;
+
+  /** Public display name - shown in UI, leaderboards */
+  display_name: string | null;
+
+  /** Complete name (may be computed from first_name + last_name) */
+  full_name: string | null;
+
+  /** Given name */
+  first_name: string | null;
+
+  /** Family name */
+  last_name: string | null;
+
+  /** Primary email (unique constraint) */
+  email: string;
+
+  /** Avatar/profile picture URL */
+  avatar_url: string | null;
+
+  /** User biography or description */
+  bio: string | null;
+
+  /** Contact phone number */
+  phone: string | null;
+
+  /** Date of birth (ISO date string) */
+  date_of_birth: string | null;
+
+  /** Academic level (e.g., "1", "2", "secondary") */
+  grade_level: string | null;
+
+  /** Student identification number */
+  student_id: string | null;
+
+  /** Links to social_features.schools */
+  school_id: string | null;
+
+  /** User role from GamilityRoleEnum (student, teacher, admin, etc.) */
+  role: string;
+
+  /** Account status from UserStatusEnum (active, inactive, suspended, etc.) */
+  status: string;
+
+  /** Email verification status */
+  email_verified: boolean;
+
+  /** Phone verification status */
+  phone_verified: boolean;
+
+  /** User preferences (theme, language, notifications, etc.) */
+  preferences: PreferencesConfig;
+
+  /** Last successful sign-in timestamp (ISO string) */
+  last_sign_in_at: string | null;
+
+  /** Last activity timestamp (ISO string) */
+  last_activity_at: string | null;
+
+  /** Additional custom metadata (flexible JSONB) */
+  metadata: Record<string, any>;
+
+  /** Profile creation timestamp (ISO string) */
+  created_at: string;
+
+  /** Profile last update timestamp (ISO string) */
+  updated_at: string;
 }
 
 /**
@@ -141,6 +274,21 @@ export function getUserFullName(user: User): string {
 }
 
 /**
+ * Helper function to get display name (username-like) from User
+ * Uses email prefix when no name fields are available
+ *
+ * @param user - User object from backend
+ * @returns Display name for UI (shorter than full name)
+ */
+export function getUserDisplayName(user: User): string {
+  if (user.displayName) return user.displayName;
+  if (user.firstName) return user.firstName;
+
+  // Use email prefix as username fallback
+  return user.email.split('@')[0];
+}
+
+/**
  * Convert backend User to UserExtended
  * Fills in missing fields with defaults
  *
@@ -150,7 +298,7 @@ export function getUserFullName(user: User): string {
  */
 export function toUserExtended(
   user: User,
-  additionalData?: Partial<Omit<UserExtended, keyof User | 'fullName'>>
+  additionalData?: Partial<UserExtended>
 ): UserExtended {
   return {
     ...user,

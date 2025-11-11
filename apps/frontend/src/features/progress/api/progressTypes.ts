@@ -7,6 +7,9 @@
  * @module progressTypes
  */
 
+// Import shared enums
+import { DifficultyLevel } from '@shared/types/educational.types';
+
 // ============================================================================
 // ENUMS
 // ============================================================================
@@ -31,13 +34,11 @@ export enum PowerupType {
 }
 
 /**
- * Difficulty levels
+ * Difficulty levels - re-export from educational.types
+ * Uses full CEFR standard (8 levels: A1-C2+)
+ * @see @shared/types/educational.types
  */
-export enum DifficultyLevel {
-  BEGINNER = 'beginner',
-  INTERMEDIATE = 'intermediate',
-  ADVANCED = 'advanced',
-}
+// Removed duplicate enum - imported from educational.types instead
 
 /**
  * Maya ranks - Official names
@@ -75,7 +76,7 @@ export interface SubmitExerciseResponse {
   attemptId: string;
   score: number; // 0-100
   isPerfect: boolean;
-  correctAnswers: number;
+  correctAnswersCount: number;
   totalQuestions: number;
   rewards: SubmissionRewards;
   feedback: SubmissionFeedback;
@@ -352,46 +353,3 @@ export interface ActivityFilters {
   limit?: number;
   offset?: number;
 }
-
-// ============================================================================
-// EXPORTS
-// ============================================================================
-
-export type {
-  // Submission types
-  SubmitExerciseRequest,
-  SubmitExerciseResponse,
-  SubmissionRewards,
-  SubmissionFeedback,
-  AnswerReview,
-  Achievement,
-  RankUpInfo,
-
-  // Progress types
-  UserProgressOverview,
-  OverallProgress,
-  ModuleProgressSummary,
-  ModuleProgressDetail,
-  ExerciseProgress,
-  StudyStreak,
-
-  // Activity types
-  Activity,
-  ActivityStats,
-
-  // Attempt types
-  ExerciseAttempt,
-
-  // Dashboard types
-  UserDashboard,
-  CurrentModuleInfo,
-  UpcomingExercise,
-  ProgressCharts,
-  DashboardStats,
-
-  // Filter types
-  ExerciseAttemptFilters,
-  ActivityFilters,
-};
-
-export { ActivityType, PowerupType, DifficultyLevel, MayaRank };

@@ -67,7 +67,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="sm"
+
       showCloseButton={false}
       closeOnOverlayClick={!loading}
       closeOnEscape={!loading}

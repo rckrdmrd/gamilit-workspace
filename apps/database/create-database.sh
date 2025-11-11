@@ -166,10 +166,11 @@ log ""
 # ============================================================================
 
 log "============================================================================"
-log "FASE 2: FUNCIONES COMPARTIDAS"
+log "FASE 2: FUNCIONES COMPARTIDAS (gamilit schema)"
 log "============================================================================"
 
-execute_sql_files "$DDL_DIR/schemas/gamilit/functions" "*.sql" "Funciones compartidas (gamilit schema)"
+execute_sql_files "$DDL_DIR/schemas/gamilit/functions" "*.sql" "Funciones compartidas"
+execute_sql_files "$DDL_DIR/schemas/gamilit/views" "*.sql" "Vistas utilitarias"
 
 log_success "FASE 2 completada"
 log ""
@@ -292,6 +293,19 @@ log_success "FASE 9 completada"
 log ""
 
 # ============================================================================
+# FASE 9.5: FK CONSTRAINTS DIFERIDOS (Resolución de dependencias circulares)
+# ============================================================================
+
+log "============================================================================"
+log "FASE 9.5: FK CONSTRAINTS DIFERIDOS"
+log "============================================================================"
+
+execute_sql_files "$DDL_DIR/schemas/auth_management/fk-constraints" "*.sql" "FK constraints diferidos auth_management"
+
+log_success "FASE 9.5 completada - Dependencias circulares resueltas"
+log ""
+
+# ============================================================================
 # FASE 10: CONTENT_MANAGEMENT SCHEMA
 # ============================================================================
 
@@ -299,6 +313,7 @@ log "===========================================================================
 log "FASE 10: CONTENT_MANAGEMENT SCHEMA"
 log "============================================================================"
 
+execute_sql_files "$DDL_DIR/schemas/content_management/enums" "*.sql" "ENUMs de gestión de contenido"
 execute_sql_files "$DDL_DIR/schemas/content_management/tables" "*.sql" "Tablas de gestión de contenido"
 execute_sql_files "$DDL_DIR/schemas/content_management/triggers" "*.sql" "Triggers de content_management"
 execute_sql_files "$DDL_DIR/schemas/content_management/indexes" "*.sql" "Índices de content_management"
@@ -352,16 +367,103 @@ log_warning "FASE 13: admin_dashboard puede estar incompleto"
 log ""
 
 # ============================================================================
-# FASE 14: PUBLIC SCHEMA (OPCIONAL - Legacy)
+# FASE 14: LTI_INTEGRATION SCHEMA (Learning Tools Interoperability)
 # ============================================================================
 
 log "============================================================================"
-log "FASE 14: PUBLIC SCHEMA (OPCIONAL - Legacy)"
+log "FASE 14: LTI_INTEGRATION SCHEMA"
+log "============================================================================"
+
+execute_sql_files "$DDL_DIR/schemas/lti_integration/tables" "*.sql" "Tablas de LTI"
+execute_sql_files "$DDL_DIR/schemas/lti_integration/functions" "*.sql" "Funciones de LTI"
+execute_sql_files "$DDL_DIR/schemas/lti_integration/triggers" "*.sql" "Triggers de LTI"
+
+log_success "FASE 14 completada"
+log ""
+
+# ============================================================================
+# FASE 15: PUBLIC SCHEMA (OPCIONAL - Legacy)
+# ============================================================================
+
+log "============================================================================"
+log "FASE 15: PUBLIC SCHEMA (OPCIONAL - Legacy)"
 log "============================================================================"
 
 log_warning "Saltando public schema - objetos legacy no necesarios para BD nueva"
 # execute_sql_files "$DDL_DIR/schemas/public/tables" "*.sql" "Tablas públicas (si existen)"
 
+log ""
+
+# ============================================================================
+# FASE 16: SEED DATA - Carga de Datos Iniciales (PROD)
+# ============================================================================
+
+log "============================================================================"
+log "FASE 16: SEED DATA - Carga de Datos Iniciales (PROD)"
+log "============================================================================"
+
+SEEDS_DIR="$SCRIPT_DIR/seeds/prod"
+
+# Orden correcto respetando dependencias:
+
+# 16.0: Audit Logging (sin dependencias)
+execute_sql "$SEEDS_DIR/audit_logging/01-default-config.sql" "Seeds: audit_logging default config"
+
+# 16.1: System Configuration (sin dependencias)
+execute_sql "$SEEDS_DIR/system_configuration/01-system_settings.sql" "Seeds: system_settings"
+execute_sql "$SEEDS_DIR/system_configuration/02-feature_flags.sql" "Seeds: feature_flags"
+execute_sql "$SEEDS_DIR/system_configuration/03-notification_settings_global.sql" "Seeds: notification_settings_global"
+execute_sql "$SEEDS_DIR/system_configuration/04-rate_limits.sql" "Seeds: rate_limits"
+
+# 16.2: Auth Management (tenants y auth_providers)
+execute_sql "$SEEDS_DIR/auth_management/01-tenants.sql" "Seeds: tenants"
+execute_sql "$SEEDS_DIR/auth_management/02-auth_providers.sql" "Seeds: auth_providers"
+
+# 16.3: Auth (usuarios de testing y demo)
+execute_sql "$SEEDS_DIR/auth/01-demo-users.sql" "Seeds: users (testing + demo)"
+
+# 16.4: Auth Management (profiles para usuarios)
+execute_sql "$SEEDS_DIR/auth_management/04-profiles-complete.sql" "Seeds: profiles"
+
+# 16.4.1: Content Management (templates de contenido)
+execute_sql "$SEEDS_DIR/content_management/01-default-templates.sql" "Seeds: content_templates"
+
+# 16.4.2: Social Features (escuelas, aulas y miembros)
+execute_sql "$SEEDS_DIR/social_features/01-schools.sql" "Seeds: schools (demo)"
+execute_sql "$SEEDS_DIR/social_features/02-classrooms.sql" "Seeds: classrooms (demo)"
+execute_sql "$SEEDS_DIR/social_features/03-classroom-members.sql" "Seeds: classroom_members (demo)"
+
+# 16.5: Educational Content (módulos y ejercicios)
+execute_sql "$SEEDS_DIR/educational_content/01-modules.sql" "Seeds: modules (5)"
+execute_sql "$SEEDS_DIR/educational_content/02-exercises-module1.sql" "Seeds: Module 1 - Literal (5 exercises)"
+execute_sql "$SEEDS_DIR/educational_content/03-exercises-module2.sql" "Seeds: Module 2 - Inferencial (5 exercises)"
+execute_sql "$SEEDS_DIR/educational_content/04-exercises-module3.sql" "Seeds: Module 3 - Crítica (5 exercises)"
+execute_sql "$SEEDS_DIR/educational_content/05-exercises-module4.sql" "Seeds: Module 4 - Digital (9 exercises)"
+execute_sql "$SEEDS_DIR/educational_content/06-exercises-module5.sql" "Seeds: Module 5 - Creativo (3 exercises)"
+execute_sql "$SEEDS_DIR/educational_content/07-assessment-rubrics.sql" "Seeds: assessment_rubrics"
+execute_sql "$SEEDS_DIR/educational_content/08-difficulty_criteria.sql" "Seeds: difficulty_criteria"
+
+# NOTA: Modelo JSONB puro - Seeds legacy movidos a _deprecated/
+# Total: 27 ejercicios production-ready con estructura JSONB completa
+
+# 16.5.1: Progress Tracking (progreso inicial de módulos)
+execute_sql "$SEEDS_DIR/progress_tracking/01-module_progress.sql" "Seeds: module_progress (initial)"
+
+# 16.5.2: LTI Integration (consumidores LTI)
+execute_sql "$SEEDS_DIR/lti_integration/01-lti_consumers.sql" "Seeds: lti_consumers"
+
+# 16.6: Gamification System
+execute_sql "$SEEDS_DIR/gamification_system/01-achievement_categories.sql" "Seeds: achievement_categories"
+execute_sql "$SEEDS_DIR/gamification_system/02-leaderboard_metadata.sql" "Seeds: leaderboard_metadata"
+execute_sql "$SEEDS_DIR/gamification_system/03-maya_ranks.sql" "Seeds: maya_ranks"
+execute_sql "$SEEDS_DIR/gamification_system/04-achievements.sql" "Seeds: achievements (20 logros demo)"
+execute_sql "$SEEDS_DIR/gamification_system/05-user_stats.sql" "Seeds: user_stats"
+execute_sql "$SEEDS_DIR/gamification_system/06-user_ranks.sql" "Seeds: user_ranks"
+execute_sql "$SEEDS_DIR/gamification_system/07-ml_coins_transactions.sql" "Seeds: ml_coins_transactions"
+execute_sql "$SEEDS_DIR/gamification_system/08-user_achievements.sql" "Seeds: user_achievements"
+execute_sql "$SEEDS_DIR/gamification_system/09-comodines_inventory.sql" "Seeds: comodines_inventory"
+
+log_success "FASE 16 completada - Seeds de PROD cargados"
 log ""
 
 # ============================================================================

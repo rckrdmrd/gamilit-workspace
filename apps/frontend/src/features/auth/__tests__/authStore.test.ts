@@ -81,7 +81,8 @@ describe('Auth Store', () => {
         emailVerified: true
       },
       token: 'mock-access-token',
-      refreshToken: 'mock-refresh-token'
+      refreshToken: 'mock-refresh-token',
+      expiresIn: '3600'
     };
 
     it('should login successfully with valid credentials', async () => {
@@ -215,11 +216,11 @@ describe('Auth Store', () => {
 
   describe('Register', () => {
     const mockRegisterData = {
+      fullName: 'New User',
       email: 'newuser@gamilit.com',
       password: 'SecurePass123!',
-      firstName: 'New',
-      lastName: 'User',
-      role: 'student'
+      confirmPassword: 'SecurePass123!',
+      acceptTerms: true
     };
 
     const mockRegisterResponse = {
@@ -231,7 +232,8 @@ describe('Auth Store', () => {
         emailVerified: false
       },
       token: 'mock-register-token',
-      refreshToken: 'mock-register-refresh-token'
+      refreshToken: 'mock-register-refresh-token',
+      expiresIn: '3600'
     };
 
     it('should register user successfully', async () => {
@@ -320,7 +322,8 @@ describe('Auth Store', () => {
         emailVerified: true
       },
       token: 'mock-token',
-      refreshToken: 'mock-refresh'
+      refreshToken: 'mock-refresh',
+      expiresIn: '3600'
     };
 
     it('should logout correctly and clear state', async () => {

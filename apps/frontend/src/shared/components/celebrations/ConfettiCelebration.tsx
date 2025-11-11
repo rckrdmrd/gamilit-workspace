@@ -7,31 +7,50 @@
 
 import React, { useEffect, useState } from 'react';
 
+export type AchievementRarity = 'common' | 'rare' | 'epic' | 'legendary';
+
+/**
+ * Props for ConfettiCelebration component
+ * @property isActive - Whether confetti animation is active
+ * @property show - Alias for isActive (for backward compatibility)
+ * @property rarity - Achievement rarity level (affects confetti intensity/colors)
+ * @property duration - Duration of animation in milliseconds (default: 3000)
+ * @property onComplete - Callback when animation completes
+ */
 export interface ConfettiCelebrationProps {
-  isActive: boolean;
+  isActive?: boolean;
+  show?: boolean;
+  rarity?: AchievementRarity;
   duration?: number;
   onComplete?: () => void;
 }
 
 export const ConfettiCelebration: React.FC<ConfettiCelebrationProps> = ({
   isActive,
+  show: showProp,
+  rarity = 'common',  // Default rarity
   duration = 3000,
   onComplete,
 }) => {
-  const [show, setShow] = useState(false);
+  // Use 'show' prop if provided, otherwise fall back to 'isActive'
+  const active = showProp ?? isActive ?? false;
+  const [showState, setShowState] = useState(false);
+
+  // TODO: Use rarity to adjust confetti intensity/colors in future implementation
+  // For now, it's accepted but not used
 
   useEffect(() => {
-    if (isActive) {
-      setShow(true);
+    if (active) {
+      setShowState(true);
       const timer = setTimeout(() => {
-        setShow(false);
+        setShowState(false);
         onComplete?.();
       }, duration);
       return () => clearTimeout(timer);
     }
-  }, [isActive, duration, onComplete]);
+  }, [active, duration, onComplete]);
 
-  if (!show) return null;
+  if (!showState) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-50 flex items-center justify-center">

@@ -3,7 +3,7 @@
 // Converts ExerciseData from ExercisePage to specific mechanic formats
 // ============================================
 
-import { BaseExercise, DifficultyLevel, Hint } from '@shared/components/mechanics/mechanicsTypes';
+import { BaseExercise, DifficultyLevel, DifficultyLevelEnum, Hint } from '@shared/components/mechanics/mechanicsTypes';
 
 /**
  * Generic ExerciseData type from ExercisePage
@@ -14,7 +14,7 @@ export interface ExerciseData {
   title: string;
   type: string;
   description: string;
-  difficulty: 'facil' | 'medio' | 'dificil' | 'experto';
+  difficulty: DifficultyLevel; // Uses official CEFR enum
   points: number;
   estimatedTime: number;
   completed: boolean;
@@ -23,21 +23,41 @@ export interface ExerciseData {
 }
 
 /**
- * Maps difficulty levels - already in correct format, but validates
+ * Maps difficulty levels - validates against DifficultyLevel enum
  */
-const mapDifficulty = (difficulty: 'facil' | 'medio' | 'dificil' | 'experto'): DifficultyLevel => {
-  const validDifficulties: DifficultyLevel[] = ['facil', 'medio', 'dificil', 'experto'];
-  return validDifficulties.includes(difficulty as DifficultyLevel) ? (difficulty as DifficultyLevel) : 'medio';
+const mapDifficulty = (difficulty: any): DifficultyLevel => {
+  // Handle legacy string values
+  const legacyMap: Record<string, DifficultyLevel> = {
+    'facil': DifficultyLevelEnum.BEGINNER,
+    'medio': DifficultyLevelEnum.INTERMEDIATE,
+    'dificil': DifficultyLevelEnum.ADVANCED,
+    'experto': DifficultyLevelEnum.PROFICIENT,
+  };
+
+  // If it's a legacy value, map it
+  if (typeof difficulty === 'string' && legacyMap[difficulty]) {
+    return legacyMap[difficulty];
+  }
+
+  // If it's already a valid DifficultyLevel, return it
+  const validValues = Object.values(DifficultyLevelEnum);
+  if (validValues.includes(difficulty)) {
+    return difficulty;
+  }
+
+  // Default to INTERMEDIATE (B2)
+  return DifficultyLevelEnum.INTERMEDIATE;
 };
 
 /**
  * Generates default hints if none are provided
+ * Backend expects hints as string[], not objects
  */
 const generateDefaultHints = (type: string): Hint[] => {
   return [
-    { id: '1', text: 'Lee cuidadosamente las instrucciones', cost: 10 },
-    { id: '2', text: 'Presta atención a los detalles', cost: 20 },
-    { id: '3', text: 'Revisa tu respuesta antes de enviar', cost: 30 },
+    'Lee cuidadosamente las instrucciones',
+    'Presta atención a los detalles',
+    'Revisa tu respuesta antes de enviar',
   ];
 };
 
@@ -46,14 +66,27 @@ const generateDefaultHints = (type: string): Hint[] => {
  * This creates the base structure that all mechanics extend from
  */
 export const adaptToBaseExercise = (exercise: ExerciseData): BaseExercise => {
+  // Ensure hints is always string[] (Backend format)
+  let hints: Hint[] = generateDefaultHints(exercise.type);
+
+  if (exercise.mechanicData?.hints) {
+    // If hints come from backend as string[], use them directly
+    if (Array.isArray(exercise.mechanicData.hints) && typeof exercise.mechanicData.hints[0] === 'string') {
+      hints = exercise.mechanicData.hints;
+    }
+    // If hints are in old object format, extract text
+    else if (Array.isArray(exercise.mechanicData.hints) && typeof exercise.mechanicData.hints[0] === 'object') {
+      hints = exercise.mechanicData.hints.map((h: any) => h.text || h);
+    }
+  }
+
   return {
     id: exercise.id,
     title: exercise.title,
-    description: exercise.description,
     difficulty: mapDifficulty(exercise.difficulty),
     estimatedTime: exercise.estimatedTime,
     topic: exercise.moduleTitle || exercise.type,
-    hints: exercise.mechanicData?.hints || generateDefaultHints(exercise.type),
+    // hints are handled separately in mechanic-specific adapters
   };
 };
 

@@ -141,13 +141,42 @@ export function useMissions(userId?: string): UseMissionsResult {
 
   // Initial fetch
   useEffect(() => {
+    // ✅ Verificar autenticación ANTES de llamar API
+    const userId = useAuthStore.getState().user?.id;
+
+    if (!userId) {
+      console.log('[useMissions] No user authenticated, skipping fetch');
+      // Establecer estados vacíos
+      setDailyMissions([]);
+      setWeeklyMissions([]);
+      setSpecialMissions([]);
+      setStats({
+        todayCompleted: 0,
+        todayTotal: 0,
+        weekCompleted: 0,
+        weekTotal: 0,
+        totalCompleted: 0,
+        totalXPEarned: 0,
+        totalMLCoinsEarned: 0,
+        currentStreak: 0,
+        longestStreak: 0,
+      });
+      setLoading(false);
+      return;
+    }
+
+    // ✅ Solo llamar API si hay usuario autenticado
     fetchMissions();
   }, [fetchMissions]);
 
   // Auto-refresh every 60 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      fetchMissions();
+      // ✅ Verificar autenticación antes de auto-refresh
+      const userId = useAuthStore.getState().user?.id;
+      if (userId) {
+        fetchMissions();
+      }
     }, REFRESH_INTERVAL);
 
     return () => clearInterval(interval);

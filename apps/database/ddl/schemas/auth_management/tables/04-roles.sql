@@ -56,5 +56,5 @@ COMMENT ON COLUMN auth_management.user_roles.revoked_by IS 'Usuario que revocó 
 COMMENT ON COLUMN auth_management.user_roles.revoked_at IS 'Fecha y hora de revocación del rol';
 
 -- Permissions
-ALTER TABLE auth_management.user_roles OWNER TO postgres;
+ALTER TABLE auth_management.user_roles OWNER TO gamilit_user;
 GRANT ALL ON TABLE auth_management.user_roles TO gamilit_user;

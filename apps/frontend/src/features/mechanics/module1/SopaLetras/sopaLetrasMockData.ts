@@ -1,4 +1,5 @@
 import { SopaLetrasData } from './sopaLetrasTypes';
+import { DifficultyLevel } from '@shared/types/educational.types';
 
 const createGrid = (rows: number, cols: number): string[][] => {
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -12,7 +13,7 @@ export const mockSopaLetrasExercises: SopaLetrasData[] = [
     id: 'sopa-001',
     title: 'Sopa de Letras: Conceptos Científicos de Marie Curie',
     description: 'Encuentra palabras relacionadas con el trabajo científico de Marie Curie',
-    difficulty: 'medio',
+    difficulty: DifficultyLevel.INTERMEDIATE,
     estimatedTime: 600,
     topic: 'Marie Curie - Vocabulario Científico',
     hints: [

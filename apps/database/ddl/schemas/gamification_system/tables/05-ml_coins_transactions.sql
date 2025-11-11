@@ -44,6 +44,7 @@ SET default_table_access_method = heap;
 CREATE TABLE gamification_system.ml_coins_transactions (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     user_id uuid NOT NULL,
+    tenant_id uuid,
     amount integer NOT NULL,
     balance_before integer NOT NULL,
     balance_after integer NOT NULL,
@@ -62,7 +63,7 @@ CREATE TABLE gamification_system.ml_coins_transactions (
 );
 
 
-ALTER TABLE gamification_system.ml_coins_transactions OWNER TO postgres;
+ALTER TABLE gamification_system.ml_coins_transactions OWNER TO gamilit_user;
 
 --
 -- Name: TABLE ml_coins_transactions; Type: COMMENT; Schema: gamification_system; Owner: postgres
@@ -83,6 +84,13 @@ COMMENT ON COLUMN gamification_system.ml_coins_transactions.transaction_type IS 
 --
 
 COMMENT ON COLUMN gamification_system.ml_coins_transactions.multiplier IS 'Multiplicador aplicado (ej: 1.5x por racha)';
+
+
+--
+-- Name: COLUMN ml_coins_transactions.tenant_id; Type: COMMENT; Schema: gamification_system; Owner: postgres
+--
+
+COMMENT ON COLUMN gamification_system.ml_coins_transactions.tenant_id IS 'ID del tenant al que pertenece la transacción (multi-tenancy support)';
 
 
 --
@@ -136,11 +144,26 @@ CREATE INDEX idx_ml_transactions_user_type_date ON gamification_system.ml_coins_
 
 
 --
+-- Name: idx_ml_transactions_tenant_id; Type: INDEX; Schema: gamification_system; Owner: postgres
+--
+
+CREATE INDEX idx_ml_transactions_tenant_id ON gamification_system.ml_coins_transactions USING btree (tenant_id);
+
+
+--
 -- Name: ml_coins_transactions ml_coins_transactions_user_id_fkey; Type: FK CONSTRAINT; Schema: gamification_system; Owner: postgres
 --
 
 ALTER TABLE ONLY gamification_system.ml_coins_transactions
     ADD CONSTRAINT ml_coins_transactions_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth_management.profiles(id) ON DELETE CASCADE;
+
+
+--
+-- Name: ml_coins_transactions ml_coins_transactions_tenant_id_fkey; Type: FK CONSTRAINT; Schema: gamification_system; Owner: postgres
+--
+
+ALTER TABLE ONLY gamification_system.ml_coins_transactions
+    ADD CONSTRAINT ml_coins_transactions_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES auth_management.tenants(id) ON DELETE SET NULL;
 
 
 --

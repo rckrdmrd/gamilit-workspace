@@ -22,7 +22,7 @@ export default function NotFoundPage() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <DetectiveButton
             variant="primary"
-            size="lg"
+
             icon={<Home className="w-5 h-5" />}
             onClick={() => navigate('/dashboard')}
           >
@@ -30,7 +30,7 @@ export default function NotFoundPage() {
           </DetectiveButton>
           <DetectiveButton
             variant="blue"
-            size="lg"
+
             icon={<Search className="w-5 h-5" />}
             onClick={() => navigate(-1)}
           >

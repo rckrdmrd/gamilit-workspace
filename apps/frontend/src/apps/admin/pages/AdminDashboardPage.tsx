@@ -20,12 +20,12 @@ export default function AdminDashboardPage() {
   const { user, logout } = useAuth();
 
   const gamificationData = {
+    userId: user?.id || 'mock-admin-id',
     level: 20,
-    xp: 5000,
-    xp_to_next: 6000,
-    ml: 2500,
+    totalXP: 5000,
+    mlCoins: 2500,
     rank: 'Super Admin',
-    badges: ['admin_master', 'system_guardian', 'platform_builder'],
+    achievements: ['admin_master', 'system_guardian', 'platform_builder'],
   };
 
   const handleLogout = () => {
@@ -47,7 +47,7 @@ export default function AdminDashboardPage() {
 
   return (
     <AdminLayout
-      user={user}
+      user={user || undefined}
       gamificationData={gamificationData}
       organizationName="GAMILIT Platform Admin"
       onLogout={handleLogout}

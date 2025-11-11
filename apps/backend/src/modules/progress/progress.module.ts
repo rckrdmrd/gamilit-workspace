@@ -8,6 +8,7 @@ import { PendingActivitiesService } from './services/pending-activities.service'
 import { RecentActivityService } from './services/recent-activity.service';
 import { Module as EducationalModule } from '../educational/entities/module.entity';
 import { Exercise } from '../educational/entities/exercise.entity';
+import { GamificationModule } from '../gamification/gamification.module';
 
 /**
  * ProgressModule
@@ -72,6 +73,8 @@ import { Exercise } from '../educational/entities/exercise.entity';
     ),
     // Import Module and Exercise entities from educational schema
     TypeOrmModule.forFeature([EducationalModule, Exercise], 'educational'),
+    // Import GamificationModule for MLCoinsService and UserStatsService
+    GamificationModule,
   ],
   providers: [
     services.ModuleProgressService,

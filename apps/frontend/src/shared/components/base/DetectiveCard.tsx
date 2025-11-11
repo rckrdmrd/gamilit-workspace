@@ -3,11 +3,11 @@ import { motion } from 'framer-motion';
 import { cn } from '@shared/utils';
 
 export interface DetectiveCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'default' | 'gold' | 'exercise' | 'mystery';
+  variant?: 'default' | 'gold' | 'exercise' | 'mystery' | 'info' | 'success' | 'danger';
   children: React.ReactNode;
   hoverable?: boolean;
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
-  as?: keyof JSX.IntrinsicElements;
+  as?: React.ElementType;
 }
 
 const variantStyles = {
@@ -15,6 +15,9 @@ const variantStyles = {
   gold: 'card-gold', // Uses detective-theme.css
   exercise: 'card-exercise', // Uses detective-theme.css
   mystery: 'card-mystery', // Uses detective-theme.css
+  info: 'detective-card', // Uses detective-theme.css (same as default for now)
+  success: 'detective-card', // Uses detective-theme.css (same as default for now)
+  danger: 'detective-card', // Uses detective-theme.css (same as default for now)
 };
 
 const paddingStyles = {
@@ -61,7 +64,7 @@ export const DetectiveCard = React.forwardRef<HTMLDivElement, DetectiveCardProps
 
     return (
       <Component
-        ref={ref}
+        ref={ref as any}
         onClick={onClick}
         className={cn(
           // Variant styles from detective-theme.css
@@ -85,8 +88,8 @@ export const DetectiveCard = React.forwardRef<HTMLDivElement, DetectiveCardProps
               }
             : undefined
         }
-        {...motionProps}
-        {...props}
+        {...(motionProps as any)}
+        {...(props as any)}
       >
         {children}
       </Component>

@@ -93,7 +93,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
       difficulty: exercise.difficulty
     };
 
-    const score = await calculateScore(attempt);
+    const score = calculateScore(correctCount, exercise.statements.length);
 
     setFeedback({
       type: correctCount === statements.length ? 'success' : 'partial',

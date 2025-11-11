@@ -5,7 +5,7 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { ExerciseProps, ResenaCriticaState, CriteriaState } from './resenaCriticaTypes';
-import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { FeedbackData, normalizeProgressUpdate } from '@shared/components/mechanics/mechanicsTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 
 export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
@@ -73,7 +73,9 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
   // Progress tracking
   useEffect(() => {
     const progress = calculateProgress();
-    onProgressUpdate?.(progress);
+    onProgressUpdate?.(
+      normalizeProgressUpdate(progress, 0, 1, 0, 0)
+    );
   }, [title, rating, summary, analysis, recommendation, criteria]);
 
   // Auto-save functionality
@@ -147,14 +149,7 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
         feedbackType === 'success'
           ? '¡Has creado una reseña crítica detallada y bien fundamentada!'
           : 'Tu reseña está completa. Considera agregar más criterios para mejorar tu puntuación.',
-      score: {
-        baseScore: score,
-        timeBonus: Math.max(0, 100 - timeSpent / 10),
-        accuracyBonus: criteriaCount * 5,
-        totalScore: score,
-        mlCoins: Math.floor(score / 10),
-        xpGained: score * 2,
-      },
+      score: score,
       showConfetti: feedbackType === 'success',
     });
     setShowFeedback(true);
@@ -326,14 +321,14 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
         <div className="flex flex-wrap gap-3">
           <DetectiveButton
             variant="primary"
-            size="lg"
+
             onClick={handleCheck}
           >
             Verificar Reseña
           </DetectiveButton>
           <DetectiveButton
             variant="secondary"
-            size="md"
+
             onClick={handleReset}
           >
             Reiniciar
@@ -341,7 +336,7 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
           {onExit && (
             <DetectiveButton
               variant="secondary"
-              size="md"
+
               onClick={onExit}
             >
               Salir

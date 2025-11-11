@@ -194,7 +194,7 @@ export default function RegisterPage() {
           <DetectiveButton
             type="submit"
             variant="primary"
-            size="lg"
+
             loading={loading}
             disabled={!isValid || loading}
             className="w-full"

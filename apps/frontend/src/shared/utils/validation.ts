@@ -10,6 +10,7 @@ export interface PasswordStrength {
   level: 'weak' | 'fair' | 'good' | 'strong' | 'very-strong';
   color: string;
   percentage: number;
+  label?: string; // Human-readable label for the strength level
 }
 
 export interface PasswordCriteria {

@@ -1,10 +1,11 @@
 import { EmparejamientoData } from './emparejamientoTypes';
+import { DifficultyLevel } from '@shared/types/educational.types';
 
 export const mockEmparejamientoExercises: EmparejamientoData[] = [{
   id: 'emp-001',
   title: 'Relaciona palabras con definiciones',
   description: 'Conecta cada descubrimiento con su descripción correcta. Empareja los elementos científicos descubiertos por Marie Curie con sus características. Módulo 1 - Ejercicio 3',
-  difficulty: 'medio',
+  difficulty: DifficultyLevel.INTERMEDIATE,
   estimatedTime: 360,
   topic: 'Marie Curie - Módulo 1: Comprensión Literal',
   hints: [

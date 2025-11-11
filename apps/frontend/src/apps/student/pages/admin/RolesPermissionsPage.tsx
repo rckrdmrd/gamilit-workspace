@@ -10,7 +10,12 @@ export default function RolesPermissionsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={{ email: 'admin@glit.com' }} />
+      <GamifiedHeader user={{
+        id: 'mock-roles-permissions-id',
+        email: 'admin@glit.com',
+        role: 'super_admin',
+        displayName: 'Admin Roles'
+      }} />
 
       <main className="detective-container py-8">
         <div className="flex items-center gap-3 mb-6">

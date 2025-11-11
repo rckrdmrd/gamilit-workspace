@@ -114,7 +114,7 @@ export class MarieCurieContent {
   @Column({
     type: 'enum',
     enum: DifficultyLevelEnum,
-    default: DifficultyLevelEnum.VERY_EASY,
+    default: DifficultyLevelEnum.BEGINNER,
   })
   difficulty_level!: DifficultyLevelEnum;
 

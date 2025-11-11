@@ -25,6 +25,7 @@ import {
   Check
 } from 'lucide-react';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { DifficultyLevel } from '@shared/types/educational.types';
 import { getExercise, saveExerciseProgress, submitExercise, getExerciseHints } from '@/services/api/educationalAPI';
 import { adaptExerciseData } from '@shared/utils/exerciseAdapter';
 
@@ -38,7 +39,7 @@ interface ExerciseData {
   title: string;
   type: string;
   description: string;
-  difficulty: 'facil' | 'medio' | 'dificil' | 'experto';
+  difficulty: DifficultyLevel;
   points: number;
   estimatedTime: number;
   completed: boolean;
@@ -143,7 +144,8 @@ export default function ExercisePage() {
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [startTime] = useState(new Date());
-  const [hints, setHints] = useState<Array<{ id: string; text: string; cost: number }>>([]);
+  // Backend returns hints as string[], not objects
+  const [hints, setHints] = useState<string[]>([]);
 
   const { user } = useAuth();
 
@@ -169,7 +171,7 @@ export default function ExercisePage() {
           title: exerciseData.title,
           type: exerciseType,
           description: exerciseData.description || '',
-          difficulty: exerciseData.difficulty as 'facil' | 'medio' | 'dificil' | 'experto',
+          difficulty: exerciseData.difficulty, // Uses DifficultyLevel enum (CEFR levels)
           points: exerciseData.points || exerciseData.max_points || 0,
           estimatedTime: exerciseData.estimatedTime || (exerciseData.estimated_time_minutes ? exerciseData.estimated_time_minutes * 60 : 900), // Backend returns seconds, fallback to 15 minutes
           completed: exerciseData.completed || false,
@@ -184,7 +186,10 @@ export default function ExercisePage() {
         // Fetch hints for this exercise
         try {
           const exerciseHints = await getExerciseHints(exerciseId!);
-          setHints(exerciseHints.map(h => ({ id: h.id, text: h.text, cost: h.cost })));
+          // Backend returns string[], but API might return objects - handle both
+          if (Array.isArray(exerciseHints)) {
+            setHints(exerciseHints.map(h => typeof h === 'string' ? h : (h as any).text || String(h)));
+          }
         } catch (hintError) {
           console.warn('Could not load hints:', hintError);
           // Continue without hints - not critical
@@ -207,7 +212,7 @@ export default function ExercisePage() {
           title: 'Crucigrama: Primeros Años de Marie Curie',
           type: 'crucigrama_cientifico',
           description: 'Completa el crucigrama sobre los primeros años de la científica Marie Curie',
-          difficulty: 'medio',
+          difficulty: DifficultyLevel.INTERMEDIATE,
           points: 150,
           estimatedTime: 900, // 15 minutes
           completed: false,
@@ -612,7 +617,7 @@ export default function ExercisePage() {
                   {/* Navigation Actions */}
                   <DetectiveButton
                     variant="blue"
-                    size="sm"
+
                     icon={<ArrowLeft className="w-4 h-4" />}
                     onClick={() => navigate(`/module/${moduleId}`)}
                     className="w-full"
@@ -622,7 +627,7 @@ export default function ExercisePage() {
 
                   <DetectiveButton
                     variant="secondary"
-                    size="sm"
+
                     icon={<Save className="w-4 h-4" />}
                     onClick={handleSaveProgress}
                     disabled={!hasUnsavedChanges}
@@ -633,7 +638,7 @@ export default function ExercisePage() {
 
                   <DetectiveButton
                     variant="secondary"
-                    size="sm"
+
                     icon={<SkipForward className="w-4 h-4" />}
                     onClick={handleSkip}
                     className="w-full"
@@ -646,7 +651,7 @@ export default function ExercisePage() {
                   {/* Mechanic Actions */}
                   <DetectiveButton
                     variant="blue"
-                    size="sm"
+
                     icon={<RotateCcw className="w-4 h-4" />}
                     onClick={() => mechanicActionsRef.current.handleReset?.()}
                     className="w-full"
@@ -656,7 +661,7 @@ export default function ExercisePage() {
 
                   <DetectiveButton
                     variant="gold"
-                    size="sm"
+
                     icon={<Check className="w-4 h-4" />}
                     onClick={() => mechanicActionsRef.current.handleCheck?.()}
                     className="w-full"
@@ -671,7 +676,7 @@ export default function ExercisePage() {
                         <DetectiveButton
                           key={index}
                           variant={action.variant || 'secondary'}
-                          size="sm"
+
                           icon={action.icon}
                           onClick={action.onClick}
                           className="w-full"
@@ -686,9 +691,11 @@ export default function ExercisePage() {
                   {hints.length > 0 && (
                     <HintSystem
                       hints={hints}
-                      onUseHint={handleUseHint}
-                      availableCoins={availableCoins}
-                      className="w-full"
+                      onHintUsed={(hintIndex) => {
+                        if (hints[hintIndex]) {
+                          handleUseHint({ id: `hint-${hintIndex}`, text: hints[hintIndex], cost: 15 });
+                        }
+                      }}
                     />
                   )}
 
@@ -697,7 +704,7 @@ export default function ExercisePage() {
                   {/* Submit Button */}
                   <DetectiveButton
                     variant="primary"
-                    size="sm"
+
                     icon={<Send className="w-4 h-4" />}
                     onClick={handleSubmit}
                     className="w-full"
@@ -712,16 +719,16 @@ export default function ExercisePage() {
                 <h3 className="text-sm font-bold text-detective-text mb-3">
                   Puntuación
                 </h3>
-                <ScoreDisplay score={progress.score} maxScore={exercise.points} size="sm" />
+                <ScoreDisplay score={progress.score} maxScore={exercise.points} />
               </DetectiveCard>
 
               {/* Timer */}
               <DetectiveCard hoverable={false}>
                 <h3 className="text-sm font-bold text-detective-text mb-3">Tiempo</h3>
                 <TimerWidget
-                  initialTime={0}
-                  countDown={false}
-                  showWarning={false}
+                  startTime={Date.now()}
+                  isPaused={false}
+                  showSeconds={true}
                 />
               </DetectiveCard>
 
@@ -729,10 +736,8 @@ export default function ExercisePage() {
               <DetectiveCard hoverable={false}>
                 <h3 className="text-sm font-bold text-detective-text mb-3">Progreso</h3>
                 <ProgressTracker
-                  current={progress.currentStep}
-                  total={progress.totalSteps}
-                  variant="circular"
-                  className="mx-auto"
+                  currentStep={progress.currentStep}
+                  totalSteps={progress.totalSteps}
                 />
                 <p className="text-center text-sm text-detective-text-secondary mt-2">
                   {progress.currentStep} de {progress.totalSteps}

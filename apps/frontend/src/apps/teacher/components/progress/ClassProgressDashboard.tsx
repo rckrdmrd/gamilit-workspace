@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { TrendingUp, Download, Users, Target, Clock, Award } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -35,10 +36,20 @@ export function ClassProgressDashboard({ classroomId }: ClassProgressDashboardPr
         a.href = url;
         a.download = `progress-report-${classroomId}.${format === 'excel' ? 'xlsx' : 'pdf'}`;
         a.click();
+        toast.success(`Reporte exportado como ${format.toUpperCase()}`, {
+          duration: 3000,
+          icon: '📊',
+        });
+      } else {
+        toast.error('Error al exportar el reporte. Por favor, intenta de nuevo.', {
+          duration: 4000,
+        });
       }
     } catch (error) {
       console.error('Error exporting report:', error);
-      alert('Error al exportar el reporte');
+      toast.error('Error al exportar el reporte. Verifica tu conexión.', {
+        duration: 4000,
+      });
     }
   };
 
@@ -84,7 +95,7 @@ export function ClassProgressDashboard({ classroomId }: ClassProgressDashboardPr
         <div className="flex gap-2">
           <DetectiveButton
             variant="secondary"
-            size="sm"
+
             onClick={() => handleExport('pdf')}
           >
             <Download className="w-4 h-4" />
@@ -92,7 +103,7 @@ export function ClassProgressDashboard({ classroomId }: ClassProgressDashboardPr
           </DetectiveButton>
           <DetectiveButton
             variant="secondary"
-            size="sm"
+
             onClick={() => handleExport('excel')}
           >
             <Download className="w-4 h-4" />

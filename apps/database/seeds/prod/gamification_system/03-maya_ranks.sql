@@ -149,7 +149,7 @@ ON CONFLICT (rank_name) DO UPDATE SET
     rank_order = EXCLUDED.rank_order,
     next_rank = EXCLUDED.next_rank,
     is_active = EXCLUDED.is_active,
-    updated_at = NOW();
+    updated_at = gamilit.now_mexico();
 
 -- =====================================================
 -- VERIFICACIÓN

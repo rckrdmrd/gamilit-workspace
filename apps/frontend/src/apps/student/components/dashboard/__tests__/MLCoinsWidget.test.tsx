@@ -52,21 +52,21 @@ const mockMLCoinsData: MLCoinsData = {
       description: 'Completaste Ejercicio 1',
       amount: 50,
       type: 'earned' as const,
-      timestamp: new Date('2025-11-09T10:30:00'),
+      timestamp: new Date('2025-11-09T10:30:00').toISOString(),
     },
     {
       id: 't2',
       description: 'Compraste Power-Up',
       amount: 25,
       type: 'spent' as const,
-      timestamp: new Date('2025-11-09T09:15:00'),
+      timestamp: new Date('2025-11-09T09:15:00').toISOString(),
     },
     {
       id: 't3',
       description: 'Desbloqueaste Logro',
       amount: 100,
       type: 'earned' as const,
-      timestamp: new Date('2025-11-09T08:00:00'),
+      timestamp: new Date('2025-11-09T08:00:00').toISOString(),
     },
   ],
 };
@@ -237,7 +237,7 @@ describe('MLCoinsWidget', () => {
             description: 'Extra Transaction',
             amount: 10,
             type: 'earned' as const,
-            timestamp: new Date(),
+            timestamp: new Date().toISOString(),
           },
         ],
       };

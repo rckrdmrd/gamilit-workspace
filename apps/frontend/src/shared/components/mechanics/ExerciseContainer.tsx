@@ -6,11 +6,22 @@
  */
 
 import React from 'react';
+import { BaseExercise } from './mechanicsTypes';
 
+/**
+ * Props for ExerciseContainer component
+ * @property children - Child components to render inside the container
+ * @property title - Optional title to display at the top
+ * @property instructions - Optional instructions text
+ * @property exercise - Optional exercise data (for future use in enhanced features)
+ * @property onComplete - Optional callback when exercise is completed
+ * @property className - Optional additional CSS classes
+ */
 export interface ExerciseContainerProps {
   children: React.ReactNode;
   title?: string;
   instructions?: string;
+  exercise?: BaseExercise;
   onComplete?: () => void;
   className?: string;
 }

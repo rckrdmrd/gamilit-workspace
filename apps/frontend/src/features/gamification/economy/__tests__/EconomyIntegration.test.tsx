@@ -25,7 +25,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useEconomyStore } from '../store/economyStore';
-import type { ShopItem, Transaction } from '../types/economyTypes';
+import type { ShopItem, Transaction, ShopCategory } from '../types/economyTypes';
 
 // Mock API
 vi.mock('../api/economyAPI', () => ({
@@ -94,8 +94,12 @@ describe('Economy Integration Tests', () => {
     name: 'Detective Power-Up',
     description: 'Boost your detective skills',
     price: 100,
-    category: 'power-ups',
+    category: 'premium' as ShopCategory,
     icon: 'zap',
+    rarity: 'rare',
+    tags: ['power-up'],
+    isOwned: false,
+    isPurchasable: true,
     available: true,
   };
 
@@ -104,8 +108,12 @@ describe('Economy Integration Tests', () => {
     name: 'Mystery Hint',
     description: 'Get a hint for difficult cases',
     price: 50,
-    category: 'hints',
+    category: 'cosmetics' as ShopCategory,
     icon: 'lightbulb',
+    rarity: 'common',
+    tags: ['hint'],
+    isOwned: false,
+    isPurchasable: true,
     available: true,
   };
 

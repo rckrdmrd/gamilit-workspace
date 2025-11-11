@@ -186,9 +186,12 @@ temp/
 /artifacts/**/*.tmp
 
 # === CLAUDE CODE ===
-# No ignorar configuración, solo archivos temporales
-/.claude/cache/
-/.claude/temp/
+# Excluir toda la carpeta .claude (configuración local de IA)
+.claude/
+
+# === ORCHESTRATION ===
+# Archivos generados por agentes/subagentes (análisis, reportes, planes)
+orchestration/
 
 # === MIGRATION (temporal) ===
 # Durante migración, mantener docs de análisis

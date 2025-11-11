@@ -232,7 +232,7 @@ export default function TeacherAnalytics() {
               name="classroom"
               type="select"
               value={selectedClassroom}
-              onChange={setSelectedClassroom}
+              onChange={(e) => setSelectedClassroom(e.target.value)}
               options={classrooms.map((c) => ({ value: c.id, label: c.name }))}
             />
             <FormField
@@ -240,14 +240,14 @@ export default function TeacherAnalytics() {
               name="startDate"
               type="date"
               value={dateRange.start}
-              onChange={(value) => setDateRange({ ...dateRange, start: value })}
+              onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
             />
             <FormField
               label="Fecha Fin"
               name="endDate"
               type="date"
               value={dateRange.end}
-              onChange={(value) => setDateRange({ ...dateRange, end: value })}
+              onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
             />
           </div>
           <div className="mt-4">

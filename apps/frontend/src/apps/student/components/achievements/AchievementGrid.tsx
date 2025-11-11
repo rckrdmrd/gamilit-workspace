@@ -43,7 +43,7 @@ export const AchievementGrid: React.FC<AchievementGridProps> = ({
         stiffness: 100,
       },
     },
-  };
+  } as const;
 
   // Skeleton loading state
   if (loading) {

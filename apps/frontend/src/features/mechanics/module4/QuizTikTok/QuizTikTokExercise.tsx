@@ -112,13 +112,13 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
 
   // Calculate progress
   const calculateProgress = () => {
-    return (answers.length / exercise.questions.length) * 100;
+    return (answers.length / currentExercise.questions.length) * 100;
   };
 
   // Calculate current score
   const calculateCurrentScore = () => {
-    const correct = answers.filter((ans, idx) => ans === exercise.questions[idx].correctAnswer).length;
-    return Math.floor((correct / exercise.questions.length) * 100);
+    const correct = answers.filter((ans, idx) => ans === currentExercise.questions[idx].correctAnswer).length;
+    return Math.floor((correct / currentExercise.questions.length) * 100);
   };
 
   // Auto-save every 30 seconds
@@ -145,7 +145,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
 
   // Handle swipe navigation
   const handleSwipe = (direction: 'up' | 'down') => {
-    if (direction === 'down' && currentIndex < exercise.questions.length - 1) {
+    if (direction === 'down' && currentIndex < currentExercise.questions.length - 1) {
       setCurrentIndex(prev => prev + 1);
     } else if (direction === 'up' && currentIndex > 0) {
       setCurrentIndex(prev => prev - 1);
@@ -160,7 +160,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
 
     // Auto-advance to next question after a short delay
     setTimeout(() => {
-      if (currentIndex < exercise.questions.length - 1) {
+      if (currentIndex < currentExercise.questions.length - 1) {
         handleSwipe('down');
       } else {
         // Last question answered, trigger check
@@ -171,13 +171,13 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
 
   // Handle check/verification
   const handleCheck = async (finalAnswers: number[] = answers) => {
-    const correct = finalAnswers.filter((ans, idx) => ans === exercise.questions[idx].correctAnswer).length;
+    const correct = finalAnswers.filter((ans, idx) => ans === currentExercise.questions[idx].correctAnswer).length;
 
-    if (finalAnswers.length < exercise.questions.length) {
+    if (finalAnswers.length < currentExercise.questions.length) {
       setFeedback({
         type: 'error',
         title: 'Quiz Incompleto',
-        message: `Has respondido ${finalAnswers.length} de ${exercise.questions.length} preguntas.`,
+        message: `Has respondido ${finalAnswers.length} de ${currentExercise.questions.length} preguntas.`,
         showConfetti: false
       });
       setShowFeedback(true);
@@ -187,24 +187,14 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
     const endTime = new Date();
     const timeSpentSeconds = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
 
-    const score = await calculateScore({
-      exerciseId,
-      userId,
-      startTime,
-      endTime,
-      answers: { answers: finalAnswers },
-      correctAnswers: correct,
-      totalQuestions: exercise.questions.length,
-      hintsUsed: 0,
-      difficulty
-    });
+    const score = calculateScore(correct, currentExercise.questions.length);
 
     setFeedback({
-      type: correct === exercise.questions.length ? 'success' : correct >= exercise.questions.length / 2 ? 'partial' : 'error',
-      title: correct === exercise.questions.length ? '¡Perfect!' : correct >= exercise.questions.length / 2 ? 'Buen intento' : 'Sigue practicando',
-      message: `Respondiste correctamente ${correct} de ${exercise.questions.length} preguntas (${Math.round((correct / exercise.questions.length) * 100)}%).`,
-      score: correct >= exercise.questions.length / 2 ? score : undefined,
-      showConfetti: correct === exercise.questions.length
+      type: correct === currentExercise.questions.length ? 'success' : correct >= currentExercise.questions.length / 2 ? 'partial' : 'error',
+      title: correct === currentExercise.questions.length ? '¡Perfect!' : correct >= currentExercise.questions.length / 2 ? 'Buen intento' : 'Sigue practicando',
+      message: `Respondiste correctamente ${correct} de ${currentExercise.questions.length} preguntas (${Math.round((correct / currentExercise.questions.length) * 100)}%).`,
+      score: correct >= currentExercise.questions.length / 2 ? score : undefined,
+      showConfetti: correct === currentExercise.questions.length
     });
     setShowFeedback(true);
   };
@@ -254,7 +244,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
         <AnimatePresence mode="wait">
           <TikTokCard
             key={currentIndex}
-            question={exercise.questions[currentIndex]}
+            question={currentExercise.questions[currentIndex]}
             onAnswer={handleAnswer}
             selectedAnswer={answers[currentIndex]}
           />
@@ -277,7 +267,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
             <DetectiveButton
               variant="secondary"
               onClick={() => handleSwipe('down')}
-              disabled={currentIndex === exercise.questions.length - 1}
+              disabled={currentIndex === currentExercise.questions.length - 1}
               icon={<ChevronDown />}
               className="bg-white/20 backdrop-blur-md border-white/30 text-white"
             >
@@ -289,7 +279,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
         {/* Progress Indicator - Bottom */}
         <div className="absolute bottom-8 left-0 right-0 text-center text-white text-sm font-medium z-20 flex items-center justify-center gap-3">
           <span className="bg-black/50 backdrop-blur-md px-4 py-2 rounded-full">
-            Pregunta {currentIndex + 1} / {exercise.questions.length}
+            Pregunta {currentIndex + 1} / {currentExercise.questions.length}
           </span>
           <span className="bg-detective-orange/80 backdrop-blur-md px-4 py-2 rounded-full">
             {answers.length} respondidas
@@ -340,7 +330,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
                 <h2 className="text-detective-2xl font-bold text-detective-text">Panel de Control</h2>
                 <DetectiveButton
                   variant="secondary"
-                  size="sm"
+
                   onClick={() => setShowSidebar(false)}
                   icon={<X />}
                 >
@@ -354,7 +344,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
               >
-                <TimerWidget initialTime={0} countDown={false} />
+                <TimerWidget startTime={Date.now()} isPaused={false} showSeconds={true} />
               </motion.div>
 
               {/* Progress Tracker */}
@@ -363,7 +353,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
-                <ProgressTracker current={calculateProgress()} total={100} variant="circular" />
+                <ProgressTracker currentStep={calculateProgress()} totalSteps={100} variant="circular" />
               </motion.div>
 
               {/* Score Display */}
@@ -387,7 +377,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
                     Estado de Preguntas
                   </h3>
                   <div className="space-y-2">
-                    {exercise.questions.map((_, idx) => (
+                    {currentExercise.questions.map((_, idx) => (
                       <div
                         key={idx}
                         className={`flex items-center justify-between p-2 rounded-detective transition-colors ${
@@ -439,7 +429,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
                       variant="primary"
                       onClick={() => handleCheck(answers)}
                       className="w-full"
-                      disabled={answers.length < exercise.questions.length}
+                      disabled={answers.length < currentExercise.questions.length}
                     >
                       Verificar Respuestas
                     </DetectiveButton>

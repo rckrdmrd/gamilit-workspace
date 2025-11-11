@@ -1,11 +1,12 @@
 import { TimelineData } from './timelineTypes';
+import { DifficultyLevel } from '@shared/types/educational.types';
 
 export const mockTimelineExercises: TimelineData[] = [
   {
     id: 'timeline-001',
     title: 'Línea de Tiempo de Marie Curie',
     description: 'Arrastra cada evento a su fecha correspondiente en la línea de tiempo. Basado en Módulo 1 - Ejercicio 1',
-    difficulty: 'medio',
+    difficulty: DifficultyLevel.INTERMEDIATE,
     estimatedTime: 480,
     topic: 'Marie Curie - Módulo 1: Comprensión Literal',
     hints: [
@@ -49,7 +50,7 @@ export const mockTimelineExercises: TimelineData[] = [
     id: 'timeline-002',
     title: 'Descubrimientos Científicos de Marie Curie',
     description: 'Ordena los descubrimientos y avances científicos de Marie Curie',
-    difficulty: 'facil',
+    difficulty: DifficultyLevel.BEGINNER,
     estimatedTime: 360,
     topic: 'Marie Curie - Ciencia',
     hints: [
@@ -92,7 +93,7 @@ export const mockTimelineExercises: TimelineData[] = [
     id: 'timeline-003',
     title: 'Reconocimientos Internacionales',
     description: 'Ordena los premios y reconocimientos que recibió Marie Curie',
-    difficulty: 'dificil',
+    difficulty: DifficultyLevel.ADVANCED,
     estimatedTime: 600,
     topic: 'Marie Curie - Logros',
     hints: [

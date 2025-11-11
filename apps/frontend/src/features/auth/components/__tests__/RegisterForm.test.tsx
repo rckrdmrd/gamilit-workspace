@@ -38,7 +38,7 @@ const mockClearError = vi.fn();
 let mockAuthContextValue = {
   register: mockRegister,
   clearError: mockClearError,
-  error: null,
+  error: null as string | null,
   isAuthenticated: false,
   isLoading: false,
 };

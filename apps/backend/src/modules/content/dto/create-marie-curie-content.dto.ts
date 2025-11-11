@@ -90,7 +90,7 @@ export class CreateMarieCurieContentDto {
   /**
    * Nivel de dificultad
    */
-  @ApiPropertyOptional({ description: 'Nivel de dificultad', enum: DifficultyLevelEnum, default: DifficultyLevelEnum.VERY_EASY })
+  @ApiPropertyOptional({ description: 'Nivel de dificultad', enum: DifficultyLevelEnum, default: DifficultyLevelEnum.BEGINNER })
   @IsOptional()
   @IsEnum(DifficultyLevelEnum)
   difficulty_level?: DifficultyLevelEnum;

@@ -8,6 +8,7 @@
 export * from './useAuth';
 export * from './useLocalStorage';
 export * from './useToggle';
+export * from './useUserClassroom';
 
 // Utility hooks
 export * from './useDebounce';

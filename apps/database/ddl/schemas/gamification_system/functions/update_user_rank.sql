@@ -5,25 +5,26 @@
 --   - p_user_id: UUID - ID del usuario
 -- Returns: TABLE (old_rank, new_rank, rank_up, reward_coins)
 -- Created: 2025-11-02
+-- Updated: 2025-11-11 - Refactorizado para usar maya_rank ENUM y leer de maya_ranks table
 -- =====================================================
 
 CREATE OR REPLACE FUNCTION gamification_system.update_user_rank(
     p_user_id UUID
 )
 RETURNS TABLE (
-    old_rank VARCHAR,
-    new_rank VARCHAR,
+    old_rank gamification_system.maya_rank,
+    new_rank gamification_system.maya_rank,
     rank_up BOOLEAN,
     reward_coins INTEGER
 ) AS $$
 DECLARE
     v_current_xp BIGINT;
-    v_old_rank VARCHAR;
-    v_new_rank VARCHAR;
+    v_old_rank gamification_system.maya_rank;
+    v_new_rank gamification_system.maya_rank;
     v_coins_reward INTEGER := 0;
 BEGIN
     -- Obtener XP y rango actual
-    SELECT COALESCE(us.total_xp, 0), COALESCE(ur.current_rank, 'beginner')
+    SELECT COALESCE(us.total_xp, 0), COALESCE(ur.current_rank, 'Ajaw'::gamification_system.maya_rank)
     INTO v_current_xp, v_old_rank
     FROM gamification_system.user_stats us
     LEFT JOIN gamification_system.user_ranks ur ON ur.user_id = us.user_id
@@ -33,19 +34,24 @@ BEGIN
         RETURN;
     END IF;
 
-    -- Calcular nuevo rango (cada 5000 XP = 1 rango)
-    v_new_rank := CASE
-        WHEN v_current_xp < 1000 THEN 'beginner'
-        WHEN v_current_xp < 5000 THEN 'apprentice'
-        WHEN v_current_xp < 10000 THEN 'journeyman'
-        WHEN v_current_xp < 20000 THEN 'expert'
-        ELSE 'master'
-    END;
+    -- Calcular nuevo rango dinámicamente desde maya_ranks table
+    SELECT mr.rank_name, mr.ml_coins_bonus
+    INTO v_new_rank, v_coins_reward
+    FROM gamification_system.maya_ranks mr
+    WHERE mr.is_active = true
+      AND v_current_xp >= mr.min_xp_required
+      AND (mr.max_xp_threshold IS NULL OR v_current_xp <= mr.max_xp_threshold)
+    ORDER BY mr.rank_order DESC
+    LIMIT 1;
+
+    -- Si no se encontró un rango válido, usar Ajaw por defecto
+    IF v_new_rank IS NULL THEN
+        v_new_rank := 'Ajaw'::gamification_system.maya_rank;
+        v_coins_reward := 0;
+    END IF;
 
     -- Si hubo cambio de rango
     IF v_new_rank != v_old_rank THEN
-        v_coins_reward := 500;
-
         -- Actualizar coins en user_stats
         UPDATE gamification_system.user_stats
         SET
@@ -71,15 +77,15 @@ BEGIN
     END IF;
 
     RETURN QUERY SELECT
-        v_old_rank::VARCHAR,
-        v_new_rank::VARCHAR,
-        v_new_rank != v_old_rank,
+        v_old_rank,
+        v_new_rank,
+        (v_new_rank != v_old_rank)::BOOLEAN,
         v_coins_reward;
 END;
 $$ LANGUAGE plpgsql;
 
 COMMENT ON FUNCTION gamification_system.update_user_rank(UUID) IS
-    'Actualiza el rango del usuario basado en XP total y otorga recompensas';
+    'Actualiza el rango del usuario basado en XP total y otorga recompensas. Lee configuración dinámica desde maya_ranks table.';
 
 -- Grant permissions
 GRANT EXECUTE ON FUNCTION gamification_system.update_user_rank(UUID) TO authenticated;

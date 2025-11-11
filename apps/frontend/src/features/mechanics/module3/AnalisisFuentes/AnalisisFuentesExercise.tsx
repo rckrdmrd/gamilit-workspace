@@ -31,6 +31,7 @@ interface ExerciseState {
 export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
   exerciseId,
   onComplete,
+  onExit,
   onProgressUpdate,
   initialData,
 }) => {
@@ -285,7 +286,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
               />
               <DetectiveButton
                 variant="primary"
-                size="md"
+
                 onClick={handleFactCheck}
                 disabled={!claim.trim() || analyzing}
                 loading={analyzing}
@@ -319,7 +320,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
             {onExit && (
               <DetectiveButton
                 variant="secondary"
-                size="lg"
+
                 onClick={onExit}
               >
                 Salir
@@ -327,14 +328,14 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
             )}
             <DetectiveButton
               variant="gold"
-              size="lg"
+
               onClick={handleReset}
             >
               Reiniciar
             </DetectiveButton>
             <DetectiveButton
               variant="primary"
-              size="lg"
+
               onClick={handleComplete}
             >
               Completar Ejercicio
@@ -350,14 +351,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
           type: currentScore >= 70 ? 'success' : 'partial',
           title: currentScore >= 70 ? '¡Excelente Análisis!' : 'Buen Trabajo',
           message: `Has completado el análisis de fuentes con ${currentScore} puntos.`,
-          score: {
-            baseScore: currentScore,
-            timeBonus: Math.max(0, 20 - Math.floor(timeSpent / 60)),
-            accuracyBonus: analyzedSources.length === sources.length ? 20 : 0,
-            totalScore: calculateFinalScore(),
-            mlCoins: Math.floor(calculateFinalScore() / 2),
-            xpGained: calculateFinalScore()
-          },
+          score: calculateFinalScore(),
           showConfetti: currentScore >= 70
         }}
         onClose={() => {

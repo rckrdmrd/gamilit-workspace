@@ -205,6 +205,75 @@ export class RanksController {
     return await this.ranksService.getUserRankHistory(userId);
   }
 
+  /**
+   * 6. GET /api/gamification/ranks/check-promotion/:userId
+   * Verifica si el usuario es elegible para promoción
+   *
+   * @param userId - ID del usuario
+   * @returns Boolean indicando si puede promocionar
+   */
+  @Get('check-promotion/:userId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Verificar elegibilidad para promoción',
+    description: 'Verifica si el usuario cumple los requisitos para promocionar al siguiente rango',
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'ID del usuario',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Elegibilidad verificada',
+    schema: {
+      properties: {
+        eligible: { type: 'boolean' },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'No autenticado' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  async checkPromotionEligibility(
+    @Param('userId') userId: string,
+  ): Promise<{ eligible: boolean }> {
+    const eligible = await this.ranksService.checkPromotionEligibility(userId);
+    return { eligible };
+  }
+
+  /**
+   * 7. POST /api/gamification/ranks/promote/:userId
+   * Promociona al usuario al siguiente rango
+   *
+   * @param userId - ID del usuario
+   * @returns Nuevo rango del usuario
+   */
+  @Post('promote/:userId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Promocionar usuario al siguiente rango',
+    description: 'Promociona al usuario al siguiente rango maya si cumple los requisitos',
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'ID del usuario',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuario promocionado exitosamente',
+    type: UserRank,
+  })
+  @ApiResponse({ status: 401, description: 'No autenticado' })
+  @ApiResponse({ status: 400, description: 'Usuario no elegible para promoción' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  async promoteUser(@Param('userId') userId: string): Promise<UserRank> {
+    return await this.ranksService.promoteToNextRank(userId);
+  }
+
   // =========================================================================
   // ENDPOINTS ADMIN
   // =========================================================================

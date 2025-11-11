@@ -31,6 +31,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
   const [score, setScore] = useState(initialData?.score || 0);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
+  const [hintsUsed, setHintsUsed] = useState(initialData?.hintsUsed || 0);
 
   useEffect(() => {
     if (!story) {
@@ -88,25 +89,11 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
       const accuracyScore = Math.round(res.predictionAccuracy * 100);
       setScore(accuracyScore);
 
-      // Create standardized score object
-      const attempt = {
-        exerciseId: story.id,
-        startTime,
-        endTime: new Date(),
-        answers: { prediction: userPrediction },
-        correctAnswers: 1,
-        totalQuestions: 1,
-        hintsUsed: 0,
-        difficulty: story.difficulty
-      };
-
-      const calculatedScore = await calculateScore(attempt);
-
       setFeedback({
         type: accuracyScore >= 70 ? 'success' : accuracyScore >= 50 ? 'partial' : 'info',
         title: accuracyScore >= 70 ? '¡Excelente Predicción!' : '¡Buen Intento!',
         message: res.explanation,
-        score: calculatedScore,
+        score: accuracyScore,
         showConfetti: accuracyScore >= 70
       });
       setShowFeedback(true);
@@ -174,7 +161,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
                 </span>
                 <DetectiveButton
                   variant="gold"
-                  size="lg"
+
                   onClick={handleSubmit}
                   disabled={submitting || userPrediction.length < 50 || result !== null}
                   loading={submitting}
@@ -253,7 +240,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
             {onExit && (
               <DetectiveButton
                 variant="secondary"
-                size="lg"
+
                 onClick={onExit}
               >
                 Salir
@@ -262,7 +249,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
             {result && (
               <DetectiveButton
                 variant="blue"
-                size="lg"
+
                 onClick={handleReset}
               >
                 Intentar de Nuevo

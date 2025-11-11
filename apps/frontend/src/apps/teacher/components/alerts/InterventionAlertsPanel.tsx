@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { AlertTriangle, Filter, RefreshCw, Bell } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -163,17 +164,26 @@ export function InterventionAlertsPanel({
 
   const handleSendMessage = async (alertId: string) => {
     console.log('Send message for alert:', alertId);
-    alert('Funcionalidad de envío de mensaje (integrar con sistema de comunicación)');
+    toast('Funcionalidad de envío de mensaje pendiente de integración', {
+      duration: 3000,
+      icon: '✉️',
+    });
   };
 
   const handleAssignHelp = async (alertId: string) => {
     console.log('Assign help for alert:', alertId);
-    alert('Funcionalidad de asignación de ayuda (integrar con sistema de asignaciones)');
+    toast('Funcionalidad de asignación de ayuda pendiente de integración', {
+      duration: 3000,
+      icon: '🤝',
+    });
   };
 
   const handleMarkForFollowUp = async (alertId: string) => {
     console.log('Mark for follow-up:', alertId);
-    alert('Funcionalidad de seguimiento (integrar con sistema de tareas del profesor)');
+    toast('Funcionalidad de seguimiento pendiente de integración', {
+      duration: 3000,
+      icon: '📋',
+    });
   };
 
   const handleResolve = async (alertId: string) => {
@@ -220,7 +230,7 @@ export function InterventionAlertsPanel({
             </p>
           </div>
         </div>
-        <DetectiveButton onClick={fetchAlerts} variant="secondary" size="sm">
+        <DetectiveButton onClick={fetchAlerts} variant="secondary">
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           Actualizar
         </DetectiveButton>
@@ -274,28 +284,28 @@ export function InterventionAlertsPanel({
           <div className="flex flex-wrap gap-2">
             <DetectiveButton
               variant={priorityFilter === 'all' ? 'primary' : 'secondary'}
-              size="sm"
+
               onClick={() => setPriorityFilter('all')}
             >
               Todas
             </DetectiveButton>
             <DetectiveButton
               variant={priorityFilter === 'critical' ? 'primary' : 'secondary'}
-              size="sm"
+
               onClick={() => setPriorityFilter('critical')}
             >
               Críticas
             </DetectiveButton>
             <DetectiveButton
               variant={priorityFilter === 'high' ? 'primary' : 'secondary'}
-              size="sm"
+
               onClick={() => setPriorityFilter('high')}
             >
               Altas
             </DetectiveButton>
             <DetectiveButton
               variant={priorityFilter === 'medium' ? 'primary' : 'secondary'}
-              size="sm"
+
               onClick={() => setPriorityFilter('medium')}
             >
               Medias

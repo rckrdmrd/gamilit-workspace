@@ -11,8 +11,9 @@ interface ModuleGridCardProps {
 }
 
 export function ModuleGridCard({ module, onClick, index = 0 }: ModuleGridCardProps) {
-  const isCompleted = module.progress === 100;
-  const isInProgress = module.progress > 0 && module.progress < 100;
+  const progress = module.progress ?? 0;
+  const isCompleted = progress === 100;
+  const isInProgress = progress > 0 && progress < 100;
   const isLocked = module.is_locked || false; // Support for locked modules
   const isClickable = !isLocked && onClick;
 
@@ -114,7 +115,7 @@ export function ModuleGridCard({ module, onClick, index = 0 }: ModuleGridCardPro
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-medium text-detective-text">Progreso</span>
             <span className="text-xs font-bold text-detective-orange">
-              {module.progress}%
+              {progress}%
             </span>
           </div>
 
@@ -126,7 +127,7 @@ export function ModuleGridCard({ module, onClick, index = 0 }: ModuleGridCardPro
                   : 'bg-gradient-to-r from-orange-500 to-orange-600'
               }`}
               initial={{ width: 0 }}
-              animate={{ width: `${module.progress}%` }}
+              animate={{ width: `${progress}%` }}
               transition={{ duration: 1, ease: 'easeOut', delay: index * 0.1 }}
             />
           </div>
@@ -136,7 +137,7 @@ export function ModuleGridCard({ module, onClick, index = 0 }: ModuleGridCardPro
         <div className="flex items-center justify-between pt-3 border-t border-detective-bg-secondary">
           <div className="flex items-center gap-1 text-xs text-detective-text-secondary">
             <Star className="w-3 h-3 text-detective-gold fill-detective-gold" />
-            <span>{Math.round((module.progress / 100) * 50)} pts</span>
+            <span>{Math.round((progress / 100) * 50)} pts</span>
           </div>
 
           {isInProgress && (

@@ -254,7 +254,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
                   />
                   <DetectiveButton
                     variant="primary"
-                    size="md"
+
                     onClick={handleSend}
                     disabled={!input.trim() || aiTyping}
                     icon={<Send className="w-5 h-5" />}
@@ -271,7 +271,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
             {onExit && (
               <DetectiveButton
                 variant="secondary"
-                size="lg"
+
                 onClick={onExit}
               >
                 Salir
@@ -279,14 +279,14 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
             )}
             <DetectiveButton
               variant="gold"
-              size="lg"
+
               onClick={handleReset}
             >
               Reiniciar
             </DetectiveButton>
             <DetectiveButton
               variant="primary"
-              size="lg"
+
               onClick={handleComplete}
               disabled={userMessageCount < 3}
             >
@@ -303,14 +303,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
           type: userMessageCount >= 5 ? 'success' : 'partial',
           title: userMessageCount >= 5 ? '¡Excelente Debate!' : 'Buen Debate',
           message: `Has participado con ${userMessageCount} argumento(s) obteniendo ${currentScore} puntos.`,
-          score: {
-            baseScore: currentScore,
-            timeBonus: Math.max(0, 20 - Math.floor(timeSpent / 120)),
-            accuracyBonus: Math.min(30, userMessageCount * 5),
-            totalScore: calculateFinalScore(),
-            mlCoins: Math.floor(calculateFinalScore() / 2),
-            xpGained: calculateFinalScore()
-          },
+          score: calculateFinalScore(),
           showConfetti: userMessageCount >= 5
         }}
         onClose={() => {

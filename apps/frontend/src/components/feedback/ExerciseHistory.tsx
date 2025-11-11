@@ -31,6 +31,12 @@ interface AttemptWithDetails extends ExerciseAttempt {
   answer_given?: string | string[];
   correct_answer?: string | string[];
   expanded?: boolean;
+  score_percentage?: number;
+  // user_id inherited from ExerciseAttempt
+  submitted_answers?: any;
+  hints_used?: number;
+  comodines_used?: any[];
+  metadata?: any;
 }
 
 export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
@@ -134,7 +140,7 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
   const totalAttempts = attempts.length;
   const correctAttempts = attempts.filter((a) => a.is_correct).length;
   const successRate = totalAttempts > 0 ? Math.round((correctAttempts / totalAttempts) * 100) : 0;
-  const bestScore = Math.max(...attempts.map((a) => a.score_percentage), 0);
+  const bestScore = Math.max(...attempts.map((a) => a.score_percentage ?? 0), 0);
   const totalXP = attempts.reduce((sum, a) => sum + a.xp_earned, 0);
 
   // Format time
@@ -301,7 +307,7 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
                           </span>
                           <span className="flex items-center">
                             <Clock className="w-3 h-3 mr-1" />
-                            {formatTime(attempt.time_spent_seconds)}
+                            {formatTime(attempt.time_spent_seconds ?? 0)}
                           </span>
                         </div>
                       </div>
@@ -381,7 +387,7 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
                         <div className="p-2 bg-gray-50 rounded-lg">
                           <div className="text-xs text-gray-600">Tiempo empleado</div>
                           <div className="font-semibold text-gray-900">
-                            {formatTime(attempt.time_spent_seconds)}
+                            {formatTime(attempt.time_spent_seconds ?? 0)}
                           </div>
                         </div>
                         <div className="p-2 bg-gray-50 rounded-lg">

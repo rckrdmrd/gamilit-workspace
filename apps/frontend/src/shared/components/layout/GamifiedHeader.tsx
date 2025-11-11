@@ -14,32 +14,14 @@ import {
   Gift,
   ChevronDown,
   Target,
-  User,
+  User as UserIcon,
   Building2,
   Coins,
 } from 'lucide-react';
+import type { User, UserGamificationData } from '@shared/types';
+import { getUserFullName, getUserDisplayName } from '@features/auth/types/auth.types';
 
-// TODO: Import from actual types when available
-interface User {
-  id: string;
-  email: string;
-  full_name?: string;
-  user_metadata?: {
-    full_name?: string;
-    role?: string;
-  };
-}
-
-interface UserGamificationData {
-  level?: number;
-  xp?: number;
-  xp_to_next?: number;
-  ml?: number;
-  rank?: string;
-  badges?: string[];
-}
-
-interface Notification {
+export interface Notification {
   id: string;
   type: 'achievement' | 'level_up' | 'badge_unlocked' | 'quest_complete' | 'reminder' | 'other';
   title: string;
@@ -53,7 +35,7 @@ interface Notification {
   };
 }
 
-interface GamifiedHeaderProps {
+export interface GamifiedHeaderProps {
   user?: User;
   onLogout?: () => void;
   gamificationData?: UserGamificationData | null;
@@ -102,13 +84,14 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
   }, []);
 
   // Use real gamification data or fallback to default values
+  // Support both old (xp, ml, badges) and new (totalXP, mlCoins, achievements) field names for backward compatibility
   const userStats: UserStats = {
     level: gamificationData?.level || 1,
-    xp: gamificationData?.xp || 0,
-    xpToNext: gamificationData?.xp_to_next || 100,
-    ml: gamificationData?.ml || 0,
+    xp: (gamificationData as any)?.totalXP || (gamificationData as any)?.xp || 0,
+    xpToNext: (gamificationData as any)?.xp_to_next || 100, // Note: not in UserGamificationData type yet
+    ml: (gamificationData as any)?.mlCoins || (gamificationData as any)?.ml || 0,
     rank: gamificationData?.rank || 'Detective Novato',
-    badges: gamificationData?.badges || [],
+    badges: (gamificationData as any)?.achievements || (gamificationData as any)?.badges || [],
     notifications: notifications.filter((n) => !n.read).length,
   };
 
@@ -425,18 +408,15 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
               >
                 <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-sm font-bold">
-                    {user?.full_name?.charAt(0) ||
-                      user?.user_metadata?.full_name?.charAt(0) ||
-                      user?.email?.charAt(0) ||
-                      'U'}
+                    {user ? getUserFullName(user).charAt(0) : 'U'}
                   </span>
                 </div>
                 <div className="text-left hidden sm:block">
                   <p className="text-sm font-medium text-white">
-                    {user?.full_name || user?.user_metadata?.full_name || 'Detective'}
+                    {user ? getUserFullName(user) : 'Detective'}
                   </p>
                   <p className="text-xs text-orange-100 capitalize">
-                    {user?.user_metadata?.role || 'Student'}
+                    {user?.role || 'student'}
                   </p>
                 </div>
                 <ChevronDown className="w-4 h-4 text-white" />
@@ -456,11 +436,11 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
                     <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-4">
                       <div className="flex items-center space-x-3">
                         <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                          <User className="w-6 h-6 text-white" />
+                          <UserIcon className="w-6 h-6 text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-white font-bold truncate">
-                            {user?.full_name || user?.user_metadata?.full_name || 'Detective'}
+                            {user ? getUserFullName(user) : 'Detective'}
                           </p>
                           <p className="text-white/80 text-sm truncate">{user?.email}</p>
                         </div>
@@ -474,7 +454,7 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
                         className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center space-x-2 transition-colors"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        <User className="w-4 h-4 text-gray-500" />
+                        <UserIcon className="w-4 h-4 text-gray-500" />
                         <span className="text-sm text-gray-700">Mi Perfil</span>
                       </Link>
                       <Link

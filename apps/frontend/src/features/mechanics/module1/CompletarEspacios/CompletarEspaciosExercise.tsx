@@ -130,7 +130,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
       difficulty: exercise.difficulty
     };
 
-    const score = await calculateScore(attempt);
+    const score = calculateScore(correctCount, blanks.length);
 
     setFeedback({
       type: correctCount === blanks.length ? 'success' : 'partial',

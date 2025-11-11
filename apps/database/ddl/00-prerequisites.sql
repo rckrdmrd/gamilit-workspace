@@ -2,7 +2,36 @@
 -- GLIT Platform - Prerequisites (ENUMs y Funciones Base)
 -- Descripción: Todos los tipos y funciones que deben existir ANTES de crear tablas
 -- Creado: 2025-11-02
+-- Actualizado: 2025-11-11 (DB-111 - Agregados roles Supabase)
 -- ============================================================================
+
+-- ============================================================================
+-- ROLES DE SUPABASE (para compatibilidad local)
+-- ============================================================================
+-- Nota: Estos roles existen por defecto en Supabase Cloud pero no en PostgreSQL local.
+-- Se crean condicionalmente para que RLS policies funcionen en ambos ambientes.
+-- Refs: https://supabase.com/docs/guides/database/postgres/roles
+
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'authenticated') THEN
+        CREATE ROLE authenticated;
+        COMMENT ON ROLE authenticated IS 'Supabase role: usuarios autenticados (cualquier rol GAMILIT)';
+    END IF;
+END $$;
+
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'anon') THEN
+        CREATE ROLE anon;
+        COMMENT ON ROLE anon IS 'Supabase role: usuarios anónimos (sin autenticar)';
+    END IF;
+END $$;
+
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'service_role') THEN
+        CREATE ROLE service_role;
+        COMMENT ON ROLE service_role IS 'Supabase role: servicio backend con privilegios elevados';
+    END IF;
+END $$;
 
 -- ============================================================================
 -- SCHEMAS
@@ -19,6 +48,7 @@ CREATE SCHEMA IF NOT EXISTS social_features;
 CREATE SCHEMA IF NOT EXISTS progress_tracking;
 CREATE SCHEMA IF NOT EXISTS audit_logging;
 CREATE SCHEMA IF NOT EXISTS admin_dashboard;
+CREATE SCHEMA IF NOT EXISTS lti_integration;
 CREATE SCHEMA IF NOT EXISTS storage;
 
 -- ============================================================================
@@ -51,12 +81,19 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 2. ENUMs de Gamificación
--- maya_rank is now defined in gamification_system schema
--- See: ddl/schemas/gamification_system/enums/maya_rank.sql
--- Values: 'Ajaw', 'Nacom', 'Ah K''in', 'Halach Uinic', 'K''uk''ulkan'
 -- 📚 Documentación: gamification_system.maya_rank
 -- Requerimiento: docs/01-requerimientos/02-gamificacion/RF-GAM-003-rangos-maya.md
 -- Especificación: docs/02-especificaciones-tecnicas/02-gamificacion/ET-GAM-003-rangos-maya.md
+-- NOTA: Debe estar en prerequisites porque educational_content.modules lo requiere
+DO $$ BEGIN
+    CREATE TYPE gamification_system.maya_rank AS ENUM (
+        'Ajaw',           -- Nivel 1: Señor o gobernante, líder supremo (0-999 XP)
+        'Nacom',          -- Nivel 2: Capitán de guerra, comandante militar (1,000-2,999 XP)
+        'Ah K''in',       -- Nivel 3: Sacerdote del sol, guía espiritual (3,000-5,999 XP)
+        'Halach Uinic',   -- Nivel 4: Hombre verdadero, líder político (6,000-9,999 XP)
+        'K''uk''ulkan'    -- Nivel 5: Serpiente emplumada, nivel legendario (10,000+ XP)
+    );
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 📚 Documentación: gamification_system.achievement_category
 -- Requerimiento: docs/01-requerimientos/02-gamificacion/RF-GAM-001-achievements.md
@@ -80,32 +117,14 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 📚 Documentación: gamification_system.notification_type
--- Requerimiento: docs/01-requerimientos/06-notificaciones/RF-NOT-001-tipos-notificaciones.md
--- Especificación: docs/02-especificaciones-tecnicas/06-notificaciones/ET-NOT-001-tipos-notificaciones.md
--- VERSIÓN: 2.0 (2025-11-08) - Migrado de public a gamification_system
-DO $$ BEGIN
-    CREATE TYPE gamification_system.notification_type AS ENUM (
-        'achievement_unlocked',
-        'rank_up',
-        'friend_request',
-        'guild_invitation',      -- v2.0: Renombrado de 'team_invite'
-        'mission_completed',
-        'level_up',              -- v2.0: NUEVO - Subida de nivel
-        'message_received',      -- v2.0: NUEVO - Mensaje recibido
-        'system_announcement',
-        'ml_coins_earned',       -- v2.0: NUEVO - ML Coins ganadas
-        'streak_milestone',      -- v2.0: NUEVO - Hito de racha
-        'exercise_feedback'      -- v2.0: NUEVO - Retroalimentación de ejercicio
-    );
-EXCEPTION WHEN duplicate_object THEN null; END $$;
+-- REMOVIDO (2025-11-11): Migrado a ddl/schemas/gamification_system/enums/notification_type.sql
+-- Razón: Evitar duplicación (Política de Carga Limpia)
+-- El ENUM se define en el schema específico con documentación completa
 
 -- 📚 Documentación: gamification_system.notification_priority
--- Requerimiento: docs/01-requerimientos/06-notificaciones/RF-NOT-001-tipos-notificaciones.md
--- Especificación: docs/02-especificaciones-tecnicas/06-notificaciones/ET-NOT-001-tipos-notificaciones.md
--- VERSIÓN: 1.1 (2025-11-08) - Migrado de public a gamification_system + agregado 'critical'
-DO $$ BEGIN
-    CREATE TYPE gamification_system.notification_priority AS ENUM ('low', 'medium', 'high', 'critical');
-EXCEPTION WHEN duplicate_object THEN null; END $$;
+-- REMOVIDO (2025-11-11): Migrado a ddl/schemas/gamification_system/enums/notification_priority.sql
+-- Razón: Evitar duplicación (Política de Carga Limpia)
+-- El ENUM se define en el schema específico con documentación completa
 
 -- 3. ENUMs de Contenido Educativo
 
@@ -132,10 +151,9 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 📚 Documentación: educational_content.difficulty_level
--- VERSIÓN: 1.1 (2025-11-08) - Migrado de public a educational_content
-DO $$ BEGIN
-    CREATE TYPE educational_content.difficulty_level AS ENUM ('very_easy', 'easy', 'beginner', 'medium', 'intermediate', 'hard', 'advanced', 'very_hard');
-EXCEPTION WHEN duplicate_object THEN null; END $$;
+-- REMOVIDO (2025-11-11): Migrado a ddl/schemas/educational_content/enums/difficulty_level.sql
+-- Razón: Evitar duplicación (Política de Carga Limpia)
+-- El ENUM se define en el schema específico con documentación completa (8 niveles CEFR)
 
 -- 📚 Documentación: educational_content.module_status
 -- VERSIÓN: 1.1 (2025-11-08) - Renombrado 'reviewing' a 'under_review'
@@ -144,10 +162,9 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 📚 Documentación: content_management.content_status
--- VERSIÓN: 1.1 (2025-11-08) - Migrado de public a content_management + renombrado 'reviewing' a 'under_review'
-DO $$ BEGIN
-    CREATE TYPE content_management.content_status AS ENUM ('draft', 'published', 'archived', 'under_review');
-EXCEPTION WHEN duplicate_object THEN null; END $$;
+-- REMOVIDO (2025-11-11): Migrado a ddl/schemas/content_management/enums/content_status.sql
+-- Razón: Evitar duplicación (Política de Carga Limpia)
+-- El ENUM se define en el schema específico con documentación completa
 
 DO $$ BEGIN
     CREATE TYPE educational_content.cognitive_level AS ENUM ('recordar', 'comprender', 'aplicar', 'analizar', 'evaluar', 'crear');
@@ -164,20 +181,18 @@ EXCEPTION WHEN duplicate_object THEN null; END $$;
 -- 📚 Documentación: content_management.processing_status
 -- Requerimiento: docs/01-requerimientos/07-contenido-media/RF-CNT-001-gestion-media.md
 -- Especificación: docs/02-especificaciones-tecnicas/07-contenido-media/ET-CNT-001-gestion-media.md
--- VERSIÓN: 1.1 (2025-11-08) - Migrado de public a content_management
+-- VERSIÓN: 1.2 (2025-11-11) - Sincronizado con Backend/Frontend (DB-093 aplicado)
+-- Valores actualizados para procesamiento de media: uploading, processing, ready, error, optimizing
 DO $$ BEGIN
-    CREATE TYPE content_management.processing_status AS ENUM ('pending', 'processing', 'completed', 'failed');
+    CREATE TYPE content_management.processing_status AS ENUM ('uploading', 'processing', 'ready', 'error', 'optimizing');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 4. ENUMs de Progreso
 
 -- 📚 Documentación: progress_tracking.progress_status
--- Requerimiento: docs/01-requerimientos/04-progreso-seguimiento/RF-PRG-001-estados-progreso.md
--- Especificación: docs/02-especificaciones-tecnicas/04-progreso-seguimiento/ET-PRG-001-estados-progreso.md
--- VERSIÓN: 1.1 (2025-11-08) - Agregado 'abandoned' y 'mastered'
-DO $$ BEGIN
-    CREATE TYPE progress_tracking.progress_status AS ENUM ('not_started', 'in_progress', 'completed', 'needs_review', 'mastered', 'abandoned');
-EXCEPTION WHEN duplicate_object THEN null; END $$;
+-- REMOVIDO (2025-11-11): Migrado a ddl/schemas/progress_tracking/enums/progress_status.sql
+-- Razón: Evitar duplicación (Política de Carga Limpia)
+-- El ENUM se define en el schema específico con documentación exhaustiva (112 líneas)
 
 -- 📚 Documentación: progress_tracking.attempt_status
 -- Requerimiento: docs/01-requerimientos/04-progreso-seguimiento/RF-PRG-001-estados-progreso.md
@@ -398,7 +413,7 @@ COMMENT ON TYPE gamification_system.notification_priority IS 'Niveles de priorid
 
 -- 3. Contenido Educativo
 COMMENT ON TYPE educational_content.exercise_type IS '31 mecánicas de ejercicios interactivos Gamilit (5 módulos + auxiliares) (v1.0)';
-COMMENT ON TYPE educational_content.difficulty_level IS 'Niveles de dificultad educativa - 8 valores (v1.1 - 2025-11-08 - migrado de public)';
+COMMENT ON TYPE educational_content.difficulty_level IS 'Niveles de dificultad CEFR - 8 niveles A1→C2+ (v2.0 - 2025-11-11 - migrado a estándar CEFR)';
 COMMENT ON TYPE educational_content.module_status IS 'Estados del ciclo de vida de módulos educativos (v1.1 - 2025-11-08)';
 COMMENT ON TYPE educational_content.cognitive_level IS 'Niveles cognitivos de Bloom para objetivos de aprendizaje (v1.0)';
 

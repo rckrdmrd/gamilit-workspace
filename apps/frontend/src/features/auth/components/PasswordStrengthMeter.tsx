@@ -59,11 +59,11 @@ export const PasswordStrengthMeter: React.FC<PasswordStrengthMeterProps> = ({
             text="Mínimo 8 caracteres"
           />
           <CriteriaItem
-            met={criteria.hasUpperCase}
+            met={criteria.hasUppercase}
             text="Una letra mayúscula"
           />
           <CriteriaItem
-            met={criteria.hasLowerCase}
+            met={criteria.hasLowercase}
             text="Una letra minúscula"
           />
           <CriteriaItem

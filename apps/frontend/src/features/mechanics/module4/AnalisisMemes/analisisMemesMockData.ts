@@ -1,10 +1,11 @@
 import { AnalisisMemesData } from './analisisMemesTypes';
+import { DifficultyLevel } from '@shared/types/educational.types';
 
 export const mockAnalisisMemesExercises: AnalisisMemesData[] = [{
   id: 'meme-001',
   title: 'Análisis de Meme: Marie Curie en la Cultura Popular',
   description: 'Analiza un meme sobre Marie Curie identificando elementos clave',
-  difficulty: 'medio',
+  difficulty: DifficultyLevel.INTERMEDIATE,
   estimatedTime: 420,
   topic: 'Marie Curie - Análisis Visual',
   hints: [{ id: 'h1', text: 'Busca referencias a la radioactividad', cost: 5 }],

@@ -1,10 +1,11 @@
 import { MapaConceptualData } from './mapaConceptualTypes';
+import { DifficultyLevel } from '@shared/types/educational.types';
 
 export const mockMapaConceptualExercises: MapaConceptualData[] = [{
   id: 'mapa-001',
   title: 'Mapa Conceptual: Descubrimientos de Marie Curie',
   description: 'Conecta los conceptos relacionados con los descubrimientos de Marie Curie',
-  difficulty: 'medio',
+  difficulty: DifficultyLevel.INTERMEDIATE,
   estimatedTime: 600,
   topic: 'Marie Curie - Conceptos',
   hints: [{ id: 'hint-m1', text: 'El polonio y el radio son elementos', cost: 5 }],

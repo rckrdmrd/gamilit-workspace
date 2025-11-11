@@ -16,7 +16,7 @@ import {
   Flame,
   Star,
 } from 'lucide-react';
-import type { AchievementStatistics as AchievementStats } from './types';
+import type { AchievementStatisticsData as AchievementStats } from './types';
 import type { Achievement } from '@/features/gamification/social/types/achievementsTypes';
 
 interface AchievementStatisticsProps {

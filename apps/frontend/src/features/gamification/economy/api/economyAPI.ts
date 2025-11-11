@@ -3,6 +3,40 @@
  *
  * API client for ML Coins economy endpoints including balance management,
  * transactions, shop, purchases, and inventory.
+ *
+ * IMPORTANT: User ID Requirements
+ * ================================
+ * Some functions in this API require a userId parameter. This should be obtained
+ * from the useAuth() hook in your component:
+ *
+ * @example
+ * ```typescript
+ * import { useAuth } from '@/shared/hooks/useAuth';
+ * import { getBalance, earnCoins } from './economyAPI';
+ *
+ * function MyComponent() {
+ *   const { user } = useAuth();
+ *
+ *   useEffect(() => {
+ *     if (user?.id) {
+ *       getBalance(user.id).then(balance => {
+ *         // Handle balance
+ *       });
+ *     }
+ *   }, [user]);
+ * }
+ * ```
+ *
+ * Functions that require userId:
+ * - getBalance(userId)
+ * - earnCoins(amount, source, description?, metadata?, userId)
+ * - spendCoins(amount, itemName, itemId?, metadata?, userId)
+ * - getTransactions(pagination?, filters?, userId)
+ *
+ * Functions that DON'T require userId (use JWT):
+ * - getInventory() - uses current authenticated user
+ * - purchaseItem() - uses current authenticated user
+ * - getEconomyStats() - uses current authenticated user
  */
 
 import { apiClient } from '@/services/api/apiClient';
@@ -68,16 +102,26 @@ const mockEarnCoins = async (
 /**
  * Get ML Coins balance
  *
+ * @param userId - User ID (REQUIRED - get from useAuth hook)
  * @returns Current balance information
+ * @throws Error if userId is not provided
+ *
+ * @example
+ * const { user } = useAuth();
+ * const balance = await getBalance(user.id);
  */
-export const getBalance = async (): Promise<MLCoinsBalance> => {
+export const getBalance = async (userId: string): Promise<MLCoinsBalance> => {
   try {
+    if (!userId) {
+      throw new Error('userId is required. Get it from useAuth() hook.');
+    }
+
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       return await mockGetBalance();
     }
 
     const { data } = await apiClient.get<ApiResponse<MLCoinsBalance>>(
-      API_ENDPOINTS.economy.balance
+      API_ENDPOINTS.economy.balance(userId)
     );
 
     return data.data;
@@ -91,23 +135,34 @@ export const getBalance = async (): Promise<MLCoinsBalance> => {
  *
  * @param amount - Amount to earn
  * @param source - Source of earnings
+ * @param userId - User ID (REQUIRED - get from useAuth hook)
  * @param description - Optional description
  * @param metadata - Optional metadata
  * @returns Transaction record
+ * @throws Error if userId is not provided
+ *
+ * @example
+ * const { user } = useAuth();
+ * const transaction = await earnCoins(50, 'exercise_completion', user.id, 'Completed exercise');
  */
 export const earnCoins = async (
   amount: number,
   source: EarningSource | string,
+  userId: string,
   description?: string,
   metadata?: Record<string, unknown>
 ): Promise<Transaction> => {
   try {
+    if (!userId) {
+      throw new Error('userId is required. Get it from useAuth() hook.');
+    }
+
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       return await mockEarnCoins(amount, source);
     }
 
     const { data } = await apiClient.post<ApiResponse<Transaction>>(
-      API_ENDPOINTS.economy.earn,
+      API_ENDPOINTS.economy.earn(userId),
       {
         amount,
         source,
@@ -127,17 +182,28 @@ export const earnCoins = async (
  *
  * @param amount - Amount to spend
  * @param itemName - Name of item/service
+ * @param userId - User ID (REQUIRED - get from useAuth hook)
  * @param itemId - Optional item ID
  * @param metadata - Optional metadata
  * @returns Transaction record
+ * @throws Error if userId is not provided
+ *
+ * @example
+ * const { user } = useAuth();
+ * const transaction = await spendCoins(100, 'Detective Hat', user.id, 'hat-001');
  */
 export const spendCoins = async (
   amount: number,
   itemName: string,
+  userId: string,
   itemId?: string,
   metadata?: Record<string, unknown>
 ): Promise<Transaction> => {
   try {
+    if (!userId) {
+      throw new Error('userId is required. Get it from useAuth() hook.');
+    }
+
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 800));
       const newBalance = 250 - amount;
@@ -155,7 +221,7 @@ export const spendCoins = async (
     }
 
     const { data } = await apiClient.post<ApiResponse<Transaction>>(
-      API_ENDPOINTS.economy.spend,
+      API_ENDPOINTS.economy.spend(userId),
       {
         amount,
         itemName,
@@ -177,15 +243,26 @@ export const spendCoins = async (
 /**
  * Get transaction history
  *
- * @param pagination - Pagination parameters
- * @param filters - Transaction filters
+ * @param userId - User ID (REQUIRED - get from useAuth hook)
+ * @param pagination - Pagination parameters (optional)
+ * @param filters - Transaction filters (optional)
  * @returns Paginated transaction list
+ * @throws Error if userId is not provided
+ *
+ * @example
+ * const { user } = useAuth();
+ * const transactions = await getTransactions(user.id, { page: 1, limit: 20 });
  */
 export const getTransactions = async (
+  userId: string,
   pagination?: PaginationParams,
   filters?: TransactionFilters
 ): Promise<PaginatedResponse<Transaction>> => {
   try {
+    if (!userId) {
+      throw new Error('userId is required. Get it from useAuth() hook.');
+    }
+
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       return {
@@ -201,7 +278,7 @@ export const getTransactions = async (
     }
 
     const { data } = await apiClient.get<ApiResponse<PaginatedResponse<Transaction>>>(
-      API_ENDPOINTS.economy.transactions,
+      API_ENDPOINTS.economy.transactions(userId),
       {
         params: {
           ...pagination,
@@ -237,8 +314,10 @@ export const getTransaction = async (transactionId: string): Promise<Transaction
       };
     }
 
+    // TODO: Backend needs endpoint for single transaction by ID
+    // For now, using transactions endpoint (may need adjustment)
     const { data } = await apiClient.get<ApiResponse<Transaction>>(
-      API_ENDPOINTS.economy.transaction(transactionId)
+      `${API_ENDPOINTS.economy.transactions(transactionId)}`
     );
 
     return data.data;

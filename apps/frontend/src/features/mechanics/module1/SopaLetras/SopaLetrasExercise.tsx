@@ -45,9 +45,7 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({ exercise
   const handleCheck = async () => {
     const foundWords = words.filter(w => w.found).length;
     const isComplete = foundWords === words.length;
-    const score = await calculateScore({
-      exerciseId: exercise.id, startTime, endTime: new Date(), answers: {words}, correctAnswers: foundWords, totalQuestions: words.length, hintsUsed: 0, difficulty: exercise.difficulty
-    });
+    const score = calculateScore(foundWords, exercise.words.length);
 
     setFeedback({
       type: isComplete ? 'success' : 'error',

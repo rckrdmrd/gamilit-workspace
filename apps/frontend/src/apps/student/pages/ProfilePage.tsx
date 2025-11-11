@@ -40,7 +40,7 @@ export default function ProfilePage() {
                   <Mail className="w-4 h-4" />
                   {user?.email}
                 </p>
-                <RankBadge rank="nacom" showIcon={true} size="lg" />
+                <RankBadge rank="detective_novato" showIcon={true} />
                 <p className="text-detective-text-secondary text-sm mt-4 flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
                   Miembro desde: Enero 2025

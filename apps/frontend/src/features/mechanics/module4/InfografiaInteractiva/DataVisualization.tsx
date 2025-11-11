@@ -9,7 +9,7 @@ export const DataVisualization: React.FC<{ cards: InfoCard[]; onCardClick: (id: 
   return (
     <div className="mb-6">
       <h3 className="text-lg font-bold mb-4">Progreso de Exploración</h3>
-      <ProgressTracker current={revealedCount} total={cards.length} variant="bar" />
+      <ProgressTracker currentStep={revealedCount} totalSteps={cards.length} />
       <div className="relative w-full h-64 bg-gray-100 rounded-lg mt-4 overflow-hidden">
         {cards.map((card, idx) => (
           <motion.div

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import {
@@ -167,15 +168,20 @@ export default function TeacherGamification() {
 
   const handleGiveBonus = () => {
     if (!selectedStudent || bonusAmount <= 0) {
-      alert('Por favor selecciona un estudiante y un monto válido');
+      toast.error('Por favor selecciona un estudiante y un monto válido', {
+        duration: 3000,
+        icon: '⚠️',
+      });
       return;
     }
 
     const student = students.find((s) => s.id === selectedStudent);
     if (student) {
-      alert(
-        `Bonus de ${bonusAmount} ML Coins otorgado a ${student.name}${bonusReason ? `\nRazón: ${bonusReason}` : ''}`
-      );
+      const message = `Bonus de ${bonusAmount} ML Coins otorgado a ${student.name}${bonusReason ? `\nRazón: ${bonusReason}` : ''}`;
+      toast.success(message, {
+        duration: 4000,
+        icon: '🎁',
+      });
       setSelectedStudent(null);
       setBonusAmount(50);
       setBonusReason('');

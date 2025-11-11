@@ -77,7 +77,7 @@ export const TimelineExercise: React.FC<TimelineExerciseProps> = ({
       difficulty: exercise.difficulty
     };
 
-    const score = await calculateScore(attempt);
+    const score = calculateScore(correctCount, exercise.events.length);
 
     setFeedback({
       type: correct ? 'success' : 'error',

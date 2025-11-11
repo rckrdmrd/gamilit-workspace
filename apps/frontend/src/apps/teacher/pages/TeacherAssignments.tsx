@@ -149,15 +149,15 @@ export default function TeacherAssignments() {
           exam: 'bg-red-500/20 text-red-500',
           homework: 'bg-green-500/20 text-green-500',
         };
-        const typeLabels = {
+        const typeLabels: Record<string, string> = {
           practice: 'Práctica',
           quiz: 'Quiz',
           exam: 'Examen',
           homework: 'Tarea',
         };
         return (
-          <span className={`px-2 py-1 rounded-lg text-xs font-medium ${typeColors[row.type]}`}>
-            {typeLabels[row.type]}
+          <span className={`px-2 py-1 rounded-lg text-xs font-medium ${row.type ? typeColors[row.type] ?? '' : ''}`}>
+            {row.type ? typeLabels[row.type] ?? row.type : 'N/A'}
           </span>
         );
       },
@@ -167,21 +167,23 @@ export default function TeacherAssignments() {
       label: 'Estado',
       sortable: true,
       render: (row) => {
-        const statusColors = {
+        const statusColors: Record<string, string> = {
           draft: 'bg-gray-500/20 text-gray-500',
           active: 'bg-green-500/20 text-green-500',
           completed: 'bg-blue-500/20 text-blue-500',
+          expired: 'bg-red-500/20 text-red-500',
           archived: 'bg-gray-600/20 text-gray-600',
         };
-        const statusLabels = {
+        const statusLabels: Record<string, string> = {
           draft: 'Borrador',
           active: 'Activo',
           completed: 'Completado',
+          expired: 'Expirado',
           archived: 'Archivado',
         };
         return (
-          <span className={`px-2 py-1 rounded-lg text-xs font-medium ${statusColors[row.status]}`}>
-            {statusLabels[row.status]}
+          <span className={`px-2 py-1 rounded-lg text-xs font-medium ${row.status ? statusColors[row.status] ?? '' : ''}`}>
+            {row.status ? statusLabels[row.status] ?? row.status : 'N/A'}
           </span>
         );
       },
@@ -199,7 +201,7 @@ export default function TeacherAssignments() {
         <div className="flex items-center gap-2">
           <Users className="w-4 h-4 text-gray-400" />
           <span className="text-detective-text">
-            {row.totalSubmissions} / {row.totalSubmissions + 10}
+            {row.totalSubmissions ?? 0} / {(row.totalSubmissions ?? 0) + 10}
           </span>
         </div>
       ),
@@ -208,8 +210,8 @@ export default function TeacherAssignments() {
       key: 'pendingReviews',
       label: 'Pendientes',
       render: (row) => (
-        <span className={`font-medium ${row.pendingReviews > 0 ? 'text-yellow-500' : 'text-green-500'}`}>
-          {row.pendingReviews}
+        <span className={`font-medium ${(row.pendingReviews ?? 0) > 0 ? 'text-yellow-500' : 'text-green-500'}`}>
+          {row.pendingReviews ?? 0}
         </span>
       ),
     },
@@ -305,7 +307,7 @@ export default function TeacherAssignments() {
               <div>
                 <p className="text-sm text-gray-400">Pendientes Revisar</p>
                 <p className="text-2xl font-bold text-detective-text">
-                  {assignments.reduce((sum, a) => sum + a.pendingReviews, 0)}
+                  {assignments.reduce((sum, a) => sum + (a.pendingReviews ?? 0), 0)}
                 </p>
               </div>
             </div>
@@ -354,7 +356,7 @@ export default function TeacherAssignments() {
           resetForm();
         }}
         title={`Crear Asignación - Paso ${currentStep} de 3`}
-        size="lg"
+
       >
         <div className="space-y-4">
           {currentStep === 1 && (
@@ -363,7 +365,7 @@ export default function TeacherAssignments() {
                 label="Título"
                 name="title"
                 value={formData.title}
-                onChange={(value) => setFormData({ ...formData, title: value })}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="Ej: Práctica Semanal: Marie Curie"
                 required
               />
@@ -372,7 +374,7 @@ export default function TeacherAssignments() {
                 name="description"
                 type="textarea"
                 value={formData.description}
-                onChange={(value) => setFormData({ ...formData, description: value })}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Describe el objetivo de la asignación"
               />
               <FormField
@@ -394,7 +396,7 @@ export default function TeacherAssignments() {
                 name="dueDate"
                 type="date"
                 value={formData.dueDate}
-                onChange={(value) => setFormData({ ...formData, dueDate: value })}
+                onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
                 required
               />
             </>
@@ -521,7 +523,7 @@ export default function TeacherAssignments() {
           setSelectedAssignment(null);
         }}
         title={`Entregas - ${selectedAssignment?.title}`}
-        size="xl"
+
       >
         <DataTable
           data={submissions}

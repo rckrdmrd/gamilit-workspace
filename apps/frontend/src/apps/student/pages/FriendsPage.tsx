@@ -282,7 +282,7 @@ export default function FriendsPage() {
                                 </p>
                               </div>
                             </div>
-                            <RankBadge rank={friend.rank} showIcon={false} size="sm" />
+                            <RankBadge rank={friend.rank} showIcon={false} />
                           </div>
 
                           {/* Stats */}
@@ -363,7 +363,7 @@ export default function FriendsPage() {
                           <div>
                             <h3 className="font-bold text-detective-text text-lg">{request.senderName}</h3>
                             <div className="flex items-center gap-2 mt-1">
-                              <RankBadge rank={request.senderRank} showIcon={false} size="sm" />
+                              <RankBadge rank={request.senderRank} showIcon={false} />
                               <span className="text-sm text-detective-text-secondary">Level {request.senderLevel}</span>
                             </div>
                             {request.message && (
@@ -439,7 +439,7 @@ export default function FriendsPage() {
                         </div>
                         <div>
                           <h3 className="font-bold text-detective-text">{rec.username}</h3>
-                          <RankBadge rank={rec.rank} showIcon={false} size="sm" />
+                          <RankBadge rank={rec.rank} showIcon={false} />
                         </div>
                       </div>
 

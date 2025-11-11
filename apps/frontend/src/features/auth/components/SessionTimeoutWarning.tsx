@@ -17,7 +17,7 @@ export const SessionTimeoutWarning: React.FC<SessionTimeoutWarningProps> = ({ mi
           <p className="text-detective-body mb-4">
             Tu sesión expirará en {minutesLeft} minutos por inactividad.
           </p>
-          <DetectiveButton variant="primary" size="sm" onClick={onExtend}>
+          <DetectiveButton variant="primary" onClick={onExtend}>
             Extender Sesión
           </DetectiveButton>
         </div>

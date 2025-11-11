@@ -304,7 +304,7 @@ export const TenantManagementPanel: React.FC = () => {
                   <div className="flex gap-2">
                     <DetectiveButton
                       variant="blue"
-                      size="sm"
+
                       icon={<Edit className="w-4 h-4" />}
                       onClick={() => setEditingTenant(selectedTenantData)}
                     >
@@ -313,7 +313,7 @@ export const TenantManagementPanel: React.FC = () => {
                     {selectedTenantData.status === 'active' ? (
                       <DetectiveButton
                         variant="primary"
-                        size="sm"
+
                         icon={<PowerOff className="w-4 h-4" />}
                         onClick={() => handleSuspend(selectedTenantData.id)}
                         className="bg-red-500 hover:bg-red-600"
@@ -323,7 +323,7 @@ export const TenantManagementPanel: React.FC = () => {
                     ) : (
                       <DetectiveButton
                         variant="green"
-                        size="sm"
+
                         icon={<Power className="w-4 h-4" />}
                         onClick={() => handleActivate(selectedTenantData.id)}
                       >

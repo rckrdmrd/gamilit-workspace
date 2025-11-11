@@ -6,18 +6,24 @@
 -- Created: 2025-11-08
 -- =====================================================
 
+-- =====================================================
+-- VERSIÓN: 2.0 (GAP-3: Migración a estándar CEFR)
+-- Fecha migración: 2025-11-11
+-- =====================================================
+
 CREATE TYPE educational_content.difficulty_level AS ENUM (
-    'very_easy',      -- Muy fácil, introductorio
-    'easy',           -- Fácil, simple
-    'beginner',       -- Principiante, para nuevos usuarios
-    'medium',         -- Medio, dificultad estándar
-    'intermediate',   -- Intermedio, requiere conocimiento previo
-    'hard',           -- Difícil, desafiante
-    'advanced',       -- Avanzado, para usuarios experimentados
-    'very_hard'       -- Muy difícil, nivel experto
+    'beginner',            -- A1: Nivel básico de supervivencia (0-200 palabras)
+    'elementary',          -- A2: Nivel elemental (200-500 palabras)
+    'pre_intermediate',    -- B1: Pre-intermedio (500-1000 palabras)
+    'intermediate',        -- B2: Intermedio (1000-2000 palabras)
+    'upper_intermediate',  -- C1: Intermedio avanzado (2000-4000 palabras)
+    'advanced',            -- C2: Avanzado (4000-8000 palabras)
+    'proficient',          -- C2+: Competente (8000-15000 palabras)
+    'native'               -- Nativo: Dominio total (15000+ palabras)
 );
 
 COMMENT ON TYPE educational_content.difficulty_level IS
-'8 niveles de dificultad en orden ascendente: very_easy → easy → beginner → medium → intermediate → hard → advanced → very_hard.
-Sincronizado con backend DifficultyLevelEnum (apps/backend/src/shared/constants/enums.constants.ts).
-Usado en: modules, exercises, content_templates, marie_curie_content, achievements.';
+'8 niveles CEFR (Marco Común Europeo de Referencia para las lenguas).
+Orden ascendente: beginner (A1) → elementary (A2) → pre_intermediate (B1) → intermediate (B2) → upper_intermediate (C1) → advanced (C2) → proficient (C2+) → native.
+Criterios definidos en: difficulty_criteria table.
+Usado en: modules, exercises, user_current_level, user_difficulty_progress.';

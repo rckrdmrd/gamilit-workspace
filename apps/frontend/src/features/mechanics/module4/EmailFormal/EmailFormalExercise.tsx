@@ -5,7 +5,7 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { ExerciseProps, EmailFormalState, ToneAnalysis, EmailTemplate } from './emailFormalTypes';
-import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { FeedbackData, normalizeProgressUpdate } from '@shared/components/mechanics/mechanicsTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 
 export const EmailFormalExercise: React.FC<ExerciseProps> = ({
@@ -62,7 +62,9 @@ export const EmailFormalExercise: React.FC<ExerciseProps> = ({
   // Progress tracking
   useEffect(() => {
     const progress = calculateProgress();
-    onProgressUpdate?.(progress);
+    onProgressUpdate?.(
+      normalizeProgressUpdate(progress, 0, 1, 0, 0)
+    );
   }, [to, subject, body, analysis]);
 
   // Auto-save functionality
@@ -147,7 +149,7 @@ export const EmailFormalExercise: React.FC<ExerciseProps> = ({
                       <motion.div key={template.id} whileHover={{ scale: 1.02 }}>
                         <DetectiveButton
                           variant="secondary"
-                          size="md"
+
                           onClick={() => useTemplate(template.id)}
                           className="w-full h-auto p-3 text-left"
                         >
@@ -210,7 +212,7 @@ export const EmailFormalExercise: React.FC<ExerciseProps> = ({
 
                     <DetectiveButton
                       variant="primary"
-                      size="lg"
+
                       onClick={analyzeTone}
                       className="w-full"
                       icon={<Send className="w-5 h-5" />}

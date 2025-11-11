@@ -9,12 +9,22 @@
  * - Frontend 'hidden' -> Backend 'hidden', 'special'
  */
 
-export type AchievementCategory = 'progress' | 'mastery' | 'social' | 'hidden';
+export type AchievementCategory =
+  | 'progress'
+  | 'streak'
+  | 'completion'
+  | 'social'
+  | 'special'
+  | 'mastery'
+  | 'exploration'
+  | 'collection'
+  | 'hidden';
 export type AchievementRarity = 'common' | 'rare' | 'epic' | 'legendary';
 
 export interface AchievementProgress {
   current: number;
   required: number;
+  percentage?: number;
 }
 
 export interface AchievementRequirements {
@@ -27,15 +37,23 @@ export interface AchievementRequirements {
   guildMembership?: boolean;
 }
 
+export interface AchievementReward {
+  xp: number;
+  mlCoins: number;
+  items?: string[];
+}
+
 export interface Achievement {
   id: string;
   title: string;
+  name?: string;  // Alternative to title (legacy)
   description: string;
   category: AchievementCategory;
   rarity: AchievementRarity;
   icon: string;
   mlCoinsReward: number;
   xpReward: number;
+  rewards?: AchievementReward;  // Opcional: consolidación de rewards
   isUnlocked: boolean;
   unlockedAt?: Date;
   progress?: AchievementProgress;
@@ -58,4 +76,5 @@ export interface AchievementStats {
   hiddenAchievements: number;
   totalMlCoinsEarned: number;
   totalXpEarned: number;
+  completionRate?: number;
 }

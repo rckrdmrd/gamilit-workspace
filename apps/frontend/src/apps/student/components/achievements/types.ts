@@ -6,8 +6,8 @@
 import type { Achievement as BaseAchievement, AchievementCategory, AchievementRarity } from '@/features/gamification/social/types/achievementsTypes';
 
 // Extended Achievement interface with additional fields
+// Note: requirements comes from BaseAchievement (AchievementRequirements object)
 export interface Achievement extends BaseAchievement {
-  requirements: string[];
   shareUrl?: string;
 }
 
@@ -15,7 +15,7 @@ export interface Achievement extends BaseAchievement {
 export type FilterStatus = 'all' | 'unlocked' | 'locked' | 'in_progress';
 export type SortOption = 'recent' | 'alphabetical' | 'rarity' | 'progress';
 
-export interface AchievementFilters {
+export interface AchievementFiltersState {
   category: AchievementCategory | 'all';
   rarity: AchievementRarity | 'all';
   status: FilterStatus;
@@ -24,7 +24,7 @@ export interface AchievementFilters {
 }
 
 // Statistics interface
-export interface AchievementStatistics {
+export interface AchievementStatisticsData {
   total: number;
   unlocked: number;
   locked: number;
@@ -56,3 +56,7 @@ export interface RarityConfig {
   glowColor: string;
   gradient: string;
 }
+
+// Type aliases for backward compatibility
+export type AchievementStatistics = AchievementStatisticsData;
+export type AchievementFilters = AchievementFiltersState;

@@ -237,7 +237,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
               {!isRecording && !recording.audioBlob && (
                 <DetectiveButton
                   variant="primary"
-                  size="lg"
+
                   onClick={startRecording}
                   icon={<Mic className="w-6 h-6" />}
                   className="bg-red-500 hover:bg-red-600"
@@ -248,7 +248,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
               {isRecording && (
                 <DetectiveButton
                   variant="secondary"
-                  size="lg"
+
                   onClick={stopRecording}
                   icon={<Square className="w-6 h-6" />}
                   className="bg-gray-800 hover:bg-gray-900 animate-pulse"
@@ -268,7 +268,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
                 </div>
                 <DetectiveButton
                   variant="primary"
-                  size="md"
+
                   onClick={handleAnalyze}
                   disabled={analyzing}
                   loading={analyzing}
@@ -349,7 +349,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
             {onExit && (
               <DetectiveButton
                 variant="secondary"
-                size="lg"
+
                 onClick={onExit}
               >
                 Salir
@@ -357,14 +357,14 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
             )}
             <DetectiveButton
               variant="gold"
-              size="lg"
+
               onClick={handleReset}
             >
               Reiniciar
             </DetectiveButton>
             <DetectiveButton
               variant="primary"
-              size="lg"
+
               onClick={handleComplete}
               disabled={!analysis}
             >
@@ -381,14 +381,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
           type: currentScore >= 70 ? 'success' : 'partial',
           title: currentScore >= 70 ? '¡Excelente Argumentación!' : 'Buen Trabajo',
           message: `Has completado el podcast argumentativo con ${currentScore} puntos.`,
-          score: {
-            baseScore: currentScore,
-            timeBonus: timer <= exercise.timeLimit ? 20 : 0,
-            accuracyBonus: recording.audioBlob && analysis ? 10 : 0,
-            totalScore: calculateFinalScore(),
-            mlCoins: Math.floor(calculateFinalScore() / 2),
-            xpGained: calculateFinalScore()
-          },
+          score: calculateFinalScore(),
           showConfetti: currentScore >= 70
         }}
         onClose={() => {

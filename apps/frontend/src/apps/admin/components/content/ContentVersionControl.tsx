@@ -140,7 +140,7 @@ export const ContentVersionControl: React.FC = () => {
                   </div>
                   <DetectiveButton
                     variant="blue"
-                    size="sm"
+
                     icon={<RotateCcw className="w-4 h-4" />}
                     onClick={() => handleRestore(selectedVersionData.id)}
                     disabled={versions[0].id === selectedVersionData.id}

@@ -8,10 +8,18 @@
 import React from 'react';
 import { Check } from 'lucide-react';
 
+/**
+ * Props for ProgressTracker component
+ * @property currentStep - Current step number (1-indexed)
+ * @property totalSteps - Total number of steps
+ * @property stepLabels - Optional labels for each step
+ * @property variant - Optional visual variant (e.g., 'tiktok', 'default')
+ */
 export interface ProgressTrackerProps {
   currentStep: number;
   totalSteps: number;
   stepLabels?: string[];
+  variant?: string;
 }
 
 export const ProgressTracker: React.FC<ProgressTrackerProps> = ({

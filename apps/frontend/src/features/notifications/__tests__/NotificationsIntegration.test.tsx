@@ -381,7 +381,7 @@ describe('Notifications Integration Tests', () => {
       vi.mocked(notificationsAPI.getNotifications).mockResolvedValue(mockNotificationsResponse);
       await useNotificationsStore.getState().fetchNotifications();
 
-      vi.mocked(notificationsAPI.clearAll).mockResolvedValue();
+      vi.mocked(notificationsAPI.clearAll).mockResolvedValue(undefined);
 
       const { clearAll } = useNotificationsStore.getState();
 

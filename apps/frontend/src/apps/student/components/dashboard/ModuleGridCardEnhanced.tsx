@@ -65,8 +65,9 @@ export function ModuleGridCardEnhanced({
   });
 
   // ========== Computed States ==========
-  const isCompleted = module.progress === 100;
-  const isInProgress = module.progress > 0 && module.progress < 100;
+  const progress = module.progress ?? 0;
+  const isCompleted = progress === 100;
+  const isInProgress = progress > 0 && progress < 100;
   const isClickable = canAccess && onClick;
 
   // ========== Render Loading State ==========
@@ -262,7 +263,7 @@ export function ModuleGridCardEnhanced({
         <div className="mb-3">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-medium text-detective-text">Progreso</span>
-            <span className="text-xs font-bold text-detective-orange">{module.progress}%</span>
+            <span className="text-xs font-bold text-detective-orange">{progress}%</span>
           </div>
 
           <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
@@ -273,7 +274,7 @@ export function ModuleGridCardEnhanced({
                   : 'bg-gradient-to-r from-orange-500 to-orange-600'
               }`}
               initial={{ width: 0 }}
-              animate={{ width: `${module.progress}%` }}
+              animate={{ width: `${progress}%` }}
               transition={{ duration: 1, ease: 'easeOut', delay: index * 0.1 }}
             />
           </div>
@@ -283,7 +284,7 @@ export function ModuleGridCardEnhanced({
         <div className="flex items-center justify-between pt-3 border-t border-detective-bg-secondary">
           <div className="flex items-center gap-1 text-xs text-detective-text-secondary">
             <Star className="w-3 h-3 text-detective-gold fill-detective-gold" />
-            <span>{Math.round((module.progress / 100) * 50)} pts</span>
+            <span>{Math.round((progress / 100) * 50)} pts</span>
           </div>
 
           {isInProgress && (

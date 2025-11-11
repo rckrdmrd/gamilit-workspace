@@ -9,9 +9,9 @@
 | **Título** | Implementación de Mecánicas de Ejercicios |
 | **Prioridad** | Crít ica |
 | **Estado** | ✅ Implementado |
-| **Versión** | 1.0 |
+| **Versión** | 2.0 |
 | **Fecha Creación** | 2025-11-07 |
-| **Última Actualización** | 2025-11-07 |
+| **Última Actualización** | 2025-11-11 |
 | **Autor** | Database Team, Backend Team |
 | **Reviewers** | Backend Lead, Frontend Lead, QA Lead |
 
@@ -26,12 +26,15 @@
 
 ### Implementación DDL
 
-🗄️ **ENUM:**
-- `educational_content.exercise_mechanic` - `apps/database/ddl/00-prerequisites.sql:59-65`
+🗄️ **ENUMs:**
+- `educational_content.exercise_type` - `apps/database/ddl/00-prerequisites.sql:~85-120`
+  - 35 implementaciones específicas GAMILIT
+- `educational_content.exercise_mechanic_mapping` (tabla) - Mapeo a categorías pedagógicas
+  - 7 categorías: Vocabulario, Gramática, Lectura, Escritura, Audio, Pronunciación, Cultura
 
 🗄️ **Tablas:**
 - `educational_content.exercises` - Ejercicios completos
-- `educational_content.exercise_templates` - Plantillas reutilizables
+- `educational_content.exercise_mechanic_mapping` - Mapeo pedagógico (NUEVO en v2.0)
 
 ---
 
@@ -71,65 +74,156 @@
 
 ## 💾 Implementación de Base de Datos
 
-### 1. ENUM: exercise_mechanic
+### 1. ENUM: exercise_type
 
-**Ubicación:** `apps/database/ddl/00-prerequisites.sql:59-65`
+**Ubicación:** `apps/database/ddl/00-prerequisites.sql:~85-120`
 
 ```sql
--- Exercise Mechanics (31 tipos)
-CREATE TYPE educational_content.exercise_mechanic AS ENUM (
-    -- Vocabulario (6)
-    'multiple_choice',
-    'fill_in_blank',
-    'matching_pairs',
+-- Exercise Types - Implementaciones específicas GAMILIT (35 tipos)
+CREATE TYPE educational_content.exercise_type AS ENUM (
+    -- Módulo 1: Comprensión Literal (5)
+    'crucigrama',
+    'linea_tiempo',
+    'sopa_letras',
+    'mapa_conceptual',
+    'emparejamiento',
+
+    -- Módulo 2: Comprensión Inferencial (4)
+    'construccion_hipotesis',
+    'prediccion_narrativa',
+    'detective_textual',
+    'puzzle_contexto',
+
+    -- Módulo 3: Lectura Crítica (5)
+    'analisis_fuentes',
+    'debate_digital',
+    'matriz_perspectivas',
+    'podcast_argumentativo',
+    'tribunal_opiniones',
+
+    -- Módulo 4: Alfabetización Digital (9)
+    'analisis_memes',
+    'chat_literario',
+    'email_formal',
+    'ensayo_argumentativo',
+    'infografia_interactiva',
+    'navegacion_hipertextual',
+    'quiz_tiktok',
+    'resena_critica',
+    'verificador_fake_news',
+
+    -- Módulo 5: Metacognición (2)
+    'reflexion_metacognitiva',
+    'proyecto_final',
+
+    -- Auxiliares (10)
+    'collage_prensa',
+    'verdadero_falso',
+    'diario_multimedia',
+    'comic_digital',
+    'mapa_mental',
+    'call_to_action',
     'flashcard',
-    'word_search',
-    'image_association',
-
-    -- Gramática (8)
-    'verb_conjugation',
-    'sentence_builder',
-    'error_detection',
-    'sentence_transformation',
-    'pronoun_selection',
-    'possessive_forms',
-    'pluralization',
-    'aspect_markers',
-
-    -- Lectura (4)
-    'reading_comprehension',
-    'true_or_false',
-    'inference',
-    'sequence_ordering',
-
-    -- Escritura (4)
-    'free_writing',
-    'sentence_completion',
-    'translation',
-    'dictation',
-
-    -- Audio (3)
-    'listening_comprehension',
-    'audio_matching',
-    'tone_recognition',
-
-    -- Pronunciación (2)
-    'speech_recording',
-    'pronunciation_comparison',
-
-    -- Cultura (4)
-    'cultural_context',
-    'historical_timeline',
-    'cultural_artifact',
-    'traditional_practice'
+    'completar_espacios',
+    'comprension_auditiva',
+    'red_conceptos'
 );
 
-COMMENT ON TYPE educational_content.exercise_mechanic IS '31 mecánicas de ejercicios agrupadas en 7 categorías pedagógicas';
+COMMENT ON TYPE educational_content.exercise_type IS '35 mecánicas específicas GAMILIT agrupadas en 5 módulos educativos + auxiliares';
 ```
 
-### 2. Tabla: exercises
+### 2. Sistema Dual: exercise_type + Categorías Pedagógicas
 
-**Ubicación:** `apps/database/ddl/schemas/educational_content/tables/exercises.sql`
+#### Concepto
+
+GAMILIT implementa un **sistema dual** que combina:
+
+1. **exercise_type (Implementación):**
+   - 35 mecánicas específicas gamificadas adaptadas al contexto maya yucateco
+   - Agrupadas por módulos educativos (1-5) + auxiliares
+   - Implementación concreta en Frontend/Backend
+
+2. **Categorías Pedagógicas (Clasificación):**
+   - 7 categorías universales: Vocabulario, Gramática, Lectura, Escritura, Audio, Pronunciación, Cultura
+   - 31 subcategorías pedagógicas genéricas
+   - Mapeo mediante tabla `exercise_mechanic_mapping`
+
+#### Tabla de Mapeo
+
+**Ubicación:** `apps/database/ddl/schemas/educational_content/tables/21-exercise_mechanic_mapping.sql`
+
+```sql
+CREATE TABLE educational_content.exercise_mechanic_mapping (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    -- CLASIFICACIÓN PEDAGÓGICA
+    mechanic_category VARCHAR(50) NOT NULL,      -- 'vocabulario', 'lectura', 'escritura'
+    mechanic_subcategory VARCHAR(50),            -- 'multiple_choice', 'word_search', 'inference'
+
+    -- IMPLEMENTACIÓN GAMILIT
+    exercise_type educational_content.exercise_type NOT NULL,
+
+    -- CONTEXTO EDUCATIVO
+    bloom_level VARCHAR(50),                     -- 'recordar', 'comprender', 'aplicar', etc.
+    cefr_level educational_content.difficulty_level[],
+    pedagogical_purpose TEXT,
+    learning_objectives TEXT[],
+
+    -- CARACTERÍSTICAS
+    interaction_type VARCHAR(50),                -- 'drag_drop', 'text_input', 'selection'
+    cognitive_load VARCHAR(20),                  -- 'bajo', 'medio', 'alto'
+
+    -- Metadatos
+    tags TEXT[],
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+
+    UNIQUE(mechanic_subcategory, exercise_type)
+);
+
+-- Índices
+CREATE INDEX idx_mechanic_mapping_category ON educational_content.exercise_mechanic_mapping(mechanic_category);
+CREATE INDEX idx_mechanic_mapping_exercise_type ON educational_content.exercise_mechanic_mapping(exercise_type);
+CREATE INDEX idx_mechanic_mapping_bloom ON educational_content.exercise_mechanic_mapping(bloom_level);
+CREATE INDEX idx_mechanic_mapping_tags_gin ON educational_content.exercise_mechanic_mapping USING gin(tags);
+
+COMMENT ON TABLE educational_content.exercise_mechanic_mapping IS 'Mapeo entre categorías pedagógicas universales y implementaciones específicas GAMILIT';
+```
+
+#### Ejemplos de Mapeos
+
+| Categoría | Subcategoría | exercise_type | Propósito Pedagógico |
+|-----------|--------------|---------------|----------------------|
+| vocabulario | word_search | crucigrama | Reforzar vocabulario mediante juego de palabras cruzadas |
+| vocabulario | word_search | sopa_letras | Identificar palabras clave en contexto visual |
+| lectura | inference | detective_textual | Desarrollar comprensión inferencial mediante pistas |
+| lectura | reading_comprehension | analisis_fuentes | Análisis crítico de textos históricos/culturales |
+| escritura | free_writing | ensayo_argumentativo | Expresión argumentativa y pensamiento crítico |
+| cultura | cultural_context | tribunal_opiniones | Análisis de perspectivas culturales diversas |
+
+#### Beneficios del Sistema Dual
+
+**Para Profesores:**
+- Buscar ejercicios por competencia pedagógica ("vocabulario", "lectura")
+- Filtrar por nivel de Bloom o CEFR
+- Asignar según objetivos de aprendizaje específicos
+- Visibilidad de progreso por área pedagógica
+
+**Para Estudiantes:**
+- Recibir recomendaciones por competencia a desarrollar
+- Variedad de mecánicas para misma competencia (evita monotonía)
+- Progresión clara por área (ej: vocabulario 60% → 80%)
+
+**Para el Sistema:**
+- Analytics por competencia pedagógica + por tipo específico
+- Interoperabilidad con estándares internacionales (Bloom, CEFR)
+- Extensibilidad sin modificar estructura existente
+- Facilita futuras implementaciones (13 GAPs identificados)
+
+### 3. Tabla: exercises
+
+**Ubicación:** `apps/database/ddl/schemas/educational_content/tables/02-exercises.sql`
 
 ```sql
 CREATE TABLE IF NOT EXISTS educational_content.exercises (
@@ -140,7 +234,7 @@ CREATE TABLE IF NOT EXISTS educational_content.exercises (
     title VARCHAR(300) NOT NULL,
 
     -- Mecánica y dificultad
-    mechanic educational_content.exercise_mechanic NOT NULL,
+    exercise_type educational_content.exercise_type NOT NULL,
     difficulty educational_content.difficulty_level NOT NULL,
 
     -- Contenido (estructura varía por mecánica)
@@ -979,9 +1073,14 @@ async getExercise(exerciseId: string): Promise<Exercise> {
 | Versión | Fecha | Autor | Cambios |
 |---------|-------|-------|---------|
 | 1.0 | 2025-11-07 | Database Team | Creación del documento |
+| 2.0 | 2025-11-11 | Database Team | **Reconciliación:** Actualizado de exercise_mechanic a exercise_type. Sistema dual implementado con tabla de mapeo pedagógico. Sincronizado con DDL real. 13 GAPs pedagógicos identificados. |
 
 ---
 
-**Documento:** `docs/02-especificaciones-tecnicas/03-contenido-educativo/ET-EDU-001-mecanicas-ejercicios.md`
-**Propósito:** Especificación técnica completa de implementación de las 31 mecánicas
+**Nota v2.0:** Este documento fue actualizado para reflejar la implementación real del sistema (DB-110, DB-111, DB-112). Se mantiene la clasificación pedagógica mediante tabla de mapeo `exercise_mechanic_mapping`, reconciliando el valor pedagógico original con las 35 implementaciones específicas GAMILIT existentes. La decisión arquitectónica está documentada en ADR-008.
+
+---
+
+**Documento:** `docs/01-fase-alcance-inicial/EAI-002-actividades/especificaciones/ET-EDU-001-mecanicas-ejercicios.md`
+**Propósito:** Especificación técnica completa de implementación de las 35 mecánicas GAMILIT + sistema de mapeo pedagógico
 **Audiencia:** Backend Developers, Frontend Developers, QA Team

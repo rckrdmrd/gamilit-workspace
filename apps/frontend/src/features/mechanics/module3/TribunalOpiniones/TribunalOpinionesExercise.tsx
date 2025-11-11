@@ -240,7 +240,7 @@ export const TribunalOpinionesExercise: React.FC<ExerciseProps> = ({
                   Has votado por la opinión de:{' '}
                   <strong>{tribunal.opinions.find((o) => o.id === selectedOpinionId)?.author}</strong>
                 </p>
-                <DetectiveButton variant="primary" size="lg" onClick={handleConfirmVote} className="w-full">
+                <DetectiveButton variant="primary" onClick={handleConfirmVote} className="w-full">
                   Confirmar Voto
                 </DetectiveButton>
               </div>
@@ -269,7 +269,7 @@ export const TribunalOpinionesExercise: React.FC<ExerciseProps> = ({
             {onExit && (
               <DetectiveButton
                 variant="secondary"
-                size="lg"
+
                 onClick={onExit}
               >
                 Salir
@@ -277,7 +277,7 @@ export const TribunalOpinionesExercise: React.FC<ExerciseProps> = ({
             )}
             <DetectiveButton
               variant="gold"
-              size="lg"
+
               onClick={handleReset}
               disabled={hasVoted}
             >
@@ -285,7 +285,7 @@ export const TribunalOpinionesExercise: React.FC<ExerciseProps> = ({
             </DetectiveButton>
             <DetectiveButton
               variant="primary"
-              size="lg"
+
               onClick={handleComplete}
               disabled={!hasVoted}
             >
@@ -305,14 +305,7 @@ export const TribunalOpinionesExercise: React.FC<ExerciseProps> = ({
             ? `Has analizado y votado correctamente con ${currentScore} puntos.`
             : 'Debes confirmar tu voto antes de completar el ejercicio.',
           score: hasVoted
-            ? {
-                baseScore: currentScore,
-                timeBonus: Math.max(0, 20 - Math.floor(timeSpent / 60)),
-                accuracyBonus: 0,
-                totalScore: calculateFinalScore(),
-                mlCoins: Math.floor(calculateFinalScore() / 2),
-                xpGained: calculateFinalScore()
-              }
+            ? calculateFinalScore()
             : undefined,
           showConfetti: hasVoted
         }}

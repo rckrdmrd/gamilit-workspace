@@ -11,8 +11,8 @@ export { AchievementStatistics } from './AchievementStatistics';
 
 export type {
   Achievement,
-  AchievementFilters,
-  AchievementStatistics,
+  AchievementFiltersState,
+  AchievementStatisticsData,
   CategoryConfig,
   RarityConfig,
   FilterStatus,

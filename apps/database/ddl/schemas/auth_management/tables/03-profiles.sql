@@ -57,8 +57,12 @@ CREATE TABLE auth_management.profiles (
 
     -- Foreign Keys
     CONSTRAINT profiles_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES auth_management.tenants(id) ON DELETE CASCADE,
-    CONSTRAINT profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE,
-    CONSTRAINT profiles_school_id_fkey FOREIGN KEY (school_id) REFERENCES social_features.schools(id) ON DELETE SET NULL
+    CONSTRAINT profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
+    -- NOTE: FK school_id DIFERIDO para resolver dependencia circular
+    -- La constraint profiles_school_id_fkey se crea DESPUÉS en:
+    -- ddl/schemas/auth_management/fk-constraints/01-profiles-school-fk.sql
+    -- Razón: profiles (Fase 5) → schools (Fase 9) crea dependencia circular
+    -- Ver: REPORTE-ANALISIS-DEPENDENCIAS-DDL-2025-11-10.md
 );
 
 -- Indexes
@@ -109,5 +113,5 @@ COMMENT ON COLUMN auth_management.profiles.grade_level IS 'Grado escolar del est
 COMMENT ON COLUMN auth_management.profiles.role IS 'Rol del usuario: student, admin_teacher, super_admin';
 
 -- Permissions
-ALTER TABLE auth_management.profiles OWNER TO postgres;
+ALTER TABLE auth_management.profiles OWNER TO gamilit_user;
 GRANT ALL ON TABLE auth_management.profiles TO gamilit_user;

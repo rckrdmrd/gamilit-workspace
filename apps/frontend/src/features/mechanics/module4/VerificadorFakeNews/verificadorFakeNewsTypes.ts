@@ -85,3 +85,6 @@ export interface VerificadorFakeNewsExerciseProps {
   exercise?: VerificadorExercise;
   actionsRef?: React.MutableRefObject<VerificadorFakeNewsActions | undefined>;
 }
+
+// Alias for generic import
+export type ExerciseProps = VerificadorFakeNewsExerciseProps;

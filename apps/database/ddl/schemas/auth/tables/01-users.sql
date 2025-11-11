@@ -15,19 +15,46 @@ SET search_path TO auth, public;
 DROP TABLE IF EXISTS auth.users CASCADE;
 
 CREATE TABLE auth.users (
+    -- Core Supabase-compatible columns
+    instance_id uuid,
     id uuid DEFAULT gen_random_uuid() NOT NULL,
+    aud varchar(255) DEFAULT 'authenticated',
+    role varchar(255),
     email text NOT NULL,
-    encrypted_password text NOT NULL,
-    role auth_management.gamilit_role DEFAULT 'student'::auth_management.gamilit_role NOT NULL,
+    encrypted_password text,
     email_confirmed_at timestamp with time zone,
+    invited_at timestamp with time zone,
+    confirmation_token varchar(255),
+    confirmation_sent_at timestamp with time zone,
+    recovery_token varchar(255),
+    recovery_sent_at timestamp with time zone,
+    email_change_token_new varchar(255),
+    email_change varchar(255),
+    email_change_sent_at timestamp with time zone,
     last_sign_in_at timestamp with time zone,
+    raw_app_meta_data jsonb,
     raw_user_meta_data jsonb DEFAULT '{}'::jsonb,
-    deleted_at timestamp with time zone,
+    is_super_admin boolean DEFAULT false,
     created_at timestamp with time zone DEFAULT gamilit.now_mexico(),
-    updated_at timestamp with time zone DEFAULT gamilit.now_mexico()
+    updated_at timestamp with time zone DEFAULT gamilit.now_mexico(),
+    phone varchar(15),
+    phone_confirmed_at timestamp with time zone,
+    phone_change varchar(15),
+    phone_change_token varchar(255),
+    phone_change_sent_at timestamp with time zone,
+    confirmed_at timestamp with time zone,
+    email_change_token_current varchar(255),
+    email_change_confirm_status smallint DEFAULT 0,
+    banned_until timestamp with time zone,
+    reauthentication_token varchar(255),
+    reauthentication_sent_at timestamp with time zone,
+    is_sso_user boolean DEFAULT false,
+    deleted_at timestamp with time zone,
+    -- GAMILIT custom columns
+    gamilit_role auth_management.gamilit_role DEFAULT 'student'::auth_management.gamilit_role
 );
 
-ALTER TABLE auth.users OWNER TO postgres;
+ALTER TABLE auth.users OWNER TO gamilit_user;
 
 -- =====================================================
 -- Constraints
@@ -47,6 +74,7 @@ ALTER TABLE ONLY auth.users
 
 CREATE INDEX idx_auth_users_email ON auth.users USING btree (email);
 CREATE INDEX idx_auth_users_role ON auth.users USING btree (role);
+CREATE INDEX idx_auth_users_gamilit_role ON auth.users USING btree (gamilit_role);
 
 -- =====================================================
 -- Comments

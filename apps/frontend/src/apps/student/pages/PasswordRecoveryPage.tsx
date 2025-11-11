@@ -130,7 +130,7 @@ export default function PasswordRecoveryPage() {
           <DetectiveButton
             type="submit"
             variant="primary"
-            size="lg"
+
             loading={loading}
             disabled={!isValid || loading}
             className="w-full mb-4"

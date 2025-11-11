@@ -99,13 +99,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
         type: result.score >= 70 ? 'success' : 'partial',
         title: result.isPerfect ? '¡Perfecto!' : '¡Buen intento!',
         message: `Obtuviste ${result.score} puntos (${result.correctAnswers}/${result.totalQuestions} correctas)`,
-        score: {
-          totalScore: result.score,
-          breakdown: {
-            baseScore: result.score,
-            bonuses: result.rewards.bonuses
-          }
-        },
+        score: result.score,
         showConfetti: result.isPerfect
       });
       setShowFeedback(true);
@@ -217,12 +211,10 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
       <DetectiveCard variant="default" padding="md" className="mb-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <TimerWidget initialTime={0} countDown={false} showWarning={false} />
+            <TimerWidget startTime={Date.now()} isPaused={false} showSeconds={true} />
             <ProgressTracker
-              current={answeredCount}
-              total={statements.length}
-              variant="bar"
-              className="w-64"
+              currentStep={answeredCount}
+              totalSteps={statements.length}
             />
           </div>
           <div className="flex items-center gap-3">
@@ -250,7 +242,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
         </div>
         {currentScore > 0 && (
           <div className="mt-4">
-            <ScoreDisplay score={currentScore} maxScore={100} size="sm" />
+            <ScoreDisplay score={currentScore} maxScore={100} />
           </div>
         )}
       </DetectiveCard>

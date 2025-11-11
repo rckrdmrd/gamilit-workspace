@@ -12,7 +12,8 @@
  */
 
 import React from 'react';
-import type { Exercise, ExerciseType, ExerciseConfig } from '@shared/types';
+import { ExerciseType } from '@shared/types';
+import type { Exercise, ExerciseConfig } from '@shared/types';
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -88,7 +89,7 @@ const EXERCISE_TYPE_REGISTRY: Partial<Record<ExerciseType, ExerciseTypeMetadata>
     displayName: 'Línea de Tiempo',
     category: 'literal',
     isImplemented: false,
-    fallbackType: 'timeline',
+    fallbackType: ExerciseType.CRUCIGRAMA,
     componentPath: '/features/mechanics/module1/Timeline/TimelineExercise',
   },
   'timeline': {
@@ -534,7 +535,7 @@ export class ExerciseFactory {
    * Normalize exercise type string
    */
   private normalizeExerciseType(exerciseType?: string): ExerciseType {
-    if (!exerciseType) return 'emparejamiento'; // Default fallback
+    if (!exerciseType) return ExerciseType.CRUCIGRAMA; // Default fallback
 
     // Handle underscore to hyphen conversion for legacy compatibility
     const normalized = exerciseType.replace(/-/g, '_').toLowerCase();
@@ -545,7 +546,7 @@ export class ExerciseFactory {
     }
 
     // Default fallback
-    return 'emparejamiento';
+    return ExerciseType.CRUCIGRAMA;
   }
 
   /**

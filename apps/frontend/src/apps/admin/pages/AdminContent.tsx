@@ -40,8 +40,10 @@ export default function AdminContent() {
   } = useContentVersions();
 
   const user = {
+    id: 'mock-admin-content-id',
     email: 'admin@glit.com',
-    full_name: 'Super Admin',
+    name: 'Super Admin',
+    role: 'super_admin',
   };
 
   const handleApproveExercise = async (exerciseId: string) => {
@@ -394,7 +396,7 @@ export default function AdminContent() {
           setSelectedExercise(null);
         }}
         title={`Vista Previa - ${selectedExercise?.title}`}
-        size="lg"
+
       >
         {selectedExercise && (
           <div className="space-y-4">
@@ -457,7 +459,7 @@ export default function AdminContent() {
             name="reason"
             type="textarea"
             value={rejectReason}
-            onChange={setRejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
             placeholder="Explica por qué se rechaza este ejercicio..."
             required
           />

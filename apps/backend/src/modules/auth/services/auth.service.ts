@@ -10,6 +10,7 @@ import {
   UserResponseDto,
   CreateUserSessionDto,
   CreateAuthAttemptDto,
+  UpdateProfileDto,
 } from '../dto';
 import { DB_SCHEMAS, DB_TABLES, GamilityRoleEnum, UserStatusEnum, SubscriptionTierEnum } from '@shared/constants';
 
@@ -266,6 +267,152 @@ export class AuthService {
       // Error de JWT (token inválido, expirado, malformado, etc.)
       throw new UnauthorizedException('Refresh token inválido o expirado');
     }
+  }
+
+  /**
+   * Actualizar perfil del usuario
+   */
+  async updateUserProfile(userId: string, dto: UpdateProfileDto): Promise<User> {
+    // 1. Buscar usuario
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Usuario no encontrado');
+    }
+
+    // 2. Buscar perfil asociado
+    const profile = await this.profileRepository.findOne({
+      where: { user_id: userId },
+    });
+
+    if (!profile) {
+      throw new BadRequestException('Perfil no encontrado');
+    }
+
+    // 3. Actualizar campos del perfil que vienen en el DTO
+    if (dto.display_name !== undefined) profile.display_name = dto.display_name;
+    if (dto.full_name !== undefined) profile.full_name = dto.full_name;
+    if (dto.first_name !== undefined) profile.first_name = dto.first_name;
+    if (dto.last_name !== undefined) profile.last_name = dto.last_name;
+    if (dto.avatar_url !== undefined) profile.avatar_url = dto.avatar_url;
+    if (dto.bio !== undefined) profile.bio = dto.bio;
+    if (dto.phone !== undefined) profile.phone = dto.phone;
+    if (dto.date_of_birth !== undefined) {
+      profile.date_of_birth = typeof dto.date_of_birth === 'string'
+        ? new Date(dto.date_of_birth)
+        : dto.date_of_birth;
+    }
+    if (dto.grade_level !== undefined) profile.grade_level = dto.grade_level;
+    if (dto.student_id !== undefined) profile.student_id = dto.student_id;
+    if (dto.school_id !== undefined) profile.school_id = dto.school_id;
+    if (dto.preferences !== undefined) profile.preferences = dto.preferences;
+    if (dto.metadata !== undefined) profile.metadata = dto.metadata;
+
+    // 4. Actualizar email en user si cambió (requiere re-verificación)
+    if (dto.email !== undefined && dto.email !== user.email) {
+      // Verificar que el nuevo email no esté en uso
+      const existingUser = await this.userRepository.findOne({
+        where: { email: dto.email },
+      });
+
+      if (existingUser && existingUser.id !== userId) {
+        throw new ConflictException('Email ya está en uso');
+      }
+
+      user.email = dto.email;
+      profile.email = dto.email;
+      profile.email_verified = false; // Requiere re-verificación
+      await this.userRepository.save(user);
+    }
+
+    // 5. Guardar perfil actualizado
+    await this.profileRepository.save(profile);
+
+    // 6. Retornar usuario actualizado
+    const updatedUser = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+
+    if (!updatedUser) {
+      throw new UnauthorizedException('Usuario no encontrado después de actualización');
+    }
+
+    return updatedUser;
+  }
+
+  /**
+   * Obtener preferencias del usuario
+   */
+  async getUserPreferences(userId: string): Promise<any> {
+    const profile = await this.profileRepository.findOne({
+      where: { user_id: userId },
+    });
+
+    if (!profile) {
+      throw new UnauthorizedException('Perfil no encontrado');
+    }
+
+    return profile.preferences || {};
+  }
+
+  /**
+   * Actualizar preferencias del usuario
+   */
+  async updateUserPreferences(userId: string, preferences: any): Promise<any> {
+    const profile = await this.profileRepository.findOne({
+      where: { user_id: userId },
+    });
+
+    if (!profile) {
+      throw new UnauthorizedException('Perfil no encontrado');
+    }
+
+    profile.preferences = preferences;
+    await this.profileRepository.save(profile);
+
+    return profile.preferences;
+  }
+
+  /**
+   * Subir avatar del usuario
+   */
+  async uploadUserAvatar(userId: string, file: any): Promise<string> {
+    // TODO: Implementar lógica de almacenamiento de archivos (S3, local storage, etc.)
+    // Por ahora, retornamos una URL de ejemplo
+    const avatarUrl = `/avatars/${userId}_${Date.now()}_${file.originalname}`;
+
+    // Actualizar perfil con nueva URL de avatar
+    const profile = await this.profileRepository.findOne({
+      where: { user_id: userId },
+    });
+
+    if (!profile) {
+      throw new UnauthorizedException('Perfil no encontrado');
+    }
+
+    profile.avatar_url = avatarUrl;
+    await this.profileRepository.save(profile);
+
+    return avatarUrl;
+  }
+
+  /**
+   * Obtener estadísticas del usuario
+   */
+  async getUserStatistics(userId: string): Promise<any> {
+    // TODO: Implementar consultas a tablas de gamificación, progreso, etc.
+    // Por ahora, retornamos estadísticas de ejemplo
+    return {
+      total_xp: 0,
+      total_ml_coins: 0,
+      total_exercises: 0,
+      total_achievements: 0,
+      current_rank: 'Nacom',
+      modules_completed: 0,
+      login_streak: 0,
+    };
   }
 
   /**

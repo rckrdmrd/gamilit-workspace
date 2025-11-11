@@ -6,7 +6,7 @@ import { ArticleParser } from './ArticleParser';
 import { FactCheckDashboard } from './FactCheckDashboard';
 import { mockArticles, mockFactCheckResults } from './verificadorFakeNewsMockData';
 import { Claim, FactCheckResult, ExerciseProps, VerificadorState, NewsArticle } from './verificadorFakeNewsTypes';
-import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { FeedbackData, normalizeProgressUpdate } from '@shared/components/mechanics/mechanicsTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 
 export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
@@ -51,7 +51,16 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
   // Progress tracking
   useEffect(() => {
     const progress = calculateProgress();
-    onProgressUpdate?.(progress);
+    const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+    onProgressUpdate?.(
+      normalizeProgressUpdate(
+        progress,
+        results.length,
+        Math.max(claims.length, 1),
+        0,
+        timeSpent
+      )
+    );
   }, [claims, results]);
 
   // Auto-save functionality

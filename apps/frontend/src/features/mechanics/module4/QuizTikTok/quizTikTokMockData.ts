@@ -1,10 +1,11 @@
 import { QuizTikTokData } from './quizTikTokTypes';
+import { DifficultyLevel } from '@shared/types/educational.types';
 
 export const mockQuizTikTokExercises: QuizTikTokData[] = [{
   id: 'tiktok-001',
   title: 'Quiz TikTok: Marie Curie',
   description: 'Responde preguntas sobre Marie Curie con formato vertical',
-  difficulty: 'medio',
+  difficulty: DifficultyLevel.INTERMEDIATE,
   estimatedTime: 180,
   topic: 'Marie Curie - Quiz Rápido',
   hints: [],

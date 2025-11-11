@@ -21,19 +21,25 @@ interface ExerciseHeaderProps {
 }
 
 const DIFFICULTY_COLORS = {
-  very_easy: 'bg-green-100 text-green-800 border-green-200',
-  easy: 'bg-blue-100 text-blue-800 border-blue-200',
-  medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  hard: 'bg-orange-100 text-orange-800 border-orange-200',
-  very_hard: 'bg-red-100 text-red-800 border-red-200',
+  beginner: 'bg-green-100 text-green-800 border-green-200',
+  elementary: 'bg-green-100 text-green-800 border-green-200',
+  pre_intermediate: 'bg-blue-100 text-blue-800 border-blue-200',
+  intermediate: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  upper_intermediate: 'bg-orange-100 text-orange-800 border-orange-200',
+  advanced: 'bg-orange-100 text-orange-800 border-orange-200',
+  proficient: 'bg-red-100 text-red-800 border-red-200',
+  native: 'bg-purple-100 text-purple-800 border-purple-200',
 };
 
 const DIFFICULTY_LABELS = {
-  very_easy: 'Muy Fácil',
-  easy: 'Fácil',
-  medium: 'Medio',
-  hard: 'Difícil',
-  very_hard: 'Muy Difícil',
+  beginner: 'Principiante (A1)',
+  elementary: 'Elemental (A2)',
+  pre_intermediate: 'Pre-Intermedio (B1)',
+  intermediate: 'Intermedio (B2)',
+  upper_intermediate: 'Intermedio Avanzado (C1)',
+  advanced: 'Avanzado (C2)',
+  proficient: 'Competente (C2+)',
+  native: 'Nativo',
 };
 
 export const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({

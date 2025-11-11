@@ -368,7 +368,7 @@ export default function LoginPage() {
                 <DetectiveButton
                   type="submit"
                   variant="primary"
-                  size="lg"
+
                   loading={authLoading}
                   disabled={!isValid || authLoading}
                   className="w-full shadow-lg hover:shadow-xl transition-shadow"

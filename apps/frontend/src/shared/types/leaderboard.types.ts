@@ -6,14 +6,25 @@
  */
 
 /**
- * Leaderboard Type Enum
+ * Leaderboard Type
  * Different types of leaderboards users can view
+ *
+ * Changed from enum to type union for better compatibility with string literals
+ * @see https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#union-types
  */
-export enum LeaderboardType {
-  GLOBAL = 'global',
-  SCHOOL = 'school',
-  CLASSROOM = 'classroom',
-}
+export type LeaderboardType = 'global' | 'school' | 'classroom';
+
+/**
+ * Leaderboard Type Enum (Legacy)
+ * @deprecated Use LeaderboardType string union instead for better type inference
+ *
+ * Kept for backward compatibility with code using enum syntax
+ */
+export const LeaderboardTypeEnum = {
+  GLOBAL: 'global' as const,
+  SCHOOL: 'school' as const,
+  CLASSROOM: 'classroom' as const,
+} as const;
 
 /**
  * Maya Rank - DEPRECATED
@@ -135,9 +146,9 @@ export const RANK_LABELS: Record<MayaRank, string> = {
  * Leaderboard Type Labels (Spanish)
  */
 export const LEADERBOARD_TYPE_LABELS: Record<LeaderboardType, string> = {
-  [LeaderboardType.GLOBAL]: 'Global',
-  [LeaderboardType.SCHOOL]: 'Escuela',
-  [LeaderboardType.CLASSROOM]: 'Clase',
+  global: 'Global',
+  school: 'Escuela',
+  classroom: 'Clase',
 };
 
 /**

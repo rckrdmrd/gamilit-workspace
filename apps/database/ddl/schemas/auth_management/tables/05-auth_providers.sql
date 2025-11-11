@@ -63,9 +63,9 @@ COMMENT ON COLUMN auth_management.auth_providers.priority IS 'Orden de visualiza
 COMMENT ON COLUMN auth_management.auth_providers.config IS 'Configuración adicional específica del proveedor en formato JSON';
 
 -- Permissions
-ALTER TABLE auth_management.auth_providers OWNER TO postgres;
+ALTER TABLE auth_management.auth_providers OWNER TO gamilit_user;
 GRANT SELECT ON TABLE auth_management.auth_providers TO gamilit_user;
-GRANT ALL ON TABLE auth_management.auth_providers TO postgres;
+GRANT ALL ON TABLE auth_management.auth_providers TO gamilit_user;
 
 -- =====================================================
 -- Seed Data: Configuración inicial de proveedores

@@ -74,10 +74,12 @@ export default function EnhancedProfilePage() {
 
   // Load data
   useEffect(() => {
-    fetchUserProgress();
-    fetchBalance();
-    fetchAchievements();
-  }, [fetchUserProgress, fetchBalance, fetchAchievements]);
+    if (user?.id) {
+      fetchUserProgress();
+      fetchBalance();
+      fetchAchievements(user.id);
+    }
+  }, [user?.id, fetchUserProgress, fetchBalance, fetchAchievements]);
 
   // Mock rank history (in real app, this would come from API)
   const rankHistory: RankHistoryEntry[] = [
@@ -167,7 +169,7 @@ export default function EnhancedProfilePage() {
                   {user?.email}
                 </p>
                 <div className="flex items-center gap-4 justify-center md:justify-start flex-wrap">
-                  <RankBadge rank={(userProgress?.currentRank as any) || 'nacom'} showIcon={true} size="lg" />
+                  <RankBadge rank={(userProgress?.currentRank as any) || 'nacom'} showIcon={true} />
                   <StreakIndicator variant="compact" />
                 </div>
                 <p className="text-white/70 text-sm mt-4 flex items-center gap-2 justify-center md:justify-start">
@@ -377,7 +379,7 @@ export default function EnhancedProfilePage() {
 
                       {/* Rank Badge */}
                       <div className="relative z-10">
-                        <RankBadge rank={entry.rank as any} size="lg" showIcon />
+                        <RankBadge rank={entry.rank as any} showIcon />
                       </div>
 
                       {/* Details */}

@@ -215,6 +215,9 @@ export interface PrestigeProgress {
   /** Date of last prestige */
   lastPrestigeDate: Date | null;
 
+  /** Bonus multiplier from prestige */
+  bonusMultiplier?: number;
+
   /** All prestige bonuses currently active */
   activeBonuses: PrestigeBonus[];
 
@@ -310,6 +313,9 @@ export interface ProgressionHistoryEntry {
 
   /** Detailed description */
   description: string;
+
+  /** Additional details (legacy/alternative) */
+  details?: string;
 
   /** Associated rank (if applicable) */
   rank?: MayaRank;

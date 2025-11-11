@@ -92,7 +92,7 @@ export const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({
         <div className="mb-4">
           <DetectiveButton
             variant="blue"
-            size="sm"
+
             icon={<ArrowLeft className="w-4 h-4" />}
             onClick={() => navigate(`/module/${moduleId}`)}
           >

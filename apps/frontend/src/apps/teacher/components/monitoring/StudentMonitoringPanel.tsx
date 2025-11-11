@@ -79,7 +79,7 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
             />
             Auto-refresh
           </label>
-          <DetectiveButton onClick={refresh} variant="secondary" size="sm" disabled={loading}>
+          <DetectiveButton onClick={refresh} variant="secondary" disabled={loading}>
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             Actualizar
           </DetectiveButton>
@@ -145,21 +145,21 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
             <div className="flex gap-2">
               <DetectiveButton
                 variant={filters.status?.includes('active') ? 'primary' : 'secondary'}
-                size="sm"
+
                 onClick={() => handleStatusFilter('active')}
               >
                 🟢 Activos
               </DetectiveButton>
               <DetectiveButton
                 variant={filters.status?.includes('inactive') ? 'primary' : 'secondary'}
-                size="sm"
+
                 onClick={() => handleStatusFilter('inactive')}
               >
                 🟡 Inactivos
               </DetectiveButton>
               <DetectiveButton
                 variant={filters.status?.includes('offline') ? 'primary' : 'secondary'}
-                size="sm"
+
                 onClick={() => handleStatusFilter('offline')}
               >
                 🔴 Offline

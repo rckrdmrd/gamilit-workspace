@@ -5,14 +5,19 @@
 
 /**
  * Difficulty Level Enum
- * Matches database enum: public.difficulty_level
+ * Matches database enum: educational_content.difficulty_level
+ * @see Backend: DifficultyLevelEnum
+ * @version 2.0 (2025-11-11) - Migrado a est\u00e1ndar CEFR (8 niveles: A1-C2+)
  */
 export enum DifficultyLevel {
-  VERY_EASY = 'very_easy',
-  EASY = 'easy',
-  MEDIUM = 'medium',
-  HARD = 'hard',
-  VERY_HARD = 'very_hard'
+  BEGINNER = 'beginner',               // A1
+  ELEMENTARY = 'elementary',           // A2
+  PRE_INTERMEDIATE = 'pre_intermediate', // B1
+  INTERMEDIATE = 'intermediate',       // B2
+  UPPER_INTERMEDIATE = 'upper_intermediate', // C1
+  ADVANCED = 'advanced',               // C2
+  PROFICIENT = 'proficient',           // C2+
+  NATIVE = 'native'                    // Nativo
 }
 
 /**
@@ -218,6 +223,76 @@ export interface Module {
    * Total number of exercises in the module
    */
   total_exercises?: number;
+
+  // =====================================================
+  // PROGRESS & STATUS (Optional fields populated by API with user context)
+  // =====================================================
+
+  /**
+   * User's progress percentage (0-100)
+   * Only present when fetching with user context
+   */
+  progress?: number;
+
+  /**
+   * Whether the module is locked for the user
+   * Based on prerequisites, rank requirements, etc.
+   */
+  is_locked?: boolean;
+
+  /**
+   * Number of completed exercises by user
+   * Only present when fetching with user context
+   */
+  completed_exercises?: number;
+
+  /**
+   * Number of completed exercises (alias for completed_exercises)
+   * For backward compatibility
+   */
+  completedExercises?: number;
+
+  /**
+   * Total number of exercises (alias for total_exercises)
+   * For backward compatibility
+   */
+  exercises_count?: number;
+
+  /**
+   * Total number of exercises (alias for total_exercises)
+   * For backward compatibility with camelCase
+   */
+  totalExercises?: number;
+
+  /**
+   * Estimated time in minutes (alias for estimated_duration_minutes)
+   * For backward compatibility
+   */
+  estimatedTime?: number;
+
+  /**
+   * Progress percentage (alias for progress)
+   * For backward compatibility
+   */
+  progressPercentage?: number;
+
+  /**
+   * Color theme for module display
+   * Optional UI customization
+   */
+  color?: string;
+
+  /**
+   * Rango Maya required (alias for maya_rank_required)
+   * For backward compatibility
+   */
+  rangoMayaRequired?: string;
+
+  /**
+   * Rango Maya granted (alias for maya_rank_granted)
+   * For backward compatibility
+   */
+  rangoMayaGranted?: string;
 
   // =====================================================
   // AUDIT FIELDS
@@ -491,6 +566,37 @@ export interface Exercise {
    * @deprecated
    */
   solution_explanation?: string;
+
+  // =====================================================
+  // PROGRESS & STATUS (Optional fields populated by API with user context)
+  // =====================================================
+
+  /**
+   * Alias for type (for backward compatibility)
+   */
+  exercise_type?: ExerciseType;
+
+  /**
+   * Alias for max_points (for backward compatibility)
+   */
+  points?: number;
+
+  /**
+   * Alias for estimated_time_minutes (for backward compatibility)
+   */
+  estimatedTime?: number;
+
+  /**
+   * Whether user has completed this exercise
+   * Only present when fetching with user context
+   */
+  completed?: boolean;
+
+  /**
+   * User's best score on this exercise
+   * Only present when fetching with user context
+   */
+  score?: number;
 }
 
 /**
@@ -516,6 +622,12 @@ export interface TestCase {
   is_hidden: boolean;
   description?: string;
 }
+
+/**
+ * Exercise Config
+ * Generic configuration object for exercise-specific settings
+ */
+export type ExerciseConfig = Record<string, any>;
 
 /**
  * Module with Progress

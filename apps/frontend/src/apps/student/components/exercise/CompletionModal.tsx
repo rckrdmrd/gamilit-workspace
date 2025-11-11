@@ -22,6 +22,8 @@ import {
   Target,
   Clock,
   Zap,
+  Crown,
+  Flame,
 } from 'lucide-react';
 
 /**

@@ -26,7 +26,7 @@ export const API_ENDPOINTS = {
     requestPasswordReset: '/auth/forgot-password',  // Backend uses forgot-password
     resetPassword: '/auth/reset-password',
     changePassword: '/auth/password',  // Backend uses /auth/password PUT
-    getCurrentUser: '/auth/me',
+    getCurrentUser: '/auth/profile',
     updateProfile: '/auth/profile',
     getSessions: '/auth/sessions',  // GET user sessions
     revokeSession: (sessionId: string) => `/auth/sessions/${sessionId}`,  // DELETE specific session
@@ -48,26 +48,33 @@ export const API_ENDPOINTS = {
    * Ranks & Progression endpoints
    */
   ranks: {
-    current: (userId: string) => `/gamification/ranks/user/${userId}`,  // Fixed: was /ranks/current
-    checkPromotion: (userId: string) => `/gamification/ranks/check-promotion/${userId}`,
-    rankUp: (userId: string) => `/gamification/ranks/promote/${userId}`,  // Fixed: was /ranks/rankup
-    history: (userId: string) => `/gamification/ranks/history/${userId}`,  // Fixed: was /ranks/history
-    multipliers: (userId: string) => `/gamification/ranks/multiplier/${userId}`,  // Fixed: was /ranks/multipliers
+    current: '/gamification/ranks/current',  // Fixed: uses auth, no userId needed
+    rankProgress: (userId: string) => `/gamification/ranks/users/${userId}/rank-progress`,  // Fixed: Backend implemented (correct route)
+    checkPromotion: (userId: string) => `/gamification/ranks/check-promotion/${userId}`,  // Fixed: Backend implemented
+    promote: (userId: string) => `/gamification/ranks/promote/${userId}`,  // Fixed: Backend implemented (renamed from rankUp)
+    history: (userId: string) => `/gamification/ranks/users/${userId}/rank-history`,  // Fixed: correct Backend structure
+    multipliers: (userId: string) => `/gamification/ranks/users/${userId}/rank-progress`,  // Fixed: get from progress data (returns multiplier info)
     listAll: '/gamification/ranks',
-    getDetails: (rank: string) => `/gamification/ranks/${rank}`,
+    getDetails: (rankId: string) => `/gamification/ranks/${rankId}`,  // rankId is UUID (id)
   },
 
   /**
    * Economy & Shop endpoints (ML Coins)
    */
   economy: {
-    balance: (userId: string) => `/gamification/coins/${userId}`,  // Fixed: backend uses /coins/:userId
-    transactions: (userId: string) => `/gamification/coins/transactions/${userId}`,  // Fixed
-    earn: '/gamification/coins/earn',  // POST to earn coins
-    spend: '/gamification/coins/spend',  // POST to spend coins
-    stats: (userId: string) => `/gamification/coins/stats/${userId}`,  // Fixed: was /economy/stats
-    leaderboard: '/gamification/coins/leaderboard',
-    metrics: '/gamification/coins/metrics',  // Admin only
+    balance: (userId: string) => `/gamification/users/${userId}/ml-coins`,  // Fixed: correct Backend structure
+    transactions: (userId: string) => `/gamification/users/${userId}/ml-coins/transactions`,  // Fixed: correct Backend structure
+    earn: (userId: string) => `/gamification/users/${userId}/ml-coins/add`,  // Fixed: Backend uses 'add' not 'earn'
+    spend: (userId: string) => `/gamification/users/${userId}/ml-coins/spend`,  // Fixed: correct Backend structure
+    stats: (userId: string) => `/gamification/users/${userId}/ml-coins`,  // Fixed: get from balance endpoint
+    leaderboard: '/gamification/coins/leaderboard',  // TODO: Backend needs to implement this
+    metrics: '/gamification/coins/metrics',  // TODO: Admin endpoint to implement
+    shopItems: '/gamification/shop/items',  // Shop item catalog
+    shopItem: (itemId: string) => `/gamification/shop/items/${itemId}`,  // Single shop item
+    purchase: '/gamification/shop/purchase',  // Purchase single item
+    purchaseCart: '/gamification/shop/purchase/cart',  // Purchase cart items
+    inventory: '/gamification/inventory',  // User inventory
+    inventoryItem: (itemId: string) => `/gamification/inventory/${itemId}`,  // Single inventory item
   },
 
   /**
@@ -406,12 +413,12 @@ export const API_CONFIG = {
   /**
    * Base API URL
    */
-  BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:3001/api',
+  BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:3006/api',
 
   /**
    * WebSocket URL
    */
-  WS_URL: import.meta.env.VITE_WS_URL || 'ws://localhost:3001',
+  WS_URL: import.meta.env.VITE_WS_URL || 'ws://localhost:3006',
 
   /**
    * Request timeout (ms)

@@ -40,3 +40,4 @@ export const MediaUploader = (_props: MediaUploaderProps) => null;
 export const MediaGallery = (_props: MediaGalleryProps) => null;
 export const FileUploader = (_props: FileUploaderProps) => null;
 export const ExportButton = (_props: ExportButtonProps) => null;
+export const VideoPlayer = () => null; // Placeholder for module5

@@ -38,7 +38,8 @@ export interface EmailFormalData {
   estimatedTime: number;
   topic: string;
   templates: EmailTemplate[];
-  hints?: Array<{ id: string; text: string; cost: number }>;
+  // Backend returns hints as string[]
+  hints?: string[];
 }
 
 export interface ExerciseProgressUpdate {
@@ -70,3 +71,6 @@ export interface EmailFormalExerciseProps {
   exercise?: EmailFormalData;
   actionsRef?: React.MutableRefObject<EmailFormalActions | undefined>;
 }
+
+// Alias for generic import
+export type ExerciseProps = EmailFormalExerciseProps;

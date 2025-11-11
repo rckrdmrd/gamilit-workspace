@@ -7,7 +7,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAchievementsStore } from '@/features/gamification/social/store/achievementsStore';
 import type { Achievement, AchievementCategory, AchievementRarity } from '@/features/gamification/social/types/achievementsTypes';
-import type { AchievementFilters, AchievementStatistics, FilterStatus, SortOption } from '../components/achievements/types';
+import type { AchievementFiltersState, AchievementStatisticsData, FilterStatus, SortOption } from '../components/achievements/types';
 
 const DEBOUNCE_DELAY = 300;
 
@@ -15,11 +15,11 @@ export interface UseAchievementsEnhancedResult {
   // Data
   achievements: Achievement[];
   filteredAchievements: Achievement[];
-  statistics: AchievementStatistics;
+  statistics: AchievementStatisticsData;
 
   // Filters
-  filters: AchievementFilters;
-  setFilter: (key: keyof AchievementFilters, value: any) => void;
+  filters: AchievementFiltersState;
+  setFilter: (key: keyof AchievementFiltersState, value: any) => void;
   clearFilters: () => void;
 
   // Navigation
@@ -38,7 +38,7 @@ export interface UseAchievementsEnhancedResult {
   refresh: () => Promise<void>;
 }
 
-const DEFAULT_FILTERS: AchievementFilters = {
+const DEFAULT_FILTERS: AchievementFiltersState = {
   category: 'all',
   rarity: 'all',
   status: 'all',
@@ -56,7 +56,7 @@ export const useAchievementsEnhanced = (): UseAchievementsEnhancedResult => {
   } = useAchievementsStore();
 
   // Local state
-  const [filters, setFilters] = useState<AchievementFilters>(DEFAULT_FILTERS);
+  const [filters, setFilters] = useState<AchievementFiltersState>(DEFAULT_FILTERS);
   const [selectedAchievement, setSelectedAchievement] = useState<Achievement | null>(null);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
@@ -162,7 +162,7 @@ export const useAchievementsEnhanced = (): UseAchievementsEnhancedResult => {
   }, [achievements, filterAchievements, sortAchievements]);
 
   // Calculate statistics
-  const statistics = useMemo((): AchievementStatistics => {
+  const statistics = useMemo((): AchievementStatisticsData => {
     const total = achievements.length;
     const unlocked = achievements.filter(a => a.isUnlocked).length;
     const locked = total - unlocked;
@@ -194,8 +194,13 @@ export const useAchievementsEnhanced = (): UseAchievementsEnhancedResult => {
     // By category
     const byCategory: Record<AchievementCategory, number> = {
       progress: 0,
-      mastery: 0,
+      streak: 0,
+      completion: 0,
       social: 0,
+      special: 0,
+      mastery: 0,
+      exploration: 0,
+      collection: 0,
       hidden: 0,
     };
     achievements.filter(a => a.isUnlocked).forEach(a => {
@@ -239,7 +244,7 @@ export const useAchievementsEnhanced = (): UseAchievementsEnhancedResult => {
   }, [achievements]);
 
   // Filter management
-  const setFilter = useCallback((key: keyof AchievementFilters, value: any) => {
+  const setFilter = useCallback((key: keyof AchievementFiltersState, value: any) => {
     setFilters(prev => ({ ...prev, [key]: value }));
   }, []);
 

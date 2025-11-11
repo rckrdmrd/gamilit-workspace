@@ -3,6 +3,39 @@
  *
  * API client for rank & progression endpoints including XP management,
  * rank-ups, prestige, multipliers, and progression history.
+ *
+ * IMPORTANT: User ID Requirements
+ * ================================
+ * Most functions in this API require a userId parameter. This should be obtained
+ * from the useAuth() hook in your component:
+ *
+ * @example
+ * ```typescript
+ * import { useAuth } from '@/shared/hooks/useAuth';
+ * import { getProgressionStats } from './ranksAPI';
+ *
+ * function MyComponent() {
+ *   const { user } = useAuth();
+ *
+ *   useEffect(() => {
+ *     if (user?.id) {
+ *       getProgressionStats(user.id).then(stats => {
+ *         // Handle stats
+ *       });
+ *     }
+ *   }, [user]);
+ * }
+ * ```
+ *
+ * Functions that require userId:
+ * - getProgressionStats(userId)
+ * - rankUp(userId)
+ * - getProgressionHistory(userId, limit?)
+ * - getMultipliers(userId)
+ * - addMultiplier(source, userId)
+ *
+ * Functions that DON'T require userId (use JWT):
+ * - getCurrentRank() - uses current authenticated user from JWT
  */
 
 import { apiClient } from '@/services/api/apiClient';
@@ -83,16 +116,26 @@ export const getCurrentRank = async (): Promise<UserRankProgress> => {
 /**
  * Get progression statistics
  *
+ * @param userId - User ID (REQUIRED - get from useAuth hook)
  * @returns User progression stats
+ * @throws Error if userId is not provided
+ *
+ * @example
+ * const { user } = useAuth();
+ * const stats = await getProgressionStats(user.id);
  */
-export const getProgressionStats = async (): Promise<UserRankProgress> => {
+export const getProgressionStats = async (userId: string): Promise<UserRankProgress> => {
   try {
+    if (!userId) {
+      throw new Error('userId is required. Get it from useAuth() hook.');
+    }
+
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       return await mockGetCurrentRank();
     }
 
     const { data } = await apiClient.get<ApiResponse<UserRankProgress>>(
-      API_ENDPOINTS.ranks.progress
+      API_ENDPOINTS.ranks.rankProgress(userId)
     );
 
     return data.data;
@@ -104,12 +147,16 @@ export const getProgressionStats = async (): Promise<UserRankProgress> => {
 /**
  * Add XP to user
  *
+ * ⚠️ NOT IMPLEMENTED - Backend endpoint does not exist in ranks controller
+ * XP is managed through user_stats module, not ranks module
+ *
  * @param amount - XP amount to add
  * @param source - Source of XP (exercise, achievement, etc.)
  * @param description - Optional description
  * @param metadata - Optional metadata
  * @returns Add XP response with level/rank up info
  */
+/*
 export const addXP = async (
   amount: number,
   source: XPSource,
@@ -121,8 +168,9 @@ export const addXP = async (
       return await mockAddXP(amount, source, description);
     }
 
+    // TODO: Backend needs to implement this endpoint or use user_stats module
     const { data } = await apiClient.post<ApiResponse<AddXPResponse>>(
-      API_ENDPOINTS.ranks.addXP,
+      '/gamification/user-stats/xp/add', // Placeholder - needs backend implementation
       {
         amount,
         source,
@@ -136,12 +184,17 @@ export const addXP = async (
     throw handleAPIError(error);
   }
 };
+*/
 
 /**
  * Trigger level up
  *
+ * ⚠️ NOT IMPLEMENTED - Backend endpoint does not exist
+ * Level ups are automatic when XP is added through user_stats module
+ *
  * @returns Updated rank progress
  */
+/*
 export const levelUp = async (): Promise<UserRankProgress> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -152,8 +205,9 @@ export const levelUp = async (): Promise<UserRankProgress> => {
       };
     }
 
+    // TODO: Backend handles level ups automatically - no manual trigger needed
     const { data } = await apiClient.post<ApiResponse<UserRankProgress>>(
-      API_ENDPOINTS.ranks.levelUp
+      '/gamification/user-stats/level-up', // Placeholder - backend auto-handles this
     );
 
     return data.data;
@@ -161,14 +215,25 @@ export const levelUp = async (): Promise<UserRankProgress> => {
     throw handleAPIError(error);
   }
 };
+*/
 
 /**
- * Trigger rank up
+ * Trigger rank up (promote user to next rank)
  *
+ * @param userId - User ID (REQUIRED - get from useAuth hook)
  * @returns Rank up event data
+ * @throws Error if userId is not provided
+ *
+ * @example
+ * const { user } = useAuth();
+ * const result = await rankUp(user.id);
  */
-export const rankUp = async (): Promise<RankUpEvent> => {
+export const rankUp = async (userId: string): Promise<RankUpEvent> => {
   try {
+    if (!userId) {
+      throw new Error('userId is required. Get it from useAuth() hook.');
+    }
+
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       return {
@@ -182,7 +247,7 @@ export const rankUp = async (): Promise<RankUpEvent> => {
     }
 
     const { data } = await apiClient.post<ApiResponse<RankUpEvent>>(
-      API_ENDPOINTS.ranks.rankUp
+      API_ENDPOINTS.ranks.promote(userId)
     );
 
     return data.data;
@@ -194,9 +259,13 @@ export const rankUp = async (): Promise<RankUpEvent> => {
 /**
  * Prestige user (reset with bonuses)
  *
+ * ⚠️ NOT IMPLEMENTED - Backend endpoint does not exist
+ * Prestige system not yet implemented in backend
+ *
  * @param confirmed - Confirmation flag
  * @returns Prestige response
  */
+/*
 export const prestige = async (confirmed: boolean): Promise<PrestigeResponse> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -218,8 +287,9 @@ export const prestige = async (confirmed: boolean): Promise<PrestigeResponse> =>
       };
     }
 
+    // TODO: Backend needs to implement prestige system
     const { data } = await apiClient.post<ApiResponse<PrestigeResponse>>(
-      API_ENDPOINTS.ranks.prestige,
+      '/gamification/ranks/prestige', // Placeholder - needs backend implementation
       { confirmed }
     );
 
@@ -228,17 +298,29 @@ export const prestige = async (confirmed: boolean): Promise<PrestigeResponse> =>
     throw handleAPIError(error);
   }
 };
+*/
 
 /**
  * Get progression history
  *
- * @param limit - Number of entries to return
+ * @param userId - User ID (REQUIRED - get from useAuth hook)
+ * @param limit - Number of entries to return (optional)
  * @returns Progression history entries
+ * @throws Error if userId is not provided
+ *
+ * @example
+ * const { user } = useAuth();
+ * const history = await getProgressionHistory(user.id, 10);
  */
 export const getProgressionHistory = async (
+  userId: string,
   limit?: number
 ): Promise<ProgressionHistoryEntry[]> => {
   try {
+    if (!userId) {
+      throw new Error('userId is required. Get it from useAuth() hook.');
+    }
+
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       return [
@@ -257,7 +339,7 @@ export const getProgressionHistory = async (
     }
 
     const { data } = await apiClient.get<ApiResponse<ProgressionHistoryEntry[]>>(
-      API_ENDPOINTS.ranks.history,
+      API_ENDPOINTS.ranks.history(userId),
       { params: { limit } }
     );
 
@@ -270,10 +352,20 @@ export const getProgressionHistory = async (
 /**
  * Get multiplier breakdown
  *
+ * @param userId - User ID (REQUIRED - get from useAuth hook)
  * @returns Current multiplier breakdown
+ * @throws Error if userId is not provided
+ *
+ * @example
+ * const { user } = useAuth();
+ * const multipliers = await getMultipliers(user.id);
  */
-export const getMultipliers = async (): Promise<MultiplierBreakdown> => {
+export const getMultipliers = async (userId: string): Promise<MultiplierBreakdown> => {
   try {
+    if (!userId) {
+      throw new Error('userId is required. Get it from useAuth() hook.');
+    }
+
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 300));
       return {
@@ -292,8 +384,9 @@ export const getMultipliers = async (): Promise<MultiplierBreakdown> => {
       };
     }
 
+    // Note: Backend returns multiplier info in rank-progress endpoint
     const { data } = await apiClient.get<ApiResponse<MultiplierBreakdown>>(
-      API_ENDPOINTS.ranks.multipliers
+      API_ENDPOINTS.ranks.multipliers(userId)
     );
 
     return data.data;
@@ -305,13 +398,28 @@ export const getMultipliers = async (): Promise<MultiplierBreakdown> => {
 /**
  * Add multiplier source
  *
+ * ⚠️ PARTIAL IMPLEMENTATION - Backend may not have dedicated endpoint for adding multipliers
+ * Multipliers are typically managed through rank progression and achievements
+ *
  * @param source - Multiplier source to add
+ * @param userId - User ID (REQUIRED - get from useAuth hook)
  * @returns Updated multiplier breakdown
+ * @throws Error if userId is not provided
+ *
+ * @example
+ * const { user } = useAuth();
+ * const multiplierSource = { type: 'achievement', value: 1.1, ... };
+ * const result = await addMultiplier(multiplierSource, user.id);
  */
 export const addMultiplier = async (
-  source: MultiplierSource
+  source: MultiplierSource,
+  userId: string
 ): Promise<MultiplierBreakdown> => {
   try {
+    if (!userId) {
+      throw new Error('userId is required. Get it from useAuth() hook.');
+    }
+
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       return {
@@ -330,8 +438,10 @@ export const addMultiplier = async (
       };
     }
 
+    // TODO: Verify if backend has dedicated endpoint for adding multipliers
+    // Currently using multipliers endpoint (may need adjustment)
     const { data } = await apiClient.post<ApiResponse<MultiplierBreakdown>>(
-      API_ENDPOINTS.ranks.addMultiplier,
+      API_ENDPOINTS.ranks.multipliers(userId),
       source
     );
 
@@ -344,9 +454,13 @@ export const addMultiplier = async (
 /**
  * Remove multiplier source
  *
+ * ⚠️ NOT IMPLEMENTED - Backend endpoint does not exist
+ * Multiplier removal is typically handled automatically through expiration
+ *
  * @param type - Multiplier type to remove
  * @returns Updated multiplier breakdown
  */
+/*
 export const removeMultiplier = async (type: string): Promise<MultiplierBreakdown> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -367,8 +481,9 @@ export const removeMultiplier = async (type: string): Promise<MultiplierBreakdow
       };
     }
 
+    // TODO: Backend needs to implement multiplier removal endpoint
     const { data } = await apiClient.delete<ApiResponse<MultiplierBreakdown>>(
-      API_ENDPOINTS.ranks.removeMultiplier(type)
+      `/gamification/ranks/multipliers/${type}`, // Placeholder - needs backend implementation
     );
 
     return data.data;
@@ -376,6 +491,7 @@ export const removeMultiplier = async (type: string): Promise<MultiplierBreakdow
     throw handleAPIError(error);
   }
 };
+*/
 
 // ============================================================================
 // EXPORTS
@@ -384,12 +500,12 @@ export const removeMultiplier = async (type: string): Promise<MultiplierBreakdow
 export default {
   getCurrentRank,
   getProgressionStats,
-  addXP,
-  levelUp,
+  // addXP, // Commented out - No backend endpoint (XP managed by user_stats)
+  // levelUp, // Commented out - No backend endpoint (automatic)
   rankUp,
-  prestige,
+  // prestige, // Commented out - No backend endpoint (not implemented yet)
   getProgressionHistory,
   getMultipliers,
   addMultiplier,
-  removeMultiplier,
+  // removeMultiplier, // Commented out - No backend endpoint
 };

@@ -158,7 +158,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
           <div className="text-center">
             <DetectiveButton
               variant="primary"
-              size="lg"
+
               onClick={handleGenerate}
               disabled={generating}
               loading={generating}
@@ -275,7 +275,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
             {onExit && (
               <DetectiveButton
                 variant="secondary"
-                size="lg"
+
                 onClick={onExit}
               >
                 Salir
@@ -283,14 +283,14 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
             )}
             <DetectiveButton
               variant="gold"
-              size="lg"
+
               onClick={handleReset}
             >
               Reiniciar
             </DetectiveButton>
             <DetectiveButton
               variant="primary"
-              size="lg"
+
               onClick={handleComplete}
               disabled={perspectives.length === 0}
             >
@@ -307,14 +307,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
           type: perspectives.length >= exercise.perspectiveCount ? 'success' : 'partial',
           title: perspectives.length >= exercise.perspectiveCount ? '¡Análisis Completo!' : 'Perspectivas Generadas',
           message: `Has generado ${perspectives.length} perspectiva(s) con ${currentScore} puntos.`,
-          score: {
-            baseScore: currentScore,
-            timeBonus: Math.max(0, 20 - Math.floor(timeSpent / 60)),
-            accuracyBonus: perspectives.length >= exercise.perspectiveCount ? 30 : 0,
-            totalScore: calculateFinalScore(),
-            mlCoins: Math.floor(calculateFinalScore() / 2),
-            xpGained: calculateFinalScore()
-          },
+          score: calculateFinalScore(),
           showConfetti: perspectives.length >= exercise.perspectiveCount
         }}
         onClose={() => {

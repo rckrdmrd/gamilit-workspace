@@ -82,7 +82,7 @@ export function ResourceSharingPanel() {
               <DetectiveButton
                 key={cat}
                 variant={categoryFilter === cat ? 'primary' : 'secondary'}
-                size="sm"
+
                 onClick={() => setCategoryFilter(cat)}
               >
                 {cat === 'all' ? 'Todos' : cat}
@@ -137,11 +137,11 @@ export function ResourceSharingPanel() {
               </div>
 
               <div className="flex gap-2 pt-3 border-t border-detective-border">
-                <DetectiveButton variant="secondary" size="sm">
+                <DetectiveButton variant="secondary">
                   <Download className="w-4 h-4" />
                   Descargar
                 </DetectiveButton>
-                <DetectiveButton variant="secondary" size="sm">
+                <DetectiveButton variant="secondary">
                   <MessageCircle className="w-4 h-4" />
                   Comentar
                 </DetectiveButton>

@@ -81,7 +81,7 @@ export function BottomNavigation() {
               onClick={() => handleNavigation(item.path)}
               className="relative flex flex-col items-center justify-center min-w-[44px] min-h-[44px] flex-1 gap-1 touch-manipulation"
               aria-label={item.ariaLabel}
-              aria-current={active ? 'page' : undefined}
+              aria-currentStep={active ? 'page' : undefined}
             >
               {/* Ripple effect background */}
               {active && (

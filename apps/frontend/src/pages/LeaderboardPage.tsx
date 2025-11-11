@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Trophy, RefreshCw, AlertCircle, TrendingUp, Crown } from 'lucide-react';
 import { useAuth } from '@/app/providers/AuthContext';
-import { DashboardLayout } from '@/shared/layouts/DashboardLayout';
+import { useUserClassroom } from '@/shared/hooks/useUserClassroom';
+import { GamifiedHeader } from '@/shared/components/layout/GamifiedHeader';
 import { LeaderboardTable } from '@/shared/components/LeaderboardTable';
 import { LeaderboardTabs } from '@/shared/components/LeaderboardTabs';
 import { gamificationApi } from '@/lib/api/gamification.api';
@@ -69,7 +70,8 @@ const getRankColor = (rank: MayaRank): string => {
  * - Classroom/school selection if user is in multiple
  */
 export const LeaderboardPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const { classroomId, schoolId } = useUserClassroom();
 
   // State
   const [activeTab, setActiveTab] = useState<LeaderboardType>('global');
@@ -82,16 +84,14 @@ export const LeaderboardPage: React.FC = () => {
   const LIMIT = 100;
 
   /**
-   * Get user's school ID (placeholder - should come from user profile)
-   * TODO: Update to get from user profile or separate API
+   * Get user's school ID from user profile or classroom hook
    */
-  const userSchoolId = user?.id ? 'school-1' : undefined; // Placeholder
+  const userSchoolId = schoolId || user?.schoolId;
 
   /**
-   * Get user's classroom ID (placeholder - should come from user profile)
-   * TODO: Update to get from user profile or separate API
+   * Get user's classroom ID from classroom hook
    */
-  const userClassroomId = user?.id ? 'classroom-1' : undefined; // Placeholder
+  const userClassroomId = classroomId;
 
   /**
    * Fetch leaderboard data
@@ -172,9 +172,12 @@ export const LeaderboardPage: React.FC = () => {
     leaderboardData?.entries.find((entry) => entry.userId === user?.id);
 
   return (
-    <DashboardLayout>
-      {/* Page Header */}
-      <div className="mb-8">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
+      <GamifiedHeader user={user} onLogout={logout} />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Page Header */}
+        <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center">
@@ -335,7 +338,8 @@ export const LeaderboardPage: React.FC = () => {
         </p>
       </div>
       */}
-    </DashboardLayout>
+      </div>
+    </div>
   );
 };
 

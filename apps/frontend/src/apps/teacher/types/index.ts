@@ -42,6 +42,13 @@ export interface Assignment {
   assigned_to: string[]; // student IDs
   created_at: string;
   status: 'draft' | 'active' | 'completed' | 'expired';
+
+  // Optional computed/display fields
+  classroomName?: string;
+  type?: string;
+  dueDate?: string; // Alias for end_date
+  totalSubmissions?: number;
+  pendingReviews?: number;
 }
 
 export interface ModuleProgress {

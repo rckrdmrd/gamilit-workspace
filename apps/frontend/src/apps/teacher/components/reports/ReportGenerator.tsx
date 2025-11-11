@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { FileText, Download, Calendar, Users } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -23,7 +24,10 @@ export function ReportGenerator({ classroomId, students }: ReportGeneratorProps)
 
   const handleGenerate = async () => {
     if (!selectedTemplate) {
-      alert('Por favor selecciona una plantilla');
+      toast.error('Por favor selecciona una plantilla', {
+        duration: 3000,
+        icon: '📋',
+      });
       return;
     }
 
@@ -52,12 +56,20 @@ export function ReportGenerator({ classroomId, students }: ReportGeneratorProps)
         a.href = url;
         a.download = `report-${selectedTemplate}-${Date.now()}.${config.format === 'excel' ? 'xlsx' : config.format}`;
         a.click();
+        toast.success('Reporte generado exitosamente', {
+          duration: 3000,
+          icon: '📊',
+        });
       } else {
-        alert('Error al generar el reporte');
+        toast.error('Error al generar el reporte. Por favor, intenta de nuevo.', {
+          duration: 4000,
+        });
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error al generar el reporte');
+      toast.error('Error al generar el reporte. Verifica tu conexión.', {
+        duration: 4000,
+      });
     } finally {
       setGenerating(false);
     }
@@ -166,7 +178,7 @@ export function ReportGenerator({ classroomId, students }: ReportGeneratorProps)
                   <p className="text-sm text-detective-text-secondary">
                     {config.student_ids?.length || 0} de {students.length} estudiantes seleccionados
                   </p>
-                  <DetectiveButton variant="secondary" size="sm" onClick={selectAllStudents}>
+                  <DetectiveButton variant="secondary" onClick={selectAllStudents}>
                     Seleccionar Todos
                   </DetectiveButton>
                 </div>
@@ -195,7 +207,7 @@ export function ReportGenerator({ classroomId, students }: ReportGeneratorProps)
             <DetectiveButton
               onClick={handleGenerate}
               disabled={generating || !config.student_ids?.length}
-              size="lg"
+
             >
               <Download className="w-5 h-5" />
               {generating ? 'Generando...' : 'Generar Reporte'}

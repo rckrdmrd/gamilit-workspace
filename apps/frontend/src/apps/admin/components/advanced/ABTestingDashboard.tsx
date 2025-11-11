@@ -265,7 +265,7 @@ export const ABTestingDashboard: React.FC = () => {
                     {selectedExp.status === 'draft' && (
                       <DetectiveButton
                         variant="green"
-                        size="sm"
+
                         icon={<Play className="w-4 h-4" />}
                         onClick={() => handleStartExperiment(selectedExp.id)}
                       >
@@ -275,7 +275,7 @@ export const ABTestingDashboard: React.FC = () => {
                     {selectedExp.status === 'running' && (
                       <DetectiveButton
                         variant="primary"
-                        size="sm"
+
                         icon={<Pause className="w-4 h-4" />}
                         onClick={() => handlePauseExperiment(selectedExp.id)}
                         className="bg-yellow-500 hover:bg-yellow-600"
@@ -286,7 +286,7 @@ export const ABTestingDashboard: React.FC = () => {
                     {selectedExp.status === 'paused' && (
                       <DetectiveButton
                         variant="green"
-                        size="sm"
+
                         icon={<Play className="w-4 h-4" />}
                         onClick={() => handleStartExperiment(selectedExp.id)}
                       >
@@ -390,7 +390,7 @@ export const ABTestingDashboard: React.FC = () => {
                             {selectedExp.status === 'running' && !selectedExp.results?.winner && (
                               <DetectiveButton
                                 variant="primary"
-                                size="sm"
+
                                 onClick={() => handleDeclareWinner(selectedExp.id, variant.id)}
                               >
                                 Declare Winner

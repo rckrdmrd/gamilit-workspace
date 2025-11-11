@@ -22,9 +22,12 @@ export interface DataTableProps<T> {
   className?: string;
   striped?: boolean;
   hoverable?: boolean;
+  searchPlaceholder?: string;
+  searchable?: boolean;
+  itemsPerPage?: number;
 }
 
-export function DataTable<T extends Record<string, unknown>>({
+export function DataTable<T = Record<string, unknown>>({
   data,
   columns,
   onRowClick,
@@ -47,7 +50,7 @@ export function DataTable<T extends Record<string, unknown>>({
     if (column.render) {
       return column.render(row);
     }
-    return String(row[column.key] ?? '');
+    return String(row[column.key as keyof T] ?? '');
   };
 
   const alignmentClasses = {

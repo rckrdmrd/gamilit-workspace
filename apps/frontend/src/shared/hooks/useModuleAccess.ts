@@ -83,7 +83,8 @@ export function useModuleAccess({
 
   // ========== Configuration from DB (NO hardcoded values) ==========
   const prerequisites = module.prerequisites || [];
-  const requiredRango = module.rango_maya_required || null;
+  // Backend field is maya_rank_required (TypeORM auto-converts to mayaRankRequired)
+  const requiredRango = (module as any).maya_rank_required || (module as any).mayaRankRequired || null;
   const isPublished = module.is_published ?? true;
   const isFree = module.is_free ?? false;
 

@@ -4,7 +4,7 @@ import { Send, User, Bot, MessageCircle, Award } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
-import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { FeedbackData, normalizeProgressUpdate } from '@shared/components/mechanics/mechanicsTypes';
 import { ExerciseProps, ChatLiterarioState, Message } from './chatLiterarioTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 
@@ -69,7 +69,16 @@ export const ChatLiterarioExercise: React.FC<ExerciseProps> = ({
   // Progress tracking
   useEffect(() => {
     const progress = calculateProgress();
-    onProgressUpdate?.(progress);
+    const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+    onProgressUpdate?.(
+      normalizeProgressUpdate(
+        progress,
+        messages.length,
+        exercise.minMessages,
+        0, // hintsUsed - no disponible en este componente
+        timeSpent
+      )
+    );
   }, [messages]);
 
   // Auto-save functionality
@@ -148,7 +157,7 @@ export const ChatLiterarioExercise: React.FC<ExerciseProps> = ({
           <div className="flex gap-3">
             <DetectiveButton
               variant={activeCharacter === 'marie' ? 'primary' : 'secondary'}
-              size="md"
+
               onClick={() => setActiveCharacter('marie')}
               className="flex-1"
             >
@@ -156,7 +165,7 @@ export const ChatLiterarioExercise: React.FC<ExerciseProps> = ({
             </DetectiveButton>
             <DetectiveButton
               variant={activeCharacter === 'pierre' ? 'gold' : 'secondary'}
-              size="md"
+
               onClick={() => setActiveCharacter('pierre')}
               className="flex-1"
             >
@@ -212,7 +221,7 @@ export const ChatLiterarioExercise: React.FC<ExerciseProps> = ({
                 />
                 <DetectiveButton
                   variant="primary"
-                  size="md"
+
                   onClick={handleSend}
                   icon={<Send className="w-5 h-5" />}
                   disabled={!input.trim()}

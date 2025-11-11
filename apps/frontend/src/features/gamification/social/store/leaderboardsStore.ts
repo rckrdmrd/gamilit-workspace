@@ -45,7 +45,7 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
       const entries = await getLeaderboard(type, selectedPeriod);
 
       // Try to get user's rank
-      let userRank: number | null = null;
+      let userRank: number | undefined = undefined;
       try {
         const userEntry = await getUserLeaderboardRank(type, selectedPeriod);
         userRank = userEntry.rank;
@@ -55,6 +55,7 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
 
       const leaderboard: LeaderboardData = {
         type,
+        timePeriod: selectedPeriod,
         entries,
         userRank,
         totalParticipants: entries.length,
@@ -90,7 +91,7 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
       const entries = await getLeaderboard(selectedType, period);
 
       // Try to get user's rank
-      let userRank: number | null = null;
+      let userRank: number | undefined = undefined;
       try {
         const userEntry = await getUserLeaderboardRank(selectedType, period);
         userRank = userEntry.rank;
@@ -100,6 +101,7 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
 
       const leaderboard: LeaderboardData = {
         type: selectedType,
+        timePeriod: period,
         entries,
         userRank,
         totalParticipants: entries.length,
@@ -131,7 +133,7 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
       const entries = await getLeaderboard(selectedType, selectedPeriod);
 
       // Try to get user's rank
-      let userRank: number | null = null;
+      let userRank: number | undefined = undefined;
       try {
         const userEntry = await getUserLeaderboardRank(selectedType, selectedPeriod);
         userRank = userEntry.rank;
@@ -141,6 +143,7 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
 
       const leaderboard: LeaderboardData = {
         type: selectedType,
+        timePeriod: selectedPeriod,
         entries,
         userRank,
         totalParticipants: entries.length,

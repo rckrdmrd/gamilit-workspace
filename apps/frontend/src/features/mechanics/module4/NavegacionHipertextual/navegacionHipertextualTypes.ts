@@ -47,3 +47,6 @@ export interface NavegacionHipertextualExerciseProps {
   exercise?: NavegacionHipertextualData;
   actionsRef?: React.MutableRefObject<NavegacionHipertextualActions | undefined>;
 }
+
+// Alias for generic import
+export type ExerciseProps = NavegacionHipertextualExerciseProps;

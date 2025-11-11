@@ -9,3 +9,4 @@ export * from './module.entity';
 export * from './exercise.entity';
 export * from './assessment-rubric.entity';
 export * from './media-resource.entity';
+export * from './exercise-mechanic-mapping.entity';

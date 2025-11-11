@@ -22,7 +22,8 @@ export interface EmparejamientoDragDropData {
   maxPoints: number;
   passingScore: number;
   estimatedTime: number;
-  hints: Array<{ id: string; text: string; cost: number }>;
+  // Backend returns hints as string[]
+  hints: string[];
   pairs: MatchingPair[];
   groupALabel?: string;
   groupBLabel?: string;
@@ -103,7 +104,7 @@ export const EmparejamientoExerciseDragDrop: React.FC<EmparejamientoDragDropProp
       difficulty: exercise.difficulty,
     };
 
-    const score = await calculateScore(attempt);
+    const score = calculateScore(correctCount, exercise.pairs.length);
     setCurrentScore(score.totalScore);
 
     const isSuccess = correctCount === exercise.pairs.length;
@@ -144,19 +145,20 @@ export const EmparejamientoExerciseDragDrop: React.FC<EmparejamientoDragDropProp
       <DetectiveCard variant="default" padding="md" className="mb-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <TimerWidget initialTime={0} countDown={false} showWarning={false} />
+            <TimerWidget startTime={Date.now()} isPaused={false} showSeconds={true} />
             <ProgressTracker
-              current={connections.size}
-              total={exercise.pairs.length}
-              variant="bar"
-              className="w-64"
+              currentStep={connections.size}
+              totalSteps={exercise.pairs.length}
             />
           </div>
           <div className="flex items-center gap-3">
             <HintSystem
-              hints={exercise.hints}
-              onUseHint={handleUseHint}
-              availableCoins={availableCoins}
+              hints={exercise.hints.map(h => h.text)}
+              onHintUsed={(hintIndex) => {
+                if (exercise.hints[hintIndex]) {
+                  handleUseHint(exercise.hints[hintIndex]);
+                }
+              }}
             />
             <DetectiveButton
               variant="blue"
@@ -176,7 +178,7 @@ export const EmparejamientoExerciseDragDrop: React.FC<EmparejamientoDragDropProp
         </div>
         {currentScore > 0 && (
           <div className="mt-4">
-            <ScoreDisplay score={currentScore} maxScore={100} size="sm" />
+            <ScoreDisplay score={currentScore} maxScore={100} />
           </div>
         )}
       </DetectiveCard>

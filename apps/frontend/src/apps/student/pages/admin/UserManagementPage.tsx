@@ -269,15 +269,15 @@ export default function UserManagementPage() {
             <div className="flex items-center justify-between">
               <p className="text-detective-base">{selectedUsers.length} usuario(s) seleccionado(s)</p>
               <div className="flex gap-2">
-                <DetectiveButton variant="green" size="sm" onClick={() => handleBulkAction('activate')}>
+                <DetectiveButton variant="green" onClick={() => handleBulkAction('activate')}>
                   Activar
                 </DetectiveButton>
-                <DetectiveButton variant="primary" size="sm" onClick={() => handleBulkAction('deactivate')}>
+                <DetectiveButton variant="primary" onClick={() => handleBulkAction('deactivate')}>
                   Desactivar
                 </DetectiveButton>
                 <DetectiveButton
                   variant="primary"
-                  size="sm"
+
                   onClick={() => handleBulkAction('delete')}
                   className="bg-red-500 hover:bg-red-600"
                 >
@@ -330,7 +330,7 @@ export default function UserManagementPage() {
       <ToastContainer toasts={toasts} position="top-right" />
 
       {/* Loading Overlay */}
-      {isModalLoading && <LoadingOverlay message="Procesando..." />}
+      {isModalLoading && <LoadingOverlay isVisible={true} message="Procesando..." />}
     </div>
   );
 }

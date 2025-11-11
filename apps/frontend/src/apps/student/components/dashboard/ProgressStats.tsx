@@ -112,8 +112,8 @@ export function ProgressStats({ data, loading }: ProgressStatsProps) {
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ scale: 1.05, y: -4 }}
               transition={{
-                initial: { delay: index * 0.05 },
-                hover: { duration: 0.2 }
+                delay: index * 0.05,
+                duration: 0.2
               }}
               className={`p-4 ${stat.bgGradient} rounded-lg border-2 ${stat.borderColor} shadow-md hover:shadow-xl transition-all cursor-pointer`}
             >

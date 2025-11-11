@@ -44,9 +44,9 @@ export const ProgressCard: React.FC<ProgressCardProps> = ({ module, progress, on
 
   // Truncate description
   const truncatedDescription =
-    module.description.length > 120
+    module.description && module.description.length > 120
       ? module.description.substring(0, 120) + '...'
-      : module.description;
+      : module.description || '';
 
   return (
     <div

@@ -7,6 +7,7 @@ import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { MemeAnnotator } from './MemeAnnotator';
 import { AnalisisMemesData, MemeAnnotation } from './analisisMemesTypes';
 import { calculateScore, saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { DifficultyLevel } from '@shared/types/educational.types';
 
 interface ExerciseProps {
   exerciseId: string;
@@ -27,7 +28,7 @@ const defaultExercise: AnalisisMemesData = {
   id: 'analisis-memes',
   title: 'Análisis de Memes',
   description: 'Analiza la imagen del meme e identifica elementos clave',
-  difficulty: 'medium',
+  difficulty: DifficultyLevel.INTERMEDIATE,
   estimatedTime: 600,
   topic: 'Análisis de textos digitales',
   hints: [],
@@ -49,6 +50,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
   const [annotations, setAnnotations] = useState<MemeAnnotation[]>(initialData?.annotations || []);
   const [isAdding, setIsAdding] = useState(false);
   const [editingAnnotation, setEditingAnnotation] = useState<MemeAnnotation | null>(null);
+  const [selectedAnnotation, setSelectedAnnotation] = useState<MemeAnnotation | null>(null);
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
@@ -142,17 +144,10 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
 
     const endTime = new Date();
 
-    const score = await calculateScore({
-      exerciseId,
-      userId,
-      startTime,
-      endTime,
-      answers: { annotations },
-      correctAnswers: annotations.length,
-      totalQuestions: Math.max(3, exercise.expectedAnnotations?.length || 3),
-      hintsUsed: 0,
-      difficulty
-    });
+    const score = calculateScore(
+      annotations.length,
+      Math.max(3, exercise.expectedAnnotations?.length || 3)
+    );
 
     setFeedback({
       type: 'success',
@@ -291,14 +286,14 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
                           <div className="flex gap-2">
                             <DetectiveButton
                               variant="primary"
-                              size="sm"
+
                               onClick={() => setEditingAnnotation(null)}
                             >
                               Guardar
                             </DetectiveButton>
                             <DetectiveButton
                               variant="secondary"
-                              size="sm"
+
                               onClick={() => setEditingAnnotation(null)}
                             >
                               Cancelar
@@ -318,14 +313,14 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
                           <div className="flex gap-2">
                             <DetectiveButton
                               variant="blue"
-                              size="sm"
+
                               onClick={() => setEditingAnnotation(annotation)}
                             >
                               Editar
                             </DetectiveButton>
                             <DetectiveButton
                               variant="secondary"
-                              size="sm"
+
                               icon={<Trash2 className="w-4 h-4" />}
                               onClick={() => handleDeleteAnnotation(annotation.id)}
                             >

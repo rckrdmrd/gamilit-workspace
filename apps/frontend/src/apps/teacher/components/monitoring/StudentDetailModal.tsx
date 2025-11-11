@@ -100,16 +100,16 @@ export function StudentDetailModal({ student, onClose }: StudentDetailModalProps
 
           {/* Actions */}
           <div className="flex flex-wrap gap-3">
-            <DetectiveButton variant="secondary" size="sm">
+            <DetectiveButton variant="secondary">
               Enviar Mensaje
             </DetectiveButton>
-            <DetectiveButton variant="secondary" size="sm">
+            <DetectiveButton variant="secondary">
               Asignar Ejercicio
             </DetectiveButton>
-            <DetectiveButton variant="secondary" size="sm">
+            <DetectiveButton variant="secondary">
               Ver Historial Completo
             </DetectiveButton>
-            <DetectiveButton variant="secondary" size="sm">
+            <DetectiveButton variant="secondary">
               Marcar para Seguimiento
             </DetectiveButton>
           </div>

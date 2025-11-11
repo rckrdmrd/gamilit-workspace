@@ -13,6 +13,17 @@ export * from './create-profile.dto';
 export * from './update-profile.dto';
 export * from './profile-response.dto';
 export * from './user-preferences.schema';
+
+// UserPreferences DTOs (DB-100 Ciclo B.1 - 2025-11-11)
+export * from './create-user-preferences.dto';
+export * from './update-user-preferences.dto';
+export * from './user-preferences-response.dto';
+
+// UserSuspension DTOs (DB-100 Ciclo B.2 - 2025-11-11)
+export * from './create-user-suspension.dto';
+export * from './update-user-suspension.dto';
+export * from './user-suspension-response.dto';
+
 export * from './assign-role.dto';
 export * from './user-role-response.dto';
 export * from './create-auth-provider.dto';

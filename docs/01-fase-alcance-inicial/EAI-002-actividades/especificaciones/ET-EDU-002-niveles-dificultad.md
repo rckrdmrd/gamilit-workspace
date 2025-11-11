@@ -6,8 +6,9 @@
 **Tipo:** Especificación Técnica
 **Estado:** ✅ Implementado
 **Prioridad:** Alta ⭐⭐⭐⭐
-**Versión:** 1.0
-**Última actualización:** 2025-11-07
+**Versión:** 1.1
+**Última actualización:** 2025-11-11
+**Cambios v1.1:** Migración de ENUM difficulty_level a archivo dedicado (Política de Carga Limpia)
 
 ---
 

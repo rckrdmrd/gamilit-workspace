@@ -290,7 +290,7 @@ export const getModules = async (
 
     return {
       data: data.data,
-      meta: data.meta || {
+      meta: {
         total: data.data.length,
         page: params?.page || 1,
         limit: params?.limit || 20,
@@ -469,7 +469,7 @@ export const getAllExercises = async (
 
     return {
       data: data.data,
-      meta: data.meta || {
+      meta: {
         total: data.data.length,
         page: params?.page || 1,
         limit: params?.limit || 20,

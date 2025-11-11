@@ -27,7 +27,7 @@ CREATE TABLE educational_content.modules (
     content jsonb DEFAULT '{"marie_curie_story": {}, "reading_materials": [], "historical_context": {}, "scientific_concepts": {}, "multimedia_resources": []}'::jsonb,
     order_index integer NOT NULL,
     module_code text,
-    difficulty_level educational_content.difficulty_level DEFAULT 'very_easy'::educational_content.difficulty_level,
+    difficulty_level educational_content.difficulty_level DEFAULT 'beginner'::educational_content.difficulty_level,
     grade_levels text[] DEFAULT ARRAY['6'::text, '7'::text, '8'::text],
     subjects text[] DEFAULT ARRAY['Literatura'::text, 'Ciencias'::text],
     estimated_duration_minutes integer DEFAULT 120,
@@ -66,7 +66,7 @@ CREATE TABLE educational_content.modules (
     CONSTRAINT modules_xp_reward_check CHECK ((xp_reward >= 0))
 );
 
-ALTER TABLE educational_content.modules OWNER TO postgres;
+ALTER TABLE educational_content.modules OWNER TO gamilit_user;
 
 -- Primary Key
 ALTER TABLE ONLY educational_content.modules

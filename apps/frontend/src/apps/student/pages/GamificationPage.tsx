@@ -42,6 +42,7 @@ import { EarningSourcesBreakdown } from '@/features/gamification/economy/compone
 import { SpendingAnalytics } from '@/features/gamification/economy/components/Analytics/SpendingAnalytics';
 
 // Stores
+import { useAuthStore } from '@/features/auth/store/authStore';
 import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
 import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
 import { useAchievementsStore } from '@/features/gamification/social/store/achievementsStore';
@@ -56,6 +57,9 @@ export default function GamificationPage() {
   const navigate = useNavigate();
   const [showRankComparison, setShowRankComparison] = useState(false);
   const [showPrestigeModal, setShowPrestigeModal] = useState(false);
+
+  // Auth
+  const { user } = useAuthStore();
 
   // Zustand Stores
   const userProgress = useRanksStore(state => state.userProgress);
@@ -84,10 +88,11 @@ export default function GamificationPage() {
   useEffect(() => {
     // Initial fetch - all in parallel
     const fetchAllData = async () => {
+      if (!user?.id) return;
       await Promise.all([
         fetchUserProgress(),
         fetchBalance(),
-        fetchAchievements()
+        fetchAchievements(user.id)
       ]);
     };
 
@@ -184,7 +189,7 @@ export default function GamificationPage() {
               <RankBadgeAdvanced
                 rank={userProgress.currentRank}
                 prestigeLevel={userProgress.prestigeLevel}
-                size="xl"
+
                 showGlow={true}
                 animated={true}
               />
@@ -268,7 +273,7 @@ export default function GamificationPage() {
               >
                 <CoinBalanceWidget
                   balance={balance.current}
-                  size="medium"
+
                   showLabel={true}
                   animated={true}
                 />

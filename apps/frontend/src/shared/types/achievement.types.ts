@@ -8,16 +8,34 @@
 /**
  * Achievement Categories
  * Different categories help organize achievements into meaningful groups
+ *
+ * Changed from enum to type union for better compatibility with string literals
  */
-export enum AchievementCategory {
-  PROGRESS = 'progress',
-  STREAK = 'streak',
-  COMPLETION = 'completion',
-  SOCIAL = 'social',
-  SPECIAL = 'special',
-  MASTERY = 'mastery',
-  EXPLORATION = 'exploration',
-}
+export type AchievementCategory =
+  | 'progress'
+  | 'streak'
+  | 'completion'
+  | 'social'
+  | 'special'
+  | 'mastery'
+  | 'exploration'
+  | 'collection'
+  | 'hidden';
+
+/**
+ * Achievement Category Enum (Legacy)
+ * @deprecated Use AchievementCategory string union instead for better type inference
+ */
+export const AchievementCategoryEnum = {
+  PROGRESS: 'progress' as const,
+  STREAK: 'streak' as const,
+  COMPLETION: 'completion' as const,
+  SOCIAL: 'social' as const,
+  SPECIAL: 'special' as const,
+  MASTERY: 'mastery' as const,
+  EXPLORATION: 'exploration' as const,
+  COLLECTION: 'collection' as const,
+} as const;
 
 /**
  * Achievement Types
@@ -33,13 +51,21 @@ export enum AchievementType {
 /**
  * Achievement Status
  * Current state of achievement for a user
+ *
+ * Changed from enum to type union for better compatibility with string literals
  */
-export enum AchievementStatus {
-  LOCKED = 'locked',
-  IN_PROGRESS = 'in_progress',
-  EARNED = 'earned',
-  CLAIMED = 'claimed',
-}
+export type AchievementStatus = 'locked' | 'in_progress' | 'earned' | 'claimed';
+
+/**
+ * Achievement Status Enum (Legacy)
+ * @deprecated Use AchievementStatus string union instead for better type inference
+ */
+export const AchievementStatusEnum = {
+  LOCKED: 'locked' as const,
+  IN_PROGRESS: 'in_progress' as const,
+  EARNED: 'earned' as const,
+  CLAIMED: 'claimed' as const,
+} as const;
 
 /**
  * Achievement Condition
@@ -128,26 +154,30 @@ export interface AchievementSummary {
  * Category-specific color mappings for UI
  */
 export const ACHIEVEMENT_CATEGORY_COLORS: Record<AchievementCategory, string> = {
-  [AchievementCategory.PROGRESS]: 'blue',
-  [AchievementCategory.STREAK]: 'orange',
-  [AchievementCategory.COMPLETION]: 'green',
-  [AchievementCategory.SOCIAL]: 'purple',
-  [AchievementCategory.SPECIAL]: 'pink',
-  [AchievementCategory.MASTERY]: 'yellow',
-  [AchievementCategory.EXPLORATION]: 'cyan',
+  progress: 'blue',
+  streak: 'orange',
+  completion: 'green',
+  social: 'purple',
+  special: 'pink',
+  mastery: 'yellow',
+  exploration: 'cyan',
+  collection: 'teal',
+  hidden: 'gray',
 };
 
 /**
  * Category display names (Spanish)
  */
 export const ACHIEVEMENT_CATEGORY_LABELS: Record<AchievementCategory, string> = {
-  [AchievementCategory.PROGRESS]: 'Progreso',
-  [AchievementCategory.STREAK]: 'Rachas',
-  [AchievementCategory.COMPLETION]: 'Completado',
-  [AchievementCategory.SOCIAL]: 'Social',
-  [AchievementCategory.SPECIAL]: 'Especial',
-  [AchievementCategory.MASTERY]: 'Maestría',
-  [AchievementCategory.EXPLORATION]: 'Exploración',
+  progress: 'Progreso',
+  streak: 'Rachas',
+  completion: 'Completado',
+  social: 'Social',
+  special: 'Especial',
+  mastery: 'Maestría',
+  exploration: 'Exploración',
+  collection: 'Colección',
+  hidden: 'Oculto',
 };
 
 /**

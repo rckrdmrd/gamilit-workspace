@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
+import { useUserClassroom } from '@/shared/hooks/useUserClassroom';
 import { TeacherLayout } from '../layouts/TeacherLayout';
 import { InterventionAlertsPanel } from '../components/alerts/InterventionAlertsPanel';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -23,23 +24,25 @@ import type { AlertPriority, AlertType } from '../types';
  */
 export default function TeacherAlertsPage() {
   const { user, logout } = useAuth();
+  const { classroomId } = useUserClassroom();
 
   // Filtros principales
   const [filterPriority, setFilterPriority] = useState<AlertPriority | 'all'>('all');
   const [filterType, setFilterType] = useState<AlertType | 'all'>('all');
   const [showFilters, setShowFilters] = useState(false);
 
-  // Mock classroomId - En producción esto vendría de la selección del usuario
-  const [selectedClassroomId] = useState<string>('classroom-1');
+  // Classroom ID from user context
+  const selectedClassroomId = classroomId || 'default-classroom';
 
   // Mock gamification data - reemplazar con datos reales del API
+  // Format matches UserGamificationData from @shared/types
   const gamificationData = {
+    userId: user?.id || 'mock-teacher-id',
     level: 15,
-    xp: 2450,
-    xp_to_next: 3000,
-    ml: 1250,
+    totalXP: 2450,
+    mlCoins: 1250,
     rank: 'Mentor Experto',
-    badges: ['first_class', 'streak_master', '100_students'],
+    achievements: ['first_class', 'streak_master', '100_students'],
   };
 
   const handleLogout = () => {
@@ -96,7 +99,7 @@ export default function TeacherAlertsPage() {
 
           <DetectiveButton
             variant="secondary"
-            size="md"
+
             onClick={() => setShowFilters(!showFilters)}
             className="self-start md:self-center"
           >
@@ -148,7 +151,7 @@ export default function TeacherAlertsPage() {
                 {hasActiveFilters && (
                   <DetectiveButton
                     variant="secondary"
-                    size="sm"
+
                     onClick={clearFilters}
                   >
                     <X className="w-4 h-4" />

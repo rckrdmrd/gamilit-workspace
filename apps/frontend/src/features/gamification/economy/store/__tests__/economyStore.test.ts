@@ -19,7 +19,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useEconomyStore } from '../economyStore';
-import type { ShopItem, MLCoinsBalance } from '../../types/economyTypes';
+import type { ShopItem, MLCoinsBalance, ShopCategory } from '../../types/economyTypes';
 import * as economyAPI from '../../api/economyAPI';
 
 // Mock the API module
@@ -47,9 +47,12 @@ const mockShopItem: ShopItem = {
   name: 'Power Boost',
   description: 'Increase XP gain by 50% for 24 hours',
   price: 100,
-  category: 'power-ups',
+  category: 'premium' as ShopCategory,
   icon: 'zap',
   isOwned: false,
+  rarity: 'rare',
+  tags: ['boost', 'xp'],
+  isPurchasable: true,
 };
 
 const mockBalance: MLCoinsBalance = {

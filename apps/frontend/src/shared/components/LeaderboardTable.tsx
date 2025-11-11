@@ -109,7 +109,7 @@ const MobileCard: React.FC<{ entry: LeaderboardEntry; isCurrentUser: boolean }> 
           src={entry.avatar}
           alt={entry.username}
           fallback={entry.username.charAt(0).toUpperCase()}
-          size="md"
+
         />
         <div>
           <p className="font-semibold text-gray-900">
@@ -291,7 +291,7 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
                         src={entry.avatar}
                         alt={entry.username}
                         fallback={entry.username.charAt(0).toUpperCase()}
-                        size="sm"
+
                       />
                       <div>
                         <p className="font-semibold text-gray-900">

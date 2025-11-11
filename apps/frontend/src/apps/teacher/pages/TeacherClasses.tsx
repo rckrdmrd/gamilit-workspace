@@ -265,7 +265,7 @@ export default function TeacherClasses() {
             label="Nombre de la Clase"
             name="name"
             value={formData.name}
-            onChange={(value) => setFormData({ ...formData, name: value })}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             placeholder="Ej: Español 5to A"
             required
           />
@@ -273,7 +273,7 @@ export default function TeacherClasses() {
             label="Materia"
             name="subject"
             value={formData.subject}
-            onChange={(value) => setFormData({ ...formData, subject: value })}
+            onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
             placeholder="Ej: Español, Matemáticas"
             required
           />
@@ -282,7 +282,7 @@ export default function TeacherClasses() {
             name="grade_level"
             type="select"
             value={formData.grade_level}
-            onChange={(value) => setFormData({ ...formData, grade_level: value })}
+            onChange={(e) => setFormData({ ...formData, grade_level: e.target.value })}
             options={[
               { value: '1ro', label: '1ro' },
               { value: '2do', label: '2do' },
@@ -329,14 +329,14 @@ export default function TeacherClasses() {
             label="Nombre de la Clase"
             name="name"
             value={formData.name}
-            onChange={(value) => setFormData({ ...formData, name: value })}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
           <FormField
             label="Materia"
             name="subject"
             value={formData.subject}
-            onChange={(value) => setFormData({ ...formData, subject: value })}
+            onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
             required
           />
           <FormField
@@ -344,7 +344,7 @@ export default function TeacherClasses() {
             name="grade_level"
             type="select"
             value={formData.grade_level}
-            onChange={(value) => setFormData({ ...formData, grade_level: value })}
+            onChange={(e) => setFormData({ ...formData, grade_level: e.target.value })}
             options={[
               { value: '1ro', label: '1ro' },
               { value: '2do', label: '2do' },
@@ -385,7 +385,7 @@ export default function TeacherClasses() {
         message={`¿Estás seguro de que deseas eliminar "${selectedClassroom?.name}"? Esta acción no se puede deshacer.`}
         confirmText="Eliminar"
         cancelText="Cancelar"
-        type="danger"
+        variant="danger"
       />
     </div>
   );

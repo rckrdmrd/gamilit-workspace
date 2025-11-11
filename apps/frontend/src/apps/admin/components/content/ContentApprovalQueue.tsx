@@ -42,9 +42,9 @@ export const ContentApprovalQueue: React.FC = () => {
     switch (type) {
       case 'exercise':
         return <FileText className="w-5 h-5" />;
-      case 'resource':
+      case 'media':
         return <ImageIcon className="w-5 h-5" />;
-      case 'comment':
+      case 'content':
         return <MessageSquare className="w-5 h-5" />;
       default:
         return <FileText className="w-5 h-5" />;
@@ -134,7 +134,7 @@ export const ContentApprovalQueue: React.FC = () => {
                   className={`p-3 rounded-lg ${
                     item.type === 'exercise'
                       ? 'bg-blue-500/20 text-blue-500'
-                      : item.type === 'resource'
+                      : item.type === 'media'
                       ? 'bg-purple-500/20 text-purple-500'
                       : 'bg-orange-500/20 text-orange-500'
                   }`}
@@ -169,7 +169,7 @@ export const ContentApprovalQueue: React.FC = () => {
                       className={`px-2 py-1 rounded text-xs ${
                         item.type === 'exercise'
                           ? 'bg-blue-500/20 text-blue-500'
-                          : item.type === 'resource'
+                          : item.type === 'media'
                           ? 'bg-purple-500/20 text-purple-500'
                           : 'bg-orange-500/20 text-orange-500'
                       }`}
@@ -201,13 +201,13 @@ export const ContentApprovalQueue: React.FC = () => {
                           />
                           <DetectiveButton
                             variant="primary"
-                            size="sm"
+
                             onClick={() => handleReject(item.id)}
                             className="bg-red-500 hover:bg-red-600"
                           >
                             Confirm
                           </DetectiveButton>
-                          <DetectiveButton variant="primary" size="sm" onClick={() => setRejectingId(null)}>
+                          <DetectiveButton variant="primary" onClick={() => setRejectingId(null)}>
                             Cancel
                           </DetectiveButton>
                         </div>
@@ -215,7 +215,7 @@ export const ContentApprovalQueue: React.FC = () => {
                         <>
                           <DetectiveButton
                             variant="green"
-                            size="sm"
+
                             icon={<CheckCircle className="w-4 h-4" />}
                             onClick={() => handleApprove(item.id)}
                           >
@@ -223,7 +223,7 @@ export const ContentApprovalQueue: React.FC = () => {
                           </DetectiveButton>
                           <DetectiveButton
                             variant="primary"
-                            size="sm"
+
                             icon={<XCircle className="w-4 h-4" />}
                             onClick={() => setRejectingId(item.id)}
                             className="bg-red-500 hover:bg-red-600"
@@ -238,7 +238,7 @@ export const ContentApprovalQueue: React.FC = () => {
                   {/* Rejection Reason */}
                   {item.status === 'rejected' && (
                     <div className="p-2 bg-red-500/10 border border-red-500/30 rounded text-detective-small text-red-400">
-                      Rejection reason: {item.content.rejectionReason || 'No reason provided'}
+                      Rejection reason: {item.content?.rejectionReason || 'No reason provided'}
                     </div>
                   )}
                 </div>

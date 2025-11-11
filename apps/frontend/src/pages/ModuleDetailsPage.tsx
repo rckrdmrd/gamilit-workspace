@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, AlertCircle, BookOpen, Clock, TrendingUp, Target } from 'lucide-react';
 import { useAuth } from '@/app/providers/AuthContext';
-import { DashboardLayout } from '@/shared/layouts/DashboardLayout';
+import { GamifiedHeader } from '@/shared/components/layout/GamifiedHeader';
 import { ExerciseAttemptCard } from '@/shared/components/ExerciseAttemptCard';
 import { progressApi } from '@/lib/api/progress.api';
 import { educationalApi } from '@/lib/api/educational.api';
@@ -32,7 +32,7 @@ import {
  */
 export const ModuleDetailsPage: React.FC = () => {
   const { moduleId } = useParams<{ moduleId: string }>();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   // State
@@ -164,9 +164,12 @@ export const ModuleDetailsPage: React.FC = () => {
   const averageScore = progress?.average_score || 0;
 
   return (
-    <DashboardLayout>
-      {/* Back Button */}
-      <button
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
+      <GamifiedHeader user={user} onLogout={logout} />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Back Button */}
+        <button
         onClick={handleBack}
         className="
           mb-6 inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900
@@ -392,7 +395,8 @@ export const ModuleDetailsPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+      </div>
+    </div>
   );
 };
 

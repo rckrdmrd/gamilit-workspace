@@ -616,7 +616,7 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
                         </div>
 
                         {isCompleted && (
-                          <Badge variant="success" size="sm">
+                          <Badge variant="success">
                             Completado
                           </Badge>
                         )}
@@ -627,7 +627,7 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
                         <div className="space-y-2">
                           <ProgressBar
                             value={module.progress}
-                            size="sm"
+
                             variant={isCompleted ? 'success' : 'detective'}
                             showPercentage={false}
                           />
@@ -670,7 +670,7 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
               </div>
               <ProgressBar
                 value={totalProgress}
-                size="sm"
+
                 variant="detective"
                 showPercentage={false}
               />

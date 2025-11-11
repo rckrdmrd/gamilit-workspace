@@ -9,7 +9,7 @@ export interface DetectiveButtonProps extends React.ButtonHTMLAttributes<HTMLBut
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   icon?: React.ReactNode;
-  as?: 'button' | 'a';
+  as?: 'button' | 'a' | 'span';
 }
 
 const sizeStyles = {
@@ -106,7 +106,7 @@ export const DetectiveButton = React.forwardRef<HTMLButtonElement, DetectiveButt
           isDisabled && 'opacity-50 cursor-not-allowed pointer-events-none',
           className
         )}
-        {...props}
+        {...(props as any)}
       >
         {loading ? (
           <>

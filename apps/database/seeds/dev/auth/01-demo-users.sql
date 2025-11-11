@@ -13,9 +13,15 @@ SET search_path TO auth, public;
 -- =====================================================
 -- Passwords Reference (Plain Text - DO NOT COMMIT TO PROD)
 -- =====================================================
--- Super Admin:  "Admin123!"
--- Instructor:   "Instructor123!"
--- Students:     "Student123!"
+-- USUARIOS DE TESTING PRINCIPALES:
+-- - admin@gamilit.com / Test1234
+-- - teacher@gamilit.com / Test1234
+-- - student@gamilit.com / Test1234
+--
+-- OTROS USUARIOS DEMO:
+-- - Super Admin:  "Admin123!"
+-- - Instructor:   "Instructor123!"
+-- - Students:     "Student123!"
 -- =====================================================
 
 -- =====================================================
@@ -34,6 +40,45 @@ INSERT INTO auth.users (
     created_at,
     updated_at
 ) VALUES
+-- =====================================================
+-- USUARIOS DE TESTING PRINCIPALES (Password: Test1234)
+-- =====================================================
+-- Admin Testing
+(
+    'admin@gamilit.com',
+    crypt('Test1234', gen_salt('bf', 10)),
+    'super_admin',
+    NOW(),
+    '{"name": "Admin GAMILIT", "description": "Usuario administrador de testing"}'::jsonb,
+    NOW(),
+    NOW()
+),
+
+-- Teacher Testing
+(
+    'teacher@gamilit.com',
+    crypt('Test1234', gen_salt('bf', 10)),
+    'admin_teacher',
+    NOW(),
+    '{"name": "Profesor Testing", "description": "Usuario profesor de testing"}'::jsonb,
+    NOW(),
+    NOW()
+),
+
+-- Student Testing
+(
+    'student@gamilit.com',
+    crypt('Test1234', gen_salt('bf', 10)),
+    'student',
+    NOW(),
+    '{"name": "Estudiante Testing", "description": "Usuario estudiante de testing"}'::jsonb,
+    NOW(),
+    NOW()
+),
+
+-- =====================================================
+-- USUARIOS DEMO (Passwords variados)
+-- =====================================================
 -- Super Admin
 (
     'admin@glit.edu.mx',

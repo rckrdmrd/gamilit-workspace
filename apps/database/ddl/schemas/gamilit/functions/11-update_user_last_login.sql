@@ -17,6 +17,6 @@ BEGIN
         updated_at = gamilit.now_mexico()
     WHERE id = p_user_id;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 COMMENT ON FUNCTION gamilit.update_user_last_login(UUID) IS 'Actualiza la fecha y hora del último login de un usuario';

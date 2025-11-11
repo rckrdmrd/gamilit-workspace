@@ -1,9 +1,12 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ExerciseAttempt } from '../entities';
 import { CreateExerciseAttemptDto } from '../dto';
 import { DB_SCHEMAS } from '@shared/constants/database.constants';
+import { TransactionTypeEnum } from '@shared/constants/enums.constants';
+import { MLCoinsService } from '@/modules/gamification/services/ml-coins.service';
+import { UserStatsService } from '@/modules/gamification/services/user-stats.service';
 
 /**
  * ExerciseAttemptService
@@ -14,13 +17,17 @@ import { DB_SCHEMAS } from '@shared/constants/database.constants';
  * - Scoring y validación de respuestas
  * - Tracking de hints y comodines
  * - Cálculo de estadísticas de rendimiento
- * - Trigger de rewards (XP/ML Coins)
+ * - Awarding de rewards (XP/ML Coins) automático al completar
  */
 @Injectable()
 export class ExerciseAttemptService {
+  private readonly logger = new Logger(ExerciseAttemptService.name);
+
   constructor(
     @InjectRepository(ExerciseAttempt, 'progress')
     private readonly attemptRepo: Repository<ExerciseAttempt>,
+    private readonly mlCoinsService: MLCoinsService,
+    private readonly userStatsService: UserStatsService,
   ) {}
 
   /**
@@ -133,7 +140,14 @@ export class ExerciseAttemptService {
       attempt.ml_coins_earned = this.calculateCoinsReward(score, attempt.comodines_used.length);
     }
 
-    return await this.attemptRepo.save(attempt);
+    const savedAttempt = await this.attemptRepo.save(attempt);
+
+    // Otorgar recompensas automáticamente si el intento fue correcto
+    if (isCorrect && (attempt.xp_earned > 0 || attempt.ml_coins_earned > 0)) {
+      await this.awardRewards(attempt.user_id, attempt.exercise_id, attempt.xp_earned, attempt.ml_coins_earned);
+    }
+
+    return savedAttempt;
   }
 
   /**
@@ -267,5 +281,63 @@ export class ExerciseAttemptService {
 
     attempt.comodines_used = [...new Set([...attempt.comodines_used, ...comodines])];
     return await this.attemptRepo.save(attempt);
+  }
+
+  /**
+   * Otorga recompensas (XP y ML Coins) al usuario por completar un ejercicio
+   *
+   * @description Método privado que se ejecuta automáticamente después de
+   * un intento correcto. Integra con MLCoinsService y UserStatsService
+   * para otorgar las recompensas calculadas.
+   *
+   * @param userId - ID del usuario
+   * @param exerciseId - ID del ejercicio completado
+   * @param xpEarned - XP ganada (calculada con penalizaciones por hints)
+   * @param mlCoinsEarned - ML Coins ganadas (calculadas con penalizaciones por comodines)
+   *
+   * @private
+   */
+  private async awardRewards(
+    userId: string,
+    exerciseId: string,
+    xpEarned: number,
+    mlCoinsEarned: number,
+  ): Promise<void> {
+    // Otorgar ML Coins
+    if (mlCoinsEarned > 0) {
+      try {
+        await this.mlCoinsService.addCoins(
+          userId,
+          mlCoinsEarned,
+          TransactionTypeEnum.EARNED_EXERCISE,
+          `Exercise completed: ${exerciseId}`,
+          exerciseId,
+          'exercise',
+        );
+        this.logger.log(
+          `Awarded ${mlCoinsEarned} ML Coins to user ${userId} for completing exercise ${exerciseId}`,
+        );
+      } catch (error: unknown) {
+        this.logger.error(
+          `Failed to award ML Coins for exercise ${exerciseId}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+        // Continue execution - don't fail the entire operation
+      }
+    }
+
+    // Otorgar XP
+    if (xpEarned > 0) {
+      try {
+        await this.userStatsService.addXp(userId, xpEarned);
+        this.logger.log(
+          `Awarded ${xpEarned} XP to user ${userId} for completing exercise ${exerciseId}`,
+        );
+      } catch (error: unknown) {
+        this.logger.error(
+          `Failed to award XP for exercise ${exerciseId}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+        // Continue execution - don't fail the entire operation
+      }
+    }
   }
 }

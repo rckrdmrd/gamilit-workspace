@@ -56,7 +56,7 @@ export const MediaLibraryManager: React.FC = () => {
     .filter(
       (file) =>
         file.filename.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        file.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+        file.tags?.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
   const storagePercentage = storageLimit > 0 ? (storageUsed / storageLimit) * 100 : 0;
@@ -99,7 +99,7 @@ export const MediaLibraryManager: React.FC = () => {
           {selectedFiles.length > 0 && (
             <DetectiveButton
               variant="primary"
-              size="sm"
+
               icon={<Trash2 className="w-4 h-4" />}
               onClick={handleBulkDelete}
               className="bg-red-500 hover:bg-red-600"
@@ -242,7 +242,7 @@ export const MediaLibraryManager: React.FC = () => {
                   <p className="text-xs text-gray-400">{formatFileSize(file.size)}</p>
 
                   {/* Tags */}
-                  {file.tags.length > 0 && (
+                  {file.tags && file.tags.length > 0 && (
                     <div className="flex items-center gap-1 mt-2 flex-wrap">
                       <Tag className="w-3 h-3 text-gray-500" />
                       {file.tags.slice(0, 2).map((tag) => (

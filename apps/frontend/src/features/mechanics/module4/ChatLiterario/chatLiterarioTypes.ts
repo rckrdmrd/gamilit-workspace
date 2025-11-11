@@ -53,3 +53,6 @@ export interface ChatLiterarioExerciseProps {
   exercise?: ChatLiterarioData;
   actionsRef?: React.MutableRefObject<ChatLiterarioActions | undefined>;
 }
+
+// Alias for generic import
+export type ExerciseProps = ChatLiterarioExerciseProps;

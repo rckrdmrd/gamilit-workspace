@@ -81,6 +81,8 @@ export interface SystemUser {
   organizationName?: string;
   lastLogin: string;
   createdAt: string;
+  // Alias for full_name (for backward compatibility)
+  display_name?: string;
 }
 
 export interface SystemLog {

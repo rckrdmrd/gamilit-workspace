@@ -207,7 +207,7 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                           </div>
                           <DetectiveButton
                             variant="primary"
-                            size="sm"
+
                             onClick={() => handleUsePowerUp(powerUp.id)}
                             className="w-full"
                             disabled={powerUp.status !== 'available'}
@@ -244,7 +244,7 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                       </p>
                       <DetectiveButton
                         variant="gold"
-                        size="md"
+
                         onClick={onOpenHints}
                         icon={<Lightbulb className="w-4 h-4" />}
                         className="w-full"
@@ -346,7 +346,7 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                     </DetectiveCard>
 
                     {/* Time */}
-                    <DetectiveCard variant="blue" padding="md">
+                    <DetectiveCard variant="default" padding="md">
                       <div className="flex items-center gap-3">
                         <Clock className="w-8 h-8 text-detective-blue" />
                         <div>

@@ -4,7 +4,7 @@ import { ProtectedRoute } from '@/shared/components/ProtectedRoute';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { RegisterPage } from '@/pages/auth/RegisterPage';
 import { ForgotPasswordPage } from '@/pages/auth/ForgotPasswordPage';
-import { DashboardPage } from '@/pages/DashboardPage';
+import DashboardComplete from '@/apps/student/pages/DashboardComplete';
 import { MyProgressPage } from '@/pages/MyProgressPage';
 import { ModuleDetailsPage } from '@/pages/ModuleDetailsPage';
 import { AchievementsPage } from '@/pages/AchievementsPage';
@@ -62,7 +62,7 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <DashboardPage />
+                <DashboardComplete />
               </ProtectedRoute>
             }
           />

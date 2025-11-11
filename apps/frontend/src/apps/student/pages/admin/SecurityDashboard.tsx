@@ -17,7 +17,12 @@ export default function SecurityDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={{ email: 'admin@glit.com' }} />
+      <GamifiedHeader user={{
+        id: 'mock-security-dashboard-id',
+        email: 'admin@glit.com',
+        role: 'super_admin',
+        displayName: 'Admin Security'
+      }} />
 
       <main className="detective-container py-8">
         <h1 className="text-detective-title mb-6">Dashboard de Seguridad</h1>

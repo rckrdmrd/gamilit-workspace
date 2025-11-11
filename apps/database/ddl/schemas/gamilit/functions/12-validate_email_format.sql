@@ -16,6 +16,6 @@ BEGIN
     -- Basic pattern: local-part@domain.extension
     RETURN p_email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$';
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 COMMENT ON FUNCTION gamilit.validate_email_format(VARCHAR) IS 'Valida que el formato del email sea correcto usando patrón regex';

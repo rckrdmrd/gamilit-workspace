@@ -105,7 +105,7 @@ describe('RegisterPage', () => {
 
       vi.mocked(mockRegister).mockResolvedValueOnce({
         success: true,
-        user: { id: '1', email: 'test@example.com', fullName: 'Test User' },
+        user: { id: '1', email: 'test@example.com', fullName: 'Test User', role: 'student', emailVerified: true },
       });
 
       renderComponent();
@@ -127,7 +127,7 @@ describe('RegisterPage', () => {
 
       vi.mocked(mockRegister).mockResolvedValueOnce({
         success: true,
-        user: { id: '1', email: 'test@example.com', fullName: 'Test User' },
+        user: { id: '1', email: 'test@example.com', fullName: 'Test User', role: 'student', emailVerified: true },
       });
 
       renderComponent();
@@ -151,7 +151,7 @@ describe('RegisterPage', () => {
 
       vi.mocked(mockRegister).mockResolvedValueOnce({
         success: true,
-        user: { id: '1', email: 'test@example.com', fullName: 'Test User' },
+        user: { id: '1', email: 'test@example.com', fullName: 'Test User', role: 'student', emailVerified: true },
       });
 
       renderComponent();
@@ -170,7 +170,7 @@ describe('RegisterPage', () => {
 
       vi.mocked(mockRegister).mockResolvedValueOnce({
         success: true,
-        user: { id: '1', email: 'test@example.com', fullName: 'Test User' },
+        user: { id: '1', email: 'test@example.com', fullName: 'Test User', role: 'student', emailVerified: true },
       });
 
       renderComponent();
@@ -199,7 +199,7 @@ describe('RegisterPage', () => {
 
       vi.mocked(mockRegister).mockResolvedValueOnce({
         success: true,
-        user: { id: '1', email: 'test@example.com', fullName: 'Test User' },
+        user: { id: '1', email: 'test@example.com', fullName: 'Test User', role: 'student', emailVerified: true },
       });
 
       renderComponent();

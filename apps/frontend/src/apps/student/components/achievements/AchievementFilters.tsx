@@ -20,12 +20,12 @@ import {
   Unlock,
   TrendingUp,
 } from 'lucide-react';
-import type { AchievementFilters, CategoryConfig, RarityConfig } from './types';
+import type { AchievementFiltersState, CategoryConfig, RarityConfig } from './types';
 import type { AchievementCategory, AchievementRarity } from '@/features/gamification/social/types/achievementsTypes';
 
 interface AchievementFiltersProps {
-  filters: AchievementFilters;
-  onFilterChange: (filters: Partial<AchievementFilters>) => void;
+  filters: AchievementFiltersState;
+  onFilterChange: (filters: Partial<AchievementFiltersState>) => void;
   onClearFilters: () => void;
   resultsCount: number;
 }
