@@ -437,11 +437,30 @@ export class AuthService {
   }
 
   /**
-   * Helper: Convertir User a UserResponseDto
+   * Helper: Convertir User a UserResponseDto con campos derivados
+   *
+   * @description Transforma User entity a DTO seguro para el cliente.
+   * Calcula campos derivados para coherencia con Frontend:
+   * - emailVerified: true si email_confirmed_at tiene valor
+   * - isActive: true si NO está deleted_at ni banned_until activo
+   *
+   * @param user - User entity de la base de datos
+   * @returns UserResponseDto con campos derivados calculados
    */
   private toUserResponse(user: User): UserResponseDto {
     const { encrypted_password, ...userWithoutPassword } = user;
-    return userWithoutPassword as UserResponseDto;
+
+    // Calcular campos derivados para coherencia Frontend-Backend
+    const emailVerified = !!user.email_confirmed_at;
+    const now = new Date();
+    const isActive = !user.deleted_at &&
+      (!user.banned_until || user.banned_until < now);
+
+    return {
+      ...userWithoutPassword,
+      emailVerified,
+      isActive,
+    } as UserResponseDto;
   }
 
   /**

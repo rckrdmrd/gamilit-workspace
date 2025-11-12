@@ -5,19 +5,19 @@ import './NotificationBell.css';
 
 export const NotificationBell: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { unreadCount, getUnreadCount } = useNotificationsStore();
+  const { unreadCount, fetchUnreadCount } = useNotificationsStore();
 
   useEffect(() => {
     // Initial fetch
-    getUnreadCount();
+    fetchUnreadCount();
 
     // Poll every 30 seconds
     const interval = setInterval(() => {
-      getUnreadCount();
+      fetchUnreadCount();
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [getUnreadCount]);
+  }, [fetchUnreadCount]);
 
   return (
     <div className="notification-bell-container">

@@ -20,9 +20,14 @@ export class ModulesService {
 
   /**
    * Obtener todos los módulos ordenados por índice
+   * FILTRO EXPLÍCITO: Solo módulos publicados (workaround para RLS)
    */
   async findAll(): Promise<Module[]> {
     return await this.moduleRepo.find({
+      where: {
+        is_published: true,
+        status: 'published' as any,
+      },
       order: { order_index: 'ASC' },
     });
   }

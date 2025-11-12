@@ -5,7 +5,7 @@ export const useAppNavigation = () => {
 
   return {
     goToDashboard: () => navigate('/dashboard'),
-    goToModule: (id: string) => navigate(`/module/${id}`),
+    goToModule: (id: string) => navigate(`/modules/${id}`),
     goToProfile: () => navigate('/profile'),
     goToLogin: () => navigate('/login'),
     goToRegister: () => navigate('/register'),

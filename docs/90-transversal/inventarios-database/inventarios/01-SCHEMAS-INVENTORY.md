@@ -1,9 +1,10 @@
 # Inventario de Schemas - Base de Datos GAMILIT
 
-**Fecha generación:** 2025-11-07
-**Versión:** 1.0
-**Total schemas:** 13
-**Método:** Análisis de estructura DDL
+**Fecha generación:** 2025-11-11
+**Versión:** 2.0 (Corregido con conteos físicos)
+**Total schemas:** 14
+**Total objetos SQL:** 324 archivos
+**Método:** Conteo físico de archivos DDL
 
 ---
 
@@ -11,19 +12,22 @@
 
 | # | Schema | Tipo | Objetos | Estado Doc | Prioridad |
 |---|--------|------|---------|------------|-----------|
-| 01 | [auth](#01-auth) | Core | Tablas(1), ENUMs, Functions | ✅ Documentado | P0 |
-| 02 | [auth_management](#02-auth_management) | Core | Tablas, Functions, Triggers, RLS, Indexes | ✅ Documentado | P0 |
-| 03 | [gamilit](#03-gamilit) | Core/Utilities | Functions | ✅ Documentado | P0 |
-| 04 | [gamification_system](#04-gamification_system) | Feature | Tablas, ENUMs, Functions, RLS, Indexes, MVs | ✅ Documentado | P0 |
-| 05 | [educational_content](#05-educational_content) | Feature | Tablas, Functions, Triggers, RLS | ✅ Documentado | P1 |
-| 06 | [progress_tracking](#06-progress_tracking) | Feature | Tablas, Functions, Triggers, RLS, Indexes | ✅ Documentado | P1 |
-| 07 | [content_management](#07-content_management) | Feature | Tablas, Triggers, RLS, Indexes | ✅ Documentado | P1 |
-| 08 | [social_features](#08-social_features) | Feature | Tablas, Functions, Triggers, RLS | ✅ Documentado | P2 |
-| 09 | [system_configuration](#09-system_configuration) | System | Tablas, Triggers, RLS | ✅ Documentado | P1 |
-| 10 | [audit_logging](#10-audit_logging) | System | Tablas, Functions, Triggers, RLS | ✅ Documentado | P1 |
-| 11 | [admin_dashboard](#11-admin_dashboard) | Admin | Views | ⚠️ No documentado | P1 |
-| 12 | [storage](#12-storage) | System | ENUMs | ⚠️ No documentado | P2 |
-| 13 | [public](#13-public) | Legacy/Unknown | Tablas, ENUMs, Functions, Triggers, Indexes | ⚠️ No documentado | P2 |
+| 01 | [auth](#01-auth) | Core | 3 objetos (1T, 2E) | ✅ Documentado | P0 |
+| 02 | [auth_management](#02-auth_management) | Core | 40 objetos (15T, 6F, 6Tr, 11I, 1RLS, 1FK) | ✅ Documentado | P0 |
+| 03 | [educational_content](#05-educational_content) | Feature | 43 objetos (15T, 3E, 3F, 4Tr, 16I, 2RLS) | ✅ Documentado | P1 |
+| 04 | [gamification_system](#04-gamification_system) | Feature | 91 objetos (15T, 4E, 24F, 10Tr, 22I, 4V, 4MV, 8RLS) | ✅ Documentado | P0 |
+| 05 | [progress_tracking](#06-progress_tracking) | Feature | 33 objetos (15T, 2E, 8F, 3Tr, 2I, 1V, 2RLS) | ✅ Documentado | P1 |
+| 06 | [social_features](#08-social_features) | Feature | 30 objetos (15T, 1E, 1F, 5Tr, 8RLS) | ✅ Documentado | P2 |
+| 07 | [content_management](#07-content_management) | Feature | 18 objetos (8T, 4E, 3Tr, 2I, 1RLS) | ✅ Documentado | P1 |
+| 08 | [audit_logging](#10-audit_logging) | System | 28 objetos (6T, 2E, 4F, 1Tr, 14I, 1RLS) | ✅ Documentado | P1 |
+| 09 | [system_configuration](#09-system_configuration) | System | 13 objetos (8T, 2F, 2Tr, 1RLS) | ✅ Documentado | P1 |
+| 10 | [lti_integration](#14-lti_integration) | System | 3 objetos (3T) | ⚠️ Parcial | P1 |
+| 11 | [admin_dashboard](#11-admin_dashboard) | Admin | 6 objetos (6V) | ⚠️ Parcial | P1 |
+| 12 | [storage](#12-storage) | System | 1 objeto (1E) | ⚠️ Parcial | P2 |
+| 13 | [gamilit](#13-gamilit) | Core/Utilities | 15 objetos (14F, 1V) | ✅ Documentado | P0 |
+| 14 | [public](#14-public) | Limpiado | 0 objetos | ✅ Limpiado | P3 |
+
+**Leyenda:** T=Tablas, E=ENUMs, F=Funciones, Tr=Triggers, I=Índices, V=Vistas, MV=Vistas Materializadas, RLS=Políticas RLS, FK=Foreign Key Constraints
 
 ---
 
@@ -87,15 +91,17 @@ auth_management/
 ```
 
 #### Objetos Contenidos
-- **Tablas:** 12
-  - users, roles, permissions, user_roles
-  - sessions, password_resets, email_verifications
-  - oauth_providers, oauth_tokens, user_settings
-  - user_profiles, user_preferences
-- **Functions:** Sí (gestión de roles, permisos, sesiones)
-- **Triggers:** Sí (auditoría, timestamps, validaciones)
-- **RLS Policies:** Sí (multi-tenancy, aislamiento por usuario)
-- **Indexes:** Sí (optimización de autenticación)
+- **Tablas:** 15
+  - tenants, auth_attempts, profiles, roles, auth_providers
+  - email_verification_tokens, password_reset_tokens
+  - security_events, user_preferences, memberships
+  - user_sessions, user_suspensions
+  - parent_accounts, parent_student_links, parent_notifications
+- **Functions:** 6 (gestión de roles, permisos, tokens)
+- **Triggers:** 6 (auditoría, timestamps, validaciones)
+- **RLS Policies:** 1 archivo (múltiples políticas)
+- **Indexes:** 11 (optimización de autenticación y sesiones)
+- **FK Constraints:** 1 (profiles-school, diferido)
 
 #### Dependencias
 - **Depende de:** auth (Nivel 1)
@@ -273,7 +279,7 @@ progress_tracking/
 
 **Tipo:** Feature - Gestión de Contenido
 **Ubicación:** `apps/database/ddl/schemas/content_management/`
-**Estado:** ✅ Documentado
+**Estado:** ✅ Documentado (actualizado 2025-11-11)
 **Prioridad:** P1 - Alto
 
 #### Descripción
@@ -283,20 +289,23 @@ Sistema de gestión de contenido multimedia y recursos educativos.
 ```
 content_management/
 ├── _MAP.md
-├── indexes/         (Búsqueda de contenido)
+├── enums/           (4 ENUMs: content_status, content_type, media_type, processing_status)
+├── indexes/         (2 índices GIN para búsqueda)
 ├── rls-policies/    (Permisos de edición)
-├── tables/          (5 tablas)
-└── triggers/        (Versionado, auditoría)
+├── tables/          (8 tablas)
+└── triggers/        (3 triggers de updated_at)
 ```
 
 #### Objetos Contenidos
-- **Tablas:** 5
-  - content_items, content_versions
-  - media_files, resource_library
-  - content_tags
-- **Triggers:** Sí (versionado automático)
-- **RLS Policies:** Sí (creators pueden editar, otros solo leer)
-- **Indexes:** Sí (búsqueda por tags, tipo, fecha)
+- **Tablas:** 8
+  - content_templates, marie_curie_content, media_files
+  - content_versions, flagged_content
+  - content_authors, content_categories, media_metadata
+- **ENUMs:** 4 (content_status, content_type, media_type, processing_status)
+- **Triggers:** 3 (updated_at para templates, marie_curie, media_files)
+- **RLS Policies:** 1 archivo (múltiples políticas)
+- **Indexes:** 2 (GIN para grade_levels y keywords en marie_curie_content)
+- **Functions:** 0 (no implementadas)
 
 #### Dependencias
 - **Depende de:** auth_management, storage (Nivel 4)
@@ -368,11 +377,13 @@ system_configuration/
 ```
 
 #### Objetos Contenidos
-- **Tablas:** 3
-  - app_settings, feature_flags
-  - system_variables
-- **Triggers:** Sí (log de cambios de configuración)
-- **RLS Policies:** Sí (solo role admin)
+- **Tablas:** 8
+  - system_settings, feature_flags, notification_settings
+  - rate_limits, notification_settings_global
+  - api_configuration, environment_config, tenant_configurations
+- **Functions:** 2 (is_feature_enabled, update_feature_flag)
+- **Triggers:** 2 (updated_at para feature_flags y system_settings)
+- **RLS Policies:** 1 archivo (solo role admin)
 
 #### Dependencias
 - **Depende de:** Ninguno (Nivel 0)
@@ -407,12 +418,13 @@ audit_logging/
 
 #### Objetos Contenidos
 - **Tablas:** 6
-  - audit_logs, user_activity_logs
-  - data_change_logs, access_logs
-  - error_logs, system_events
-- **Functions:** Sí (logging helpers)
-- **Triggers:** Sí (logging automático de cambios)
-- **RLS Policies:** Sí (solo admins pueden leer logs)
+  - audit_logs, performance_metrics, system_alerts
+  - system_logs, user_activity_logs, user_activity
+- **ENUMs:** 2 (aggregation_period, metric_type)
+- **Functions:** 4 (cleanup_old_system_logs, cleanup_old_user_activity, log_audit_event, log_system_event)
+- **Triggers:** 1 (updated_at para system_alerts)
+- **Indexes:** 14 (optimización de consultas de actividad y alertas)
+- **RLS Policies:** 1 archivo (solo admins pueden leer logs)
 
 #### Dependencias
 - **Depende de:** auth_management (Nivel 1)
@@ -425,11 +437,55 @@ audit_logging/
 
 ---
 
+### 10.5. lti_integration
+
+**Tipo:** System - Integración LTI 1.3
+**Ubicación:** `apps/database/ddl/schemas/lti_integration/`
+**Estado:** ⚠️ **PARCIALMENTE DOCUMENTADO** (actualizado 2025-11-11)
+**Prioridad:** P1 - Alto
+
+#### Descripción
+Learning Tools Interoperability 1.3 - Integración con plataformas LMS externas (Canvas, Moodle, Blackboard).
+
+#### Estructura de Objetos
+```
+lti_integration/
+├── _MAP.md
+└── tables/          (3 tablas)
+```
+
+#### Objetos Contenidos
+- **Tablas:** 3
+  - lti_consumers.sql - Consumidores LTI (plataformas LMS)
+  - lti_sessions.sql - Sesiones LTI activas
+  - lti_grade_passback.sql - Envío de calificaciones a LMS
+- **ENUMs:** 0
+- **Functions:** 0
+- **Triggers:** 0
+- **Indexes:** 0
+- **RLS Policies:** 0
+
+#### Dependencias
+- **Depende de:** auth_management, educational_content (Nivel 4)
+- **Usado por:** Backend LTI module
+
+#### ⚠️ Acción Requerida
+- [ ] Crear README.md detallado con especificación LTI 1.3
+- [ ] Documentar flujo de integración completo
+- [ ] Agregar diagramas de secuencia de autenticación LTI
+
+#### Referencias SIMCO
+- **Documentación:** `docs/03-fase-extensiones/EXT-007-lti-integration/`
+- **Backend:** `apps/backend/src/modules/lti/`
+- **Especificación:** LTI 1.3 Advantage (IMS Global)
+
+---
+
 ### 11. admin_dashboard
 
 **Tipo:** Admin - Dashboard de Administración
 **Ubicación:** `apps/database/ddl/schemas/admin_dashboard/`
-**Estado:** ⚠️ **NO DOCUMENTADO**
+**Estado:** ⚠️ **PARCIALMENTE DOCUMENTADO** (actualizado 2025-11-11)
 **Prioridad:** P1 - Alto
 
 #### Descripción
@@ -438,18 +494,20 @@ Schema dedicado a vistas y queries del dashboard de administración.
 #### Estructura de Objetos
 ```
 admin_dashboard/
-└── views/           (Vistas pre-calculadas para dashboard)
+├── _MAP.md
+└── views/           (6 vistas analíticas)
 ```
 
 #### Objetos Contenidos
-- **Views:** Sí (métricas agregadas, reportes)
-  - Vista de usuarios activos
-  - Vista de estadísticas de uso
-  - Vista de métricas de gamificación
-  - Vista de progreso global
-  - (Total: 4 vistas estimadas)
-- **Tablas:** No
-- **Materialized Views:** ¿Posible? (pendiente verificar)
+- **Vistas:** 6
+  - assignment_submission_stats - Estadísticas de envíos de asignaciones
+  - classroom_overview - Resumen de aulas
+  - moderation_queue - Cola de moderación de contenido
+  - organization_stats_summary - Resumen de estadísticas organizacionales
+  - recent_admin_actions - Acciones recientes de administradores
+  - user_stats_summary - Resumen de estadísticas de usuarios
+- **Tablas:** 0 (solo vistas, sin datos propios)
+
 
 #### Dependencias
 - **Depende de:** auth_management, progress_tracking, gamification_system (Nivel 5)
@@ -473,25 +531,24 @@ admin_dashboard/
 
 **Tipo:** System - Gestión de Almacenamiento
 **Ubicación:** `apps/database/ddl/schemas/storage/`
-**Estado:** ⚠️ **NO DOCUMENTADO**
+**Estado:** ⚠️ **PARCIALMENTE DOCUMENTADO** (actualizado 2025-11-11)
 **Prioridad:** P2 - Medio
 
 #### Descripción
-Schema de soporte para integración con sistema de almacenamiento de archivos (MinIO/S3).
+Schema de soporte para integración con sistema de almacenamiento Supabase Storage.
 
 #### Estructura de Objetos
 ```
 storage/
-└── enums/           (Tipos de archivo, estados de upload)
+├── _MAP.md
+└── enums/           (1 ENUM)
 ```
 
 #### Objetos Contenidos
-- **ENUMs:** Sí
-  - Tipos de archivo (imagen, video, audio, documento)
-  - Estados de upload (pending, uploading, completed, failed)
-  - Políticas de acceso (public, private, authenticated)
-- **Tablas:** No (¿posible? pendiente verificar)
-- **Functions:** No (¿posible? pendiente verificar)
+- **ENUMs:** 1
+  - buckettype.sql - Tipos de bucket de almacenamiento
+- **Tablas:** 0 (usa sistema de Supabase Storage)
+- **Functions:** 0 (funcionalidad delegada a Supabase)
 
 #### Dependencias
 - **Depende de:** Ninguno (Nivel 0)
@@ -511,79 +568,124 @@ storage/
 
 ---
 
-### 13. public
+### 13. gamilit
 
-**Tipo:** Legacy/Unknown - Schema Público
-**Ubicación:** `apps/database/ddl/schemas/public/`
-**Estado:** ⚠️ **NO DOCUMENTADO - REQUIERE ANÁLISIS**
-**Prioridad:** P2 - Medio (puede ser legacy)
+**Tipo:** Core - Funciones Utilitarias
+**Ubicación:** `apps/database/ddl/schemas/gamilit/`
+**Estado:** ✅ **DOCUMENTADO** (actualizado 2025-11-11)
+**Prioridad:** P0 - Crítico
 
 #### Descripción
-Schema público de PostgreSQL. Uso indeterminado - requiere investigación para determinar si es legacy o funcional.
+Schema de funciones utilitarias compartidas por todos los schemas. Funciones de auditoría, validación, timestamps, etc.
+
+#### Estructura de Objetos
+```
+gamilit/
+├── _MAP.md
+├── functions/       (14 funciones utilitarias)
+└── views/           (1 vista helper)
+```
+
+#### Objetos Contenidos
+- **Functions:** 14
+  - audit_profile_changes, get_current_user_id, get_current_user_role
+  - initialize_user_stats, is_admin, now_mexico
+  - set_profile_defaults, update_classroom_member_count
+  - update_user_last_login, validate_email_format, validate_username
+  - update_user_stats_on_exercise_complete
+  - update_updated_at_column, validate_date_range
+- **Vistas:** 1 (number_series - helper para generación de secuencias)
+- **Tablas:** 0 (solo funciones utilitarias)
+
+#### Dependencias
+- **Depende de:** Ninguno (Nivel 0)
+- **Usado por:** Todos los schemas (utilidades cross-schema)
+
+#### Referencias SIMCO
+- **Documentación:** `docs/90-transversal/FUNCIONES-UTILITARIAS-GAMILIT.md`
+- **Backend:** Usado indirectamente por todos los módulos
+- **Referencia:** `gamilit/_MAP.md`
+
+---
+
+### 14. public
+
+**Tipo:** System - Schema Público PostgreSQL
+**Ubicación:** `apps/database/ddl/schemas/public/`
+**Estado:** ✅ **LIMPIADO** (actualizado 2025-11-11)
+**Prioridad:** P3 - Bajo
+
+#### Descripción
+Schema público de PostgreSQL. Actualmente VACÍO - objetos legacy fueron migrados a schemas específicos.
 
 #### Estructura de Objetos
 ```
 public/
-├── enums/           (ENUMs en public schema)
-├── functions/       (Funciones en public)
-├── indexes/         (Índices)
-├── tables/          (9 tablas - posible legacy)
-└── triggers/        (Triggers)
+└── (Sin objetos SQL actualmente)
 ```
 
 #### Objetos Contenidos
-- **Tablas:** 9 (⚠️ CANTIDAD SIGNIFICATIVA - requiere análisis)
-- **ENUMs:** Sí
-- **Functions:** Sí
-- **Triggers:** Sí
-- **Indexes:** Sí
+- **Tablas:** 0 (limpiado, migrado a schemas específicos)
+- **ENUMs:** 0 (migrados a schemas específicos)
+- **Functions:** 0 (migradas a gamilit o schemas específicos)
+- **Triggers:** 0
+- **Indexes:** 0
 
-#### ⚠️ Análisis Requerido
-**Posibles escenarios:**
-1. **Legacy Migration:** Tablas de sistema anterior no migradas completamente
-2. **Funcional:** Tablas compartidas o de utilidades que deben estar en public
-3. **PostgreSQL Default:** Extensiones o funcionalidades de PostgreSQL
-4. **Temporal:** Tablas temporales que deberían moverse a schemas específicos
+#### Nota
+Según INVENTORY-MASTER-REPORT.md, existían objetos mal ubicados en public que debían migrarse:
+- 33 ENUMs (89% del total) → Plan de migración en Fase 2B
+- 64 índices (86% del total) → Redistribuir a schemas correctos
+- 21 triggers duplicados → Consolidar
 
-#### ⚠️ Acción Requerida
-- [ ] Listar las 9 tablas en public
-- [ ] Investigar propósito de cada tabla
-- [ ] Revisar git history para entender origen
-- [ ] Determinar si son legacy o funcionales
-- [ ] Si legacy: Crear plan de migración o deprecación
-- [ ] Si funcional: Documentar propósito y justificación
-- [ ] Crear `public/README.md` con análisis
+**Estado actual:** Directorio existe pero sin archivos SQL (limpieza completa)
 
 #### Referencias SIMCO
-- **Documentación:** ⚠️ FALTANTE - Crear en `docs/03-desarrollo/base-de-datos/schemas/public/`
-- **Backend:** ¿Desconocido? - Requiere investigación
+- **Documentación:** `docs/90-transversal/inventarios-database/INVENTORY-MASTER-REPORT.md`
+- **Plan de correcciones:** `docs/90-transversal/inventarios-database/TRACKING-CORRECCIONES.md`
 
 ---
 
 ## 📊 Resumen Estadístico
 
+### Totales Generales
+
+| Métrica | Cantidad |
+|---------|----------|
+| **Total de Schemas** | 14 |
+| **Total de Objetos SQL** | 324 archivos |
+| **Total de Tablas** | 101 |
+| **Total de ENUMs** | 19 |
+| **Total de Funciones** | 62 |
+| **Total de Triggers** | 34 |
+| **Total de Índices** | 67 |
+| **Total de Vistas** | 12 |
+| **Total de Vistas Materializadas** | 4 |
+| **Total de Políticas RLS** | 24 |
+| **Total de FK Constraints** | 1 |
+
 ### Por Tipo de Schema
 
 | Categoría | Schemas | % |
 |-----------|---------|---|
-| **Core** | 3 (auth, auth_management, gamilit) | 23% |
-| **Features** | 5 (gamification, educational, progress, content, social) | 38% |
-| **System** | 3 (system_config, audit, storage) | 23% |
-| **Admin** | 1 (admin_dashboard) | 8% |
-| **Legacy/Unknown** | 1 (public) | 8% |
+| **Core** | 3 (auth, auth_management, gamilit) | 21% |
+| **Features** | 5 (gamification, educational, progress, content, social) | 36% |
+| **System** | 4 (system_config, audit, storage, lti_integration) | 29% |
+| **Admin** | 1 (admin_dashboard) | 7% |
+| **Legacy/Limpiado** | 1 (public) | 7% |
 
-### Por Estado de Documentación
+### Por Estado de Documentación (Actualizado 2025-11-11)
 
 | Estado | Schemas | % |
 |--------|---------|---|
-| ✅ Documentado | 10 | 77% |
-| ⚠️ No documentado | 3 | **23%** |
+| ✅ Completamente Documentado | 10 | 71% |
+| ⚠️ Parcialmente Documentado | 3 | 21% |
+| ✅ Limpiado (sin objetos) | 1 | 7% |
 
-### Schemas No Documentados (Prioridad)
+### Schemas Parcialmente Documentados
 
-1. **admin_dashboard** - P1 Alto (vistas de dashboard)
-2. **storage** - P2 Medio (ENUMs de almacenamiento)
-3. **public** - P2 Medio (requiere análisis - posible legacy)
+1. **admin_dashboard** - P1 Alto (6 vistas documentadas, falta README detallado)
+2. **storage** - P2 Medio (1 ENUM documentado, falta README detallado)
+3. **lti_integration** - P1 Alto (3 tablas documentadas, falta README detallado)
 
 ---
 

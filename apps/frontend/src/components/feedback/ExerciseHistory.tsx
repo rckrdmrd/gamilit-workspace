@@ -62,6 +62,7 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
         const mockAttempts: AttemptWithDetails[] = [
           {
             id: '1',
+            user_id: userId,
             exercise_id: exerciseId,
             attempt_number: 3,
             answer: 'option-c',
@@ -76,6 +77,7 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
           },
           {
             id: '2',
+            user_id: userId,
             exercise_id: exerciseId,
             attempt_number: 2,
             answer: 'option-b',
@@ -90,6 +92,7 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
           },
           {
             id: '3',
+            user_id: userId,
             exercise_id: exerciseId,
             attempt_number: 1,
             answer: 'option-a',

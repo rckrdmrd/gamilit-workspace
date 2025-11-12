@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authApi } from '@/lib/api/auth.api';
+import { useAuthStore } from '@/features/auth/store/authStore';
 import type {
   User,
   LoginCredentials,
@@ -46,7 +47,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
    */
   useEffect(() => {
     const loadUser = async () => {
-      const token = localStorage.getItem('access_token');
+      // CRITICAL: Check for logout flag FIRST to prevent race condition
+      const isLoggingOut = localStorage.getItem('is_logging_out');
+      if (isLoggingOut === 'true') {
+        console.log('🚪 [AuthProvider] is_logging_out flag detected - clearing all auth data');
+
+        // User is logging out, clear flag
+        localStorage.removeItem('is_logging_out');
+
+        // Ensure BOTH systems are completely cleared
+        setUser(null);
+        setError(null);
+        setIsLoading(false);
+
+        useAuthStore.setState({
+          user: null,
+          token: null,
+          refreshToken: null,
+          isAuthenticated: false,
+          sessionExpiresAt: null,
+          error: null,
+          isLoading: false
+        });
+
+        console.log('🚪 [AuthProvider] Auth cleared - user should stay on login page');
+        return;
+      }
+
+      const token = localStorage.getItem('auth-token');
 
       if (!token) {
         setIsLoading(false);
@@ -55,14 +83,47 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       try {
         const userData = await authApi.getProfile();
+
+        // CRITICAL: Sync BOTH auth systems on session restore
+        // 1. Update AuthContext
         setUser(userData);
         setError(null);
+
+        // 2. Update authStore
+        const refreshToken = localStorage.getItem('refresh-token');
+        useAuthStore.setState({
+          user: userData,
+          token: token,
+          refreshToken: refreshToken || null,
+          isAuthenticated: true,
+          sessionExpiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
+          isLoading: false,
+          error: null
+        });
+
+        console.log('✅ [AuthContext] Session restored - both systems synchronized', {
+          userId: userData.id,
+          email: userData.email
+        });
+
       } catch (err) {
         // Token is invalid or expired, clear storage
         console.error('Failed to load user profile:', err);
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('auth-token');
+        localStorage.removeItem('refresh-token');
+        localStorage.removeItem('auth-storage');
+
+        // Clear both systems
         setUser(null);
+        useAuthStore.setState({
+          user: null,
+          token: null,
+          refreshToken: null,
+          isAuthenticated: false,
+          sessionExpiresAt: null,
+          error: null,
+          isLoading: false
+        });
       } finally {
         setIsLoading(false);
       }
@@ -90,16 +151,46 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       const response = await authApi.login(credentials);
 
-      // If the API returns user data, use it; otherwise fetch profile
+      // Determine user data
+      let userData: User;
       if (response.user) {
-        setUser(response.user);
+        userData = response.user;
       } else {
-        const userData = await authApi.getProfile();
-        setUser(userData);
+        userData = await authApi.getProfile();
       }
+
+      // CRITICAL: Sync BOTH auth systems
+      // 1. Update AuthContext (React Context)
+      setUser(userData);
+
+      // 2. Update authStore (Zustand) - Direct state update to avoid duplicate API call
+      useAuthStore.setState({
+        user: userData,
+        token: response.token || localStorage.getItem('auth-token') || '',
+        refreshToken: response.refreshToken || localStorage.getItem('refresh-token') || '',
+        isAuthenticated: true,
+        sessionExpiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
+        isLoading: false,
+        error: null
+      });
+
+      console.log('✅ [AuthContext] Login successful - both systems synchronized', {
+        userId: userData.id,
+        email: userData.email,
+        role: userData.role
+      });
+
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || 'Login failed. Please check your credentials.';
       setError(errorMessage);
+
+      // Also update authStore error
+      useAuthStore.setState({
+        error: errorMessage,
+        isLoading: false,
+        isAuthenticated: false
+      });
+
       throw new Error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -130,16 +221,42 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       const response = await authApi.register(userData);
 
-      // Auto-login after successful registration
+      // Determine user data
+      let userProfile: User;
       if (response.user) {
-        setUser(response.user);
+        userProfile = response.user;
       } else {
-        const userProfile = await authApi.getProfile();
-        setUser(userProfile);
+        userProfile = await authApi.getProfile();
       }
+
+      // CRITICAL: Sync BOTH auth systems (auto-login after registration)
+      // 1. Update AuthContext
+      setUser(userProfile);
+
+      // 2. Update authStore
+      useAuthStore.setState({
+        user: userProfile,
+        token: response.token || localStorage.getItem('auth-token') || '',
+        refreshToken: response.refreshToken || localStorage.getItem('refresh-token') || '',
+        isAuthenticated: true,
+        sessionExpiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
+        isLoading: false,
+        error: null
+      });
+
+      console.log('✅ [AuthContext] Registration successful - both systems synchronized');
+
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || 'Registration failed. Please try again.';
       setError(errorMessage);
+
+      // Also update authStore error
+      useAuthStore.setState({
+        error: errorMessage,
+        isLoading: false,
+        isAuthenticated: false
+      });
+
       throw new Error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -164,9 +281,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.error('Logout error:', err);
       // Continue with logout even if API call fails
     } finally {
+      // Clear all auth data from localStorage
+      localStorage.removeItem('auth-token');
+      localStorage.removeItem('refresh-token');
+      localStorage.removeItem('auth-storage'); // Clear Zustand persist
+
+      // CRITICAL: Sync BOTH auth systems
+      // 1. Clear AuthContext
       setUser(null);
       setError(null);
       setIsLoading(false);
+
+      // 2. Clear authStore
+      useAuthStore.setState({
+        user: null,
+        token: null,
+        refreshToken: null,
+        isAuthenticated: false,
+        sessionExpiresAt: null,
+        error: null,
+        isLoading: false
+      });
+
+      console.log('✅ [AuthContext] Logout successful - both systems cleared');
     }
   };
 
@@ -186,10 +323,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setError(null);
       const userData = await authApi.getProfile();
+
+      // CRITICAL: Sync BOTH auth systems
+      // 1. Update AuthContext
       setUser(userData);
+
+      // 2. Update authStore (keep existing tokens)
+      const currentState = useAuthStore.getState();
+      useAuthStore.setState({
+        ...currentState,
+        user: userData,
+        error: null
+      });
+
+      console.log('✅ [AuthContext] User profile refreshed - both systems synchronized');
+
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || 'Failed to refresh user profile.';
       setError(errorMessage);
+
+      // Also update authStore error
+      useAuthStore.setState({
+        error: errorMessage
+      });
+
       throw new Error(errorMessage);
     }
   };

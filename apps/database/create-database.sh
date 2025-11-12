@@ -111,7 +111,7 @@ execute_sql_files() {
 
     log "$description ($file_count archivos)"
 
-    find "$dir" -name "$pattern" -type f | sort | while read -r file; do
+    find "$dir" -name "$pattern" -type f ! -path "*/_deprecated/*" ! -path "*/tests/*" | sort | while read -r file; do
         local filename=$(basename "$file")
         if ! execute_sql "$file" "  → $filename"; then
             log_error "Fallo al ejecutar: $filename"
@@ -146,6 +146,25 @@ if ! psql "$DATABASE_URL" -c "SELECT version();" >> "$LOG_FILE" 2>&1; then
     exit 1
 fi
 log_success "Conexión exitosa a la base de datos"
+log ""
+
+# ============================================================================
+# FASE 0: EXTENSIONS (REQUIRED)
+# ============================================================================
+
+log "============================================================================"
+log "FASE 0: HABILITANDO EXTENSIONES REQUERIDAS"
+log "============================================================================"
+
+# Enable pgcrypto extension (required for password hashing in seeds)
+psql "$DATABASE_URL" -c "CREATE EXTENSION IF NOT EXISTS pgcrypto;" >> "$LOG_FILE" 2>&1
+log_success "pgcrypto extension habilitada"
+
+# Enable uuid-ossp extension (if not already enabled)
+psql "$DATABASE_URL" -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";" >> "$LOG_FILE" 2>&1
+log_success "uuid-ossp extension habilitada"
+
+log_success "FASE 0 completada - Extensiones habilitadas"
 log ""
 
 # ============================================================================
@@ -232,6 +251,7 @@ execute_sql_files "$DDL_DIR/schemas/educational_content/enums" "*.sql" "ENUMs ed
 execute_sql_files "$DDL_DIR/schemas/educational_content/tables" "*.sql" "Tablas de contenido educativo"
 execute_sql_files "$DDL_DIR/schemas/educational_content/functions" "*.sql" "Funciones educativas"
 execute_sql_files "$DDL_DIR/schemas/educational_content/triggers" "*.sql" "Triggers educativos"
+execute_sql_files "$DDL_DIR/schemas/educational_content/indexes" "*.sql" "Índices educativos"
 execute_sql_files "$DDL_DIR/schemas/educational_content/rls-policies" "*.sql" "RLS Policies educativas"
 
 log_success "FASE 6 completada"
@@ -284,6 +304,7 @@ log "===========================================================================
 log "FASE 9: SOCIAL_FEATURES SCHEMA"
 log "============================================================================"
 
+execute_sql_files "$DDL_DIR/schemas/social_features/enums" "*.sql" "ENUMs sociales"
 execute_sql_files "$DDL_DIR/schemas/social_features/tables" "*.sql" "Tablas sociales"
 execute_sql_files "$DDL_DIR/schemas/social_features/functions" "*.sql" "Funciones sociales"
 execute_sql_files "$DDL_DIR/schemas/social_features/triggers" "*.sql" "Triggers sociales"
@@ -330,9 +351,11 @@ log "===========================================================================
 log "FASE 11: AUDIT_LOGGING SCHEMA"
 log "============================================================================"
 
+execute_sql_files "$DDL_DIR/schemas/audit_logging/enums" "*.sql" "ENUMs de auditoría"
 execute_sql_files "$DDL_DIR/schemas/audit_logging/tables" "*.sql" "Tablas de auditoría"
 execute_sql_files "$DDL_DIR/schemas/audit_logging/functions" "*.sql" "Funciones de auditoría"
 execute_sql_files "$DDL_DIR/schemas/audit_logging/triggers" "*.sql" "Triggers de auditoría"
+execute_sql_files "$DDL_DIR/schemas/audit_logging/indexes" "*.sql" "Índices de auditoría"
 execute_sql_files "$DDL_DIR/schemas/audit_logging/rls-policies" "*.sql" "RLS Policies de auditoría"
 
 log_success "FASE 11 completada"
@@ -395,6 +418,19 @@ log_warning "Saltando public schema - objetos legacy no necesarios para BD nueva
 log ""
 
 # ============================================================================
+# FASE 15.5: POST-DDL PERMISSIONS Y CONFIGURACIÓN
+# ============================================================================
+
+log "============================================================================"
+log "FASE 15.5: POST-DDL PERMISSIONS Y CONFIGURACIÓN"
+log "============================================================================"
+
+execute_sql "$DDL_DIR/99-post-ddl-permissions.sql" "Permisos finales y configuración post-DDL"
+
+log_success "FASE 15.5 completada"
+log ""
+
+# ============================================================================
 # FASE 16: SEED DATA - Carga de Datos Iniciales (PROD)
 # ============================================================================
 
@@ -442,9 +478,11 @@ execute_sql "$SEEDS_DIR/educational_content/05-exercises-module4.sql" "Seeds: Mo
 execute_sql "$SEEDS_DIR/educational_content/06-exercises-module5.sql" "Seeds: Module 5 - Creativo (3 exercises)"
 execute_sql "$SEEDS_DIR/educational_content/07-assessment-rubrics.sql" "Seeds: assessment_rubrics"
 execute_sql "$SEEDS_DIR/educational_content/08-difficulty_criteria.sql" "Seeds: difficulty_criteria"
+execute_sql "$SEEDS_DIR/educational_content/09-exercise_mechanic_mapping.sql" "Seeds: exercise_mechanic_mapping"
 
 # NOTA: Modelo JSONB puro - Seeds legacy movidos a _deprecated/
 # Total: 27 ejercicios production-ready con estructura JSONB completa
+# Total seeds PROD: 33 archivos (actualizado con 09-exercise_mechanic_mapping)
 
 # 16.5.1: Progress Tracking (progreso inicial de módulos)
 execute_sql "$SEEDS_DIR/progress_tracking/01-module_progress.sql" "Seeds: module_progress (initial)"
@@ -462,6 +500,7 @@ execute_sql "$SEEDS_DIR/gamification_system/06-user_ranks.sql" "Seeds: user_rank
 execute_sql "$SEEDS_DIR/gamification_system/07-ml_coins_transactions.sql" "Seeds: ml_coins_transactions"
 execute_sql "$SEEDS_DIR/gamification_system/08-user_achievements.sql" "Seeds: user_achievements"
 execute_sql "$SEEDS_DIR/gamification_system/09-comodines_inventory.sql" "Seeds: comodines_inventory"
+execute_sql "$SEEDS_DIR/gamification_system/10-missions-init.sql" "Seeds: missions initialization (student)"
 
 log_success "FASE 16 completada - Seeds de PROD cargados"
 log ""

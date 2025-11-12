@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Zap, Coins, TrendingUp, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/app/providers/AuthContext';
-import { DashboardLayout } from '@/shared/layouts/DashboardLayout';
+import { DashboardLayout } from '@/shared/layouts/_legacy/DashboardLayout';
 import { UserStatsCard } from '@/shared/components/UserStatsCard';
 import { AchievementsGrid } from '@/shared/components/AchievementsGrid';
 import { SkeletonStats } from '@/shared/components/Skeleton';
@@ -14,10 +14,10 @@ import type { UserAchievement } from '@/shared/types/achievement.types';
 import { AchievementStatus } from '@/shared/types/achievement.types';
 import type { Module } from '@/shared/types/educational.types';
 import type { ModuleProgress } from '@/shared/types/progress.types';
-import { MotivationalBanner } from '@/components/dashboard/MotivationalBanner';
-import { ModulesGrid } from '@/components/dashboard/ModulesGrid';
-import { PendingActivitiesList } from '@/components/dashboard/PendingActivitiesList';
-import { RecentActivityFeed } from '@/components/dashboard/RecentActivityFeed';
+import { MotivationalBanner } from '@/components/_legacy/dashboard-migration-sprint/MotivationalBanner';
+import { ModulesGrid } from '@/components/_legacy/dashboard-migration-sprint/ModulesGrid';
+import { PendingActivitiesList } from '@/components/_legacy/dashboard-migration-sprint/PendingActivitiesList';
+import { RecentActivityFeed } from '@/components/_legacy/dashboard-migration-sprint/RecentActivityFeed';
 
 /**
  * DashboardPage Component
@@ -214,7 +214,7 @@ export const DashboardPage: React.FC = () => {
         setIsLoadingDailyStats(true);
         setErrors(prev => { const { dailyStats, ...rest } = prev; return rest; }); // Clear error
         const data = await progressApi.getSessionStats(user.id, 'daily');
-        setDailyStats({ exercises_completed: data.exercises_completed });
+        setDailyStats({ exercises_completed: (data as any).exercises_completed ?? 0 });
       } catch (err) {
         console.error('Failed to load daily stats:', err);
         // Don't set error state for daily stats, just use 0 as fallback

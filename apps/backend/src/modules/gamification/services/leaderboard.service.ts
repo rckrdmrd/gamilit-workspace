@@ -47,9 +47,14 @@ export class LeaderboardService {
     const cacheKey = `leaderboard:global:${limit}:${offset}:${timePeriod || 'all_time'}`;
 
     // Try to get from cache first
-    const cachedData = await this.cacheManager.get(cacheKey);
-    if (cachedData) {
-      return cachedData;
+    try {
+      const cachedData = await this.cacheManager.get(cacheKey);
+      if (cachedData) {
+        return cachedData;
+      }
+    } catch (error) {
+      // Si el cache falla, continuar sin caché
+      console.warn('Cache get failed:', error);
     }
 
     // TODO: Implementar filtrado por time period (this_week, this_month, etc.)
@@ -75,7 +80,25 @@ export class LeaderboardService {
       .getRawMany();
 
     // Obtener información de perfiles para estos usuarios
-    const userIds = topUsers.map((u) => u.stats_user_id);
+    const userIds = topUsers.map((u) => u.stats_user_id).filter((id) => id);
+
+    // Si no hay userIds válidos, retornar resultado vacío
+    if (userIds.length === 0) {
+      const emptyResult = {
+        type: 'global',
+        entries: [],
+        totalEntries: 0,
+        lastUpdated: new Date().toISOString(),
+        timePeriod: timePeriod || 'all_time',
+      };
+      try {
+        await this.cacheManager.set(cacheKey, emptyResult, 60000);
+      } catch (error) {
+        console.warn('Cache set failed:', error);
+      }
+      return emptyResult;
+    }
+
     const profiles = await this.profileRepo
       .createQueryBuilder('profile')
       .select([
@@ -130,7 +153,12 @@ export class LeaderboardService {
     };
 
     // Store in cache for 60 seconds (60000 ms)
-    await this.cacheManager.set(cacheKey, result, 60000);
+    try {
+      await this.cacheManager.set(cacheKey, result, 60000);
+    } catch (error) {
+      // Si el cache falla, continuar sin caché
+      console.warn('Cache set failed:', error);
+    }
 
     return result;
   }
@@ -372,6 +400,137 @@ export class LeaderboardService {
       timePeriod: timePeriod || 'all_time',
       classroomId,
     };
+  }
+
+  /**
+   * Obtiene el leaderboard de amigos de un usuario específico
+   *
+   * @param userId - ID del usuario (UUID)
+   * @param limit - Cantidad de amigos a retornar
+   * @param offset - Offset para paginación
+   * @param timePeriod - Período de tiempo (future feature)
+   * @returns Leaderboard de amigos del usuario
+   */
+  async getFriendsLeaderboard(
+    userId: string,
+    limit: number = 100,
+    offset: number = 0,
+    timePeriod?: string,
+  ): Promise<any> {
+    // Cache key based on user and parameters
+    const cacheKey = `leaderboard:friends:${userId}:${limit}:${offset}:${timePeriod || 'all_time'}`;
+
+    // Try to get from cache first
+    const cachedData = await this.cacheManager.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // Query para obtener amigos aceptados del usuario
+    // Nota: Las amistades son bidireccionales, necesitamos ambas direcciones
+    const friendshipsQuery = `
+      SELECT friend_id as user_id
+      FROM social_features.friendships
+      WHERE user_id = $1 AND status = 'accepted'
+      UNION
+      SELECT user_id as user_id
+      FROM social_features.friendships
+      WHERE friend_id = $1 AND status = 'accepted'
+    `;
+
+    const friendships = await this.userStatsRepo.query(friendshipsQuery, [
+      userId,
+    ]);
+
+    const friendIds = friendships.map((f: any) => f.user_id);
+
+    if (friendIds.length === 0) {
+      return {
+        type: 'friends',
+        entries: [],
+        totalEntries: 0,
+        lastUpdated: new Date().toISOString(),
+        timePeriod: timePeriod || 'all_time',
+        userId,
+      };
+    }
+
+    // Query para obtener stats de los amigos
+    const topUsers = await this.userStatsRepo
+      .createQueryBuilder('stats')
+      .select([
+        'stats.user_id',
+        'stats.total_xp',
+        'stats.level',
+        'stats.current_rank',
+        'stats.current_streak',
+        'stats.achievements_earned',
+        'stats.exercises_completed',
+      ])
+      .where('stats.user_id IN (:...friendIds)', { friendIds })
+      .orderBy('stats.total_xp', 'DESC')
+      .addOrderBy('stats.level', 'DESC')
+      .addOrderBy('stats.exercises_completed', 'DESC')
+      .limit(limit)
+      .offset(offset)
+      .getRawMany();
+
+    // Obtener perfiles
+    const topUserIds = topUsers.map((u) => u.stats_user_id);
+    const profiles = await this.profileRepo
+      .createQueryBuilder('profile')
+      .select([
+        'profile.user_id',
+        'profile.display_name',
+        'profile.first_name',
+        'profile.last_name',
+        'profile.avatar_url',
+      ])
+      .where('profile.user_id IN (:...topUserIds)', { topUserIds })
+      .getRawMany();
+
+    const profileMap = new Map<string, any>();
+    profiles.forEach((p) => {
+      profileMap.set(p.profile_user_id, p);
+    });
+
+    // Construir entries
+    const entries = topUsers.map((user, index) => {
+      const profile = profileMap.get(user.stats_user_id);
+      const username =
+        profile?.profile_display_name ||
+        profile?.profile_first_name ||
+        'Usuario';
+
+      return {
+        rank: offset + index + 1,
+        userId: user.stats_user_id,
+        username,
+        firstName: profile?.profile_first_name || null,
+        lastName: profile?.profile_last_name || null,
+        avatar: profile?.profile_avatar_url || null,
+        totalXP: user.stats_total_xp,
+        level: user.stats_level,
+        currentRank: user.stats_current_rank,
+        streak: user.stats_current_streak,
+        achievementCount: user.stats_achievements_earned,
+        tasksCompleted: user.stats_exercises_completed,
+      };
+    });
+
+    const result = {
+      type: 'friends',
+      entries,
+      totalEntries: friendIds.length,
+      lastUpdated: new Date().toISOString(),
+      timePeriod: timePeriod || 'all_time',
+      userId,
+    };
+
+    // Store in cache for 60 seconds
+    await this.cacheManager.set(cacheKey, result, 60000);
+
+    return result;
   }
 
   /**

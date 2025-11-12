@@ -3,7 +3,9 @@
  * Centralized exports for all shared TypeScript types and interfaces
  */
 
-export * from './auth.types';
+// Export auth types (excluding Profile to avoid conflict)
+export type { User, AuthResponse, LoginCredentials, RegisterData } from './auth.types';
+// Export profile types (Profile comes from here)
 export * from './profile.types';
 export * from './progress.types';
 export * from './educational.types';

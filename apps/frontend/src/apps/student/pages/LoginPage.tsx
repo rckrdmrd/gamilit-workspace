@@ -62,6 +62,9 @@ export default function LoginPage() {
     setAccountStatusError({ type: null, message: '' });
 
     try {
+      // CRITICAL: Clear logout flag if present (user is now logging in)
+      localStorage.removeItem('is_logging_out');
+
       // Use real authentication
       await login(data.email, data.password);
 

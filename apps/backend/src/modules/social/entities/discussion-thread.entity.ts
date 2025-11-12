@@ -193,12 +193,17 @@ export class DiscussionThread {
    * Usuario que creó el thread (autor)
    * @description Relación con el usuario creador
    * @cascade DELETE (si se elimina el usuario, se eliminan sus threads)
+   *
+   * @note CROSS-DATABASE RELATION DISABLED
+   * @note DiscussionThread (social datasource) -> User (auth datasource)
+   * @note TypeORM no soporta relaciones entre datasources diferentes
+   * @note Usar created_by UUID para joins manuales en services
    */
-  @ManyToOne(() => User, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'created_by' })
-  author!: User;
+  // @ManyToOne(() => User, {
+  //   onDelete: 'CASCADE',
+  // })
+  // @JoinColumn({ name: 'created_by' })
+  // author!: User;
 
   // =============================================================================
   // MÉTODOS AUXILIARES

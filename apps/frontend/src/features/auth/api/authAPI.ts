@@ -41,12 +41,19 @@ const mapBackendUserToFrontend = (backendUser: any): User => {
 
 /**
  * Map backend auth response to frontend AuthResponse
- * Now includes expiresIn field
+ * Backend returns 'accessToken' but frontend expects 'token'
  */
 const mapBackendAuthResponse = (backendResponse: any): AuthResponse => {
+  console.log('🔄 [authAPI] Mapping backend response:', {
+    hasAccessToken: !!backendResponse.accessToken,
+    hasToken: !!backendResponse.token,
+    hasRefreshToken: !!backendResponse.refreshToken,
+    hasUser: !!backendResponse.user,
+  });
+
   return {
     user: mapBackendUserToFrontend(backendResponse.user),
-    token: backendResponse.token,
+    token: backendResponse.accessToken || backendResponse.token, // Backend uses 'accessToken'
     refreshToken: backendResponse.refreshToken,
     expiresIn: backendResponse.expiresIn,
   };
@@ -136,13 +143,20 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
     }
 
     // Real API call
-    const response = await apiClient.post<ApiResponse<any>>(
+    const response = await apiClient.post<any>(
       API_ENDPOINTS.auth.login,
       credentials
     );
 
-    // Extract and map backend response to frontend format
-    return mapBackendAuthResponse(response.data.data);
+    console.log('✅ [authAPI] Login response received:', {
+      hasData: !!response.data,
+      dataKeys: response.data ? Object.keys(response.data) : [],
+      hasUser: !!response.data?.user,
+      hasAccessToken: !!response.data?.accessToken,
+    });
+
+    // Backend returns data directly, not wrapped in { data: {...} }
+    return mapBackendAuthResponse(response.data);
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -176,13 +190,19 @@ export const register = async (registerData: RegisterData): Promise<AuthResponse
     };
 
     // Real API call
-    const response = await apiClient.post<ApiResponse<any>>(
+    const response = await apiClient.post<any>(
       API_ENDPOINTS.auth.register,
       backendRegisterData
     );
 
-    // Extract and map backend response to frontend format
-    return mapBackendAuthResponse(response.data.data);
+    console.log('✅ [authAPI] Register response received:', {
+      hasData: !!response.data,
+      hasUser: !!response.data?.user,
+      hasAccessToken: !!response.data?.accessToken,
+    });
+
+    // Backend returns data directly, not wrapped in { data: {...} }
+    return mapBackendAuthResponse(response.data);
   } catch (error) {
     throw handleAPIError(error);
   }

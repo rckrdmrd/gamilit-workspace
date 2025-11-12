@@ -544,7 +544,7 @@ export const getAllAchievements = async (): Promise<Achievement[]> => {
 export const getUserAchievements = async (userId: string): Promise<UserAchievement[]> => {
   try {
     const { data } = await apiClient.get<ApiResponse<UserAchievement[]>>(
-      `/gamification/achievements/${userId}`
+      `/gamification/users/${userId}/achievements`
     );
     return data.data;
   } catch (error) {

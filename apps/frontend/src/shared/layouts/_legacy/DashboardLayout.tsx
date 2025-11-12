@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/app/providers/AuthContext';
+import { useAuthStore } from '@/features/auth/store/authStore';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { GamifiedHeader } from '@/shared/components/layout/GamifiedHeader';
 import { GamilitSidebar } from '@/shared/components/layout/GamilitSidebar';
@@ -46,10 +47,58 @@ interface DashboardLayoutProps {
  */
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { user, logout } = useAuth();
+  const { logout: zustandLogout } = useAuthStore();
   const location = useLocation();
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [gamificationData, setGamificationData] = useState<UserGamificationData | null>(null);
+
+  // Handle logout with navigation - SYNCS BOTH auth systems
+  const handleLogout = () => {
+    console.log('🚪 [handleLogout] Starting IMMEDIATE logout...');
+
+    // STEP 1: Clear ALL localStorage IMMEDIATELY (nuclear option)
+    console.log('🚪 [handleLogout] Clearing ALL localStorage...');
+    const keysToRemove = [
+      'auth-token',
+      'refresh-token',
+      'auth-storage',
+      'is_logging_out'
+    ];
+
+    // Clear specific keys
+    keysToRemove.forEach(key => {
+      localStorage.removeItem(key);
+      console.log(`🚪 [handleLogout] Removed: ${key}`);
+    });
+
+    // STEP 2: Set logout flag AFTER clearing (so it's the only thing left)
+    localStorage.setItem('is_logging_out', 'true');
+    console.log('🚪 [handleLogout] Set is_logging_out flag');
+
+    // STEP 3: Clear auth state in memory IMMEDIATELY (synchronous)
+    console.log('🚪 [handleLogout] Clearing in-memory state...');
+
+    // Clear authStore using direct setState
+    useAuthStore.setState({
+      user: null,
+      token: null,
+      refreshToken: null,
+      isAuthenticated: false,
+      sessionExpiresAt: null,
+      error: null,
+      isLoading: false
+    });
+
+    // STEP 4: Force immediate redirect (no async, no waiting)
+    console.log('🚪 [handleLogout] FORCING redirect to /login NOW...');
+
+    // Use setTimeout with 0ms to ensure localStorage operations complete
+    setTimeout(() => {
+      console.log('🚪 [handleLogout] Executing redirect...');
+      window.location.replace('/login');
+    }, 0);
+  };
 
   // Fetch gamification data
   useEffect(() => {
@@ -115,7 +164,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         {/* GamifiedHeader - Detective Theme */}
         <GamifiedHeader
           user={user || undefined}
-          onLogout={logout}
+          onLogout={handleLogout}
           gamificationData={gamificationData}
           organizationName="GAMILIT"
           notifications={[]} // TODO: Fetch notifications

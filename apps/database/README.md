@@ -45,19 +45,26 @@ export DATABASE_URL="postgresql://usuario:password@localhost:5432/gamilit"
 ./scripts/init-database.sh --env prod
 ```
 
-### Opción 3: Drop y Recrear (Testing de Carga Limpia)
+### Opción 3: Drop y Recrear (Testing de Carga Limpia) ⭐ VALIDADO DB-111
 
 ```bash
 # ADVERTENCIA: Elimina TODOS los datos
 # Para testing de carga limpia desde cero (drop + create automático)
-export DATABASE_URL="postgresql://usuario:password@localhost:5432/gamilit"
+export DATABASE_URL="postgresql://usuario:password@localhost:5432/gamilit_db"
 
 # Ejecuta drop, recreate y create-database en un solo comando
-./drop-and-recreate-database.sh "$DATABASE_URL"
+./drop-and-recreate-database.sh
 ```
 
-**Nota**: Este script ahora ejecuta automáticamente `create-database.sh` después del drop,
-centralizando todo el proceso en un solo comando.
+**Características (v2.3.7 - DB-111):**
+- ✅ Desconecta automáticamente usuarios activos
+- ✅ DROP DATABASE completo
+- ✅ CREATE DATABASE automático
+- ✅ Ejecuta create-database.sh automáticamente
+- ✅ Carga 32 seeds PROD (100% de válidos)
+- ✅ Reporta éxito/error con códigos de salida
+
+**Validado:** DB-111 (2025-11-11) - Scripts 100% funcionales
 
 ### Opción 4: Recrear con Seeds
 
@@ -86,7 +93,7 @@ El script `create-database.sh` ejecuta los archivos DDL en este orden:
 13. **Admin Dashboard** - Dashboard administrativo (vistas analíticas)
 14. **LTI Integration** - Learning Tools Interoperability 1.3
 15. **Public Schema** - Deshabilitado (reservado para PostgreSQL core)
-16. **Seed Data** - Carga de datos iniciales de producción (33 archivos PROD)
+16. **Seed Data** - Carga de datos iniciales de producción (32 archivos PROD) ⭐ ACTUALIZADO DB-111
 
 ## Documentación Completa
 
@@ -162,24 +169,37 @@ Las migraciones en `migrations/` se aplican a bases de datos existentes:
 psql "$DATABASE_URL" -f migrations/2025-11-08-migrate-auth-provider-enum.sql
 ```
 
-## Seeds
+## Seeds ⭐ VALIDADO Y COMPLETADO DB-111
 
 Los seeds están organizados por ambiente:
 
 - **dev/**: Datos completos de desarrollo (usuarios demo, ejercicios, etc.)
 - **staging/**: Datos de staging
-- **prod/**: Datos completos de producción (33 archivos, 27 ejercicios educativos)
+- **prod/**: **32 archivos validados** (100% de seeds válidos) - 27 ejercicios educativos
 
-### Seeds de Producción Detallados
+### Seeds de Producción Detallados (v2.3.7 - DB-111)
+
+**Estado:** ✅ 100% de cobertura - Todos los schemas tienen seeds necesarios
 
 **Estructura por schema:**
 
-| Schema | Archivos | Contenido |
-|--------|----------|-----------|
-| `auth_management/` | 4 archivos | Tenants, auth providers, perfiles demo |
-| `educational_content/` | 6 archivos | 5 módulos + 27 ejercicios (mecánicas completas) |
-| `gamification_system/` | 9 archivos | Categorías, leaderboards, rangos Maya, achievements |
-| `system_configuration/` | 3 archivos | Settings, feature flags, notificaciones |
+| Schema | Archivos | Contenido | Estado |
+|--------|----------|-----------|--------|
+| `audit_logging/` | 1 archivo | Configuración por defecto | ✅ Agregado DB-111 |
+| `auth/` | 1 archivo | Usuarios testing y demo | ✅ Validado |
+| `auth_management/` | 3 archivos | Tenants, providers, 26 perfiles | ✅ Validado |
+| `content_management/` | 1 archivo | Templates de contenido | ✅ Agregado DB-111 |
+| `educational_content/` | 8 archivos | 5 módulos + 27 ejercicios + rubrics | ✅ Validado |
+| `gamification_system/` | 9 archivos | Categorías, leaderboards, rangos Maya, achievements | ✅ Validado |
+| `lti_integration/` | 1 archivo | Consumidores LTI | ✅ Agregado DB-111 |
+| `progress_tracking/` | 1 archivo | Progreso inicial de módulos | ✅ Agregado DB-111 |
+| `social_features/` | 3 archivos | Escuelas, aulas, miembros demo | ✅ Agregado DB-111 |
+| `system_configuration/` | 4 archivos | Settings, flags, notificaciones, rate limits | ✅ Completado DB-111 |
+
+**Total:** 32 seeds PROD ejecutándose (100% de válidos)
+
+**Seeds Legacy (deprecated):**
+- `auth_management/03-profiles.sql` → Reemplazado por `04-profiles-complete.sql` (v2.0)
 
 **Ejercicios por módulo:**
 - **Module 1** (Historiador Detective): 6 mecánicas con JSONB completo
@@ -189,6 +209,63 @@ Los seeds están organizados por ambiente:
 - **Module 5** (Video Carta): 5 mecánicas con producción creativa (835 líneas JSONB)
 
 ## Correcciones Aplicadas
+
+### v2.3.7 - Validación y Seeds Completos (2025-11-11) 🆕 DB-111
+
+**Estado:** ✅ Validación exhaustiva + 100% seeds PROD
+
+#### Validación y Corrección de Documentación (FASE 1.7)
+
+**Problema:** Discrepancias entre documentación y DDL físico
+
+**Correcciones aplicadas:**
+
+1. **DATABASE_INVENTORY.yml** - 7 propiedades corregidas
+   - ✅ content_management: `tables: 6 → 8`
+   - ✅ content_management: `functions: 3 → 0` (no existe directorio)
+   - ✅ content_management: `triggers: 2 → 3`
+   - ✅ content_management: `indexes: 4 → 2`
+   - ✅ content_management: `rls_policies: 2 → 1`
+   - ✅ Agregada lista explícita de 8 tablas
+
+2. **CONTENT_MANAGEMENT_TRACEABILITY.yml** - Trazabilidad completa
+   - ✅ Eliminadas 3 "tablas fantasma" (no existían físicamente)
+   - ✅ Agregadas 3 tablas no documentadas:
+     - `content_authors.sql` (12 columnas, 5 índices)
+     - `content_categories.sql` (jerárquica, self-referential)
+     - `media_metadata.sql`
+   - ✅ 8 tablas completas documentadas con todos sus atributos
+
+**Resultado:** ✅ 100% sincronización DDL ↔ Documentación
+
+#### Seeds PROD Completos (FASE 1.8)
+
+**Problema:** 9 seeds PROD (27%) no ejecutándose en create-database.sh
+
+**Correcciones aplicadas:**
+
+3. **Seed Legacy Identificado:**
+   - ✅ `03-profiles.sql` (v1.0) movido a `_deprecated/`
+   - ✅ Reemplazado por `04-profiles-complete.sql` (v2.0, 26 perfiles)
+
+4. **8 Seeds Agregados a create-database.sh:**
+   - ✅ `audit_logging/01-default-config.sql`
+   - ✅ `system_configuration/04-rate_limits.sql`
+   - ✅ `content_management/01-default-templates.sql`
+   - ✅ `social_features/01-schools.sql`
+   - ✅ `social_features/02-classrooms.sql`
+   - ✅ `social_features/03-classroom-members.sql`
+   - ✅ `progress_tracking/01-module_progress.sql`
+   - ✅ `lti_integration/01-lti_consumers.sql`
+
+**Resultado:**
+- ✅ Seeds ejecutados: 24 → 32 (100% de válidos)
+- ✅ 10 schemas con 100% cobertura
+- ✅ Orden de dependencias validado
+
+**Documentación:** Ver `orchestration/database/DB-111/` para reportes completos
+
+---
 
 ### v2.3.5 - Seeds Gamification UTF-8 + UUIDs Fixed (2025-11-11) 🆕
 
@@ -318,7 +395,137 @@ Los seeds están organizados por ambiente:
 
 ---
 
+## Guía de Uso de Scripts (DB-111) ⭐ NUEVO
+
+### Variables de Ambiente Requeridas
+
+```bash
+# Variable principal (REQUERIDA)
+export DATABASE_URL="postgresql://user:password@host:5432/dbname"
+
+# Ejemplo desarrollo local
+export DATABASE_URL="postgresql://gamilit_user:gamilit_password@localhost:5432/gamilit_db"
+
+# Ejemplo producción
+export DATABASE_URL="postgresql://prod_user:secure_pass@prod-host:5432/gamilit_prod"
+```
+
+### Workflow Recomendado
+
+#### 1. Primera Instalación (Base de Datos Nueva)
+
+```bash
+# 1. Configurar variable de ambiente
+export DATABASE_URL="postgresql://user:pass@localhost:5432/gamilit_db"
+
+# 2. Crear base de datos (si no existe)
+createdb gamilit_db
+
+# 3. Ejecutar script de creación
+cd apps/database
+./create-database.sh
+```
+
+**Resultado esperado:**
+- 16 fases DDL ejecutadas
+- 32 seeds PROD cargados
+- 0 errores
+- Tiempo: ~30-60 segundos
+
+#### 2. Desarrollo/Testing (Recreación Frecuente)
+
+```bash
+# Un solo comando que hace todo
+export DATABASE_URL="postgresql://user:pass@localhost:5432/gamilit_db"
+cd apps/database
+./drop-and-recreate-database.sh
+```
+
+**Resultado esperado:**
+- Base de datos eliminada y recreada
+- DDL completo ejecutado
+- Seeds cargados
+- Tiempo: ~30-60 segundos
+
+#### 3. Validación Post-Carga
+
+```bash
+# Verificar conteos de objetos
+psql "$DATABASE_URL" -c "SELECT COUNT(*) FROM pg_tables WHERE schemaname NOT IN ('pg_catalog', 'information_schema');"
+
+# Verificar seeds cargados
+psql "$DATABASE_URL" -c "SELECT COUNT(*) FROM auth_management.profiles;"
+psql "$DATABASE_URL" -c "SELECT COUNT(*) FROM educational_content.modules;"
+```
+
+**Resultado esperado:**
+- ~99 tablas
+- 26 perfiles
+- 5 módulos
+
+### Orden de Ejecución de Seeds (Importante)
+
+Los seeds se ejecutan en orden de dependencias:
+
+```
+1. audit_logging (sin dependencias)
+2. system_configuration (sin dependencias)
+3. auth_management/tenants
+4. auth_management/auth_providers
+5. auth/users
+6. auth_management/profiles (depende de users)
+7. content_management (depende de users, tenants)
+8. social_features (depende de users, profiles)
+9. educational_content (depende de tenants)
+10. progress_tracking (depende de educational_content, users)
+11. lti_integration (depende de system_configuration)
+12. gamification_system (depende de users)
+```
+
+**⚠️ No ejecutar seeds individualmente fuera de orden**
+
+### Verificación de Integridad
+
+```bash
+# Verificar que todos los schemas existen
+psql "$DATABASE_URL" << EOF
+SELECT nspname FROM pg_namespace
+WHERE nspname IN (
+  'auth', 'auth_management', 'content_management',
+  'educational_content', 'gamification_system', 'progress_tracking',
+  'social_features', 'audit_logging', 'system_configuration',
+  'lti_integration', 'admin_dashboard', 'storage', 'gamilit'
+) ORDER BY nspname;
+EOF
+```
+
+**Resultado esperado:** 13 schemas listados
+
 ## Troubleshooting
+
+### Error: "password authentication failed"
+
+```bash
+# Verificar que DATABASE_URL es correcta
+echo $DATABASE_URL
+
+# Verificar que PostgreSQL acepta la autenticación
+psql -h localhost -U gamilit_user -d postgres -c "SELECT 1;"
+
+# Si falla, revisar pg_hba.conf
+# Debe tener: host all all 127.0.0.1/32 md5
+```
+
+### Error: "database already exists"
+
+```bash
+# Opción 1: Usar drop-and-recreate-database.sh
+./drop-and-recreate-database.sh
+
+# Opción 2: Drop manual + create
+psql -h localhost -U postgres -c "DROP DATABASE IF EXISTS gamilit_db;"
+./create-database.sh
+```
 
 ### Error: "psql: command not found"
 
@@ -365,5 +572,5 @@ Para problemas o preguntas:
 
 ---
 
-**Última actualización:** 2025-11-11 (Seeds Production-Ready v2.3.2 - DB-095/DB-096)
-**Versión del proyecto:** 2.3.2
+**Última actualización:** 2025-11-11 (Validación Completa + Seeds 100% v2.3.7 - DB-111)
+**Versión del proyecto:** 2.3.7

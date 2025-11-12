@@ -77,12 +77,25 @@ export function useUserModules(): UseUserModulesReturn {
         firstModule: data[0],
       });
 
+      // Helper function to map backend difficulty to frontend difficulty
+      const mapDifficulty = (backendDifficulty: string): 'easy' | 'medium' | 'hard' => {
+        const difficultyMap: Record<string, 'easy' | 'medium' | 'hard'> = {
+          'beginner': 'easy',
+          'intermediate': 'medium',
+          'advanced': 'hard',
+          'easy': 'easy',
+          'medium': 'medium',
+          'hard': 'hard',
+        };
+        return difficultyMap[backendDifficulty] || 'medium';
+      };
+
       // Transform the data to match the expected UserModuleData interface
       const transformedData: UserModuleData[] = data.map((module: any) => ({
         id: module.id,
         title: module.title,
         description: module.description,
-        difficulty: module.difficulty || 'medium',
+        difficulty: mapDifficulty(module.difficulty || 'medium'),
         status: module.status || 'available',
         progress: module.progress || 0,
         totalExercises: module.totalExercises || 0,
@@ -90,7 +103,7 @@ export function useUserModules(): UseUserModulesReturn {
         estimatedTime: module.estimatedTime || 60,
         xpReward: module.xpReward || 100,
         icon: module.icon || '📚',
-        category: module.category || 'science',
+        category: Array.isArray(module.category) ? module.category.join(', ') : (module.category || 'science'),
         mlCoinsReward: module.mlCoinsReward || 50,
       }));
 

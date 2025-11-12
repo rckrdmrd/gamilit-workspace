@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { DraggableItem, DropZone, CategoryBadge, InlineFeedback } from '@shared/components/exercises';
+// TODO: Implement these exercise components
+// import { DraggableItem, DropZone, CategoryBadge, InlineFeedback } from '@shared/components/exercises';
 import { cn } from '@shared/utils/cn';
 
 export interface MatchingPair {

@@ -2,12 +2,12 @@
 -- Seed Data: Exercises Module 5 - Producción Creativa (PRODUCTION)
 -- =====================================================
 -- Description: 3 ejercicios creativos del Módulo 5 COMPLETOS
--- Module: MOD-05-CREATIVO
+-- Module: MOD-05-PRODUCCION
 -- Exercises: Diario Multimedia, Cómic Digital, Video-Carta
 -- Created by: SA-SEEDS-EDUCATIONAL
 -- Date: 2025-11-11
 -- Status: PRODUCTION
--- Updated: 2025-11-11 (Expansión completa)
+-- Updated: 2025-11-11 (Expansión completa + corrección código módulo)
 -- =====================================================
 
 SET search_path TO educational_content, public;
@@ -16,10 +16,10 @@ DO $$
 DECLARE
     mod_id UUID;
 BEGIN
-    SELECT id INTO mod_id FROM educational_content.modules WHERE module_code = 'MOD-05-CREATIVO';
+    SELECT id INTO mod_id FROM educational_content.modules WHERE module_code = 'MOD-05-PRODUCCION';
 
     IF mod_id IS NULL THEN
-        RAISE EXCEPTION 'Módulo MOD-05-CREATIVO no encontrado. Ejecutar primero 01-modules.sql';
+        RAISE EXCEPTION 'Módulo MOD-05-PRODUCCION no encontrado. Ejecutar primero 01-modules.sql';
     END IF;
 
     -- ========================================================================
@@ -428,7 +428,7 @@ BEGIN
                     "visualDescription": "Split panel: Arriba - Marie presentando radio a médicos en conferencia. Abajo - Médico usando radioterapia para tratar paciente con tumor. Conexión visual entre el descubrimiento y su aplicación.",
                     "keyElements": ["radio en contenedor", "médicos interesados", "tratamiento médico", "esperanza"],
                     "suggestedDialogue": {
-                        "Médico": "Con este 'radio' podemos atacar tumores sin cirugía invasiva.",
+                        "Médico": "Con este ''radio'' podemos atacar tumores sin cirugía invasiva.",
                         "Marie": "La ciencia debe servir a la humanidad."
                     },
                     "narration": "El descubrimiento de Marie revoluciona la medicina. La radioterapia salva miles de vidas.",
@@ -814,22 +814,21 @@ BEGIN
     SET
         total_exercises = 3,
         metadata = jsonb_set(
-            COALESCE(metadata, '{}'::jsonb),
-            '{exercises_loaded}',
-            'true'::jsonb
-        ),
-        metadata = jsonb_set(
-            metadata,
+            jsonb_set(
+                COALESCE(metadata, '{}'::jsonb),
+                '{exercises_loaded}',
+                'true'::jsonb
+            ),
             '{last_seed_update}',
             to_jsonb(gamilit.now_mexico())
         ),
         updated_at = gamilit.now_mexico()
     WHERE id = mod_id;
 
-    RAISE NOTICE '✅ Módulo 5 (MOD-05-CREATIVO): 3 ejercicios COMPLETOS cargados exitosamente';
+    RAISE NOTICE '✅ Módulo 5 (MOD-05-PRODUCCION): 3 ejercicios COMPLETOS cargados exitosamente';
     RAISE NOTICE '   - Diario Multimedia: Templates completos, 5 prompts detallados';
     RAISE NOTICE '   - Cómic Digital: 6 story beats, guías visuales, assets';
     RAISE NOTICE '   - Video-Carta: Guión completo, 6 temas, tips de entrega';
-    RAISE NOTICE '✅ Module 5 expandido de 97 a 545 líneas (+462%)';
+    RAISE NOTICE '✅ Module 5 expandido de 97 a 545 líneas (+462%%)';
 
 END $$;

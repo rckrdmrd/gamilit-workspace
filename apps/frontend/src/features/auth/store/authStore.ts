@@ -38,15 +38,24 @@ interface AuthState {
  */
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
-      // Initial state
-      user: null,
-      token: null,
-      refreshToken: null,
-      isAuthenticated: false,
-      isLoading: false,
-      error: null,
-      sessionExpiresAt: null,
+    (set, get) => {
+      // Log on store initialization
+      console.log('🔄 [authStore] Initializing store...');
+      const storedData = localStorage.getItem('auth-storage');
+      console.log('💾 [authStore] Stored data in localStorage:', {
+        hasStoredData: !!storedData,
+        storedDataPreview: storedData ? storedData.substring(0, 100) + '...' : null,
+      });
+
+      return {
+        // Initial state
+        user: null,
+        token: null,
+        refreshToken: null,
+        isAuthenticated: false,
+        isLoading: false,
+        error: null,
+        sessionExpiresAt: null,
 
       // Login action
       login: async (email: string, password: string) => {
@@ -126,6 +135,7 @@ export const useAuthStore = create<AuthState>()(
           // Clear tokens from localStorage
           localStorage.removeItem('auth-token');
           localStorage.removeItem('refresh-token');
+          localStorage.removeItem('auth-storage'); // Clear Zustand persist
 
           // Clear state
           set({
@@ -228,10 +238,11 @@ export const useAuthStore = create<AuthState>()(
           throw error;
         }
       }
-    }),
-    {
-      name: 'auth-storage',
-      storage: createJSONStorage(() => localStorage),
+    };
+  },
+  {
+    name: 'auth-storage',
+    storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         user: state.user,
         token: state.token,

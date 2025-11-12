@@ -15,7 +15,7 @@ interface ExerciseProps {
   userId: string;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
-  onProgressUpdate?: (progress: number) => void;
+  onProgressUpdate?: (progress: { currentStep: number; totalSteps: number; score: number; hintsUsed: number; timeSpent: number; }) => void;
   initialData?: Partial<ExerciseState>;
   difficulty?: 'easy' | 'medium' | 'hard';
 }

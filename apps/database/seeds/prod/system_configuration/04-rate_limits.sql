@@ -191,27 +191,28 @@ VALUES
         'ML Coins transactions - 500 per hour per user'
     ),
 
-    -- Parent Portal
-    (
-        'operation',
-        'parent_report_generate',
-        10,
-        3600,
-        'user',
-        true,
-        15,
-        'Parent report generation - 10 per hour per parent'
-    ),
-    (
-        'operation',
-        'parent_student_link',
-        20,
-        86400,
-        'user',
-        true,
-        25,
-        'Parent-student linking - 20 per day per parent'
-    ),
+    -- ⚠️ FUTURE: Parent Portal (Extension EXT-010, v1.3) - Rate limits anticipados
+    -- Descomentarlos cuando se active Extension EXT-010
+    -- (
+    --     'operation',
+    --     'parent_report_generate',
+    --     10,
+    --     3600,
+    --     'user',
+    --     true,
+    --     15,
+    --     'Parent report generation - 10 per hour per parent'
+    -- ),
+    -- (
+    --     'operation',
+    --     'parent_student_link',
+    --     20,
+    --     86400,
+    --     'user',
+    --     true,
+    --     25,
+    --     'Parent-student linking - 20 per day per parent'
+    -- ),
 
     -- LTI Integration
     (

@@ -78,7 +78,7 @@ export const ShopItem: React.FC<ShopItemProps> = ({ item, onPurchase }) => {
 
         {/* Tags */}
         <div className="flex flex-wrap gap-1 mb-4">
-          {item.tags.slice(0, 3).map((tag) => (
+          {item.tags?.slice(0, 3).map((tag) => (
             <span
               key={tag}
               className="px-2 py-1 bg-detective-bg text-detective-xs text-detective-text-secondary rounded-full"

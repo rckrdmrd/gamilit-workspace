@@ -59,7 +59,7 @@ describe('Ranks Integration Tests', () => {
     prestigeLevel: 0,
     multiplier: 1.0,
     mlCoinsEarned: 0,
-    totalMLCoinsEarned: 0,
+    mlCoinsEarned: 0,
     lastRankUp: new Date(),
     lastActivityDate: new Date(),
   };

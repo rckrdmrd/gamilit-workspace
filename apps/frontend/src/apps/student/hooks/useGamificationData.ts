@@ -83,7 +83,7 @@ export function useGamificationData(userId: string) {
       ] = await Promise.all([
         apiClient.get(`/gamification/ranks/user/${userId}`),
         apiClient.get(`/gamification/coins/${userId}`),
-        apiClient.get(`/gamification/achievements/${userId}?limit=6`),
+        apiClient.get(`/gamification/users/${userId}/achievements?limit=6`),
         apiClient.get(`/gamification/leaderboard/user/${userId}/position`),
         apiClient.get(`/gamification/missions/daily`),
         apiClient.get(`/gamification/streaks/${userId}`),

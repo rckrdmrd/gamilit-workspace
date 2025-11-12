@@ -105,7 +105,7 @@ export const EmparejamientoExerciseDragDrop: React.FC<EmparejamientoDragDropProp
     };
 
     const score = calculateScore(correctCount, exercise.pairs.length);
-    setCurrentScore(score.totalScore);
+    setCurrentScore(score);
 
     const isSuccess = correctCount === exercise.pairs.length;
 
@@ -153,10 +153,14 @@ export const EmparejamientoExerciseDragDrop: React.FC<EmparejamientoDragDropProp
           </div>
           <div className="flex items-center gap-3">
             <HintSystem
-              hints={exercise.hints.map(h => h.text)}
+              hints={exercise.hints}
               onHintUsed={(hintIndex) => {
                 if (exercise.hints[hintIndex]) {
-                  handleUseHint(exercise.hints[hintIndex]);
+                  handleUseHint({
+                    id: `hint-${hintIndex}`,
+                    text: exercise.hints[hintIndex],
+                    cost: 10
+                  });
                 }
               }}
             />

@@ -424,14 +424,15 @@ export enum ProcessingStatusEnum {
 }
 
 /**
- * Tipos de ejercicios (35 mecánicas diferentes)
+ * Tipos de ejercicios (33 mecánicas diferentes)
  * @see DDL: apps/database/ddl/schemas/educational_content/enums/exercise_type.sql
  * @note Module 1: Comprensión Literal (5 mecánicas)
  * @note Module 2: Comprensión Inferencial (5 mecánicas)
  * @note Module 3: Comprensión Crítica (5 mecánicas)
  * @note Module 4: Lectura Digital (9 mecánicas)
  * @note Module 5: Producción Lectora (3 mecánicas)
- * @note Auxiliares (8 mecánicas)
+ * @note Auxiliares (6 mecánicas)
+ * @version 1.1 (2025-11-11) - Removidas 2 mecánicas huérfanas sin implementación (diario_interactivo, resumen_visual)
  * @version 1.0 - Sincronizado con DDL educational_content.exercise_type
  */
 export enum ExerciseTypeEnum {
@@ -473,15 +474,85 @@ export enum ExerciseTypeEnum {
   COMIC_DIGITAL = 'comic_digital',
   VIDEO_CARTA = 'video_carta',
 
-  // Auxiliares
+  // Auxiliares (6 mecánicas)
+  // UPDATED 2025-11-11: Reducido de 8 a 6 mecánicas
   COMPRENSION_AUDITIVA = 'comprension_auditiva',
   COLLAGE_PRENSA = 'collage_prensa',
   TEXTO_MOVIMIENTO = 'texto_movimiento',
   CALL_TO_ACTION = 'call_to_action',
   VERDADERO_FALSO = 'verdadero_falso',
   COMPLETAR_ESPACIOS = 'completar_espacios',
-  DIARIO_INTERACTIVO = 'diario_interactivo',
-  RESUMEN_VISUAL = 'resumen_visual',
+  // REMOVIDO 2025-11-11: DIARIO_INTERACTIVO, RESUMEN_VISUAL (mecánicas huérfanas sin implementación)
+}
+
+/**
+ * Categorías Pedagógicas (Sistema Dual - ADR-008)
+ * @see DDL: educational_content.exercise_mechanic_mapping.mechanic_category
+ * @see ADR-008: Sistema Dual exercise_type + Categorías Pedagógicas
+ * @version 1.0 (2025-11-11) - DB-113: Sistema Dual implementado
+ *
+ * 7 categorías pedagógicas universales que clasifican competencias de lectoescritura.
+ * Permiten búsqueda de ejercicios por área pedagógica sin afectar implementación específica.
+ */
+export enum PedagogicalCategoryEnum {
+  VOCABULARIO = 'vocabulario',
+  GRAMATICA = 'gramatica',
+  LECTURA = 'lectura',
+  ESCRITURA = 'escritura',
+  AUDIO = 'audio',
+  PRONUNCIACION = 'pronunciacion',
+  CULTURA = 'cultura',
+}
+
+/**
+ * Niveles de Taxonomía de Bloom (Sistema Dual - ADR-008)
+ * @see DDL: educational_content.exercise_mechanic_mapping.bloom_level
+ * @see https://cft.vanderbilt.edu/guides-sub-pages/blooms-taxonomy/
+ * @version 1.0 (2025-11-11) - DB-113: Sistema Dual implementado
+ *
+ * 6 niveles cognitivos jerárquicos que clasifican profundidad de aprendizaje.
+ * Útil para progresión curricular y recomendaciones adaptativas.
+ */
+export enum BloomLevelEnum {
+  RECORDAR = 'recordar',        // Recuperar información de memoria
+  COMPRENDER = 'comprender',    // Explicar ideas o conceptos
+  APLICAR = 'aplicar',          // Usar información en situaciones nuevas
+  ANALIZAR = 'analizar',        // Descomponer información en partes
+  EVALUAR = 'evaluar',          // Hacer juicios basados en criterios
+  CREAR = 'crear',              // Producir trabajo nuevo u original
+}
+
+/**
+ * Carga Cognitiva (Sistema Dual - ADR-008)
+ * @see DDL: educational_content.exercise_mechanic_mapping.cognitive_load
+ * @see Teoría de Carga Cognitiva (Sweller, 1988)
+ * @version 1.0 (2025-11-11) - DB-113: Sistema Dual implementado
+ *
+ * Nivel de esfuerzo mental requerido por el ejercicio.
+ * Ayuda a equilibrar asignaciones y evitar sobrecarga cognitiva.
+ */
+export enum CognitiveLoadEnum {
+  BAJO = 'bajo',      // Ejercicios simples, respuesta rápida, memoria
+  MEDIO = 'medio',    // Ejercicios de comprensión, aplicación
+  ALTO = 'alto',      // Ejercicios de análisis, evaluación, creación
+}
+
+/**
+ * Tipos de Interacción (Sistema Dual - ADR-008)
+ * @see DDL: educational_content.exercise_mechanic_mapping.interaction_type
+ * @version 1.0 (2025-11-11) - DB-113: Sistema Dual implementado
+ *
+ * Modalidad de interacción del usuario con el ejercicio.
+ * Útil para filtrar por tipo de actividad y accesibilidad.
+ */
+export enum InteractionTypeEnum {
+  DRAG_DROP = 'drag_drop',              // Arrastrar y soltar elementos
+  TEXT_INPUT = 'text_input',            // Entrada de texto libre
+  SELECTION = 'selection',              // Selección de opciones
+  AUDIO_RECORDING = 'audio_recording',  // Grabación de audio
+  DRAWING = 'drawing',                  // Dibujo o anotación visual
+  VIDEO_INTERACTION = 'video_interaction', // Interacción con video
+  MULTIMODAL = 'multimodal',            // Combinación de varios tipos
 }
 
 /**

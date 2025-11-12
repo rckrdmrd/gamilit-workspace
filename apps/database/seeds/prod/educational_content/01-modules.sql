@@ -27,7 +27,6 @@ SET search_path TO educational_content, public;
 -- =====================================================
 
 INSERT INTO educational_content.modules (
-    id,
     tenant_id,
     title,
     description,
@@ -45,7 +44,6 @@ INSERT INTO educational_content.modules (
 ) VALUES
 -- Módulo 1: Comprensión Literal
 (
-    'd7e8f9a0-1b2c-3d4e-5f6a-7b8c9d0e1f20'::uuid,
     NULL,  -- tenant_id NULL = disponible para todos
     'Módulo 1: Comprensión Literal',
     'Identifica información explícita en textos sobre la vida de Marie Curie',
@@ -63,7 +61,6 @@ INSERT INTO educational_content.modules (
 ),
 -- Módulo 2: Comprensión Inferencial
 (
-    'e8f9a0b1-2c3d-4e5f-6a7b-8c9d0e1f2a30'::uuid,
     NULL,
     'Módulo 2: Comprensión Inferencial',
     'Deduce información implícita y relaciones causa-efecto en la vida de Marie Curie',
@@ -81,7 +78,6 @@ INSERT INTO educational_content.modules (
 ),
 -- Módulo 3: Comprensión Crítica
 (
-    'f9a0b1c2-3d4e-5f6a-7b8c-9d0e1f2a3b40'::uuid,
     NULL,
     'Módulo 3: Comprensión Crítica',
     'Evalúa y analiza críticamente la información sobre Marie Curie',
@@ -99,7 +95,6 @@ INSERT INTO educational_content.modules (
 ),
 -- Módulo 4: Lectura Digital
 (
-    'a0b1c2d3-4e5f-6a7b-8c9d-0e1f2a3b4c50'::uuid,
     NULL,
     'Módulo 4: Lectura Digital',
     'Desarrolla habilidades de lectura en medios digitales con contenido de Marie Curie',
@@ -117,7 +112,6 @@ INSERT INTO educational_content.modules (
 ),
 -- Módulo 5: Producción de Textos
 (
-    'b1c2d3e4-5f6a-7b8c-9d0e-1f2a3b4c5d60'::uuid,
     NULL,
     'Módulo 5: Producción de Textos',
     'Crea textos diversos basados en la vida y obra de Marie Curie',
@@ -133,11 +127,10 @@ INSERT INTO educational_content.modules (
     gamilit.now_mexico(),
     gamilit.now_mexico()
 )
-ON CONFLICT (id) DO UPDATE SET
+ON CONFLICT (module_code) DO UPDATE SET
     title = EXCLUDED.title,
     description = EXCLUDED.description,
     order_index = EXCLUDED.order_index,
-    module_code = EXCLUDED.module_code,
     status = EXCLUDED.status,
     is_published = EXCLUDED.is_published,
     updated_at = gamilit.now_mexico();

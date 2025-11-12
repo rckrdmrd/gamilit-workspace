@@ -2,10 +2,10 @@
 -- Seed: social_features.schools (PROD)
 -- Description: Escuelas demo para testing y demostraciones
 -- Environment: PRODUCTION
--- Dependencies: None
+-- Dependencies: auth_management.tenants
 -- Order: 01
 -- Created: 2025-01-11
--- Version: 1.0
+-- Version: 2.0 (Actualizado para alineación con DDL)
 -- =====================================================
 --
 -- ESCUELAS DEMO INCLUIDAS:
@@ -15,9 +15,38 @@
 -- TOTAL: 2 escuelas demo
 --
 -- IMPORTANTE: Estas escuelas son para testing y demos.
+--
+-- CAMBIOS v2.0:
+-- - Agregado tenant_id (requerido)
+-- - Removido type (columna legacy)
+-- - Cambiado state → region (nuevo nombre de columna)
+-- - Removido principal_name, contact_name, contact_email (legacy)
+-- - Removido status (columna legacy)
+-- - Agregado short_name, description
+-- - Actualizados queries de verificación
 -- =====================================================
 
-SET search_path TO social_features, public;
+SET search_path TO social_features, auth_management, public;
+
+-- =====================================================
+-- Obtener tenant_id para las escuelas
+-- =====================================================
+
+DO $$
+DECLARE
+    v_tenant_id UUID;
+BEGIN
+    -- Obtener el tenant principal de GAMILIT Platform
+    SELECT id INTO v_tenant_id
+    FROM auth_management.tenants
+    WHERE name = 'GAMILIT Platform'
+    LIMIT 1;
+
+    IF v_tenant_id IS NULL THEN
+        RAISE EXCEPTION 'Tenant "GAMILIT Platform" no encontrado. Ejecutar primero seed de tenants.';
+    END IF;
+
+    RAISE NOTICE 'Usando tenant_id: %', v_tenant_id;
 
 -- =====================================================
 -- INSERT: Escuelas Demo
@@ -25,23 +54,21 @@ SET search_path TO social_features, public;
 
 INSERT INTO social_features.schools (
     id,
+    tenant_id,
     name,
     code,
-    type,
+    short_name,
+    description,
     address,
     city,
-    state,
+    region,
     country,
     postal_code,
     phone,
     email,
     website,
-    principal_name,
-    contact_name,
-    contact_email,
     current_students_count,
     current_teachers_count,
-    status,
     is_active,
     settings,
     metadata,
@@ -54,9 +81,11 @@ INSERT INTO social_features.schools (
 -- =====================================================
 (
     '50000000-0000-0000-0000-000000000001'::uuid,
+    v_tenant_id,
     'Escuela Primaria Marie Curie',
     'EP-MC-CDMX',
-    'public',
+    'EP Marie Curie',
+    'Escuela primaria pública enfocada en ciencias y educación integral, inspirada en la vida de Marie Curie.',
     'Av. Insurgentes Sur 1234',
     'Ciudad de México',
     'CDMX',
@@ -65,12 +94,8 @@ INSERT INTO social_features.schools (
     '55-1234-5678',
     'contacto@mariecurie.edu.mx',
     'https://mariecurie.edu.mx',
-    'Lic. Ana María Rodríguez',
-    'Prof. Carlos Méndez',
-    'admin@mariecurie.edu.mx',
     450,
     32,
-    'active',
     true,
     jsonb_build_object(
         'allow_public_registration', true,
@@ -94,10 +119,14 @@ INSERT INTO social_features.schools (
     ),
     jsonb_build_object(
         'year_founded', 2010,
+        'type', 'public',
         'cct', '09DPR0123K',
         'shift', 'matutino',
         'grades', jsonb_build_array('1', '2', '3', '4', '5', '6'),
         'recognition', 'Escuela de Calidad 2024',
+        'principal_name', 'Lic. Ana María Rodríguez',
+        'contact_name', 'Prof. Carlos Méndez',
+        'contact_email', 'admin@mariecurie.edu.mx',
         'infrastructure', jsonb_build_object(
             'library', true,
             'computer_lab', true,
@@ -121,9 +150,11 @@ INSERT INTO social_features.schools (
 -- =====================================================
 (
     '50000000-0000-0000-0000-000000000002'::uuid,
+    v_tenant_id,
     'Instituto de Educación Integral',
     'IEI-GDL',
-    'private',
+    'IEI Guadalajara',
+    'Instituto privado de educación integral con enfoque STEAM y programas bilingües.',
     'Av. Chapultepec 890',
     'Guadalajara',
     'Jalisco',
@@ -132,12 +163,8 @@ INSERT INTO social_features.schools (
     '33-3456-7890',
     'contacto@iei.edu.mx',
     'https://iei.edu.mx',
-    'Dra. Patricia Hernández',
-    'Lic. Miguel Ángel Torres',
-    'admisiones@iei.edu.mx',
     280,
     24,
-    'active',
     true,
     jsonb_build_object(
         'allow_public_registration', false,
@@ -172,11 +199,15 @@ INSERT INTO social_features.schools (
     ),
     jsonb_build_object(
         'year_founded', 1995,
+        'type', 'private',
         'accreditation', 'SEP',
         'bilingual', true,
         'steam_focused', true,
         'international_programs', jsonb_build_array('Cambridge Primary'),
         'partnerships', jsonb_build_array('Universidad de Guadalajara'),
+        'principal_name', 'Dra. Patricia Hernández',
+        'contact_name', 'Lic. Miguel Ángel Torres',
+        'contact_email', 'admisiones@iei.edu.mx',
         'infrastructure', jsonb_build_object(
             'library', true,
             'computer_lab', true,
@@ -203,15 +234,17 @@ INSERT INTO social_features.schools (
 
 ON CONFLICT (code) DO UPDATE SET
     name = EXCLUDED.name,
+    short_name = EXCLUDED.short_name,
+    description = EXCLUDED.description,
     email = EXCLUDED.email,
-    contact_email = EXCLUDED.contact_email,
     current_students_count = EXCLUDED.current_students_count,
     current_teachers_count = EXCLUDED.current_teachers_count,
-    status = EXCLUDED.status,
     is_active = EXCLUDED.is_active,
     settings = EXCLUDED.settings,
     metadata = EXCLUDED.metadata,
     updated_at = gamilit.now_mexico();
+
+END $$;
 
 -- =====================================================
 -- Verification Query
@@ -229,11 +262,11 @@ BEGIN
 
     SELECT COUNT(*) INTO public_schools
     FROM social_features.schools
-    WHERE type = 'public' AND metadata->>'demo_school' = 'true';
+    WHERE metadata->>'type' = 'public' AND metadata->>'demo_school' = 'true';
 
     SELECT COUNT(*) INTO private_schools
     FROM social_features.schools
-    WHERE type = 'private' AND metadata->>'demo_school' = 'true';
+    WHERE metadata->>'type' = 'private' AND metadata->>'demo_school' = 'true';
 
     RAISE NOTICE '========================================';
     RAISE NOTICE 'ESCUELAS DEMO CREADAS EXITOSAMENTE';
@@ -263,7 +296,7 @@ BEGIN
     RAISE NOTICE '========================================';
 
     FOR school_record IN
-        SELECT name, code, city, state, current_students_count
+        SELECT name, code, city, region, current_students_count
         FROM social_features.schools
         WHERE metadata->>'demo_school' = 'true'
         ORDER BY name
@@ -272,7 +305,7 @@ BEGIN
             school_record.name,
             school_record.code,
             school_record.city,
-            school_record.state;
+            school_record.region;
         RAISE NOTICE '    Estudiantes: %', school_record.current_students_count;
     END LOOP;
 

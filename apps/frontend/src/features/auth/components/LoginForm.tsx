@@ -85,7 +85,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
   // Redirect if already authenticated
   useEffect(() => {
+    // CRITICAL: Don't redirect if user just logged out
+    const isLoggingOut = localStorage.getItem('is_logging_out');
+    if (isLoggingOut === 'true') {
+      console.log('⚠️ [LoginForm] is_logging_out flag detected - skipping auto-redirect');
+      return;
+    }
+
     if (isAuthenticated) {
+      console.log('✅ [LoginForm] User authenticated - redirecting to:', redirectTo);
       navigate(redirectTo);
     }
   }, [isAuthenticated, navigate, redirectTo]);
@@ -103,6 +111,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   const onSubmit = async (data: LoginFormData) => {
     try {
       clearError();
+
+      // CRITICAL: Clear logout flag if present (user is now logging in)
+      localStorage.removeItem('is_logging_out');
 
       // Save "remember me" preference
       if (rememberMe) {

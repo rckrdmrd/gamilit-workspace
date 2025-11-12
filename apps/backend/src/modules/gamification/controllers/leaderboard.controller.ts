@@ -342,4 +342,121 @@ export class LeaderboardController {
       timePeriod,
     );
   }
+
+  /**
+   * Obtiene el leaderboard de amigos del usuario
+   *
+   * @param userId - ID del usuario (UUID)
+   * @param limit - Cantidad de amigos a retornar (default: 100)
+   * @param offset - Offset para paginación (default: 0)
+   * @param timePeriod - Período de tiempo (future feature)
+   * @returns Leaderboard de amigos del usuario
+   *
+   * @example
+   * GET /api/v1/gamification/leaderboard/friends/550e8400-e29b-41d4-a716-446655440000?limit=20
+   * Response: {
+   *   "type": "friends",
+   *   "entries": [
+   *     {
+   *       "rank": 1,
+   *       "userId": "660e8400-e29b-41d4-a716-446655440000",
+   *       "username": "Ana Martínez",
+   *       "totalXP": 9500,
+   *       "level": 20,
+   *       "currentRank": "Nacom",
+   *       "streak": 25,
+   *       "achievementCount": 9,
+   *       "tasksCompleted": 95
+   *     }
+   *   ],
+   *   "totalEntries": 15,
+   *   "lastUpdated": "2025-11-11T10:30:00Z",
+   *   "timePeriod": "all_time",
+   *   "userId": "550e8400-e29b-41d4-a716-446655440000"
+   * }
+   */
+  @Get('leaderboard/friends/:userId')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Get friends leaderboard',
+    description:
+      'Obtiene el ranking de amigos de un usuario específico ordenado por XP',
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'ID del usuario en formato UUID',
+    type: String,
+    required: true,
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Cantidad de amigos a retornar',
+    example: 100,
+  })
+  @ApiQuery({
+    name: 'offset',
+    required: false,
+    type: Number,
+    description: 'Offset para paginación',
+    example: 0,
+  })
+  @ApiQuery({
+    name: 'timePeriod',
+    required: false,
+    type: String,
+    description: 'Período de tiempo (feature futura)',
+    example: 'all_time',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Leaderboard de amigos obtenido exitosamente',
+    schema: {
+      example: {
+        type: 'friends',
+        entries: [
+          {
+            rank: 1,
+            userId: '660e8400-e29b-41d4-a716-446655440000',
+            username: 'Ana Martínez',
+            firstName: 'Ana',
+            lastName: 'Martínez',
+            avatar: 'https://cdn.example.com/avatars/ana.jpg',
+            totalXP: 9500,
+            level: 20,
+            currentRank: 'Nacom',
+            streak: 25,
+            achievementCount: 9,
+            tasksCompleted: 95,
+          },
+        ],
+        totalEntries: 15,
+        lastUpdated: '2025-11-11T10:30:00Z',
+        timePeriod: 'all_time',
+        userId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Usuario no encontrado',
+  })
+  async getFriendsLeaderboard(
+    @Param('userId') userId: string,
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string,
+    @Query('timePeriod') timePeriod?: string,
+  ) {
+    const parsedLimit = limit ? parseInt(limit, 10) : 100;
+    const parsedOffset = offset ? parseInt(offset, 10) : 0;
+
+    return await this.leaderboardService.getFriendsLeaderboard(
+      userId,
+      parsedLimit,
+      parsedOffset,
+      timePeriod,
+    );
+  }
 }

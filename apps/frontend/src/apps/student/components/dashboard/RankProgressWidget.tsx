@@ -20,7 +20,11 @@ const MAYA_RANKS = {
 };
 
 export function RankProgressWidget({ data, loading }: RankProgressWidgetProps) {
+  console.log('🎨 [RankProgressWidget] Props received:', { data, loading });
+
   const rankInfo = data ? MAYA_RANKS[data.currentRank as keyof typeof MAYA_RANKS] || MAYA_RANKS.Nacom : MAYA_RANKS.Nacom;
+
+  console.log('🎨 [RankProgressWidget] Rank info:', { rankInfo, currentRank: data?.currentRank });
 
   if (loading || !data) {
     return (

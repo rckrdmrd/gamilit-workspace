@@ -58,7 +58,8 @@ INSERT INTO auth.users (
     confirmation_token,
     email_change,
     email_change_token_new,
-    recovery_token
+    recovery_token,
+    gamilit_role
 ) VALUES
 -- =====================================================
 -- USUARIOS DE TESTING PRINCIPALES (3)
@@ -84,7 +85,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'super_admin'::auth_management.gamilit_role
 ),
 (
     'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,
@@ -98,7 +100,7 @@ INSERT INTO auth.users (
     ),
     jsonb_build_object(
         'name', 'Profesor Testing',
-        'role', 'teacher',
+        'role', 'admin_teacher',
         'description', 'Usuario profesor de testing'
     ),
     gamilit.now_mexico(),
@@ -106,7 +108,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'admin_teacher'::auth_management.gamilit_role
 ),
 (
     'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid,
@@ -128,7 +131,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'student'::auth_management.gamilit_role
 ),
 
 -- =====================================================
@@ -155,7 +159,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'student'::auth_management.gamilit_role
 ),
 (
     '02bc5f00-182e-5387-c899-3f269d49c06f'::uuid,
@@ -177,7 +182,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'student'::auth_management.gamilit_role
 ),
 (
     '03cd6000-282e-6487-d899-40369e49d070'::uuid,
@@ -199,7 +205,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'student'::auth_management.gamilit_role
 ),
 (
     '04de7000-382e-7587-e899-51469f49e081'::uuid,
@@ -221,7 +228,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'student'::auth_management.gamilit_role
 ),
 (
     '05ef8000-482e-8687-f899-62569049f092'::uuid,
@@ -243,7 +251,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'student'::auth_management.gamilit_role
 ),
 (
     '06f09000-582e-9787-0899-73679149010d'::uuid,
@@ -265,7 +274,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'student'::auth_management.gamilit_role
 ),
 (
     '07010000-682e-0887-1999-847802491e14'::uuid,
@@ -287,7 +297,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'student'::auth_management.gamilit_role
 ),
 (
     '08121000-782e-1987-2009-9f891349212f'::uuid,
@@ -309,7 +320,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'student'::auth_management.gamilit_role
 ),
 (
     '09232000-882e-2087-3119-0a90244931a3'::uuid,
@@ -331,7 +343,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'student'::auth_management.gamilit_role
 ),
 (
     '10343000-982e-3187-4229-1b01354941b4'::uuid,
@@ -353,7 +366,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'student'::auth_management.gamilit_role
 ),
 (
     '11454000-092e-4287-5339-2c12464951c5'::uuid,
@@ -375,7 +389,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'student'::auth_management.gamilit_role
 ),
 (
     '12565000-102e-5387-6449-3d23574961d6'::uuid,
@@ -397,7 +412,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'student'::auth_management.gamilit_role
 ),
 (
     '13676000-202e-6487-7559-4e34684971e7'::uuid,
@@ -419,7 +435,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'student'::auth_management.gamilit_role
 ),
 (
     '14787000-302e-7587-8669-5f45794981f8'::uuid,
@@ -441,7 +458,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'student'::auth_management.gamilit_role
 ),
 (
     '15898000-402e-8687-9779-60568a4991a9'::uuid,
@@ -463,7 +481,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'student'::auth_management.gamilit_role
 ),
 
 -- =====================================================
@@ -482,7 +501,7 @@ INSERT INTO auth.users (
     ),
     jsonb_build_object(
         'name', 'Prof. Roberto Méndez',
-        'role', 'teacher',
+        'role', 'admin_teacher',
         'description', 'Profesor demo 1 - Lengua Española y Literatura'
     ),
     gamilit.now_mexico(),
@@ -490,7 +509,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'admin_teacher'::auth_management.gamilit_role
 ),
 (
     '11bc5f00-192e-5397-c919-3f279d49c26f'::uuid,
@@ -504,7 +524,7 @@ INSERT INTO auth.users (
     ),
     jsonb_build_object(
         'name', 'Profa. Laura González',
-        'role', 'teacher',
+        'role', 'admin_teacher',
         'description', 'Profesora demo 2 - Comprensión Lectora'
     ),
     gamilit.now_mexico(),
@@ -512,7 +532,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'admin_teacher'::auth_management.gamilit_role
 ),
 
 -- =====================================================
@@ -539,7 +560,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'super_admin'::auth_management.gamilit_role
 ),
 (
     '21bc5f00-102e-5307-c829-3f289d49c36f'::uuid,
@@ -553,7 +575,7 @@ INSERT INTO auth.users (
     ),
     jsonb_build_object(
         'name', 'Lic. Patricia Hernández',
-        'role', 'school_admin',
+        'role', 'admin_teacher',
         'description', 'Directora de escuela demo'
     ),
     gamilit.now_mexico(),
@@ -561,7 +583,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'admin_teacher'::auth_management.gamilit_role
 ),
 
 -- =====================================================
@@ -587,7 +610,8 @@ INSERT INTO auth.users (
     '',
     '',
     '',
-    ''
+    '',
+    'student'::auth_management.gamilit_role
 )
 
 ON CONFLICT (email) DO UPDATE SET

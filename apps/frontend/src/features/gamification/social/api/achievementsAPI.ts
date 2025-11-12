@@ -108,7 +108,7 @@ export const getUserAchievements = async (userId: string): Promise<AchievementWi
 
     // Get user's achievement progress
     const { data } = await apiClient.get<ApiResponse<{ achievements: BackendUserAchievement[]; total: number }>>(
-      `/gamification/achievements/${userId}`
+      `/gamification/users/${userId}/achievements`
     );
 
     const userAchievements = data.data.achievements;

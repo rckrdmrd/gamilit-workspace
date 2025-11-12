@@ -17,6 +17,7 @@ import {
   MediaController,
 } from './controllers';
 import { DB_SCHEMAS } from '@shared/constants';
+import { ProgressModule } from '../progress/progress.module';
 
 /**
  * EducationalModule
@@ -45,6 +46,8 @@ import { DB_SCHEMAS } from '@shared/constants';
       [ModuleEntity, Exercise, AssessmentRubric, MediaResource],
       'educational',
     ),
+    // Import ProgressModule to access ExerciseSubmissionService for submit endpoint
+    ProgressModule,
   ],
   controllers: [ModulesController, ExercisesController, MediaController],
   providers: [ModulesService, ExercisesService, MediaService],

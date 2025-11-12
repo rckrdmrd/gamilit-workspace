@@ -13,9 +13,9 @@
 -- - 16 perfiles de estudiantes demo
 -- - 3 perfiles de profesores demo
 -- - 3 perfiles de administradores demo
--- - 1 perfil de padre
+-- ⚠️ NO incluye perfiles de padres (Portal Padres = Extension EXT-010, fuera de alcance)
 --
--- TOTAL: 26 perfiles (para 23 usuarios + usuarios demo adicionales)
+-- TOTAL: 22 perfiles (teacher, student, admin SOLO - alcance v2.3.x)
 -- =====================================================
 
 SET search_path TO auth_management, public;

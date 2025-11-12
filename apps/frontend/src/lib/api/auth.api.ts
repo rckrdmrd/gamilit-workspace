@@ -28,9 +28,9 @@ export const authApi = {
   login: async (credentials: LoginCredentials) => {
     const { data } = await apiClient.post<AuthResponse>('/auth/login', credentials);
     if (data.accessToken) {
-      localStorage.setItem('access_token', data.accessToken);
+      localStorage.setItem('auth-token', data.accessToken);
       if (data.refreshToken) {
-        localStorage.setItem('refresh_token', data.refreshToken);
+        localStorage.setItem('refresh-token', data.refreshToken);
       }
     }
     return data;
@@ -39,9 +39,9 @@ export const authApi = {
   register: async (userData: RegisterData) => {
     const { data } = await apiClient.post<AuthResponse>('/auth/register', userData);
     if (data.accessToken) {
-      localStorage.setItem('access_token', data.accessToken);
+      localStorage.setItem('auth-token', data.accessToken);
       if (data.refreshToken) {
-        localStorage.setItem('refresh_token', data.refreshToken);
+        localStorage.setItem('refresh-token', data.refreshToken);
       }
     }
     return data;
@@ -51,8 +51,8 @@ export const authApi = {
     try {
       await apiClient.post('/auth/logout');
     } finally {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('auth-token');
+      localStorage.removeItem('refresh-token');
     }
   },
 
@@ -64,9 +64,9 @@ export const authApi = {
   refreshToken: async (refreshToken: string) => {
     const { data } = await apiClient.post<AuthResponse>('/auth/refresh', { refreshToken });
     if (data.accessToken) {
-      localStorage.setItem('access_token', data.accessToken);
+      localStorage.setItem('auth-token', data.accessToken);
       if (data.refreshToken) {
-        localStorage.setItem('refresh_token', data.refreshToken);
+        localStorage.setItem('refresh-token', data.refreshToken);
       }
     }
     return data;

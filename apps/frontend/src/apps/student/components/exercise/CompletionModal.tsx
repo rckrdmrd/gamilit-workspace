@@ -536,7 +536,7 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
             >
               <DetectiveButton
                 variant="secondary"
-                onClick={() => navigate(`/module/${moduleId}`)}
+                onClick={() => navigate(`/modules/${moduleId}`)}
                 icon={<ArrowLeft className="w-4 h-4" />}
                 className="flex-1"
               >

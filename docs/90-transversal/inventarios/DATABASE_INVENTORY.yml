@@ -1,11 +1,11 @@
 # DATABASE_INVENTORY.yml - Inventario Consolidado Global
 
 project: GAMILIT
-version: 2.2
-generated: 2025-11-09
-updated: 2025-11-09
-source: Validación Exhaustiva Post-Migración
-status: ⚠️ VALIDACIÓN COMPLETA - 40% implementado (39/97 tablas con entidad)
+version: 2.3
+generated: 2025-11-11
+updated: 2025-11-11
+source: Validación Exhaustiva + Corrección de Conteos Físicos
+status: ⚠️ VALIDACIÓN COMPLETA - 39% implementado (39/101 tablas con entidad)
 
 # ============================================================================
 # RESUMEN EJECUTIVO
@@ -14,27 +14,33 @@ status: ⚠️ VALIDACIÓN COMPLETA - 40% implementado (39/97 tablas con entidad
 # Resultado: Discrepancias críticas encontradas vs reporte anterior
 
 summary:
-  total_schemas: 10  # Real en DDL (sin storage, public, gamilit, admin_dashboard)
-  total_tables_ddl: 97  # ✅ VALIDADO: Conteo real de archivos .sql en DDL
+  total_schemas: 14  # ✅ CORREGIDO: Incluye storage, public, gamilit, admin_dashboard, lti_integration
+  total_tables_ddl: 101  # ✅ CORREGIDO: Conteo físico real de archivos .sql (antes 97)
   total_tables_in_constants: 55  # ⚠️ Definidas en database.constants.ts
   total_entities_backend: 47  # ✅ VALIDADO: Archivos .entity.ts en backend
 
-  # COBERTURA REAL (Validado 2025-11-09)
-  coverage_complete: 39  # ✅ Tablas con DDL + Constante + Entidad (40%)
+  # COBERTURA REAL (Actualizado 2025-11-11)
+  coverage_complete: 39  # ✅ Tablas con DDL + Constante + Entidad (39%)
   coverage_partial: 14   # 🟡 Tablas con DDL + Constante (sin Entidad) (14%)
-  coverage_missing: 44   # 🔴 Tablas con solo DDL (sin Constante ni Entidad) (45%)
+  coverage_missing: 48   # 🔴 Tablas con solo DDL (sin Constante ni Entidad) (47%)
 
-  total_indexes: 117
-  total_functions: 60
-  total_triggers: 44
-  total_views: 8
+  # TOTALES CORREGIDOS (Conteo físico 2025-11-11)
+  total_indexes: 67     # ✅ CORREGIDO (antes 117)
+  total_functions: 62   # ✅ CORREGIDO (antes 60)
+  total_triggers: 34    # ✅ CORREGIDO (antes 44)
+  total_views: 12       # ✅ CORREGIDO (antes 8)
   total_materialized_views: 4
-  total_enums: 12
+  total_enums: 19       # ✅ CORREGIDO (antes 12)
   total_rls_policies: 24
+  total_fk_constraints: 1  # ✅ AGREGADO (profiles-school diferido)
 
-  last_major_update: "2025-11-09 - VALIDACIÓN EXHAUSTIVA COMPLETADA"
-  validation_status: "⚠️ CRÍTICO - 45% de tablas sin implementar (44/97)"
+  # TOTALES SQL
+  total_sql_files: 324  # ✅ AGREGADO: Total de archivos .sql en DDL
+
+  last_major_update: "2025-11-11 - CORRECCIÓN DE CONTEOS FÍSICOS"
+  validation_status: "⚠️ CRÍTICO - 47% de tablas sin implementar (48/101)"
   action_required: "URGENTE - Ver MATRIZ-TRAZABILIDAD-DDL-CONSTANTS-ENTITIES-2025-11-09.md"
+  correction_note: "Conteos actualizados con inventario físico automatizado (324 archivos SQL)"
 
 evolution:
   initial_state:
@@ -189,13 +195,21 @@ schemas:
 
   - name: admin_dashboard
     description: Admin dashboard and reports
-    tables: 0  # CRÍTICO: Schema VACÍO sin tablas
+    tables: 0  # ✅ CORRECTO: Schema solo de vistas
+    views: 6  # ✅ CORREGIDO 2025-11-11: 6 vistas (antes 4)
     path: apps/database/ddl/schemas/admin_dashboard/
     phase: 2-3
     epic: [EMR-001, EXT-002]
-    status: VACÍO - Pero tiene 4 vistas implementadas
-    note: "Algunas tablas están en audit_logging, no aquí"
-    views_implemented: 4  # user_stats_summary, organization_stats_summary, moderation_queue, recent_admin_actions
+    status: ✅ CORRECTO - Schema de vistas analíticas
+    last_update: "2025-11-11 - Corregidos conteos (views: 6)"
+    note: "Schema de vistas que consultan otras tablas (audit_logging, etc.)"
+    views_implemented:
+      - assignment_submission_stats  # ✅ Estadísticas de envíos
+      - classroom_overview  # ✅ Resumen de aulas
+      - moderation_queue  # ✅ Cola de moderación
+      - organization_stats_summary  # ✅ Resumen de estadísticas org
+      - recent_admin_actions  # ✅ Acciones recientes de admins
+      - user_stats_summary  # ✅ Resumen de estadísticas de usuarios
     key_tables_documented_but_missing:
       - dashboard_metrics  # ❌ FALTA
       - system_alerts  # ⚠️ Existe en audit_logging
@@ -210,11 +224,16 @@ schemas:
   - name: content_management
     description: Content management and media
     tables: 8  # ✅ MEJORADO: 5 originales + 3 nuevas (2025-11-08)
+    enums: 4  # ✅ CORREGIDO 2025-11-11: content_status, content_type, media_type, processing_status
+    functions: 0  # ✅ CORREGIDO 2025-11-11: NO tiene funciones (3 funciones fantasma eliminadas de docs)
+    triggers: 3  # ✅ CORREGIDO 2025-11-11: updated_at triggers
+    indexes: 2   # ✅ GIN indexes para marie_curie_content
+    rls_policies: 1
     path: apps/database/ddl/schemas/content_management/
     phase: 2
     epic: EMR-001
     status: ✅ MEJORADO - Funcionalidad core completa
-    last_update: "2025-11-08 - Creadas 3 tablas críticas"
+    last_update: "2025-11-11 - Corregidos conteos (enums: 4, functions: 0, triggers: 3)"
     completion: "8/10 (80%)"
     key_tables_implemented:
       - content_templates  # ✅
@@ -225,6 +244,11 @@ schemas:
       - media_metadata  # ✅ CREADO (2025-11-08)
       - content_categories  # ✅ CREADO (2025-11-08)
       - content_authors  # ✅ CREADO (2025-11-08)
+    enums_implemented:
+      - content_status  # ✅ draft, published, archived, under_review
+      - content_type  # ✅ video, text, interactive, quiz, game, simulation
+      - media_type  # ✅ image, video, audio, document, interactive, animation
+      - processing_status  # ✅ uploading, processing, ready, error, optimizing
     key_tables_nice_to_have:
       - editorial_workflow  # ⏸️ Funcionalidad en content_approvals
       - publication_schedule  # ⏸️ Puede implementarse después
@@ -296,9 +320,15 @@ schemas:
   - name: audit_logging
     description: Audit logs and system events
     tables: 6  # ✅ Correcto
+    enums: 2  # ✅ AGREGADO 2025-11-11: aggregation_period, metric_type
+    functions: 4  # ✅ AGREGADO 2025-11-11: cleanup_old_system_logs, cleanup_old_user_activity, log_audit_event, log_system_event
+    triggers: 1  # ✅ AGREGADO 2025-11-11: trg_system_alerts_updated_at
+    indexes: 14  # ✅ AGREGADO 2025-11-11: Optimización de actividad y alertas
+    rls_policies: 1
     path: apps/database/ddl/schemas/audit_logging/
     phase: 2
     epic: EMR-001
+    last_update: "2025-11-11 - Corregidos conteos (enums: 2, functions: 4, triggers: 1, indexes: 14)"
     note: "Nombres diferentes pero funcionalidad correcta"
     key_tables:
       - audit_logs  # ✅ (similar a audit_events)
@@ -310,17 +340,22 @@ schemas:
 
   - name: system_configuration
     description: System configuration and settings
-    tables: 6  # ✅ COMPLETADO: 100% (6/6 tablas implementadas)
+    tables: 8  # ✅ CORREGIDO 2025-11-11: 8 tablas (antes 6)
+    functions: 2  # ✅ AGREGADO 2025-11-11: is_feature_enabled, update_feature_flag
+    triggers: 2  # ✅ AGREGADO 2025-11-11: updated_at triggers
+    rls_policies: 1
     path: apps/database/ddl/schemas/system_configuration/
     phase: 2-3
     epic: [EMR-001, EXT-002, EXT-008]
     status: ✅ COMPLETADO - 100% de todas las tablas documentadas
-    last_update: "2025-11-08 - Creadas 3 tablas faltantes"
-    completion: "6/6 (100%)"
+    last_update: "2025-11-11 - Corregidos conteos (tables: 8, functions: 2, triggers: 2)"
+    completion: "8/8 (100%)"
     key_tables_implemented:
       - system_settings  # ✅ (similar a application_settings)
       - feature_flags  # ✅ (similar a feature_toggles - EXT-002)
       - notification_settings  # ✅
+      - notification_settings_global  # ✅
+      - rate_limits  # ✅
       - environment_config  # ✅ CREADO (2025-11-08)
       - api_configuration  # ✅ CREADO (2025-11-08)
       - tenant_configurations  # ✅ CREADO (2025-11-08 - EXT-008)
@@ -328,12 +363,14 @@ schemas:
   - name: gamilit
     description: Main application schema (funciones utilitarias)
     tables: 0  # CRÍTICO: Schema VACÍO sin tablas
-    functions: 13  # Tiene 13 funciones utilitarias
+    functions: 14  # ✅ CORREGIDO 2025-11-11: 14 funciones (antes 13)
+    views: 1  # ✅ AGREGADO 2025-11-11: number_series (helper)
     path: apps/database/ddl/schemas/gamilit/
     phase: 2
     epic: EMR-001
-    status: VACÍO - Schema usado para funciones, no tablas
-    note: "Tablas documentadas están en otros schemas o no existen"
+    status: ✅ CORRECTO - Schema usado solo para funciones utilitarias
+    last_update: "2025-11-11 - Corregidos conteos (functions: 14, views: 1)"
+    note: "Schema de utilidades compartidas cross-schema"
     functions_implemented:
       - audit_profile_changes
       - get_current_user_id
@@ -347,6 +384,8 @@ schemas:
       - update_user_last_login
       - update_user_stats_on_exercise_complete
       - validate_email_format
+      - validate_username
+      - validate_date_range
       - validate_username
     key_tables_documented_but_missing:
       - app_metadata  # ❌ FALTA

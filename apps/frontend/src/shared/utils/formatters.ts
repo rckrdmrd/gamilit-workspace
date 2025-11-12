@@ -142,18 +142,27 @@ export const getStatusBadgeColor = (
 
 /**
  * Get difficulty badge color
- * @param difficulty - Difficulty level
+ * @param difficulty - Difficulty level (CEFR or simple)
  * @returns Tailwind color class
  */
 export const getDifficultyBadgeColor = (
-  difficulty: 'beginner' | 'intermediate' | 'advanced'
+  difficulty: string
 ): string => {
-  switch (difficulty) {
-    case 'beginner':
+  // Normalize to lowercase for consistent matching
+  const level = difficulty.toLowerCase();
+
+  // CEFR levels (8 levels)
+  switch (level) {
+    case 'beginner':     // A1
+    case 'elementary':   // A2
       return 'bg-green-100 text-green-800';
-    case 'intermediate':
+    case 'pre_intermediate': // B1
+    case 'intermediate':     // B2
       return 'bg-yellow-100 text-yellow-800';
-    case 'advanced':
+    case 'upper_intermediate': // C1
+    case 'advanced':           // C2
+    case 'proficient':         // C2+
+    case 'native':
       return 'bg-red-100 text-red-800';
     default:
       return 'bg-gray-100 text-gray-800';

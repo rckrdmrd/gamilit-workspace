@@ -124,7 +124,7 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
       };
 
       const score = calculateScore(completedClues.size, exercise.clues.length);
-      setCurrentScore(score.totalScore);
+      setCurrentScore(score);
 
       setFeedback({
         type: 'success',

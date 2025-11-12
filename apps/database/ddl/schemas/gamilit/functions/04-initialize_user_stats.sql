@@ -4,6 +4,7 @@
 -- Parameters: None
 -- Returns: trigger
 -- Created: 2025-10-27
+-- Updated: 2025-11-12 - Extendido para incluir admin_teacher y super_admin
 -- =====================================================
 
 CREATE OR REPLACE FUNCTION gamilit.initialize_user_stats()
@@ -11,7 +12,9 @@ CREATE OR REPLACE FUNCTION gamilit.initialize_user_stats()
  LANGUAGE plpgsql
 AS $function$
 BEGIN
-    IF NEW.role = 'student' THEN
+    -- Initialize gamification for students, teachers, and admins
+    -- Only these roles have gamification enabled
+    IF NEW.role IN ('student', 'admin_teacher', 'super_admin') THEN
         -- Use NEW.user_id which points to auth.users.id (correct foreign key reference)
         INSERT INTO gamification_system.user_stats (
             user_id,
@@ -45,7 +48,7 @@ BEGIN
             'Ajaw'::gamification_system.maya_rank
         );
 
-        -- NEW: Initialize daily and weekly missions for new student
+        -- NEW: Initialize daily and weekly missions for new users
         -- This ensures missions are available immediately after registration
         -- PERFORM gamilit.initialize_user_missions(NEW.user_id);  -- TODO: Implementar función
     END IF;

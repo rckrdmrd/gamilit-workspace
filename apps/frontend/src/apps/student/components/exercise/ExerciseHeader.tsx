@@ -94,7 +94,7 @@ export const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({
             variant="blue"
 
             icon={<ArrowLeft className="w-4 h-4" />}
-            onClick={() => navigate(`/module/${moduleId}`)}
+            onClick={() => navigate(`/modules/${moduleId}`)}
           >
             Volver al Módulo
           </DetectiveButton>

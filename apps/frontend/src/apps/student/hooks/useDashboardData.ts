@@ -14,6 +14,18 @@ function getRankIcon(rank: string): string {
   return icons[rank] || '🔍';
 }
 
+// Helper function to get rank multiplier
+function getRankMultiplier(rank: string): number {
+  const multipliers: Record<string, number> = {
+    'Ajaw': 1.0,
+    'Nacom': 1.2,
+    "Ah K'in": 1.5,
+    'Halach Uinic': 2.0,
+    "K'uk'ulkan": 3.0,
+  };
+  return multipliers[rank] || 1.0;
+}
+
 export interface MLCoinsData {
   balance: number;
   todayEarned: number;
@@ -83,13 +95,28 @@ export function useDashboardData() {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const fetchDashboardData = useCallback(async (isRefresh = false) => {
+    console.log('🚀 [useDashboardData] fetchDashboardData called', {
+      isAuthenticated,
+      hasUser: !!user,
+      userId: user?.id,
+      isRefresh,
+    });
+
     // Don't fetch if no user is authenticated
     if (!isAuthenticated || !user?.id) {
+      console.warn('⚠️ [useDashboardData] User not authenticated or no userId - stopping');
       setLoading(false);
       return;
     }
 
     const userId = user.id;
+    const token = localStorage.getItem('auth-token');
+    console.log('🔑 [useDashboardData] Token check:', {
+      hasToken: !!token,
+      tokenLength: token?.length,
+      userId,
+    });
+
     if (isRefresh) {
       setIsRefreshing(true);
     } else {
@@ -99,39 +126,83 @@ export function useDashboardData() {
     setError(null);
 
     try {
+      console.log('📡 [useDashboardData] Starting API calls...');
+
       // Fetch all data in parallel
-      const [coinsRes, rankRes, achievementsRes, progressRes] = await Promise.all([
-        apiClient.get(`/gamification/coins/${userId}`),
-        apiClient.get(`/gamification/ranks/user/${userId}`),
-        apiClient.get(`/gamification/achievements/${userId}`),
-        apiClient.get(`/educational/progress/user/${userId}`),
+      const [coinsRes, rankCurrentRes, rankProgressRes, achievementsRes, progressRes] = await Promise.all([
+        apiClient.get(`/gamification/users/${userId}/ml-coins`),
+        apiClient.get(`/gamification/ranks/current`),
+        apiClient.get(`/gamification/ranks/users/${userId}/rank-progress`),
+        apiClient.get(`/gamification/users/${userId}/achievements`),
+        apiClient.get(`/progress/users/${userId}`),
       ]);
 
-      // Extract data from backend response structure { success: true, data: {...} }
-      const achievementsData = achievementsRes.data.data;
-      const recentUnlocked = achievementsData
+      console.log('✅ [useDashboardData] API calls completed successfully');
+
+      // Backend responses come directly, not wrapped in { data: {...} }
+      // Axios already puts the response in .data, so we access .data directly
+      console.log('🔍 [useDashboardData] Raw API responses:', {
+        coins: coinsRes.data,
+        rankCurrent: rankCurrentRes.data,
+        rankProgress: rankProgressRes.data,
+        achievements: achievementsRes.data,
+        progress: progressRes.data,
+      });
+
+      // Process achievements data
+      const achievementsData = achievementsRes.data?.data || achievementsRes.data || [];
+      const recentUnlocked = Array.isArray(achievementsData) ? achievementsData
         .filter((a: AchievementData) => a.unlocked && a.unlockedAt)
         .sort((a: AchievementData, b: AchievementData) =>
           new Date(b.unlockedAt!).getTime() - new Date(a.unlockedAt!).getTime()
         )
-        .slice(0, 5);
+        .slice(0, 5) : [];
 
       // Transform rank data from API format to component format
-      const rankApiData = rankRes.data.data;
-      const transformedRankData: RankData | null = rankApiData ? {
-        currentRank: rankApiData.currentRank?.rank || 'Nacom',
-        currentXP: rankApiData.progress?.currentXP || 0,
-        nextRankXP: rankApiData.nextRank?.xpRequired || (rankApiData.progress?.currentXP || 0) + 1000, // Fallback for max rank
-        multiplier: rankApiData.currentRank?.multiplier || 1,
-        rankIcon: getRankIcon(rankApiData.currentRank?.rank || 'Nacom'),
-        progress: rankApiData.progress?.percentage || 0,
+      const rankCurrent = rankCurrentRes.data;
+      const rankProgress = rankProgressRes.data;
+
+      console.log('🔍 [useDashboardData] Rank data extraction:', {
+        hasRankCurrent: !!rankCurrent,
+        hasRankProgress: !!rankProgress,
+        rankCurrentData: rankCurrent,
+        rankProgressData: rankProgress,
+      });
+
+      const currentRankName = rankCurrent?.current_rank || rankProgress?.current_rank || 'Ajaw';
+      const transformedRankData: RankData | null = (rankCurrent && rankProgress) ? {
+        currentRank: currentRankName,
+        currentXP: rankProgress.xp_current || 0,
+        nextRankXP: rankProgress.xp_required || (rankProgress.xp_current || 0) + 1000, // Fallback for max rank
+        multiplier: getRankMultiplier(currentRankName),
+        rankIcon: getRankIcon(currentRankName),
+        progress: rankProgress.progress_percentage || 0,
       } : null;
 
+      console.log('✨ [useDashboardData] Rank transformation result:', {
+        currentRankName,
+        transformedRankData,
+        willBeNull: !(rankCurrent && rankProgress),
+      });
+
+      console.log('🎯 [useDashboardData] Transformed data:', {
+        rank: transformedRankData,
+        coinsBalance: coinsRes.data?.current_balance,
+      });
+
+      // Process coins data
+      const coinsData: MLCoinsData = {
+        balance: coinsRes.data?.current_balance || 0,
+        todayEarned: coinsRes.data?.earned_today || 0,
+        todaySpent: 0, // Not provided by API
+        recentTransactions: [], // Would need separate call to /transactions
+      };
+
       setData({
-        coins: coinsRes.data.data,
+        coins: coinsData,
         rank: transformedRankData,
         achievements: achievementsData,
-        progress: progressRes.data.data,
+        progress: progressRes.data?.data || progressRes.data || null,
         recentAchievements: recentUnlocked,
       });
 
@@ -140,7 +211,12 @@ export function useDashboardData() {
     } catch (err) {
       // Set proper error message without falling back to mock data
       const errorMessage = err instanceof Error ? err.message : 'Error al cargar los datos del dashboard';
-      console.error('Error fetching dashboard data:', err);
+      console.error('❌ [useDashboardData] Error fetching dashboard data:', err);
+      console.error('❌ [useDashboardData] Error details:', {
+        error: err,
+        message: errorMessage,
+        userId,
+      });
       setError(errorMessage);
 
       // Keep existing data or set to null if first load

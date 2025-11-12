@@ -128,7 +128,7 @@ export const ConstruccionHipotesisExercise: React.FC<ExerciseProps> = ({
       setFeedback({
         type: result.isValid ? 'success' : 'partial',
         title: result.isValid ? '¡Hipótesis Válida!' : 'Hipótesis Necesita Mejoras',
-        message: result.feedback,
+        message: result.suggestions.join('. '),
         score: calculatedScore,
         showConfetti: result.isValid
       });

@@ -424,14 +424,15 @@ export enum ProcessingStatusEnum {
 }
 
 /**
- * Tipos de ejercicios (35 mecánicas diferentes)
+ * Tipos de ejercicios (33 mecánicas diferentes)
  * @see DDL: apps/database/ddl/schemas/educational_content/enums/exercise_type.sql
  * @note Module 1: Comprensión Literal (5 mecánicas)
  * @note Module 2: Comprensión Inferencial (5 mecánicas)
  * @note Module 3: Comprensión Crítica (5 mecánicas)
  * @note Module 4: Lectura Digital (9 mecánicas)
  * @note Module 5: Producción Lectora (3 mecánicas)
- * @note Auxiliares (8 mecánicas)
+ * @note Auxiliares (6 mecánicas)
+ * @version 1.1 (2025-11-11) - Removidas 2 mecánicas huérfanas sin implementación (diario_interactivo, resumen_visual)
  * @version 1.0 - Sincronizado con DDL educational_content.exercise_type
  */
 export enum ExerciseTypeEnum {
@@ -473,15 +474,15 @@ export enum ExerciseTypeEnum {
   COMIC_DIGITAL = 'comic_digital',
   VIDEO_CARTA = 'video_carta',
 
-  // Auxiliares
+  // Auxiliares (6 mecánicas)
+  // UPDATED 2025-11-11: Reducido de 8 a 6 mecánicas
   COMPRENSION_AUDITIVA = 'comprension_auditiva',
   COLLAGE_PRENSA = 'collage_prensa',
   TEXTO_MOVIMIENTO = 'texto_movimiento',
   CALL_TO_ACTION = 'call_to_action',
   VERDADERO_FALSO = 'verdadero_falso',
   COMPLETAR_ESPACIOS = 'completar_espacios',
-  DIARIO_INTERACTIVO = 'diario_interactivo',
-  RESUMEN_VISUAL = 'resumen_visual',
+  // REMOVIDO 2025-11-11: DIARIO_INTERACTIVO, RESUMEN_VISUAL (mecánicas huérfanas sin implementación)
 }
 
 /**

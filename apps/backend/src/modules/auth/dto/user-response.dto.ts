@@ -45,6 +45,50 @@ export class UserResponseDto {
   email_confirmed_at?: Date;
 
   /**
+   * Indica si el email ha sido verificado
+   * Campo derivado: true si email_confirmed_at tiene valor
+   * IMPORTANTE: Campo agregado para coherencia con Frontend
+   */
+  @Expose()
+  emailVerified?: boolean;
+
+  /**
+   * Indica si el usuario está activo
+   * Campo derivado: true si no está deleted_at ni banned_until activo
+   * IMPORTANTE: Campo agregado para coherencia con Frontend
+   */
+  @Expose()
+  isActive?: boolean;
+
+  /**
+   * Número de teléfono del usuario
+   * IMPORTANTE: Campo agregado para alineación con DDL auth.users
+   */
+  @Expose()
+  phone?: string;
+
+  /**
+   * Fecha y hora de confirmación del teléfono
+   * IMPORTANTE: Campo agregado para alineación con DDL auth.users
+   */
+  @Expose()
+  phone_confirmed_at?: Date;
+
+  /**
+   * Indica si el usuario es super administrador
+   * IMPORTANTE: Campo agregado para alineación con DDL auth.users
+   */
+  @Expose()
+  is_super_admin?: boolean;
+
+  /**
+   * Fecha y hora hasta la cual el usuario está baneado
+   * IMPORTANTE: Campo agregado para alineación con DDL auth.users
+   */
+  @Expose()
+  banned_until?: Date;
+
+  /**
    * Fecha y hora del último inicio de sesión
    */
   @Expose()

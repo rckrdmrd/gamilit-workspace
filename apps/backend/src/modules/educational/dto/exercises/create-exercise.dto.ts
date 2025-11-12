@@ -20,7 +20,7 @@ import {
  * CreateExerciseDto
  *
  * @description DTO para crear un nuevo ejercicio educativo.
- *              Ejercicios con 27+ mecánicas diferentes.
+ *              Ejercicios con 33 mecánicas diferentes (updated 2025-11-11).
  */
 export class CreateExerciseDto {
   /**

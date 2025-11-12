@@ -35,9 +35,9 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onCl
     }
   };
 
-  const formatTimestamp = (date: Date) => {
+  const formatTimestamp = (date: Date | string) => {
     const now = new Date();
-    const notifDate = new Date(date);
+    const notifDate = typeof date === 'string' ? new Date(date) : date;
     const diffMs = now.getTime() - notifDate.getTime();
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);
@@ -79,9 +79,9 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onCl
         {!isLoading && notifications.map(notification => (
           <div
             key={notification.id}
-            className={`notification-item ${notification.isRead ? 'read' : 'unread'}`}
+            className={`notification-item ${notification.status === 'read' ? 'read' : 'unread'}`}
             onClick={() => {
-              if (!notification.isRead) {
+              if (notification.status === 'unread') {
                 markAsRead(notification.id);
               }
             }}

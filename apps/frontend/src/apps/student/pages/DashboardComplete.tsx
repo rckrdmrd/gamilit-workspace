@@ -80,6 +80,12 @@ export default function DashboardComplete() {
     xpRequired: rank.nextRankXP,
   } : null;
 
+  console.log('📊 [DashboardComplete] Rank data prepared for widget:', {
+    originalRank: rank,
+    rankData,
+    loading,
+  });
+
   // Missions data from missions API - transform to match MissionsPanel interface
   const transformedMissions = (activeMissions.length > 0 ? activeMissions : allMissions.slice(0, 3)).map(mission => ({
     ...mission,
@@ -164,7 +170,7 @@ export default function DashboardComplete() {
                 modules={modulesData}
                 loading={modulesLoading}
                 error={modulesError}
-                onModuleClick={(id) => navigate(`/module/${id}`)}
+                onModuleClick={(id) => navigate(`/modules/${id}`)}
               />
             </div>
           </div>

@@ -23,7 +23,7 @@ interface ExerciseProps {
   userId: string;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
-  onProgressUpdate?: (progress: number) => void;
+  onProgressUpdate?: (progress: { currentStep: number; totalSteps: number; score: number; hintsUsed: number; timeSpent: number; }) => void;
   initialData?: Partial<ExerciseState>;
   difficulty?: 'easy' | 'medium' | 'hard';
 }
@@ -106,7 +106,8 @@ export const PuzzleContextoExercise: React.FC<ExerciseProps> = ({
     setResult(res);
 
     // Calculate standardized score
-    const calculatedScore = calculateScore(res.correctCount || 0, pieces.length);
+    const correctCount = pieces.length - res.corrections.length;
+    const calculatedScore = calculateScore(correctCount, pieces.length);
     setScore(calculatedScore);
 
     setFeedback({

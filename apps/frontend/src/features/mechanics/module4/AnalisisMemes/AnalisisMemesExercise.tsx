@@ -360,7 +360,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
           onClose={() => {
             setShowFeedback(false);
             if (feedback.type === 'success' && feedback.score) {
-              onComplete?.(feedback.score.totalScore, timeSpent);
+              onComplete?.(feedback.score, timeSpent);
             }
           }}
           onRetry={handleReset}

@@ -20,3 +20,7 @@ export * from './rubrics/rubric-response.dto';
 // Media Resource DTOs
 export * from './media/upload-media.dto';
 export * from './media/media-response.dto';
+
+// Exercise Mechanic Mapping DTOs (Sistema Dual - ADR-008)
+export * from './mechanic-mapping/query-mechanic-mapping.dto';
+export * from './mechanic-mapping/mechanic-mapping-response.dto';

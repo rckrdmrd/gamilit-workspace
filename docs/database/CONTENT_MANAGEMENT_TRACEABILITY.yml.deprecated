@@ -7,10 +7,10 @@ metadata:
   schema: content_management
   description: "Gestión de contenido educativo y multimedia"
   created: "2025-11-09"
-  last_updated: "2025-11-11 16:30 (DB-111 FASE 1.7 - Corrección completa de tablas 6→8)"
+  last_updated: "2025-11-11 18:00 (CORRECCIÓN-DOC: Eliminadas funciones fantasma, corregidos conteos)"
   owner: "Database Team"
   status: "Production Ready"
-  validation_note: "DB-111 FASE 1.7: Corregido inventario completo de tablas (6→8), agregadas content_authors, content_categories, media_metadata"
+  validation_note: "CORRECCIÓN-DOC: Eliminadas 3 funciones inexistentes (validate_content_status_transition, get_content_metadata, tag_content). Corregidos conteos: triggers 2→3, enums 1→4. 100% sincronizado con DDL físico."
 
 # ============================================================================
 # ENUMs
@@ -222,32 +222,28 @@ cross_schema_usage:
 # ============================================================================
 # FUNCIONES
 # ============================================================================
-functions:
-  - name: validate_content_status_transition
-    description: "Valida transiciones de estado de contenido"
-    file: "ddl/schemas/content_management/functions/01-validate_content_status_transition.sql"
-
-  - name: get_content_metadata
-    description: "Obtiene metadatos de contenido"
-    file: "ddl/schemas/content_management/functions/02-get_content_metadata.sql"
-
-  - name: tag_content
-    description: "Agrega tags a contenido"
-    file: "ddl/schemas/content_management/functions/03-tag_content.sql"
+# NOTA: Schema content_management NO tiene funciones implementadas
+# El directorio functions/ no existe en la estructura DDL
+functions: []
 
 # ============================================================================
 # TRIGGERS
 # ============================================================================
 triggers:
-  - name: trg_marie_curie_content_updated_at
-    table: marie_curie_content
-    description: "Actualiza timestamp de modificación"
-    file: "ddl/schemas/content_management/triggers/01-trg_marie_curie_content_updated_at.sql"
-
   - name: trg_content_templates_updated_at
     table: content_templates
     description: "Actualiza timestamp de modificación"
-    file: "ddl/schemas/content_management/triggers/02-trg_content_templates_updated_at.sql"
+    file: "ddl/schemas/content_management/triggers/08-trg_content_templates_updated_at.sql"
+
+  - name: trg_marie_curie_content_updated_at
+    table: marie_curie_content
+    description: "Actualiza timestamp de modificación"
+    file: "ddl/schemas/content_management/triggers/09-trg_marie_curie_content_updated_at.sql"
+
+  - name: trg_media_files_updated_at
+    table: media_files
+    description: "Actualiza timestamp de modificación"
+    file: "ddl/schemas/content_management/triggers/10-trg_media_files_updated_at.sql"
 
 # ============================================================================
 # RLS POLICIES
@@ -350,12 +346,12 @@ validation:
 
   ddl_sync:
     status: "✅ 100% sincronizado"
-    enums_count: 4
+    enums_count: 4  # content_status, content_type, media_type, processing_status
     tables_count: 8  # Corregido de 6 a 8 (agregadas: content_authors, content_categories, media_metadata)
-    functions_count: 0  # Corregido de 3 a 0 (NO existe directorio functions, es correcto)
-    triggers_count: 3  # Corregido de 2 a 3 (content_templates, marie_curie_content, media_files)
-    indexes_count: 2  # Validado (idx_marie_content_grade_levels_gin, idx_marie_content_keywords_gin)
-    rls_policies_count: 1  # Validado (01-policies.sql)
+    functions_count: 0  # NO existe directorio functions/ (funciones fantasma eliminadas de documentación)
+    triggers_count: 3  # Corregido de 2 a 3 (08-content_templates, 09-marie_curie_content, 10-media_files)
+    indexes_count: 2  # idx_marie_content_grade_levels_gin, idx_marie_content_keywords_gin
+    rls_policies_count: 1  # 01-policies.sql
 
   backend_sync:
     status: "✅ 100% sincronizado"

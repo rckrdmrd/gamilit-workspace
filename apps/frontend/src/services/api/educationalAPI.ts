@@ -232,6 +232,34 @@ const mockExercises: Partial<Exercise>[] = [
 ];
 
 // ============================================================================
+// RESPONSE TRANSFORMERS
+// ============================================================================
+
+/**
+ * Transform backend exercise response to frontend Exercise format
+ * Handles field name mismatches between snake_case (backend) and camelCase/different names (frontend)
+ */
+function transformExercise(backendExercise: any): Exercise {
+  return {
+    ...backendExercise,
+    // Map backend field names to frontend field names
+    type: backendExercise.exercise_type || backendExercise.type,
+    difficulty: backendExercise.difficulty_level || backendExercise.difficulty,
+    estimatedTime: backendExercise.estimated_time_minutes || backendExercise.estimatedTime,
+    timeLimit: backendExercise.time_limit_minutes || backendExercise.timeLimit,
+    max_score: backendExercise.max_points || backendExercise.max_score,
+    points: backendExercise.max_points || backendExercise.points || backendExercise.max_score,
+  } as Exercise;
+}
+
+/**
+ * Transform array of backend exercises to frontend format
+ */
+function transformExercises(backendExercises: any[]): Exercise[] {
+  return backendExercises.map(transformExercise);
+}
+
+// ============================================================================
 // MODULES API FUNCTIONS
 // ============================================================================
 
@@ -247,11 +275,12 @@ export const getModules = async (): Promise<Module[]> => {
       return mockModules;
     }
 
-    const { data } = await apiClient.get<ApiResponse<Module[]>>(
+    // Backend returns modules array directly, not wrapped in { data: {...} }
+    const { data } = await apiClient.get<Module[]>(
       API_ENDPOINTS.educational.modules
     );
 
-    return data.data;
+    return data;
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -272,11 +301,12 @@ export const getModule = async (moduleId: string): Promise<Module> => {
       return module;
     }
 
-    const { data } = await apiClient.get<ApiResponse<Module>>(
+    // Backend returns module directly, not wrapped in { data: {...} }
+    const { data } = await apiClient.get<Module>(
       API_ENDPOINTS.educational.module(moduleId)
     );
 
-    return data.data;
+    return data;
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -295,11 +325,12 @@ export const checkModuleAccess = async (moduleId: string): Promise<boolean> => {
       return true;
     }
 
-    const { data } = await apiClient.get<ApiResponse<{ hasAccess: boolean }>>(
+    // Backend returns data directly, not wrapped in { data: {...} }
+    const { data } = await apiClient.get<{ hasAccess: boolean }>(
       API_ENDPOINTS.educational.moduleAccess(moduleId)
     );
 
-    return data.data.hasAccess;
+    return data.hasAccess;
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -326,16 +357,19 @@ export const getUserModules = async (userId: string): Promise<Module[]> => {
     }
 
     console.log('📡 [educationalAPI] Making HTTP GET request to backend...');
-    const { data } = await apiClient.get<ApiResponse<Module[]>>(
+    const { data } = await apiClient.get<Module[]>(
       API_ENDPOINTS.educational.userModules(userId)
     );
 
     console.log('✅ [educationalAPI] Backend response received:', {
-      modulesCount: data.data?.length,
+      isArray: Array.isArray(data),
+      modulesCount: Array.isArray(data) ? data.length : 0,
+      firstModule: Array.isArray(data) && data.length > 0 ? data[0] : null,
       responseStatus: 'success',
     });
 
-    return data.data;
+    // Backend returns array directly, not wrapped in { data: {...} }
+    return data;
   } catch (error) {
     console.error('❌ [educationalAPI] Error fetching user modules:', error);
     throw handleAPIError(error);
@@ -369,12 +403,14 @@ export const getExercises = async (filters?: {
       return exercises as Exercise[];
     }
 
-    const { data } = await apiClient.get<ApiResponse<Exercise[]>>(
+    // Backend returns exercises array directly, not wrapped in { data: {...} }
+    const { data } = await apiClient.get<any[]>(
       API_ENDPOINTS.educational.exercises,
       { params: filters }
     );
 
-    return data.data;
+    // Transform backend response to frontend format
+    return transformExercises(data);
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -393,11 +429,13 @@ export const getModuleExercises = async (moduleId: string): Promise<Exercise[]> 
       return mockExercises.filter((e) => e.module_id === moduleId) as Exercise[];
     }
 
-    const { data } = await apiClient.get<ApiResponse<Exercise[]>>(
+    // Backend returns exercises array directly, not wrapped in { data: {...} }
+    const { data } = await apiClient.get<any[]>(
       API_ENDPOINTS.educational.moduleExercises(moduleId)
     );
 
-    return data.data;
+    // Transform backend response to frontend format
+    return transformExercises(data);
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -418,11 +456,13 @@ export const getExercise = async (exerciseId: string): Promise<Exercise> => {
       return exercise as Exercise;
     }
 
-    const { data } = await apiClient.get<ApiResponse<Exercise>>(
+    // Backend returns exercise directly, not wrapped in { data: {...} }
+    const { data } = await apiClient.get<any>(
       API_ENDPOINTS.educational.exercise(exerciseId)
     );
 
-    return data.data;
+    // Transform backend response to frontend format
+    return transformExercise(data);
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -485,12 +525,13 @@ export const submitExercise = async (
       };
     }
 
-    const { data } = await apiClient.post<ApiResponse<ExerciseSubmissionResult>>(
+    // Backend returns submission result directly, not wrapped in { data: {...} }
+    const { data } = await apiClient.post<ExerciseSubmissionResult>(
       `${API_ENDPOINTS.educational.exercise(exerciseId)}/submit`,
       submission
     );
 
-    return data.data;
+    return data;
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -551,11 +592,12 @@ export const getExerciseHints = async (
     }
 
     // Use the educational route instead of mechanics
+    // Backend returns hints array directly, not wrapped in { data: {...} }
     const { data} = await apiClient.get<
-      ApiResponse<Array<{ id: string; text: string; cost: number; order: number }>>
+      Array<{ id: string; text: string; cost: number; order: number }>
     >(`/educational/mechanics/${exerciseId}/hints`);
 
-    return data.data;
+    return data;
   } catch (error) {
     // If hints endpoint fails, return empty array
     console.warn('Failed to fetch hints:', error);
@@ -589,11 +631,12 @@ export const getUserProgress = async (userId: string): Promise<UserDashboardData
       };
     }
 
-    const { data } = await apiClient.get<ApiResponse<UserDashboardData>>(
+    // Backend returns user progress data directly, not wrapped in { data: {...} }
+    const { data } = await apiClient.get<UserDashboardData>(
       API_ENDPOINTS.educational.userProgress(userId)
     );
 
-    return data.data;
+    return data;
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -622,11 +665,12 @@ export const getModuleProgress = async (
       };
     }
 
-    const { data } = await apiClient.get<ApiResponse<ModuleProgress>>(
+    // Backend returns module progress directly, not wrapped in { data: {...} }
+    const { data } = await apiClient.get<ModuleProgress>(
       API_ENDPOINTS.educational.moduleProgress(userId, moduleId)
     );
 
-    return data.data;
+    return data;
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -654,11 +698,12 @@ export const getUserDashboard = async (userId: string): Promise<UserDashboardDat
       };
     }
 
-    const { data } = await apiClient.get<ApiResponse<UserDashboardData>>(
+    // Backend returns dashboard data directly, not wrapped in { data: {...} }
+    const { data } = await apiClient.get<UserDashboardData>(
       API_ENDPOINTS.educational.userDashboard(userId)
     );
 
-    return data.data;
+    return data;
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -690,12 +735,13 @@ export const getExerciseAttempts = async (
       ];
     }
 
-    const { data } = await apiClient.get<ApiResponse<ExerciseProgress[]>>(
+    // Backend returns exercise attempts array directly, not wrapped in { data: {...} }
+    const { data } = await apiClient.get<ExerciseProgress[]>(
       API_ENDPOINTS.educational.exerciseAttempts(userId),
       { params: { exerciseId } }
     );
 
-    return data.data;
+    return data;
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -733,12 +779,13 @@ export const getUserAnalytics = async (
       };
     }
 
-    const { data } = await apiClient.get<ApiResponse<UserAnalytics>>(
+    // Backend returns analytics data directly, not wrapped in { data: {...} }
+    const { data } = await apiClient.get<UserAnalytics>(
       API_ENDPOINTS.educational.userAnalytics(userId),
       { params: { timeframe } }
     );
 
-    return data.data;
+    return data;
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -763,20 +810,40 @@ export const getUserActivities = async (userId: string, limit: number = 10): Pro
       return [];
     }
 
-    const { data } = await apiClient.get<ApiResponse<UserActivity[]>>(
+    const { data } = await apiClient.get<any[]>(
       API_ENDPOINTS.educational.userActivities(userId),
       { params: { limit } }
     );
 
-    // Parse timestamp strings to Date objects
-    return data.data.map(activity => ({
-      ...activity,
-      timestamp: new Date(activity.timestamp),
+    // Backend returns array directly, not wrapped in { data: {...} }
+    // Transform backend format to frontend format
+    return data.map((activity: any) => ({
+      id: activity.id,
+      type: mapActivityAction(activity.action),
+      title: activity.entity_name || activity.description,
+      description: activity.description,
+      timestamp: new Date(activity.created_at),
+      metadata: activity.metadata || {},
+      category: activity.entity_type || 'general',
     }));
   } catch (error) {
     throw handleAPIError(error);
   }
 };
+
+/**
+ * Map backend action to frontend activity type
+ */
+function mapActivityAction(action: string): UserActivity['type'] {
+  const actionMap: Record<string, UserActivity['type']> = {
+    'completed_exercise': 'exercise_completed',
+    'completed_module': 'module_completed',
+    'unlocked_achievement': 'achievement_unlocked',
+    'reached_streak': 'streak_milestone',
+    'leveled_up': 'level_up',
+  };
+  return actionMap[action] || 'exercise_completed';
+}
 
 /**
  * Get activity statistics for a user
@@ -829,12 +896,13 @@ export const getUserActivitiesByType = async (
       return [];
     }
 
-    const { data } = await apiClient.get<ApiResponse<UserActivity[]>>(
+    // Backend returns activities array directly, not wrapped in { data: {...} }
+    const { data } = await apiClient.get<UserActivity[]>(
       API_ENDPOINTS.educational.activitiesByType(userId, type),
       { params: { limit } }
     );
 
-    return data.data.map(activity => ({
+    return data.map(activity => ({
       ...activity,
       timestamp: new Date(activity.timestamp),
     }));

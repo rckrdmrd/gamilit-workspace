@@ -53,14 +53,14 @@ export const useShop = (shopItems: ShopItem[]) => {
         (item) =>
           item.name.toLowerCase().includes(query) ||
           item.description.toLowerCase().includes(query) ||
-          item.tags.some((tag) => tag.toLowerCase().includes(query))
+          item.tags?.some((tag) => tag.toLowerCase().includes(query))
       );
     }
 
     // Tags filter
     if (filters.tags && filters.tags.length > 0) {
       items = items.filter((item) =>
-        filters.tags!.some((tag) => item.tags.includes(tag))
+        filters.tags!.some((tag) => item.tags?.includes(tag))
       );
     }
 

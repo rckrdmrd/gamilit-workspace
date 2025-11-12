@@ -17,10 +17,11 @@ export { LeaderboardLayout } from './LeaderboardLayout';
 export { LeaderboardEntry } from './LeaderboardEntry';
 export { LeaderboardTabs } from './LeaderboardTabs';
 export { SeasonSelector } from './SeasonSelector';
-export { GlobalLeaderboard } from './GlobalLeaderboard';
-export { SchoolLeaderboard } from './SchoolLeaderboard';
-export { GradeLeaderboard } from './GradeLeaderboard';
-export { FriendsLeaderboard } from './FriendsLeaderboard';
+// TODO: Implement these leaderboard components (currently empty files)
+// export { GlobalLeaderboard } from './GlobalLeaderboard';
+// export { SchoolLeaderboard } from './SchoolLeaderboard';
+// export { GradeLeaderboard } from './GradeLeaderboard';
+// export { FriendsLeaderboard } from './FriendsLeaderboard';
 
 // Types
 export type { ExtendedLeaderboardType } from './EnhancedLeaderboardTabs';

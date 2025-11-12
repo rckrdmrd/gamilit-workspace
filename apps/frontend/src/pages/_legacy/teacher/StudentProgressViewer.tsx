@@ -334,7 +334,7 @@ export const StudentProgressViewer: React.FC = () => {
       ['Usuario', student.username],
       ['Nivel', student.current_level.toString()],
       ['Rango Maya', student.maya_rank],
-      ['XP Total', stats.total_xp.toString()],
+      ['XP Total', ((stats as any).total_xp ?? 0).toString()],
       [''],
       ['Estadísticas Generales'],
       ['Módulos Completados', `${stats.completed_modules}/${stats.total_modules}`],

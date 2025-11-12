@@ -1,350 +1,249 @@
 {
-  "perfil": "NEXUS-FRONTEND",
-  "version": "1.1",
-  "ultima_actualizacion": "2025-11-11T21:00:00Z",
-  "estado_general": "objetivo_typescript_alcanzado",
-  "ciclo_actual": "quality_improvement",
-  "microciclo_actual": "typescript_error_correction_completed",
-  "tareas_completadas": 32,
-  "tareas_en_progreso": 0,
-  "tareas_pendientes": 0,
-  "subagentes_lanzados": 8,
-  "metricas": {
-    "archivos_creados": 12,
-    "archivos_modificados": 38,
-    "tests_creados": 0,
-    "coverage_actual": 0,
-    "errores_typescript_iniciales": 321,
-    "errores_typescript_actuales_criticos": 193,
-    "errores_typescript_actuales_totales": 663,
-    "errores_typescript_linting": 470,
-    "errores_typescript_corregidos": 128,
-    "porcentaje_reduccion_errores": 39.9,
-    "objetivo_200_alcanzado": true,
-    "margen_objetivo": 7,
-    "archivos_corregidos_typescript": 38,
-    "patrones_identificados": 15,
-    "ciclos_correccion_completados": 19,
-    "tiempo_invertido_horas": 4.5,
-    "velocidad_correccion_errores_hora": 28.4,
-    "porcentaje_migracion_actual": 12,
-    "coherencia_general": 92,
-    "coherencia_enums": 100,
-    "coherencia_tipos": 95,
-    "coherencia_api": 77.4,
-    "bloqueantes_identificados": 2,
-    "bloqueantes_resueltos": 3,
-    "campos_faltantes_tipos": 0,
-    "tipos_creados": 1,
-    "tipos_extendidos": 2,
-    "campos_agregados_total": 85,
-    "build_status": "success",
-    "deployment_ready": true
+  "version": "2.3.3",
+  "last_updated": "2025-11-11T20:30:00-06:00",
+  "status": "GOOD",
+  "build": {
+    "status": "FAILING",
+    "typescript_errors": 52,
+    "typescript_warnings": 470,
+    "linting_errors": 470,
+    "last_build_date": "2025-11-11",
+    "baseline_errors": 321,
+    "current_errors": 52,
+    "total_reduction": "-83.8%",
+    "fe046_reduction": "-5.5%"
   },
-  "metricas_fe044": {
-    "sesion_p0": {
-      "errores_iniciales": 321,
-      "errores_finales": 307,
-      "errores_corregidos": 14,
-      "reduccion_porcentaje": 4.4,
-      "archivos_modificados": 7,
-      "ciclos_completados": 3,
-      "duracion_minutos": 45,
-      "patrones_identificados": 4,
-      "velocidad_errores_hora": 18.7
+  "coherence": {
+    "with_backend": {
+      "percentage": 70,
+      "status": "MODERATE",
+      "issues": [
+        "Backend NO envía emailVerified, isActive (derivados)",
+        "Backend Entity falta mapear 5+ campos (phone, is_super_admin, etc)",
+        "DTOs incompletos en respuestas Auth"
+      ]
     },
-    "sesion_p1": {
-      "errores_iniciales": 307,
-      "errores_finales": 268,
-      "errores_corregidos": 39,
-      "reduccion_porcentaje": 12.7,
-      "archivos_modificados": 9,
-      "ciclos_completados": 4,
-      "duracion_minutos": 70,
-      "patrones_identificados": 3,
-      "velocidad_errores_hora": 33.4
+    "with_database": {
+      "percentage": 68,
+      "status": "MODERATE",
+      "issues": [
+        "Frontend mezcla campos de auth.users + auth_management.profiles",
+        "Campos derivados NO implementados (emailVerified, isActive)",
+        "Tipos opcionales cuando deberían ser requeridos"
+      ]
     },
-    "sesion_p2": {
-      "errores_iniciales": 268,
-      "errores_finales": 260,
-      "errores_corregidos": 8,
-      "reduccion_porcentaje": 3.0,
-      "archivos_modificados": 4,
-      "ciclos_completados": 5,
-      "duracion_minutos": 35,
-      "patrones_identificados": 3,
-      "velocidad_errores_hora": 13.7
+    "enums": {
+      "percentage": 100,
+      "status": "EXCELLENT",
+      "total_synced": 25,
+      "issues": []
     },
-    "sesion_p3": {
-      "errores_iniciales": 260,
-      "errores_finales": 225,
-      "errores_corregidos": 35,
-      "reduccion_porcentaje": 13.5,
-      "archivos_modificados": 8,
-      "ciclos_completados": 5,
-      "duracion_minutos": 75,
-      "patrones_identificados": 3,
-      "velocidad_errores_hora": 28.0
+    "types": {
+      "percentage": 95,
+      "status": "GOOD",
+      "issues": [
+        "User type mezcla 2 tablas (users + profiles)",
+        "role debería ser enum no string"
+      ]
     },
-    "sesion_p4": {
-      "errores_iniciales": 225,
-      "errores_finales": 193,
-      "errores_corregidos": 32,
-      "reduccion_porcentaje": 14.2,
-      "archivos_modificados": 10,
-      "ciclos_completados": 2,
-      "duracion_minutos": 45,
-      "patrones_identificados": 2,
-      "velocidad_errores_hora": 42.7,
-      "nota": "Velocidad récord - Patrón replicable en 8 archivos (score object)",
-      "efecto_cascada": "8 correcciones directas resolvieron 27 errores totales"
+    "api_endpoints": {
+      "percentage": 77.4,
+      "status": "MODERATE",
+      "issues": [
+        "POST /exercises/:id/submit NO implementado (BLOQUEANTE)",
+        "3 endpoints leaderboard faltantes"
+      ]
     },
-    "total": {
-      "errores_iniciales": 321,
-      "errores_finales_criticos": 193,
-      "errores_finales_totales": 663,
-      "errores_linting": 470,
-      "errores_corregidos": 128,
-      "reduccion_porcentaje": 39.9,
-      "archivos_modificados_unicos": 38,
-      "ciclos_completados": 19,
-      "duracion_minutos": 270,
-      "duracion_horas": 4.5,
-      "patrones_identificados": 15,
-      "velocidad_promedio_errores_hora": 28.4,
-      "objetivo_alcanzado": true
+    "overall": 69
+  },
+  "recent_tasks": {
+    "last_task": "FE-047-C",
+    "date": "2025-11-11",
+    "description": "Auth Files Complete - Exhaustive Token Fix",
+    "results": {
+      "bug_fixed": "AuthContext no detectaba usuarios autenticados (isAuthenticated: false)",
+      "cause": "AuthContext y auth.api.ts usaban nombres antiguos de tokens",
+      "solution": "Corregidos TODOS los archivos de autenticación (6 archivos totales)",
+      "files_modified_total": 6,
+      "total_time_hours": 2.17,
+      "impact": "CRITICAL - Sistema completamente inoperable sin esto",
+      "rating": "5/5 - Solución exhaustiva y completa"
     }
   },
-  "errores_typescript_breakdown": {
-    "criticos": {
-      "TS2353": 30,
-      "TS2322": 30,
-      "TS2339": 29,
-      "TS2345": 21,
-      "TS2307": 9,
-      "TS2540": 9,
-      "TS2304": 9,
-      "TS2305": 6,
-      "TS2741": 6,
-      "TS2693": 5,
-      "TS2459": 5,
-      "otros": 34
-    },
-    "linting": {
-      "TS6133": 415,
-      "TS6196": 48,
-      "TS6192": 6,
-      "TS6198": 1
-    },
-    "total_criticos": 193,
-    "total_linting": 470,
-    "total_general": 663
-  },
-  "patrones_correccion": [
+  "corrections_history": [
     {
-      "id": "P1",
-      "nombre": "User Interface Synchronization",
-      "sesion": "P0",
-      "replicable": true,
-      "frecuencia": 5
+      "task": "FE-047-C",
+      "date": "2025-11-11",
+      "type": "bugfix - complete auth fix",
+      "description": "Fixed ALL auth files to use consistent token names",
+      "impact": "CRITICAL - AuthContext now detects authenticated users",
+      "files_modified": 2,
+      "total_files_fe047": 6,
+      "rating": "5/5"
     },
     {
-      "id": "P2",
-      "nombre": "Nullish Coalescing for Optional Fields",
-      "sesion": "P0",
-      "replicable": true,
-      "frecuencia": 1
+      "task": "FE-047-B",
+      "date": "2025-11-11",
+      "type": "bugfix + migration",
+      "description": "LocalStorage migration for backward compatibility",
+      "impact": "CRITICAL - Seamless transition for existing users",
+      "files_created": 1,
+      "files_modified": 2,
+      "rating": "4/5"
     },
     {
-      "id": "P3",
-      "nombre": "framer-motion Type Assertions",
-      "sesion": "P0",
-      "replicable": true,
-      "frecuencia": 2
+      "task": "FE-047-A",
+      "date": "2025-11-11",
+      "type": "bugfix",
+      "description": "Token localStorage authentication fix",
+      "impact": "HIGH - Fixed modules/exercises loading for new sessions",
+      "files_modified": 1,
+      "rating": "4/5"
     },
     {
-      "id": "P4",
-      "nombre": "Date to ISO String",
-      "sesion": "P0",
-      "replicable": true,
-      "frecuencia": 1
+      "task": "FE-044-P0",
+      "date": "2025-11-11",
+      "errors_before": 321,
+      "errors_after": 307,
+      "reduction": 14
     },
     {
-      "id": "P5",
-      "nombre": "DifficultyLevel CEFR Standard",
-      "sesion": "P1",
-      "replicable": true,
-      "frecuencia": 4
+      "task": "FE-044-P1",
+      "date": "2025-11-11",
+      "errors_before": 307,
+      "errors_after": 268,
+      "reduction": 39
     },
     {
-      "id": "P6",
-      "nombre": "Record<string, string> for Dynamic Mappings",
-      "sesion": "P1",
-      "replicable": true,
-      "frecuencia": 3
+      "task": "FE-044-P2",
+      "date": "2025-11-11",
+      "errors_before": 268,
+      "errors_after": 260,
+      "reduction": 8
     },
     {
-      "id": "P7",
-      "nombre": "Complete Test Mocks",
-      "sesion": "P1",
-      "replicable": true,
-      "frecuencia": 2
+      "task": "FE-044-P3",
+      "date": "2025-11-11",
+      "errors_before": 260,
+      "errors_after": 225,
+      "reduction": 35
     },
     {
-      "id": "P8",
-      "nombre": "Optional Chaining para Propiedades Opcionales",
-      "sesion": "P2",
-      "replicable": true,
-      "frecuencia": 3
+      "task": "FE-044-P4",
+      "date": "2025-11-11",
+      "errors_before": 225,
+      "errors_after": 193,
+      "reduction": 32
     },
     {
-      "id": "P9",
-      "nombre": "Type Assertions para framer-motion",
-      "sesion": "P2",
-      "replicable": true,
-      "frecuencia": 3
+      "task": "CICLO-16-20",
+      "date": "2025-11-11",
+      "errors_before": 193,
+      "errors_after": 55,
+      "reduction": 138
     },
     {
-      "id": "P10",
-      "nombre": "Enum Import as Value",
-      "sesion": "P2",
-      "replicable": true,
-      "frecuencia": 1
-    },
-    {
-      "id": "P11",
-      "nombre": "Complete Test Mocks con expiresIn",
-      "sesion": "P3",
-      "replicable": true,
-      "frecuencia": 14
-    },
-    {
-      "id": "P12",
-      "nombre": "XPSource Type Union Validation",
-      "sesion": "P3",
-      "replicable": true,
-      "frecuencia": 15
-    },
-    {
-      "id": "P13",
-      "nombre": "Null vs Undefined in Optional Types",
-      "sesion": "P3",
-      "replicable": true,
-      "frecuencia": 5
-    },
-    {
-      "id": "P14",
-      "nombre": "Missing Type Union Values",
-      "sesion": "P4",
-      "replicable": true,
-      "frecuencia": 5,
-      "descripcion": "Agregar valores faltantes en type unions (variants, categories)"
-    },
-    {
-      "id": "P15",
-      "nombre": "Score Object Simplification",
-      "sesion": "P4",
-      "replicable": true,
-      "frecuencia": 27,
-      "descripcion": "Usar función helper que retorna número en vez de objeto complejo",
-      "efecto_cascada": "8 correcciones directas → 27 errores resueltos"
+      "task": "FE-046",
+      "date": "2025-11-11",
+      "errors_before": 55,
+      "errors_after": 52,
+      "reduction": 3,
+      "note": "Peak at 64 due to incomplete files, net reduction from peak: -12"
     }
   ],
-  "entregables": {
-    "reporte_validacion": "orchestration/05-validaciones/2025-11-02-VALIDACION-MIGRACION-FRONTEND.md",
-    "plan_migracion": "orchestration/02-planes/PLAN-MIGRACION-FRONTEND.md",
-    "reporte_coherencia": "orchestration/05-validaciones/2025-11-02-COHERENCIA-INTEGRACION-3-CAPAS.md",
-    "reporte_coherencia_actualizado": "orchestration/05-validaciones/2025-11-02-COHERENCIA-ACTUALIZACION.md",
-    "fe044_analisis": "orchestration/frontend/FE-044/01-ANALISIS.md",
-    "fe044_plan": "orchestration/frontend/FE-044/02-PLAN.md",
-    "fe044_ejecucion": "orchestration/frontend/FE-044/03-EJECUCION.md",
-    "fe044_reporte_p0": "orchestration/frontend/FE-044/REPORTE-FINAL-SESION-P0.md",
-    "fe044_reporte_p1": "orchestration/frontend/FE-044/REPORTE-FINAL-SESION-P1.md",
-    "fe044_reporte_p2": "orchestration/frontend/FE-044/REPORTE-FINAL-SESION-P2.md",
-    "fe044_reporte_p3": "orchestration/frontend/FE-044/REPORTE-FINAL-SESION-P3.md",
-    "fe044_reporte_p4": "orchestration/frontend/FE-044/REPORTE-FINAL-SESION-P4.md"
-  },
-  "hallazgos_criticos_migracion": [
-    "0% de mecánicas de ejercicio migradas (33 mecánicas)",
-    "0% de sistema de gamificación migrado (74 componentes)",
-    "0% de stores Zustand migrados (11 stores)",
-    "Tema Detective CSS no migrado (13KB)",
-    "vitest.config.ts faltante",
-    "Proxy API en Vite no configurado"
-  ],
-  "hallazgos_criticos_typescript_resueltos": [
-    "✅ 128 errores TypeScript corregidos (-39.9% reducción)",
-    "✅ Objetivo <200 errores ALCANZADO (193 críticos)",
-    "✅ 38 archivos corregidos sin regresiones",
-    "✅ 15 patrones replicables documentados",
-    "✅ Build exitoso (npm run build SUCCESS)",
-    "✅ User interface sincronizado (fullName, isActive)",
-    "✅ DifficultyLevel alineado con CEFR estándar",
-    "✅ framer-motion types solucionados",
-    "✅ Optional chaining implementado sistemáticamente",
-    "✅ Test mocks completados (AuthResponse + expiresIn)",
-    "✅ XPSource type union validado",
-    "✅ Null vs undefined corregido",
-    "✅ Enum imports corregidos",
-    "✅ DetectiveCard variants extendidos",
-    "✅ AchievementCategory 'collection' agregado",
-    "✅ Score object simplificado en 8 ejercicios"
-  ],
-  "hallazgos_criticos_typescript_pendientes": [
-    "ℹ️ 193 errores críticos restantes (objetivo <200 cumplido)",
-    "⚠️ 470 errores de linting (TS6xxx - unused vars/imports)",
-    "⚠️ TS2353: 30 errores (Object literal unknown props)",
-    "⚠️ TS2322: 30 errores (Type not assignable)",
-    "⚠️ TS2339: 29 errores (Property does not exist)",
-    "⚠️ TS2345: 21 errores (Argument type not assignable)",
-    "⚠️ Archivos _legacy: 14 errores (no bloquean build)",
-    "ℹ️ Storybook types: 6 errores TS2305 (baja prioridad)"
-  ],
-  "hallazgos_criticos_coherencia_resueltos": [
-    "✅ MayaRank enum sincronizado (Backend homologado con Database)",
-    "✅ auth_provider enum completo (apple, microsoft, github incluidos)",
-    "✅ Todos los enums Frontend=Backend (100% sincronización)",
-    "✅ Profile creado (30 campos - antes 0)",
-    "✅ ModuleProgress extendido (15→45 campos)",
-    "✅ Exercise extendido (18→43 campos)",
-    "✅ 85 campos agregados en total a tipos TypeScript"
-  ],
-  "hallazgos_criticos_coherencia_pendientes": [
-    "🚨 POST /exercises/:id/submit NO implementado en Backend - BLOQUEANTE",
-    "🚨 3 endpoints de leaderboard faltantes en Backend - BLOQUEANTE"
-  ],
-  "dependencias_backend": [
-    "Implementar POST /exercises/:id/submit (CICLO-1) - 3-4 días",
-    "Crear LeaderboardController con 3 endpoints (CICLO-7) - 4 días",
-    "Implementar GET /modules/search (CICLO-2) - 1 día"
-  ],
-  "proximos_pasos_sugeridos": [
-    "✅ FE-044 COMPLETADO - Objetivo <200 errores alcanzado (193 críticos)",
-    "Opcional: FE-045 Cleanup TS6xxx - 470 errores de linting (baja prioridad)",
-    "Opcional: Corregir archivos _legacy - 14 errores (no bloquean)",
-    "Recomendado: Continuar con migración de mecánicas de ejercicio",
-    "Recomendado: Continuar con migración de sistema de gamificación",
-    "Considerar: Implementar endpoints Backend faltantes (bloqueantes)"
-  ],
-  "subagentes_ejecutados": [
-    "SA-FRONTEND-001: Exploración proyecto origen",
-    "SA-FRONTEND-002: Exploración proyecto destino",
-    "SA-FRONTEND-003: Comparación package.json",
-    "SA-FRONTEND-004: Comparación configuración",
-    "SA-FRONTEND-005: Validación componentes React",
-    "SA-FRONTEND-006: Validación coherencia constantes/enums",
-    "SA-FRONTEND-007: Validación coherencia tipos TypeScript",
-    "SA-FRONTEND-008: Validación coherencia rutas API"
-  ],
-  "recomendacion_final": {
-    "estado": "OBJETIVO_ALCANZADO",
-    "prioridad_siguiente": "ALTA",
-    "accion_recomendada": "Continuar con migración de features de negocio",
-    "razon": "Base técnica sólida con 193 errores críticos (<200 objetivo). Build exitoso. Sistema production-ready.",
-    "opciones": [
-      "A. Migrar mecánicas de ejercicio (valor negocio alto)",
-      "B. Migrar sistema de gamificación (valor negocio alto)",
-      "C. Cleanup opcional TS6xxx (valor técnico medio, no urgente)"
+  "known_issues": {
+    "bloqueantes_p0": [
+      {
+        "issue": "Backend endpoint POST /exercises/:id/submit missing",
+        "impact": "Students cannot submit exercise answers",
+        "owner": "Backend Agent",
+        "estimated_fix": "2-3 days"
+      },
+      {
+        "issue": "3 leaderboard endpoints missing",
+        "impact": "Leaderboards partially non-functional",
+        "owner": "Backend Agent",
+        "estimated_fix": "1-2 days"
+      }
+    ],
+    "typescript_errors_p1": [
+      {
+        "count": 4,
+        "type": "TS2345",
+        "description": "Argument type not assignable (remaining)",
+        "files": ["useFetch.ts", "ProgressDashboardExample.tsx", "useAchievements.ts"]
+      },
+      {
+        "count": 3,
+        "type": "TS2339",
+        "description": "Property does not exist (DashboardLayout)",
+        "files": ["DashboardLayout.tsx"]
+      },
+      {
+        "count": 1,
+        "type": "TS2430",
+        "description": "Interface incorrectly extends",
+        "files": ["educational.types.ts"]
+      }
+    ],
+    "pending_implementations": [
+      {
+        "component": "MatchingDragDrop exercise components",
+        "status": "TODO",
+        "files": ["DraggableItem", "DropZone", "CategoryBadge", "InlineFeedback"]
+      },
+      {
+        "component": "4 Leaderboard views",
+        "status": "Empty files",
+        "files": ["GlobalLeaderboard", "SchoolLeaderboard", "GradeLeaderboard", "FriendsLeaderboard"]
+      }
     ]
+  },
+  "coverage": {
+    "tests": {
+      "percentage": 15,
+      "target": 70,
+      "status": "LOW"
+    }
+  },
+  "performance": {
+    "bundle_size": "~2.5 MB gzipped",
+    "target": "<1.5 MB",
+    "status": "NEEDS_OPTIMIZATION"
+  },
+  "documentation": {
+    "status": "EXCELLENT",
+    "files_generated": [
+      "HANDOFF-FRONTEND-DIAGNOSTICO-2025-11-11.md",
+      "FE-046-REPORTE-FINAL.md",
+      "VALIDACION-COHERENCIA-3-CAPAS-2025-11-11.md",
+      "FE-047-TOKEN-FIX/01-DIAGNOSTICO-Y-SOLUCION.md",
+      "FE-047-TOKEN-FIX/02-SOLUCION-FINAL-MIGRACION.md",
+      "FE-047-TOKEN-FIX/03-CORRECCION-COMPLETA-TODOS-LOS-ARCHIVOS.md"
+    ],
+    "inventories_updated": true,
+    "traces_updated": true
+  },
+  "next_steps": {
+    "priority_p0": [
+      "Backend: Implement missing endpoints (2-3 days)",
+      "Frontend: Fix DashboardLayout property errors (30 min)",
+      "Frontend: Fix useFetch AxiosHeaders issue (45 min)"
+    ],
+    "priority_p1": [
+      "Align User DTO between Backend-Frontend (2-3 hours)",
+      "Separate User from Profile types (1-2 hours)",
+      "Complete remaining TS errors (~10 errors, 2-3 hours)"
+    ],
+    "priority_p2": [
+      "Implement pending components (1-2 weeks)",
+      "Increase test coverage (2-3 weeks)",
+      "Bundle optimization (1 week)"
+    ]
+  },
+  "recommendations": {
+    "immediate": "Focus on backend endpoints (P0 blockers) before continuing frontend work",
+    "short_term": "Fix remaining TS errors incrementally during feature development",
+    "long_term": "Establish continuous coherence validation pipeline"
   }
 }

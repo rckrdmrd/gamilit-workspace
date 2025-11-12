@@ -30,7 +30,7 @@ import { Role } from './role.entity';
  */
 @Entity({ schema: 'auth', name: DB_TABLES.AUTH.USERS })
 @Index('idx_auth_users_email', ['email'])
-@Index('idx_auth_users_role', ['role'])
+@Index('idx_auth_users_gamilit_role', ['role']) // Índice correcto para gamilit_role
 export class User {
   /**
    * Identificador único del usuario (UUID)
@@ -54,11 +54,15 @@ export class User {
 
   /**
    * Rol del usuario en el sistema (student, admin_teacher, super_admin)
+   *
+   * @note GAMILIT usa la columna 'gamilit_role' (ENUM auth_management.gamilit_role)
+   * @note La columna 'role' (varchar) es legacy de Supabase, no se usa
    */
   @Column({
     type: 'enum',
     enum: GamilityRoleEnum,
     default: GamilityRoleEnum.STUDENT,
+    name: 'gamilit_role', // ← FIX: Mapear a columna correcta
   })
   role!: GamilityRoleEnum;
 
@@ -95,6 +99,36 @@ export class User {
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
   email_confirmed_at?: Date;
+
+  /**
+   * Número de teléfono del usuario
+   * IMPORTANTE: Campo agregado para alineación con DDL auth.users
+   */
+  @Column({ type: 'text', nullable: true })
+  phone?: string;
+
+  /**
+   * Fecha y hora de confirmación del teléfono
+   * IMPORTANTE: Campo agregado para alineación con DDL auth.users
+   */
+  @Column({ type: 'timestamp with time zone', nullable: true })
+  phone_confirmed_at?: Date;
+
+  /**
+   * Indica si el usuario es super administrador
+   * IMPORTANTE: Campo agregado para alineación con DDL auth.users
+   * Super admin tiene acceso total al sistema sin restricciones
+   */
+  @Column({ type: 'boolean', default: false })
+  is_super_admin!: boolean;
+
+  /**
+   * Fecha y hora hasta la cual el usuario está baneado
+   * Si tiene valor, el usuario no puede acceder hasta que pase esta fecha
+   * IMPORTANTE: Campo agregado para alineación con DDL auth.users
+   */
+  @Column({ type: 'timestamp with time zone', nullable: true })
+  banned_until?: Date;
 
   /**
    * Fecha y hora del último inicio de sesión

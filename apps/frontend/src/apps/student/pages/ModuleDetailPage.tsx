@@ -514,7 +514,7 @@ export default function ModuleDetailPage() {
                 id={exercise.id}
                 hover={true}
                 padding="md"
-                onClick={() => navigate(`/module/${moduleId}/exercise/${exercise.id}`)}
+                onClick={() => navigate(`/exercises/${exercise.id}`)}
                 animationDelay={index * 0.1}
               >
                 <ExerciseCardContent exercise={exercise} />

@@ -81,22 +81,31 @@ export function useModuleDetail(moduleId: string): UseModuleDetailReturn {
   const [error, setError] = useState<Error | null>(null);
 
   const fetchModuleDetail = useCallback(async () => {
+    console.log('📡 [useModuleDetail] fetchModuleDetail called', { moduleId });
     setLoading(true);
     setError(null);
 
     try {
+      console.log('📡 [useModuleDetail] Fetching module and exercises...');
       const [moduleData, exercisesData] = await Promise.all([
         getModule(moduleId),
         getModuleExercises(moduleId),
       ]);
 
+      console.log('✅ [useModuleDetail] Data received:', {
+        hasModule: !!moduleData,
+        moduleTitle: moduleData?.title,
+        exercisesCount: exercisesData?.length,
+      });
+
       setModule(moduleData);
       setExercises(exercisesData);
     } catch (err) {
+      console.error('❌ [useModuleDetail] Error fetching module detail:', err);
       setError(err instanceof Error ? err : new Error('Failed to fetch module'));
-      console.error('Error fetching module detail:', err);
     } finally {
       setLoading(false);
+      console.log('🏁 [useModuleDetail] Fetch completed');
     }
   }, [moduleId]);
 

@@ -14,6 +14,8 @@ import { ExercisesService } from '../services';
 import { CreateExerciseDto, ExerciseResponseDto } from '../dto';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
 import { ExerciseTypeEnum } from '@/shared/constants/enums.constants';
+import { ExerciseSubmissionService } from '@/modules/progress/services';
+import { ExerciseSubmissionResponseDto } from '@/modules/progress/dto';
 
 /**
  * ExercisesController
@@ -27,7 +29,10 @@ import { ExerciseTypeEnum } from '@/shared/constants/enums.constants';
 @ApiTags('Educational - Exercises')
 @Controller(extractBasePath(API_ROUTES.EDUCATIONAL.BASE))
 export class ExercisesController {
-  constructor(private readonly exercisesService: ExercisesService) {}
+  constructor(
+    private readonly exercisesService: ExercisesService,
+    private readonly exerciseSubmissionService: ExerciseSubmissionService,
+  ) {}
 
   /**
    * Obtiene todos los ejercicios ordenados por módulo y índice
@@ -560,5 +565,129 @@ export class ExercisesController {
       valid: true,
       message: `Content is valid for exercise type: ${body.exercise_type}`,
     };
+  }
+
+  /**
+   * Envía un ejercicio completo - Frontend-aligned endpoint
+   *
+   * @param id - ID del ejercicio (UUID)
+   * @param body - Datos del envío (userId, submitted_answers, hints_used, time_spent_seconds, comodines_used)
+   * @returns Envío creado y procesado con puntaje, XP y ML Coins ganadas
+   *
+   * @description
+   * Este endpoint permite a los estudiantes enviar sus respuestas de ejercicios.
+   * Internamente delega al ExerciseSubmissionService del módulo Progress.
+   *
+   * Proceso:
+   * 1. Valida que el ejercicio exista
+   * 2. Crea un ExerciseAttempt en progress_tracking.exercise_attempts
+   * 3. Calcula el puntaje automáticamente
+   * 4. Otorga XP y ML Coins según el score
+   * 5. Dispara trigger para actualizar user_stats (ejercicios completados, XP, etc.)
+   * 6. Retorna el resultado completo del intento
+   *
+   * @example
+   * POST /api/v1/educational/exercises/880e8400-e29b-41d4-a716-446655440000/submit
+   * Request: {
+   *   "userId": "550e8400-e29b-41d4-a716-446655440000",
+   *   "submitted_answers": {
+   *     "question_1": "Marie Curie",
+   *     "question_2": "1903",
+   *     "question_3": "Radiactividad"
+   *   },
+   *   "time_spent_seconds": 180,
+   *   "hints_used": 1,
+   *   "comodines_used": ["pistas"]
+   * }
+   * Response: {
+   *   "id": "aa0e8400-e29b-41d4-a716-446655440000",
+   *   "user_id": "550e8400-e29b-41d4-a716-446655440000",
+   *   "exercise_id": "880e8400-e29b-41d4-a716-446655440000",
+   *   "status": "auto_graded",
+   *   "final_score": 85,
+   *   "submitted_at": "2025-11-11T15:00:00Z",
+   *   "graded_at": "2025-11-11T15:00:01Z",
+   *   "xp_earned": 170,
+   *   "ml_coins_earned": 85,
+   *   "user_answers": { ... }
+   * }
+   */
+  @Post('exercises/:id/submit')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({
+    summary: 'Submit exercise answers',
+    description:
+      'Envía las respuestas de un ejercicio para calificación automática. ' +
+      'Crea un registro de intento, calcula score, otorga XP/ML Coins y actualiza estadísticas del usuario.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID del ejercicio en formato UUID',
+    type: String,
+    required: true,
+    example: '880e8400-e29b-41d4-a716-446655440000',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Ejercicio enviado y calificado exitosamente',
+    type: ExerciseSubmissionResponseDto,
+    schema: {
+      example: {
+        id: 'aa0e8400-e29b-41d4-a716-446655440000',
+        user_id: '550e8400-e29b-41d4-a716-446655440000',
+        exercise_id: '880e8400-e29b-41d4-a716-446655440000',
+        status: 'auto_graded',
+        final_score: 85,
+        submitted_at: '2025-11-11T15:00:00Z',
+        graded_at: '2025-11-11T15:00:01Z',
+        xp_earned: 170,
+        ml_coins_earned: 85,
+        user_answers: {
+          question_1: 'Marie Curie',
+          question_2: '1903',
+          question_3: 'Radiactividad',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Datos inválidos o respuestas incorrectas',
+    schema: {
+      example: {
+        statusCode: 400,
+        message: 'Invalid submitted_answers format',
+        error: 'Bad Request',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Ejercicio no encontrado',
+    schema: {
+      example: {
+        statusCode: 404,
+        message: 'Exercise with ID 880e8400-... not found',
+        error: 'Not Found',
+      },
+    },
+  })
+  async submitExercise(
+    @Param('id') exerciseId: string,
+    @Body()
+    body: {
+      userId: string;
+      submitted_answers: Record<string, any>;
+      time_spent_seconds?: number;
+      hints_used?: number;
+      comodines_used?: string[];
+    },
+  ) {
+    // Delegar al ExerciseSubmissionService que maneja la lógica completa
+    return await this.exerciseSubmissionService.submitExercise(
+      body.userId,
+      exerciseId,
+      body.submitted_answers,
+    );
   }
 }

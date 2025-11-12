@@ -58,7 +58,7 @@ export function useWebSocket(): UseWebSocketReturn {
   const socketRef = useRef<Socket | null>(null);
   const isConnectedRef = useRef(false);
   const { user } = useAuthStore();
-  const { addNotification, incrementUnreadCount, getUnreadCount } = useNotificationsStore();
+  const { addNotification, fetchUnreadCount } = useNotificationsStore();
 
   /**
    * Initialize WebSocket connection
@@ -161,14 +161,12 @@ export function useWebSocket(): UseWebSocketReturn {
         data: data.notification.metadata || {},
         readAt: null,
         createdAt: new Date(data.notification.createdAt),
-        expiresAt: null
+        expiresAt: null,
+        status: 'unread' as const
       };
 
-      // Add to notifications store
+      // Add to notifications store (automatically increments unreadCount)
       addNotification(notification);
-
-      // Increment unread count
-      incrementUnreadCount();
 
       // Show browser notification if permission granted
       showBrowserNotification(data.notification);
@@ -187,12 +185,12 @@ export function useWebSocket(): UseWebSocketReturn {
     // Listen for unread count updates
     socket.on('unread_count_updated', (data: { count: number; timestamp: string }) => {
       console.log('🔢 Unread count updated:', data.count);
-      // The store will be updated via getUnreadCount
-      getUnreadCount();
+      // The store will be updated via fetchUnreadCount
+      fetchUnreadCount();
     });
 
     socketRef.current = socket;
-  }, [user?.id, addNotification, incrementUnreadCount, getUnreadCount]);
+  }, [user?.id, addNotification, fetchUnreadCount]);
 
   /**
    * Disconnect WebSocket

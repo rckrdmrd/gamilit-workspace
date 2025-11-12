@@ -5,12 +5,12 @@ Gestión de contenido: plantillas, archivos media, metadatos
 ## Estructura
 
 - **tables/**: 8 archivos
-- **enums/**: 1 archivos
+- **enums/**: 4 archivos
 - **triggers/**: 3 archivos
 - **indexes/**: 2 archivos
 - **rls-policies/**: 1 archivos
 
-**Total:** 15 objetos
+**Total:** 18 objetos
 
 ## Contenido Detallado
 
@@ -27,10 +27,13 @@ content_categories.sql
 media_metadata.sql
 ```
 
-### enums/ (1 archivos)
+### enums/ (4 archivos)
 
 ```
+content_status.sql
 content_type.sql
+media_type.sql
+processing_status.sql
 ```
 
 ### triggers/ (3 archivos)
@@ -56,5 +59,5 @@ content_type.sql
 
 ---
 
-**Última actualización:** 2025-11-09
-**Reorganización:** 2025-11-09
+**Última actualización:** 2025-11-11
+**Corrección:** Actualizado conteo de ENUMs (1→4) y total de objetos (15→18)

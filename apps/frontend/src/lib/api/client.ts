@@ -7,7 +7,7 @@ const apiClient = axios.create({
 
 // Request interceptor: añadir token
 apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token');
+  const token = localStorage.getItem('auth-token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -20,7 +20,7 @@ apiClient.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401) {
       // Handle token refresh
-      const refreshToken = localStorage.getItem('refresh_token');
+      const refreshToken = localStorage.getItem('refresh-token');
       if (refreshToken) {
         try {
           const { data } = await axios.post(
@@ -29,7 +29,7 @@ apiClient.interceptors.response.use(
           );
 
           if (data.accessToken) {
-            localStorage.setItem('access_token', data.accessToken);
+            localStorage.setItem('auth-token', data.accessToken);
             // Retry the original request
             const config = error.config;
             config.headers.Authorization = `Bearer ${data.accessToken}`;
@@ -37,12 +37,16 @@ apiClient.interceptors.response.use(
           }
         } catch (refreshError) {
           // Refresh failed, clear tokens and redirect to login
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
+          localStorage.removeItem('auth-token');
+          localStorage.removeItem('refresh-token');
+          localStorage.removeItem('auth-storage'); // Clear Zustand persist
           window.location.href = '/login';
         }
       } else {
         // No refresh token available, redirect to login
+        localStorage.removeItem('auth-token');
+        localStorage.removeItem('refresh-token');
+        localStorage.removeItem('auth-storage'); // Clear Zustand persist
         window.location.href = '/login';
       }
     }

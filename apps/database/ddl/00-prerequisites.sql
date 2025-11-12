@@ -128,9 +128,10 @@ EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 3. ENUMs de Contenido Educativo
 
--- 📚 Documentación: educational_content.exercise_type (31 mecánicas)
+-- 📚 Documentación: educational_content.exercise_type (33 mecánicas)
 -- Requerimiento: docs/01-requerimientos/03-contenido-educativo/RF-EDU-001-mecanicas-ejercicios.md
 -- Especificación: docs/02-especificaciones-tecnicas/03-contenido-educativo/ET-EDU-001-mecanicas-ejercicios.md
+-- UPDATED 2025-11-11: Removidas 2 mecánicas huérfanas sin implementación (diario_interactivo, resumen_visual)
 DO $$ BEGIN
     CREATE TYPE educational_content.exercise_type AS ENUM (
         -- Module 1: Comprensión Literal (5 mecánicas)
@@ -144,9 +145,10 @@ DO $$ BEGIN
         'resena_critica', 'chat_literario', 'email_formal', 'ensayo_argumentativo',
         -- Module 5: Producción Lectora (3 mecánicas)
         'diario_multimedia', 'comic_digital', 'video_carta',
-        -- Auxiliares (8 mecánicas)
+        -- Auxiliares (6 mecánicas) -- UPDATED 2025-11-11: Reducido de 8 a 6 mecánicas
         'comprension_auditiva', 'collage_prensa', 'texto_movimiento', 'call_to_action',
-        'verdadero_falso', 'completar_espacios', 'diario_interactivo', 'resumen_visual'
+        'verdadero_falso', 'completar_espacios'
+        -- REMOVIDO 2025-11-11: 'diario_interactivo', 'resumen_visual' (mecánicas huérfanas sin implementación)
     );
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
@@ -408,12 +410,17 @@ COMMENT ON TYPE auth_management.auth_provider IS 'Proveedores de autenticación 
 COMMENT ON TYPE gamification_system.achievement_category IS 'Categorías de logros para gamificación (v1.0)';
 COMMENT ON TYPE gamification_system.achievement_type IS 'Tipos de logros disponibles (badge, milestone, special, rank_promotion) (v1.0)';
 COMMENT ON TYPE gamification_system.comodin_type IS 'Tipos de comodines/power-ups (pistas, vision_lectora, segunda_oportunidad) (v1.0)';
-COMMENT ON TYPE gamification_system.notification_type IS 'Tipos de notificaciones del sistema (v2.0 - 2025-11-08 - migrado de public)';
-COMMENT ON TYPE gamification_system.notification_priority IS 'Niveles de prioridad de notificaciones (v1.1 - 2025-11-08 - migrado de public)';
+-- NOTA (2025-11-11): Los siguientes comentarios están en los archivos de ENUM correspondientes
+-- notification_type se crea en FASE 7: gamification_system/enums/notification_type.sql
+-- notification_priority se crea en FASE 7: gamification_system/enums/notification_priority.sql
+-- COMMENT ON TYPE gamification_system.notification_type IS 'Tipos de notificaciones del sistema (v2.0 - 2025-11-08 - migrado de public)';
+-- COMMENT ON TYPE gamification_system.notification_priority IS 'Niveles de prioridad de notificaciones (v1.1 - 2025-11-08 - migrado de public)';
 
 -- 3. Contenido Educativo
 COMMENT ON TYPE educational_content.exercise_type IS '31 mecánicas de ejercicios interactivos Gamilit (5 módulos + auxiliares) (v1.0)';
-COMMENT ON TYPE educational_content.difficulty_level IS 'Niveles de dificultad CEFR - 8 niveles A1→C2+ (v2.0 - 2025-11-11 - migrado a estándar CEFR)';
+-- NOTA (2025-11-11): El siguiente comentario está en el archivo de ENUM correspondiente
+-- difficulty_level se crea en FASE 6: educational_content/enums/difficulty_level.sql
+-- COMMENT ON TYPE educational_content.difficulty_level IS 'Niveles de dificultad CEFR - 8 niveles A1→C2+ (v2.0 - 2025-11-11 - migrado a estándar CEFR)';
 COMMENT ON TYPE educational_content.module_status IS 'Estados del ciclo de vida de módulos educativos (v1.1 - 2025-11-08)';
 COMMENT ON TYPE educational_content.cognitive_level IS 'Niveles cognitivos de Bloom para objetivos de aprendizaje (v1.0)';
 
