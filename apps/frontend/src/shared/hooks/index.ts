@@ -1,20 +1,6 @@
 /**
- * Hooks Barrel Export
- *
- * Centralized export for all custom React hooks.
+ * Shared Hooks Export Index
+ * Re-exports all shared hooks for easier importing
  */
 
-// State management hooks
-export * from './useAuth';
-export * from './useLocalStorage';
-export * from './useToggle';
-export * from './useUserClassroom';
-
-// Utility hooks
-export * from './useDebounce';
-export * from './useFetch';
-export * from './useMediaQuery';
-export * from './useForm';
-export * from './useClickOutside';
-export * from './usePrevious';
-export * from './useIntersectionObserver';
+export { useModuleDetail } from './useModules';

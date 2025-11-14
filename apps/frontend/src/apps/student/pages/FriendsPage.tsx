@@ -63,7 +63,7 @@ export default function FriendsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   // Filter friends based on search and online status
   const filteredFriends = friends.filter(friend => {
@@ -111,7 +111,10 @@ export default function FriendsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={user ?? undefined} onLogout={() => navigate('/login')} />
+      <GamifiedHeader user={user ?? undefined} onLogout={async () => {
+        await logout();
+        // No need to navigate - performLogout() handles redirect
+      }} />
 
       <main className="detective-container py-8">
         {/* Header */}

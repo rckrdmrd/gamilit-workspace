@@ -6,7 +6,7 @@
 
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import { ModuleProgress } from '@/modules/progress/entities/module-progress.entity';
@@ -69,6 +69,8 @@ export class TeacherDashboardService {
 
   /**
    * Get classroom statistics overview
+   *
+   * Fixed: Removed 'as any' casts, now uses In() operator properly
    */
   async getClassroomStats(teacherId: string): Promise<ClassroomStats> {
     // Get all students from teacher's classrooms
@@ -80,6 +82,17 @@ export class TeacherDashboardService {
 
     const totalStudents = students.length;
 
+    if (totalStudents === 0) {
+      return {
+        total_students: 0,
+        active_students: 0,
+        average_score: 0,
+        average_completion: 0,
+        total_submissions_pending: 0,
+        students_at_risk: 0,
+      };
+    }
+
     // Get active students (activity in last 7 days)
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -90,10 +103,11 @@ export class TeacherDashboardService {
     );
 
     // Get all submissions for score calculation
+    const studentUserIds = students.map(s => s.user_id).filter(id => id != null);
     const submissions = await this.submissionRepository.find({
       where: {
-        user_id: students.map((s) => s.user_id),
-      } as any,
+        user_id: In(studentUserIds),
+      },
     });
 
     // Calculate average score
@@ -111,8 +125,8 @@ export class TeacherDashboardService {
     // Get module progress for completion calculation
     const moduleProgresses = await this.moduleProgressRepository.find({
       where: {
-        user_id: students.map((s) => s.user_id),
-      } as any,
+        user_id: In(studentUserIds),
+      },
     });
 
     const totalCompletion = moduleProgresses.reduce(
@@ -157,50 +171,87 @@ export class TeacherDashboardService {
 
   /**
    * Get recent activities (submissions, achievements, etc.)
+   *
+   * Fixed: Removed cross-datasource join, now uses separate queries + merge in code
    */
   async getRecentActivities(
     teacherId: string,
     limit: number = 10,
   ): Promise<RecentActivity[]> {
-    // Get recent submissions
-    const recentSubmissions = await this.submissionRepository
-      .createQueryBuilder('submission')
-      .leftJoinAndSelect(
-        'auth_management.profiles',
-        'profile',
-        'profile.user_id = submission.user_id',
-      )
-      .orderBy('submission.submitted_at', 'DESC')
-      .limit(limit)
-      .getRawMany();
+    // 1. Get submissions from 'progress' datasource
+    const submissions = await this.submissionRepository.find({
+      order: { submitted_at: 'DESC' },
+      take: limit,
+    });
 
-    const activities: RecentActivity[] = recentSubmissions.map((sub) => ({
-      id: sub.submission_id,
-      student_name: sub.profile_full_name || sub.profile_display_name || 'Unknown',
-      student_id: sub.submission_user_id,
-      activity_type: 'submission' as const,
-      title: `Entregó ejercicio`, // TODO: Get exercise title
-      timestamp: new Date(sub.submission_submitted_at),
-      status: this.mapSubmissionStatus(sub.submission_status),
-    }));
+    if (submissions.length === 0) {
+      return [];
+    }
+
+    // 2. Get profiles from 'auth' datasource
+    const userIds = submissions.map(s => s.user_id);
+    const profiles = await this.profileRepository.find({
+      where: { user_id: In(userIds) },
+    });
+
+    // 3. Merge in code (aplicación)
+    const activities: RecentActivity[] = submissions.map(sub => {
+      const profile = profiles.find(p => p.user_id === sub.user_id);
+      return {
+        id: sub.id,
+        student_name: profile?.full_name || profile?.display_name || 'Unknown',
+        student_id: sub.user_id,
+        activity_type: 'submission' as const,
+        title: 'Entregó ejercicio',
+        timestamp: sub.submitted_at,
+        status: this.mapSubmissionStatus(sub.status),
+      };
+    });
 
     return activities;
   }
 
   /**
    * Get student alerts (low scores, inactive, struggling)
+   *
+   * Fixed: Eliminated N+1 query problem, now uses bulk query + grouping in code
    */
   async getStudentAlerts(teacherId: string): Promise<StudentAlert[]> {
+    // 1. Get all students
     const students = await this.profileRepository.find({
       where: { role: GamilityRoleEnum.STUDENT },
     });
 
+    if (students.length === 0) {
+      return [];
+    }
+
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
+    // 2. Get ALL submissions for ALL students in 1 query
+    const studentUserIds = students.map(s => s.user_id).filter(id => id != null);
+    const allSubmissions = await this.submissionRepository.find({
+      where: { user_id: In(studentUserIds) },
+      order: { submitted_at: 'DESC' },
+    });
+
+    // 3. Group submissions by student
+    const submissionsByStudent = new Map<string, ExerciseSubmission[]>();
+    for (const sub of allSubmissions) {
+      if (!submissionsByStudent.has(sub.user_id)) {
+        submissionsByStudent.set(sub.user_id, []);
+      }
+      submissionsByStudent.get(sub.user_id)!.push(sub);
+    }
+
+    // 4. Calculate alerts
     const alerts: StudentAlert[] = [];
 
     for (const student of students) {
+      // Skip students without user_id
+      if (!student.user_id) continue;
+
       // Check for inactivity
       if (
         !student.last_activity_at ||
@@ -217,18 +268,15 @@ export class TeacherDashboardService {
       }
 
       // Check for low scores
-      const submissions = await this.submissionRepository.find({
-        where: { user_id: student.user_id || undefined },
-        order: { submitted_at: 'DESC' },
-        take: 5,
-      });
+      const studentSubmissions = submissionsByStudent.get(student.user_id) || [];
+      const recentSubmissions = studentSubmissions.slice(0, 5);
 
-      if (submissions.length > 0) {
+      if (recentSubmissions.length > 0) {
         const avgScore =
-          submissions.reduce(
+          recentSubmissions.reduce(
             (sum, sub) => sum + (sub.score / sub.max_score) * 100,
             0,
-          ) / submissions.length;
+          ) / recentSubmissions.length;
 
         if (avgScore < 60) {
           alerts.push({
@@ -248,41 +296,65 @@ export class TeacherDashboardService {
 
   /**
    * Get top performing students
+   *
+   * Fixed: Eliminated N+1 query problem, now uses bulk query + grouping in code
    */
   async getTopPerformers(
     teacherId: string,
     limit: number = 5,
   ): Promise<TopPerformer[]> {
+    // 1. Get all students
     const students = await this.profileRepository.find({
       where: { role: GamilityRoleEnum.STUDENT },
     });
 
+    if (students.length === 0) {
+      return [];
+    }
+
+    // 2. Get ALL submissions for ALL students in 1 query
+    const studentUserIds = students.map(s => s.user_id).filter(id => id != null);
+    const allSubmissions = await this.submissionRepository.find({
+      where: { user_id: In(studentUserIds) },
+    });
+
+    // 3. Group submissions by student
+    const submissionsByStudent = new Map<string, ExerciseSubmission[]>();
+    for (const sub of allSubmissions) {
+      if (!submissionsByStudent.has(sub.user_id)) {
+        submissionsByStudent.set(sub.user_id, []);
+      }
+      submissionsByStudent.get(sub.user_id)!.push(sub);
+    }
+
+    // 4. Calculate performers
     const performers: TopPerformer[] = [];
 
     for (const student of students) {
-      const submissions = await this.submissionRepository.find({
-        where: { user_id: student.user_id || undefined },
-      });
+      // Skip students without user_id
+      if (!student.user_id) continue;
 
-      if (submissions.length === 0) continue;
+      const studentSubmissions = submissionsByStudent.get(student.user_id) || [];
 
-      const totalXP = submissions.reduce(
+      if (studentSubmissions.length === 0) continue;
+
+      const totalXP = studentSubmissions.reduce(
         (sum, sub) => sum + (sub.is_correct ? 50 : 0), // TODO: Get actual XP from exercise
         0,
       );
 
       const avgScore =
-        submissions.reduce(
+        studentSubmissions.reduce(
           (sum, sub) => sum + (sub.score / sub.max_score) * 100,
           0,
-        ) / submissions.length;
+        ) / studentSubmissions.length;
 
       performers.push({
         student_id: student.id,
         student_name: student.full_name || student.display_name || 'Unknown',
         total_xp: totalXP,
         current_level: Math.floor(totalXP / 500) + 1, // Simple level calculation
-        exercises_completed: submissions.length,
+        exercises_completed: studentSubmissions.length,
         average_score: Math.round(avgScore),
       });
     }
@@ -295,13 +367,60 @@ export class TeacherDashboardService {
 
   /**
    * Get module progress summary
+   *
+   * Fixed: Implemented with actual module data from database
+   * Note: Module name will be fetched separately or shown as ID
    */
   async getModuleProgressSummary(
     teacherId: string,
   ): Promise<ModuleProgressSummary[]> {
-    // TODO: Implement with actual module data
-    // For now return empty array
-    return [];
+    // 1. Get all module progress records
+    const moduleProgresses = await this.moduleProgressRepository.find();
+
+    if (moduleProgresses.length === 0) {
+      return [];
+    }
+
+    // 2. Group by module_id
+    const progressByModule = new Map<string, ModuleProgress[]>();
+    for (const mp of moduleProgresses) {
+      if (!progressByModule.has(mp.module_id)) {
+        progressByModule.set(mp.module_id, []);
+      }
+      progressByModule.get(mp.module_id)!.push(mp);
+    }
+
+    // 3. Calculate summary per module
+    const summary: ModuleProgressSummary[] = [];
+
+    for (const [moduleId, progresses] of progressByModule.entries()) {
+      const activeStudents = progresses.filter(
+        p => p.status === 'in_progress' || p.status === 'completed',
+      ).length;
+
+      const totalCompletion = progresses.reduce(
+        (sum, p) => sum + p.progress_percentage,
+        0,
+      );
+      const avgCompletion = progresses.length > 0
+        ? Math.round(totalCompletion / progresses.length)
+        : 0;
+
+      // Use module_id as name for now (can be improved later with a separate query)
+      const moduleName = `Module ${moduleId}`;
+
+      summary.push({
+        module_id: moduleId,
+        module_name: moduleName,
+        students_active: activeStudents,
+        average_completion: avgCompletion,
+      });
+    }
+
+    // Sort by students_active DESC
+    summary.sort((a, b) => b.students_active - a.students_active);
+
+    return summary;
   }
 
   /**

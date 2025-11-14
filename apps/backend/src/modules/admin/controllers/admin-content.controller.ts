@@ -11,7 +11,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { AdminGuard } from '../guards/admin.guard';
 import { AdminContentService } from '../services/admin-content.service';
@@ -23,6 +23,8 @@ import {
   PaginatedContentDto,
   ListMediaDto,
   PaginatedMediaDto,
+  CreateVersionDto,
+  VersionResponseDto,
 } from '../dto/content';
 import { MediaFileResponseDto } from '@modules/content/dto/media-file-response.dto';
 
@@ -81,6 +83,35 @@ export class AdminContentController {
       rejectionDto,
       adminId,
     );
+  }
+
+  @Post('version')
+  @ApiOperation({
+    summary: 'Create version snapshot',
+    description:
+      'Create a version snapshot of content (module, exercise, or template). ' +
+      'Stores version history in metadata field with incremental version numbers. ' +
+      'Auto-increments minor version by default, or accepts custom version number.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Version created successfully',
+    type: VersionResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Content not found',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid content_type or version format',
+  })
+  async createVersion(
+    @Body() dto: CreateVersionDto,
+    @Request() req: any,
+  ): Promise<VersionResponseDto> {
+    const adminId = req.user?.id || req.user?.sub;
+    return await this.adminContentService.createVersion(dto, adminId);
   }
 
   @Get('media')

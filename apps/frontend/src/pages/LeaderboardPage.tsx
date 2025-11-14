@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Trophy, RefreshCw, AlertCircle, TrendingUp, Crown } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Trophy, RefreshCw, AlertCircle, Crown } from 'lucide-react';
 import { useAuth } from '@/app/providers/AuthContext';
-import { useUserClassroom } from '@/shared/hooks/useUserClassroom';
 import { GamifiedHeader } from '@/shared/components/layout/GamifiedHeader';
 import { LeaderboardTable } from '@/shared/components/LeaderboardTable';
 import { LeaderboardTabs } from '@/shared/components/LeaderboardTabs';
@@ -11,9 +10,6 @@ import { cn } from '@shared/utils';
 import type {
   LeaderboardType,
   LeaderboardResponse,
-  LeaderboardEntry,
-  RANK_LABELS,
-  RANK_COLORS,
 } from '@/shared/types/leaderboard.types';
 import { MayaRank } from '@/shared/constants/ranks.constants';
 
@@ -71,7 +67,6 @@ const getRankColor = (rank: MayaRank): string => {
  */
 export const LeaderboardPage: React.FC = () => {
   const { user, logout } = useAuth();
-  const { classroomId, schoolId } = useUserClassroom();
 
   // State
   const [activeTab, setActiveTab] = useState<LeaderboardType>('global');
@@ -84,14 +79,16 @@ export const LeaderboardPage: React.FC = () => {
   const LIMIT = 100;
 
   /**
-   * Get user's school ID from user profile or classroom hook
+   * Get user's school ID from user profile
+   * TODO: When useUserClassroom hook is created, use it instead
    */
-  const userSchoolId = schoolId || user?.schoolId;
+  const userSchoolId = (user as any)?.schoolId || null;
 
   /**
-   * Get user's classroom ID from classroom hook
+   * Get user's classroom ID from user profile
+   * TODO: When useUserClassroom hook is created, use it instead
    */
-  const userClassroomId = classroomId;
+  const userClassroomId = (user as any)?.classroomId || null;
 
   /**
    * Fetch leaderboard data
@@ -173,7 +170,7 @@ export const LeaderboardPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-      <GamifiedHeader user={user} onLogout={logout} />
+      <GamifiedHeader user={user ?? undefined} onLogout={logout} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Page Header */}

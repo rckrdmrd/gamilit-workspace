@@ -64,7 +64,7 @@ export default function EnhancedProfilePage() {
   const navigate = useNavigate();
 
   // Global state
-  const { user } = useAuthStore();
+  const { user, logout } = useAuthStore();
   const { userProgress, fetchUserProgress } = useRanksStore();
   const { balance, fetchBalance } = useEconomyStore();
   const { achievements, stats: achievementStats, fetchAchievements } = useAchievementsStore();
@@ -140,7 +140,10 @@ export default function EnhancedProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 dark:from-gray-900 dark:to-indigo-900">
-      <GamifiedHeader user={user || undefined} onLogout={() => navigate('/login')} />
+      <GamifiedHeader user={user || undefined} onLogout={async () => {
+        await logout();
+        // No need to navigate - performLogout() handles redirect
+      }} />
 
       <main className="container mx-auto px-4 py-8">
         {/* Hero Section */}

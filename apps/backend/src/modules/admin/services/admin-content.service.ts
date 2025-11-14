@@ -17,6 +17,8 @@ import {
   PaginatedContentDto,
   ListMediaDto,
   PaginatedMediaDto,
+  CreateVersionDto,
+  VersionResponseDto,
 } from '../dto/content';
 import { ContentStatusEnum } from '@shared/constants';
 import { MediaFileResponseDto } from '@modules/content/dto/media-file-response.dto';
@@ -430,6 +432,144 @@ export class AdminContentService {
       published_at: undefined,
       metadata: template.metadata,
     } as ContentDto;
+  }
+
+  // =====================================================
+  // VERSION MANAGEMENT
+  // =====================================================
+
+  /**
+   * Create a version snapshot of content (module, exercise, or template)
+   * Stores version history in metadata JSONB field
+   */
+  async createVersion(
+    dto: CreateVersionDto,
+    adminId: string,
+  ): Promise<VersionResponseDto> {
+    const { content_id, content_type, version_notes, new_version } = dto;
+
+    // 1. Find content by type
+    let content: any;
+    let repository: any;
+
+    switch (content_type) {
+      case 'module':
+        content = await this.moduleRepo.findOne({
+          where: { id: content_id },
+        });
+        repository = this.moduleRepo;
+        break;
+      case 'exercise':
+        content = await this.exerciseRepo.findOne({
+          where: { id: content_id },
+        });
+        repository = this.exerciseRepo;
+        break;
+      case 'template':
+        content = await this.templateRepo.findOne({
+          where: { id: content_id },
+        });
+        repository = this.templateRepo;
+        break;
+      default:
+        throw new BadRequestException(`Invalid content_type: ${content_type}`);
+    }
+
+    if (!content) {
+      throw new NotFoundException(
+        `${content_type} with ID ${content_id} not found`,
+      );
+    }
+
+    // 2. Get current version from metadata or default to 1.0.0
+    const metadata = content.metadata || {};
+    const current_version = metadata.current_version || '1.0.0';
+    const versions = metadata.versions || [];
+
+    // 3. Calculate new version (auto-increment or use provided)
+    let calculated_new_version: string;
+    if (new_version) {
+      calculated_new_version = new_version;
+    } else {
+      // Auto-increment minor version (x.y.0 → x.(y+1).0)
+      const [major, minor] = current_version.split('.').map(Number);
+      calculated_new_version = `${major}.${minor + 1}.0`;
+    }
+
+    // 4. Create snapshot based on content type
+    const snapshot = this.createSnapshot(content, content_type);
+
+    // 5. Create version entry
+    const version_entry = {
+      version: calculated_new_version,
+      created_at: new Date().toISOString(),
+      created_by: adminId,
+      version_notes: version_notes || '',
+      snapshot,
+    };
+
+    // 6. Update metadata with new version
+    const updated_metadata = {
+      ...metadata,
+      current_version: calculated_new_version,
+      versions: [...versions, version_entry],
+    };
+
+    // 7. Save updated content
+    content.metadata = updated_metadata;
+    await repository.save(content);
+
+    // 8. Return response
+    return {
+      content_id,
+      content_type,
+      old_version: current_version,
+      new_version: calculated_new_version,
+      version_notes: version_notes || '',
+      created_at: version_entry.created_at,
+      created_by: adminId,
+      total_versions: updated_metadata.versions.length,
+      snapshot,
+    };
+  }
+
+  /**
+   * Create snapshot of content based on type
+   * @private
+   */
+  private createSnapshot(
+    content: any,
+    content_type: string,
+  ): Record<string, any> {
+    switch (content_type) {
+      case 'module':
+        return {
+          title: content.title,
+          description: content.description,
+          order: content.order,
+          estimated_duration: content.estimated_duration,
+          is_published: content.is_published,
+          published_at: content.published_at,
+        };
+      case 'exercise':
+        return {
+          title: content.title,
+          description: content.description,
+          exercise_type: content.exercise_type,
+          content_data: content.content_data,
+          is_published: content.is_active,
+          estimated_time: content.estimated_time,
+        };
+      case 'template':
+        return {
+          template_name: content.name,
+          template_type: content.type,
+          template_structure: content.structure,
+          is_active: content.is_active,
+        };
+      default:
+        return {};
+    }
   }
 
   // =====================================================

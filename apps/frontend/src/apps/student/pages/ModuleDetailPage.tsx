@@ -84,7 +84,7 @@ function ExerciseCardContent({ exercise }: ExerciseCardContentProps) {
 
       {/* Title */}
       <h3 className="text-base font-bold text-gray-900 mb-2">
-        {exercise.title}
+        {exercise.title || 'Sin título'}
       </h3>
 
       {/* Description */}
@@ -111,7 +111,7 @@ function ExerciseCardContent({ exercise }: ExerciseCardContentProps) {
             'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border-purple-300'
           )}
         >
-          {DIFFICULTY_LABELS[exercise.difficulty]?.toUpperCase() || exercise.difficulty.toUpperCase()}
+          {DIFFICULTY_LABELS[exercise.difficulty]?.toUpperCase() || exercise.difficulty?.toUpperCase() || 'DESCONOCIDO'}
         </motion.span>
 
         {/* Points Badge */}
@@ -120,7 +120,7 @@ function ExerciseCardContent({ exercise }: ExerciseCardContentProps) {
           className="flex items-center gap-1.5 px-2.5 py-1 bg-gradient-to-r from-amber-100 to-orange-100 rounded-lg border-2 border-amber-300 shadow-sm"
         >
           <Star className="w-4 h-4 text-amber-600" />
-          <span className="text-xs font-bold text-amber-700">{exercise.points} pts</span>
+          <span className="text-xs font-bold text-amber-700">{exercise.points ?? 0} pts</span>
         </motion.div>
 
         {/* Time Badge */}
@@ -162,7 +162,7 @@ function ExerciseCardContent({ exercise }: ExerciseCardContentProps) {
 export default function ModuleDetailPage() {
   const { moduleId } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   // Fetch module and exercises from API
   const {
@@ -209,7 +209,10 @@ export default function ModuleDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-        <GamifiedHeader user={user ?? undefined} onLogout={() => navigate('/login')} />
+        <GamifiedHeader user={user ?? undefined} onLogout={async () => {
+          await logout();
+          // No need to navigate - performLogout() handles redirect
+        }} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="animate-pulse space-y-4">
             <div className="h-8 bg-gray-200 rounded w-1/3"></div>
@@ -230,7 +233,10 @@ export default function ModuleDetailPage() {
   if (error || !module) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-        <GamifiedHeader user={user ?? undefined} onLogout={() => navigate('/login')} />
+        <GamifiedHeader user={user ?? undefined} onLogout={async () => {
+          await logout();
+          // No need to navigate - performLogout() handles redirect
+        }} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <DetectiveButton
             variant="blue"
@@ -269,7 +275,10 @@ export default function ModuleDetailPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-      <GamifiedHeader user={user || undefined} onLogout={() => navigate('/login')} />
+      <GamifiedHeader user={user || undefined} onLogout={async () => {
+        await logout();
+        // No need to navigate - performLogout() handles redirect
+      }} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <DetectiveButton
@@ -287,7 +296,7 @@ export default function ModuleDetailPage() {
           <div className="flex items-center gap-2 mb-2">
             {module.difficulty && (
               <span className={`px-2 py-0.5 rounded-md text-xs font-bold ${difficultyBgColors[module.difficulty] || 'bg-gray-100'} ${difficultyColors[module.difficulty] || 'text-gray-600'}`}>
-                {(difficultyLabels[module.difficulty] || module.difficulty).toUpperCase()}
+                {(difficultyLabels[module.difficulty] || module.difficulty || 'DESCONOCIDO').toUpperCase()}
               </span>
             )}
             {module.tags && module.tags.slice(0, 3).map((tag, idx) => (

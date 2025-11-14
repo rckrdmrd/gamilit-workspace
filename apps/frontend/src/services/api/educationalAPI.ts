@@ -599,8 +599,7 @@ export const getExerciseHints = async (
 
     return data;
   } catch (error) {
-    // If hints endpoint fails, return empty array
-    console.warn('Failed to fetch hints:', error);
+    // If hints endpoint fails, return empty array (silent fail for optional feature)
     return [];
   }
 };

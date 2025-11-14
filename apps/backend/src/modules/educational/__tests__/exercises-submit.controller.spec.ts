@@ -45,6 +45,15 @@ describe('ExercisesController - Submit Endpoint', () => {
     const exerciseId = '880e8400-e29b-41d4-a716-446655440000';
     const userId = '550e8400-e29b-41d4-a716-446655440000';
 
+    // Mock request object with authenticated user (from JWT)
+    const mockRequest = {
+      user: {
+        id: userId,
+        email: 'student@gamilit.com',
+        role: 'student',
+      },
+    };
+
     const submitDto = {
       userId,
       submitted_answers: {
@@ -77,7 +86,7 @@ describe('ExercisesController - Submit Endpoint', () => {
       );
 
       // Act
-      const result = await controller.submitExercise(exerciseId, submitDto);
+      const result = await controller.submitExercise(exerciseId, mockRequest, submitDto);
 
       // Assert
       expect(exerciseSubmissionService.submitExercise).toHaveBeenCalledWith(
@@ -104,7 +113,7 @@ describe('ExercisesController - Submit Endpoint', () => {
       );
 
       // Act
-      const result = await controller.submitExercise(exerciseId, submitDto);
+      const result = await controller.submitExercise(exerciseId, mockRequest, submitDto);
 
       // Assert
       // Note: final_score, xp_earned, ml_coins_earned no están en ExerciseSubmissionResponseDto
@@ -125,7 +134,7 @@ describe('ExercisesController - Submit Endpoint', () => {
       );
 
       // Act
-      await controller.submitExercise(exerciseId, noDtoWithoutHints);
+      await controller.submitExercise(exerciseId, mockRequest, noDtoWithoutHints);
 
       // Assert
       expect(exerciseSubmissionService.submitExercise).toHaveBeenCalledWith(
@@ -142,7 +151,7 @@ describe('ExercisesController - Submit Endpoint', () => {
 
       // Act & Assert
       await expect(
-        controller.submitExercise(exerciseId, submitDto),
+        controller.submitExercise(exerciseId, mockRequest, submitDto),
       ).rejects.toThrow('Exercise with ID 880e8400-... not found');
     });
 
@@ -158,7 +167,7 @@ describe('ExercisesController - Submit Endpoint', () => {
 
       // Act & Assert
       await expect(
-        controller.submitExercise(exerciseId, invalidDto),
+        controller.submitExercise(exerciseId, mockRequest, invalidDto),
       ).rejects.toThrow('Invalid submitted_answers format');
     });
   });

@@ -5,3 +5,5 @@ export * from './content.dto';
 export * from './paginated-content.dto';
 export * from './list-media.dto';
 export * from './paginated-media.dto';
+export * from './create-version.dto';
+export * from './version-response.dto';

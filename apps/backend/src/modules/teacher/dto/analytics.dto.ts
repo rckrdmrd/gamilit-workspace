@@ -16,6 +16,7 @@ export enum ReportFormat {
   JSON = 'json',
   PDF = 'pdf',
   CSV = 'csv',
+  EXCEL = 'excel',
 }
 
 export class GetAnalyticsQueryDto {
@@ -79,4 +80,42 @@ export class GenerateReportsDto {
   @IsOptional()
   @IsString()
   report_type?: string = 'overall';
+}
+
+/**
+ * Student Insights Response DTO
+ * Provides comprehensive analytics and AI-generated insights for individual students
+ */
+export class StudentInsightsResponseDto {
+  @ApiProperty({ description: 'Overall performance score (0-100)' })
+  overall_score!: number;
+
+  @ApiProperty({ description: 'Number of modules completed' })
+  modules_completed!: number;
+
+  @ApiProperty({ description: 'Total number of modules' })
+  modules_total!: number;
+
+  @ApiProperty({ description: 'Comparison to class metrics' })
+  comparison_to_class!: {
+    score_percentile: number;
+  };
+
+  @ApiProperty({ description: 'Risk level', enum: ['low', 'medium', 'high'] })
+  risk_level!: 'low' | 'medium' | 'high';
+
+  @ApiProperty({ description: 'Student strengths', type: [String] })
+  strengths!: string[];
+
+  @ApiProperty({ description: 'Areas for improvement', type: [String] })
+  weaknesses!: string[];
+
+  @ApiProperty({ description: 'Performance predictions' })
+  predictions!: {
+    completion_probability: number;
+    dropout_risk: number;
+  };
+
+  @ApiProperty({ description: 'Personalized recommendations', type: [String] })
+  recommendations!: string[];
 }

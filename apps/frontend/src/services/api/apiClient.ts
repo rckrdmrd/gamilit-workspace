@@ -147,7 +147,14 @@ apiClient.interceptors.response.use(
 
     // Handle 404 Not Found
     if (error.response?.status === 404) {
-      console.error('[API] Resource not found:', error.config.url);
+      // Silent fail for optional endpoints (hints, avatars, etc.)
+      const url = error.config?.url || '';
+      const optionalEndpoints = ['/hints', '/avatar', '/profile-picture', '/badges'];
+      const isOptional = optionalEndpoints.some(endpoint => url.includes(endpoint));
+
+      if (!isOptional) {
+        console.error('[API] Resource not found:', error.config.url);
+      }
     }
 
     // Handle 500 Internal Server Error

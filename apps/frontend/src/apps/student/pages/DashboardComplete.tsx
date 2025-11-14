@@ -17,7 +17,7 @@ export default function DashboardComplete() {
   console.log('🚀 [DashboardComplete] Component rendering...');
 
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   console.log('👤 [DashboardComplete] User from useAuth:', {
     isAuthenticated: !!user,
@@ -115,8 +115,9 @@ export default function DashboardComplete() {
   // Activities data from activities API
   const activitiesData = userActivities || [];
 
-  const handleLogout = () => {
-    navigate('/login');
+  const handleLogout = async () => {
+    await logout();
+    // No need to navigate - performLogout() handles redirect
   };
 
   return (

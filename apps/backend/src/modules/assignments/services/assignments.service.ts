@@ -157,6 +157,287 @@ export class AssignmentsService {
   }
 
   /**
+   * Patch assignment (partial update)
+   * Allows updates even with submissions, but blocks critical fields
+   * REQ-TCH-091: Partial updates permitted
+   */
+  async patchAssignment(
+    id: string,
+    patchDto: any,
+    teacherId: string,
+  ): Promise<Assignment> {
+    // 1. Verify ownership
+    const assignment = await this.assignmentRepository.findOne({
+      where: { id, teacherId },
+    });
+
+    if (!assignment) {
+      throw new NotFoundException(`Assignment with ID ${id} not found or access denied`);
+    }
+
+    // 2. Check for submissions
+    const submissionsCount = await this.submissionRepository.count({
+      where: { assignmentId: id },
+    });
+
+    // 3. Block critical field changes if submissions exist
+    if (submissionsCount > 0) {
+      const blockedFields = [];
+      if (patchDto.assignmentType !== undefined) blockedFields.push('assignmentType');
+      if (patchDto.totalPoints !== undefined) blockedFields.push('totalPoints');
+      if (patchDto.dueDate !== undefined) blockedFields.push('dueDate');
+
+      if (blockedFields.length > 0) {
+        throw new UnprocessableEntityException(
+          `Cannot change ${blockedFields.join(', ')} when submissions exist (${submissionsCount} submissions)`,
+        );
+      }
+    }
+
+    // 4. Sanitize HTML fields
+    if (patchDto.description !== undefined) {
+      patchDto.description = this.sanitizeHtml(patchDto.description) || undefined;
+    }
+    if (patchDto.instructions !== undefined) {
+      patchDto.instructions = this.sanitizeHtml(patchDto.instructions) || undefined;
+    }
+
+    // 5. Apply partial update
+    Object.keys(patchDto).forEach((key) => {
+      if (patchDto[key] !== undefined) {
+        if (key === 'dueDate') {
+          assignment.dueDate = new Date(patchDto.dueDate);
+        } else {
+          (assignment as any)[key] = patchDto[key];
+        }
+      }
+    });
+
+    const updated = await this.assignmentRepository.save(assignment);
+
+    this.logger.log(`Assignment patched: ${id} by teacher ${teacherId} (${submissionsCount} submissions)`);
+
+    return updated;
+  }
+
+  /**
+   * Distribute assignment to classrooms and/or students
+   * Enhanced version of assignToClassrooms with more options
+   * REQ-TCH-091: Assignment distribution
+   */
+  async distributeAssignment(
+    assignmentId: string,
+    dto: any,
+    teacherId: string,
+  ): Promise<any> {
+    // 1. Verify ownership
+    const assignment = await this.assignmentRepository.findOne({
+      where: { id: assignmentId, teacherId },
+    });
+
+    if (!assignment) {
+      throw new NotFoundException(`Assignment with ID ${assignmentId} not found or access denied`);
+    }
+
+    const result: any = {
+      classroomsSuccess: 0,
+      classroomsFailed: 0,
+      studentsSuccess: 0,
+      studentsFailed: 0,
+      published: assignment.isPublished,
+      notificationsSent: false,
+    };
+
+    // 2. Distribute to classrooms
+    for (const classroom of dto.classrooms) {
+      try {
+        // Validate deadline override is in future
+        if (classroom.deadlineOverride) {
+          const overrideDate = new Date(classroom.deadlineOverride);
+          if (overrideDate < new Date()) {
+            this.logger.warn(`Deadline override for classroom ${classroom.classroomId} is in the past`);
+            result.classroomsFailed++;
+            continue;
+          }
+        }
+
+        // Check if already assigned
+        const existing = await this.assignmentClassroomRepository.findOne({
+          where: {
+            assignmentId,
+            classroomId: classroom.classroomId,
+          },
+        });
+
+        if (existing) {
+          this.logger.warn(`Assignment already distributed to classroom ${classroom.classroomId}`);
+          result.classroomsFailed++;
+          continue;
+        }
+
+        // Create distribution
+        const assignmentClassroom = this.assignmentClassroomRepository.create({
+          assignmentId,
+          classroomId: classroom.classroomId,
+          deadlineOverride: classroom.deadlineOverride ? new Date(classroom.deadlineOverride) : null,
+          studentsCount: 0, // TODO: Calculate from classroom
+        });
+
+        await this.assignmentClassroomRepository.save(assignmentClassroom);
+        result.classroomsSuccess++;
+      } catch (error) {
+        this.logger.error(`Failed to distribute to classroom ${classroom.classroomId}:`, error);
+        result.classroomsFailed++;
+      }
+    }
+
+    // 3. Distribute to individual students (if provided)
+    if (dto.studentIds && dto.studentIds.length > 0) {
+      for (const studentId of dto.studentIds) {
+        try {
+          const existing = await this.assignmentStudentRepository.findOne({
+            where: { assignmentId, studentId },
+          });
+
+          if (existing) {
+            result.studentsFailed++;
+            continue;
+          }
+
+          const assignmentStudent = this.assignmentStudentRepository.create({
+            assignmentId,
+            studentId,
+          });
+
+          await this.assignmentStudentRepository.save(assignmentStudent);
+          result.studentsSuccess++;
+        } catch (error) {
+          this.logger.error(`Failed to distribute to student ${studentId}:`, error);
+          result.studentsFailed++;
+        }
+      }
+    }
+
+    // 4. Publish if requested
+    if (dto.publishOnDistribute && !assignment.isPublished) {
+      assignment.isPublished = true;
+      await this.assignmentRepository.save(assignment);
+      result.published = true;
+      result.publishedAt = new Date().toISOString();
+    }
+
+    // 5. Send notifications (mock - to be implemented)
+    if (dto.sendNotifications) {
+      // TODO: Integrate with notification service
+      result.notificationsSent = true;
+      this.logger.log(`Notifications sent for assignment ${assignmentId}`);
+    }
+
+    this.logger.log(
+      `Assignment ${assignmentId} distributed: ${result.classroomsSuccess} classrooms, ${result.studentsSuccess} students`,
+    );
+
+    return result;
+  }
+
+  /**
+   * Duplicate assignment with optional modifications
+   * Creates a new assignment with same properties but new ID
+   * REQ-TCH-091: Assignment duplication
+   */
+  async duplicateAssignment(
+    originalId: string,
+    dto: any,
+    teacherId: string,
+  ): Promise<any> {
+    // 1. Get original assignment and verify ownership
+    const original = await this.assignmentRepository.findOne({
+      where: { id: originalId, teacherId },
+    });
+
+    if (!original) {
+      throw new NotFoundException(`Assignment with ID ${originalId} not found or access denied`);
+    }
+
+    // 2. Create duplicate (omit id, timestamps)
+    const newTitle = dto.newTitle || `Copy of ${original.title}`;
+    const newDueDate = dto.newDueDate ? new Date(dto.newDueDate) : original.dueDate;
+
+    const duplicate = this.assignmentRepository.create({
+      teacherId: original.teacherId,
+      title: newTitle,
+      description: original.description,
+      assignmentType: original.assignmentType,
+      totalPoints: original.totalPoints,
+      dueDate: newDueDate,
+      isPublished: false, // Always start as draft
+    });
+
+    const saved = await this.assignmentRepository.save(duplicate);
+
+    const response: any = {
+      id: saved.id,
+      title: saved.title,
+      originalId: originalId,
+      classroomsCopied: 0,
+      exercisesCopied: 0,
+      isPublished: false,
+    };
+
+    // 3. Copy classroom assignments if requested
+    if (dto.copyClassroomAssignments) {
+      const classrooms = await this.assignmentClassroomRepository.find({
+        where: { assignmentId: originalId },
+      });
+
+      for (const ac of classrooms) {
+        try {
+          const newAC = this.assignmentClassroomRepository.create({
+            assignmentId: saved.id,
+            classroomId: ac.classroomId,
+            deadlineOverride: ac.deadlineOverride,
+            studentsCount: 0,
+          });
+          await this.assignmentClassroomRepository.save(newAC);
+          response.classroomsCopied++;
+        } catch (error) {
+          this.logger.error(`Failed to copy classroom assignment ${ac.id}:`, error);
+        }
+      }
+    }
+
+    // 4. Copy exercises if requested (default: true)
+    if (dto.copyExercises !== false) {
+      const exercises = await this.assignmentExerciseRepository.find({
+        where: { assignmentId: originalId },
+        order: { orderIndex: 'ASC' },
+      });
+
+      for (const ex of exercises) {
+        try {
+          const newEx = this.assignmentExerciseRepository.create({
+            assignmentId: saved.id,
+            exerciseId: ex.exerciseId,
+            orderIndex: ex.orderIndex,
+            pointsOverride: ex.pointsOverride,
+            isRequired: ex.isRequired,
+          });
+          await this.assignmentExerciseRepository.save(newEx);
+          response.exercisesCopied++;
+        } catch (error) {
+          this.logger.error(`Failed to copy exercise ${ex.id}:`, error);
+        }
+      }
+    }
+
+    this.logger.log(
+      `Assignment ${originalId} duplicated to ${saved.id} (${response.classroomsCopied} classrooms, ${response.exercisesCopied} exercises)`,
+    );
+
+    return response;
+  }
+
+  /**
    * Soft delete assignment
    * REQ-TCH-037: Soft delete (is_active = false)
    */

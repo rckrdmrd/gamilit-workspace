@@ -47,7 +47,7 @@ type TabType = 'all' | 'cosmetics' | 'powerups' | 'active';
 
 export default function InventoryPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   // State
   const [activeTab, setActiveTab] = useState<TabType>('all');
@@ -208,7 +208,10 @@ export default function InventoryPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={user ?? undefined} onLogout={() => navigate('/login')} />
+      <GamifiedHeader user={user ?? undefined} onLogout={async () => {
+        await logout();
+        // No need to navigate - performLogout() handles redirect
+      }} />
 
       <main className="detective-container py-8">
         {/* Header */}

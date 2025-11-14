@@ -1,53 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { Modal } from '@shared/components/common/Modal';
 import { FormField } from '@shared/components/common/FormField';
 import { ConfirmDialog } from '@shared/components/common/ConfirmDialog';
-import { Users, Plus, Edit, Trash2, Search, BookOpen, GraduationCap, Loader } from 'lucide-react';
-import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS } from '@/services/api/apiConfig';
+import { Users, Plus, Edit, Trash2, Search, BookOpen, GraduationCap, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import { useClassrooms } from '../hooks/useClassrooms';
 import type { Classroom } from '../types';
 
 export default function TeacherClasses() {
   const navigate = useNavigate();
-  const [classrooms, setClassrooms] = useState<Classroom[]>([]);
+  const {
+    classrooms,
+    loading,
+    error,
+    createClassroom: createClassroomAPI,
+    updateClassroom: updateClassroomAPI,
+    deleteClassroom: deleteClassroomAPI,
+    refresh,
+  } = useClassrooms();
+
   const [filteredClassrooms, setFilteredClassrooms] = useState<Classroom[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedClassroom, setSelectedClassroom] = useState<Classroom | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     subject: '',
     grade_level: '',
   });
-
-  // Fetch classrooms from API
-  useEffect(() => {
-    const fetchClassrooms = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await apiClient.get(API_ENDPOINTS.teacher.classrooms);
-        const data = response.data.data || response.data;
-        setClassrooms(data);
-        setFilteredClassrooms(data);
-      } catch (err: any) {
-        const errorMessage = err.response?.data?.message || 'Failed to load classrooms';
-        setError(errorMessage);
-        console.error('[TeacherClasses] Error fetching classrooms:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchClassrooms();
-  }, []);
 
   // Search functionality
   useEffect(() => {
@@ -61,17 +45,12 @@ export default function TeacherClasses() {
 
   const handleCreateClassroom = async () => {
     try {
-      setError(null);
-      const response = await apiClient.post(API_ENDPOINTS.teacher.createClassroom, formData);
-      const newClassroom = response.data.data || response.data;
-
-      setClassrooms([...classrooms, newClassroom]);
+      await createClassroomAPI(formData);
       setIsCreateModalOpen(false);
       setFormData({ name: '', subject: '', grade_level: '' });
     } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Failed to create classroom';
-      setError(errorMessage);
       console.error('[TeacherClasses] Error creating classroom:', err);
+      alert('Error al crear la clase. Por favor intenta nuevamente.');
     }
   };
 
@@ -79,24 +58,13 @@ export default function TeacherClasses() {
     if (!selectedClassroom) return;
 
     try {
-      setError(null);
-      const response = await apiClient.put(
-        API_ENDPOINTS.teacher.updateClassroom(selectedClassroom.id),
-        formData
-      );
-      const updatedClassroom = response.data.data || response.data;
-
-      const updatedClassrooms = classrooms.map((classroom) =>
-        classroom.id === selectedClassroom.id ? updatedClassroom : classroom
-      );
-      setClassrooms(updatedClassrooms);
+      await updateClassroomAPI(selectedClassroom.id, formData);
       setIsEditModalOpen(false);
       setSelectedClassroom(null);
       setFormData({ name: '', subject: '', grade_level: '' });
     } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Failed to update classroom';
-      setError(errorMessage);
       console.error('[TeacherClasses] Error updating classroom:', err);
+      alert('Error al actualizar la clase. Por favor intenta nuevamente.');
     }
   };
 
@@ -104,17 +72,12 @@ export default function TeacherClasses() {
     if (!selectedClassroom) return;
 
     try {
-      setError(null);
-      await apiClient.delete(API_ENDPOINTS.teacher.deleteClassroom(selectedClassroom.id));
-
-      const updatedClassrooms = classrooms.filter((c) => c.id !== selectedClassroom.id);
-      setClassrooms(updatedClassrooms);
+      await deleteClassroomAPI(selectedClassroom.id);
       setIsDeleteDialogOpen(false);
       setSelectedClassroom(null);
     } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Failed to delete classroom';
-      setError(errorMessage);
       console.error('[TeacherClasses] Error deleting classroom:', err);
+      alert('Error al eliminar la clase. Por favor intenta nuevamente.');
     }
   };
 
@@ -163,20 +126,43 @@ export default function TeacherClasses() {
             <Plus className="w-5 h-5" />
             Crear Nueva Clase
           </DetectiveButton>
+          {!loading && !error && (
+            <DetectiveButton variant="secondary" onClick={refresh}>
+              <RefreshCw className="w-4 h-4" />
+              Actualizar
+            </DetectiveButton>
+          )}
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="mb-6 p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-500">
-            {error}
-          </div>
+        {/* Error State */}
+        {error && !loading && (
+          <DetectiveCard variant="danger" className="mb-6">
+            <div className="flex items-start gap-4">
+              <AlertCircle className="w-8 h-8 text-red-500 flex-shrink-0" />
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-detective-text mb-2">
+                  Error al cargar clases
+                </h3>
+                <p className="text-detective-text-secondary mb-4">
+                  No se pudieron cargar las clases. Por favor, intenta nuevamente.
+                </p>
+                <p className="text-sm text-red-400 mb-4 font-mono bg-red-950 p-2 rounded">
+                  {error.message}
+                </p>
+                <DetectiveButton onClick={refresh} variant="primary">
+                  <RefreshCw className="w-4 h-4" />
+                  Reintentar
+                </DetectiveButton>
+              </div>
+            </div>
+          </DetectiveCard>
         )}
 
         {/* Loading State */}
         {loading && (
-          <div className="flex items-center justify-center py-12">
-            <Loader className="w-8 h-8 text-detective-orange animate-spin" />
-            <span className="ml-3 text-detective-text">Cargando clases...</span>
+          <div className="flex flex-col items-center justify-center py-20">
+            <Loader2 className="w-12 h-12 text-detective-orange animate-spin mb-4" />
+            <p className="text-detective-text-secondary">Cargando clases...</p>
           </div>
         )}
 

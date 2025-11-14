@@ -451,6 +451,9 @@ execute_sql "$SEEDS_DIR/system_configuration/02-feature_flags.sql" "Seeds: featu
 execute_sql "$SEEDS_DIR/system_configuration/03-notification_settings_global.sql" "Seeds: notification_settings_global"
 execute_sql "$SEEDS_DIR/system_configuration/04-rate_limits.sql" "Seeds: rate_limits"
 
+# 16.1.1: Notifications (templates y configuración)
+execute_sql "$SEEDS_DIR/notifications/01-notification_templates.sql" "Seeds: notification_templates (8 templates)"
+
 # 16.2: Auth Management (tenants y auth_providers)
 execute_sql "$SEEDS_DIR/auth_management/01-tenants.sql" "Seeds: tenants"
 execute_sql "$SEEDS_DIR/auth_management/02-auth_providers.sql" "Seeds: auth_providers"

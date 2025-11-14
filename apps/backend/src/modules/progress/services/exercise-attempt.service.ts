@@ -45,8 +45,8 @@ export class ExerciseAttemptService {
       submitted_at: new Date(),
       hints_used: dto.hints_used || 0,
       comodines_used: dto.comodines_used || [],
-      xp_earned: 0,
-      ml_coins_earned: 0,
+      xp_earned: dto.xp_earned || 0,
+      ml_coins_earned: dto.ml_coins_earned || 0,
       metadata: dto.metadata || {
         browser: null,
         device_type: null,

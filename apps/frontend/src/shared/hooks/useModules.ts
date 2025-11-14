@@ -1,125 +1,127 @@
 /**
  * useModules Hook
- *
- * Custom hook for managing modules data from the educational API
+ * Custom hook for fetching module and exercise data from the API
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { getModules, getModule, getModuleExercises } from '@/services/api/educationalAPI';
-import type { Module, Exercise } from '@shared/types';
+import { useState, useEffect } from 'react';
 
-interface UseModulesReturn {
-  modules: Module[];
-  loading: boolean;
-  error: Error | null;
-  refresh: () => Promise<void>;
-  isRefreshing: boolean;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3006/api';
+
+interface Module {
+  id: string;
+  title: string;
+  description: string;
+  difficulty_level: string;
+  estimated_duration_minutes: number;
+  xp_reward: number;
+  ml_coins_reward: number;
+  total_exercises?: number;
+  completed_exercises?: number;
+  progress?: number;
+  completed?: boolean;
+  [key: string]: any;
 }
 
-/**
- * Hook to fetch all modules
- */
-export function useModules(): UseModulesReturn {
-  const [modules, setModules] = useState<Module[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const fetchModules = useCallback(async (isRefresh = false) => {
-    if (isRefresh) {
-      setIsRefreshing(true);
-    } else {
-      setLoading(true);
-    }
-
-    setError(null);
-
-    try {
-      const data = await getModules();
-      setModules(data);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to fetch modules'));
-      console.error('Error fetching modules:', err);
-    } finally {
-      setLoading(false);
-      setIsRefreshing(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchModules();
-  }, [fetchModules]);
-
-  const refresh = useCallback(() => {
-    return fetchModules(true);
-  }, [fetchModules]);
-
-  return {
-    modules,
-    loading,
-    error,
-    refresh,
-    isRefreshing,
-  };
+interface Exercise {
+  id: string;
+  module_id: string;
+  title: string;
+  description: string;
+  exercise_type: string;
+  difficulty_level: string;
+  max_points: number;
+  xp_reward: number;
+  ml_coins_reward: number;
+  order_index: number;
+  completed?: boolean;
+  [key: string]: any;
 }
 
 interface UseModuleDetailReturn {
   module: Module | null;
   exercises: Exercise[];
   loading: boolean;
-  error: Error | null;
-  refresh: () => Promise<void>;
+  error: string | null;
 }
 
 /**
- * Hook to fetch a single module with its exercises
+ * Hook to fetch a specific module and its exercises
+ * @param moduleId - The ID of the module to fetch
+ * @returns Object containing module, exercises, loading state, and error
  */
 export function useModuleDetail(moduleId: string): UseModuleDetailReturn {
   const [module, setModule] = useState<Module | null>(null);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const fetchModuleDetail = useCallback(async () => {
-    console.log('📡 [useModuleDetail] fetchModuleDetail called', { moduleId });
-    setLoading(true);
-    setError(null);
-
-    try {
-      console.log('📡 [useModuleDetail] Fetching module and exercises...');
-      const [moduleData, exercisesData] = await Promise.all([
-        getModule(moduleId),
-        getModuleExercises(moduleId),
-      ]);
-
-      console.log('✅ [useModuleDetail] Data received:', {
-        hasModule: !!moduleData,
-        moduleTitle: moduleData?.title,
-        exercisesCount: exercisesData?.length,
-      });
-
-      setModule(moduleData);
-      setExercises(exercisesData);
-    } catch (err) {
-      console.error('❌ [useModuleDetail] Error fetching module detail:', err);
-      setError(err instanceof Error ? err : new Error('Failed to fetch module'));
-    } finally {
-      setLoading(false);
-      console.log('🏁 [useModuleDetail] Fetch completed');
-    }
-  }, [moduleId]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (moduleId) {
-      fetchModuleDetail();
+    if (!moduleId) {
+      setLoading(false);
+      return;
     }
-  }, [moduleId, fetchModuleDetail]);
+
+    const fetchModuleDetail = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const token = localStorage.getItem('auth-token');
+        if (!token) {
+          throw new Error('No authentication token found');
+        }
+
+        const headers = {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        };
+
+        // Fetch module details
+        const moduleResponse = await fetch(
+          `${API_BASE_URL}/educational/modules/${moduleId}`,
+          { headers }
+        );
+
+        if (!moduleResponse.ok) {
+          throw new Error(`Failed to fetch module: ${moduleResponse.statusText}`);
+        }
+
+        const moduleData = await moduleResponse.json();
+        setModule(moduleData);
+
+        // Fetch all exercises (with completed field)
+        const exercisesResponse = await fetch(
+          `${API_BASE_URL}/educational/exercises`,
+          { headers }
+        );
+
+        if (!exercisesResponse.ok) {
+          throw new Error(`Failed to fetch exercises: ${exercisesResponse.statusText}`);
+        }
+
+        const allExercises = await exercisesResponse.json();
+
+        // Filter exercises for this module and sort by order_index
+        const moduleExercises = allExercises
+          .filter((ex: Exercise) => ex.module_id === moduleId)
+          .sort((a: Exercise, b: Exercise) => a.order_index - b.order_index);
+
+        setExercises(moduleExercises);
+      } catch (err) {
+        console.error('Error fetching module detail:', err);
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchModuleDetail();
+  }, [moduleId]);
 
   return {
     module,
     exercises,
     loading,
     error,
-    refresh: fetchModuleDetail,
   };
 }

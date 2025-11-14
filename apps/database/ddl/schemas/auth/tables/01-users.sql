@@ -51,7 +51,10 @@ CREATE TABLE auth.users (
     is_sso_user boolean DEFAULT false,
     deleted_at timestamp with time zone,
     -- GAMILIT custom columns
-    gamilit_role auth_management.gamilit_role DEFAULT 'student'::auth_management.gamilit_role
+    gamilit_role auth_management.gamilit_role DEFAULT 'student'::auth_management.gamilit_role,
+
+    -- User account status (FE-051 Admin Portal)
+    status VARCHAR(50) NOT NULL DEFAULT 'active'
 );
 
 ALTER TABLE auth.users OWNER TO gamilit_user;
@@ -67,6 +70,11 @@ ALTER TABLE ONLY auth.users
 -- Unique Constraints
 ALTER TABLE ONLY auth.users
     ADD CONSTRAINT users_email_key UNIQUE (email);
+
+-- Status constraint (FE-051 Admin Portal)
+ALTER TABLE auth.users
+    ADD CONSTRAINT users_status_check
+    CHECK (status IN ('active', 'inactive', 'suspended', 'deleted'));
 
 -- =====================================================
 -- Indexes
@@ -91,6 +99,9 @@ COMMENT ON COLUMN auth.users.raw_user_meta_data IS 'Metadatos adicionales del us
 COMMENT ON COLUMN auth.users.deleted_at IS 'Fecha y hora de eliminación lógica (soft delete)';
 COMMENT ON COLUMN auth.users.created_at IS 'Fecha y hora de creación del registro';
 COMMENT ON COLUMN auth.users.updated_at IS 'Fecha y hora de última actualización del registro';
+
+-- Status column (FE-051 Admin Portal)
+COMMENT ON COLUMN auth.users.status IS 'User account status. Values: active (normal user, can login), inactive (temporarily deactivated), suspended (administratively suspended), deleted (soft deleted for audit trail)';
 
 -- =====================================================
 -- Grants

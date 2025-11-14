@@ -53,6 +53,7 @@ INSERT INTO auth.users (
     email_confirmed_at,
     raw_app_meta_data,
     raw_user_meta_data,
+    status,
     created_at,
     updated_at,
     confirmation_token,
@@ -80,6 +81,7 @@ INSERT INTO auth.users (
         'role', 'super_admin',
         'description', 'Usuario administrador de testing'
     ),
+    'active',
     gamilit.now_mexico(),
     gamilit.now_mexico(),
     '',
@@ -104,6 +106,7 @@ INSERT INTO auth.users (
         'description', 'Usuario profesor de testing'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -127,6 +130,7 @@ INSERT INTO auth.users (
         'description', 'Usuario estudiante de testing'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -155,6 +159,7 @@ INSERT INTO auth.users (
         'description', 'Estudiante demo 1 - 5to grado'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -178,6 +183,7 @@ INSERT INTO auth.users (
         'description', 'Estudiante demo 2 - 5to grado'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -201,6 +207,7 @@ INSERT INTO auth.users (
         'description', 'Estudiante demo 3 - 5to grado'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -224,6 +231,7 @@ INSERT INTO auth.users (
         'description', 'Estudiante demo 4 - 5to grado'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -247,6 +255,7 @@ INSERT INTO auth.users (
         'description', 'Estudiante demo 5 - 6to grado'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -270,6 +279,7 @@ INSERT INTO auth.users (
         'description', 'Estudiante demo 6 - 6to grado'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -293,6 +303,7 @@ INSERT INTO auth.users (
         'description', 'Estudiante demo 7 - 5to grado'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -316,6 +327,7 @@ INSERT INTO auth.users (
         'description', 'Estudiante demo 8 - 5to grado'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -339,6 +351,7 @@ INSERT INTO auth.users (
         'description', 'Estudiante demo 9 - 6to grado'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -362,6 +375,7 @@ INSERT INTO auth.users (
         'description', 'Estudiante demo 10 - 5to grado'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -385,6 +399,7 @@ INSERT INTO auth.users (
         'description', 'Estudiante demo 11 - 6to grado'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -408,6 +423,7 @@ INSERT INTO auth.users (
         'description', 'Estudiante demo 12 - 5to grado'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -431,6 +447,7 @@ INSERT INTO auth.users (
         'description', 'Estudiante demo 13 - 6to grado'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -454,6 +471,7 @@ INSERT INTO auth.users (
         'description', 'Estudiante demo 14 - 5to grado'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -477,6 +495,7 @@ INSERT INTO auth.users (
         'description', 'Estudiante demo 15 - 6to grado'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -505,6 +524,7 @@ INSERT INTO auth.users (
         'description', 'Profesor demo 1 - Lengua Española y Literatura'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -528,6 +548,7 @@ INSERT INTO auth.users (
         'description', 'Profesora demo 2 - Comprensión Lectora'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -556,6 +577,7 @@ INSERT INTO auth.users (
         'description', 'Administrador secundario del sistema'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -579,6 +601,7 @@ INSERT INTO auth.users (
         'description', 'Directora de escuela demo'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',
@@ -606,6 +629,7 @@ INSERT INTO auth.users (
         'description', 'Padre de familia demo - Padre de Ana García'
     ),
     gamilit.now_mexico(),
+    'active',
     gamilit.now_mexico(),
     '',
     '',

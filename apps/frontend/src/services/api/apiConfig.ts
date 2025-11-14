@@ -356,9 +356,62 @@ export const API_ENDPOINTS = {
      */
     system: {
       health: '/admin/system/health',
+      metrics: '/admin/system/metrics',
       logs: '/admin/system/logs',
       maintenance: '/admin/system/maintenance',
       statistics: '/admin/system/statistics',
+      config: '/admin/system/config',
+      configCategories: '/admin/system/config/categories',
+      categoryConfig: (category: string) => `/admin/system/config/${category}`,
+      validateConfig: '/admin/system/config/validate',
+    },
+
+    /**
+     * Roles & Permissions endpoints (P0 - CRITICAL)
+     */
+    roles: {
+      list: '/admin/roles',
+      get: (roleId: string) => `/admin/roles/${roleId}`,
+      permissions: (roleId: string) => `/admin/roles/${roleId}/permissions`,
+      updatePermissions: (roleId: string) => `/admin/roles/${roleId}/permissions`,
+      availablePermissions: '/admin/permissions',
+    },
+
+    /**
+     * Gamification management endpoints (P1 - HIGH)
+     */
+    gamification: {
+      settings: '/admin/gamification/settings',
+      updateSettings: '/admin/gamification/settings',
+      previewChanges: '/admin/gamification/settings/preview',
+      restoreDefaults: '/admin/gamification/settings/restore-defaults',
+      ranks: '/admin/gamification/ranks',
+      rank: (rankId: string) => `/admin/gamification/ranks/${rankId}`,
+      achievements: '/admin/gamification/achievements',
+      achievement: (achievementId: string) => `/admin/gamification/achievements/${achievementId}`,
+      economyStats: '/admin/gamification/economy/stats',
+    },
+
+    /**
+     * Reports endpoints (P2 - MEDIUM)
+     */
+    reports: {
+      generate: '/admin/reports/generate',
+      list: '/admin/reports',
+      get: (reportId: string) => `/admin/reports/${reportId}`,
+      download: (reportId: string) => `/admin/reports/${reportId}/download`,
+      delete: (reportId: string) => `/admin/reports/${reportId}`,
+      schedule: (reportId: string) => `/admin/reports/${reportId}/schedule`,
+    },
+
+    /**
+     * Approvals history endpoints (P2 - MEDIUM)
+     */
+    approvals: {
+      history: '/admin/approvals/history',
+      pending: '/admin/content/pending',
+      approve: (id: string) => `/admin/content/${id}/approve`,
+      reject: (id: string) => `/admin/content/${id}/reject`,
     },
   },
 } as const;

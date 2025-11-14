@@ -14,8 +14,11 @@ import {
   Query,
   UseGuards,
   Request,
+  Res,
+  HttpStatus,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger';
+import { Response } from 'express';
+import { ApiBearerAuth, ApiTags, ApiOperation, ApiProduces } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from '@/modules/auth/guards/roles.guard';
 import { Roles } from '@/modules/auth/decorators/roles.decorator';
@@ -25,6 +28,7 @@ import {
   StudentProgressService,
   GradingService,
   AnalyticsService,
+  ReportsService,
 } from '../services';
 import {
   SubmitFeedbackDto,
@@ -36,7 +40,10 @@ import {
   StudentNoteResponseDto,
   GetEngagementMetricsDto,
   GenerateReportsDto,
+  StudentInsightsResponseDto,
+  ReportFormat,
 } from '../dto';
+import { GenerateReportDto } from '../dto/reports.dto';
 
 @ApiTags('Teacher')
 @ApiBearerAuth()
@@ -49,6 +56,7 @@ export class TeacherController {
     private readonly studentProgressService: StudentProgressService,
     private readonly gradingService: GradingService,
     private readonly analyticsService: AnalyticsService,
+    private readonly reportsService: ReportsService,
   ) {}
 
   // =====================================================
@@ -58,14 +66,14 @@ export class TeacherController {
   @Get('dashboard/stats')
   @ApiOperation({ summary: 'Get classroom statistics' })
   async getClassroomStats(@Request() req: any) {
-    const teacherId = req.user.profile.id;
+    const teacherId = req.user.id;
     return this.dashboardService.getClassroomStats(teacherId);
   }
 
   @Get('dashboard/activities')
   @ApiOperation({ summary: 'Get recent activities' })
   async getRecentActivities(@Request() req: any, @Query('limit') limit?: number) {
-    const teacherId = req.user.profile.id;
+    const teacherId = req.user.id;
     return this.dashboardService.getRecentActivities(
       teacherId,
       limit ? parseInt(limit as any) : 10,
@@ -75,14 +83,14 @@ export class TeacherController {
   @Get('dashboard/alerts')
   @ApiOperation({ summary: 'Get student alerts' })
   async getStudentAlerts(@Request() req: any) {
-    const teacherId = req.user.profile.id;
+    const teacherId = req.user.id;
     return this.dashboardService.getStudentAlerts(teacherId);
   }
 
   @Get('dashboard/top-performers')
   @ApiOperation({ summary: 'Get top performing students' })
   async getTopPerformers(@Request() req: any, @Query('limit') limit?: number) {
-    const teacherId = req.user.profile.id;
+    const teacherId = req.user.id;
     return this.dashboardService.getTopPerformers(
       teacherId,
       limit ? parseInt(limit as any) : 5,
@@ -92,7 +100,7 @@ export class TeacherController {
   @Get('dashboard/module-progress')
   @ApiOperation({ summary: 'Get module progress summary' })
   async getModuleProgressSummary(@Request() req: any) {
-    const teacherId = req.user.profile.id;
+    const teacherId = req.user.id;
     return this.dashboardService.getModuleProgressSummary(teacherId);
   }
 
@@ -150,6 +158,15 @@ export class TeacherController {
       teacherId,
       noteDto,
     );
+  }
+
+  @Get('students/:studentId/insights')
+  @ApiOperation({
+    summary: 'Get comprehensive student insights',
+    description: 'Get AI-powered insights including strengths, weaknesses, predictions, and personalized recommendations for a student',
+  })
+  async getStudentInsights(@Param('studentId') studentId: string) {
+    return this.analyticsService.getStudentInsights(studentId);
   }
 
   // =====================================================
@@ -248,5 +265,46 @@ export class TeacherController {
   ) {
     const teacherId = req.user.profile.id;
     return this.analyticsService.generateReports(teacherId, query);
+  }
+
+  // =====================================================
+  // REPORT GENERATION ENDPOINTS (PDF/Excel with Insights)
+  // =====================================================
+
+  @Post('reports/generate')
+  @ApiOperation({
+    summary: 'Generate student insights report',
+    description:
+      'Generate a comprehensive report with student insights in PDF or Excel format. ' +
+      'Reports include risk analysis, recommendations, strengths/weaknesses, and predictions.',
+  })
+  @ApiProduces('application/pdf', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+  async generateInsightsReport(
+    @Request() req: any,
+    @Body() dto: GenerateReportDto,
+    @Res() res: Response,
+  ) {
+    const userId = req.user.profile.id;
+
+    // Generate report
+    const { buffer, metadata } = await this.reportsService.generateReport(dto, userId);
+
+    // Set appropriate headers
+    const filename = `student-insights-${metadata.report_id}.${dto.format === ReportFormat.PDF ? 'pdf' : 'xlsx'}`;
+    const contentType =
+      dto.format === ReportFormat.PDF
+        ? 'application/pdf'
+        : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+    res.set({
+      'Content-Type': contentType,
+      'Content-Disposition': `attachment; filename="${filename}"`,
+      'Content-Length': buffer.length,
+      'X-Report-ID': metadata.report_id,
+      'X-Student-Count': metadata.student_count,
+      'X-Generated-At': metadata.generated_at.toISOString(),
+    });
+
+    res.status(HttpStatus.OK).send(buffer);
   }
 }

@@ -22,7 +22,7 @@ import type {
   EconomyStats,
 } from '../types/economyTypes';
 import { getBalance } from '../api/economyAPI';
-import { useAuth } from '@/shared/hooks/useAuth';
+import { useAuthStore } from '@/features/auth/store/authStore';
 
 /**
  * Economy Store State Interface
@@ -487,7 +487,7 @@ export const useEconomyStore = create<EconomyState>()(
         set({ isLoading: true, error: null });
         try {
           // Get userId from auth store
-          const userId = useAuth.getState().user?.id;
+          const userId = useAuthStore.getState().user?.id;
           if (!userId) {
             throw new Error('User not authenticated. Please login first.');
           }

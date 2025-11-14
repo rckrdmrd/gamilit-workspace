@@ -1,249 +1,222 @@
+/**
+ * useTeacherDashboard Hook
+ *
+ * Custom React hook to fetch and manage teacher dashboard data including
+ * statistics, recent activities, alerts, top performers, and module progress.
+ *
+ * Features:
+ * - Automatic data fetching on mount
+ * - Loading and error states
+ * - Refresh mechanism for individual sections
+ * - Global refresh for all data
+ * - Error handling with console logging
+ *
+ * @module apps/teacher/hooks/useTeacherDashboard
+ */
+
 import { useState, useEffect, useCallback } from 'react';
-import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS } from '@/services/api/apiConfig';
+import { teacherApi } from '@services/api/teacher';
+import type { Activity } from '@services/api/teacher';
 import type {
-  DashboardClassroom,
-  DashboardAssignment,
-  DashboardSubmission,
-  StudentAlert,
-  TeacherStats,
-  CreateClassroomData,
-  CreateAssignmentData,
-  GradeSubmissionData,
+  TeacherDashboardStats,
+  InterventionAlert,
+  StudentPerformance,
+  ModuleProgress,
 } from '../types';
 
-interface UseTeacherDashboardResult {
+// ============================================================================
+// TYPES
+// ============================================================================
+
+/**
+ * Return type for useTeacherDashboard hook
+ */
+export interface UseTeacherDashboardReturn {
   // Data
-  classrooms: DashboardClassroom[];
-  assignments: DashboardAssignment[];
-  submissions: DashboardSubmission[];
-  alerts: StudentAlert[];
-  stats: TeacherStats;
+  stats: TeacherDashboardStats | null;
+  activities: Activity[];
+  alerts: InterventionAlert[];
+  topPerformers: StudentPerformance[];
+  moduleProgress: ModuleProgress[];
 
   // State
   loading: boolean;
-  error: string | null;
+  error: Error | null;
 
   // Actions
-  createClassroom: (data: CreateClassroomData) => Promise<void>;
-  updateClassroom: (id: string, data: Partial<CreateClassroomData>) => Promise<void>;
-  deleteClassroom: (id: string) => Promise<void>;
-  createAssignment: (data: CreateAssignmentData) => Promise<void>;
-  updateAssignment: (id: string, data: Partial<CreateAssignmentData>) => Promise<void>;
-  closeAssignment: (id: string) => Promise<void>;
-  gradeSubmission: (data: GradeSubmissionData) => Promise<void>;
-  dismissAlert: (id: string) => void;
   refresh: () => Promise<void>;
+  refreshStats: () => Promise<void>;
+  refreshActivities: () => Promise<void>;
+  refreshAlerts: () => Promise<void>;
 }
 
-export const useTeacherDashboard = (): UseTeacherDashboardResult => {
-  const [classrooms, setClassrooms] = useState<DashboardClassroom[]>([]);
-  const [assignments, setAssignments] = useState<DashboardAssignment[]>([]);
-  const [submissions, setSubmissions] = useState<DashboardSubmission[]>([]);
-  const [alerts, setAlerts] = useState<StudentAlert[]>([]);
-  const [stats, setStats] = useState<TeacherStats>({
-    totalClassrooms: 0,
-    totalStudents: 0,
-    pendingSubmissions: 0,
-    averagePerformance: 0,
-  });
+// ============================================================================
+// HOOK
+// ============================================================================
+
+/**
+ * Hook to manage teacher dashboard data
+ *
+ * Fetches all dashboard data on component mount and provides methods
+ * to refresh individual sections or all data at once.
+ *
+ * @returns {UseTeacherDashboardReturn} Dashboard data, loading state, error, and refresh methods
+ *
+ * @example
+ * ```tsx
+ * function TeacherDashboard() {
+ *   const {
+ *     stats,
+ *     activities,
+ *     alerts,
+ *     topPerformers,
+ *     moduleProgress,
+ *     loading,
+ *     error,
+ *     refresh,
+ *     refreshStats,
+ *   } = useTeacherDashboard();
+ *
+ *   if (loading && !stats) {
+ *     return <LoadingSpinner />;
+ *   }
+ *
+ *   if (error) {
+ *     return <ErrorMessage error={error} onRetry={refresh} />;
+ *   }
+ *
+ *   return (
+ *     <div>
+ *       <DashboardStats stats={stats!} onRefresh={refreshStats} />
+ *       <RecentActivities activities={activities} />
+ *       <AlertsPanel alerts={alerts} />
+ *       <TopPerformers students={topPerformers} />
+ *       <ModuleProgress modules={moduleProgress} />
+ *       <RefreshButton onClick={refresh} loading={loading} />
+ *     </div>
+ *   );
+ * }
+ * ```
+ */
+export function useTeacherDashboard(): UseTeacherDashboardReturn {
+  // ============================================================================
+  // STATE
+  // ============================================================================
+
+  const [stats, setStats] = useState<TeacherDashboardStats | null>(null);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [alerts, setAlerts] = useState<InterventionAlert[]>([]);
+  const [topPerformers, setTopPerformers] = useState<StudentPerformance[]>([]);
+  const [moduleProgress, setModuleProgress] = useState<ModuleProgress[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  // ============================================================================
+  // FETCH FUNCTIONS
+  // ============================================================================
 
+  /**
+   * Fetch all dashboard data
+   * Calls all dashboard endpoints in parallel for optimal performance
+   */
+  const fetchDashboardData = useCallback(async () => {
     try {
+      setLoading(true);
+      setError(null);
+
       // Fetch all data in parallel
-      const [classroomsRes, assignmentsRes, submissionsRes] = await Promise.all([
-        apiClient.get(API_ENDPOINTS.teacher.classrooms),
-        apiClient.get(API_ENDPOINTS.teacher.assignments),
-        apiClient.get(API_ENDPOINTS.teacher.pendingSubmissions),
-      ]);
+      const [statsData, activitiesData, alertsData, performersData, progressData] =
+        await Promise.all([
+          teacherApi.getDashboardStats(),
+          teacherApi.getRecentActivities(10),
+          teacherApi.getStudentAlerts(),
+          teacherApi.getTopPerformers(5),
+          teacherApi.getModuleProgressSummary(),
+        ]);
 
-      const fetchedClassrooms = classroomsRes.data.data || classroomsRes.data;
-      const fetchedAssignments = assignmentsRes.data.data || assignmentsRes.data;
-      const fetchedSubmissions = submissionsRes.data.data || submissionsRes.data;
-
-      // Calculate stats from fetched data
-      const calculatedStats: TeacherStats = {
-        totalClassrooms: fetchedClassrooms.length,
-        totalStudents: fetchedClassrooms.reduce((sum: number, c: any) => sum + (c.student_count || 0), 0),
-        pendingSubmissions: fetchedSubmissions.length,
-        averagePerformance:
-          fetchedClassrooms.length > 0
-            ? fetchedClassrooms.reduce((sum: number, c: any) => sum + (c.average_score || 0), 0) /
-              fetchedClassrooms.length
-            : 0,
-      };
-
-      setClassrooms(fetchedClassrooms);
-      setAssignments(fetchedAssignments);
-      setSubmissions(fetchedSubmissions);
-      setAlerts([]); // Alerts will be implemented later with backend support
-      setStats(calculatedStats);
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || err.message || 'Failed to load dashboard data';
-      setError(errorMessage);
-      console.error('[useTeacherDashboard] Error fetching data:', err);
+      // Update all states
+      setStats(statsData);
+      setActivities(activitiesData);
+      setAlerts(alertsData);
+      setTopPerformers(performersData);
+      setModuleProgress(progressData);
+    } catch (err) {
+      console.error('[useTeacherDashboard] Error fetching dashboard data:', err);
+      setError(err as Error);
     } finally {
       setLoading(false);
     }
   }, []);
 
+  /**
+   * Refresh only dashboard statistics
+   * Useful for updating stats without refetching everything
+   */
+  const refreshStats = useCallback(async () => {
+    try {
+      const data = await teacherApi.getDashboardStats();
+      setStats(data);
+    } catch (err) {
+      console.error('[useTeacherDashboard] Error refreshing stats:', err);
+      // Don't update error state for individual refreshes
+    }
+  }, []);
+
+  /**
+   * Refresh only recent activities
+   */
+  const refreshActivities = useCallback(async () => {
+    try {
+      const data = await teacherApi.getRecentActivities(10);
+      setActivities(data);
+    } catch (err) {
+      console.error('[useTeacherDashboard] Error refreshing activities:', err);
+    }
+  }, []);
+
+  /**
+   * Refresh only student alerts
+   */
+  const refreshAlerts = useCallback(async () => {
+    try {
+      const data = await teacherApi.getStudentAlerts();
+      setAlerts(data);
+    } catch (err) {
+      console.error('[useTeacherDashboard] Error refreshing alerts:', err);
+    }
+  }, []);
+
+  // ============================================================================
+  // EFFECTS
+  // ============================================================================
+
+  /**
+   * Fetch data on component mount
+   */
   useEffect(() => {
-    fetchData();
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
-    // Set up auto-refresh every 60 seconds
-    const interval = setInterval(fetchData, 60000);
-
-    return () => clearInterval(interval);
-  }, [fetchData]);
-
-  const createClassroom = async (data: CreateClassroomData) => {
-    try {
-      const response = await apiClient.post(API_ENDPOINTS.teacher.createClassroom, data);
-      const newClassroom = response.data.data || response.data;
-
-      setClassrooms((prev) => [...prev, newClassroom]);
-      setStats((prev) => ({
-        ...prev,
-        totalClassrooms: prev.totalClassrooms + 1,
-      }));
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Failed to create classroom';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    }
-  };
-
-  const updateClassroom = async (id: string, data: Partial<CreateClassroomData>) => {
-    try {
-      const response = await apiClient.put(API_ENDPOINTS.teacher.updateClassroom(id), data);
-      const updatedClassroom = response.data.data || response.data;
-
-      setClassrooms((prev) =>
-        prev.map((c) => (c.id === id ? updatedClassroom : c))
-      );
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Failed to update classroom';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    }
-  };
-
-  const deleteClassroom = async (id: string) => {
-    try {
-      await apiClient.delete(API_ENDPOINTS.teacher.deleteClassroom(id));
-
-      const classroom = classrooms.find((c) => c.id === id);
-      if (classroom) {
-        setClassrooms((prev) => prev.filter((c) => c.id !== id));
-        setStats((prev) => ({
-          ...prev,
-          totalClassrooms: prev.totalClassrooms - 1,
-          totalStudents: prev.totalStudents - (classroom.studentCount || 0),
-        }));
-      }
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Failed to delete classroom';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    }
-  };
-
-  const createAssignment = async (data: CreateAssignmentData) => {
-    try {
-      const response = await apiClient.post(API_ENDPOINTS.teacher.createAssignment, data);
-      const newAssignment = response.data.data || response.data;
-
-      setAssignments((prev) => [...prev, newAssignment]);
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Failed to create assignment';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    }
-  };
-
-  const updateAssignment = async (id: string, data: Partial<CreateAssignmentData>) => {
-    try {
-      const response = await apiClient.put(API_ENDPOINTS.teacher.updateAssignment(id), data);
-      const updatedAssignment = response.data.data || response.data;
-
-      setAssignments((prev) =>
-        prev.map((a) => (a.id === id ? updatedAssignment : a))
-      );
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Failed to update assignment';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    }
-  };
-
-  const closeAssignment = async (id: string) => {
-    try {
-      await apiClient.delete(API_ENDPOINTS.teacher.deleteAssignment(id));
-
-      setAssignments((prev) => prev.filter((a) => a.id !== id));
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Failed to close assignment';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    }
-  };
-
-  const gradeSubmission = async (data: GradeSubmissionData) => {
-    try {
-      const response = await apiClient.post(
-        API_ENDPOINTS.teacher.gradeSubmission(data.submissionId),
-        {
-          score: data.score,
-          grade: data.grade,
-          feedback: data.feedback,
-        }
-      );
-      const gradedSubmission = response.data.data || response.data;
-
-      setSubmissions((prev) =>
-        prev.map((s) => (s.id === data.submissionId ? gradedSubmission : s))
-      );
-
-      setStats((prev) => ({
-        ...prev,
-        pendingSubmissions: Math.max(0, prev.pendingSubmissions - 1),
-      }));
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Failed to grade submission';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    }
-  };
-
-  const dismissAlert = (id: string) => {
-    setAlerts((prev) => prev.filter((a) => a.id !== id));
-  };
-
-  const refresh = async () => {
-    await fetchData();
-  };
+  // ============================================================================
+  // RETURN
+  // ============================================================================
 
   return {
-    classrooms,
-    assignments,
-    submissions,
-    alerts,
+    // Data
     stats,
+    activities,
+    alerts,
+    topPerformers,
+    moduleProgress,
+
+    // State
     loading,
     error,
-    createClassroom,
-    updateClassroom,
-    deleteClassroom,
-    createAssignment,
-    updateAssignment,
-    closeAssignment,
-    gradeSubmission,
-    dismissAlert,
-    refresh,
+
+    // Actions
+    refresh: fetchDashboardData,
+    refreshStats,
+    refreshActivities,
+    refreshAlerts,
   };
-};
+}

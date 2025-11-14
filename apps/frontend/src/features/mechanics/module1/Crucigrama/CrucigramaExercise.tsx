@@ -10,6 +10,7 @@ import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 export interface CrucigramaExerciseProps {
   exercise: CrucigramaData;
   onComplete?: () => void;
+  onSubmit?: (answers: any) => Promise<void>;
   onProgressUpdate?: (progress: any) => void;
   actionsRef?: React.MutableRefObject<{
     handleReset?: () => void;
@@ -20,6 +21,7 @@ export interface CrucigramaExerciseProps {
 export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
   exercise,
   onComplete,
+  onSubmit,
   onProgressUpdate,
   actionsRef
 }) => {
@@ -112,28 +114,39 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
     const isComplete = completedClues.size === exercise.clues.length;
 
     if (isComplete) {
-      const attempt = {
-        exerciseId: exercise.id,
-        startTime,
-        endTime: new Date(),
-        answers: { grid },
-        correctAnswers: completedClues.size,
-        totalQuestions: exercise.clues.length,
-        hintsUsed,
-        difficulty: exercise.difficulty
-      };
+      // Submit to backend if onSubmit is provided
+      if (onSubmit) {
+        try {
+          await onSubmit({
+            grid,
+            completedClues: Array.from(completedClues),
+            hintsUsed,
+            startTime: startTime.getTime(),
+          });
+          // Success feedback will be shown by parent component
+        } catch (error) {
+          console.error('Error submitting exercise:', error);
+          setFeedback({
+            type: 'error',
+            title: 'Error al Enviar',
+            message: 'Hubo un problema al enviar tu respuesta. Por favor, intenta nuevamente.',
+          });
+          setShowFeedback(true);
+        }
+      } else {
+        // Fallback: Show local feedback if no submit handler
+        const score = calculateScore(completedClues.size, exercise.clues.length);
+        setCurrentScore(score);
 
-      const score = calculateScore(completedClues.size, exercise.clues.length);
-      setCurrentScore(score);
-
-      setFeedback({
-        type: 'success',
-        title: '¡Crucigrama Completado!',
-        message: '¡Excelente trabajo! Has completado todas las palabras correctamente.',
-        score,
-        showConfetti: true
-      });
-      setShowFeedback(true);
+        setFeedback({
+          type: 'success',
+          title: '¡Crucigrama Completado!',
+          message: '¡Excelente trabajo! Has completado todas las palabras correctamente.',
+          score,
+          showConfetti: true
+        });
+        setShowFeedback(true);
+      }
     } else {
       setFeedback({
         type: 'error',

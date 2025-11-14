@@ -23,6 +23,7 @@ import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/app/providers/AuthContext';
 import { loginSchema, type LoginFormData } from '@/shared/schemas/auth.schemas';
+import { getRoleBasedRedirect } from '@/shared/utils/roleRedirect';
 
 interface LoginFormProps {
   /**
@@ -64,7 +65,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   showForgotPassword = true,
 }) => {
   const navigate = useNavigate();
-  const { login, error: authError, clearError, isAuthenticated } = useAuth();
+  const { login, error: authError, clearError, isAuthenticated, user } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -92,11 +93,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       return;
     }
 
-    if (isAuthenticated) {
-      console.log('✅ [LoginForm] User authenticated - redirecting to:', redirectTo);
-      navigate(redirectTo);
+    if (isAuthenticated && user) {
+      // Use role-based redirect instead of hardcoded redirectTo
+      const targetRoute = getRoleBasedRedirect(user.role);
+      console.log('✅ [LoginForm] User authenticated - role:', user.role, '- redirecting to:', targetRoute);
+      navigate(targetRoute);
     }
-  }, [isAuthenticated, navigate, redirectTo]);
+  }, [isAuthenticated, user, navigate]);
 
   // Clear auth errors when component unmounts
   useEffect(() => {
@@ -130,8 +133,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         onSuccess();
       }
 
-      // Navigate to dashboard
-      navigate(redirectTo);
+      // Navigate to role-based dashboard
+      // Note: The useEffect will also handle redirect, but we do it here for immediate navigation
+      if (user) {
+        const targetRoute = getRoleBasedRedirect(user.role);
+        console.log('✅ [LoginForm] Login successful - redirecting to:', targetRoute);
+        navigate(targetRoute);
+      }
     } catch (err: any) {
       // Error is already set in AuthContext
       // Optionally set form-level error

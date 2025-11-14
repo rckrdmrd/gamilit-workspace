@@ -88,7 +88,7 @@ export default function TeacherReportsPage() {
       // Cargar aulas
       const classroomsResponse = await fetch('/api/teacher/classrooms', {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+          Authorization: `Bearer ${localStorage.getItem('auth-token')}`,
         },
       });
 
@@ -116,7 +116,7 @@ export default function TeacherReportsPage() {
     try {
       const response = await fetch(`/api/teacher/classrooms/${classroomId}/students`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+          Authorization: `Bearer ${localStorage.getItem('auth-token')}`,
         },
       });
 
@@ -141,7 +141,7 @@ export default function TeacherReportsPage() {
     try {
       const response = await fetch('/api/reports/recent', {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+          Authorization: `Bearer ${localStorage.getItem('auth-token')}`,
         },
       });
 
@@ -191,7 +191,7 @@ export default function TeacherReportsPage() {
     try {
       const response = await fetch('/api/reports/stats', {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+          Authorization: `Bearer ${localStorage.getItem('auth-token')}`,
         },
       });
 
@@ -222,7 +222,7 @@ export default function TeacherReportsPage() {
     try {
       const response = await fetch(`/api/reports/${reportId}/download`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+          Authorization: `Bearer ${localStorage.getItem('auth-token')}`,
         },
       });
 

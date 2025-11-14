@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
-import { useUserClassroom } from '@/shared/hooks/useUserClassroom';
+import { useClassrooms } from '../hooks/useClassrooms';
 import { TeacherLayout } from '../layouts/TeacherLayout';
 import { InterventionAlertsPanel } from '../components/alerts/InterventionAlertsPanel';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -24,15 +24,15 @@ import type { AlertPriority, AlertType } from '../types';
  */
 export default function TeacherAlertsPage() {
   const { user, logout } = useAuth();
-  const { classroomId } = useUserClassroom();
+  const { classrooms, selectedClassroom } = useClassrooms();
 
   // Filtros principales
   const [filterPriority, setFilterPriority] = useState<AlertPriority | 'all'>('all');
   const [filterType, setFilterType] = useState<AlertType | 'all'>('all');
   const [showFilters, setShowFilters] = useState(false);
 
-  // Classroom ID from user context
-  const selectedClassroomId = classroomId || 'default-classroom';
+  // Classroom ID from user context - use first classroom if available
+  const selectedClassroomId = selectedClassroom?.id ?? classrooms[0]?.id ?? 'default-classroom';
 
   // Mock gamification data - reemplazar con datos reales del API
   // Format matches UserGamificationData from @shared/types

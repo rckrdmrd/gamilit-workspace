@@ -125,13 +125,15 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
       clearError();
 
       // Prepare registration data for API
+      // Backend only expects: email, password, first_name (optional), last_name (optional)
       const registrationData = {
-        fullName: data.full_name || '',
         email: data.email,
         password: data.password,
-        confirmPassword: data.confirmPassword || data.password,
-        acceptTerms: data.terms_accepted || false,
-        ...(data.role && { role: data.role as any }),
+        // Split full_name into first_name and last_name if provided
+        ...(data.full_name && {
+          first_name: data.full_name.split(' ')[0] || '',
+          last_name: data.full_name.split(' ').slice(1).join(' ') || '',
+        }),
       };
 
       // Attempt registration

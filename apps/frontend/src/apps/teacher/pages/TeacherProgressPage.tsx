@@ -1,11 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { TeacherLayout } from '../layouts/TeacherLayout';
 import { ClassProgressDashboard } from '../components/progress/ClassProgressDashboard';
-import { useTeacherDashboard } from '../hooks/useTeacherDashboard';
+import { useClassrooms } from '../hooks/useClassrooms';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
-import { BarChart3, RefreshCw, Filter, ChevronDown } from 'lucide-react';
+import { BarChart3, RefreshCw, Filter, ChevronDown, Loader2, AlertCircle } from 'lucide-react';
 
 /**
  * TeacherProgressPage - Página de seguimiento de progreso académico
@@ -18,8 +18,8 @@ import { BarChart3, RefreshCw, Filter, ChevronDown } from 'lucide-react';
  */
 export default function TeacherProgressPage() {
   const { user, logout } = useAuth();
-  const { classrooms, loading: dashboardLoading } = useTeacherDashboard();
-  const [selectedClassroom, setSelectedClassroom] = useState<string>('all');
+  const { classrooms, loading, error, refresh } = useClassrooms();
+  const [selectedClassroomId, setSelectedClassroomId] = useState<string>('all');
   const [showClassroomDropdown, setShowClassroomDropdown] = useState(false);
 
   // Mock gamification data - será reemplazado con datos reales del API
@@ -40,10 +40,10 @@ export default function TeacherProgressPage() {
 
   // Obtener el nombre de la clase seleccionada
   const selectedClassroomName = useMemo(() => {
-    if (selectedClassroom === 'all') return 'Todas las clases';
-    const classroom = classrooms.find((c) => c.id === selectedClassroom);
+    if (selectedClassroomId === 'all') return 'Todas las clases';
+    const classroom = classrooms.find((c) => c.id === selectedClassroomId);
     return classroom?.name || 'Clase no encontrada';
-  }, [selectedClassroom, classrooms]);
+  }, [selectedClassroomId, classrooms]);
 
   // Estadísticas generales de todas las clases
   const overallStats = useMemo(() => {
@@ -56,9 +56,9 @@ export default function TeacherProgressPage() {
     }
 
     return {
-      totalStudents: classrooms.reduce((sum, c) => sum + (c.studentCount || 0), 0),
-      averageScore: classrooms.reduce((sum, c) => sum + (c.averageScore || 0), 0) / classrooms.length,
-      activeClasses: classrooms.filter((c) => c.isActive).length,
+      totalStudents: classrooms.reduce((sum, c) => sum + (c.student_count || 0), 0),
+      averageScore: 0, // TODO: calculate from classroom stats when available
+      activeClasses: classrooms.length, // All loaded classrooms are considered active
     };
   }, [classrooms]);
 
@@ -87,19 +87,52 @@ export default function TeacherProgressPage() {
           </div>
 
           {/* Refresh Button */}
-          <DetectiveButton
-            variant="secondary"
-
-            onClick={() => window.location.reload()}
-            className="self-start md:self-auto"
-          >
-            <RefreshCw className="w-4 h-4" />
-            Actualizar
-          </DetectiveButton>
+          {!loading && !error && (
+            <DetectiveButton
+              variant="secondary"
+              onClick={refresh}
+              className="self-start md:self-auto"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Actualizar
+            </DetectiveButton>
+          )}
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="flex flex-col items-center justify-center py-20">
+            <Loader2 className="w-12 h-12 text-detective-orange animate-spin mb-4" />
+            <p className="text-detective-text-secondary">Cargando datos de progreso...</p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && !loading && (
+          <DetectiveCard variant="danger">
+            <div className="flex items-start gap-4">
+              <AlertCircle className="w-8 h-8 text-red-500 flex-shrink-0" />
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-detective-text mb-2">
+                  Error al cargar progreso
+                </h3>
+                <p className="text-detective-text-secondary mb-4">
+                  No se pudieron cargar los datos de progreso. Por favor, intenta nuevamente.
+                </p>
+                <p className="text-sm text-red-400 mb-4 font-mono bg-red-950 p-2 rounded">
+                  {error.message}
+                </p>
+                <DetectiveButton onClick={refresh} variant="primary">
+                  <RefreshCw className="w-4 h-4" />
+                  Reintentar
+                </DetectiveButton>
+              </div>
+            </div>
+          </DetectiveCard>
+        )}
+
         {/* Overall Stats Cards - Solo cuando se ve "Todas las clases" */}
-        {selectedClassroom === 'all' && (
+        {selectedClassroomId === 'all' && !loading && !error && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <DetectiveCard hoverable={false}>
               <div className="text-center">
@@ -137,48 +170,48 @@ export default function TeacherProgressPage() {
         )}
 
         {/* Classroom Selector */}
-        <DetectiveCard hoverable={false}>
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Filter className="w-5 h-5 text-detective-orange" />
-              <div>
-                <label className="text-sm font-medium text-detective-text-secondary block mb-1">
-                  Filtrar por Clase
-                </label>
-                <p className="text-xs text-detective-text-secondary">
-                  Selecciona una clase específica o visualiza todas
-                </p>
+        {!loading && !error && (
+          <DetectiveCard hoverable={false}>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <Filter className="w-5 h-5 text-detective-orange" />
+                <div>
+                  <label className="text-sm font-medium text-detective-text-secondary block mb-1">
+                    Filtrar por Clase
+                  </label>
+                  <p className="text-xs text-detective-text-secondary">
+                    Selecciona una clase específica o visualiza todas
+                  </p>
+                </div>
               </div>
-            </div>
 
-            {/* Custom Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setShowClassroomDropdown(!showClassroomDropdown)}
-                disabled={dashboardLoading}
-                className="w-full md:w-80 px-4 py-3 bg-detective-bg-secondary border-2 border-detective-border rounded-lg text-left flex items-center justify-between hover:border-detective-orange transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <span className="text-detective-text font-medium truncate">
-                  {dashboardLoading ? 'Cargando clases...' : selectedClassroomName}
-                </span>
-                <ChevronDown
-                  className={`w-5 h-5 text-detective-text-secondary transition-transform ${
-                    showClassroomDropdown ? 'rotate-180' : ''
-                  }`}
-                />
-              </button>
+              {/* Custom Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowClassroomDropdown(!showClassroomDropdown)}
+                  className="w-full md:w-80 px-4 py-3 bg-detective-bg-secondary border-2 border-detective-border rounded-lg text-left flex items-center justify-between hover:border-detective-orange transition-colors"
+                >
+                  <span className="text-detective-text font-medium truncate">
+                    {selectedClassroomName}
+                  </span>
+                  <ChevronDown
+                    className={`w-5 h-5 text-detective-text-secondary transition-transform ${
+                      showClassroomDropdown ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
 
-              {/* Dropdown Menu */}
-              {showClassroomDropdown && !dashboardLoading && (
+                {/* Dropdown Menu */}
+                {showClassroomDropdown && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-detective-card border-2 border-detective-border rounded-lg shadow-detective-lg z-50 max-h-80 overflow-y-auto">
                   {/* All Classes Option */}
                   <button
                     onClick={() => {
-                      setSelectedClassroom('all');
+                      setSelectedClassroomId('all');
                       setShowClassroomDropdown(false);
                     }}
                     className={`w-full px-4 py-3 text-left hover:bg-detective-bg-secondary transition-colors ${
-                      selectedClassroom === 'all'
+                      selectedClassroomId === 'all'
                         ? 'bg-detective-orange bg-opacity-10 text-detective-orange font-semibold'
                         : 'text-detective-text'
                     }`}
@@ -201,11 +234,11 @@ export default function TeacherProgressPage() {
                     <button
                       key={classroom.id}
                       onClick={() => {
-                        setSelectedClassroom(classroom.id);
+                        setSelectedClassroomId(classroom.id);
                         setShowClassroomDropdown(false);
                       }}
                       className={`w-full px-4 py-3 text-left hover:bg-detective-bg-secondary transition-colors ${
-                        selectedClassroom === classroom.id
+                        selectedClassroomId === classroom.id
                           ? 'bg-detective-orange bg-opacity-10 text-detective-orange font-semibold'
                           : 'text-detective-text'
                       }`}
@@ -213,7 +246,7 @@ export default function TeacherProgressPage() {
                       <div>
                         <p className="font-medium">{classroom.name}</p>
                         <p className="text-xs text-detective-text-secondary mt-0.5">
-                          {classroom.studentCount} estudiante(s) • {classroom.grade} • {classroom.subject}
+                          {classroom.student_count} estudiante(s) • {classroom.grade_level} • {classroom.subject}
                         </p>
                       </div>
                     </button>
@@ -227,15 +260,16 @@ export default function TeacherProgressPage() {
                     </div>
                   )}
                 </div>
-              )}
+                )}
+              </div>
             </div>
-          </div>
-        </DetectiveCard>
+          </DetectiveCard>
+        )}
 
         {/* Progress Dashboard */}
-        {selectedClassroom !== 'all' ? (
-          <ClassProgressDashboard classroomId={selectedClassroom} />
-        ) : (
+        {!loading && !error && selectedClassroomId !== 'all' ? (
+          <ClassProgressDashboard classroomId={selectedClassroomId} />
+        ) : !loading && !error ? (
           <DetectiveCard hoverable={false}>
             <div className="text-center py-16">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-detective-orange bg-opacity-10 rounded-full mb-4">
@@ -259,10 +293,11 @@ export default function TeacherProgressPage() {
               )}
             </div>
           </DetectiveCard>
-        )}
+        ) : null}
 
         {/* Info Card - Tips para el Teacher */}
-        <DetectiveCard hoverable={false}>
+        {!loading && !error && (
+          <DetectiveCard hoverable={false}>
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0 p-3 bg-detective-accent bg-opacity-10 rounded-lg">
               <BarChart3 className="w-6 h-6 text-detective-accent" />
@@ -299,7 +334,8 @@ export default function TeacherProgressPage() {
               </ul>
             </div>
           </div>
-        </DetectiveCard>
+          </DetectiveCard>
+        )}
       </div>
 
       {/* Click Outside Handler for Dropdown */}

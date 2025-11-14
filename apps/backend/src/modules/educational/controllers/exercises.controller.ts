@@ -8,14 +8,18 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  Request,
+  UseGuards,
+  NotFoundException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { ExercisesService } from '../services';
 import { CreateExerciseDto, ExerciseResponseDto } from '../dto';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
 import { ExerciseTypeEnum } from '@/shared/constants/enums.constants';
-import { ExerciseSubmissionService } from '@/modules/progress/services';
+import { ExerciseSubmissionService, ExerciseAttemptService } from '@/modules/progress/services';
 import { ExerciseSubmissionResponseDto } from '@/modules/progress/dto';
+import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 
 /**
  * ExercisesController
@@ -32,6 +36,7 @@ export class ExercisesController {
   constructor(
     private readonly exercisesService: ExercisesService,
     private readonly exerciseSubmissionService: ExerciseSubmissionService,
+    private readonly exerciseAttemptService: ExerciseAttemptService,
   ) {}
 
   /**
@@ -52,11 +57,12 @@ export class ExercisesController {
    *   }
    * ]
    */
+  @UseGuards(JwtAuthGuard)
   @Get('exercises')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Get all exercises',
-    description: 'Obtiene todos los ejercicios ordenados por módulo e índice de secuencia',
+    description: 'Obtiene todos los ejercicios ordenados por módulo e índice de secuencia, con estado de completado para el usuario autenticado',
   })
   @ApiResponse({
     status: 200,
@@ -97,6 +103,7 @@ export class ExercisesController {
           is_optional: false,
           is_bonus: false,
           version: 1,
+          completed: false,
           created_at: '2025-01-15T10:00:00Z',
           updated_at: '2025-01-15T10:00:00Z',
         },
@@ -107,8 +114,28 @@ export class ExercisesController {
     status: 500,
     description: 'Error interno del servidor',
   })
-  async findAll() {
-    return await this.exercisesService.findAll();
+  async findAll(@Request() req: any) {
+    const userId = req.user.id;
+
+    // Obtener todos los ejercicios
+    const exercises = await this.exercisesService.findAll();
+
+    // Obtener todas las submissions del usuario de una sola vez para eficiencia
+    const allSubmissions = await this.exerciseSubmissionService.findByUserId(userId);
+
+    // Crear un mapa de ejercicios completados
+    const completedExercisesMap = new Map<string, boolean>();
+    allSubmissions.forEach((submission) => {
+      if (submission.status === 'graded') {
+        completedExercisesMap.set(submission.exercise_id, true);
+      }
+    });
+
+    // Agregar campo 'completed' a cada ejercicio
+    return exercises.map((exercise) => ({
+      ...exercise,
+      completed: completedExercisesMap.get(exercise.id) || false,
+    }));
   }
 
   /**
@@ -120,11 +147,12 @@ export class ExercisesController {
    * @example
    * GET /api/v1/educational/exercises/550e8400-e29b-41d4-a716-446655440000
    */
+  @UseGuards(JwtAuthGuard)
   @Get('exercises/:id')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Get exercise by ID',
-    description: 'Obtiene un ejercicio específico por su ID',
+    description: 'Obtiene un ejercicio específico por su ID, incluyendo estado de completado para el usuario autenticado',
   })
   @ApiParam({
     name: 'id',
@@ -196,6 +224,7 @@ export class ExercisesController {
         metadata: {
           tags: ['crucigrama', 'infancia', 'biografía'],
         },
+        completed: false,
         created_at: '2025-01-15T10:00:00Z',
         updated_at: '2025-01-15T10:00:00Z',
       },
@@ -211,8 +240,25 @@ export class ExercisesController {
       },
     },
   })
-  async findOne(@Param('id') id: string) {
-    return await this.exercisesService.findById(id);
+  async findOne(@Param('id') id: string, @Request() req: any) {
+    const userId = req.user.id;
+
+    // Obtener ejercicio
+    const exercise = await this.exercisesService.findById(id);
+
+    if (!exercise) {
+      throw new NotFoundException(`Exercise with ID ${id} not found`);
+    }
+
+    // Verificar si el usuario ha completado este ejercicio
+    const submission = await this.exerciseSubmissionService.findByUserAndExercise(userId, id);
+    const completed = submission ? submission.status === 'graded' : false;
+
+    // Retornar ejercicio con campo 'completed'
+    return {
+      ...exercise,
+      completed,
+    };
   }
 
   /**
@@ -578,6 +624,14 @@ export class ExercisesController {
    * Este endpoint permite a los estudiantes enviar sus respuestas de ejercicios.
    * Internamente delega al ExerciseSubmissionService del módulo Progress.
    *
+   * WORKAROUND TEMPORAL (Issue FE-049):
+   * Frontend actualmente envía formato incorrecto en `answers` (objeto de progreso en lugar de respuestas reales).
+   * Este endpoint acepta AMBOS formatos hasta que Frontend se refactorice:
+   * - Formato antiguo: { userId, submitted_answers, ... }
+   * - Formato nuevo (problemático): { answers, startedAt, hintsUsed, powerupsUsed }
+   *
+   * TODO: Remover workaround cuando Frontend envíe respuestas reales
+   *
    * Proceso:
    * 1. Valida que el ejercicio exista
    * 2. Crea un ExerciseAttempt en progress_tracking.exercise_attempts
@@ -612,6 +666,7 @@ export class ExercisesController {
    *   "user_answers": { ... }
    * }
    */
+  @UseGuards(JwtAuthGuard)
   @Post('exercises/:id/submit')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
@@ -674,20 +729,93 @@ export class ExercisesController {
   })
   async submitExercise(
     @Param('id') exerciseId: string,
+    @Request() req: any,
     @Body()
     body: {
-      userId: string;
-      submitted_answers: Record<string, any>;
+      // Formato antiguo (esperado)
+      userId?: string;
+      submitted_answers?: Record<string, any>;
       time_spent_seconds?: number;
       hints_used?: number;
       comodines_used?: string[];
+      // Formato nuevo (problemático - Issue FE-049)
+      answers?: any;
+      startedAt?: number;
+      hintsUsed?: number;
+      powerupsUsed?: string[];
     },
   ) {
+    // WORKAROUND TEMPORAL (Issue FE-049)
+    // Detectar qué formato está usando Frontend y adaptar
+    let userId: string;
+    let submittedAnswers: Record<string, any>;
+
+    if (body.userId && body.submitted_answers) {
+      // Formato antiguo (correcto)
+      userId = body.userId;
+      submittedAnswers = body.submitted_answers;
+    } else {
+      // Formato nuevo problemático (workaround)
+      // Frontend no envía userId, extraerlo del token JWT autenticado
+      userId = req.user.id; // Extraído del JWT por JwtAuthGuard
+
+      // Frontend envía 'answers' en lugar de 'submitted_answers'
+      // y es un objeto de progreso, no respuestas reales
+      submittedAnswers = body.answers || {};
+    }
+
     // Delegar al ExerciseSubmissionService que maneja la lógica completa
-    return await this.exerciseSubmissionService.submitExercise(
-      body.userId,
+    const submission = await this.exerciseSubmissionService.submitExercise(
+      userId,
       exerciseId,
-      body.submitted_answers,
+      submittedAnswers,
     );
+
+    // Calcular recompensas basadas en el score
+    const score = submission.score || 0;
+    const hintsUsed = body.hintsUsed || 0;
+    const comodinesUsed = body.powerupsUsed || [];
+
+    // Calcular XP: 2 XP por punto, con penalización por hints
+    const baseXp = score * 2;
+    const hintPenalty = hintsUsed * 10; // 10 XP de penalización por hint
+    const xpEarned = Math.max(0, baseXp - hintPenalty);
+
+    // Calcular ML Coins: 1 coin por cada 2 puntos, con penalización por comodines
+    const baseCoins = Math.floor(score / 2);
+    const comodinPenalty = comodinesUsed.length * 2; // 2 coins de penalización por comodín
+    const mlCoinsEarned = Math.max(0, baseCoins - comodinPenalty);
+
+    // CRÍTICO: Guardar en exercise_attempts para disparar trigger de user_stats
+    // El trigger actualiza automáticamente: total_xp, ml_coins, exercises_completed
+    await this.exerciseAttemptService.create({
+      user_id: userId,
+      exercise_id: exerciseId,
+      submitted_answers: submittedAnswers,
+      is_correct: score >= 60, // 60% es aprobatorio
+      score: score,
+      time_spent_seconds: body.startedAt
+        ? Math.floor((Date.now() - body.startedAt) / 1000)
+        : undefined,
+      hints_used: hintsUsed,
+      comodines_used: comodinesUsed,
+      xp_earned: xpEarned,
+      ml_coins_earned: mlCoinsEarned,
+    });
+
+    // Transformar respuesta a formato esperado por Frontend (Issue FE-049)
+    // Frontend espera: { score, rewards: { xp, mlCoins, bonuses }, rankUp }
+    const response = {
+      score: score,
+      isPerfect: score === 100 && hintsUsed === 0,
+      rewards: {
+        xp: xpEarned,
+        mlCoins: mlCoinsEarned,
+        bonuses: [], // TODO: Implementar bonos cuando Frontend envíe respuestas reales
+      },
+      rankUp: null, // TODO: Implementar lógica de rank up
+    };
+
+    return response;
   }
 }

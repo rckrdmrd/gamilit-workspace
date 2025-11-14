@@ -23,6 +23,7 @@ export const DB_SCHEMAS = {
   SOCIAL: 'social_features',
   CONTENT: 'content_management',
   AUDIT: 'audit_logging',
+  NOTIFICATIONS: 'notifications', // ✨ NUEVO - EXT-003 (Sistema Multi-Canal de Notificaciones)
   GAMILIT: 'gamilit',
   PUBLIC: 'public',
   ADMIN_DASHBOARD: 'admin_dashboard',
@@ -178,6 +179,28 @@ export const DB_TABLES = {
   },
 
   /**
+   * Notifications Schema (Multi-Canal)
+   * Sistema completo de notificaciones multi-canal (EXT-003)
+   * Incluye notificaciones, preferencias, logs, templates, cola y dispositivos
+   */
+  NOTIFICATIONS: {
+    NOTIFICATIONS: 'notifications', // ✨ NUEVO - EXT-003 (Notificaciones multi-canal)
+    NOTIFICATION_PREFERENCES: 'notification_preferences', // ✨ NUEVO - EXT-003 (Preferencias por canal)
+    NOTIFICATION_LOGS: 'notification_logs', // ✨ NUEVO - EXT-003 (Registro de envíos)
+    NOTIFICATION_TEMPLATES: 'notification_templates', // ✨ NUEVO - EXT-003 (Plantillas reutilizables)
+    NOTIFICATION_QUEUE: 'notification_queue', // ✨ NUEVO - EXT-003 (Cola de envíos)
+    USER_DEVICES: 'user_devices', // ✨ NUEVO - EXT-003 (Dispositivos para push)
+  },
+
+  /**
+   * Admin Dashboard Schema
+   * Tablas para operaciones administrativas y reportes
+   */
+  ADMIN: {
+    BULK_OPERATIONS: 'bulk_operations', // ✨ NUEVO - EXT-002 (Bulk Operations)
+  },
+
+  /**
    * System Configuration Schema
    * Configuración dinámica del sistema
    */
@@ -241,6 +264,9 @@ export type SocialTable = (typeof DB_TABLES.SOCIAL)[keyof typeof DB_TABLES.SOCIA
 export type ContentTable =
   (typeof DB_TABLES.CONTENT)[keyof typeof DB_TABLES.CONTENT];
 export type AuditTable = (typeof DB_TABLES.AUDIT)[keyof typeof DB_TABLES.AUDIT]; // ✨ NUEVO
+export type NotificationsTable =
+  (typeof DB_TABLES.NOTIFICATIONS)[keyof typeof DB_TABLES.NOTIFICATIONS]; // ✨ NUEVO - EXT-003
+export type AdminTable = (typeof DB_TABLES.ADMIN)[keyof typeof DB_TABLES.ADMIN]; // ✨ NUEVO - EXT-002
 export type SystemTable = (typeof DB_TABLES.SYSTEM)[keyof typeof DB_TABLES.SYSTEM]; // ✨ NUEVO
 export type LTITable = (typeof DB_TABLES.LTI)[keyof typeof DB_TABLES.LTI]; // ✨ NUEVO
 export type AuthBaseTable =

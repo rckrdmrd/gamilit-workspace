@@ -8,7 +8,7 @@ import { User, Mail, Calendar, Trophy, Target, Coins } from 'lucide-react';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   const stats = [
     { label: 'ML Coins', value: '350', icon: Coins, color: 'text-detective-gold' },
@@ -18,7 +18,10 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={user ?? undefined} onLogout={() => navigate('/login')} />
+      <GamifiedHeader user={user ?? undefined} onLogout={async () => {
+        await logout();
+        // No need to navigate - performLogout() handles redirect
+      }} />
 
       <main className="detective-container py-8">
         <h1 className="text-4xl font-bold text-detective-text mb-8">

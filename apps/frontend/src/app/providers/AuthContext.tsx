@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authApi } from '@/lib/api/auth.api';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { performLogout } from '@/shared/utils/authCleanup';
 import type {
   User,
   LoginCredentials,
@@ -266,6 +267,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   /**
    * Logout current user
    * Clears user state and removes tokens from storage
+   * Uses centralized performLogout() utility for consistent behavior
    *
    * @example
    * ```tsx
@@ -274,37 +276,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
    * ```
    */
   const logout = async (): Promise<void> => {
-    try {
-      setIsLoading(true);
+    await performLogout(async () => {
       await authApi.logout();
-    } catch (err) {
-      console.error('Logout error:', err);
-      // Continue with logout even if API call fails
-    } finally {
-      // Clear all auth data from localStorage
-      localStorage.removeItem('auth-token');
-      localStorage.removeItem('refresh-token');
-      localStorage.removeItem('auth-storage'); // Clear Zustand persist
-
-      // CRITICAL: Sync BOTH auth systems
-      // 1. Clear AuthContext
-      setUser(null);
-      setError(null);
-      setIsLoading(false);
-
-      // 2. Clear authStore
-      useAuthStore.setState({
-        user: null,
-        token: null,
-        refreshToken: null,
-        isAuthenticated: false,
-        sessionExpiresAt: null,
-        error: null,
-        isLoading: false
-      });
-
-      console.log('✅ [AuthContext] Logout successful - both systems cleared');
-    }
+    });
   };
 
   /**

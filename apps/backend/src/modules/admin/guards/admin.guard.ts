@@ -30,7 +30,7 @@ export class AdminGuard implements CanActivate {
 
     // Verificar si el usuario tiene rol admin o super_admin
     const isAdmin =
-      user.roles?.includes('admin') || user.roles?.includes('super_admin');
+      user.role === 'admin' || user.role === 'super_admin';
 
     if (!isAdmin) {
       throw new ForbiddenException(

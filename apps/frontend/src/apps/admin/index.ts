@@ -1,8 +1,9 @@
 // Pages
-export { default as AdminDashboard } from './pages/AdminDashboard';
-export { default as SystemMonitoring } from './pages/SystemMonitoring';
-export { default as ContentManagement } from './pages/ContentManagement';
-export { default as AdvancedAdmin } from './pages/AdvancedAdmin';
+export { default as AdminDashboardPage } from './pages/AdminDashboardPage';
+export { default as AdminInstitutionsPage } from './pages/AdminInstitutionsPage';
+export { default as AdminContentPage } from './pages/AdminContentPage';
+export { default as AdminMonitoringPage } from './pages/AdminMonitoringPage';
+export { default as AdminAdvancedPage } from './pages/AdminAdvancedPage';
 
 // Components
 export * from './components/monitoring';

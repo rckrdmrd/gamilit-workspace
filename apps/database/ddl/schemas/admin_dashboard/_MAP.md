@@ -1,14 +1,28 @@
 # Schema: admin_dashboard
 
-Vistas para panel de administración y reportes analíticos
+Tablas, funciones y vistas para panel de administración y reportes analíticos
 
 ## Estructura
 
+- **tables/**: 1 archivo
+- **functions/**: 1 archivo
 - **views/**: 6 archivos
 
-**Total:** 6 objetos
+**Total:** 8 objetos
 
 ## Contenido Detallado
+
+### tables/ (1 archivo)
+
+```
+07-bulk_operations.sql              (creado 2025-11-11 - EXT-002)
+```
+
+### functions/ (1 archivo)
+
+```
+01-update_bulk_operation_progress.sql  (creado 2025-11-11 - EXT-002)
+```
 
 ### views/ (6 archivos)
 
@@ -23,6 +37,13 @@ user_stats_summary.sql
 
 ## Descripción
 
+### Tablas
+- **bulk_operations**: Registro de operaciones masivas (bulk) realizadas por administradores sobre múltiples usuarios/recursos
+
+### Funciones
+- **update_bulk_operation_progress**: Actualiza el progreso de operaciones bulk incrementando contadores
+
+### Vistas
 Vistas SQL optimizadas para consultas analíticas del dashboard administrativo:
 
 - **assignment_submission_stats**: Estadísticas de entregas de assignments
@@ -36,3 +57,4 @@ Vistas SQL optimizadas para consultas analíticas del dashboard administrativo:
 
 **Última actualización:** 2025-11-11
 **Reorganización:** 2025-11-11 (migración de 2 vistas desde public)
+**Extensión:** 2025-11-11 (agregadas tabla bulk_operations y función helper para EXT-002)

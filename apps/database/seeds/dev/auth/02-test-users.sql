@@ -27,6 +27,7 @@ INSERT INTO auth.users (
     role,
     email_confirmed_at,
     raw_user_meta_data,
+    status,
     created_at,
     updated_at
 ) VALUES
@@ -37,6 +38,7 @@ INSERT INTO auth.users (
     'super_admin',
     NOW(),
     '{"name": "Admin Gamilit", "description": "Usuario administrador de testing"}'::jsonb,
+    'active',
     NOW(),
     NOW()
 ),
@@ -48,6 +50,7 @@ INSERT INTO auth.users (
     'admin_teacher',
     NOW(),
     '{"name": "Teacher Gamilit", "description": "Usuario maestro de testing"}'::jsonb,
+    'active',
     NOW(),
     NOW()
 ),
@@ -59,6 +62,7 @@ INSERT INTO auth.users (
     'student',
     NOW(),
     '{"name": "Student Gamilit", "description": "Usuario estudiante de testing"}'::jsonb,
+    'active',
     NOW(),
     NOW()
 )
@@ -68,6 +72,7 @@ ON CONFLICT (email) DO UPDATE SET
     role = EXCLUDED.role,
     email_confirmed_at = EXCLUDED.email_confirmed_at,
     raw_user_meta_data = EXCLUDED.raw_user_meta_data,
+    status = EXCLUDED.status,
     updated_at = NOW();
 
 -- =====================================================

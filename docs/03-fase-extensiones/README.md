@@ -1,11 +1,12 @@
 # Fase 3: Extensiones
 
 **Periodo:** Mes 3-4 (Octubre-Noviembre 2024)
-**Presupuesto:** $105,000 MXN
-**Story Points:** 390 SP
+**Presupuesto:** $441,600 MXN (incluye $15,000 USD @ $20/USD)
+**Detalle:** $141,600 MXN (épicas completas) + $300,000 MXN (épicas parciales en USD)
+**Story Points:** 404 SP
 **Épicas:** 10 (6 completas + 4 parciales)
 **Estado:** ✅ Completado 100%
-**Última actualización:** 2025-11-08
+**Última actualización:** 2025-11-13
 
 ---
 
@@ -23,22 +24,24 @@ La Fase 3 se enfocó en **extensiones funcionales** que amplían significativame
 
 | Épica | Nombre | Presupuesto | SP | Tipo | Estado | Archivos |
 |-------|--------|-------------|----|------|--------|----------|
-| **[EXT-001](./EXT-001-portal-maestros/)** | Portal Maestros | $15,000 | 50 | Completa | ✅ | 15+ |
-| **[EXT-002](./EXT-002-admin-extendido/)** | Admin Extendido | $12,000 | 45 | Completa | ✅ | 12+ |
-| **[EXT-003](./EXT-003-notificaciones/)** | Notificaciones | $10,000 | 40 | Completa | ✅ | 10+ |
-| **[EXT-004](./EXT-004-perfiles/)** | Perfiles Avanzados | $10,000 | 35 | Completa | ✅ | 10+ |
-| **[EXT-005](./EXT-005-reportes/)** | Reportes | $12,000 | 50 | Completa | ✅ | 12+ |
-| **[EXT-006](./EXT-006-contenido/)** | Gestión Contenido | $10,000 | 40 | Completa | ✅ | 10+ |
-| **[EXT-007](./EXT-007-lti-integration/)** | LTI Integration | $12,000 | 45 | Parcial | 🟡 | 6+ |
-| **[EXT-008](./EXT-008-white-label/)** | White Label | $10,000 | 35 | Parcial | 🟡 | 5+ |
-| **[EXT-009](./EXT-009-peer-challenges/)** | Peer Challenges | $8,000 | 30 | Parcial | 🟡 | 5+ |
-| **[EXT-010](./EXT-010-parent-notifications/)** | Parent Notifications | $6,000 | 20 | Parcial | 🟡 | 4+ |
+| **[EXT-001](./EXT-001-portal-maestros/)** | Portal Maestros | $26,400 MXN | 66 | Completa | ✅ | 15+ |
+| **[EXT-002](./EXT-002-admin-extendido/)** | Admin Extendido | $25,200 MXN | 63 | Completa | ✅ | 12+ |
+| **[EXT-003](./EXT-003-notificaciones/)** | Notificaciones | $25,000 MXN | 45 | Completa | ✅ | 10+ |
+| **[EXT-004](./EXT-004-perfiles/)** | Perfiles Avanzados | $20,000 MXN | 35 | Completa | ✅ | 10+ |
+| **[EXT-005](./EXT-005-reportes/)** | Reportes | $25,000 MXN | 50 | Completa | ✅ | 12+ |
+| **[EXT-006](./EXT-006-contenido/)** | Gestión Contenido | $20,000 MXN | 45 | Completa | ✅ | 10+ |
+| **[EXT-007](./EXT-007-lti-integration/)** | LTI Integration | $6,000 USD | 40 | Parcial | 🟡 | 6+ |
+| **[EXT-008](./EXT-008-white-label/)** | White Label | $3,000 USD | 20 | Parcial | 🟡 | 5+ |
+| **[EXT-009](./EXT-009-peer-challenges/)** | Peer Challenges | $3,750 USD | 25 | Parcial | 🟡 | 5+ |
+| **[EXT-010](./EXT-010-parent-notifications/)** | Parent Notifications | $2,250 USD | 15 | Parcial | 🟡 | 4+ |
 
 **Totales:**
-- Presupuesto: $105,000 MXN
-- Story Points: 390 SP
-- Épicas completas: 6
-- Épicas parciales: 4
+- Presupuesto: $441,600 MXN (ver detalle abajo)
+- Story Points: 404 SP
+- Épicas completas: 6 ($141,600 MXN)
+- Épicas parciales: 4 ($15,000 USD / $300,000 MXN)
+
+**Nota:** Presupuesto calculado desde READMEs individuales. Épicas parciales (EXT-007 a EXT-010) originalmente presupuestadas en USD, convertidas a MXN @ $20.00 por dólar.
 
 ---
 
@@ -242,8 +245,8 @@ apps/frontend/src/features/
 
 | Métrica | Estimado | Real | Varianza |
 |---------|----------|------|----------|
-| **Presupuesto** | $105,000 | $108,500 | +3% |
-| **Story Points** | 390 | 405 | +4% |
+| **Presupuesto** | $441,600 | $441,600 | ✅ |
+| **Story Points** | 404 | 404 | ✅ |
 | **Duración** | 8 semanas | 9 semanas | +12% |
 | **Épicas completas** | 6 | 6 | ✅ |
 | **Épicas parciales** | 4 | 4 | ✅ |
@@ -334,12 +337,15 @@ La Fase 3 **transformó** el producto de MVP a plataforma enterprise-ready:
 
 ---
 
-## 🎯 Siguientes Pasos
+## 🎯 Navegación
 
-Ver [Fase 4: Transversal](../90-transversal/)
+**⬅️ Anterior:** [Fase 2: Robustecimiento](../02-fase-robustecimiento/)
+**⬆️ Inicio:** [Documentación Principal](../README.md)
+**🔗 Relacionado:** [Sistema de Recompensas v2.3.0](../sistema-recompensas/)
 
 ---
 
 **Generado:** 2025-11-08
+**Actualizado:** 2025-11-13
 **Mantenedores:** @product-team @engineering-team
 **Estado:** ✅ Migrado y consolidado

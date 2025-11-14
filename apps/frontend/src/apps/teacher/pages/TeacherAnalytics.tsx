@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FormField } from '@shared/components/common/FormField';
@@ -7,106 +7,78 @@ import {
   TrendingUp,
   Users,
   Download,
-  Calendar as CalendarIcon,
-  Loader,
+  Loader2,
+  AlertCircle,
+  RefreshCw,
+  Clock,
+  Activity,
+  ArrowUp,
+  ArrowDown,
 } from 'lucide-react';
-import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS } from '@/services/api/apiConfig';
-import { Bar, Line } from 'react-chartjs-2';
+import { useAnalytics } from '../hooks/useAnalytics';
+import { useClassrooms } from '../hooks/useClassrooms';
+import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
-  LineElement,
-  PointElement,
   Title,
   Tooltip,
   Legend,
 } from 'chart.js';
-import type { ClassroomAnalytics, EngagementData } from '../types';
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
-  LineElement,
-  PointElement,
   Title,
   Tooltip,
   Legend
 );
 
 export default function TeacherAnalytics() {
-  const [selectedClassroom, setSelectedClassroom] = useState('1');
+  const [selectedClassroomId, setSelectedClassroomId] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'overview' | 'performance' | 'engagement'>('overview');
   const [dateRange, setDateRange] = useState({ start: '2025-10-01', end: '2025-10-16' });
-  const [analytics, setAnalytics] = useState<ClassroomAnalytics | null>(null);
-  const [engagementData, setEngagementData] = useState<EngagementData[]>([]);
-  const [classrooms, setClassrooms] = useState<Array<{ id: string; name: string }>>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  // Fetch classrooms on mount
-  useEffect(() => {
-    const fetchClassrooms = async () => {
-      try {
-        const response = await apiClient.get(API_ENDPOINTS.teacher.classrooms);
-        const data = response.data.data || response.data;
-        setClassrooms(data.map((c: any) => ({ id: c.id, name: c.name })));
-        if (data.length > 0 && !selectedClassroom) {
-          setSelectedClassroom(data[0].id);
+  // Use custom hooks
+  const { classrooms, loading: classroomsLoading } = useClassrooms();
+  const {
+    analytics,
+    engagement,
+    loading: analyticsLoading,
+    error: analyticsError,
+    generateReport,
+    refresh,
+  } = useAnalytics(
+    selectedClassroomId
+      ? {
+          classroom_id: selectedClassroomId,
+          start_date: dateRange.start,
+          end_date: dateRange.end,
         }
-      } catch (err: any) {
-        console.error('[TeacherAnalytics] Error fetching classrooms:', err);
-      }
-    };
+      : undefined,
+    selectedClassroomId
+      ? {
+          classroom_id: selectedClassroomId,
+          start_date: dateRange.start,
+          end_date: dateRange.end,
+          period: 'daily',
+        }
+      : undefined
+  );
 
-    fetchClassrooms();
-  }, []);
-
-  // Fetch analytics when classroom or date range changes
+  // Auto-select first classroom when loaded
   useEffect(() => {
-    const fetchAnalytics = async () => {
-      if (!selectedClassroom) return;
+    if (!selectedClassroomId && classrooms.length > 0) {
+      setSelectedClassroomId(classrooms[0].id);
+    }
+  }, [classrooms, selectedClassroomId]);
 
-      try {
-        setLoading(true);
-        setError(null);
-
-        // Fetch classroom analytics and engagement metrics in parallel
-        const [analyticsRes, engagementRes] = await Promise.all([
-          apiClient.get(API_ENDPOINTS.teacher.classroomAnalytics(selectedClassroom), {
-            params: {
-              start_date: dateRange.start,
-              end_date: dateRange.end,
-            },
-          }),
-          apiClient.get(API_ENDPOINTS.teacher.engagementMetrics, {
-            params: {
-              classroom_id: selectedClassroom,
-              start_date: dateRange.start,
-              end_date: dateRange.end,
-            },
-          }),
-        ]);
-
-        const analyticsData = analyticsRes.data.data || analyticsRes.data;
-        const engagementDataRes = engagementRes.data.data || engagementRes.data;
-
-        setAnalytics(analyticsData);
-        setEngagementData(engagementDataRes);
-      } catch (err: any) {
-        const errorMessage = err.response?.data?.message || 'Failed to load analytics';
-        setError(errorMessage);
-        console.error('[TeacherAnalytics] Error fetching analytics:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAnalytics();
-  }, [selectedClassroom, dateRange]);
+  // Combined loading and error states
+  const loading = classroomsLoading || analyticsLoading;
+  const error = analyticsError;
 
   const moduleScoresChart = {
     labels: analytics?.module_stats.map((m) => m.module_name) || [],
@@ -130,26 +102,6 @@ export default function TeacherAnalytics() {
         backgroundColor: 'rgba(34, 197, 94, 0.6)',
         borderColor: 'rgba(34, 197, 94, 1)',
         borderWidth: 1,
-      },
-    ],
-  };
-
-  const engagementChart = {
-    labels: engagementData.map((d) => new Date(d.date).toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })),
-    datasets: [
-      {
-        label: 'Estudiantes Activos',
-        data: engagementData.map((d) => d.active_students),
-        borderColor: 'rgba(59, 130, 246, 1)',
-        backgroundColor: 'rgba(59, 130, 246, 0.2)',
-        tension: 0.4,
-      },
-      {
-        label: 'Ejercicios Completados',
-        data: engagementData.map((d) => d.completed_exercises),
-        borderColor: 'rgba(249, 115, 22, 1)',
-        backgroundColor: 'rgba(249, 115, 22, 0.2)',
-        tension: 0.4,
       },
     ],
   };
@@ -185,31 +137,32 @@ export default function TeacherAnalytics() {
   };
 
   const exportToCSV = async () => {
+    if (!selectedClassroomId) {
+      alert('Por favor selecciona una clase primero');
+      return;
+    }
+
     try {
-      setError(null);
-      const response = await apiClient.get(API_ENDPOINTS.teacher.generateReport, {
-        params: {
-          classroom_id: selectedClassroom,
-          start_date: dateRange.start,
-          end_date: dateRange.end,
-          format: 'csv',
-        },
-        responseType: 'blob',
+      const report = await generateReport({
+        type: 'custom',
+        title: `Analytics Report - ${selectedClassroomId}`,
+        classroom_id: selectedClassroomId,
+        start_date: dateRange.start,
+        end_date: dateRange.end,
+        format: 'csv',
+        include_charts: true,
+        include_recommendations: true,
       });
 
-      // Create a download link for the CSV file
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `analytics_${selectedClassroom}_${dateRange.start}_${dateRange.end}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      if (report.status === 'completed' && report.file_url) {
+        // Open download link in new tab
+        window.open(report.file_url, '_blank');
+      } else {
+        alert('El reporte está siendo generado. Por favor intenta nuevamente en unos momentos.');
+      }
     } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Failed to export report';
-      setError(errorMessage);
       console.error('[TeacherAnalytics] Error exporting CSV:', err);
+      alert('Error al generar el reporte. Por favor intenta nuevamente.');
     }
   };
 
@@ -231,8 +184,8 @@ export default function TeacherAnalytics() {
               label="Clase"
               name="classroom"
               type="select"
-              value={selectedClassroom}
-              onChange={(e) => setSelectedClassroom(e.target.value)}
+              value={selectedClassroomId}
+              onChange={(e) => setSelectedClassroomId(e.target.value)}
               options={classrooms.map((c) => ({ value: c.id, label: c.name }))}
             />
             <FormField
@@ -250,26 +203,49 @@ export default function TeacherAnalytics() {
               onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
             />
           </div>
-          <div className="mt-4">
-            <DetectiveButton variant="primary" onClick={exportToCSV}>
+          <div className="mt-4 flex gap-3">
+            <DetectiveButton variant="primary" onClick={exportToCSV} disabled={!selectedClassroomId}>
               <Download className="w-4 h-4" />
               Exportar a CSV
             </DetectiveButton>
+            {!loading && selectedClassroomId && (
+              <DetectiveButton variant="secondary" onClick={refresh}>
+                <RefreshCw className="w-4 h-4" />
+                Actualizar
+              </DetectiveButton>
+            )}
           </div>
         </DetectiveCard>
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-500">
-            {error}
-          </div>
+          <DetectiveCard variant="danger" className="mb-6">
+            <div className="flex items-start gap-4">
+              <AlertCircle className="w-8 h-8 text-red-500 flex-shrink-0" />
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-detective-text mb-2">
+                  Error al cargar analíticas
+                </h3>
+                <p className="text-detective-text-secondary mb-4">
+                  No se pudieron cargar los datos de analíticas. Por favor, intenta nuevamente.
+                </p>
+                <p className="text-sm text-red-400 mb-4 font-mono bg-red-950 p-2 rounded">
+                  {error.message}
+                </p>
+                <DetectiveButton onClick={refresh} variant="primary">
+                  <RefreshCw className="w-4 h-4" />
+                  Reintentar
+                </DetectiveButton>
+              </div>
+            </div>
+          </DetectiveCard>
         )}
 
         {/* Loading State */}
         {loading && (
-          <div className="flex items-center justify-center py-12">
-            <Loader className="w-8 h-8 text-detective-orange animate-spin" />
-            <span className="ml-3 text-detective-text">Cargando analíticas...</span>
+          <div className="flex flex-col items-center justify-center py-20">
+            <Loader2 className="w-12 h-12 text-detective-orange animate-spin mb-4" />
+            <p className="text-detective-text-secondary">Cargando analíticas...</p>
           </div>
         )}
 
@@ -457,38 +433,191 @@ export default function TeacherAnalytics() {
           </div>
         )}
 
-        {!loading && activeTab === 'engagement' && (
+        {!loading && activeTab === 'engagement' && engagement && (
           <div className="space-y-6">
+            {/* Main Engagement Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <DetectiveCard>
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-blue-500/20 rounded-lg">
+                    <Users className="w-8 h-8 text-blue-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-400">Usuarios Activos Diarios</p>
+                    <p className="text-3xl font-bold text-detective-text">
+                      {engagement.dau}
+                    </p>
+                  </div>
+                </div>
+              </DetectiveCard>
+
+              <DetectiveCard>
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-green-500/20 rounded-lg">
+                    <Activity className="w-8 h-8 text-green-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-400">Usuarios Activos Semanales</p>
+                    <p className="text-3xl font-bold text-detective-text">
+                      {engagement.wau}
+                    </p>
+                  </div>
+                </div>
+              </DetectiveCard>
+
+              <DetectiveCard>
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-orange-500/20 rounded-lg">
+                    <Clock className="w-8 h-8 text-orange-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-400">Duración Promedio (min)</p>
+                    <p className="text-3xl font-bold text-detective-text">
+                      {engagement.session_duration_avg.toFixed(0)}
+                    </p>
+                  </div>
+                </div>
+              </DetectiveCard>
+
+              <DetectiveCard>
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-purple-500/20 rounded-lg">
+                    <TrendingUp className="w-8 h-8 text-purple-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-400">Sesiones por Usuario</p>
+                    <p className="text-3xl font-bold text-detective-text">
+                      {engagement.sessions_per_user.toFixed(1)}
+                    </p>
+                  </div>
+                </div>
+              </DetectiveCard>
+            </div>
+
+            {/* Comparison with Previous Period */}
             <DetectiveCard>
               <h3 className="text-lg font-bold text-detective-text mb-4">
-                Tendencia de Engagement
+                Comparación con Período Anterior
               </h3>
-              <div className="h-80">
-                <Line data={engagementChart} options={chartOptions} />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="flex items-center gap-3">
+                  {engagement.comparison_previous_period.dau_change >= 0 ? (
+                    <ArrowUp className="w-6 h-6 text-green-500" />
+                  ) : (
+                    <ArrowDown className="w-6 h-6 text-red-500" />
+                  )}
+                  <div>
+                    <p className="text-sm text-gray-400">Cambio en DAU</p>
+                    <p className={`text-2xl font-bold ${
+                      engagement.comparison_previous_period.dau_change >= 0
+                        ? 'text-green-500'
+                        : 'text-red-500'
+                    }`}>
+                      {engagement.comparison_previous_period.dau_change >= 0 ? '+' : ''}
+                      {engagement.comparison_previous_period.dau_change.toFixed(1)}%
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  {engagement.comparison_previous_period.wau_change >= 0 ? (
+                    <ArrowUp className="w-6 h-6 text-green-500" />
+                  ) : (
+                    <ArrowDown className="w-6 h-6 text-red-500" />
+                  )}
+                  <div>
+                    <p className="text-sm text-gray-400">Cambio en WAU</p>
+                    <p className={`text-2xl font-bold ${
+                      engagement.comparison_previous_period.wau_change >= 0
+                        ? 'text-green-500'
+                        : 'text-red-500'
+                    }`}>
+                      {engagement.comparison_previous_period.wau_change >= 0 ? '+' : ''}
+                      {engagement.comparison_previous_period.wau_change.toFixed(1)}%
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  {engagement.comparison_previous_period.engagement_change >= 0 ? (
+                    <ArrowUp className="w-6 h-6 text-green-500" />
+                  ) : (
+                    <ArrowDown className="w-6 h-6 text-red-500" />
+                  )}
+                  <div>
+                    <p className="text-sm text-gray-400">Cambio en Engagement</p>
+                    <p className={`text-2xl font-bold ${
+                      engagement.comparison_previous_period.engagement_change >= 0
+                        ? 'text-green-500'
+                        : 'text-red-500'
+                    }`}>
+                      {engagement.comparison_previous_period.engagement_change >= 0 ? '+' : ''}
+                      {engagement.comparison_previous_period.engagement_change.toFixed(1)}%
+                    </p>
+                  </div>
+                </div>
               </div>
             </DetectiveCard>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Feature Usage */}
+            {engagement.feature_usage && engagement.feature_usage.length > 0 && (
               <DetectiveCard>
-                <h4 className="text-sm text-gray-400 mb-2">Promedio Estudiantes Activos</h4>
-                <p className="text-3xl font-bold text-detective-text">
-                  {(engagementData.reduce((sum, d) => sum + d.active_students, 0) / engagementData.length).toFixed(0)}
-                </p>
+                <h3 className="text-lg font-bold text-detective-text mb-4">
+                  Uso de Funcionalidades
+                </h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-700">
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-400">
+                          Funcionalidad
+                        </th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-400">
+                          Usos Totales
+                        </th>
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-400">
+                          Usuarios Únicos
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {engagement.feature_usage.map((feature, index) => (
+                        <tr
+                          key={index}
+                          className="border-b border-gray-800 hover:bg-detective-bg-secondary transition-colors"
+                        >
+                          <td className="px-4 py-3 text-detective-text font-medium">
+                            {feature.feature_name}
+                          </td>
+                          <td className="px-4 py-3 text-detective-text">
+                            {feature.usage_count}
+                          </td>
+                          <td className="px-4 py-3 text-detective-text">
+                            {feature.unique_users}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </DetectiveCard>
-              <DetectiveCard>
-                <h4 className="text-sm text-gray-400 mb-2">Promedio Ejercicios por Día</h4>
-                <p className="text-3xl font-bold text-detective-text">
-                  {(engagementData.reduce((sum, d) => sum + d.completed_exercises, 0) / engagementData.length).toFixed(0)}
-                </p>
-              </DetectiveCard>
-              <DetectiveCard>
-                <h4 className="text-sm text-gray-400 mb-2">Tiempo Promedio (min)</h4>
-                <p className="text-3xl font-bold text-detective-text">
-                  {(engagementData.reduce((sum, d) => sum + d.average_time, 0) / engagementData.length).toFixed(0)}
-                </p>
-              </DetectiveCard>
-            </div>
+            )}
           </div>
+        )}
+
+        {/* Empty State for Engagement Tab */}
+        {!loading && activeTab === 'engagement' && !engagement && (
+          <DetectiveCard>
+            <div className="text-center py-12">
+              <Activity className="w-16 h-16 text-detective-text-secondary mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-detective-text mb-2">
+                No hay datos de engagement disponibles
+              </h3>
+              <p className="text-detective-text-secondary">
+                Selecciona una clase y un rango de fechas para ver las métricas de engagement
+              </p>
+            </div>
+          </DetectiveCard>
         )}
       </main>
     </div>

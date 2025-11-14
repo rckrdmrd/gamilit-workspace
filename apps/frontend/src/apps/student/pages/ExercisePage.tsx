@@ -147,7 +147,7 @@ export default function ExercisePage() {
   // Backend returns hints as string[], not objects
   const [hints, setHints] = useState<string[]>([]);
 
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   // ============================================================================
   // DATA FETCHING
@@ -191,8 +191,7 @@ export default function ExercisePage() {
             setHints(exerciseHints.map(h => typeof h === 'string' ? h : (h as any).text || String(h)));
           }
         } catch (hintError) {
-          console.warn('Could not load hints:', hintError);
-          // Continue without hints - not critical
+          // Continue without hints - not critical (silent fail for optional feature)
         }
 
         // Load dynamic component
@@ -300,13 +299,13 @@ export default function ExercisePage() {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (customAnswers?: any) => {
     if (!exerciseId) return;
 
     try {
       // Submit exercise via API
       const result = await submitExercise(exerciseId, {
-        answers: progress,
+        answers: customAnswers || progress,
         startedAt: startTime.getTime(), // Send start timestamp instead of timeSpent
         hintsUsed: progress.hintsUsed || 0,
         powerupsUsed: progress.powerupsUsed || [],
@@ -342,6 +341,11 @@ export default function ExercisePage() {
       if (result.rewards.mlCoins) {
         setAvailableCoins((prev) => prev + result.rewards.mlCoins);
       }
+
+      // Mark exercise as completed locally
+      if (exercise) {
+        setExercise({ ...exercise, completed: true });
+      }
     } catch (error) {
       console.error('Error submitting exercise:', error);
       setFeedback({
@@ -355,7 +359,7 @@ export default function ExercisePage() {
 
   const handleSkip = () => {
     if (window.confirm('¿Estás seguro de que deseas omitir este ejercicio?')) {
-      navigate(`/module/${moduleId}`);
+      navigate(`/modules/${exercise?.module_id || moduleId}`);
     }
   };
 
@@ -381,6 +385,11 @@ export default function ExercisePage() {
     setProgress((prev) => ({ ...prev, ...newProgress }));
     setHasUnsavedChanges(true);
   }, []);
+
+  const handleMechanicSubmit = React.useCallback(async (answers: any) => {
+    // Call the main submit function with custom answers
+    await handleSubmit(answers);
+  }, [handleSubmit]);
 
   // Refs for mechanic callbacks
   const mechanicActionsRef = React.useRef<{
@@ -446,7 +455,10 @@ export default function ExercisePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-        <GamifiedHeader user={user ?? undefined} onLogout={() => navigate('/login')} />
+        <GamifiedHeader user={user ?? undefined} onLogout={async () => {
+          await logout();
+          // No need to navigate - performLogout() handles redirect
+        }} />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <DetectiveCard hoverable={false}>
@@ -468,7 +480,10 @@ export default function ExercisePage() {
   if (!exercise || !MechanicComponent) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-        <GamifiedHeader user={user ?? undefined} onLogout={() => navigate('/login')} />
+        <GamifiedHeader user={user ?? undefined} onLogout={async () => {
+          await logout();
+          // No need to navigate - performLogout() handles redirect
+        }} />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <motion.div
@@ -479,7 +494,7 @@ export default function ExercisePage() {
             <p className="font-semibold">No se pudo cargar el ejercicio</p>
             <DetectiveButton
               variant="blue"
-              onClick={() => navigate(`/module/${moduleId}`)}
+              onClick={() => navigate(`/modules/${moduleId || 'dashboard'}`)}
               className="mt-4"
             >
               Volver al módulo
@@ -497,7 +512,10 @@ export default function ExercisePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
       {/* Header */}
-      <GamifiedHeader user={user ?? undefined} onLogout={() => navigate('/login')} />
+      <GamifiedHeader user={user ?? undefined} onLogout={async () => {
+        await logout();
+        // No need to navigate - performLogout() handles redirect
+      }} />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -513,7 +531,7 @@ export default function ExercisePage() {
             </button>
             <ChevronRight className="w-4 h-4" />
             <button
-              onClick={() => navigate(`/module/${moduleId}`)}
+              onClick={() => navigate(`/modules/${exercise.module_id}`)}
               className="hover:text-detective-orange transition-colors"
             >
               {exercise.moduleTitle || 'Módulo'}
@@ -599,6 +617,7 @@ export default function ExercisePage() {
                   <MechanicComponent
                     exercise={adaptedExercise || exercise}
                     onComplete={handleComplete}
+                    onSubmit={handleMechanicSubmit}
                     onProgressUpdate={handleProgressUpdate}
                     actionsRef={mechanicActionsRef}
                   />
@@ -617,9 +636,8 @@ export default function ExercisePage() {
                   {/* Navigation Actions */}
                   <DetectiveButton
                     variant="blue"
-
                     icon={<ArrowLeft className="w-4 h-4" />}
-                    onClick={() => navigate(`/module/${moduleId}`)}
+                    onClick={() => navigate(`/modules/${exercise.module_id}`)}
                     className="w-full"
                   >
                     Volver
@@ -768,7 +786,7 @@ export default function ExercisePage() {
             onClose={() => {
               setShowFeedback(false);
               if (feedback.type === 'success') {
-                navigate(`/module/${moduleId}`);
+                navigate(`/modules/${exercise?.module_id || moduleId}`);
               }
             }}
             onRetry={() => {

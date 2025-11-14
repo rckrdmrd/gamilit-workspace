@@ -25,6 +25,7 @@
       "@types/*": ["shared/types/*"],
       "@services/*": ["services/*"],
       "@app/*": ["app/*"],
+      "@apps/*": ["apps/*"],
       "@features/*": ["features/*"],
       "@pages/*": ["pages/*"]
     },

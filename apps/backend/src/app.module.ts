@@ -189,6 +189,26 @@ import { RlsInterceptor } from './shared/interceptors/rls.interceptor';
       inject: [ConfigService],
     }),
 
+    // Database connection for 'notifications' schema (EXT-003)
+    TypeOrmModule.forRootAsync({
+      name: 'notifications',  // 8th datasource for multi-channel notifications
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('database.host'),
+        port: configService.get('database.port'),
+        username: configService.get('database.username'),
+        password: configService.get('database.password'),
+        database: configService.get('database.database'),
+        entities: [__dirname + '/modules/notifications/entities/multichannel/**/*.entity{.ts,.js}'],
+        synchronize: configService.get('database.synchronize', false),
+        logging: configService.get('database.logging'),
+        ssl: configService.get('database.ssl'),
+        extra: configService.get('database.extra'),
+      }),
+      inject: [ConfigService],
+    }),
+
     // Application modules
     AuthModule,
     EducationalModule,

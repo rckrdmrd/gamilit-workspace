@@ -1,23 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { DataTable, Column } from '@shared/components/common/DataTable';
 import { Modal } from '@shared/components/common/Modal';
 import { FormField } from '@shared/components/common/FormField';
-import { Plus, Clock, CheckCircle, FileText, Users, Calendar, Loader } from 'lucide-react';
-import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS } from '@/services/api/apiConfig';
-import type { Assignment, Exercise, Submission } from '../types';
+import { Plus, Clock, CheckCircle, FileText, Users, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import { useAssignments } from '../hooks/useAssignments';
+import type { Assignment, Submission } from '../types';
 
 export default function TeacherAssignments() {
-  const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const {
+    assignments,
+    exercises,
+    loading,
+    error,
+    createAssignment: createAssignmentAPI,
+    getSubmissions: getSubmissionsAPI,
+    refresh,
+  } = useAssignments();
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSubmissionsModalOpen, setIsSubmissionsModalOpen] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [currentStep, setCurrentStep] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [submissionsLoading, setSubmissionsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -27,38 +34,9 @@ export default function TeacherAssignments() {
     selectedExercises: [] as string[],
   });
 
-  // Fetch assignments from API
-  useEffect(() => {
-    const fetchAssignments = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await apiClient.get(API_ENDPOINTS.teacher.assignments);
-        const data = response.data.data || response.data;
-        setAssignments(data);
-      } catch (err: any) {
-        const errorMessage = err.response?.data?.message || 'Failed to load assignments';
-        setError(errorMessage);
-        console.error('[TeacherAssignments] Error fetching assignments:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAssignments();
-  }, []);
-
-  const mockExercises: Exercise[] = [
-    { id: 'ex1', title: 'Biografía Marie Curie', type: 'BiografiaInteractiva', difficulty: 'medium', module_id: 'm1' },
-    { id: 'ex2', title: 'Crucigrama Científico', type: 'CrucigramaInteractivo', difficulty: 'hard', module_id: 'm1' },
-    { id: 'ex3', title: 'Quiz Descubrimientos', type: 'QuizTikTok', difficulty: 'medium', module_id: 'm2' },
-    { id: 'ex4', title: 'Análisis de Memes', type: 'AnalisisMemes', difficulty: 'easy', module_id: 'm4' },
-  ];
-
   const handleCreateAssignment = async () => {
     try {
-      setError(null);
-      const response = await apiClient.post(API_ENDPOINTS.teacher.createAssignment, {
+      await createAssignmentAPI({
         title: formData.title,
         description: formData.description,
         type: formData.type,
@@ -66,15 +44,11 @@ export default function TeacherAssignments() {
         classroom_id: formData.classroomId,
         exercise_ids: formData.selectedExercises,
       });
-      const newAssignment = response.data.data || response.data;
-
-      setAssignments([newAssignment, ...assignments]);
       setIsCreateModalOpen(false);
       resetForm();
     } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Failed to create assignment';
-      setError(errorMessage);
       console.error('[TeacherAssignments] Error creating assignment:', err);
+      alert('Error al crear la asignación. Por favor intenta nuevamente.');
     }
   };
 
@@ -93,38 +67,18 @@ export default function TeacherAssignments() {
   const viewSubmissions = async (assignment: Assignment) => {
     setSelectedAssignment(assignment);
     try {
-      setError(null);
-      const response = await apiClient.get(
-        API_ENDPOINTS.teacher.assignmentSubmissions(assignment.id)
-      );
-      const data = response.data.data || response.data;
+      setSubmissionsLoading(true);
+      const data = await getSubmissionsAPI(assignment.id);
       setSubmissions(data);
       setIsSubmissionsModalOpen(true);
     } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Failed to load submissions';
-      setError(errorMessage);
       console.error('[TeacherAssignments] Error fetching submissions:', err);
+      alert('Error al cargar las entregas. Por favor intenta nuevamente.');
+    } finally {
+      setSubmissionsLoading(false);
     }
   };
 
-  const gradeSubmission = async (submissionId: string, score: number) => {
-    try {
-      setError(null);
-      const response = await apiClient.post(
-        API_ENDPOINTS.teacher.gradeSubmission(submissionId),
-        { score }
-      );
-      const gradedSubmission = response.data.data || response.data;
-
-      setSubmissions(
-        submissions.map((sub) => (sub.id === submissionId ? gradedSubmission : sub))
-      );
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Failed to grade submission';
-      setError(errorMessage);
-      console.error('[TeacherAssignments] Error grading submission:', err);
-    }
-  };
 
   const columns: Column<Assignment>[] = [
     {
@@ -143,7 +97,7 @@ export default function TeacherAssignments() {
       label: 'Tipo',
       sortable: true,
       render: (row) => {
-        const typeColors = {
+        const typeColors: Record<string, string> = {
           practice: 'bg-blue-500/20 text-blue-500',
           quiz: 'bg-purple-500/20 text-purple-500',
           exam: 'bg-red-500/20 text-red-500',
@@ -155,9 +109,10 @@ export default function TeacherAssignments() {
           exam: 'Examen',
           homework: 'Tarea',
         };
+        const typeKey = row.type ?? '';
         return (
-          <span className={`px-2 py-1 rounded-lg text-xs font-medium ${row.type ? typeColors[row.type] ?? '' : ''}`}>
-            {row.type ? typeLabels[row.type] ?? row.type : 'N/A'}
+          <span className={`px-2 py-1 rounded-lg text-xs font-medium ${typeColors[typeKey] ?? ''}`}>
+            {(typeLabels[typeKey] ?? typeKey) || 'N/A'}
           </span>
         );
       },
@@ -192,7 +147,7 @@ export default function TeacherAssignments() {
       key: 'dueDate',
       label: 'Fecha Límite',
       sortable: true,
-      render: (row) => new Date(row.dueDate).toLocaleDateString('es-ES'),
+      render: (row) => row.dueDate ? new Date(row.dueDate).toLocaleDateString('es-ES') : 'N/A',
     },
     {
       key: 'submissions',
@@ -314,26 +269,49 @@ export default function TeacherAssignments() {
           </DetectiveCard>
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="mb-6 p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-500">
-            {error}
+        {/* Error State */}
+        {error && !loading && (
+          <DetectiveCard variant="danger" className="mb-6">
+            <div className="flex items-start gap-4">
+              <AlertCircle className="w-8 h-8 text-red-500 flex-shrink-0" />
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-detective-text mb-2">
+                  Error al cargar asignaciones
+                </h3>
+                <p className="text-detective-text-secondary mb-4">
+                  No se pudieron cargar las asignaciones. Por favor, intenta nuevamente.
+                </p>
+                <p className="text-sm text-red-400 mb-4 font-mono bg-red-950 p-2 rounded">
+                  {error.message}
+                </p>
+                <DetectiveButton onClick={refresh} variant="primary">
+                  <RefreshCw className="w-4 h-4" />
+                  Reintentar
+                </DetectiveButton>
+              </div>
+            </div>
+          </DetectiveCard>
+        )}
+
+        {/* Create Button & Refresh */}
+        {!loading && !error && (
+          <div className="mb-6 flex gap-3">
+            <DetectiveButton variant="primary" onClick={() => setIsCreateModalOpen(true)}>
+              <Plus className="w-5 h-5" />
+              Crear Asignación
+            </DetectiveButton>
+            <DetectiveButton variant="secondary" onClick={refresh}>
+              <RefreshCw className="w-4 h-4" />
+              Actualizar
+            </DetectiveButton>
           </div>
         )}
 
-        {/* Create Button */}
-        <div className="mb-6">
-          <DetectiveButton variant="primary" onClick={() => setIsCreateModalOpen(true)}>
-            <Plus className="w-5 h-5" />
-            Crear Asignación
-          </DetectiveButton>
-        </div>
-
         {/* Loading State */}
         {loading && (
-          <div className="flex items-center justify-center py-12">
-            <Loader className="w-8 h-8 text-detective-orange animate-spin" />
-            <span className="ml-3 text-detective-text">Cargando asignaciones...</span>
+          <div className="flex flex-col items-center justify-center py-20">
+            <Loader2 className="w-12 h-12 text-detective-orange animate-spin mb-4" />
+            <p className="text-detective-text-secondary">Cargando asignaciones...</p>
           </div>
         )}
 
@@ -408,7 +386,7 @@ export default function TeacherAssignments() {
                 Seleccionar Ejercicios
               </h3>
               <div className="space-y-2 max-h-96 overflow-y-auto">
-                {mockExercises.map((exercise) => (
+                {exercises.map((exercise) => (
                   <label
                     key={exercise.id}
                     className="flex items-center gap-3 p-3 bg-detective-bg-secondary rounded-lg cursor-pointer hover:bg-opacity-80"
@@ -525,12 +503,19 @@ export default function TeacherAssignments() {
         title={`Entregas - ${selectedAssignment?.title}`}
 
       >
-        <DataTable
-          data={submissions}
-          columns={submissionColumns}
-          searchable={false}
-          itemsPerPage={5}
-        />
+        {submissionsLoading ? (
+          <div className="flex flex-col items-center justify-center py-12">
+            <Loader2 className="w-12 h-12 text-detective-orange animate-spin mb-4" />
+            <p className="text-detective-text-secondary">Cargando entregas...</p>
+          </div>
+        ) : (
+          <DataTable
+            data={submissions}
+            columns={submissionColumns}
+            searchable={false}
+            itemsPerPage={5}
+          />
+        )}
       </Modal>
     </div>
   );

@@ -9,12 +9,17 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { ModulesService } from '../services';
 import { CreateModuleDto, ModuleResponseDto } from '../dto';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
 import { DifficultyLevelEnum } from '@/shared/constants/enums.constants';
+import { ExercisesService } from '../services/exercises.service';
+import { ExerciseSubmissionService } from '@/modules/progress/services';
+import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 
 /**
  * ModulesController
@@ -28,7 +33,11 @@ import { DifficultyLevelEnum } from '@/shared/constants/enums.constants';
 @ApiTags('Educational - Modules')
 @Controller(extractBasePath(API_ROUTES.EDUCATIONAL.BASE))
 export class ModulesController {
-  constructor(private readonly modulesService: ModulesService) {}
+  constructor(
+    private readonly modulesService: ModulesService,
+    private readonly exercisesService: ExercisesService,
+    private readonly exerciseSubmissionService: ExerciseSubmissionService,
+  ) {}
 
   /**
    * Obtiene todos los módulos educativos ordenados por índice
@@ -48,11 +57,12 @@ export class ModulesController {
    *   }
    * ]
    */
+  @UseGuards(JwtAuthGuard)
   @Get('modules')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Get all modules',
-    description: 'Obtiene todos los módulos educativos ordenados por índice de secuencia',
+    description: 'Obtiene todos los módulos educativos ordenados por índice de secuencia, con progreso del usuario autenticado',
   })
   @ApiResponse({
     status: 200,
@@ -75,6 +85,9 @@ export class ModulesController {
           status: 'published',
           is_published: true,
           total_exercises: 5,
+          completed_exercises: 3,
+          progress: 60,
+          completed: false,
           created_at: '2025-01-15T10:00:00Z',
           updated_at: '2025-01-15T10:00:00Z',
         },
@@ -85,8 +98,53 @@ export class ModulesController {
     status: 500,
     description: 'Error interno del servidor',
   })
-  async findAll() {
-    return await this.modulesService.findAll();
+  async findAll(@Request() req: any) {
+    const userId = req.user.id;
+
+    // Obtener todos los módulos
+    const modules = await this.modulesService.findAll();
+
+    // Obtener todas las submissions del usuario
+    const allSubmissions = await this.exerciseSubmissionService.findByUserId(userId);
+
+    // Crear un mapa de ejercicios completados
+    const completedExercisesMap = new Map<string, boolean>();
+    allSubmissions.forEach((submission) => {
+      if (submission.status === 'graded') {
+        completedExercisesMap.set(submission.exercise_id, true);
+      }
+    });
+
+    // Obtener todos los ejercicios
+    const allExercises = await this.exercisesService.findAll();
+
+    // Agrupar ejercicios por módulo
+    const exercisesByModule = new Map<string, any[]>();
+    allExercises.forEach((exercise) => {
+      if (!exercisesByModule.has(exercise.module_id)) {
+        exercisesByModule.set(exercise.module_id, []);
+      }
+      exercisesByModule.get(exercise.module_id)!.push(exercise);
+    });
+
+    // Calcular progreso para cada módulo
+    return modules.map((module) => {
+      const moduleExercises = exercisesByModule.get(module.id) || [];
+      const totalExercises = moduleExercises.length;
+      const completedExercises = moduleExercises.filter((ex) =>
+        completedExercisesMap.has(ex.id),
+      ).length;
+      const progress = totalExercises > 0 ? Math.round((completedExercises / totalExercises) * 100) : 0;
+      const completed = totalExercises > 0 && completedExercises === totalExercises;
+
+      return {
+        ...module,
+        total_exercises: totalExercises,
+        completed_exercises: completedExercises,
+        progress,
+        completed,
+      };
+    });
   }
 
   /**

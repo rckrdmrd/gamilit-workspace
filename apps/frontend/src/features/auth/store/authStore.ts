@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { User, RegisterData, AuthResponse } from '../types/auth.types';
 import * as authAPI from '../api/authAPI';
+import { performLogout } from '@/shared/utils/authCleanup';
 
 /**
  * Auth State Interface
@@ -124,30 +125,11 @@ export const useAuthStore = create<AuthState>()(
       },
 
       // Logout action
+      // Uses centralized performLogout() utility for consistent behavior
       logout: async () => {
-        try {
-          // Call real API to invalidate session on backend
+        await performLogout(async () => {
           await authAPI.logout();
-        } catch (error) {
-          // Continue with local logout even if API call fails
-          console.error('Logout API call failed:', error);
-        } finally {
-          // Clear tokens from localStorage
-          localStorage.removeItem('auth-token');
-          localStorage.removeItem('refresh-token');
-          localStorage.removeItem('auth-storage'); // Clear Zustand persist
-
-          // Clear state
-          set({
-            user: null,
-            token: null,
-            refreshToken: null,
-            isAuthenticated: false,
-            sessionExpiresAt: null,
-            error: null,
-            isLoading: false
-          });
-        }
+        });
       },
 
       // Refresh session

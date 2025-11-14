@@ -23,6 +23,7 @@ export default defineConfig({
       '@types': path.resolve(__dirname, './src/shared/types'),
       '@services': path.resolve(__dirname, './src/services'),
       '@app': path.resolve(__dirname, './src/app'),
+      '@apps': path.resolve(__dirname, './src/apps'),
       '@features': path.resolve(__dirname, './src/features'),
       '@pages': path.resolve(__dirname, './src/pages'),
     },

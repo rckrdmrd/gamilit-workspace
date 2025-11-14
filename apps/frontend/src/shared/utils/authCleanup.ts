@@ -78,6 +78,11 @@ export const performLogout = async (
 ): Promise<void> => {
   console.log('[authCleanup] Starting logout sequence...');
 
+  // CRITICAL: Set logout flag FIRST to prevent race condition
+  // This prevents AuthContext useEffect from restoring session during redirect
+  localStorage.setItem('is_logging_out', 'true');
+  console.log('[authCleanup] Set is_logging_out flag to prevent session restore');
+
   try {
     // Try to call backend logout
     if (backendLogout) {

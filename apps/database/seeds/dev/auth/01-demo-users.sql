@@ -37,6 +37,7 @@ INSERT INTO auth.users (
     role,
     email_confirmed_at,
     raw_user_meta_data,
+    status,
     created_at,
     updated_at
 ) VALUES
@@ -50,6 +51,7 @@ INSERT INTO auth.users (
     'super_admin',
     NOW(),
     '{"name": "Admin GAMILIT", "description": "Usuario administrador de testing"}'::jsonb,
+    'active',
     NOW(),
     NOW()
 ),
@@ -61,6 +63,7 @@ INSERT INTO auth.users (
     'admin_teacher',
     NOW(),
     '{"name": "Profesor Testing", "description": "Usuario profesor de testing"}'::jsonb,
+    'active',
     NOW(),
     NOW()
 ),
@@ -72,6 +75,7 @@ INSERT INTO auth.users (
     'student',
     NOW(),
     '{"name": "Estudiante Testing", "description": "Usuario estudiante de testing"}'::jsonb,
+    'active',
     NOW(),
     NOW()
 ),
@@ -86,6 +90,7 @@ INSERT INTO auth.users (
     'super_admin',
     NOW(),
     '{"name": "Super Admin", "description": "Usuario administrador principal del sistema"}'::jsonb,
+    'active',
     NOW(),
     NOW()
 ),
@@ -97,6 +102,7 @@ INSERT INTO auth.users (
     'admin_teacher',
     NOW(),
     '{"name": "Instructor Demo", "description": "Usuario instructor de demostración"}'::jsonb,
+    'active',
     NOW(),
     NOW()
 ),
@@ -108,6 +114,7 @@ INSERT INTO auth.users (
     'student',
     NOW(),
     '{"name": "Estudiante Demo 1", "description": "Usuario estudiante de demostración 1"}'::jsonb,
+    'active',
     NOW(),
     NOW()
 ),
@@ -119,6 +126,7 @@ INSERT INTO auth.users (
     'student',
     NOW(),
     '{"name": "Estudiante Demo 2", "description": "Usuario estudiante de demostración 2"}'::jsonb,
+    'active',
     NOW(),
     NOW()
 ),
@@ -130,6 +138,7 @@ INSERT INTO auth.users (
     'student',
     NOW(),
     '{"name": "Estudiante Demo 3", "description": "Usuario estudiante de demostración 3"}'::jsonb,
+    'active',
     NOW(),
     NOW()
 )
@@ -139,6 +148,7 @@ ON CONFLICT (email) DO UPDATE SET
     role = EXCLUDED.role,
     email_confirmed_at = EXCLUDED.email_confirmed_at,
     raw_user_meta_data = EXCLUDED.raw_user_meta_data,
+    status = EXCLUDED.status,
     updated_at = NOW();
 
 -- =====================================================
