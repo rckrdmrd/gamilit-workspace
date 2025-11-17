@@ -33,4 +33,4 @@ COMMENT ON COLUMN system_configuration.tenant_configurations.is_overridable IS '
 CREATE TRIGGER update_tenant_configurations_updated_at
     BEFORE UPDATE ON system_configuration.tenant_configurations
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();

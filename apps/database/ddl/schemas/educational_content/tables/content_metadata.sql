@@ -30,4 +30,4 @@ COMMENT ON COLUMN educational_content.content_metadata.metadata_value IS 'JSONB 
 CREATE TRIGGER update_content_metadata_updated_at
     BEFORE UPDATE ON educational_content.content_metadata
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();

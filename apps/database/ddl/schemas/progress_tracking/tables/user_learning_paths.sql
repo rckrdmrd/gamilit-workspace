@@ -35,4 +35,4 @@ COMMENT ON COLUMN progress_tracking.user_learning_paths.status IS 'Status: enrol
 CREATE TRIGGER update_user_learning_paths_updated_at
     BEFORE UPDATE ON progress_tracking.user_learning_paths
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();

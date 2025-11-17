@@ -123,22 +123,22 @@ export class Mission {
   @Column({ type: 'float', default: 0 })
   progress!: number;
 
-  @Column({ type: 'timestamp without time zone', default: () => 'now()' })
+  @Column({ type: 'timestamp with time zone', default: () => 'now()' })
   start_date!: Date;
 
-  @Column({ type: 'timestamp without time zone' })
+  @Column({ type: 'timestamp with time zone' })
   end_date!: Date;
 
-  @Column({ type: 'timestamp without time zone', nullable: true })
+  @Column({ type: 'timestamp with time zone', nullable: true })
   completed_at!: Date | null;
 
-  @Column({ type: 'timestamp without time zone', nullable: true })
+  @Column({ type: 'timestamp with time zone', nullable: true })
   claimed_at!: Date | null;
 
-  @CreateDateColumn({ type: 'timestamp without time zone' })
+  @CreateDateColumn({ type: 'timestamp with time zone' })
   created_at!: Date;
 
-  @UpdateDateColumn({ type: 'timestamp without time zone' })
+  @UpdateDateColumn({ type: 'timestamp with time zone' })
   updated_at!: Date;
 
   // Relación a auth_management.profiles (FK)

@@ -501,6 +501,31 @@ EOF
 
 **Resultado esperado:** 13 schemas listados
 
+### Script de Validación Exhaustiva
+
+Para validar la integridad completa de la base de datos (útil después de migraciones o cambios):
+
+```bash
+# Ejecutar validación exhaustiva
+cd apps/database
+python3 scripts/validate_integrity.py
+```
+
+**Características del script:**
+- ✅ Valida que todas las Foreign Keys apunten a tablas existentes
+- ✅ Verifica que todos los ENUMs usados en tablas estén definidos
+- ✅ Detecta funciones con referencias a tablas inexistentes
+- ✅ Valida que triggers llamen a funciones válidas
+- ✅ Identifica ENUMs duplicados en diferentes schemas
+- ✅ Reporta problemas por severidad (CRÍTICO, ALTO, MEDIO, BAJO)
+
+**Uso recomendado:**
+- Después de aplicar migraciones
+- Antes de despliegues a producción
+- Para diagnóstico de problemas de integridad referencial
+
+**Ubicación:** `apps/database/scripts/validate_integrity.py`
+
 ## Troubleshooting
 
 ### Error: "password authentication failed"

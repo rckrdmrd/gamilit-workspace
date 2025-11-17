@@ -1,11 +1,12 @@
 -- =====================================================
--- Seed Data: Exercises Module 3 - Comprensión Crítica (DEV)
+-- Seed Data: Exercises Module 3 - Comprensión Crítica (PRODUCTION)
 -- =====================================================
--- Description: 5 ejercicios interactivos del Módulo 3
+-- Description: Ejercicios interactivos del Módulo (PRODUCTION) 3
 -- Module: MOD-03-CRITICA
 -- Exercises: Análisis Fuentes, Debate, Matriz Perspectivas, Podcast, Tribunal
 -- Created by: SA-SEEDS-EDUCATIONAL
--- Date: 2025-11-02
+-- Date: 2025-11-11
+-- Status: PRODUCTION
 -- =====================================================
 
 SET search_path TO educational_content, public;
@@ -38,7 +39,7 @@ BEGIN
         'Evalúa la Credibilidad de las Fuentes',
         'Analiza diferentes fuentes sobre Marie Curie y evalúa su confiabilidad basándote en criterios académicos.',
         'Lee cada fuente cuidadosamente y ordénalas según su credibilidad (de más a menos confiable).',
-        'analisis_fuentes', 1,
+        'analisis_fuentes', 3,  -- CHANGED: order_index 1→3 per doc v6.2 (DB-121)
         '{
             "dragAndDrop": true,
             "showCriteria": true,
@@ -134,7 +135,7 @@ BEGIN
             'Los blogs anónimos sin fuentes tienen credibilidad muy baja'
         ]::text[],
         true, 15,
-        35, 18,
+        100, 20,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -154,7 +155,7 @@ BEGIN
         is_active, version
     ) VALUES (
         mod_id,
-        'Debate Digital: Ética en la Investigación Científica',
+        'Debate Digital Estructurado',
         'Argumenta tu Posición con Evidencias',
         'Participa en un debate estructurado sobre los dilemas éticos de la investigación de Marie Curie.',
         'Elige una postura, desarrolla argumentos sólidos respaldados con evidencias y anticipa contraargumentos.',
@@ -247,14 +248,14 @@ BEGIN
             "note": "Este debate no tiene respuesta única correcta. Se evalúa la calidad de argumentación."
         }'::jsonb,
         'advanced', 100, 70,
-        30, 3,
+        100, 20,
         ARRAY[
             'No hay respuesta única correcta; lo importante es la calidad de la argumentación',
             'Usa evidencias específicas de la vida de Marie para respaldar tus argumentos',
             'Anticipa y responde a posibles contraargumentos'
         ]::text[],
         true, 15,
-        40, 20,
+        100, 20,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -278,7 +279,7 @@ BEGIN
         'Analiza Diferentes Puntos de Vista',
         'Examina cómo diferentes grupos y épocas han visto a Marie Curie y sus logros.',
         'Completa la matriz identificando cómo cada grupo/época percibió a Marie Curie.',
-        'matriz_perspectivas', 3,
+        'matriz_perspectivas', 5,  -- CHANGED: order_index 3→5 per doc v6.2 (DB-121)
         '{
             "interactiveMatrix": true,
             "allowComparisons": true,
@@ -352,14 +353,14 @@ BEGIN
             "evaluation": "comprehensive_understanding"
         }'::jsonb,
         'advanced', 100, 70,
-        25, 3,
+        100, 20,
         ARRAY[
             'Las perspectivas históricas cambian con el tiempo y contexto',
             'Ninguna perspectiva es completamente objetiva',
             'Comprender múltiples puntos de vista enriquece nuestra comprensión'
         ]::text[],
         true, 15,
-        35, 18,
+        100, 20,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -379,7 +380,7 @@ BEGIN
         is_active, version
     ) VALUES (
         mod_id,
-        'Podcast Argumentativo: El Dilema de Marie Curie',
+        'Creación de Podcast Argumentativo',
         'Crea un Episodio sobre Ética Científica',
         'Graba un podcast (o escribe guión) argumentando sobre un dilema ético en la vida de Marie Curie.',
         'Elige un tema, investiga, estructura tu argumento y graba/escribe tu podcast de 3-5 minutos.',
@@ -442,14 +443,14 @@ BEGIN
             "evaluation": "rubric_based"
         }'::jsonb,
         'advanced', 100, 70,
-        35, 3,
+        100, 20,
         ARRAY[
             'Estructura tu podcast con introducción, desarrollo y conclusión clara',
             'Usa evidencias históricas específicas para respaldar tus argumentos',
             'Reconoce la complejidad: evita juicios simplistas'
         ]::text[],
         true, 15,
-        40, 20,
+        100, 20,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -473,7 +474,7 @@ BEGIN
         'Evalúa Decisiones con Criterios Éticos',
         'Participa como jurado evaluando decisiones controversiales de Marie Curie usando criterios éticos contemporáneos y de su época.',
         'Lee cada caso, evalúa con criterios éticos y emite tu veredicto fundamentado.',
-        'tribunal_opiniones', 5,
+        'tribunal_opiniones', 1,  -- CHANGED: order_index 5→1 per doc v6.2 (DB-121)
         '{
             "rolePlay": true,
             "multipleJudges": false,
@@ -574,14 +575,14 @@ BEGIN
             "no_single_correct_answer": true
         }'::jsonb,
         'advanced', 100, 70,
-        22, 3,
+        100, 20,
         ARRAY[
             'Juzga con criterios éticos de la época Y con perspectiva moderna',
             'Reconoce que muchas decisiones éticas son complejas sin respuestas simples',
             'Fundamenta tu veredicto con razonamiento claro'
         ]::text[],
         true, 15,
-        40, 20,
+        100, 20,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,

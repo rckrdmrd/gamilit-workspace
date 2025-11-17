@@ -33,4 +33,4 @@ COMMENT ON COLUMN content_management.content_categories.display_order IS 'Order 
 CREATE TRIGGER update_content_categories_updated_at
     BEFORE UPDATE ON content_management.content_categories
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();

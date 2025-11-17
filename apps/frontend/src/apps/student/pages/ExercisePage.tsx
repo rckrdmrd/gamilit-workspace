@@ -299,17 +299,29 @@ export default function ExercisePage() {
     }
   };
 
-  const handleSubmit = async (customAnswers?: any) => {
+  const handleSubmit = async () => {
     if (!exerciseId) return;
 
     try {
+      console.log('📤 [ExercisePage] Submitting exercise:', {
+        exerciseId,
+        payload: {
+          answers: progress,
+          startedAt: startTime.getTime(),
+          hintsUsed: progress.hintsUsed || 0,
+          powerupsUsed: progress.powerupsUsed || [],
+        }
+      });
+
       // Submit exercise via API
       const result = await submitExercise(exerciseId, {
-        answers: customAnswers || progress,
+        answers: progress,
         startedAt: startTime.getTime(), // Send start timestamp instead of timeSpent
         hintsUsed: progress.hintsUsed || 0,
         powerupsUsed: progress.powerupsUsed || [],
       });
+
+      console.log('✅ [ExercisePage] Submission result:', result);
 
       // Build feedback message
       let feedbackMessage = `Has obtenido ${result.score} puntos. Ganaste ${result.rewards.xp} XP y ${result.rewards.mlCoins} ML Coins.`;
@@ -333,6 +345,9 @@ export default function ExercisePage() {
         type: 'success',
         title: result.isPerfect ? '¡Perfecto!' : 'Ejercicio Completado',
         message: feedbackMessage,
+        score: result.score,
+        xpEarned: result.rewards.xp,
+        mlCoinsEarned: result.rewards.mlCoins,
         showConfetti: result.isPerfect || result.score >= 80 || !!result.rankUp,
       });
       setShowFeedback(true);
@@ -385,11 +400,6 @@ export default function ExercisePage() {
     setProgress((prev) => ({ ...prev, ...newProgress }));
     setHasUnsavedChanges(true);
   }, []);
-
-  const handleMechanicSubmit = React.useCallback(async (answers: any) => {
-    // Call the main submit function with custom answers
-    await handleSubmit(answers);
-  }, [handleSubmit]);
 
   // Refs for mechanic callbacks
   const mechanicActionsRef = React.useRef<{
@@ -617,7 +627,6 @@ export default function ExercisePage() {
                   <MechanicComponent
                     exercise={adaptedExercise || exercise}
                     onComplete={handleComplete}
-                    onSubmit={handleMechanicSubmit}
                     onProgressUpdate={handleProgressUpdate}
                     actionsRef={mechanicActionsRef}
                   />
@@ -724,7 +733,7 @@ export default function ExercisePage() {
                     variant="primary"
 
                     icon={<Send className="w-4 h-4" />}
-                    onClick={handleSubmit}
+                    onClick={() => handleSubmit()}
                     className="w-full"
                   >
                     Enviar Respuestas

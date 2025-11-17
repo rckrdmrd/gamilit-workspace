@@ -37,4 +37,4 @@ COMMENT ON COLUMN educational_content.content_approvals.revision_notes IS 'Notes
 CREATE TRIGGER update_content_approvals_updated_at
     BEFORE UPDATE ON educational_content.content_approvals
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();

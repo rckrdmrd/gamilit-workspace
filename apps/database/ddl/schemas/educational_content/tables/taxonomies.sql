@@ -29,7 +29,7 @@ COMMENT ON COLUMN educational_content.taxonomies.is_active IS 'Whether this taxo
 CREATE TRIGGER update_taxonomies_updated_at
     BEFORE UPDATE ON educational_content.taxonomies
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();
 
 -- Datos iniciales: Taxonomía de Bloom
 INSERT INTO educational_content.taxonomies (name, taxonomy_type, description, levels) VALUES

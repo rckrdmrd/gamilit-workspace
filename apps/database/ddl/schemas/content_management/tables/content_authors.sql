@@ -37,4 +37,4 @@ COMMENT ON COLUMN content_management.content_authors.is_verified IS 'Whether aut
 CREATE TRIGGER update_content_authors_updated_at
     BEFORE UPDATE ON content_management.content_authors
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();

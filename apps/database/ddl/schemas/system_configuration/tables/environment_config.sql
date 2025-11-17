@@ -33,4 +33,4 @@ COMMENT ON COLUMN system_configuration.environment_config.is_sensitive IS 'Wheth
 CREATE TRIGGER update_environment_config_updated_at
     BEFORE UPDATE ON system_configuration.environment_config
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();

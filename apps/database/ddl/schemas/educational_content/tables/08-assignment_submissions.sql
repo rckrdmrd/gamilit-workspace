@@ -35,4 +35,4 @@ COMMENT ON COLUMN educational_content.assignment_submissions.graded_by IS 'Teach
 CREATE TRIGGER update_assignment_submissions_updated_at
     BEFORE UPDATE ON educational_content.assignment_submissions
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();

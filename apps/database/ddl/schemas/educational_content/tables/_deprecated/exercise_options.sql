@@ -29,4 +29,4 @@ COMMENT ON COLUMN educational_content.exercise_options.explanation IS 'Explanati
 CREATE TRIGGER update_exercise_options_updated_at
     BEFORE UPDATE ON educational_content.exercise_options
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();

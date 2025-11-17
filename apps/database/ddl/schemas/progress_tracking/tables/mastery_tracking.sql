@@ -39,4 +39,4 @@ COMMENT ON COLUMN progress_tracking.mastery_tracking.status IS 'Status: not_star
 CREATE TRIGGER update_mastery_tracking_updated_at
     BEFORE UPDATE ON progress_tracking.mastery_tracking
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();

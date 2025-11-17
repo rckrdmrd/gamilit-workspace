@@ -51,10 +51,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
 **Base:** `/api/v1/auth`
 
 ```bash
-# Registrar nuevo usuario
+# Registrar nuevo usuario (público)
 POST   /register
-Body: { email, password, role, firstName, lastName }
+Body: { email, password, first_name?, last_name? }
 Auth: No
+Note: role is assigned automatically as 'student'
 
 # Login
 POST   /login
@@ -101,16 +102,16 @@ Auth: Yes
 ### Ejemplos
 
 ```bash
-# Register
+# Register (public self-service)
 curl -X POST http://localhost:3000/api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "email": "student@example.com",
     "password": "SecurePass123",
-    "role": "student",
-    "firstName": "John",
-    "lastName": "Doe"
+    "first_name": "John",
+    "last_name": "Doe"
   }'
+# Note: role is NOT accepted (assigned as 'student' automatically)
 
 # Login
 curl -X POST http://localhost:3000/api/v1/auth/login \
@@ -509,14 +510,15 @@ GET    /users
 Query: ?limit=50&offset=0&role=student|teacher|admin
 Auth: Yes (admin)
 
-# Crear usuario
+# Crear usuario (admin only)
 POST   /users
-Body: { email, password, role, firstName, lastName }
+Body: { email, password, role, first_name, last_name }
 Auth: Yes (admin)
+Note: Admin endpoint can set role explicitly
 
 # Actualizar usuario
 PUT    /users/:id
-Body: { firstName, lastName, role, active }
+Body: { first_name, last_name, role, active }
 Auth: Yes (admin)
 
 # Eliminar usuario
@@ -549,7 +551,7 @@ Auth: Yes (admin)
 curl http://localhost:3000/api/v1/admin/users?role=student&limit=20 \
   -H "Authorization: Bearer YOUR_ADMIN_TOKEN"
 
-# Create user
+# Create user (admin can set role)
 curl -X POST http://localhost:3000/api/v1/admin/users \
   -H "Authorization: Bearer YOUR_ADMIN_TOKEN" \
   -H "Content-Type: application/json" \
@@ -557,8 +559,8 @@ curl -X POST http://localhost:3000/api/v1/admin/users \
     "email": "newuser@example.com",
     "password": "TempPass123",
     "role": "student",
-    "firstName": "Jane",
-    "lastName": "Smith"
+    "first_name": "Jane",
+    "last_name": "Smith"
   }'
 
 # Get system stats

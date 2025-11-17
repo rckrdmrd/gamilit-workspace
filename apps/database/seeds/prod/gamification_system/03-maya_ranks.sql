@@ -4,8 +4,9 @@
 -- Description: Configuración de rangos maya del sistema de gamificación
 -- Environment: PRODUCTION
 -- Records: 5
--- Date: 2025-11-07
--- Source: Migrated from backend ranks.service.ts
+-- Date: 2025-11-16 (Updated)
+-- Version: 2.0
+-- Source: ESPECIFICACION-TECNICA-RANGOS-MAYA-v2.0.md
 -- =====================================================
 
 SET search_path TO gamification_system, public;
@@ -42,16 +43,16 @@ INSERT INTO gamification_system.maya_ranks (
     (
         'Ajaw',
         'Ajaw',
-        'Señor - Nivel inicial del viaje maya',
+        'Señor - Inicio del camino del conocimiento',
         0,
-        999,
+        499,
         0,
         1.00,
         0,
         0,
         '["basic_access", "forum_access"]'::jsonb,
         'star',
-        '#CD7F32',  -- Bronze
+        '#8B4513',  -- Brown (tierra, inicio)
         NULL,
         1,
         'Nacom',
@@ -61,16 +62,16 @@ INSERT INTO gamification_system.maya_ranks (
     (
         'Nacom',
         'Nacom',
-        'Capitán de Guerra - Comandante en entrenamiento',
-        1000,
-        2999,
+        'Capitán de Guerra - Guerrero en entrenamiento',
         500,
+        999,
+        100,
         1.10,
         0,
         0,
-        '["xp_boost_10", "daily_bonus", "forum_access"]'::jsonb,
+        '["xp_boost_10", "daily_bonus", "forum_access", "first_warrior_badge"]'::jsonb,
         'shield',
-        '#C0C0C0',  -- Silver
+        '#CD7F32',  -- Bronze
         NULL,
         2,
         'Ah K''in',
@@ -81,15 +82,15 @@ INSERT INTO gamification_system.maya_ranks (
         'Ah K''in',
         'Ah K''in',
         'Sacerdote del Sol - Guía del conocimiento',
-        3000,
-        5999,
         1000,
-        1.20,
+        1499,
+        250,
+        1.15,
         0,
         0,
-        '["xp_boost_20", "coin_bonus", "exclusive_content", "custom_avatar"]'::jsonb,
+        '["xp_boost_15", "coin_bonus", "exclusive_content", "custom_avatar", "special_missions"]'::jsonb,
         'sun',
-        '#FFD700',  -- Gold
+        '#C0C0C0',  -- Silver
         NULL,
         3,
         'Halach Uinic',
@@ -100,15 +101,15 @@ INSERT INTO gamification_system.maya_ranks (
         'Halach Uinic',
         'Halach Uinic',
         'Hombre Verdadero - Líder de la comunidad',
-        6000,
-        9999,
-        2000,
-        1.30,
+        1500,
+        2249,
+        500,
+        1.20,
         0,
         0,
-        '["xp_boost_30", "priority_support", "exclusive_missions", "leaderboard_badge"]'::jsonb,
+        '["xp_boost_20", "priority_support", "exclusive_missions", "leaderboard_badge", "mentor_privileges", "premium_content"]'::jsonb,
         'crown',
-        '#E5E4E2',  -- Platinum
+        '#FFD700',  -- Gold
         NULL,
         4,
         'K''uk''ulkan',
@@ -118,16 +119,16 @@ INSERT INTO gamification_system.maya_ranks (
     (
         'K''uk''ulkan',
         'K''uk''ulkan',
-        'Serpiente Emplumada - Nivel legendario',
-        10000,
+        'Serpiente Emplumada - Maestro legendario',
+        2250,
         NULL,  -- Sin límite superior
-        5000,
-        1.50,
+        1000,
+        1.25,
         0,
         0,
-        '["xp_boost_50", "all_perks", "mentor_access", "exclusive_events", "legendary_badge"]'::jsonb,
+        '["xp_boost_25", "all_perks", "mentor_access", "exclusive_events", "legendary_badge", "hall_of_fame", "downloadable_certificate", "maya_master_title"]'::jsonb,
         'dragon',
-        '#B9F2FF',  -- Diamond
+        '#9B59B6',  -- Purple (legendario)
         NULL,
         5,
         NULL,  -- No hay siguiente rango
@@ -175,25 +176,32 @@ FROM gamification_system.maya_ranks
 ORDER BY rank_order;
 
 -- =====================================================
--- MIGRATION NOTES
+-- MIGRATION NOTES v2.0 (2025-11-16)
 -- =====================================================
--- ORIGEN:
--- - Configuración migrada desde backend (ranks.service.ts líneas 62-108)
--- - Anteriormente hardcodeada en TypeScript
+-- CAMBIOS RESPECTO A v1.0:
+-- - Ajustados umbrales XP para alinearse con contenido disponible
+-- - v1.0: Rangos hasta 10,000+ XP (inalcanzables)
+-- - v2.0: Rangos hasta 2,250+ XP (todos alcanzables)
+-- - ML Coins bonus reducidos proporcionalmente
+-- - XP multipliers más conservadores (1.00 → 1.25)
+-- - Perks actualizados y ampliados
 --
--- CAMBIOS RESPECTO AL BACKEND:
--- - Agregado xp_multiplier (progresión lógica 1.0 → 1.5)
--- - Agregado perks en formato JSONB para beneficios adicionales
--- - Agregado iconos y colores para UI
--- - Agregado next_rank para facilitar navegación de progresión
+-- DISTRIBUCIÓN v2.0:
+-- - Ajaw:         0-499 XP (< 1 módulo)
+-- - Nacom:        500-999 XP (1 módulo)
+-- - Ah K'in:      1,000-1,499 XP (2 módulos)
+-- - Halach Uinic: 1,500-2,249 XP (3+ módulos)
+-- - K'uk'ulkan:   2,250+ XP (casi todos los módulos con excelencia)
 --
 -- BENEFICIOS:
 -- - Configuración actualizable sin deploy
 -- - Funciones SQL pueden consultar directamente
--- - Flexibilidad para agregar nuevos rangos o modificar umbrales
--- - Sincronización con funciones: calculate_user_rank, update_user_rank, etc.
+-- - Todos los 5 rangos son ahora alcanzables
+-- - Progresión justa y motivante
+-- - Sincronización con: calculate_user_rank, update_user_rank, etc.
 --
--- PRÓXIMOS PASOS:
--- - Actualizar backend para leer configuración desde DB
--- - Considerar deprecar RANK_CONFIG hardcodeado
+-- DOCUMENTACIÓN:
+-- - Especificación: docs/00-vision-general/ESPECIFICACION-TECNICA-RANGOS-MAYA-v2.0.md
+-- - Documento de diseño: docs/00-vision-general/DocumentoDiseño_Mecanicas_GAMILIT_v6.2.md
+-- - Script de migración: scripts/migrations/2025-11-16_ajustar-umbrales-xp-rangos-v2.sql
 -- =====================================================

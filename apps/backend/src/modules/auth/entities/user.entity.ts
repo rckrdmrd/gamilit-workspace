@@ -76,15 +76,14 @@ export class User {
 
   /**
    * Estado del usuario en el sistema
-   * NOTA: Esta columna NO existe en la tabla auth.users actual
-   * El estado se maneja a través de deleted_at para soft deletes
+   * @see DDL: auth.users.status (VARCHAR(50), CHECK constraint)
    */
-  // @Column({
-  //   type: 'enum',
-  //   enum: UserStatusEnum,
-  //   default: UserStatusEnum.ACTIVE,
-  // })
-  // status: UserStatusEnum;
+  @Column({
+    type: 'varchar',
+    length: 50,
+    default: 'active',
+  })
+  status!: string;
 
   /**
    * Indica si el email ha sido verificado

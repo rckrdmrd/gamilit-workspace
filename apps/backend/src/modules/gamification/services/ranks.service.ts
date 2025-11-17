@@ -56,53 +56,55 @@ export class RanksService {
   private readonly logger = new Logger(RanksService.name);
 
   /**
-   * Configuración de rangos maya
+   * Configuración de rangos maya v2.0
    * Define XP requerida, bonos y progresión
+   * VERSIÓN: 2.0 (2025-11-16)
+   * SINCRONIZADO CON: apps/database/seeds/prod/gamification_system/03-maya_ranks.sql
    */
   private readonly RANK_CONFIG: Record<MayaRank, RankConfig> = {
     [MayaRank.AJAW]: {
       xp_min: 0,
-      xp_max: 999,
+      xp_max: 499,
       ml_coins_bonus: 0,
       next_rank: MayaRank.NACOM,
       name: 'Ajaw',
-      description: 'Señor - Nivel inicial',
+      description: 'Señor - Inicio del camino del conocimiento',
       order: 1,
     },
     [MayaRank.NACOM]: {
-      xp_min: 1000,
-      xp_max: 2999,
-      ml_coins_bonus: 500,
+      xp_min: 500,
+      xp_max: 999,
+      ml_coins_bonus: 100,
       next_rank: MayaRank.AH_KIN,
       name: 'Nacom',
-      description: 'Capitán de Guerra',
+      description: 'Capitán de Guerra - Guerrero en entrenamiento',
       order: 2,
     },
     [MayaRank.AH_KIN]: {
-      xp_min: 3000,
-      xp_max: 5999,
-      ml_coins_bonus: 1000,
+      xp_min: 1000,
+      xp_max: 1499,
+      ml_coins_bonus: 250,
       next_rank: MayaRank.HALACH_UINIC,
       name: "Ah K'in",
-      description: 'Sacerdote del Sol',
+      description: 'Sacerdote del Sol - Guía del conocimiento',
       order: 3,
     },
     [MayaRank.HALACH_UINIC]: {
-      xp_min: 6000,
-      xp_max: 9999,
-      ml_coins_bonus: 2000,
+      xp_min: 1500,
+      xp_max: 2249,
+      ml_coins_bonus: 500,
       next_rank: MayaRank.KUKUKULKAN,
       name: 'Halach Uinic',
-      description: 'Hombre Verdadero',
+      description: 'Hombre Verdadero - Líder de la comunidad',
       order: 4,
     },
     [MayaRank.KUKUKULKAN]: {
-      xp_min: 10000,
+      xp_min: 2250,
       xp_max: Infinity,
-      ml_coins_bonus: 5000,
+      ml_coins_bonus: 1000,
       next_rank: null,
       name: "K'uk'ulkan",
-      description: 'Serpiente Emplumada - Máximo rango',
+      description: 'Serpiente Emplumada - Maestro legendario',
       order: 5,
     },
   };

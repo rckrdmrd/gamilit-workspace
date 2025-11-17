@@ -33,7 +33,7 @@ ON CONFLICT (name) DO UPDATE SET
     icon_url = EXCLUDED.icon_url,
     display_order = EXCLUDED.display_order,
     is_active = EXCLUDED.is_active,
-    updated_at = NOW();
+    updated_at = gamilit.now_mexico();
 
 -- =====================================================
 -- VERIFICACIÓN

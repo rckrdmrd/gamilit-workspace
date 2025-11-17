@@ -591,15 +591,24 @@ export const getExerciseHints = async (
       ];
     }
 
-    // Use the educational route instead of mechanics
-    // Backend returns hints array directly, not wrapped in { data: {...} }
-    const { data} = await apiClient.get<
-      Array<{ id: string; text: string; cost: number; order: number }>
-    >(`/educational/mechanics/${exerciseId}/hints`);
+    // ✅ Fixed: Use correct exercises endpoint (not mechanics)
+    // Backend returns: { hints: string[], cost_per_hint_ml_coins: number, hints_available: number }
+    const { data } = await apiClient.get<{
+      hints: string[];
+      cost_per_hint_ml_coins: number;
+      hints_available: number;
+    }>(`/educational/exercises/${exerciseId}/hints`);
 
-    return data;
+    // Transform backend response to frontend format
+    return data.hints.map((text, index) => ({
+      id: `${index + 1}`,
+      text,
+      cost: data.cost_per_hint_ml_coins,
+      order: index + 1,
+    }));
   } catch (error) {
     // If hints endpoint fails, return empty array (silent fail for optional feature)
+    console.warn(`Failed to fetch hints for exercise ${exerciseId}:`, error);
     return [];
   }
 };

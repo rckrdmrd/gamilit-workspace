@@ -37,7 +37,7 @@ BEGIN
         is_active, version
     ) VALUES (
         mod_id,
-        'Diario Multimedia de Marie Curie',
+        'Diario Interactivo de Marie',
         'Imagina su Vida Cotidiana en 1898',
         'Crea un diario multimedia desde la perspectiva de Marie Curie durante el descubrimiento del radio. Incluye entradas de texto, reflexiones, y elementos multimedia que capturen sus emociones, desafíos y triunfos.',
         'Escribe al menos 3 entradas de diario desde la perspectiva de Marie Curie. Cada entrada debe incluir: fecha histórica, contexto del día, estado emocional, reflexión personal, y opcionalmente elementos multimedia (imagen, audio, o boceto). Usa tu creatividad pero mantén precisión histórica.',
@@ -250,7 +250,7 @@ BEGIN
             "pistas": {"cost": 15, "enabled": true, "description": "Revela contexto histórico adicional"},
             "vision_lectora": {"cost": 25, "enabled": true, "description": "Muestra ejemplo de entrada de diario"}
         }'::jsonb,
-        40, 20,
+        500, 100,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -274,7 +274,7 @@ BEGIN
         is_active, version
     ) VALUES (
         mod_id,
-        'Cómic Digital: El Descubrimiento del Radio',
+        'Resumen Visual Progresivo (Cómic Digital)',
         'Narrativa Visual Científica',
         'Crea un cómic digital de 4-6 viñetas narrando el descubrimiento del radio por Marie Curie. Usa narrativa visual para contar esta historia científica de manera atractiva y educativa.',
         'Diseña un cómic de 4-6 viñetas (panels) que cuente la historia del descubrimiento del radio. Cada viñeta debe incluir: ilustración/boceto, diálogo de personajes, narración contextual, y elementos visuales que refuercen la historia. Usa la herramienta de creación de cómics o dibuja manualmente y sube imágenes.',
@@ -544,7 +544,7 @@ BEGIN
             "pistas": {"cost": 15, "enabled": true, "description": "Revela técnicas visuales específicas"},
             "vision_lectora": {"cost": 25, "enabled": true, "description": "Muestra ejemplo de panel completado"}
         }'::jsonb,
-        45, 22,
+        500, 100,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -568,7 +568,7 @@ BEGIN
         is_active, version
     ) VALUES (
         mod_id,
-        'Video-Carta: Mensaje de Marie al Futuro',
+        'Cápsula del Tiempo Digital',
         'Comunicación a Través del Tiempo',
         'Graba un video (o escribe guión detallado) como Marie Curie en 1925 enviando un mensaje inspirador y reflexivo a las generaciones del siglo XXI. Captura su sabiduría, esperanzas y advertencias.',
         'Imagina que eres Marie Curie en 1925, a los 58 años, con dos premios Nobel y décadas de experiencia. Graba un video de 2-5 minutos (o escribe guión de 400-600 palabras) dirigido a los jóvenes del siglo XXI. Habla desde tu perspectiva sobre educación, ciencia, igualdad, responsabilidad, y tu legado. Sé auténtica, inspiradora y reflexiva.',
@@ -798,7 +798,7 @@ BEGIN
             "pistas": {"cost": 15, "enabled": true, "description": "Revela citas reales de Marie Curie"},
             "vision_lectora": {"cost": 25, "enabled": true, "description": "Muestra guión completo de ejemplo"}
         }'::jsonb,
-        50, 25,
+        500, 100,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,

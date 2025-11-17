@@ -41,4 +41,4 @@ COMMENT ON COLUMN progress_tracking.engagement_metrics.engagement_score IS 'Calc
 CREATE TRIGGER update_engagement_metrics_updated_at
     BEFORE UPDATE ON progress_tracking.engagement_metrics
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();

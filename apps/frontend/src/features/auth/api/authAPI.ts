@@ -184,9 +184,9 @@ export const register = async (registerData: RegisterData): Promise<AuthResponse
     const backendRegisterData = {
       email: registerData.email,
       password: registerData.password,
-      firstName: firstName,
-      lastName: lastName,
-      role: 'student' as const,
+      first_name: firstName,
+      last_name: lastName,
+      // role removed - Backend assigns 'student' automatically
     };
 
     // Real API call

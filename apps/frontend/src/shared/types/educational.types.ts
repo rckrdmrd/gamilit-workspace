@@ -388,14 +388,14 @@ export interface Exercise {
   difficulty: DifficultyLevel;
 
   /**
-   * Maximum points possible
+   * Maximum points possible (Backend field)
    */
-  max_score: number;
+  max_points: number;
 
   /**
-   * Alternative name for max_score (Backend uses max_points)
+   * @deprecated Use max_points instead (Alias for backward compatibility)
    */
-  max_points?: number;
+  max_score?: number;
 
   /**
    * Minimum score to pass

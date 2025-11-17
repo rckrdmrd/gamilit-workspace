@@ -1,12 +1,13 @@
 -- =====================================================
--- Seed Data: Exercises Module 5 - Producción Creativa (DEV)
+-- Seed Data: Exercises Module 5 - Producción Creativa (PRODUCTION)
 -- =====================================================
 -- Description: 3 ejercicios creativos del Módulo 5 COMPLETOS
--- Module: MOD-05-CREATIVO
+-- Module: MOD-05-PRODUCCION
 -- Exercises: Diario Multimedia, Cómic Digital, Video-Carta
 -- Created by: SA-SEEDS-EDUCATIONAL
--- Date: 2025-11-02
--- Updated: 2025-11-11 (Expansión completa)
+-- Date: 2025-11-11
+-- Status: PRODUCTION
+-- Updated: 2025-11-11 (Expansión completa + corrección código módulo)
 -- =====================================================
 
 SET search_path TO educational_content, public;
@@ -15,10 +16,10 @@ DO $$
 DECLARE
     mod_id UUID;
 BEGIN
-    SELECT id INTO mod_id FROM educational_content.modules WHERE module_code = 'MOD-05-CREATIVO';
+    SELECT id INTO mod_id FROM educational_content.modules WHERE module_code = 'MOD-05-PRODUCCION';
 
     IF mod_id IS NULL THEN
-        RAISE EXCEPTION 'Módulo MOD-05-CREATIVO no encontrado. Ejecutar primero 01-modules.sql';
+        RAISE EXCEPTION 'Módulo MOD-05-PRODUCCION no encontrado. Ejecutar primero 01-modules.sql';
     END IF;
 
     -- ========================================================================
@@ -36,7 +37,7 @@ BEGIN
         is_active, version
     ) VALUES (
         mod_id,
-        'Diario Multimedia de Marie Curie',
+        'Diario Interactivo de Marie',
         'Imagina su Vida Cotidiana en 1898',
         'Crea un diario multimedia desde la perspectiva de Marie Curie durante el descubrimiento del radio. Incluye entradas de texto, reflexiones, y elementos multimedia que capturen sus emociones, desafíos y triunfos.',
         'Escribe al menos 3 entradas de diario desde la perspectiva de Marie Curie. Cada entrada debe incluir: fecha histórica, contexto del día, estado emocional, reflexión personal, y opcionalmente elementos multimedia (imagen, audio, o boceto). Usa tu creatividad pero mantén precisión histórica.',
@@ -249,7 +250,7 @@ BEGIN
             "pistas": {"cost": 15, "enabled": true, "description": "Revela contexto histórico adicional"},
             "vision_lectora": {"cost": 25, "enabled": true, "description": "Muestra ejemplo de entrada de diario"}
         }'::jsonb,
-        40, 20,
+        500, 100,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -273,7 +274,7 @@ BEGIN
         is_active, version
     ) VALUES (
         mod_id,
-        'Cómic Digital: El Descubrimiento del Radio',
+        'Resumen Visual Progresivo (Cómic Digital)',
         'Narrativa Visual Científica',
         'Crea un cómic digital de 4-6 viñetas narrando el descubrimiento del radio por Marie Curie. Usa narrativa visual para contar esta historia científica de manera atractiva y educativa.',
         'Diseña un cómic de 4-6 viñetas (panels) que cuente la historia del descubrimiento del radio. Cada viñeta debe incluir: ilustración/boceto, diálogo de personajes, narración contextual, y elementos visuales que refuercen la historia. Usa la herramienta de creación de cómics o dibuja manualmente y sube imágenes.',
@@ -427,7 +428,7 @@ BEGIN
                     "visualDescription": "Split panel: Arriba - Marie presentando radio a médicos en conferencia. Abajo - Médico usando radioterapia para tratar paciente con tumor. Conexión visual entre el descubrimiento y su aplicación.",
                     "keyElements": ["radio en contenedor", "médicos interesados", "tratamiento médico", "esperanza"],
                     "suggestedDialogue": {
-                        "Médico": "Con este 'radio' podemos atacar tumores sin cirugía invasiva.",
+                        "Médico": "Con este ''radio'' podemos atacar tumores sin cirugía invasiva.",
                         "Marie": "La ciencia debe servir a la humanidad."
                     },
                     "narration": "El descubrimiento de Marie revoluciona la medicina. La radioterapia salva miles de vidas.",
@@ -543,7 +544,7 @@ BEGIN
             "pistas": {"cost": 15, "enabled": true, "description": "Revela técnicas visuales específicas"},
             "vision_lectora": {"cost": 25, "enabled": true, "description": "Muestra ejemplo de panel completado"}
         }'::jsonb,
-        45, 22,
+        500, 100,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -567,7 +568,7 @@ BEGIN
         is_active, version
     ) VALUES (
         mod_id,
-        'Video-Carta: Mensaje de Marie al Futuro',
+        'Cápsula del Tiempo Digital',
         'Comunicación a Través del Tiempo',
         'Graba un video (o escribe guión detallado) como Marie Curie en 1925 enviando un mensaje inspirador y reflexivo a las generaciones del siglo XXI. Captura su sabiduría, esperanzas y advertencias.',
         'Imagina que eres Marie Curie en 1925, a los 58 años, con dos premios Nobel y décadas de experiencia. Graba un video de 2-5 minutos (o escribe guión de 400-600 palabras) dirigido a los jóvenes del siglo XXI. Habla desde tu perspectiva sobre educación, ciencia, igualdad, responsabilidad, y tu legado. Sé auténtica, inspiradora y reflexiva.',
@@ -797,7 +798,7 @@ BEGIN
             "pistas": {"cost": 15, "enabled": true, "description": "Revela citas reales de Marie Curie"},
             "vision_lectora": {"cost": 25, "enabled": true, "description": "Muestra guión completo de ejemplo"}
         }'::jsonb,
-        50, 25,
+        500, 100,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -813,22 +814,21 @@ BEGIN
     SET
         total_exercises = 3,
         metadata = jsonb_set(
-            COALESCE(metadata, '{}'::jsonb),
-            '{exercises_loaded}',
-            'true'::jsonb
-        ),
-        metadata = jsonb_set(
-            metadata,
+            jsonb_set(
+                COALESCE(metadata, '{}'::jsonb),
+                '{exercises_loaded}',
+                'true'::jsonb
+            ),
             '{last_seed_update}',
             to_jsonb(gamilit.now_mexico())
         ),
         updated_at = gamilit.now_mexico()
     WHERE id = mod_id;
 
-    RAISE NOTICE '✅ Módulo 5 (MOD-05-CREATIVO): 3 ejercicios COMPLETOS cargados exitosamente';
+    RAISE NOTICE '✅ Módulo 5 (MOD-05-PRODUCCION): 3 ejercicios COMPLETOS cargados exitosamente';
     RAISE NOTICE '   - Diario Multimedia: Templates completos, 5 prompts detallados';
     RAISE NOTICE '   - Cómic Digital: 6 story beats, guías visuales, assets';
     RAISE NOTICE '   - Video-Carta: Guión completo, 6 temas, tips de entrega';
-    RAISE NOTICE '✅ Module 5 expandido de 97 a 545 líneas (+462%)';
+    RAISE NOTICE '✅ Module 5 expandido de 97 a 545 líneas (+462%%)';
 
 END $$;

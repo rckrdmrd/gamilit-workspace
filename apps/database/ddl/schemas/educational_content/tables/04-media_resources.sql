@@ -30,7 +30,7 @@ CREATE TABLE educational_content.media_resources (
     category text,
     tags text[],
     keywords text[],
-    processing_status content_management.processing_status DEFAULT 'completed'::content_management.processing_status,
+    processing_status content_management.processing_status DEFAULT 'ready'::content_management.processing_status,
     is_public boolean DEFAULT false,
     is_active boolean DEFAULT true,
     used_in_modules uuid[],

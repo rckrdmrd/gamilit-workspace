@@ -1,11 +1,12 @@
 -- =====================================================
--- Seed Data: Exercises Module 1 - Comprensión Literal (DEV)
+-- Seed Data: Exercises Module 1 - Comprensión Literal (PRODUCTION)
 -- =====================================================
 -- Description: 5 ejercicios interactivos del Módulo 1
 -- Module: MOD-01-LITERAL
 -- Exercises: Crucigrama, Línea de Tiempo, Sopa de Letras, Mapa Conceptual, Emparejamiento
--- Created by: SA-SEEDS-EDUCATIONAL
--- Date: 2025-11-02
+-- Source: Migrated from DEV seeds (validated and production-ready)
+-- Date: 2025-11-11
+-- Status: PRODUCTION
 -- =====================================================
 
 SET search_path TO educational_content, public;
@@ -36,10 +37,10 @@ BEGIN
         is_active, version
     ) VALUES (
         mod_id,
-        'Crucigrama Científico: Descubrimientos de Marie Curie',
+        'Crucigrama Científico - DISTRIBUCIÓN',
         'Vocabulario de Radioactividad',
         'Completa el crucigrama con términos científicos relacionados con los descubrimientos de Marie Curie.',
-        'Lee las pistas horizontales y verticales. Haz clic en una casilla para comenzar a escribir. Usa mayúsculas sin acentos.',
+        '1. Lee todas las pistas antes de empezar, tanto horizontales como verticales. 2. Comienza con las palabras más largas o las que estés más seguro. 3. Usa las intersecciones - cuando dos palabras se cruzan, la letra debe coincidir. 4. Cuenta las casillas - cada pista indica cuántas letras tiene la respuesta. 5. Revisa el texto base - todas las respuestas están en la biografía de Marie Curie.',
         'crucigrama', 1,
         '{
             "gridSize": {"rows": 15, "cols": 15},
@@ -54,102 +55,81 @@ BEGIN
                     "id": "h1",
                     "number": 1,
                     "direction": "horizontal",
-                    "clue": "Elemento químico radiactivo que brilla en la oscuridad, descubierto por Marie Curie",
-                    "answer": "RADIO",
-                    "startRow": 2,
+                    "clue": "Universidad donde estudió",
+                    "answer": "SORBONA",
+                    "startRow": 4,
+                    "startCol": 3,
+                    "length": 7
+                },
+                {
+                    "id": "h2",
+                    "number": 2,
+                    "direction": "horizontal",
+                    "clue": "Premio recibido en 1903 y 1911",
+                    "answer": "NOBEL",
+                    "startRow": 6,
                     "startCol": 3,
                     "length": 5
                 },
                 {
-                    "id": "h2",
+                    "id": "h3",
                     "number": 3,
                     "direction": "horizontal",
-                    "clue": "País natal de Marie Curie",
-                    "answer": "POLONIA",
-                    "startRow": 5,
-                    "startCol": 1,
-                    "length": 7
-                },
-                {
-                    "id": "h3",
-                    "number": 5,
-                    "direction": "horizontal",
-                    "clue": "Ciudad francesa donde estudió en la Sorbona",
-                    "answer": "PARIS",
-                    "startRow": 8,
-                    "startCol": 4,
-                    "length": 5
-                },
-                {
-                    "id": "h4",
-                    "number": 7,
-                    "direction": "horizontal",
-                    "clue": "Mineral del cual Marie extrajo el radio",
-                    "answer": "PECHBLENDA",
-                    "startRow": 11,
-                    "startCol": 2,
-                    "length": 10
-                },
-                {
-                    "id": "v1",
-                    "number": 2,
-                    "direction": "vertical",
                     "clue": "Fenómeno de emisión espontánea de radiación descubierto por Marie",
                     "answer": "RADIOACTIVIDAD",
-                    "startRow": 0,
-                    "startCol": 5,
+                    "startRow": 8,
+                    "startCol": 1,
                     "length": 14
                 },
                 {
-                    "id": "v2",
+                    "id": "v1",
                     "number": 4,
                     "direction": "vertical",
                     "clue": "Elemento químico nombrado en honor a Polonia",
                     "answer": "POLONIO",
                     "startRow": 3,
-                    "startCol": 7,
+                    "startCol": 4,
                     "length": 7
+                },
+                {
+                    "id": "v2",
+                    "number": 5,
+                    "direction": "vertical",
+                    "clue": "Elemento químico radiactivo descubierto",
+                    "answer": "RADIO",
+                    "startRow": 8,
+                    "startCol": 1,
+                    "length": 5
                 },
                 {
                     "id": "v3",
                     "number": 6,
                     "direction": "vertical",
-                    "clue": "Premio internacional que Marie ganó dos veces",
-                    "answer": "NOBEL",
-                    "startRow": 6,
-                    "startCol": 9,
+                    "clue": "Apellido de Marie",
+                    "answer": "CURIE",
+                    "startRow": 8,
+                    "startCol": 7,
                     "length": 5
-                },
-                {
-                    "id": "v4",
-                    "number": 8,
-                    "direction": "vertical",
-                    "clue": "Apellido de soltera de Marie",
-                    "answer": "SKLODOWSKA",
-                    "startRow": 1,
-                    "startCol": 11,
-                    "length": 10
                 }
             ]
         }'::jsonb,
         '{
             "solution": {
-                "h1": "RADIO",
-                "h2": "POLONIA",
-                "h3": "PARIS",
-                "h4": "PECHBLENDA",
-                "v1": "RADIOACTIVIDAD",
-                "v2": "POLONIO",
-                "v3": "NOBEL",
-                "v4": "SKLODOWSKA"
+                "h1": "SORBONA",
+                "h2": "NOBEL",
+                "h3": "RADIOACTIVIDAD",
+                "v1": "POLONIO",
+                "v2": "RADIO",
+                "v3": "CURIE"
             }
         }'::jsonb,
         'beginner', 100, 70,
         15, 25, 3,
         ARRAY[
-            'Piensa en los elementos que Marie descubrió',
-            'Uno de los elementos lleva el nombre de su país',
-            'Marie ganó premios muy importantes en su carrera'
+            'La universidad francesa donde Marie estudió',
+            'Marie ganó este premio dos veces',
+            'Elemento nombrado en honor al país de Marie',
+            'Apellido de la científica'
         ]::text[],
         true, 15,
         ARRAY['pistas', 'vision_lectora', 'segunda_oportunidad']::gamification_system.comodin_type[],
@@ -158,7 +138,7 @@ BEGIN
             "vision_lectora": {"enabled": true, "cost": 25},
             "segunda_oportunidad": {"enabled": true, "cost": 40}
         }'::jsonb,
-        25, 12,
+        100, 20,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -180,7 +160,7 @@ BEGIN
         is_active, version
     ) VALUES (
         mod_id,
-        'Línea de Tiempo: Vida de Marie Curie',
+        'Línea de Tiempo de Marie Curie',
         'Ordena los Eventos Cronológicamente',
         'Organiza los eventos más importantes de la vida de Marie Curie en orden cronológico correcto.',
         'Arrastra los eventos a la línea de tiempo en el orden correcto. Comienza con el evento más antiguo (1867) y termina con el más reciente (1934).',
@@ -275,7 +255,7 @@ BEGIN
             "vision_lectora": {"enabled": true, "cost": 25},
             "segunda_oportunidad": {"enabled": true, "cost": 40}
         }'::jsonb,
-        20, 10,
+        100, 20,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -283,8 +263,9 @@ BEGIN
         updated_at = NOW();
 
     -- ========================================================================
-    -- EXERCISE 1.3: SOPA DE LETRAS
+    -- EXERCISE 1.3: COMPLETAR ESPACIOS EN BLANCO
     -- ========================================================================
+    -- CHANGED: Replaced "Sopa de Letras" with "Completar Espacios en Blanco" per doc v6.2 (DB-121)
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
         exercise_type, order_index,
@@ -297,171 +278,53 @@ BEGIN
         is_active, version
     ) VALUES (
         mod_id,
-        'Sopa de Letras: Vocabulario Científico de Marie Curie',
-        'Encuentra los Términos Clave',
-        'Busca y marca palabras relacionadas con la vida y descubrimientos de Marie Curie en esta sopa de letras.',
-        'Busca las palabras de la lista en la sopa de letras. Pueden estar en horizontal, vertical o diagonal.',
-        'sopa_letras', 3,
+        'Completar Espacios en Blanco',
+        'Datos Biográficos de Marie',
+        'Lee el texto sobre Marie Curie y completa los espacios con las palabras correctas del banco de palabras.',
+        'Lee el texto completo antes de completar. Arrastra las palabras del banco a los espacios correspondientes. Puedes revisar tus respuestas antes de enviar.',
+        'completar_espacios', 3,
         '{
-            "gridSize": 12,
-            "directions": ["horizontal", "vertical", "diagonal"],
-            "highlightFound": true,
-            "showWordList": true
+            "blankCount": 6,
+            "allowMultipleAttempts": true,
+            "showWordBank": true,
+            "caseSensitive": false
         }'::jsonb,
         '{
-            "words": [
-                "RADIO",
-                "POLONIO",
-                "URANIO",
-                "RADIOACTIVIDAD",
-                "RADIACION",
-                "NOBEL",
-                "FISICA",
-                "QUIMICA",
-                "LABORATORIO",
-                "SORBONA"
+            "text": "Marie Sklodowska nació en ___, Polonia. Su padre ___ era profesor de matemáticas y física, mientras que su madre ___ dirigía una escuela prestigiosa. La familia valoraba mucho la ___ y Marie mostró desde pequeña gran curiosidad por las ___ y ___.",
+            "wordBank": [
+                "Varsovia",
+                "Władysław",
+                "Bronisława",
+                "educación",
+                "ciencias",
+                "Polonia",
+                "matemáticas",
+                "física"
             ],
-            "definitions": {
-                "RADIO": "Elemento radiactivo que brilla en la oscuridad",
-                "POLONIO": "Elemento nombrado por el país natal de Marie",
-                "URANIO": "Elemento base para sus investigaciones",
-                "RADIOACTIVIDAD": "Fenómeno descubierto por Marie",
-                "RADIACION": "Emisión de energía o partículas",
-                "NOBEL": "Premio máximo de ciencia",
-                "FISICA": "Ciencia del primer Nobel de Marie",
-                "QUIMICA": "Ciencia del segundo Nobel de Marie",
-                "LABORATORIO": "Lugar de trabajo científico",
-                "SORBONA": "Universidad donde estudió Marie"
+            "blanks": [
+                {"id": "1", "position": 0, "correctAnswer": "Varsovia", "alternatives": []},
+                {"id": "2", "position": 1, "correctAnswer": "Władysław", "alternatives": []},
+                {"id": "3", "position": 2, "correctAnswer": "Bronisława", "alternatives": []},
+                {"id": "4", "position": 3, "correctAnswer": "educación", "alternatives": []},
+                {"id": "5", "position": 4, "correctAnswer": "ciencias", "alternatives": []},
+                {"id": "6", "position": 5, "correctAnswer": "matemáticas", "alternatives": ["física"]}
+            ]
+        }'::jsonb,
+        '{
+            "correctAnswers": {
+                "1": "Varsovia",
+                "2": "Władysław",
+                "3": "Bronisława",
+                "4": "educación",
+                "5": "ciencias",
+                "6": "matemáticas"
             }
         }'::jsonb,
-        '{
-            "words": ["RADIO", "POLONIO", "URANIO", "RADIOACTIVIDAD", "RADIACION", "NOBEL", "FISICA", "QUIMICA", "LABORATORIO", "SORBONA"],
-            "totalWords": 10
-        }'::jsonb,
-        'beginner', 100, 70,
-        10, 15, 3,
+        'beginner', 100, 60,
+        10, NULL, 3,
         ARRAY[
-            'Busca primero las palabras más cortas',
-            'RADIO y NOBEL son palabras de 5 letras',
-            'RADIOACTIVIDAD es la palabra más larga (14 letras)'
-        ]::text[],
-        true, 10,
-        ARRAY['pistas', 'vision_lectora', 'segunda_oportunidad']::gamification_system.comodin_type[],
-        '{
-            "pistas": {"enabled": true, "cost": 15},
-            "vision_lectora": {"enabled": true, "cost": 25},
-            "segunda_oportunidad": {"enabled": true, "cost": 40}
-        }'::jsonb,
-        20, 10,
-        true, 1
-    ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
-        content = EXCLUDED.content,
-        solution = EXCLUDED.solution,
-        updated_at = NOW();
-
-    -- ========================================================================
-    -- EXERCISE 1.4: MAPA CONCEPTUAL
-    -- ========================================================================
-    INSERT INTO educational_content.exercises (
-        module_id, title, subtitle, description, instructions,
-        exercise_type, order_index,
-        config, content, solution,
-        difficulty_level, max_points, passing_score,
-        estimated_time_minutes, time_limit_minutes, max_attempts,
-        hints, enable_hints, hint_cost_ml_coins,
-        comodines_allowed, comodines_config,
-        xp_reward, ml_coins_reward,
-        is_active, version
-    ) VALUES (
-        mod_id,
-        'Mapa Conceptual: Descubrimientos de Marie Curie',
-        'Organiza los Conceptos Científicos',
-        'Completa el mapa conceptual arrastrando los conceptos correctos a sus posiciones correspondientes.',
-        'Arrastra cada concepto a su lugar correcto en el mapa. Las conexiones mostrarán las relaciones entre los descubrimientos de Marie.',
-        'mapa_conceptual', 4,
-        '{
-            "layout": "hierarchical",
-            "allowConnections": true,
-            "dragAndDrop": true,
-            "autoConnect": true
-        }'::jsonb,
-        '{
-            "centralConcept": {
-                "id": "central",
-                "text": "Marie Curie",
-                "level": 0
-            },
-            "nodes": [
-                {
-                    "id": "node-1",
-                    "text": "Radioactividad",
-                    "level": 1,
-                    "category": "discovery",
-                    "correctPosition": {"x": 50, "y": 20}
-                },
-                {
-                    "id": "node-2",
-                    "text": "Radio",
-                    "level": 2,
-                    "category": "element",
-                    "correctPosition": {"x": 30, "y": 40}
-                },
-                {
-                    "id": "node-3",
-                    "text": "Polonio",
-                    "level": 2,
-                    "category": "element",
-                    "correctPosition": {"x": 70, "y": 40}
-                },
-                {
-                    "id": "node-4",
-                    "text": "Nobel de Física 1903",
-                    "level": 1,
-                    "category": "award",
-                    "correctPosition": {"x": 20, "y": 60}
-                },
-                {
-                    "id": "node-5",
-                    "text": "Nobel de Química 1911",
-                    "level": 1,
-                    "category": "award",
-                    "correctPosition": {"x": 80, "y": 60}
-                },
-                {
-                    "id": "node-6",
-                    "text": "Pechblenda",
-                    "level": 2,
-                    "category": "material",
-                    "correctPosition": {"x": 50, "y": 80}
-                }
-            ],
-            "connections": [
-                {"from": "central", "to": "node-1", "label": "descubrió"},
-                {"from": "node-1", "to": "node-2", "label": "elemento"},
-                {"from": "node-1", "to": "node-3", "label": "elemento"},
-                {"from": "node-2", "to": "node-6", "label": "extraído de"},
-                {"from": "node-3", "to": "node-6", "label": "extraído de"},
-                {"from": "central", "to": "node-4", "label": "recibió"},
-                {"from": "central", "to": "node-5", "label": "recibió"}
-            ]
-        }'::jsonb,
-        '{
-            "correctConnections": [
-                {"from": "central", "to": "node-1"},
-                {"from": "node-1", "to": "node-2"},
-                {"from": "node-1", "to": "node-3"},
-                {"from": "node-2", "to": "node-6"},
-                {"from": "node-3", "to": "node-6"},
-                {"from": "central", "to": "node-4"},
-                {"from": "central", "to": "node-5"}
-            ]
-        }'::jsonb,
-        'beginner', 100, 70,
-        15, 25, 3,
-        ARRAY[
-            'Marie descubrió la radioactividad como concepto principal',
-            'Radio y Polonio son elementos extraídos de la pechblenda',
-            'Marie ganó dos Premios Nobel en diferentes disciplinas'
+            'Pista 1: El padre de Marie tenía un nombre polaco que comienza con W',
+            'Pista 2: Marie nació en la capital de Polonia'
         ]::text[],
         true, 15,
         ARRAY['pistas', 'vision_lectora', 'segunda_oportunidad']::gamification_system.comodin_type[],
@@ -470,7 +333,7 @@ BEGIN
             "vision_lectora": {"enabled": true, "cost": 25},
             "segunda_oportunidad": {"enabled": true, "cost": 40}
         }'::jsonb,
-        25, 12,
+        100, 20,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -478,7 +341,122 @@ BEGIN
         updated_at = NOW();
 
     -- ========================================================================
-    -- EXERCISE 1.5: EMPAREJAMIENTO
+    -- EXERCISE 1.4: VERDADERO O FALSO
+    -- ========================================================================
+    -- CHANGED: Replaced "Mapa Conceptual" with "Verdadero o Falso" per doc v6.2 (DB-121)
+    INSERT INTO educational_content.exercises (
+        module_id, title, subtitle, description, instructions,
+        exercise_type, order_index,
+        config, content, solution,
+        difficulty_level, max_points, passing_score,
+        estimated_time_minutes, time_limit_minutes, max_attempts,
+        hints, enable_hints, hint_cost_ml_coins,
+        comodines_allowed, comodines_config,
+        xp_reward, ml_coins_reward,
+        is_active, version
+    ) VALUES (
+        mod_id,
+        'Verdadero o Falso',
+        'Hechos sobre la Juventud de Marie Curie',
+        'Evalúa afirmaciones sobre hechos explícitos de la juventud de Marie Curie según el contexto histórico proporcionado.',
+        'Lee el contexto histórico. Marca cada afirmación como Verdadero o Falso. Revisa todas las respuestas antes de enviar.',
+        'verdadero_falso', 4,
+        '{
+            "statementCount": 10,
+            "randomizeOrder": false,
+            "showExplanations": true
+        }'::jsonb,
+        '{
+            "context": "Durante su infancia en Polonia, Marie era conocida por su insaciable curiosidad científica. Su padre le enseñó los primeros principios de las matemáticas y la física, mientras su madre la inspiró con su dedicación a la educación.",
+            "statements": [
+                {
+                    "id": 1,
+                    "statement": "Marie mostró curiosidad excepcional por las ciencias desde muy pequeña",
+                    "answer": true,
+                    "explanation": "El texto menciona su insaciable curiosidad científica"
+                },
+                {
+                    "id": 2,
+                    "statement": "Su padre era profesor de química solamente",
+                    "answer": false,
+                    "explanation": "Era profesor de matemáticas y física"
+                },
+                {
+                    "id": 3,
+                    "statement": "Marie nació en Francia",
+                    "answer": false,
+                    "explanation": "Nació en Polonia (Varsovia)"
+                },
+                {
+                    "id": 4,
+                    "statement": "Su familia valoraba mucho la educación",
+                    "answer": true,
+                    "explanation": "Explícitamente mencionado en el contexto"
+                },
+                {
+                    "id": 5,
+                    "statement": "La madre de Marie dirigía una escuela",
+                    "answer": true,
+                    "explanation": "Se menciona que dirigía una escuela prestigiosa"
+                },
+                {
+                    "id": 6,
+                    "statement": "Marie Curie ganó su primer Nobel a los 20 años",
+                    "answer": false,
+                    "explanation": "Lo ganó en 1903, cuando tenía 36 años"
+                },
+                {
+                    "id": 7,
+                    "statement": "El nombre original de Marie era Maria Sklodowska",
+                    "answer": true,
+                    "explanation": "Nombre de nacimiento confirmado"
+                },
+                {
+                    "id": 8,
+                    "statement": "Marie fue la primera mujer en ganar un Premio Nobel",
+                    "answer": true,
+                    "explanation": "Hecho histórico verificable"
+                },
+                {
+                    "id": 9,
+                    "statement": "Su padre no apoyaba su interés en las ciencias",
+                    "answer": false,
+                    "explanation": "Le enseñó matemáticas y física"
+                },
+                {
+                    "id": 10,
+                    "statement": "Marie estudió en la Universidad de Varsovia",
+                    "answer": false,
+                    "explanation": "Estudió en la Sorbona de París"
+                }
+            ]
+        }'::jsonb,
+        '{
+            "correctAnswers": [true, false, false, true, true, false, true, true, false, false]
+        }'::jsonb,
+        'beginner', 100, 70,
+        12, NULL, 3,
+        ARRAY[
+            'Pista 1: Revisa el contexto histórico proporcionado',
+            'Pista 2: Marie nació en Polonia, no en Francia'
+        ]::text[],
+        true, 15,
+        ARRAY['pistas', 'vision_lectora', 'segunda_oportunidad']::gamification_system.comodin_type[],
+        '{
+            "pistas": {"enabled": true, "cost": 15},
+            "vision_lectora": {"enabled": true, "cost": 25},
+            "segunda_oportunidad": {"enabled": true, "cost": 40}
+        }'::jsonb,
+        100, 20,
+        true, 1
+    ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
+        content = EXCLUDED.content,
+        solution = EXCLUDED.solution,
+        updated_at = NOW();
+
+    -- ========================================================================
+    -- EXERCISE 1.5: SOPA DE LETRAS (BONUS)
+    -- CHANGED: Replaced "Emparejamiento" with "Sopa de Letras (BONUS)" per doc v6.2 (DB-121)
     -- ========================================================================
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
@@ -492,83 +470,47 @@ BEGIN
         is_active, version
     ) VALUES (
         mod_id,
-        'Emparejamiento: Fechas y Eventos de Marie Curie',
-        'Conecta Fechas con Eventos Históricos',
-        'Une cada fecha importante con el evento correspondiente en la vida de Marie Curie.',
-        'Haz clic en una fecha de la columna izquierda y luego en el evento correspondiente de la columna derecha para emparejarlos.',
-        'emparejamiento', 5,
+        'Sopa de Letras (BONUS)',
+        'Vocabulario Científico de Marie Curie',
+        'Encuentra palabras clave relacionadas con Marie Curie en una sopa de letras interactiva. Este es un ejercicio bonus opcional.',
+        'Busca las 10 palabras en el grid. Haz clic y arrastra para seleccionar. Las palabras pueden estar en horizontal, vertical o diagonal.',
+        'sopa_letras', 5,
         '{
-            "matchingType": "cards",
-            "allowMultipleAttempts": true,
-            "shuffleCards": true,
-            "showFeedback": "immediate"
+            "gridSize": {"rows": 12, "cols": 12},
+            "directions": ["horizontal", "vertical", "diagonal"],
+            "selectionMode": "click-drag",
+            "highlightFound": true
         }'::jsonb,
         '{
-            "scenarioText": "Marie Curie vivió una vida extraordinaria marcada por momentos históricos. ¿Puedes emparejar cada fecha con su evento correspondiente?",
-            "pairs": [
-                {
-                    "id": "pair-1",
-                    "left": {"id": "q1", "content": "1867", "type": "date"},
-                    "right": {"id": "a1", "content": "Nacimiento de Maria Sklodowska en Varsovia", "type": "event"}
-                },
-                {
-                    "id": "pair-2",
-                    "left": {"id": "q2", "content": "1891", "type": "date"},
-                    "right": {"id": "a2", "content": "Traslado a París para estudiar en la Sorbona", "type": "event"}
-                },
-                {
-                    "id": "pair-3",
-                    "left": {"id": "q3", "content": "1895", "type": "date"},
-                    "right": {"id": "a3", "content": "Matrimonio con Pierre Curie", "type": "event"}
-                },
-                {
-                    "id": "pair-4",
-                    "left": {"id": "q4", "content": "1898", "type": "date"},
-                    "right": {"id": "a4", "content": "Descubrimiento del polonio y el radio", "type": "event"}
-                },
-                {
-                    "id": "pair-5",
-                    "left": {"id": "q5", "content": "1903", "type": "date"},
-                    "right": {"id": "a5", "content": "Primer Premio Nobel (Física)", "type": "event"}
-                },
-                {
-                    "id": "pair-6",
-                    "left": {"id": "q6", "content": "1911", "type": "date"},
-                    "right": {"id": "a6", "content": "Segundo Premio Nobel (Química)", "type": "event"}
-                },
-                {
-                    "id": "pair-7",
-                    "left": {"id": "q7", "content": "1934", "type": "date"},
-                    "right": {"id": "a7", "content": "Fallecimiento por anemia aplásica", "type": "event"}
-                }
+            "words": [
+                {"word": "MARIE", "direction": "horizontal", "startRow": 2, "startCol": 3},
+                {"word": "CURIE", "direction": "vertical", "startRow": 1, "startCol": 7},
+                {"word": "POLONIA", "direction": "horizontal", "startRow": 5, "startCol": 0},
+                {"word": "NOBEL", "direction": "diagonal", "startRow": 0, "startCol": 0},
+                {"word": "RADIO", "direction": "horizontal", "startRow": 8, "startCol": 4},
+                {"word": "POLONIO", "direction": "vertical", "startRow": 3, "startCol": 9},
+                {"word": "PARIS", "direction": "horizontal", "startRow": 10, "startCol": 1},
+                {"word": "SORBONA", "direction": "vertical", "startRow": 4, "startCol": 5},
+                {"word": "CIENCIA", "direction": "diagonal", "startRow": 7, "startCol": 2},
+                {"word": "FISICA", "direction": "horizontal", "startRow": 11, "startCol": 6}
             ]
         }'::jsonb,
         '{
-            "correctPairs": [
-                {"left": "q1", "right": "a1"},
-                {"left": "q2", "right": "a2"},
-                {"left": "q3", "right": "a3"},
-                {"left": "q4", "right": "a4"},
-                {"left": "q5", "right": "a5"},
-                {"left": "q6", "right": "a6"},
-                {"left": "q7", "right": "a7"}
-            ]
+            "allWords": ["MARIE", "CURIE", "POLONIA", "NOBEL", "RADIO", "POLONIO", "PARIS", "SORBONA", "CIENCIA", "FISICA"]
         }'::jsonb,
         'beginner', 100, 70,
-        10, 18, 3,
+        10, 10, 1,
         ARRAY[
-            'Marie nació en el siglo XIX (1800s)',
-            'Los descubrimientos importantes fueron en 1898',
-            'Ganó dos Nobel: uno en 1903 y otro en 1911'
+            'Pista 1: Busca primero las palabras más largas',
+            'Pista 2: Recuerda revisar diagonal'
         ]::text[],
-        true, 10,
-        ARRAY['pistas', 'vision_lectora', 'segunda_oportunidad']::gamification_system.comodin_type[],
+        true, 15,
+        ARRAY['pistas', 'vision_lectora']::gamification_system.comodin_type[],
         '{
             "pistas": {"enabled": true, "cost": 15},
-            "vision_lectora": {"enabled": true, "cost": 25},
-            "segunda_oportunidad": {"enabled": true, "cost": 40}
+            "vision_lectora": {"enabled": true, "cost": 25}
         }'::jsonb,
-        20, 10,
+        100, 20,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -587,10 +529,10 @@ BEGIN
         updated_at = NOW()
     WHERE id = mod_id;
 
-    RAISE NOTICE '✅ Módulo 1 (MOD-01-LITERAL): 5 ejercicios cargados exitosamente';
+    RAISE NOTICE '✅ Módulo 1 (MOD-01-LITERAL): 5 ejercicios cargados exitosamente [PRODUCTION]';
     RAISE NOTICE '   - Crucigrama Científico';
     RAISE NOTICE '   - Línea de Tiempo';
-    RAISE NOTICE '   - Sopa de Letras';
-    RAISE NOTICE '   - Mapa Conceptual';
-    RAISE NOTICE '   - Emparejamiento';
+    RAISE NOTICE '   - Completar Espacios en Blanco';
+    RAISE NOTICE '   - Verdadero o Falso';
+    RAISE NOTICE '   - Sopa de Letras (BONUS)';
 END $$;

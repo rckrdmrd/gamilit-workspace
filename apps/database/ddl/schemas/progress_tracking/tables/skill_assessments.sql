@@ -36,4 +36,4 @@ COMMENT ON COLUMN progress_tracking.skill_assessments.evidence IS 'JSONB with ev
 CREATE TRIGGER update_skill_assessments_updated_at
     BEFORE UPDATE ON progress_tracking.skill_assessments
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();

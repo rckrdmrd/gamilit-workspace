@@ -39,9 +39,10 @@ En el MVP se implementó un sistema de autenticación básico con JWT que soport
 
 **Endpoints:**
 ```
-POST /api/auth/register
-- Body: { email, password, firstName, lastName, role }
+POST /api/auth/register (public self-service)
+- Body: { email, password, first_name?, last_name? }
 - Response: { user, accessToken }
+- Note: role is assigned automatically as 'student'
 
 POST /api/auth/login
 - Body: { email, password }
@@ -72,8 +73,8 @@ class User {
   id: string (UUID)
   email: string (unique)
   password: string (hashed)
-  firstName: string
-  lastName: string
+  first_name: string  // snake_case for DB consistency
+  last_name: string   // snake_case for DB consistency
   role: 'student' | 'teacher'
   createdAt: Date
   updatedAt: Date

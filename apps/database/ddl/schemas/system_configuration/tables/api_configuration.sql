@@ -37,4 +37,4 @@ COMMENT ON COLUMN system_configuration.api_configuration.rate_limit_per_minute I
 CREATE TRIGGER update_api_configuration_updated_at
     BEFORE UPDATE ON system_configuration.api_configuration
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();

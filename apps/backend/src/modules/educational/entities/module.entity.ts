@@ -238,11 +238,12 @@ export class Module {
 
   /**
    * Estado del módulo
-   * ENUM: draft, published, archived, reviewing
+   * ENUM: draft, published, archived, under_review
    */
   @Column({
     type: 'enum',
     enum: ContentStatusEnum,
+    enumName: 'educational_content.module_status',
     default: ContentStatusEnum.DRAFT,
   })
   status!: ContentStatusEnum;

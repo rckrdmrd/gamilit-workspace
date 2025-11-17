@@ -39,4 +39,4 @@ COMMENT ON COLUMN progress_tracking.module_completion_tracking.status IS 'Status
 CREATE TRIGGER update_module_completion_tracking_updated_at
     BEFORE UPDATE ON progress_tracking.module_completion_tracking
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();

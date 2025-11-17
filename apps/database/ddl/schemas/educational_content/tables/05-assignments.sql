@@ -32,4 +32,4 @@ COMMENT ON COLUMN educational_content.assignments.is_published IS 'Whether assig
 CREATE TRIGGER update_assignments_updated_at
     BEFORE UPDATE ON educational_content.assignments
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();

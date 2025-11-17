@@ -114,7 +114,7 @@ BEGIN
             'Las motivaciones de Marie eran principalmente científicas y humanitarias'
         ]::text[],
         true, 15,
-        25, 15,
+        100, 20,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -233,14 +233,14 @@ BEGIN
             "correctHypotheses": ["s1-h2", "s2-h2", "s3-h1"]
         }'::jsonb,
         'intermediate', 100, 70,
-        20, 3,
+        100, 20,
         ARRAY[
             'Piensa en el método científico: observación → hipótesis → verificación',
             'Las hipótesis correctas explican todos los fenómenos observados',
             'Marie fue pionera en aplicar el pensamiento científico riguroso'
         ]::text[],
         true, 15,
-        25, 15,
+        100, 20,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -352,14 +352,14 @@ BEGIN
             "correctPredictions": ["pred-1-p2", "pred-2-p2", "pred-3-p2"]
         }'::jsonb,
         'intermediate', 100, 70,
-        20, 3,
+        100, 20,
         ARRAY[
             'Considera las características personales de Marie: determinación, pasión por la ciencia, principios éticos',
             'El contexto histórico es importante pero Marie frecuentemente desafió las normas',
             'Las acciones de Marie siempre estuvieron guiadas por su visión del bien común'
         ]::text[],
         true, 15,
-        25, 15,
+        100, 20,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -461,14 +461,14 @@ BEGIN
             }
         }'::jsonb,
         'intermediate', 100, 75,
-        18, 3,
+        100, 20,
         ARRAY[
             'Lee toda la narrativa primero para entender el contexto general',
             'Las piezas están categorizadas: temporales, de lugar, hipótesis, duración, resultado e impacto',
             'El descubrimiento del radio tomó varios años de trabajo intenso'
         ]::text[],
         true, 15,
-        25, 15,
+        100, 20,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -554,14 +554,14 @@ BEGIN
             "incorrectInferences": ["inf-5", "inf-6"]
         }'::jsonb,
         'intermediate', 100, 75,
-        22, 3,
+        100, 20,
         ARRAY[
             'Distingue entre inferencias basadas en evidencia y juicios de valor',
             'Considera el contexto histórico: el conocimiento científico de esa época era limitado',
             'Las inferencias correctas explican hechos observables de manera lógica'
         ]::text[],
         true, 15,
-        25, 15,
+        100, 20,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,

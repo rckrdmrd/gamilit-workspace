@@ -175,6 +175,13 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
 
       if (index < parts.length - 1) {
         const blank = blanks[index];
+
+        // Safety check: skip if blank is undefined
+        if (!blank) {
+          console.warn(`[CompletarEspacios] Blank at index ${index} is undefined. Blanks length: ${blanks.length}, Parts length: ${parts.length}`);
+          return;
+        }
+
         const isAnswered = blank.userAnswer && blank.userAnswer.trim() !== '';
         const isCorrect = isAnswered && (
           blank.userAnswer!.trim().toLowerCase() === blank.correctAnswer.toLowerCase() ||

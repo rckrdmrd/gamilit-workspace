@@ -38,4 +38,4 @@ COMMENT ON COLUMN content_management.media_metadata.exif_data IS 'EXIF data from
 CREATE TRIGGER update_media_metadata_updated_at
     BEFORE UPDATE ON content_management.media_metadata
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();

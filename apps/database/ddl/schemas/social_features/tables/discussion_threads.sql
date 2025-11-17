@@ -37,4 +37,4 @@ COMMENT ON COLUMN social_features.discussion_threads.replies_count IS 'Number of
 CREATE TRIGGER update_discussion_threads_updated_at
     BEFORE UPDATE ON social_features.discussion_threads
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION gamilit.update_updated_at_column();
