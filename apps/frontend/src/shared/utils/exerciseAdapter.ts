@@ -171,12 +171,32 @@ const generateGridFromClues = (clues: any[], rows: number, cols: number): any[][
 
 /**
  * Adapts ExerciseData to CrucigramaData format
+ *
+ * NEW (SECURE): Backend pre-generates grid without answers
+ * FALLBACK: If old format, generate locally (backwards compatibility)
  */
 export const adaptToCrucigramaData = (exercise: ExerciseData): any => {
   const base = adaptToBaseExercise(exercise);
 
-  // Get clues and grid size from mechanicData.content
+  // Get clues and grid from mechanicData.content
   const content = exercise.mechanicData?.content || {};
+
+  // NEW FORMAT: Backend sends pre-built grid (SECURE)
+  // Check if backend sent pre-generated grid (Array format)
+  if (Array.isArray(content.grid) && content.gridConfig) {
+    console.log('[SECURE] Using pre-generated grid from backend');
+
+    return {
+      ...base,
+      grid: content.grid,              // Pre-built grid WITHOUT answers
+      clues: content.clues || [],       // Clues WITHOUT answer field
+      rows: content.gridConfig.rows,
+      cols: content.gridConfig.cols,
+    };
+  }
+
+  // FALLBACK: Old format - generate grid locally (BACKWARDS COMPATIBILITY)
+  console.warn('[FALLBACK] Generating grid locally - consider updating backend');
 
   // Use words array for grid generation (new format)
   // or fall back to clues array (old format)
@@ -212,12 +232,12 @@ export const adaptToCrucigramaData = (exercise: ExerciseData): any => {
     wordsForGrid = [...vertical, ...horizontal];
   }
 
-  // Get grid from content.grid or use default
+  // Get grid config or use default
   const gridConfig = content.grid || { rows: 15, cols: 15 };
   const rows = gridConfig.rows || 15;
   const cols = gridConfig.cols || 15;
 
-  // Generate grid from words
+  // Generate grid from words (OLD WAY)
   const grid = generateGridFromClues(wordsForGrid, rows, cols);
 
   // Convert clues to flat array format expected by CrucigramaExercise component

@@ -5,6 +5,7 @@ import { ExerciseSubmission } from '../entities';
 import { CreateExerciseSubmissionDto } from '../dto';
 import { DB_SCHEMAS } from '@shared/constants/database.constants';
 import { Exercise } from '@/modules/educational/entities';
+import { Profile } from '@/modules/auth-management/entities';
 
 /**
  * ExerciseSubmissionService
@@ -24,7 +25,32 @@ export class ExerciseSubmissionService {
     private readonly submissionRepo: Repository<ExerciseSubmission>,
     @InjectRepository(Exercise, 'educational')
     private readonly exerciseRepo: Repository<Exercise>,
+    @InjectRepository(Profile, 'auth')
+    private readonly profileRepo: Repository<Profile>,
   ) {}
+
+  /**
+   * Helper method to get profile.id from auth.users.id
+   *
+   * @description exercise_submissions table FK references profiles.id, but JWT contains auth.users.id.
+   * This method converts auth.users.id → profiles.id
+   *
+   * @param userId - auth.users.id (from JWT token)
+   * @returns profiles.id
+   * @throws NotFoundException if profile doesn't exist
+   */
+  private async getProfileId(userId: string): Promise<string> {
+    const profile = await this.profileRepo.findOne({
+      where: { user_id: userId },
+      select: ['id'],
+    });
+
+    if (!profile) {
+      throw new NotFoundException(`Profile not found for user ${userId}`);
+    }
+
+    return profile.id;
+  }
 
   /**
    * Crea un nuevo envío de ejercicio
@@ -92,7 +118,7 @@ export class ExerciseSubmissionService {
 
   /**
    * Workflow completo de envío de ejercicio
-   * @param userId - ID del usuario
+   * @param userId - ID del usuario (auth.users.id from JWT)
    * @param exerciseId - ID del ejercicio
    * @param answers - Respuestas del ejercicio
    * @returns Envío creado y procesado
@@ -102,8 +128,12 @@ export class ExerciseSubmissionService {
     exerciseId: string,
     answers: Record<string, any>,
   ): Promise<ExerciseSubmission> {
+    // CRITICAL FIX: Convert auth.users.id → profiles.id
+    // exercise_submissions.user_id FK references profiles.id (NOT auth.users.id)
+    const profileId = await this.getProfileId(userId);
+
     // Verificar si ya existe un envío previo
-    const existingSubmission = await this.findByUserAndExercise(userId, exerciseId);
+    const existingSubmission = await this.findByUserAndExercise(profileId, exerciseId);
 
     if (existingSubmission && existingSubmission.status === 'graded') {
       throw new BadRequestException(
@@ -113,7 +143,7 @@ export class ExerciseSubmissionService {
 
     // Crear o actualizar submission
     const submissionData: CreateExerciseSubmissionDto = {
-      user_id: userId,
+      user_id: profileId,  // FIXED: usar profileId en lugar de userId
       exercise_id: exerciseId,
       answer_data: answers,
       max_score: 100,
@@ -248,6 +278,26 @@ export class ExerciseSubmissionService {
 
         case 'mapa_conceptual':
           ({ correctAnswers, totalQuestions } = this.validateMapaConceptual(answerData, content, solution));
+          break;
+
+        case 'detective_textual':
+          ({ correctAnswers, totalQuestions } = this.validateDetectiveTextual(answerData, content, solution));
+          break;
+
+        case 'construccion_hipotesis':
+          ({ correctAnswers, totalQuestions } = this.validateConstruccionHipotesis(answerData, content, solution));
+          break;
+
+        case 'prediccion_narrativa':
+          ({ correctAnswers, totalQuestions } = this.validatePrediccionNarrativa(answerData, content, solution));
+          break;
+
+        case 'puzzle_contexto':
+          ({ correctAnswers, totalQuestions } = this.validatePuzzleContexto(answerData, content, solution));
+          break;
+
+        case 'rueda_inferencias':
+          ({ correctAnswers, totalQuestions } = this.validateRuedaInferencias(answerData, content, solution));
           break;
 
         default:
@@ -649,6 +699,172 @@ export class ExerciseSubmissionService {
       submission,
       xp_earned: xpEarned,
       ml_coins_earned: mlCoinsEarned,
+    };
+  }
+
+  /**
+   * Validate Detective Textual (Module 2.1)
+   * Multiple choice questions with correct answers in content
+   */
+  private validateDetectiveTextual(
+    answerData: Record<string, any>,
+    content: Record<string, any>,
+    solution: Record<string, any>
+  ): { correctAnswers: number; totalQuestions: number } {
+    const questions = content.questions || [];
+    let correctCount = 0;
+
+    questions.forEach((question: any) => {
+      const userAnswer = answerData[question.id];
+      const correctAnswer = question.correctAnswer;
+
+      if (userAnswer !== undefined && userAnswer === correctAnswer) {
+        correctCount++;
+      }
+    });
+
+    return {
+      correctAnswers: correctCount,
+      totalQuestions: questions.length
+    };
+  }
+
+  /**
+   * Validate Construcción de Hipótesis (Module 2.2)
+   * Cause-effect matching: answerData = { causeId: [consequenceIds] }
+   */
+  private validateConstruccionHipotesis(
+    answerData: Record<string, any>,
+    content: Record<string, any>,
+    solution: Record<string, any>
+  ): { correctAnswers: number; totalQuestions: number } {
+    const consequences = content.consequences || [];
+    let correctCount = 0;
+    let totalCount = 0;
+
+    // For each consequence, check if it's assigned to the correct cause(s)
+    consequences.forEach((consequence: any) => {
+      if (!consequence.correctCauseIds || consequence.correctCauseIds.length === 0) {
+        return; // Skip distractors
+      }
+
+      consequence.correctCauseIds.forEach((correctCauseId: string) => {
+        totalCount++;
+        // Check if user assigned this consequence to this cause
+        const assignedConsequences = answerData[correctCauseId] || [];
+        if (assignedConsequences.includes(consequence.id)) {
+          correctCount++;
+        }
+      });
+    });
+
+    return {
+      correctAnswers: correctCount,
+      totalQuestions: totalCount
+    };
+  }
+
+  /**
+   * Validate Predicción Narrativa (Module 2.3)
+   * Multiple scenarios with prediction selection
+   */
+  private validatePrediccionNarrativa(
+    answerData: Record<string, any>,
+    content: Record<string, any>,
+    solution: Record<string, any>
+  ): { correctAnswers: number; totalQuestions: number } {
+    const scenarios = content.scenarios || [];
+    let correctCount = 0;
+
+    scenarios.forEach((scenario: any) => {
+      const userAnswer = answerData[scenario.id];
+
+      // Find the correct prediction
+      const correctPrediction = scenario.predictions?.find((p: any) => p.isCorrect);
+
+      if (userAnswer && correctPrediction && userAnswer === correctPrediction.id) {
+        correctCount++;
+      }
+    });
+
+    return {
+      correctAnswers: correctCount,
+      totalQuestions: scenarios.length
+    };
+  }
+
+  /**
+   * Validate Puzzle Contexto (Module 2.4)
+   * Fragment ordering puzzle
+   */
+  private validatePuzzleContexto(
+    answerData: Record<string, any>,
+    content: Record<string, any>,
+    solution: Record<string, any>
+  ): { correctAnswers: number; totalQuestions: number } {
+    const correctOrder = solution.correctOrder || [];
+    let correctCount = 0;
+
+    // answerData format: { fragmentId: position }
+    // Check each fragment's position
+    correctOrder.forEach((fragmentId: string, correctPosition: number) => {
+      const userPosition = answerData[fragmentId];
+      if (userPosition === correctPosition) {
+        correctCount++;
+      }
+    });
+
+    return {
+      correctAnswers: correctCount,
+      totalQuestions: correctOrder.length
+    };
+  }
+
+  /**
+   * Validate Rueda de Inferencias (Module 2.5)
+   * Select correct inferences from a list
+   */
+  private validateRuedaInferencias(
+    answerData: Record<string, any>,
+    content: Record<string, any>,
+    solution: Record<string, any>
+  ): { correctAnswers: number; totalQuestions: number } {
+    const correctInferences = solution.correctInferences || [];
+    const incorrectInferences = solution.incorrectInferences || [];
+    const totalInferences = [...correctInferences, ...incorrectInferences];
+
+    // answerData should be an array of selected inference IDs
+    const selectedInferences = answerData.selectedInferences || [];
+
+    let correctCount = 0;
+
+    // Count correct selections (selected a correct inference)
+    selectedInferences.forEach((inferenceId: string) => {
+      if (correctInferences.includes(inferenceId)) {
+        correctCount++;
+      }
+    });
+
+    // Penalize incorrect selections (selected an incorrect inference)
+    selectedInferences.forEach((inferenceId: string) => {
+      if (incorrectInferences.includes(inferenceId)) {
+        correctCount--;
+      }
+    });
+
+    // Penalize missed correct inferences (should have selected but didn't)
+    correctInferences.forEach((correctId: string) => {
+      if (!selectedInferences.includes(correctId)) {
+        // Already counted as not correct by not including it
+      }
+    });
+
+    // Ensure correctCount is not negative
+    correctCount = Math.max(0, correctCount);
+
+    return {
+      correctAnswers: correctCount,
+      totalQuestions: correctInferences.length
     };
   }
 }

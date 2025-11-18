@@ -265,6 +265,138 @@ export class ExercisesController {
   }
 
   /**
+   * Generates crossword grid structure WITHOUT exposing answers (SECURITY)
+   *
+   * @description Pre-generates the grid structure on the backend so the frontend
+   * doesn't need the actual answers to build the crossword. This prevents
+   * cheating while maintaining full functionality.
+   *
+   * @param content - Exercise content with clues array
+   * @returns Object with pre-built grid, filtered clues, and grid config
+   *
+   * Algorithm:
+   * 1. Find grid dimensions from clues positions
+   * 2. Initialize empty grid
+   * 3. Mark cells as non-black based on word positions
+   * 4. Add cell numbers from clue numbers
+   * 5. Return grid WITHOUT letter values
+   */
+  private generateCrosswordGrid(content: any): any {
+    const clues = content.clues || [];
+
+    // Calculate grid dimensions
+    let maxRow = 0;
+    let maxCol = 0;
+
+    clues.forEach((clue: any) => {
+      const { answer, startRow, startCol, direction } = clue;
+      const length = answer?.length || 0;
+
+      if (direction === 'horizontal') {
+        maxRow = Math.max(maxRow, startRow);
+        maxCol = Math.max(maxCol, startCol + length - 1);
+      } else if (direction === 'vertical') {
+        maxRow = Math.max(maxRow, startRow + length - 1);
+        maxCol = Math.max(maxCol, startCol);
+      }
+    });
+
+    const rows = maxRow + 1;
+    const cols = maxCol + 1;
+
+    // Initialize empty grid
+    const grid: any[][] = [];
+    for (let r = 0; r < rows; r++) {
+      grid[r] = [];
+      for (let c = 0; c < cols; c++) {
+        grid[r][c] = {
+          row: r,
+          col: c,
+          isBlack: true,
+          userInput: '',
+        };
+      }
+    }
+
+    // Mark cells and add numbers
+    clues.forEach((clue: any) => {
+      const { answer, startRow, startCol, direction, number } = clue;
+      const length = answer?.length || 0;
+
+      for (let i = 0; i < length; i++) {
+        let row: number, col: number;
+
+        if (direction === 'horizontal') {
+          row = startRow;
+          col = startCol + i;
+        } else {
+          row = startRow + i;
+          col = startCol;
+        }
+
+        if (row < rows && col < cols) {
+          const existingCell = grid[row][col];
+
+          // First letter of the word gets the number
+          if (i === 0) {
+            if (!existingCell.isBlack && existingCell.number !== undefined) {
+              // Cell already has a number from another word (intersection start)
+              grid[row][col] = {
+                ...existingCell,
+                isBlack: false,
+                numbers: existingCell.numbers
+                  ? [...existingCell.numbers, number].sort((a, b) => a - b)
+                  : [existingCell.number, number].sort((a, b) => a - b),
+                number: undefined,
+              };
+            } else {
+              // First word in this cell
+              grid[row][col] = {
+                row,
+                col,
+                isBlack: false,
+                number: number,
+                userInput: '',
+              };
+            }
+          } else {
+            // Not the first letter
+            if (existingCell.isBlack) {
+              grid[row][col] = {
+                row,
+                col,
+                isBlack: false,
+                userInput: '',
+              };
+            }
+          }
+        }
+      }
+    });
+
+    // Filter clues to remove answers but keep metadata
+    const filteredClues = clues.map((clue: any) => ({
+      id: clue.id,
+      number: clue.number,
+      clue: clue.clue,
+      length: clue.answer?.length || 0,
+      direction: clue.direction,
+      startRow: clue.startRow,
+      startCol: clue.startCol,
+      // answer: NOT INCLUDED (security)
+    }));
+
+    return {
+      grid,
+      clues: filteredClues,
+      gridConfig: {
+        rows,
+        cols,
+      },
+    };
+  }
+
+  /**
    * FE-055: Filter correct answers from exercise content (SECURITY)
    * Removes solution fields to prevent cheating
    */
@@ -293,38 +425,36 @@ export class ExercisesController {
         });
       }
 
-      if (content.clues) {
-        // CRITICAL FIX: For crucigrama (crossword), keep 'answer' field
-        // Reason: The grid generation requires answer.length and answer[i] to build the crossword grid
-        // Security: The frontend still shows empty cells initially - no cheating possible
-        const isCrucigrama = filtered.exercise_type === 'crucigrama';
+      // CRUCIGRAMA: Generate pre-built grid structure (SECURE)
+      // Instead of sending answers, we send the grid structure
+      if (filtered.exercise_type === 'crucigrama' && content.clues) {
+        const gridData = this.generateCrosswordGrid(content);
+        content.grid = gridData.grid;
+        content.clues = gridData.clues;
+        content.gridConfig = gridData.gridConfig;
+      }
 
+      // Remove answer fields from clues for all other exercise types
+      if (content.clues && filtered.exercise_type !== 'crucigrama') {
         if (Array.isArray(content.clues)) {
-          if (!isCrucigrama) {
-            // For non-crossword exercises, remove answers
-            content.clues = content.clues.map((clue: any) => {
+          content.clues = content.clues.map((clue: any) => {
+            const { word, answer, ...rest } = clue;
+            return rest;
+          });
+        } else {
+          // Handle object format {horizontal: [], vertical: []}
+          if (content.clues.horizontal) {
+            content.clues.horizontal = content.clues.horizontal.map((clue: any) => {
               const { word, answer, ...rest } = clue;
               return rest;
             });
           }
-          // For crucigrama, keep clues as-is (with answer field)
-        } else {
-          // Handle object format {horizontal: [], vertical: []}
-          if (!isCrucigrama) {
-            if (content.clues.horizontal) {
-              content.clues.horizontal = content.clues.horizontal.map((clue: any) => {
-                const { word, answer, ...rest } = clue;
-                return rest;
-              });
-            }
-            if (content.clues.vertical) {
-              content.clues.vertical = content.clues.vertical.map((clue: any) => {
-                const { word, answer, ...rest } = clue;
-                return rest;
-              });
-            }
+          if (content.clues.vertical) {
+            content.clues.vertical = content.clues.vertical.map((clue: any) => {
+              const { word, answer, ...rest } = clue;
+              return rest;
+            });
           }
-          // For crucigrama, keep clues as-is (with answer field)
         }
       }
 
@@ -345,7 +475,7 @@ export class ExercisesController {
 
     console.log('[FE-055] Filtered correct answers from exercise:', exercise.id,
       '| Type:', filtered.exercise_type,
-      '| Kept answers for crucigrama:', filtered.exercise_type === 'crucigrama');
+      '| Crucigrama grid pre-generated:', filtered.exercise_type === 'crucigrama');
 
     return filtered;
   }

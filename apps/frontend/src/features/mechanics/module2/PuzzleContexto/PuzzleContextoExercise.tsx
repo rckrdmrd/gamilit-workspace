@@ -171,18 +171,26 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
           className="space-y-6"
         >
           {/* Header - Detective Theme with Gradient */}
-          <div className="bg-gradient-to-r from-detective-blue to-detective-orange rounded-detective p-6 text-white shadow-detective-lg">
+          <div
+            className="rounded-detective p-6 shadow-detective-lg"
+            style={{
+              background: 'linear-gradient(to right, #1e3a8a, #f97316)',
+              color: 'white'
+            }}
+          >
             <div className="flex items-center gap-3 mb-2">
-              <Puzzle className="w-8 h-8" />
-              <h1 className="text-detective-3xl font-bold">{exercise.title}</h1>
+              <Puzzle className="w-8 h-8 text-white" />
+              <h1 className="text-detective-3xl font-bold text-white">{exercise.title}</h1>
             </div>
             {exercise.subtitle && (
-              <p className="text-detective-base opacity-90 mb-4">{exercise.subtitle}</p>
+              <p className="text-detective-base text-white mb-4" style={{ opacity: 0.9 }}>
+                {exercise.subtitle}
+              </p>
             )}
             {exercise.description && (
               <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
-                <p className="text-detective-sm font-medium">Objetivo:</p>
-                <p className="text-detective-base">{exercise.description}</p>
+                <p className="text-detective-sm font-medium text-gray-900">Objetivo:</p>
+                <p className="text-detective-base text-gray-900">{exercise.description}</p>
               </div>
             )}
           </div>
