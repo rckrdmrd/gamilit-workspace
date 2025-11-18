@@ -300,6 +300,27 @@ export class ExerciseSubmissionService {
           ({ correctAnswers, totalQuestions } = this.validateRuedaInferencias(answerData, content, solution));
           break;
 
+        // Module 3: Critical Reading
+        case 'tribunal_opiniones':
+          ({ correctAnswers, totalQuestions } = this.validateTribunalOpiniones(answerData, content, solution));
+          break;
+
+        case 'analisis_fuentes':
+          ({ correctAnswers, totalQuestions } = this.validateAnalisisFuentes(answerData, content, solution));
+          break;
+
+        case 'debate_digital':
+          ({ correctAnswers, totalQuestions } = this.validateDebateDigital(answerData, content, solution));
+          break;
+
+        case 'podcast_argumentativo':
+          ({ correctAnswers, totalQuestions } = this.validatePodcastArgumentativo(answerData, content, solution));
+          break;
+
+        case 'matriz_perspectivas':
+          ({ correctAnswers, totalQuestions } = this.validateMatrizPerspectivas(answerData, content, solution));
+          break;
+
         default:
           console.warn(`[FE-055] Unknown exercise type: ${exerciseType}, using placeholder`);
           // Fallback for unknown types
@@ -865,6 +886,217 @@ export class ExerciseSubmissionService {
     return {
       correctAnswers: correctCount,
       totalQuestions: correctInferences.length
+    };
+  }
+
+  /**
+   * Validate Tribunal de Opiniones (Module 3.1)
+   * Multiple cases with ethical questions, each with correctAnswer
+   */
+  private validateTribunalOpiniones(
+    answerData: Record<string, any>,
+    content: Record<string, any>,
+    solution: Record<string, any>
+  ): { correctAnswers: number; totalQuestions: number } {
+    const cases = content.cases || [];
+    let correctCount = 0;
+    let totalCount = 0;
+
+    // Iterate through all cases and their questions
+    cases.forEach((caseItem: any) => {
+      const questions = caseItem.questions || [];
+      questions.forEach((question: any) => {
+        totalCount++;
+        const userAnswer = answerData[question.id];
+        const correctAnswer = question.correctAnswer;
+
+        if (userAnswer !== undefined && userAnswer === correctAnswer) {
+          correctCount++;
+        }
+      });
+    });
+
+    return {
+      correctAnswers: correctCount,
+      totalQuestions: totalCount
+    };
+  }
+
+  /**
+   * Validate Análisis de Fuentes (Module 3.2)
+   * Students rank sources by credibility, compare with credibilityScore
+   */
+  private validateAnalisisFuentes(
+    answerData: Record<string, any>,
+    content: Record<string, any>,
+    solution: Record<string, any>
+  ): { correctAnswers: number; totalQuestions: number } {
+    const sources = content.sources || [];
+
+    // Create correct order based on credibilityScore (descending)
+    const sortedSources = [...sources].sort((a, b) => b.credibilityScore - a.credibilityScore);
+    const correctOrder = sortedSources.map((s: any) => s.id);
+
+    // Get user's ranking: answerData.ranking = [sourceId1, sourceId2, ...]
+    const userRanking = answerData.ranking || [];
+
+    let correctCount = 0;
+
+    // Check each position in the ranking
+    correctOrder.forEach((correctId: string, index: number) => {
+      if (userRanking[index] === correctId) {
+        correctCount++;
+      }
+    });
+
+    return {
+      correctAnswers: correctCount,
+      totalQuestions: correctOrder.length
+    };
+  }
+
+  /**
+   * Validate Debate Digital (Module 3.3)
+   * Open-ended argumentative exercise - basic validation for completion
+   *
+   * @note This is a placeholder validator. Ideally requires AI/manual review.
+   * Currently validates: minimum length, presence of arguments
+   */
+  private validateDebateDigital(
+    answerData: Record<string, any>,
+    content: Record<string, any>,
+    solution: Record<string, any>
+  ): { correctAnswers: number; totalQuestions: number } {
+    const rubric = content.evaluationRubric || {};
+    const totalCriteria = Object.keys(rubric).length || 4; // logic, clarity, evidence, counterarguments
+
+    // Get user's response
+    const userResponse = answerData.response || answerData.text || '';
+    const selectedPosition = answerData.position || '';
+    const userArguments = answerData.arguments || [];
+
+    let score = 0;
+
+    // Basic validation criteria:
+    // 1. Selected a position
+    if (selectedPosition) {
+      score++;
+    }
+
+    // 2. Minimum response length (at least 100 characters)
+    if (userResponse.length >= 100) {
+      score++;
+    }
+
+    // 3. Provided at least 2 arguments
+    if (userArguments.length >= 2 || userResponse.length >= 200) {
+      score++;
+    }
+
+    // 4. Response shows structure (mentions key terms)
+    const hasStructure = /argumento|evidencia|contra|ejemplo|porque/i.test(userResponse);
+    if (hasStructure) {
+      score++;
+    }
+
+    return {
+      correctAnswers: score,
+      totalQuestions: totalCriteria
+    };
+  }
+
+  /**
+   * Validate Podcast Argumentativo (Module 3.4)
+   * Audio/script production exercise - basic completion validation
+   *
+   * @note This is a placeholder validator. Ideally requires manual review.
+   * Currently validates: presence of required elements
+   */
+  private validatePodcastArgumentativo(
+    answerData: Record<string, any>,
+    content: Record<string, any>,
+    solution: Record<string, any>
+  ): { correctAnswers: number; totalQuestions: number } {
+    const structure = content.structure || {};
+    const requiredElements = Object.keys(structure).length || 4; // intro, development, counterargument, conclusion
+
+    // Get user's submission
+    const script = answerData.script || answerData.text || '';
+    const audioUrl = answerData.audioUrl || '';
+    const selectedTopic = answerData.topicId || '';
+
+    let score = 0;
+
+    // Basic validation criteria:
+    // 1. Selected a topic
+    if (selectedTopic) {
+      score++;
+    }
+
+    // 2. Provided script or audio
+    if (script.length >= 200 || audioUrl) {
+      score++;
+    }
+
+    // 3. Script has minimum structure (mentions required elements)
+    const hasIntro = /introducción|introduzco|inicio|tema|tesis/i.test(script);
+    const hasConclusion = /conclusión|concluyo|resumen|reflexión|final/i.test(script);
+    if (hasIntro && hasConclusion) {
+      score++;
+    }
+
+    // 4. Script has substantive content (at least 300 chars)
+    if (script.length >= 300 || audioUrl) {
+      score++;
+    }
+
+    return {
+      correctAnswers: score,
+      totalQuestions: requiredElements
+    };
+  }
+
+  /**
+   * Validate Matriz de Perspectivas (Module 3.5)
+   * Open-ended questions with expected answers - basic completion validation
+   *
+   * @note This is a placeholder validator. Ideally requires semantic similarity check.
+   * Currently validates: presence of answers with minimum quality
+   */
+  private validateMatrizPerspectivas(
+    answerData: Record<string, any>,
+    content: Record<string, any>,
+    solution: Record<string, any>
+  ): { correctAnswers: number; totalQuestions: number } {
+    const questions = content.analysisQuestions || [];
+    let correctCount = 0;
+
+    // Validate each question
+    questions.forEach((question: any) => {
+      const userAnswer = answerData[question.id] || '';
+      const expectedAnswer = question.expectedAnswer || '';
+
+      // Basic validation:
+      // 1. Answer is not empty and has minimum length (50 chars)
+      if (userAnswer.length >= 50) {
+        // 2. Check for basic keyword overlap (simple heuristic)
+        const expectedKeywords = expectedAnswer.toLowerCase().split(/\s+/).filter((w: string) => w.length > 4);
+        const userWords = userAnswer.toLowerCase().split(/\s+/);
+
+        const matchedKeywords = expectedKeywords.filter((keyword: string) =>
+          userWords.some((word: string) => word.includes(keyword) || keyword.includes(word))
+        );
+
+        // If at least 20% of keywords match, or answer is substantial (>100 chars), give credit
+        if (matchedKeywords.length >= expectedKeywords.length * 0.2 || userAnswer.length >= 100) {
+          correctCount++;
+        }
+      }
+    });
+
+    return {
+      correctAnswers: correctCount,
+      totalQuestions: questions.length
     };
   }
 }
