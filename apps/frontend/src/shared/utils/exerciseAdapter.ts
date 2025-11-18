@@ -362,23 +362,47 @@ export const adaptToCompletarEspaciosData = (exercise: ExerciseData): any => {
 export const adaptToSopaLetrasData = (exercise: ExerciseData): any => {
   const base = adaptToBaseExercise(exercise);
 
-  // Mock data for sopa de letras - In production, this would come from mechanicData
+  // Get config and content from mechanicData
+  const config = exercise.mechanicData?.config || {};
+  const content = exercise.mechanicData?.content || {};
+
+  // Mock data for sopa de letras - fallback if no data from backend
   const mockGrid = [
     ['M', 'A', 'R', 'I', 'E'],
     ['C', 'U', 'R', 'I', 'E'],
   ];
 
-  const mockWords = [
+  const mockWords = ['MARIE', 'CURIE'];
+  const mockWordsPositions = [
     { word: 'MARIE', found: false, startRow: 0, startCol: 0, direction: 'horizontal' as const },
     { word: 'CURIE', found: false, startRow: 1, startCol: 0, direction: 'horizontal' as const },
   ];
 
+  // Build config object
+  const gridSize = config.gridSize || { rows: mockGrid.length, cols: mockGrid[0]?.length || 5 };
+
+  const sopaConfig = {
+    gridSize,
+    useStaticGrid: config.useStaticGrid || false,
+    directions: config.directions || ['horizontal', 'vertical', 'diagonal'],
+    selectionMode: config.selectionMode || 'click-drag',
+    highlightFound: config.highlightFound !== undefined ? config.highlightFound : true,
+  };
+
+  // Build content object
+  const sopaContent = {
+    grid: content.grid || mockGrid,
+    words: content.words || mockWords,
+    wordsPositions: content.wordsPositions || mockWordsPositions,
+  };
+
   return {
     ...base,
-    grid: exercise.mechanicData?.grid || mockGrid,
-    words: exercise.mechanicData?.words || mockWords,
-    rows: exercise.mechanicData?.rows || mockGrid.length,
-    cols: exercise.mechanicData?.cols || (mockGrid[0]?.length || 5),
+    config: sopaConfig,
+    content: sopaContent,
+    // Keep convenience properties for backward compatibility
+    rows: gridSize.rows,
+    cols: gridSize.cols,
   };
 };
 
@@ -401,6 +425,111 @@ export const adaptToMapaConceptualData = (exercise: ExerciseData): any => {
     ...base,
     nodes: exercise.mechanicData?.nodes || mockNodes,
     correctConnections: exercise.mechanicData?.correctConnections || mockConnections,
+  };
+};
+
+/**
+ * Adapts ExerciseData to LecturaInferencialData format
+ * Module 2 - Reading comprehension with multiple choice inference questions
+ */
+export const adaptToLecturaInferencialData = (exercise: ExerciseData): any => {
+  const base = adaptToBaseExercise(exercise);
+
+  // Get config and content from mechanicData
+  const config = exercise.mechanicData?.config || {};
+  const content = exercise.mechanicData?.content || {};
+
+  // Build config object with defaults
+  const lecturaConfig = {
+    timePerQuestion: config.timePerQuestion || 90,
+    allowReview: config.allowReview !== undefined ? config.allowReview : true,
+    showExplanations: config.showExplanations !== undefined ? config.showExplanations : true,
+    shuffleQuestions: config.shuffleQuestions || false,
+    shuffleOptions: config.shuffleOptions || false,
+  };
+
+  // Build content object
+  const lecturaContent = {
+    passage: content.passage || '',
+    questions: content.questions || [],
+  };
+
+  return {
+    ...base,
+    config: lecturaConfig,
+    content: lecturaContent,
+  };
+};
+
+/**
+ * Adapts ExerciseData to CausaEfectoData format
+ * Module 2 - Cause-Effect relationships with drag & drop
+ */
+export const adaptToCausaEfectoData = (exercise: ExerciseData): any => {
+  const base = adaptToBaseExercise(exercise);
+
+  // Get config and content from mechanicData
+  const config = exercise.mechanicData?.config || {};
+  const content = exercise.mechanicData?.content || {};
+
+  // Build config object with defaults
+  const causaEfectoConfig = {
+    allowMultiple: config.allowMultiple !== undefined ? config.allowMultiple : true,
+    showFeedback: config.showFeedback !== undefined ? config.showFeedback : true,
+    dragAndDrop: config.dragAndDrop !== undefined ? config.dragAndDrop : true,
+  };
+
+  // Build content object
+  const causaEfectoContent = {
+    causes: content.causes || [],
+    consequences: content.consequences || [],
+  };
+
+  return {
+    ...base,
+    config: causaEfectoConfig,
+    content: causaEfectoContent,
+  };
+};
+
+/**
+ * Adapts ExerciseData to PrediccionNarrativaData format
+ * Module 2 - Narrative prediction with multiple choice scenarios
+ */
+export const adaptToPrediccionNarrativaData = (exercise: ExerciseData): any => {
+  const base = adaptToBaseExercise(exercise);
+
+  // Get content from mechanicData
+  const content = exercise.mechanicData?.content || {};
+
+  return {
+    ...base,
+    subtitle: exercise.mechanicData?.subtitle || '',
+    description: exercise.description || '',
+    instructions: exercise.mechanicData?.instructions || '',
+    scenarios: content.scenarios || [],
+  };
+};
+
+/**
+ * Adapts ExerciseData to PuzzleContextoData format
+ * Module 2 - Ordering fragments to create a coherent inference
+ */
+export const adaptToPuzzleContextoData = (exercise: ExerciseData): any => {
+  const base = adaptToBaseExercise(exercise);
+
+  // Get content and solution from mechanicData
+  const content = exercise.mechanicData?.content || {};
+  const solution = exercise.mechanicData?.solution || {};
+
+  return {
+    ...base,
+    subtitle: exercise.mechanicData?.subtitle || '',
+    description: exercise.description || '',
+    instructions: exercise.mechanicData?.instructions || '',
+    completeInference: content.completeInference || '',
+    fragments: content.fragments || [],
+    correctOrder: solution.correctOrder || [],
   };
 };
 
@@ -436,6 +565,14 @@ export const adaptExerciseData = (exercise: ExerciseData): any => {
     return adaptToSopaLetrasData(exercise);
   } else if (type.includes('mapa_conceptual') || type.includes('mapa conceptual')) {
     return adaptToMapaConceptualData(exercise);
+  } else if (type.includes('lectura_inferencial') || type.includes('detective_textual')) {
+    return adaptToLecturaInferencialData(exercise);
+  } else if (type.includes('construccion_hipotesis')) {
+    return adaptToCausaEfectoData(exercise);
+  } else if (type.includes('prediccion_narrativa')) {
+    return adaptToPrediccionNarrativaData(exercise);
+  } else if (type.includes('puzzle_contexto')) {
+    return adaptToPuzzleContextoData(exercise);
   }
 
   // Default: return base exercise data

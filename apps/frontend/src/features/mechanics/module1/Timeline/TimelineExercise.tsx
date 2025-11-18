@@ -45,21 +45,31 @@ export const TimelineExercise: React.FC<TimelineExerciseProps> = ({
       .map(event => event.id);
   }, [exercise.events]);
 
-  // Notify parent of progress updates
+  // FE-055: Notify parent of progress updates WITH user answers
   React.useEffect(() => {
     if (onProgressUpdate) {
       const userOrder = events.map(e => e.id);
       const correctCount = userOrder.filter((id, idx) => id === correctOrder[idx]).length;
+
+      // Send both progress metadata AND user answers
       onProgressUpdate({
-        currentStep: correctCount,
-        totalSteps: exercise.events.length,
-        score: Math.floor((correctCount / exercise.events.length) * 100),
-        hintsUsed,
-        timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
+        progress: {
+          currentStep: correctCount,
+          totalSteps: exercise.events.length,
+          score: Math.floor((correctCount / exercise.events.length) * 100),
+          hintsUsed,
+          timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
+        },
+        answers: { eventOrder: userOrder }
+      });
+
+      console.log('📊 [Timeline] Progress update sent:', {
+        correctlyOrdered: correctCount,
+        totalEvents: exercise.events.length
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [events, hintsUsed]);
+  }, [events, hintsUsed, onProgressUpdate, correctOrder, startTime]);
 
   const handleCheck = async () => {
     const userOrder = events.map(e => e.id);

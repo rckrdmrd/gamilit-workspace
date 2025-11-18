@@ -548,84 +548,76 @@ MARIE • CURIE • POLONIA • NOBEL • RADIO • POLONIO • PARIS • SORBON
 
 ***Explicación: ****En la época, los laboratorios carecían de comodidades básicas y Marie trabajaba en condiciones precarias**.*
 
-###### Ejercicio 2.2: Construcción de Hipótesis
-
-
-
+###### Ejercicio 2.2: Relaciones Causa-Efecto sobre Marie Curie
 
 **[Separador visual - Línea decorativa]**
 
+**Subtítulo:** *Conectando Causas con sus Consecuencias*
 
+**Descripción**
 
-**  *****Relaciones Causa-Efecto sobre Marie Curie***
+Conecta causas con sus consecuencias lógicas sobre decisiones y eventos de la vida de Marie Curie.
 
+**Objetivo**
 
-**[Separador visual - Línea decorativa]**
+Desarrollar el pensamiento causal mediante la identificación de relaciones entre acciones y sus efectos.
 
+**Mecánica del Ejercicio**
 
-
-** Objetivo**
-
-Conectar causas con sus consecuencias lógicas sobre decisiones de Marie Curie.
+**DRAG & DROP:** Arrastra las consecuencias correctas desde la columna derecha hacia las causas en la columna izquierda.
 
 **Cómo resolverlo:**
 
-      Lee la CAUSA en la columna izquierda
-
-Analiza las CONSECUENCIAS disponibles en la derecha
-
-Arrastra las consecuencias correctas hacia la causa
-
-Cada causa puede tener 1-3 consecuencias
+1. Lee la CAUSA en la columna izquierda
+2. Analiza las CONSECUENCIAS disponibles en la derecha
+3. Arrastra (o selecciona) las consecuencias correctas hacia la causa
+4. Cada causa puede tener 1-3 consecuencias
 
 **Piensa en:**
+- Efectos inmediatos
+- Efectos a largo plazo
+- Impacto en otros
 
-**     ** Efectos inmediatos
+**Ejemplo visual:**
 
-Efectos a largo plazo
+```
+CAUSA                                    CONSECUENCIAS (Arrastrar las correctas)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Impacto en otros
+Marie decidió no patentar el proceso     ✓ Otros científicos pudieron continuar
+de aislamiento del radio            ────► ✓ No obtuvo riquezas de su descubrimiento
+                                          ✓ La medicina avanzó más rápidamente
+                                          ✗ Demostró su independencia científica
 
-**Ejemplo:**
+Marie continuó trabajando después         ✓ Completó investigaciones pendientes
+de la muerte de Pierre              ────► ✓ Se convirtió en la primera profesora
+                                             de la Sorbona
+```
 
-CAUSA: "Marie no patentó el proceso del radio"
+**Causas y Consecuencias (2 causas totales):**
 
-CONSECUENCIAS:
+**CAUSA 1:** Marie decidió no patentar el proceso de aislamiento del radio
+- **Consecuencias correctas:**
+  - Otros científicos pudieron continuar la investigación
+  - No obtuvo riquezas de su descubrimiento
+  - La medicina avanzó más rápidamente
 
-✅ "Otros científicos pudieron investigar"
+**CAUSA 2:** Marie continuó trabajando después de la muerte de Pierre
+- **Consecuencias correctas:**
+  - Completó investigaciones pendientes
+  - Se convirtió en la primera profesora de la Sorbona
 
-✅ "No obtuvo riquezas"
+**Distractor:**
+- Demostró su independencia científica (no corresponde a ninguna causa específica)
 
-✅ "La medicina avanzó más rápido"
+**Puntuación:**
+- 5 relaciones correctas: 100 puntos
+- 3-4 relaciones correctas: 70 puntos (aprobado)
+- Menos de 3: Reprobado
 
-***CAUSA****CONSECUENCIAS (Arrastrar las correctas)*
-
-
-|  *•*    ***Marie decidió no patentar el proceso de ****•* ***aislamiento del radio*** *•* | *-+ ****Otros científicos pudieron continuar la investigación*** *-+ ****No obtuvo riquezas de su descubrimiento*** *-+ ****La medicina avanzó más rápidamente*** |
-| --- | --- |
-|  *•* | *-+ ****Demostró su independencia*** |
-|  | ***científica*** |
-| ***Marie continuó trabajando después de la ****•* | *-+ ****Completó investigaciones*** |
-| ***muerte de Pierre*** | ***pendientes*** |
-| *•* | *-+ ****Se convirtió en la primera profesora*** |
-|  | ***de la Sorbona*** |
-
-
-###### 
-
-###### 
-
-###### 
-
-###### 
-
-###### 
-
-###### 
-
-###### 
-
-###### 
+**Tiempo estimado:** 15-20 minutos
+**Pistas disponibles:** 3 pistas (costo: 15 ML cada una)
+**Comodines permitidos:** Pistas, Visión Lectora, Segunda Oportunidad
 
 ###### Ejercicio 2.3: Predicción Narrativa
 
@@ -724,29 +716,68 @@ Los hechos históricos no se pueden cambiar
 
 ###### Ejercicio 2.5: Rueda de Inferencias
 
-
-
-
 **[Separador visual - Línea decorativa]**
 
+**Subtítulo:** *Conectando Ideas: Visualiza las Relaciones entre Causas y Efectos*
 
+**Descripción**
 
-***Mecánica del Juego***
+Crea conexiones entre observaciones directas y las inferencias que podemos hacer sobre la vida de Marie Curie.
 
-- *Girar la ruleta virtual para obtener una categoría*
+**Objetivo**
 
-- *Leer el fragmento presentado*
+Distinguir entre observaciones objetivas e inferencias válidas, comprendiendo diferentes tipos de razonamiento inferencial.
 
-- *Escribir una inferencia en 30 segundos*
+**Mecánica del Ejercicio**
 
-- *Competencia por equipos con puntuación*
+Diagrama radial interactivo: En el centro hay una observación sobre Marie Curie. Debes conectar las inferencias correctas (4 de 6 opciones) al concepto central.
 
-**CategoríaFragmentoInferencia EsperadaPuntos**
+**Cómo resolverlo:**
 
+1. Lee el concepto central (observación directa)
+2. Analiza cada una de las 6 inferencias propuestas
+3. Identifica las 4 inferencias correctas basadas en evidencia
+4. Arrastra/conecta cada inferencia correcta al centro
+5. Evita las 2 inferencias incorrectas (juicios sin fundamento)
 
-|  ***Emociones no expresadas*** | *"Marie trabajó 4 años procesando toneladas de pechblenda"* | *Frustración, cansancio, pero también esperanza y determinación* |   *20* |
-| --- | --- | --- | --- |
-|  ***Contexto social*** | *"Marie usaba su apellido de casada en publicaciones"* | *Era más aceptable publicar como mujer casada que soltera* |   *20* |
+**Concepto Central:**
+
+*"Marie trabajó con materiales radiactivos toda su vida sin protección adecuada"*
+
+**Inferencias a Evaluar (6 totales, 4 correctas):**
+
+✅ **Contexto Histórico:** "Marie probablemente no conocía completamente los riesgos de la radiación"
+   - *Explicación:* En la década de 1890-1910, los efectos de la radiación no eran bien comprendidos.
+
+✅ **Causa-Efecto:** "Su muerte por anemia aplásica fue causada por exposición crónica a radiación"
+   - *Explicación:* La exposición prolongada a radiación ionizante daña la médula ósea.
+
+✅ **Motivación:** "Marie priorizaba el avance científico sobre su seguridad personal"
+   - *Explicación:* Continuó su trabajo incluso cuando experimentaba síntomas.
+
+✅ **Consecuencia Duradera:** "Sus cuadernos siguen siendo radiactivos más de 100 años después"
+   - *Explicación:* La vida media del radio-226 es de 1,600 años.
+
+❌ **Juicio Incorrecto:** "Marie era descuidada e irresponsable en su trabajo"
+   - *Explicación:* Era meticulosa; simplemente no se conocían los riesgos en su época.
+
+❌ **Conclusión Incorrecta:** "El radio no es realmente peligroso para los humanos"
+   - *Explicación:* Sabemos que la exposición causó la muerte de Marie.
+
+**Tipos de Inferencia Cubiertos:**
+- 🕐 Contexto histórico
+- 🔗 Causa-efecto
+- 💭 Motivación personal
+- ⏰ Consecuencias duraderas
+
+**Puntuación:**
+- 4/4 inferencias correctas: 100 puntos
+- 3/4 inferencias correctas: 75 puntos (aprobado)
+- 2/4 o menos: Reprobado
+
+**Tiempo estimado:** 15-20 minutos
+**Pistas disponibles:** 3 pistas (costo: 15 ML cada una)
+**Comodines permitidos:** Pistas, Visión Lectora, Segunda Oportunidad
 
 
 ### MÓDULO 3: COMPRENSIÓN CRÍTICA V VALORATIVA

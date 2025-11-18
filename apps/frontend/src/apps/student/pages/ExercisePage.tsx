@@ -56,6 +56,12 @@ interface ExerciseProgress {
   powerupsUsed?: string[];
 }
 
+// FE-055: Interface for progress updates from mechanics
+interface ProgressUpdate {
+  progress: Partial<ExerciseProgress>;
+  answers: any; // User's actual answers (format varies by exercise type)
+}
+
 // ============================================================================
 // DYNAMIC IMPORTS MAPPING
 // ============================================================================
@@ -80,8 +86,9 @@ const loadMechanic = (mechanicType: string) => {
     'completar_espacios': () => import('@/features/mechanics/module1/CompletarEspacios/CompletarEspaciosExercise'),
 
     // Module 2 - Comprensión Inferencial
-    'detective_textual': () => import('@/features/mechanics/module2/DetectiveTextual/DetectiveTextualExercise'),
-    'construccion_hipotesis': () => import('@/features/mechanics/module2/ConstruccionHipotesis/ConstruccionHipotesisExercise'),
+    'detective_textual': () => import('@/features/mechanics/module2/LecturaInferencial/LecturaInferencialExercise'),
+    'lectura_inferencial': () => import('@/features/mechanics/module2/LecturaInferencial/LecturaInferencialExercise'),
+    'construccion_hipotesis': () => import('@/features/mechanics/module2/ConstruccionHipotesis/CausaEfectoExercise'),
     'prediccion_narrativa': () => import('@/features/mechanics/module2/PrediccionNarrativa/PrediccionNarrativaExercise'),
     'puzzle_contexto': () => import('@/features/mechanics/module2/PuzzleContexto/PuzzleContextoExercise'),
     'rueda_inferencias': () => import('@/features/mechanics/module2/RuedaInferencias/RuedaInferenciasExercise'),
@@ -146,6 +153,8 @@ export default function ExercisePage() {
   const [startTime] = useState(new Date());
   // Backend returns hints as string[], not objects
   const [hints, setHints] = useState<string[]>([]);
+  // FE-055: Store user's actual answers (not just progress metadata)
+  const [userAnswers, setUserAnswers] = useState<any>(null);
 
   const { user, logout } = useAuth();
 
@@ -302,21 +311,33 @@ export default function ExercisePage() {
   const handleSubmit = async () => {
     if (!exerciseId) return;
 
+    // FE-055: Validate that we have user answers before submitting
+    if (!userAnswers) {
+      console.error('❌ [ExercisePage] Cannot submit: No user answers available');
+      setFeedback({
+        type: 'error',
+        title: 'Error',
+        message: 'No se pudieron obtener tus respuestas. Por favor, intenta nuevamente.',
+      });
+      setShowFeedback(true);
+      return;
+    }
+
     try {
       console.log('📤 [ExercisePage] Submitting exercise:', {
         exerciseId,
         payload: {
-          answers: progress,
+          answers: userAnswers,  // ✅ FE-055: Send REAL user answers
           startedAt: startTime.getTime(),
           hintsUsed: progress.hintsUsed || 0,
           powerupsUsed: progress.powerupsUsed || [],
         }
       });
 
-      // Submit exercise via API
+      // FE-055: Submit exercise with REAL user answers (not progress metadata)
       const result = await submitExercise(exerciseId, {
-        answers: progress,
-        startedAt: startTime.getTime(), // Send start timestamp instead of timeSpent
+        answers: userAnswers,  // ✅ FIXED: Send actual user answers
+        startedAt: startTime.getTime(),
         hintsUsed: progress.hintsUsed || 0,
         powerupsUsed: progress.powerupsUsed || [],
       });
@@ -396,8 +417,22 @@ export default function ExercisePage() {
     }
   };
 
-  const handleProgressUpdate = React.useCallback((newProgress: Partial<ExerciseProgress>) => {
-    setProgress((prev) => ({ ...prev, ...newProgress }));
+  // FE-055: Updated to handle both progress metadata AND user answers
+  const handleProgressUpdate = React.useCallback((update: Partial<ExerciseProgress> | ProgressUpdate) => {
+    // Check if this is the new format (object with progress + answers)
+    if (update && typeof update === 'object' && 'progress' in update && 'answers' in update) {
+      const progressUpdate = update as ProgressUpdate;
+      setProgress((prev) => ({ ...prev, ...progressUpdate.progress }));
+      setUserAnswers(progressUpdate.answers);
+      console.log('📤 [ExercisePage] Progress update received:', {
+        progress: progressUpdate.progress,
+        answersReceived: !!progressUpdate.answers
+      });
+    } else {
+      // Old format (just progress) - maintain backward compatibility
+      setProgress((prev) => ({ ...prev, ...(update as Partial<ExerciseProgress>) }));
+      console.log('⚠️ [ExercisePage] Old format progress update (no answers):', update);
+    }
     setHasUnsavedChanges(true);
   }, []);
 

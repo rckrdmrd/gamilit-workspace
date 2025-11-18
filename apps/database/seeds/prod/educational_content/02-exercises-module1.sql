@@ -476,27 +476,38 @@ BEGIN
         'Busca las 10 palabras en el grid. Haz clic y arrastra para seleccionar. Las palabras pueden estar en horizontal, vertical o diagonal.',
         'sopa_letras', 5,
         '{
-            "gridSize": {"rows": 12, "cols": 12},
+            "gridSize": {"rows": 10, "cols": 10},
+            "useStaticGrid": true,
             "directions": ["horizontal", "vertical", "diagonal"],
             "selectionMode": "click-drag",
             "highlightFound": true
         }'::jsonb,
         '{
+            "grid": [
+                ["A", "C", "I", "S", "Í", "F", "K", "A", "V", "S"],
+                ["É", "P", "M", "V", "V", "Ó", "I", "A", "N", "Y"],
+                ["Í", "A", "Ü", "H", "D", "C", "N", "T", "M", "É"],
+                ["N", "R", "A", "I", "N", "O", "L", "O", "P", "É"],
+                ["O", "I", "T", "E", "B", "C", "I", "T", "R", "D"],
+                ["B", "S", "I", "R", "U", "N", "Ó", "N", "A", "Ó"],
+                ["E", "C", "O", "R", "O", "C", "Í", "D", "D", "Í"],
+                ["L", "S", "I", "L", "X", "T", "M", "Y", "I", "Ü"],
+                ["J", "E", "O", "Í", "Í", "L", "P", "O", "O", "Á"],
+                ["N", "P", "M", "A", "R", "I", "E", "E", "O", "V"]
+            ],
             "words": [
-                {"word": "MARIE", "direction": "horizontal", "startRow": 2, "startCol": 3},
-                {"word": "CURIE", "direction": "vertical", "startRow": 1, "startCol": 7},
-                {"word": "POLONIA", "direction": "horizontal", "startRow": 5, "startCol": 0},
-                {"word": "NOBEL", "direction": "diagonal", "startRow": 0, "startCol": 0},
-                {"word": "RADIO", "direction": "horizontal", "startRow": 8, "startCol": 4},
-                {"word": "POLONIO", "direction": "vertical", "startRow": 3, "startCol": 9},
-                {"word": "PARIS", "direction": "horizontal", "startRow": 10, "startCol": 1},
-                {"word": "SORBONA", "direction": "vertical", "startRow": 4, "startCol": 5},
-                {"word": "CIENCIA", "direction": "diagonal", "startRow": 7, "startCol": 2},
-                {"word": "FISICA", "direction": "horizontal", "startRow": 11, "startCol": 6}
+                "MARIE", "CURIE", "POLONIA", "NOBEL", "RADIO",
+                "POLONIO", "PARIS", "SORBONA", "CIENCIA", "FÍSICA"
+            ],
+            "wordsPositions": [
+                {"word": "MARIE", "direction": "horizontal", "startRow": 9, "startCol": 4},
+                {"word": "POLONIA", "direction": "horizontal-reverse", "startRow": 3, "startCol": 8},
+                {"word": "NOBEL", "direction": "vertical", "startRow": 3, "startCol": 0},
+                {"word": "PARIS", "direction": "vertical", "startRow": 1, "startCol": 1}
             ]
         }'::jsonb,
         '{
-            "allWords": ["MARIE", "CURIE", "POLONIA", "NOBEL", "RADIO", "POLONIO", "PARIS", "SORBONA", "CIENCIA", "FISICA"]
+            "allWords": ["MARIE", "CURIE", "POLONIA", "NOBEL", "RADIO", "POLONIO", "PARIS", "SORBONA", "CIENCIA", "FÍSICA"]
         }'::jsonb,
         'beginner', 100, 70,
         10, 10, 1,

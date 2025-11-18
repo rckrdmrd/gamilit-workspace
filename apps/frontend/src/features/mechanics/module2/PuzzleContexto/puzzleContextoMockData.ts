@@ -1,16 +1,37 @@
-import type { PuzzleExercise } from './puzzleContextoTypes';
+import type { PuzzleContextoData } from './puzzleContextoTypes';
 
-export const mockPuzzle: PuzzleExercise = {
-  id: 'puzzle-1',
-  title: 'El Contexto de Marie Curie',
-  description: 'Ordena los eventos y contextos para comprender la vida de Marie Curie',
-  pieces: [
-    { id: 'p1', content: 'Polonia bajo dominio ruso - Limitaciones para mujeres en educación', correctPosition: 0, category: 'historical' },
-    { id: 'p2', content: 'Marie se muda a París para estudiar en la Sorbonne', correctPosition: 1, category: 'personal' },
-    { id: 'p3', content: 'Descubrimiento de la radiactividad por Becquerel inspira investigación', correctPosition: 2, category: 'scientific' },
-    { id: 'p4', content: 'Colaboración con Pierre Curie en laboratorio improvisado', correctPosition: 3, category: 'personal' },
-    { id: 'p5', content: 'Aislamiento del radio tras años de trabajo extenuante', correctPosition: 4, category: 'scientific' },
-    { id: 'p6', content: 'Premio Nobel de Física 1903 compartido con Pierre y Becquerel', correctPosition: 5, category: 'social' },
+export const mockPuzzleData: PuzzleContextoData = {
+  id: 'ex-2-4',
+  title: 'Puzzle de Contexto',
+  subtitle: 'Ordenar fragmentos para crear una inferencia coherente',
+  description: 'Ordena los fragmentos para formar una inferencia completa y coherente sobre Marie Curie.',
+  instructions: 'Arrastra los fragmentos desordenados al área de construcción para formar la inferencia en el orden correcto.',
+  completeInference: 'A pesar de las barreras sociales y económicas que enfrentó como mujer inmigrante, demostró una determinación extraordinaria, convirtiéndose en pionera de la ciencia moderna.',
+  fragments: [
+    {
+      id: 'frag-a',
+      label: 'A',
+      text: 'demostró una determinación extraordinaria',
+      correctPosition: 2
+    },
+    {
+      id: 'frag-b',
+      label: 'B',
+      text: 'A pesar de las barreras sociales y económicas',
+      correctPosition: 0
+    },
+    {
+      id: 'frag-c',
+      label: 'C',
+      text: 'que enfrentó como mujer inmigrante',
+      correctPosition: 1
+    },
+    {
+      id: 'frag-d',
+      label: 'D',
+      text: 'convirtiéndose en pionera de la ciencia moderna',
+      correctPosition: 3
+    }
   ],
-  difficulty: 'medio',
+  correctOrder: ['frag-b', 'frag-c', 'frag-a', 'frag-d']
 };

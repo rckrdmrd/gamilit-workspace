@@ -22,21 +22,31 @@ export const mockSopaLetrasExercises: SopaLetrasData[] = [
     ],
     rows: 12,
     cols: 12,
-    grid: (() => {
-      const grid = createGrid(12, 12);
-      'RADIOACTIVIDAD'.split('').forEach((l, i) => { grid[0][i] = l; });
-      'POLONIO'.split('').forEach((l, i) => { grid[2][i] = l; });
-      'RADIO'.split('').forEach((l, i) => { grid[4][i] = l; });
-      'CURIO'.split('').forEach((l, i) => { grid[6][i] = l; });
-      'NOBEL'.split('').forEach((l, i) => { grid[8][i] = l; });
-      return grid;
-    })(),
-    words: [
-      { word: 'RADIOACTIVIDAD', startRow: 0, startCol: 0, direction: 'horizontal', found: false },
-      { word: 'POLONIO', startRow: 2, startCol: 0, direction: 'horizontal', found: false },
-      { word: 'RADIO', startRow: 4, startCol: 0, direction: 'horizontal', found: false },
-      { word: 'CURIO', startRow: 6, startCol: 0, direction: 'horizontal', found: false },
-      { word: 'NOBEL', startRow: 8, startCol: 0, direction: 'horizontal', found: false }
-    ]
+    config: {
+      gridSize: { rows: 12, cols: 12 },
+      useStaticGrid: true,
+      directions: ['horizontal', 'vertical', 'diagonal'],
+      selectionMode: 'click-drag',
+      highlightFound: true
+    },
+    content: {
+      grid: (() => {
+        const grid = createGrid(12, 12);
+        'RADIOACTIVIDAD'.split('').forEach((l, i) => { grid[0][i] = l; });
+        'POLONIO'.split('').forEach((l, i) => { grid[2][i] = l; });
+        'RADIO'.split('').forEach((l, i) => { grid[4][i] = l; });
+        'CURIO'.split('').forEach((l, i) => { grid[6][i] = l; });
+        'NOBEL'.split('').forEach((l, i) => { grid[8][i] = l; });
+        return grid;
+      })(),
+      words: ['RADIOACTIVIDAD', 'POLONIO', 'RADIO', 'CURIO', 'NOBEL'],
+      wordsPositions: [
+        { word: 'RADIOACTIVIDAD', startRow: 0, startCol: 0, direction: 'horizontal', found: false },
+        { word: 'POLONIO', startRow: 2, startCol: 0, direction: 'horizontal', found: false },
+        { word: 'RADIO', startRow: 4, startCol: 0, direction: 'horizontal', found: false },
+        { word: 'CURIO', startRow: 6, startCol: 0, direction: 'horizontal', found: false },
+        { word: 'NOBEL', startRow: 8, startCol: 0, direction: 'horizontal', found: false }
+      ]
+    }
   }
 ];

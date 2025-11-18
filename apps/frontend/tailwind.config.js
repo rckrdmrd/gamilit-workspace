@@ -103,6 +103,7 @@ export default {
       },
       borderRadius: {
         'detective': '0.75rem',
+        'detective-lg': '1rem',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

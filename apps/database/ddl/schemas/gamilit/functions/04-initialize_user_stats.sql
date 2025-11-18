@@ -30,10 +30,11 @@ BEGIN
         ON CONFLICT (user_id) DO NOTHING;  -- Prevent duplicates
 
         -- Create comodines inventory
+        -- IMPORTANT: comodines_inventory.user_id references profiles.id (NOT auth.users.id)
         INSERT INTO gamification_system.comodines_inventory (
             user_id
         ) VALUES (
-            NEW.user_id  -- Fixed: usar user_id en lugar de id
+            NEW.id  -- CORRECTED: usar NEW.id (profiles.id) porque FK apunta a profiles(id)
         )
         ON CONFLICT (user_id) DO NOTHING;
 

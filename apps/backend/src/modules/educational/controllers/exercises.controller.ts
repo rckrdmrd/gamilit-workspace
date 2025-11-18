@@ -254,11 +254,86 @@ export class ExercisesController {
     const submission = await this.exerciseSubmissionService.findByUserAndExercise(userId, id);
     const completed = submission ? submission.status === 'graded' : false;
 
+    // FE-055: Filter out correct answers from response (SECURITY)
+    const filteredExercise = this.filterCorrectAnswers(exercise);
+
     // Retornar ejercicio con campo 'completed'
     return {
-      ...exercise,
+      ...filteredExercise,
       completed,
     };
+  }
+
+  /**
+   * FE-055: Filter correct answers from exercise content (SECURITY)
+   * Removes solution fields to prevent cheating
+   */
+  private filterCorrectAnswers(exercise: any): any {
+    const filtered = { ...exercise };
+
+    // Remove entire solution field
+    delete filtered.solution;
+
+    // Filter content based on exercise type
+    if (filtered.content) {
+      const content = { ...filtered.content };
+
+      // Remove correctAnswer fields from all exercise types
+      if (content.statements) {
+        content.statements = content.statements.map((stmt: any) => {
+          const { correctAnswer, ...rest } = stmt;
+          return rest;
+        });
+      }
+
+      if (content.blanks) {
+        content.blanks = content.blanks.map((blank: any) => {
+          const { correctAnswer, alternatives, ...rest } = blank;
+          return rest;
+        });
+      }
+
+      if (content.clues) {
+        if (Array.isArray(content.clues)) {
+          content.clues = content.clues.map((clue: any) => {
+            const { word, answer, ...rest } = clue;
+            return rest;
+          });
+        } else {
+          // Handle object format {horizontal: [], vertical: []}
+          if (content.clues.horizontal) {
+            content.clues.horizontal = content.clues.horizontal.map((clue: any) => {
+              const { word, answer, ...rest } = clue;
+              return rest;
+            });
+          }
+          if (content.clues.vertical) {
+            content.clues.vertical = content.clues.vertical.map((clue: any) => {
+              const { word, answer, ...rest } = clue;
+              return rest;
+            });
+          }
+        }
+      }
+
+      // Remove correctOrder for timeline
+      delete content.correctOrder;
+
+      // Remove correctConnections for mapa conceptual
+      delete content.correctConnections;
+
+      // Remove correctPairs for emparejamiento
+      delete content.correctPairs;
+
+      // For prediccion_narrativa, keep isCorrect in predictions (client-side validation)
+      // No need to filter - it's a multiple choice exercise
+
+      filtered.content = content;
+    }
+
+    console.log('[FE-055] Filtered correct answers from exercise:', exercise.id);
+
+    return filtered;
   }
 
   /**

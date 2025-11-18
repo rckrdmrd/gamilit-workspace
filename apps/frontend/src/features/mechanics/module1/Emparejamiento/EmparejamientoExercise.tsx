@@ -23,21 +23,55 @@ export const EmparejamientoExercise: React.FC<EmparejamientoExerciseProps> = ({ 
   const [startTime] = useState(new Date());
   const [hintsUsed] = useState(0);
 
-  // Notify parent of progress updates
+  // FE-055: Notify parent of progress updates WITH user answers
   React.useEffect(() => {
     if (onProgressUpdate) {
       const matched = cards.filter(c => c.isMatched).length;
       const totalPairs = cards.length / 2;
       const matchedPairs = matched / 2;
+
+      // Prepare user answers: array of matched pairs
+      const matchedCards = cards.filter(c => c.isMatched);
+      const matches: Array<{ leftId: string; rightId: string }> = [];
+
+      // Group matched cards by matchId
+      const matchGroups: Record<string, typeof cards> = {};
+      matchedCards.forEach(card => {
+        if (!matchGroups[card.matchId]) {
+          matchGroups[card.matchId] = [];
+        }
+        matchGroups[card.matchId].push(card);
+      });
+
+      // Create matches array
+      Object.values(matchGroups).forEach(group => {
+        if (group.length === 2) {
+          const left = group.find(c => c.type === 'question');
+          const right = group.find(c => c.type === 'answer');
+          if (left && right) {
+            matches.push({ leftId: left.id, rightId: right.id });
+          }
+        }
+      });
+
+      // Send both progress metadata AND user answers
       onProgressUpdate({
-        currentStep: matchedPairs,
-        totalSteps: totalPairs,
-        score: Math.floor((matchedPairs / totalPairs) * 100),
-        hintsUsed,
-        timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
+        progress: {
+          currentStep: matchedPairs,
+          totalSteps: totalPairs,
+          score: Math.floor((matchedPairs / totalPairs) * 100),
+          hintsUsed,
+          timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
+        },
+        answers: { matches }
+      });
+
+      console.log('📊 [Emparejamiento] Progress update sent:', {
+        matchedPairs,
+        totalPairs
       });
     }
-  }, [cards, hintsUsed]);
+  }, [cards, hintsUsed, onProgressUpdate, startTime]);
 
   const handleCardClick = (cardId: string) => {
     if (!selectedCard) {

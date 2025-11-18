@@ -128,27 +128,26 @@ EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 3. ENUMs de Contenido Educativo
 
--- 📚 Documentación: educational_content.exercise_type (33 mecánicas)
+-- 📚 Documentación: educational_content.exercise_type (23 mecánicas principales)
 -- Requerimiento: docs/01-requerimientos/03-contenido-educativo/RF-EDU-001-mecanicas-ejercicios.md
 -- Especificación: docs/02-especificaciones-tecnicas/03-contenido-educativo/ET-EDU-001-mecanicas-ejercicios.md
--- UPDATED 2025-11-11: Removidas 2 mecánicas huérfanas sin implementación (diario_interactivo, resumen_visual)
+-- UPDATED 2025-11-17: Sincronizado con seeds reales - Removidas mecánicas no implementadas
 DO $$ BEGIN
     CREATE TYPE educational_content.exercise_type AS ENUM (
         -- Module 1: Comprensión Literal (5 mecánicas)
-        'crucigrama', 'linea_tiempo', 'sopa_letras', 'mapa_conceptual', 'emparejamiento',
+        'crucigrama', 'linea_tiempo', 'sopa_letras', 'completar_espacios', 'verdadero_falso',
         -- Module 2: Comprensión Inferencial (5 mecánicas)
         'detective_textual', 'construccion_hipotesis', 'prediccion_narrativa', 'puzzle_contexto', 'rueda_inferencias',
         -- Module 3: Comprensión Crítica (5 mecánicas)
         'tribunal_opiniones', 'debate_digital', 'analisis_fuentes', 'podcast_argumentativo', 'matriz_perspectivas',
-        -- Module 4: Lectura Digital (9 mecánicas) -- UPDATED 2025-11-07: Agregadas 4 mecánicas faltantes
+        -- Module 4: Lectura Digital (5 mecánicas) -- UPDATED 2025-11-17: Reducido de 9 a 5 mecánicas implementadas
         'verificador_fake_news', 'infografia_interactiva', 'quiz_tiktok', 'navegacion_hipertextual', 'analisis_memes',
-        'resena_critica', 'chat_literario', 'email_formal', 'ensayo_argumentativo',
         -- Module 5: Producción Lectora (3 mecánicas)
-        'diario_multimedia', 'comic_digital', 'video_carta',
-        -- Auxiliares (6 mecánicas) -- UPDATED 2025-11-11: Reducido de 8 a 6 mecánicas
-        'comprension_auditiva', 'collage_prensa', 'texto_movimiento', 'call_to_action',
-        'verdadero_falso', 'completar_espacios'
-        -- REMOVIDO 2025-11-11: 'diario_interactivo', 'resumen_visual' (mecánicas huérfanas sin implementación)
+        'diario_multimedia', 'comic_digital', 'video_carta'
+        -- REMOVIDO 2025-11-17: Mecánicas no implementadas movidas a comentarios
+        -- Futuros Módulo 1: 'mapa_conceptual', 'emparejamiento'
+        -- Futuros Módulo 4: 'resena_critica', 'chat_literario', 'email_formal', 'ensayo_argumentativo'
+        -- Auxiliares potenciales: 'comprension_auditiva', 'collage_prensa', 'texto_movimiento', 'call_to_action'
     );
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
@@ -417,7 +416,7 @@ COMMENT ON TYPE gamification_system.comodin_type IS 'Tipos de comodines/power-up
 -- COMMENT ON TYPE gamification_system.notification_priority IS 'Niveles de prioridad de notificaciones (v1.1 - 2025-11-08 - migrado de public)';
 
 -- 3. Contenido Educativo
-COMMENT ON TYPE educational_content.exercise_type IS '31 mecánicas de ejercicios interactivos Gamilit (5 módulos + auxiliares) (v1.0)';
+COMMENT ON TYPE educational_content.exercise_type IS '23 mecánicas de ejercicios interactivos Gamilit implementadas (5 módulos) (v2.0 - 2025-11-17 - sincronizado con seeds)';
 -- NOTA (2025-11-11): El siguiente comentario está en el archivo de ENUM correspondiente
 -- difficulty_level se crea en FASE 6: educational_content/enums/difficulty_level.sql
 -- COMMENT ON TYPE educational_content.difficulty_level IS 'Niveles de dificultad CEFR - 8 niveles A1→C2+ (v2.0 - 2025-11-11 - migrado a estándar CEFR)';

@@ -60,7 +60,7 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
     return userAnswer === clue.answer;
   };
 
-  // Update completed clues
+  // FE-055: Update completed clues and notify with answers
   useEffect(() => {
     const newCompleted = new Set<string>();
     exercise.clues.forEach((clue) => {
@@ -73,17 +73,45 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
     // Auto-save progress
     saveProgress(exercise.id, { grid, completedClues: Array.from(newCompleted) });
 
-    // Notify parent component of progress
+    // FE-055: Notify parent component with progress AND user answers
     if (onProgressUpdate) {
+      // Prepare user answers: clue-id: user's answer
+      const userAnswers: Record<string, string> = {};
+      exercise.clues.forEach((clue) => {
+        let answer = '';
+        if (clue.direction === 'horizontal') {
+          for (let i = 0; i < clue.answer.length; i++) {
+            const cell = grid[clue.startRow]?.[clue.startCol + i];
+            answer += cell?.userInput || '';
+          }
+        } else {
+          for (let i = 0; i < clue.answer.length; i++) {
+            const cell = grid[clue.startRow + i]?.[clue.startCol];
+            answer += cell?.userInput || '';
+          }
+        }
+        if (answer) {
+          userAnswers[clue.id] = answer;
+        }
+      });
+
       onProgressUpdate({
-        currentStep: newCompleted.size,
-        totalSteps: exercise.clues.length,
-        score: Math.floor((newCompleted.size / exercise.clues.length) * 100),
-        hintsUsed,
-        timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
+        progress: {
+          currentStep: newCompleted.size,
+          totalSteps: exercise.clues.length,
+          score: Math.floor((newCompleted.size / exercise.clues.length) * 100),
+          hintsUsed,
+          timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
+        },
+        answers: { clues: userAnswers }
+      });
+
+      console.log('📊 [Crucigrama] Progress update sent:', {
+        completedClues: newCompleted.size,
+        totalClues: exercise.clues.length
       });
     }
-  }, [grid, hintsUsed]);
+  }, [grid, hintsUsed, exercise.clues, exercise.id, onProgressUpdate, startTime]);
 
   const handleCellInput = (row: number, col: number, value: string) => {
     const newGrid = grid.map((r) => r.map((c) => ({ ...c })));

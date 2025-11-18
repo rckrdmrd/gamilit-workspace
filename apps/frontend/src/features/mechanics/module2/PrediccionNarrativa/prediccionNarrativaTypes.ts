@@ -1,24 +1,36 @@
-export interface Story {
+// Prediction option (multiple choice)
+export interface PredictionOption {
+  id: string;
+  text: string;
+  isCorrect: boolean;
+  explanation: string;
+}
+
+// Scenario with context and multiple prediction options
+export interface Scenario {
+  id: string;
+  context: string;
+  beginning: string;
+  question: string;
+  predictions: PredictionOption[];
+  contextualHint?: string;
+}
+
+// Exercise data structure
+export interface PrediccionNarrativaData {
   id: string;
   title: string;
-  beginning: string;
-  context: string;
-  difficulty: 'facil' | 'medio' | 'dificil' | 'experto';
+  subtitle?: string;
+  description?: string;
+  instructions?: string;
+  scenarios: Scenario[];
 }
 
-export interface Prediction {
-  id: string;
-  storyId: string;
-  userPrediction: string;
-  aiContinuation: string | null;
-  accuracy: number;
-  feedback: string;
-}
-
-export interface NarrativeProgress {
-  storyId: string;
-  predictions: Prediction[];
-  score: number;
+// User answer for a scenario
+export interface ScenarioAnswer {
+  scenarioId: string;
+  selectedPredictionId: string | null;
+  isCorrect: boolean | null;
 }
 
 export interface ExerciseProgressUpdate {
@@ -31,11 +43,11 @@ export interface ExerciseProgressUpdate {
 
 // Exercise State for auto-save
 export interface PrediccionNarrativaState {
-  userPrediction: string;
-  predictions: Prediction[];
+  answers: ScenarioAnswer[];
   score: number;
   timeSpent: number;
   hintsUsed: number;
+  showResults: boolean;
 }
 
 // Exercise Actions Interface for Parent Control
@@ -43,19 +55,14 @@ export interface PrediccionNarrativaActions {
   getState: () => PrediccionNarrativaState;
   reset: () => void;
   validate: () => Promise<void>;
-  submitPrediction?: (prediction: string) => Promise<void>;
 }
 
 // Standardized Exercise Props Interface (Module 1 Pattern)
 export interface PrediccionNarrativaExerciseProps {
-  moduleId: number;
-  lessonId: number;
-  exerciseId: string;
-  userId: string;
+  exercise: PrediccionNarrativaData;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
-  onProgressUpdate?: (progress: ExerciseProgressUpdate) => void;
+  onProgressUpdate?: (progress: any) => void;
   initialData?: Partial<PrediccionNarrativaState>;
-  difficulty?: 'easy' | 'medium' | 'hard';
   actionsRef?: React.MutableRefObject<PrediccionNarrativaActions | undefined>;
 }

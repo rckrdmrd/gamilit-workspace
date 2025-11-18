@@ -1,122 +1,238 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { BookOpen, Send, Sparkles, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { BookOpen, CheckCircle, XCircle, AlertCircle, Lightbulb } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
-import { fetchStory, submitPrediction } from './prediccionNarrativaAPI';
-import type { Story, PrediccionNarrativaExerciseProps } from './prediccionNarrativaTypes';
-import type { NarrativeContinuation } from '../../shared/aiTypes';
 import { calculateScore, saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import { mockStory } from './prediccionNarrativaMockData';
+import type {
+  PrediccionNarrativaExerciseProps,
+  Scenario,
+  ScenarioAnswer,
+  PredictionOption,
+} from './prediccionNarrativaTypes';
+import { mockExerciseData } from './prediccionNarrativaMockData';
 
 export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExerciseProps> = ({
-  moduleId,
-  lessonId,
-  exerciseId,
-  userId,
+  exercise = mockExerciseData,
   onComplete,
   onExit,
   onProgressUpdate,
   initialData,
-  difficulty = 'medium',
+  actionsRef,
 }) => {
-  const [story, setStory] = useState<Story | null>(mockStory);
-  const [userPrediction, setUserPrediction] = useState(initialData?.userPrediction || '');
-  const [result, setResult] = useState<NarrativeContinuation | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  // Initialize answers for all scenarios
+  const [answers, setAnswers] = useState<ScenarioAnswer[]>(
+    initialData?.answers || exercise.scenarios.map(s => ({
+      scenarioId: s.id,
+      selectedPredictionId: null,
+      isCorrect: null,
+    }))
+  );
+  const [showResults, setShowResults] = useState(initialData?.showResults || false);
+  const [hintsUsed, setHintsUsed] = useState(initialData?.hintsUsed || 0);
   const [startTime] = useState(new Date());
   const [timeSpent, setTimeSpent] = useState(initialData?.timeSpent || 0);
   const [score, setScore] = useState(initialData?.score || 0);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
-  const [hintsUsed, setHintsUsed] = useState(initialData?.hintsUsed || 0);
+  const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
+  const [showHint, setShowHint] = useState(false);
 
-  useEffect(() => {
-    if (!story) {
-      setStory(mockStory);
-    }
-  }, [exerciseId]);
+  const currentScenario = exercise.scenarios[currentScenarioIndex];
+  const currentAnswer = answers.find(a => a.scenarioId === currentScenario.id);
 
   // Timer
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeSpent((prev) => prev + 1);
+      setTimeSpent(prev => prev + 1);
     }, 1000);
     return () => clearInterval(timer);
   }, []);
 
-  // Auto-save progress every 30 seconds
+  // Auto-save progress
   useEffect(() => {
     const autoSaveInterval = setInterval(() => {
-      saveProgress(story?.id || '', {
-        userPrediction,
+      saveProgress(exercise.id, {
+        answers,
         score,
         timeSpent,
-        predictions: [],
-        hintsUsed: 0,
+        hintsUsed,
+        showResults,
       });
     }, 30000);
 
     return () => clearInterval(autoSaveInterval);
-  }, [userPrediction, score, timeSpent, story]);
+  }, [answers, score, timeSpent, hintsUsed, showResults, exercise.id]);
 
   // Progress update callback
   useEffect(() => {
     if (onProgressUpdate) {
-      const predictionComplete = userPrediction.length >= 50;
-      const resultComplete = !!result;
+      const answeredCount = answers.filter(a => a.selectedPredictionId !== null).length;
+      const correctCount = answers.filter(a => a.isCorrect === true).length;
+
+      // Prepare user answers in backend format
+      const userAnswers: Record<string, string> = {};
+      answers.forEach(answer => {
+        if (answer.selectedPredictionId) {
+          userAnswers[answer.scenarioId] = answer.selectedPredictionId;
+        }
+      });
+
       onProgressUpdate({
-        currentStep: (predictionComplete ? 1 : 0) + (resultComplete ? 1 : 0),
-        totalSteps: 2,
-        score,
-        hintsUsed,
-        timeSpent,
+        progress: {
+          currentStep: answeredCount,
+          totalSteps: exercise.scenarios.length,
+          score: answeredCount > 0 ? Math.floor((correctCount / exercise.scenarios.length) * 100) : 0,
+          hintsUsed,
+          timeSpent,
+        },
+        answers: userAnswers,
       });
     }
-  }, [userPrediction.length, result, score, hintsUsed, timeSpent, onProgressUpdate]);
+  }, [answers, hintsUsed, timeSpent, onProgressUpdate, exercise.scenarios.length]);
 
+  const handleSelectPrediction = (predictionId: string) => {
+    if (showResults) return;
 
-  const handleSubmit = async () => {
-    if (!story || userPrediction.length < 50) return;
-    setSubmitting(true);
-    try {
-      const res = await submitPrediction(story.beginning, userPrediction);
-      setResult(res);
+    setAnswers(prev =>
+      prev.map(answer =>
+        answer.scenarioId === currentScenario.id
+          ? { ...answer, selectedPredictionId: predictionId, isCorrect: null }
+          : answer
+      )
+    );
+  };
 
-      // Calculate score based on accuracy
-      const accuracyScore = Math.round(res.predictionAccuracy * 100);
-      setScore(accuracyScore);
+  const handleCheck = () => {
+    // Check if all scenarios are answered
+    const allAnswered = answers.every(a => a.selectedPredictionId !== null);
 
+    if (!allAnswered) {
+      const answeredCount = answers.filter(a => a.selectedPredictionId !== null).length;
       setFeedback({
-        type: accuracyScore >= 70 ? 'success' : accuracyScore >= 50 ? 'partial' : 'info',
-        title: accuracyScore >= 70 ? '¡Excelente Predicción!' : '¡Buen Intento!',
-        message: res.explanation,
-        score: accuracyScore,
-        showConfetti: accuracyScore >= 70
+        type: 'error',
+        title: 'Ejercicio Incompleto',
+        message: `Has respondido ${answeredCount} de ${exercise.scenarios.length} escenarios. Responde todos antes de verificar.`,
       });
       setShowFeedback(true);
-    } finally {
-      setSubmitting(false);
+      return;
     }
+
+    // Validate all answers
+    const validatedAnswers = answers.map(answer => {
+      const scenario = exercise.scenarios.find(s => s.id === answer.scenarioId);
+      if (!scenario) return answer;
+
+      const selectedPrediction = scenario.predictions.find(p => p.id === answer.selectedPredictionId);
+      return {
+        ...answer,
+        isCorrect: selectedPrediction?.isCorrect || false,
+      };
+    });
+
+    setAnswers(validatedAnswers);
+    setShowResults(true);
+
+    const correctCount = validatedAnswers.filter(a => a.isCorrect === true).length;
+    const finalScore = Math.floor((correctCount / exercise.scenarios.length) * 100);
+    setScore(finalScore);
+
+    // Show feedback
+    setFeedback({
+      type: finalScore >= 70 ? 'success' : finalScore >= 50 ? 'partial' : 'info',
+      title: finalScore >= 70 ? '¡Excelente Predicción!' : finalScore >= 50 ? '¡Buen Intento!' : 'Sigue Practicando',
+      message: `Has acertado ${correctCount} de ${exercise.scenarios.length} predicciones.`,
+      score: finalScore,
+      showConfetti: finalScore >= 70,
+    });
+    setShowFeedback(true);
   };
 
   const handleReset = () => {
-    setUserPrediction('');
-    setResult(null);
+    setAnswers(
+      exercise.scenarios.map(s => ({
+        scenarioId: s.id,
+        selectedPredictionId: null,
+        isCorrect: null,
+      }))
+    );
+    setShowResults(false);
     setScore(0);
     setFeedback(null);
     setShowFeedback(false);
+    setCurrentScenarioIndex(0);
+    setShowHint(false);
   };
 
-  if (loading || !story) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-detective-blue text-detective-xl">Cargando historia...</div>
-      </div>
-    );
-  }
+  const handleNext = () => {
+    if (currentScenarioIndex < exercise.scenarios.length - 1) {
+      setCurrentScenarioIndex(prev => prev + 1);
+      setShowHint(false);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentScenarioIndex > 0) {
+      setCurrentScenarioIndex(prev => prev - 1);
+      setShowHint(false);
+    }
+  };
+
+  const toggleHint = () => {
+    setShowHint(prev => !prev);
+    if (!showHint) {
+      setHintsUsed(prev => prev + 1);
+    }
+  };
+
+  // Expose actions to parent
+  useEffect(() => {
+    if (actionsRef) {
+      actionsRef.current = {
+        getState: () => ({ answers, score, timeSpent, hintsUsed, showResults }),
+        reset: handleReset,
+        validate: async () => handleCheck(),
+      };
+    }
+  }, [answers, score, timeSpent, hintsUsed, showResults, actionsRef]);
+
+  const getOptionStyle = (prediction: PredictionOption) => {
+    const isSelected = currentAnswer?.selectedPredictionId === prediction.id;
+    const isCorrect = prediction.isCorrect;
+
+    if (!showResults) {
+      return isSelected
+        ? 'border-detective-orange bg-detective-orange/10'
+        : 'border-gray-300 hover:border-detective-orange hover:bg-detective-orange/5';
+    }
+
+    if (isSelected && isCorrect) {
+      return 'border-green-500 bg-green-50';
+    }
+    if (isSelected && !isCorrect) {
+      return 'border-red-500 bg-red-50';
+    }
+    if (!isSelected && isCorrect) {
+      return 'border-green-500 bg-green-50';
+    }
+    return 'border-gray-300 opacity-60';
+  };
+
+  const getOptionIcon = (prediction: PredictionOption) => {
+    const isSelected = currentAnswer?.selectedPredictionId === prediction.id;
+    const isCorrect = prediction.isCorrect;
+
+    if (!showResults) return null;
+
+    if (isCorrect) {
+      return <CheckCircle className="w-6 h-6 text-green-600" />;
+    }
+    if (isSelected && !isCorrect) {
+      return <XCircle className="w-6 h-6 text-red-600" />;
+    }
+    return null;
+  };
 
   return (
     <>
@@ -126,135 +242,181 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
           animate={{ opacity: 1, y: 0 }}
           className="space-y-6"
         >
-          {/* Header */}
+          {/* Header - Detective Theme with Gradient */}
           <div className="bg-gradient-to-r from-detective-blue to-detective-orange rounded-detective p-6 text-white shadow-detective-lg">
             <div className="flex items-center gap-3 mb-2">
               <BookOpen className="w-8 h-8" />
-              <h1 className="text-detective-3xl font-bold">{story.title}</h1>
+              <h1 className="text-detective-3xl font-bold">{exercise.title}</h1>
             </div>
-            <p className="text-detective-base opacity-90">{story.context}</p>
-          </div>
-
-          {/* Story Beginning */}
-          <div className="mt-6">
-            <h3 className="text-detective-lg font-semibold text-detective-blue mb-4">
-              Comienzo de la Historia
-            </h3>
-            <p className="text-detective-base text-detective-text leading-relaxed mb-6 whitespace-pre-line">
-              {story.beginning}
-            </p>
-            <div className="border-t-2 border-detective-orange pt-6">
-              <label className="block text-detective-base font-medium text-detective-text mb-3">
-                ¿Qué crees que sucederá a continuación?
-              </label>
-              <textarea
-                value={userPrediction}
-                onChange={(e) => setUserPrediction(e.target.value)}
-                placeholder="Escribe tu predicción sobre cómo continuará la historia..."
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-detective-orange resize-none"
-                rows={8}
-                disabled={submitting || result !== null}
-              />
-              <div className="flex items-center justify-between mt-3">
-                <span className={`text-detective-sm ${userPrediction.length >= 50 ? 'text-green-600' : 'text-detective-text-secondary'}`}>
-                  {userPrediction.length} / 50 caracteres mínimo
-                </span>
-                <DetectiveButton
-                  variant="gold"
-
-                  onClick={handleSubmit}
-                  disabled={submitting || userPrediction.length < 50 || result !== null}
-                  loading={submitting}
-                  icon={submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
-                >
-                  {submitting ? 'Analizando...' : 'Enviar Predicción'}
-                </DetectiveButton>
+            {exercise.subtitle && (
+              <p className="text-detective-base opacity-90 mb-4">{exercise.subtitle}</p>
+            )}
+            {exercise.description && (
+              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+                <p className="text-detective-sm font-medium">Objetivo:</p>
+                <p className="text-detective-base">{exercise.description}</p>
               </div>
-            </div>
+            )}
           </div>
 
-          {/* Results */}
-          {result && (
+          {/* Progress Indicator */}
+          <div className="flex items-center justify-between text-detective-sm text-detective-text-secondary">
+            <span>
+              Escenario {currentScenarioIndex + 1} de {exercise.scenarios.length}
+            </span>
+            <span>
+              {answers.filter(a => a.selectedPredictionId !== null).length} de {exercise.scenarios.length} respondidos
+            </span>
+          </div>
+
+          {/* Scenario Content */}
+          <AnimatePresence mode="wait">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              key={currentScenario.id}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
               className="space-y-6"
             >
-              {/* Real Continuation */}
-              <div className="bg-purple-50 border-2 border-purple-200 rounded-detective p-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <Sparkles className="w-6 h-6 text-purple-600" />
-                  <h3 className="text-detective-lg font-bold text-detective-blue">
-                    Continuación Real de la Historia
-                  </h3>
-                </div>
-                <p className="text-detective-base text-detective-text leading-relaxed whitespace-pre-line">
-                  {result.continuation}
+              {/* Context */}
+              <div className="bg-blue-50 border-l-4 border-detective-blue p-4 rounded-detective">
+                <h3 className="text-detective-base font-semibold text-detective-blue mb-2">
+                  Contexto Histórico
+                </h3>
+                <p className="text-detective-sm text-detective-text">{currentScenario.context}</p>
+              </div>
+
+              {/* Beginning of narrative */}
+              <div className="bg-purple-50 border-2 border-purple-200 p-6 rounded-detective">
+                <h3 className="text-detective-lg font-semibold text-detective-blue mb-3">
+                  Inicio de la Historia
+                </h3>
+                <p className="text-detective-base text-detective-text leading-relaxed italic">
+                  "{currentScenario.beginning}"
                 </p>
               </div>
 
-              {/* Analysis */}
-              <div>
-                <h4 className="text-detective-lg font-semibold text-detective-blue mb-4">
-                  Análisis de tu Predicción
-                </h4>
-                <div className="mb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-detective-sm text-detective-text-secondary">
-                      Precisión de Predicción
-                    </span>
-                    <span className="text-detective-lg font-bold text-detective-orange">
-                      {Math.round(result.predictionAccuracy * 100)}%
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${result.predictionAccuracy * 100}%` }}
-                      className="h-full bg-gradient-to-r from-detective-orange to-detective-gold rounded-full"
-                    />
-                  </div>
-                </div>
-                <p className="text-detective-base text-detective-text mb-4">{result.explanation}</p>
-                {result.alternativeEndings.length > 0 && (
-                  <div>
-                    <h5 className="text-detective-base font-semibold text-detective-blue mb-3">
-                      Finales Alternativos Posibles
-                    </h5>
-                    <ul className="space-y-2">
-                      {result.alternativeEndings.map((ending, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-detective-sm">
-                          <span className="text-detective-orange font-bold">•</span>
-                          <span>{ending}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+              {/* Question */}
+              <div className="text-center py-4">
+                <h3 className="text-detective-xl font-bold text-detective-orange">
+                  {currentScenario.question}
+                </h3>
               </div>
-            </motion.div>
-          )}
 
-          {/* Action Buttons */}
-          <div className="flex justify-center gap-4">
-            {onExit && (
+              {/* Prediction Options */}
+              <div className="space-y-4">
+                {currentScenario.predictions.map((prediction, index) => (
+                  <motion.button
+                    key={prediction.id}
+                    onClick={() => handleSelectPrediction(prediction.id)}
+                    disabled={showResults}
+                    whileHover={!showResults ? { scale: 1.02 } : {}}
+                    whileTap={!showResults ? { scale: 0.98 } : {}}
+                    className={`w-full text-left p-4 border-2 rounded-detective transition-all ${getOptionStyle(
+                      prediction
+                    )} ${!showResults ? 'cursor-pointer' : 'cursor-default'}`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-detective-orange/20 text-detective-orange font-bold flex items-center justify-center text-detective-sm">
+                        {String.fromCharCode(65 + index)}
+                      </span>
+                      <div className="flex-1">
+                        <p className="text-detective-base text-detective-text">{prediction.text}</p>
+                        {showResults && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            className="mt-3 pt-3 border-t border-gray-300"
+                          >
+                            <p className="text-detective-sm text-detective-text-secondary">
+                              {prediction.explanation}
+                            </p>
+                          </motion.div>
+                        )}
+                      </div>
+                      {getOptionIcon(prediction)}
+                    </div>
+                  </motion.button>
+                ))}
+              </div>
+
+              {/* Contextual Hint */}
+              {currentScenario.contextualHint && (
+                <div className="mt-6">
+                  <DetectiveButton
+                    variant="secondary"
+                    size="sm"
+                    icon={<Lightbulb className="w-4 h-4" />}
+                    onClick={toggleHint}
+                  >
+                    {showHint ? 'Ocultar Pista' : 'Ver Pista Contextual'}
+                  </DetectiveButton>
+
+                  <AnimatePresence>
+                    {showHint && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="mt-3 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-detective"
+                      >
+                        <div className="flex items-start gap-2">
+                          <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                          <p className="text-detective-sm text-yellow-800">
+                            {currentScenario.contextualHint}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Navigation & Actions */}
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-gray-200">
+            <div className="flex gap-2">
               <DetectiveButton
                 variant="secondary"
-
-                onClick={onExit}
+                size="md"
+                onClick={handlePrevious}
+                disabled={currentScenarioIndex === 0}
               >
-                Salir
+                ← Anterior
               </DetectiveButton>
-            )}
-            {result && (
-              <DetectiveButton
-                variant="blue"
+              {currentScenarioIndex < exercise.scenarios.length - 1 && (
+                <DetectiveButton
+                  variant="secondary"
+                  size="md"
+                  onClick={handleNext}
+                >
+                  Siguiente →
+                </DetectiveButton>
+              )}
+            </div>
 
-                onClick={handleReset}
-              >
-                Intentar de Nuevo
-              </DetectiveButton>
-            )}
+            <div className="flex gap-2">
+              {onExit && (
+                <DetectiveButton variant="secondary" size="md" onClick={onExit}>
+                  Salir
+                </DetectiveButton>
+              )}
+              {!showResults ? (
+                <DetectiveButton
+                  variant="gold"
+                  size="md"
+                  onClick={handleCheck}
+                  disabled={answers.some(a => a.selectedPredictionId === null)}
+                >
+                  Verificar Respuestas
+                </DetectiveButton>
+              ) : (
+                <DetectiveButton variant="blue" size="md" onClick={handleReset}>
+                  Intentar de Nuevo
+                </DetectiveButton>
+              )}
+            </div>
           </div>
         </motion.div>
       </DetectiveCard>

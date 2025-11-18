@@ -1,17 +1,19 @@
-export interface ContextPiece {
+export interface Fragment {
   id: string;
-  content: string;
+  label: string; // A, B, C, D
+  text: string;
   correctPosition: number;
-  category: 'historical' | 'scientific' | 'personal' | 'social';
 }
 
-export interface PuzzleExercise {
+export interface PuzzleContextoData {
   id: string;
   title: string;
+  subtitle?: string;
   description: string;
-  pieces: ContextPiece[];
-  correctOrder?: string[];
-  difficulty: 'facil' | 'medio' | 'dificil' | 'experto';
+  instructions?: string;
+  completeInference: string;
+  fragments: Fragment[];
+  correctOrder: string[];
 }
 
 export interface ExerciseProgressUpdate {
@@ -24,7 +26,7 @@ export interface ExerciseProgressUpdate {
 
 // Exercise State for auto-save
 export interface PuzzleContextoState {
-  currentOrder: string[];
+  currentOrder: string[]; // Array of fragment IDs in current order
   isComplete: boolean;
   score: number;
   timeSpent: number;
@@ -36,19 +38,14 @@ export interface PuzzleContextoActions {
   getState: () => PuzzleContextoState;
   reset: () => void;
   validate: () => Promise<void>;
-  movePiece?: (pieceId: string, newPosition: number) => void;
 }
 
-// Standardized Exercise Props Interface (Module 1 Pattern)
+// Standardized Exercise Props Interface (Module 2 Pattern)
 export interface PuzzleContextoExerciseProps {
-  moduleId: number;
-  lessonId: number;
-  exerciseId: string;
-  userId: string;
+  exercise: PuzzleContextoData;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
-  onProgressUpdate?: (progress: ExerciseProgressUpdate) => void;
+  onProgressUpdate?: (progress: any) => void;
   initialData?: Partial<PuzzleContextoState>;
-  difficulty?: 'easy' | 'medium' | 'hard';
   actionsRef?: React.MutableRefObject<PuzzleContextoActions | undefined>;
 }

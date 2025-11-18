@@ -249,8 +249,8 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
             </div>
             <p className="text-detective-base opacity-90 mb-4">{investigation.description}</p>
             <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
-              <p className="font-medium">Misterio a resolver:</p>
-              <p className="text-detective-base">{investigation.mystery}</p>
+              <p className="font-medium text-gray-900">Misterio a resolver:</p>
+              <p className="text-detective-base text-gray-900">{investigation.mystery}</p>
             </div>
           </div>
 

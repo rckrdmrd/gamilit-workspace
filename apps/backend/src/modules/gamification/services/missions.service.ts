@@ -6,6 +6,7 @@ import { MissionStatsDto } from '../dto/missions/mission-stats.dto';
 import { MLCoinsService } from './ml-coins.service';
 import { UserStatsService } from './user-stats.service';
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
+import { Profile } from '@/modules/auth/entities/profile.entity';
 
 /**
  * MissionsService
@@ -35,9 +36,34 @@ export class MissionsService {
   constructor(
     @InjectRepository(Mission, 'gamification')
     private readonly missionsRepo: Repository<Mission>,
+    @InjectRepository(Profile, 'auth')
+    private readonly profileRepo: Repository<Profile>,
     private readonly mlCoinsService: MLCoinsService,
     private readonly userStatsService: UserStatsService,
   ) {}
+
+  /**
+   * Helper method to get profile.id from auth.users.id
+   *
+   * @description Missions table FK references profiles.id, but JWT contains auth.users.id.
+   * This method converts auth.users.id → profiles.id
+   *
+   * @param userId - auth.users.id (from JWT token)
+   * @returns profiles.id
+   * @throws NotFoundException if profile doesn't exist
+   */
+  private async getProfileId(userId: string): Promise<string> {
+    const profile = await this.profileRepo.findOne({
+      where: { user_id: userId },
+      select: ['id'],
+    });
+
+    if (!profile) {
+      throw new NotFoundException(`Profile not found for user ${userId}`);
+    }
+
+    return profile.id;
+  }
 
   /**
    * Obtiene misiones por tipo y usuario
@@ -57,10 +83,14 @@ export class MissionsService {
     userId: string,
     type: MissionTypeEnum,
   ): Promise<Mission[]> {
+    // CRITICAL FIX: Convert auth.users.id → profiles.id
+    // missions.user_id FK references profiles.id (NOT auth.users.id)
+    const profileId = await this.getProfileId(userId);
+
     // Buscar misiones activas/in_progress del tipo solicitado
     const missions = await this.missionsRepo.find({
       where: {
-        user_id: userId,
+        user_id: profileId,  // FIXED: usar profileId en lugar de userId
         mission_type: type,
         status: Between(MissionStatusEnum.ACTIVE, MissionStatusEnum.IN_PROGRESS),
       },
@@ -72,9 +102,9 @@ export class MissionsService {
     // Si no existen misiones, generar automáticamente
     if (missions.length === 0 && type !== MissionTypeEnum.SPECIAL) {
       if (type === MissionTypeEnum.DAILY) {
-        return await this.generateDailyMissions(userId);
+        return await this.generateDailyMissions(profileId);  // FIXED: pasar profileId
       } else if (type === MissionTypeEnum.WEEKLY) {
-        return await this.generateWeeklyMissions(userId);
+        return await this.generateWeeklyMissions(profileId);  // FIXED: pasar profileId
       }
     }
 
@@ -92,11 +122,12 @@ export class MissionsService {
    * 2. Racha de 2 aciertos → 30 XP + 15 ML Coins
    * 3. Estudiar 15 minutos → 40 XP + 20 ML Coins
    *
-   * @param userId - ID del usuario (UUID)
+   * @param userId - profiles.id (UUID) - NOT auth.users.id!
    * @returns Array de 3 misiones diarias creadas
    *
    * @example
-   * const missions = await service.generateDailyMissions(userId);
+   * const profileId = await this.getProfileId(authUserId);
+   * const missions = await service.generateDailyMissions(profileId);
    * // Retorna: [Mission, Mission, Mission]
    */
   async generateDailyMissions(userId: string): Promise<Mission[]> {
@@ -195,11 +226,12 @@ export class MissionsService {
    * 1. Completar 15 ejercicios → 200 XP + 100 ML Coins
    * 2. Racha de 5 días consecutivos → 300 XP + 150 ML Coins
    *
-   * @param userId - ID del usuario (UUID)
+   * @param userId - profiles.id (UUID) - NOT auth.users.id!
    * @returns Array de 2 misiones semanales creadas
    *
    * @example
-   * const missions = await service.generateWeeklyMissions(userId);
+   * const profileId = await this.getProfileId(authUserId);
+   * const missions = await service.generateWeeklyMissions(profileId);
    * // Retorna: [Mission, Mission]
    */
   async generateWeeklyMissions(userId: string): Promise<Mission[]> {
@@ -286,6 +318,9 @@ export class MissionsService {
    * // mission.status === 'in_progress'
    */
   async startMission(missionId: string, userId: string): Promise<Mission> {
+    // CRITICAL FIX: Convert auth.users.id → profiles.id
+    const profileId = await this.getProfileId(userId);
+
     const mission = await this.missionsRepo.findOne({
       where: { id: missionId },
     });
@@ -295,7 +330,7 @@ export class MissionsService {
     }
 
     // Validar que la misión pertenece al usuario
-    if (mission.user_id !== userId) {
+    if (mission.user_id !== profileId) {  // FIXED: comparar con profileId
       throw new BadRequestException('Mission does not belong to this user');
     }
 
@@ -345,6 +380,9 @@ export class MissionsService {
     objectiveType: string,
     increment: number,
   ): Promise<Mission> {
+    // CRITICAL FIX: Convert auth.users.id → profiles.id
+    const profileId = await this.getProfileId(userId);
+
     const mission = await this.missionsRepo.findOne({
       where: { id: missionId },
     });
@@ -354,7 +392,7 @@ export class MissionsService {
     }
 
     // Validar que la misión pertenece al usuario
-    if (mission.user_id !== userId) {
+    if (mission.user_id !== profileId) {  // FIXED: comparar con profileId
       throw new BadRequestException('Mission does not belong to this user');
     }
 
@@ -430,6 +468,9 @@ export class MissionsService {
     mission: Mission;
     rewards: MissionRewards;
   }> {
+    // CRITICAL FIX: Convert auth.users.id → profiles.id
+    const profileId = await this.getProfileId(userId);
+
     const mission = await this.missionsRepo.findOne({
       where: { id: missionId },
     });
@@ -439,7 +480,7 @@ export class MissionsService {
     }
 
     // Validar que la misión pertenece al usuario
-    if (mission.user_id !== userId) {
+    if (mission.user_id !== profileId) {  // FIXED: comparar con profileId
       throw new BadRequestException('Mission does not belong to this user');
     }
 
@@ -534,6 +575,9 @@ export class MissionsService {
    * // }
    */
   async getStats(userId: string): Promise<MissionStatsDto> {
+    // CRITICAL FIX: Convert auth.users.id → profiles.id
+    const profileId = await this.getProfileId(userId);
+
     const now = new Date();
 
     // Calcular inicio del día
@@ -550,7 +594,7 @@ export class MissionsService {
     // Misiones de hoy
     const todayMissions = await this.missionsRepo.find({
       where: {
-        user_id: userId,
+        user_id: profileId,  // FIXED: usar profileId
         mission_type: MissionTypeEnum.DAILY,
         start_date: Between(startOfDay, new Date()),
       },
@@ -563,7 +607,7 @@ export class MissionsService {
     // Misiones de la semana
     const weekMissions = await this.missionsRepo.find({
       where: {
-        user_id: userId,
+        user_id: profileId,  // FIXED: usar profileId
         start_date: Between(startOfWeek, new Date()),
       },
     });
@@ -575,7 +619,7 @@ export class MissionsService {
     // Totales históricos
     const allCompletedMissions = await this.missionsRepo.find({
       where: {
-        user_id: userId,
+        user_id: profileId,  // FIXED: usar profileId
         status: Between(MissionStatusEnum.COMPLETED, MissionStatusEnum.CLAIMED),
       },
     });

@@ -35,21 +35,39 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
   const answeredCount = statements.filter(s => s.userAnswer !== null).length;
   const correctCount = statements.filter(s => s.userAnswer === s.correctAnswer).length;
 
+  // FE-055: Notify parent with progress AND user answers
   useEffect(() => {
     // Auto-save progress
     saveProgress(exercise.id, { statements, hintsUsed });
 
-    // Notify parent component of progress
+    // Notify parent component of progress WITH user answers
     if (onProgressUpdate) {
+      // Prepare user answers in backend format (statement-id: boolean)
+      const userAnswers: Record<string, boolean> = {};
+      statements.forEach(stmt => {
+        if (stmt.userAnswer !== null) {
+          userAnswers[stmt.id] = stmt.userAnswer;
+        }
+      });
+
+      // Send both progress metadata AND user answers
       onProgressUpdate({
-        currentStep: answeredCount,
-        totalSteps: statements.length,
-        score: answeredCount > 0 ? Math.floor((correctCount / statements.length) * 100) : 0,
-        hintsUsed,
-        timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
+        progress: {
+          currentStep: answeredCount,
+          totalSteps: statements.length,
+          score: answeredCount > 0 ? Math.floor((correctCount / statements.length) * 100) : 0,
+          hintsUsed,
+          timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
+        },
+        answers: userAnswers
+      });
+
+      console.log('📊 [VerdaderoFalso] Progress update sent:', {
+        answered: answeredCount,
+        totalQuestions: statements.length
       });
     }
-  }, [statements, hintsUsed]);
+  }, [statements, hintsUsed, onProgressUpdate, answeredCount, correctCount, startTime, exercise.id]);
 
   const handleAnswer = (statementId: string, answer: boolean) => {
     if (showResults) return; // No cambiar respuestas después de verificar

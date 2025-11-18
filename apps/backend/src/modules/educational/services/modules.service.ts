@@ -134,18 +134,37 @@ export class ModulesService {
         m.order_index,
         m.thumbnail_url as icon,
         m.subjects as category,
-        COALESCE(mp.progress_percentage, 0) as progress,
-        COALESCE(mp.completed_exercises, 0) as "completedExercises",
-        COALESCE(mp.total_exercises, 0) as "totalExercises",
+        COALESCE(mp.progress_percentage,
+          CASE
+            WHEN total_ex.total > 0 THEN (CAST(completed_ex.completed AS DECIMAL) / total_ex.total) * 100
+            ELSE 0
+          END, 0) as progress,
+        COALESCE(completed_ex.completed, 0) as "completedExercises",
+        COALESCE(total_ex.total, 0) as "totalExercises",
         CASE
           WHEN mp.status = 'completed' THEN 'completed'
           WHEN mp.status = 'in_progress' THEN 'in_progress'
+          WHEN completed_ex.completed > 0 THEN 'in_progress'
           WHEN mp.status IS NULL OR mp.status = 'not_started' THEN 'available'
           ELSE 'available'
         END as status
       FROM educational_content.modules m
       LEFT JOIN progress_tracking.module_progress mp
         ON m.id = mp.module_id AND mp.user_id = $1
+      LEFT JOIN LATERAL (
+        SELECT COUNT(*) as total
+        FROM educational_content.exercises e
+        WHERE e.module_id = m.id AND e.is_active = true
+      ) total_ex ON true
+      LEFT JOIN LATERAL (
+        SELECT COUNT(DISTINCT e.id) as completed
+        FROM educational_content.exercises e
+        INNER JOIN progress_tracking.exercise_attempts ea
+          ON e.id = ea.exercise_id AND ea.user_id = $1
+        WHERE e.module_id = m.id
+          AND e.is_active = true
+          AND ea.is_correct = true
+      ) completed_ex ON true
       WHERE m.is_published = true
       ORDER BY m.order_index ASC
     `;

@@ -1,70 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { motion, Reorder } from 'framer-motion';
-import { Puzzle, Check, GripVertical } from 'lucide-react';
+import { Puzzle, Check, GripVertical, RotateCcw } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
-import { validateAssembly } from './puzzleContextoAPI';
-import type { PuzzleExercise, ContextPiece } from './puzzleContextoTypes';
+import type { PuzzleContextoExerciseProps, Fragment, PuzzleContextoState } from './puzzleContextoTypes';
 import { calculateScore, saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import { mockPuzzle } from './puzzleContextoMockData';
+import { mockPuzzleData } from './puzzleContextoMockData';
 
-const categoryColors = {
-  historical: 'bg-blue-100 border-blue-400',
-  scientific: 'bg-green-100 border-green-400',
-  personal: 'bg-purple-100 border-purple-400',
-  social: 'bg-orange-100 border-orange-400',
-};
-
-interface ExerciseProps {
-  moduleId: number;
-  lessonId: number;
-  exerciseId: string;
-  userId: string;
-  onComplete?: (score: number, timeSpent: number) => void;
-  onExit?: () => void;
-  onProgressUpdate?: (progress: { currentStep: number; totalSteps: number; score: number; hintsUsed: number; timeSpent: number; }) => void;
-  initialData?: Partial<ExerciseState>;
-  difficulty?: 'easy' | 'medium' | 'hard';
-}
-
-interface ExerciseState {
-  pieces: ContextPiece[];
-  timeSpent: number;
-  score: number;
-  hintsUsed: number;
-}
-
-export const PuzzleContextoExercise: React.FC<ExerciseProps> = ({
-  exerciseId,
+export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
+  exercise = mockPuzzleData,
   onComplete,
   onExit,
   onProgressUpdate,
   initialData,
+  actionsRef,
 }) => {
-  const [puzzle, setPuzzle] = useState<PuzzleExercise | null>(null);
-  const [pieces, setPieces] = useState<ContextPiece[]>(initialData?.pieces || []);
-  const [loading, setLoading] = useState(true);
+  // Shuffle fragments initially
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  const [fragments, setFragments] = useState<Fragment[]>(
+    initialData?.currentOrder
+      ? initialData.currentOrder.map(id => exercise.fragments.find(f => f.id === id)!).filter(Boolean)
+      : shuffleArray(exercise.fragments)
+  );
+  const [showResults, setShowResults] = useState(false);
+  const [hintsUsed, setHintsUsed] = useState(initialData?.hintsUsed || 0);
   const [startTime] = useState(new Date());
   const [timeSpent, setTimeSpent] = useState(initialData?.timeSpent || 0);
   const [score, setScore] = useState(initialData?.score || 0);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
-  const [hintsUsed] = useState(initialData?.hintsUsed || 0);
-  const [result, setResult] = useState<any>(null); // Validation result
-
-  useEffect(() => {
-    if (!puzzle) {
-      setPuzzle(mockPuzzle);
-      setPieces(mockPuzzle.pieces);
-      setLoading(false);
-    }
-  }, [exerciseId]);
 
   // Timer
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeSpent((prev) => prev + 1);
+      setTimeSpent(prev => prev + 1);
     }, 1000);
     return () => clearInterval(timer);
   }, []);
@@ -72,71 +50,117 @@ export const PuzzleContextoExercise: React.FC<ExerciseProps> = ({
   // Auto-save progress every 30 seconds
   useEffect(() => {
     const autoSaveInterval = setInterval(() => {
-      saveProgress(puzzle?.id || '', {
-        pieces,
-        timeSpent,
+      saveProgress(exercise.id, {
+        currentOrder: fragments.map(f => f.id),
+        isComplete: showResults,
         score,
+        timeSpent,
         hintsUsed,
       });
     }, 30000);
 
     return () => clearInterval(autoSaveInterval);
-  }, [pieces, timeSpent, score, hintsUsed, puzzle]);
+  }, [fragments, showResults, score, timeSpent, hintsUsed, exercise.id]);
 
   // Progress update callback
   useEffect(() => {
-    if (onProgressUpdate && puzzle) {
-      const correctOrder = puzzle.correctOrder || [];
-      const correctCount = pieces.filter((piece, index) => {
-        return correctOrder[index] === piece.id;
+    if (onProgressUpdate) {
+      const correctCount = fragments.filter((frag, index) => {
+        return exercise.correctOrder[index] === frag.id;
       }).length;
+
+      // Prepare user answers in backend format
+      const userAnswers: Record<string, number> = {};
+      fragments.forEach((frag, index) => {
+        userAnswers[frag.id] = index;
+      });
+
       onProgressUpdate({
-        currentStep: correctCount,
-        totalSteps: pieces.length,
-        score: score,
-        hintsUsed: hintsUsed,
-        timeSpent: timeSpent,
+        progress: {
+          currentStep: correctCount,
+          totalSteps: fragments.length,
+          score: showResults ? score : 0,
+          hintsUsed,
+          timeSpent,
+        },
+        answers: userAnswers,
       });
     }
-  }, [pieces.length, puzzle?.correctOrder, score, hintsUsed, timeSpent, onProgressUpdate]);
+  }, [fragments, showResults, score, hintsUsed, timeSpent, onProgressUpdate, exercise.correctOrder]);
 
-  const handleValidate = async () => {
-    const assembled = pieces.map((p) => ({ id: p.id, content: p.content }));
-    const res = await validateAssembly(assembled);
-    setResult(res);
+  const handleCheck = () => {
+    // Validate order
+    let correctCount = 0;
+    fragments.forEach((frag, index) => {
+      if (exercise.correctOrder[index] === frag.id) {
+        correctCount++;
+      }
+    });
 
-    // Calculate standardized score
-    const correctCount = pieces.length - res.corrections.length;
-    const calculatedScore = calculateScore(correctCount, pieces.length);
-    setScore(calculatedScore);
+    const finalScore = Math.floor((correctCount / fragments.length) * 100);
+    setScore(finalScore);
+    setShowResults(true);
 
+    // Show feedback
     setFeedback({
-      type: res.isCorrect ? 'success' : 'partial',
-      title: res.isCorrect ? '¡Perfecto!' : 'Buen intento',
-      message: res.feedback,
-      score: calculatedScore,
-      showConfetti: res.isCorrect
+      type: finalScore >= 70 ? 'success' : finalScore >= 50 ? 'partial' : 'info',
+      title: finalScore >= 70 ? '¡Excelente Orden!' : finalScore >= 50 ? '¡Buen Intento!' : 'Sigue Practicando',
+      message: `Has ordenado correctamente ${correctCount} de ${fragments.length} fragmentos.`,
+      score: finalScore,
+      showConfetti: finalScore >= 70,
     });
     setShowFeedback(true);
   };
 
   const handleReset = () => {
-    if (puzzle) {
-      setPieces([...puzzle.pieces]);
-      setResult(null);
-      setScore(0);
-      setFeedback(null);
-      setShowFeedback(false);
-    }
+    setFragments(shuffleArray(exercise.fragments));
+    setShowResults(false);
+    setScore(0);
+    setFeedback(null);
+    setShowFeedback(false);
   };
 
-  if (loading || !puzzle) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-detective-blue text-detective-xl">Cargando puzzle...</div>
-      </div>
-    );
-  }
+  // Expose actions to parent
+  useEffect(() => {
+    if (actionsRef) {
+      actionsRef.current = {
+        getState: () => ({
+          currentOrder: fragments.map(f => f.id),
+          isComplete: showResults,
+          score,
+          timeSpent,
+          hintsUsed,
+        }),
+        reset: handleReset,
+        validate: async () => handleCheck(),
+      };
+    }
+  }, [fragments, showResults, score, timeSpent, hintsUsed, actionsRef]);
+
+  const getFragmentStyle = (fragment: Fragment, index: number) => {
+    if (!showResults) {
+      return 'border-detective-orange/30 bg-white hover:border-detective-orange hover:shadow-lg';
+    }
+
+    const isCorrect = exercise.correctOrder[index] === fragment.id;
+    if (isCorrect) {
+      return 'border-green-500 bg-green-50';
+    }
+    return 'border-red-500 bg-red-50';
+  };
+
+  const getFragmentIcon = (fragment: Fragment, index: number) => {
+    if (!showResults) return null;
+
+    const isCorrect = exercise.correctOrder[index] === fragment.id;
+    if (isCorrect) {
+      return <Check className="w-5 h-5 text-green-600" />;
+    }
+    return null;
+  };
+
+  // Build the current inference from fragments
+  const currentInference = fragments.map(f => f.text).join(' ');
 
   return (
     <>
@@ -146,62 +170,131 @@ export const PuzzleContextoExercise: React.FC<ExerciseProps> = ({
           animate={{ opacity: 1, y: 0 }}
           className="space-y-6"
         >
-          {/* Header */}
+          {/* Header - Detective Theme with Gradient */}
           <div className="bg-gradient-to-r from-detective-blue to-detective-orange rounded-detective p-6 text-white shadow-detective-lg">
             <div className="flex items-center gap-3 mb-2">
               <Puzzle className="w-8 h-8" />
-              <h1 className="text-detective-3xl font-bold">{puzzle.title}</h1>
+              <h1 className="text-detective-3xl font-bold">{exercise.title}</h1>
             </div>
-            <p className="text-detective-lg opacity-90">{puzzle.description}</p>
+            {exercise.subtitle && (
+              <p className="text-detective-base opacity-90 mb-4">{exercise.subtitle}</p>
+            )}
+            {exercise.description && (
+              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+                <p className="text-detective-sm font-medium">Objetivo:</p>
+                <p className="text-detective-base">{exercise.description}</p>
+              </div>
+            )}
           </div>
 
-          {/* Main Content */}
-          <div className="mt-6">
-            <h3 className="text-detective-lg font-semibold text-detective-blue mb-4">
-              Arrastra para Ordenar el Contexto
+          {/* Instructions */}
+          {exercise.instructions && (
+            <div className="bg-blue-50 border-l-4 border-detective-blue p-4 rounded-detective">
+              <p className="text-detective-sm text-detective-text leading-relaxed">
+                <strong>Instrucciones:</strong> {exercise.instructions}
+              </p>
+            </div>
+          )}
+
+          {/* Fragments to Order */}
+          <div>
+            <h3 className="text-detective-lg font-semibold text-detective-blue mb-3">
+              Fragmentos Desordenados
             </h3>
-            <Reorder.Group axis="y" values={pieces} onReorder={setPieces} className="space-y-3">
-              {pieces.map((piece, idx) => (
-                <Reorder.Item key={piece.id} value={piece}>
+            <p className="text-detective-sm text-detective-text-secondary mb-4">
+              Arrastra los fragmentos para ordenarlos correctamente
+            </p>
+
+            <Reorder.Group
+              axis="y"
+              values={fragments}
+              onReorder={setFragments}
+              className="space-y-3"
+            >
+              {fragments.map((fragment, index) => (
+                <Reorder.Item key={fragment.id} value={fragment}>
                   <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    className={`p-4 rounded-lg border-2 cursor-move flex items-start gap-3 ${categoryColors[piece.category]}`}
+                    whileHover={!showResults ? { scale: 1.02 } : {}}
+                    whileTap={!showResults ? { scale: 0.98 } : {}}
+                    className={`flex items-center gap-3 p-4 border-2 rounded-detective transition-all ${getFragmentStyle(
+                      fragment,
+                      index
+                    )} ${!showResults ? 'cursor-move' : 'cursor-default'}`}
                   >
-                    <GripVertical className="w-5 h-5 text-gray-400 flex-shrink-0 mt-1" />
+                    {!showResults && <GripVertical className="w-5 h-5 text-gray-400" />}
+                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-detective-orange/20 text-detective-orange font-bold flex items-center justify-center text-detective-sm">
+                      {fragment.label}
+                    </span>
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-detective-xs font-bold uppercase px-2 py-1 bg-white rounded">
-                          {piece.category}
-                        </span>
-                        <span className="text-detective-xs text-gray-600">Posición: {idx + 1}</span>
-                      </div>
-                      <p className="text-detective-sm">{piece.content}</p>
+                      <p className="text-detective-base text-detective-text">{fragment.text}</p>
                     </div>
+                    {getFragmentIcon(fragment, index)}
                   </motion.div>
                 </Reorder.Item>
               ))}
             </Reorder.Group>
           </div>
 
-          {/* Submit Button */}
-          <div className="flex justify-center gap-4">
-            {onExit && (
-              <DetectiveButton
-                variant="secondary"
+          {/* Current Inference Preview */}
+          <div>
+            <h3 className="text-detective-lg font-semibold text-detective-blue mb-3">
+              Inferencia Actual
+            </h3>
+            <div className="bg-purple-50 border-2 border-purple-200 p-6 rounded-detective">
+              <p className="text-detective-base text-detective-text leading-relaxed italic">
+                "{currentInference}"
+              </p>
+            </div>
+          </div>
 
-                onClick={onExit}
-              >
+          {/* Correct Inference (after validation) */}
+          {showResults && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <h3 className="text-detective-lg font-semibold text-green-600 mb-3">
+                Inferencia Correcta
+              </h3>
+              <div className="bg-green-50 border-2 border-green-200 p-6 rounded-detective">
+                <p className="text-detective-base text-detective-text leading-relaxed font-medium">
+                  "{exercise.completeInference}"
+                </p>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex justify-center gap-4 pt-6 border-t border-gray-200">
+            {onExit && (
+              <DetectiveButton variant="secondary" size="md" onClick={onExit}>
                 Salir
               </DetectiveButton>
             )}
-            <DetectiveButton
-              variant="gold"
-
-              onClick={handleValidate}
-              icon={<Check className="w-5 h-5" />}
-            >
-              Validar Orden
-            </DetectiveButton>
+            {!showResults ? (
+              <>
+                <DetectiveButton
+                  variant="secondary"
+                  size="md"
+                  icon={<RotateCcw className="w-5 h-5" />}
+                  onClick={handleReset}
+                >
+                  Mezclar de Nuevo
+                </DetectiveButton>
+                <DetectiveButton
+                  variant="gold"
+                  size="md"
+                  icon={<Check className="w-5 h-5" />}
+                  onClick={handleCheck}
+                >
+                  Verificar Orden
+                </DetectiveButton>
+              </>
+            ) : (
+              <DetectiveButton variant="blue" size="md" onClick={handleReset}>
+                Intentar de Nuevo
+              </DetectiveButton>
+            )}
           </div>
         </motion.div>
       </DetectiveCard>

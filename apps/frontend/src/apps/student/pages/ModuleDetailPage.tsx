@@ -268,10 +268,10 @@ export default function ModuleDetailPage() {
     );
   }
 
-  // Calculate progress percentage
-  const progressPercentage = module.progressPercentage || module.progress || 0;
-  const completedExercises = module.completedExercises || module.completed_exercises || 0;
-  const totalExercises = module.total_exercises || module.exercises_count || exercises.length;
+  // Calculate progress percentage based on actual completed exercises
+  const completedExercises = exercises.filter(ex => ex.completed).length;
+  const totalExercises = exercises.length;
+  const progressPercentage = totalExercises > 0 ? (completedExercises / totalExercises) * 100 : 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">

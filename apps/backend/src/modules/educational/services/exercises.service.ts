@@ -47,6 +47,7 @@ export class ExercisesService {
       this.validateContentByExerciseType(
         exerciseData.exercise_type,
         exerciseData.content,
+        exerciseData.config,
       );
     }
 
@@ -67,7 +68,8 @@ export class ExercisesService {
     if (exerciseData.exercise_type || exerciseData.content) {
       const exerciseType = exerciseData.exercise_type || exercise.exercise_type;
       const content = exerciseData.content || exercise.content;
-      this.validateContentByExerciseType(exerciseType, content);
+      const config = exerciseData.config || exercise.config;
+      this.validateContentByExerciseType(exerciseType, content, config);
     }
 
     await this.exerciseRepo.update(id, exerciseData);
@@ -93,6 +95,7 @@ export class ExercisesService {
   validateContentByExerciseType(
     exerciseType: ExerciseTypeEnum,
     content: Record<string, any>,
+    config?: Record<string, any>,
   ): void {
     if (!content) {
       throw new BadRequestException('Content is required');
@@ -109,11 +112,44 @@ export class ExercisesService {
         break;
 
       case ExerciseTypeEnum.SOPA_LETRAS:
-        // Sopa de letras requiere grid y words
-        if (!content.grid || !content.words) {
+        // Validar estructura básica
+        if (!content?.words || !Array.isArray(content.words)) {
           throw new BadRequestException(
-            'Sopa de letras must have grid and words',
+            'Sopa de letras must have words array',
           );
+        }
+
+        // Validación condicional según useStaticGrid
+        if (config?.useStaticGrid) {
+          // Grid estático: debe existir grid completo en content
+          if (!content?.grid || !Array.isArray(content.grid)) {
+            throw new BadRequestException(
+              'Sopa de letras with useStaticGrid must have static grid in content',
+            );
+          }
+
+          // Validar que grid tenga dimensiones correctas
+          const rows = config?.gridSize?.rows || 0;
+          const cols = config?.gridSize?.cols || 0;
+
+          if (content.grid.length !== rows) {
+            throw new BadRequestException(
+              `Grid must have ${rows} rows (found ${content.grid.length})`,
+            );
+          }
+
+          if (content.grid[0]?.length !== cols) {
+            throw new BadRequestException(
+              `Grid must have ${cols} columns (found ${content.grid[0]?.length})`,
+            );
+          }
+        } else {
+          // Grid generado: debe tener wordsPositions
+          if (!content?.wordsPositions || !Array.isArray(content.wordsPositions)) {
+            throw new BadRequestException(
+              'Sopa de letras without useStaticGrid must have wordsPositions',
+            );
+          }
         }
         break;
 

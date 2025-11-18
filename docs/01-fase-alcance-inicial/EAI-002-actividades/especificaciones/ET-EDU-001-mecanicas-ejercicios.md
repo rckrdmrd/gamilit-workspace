@@ -88,11 +88,12 @@ CREATE TYPE educational_content.exercise_type AS ENUM (
     'mapa_conceptual',
     'emparejamiento',
 
-    -- Módulo 2: Comprensión Inferencial (4)
+    -- Módulo 2: Comprensión Inferencial (5)
+    'detective_textual',
     'construccion_hipotesis',
     'prediccion_narrativa',
-    'detective_textual',
     'puzzle_contexto',
+    'rueda_inferencias',
 
     -- Módulo 3: Lectura Crítica (5)
     'analisis_fuentes',
@@ -101,32 +102,31 @@ CREATE TYPE educational_content.exercise_type AS ENUM (
     'podcast_argumentativo',
     'tribunal_opiniones',
 
-    -- Módulo 4: Alfabetización Digital (9)
-    'analisis_memes',
-    'chat_literario',
-    'email_formal',
-    'ensayo_argumentativo',
-    'infografia_interactiva',
-    'navegacion_hipertextual',
-    'quiz_tiktok',
-    'resena_critica',
+    -- Módulo 4: Alfabetización Digital (5)
     'verificador_fake_news',
+    'infografia_interactiva',
+    'quiz_tiktok',
+    'navegacion_hipertextual',
+    'analisis_memes',
 
-    -- Módulo 5: Metacognición (2)
-    'reflexion_metacognitiva',
-    'proyecto_final',
-
-    -- Auxiliares (10)
-    'collage_prensa',
-    'verdadero_falso',
+    -- Módulo 5: Producción y Expresión Lectora (3)
     'diario_multimedia',
     'comic_digital',
+    'video_carta',
+
+    -- Auxiliares y Futuros (12)
+    'collage_prensa',
+    'verdadero_falso',
     'mapa_mental',
     'call_to_action',
     'flashcard',
     'completar_espacios',
     'comprension_auditiva',
-    'red_conceptos'
+    'red_conceptos',
+    'chat_literario',
+    'email_formal',
+    'ensayo_argumentativo',
+    'resena_critica'
 );
 
 COMMENT ON TYPE educational_content.exercise_type IS '35 mecánicas específicas GAMILIT agrupadas en 5 módulos educativos + auxiliares';

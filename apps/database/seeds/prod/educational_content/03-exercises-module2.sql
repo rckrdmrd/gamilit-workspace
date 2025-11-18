@@ -121,7 +121,7 @@ BEGIN
         updated_at = NOW();
 
     -- ========================================================================
-    -- EXERCISE 2.2: CONSTRUCCIÓN DE HIPÓTESIS
+    -- EXERCISE 2.2: RELACIONES CAUSA-EFECTO (DRAG & DROP)
     -- ========================================================================
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
@@ -134,110 +134,72 @@ BEGIN
         is_active, version
     ) VALUES (
         mod_id,
-        'Construcción de Hipótesis Científicas',
-        'Predice Consecuencias como un Científico',
-        'Formula hipótesis sobre las consecuencias de los descubrimientos de Marie Curie basándote en el método científico.',
-        'Lee cada escenario científico y selecciona la hipótesis más probable basándote en la evidencia presentada.',
+        'Relaciones Causa-Efecto sobre Marie Curie',
+        'Conectando Causas con sus Consecuencias',
+        'Conecta causas con sus consecuencias lógicas sobre decisiones y eventos de la vida de Marie Curie.',
+        'Lee la CAUSA en la columna izquierda y arrastra las CONSECUENCIAS correctas desde la derecha. Cada causa puede tener 1-3 consecuencias. Piensa en efectos inmediatos, efectos a largo plazo e impacto en otros.',
         'construccion_hipotesis', 2,
         '{
-            "allowMultiple": false,
+            "allowMultiple": true,
             "showFeedback": true,
-            "requireJustification": false
+            "dragAndDrop": true
         }'::jsonb,
         '{
-            "scenarios": [
+            "causes": [
                 {
-                    "id": "s1",
-                    "situation": "Marie Curie descubre que el radio emite energía constantemente sin aparente fuente externa de alimentación. Este fenómeno desafía la comprensión científica de su época sobre la conservación de la energía.",
-                    "question": "¿Qué hipótesis podría formular Marie sobre este fenómeno extraordinario?",
-                    "hypotheses": [
-                        {
-                            "id": "h1",
-                            "text": "El radio absorbe energía del aire circundante y la reemite",
-                            "isCorrect": false,
-                            "feedback": "Esta hipótesis no explica la emisión constante de energía durante años sin disminución aparente."
-                        },
-                        {
-                            "id": "h2",
-                            "text": "El átomo de radio se desintegra gradualmente liberando energía almacenada en su núcleo",
-                            "isCorrect": true,
-                            "feedback": "¡Correcto! Esta hipótesis llevó al descubrimiento de la radioactividad y la comprensión de la desintegración atómica, revolucionando la física nuclear."
-                        },
-                        {
-                            "id": "h3",
-                            "text": "El radio tiene propiedades mágicas inexplicables por la ciencia",
-                            "isCorrect": false,
-                            "feedback": "Las hipótesis científicas deben basarse en explicaciones naturales verificables, no en fenómenos sobrenaturales."
-                        },
-                        {
-                            "id": "h4",
-                            "text": "Es un error experimental y el radio en realidad no emite energía",
-                            "isCorrect": false,
-                            "feedback": "Los múltiples experimentos confirmaron consistentemente la emisión de energía del radio."
-                        }
-                    ]
+                    "id": "c1",
+                    "text": "Marie decidió no patentar el proceso de aislamiento del radio"
                 },
                 {
-                    "id": "s2",
-                    "situation": "Marie observa que los investigadores que trabajan frecuentemente con materiales radiactivos desarrollan enfermedades similares: fatiga extrema, anemia y lesiones en la piel.",
-                    "question": "¿Qué relación causal podría inferir Marie entre el radio y estos síntomas?",
-                    "hypotheses": [
-                        {
-                            "id": "h1",
-                            "text": "Las enfermedades son meras coincidencias sin relación real",
-                            "isCorrect": false,
-                            "feedback": "La frecuencia y similitud de los síntomas en todos los investigadores expuestos sugiere una relación causal, no una coincidencia."
-                        },
-                        {
-                            "id": "h2",
-                            "text": "La exposición prolongada al radio causa efectos nocivos en los tejidos vivos",
-                            "isCorrect": true,
-                            "feedback": "Correcto. La radiación ionizante daña las células vivas, causando los síntomas observados. Este descubrimiento fue crucial para entender los riesgos de la radiación."
-                        },
-                        {
-                            "id": "h3",
-                            "text": "Los síntomas son causados por el estrés del trabajo científico intenso",
-                            "isCorrect": false,
-                            "feedback": "Aunque el estrés puede causar fatiga, no explica las lesiones físicas específicas ni la anemia observadas."
-                        }
-                    ]
+                    "id": "c2",
+                    "text": "Marie continuó trabajando después de la muerte de Pierre"
+                }
+            ],
+            "consequences": [
+                {
+                    "id": "e1",
+                    "text": "Otros científicos pudieron continuar la investigación",
+                    "correctCauseIds": ["c1"]
                 },
                 {
-                    "id": "s3",
-                    "situation": "Tras aislar el radio, Marie nota que una muestra de pechblenda (mineral de uranio) emite más radiación que el uranio puro que contiene.",
-                    "question": "¿Qué puede hipotizar Marie sobre esta observación?",
-                    "hypotheses": [
-                        {
-                            "id": "h1",
-                            "text": "La pechblenda contiene otros elementos radiactivos aún desconocidos",
-                            "isCorrect": true,
-                            "feedback": "¡Excelente! Esta hipótesis llevó a Marie al descubrimiento del polonio y el radio. Un brillante ejemplo de razonamiento científico."
-                        },
-                        {
-                            "id": "h2",
-                            "text": "El instrumento de medición está defectuoso",
-                            "isCorrect": false,
-                            "feedback": "Marie verificó sus resultados múltiples veces con diferentes instrumentos antes de formular su hipótesis."
-                        },
-                        {
-                            "id": "h3",
-                            "text": "El uranio se vuelve más radiactivo cuando está mezclado con otros minerales",
-                            "isCorrect": false,
-                            "feedback": "La radiactividad es una propiedad intrínseca de los elementos, no aumenta por mezclas con otros minerales no radiactivos."
-                        }
-                    ]
+                    "id": "e2",
+                    "text": "No obtuvo riquezas de su descubrimiento",
+                    "correctCauseIds": ["c1"]
+                },
+                {
+                    "id": "e3",
+                    "text": "La medicina avanzó más rápidamente",
+                    "correctCauseIds": ["c1"]
+                },
+                {
+                    "id": "e4",
+                    "text": "Demostró su independencia científica",
+                    "correctCauseIds": []
+                },
+                {
+                    "id": "e5",
+                    "text": "Completó investigaciones pendientes",
+                    "correctCauseIds": ["c2"]
+                },
+                {
+                    "id": "e6",
+                    "text": "Se convirtió en la primera profesora de la Sorbona",
+                    "correctCauseIds": ["c2"]
                 }
             ]
         }'::jsonb,
         '{
-            "correctHypotheses": ["s1-h2", "s2-h2", "s3-h1"]
+            "correctMatches": {
+                "c1": ["e1", "e2", "e3"],
+                "c2": ["e5", "e6"]
+            }
         }'::jsonb,
         'intermediate', 100, 70,
-        100, 20,
+        20, 20,
         ARRAY[
-            'Piensa en el método científico: observación → hipótesis → verificación',
-            'Las hipótesis correctas explican todos los fenómenos observados',
-            'Marie fue pionera en aplicar el pensamiento científico riguroso'
+            'Lee cada causa cuidadosamente antes de seleccionar las consecuencias',
+            'Una causa puede tener múltiples efectos: inmediatos, a largo plazo y en otros',
+            'No todas las consecuencias pertenecen a todas las causas'
         ]::text[],
         true, 15,
         100, 20,
@@ -273,90 +235,48 @@ BEGIN
             "scenarios": [
                 {
                     "id": "pred-1",
-                    "context": "Año 1895. Marie acaba de casarse con Pierre Curie. Ambos son científicos apasionados. En esa época, se esperaba que las mujeres casadas dejaran sus carreras profesionales para dedicarse al hogar.",
-                    "question": "¿Qué decisión es más probable que tome Marie?",
+                    "context": "Año 1911. Marie Curie ya ha ganado el Premio Nobel de Física (1903) junto a Pierre Curie y Henri Becquerel por sus investigaciones sobre la radiactividad. Ahora, siendo viuda desde 1906, ha continuado sus investigaciones y ha aislado el radio puro, un logro científico extraordinario.",
+                    "beginning": "Cuando Marie presentó su candidatura a la Academia de Ciencias Francesa en 1911, siendo ya ganadora del Nobel...",
+                    "question": "¿Cómo continúa más probablemente?",
                     "predictions": [
                         {
                             "id": "p1",
-                            "text": "Abandonará la ciencia para ser ama de casa tradicional",
+                            "text": "fue aceptada inmediatamente con honores",
                             "isCorrect": false,
-                            "explanation": "Aunque era la expectativa social, la pasión de Marie por la ciencia y el apoyo de Pierre hicieron improbable esta opción."
+                            "explanation": "Aunque Marie tenía méritos excepcionales, la Academia Francesa era una institución profundamente conservadora que nunca había admitido mujeres en sus más de 200 años de historia."
                         },
                         {
                             "id": "p2",
-                            "text": "Continuará investigando, colaborando científicamente con Pierre",
+                            "text": "fue rechazada por ser mujer, a pesar de sus logros",
                             "isCorrect": true,
-                            "explanation": "Correcto. Marie y Pierre formaron una histórica asociación científica, trabajando juntos en investigación mientras desafiaban las normas sociales."
+                            "explanation": "Correcto. A pesar de sus extraordinarios logros científicos, Marie fue rechazada por la Academia de Ciencias Francesa en 1911 por un voto (30-28). Los prejuicios de género de la época pesaron más que sus méritos. Irónicamente, ese mismo año ganó su segundo Nobel, esta vez en Química, convirtiéndose en la primera persona en ganar dos premios Nobel."
                         },
                         {
                             "id": "p3",
-                            "text": "Se mudará a otro país para escapar de las restricciones sociales",
+                            "text": "decidió retirar su candidatura",
                             "isCorrect": false,
-                            "explanation": "Marie ya estaba en Francia, uno de los lugares más progresistas de la época, y tenía el apoyo de Pierre."
+                            "explanation": "Marie no era de las que se rendían ante obstáculos. Su determinación y convicción en su trabajo científico la llevaron a mantener su candidatura hasta el final, a pesar de la oposición."
+                        },
+                        {
+                            "id": "p4",
+                            "text": "fue elegida presidenta de la Academia",
+                            "isCorrect": false,
+                            "explanation": "Este escenario es completamente anacrónico. No solo no fue aceptada, sino que la Academia no admitiría a su primera mujer hasta 1979, décadas después de la muerte de Marie."
                         }
-                    ]
-                },
-                {
-                    "id": "pred-2",
-                    "context": "Año 1903. Marie, Pierre y Henri Becquerel acaban de ganar el Premio Nobel de Física. Sin embargo, Marie nota que los medios y la comunidad científica tienden a minimizar su contribución, atribuyendo el mérito principalmente a los hombres.",
-                    "question": "¿Cómo responderá probablemente Marie a esta situación?",
-                    "predictions": [
-                        {
-                            "id": "p1",
-                            "text": "Aceptará silenciosamente la situación sin quejarse",
-                            "isCorrect": false,
-                            "explanation": "Marie tenía un fuerte carácter y defendía su trabajo, aunque con dignidad y profesionalismo."
-                        },
-                        {
-                            "id": "p2",
-                            "text": "Trabajará aún más duro para demostrar su valía científica con nuevos descubrimientos",
-                            "isCorrect": true,
-                            "explanation": "Correcto. Marie continuó su investigación con determinación, ganando un segundo Nobel en 1911 (esta vez sola), demostrando indiscutiblemente su genio."
-                        },
-                        {
-                            "id": "p3",
-                            "text": "Abandonará la ciencia frustrada por la discriminación",
-                            "isCorrect": false,
-                            "explanation": "La perseverancia era una de las características más notables de Marie; los obstáculos la motivaban más."
-                        }
-                    ]
-                },
-                {
-                    "id": "pred-3",
-                    "context": "Año 1898. Marie y Pierre han descubierto el radio y el polonio. Algunos empresarios les ofrecen grandes sumas de dinero si patentan el proceso de extracción del radio. La pareja necesita dinero, pero también cree en la ciencia abierta.",
-                    "question": "¿Qué decisión tomarán más probablemente?",
-                    "predictions": [
-                        {
-                            "id": "p1",
-                            "text": "Patentarán el proceso y se harán ricos",
-                            "isCorrect": false,
-                            "explanation": "Aunque necesitaban dinero, sus principios éticos eran más fuertes que el interés económico."
-                        },
-                        {
-                            "id": "p2",
-                            "text": "Publicarán sus métodos libremente para beneficio de la humanidad",
-                            "isCorrect": true,
-                            "explanation": "Correcto. Marie y Pierre rechazaron patentar sus descubrimientos, creyendo que el conocimiento científico debía ser libre para ayudar a la humanidad, especialmente en medicina."
-                        },
-                        {
-                            "id": "p3",
-                            "text": "Patentarán parcialmente para proteger algunos aspectos",
-                            "isCorrect": false,
-                            "explanation": "Su decisión fue absoluta: compartieron toda su investigación sin restricciones."
-                        }
-                    ]
+                    ],
+                    "contextualHint": "Considera los prejuicios de género de la época. Recuerda que Marie era perseverante pero modesta, y que los hechos históricos no se pueden cambiar."
                 }
             ]
         }'::jsonb,
         '{
-            "correctPredictions": ["pred-1-p2", "pred-2-p2", "pred-3-p2"]
+            "correctPredictions": ["pred-1-p2"]
         }'::jsonb,
         'intermediate', 100, 70,
-        100, 20,
+        15, 3,
         ARRAY[
-            'Considera las características personales de Marie: determinación, pasión por la ciencia, principios éticos',
-            'El contexto histórico es importante pero Marie frecuentemente desafió las normas',
-            'Las acciones de Marie siempre estuvieron guiadas por su visión del bien común'
+            'Recuerda el contexto de discriminación de género de la época - las instituciones científicas eran profundamente conservadoras',
+            'Marie era perseverante pero modesta - enfrentó muchos rechazos pero nunca se rindió',
+            'Los hechos históricos no se pueden cambiar - considera qué realmente sucedió en 1911'
         ]::text[],
         true, 15,
         100, 20,
@@ -379,10 +299,10 @@ BEGIN
         is_active, version
     ) VALUES (
         mod_id,
-        'Puzzle de Contexto: Armando la Historia',
-        'Ordena las Piezas del Contexto Histórico',
-        'Arrastra las piezas de información para reconstruir el contexto completo de un evento en la vida de Marie Curie.',
-        'Lee las piezas de información y arrástralas al lugar correcto en la narrativa para completar la historia coherentemente.',
+        'Puzzle de Contexto',
+        'Ordenar fragmentos para crear una inferencia coherente',
+        'Ordena los fragmentos para formar una inferencia completa y coherente sobre Marie Curie.',
+        'Arrastra los fragmentos desordenados al área de construcción para formar la inferencia en el orden correcto.',
         'puzzle_contexto', 4,
         '{
             "dragAndDrop": true,
@@ -390,88 +310,57 @@ BEGIN
             "showValidation": "onComplete"
         }'::jsonb,
         '{
-            "narrative": {
-                "title": "El Descubrimiento del Radio: Reconstruyendo el Contexto",
-                "incompleteText": "En [SLOT-1], Marie Curie trabajaba en un [SLOT-2] tratando de entender por qué la pechblenda era más radiactiva que el uranio. Sospechaba que [SLOT-3]. Después de [SLOT-4] de trabajo agotador refinando toneladas de pechblenda, finalmente [SLOT-5]. Este descubrimiento revolucionó [SLOT-6]."
-            },
-            "pieces": [
+            "completeInference": "A pesar de las barreras sociales y económicas que enfrentó como mujer inmigrante, demostró una determinación extraordinaria, convirtiéndose en pionera de la ciencia moderna.",
+            "fragments": [
                 {
-                    "id": "piece-1",
-                    "text": "1898",
-                    "correctSlot": "SLOT-1",
-                    "category": "temporal"
+                    "id": "frag-a",
+                    "label": "A",
+                    "text": "demostró una determinación extraordinaria",
+                    "correctPosition": 2
                 },
                 {
-                    "id": "piece-2",
-                    "text": "laboratorio improvisado y mal equipado",
-                    "correctSlot": "SLOT-2",
-                    "category": "lugar"
+                    "id": "frag-b",
+                    "label": "B",
+                    "text": "A pesar de las barreras sociales y económicas",
+                    "correctPosition": 0
                 },
                 {
-                    "id": "piece-3",
-                    "text": "había elementos radiactivos desconocidos en el mineral",
-                    "correctSlot": "SLOT-3",
-                    "category": "hipotesis"
+                    "id": "frag-c",
+                    "label": "C",
+                    "text": "que enfrentó como mujer inmigrante",
+                    "correctPosition": 1
                 },
                 {
-                    "id": "piece-4",
-                    "text": "cuatro años",
-                    "correctSlot": "SLOT-4",
-                    "category": "duracion"
-                },
-                {
-                    "id": "piece-5",
-                    "text": "aisló una pequeña cantidad de radio puro que brillaba en la oscuridad",
-                    "correctSlot": "SLOT-5",
-                    "category": "resultado"
-                },
-                {
-                    "id": "piece-6",
-                    "text": "nuestra comprensión de la física atómica y abrió la era nuclear",
-                    "correctSlot": "SLOT-6",
-                    "category": "impacto"
-                }
-            ],
-            "distractors": [
-                {
-                    "id": "dist-1",
-                    "text": "1905",
-                    "category": "temporal"
-                },
-                {
-                    "id": "dist-2",
-                    "text": "laboratorio de última generación",
-                    "category": "lugar"
-                },
-                {
-                    "id": "dist-3",
-                    "text": "seis meses",
-                    "category": "duracion"
+                    "id": "frag-d",
+                    "label": "D",
+                    "text": "convirtiéndose en pionera de la ciencia moderna",
+                    "correctPosition": 3
                 }
             ]
         }'::jsonb,
         '{
-            "correctPlacements": {
-                "SLOT-1": "piece-1",
-                "SLOT-2": "piece-2",
-                "SLOT-3": "piece-3",
-                "SLOT-4": "piece-4",
-                "SLOT-5": "piece-5",
-                "SLOT-6": "piece-6"
-            }
+            "correctOrder": ["frag-b", "frag-c", "frag-a", "frag-d"]
         }'::jsonb,
-        'intermediate', 100, 75,
-        100, 20,
+        'intermediate', 100, 70,
+        15, 3,
         ARRAY[
-            'Lee toda la narrativa primero para entender el contexto general',
-            'Las piezas están categorizadas: temporales, de lugar, hipótesis, duración, resultado e impacto',
-            'El descubrimiento del radio tomó varios años de trabajo intenso'
+            'Lee todos los fragmentos antes de empezar a ordenarlos',
+            'Busca conectores lógicos entre fragmentos (aunque, que, por lo tanto)',
+            'La inferencia debe tener coherencia gramatical y sentido completo'
         ]::text[],
         true, 15,
         100, 20,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
+        title = EXCLUDED.title,
+        subtitle = EXCLUDED.subtitle,
+        description = EXCLUDED.description,
+        instructions = EXCLUDED.instructions,
         content = EXCLUDED.content,
+        solution = EXCLUDED.solution,
+        hints = EXCLUDED.hints,
+        estimated_time_minutes = EXCLUDED.estimated_time_minutes,
+        max_attempts = EXCLUDED.max_attempts,
         updated_at = NOW();
 
     -- ========================================================================
@@ -554,7 +443,7 @@ BEGIN
             "incorrectInferences": ["inf-5", "inf-6"]
         }'::jsonb,
         'intermediate', 100, 75,
-        100, 20,
+        20, 20,
         ARRAY[
             'Distingue entre inferencias basadas en evidencia y juicios de valor',
             'Considera el contexto histórico: el conocimiento científico de esa época era limitado',
