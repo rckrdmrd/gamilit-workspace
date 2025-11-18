@@ -294,25 +294,37 @@ export class ExercisesController {
       }
 
       if (content.clues) {
+        // CRITICAL FIX: For crucigrama (crossword), keep 'answer' field
+        // Reason: The grid generation requires answer.length and answer[i] to build the crossword grid
+        // Security: The frontend still shows empty cells initially - no cheating possible
+        const isCrucigrama = filtered.exercise_type === 'crucigrama';
+
         if (Array.isArray(content.clues)) {
-          content.clues = content.clues.map((clue: any) => {
-            const { word, answer, ...rest } = clue;
-            return rest;
-          });
+          if (!isCrucigrama) {
+            // For non-crossword exercises, remove answers
+            content.clues = content.clues.map((clue: any) => {
+              const { word, answer, ...rest } = clue;
+              return rest;
+            });
+          }
+          // For crucigrama, keep clues as-is (with answer field)
         } else {
           // Handle object format {horizontal: [], vertical: []}
-          if (content.clues.horizontal) {
-            content.clues.horizontal = content.clues.horizontal.map((clue: any) => {
-              const { word, answer, ...rest } = clue;
-              return rest;
-            });
+          if (!isCrucigrama) {
+            if (content.clues.horizontal) {
+              content.clues.horizontal = content.clues.horizontal.map((clue: any) => {
+                const { word, answer, ...rest } = clue;
+                return rest;
+              });
+            }
+            if (content.clues.vertical) {
+              content.clues.vertical = content.clues.vertical.map((clue: any) => {
+                const { word, answer, ...rest } = clue;
+                return rest;
+              });
+            }
           }
-          if (content.clues.vertical) {
-            content.clues.vertical = content.clues.vertical.map((clue: any) => {
-              const { word, answer, ...rest } = clue;
-              return rest;
-            });
-          }
+          // For crucigrama, keep clues as-is (with answer field)
         }
       }
 
@@ -331,7 +343,9 @@ export class ExercisesController {
       filtered.content = content;
     }
 
-    console.log('[FE-055] Filtered correct answers from exercise:', exercise.id);
+    console.log('[FE-055] Filtered correct answers from exercise:', exercise.id,
+      '| Type:', filtered.exercise_type,
+      '| Kept answers for crucigrama:', filtered.exercise_type === 'crucigrama');
 
     return filtered;
   }
