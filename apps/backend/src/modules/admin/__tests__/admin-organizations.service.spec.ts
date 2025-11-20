@@ -219,8 +219,8 @@ describe('AdminOrganizationsService', () => {
       const result = await service.listOrganizations(query);
 
       // Assert
-      expect(result.data).toHaveLength(0);
-      expect(result.total).toBe(0);
+      expect(result.items).toHaveLength(0);
+      expect(result.pagination.totalItems).toBe(0);
     });
   });
 
