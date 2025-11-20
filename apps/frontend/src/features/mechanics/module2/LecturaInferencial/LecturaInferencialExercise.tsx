@@ -24,20 +24,36 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
 
   const questions = exercise.content.questions;
 
-  // Notify parent of progress updates
+  // FE-055 & FE-059: Notify parent of progress updates WITH user answers
   useEffect(() => {
     if (onProgressUpdate) {
       const answeredCount = Object.keys(selectedAnswers).length;
       const score = validated ? calculateCurrentScore() : 0;
+
+      // Prepare user answers in backend DTO format
+      const userAnswers: Record<string, string> = {};
+      Object.entries(selectedAnswers).forEach(([questionId, optionIndex]) => {
+        userAnswers[questionId] = String(optionIndex); // Convert index to string
+      });
+
       onProgressUpdate({
-        currentStep: answeredCount,
-        totalSteps: questions.length,
-        score,
-        hintsUsed: 0,
-        timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
+        progress: {
+          currentStep: answeredCount,
+          totalSteps: questions.length,
+          score: 0, // FE-059: Score calculated by backend only
+          hintsUsed: 0,
+          timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
+        },
+        answers: { questions: userAnswers }  // FE-066: Wrap in 'questions' key to match DTO
+      });
+
+      console.log('📊 [LecturaInferencial] Progress update sent:', {
+        answered: answeredCount,
+        totalQuestions: questions.length,
+        answersFormat: Object.keys(userAnswers).length > 0 ? 'valid' : 'empty'
       });
     }
-  }, [selectedAnswers, validated, startTime, onProgressUpdate]);
+  }, [selectedAnswers, validated, startTime, onProgressUpdate, questions.length]);
 
   const calculateCurrentScore = () => {
     if (answers.length === 0) return 0;

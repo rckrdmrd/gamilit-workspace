@@ -93,7 +93,7 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
           hintsUsed: progress.hintsUsed,
           timeSpent: progress.timeSpent,
         },
-        answers: userAnswers
+        answers: { questions: userAnswers }  // BE-FE-062: Wrap in 'questions' key to match DTO
       });
 
       console.log('📊 [DetectiveTextual] Progress update sent:', {

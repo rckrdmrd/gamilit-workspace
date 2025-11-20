@@ -185,6 +185,8 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
         title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
         message: response.feedback?.overall || `Has establecido ${response.correctAnswersCount} de ${response.totalQuestions} relaciones correctas.`,
         score: response.score,
+        xpEarned: response.rewards?.xp,
+        mlCoinsEarned: response.rewards?.mlCoins,
         showConfetti: response.isPerfect
       });
       setShowFeedback(true);

@@ -3016,3 +3016,30 @@ La solución real requiere eliminar la duplicación en el controller.
 - Backend debe tener UN solo punto de sanitización
 - Controller NO debe re-sanitizar lo que Service ya sanitizó
 
+
+---
+
+## [2025-11-19] FE-061: Corrección - Ejercicio 2 Módulo 2 no mostraba puntos XP ✅
+
+**Estado:** ✅ COMPLETADO
+**Tipo:** Bug Fix
+**Prioridad:** P1 (Alta)
+**Duración:** 30 min
+
+### Problema
+El ejercicio "Relaciones Causa-Efecto sobre Marie Curie" (módulo 2, ejercicio 2) no mostraba los puntos de experiencia (XP) ni ML Coins al completarse.
+
+### Causa Raíz
+El componente NO estaba pasando `xpEarned` y `mlCoinsEarned` al objeto `feedback`.
+
+### Solución Aplicada
+Se agregaron las propiedades faltantes (líneas 188-189 de CausaEfectoExercise.tsx)
+
+### Archivos Modificados
+- `apps/frontend/src/features/mechanics/module2/ConstruccionHipotesis/CausaEfectoExercise.tsx` (+2 líneas)
+
+### Validaciones
+- ✅ TypeScript compila sin errores nuevos
+- ⏸️ Validación manual pendiente por usuario
+
+---

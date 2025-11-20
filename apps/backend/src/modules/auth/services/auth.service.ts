@@ -12,7 +12,7 @@ import {
   CreateAuthAttemptDto,
   UpdateProfileDto,
 } from '../dto';
-import { DB_SCHEMAS, DB_TABLES, GamilityRoleEnum, UserStatusEnum, SubscriptionTierEnum } from '@shared/constants';
+import { DB_SCHEMAS, DB_TABLES, GamilityRoleEnum, UserStatusEnum } from '@shared/constants';
 
 /**
  * AuthService
@@ -21,7 +21,7 @@ import { DB_SCHEMAS, DB_TABLES, GamilityRoleEnum, UserStatusEnum, SubscriptionTi
  * Maneja registro, login, logout y validación de usuarios.
  *
  * @responsibilities
- * - Registro de nuevos usuarios con tenant personal
+ * - Registro de nuevos usuarios en tenant principal (GAMILIT Platform)
  * - Autenticación con JWT (access + refresh tokens)
  * - Logging de intentos (exitosos y fallidos)
  * - Gestión de sesiones activas
@@ -68,14 +68,23 @@ export class AuthService {
     // 2. Hashear password
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
-    // 3. Crear tenant personal
-    const tenant = this.tenantRepository.create({
-      name: `${dto.email.split('@')[0]}-personal`,
-      slug: `${dto.email.split('@')[0]}-${Date.now()}`,
-      subscription_tier: SubscriptionTierEnum.FREE,
-      is_active: true,
+    // 3. Obtener tenant principal de GAMILIT
+    let mainTenant = await this.tenantRepository.findOne({
+      where: { slug: 'gamilit-prod', is_active: true },
     });
-    await this.tenantRepository.save(tenant);
+
+    // Fallback: buscar primer tenant activo
+    if (!mainTenant) {
+      mainTenant = await this.tenantRepository.findOne({
+        where: { is_active: true },
+        order: { created_at: 'ASC' },
+      });
+    }
+
+    // Validar que existe un tenant
+    if (!mainTenant) {
+      throw new Error('No hay tenants activos en el sistema. Contacte al administrador.');
+    }
 
     // 4. Crear usuario (sin status ya que no existe en la tabla)
     const user = this.userRepository.create({
@@ -88,10 +97,13 @@ export class AuthService {
     });
     await this.userRepository.save(user);
 
-    // 5. Crear perfil
+    // 5. Crear perfil con tenant principal
+    // CRITICAL FIX: profiles.id MUST equal auth.users.id for FK consistency
+    // This matches the pattern used in seeds and eliminates ID conversion bugs
     const profile = this.profileRepository.create({
-      user_id: user.id,
-      tenant_id: tenant.id,
+      id: user.id,             // ✅ profiles.id = auth.users.id (same UUID)
+      user_id: user.id,        // ✅ self-reference for consistency
+      tenant_id: mainTenant.id, // ✅ Usa tenant principal
       email: user.email,
       first_name: dto.first_name || null,
       last_name: dto.last_name || null,
