@@ -145,7 +145,7 @@ Los rangos se basan en la jerarquía histórica de la civilización maya clásic
 
 #### Rango 1: Ajaw (Señor) 🌱
 
-**Umbral:** 0 - 999 XP
+**Umbral:** 0 - 499 XP
 **Estado:** Rango inicial (todos empiezan aquí)
 
 **Significado histórico:**
@@ -173,8 +173,8 @@ Los rangos se basan en la jerarquía histórica de la civilización maya clásic
 
 #### Rango 2: Nacom (Capitán Guerrero) ⚔️
 
-**Umbral:** 1,000 - 4,999 XP
-**Requisito:** Ganar 1,000 XP
+**Umbral:** 500 - 999 XP
+**Requisito:** Ganar 500 XP
 
 **Significado histórico:**
 > "Nacom" era el capitán de guerra elegido por 3 años. Representa disciplina y consistencia en el aprendizaje.
@@ -193,21 +193,21 @@ Los rangos se basan en la jerarquía histórica de la civilización maya clásic
 
 **Beneficios:**
 - Desbloquea ejercicios de dificultad media-alta
-- +5% bonus en XP ganado por ejercicio
+- +10% bonus en XP ganado por ejercicio
 - Puede crear equipos de estudio
 - Avatar frame especial "Nacom"
 
 **Recompensa de promoción:**
 - Achievement: "Ascenso a Nacom"
-- 50 ML Coins bonus
+- 100 ML Coins bonus
 - Notificación especial con animación
 
 ---
 
 #### Rango 3: Ah K'in (Sacerdote del Sol) ☀️
 
-**Umbral:** 5,000 - 19,999 XP
-**Requisito:** Ganar 5,000 XP
+**Umbral:** 1,000 - 1,499 XP
+**Requisito:** Ganar 1,000 XP
 
 **Significado histórico:**
 > "Ah K'in" era un sacerdote, guardián del calendario y del conocimiento astronómico. Representa sabiduría y dominio.
@@ -225,7 +225,7 @@ Los rangos se basan en la jerarquía histórica de la civilización maya clásic
 ```
 
 **Beneficios:**
-- +10% bonus en XP ganado
+- +15% bonus en XP ganado
 - Desbloquea ejercicios avanzados
 - Puede ser tutor de estudiantes Ajaw/Nacom
 - Acceso a "Biblioteca Avanzada" (contenido exclusivo)
@@ -233,7 +233,7 @@ Los rangos se basan en la jerarquía histórica de la civilización maya clásic
 
 **Recompensa de promoción:**
 - Achievement: "Ascenso a Ah K'in"
-- 100 ML Coins bonus
+- 250 ML Coins bonus
 - Título especial en perfil público
 - Certificado digital descargable
 
@@ -241,8 +241,8 @@ Los rangos se basan en la jerarquía histórica de la civilización maya clásic
 
 #### Rango 4: Halach Uinic (Hombre Verdadero) 👑
 
-**Umbral:** 20,000 - 99,999 XP
-**Requisito:** Ganar 20,000 XP
+**Umbral:** 1,500 - 2,249 XP
+**Requisito:** Ganar 1,500 XP
 
 **Significado histórico:**
 > "Halach Uinic" significa "Hombre Verdadero", título del gobernante supremo de una ciudad-estado maya. Representa liderazgo y maestría.
@@ -261,7 +261,7 @@ Los rangos se basan en la jerarquía histórica de la civilización maya clásic
 ```
 
 **Beneficios:**
-- +15% bonus en XP ganado
+- +20% bonus en XP ganado
 - Acceso a "Desafíos de Maestría" (contenido experto)
 - Puede crear aulas como maestro invitado
 - Aparece en "Hall of Fame" de la plataforma
@@ -270,7 +270,7 @@ Los rangos se basan en la jerarquía histórica de la civilización maya clásic
 
 **Recompensa de promoción:**
 - Achievement: "Ascenso a Halach Uinic"
-- 200 ML Coins bonus
+- 500 ML Coins bonus
 - Mención en newsletter mensual
 - Entrevista opcional para blog de Gamilit
 
@@ -278,8 +278,8 @@ Los rangos se basan en la jerarquía histórica de la civilización maya clásic
 
 #### Rango 5: K'uk'ulkan (Serpiente Emplumada) 🐉
 
-**Umbral:** 100,000+ XP
-**Requisito:** Ganar 100,000 XP
+**Umbral:** 2,250+ XP
+**Requisito:** Ganar 2,250 XP
 
 **Significado histórico:**
 > "K'uk'ulkan" (Kukulkán en español) es la deidad maya asociada con el conocimiento, el viento y el planeta Venus. Equivalente a Quetzalcóatl. Representa la máxima sabiduría y trascendencia.
@@ -298,7 +298,7 @@ Los rangos se basan en la jerarquía histórica de la civilización maya clásic
 ```
 
 **Beneficios:**
-- +20% bonus en XP ganado
+- +25% bonus en XP ganado
 - Acceso a contenido exclusivo experimental (beta features)
 - Puede participar en creación de contenido (contribuir ejercicios)
 - Sesiones de mentoría 1:1 con equipo pedagógico
@@ -309,7 +309,7 @@ Los rangos se basan en la jerarquía histórica de la civilización maya clásic
 
 **Recompensa de promoción:**
 - Achievement: "Ascenso a K'uk'ulkan"
-- 500 ML Coins bonus
+- 1,000 ML Coins bonus
 - Certificado físico enviado por correo
 - Reconocimiento en redes sociales oficiales
 - Invitación a eventos presenciales de Gamilit
@@ -322,11 +322,11 @@ Los rangos se basan en la jerarquía histórica de la civilización maya clásic
 
 | Rango | Umbral XP Mínimo | Umbral XP Máximo | XP Requerido para Promover |
 |-------|------------------|------------------|----------------------------|
-| Ajaw | 0 | 999 | 1,000 |
-| Nacom | 1,000 | 4,999 | 5,000 |
-| Ah K'in | 5,000 | 19,999 | 20,000 |
-| Halach Uinic | 20,000 | 99,999 | 100,000 |
-| K'uk'ulkan | 100,000 | ∞ | - (rango final) |
+| Ajaw | 0 | 499 | 500 |
+| Nacom | 500 | 999 | 1,000 |
+| Ah K'in | 1,000 | 1,499 | 1,500 |
+| Halach Uinic | 1,500 | 2,249 | 2,250 |
+| K'uk'ulkan | 2,250 | ∞ | - (rango final) |
 
 #### Progresión de Dificultad
 
@@ -340,10 +340,10 @@ Los rangos se basan en la jerarquía histórica de la civilización maya clásic
 
 | Rango | Ejercicios (~20 XP/ej) | Tiempo (estudiante activo 5 ej/día) |
 |-------|------------------------|--------------------------------------|
-| Nacom | ~50 ejercicios | 10 días |
-| Ah K'in | ~250 ejercicios | 50 días (~2 meses) |
-| Halach Uinic | ~1,000 ejercicios | 200 días (~7 meses) |
-| K'uk'ulkan | ~5,000 ejercicios | 1,000 días (~3 años) |
+| Nacom | ~25 ejercicios | 5 días |
+| Ah K'in | ~50 ejercicios | 10 días |
+| Halach Uinic | ~75 ejercicios | 15 días |
+| K'uk'ulkan | ~113 ejercicios | 23 días (~3 semanas) |
 
 ---
 
@@ -400,11 +400,11 @@ Cada rango otorga un multiplicador de XP permanente:
 
 | Rango | Multiplicador XP | Ejemplo |
 |-------|------------------|---------|
-| Ajaw | 1.0x | 20 XP → 20 XP |
-| Nacom | 1.05x (+5%) | 20 XP → 21 XP |
-| Ah K'in | 1.10x (+10%) | 20 XP → 22 XP |
-| Halach Uinic | 1.15x (+15%) | 20 XP → 23 XP |
-| K'uk'ulkan | 1.20x (+20%) | 20 XP → 24 XP |
+| Ajaw | 1.00x | 20 XP → 20 XP |
+| Nacom | 1.10x (+10%) | 20 XP → 22 XP |
+| Ah K'in | 1.15x (+15%) | 20 XP → 23 XP |
+| Halach Uinic | 1.20x (+20%) | 20 XP → 24 XP |
+| K'uk'ulkan | 1.25x (+25%) | 20 XP → 25 XP |
 
 **Implementación:**
 ```sql
@@ -791,16 +791,16 @@ INSERT INTO audit_logging.audit_logs (
 - [ ] Nacom: 1,000-4,999 XP
 - [ ] Ah K'in: 5,000-19,999 XP
 - [ ] Halach Uinic: 20,000-99,999 XP
-- [ ] K'uk'ulkan: 100,000+ XP
+- [ ] K'uk'ulkan: 2,250+ XP
 - [ ] Usuario en K'uk'ulkan no puede promover más (es final)
 
 ### CA-GAM-003-003: Bonus de XP por Rango
 
 - [ ] Ajaw: 1.0x (sin bonus)
-- [ ] Nacom: 1.05x (+5%)
-- [ ] Ah K'in: 1.10x (+10%)
-- [ ] Halach Uinic: 1.15x (+15%)
-- [ ] K'uk'ulkan: 1.20x (+20%)
+- [ ] Nacom: 1.25x (+25%)
+- [ ] Ah K'in: 1.25x (+25%)
+- [ ] Halach Uinic: 1.25x (+25%)
+- [ ] K'uk'ulkan: 1.25x (+25%)
 - [ ] Bonus se aplica correctamente en cada ejercicio completado
 
 ### CA-GAM-003-004: Desbloqueo de Contenido

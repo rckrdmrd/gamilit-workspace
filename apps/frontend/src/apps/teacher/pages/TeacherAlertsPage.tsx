@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { useClassrooms } from '../hooks/useClassrooms';
 import { TeacherLayout } from '../layouts/TeacherLayout';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { InterventionAlertsPanel } from '../components/alerts/InterventionAlertsPanel';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -34,15 +35,17 @@ export default function TeacherAlertsPage() {
   // Classroom ID from user context - use first classroom if available
   const selectedClassroomId = selectedClassroom?.id ?? classrooms[0]?.id ?? 'default-classroom';
 
-  // Mock gamification data - reemplazar con datos reales del API
-  // Format matches UserGamificationData from @shared/types
-  const gamificationData = {
+  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
+  const { gamificationData } = useUserGamification(user?.id);
+
+  // Fallback gamification data in case hook fails or user is not loaded
+  const displayGamificationData = gamificationData || {
     userId: user?.id || 'mock-teacher-id',
-    level: 15,
-    totalXP: 2450,
-    mlCoins: 1250,
-    rank: 'Mentor Experto',
-    achievements: ['first_class', 'streak_master', '100_students'],
+    level: 1,
+    totalXP: 0,
+    mlCoins: 0,
+    rank: 'Novato',
+    achievements: [],
   };
 
   const handleLogout = () => {
@@ -76,7 +79,7 @@ export default function TeacherAlertsPage() {
   return (
     <TeacherLayout
       user={user ?? undefined}
-      gamificationData={gamificationData}
+      gamificationData={displayGamificationData}
       organizationName="GLIT Platform"
       onLogout={handleLogout}
     >

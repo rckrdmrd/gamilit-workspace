@@ -12,6 +12,7 @@ import { useDashboardData } from '../hooks/useDashboardData';
 import { useMissions } from '@/features/gamification/missions/hooks/useMissions';
 import { useUserModules } from '../hooks/useUserModules';
 import { useRecentActivities } from '../hooks/useRecentActivities';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 
 export default function DashboardComplete() {
   console.log('🚀 [DashboardComplete] Component rendering...');
@@ -24,6 +25,9 @@ export default function DashboardComplete() {
     userId: user?.id,
     userEmail: user?.email,
   });
+
+  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
+  const { gamificationData } = useUserGamification(user?.id);
 
   // Real data from backend
   const {
@@ -122,7 +126,11 @@ export default function DashboardComplete() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-      <GamifiedHeader user={user || undefined} onLogout={handleLogout} />
+      <GamifiedHeader
+        user={user || undefined}
+        gamificationData={gamificationData}
+        onLogout={handleLogout}
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Welcome Message */}

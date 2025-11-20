@@ -10,6 +10,11 @@ import { Exercise } from '@modules/educational/entities/exercise.entity';
 import { ContentTemplate } from '@modules/content/entities/content-template.entity';
 import { MediaFile } from '@modules/content/entities/media-file.entity';
 import {
+  ContentApproval,
+  ContentApprovalStatus,
+  ContentApprovalType
+} from '@modules/educational/entities/content-approval.entity';
+import {
   ListContentDto,
   ApproveContentDto,
   RejectContentDto,
@@ -19,6 +24,9 @@ import {
   PaginatedMediaDto,
   CreateVersionDto,
   VersionResponseDto,
+  ListApprovalHistoryDto,
+  PaginatedApprovalHistoryDto,
+  ApprovalHistoryItemDto,
 } from '../dto/content';
 import { ContentStatusEnum } from '@shared/constants';
 import { MediaFileResponseDto } from '@modules/content/dto/media-file-response.dto';
@@ -34,6 +42,8 @@ export class AdminContentService {
     private readonly templateRepo: Repository<ContentTemplate>,
     @InjectRepository(MediaFile, 'content')
     private readonly mediaFileRepo: Repository<MediaFile>,
+    @InjectRepository(ContentApproval, 'educational')
+    private readonly contentApprovalRepo: Repository<ContentApproval>,
   ) {}
 
   /**
@@ -138,6 +148,19 @@ export class AdminContentService {
       }
     }
 
+    // Create approval history record
+    const approvalRecord = this.contentApprovalRepo.create({
+      content_type: contentType as any,
+      content_id: id,
+      submitted_by: content.created_by,
+      submitted_at: content.created_at,
+      reviewed_by: adminId,
+      reviewed_at: new Date(),
+      status: ContentApprovalStatus.APPROVED,
+      reviewer_notes: approvalDto.approval_notes,
+    });
+    await this.contentApprovalRepo.save(approvalRecord);
+
     // Update content status and approval fields
     if (contentType === 'module') {
       content.status = ContentStatusEnum.PUBLISHED;
@@ -220,6 +243,19 @@ export class AdminContentService {
         }
       }
     }
+
+    // Create rejection history record
+    const approvalRecord = this.contentApprovalRepo.create({
+      content_type: contentType as any,
+      content_id: id,
+      submitted_by: content.created_by,
+      submitted_at: content.created_at,
+      reviewed_by: adminId,
+      reviewed_at: new Date(),
+      status: ContentApprovalStatus.REJECTED,
+      reviewer_notes: rejectionDto.rejection_reason,
+    });
+    await this.contentApprovalRepo.save(approvalRecord);
 
     // Update content to rejected state
     if (contentType === 'module') {
@@ -659,5 +695,148 @@ export class AdminContentService {
     // Soft delete - set is_active to false
     mediaFile.is_active = false;
     await this.mediaFileRepo.save(mediaFile);
+  }
+
+  // =====================================================
+  // APPROVAL HISTORY MANAGEMENT
+  // =====================================================
+
+  /**
+   * Get approval history with filters and pagination
+   */
+  async getApprovalHistory(
+    query: ListApprovalHistoryDto,
+  ): Promise<PaginatedApprovalHistoryDto> {
+    const {
+      content_type,
+      content_id,
+      status,
+      submitted_by,
+      reviewed_by,
+      search,
+      page = 1,
+      limit = 20,
+    } = query;
+    const skip = (page - 1) * limit;
+
+    const queryBuilder = this.contentApprovalRepo
+      .createQueryBuilder('approval')
+      .leftJoinAndSelect('approval.submitter', 'submitter')
+      .leftJoinAndSelect('approval.reviewer', 'reviewer');
+
+    // Apply filters
+    if (content_type) {
+      queryBuilder.andWhere('approval.content_type = :content_type', {
+        content_type,
+      });
+    }
+
+    if (content_id) {
+      queryBuilder.andWhere('approval.content_id = :content_id', {
+        content_id,
+      });
+    }
+
+    if (status) {
+      queryBuilder.andWhere('approval.status = :status', { status });
+    }
+
+    if (submitted_by) {
+      queryBuilder.andWhere('approval.submitted_by = :submitted_by', {
+        submitted_by,
+      });
+    }
+
+    if (reviewed_by) {
+      queryBuilder.andWhere('approval.reviewed_by = :reviewed_by', {
+        reviewed_by,
+      });
+    }
+
+    if (search) {
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          qb.where('approval.reviewer_notes ILIKE :search', {
+            search: `%${search}%`,
+          }).orWhere('approval.revision_notes ILIKE :search', {
+            search: `%${search}%`,
+          });
+        }),
+      );
+    }
+
+    // Pagination and ordering
+    const [approvals, total] = await queryBuilder
+      .skip(skip)
+      .take(limit)
+      .orderBy('approval.created_at', 'DESC')
+      .getManyAndCount();
+
+    // Get content titles by querying respective repositories
+    const data: ApprovalHistoryItemDto[] = await Promise.all(
+      approvals.map(async (approval) => {
+        let content_title: string | undefined;
+
+        try {
+          if (approval.content_type === ContentApprovalType.MODULE) {
+            const module = await this.moduleRepo.findOne({
+              where: { id: approval.content_id },
+              select: ['title'],
+            });
+            content_title = module?.title;
+          } else if (approval.content_type === ContentApprovalType.EXERCISE) {
+            const exercise = await this.exerciseRepo.findOne({
+              where: { id: approval.content_id },
+              select: ['title'],
+            });
+            content_title = exercise?.title;
+          } else if (approval.content_type === 'resource' as any) {
+            // Template or resource
+            const template = await this.templateRepo.findOne({
+              where: { id: approval.content_id },
+              select: ['name'],
+            });
+            content_title = template?.name;
+          }
+        } catch (error) {
+          // Content might have been deleted, just leave title as undefined
+          content_title = undefined;
+        }
+
+        return {
+          id: approval.id,
+          content_type: approval.content_type,
+          content_id: approval.content_id,
+          content_title,
+          submitted_by: approval.submitted_by,
+          submitter_email: approval.submitter?.email,
+          submitter_name: approval.submitter
+            ? `${approval.submitter.raw_user_meta_data?.first_name || ''} ${approval.submitter.raw_user_meta_data?.last_name || ''}`.trim() ||
+              approval.submitter.email
+            : undefined,
+          submitted_at: approval.submitted_at.toISOString(),
+          reviewed_by: approval.reviewed_by,
+          reviewer_email: approval.reviewer?.email,
+          reviewer_name: approval.reviewer
+            ? `${approval.reviewer.raw_user_meta_data?.first_name || ''} ${approval.reviewer.raw_user_meta_data?.last_name || ''}`.trim() ||
+              approval.reviewer.email
+            : undefined,
+          reviewed_at: approval.reviewed_at?.toISOString(),
+          status: approval.status,
+          reviewer_notes: approval.reviewer_notes,
+          revision_notes: approval.revision_notes,
+          created_at: approval.created_at.toISOString(),
+          updated_at: approval.updated_at.toISOString(),
+        };
+      }),
+    );
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      total_pages: Math.ceil(total / limit),
+    };
   }
 }

@@ -12,6 +12,8 @@ import type {
   PredictionOption,
 } from './prediccionNarrativaTypes';
 import { mockExerciseData } from './prediccionNarrativaMockData';
+import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExerciseProps> = ({
   exercise = mockExerciseData,
@@ -21,6 +23,9 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
   initialData,
   actionsRef,
 }) => {
+  const { user } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Initialize answers for all scenarios
   const [answers, setAnswers] = useState<ScenarioAnswer[]>(
     initialData?.answers || exercise.scenarios.map(s => ({
@@ -65,13 +70,15 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
     return () => clearInterval(autoSaveInterval);
   }, [answers, score, timeSpent, hintsUsed, showResults, exercise.id]);
 
-  // Progress update callback
+  // FE-055 & FE-059: Progress update callback with user answers
   useEffect(() => {
     if (onProgressUpdate) {
       const answeredCount = answers.filter(a => a.selectedPredictionId !== null).length;
-      const correctCount = answers.filter(a => a.isCorrect === true).length;
+
+      // FE-059: Removed local correctCount calculation - uses sanitized isCorrect field
 
       // Prepare user answers in backend format
+      // Backend expects: { scenarios: { s1: "pred_a" } }
       const userAnswers: Record<string, string> = {};
       answers.forEach(answer => {
         if (answer.selectedPredictionId) {
@@ -83,11 +90,16 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
         progress: {
           currentStep: answeredCount,
           totalSteps: exercise.scenarios.length,
-          score: answeredCount > 0 ? Math.floor((correctCount / exercise.scenarios.length) * 100) : 0,
+          score: 0, // FE-059: Score calculated by backend only
           hintsUsed,
           timeSpent,
         },
-        answers: userAnswers,
+        answers: { scenarios: userAnswers },
+      });
+
+      console.log('📊 [PrediccionNarrativa] Progress update sent:', {
+        answered: answeredCount,
+        totalScenarios: exercise.scenarios.length
       });
     }
   }, [answers, hintsUsed, timeSpent, onProgressUpdate, exercise.scenarios.length]);
@@ -104,7 +116,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
     );
   };
 
-  const handleCheck = () => {
+  const handleCheck = async () => {
     // Check if all scenarios are answered
     const allAnswered = answers.every(a => a.selectedPredictionId !== null);
 
@@ -119,34 +131,58 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
       return;
     }
 
-    // Validate all answers
-    const validatedAnswers = answers.map(answer => {
-      const scenario = exercise.scenarios.find(s => s.id === answer.scenarioId);
-      if (!scenario) return answer;
+    // Check if user is authenticated
+    if (!user?.id) {
+      setFeedback({
+        type: 'error',
+        title: 'Error de Autenticación',
+        message: 'Debes estar autenticado para enviar el ejercicio.',
+      });
+      setShowFeedback(true);
+      return;
+    }
 
-      const selectedPrediction = scenario.predictions.find(p => p.id === answer.selectedPredictionId);
-      return {
-        ...answer,
-        isCorrect: selectedPrediction?.isCorrect || false,
-      };
-    });
-
-    setAnswers(validatedAnswers);
+    setIsSubmitting(true);
     setShowResults(true);
 
-    const correctCount = validatedAnswers.filter(a => a.isCorrect === true).length;
-    const finalScore = Math.floor((correctCount / exercise.scenarios.length) * 100);
-    setScore(finalScore);
+    try {
+      // Prepare answers in backend DTO format: { scenarios: { s1: "pred_a" } }
+      const userAnswers: Record<string, string> = {};
+      answers.forEach(answer => {
+        if (answer.selectedPredictionId) {
+          userAnswers[answer.scenarioId] = answer.selectedPredictionId;
+        }
+      });
 
-    // Show feedback
-    setFeedback({
-      type: finalScore >= 70 ? 'success' : finalScore >= 50 ? 'partial' : 'info',
-      title: finalScore >= 70 ? '¡Excelente Predicción!' : finalScore >= 50 ? '¡Buen Intento!' : 'Sigue Practicando',
-      message: `Has acertado ${correctCount} de ${exercise.scenarios.length} predicciones.`,
-      score: finalScore,
-      showConfetti: finalScore >= 70,
-    });
-    setShowFeedback(true);
+      // Submit to backend API
+      const response = await submitExercise(exercise.id, user.id, { scenarios: userAnswers });
+
+      // Show backend response
+      setFeedback({
+        type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
+        title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
+        message: response.feedback?.overall || `Has predicho ${response.correctAnswersCount} de ${response.totalQuestions} escenarios correctamente.`,
+        score: response.score,
+        showConfetti: response.isPerfect
+      });
+      setShowFeedback(true);
+
+      console.log('✅ [PrediccionNarrativa] Submission successful:', {
+        attemptId: response.attemptId,
+        score: response.score,
+        rewards: response.rewards
+      });
+    } catch (error) {
+      console.error('❌ [PrediccionNarrativa] Submission error:', error);
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: 'Hubo un problema al enviar tu respuesta. Por favor, intenta nuevamente.',
+      });
+      setShowFeedback(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
@@ -197,40 +233,19 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
     }
   }, [answers, score, timeSpent, hintsUsed, showResults, actionsRef]);
 
+  // FE-059: Removed validation styling - isCorrect field no longer available
   const getOptionStyle = (prediction: PredictionOption) => {
     const isSelected = currentAnswer?.selectedPredictionId === prediction.id;
-    const isCorrect = prediction.isCorrect;
 
-    if (!showResults) {
-      return isSelected
-        ? 'border-detective-orange bg-detective-orange/10'
-        : 'border-gray-300 hover:border-detective-orange hover:bg-detective-orange/5';
-    }
-
-    if (isSelected && isCorrect) {
-      return 'border-green-500 bg-green-50';
-    }
-    if (isSelected && !isCorrect) {
-      return 'border-red-500 bg-red-50';
-    }
-    if (!isSelected && isCorrect) {
-      return 'border-green-500 bg-green-50';
-    }
-    return 'border-gray-300 opacity-60';
+    // No correctness feedback until backend integration
+    return isSelected
+      ? 'border-detective-orange bg-detective-orange/10'
+      : 'border-gray-300 hover:border-detective-orange hover:bg-detective-orange/5';
   };
 
+  // FE-059: Removed validation icons - isCorrect field no longer available
   const getOptionIcon = (prediction: PredictionOption) => {
-    const isSelected = currentAnswer?.selectedPredictionId === prediction.id;
-    const isCorrect = prediction.isCorrect;
-
-    if (!showResults) return null;
-
-    if (isCorrect) {
-      return <CheckCircle className="w-6 h-6 text-green-600" />;
-    }
-    if (isSelected && !isCorrect) {
-      return <XCircle className="w-6 h-6 text-red-600" />;
-    }
+    // No correctness feedback until backend integration
     return null;
   };
 

@@ -129,11 +129,11 @@ describe('AdminOrganizationsService', () => {
 
       // Assert
       expect(result).toBeDefined();
-      expect(result.data).toHaveLength(2);
-      expect(result.total).toBe(2);
-      expect(result.page).toBe(1);
-      expect(result.limit).toBe(20);
-      expect(result.total_pages).toBe(1);
+      expect(result.items).toHaveLength(2);
+      expect(result.pagination.totalItems).toBe(2);
+      expect(result.pagination.page).toBe(1);
+      expect(result.pagination.limit).toBe(20);
+      expect(result.pagination.totalPages).toBe(1);
     });
 
     it('should apply pagination correctly', async () => {
@@ -150,8 +150,8 @@ describe('AdminOrganizationsService', () => {
       // Assert
       expect(mockQueryBuilder.skip).toHaveBeenCalledWith(10); // (2 - 1) * 10
       expect(mockQueryBuilder.take).toHaveBeenCalledWith(10);
-      expect(result.page).toBe(2);
-      expect(result.total_pages).toBe(3); // 25 / 10 = 2.5 => 3
+      expect(result.pagination.page).toBe(2);
+      expect(result.pagination.totalPages).toBe(3); // 25 / 10 = 2.5 => 3
     });
 
     it('should filter by search term', async () => {

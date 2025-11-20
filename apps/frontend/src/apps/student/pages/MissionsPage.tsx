@@ -29,6 +29,7 @@ import { RewardsPreview } from '@/features/gamification/missions/components/Rewa
 // Hooks
 import { useMissions } from '@/features/gamification/missions/hooks/useMissions';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 
 // Utils
 import { cn } from '@shared/utils/cn';
@@ -37,6 +38,9 @@ export default function MissionsPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, logout } = useAuth();
+
+  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
+  const { gamificationData } = useUserGamification(user?.id);
 
   // Get tab from URL or default to 'daily'
   const tabFromUrl = (searchParams.get('tab') as MissionType) || 'daily';
@@ -140,10 +144,14 @@ export default function MissionsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
       {/* Header siempre visible */}
-      <GamifiedHeader user={user || undefined} onLogout={async () => {
-        await logout();
-        // No need to navigate - performLogout() handles redirect
-      }} />
+      <GamifiedHeader
+        user={user || undefined}
+        gamificationData={gamificationData}
+        onLogout={async () => {
+          await logout();
+          // No need to navigate - performLogout() handles redirect
+        }}
+      />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

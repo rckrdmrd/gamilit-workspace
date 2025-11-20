@@ -6,6 +6,8 @@ import { CompletarEspaciosData, BlankSpace } from './completarEspaciosTypes';
 import { calculateScore, saveProgress } from '@shared/components/mechanics/mechanicsTypes';
 import { Check, X, Sparkles } from 'lucide-react';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 export interface CompletarEspaciosExerciseProps {
   exercise: CompletarEspaciosData;
@@ -23,6 +25,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
   onProgressUpdate,
   actionsRef
 }) => {
+  const { user } = useAuth();
   const [blanks, setBlanks] = useState<BlankSpace[]>(
     exercise.blanks.map(blank => ({ ...blank, userAnswer: '' }))
   );
@@ -33,15 +36,13 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [showResults, setShowResults] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const answeredCount = blanks.filter(b => b.userAnswer && b.userAnswer.trim() !== '').length;
-  const correctCount = blanks.filter(b => {
-    if (!b.userAnswer) return false;
-    const userAnswer = b.userAnswer.trim().toLowerCase();
-    const correctAnswer = b.correctAnswer.toLowerCase();
-    const alternatives = b.alternatives?.map(alt => alt.toLowerCase()) || [];
-    return userAnswer === correctAnswer || alternatives.includes(userAnswer);
-  }).length;
+
+  // FE-059: Removed local validation - correctAnswer field no longer available
+  // Validation is now done server-side via backend API
+  // const correctCount = ... REMOVED
 
   // FE-055: Notify parent with progress AND user answers
   useEffect(() => {
@@ -63,7 +64,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
         progress: {
           currentStep: answeredCount,
           totalSteps: blanks.length,
-          score: answeredCount > 0 ? Math.floor((correctCount / blanks.length) * 100) : 0,
+          score: 0, // FE-059: Score calculated by backend only
           hintsUsed,
           timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
         },
@@ -75,7 +76,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
         totalBlanks: blanks.length
       });
     }
-  }, [blanks, hintsUsed, usedWords, onProgressUpdate, answeredCount, correctCount, startTime, exercise.id]);
+  }, [blanks, hintsUsed, usedWords, onProgressUpdate, answeredCount, startTime, exercise.id]);
 
   const handleWordSelect = (word: string) => {
     if (showResults) return;
@@ -129,35 +130,77 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
       return;
     }
 
+    // Check if user is authenticated
+    if (!user?.id) {
+      setFeedback({
+        type: 'error',
+        title: 'Error de Autenticación',
+        message: 'Debes estar autenticado para enviar el ejercicio.',
+      });
+      setShowFeedback(true);
+      return;
+    }
+
+    setIsSubmitting(true);
     setShowResults(true);
 
-    // Convert blanks array to answers object
-    const answersObj: Record<string, any> = {};
-    blanks.forEach(b => {
-      answersObj[b.id] = b.userAnswer;
-    });
+    try {
+      // Prepare answers in backend DTO format: { blanks: { b1: "word1", b2: "word2" } }
+      const answersObj: Record<string, string> = {};
+      blanks.forEach(b => {
+        if (b.userAnswer && b.userAnswer.trim() !== '') {
+          answersObj[b.id] = b.userAnswer;
+        }
+      });
 
-    const attempt = {
-      exerciseId: exercise.id,
-      startTime,
-      endTime: new Date(),
-      answers: answersObj,
-      correctAnswers: correctCount,
-      totalQuestions: blanks.length,
-      hintsUsed,
-      difficulty: exercise.difficulty
-    };
+      // ✅ FIX BUG-005: Validate that at least one blank is filled
+      if (Object.keys(answersObj).length === 0) {
+        setIsSubmitting(false);
+        setShowResults(false);
+        setFeedback({
+          type: 'error',
+          title: '¡Espera!',
+          message: 'Debes completar al menos un espacio en blanco antes de enviar.',
+          score: 0
+        });
+        setShowFeedback(true);
+        return;
+      }
 
-    const score = calculateScore(correctCount, blanks.length);
+      console.log('📝 [CompletarEspacios] Submitting with answers:', {
+        blankCount: Object.keys(answersObj).length,
+        totalBlanks: blanks.length
+      });
 
-    setFeedback({
-      type: correctCount === blanks.length ? 'success' : 'partial',
-      title: correctCount === blanks.length ? '¡Perfecto!' : '¡Buen intento!',
-      message: `Has completado correctamente ${correctCount} de ${blanks.length} espacios.`,
-      score,
-      showConfetti: correctCount === blanks.length
-    });
-    setShowFeedback(true);
+      // Submit to backend API
+      const response = await submitExercise(exercise.id, user.id, { blanks: answersObj });
+
+      // Show backend response
+      setFeedback({
+        type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
+        title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
+        message: response.feedback?.overall || `Has obtenido ${response.correctAnswersCount} de ${response.totalQuestions} respuestas correctas.`,
+        score: response.score,
+        showConfetti: response.isPerfect
+      });
+      setShowFeedback(true);
+
+      console.log('✅ [CompletarEspacios] Submission successful:', {
+        attemptId: response.attemptId,
+        score: response.score,
+        rewards: response.rewards
+      });
+    } catch (error) {
+      console.error('❌ [CompletarEspacios] Submission error:', error);
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: 'Hubo un problema al enviar tu respuesta. Por favor, intenta nuevamente.',
+      });
+      setShowFeedback(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
@@ -201,11 +244,11 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
         }
 
         const isAnswered = blank.userAnswer && blank.userAnswer.trim() !== '';
-        const isCorrect = isAnswered && (
-          blank.userAnswer!.trim().toLowerCase() === blank.correctAnswer.toLowerCase() ||
-          (blank.alternatives?.map(alt => alt.toLowerCase()).includes(blank.userAnswer!.trim().toLowerCase()) || false)
-        );
-        const showResult = showResults && isAnswered;
+
+        // FE-059: Removed local validation - correctAnswer field no longer available
+        // Visual feedback (green/red) disabled until backend integration
+        const isCorrect = false; // Will be determined by backend
+        const showResult = false; // Disabled for now
 
         segments.push(
           <motion.span
@@ -327,7 +370,8 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
         )}
       </DetectiveCard>
 
-      {/* Results Explanation */}
+      {/* FE-059: Results section removed - correct answers no longer available in frontend */}
+      {/* Validation and feedback now provided by backend API */}
       {showResults && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -335,39 +379,27 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
           className="mt-6"
         >
           <DetectiveCard variant="info" padding="lg">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">📝 Respuestas Correctas</h3>
+            <h3 className="text-lg font-bold text-gray-800 mb-4">📝 Tus Respuestas</h3>
             <div className="space-y-3">
-              {blanks.map((blank, index) => {
-                const isCorrect = blank.userAnswer && (
-                  blank.userAnswer.trim().toLowerCase() === blank.correctAnswer.toLowerCase() ||
-                  (blank.alternatives?.map(alt => alt.toLowerCase()).includes(blank.userAnswer.trim().toLowerCase()) || false)
-                );
-                return (
-                  <div
-                    key={blank.id}
-                    className={`p-3 rounded-lg border-l-4 ${
-                      isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0 text-2xl">
-                        {isCorrect ? '✅' : '❌'}
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-semibold text-gray-800">Espacio {index + 1}</p>
-                        <p className="text-gray-600">
-                          Tu respuesta: <span className="font-semibold">{blank.userAnswer || '(sin respuesta)'}</span>
-                        </p>
-                        {!isCorrect && (
-                          <p className="text-green-700">
-                            Respuesta correcta: <span className="font-semibold">{blank.correctAnswer}</span>
-                          </p>
-                        )}
-                      </div>
+              {blanks.map((blank, index) => (
+                <div
+                  key={blank.id}
+                  className="p-3 rounded-lg border-l-4 bg-blue-50 border-blue-500"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 text-2xl">📝</div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-gray-800">Espacio {index + 1}</p>
+                      <p className="text-gray-600">
+                        Tu respuesta: <span className="font-semibold">{blank.userAnswer || '(sin respuesta)'}</span>
+                      </p>
+                      <p className="text-sm text-gray-500 mt-1">
+                        La validación se procesará en el servidor
+                      </p>
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </DetectiveCard>
         </motion.div>

@@ -250,6 +250,7 @@ log "===========================================================================
 execute_sql_files "$DDL_DIR/schemas/educational_content/enums" "*.sql" "ENUMs educativos (si existen)"
 execute_sql_files "$DDL_DIR/schemas/educational_content/tables" "*.sql" "Tablas de contenido educativo"
 execute_sql_files "$DDL_DIR/schemas/educational_content/functions" "*.sql" "Funciones educativas"
+execute_sql_files "$DDL_DIR/schemas/educational_content/views" "*.sql" "Vistas de análisis educativo"
 execute_sql_files "$DDL_DIR/schemas/educational_content/triggers" "*.sql" "Triggers educativos"
 execute_sql_files "$DDL_DIR/schemas/educational_content/indexes" "*.sql" "Índices educativos"
 execute_sql_files "$DDL_DIR/schemas/educational_content/rls-policies" "*.sql" "RLS Policies educativas"
@@ -327,6 +328,23 @@ log_success "FASE 9.5 completada - Dependencias circulares resueltas"
 log ""
 
 # ============================================================================
+# FASE 9.7: NOTIFICATIONS SCHEMA (Sistema de Notificaciones Multi-Canal)
+# ============================================================================
+
+log "============================================================================"
+log "FASE 9.7: NOTIFICATIONS SCHEMA"
+log "============================================================================"
+
+execute_sql_files "$DDL_DIR/schemas/notifications/tables" "*.sql" "Tablas de notificaciones"
+execute_sql_files "$DDL_DIR/schemas/notifications/functions" "*.sql" "Funciones de notificaciones"
+execute_sql_files "$DDL_DIR/schemas/notifications/triggers" "*.sql" "Triggers de notificaciones (si existen)"
+execute_sql_files "$DDL_DIR/schemas/notifications/indexes" "*.sql" "Índices de notificaciones (si existen)"
+execute_sql_files "$DDL_DIR/schemas/notifications/rls-policies" "*.sql" "RLS Policies de notificaciones (si existen)"
+
+log_success "FASE 9.7 completada - Notifications schema creado"
+log ""
+
+# ============================================================================
 # FASE 10: CONTENT_MANAGEMENT SCHEMA
 # ============================================================================
 
@@ -341,6 +359,24 @@ execute_sql_files "$DDL_DIR/schemas/content_management/indexes" "*.sql" "Índice
 execute_sql_files "$DDL_DIR/schemas/content_management/rls-policies" "*.sql" "RLS Policies de content_management"
 
 log_success "FASE 10 completada"
+log ""
+
+# ============================================================================
+# FASE 10.5: COMMUNICATION SCHEMA (Sistema de Mensajería)
+# ============================================================================
+
+log "============================================================================"
+log "FASE 10.5: COMMUNICATION SCHEMA (DB-122)"
+log "============================================================================"
+
+execute_sql "$DDL_DIR/schemas/communication/00-schema.sql" "Schema communication"
+execute_sql_files "$DDL_DIR/schemas/communication/tables" "*.sql" "Tablas de comunicación"
+execute_sql_files "$DDL_DIR/schemas/communication/functions" "*.sql" "Funciones de comunicación (si existen)"
+execute_sql_files "$DDL_DIR/schemas/communication/triggers" "*.sql" "Triggers de comunicación (si existen)"
+execute_sql_files "$DDL_DIR/schemas/communication/indexes" "*.sql" "Índices de comunicación (si existen)"
+execute_sql_files "$DDL_DIR/schemas/communication/views" "*.sql" "Vistas de comunicación (si existen)"
+
+log_success "FASE 10.5 completada - Communication schema creado (DB-122)"
 log ""
 
 # ============================================================================
@@ -447,7 +483,8 @@ execute_sql "$SEEDS_DIR/audit_logging/01-default-config.sql" "Seeds: audit_loggi
 
 # 16.1: System Configuration (sin dependencias)
 execute_sql "$SEEDS_DIR/system_configuration/01-system_settings.sql" "Seeds: system_settings"
-execute_sql "$SEEDS_DIR/system_configuration/02-feature_flags.sql" "Seeds: feature_flags"
+execute_sql "$SEEDS_DIR/system_configuration/01-feature_flags_seeds.sql" "Seeds: feature_flags (26 flags - DB-122)"
+execute_sql "$SEEDS_DIR/system_configuration/02-gamification_parameters_seeds.sql" "Seeds: gamification_parameters (37 params - DB-122)"
 execute_sql "$SEEDS_DIR/system_configuration/03-notification_settings_global.sql" "Seeds: notification_settings_global"
 execute_sql "$SEEDS_DIR/system_configuration/04-rate_limits.sql" "Seeds: rate_limits"
 
@@ -477,15 +514,16 @@ execute_sql "$SEEDS_DIR/educational_content/01-modules.sql" "Seeds: modules (5)"
 execute_sql "$SEEDS_DIR/educational_content/02-exercises-module1.sql" "Seeds: Module 1 - Literal (5 exercises)"
 execute_sql "$SEEDS_DIR/educational_content/03-exercises-module2.sql" "Seeds: Module 2 - Inferencial (5 exercises)"
 execute_sql "$SEEDS_DIR/educational_content/04-exercises-module3.sql" "Seeds: Module 3 - Crítica (5 exercises)"
-execute_sql "$SEEDS_DIR/educational_content/05-exercises-module4.sql" "Seeds: Module 4 - Digital (9 exercises)"
-execute_sql "$SEEDS_DIR/educational_content/06-exercises-module5.sql" "Seeds: Module 5 - Creativo (3 exercises)"
+# execute_sql "$SEEDS_DIR/educational_content/05-exercises-module4.sql" "Seeds: Module 4 - Digital (9 exercises)"
+# execute_sql "$SEEDS_DIR/educational_content/06-exercises-module5.sql" "Seeds: Module 5 - Creativo (3 exercises)"
 execute_sql "$SEEDS_DIR/educational_content/07-assessment-rubrics.sql" "Seeds: assessment_rubrics"
 execute_sql "$SEEDS_DIR/educational_content/08-difficulty_criteria.sql" "Seeds: difficulty_criteria"
 execute_sql "$SEEDS_DIR/educational_content/09-exercise_mechanic_mapping.sql" "Seeds: exercise_mechanic_mapping"
+execute_sql "$SEEDS_DIR/educational_content/10-exercise_validation_config.sql" "Seeds: exercise_validation_config (15 configs)"
 
 # NOTA: Modelo JSONB puro - Seeds legacy movidos a _deprecated/
-# Total: 27 ejercicios production-ready con estructura JSONB completa
-# Total seeds PROD: 33 archivos (actualizado con 09-exercise_mechanic_mapping)
+# Total: 15 ejercicios production-ready (módulos 1-3) - Módulos 4-5 en backlog
+# Total seeds PROD: 38 archivos (actualizado DB-122: +63 registros feature_flags & gamification_parameters)
 
 # 16.5.1: Progress Tracking (progreso inicial de módulos)
 execute_sql "$SEEDS_DIR/progress_tracking/01-module_progress.sql" "Seeds: module_progress (initial)"

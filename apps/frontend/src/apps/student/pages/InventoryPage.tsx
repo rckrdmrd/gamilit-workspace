@@ -30,6 +30,7 @@ import {
 
 // Components
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { Modal } from '@shared/components/common/Modal';
 
@@ -48,6 +49,9 @@ type TabType = 'all' | 'cosmetics' | 'powerups' | 'active';
 export default function InventoryPage() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+
+  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
+  const { gamificationData } = useUserGamification(user?.id);
 
   // State
   const [activeTab, setActiveTab] = useState<TabType>('all');
@@ -208,10 +212,14 @@ export default function InventoryPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={user ?? undefined} onLogout={async () => {
-        await logout();
-        // No need to navigate - performLogout() handles redirect
-      }} />
+      <GamifiedHeader
+        user={user ?? undefined}
+        gamificationData={gamificationData}
+        onLogout={async () => {
+          await logout();
+          // No need to navigate - performLogout() handles redirect
+        }}
+      />
 
       <main className="detective-container py-8">
         {/* Header */}

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
+import { useState } from 'react';
+import { useAuth } from '@features/auth/hooks/useAuth';
+import { AdminLayout } from '../layouts/AdminLayout';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { DataTable, Column } from '@shared/components/common/DataTable';
@@ -9,7 +10,13 @@ import { CheckCircle, XCircle, Upload, Trash2, Image, FileText, History } from '
 import { usePendingExercises, useMediaLibrary, useContentVersions } from '../hooks/useContentManagement';
 import type { PendingExercise, MediaItem, ContentVersion } from '../types';
 
-export default function AdminContent() {
+/**
+ * AdminContentPage - Gestión y moderación de contenido
+ * Updated: 2025-11-19 - Migrated to use AdminLayout with sidebar
+ */
+export default function AdminContentPage() {
+  const { user, logout } = useAuth();
+
   const [activeTab, setActiveTab] = useState<'pending' | 'media' | 'versions'>('pending');
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
@@ -39,11 +46,19 @@ export default function AdminContent() {
     error: errorVersions,
   } = useContentVersions();
 
-  const user = {
-    id: 'mock-admin-content-id',
-    email: 'admin@glit.com',
-    name: 'Super Admin',
-    role: 'super_admin',
+  // TODO: Replace with useUserGamification hook when backend endpoint is ready
+  const gamificationData = {
+    userId: user?.id || 'mock-admin-id',
+    level: 20,
+    totalXP: 5000,
+    mlCoins: 2500,
+    rank: 'Super Admin',
+    achievements: ['admin_master', 'content_moderator'],
+  };
+
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/login';
   };
 
   const handleApproveExercise = async (exerciseId: string) => {
@@ -252,15 +267,18 @@ export default function AdminContent() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={user} />
-
-      <main className="detective-container py-8">
+    <AdminLayout
+      user={user || undefined}
+      gamificationData={gamificationData}
+      organizationName="GAMILIT Platform Admin"
+      onLogout={handleLogout}
+    >
+      <div className="space-y-6">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-detective-text mb-2">Gestión de Contenido</h1>
-          <p className="text-detective-text-secondary">
-            Modera ejercicios, gestiona multimedia y controla versiones
+        <div>
+          <h1 className="text-3xl font-bold text-detective-text">Gestión de Contenido</h1>
+          <p className="text-detective-text-secondary mt-1">
+            Modera ejercicios, gestiona multimedia y controla versiones del sistema
           </p>
         </div>
 
@@ -386,7 +404,7 @@ export default function AdminContent() {
             )}
           </div>
         )}
-      </main>
+      </div>
 
       {/* Preview Modal */}
       <Modal
@@ -483,6 +501,6 @@ export default function AdminContent() {
           </div>
         </div>
       </Modal>
-    </div>
+    </AdminLayout>
   );
 }

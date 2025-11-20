@@ -259,5 +259,74 @@ export function MatchingActivity({ activity }) {
 
 ---
 
+## 💻 Implementación Técnica
+
+### Validadores Relacionados
+
+Esta historia de usuario (Asociación/Matching) se implementa en diferentes variantes:
+
+| Tipo de Ejercicio | Validador DB | Formato Respuesta | Descripción |
+|-------------------|-------------|-------------------|-------------|
+| `rueda_inferencias` | `validate_rueda_inferencias()` | `{"inferences": {"inf1": "conclusion1", "inf2": "conclusion2"}}` | Matching de inferencias (1 a 1) |
+| `construccion_hipotesis` | `validate_cause_effect_matching()` | `{"causes": {"c1": ["cons1", "cons2"], "c2": ["cons3"]}}` | **Matching causa-efecto drag & drop (1 a muchos)** |
+
+### Implementación Causa-Efecto (construccion_hipotesis)
+
+**Componente Frontend:** `CausaEfectoExercise.tsx`
+**Ubicación:** `apps/frontend/src/features/mechanics/module2/ConstruccionHipotesis/`
+**Validador DB:** `validate_cause_effect_matching()`
+**Tipo en ENUM:** `construccion_hipotesis`
+
+**Formato de respuesta:**
+
+```json
+{
+  "causes": {
+    "cause-1": ["consequence-a", "consequence-b"],
+    "cause-2": ["consequence-c"],
+    "cause-3": ["consequence-d", "consequence-e", "consequence-f"]
+  }
+}
+```
+
+**Formato de solución:**
+
+```json
+{
+  "correctMatches": {
+    "cause-1": ["consequence-a", "consequence-b"],
+    "cause-2": ["consequence-c"],
+    "cause-3": ["consequence-d", "consequence-e", "consequence-f"]
+  },
+  "allowPartialMatches": true,
+  "strictOrder": false
+}
+```
+
+**Características:**
+- ✅ Drag & drop de consecuencias hacia causas
+- ✅ Múltiples consecuencias por causa (1 a muchos)
+- ✅ Orden flexible (configurable con `strictOrder`)
+- ✅ Crédito parcial por matches correctos
+- ✅ Feedback detallado por causa con errores específicos
+- ✅ Score proporcional: `(consecuencias correctas / total) × max_points`
+
+**Diferencia vs. Rueda Inferencias:**
+- **Rueda Inferencias:** Matching 1-a-1 (una inferencia → una conclusión)
+- **Causa-Efecto:** Matching 1-a-muchos (una causa → múltiples consecuencias)
+
+**Implementado en:** FE-059, DB-117, DB-123 (2025-11-19)
+
+**Referencias:**
+- **Handoff:** `orchestration/HANDOFF-FE-059-TO-DB.md` - Discrepancia 3
+- **Validador:** `apps/database/ddl/schemas/educational_content/functions/22-validate_cause_effect_matching.sql`
+- **Especificación:** `orchestration/SQL-SPECS-NUEVOS-VALIDADORES-FE-059.md`
+- **Seeds Testing:** `apps/database/seeds/dev/educational_content/10-test-nuevos-validadores-FE-059.sql`
+
+**Beneficio:** Permite modelar relaciones causa-efecto complejas del mundo real donde una causa puede tener múltiples consecuencias, mejorando el aprendizaje crítico.
+
+---
+
 **Creado:** 2025-11-02
+**Actualizado:** 2025-11-19 - DB-123 (Agregada sección de implementación técnica)
 **Responsable:** Equipo Fullstack

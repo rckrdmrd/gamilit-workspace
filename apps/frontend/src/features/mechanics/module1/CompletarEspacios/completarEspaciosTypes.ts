@@ -1,14 +1,21 @@
 /**
  * Types for Completar Espacios (Fill in the Blanks) Exercise
  * Module 1 - Exercise 4
+ * ⚠️ FE-059: correctAnswer and alternatives are NEVER sent by backend (sanitized for security)
  */
 
 export interface BlankSpace {
   id: string;
   position: number;
-  correctAnswer: string;
+  /**
+   * @deprecated Backend sanitizes this field - never present. Validation is done server-side.
+   */
+  correctAnswer?: never;
   userAnswer?: string;
-  alternatives?: string[]; // Alternative correct answers
+  /**
+   * @deprecated Backend sanitizes this field - never present. Validation is done server-side.
+   */
+  alternatives?: never;
 }
 
 export interface CompletarEspaciosData {

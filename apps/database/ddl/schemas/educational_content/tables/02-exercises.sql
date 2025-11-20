@@ -37,6 +37,13 @@ CREATE TABLE educational_content.exercises (
     solution jsonb,
     rubric jsonb,
     auto_gradable boolean DEFAULT true,
+
+    -- Contenido pedagógico expandido (DB-125: 2025-11-19)
+    objective TEXT,
+    how_to_solve TEXT,
+    recommended_strategy TEXT,
+    pedagogical_notes TEXT,
+
     difficulty_level educational_content.difficulty_level DEFAULT 'beginner'::educational_content.difficulty_level,
     max_points integer DEFAULT 100,
     passing_score integer DEFAULT 70,
@@ -126,3 +133,16 @@ COMMENT ON COLUMN educational_content.exercises.prerequisites IS 'Array UUID de 
 COMMENT ON COLUMN educational_content.exercises.comodines_allowed IS 'Power-ups permitidos en este ejercicio (gamification_system.comodin_type[] ARRAY). Valores: pistas (15 coins), vision_lectora (25 coins), segunda_oportunidad (40 coins). DEFAULT: todos habilitados.';
 COMMENT ON COLUMN educational_content.exercises.created_by IS 'Perfil del creador (auditoría, ON DELETE SET NULL)';
 COMMENT ON COLUMN educational_content.exercises.reviewed_by IS 'Perfil del revisor (auditoría, ON DELETE SET NULL)';
+
+-- Comentarios de contenido pedagógico (DB-125: 2025-11-19)
+COMMENT ON COLUMN educational_content.exercises.objective IS
+'Objetivo pedagógico expandido del ejercicio (200-500 palabras). Describe qué aprenderá el estudiante y por qué es importante según el modelo de comprensión lectora de Daniel Cassany.';
+
+COMMENT ON COLUMN educational_content.exercises.how_to_solve IS
+'Guía detallada de cómo resolver el ejercicio (300-800 palabras). Pasos pedagógicos, estrategias de pensamiento, y consejos para completar exitosamente el ejercicio.';
+
+COMMENT ON COLUMN educational_content.exercises.recommended_strategy IS
+'Estrategias recomendadas para resolver eficientemente (100-300 palabras). Tips, trucos, y mejores prácticas para estudiantes.';
+
+COMMENT ON COLUMN educational_content.exercises.pedagogical_notes IS
+'Notas metodológicas para educadores (100-400 palabras). Contexto pedagógico, relación con competencias, y alineación con modelo Cassany.';

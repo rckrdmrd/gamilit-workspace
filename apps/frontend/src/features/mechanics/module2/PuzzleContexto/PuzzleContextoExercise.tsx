@@ -7,6 +7,8 @@ import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import type { PuzzleContextoExerciseProps, Fragment, PuzzleContextoState } from './puzzleContextoTypes';
 import { calculateScore, saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { mockPuzzleData } from './puzzleContextoMockData';
+import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
   exercise = mockPuzzleData,
@@ -16,6 +18,9 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
   initialData,
   actionsRef,
 }) => {
+  const { user } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Shuffle fragments initially
   const shuffleArray = <T,>(array: T[]): T[] => {
     const shuffled = [...array];
@@ -65,51 +70,90 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
   // Progress update callback
   useEffect(() => {
     if (onProgressUpdate) {
-      const correctCount = fragments.filter((frag, index) => {
-        return exercise.correctOrder[index] === frag.id;
-      }).length;
+      // FE-059: Removed local validation - correctOrder field no longer available
+      // Validation is now done server-side via backend API
 
-      // Prepare user answers in backend format
-      const userAnswers: Record<string, number> = {};
+      // BE-FE-062: Prepare user answers in backend DTO format
+      // Backend expects: { questions: {"q1": "option_a", "q2": "option_b"} }
+      // Convert fragment positions to string format
+      const userAnswers: Record<string, string> = {};
       fragments.forEach((frag, index) => {
-        userAnswers[frag.id] = index;
+        userAnswers[frag.id] = String(index);
       });
+
+      // FE-044 FIX: Use stage-based progress instead of fragment count
+      // Stage 1: Ordering fragments (50%)
+      // Stage 2: Verified/Completed (100%)
+      const currentStage = showResults ? 2 : 1;
+      const totalStages = 2;
 
       onProgressUpdate({
         progress: {
-          currentStep: correctCount,
-          totalSteps: fragments.length,
+          currentStep: currentStage, // FE-044 FIX: 1=Ordering, 2=Verified
+          totalSteps: totalStages,   // FE-044 FIX: 2 stages total
           score: showResults ? score : 0,
           hintsUsed,
           timeSpent,
         },
-        answers: userAnswers,
+        answers: { questions: userAnswers },  // BE-FE-062: Wrap in questions object
       });
     }
-  }, [fragments, showResults, score, hintsUsed, timeSpent, onProgressUpdate, exercise.correctOrder]);
+  }, [fragments, showResults, score, hintsUsed, timeSpent, onProgressUpdate]);
 
-  const handleCheck = () => {
-    // Validate order
-    let correctCount = 0;
-    fragments.forEach((frag, index) => {
-      if (exercise.correctOrder[index] === frag.id) {
-        correctCount++;
-      }
-    });
+  const handleCheck = async () => {
+    // Check if user is authenticated
+    if (!user?.id) {
+      setFeedback({
+        type: 'error',
+        title: 'Error de Autenticación',
+        message: 'Debes estar autenticado para enviar el ejercicio.',
+      });
+      setShowFeedback(true);
+      return;
+    }
 
-    const finalScore = Math.floor((correctCount / fragments.length) * 100);
-    setScore(finalScore);
-    setShowResults(true);
+    setIsSubmitting(true);
 
-    // Show feedback
-    setFeedback({
-      type: finalScore >= 70 ? 'success' : finalScore >= 50 ? 'partial' : 'info',
-      title: finalScore >= 70 ? '¡Excelente Orden!' : finalScore >= 50 ? '¡Buen Intento!' : 'Sigue Practicando',
-      message: `Has ordenado correctamente ${correctCount} de ${fragments.length} fragmentos.`,
-      score: finalScore,
-      showConfetti: finalScore >= 70,
-    });
-    setShowFeedback(true);
+    try {
+      // BE-FE-062: Prepare answers in backend DTO format
+      // Backend expects: { questions: {"frag1": "0", "frag2": "1", ...} }
+      const userAnswers: Record<string, string> = {};
+      fragments.forEach((frag, index) => {
+        userAnswers[frag.id] = String(index);
+      });
+
+      // Submit to backend API
+      const response = await submitExercise(exercise.id, user.id, { questions: userAnswers });
+
+      setShowResults(true);
+      setScore(response.score);
+
+      // Show backend response
+      setFeedback({
+        type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
+        title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
+        message: response.feedback?.overall || `Has ordenado ${response.correctAnswersCount} de ${response.totalQuestions} fragmentos correctamente.`,
+        score: response.score,
+        showConfetti: response.isPerfect
+      });
+      setShowFeedback(true);
+
+      console.log('✅ [PuzzleContexto] Submission successful:', {
+        attemptId: response.attemptId,
+        score: response.score,
+        rewards: response.rewards
+      });
+    } catch (error) {
+      console.error('❌ [PuzzleContexto] Submission error:', error);
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: 'Hubo un problema al enviar tu respuesta. Por favor, intenta nuevamente.',
+      });
+      setShowFeedback(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
@@ -138,24 +182,14 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
   }, [fragments, showResults, score, timeSpent, hintsUsed, actionsRef]);
 
   const getFragmentStyle = (fragment: Fragment, index: number) => {
-    if (!showResults) {
-      return 'border-detective-orange/30 bg-white hover:border-detective-orange hover:shadow-lg';
-    }
-
-    const isCorrect = exercise.correctOrder[index] === fragment.id;
-    if (isCorrect) {
-      return 'border-green-500 bg-green-50';
-    }
-    return 'border-red-500 bg-red-50';
+    // FE-059: Removed visual validation - correctOrder field no longer available
+    // Visual feedback disabled until backend integration
+    return 'border-detective-orange/30 bg-white hover:border-detective-orange hover:shadow-lg';
   };
 
   const getFragmentIcon = (fragment: Fragment, index: number) => {
-    if (!showResults) return null;
-
-    const isCorrect = exercise.correctOrder[index] === fragment.id;
-    if (isCorrect) {
-      return <Check className="w-5 h-5 text-green-600" />;
-    }
+    // FE-059: Removed visual validation - correctOrder field no longer available
+    // Icon feedback disabled until backend integration
     return null;
   };
 

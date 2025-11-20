@@ -10,11 +10,14 @@
  * - Content version control
  * - Pagination and filtering
  * - Error handling and loading states
+ *
+ * Updated: 2025-11-19 - Integrated with adminAPI.ts (FE-059)
+ * - Now uses adminAPI methods for content and media operations
  */
 
 import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS } from '@/services/api/apiConfig';
+import * as adminAPI from '@/services/api/adminAPI';
 import type { PendingExercise, MediaItem, ContentVersion, PaginatedResponse } from '../types';
 
 // ============================================================================
@@ -94,22 +97,14 @@ export function usePendingExercises(): UsePendingExercisesResult {
       setLoading(true);
       setError(null);
       try {
-        const response = await apiClient.get<{ success: boolean; data: PaginatedResponse<PendingExercise> }>(
-          API_ENDPOINTS.admin.content.pendingExercises,
-          {
-            params: {
-              page: newPage || page,
-              limit: newPageSize || pageSize,
-            },
-          }
-        );
+        const response = await adminAPI.getPendingContent({
+          page: newPage || page,
+          limit: newPageSize || pageSize,
+        });
 
-        const data = response.data.success
-          ? response.data.data
-          : (response.data as unknown as PaginatedResponse<PendingExercise>);
-
-        setPendingExercises(data.data);
-        setTotal(data.total);
+        // adminAPI returns { items: T[], pagination: {...} }
+        setPendingExercises(response.items);
+        setTotal(response.pagination.totalItems);
         if (newPage) setPage(newPage);
         if (newPageSize) setPageSize(newPageSize);
       } catch (err) {
@@ -128,7 +123,7 @@ export function usePendingExercises(): UsePendingExercisesResult {
       setLoading(true);
       setError(null);
       try {
-        await apiClient.post(API_ENDPOINTS.admin.content.approveExercise(id));
+        await adminAPI.approveContent(id);
 
         // Remove from pending list
         setPendingExercises((prev) => prev.filter((ex) => ex.id !== id));
@@ -150,7 +145,7 @@ export function usePendingExercises(): UsePendingExercisesResult {
       setLoading(true);
       setError(null);
       try {
-        await apiClient.post(API_ENDPOINTS.admin.content.rejectExercise(id), { reason });
+        await adminAPI.rejectContent(id, reason);
 
         // Remove from pending list
         setPendingExercises((prev) => prev.filter((ex) => ex.id !== id));

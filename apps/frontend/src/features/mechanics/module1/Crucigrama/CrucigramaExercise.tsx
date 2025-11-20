@@ -6,6 +6,8 @@ import { CrucigramaClue } from './CrucigramaClue';
 import { CrucigramaData, CrucigramaCell } from './crucigramaTypes';
 import { calculateScore, saveProgress } from '@shared/components/mechanics/mechanicsTypes';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 export interface CrucigramaExerciseProps {
   exercise: CrucigramaData;
@@ -25,6 +27,7 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
   onProgressUpdate,
   actionsRef
 }) => {
+  const { user } = useAuth();
   const [grid, setGrid] = useState<CrucigramaCell[][]>(
     exercise.grid.map((row) =>
       row.map((cell) => ({ ...cell, userInput: cell.userInput || '' }))
@@ -38,33 +41,56 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [currentScore, setCurrentScore] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Check if a clue is completed
-  const checkClue = (clueId: string) => {
+  // FE-059: Calculate clue length from grid instead of using answer field
+  const getClueLength = (clue: typeof exercise.clues[0]): number => {
+    let length = 0;
+    if (clue.direction === 'horizontal') {
+      for (let i = 0; i < grid[0].length; i++) {
+        const cell = grid[clue.startRow]?.[clue.startCol + i];
+        if (!cell || cell.isBlack) break;
+        length++;
+      }
+    } else {
+      for (let i = 0; i < grid.length; i++) {
+        const cell = grid[clue.startRow + i]?.[clue.startCol];
+        if (!cell || cell.isBlack) break;
+        length++;
+      }
+    }
+    return length;
+  };
+
+  // FE-059: Check if clue has user input (NOT if it's correct)
+  const hasClueInput = (clueId: string): boolean => {
     const clue = exercise.clues.find((c) => c.id === clueId);
     if (!clue) return false;
 
+    const length = getClueLength(clue);
     let userAnswer = '';
+
     if (clue.direction === 'horizontal') {
-      for (let i = 0; i < clue.answer.length; i++) {
+      for (let i = 0; i < length; i++) {
         const cell = grid[clue.startRow][clue.startCol + i];
         userAnswer += cell.userInput || '';
       }
     } else {
-      for (let i = 0; i < clue.answer.length; i++) {
+      for (let i = 0; i < length; i++) {
         const cell = grid[clue.startRow + i][clue.startCol];
         userAnswer += cell.userInput || '';
       }
     }
 
-    return userAnswer === clue.answer;
+    return userAnswer.trim().length === length;
   };
 
   // FE-055: Update completed clues and notify with answers
   useEffect(() => {
+    // FE-059: Track clues with user input (not correctness)
     const newCompleted = new Set<string>();
     exercise.clues.forEach((clue) => {
-      if (checkClue(clue.id)) {
+      if (hasClueInput(clue.id)) {
         newCompleted.add(clue.id);
       }
     });
@@ -78,14 +104,16 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
       // Prepare user answers: clue-id: user's answer
       const userAnswers: Record<string, string> = {};
       exercise.clues.forEach((clue) => {
+        const length = getClueLength(clue);
         let answer = '';
+
         if (clue.direction === 'horizontal') {
-          for (let i = 0; i < clue.answer.length; i++) {
+          for (let i = 0; i < length; i++) {
             const cell = grid[clue.startRow]?.[clue.startCol + i];
             answer += cell?.userInput || '';
           }
         } else {
-          for (let i = 0; i < clue.answer.length; i++) {
+          for (let i = 0; i < length; i++) {
             const cell = grid[clue.startRow + i]?.[clue.startCol];
             answer += cell?.userInput || '';
           }
@@ -141,47 +169,81 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
   const handleCheck = async () => {
     const isComplete = completedClues.size === exercise.clues.length;
 
-    if (isComplete) {
-      // Submit to backend if onSubmit is provided
-      if (onSubmit) {
-        try {
-          await onSubmit({
-            grid,
-            completedClues: Array.from(completedClues),
-            hintsUsed,
-            startTime: startTime.getTime(),
-          });
-          // Success feedback will be shown by parent component
-        } catch (error) {
-          console.error('Error submitting exercise:', error);
-          setFeedback({
-            type: 'error',
-            title: 'Error al Enviar',
-            message: 'Hubo un problema al enviar tu respuesta. Por favor, intenta nuevamente.',
-          });
-          setShowFeedback(true);
-        }
-      } else {
-        // Fallback: Show local feedback if no submit handler
-        const score = calculateScore(completedClues.size, exercise.clues.length);
-        setCurrentScore(score);
-
-        setFeedback({
-          type: 'success',
-          title: '¡Crucigrama Completado!',
-          message: '¡Excelente trabajo! Has completado todas las palabras correctamente.',
-          score,
-          showConfetti: true
-        });
-        setShowFeedback(true);
-      }
-    } else {
+    if (!isComplete) {
       setFeedback({
         type: 'error',
         title: 'Crucigrama Incompleto',
         message: `Has completado ${completedClues.size} de ${exercise.clues.length} palabras. ¡Sigue intentando!`,
       });
       setShowFeedback(true);
+      return;
+    }
+
+    // Check if user is authenticated
+    if (!user?.id) {
+      setFeedback({
+        type: 'error',
+        title: 'Error de Autenticación',
+        message: 'Debes estar autenticado para enviar el ejercicio.',
+      });
+      setShowFeedback(true);
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Prepare answers in backend DTO format: { clues: { c1: "WORD1", c2: "WORD2" } }
+      const answersObj: Record<string, string> = {};
+      exercise.clues.forEach((clue) => {
+        const length = getClueLength(clue);
+        let answer = '';
+
+        if (clue.direction === 'horizontal') {
+          for (let i = 0; i < length; i++) {
+            const cell = grid[clue.startRow]?.[clue.startCol + i];
+            answer += cell?.userInput || '';
+          }
+        } else {
+          for (let i = 0; i < length; i++) {
+            const cell = grid[clue.startRow + i]?.[clue.startCol];
+            answer += cell?.userInput || '';
+          }
+        }
+
+        if (answer) {
+          answersObj[clue.id] = answer;
+        }
+      });
+
+      // Submit to backend API
+      const response = await submitExercise(exercise.id, user.id, { clues: answersObj });
+
+      // Show backend response
+      setFeedback({
+        type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
+        title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
+        message: response.feedback?.overall || `Has obtenido ${response.correctAnswersCount} de ${response.totalQuestions} respuestas correctas.`,
+        score: response.score,
+        showConfetti: response.isPerfect
+      });
+      setShowFeedback(true);
+
+      console.log('✅ [Crucigrama] Submission successful:', {
+        attemptId: response.attemptId,
+        score: response.score,
+        rewards: response.rewards
+      });
+    } catch (error) {
+      console.error('❌ [Crucigrama] Submission error:', error);
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: 'Hubo un problema al enviar tu respuesta. Por favor, intenta nuevamente.',
+      });
+      setShowFeedback(true);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

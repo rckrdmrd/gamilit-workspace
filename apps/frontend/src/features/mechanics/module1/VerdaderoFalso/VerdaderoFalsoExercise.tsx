@@ -6,6 +6,8 @@ import { VerdaderoFalsoData, VerdaderoFalsoStatement } from './verdaderoFalsoTyp
 import { calculateScore, saveProgress } from '@shared/components/mechanics/mechanicsTypes';
 import { CheckCircle, XCircle } from 'lucide-react';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 export interface VerdaderoFalsoExerciseProps {
   exercise: VerdaderoFalsoData;
@@ -23,6 +25,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
   onProgressUpdate,
   actionsRef
 }) => {
+  const { user } = useAuth(); // Get authenticated user
   const [statements, setStatements] = useState<VerdaderoFalsoStatement[]>(
     exercise.statements.map(stmt => ({ ...stmt, userAnswer: null }))
   );
@@ -31,9 +34,13 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [showResults, setShowResults] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const answeredCount = statements.filter(s => s.userAnswer !== null).length;
-  const correctCount = statements.filter(s => s.userAnswer === s.correctAnswer).length;
+
+  // FE-059: Removed local validation - correctAnswer field no longer available
+  // Validation is now done server-side via backend API
+  // const correctCount = ... REMOVED
 
   // FE-055: Notify parent with progress AND user answers
   useEffect(() => {
@@ -46,7 +53,8 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
       const userAnswers: Record<string, boolean> = {};
       statements.forEach(stmt => {
         if (stmt.userAnswer !== null) {
-          userAnswers[stmt.id] = stmt.userAnswer;
+          // BE-FE-064: Ensure ID is string
+          userAnswers[String(stmt.id)] = stmt.userAnswer;
         }
       });
 
@@ -55,11 +63,11 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
         progress: {
           currentStep: answeredCount,
           totalSteps: statements.length,
-          score: answeredCount > 0 ? Math.floor((correctCount / statements.length) * 100) : 0,
+          score: 0, // FE-059: Score calculated by backend only
           hintsUsed,
           timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
         },
-        answers: userAnswers
+        answers: { statements: userAnswers }  // BE-FE-064: Wrap in 'statements' key to match DTO
       });
 
       console.log('📊 [VerdaderoFalso] Progress update sent:', {
@@ -67,7 +75,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
         totalQuestions: statements.length
       });
     }
-  }, [statements, hintsUsed, onProgressUpdate, answeredCount, correctCount, startTime, exercise.id]);
+  }, [statements, hintsUsed, onProgressUpdate, answeredCount, startTime, exercise.id]);
 
   const handleAnswer = (statementId: string, answer: boolean) => {
     if (showResults) return; // No cambiar respuestas después de verificar
@@ -80,6 +88,13 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
   };
 
   const handleCheck = async () => {
+    console.log('🔍 [VerdaderoFalso] handleCheck called - FILE VERSION: 2025-11-19-v2');
+    console.log('🔍 [VerdaderoFalso] Statements data types:', {
+      firstStatementId: statements[0]?.id,
+      idType: typeof statements[0]?.id,
+      sampleStatement: statements[0]
+    });
+
     const allAnswered = statements.every(s => s.userAnswer !== null);
 
     if (!allAnswered) {
@@ -92,35 +107,68 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
       return;
     }
 
+    // Check if user is authenticated
+    if (!user?.id) {
+      setFeedback({
+        type: 'error',
+        title: 'Error de Autenticación',
+        message: 'Debes estar autenticado para enviar el ejercicio.',
+      });
+      setShowFeedback(true);
+      return;
+    }
+
+    setIsSubmitting(true);
     setShowResults(true);
 
-    // Convert statements array to answers object
-    const answersObj: Record<string, any> = {};
-    statements.forEach(s => {
-      answersObj[s.id] = s.userAnswer;
-    });
+    try {
+      // Prepare answers in backend DTO format: { statements: { "1": true, "2": false } }
+      const statementsAnswers: Record<string, boolean> = {};
+      statements.forEach(s => {
+        if (s.userAnswer !== null) {
+          // BE-FE-064: Ensure ID is string (DB stores as number, need to convert)
+          statementsAnswers[String(s.id)] = s.userAnswer;
+        }
+      });
 
-    const attempt = {
-      exerciseId: exercise.id,
-      startTime,
-      endTime: new Date(),
-      answers: answersObj,
-      correctAnswers: correctCount,
-      totalQuestions: statements.length,
-      hintsUsed,
-      difficulty: exercise.difficulty
-    };
+      // FE-044 FIX: Wrap in 'statements' key to match backend DTO
+      const answersObj = { statements: statementsAnswers };
 
-    const score = calculateScore(correctCount, exercise.statements.length);
+      console.log('📝 [VerdaderoFalso] Submitting answers:', {
+        answersCount: Object.keys(statementsAnswers).length,
+        sampleIds: Object.keys(statementsAnswers).slice(0, 3),
+        payload: answersObj
+      });
 
-    setFeedback({
-      type: correctCount === statements.length ? 'success' : 'partial',
-      title: correctCount === statements.length ? '¡Perfecto!' : '¡Buen intento!',
-      message: `Has acertado ${correctCount} de ${statements.length} afirmaciones.`,
-      score,
-      showConfetti: correctCount === statements.length
-    });
-    setShowFeedback(true);
+      // Submit to backend API
+      const response = await submitExercise(exercise.id, user.id, answersObj);
+
+      // Show backend response
+      setFeedback({
+        type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
+        title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
+        message: response.feedback?.overall || `Has obtenido ${response.correctAnswersCount} de ${response.totalQuestions} respuestas correctas.`,
+        score: response.score,
+        showConfetti: response.isPerfect
+      });
+      setShowFeedback(true);
+
+      console.log('✅ [VerdaderoFalso] Submission successful:', {
+        attemptId: response.attemptId,
+        score: response.score,
+        rewards: response.rewards
+      });
+    } catch (error) {
+      console.error('❌ [VerdaderoFalso] Submission error:', error);
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: 'Hubo un problema al enviar tu respuesta. Por favor, intenta nuevamente.',
+      });
+      setShowFeedback(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
@@ -168,8 +216,11 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
         <AnimatePresence>
           {statements.map((statement, index) => {
             const isAnswered = statement.userAnswer !== null;
-            const isCorrect = statement.userAnswer === statement.correctAnswer;
-            const showResult = showResults && isAnswered;
+
+            // FE-059: Removed local validation - correctAnswer field no longer available
+            // Visual feedback disabled until backend integration
+            const isCorrect = false; // Will be determined by backend
+            const showResult = false; // Disabled for now
 
             return (
               <motion.div

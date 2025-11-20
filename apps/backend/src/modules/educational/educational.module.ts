@@ -5,7 +5,9 @@ import {
   Exercise,
   AssessmentRubric,
   MediaResource,
+  ContentApproval,
 } from './entities';
+import { Profile } from '../auth/entities/profile.entity';
 import {
   ModulesService,
   ExercisesService,
@@ -43,9 +45,11 @@ import { ProgressModule } from '../progress/progress.module';
   imports: [
     // Connection 'educational' handles schema 'educational_content'
     TypeOrmModule.forFeature(
-      [ModuleEntity, Exercise, AssessmentRubric, MediaResource],
+      [ModuleEntity, Exercise, AssessmentRubric, MediaResource, ContentApproval],
       'educational',
     ),
+    // Import Profile entity from auth schema (for ExercisesController)
+    TypeOrmModule.forFeature([Profile], 'auth'),
     // Import ProgressModule to access ExerciseSubmissionService for submit endpoint
     ProgressModule,
   ],

@@ -14,22 +14,34 @@ export interface Evidence {
   relevance: number;
 }
 
+/**
+ * ⚠️ FE-059: isCorrect is NEVER sent by backend (sanitized for security)
+ */
 export interface EvidenceConnection {
   id: string;
   fromEvidenceId: string;
   toEvidenceId: string;
   relationship: string;
   userCreated: boolean;
-  isCorrect?: boolean;
+  /**
+   * @deprecated Backend sanitizes this field - never present. Validation is done server-side.
+   */
+  isCorrect?: never;
 }
 
+/**
+ * ⚠️ FE-059: correctConnections is NEVER sent by backend (sanitized for security)
+ */
 export interface Investigation {
   id: string;
   title: string;
   description: string;
   mystery: string;
   availableEvidence: Evidence[];
-  correctConnections: EvidenceConnection[];
+  /**
+   * @deprecated Backend sanitizes this field - never present. Validation is done server-side.
+   */
+  correctConnections?: never;
   difficulty: 'facil' | 'medio' | 'dificil' | 'experto';
 }
 

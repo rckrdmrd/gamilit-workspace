@@ -39,6 +39,7 @@ import { Modal } from '@shared/components/common/Modal';
 
 // Hooks & Store
 import { useGuilds } from '@/features/gamification/social/hooks/useGuilds';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 import type { Guild, GuildMember, GuildChallenge } from '@/features/gamification/social/types/guildsTypes';
 
 // Utils
@@ -80,6 +81,9 @@ export default function GuildsPage() {
   });
 
   const { user, logout } = useAuth();
+
+  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
+  const { gamificationData } = useUserGamification(user?.id);
 
   // Filter guilds
   const publicGuilds = getPublicGuilds();
@@ -146,10 +150,14 @@ export default function GuildsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={user ?? undefined} onLogout={async () => {
-        await logout();
-        // No need to navigate - performLogout() handles redirect
-      }} />
+      <GamifiedHeader
+        user={user ?? undefined}
+        gamificationData={gamificationData}
+        onLogout={async () => {
+          await logout();
+          // No need to navigate - performLogout() handles redirect
+        }}
+      />
 
       <main className="detective-container py-8">
         {/* Header */}

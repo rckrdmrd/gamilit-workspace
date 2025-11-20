@@ -37,6 +37,7 @@ import { Modal } from '@shared/components/common/Modal';
 
 // Hooks
 import { useCoins } from '@/features/gamification/economy/hooks/useCoins';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 import type { ShopItem, ShopCategory, ItemRarity } from '@/features/gamification/economy/types/economyTypes';
 
 // API
@@ -48,6 +49,9 @@ import { cn } from '@shared/utils/cn';
 export default function ShopPage() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+
+  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
+  const { gamificationData } = useUserGamification(user?.id);
 
   // Hooks
   const { balance, updateBalance } = useCoins();
@@ -184,10 +188,14 @@ export default function ShopPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={user ?? undefined} onLogout={async () => {
-        await logout();
-        // No need to navigate - performLogout() handles redirect
-      }} />
+      <GamifiedHeader
+        user={user ?? undefined}
+        gamificationData={gamificationData}
+        onLogout={async () => {
+          await logout();
+          // No need to navigate - performLogout() handles redirect
+        }}
+      />
 
       <main className="detective-container py-8">
         {/* Header */}

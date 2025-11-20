@@ -87,13 +87,14 @@ El script `create-database.sh` ejecuta los archivos DDL en este orden:
 8. **Progress Tracking** - Seguimiento de progreso
 9. **Social Features** - Características sociales
 9.5. **FK Constraints Diferidos** - Resolución de dependencias circulares
+9.7. **Notifications** - Sistema de notificaciones multi-canal ⭐ NUEVO
 10. **Content Management** - Gestión de contenido
 11. **Audit Logging** - Auditoría
 12. **System Configuration** - Configuración
 13. **Admin Dashboard** - Dashboard administrativo (vistas analíticas)
 14. **LTI Integration** - Learning Tools Interoperability 1.3
 15. **Public Schema** - Deshabilitado (reservado para PostgreSQL core)
-16. **Seed Data** - Carga de datos iniciales de producción (32 archivos PROD) ⭐ ACTUALIZADO DB-111
+16. **Seed Data** - Carga de datos iniciales de producción (34 archivos PROD) ⭐ ACTUALIZADO 2025-11-18
 
 ## Documentación Completa
 
@@ -202,11 +203,13 @@ Los seeds están organizados por ambiente:
 - `auth_management/03-profiles.sql` → Reemplazado por `04-profiles-complete.sql` (v2.0)
 
 **Ejercicios por módulo:**
-- **Module 1** (Historiador Detective): 6 mecánicas con JSONB completo
-- **Module 2** (Detective Textual): 5 mecánicas con análisis de textos
-- **Module 3** (Científico Pensamiento Crítico): 6 mecánicas con evaluación
-- **Module 4** (Creador Digital): 5 mecánicas con producción multimedia
-- **Module 5** (Video Carta): 5 mecánicas con producción creativa (835 líneas JSONB)
+- **Module 1** (Historiador Detective): 5 mecánicas con JSONB completo ✅ IMPLEMENTADO
+- **Module 2** (Detective Textual): 5 mecánicas con análisis de textos ✅ IMPLEMENTADO
+- **Module 3** (Científico Pensamiento Crítico): 5 mecánicas con evaluación ✅ IMPLEMENTADO
+- **Module 4** (Creador Digital): 5 mecánicas con producción multimedia ⚠️ BACKLOG
+- **Module 5** (Video Carta): 3 mecánicas con producción creativa ⚠️ BACKLOG
+
+**Nota:** Módulos 4 y 5 están en backlog (ver sección "Módulos en Backlog" más abajo)
 
 ## Correcciones Aplicadas
 
@@ -346,6 +349,42 @@ Los seeds están organizados por ambiente:
 - 📄 Ver `orchestration/TRAZA-CORRECCIONES.md` para detalles completos
 - 📄 Ver `orchestration/TRAZA-TAREAS-DATABASE.md` (DB-095, DB-096)
 - 📄 Ver `orchestration/04-inventarios/database/SEEDS_INVENTORY.yml`
+
+---
+
+## 📦 Módulos en Backlog (Fase 4)
+
+**Fecha:** 2025-11-19 (DB-126)
+**Estado:** BACKLOG - Evaluación manual/IA requerida
+
+Los siguientes módulos están definidos en la estructura de datos pero marcados como **BACKLOG** (Fase 4) por requerir evaluación manual o con IA:
+
+### Módulo 4: Lectura Digital (5 ejercicios) ⚠️ BACKLOG
+
+- `verificador_fake_news` - Verificador de noticias falsas
+- `infografia_interactiva` - Creación de infografía interactiva
+- `quiz_tiktok` - Quiz estilo TikTok
+- `navegacion_hipertextual` - Navegación hipertextual
+- `analisis_memes` - Análisis de memes educativos
+
+**Razón:** Requieren validación con IA (análisis de imágenes, verificación de fuentes, análisis multimodal)
+
+### Módulo 5: Producción Lectora (3 ejercicios) ⚠️ BACKLOG
+
+- `diario_multimedia` - Diario interactivo multimedia
+- `comic_digital` - Resumen visual progresivo
+- `video_carta` - Cápsula del tiempo digital
+
+**Razón:** Requieren rúbricas de evaluación creativa y revisión humana/IA
+
+### Estado de Implementación
+
+- ✅ **Tipos definidos** en ENUM `exercise_type` (compatibilidad futura)
+- ✅ **Seeds disponibles** en `_backlog/` (no se cargan por defecto)
+- ❌ **Validadores SQL:** NO implementados (intencionado)
+- ❌ **No auto-evaluables:** `auto_gradable = false`
+
+**Roadmap:** Ver `docs/04-fase-backlog/` para plan de implementación (P1: Validadores parciales, P2: Revisión manual, P3: IA multimodal)
 
 ---
 

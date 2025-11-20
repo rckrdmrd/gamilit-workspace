@@ -82,11 +82,13 @@ export class AdminOrganizationsService {
       .getManyAndCount();
 
     return {
-      data: data as any,
-      total,
-      page,
-      limit,
-      total_pages: Math.ceil(total / limit),
+      items: data as any,
+      pagination: {
+        page,
+        totalPages: Math.ceil(total / limit),
+        totalItems: total,
+        limit,
+      },
     };
   }
 

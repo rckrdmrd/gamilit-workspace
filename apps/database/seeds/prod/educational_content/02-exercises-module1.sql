@@ -27,6 +27,7 @@ BEGIN
     -- ========================================================================
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
+        objective, how_to_solve, recommended_strategy, pedagogical_notes,
         exercise_type, order_index,
         config, content, solution,
         difficulty_level, max_points, passing_score,
@@ -41,6 +42,19 @@ BEGIN
         'Vocabulario de Radioactividad',
         'Completa el crucigrama con términos científicos relacionados con los descubrimientos de Marie Curie.',
         '1. Lee todas las pistas antes de empezar, tanto horizontales como verticales. 2. Comienza con las palabras más largas o las que estés más seguro. 3. Usa las intersecciones - cuando dos palabras se cruzan, la letra debe coincidir. 4. Cuenta las casillas - cada pista indica cuántas letras tiene la respuesta. 5. Revisa el texto base - todas las respuestas están en la biografía de Marie Curie.',
+
+        -- objective (DB-125)
+        'Completar un crucigrama de 15×15 casillas con términos relacionados con Marie Curie. Este ejercicio refuerza el vocabulario científico clave (radioactividad, elementos químicos, instituciones académicas) y desarrolla la habilidad de identificar información explícita en textos biográficos, alineado con el nivel de comprensión literal del modelo de Daniel Cassany.',
+
+        -- how_to_solve (DB-125)
+        E'Estrategia de resolución paso a paso:\n\n1. Leer todas las pistas primero: Lee tanto las pistas horizontales como verticales antes de empezar a escribir. Esto te da una visión general del crucigrama.\n\n2. Comenzar con las palabras más largas o seguras: Identifica las palabras que conoces con certeza (por ejemplo: POLONIA, MARIE, CURIE, SORBONA, NOBEL). Estas suelen ser las más largas o las más conocidas del texto base.\n\n3. Usar las intersecciones estratégicamente: Cuando dos palabras se cruzan, la letra debe coincidir. Usa estas intersecciones para deducir letras de palabras que no conoces.\n\n4. Contar las casillas: Cada pista indica cuántas letras tiene la respuesta. Cuenta las casillas disponibles para asegurarte de que tu respuesta encaja.\n\n5. Revisar el texto base: Todas las respuestas están explícitamente mencionadas en la biografía de Marie Curie. Si te atascas, vuelve al texto y busca las palabras clave de la pista.',
+
+        -- recommended_strategy (DB-125)
+        E'Tips para resolver eficientemente:\n- Empezar por palabras seguras: POLONIA (país de origen), MARIE y CURIE (nombre), SORBONA (universidad) son términos que probablemente conoces.\n- Aprovechar las intersecciones: Una vez que tengas 1-2 palabras seguras, usa las letras compartidas para deducir otras palabras.\n- Usar comodines con inteligencia: Si te atascas completamente, el comodín "Pista" revelará una letra por 15 ML Coins. Úsalo estratégicamente en las palabras más difíciles (RADIOACTIVIDAD, POLONIO, RADIO).\n- No adivinar al azar: Penalizaciones aplican por respuestas incorrectas. Mejor consulta el texto base o usa una pista.',
+
+        -- pedagogical_notes (DB-125)
+        E'Este ejercicio desarrolla la competencia de comprensión literal según el modelo de tres niveles de Daniel Cassany. Los estudiantes practican:\n- Identificación de información explícita en textos biográficos\n- Reconocimiento de vocabulario técnico-científico en contexto\n- Asociación de conceptos clave con su significado (universidad → SORBONA, elemento químico → RADIO/POLONIO)\n\nCompetencias trabajadas:\n- Lectura literal (nivel 1 de Cassany)\n- Vocabulario académico y científico\n- Atención al detalle y precisión\n\nAlineación curricular: Este ejercicio es apropiado para estudiantes de nivel beginner (A1 CEFR) en comprensión lectora de textos académicos.',
+
         'crucigrama', 1,
         '{
             "gridSize": {"rows": 15, "cols": 15},
@@ -114,7 +128,7 @@ BEGIN
             ]
         }'::jsonb,
         '{
-            "solution": {
+            "clues": {
                 "h1": "SORBONA",
                 "h2": "NOBEL",
                 "h3": "RADIOACTIVIDAD",
@@ -150,6 +164,7 @@ BEGIN
     -- ========================================================================
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
+        objective, how_to_solve, recommended_strategy, pedagogical_notes,
         exercise_type, order_index,
         config, content, solution,
         difficulty_level, max_points, passing_score,
@@ -164,6 +179,19 @@ BEGIN
         'Ordena los Eventos Cronológicamente',
         'Organiza los eventos más importantes de la vida de Marie Curie en orden cronológico correcto.',
         'Arrastra los eventos a la línea de tiempo en el orden correcto. Comienza con el evento más antiguo (1867) y termina con el más reciente (1934).',
+
+        -- objective (DB-125)
+        'Ordenar cronológicamente 6 eventos clave de la vida de Marie Curie mediante drag & drop interactivo. Este ejercicio desarrolla la capacidad de secuenciar información temporal explícita, identificar fechas importantes y comprender la cronología de eventos biográficos según el modelo de comprensión literal de Cassany.',
+
+        -- how_to_solve (DB-125)
+        E'Pasos para resolver correctamente:\n\n1. Leer todos los eventos antes de empezar: Revisa las 6 tarjetas de eventos para tener una visión general de la vida de Marie.\n\n2. Identificar las fechas clave: Los eventos incluyen fechas explícitas (1867, 1891, 1898, 1903, 1906, 1911) que son tu guía principal.\n\n3. Ordenar de más antiguo a más reciente: Arrastra el evento de 1867 (nacimiento) a la primera posición, luego 1891 (llega a París), y así sucesivamente hasta 1911 (segundo Nobel).\n\n4. Validar con feedback visual: El sistema indica en verde si está correcto y en rojo si está incorrecto. Tienes 3 intentos sin penalización.\n\n5. Revisar la secuencia completa: Una vez ordenados todos, verifica que la historia tiene sentido cronológico (nacimiento → estudios → descubrimientos → premios).',
+
+        -- recommended_strategy (DB-125)
+        E'Tips para ordenar eficientemente:\n- Anclar eventos extremos: Coloca primero el nacimiento (1867) y el segundo Nobel (1911) como puntos de referencia.\n- Agrupar eventos relacionados: Los descubrimientos (1898) van antes que el primer Nobel (1903), ya que este premio fue por esos descubrimientos.\n- Usar el contexto lógico: La muerte de Pierre (1906) ocurre después del primer Nobel compartido (1903) y antes del segundo Nobel individual (1911).\n- Aprovechar los 3 intentos: Si te equivocas, el feedback te ayudará a corregir sin perder puntos en los primeros 3 intentos.',
+
+        -- pedagogical_notes (DB-125)
+        E'Ejercicio de comprensión literal enfocado en secuenciación temporal. Los estudiantes practican:\n- Identificación de fechas y eventos explícitos en textos biográficos\n- Ordenación cronológica de información temporal\n- Comprensión de secuencias causa-efecto temporales\n\nCompetencias trabajadas:\n- Lectura literal (nivel 1 de Cassany) con énfasis en cronología\n- Pensamiento secuencial y temporal\n- Comprensión de narrativas biográficas\n\nAlineación curricular: Nivel beginner (A1-A2 CEFR). La interfaz drag & drop hace este ejercicio accesible y kinestésico, ideal para estudiantes visuales.',
+
         'linea_tiempo', 2,
         '{
             "allowReordering": true,
@@ -268,6 +296,7 @@ BEGIN
     -- CHANGED: Replaced "Sopa de Letras" with "Completar Espacios en Blanco" per doc v6.2 (DB-121)
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
+        objective, how_to_solve, recommended_strategy, pedagogical_notes,
         exercise_type, order_index,
         config, content, solution,
         difficulty_level, max_points, passing_score,
@@ -282,6 +311,19 @@ BEGIN
         'Datos Biográficos de Marie',
         'Lee el texto sobre Marie Curie y completa los espacios con las palabras correctas del banco de palabras.',
         'Lee el texto completo antes de completar. Arrastra las palabras del banco a los espacios correspondientes. Puedes revisar tus respuestas antes de enviar.',
+
+        -- objective (DB-125)
+        'Completar 6 espacios en blanco de un texto biográfico sobre Marie Curie seleccionando las palabras correctas de un banco de opciones. Este ejercicio refuerza la comprensión de datos biográficos explícitos (nombres, lugares, conceptos) y desarrolla la habilidad de identificar información clave en contexto narrativo según el modelo literal de Cassany.',
+
+        -- how_to_solve (DB-125)
+        E'Estrategia de resolución:\n\n1. Leer el texto completo primero: Antes de completar espacios, lee todo el párrafo para entender el contexto general sobre la familia y juventud de Marie.\n\n2. Analizar el banco de palabras: Revisa las 8 opciones disponibles (Varsovia, Władysław, Bronisława, educación, ciencias, Polonia, matemáticas, física). Identifica cuáles son nombres propios, lugares o conceptos.\n\n3. Completar por categorías: Primero completa los espacios obvios (nombres de personas y lugares), luego los conceptos más específicos.\n\n4. Usar el contexto gramatical: Cada espacio tiene pistas gramaticales. Por ejemplo, "nació en ___" espera un lugar (Varsovia), "su padre ___" espera un nombre propio.\n\n5. Revisar coherencia: Lee el texto completo con tus respuestas para verificar que tenga sentido lógico antes de enviar.',
+
+        -- recommended_strategy (DB-125)
+        E'Tips para completar eficientemente:\n- Espacios de nombres y lugares primero: Varsovia (ciudad natal), Władysław (padre), Bronisława (madre) son datos únicos y fáciles de identificar.\n- Usar eliminación: Si usas "Varsovia" en el espacio (1), ya no estará disponible para otros espacios.\n- Contexto semántico: "valoraba la ___" probablemente es un concepto abstracto (educación), no un nombre propio.\n- Último espacio con 2 opciones: El ejercicio permite matemáticas O física para el espacio (6), ambas son correctas (curiosidad por ciencias y matemáticas/física).\n- Revisar antes de enviar: Tienes 3 intentos, usa el primero para probar, luego ajusta si es necesario.',
+
+        -- pedagogical_notes (DB-125)
+        E'Ejercicio de comprensión literal con enfoque en datos biográficos explícitos. Los estudiantes practican:\n- Identificación de información clave: nombres propios, lugares, fechas, conceptos\n- Uso de contexto gramatical y semántico para completar información faltante\n- Atención al detalle y precisión en lectura biográfica\n\nCompetencias trabajadas:\n- Lectura literal (nivel 1 de Cassany) con énfasis en datos biográficos\n- Vocabulario académico y nombres históricos\n- Comprensión de estructura narrativa biográfica\n\nAlineación curricular: Nivel beginner-intermediate (A2 CEFR). El banco de palabras reduce la carga cognitiva, permitiendo enfoque en comprensión contextual.',
+
         'completar_espacios', 3,
         '{
             "blankCount": 6,
@@ -346,6 +388,7 @@ BEGIN
     -- CHANGED: Replaced "Mapa Conceptual" with "Verdadero o Falso" per doc v6.2 (DB-121)
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
+        objective, how_to_solve, recommended_strategy, pedagogical_notes,
         exercise_type, order_index,
         config, content, solution,
         difficulty_level, max_points, passing_score,
@@ -360,6 +403,19 @@ BEGIN
         'Hechos sobre la Juventud de Marie Curie',
         'Evalúa afirmaciones sobre hechos explícitos de la juventud de Marie Curie según el contexto histórico proporcionado.',
         'Lee el contexto histórico. Marca cada afirmación como Verdadero o Falso. Revisa todas las respuestas antes de enviar.',
+
+        -- objective (DB-125)
+        'Evaluar 10 afirmaciones sobre hechos explícitos de la juventud de Marie Curie, determinando si son verdaderas o falsas según un contexto histórico proporcionado. Este ejercicio desarrolla la capacidad de verificar información biográfica explícita contra un texto fuente, fundamental para la comprensión literal según Cassany.',
+
+        -- how_to_solve (DB-125)
+        E'Pasos para resolver correctamente:\n\n1. Leer el contexto completo primero: Antes de evaluar afirmaciones, lee todo el párrafo histórico sobre la infancia de Marie para tener el marco de referencia completo.\n\n2. Leer cada afirmación cuidadosamente: No te apresures. Cada afirmación tiene detalles específicos que debes verificar contra el contexto.\n\n3. Buscar evidencia en el texto: Para cada afirmación, busca la información correspondiente en el contexto. Si está explícitamente mencionada = Verdadero. Si contradice el texto = Falso.\n\n4. Cuidado con trampas sutiles: Algunas afirmaciones son parcialmente correctas. Por ejemplo, "su padre era profesor de química solamente" es FALSO porque era de matemáticas Y física, no solo química.\n\n5. Revisar todas antes de enviar: Tienes 3 intentos. Usa el primero para contestar todas, luego revisa las dudosas antes del segundo intento.',
+
+        -- recommended_strategy (DB-125)
+        E'Tips para evaluar eficientemente:\n- Afirmaciones obvias primero: Algunas son muy directas ("Marie nació en Francia" - FALSO, nació en Polonia). Contesta estas rápido para ganar confianza.\n- Subrayar mentalmente palabras clave: "solamente", "nunca", "siempre" son señales de alerta. Verifica si el texto realmente usa esos absolutos.\n- Afirmaciones sobre edades/fechas: Verifica números exactos. "Ganó el Nobel a los 20" es FALSO (lo ganó en 1903, con ~36 años).\n- Usar eliminación: Si sabes que estudió en la Sorbona de París, entonces "estudió en Universidad de Varsovia" es automáticamente FALSO.\n- Máximo 3 intentos: Primer intento = contestar todas. Segundo intento = revisar dudosas. Tercer intento = confirmar.',
+
+        -- pedagogical_notes (DB-125)
+        E'Ejercicio de comprensión literal con énfasis en verificación de hechos explícitos. Los estudiantes practican:\n- Contrastar afirmaciones con evidencia textual\n- Identificar información explícita vs implícita\n- Detectar afirmaciones falsas por contradicción o ausencia de evidencia\n- Atención al detalle (palabras como "solamente", "nunca" cambian el significado)\n\nCompetencias trabajadas:\n- Lectura literal (nivel 1 de Cassany) con énfasis en verificación factual\n- Pensamiento crítico básico (evidencia vs afirmación)\n- Atención a detalles y precisión lingüística\n\nAlineación curricular: Nivel beginner-intermediate (A2-B1 CEFR). Formato verdadero/falso es accesible pero requiere lectura cuidadosa.',
+
         'verdadero_falso', 4,
         '{
             "statementCount": 10,
@@ -432,7 +488,18 @@ BEGIN
             ]
         }'::jsonb,
         '{
-            "correctAnswers": [true, false, false, true, true, false, true, true, false, false]
+            "correctAnswers": {
+                "1": true,
+                "2": false,
+                "3": false,
+                "4": true,
+                "5": true,
+                "6": false,
+                "7": true,
+                "8": true,
+                "9": false,
+                "10": false
+            }
         }'::jsonb,
         'beginner', 100, 70,
         12, NULL, 3,
@@ -460,6 +527,7 @@ BEGIN
     -- ========================================================================
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
+        objective, how_to_solve, recommended_strategy, pedagogical_notes,
         exercise_type, order_index,
         config, content, solution,
         difficulty_level, max_points, passing_score,
@@ -474,6 +542,19 @@ BEGIN
         'Vocabulario Científico de Marie Curie',
         'Encuentra palabras clave relacionadas con Marie Curie en una sopa de letras interactiva. Este es un ejercicio bonus opcional.',
         'Busca las 10 palabras en el grid. Haz clic y arrastra para seleccionar. Las palabras pueden estar en horizontal, vertical o diagonal.',
+
+        -- objective (DB-125)
+        'Encontrar 10 palabras clave relacionadas con Marie Curie en una cuadrícula de 12×12 letras. Este ejercicio BONUS refuerza el vocabulario científico y biográfico clave (MARIE, CURIE, POLONIA, NOBEL, RADIO, POLONIO, PARIS, SORBONA, CIENCIA, FISICA) mediante búsqueda visual, complementando la comprensión literal con actividad lúdica.',
+
+        -- how_to_solve (DB-125)
+        E'Estrategia de búsqueda:\n\n1. Revisar la lista de palabras: Antes de buscar, lee las 10 palabras que debes encontrar (MARIE, CURIE, POLONIA, NOBEL, RADIO, POLONIO, PARIS, SORBONA, CIENCIA, FISICA). Esto activa tu memoria visual.\n\n2. Buscar por longitud: Empieza por palabras largas (RADIOACTIVIDAD sería la más larga si estuviera, pero no está). POLONIA y POLONIO son las más largas con 7 letras.\n\n3. Buscar en todas direcciones: Las palabras pueden estar horizontal (→), vertical (↓) o diagonal (↘). Escanea sistemáticamente.\n\n4. Método de escaneo eficiente: Lee la cuadrícula fila por fila buscando la primera letra de cada palabra. Cuando encuentres una "P", verifica si forma POLONIA, POLONIO o PARIS.\n\n5. Marcar palabras encontradas: Haz clic y arrastra para seleccionar. Las palabras encontradas se iluminan y ya no necesitas buscarlas.',
+
+        -- recommended_strategy (DB-125)
+        E'Tips para encontrar eficientemente:\n- Palabras cortas primero: MARIE (5), CURIE (5), NOBEL (5), RADIO (5), PARIS (5) son más fáciles de encontrar que las largas.\n- Esquinas y bordes: Muchas sopas de letras colocan palabras en los bordes. Revisa primero las orillas.\n- Letras poco comunes: "Q", "K", "W" no aparecen en español. Si ves una, probablemente es ruido. Las palabras del ejercicio solo usan letras comunes.\n- Tiempo límite: 10 minutos. No te estreses, es ejercicio BONUS (opcional). Si no terminas, no afecta tu progreso obligatorio.\n- Usar comodín "Pista": Si te atascas, el comodín revelará la posición de una palabra por 15 ML Coins.',
+
+        -- pedagogical_notes (DB-125)
+        E'Ejercicio BONUS lúdico que refuerza vocabulario clave mediante búsqueda visual. Los estudiantes practican:\n- Reconocimiento visual de palabras clave biográficas y científicas\n- Atención sostenida y búsqueda sistemática\n- Familiarización con términos importantes (nombres, lugares, conceptos)\n\nCompetencias trabajadas:\n- Vocabulario académico y científico (refuerzo, no evaluación)\n- Atención visual y concentración\n- Gamificación: actividad lúdica reduce ansiedad y aumenta motivación\n\nAlineación curricular: Nivel beginner (A1 CEFR). BONUS significa que es opcional y no afecta la calificación obligatoria del módulo. Ideal para estudiantes que terminan rápido o buscan práctica extra.',
+
         'sopa_letras', 5,
         '{
             "gridSize": {"rows": 10, "cols": 10},

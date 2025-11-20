@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/app/providers/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { EnhancedCard } from '@shared/components/base/EnhancedCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -28,6 +29,7 @@ import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { DifficultyLevel } from '@shared/types/educational.types';
 import { getExercise, saveExerciseProgress, submitExercise, getExerciseHints } from '@/services/api/educationalAPI';
 import { adaptExerciseData } from '@shared/utils/exerciseAdapter';
+import { ExerciseGuide } from '@/features/exercises/components/ExerciseGuide';
 
 // ============================================================================
 // TYPES
@@ -157,6 +159,9 @@ export default function ExercisePage() {
   const [userAnswers, setUserAnswers] = useState<any>(null);
 
   const { user, logout } = useAuth();
+
+  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
+  const { gamificationData } = useUserGamification(user?.id);
 
   // ============================================================================
   // DATA FETCHING
@@ -500,10 +505,14 @@ export default function ExercisePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-        <GamifiedHeader user={user ?? undefined} onLogout={async () => {
-          await logout();
-          // No need to navigate - performLogout() handles redirect
-        }} />
+        <GamifiedHeader
+          user={user ?? undefined}
+          gamificationData={gamificationData}
+          onLogout={async () => {
+            await logout();
+            // No need to navigate - performLogout() handles redirect
+          }}
+        />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <DetectiveCard hoverable={false}>
@@ -525,10 +534,14 @@ export default function ExercisePage() {
   if (!exercise || !MechanicComponent) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-        <GamifiedHeader user={user ?? undefined} onLogout={async () => {
-          await logout();
-          // No need to navigate - performLogout() handles redirect
-        }} />
+        <GamifiedHeader
+          user={user ?? undefined}
+          gamificationData={gamificationData}
+          onLogout={async () => {
+            await logout();
+            // No need to navigate - performLogout() handles redirect
+          }}
+        />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <motion.div
@@ -557,10 +570,14 @@ export default function ExercisePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
       {/* Header */}
-      <GamifiedHeader user={user ?? undefined} onLogout={async () => {
-        await logout();
-        // No need to navigate - performLogout() handles redirect
-      }} />
+      <GamifiedHeader
+        user={user ?? undefined}
+        gamificationData={gamificationData}
+        onLogout={async () => {
+          await logout();
+          // No need to navigate - performLogout() handles redirect
+        }}
+      />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -632,6 +649,18 @@ export default function ExercisePage() {
             </p>
           )}
         </DetectiveCard>
+
+        {/* Pedagogical Guide (FE-060: 2025-11-19) */}
+        {exercise.mechanicData && (
+          <ExerciseGuide
+            objective={(exercise.mechanicData as any).objective}
+            how_to_solve={(exercise.mechanicData as any).how_to_solve}
+            recommended_strategy={(exercise.mechanicData as any).recommended_strategy}
+            pedagogical_notes={(exercise.mechanicData as any).pedagogical_notes}
+            defaultExpanded={false}
+            className="mb-6"
+          />
+        )}
 
         {/* Main Grid Layout - Compact */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">

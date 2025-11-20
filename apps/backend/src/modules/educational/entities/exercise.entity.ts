@@ -83,6 +83,40 @@ export class Exercise {
   @Column({ type: 'text', nullable: true })
   instructions?: string;
 
+  // =====================================================
+  // PEDAGOGICAL CONTENT (DB-125: 2025-11-19)
+  // =====================================================
+
+  /**
+   * Objetivo pedagógico expandido del ejercicio (200-500 palabras)
+   * Describe qué aprenderá el estudiante y por qué es importante según
+   * el modelo de comprensión lectora de Daniel Cassany.
+   */
+  @Column({ type: 'text', nullable: true })
+  objective?: string;
+
+  /**
+   * Guía detallada de cómo resolver el ejercicio (300-800 palabras)
+   * Pasos pedagógicos, estrategias de pensamiento, y consejos para
+   * completar exitosamente el ejercicio.
+   */
+  @Column({ type: 'text', nullable: true })
+  how_to_solve?: string;
+
+  /**
+   * Estrategias recomendadas para resolver eficientemente (100-300 palabras)
+   * Tips, trucos, y mejores prácticas para estudiantes.
+   */
+  @Column({ type: 'text', nullable: true })
+  recommended_strategy?: string;
+
+  /**
+   * Notas metodológicas para educadores (100-400 palabras)
+   * Contexto pedagógico, relación con competencias, y alineación con modelo Cassany.
+   */
+  @Column({ type: 'text', nullable: true })
+  pedagogical_notes?: string;
+
   /**
    * Índice de orden dentro del módulo
    */

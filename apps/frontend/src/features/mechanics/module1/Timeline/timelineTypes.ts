@@ -9,9 +9,15 @@ export interface TimelineEvent {
   category: string;
 }
 
+/**
+ * ⚠️ FE-059: correctOrder is NEVER sent by backend (sanitized for security)
+ */
 export interface TimelineData extends BaseExercise {
   events: TimelineEvent[];
-  correctOrder?: string[]; // Optional - if not provided, will be calculated by sorting events by year
+  /**
+   * @deprecated Backend sanitizes this field - never present. Validation is done server-side.
+   */
+  correctOrder?: never;
 }
 
 export interface DraggedEvent extends TimelineEvent {

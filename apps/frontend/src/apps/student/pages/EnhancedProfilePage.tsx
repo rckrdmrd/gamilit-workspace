@@ -52,6 +52,7 @@ import { useAuthStore } from '@/features/auth/store/authStore';
 import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
 import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
 import { useAchievementsStore } from '@/features/gamification/social/store/achievementsStore';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { cn } from '@shared/utils/cn';
 
 interface RankHistoryEntry {
@@ -68,6 +69,9 @@ export default function EnhancedProfilePage() {
   const { userProgress, fetchUserProgress } = useRanksStore();
   const { balance, fetchBalance } = useEconomyStore();
   const { achievements, stats: achievementStats, fetchAchievements } = useAchievementsStore();
+
+  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
+  const { gamificationData } = useUserGamification(user?.id);
 
   // Local state
   const [selectedTab, setSelectedTab] = useState<'overview' | 'stats' | 'history' | 'achievements'>('overview');
@@ -140,10 +144,14 @@ export default function EnhancedProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 dark:from-gray-900 dark:to-indigo-900">
-      <GamifiedHeader user={user || undefined} onLogout={async () => {
-        await logout();
-        // No need to navigate - performLogout() handles redirect
-      }} />
+      <GamifiedHeader
+        user={user || undefined}
+        gamificationData={gamificationData}
+        onLogout={async () => {
+          await logout();
+          // No need to navigate - performLogout() handles redirect
+        }}
+      />
 
       <main className="container mx-auto px-4 py-8">
         {/* Hero Section */}

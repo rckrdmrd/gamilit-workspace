@@ -62,16 +62,39 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
     return () => clearInterval(interval);
   }, [analyzedSources, checkedClaims, currentScore]);
 
-  // Update progress
+  // FE-055 & FE-059: Update progress with user answers
   useEffect(() => {
-    const totalTasks = sources.length + 3; // Sources to analyze + 3 claims to check
-    const completedTasks = analyzedSources.length + checkedClaims;
-    const progress = (completedTasks / totalTasks) * 100;
-    onProgressUpdate?.(progress);
+    if (onProgressUpdate) {
+      const totalTasks = sources.length + 3; // Sources to analyze + 3 claims to check
+      const completedTasks = analyzedSources.length + checkedClaims;
+
+      // Prepare user answers in backend DTO format
+      // Backend expects: { ranking: ["src1", "src3", "src2"] }
+      // Ranking sources by order analyzed (proxy for perceived credibility)
+      const userAnswers = {
+        ranking: analyzedSources // Sources analyzed in order
+      };
+
+      onProgressUpdate({
+        progress: {
+          currentStep: completedTasks,
+          totalSteps: totalTasks,
+          score: 0, // FE-059: Score calculated by backend only
+          hintsUsed: 0,
+          timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
+        },
+        answers: userAnswers
+      });
+
+      console.log('📊 [AnalisisFuentes] Progress update sent:', {
+        analyzedSources: analyzedSources.length,
+        checkedClaims
+      });
+    }
 
     const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     setTimeSpent(elapsed);
-  }, [analyzedSources, checkedClaims, sources.length]);
+  }, [analyzedSources, checkedClaims, sources.length, onProgressUpdate, startTime]);
 
   const loadSources = async () => {
     try {
@@ -92,6 +115,11 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
     saveProgressUtil(exerciseId, state);
   };
 
+  // FE-059 NOTE: This component uses AI services (analyzeSource, checkClaim) for real-time analysis
+  // Unlike other exercises, it doesn't rely on stored "correct answers" in the exercise data
+  // The SourceAnalysis.credibilityScore field is sanitized in exercise data
+  // but analysis.credibilityScore (from SourceCredibility/AI) is a runtime calculation
+  // TODO: When integrating with backend, backend should perform source analysis or store rankings
   const handleAnalyze = async (source: Source) => {
     setSelectedSource(source);
     setAnalyzing(true);
@@ -102,6 +130,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
       // Track analyzed source
       if (!analyzedSources.includes(source.id)) {
         setAnalyzedSources([...analyzedSources, source.id]);
+        // FE-059: Local scoring will be replaced with backend scoring
         const newScore = currentScore + 10;
         setCurrentScore(newScore);
       }

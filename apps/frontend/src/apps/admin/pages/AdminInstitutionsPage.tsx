@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
+import { useState } from 'react';
+import { useAuth } from '@features/auth/hooks/useAuth';
+import { AdminLayout } from '../layouts/AdminLayout';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { DataTable, Column } from '@shared/components/common/DataTable';
 import { Modal } from '@shared/components/common/Modal';
@@ -9,7 +10,13 @@ import { Plus, Users, Settings, Trash2, Edit } from 'lucide-react';
 import { useOrganizations } from '../hooks/useOrganizations';
 import type { Organization } from '../types';
 
-export default function AdminOrganizations() {
+/**
+ * AdminInstitutionsPage - Gestión de organizaciones/instituciones
+ * Updated: 2025-11-19 - Migrated to use AdminLayout with sidebar
+ */
+export default function AdminInstitutionsPage() {
+  const { user, logout } = useAuth();
+
   const {
     organizations,
     loading,
@@ -30,11 +37,19 @@ export default function AdminOrganizations() {
     plan: 'free' as 'free' | 'pro' | 'enterprise',
   });
 
-  const user = {
-    id: 'mock-admin-orgs-id',
-    email: 'admin@glit.com',
-    name: 'Super Admin',
-    role: 'super_admin',
+  // TODO: Replace with useUserGamification hook when backend endpoint is ready
+  const gamificationData = {
+    userId: user?.id || 'mock-admin-id',
+    level: 20,
+    totalXP: 5000,
+    mlCoins: 2500,
+    rank: 'Super Admin',
+    achievements: ['admin_master', 'org_manager'],
+  };
+
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/login';
   };
 
   const handleCreateOrg = async () => {
@@ -216,15 +231,18 @@ export default function AdminOrganizations() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={user} />
-
-      <main className="detective-container py-8">
+    <AdminLayout
+      user={user || undefined}
+      gamificationData={gamificationData}
+      organizationName="GAMILIT Platform Admin"
+      onLogout={handleLogout}
+    >
+      <div className="space-y-6">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-detective-text mb-2">Organizaciones</h1>
-          <p className="text-detective-text-secondary">
-            Gestiona organizaciones, planes y suscripciones
+        <div>
+          <h1 className="text-3xl font-bold text-detective-text">Gestión de Organizaciones</h1>
+          <p className="text-detective-text-secondary mt-1">
+            Gestiona organizaciones, planes y suscripciones de la plataforma
           </p>
         </div>
 
@@ -258,7 +276,7 @@ export default function AdminOrganizations() {
             searchPlaceholder="Buscar organizaciones..."
           />
         )}
-      </main>
+      </div>
 
       {/* Create Modal */}
       <Modal
@@ -422,6 +440,6 @@ export default function AdminOrganizations() {
         cancelText="Cancelar"
         variant="danger"
       />
-    </div>
+    </AdminLayout>
   );
 }

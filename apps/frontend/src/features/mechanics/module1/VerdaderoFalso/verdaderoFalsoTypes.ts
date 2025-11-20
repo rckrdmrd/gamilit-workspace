@@ -1,12 +1,16 @@
 /**
  * Types for Verdadero/Falso (True/False) Exercise
  * Module 1 - Exercise 2
+ * ⚠️ FE-059: correctAnswer is NEVER sent by backend (sanitized for security)
  */
 
 export interface VerdaderoFalsoStatement {
   id: string;
   statement: string;
-  correctAnswer: boolean;
+  /**
+   * @deprecated Backend sanitizes this field - never present. Validation is done server-side.
+   */
+  correctAnswer?: never;
   explanation?: string;
   userAnswer?: boolean | null;
 }

@@ -25,6 +25,8 @@ import {
   PaginatedMediaDto,
   CreateVersionDto,
   VersionResponseDto,
+  ListApprovalHistoryDto,
+  PaginatedApprovalHistoryDto,
 } from '../dto/content';
 import { MediaFileResponseDto } from '@modules/content/dto/media-file-response.dto';
 
@@ -47,6 +49,18 @@ export class AdminContentController {
     return await this.adminContentService.getPendingContent(query);
   }
 
+  @Get('exercises/pending')
+  @ApiOperation({
+    summary: 'Get pending exercises for approval (alias)',
+    description: 'Alias for /admin/content/pending with exercises filter. For frontend compatibility.',
+  })
+  async getPendingExercises(
+    @Query() query: ListContentDto,
+  ): Promise<PaginatedContentDto> {
+    // Filter only exercises
+    return await this.adminContentService.getPendingContent({ ...query, contentType: 'exercise' });
+  }
+
   @Post(':id/approve')
   @ApiOperation({
     summary: 'Approve content',
@@ -66,6 +80,24 @@ export class AdminContentController {
     );
   }
 
+  @Post('exercises/:id/approve')
+  @ApiOperation({
+    summary: 'Approve exercise (alias)',
+    description: 'Alias for /admin/content/:id/approve. For frontend compatibility.',
+  })
+  async approveExercise(
+    @Param('id') id: string,
+    @Body() approvalDto: ApproveContentDto,
+    @Request() req: any,
+  ): Promise<ContentDto> {
+    const adminId = req.user?.id || req.user?.sub;
+    return await this.adminContentService.approveContent(
+      id,
+      approvalDto,
+      adminId,
+    );
+  }
+
   @Post(':id/reject')
   @ApiOperation({
     summary: 'Reject content with reason',
@@ -73,6 +105,24 @@ export class AdminContentController {
       'Reject content by ID. Changes status back to draft and stores rejection reason.',
   })
   async rejectContent(
+    @Param('id') id: string,
+    @Body() rejectionDto: RejectContentDto,
+    @Request() req: any,
+  ): Promise<ContentDto> {
+    const adminId = req.user?.id || req.user?.sub;
+    return await this.adminContentService.rejectContent(
+      id,
+      rejectionDto,
+      adminId,
+    );
+  }
+
+  @Post('exercises/:id/reject')
+  @ApiOperation({
+    summary: 'Reject exercise (alias)',
+    description: 'Alias for /admin/content/:id/reject. For frontend compatibility.',
+  })
+  async rejectExercise(
     @Param('id') id: string,
     @Body() rejectionDto: RejectContentDto,
     @Request() req: any,
@@ -135,5 +185,22 @@ export class AdminContentController {
   })
   async deleteMediaFile(@Param('id') id: string): Promise<void> {
     await this.adminContentService.deleteMediaFile(id);
+  }
+
+  @Get('approval-history')
+  @ApiOperation({
+    summary: 'Get content approval history',
+    description:
+      'Retrieve paginated approval history for content (modules, exercises, templates) with filters for content type, status, submitter, reviewer, etc.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Approval history retrieved successfully',
+    type: PaginatedApprovalHistoryDto,
+  })
+  async getApprovalHistory(
+    @Query() query: ListApprovalHistoryDto,
+  ): Promise<PaginatedApprovalHistoryDto> {
+    return await this.adminContentService.getApprovalHistory(query);
   }
 }

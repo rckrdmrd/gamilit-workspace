@@ -34,6 +34,7 @@ import {
 
 // Components
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { EnhancedCard } from '@shared/components/base/EnhancedCard';
 import { ColorfulCard } from '@shared/components/base/ColorfulCard';
 
@@ -46,6 +47,9 @@ type SettingsSection = 'profile' | 'account' | 'preferences' | 'privacy' | 'conn
 export default function SettingsPage() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+
+  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
+  const { gamificationData } = useUserGamification(user?.id);
 
   // State
   const [activeSection, setActiveSection] = useState<SettingsSection>('profile');
@@ -119,10 +123,14 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-      <GamifiedHeader user={user ?? undefined} onLogout={async () => {
-        await logout();
-        // No need to navigate - performLogout() handles redirect
-      }} />
+      <GamifiedHeader
+        user={user ?? undefined}
+        gamificationData={gamificationData}
+        onLogout={async () => {
+          await logout();
+          // No need to navigate - performLogout() handles redirect
+        }}
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

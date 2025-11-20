@@ -6,9 +6,15 @@ export interface Source {
   type: 'academic' | 'news' | 'blog' | 'social';
 }
 
+/**
+ * ⚠️ FE-059: credibilityScore is NEVER sent by backend (sanitized for security)
+ */
 export interface SourceAnalysis {
   sourceId: string;
-  credibilityScore: number;
+  /**
+   * @deprecated Backend sanitizes this field - never present. Validation is done server-side.
+   */
+  credibilityScore?: never;
   biasLevel: string;
   factualReporting: string;
 }

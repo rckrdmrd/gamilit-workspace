@@ -85,11 +85,11 @@
 
 El **Sistema de Rangos Maya** implementa una progresión jerárquica basada en XP (Experience Points) que reconoce el avance de los estudiantes mediante 5 rangos inspirados en la civilización maya:
 
-1. **Ajaw** (0-999 XP) - Rango inicial
-2. **Nacom** (1,000-2,999 XP) - Capitán guerrero
-3. **Ah K'in** (3,000-5,999 XP) - Sacerdote del sol
-4. **Halach Uinic** (6,000-9,999 XP) - Hombre verdadero
-5. **K'uk'ulkan** (10,000+ XP) - Serpiente emplumada (máximo)
+1. **Ajaw** (0-499 XP) - Rango inicial
+2. **Nacom** (500-999 XP) - Capitán guerrero
+3. **Ah K'in** (1,000-1,499 XP) - Sacerdote del sol
+4. **Halach Uinic** (1,500-2,249 XP) - Hombre verdadero
+5. **K'uk'ulkan** (2,250+ XP) - Serpiente emplumada (máximo)
 
 ### Características Técnicas
 
@@ -133,11 +133,11 @@ Usuario completa ejercicio → Gana XP → total_xp actualizado
 -- apps/database/ddl/schemas/gamification_system/enums/maya_rank.sql
 
 CREATE TYPE gamification_system.maya_rank AS ENUM (
-    'Ajaw',              -- Rango 1: 0-999 XP
-    'Nacom',             -- Rango 2: 1,000-2,999 XP
-    'Ah K''in',          -- Rango 3: 3,000-5,999 XP (nota: comilla escapada)
-    'Halach Uinic',      -- Rango 4: 6,000-9,999 XP
-    'K''uk''ulkan'       -- Rango 5: 10,000+ XP (rango máximo)
+    'Ajaw',              -- Rango 1: 0-499 XP
+    'Nacom',             -- Rango 2: 500-999 XP
+    'Ah K''in',          -- Rango 3: 1,000-1,499 XP (nota: comilla escapada)
+    'Halach Uinic',      -- Rango 4: 1,500-2,249 XP
+    'K''uk''ulkan'       -- Rango 5: 2,250+ XP (rango máximo)
 );
 
 COMMENT ON TYPE gamification_system.maya_rank IS
@@ -229,25 +229,25 @@ BEGIN
     -- Verificar promociones según rango actual
     CASE v_current_rank
         WHEN 'Ajaw' THEN
-            IF v_total_xp >= 1000 THEN
+            IF v_total_xp >= 500 THEN
                 PERFORM gamification_system.promote_to_next_rank(p_user_id, 'Nacom');
                 v_promoted := true;
             END IF;
 
         WHEN 'Nacom' THEN
-            IF v_total_xp >= 3000 THEN
+            IF v_total_xp >= 1000 THEN
                 PERFORM gamification_system.promote_to_next_rank(p_user_id, 'Ah K''in');
                 v_promoted := true;
             END IF;
 
         WHEN 'Ah K''in' THEN
-            IF v_total_xp >= 6000 THEN
+            IF v_total_xp >= 1500 THEN
                 PERFORM gamification_system.promote_to_next_rank(p_user_id, 'Halach Uinic');
                 v_promoted := true;
             END IF;
 
         WHEN 'Halach Uinic' THEN
-            IF v_total_xp >= 10000 THEN
+            IF v_total_xp >= 2250 THEN
                 PERFORM gamification_system.promote_to_next_rank(p_user_id, 'K''uk''ulkan');
                 v_promoted := true;
             END IF;
@@ -309,10 +309,10 @@ BEGIN
 
     -- Determinar bonus de ML Coins según nuevo rango
     v_ml_coins_bonus := CASE p_new_rank
-        WHEN 'Nacom' THEN 50
-        WHEN 'Ah K''in' THEN 100
-        WHEN 'Halach Uinic' THEN 200
-        WHEN 'K''uk''ulkan' THEN 500
+        WHEN 'Nacom' THEN 100
+        WHEN 'Ah K''in' THEN 250
+        WHEN 'Halach Uinic' THEN 500
+        WHEN 'K''uk''ulkan' THEN 1000
         ELSE 0
     END;
 
@@ -457,7 +457,7 @@ BEGIN
 
         WHEN 'Nacom' THEN jsonb_build_object(
             'rank', 'Nacom',
-            'xp_multiplier', 1.05,
+            'xp_multiplier', 1.10,
             'max_difficulty_access', 'hard',
             'can_create_study_groups', true,
             'can_be_tutor', false,
@@ -469,7 +469,7 @@ BEGIN
 
         WHEN 'Ah K''in' THEN jsonb_build_object(
             'rank', 'Ah K''in',
-            'xp_multiplier', 1.10,
+            'xp_multiplier', 1.15,
             'max_difficulty_access', 'expert',
             'can_create_study_groups', true,
             'can_be_tutor', true,
@@ -481,7 +481,7 @@ BEGIN
 
         WHEN 'Halach Uinic' THEN jsonb_build_object(
             'rank', 'Halach Uinic',
-            'xp_multiplier', 1.15,
+            'xp_multiplier', 1.20,
             'max_difficulty_access', 'mastery',
             'can_create_study_groups', true,
             'can_be_tutor', true,
@@ -493,7 +493,7 @@ BEGIN
 
         WHEN 'K''uk''ulkan' THEN jsonb_build_object(
             'rank', 'K''uk''ulkan',
-            'xp_multiplier', 1.20,
+            'xp_multiplier', 1.25,
             'max_difficulty_access', 'all',
             'can_create_study_groups', true,
             'can_be_tutor', true,
@@ -527,10 +527,10 @@ AS $$
 BEGIN
     RETURN CASE p_rank
         WHEN 'Ajaw' THEN 1.00
-        WHEN 'Nacom' THEN 1.05
-        WHEN 'Ah K''in' THEN 1.10
-        WHEN 'Halach Uinic' THEN 1.15
-        WHEN 'K''uk''ulkan' THEN 1.20
+        WHEN 'Nacom' THEN 1.10
+        WHEN 'Ah K''in' THEN 1.15
+        WHEN 'Halach Uinic' THEN 1.20
+        WHEN 'K''uk''ulkan' THEN 1.25
     END;
 END;
 $$;
@@ -600,19 +600,19 @@ export const RANK_ORDER = [
 ];
 
 export const RANK_THRESHOLDS: Record<MayaRankEnum, { min: number; max: number | null }> = {
-  [MayaRankEnum.AJAW]: { min: 0, max: 999 },
-  [MayaRankEnum.NACOM]: { min: 1000, max: 4999 },
-  [MayaRankEnum.AH_KIN]: { min: 5000, max: 19999 },
-  [MayaRankEnum.HALACH_UINIC]: { min: 20000, max: 99999 },
-  [MayaRankEnum.KUKULKAN]: { min: 100000, max: null }, // Sin límite superior
+  [MayaRankEnum.AJAW]: { min: 0, max: 499 },
+  [MayaRankEnum.NACOM]: { min: 500, max: 999 },
+  [MayaRankEnum.AH_KIN]: { min: 1000, max: 1499 },
+  [MayaRankEnum.HALACH_UINIC]: { min: 1500, max: 2249 },
+  [MayaRankEnum.KUKULKAN]: { min: 2250, max: null }, // Sin límite superior
 };
 
 export const RANK_MULTIPLIERS: Record<MayaRankEnum, number> = {
   [MayaRankEnum.AJAW]: 1.0,
-  [MayaRankEnum.NACOM]: 1.05,
-  [MayaRankEnum.AH_KIN]: 1.1,
-  [MayaRankEnum.HALACH_UINIC]: 1.15,
-  [MayaRankEnum.KUKULKAN]: 1.2,
+  [MayaRankEnum.NACOM]: 1.10,
+  [MayaRankEnum.AH_KIN]: 1.15,
+  [MayaRankEnum.HALACH_UINIC]: 1.20,
+  [MayaRankEnum.KUKULKAN]: 1.25,
 };
 ```
 
@@ -1808,35 +1808,35 @@ describe('Rank System - Immutable History', () => {
 └─────────────────────────────────────────────────────────────┘
 
               🐉 K'uk'ulkan (Serpiente Emplumada)
-              ├─ 10,000+ XP
-              ├─ +20% XP bonus
+              ├─ 2,250+ XP
+              ├─ +25% XP bonus
               ├─ Puede contribuir ejercicios
               └─ Acceso a comunidad privada
                           ↑
                           │
               👑 Halach Uinic (Hombre Verdadero)
-              ├─ 6,000-9,999 XP
-              ├─ +15% XP bonus
+              ├─ 1,500-2,249 XP
+              ├─ +20% XP bonus
               ├─ Puede crear aulas
               └─ Aparece en Hall of Fame
                           ↑
                           │
               ☀️ Ah K'in (Sacerdote del Sol)
-              ├─ 3,000-5,999 XP
-              ├─ +10% XP bonus
+              ├─ 1,000-1,499 XP
+              ├─ +15% XP bonus
               ├─ Puede ser tutor
               └─ Biblioteca avanzada
                           ↑
                           │
               ⚔️ Nacom (Capitán Guerrero)
-              ├─ 1,000-2,999 XP
-              ├─ +5% XP bonus
+              ├─ 500-999 XP
+              ├─ +10% XP bonus
               ├─ Puede crear equipos
               └─ Ejercicios hard desbloqueados
                           ↑
                           │
               🌱 Ajaw (Señor)
-              ├─ 0-999 XP
+              ├─ 0-499 XP
               ├─ Sin bonus
               ├─ Rango inicial
               └─ Funcionalidades básicas

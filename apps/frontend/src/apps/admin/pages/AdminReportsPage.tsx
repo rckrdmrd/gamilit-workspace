@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { useReports } from '../hooks/useReports';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 import {
   FileText,
   Download,
@@ -18,20 +20,39 @@ import {
 
 /**
  * AdminReportsPage - Generación de reportes del sistema
+ * Updated: 2025-11-19 - Integrated with useReports hook (FE-059)
  */
 export default function AdminReportsPage() {
   const { user, logout } = useAuth();
   const [startDate, setStartDate] = useState('2025-11-01');
-  const [endDate, setEndDate] = useState('2025-11-11');
+  const [endDate, setEndDate] = useState('2025-11-19');
   const [reportType, setReportType] = useState('users');
+  const [reportFormat, setReportFormat] = useState<'pdf' | 'excel' | 'csv' | 'json'>('pdf');
 
-  const gamificationData = {
+  // Use useReports hook
+  const {
+    reports,
+    reportTypes,
+    stats,
+    loading,
+    generating,
+    error,
+    fetchReports,
+    generateReport,
+    downloadReport,
+  } = useReports();
+
+  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
+  const { gamificationData } = useUserGamification(user?.id);
+
+  // Fallback gamification data in case hook fails or user is not loaded
+  const displayGamificationData = gamificationData || {
     userId: user?.id || 'mock-admin-id',
-    level: 20,
-    totalXP: 5000,
-    mlCoins: 2500,
-    rank: 'Super Admin',
-    achievements: ['admin_master', 'data_analyst'],
+    level: 1,
+    totalXP: 0,
+    mlCoins: 0,
+    rank: 'Novato',
+    achievements: [],
   };
 
   const handleLogout = () => {
@@ -39,89 +60,39 @@ export default function AdminReportsPage() {
     window.location.href = '/login';
   };
 
-  // Mock report types
-  const reportTypes = [
-    {
-      id: 'users',
-      name: 'Reporte de Usuarios',
-      description: 'Información completa de usuarios registrados y actividad',
-      icon: Users,
-      color: 'text-blue-500',
-    },
-    {
-      id: 'progress',
-      name: 'Reporte de Progreso',
-      description: 'Progreso de estudiantes por módulo y ejercicio',
-      icon: TrendingUp,
-      color: 'text-green-500',
-    },
-    {
-      id: 'exercises',
-      name: 'Reporte de Ejercicios',
-      description: 'Estadísticas de ejercicios completados y rendimiento',
-      icon: BookOpen,
-      color: 'text-purple-500',
-    },
-    {
-      id: 'gamification',
-      name: 'Reporte de Gamificación',
-      description: 'Uso de logros, rangos y ML Coins',
-      icon: Trophy,
-      color: 'text-detective-gold',
-    },
-    {
-      id: 'usage',
-      name: 'Reporte de Uso de Plataforma',
-      description: 'Estadísticas de acceso y tiempo de uso',
-      icon: Clock,
-      color: 'text-orange-500',
-    },
-    {
-      id: 'completion',
-      name: 'Reporte de Completitud',
-      description: 'Tasas de completitud por institución y módulo',
-      icon: CheckCircle,
-      color: 'text-green-500',
-    },
-  ];
+  // Fetch reports on mount
+  useEffect(() => {
+    fetchReports();
+  }, [fetchReports]);
 
-  // Mock generated reports
-  const generatedReports = [
-    {
-      id: '1',
-      type: 'users',
-      name: 'Reporte de Usuarios - Noviembre 2025',
-      generatedAt: '2025-11-11 10:30',
-      size: '2.4 MB',
-      format: 'PDF',
-    },
-    {
-      id: '2',
-      type: 'progress',
-      name: 'Reporte de Progreso - Octubre 2025',
-      generatedAt: '2025-11-01 14:15',
-      size: '3.1 MB',
-      format: 'Excel',
-    },
-    {
-      id: '3',
-      type: 'gamification',
-      name: 'Reporte de Gamificación - Q3 2025',
-      generatedAt: '2025-10-15 09:00',
-      size: '1.8 MB',
-      format: 'PDF',
-    },
-  ];
+  // Icon mapping
+  const iconMap: Record<string, any> = {
+    Users,
+    TrendingUp,
+    BookOpen,
+    Trophy,
+    Clock,
+    CheckCircle,
+  };
 
-  const handleGenerateReport = () => {
-    const selectedReport = reportTypes.find((r) => r.id === reportType);
-    alert(`Generando reporte:\n${selectedReport?.name}\nPeríodo: ${startDate} a ${endDate}`);
+  const handleGenerateReport = async () => {
+    try {
+      await generateReport({
+        type: reportType,
+        startDate,
+        endDate,
+        format: reportFormat,
+      });
+      alert('Reporte generado correctamente');
+    } catch (err) {
+      alert('Error al generar reporte');
+    }
   };
 
   return (
     <AdminLayout
       user={user || undefined}
-      gamificationData={gamificationData}
+      gamificationData={displayGamificationData}
       organizationName="GAMILIT Platform Admin"
       onLogout={handleLogout}
     >
@@ -148,23 +119,26 @@ export default function AdminReportsPage() {
                 Tipo de Reporte
               </label>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {reportTypes.map((type) => (
-                  <button
-                    key={type.id}
-                    onClick={() => setReportType(type.id)}
-                    className={`p-4 rounded-lg text-left transition-all ${
-                      reportType === type.id
-                        ? 'bg-detective-orange/20 border-2 border-detective-orange'
-                        : 'bg-detective-bg-secondary hover:bg-detective-bg-secondary/70 border-2 border-transparent'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 mb-2">
-                      <type.icon className={`w-6 h-6 ${type.color}`} />
-                      <h3 className="font-bold text-detective-text text-sm">{type.name}</h3>
-                    </div>
-                    <p className="text-xs text-detective-text-secondary">{type.description}</p>
-                  </button>
-                ))}
+                {reportTypes.map((type) => {
+                  const Icon = iconMap[type.icon] || FileText;
+                  return (
+                    <button
+                      key={type.id}
+                      onClick={() => setReportType(type.id)}
+                      className={`p-4 rounded-lg text-left transition-all ${
+                        reportType === type.id
+                          ? 'bg-detective-orange/20 border-2 border-detective-orange'
+                          : 'bg-detective-bg-secondary hover:bg-detective-bg-secondary/70 border-2 border-transparent'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <Icon className={`w-6 h-6 ${type.color}`} />
+                        <h3 className="font-bold text-detective-text text-sm">{type.name}</h3>
+                      </div>
+                      <p className="text-xs text-detective-text-secondary">{type.description}</p>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -202,7 +176,11 @@ export default function AdminReportsPage() {
                 <Filter className="w-4 h-4" />
                 Formato
               </label>
-              <select className="w-full px-4 py-2 bg-detective-bg-secondary border border-gray-600 rounded-lg text-detective-text focus:outline-none focus:ring-2 focus:ring-detective-orange">
+              <select
+                value={reportFormat}
+                onChange={(e) => setReportFormat(e.target.value as any)}
+                className="w-full px-4 py-2 bg-detective-bg-secondary border border-gray-600 rounded-lg text-detective-text focus:outline-none focus:ring-2 focus:ring-detective-orange"
+              >
                 <option value="pdf">PDF</option>
                 <option value="excel">Excel (XLSX)</option>
                 <option value="csv">CSV</option>
@@ -215,43 +193,72 @@ export default function AdminReportsPage() {
               <DetectiveButton
                 variant="primary"
                 onClick={handleGenerateReport}
+                disabled={generating}
                 className="flex-1"
               >
-                <FileText className="w-5 h-5" />
-                Generar Reporte
+                {generating ? (
+                  <>
+                    <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    Generando...
+                  </>
+                ) : (
+                  <>
+                    <FileText className="w-5 h-5" />
+                    Generar Reporte
+                  </>
+                )}
               </DetectiveButton>
-              <DetectiveButton variant="outline" onClick={() => alert('Preview del reporte')}>
+              <DetectiveButton
+                variant="outline"
+                onClick={() => alert('Preview del reporte - Próximamente')}
+                disabled={generating}
+              >
                 Vista Previa
               </DetectiveButton>
             </div>
           </div>
         </DetectiveCard>
 
+        {/* Error Message */}
+        {error && (
+          <DetectiveCard>
+            <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4 text-red-500">
+              <p className="font-semibold">Error:</p>
+              <p>{error}</p>
+            </div>
+          </DetectiveCard>
+        )}
+
         {/* Generated Reports History */}
         <DetectiveCard>
           <h2 className="text-xl font-bold text-detective-text mb-4">Reportes Generados</h2>
 
-          {generatedReports.length === 0 ? (
+          {loading && reports.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-detective-orange"></div>
+              <p className="mt-4 text-detective-text-secondary">Cargando reportes...</p>
+            </div>
+          ) : reports.length === 0 ? (
             <div className="text-center py-8 text-detective-text-secondary">
               <FileText className="w-16 h-16 mx-auto mb-4 opacity-50" />
               <p>No hay reportes generados aún</p>
             </div>
           ) : (
             <div className="space-y-3">
-              {generatedReports.map((report) => {
-                const reportType = reportTypes.find((t) => t.id === report.type);
-                const Icon = reportType?.icon || FileText;
+              {reports.map((report) => {
+                const reportTypeData = reportTypes.find((t) => t.id === report.type);
+                const Icon = reportTypeData ? iconMap[reportTypeData.icon] || FileText : FileText;
                 return (
                   <div
                     key={report.id}
                     className="flex items-center justify-between p-4 bg-detective-bg-secondary rounded-lg hover:bg-detective-bg-secondary/70 transition-colors"
                   >
                     <div className="flex items-center gap-4">
-                      <Icon className={`w-6 h-6 ${reportType?.color || 'text-gray-500'}`} />
+                      <Icon className={`w-6 h-6 ${reportTypeData?.color || 'text-gray-500'}`} />
                       <div>
                         <h3 className="font-bold text-detective-text">{report.name}</h3>
                         <p className="text-sm text-detective-text-secondary">
-                          Generado: {report.generatedAt} • {report.size} • {report.format}
+                          Generado: {new Date(report.generatedAt).toLocaleString('es-ES')} • {report.size} • {report.format}
                         </p>
                       </div>
                     </div>
@@ -259,7 +266,7 @@ export default function AdminReportsPage() {
                       <DetectiveButton
                         variant="outline"
                         size="sm"
-                        onClick={() => alert(`Descargar: ${report.name}`)}
+                        onClick={() => downloadReport(report.id)}
                       >
                         <Download className="w-4 h-4" />
                         Descargar
@@ -278,28 +285,32 @@ export default function AdminReportsPage() {
             <div className="text-center">
               <FileText className="w-10 h-10 text-blue-500 mx-auto mb-2" />
               <p className="text-sm text-detective-text-secondary mb-1">Reportes Generados</p>
-              <p className="text-2xl font-bold text-detective-text">{generatedReports.length}</p>
+              <p className="text-2xl font-bold text-detective-text">{stats?.totalGenerated || 0}</p>
             </div>
           </DetectiveCard>
           <DetectiveCard hoverable={false}>
             <div className="text-center">
               <Download className="w-10 h-10 text-green-500 mx-auto mb-2" />
               <p className="text-sm text-detective-text-secondary mb-1">Descargas Este Mes</p>
-              <p className="text-2xl font-bold text-green-500">45</p>
+              <p className="text-2xl font-bold text-green-500">{stats?.downloadsThisMonth || 0}</p>
             </div>
           </DetectiveCard>
           <DetectiveCard hoverable={false}>
             <div className="text-center">
               <Clock className="w-10 h-10 text-orange-500 mx-auto mb-2" />
               <p className="text-sm text-detective-text-secondary mb-1">Último Reporte</p>
-              <p className="text-sm font-bold text-orange-500">Hace 2 horas</p>
+              <p className="text-sm font-bold text-orange-500">
+                {stats?.lastReportTime && stats.lastReportTime !== 'Nunca'
+                  ? new Date(stats.lastReportTime).toLocaleDateString('es-ES')
+                  : 'Nunca'}
+              </p>
             </div>
           </DetectiveCard>
           <DetectiveCard hoverable={false}>
             <div className="text-center">
               <TrendingUp className="w-10 h-10 text-purple-500 mx-auto mb-2" />
               <p className="text-sm text-detective-text-secondary mb-1">Más Generado</p>
-              <p className="text-sm font-bold text-purple-500">Usuarios</p>
+              <p className="text-sm font-bold text-purple-500">{stats?.mostGenerated || 'N/A'}</p>
             </div>
           </DetectiveCard>
         </div>

@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { useUserManagement } from '../hooks/useUserManagement';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 import {
   Users,
   Search,
@@ -14,24 +16,46 @@ import {
   XCircle,
   Mail,
   Shield,
+  RefreshCw,
 } from 'lucide-react';
 
 /**
  * AdminUsersPage - Gestión de usuarios de la plataforma
+ * Updated: 2025-11-19 - Integrated with useUserManagement hook (FE-059)
  */
 export default function AdminUsersPage() {
   const { user, logout } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterRole, setFilterRole] = useState<string>('all');
-  const [filterStatus, setFilterStatus] = useState<string>('all');
 
-  const gamificationData = {
+  // Use useUserManagement hook for data management
+  const {
+    users,
+    totalUsers,
+    loading,
+    error,
+    filters,
+    fetchUsers,
+    suspendUser,
+    unsuspendUser,
+    deleteUser,
+    setFilters,
+    currentPage,
+    totalPages,
+    nextPage,
+    prevPage,
+  } = useUserManagement();
+
+  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
+  const { gamificationData } = useUserGamification(user?.id);
+
+  // Fallback gamification data in case hook fails or user is not loaded
+  const displayGamificationData = gamificationData || {
     userId: user?.id || 'mock-admin-id',
-    level: 20,
-    totalXP: 5000,
-    mlCoins: 2500,
-    rank: 'Super Admin',
-    achievements: ['admin_master', 'user_manager'],
+    level: 1,
+    totalXP: 0,
+    mlCoins: 0,
+    rank: 'Novato',
+    achievements: [],
   };
 
   const handleLogout = () => {
@@ -39,78 +63,60 @@ export default function AdminUsersPage() {
     window.location.href = '/login';
   };
 
-  // Mock data de usuarios
-  const mockUsers = [
-    {
-      id: '1',
-      name: 'Ana García',
-      email: 'ana.garcia@school.edu',
-      role: 'student',
-      status: 'active',
-      institution: 'Escuela Primaria Central',
-      registeredAt: '2024-01-15',
-      lastLogin: '2025-11-10',
-    },
-    {
-      id: '2',
-      name: 'Carlos Méndez',
-      email: 'carlos.mendez@school.edu',
-      role: 'admin_teacher',
-      status: 'active',
-      institution: 'Escuela Primaria Central',
-      registeredAt: '2023-09-01',
-      lastLogin: '2025-11-11',
-    },
-    {
-      id: '3',
-      name: 'María López',
-      email: 'maria.lopez@school2.edu',
-      role: 'student',
-      status: 'inactive',
-      institution: 'Colegio San José',
-      registeredAt: '2024-03-20',
-      lastLogin: '2025-10-15',
-    },
-    {
-      id: '4',
-      name: 'Roberto Sánchez',
-      email: 'roberto.sanchez@admin.gamilit.com',
-      role: 'super_admin',
-      status: 'active',
-      institution: 'GAMILIT Platform',
-      registeredAt: '2023-01-01',
-      lastLogin: '2025-11-11',
-    },
-    {
-      id: '5',
-      name: 'Laura Fernández',
-      email: 'laura.fernandez@school.edu',
-      role: 'student',
-      status: 'active',
-      institution: 'Escuela Primaria Central',
-      registeredAt: '2024-02-10',
-      lastLogin: '2025-11-09',
-    },
-  ];
+  // Fetch users on component mount
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
-  // Filtrar usuarios
-  const filteredUsers = mockUsers.filter((u) => {
-    const matchesSearch =
-      u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      u.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = filterRole === 'all' || u.role === filterRole;
-    const matchesStatus = filterStatus === 'all' || u.status === filterStatus;
-    return matchesSearch && matchesRole && matchesStatus;
-  });
+  // Update filters when search changes
+  useEffect(() => {
+    if (searchTerm) {
+      setFilters({ ...filters, search: searchTerm });
+    }
+  }, [searchTerm]);
 
-  // Stats
+  // Handle user actions
+  const handleSuspendUser = async (userId: string, name: string) => {
+    if (confirm(`¿Suspender usuario ${name}?`)) {
+      try {
+        await suspendUser(userId);
+        await fetchUsers(); // Refresh list
+      } catch (err) {
+        alert('Error al suspender usuario');
+      }
+    }
+  };
+
+  const handleUnsuspendUser = async (userId: string, name: string) => {
+    if (confirm(`¿Reactivar usuario ${name}?`)) {
+      try {
+        await unsuspendUser(userId);
+        await fetchUsers(); // Refresh list
+      } catch (err) {
+        alert('Error al reactivar usuario');
+      }
+    }
+  };
+
+  const handleDeleteUser = async (userId: string, name: string) => {
+    if (confirm(`¿ELIMINAR usuario ${name}? Esta acción no se puede deshacer.`)) {
+      try {
+        await deleteUser(userId);
+        await fetchUsers(); // Refresh list
+      } catch (err) {
+        alert('Error al eliminar usuario');
+      }
+    }
+  };
+
+  // Calculate stats from real data
   const stats = {
-    total: mockUsers.length,
-    active: mockUsers.filter((u) => u.status === 'active').length,
-    inactive: mockUsers.filter((u) => u.status === 'inactive').length,
-    students: mockUsers.filter((u) => u.role === 'student').length,
-    teachers: mockUsers.filter((u) => u.role === 'admin_teacher').length,
-    admins: mockUsers.filter((u) => u.role === 'super_admin').length,
+    total: totalUsers,
+    active: users.filter((u) => u.status === 'active').length,
+    inactive: users.filter((u) => u.status === 'inactive').length,
+    students: users.filter((u) => u.role === 'student').length,
+    teachers: users.filter((u) => u.role === 'admin_teacher').length,
+    admins: users.filter((u) => u.role === 'super_admin').length,
   };
 
   const getRoleBadge = (role: string) => {
@@ -153,7 +159,7 @@ export default function AdminUsersPage() {
   return (
     <AdminLayout
       user={user || undefined}
-      gamificationData={gamificationData}
+      gamificationData={displayGamificationData}
       organizationName="GAMILIT Platform Admin"
       onLogout={handleLogout}
     >
@@ -228,8 +234,8 @@ export default function AdminUsersPage() {
             <div className="flex items-center gap-2">
               <Filter className="w-5 h-5 text-gray-400" />
               <select
-                value={filterRole}
-                onChange={(e) => setFilterRole(e.target.value)}
+                value={filters.role?.[0] || 'all'}
+                onChange={(e) => setFilters({ ...filters, role: e.target.value === 'all' ? undefined : [e.target.value] })}
                 className="px-4 py-2 bg-detective-bg-secondary border border-gray-600 rounded-lg text-detective-text focus:outline-none focus:ring-2 focus:ring-detective-orange"
               >
                 <option value="all">Todos los roles</option>
@@ -243,8 +249,8 @@ export default function AdminUsersPage() {
             <div className="flex items-center gap-2">
               <Shield className="w-5 h-5 text-gray-400" />
               <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
+                value={filters.status?.[0] || 'all'}
+                onChange={(e) => setFilters({ ...filters, status: e.target.value === 'all' ? undefined : [e.target.value] })}
                 className="px-4 py-2 bg-detective-bg-secondary border border-gray-600 rounded-lg text-detective-text focus:outline-none focus:ring-2 focus:ring-detective-orange"
               >
                 <option value="all">Todos los estados</option>
@@ -252,6 +258,15 @@ export default function AdminUsersPage() {
                 <option value="inactive">Inactivos</option>
               </select>
             </div>
+
+            {/* Refresh Button */}
+            <DetectiveButton
+              variant="secondary"
+              onClick={() => fetchUsers()}
+              disabled={loading}
+            >
+              <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+            </DetectiveButton>
 
             {/* Add User Button */}
             <DetectiveButton variant="primary" onClick={() => alert('Crear usuario - Próximamente')}>
@@ -261,103 +276,150 @@ export default function AdminUsersPage() {
           </div>
         </DetectiveCard>
 
+        {/* Error Message */}
+        {error && (
+          <DetectiveCard>
+            <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4 text-red-500">
+              <p className="font-semibold">Error al cargar usuarios:</p>
+              <p>{error}</p>
+            </div>
+          </DetectiveCard>
+        )}
+
         {/* Users Table */}
         <DetectiveCard>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-700">
-                  <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
-                    Usuario
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
-                    Email
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
-                    Rol
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
-                    Estado
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
-                    Institución
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
-                    Último acceso
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredUsers.map((usr) => (
-                  <tr key={usr.id} className="border-b border-gray-700 hover:bg-detective-bg-secondary transition-colors">
-                    <td className="px-4 py-3 text-sm text-detective-text font-medium">
-                      {usr.name}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-detective-text-secondary flex items-center gap-2">
-                      <Mail className="w-4 h-4" />
-                      {usr.email}
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      {getRoleBadge(usr.role)}
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      {getStatusBadge(usr.status)}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-detective-text-secondary">
-                      {usr.institution}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-detective-text-secondary">
-                      {usr.lastLogin}
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      <div className="flex items-center gap-2">
-                        <button
-                          className="p-1 hover:bg-detective-bg rounded text-blue-400 hover:text-blue-300"
-                          onClick={() => alert(`Editar usuario: ${usr.name}`)}
-                          title="Editar"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        {usr.status === 'active' ? (
-                          <button
-                            className="p-1 hover:bg-detective-bg rounded text-red-400 hover:text-red-300"
-                            onClick={() => alert(`Desactivar usuario: ${usr.name}`)}
-                            title="Desactivar"
-                          >
-                            <XCircle className="w-4 h-4" />
-                          </button>
-                        ) : (
-                          <button
-                            className="p-1 hover:bg-detective-bg rounded text-green-400 hover:text-green-300"
-                            onClick={() => alert(`Activar usuario: ${usr.name}`)}
-                            title="Activar"
-                          >
-                            <CheckCircle className="w-4 h-4" />
-                          </button>
-                        )}
-                        <button
-                          className="p-1 hover:bg-detective-bg rounded text-red-400 hover:text-red-300"
-                          onClick={() => alert(`Eliminar usuario: ${usr.name}`)}
-                          title="Eliminar"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {loading && users.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-detective-orange"></div>
+              <p className="mt-4 text-detective-text-secondary">Cargando usuarios...</p>
+            </div>
+          ) : (
+            <>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-gray-700">
+                      <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
+                        Usuario
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
+                        Email
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
+                        Rol
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
+                        Estado
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
+                        Institución
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
+                        Último acceso
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-detective-text-secondary">
+                        Acciones
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.map((usr) => (
+                      <tr key={usr.id} className="border-b border-gray-700 hover:bg-detective-bg-secondary transition-colors">
+                        <td className="px-4 py-3 text-sm text-detective-text font-medium">
+                          {usr.full_name || usr.display_name || usr.email}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-detective-text-secondary flex items-center gap-2">
+                          <Mail className="w-4 h-4" />
+                          {usr.email}
+                        </td>
+                        <td className="px-4 py-3 text-sm">
+                          {getRoleBadge(usr.role)}
+                        </td>
+                        <td className="px-4 py-3 text-sm">
+                          {getStatusBadge(usr.status)}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-detective-text-secondary">
+                          {usr.organizationName || usr.organizationId || 'N/A'}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-detective-text-secondary">
+                          {usr.lastLogin ? new Date(usr.lastLogin).toLocaleDateString('es-ES') : 'Nunca'}
+                        </td>
+                        <td className="px-4 py-3 text-sm">
+                          <div className="flex items-center gap-2">
+                            <button
+                              className="p-1 hover:bg-detective-bg rounded text-blue-400 hover:text-blue-300"
+                              onClick={() => alert(`Editar usuario: ${usr.full_name || usr.email} - Próximamente`)}
+                              title="Editar"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </button>
+                            {usr.status === 'active' ? (
+                              <button
+                                className="p-1 hover:bg-detective-bg rounded text-red-400 hover:text-red-300"
+                                onClick={() => handleSuspendUser(usr.id, usr.full_name || usr.email)}
+                                title="Suspender"
+                                disabled={loading}
+                              >
+                                <XCircle className="w-4 h-4" />
+                              </button>
+                            ) : (
+                              <button
+                                className="p-1 hover:bg-detective-bg rounded text-green-400 hover:text-green-300"
+                                onClick={() => handleUnsuspendUser(usr.id, usr.full_name || usr.email)}
+                                title="Reactivar"
+                                disabled={loading}
+                              >
+                                <CheckCircle className="w-4 h-4" />
+                              </button>
+                            )}
+                            <button
+                              className="p-1 hover:bg-detective-bg rounded text-red-400 hover:text-red-300"
+                              onClick={() => handleDeleteUser(usr.id, usr.full_name || usr.email)}
+                              title="Eliminar"
+                              disabled={loading}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
 
-            {filteredUsers.length === 0 && (
-              <div className="text-center py-8 text-detective-text-secondary">
-                No se encontraron usuarios que coincidan con los filtros
+                {users.length === 0 && !loading && (
+                  <div className="text-center py-8 text-detective-text-secondary">
+                    No se encontraron usuarios que coincidan con los filtros
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="mt-4 flex items-center justify-between border-t border-gray-700 pt-4">
+                  <div className="text-sm text-detective-text-secondary">
+                    Página {currentPage} de {totalPages} ({totalUsers} usuarios totales)
+                  </div>
+                  <div className="flex gap-2">
+                    <DetectiveButton
+                      variant="secondary"
+                      onClick={prevPage}
+                      disabled={currentPage === 1 || loading}
+                    >
+                      Anterior
+                    </DetectiveButton>
+                    <DetectiveButton
+                      variant="secondary"
+                      onClick={nextPage}
+                      disabled={currentPage === totalPages || loading}
+                    >
+                      Siguiente
+                    </DetectiveButton>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </DetectiveCard>
       </div>
     </AdminLayout>

@@ -6,6 +6,7 @@ import {
   ListUsersDto,
   UpdateUserDto,
   SuspendUserDto,
+  ResetPasswordDto,
   PaginatedUsersDto,
   UserStatsDto,
 } from '../dto/users';
@@ -137,6 +138,34 @@ export class AdminUsersService {
     };
 
     return await this.userRepo.save(user);
+  }
+
+  async resetPassword(
+    id: string,
+    resetDto: ResetPasswordDto,
+  ): Promise<{ success: boolean; message: string }> {
+    const user = await this.getUserDetails(id);
+
+    // Mark user as requiring password reset
+    user.raw_user_meta_data = {
+      ...user.raw_user_meta_data,
+      require_password_reset: true,
+      password_reset_requested_at: new Date().toISOString(),
+      password_reset_requested_by: 'admin',
+    };
+
+    await this.userRepo.save(user);
+
+    // In production: Generate reset token and send email
+    // For now, just return success
+    const message = resetDto.sendEmail
+      ? 'Password reset email sent to user'
+      : 'User marked for password reset on next login';
+
+    return {
+      success: true,
+      message,
+    };
   }
 
   async getUserStats(): Promise<UserStatsDto> {

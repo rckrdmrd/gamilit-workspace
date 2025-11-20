@@ -353,11 +353,61 @@ export async function getUsers(
   filters?: UserFilters
 ): Promise<PaginatedResponse<User>> {
   try {
-    const response = await apiClient.get<ApiResponse<PaginatedResponse<User>>>(
+    // FE-062: Transform pagination params to match backend ListUsersDto
+    // Backend expects 'limit' not 'pageSize', and doesn't support sortBy/sortOrder yet
+    let transformedFilters: any = undefined;
+    if (filters) {
+      const { pageSize, sortBy, sortOrder, ...rest } = filters as any;
+      transformedFilters = {
+        ...rest,
+        ...(pageSize && { limit: pageSize }),  // Map pageSize → limit
+      };
+    }
+
+    // Backend returns different structure than expected
+    // Need to check what actually comes back
+    const response = await apiClient.get<ApiResponse<any>>(
       API_ENDPOINTS.admin.users.list,
-      { params: filters }
+      { params: transformedFilters }
     );
-    return response.data.data;
+
+    const backendData = response.data.data;
+
+    // FE-062: Handle different response structures from backend
+    // Backend may return either a direct array or an object with data property
+    let transformed: PaginatedResponse<User>;
+
+    if (Array.isArray(backendData)) {
+      // Backend returns array directly (no pagination info)
+      transformed = {
+        items: backendData,
+        pagination: {
+          page: 1,
+          totalPages: 1,
+          totalItems: backendData.length,
+          limit: backendData.length,
+        }
+      };
+    } else if (backendData && typeof backendData === 'object') {
+      // Backend returns object with data property
+      transformed = {
+        items: backendData.data || [],
+        pagination: {
+          page: backendData.page || 1,
+          totalPages: backendData.total_pages || 0,
+          totalItems: backendData.total || 0,
+          limit: backendData.limit || 20,
+        }
+      };
+    } else {
+      // Fallback for unexpected response structure
+      transformed = {
+        items: [],
+        pagination: { page: 1, totalPages: 0, totalItems: 0, limit: 20 }
+      };
+    }
+
+    return transformed;
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch users');
   }

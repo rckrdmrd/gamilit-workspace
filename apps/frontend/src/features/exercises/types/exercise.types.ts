@@ -69,11 +69,15 @@ export interface ExerciseHint {
 
 /**
  * Exercise content (varies by type)
+ * ⚠️ FE-059: correct_answer is NEVER sent by backend (sanitized for security)
  */
 export interface ExerciseContent {
   question: string;
   options?: MultipleChoiceOption[]; // For multiple_choice
-  correct_answer?: string | string[]; // For true_false, fill_blank
+  /**
+   * @deprecated Backend sanitizes this field - never present
+   */
+  correct_answer?: never;
   explanation?: string;
   media_url?: string;
   media_type?: 'image' | 'video' | 'audio';
@@ -81,12 +85,16 @@ export interface ExerciseContent {
 
 /**
  * Multiple choice option
+ * ⚠️ FE-059: is_correct is NEVER sent by backend (sanitized for security)
  */
 export interface MultipleChoiceOption {
   id: string;
   label: string; // A, B, C, D
   text: string;
-  is_correct: boolean;
+  /**
+   * @deprecated Backend sanitizes this field - never present
+   */
+  is_correct?: never;
 }
 
 /**

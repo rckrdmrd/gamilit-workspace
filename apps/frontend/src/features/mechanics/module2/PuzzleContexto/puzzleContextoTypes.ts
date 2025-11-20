@@ -1,10 +1,19 @@
+/**
+ * ⚠️ FE-059: correctPosition is NEVER sent by backend (sanitized for security)
+ */
 export interface Fragment {
   id: string;
   label: string; // A, B, C, D
   text: string;
-  correctPosition: number;
+  /**
+   * @deprecated Backend sanitizes this field - never present. Validation is done server-side.
+   */
+  correctPosition?: never;
 }
 
+/**
+ * ⚠️ FE-059: correctOrder is NEVER sent by backend (sanitized for security)
+ */
 export interface PuzzleContextoData {
   id: string;
   title: string;
@@ -13,7 +22,10 @@ export interface PuzzleContextoData {
   instructions?: string;
   completeInference: string;
   fragments: Fragment[];
-  correctOrder: string[];
+  /**
+   * @deprecated Backend sanitizes this field - never present. Validation is done server-side.
+   */
+  correctOrder?: never;
 }
 
 export interface ExerciseProgressUpdate {

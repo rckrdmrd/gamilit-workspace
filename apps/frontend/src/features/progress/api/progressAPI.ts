@@ -361,29 +361,30 @@ const mockGetModuleProgress = async (
  * Submit exercise answers
  *
  * @param exerciseId - Exercise ID
- * @param request - Submission request payload
+ * @param userId - User ID
+ * @param answers - User answers in exercise-specific format
  * @returns Submission result with score, feedback, and rewards
  */
 export const submitExercise = async (
   exerciseId: string,
-  request: Omit<SubmitExerciseRequest, 'exerciseId'>
+  userId: string,
+  answers: unknown
 ): Promise<SubmitExerciseResponse> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
-      return await mockSubmitExercise({ ...request, exerciseId });
+      return await mockSubmitExercise({ exerciseId, userId, answers, startedAt: Date.now() });
     }
 
-    // Transform frontend submission to backend format
+    // Backend endpoint: POST /api/v1/progress/submissions/submit
+    // Expected format: { userId, exerciseId, answers }
     const backendPayload = {
-      answers: request.answers,
-      startedAt: request.startedAt,
-      hintsUsed: request.hintsUsed || 0,
-      powerupsUsed: request.powerupsUsed || [],
-      sessionId: request.sessionId,
+      userId,
+      exerciseId,
+      answers,
     };
 
     const { data } = await apiClient.post<ApiResponse<SubmitExerciseResponse>>(
-      `/educational/exercises/${exerciseId}/submit`,
+      '/api/v1/progress/submissions/submit',
       backendPayload
     );
 

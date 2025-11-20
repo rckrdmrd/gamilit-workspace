@@ -168,11 +168,11 @@ Los ML Coins son el núcleo del sistema de gamificación de Gamilit:
 #### 1.2 Por Progresión y Engagement
 
 **Subida de Rango** (`earned_rank`)
-- **Monto:** 100-1000 ML Coins (según rango alcanzado)
-  - Ajaw → Nacom: 100 coins
-  - Nacom → Ah K'in: 250 coins
-  - Ah K'in → Halach Uinic: 500 coins
-  - Halach Uinic → K'uk'ulkan: 1000 coins
+- **Monto:** 100-1000 ML Coins (según rango alcanzado) ✅ IMPLEMENTADO
+  - Ajaw → Nacom: 100 coins (al alcanzar 500 XP)
+  - Nacom → Ah K'in: 250 coins (al alcanzar 1,000 XP)
+  - Ah K'in → Halach Uinic: 500 coins (al alcanzar 1,500 XP)
+  - Halach Uinic → K'uk'ulkan: 1,000 coins (al alcanzar 2,250 XP)
 - **Multiplicador:** NO aplica (recompensa fija)
 - **Trigger:** Al alcanzar XP requerido para nuevo rango
 
@@ -264,21 +264,36 @@ Los ML Coins son el núcleo del sistema de gamificación de Gamilit:
 
 ### Multiplicadores por Rango Maya
 
-| Rango | Nivel | Multiplicador | Impacto |
-|-------|-------|---------------|---------|
-| **Ajaw** | 1 | 1.00x | Sin bonus (baseline) |
-| **Nacom** | 2 | 1.25x | +25% ML Coins |
-| **Ah K'in** | 3 | 1.50x | +50% ML Coins |
-| **Halach Uinic** | 4 | 1.75x | +75% ML Coins |
-| **K'uk'ulkan** | 5 | 2.00x | +100% ML Coins (doble) |
+⚠️ **NOTA IMPORTANTE (2025-11-19):** Los multiplicadores ML Coins descritos aquí están **PENDIENTES DE IMPLEMENTACIÓN**.
 
-**Justificación:**
-- Recompensa progresión a largo plazo
-- Veteranos ganan más por misma actividad
-- Incentivo para subir de rango
-- Crea diferenciación entre niveles de maestría
+| Rango | Nivel | Multiplicador ML Coins (Documentado) | Multiplicador XP (Implementado) | Estado |
+|-------|-------|--------------------------------------|--------------------------------|--------|
+| **Ajaw** | 1 | 1.00x | 1.00x | ✅ XP: Implementado |
+| **Nacom** | 2 | 1.25x (+25%) | 1.10x (+10%) | ❌ ML: No implementado |
+| **Ah K'in** | 3 | 1.50x (+50%) | 1.15x (+15%) | ❌ ML: No implementado |
+| **Halach Uinic** | 4 | 1.75x (+75%) | 1.20x (+20%) | ❌ ML: No implementado |
+| **K'uk'ulkan** | 5 | 2.00x (+100%) | 1.25x (+25%) | ❌ ML: No implementado |
 
-**Ver:** [ET-GAM-003: Rangos Maya](../../especificaciones/ET-GAM-003-rangos-maya.md) para detalles completos.
+**Estado Actual:**
+- ✅ **Multiplicadores XP:** Implementados y funcionales (1.00x - 1.25x)
+- ❌ **Multiplicadores ML Coins:** Documentados pero NO implementados en DB v2.0
+- ✅ **Bonus ML Coins (único por promoción):** Implementados (100-1000 ML)
+
+**Funcionalidad NO Implementada:**
+```sql
+-- ❌ Esta columna NO existe en la tabla maya_ranks:
+ml_coins_multiplier NUMERIC(3,2)
+
+-- ✅ Lo que SÍ existe:
+ml_coins_bonus INTEGER  -- Bonus único al promover
+xp_multiplier NUMERIC(3,2)  -- Multiplicador XP
+```
+
+**Decisión Pendiente:** Product Owner debe decidir si implementar multiplicadores ML Coins o simplificar economía manteniendo solo bonus únicos.
+
+**Ver:**
+- [ET-GAM-003: Rangos Maya](../../especificaciones/ET-GAM-003-rangos-maya.md) para multiplicadores XP implementados
+- [docs/04-fase-backlog/FUNCIONALIDADES-GAMIFICACION-PENDIENTES.md](../../../../04-fase-backlog/FUNCIONALIDADES-GAMIFICACION-PENDIENTES.md) para análisis detallado
 
 ### Earning vs Spending Estimado
 

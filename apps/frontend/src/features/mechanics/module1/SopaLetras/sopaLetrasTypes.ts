@@ -33,11 +33,15 @@ export interface WordPosition {
 
 /**
  * Contenido de Sopa de Letras (mapea a exercise.content en BD)
+ * ⚠️ FE-059: wordsPositions is NEVER sent by backend (sanitized for security)
  */
 export interface SopaLetrasContent {
   grid: string[][];  // Grid estático (si useStaticGrid=true) o generado
   words: string[];  // Lista de palabras a buscar
-  wordsPositions?: WordPosition[];  // Posiciones conocidas (opcional)
+  /**
+   * @deprecated Backend sanitizes this field - never present. Validation is done server-side.
+   */
+  wordsPositions?: never;
 }
 
 /**

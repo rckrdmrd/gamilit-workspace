@@ -147,23 +147,41 @@ export class UserStatsService {
   private async checkRankPromotion(stats: UserStats): Promise<void> {
     const currentRankIndex = this.RANKS.indexOf(stats.current_rank);
 
-    // Si ya está en el rango máximo, no hace nada
-    if (currentRankIndex >= this.RANKS.length - 1) {
+    // Calcular threshold del rank actual y siguiente
+    const currentRankMinLevel = currentRankIndex * 5;
+    const nextRankMinLevel = (currentRankIndex + 1) * 5;
+
+    // FIX: Si el usuario está por debajo del nivel mínimo del rank actual, degradar
+    if (stats.level < currentRankMinLevel && currentRankIndex > 0) {
+      // Encontrar el rank correcto para el nivel actual
+      const correctRankIndex = Math.floor(stats.level / 5);
+      stats.current_rank = this.RANKS[correctRankIndex];
+
+      // Recalcular con el rank correcto
+      const newCurrentRankMinLevel = correctRankIndex * 5;
+      const newNextRankMinLevel = (correctRankIndex + 1) * 5;
+      stats.rank_progress = Math.max(0,
+        ((stats.level - newCurrentRankMinLevel) / (newNextRankMinLevel - newCurrentRankMinLevel)) * 100
+      );
       return;
     }
 
-    // Cada 5 niveles, promoción automática (ajustable)
-    const levelThreshold = (currentRankIndex + 1) * 5;
+    // Si ya está en el rango máximo, no hace nada
+    if (currentRankIndex >= this.RANKS.length - 1) {
+      stats.rank_progress = 100; // Máximo rank alcanzado
+      return;
+    }
 
-    if (stats.level >= levelThreshold) {
+    // Verificar si debe ser promovido
+    if (stats.level >= nextRankMinLevel) {
       stats.current_rank = this.RANKS[currentRankIndex + 1];
       stats.rank_progress = 0;
     } else {
       // Calcular progreso hacia el siguiente rango
-      const previousThreshold = currentRankIndex * 5;
-      const nextThreshold = levelThreshold;
-      stats.rank_progress =
-        ((stats.level - previousThreshold) / (nextThreshold - previousThreshold)) * 100;
+      // FIX: Usar Math.max para evitar valores negativos
+      stats.rank_progress = Math.max(0,
+        ((stats.level - currentRankMinLevel) / (nextRankMinLevel - currentRankMinLevel)) * 100
+      );
     }
   }
 

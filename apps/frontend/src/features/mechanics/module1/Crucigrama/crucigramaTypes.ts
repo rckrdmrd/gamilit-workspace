@@ -10,12 +10,18 @@ export interface CrucigramaCell {
   userInput?: string;
 }
 
+/**
+ * ⚠️ FE-059: answer field is NEVER sent by backend (sanitized for security)
+ */
 export interface CrucigramaClue {
   id: string;
   number: number;
   direction: 'horizontal' | 'vertical';
   clue: string;
-  answer: string;
+  /**
+   * @deprecated Backend sanitizes this field - never present. Validation is done server-side.
+   */
+  answer?: never;
   startRow: number;
   startCol: number;
 }

@@ -359,6 +359,166 @@ $$;
 COMMENT ON FUNCTION educational_content.validate_exercise_structure IS 'Valida que estructura JSONB sea correcta según mechanic';
 ```
 
+### 4. Validadores de Ejercicios (Funciones PostgreSQL)
+
+GAMILIT implementa un **sistema robusto de validación de respuestas** mediante funciones PostgreSQL especializadas. Cada tipo de ejercicio tiene su validador específico que verifica la corrección de las respuestas del estudiante.
+
+#### 4.1. Ubicación y Estructura
+
+**Ubicación:** `apps/database/ddl/schemas/educational_content/functions/`
+
+**Firma estándar de validadores:**
+
+```sql
+CREATE OR REPLACE FUNCTION educational_content.validate_[tipo](
+    p_solution JSONB,
+    p_submitted_answer JSONB,
+    p_max_points INTEGER,
+    p_allow_partial_credit BOOLEAN DEFAULT true,
+    OUT is_correct BOOLEAN,
+    OUT score INTEGER,
+    OUT feedback TEXT,
+    OUT details JSONB
+)
+```
+
+Todos los validadores retornan el mismo formato de respuesta:
+- `is_correct`: Indica si la respuesta es completamente correcta
+- `score`: Puntuación obtenida (0 a p_max_points)
+- `feedback`: Mensaje de retroalimentación para el estudiante
+- `details`: JSONB con detalles adicionales (conexiones correctas, errores, etc.)
+
+#### 4.2. Validadores Módulo 1: Comprensión Literal
+
+| # | Tipo de Ejercicio | Validador | Archivo | Formato Entrada | Descripción |
+|---|-------------------|-----------|---------|-----------------|-------------|
+| 1 | crucigrama | `validate_crucigrama()` | 03-validate_crucigrama.sql | `{"clues": {"h1": "sorbona", "v1": "nobel"}}` | Compara respuestas por ID de pista |
+| 2 | linea_tiempo | `validate_timeline()` | 04-validate_timeline.sql | `{"events": ["e1", "e2", "e3"]}` | Valida orden cronológico de eventos |
+| 3 | sopa_letras | `validate_word_search()` | 05-validate_word_search.sql | `{"words": ["MARIE", "CURIE"]}` | Verifica palabras encontradas |
+| 4 | completar_espacios | `validate_fill_in_blank()` | 06-validate_fill_in_blank.sql | `{"blanks": {"b1": "varsovia"}}` | Compara con fuzzy matching (85%) |
+| 5 | verdadero_falso | `validate_true_false()` | 07-validate_true_false.sql | `{"statements": {"s1": true, "s2": false}}` | Compara valores booleanos |
+
+#### 4.3. Validadores Módulo 2: Comprensión Inferencial
+
+| # | Tipo de Ejercicio | Validador | Archivo | Formato Entrada | Descripción |
+|---|-------------------|-----------|---------|-----------------|-------------|
+| 6 | detective_textual | ✨ `validate_detective_connections()` | 20-validate_detective_connections.sql | `{"connections": [{"from": "ev1", "to": "ev2", "relationship": "..."}]}` | **NUEVO:** Valida conexiones entre evidencias con keywords |
+| 7 | prediccion_narrativa | ✨ `validate_prediction_scenarios()` | 21-validate_prediction_scenarios.sql | `{"scenarios": {"s1": "pred_a", "s2": "pred_b"}}` | **NUEVO:** Valida predicciones por escenario |
+| 8 | construccion_hipotesis | ✨ `validate_cause_effect_matching()` | 22-validate_cause_effect_matching.sql | `{"causes": {"c1": ["cons1", "cons2"]}}` | **NUEVO:** Valida matching causa-efecto drag & drop |
+| 9 | puzzle_contexto | `validate_puzzle_contexto()` | 13-validate_puzzle_contexto.sql | `{"questions": {"q1": "opt_a", "q2": "opt_b"}}` | Múltiple choice con inferencias |
+| 10 | rueda_inferencias | `validate_rueda_inferencias()` | 14-validate_rueda_inferencias.sql | `{"inferences": {"inf1": "conclusion1"}}` | Matching de inferencias |
+
+✨ **Validadores agregados en DB-117/FE-059 (2025-11-19)** para resolver discrepancias entre frontend y especificaciones originales.
+
+**Nota:** Los validadores antiguos (`validate_detective_textual`, `validate_prediccion_narrativa`, `validate_construccion_hipotesis`) aún existen en el código pero `exercise_validation_config` ahora apunta a los nuevos validadores.
+
+#### 4.4. Validadores Módulo 3: Lectura Crítica
+
+| # | Tipo de Ejercicio | Validador | Archivo | Formato Entrada | Descripción |
+|---|-------------------|-----------|---------|-----------------|-------------|
+| 11 | tribunal_opiniones | `validate_tribunal_opiniones()` | 15-validate_tribunal_opiniones.sql | `{"opinion": "texto libre"}` | Validación heurística (keywords + longitud) |
+| 12 | debate_digital | `validate_debate_digital()` | 16-validate_debate_digital.sql | `{"debate": "texto libre"}` | Validación heurística |
+| 13 | analisis_fuentes | `validate_analisis_fuentes()` | 17-validate_analisis_fuentes.sql | `{"questions": {...}}` | Preguntas de análisis crítico |
+| 14 | podcast_argumentativo | `validate_podcast_argumentativo()` | 18-validate_podcast_argumentativo.sql | `{"audio_url": "...", "duration": 180}` | Valida duración y formato de audio |
+| 15 | matriz_perspectivas | `validate_matriz_perspectivas()` | 19-validate_matriz_perspectivas.sql | `{"matrix": {"cell1": "...", "cell2": "..."}}` | Verifica celdas completadas |
+
+#### 4.5. Configuración de Validadores
+
+Los validadores se configuran en la tabla `educational_content.exercise_validation_config`:
+
+```sql
+CREATE TABLE educational_content.exercise_validation_config (
+    exercise_type educational_content.exercise_type PRIMARY KEY,
+    validation_function VARCHAR(100) NOT NULL,  -- Nombre de la función a llamar
+    case_sensitive BOOLEAN DEFAULT false,
+    allow_partial_credit BOOLEAN DEFAULT true,
+    fuzzy_matching_threshold DECIMAL(3,2),      -- 0.85 = 85% similaridad
+    normalize_text BOOLEAN DEFAULT true,
+    special_rules JSONB,                        -- Reglas específicas por tipo
+    default_max_points INTEGER DEFAULT 100,
+    default_passing_score INTEGER DEFAULT 70,
+    description TEXT,
+    examples JSONB,                             -- Ejemplos de uso
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT gamilit.now_mexico(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT gamilit.now_mexico()
+);
+```
+
+**Ejemplo de configuración:** Detective Textual
+
+```sql
+INSERT INTO educational_content.exercise_validation_config (
+    exercise_type,
+    validation_function,
+    allow_partial_credit,
+    special_rules,
+    description
+) VALUES (
+    'detective_textual',
+    'validate_detective_connections',  -- Función a llamar
+    true,                               -- Permite crédito parcial
+    '{
+        "minCorrectConnections": 2,
+        "allowPartialCredit": true,
+        "validateKeywords": true
+    }'::jsonb,
+    'Validación de detective textual: conexión de evidencias en investigación tipo tablero detective'
+);
+```
+
+#### 4.6. Función Dispatcher: validate_and_audit()
+
+Todos los validadores se invocan a través de `validate_and_audit()` que:
+
+1. **Recupera el ejercicio** y su configuración de validación
+2. **Ejecuta el validador específico** según `validation_function` en la config
+3. **Crea registro de auditoría** en `exercise_validation_audit`
+4. **Retorna resultado** con feedback detallado
+
+**Ubicación:** `apps/database/ddl/schemas/educational_content/functions/20-validate_and_audit.sql`
+
+**Flujo de validación:**
+
+```
+Frontend → Backend → validate_and_audit(exercise_id, user_id, answer)
+                              ↓
+                   exercise_validation_config (obtener validation_function)
+                              ↓
+                   CASE validation_function
+                      WHEN 'validate_detective_connections' → ejecutar validador
+                      WHEN 'validate_prediction_scenarios' → ejecutar validador
+                      WHEN 'validate_cause_effect_matching' → ejecutar validador
+                      ...
+                              ↓
+                   Retornar (is_correct, score, feedback, details)
+```
+
+**Invocación desde Backend:**
+
+```typescript
+const result = await db.query(`
+  SELECT * FROM educational_content.validate_and_audit(
+    $1::UUID,  -- exercise_id
+    $2::UUID,  -- user_id
+    $3::JSONB  -- submitted_answer
+  )
+`, [exerciseId, userId, submittedAnswer]);
+
+// result = { is_correct: true, score: 100, feedback: "...", details: {...} }
+```
+
+#### 4.7. Seeds de Testing
+
+**Archivo:** `apps/database/seeds/dev/educational_content/10-test-nuevos-validadores-FE-059.sql`
+
+Contiene 3 ejercicios de prueba (order_index 101-103) para validar los nuevos validadores:
+
+1. **Detective Textual (101):** Investigación de descubrimientos de Marie Curie con 4 evidencias
+2. **Predicción Narrativa (102):** Decisiones históricas de Marie Curie en 4 escenarios
+3. **Causa-Efecto (103):** Impacto de los descubrimientos de Curie con 5 causas y 15 consecuencias
+
+**Referencia:** DB-117, DB-123, FE-059
+
 ---
 
 ## 🔧 Implementación Backend (NestJS)

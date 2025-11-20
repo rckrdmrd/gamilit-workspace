@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException, Logger } from '@nestjs/common';
+import { InjectRepository, InjectEntityManager } from '@nestjs/typeorm';
+import { Repository, EntityManager } from 'typeorm';
 import { ExerciseAttempt } from '../entities';
 import { CreateExerciseAttemptDto } from '../dto';
 import { DB_SCHEMAS } from '@shared/constants/database.constants';
@@ -28,6 +28,8 @@ export class ExerciseAttemptService {
     private readonly attemptRepo: Repository<ExerciseAttempt>,
     private readonly mlCoinsService: MLCoinsService,
     private readonly userStatsService: UserStatsService,
+    @InjectEntityManager('progress')
+    private readonly entityManager: EntityManager,
   ) {}
 
   /**
@@ -128,11 +130,20 @@ export class ExerciseAttemptService {
     attempt.submitted_answers = answers;
     attempt.submitted_at = new Date();
 
-    // TODO: Implementar lógica de scoring real basada en tipo de ejercicio
-    // Por ahora, este es un placeholder
-    const { score, isCorrect } = this.calculateScore(answers, attempt);
+    // FE-059: Use SQL validate_and_audit() for scoring (replaces placeholder)
+    const { score, isCorrect, feedback, details, auditId } = await this.calculateScore(
+      attempt.user_id,
+      attempt.exercise_id,
+      answers,
+      attempt.attempt_number
+    );
+
     attempt.score = score;
     attempt.is_correct = isCorrect;
+
+    // FE-059: Audit ID is stored in educational_content.exercise_validation_audit
+    // Can be queried using: exercise_id + user_id + attempt_number
+    this.logger.log(`[FE-059] Validation audit saved with ID: ${auditId}`);
 
     // Calcular rewards (XP y ML Coins)
     if (isCorrect) {
@@ -151,21 +162,74 @@ export class ExerciseAttemptService {
   }
 
   /**
-   * Calcula el score de un intento (placeholder - debe ser implementado según tipo de ejercicio)
+   * FE-059: Calcula el score usando PostgreSQL validate_and_audit()
+   *
+   * @description Reemplaza el placeholder que siempre retornaba 100/true.
+   * Ahora usa el sistema de validación centralizado en SQL con auditoría automática.
+   *
+   * @param userId - ID del usuario (profiles.id)
+   * @param exerciseId - ID del ejercicio
    * @param answers - Respuestas enviadas
-   * @param attempt - Intento actual
-   * @returns Score y si es correcto
+   * @param attemptNumber - Número de intento
+   * @returns Score, correctness, feedback, details, y audit ID
    */
-  private calculateScore(
+  private async calculateScore(
+    userId: string,
+    exerciseId: string,
     answers: Record<string, any>,
-    attempt: ExerciseAttempt,
-  ): { score: number; isCorrect: boolean } {
-    // Placeholder: lógica simple
-    // En producción, esto debe evaluar según el tipo de ejercicio y respuestas correctas
-    const score = 100; // Por ahora, asumir score perfecto
-    const isCorrect = score >= 60;
+    attemptNumber: number,
+  ): Promise<{
+    score: number;
+    isCorrect: boolean;
+    feedback: string;
+    details: any;
+    auditId: string;
+  }> {
+    this.logger.log(`[FE-059] Validating attempt #${attemptNumber} for exercise ${exerciseId}`);
 
-    return { score, isCorrect };
+    // Call PostgreSQL validate_and_audit() function
+    const query = `
+      SELECT * FROM educational_content.validate_and_audit(
+        $1::uuid,    -- exercise_id
+        $2::uuid,    -- user_id
+        $3::jsonb,   -- submitted_answer
+        $4::integer, -- attempt_number
+        $5::jsonb    -- client_metadata
+      )
+    `;
+
+    try {
+      const result = await this.entityManager.query(query, [
+        exerciseId,
+        userId,
+        JSON.stringify(answers),
+        attemptNumber,
+        JSON.stringify({})
+      ]);
+
+      if (!result || result.length === 0) {
+        throw new InternalServerErrorException('Validation function returned no results');
+      }
+
+      const validation = result[0];
+
+      this.logger.log(
+        `[FE-059] Validation result: score=${validation.score}/${validation.max_score}, ` +
+        `correct=${validation.is_correct}, audit_id=${validation.audit_id}`
+      );
+
+      return {
+        score: validation.score,
+        isCorrect: validation.is_correct,
+        feedback: validation.feedback || '',
+        details: validation.details || {},
+        auditId: validation.audit_id
+      };
+    } catch (error) {
+      this.logger.error(`[FE-059] Error calling validate_and_audit():`, error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new InternalServerErrorException(`Exercise validation failed: ${errorMessage}`);
+    }
   }
 
   /**

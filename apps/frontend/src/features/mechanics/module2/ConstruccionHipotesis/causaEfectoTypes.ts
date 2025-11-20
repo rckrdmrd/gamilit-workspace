@@ -15,11 +15,15 @@ export interface Cause {
 
 /**
  * A consequence (right column, draggable)
+ * ⚠️ FE-059: correctCauseIds is NEVER sent by backend (sanitized for security)
  */
 export interface Consequence {
   id: string;
   text: string;
-  correctCauseIds: string[]; // Which causes this consequence belongs to
+  /**
+   * @deprecated Backend sanitizes this field - never present. Validation is done server-side.
+   */
+  correctCauseIds?: never;
 }
 
 /**

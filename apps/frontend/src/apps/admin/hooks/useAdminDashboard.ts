@@ -10,17 +10,21 @@
  * - Alert management (dismiss, view details)
  * - Error handling and loading states
  * - Optimistic updates for better UX
+ *
+ * Updated: 2025-11-19 - Integrated with adminAPI.ts (FE-059)
+ * - Now uses adminAPI.getSystemHealth() and adminAPI.getSystemMetrics()
+ * - Alerts, actions, and activity endpoints not yet implemented in backend
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { apiClient } from '@/services/api/apiClient';
+import * as adminAPI from '@/services/api/adminAPI';
 import type {
   SystemHealth,
   SystemMetrics,
   AdminAction,
   SystemAlert,
   UserActivityData,
-  DashboardStats,
 } from '../types';
 
 export interface UseAdminDashboardResult {
@@ -98,12 +102,11 @@ export function useAdminDashboard(customIntervals?: Partial<RefreshIntervals>): 
 
   /**
    * Fetch system health status
+   * Updated: Now uses adminAPI.getSystemHealth()
    */
   const fetchSystemHealth = useCallback(async (): Promise<void> => {
     try {
-      const response = await apiClient.get<{ success: boolean; data: SystemHealth }>('/admin/health');
-      const data = response.data.success ? response.data.data : response.data as unknown as SystemHealth;
-
+      const data = await adminAPI.getSystemHealth();
       setSystemHealth(data);
       setError(null);
     } catch (err) {
@@ -128,12 +131,11 @@ export function useAdminDashboard(customIntervals?: Partial<RefreshIntervals>): 
 
   /**
    * Fetch system metrics
+   * Updated: Now uses adminAPI.getSystemMetrics()
    */
   const fetchMetrics = useCallback(async (): Promise<void> => {
     try {
-      const response = await apiClient.get<{ success: boolean; data: SystemMetrics }>('/admin/metrics');
-      const data = response.data.success ? response.data.data : response.data as unknown as SystemMetrics;
-
+      const data = await adminAPI.getSystemMetrics();
       setMetrics(data);
       setError(null);
     } catch (err) {
@@ -144,22 +146,25 @@ export function useAdminDashboard(customIntervals?: Partial<RefreshIntervals>): 
 
   /**
    * Fetch recent admin actions
+   * Note: Backend endpoint /admin/actions/recent NOT yet implemented
+   * TODO: Implement in backend or use alternative data source
    */
   const fetchRecentActions = useCallback(async (): Promise<void> => {
     try {
-      const response = await apiClient.get<{ success: boolean; data: AdminAction[] }>('/admin/actions/recent', {
-        params: { limit: 10 },
-      });
-      const data = response.data.success ? response.data.data : response.data as unknown as AdminAction[];
-
-      // Parse timestamps
-      const actions = data.map(action => ({
-        ...action,
-        timestamp: new Date(action.timestamp),
-      }));
-
-      setRecentActions(actions);
+      // Endpoint not implemented - return empty for now
+      setRecentActions([]);
       setError(null);
+
+      // TODO: When backend implements, uncomment:
+      // const response = await apiClient.get<{ success: boolean; data: AdminAction[] }>('/admin/actions/recent', {
+      //   params: { limit: 10 },
+      // });
+      // const data = response.data.success ? response.data.data : response.data as unknown as AdminAction[];
+      // const actions = data.map(action => ({
+      //   ...action,
+      //   timestamp: new Date(action.timestamp),
+      // }));
+      // setRecentActions(actions);
     } catch (err) {
       console.error('Failed to fetch recent actions:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch recent actions');
@@ -168,31 +173,31 @@ export function useAdminDashboard(customIntervals?: Partial<RefreshIntervals>): 
 
   /**
    * Fetch system alerts
+   * Note: Backend endpoint /admin/alerts NOT yet implemented
+   * TODO: Implement in backend or use alternative data source
    */
   const fetchAlerts = useCallback(async (): Promise<void> => {
     try {
-      const response = await apiClient.get<{ success: boolean; data: SystemAlert[] }>('/admin/alerts', {
-        params: { dismissed: false },
-      });
-      const data = response.data.success ? response.data.data : response.data as unknown as SystemAlert[];
-
-      // Parse timestamps and sort by severity and timestamp
-      const parsedAlerts = data.map(alert => ({
-        ...alert,
-        timestamp: new Date(alert.timestamp),
-        dismissedAt: alert.dismissedAt ? new Date(alert.dismissedAt) : undefined,
-      })).sort((a, b) => {
-        // Sort by severity first (high > medium > low)
-        const severityOrder = { high: 3, medium: 2, low: 1 };
-        const severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
-        if (severityDiff !== 0) return severityDiff;
-
-        // Then by timestamp (newest first)
-        return b.timestamp.getTime() - a.timestamp.getTime();
-      });
-
-      setAlerts(parsedAlerts);
+      // Endpoint not implemented - return empty for now
+      setAlerts([]);
       setError(null);
+
+      // TODO: When backend implements, uncomment:
+      // const response = await apiClient.get<{ success: boolean; data: SystemAlert[] }>('/admin/alerts', {
+      //   params: { dismissed: false },
+      // });
+      // const data = response.data.success ? response.data.data : response.data as unknown as SystemAlert[];
+      // const parsedAlerts = data.map(alert => ({
+      //   ...alert,
+      //   timestamp: new Date(alert.timestamp),
+      //   dismissedAt: alert.dismissedAt ? new Date(alert.dismissedAt) : undefined,
+      // })).sort((a, b) => {
+      //   const severityOrder = { high: 3, medium: 2, low: 1 };
+      //   const severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
+      //   if (severityDiff !== 0) return severityDiff;
+      //   return b.timestamp.getTime() - a.timestamp.getTime();
+      // });
+      // setAlerts(parsedAlerts);
     } catch (err) {
       console.error('Failed to fetch alerts:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch alerts');
@@ -201,16 +206,21 @@ export function useAdminDashboard(customIntervals?: Partial<RefreshIntervals>): 
 
   /**
    * Fetch user activity data
+   * Note: Backend endpoint /admin/analytics/user-activity NOT yet implemented
+   * TODO: Implement in backend or use alternative data source
    */
   const fetchUserActivity = useCallback(async (): Promise<void> => {
     try {
-      const response = await apiClient.get<{ success: boolean; data: UserActivityData[] }>('/admin/analytics/user-activity', {
-        params: { days: 7 },
-      });
-      const data = response.data.success ? response.data.data : response.data as unknown as UserActivityData[];
-
-      setUserActivity(data);
+      // Endpoint not implemented - return empty for now
+      setUserActivity([]);
       setError(null);
+
+      // TODO: When backend implements, uncomment:
+      // const response = await apiClient.get<{ success: boolean; data: UserActivityData[] }>('/admin/analytics/user-activity', {
+      //   params: { days: 7 },
+      // });
+      // const data = response.data.success ? response.data.data : response.data as unknown as UserActivityData[];
+      // setUserActivity(data);
     } catch (err) {
       console.error('Failed to fetch user activity:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch user activity');

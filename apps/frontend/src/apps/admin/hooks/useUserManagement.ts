@@ -3,15 +3,17 @@
  *
  * Comprehensive hook for user management operations.
  * Handles CRUD operations, bulk actions, filtering, and pagination.
+ *
+ * Updated: 2025-11-19 - Integrated with adminAPI.ts (FE-059)
  */
 
 import { useState, useCallback } from 'react';
 import { apiClient } from '@/services/api/apiClient';
+import * as adminAPI from '@/services/api/adminAPI';
 import type {
   SystemUser,
   UserManagementFilters,
   PaginationParams,
-  PaginatedResponse,
   BulkActionResult,
 } from '../types';
 
@@ -82,31 +84,32 @@ export function useUserManagement(): UseUserManagementResult {
 
   /**
    * Fetch users with filters and pagination
+   * Updated: Now uses adminAPI.getUsers() instead of direct apiClient call
+   * Fixed: Uses items/pagination structure from PaginatedResponse
+   * Fixed FE-062: Removed pagination from deps to prevent infinite loop
    */
   const fetchUsers = useCallback(async (params?: Partial<PaginationParams>): Promise<void> => {
     setLoading(true);
     setError(null);
 
     try {
+      // FE-062: Use DEFAULT_PAGINATION as base instead of state to prevent circular dependency
       const queryParams = {
-        ...pagination,
+        ...DEFAULT_PAGINATION,
         ...params,
         ...filters,
       };
 
-      const response = await apiClient.get<{ success: boolean; data: PaginatedResponse<SystemUser> }>(
-        '/admin/users',
-        { params: queryParams }
-      );
+      // Use adminAPI instead of direct apiClient call
+      const response = await adminAPI.getUsers(queryParams);
 
-      const data = response.data.success ? response.data.data : response.data as unknown as PaginatedResponse<SystemUser>;
-
-      setUsers(data.data);
-      setTotalUsers(data.total);
+      // adminAPI returns { items: T[], pagination: {...} }
+      setUsers(response.items);
+      setTotalUsers(response.pagination.totalItems);
       setPagination(prev => ({
         ...prev,
         ...params,
-        page: data.page,
+        page: response.pagination.page,
       }));
     } catch (err) {
       console.error('Failed to fetch users:', err);
@@ -114,7 +117,7 @@ export function useUserManagement(): UseUserManagementResult {
     } finally {
       setLoading(false);
     }
-  }, [filters, pagination]);
+  }, [filters]);
 
   // ============================================================================
   // SELECTION MANAGEMENT
@@ -150,6 +153,7 @@ export function useUserManagement(): UseUserManagementResult {
 
   /**
    * Suspend a user
+   * Updated: Now uses adminAPI.suspendUser()
    */
   const suspendUser = useCallback(async (userId: string, reason?: string): Promise<void> => {
     try {
@@ -158,7 +162,7 @@ export function useUserManagement(): UseUserManagementResult {
         user.id === userId ? { ...user, status: 'inactive' as const } : user
       ));
 
-      await apiClient.post(`/admin/users/${userId}/suspend`, { reason });
+      await adminAPI.suspendUser(userId);
     } catch (err) {
       console.error('Failed to suspend user:', err);
       // Revert on error
@@ -169,6 +173,7 @@ export function useUserManagement(): UseUserManagementResult {
 
   /**
    * Unsuspend a user
+   * Updated: Now uses adminAPI.unsuspendUser()
    */
   const unsuspendUser = useCallback(async (userId: string): Promise<void> => {
     try {
@@ -177,7 +182,7 @@ export function useUserManagement(): UseUserManagementResult {
         user.id === userId ? { ...user, status: 'active' as const } : user
       ));
 
-      await apiClient.post(`/admin/users/${userId}/unsuspend`);
+      await adminAPI.unsuspendUser(userId);
     } catch (err) {
       console.error('Failed to unsuspend user:', err);
       // Revert on error
@@ -188,6 +193,7 @@ export function useUserManagement(): UseUserManagementResult {
 
   /**
    * Delete a user
+   * Updated: Now uses adminAPI.deleteUser()
    */
   const deleteUser = useCallback(async (userId: string): Promise<void> => {
     try {
@@ -195,7 +201,7 @@ export function useUserManagement(): UseUserManagementResult {
       setUsers(prev => prev.filter(user => user.id !== userId));
       setTotalUsers(prev => prev - 1);
 
-      await apiClient.delete(`/admin/users/${userId}`);
+      await adminAPI.deleteUser(userId);
     } catch (err) {
       console.error('Failed to delete user:', err);
       // Revert on error
@@ -206,6 +212,7 @@ export function useUserManagement(): UseUserManagementResult {
 
   /**
    * Update user role
+   * Updated: Now uses adminAPI.updateUser()
    */
   const updateUserRole = useCallback(async (userId: string, role: string): Promise<void> => {
     try {
@@ -214,7 +221,7 @@ export function useUserManagement(): UseUserManagementResult {
         user.id === userId ? { ...user, role: role as any } : user
       ));
 
-      await apiClient.patch(`/admin/users/${userId}`, { role });
+      await adminAPI.updateUser(userId, { role });
     } catch (err) {
       console.error('Failed to update user role:', err);
       // Revert on error

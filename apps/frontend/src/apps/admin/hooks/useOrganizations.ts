@@ -11,11 +11,13 @@
  * - User listing per organization
  * - Pagination and filtering
  * - Error handling and loading states
+ *
+ * Updated: 2025-11-19 - Integrated with adminAPI.ts (FE-059)
+ * - Now uses adminAPI methods instead of direct apiClient calls
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS } from '@/services/api/apiConfig';
+import * as adminAPI from '@/services/api/adminAPI';
 import type { Organization, OrganizationUser, PaginatedResponse } from '../types';
 
 export interface UseOrganizationsResult {
@@ -91,26 +93,22 @@ export function useOrganizations(): UseOrganizationsResult {
 
   /**
    * Fetch organizations with pagination
+   * Updated: Now uses adminAPI.getOrganizations()
+   * Fixed: Uses items/pagination structure from PaginatedResponse
    */
   const fetchOrganizations = useCallback(
     async (newPage?: number, newPageSize?: number): Promise<void> => {
       setLoading(true);
       setError(null);
       try {
-        const response = await apiClient.get<{ success: boolean; data: PaginatedResponse<Organization> }>(
-          API_ENDPOINTS.admin.organizations.list,
-          {
-            params: {
-              page: newPage || page,
-              limit: newPageSize || pageSize,
-            },
-          }
-        );
+        const response = await adminAPI.getOrganizations({
+          page: newPage || page,
+          limit: newPageSize || pageSize,
+        });
 
-        const data = response.data.success ? response.data.data : (response.data as unknown as PaginatedResponse<Organization>);
-
-        setOrganizations(data.data);
-        setTotal(data.total);
+        // adminAPI returns { items: T[], pagination: {...} }
+        setOrganizations(response.items);
+        setTotal(response.pagination.totalItems);
         if (newPage) setPage(newPage);
         if (newPageSize) setPageSize(newPageSize);
       } catch (err) {
@@ -126,15 +124,13 @@ export function useOrganizations(): UseOrganizationsResult {
 
   /**
    * Get single organization by ID
+   * Updated: Now uses adminAPI.getOrganization()
    */
   const getOrganization = useCallback(async (id: string): Promise<Organization> => {
     setLoading(true);
     setError(null);
     try {
-      const response = await apiClient.get<{ success: boolean; data: Organization }>(
-        API_ENDPOINTS.admin.organizations.get(id)
-      );
-      const org = response.data.success ? response.data.data : (response.data as unknown as Organization);
+      const org = await adminAPI.getOrganization(id);
       return org;
     } catch (err) {
       console.error('Failed to fetch organization:', err);
@@ -148,17 +144,14 @@ export function useOrganizations(): UseOrganizationsResult {
 
   /**
    * Create new organization
+   * Updated: Now uses adminAPI.createOrganization()
    */
   const createOrganization = useCallback(
     async (data: CreateOrganizationData): Promise<Organization> => {
       setLoading(true);
       setError(null);
       try {
-        const response = await apiClient.post<{ success: boolean; data: Organization }>(
-          API_ENDPOINTS.admin.organizations.create,
-          data
-        );
-        const newOrg = response.data.success ? response.data.data : (response.data as unknown as Organization);
+        const newOrg = await adminAPI.createOrganization(data);
 
         // Refresh list
         await fetchOrganizations();
@@ -178,17 +171,14 @@ export function useOrganizations(): UseOrganizationsResult {
 
   /**
    * Update organization
+   * Updated: Now uses adminAPI.updateOrganization()
    */
   const updateOrganization = useCallback(
     async (id: string, data: UpdateOrganizationData): Promise<Organization> => {
       setLoading(true);
       setError(null);
       try {
-        const response = await apiClient.put<{ success: boolean; data: Organization }>(
-          API_ENDPOINTS.admin.organizations.update(id),
-          data
-        );
-        const updatedOrg = response.data.success ? response.data.data : (response.data as unknown as Organization);
+        const updatedOrg = await adminAPI.updateOrganization(id, data);
 
         // Update local state
         setOrganizations((prev) => prev.map((org) => (org.id === id ? updatedOrg : org)));
@@ -213,13 +203,14 @@ export function useOrganizations(): UseOrganizationsResult {
 
   /**
    * Delete organization
+   * Updated: Now uses adminAPI.deleteOrganization()
    */
   const deleteOrganization = useCallback(
     async (id: string): Promise<void> => {
       setLoading(true);
       setError(null);
       try {
-        await apiClient.delete(API_ENDPOINTS.admin.organizations.delete(id));
+        await adminAPI.deleteOrganization(id);
 
         // Remove from local state
         setOrganizations((prev) => prev.filter((org) => org.id !== id));
@@ -249,17 +240,14 @@ export function useOrganizations(): UseOrganizationsResult {
 
   /**
    * Update feature flags for organization
+   * Updated: Now uses adminAPI.updateOrganizationFeatures()
    */
   const updateFeatureFlags = useCallback(
     async (id: string, features: string[]): Promise<void> => {
       setLoading(true);
       setError(null);
       try {
-        const response = await apiClient.patch<{ success: boolean; data: Organization }>(
-          API_ENDPOINTS.admin.organizations.updateFeatures(id),
-          { features }
-        );
-        const updatedOrg = response.data.success ? response.data.data : (response.data as unknown as Organization);
+        const updatedOrg = await adminAPI.updateOrganizationFeatures(id, { features });
 
         // Update local state
         setOrganizations((prev) => prev.map((org) => (org.id === id ? updatedOrg : org)));

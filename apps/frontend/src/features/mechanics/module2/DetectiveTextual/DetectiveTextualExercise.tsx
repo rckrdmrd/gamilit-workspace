@@ -18,6 +18,8 @@ import type {
 } from './detectiveTextualTypes';
 import { calculateScore, saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { mockInvestigation } from './detectiveTextualMockData';
+import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> = ({
   exerciseId,
@@ -26,6 +28,9 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
   initialData,
   actionsRef,
 }) => {
+  const { user } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Load exercise data based on exerciseId
   const [investigation, setInvestigation] = useState<Investigation | null>(mockInvestigation);
   const [progress, setProgress] = useState<DetectiveProgress>({
@@ -68,18 +73,35 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
     return () => clearInterval(autoSaveInterval);
   }, [progress, investigation]);
 
-  // Progress update callback
+  // FE-055 & FE-059: Progress update callback with user answers
   useEffect(() => {
     if (onProgressUpdate && investigation) {
+      // Prepare user answers for backend
+      // Note: Backend DTO format for Detective Textual needs to be defined
+      // TODO: Confirm DTO structure with backend - currently using questions format
+      const userAnswers: Record<string, string> = {};
+      progress.connections.forEach((conn, index) => {
+        // Map connections to question format (placeholder)
+        userAnswers[`q${index + 1}`] = `${conn.fromEvidenceId}-${conn.toEvidenceId}-${conn.relationship}`;
+      });
+
       onProgressUpdate({
-        currentStep: progress.discoveredEvidence.length,
-        totalSteps: investigation.availableEvidence.length,
-        score: progress.score,
-        hintsUsed: progress.hintsUsed,
-        timeSpent: progress.timeSpent,
+        progress: {
+          currentStep: progress.discoveredEvidence.length,
+          totalSteps: investigation.availableEvidence.length,
+          score: 0, // FE-059: Score calculated by backend only
+          hintsUsed: progress.hintsUsed,
+          timeSpent: progress.timeSpent,
+        },
+        answers: userAnswers
+      });
+
+      console.log('📊 [DetectiveTextual] Progress update sent:', {
+        discoveredEvidence: progress.discoveredEvidence.length,
+        connections: progress.connections.length
       });
     }
-  }, [progress.discoveredEvidence.length, progress.score, progress.hintsUsed, progress.timeSpent, investigation, onProgressUpdate]);
+  }, [progress.discoveredEvidence.length, progress.connections, progress.hintsUsed, progress.timeSpent, investigation, onProgressUpdate]);
 
   // Timer
   useEffect(() => {
@@ -105,30 +127,26 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
     toId: string,
     relationship: string
   ) => {
-    try {
-      const validation = await validateConnection(fromId, toId, relationship);
+    // FE-059: Removed local validation - isCorrect field no longer available
+    // Validation will be done server-side when solution is submitted
 
-      const newConnection: EvidenceConnection = {
-        id: `conn-${Date.now()}`,
-        fromEvidenceId: fromId,
-        toEvidenceId: toId,
-        relationship,
-        userCreated: true,
-        isCorrect: validation.isCorrect,
-      };
+    const newConnection: EvidenceConnection = {
+      id: `conn-${Date.now()}`,
+      fromEvidenceId: fromId,
+      toEvidenceId: toId,
+      relationship,
+      userCreated: true,
+      // FE-059: No isCorrect field - validation is server-side only
+    };
 
-      setProgress({
-        ...progress,
-        connections: [...progress.connections, newConnection],
-        score: progress.score + validation.score,
-      });
+    setProgress({
+      ...progress,
+      connections: [...progress.connections, newConnection],
+      // FE-059: No score update - calculated by backend only
+    });
 
-      if (validation.isCorrect) {
-        setAvailableCoins((prev) => prev + 15);
-      }
-    } catch (error) {
-      console.error('Error validating connection:', error);
-    }
+    // Award coins for creating connection (not based on correctness)
+    setAvailableCoins((prev) => prev + 5);
   };
 
   const handleRemoveConnection = (connectionId: string) => {
@@ -139,42 +157,69 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
   };
 
   const handleSubmitSolution = async () => {
-    try {
-      const result = await submitSolution(progress);
+    const hasConnections = progress.connections.length > 0;
+    const hasDiscoveredEvidence = progress.discoveredEvidence.length > 1; // More than just the initial evidence
 
-      // Calculate standardized score
-      const correctConnectionsCount = progress.connections.filter(c => c.isCorrect).length;
-      const totalConnectionsRequired = investigation?.correctConnections.length || 0;
-
-      const attempt = {
-        exerciseId: investigation?.id || '',
-        startTime,
-        endTime: new Date(),
-        answers: { connections: progress.connections },
-        correctAnswers: correctConnectionsCount,
-        totalQuestions: totalConnectionsRequired,
-        hintsUsed: progress.hintsUsed,
-        difficulty: investigation?.difficulty || 'medio'
-      };
-
-      const score = calculateScore(correctConnectionsCount, totalConnectionsRequired);
-
-      setFeedback({
-        type: result.completed ? 'success' : 'partial',
-        title: result.completed ? '¡Caso Resuelto!' : 'Investigación Incompleta',
-        message: result.feedback,
-        score,
-        showConfetti: result.completed
-      });
-      setShowFeedback(true);
-    } catch (error) {
-      console.error('Error submitting solution:', error);
+    if (!hasConnections || !hasDiscoveredEvidence) {
       setFeedback({
         type: 'error',
-        title: 'Error',
-        message: 'Hubo un error al enviar la solución. Intenta de nuevo.',
+        title: 'Investigación Incompleta',
+        message: 'Necesitas crear conexiones entre las evidencias antes de enviar tu solución.',
       });
       setShowFeedback(true);
+      return;
+    }
+
+    // Check if user is authenticated
+    if (!user?.id) {
+      setFeedback({
+        type: 'error',
+        title: 'Error de Autenticación',
+        message: 'Debes estar autenticado para enviar el ejercicio.',
+      });
+      setShowFeedback(true);
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Prepare answers in backend DTO format
+      // Format connections as serialized objects for backend validation
+      const connectionsData = progress.connections.map(conn => ({
+        from: conn.fromEvidenceId,
+        to: conn.toEvidenceId,
+        relationship: conn.relationship
+      }));
+
+      // Submit to backend API
+      const response = await submitExercise(exerciseId, user.id, { connections: connectionsData });
+
+      // Show backend response
+      setFeedback({
+        type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
+        title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
+        message: response.feedback?.overall || `Has identificado ${response.correctAnswersCount} de ${response.totalQuestions} conexiones correctamente.`,
+        score: response.score,
+        showConfetti: response.isPerfect
+      });
+      setShowFeedback(true);
+
+      console.log('✅ [DetectiveTextual] Submission successful:', {
+        attemptId: response.attemptId,
+        score: response.score,
+        rewards: response.rewards
+      });
+    } catch (error) {
+      console.error('❌ [DetectiveTextual] Submission error:', error);
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: 'Hubo un problema al enviar tu respuesta. Por favor, intenta nuevamente.',
+      });
+      setShowFeedback(true);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

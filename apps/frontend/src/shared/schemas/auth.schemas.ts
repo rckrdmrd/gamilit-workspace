@@ -42,13 +42,13 @@ const PASSWORD_REGEX = {
 export const loginSchema = z.object({
   email: z
     .string()
-    .min(1, 'Email is required')
-    .email('Please enter a valid email address'),
+    .min(1, 'El correo electrónico es requerido')
+    .email('Por favor ingresa un correo electrónico válido'),
 
   password: z
     .string()
-    .min(1, 'Password is required')
-    .min(8, 'Password must be at least 8 characters'),
+    .min(1, 'La contraseña es requerida')
+    .min(8, 'La contraseña debe tener al menos 8 caracteres'),
 });
 
 /**
@@ -79,54 +79,54 @@ export const registerSchema = z
   .object({
     email: z
       .string()
-      .min(1, 'Email is required')
-      .email('Please enter a valid email address'),
+      .min(1, 'El correo electrónico es requerido')
+      .email('Por favor ingresa un correo electrónico válido'),
 
     password: z
       .string()
-      .min(1, 'Password is required')
-      .min(8, 'Password must be at least 8 characters')
+      .min(1, 'La contraseña es requerida')
+      .min(8, 'La contraseña debe tener al menos 8 caracteres')
       .regex(
         PASSWORD_REGEX.uppercase,
-        'Password must contain at least one uppercase letter'
+        'La contraseña debe contener al menos una letra mayúscula'
       )
       .regex(
         PASSWORD_REGEX.lowercase,
-        'Password must contain at least one lowercase letter'
+        'La contraseña debe contener al menos una letra minúscula'
       )
       .regex(
         PASSWORD_REGEX.number,
-        'Password must contain at least one number'
+        'La contraseña debe contener al menos un número'
       )
       .regex(
         PASSWORD_REGEX.special,
-        'Password must contain at least one special character (!@#$%^&*...)'
+        'La contraseña debe contener al menos un carácter especial (!@#$%^&*...)'
       ),
 
     confirmPassword: z
       .string()
-      .min(1, 'Please confirm your password'),
+      .min(1, 'Por favor confirma tu contraseña'),
 
     full_name: z
       .string()
-      .min(2, 'Full name must be at least 2 characters')
+      .min(2, 'El nombre completo debe tener al menos 2 caracteres')
       .optional()
       .or(z.literal('')),
 
     role: z
       .enum(['student', 'admin_teacher', 'super_admin'], {
-        errorMap: () => ({ message: 'Please select a valid role' }),
+        errorMap: () => ({ message: 'Por favor selecciona un rol válido' }),
       })
       .optional(),
 
     terms_accepted: z
       .boolean()
       .refine((val) => val === true, {
-        message: 'You must accept the terms and conditions',
+        message: 'Debes aceptar los términos y condiciones',
       }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
+    message: 'Las contraseñas no coinciden',
     path: ['confirmPassword'],
   });
 
@@ -144,8 +144,8 @@ export const registerSchema = z
 export const forgotPasswordSchema = z.object({
   email: z
     .string()
-    .min(1, 'Email is required')
-    .email('Please enter a valid email address'),
+    .min(1, 'El correo electrónico es requerido')
+    .email('Por favor ingresa un correo electrónico válido'),
 });
 
 /**
@@ -164,31 +164,31 @@ export const resetPasswordSchema = z
   .object({
     password: z
       .string()
-      .min(1, 'Password is required')
-      .min(8, 'Password must be at least 8 characters')
+      .min(1, 'La contraseña es requerida')
+      .min(8, 'La contraseña debe tener al menos 8 caracteres')
       .regex(
         PASSWORD_REGEX.uppercase,
-        'Password must contain at least one uppercase letter'
+        'La contraseña debe contener al menos una letra mayúscula'
       )
       .regex(
         PASSWORD_REGEX.lowercase,
-        'Password must contain at least one lowercase letter'
+        'La contraseña debe contener al menos una letra minúscula'
       )
       .regex(
         PASSWORD_REGEX.number,
-        'Password must contain at least one number'
+        'La contraseña debe contener al menos un número'
       )
       .regex(
         PASSWORD_REGEX.special,
-        'Password must contain at least one special character'
+        'La contraseña debe contener al menos un carácter especial'
       ),
 
     confirmPassword: z
       .string()
-      .min(1, 'Please confirm your password'),
+      .min(1, 'Por favor confirma tu contraseña'),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
+    message: 'Las contraseñas no coinciden',
     path: ['confirmPassword'],
   });
 

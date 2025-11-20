@@ -5,6 +5,8 @@ import { SopaLetrasGrid } from './SopaLetrasGrid';
 import { WordList } from './WordList';
 import { SopaLetrasData, WordPosition } from './sopaLetrasTypes';
 import { calculateScore, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 export interface SopaLetrasExerciseProps {
   exercise: SopaLetrasData;
@@ -17,33 +19,33 @@ export interface SopaLetrasExerciseProps {
 }
 
 export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({ exercise, onComplete, onProgressUpdate, actionsRef }) => {
-  // Inicializar palabras combinando words + wordsPositions
+  const { user } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // FE-059: Initialize words from words list only (wordsPositions field is sanitized)
+  // User will discover positions by selecting cells in the grid
   const initialWords: WordPosition[] = React.useMemo(() => {
     const wordsList = exercise.content.words || [];
-    const positions = exercise.content.wordsPositions || [];
 
     const result = wordsList.map((item: string | any) => {
       // Handle both string[] and object[] formats
       const word = typeof item === 'string' ? item : (item?.word || item);
       const wordStr = String(word).toUpperCase();
 
-      const position = positions.find((p: any) => {
-        const posWord = String(p.word || '').toUpperCase();
-        return posWord === wordStr;
-      });
-
+      // FE-059: Positions are unknown initially (-1, -1)
+      // Will be calculated when user finds the word (lines 127-143)
       return {
         word: wordStr,
-        startRow: position?.startRow ?? -1,
-        startCol: position?.startCol ?? -1,
-        direction: position?.direction ?? 'horizontal',
+        startRow: -1,
+        startCol: -1,
+        direction: 'horizontal' as const,
         found: false,
       };
     });
 
     console.log('🎮 [SopaLetras] Palabras inicializadas:', result);
     return result;
-  }, [exercise.content.words, exercise.content.wordsPositions]);
+  }, [exercise.content.words]);
 
   const [words, setWords] = useState<WordPosition[]>(initialWords);
   const [selectedCells, setSelectedCells] = useState<{row:number,col:number}[]>([]);
@@ -58,16 +60,10 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({ exercise
     if (onProgressUpdate) {
       const foundWords = words.filter(w => w.found).length;
 
-      // Prepare user answers in format expected by backend
+      // FE-059: Prepare user answers in backend DTO format
+      // Backend validator expects: { words: ["MARIE", "CURIE", "NOBEL"] }
       const userAnswers = {
-        foundWords: words.filter(w => w.found).map(w => w.word),
-        wordsPositions: words.filter(w => w.found).map(w => ({
-          word: w.word,
-          startRow: w.startRow,
-          startCol: w.startCol,
-          direction: w.direction,
-          found: w.found
-        }))
+        words: words.filter(w => w.found).map(w => w.word)
       };
 
       // Send both progress metadata AND user answers
@@ -75,7 +71,7 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({ exercise
         progress: {
           currentStep: foundWords,
           totalSteps: words.length,
-          score: Math.floor((foundWords / words.length) * 100),
+          score: 0, // FE-059: Score calculated by backend only
           hintsUsed,
           timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
         },
@@ -83,7 +79,7 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({ exercise
       });
 
       console.log('📊 [SopaLetras] Progress update sent:', {
-        foundWords: userAnswers.foundWords.length,
+        foundWords: userAnswers.words.length,
         totalWords: words.length
       });
     }
@@ -212,7 +208,7 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({ exercise
     });
   }, [foundCells]);
 
-  const handleCheck = React.useCallback(() => {
+  const handleCheck = React.useCallback(async () => {
     console.log('📋 [SopaLetras] handleCheck iniciado');
 
     // Validar selección actual antes de verificar
@@ -225,33 +221,76 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({ exercise
     });
 
     // Usar setTimeout para asegurar que el estado se actualice antes de calcular
-    setTimeout(() => {
-      setWords(currentWords => {
-        const foundWords = currentWords.filter(w => w.found).length;
-        const isComplete = foundWords === currentWords.length;
-        const score = calculateScore(foundWords, exercise.content.words.length);
+    setTimeout(async () => {
+      const currentWords = words;
+      const foundWords = currentWords.filter(w => w.found).length;
+      const isComplete = foundWords === currentWords.length;
 
-        console.log('📊 [SopaLetras] Estado final:', {
-          foundWords,
-          totalWords: currentWords.length,
-          isComplete,
-          score,
-          words: currentWords.map(w => ({ word: w.word, found: w.found }))
-        });
+      console.log('📊 [SopaLetras] Estado final:', {
+        foundWords,
+        totalWords: currentWords.length,
+        isComplete,
+        words: currentWords.map(w => ({ word: w.word, found: w.found }))
+      });
 
+      if (!isComplete) {
         setFeedback({
-          type: isComplete ? 'success' : 'error',
-          title: isComplete ? '¡Completado!' : 'Faltan palabras',
-          message: isComplete ? '¡Encontraste todas las palabras!' : `Encontraste ${foundWords} de ${currentWords.length} palabras.`,
-          score: isComplete ? score : undefined,
-          showConfetti: isComplete
+          type: 'error',
+          title: 'Sopa de Letras Incompleta',
+          message: `Has encontrado ${foundWords} de ${currentWords.length} palabras. Encuentra todas antes de verificar.`,
+        });
+        setShowFeedback(true);
+        return;
+      }
+
+      // Check if user is authenticated
+      if (!user?.id) {
+        setFeedback({
+          type: 'error',
+          title: 'Error de Autenticación',
+          message: 'Debes estar autenticado para enviar el ejercicio.',
+        });
+        setShowFeedback(true);
+        return;
+      }
+
+      setIsSubmitting(true);
+
+      try {
+        // Prepare answers in backend DTO format: { words: ["MARIE", "CURIE"] }
+        const foundWordsList = currentWords.filter(w => w.found).map(w => w.word);
+
+        // Submit to backend API
+        const response = await submitExercise(exercise.id, user.id, { words: foundWordsList });
+
+        // Show backend response
+        setFeedback({
+          type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
+          title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
+          message: response.feedback?.overall || `Has encontrado ${response.correctAnswersCount} de ${response.totalQuestions} palabras correctamente.`,
+          score: response.score,
+          showConfetti: response.isPerfect
         });
         setShowFeedback(true);
 
-        return currentWords;
-      });
+        console.log('✅ [SopaLetras] Submission successful:', {
+          attemptId: response.attemptId,
+          score: response.score,
+          rewards: response.rewards
+        });
+      } catch (error) {
+        console.error('❌ [SopaLetras] Submission error:', error);
+        setFeedback({
+          type: 'error',
+          title: 'Error al Enviar',
+          message: 'Hubo un problema al enviar tu respuesta. Por favor, intenta nuevamente.',
+        });
+        setShowFeedback(true);
+      } finally {
+        setIsSubmitting(false);
+      }
     }, 100);
-  }, [validateSelection, exercise.content.words.length]);
+  }, [validateSelection, words, user, exercise.id]);
 
   const handleReset = React.useCallback(() => {
     setWords(initialWords);

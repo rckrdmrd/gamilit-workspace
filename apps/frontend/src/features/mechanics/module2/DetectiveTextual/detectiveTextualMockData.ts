@@ -75,7 +75,8 @@ export const mockInvestigation: Investigation = {
   mystery:
     '¿Cómo logró Marie Curie descubrir nuevos elementos, y qué precio pagó por su dedicación a la ciencia?',
   availableEvidence: mockEvidence,
-  correctConnections: [
+  // FE-059: correctConnections field removed - sanitized for security
+  /* correctConnections: [
     {
       id: 'conn-1',
       fromEvidenceId: 'evidence-2',
@@ -100,6 +101,6 @@ export const mockInvestigation: Investigation = {
       userCreated: false,
       isCorrect: true,
     },
-  ],
+  ], */
   difficulty: 'medio',
 };

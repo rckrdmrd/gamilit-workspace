@@ -34,6 +34,22 @@ export class ExerciseResponseDto {
   @Expose()
   instructions?: string;
 
+  // =====================================================
+  // PEDAGOGICAL CONTENT (DB-125: 2025-11-19)
+  // =====================================================
+
+  @Expose()
+  objective?: string;
+
+  @Expose()
+  how_to_solve?: string;
+
+  @Expose()
+  recommended_strategy?: string;
+
+  @Expose()
+  pedagogical_notes?: string;
+
   @Expose()
   order_index!: number;
 

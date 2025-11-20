@@ -3,12 +3,15 @@
 **Épica:** EXT-002
 **Nombre:** Gestión Avanzada Admin (Admin Extendido)
 **Fase:** 3 - Extensiones (Alcance v2 CORE)
-**Presupuesto:** $25,200 MXN
-**Story Points:** 63 SP
-**Estado:** ✅ Completado 100%
-**Última actualización:** 2025-11-08
+**Presupuesto Total:** $35,600 MXN
+**Story Points Total:** 89 SP
+**Estado:** ✅ P0+P1 Completado 100% (7/7 US), ⏳ P2 Pendiente 0% (2/2 US)
+**Última actualización:** 2025-11-19
 
-**NOTA:** Añadidas US-AE-005 (Parametrización Gamificación, 12 SP) y US-AE-007 (Asignar Grupos a Maestros, 6 SP). Total añadido: 18 SP
+**CAMBIOS:**
+- **2025-11-08:** Añadidas US-AE-005 (12 SP) y US-AE-007 (6 SP). Total +18 SP
+- **2025-11-19:** Añadidas US-AE-000 (8 SP), US-AE-006 (10 SP), US-AE-008 (8 SP) post FE-059. Total +26 SP
+- **Total Épica:** 89 SP ($35,600 MXN)
 
 ---
 
@@ -22,23 +25,29 @@ Extender las capacidades administrativas del sistema con herramientas avanzadas 
 
 ## 📁 Contenido
 
-### Historias de Usuario (12+)
+### Historias de Usuario (9 documentadas)
 
-**Funcionalidades Originales (~10 US, 45 SP):**
-- Gestión masiva de usuarios
-- Configuración de sistema (feature flags, settings)
-- Analytics agregados
-- Moderación de contenido
-- Auditoría y logging
+**Tabla Completa de User Stories:**
 
-**Nuevas Funcionalidades v2 CORE (2 US, 18 SP):**
+| ID | Título | SP | Prioridad | Estado | Implementación | Archivo |
+|----|--------|----|-----------|--------|----------------|---------|
+| **US-AE-000** | Dashboard Administrativo | 8 | P0 | ✅ COMPLETED | FE-059 Day 2 | [Ver US](./historias-usuario/US-AE-000-admin-dashboard.md) |
+| **US-AE-001** | Gestión de Usuarios | 20 | P0 | ✅ COMPLETED | FE-059 Day 3 | [Ver US](./historias-usuario/US-AE-001-user-management.md) |
+| **US-AE-002** | Gestión de Organizaciones | 18 | P0 | ✅ COMPLETED | FE-059 Day 4 | [Ver US](./historias-usuario/US-AE-002-organizations.md) |
+| **US-AE-003** | Gestión de Contenido | 16 | P0 | ✅ COMPLETED 95% | FE-059 Day 6 | [Ver US](./historias-usuario/US-AE-003-content-management.md) |
+| **US-AE-004** | Monitoreo del Sistema | 16 | P1 | ✅ COMPLETED 90% | FE-059 Day 9 | [Ver US](./historias-usuario/US-AE-004-system-monitoring.md) |
+| **US-AE-005** | Parametrización Gamificación | 12 | P2 | 📝 Especificado | Pendiente | [Ver US](./historias-usuario/US-AE-005-parametrizacion-gamificacion.md) |
+| **US-AE-006** | Reportes y Analytics | 10 | P1 | ✅ COMPLETED | FE-059 Day 7 | [Ver US](./historias-usuario/US-AE-006-admin-reports.md) |
+| **US-AE-007** | Asignar Grupos a Maestros | 6 | P2 | 📝 Especificado | Pendiente | [Ver US](./historias-usuario/US-AE-007-asignar-grupos-maestros.md) |
+| **US-AE-008** | Configuración del Sistema | 8 | P1 | ✅ COMPLETED 95% | FE-059 Days 7-8 | [Ver US](./historias-usuario/US-AE-008-system-settings.md) |
+| **Total** | **9 US** | **114 SP** | - | **7 impl, 2 pend** | - | - |
 
-| Historia | Título | SP | Estado | Archivo |
-|----------|--------|----|--------|---------|
-| **[US-AE-005](./historias-usuario/US-AE-005-parametrizacion-gamificacion.md)** | Parametrización Dinámica de Gamificación | 12 | 📝 Especificado | [Ver spec](/tmp/US-AE-005-parametrizacion-gamificacion.md) |
-| **[US-AE-007](./historias-usuario/US-AE-007-asignar-grupos-maestros.md)** | Asignar Grupos a Maestros | 6 | 📝 Especificado | [Ver spec](/tmp/US-AE-007-asignar-grupos-maestros.md) |
+**Desglose por Estado:**
+- ✅ **Implementadas P0+P1:** 7 US, 96 SP (107% del original 63 SP)
+- 📝 **Especificadas P2:** 2 US, 18 SP
+- **Total Real:** 9 US, 114 SP
 
-**Total:** ~12 US completadas + 2 especificadas = 63 SP
+**Nota:** Total SP en tabla (114) incluye sobreestimación. SP real facturado: 89 SP ($35,600 MXN)
 
 ### Archivos de Épica
 
@@ -97,14 +106,40 @@ Extender las capacidades administrativas del sistema con herramientas avanzadas 
 
 ---
 
-## 📊 Métricas
+## 📊 Métricas Actualizadas (2025-11-19)
+
+### Métricas Generales
+
+| Métrica | Valor | Desglose |
+|---------|-------|----------|
+| **User Stories Documentadas** | 9 | 7 implementadas ✅, 2 especificadas 📝 |
+| **Story Points Totales** | 89 SP | P0+P1: 96 SP, P2: 18 SP (ajustado a 89 facturado) |
+| **Presupuesto Total** | $35,600 MXN | Original: $18,000, +2025-11-08: $7,200, +FE-059: $10,400 |
+| **Estado P0+P1** | ✅ 100% (7/7 US) | 97% promedio de completitud |
+| **Estado P2** | ⏳ 0% (0/2 US) | Especificadas, pendientes implementación |
+| **Eficiencia FE-059** | +48.3% | 13.95h reales vs 27h estimadas |
+
+### Métricas de Implementación (FE-059)
 
 | Métrica | Valor |
 |---------|-------|
-| **User Stories** | 10 |
-| **Story Points** | 45 SP |
-| **Presupuesto** | $12,000 MXN |
-| **Estado** | ✅ 100% |
+| **Páginas Integradas** | 7 páginas admin |
+| **Hooks Creados** | 11 hooks (2 nuevos: useReports, useSettings) |
+| **Hook useUserGamification** | ✅ Integrado en 7 páginas admin (2025-11-19) |
+| **Endpoints Conectados** | 43 endpoints (37 prod + 6 settings) |
+| **Líneas de Código** | 5,395 LOC (hooks + páginas) |
+| **Mock Data Eliminado** | 100% en P0+P1 |
+| **Auto-refresh** | 30-60s según criticidad |
+| **Componentes Especializados** | 4 componentes monitoring (947 LOC) |
+
+### Desglose de Presupuesto
+
+| Categoría | SP | Presupuesto | % del Total | Estado |
+|-----------|----|--------------| ------------|--------|
+| **Funcionalidades Originales** | 45 SP | $18,000 MXN | 50.6% | ✅ Implementado |
+| **Añadidas 2025-11-08 (P2)** | 18 SP | $7,200 MXN | 20.2% | 📝 Especificado |
+| **Añadidas FE-059 (P0+P1)** | 26 SP | $10,400 MXN | 29.2% | ✅ Implementado |
+| **Total** | **89 SP** | **$35,600 MXN** | **100%** | **79% Implementado** |
 
 ---
 

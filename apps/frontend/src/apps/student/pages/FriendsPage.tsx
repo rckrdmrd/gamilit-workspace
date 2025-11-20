@@ -34,6 +34,7 @@ import { RankBadge } from '@shared/components/base/RankBadge';
 
 // Hooks & Store
 import { useFriends } from '@/features/gamification/social/hooks/useFriends';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 
 // Utils
 import { cn } from '@shared/utils/cn';
@@ -64,6 +65,9 @@ export default function FriendsPage() {
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
   const { user, logout } = useAuth();
+
+  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
+  const { gamificationData } = useUserGamification(user?.id);
 
   // Filter friends based on search and online status
   const filteredFriends = friends.filter(friend => {
@@ -111,10 +115,14 @@ export default function FriendsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={user ?? undefined} onLogout={async () => {
-        await logout();
-        // No need to navigate - performLogout() handles redirect
-      }} />
+      <GamifiedHeader
+        user={user ?? undefined}
+        gamificationData={gamificationData}
+        onLogout={async () => {
+          await logout();
+          // No need to navigate - performLogout() handles redirect
+        }}
+      />
 
       <main className="detective-container py-8">
         {/* Header */}

@@ -6,3 +6,4 @@ export * from './paginated-audit-log.dto';
 export * from './update-system-config.dto';
 export * from './system-config.dto';
 export * from './toggle-maintenance.dto';
+export * from './maintenance-operations.dto';

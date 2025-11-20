@@ -563,6 +563,59 @@ describe('MultipleChoiceActivity', () => {
 
 ---
 
+## 💻 Implementación Técnica
+
+### Validadores Relacionados
+
+Esta historia de usuario base (Opción Múltiple) se implementa en múltiples variantes con diferentes validadores:
+
+| Tipo de Ejercicio | Validador DB | Formato Respuesta | Notas de Implementación |
+|-------------------|-------------|-------------------|-------------------------|
+| `puzzle_contexto` | `validate_puzzle_contexto()` | `{"questions": {"q1": "opt_a", "q2": "opt_b"}}` | Implementación estándar de múltiple choice |
+| `analisis_fuentes` | `validate_analisis_fuentes()` | `{"questions": {"q1": "opt_c", "q2": "opt_a"}}` | Análisis crítico con múltiple choice |
+| `detective_textual` ⚠️ | `validate_detective_connections()` | `{"connections": [{"from": "ev1", "to": "ev2", "relationship": "..."}]}` | **Formato extendido** (no es múltiple choice puro) |
+
+### Nota sobre Detective Textual ⚠️
+
+**Discrepancia identificada en FE-059:**
+
+Detective Textual originalmente se especificó como ejercicio de múltiple choice, pero durante la implementación frontend se decidió usar una mecánica más atractiva: **conexión de evidencias mediante tablero detective**.
+
+**Formato original (especificado):**
+```json
+{
+  "questions": {
+    "q1": "option_b",
+    "q2": "option_a",
+    "q3": "option_c"
+  }
+}
+```
+
+**Formato implementado (actual):**
+```json
+{
+  "connections": [
+    {
+      "from": "evidence-1",
+      "to": "evidence-2",
+      "relationship": "Ambos documentos describen las propiedades del radio"
+    }
+  ]
+}
+```
+
+**Resolución:** Se implementó `validate_detective_connections()` en DB-117 para soportar el formato extendido, manteniendo la experiencia de usuario mejorada.
+
+**Referencias:**
+- **Handoff:** `orchestration/HANDOFF-FE-059-TO-DB.md` - Discrepancia 1
+- **Validador:** `apps/database/ddl/schemas/educational_content/functions/20-validate_detective_connections.sql`
+- **Configuración:** `exercise_validation_config.detective_textual`
+
+**Beneficio:** Mejor engagement del estudiante con mecánica visual de drag & drop/conexión de evidencias vs. simple selección de opciones.
+
+---
+
 **Creado:** 2025-11-02
-**Actualizado:** 2025-11-02
+**Actualizado:** 2025-11-19 - DB-123 (Agregada sección de implementación técnica)
 **Responsable:** Equipo Fullstack

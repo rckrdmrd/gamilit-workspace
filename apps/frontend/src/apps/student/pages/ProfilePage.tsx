@@ -5,10 +5,14 @@ import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { RankBadge } from '@shared/components/base/RankBadge';
 import { User, Mail, Calendar, Trophy, Target, Coins } from 'lucide-react';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+
+  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
+  const { gamificationData } = useUserGamification(user?.id);
 
   const stats = [
     { label: 'ML Coins', value: '350', icon: Coins, color: 'text-detective-gold' },
@@ -18,10 +22,14 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={user ?? undefined} onLogout={async () => {
-        await logout();
-        // No need to navigate - performLogout() handles redirect
-      }} />
+      <GamifiedHeader
+        user={user ?? undefined}
+        gamificationData={gamificationData}
+        onLogout={async () => {
+          await logout();
+          // No need to navigate - performLogout() handles redirect
+        }}
+      />
 
       <main className="detective-container py-8">
         <h1 className="text-4xl font-bold text-detective-text mb-8">

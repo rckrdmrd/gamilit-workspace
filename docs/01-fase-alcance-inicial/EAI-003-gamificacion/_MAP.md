@@ -17,10 +17,12 @@
 - [RF-GAM-002](./requerimientos/RF-GAM-002-comodines.md) - Sistema de Comodines (Ayudas)
 - [RF-GAM-003](./requerimientos/RF-GAM-003-rangos-maya.md) - Sistema de Rangos Maya
 
-### Especificaciones Técnicas (3)
+### Especificaciones Técnicas (5)
 - [ET-GAM-001](./especificaciones/ET-GAM-001-achievements.md) - Implementación Achievements
 - [ET-GAM-002](./especificaciones/ET-GAM-002-comodines.md) - Implementación Comodines
 - [ET-GAM-003](./especificaciones/ET-GAM-003-rangos-maya.md) - Implementación Rangos
+- [ET-GAM-004](./especificaciones/ET-GAM-004-tipos-compartidos-gamificacion.md) - Tipos Compartidos
+- [ET-GAM-005](./especificaciones/ET-GAM-005-hook-user-gamification.md) - Hook useUserGamification ✅ 2025-11-19
 
 ### Historias de Usuario (8)  
 Total: 40 SP

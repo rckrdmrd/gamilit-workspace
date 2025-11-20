@@ -343,6 +343,36 @@ export interface Exercise {
    */
   instructions?: string;
 
+  // =====================================================
+  // PEDAGOGICAL CONTENT (DB-125: 2025-11-19)
+  // =====================================================
+
+  /**
+   * Objetivo pedagógico expandido del ejercicio (200-500 palabras)
+   * Describe qué aprenderá el estudiante y por qué es importante según
+   * el modelo de comprensión lectora de Daniel Cassany.
+   */
+  objective?: string;
+
+  /**
+   * Guía detallada de cómo resolver el ejercicio (300-800 palabras)
+   * Pasos pedagógicos, estrategias de pensamiento, y consejos para
+   * completar exitosamente el ejercicio.
+   */
+  how_to_solve?: string;
+
+  /**
+   * Estrategias recomendadas para resolver eficientemente (100-300 palabras)
+   * Tips, trucos, y mejores prácticas para estudiantes.
+   */
+  recommended_strategy?: string;
+
+  /**
+   * Notas metodológicas para educadores (100-400 palabras)
+   * Contexto pedagógico, relación con competencias, y alineación con modelo Cassany.
+   */
+  pedagogical_notes?: string;
+
   order_index: number;
 
   // =====================================================
@@ -367,9 +397,11 @@ export interface Exercise {
 
   /**
    * Solution data (JSONB)
+   * ⚠️ FE-059: This field is NEVER sent by backend (sanitized for security)
    * Private information not visible to students during resolution
+   * @deprecated Backend sanitizes this field - always undefined
    */
-  solution?: Record<string, any>;
+  solution?: never;
 
   /**
    * Evaluation rubric (JSONB)
@@ -602,11 +634,15 @@ export interface Exercise {
 /**
  * Exercise Content
  * Content varies by exercise type
+ * ⚠️ FE-059: correct_answer is NEVER sent by backend (sanitized for security)
  */
 export interface ExerciseContent {
   question?: string;
   options?: string[];
-  correct_answer?: string | string[];
+  /**
+   * @deprecated Backend sanitizes this field - never present
+   */
+  correct_answer?: never;
   code_template?: string;
   test_cases?: TestCase[];
   [key: string]: any;

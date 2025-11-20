@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/app/providers/AuthContext';
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { EnhancedCard } from '@shared/components/base/EnhancedCard';
 import { ColorfulCard } from '@shared/components/base/ColorfulCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -164,6 +165,9 @@ export default function ModuleDetailPage() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
+  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
+  const { gamificationData } = useUserGamification(user?.id);
+
   // Fetch module and exercises from API
   const {
     module,
@@ -209,10 +213,14 @@ export default function ModuleDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-        <GamifiedHeader user={user ?? undefined} onLogout={async () => {
-          await logout();
-          // No need to navigate - performLogout() handles redirect
-        }} />
+        <GamifiedHeader
+          user={user ?? undefined}
+          gamificationData={gamificationData}
+          onLogout={async () => {
+            await logout();
+            // No need to navigate - performLogout() handles redirect
+          }}
+        />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="animate-pulse space-y-4">
             <div className="h-8 bg-gray-200 rounded w-1/3"></div>
@@ -233,10 +241,14 @@ export default function ModuleDetailPage() {
   if (error || !module) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-        <GamifiedHeader user={user ?? undefined} onLogout={async () => {
-          await logout();
-          // No need to navigate - performLogout() handles redirect
-        }} />
+        <GamifiedHeader
+          user={user ?? undefined}
+          gamificationData={gamificationData}
+          onLogout={async () => {
+            await logout();
+            // No need to navigate - performLogout() handles redirect
+          }}
+        />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <DetectiveButton
             variant="blue"
@@ -275,10 +287,14 @@ export default function ModuleDetailPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-      <GamifiedHeader user={user || undefined} onLogout={async () => {
-        await logout();
-        // No need to navigate - performLogout() handles redirect
-      }} />
+      <GamifiedHeader
+        user={user || undefined}
+        gamificationData={gamificationData}
+        onLogout={async () => {
+          await logout();
+          // No need to navigate - performLogout() handles redirect
+        }}
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <DetectiveButton

@@ -34,6 +34,18 @@ DO $$ BEGIN
 END $$;
 
 -- ============================================================================
+-- EXTENSIONES REQUERIDAS
+-- ============================================================================
+
+-- pg_trgm: Similarity matching para fuzzy validation
+-- Usado en validate_fill_in_blank y otros validadores con fuzzy_matching_threshold
+-- Funciones: similarity(), word_similarity(), strict_word_similarity()
+-- Documentación: https://www.postgresql.org/docs/current/pgtrgm.html
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+COMMENT ON EXTENSION pg_trgm IS 'Fuzzy string matching para validadores de ejercicios (similarity function)';
+
+-- ============================================================================
 -- SCHEMAS
 -- ============================================================================
 
@@ -49,6 +61,7 @@ CREATE SCHEMA IF NOT EXISTS progress_tracking;
 CREATE SCHEMA IF NOT EXISTS audit_logging;
 CREATE SCHEMA IF NOT EXISTS admin_dashboard;
 CREATE SCHEMA IF NOT EXISTS lti_integration;
+CREATE SCHEMA IF NOT EXISTS notifications;
 CREATE SCHEMA IF NOT EXISTS storage;
 
 -- ============================================================================
@@ -134,17 +147,38 @@ EXCEPTION WHEN duplicate_object THEN null; END $$;
 -- UPDATED 2025-11-17: Sincronizado con seeds reales - Removidas mecánicas no implementadas
 DO $$ BEGIN
     CREATE TYPE educational_content.exercise_type AS ENUM (
-        -- Module 1: Comprensión Literal (5 mecánicas)
+        -- ====================================================================
+        -- MÓDULOS IMPLEMENTADOS (15 mecánicas) - AUTO-EVALUABLES
+        -- ====================================================================
+
+        -- Module 1: Comprensión Literal (5 mecánicas) ✅ IMPLEMENTADO
         'crucigrama', 'linea_tiempo', 'sopa_letras', 'completar_espacios', 'verdadero_falso',
-        -- Module 2: Comprensión Inferencial (5 mecánicas)
+
+        -- Module 2: Comprensión Inferencial (5 mecánicas) ✅ IMPLEMENTADO
         'detective_textual', 'construccion_hipotesis', 'prediccion_narrativa', 'puzzle_contexto', 'rueda_inferencias',
-        -- Module 3: Comprensión Crítica (5 mecánicas)
+
+        -- Module 3: Comprensión Crítica (5 mecánicas) ✅ IMPLEMENTADO
         'tribunal_opiniones', 'debate_digital', 'analisis_fuentes', 'podcast_argumentativo', 'matriz_perspectivas',
-        -- Module 4: Lectura Digital (5 mecánicas) -- UPDATED 2025-11-17: Reducido de 9 a 5 mecánicas implementadas
+
+        -- ====================================================================
+        -- ⚠️ BACKLOG: FASE 4 (8 mecánicas) - EVALUACIÓN MANUAL/IA REQUERIDA
+        -- ====================================================================
+        -- Razón: Requieren validación con IA o evaluación manual
+        -- Estado: Tipos definidos (compatibilidad futura), seeds en _backlog/
+        -- Roadmap: docs/04-fase-backlog/
+        -- Fecha: Movido a backlog 2025-11-19 (DB-126)
+
+        -- Module 4: Lectura Digital (5 mecánicas) ⚠️ BACKLOG
+        -- Requieren: Validación de fuentes, análisis de imágenes, IA multimodal
         'verificador_fake_news', 'infografia_interactiva', 'quiz_tiktok', 'navegacion_hipertextual', 'analisis_memes',
-        -- Module 5: Producción Lectora (3 mecánicas)
+
+        -- Module 5: Producción Lectora (3 mecánicas) ⚠️ BACKLOG
+        -- Requieren: Rúbricas de evaluación creativa, revisión humana/IA
         'diario_multimedia', 'comic_digital', 'video_carta'
+
+        -- ====================================================================
         -- REMOVIDO 2025-11-17: Mecánicas no implementadas movidas a comentarios
+        -- ====================================================================
         -- Futuros Módulo 1: 'mapa_conceptual', 'emparejamiento'
         -- Futuros Módulo 4: 'resena_critica', 'chat_literario', 'email_formal', 'ensayo_argumentativo'
         -- Auxiliares potenciales: 'comprension_auditiva', 'collage_prensa', 'texto_movimiento', 'call_to_action'

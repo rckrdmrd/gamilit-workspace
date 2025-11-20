@@ -729,6 +729,181 @@ Las 35 **implementaciones GAMILIT** (exercise_type) se clasifican en **7 categor
 
 ---
 
+## 📋 Formatos de Respuesta por Tipo de Ejercicio
+
+Esta sección documenta los formatos de respuesta (DTOs) específicos para ejercicios que requieren validadores personalizados.
+
+### Módulo 2: Comprensión Inferencial
+
+#### Detective Textual (Conexión de Evidencias)
+
+**Formato DTO (actualizado 2025-11-19):**
+
+```json
+{
+  "connections": [
+    {
+      "from": "evidence-1",
+      "to": "evidence-2",
+      "relationship": "Ambos documentos describen las propiedades del radio"
+    },
+    {
+      "from": "evidence-1",
+      "to": "evidence-3",
+      "relationship": "El cuaderno de laboratorio confirma los experimentos del artículo"
+    }
+  ]
+}
+```
+
+**Criterios de Validación:**
+- Valida pares `from`-`to` correctos (orden flexible)
+- Verifica que `relationship` contenga keywords requeridos (threshold: 50%)
+- Permite crédito parcial por conexiones correctas
+- Score proporcional: `(conexiones correctas / total esperadas) × max_points`
+
+**Validador DB:** `educational_content.validate_detective_connections()`
+
+**Ejemplo de respuesta:**
+```json
+{
+  "is_correct": false,
+  "score": 50,
+  "feedback": "1 de 2 conexiones correctas. Revisa la relación entre evidencia-1 y evidencia-3.",
+  "details": {
+    "correctCount": 1,
+    "totalExpected": 2,
+    "correctConnections": [{"from": "evidence-1", "to": "evidence-2"}],
+    "incorrectConnections": [{"from": "evidence-1", "to": "evidence-3"}]
+  }
+}
+```
+
+---
+
+#### Predicción Narrativa (Escenarios Múltiples)
+
+**Formato DTO (actualizado 2025-11-19):**
+
+```json
+{
+  "scenarios": {
+    "scenario-1": "prediction-a",
+    "scenario-2": "prediction-c",
+    "scenario-3": "prediction-b",
+    "scenario-4": "prediction-d"
+  }
+}
+```
+
+**Criterios de Validación:**
+- Compara predicción seleccionada por escenario (exacta)
+- Proporciona explicación para cada respuesta incorrecta
+- Score proporcional: `(escenarios correctos / total) × max_points`
+- Permite crédito parcial por escenarios correctos
+
+**Validador DB:** `educational_content.validate_prediction_scenarios()`
+
+**Ejemplo de respuesta:**
+```json
+{
+  "is_correct": false,
+  "score": 75,
+  "feedback": "3 de 4 predicciones correctas. Revisa el escenario 2.",
+  "details": {
+    "correctCount": 3,
+    "totalScenarios": 4,
+    "correct": ["scenario-1", "scenario-3", "scenario-4"],
+    "incorrect": [
+      {
+        "scenario": "scenario-2",
+        "submitted": "prediction-c",
+        "correct": "prediction-b",
+        "explanation": "El contexto histórico sugiere que..."
+      }
+    ]
+  }
+}
+```
+
+---
+
+#### Causa-Efecto (Construcción de Hipótesis - Matching)
+
+**Formato DTO (actualizado 2025-11-19):**
+
+```json
+{
+  "causes": {
+    "cause-1": ["consequence-a", "consequence-b"],
+    "cause-2": ["consequence-c"],
+    "cause-3": ["consequence-d", "consequence-e", "consequence-f"]
+  }
+}
+```
+
+**Criterios de Validación:**
+- Valida arrays de consecuencias por causa
+- Orden flexible por defecto (`strictOrder: false`)
+- Permite crédito parcial por matches correctos (`allowPartialMatches: true`)
+- Score proporcional: `(consecuencias correctas / total) × max_points`
+- Feedback detallado por causa
+
+**Validador DB:** `educational_content.validate_cause_effect_matching()`
+
+**Ejemplo de respuesta:**
+```json
+{
+  "is_correct": false,
+  "score": 83,
+  "feedback": "5 de 6 consecuencias asignadas correctamente. Revisa la causa-1.",
+  "details": {
+    "correctCount": 5,
+    "totalCount": 6,
+    "causeResults": {
+      "cause-1": {
+        "correct": ["consequence-a"],
+        "incorrect": ["consequence-b"],
+        "missing": [],
+        "extra": []
+      },
+      "cause-2": {"correct": ["consequence-c"]},
+      "cause-3": {"correct": ["consequence-d", "consequence-e", "consequence-f"]}
+    }
+  }
+}
+```
+
+---
+
+## 📅 Historial de Cambios - Formatos DTO
+
+### v2.1 (2025-11-19) - FE-059: Formatos Extendidos
+
+**Agregados:**
+- Formato de conexiones para `detective_textual`
+- Formato de escenarios para `prediccion_narrativa`
+- Formato de matching para `causa_efecto` (vía `construccion_hipotesis`)
+
+**Razón:** Discrepancias entre implementación frontend y especificaciones originales de base de datos
+
+**Decisión:** Propuesta 1 - Extender base de datos con nuevos validadores (vs. Propuesta 2 - reescribir frontend)
+
+**Implementación:**
+- **DB-117:** Creación de validadores SQL
+- **DB-123:** Actualización de configuraciones
+- **FE-059:** Especificaciones SQL y seeds de testing
+
+**Documentación:** `orchestration/HANDOFF-FE-059-TO-DB.md`
+
+**Beneficios:**
+- Frontend mantiene mecánicas más atractivas (drag & drop, conexiones visuales)
+- Mejor experiencia de usuario
+- Ahorro de tiempo: 4-6h (DB) vs 12-16h (Frontend completo)
+- Validación más robusta con feedback detallado
+
+---
+
 ## 💼 Casos de Uso
 
 ### CU-EDU-001-001: Resolver Ejercicio Multiple Choice

@@ -34,10 +34,10 @@ export const RegisterPage: React.FC = () => {
             <UserPlus className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Create Account
+            Crear Cuenta
           </h1>
           <p className="text-gray-600">
-            Join GAMILIT and start your learning journey
+            Únete a GAMILIT y comienza tu viaje de aprendizaje
           </p>
         </div>
 
@@ -53,12 +53,12 @@ export const RegisterPage: React.FC = () => {
         {/* Login Link */}
         <div className="text-center">
           <p className="text-sm text-gray-600">
-            Already have an account?{' '}
+            ¿Ya tienes una cuenta?{' '}
             <Link
               to="/login"
               className="font-medium text-orange-600 hover:text-orange-500 focus:outline-none focus:underline"
             >
-              Sign in instead
+              Inicia sesión aquí
             </Link>
           </p>
         </div>
@@ -70,21 +70,21 @@ export const RegisterPage: React.FC = () => {
               href="/terms"
               className="hover:text-gray-700 focus:outline-none focus:underline"
             >
-              Terms
+              Términos
             </a>
             <span>&bull;</span>
             <a
               href="/privacy"
               className="hover:text-gray-700 focus:outline-none focus:underline"
             >
-              Privacy
+              Privacidad
             </a>
             <span>&bull;</span>
             <a
               href="/help"
               className="hover:text-gray-700 focus:outline-none focus:underline"
             >
-              Help
+              Ayuda
             </a>
           </div>
         </div>

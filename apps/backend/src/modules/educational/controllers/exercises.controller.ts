@@ -13,6 +13,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { ExercisesService } from '../services';
 import { CreateExerciseDto, ExerciseResponseDto } from '../dto';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
@@ -20,6 +22,7 @@ import { ExerciseTypeEnum } from '@/shared/constants/enums.constants';
 import { ExerciseSubmissionService, ExerciseAttemptService } from '@/modules/progress/services';
 import { ExerciseSubmissionResponseDto } from '@/modules/progress/dto';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
+import { Profile } from '@/modules/auth/entities';
 
 /**
  * ExercisesController
@@ -37,7 +40,29 @@ export class ExercisesController {
     private readonly exercisesService: ExercisesService,
     private readonly exerciseSubmissionService: ExerciseSubmissionService,
     private readonly exerciseAttemptService: ExerciseAttemptService,
+    @InjectRepository(Profile, 'auth')
+    private readonly profileRepo: Repository<Profile>,
   ) {}
+
+  /**
+   * FE-061: Helper method to convert auth.users.id → profiles.id
+   *
+   * @param userId - auth.users.id (from JWT token)
+   * @returns profiles.id
+   * @throws NotFoundException if profile doesn't exist
+   */
+  private async getProfileId(userId: string): Promise<string> {
+    const profile = await this.profileRepo.findOne({
+      where: { user_id: userId },
+      select: ['id'],
+    });
+
+    if (!profile) {
+      throw new NotFoundException(`Profile not found for user ${userId}`);
+    }
+
+    return profile.id;
+  }
 
   /**
    * Obtiene todos los ejercicios ordenados por módulo y índice
@@ -250,235 +275,48 @@ export class ExercisesController {
       throw new NotFoundException(`Exercise with ID ${id} not found`);
     }
 
-    // Verificar si el usuario ha completado este ejercicio
+    // FE-061: Mejorar validación de completed
+    // Verificar si el usuario ha completado este ejercicio con validaciones adicionales
     const submission = await this.exerciseSubmissionService.findByUserAndExercise(userId, id);
-    const completed = submission ? submission.status === 'graded' : false;
 
-    // FE-055: Filter out correct answers from response (SECURITY)
-    const filteredExercise = this.filterCorrectAnswers(exercise);
+    // Validar que:
+    // 1. Existe submission
+    // 2. Status es 'graded'
+    // 3. Score es >= passing_score (70 por defecto)
+    const completed = submission
+      && submission.status === 'graded'
+      && submission.final_score >= (exercise.passing_score || 70)
+      ? true
+      : false;
+
+    // FE-061: Exercise ya viene sanitizado del service (sanitizeExercise)
+    // NO re-sanitizar para evitar duplicación y sobreescritura
+    // El service ya eliminó solutions y generó grid correcto con config.gridSize
 
     // Retornar ejercicio con campo 'completed'
     return {
-      ...filteredExercise,
+      ...exercise,
       completed,
     };
   }
 
   /**
-   * Generates crossword grid structure WITHOUT exposing answers (SECURITY)
+   * FE-061: MÉTODOS ELIMINADOS - generateCrosswordGrid() y filterCorrectAnswers()
    *
-   * @description Pre-generates the grid structure on the backend so the frontend
-   * doesn't need the actual answers to build the crossword. This prevents
-   * cheating while maintaining full functionality.
+   * @deprecated Estos métodos fueron eliminados para evitar duplicación de sanitización.
+   * La sanitización ahora se realiza ÚNICAMENTE en ExercisesService.sanitizeExercise()
    *
-   * @param content - Exercise content with clues array
-   * @returns Object with pre-built grid, filtered clues, and grid config
+   * Razón de eliminación:
+   * - generateCrosswordGrid() calculaba dimensiones desde clues (incorrecto)
+   * - Ignoraba config.gridSize del ejercicio
+   * - filterCorrectAnswers() duplicaba la sanitización del service
+   * - Causaba sobreescritura del grid correcto (15x15 -> 13x15)
    *
-   * Algorithm:
-   * 1. Find grid dimensions from clues positions
-   * 2. Initialize empty grid
-   * 3. Mark cells as non-black based on word positions
-   * 4. Add cell numbers from clue numbers
-   * 5. Return grid WITHOUT letter values
+   * Ver:
+   * - FE-060: Fix gridSize en service
+   * - FE-061: Análisis profundo y eliminación de duplicación
+   * - apps/backend/src/modules/educational/services/exercises.service.ts (sanitización única)
    */
-  private generateCrosswordGrid(content: any): any {
-    const clues = content.clues || [];
-
-    // Calculate grid dimensions
-    let maxRow = 0;
-    let maxCol = 0;
-
-    clues.forEach((clue: any) => {
-      const { answer, startRow, startCol, direction } = clue;
-      const length = answer?.length || 0;
-
-      if (direction === 'horizontal') {
-        maxRow = Math.max(maxRow, startRow);
-        maxCol = Math.max(maxCol, startCol + length - 1);
-      } else if (direction === 'vertical') {
-        maxRow = Math.max(maxRow, startRow + length - 1);
-        maxCol = Math.max(maxCol, startCol);
-      }
-    });
-
-    const rows = maxRow + 1;
-    const cols = maxCol + 1;
-
-    // Initialize empty grid
-    const grid: any[][] = [];
-    for (let r = 0; r < rows; r++) {
-      grid[r] = [];
-      for (let c = 0; c < cols; c++) {
-        grid[r][c] = {
-          row: r,
-          col: c,
-          isBlack: true,
-          userInput: '',
-        };
-      }
-    }
-
-    // Mark cells and add numbers
-    clues.forEach((clue: any) => {
-      const { answer, startRow, startCol, direction, number } = clue;
-      const length = answer?.length || 0;
-
-      for (let i = 0; i < length; i++) {
-        let row: number, col: number;
-
-        if (direction === 'horizontal') {
-          row = startRow;
-          col = startCol + i;
-        } else {
-          row = startRow + i;
-          col = startCol;
-        }
-
-        if (row < rows && col < cols) {
-          const existingCell = grid[row][col];
-
-          // First letter of the word gets the number
-          if (i === 0) {
-            if (!existingCell.isBlack && existingCell.number !== undefined) {
-              // Cell already has a number from another word (intersection start)
-              grid[row][col] = {
-                ...existingCell,
-                isBlack: false,
-                numbers: existingCell.numbers
-                  ? [...existingCell.numbers, number].sort((a, b) => a - b)
-                  : [existingCell.number, number].sort((a, b) => a - b),
-                number: undefined,
-              };
-            } else {
-              // First word in this cell
-              grid[row][col] = {
-                row,
-                col,
-                isBlack: false,
-                number: number,
-                userInput: '',
-              };
-            }
-          } else {
-            // Not the first letter
-            if (existingCell.isBlack) {
-              grid[row][col] = {
-                row,
-                col,
-                isBlack: false,
-                userInput: '',
-              };
-            }
-          }
-        }
-      }
-    });
-
-    // Filter clues to remove answers but keep metadata
-    const filteredClues = clues.map((clue: any) => ({
-      id: clue.id,
-      number: clue.number,
-      clue: clue.clue,
-      length: clue.answer?.length || 0,
-      direction: clue.direction,
-      startRow: clue.startRow,
-      startCol: clue.startCol,
-      // answer: NOT INCLUDED (security)
-    }));
-
-    return {
-      grid,
-      clues: filteredClues,
-      gridConfig: {
-        rows,
-        cols,
-      },
-    };
-  }
-
-  /**
-   * FE-055: Filter correct answers from exercise content (SECURITY)
-   * Removes solution fields to prevent cheating
-   */
-  private filterCorrectAnswers(exercise: any): any {
-    const filtered = { ...exercise };
-
-    // Remove entire solution field
-    delete filtered.solution;
-
-    // Filter content based on exercise type
-    if (filtered.content) {
-      const content = { ...filtered.content };
-
-      // Remove correctAnswer fields from all exercise types
-      if (content.statements) {
-        content.statements = content.statements.map((stmt: any) => {
-          const { correctAnswer, ...rest } = stmt;
-          return rest;
-        });
-      }
-
-      if (content.blanks) {
-        content.blanks = content.blanks.map((blank: any) => {
-          const { correctAnswer, alternatives, ...rest } = blank;
-          return rest;
-        });
-      }
-
-      // CRUCIGRAMA: Generate pre-built grid structure (SECURE)
-      // Instead of sending answers, we send the grid structure
-      if (filtered.exercise_type === 'crucigrama' && content.clues) {
-        const gridData = this.generateCrosswordGrid(content);
-        content.grid = gridData.grid;
-        content.clues = gridData.clues;
-        content.gridConfig = gridData.gridConfig;
-      }
-
-      // Remove answer fields from clues for all other exercise types
-      if (content.clues && filtered.exercise_type !== 'crucigrama') {
-        if (Array.isArray(content.clues)) {
-          content.clues = content.clues.map((clue: any) => {
-            const { word, answer, ...rest } = clue;
-            return rest;
-          });
-        } else {
-          // Handle object format {horizontal: [], vertical: []}
-          if (content.clues.horizontal) {
-            content.clues.horizontal = content.clues.horizontal.map((clue: any) => {
-              const { word, answer, ...rest } = clue;
-              return rest;
-            });
-          }
-          if (content.clues.vertical) {
-            content.clues.vertical = content.clues.vertical.map((clue: any) => {
-              const { word, answer, ...rest } = clue;
-              return rest;
-            });
-          }
-        }
-      }
-
-      // Remove correctOrder for timeline
-      delete content.correctOrder;
-
-      // Remove correctConnections for mapa conceptual
-      delete content.correctConnections;
-
-      // Remove correctPairs for emparejamiento
-      delete content.correctPairs;
-
-      // For prediccion_narrativa, keep isCorrect in predictions (client-side validation)
-      // No need to filter - it's a multiple choice exercise
-
-      filtered.content = content;
-    }
-
-    console.log('[FE-055] Filtered correct answers from exercise:', exercise.id,
-      '| Type:', filtered.exercise_type,
-      '| Crucigrama grid pre-generated:', filtered.exercise_type === 'crucigrama');
-
-    return filtered;
-  }
 
   /**
    * Crea un nuevo ejercicio educativo
@@ -964,7 +802,7 @@ export class ExercisesController {
       powerupsUsed?: string[];
     },
   ) {
-    // WORKAROUND TEMPORAL (Issue FE-049)
+    // WORKAROUND TEMPORAL (Issue FE-049 + FE-061)
     // Detectar qué formato está usando Frontend y adaptar
     let userId: string;
     let submittedAnswers: Record<string, any>;
@@ -979,13 +817,29 @@ export class ExercisesController {
       userId = req.user.id; // Extraído del JWT por JwtAuthGuard
 
       // Frontend envía 'answers' en lugar de 'submitted_answers'
-      // y es un objeto de progreso, no respuestas reales
+      // FE-061: Frontend anida las respuestas dentro de 'answers'
+      // Por ejemplo, crucigrama envía {answers: {clues: {...}}}
+      // pero el validator espera directamente {clues: {...}}
       submittedAnswers = body.answers || {};
     }
 
+    // FE-061: CRITICAL - Convert auth.users.id → profiles.id
+    // Both exercise_submissions and exercise_attempts have FK to profiles.id
+    const profileId = await this.getProfileId(userId);
+
+    // FE-061: Debug log para ver estructura recibida
+    console.log('[FE-061 DEBUG] Exercise submit received:', {
+      exerciseId,
+      userId: userId,
+      profileId: profileId,
+      bodyKeys: Object.keys(body),
+      submittedAnswersKeys: Object.keys(submittedAnswers),
+      submittedAnswersStructure: JSON.stringify(submittedAnswers, null, 2).substring(0, 500)
+    });
+
     // Delegar al ExerciseSubmissionService que maneja la lógica completa
     const submission = await this.exerciseSubmissionService.submitExercise(
-      userId,
+      userId,  // Service hace su propia conversión internamente (redundante pero OK)
       exerciseId,
       submittedAnswers,
     );
@@ -1005,10 +859,11 @@ export class ExercisesController {
     const comodinPenalty = comodinesUsed.length * 2; // 2 coins de penalización por comodín
     const mlCoinsEarned = Math.max(0, baseCoins - comodinPenalty);
 
-    // CRÍTICO: Guardar en exercise_attempts para disparar trigger de user_stats
+    // FE-061: CRÍTICO - Usar profileId (no userId) para exercise_attempts
+    // Guardar en exercise_attempts para disparar trigger de user_stats
     // El trigger actualiza automáticamente: total_xp, ml_coins, exercises_completed
     await this.exerciseAttemptService.create({
-      user_id: userId,
+      user_id: profileId,  // ✅ FE-061 FIX: Usar profileId (profiles.id) no userId (auth.users.id)
       exercise_id: exerciseId,
       submitted_answers: submittedAnswers,
       is_correct: score >= 60, // 60% es aprobatorio

@@ -10,18 +10,27 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  Request,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { AdminGuard } from '../guards/admin.guard';
 import { AdminUsersService } from '../services/admin-users.service';
+import { BulkOperationsService } from '../services/bulk-operations.service';
 import {
   ListUsersDto,
   UpdateUserDto,
   SuspendUserDto,
   PaginatedUsersDto,
   UserStatsDto,
+  ResetPasswordDto,
 } from '../dto/users';
+import {
+  BulkSuspendUsersDto,
+  BulkDeleteUsersDto,
+  BulkUpdateRoleDto,
+  BulkOperationStatusDto,
+} from '../dto/bulk-operations';
 import { User } from '@modules/auth/entities/user.entity';
 
 @ApiTags('Admin - Users')
@@ -29,7 +38,10 @@ import { User } from '@modules/auth/entities/user.entity';
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()
 export class AdminUsersController {
-  constructor(private readonly adminUsersService: AdminUsersService) {}
+  constructor(
+    private readonly adminUsersService: AdminUsersService,
+    private readonly bulkOpsService: BulkOperationsService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'List users with filters and pagination' })
@@ -99,5 +111,63 @@ export class AdminUsersController {
     @Body() deactivateDto: SuspendUserDto,
   ): Promise<User> {
     return await this.adminUsersService.deactivateUser(id, deactivateDto);
+  }
+
+  @Post(':id/reset-password')
+  @ApiOperation({
+    summary: 'Force password reset for user',
+    description: 'Forces a user to reset their password on next login. Generates reset token and sends email.',
+  })
+  async resetPassword(
+    @Param('id') id: string,
+    @Body() resetDto: ResetPasswordDto,
+  ): Promise<{ success: boolean; message: string }> {
+    return await this.adminUsersService.resetPassword(id, resetDto);
+  }
+
+  // ===============================================
+  // BULK OPERATIONS (Aliases for compatibility)
+  // ===============================================
+
+  @Post('bulk/suspend')
+  @HttpCode(HttpStatus.ACCEPTED)
+  @ApiOperation({
+    summary: 'Bulk suspend users',
+    description: 'Suspend multiple users at once. Alias for /admin/bulk-operations/suspend-users',
+  })
+  async bulkSuspend(
+    @Body() dto: BulkSuspendUsersDto,
+    @Request() req: any,
+  ): Promise<BulkOperationStatusDto> {
+    const adminId = req.user?.id || req.user?.sub;
+    return await this.bulkOpsService.bulkSuspendUsers(dto, adminId);
+  }
+
+  @Post('bulk/delete')
+  @HttpCode(HttpStatus.ACCEPTED)
+  @ApiOperation({
+    summary: 'Bulk delete users',
+    description: 'Delete multiple users at once. Alias for /admin/bulk-operations/delete-users',
+  })
+  async bulkDelete(
+    @Body() dto: BulkDeleteUsersDto,
+    @Request() req: any,
+  ): Promise<BulkOperationStatusDto> {
+    const adminId = req.user?.id || req.user?.sub;
+    return await this.bulkOpsService.bulkDeleteUsers(dto, adminId);
+  }
+
+  @Post('bulk/update-role')
+  @HttpCode(HttpStatus.ACCEPTED)
+  @ApiOperation({
+    summary: 'Bulk update user roles',
+    description: 'Update role for multiple users at once. Alias for /admin/bulk-operations/update-role',
+  })
+  async bulkUpdateRole(
+    @Body() dto: BulkUpdateRoleDto,
+    @Request() req: any,
+  ): Promise<BulkOperationStatusDto> {
+    const adminId = req.user?.id || req.user?.sub;
+    return await this.bulkOpsService.bulkUpdateRole(dto, adminId);
   }
 }

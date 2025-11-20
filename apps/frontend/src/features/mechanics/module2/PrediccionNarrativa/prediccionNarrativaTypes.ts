@@ -1,8 +1,14 @@
-// Prediction option (multiple choice)
+/**
+ * Prediction option (multiple choice)
+ * ⚠️ FE-059: isCorrect is NEVER sent by backend (sanitized for security)
+ */
 export interface PredictionOption {
   id: string;
   text: string;
-  isCorrect: boolean;
+  /**
+   * @deprecated Backend sanitizes this field - never present. Validation is done server-side.
+   */
+  isCorrect?: never;
   explanation: string;
 }
 

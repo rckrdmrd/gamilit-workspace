@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
-import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
+import { useAuth } from '@features/auth/hooks/useAuth';
+import { AdminLayout } from '../layouts/AdminLayout';
 import { SystemPerformanceDashboard } from '../components/monitoring/SystemPerformanceDashboard';
 import { UserActivityMonitor } from '../components/monitoring/UserActivityMonitor';
 import { ErrorTrackingPanel } from '../components/monitoring/ErrorTrackingPanel';
 import { SystemHealthIndicators } from '../components/monitoring/SystemHealthIndicators';
 
-const SystemMonitoring: React.FC = () => {
+/**
+ * AdminMonitoringPage - Monitoreo del sistema en tiempo real
+ * Updated: 2025-11-19 - Migrated to use AdminLayout with sidebar
+ */
+const AdminMonitoringPage: React.FC = () => {
+  const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<'performance' | 'activity' | 'errors' | 'health'>('performance');
 
   const tabs = [
@@ -15,26 +21,41 @@ const SystemMonitoring: React.FC = () => {
     { id: 'health' as const, label: 'System Health', component: SystemHealthIndicators },
   ];
 
+  // TODO: Replace with useUserGamification hook when backend endpoint is ready
+  const gamificationData = {
+    userId: user?.id || 'mock-admin-id',
+    level: 20,
+    totalXP: 5000,
+    mlCoins: 2500,
+    rank: 'Super Admin',
+    achievements: ['admin_master', 'system_monitor'],
+  };
+
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/login';
+  };
+
   const ActiveComponent = tabs.find((tab) => tab.id === activeTab)?.component || SystemPerformanceDashboard;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={{
-        id: 'mock-admin-systemmonitoring-id',
-        email: 'admin@gamilit.com',
-        role: 'super_admin',
-        displayName: 'Admin SystemMonitoring'
-      }} />
-
-      <main className="detective-container py-8">
+    <AdminLayout
+      user={user || undefined}
+      gamificationData={gamificationData}
+      organizationName="GAMILIT Platform Admin"
+      onLogout={handleLogout}
+    >
+      <div className="space-y-6">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-detective-title mb-2">System Monitoring</h1>
-          <p className="text-detective-base text-gray-400">Real-time system performance and monitoring</p>
+        <div>
+          <h1 className="text-3xl font-bold text-detective-text">Monitoreo del Sistema</h1>
+          <p className="text-detective-text-secondary mt-1">
+            Monitorea el rendimiento, actividad y salud del sistema en tiempo real
+          </p>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 overflow-x-auto">
+        <div className="flex gap-2 overflow-x-auto">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -42,7 +63,7 @@ const SystemMonitoring: React.FC = () => {
               className={`px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${
                 activeTab === tab.id
                   ? 'bg-detective-orange text-white'
-                  : 'bg-detective-bg-secondary text-gray-400 hover:bg-detective-bg-secondary/70'
+                  : 'bg-detective-bg-secondary text-detective-text hover:bg-opacity-80'
               }`}
             >
               {tab.label}
@@ -52,9 +73,9 @@ const SystemMonitoring: React.FC = () => {
 
         {/* Content */}
         <ActiveComponent />
-      </main>
-    </div>
+      </div>
+    </AdminLayout>
   );
 };
 
-export default SystemMonitoring;
+export default AdminMonitoringPage;

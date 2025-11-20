@@ -21,12 +21,14 @@
 | | Tipos/Enums | ~20 | ✅ Identificados |
 | **Base de Datos** | Schemas | 14 | ✅ Identificados |
 | | Tablas | 62 | ✅ Identificadas |
-| | Funciones | 69 | ✅ Identificadas |
+| | Funciones | 72 | ✅ Identificadas (+3 validadores DB-117/DB-123) |
 | | Views | 12 | ✅ Identificadas |
 | | Enums | 10 | ✅ Identificados |
 | **Frontend** | Módulos Features | ~15 | ✅ Identificados |
 | | Mecánicas Educativas | 33 | ✅ Identificadas |
 | | Zustand Stores | 8 | ✅ Identificados |
+| | Custom Hooks | 1 | ✅ Identificados |
+| | Páginas con useUserGamification | 29 | ✅ Migradas |
 
 ---
 
@@ -127,7 +129,7 @@
 | 3 | **auth** | 1 | 1 | 0 | 2 | 4 |
 | 4 | **auth_management** | 12 | 6 | 0 | 0 | 18 |
 | 5 | **content_management** | 5 | 0 | 0 | 0 | 5 |
-| 6 | **educational_content** | 4 | 2 | 0 | 0 | 6 |
+| 6 | **educational_content** | 6 | 24+ | 1 | 0 | 31+ (+25 DB-117/DB-123) |
 | 7 | **gamification_system** | 13 | 23 | 4 | 2 | 42 |
 | 8 | **gamilit** | 0 | 13 | 0 | 0 | 13 |
 | 9 | **progress_tracking** | 5 | 7 | 1 | 0 | 13 |
@@ -214,16 +216,37 @@
 - `maya_rank_enum`
 - `achievement_type_enum`
 
-#### educational_content (6 objetos)
-**Tablas (4):**
+#### educational_content (30+ objetos)
+**Tablas (6):**
 - `modules`
 - `lessons`
 - `exercises`
 - `exercise_configurations`
+- `exercise_validation_config` ✨ (DB-117)
+- `exercise_validation_audit` ✨ (DB-117)
 
-**Funciones (2):**
+**Funciones (24+):**
 - `get_module_progress()`
 - `calculate_lesson_completion()`
+- **Sistema de Validación (22 funciones - DB-117/DB-123):**
+  - `validate_answer()` - Función maestra de routing
+  - `validate_and_audit()` - Función principal para backend (con auditoría)
+  - `recalculate_exercise()` - Recálculo con snapshot inmutable
+  - **Módulo 1 (5 validadores):** crucigrama, timeline, word_search, fill_in_blank, true_false
+  - **Módulo 2 (8 validadores):** detective_textual [LEGACY], construccion_hipotesis [LEGACY], prediccion_narrativa [LEGACY], puzzle_contexto, rueda_inferencias, + ✨ detective_connections, ✨ prediction_scenarios, ✨ cause_effect_matching
+  - **Módulo 3 (5 validadores):** tribunal_opiniones, debate_digital, analisis_fuentes, podcast_argumentativo, matriz_perspectivas
+  - `validate_exercise_structure()` - Pre-existente
+
+**Vistas (1):**
+- `v_validation_analysis` ✨ (DB-117)
+
+**Seeds:**
+- `exercise_validation_config` - 15 configuraciones (3 actualizadas en DB-123)
+
+**Nota DB-123 (2025-11-19):** 3 configuraciones actualizadas para usar nuevos validadores específicos:
+- `detective_textual` → `validate_detective_connections()` (antes validate_detective_textual)
+- `construccion_hipotesis` → `validate_cause_effect_matching()` (antes validate_construccion_hipotesis)
+- `prediccion_narrativa` → `validate_prediction_scenarios()` (antes validate_prediccion_narrativa)
 
 #### progress_tracking (13 objetos)
 **Tablas (5):**
@@ -433,6 +456,17 @@ apps/frontend/src/
 7. **tenantStore** - Multi-tenancy
 8. **uiStore** - Estado de UI global
 
+### 3.4 Custom Hooks Centralizados (1 Total)
+
+1. **useUserGamification** - Hook centralizado para datos de gamificación del usuario
+   - **Ubicación:** `apps/frontend/src/shared/hooks/useUserGamification.ts`
+   - **Propósito:** Obtener y gestionar datos de gamificación (level, XP, ML Coins, rank, achievements)
+   - **Implementado en:** 29 páginas (7 Admin + 11 Teacher + 11 Student)
+   - **Estado:** ✅ Completado - Mock data (preparado para API real)
+   - **Backend Endpoint:** `GET /api/users/:userId/gamification` (pendiente)
+   - **Documentación:** `docs/01-fase-alcance-inicial/EAI-003-gamificacion/especificaciones/ET-GAM-005-hook-user-gamification.md`
+   - **Reporte Migración:** `orchestration/frontend/REPORTE-MIGRACION-USERGAMIFICATION-2025-11-19.md`
+
 ---
 
 ## 4️⃣ MAPEO DE REFERENCIAS CRUZADAS
@@ -540,5 +574,175 @@ Frontend: features/mechanics/module1/Crucigrama/
 
 **Documento Vivo:** Este inventario será actualizado continuamente conforme se descubran más componentes.
 
-**Última actualización:** 2025-11-07
+**Última actualización:** 2025-11-19
 **Próxima revisión:** Semanal
+
+---
+
+## 📝 ACTUALIZACIÓN FE-059 (2025-11-19)
+
+### Integración Frontend-Backend API
+
+**Tarea:** FE-059 - Backend Migration e Integración con API
+**Estado:** ✅ Completado (con discrepancias identificadas)
+**Documentos:** 
+- `orchestration/TRAZA-DECISIONES-FE-059.md`
+- `docs/90-transversal/correcciones/ANALISIS-FORMATOS-DTO-FE-059.md`
+- `orchestration/HANDOFF-FE-059-TO-DB.md`
+
+### Componentes Frontend Integrados (9)
+
+#### Módulo 1: Comprensión Literal (5 componentes)
+
+| Componente | Archivo | DTO Format | Estado |
+|-----------|---------|------------|--------|
+| Verdadero/Falso | `VerdaderoFalsoExercise.tsx` | `Record<string, boolean>` | ✅ Integrado |
+| Completar Espacios | `CompletarEspaciosExercise.tsx` | `{blanks: Record<string, string>}` | ✅ Integrado |
+| Crucigrama | `CrucigramaExercise.tsx` | `{clues: Record<string, string>}` | ✅ Integrado |
+| Sopa de Letras | `SopaLetrasExercise.tsx` | `{foundWords: string[]}` | ⚠️ Requiere cambio a `words` |
+| Timeline | `TimelineExercise.tsx` | `{eventOrder: string[]}` | ⚠️ Requiere cambio a `events` |
+
+#### Módulo 2: Comprensión Inferencial (4 componentes)
+
+| Componente | Archivo | DTO Format | Estado |
+|-----------|---------|------------|--------|
+| Detective Textual | `DetectiveTextualExercise.tsx` | `{connections: Array<{from,to,relationship}>}` | 🚨 Discrepancia crítica |
+| Causa-Efecto | `CausaEfectoExercise.tsx` | `{causes: Record<string, string[]>}` | 🚨 Discrepancia crítica |
+| Predicción Narrativa | `PrediccionNarrativaExercise.tsx` | `{scenarios: Record<string, string>}` | 🚨 Discrepancia crítica |
+| Puzzle Contexto | `PuzzleContextoExercise.tsx` | No integrado aún | ⏳ Pendiente |
+
+### API Endpoint Utilizado
+
+**POST** `/api/v1/progress/submissions/submit`
+
+**Request:**
+```typescript
+{
+  userId: UUID,
+  exerciseId: UUID,
+  answers: unknown  // Formato varía por tipo de ejercicio
+}
+```
+
+**Response:**
+```typescript
+{
+  attemptId: UUID,
+  score: number,         // 0-100
+  isPerfect: boolean,
+  correctAnswersCount: number,
+  totalQuestions: number,
+  rewards: {
+    mlCoins: number,
+    xp: number,
+    bonuses: {...}
+  },
+  feedback: {
+    overall: string,
+    answerReview: Array<...>
+  },
+  achievements?: Array<...>,
+  rankUp?: {...} | null
+}
+```
+
+### Discrepancias Identificadas
+
+#### Críticas (Requieren decisión DB Agent)
+
+1. **Detective Textual**
+   - Frontend: Conexiones de evidencias
+   - DB-117 espera: Múltiple choice
+   - Estado: ⏳ Ver HANDOFF-FE-059-TO-DB.md
+
+2. **Predicción Narrativa**
+   - Frontend: Escenarios con opciones
+   - DB-117 espera: Texto libre
+   - Estado: ⏳ Ver HANDOFF-FE-059-TO-DB.md
+
+3. **Causa-Efecto**
+   - Frontend: Matching drag & drop
+   - DB-117 espera: Texto libre de hipótesis
+   - Estado: ⏳ Ver HANDOFF-FE-059-TO-DB.md
+
+#### Menores (5 minutos corrección)
+
+4. **Timeline**: Cambiar `eventOrder` → `events`
+5. **Sopa de Letras**: Cambiar `foundWords` → `words`
+
+### Archivos Modificados (9)
+
+#### Frontend Components
+1. `src/features/mechanics/module1/VerdaderoFalso/VerdaderoFalsoExercise.tsx`
+2. `src/features/mechanics/module1/CompletarEspacios/CompletarEspaciosExercise.tsx`
+3. `src/features/mechanics/module1/Crucigrama/CrucigramaExercise.tsx`
+4. `src/features/mechanics/module1/SopaLetras/SopaLetrasExercise.tsx`
+5. `src/features/mechanics/module1/Timeline/TimelineExercise.tsx`
+6. `src/features/mechanics/module2/DetectiveTextual/DetectiveTextualExercise.tsx`
+7. `src/features/mechanics/module2/ConstruccionHipotesis/CausaEfectoExercise.tsx`
+8. `src/features/mechanics/module2/PrediccionNarrativa/PrediccionNarrativaExercise.tsx`
+
+#### API Service
+9. `src/features/progress/api/progressAPI.ts`
+
+### Métricas de Implementación
+
+- **Duración:** ~2 horas
+- **Componentes integrados:** 9
+- **Líneas agregadas:** ~450
+- **Líneas eliminadas:** ~90
+- **Líneas netas:** +360
+- **Tiempo promedio por componente:** ~13 minutos
+
+### Patrón de Integración Implementado
+
+```typescript
+// Patrón estándar en todos los componentes
+const { user } = useAuth();
+const [isSubmitting, setIsSubmitting] = useState(false);
+
+const handleCheck = async () => {
+  // 1. Validar completitud
+  if (!allAnswered) return;
+  
+  // 2. Validar autenticación
+  if (!user?.id) return;
+  
+  setIsSubmitting(true);
+  
+  try {
+    // 3. Preparar answers en DTO
+    const answersObj = prepareAnswers();
+    
+    // 4. Submit a backend
+    const response = await submitExercise(exercise.id, user.id, answersObj);
+    
+    // 5. Mostrar resultado
+    setFeedback({
+      type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
+      message: response.feedback?.overall,
+      score: response.score
+    });
+  } catch (error) {
+    setFeedback({ type: 'error', message: 'Error al enviar' });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+```
+
+### Próximos Pasos
+
+1. ⏳ Database Agent: Revisar HANDOFF-FE-059-TO-DB.md y decidir propuesta
+2. ⏳ Frontend Agent: Aplicar cambios menores (Timeline, SopaLetras)
+3. ⏳ Database Agent: Implementar solución para discrepancias críticas
+4. ⏳ Backend Agent: Integrar con nuevos validadores (si aplica)
+5. ⏳ Testing end-to-end completo
+6. ⏳ Actualizar HANDOFF-DB-117 con formatos finales
+
+---
+
+**Actualización agregada:** 2025-11-19
+**Responsable:** Frontend Agent
+**Revisión requerida:** Database Agent, Backend Agent
+

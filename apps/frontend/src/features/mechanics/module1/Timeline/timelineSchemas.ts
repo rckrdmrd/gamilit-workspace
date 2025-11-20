@@ -22,7 +22,8 @@ export const timelineDataSchema = z.object({
     cost: z.number().int().min(0)
   })),
   events: z.array(timelineEventSchema),
-  correctOrder: z.array(z.string())
+  // FE-059: correctOrder is sanitized by backend - never present
+  correctOrder: z.array(z.string()).optional()
 });
 
 export type TimelineEventInput = z.infer<typeof timelineEventSchema>;

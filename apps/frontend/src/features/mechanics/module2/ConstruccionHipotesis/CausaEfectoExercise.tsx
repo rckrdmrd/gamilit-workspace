@@ -8,6 +8,8 @@ import type {
   CausaEfectoExerciseProps,
   CauseMatches,
 } from './causaEfectoTypes';
+import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
   exercise,
@@ -15,6 +17,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
   onProgressUpdate,
   actionsRef,
 }) => {
+  const { user } = useAuth();
   const [matches, setMatches] = useState<CauseMatches>({});
   const [validated, setValidated] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -22,6 +25,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
   const [startTime] = useState(new Date());
   const [draggedConsequence, setDraggedConsequence] = useState<string | null>(null);
   const [dragOverCause, setDragOverCause] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { causes, consequences } = exercise.content;
 
@@ -34,44 +38,41 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
     setMatches(initialMatches);
   }, [causes]);
 
-  // Notify parent of progress updates
+  // FE-055 & FE-059: Notify parent of progress updates with user answers
   useEffect(() => {
     if (onProgressUpdate) {
       const totalMatches = Object.values(matches).reduce((sum, arr) => sum + arr.length, 0);
-      const totalPossible = consequences.filter(c => c.correctCauseIds.length > 0).length;
-      const score = validated ? calculateCurrentScore() : 0;
 
-      // FE-055: Send BOTH progress metadata AND user answers
+      // FE-059: Prepare user answers in backend DTO format
+      // Backend expects: { causes: { c1: ["cons1", "cons2"] } }
+      const userAnswers: Record<string, string[]> = {};
+      Object.keys(matches).forEach(causeId => {
+        if (matches[causeId].length > 0) {
+          userAnswers[causeId] = matches[causeId];
+        }
+      });
+
+      // Send BOTH progress metadata AND user answers
       onProgressUpdate({
         progress: {
           currentStep: totalMatches,
-          totalSteps: totalPossible,
-          score,
+          totalSteps: consequences.length, // All consequences should be matched
+          score: 0, // FE-059: Score calculated by backend only
           hintsUsed: 0,
           timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
         },
-        answers: matches,  // ✅ Send user's cause-effect matches
+        answers: { causes: userAnswers },
+      });
+
+      console.log('📊 [CausaEfecto] Progress update sent:', {
+        totalMatches,
+        totalConsequences: consequences.length
       });
     }
-  }, [matches, validated, startTime, onProgressUpdate, consequences]);
+  }, [matches, startTime, onProgressUpdate, consequences.length]);
 
-  const calculateCurrentScore = () => {
-    let correctMatches = 0;
-    let totalMatches = 0;
-
-    consequences.forEach(consequence => {
-      if (consequence.correctCauseIds.length === 0) return; // Skip distractors
-
-      consequence.correctCauseIds.forEach(correctCauseId => {
-        totalMatches++;
-        if (matches[correctCauseId]?.includes(consequence.id)) {
-          correctMatches++;
-        }
-      });
-    });
-
-    return totalMatches > 0 ? calculateScore(correctMatches, totalMatches) : 0;
-  };
+  // FE-059: Removed calculateCurrentScore() - uses sanitized correctCauseIds field
+  // Scoring is now done server-side via backend API
 
   // Drag handlers
   const handleDragStart = (e: React.DragEvent, consequenceId: string) => {
@@ -135,58 +136,76 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
     return Object.values(matches).some(arr => arr.includes(consequenceId));
   };
 
-  const getMatchCounts = () => {
-    let correctCount = 0;
-    let totalCount = 0;
+  // FE-059: Removed getMatchCounts() - uses sanitized correctCauseIds field
+  // Validation is now done server-side via backend API
 
-    consequences.forEach(consequence => {
-      if (consequence.correctCauseIds.length === 0) return; // Skip distractors
+  const handleCheck = useCallback(async () => {
+    const totalMatches = Object.values(matches).reduce((sum, arr) => sum + arr.length, 0);
+    const hasMatches = totalMatches > 0;
 
-      consequence.correctCauseIds.forEach(correctCauseId => {
-        totalCount++;
-        if (matches[correctCauseId]?.includes(consequence.id)) {
-          correctCount++;
-        }
-      });
-    });
-
-    return { correctCount, totalCount };
-  };
-
-  const handleCheck = useCallback(() => {
-    if (validated) {
-      // Already validated, show results again
-      const { correctCount, totalCount } = getMatchCounts();
-      const finalScore = calculateScore(correctCount, totalCount);
-      const percentage = totalCount > 0 ? (correctCount / totalCount) * 100 : 0;
-
+    if (!hasMatches) {
       setFeedback({
-        type: percentage >= 70 ? 'success' : percentage >= 50 ? 'partial' : 'error',
-        title: percentage >= 70 ? '¡Excelente análisis!' : percentage >= 50 ? 'Buen intento' : 'Necesitas practicar más',
-        message: `Identificaste correctamente ${correctCount} de ${totalCount} relaciones causa-efecto (${Math.round(percentage)}%).`,
-        score: finalScore,
-        showConfetti: percentage >= 70,
+        type: 'error',
+        title: 'Ejercicio Incompleto',
+        message: 'Debes establecer al menos una relación causa-efecto antes de verificar.',
       });
       setShowFeedback(true);
       return;
     }
 
-    // Validate
+    // Check if user is authenticated
+    if (!user?.id) {
+      setFeedback({
+        type: 'error',
+        title: 'Error de Autenticación',
+        message: 'Debes estar autenticado para enviar el ejercicio.',
+      });
+      setShowFeedback(true);
+      return;
+    }
+
+    setIsSubmitting(true);
     setValidated(true);
 
-    const { correctCount, totalCount } = getMatchCounts();
-    const finalScore = calculateScore(correctCount, totalCount);
-    const percentage = totalCount > 0 ? (correctCount / totalCount) * 100 : 0;
+    try {
+      // Prepare answers in backend DTO format: { causes: { c1: ["cons1", "cons2"] } }
+      const userAnswers: Record<string, string[]> = {};
+      Object.keys(matches).forEach(causeId => {
+        if (matches[causeId].length > 0) {
+          userAnswers[causeId] = matches[causeId];
+        }
+      });
 
-    setFeedback({
-      type: percentage >= 70 ? 'success' : percentage >= 50 ? 'partial' : 'error',
-      title: percentage >= 70 ? '¡Excelente análisis!' : percentage >= 50 ? 'Buen intento' : 'Necesitas practicar más',
-      message: `Identificaste correctamente ${correctCount} de ${totalCount} relaciones causa-efecto (${Math.round(percentage)}%).`,
-      score: finalScore,
-      showConfetti: percentage >= 70,
-    });
-    setShowFeedback(true);
-  }, [matches, validated, consequences]);
+      // Submit to backend API
+      const response = await submitExercise(exercise.id, user.id, { causes: userAnswers });
+
+      // Show backend response
+      setFeedback({
+        type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
+        title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
+        message: response.feedback?.overall || `Has establecido ${response.correctAnswersCount} de ${response.totalQuestions} relaciones correctas.`,
+        score: response.score,
+        showConfetti: response.isPerfect
+      });
+      setShowFeedback(true);
+
+      console.log('✅ [CausaEfecto] Submission successful:', {
+        attemptId: response.attemptId,
+        score: response.score,
+        rewards: response.rewards
+      });
+    } catch (error) {
+      console.error('❌ [CausaEfecto] Submission error:', error);
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: 'Hubo un problema al enviar tu respuesta. Por favor, intenta nuevamente.',
+      });
+      setShowFeedback(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [matches, user, exercise.id]);
 
   const handleReset = useCallback(() => {
     const initialMatches: CauseMatches = {};
@@ -250,13 +269,9 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
           {/* Progress */}
           <div className="flex items-center justify-between">
             <div className="text-detective-sm text-detective-text-secondary">
-              Consecuencias asignadas: {Object.values(matches).reduce((sum, arr) => sum + arr.length, 0)} / {consequences.filter(c => c.correctCauseIds.length > 0).length}
+              Consecuencias asignadas: {Object.values(matches).reduce((sum, arr) => sum + arr.length, 0)} / {consequences.length}
             </div>
-            {validated && (
-              <div className="text-detective-sm font-bold text-detective-blue">
-                Correctas: {getMatchCounts().correctCount} / {getMatchCounts().totalCount}
-              </div>
-            )}
+            {/* FE-059: Removed correctness display - validation is server-side only */}
           </div>
 
           {/* Two-column layout: Causes | Consequences */}
@@ -301,28 +316,16 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
                           const consequence = consequences.find(c => c.id === cId);
                           if (!consequence) return null;
 
-                          const isCorrect = consequence.correctCauseIds.includes(cause.id);
-                          const showCorrectness = validated;
+                          // FE-059: Removed correctness validation - correctCauseIds field not available
+                          // Visual feedback disabled until backend integration
 
                           return (
                             <div
                               key={cId}
-                              className={`p-3 rounded-lg border-2 text-detective-xs relative group ${
-                                showCorrectness
-                                  ? isCorrect
-                                    ? 'bg-green-50 border-green-500 text-green-900'
-                                    : 'bg-red-50 border-red-500 text-red-900'
-                                  : 'bg-orange-50 border-orange-300 text-orange-900'
-                              }`}
+                              className="p-3 rounded-lg border-2 text-detective-xs relative group bg-orange-50 border-orange-300 text-orange-900"
                             >
                               <div className="flex items-center gap-2">
-                                {showCorrectness && (
-                                  isCorrect ? (
-                                    <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                                  ) : (
-                                    <XCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
-                                  )
-                                )}
+                                {/* FE-059: Removed CheckCircle/XCircle icons - no local validation */}
                                 <span className="flex-1">{consequence.text}</span>
                                 {!validated && (
                                   <button

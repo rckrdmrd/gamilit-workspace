@@ -11,6 +11,8 @@ export const fetchInvestigation = async (id: string): Promise<Investigation> => 
   return mockInvestigation;
 };
 
+// FE-059: Mock validation function - no longer uses correctConnections (sanitized field)
+// In real backend integration, validation will be done server-side
 export const validateConnection = async (
   fromEvidenceId: string,
   toEvidenceId: string,
@@ -18,24 +20,12 @@ export const validateConnection = async (
 ): Promise<{ isCorrect: boolean; feedback: string; score: number }> => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  const correctConnection = mockInvestigation.correctConnections.find(
-    (c) =>
-      (c.fromEvidenceId === fromEvidenceId && c.toEvidenceId === toEvidenceId) ||
-      (c.fromEvidenceId === toEvidenceId && c.toEvidenceId === fromEvidenceId)
-  );
-
-  if (correctConnection) {
-    return {
-      isCorrect: true,
-      feedback: '¡Excelente conexión! Has identificado una relación clave en la investigación.',
-      score: 20,
-    };
-  }
-
+  // FE-059: Removed validation against correctConnections
+  // Mock response - all connections accepted for now
   return {
-    isCorrect: false,
-    feedback: 'Esta conexión es interesante, pero no es fundamental para resolver el misterio.',
-    score: 5,
+    isCorrect: true, // Mock: accept all connections
+    feedback: 'Conexión registrada. La validación final se hará en el servidor.',
+    score: 10,
   };
 };
 
@@ -55,32 +45,23 @@ export const getAIInferences = async (discoveredEvidence: string[]) => {
   return generateInferenceSuggestions(discoveredEvidence);
 };
 
+// FE-059: Mock submit function - no longer uses correctConnections (sanitized field)
+// In real backend integration, validation will be done server-side
 export const submitSolution = async (
   progress: DetectiveProgress
 ): Promise<{ score: number; feedback: string; completed: boolean }> => {
   await new Promise((resolve) => setTimeout(resolve, 1500));
 
-  const correctConnectionsFound = progress.connections.filter((c) =>
-    mockInvestigation.correctConnections.some(
-      (cc) =>
-        (cc.fromEvidenceId === c.fromEvidenceId && cc.toEvidenceId === c.toEvidenceId) ||
-        (cc.fromEvidenceId === c.toEvidenceId && cc.toEvidenceId === c.fromEvidenceId)
-    )
-  ).length;
-
-  const connectionScore = (correctConnectionsFound / mockInvestigation.correctConnections.length) * 60;
-  const evidenceScore = (progress.discoveredEvidence.length / mockInvestigation.availableEvidence.length) * 30;
-  const hintPenalty = progress.hintsUsed * 2;
-  const finalScore = Math.max(0, Math.min(100, connectionScore + evidenceScore - hintPenalty + 10));
+  // FE-059: Removed validation against correctConnections
+  // Mock scoring based on activity level only
+  const hasConnections = progress.connections.length > 0;
+  const hasDiscoveredEvidence = progress.discoveredEvidence.length > 1;
 
   return {
-    score: Math.round(finalScore),
-    feedback:
-      finalScore > 80
-        ? '¡Detective experto! Has resuelto el misterio brillantemente.'
-        : finalScore > 60
-          ? 'Buen trabajo. Has identificado las conexiones principales.'
-          : 'Revisa las evidencias cuidadosamente y busca más conexiones.',
-    completed: finalScore > 50,
+    score: 0, // Will be calculated by backend
+    feedback: hasConnections && hasDiscoveredEvidence
+      ? 'Has completado la investigación. La validación final se procesará en el servidor.'
+      : 'Necesitas crear más conexiones entre las evidencias.',
+    completed: hasConnections && hasDiscoveredEvidence,
   };
 };

@@ -149,7 +149,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
     } catch (err: any) {
       // Error is already set in AuthContext
       setError('root', {
-        message: err.message || 'Registration failed. Please try again.',
+        message: err.message || 'El registro falló. Por favor, intenta nuevamente.',
       });
     }
   };
@@ -201,7 +201,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           htmlFor="email"
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Email Address
+          Correo Electrónico
         </label>
         <input
           id="email"
@@ -217,7 +217,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                 : 'border-gray-300 bg-white'
             }
           `}
-          placeholder="you@example.com"
+          placeholder="tu@ejemplo.com"
           aria-invalid={errors.email ? 'true' : 'false'}
           aria-describedby={errors.email ? 'email-error' : undefined}
           disabled={isSubmitting}
@@ -236,7 +236,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           htmlFor="full_name"
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Full Name <span className="text-gray-400 text-xs">(optional)</span>
+          Nombre Completo <span className="text-gray-400 text-xs">(opcional)</span>
         </label>
         <input
           id="full_name"
@@ -252,7 +252,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                 : 'border-gray-300 bg-white'
             }
           `}
-          placeholder="John Doe"
+          placeholder="Juan Pérez"
           aria-invalid={errors.full_name ? 'true' : 'false'}
           aria-describedby={errors.full_name ? 'full-name-error' : undefined}
           disabled={isSubmitting}
@@ -276,7 +276,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             htmlFor="role"
             className="block text-sm font-medium text-gray-700 mb-2"
           >
-            Role
+            Rol
           </label>
           <select
             id="role"
@@ -295,8 +295,8 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             disabled={isSubmitting}
             {...register('role')}
           >
-            <option value="student">Student</option>
-            <option value="admin_teacher">Teacher/Admin</option>
+            <option value="student">Estudiante</option>
+            <option value="admin_teacher">Profesor/Admin</option>
             <option value="super_admin">Super Admin</option>
           </select>
           {errors.role && (
@@ -313,7 +313,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           htmlFor="password"
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Password
+          Contraseña
         </label>
         <div className="relative">
           <input
@@ -330,7 +330,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                   : 'border-gray-300 bg-white'
               }
             `}
-            placeholder="Create a strong password"
+            placeholder="Crea una contraseña segura"
             aria-invalid={errors.password ? 'true' : 'false'}
             aria-describedby={
               errors.password ? 'password-error' : 'password-strength'
@@ -342,7 +342,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700"
-            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
             disabled={isSubmitting}
           >
             {showPassword ? (
@@ -357,7 +357,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
         {password && (
           <div id="password-strength" className="mt-2">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs text-gray-600">Password strength:</span>
+              <span className="text-xs text-gray-600">Fortaleza de la contraseña:</span>
               <span
                 className={`text-xs font-medium ${
                   passwordStrength.strength === 'weak'
@@ -367,8 +367,11 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                     : 'text-green-600'
                 }`}
               >
-                {passwordStrength.strength.charAt(0).toUpperCase() +
-                  passwordStrength.strength.slice(1)}
+                {passwordStrength.strength === 'weak'
+                  ? 'Débil'
+                  : passwordStrength.strength === 'medium'
+                  ? 'Media'
+                  : 'Fuerte'}
               </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
@@ -397,7 +400,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           htmlFor="confirmPassword"
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Confirm Password
+          Confirmar Contraseña
         </label>
         <div className="relative">
           <input
@@ -414,7 +417,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
                   : 'border-gray-300 bg-white'
               }
             `}
-            placeholder="Re-enter your password"
+            placeholder="Vuelve a ingresar tu contraseña"
             aria-invalid={errors.confirmPassword ? 'true' : 'false'}
             aria-describedby={
               errors.confirmPassword ? 'confirm-password-error' : undefined
@@ -427,7 +430,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             onClick={() => setShowConfirmPassword((prev) => !prev)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700"
             aria-label={
-              showConfirmPassword ? 'Hide password' : 'Show password'
+              showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
             }
             disabled={isSubmitting}
           >
@@ -470,23 +473,23 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             htmlFor="terms_accepted"
             className="ml-2 block text-sm text-gray-700 cursor-pointer"
           >
-            I agree to the{' '}
+            Acepto los{' '}
             <a
               href="/terms"
               className="text-orange-600 hover:text-orange-500 underline"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Terms and Conditions
+              Términos y Condiciones
             </a>{' '}
-            and{' '}
+            y la{' '}
             <a
               href="/privacy"
               className="text-orange-600 hover:text-orange-500 underline"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Privacy Policy
+              Política de Privacidad
             </a>
           </label>
         </div>
@@ -512,12 +515,12 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
         {isSubmitting ? (
           <>
             <Loader2 className="w-5 h-5 animate-spin" />
-            <span>Creating account...</span>
+            <span>Creando cuenta...</span>
           </>
         ) : (
           <>
             <CheckCircle2 className="w-5 h-5" />
-            <span>Create Account</span>
+            <span>Crear Cuenta</span>
           </>
         )}
       </button>
