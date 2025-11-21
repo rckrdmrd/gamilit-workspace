@@ -142,23 +142,21 @@ INSERT INTO educational_content.exercise_validation_config (
 -- 2.1. DETECTIVE TEXTUAL
 (
     'detective_textual',
-    'validate_detective_connections',
+    'validate_detective_textual',
     false,
     true,
     NULL,
     false,
     '{
-        "minCorrectConnections": 2,
-        "allowPartialCredit": true,
-        "validateKeywords": true
+        "allowPartialCredit": true
     }'::jsonb,
     100,
     70,
-    'Validación de detective textual: conexión de evidencias en investigación tipo tablero detective',
+    'Validación de detective textual: preguntas de inferencia con opciones múltiples',
     '{
-        "submitted": {"connections": [{"from": "ev1", "to": "ev2", "relationship": "Ambos describen el experimento"}]},
-        "solution": {"expectedConnections": [{"from": "ev1", "to": "ev2", "requiredKeywords": ["experimento", "radiación"]}]},
-        "result": {"is_correct": true, "correctCount": 1, "score": 100}
+        "submitted": {"questions": {"q1": "1", "q2": "1", "q3": "1", "q4": "1"}},
+        "solution": {"correctAnswers": {"q1": "1", "q2": "1", "q3": "1", "q4": "1"}, "totalQuestions": 4},
+        "result": {"is_correct": true, "correct_answers": 4, "score": 100}
     }'::jsonb
 ),
 
@@ -179,7 +177,7 @@ INSERT INTO educational_content.exercise_validation_config (
     'Validación de causa-efecto: asociación de causas con consecuencias mediante drag & drop',
     '{
         "submitted": {"causes": {"c1": ["cons1", "cons2"], "c2": ["cons3"], "c3": ["cons4"]}},
-        "solution": {"correctMatches": {"c1": ["cons1", "cons2"], "c2": ["cons3"], "c3": ["cons4"]}, "allowPartialMatches": true},
+        "solution": {"causes": {"c1": ["cons1", "cons2"], "c2": ["cons3"], "c3": ["cons4"]}},
         "result": {"is_correct": true, "correctCount": 4, "totalCount": 4, "score": 100}
     }'::jsonb
 ),
@@ -199,9 +197,9 @@ INSERT INTO educational_content.exercise_validation_config (
     70,
     'Validación de predicción narrativa: selección de predicciones predefinidas para múltiples escenarios',
     '{
-        "submitted": {"scenarios": {"s1": "pred_a", "s2": "pred_b", "s3": "pred_c"}},
-        "solution": {"correctPredictions": {"s1": "pred_a", "s2": "pred_b", "s3": "pred_c"}, "explanations": {"s1": "Basado en...", "s2": "Porque..."}},
-        "result": {"is_correct": true, "correctCount": 3, "score": 100}
+        "submitted": {"scenarios": {"pred-1": "p2", "pred-2": "p1"}},
+        "solution": {"scenarios": {"pred-1": "p2", "pred-2": "p1"}},
+        "result": {"is_correct": true, "correctCount": 2, "score": 100}
     }'::jsonb
 ),
 

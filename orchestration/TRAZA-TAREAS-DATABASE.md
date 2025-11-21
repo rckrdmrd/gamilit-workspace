@@ -1,11 +1,49 @@
 # Traza de Tareas: ATLAS-DATABASE
 
-**Última actualización:** 2025-11-19 16:55
-**Estado:** ✅✅✅✅✅✅✅✅ DB-126 COMPLETADO - CRUCIGRAMA FUNCIONAL - 5/5 TESTS PASSED - EJERCICIO RESTAURADO
+**Última actualización:** 2025-11-21
+**Estado:** ✅ DB-127 COMPLETADO - MÓDULO 3 ALINEADO CON DOC v6.3
 
 ---
 
 ## 📋 Tareas Actuales
+
+### ✅ DB-127: Alineación Módulo 3 con Documento de Diseño v6.3 - COMPLETADO
+
+**Objetivo:** Actualizar seeds del Módulo 3 (Comprensión Crítica) para alinear con especificaciones del documento de diseño v6.3.
+
+**Contexto:** Los ejercicios del Módulo 3 tenían contenido desactualizado respecto al documento de diseño v6.3. Se requerían actualizaciones en 3 ejercicios.
+
+**Cambios Realizados:**
+
+1. **Ejercicio 3.1 - Tribunal de Opiniones (tribunal_opiniones)**
+   - ✅ PROD actualizado: formato `cases` → `statements` (v6.3)
+   - ✅ DEV ya tenía formato correcto
+   - ✅ 8 afirmaciones sobre Marie Curie con clasificación HECHO/OPINIÓN/INTERPRETACIÓN
+   - ✅ Veredictos: bien-fundamentada, parcialmente-fundamentada, sin-fundamento
+
+2. **Ejercicio 3.2 - Debate Digital (debate_digital)**
+   - ✅ DEV actualizado
+   - ✅ PROD actualizado
+   - ✅ Cambio topic: "patentes" → "¿La fama afectó negativamente la investigación de Marie Curie?"
+   - ✅ Cambio context: Nuevo contexto sobre fama post-Nobel 1903, escándalo 1911
+   - ✅ Cambio positions: A FAVOR (fama negativa) vs EN CONTRA (fama positiva)
+
+3. **Ejercicio 3.5 - Matriz de Perspectivas (matriz_perspectivas)**
+   - ✅ DEV actualizado
+   - ✅ PROD actualizado
+   - ✅ persp-5: "Comunidad médica" → "Marie Curie (perspectiva personal)"
+   - ✅ persp-6: "Historiadores modernos" → "Pierre Curie (perspectiva póstuma hipotética)"
+
+**Archivos Modificados:**
+- `apps/database/seeds/dev/educational_content/04-exercises-module3.sql`
+- `apps/database/seeds/prod/educational_content/04-exercises-module3.sql`
+
+**Referencia:** `docs/00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md` (líneas 559-761)
+
+**Estado:** ✅ COMPLETADO
+**Fecha:** 2025-11-21
+
+---
 
 ### ✅ DB-126: Corrección Formato Crucigrama - COMPLETADO
 

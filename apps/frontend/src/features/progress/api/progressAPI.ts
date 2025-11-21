@@ -384,7 +384,7 @@ export const submitExercise = async (
     };
 
     const { data } = await apiClient.post<ApiResponse<SubmitExerciseResponse>>(
-      '/api/v1/progress/submissions/submit',
+      '/v1/progress/submissions/submit',
       backendPayload
     );
 

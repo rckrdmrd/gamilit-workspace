@@ -108,7 +108,12 @@ BEGIN
             ]
         }'::jsonb,
         '{
-            "correctAnswers": [1, 1, 1, 1],
+            "correctAnswers": {
+                "q1": "1",
+                "q2": "1",
+                "q3": "1",
+                "q4": "1"
+            },
             "totalQuestions": 4
         }'::jsonb,
         'intermediate', 100, 75,
@@ -199,7 +204,7 @@ BEGIN
             ]
         }'::jsonb,
         '{
-            "correctMatches": {
+            "causes": {
                 "c1": ["e1", "e2", "e3"],
                 "c2": ["e5", "e6"]
             }
@@ -284,7 +289,9 @@ BEGIN
             ]
         }'::jsonb,
         '{
-            "correctPredictions": ["pred-1-p2"]
+            "scenarios": {
+                "pred-1": "p2"
+            }
         }'::jsonb,
         'intermediate', 100, 70,
         15, 3,
@@ -359,7 +366,12 @@ BEGIN
             ]
         }'::jsonb,
         '{
-            "correctOrder": ["frag-b", "frag-c", "frag-a", "frag-d"]
+            "correctAnswers": {
+                "frag-b": "0",
+                "frag-c": "1",
+                "frag-a": "2",
+                "frag-d": "3"
+            }
         }'::jsonb,
         'intermediate', 100, 70,
         15, 3,

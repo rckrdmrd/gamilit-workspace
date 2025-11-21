@@ -412,15 +412,17 @@ Todos los validadores retornan el mismo formato de respuesta:
 
 **Nota:** Los validadores antiguos (`validate_detective_textual`, `validate_prediccion_narrativa`, `validate_construccion_hipotesis`) aún existen en el código pero `exercise_validation_config` ahora apunta a los nuevos validadores.
 
-#### 4.4. Validadores Módulo 3: Lectura Crítica
+#### 4.4. Validadores Módulo 3: Lectura Crítica (Actualizado v6.3)
 
 | # | Tipo de Ejercicio | Validador | Archivo | Formato Entrada | Descripción |
 |---|-------------------|-----------|---------|-----------------|-------------|
-| 11 | tribunal_opiniones | `validate_tribunal_opiniones()` | 15-validate_tribunal_opiniones.sql | `{"opinion": "texto libre"}` | Validación heurística (keywords + longitud) |
-| 12 | debate_digital | `validate_debate_digital()` | 16-validate_debate_digital.sql | `{"debate": "texto libre"}` | Validación heurística |
-| 13 | analisis_fuentes | `validate_analisis_fuentes()` | 17-validate_analisis_fuentes.sql | `{"questions": {...}}` | Preguntas de análisis crítico |
-| 14 | podcast_argumentativo | `validate_podcast_argumentativo()` | 18-validate_podcast_argumentativo.sql | `{"audio_url": "...", "duration": 180}` | Valida duración y formato de audio |
-| 15 | matriz_perspectivas | `validate_matriz_perspectivas()` | 19-validate_matriz_perspectivas.sql | `{"matrix": {"cell1": "...", "cell2": "..."}}` | Verifica celdas completadas |
+| 11 | tribunal_opiniones | `validate_tribunal_opiniones()` | 15-validate_tribunal_opiniones.sql | `{"answers": {"stmt-1": {"type": "hecho", "verdict": "bien-fundamentada", "justification": "..."}}}` | Clasificar afirmaciones (HECHO/OPINIÓN/INTERPRETACIÓN) y asignar veredictos |
+| 12 | debate_digital | `validate_debate_digital()` | 16-validate_debate_digital.sql | `{"stance": "a_favor", "arguments": [...], "evidence": [...]}` | Debate sobre impacto de la fama en Marie Curie |
+| 13 | analisis_fuentes | `validate_analisis_fuentes()` | 17-validate_analisis_fuentes.sql | `{"sources": {"s1": {"craap_scores": {...}, "classification": "..."}}}` | Evaluación método CRAAP |
+| 14 | podcast_argumentativo | `validate_podcast_argumentativo()` | 18-validate_podcast_argumentativo.sql | `{"audio_url": "...", "duration": 180, "transcript": "..."}` | Valida duración, formato y contenido |
+| 15 | matriz_perspectivas | `validate_matriz_perspectivas()` | 19-validate_matriz_perspectivas.sql | `{"perspectives": {"persp-1": {...}, "persp-5": {"group": "Marie Curie"}, "persp-6": {"group": "Pierre Curie"}}}` | 6 perspectivas incluyendo Marie y Pierre Curie |
+
+**Nota v6.3:** El ejercicio Tribunal de Opiniones ahora usa formato `statements` con 8 afirmaciones sobre Marie Curie. Cada afirmación debe clasificarse como HECHO, OPINIÓN o INTERPRETACIÓN, y asignar un veredicto (bien-fundamentada, parcialmente-fundamentada, sin-fundamento).
 
 #### 4.5. Configuración de Validadores
 
@@ -1234,6 +1236,7 @@ async getExercise(exerciseId: string): Promise<Exercise> {
 |---------|-------|-------|---------|
 | 1.0 | 2025-11-07 | Database Team | Creación del documento |
 | 2.0 | 2025-11-11 | Database Team | **Reconciliación:** Actualizado de exercise_mechanic a exercise_type. Sistema dual implementado con tabla de mapeo pedagógico. Sincronizado con DDL real. 13 GAPs pedagógicos identificados. |
+| 2.1 | 2025-11-21 | Database Team | **Alineación v6.3:** Actualización validadores Módulo 3. tribunal_opiniones: formato statements. debate_digital: tema fama Marie Curie. matriz_perspectivas: perspectivas Marie y Pierre Curie. Ref: DB-127 |
 
 ---
 
