@@ -1,71 +1,43 @@
-# _MAP: EXT-009 - Peer Challenges (Parcial)
+# _MAP: EXT-009 - Peer Challenges
 
 **Épica:** EXT-009
-**Nombre:** Peer Challenges
-**Fase:** 3 - Extensiones
-**Presupuesto:** $8,000 MXN
-**Story Points:** 30 SP
-**Estado:** 🟡 Parcial 50%
+**Nombre:** Desafíos entre Pares (Peer-to-Peer Challenges)
+**Fase:** 3 - Extensiones (Alcance v2 EXTENSIONES)
+**Presupuesto Total:** $12,000 MXN
+**Story Points Total:** 30 SP
+**Estado:** 🟡 50% IMPLEMENTADA (15 SP impl, 15 SP pend)
+**Última actualización:** 2025-11-20
 
 ---
 
 ## 📋 Propósito
 
-Sistema de desafíos entre estudiantes (peer-to-peer challenges) con matchmaking, leaderboards y recompensas sociales.
+Sistema de desafíos competitivos entre estudiantes para aumentar engagement y aprendizaje social.
 
-**Impacto:** **BAJO** - Feature social adicional
-
----
-
-## 📁 Contenido
-
-| Archivo | Descripción |
-|---------|-------------|
-| [README.md](./README.md) | Overview de la épica |
-| [historias-usuario/](./historias-usuario/) | User stories (~5) |
-| [implementacion/TRACEABILITY.yml](./implementacion/TRACEABILITY.yml) | Trazabilidad |
+**Impacto:** **MEDIO** - Feature nice-to-have para engagement
 
 ---
 
-## 🎯 Funcionalidades
+## 📁 User Stories (5 total)
 
-### ✅ Implementado (50%)
+| ID | Título | SP | Prioridad | Estado |
+|----|--------|----|-----------|--------|
+| **US-PC-001** | CRUD Challenges | 8 | P2 | ✅ 100% |
+| **US-PC-002** | Scoring Básico | 7 | P2 | ✅ 100% |
+| **US-PC-003** | Matchmaking Algorithm | 8 | P2 | 📝 Pendiente |
+| **US-PC-004** | Challenge Leaderboards | 7 | P3 | 📝 Pendiente |
+| **US-PC-005** | Notificaciones Challenge | - | P3 | 🟡 Parcial |
 
-- Challenge creation
-- Challenge acceptance
-- Basic scoring
-- Prototipo funcional
-
-### ⚪ Pendiente (50%)
-
-- Matchmaking algorithm
-- Leaderboards globales
-- Recompensas especiales
-- Challenge categories
-- Ranking system
+**Total:** 15/30 SP implementados (50%)
 
 ---
 
-## 🏗️ Implementación
+## 🎯 Implementación
 
-### Backend
-- **Módulo:** `peer-challenges` (prototipo)
-
-### Base de Datos
-- **Tabla:** `peer_challenges` (básica)
+**Database:** `social_features.challenges` ✅ Creado
+**Backend:** `ChallengesService` 🟡 Parcial
+**Pendiente:** Matchmaking algorithm, leaderboards
 
 ---
 
-## 📊 Estado
-
-| Aspecto | Completitud |
-|---------|-------------|
-| **Challenge CRUD** | ✅ 90% |
-| **Matchmaking** | ⚪ 20% |
-| **Leaderboards** | ⚪ 30% |
-
-**Overall:** 🟡 50% completado
-
----
-
-**Generado:** 2025-11-08
+**Generado:** 2025-11-20

@@ -23,20 +23,20 @@ export enum ContentApprovalType {
 @Entity({ schema: 'educational_content', name: 'content_approvals' })
 export class ContentApproval {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({
     type: 'varchar',
     length: 50,
     enum: ContentApprovalType,
   })
-  content_type: ContentApprovalType;
+  content_type!: ContentApprovalType;
 
   @Column('uuid')
-  content_id: string;
+  content_id!: string;
 
   @Column('uuid')
-  submitted_by: string;
+  submitted_by!: string;
 
   // NOTE: Cannot use @ManyToOne relation here because User is in 'auth' datasource
   // and ContentApproval is in 'educational' datasource.
@@ -44,7 +44,7 @@ export class ContentApproval {
   // Relation must be handled manually in service layer.
 
   @Column({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP' })
-  submitted_at: Date;
+  submitted_at!: Date;
 
   @Column({ type: 'uuid', nullable: true })
   reviewed_by?: string;
@@ -60,7 +60,7 @@ export class ContentApproval {
     enum: ContentApprovalStatus,
     default: ContentApprovalStatus.PENDING,
   })
-  status: ContentApprovalStatus;
+  status!: ContentApprovalStatus;
 
   @Column({ type: 'text', nullable: true })
   reviewer_notes?: string;
@@ -69,8 +69,8 @@ export class ContentApproval {
   revision_notes?: string;
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at: Date;
+  created_at!: Date;
 
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at: Date;
+  updated_at!: Date;
 }

@@ -62,5 +62,5 @@ export type {
   UpdateAssignmentDto,
   GradeSubmissionDto,
   GetAssignmentsQueryDto,
-  GetSubmissionsQueryDto,
+  GetSubmissionsQueryDto as GetAssignmentSubmissionsQueryDto,
 } from './assignmentsApi';

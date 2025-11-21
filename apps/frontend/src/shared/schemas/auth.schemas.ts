@@ -115,7 +115,7 @@ export const registerSchema = z
 
     role: z
       .enum(['student', 'admin_teacher', 'super_admin'], {
-        errorMap: () => ({ message: 'Por favor selecciona un rol válido' }),
+        message: 'Por favor selecciona un rol válido',
       })
       .optional(),
 

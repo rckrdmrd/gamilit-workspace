@@ -23,7 +23,7 @@ const getRankLabel = (rank: MayaRank): string => {
     [MayaRank.NACOM]: 'Nacom',
     [MayaRank.AH_KIN]: "Ah K'in",
     [MayaRank.HALACH_UINIC]: 'Halach Uinic',
-    [MayaRank.KUKKULKAN]: "K'uk'ulkan",
+    [MayaRank.KUKUKULKAN]: "K'uk'ulkan",
   };
   return labels[rank] || String(rank);
 };
@@ -37,7 +37,7 @@ const getRankColor = (rank: MayaRank): string => {
     [MayaRank.NACOM]: 'text-bronze-600 bg-bronze-100',
     [MayaRank.AH_KIN]: 'text-silver-600 bg-silver-100',
     [MayaRank.HALACH_UINIC]: 'text-yellow-600 bg-yellow-100',
-    [MayaRank.KUKKULKAN]: 'text-purple-600 bg-purple-100',
+    [MayaRank.KUKUKULKAN]: 'text-purple-600 bg-purple-100',
   };
   return colors[rank] || 'text-gray-600 bg-gray-100';
 };

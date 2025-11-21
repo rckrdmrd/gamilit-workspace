@@ -318,8 +318,19 @@ export class AdminSystemService {
   async getSystemConfig(): Promise<SystemConfigDto> {
     // Fetch all settings from database
     const settings = await this.systemSettingRepo.find({
-      where: { tenant_id: null }, // Global settings only
+      where: { tenant_id: undefined }, // Global settings only
     });
+
+    // Find the most recently updated setting to get metadata
+    let mostRecentSetting: SystemSetting | undefined;
+    if (settings.length > 0) {
+      mostRecentSetting = settings.reduce((latest, current) => {
+        if (!latest) return current;
+        const latestTime = latest.updated_at?.getTime() || latest.created_at?.getTime() || 0;
+        const currentTime = current.updated_at?.getTime() || current.created_at?.getTime() || 0;
+        return currentTime > latestTime ? current : latest;
+      });
+    }
 
     // Build config object
     const config: SystemConfigDto = {
@@ -334,8 +345,8 @@ export class AdminSystemService {
       lockout_duration_minutes: this.parseSettingValue('lockout_duration_minutes', settings, 30),
       session_timeout_minutes: this.parseSettingValue('session_timeout_minutes', settings, 60),
       custom_settings: {},
-      updated_at: new Date().toISOString(),
-      updated_by: undefined,
+      updated_at: mostRecentSetting?.updated_at?.toISOString() || new Date().toISOString(),
+      updated_by: mostRecentSetting?.updated_by,
     };
 
     // Add custom settings
@@ -373,7 +384,7 @@ export class AdminSystemService {
     const settings = await this.systemSettingRepo.find({
       where: {
         setting_category: dbCategory as any,
-        tenant_id: null,
+        tenant_id: undefined,
       },
     });
 
@@ -466,12 +477,13 @@ export class AdminSystemService {
         },
       };
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return {
         success: false,
-        message: `Failed to cleanup system logs: ${error.message}`,
+        message: `Failed to cleanup system logs: ${errorMessage}`,
         affected_records: 0,
         metadata: {
-          error: error.message,
+          error: errorMessage,
         },
       };
     }
@@ -503,12 +515,13 @@ export class AdminSystemService {
         },
       };
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return {
         success: false,
-        message: `Failed to cleanup user activity logs: ${error.message}`,
+        message: `Failed to cleanup user activity logs: ${errorMessage}`,
         affected_records: 0,
         metadata: {
-          error: error.message,
+          error: errorMessage,
         },
       };
     }
@@ -544,10 +557,11 @@ export class AdminSystemService {
       };
     } catch (error) {
       const executionTime = Date.now() - startTime;
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
       return {
         success: false,
-        message: `Database optimization failed: ${error.message}`,
+        message: `Database optimization failed: ${errorMessage}`,
         tables_optimized: [],
         space_reclaimed_mb: 0,
         execution_time_ms: executionTime,
@@ -571,9 +585,10 @@ export class AdminSystemService {
         entries_cleared: 0, // Would be actual count in real implementation
       };
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return {
         success: false,
-        message: `Failed to clear cache: ${error.message}`,
+        message: `Failed to clear cache: ${errorMessage}`,
         entries_cleared: 0,
       };
     }
@@ -600,9 +615,10 @@ export class AdminSystemService {
         sessions_terminated: 0, // Would be actual count in real implementation
       };
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return {
         success: false,
-        message: `Failed to cleanup sessions: ${error.message}`,
+        message: `Failed to cleanup sessions: ${errorMessage}`,
         sessions_terminated: 0,
       };
     }
@@ -620,30 +636,30 @@ export class AdminSystemService {
     value: any,
     adminId: string,
   ): Promise<void> {
-    let setting = await this.systemSettingRepo.findOne({
+    const existingSetting = await this.systemSettingRepo.findOne({
       where: { setting_key: key },
     });
 
     const valueType = this.detectValueType(value);
     const stringValue = this.serializeValue(value, valueType);
 
-    if (setting) {
+    if (existingSetting) {
       // Update existing
-      setting.setting_value = stringValue;
-      setting.value_type = valueType;
-      setting.updated_by = adminId;
-      await this.systemSettingRepo.save(setting);
+      existingSetting.setting_value = stringValue;
+      existingSetting.value_type = valueType;
+      existingSetting.updated_by = adminId;
+      await this.systemSettingRepo.save(existingSetting);
     } else {
       // Create new
-      setting = this.systemSettingRepo.create({
+      const newSetting = this.systemSettingRepo.create({
         setting_key: key,
         setting_value: stringValue,
         value_type: valueType,
-        tenant_id: null, // Global setting
+        tenant_id: undefined, // Global setting
         created_by: adminId,
         updated_by: adminId,
-      });
-      await this.systemSettingRepo.save(setting);
+      } as any);
+      await this.systemSettingRepo.save(newSetting);
     }
   }
 

@@ -1,322 +1,412 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { Scale, ThumbsUp, ThumbsDown, Minus } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Scale, ChevronRight, ChevronLeft, Send } from 'lucide-react';
 import { DetectiveCard } from '@/shared/components/base/DetectiveCard';
-import { DetectiveButton } from '@/shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
-import { fetchTribunal } from './tribunalOpinionesAPI';
-import type { TribunalExercise, Opinion } from './tribunalOpinionesTypes';
-import { calculateTimeBonus } from '@/shared/utils/scoring';
-import { saveProgress as saveProgressUtil, loadProgress, clearProgress } from '@/shared/utils/storage';
+import { FeedbackData } from '@/shared/components/mechanics/mechanicsTypes';
+import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import type {
+  TribunalOpinionesExerciseProps,
+  StatementEvaluation,
+  StatementClassification,
+  StatementVerdict,
+  TribunalOpinionesAnswers
+} from './tribunalOpinionesTypes';
+import { CLASSIFICATION_OPTIONS, VERDICT_OPTIONS } from './tribunalOpinionesTypes';
 
-interface ExerciseProps {
-  moduleId: number;
-  lessonId: number;
-  exerciseId: string;
-  userId: string;
-  onComplete?: (score: number, timeSpent: number) => void;
-  onExit?: () => void;
-  onProgressUpdate?: (progress: number) => void;
-  initialData?: ExerciseState;
-  difficulty?: 'easy' | 'medium' | 'hard';
-}
-
-interface ExerciseState {
-  selectedOpinionId: string | null;
-  currentScore: number;
-  hasVoted: boolean;
-}
-
-const stanceIcons = { a_favor: ThumbsUp, en_contra: ThumbsDown, neutral: Minus };
-const stanceColors = {
-  a_favor: 'bg-green-100 border-green-400 text-green-800',
-  en_contra: 'bg-red-100 border-red-400 text-red-800',
-  neutral: 'bg-gray-100 border-gray-400 text-gray-800'
-};
-
-export const TribunalOpinionesExercise: React.FC<ExerciseProps> = ({
-  moduleId,
-  lessonId,
-  exerciseId,
-  userId,
+export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps> = ({
+  exercise,
   onComplete,
-  onExit,
   onProgressUpdate,
-  initialData,
-  difficulty = 'medium'
+  actionsRef
 }) => {
-  const [tribunal, setTribunal] = useState<TribunalExercise | null>(null);
-  const [selectedOpinionId, setSelectedOpinionId] = useState<string | null>(
-    initialData?.selectedOpinionId || null
-  );
-  const [loading, setLoading] = useState(true);
-  const [currentScore, setCurrentScore] = useState(initialData?.currentScore || 0);
-  const [hasVoted, setHasVoted] = useState(initialData?.hasVoted || false);
-  const [startTime] = useState(new Date());
+  const { user } = useAuth();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [evaluations, setEvaluations] = useState<Map<string, StatementEvaluation>>(new Map());
+  const [currentClassification, setCurrentClassification] = useState<StatementClassification | null>(null);
+  const [currentVerdict, setCurrentVerdict] = useState<StatementVerdict | null>(null);
+  const [currentJustification, setCurrentJustification] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const [timeSpent, setTimeSpent] = useState(0);
-  const actionsRef = useRef<any>(null);
+  const [feedback, setFeedback] = useState<FeedbackData | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [startTime] = useState(new Date());
+  const [hintsUsed] = useState(0);
 
+  const statements = exercise.content?.statements || [];
+  const currentStatement = statements[currentIndex];
+  const totalStatements = statements.length;
+
+  // Load existing evaluation when navigating
   useEffect(() => {
-    loadTribunal();
+    if (currentStatement) {
+      const existing = evaluations.get(currentStatement.id);
+      if (existing) {
+        setCurrentClassification(existing.classification);
+        setCurrentVerdict(existing.verdict);
+        setCurrentJustification(existing.justification || '');
+      } else {
+        setCurrentClassification(null);
+        setCurrentVerdict(null);
+        setCurrentJustification('');
+      }
+    }
+  }, [currentIndex, currentStatement, evaluations]);
+
+  // Progress updates
+  useEffect(() => {
+    if (onProgressUpdate) {
+      const evaluatedCount = evaluations.size;
+      const answers: TribunalOpinionesAnswers = {
+        evaluations: Array.from(evaluations.values())
+      };
+
+      onProgressUpdate({
+        progress: {
+          currentStep: evaluatedCount,
+          totalSteps: totalStatements,
+          score: 0,
+          hintsUsed,
+          timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000)
+        },
+        answers
+      });
+    }
+  }, [evaluations, totalStatements, hintsUsed, onProgressUpdate, startTime]);
+
+  // Save current evaluation
+  const saveCurrentEvaluation = useCallback(() => {
+    if (currentStatement && currentClassification && currentVerdict) {
+      const evaluation: StatementEvaluation = {
+        statementId: currentStatement.id,
+        classification: currentClassification,
+        verdict: currentVerdict,
+        justification: currentJustification.trim() || undefined
+      };
+      setEvaluations(prev => new Map(prev).set(currentStatement.id, evaluation));
+      return true;
+    }
+    return false;
+  }, [currentStatement, currentClassification, currentVerdict, currentJustification]);
+
+  // Navigation
+  const handleNext = useCallback(() => {
+    saveCurrentEvaluation();
+    if (currentIndex < totalStatements - 1) {
+      setCurrentIndex(prev => prev + 1);
+    }
+  }, [currentIndex, totalStatements, saveCurrentEvaluation]);
+
+  const handlePrevious = useCallback(() => {
+    saveCurrentEvaluation();
+    if (currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1);
+    }
+  }, [currentIndex, saveCurrentEvaluation]);
+
+  // Submit handler
+  const handleCheck = useCallback(async () => {
+    // Save current evaluation first
+    saveCurrentEvaluation();
+
+    // Validate all statements are evaluated
+    const currentEvaluations = new Map(evaluations);
+    if (currentStatement && currentClassification && currentVerdict) {
+      currentEvaluations.set(currentStatement.id, {
+        statementId: currentStatement.id,
+        classification: currentClassification,
+        verdict: currentVerdict,
+        justification: currentJustification.trim() || undefined
+      });
+    }
+
+    if (currentEvaluations.size < totalStatements) {
+      setFeedback({
+        type: 'error',
+        title: 'Ejercicio Incompleto',
+        message: `Has evaluado ${currentEvaluations.size} de ${totalStatements} afirmaciones. Evalúa todas antes de enviar.`
+      });
+      setShowFeedback(true);
+      return;
+    }
+
+    if (!user?.id) {
+      setFeedback({
+        type: 'error',
+        title: 'Error de Autenticación',
+        message: 'Debes estar autenticado para enviar el ejercicio.'
+      });
+      setShowFeedback(true);
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const answers: TribunalOpinionesAnswers = {
+        evaluations: Array.from(currentEvaluations.values())
+      };
+
+      const response = await submitExercise(exercise.id, user.id, answers);
+
+      setFeedback({
+        type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
+        title: response.isPerfect ? '¡Excelente Juicio Crítico!' : response.score >= 70 ? '¡Buen Análisis!' : 'Sigue Practicando',
+        message: response.feedback?.overall || `Has clasificado correctamente ${response.correctAnswersCount} de ${response.totalQuestions} afirmaciones.`,
+        score: response.score,
+        showConfetti: response.isPerfect
+      });
+      setShowFeedback(true);
+    } catch (error) {
+      console.error('[TribunalOpiniones] Submission error:', error);
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: 'Hubo un problema al enviar tu respuesta. Intenta nuevamente.'
+      });
+      setShowFeedback(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [evaluations, currentStatement, currentClassification, currentVerdict, currentJustification, totalStatements, user, exercise.id, saveCurrentEvaluation]);
+
+  // Reset handler
+  const handleReset = useCallback(() => {
+    setEvaluations(new Map());
+    setCurrentIndex(0);
+    setCurrentClassification(null);
+    setCurrentVerdict(null);
+    setCurrentJustification('');
+    setFeedback(null);
+    setShowFeedback(false);
   }, []);
 
-  // Auto-save progress every 30 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      saveProgress();
-    }, 30000);
-    return () => clearInterval(interval);
-  }, [selectedOpinionId, currentScore, hasVoted]);
-
-  // Update progress
-  useEffect(() => {
-    const progress = selectedOpinionId ? 100 : 0;
-    onProgressUpdate?.(progress);
-
-    const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-    setTimeSpent(elapsed);
-  }, [selectedOpinionId]);
-
-  const loadTribunal = async () => {
-    try {
-      const data = await fetchTribunal('tribunal-1');
-      setTribunal(data);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const saveProgress = () => {
-    const state: ExerciseState = {
-      selectedOpinionId,
-      currentScore,
-      hasVoted
-    };
-    saveProgressUtil(exerciseId, state);
-  };
-
-  const handleVote = (opinionId: string) => {
-    if (hasVoted) return;
-    setSelectedOpinionId(opinionId);
-  };
-
-  const handleConfirmVote = () => {
-    if (!selectedOpinionId || hasVoted) return;
-
-    // Calculate score
-    const baseScore = 50; // Base score for voting
-    const analysisBonus = 30; // Bonus for reading all opinions
-    const newScore = baseScore + analysisBonus;
-    setCurrentScore(newScore);
-    setHasVoted(true);
-  };
-
-  const handleComplete = () => {
-    setShowFeedback(true);
-  };
-
-  const calculateFinalScore = () => {
-    const baseScore = currentScore;
-    const timeBonus = calculateTimeBonus(startTime, new Date(), 20, 60);
-    return Math.min(100, baseScore + timeBonus);
-  };
-
-  const handleReset = () => {
-    setSelectedOpinionId(null);
-    setCurrentScore(0);
-    setHasVoted(false);
-  };
-
-  // Attach actions ref
+  // Expose actions to parent
   useEffect(() => {
     if (actionsRef) {
       actionsRef.current = {
-        handleReset,
-        handleCheck: handleComplete,
-        getState: () => ({ selectedOpinionId, currentScore, hasVoted })
+        getState: () => ({
+          evaluations: Array.from(evaluations.values()),
+          currentStatementIndex: currentIndex,
+          score: 0,
+          timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
+          hintsUsed,
+          isComplete: evaluations.size === totalStatements
+        }),
+        reset: handleReset,
+        validate: handleCheck
       };
     }
-  }, [selectedOpinionId, currentScore, hasVoted]);
+  }, [actionsRef, evaluations, currentIndex, startTime, hintsUsed, totalStatements, handleReset, handleCheck]);
 
-  if (loading || !tribunal) {
+  if (!currentStatement) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-detective-orange-50 to-detective-blue-50">
-        <div className="text-detective-lg text-detective-text-secondary">Cargando tribunal...</div>
-      </div>
+      <DetectiveCard variant="default" padding="lg">
+        <div className="text-center py-8">
+          <p className="text-gray-500">No hay afirmaciones para evaluar.</p>
+        </div>
+      </DetectiveCard>
     );
   }
+
+  const isCurrentComplete = currentClassification && currentVerdict;
+  const evaluatedCount = evaluations.size + (isCurrentComplete && !evaluations.has(currentStatement.id) ? 1 : 0);
 
   return (
     <>
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-r from-detective-blue to-detective-orange rounded-detective-lg p-6 text-white shadow-detective-lg"
-          >
+          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl p-6 text-white">
             <div className="flex items-center gap-3 mb-2">
               <Scale className="w-8 h-8" />
-              <h1 className="text-detective-3xl font-bold">Tribunal de Opiniones</h1>
+              <h1 className="text-2xl font-bold">Tribunal de Opiniones</h1>
             </div>
-            <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
-              <p className="font-medium mb-2">Tema: {tribunal.topic}</p>
-              <p className="text-detective-lg">{tribunal.question}</p>
+            <p className="text-white/90">
+              Clasifica cada afirmación y evalúa si está bien fundamentada
+            </p>
+            <div className="mt-3 flex items-center gap-4 text-sm">
+              <span className="bg-white/20 px-3 py-1 rounded-full">
+                Afirmación {currentIndex + 1} de {totalStatements}
+              </span>
+              <span className="bg-white/20 px-3 py-1 rounded-full">
+                {evaluatedCount} evaluadas
+              </span>
             </div>
-          </motion.div>
-
-          {/* Opinions Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-            {tribunal.opinions.map((opinion) => {
-              const StanceIcon = stanceIcons[opinion.stance];
-              const isSelected = selectedOpinionId === opinion.id;
-
-              return (
-                <motion.div
-                  key={opinion.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  whileHover={{ scale: hasVoted ? 1 : 1.02 }}
-                >
-                  <div
-                    onClick={() => !hasVoted && handleVote(opinion.id)}
-                    className={`cursor-pointer transition-all p-6 rounded-detective border-2 ${
-                      isSelected ? 'ring-4 ring-detective-orange' : ''
-                    } ${stanceColors[opinion.stance]} ${hasVoted ? 'opacity-75' : ''}`}
-                  >
-                    <div className="flex items-center gap-2 mb-3">
-                      <StanceIcon className="w-6 h-6" />
-                      <span className="font-bold uppercase text-detective-sm">
-                        {opinion.stance.replace('_', ' ')}
-                      </span>
-                    </div>
-                    <h4 className="text-detective-base font-semibold mb-2">{opinion.author}</h4>
-                    <p className="text-detective-sm mb-4">{opinion.text}</p>
-
-                    {/* Arguments */}
-                    <div className="mb-3">
-                      <h5 className="text-detective-xs font-semibold mb-2">Argumentos:</h5>
-                      <ul className="space-y-1">
-                        {opinion.arguments.map((arg, idx) => (
-                          <li key={idx} className="text-detective-xs flex items-start gap-1">
-                            <span>•</span>
-                            <span>{arg}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {/* Evidence */}
-                    <div>
-                      <h5 className="text-detective-xs font-semibold mb-2">Evidencia:</h5>
-                      <ul className="space-y-1">
-                        {opinion.evidence.map((ev, idx) => (
-                          <li key={idx} className="text-detective-xs italic">
-                            {ev}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {isSelected && !hasVoted && (
-                      <div className="mt-4 pt-4 border-t border-current">
-                        <p className="text-detective-xs font-semibold text-center">Seleccionada</p>
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-              );
-            })}
           </div>
 
-          {/* Vote Confirmation */}
-          {selectedOpinionId && !hasVoted && (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <div className="bg-detective-gold-50 border-2 border-detective-gold rounded-detective p-6">
-                <h3 className="text-detective-lg font-semibold text-detective-blue mb-3">Tu Selección</h3>
-                <p className="text-detective-base mb-4">
-                  Has votado por la opinión de:{' '}
-                  <strong>{tribunal.opinions.find((o) => o.id === selectedOpinionId)?.author}</strong>
+          {/* Current Statement */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStatement.id}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="bg-gray-50 rounded-xl p-6 border-2 border-gray-200"
+            >
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">Afirmación:</h3>
+              <p className="text-xl text-gray-900 leading-relaxed">
+                "{currentStatement.text}"
+              </p>
+              {currentStatement.source && (
+                <p className="mt-2 text-sm text-gray-500 italic">
+                  Fuente: {currentStatement.source}
                 </p>
-                <DetectiveButton variant="primary" onClick={handleConfirmVote} className="w-full">
-                  Confirmar Voto
-                </DetectiveButton>
-              </div>
+              )}
             </motion.div>
-          )}
+          </AnimatePresence>
 
-          {/* Vote Confirmed */}
-          {hasVoted && (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <div className="bg-white rounded-detective p-6 border-2 border-detective-border-light">
-                <div className="text-center">
-                  <h3 className="text-detective-lg font-semibold text-green-600 mb-2">Voto Confirmado</h3>
-                  <p className="text-detective-base">
-                    Has votado por: <strong>{tribunal.opinions.find((o) => o.id === selectedOpinionId)?.author}</strong>
-                  </p>
-                  <p className="text-detective-sm text-detective-text-secondary mt-2">
-                    +{currentScore} puntos por analizar las opiniones y emitir tu voto
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          )}
+          {/* Step 1: Classification */}
+          <div className="space-y-3">
+            <h3 className="text-lg font-semibold text-gray-800">
+              Paso 1: ¿Qué tipo de afirmación es?
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {CLASSIFICATION_OPTIONS.map(option => (
+                <button
+                  key={option.value}
+                  onClick={() => setCurrentClassification(option.value)}
+                  className={`p-4 rounded-xl border-2 transition-all text-left ${
+                    currentClassification === option.value
+                      ? `${option.color} ring-2 ring-offset-2 ring-current`
+                      : 'bg-white border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-2xl">{option.icon}</span>
+                    <span className="font-bold">{option.label}</span>
+                  </div>
+                  <p className="text-sm opacity-80">{option.description}</p>
+                </button>
+              ))}
+            </div>
+          </div>
 
-          {/* Action Buttons */}
-          <div className="flex justify-center gap-4 mt-6">
-            {onExit && (
-              <DetectiveButton
-                variant="secondary"
+          {/* Step 2: Verdict */}
+          <div className="space-y-3">
+            <h3 className="text-lg font-semibold text-gray-800">
+              Paso 2: ¿Está bien fundamentada?
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {VERDICT_OPTIONS.map(option => (
+                <button
+                  key={option.value}
+                  onClick={() => setCurrentVerdict(option.value)}
+                  className={`p-4 rounded-xl border-2 transition-all text-left ${
+                    currentVerdict === option.value
+                      ? `${option.color} ring-2 ring-offset-2 ring-current`
+                      : 'bg-white border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-2xl">{option.icon}</span>
+                    <span className="font-bold">{option.label}</span>
+                  </div>
+                  <p className="text-sm opacity-80">{option.description}</p>
+                </button>
+              ))}
+            </div>
+          </div>
 
-                onClick={onExit}
-              >
-                Salir
-              </DetectiveButton>
-            )}
-            <DetectiveButton
-              variant="gold"
+          {/* Step 3: Justification (Optional) */}
+          <div className="space-y-3">
+            <h3 className="text-lg font-semibold text-gray-800">
+              Paso 3: Justifica tu decisión (opcional)
+            </h3>
+            <textarea
+              value={currentJustification}
+              onChange={(e) => setCurrentJustification(e.target.value)}
+              placeholder="Explica en 2-3 líneas por qué clasificaste así esta afirmación..."
+              className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all resize-none"
+              rows={3}
+              maxLength={300}
+            />
+            <p className="text-sm text-gray-500 text-right">
+              {currentJustification.length}/300 caracteres
+            </p>
+          </div>
 
-              onClick={handleReset}
-              disabled={hasVoted}
+          {/* Navigation & Actions */}
+          <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+            <button
+              onClick={handlePrevious}
+              disabled={currentIndex === 0}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
-              Reiniciar
-            </DetectiveButton>
-            <DetectiveButton
-              variant="primary"
+              <ChevronLeft className="w-5 h-5" />
+              Anterior
+            </button>
 
-              onClick={handleComplete}
-              disabled={!hasVoted}
+            <div className="flex items-center gap-3">
+              {currentIndex < totalStatements - 1 ? (
+                <button
+                  onClick={handleNext}
+                  disabled={!isCurrentComplete}
+                  className="flex items-center gap-2 px-6 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  Siguiente
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              ) : (
+                <button
+                  onClick={handleCheck}
+                  disabled={isSubmitting || evaluatedCount < totalStatements}
+                  className="flex items-center gap-2 px-6 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  {isSubmitting ? 'Enviando...' : 'Enviar Evaluaciones'}
+                  <Send className="w-5 h-5" />
+                </button>
+              )}
+            </div>
+
+            <button
+              onClick={handleNext}
+              disabled={currentIndex === totalStatements - 1}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
-              Completar Ejercicio
-            </DetectiveButton>
+              Siguiente
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Progress Dots */}
+          <div className="flex justify-center gap-2 pt-4">
+            {statements.map((stmt, idx) => {
+              const isEvaluated = evaluations.has(stmt.id) || (idx === currentIndex && isCurrentComplete);
+              return (
+                <button
+                  key={stmt.id}
+                  onClick={() => {
+                    saveCurrentEvaluation();
+                    setCurrentIndex(idx);
+                  }}
+                  className={`w-3 h-3 rounded-full transition-all ${
+                    idx === currentIndex
+                      ? 'bg-indigo-600 scale-125'
+                      : isEvaluated
+                        ? 'bg-green-500'
+                        : 'bg-gray-300'
+                  }`}
+                  title={`Afirmación ${idx + 1}${isEvaluated ? ' (evaluada)' : ''}`}
+                />
+              );
+            })}
           </div>
         </div>
       </DetectiveCard>
 
       {/* Feedback Modal */}
-      <FeedbackModal
-        isOpen={showFeedback}
-        feedback={{
-          type: hasVoted ? 'success' : 'error',
-          title: hasVoted ? '¡Voto Registrado!' : 'Voto Pendiente',
-          message: hasVoted
-            ? `Has analizado y votado correctamente con ${currentScore} puntos.`
-            : 'Debes confirmar tu voto antes de completar el ejercicio.',
-          score: hasVoted
-            ? calculateFinalScore()
-            : undefined,
-          showConfetti: hasVoted
-        }}
-        onClose={() => {
-          setShowFeedback(false);
-          if (hasVoted) {
-            onComplete?.(calculateFinalScore(), timeSpent);
-          }
-        }}
-        onRetry={handleReset}
-      />
+      {feedback && (
+        <FeedbackModal
+          isOpen={showFeedback}
+          feedback={feedback}
+          onClose={() => {
+            setShowFeedback(false);
+            if (feedback.type === 'success') onComplete?.();
+          }}
+          onRetry={handleReset}
+        />
+      )}
     </>
   );
 };

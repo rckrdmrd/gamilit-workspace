@@ -809,18 +809,12 @@ export class AdminContentService {
           content_id: approval.content_id,
           content_title,
           submitted_by: approval.submitted_by,
-          submitter_email: approval.submitter?.email,
-          submitter_name: approval.submitter
-            ? `${approval.submitter.raw_user_meta_data?.first_name || ''} ${approval.submitter.raw_user_meta_data?.last_name || ''}`.trim() ||
-              approval.submitter.email
-            : undefined,
+          submitter_email: undefined, // User relation removed due to cross-datasource limitation
+          submitter_name: undefined,
           submitted_at: approval.submitted_at.toISOString(),
           reviewed_by: approval.reviewed_by,
-          reviewer_email: approval.reviewer?.email,
-          reviewer_name: approval.reviewer
-            ? `${approval.reviewer.raw_user_meta_data?.first_name || ''} ${approval.reviewer.raw_user_meta_data?.last_name || ''}`.trim() ||
-              approval.reviewer.email
-            : undefined,
+          reviewer_email: undefined, // User relation removed due to cross-datasource limitation
+          reviewer_name: undefined,
           reviewed_at: approval.reviewed_at?.toISOString(),
           status: approval.status,
           reviewer_notes: approval.reviewer_notes,

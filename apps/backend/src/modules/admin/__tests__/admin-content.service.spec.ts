@@ -7,6 +7,7 @@ import { Module } from '@modules/educational/entities/module.entity';
 import { Exercise } from '@modules/educational/entities/exercise.entity';
 import { ContentTemplate } from '@modules/content/entities/content-template.entity';
 import { MediaFile } from '@modules/content/entities/media-file.entity';
+import { ContentApproval } from '@modules/educational/entities/content-approval.entity';
 import {
   ListContentDto,
   ApproveContentDto,
@@ -21,6 +22,7 @@ describe('AdminContentService', () => {
   let exerciseRepo: Repository<Exercise>;
   let templateRepo: Repository<ContentTemplate>;
   let mediaFileRepo: Repository<MediaFile>;
+  let contentApprovalRepo: Repository<ContentApproval>;
 
   const mockQueryBuilder = {
     where: jest.fn().mockReturnThis(),
@@ -56,6 +58,13 @@ describe('AdminContentService', () => {
     createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
   };
 
+  const mockContentApprovalRepo = {
+    findOne: jest.fn(),
+    save: jest.fn(),
+    create: jest.fn(),
+    createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -76,6 +85,10 @@ describe('AdminContentService', () => {
           provide: getRepositoryToken(MediaFile, 'content'),
           useValue: mockMediaFileRepo,
         },
+        {
+          provide: getRepositoryToken(ContentApproval, 'educational'),
+          useValue: mockContentApprovalRepo,
+        },
       ],
     }).compile();
 
@@ -84,6 +97,7 @@ describe('AdminContentService', () => {
     exerciseRepo = module.get(getRepositoryToken(Exercise, 'educational'));
     templateRepo = module.get(getRepositoryToken(ContentTemplate, 'content'));
     mediaFileRepo = module.get(getRepositoryToken(MediaFile, 'content'));
+    contentApprovalRepo = module.get(getRepositoryToken(ContentApproval, 'educational'));
 
     jest.clearAllMocks();
   });
@@ -274,7 +288,7 @@ describe('AdminContentService', () => {
     };
 
     describe('Module approval', () => {
-      const mockModule = {
+      const getMockModule = () => ({
         id: 'module-1',
         title: 'Test Module',
         description: 'Test Description',
@@ -288,10 +302,11 @@ describe('AdminContentService', () => {
         updated_at: new Date(),
         published_at: null,
         metadata: {},
-      };
+      });
 
       it('should approve and publish module immediately', async () => {
         // Arrange
+        const mockModule = getMockModule();
         mockModuleRepo.findOne.mockResolvedValue(mockModule);
         mockModuleRepo.save.mockResolvedValue({
           ...mockModule,
@@ -321,6 +336,7 @@ describe('AdminContentService', () => {
 
       it('should add approval notes to module metadata', async () => {
         // Arrange
+        const mockModule = getMockModule();
         mockModuleRepo.findOne.mockResolvedValue(mockModule);
         mockModuleRepo.save.mockImplementation((entity) =>
           Promise.resolve(entity),
@@ -346,6 +362,7 @@ describe('AdminContentService', () => {
           approval_notes: 'Approved but not ready to publish',
           publish_immediately: false,
         };
+        const mockModule = getMockModule();
         mockModuleRepo.findOne.mockResolvedValue(mockModule);
         mockModuleRepo.save.mockImplementation((entity) =>
           Promise.resolve(entity),

@@ -59,7 +59,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
       const aiIntro: DebateMessage = {
         id: `msg-${Date.now()}`,
         sender: 'ai',
-        text: 'Hola, soy tu oponente en este debate. Defenderé la posición de que Marie Curie debió haber patentado sus descubrimientos. ¿Cuál es tu argumento inicial?',
+        text: 'Hola, soy tu oponente en este debate. Defenderé la posición de que la fama benefició la investigación de Marie Curie, dándole acceso a financiación y colaboraciones internacionales. ¿Cuál es tu argumento inicial?',
         timestamp: new Date()
       };
       setMessages([aiIntro]);
@@ -145,7 +145,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
     const aiIntro: DebateMessage = {
       id: `msg-${Date.now()}`,
       sender: 'ai',
-      text: 'Hola, soy tu oponente en este debate. Defenderé la posición de que Marie Curie debió haber patentado sus descubrimientos. ¿Cuál es tu argumento inicial?',
+      text: 'Hola, soy tu oponente en este debate. Defenderé la posición de que la fama benefició la investigación de Marie Curie, dándole acceso a financiación y colaboraciones internacionales. ¿Cuál es tu argumento inicial?',
       timestamp: new Date()
     };
     setMessages([aiIntro]);

@@ -177,71 +177,71 @@ BEGIN
             "minArguments": 3
         }'::jsonb,
         '{
-            "topic": "¿Debería Marie Curie haber patentado sus descubrimientos del radio y polonio?",
-            "context": "En 1898, tras descubrir el radio y polonio, Marie y Pierre Curie rechazaron patentar el proceso de aislamiento, permitiendo que otros científicos y la industria usaran libremente sus métodos. Esta decisión les costó millones pero permitió el rápido desarrollo de aplicaciones médicas.",
+            "topic": "¿La fama afectó negativamente la investigación de Marie Curie?",
+            "context": "Tras ganar el Premio Nobel de Física en 1903, Marie Curie se convirtió en una figura pública mundial. Esta fama trajo consigo escrutinio mediático intenso, especialmente durante el escándalo de 1911 con Paul Langevin, invitaciones constantes a eventos y ceremonias, y atención que invadía su privacidad. Sin embargo, también le proporcionó financiación, colaboraciones internacionales y recursos para su laboratorio.",
             "positions": [
                 {
                     "id": "pos1",
-                    "stance": "A FAVOR - Debieron patentar",
+                    "stance": "A FAVOR - La fama afectó negativamente",
                     "arguments": [
                         {
                             "id": "arg1-1",
-                            "text": "Merecían compensación económica por años de trabajo arduo",
-                            "evidence": "Trabajaron en pobreza relativa mientras otros se enriquecieron con sus descubrimientos",
-                            "strength": "fuerte"
+                            "text": "Invasión de privacidad que interrumpía su trabajo científico",
+                            "evidence": "El escándalo tras la muerte de Pierre en 1911 causó acoso periodístico constante frente a su casa",
+                            "strength": "muy-fuerte"
                         },
                         {
                             "id": "arg1-2",
-                            "text": "Podrían haber financiado más investigación con los ingresos",
-                            "evidence": "El dinero les habría permitido construir mejor laboratorio y contratar asistentes",
-                            "strength": "media"
+                            "text": "Tiempo perdido en eventos y ceremonias obligatorias",
+                            "evidence": "Múltiples ceremonias de premiación, conferencias y eventos sociales que le restaban tiempo de laboratorio",
+                            "strength": "fuerte"
                         },
                         {
                             "id": "arg1-3",
-                            "text": "La patente no habría impedido el avance científico",
-                            "evidence": "Muchos inventos patentados han beneficiado a la humanidad",
-                            "strength": "media"
+                            "text": "Presión mediática que afectó su salud mental",
+                            "evidence": "Acoso periodístico documentado durante el escándalo Langevin; cartas amenazantes; tuvo que refugiarse en casa de amigos",
+                            "strength": "fuerte"
                         }
                     ],
                     "counterarguments": [
-                        "Patentar habría retrasado aplicaciones médicas",
-                        "El conocimiento científico debe ser libre",
-                        "Su legado ético es más valioso que el dinero"
+                        "La fama le dio acceso a mejores recursos y financiación",
+                        "El reconocimiento validó su trabajo ante escépticos",
+                        "Las colaboraciones internacionales enriquecieron su investigación"
                     ]
                 },
                 {
                     "id": "pos2",
-                    "stance": "EN CONTRA - Correcta decisión de no patentar",
+                    "stance": "EN CONTRA - La fama benefició su investigación",
                     "arguments": [
                         {
                             "id": "arg2-1",
-                            "text": "El conocimiento científico debe ser libre para beneficiar a toda la humanidad",
-                            "evidence": "La decisión permitió desarrollo rápido de radioterapia, salvando miles de vidas",
+                            "text": "Mayor financiación para su laboratorio e investigación",
+                            "evidence": "Laboratorio mejorado significativamente después del Nobel; pudo contratar asistentes y adquirir equipos",
                             "strength": "muy-fuerte"
                         },
                         {
                             "id": "arg2-2",
-                            "text": "Las patentes habrían retrasado investigación médica crucial",
-                            "evidence": "Tratamientos de cáncer se desarrollaron rápidamente gracias a métodos libres",
+                            "text": "Reconocimiento institucional que abrió puertas",
+                            "evidence": "Primera mujer profesora en la Sorbona (1906); acceso a instituciones antes vedadas",
                             "strength": "fuerte"
                         },
                         {
                             "id": "arg2-3",
-                            "text": "Su legado ético inspiró generaciones de científicos",
-                            "evidence": "Marie es recordada no solo por su ciencia sino por su integridad",
-                            "strength": "media"
+                            "text": "Colaboraciones internacionales y mejores recursos",
+                            "evidence": "Apoyo gubernamental francés; donaciones de instituciones americanas; red global de científicos colaboradores",
+                            "strength": "fuerte"
                         },
                         {
                             "id": "arg2-4",
-                            "text": "La ciencia es construcción colectiva, no propiedad individual",
-                            "evidence": "Marie misma se basó en el trabajo de Becquerel y otros",
-                            "strength": "fuerte"
+                            "text": "Plataforma para promover la ciencia y mujeres en STEM",
+                            "evidence": "Su fama inspiró a generaciones de mujeres científicas; usó su visibilidad para promover la ciencia",
+                            "strength": "media"
                         }
                     ],
                     "counterarguments": [
-                        "Marie y Pierre vivieron en relativa pobreza",
-                        "Otros se enriquecieron con su trabajo sin compensarlos",
-                        "La patente temporal no habría impedido uso eventual"
+                        "El acoso mediático interrumpía constantemente su trabajo",
+                        "Los eventos sociales consumían tiempo valioso",
+                        "La presión pública afectó su bienestar personal"
                     ]
                 }
             ],
@@ -332,17 +332,17 @@ BEGIN
                 },
                 {
                     "id": "persp-5",
-                    "group": "Comunidad médica (1920s-presente)",
-                    "perspective": "Pionera de radioterapia y medicina moderna",
-                    "evidence": "Sus descubrimientos salvaron millones de vidas con tratamientos de cáncer",
-                    "evolution": "Reconocimiento como revolucionaria médica"
+                    "group": "Marie Curie (perspectiva personal)",
+                    "perspective": "Reconocimiento científico merecido, pero invasión de privacidad dolorosa",
+                    "evidence": "Cartas personales donde expresa frustración por el escándalo eclipsando su segundo Nobel",
+                    "evolution": "Separar vida personal de logros profesionales; orgullo científico mezclado con dolor personal"
                 },
                 {
                     "id": "persp-6",
-                    "group": "Historiadores modernos (2000s)",
-                    "perspective": "Análisis complejo: genio con limitaciones de época",
-                    "evidence": "Reconocen grandeza pero también contextualizan limitaciones por falta de conocimiento sobre radiación",
-                    "evolution": "Visión matizada y contextualizada"
+                    "group": "Pierre Curie (perspectiva póstuma hipotética)",
+                    "perspective": "Orgullo por los logros continuados de Marie tras su muerte",
+                    "evidence": "Basado en cartas donde expresaba admiración por el talento de Marie y apoyo incondicional",
+                    "evolution": "Validación del trabajo conjunto; satisfacción de que Marie continuara el legado científico"
                 }
             ],
             "analysisQuestions": [
@@ -477,7 +477,7 @@ BEGIN
         updated_at = NOW();
 
     -- ========================================================================
-    -- EXERCISE 3.5: TRIBUNAL DE OPINIONES
+    -- EXERCISE 3.1: TRIBUNAL DE OPINIONES (ALINEADO CON DOC v6.3)
     -- ========================================================================
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
@@ -491,113 +491,92 @@ BEGIN
         is_active, version
     ) VALUES (
         mod_id,
-        'Tribunal de Opiniones: Juzgando Decisiones Históricas',
-        'Evalúa Decisiones con Criterios Éticos',
-        'Participa como jurado evaluando decisiones controversiales de Marie Curie usando criterios éticos contemporáneos y de su época.',
-        'Lee cada caso, evalúa con criterios éticos y emite tu veredicto fundamentado.',
+        'Tribunal de Opiniones: Evaluando Afirmaciones',
+        'Clasifica y Evalúa Opiniones sobre Marie Curie',
+        'Analiza diferentes afirmaciones sobre Marie Curie. Clasifica cada una como HECHO, OPINIÓN o INTERPRETACIÓN, y determina si está bien fundamentada.',
+        'Lee cada afirmación, clasifícala según su tipo (Hecho/Opinión/Interpretación), evalúa si está bien fundamentada, y justifica tu decisión en 2-3 líneas.',
         E'Desarrollar juicio crítico riguroso y evaluación sistemática de opiniones mediante la aplicación de criterios lógicos y epistemológicos. Este ejercicio entrena una habilidad fundamental del Nivel 3 de Cassany: distinguir entre hechos verificables, interpretaciones razonables y opiniones subjetivas, y evaluar la calidad de argumentos según estándares académicos.\n\nLos estudiantes aprenderán a:\n- Diferenciar entre tres categorías epistemológicas:\n  * HECHOS: Afirmaciones verificables objetivamente (ej: "Marie murió el 4 de julio de 1934")\n  * INTERPRETACIONES: Deducciones razonables basadas en evidencia pero no 100% confirmadas (ej: "Su exposición al radio contribuyó a su enfermedad")\n  * OPINIONES: Juicios de valor subjetivos sin criterios objetivos de verificación (ej: "Fue la científica más brillante del siglo XX")\n- Evaluar opiniones según 3 criterios académicos:\n  * Evidencia factual: ¿Hay datos verificables que la respalden?\n  * Coherencia lógica: ¿El razonamiento es válido?\n  * Ausencia de falacias: ¿Evita errores lógicos comunes?\n- Asignar veredictos fundamentados:\n  * Bien fundamentada ✅: Evidencia sólida + lógica válida + sin falacias\n  * Parcialmente fundamentada ⚠: Tiene evidencia pero con limitaciones o sesgos\n  * Sin fundamento ❌: Carece de evidencia, usa lógica inválida o contiene falacias\n- Justificar decisiones en 2-3 líneas con referencias específicas a evidencia\n- Aplicar el principio jerárquico: Evidencia > Opinión, Hechos > Suposiciones, Lógica > Emoción\n\nEsta habilidad es esencial para pensamiento crítico académico, evaluación de información y participación en debates intelectuales rigurosos.',
         E'Metodología para evaluar opiniones sistemáticamente:\n\n1. LECTURA Y DESCOMPOSICIÓN DE LA OPINIÓN (2 min):\n   - Leer la afirmación/opinión presentada\n   - Identificar componentes:\n     * Afirmación principal: ¿Qué se está afirmando?\n     * Evidencias explícitas: ¿Qué datos se mencionan?\n     * Argumentos implícitos: ¿Qué razonamiento subyace?\n\n2. CLASIFICACIÓN EPISTEMOLÓGICA (1 min):\n   Determinar si la afirmación es:\n   \n   HECHO (verificable objetivamente):\n   - Ejemplo: "Marie ganó 2 Premios Nobel"\n   - Criterio: ¿Hay registros históricos que lo confirmen?\n   - Veredicto probable: Bien fundamentada ✅\n   \n   INTERPRETACIÓN (deducción razonable):\n   - Ejemplo: "La radiación causó su muerte"\n   - Criterio: ¿Hay evidencia que lo sugiera fuertemente aunque no sea 100% demostrable?\n   - Veredicto probable: Bien/Parcialmente fundamentada ✅⚠\n   \n   OPINIÓN (juicio de valor):\n   - Ejemplo: "Fue la mejor científica del siglo XX"\n   - Criterio: ¿Es medible objetivamente o es preferencia subjetiva?\n   - Veredicto probable: Sin fundamento (si no define "mejor") ❌\n\n3. EVALUACIÓN SEGÚN CRITERIOS ACADÉMICOS:\n\n   CRITERIO 1 - EVIDENCIA FACTUAL:\n   - ¿Se citan datos verificables?\n   - ¿Las fuentes son confiables?\n   - ¿La evidencia es relevante?\n   \n   CRITERIO 2 - COHERENCIA LÓGICA:\n   - ¿Las conclusiones se siguen lógicamente de las premisas?\n   - ¿Hay contradicciones internas?\n   - ¿El razonamiento es válido?\n   \n   CRITERIO 3 - AUSENCIA DE FALACIAS:\n   Detectar errores comunes:\n   - Ad hominem: Atacar persona en vez de argumento\n   - Falsa dicotomía: "O Marie es heroína perfecta o es sobrevalorada" (ignora matices)\n   - Apelación a emoción: Usar lenguaje emotivo en vez de evidencia\n   - Generalización apresurada: Concluir de casos insuficientes\n   - Causa falsa: Confundir correlación con causalidad\n\n4. ASIGNACIÓN DE VEREDICTO:\n   \n   BIEN FUNDAMENTADA ✅:\n   - Evidencia sólida verificable\n   - Lógica válida\n   - Sin falacias detectables\n   - Ejemplo: "Marie fue la primera mujer en ganar un Nobel (hecho verificable en registros oficiales)"\n   \n   PARCIALMENTE FUNDAMENTADA ⚠:\n   - Tiene evidencia pero incompleta\n   - Lógica mayormente válida con algunas limitaciones\n   - Puede tener sesgos reconocidos\n   - Ejemplo: "Marie fue importante para equidad de género" (cierto pero requiere definir "importante")\n   \n   SIN FUNDAMENTO ❌:\n   - Sin evidencia verificable\n   - Lógica inválida\n   - Contiene falacias\n   - Ejemplo: "Marie solo tuvo éxito porque su esposo la ayudó" (asume sin evidencia, minimiza logros documentados)\n\n5. JUSTIFICACIÓN ESCRITA (2-3 líneas):\n   - Mencionar qué criterio se cumple o falla\n   - Citar evidencia específica\n   - Explicar brevemente el razonamiento',
         E'Estrategias para evaluar opiniones críticamente:\n\n- PRIORIZAR JERARQUÍA EPISTEMOLÓGICA: Evidencia > Opinión, Hechos > Suposiciones, Lógica > Emoción\n- BUSCAR EVIDENCIA ESPECÍFICA: "Marie ganó Nobel en 1903" > "Marie era exitosa"\n- DETECTAR LENGUAJE EMOTIVO: Palabras como "obviamente", "claramente", "sin duda" a menudo ocultan falta de evidencia\n- IDENTIFICAR TÉRMINOS VAGOS: "Importante", "mejor", "brillante" requieren definición objetiva\n- APLICAR PRINCIPIO DE CARIDAD: Interpretar argumento en su mejor versión antes de criticar\n- RECONOCER SESGOS PROPIOS: Tus preferencias pueden influir en evaluación - mantener objetividad\n- VERIFICAR FUENTES: "Según historiadores" es más creíble que "se dice que..."\n- BUSCAR CONTRAEJEMPLOS: Si la afirmación dice "siempre", un solo contraejemplo la refuta\n- EVALUAR RELEVANCIA: Evidencia verdadera puede ser irrelevante para conclusión\n- ADMITIR INCERTIDUMBRE: "Parcialmente fundamentada" es a veces la respuesta más honesta\n\nTRAMPAS COMUNES A EVITAR:\n- Confundir "me gusta esta opinión" con "está bien fundamentada"\n- Rechazar opinión solo porque tiene sesgos (todos las tenemos)\n- Exigir evidencia perfecta (interpretaciones razonables son válidas)\n- Aceptar cualquier evidencia sin evaluar su calidad',
         E'Este ejercicio desarrolla pensamiento crítico epistemológico, una competencia central del Nivel 3 de Cassany (Comprensión Crítica y Valorativa). A diferencia de ejercicios previos que entrenan emitir juicios, este entrena EVALUAR juicios de otros según estándares académicos rigurosos.\n\nHabilidades metacognitivas desarrolladas:\n- Razonamiento lógico formal (identificar validez de argumentos)\n- Consciencia epistemológica (comprender diferencia entre hechos, interpretaciones, opiniones)\n- Detección de falacias (reconocer errores lógicos comunes)\n- Juicio matizado (usar categoría "parcialmente fundamentada" cuando apropiado)\n- Justificación explícita (articular por qué una opinión es válida/inválida)\n\nAlineación con Cassany (Nivel 3):\n- Evalúa calidad de argumentos (no solo comprenderlos)\n- Identifica falacias y sesgos en textos\n- Distingue entre niveles de certeza epistémica\n- Practica razonamiento lógico riguroso\n\nDificultad: Avanzada (CEFR: B2-C1). Requiere:\n- Comprensión de lógica formal básica\n- Conocimiento de falacias comunes\n- Capacidad de separar acuerdo personal de evaluación objetiva\n- Tolerancia a ambigüedad (reconocer que "parcialmente fundamentada" es legítimo)\n\nRelevancia contemporánea:\nEn la era de desinformación masiva y "posverdad", esta habilidad es crítica para:\n- Evaluar afirmaciones políticas y mediáticas\n- Distinguir noticias reales de fake news\n- Participar en debates académicos rigurosos\n- Tomar decisiones informadas sobre información contradictoria\n- Ejercer ciudadanía crítica\n\nDiferencia clave con otros ejercicios:\n- Análisis de Fuentes (3.1): Evalúa CONFIABILIDAD de fuentes\n- Tribunal de Opiniones (3.5): Evalúa VALIDEZ LÓGICA de argumentos\n\nEl formato de "tribunal" (juzgar con veredicto) hace el ejercicio más atractivo que análisis abstracto, mientras mantiene rigor académico mediante criterios explícitos. La justificación escrita obligatoria asegura que estudiantes no solo intuyen sino que articulan explícitamente su razonamiento.',
-        'tribunal_opiniones', 1,  -- CHANGED: order_index 5→1 per doc v6.2 (DB-121)
+        'tribunal_opiniones', 1,  -- order_index 1 per doc v6.3
         '{
-            "rolePlay": true,
-            "multipleJudges": false,
-            "requireJustification": true
+            "dragAndDrop": true,
+            "requireJustification": true,
+            "showStatementTypes": true
         }'::jsonb,
         '{
-            "cases": [
+            "statements": [
                 {
-                    "id": "case-1",
-                    "title": "Caso: Exposición a Radiación",
-                    "description": "Marie Curie trabajó durante décadas con materiales altamente radiactivos sin protección adecuada, a pesar de experimentar síntomas de enfermedad. Finalmente murió de anemia aplásica causada por exposición a radiación.",
-                    "charges": [
-                        "Negligencia hacia su propia salud",
-                        "Posible mal ejemplo para otros científicos"
-                    ],
-                    "defense": [
-                        "En su época no se conocían completamente los riesgos",
-                        "Su dedicación permitió avances que salvaron millones de vidas"
-                    ],
-                    "context": "1890s-1930s: conocimiento limitado sobre efectos biológicos de radiación",
-                    "questions": [
-                        {
-                            "id": "q1-1",
-                            "question": "Juzgando con estándares de su época, ¿fue Marie negligente?",
-                            "options": [
-                                "Sí, claramente negligente",
-                                "No, actuó según conocimiento disponible",
-                                "Parcialmente responsable",
-                                "Imposible juzgar con información de la época"
-                            ],
-                            "correctAnswer": 1,
-                            "explanation": "Con el conocimiento científico de 1890-1920, los riesgos no eran completamente comprendidos"
-                        },
-                        {
-                            "id": "q1-2",
-                            "question": "¿Qué responsabilidad tiene un científico hacia su propia seguridad vs avance científico?",
-                            "options": [
-                                "Seguridad personal siempre es prioridad absoluta",
-                                "El avance científico justifica riesgos personales calculados",
-                                "Balance entre ambos dependiendo del contexto",
-                                "Solo la ciencia importa, la seguridad es secundaria"
-                            ],
-                            "correctAnswer": 2,
-                            "explanation": "El balance ético considera tanto bienestar personal como beneficio potencial para humanidad"
-                        }
-                    ]
+                    "id": "stmt-1",
+                    "text": "Marie Curie murió el 4 de julio de 1934 a causa de anemia aplásica.",
+                    "context": "Información sobre la muerte de Marie Curie"
                 },
                 {
-                    "id": "case-2",
-                    "title": "Caso: Relación con Paul Langevin",
-                    "description": "En 1911, Marie Curie, viuda, tuvo una relación con Paul Langevin, un colega científico casado. La prensa francesa la atacó ferozmente, algunos sugiriendo que no merecía el Nobel de Química por razones morales.",
-                    "charges": [
-                        "Conducta inmoral que daña reputación de la ciencia"
-                    ],
-                    "defense": [
-                        "Vida personal no debe afectar evaluación de logros científicos",
-                        "Doble estándar: hombres no reciben mismo escrutinio",
-                        "Juicio público injusto e invasivo"
-                    ],
-                    "context": "1911: sociedad conservadora con diferentes estándares para hombres y mujeres",
-                    "questions": [
-                        {
-                            "id": "q2-1",
-                            "question": "¿Debe la vida personal de un científico afectar el reconocimiento de sus logros?",
-                            "options": [
-                                "Sí, la moralidad personal invalida logros profesionales",
-                                "No, vida personal y logros científicos deben separarse completamente",
-                                "Depende de la gravedad de las acciones personales",
-                                "Solo si afecta directamente el trabajo científico"
-                            ],
-                            "correctAnswer": 1,
-                            "explanation": "Los logros científicos se evalúan por méritos propios, no por vida personal del científico"
-                        },
-                        {
-                            "id": "q2-2",
-                            "question": "¿El tratamiento de Marie por la prensa fue justo?",
-                            "options": [
-                                "Sí, las figuras públicas deben rendir cuentas",
-                                "No, fue claramente un doble estándar sexista",
-                                "Parcialmente justificado dada la época",
-                                "Completamente injustificado en cualquier contexto"
-                            ],
-                            "correctAnswer": 1,
-                            "explanation": "El escrutinio desproporcionado reveló el sexismo de la época; hombres científicos con vidas similares no sufrieron igual tratamiento"
-                        }
-                    ]
+                    "id": "stmt-2",
+                    "text": "Marie Curie fue la científica más brillante del siglo XX.",
+                    "context": "Valoración de la carrera de Marie Curie"
+                },
+                {
+                    "id": "stmt-3",
+                    "text": "La exposición prolongada al radio contribuyó a la enfermedad que causó la muerte de Marie Curie.",
+                    "context": "Relación entre su trabajo y su salud"
+                },
+                {
+                    "id": "stmt-4",
+                    "text": "Marie Curie ganó dos Premios Nobel: uno en Física (1903) y otro en Química (1911).",
+                    "context": "Reconocimientos de Marie Curie"
+                },
+                {
+                    "id": "stmt-5",
+                    "text": "Pierre Curie merecía más crédito que Marie por el descubrimiento del radio.",
+                    "context": "Debate sobre contribuciones científicas"
+                },
+                {
+                    "id": "stmt-6",
+                    "text": "Si Marie Curie no hubiera emigrado a Francia, probablemente no habría logrado sus descubrimientos.",
+                    "context": "Impacto de las circunstancias en su carrera"
+                },
+                {
+                    "id": "stmt-7",
+                    "text": "Marie Curie fue la primera mujer en recibir un Premio Nobel.",
+                    "context": "Logros históricos de Marie Curie"
+                },
+                {
+                    "id": "stmt-8",
+                    "text": "La decisión de Marie de no patentar el proceso de aislamiento del radio fue ingenua e irresponsable.",
+                    "context": "Evaluación de sus decisiones profesionales"
                 }
             ],
-            "verdictOptions": {
-                "inocente": "Actuó éticamente dadas las circunstancias",
-                "culpable": "Violó principios éticos importantes",
-                "mixto": "Actuación ética compleja con aspectos positivos y negativos",
-                "insuficiente": "Información insuficiente para juzgar"
+            "statementTypes": [
+                {"id": "hecho", "name": "HECHO", "icon": "📋", "description": "Dato verificable objetivamente con registros históricos"},
+                {"id": "opinion", "name": "OPINIÓN", "icon": "💭", "description": "Juicio de valor subjetivo, no medible objetivamente"},
+                {"id": "interpretacion", "name": "INTERPRETACIÓN", "icon": "🔍", "description": "Deducción basada en evidencia, no confirmada definitivamente"}
+            ],
+            "verdicts": [
+                {"id": "bien-fundamentada", "name": "Bien fundamentada", "icon": "✅", "description": "Evidencia sólida verificable, lógica válida, sin falacias"},
+                {"id": "parcialmente-fundamentada", "name": "Parcialmente fundamentada", "icon": "⚠️", "description": "Tiene evidencia pero incompleta, o con sesgos reconocidos"},
+                {"id": "sin-fundamento", "name": "Sin fundamento", "icon": "❌", "description": "Sin evidencia verificable, lógica inválida, o contiene falacias"}
+            ],
+            "evaluationCriteria": {
+                "evidencia": "¿Tiene evidencia factual verificable?",
+                "logica": "¿Es lógicamente coherente?",
+                "falacias": "¿Evita falacias argumentativas?"
             }
         }'::jsonb,
         '{
-            "evaluation_type": "ethical_reasoning",
-            "no_single_correct_answer": true
+            "correctAnswers": {
+                "stmt-1": {"type": "hecho", "verdict": "bien-fundamentada", "explanation": "Dato histórico verificable en registros oficiales de defunción y médicos."},
+                "stmt-2": {"type": "opinion", "verdict": "sin-fundamento", "explanation": "Juicio de valor subjetivo. Más brillante no es medible objetivamente y depende de criterios personales."},
+                "stmt-3": {"type": "interpretacion", "verdict": "bien-fundamentada", "explanation": "Deducción razonable basada en evidencia médica. Su anemia aplásica es consistente con exposición prolongada a radiación."},
+                "stmt-4": {"type": "hecho", "verdict": "bien-fundamentada", "explanation": "Dato verificable en registros oficiales de la Fundación Nobel."},
+                "stmt-5": {"type": "opinion", "verdict": "sin-fundamento", "explanation": "Opinión sin evidencia que la respalde. Los registros muestran contribuciones iguales o superiores de Marie."},
+                "stmt-6": {"type": "interpretacion", "verdict": "parcialmente-fundamentada", "explanation": "Interpretación con algo de base (Francia ofrecía mejores oportunidades), pero especulativa sobre alternativas."},
+                "stmt-7": {"type": "hecho", "verdict": "bien-fundamentada", "explanation": "Dato histórico verificable. Marie recibió el Nobel de Física en 1903, siendo la primera mujer."},
+                "stmt-8": {"type": "opinion", "verdict": "sin-fundamento", "explanation": "Juicio de valor con lenguaje peyorativo (ingenua, irresponsable). Su decisión fue ética y deliberada."}
+            },
+            "scoring": {"correctType": 5, "correctVerdict": 10, "goodJustification": 5, "pointsPerStatement": 20, "totalStatements": 8, "maxPoints": 160},
+            "validation": {"minJustificationLength": 30, "maxJustificationLength": 200, "requireBothTypeAndVerdict": true}
         }'::jsonb,
         'advanced', 100, 70,
         100, 20,

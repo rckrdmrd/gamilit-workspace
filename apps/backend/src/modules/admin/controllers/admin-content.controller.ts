@@ -58,7 +58,7 @@ export class AdminContentController {
     @Query() query: ListContentDto,
   ): Promise<PaginatedContentDto> {
     // Filter only exercises
-    return await this.adminContentService.getPendingContent({ ...query, contentType: 'exercise' });
+    return await this.adminContentService.getPendingContent({ ...query, content_type: 'exercise' });
   }
 
   @Post(':id/approve')

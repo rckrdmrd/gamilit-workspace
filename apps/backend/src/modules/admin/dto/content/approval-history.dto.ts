@@ -10,19 +10,19 @@ export class ApprovalHistoryItemDto {
     description: 'Unique identifier of the approval record',
     example: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
   })
-  id: string;
+  id!: string;
 
   @ApiProperty({
     description: 'Type of content (module, exercise, assignment, resource)',
     example: 'exercise',
   })
-  content_type: string;
+  content_type!: string;
 
   @ApiProperty({
     description: 'ID of the content being approved',
     example: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
   })
-  content_id: string;
+  content_id!: string;
 
   @ApiProperty({
     description: 'Title of the content (from joined table)',
@@ -35,7 +35,7 @@ export class ApprovalHistoryItemDto {
     description: 'ID of user who submitted the content',
     example: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
   })
-  submitted_by: string;
+  submitted_by!: string;
 
   @ApiProperty({
     description: 'Email of submitter',
@@ -55,7 +55,7 @@ export class ApprovalHistoryItemDto {
     description: 'When the content was submitted for approval',
     example: '2025-11-15T10:30:00Z',
   })
-  submitted_at: string;
+  submitted_at!: string;
 
   @ApiProperty({
     description: 'ID of user who reviewed the content',
@@ -90,7 +90,7 @@ export class ApprovalHistoryItemDto {
     example: 'approved',
     enum: ['pending', 'approved', 'rejected', 'needs_revision'],
   })
-  status: string;
+  status!: string;
 
   @ApiProperty({
     description: 'Notes from the reviewer',
@@ -110,13 +110,13 @@ export class ApprovalHistoryItemDto {
     description: 'When the approval record was created',
     example: '2025-11-15T10:30:00Z',
   })
-  created_at: string;
+  created_at!: string;
 
   @ApiProperty({
     description: 'When the approval record was last updated',
     example: '2025-11-16T14:20:00Z',
   })
-  updated_at: string;
+  updated_at!: string;
 }
 
 /**
@@ -204,29 +204,29 @@ export class PaginatedApprovalHistoryDto {
     description: 'Array of approval history items',
     type: [ApprovalHistoryItemDto],
   })
-  data: ApprovalHistoryItemDto[];
+  data!: ApprovalHistoryItemDto[];
 
   @ApiProperty({
     description: 'Total number of approval records',
     example: 150,
   })
-  total: number;
+  total!: number;
 
   @ApiProperty({
     description: 'Current page number',
     example: 1,
   })
-  page: number;
+  page!: number;
 
   @ApiProperty({
     description: 'Number of items per page',
     example: 20,
   })
-  limit: number;
+  limit!: number;
 
   @ApiProperty({
     description: 'Total number of pages',
     example: 8,
   })
-  total_pages: number;
+  total_pages!: number;
 }

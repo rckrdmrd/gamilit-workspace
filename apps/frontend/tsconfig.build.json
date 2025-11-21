@@ -31,6 +31,12 @@
     "src/stories/**",
     "src/**/__tests__/**",
     "**/App.example.tsx",
-    "src/shared/layouts/_legacy/**"
+    "src/shared/layouts/_legacy/**",
+    "src/pages/_legacy/**",
+    "**/*MockData.ts",
+    "**/*mockData.ts",
+    "**/examples/**",
+    "**/*.SECURE.tsx",
+    "src/features/notifications/hooks/useWebSocket.ts"
   ]
 }

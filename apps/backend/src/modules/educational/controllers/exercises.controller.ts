@@ -285,7 +285,7 @@ export class ExercisesController {
     // 3. Score es >= passing_score (70 por defecto)
     const completed = submission
       && submission.status === 'graded'
-      && submission.final_score >= (exercise.passing_score || 70)
+      && submission.score >= (exercise.passing_score || 70)
       ? true
       : false;
 

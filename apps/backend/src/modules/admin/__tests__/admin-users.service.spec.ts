@@ -241,11 +241,11 @@ describe('AdminUsersService', () => {
   });
 
   describe('updateUser', () => {
-    const mockUser = {
+    const getMockUser = () => ({
       id: 'user-1',
       email: 'old@example.com',
       role: GamilityRoleEnum.STUDENT,
-    };
+    });
 
     const updateDto: UpdateUserDto = {
       email: 'new@example.com',
@@ -254,6 +254,7 @@ describe('AdminUsersService', () => {
 
     it('should update user successfully', async () => {
       // Arrange
+      const mockUser = getMockUser();
       mockUserRepository.findOne.mockResolvedValue(mockUser);
       mockUserRepository.save.mockResolvedValue({
         ...mockUser,
@@ -282,6 +283,7 @@ describe('AdminUsersService', () => {
 
     it('should only update provided fields', async () => {
       // Arrange
+      const mockUser = getMockUser();
       const partialUpdate: UpdateUserDto = { email: 'updated@example.com' };
       mockUserRepository.findOne.mockResolvedValue(mockUser);
       mockUserRepository.save.mockResolvedValue({

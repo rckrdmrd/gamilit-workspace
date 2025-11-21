@@ -6,6 +6,7 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Repository } from 'typeorm';
 import { AnalyticsService } from '../services/analytics.service';
 import { StudentProgressService } from '../services/student-progress.service';
@@ -59,6 +60,14 @@ describe('AnalyticsService', () => {
     getClassComparison: jest.fn(),
   };
 
+  // Mock CacheManager
+  const mockCacheManager = {
+    get: jest.fn(),
+    set: jest.fn(),
+    del: jest.fn(),
+    reset: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -90,6 +99,10 @@ describe('AnalyticsService', () => {
         {
           provide: StudentProgressService,
           useValue: mockStudentProgressService,
+        },
+        {
+          provide: CACHE_MANAGER,
+          useValue: mockCacheManager,
         },
       ],
     }).compile();

@@ -2,8 +2,14 @@
 **Sistema de comprensión lectora gamificado basado en Daniel Cassany**
 **Texto base:** Biografía de Marie Curie
 
-**Versión:** 6.2 (Actualizado 2025-11-19)
+**Versión:** 6.3 (Actualizado 2025-11-20)
 **Tipo de documento:** Documento de diseño e implementación
+
+**Cambios en v6.3:**
+- ✅ Módulo 3 actualizado con instrucciones detalladas "Cómo resolverlo" para cada ejercicio
+- ✅ Agregadas mecánicas específicas: tarjetas arrastrables, checklist interactivo, guión de podcast
+- ✅ Tablas de ejemplos mejoradas con más detalle
+- ✅ Estructura de debate digital estructurada con tiempos específicos
 
 **Cambios en v6.2:**
 - ✅ Umbrales de XP sincronizados con implementación DB v2.0 (valores realistas y alcanzables)
@@ -545,211 +551,213 @@ Categorías posibles:
 
 ## MÓDULO 3: COMPRENSIÓN CRÍTICA Y VALORATIVA
 
-**Objetivo:** Emitir juicios, identificar intenciones del autor y argumentar posturas.  
+**Objetivo:** Emitir juicios, identificar intenciones del autor, argumentar posturas.
 **Rango al completar:** `AH K´IN`
 
 ---
 
 ### Ejercicio 3.1: Tribunal de Opiniones
 
-**Objetivo:**  
+**Mecánica:** Clasificar afirmaciones usando tarjetas digitales arrastrables.
+
+**Objetivo:**
 Evaluar diferentes opiniones sobre Marie Curie y determinar cuáles están bien fundamentadas.
 
-**Mecánica:**
+**Cómo resolverlo:**
 
-1. Leer la opinión presentada.  
-2. Identificar:
-   - Afirmación principal.  
-   - Evidencias que la apoyan.  
-   - Argumentos utilizados.  
-3. Evaluar según criterios:
-   - ¿Tiene evidencia factual?  
-   - ¿Es lógicamente coherente?  
-   - ¿Evita falacias?  
-4. Asignar un veredicto:
-   - `Bien fundamentada` ✅  
-   - `Parcialmente fundamentada` ⚠  
-   - `Sin fundamento` ❌  
-5. Justificar la decisión en 2–3 líneas.
+1. Lee la opinión presentada.
+2. Identifica:
+   - La afirmación principal.
+   - Las evidencias que la apoyan.
+   - Los argumentos usados.
+3. Evalúa según criterios:
+   - ¿Tiene evidencia factual?
+   - ¿Es lógicamente coherente?
+   - ¿Evita falacias?
+4. Asigna un veredicto:
+   - `Bien fundamentada` ✅
+   - `Parcialmente fundamentada` ⚠️
+   - `Sin fundamento` ❌
+5. Justifica tu decisión en 2–3 líneas.
 
 **Criterios de evaluación:**
 
-- Evidencia > Opinión.  
-- Hechos > Suposiciones.  
-- Lógica > Emoción.
+- Evidencia > Opinión
+- Hechos > Suposiciones
+- Lógica > Emoción
 
 #### Ejemplos
 
-| Afirmación                                  | Clasificación | Justificación                                      |
-|--------------------------------------------|--------------|---------------------------------------------------|
-| "Marie Curie murió el 4 de julio de 1934"  | HECHO        | Dato histórico verificable en registros.          |
-| "Fue la científica más brillante del siglo XX" | OPINIÓN   | Juicio de valor subjetivo, no es medible.         |
-| "Su exposición al radio contribuyó a su enfermedad" | INTERPRETACIÓN | Deducción basada en evidencia, no confirmada al 100%. |
+| Afirmación sobre Marie Curie | Clasificación | Justificación |
+|------------------------------|---------------|---------------|
+| "Marie Curie murió el 4 de julio de 1934" | HECHO | Dato histórico verificable en registros |
+| "Fue la científica más brillante del siglo XX" | OPINIÓN | Juicio de valor subjetivo, no medible |
+| "Su exposición al radio contribuyó a su enfermedad" | INTERPRETACIÓN | Deducción basada en evidencia, no confirmada definitivamente |
 
 ---
 
 ### Ejercicio 3.2: Debate Digital Estructurado
 
-**Tema:**  
+**Tema:**
 > ¿La fama afectó negativamente la investigación de Marie Curie?
 
-**Objetivo:**  
-Participar en un debate argumentado sobre decisiones controvertidas de Marie Curie.
+**Objetivo:**
+Participar en un debate argumentado sobre decisiones controversiales de Marie Curie.
+
+**Cómo resolverlo:**
 
 **Fase 1: Preparación (5 minutos)**
-
-- Recibir postura (a favor / en contra) asignada aleatoriamente.  
-- Leer las fuentes de información disponibles.  
-- Preparar 3 argumentos principales.  
-- Anticipar contra-argumentos.
+- Recibe tu postura (asignada aleatoriamente).
+- Lee las fuentes de información disponibles.
+- Prepara 3 argumentos principales.
+- Anticipa posibles contra-argumentos.
 
 **Fase 2: Debate (10 minutos)**
-
-- Apertura (1 min): presentar postura principal.  
-- Desarrollo (2 min): exponer 3 argumentos.  
-- Réplica (2 min): responder a argumentos contrarios.  
-- Contra-réplica (2 min): defender la posición.  
-- Cierre (30 s): conclusión contundente.
+- **Apertura (1 min):** Presenta tu postura principal.
+- **Desarrollo (2 min):** Expón tus 3 argumentos.
+- **Réplica (2 min):** Responde a argumentos contrarios.
+- **Contra-réplica (2 min):** Defiende tu posición.
+- **Cierre (30 seg):** Conclusión contundente.
 
 **Fase 3: Votación**
-
-- Otros usuarios votan el mejor argumento.  
+- Otros usuarios votan el mejor argumento.
 - Se evalúa: claridad, evidencia, persuasión.
 
 **Tips para ganar:**
-
-- Usar datos concretos.  
-- Citar fuentes.  
-- Mantener respeto.  
-- Ser conciso.
+- Usa datos concretos.
+- Cita fuentes.
+- Mantén respeto.
+- Sé conciso.
 
 #### Ejemplo de argumentos
 
-| Rol      | Argumentos principales                                 | Evidencia del texto                                 |
-|----------|--------------------------------------------------------|-----------------------------------------------------|
-| A FAVOR  | Invasión de privacidad; tiempo perdido en eventos; presión mediática | Escándalo tras muerte de Pierre; ceremonias; acoso periodístico |
-| EN CONTRA| Mayor financiación; reconocimiento institucional; mejores recursos   | Laboratorio mejorado; colaboraciones internacionales; apoyo gubernamental |
+| Rol | Argumentos Principales | Evidencia del Texto |
+|-----|------------------------|---------------------|
+| **A FAVOR** | Invasión de privacidad / Tiempo perdido en eventos / Presión mediática | Escándalo tras muerte de Pierre / Múltiples ceremonias obligatorias / Acoso periodístico documentado |
+| **EN CONTRA** | Mayor financiación / Reconocimiento institucional / Mejores recursos | Laboratorio mejorado post-Nobel / Colaboraciones internacionales / Apoyo gubernamental |
 
 ---
 
 ### Ejercicio 3.3: Análisis de Fuentes
 
-**Objetivo:**  
+**Mecánica:** Evaluar credibilidad de 5 textos sobre Marie usando checklist interactivo.
+
+**Objetivo:**
 Evaluar la confiabilidad de diferentes fuentes de información sobre Marie Curie.
 
-**Método:**  
-Aplicar el método **CRAAP**:
+**Cómo resolverlo:**
 
-- **Currency** (Actualidad).  
-- **Relevance** (Relevancia).  
-- **Authority** (Autoridad).  
-- **Accuracy** (Precisión).  
-- **Purpose** (Propósito).
-
-**Mecánica:**
-
-- Examinar cada fuente.  
-- Asignar puntuación de 1–5 en cada criterio.  
-- Clasificar la fuente:
-  - 20–25 puntos: Muy confiable.  
-  - 15–19 puntos: Confiable.  
-  - 10–14 puntos: Cuestionable.  
-  - <10 puntos: No confiable.
+1. Examina cada fuente presentada.
+2. Aplica el método **CRAAP**:
+   - **Currency** (Actualidad): ¿Cuándo se publicó?
+   - **Relevance** (Relevancia): ¿Es pertinente?
+   - **Authority** (Autoridad): ¿Quién es el autor?
+   - **Accuracy** (Precisión): ¿Es verificable?
+   - **Purpose** (Propósito): ¿Por qué se escribió?
+3. Asigna puntuación (1-5) en cada criterio.
+4. Clasifica la fuente:
+   - **Muy confiable** (20-25 puntos)
+   - **Confiable** (15-19 puntos)
+   - **Cuestionable** (10-14 puntos)
+   - **No confiable** (<10 puntos)
 
 **Señales de alerta:**
-
-- Sin autor identificable.  
-- Sin fecha de publicación.  
-- Lenguaje excesivamente emotivo.  
+- Sin autor identificable.
+- Sin fecha de publicación.
+- Lenguaje emotivo excesivo.
 - Sin referencias.
 
 #### Ejemplos de evaluación
 
-| Fuente                    | Autor                         | Fecha | Credibilidad | Problemas / Fortalezas                   |
-|---------------------------|-------------------------------|-------|-------------|------------------------------------------|
-| Biografía oficial UNESCO  | Historiadores verificados     | 2020  | ALTA        | ✓ Fuentes primarias, ✓ revisión académica |
-| Blog "Mujeres increíbles" | Anónimo                       | s/f   | BAJA        | ✗ Sin autor, ✗ sin referencias           |
-| Wikipedia – Marie Curie   | Múltiples editores            | Var.  | MEDIA       | ± Verificar referencias, ± posibles errores |
+| Fuente | Autor | Fecha | Credibilidad | Problemas / Fortalezas |
+|--------|-------|-------|--------------|------------------------|
+| Biografía oficial UNESCO | Historiadores verificados | 2020 | **ALTA** | ✓ Fuentes primarias, ✓ Revisión académica |
+| Blog "Mujeres increíbles" | Anónimo | Sin fecha | **BAJA** | ✗ Sin autor, ✗ Sin referencias |
+| Wikipedia – Marie Curie | Múltiples editores | Actualización continua | **MEDIA** | ± Verificar referencias, ± Posibles errores |
 
 ---
 
 ### Ejercicio 3.4: Creación de Podcast Argumentativo
 
-**Tema sugerido:**  
+**Tema:**
 > Impacto de Marie Curie en la equidad de género en ciencia.
 
-**Objetivo:**  
-Crear un podcast de 2–3 minutos defendiendo o criticando alguna decisión de Marie Curie.
+**Objetivo:**
+Crear un podcast de 2-3 minutos defendiendo o criticando una decisión de Marie Curie.
 
-**Estructura del podcast:**
+**Cómo resolverlo:**
 
-1. **Introducción (30 s)**  
-   - *Hook*: "¿Sabían que Marie Curie fue rechazada de la Academia de Ciencias pese a tener un Nobel?"  
-   - Tesis central.
+1. Elige tu tema de la lista disponible.
+2. Estructura tu podcast:
+   - **Introducción (30 seg):** Presenta el tema.
+   - **Desarrollo (2 min):** 3 argumentos principales.
+   - **Conclusión (30 seg):** Resumen y llamada a la reflexión.
+3. Graba usando el botón de grabación.
+4. Incluye:
+   - Al menos 3 datos verificables.
+   - 2 citas o referencias.
+   - Tu opinión personal fundamentada.
+5. Revisa antes de enviar (puedes regrabar).
 
-2. **Desarrollo (2 min)**  
-   - Argumento 1: primera mujer en ganar un Nobel.  
-   - Argumento 2: primera profesora en la Sorbona.  
-   - Argumento 3: modelo para futuras científicas.
+**Elementos clave:**
+- Habla claro y pausado.
+- Usa transiciones ("en primer lugar", "además", "por lo tanto").
+- Varía el tono para mantener interés.
 
-3. **Conclusión (30 s)**  
-   - Síntesis del impacto.  
-   - Llamado a la reflexión.
+#### Guión Sugerido
 
-**Requisitos:**
+**Introducción (0:00-0:20)**
+- *Hook:* "¿Sabían que Marie Curie fue rechazada de la Academia de Ciencias pese a tener un Nobel?"
+- *Tesis:* "Marie Curie no solo revolucionó la ciencia, sino que abrió puertas para generaciones de mujeres científicas."
 
-- Al menos 3 datos verificables.  
-- 2 citas o referencias.  
-- Opinión personal fundamentada.  
-- Posibilidad de regrabar antes de enviar.
+**Argumentos (0:20-1:30)**
+- **Argumento 1:** Primera mujer en ganar un Nobel (evidencia).
+- **Argumento 2:** Primera profesora en la Sorbona (impacto).
+- **Argumento 3:** Modelo para futuras científicas (legado).
 
-**Tips:**
-
-- Hablar claro y pausado.  
-- Usar conectores: "en primer lugar", "además", "por lo tanto".  
-- Variar el tono para mantener interés.
+**Conclusión (1:30-2:00)**
+- Síntesis de impacto.
+- Llamado a la acción.
 
 ---
 
 ### Ejercicio 3.5: Matriz de Perspectivas
 
-**Evento central:**
+**Evento:**
+> "Marie gana el Nobel de Química en 1911 en medio de escándalo personal."
 
-> "Marie gana el Nobel de Química en 1911 en medio de un escándalo personal."
+**Objetivo:**
+Analizar un evento desde múltiples puntos de vista diferentes.
 
-**Objetivo:**  
-Analizar el evento desde múltiples puntos de vista.
+**Cómo resolverlo:**
 
-**Perspectivas sugeridas:**
-
-- Marie Curie.  
-- Pierre Curie.  
-- Científicos contemporáneos.  
-- Prensa de la época.  
-- Mujeres de la época.  
-- Sociedad polaca.
-
-Para cada perspectiva se debe incluir:
-
-- Reacción emocional.  
-- Opinión sobre el evento.  
-- Consecuencias percibidas.
-
-**Factores a considerar:**
-
-- Prejuicios de la época.  
-- Contexto político.  
-- Roles de género.  
-- Nacionalismo.
+1. Lee el evento central (ej: "Marie gana el Nobel").
+2. Completa la matriz con perspectivas de:
+   - Marie Curie misma.
+   - Pierre Curie.
+   - Científicos contemporáneos.
+   - La prensa de la época.
+   - Mujeres de la época.
+   - La sociedad polaca.
+3. Para cada perspectiva incluye:
+   - Reacción emocional.
+   - Opinión sobre el evento.
+   - Consecuencias percibidas.
+4. Basa tus respuestas en el contexto histórico.
+5. Considera:
+   - Prejuicios de la época.
+   - Contexto político.
+   - Roles de género.
+   - Nacionalismo.
 
 #### Ejemplo de matriz
 
-| Perspectiva       | Visión del evento                                         | Intereses / Sesgos                               |
-|-------------------|-----------------------------------------------------------|--------------------------------------------------|
-| Marie Curie       | Reconocimiento merecido por su trabajo científico.       | Separar vida personal de logros profesionales.   |
-| Prensa de la época| El escándalo es más importante que el logro científico.  | Vender periódicos, sensacionalismo.             |
-| Comunidad científica | División entre apoyo y rechazo.                      | Mantener "reputación" de la ciencia.            |
-| Mujeres de la época | Inspiración y esperanza.                              | Ver posibilidades en campos antes vedados.      |
+| Perspectiva | Visión del Evento | Intereses / Sesgos |
+|-------------|-------------------|-------------------|
+| **Marie Curie** | Reconocimiento merecido por trabajo científico | Separar vida personal de logros profesionales |
+| **Prensa de la época** | Escándalo más importante que el logro | Vender periódicos, sensacionalismo |
+| **Comunidad científica** | División entre apoyo y rechazo | Mantener "reputación" de la ciencia |
+| **Mujeres de la época** | Inspiración y esperanza | Ver posibilidades en campos vedados |
 
 ---
 

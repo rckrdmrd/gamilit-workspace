@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { ExercisesController } from '../controllers/exercises.controller';
 import { ExercisesService } from '../services';
-import { ExerciseSubmissionService } from '@/modules/progress/services';
+import { ExerciseSubmissionService, ExerciseAttemptService } from '@/modules/progress/services';
+import { Profile } from '@modules/auth/entities/profile.entity';
 
 describe('ExercisesController - Submit Endpoint', () => {
   let controller: ExercisesController;
@@ -16,6 +18,18 @@ describe('ExercisesController - Submit Endpoint', () => {
     submitExercise: jest.fn(),
   };
 
+  const mockExerciseAttemptService = {
+    create: jest.fn(),
+    save: jest.fn(),
+    findOne: jest.fn(),
+  };
+
+  const mockProfileRepository = {
+    findOne: jest.fn(),
+    find: jest.fn(),
+    save: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ExercisesController],
@@ -28,6 +42,14 @@ describe('ExercisesController - Submit Endpoint', () => {
           provide: ExerciseSubmissionService,
           useValue: mockExerciseSubmissionService,
         },
+        {
+          provide: ExerciseAttemptService,
+          useValue: mockExerciseAttemptService,
+        },
+        {
+          provide: getRepositoryToken(Profile, 'auth'),
+          useValue: mockProfileRepository,
+        },
       ],
     }).compile();
 
@@ -35,6 +57,13 @@ describe('ExercisesController - Submit Endpoint', () => {
     exerciseSubmissionService = module.get<ExerciseSubmissionService>(
       ExerciseSubmissionService,
     );
+
+    // Setup default mock for profile lookup
+    mockProfileRepository.findOne.mockResolvedValue({
+      id: 'profile-550e8400-e29b-41d4-a716-446655440000',
+      user_id: '550e8400-e29b-41d4-a716-446655440000',
+      full_name: 'Test Student',
+    });
   });
 
   afterEach(() => {
@@ -67,16 +96,16 @@ describe('ExercisesController - Submit Endpoint', () => {
     };
 
     const expectedResponse = {
-      id: 'aa0e8400-e29b-41d4-a716-446655440000',
-      user_id: userId,
-      exercise_id: exerciseId,
-      status: 'auto_graded',
-      final_score: 85,
-      submitted_at: new Date('2025-11-11T15:00:00Z'),
-      graded_at: new Date('2025-11-11T15:00:01Z'),
-      xp_earned: 170,
-      ml_coins_earned: 85,
-      user_answers: submitDto.submitted_answers,
+      attemptId: 'aa0e8400-e29b-41d4-a716-446655440000',
+      exerciseId: exerciseId,
+      score: 85,
+      isPerfect: false,
+      rankUp: null,
+      rewards: {
+        bonuses: [],
+        mlCoins: 85,
+        xp: 170,
+      },
     };
 
     it('should submit exercise and return score with XP and ML Coins', async () => {
@@ -94,19 +123,26 @@ describe('ExercisesController - Submit Endpoint', () => {
         exerciseId,
         submitDto.submitted_answers,
       );
-      expect(result).toEqual(expectedResponse);
-      // Note: final_score, xp_earned, ml_coins_earned no están en ExerciseSubmissionResponseDto
-      // La entity/DTO usa 'score' (no 'final_score'), y no incluye xp_earned/ml_coins_earned
       expect(result.score).toBeDefined();
+      expect(result.rewards).toBeDefined();
+      expect(result.rewards.xp).toBeDefined();
+      expect(result.rewards.mlCoins).toBeDefined();
+      expect(result.isPerfect).toBe(false);
     });
 
     it('should handle exercise with perfect score (100%)', async () => {
       // Arrange
       const perfectScoreResponse = {
-        ...expectedResponse,
-        final_score: 100,
-        xp_earned: 200,
-        ml_coins_earned: 100,
+        attemptId: 'aa0e8400-e29b-41d4-a716-446655440000',
+        exerciseId: exerciseId,
+        score: 100,
+        isPerfect: true,
+        rankUp: null,
+        rewards: {
+          bonuses: [],
+          mlCoins: 100,
+          xp: 200,
+        },
       };
       mockExerciseSubmissionService.submitExercise.mockResolvedValue(
         perfectScoreResponse,
@@ -116,9 +152,11 @@ describe('ExercisesController - Submit Endpoint', () => {
       const result = await controller.submitExercise(exerciseId, mockRequest, submitDto);
 
       // Assert
-      // Note: final_score, xp_earned, ml_coins_earned no están en ExerciseSubmissionResponseDto
-      // La entity/DTO usa 'score' (no 'final_score'), y no incluye xp_earned/ml_coins_earned
-      expect(result.score).toBeDefined();
+      expect(result.score).toBe(100);
+      expect(result.isPerfect).toBe(true);
+      expect(result.rewards).toBeDefined();
+      expect(result.rewards.xp).toBeDefined();
+      expect(result.rewards.mlCoins).toBeDefined();
     });
 
     it('should handle exercise submission with no hints used', async () => {
@@ -129,8 +167,21 @@ describe('ExercisesController - Submit Endpoint', () => {
         comodines_used: [],
       };
 
+      const responseWithoutHints = {
+        attemptId: 'aa0e8400-e29b-41d4-a716-446655440000',
+        exerciseId: exerciseId,
+        score: 90, // Higher score without hints
+        isPerfect: false,
+        rankUp: null,
+        rewards: {
+          bonuses: [],
+          mlCoins: 90,
+          xp: 180,
+        },
+      };
+
       mockExerciseSubmissionService.submitExercise.mockResolvedValue(
-        expectedResponse,
+        responseWithoutHints,
       );
 
       // Act

@@ -1,70 +1,43 @@
-# _MAP: EXT-008 - White Label (Parcial)
+# _MAP: EXT-008 - White Label
 
 **Épica:** EXT-008
-**Nombre:** White Label Multi-Tenant
-**Fase:** 3 - Extensiones
-**Presupuesto:** $10,000 MXN
-**Story Points:** 35 SP
-**Estado:** 🟡 Parcial 30%
+**Nombre:** White Label / Multi-Tenancy Avanzado
+**Fase:** 3 - Extensiones (Alcance v2 EXTENSIONES)
+**Presupuesto Total:** $14,000 MXN
+**Story Points Total:** 35 SP
+**Estado:** 🟡 30% IMPLEMENTADA (10.5 SP impl, 24.5 SP pend)
+**Última actualización:** 2025-11-20
 
 ---
 
 ## 📋 Propósito
 
-Personalización multi-tenant con theming, branding customization y multi-domain support para clientes enterprise.
+Permitir personalización completa de branding por organización (white label) para modelo B2B.
 
-**Impacto:** **BAJO** - Nice-to-have para enterprise
-
----
-
-## 📁 Contenido
-
-| Archivo | Descripción |
-|---------|-------------|
-| [README.md](./README.md) | Overview de la épica |
-| [historias-usuario/](./historias-usuario/) | User stories (~5) |
-| [implementacion/TRACEABILITY.yml](./implementacion/TRACEABILITY.yml) | Trazabilidad |
+**Impacto:** **MEDIO-ALTO** - Diferenciador competitivo B2B
 
 ---
 
-## 🎯 Funcionalidades
+## 📁 User Stories (5 total)
 
-### ✅ Implementado (30%)
+| ID | Título | SP | Prioridad | Estado |
+|----|--------|----|-----------|--------|
+| **US-WL-001** | Theming Básico | 8 | P1 | 🟡 80% |
+| **US-WL-002** | Logo Customization | 6 | P1 | 📝 Pendiente |
+| **US-WL-003** | Multi-Domain Routing | 9 | P2 | 📝 Pendiente |
+| **US-WL-004** | Custom Fonts | 4.5 | P2 | 📝 Pendiente |
+| **US-WL-005** | Email Branding | 5 | P2 | 📝 Pendiente |
 
-- Basic theming (colors)
-- Tenant configuration table
-- Theme switcher
-
-### ⚪ Pendiente (70%)
-
-- Logo/banner customization
-- Multi-domain routing
-- Custom CSS injection
-- Email template theming
-- Full branding suite
+**Total:** 10.5/35 SP implementados (30%)
 
 ---
 
-## 🏗️ Implementación
+## 🎯 Implementación
 
-### Backend
-- **Módulo:** `white-label` (parcial)
-
-### Base de Datos
-- **Tabla:** `tenant_configurations` (básica)
+**Database:** `tenants.settings` JSONB con theme config ✅
+**Frontend:** CSS variables en uso 🟡 Parcial
+**Pendiente:** Logo upload, multi-domain, fonts, email templates
 
 ---
 
-## 📊 Estado
-
-| Aspecto | Completitud |
-|---------|-------------|
-| **Theming** | ✅ 80% |
-| **Branding** | ⚪ 10% |
-| **Multi-domain** | ⚪ 0% |
-
-**Overall:** 🟡 30% completado
-
----
-
-**Generado:** 2025-11-08
+**Generado:** 2025-11-20

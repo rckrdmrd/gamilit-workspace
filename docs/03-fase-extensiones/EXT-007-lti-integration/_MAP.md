@@ -1,83 +1,48 @@
-# _MAP: EXT-007 - LTI Integration (Parcial)
+# _MAP: EXT-007 - LTI Integration
 
 **Épica:** EXT-007
-**Nombre:** LTI Integration
-**Fase:** 3 - Extensiones
-**Presupuesto:** $12,000 MXN
-**Story Points:** 45 SP
-**Estado:** 🟡 Parcial 40%
+**Nombre:** Integración LTI 1.3 (Learning Tools Interoperability)
+**Fase:** 3 - Extensiones (Alcance v2 EXTENSIONES)
+**Presupuesto Total:** $18,000 MXN
+**Story Points Total:** 45 SP
+**Estado:** 🟡 40% IMPLEMENTADA (18 SP impl, 27 SP pend)
+**Última actualización:** 2025-11-20
+
+**CAMBIOS:**
+- **2025-11-20:** Documentación inicial creada post validación de alcances
+- **Estado Actual:** Basic auth + Launch implementados, Deep linking/Grade passback/NRPS pendientes
 
 ---
 
 ## 📋 Propósito
 
-Integración con LMS externos (Moodle, Canvas, Blackboard) mediante protocolo LTI 1.3 (Learning Tools Interoperability).
+Integrar GAMILIT con sistemas de gestión de aprendizaje (LMS) institucionales mediante el estándar LTI 1.3.
 
-**Impacto:** **MEDIO** - Habilita integración con plataformas enterprise
-
----
-
-## 📁 Contenido
-
-| Archivo | Descripción |
-|---------|-------------|
-| [README.md](./README.md) | Overview de la épica |
-| [historias-usuario/](./historias-usuario/) | User stories (~6) |
-| [implementacion/TRACEABILITY.yml](./implementacion/TRACEABILITY.yml) | Trazabilidad |
+**Impacto:** **ALTO** - Crítico para adopción institucional B2B
 
 ---
 
-## 🎯 Funcionalidades
+## 📁 User Stories (6 total)
 
-### ✅ Implementado (40%)
+| ID | Título | SP | Prioridad | Estado |
+|----|--------|----|-----------|--------|
+| **US-LTI-001** | LTI 1.3 Basic Authentication | 9 | P1 | ✅ 100% |
+| **US-LTI-002** | LTI Launch Flow | 9 | P1 | ✅ 100% |
+| **US-LTI-003** | Deep Linking | 9 | P1 | 📝 Pendiente |
+| **US-LTI-004** | Grade Passback (AGS) | 9 | P2 | 📝 Pendiente |
+| **US-LTI-005** | NRPS | 9 | P2 | 📝 Pendiente |
+| **US-LTI-006** | Analytics | - | P3 | 📝 Backlog |
 
-- LTI 1.3 basic authentication
-- Tool registration
-- Basic launch flow
-- LTI Advantage essentials
-
-### ⚪ Pendiente (60%)
-
-- Deep linking
-- Grade passback (AGS)
-- Names & Roles Provisioning (NRPS)
-- Content item selection
-- Full Canvas integration
-- Full Moodle integration
+**Total:** 18/45 SP implementados (40%)
 
 ---
 
-## 🏗️ Implementación
+## 🎯 Implementación
 
-### Backend
-- **Módulo:** `lti` (parcial)
-- **Estado:** Basic auth y launch implementado
-
-### Base de Datos
-- **Tablas:** lti_consumers, lti_sessions (parcial)
+**Database:** `lti_integration` schema (3/6 tablas)
+**Backend:** `apps/backend/src/modules/lti/` (2/5 services)
+**Endpoints:** 3/8+ implementados
 
 ---
 
-## 📊 Estado
-
-| Aspecto | Completitud |
-|---------|-------------|
-| **Authentication** | ✅ 100% |
-| **Basic Launch** | ✅ 100% |
-| **Deep Linking** | ⚪ 0% |
-| **Grade Passback** | ⚪ 0% |
-| **NRPS** | ⚪ 0% |
-
-**Overall:** 🟡 40% completado
-
----
-
-## 💡 Notas
-
-- Requiere contratos enterprise con instituciones
-- Depende de roadmap 2025
-- Diseño completo disponible
-
----
-
-**Generado:** 2025-11-08
+**Generado:** 2025-11-20

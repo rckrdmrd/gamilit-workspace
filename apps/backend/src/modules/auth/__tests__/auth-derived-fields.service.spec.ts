@@ -314,6 +314,7 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
         email: 'test@example.com',
         encrypted_password: 'hashed_password',
         role: GamilityRoleEnum.ADMIN_TEACHER,
+        status: 'active',
         email_confirmed_at: new Date('2025-11-10T10:00:00Z'),
         phone: '+52123456789',
         phone_confirmed_at: new Date('2025-11-10T11:00:00Z'),

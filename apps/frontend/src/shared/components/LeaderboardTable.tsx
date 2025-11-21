@@ -26,7 +26,7 @@ const getRankColor = (rank: MayaRank): string => {
     [MayaRank.NACOM]: 'text-bronze-600',
     [MayaRank.AH_KIN]: 'text-silver-600',
     [MayaRank.HALACH_UINIC]: 'text-yellow-600',
-    [MayaRank.KUKKULKAN]: 'text-purple-600',
+    [MayaRank.KUKUKULKAN]: 'text-purple-600',
   };
   return colors[rank] || 'text-gray-600';
 };
@@ -40,7 +40,7 @@ const getRankLabel = (rank: MayaRank): string => {
     [MayaRank.NACOM]: 'Nacom',
     [MayaRank.AH_KIN]: "Ah K'in",
     [MayaRank.HALACH_UINIC]: 'Halach Uinic',
-    [MayaRank.KUKKULKAN]: "K'uk'ulkan",
+    [MayaRank.KUKUKULKAN]: "K'uk'ulkan",
   };
   return labels[rank] || String(rank);
 };
@@ -108,8 +108,7 @@ const MobileCard: React.FC<{ entry: LeaderboardEntry; isCurrentUser: boolean }> 
         <Avatar
           src={entry.avatar}
           alt={entry.username}
-          fallback={entry.username.charAt(0).toUpperCase()}
-
+          name={entry.username}
         />
         <div>
           <p className="font-semibold text-gray-900">
@@ -290,8 +289,7 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
                       <Avatar
                         src={entry.avatar}
                         alt={entry.username}
-                        fallback={entry.username.charAt(0).toUpperCase()}
-
+                        name={entry.username}
                       />
                       <div>
                         <p className="font-semibold text-gray-900">

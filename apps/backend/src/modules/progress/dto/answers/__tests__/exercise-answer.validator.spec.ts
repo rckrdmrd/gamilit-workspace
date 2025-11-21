@@ -58,7 +58,7 @@ describe('ExerciseAnswerValidator', () => {
 
     it('should validate word search answers', async () => {
       const validAnswers = {
-        foundWords: ['MARIE', 'CURIE', 'NOBEL']
+        words: ['MARIE', 'CURIE', 'NOBEL']
       };
 
       await expect(
@@ -68,7 +68,7 @@ describe('ExerciseAnswerValidator', () => {
 
     it('should reject empty word search array', async () => {
       const invalidAnswers = {
-        foundWords: []
+        words: []
       };
 
       await expect(
@@ -92,7 +92,7 @@ describe('ExerciseAnswerValidator', () => {
 
     it('should validate timeline answers', async () => {
       const validAnswers = {
-        eventOrder: ['evt1', 'evt3', 'evt2', 'evt4']
+        events: ['evt1', 'evt3', 'evt2', 'evt4']
       };
 
       await expect(

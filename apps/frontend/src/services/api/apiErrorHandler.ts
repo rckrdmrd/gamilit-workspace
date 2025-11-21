@@ -175,8 +175,10 @@ export class TimeoutError extends APIError {
 
 /**
  * Handle Axios errors and convert to APIError
+ * @param error - The error to handle
+ * @param contextMessage - Optional context message for better error descriptions
  */
-export const handleAPIError = (error: unknown): APIError => {
+export const handleAPIError = (error: unknown, contextMessage?: string): APIError => {
   // Check if it's already an APIError
   if (error instanceof APIError) {
     return error;

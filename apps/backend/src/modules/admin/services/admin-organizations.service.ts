@@ -300,7 +300,7 @@ export class AdminOrganizationsService {
     const data = memberships.map((membership) => ({
       user_id: membership.user_id,
       email: membership.user?.email || '',
-      full_name: undefined, // TODO: Load profile relation separately if needed
+      full_name: undefined, // Profile relation not available due to cross-datasource limitation
       role: membership.user?.role || '',
       membership_role: membership.role,
       membership_status: membership.status,

@@ -1,7 +1,7 @@
 # Traza de Tareas: NEXUS-BACKEND
 
-**Última actualización:** 2025-11-19 (Sesión 7)
-**Estado:** ✅ Backend Operativo + Progreso de Módulos Corregido + Fix Crucigrama
+**Última actualización:** 2025-11-20 (Sesión 8)
+**Estado:** ✅ Backend Operativo + Rueda de Inferencias DTO Completado (BE-FE-071)
 
 ---
 
@@ -1314,4 +1314,277 @@ Todos en `apps/backend/src/modules/progress/dto/answers/`:
 
 **Documentación:**
 - orchestration/backend/BE-FE-061/04-FIX-VALIDACION-TODOS-EJERCICIOS.md
+
+
+---
+
+## BE-FE-069: Fix Predicción Narrativa Solution Format ✅
+
+**Fecha:** 2025-11-20
+**Estado:** ✅ RESUELTO
+**Prioridad:** P1 ALTO
+
+**Problema:**
+- Ejercicio 3 del Módulo 2 (Predicción Narrativa) daba 0 XP
+- Solution usaba clave incorrecta: `correctPredictions` (array)
+- Validador esperaba: `scenarios` (object)
+
+**Root Cause:**
+```json
+// ANTES (❌)
+{
+  "correctPredictions": ["pred-1-p2"]
+}
+
+// DESPUÉS (✅)
+{
+  "scenarios": {
+    "pred-1": "p2"
+  }
+}
+```
+
+**Fix Aplicado:**
+```sql
+UPDATE educational_content.exercises
+SET solution = '{"scenarios": {"pred-1": "p2"}}'::jsonb
+WHERE id = 'abc415a2-27ac-4980-9a8b-ced110f606d7';
+```
+
+**Testing:**
+- ✅ Respuesta correcta: Score 100, XP 200, ML Coins 50
+- ✅ Respuesta incorrecta: Score 0
+- ✅ Frontend ya enviaba formato correcto
+- ✅ DTO ya esperaba formato correcto
+
+**Patrón Recurrente:** Este es el 6º ejercicio con el mismo patrón (array → object, wrong key)
+
+**Documentación:** orchestration/backend/BE-FE-069-PREDICCION-NARRATIVA-FIX.md
+
+
+---
+
+## BE-FE-070: Fix Puzzle Contexto Solution Format ✅
+
+**Fecha:** 2025-11-20
+**Estado:** ✅ RESUELTO
+**Prioridad:** P1 ALTO
+
+**Problema:**
+- Ejercicio 4 del Módulo 2 (Puzzle de Contexto) daba 0 XP
+- Solution usaba array: `correctOrder: ["frag-b", "frag-c", "frag-a", "frag-d"]`
+- Validador esperaba object: `correctAnswers: {"frag-a": "2", ...}`
+
+**Root Cause:**
+```json
+// ANTES (❌)
+{
+  "correctOrder": ["frag-b", "frag-c", "frag-a", "frag-d"]
+}
+
+// DESPUÉS (✅)
+{
+  "correctAnswers": {
+    "frag-a": "2",
+    "frag-b": "0",
+    "frag-c": "1",
+    "frag-d": "3"
+  }
+}
+```
+
+**Fix Aplicado:**
+- Convertir array de orden a object con posiciones
+- Usar clave `correctAnswers` en lugar de `correctOrder`
+
+**Testing:**
+- ✅ Todos correctos: Score 100, XP 200, ML Coins 50
+- ✅ Parcialmente correctos (2/4): Score 50
+- ✅ Frontend ya enviaba formato correcto
+- ✅ DTO ya esperaba formato correcto
+
+**Patrón Recurrente:** Este es el 7º ejercicio con el mismo patrón (array → object, wrong key)
+
+**Documentación:** orchestration/backend/BE-FE-070-PUZZLE-CONTEXTO-FIX.md
+
+
+---
+
+## ANÁLISIS-RUEDA-INFERENCIAS: Validación contra Diseño v6.1 ✅
+
+**Fecha:** 2025-11-20
+**Estado:** ✅ ANÁLISIS COMPLETO
+**Prioridad:** P0 CRÍTICO
+**Decisión:** Opción A - Homologar al diseño original
+
+**Hallazgos:**
+- Ejercicio 2.5 (Rueda de Inferencias) completamente desalineado con diseño
+- Mecánica implementada: Selección múltiple (INCORRECTO)
+- Mecánica especificada: Escritura libre de inferencias (CORRECTO)
+- Solution format: Array (incompatible con validador SQL)
+- Frontend: Desconectado, usa mocks
+
+**Análisis completo:** orchestration/ANALISIS-RUEDA-INFERENCIAS-2025-11-20.md
+
+**Impacto:** 🔴 CRÍTICO - Bloquea deployment de Módulo 2
+
+---
+
+## PLAN-EJECUCION: Homologación Rueda de Inferencias ✅
+
+**Fecha:** 2025-11-20
+**Estado:** ✅ APROBADO POR USUARIO
+**Estimado total:** 9-13 horas
+
+**Tareas creadas:**
+- DB-071: Rediseñar content/solution/validador (Database Agent) - 3-4 hrs
+- BE-FE-071: Actualizar DTO (Backend Agent) - 1-2 hrs
+- FE-071: Implementar componente completo (Frontend Agent) - 4-6 hrs
+
+**Orden de ejecución:**
+1. DB-071 (Database Agent) - BLOQUEA a los demás
+2. BE-FE-071 (Backend Agent) - Depende de DB-071
+3. FE-071 (Frontend Agent) - Puede desarrollar en paralelo con mocks
+
+**Plan completo:** orchestration/PLAN-EJECUCION-RUEDA-INFERENCIAS.md
+
+---
+
+## BE-FE-071: Actualizar DTO Rueda de Inferencias ✅
+
+**Fecha:** 2025-11-20
+**Estado:** ✅ COMPLETADO
+**Prioridad:** P0 CRÍTICO
+**Tiempo real:** ~30 minutos
+
+**Objetivo:**
+Actualizar `RuedaInferenciasAnswersDto` de formato array (selección múltiple) a formato object (texto libre).
+
+**Cambios implementados:**
+```typescript
+// ANTES
+export class RuedaInferenciasAnswersDto {
+  @IsArray()
+  @ArrayNotEmpty({ message: 'selectedInferences array cannot be empty' })
+  @IsString({ each: true })
+  selectedInferences!: string[];
+}
+
+// DESPUÉS
+export class RuedaInferenciasAnswersDto {
+  @IsObject({ message: 'fragments must be an object' })
+  @IsNotEmpty({ message: 'fragments object is required' })
+  fragments!: Record<string, string>;
+
+  @IsString({ message: 'categoryId must be a string' })
+  @IsOptional()
+  categoryId?: string;
+
+  @IsNumber({}, { message: 'timeSpent must be a number' })
+  @IsOptional()
+  timeSpent?: number;
+
+  constructor() {
+    this.fragments = {};
+  }
+}
+```
+
+**Formato esperado:**
+```json
+{
+  "fragments": {
+    "frag-1": "Marie Curie fue pionera en el estudio de la radiactividad...",
+    "frag-2": "Su determinación la llevó a superar muchas barreras..."
+  },
+  "categoryId": "inferencial",
+  "timeSpent": 45
+}
+```
+
+**Verificación:**
+- ✅ DTO actualizado con estructura correcta
+- ✅ TypeScript compila sin errores
+- ✅ Backend inicia correctamente
+- ✅ DTO exportado en index.ts
+- ✅ Mapping correcto en exercise-answer.validator.ts
+- ✅ Compatible con `validate_rueda_inferencias()` wrapper
+- ✅ Compatible con servicio `ExerciseSubmissionService`
+
+**Archivos modificados:**
+- `apps/backend/src/modules/progress/dto/answers/rueda-inferencias-answers.dto.ts`
+
+**Documentación:**
+- `orchestration/backend/BE-FE-071-RUEDA-INFERENCIAS-DTO.md` (especificación)
+- `orchestration/backend/BE-FE-071-COMPLETADO.md` (reporte completo)
+
+**FE-071 DESBLOQUEADO:** Frontend puede proceder con componentes ✅
+
+
+---
+
+## DB-071: Rediseño Rueda de Inferencias COMPLETADO ✅
+
+**Fecha:** 2025-11-20
+**Estado:** ✅ COMPLETADO por Database Agent
+**Prioridad:** P0 CRÍTICO
+**Tiempo real:** ~3 horas
+
+**Cambios implementados:**
+1. ✅ Content actualizado (4 categorías: Literal, Inferencial, Crítico, Creativo)
+2. ✅ Solution con keywords (6 keywords por fragmento)
+3. ✅ Validador SQL `validate_rueda_inferencias_text` creado
+4. ✅ 6 tests ejecutados y pasando
+5. ✅ Configuración actualizada en `exercise_validation_config`
+
+**Testing:**
+- ✅ Válido con 5 keywords → 20 puntos
+- ✅ Válido con 2 keywords → 20 puntos  
+- ✅ Inválido con 0 keywords → 0 puntos
+- ✅ Validación de longitud (20-200 chars)
+- ✅ Normalización de texto funcionando
+
+**Archivos:**
+- `ddl/schemas/educational_content/functions/14-validate_rueda_inferencias_text.sql` (NUEVO)
+- `seeds/prod/educational_content/10-exercise_validation_config.sql` (ACTUALIZADO)
+
+**BE-FE-071 DESBLOQUEADO:** Backend puede proceder ahora ✅
+
+
+---
+
+## DB-071 WRAPPER: Función validate_rueda_inferencias() Completada ✅
+
+**Fecha:** 2025-11-20
+**Estado:** ✅ COMPLETADO por Database Agent
+**Arquitectura:** 3 capas (auxiliar + directa + wrapper)
+
+**Funciones creadas:**
+1. ✅ `_validate_single_fragment()` - Auxiliar interna con lógica core
+2. ✅ `validate_rueda_inferencias_text()` - Refactorizada (mantiene firma original)
+3. ✅ `validate_rueda_inferencias()` - Wrapper estándar compatible con validate_and_audit()
+
+**Testing:**
+- ✅ 8 tests ejecutados y pasando
+- ✅ Todos fragmentos válidos (3/3) → 100 score
+- ✅ Algunos válidos (2/3) → 67 score (crédito parcial)
+- ✅ Ninguno válido (0/3) → 0 score
+- ✅ Validación de longitud funcionando
+- ✅ Compatibilidad con llamadas directas
+
+**Formato esperado:**
+```json
+{
+  "fragments": {
+    "frag-1": "Marie Curie fue pionera...",
+    "frag-2": "Su determinación..."
+  }
+}
+```
+
+**Archivos:**
+- `ddl/schemas/educational_content/functions/14-validate_rueda_inferencias.sql` (3 funciones)
+- `seeds/prod/educational_content/10-exercise_validation_config.sql` (actualizado)
+
+**BE-FE-071 CONFIRMADO COMPLETO** ✅
 

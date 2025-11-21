@@ -178,7 +178,7 @@ describe('AdminOrganizationsService', () => {
       // Assert
       expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
         'tenant.subscription_tier = :tier',
-        { tier: 'premium' },
+        { tier: 'professional' },
       );
     });
 
@@ -402,7 +402,7 @@ describe('AdminOrganizationsService', () => {
       // Assert
       expect(result).toBeDefined();
       expect(result.name).toBe('UNAM - Universidad Nacional');
-      expect(result.subscription_tier).toBe('premium');
+      expect(result.subscription_tier).toBe('professional');
       expect(mockTenantRepo.save).toHaveBeenCalled();
     });
 
@@ -775,14 +775,14 @@ describe('AdminOrganizationsService', () => {
   });
 
   describe('updateSubscription', () => {
-    const mockOrganization = {
+    const getMockOrganization = () => ({
       id: 'org-1',
       name: 'UNAM',
       subscription_tier: SubscriptionTierEnum.BASIC,
       max_users: 100,
       max_storage_gb: 5,
       trial_ends_at: null,
-    };
+    });
 
     const updateDto: UpdateSubscriptionDto = {
       subscription_tier: SubscriptionTierEnum.PROFESSIONAL,
@@ -793,7 +793,7 @@ describe('AdminOrganizationsService', () => {
 
     it('should update subscription successfully', async () => {
       // Arrange
-      mockTenantRepo.findOne.mockResolvedValue(mockOrganization);
+      mockTenantRepo.findOne.mockResolvedValue(getMockOrganization());
       mockTenantRepo.save.mockImplementation((entity) =>
         Promise.resolve(entity),
       );
@@ -828,7 +828,7 @@ describe('AdminOrganizationsService', () => {
       const partialUpdate: UpdateSubscriptionDto = {
         max_users: 200,
       };
-      mockTenantRepo.findOne.mockResolvedValue(mockOrganization);
+      mockTenantRepo.findOne.mockResolvedValue(getMockOrganization());
       mockTenantRepo.save.mockImplementation((entity) =>
         Promise.resolve(entity),
       );

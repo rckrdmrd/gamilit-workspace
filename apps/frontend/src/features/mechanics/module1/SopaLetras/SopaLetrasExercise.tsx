@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Check, X } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { SopaLetrasGrid } from './SopaLetrasGrid';
@@ -310,6 +311,30 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({ exercise
     }
   }, [actionsRef, handleReset, handleCheck]);
 
+  // Handler para validar la selección actual (botón móvil)
+  const handleValidateSelection = React.useCallback(() => {
+    if (selectedCells.length > 0) {
+      console.log('📱 [SopaLetras] Botón validar presionado - Validando selección');
+      validateSelection(selectedCells);
+    }
+  }, [selectedCells, validateSelection]);
+
+  // Handler para cancelar la selección actual
+  const handleCancelSelection = React.useCallback(() => {
+    console.log('📱 [SopaLetras] Botón cancelar presionado - Limpiando selección');
+    setSelectedCells([]);
+  }, []);
+
+  // Obtener la palabra formada por las celdas seleccionadas (para mostrar preview)
+  const selectedWord = React.useMemo(() => {
+    if (selectedCells.length === 0) return '';
+    return selectedCells
+      .map(cell => exercise.content.grid[cell.row]?.[cell.col])
+      .filter(Boolean)
+      .join('')
+      .toUpperCase();
+  }, [selectedCells, exercise.content.grid]);
+
   return (
     <>
       <DetectiveCard variant="default" padding="lg">
@@ -321,6 +346,44 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({ exercise
               foundCells={foundCells}
               onCellSelect={handleCellSelect}
             />
+
+            {/* Botones de validar/cancelar para móvil - Aparecen cuando hay selección */}
+            {selectedCells.length > 0 && (
+              <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+                {/* Preview de la palabra seleccionada */}
+                <div className="bg-blue-100 border-2 border-blue-400 rounded-lg px-4 py-2 text-center">
+                  <span className="text-sm text-blue-600 font-medium">Palabra seleccionada:</span>
+                  <span className="ml-2 text-lg font-bold text-blue-800">{selectedWord}</span>
+                  <span className="ml-2 text-sm text-blue-500">({selectedCells.length} letras)</span>
+                </div>
+
+                {/* Botones de acción */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleValidateSelection}
+                    className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-all active:scale-95"
+                  >
+                    <Check className="w-5 h-5" />
+                    Validar Palabra
+                  </button>
+                  <button
+                    onClick={handleCancelSelection}
+                    className="flex items-center gap-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-all active:scale-95"
+                  >
+                    <X className="w-5 h-5" />
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Mensaje de ayuda cuando no hay selección */}
+            {selectedCells.length === 0 && (
+              <div className="mt-4 text-center text-gray-500 text-sm">
+                <p>📱 Toca las letras para formar una palabra, luego presiona <strong>Validar Palabra</strong></p>
+                <p className="text-xs mt-1">(En PC también puedes usar Enter para validar o Escape para cancelar)</p>
+              </div>
+            )}
           </div>
           <div>
             <WordList words={words} />

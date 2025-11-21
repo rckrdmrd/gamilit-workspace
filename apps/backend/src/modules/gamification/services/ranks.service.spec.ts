@@ -63,7 +63,7 @@ describe('RanksService', () => {
       providers: [
         RanksService,
         {
-          provide: getRepositoryToken(UserRank, DB_SCHEMAS.GAMIFICATION),
+          provide: getRepositoryToken(UserRank, 'gamification'),
           useValue: mockUserRankRepository,
         },
         {
@@ -78,7 +78,7 @@ describe('RanksService', () => {
     }).compile();
 
     service = module.get<RanksService>(RanksService);
-    userRankRepo = module.get(getRepositoryToken(UserRank, DB_SCHEMAS.GAMIFICATION));
+    userRankRepo = module.get(getRepositoryToken(UserRank, 'gamification'));
     userStatsService = module.get<UserStatsService>(UserStatsService);
     mlCoinsService = module.get<MLCoinsService>(MLCoinsService);
 
@@ -155,7 +155,7 @@ describe('RanksService', () => {
 
       expect(config).toMatchObject({
         xp_min: 0,
-        xp_max: 999,
+        xp_max: 499,
         ml_coins_bonus: 0,
         next_rank: MayaRank.NACOM,
         name: 'Ajaw',
@@ -167,9 +167,9 @@ describe('RanksService', () => {
       const config = service.getRankConfig(MayaRank.NACOM);
 
       expect(config).toMatchObject({
-        xp_min: 1000,
-        xp_max: 2999,
-        ml_coins_bonus: 500,
+        xp_min: 500,
+        xp_max: 999,
+        ml_coins_bonus: 100,
         next_rank: MayaRank.AH_KIN,
         name: 'Nacom',
         order: 2,
@@ -180,9 +180,9 @@ describe('RanksService', () => {
       const config = service.getRankConfig(MayaRank.KUKUKULKAN);
 
       expect(config).toMatchObject({
-        xp_min: 10000,
+        xp_min: 2250,
         xp_max: Infinity,
-        ml_coins_bonus: 5000,
+        ml_coins_bonus: 1000,
         next_rank: null,
         name: "K'uk'ulkan",
         order: 5,
@@ -213,7 +213,7 @@ describe('RanksService', () => {
       mockUserRankRepository.findOne.mockResolvedValue(mockCurrentRank);
       mockUserStatsService.findByUserId.mockResolvedValue({
         ...mockUserStats,
-        total_xp: 500,
+        total_xp: 250, // Mid-progress in Ajaw (xp_min: 0, xp_max: 499)
       });
 
       const result = await service.calculateRankProgress(mockUserId);
@@ -221,10 +221,10 @@ describe('RanksService', () => {
       expect(result).toMatchObject({
         current_rank: MayaRank.AJAW,
         next_rank: MayaRank.NACOM,
-        xp_current: 500,
-        xp_required: 1000,
-        xp_remaining: 500,
-        ml_coins_bonus_on_promotion: 500,
+        xp_current: 250,
+        xp_required: 500, // Nacom xp_min
+        xp_remaining: 250, // 500 - 250
+        ml_coins_bonus_on_promotion: 100, // Nacom bonus
         is_max_rank: false,
       });
       expect(result.progress_percentage).toBeGreaterThanOrEqual(0);
@@ -284,7 +284,7 @@ describe('RanksService', () => {
       mockUserRankRepository.findOne.mockResolvedValue(mockCurrentRank);
       mockUserStatsService.findByUserId.mockResolvedValue({
         ...mockUserStats,
-        total_xp: 500,
+        total_xp: 499, // Not enough XP for Nacom (xp_min: 500)
       });
 
       const result = await service.checkPromotionEligibility(mockUserId);
@@ -350,7 +350,7 @@ describe('RanksService', () => {
 
       expect(mockMLCoinsService.addCoins).toHaveBeenCalledWith(
         mockUserId,
-        500, // Nacom bonus
+        100, // Nacom bonus (actual rank config value)
         TransactionTypeEnum.EARNED_RANK,
         expect.stringContaining('Nacom'),
         expect.any(String),
@@ -369,7 +369,7 @@ describe('RanksService', () => {
     it('should throw BadRequestException if not eligible', async () => {
       mockUserStatsService.findByUserId.mockResolvedValue({
         ...mockUserStats,
-        total_xp: 500, // Not enough XP
+        total_xp: 499, // Not enough XP for Nacom (xp_min: 500)
       });
 
       await expect(service.promoteToNextRank(mockUserId)).rejects.toThrow(

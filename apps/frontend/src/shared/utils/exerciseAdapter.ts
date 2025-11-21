@@ -554,6 +554,62 @@ export const adaptToPuzzleContextoData = (exercise: ExerciseData): any => {
 };
 
 /**
+ * Adapts ExerciseData to TribunalOpinionesData format
+ * Module 3 - Classify statements as HECHO/OPINIÓN/INTERPRETACIÓN
+ *
+ * Expected database format (v6.3):
+ * content: {
+ *   statements: [
+ *     { id: "stmt-1", text: "...", correctClassification: "hecho", correctVerdict: "bien_fundamentada", explanation: "..." }
+ *   ]
+ * }
+ */
+export const adaptToTribunalOpinionesData = (exercise: ExerciseData): any => {
+  const base = adaptToBaseExercise(exercise);
+
+  // Get config and content from mechanicData
+  const config = exercise.mechanicData?.config || {};
+  const content = exercise.mechanicData?.content || {};
+
+  // Build config object with defaults
+  const tribunalConfig = {
+    dragAndDrop: config.dragAndDrop !== undefined ? config.dragAndDrop : false,
+    requireJustification: config.requireJustification !== undefined ? config.requireJustification : false,
+    showHints: config.showHints !== undefined ? config.showHints : true,
+  };
+
+  // Get statements from database content (v6.3 format)
+  const statements = content.statements || [];
+
+  if (statements.length === 0) {
+    console.warn('[TribunalOpiniones] No statements found in exercise content');
+  }
+
+  // Build content object with statements
+  const tribunalContent = {
+    statements,
+    evaluationCriteria: content.evaluationCriteria || {
+      evidencia: '¿Hay datos verificables que respalden la afirmación?',
+      logica: '¿El razonamiento es válido y coherente?',
+      falacias: '¿Evita errores lógicos comunes?'
+    },
+    classificationHelp: content.classificationHelp || {
+      hecho: 'Dato verificable objetivamente con fuentes documentadas',
+      opinion: 'Juicio de valor subjetivo sin criterios objetivos de verificación',
+      interpretacion: 'Deducción razonable basada en evidencia pero no 100% demostrable'
+    }
+  };
+
+  return {
+    ...base,
+    description: exercise.description || '',
+    instructions: exercise.mechanicData?.instructions || 'Clasifica cada afirmación y evalúa si está bien fundamentada.',
+    config: tribunalConfig,
+    content: tribunalContent,
+  };
+};
+
+/**
  * Generic adapter that routes to the correct specific adapter based on exercise type
  */
 export const adaptExerciseData = (exercise: ExerciseData): any => {
@@ -593,6 +649,8 @@ export const adaptExerciseData = (exercise: ExerciseData): any => {
     return adaptToPrediccionNarrativaData(exercise);
   } else if (type.includes('puzzle_contexto')) {
     return adaptToPuzzleContextoData(exercise);
+  } else if (type.includes('tribunal_opiniones')) {
+    return adaptToTribunalOpinionesData(exercise);
   }
 
   // Default: return base exercise data

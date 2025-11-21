@@ -227,7 +227,7 @@ INSERT INTO educational_content.exercise_validation_config (
     }'::jsonb
 ),
 
--- 2.5. RUEDA DE INFERENCIAS
+-- 2.5. RUEDA DE INFERENCIAS (Texto Libre)
 (
     'rueda_inferencias',
     'validate_rueda_inferencias',
@@ -236,16 +236,19 @@ INSERT INTO educational_content.exercise_validation_config (
     NULL,
     true,
     '{
-        "score_per_inference": true,
-        "allow_partial_matches": false
+        "validation_type": "keyword_based",
+        "min_keywords": 2,
+        "min_length": 20,
+        "max_length": 200,
+        "score_per_fragment": true
     }'::jsonb,
     100,
     70,
-    'Validación de rueda de inferencias: matching pairs de inferencias',
+    'Validación de rueda de inferencias con texto libre: wrapper estándar que valida múltiples fragmentos con keywords',
     '{
-        "submitted": {"inferences": {"inf1": "conclusion1", "inf2": "conclusion2"}},
-        "solution": {"correctInferences": {"inf1": "conclusion1", "inf2": "conclusion2"}},
-        "result": {"is_correct": true, "score": 100}
+        "submitted": {"fragments": {"frag-1": "Marie Curie fue la primera mujer en ganar el Nobel en física y química", "frag-2": "Ella usaba el apellido Curie en sus publicaciones"}},
+        "solution": {"fragments": [{"id": "frag-1", "keywords": ["nobel", "física", "química", "primera", "mujer"], "points": 20}, {"id": "frag-2", "keywords": ["apellido", "curie", "publicaciones"], "points": 20}], "validation": {"minKeywords": 2, "minLength": 20, "maxLength": 200}},
+        "result": {"is_correct": true, "valid_fragments": 2, "total_points": 40, "score": 100}
     }'::jsonb
 ),
 

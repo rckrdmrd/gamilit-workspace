@@ -408,64 +408,88 @@ BEGIN
         E'Este ejercicio culminante del Módulo 2 sintetiza todas las habilidades de comprensión inferencial desarrolladas en ejercicios previos:\n- Detective Textual: Inferencias de contexto situacional\n- Causa-Efecto: Relaciones causales\n- Predicción Narrativa: Anticipación basada en contexto\n- Puzzle de Contexto: Construcción sintáctica de inferencias\n\nLa mecánica radial enseña un concepto metacognitivo crucial: la MULTIPERSPECTIVIDAD INFERENCIAL. Un solo hecho histórico puede analizarse desde múltiples lentes (histórica, científica, psicológica, ética), y cada lente genera inferencias válidas diferentes.\n\nAlineación con Cassany (Nivel 2 - Comprensión Inferencial):\n- Trasciende completamente la información explícita\n- Requiere integración de conocimiento previo (historia, ciencia, psicología)\n- Desarrolla pensamiento crítico al distinguir inferencias de juicios\n- Practica razonamiento hipotético-deductivo\n\nDificultad: Intermedia-Avanzada (CEFR: B2). Requiere:\n- Conocimiento científico básico (radiactividad, vida media de isótopos)\n- Comprensión de contextos históricos (conocimiento científico del s.XIX-XX)\n- Pensamiento categórico (clasificar inferencias por tipo)\n- Juicio epistémico (distinguir lo deducible de lo especulativo)\n\nEste ejercicio es especialmente valioso porque:\n1. Integra ciencias y humanidades (física nuclear + historia social)\n2. Desarrolla pensamiento no-lineal (una observación → múltiples inferencias)\n3. Refuerza empatía histórica (juzgar acciones en su contexto original)\n4. Prepara para análisis académico avanzado donde múltiples interpretaciones coexisten legítimamente',
         'rueda_inferencias', 5,
         '{
-            "visualType": "radial",
-            "allowMultipleConnections": true,
-            "showFeedback": "onConnect"
+            "wheelAnimation": true,
+            "showTimer": true,
+            "allowSkip": false
         }'::jsonb,
         '{
-            "centralConcept": {
-                "id": "central",
-                "text": "Marie trabajó con materiales radiactivos toda su vida sin protección adecuada",
-                "type": "observation"
+            "categories": [
+                {
+                    "id": "cat-literal",
+                    "name": "Literal",
+                    "description": "Información directa del texto",
+                    "color": "#3B82F6",
+                    "icon": "book"
+                },
+                {
+                    "id": "cat-inferencial",
+                    "name": "Inferencial",
+                    "description": "Conclusiones basadas en pistas del texto",
+                    "color": "#10B981",
+                    "icon": "search"
+                },
+                {
+                    "id": "cat-critico",
+                    "name": "Crítico",
+                    "description": "Análisis y evaluación del contenido",
+                    "color": "#F59E0B",
+                    "icon": "lightbulb"
+                },
+                {
+                    "id": "cat-creativo",
+                    "name": "Creativo",
+                    "description": "Ideas originales relacionadas con el texto",
+                    "color": "#8B5CF6",
+                    "icon": "palette"
+                }
+            ],
+            "fragments": [
+                {
+                    "id": "frag-1",
+                    "text": "Marie Curie fue pionera en el estudio de la radiactividad, convirtiéndose en la primera mujer en ganar un Premio Nobel y la única persona en ganar en dos campos científicos diferentes.",
+                    "difficulty": "medium"
+                },
+                {
+                    "id": "frag-2",
+                    "text": "A pesar de enfrentar discriminación por ser mujer en un campo dominado por hombres, Marie persistió en su investigación, trabajando en condiciones difíciles en un laboratorio improvisado.",
+                    "difficulty": "medium"
+                },
+                {
+                    "id": "frag-3",
+                    "text": "Los cuadernos de Marie Curie todavía son radiactivos y se guardan en cajas especiales de plomo. Las personas que quieren consultarlos deben firmar un descargo de responsabilidad.",
+                    "difficulty": "hard"
+                }
+            ],
+            "settings": {
+                "timeLimit": 30,
+                "minTextLength": 20,
+                "maxTextLength": 200
             },
-            "inferences": [
+            "instructions": "1. Gira la ruleta para seleccionar una categoría de inferencia\n2. Lee el fragmento de texto con atención\n3. Escribe una inferencia según la categoría seleccionada en 30 segundos\n4. Tu inferencia debe incluir conceptos clave del texto"
+        }'::jsonb,
+        '{
+            "validation": {
+                "minKeywords": 2,
+                "minLength": 20,
+                "maxLength": 200
+            },
+            "fragments": [
                 {
-                    "id": "inf-1",
-                    "text": "Marie probablemente no conocía completamente los riesgos de la radiación",
-                    "isCorrect": true,
-                    "type": "contexto_historico",
-                    "explanation": "En la década de 1890-1910, los efectos de la radiación en la salud no eran bien comprendidos."
+                    "id": "frag-1",
+                    "keywords": ["pionera", "radiactividad", "nobel", "primera", "mujer", "cientifico", "premio", "campos", "unica"],
+                    "points": 20
                 },
                 {
-                    "id": "inf-2",
-                    "text": "Su muerte por anemia aplásica fue causada por exposición crónica a radiación",
-                    "isCorrect": true,
-                    "type": "causa_efecto",
-                    "explanation": "La exposición prolongada a radiación ionizante daña la médula ósea, causando anemia aplásica."
+                    "id": "frag-2",
+                    "keywords": ["discriminacion", "mujer", "persistio", "investigacion", "laboratorio", "condiciones", "dificiles", "hombres", "campo"],
+                    "points": 20
                 },
                 {
-                    "id": "inf-3",
-                    "text": "Marie priorizaba el avance científico sobre su seguridad personal",
-                    "isCorrect": true,
-                    "type": "motivacion",
-                    "explanation": "Incluso cuando empezó a experimentar síntomas, continuó su trabajo, mostrando su dedicación a la ciencia."
-                },
-                {
-                    "id": "inf-4",
-                    "text": "Sus cuadernos siguen siendo radiactivos más de 100 años después",
-                    "isCorrect": true,
-                    "type": "consecuencia_duradera",
-                    "explanation": "La vida media del radio-226 es de 1,600 años, por lo que los objetos contaminados permanecen radiactivos."
-                },
-                {
-                    "id": "inf-5",
-                    "text": "Marie era descuidada e irresponsable en su trabajo",
-                    "isCorrect": false,
-                    "type": "juicio_incorrecto",
-                    "explanation": "Incorrecto. Marie era meticulosa en su trabajo científico; simplemente no se conocían los riesgos en su época."
-                },
-                {
-                    "id": "inf-6",
-                    "text": "El radio no es realmente peligroso para los humanos",
-                    "isCorrect": false,
-                    "type": "conclusion_incorrecta",
-                    "explanation": "Incorrecto. El radio es extremadamente peligroso; hoy sabemos que la exposición causó la muerte de Marie."
+                    "id": "frag-3",
+                    "keywords": ["cuadernos", "radiactivos", "plomo", "cajas", "peligroso", "descargo", "responsabilidad", "anos", "consultar"],
+                    "points": 20
                 }
             ]
-        }'::jsonb,
-        '{
-            "correctInferences": ["inf-1", "inf-2", "inf-3", "inf-4"],
-            "incorrectInferences": ["inf-5", "inf-6"]
         }'::jsonb,
         'intermediate', 100, 75,
         20, 20,

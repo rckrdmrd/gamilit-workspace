@@ -7,6 +7,7 @@ import { User } from '@modules/auth/entities/user.entity';
 import { Tenant } from '@modules/auth/entities/tenant.entity';
 import { Module } from '@modules/educational/entities/module.entity';
 import { Exercise } from '@modules/educational/entities/exercise.entity';
+import { SystemSetting } from '../entities/system-setting.entity';
 import {
   AuditLogQueryDto,
   UpdateSystemConfigDto,
@@ -20,8 +21,10 @@ describe('AdminSystemService', () => {
   let tenantRepo: Repository<Tenant>;
   let moduleRepo: Repository<Module>;
   let exerciseRepo: Repository<Exercise>;
+  let systemSettingRepo: Repository<SystemSetting>;
   let authConnection: Connection;
   let educationalConnection: Connection;
+  let settingsStore: any[];
 
   const mockQueryBuilder = {
     select: jest.fn().mockReturnThis(),
@@ -57,6 +60,13 @@ describe('AdminSystemService', () => {
 
   const mockExerciseRepo = {
     count: jest.fn(),
+  };
+
+  const mockSystemSettingRepo = {
+    findOne: jest.fn(),
+    find: jest.fn(),
+    save: jest.fn(),
+    create: jest.fn(),
   };
 
   const mockAuthConnection = {
@@ -105,6 +115,10 @@ describe('AdminSystemService', () => {
           provide: getRepositoryToken(Exercise, 'educational'),
           useValue: mockExerciseRepo,
         },
+        {
+          provide: getRepositoryToken(SystemSetting, 'auth'),
+          useValue: mockSystemSettingRepo,
+        },
       ],
     }).compile();
 
@@ -114,10 +128,52 @@ describe('AdminSystemService', () => {
     tenantRepo = module.get(getRepositoryToken(Tenant, 'auth'));
     moduleRepo = module.get(getRepositoryToken(Module, 'educational'));
     exerciseRepo = module.get(getRepositoryToken(Exercise, 'educational'));
+    systemSettingRepo = module.get(getRepositoryToken(SystemSetting, 'auth'));
     authConnection = module.get(getConnectionToken('auth'));
     educationalConnection = module.get(getConnectionToken('educational'));
 
     jest.clearAllMocks();
+
+    // Initialize settings store for each test
+    settingsStore = [];
+    let timestampCounter = 0;
+
+    // Setup default mocks for system settings with stateful storage
+    mockSystemSettingRepo.find.mockImplementation(() => Promise.resolve([...settingsStore]));
+    mockSystemSettingRepo.findOne.mockImplementation((options) => {
+      const key = options?.where?.setting_key;
+      const setting = settingsStore.find(s => s.setting_key === key);
+      return Promise.resolve(setting || null);
+    });
+    mockSystemSettingRepo.save.mockImplementation((setting) => {
+      // Ensure updated_at is set with unique timestamp
+      // Add milliseconds to ensure each save has a unique timestamp
+      const now = new Date();
+      now.setMilliseconds(now.getMilliseconds() + timestampCounter++);
+
+      const savedSetting = {
+        ...setting,
+        updated_at: setting.updated_at || now,
+        created_at: setting.created_at || now,
+      };
+
+      const index = settingsStore.findIndex(s => s.setting_key === setting.setting_key);
+      if (index >= 0) {
+        settingsStore[index] = savedSetting;
+      } else {
+        settingsStore.push(savedSetting);
+      }
+      return Promise.resolve(savedSetting);
+    });
+    mockSystemSettingRepo.create.mockImplementation((setting) => {
+      const now = new Date();
+      now.setMilliseconds(now.getMilliseconds() + timestampCounter++);
+      return {
+        ...setting,
+        created_at: now,
+        updated_at: now,
+      };
+    });
   });
 
   afterEach(() => {
@@ -298,6 +354,7 @@ describe('AdminSystemService', () => {
 
     it('should handle zero requests gracefully', async () => {
       // Arrange
+      mockAuthAttemptRepo.count.mockReset();
       mockAuthAttemptRepo.count
         .mockResolvedValueOnce(0) // requests
         .mockResolvedValueOnce(0) // failed
@@ -312,6 +369,13 @@ describe('AdminSystemService', () => {
     });
 
     it('should estimate database queries', async () => {
+      // Arrange
+      mockAuthAttemptRepo.count.mockReset();
+      mockAuthAttemptRepo.count
+        .mockResolvedValueOnce(mockMetricsData.requestsLastHour)
+        .mockResolvedValueOnce(mockMetricsData.failedLastHour)
+        .mockResolvedValueOnce(mockMetricsData.exercisesCompleted24h);
+
       // Act
       const result = await service.getSystemMetrics();
 

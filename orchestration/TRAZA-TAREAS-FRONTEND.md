@@ -1,7 +1,7 @@
 # Traza de Tareas: NEXUS-FRONTEND
 
-**Última actualización:** 2025-11-17 (FE-058: Validación Estilos Módulos 2 y 3)
-**Estado:** ✅ Frontend operativo - Estilos consistentes en módulos 2 y 3
+**Última actualización:** 2025-11-20 (FE-071: Rueda de Inferencias Component Completado)
+**Estado:** ✅ Frontend operativo - Rueda de Inferencias Implementada (DB-071 + BE-FE-071 + FE-071)
 
 ---
 
@@ -3043,3 +3043,447 @@ Se agregaron las propiedades faltantes (líneas 188-189 de CausaEfectoExercise.t
 - ⏸️ Validación manual pendiente por usuario
 
 ---
+
+## [2025-11-20] DB-071: Rediseño Rueda de Inferencias (Texto Libre) ✅
+
+**Estado:** ✅ COMPLETADO
+**Tipo:** Database Redesign + Validator Implementation
+**Prioridad:** P1 (Alta) - Bloquea BE-FE-071
+**Duración:** 45 min
+
+### Objetivo
+Rediseñar el ejercicio "Rueda de Inferencias" (Módulo 2) desde matching pairs a formato de texto libre con validación basada en keywords.
+
+### Problema Original
+- Formato anterior: Matching pairs (drag & drop de conclusiones predefinidas)
+- Limitación: Los estudiantes no escribían sus propias inferencias
+- Mecánica: Conectar inferencias predefinidas con conclusiones predefinidas
+
+### Solución Implementada
+**Nuevo diseño:** Texto libre con validación de keywords
+
+**Componentes modificados:**
+
+1. **Content del ejercicio** (JSON)
+   - 4 categorías de inferencias: Literal, Inferencial, Crítico, Creativo
+   - 6 fragmentos de texto sobre Marie Curie
+   - Cada categoría con icono y descripción
+
+2. **Solution del ejercicio** (JSON)
+   - Keywords por fragmento (6 keywords cada uno)
+   - Criterios de validación: minKeywords=2, minLength=20, maxLength=200
+   - Puntos por fragmento: 20 (total: 120 puntos posibles)
+
+3. **Función SQL de validación**
+   - **Función:** `validate_rueda_inferencias_text(exercise_id, fragment_id, user_text)`
+   - **Ubicación:** `ddl/schemas/educational_content/functions/14-validate_rueda_inferencias_text.sql`
+   - **Validaciones:**
+     - Longitud de texto (20-200 caracteres)
+     - Keywords mínimos (2 requeridos)
+     - Normalización de texto (lowercase + sin acentos)
+     - Puntuación basada en keywords encontrados
+   - **Retorno:** JSONB con is_valid, matched_keywords, keyword_count, points, feedback
+
+4. **Configuración de validación**
+   - **Archivo:** `seeds/prod/educational_content/10-exercise_validation_config.sql`
+   - **Cambio:** `validation_function` de `validate_rueda_inferencias` a `validate_rueda_inferencias_text`
+   - **Special rules:** keyword_based validation, score_per_fragment
+
+### Archivos Modificados
+
+**Base de Datos:**
+1. `ddl/schemas/educational_content/functions/14-validate_rueda_inferencias_text.sql` (NUEVO)
+2. `ddl/schemas/educational_content/functions/14-validate_rueda_inferencias.sql` → `...-DEPRECATED.sql`
+3. `seeds/prod/educational_content/10-exercise_validation_config.sql` (ACTUALIZADO)
+
+**Ejercicio actualizado:**
+- ID: `7bd580d3-b9ab-47f0-8bed-fe68e6598948`
+- Tipo: `rueda_inferencias`
+- Content: 4 categorías + 6 fragmentos
+- Solution: Keywords + criterios de validación
+
+### Testing Ejecutado
+
+**6 tests de validación:**
+1. ✅ Respuesta válida con 3+ keywords (frag-1) → 5 keywords encontrados, 20 puntos
+2. ✅ Respuesta válida con exactamente 2 keywords (frag-2) → 2 keywords, 20 puntos
+3. ✅ Respuesta con solo 1 keyword (frag-3) → 0 keywords, 0 puntos, feedback correcto
+4. ✅ Respuesta demasiado corta (<20 chars) → 0 puntos, mensaje de error
+5. ✅ Respuesta demasiado larga (>200 chars) → 0 puntos, mensaje de error
+6. ✅ Normalización (mayúsculas/acentos) → Funciona correctamente
+
+**Resultado:** 6/6 tests pasados ✅
+
+### Validaciones
+
+- ✅ Content JSON actualizado en BD
+- ✅ Solution JSON actualizado en BD
+- ✅ Función SQL creada y probada
+- ✅ exercise_validation_config actualizado (15/15 configuraciones)
+- ✅ Tests de validación ejecutados (6/6 exitosos)
+- ✅ Documentación completa
+
+### Impacto
+
+**Desbloquea:**
+- BE-FE-071: Implementación del componente frontend para Rueda de Inferencias con texto libre
+
+**Beneficios:**
+- Estudiantes escriben sus propias inferencias (más desafiante)
+- Validación automática basada en keywords (menos supervisión manual)
+- Feedback inmediato y específico
+- Puntuación justa basada en conceptos clave mencionados
+
+### Notas Técnicas
+
+**Formato de respuesta esperado (Frontend → Backend):**
+```json
+{
+  "fragment_id": "frag-1",
+  "category_id": "inferencial",
+  "text": "Marie Curie fue pionera en física y química..."
+}
+```
+
+**Validación por fragmento:**
+- Backend llamará `validate_rueda_inferencias_text()` por cada respuesta
+- Acumulará puntos de todos los fragmentos (max 120)
+- Retornará feedback detallado con keywords encontrados
+
+**Criterios de aprobación:**
+- Puntuación mínima: 70/120 (58.3%)
+- Equivale a ~4 fragmentos correctos de 6
+
+### Próximos Pasos
+
+**Backend (BE-071):**
+- Adaptar endpoint de submission para validar múltiples fragmentos
+- Procesar respuestas con validate_rueda_inferencias_text()
+- Acumular puntos y generar feedback consolidado
+
+**Frontend (FE-071):**
+- Implementar componente con 4 categorías visuales (iconos)
+- 6 fragmentos de texto con textarea para respuestas
+- Mostrar feedback con keywords matched
+- Integrar con flujo de submissions
+
+---
+
+## [2025-11-20] DB-071-WRAPPER: Función Wrapper Estándar para Rueda de Inferencias ✅
+
+**Estado:** ✅ COMPLETADO
+**Tipo:** Database Enhancement - Wrapper Function
+**Prioridad:** P1 (Alta)
+**Duración:** 30 min
+
+### Objetivo
+Crear función wrapper `validate_rueda_inferencias()` con firma estándar para integración completa con el sistema de validación del backend.
+
+### Problema
+- La función `validate_rueda_inferencias_text()` creada anteriormente requiere `exercise_id` y `fragment_id` explícitos
+- El sistema de validación estándar espera firma: `(p_solution, p_submitted_answer, p_max_points, ...)`
+- Backend necesita validar múltiples fragmentos en una sola llamada
+
+### Solución Implementada
+
+**Arquitectura de 3 capas:**
+
+1. **`_validate_single_fragment()` - Función Auxiliar Interna**
+   - Parámetros: keywords, min_keywords, min_length, max_length, user_text, points
+   - Retorno: JSONB con resultado de validación
+   - Propósito: Lógica core reutilizable, evita duplicación
+
+2. **`validate_rueda_inferencias_text()` - Validador Directo (REFACTORIZADO)**
+   - Parámetros: exercise_id, fragment_id, user_text
+   - Busca ejercicio en BD y extrae solution
+   - Delega validación a `_validate_single_fragment()`
+   - Uso: Llamadas directas desde endpoints específicos
+
+3. **`validate_rueda_inferencias()` - Wrapper Estándar (NUEVO)**
+   - Firma estándar: `(p_solution, p_submitted_answer, p_max_points, p_allow_partial_credit, p_normalize_text)`
+   - Formato esperado: `{"fragments": {"frag-1": "texto...", "frag-2": "texto...", ...}}`
+   - Itera sobre cada fragmento enviado
+   - Llama a `_validate_single_fragment()` para cada uno
+   - Acumula puntos y genera resultado consolidado
+   - Retorna: `(is_correct, score, feedback, details)`
+
+### Funcionalidades del Wrapper
+
+**Validación por Fragmento:**
+- Busca solution del fragmento en p_solution
+- Extrae keywords y puntos específicos
+- Valida longitud (min/max caracteres)
+- Cuenta keywords encontrados (mínimo requerido)
+- Asigna puntos si es válido
+
+**Acumulación de Resultados:**
+- Suma puntos de todos los fragmentos válidos
+- Calcula porcentaje (valid_fragments / total_fragments)
+- Ajusta score final a p_max_points (normalmente 100)
+- Soporta crédito parcial
+
+**Feedback Consolidado:**
+- "¡Excelente! Todas las N inferencias son válidas..." (si 100%)
+- "N de M inferencias válidas. Revisa los fragmentos marcados..." (si parcial)
+- "Ninguna inferencia válida. Asegúrate de incluir conceptos clave..." (si 0%)
+
+**Detalles por Fragmento:**
+```json
+{
+  "total_fragments": 3,
+  "valid_fragments": 2,
+  "total_points_possible": 60,
+  "points_earned": 40,
+  "percentage": 67,
+  "validation_criteria": {
+    "min_keywords": 2,
+    "min_length": 20,
+    "max_length": 200
+  },
+  "results_per_fragment": [
+    {
+      "fragment_id": "frag-1",
+      "is_valid": true,
+      "matched_keywords": ["nobel", "física", "química"],
+      "keyword_count": 5,
+      "points": 20,
+      "feedback": "¡Excelente! Has incluido 5 conceptos clave..."
+    },
+    ...
+  ]
+}
+```
+
+### Testing Ejecutado
+
+**8 tests completos:**
+1. ✅ Todos los fragmentos válidos (3/3) → 100% score
+2. ✅ Algunos fragmentos válidos (2/3) → 67% score, crédito parcial
+3. ✅ Ningún fragmento válido (0/3) → 0% score, feedback apropiado
+4. ✅ Fragmento con texto corto → Validación de longitud funcionando
+5. ✅ Solo 1 fragmento enviado → Funciona con cantidad variable
+6. ✅ Verificación de puntuación parcial → Cálculo correcto
+7. ✅ validate_rueda_inferencias_text() refactorizada → Aún funciona
+8. ✅ Llamada directa con exercise_id → Compatibilidad mantenida
+
+**Resultado:** 8/8 tests pasados ✅
+
+### Archivos Modificados
+
+**Nuevos:**
+- `ddl/schemas/educational_content/functions/14-validate_rueda_inferencias.sql` (3 funciones)
+
+**Actualizados:**
+- `seeds/prod/educational_content/10-exercise_validation_config.sql` (apunta a wrapper)
+- `ddl/schemas/educational_content/functions/14-validate_rueda_inferencias_text.sql` → DEPRECATED (lógica movida)
+
+**Configuración:**
+- exercise_validation_config ahora usa `validate_rueda_inferencias` (wrapper estándar)
+
+### Formato de Integración Backend
+
+**Llamada desde validate_answer.sql:**
+```sql
+SELECT * FROM educational_content.validate_rueda_inferencias(
+    p_solution,           -- Desde exercises.solution
+    p_submitted_answer,   -- {"fragments": {"frag-1": "...", ...}}
+    p_max_points,         -- 100
+    p_allow_partial_credit,
+    p_normalize_text
+);
+-- Retorna: (is_correct, score, feedback, details)
+```
+
+**Estructura esperada en submission:**
+```json
+{
+  "fragments": {
+    "frag-1": "Marie Curie fue la primera mujer en ganar el Nobel...",
+    "frag-2": "Ella usaba el apellido Curie en sus publicaciones...",
+    "frag-3": "A pesar de la discriminación de género...",
+    "frag-4": "...",
+    "frag-5": "...",
+    "frag-6": "..."
+  }
+}
+```
+
+### Beneficios de la Arquitectura
+
+**1. Sin Duplicación de Código:**
+- `_validate_single_fragment()` contiene la lógica core
+- Ambos validadores (text y wrapper) la reusan
+- Cambios futuros se hacen en un solo lugar
+
+**2. Flexibilidad de Uso:**
+- Wrapper estándar para integración con validate_answer
+- Función directa para endpoints específicos del backend
+- Ambas comparten la misma lógica de validación
+
+**3. Compatibilidad:**
+- Firma estándar compatible con otros validadores
+- Sistema de validación no requiere cambios
+- Frontend puede enviar múltiples fragmentos en una sola submission
+
+**4. Mantenibilidad:**
+- Código organizado en capas lógicas
+- Tests exhaustivos para ambas funciones
+- Documentación clara de uso
+
+### Próximos Pasos Backend
+
+**BE-071 puede ahora:**
+1. Recibir submission con formato `{"fragments": {...}}`
+2. Llamar a `validate_rueda_inferencias()` vía validate_answer
+3. Obtener resultado consolidado con score total
+4. Retornar feedback detallado por fragmento al frontend
+5. Registrar submission con puntuación correcta
+
+**Ejemplo de flujo:**
+```
+Frontend → Backend: POST /submissions
+{
+  "exercise_id": "...",
+  "answer": {
+    "fragments": {
+      "frag-1": "texto...",
+      ...
+    }
+  }
+}
+
+Backend → validate_answer() → validate_rueda_inferencias()
+  → Valida 6 fragmentos
+  → Acumula puntos (max 120)
+  → Ajusta a score/100
+  → Retorna resultado
+
+Backend → Frontend: 
+{
+  "is_correct": false,
+  "score": 67,
+  "feedback": "4 de 6 inferencias válidas...",
+  "details": {...}
+}
+```
+
+### Validaciones
+
+- ✅ 3 funciones creadas correctamente
+- ✅ exercise_validation_config actualizado
+- ✅ 8 tests ejecutados (100% success)
+- ✅ Compatibilidad con validate_answer verificada
+- ✅ Documentación completa
+
+---
+
+## FE-071: Rueda de Inferencias Component - COMPLETADO ✅
+
+**Fecha:** 2025-11-20
+**Estado:** ✅ COMPLETADO
+**Prioridad:** P0 CRÍTICO
+**Tiempo real:** ~2 horas
+**Depende de:** DB-071, BE-FE-071
+
+### Objetivo Cumplido
+
+Implementar componente completo de Rueda de Inferencias con ruleta animada, temporizador de 30 segundos, escritura de inferencias en texto libre, e integración con backend.
+
+### Componentes Creados
+
+1. **WheelSpinner.tsx** (136 líneas)
+   - Animación de ruleta con framer-motion
+   - 4 segmentos de colores (Literal, Inferencial, Crítico, Creativo)
+   - Selección aleatoria de categoría
+   - Rotación de 3-5 vueltas completas con easing
+
+2. **CountdownTimer.tsx** (119 líneas)
+   - Timer de 30 segundos configurable
+   - Barra de progreso visual
+   - Variantes de color (default/warning/danger)
+   - Animaciones pulse en estado danger
+   - Callbacks onComplete y onTick
+
+3. **RuedaInferenciasExercise.tsx** (582 líneas - REESCRITO)
+   - Flujo multi-fase (intro → spinning → reading → writing → completed → feedback)
+   - Gestión de estado por fragmento
+   - Validación de texto (20-200 caracteres)
+   - Integración con submitExercise API
+   - FeedbackModal con resultados
+   - Mock data integrado (4 categorías, 3 fragmentos)
+
+### Types Actualizados
+
+**Archivo:** `ruedaInferenciasTypes.ts` (156 líneas)
+
+Nuevos interfaces creados:
+- `InferenceCategory` - Categorías con color e ícono
+- `InferenceFragment` - Fragmentos de texto
+- `ExerciseSettings` - Configuración (timeLimit, minLength, etc.)
+- `RuedaInferenciasContent` - Content completo
+- `RuedaInferenciasExercise` - Exercise completo
+- `FragmentState` - Estado de fragmento individual
+- `RuedaInferenciasState` - Estado del ejercicio
+- `RuedaInferenciasAnswers` - Formato para backend
+- `WheelSpinnerProps`, `CountdownTimerProps`
+
+### Integración Backend
+
+**Formato enviado (compatible con BE-FE-071):**
+```typescript
+{
+  "userId": "user-uuid",
+  "exerciseId": "ex-rueda-001",
+  "answers": {
+    "fragments": {
+      "frag-1": "Marie Curie fue pionera...",
+      "frag-2": "Su determinación...",
+      "frag-3": "Los cuadernos..."
+    },
+    "categoryId": "cat-inferencial",
+    "timeSpent": 142
+  }
+}
+```
+
+### Verificaciones
+
+- ✅ TypeScript compila sin errores (0 errores en RuedaInferencias)
+- ✅ WheelSpinner funciona con animación suave
+- ✅ CountdownTimer funciona con variantes de color
+- ✅ Validación de texto (min 20, max 200 caracteres)
+- ✅ Submit manual y automático funcionando
+- ✅ Progreso entre fragmentos
+- ✅ Integración con submitExercise API
+- ✅ FeedbackModal muestra resultados
+- ✅ Compatible con BE-FE-071 DTO
+- ✅ Compatible con DB-071 SQL validator
+
+### Archivos Modificados
+
+```
+apps/frontend/src/features/mechanics/module2/RuedaInferencias/
+├── ruedaInferenciasTypes.ts           ← ACTUALIZADO (156 líneas)
+├── WheelSpinner.tsx                    ← CREADO (136 líneas)
+├── CountdownTimer.tsx                  ← CREADO (119 líneas)
+└── RuedaInferenciasExercise.tsx       ← REESCRITO (582 líneas)
+```
+
+### Documentación
+
+- ✅ `orchestration/frontend/FE-071-RUEDA-INFERENCIAS-COMPONENT.md` (especificación)
+- ✅ `orchestration/frontend/FE-071-COMPLETADO.md` (reporte completo)
+
+### Próximos Pasos
+
+1. Testing E2E con datos reales del backend
+2. Implementar fetchExercise para cargar desde backend (actualmente usa mock)
+3. Implementar auto-save de progreso cada 30 segundos
+4. Analytics tracking (eventos de ruleta, fragmentos, etc.)
+5. Revisión de accesibilidad (A11y)
+
+---
+
+**Estado:** ✅ DB-071 + BE-FE-071 + FE-071 = CADENA COMPLETADA
+**Listo para:** Testing E2E con backend real
+

@@ -2,7 +2,7 @@ import React from 'react';
 import { Search, X, SlidersHorizontal } from 'lucide-react';
 import { cn } from '@shared/utils';
 import type {
-  AchievementFilter,
+  AchievementFilter as AchievementFilterType,
   AchievementCategory,
   AchievementStatus,
   ACHIEVEMENT_CATEGORY_LABELS,
@@ -12,8 +12,8 @@ import type {
  * AchievementFilter Props
  */
 interface AchievementFilterProps {
-  currentFilter: AchievementFilter;
-  onFilterChange: (filter: AchievementFilter) => void;
+  currentFilter: AchievementFilterType;
+  onFilterChange: (filter: AchievementFilterType) => void;
   className?: string;
 }
 

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString, IsArray } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 
 export enum ReportType {
   USERS = 'users',
@@ -26,28 +26,28 @@ export class ReportDto {
     description: 'Report unique identifier',
     example: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
   })
-  id: string;
+  id!: string;
 
   @ApiProperty({
     description: 'Report type',
     enum: ReportType,
     example: ReportType.USERS,
   })
-  type: ReportType;
+  type!: ReportType;
 
   @ApiProperty({
     description: 'Report format',
     enum: ReportFormat,
     example: ReportFormat.EXCEL,
   })
-  format: ReportFormat;
+  format!: ReportFormat;
 
   @ApiProperty({
     description: 'Report status',
     enum: ReportStatus,
     example: ReportStatus.COMPLETED,
   })
-  status: ReportStatus;
+  status!: ReportStatus;
 
   @ApiPropertyOptional({
     description: 'Report file URL (when completed)',
@@ -64,7 +64,7 @@ export class ReportDto {
     description: 'Report creation timestamp',
     example: '2025-11-19T10:30:00Z',
   })
-  created_at: string;
+  created_at!: string;
 
   @ApiPropertyOptional({
     description: 'Report completion timestamp',
@@ -76,7 +76,7 @@ export class ReportDto {
     description: 'User ID who requested the report',
     example: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
   })
-  requested_by: string;
+  requested_by!: string;
 }
 
 export class GenerateReportDto {
@@ -86,7 +86,7 @@ export class GenerateReportDto {
     example: ReportType.USERS,
   })
   @IsEnum(ReportType)
-  type: ReportType;
+  type!: ReportType;
 
   @ApiProperty({
     description: 'Report output format',
@@ -94,7 +94,7 @@ export class GenerateReportDto {
     example: ReportFormat.EXCEL,
   })
   @IsEnum(ReportFormat)
-  format: ReportFormat;
+  format!: ReportFormat;
 
   @ApiPropertyOptional({
     description: 'Report filters',
@@ -143,29 +143,29 @@ export class PaginatedReportsDto {
     description: 'Array of reports',
     type: [ReportDto],
   })
-  data: ReportDto[];
+  data!: ReportDto[];
 
   @ApiProperty({
     description: 'Total number of reports',
     example: 50,
   })
-  total: number;
+  total!: number;
 
   @ApiProperty({
     description: 'Current page',
     example: 1,
   })
-  page: number;
+  page!: number;
 
   @ApiProperty({
     description: 'Items per page',
     example: 20,
   })
-  limit: number;
+  limit!: number;
 
   @ApiProperty({
     description: 'Total pages',
     example: 3,
   })
-  total_pages: number;
+  total_pages!: number;
 }

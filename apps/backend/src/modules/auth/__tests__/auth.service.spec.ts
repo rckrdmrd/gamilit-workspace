@@ -9,6 +9,12 @@ import { User, Profile, Tenant, UserSession, AuthAttempt } from '../entities';
 import { RegisterUserDto } from '../dto';
 import { GamilityRoleEnum, UserStatusEnum, SubscriptionTierEnum } from '@shared/constants';
 
+// Mock bcrypt globally
+jest.mock('bcrypt', () => ({
+  hash: jest.fn().mockResolvedValue('hashed_password'),
+  compare: jest.fn().mockResolvedValue(true),
+}));
+
 describe('AuthService', () => {
   let service: AuthService;
   let userRepository: Repository<User>;
@@ -32,6 +38,7 @@ describe('AuthService', () => {
   };
 
   const mockTenantRepository = {
+    findOne: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
   };
@@ -137,16 +144,13 @@ describe('AuthService', () => {
     it('should register a new user successfully', async () => {
       // Arrange
       mockUserRepository.findOne.mockResolvedValue(null); // Email no existe
-      mockTenantRepository.create.mockReturnValue(mockTenant);
-      mockTenantRepository.save.mockResolvedValue(mockTenant);
+      mockTenantRepository.findOne.mockResolvedValue(mockTenant); // Main tenant exists
       mockUserRepository.create.mockReturnValue(mockUser);
       mockUserRepository.save.mockResolvedValue(mockUser);
       mockProfileRepository.create.mockReturnValue(mockProfile);
       mockProfileRepository.save.mockResolvedValue(mockProfile);
       mockAttemptRepository.create.mockReturnValue({});
       mockAttemptRepository.save.mockResolvedValue({});
-
-      jest.spyOn(bcrypt, 'hash').mockImplementation(() => Promise.resolve('hashed_password'));
 
       // Act
       const result = await service.register(registerDto, '127.0.0.1', 'Test UserAgent');
@@ -155,8 +159,8 @@ describe('AuthService', () => {
       expect(mockUserRepository.findOne).toHaveBeenCalledWith({
         where: { email: registerDto.email },
       });
-      expect(mockTenantRepository.create).toHaveBeenCalled();
-      expect(mockTenantRepository.save).toHaveBeenCalled();
+      // Tenant is reused from existing main tenant, so create/save are not called
+      expect(mockTenantRepository.findOne).toHaveBeenCalled();
       expect(mockUserRepository.create).toHaveBeenCalled();
       expect(mockUserRepository.save).toHaveBeenCalled();
       expect(mockProfileRepository.create).toHaveBeenCalled();
@@ -188,6 +192,7 @@ describe('AuthService', () => {
     it('should hash password with bcrypt cost 10', async () => {
       // Arrange
       mockUserRepository.findOne.mockResolvedValue(null);
+      mockTenantRepository.findOne.mockResolvedValue(mockTenant); // Main tenant exists
       mockTenantRepository.create.mockReturnValue(mockTenant);
       mockTenantRepository.save.mockResolvedValue(mockTenant);
       mockUserRepository.create.mockReturnValue(mockUser);
@@ -197,20 +202,17 @@ describe('AuthService', () => {
       mockAttemptRepository.create.mockReturnValue({});
       mockAttemptRepository.save.mockResolvedValue({});
 
-      const hashSpy = jest.spyOn(bcrypt, 'hash').mockImplementation(() => Promise.resolve('hashed_password'));
-
       // Act
       await service.register(registerDto, '127.0.0.1', 'Test UserAgent');
 
       // Assert
-      expect(hashSpy).toHaveBeenCalledWith(registerDto.password, 10);
+      expect(bcrypt.hash).toHaveBeenCalledWith(registerDto.password, 10);
     });
 
-    it('should create tenant with correct values', async () => {
+    it('should use existing tenant when registering', async () => {
       // Arrange
       mockUserRepository.findOne.mockResolvedValue(null);
-      mockTenantRepository.create.mockReturnValue(mockTenant);
-      mockTenantRepository.save.mockResolvedValue(mockTenant);
+      mockTenantRepository.findOne.mockResolvedValue(mockTenant); // Main tenant exists
       mockUserRepository.create.mockReturnValue(mockUser);
       mockUserRepository.save.mockResolvedValue(mockUser);
       mockProfileRepository.create.mockReturnValue(mockProfile);
@@ -218,23 +220,19 @@ describe('AuthService', () => {
       mockAttemptRepository.create.mockReturnValue({});
       mockAttemptRepository.save.mockResolvedValue({});
 
-      jest.spyOn(bcrypt, 'hash').mockImplementation(() => Promise.resolve('hashed_password'));
-
       // Act
       await service.register(registerDto, '127.0.0.1', 'Test UserAgent');
 
-      // Assert
-      expect(mockTenantRepository.create).toHaveBeenCalledWith({
-        name: expect.stringContaining('test-personal'),
-        slug: expect.stringMatching(/test-\d+/),
-        subscription_tier: SubscriptionTierEnum.FREE,
-        is_active: true,
-      });
+      // Assert - uses existing tenant, doesn't create new one
+      expect(mockTenantRepository.findOne).toHaveBeenCalled();
+      expect(mockTenantRepository.create).not.toHaveBeenCalled();
+      expect(mockUserRepository.create).toHaveBeenCalled();
     });
 
     it('should create profile with user details', async () => {
       // Arrange
       mockUserRepository.findOne.mockResolvedValue(null);
+      mockTenantRepository.findOne.mockResolvedValue(mockTenant); // Main tenant exists
       mockTenantRepository.create.mockReturnValue(mockTenant);
       mockTenantRepository.save.mockResolvedValue(mockTenant);
       mockUserRepository.create.mockReturnValue(mockUser);
@@ -243,14 +241,13 @@ describe('AuthService', () => {
       mockProfileRepository.save.mockResolvedValue(mockProfile);
       mockAttemptRepository.create.mockReturnValue({});
       mockAttemptRepository.save.mockResolvedValue({});
-
-      jest.spyOn(bcrypt, 'hash').mockImplementation(() => Promise.resolve('hashed_password'));
 
       // Act
       await service.register(registerDto, '127.0.0.1', 'Test UserAgent');
 
       // Assert
       expect(mockProfileRepository.create).toHaveBeenCalledWith({
+        id: mockUser.id,
         user_id: mockUser.id,
         tenant_id: mockTenant.id,
         email: mockUser.email,
@@ -265,6 +262,7 @@ describe('AuthService', () => {
     it('should log successful auth attempt', async () => {
       // Arrange
       mockUserRepository.findOne.mockResolvedValue(null);
+      mockTenantRepository.findOne.mockResolvedValue(mockTenant); // Main tenant exists
       mockTenantRepository.create.mockReturnValue(mockTenant);
       mockTenantRepository.save.mockResolvedValue(mockTenant);
       mockUserRepository.create.mockReturnValue(mockUser);
@@ -273,8 +271,6 @@ describe('AuthService', () => {
       mockProfileRepository.save.mockResolvedValue(mockProfile);
       mockAttemptRepository.create.mockReturnValue({});
       mockAttemptRepository.save.mockResolvedValue({});
-
-      jest.spyOn(bcrypt, 'hash').mockImplementation(() => Promise.resolve('hashed_password'));
 
       // Act
       await service.register(registerDto, '127.0.0.1', 'Test UserAgent');
@@ -312,7 +308,6 @@ describe('AuthService', () => {
       mockSessionRepository.save.mockResolvedValue({});
       mockJwtService.sign.mockReturnValueOnce('access_token').mockReturnValueOnce('refresh_token');
 
-      jest.spyOn(bcrypt, 'compare').mockImplementation(() => Promise.resolve(true));
 
       // Act
       const result = await service.login('test@example.com', 'Password123!', '127.0.0.1', 'Test UserAgent');
@@ -351,7 +346,8 @@ describe('AuthService', () => {
       mockAttemptRepository.create.mockReturnValue({});
       mockAttemptRepository.save.mockResolvedValue({});
 
-      jest.spyOn(bcrypt, 'compare').mockImplementation(() => Promise.resolve(false));
+      // Override bcrypt.compare to return false for this test
+      (bcrypt.compare as jest.Mock).mockResolvedValueOnce(false);
 
       // Act & Assert
       await expect(service.login('test@example.com', 'WrongPassword', '127.0.0.1', 'Test UserAgent')).rejects.toThrow(
@@ -367,7 +363,6 @@ describe('AuthService', () => {
       mockAttemptRepository.create.mockReturnValue({});
       mockAttemptRepository.save.mockResolvedValue({});
 
-      jest.spyOn(bcrypt, 'compare').mockImplementation(() => Promise.resolve(true));
 
       // Act & Assert
       await expect(service.login('test@example.com', 'Password123!', '127.0.0.1', 'Test UserAgent')).rejects.toThrow(
@@ -388,7 +383,6 @@ describe('AuthService', () => {
       mockSessionRepository.save.mockResolvedValue({});
       mockJwtService.sign.mockReturnValueOnce('access_token').mockReturnValueOnce('refresh_token');
 
-      jest.spyOn(bcrypt, 'compare').mockImplementation(() => Promise.resolve(true));
 
       // Act
       await service.login('test@example.com', 'Password123!', '127.0.0.1', 'Test UserAgent');
@@ -411,7 +405,6 @@ describe('AuthService', () => {
       mockSessionRepository.save.mockResolvedValue({});
       mockJwtService.sign.mockReturnValueOnce('access_token').mockReturnValueOnce('refresh_token');
 
-      jest.spyOn(bcrypt, 'compare').mockImplementation(() => Promise.resolve(true));
 
       // Act
       await service.login('test@example.com', 'Password123!', '127.0.0.1', 'Test UserAgent');
@@ -434,7 +427,6 @@ describe('AuthService', () => {
       mockSessionRepository.save.mockResolvedValue({});
       mockJwtService.sign.mockReturnValueOnce('access_token').mockReturnValueOnce('refresh_token');
 
-      jest.spyOn(bcrypt, 'compare').mockImplementation(() => Promise.resolve(true));
 
       // Act
       await service.login('test@example.com', 'Password123!', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0)');
@@ -461,7 +453,6 @@ describe('AuthService', () => {
       mockSessionRepository.save.mockResolvedValue({});
       mockJwtService.sign.mockReturnValueOnce('access_token').mockReturnValueOnce('refresh_token');
 
-      jest.spyOn(bcrypt, 'compare').mockImplementation(() => Promise.resolve(true));
 
       // Act
       await service.login('test@example.com', 'Password123!', '127.0.0.1', 'Test UserAgent');

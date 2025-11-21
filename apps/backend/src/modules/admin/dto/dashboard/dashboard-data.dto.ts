@@ -7,17 +7,17 @@ export class DashboardDataDto {
     description: 'Dashboard statistics',
     type: DashboardStatsDto,
   })
-  stats: DashboardStatsDto;
+  stats!: DashboardStatsDto;
 
   @ApiProperty({
     description: 'Recent activity (last 10 actions)',
     type: [AdminActionDto],
   })
-  recentActivity: AdminActionDto[];
+  recentActivity!: AdminActionDto[];
 
   @ApiProperty({
     description: 'Timestamp when the dashboard data was generated',
     example: '2025-11-19T10:30:00Z',
   })
-  timestamp: string;
+  timestamp!: string;
 }

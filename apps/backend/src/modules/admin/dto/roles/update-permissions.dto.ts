@@ -13,7 +13,7 @@ export class UpdatePermissionsDto {
   })
   @IsObject()
   @IsNotEmpty()
-  permissions: Record<string, boolean>;
+  permissions!: Record<string, boolean>;
 }
 
 export class RolePermissionsDto {
@@ -21,13 +21,13 @@ export class RolePermissionsDto {
     description: 'Role ID',
     example: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
   })
-  role_id: string;
+  role_id!: string;
 
   @ApiProperty({
     description: 'Role name',
     example: 'teacher',
   })
-  role_name: string;
+  role_name!: string;
 
   @ApiProperty({
     description: 'Current permissions',
@@ -36,11 +36,11 @@ export class RolePermissionsDto {
       can_delete_users: false,
     },
   })
-  permissions: Record<string, boolean>;
+  permissions!: Record<string, boolean>;
 
   @ApiProperty({
     description: 'Last update timestamp',
     example: '2025-11-19T10:30:00Z',
   })
-  updated_at: string;
+  updated_at!: string;
 }

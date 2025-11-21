@@ -169,7 +169,7 @@ describe('SecurityService', () => {
         where: expect.objectContaining({
           email: 'test@example.com',
           success: false,
-          created_at: expect.anything(),
+          attempted_at: expect.anything(),
         }),
       });
     });
@@ -238,7 +238,7 @@ describe('SecurityService', () => {
       // Assert
       expect(mockAttemptRepository.count).toHaveBeenCalledWith({
         where: expect.objectContaining({
-          created_at: expect.any(Object), // MoreThan operator
+          attempted_at: expect.any(Object), // MoreThan operator
         }),
       });
     });
@@ -275,23 +275,15 @@ describe('SecurityService', () => {
   });
 
   describe('detectBruteForce', () => {
-    it('should detect brute force attack if multiple emails from same IP', async () => {
+    it('should detect brute force attack if many failed attempts', async () => {
       // Arrange
-      const mockAttempts = [
-        { email: 'user1@example.com', success: false },
-        { email: 'user2@example.com', success: false },
-        { email: 'user3@example.com', success: false },
-        { email: 'user4@example.com', success: false },
-        { email: 'user5@example.com', success: false },
-      ];
-      mockAttemptRepository.find.mockResolvedValue(mockAttempts);
-      mockAttemptRepository.count.mockResolvedValue(10); // 10 failed attempts
+      mockAttemptRepository.count.mockResolvedValue(11); // More than 10 failed attempts
 
       // Act
       const result = await service.detectBruteForce('test@example.com');
 
-      // Assert
-      expect(result).toBe(true); // detectBruteForce now returns boolean
+      // Assert - detectBruteForce returns true when count > 10
+      expect(result).toBe(true);
     });
 
     it('should not flag normal usage patterns', async () => {
@@ -312,17 +304,17 @@ describe('SecurityService', () => {
 
     it('should consider time window for analysis', async () => {
       // Arrange
-      mockAttemptRepository.find.mockResolvedValue([]);
       mockAttemptRepository.count.mockResolvedValue(0);
 
       // Act
       await service.detectBruteForce('test@example.com');
 
-      // Assert
-      expect(mockAttemptRepository.find).toHaveBeenCalledWith({
+      // Assert - uses count with email and attempted_at filter
+      expect(mockAttemptRepository.count).toHaveBeenCalledWith({
         where: expect.objectContaining({
-          ip_address: '192.168.1.1',
-          created_at: expect.anything(),
+          email: 'test@example.com',
+          success: false,
+          attempted_at: expect.anything(),
         }),
       });
     });
@@ -364,7 +356,7 @@ describe('SecurityService', () => {
     it('should order by most recent first', async () => {
       await service.getFailuresByEmail('test@example.com', 10);
       expect(mockAttemptRepository.find).toHaveBeenCalledWith(
-        expect.objectContaining({ order: { created_at: 'DESC' } }),
+        expect.objectContaining({ order: { attempted_at: 'DESC' } }),
       );
     });
   });

@@ -6,11 +6,16 @@
 **Presupuesto Total:** $35,600 MXN
 **Story Points Total:** 89 SP
 **Estado:** ✅ P0+P1 Completado 100% (7/7 US), ⏳ P2 Pendiente 0% (2/2 US)
-**Última actualización:** 2025-11-19
+**Última actualización:** 2025-11-20
 
 **CAMBIOS:**
 - **2025-11-08:** Añadidas US-AE-005 (12 SP) y US-AE-007 (6 SP). Total +18 SP
 - **2025-11-19:** Añadidas US-AE-000 (8 SP), US-AE-006 (10 SP), US-AE-008 (8 SP) post FE-059. Total +26 SP
+- **2025-11-20:** Correcciones backend críticas:
+  - Fix error 500 en `/api/admin/system/metrics` (query user_id → email)
+  - Homogeneización formato respuesta organizations (data → items + pagination)
+  - Actualización tests unitarios admin-organizations.service.spec.ts
+  - Backend funcional 100% en endpoints P0+P1
 - **Total Épica:** 89 SP ($35,600 MXN)
 
 ---

@@ -1,173 +1,557 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Network, Sparkles } from 'lucide-react';
+/**
+ * Rueda de Inferencias Exercise
+ *
+ * @description Main exercise component for Inference Wheel (Module 2.5)
+ * Mechanic: Spin wheel → select category → write free-text inference (30 seconds)
+ * @task FE-071
+ */
+
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { RotateCw, Send, Book, CheckCircle2 } from 'lucide-react';
+import { WheelSpinner } from './WheelSpinner';
+import { CountdownTimer } from './CountdownTimer';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
-import { fetchInferenceWheel, getAISuggestions } from './ruedaInferenciasAPI';
-import type { InferenceWheel, InferenceNode } from './ruedaInferenciasTypes';
-import { saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import { mockInferenceWheel } from './ruedaInferenciasMockData';
+import { submitExercise } from '@features/progress/api/progressAPI';
+import type {
+  RuedaInferenciasExerciseProps,
+  RuedaInferenciasExercise as RuedaInferenciasExerciseType,
+  InferenceCategory,
+  FragmentState,
+  RuedaInferenciasAnswers,
+} from './ruedaInferenciasTypes';
+import type { ExerciseFeedback } from '@shared/components/mechanics/mechanicsTypes';
 
-interface ExerciseProps {
-  moduleId: number;
-  lessonId: number;
-  exerciseId: string;
-  userId: string;
-  onComplete?: (score: number, timeSpent: number) => void;
-  onExit?: () => void;
-  onProgressUpdate?: (progress: { currentStep: number; totalSteps: number; score: number; hintsUsed: number; timeSpent: number; }) => void;
-  initialData?: Partial<ExerciseState>;
-  difficulty?: 'easy' | 'medium' | 'hard';
-}
+// Mock data (will be replaced with real API call)
+const mockExercise: RuedaInferenciasExerciseType = {
+  id: 'ex-rueda-001',
+  title: 'Rueda de Inferencias: Marie Curie',
+  description: 'Analiza fragmentos del texto y escribe inferencias según la categoría seleccionada',
+  difficulty_level: 'medium',
+  max_score: 100,
+  passing_score: 70,
+  content: {
+    categories: [
+      {
+        id: 'cat-literal',
+        name: 'Literal',
+        description: 'Información directa del texto',
+        color: '#3B82F6',
+        icon: '📖',
+      },
+      {
+        id: 'cat-inferencial',
+        name: 'Inferencial',
+        description: 'Conclusiones basadas en pistas',
+        color: '#10B981',
+        icon: '🔍',
+      },
+      {
+        id: 'cat-critico',
+        name: 'Crítico',
+        description: 'Análisis y evaluación',
+        color: '#F59E0B',
+        icon: '💡',
+      },
+      {
+        id: 'cat-creativo',
+        name: 'Creativo',
+        description: 'Ideas originales relacionadas',
+        color: '#8B5CF6',
+        icon: '🎨',
+      },
+    ],
+    fragments: [
+      {
+        id: 'frag-1',
+        text: 'Marie Curie fue pionera en el estudio de la radiactividad, convirtiéndose en la primera mujer en ganar un Premio Nobel y la única persona en ganar en dos campos científicos diferentes.',
+        difficulty: 'medium',
+        hints: ['Piensa en logros', 'Considera el impacto histórico'],
+      },
+      {
+        id: 'frag-2',
+        text: 'A pesar de enfrentar discriminación por ser mujer en un campo dominado por hombres, Marie persistió en su investigación, trabajando en condiciones difíciles en un laboratorio improvisado.',
+        difficulty: 'medium',
+        hints: ['Considera el contexto social', 'Piensa en obstáculos'],
+      },
+      {
+        id: 'frag-3',
+        text: 'Los cuadernos de Marie Curie todavía son radiactivos y se guardan en cajas especiales de plomo. Las personas que quieren consultarlos deben firmar un descargo de responsabilidad.',
+        difficulty: 'hard',
+        hints: ['Piensa en consecuencias a largo plazo', 'Considera riesgos'],
+      },
+    ],
+    settings: {
+      timeLimit: 30,
+      minTextLength: 20,
+      maxTextLength: 200,
+      wheelAnimation: true,
+      showTimer: true,
+      allowSkip: false,
+    },
+    instructions:
+      '1. Gira la ruleta para seleccionar una categoría\n2. Lee el fragmento de texto\n3. Escribe una inferencia en 30 segundos\n4. Continúa con el siguiente fragmento',
+  },
+};
 
-interface ExerciseState {
-  nodes: InferenceNode[];
-  timeSpent: number;
-  score: number;
-  hintsUsed: number;
-}
+type GamePhase = 'intro' | 'spinning' | 'reading' | 'writing' | 'completed' | 'feedback';
 
-export const RuedaInferenciasExercise: React.FC<ExerciseProps> = ({
+export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> = ({
   exerciseId,
+  userId,
   onComplete,
   onProgressUpdate,
   initialData,
+  actionsRef,
 }) => {
-  const [wheel, setWheel] = useState<InferenceWheel | null>(null);
-  const [suggestions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [timeSpent, setTimeSpent] = useState(initialData?.timeSpent || 0);
+  // Exercise data
+  const [exercise] = useState<RuedaInferenciasExerciseType>(mockExercise);
+
+  // Game state
+  const [phase, setPhase] = useState<GamePhase>('intro');
+  const [currentFragmentIndex, setCurrentFragmentIndex] = useState(0);
+  const [isWheelSpinning, setIsWheelSpinning] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<InferenceCategory | null>(null);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+
+  // Fragment states
+  const [fragmentStates, setFragmentStates] = useState<FragmentState[]>(
+    exercise.content.fragments.map((frag) => ({
+      fragmentId: frag.id,
+      categoryId: null,
+      userText: '',
+      timeSpent: 0,
+      isComplete: false,
+      startedAt: null,
+    }))
+  );
+
+  // Current fragment text input
+  const [currentText, setCurrentText] = useState('');
+  const [characterCount, setCharacterCount] = useState(0);
+
+  // Progress tracking
+  const [totalTimeSpent, setTotalTimeSpent] = useState(initialData?.totalTimeSpent || 0);
   const [score, setScore] = useState(initialData?.score || 0);
+
+  // Feedback modal
   const [showFeedback, setShowFeedback] = useState(false);
-  const [feedback, setFeedback] = useState<FeedbackData | null>(null);
-  const [hintsUsed] = useState(initialData?.hintsUsed || 0);
-  const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
+  const [feedback, setFeedback] = useState<ExerciseFeedback | null>(null);
 
+  // Submitting state
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Refs
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const startTimeRef = useRef<Date | null>(null);
+
+  // Current fragment
+  const currentFragment = exercise.content.fragments[currentFragmentIndex];
+
+  // Timer effect
   useEffect(() => {
-    if (!wheel) {
-      setWheel(mockInferenceWheel as InferenceWheel);
-      setLoading(false);
+    if (phase === 'writing' || phase === 'reading') {
+      const interval = setInterval(() => {
+        setTotalTimeSpent((prev) => prev + 1);
+      }, 1000);
+      return () => clearInterval(interval);
     }
-  }, [exerciseId]);
+  }, [phase]);
 
-  // Timer
+  // Progress callback
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeSpent((prev) => prev + 1);
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Auto-save progress every 30 seconds
-  useEffect(() => {
-    const autoSaveInterval = setInterval(() => {
-      saveProgress(wheel?.id || '', {
-        nodes: wheel?.nodes || [],
-        timeSpent,
-        score,
-        hintsUsed,
-      });
-    }, 30000);
-
-    return () => clearInterval(autoSaveInterval);
-  }, [wheel, timeSpent, score, hintsUsed]);
-
-  // Progress update callback
-  useEffect(() => {
-    if (onProgressUpdate && wheel) {
+    if (onProgressUpdate) {
       onProgressUpdate({
-        currentStep: selectedNodes.length,
-        totalSteps: wheel.nodes.length,
-        score: score,
-        hintsUsed: hintsUsed,
-        timeSpent: timeSpent,
+        currentFragment: currentFragmentIndex + 1,
+        totalFragments: exercise.content.fragments.length,
+        score,
+        hintsUsed: 0,
+        timeSpent: totalTimeSpent,
       });
     }
-  }, [selectedNodes.length, wheel?.nodes.length, score, hintsUsed, timeSpent, onProgressUpdate]);
+  }, [currentFragmentIndex, score, totalTimeSpent, onProgressUpdate]);
 
-  const handleReset = () => {
-    setSelectedNodes([]);
-    setScore(0);
-    setFeedback(null);
-    setShowFeedback(false);
+  // Character count
+  useEffect(() => {
+    setCharacterCount(currentText.length);
+  }, [currentText]);
+
+  // Handle spin wheel
+  const handleSpinWheel = () => {
+    setIsWheelSpinning(true);
+    setPhase('spinning');
   };
 
-  if (loading || !wheel) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-detective-blue text-detective-xl">Cargando...</div>
-      </div>
+  // Handle wheel spin complete
+  const handleWheelSpinComplete = (category: InferenceCategory) => {
+    setSelectedCategory(category);
+    setIsWheelSpinning(false);
+    setPhase('reading');
+
+    // Update fragment state
+    setFragmentStates((prev) =>
+      prev.map((state, idx) =>
+        idx === currentFragmentIndex ? { ...state, categoryId: category.id } : state
+      )
     );
-  }
+  };
+
+  // Handle start writing
+  const handleStartWriting = () => {
+    setPhase('writing');
+    setIsTimerRunning(true);
+    startTimeRef.current = new Date();
+    setTimeout(() => textareaRef.current?.focus(), 100);
+  };
+
+  // Handle timer complete
+  const handleTimerComplete = () => {
+    setIsTimerRunning(false);
+    handleSaveFragment();
+  };
+
+  // Handle save fragment
+  const handleSaveFragment = useCallback(() => {
+    const timeSpent = startTimeRef.current
+      ? Math.floor((new Date().getTime() - startTimeRef.current.getTime()) / 1000)
+      : 0;
+
+    // Update fragment state
+    setFragmentStates((prev) =>
+      prev.map((state, idx) =>
+        idx === currentFragmentIndex
+          ? {
+              ...state,
+              userText: currentText,
+              timeSpent,
+              isComplete: true,
+            }
+          : state
+      )
+    );
+
+    // Move to next fragment or complete
+    if (currentFragmentIndex < exercise.content.fragments.length - 1) {
+      setCurrentFragmentIndex((prev) => prev + 1);
+      setPhase('intro');
+      setSelectedCategory(null);
+      setCurrentText('');
+      setIsTimerRunning(false);
+      startTimeRef.current = null;
+    } else {
+      setPhase('completed');
+      handleSubmitExercise();
+    }
+  }, [currentFragmentIndex, currentText, exercise.content.fragments.length]);
+
+  // Handle manual submit (before timer runs out)
+  const handleManualSubmit = () => {
+    if (characterCount < exercise.content.settings.minTextLength) {
+      alert(
+        `Tu respuesta debe tener al menos ${exercise.content.settings.minTextLength} caracteres. Actualmente tienes ${characterCount}.`
+      );
+      return;
+    }
+
+    setIsTimerRunning(false);
+    handleSaveFragment();
+  };
+
+  // Handle submit exercise to backend
+  const handleSubmitExercise = async () => {
+    setIsSubmitting(true);
+
+    try {
+      // Prepare answers in backend format
+      const answers: RuedaInferenciasAnswers = {
+        fragments: fragmentStates.reduce((acc, state) => {
+          acc[state.fragmentId] = state.userText;
+          return acc;
+        }, {} as Record<string, string>),
+        categoryId: selectedCategory?.id,
+        timeSpent: totalTimeSpent,
+      };
+
+      const response = await submitExercise(exerciseId, userId, answers);
+
+      // Show feedback
+      setFeedback({
+        type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
+        title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
+        message: response.feedback.overall,
+        score: response.score,
+        xpEarned: response.rewards.xp,
+        mlCoinsEarned: response.rewards.mlCoins,
+        showConfetti: response.isPerfect,
+        isCorrect: response.score >= exercise.passing_score,
+      });
+
+      setScore(response.score);
+      setShowFeedback(true);
+    } catch (error) {
+      console.error('Error submitting exercise:', error);
+      setFeedback({
+        type: 'error',
+        title: 'Error',
+        message: 'Hubo un error al enviar tus respuestas. Por favor intenta de nuevo.',
+        score: 0,
+        isCorrect: false,
+      });
+      setShowFeedback(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Handle reset
+  const handleReset = () => {
+    setCurrentFragmentIndex(0);
+    setPhase('intro');
+    setSelectedCategory(null);
+    setCurrentText('');
+    setIsTimerRunning(false);
+    setIsWheelSpinning(false);
+    setFragmentStates(
+      exercise.content.fragments.map((frag) => ({
+        fragmentId: frag.id,
+        categoryId: null,
+        userText: '',
+        timeSpent: 0,
+        isComplete: false,
+        startedAt: null,
+      }))
+    );
+    setTotalTimeSpent(0);
+    setScore(0);
+    setShowFeedback(false);
+    setFeedback(null);
+  };
+
+  // Actions ref
+  useEffect(() => {
+    if (actionsRef) {
+      actionsRef.current = {
+        getState: () => ({
+          currentFragmentIndex,
+          fragments: fragmentStates,
+          totalTimeSpent,
+          score,
+          hintsUsed: 0,
+          isWheelSpinning,
+          selectedCategoryId: selectedCategory?.id || null,
+        }),
+        reset: handleReset,
+        submit: handleSubmitExercise,
+      };
+    }
+  }, [actionsRef, currentFragmentIndex, fragmentStates, totalTimeSpent, score, isWheelSpinning, selectedCategory]);
+
+  // Validate text length
+  const isTextValid =
+    characterCount >= exercise.content.settings.minTextLength &&
+    characterCount <= exercise.content.settings.maxTextLength;
+
+  const getCharacterColor = () => {
+    if (characterCount < exercise.content.settings.minTextLength) return 'text-red-600';
+    if (characterCount > exercise.content.settings.maxTextLength) return 'text-red-600';
+    return 'text-green-600';
+  };
 
   return (
     <>
-      {/* Main Exercise Content */}
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
-          {/* Exercise Description */}
-          <div className="bg-gradient-to-r from-detective-blue to-detective-orange rounded-detective p-6 text-white shadow-detective-lg">
-            <div className="flex items-center gap-3 mb-2">
-              <Network className="w-8 h-8" />
-              <h2 className="text-detective-2xl font-bold">Rueda de Inferencias</h2>
+          {/* Header */}
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 text-white shadow-lg">
+            <h2 className="text-2xl font-bold mb-2">{exercise.title}</h2>
+            <p className="opacity-90 mb-4">{exercise.description}</p>
+            <div className="flex items-center gap-4 text-sm">
+              <div>
+                📊 Fragmento {currentFragmentIndex + 1} de {exercise.content.fragments.length}
+              </div>
+              <div>⏱️ Tiempo: {Math.floor(totalTimeSpent / 60)}:{String(totalTimeSpent % 60).padStart(2, '0')}</div>
+              {score > 0 && <div>⭐ Puntuación: {score}/100</div>}
             </div>
-            <p className="text-detective-base opacity-90">Analiza el texto central e identifica las inferencias posibles</p>
           </div>
 
-          {/* Main Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Left: Central Text & Inferences */}
-            <div>
-              <h3 className="text-detective-lg font-semibold text-detective-blue mb-4">Texto Central</h3>
-              <div className="mb-6 p-6 bg-detective-bg-secondary rounded-lg border-2 border-detective-orange">
-                <p className="text-detective-base text-center font-medium">{wheel.centralText}</p>
-              </div>
-              <h4 className="text-detective-base font-semibold text-detective-blue mb-3">Inferencias</h4>
-              <div className="space-y-3">
-                {wheel.nodes.map((node) => (
-                  <div key={node.id} className="p-4 bg-blue-50 rounded-lg border border-blue-300">
-                    <p className="text-detective-sm mb-2">{node.text}</p>
-                    <div className="flex items-center gap-2 text-detective-xs text-gray-600">
-                      <span>Confianza:</span>
-                      <div className="flex-1 bg-gray-200 rounded-full h-2">
-                        <div className="bg-blue-500 h-full rounded-full" style={{ width: `${node.confidence * 100}%` }} />
+          {/* Instructions (Intro Phase) */}
+          {phase === 'intro' && (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key="intro"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="text-center space-y-6"
+              >
+                <div className="bg-blue-50 rounded-lg p-6 border-2 border-blue-200">
+                  <Book className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-blue-900 mb-3">¿Cómo funciona?</h3>
+                  <div className="text-left space-y-2 text-gray-700 max-w-2xl mx-auto">
+                    {exercise.content.instructions.split('\n').map((line, idx) => (
+                      <div key={idx} className="flex items-start gap-2">
+                        <span className="text-blue-600 font-semibold">{line}</span>
                       </div>
-                      <span>{Math.round(node.confidence * 100)}%</span>
-                    </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
+                </div>
 
-            {/* Right: AI Suggestions */}
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Sparkles className="w-5 h-5 text-detective-gold" />
-                <h3 className="text-detective-lg font-semibold text-detective-blue">Sugerencias IA</h3>
-              </div>
-              <div className="space-y-3">
-                {suggestions.map((sug, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.1 }}
-                    className="p-4 bg-green-50 rounded-lg border border-green-300"
+                <button
+                  onClick={handleSpinWheel}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg shadow-lg transition-all transform hover:scale-105 flex items-center gap-3 mx-auto"
+                >
+                  <RotateCw className="w-6 h-6" />
+                  Girar la Ruleta
+                </button>
+              </motion.div>
+            </AnimatePresence>
+          )}
+
+          {/* Wheel Spinning Phase */}
+          {phase === 'spinning' && (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key="spinning"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+              >
+                <WheelSpinner
+                  categories={exercise.content.categories}
+                  isSpinning={isWheelSpinning}
+                  onSpinComplete={handleWheelSpinComplete}
+                />
+              </motion.div>
+            </AnimatePresence>
+          )}
+
+          {/* Reading Phase */}
+          {phase === 'reading' && selectedCategory && (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key="reading"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="space-y-6"
+              >
+                {/* Selected Category */}
+                <div
+                  className="rounded-lg p-6 text-white text-center shadow-lg"
+                  style={{ backgroundColor: selectedCategory.color }}
+                >
+                  <div className="text-5xl mb-3">{selectedCategory.icon}</div>
+                  <h3 className="text-2xl font-bold mb-2">{selectedCategory.name}</h3>
+                  <p className="text-lg opacity-90">{selectedCategory.description}</p>
+                </div>
+
+                {/* Fragment Text */}
+                <div className="bg-gray-50 rounded-lg p-8 border-2 border-gray-300">
+                  <h4 className="text-lg font-semibold text-gray-700 mb-4">Fragmento {currentFragmentIndex + 1}:</h4>
+                  <p className="text-lg leading-relaxed text-gray-800">{currentFragment.text}</p>
+                </div>
+
+                <button
+                  onClick={handleStartWriting}
+                  className="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-lg shadow-lg transition-all transform hover:scale-105 flex items-center gap-3 mx-auto"
+                >
+                  <Send className="w-6 h-6" />
+                  Comenzar a Escribir
+                </button>
+              </motion.div>
+            </AnimatePresence>
+          )}
+
+          {/* Writing Phase */}
+          {phase === 'writing' && selectedCategory && (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key="writing"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="space-y-6"
+              >
+                {/* Timer */}
+                <CountdownTimer
+                  duration={exercise.content.settings.timeLimit}
+                  isRunning={isTimerRunning}
+                  onComplete={handleTimerComplete}
+                />
+
+                {/* Category Reminder */}
+                <div
+                  className="rounded-lg p-4 text-white text-center"
+                  style={{ backgroundColor: selectedCategory.color }}
+                >
+                  <span className="text-2xl mr-2">{selectedCategory.icon}</span>
+                  <span className="font-semibold">Escribe una inferencia {selectedCategory.name.toLowerCase()}</span>
+                </div>
+
+                {/* Fragment Text */}
+                <div className="bg-gray-50 rounded-lg p-6 border-2 border-gray-200">
+                  <p className="text-base leading-relaxed text-gray-800">{currentFragment.text}</p>
+                </div>
+
+                {/* Textarea */}
+                <div className="space-y-2">
+                  <textarea
+                    ref={textareaRef}
+                    value={currentText}
+                    onChange={(e) => setCurrentText(e.target.value)}
+                    placeholder={`Escribe tu inferencia aquí (${exercise.content.settings.minTextLength}-${exercise.content.settings.maxTextLength} caracteres)...`}
+                    className="w-full h-40 p-4 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 resize-none text-base"
+                    maxLength={exercise.content.settings.maxTextLength}
+                    disabled={!isTimerRunning}
+                  />
+                  <div className="flex justify-between items-center">
+                    <span className={`text-sm font-semibold ${getCharacterColor()}`}>
+                      {characterCount} / {exercise.content.settings.maxTextLength} caracteres
+                      {characterCount < exercise.content.settings.minTextLength &&
+                        ` (mínimo ${exercise.content.settings.minTextLength})`}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Submit Button */}
+                <div className="flex justify-center">
+                  <button
+                    onClick={handleManualSubmit}
+                    disabled={!isTextValid || !isTimerRunning}
+                    className={`font-bold py-4 px-8 rounded-lg shadow-lg transition-all flex items-center gap-3 ${
+                      isTextValid && isTimerRunning
+                        ? 'bg-blue-600 hover:bg-blue-700 text-white transform hover:scale-105'
+                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    }`}
                   >
-                    <p className="text-detective-sm font-medium mb-2">{sug.inference}</p>
-                    <p className="text-detective-xs text-gray-600 mb-2">{sug.reasoning}</p>
-                    <div className="flex items-center gap-2 text-detective-xs">
-                      <span>Confianza:</span>
-                      <div className="flex-1 bg-gray-200 rounded-full h-2">
-                        <div className="bg-green-500 h-full rounded-full" style={{ width: `${sug.confidence * 100}%` }} />
-                      </div>
-                      <span>{Math.round(sug.confidence * 100)}%</span>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </div>
+                    <Send className="w-6 h-6" />
+                    Enviar Respuesta
+                  </button>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          )}
+
+          {/* Completed Phase */}
+          {phase === 'completed' && (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key="completed"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center space-y-6"
+              >
+                <div className="bg-green-50 rounded-lg p-8 border-2 border-green-300">
+                  <CheckCircle2 className="w-16 h-16 text-green-600 mx-auto mb-4" />
+                  <h3 className="text-2xl font-bold text-green-900 mb-2">¡Ejercicio Completado!</h3>
+                  <p className="text-gray-700">
+                    {isSubmitting ? 'Enviando tus respuestas...' : 'Procesando resultados...'}
+                  </p>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          )}
         </div>
       </DetectiveCard>
 
@@ -178,14 +562,11 @@ export const RuedaInferenciasExercise: React.FC<ExerciseProps> = ({
           feedback={feedback}
           onClose={() => {
             setShowFeedback(false);
-            if (feedback.type === 'success' && onComplete) {
-              onComplete(score, timeSpent);
+            if (onComplete) {
+              onComplete(score, totalTimeSpent);
             }
           }}
-          onRetry={() => {
-            setShowFeedback(false);
-            handleReset();
-          }}
+          onRetry={handleReset}
         />
       )}
     </>

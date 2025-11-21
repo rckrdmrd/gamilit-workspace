@@ -3,7 +3,7 @@ import { Trophy, Award, Medal, Star, Lock } from 'lucide-react';
 import { cn } from '@/shared/utils/cn';
 import { SkeletonAchievement } from './Skeleton';
 import type { UserAchievement } from '@/shared/types/achievement.types';
-import { AchievementStatus } from '@/shared/types/achievement.types';
+import { AchievementStatusEnum } from '@/shared/types/achievement.types';
 
 interface AchievementsGridProps {
   achievements: UserAchievement[];
@@ -37,8 +37,8 @@ const AchievementCard: React.FC<{
   userAchievement: UserAchievement;
   onClick?: (userAchievement: UserAchievement) => void;
 }> = ({ userAchievement, onClick }) => {
-  const isLocked = userAchievement.status === AchievementStatus.LOCKED;
-  const isCompleted = userAchievement.status === AchievementStatus.EARNED || userAchievement.status === AchievementStatus.CLAIMED;
+  const isLocked = userAchievement.status === AchievementStatusEnum.LOCKED;
+  const isCompleted = userAchievement.status === AchievementStatusEnum.EARNED || userAchievement.status === AchievementStatusEnum.CLAIMED;
 
   // Format date
   const formatDate = (dateString?: string) => {
