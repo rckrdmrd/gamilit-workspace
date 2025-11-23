@@ -1,6 +1,6 @@
 # 📋 DIRECTIVA DE DOCUMENTACIÓN OBLIGATORIA
 
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Versión:** 1.0.0
 **Fecha:** 2025-11-17
 **Aplicable a:** Todos los agentes (Database, Backend, Frontend, especializados)
@@ -66,39 +66,39 @@ Esta directiva establece la **obligatoriedad** de actualizar documentación en *
 **Ejemplo DDL:**
 ```sql
 -- Comentar tabla
-COMMENT ON TABLE project_management.projects IS
-    'Proyectos habitacionales - Nivel superior de jerarquía (Proyecto > Desarrollo > Fase > Vivienda)';
+COMMENT ON TABLE educational_content.modules IS
+    'Módulos educativos de la plataforma GAMILIT - Contiene los módulos de aprendizaje (rutas Maya, actividades gamificadas)';
 
 -- Comentar columnas importantes
-COMMENT ON COLUMN project_management.projects.code IS
-    'Código único del proyecto (ej: PROJ-2025-001). Usado para reportes y referencias externas';
-COMMENT ON COLUMN project_management.projects.status IS
-    'Estado del proyecto: planning=planeación, active=en ejecución, paused=pausado, completed=completado, cancelled=cancelado';
+COMMENT ON COLUMN educational_content.modules.code IS
+    'Código único del módulo (ej: MOD-MAYA-001). Usado para reportes y referencias externas';
+COMMENT ON COLUMN educational_content.modules.difficulty_level IS
+    'Nivel de dificultad: beginner=principiante, intermediate=intermedio, advanced=avanzado, expert=experto';
 ```
 
 **Ejemplo Entity (JSDoc):**
 ```typescript
 /**
- * Entity para Proyectos habitacionales
+ * Entity para Módulos Educativos de GAMILIT
  *
- * Representa el nivel superior en la jerarquía de obra:
- * Proyecto → Desarrollo (fraccionamiento) → Fase → Vivienda
+ * Representa los módulos de aprendizaje en la plataforma:
+ * Módulos → Actividades → Desafíos → Recompensas
  *
- * Un proyecto puede contener múltiples desarrollos (fraccionamientos),
- * cada uno con varias fases y viviendas.
+ * Un módulo puede contener múltiples actividades gamificadas,
+ * cada una con desafíos y recompensas para los estudiantes.
  *
- * @see apps/database/ddl/schemas/project_management/tables/01-projects.sql
- * @see docs/01-requerimientos/R-002-proyectos-obras.md
+ * @see apps/database/ddl/schemas/educational_content/tables/01-modules.sql
+ * @see docs/01-requerimientos/R-002-modulos-educativos.md
  */
-@Entity({ schema: 'project_management', name: 'projects' })
-export class ProjectEntity {
+@Entity({ schema: 'educational_content', name: 'modules' })
+export class ModuleEntity {
     /**
-     * Código único del proyecto
-     * @example "PROJ-2025-001"
+     * Código único del módulo educativo
+     * @example "MOD-MAYA-001"
      */
     @Column({ type: 'varchar', length: 50, unique: true })
     @IsNotEmpty()
-    @ApiProperty({ description: 'Código único del proyecto', example: 'PROJ-2025-001' })
+    @ApiProperty({ description: 'Código único del módulo', example: 'MOD-MAYA-001' })
     code: string;
 }
 ```
@@ -166,14 +166,14 @@ export class ProjectEntity {
 **Duración:** 1h 30min (estimado: 1h 30min) ✅
 
 #### Tareas Completadas
-- [x] Crear ProjectEntity
-- [x] Crear DevelopmentEntity
+- [x] Crear ModuleEntity
+- [x] Crear ActivityEntity
 - [x] Configurar relaciones OneToMany/ManyToOne
 - [x] Validar TypeScript compilation
 
 #### Archivos Creados
-- apps/backend/src/modules/projects/entities/project.entity.ts
-- apps/backend/src/modules/projects/entities/development.entity.ts
+- apps/backend/src/modules/educational-content/entities/module.entity.ts
+- apps/backend/src/modules/educational-content/entities/activity.entity.ts
 
 #### Validación
 ```bash
@@ -223,44 +223,44 @@ $ cd apps/backend && npm run build
 **Ejemplo MASTER_INVENTORY.yml:**
 ```yaml
 modules:
-  projects:
+  educational-content:
     status: ✅ Completo
     priority: P0
     phase: MVP
     completitud: 100%
 
     database:
-      schema: project_management
+      schema: educational_content
       tables:
-        - name: projects
-          file: apps/database/ddl/schemas/project_management/tables/01-projects.sql
+        - name: modules
+          file: apps/database/ddl/schemas/educational_content/tables/01-modules.sql
           columns: 15
           indexes: 4
           triggers: 1
-          related_backend_entity: ProjectEntity
-          related_frontend_pages: [ProjectsPage, ProjectDetailPage]
+          related_backend_entity: ModuleEntity
+          related_frontend_pages: [ModulesPage, ModuleDetailPage]
           status: ✅ Completo
 
     backend:
-      module_path: apps/backend/src/modules/projects
+      module_path: apps/backend/src/modules/educational-content
       entities:
-        - name: ProjectEntity
-          file: entities/project.entity.ts
-          table: project_management.projects
-          relations: [developments, budgets]
-          used_in_controllers: [ProjectController]
-          used_in_services: [ProjectService]
+        - name: ModuleEntity
+          file: entities/module.entity.ts
+          table: educational_content.modules
+          relations: [activities, challenges]
+          used_in_controllers: [ModuleController]
+          used_in_services: [ModuleService]
           dto_count: 4
           status: ✅ Completo
 
     frontend:
       pages:
-        - name: ProjectsPage
-          file: apps/frontend/web/src/apps/admin/pages/ProjectsPage.tsx
-          routes: [/admin/projects]
-          components_used: [ProjectCard, ProjectList]
-          stores_used: [projectStore]
-          api_endpoints: [GET /api/projects, POST /api/projects]
+        - name: ModulesPage
+          file: apps/frontend/web/src/apps/teacher/pages/ModulesPage.tsx
+          routes: [/teacher/modules]
+          components_used: [ModuleCard, ModuleList]
+          stores_used: [moduleStore]
+          api_endpoints: [GET /api/modules, POST /api/modules]
           status: ✅ Completo
 
     tests:
@@ -306,7 +306,7 @@ modules:
 
 **Ejemplo:**
 ```markdown
-## [DB-005] Crear Módulo de Proyectos y Obras
+## [DB-005] Crear Módulo de Contenido Educativo
 
 **Fecha:** 2025-11-17 09:00
 **Estado:** ✅ Completado
@@ -315,23 +315,23 @@ modules:
 **Relacionado con:** [REQ-002], [BE-008], [FE-010]
 
 ### Descripción
-Creado schema project_management completo con jerarquía
-Proyecto → Desarrollo → Fase → Vivienda
+Creado schema educational_content completo con jerarquía
+Módulo → Actividad → Desafío → Recompensa
 
 ### Archivos Creados
-- apps/database/ddl/schemas/project_management/00-schema.sql
-- apps/database/ddl/schemas/project_management/tables/01-projects.sql
-- apps/database/ddl/schemas/project_management/tables/02-developments.sql
-- apps/database/ddl/schemas/project_management/tables/03-phases.sql
-- apps/database/ddl/schemas/project_management/tables/04-housing_units.sql
-- apps/database/ddl/schemas/project_management/functions/01-calculate_progress.sql
-- apps/database/seeds/dev/project_management/01-projects.sql
+- apps/database/ddl/schemas/educational_content/00-schema.sql
+- apps/database/ddl/schemas/educational_content/tables/01-modules.sql
+- apps/database/ddl/schemas/educational_content/tables/02-activities.sql
+- apps/database/ddl/schemas/educational_content/tables/03-challenges.sql
+- apps/database/ddl/schemas/educational_content/tables/04-rewards.sql
+- apps/database/ddl/schemas/educational_content/functions/01-calculate_progress.sql
+- apps/database/seeds/dev/educational_content/01-modules.sql
 
 ### Objetos Creados
-- **Schema:** project_management
-- **Tablas:** 4 (projects, developments, phases, housing_units)
+- **Schema:** educational_content
+- **Tablas:** 4 (modules, activities, challenges, rewards)
 - **Funciones:** 1 (calculate_progress)
-- **Triggers:** 2 (updated_at en projects y developments)
+- **Triggers:** 2 (updated_at en modules y activities)
 - **Índices:** 12
 
 ### Validación
@@ -340,14 +340,14 @@ $ ./apps/database/create-database.sh
 ✅ Schema creado exitosamente
 ✅ 4 tablas creadas
 ✅ 12 índices creados
-✅ Seeds cargados (5 proyectos, 10 desarrollos)
+✅ Seeds cargados (5 módulos, 10 actividades)
 ```
 
 ### Impacto
-- **Schemas afectados:** project_management (nuevo)
+- **Schemas afectados:** educational_content (nuevo)
 - **Módulos Backend afectados:** Ninguno (aún no existen)
 - **Próximos pasos:**
-  1. Backend-Agent: Crear entities (ProjectEntity, DevelopmentEntity, etc.)
+  1. Backend-Agent: Crear entities (ModuleEntity, ActivityEntity, etc.)
   2. Backend-Agent: Crear services y controllers
   3. Frontend-Agent: Crear páginas y componentes
 ```

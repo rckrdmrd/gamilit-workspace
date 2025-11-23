@@ -1,6 +1,6 @@
 # ESTÁNDARES DE NOMENCLATURA
 
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Versión:** 1.0.0
 **Fecha:** 2025-11-17
 **Audiencia:** Todos los agentes (Database, Backend, Frontend) y subagentes
@@ -43,11 +43,11 @@ Este documento establece las **convenciones de nomenclatura obligatorias** para 
 ### 3. Predictibilidad
 
 ```markdown
-Si existe `ProjectEntity`, entonces:
-- Service: `ProjectService` (NO `ProjectsService`, `ProjService`)
-- Controller: `ProjectController` (NO `ProjectsController`)
-- DTO Create: `CreateProjectDto` (NO `ProjectCreateDto`, `NewProjectDto`)
-- DTO Update: `UpdateProjectDto`
+Si existe `ModuleEntity`, entonces:
+- Service: `ModuleService` (NO `ModulesService`, `ModService`)
+- Controller: `ModuleController` (NO `ModulesController`)
+- DTO Create: `CreateModuleDto` (NO `ModuleCreateDto`, `NewModuleDto`)
+- DTO Update: `UpdateModuleDto`
 ```
 
 ### 4. Evitar Ambigüedad
@@ -71,41 +71,38 @@ Si existe `ProjectEntity`, entonces:
 
 ### 1.1. Schemas
 
-**Convención:** `snake_case` + sufijo `_management`
+**Convención:** `snake_case` descriptivo
 
 ```sql
 -- ✅ CORRECTO
-auth_management
-project_management
-budget_management
-contract_management
+auth
+educational_content
+gamification
+student_progress
 
 -- ❌ INCORRECTO
 Auth              -- Pascal case
 auth_mgmt         -- Abreviatura no estándar
-authentication    -- Sin sufijo
 ```
 
 **Patrón:**
 ```
-{dominio}_management
+{dominio}
 ```
 
 **Ejemplos:**
 ```sql
--- Schemas del MVP
-auth_management          -- Autenticación y usuarios
-project_management       -- Proyectos y obras
-budget_management        -- Presupuestos y partidas
-contract_management      -- Contratos y subcontratos
-purchase_management      -- Compras y proveedores
-inventory_management     -- Almacenes e inventarios
-progress_management      -- Avances y números generador
-quality_management       -- Calidad postventa
-crm_management          -- CRM derechohabientes
-infonavit_management    -- INFONAVIT cumplimiento
-preconstruction_management  -- Preconstrucción y licitaciones
-security_management     -- Seguridad de obra
+-- Schemas del MVP GAMILIT
+auth                    -- Autenticación y usuarios
+educational_content     -- Contenido educativo y módulos
+gamification           -- Sistema de gamificación
+student_progress       -- Progreso de estudiantes
+achievements           -- Logros y medallas
+maya_culture           -- Contenido cultural Maya
+classrooms             -- Aulas y grupos
+notifications          -- Sistema de notificaciones
+analytics              -- Analíticas y reportes
+file_storage           -- Almacenamiento de archivos
 ```
 
 ### 1.2. Tablas
@@ -137,19 +134,19 @@ projectDevelopments -- Camel case
 ```sql
 -- Entidades de negocio (plural)
 users
-projects
-developments
-phases
-houses
-budgets
-budget_items
-contracts
-subcontracts
-suppliers
-purchase_orders
-materials
-warehouses
-work_progresses
+students
+teachers
+modules
+activities
+challenges
+rewards
+achievements
+badges
+student_progress_records
+maya_stories
+classrooms
+student_groups
+notifications
 
 -- Configuración (singular)
 system_configuration
@@ -161,8 +158,8 @@ change_history
 
 -- Relaciones muchos-a-muchos
 users_roles              -- users M:N roles
-contracts_suppliers      -- contracts M:N suppliers
-projects_stakeholders    -- projects M:N stakeholders
+students_classrooms      -- students M:N classrooms
+modules_activities       -- modules M:N activities
 ```
 
 ### 1.3. Columnas
@@ -239,24 +236,24 @@ boundary GEOGRAPHY(POLYGON, 4326)
 
 ```sql
 -- ✅ CORRECTO - Índice simple
-CREATE INDEX idx_users_email ON auth_management.users(email);
-CREATE INDEX idx_projects_code ON project_management.projects(code);
-CREATE INDEX idx_contracts_status ON contract_management.contracts(status);
+CREATE INDEX idx_users_email ON auth.users(email);
+CREATE INDEX idx_modules_code ON educational_content.modules(code);
+CREATE INDEX idx_activities_status ON educational_content.activities(status);
 
 -- ✅ CORRECTO - Índice compuesto
-CREATE INDEX idx_projects_status_created_at
-    ON project_management.projects(status, created_at);
+CREATE INDEX idx_modules_status_created_at
+    ON educational_content.modules(status, created_at);
 
-CREATE INDEX idx_budget_items_budget_category
-    ON budget_management.budget_items(budget_id, category_id);
+CREATE INDEX idx_challenges_activity_difficulty
+    ON educational_content.challenges(activity_id, difficulty_level);
 
--- ✅ CORRECTO - Índice GiST (geo)
-CREATE INDEX idx_projects_coordinates
-    ON project_management.projects USING GIST(coordinates);
+-- ✅ CORRECTO - Índice GiST (búsqueda de texto)
+CREATE INDEX idx_modules_search_vector
+    ON educational_content.modules USING GIN(search_vector);
 
 -- ✅ CORRECTO - Índice parcial
 CREATE INDEX idx_users_active_email
-    ON auth_management.users(email) WHERE is_active = true;
+    ON auth.users(email) WHERE is_active = true;
 
 -- ❌ INCORRECTO
 CREATE INDEX users_email_idx         -- Orden incorrecto
@@ -280,30 +277,30 @@ CREATE INDEX idx_email               -- Falta nombre tabla
 
 ```sql
 -- ✅ CORRECTO
-ALTER TABLE project_management.projects
-ADD CONSTRAINT fk_projects_to_users
+ALTER TABLE educational_content.modules
+ADD CONSTRAINT fk_modules_to_users
 FOREIGN KEY (created_by_id)
-REFERENCES auth_management.users(id);
+REFERENCES auth.users(id);
 
-ALTER TABLE project_management.developments
-ADD CONSTRAINT fk_developments_to_projects
-FOREIGN KEY (project_id)
-REFERENCES project_management.projects(id);
+ALTER TABLE educational_content.activities
+ADD CONSTRAINT fk_activities_to_modules
+FOREIGN KEY (module_id)
+REFERENCES educational_content.modules(id);
 
 -- ✅ CORRECTO - Mismo nombre tabla destino pero columna diferente
-ALTER TABLE contract_management.contracts
-ADD CONSTRAINT fk_contracts_to_users_creator
-FOREIGN KEY (created_by_id)
-REFERENCES auth_management.users(id);
+ALTER TABLE student_progress.progress_records
+ADD CONSTRAINT fk_progress_records_to_students
+FOREIGN KEY (student_id)
+REFERENCES auth.users(id);
 
-ALTER TABLE contract_management.contracts
-ADD CONSTRAINT fk_contracts_to_users_approver
-FOREIGN KEY (approved_by_id)
-REFERENCES auth_management.users(id);
+ALTER TABLE student_progress.progress_records
+ADD CONSTRAINT fk_progress_records_to_activities
+FOREIGN KEY (activity_id)
+REFERENCES educational_content.activities(id);
 
 -- ❌ INCORRECTO
-fk_project_user              -- Faltan plurales/singulares consistentes
-projects_created_by_fk       -- Orden incorrecto
+fk_module_user               -- Faltan plurales/singulares consistentes
+modules_created_by_fk        -- Orden incorrecto
 fk_created_by                -- No especifica tablas
 ```
 
@@ -313,28 +310,28 @@ fk_created_by                -- No especifica tablas
 
 ```sql
 -- ✅ CORRECTO - Constraint simple
-ALTER TABLE project_management.projects
-ADD CONSTRAINT chk_projects_status
-CHECK (status IN ('PLANNING', 'ACTIVE', 'PAUSED', 'COMPLETED', 'CANCELLED'));
+ALTER TABLE educational_content.modules
+ADD CONSTRAINT chk_modules_difficulty
+CHECK (difficulty_level IN ('beginner', 'intermediate', 'advanced', 'expert'));
 
-ALTER TABLE budget_management.budget_items
-ADD CONSTRAINT chk_budget_items_amount
-CHECK (total_amount >= 0);
+ALTER TABLE gamification.rewards
+ADD CONSTRAINT chk_rewards_points
+CHECK (points_value >= 0);
 
 -- ✅ CORRECTO - Constraint multi-columna
-ALTER TABLE contract_management.contracts
-ADD CONSTRAINT chk_contracts_dates
+ALTER TABLE educational_content.activities
+ADD CONSTRAINT chk_activities_dates
 CHECK (end_date >= start_date);
 
 -- ✅ CORRECTO - Constraint complejo
-ALTER TABLE purchase_management.purchase_orders
-ADD CONSTRAINT chk_purchase_orders_total
-CHECK (total_amount = subtotal + tax_amount);
+ALTER TABLE student_progress.progress_records
+ADD CONSTRAINT chk_progress_records_score
+CHECK (score_obtained <= max_score);
 
 -- ❌ INCORRECTO
-chk_status                   -- No especifica tabla
-projects_status_check        -- Orden incorrecto
-check_projects_status        -- Prefijo incorrecto
+chk_difficulty               -- No especifica tabla
+modules_difficulty_check     -- Orden incorrecto
+check_modules_difficulty     -- Prefijo incorrecto
 ```
 
 #### Unique Constraints
@@ -343,16 +340,16 @@ check_projects_status        -- Prefijo incorrecto
 
 ```sql
 -- ✅ CORRECTO
-ALTER TABLE auth_management.users
+ALTER TABLE auth.users
 ADD CONSTRAINT uq_users_email UNIQUE (email);
 
-ALTER TABLE project_management.projects
-ADD CONSTRAINT uq_projects_code UNIQUE (code);
+ALTER TABLE educational_content.modules
+ADD CONSTRAINT uq_modules_code UNIQUE (code);
 
 -- ✅ CORRECTO - Unique compuesto
-ALTER TABLE budget_management.budget_items
-ADD CONSTRAINT uq_budget_items_budget_code
-UNIQUE (budget_id, item_code);
+ALTER TABLE gamification.achievements
+ADD CONSTRAINT uq_achievements_student_badge
+UNIQUE (student_id, badge_id);
 
 -- ❌ INCORRECTO
 uq_email                     -- No especifica tabla
@@ -366,21 +363,21 @@ unique_users_email           -- Prefijo incorrecto
 
 ```sql
 -- ✅ CORRECTO
-CREATE FUNCTION calculate_budget_total(budget_id UUID)
+CREATE FUNCTION calculate_student_progress(student_id UUID)
 RETURNS DECIMAL AS $$...$$;
 
-CREATE FUNCTION get_project_summary(project_id UUID)
+CREATE FUNCTION get_module_summary(module_id UUID)
 RETURNS TABLE(...) AS $$...$$;
 
-CREATE FUNCTION update_contract_status(
-    contract_id UUID,
+CREATE FUNCTION update_activity_status(
+    activity_id UUID,
     new_status VARCHAR
 ) RETURNS VOID AS $$...$$;
 
 -- ❌ INCORRECTO
-calculateBudgetTotal         -- Camel case
-CalcBudgetTotal             -- Pascal case
-budget_total_calc           -- Sustantivo + verbo (orden incorrecto)
+calculateStudentProgress     -- Camel case
+CalcProgressTotal           -- Pascal case
+progress_total_calc         -- Sustantivo + verbo (orden incorrecto)
 ```
 
 ### 1.7. Views
@@ -389,14 +386,14 @@ budget_total_calc           -- Sustantivo + verbo (orden incorrecto)
 
 ```sql
 -- ✅ CORRECTO
-CREATE VIEW project_management.v_active_projects AS ...;
-CREATE VIEW budget_management.v_budget_summary AS ...;
-CREATE VIEW contract_management.vw_contract_details AS ...;
+CREATE VIEW educational_content.v_active_modules AS ...;
+CREATE VIEW student_progress.v_progress_summary AS ...;
+CREATE VIEW gamification.vw_achievement_details AS ...;
 
 -- ❌ INCORRECTO
-CREATE VIEW active_projects AS ...;     -- Sin prefijo
-CREATE VIEW ActiveProjects AS ...;       -- Pascal case
-CREATE VIEW view_active_projects AS ...; -- Prefijo redundante
+CREATE VIEW active_modules AS ...;      -- Sin prefijo
+CREATE VIEW ActiveModules AS ...;        -- Pascal case
+CREATE VIEW view_active_modules AS ...; -- Prefijo redundante
 ```
 
 ### 1.8. Triggers
@@ -405,17 +402,17 @@ CREATE VIEW view_active_projects AS ...; -- Prefijo redundante
 
 ```sql
 -- ✅ CORRECTO
-CREATE TRIGGER trg_projects_before_update_timestamp
-BEFORE UPDATE ON project_management.projects
+CREATE TRIGGER trg_modules_before_update_timestamp
+BEFORE UPDATE ON educational_content.modules
 FOR EACH ROW EXECUTE FUNCTION update_timestamp();
 
-CREATE TRIGGER trg_contracts_after_insert_audit
-AFTER INSERT ON contract_management.contracts
+CREATE TRIGGER trg_progress_records_after_insert_audit
+AFTER INSERT ON student_progress.progress_records
 FOR EACH ROW EXECUTE FUNCTION audit_log_insert();
 
 -- ❌ INCORRECTO
-projects_update_trigger      -- Orden incorrecto
-trigger_projects_update      -- Prefijo redundante
+modules_update_trigger       -- Orden incorrecto
+trigger_modules_update       -- Prefijo redundante
 trg_update                   -- No especifica tabla
 ```
 
@@ -425,15 +422,15 @@ trg_update                   -- No especifica tabla
 
 ```sql
 -- ✅ CORRECTO
-CREATE SEQUENCE contract_management.seq_contracts_number
+CREATE SEQUENCE educational_content.seq_modules_number
 START 1 INCREMENT 1;
 
-CREATE SEQUENCE purchase_management.seq_purchase_orders_year
+CREATE SEQUENCE gamification.seq_achievements_year
 START 1 INCREMENT 1;
 
 -- ❌ INCORRECTO
-contracts_seq                -- Orden incorrecto
-contract_number_sequence     -- Prefijo incorrecto
+modules_seq                  -- Orden incorrecto
+module_number_sequence       -- Prefijo incorrecto
 seq_number                   -- No especifica tabla
 ```
 
@@ -448,31 +445,31 @@ seq_number                   -- No especifica tabla
 ```typescript
 // ✅ CORRECTO
 export class UserEntity { ... }
-export class ProjectEntity { ... }
-export class ProjectDevelopmentEntity { ... }
-export class BudgetItemEntity { ... }
-export class ContractEntity { ... }
+export class ModuleEntity { ... }
+export class ActivityEntity { ... }
+export class ChallengeEntity { ... }
+export class RewardEntity { ... }
 
 // ❌ INCORRECTO
 export class User { ... }              // Sin sufijo
 export class userEntity { ... }        // Camel case
 export class Users { ... }             // Plural
-export class project_entity { ... }    // Snake case
+export class module_entity { ... }    // Snake case
 ```
 
 **Estructura de archivo:**
 
 ```typescript
-// apps/backend/src/modules/projects/entities/project.entity.ts
+// apps/backend/src/modules/educational-content/entities/module.entity.ts
 
 import { Entity, Column, PrimaryGeneratedColumn, ... } from 'typeorm';
 
 /**
- * Entity representing a construction project
- * Maps to table: project_management.projects
+ * Entity representing an educational module
+ * Maps to table: educational_content.modules
  */
-@Entity('projects', { schema: 'project_management' })
-export class ProjectEntity {
+@Entity('modules', { schema: 'educational_content' })
+export class ModuleEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
@@ -489,13 +486,13 @@ export class ProjectEntity {
 **Nombre de archivo:** `{nombre}.entity.ts` (singular, kebab-case si multi-palabra)
 
 ```
-project.entity.ts                    // ✅
-project-development.entity.ts        // ✅
-budget-item.entity.ts               // ✅
+module.entity.ts                     // ✅
+student-progress.entity.ts           // ✅
+maya-story.entity.ts                // ✅
 
-projects.entity.ts                  // ❌ (plural)
-ProjectEntity.ts                    // ❌ (Pascal case en archivo)
-project_entity.ts                   // ❌ (snake case)
+modules.entity.ts                   // ❌ (plural)
+ModuleEntity.ts                     // ❌ (Pascal case en archivo)
+module_entity.ts                    // ❌ (snake case)
 ```
 
 ### 2.2. Properties de Entity
@@ -504,24 +501,24 @@ project_entity.ts                   // ❌ (snake case)
 
 ```typescript
 // ✅ CORRECTO
-export class ProjectEntity {
+export class ModuleEntity {
     id: string;
     code: string;
     name: string;
     description: string;
-    projectStatus: string;          // Mapea a project_status en DB
-    totalBudget: number;            // Mapea a total_budget
+    difficultyLevel: string;        // Mapea a difficulty_level en DB
+    maxPoints: number;              // Mapea a max_points
     createdById: string;            // Mapea a created_by_id
     createdAt: Date;                // Mapea a created_at
     updatedAt: Date;
     isActive: boolean;
-    coordinates: Point;             // PostGIS
+    sortOrder: number;
 }
 
 // ❌ INCORRECTO
-export class ProjectEntity {
+export class ModuleEntity {
     Id: string;                     // Pascal case
-    project_status: string;         // Snake case (usar camelCase)
+    difficulty_level: string;       // Snake case (usar camelCase)
     created_at: Date;               // Snake case
 }
 ```
@@ -533,32 +530,32 @@ export class ProjectEntity {
 **Convención:** `camelCase`, singular para `@ManyToOne`, plural para `@OneToMany`/`@ManyToMany`
 
 ```typescript
-export class ProjectEntity {
+export class ModuleEntity {
     // ✅ CORRECTO - ManyToOne (singular)
     @ManyToOne(() => UserEntity, { nullable: false })
     @JoinColumn({ name: 'created_by_id' })
     createdBy: UserEntity;
 
     // ✅ CORRECTO - OneToMany (plural)
-    @OneToMany(() => DevelopmentEntity, dev => dev.project)
-    developments: DevelopmentEntity[];
+    @OneToMany(() => ActivityEntity, activity => activity.module)
+    activities: ActivityEntity[];
 
     // ✅ CORRECTO - ManyToMany (plural)
-    @ManyToMany(() => StakeholderEntity)
-    @JoinTable({ name: 'projects_stakeholders' })
-    stakeholders: StakeholderEntity[];
+    @ManyToMany(() => StudentEntity)
+    @JoinTable({ name: 'modules_students' })
+    enrolledStudents: StudentEntity[];
 }
 
 // ❌ INCORRECTO
-export class ProjectEntity {
+export class ModuleEntity {
     @ManyToOne(() => UserEntity)
     user: UserEntity;               // Ambiguo (¿cuál user?)
 
-    @OneToMany(() => DevelopmentEntity, ...)
-    development: DevelopmentEntity[];  // Singular cuando debería ser plural
+    @OneToMany(() => ActivityEntity, ...)
+    activity: ActivityEntity[];     // Singular cuando debería ser plural
 
-    @ManyToMany(() => StakeholderEntity)
-    stakeholder: StakeholderEntity[];  // Singular
+    @ManyToMany(() => StudentEntity)
+    student: StudentEntity[];       // Singular
 }
 ```
 
@@ -568,15 +565,15 @@ export class ProjectEntity {
 
 ```typescript
 // ✅ CORRECTO
-export class ProjectService { ... }
+export class ModuleService { ... }
 export class UserService { ... }
-export class BudgetItemService { ... }
-export class ContractService { ... }
+export class ActivityService { ... }
+export class StudentProgressService { ... }
 
 // ❌ INCORRECTO
-export class ProjectsService { ... }    // Plural
-export class projectService { ... }     // Camel case
-export class ProjectServ { ... }        // Abreviatura
+export class ModulesService { ... }    // Plural
+export class moduleService { ... }     // Camel case
+export class ModServ { ... }           // Abreviatura
 ```
 
 **Nombre de archivo:** `{nombre}.service.ts`
@@ -1294,25 +1291,26 @@ apps/
   database/
     ddl/
       schemas/
-        project-management/
-        budget-management/
+        educational-content/
+        gamification/
   backend/
     src/
       modules/
-        projects/
-        budget-items/
+        educational-content/
+        student-progress/
   frontend/
     web/
       src/
         apps/
-          project-manager/
+          teacher/
+          student/
         shared/
           components/
 
 ❌ INCORRECTO
-ProjectManagement/        -- Pascal case
-project_management/       -- Snake case
-projectManagement/        -- Camel case
+EducationalContent/       -- Pascal case
+educational_content/      -- Snake case
+educationalContent/       -- Camel case
 ```
 
 ### 4.2. Archivos Database (SQL)
@@ -1324,9 +1322,9 @@ projectManagement/        -- Camel case
 01-users.sql
 02-roles.sql
 03-permissions.sql
-10-projects.sql
-11-developments.sql
-20-budgets.sql
+10-modules.sql
+11-activities.sql
+20-challenges.sql
 
 ❌ INCORRECTO
 users.sql                 -- Sin prefijo numérico

@@ -1,8 +1,8 @@
-# PROMPT PARA SUBAGENTES - Sistema Administración de Obra
+# PROMPT PARA SUBAGENTES - GAMILIT Sistema de Gamificación Educativa
 
 **Versión:** 1.0.0
 **Fecha creación:** 2025-11-17
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Aplicable a:** Todos los subagentes lanzados por agentes principales
 
 ---
@@ -31,8 +31,8 @@ El agente principal **DEBE** proporcionarte este contexto completo:
 ```yaml
 tarea_id: "DB-042-SUB-001"
 agente_principal: "Database-Agent"
-tarea_principal: "DB-042 - Crear módulo de Proyectos"
-subtarea: "Crear tabla projects"
+tarea_principal: "DB-042 - Crear módulo de Contenido Educativo"
+subtarea: "Crear tabla modules"
 prioridad: "P0"
 duracion_estimada: "1.5 horas"
 ```
@@ -41,37 +41,38 @@ duracion_estimada: "1.5 horas"
 
 ```markdown
 ## Objetivo
-Crear la tabla `projects` en el schema `project_management` con las siguientes especificaciones:
+Crear la tabla `modules` en el schema `educational_content` con las siguientes especificaciones:
 
 ### Columnas Requeridas
 - id (UUID, PK, default gen_random_uuid())
 - code (VARCHAR(50), UNIQUE, NOT NULL)
 - name (VARCHAR(200), NOT NULL)
 - description (TEXT, nullable)
-- state (VARCHAR(100), NOT NULL)
-- city (VARCHAR(100), NOT NULL)
-- address (TEXT)
-- coordinates (GEOGRAPHY(POINT, 4326))
-- start_date (DATE, NOT NULL)
-- end_date (DATE)
-- status (VARCHAR(50), default 'planning')
+- difficulty_level (VARCHAR(20), NOT NULL)
+- category (VARCHAR(100), NOT NULL)
+- maya_theme (VARCHAR(100))
+- max_points (INTEGER, NOT NULL)
+- estimated_duration_minutes (INTEGER)
+- sort_order (INTEGER, NOT NULL)
+- status (VARCHAR(50), default 'draft')
 - created_at (TIMESTAMP, default NOW())
 - updated_at (TIMESTAMP, default NOW())
-- created_by (UUID, FK a auth_management.users)
+- created_by (UUID, FK a auth.users)
 
 ### Índices
-- idx_projects_code (code) UNIQUE
-- idx_projects_status (status)
-- idx_projects_dates (start_date, end_date)
-- idx_projects_coordinates (coordinates) USING GIST
+- idx_modules_code (code) UNIQUE
+- idx_modules_status (status)
+- idx_modules_difficulty (difficulty_level)
+- idx_modules_category (category)
 
 ### Constraints
-- FK created_by → auth_management.users(id)
-- CHECK status IN ('planning', 'active', 'paused', 'completed', 'cancelled')
+- FK created_by → auth.users(id)
+- CHECK difficulty_level IN ('beginner', 'intermediate', 'advanced', 'expert')
+- CHECK status IN ('draft', 'active', 'archived')
 
 ### Comentarios SQL
-- Tabla: "Proyectos habitacionales - Nivel superior de jerarquía"
-- Columnas importantes: code, status, coordinates
+- Tabla: "Módulos educativos de la plataforma GAMILIT con temática Maya"
+- Columnas importantes: code, difficulty_level, maya_theme
 ```
 
 ### 3. Archivos de Referencia
@@ -80,15 +81,15 @@ Crear la tabla `projects` en el schema `project_management` con las siguientes e
 ## Archivos para Consultar
 
 ### Templates
-- `apps/database/ddl/schemas/auth_management/tables/01-users.sql` (como referencia)
-- `apps/database/ddl/schemas/project_management/00-schema.sql` (schema ya existe)
+- `apps/database/ddl/schemas/auth/tables/01-users.sql` (como referencia)
+- `apps/database/ddl/schemas/educational_content/00-schema.sql` (schema ya existe)
 
 ### Inventarios
 - `orchestration/inventarios/MASTER_INVENTORY.yml` (verificar que no exista)
 - `orchestration/inventarios/DATABASE_INVENTORY.yml`
 
 ### Documentación
-- `docs/00-overview/MVP-APP.md` (sección 2: Proyectos y Obras)
+- `docs/00-overview/MVP-APP.md` (sección 2: Contenido Educativo)
 - `orchestration/prompts/PROMPT-AGENTES-PRINCIPALES.md` (estándares de código)
 
 ### Estándares
@@ -101,13 +102,13 @@ Crear la tabla `projects` en el schema `project_management` con las siguientes e
 ## Restricciones OBLIGATORIAS
 
 ### Nomenclatura
-- Archivo: `01-projects.sql` (prefijo numérico secuencial)
-- Tabla: `projects` (snake_case, plural)
+- Archivo: `01-modules.sql` (prefijo numérico secuencial)
+- Tabla: `modules` (snake_case, plural)
 - Índices: `idx_{tabla}_{columna(s)}`
 - Constraints: `fk_{tabla}_to_{tabla_ref}` o `chk_{tabla}_{columna}`
 
 ### Ubicación
-- Archivo DDL: `apps/database/ddl/schemas/project_management/tables/01-projects.sql`
+- Archivo DDL: `apps/database/ddl/schemas/educational_content/tables/01-modules.sql`
 - ❌ NO crear en otra ubicación
 - ❌ NO crear carpetas orchestration/ dentro de apps/
 
@@ -132,10 +133,10 @@ Crear la tabla `projects` en el schema `project_management` con las siguientes e
 El Agente Principal validará:
 
 - [ ] Archivo creado en ubicación correcta
-- [ ] Nombre de archivo correcto: `01-projects.sql`
+- [ ] Nombre de archivo correcto: `01-modules.sql`
 - [ ] Tabla con TODAS las columnas especificadas
 - [ ] Todos los índices creados (4 índices)
-- [ ] Constraints correctos (1 FK, 1 CHECK)
+- [ ] Constraints correctos (1 FK, 2 CHECK)
 - [ ] Código SQL válido (sin errores de sintaxis)
 - [ ] Comentarios incluidos (COMMENT ON TABLE/COLUMN)
 - [ ] Formato consistente con tablas existentes
@@ -184,17 +185,17 @@ ESPERA respuesta del Agente Principal.
 
 ```bash
 # 1. Verificar que NO existe el objeto
-grep -rn "projects" orchestration/inventarios/MASTER_INVENTORY.yml
-grep -rn "CREATE TABLE.*projects" apps/database/ddl/
+grep -rn "modules" orchestration/inventarios/MASTER_INVENTORY.yml
+grep -rn "CREATE TABLE.*modules" apps/database/ddl/
 
 # 2. Revisar objetos similares
-find apps/database/ddl -name "*project*"
+find apps/database/ddl -name "*module*"
 
 # 3. Verificar último número de archivo (para prefijo)
-ls apps/database/ddl/schemas/project_management/tables/ | sort
+ls apps/database/ddl/schemas/educational_content/tables/ | sort
 
 # 4. Revisar trazas de tareas relacionadas
-grep -A 10 "projects" orchestration/trazas/TRAZA-TAREAS-DATABASE.md
+grep -A 10 "modules" orchestration/trazas/TRAZA-TAREAS-DATABASE.md
 ```
 
 **Resultado esperado:**
