@@ -794,49 +794,73 @@ analytics/
 
 ### DO ✅
 
-1. **Ser conservador con eliminaciones**
+1. **Seguir DIRECTIVA-GESTION-BACKUPS-GITIGNORE.md** ⭐
+   - orchestration/ SIEMPRE debe estar versionado (NO en .gitignore)
+   - Carpetas backup (*_old/, *_bckp/) SIEMPRE deben estar ignoradas
+   - Validar .gitignore semanalmente
+   - Ver: [DIRECTIVA-GESTION-BACKUPS-GITIGNORE.md](../directivas/DIRECTIVA-GESTION-BACKUPS-GITIGNORE.md)
+
+2. **Ser conservador con eliminaciones**
    - Cuando dudes, mueve a .archive/ en vez de eliminar
    - Crear backups antes de cambios masivos
+   - Archivar en .tar.gz antes de eliminar
 
-2. **Documentar exhaustivamente**
+3. **Documentar exhaustivamente**
    - Cada limpieza debe tener reporte detallado
    - Explicar razón de cada acción
+   - Documentar ubicación de archivos archivados
 
-3. **Automatizar validaciones**
+4. **Automatizar validaciones**
    - Scripts para validaciones repetitivas
    - Alertas tempranas de problemas
+   - Ejecutar validate-gitignore.sh semanalmente
 
-4. **Priorizar por impacto**
+5. **Priorizar por impacto**
    - Desalineaciones críticas primero
    - Problemas estéticos después
+   - orchestration/ en repo es prioridad P0
 
-5. **Mantener trazabilidad**
+6. **Mantener trazabilidad**
    - Siempre actualizar trazas después de acciones
    - Cross-referenciar reportes relacionados
+   - Documentar archivados en TRAZA-WORKSPACE-MANAGEMENT.md
 
-6. **Ser proactivo**
+7. **Ser proactivo**
    - No esperar a que el workspace esté caótico
    - Ejecuciones regulares programadas
+   - Detección temprana de carpetas backup
 
 ### DON'T ❌
 
-1. **NO eliminar sin analizar**
+1. **NO ignorar orchestration/ en .gitignore** ❌⚠️
+   - orchestration/ DEBE estar versionado para Claude Code cloud
+   - Solo ignorar orchestration/.archive/ y orchestration/.tmp/
+   - Ver: [DIRECTIVA-GESTION-BACKUPS-GITIGNORE.md](../directivas/DIRECTIVA-GESTION-BACKUPS-GITIGNORE.md)
+
+2. **NO permitir carpetas backup sin ignorar** ❌
+   - Toda carpeta *_old/, *_bckp/ debe estar en .gitignore
+   - Archivar y eliminar carpetas backup encontradas
+   - Nunca commitear carpetas backup
+
+3. **NO eliminar sin analizar**
    - Puede contener trabajo valioso
    - Siempre revisar contenido primero
+   - Archivar en .tar.gz antes de eliminar
 
-2. **NO ignorar desalineaciones**
+4. **NO ignorar desalineaciones**
    - Pequeñas desalineaciones crecen
    - Atender temprano evita problemas mayores
 
-3. **NO hacer cambios masivos sin backup**
+5. **NO hacer cambios masivos sin backup**
    - Siempre tener punto de retorno
    - Git commit antes de limpieza grande
+   - Crear archivos .tar.gz de respaldo
 
-4. **NO asumir que archivo temporal no sirve**
+6. **NO asumir que archivo temporal no sirve**
    - Verificar antes de eliminar
    - Consultar con autor si es reciente
 
-5. **NO olvidar notificar cambios**
+7. **NO olvidar notificar cambios**
    - Cambios de alcance afectan a otros
    - Comunicación proactiva esencial
 
@@ -851,6 +875,7 @@ analytics/
 - [orchestration/trazas/](../trazas/) - Trazas del proyecto
 
 ### Directivas Aplicables
+- [DIRECTIVA-GESTION-BACKUPS-GITIGNORE.md](../directivas/DIRECTIVA-GESTION-BACKUPS-GITIGNORE.md) - **⭐ CRÍTICA** para gestión de workspace
 - [DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md](../directivas/DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md)
 - [ESTANDARES-NOMENCLATURA.md](../directivas/ESTANDARES-NOMENCLATURA.md)
 - [DIRECTIVA-CONTROL-VERSIONES.md](../directivas/DIRECTIVA-CONTROL-VERSIONES.md)
