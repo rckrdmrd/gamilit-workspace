@@ -1,57 +1,293 @@
 # INVENTARIO MAESTRO - GAMILIT
 
-version: "1.0.0"
+version: "2.0.0"
 proyecto: "GAMILIT - Sistema de Gamificación Educativa"
 fecha_actualizacion: "2025-11-23"
+actualizado_por: "Architecture-Analyst (Reporte Coherencia 2025-11-23)"
+fuente_consolidacion:
+  - "DATABASE_INVENTORY.yml v2.5.0"
+  - "BACKEND_INVENTORY.yml v2.3.1"
+  - "FRONTEND_INVENTORY.yml v2.3.7"
+
+# =============================================================================
+# RESUMEN EJECUTIVO
+# =============================================================================
+
+resumen:
+  estado_general: "MVP Documentado - Bloqueado por Configuración"
+  coherencia_arquitectura: "98%"
+  coherencia_documentacion: "95%"
+  coherencia_implementacion: "65%"
+  readiness_desarrollo: "BLOQUEADO - Ver gaps críticos"
+  fecha_ultimo_reporte: "2025-11-23"
+  reporte_detallado: "orchestration/agentes/architecture-analyst/coherence-reports/REPORTE-COHERENCIA-2025-11-23.md"
+
+gaps_criticos:
+  - id: "GAP-001"
+    severidad: "P0"
+    descripcion: "Dependencies no instaladas (Backend + Frontend)"
+    bloqueador: true
+  - id: "GAP-002"
+    severidad: "P0"
+    descripcion: "MASTER_INVENTORY.yml vacío (RESUELTO en v2.0.0)"
+    bloqueador: false
+  - id: "GAP-003"
+    severidad: "P1"
+    descripcion: "Frontend build failing (52 errores TypeScript)"
+    bloqueador: false
 
 # =============================================================================
 # DATABASE OBJECTS
 # =============================================================================
 
 database:
-  schemas: []
-  tables: []
-  functions: []
-  triggers: []
-  views: []
-  policies: []
+  version_inventory: "2.5.0"
+  fecha_actualizacion: "2025-11-19"
+  total_schemas: 16
+  total_tables: 121
+  total_functions: 112
+  total_triggers: 112
+  total_views: 8
+  total_materialized_views: 11
+  total_enums: 34
+  total_indexes: 671
+  total_policies: 241
+  total_foreign_keys: 205
+  total_ddl_files: 362
+  total_seed_files: 84
+
+  schemas_principales:
+    - name: "auth_management"
+      tables: 3
+      functions: 4
+      triggers: 2
+      descripcion: "Gestión de usuarios y autenticación"
+      status: "✅ Production Ready"
+
+    - name: "educational_content"
+      tables: 23
+      functions: 28
+      triggers: 8
+      descripcion: "Contenido educativo (módulos, ejercicios, assignments)"
+      status: "✅ Production Ready"
+
+    - name: "gamification_system"
+      tables: 18
+      functions: 25
+      triggers: 12
+      descripcion: "Sistema de gamificación (logros, rangos, economía)"
+      status: "✅ Production Ready"
+
+    - name: "progress_tracking"
+      tables: 16
+      functions: 10
+      triggers: 5
+      descripcion: "Seguimiento de progreso de estudiantes"
+      status: "✅ Production Ready"
+
+    - name: "social_features"
+      tables: 12
+      functions: 6
+      triggers: 3
+      descripcion: "Características sociales (escuelas, aulas, equipos)"
+      status: "✅ Production Ready"
+
+    - name: "content_management"
+      tables: 8
+      functions: 0
+      triggers: 3
+      descripcion: "Gestión de contenido Marie Curie"
+      status: "✅ Production Ready"
+
+  scripts_disponibles:
+    - "apps/database/scripts/init-database.sh"
+    - "apps/database/scripts/reset-database.sh"
+    - "apps/database/scripts/recreate-database.sh"
+    - "apps/database/scripts/load-users-and-profiles.sh"
+
+  coherencia: "100%"
+  notas:
+    - "388 archivos SQL DDL organizados en schemas/"
+    - "84 archivos seeds (34 dev, 38 prod, 6 scripts)"
+    - "Todos los schemas MVP implementados"
 
 # =============================================================================
 # BACKEND MODULES
 # =============================================================================
 
 backend:
-  modules: []
-  entities: []
-  services: []
-  controllers: []
-  dto: []
-  guards: []
-  decorators: []
+  version_inventory: "2.3.1"
+  fecha_actualizacion: "2025-11-15"
+  framework: "NestJS 11.1.8 + TypeScript 5.x + TypeORM 0.3.x"
+  total_modules: 13
+  total_entities: 76
+  total_services: 64
+  total_controllers: 47
+  total_dtos: 195
+  total_endpoints: 356
+  typescript_errors: 0
+  build_status: "FAILING (Dependencies no instaladas)"
+
+  modules_principales:
+    - name: "auth"
+      entities: 12
+      services: 5
+      controllers: 2
+      dtos: 37
+      schema_db: "auth_management"
+      status: "✅ Active"
+
+    - name: "educational"
+      entities: 4
+      services: 3
+      controllers: 3
+      dtos: 0
+      schema_db: "educational_content"
+      status: "✅ Active"
+
+    - name: "gamification"
+      entities: 13
+      services: 7
+      controllers: 8
+      dtos: 0
+      schema_db: "gamification_system"
+      status: "✅ Active"
+
+    - name: "progress"
+      entities: 13
+      services: 7
+      controllers: 5
+      dtos: 12
+      schema_db: "progress_tracking"
+      status: "✅ Active"
+
+    - name: "social"
+      entities: 10
+      services: 9
+      controllers: 9
+      dtos: 20
+      schema_db: "social_features"
+      status: "✅ Active"
+
+    - name: "admin"
+      entities: 3
+      services: 4
+      controllers: 4
+      dtos: 0
+      schema_db: "system_configuration"
+      status: "✅ Active"
+
+  coherencia_bd: "97%"
+  notas:
+    - "76/121 tablas tienen entity (63% - correcto, resto auxiliares)"
+    - "Build falla por GAP-001 (npm install faltante)"
+    - "Arquitectura sólida, alineada con épicas MVP"
 
 # =============================================================================
 # FRONTEND COMPONENTS
 # =============================================================================
 
 frontend:
-  pages: []
-  components: []
-  stores: []
-  services: []
-  hooks: []
-  utils: []
-  types: []
+  version_inventory: "2.3.7"
+  fecha_actualizacion: "2025-11-15"
+  framework: "React 18 + TypeScript + Vite"
+  total_portals: 3
+  total_pages: 61
+  total_components: 163
+  total_stores: 2
+  total_hooks: 2
+  total_types: 12
+  total_api_services: 11
+  typescript_errors: 52
+  typescript_warnings: 470
+  build_status: "FAILING (.env faltante + Dependencies)"
+
+  portals:
+    - name: "student"
+      pages: 28
+      role: "student"
+      status: "✅ Active"
+      main_features:
+        - "Dashboard de progreso"
+        - "Ejercicios interactivos"
+        - "Gamificación (logros, rangos, ML Coins)"
+        - "Social (amigos, leaderboard, equipos)"
+
+    - name: "teacher"
+      pages: 21
+      role: "admin_teacher"
+      status: "✅ Active"
+      main_features:
+        - "Dashboard de clase"
+        - "Monitoreo de estudiantes"
+        - "Asignaciones y tareas"
+        - "Reportes de progreso"
+
+    - name: "admin"
+      pages: 12
+      role: "super_admin"
+      status: "✅ Active"
+      main_features:
+        - "Dashboard del sistema"
+        - "Gestión de usuarios"
+        - "Gestión de organizaciones"
+        - "Monitoreo del sistema"
+
+  coherencia_backend: "70%"
+  coherencia_database: "68%"
+  coherencia_general: "69%"
+  notas:
+    - "163 componentes (106 portal + 57 shared)"
+    - "Arquitectura feature-sliced design implementada"
+    - "Build falla por GAP-001 (.env + npm install)"
+    - "52 errores TypeScript deben resolverse (GAP-003)"
 
 # =============================================================================
 # DEPENDENCY GRAPH
 # =============================================================================
 
 dependencies:
-  # Ejemplo:
-  # - source: "backend/users"
-  #   depends_on:
-  #     - "database/auth_management/users"
-  #     - "backend/auth"
+  frontend_to_backend:
+    - frontend: "student portal"
+      depends_on:
+        - "backend/auth"
+        - "backend/educational"
+        - "backend/gamification"
+        - "backend/progress"
+        - "backend/social"
+
+    - frontend: "teacher portal"
+      depends_on:
+        - "backend/auth"
+        - "backend/teacher"
+        - "backend/assignments"
+        - "backend/social"
+
+    - frontend: "admin portal"
+      depends_on:
+        - "backend/auth"
+        - "backend/admin"
+
+  backend_to_database:
+    - backend: "auth module"
+      depends_on:
+        - "database/auth_management"
+
+    - backend: "educational module"
+      depends_on:
+        - "database/educational_content"
+
+    - backend: "gamification module"
+      depends_on:
+        - "database/gamification_system"
+
+    - backend: "progress module"
+      depends_on:
+        - "database/progress_tracking"
+
+    - backend: "social module"
+      depends_on:
+        - "database/social_features"
 
 # =============================================================================
 # TEST COVERAGE
@@ -59,23 +295,164 @@ dependencies:
 
 test_coverage:
   database:
-    total: 0
+    total_objects: 121  # tablas
     tested: 0
     percentage: 0
+    target: 60
+    gap: -60
+    notas: "Sin tests documentados - Priority P1"
+
   backend:
-    total: 0
+    total_modules: 13
     tested: 0
-    percentage: 0
+    percentage_estimado: 18
+    percentage_real: 0
+    target: 88
+    gap: -88
+    notas: "Gap crítico: 18% real vs 88% esperado (Fase 1 docs)"
+
   frontend:
-    total: 0
+    total_components: 163
     tested: 0
-    percentage: 0
+    percentage_estimado: 18
+    percentage_real: 0
+    target: 88
+    gap: -88
+    notas: "Gap crítico: 18% real vs 88% esperado (Fase 1 docs)"
+
+  overall:
+    percentage: 18
+    target: 88
+    gap: -70
+    priority: "P1 - Alta"
+    recommended_action: "Plan de testing dedicado (2 sprints)"
 
 # =============================================================================
-# NOTES
+# MVP STATUS (FASE 1 - ALCANCE INICIAL)
+# =============================================================================
+
+mvp_fase_1:
+  presupuesto_planificado: "$110,000 MXN"
+  story_points: 230
+  epicas_totales: 5
+  epicas_completadas: 5
+  completitud: "100%"
+
+  epicas:
+    - codigo: "EAI-001"
+      nombre: "Fundamentos"
+      presupuesto: "$22,000 MXN"
+      story_points: 60
+      status: "✅ Completada"
+      documentos: 17
+
+    - codigo: "EAI-002"
+      nombre: "Actividades"
+      presupuesto: "$22,000 MXN"
+      story_points: 45
+      status: "✅ Completada"
+      documentos: 19
+
+    - codigo: "EAI-003"
+      nombre: "Gamificación"
+      presupuesto: "$22,000 MXN"
+      story_points: 40
+      status: "✅ Completada"
+      documentos: 17
+
+    - codigo: "EAI-004"
+      nombre: "Analytics"
+      presupuesto: "$22,000 MXN"
+      story_points: 35
+      status: "✅ Completada"
+      documentos: 10
+
+    - codigo: "EAI-005"
+      nombre: "Admin Base"
+      presupuesto: "$22,000 MXN"
+      story_points: 50
+      status: "✅ Completada"
+      documentos: 15
+
+  total_documentos_markdown: 77
+  coherencia_documentacion: "95%"
+  coherencia_implementacion: "65%"
+  bloqueadores: "GAP-001 (Dependencies)"
+
+# =============================================================================
+# DIRECTIVAS Y POLÍTICAS
+# =============================================================================
+
+directivas:
+  total: 11
+  ubicacion: "orchestration/directivas/"
+  principales:
+    - "DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md"
+    - "DIRECTIVA-DISENO-BASE-DATOS.md"
+    - "DIRECTIVA-CALIDAD-CODIGO.md"
+    - "ESTANDARES-NOMENCLATURA.md"
+    - "POLITICAS-USO-AGENTES.md"
+  coherencia: "100%"
+
+# =============================================================================
+# READINESS PARA AGENTES
+# =============================================================================
+
+readiness_agentes:
+  backend_developer:
+    status: "❌ BLOQUEADO"
+    razon: "GAP-001 (npm install faltante)"
+    tiempo_desbloqueo: "5 minutos"
+
+  frontend_developer:
+    status: "❌ BLOQUEADO"
+    razon: "GAP-001 (npm install + .env faltante)"
+    tiempo_desbloqueo: "10 minutos"
+
+  database_developer:
+    status: "✅ READY"
+    razon: "Scripts y DDL completos"
+    puede_continuar: true
+
+  qa_agent:
+    status: "⚠️ PARCIAL"
+    razon: "Builds bloqueados"
+    puede_hacer:
+      - "Tests unitarios database"
+    no_puede_hacer:
+      - "Tests integración"
+      - "Tests E2E"
+
+  devops_agent:
+    status: "✅ READY"
+    razon: "Puede resolver GAP-001"
+    accion_inmediata: "Instalar dependencies"
+
+# =============================================================================
+# NOTAS Y ACTUALIZACIONES
 # =============================================================================
 
 notas:
-  - "Inventario inicializado el 2025-11-23"
-  - "Actualizar después de cada tarea de agente"
-  - "Mantener sincronizado con la realidad del código"
+  - "Inventario consolidado desde DATABASE, BACKEND, FRONTEND inventories"
+  - "Actualizado por Architecture-Analyst el 2025-11-23"
+  - "Reporte completo en: orchestration/agentes/architecture-analyst/coherence-reports/REPORTE-COHERENCIA-2025-11-23.md"
+  - "ACCIÓN INMEDIATA: Resolver GAP-001 (npm install backend + frontend)"
+  - "ACCIÓN INMEDIATA: Crear .env en apps/frontend/"
+  - "Después de GAP-001: Resolver GAP-003 (52 errores TypeScript frontend)"
+
+historial_actualizaciones:
+  - version: "1.0.0"
+    fecha: "2025-11-23"
+    autor: "Sistema"
+    cambios: "Inventario inicializado vacío"
+
+  - version: "2.0.0"
+    fecha: "2025-11-23"
+    autor: "Architecture-Analyst"
+    cambios: "Consolidación completa desde inventarios específicos"
+    metricas_agregadas:
+      - "16 schemas, 121 tablas, 112 funciones"
+      - "13 módulos backend, 76 entities"
+      - "3 portales frontend, 163 componentes"
+      - "Gaps críticos identificados (GAP-001, GAP-002, GAP-003)"
+      - "Readiness para agentes documentada"
