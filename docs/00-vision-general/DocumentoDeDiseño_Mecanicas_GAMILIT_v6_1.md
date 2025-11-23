@@ -2,8 +2,13 @@
 **Sistema de comprensión lectora gamificado basado en Daniel Cassany**
 **Texto base:** Biografía de Marie Curie
 
-**Versión:** 6.3 (Actualizado 2025-11-20)
+**Versión:** 6.4 (Actualizado 2025-11-23)
 **Tipo de documento:** Documento de diseño e implementación
+
+**Cambios en v6.4:**
+- ✅ Ejercicio 3.4: Duración de podcast ajustada a 2 minutos (desarrollo reducido a 1 min)
+- ✅ Ejercicio 5C: Estructura de guión actualizada a 4 secciones (Introducción 30s, Mensaje Principal 90s, Reflexiones 45s, Cierre 15s)
+- ✅ Ejercicio 5C: Total de video optimizado a 180 segundos (3 minutos exactos)
 
 **Cambios en v6.3:**
 - ✅ Módulo 3 actualizado con instrucciones detalladas "Cómo resolverlo" para cada ejercicio
@@ -683,14 +688,14 @@ Evaluar la confiabilidad de diferentes fuentes de información sobre Marie Curie
 > Impacto de Marie Curie en la equidad de género en ciencia.
 
 **Objetivo:**
-Crear un podcast de 2-3 minutos defendiendo o criticando una decisión de Marie Curie.
+Crear un podcast de 2 minutos defendiendo o criticando una decisión de Marie Curie.
 
 **Cómo resolverlo:**
 
 1. Elige tu tema de la lista disponible.
 2. Estructura tu podcast:
    - **Introducción (30 seg):** Presenta el tema.
-   - **Desarrollo (2 min):** 3 argumentos principales.
+   - **Desarrollo (1 min):** 3 argumentos principales.
    - **Conclusión (30 seg):** Resumen y llamada a la reflexión.
 3. Graba usando el botón de grabación.
 4. Incluye:
@@ -1033,61 +1038,61 @@ Crear un cómic de 6 viñetas resumiendo la vida de Marie Curie.
 
 ### OPCIÓN C: Cápsula del Tiempo Digital
 
-**Objetivo:**  
+**Objetivo:**
 Crear un video de 2–3 minutos como si Marie Curie dejara un mensaje para el futuro.
 
 **Mecánica:**
 
 1. Escribir guion:
-   - Saludo (15 s).  
-   - Presentación personal (30 s).  
-   - Logros principales (45 s).  
-   - Desafíos enfrentados (45 s).  
-   - Mensaje sobre ciencia (30 s).  
-   - Advertencias sobre radiación (30 s).  
-   - Esperanzas para el futuro (30 s).  
-   - Despedida (15 s).
+   - **Introducción (30 seg):** Saludo y presentación personal con contexto
+   - **Mensaje Principal (90 seg):** Logros, desafíos y reflexiones sobre la ciencia
+   - **Reflexiones y Advertencias (45 seg):** Peligros de la radiación y ética científica
+   - **Cierre (15 seg):** Esperanzas para el futuro y despedida
 
 2. Grabar frente a la cámara o usando un avatar.
 
 3. Caracterización:
-   - Vestuario de época o bata de laboratorio.  
-   - Hablar en primera persona.  
+   - Vestuario de época o bata de laboratorio.
+   - Hablar en primera persona.
    - Tono de época.
 
 4. Edición (opcional):
-   - Música de fondo suave.  
-   - Imágenes de apoyo.  
+   - Música de fondo suave.
+   - Imágenes de apoyo.
    - Subtítulos.
 
 **Elementos clave:**
 
-- Mantener contacto visual con la cámara.  
-- Hablar pausado y claro.  
-- Usar gestos apropiados.  
+- Mantener contacto visual con la cámara.
+- Hablar pausado y claro.
+- Usar gestos apropiados.
 - Transmitir emoción.
 
-#### Guion sugerido (estructura)
+#### Guion Sugerido
 
-- **Introducción (0–15 s):**  
-  "Soy Marie Curie, escribo desde 1934..."  
-- **Mensaje principal (hasta 90 s):**  
-  - A futuras científicas: "No permitan que las barreras..."  
-  - Sobre la ciencia: "La radiactividad es solo el principio..."  
-  - Sobre igualdad: "Espero que en su tiempo..."  
-- **Reflexiones y advertencias (45 s):**  
-  - Peligros de la radiación.  
-  - Importancia de la ética científica.  
-- **Cierre (15 s):**  
-  - Esperanzas para el futuro.  
-  - Despedida inspiradora.
+**Introducción (30 segundos)**
+- "Soy Marie Curie, escribo desde 1934..."
+- Presentación personal y contexto
 
-**Elementos visuales sugeridos para la escena:**
+**Mensaje Principal (90 segundos)**
+- A las futuras científicas: "No permitan que las barreras..."
+- Sobre la ciencia: "La radiactividad es solo el principio..."
+- Sobre la igualdad: "Espero que en su tiempo..."
 
-- Fondo: laboratorio vintage o moderno.  
-- Vestuario: bata de laboratorio o ropa de época.  
-- Accesorios: matraces, libros, notas.  
-- Efecto visual: filtro sepia opcional.
+**Reflexiones y Advertencias (45 segundos)**
+- Peligros de la radiación (lo que ahora sabemos)
+- Importancia de la ética científica
+
+**Cierre (15 segundos)**
+- Esperanzas para el futuro
+- Despedida inspiradora
+
+**Elementos de Producción:**
+
+- **Fondo:** laboratorio vintage o moderno
+- **Vestuario:** época o bata de laboratorio
+- **Props:** elementos de laboratorio, libros
+- **Efectos:** filtro sepia opcional
 
 ---
 
@@ -1213,16 +1218,22 @@ Puntos clave:
 
 ---
 
-**Sistema de Comprensión Lectora Gamificado – v6.2**
+**Sistema de Comprensión Lectora Gamificado – v6.4**
 Basado en los niveles de Daniel Cassany
 © 2025 – Documento de Diseño e Implementación – GAMILIT
 
 ---
 
 **Historial de versiones:**
-- v6.1.1 (2025-11-18): Homologación preliminar con documentación técnica
+- v6.4 (2025-11-23): Ajustes en ejercicios de Módulos 3 y 5
+  - ✅ Ejercicio 3.4 (Podcast): Duración ajustada a 2 minutos
+  - ✅ Ejercicio 5C (Cápsula del Tiempo): Nueva estructura de guión en 4 secciones
+- v6.3 (2025-11-20): Mejoras en Módulo 3
+  - ✅ Instrucciones detalladas "Cómo resolverlo" agregadas
+  - ✅ Mecánicas específicas documentadas
 - v6.2 (2025-11-19): Sincronización completa con implementación DB v2.0
   - ✅ Umbrales XP ajustados a valores realistas (0-499, 500-999, 1k-1.5k, 1.5k-2.2k, 2.2k+)
   - ✅ Bonus ML Coins actualizados (100, 250, 500, 1000)
   - ✅ Multiplicadores XP alineados (1.00x, 1.10x, 1.15x, 1.20x, 1.25x)
   - ⚠️ Multiplicador ML Coins marcado como pendiente (no implementado en DB)
+- v6.1.1 (2025-11-18): Homologación preliminar con documentación técnica
