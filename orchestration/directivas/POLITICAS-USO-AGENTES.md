@@ -1,8 +1,8 @@
 # POLÍTICAS DE USO DE AGENTES Y SUBAGENTES
 
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
-**Versión:** 1.0.0
-**Fecha:** 2025-11-17
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
+**Versión:** 1.1.0
+**Fecha:** 2025-11-23 (actualizada)
 **Estado:** OBLIGATORIO
 
 ---
@@ -10,6 +10,100 @@
 ## 🎯 OBJETIVO
 
 Definir cuándo y cómo usar agentes y subagentes para maximizar eficiencia, calidad y trazabilidad del desarrollo.
+
+---
+
+## 🚨 PRINCIPIO FUNDAMENTAL: ESPECIALIZACIÓN Y DELEGACIÓN
+
+**REGLA DE ORO:**
+Cada agente tiene una responsabilidad específica. **NO implementes fuera de tu especialidad. ANALIZA, DOCUMENTA Y DELEGA.**
+
+### Matriz de Responsabilidades y Delegación
+
+| Agente | SÍ HACE (Implementa) | NO HACE (Delega a) |
+|--------|---------------------|---------------------|
+| **Database-Agent** | Crear DDL, migrations, seeds | Backend entities, Frontend → Backend-Agent/Frontend-Agent |
+| **Backend-Agent** | Crear entities, services, controllers | DDL, Seeds → Database-Agent; UI → Frontend-Agent |
+| **Frontend-Agent** | Crear components, pages, stores | Backend logic → Backend-Agent; DB → Database-Agent |
+| **Requirements-Analyst** | Analizar, documentar requerimientos | **TODO código** → Delega a Database/Backend/Frontend |
+| **Code-Reviewer** | Revisar, sugerir mejoras | **NO implementa correcciones** → Delega a agente responsable |
+| **Architecture-Analyst** | Analizar, validar, documentar (docs/, ADRs, reportes) | **TODO código en apps/** → Delega a Database/Backend/Frontend |
+| **Workspace-Manager** | Organizar archivos, validar estructura | **NO modifica código** → Delega implementaciones |
+| **Bug-Fixer** | Diagnosticar y corregir bugs | (Puede implementar en todas las capas según el bug) |
+| **Feature-Developer** | Coordinar features completos | (Puede usar Database/Backend/Frontend como subagentes) |
+
+### Principio de No Invasión de Responsabilidades
+
+**❌ INCORRECTO:**
+```markdown
+Architecture-Analyst modifica:
+- apps/database/ddl/00-prerequisites.sql
+- apps/backend/src/modules/educational/entities/module.entity.ts
+- apps/frontend/src/components/ModulesSection.tsx
+
+Y ejecuta:
+- psql para aplicar migraciones
+- npm run dev
+- npm run build
+```
+
+**✅ CORRECTO:**
+```markdown
+Architecture-Analyst:
+1. Identifica gaps (GAP-003, GAP-004, GAP-005)
+2. Analiza opciones (OPTION A, OPTION B)
+3. Documenta solución detallada
+4. Actualiza docs/, ADRs, trazas
+
+Luego DELEGA a:
+- Database-Agent: "Implementar GAP-004 según SPEC líneas 50-80"
+- Frontend-Agent: "Implementar GAP-005 según SPEC líneas 120-180"
+- QA-Agent: "Validar implementación según criterios de aceptación"
+```
+
+### Cómo Delegar Correctamente
+
+**Paso 1: Identificar necesidad**
+```markdown
+Gap, bug, feature, etc.
+```
+
+**Paso 2: Documentar QUÉ (no CÓMO)**
+```markdown
+## GAP-XXX: [Descripción]
+
+**Agente Responsable:** [Nombre-Agente]
+**Prioridad:** P0/P1/P2/P3
+**Ubicación archivos:** [rutas exactas]
+
+**QUÉ debe hacerse:**
+- [Especificación clara del resultado esperado]
+- [Criterios de aceptación]
+
+**ESPECIFICACIÓN DETALLADA:**
+[Referencia a documento con detalles técnicos]
+
+**ESTADO:** Documentado, pendiente de implementación
+```
+
+**Paso 3: Actualizar traza con delegación**
+```markdown
+### PRÓXIMAS ACCIONES
+
+#### Delegadas a Database-Agent
+- [ ] GAP-XXX: [Descripción breve] (Ver SPEC líneas X-Y)
+
+#### Delegadas a Frontend-Agent
+- [ ] GAP-XXX: [Descripción breve] (Ver SPEC líneas X-Y)
+```
+
+**Paso 4: NO ejecutar implementación**
+```markdown
+El agente que identificó la necesidad NO ejecuta:
+- Comandos de compilación (npm, docker, psql)
+- Modificaciones de código (excepto su especialidad)
+- Deploys o migrations
+```
 
 ---
 

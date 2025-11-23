@@ -15,7 +15,7 @@ export interface UserModuleData {
   title: string;
   description: string;
   difficulty: 'easy' | 'medium' | 'hard';
-  status: 'in_progress' | 'available' | 'locked';
+  status: 'in_progress' | 'available' | 'locked' | 'backlog';
   progress: number; // 0-100
   totalExercises: number;
   completedExercises: number;

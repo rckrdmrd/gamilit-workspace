@@ -9,7 +9,8 @@ import {
   Target,
   Zap,
   Gift,
-  Trophy
+  Trophy,
+  Construction
 } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
 import { EnhancedCard } from '@shared/components/base/EnhancedCard';
@@ -20,7 +21,7 @@ interface ModuleData {
   title: string;
   description: string;
   difficulty: 'facil' | 'medio' | 'dificil' | 'experto';
-  status: 'locked' | 'available' | 'in_progress' | 'completed';
+  status: 'locked' | 'available' | 'in_progress' | 'completed' | 'backlog';
   progress: number; // 0-100
   totalExercises: number;
   completedExercises: number;
@@ -46,7 +47,7 @@ interface ModuleCardProps {
 }
 
 const ModuleCard: React.FC<ModuleCardProps> = ({ module, index, onModuleClick }) => {
-  const isClickable = module.status !== 'locked';
+  const isClickable = module.status !== 'locked' && module.status !== 'backlog';
 
   // Get unique color scheme based on module ID (consistent across renders)
   const colorScheme = useMemo(() => getColorSchemeById(module.id), [module.id]);
@@ -61,6 +62,8 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, index, onModuleClick })
         return <BookOpen className="w-8 h-8 text-white" />;
       case 'locked':
         return <Lock className="w-8 h-8 text-white" />;
+      case 'backlog':
+        return <Construction className="w-8 h-8 text-white" />;
       default:
         return <BookOpen className="w-8 h-8 text-white" />;
     }
@@ -79,6 +82,20 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, index, onModuleClick })
         progressGradient: 'from-gray-400 to-gray-500',
         buttonGradient: 'from-gray-400 to-gray-500',
         buttonHoverGradient: 'from-gray-500 to-gray-600',
+      };
+    }
+
+    // For backlog modules, use amber/orange (construction theme)
+    if (module.status === 'backlog') {
+      return {
+        border: 'border-amber-300',
+        shadow: 'shadow-amber-100',
+        background: 'bg-amber-50',
+        badge: 'bg-amber-500 text-white',
+        iconGradient: 'from-amber-400 to-orange-500',
+        progressGradient: 'from-amber-400 to-orange-500',
+        buttonGradient: 'from-amber-400 to-orange-500',
+        buttonHoverGradient: 'from-amber-500 to-orange-600',
       };
     }
 
@@ -118,7 +135,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, index, onModuleClick })
 
   const statusStyles = getStatusStyles();
   const difficultyLabel = module.difficulty === 'facil' ? 'FÁCIL' : module.difficulty === 'medio' ? 'MEDIO' : module.difficulty === 'dificil' ? 'DIFÍCIL' : 'EXPERTO';
-  const statusLabel = module.status === 'completed' ? 'Completado ✓' : module.status === 'in_progress' ? 'En Progreso' : module.status === 'available' ? 'Disponible' : 'Bloqueado';
+  const statusLabel = module.status === 'completed' ? 'Completado ✓' : module.status === 'in_progress' ? 'En Progreso' : module.status === 'available' ? 'Disponible' : module.status === 'backlog' ? '🚧 En Construcción' : 'Bloqueado';
 
   return (
     <motion.div
@@ -133,7 +150,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, index, onModuleClick })
         "border-2 transition-all duration-300",
         statusStyles.border,
         statusStyles.shadow,
-        module.status === 'locked' && "opacity-70",
+        (module.status === 'locked' || module.status === 'backlog') && "opacity-90",
         isClickable && "cursor-pointer"
       )}
       onClick={handleClick}
@@ -259,6 +276,20 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, index, onModuleClick })
             >
               <Lock className="w-5 h-5" />
               Bloqueado
+            </div>
+          ) : module.status === 'backlog' ? (
+            <div
+              className={cn(
+                'w-full py-3 rounded-lg font-semibold',
+                'bg-gradient-to-r',
+                statusStyles.buttonGradient,
+                'text-white',
+                'flex items-center justify-center gap-2',
+                'shadow-md cursor-not-allowed'
+              )}
+            >
+              <Construction className="w-5 h-5" />
+              Próximamente Disponible
             </div>
           ) : module.status === 'completed' ? (
             <motion.button

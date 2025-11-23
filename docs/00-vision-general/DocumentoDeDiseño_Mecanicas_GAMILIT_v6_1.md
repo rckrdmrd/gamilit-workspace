@@ -768,8 +768,8 @@ Analizar un evento desde múltiples puntos de vista diferentes.
 
 ## MÓDULO 4: LECTURA DIGITAL Y MULTIMODAL
 
-**Objetivo:** Comprender y analizar textos en formatos digitales.  
-**Fuente base sugerida:** (artículo académico digital)  
+**Objetivo:** Comprender y analizar textos en formatos digitales.
+**Fuente base:** https://digitalcommons.fiu.edu/led/vol1ss9/3
 
 **Rango al completar:** `HALACH UINIC`
 

@@ -30,6 +30,7 @@ import { DifficultyLevel } from '@shared/types/educational.types';
 import { getExercise, saveExerciseProgress, submitExercise, getExerciseHints } from '@/services/api/educationalAPI';
 import { adaptExerciseData } from '@shared/utils/exerciseAdapter';
 import { ExerciseGuide } from '@/features/exercises/components/ExerciseGuide';
+import { UnderConstructionExercise } from '@/features/exercises/components/UnderConstructionExercise';
 
 // ============================================================================
 // TYPES
@@ -208,11 +209,30 @@ export default function ExercisePage() {
           // Continue without hints - not critical (silent fail for optional feature)
         }
 
-        // Load dynamic component
-        const loader = loadMechanic(mappedExercise.type);
-        if (loader) {
-          const module = await loader();
-          setMechanicComponent(() => module.default || module.CrucigramaExercise || module);
+        // GAP-005 Resolution: Check if exercise belongs to backlog modules (4-5)
+        // Backlog exercise types from modules 4-5
+        const backlogExerciseTypes = [
+          // Module 4
+          'verificador_fakenews', 'fake_news', 'quiz_tiktok', 'navegacion_hipertextual',
+          'analisis_memes', 'infografia_interactiva', 'email_formal', 'chat_literario',
+          'ensayo_argumentativo', 'resena_critica',
+          // Module 5
+          'diario_multimedia', 'comic_digital', 'video_carta'
+        ];
+
+        const isBacklogExercise = backlogExerciseTypes.includes(mappedExercise.type.toLowerCase());
+
+        if (isBacklogExercise) {
+          // Set UnderConstructionExercise component for backlog exercises
+          console.log('Exercise in backlog - showing Under Construction component');
+          setMechanicComponent(() => UnderConstructionExercise);
+        } else {
+          // Load dynamic component for active exercises
+          const loader = loadMechanic(mappedExercise.type);
+          if (loader) {
+            const module = await loader();
+            setMechanicComponent(() => module.default || module.CrucigramaExercise || module);
+          }
         }
       } catch (error) {
         console.error('Error loading exercise:', error);

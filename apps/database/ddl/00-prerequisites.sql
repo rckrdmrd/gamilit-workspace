@@ -191,9 +191,16 @@ EXCEPTION WHEN duplicate_object THEN null; END $$;
 -- El ENUM se define en el schema específico con documentación completa (8 niveles CEFR)
 
 -- 📚 Documentación: educational_content.module_status
+-- VERSIÓN: 1.2 (2025-11-23) - Agregado 'backlog' para módulos fuera de alcance de entrega
 -- VERSIÓN: 1.1 (2025-11-08) - Renombrado 'reviewing' a 'under_review'
+-- Estados:
+--   - draft: Módulo en borrador, no publicado
+--   - published: Módulo publicado y disponible para estudiantes
+--   - archived: Módulo archivado, no visible
+--   - under_review: Módulo en revisión pedagógica
+--   - backlog: Módulo diseñado pero fuera de alcance de entrega actual (visible con mensaje "En Construcción")
 DO $$ BEGIN
-    CREATE TYPE educational_content.module_status AS ENUM ('draft', 'published', 'archived', 'under_review');
+    CREATE TYPE educational_content.module_status AS ENUM ('draft', 'published', 'archived', 'under_review', 'backlog');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 📚 Documentación: content_management.content_status

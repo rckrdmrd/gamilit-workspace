@@ -1,12 +1,18 @@
 -- =====================================================
 -- Seed: educational_content.modules (PROD)
 -- Description: Módulos educativos de Marie Curie para producción
--- Environment: PRODUCTION  
+-- Environment: PRODUCTION
 -- Dependencies: None
 -- Order: 01
 -- Created: 2025-11-11
--- Version: 2.0 (reescrito para carga limpia)
+-- Version: 2.1 (módulos 4-5 en backlog)
 -- =====================================================
+--
+-- CAMBIOS v2.1 (2025-11-23):
+-- - Módulos 4 y 5 cambiados a status 'backlog'
+-- - Módulos 4 y 5 marcados como is_published = false
+-- - Actualizados títulos y descripciones de módulos 4-5 según DocumentoDeDiseño v6.4
+-- - GAP-003 RESUELTO: Módulos visibles en UI con mensaje "En Construcción"
 --
 -- CAMBIOS v2.0:
 -- - Convertido de STRING a UUID
@@ -17,6 +23,7 @@
 -- VALIDADO CONTRA:
 -- - DDL: ddl/schemas/educational_content/tables/01-modules.sql
 -- - Template: seeds/dev/educational_content/01-modules.sql
+-- - DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md
 --
 -- =====================================================
 
@@ -93,37 +100,37 @@ INSERT INTO educational_content.modules (
     gamilit.now_mexico(),
     gamilit.now_mexico()
 ),
--- Módulo 4: Lectura Digital
+-- Módulo 4: Lectura Digital (BACKLOG - Fuera de alcance de entrega actual)
 (
     NULL,
-    'Módulo 4: Lectura Digital',
-    'Desarrolla habilidades de lectura en medios digitales con contenido de Marie Curie',
+    'Módulo 4: Lectura Digital y Multimodal',
+    'Desarrolla habilidades de lectura en medios digitales y multimodales con contenido de Marie Curie',
     4,
     'MOD-04-DIGITAL',
     'intermediate',
     120,
-    ARRAY['Navegar contenido hipertextual', 'Evaluar fuentes digitales', 'Sintetizar información multimedia'],
+    ARRAY['Navegar contenido hipertextual', 'Evaluar fuentes digitales', 'Sintetizar información multimedia', 'Analizar memes y contenido visual'],
     175,
     85,
-    'published',
-    true,
+    'backlog',  -- ← Módulo en backlog, visible con mensaje "En Construcción"
+    false,      -- ← No publicado para evitar acceso a ejercicios
     gamilit.now_mexico(),
     gamilit.now_mexico()
 ),
--- Módulo 5: Producción de Textos
+-- Módulo 5: Producción y Expresión Lectora (BACKLOG - Fuera de alcance de entrega actual)
 (
     NULL,
-    'Módulo 5: Producción de Textos',
-    'Crea textos diversos basados en la vida y obra de Marie Curie',
+    'Módulo 5: Producción y Expresión Lectora',
+    'Crea textos diversos y expresiones lectoras basadas en la vida y obra de Marie Curie',
     5,
     'MOD-05-PRODUCCION',
     'advanced',
     120,
-    ARRAY['Producir textos argumentativos', 'Crear contenido multimedia', 'Expresar ideas con claridad'],
+    ARRAY['Producir textos argumentativos', 'Crear contenido multimedia', 'Expresar ideas con claridad', 'Desarrollar presentaciones creativas'],
     250,
     125,
-    'published',
-    true,
+    'backlog',  -- ← Módulo en backlog, visible con mensaje "En Construcción"
+    false,      -- ← No publicado para evitar acceso a ejercicios
     gamilit.now_mexico(),
     gamilit.now_mexico()
 )
