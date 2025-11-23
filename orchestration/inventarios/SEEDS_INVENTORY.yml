@@ -1,0 +1,769 @@
+seeds_inventory:
+  version: 1.0.0
+  fecha: '2025-11-11'
+  metadata:
+    proyecto: GAMILIT - Plataforma de Aprendizaje Gamificada
+    proposito: Inventario completo de seeds (datos iniciales) DEV y PROD
+    ubicacion_base: apps/database/seeds/
+    ultima_migracion: '2025-11-11 (Fase 1 - Seeds DEV→PROD)'
+    modelo_datos: JSONB puro (consistente)
+
+  resumen_ejecutivo:
+    total_seeds_prod: 33
+    total_seeds_dev: 34
+    ejercicios_prod: 27
+    ejercicios_dev: 28
+    estado_prod: production-ready
+    completitud_prod: 100%
+    alineacion_dev_prod: 100%
+
+  produccion:
+    ubicacion: apps/database/seeds/prod/
+    total_archivos: 33
+    estado: production-ready
+    completitud: 100%
+    ultima_actualizacion: '2025-11-11'
+
+    schemas:
+      # ===========================================================================
+      # AUDIT LOGGING
+      # ===========================================================================
+      audit_logging:
+        archivos: 1
+        seeds:
+          - nombre: 01-default-config.sql
+            descripcion: Configuración por defecto de auditoría
+            tablas:
+              - audit_logs (estructura)
+            registros_estimados: 0
+            dependencias: []
+            estado: activo
+
+      # ===========================================================================
+      # AUTH (Base Supabase)
+      # ===========================================================================
+      auth:
+        archivos: 1
+        seeds:
+          - nombre: 01-demo-users.sql
+            descripcion: Usuarios de demostración y testing
+            tablas:
+              - users
+            registros_estimados: 5-10
+            perfiles:
+              - admin@gamilit.com
+              - teacher@gamilit.com
+              - student@gamilit.com
+            dependencias: []
+            estado: activo
+
+      # ===========================================================================
+      # AUTH MANAGEMENT
+      # ===========================================================================
+      auth_management:
+        archivos: 4
+        seeds:
+          - nombre: 01-tenants.sql
+            descripcion: Tenants (organizaciones)
+            tablas:
+              - tenants
+            registros_estimados: 3
+            tenants:
+              - Gamilit Demo (principal)
+              - Colegio Demo
+              - Universidad Demo
+            dependencias: []
+            estado: activo
+
+          - nombre: 02-auth_providers.sql
+            descripcion: Proveedores de autenticación
+            tablas:
+              - auth_providers
+            registros_estimados: 3
+            providers:
+              - email/password
+              - Google OAuth
+              - Microsoft OAuth
+            dependencias: []
+            estado: activo
+
+          - nombre: 03-profiles.sql
+            descripcion: Perfiles básicos de usuarios
+            tablas:
+              - profiles
+            registros_estimados: 5-10
+            dependencias:
+              - auth.users
+              - auth_management.tenants
+            estado: activo
+
+          - nombre: 04-profiles-complete.sql
+            descripcion: Perfiles completos con relaciones
+            tablas:
+              - profiles
+            registros_estimados: 22
+            incluye:
+              - Estudiantes completos
+              - Profesores completos
+              - Administradores
+            alcance: teacher, student, admin SOLO (v2.3.x)
+            nota: NO incluye padres - Portal Padres = Extension EXT-010 (fuera de alcance)
+            dependencias:
+              - auth.users
+              - auth_management.tenants
+            estado: activo
+
+      # ===========================================================================
+      # CONTENT MANAGEMENT
+      # ===========================================================================
+      content_management:
+        archivos: 1
+        seeds:
+          - nombre: 01-default-templates.sql
+            descripcion: Templates de contenido predeterminados
+            tablas:
+              - content_templates
+            registros_estimados: 5-10
+            templates:
+              - Biografía Marie Curie
+              - Historia científica
+              - Experimentos
+            dependencias: []
+            estado: activo
+
+      # ===========================================================================
+      # EDUCATIONAL CONTENT ⭐ PRINCIPAL
+      # ===========================================================================
+      educational_content:
+        archivos: 8
+        total_ejercicios: 27
+        modelo_datos: JSONB puro
+        descripcion: Seeds completos de módulos y ejercicios (production-ready)
+
+        seeds:
+          - nombre: 01-modules.sql
+            descripcion: 5 módulos educativos principales
+            tablas:
+              - modules
+            registros: 5
+            modulos:
+              - MOD-01-LITERAL: Comprensión Literal
+              - MOD-02-INFERENCIAL: Comprensión Inferencial
+              - MOD-03-CRITICA: Comprensión Crítica
+              - MOD-04-DIGITAL: Textos Digitales
+              - MOD-05-CREATIVO: Producción Creativa
+            dependencias: []
+            estado: activo
+
+          - nombre: 02-exercises-module1.sql
+            descripcion: Módulo 1 - Comprensión Literal
+            tablas:
+              - exercises
+            registros: 5
+            lineas_codigo: 596
+            ejercicios:
+              - 1.1: Crucigrama Científico
+              - 1.2: Línea de Tiempo
+              - 1.3: Sopa de Letras
+              - 1.4: Mapa Conceptual
+              - 1.5: Emparejamiento
+            mecanicas:
+              - crucigrama
+              - linea_tiempo
+              - sopa_letras
+              - mapa_conceptual
+              - emparejamiento
+            dependencias:
+              - educational_content.modules (MOD-01-LITERAL)
+            estado: activo
+            modelo: JSONB puro (config, content, solution)
+
+          - nombre: 03-exercises-module2.sql
+            descripcion: Módulo 2 - Comprensión Inferencial
+            tablas:
+              - exercises
+            registros: 5
+            lineas_codigo: 587
+            ejercicios:
+              - 2.1: Detective Textual
+              - 2.2: Construcción de Hipótesis
+              - 2.3: Predicción Narrativa
+              - 2.4: Puzzle de Contexto
+              - 2.5: Rueda de Inferencias
+            mecanicas:
+              - detective_textual
+              - construccion_hipotesis
+              - prediccion_narrativa
+              - puzzle_contexto
+              - rueda_inferencias
+            dependencias:
+              - educational_content.modules (MOD-02-INFERENCIAL)
+            estado: activo
+            modelo: JSONB puro (config, content, solution)
+
+          - nombre: 04-exercises-module3.sql
+            descripcion: Módulo 3 - Comprensión Crítica (Alineado con Doc v6.3)
+            tablas:
+              - exercises
+            registros: 5
+            lineas_codigo: 608
+            ultima_actualizacion: '2025-11-21'
+            ejercicios:
+              - 3.1: Tribunal de Opiniones (order_index 1) - Clasificar afirmaciones HECHO/OPINIÓN/INTERPRETACIÓN
+              - 3.2: Debate Digital (order_index 2) - ¿La fama afectó negativamente a Marie Curie?
+              - 3.3: Análisis de Fuentes (order_index 3) - Método CRAAP
+              - 3.4: Podcast Argumentativo (order_index 4) - Impacto en equidad de género
+              - 3.5: Matriz de Perspectivas (order_index 5) - 6 perspectivas incluyendo Marie y Pierre Curie
+            mecanicas:
+              - tribunal_opiniones
+              - debate_digital
+              - analisis_fuentes
+              - podcast_argumentativo
+              - matriz_perspectivas
+            dependencias:
+              - educational_content.modules (MOD-03-CRITICA)
+            estado: activo
+            modelo: JSONB puro (config, content, solution)
+            cambios_v6_3:
+              - tribunal_opiniones: formato statements con 8 afirmaciones
+              - debate_digital: tema actualizado sobre fama post-Nobel
+              - matriz_perspectivas: perspectivas 5-6 ahora son Marie y Pierre Curie
+
+          - nombre: 05-exercises-module4.sql
+            descripcion: Módulo 4 - Textos Digitales
+            tablas:
+              - exercises
+            registros: 9
+            lineas_codigo: 574
+            ejercicios:
+              - 4.1: Verificador de Fake News
+              - 4.2: Quiz TikTok
+              - 4.3: Navegación Hipertextual
+              - 4.4: Análisis de Memes
+              - 4.5: Infografía Interactiva
+              - 4.6: Email Formal
+              - 4.7: Chat Literario
+              - 4.8: Ensayo Argumentativo
+              - 4.9: Reseña Crítica
+            mecanicas:
+              - verificador_fake_news
+              - quiz_tiktok
+              - navegacion_hipertextual
+              - analisis_memes
+              - infografia_interactiva
+              - call_to_action
+              - debate_digital
+              - podcast_argumentativo
+              - analisis_fuentes
+            dependencias:
+              - educational_content.modules (MOD-04-DIGITAL)
+            estado: activo
+            modelo: JSONB puro (config, content, solution)
+
+          - nombre: 06-exercises-module5.sql
+            descripcion: Módulo 5 - Producción Creativa (EXPANDIDO Fase 1)
+            tablas:
+              - exercises
+            registros: 3
+            lineas_codigo: 835
+            version: 2.0.0
+            fecha_expansion: '2025-11-11'
+            incremento: 861%
+            ejercicios:
+              - 5.1: Diario Multimedia
+              - 5.2: Cómic Digital
+              - 5.3: Video-Carta
+            mecanicas:
+              - diario_multimedia
+              - comic_digital
+              - video_carta
+            estructura_jsonb_completa:
+              diario_multimedia:
+                - 3 templates (clásico, científico, carta)
+                - 5 prompts detallados con contexto histórico
+                - Rúbricas de creatividad (4 criterios)
+                - Ejemplo de entrada (156 palabras)
+              comic_digital:
+                - 4 panel layouts
+                - 5 estilos visuales
+                - 6 story beats con descripciones visuales
+                - Guía de emociones y técnicas
+              video_carta:
+                - 6 temas completos
+                - Script de ejemplo (487 palabras)
+                - 8 delivery tips
+                - Estructura guiada
+            dependencias:
+              - educational_content.modules (MOD-05-CREATIVO)
+            estado: activo
+            modelo: JSONB puro (config, content, solution)
+
+          - nombre: 07-assessment-rubrics.sql
+            descripcion: Rúbricas de evaluación para ejercicios
+            tablas:
+              - assessment_rubrics
+            registros: 20-30
+            cobertura:
+              - Rúbricas por mecánica
+              - Criterios de evaluación
+              - Escalas de puntuación
+            dependencias:
+              - educational_content.exercises
+            estado: activo
+
+          - nombre: 08-difficulty_criteria.sql
+            descripcion: Criterios de dificultad y progresión CEFR
+            tablas:
+              - difficulty_criteria
+            registros: 15-20
+            incluye:
+              - Niveles CEFR (A1, A2, B1, B2, C1, C2)
+              - Criterios por nivel
+              - Progresión de dificultad
+            dependencias: []
+            estado: activo
+
+        archivos_deprecated:
+          - nombre: _deprecated/02-exercises-demo.sql
+            razon: Migrado a 02-06 (2025-11-11)
+            destino: 02-exercises-module1.sql y otros
+          - nombre: _deprecated/03-exercises-complete.sql
+            razon: Migrado a 02-06 (2025-11-11)
+            destino: 02-exercises-module1.sql y otros
+          - nombre: _deprecated/04-exercise-mechanics.sql.deprecated
+            razon: Tabla no existe, config integrado en exercises
+          - nombre: _deprecated/05-exercise-options.sql.deprecated
+            razon: Tipos actuales no usan exercise_options
+          - nombre: _deprecated/06-exercise-answers.sql
+            razon: Modelo dual eliminado, JSONB puro (2025-11-11)
+
+      # ===========================================================================
+      # GAMIFICATION SYSTEM
+      # ===========================================================================
+      gamification_system:
+        archivos: 9
+        seeds:
+          - nombre: 01-achievement_categories.sql
+            descripcion: Categorías de logros
+            tablas:
+              - achievement_categories
+            registros: 5-8
+            categorias:
+              - Explorador
+              - Maestro
+              - Colaborador
+              - Innovador
+            dependencias: []
+            estado: activo
+
+          - nombre: 02-leaderboard_metadata.sql
+            descripcion: Metadatos de leaderboards
+            tablas:
+              - leaderboard_metadata
+            registros: 4
+            leaderboards:
+              - Global XP
+              - ML Coins
+              - Streaks
+              - Por mecánica
+            dependencias: []
+            estado: activo
+
+          - nombre: 03-maya_ranks.sql
+            descripcion: Rangos maya del sistema
+            tablas:
+              - maya_ranks
+            registros: 7
+            rangos:
+              - Novato
+              - Aprendiz
+              - Experto
+              - Maestro
+              - Sabio
+              - Guardián
+              - Leyenda
+            dependencias: []
+            estado: activo
+
+          - nombre: 04-achievements.sql
+            descripcion: Logros del sistema (20 logros demo)
+            tablas:
+              - achievements
+            registros: 20
+            tipos:
+              - Por progreso
+              - Por maestría
+              - Por colaboración
+              - Por constancia
+            dependencias:
+              - gamification_system.achievement_categories
+            estado: activo
+
+          - nombre: 05-user_stats.sql
+            descripcion: Estadísticas iniciales de usuarios
+            tablas:
+              - user_stats
+            registros: 5-10
+            dependencias:
+              - auth.users
+            estado: activo
+
+          - nombre: 06-user_ranks.sql
+            descripcion: Rangos asignados a usuarios
+            tablas:
+              - user_ranks
+            registros: 5-10
+            dependencias:
+              - gamification_system.user_stats
+              - gamification_system.maya_ranks
+            estado: activo
+
+          - nombre: 07-ml_coins_transactions.sql
+            descripcion: Transacciones iniciales de ML coins
+            tablas:
+              - ml_coins_transactions
+            registros: 10-20
+            dependencias:
+              - gamification_system.user_stats
+            estado: activo
+
+          - nombre: 08-user_achievements.sql
+            descripcion: Logros desbloqueados por usuarios
+            tablas:
+              - user_achievements
+            registros: 5-15
+            dependencias:
+              - gamification_system.achievements
+              - auth.users
+            estado: activo
+
+          - nombre: 09-comodines_inventory.sql
+            descripcion: Inventario de comodines
+            tablas:
+              - comodines_inventory
+            registros: 5-10
+            comodines:
+              - Pistas
+              - Visión Lectora
+              - Segunda Oportunidad
+            dependencias:
+              - auth.users
+            estado: activo
+
+      # ===========================================================================
+      # LTI INTEGRATION
+      # ===========================================================================
+      lti_integration:
+        archivos: 1
+        seeds:
+          - nombre: 01-lti_consumers.sql
+            descripcion: Consumidores LTI (LMS externos)
+            tablas:
+              - lti_consumers
+            registros: 2-3
+            consumers:
+              - Moodle Demo
+              - Canvas Demo
+            dependencias: []
+            estado: activo
+
+      # ===========================================================================
+      # PROGRESS TRACKING
+      # ===========================================================================
+      progress_tracking:
+        archivos: 1
+        seeds:
+          - nombre: 01-module_progress.sql
+            descripcion: Progreso inicial de módulos
+            tablas:
+              - module_progress
+            registros: 5-10
+            dependencias:
+              - educational_content.modules
+              - auth.users
+            estado: activo
+
+      # ===========================================================================
+      # SOCIAL FEATURES
+      # ===========================================================================
+      social_features:
+        archivos: 3
+        seeds:
+          - nombre: 01-schools.sql
+            descripcion: Escuelas de demostración
+            tablas:
+              - schools
+            registros: 2-3
+            escuelas:
+              - Colegio Demo
+              - Universidad Demo
+            dependencias: []
+            estado: activo
+
+          - nombre: 02-classrooms.sql
+            descripcion: Aulas de demostración
+            tablas:
+              - classrooms
+            registros: 3-5
+            dependencias:
+              - social_features.schools
+            estado: activo
+
+          - nombre: 03-classroom-members.sql
+            descripcion: Miembros de aulas
+            tablas:
+              - classroom_members
+            registros: 10-20
+            dependencias:
+              - social_features.classrooms
+              - auth.users
+            estado: activo
+
+      # ===========================================================================
+      # SYSTEM CONFIGURATION
+      # ===========================================================================
+      system_configuration:
+        archivos: 4
+        seeds:
+          - nombre: 01-system_settings.sql
+            descripcion: Configuración del sistema
+            tablas:
+              - system_settings
+            registros: 10-15
+            configuraciones:
+              - Límites de intentos
+              - Timeouts
+              - Notificaciones
+            dependencias: []
+            estado: activo
+
+          - nombre: 02-feature_flags.sql
+            descripcion: Feature flags del sistema
+            tablas:
+              - feature_flags
+            registros: 10-20
+            features:
+              - Gamificación
+              - Misiones
+              - Colaboración
+            dependencias: []
+            estado: activo
+
+          - nombre: 03-notification_settings_global.sql
+            descripcion: Configuración global de notificaciones
+            tablas:
+              - notification_settings_global
+            registros: 5-10
+            dependencias: []
+            estado: activo
+
+          - nombre: 04-rate_limits.sql
+            descripcion: Límites de tasa (rate limiting)
+            tablas:
+              - rate_limits
+            registros: 5-10
+            limites:
+              - API requests
+              - Intentos de login
+              - Submissions
+            dependencias: []
+            estado: activo
+
+  # =============================================================================
+  # DESARROLLO (DEV SEEDS)
+  # =============================================================================
+  desarrollo:
+    ubicacion: apps/database/seeds/dev/
+    total_archivos: 34
+    total_ejercicios: 28
+    completitud: 100%
+    alineacion_con_prod: 100%
+    nota: Seeds DEV alineados completamente con PROD tras migración Fase 1
+
+    diferencias_con_prod:
+      adicionales_dev:
+        - Más usuarios de testing
+        - Datos de auditoría de ejemplo
+        - Intentos de ejercicios de prueba
+        - Métricas de sistema de ejemplo
+      cobertura:
+        ejercicios_dev: 28
+        ejercicios_prod: 27
+        diferencia: +1 (ejercicio extra de testing en DEV)
+
+    schemas:
+      audit_logging:
+        archivos: 2
+        adicional_vs_prod:
+          - 01-audit-logs.sql (logs de ejemplo)
+          - 02-system-metrics.sql (métricas de prueba)
+
+      auth:
+        archivos: 2
+        adicional_vs_prod:
+          - 02-test-users.sql (usuarios adicionales de testing)
+
+      auth_management:
+        archivos: 7
+        adicional_vs_prod:
+          - 04-user_roles.sql
+          - 05-user_preferences.sql
+          - 06-auth_attempts.sql
+          - 07-security_events.sql
+
+      content_management:
+        archivos: 3
+        adicional_vs_prod:
+          - 02-media-files.sql
+          - 03-tags.sql
+
+      educational_content:
+        archivos: 7
+        nota: Idénticos a PROD (01-06) más rúbricas
+        seeds:
+          - 01-modules.sql
+          - 02-exercises-module1.sql
+          - 03-exercises-module2.sql
+          - 04-exercises-module3.sql
+          - 05-exercises-module4.sql
+          - 06-exercises-module5.sql (835 líneas, expandido Fase 1)
+          - 07-assessment-rubrics.sql
+
+      gamification_system:
+        archivos: 5
+        reducido_vs_prod: Menos seeds inicializados (solo estructura)
+
+      progress_tracking:
+        archivos: 2
+        adicional_vs_prod:
+          - 02-exercise-attempts.sql (intentos de ejemplo)
+
+      social_features:
+        archivos: 4
+        adicional_vs_prod:
+          - 04-teams.sql (equipos de ejemplo)
+
+      system_configuration:
+        archivos: 2
+        reducido_vs_prod: Configuración mínima de desarrollo
+
+  # =============================================================================
+  # ESTADÍSTICAS Y MÉTRICAS
+  # =============================================================================
+  metricas:
+    cobertura_ejercicios:
+      total_mecanicas_definidas: 27
+      mecanicas_con_seeds_prod: 23
+      porcentaje_cobertura: 85%
+      mecanicas_faltantes:
+        - Algunas mecánicas avanzadas aún sin seeds
+
+    modelo_datos:
+      estrategia: JSONB puro
+      ventajas:
+        - Flexibilidad para 27+ mecánicas
+        - Sin necesidad de JOINs complejos
+        - Fácil extensión
+        - Frontend consume directamente
+        - Backend mapea a entities
+      decisiones_arquitectonicas:
+        - Eliminación modelo dual (2025-11-11)
+        - Consolidación en JSONB
+        - Tablas legacy deprecated
+
+    calidad_seeds:
+      prod_completitud: 100%
+      prod_production_ready: true
+      dev_completitud: 100%
+      alineacion_dev_prod: 100%
+      estructura_jsonb_completa: true
+      validacion: pendiente (Fase 5)
+
+    mantenimiento:
+      ultima_migracion: '2025-11-11 (Fase 1)'
+      proxima_validacion: '2025-11-11 (Fase 5)'
+      esquema_versionado: true
+      deprecacion_controlada: true
+
+  # =============================================================================
+  # DEPENDENCIAS ENTRE SEEDS
+  # =============================================================================
+  grafo_dependencias:
+    orden_carga_produccion:
+      fase_1_sin_dependencias:
+        - system_configuration/*
+        - audit_logging/*
+      fase_2_auth:
+        - auth/01-demo-users.sql
+        - auth_management/01-tenants.sql
+        - auth_management/02-auth_providers.sql
+      fase_3_perfiles:
+        - auth_management/04-profiles-complete.sql
+      fase_4_contenido:
+        - educational_content/01-modules.sql
+        - educational_content/02-exercises-module1.sql
+        - educational_content/03-exercises-module2.sql
+        - educational_content/04-exercises-module3.sql
+        - educational_content/05-exercises-module4.sql
+        - educational_content/06-exercises-module5.sql
+        - educational_content/07-assessment-rubrics.sql
+        - educational_content/08-difficulty_criteria.sql
+      fase_5_gamificacion:
+        - gamification_system/01-achievement_categories.sql
+        - gamification_system/02-leaderboard_metadata.sql
+        - gamification_system/03-maya_ranks.sql
+        - gamification_system/04-achievements.sql
+        - gamification_system/05-user_stats.sql
+        - gamification_system/06-user_ranks.sql
+        - gamification_system/07-ml_coins_transactions.sql
+        - gamification_system/08-user_achievements.sql
+        - gamification_system/09-comodines_inventory.sql
+      fase_6_social:
+        - social_features/01-schools.sql
+        - social_features/02-classrooms.sql
+        - social_features/03-classroom-members.sql
+      fase_7_otros:
+        - content_management/01-default-templates.sql
+        - lti_integration/01-lti_consumers.sql
+        - progress_tracking/01-module_progress.sql
+
+  # =============================================================================
+  # CHANGELOG
+  # =============================================================================
+  changelog:
+    - fecha: '2025-11-21'
+      version: 2.1.0
+      fase: Alineación Módulo 3 con Doc v6.3
+      cambios:
+        - Tribunal de Opiniones (3.1) - PROD actualizado a formato statements
+        - Debate Digital (3.2) - Tema actualizado sobre fama de Marie Curie
+        - Matriz de Perspectivas (3.5) - Perspectivas 5-6 actualizadas (Marie y Pierre Curie)
+      impacto: Módulo 3 100% alineado con DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md
+      referencia: DB-127
+
+    - fecha: '2025-11-11'
+      version: 2.0.0
+      fase: Fase 1 - Correcciones P0
+      cambios:
+        - Module 5 expandido (97 → 835 líneas, +861%)
+        - Migración completa seeds DEV → PROD (27 ejercicios)
+        - Eliminación modelo dual (JSONB puro)
+        - Creación 02-06-exercises-module[1-5].sql
+        - Deprecación 02/03-exercises-{demo,complete}.sql
+        - Deprecación 06-exercise-answers.sql
+        - Actualización create-database.sh
+      impacto: Seeds PROD 100% production-ready
+
+    - fecha: '2025-11-08'
+      version: 1.5.0
+      cambios:
+        - Corrección seeds 03-exercises-complete v3.0
+        - Corrección 06-exercise-answers v2.0
+        - Deprecación 04/05 (mechanics/options)
+
+    - fecha: '2025-11-07'
+      version: 1.0.0
+      cambios:
+        - Estructura inicial de seeds
+        - Seeds básicos de módulos
+        - Seeds iniciales de ejercicios

@@ -190,8 +190,13 @@ temp/
 .claude/
 
 # === ORCHESTRATION ===
-# Archivos generados por agentes/subagentes (análisis, reportes, planes)
-orchestration/
+# IMPORTANTE: orchestration/ DEBE estar en el repo para Claude Code cloud
+# Contiene: prompts, directivas, trazas, inventarios, templates
+# Solo ignorar subcarpetas temporales específicas y archivos comprimidos
+orchestration/.archive/
+orchestration/.tmp/
+orchestration/**/*.tmp
+orchestration/**/*.cache
 
 # === MIGRATION (temporal) ===
 # Durante migración, mantener docs de análisis
@@ -221,10 +226,24 @@ newrelic_agent.log
 .monitors/
 
 # === MISC ===
-# Backups
+# Backups - Archivos
 *.backup
 *.bak
 *.old
+
+# Backups - Carpetas
+*_old/
+*_bckp/
+*_bkp/
+*_backup/
+*.old/
+*.bak/
+*.backup/
+
+# Backups específicos (carpetas identificadas en workspace)
+orchestration_old/
+orchestration_bckp/
+docs_bkp/
 
 # Compressed files (si no son assets del proyecto)
 *.zip

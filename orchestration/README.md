@@ -2,7 +2,7 @@
 
 **Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Versión:** 1.0.0
-**Fecha:** 2025-11-17
+**Fecha:** 2025-11-23
 
 ---
 
@@ -21,13 +21,17 @@ orchestration/
 ├── README.md                          # Este archivo
 │
 ├── prompts/                           # Prompts para agentes
-│   ├── PROMPT-AGENTES-PRINCIPALES.md  # Database, Backend, Frontend
-│   ├── PROMPT-SUBAGENTES.md           # Guía para subagentes
-│   ├── PROMPT-REQUIREMENTS-ANALYST.md # Análisis de requerimientos
-│   ├── PROMPT-CODE-REVIEWER.md        # Revisión de código
-│   ├── PROMPT-BUG-FIXER.md            # Corrección de bugs
-│   ├── PROMPT-FEATURE-DEVELOPER.md    # Desarrollo de features
-│   └── PROMPT-POLICY-AUDITOR.md       # Auditoría de políticas
+│   ├── PROMPT-DATABASE-AGENT.md       # Database-Agent
+│   ├── PROMPT-BACKEND-AGENT.md        # Backend-Agent
+│   ├── PROMPT-FRONTEND-AGENT.md       # Frontend-Agent
+│   ├── PROMPT-REQUIREMENTS-ANALYST.md # Requirements-Analyst
+│   ├── PROMPT-BUG-FIXER.md            # Bug-Fixer
+│   ├── PROMPT-CODE-REVIEWER.md        # Code-Reviewer
+│   ├── PROMPT-FEATURE-DEVELOPER.md    # Feature-Developer
+│   ├── PROMPT-POLICY-AUDITOR.md       # Policy-Auditor
+│   ├── PROMPT-ARCHITECTURE-ANALYST.md # Architecture-Analyst
+│   ├── PROMPT-WORKSPACE-MANAGER.md    # Workspace-Manager
+│   └── PROMPT-SUBAGENTES.md           # Subagentes delegados
 │
 ├── directivas/                        # Políticas obligatorias
 │   ├── DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md
@@ -43,7 +47,9 @@ orchestration/
 │   ├── TRAZA-BUGS.md                  # Bugs reportados/resueltos
 │   ├── TRAZA-TAREAS-DATABASE.md       # Historial Database
 │   ├── TRAZA-TAREAS-BACKEND.md        # Historial Backend
-│   └── TRAZA-TAREAS-FRONTEND.md       # Historial Frontend
+│   ├── TRAZA-TAREAS-FRONTEND.md       # Historial Frontend
+│   ├── TRAZA-ANALISIS-ARQUITECTURA.md # Análisis arquitectónicos y referencias
+│   └── TRAZA-WORKSPACE-MANAGEMENT.md  # Gestión del workspace
 │
 ├── inventarios/                       # Inventarios de objetos
 │   ├── MASTER_INVENTORY.yml           # Inventario maestro con relaciones
@@ -79,7 +85,9 @@ orchestration/
 │   ├── code-reviewer/                 # Code-Reviewer
 │   ├── bug-fixer/                     # Bug-Fixer
 │   ├── feature-developer/             # Feature-Developer
-│   └── policy-auditor/                # Policy-Auditor
+│   ├── policy-auditor/                # Policy-Auditor
+│   ├── architecture-analyst/          # Architecture-Analyst
+│   └── workspace-manager/             # Workspace-Manager
 │
 └── templates/                         # Templates de documentación
     ├── TEMPLATE-ANALISIS.md
@@ -212,16 +220,22 @@ vim orchestration/reportes/REPORTE-{TEMA}-{FECHA}.md
 
 ### Por Tipo de Agente
 
-**Agentes Principales:**
-- [PROMPT-AGENTES-PRINCIPALES.md](prompts/PROMPT-AGENTES-PRINCIPALES.md)
-- [PROMPT-SUBAGENTES.md](prompts/PROMPT-SUBAGENTES.md)
+**Agentes Principales (Database, Backend, Frontend):**
+- [PROMPT-DATABASE-AGENT.md](prompts/PROMPT-DATABASE-AGENT.md) - PostgreSQL, DDL, seeds, migrations
+- [PROMPT-BACKEND-AGENT.md](prompts/PROMPT-BACKEND-AGENT.md) - NestJS, TypeORM, API REST
+- [PROMPT-FRONTEND-AGENT.md](prompts/PROMPT-FRONTEND-AGENT.md) - React, Zustand, interfaces
 
 **Agentes Especializados:**
-- [PROMPT-REQUIREMENTS-ANALYST.md](prompts/PROMPT-REQUIREMENTS-ANALYST.md)
-- [PROMPT-CODE-REVIEWER.md](prompts/PROMPT-CODE-REVIEWER.md)
-- [PROMPT-BUG-FIXER.md](prompts/PROMPT-BUG-FIXER.md)
-- [PROMPT-FEATURE-DEVELOPER.md](prompts/PROMPT-FEATURE-DEVELOPER.md)
-- [PROMPT-POLICY-AUDITOR.md](prompts/PROMPT-POLICY-AUDITOR.md)
+- [PROMPT-REQUIREMENTS-ANALYST.md](prompts/PROMPT-REQUIREMENTS-ANALYST.md) - Análisis de requerimientos
+- [PROMPT-BUG-FIXER.md](prompts/PROMPT-BUG-FIXER.md) - Diagnóstico y corrección de bugs
+- [PROMPT-CODE-REVIEWER.md](prompts/PROMPT-CODE-REVIEWER.md) - Revisión de código y calidad
+- [PROMPT-FEATURE-DEVELOPER.md](prompts/PROMPT-FEATURE-DEVELOPER.md) - Features end-to-end (DB+BE+FE)
+- [PROMPT-POLICY-AUDITOR.md](prompts/PROMPT-POLICY-AUDITOR.md) - Auditoría de cumplimiento
+- [PROMPT-ARCHITECTURE-ANALYST.md](prompts/PROMPT-ARCHITECTURE-ANALYST.md) - Análisis arquitectónico y referencias
+- [PROMPT-WORKSPACE-MANAGER.md](prompts/PROMPT-WORKSPACE-MANAGER.md) - Gobernanza y limpieza del workspace
+
+**Subagentes:**
+- [PROMPT-SUBAGENTES.md](prompts/PROMPT-SUBAGENTES.md) - Tareas delegadas por agentes principales
 
 ---
 
@@ -411,12 +425,12 @@ mv orchestration/reportes/REPORTE-*-2024-*.md orchestration/reportes/archive/
 ## 📖 REFERENCIAS
 
 ### Proyecto Base
-- Sistema GAMILIT: `/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/orchestration`
+- Sistema Inmobiliaria (referencia): `/home/isem/workspace/worskpace-inmobiliaria/orchestration`
 
 ### Documentación del Proyecto
-- MVP Plan: `docs/00-overview/MVP-APP.md`
-- ADRs: `docs/adr/`
-- Análisis de mejoras: `docs/orchestration/ANALISIS-MEJORAS-SISTEMA-ORQUESTACION.md`
+- MVP Plan: `docs/README.md`
+- Módulos: `docs/modulos/`
+- Análisis de reorganización: `ANALISIS-REORGANIZACION-ORCHESTRATION.md`
 
 ---
 
@@ -434,6 +448,7 @@ Para nuevos usuarios del sistema:
 ---
 
 **Versión:** 1.0.0
-**Última actualización:** 2025-11-17
+**Última actualización:** 2025-11-23
 **Mantenido por:** Tech Lead / AI Agents
 **Revisión:** Mensual
+**Reorganización:** 2025-11-23 (estructura mejorada basada en proyecto inmobiliaria)

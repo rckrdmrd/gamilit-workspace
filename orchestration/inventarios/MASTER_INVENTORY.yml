@@ -1,0 +1,81 @@
+# INVENTARIO MAESTRO - GAMILIT
+
+version: "1.0.0"
+proyecto: "GAMILIT - Sistema de Gamificación Educativa"
+fecha_actualizacion: "2025-11-23"
+
+# =============================================================================
+# DATABASE OBJECTS
+# =============================================================================
+
+database:
+  schemas: []
+  tables: []
+  functions: []
+  triggers: []
+  views: []
+  policies: []
+
+# =============================================================================
+# BACKEND MODULES
+# =============================================================================
+
+backend:
+  modules: []
+  entities: []
+  services: []
+  controllers: []
+  dto: []
+  guards: []
+  decorators: []
+
+# =============================================================================
+# FRONTEND COMPONENTS
+# =============================================================================
+
+frontend:
+  pages: []
+  components: []
+  stores: []
+  services: []
+  hooks: []
+  utils: []
+  types: []
+
+# =============================================================================
+# DEPENDENCY GRAPH
+# =============================================================================
+
+dependencies:
+  # Ejemplo:
+  # - source: "backend/users"
+  #   depends_on:
+  #     - "database/auth_management/users"
+  #     - "backend/auth"
+
+# =============================================================================
+# TEST COVERAGE
+# =============================================================================
+
+test_coverage:
+  database:
+    total: 0
+    tested: 0
+    percentage: 0
+  backend:
+    total: 0
+    tested: 0
+    percentage: 0
+  frontend:
+    total: 0
+    tested: 0
+    percentage: 0
+
+# =============================================================================
+# NOTES
+# =============================================================================
+
+notas:
+  - "Inventario inicializado el 2025-11-23"
+  - "Actualizar después de cada tarea de agente"
+  - "Mantener sincronizado con la realidad del código"

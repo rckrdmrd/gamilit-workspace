@@ -1,0 +1,267 @@
+# DEPENDENCY GRAPH - GAMILIT
+# Grafo de dependencias entre módulos, schemas y componentes
+# Versión: 1.0.0
+# Fecha: 2025-11-23
+# Fuente: Migrado desde orchestration_old/
+
+version: "1.0.0"
+proyecto: "GAMILIT - Sistema de Gamificación Educativa"
+fecha_actualizacion: "2025-11-23"
+descripcion: "Grafo de dependencias entre capas (Database → Backend → Frontend)"
+
+# ========================================
+# SCHEMAS DE DATABASE (Base de la pirámide)
+# ========================================
+
+database_schemas:
+  auth_management:
+    descripcion: "Gestión de autenticación y perfiles de usuario"
+    dependencias: []
+    usado_por:
+      - backend: ["auth", "users", "profiles"]
+      - frontend: ["AuthContext", "useAuth"]
+
+  content_management:
+    descripcion: "Gestión de contenido pedagógico"
+    dependencias: ["auth_management"]
+    usado_por:
+      - backend: ["content", "exercises", "lessons"]
+      - frontend: ["ContentPages", "ExercisePage"]
+
+  gamification_system:
+    descripcion: "Sistema de gamificación (puntos, logros, recompensas)"
+    dependencias: ["auth_management", "content_management"]
+    usado_por:
+      - backend: ["gamification", "rewards", "achievements"]
+      - frontend: ["GamifiedHeader", "RewardsPage", "LeaderboardPage"]
+
+  classroom_system:
+    descripcion: "Gestión de aulas y grupos"
+    dependencias: ["auth_management"]
+    usado_por:
+      - backend: ["classrooms", "assignments"]
+      - frontend: ["ClassroomPages", "TeacherPortal"]
+
+  analytics_system:
+    descripcion: "Métricas y análisis de uso"
+    dependencias: ["auth_management", "content_management", "gamification_system"]
+    usado_por:
+      - backend: ["analytics"]
+      - frontend: ["AnalyticsPage", "DashboardPage"]
+
+  notification_system:
+    descripcion: "Sistema de notificaciones"
+    dependencias: ["auth_management"]
+    usado_por:
+      - backend: ["notifications"]
+      - frontend: ["NotificationsComponent"]
+
+  system_config:
+    descripcion: "Configuración del sistema"
+    dependencias: []
+    usado_por:
+      - backend: ["config"]
+      - frontend: ["SettingsPage"]
+
+# ========================================
+# MÓDULOS DE BACKEND (Capa intermedia)
+# ========================================
+
+backend_modules:
+  auth:
+    descripcion: "Autenticación y autorización"
+    dependencias_db: ["auth_management"]
+    dependencias_backend: []
+    expone_endpoints:
+      - "POST /auth/login"
+      - "POST /auth/register"
+      - "POST /auth/logout"
+      - "GET /auth/me"
+    usado_por_frontend:
+      - "AuthContext"
+      - "useAuth hook"
+      - "LoginPage"
+      - "RegisterPage"
+
+  users:
+    descripcion: "Gestión de usuarios"
+    dependencias_db: ["auth_management"]
+    dependencias_backend: ["auth"]
+    expone_endpoints:
+      - "GET /users"
+      - "GET /users/:id"
+      - "PATCH /users/:id"
+      - "DELETE /users/:id"
+    usado_por_frontend:
+      - "UsersPage (admin)"
+      - "ProfilePage"
+
+  profiles:
+    descripcion: "Perfiles de usuario"
+    dependencias_db: ["auth_management"]
+    dependencias_backend: ["auth", "users"]
+    expone_endpoints:
+      - "GET /profiles/:userId"
+      - "PATCH /profiles/:userId"
+    usado_por_frontend:
+      - "ProfilePage"
+      - "EnhancedProfilePage"
+
+  content:
+    descripcion: "Gestión de contenido"
+    dependencias_db: ["content_management", "auth_management"]
+    dependencias_backend: ["auth"]
+    expone_endpoints:
+      - "GET /content"
+      - "POST /content"
+      - "PATCH /content/:id"
+      - "DELETE /content/:id"
+    usado_por_frontend:
+      - "ContentManagementPage"
+      - "TeacherPortal"
+
+  exercises:
+    descripcion: "Gestión de ejercicios"
+    dependencias_db: ["content_management"]
+    dependencias_backend: ["auth", "content"]
+    expone_endpoints:
+      - "GET /exercises"
+      - "GET /exercises/:id"
+      - "POST /exercises/:id/submit"  # ⚠️ BLOQUEANTE
+    usado_por_frontend:
+      - "ExercisePage"
+      - "ExercisesList"
+
+  gamification:
+    descripcion: "Sistema de gamificación"
+    dependencias_db: ["gamification_system", "auth_management"]
+    dependencias_backend: ["auth", "exercises"]
+    expone_endpoints:
+      - "GET /gamification/points"
+      - "GET /gamification/achievements"
+      - "POST /gamification/claim-reward"
+    usado_por_frontend:
+      - "GamifiedHeader"
+      - "RewardsPage"
+      - "AchievementsPage"
+
+  classrooms:
+    descripcion: "Gestión de aulas"
+    dependencias_db: ["classroom_system", "auth_management"]
+    dependencias_backend: ["auth", "users"]
+    expone_endpoints:
+      - "GET /classrooms"
+      - "POST /classrooms"
+      - "GET /classrooms/:id/students"
+    usado_por_frontend:
+      - "ClassroomsPage"
+      - "TeacherPortal"
+
+  assignments:
+    descripcion: "Gestión de tareas"
+    dependencias_db: ["classroom_system", "content_management"]
+    dependencias_backend: ["auth", "classrooms", "exercises"]
+    expone_endpoints:
+      - "GET /assignments"
+      - "POST /assignments"
+      - "POST /assignments/:id/submit"
+    usado_por_frontend:
+      - "AssignmentsPage"
+      - "StudentDashboard"
+
+  analytics:
+    descripcion: "Métricas y análisis"
+    dependencias_db: ["analytics_system"]
+    dependencias_backend: ["auth", "exercises", "gamification"]
+    expone_endpoints:
+      - "GET /analytics/dashboard"
+      - "GET /analytics/user/:userId"
+    usado_por_frontend:
+      - "AnalyticsPage"
+      - "DashboardPage"
+
+  notifications:
+    descripcion: "Sistema de notificaciones"
+    dependencias_db: ["notification_system"]
+    dependencias_backend: ["auth"]
+    expone_endpoints:
+      - "GET /notifications"
+      - "PATCH /notifications/:id/read"
+    usado_por_frontend:
+      - "NotificationsComponent"
+      - "Header"
+
+# ========================================
+# COMPONENTES DE FRONTEND (Capa superior)
+# ========================================
+
+frontend_components:
+  AuthContext:
+    descripcion: "Contexto de autenticación"
+    dependencias_backend: ["auth"]
+    dependencias_frontend: []
+    usado_por:
+      - "App.tsx"
+      - "Todas las páginas protegidas"
+
+  GamifiedHeader:
+    descripcion: "Header con información de gamificación"
+    dependencias_backend: ["gamification", "auth"]
+    dependencias_frontend: ["AuthContext"]
+    usado_por:
+      - "StudentLayout"
+      - "TeacherLayout"
+
+  StudentDashboard:
+    descripcion: "Dashboard del estudiante"
+    dependencias_backend: ["auth", "gamification", "assignments", "analytics"]
+    dependencias_frontend: ["AuthContext", "GamifiedHeader"]
+    usado_por:
+      - "StudentApp"
+
+  TeacherPortal:
+    descripcion: "Portal del maestro"
+    dependencias_backend: ["auth", "classrooms", "assignments", "content"]
+    dependencias_frontend: ["AuthContext"]
+    usado_por:
+      - "TeacherApp"
+
+  AdminPortal:
+    descripcion: "Portal de administración"
+    dependencias_backend: ["auth", "users", "config"]
+    dependencias_frontend: ["AuthContext"]
+    usado_por:
+      - "AdminApp"
+
+# ========================================
+# BLOQUEADORES Y DEPENDENCIAS CRÍTICAS
+# ========================================
+
+bloqueadores_conocidos:
+  - id: "BLOCK-001"
+    descripcion: "Endpoint POST /exercises/:id/submit no implementado"
+    afecta:
+      - backend: ["exercises"]
+      - frontend: ["ExercisePage"]
+    prioridad: "P0"
+    estado: "Pendiente"
+
+  - id: "BLOCK-002"
+    descripcion: "Módulo Admin Portal incompleto en backend"
+    afecta:
+      - backend: ["admin"]
+      - frontend: ["AdminPortal"]
+    prioridad: "P1"
+    estado: "Pendiente"
+
+# ========================================
+# NOTAS
+# ========================================
+
+notas:
+  - "Grafo creado durante migración orchestration_old → orchestration"
+  - "Database: 98% completitud (PRODUCTION READY)"
+  - "Backend: 28-40% completitud (análisis completado)"
+  - "Frontend: Funcional (coherencia 75% con backend)"
+  - "Actualizar este grafo cuando se implementen nuevos módulos"
+  - "Ver ESTADO-GENERAL.json para métricas detalladas"

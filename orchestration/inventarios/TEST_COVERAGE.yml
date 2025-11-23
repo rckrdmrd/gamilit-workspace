@@ -1,0 +1,308 @@
+# TEST COVERAGE - GAMILIT
+# Cobertura de tests por módulo y capa
+# Versión: 1.0.0
+# Fecha: 2025-11-23
+# Fuente: Consolidado desde orchestration_old/
+
+version: "1.0.0"
+proyecto: "GAMILIT - Sistema de Gamificación Educativa"
+fecha_actualizacion: "2025-11-23"
+fuente: "Estados consolidados desde orchestration_bckp/"
+
+# ========================================
+# RESUMEN GENERAL
+# ========================================
+
+resumen:
+  coverage_global: "15%"
+  tests_totales: 50
+  tests_passing: 45
+  tests_failing: 5
+  tests_skipped: 0
+  objetivo_mvp: "70%"
+  objetivo_produccion: "90%"
+
+# ========================================
+# DATABASE - Tests
+# ========================================
+
+database:
+  coverage: "0%"
+  descripcion: "Tests de database no implementados sistemáticamente"
+  tests_implementados: 0
+  tests_requeridos: 150
+  prioridad: "P1"
+
+  schemas_con_tests:
+    auth_management: 0
+    content_management: 0
+    gamification_system: 0
+    classroom_system: 0
+    analytics_system: 0
+    notification_system: 0
+    system_config: 0
+
+  tests_recomendados:
+    - "Tests de integridad referencial"
+    - "Tests de RLS policies (245 policies)"
+    - "Tests de triggers (54 triggers)"
+    - "Tests de funciones (72 funciones)"
+    - "Tests de vistas materializadas (4 vistas)"
+    - "Tests de validaciones de constraints"
+    - "Tests de performance de índices"
+
+  estado: "❌ No implementado - Alta prioridad"
+
+# ========================================
+# BACKEND - Tests
+# ========================================
+
+backend:
+  coverage: "9.1%"
+  descripcion: "Solo 9.1% de tests migrados desde proyecto anterior"
+  tests_implementados: 20
+  tests_passing: 18
+  tests_failing: 2
+  tests_requeridos: 220
+  prioridad: "P0"
+
+  modulos_con_tests:
+    auth:
+      coverage: "25%"
+      tests_unit: 5
+      tests_integration: 2
+      tests_e2e: 0
+      estado: "⚠️ Parcial"
+
+    users:
+      coverage: "10%"
+      tests_unit: 2
+      tests_integration: 1
+      tests_e2e: 0
+      estado: "⚠️ Mínimo"
+
+    profiles:
+      coverage: "5%"
+      tests_unit: 1
+      tests_integration: 0
+      tests_e2e: 0
+      estado: "❌ Crítico"
+
+    content:
+      coverage: "0%"
+      tests_unit: 0
+      tests_integration: 0
+      tests_e2e: 0
+      estado: "❌ No implementado"
+
+    exercises:
+      coverage: "0%"
+      tests_unit: 0
+      tests_integration: 0
+      tests_e2e: 0
+      estado: "❌ No implementado - BLOQUEANTE"
+      nota: "Endpoint POST /exercises/:id/submit sin implementar ni tests"
+
+    gamification:
+      coverage: "15%"
+      tests_unit: 3
+      tests_integration: 1
+      tests_e2e: 0
+      estado: "⚠️ Parcial"
+
+    classrooms:
+      coverage: "8%"
+      tests_unit: 2
+      tests_integration: 0
+      tests_e2e: 0
+      estado: "⚠️ Mínimo"
+
+    assignments:
+      coverage: "0%"
+      tests_unit: 0
+      tests_integration: 0
+      tests_e2e: 0
+      estado: "❌ No implementado"
+
+    analytics:
+      coverage: "0%"
+      tests_unit: 0
+      tests_integration: 0
+      tests_e2e: 0
+      estado: "❌ No implementado"
+
+    notifications:
+      coverage: "0%"
+      tests_unit: 0
+      tests_integration: 0
+      tests_e2e: 0
+      estado: "❌ No implementado"
+
+  tests_seguridad_faltantes: 5
+  tests_security_priority:
+    - "Tests de SQL injection"
+    - "Tests de XSS"
+    - "Tests de autenticación JWT"
+    - "Tests de autorización RLS"
+    - "Tests de rate limiting"
+
+  estado: "❌ Insuficiente - Prioridad P0"
+
+# ========================================
+# FRONTEND - Tests
+# ========================================
+
+frontend:
+  coverage: "0%"
+  descripcion: "Tests de frontend no implementados"
+  tests_implementados: 0
+  tests_passing: 0
+  tests_failing: 0
+  tests_requeridos: 200
+  prioridad: "P1"
+
+  componentes_con_tests:
+    AuthContext: 0
+    GamifiedHeader: 0
+    StudentDashboard: 0
+    TeacherPortal: 0
+    AdminPortal: 0
+    ExercisePage: 0
+    ProfilePage: 0
+
+  tipos_tests_requeridos:
+    unit_tests: "Tests de componentes aislados"
+    integration_tests: "Tests de flujos completos"
+    e2e_tests: "Tests end-to-end con Playwright/Cypress"
+
+  estado: "❌ No implementado - Prioridad P1"
+
+# ========================================
+# INTEGRATION - Tests E2E
+# ========================================
+
+integration:
+  coverage: "0%"
+  descripcion: "Tests de integración end-to-end no implementados"
+  tests_implementados: 0
+  tests_requeridos: 30
+  prioridad: "P2"
+
+  flujos_criticos_sin_tests:
+    - "Flujo completo de registro y login"
+    - "Flujo de completar ejercicio y recibir puntos"
+    - "Flujo de maestro crear tarea y alumno completarla"
+    - "Flujo de visualizar leaderboard"
+    - "Flujo de reclamar recompensas"
+    - "Flujo de configuración de gamificación"
+
+  estado: "❌ No implementado - Prioridad P2"
+
+# ========================================
+# PLAN DE ACCIÓN - Incrementar Coverage
+# ========================================
+
+plan_accion:
+  fase_1_critico:
+    objetivo: "30% coverage backend"
+    duracion: "2 semanas"
+    prioridad: "P0"
+    tareas:
+      - "Tests de seguridad (5 tests críticos)"
+      - "Tests de auth module (completar al 80%)"
+      - "Tests de exercises module (implementar endpoint bloqueante)"
+      - "Tests de gamification module (completar al 50%)"
+
+  fase_2_basico:
+    objetivo: "50% coverage backend + 20% frontend"
+    duracion: "3 semanas"
+    prioridad: "P1"
+    tareas:
+      - "Tests de todos los módulos backend al 40%"
+      - "Tests unitarios de componentes frontend principales"
+      - "Tests de integración de flujos críticos"
+
+  fase_3_robusto:
+    objetivo: "70% coverage backend + 50% frontend + 10% database"
+    duracion: "4 semanas"
+    prioridad: "P1"
+    tareas:
+      - "Completar tests backend al 70%"
+      - "Tests frontend de componentes principales"
+      - "Tests básicos de database (RLS, triggers)"
+      - "Tests E2E de flujos principales"
+
+  fase_4_produccion:
+    objetivo: "90% coverage en todas las capas"
+    duracion: "6 semanas"
+    prioridad: "P2"
+    tareas:
+      - "Coverage backend al 90%"
+      - "Coverage frontend al 80%"
+      - "Coverage database al 70%"
+      - "Suite completa de tests E2E"
+
+# ========================================
+# MÉTRICAS Y OBJETIVOS
+# ========================================
+
+metricas:
+  actual:
+    backend: "9.1%"
+    frontend: "0%"
+    database: "0%"
+    integration: "0%"
+    global: "15%"
+
+  objetivo_mvp:
+    backend: "70%"
+    frontend: "50%"
+    database: "40%"
+    integration: "30%"
+    global: "60%"
+
+  objetivo_produccion:
+    backend: "90%"
+    frontend: "80%"
+    database: "70%"
+    integration: "50%"
+    global: "85%"
+
+# ========================================
+# BLOQUEADORES Y RIESGOS
+# ========================================
+
+bloqueadores:
+  - id: "TEST-BLOCK-001"
+    descripcion: "Endpoint POST /exercises/:id/submit sin implementar ni tests"
+    impacto: "Alto - Bloquea flujo principal de estudiantes"
+    prioridad: "P0"
+
+  - id: "TEST-BLOCK-002"
+    descripcion: "Tests de seguridad faltantes (5 críticos)"
+    impacto: "Alto - Riesgo de seguridad"
+    prioridad: "P0"
+
+  - id: "TEST-BLOCK-003"
+    descripcion: "Frontend sin tests - riesgo de regresiones"
+    impacto: "Medio - Posibles bugs en UI"
+    prioridad: "P1"
+
+riesgos:
+  - "Falta de tests puede causar regresiones en producción"
+  - "Tests de seguridad insuficientes - vulnerabilidades potenciales"
+  - "Sin tests E2E, difícil validar flujos completos"
+  - "Coverage muy bajo dificulta refactoring seguro"
+
+# ========================================
+# NOTAS
+# ========================================
+
+notas:
+  - "Datos consolidados desde orchestration_bckp/ESTADO-*.json"
+  - "Backend: Solo 9.1% de tests migrados"
+  - "Frontend: 0% coverage - necesita implementación urgente"
+  - "Database: 0% coverage - considerar tests de RLS y triggers"
+  - "Priorizar tests de seguridad y módulos críticos"
+  - "Ver plan de acción para roadmap de implementación"
+  - "Actualizar este archivo conforme se implementen tests"
