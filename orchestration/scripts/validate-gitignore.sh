@@ -57,6 +57,57 @@ else
 fi
 
 # =============================================
+# VALIDACIÓN 3.5: reference/ NO ignorado
+# =============================================
+echo ""
+echo "3.5. Verificando reference/..."
+if git check-ignore -q reference/ 2>/dev/null; then
+    echo "❌ ERROR: reference/ está ignorado"
+    echo "   → reference/ DEBE estar versionado para código de referencia"
+    echo "   → Editar .gitignore y eliminar línea que ignora reference/"
+    ((ERRORS++))
+else
+    echo "✅ reference/ NO está ignorado (correcto)"
+fi
+
+# =============================================
+# VALIDACIÓN 3.6: reference/**/node_modules/ SÍ ignorado
+# =============================================
+echo ""
+echo "3.6. Verificando reference/**/node_modules/..."
+
+# Crear estructura de prueba
+mkdir -p reference/test-project/node_modules 2>/dev/null
+
+if git check-ignore -q reference/test-project/node_modules/ 2>/dev/null; then
+    echo "✅ reference/**/node_modules/ está ignorado (correcto)"
+    rm -rf reference/test-project 2>/dev/null
+else
+    echo "❌ ERROR: reference/**/node_modules/ NO está ignorado"
+    echo "   → Agregar 'reference/**/node_modules/' al .gitignore"
+    rm -rf reference/test-project 2>/dev/null
+    ((ERRORS++))
+fi
+
+# =============================================
+# VALIDACIÓN 3.7: reference/**/dist/ SÍ ignorado
+# =============================================
+echo ""
+echo "3.7. Verificando reference/**/dist/..."
+
+# Crear estructura de prueba
+mkdir -p reference/test-project/dist 2>/dev/null
+
+if git check-ignore -q reference/test-project/dist/ 2>/dev/null; then
+    echo "✅ reference/**/dist/ está ignorado (correcto)"
+    rm -rf reference/test-project 2>/dev/null
+else
+    echo "⚠️  ADVERTENCIA: reference/**/dist/ NO está ignorado"
+    echo "   → Agregar 'reference/**/dist/' al .gitignore"
+    rm -rf reference/test-project 2>/dev/null
+fi
+
+# =============================================
 # VALIDACIÓN 4: Patrones de carpetas backup
 # =============================================
 echo ""

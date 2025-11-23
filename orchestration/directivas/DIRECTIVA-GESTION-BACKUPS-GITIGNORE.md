@@ -41,6 +41,45 @@ Excepciones permitidas (ignorar subcarpetas):
   - orchestration/**/*.cache     # Archivos de cache
 ```
 
+### 1.5. reference/ (Código de Referencia) SIEMPRE en Repositorio
+
+```yaml
+REGLA CRÍTICA: reference/ DEBE estar versionado
+
+Propósito:
+  - Contiene proyectos de referencia para análisis y desarrollo
+  - Architecture-Analyst lo usa para análisis de implementaciones
+  - Agentes de desarrollo lo usan como referencia
+  - Claude Code en cloud necesita acceso para comparaciones
+
+Contenido típico:
+  - Proyectos completos de referencia
+  - Implementaciones de patrones
+  - Ejemplos de arquitectura
+  - Código base para comparaciones
+
+Excepciones CRÍTICAS (ignorar dentro de reference/):
+  - reference/**/node_modules/  # Dependencias (pueden reinstalarse)
+  - reference/**/dist/           # Build outputs
+  - reference/**/build/          # Build outputs
+  - reference/**/.next/          # Next.js build
+  - reference/**/.nuxt/          # Nuxt build
+  - reference/**/coverage/       # Test coverage
+  - reference/**/.turbo/         # Turbo cache
+  - reference/**/.nx/            # NX cache
+  - reference/**/out/            # Output folders
+  - reference/**/*.log           # Logs
+  - reference/**/*.tmp           # Temporales
+  - reference/**/*.cache         # Cache
+  - reference/**/.DS_Store       # OS files
+
+Razón de excepciones:
+  - Solo versionar código fuente, NO builds ni dependencias
+  - Reducir tamaño del repositorio significativamente
+  - Dependencias pueden reinstalarse con npm/pnpm install
+  - Builds pueden regenerarse
+```
+
 ### 2. Carpetas Backup SIEMPRE Ignoradas
 
 ```yaml
@@ -95,13 +134,6 @@ orchestration/**/*.tmp
 orchestration/**/*.cache
 ```
 
-**❌ PROHIBIDO:**
-
-```gitignore
-# ❌ NO HACER ESTO:
-orchestration/    # Ignora toda la carpeta
-```
-
 **Validación:**
 
 ```bash
@@ -112,6 +144,59 @@ git check-ignore orchestration/prompts/
 # .archive SÍ debe estar ignorado
 git check-ignore orchestration/.archive/
 # Debe devolver: orchestration/.archive/
+```
+
+---
+
+### Sección 1.5: REFERENCE (Código de Referencia) - NUEVA
+
+**Estado requerido:**
+
+```gitignore
+# === REFERENCE (Código de Referencia) ===
+# IMPORTANTE: reference/ DEBE estar en el repo para Claude Code cloud
+# Contiene: proyectos de referencia para análisis y desarrollo
+# Ignorar solo carpetas de build/dependencias dentro de reference/
+reference/**/node_modules/
+reference/**/dist/
+reference/**/build/
+reference/**/.next/
+reference/**/.nuxt/
+reference/**/coverage/
+reference/**/.turbo/
+reference/**/.nx/
+reference/**/out/
+reference/**/*.log
+reference/**/*.tmp
+reference/**/*.cache
+reference/**/.DS_Store
+```
+
+**Validación:**
+
+```bash
+# reference/ NO debe estar ignorado
+git check-ignore reference/
+# Debe devolver: (vacío - exit code 1)
+
+# node_modules dentro de reference/ SÍ debe estar ignorado
+mkdir -p reference/ejemplo-proyecto/node_modules
+git check-ignore reference/ejemplo-proyecto/node_modules/
+# Debe devolver: reference/ejemplo-proyecto/node_modules/
+
+# dist dentro de reference/ SÍ debe estar ignorado
+git check-ignore reference/ejemplo-proyecto/dist/
+# Debe devolver: reference/ejemplo-proyecto/dist/
+```
+
+**❌ PROHIBIDO:**
+
+```gitignore
+# ❌ NO HACER ESTO:
+reference/    # Ignora toda la carpeta (error crítico)
+
+# ❌ TAMPOCO HACER ESTO:
+# No ignorar node_modules dentro de reference (contamina repo)
 ```
 
 ---

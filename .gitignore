@@ -198,6 +198,24 @@ orchestration/.tmp/
 orchestration/**/*.tmp
 orchestration/**/*.cache
 
+# === REFERENCE (Código de Referencia) ===
+# IMPORTANTE: reference/ DEBE estar en el repo para Claude Code cloud
+# Contiene: proyectos de referencia para análisis y desarrollo
+# Ignorar solo carpetas de build/dependencias dentro de reference/
+reference/**/node_modules/
+reference/**/dist/
+reference/**/build/
+reference/**/.next/
+reference/**/.nuxt/
+reference/**/coverage/
+reference/**/.turbo/
+reference/**/.nx/
+reference/**/out/
+reference/**/*.log
+reference/**/*.tmp
+reference/**/*.cache
+reference/**/.DS_Store
+
 # === MIGRATION (temporal) ===
 # Durante migración, mantener docs de análisis
 # Descomentar después de migración completa:
