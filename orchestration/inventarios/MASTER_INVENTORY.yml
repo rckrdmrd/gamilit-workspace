@@ -66,6 +66,32 @@ gaps_criticos:
     addendum: "orchestration/agentes/architecture-analyst/coherence-reports/ADDENDUM-GAP-004-2025-11-23.md"
     fecha_identificacion: "2025-11-23"
 
+  - id: "GAP-005"
+    severidad: "P0"
+    descripcion: "Referencias a proyecto incorrecto (INFONAVIT/Obra) en orchestration/"
+    bloqueador: false
+    impacto: "CRÍTICO - Confusión de contexto para agentes y desarrolladores"
+    estado: "IDENTIFICADO"
+    archivos_afectados:
+      directivas_incorrectas: 9
+      prompts_incorrectos: 4
+      total_archivos: 20
+      porcentaje_afectado: "23%"
+    errores_clave:
+      - "9 directivas con 'MVP Sistema Administración de Obra e INFONAVIT'"
+      - "Ejemplos de schemas inexistentes (project_management, housing, etc.)"
+      - "Entidades de otro dominio (ProjectEntity, HousingEntity)"
+      - "Referencias a docs de otro proyecto"
+    solucion_estimada: "4-5 horas"
+    prioridad_correccion:
+      - "P0: 9 directivas + 2 prompts principales (4 hrs)"
+      - "P1: 1 prompt deprecated (30 min)"
+      - "P2: Archivos análisis/reportes (30 min)"
+    delegar_a: "Architecture-Analyst"
+    reporte_detallado: "orchestration/agentes/architecture-analyst/coherence-reports/GAP-005-REFERENCIAS-PROYECTO-INCORRECTO.md"
+    fecha_identificacion: "2025-11-23"
+    script_validacion: "validate-orchestration-references.sh"
+
 # =============================================================================
 # DATABASE OBJECTS
 # =============================================================================
