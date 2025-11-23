@@ -1,6 +1,6 @@
 # DIRECTIVA: CALIDAD DE CÓDIGO Y PRINCIPIOS SOLID
 
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Versión:** 1.0.0
 **Fecha:** 2025-11-20
 **Ámbito:** Backend-Agent, Frontend-Agent (aplica también a Database-Agent para lógica SQL)

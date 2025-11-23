@@ -1,6 +1,6 @@
 # GUÍA COMPLETA: NOMENCLATURA Y ESTÁNDARES
 
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Versión:** 1.0.0
 **Fecha:** 2025-11-20
 **Ámbito:** Todos los agentes y desarrolladores

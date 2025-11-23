@@ -2,7 +2,7 @@
 
 **Versión:** 1.0.0
 **Fecha creación:** 2025-11-17
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Aplicable a:** Database-Agent, Backend-Agent, Frontend-Agent
 
 ---

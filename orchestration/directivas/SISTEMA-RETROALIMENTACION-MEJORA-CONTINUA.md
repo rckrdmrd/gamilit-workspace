@@ -1,6 +1,6 @@
 # SISTEMA DE RETROALIMENTACIÓN Y MEJORA CONTINUA
 
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Versión:** 1.0.0
 **Fecha:** 2025-11-17
 **Audiencia:** Agentes Principales y administradores del sistema

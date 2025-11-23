@@ -2,7 +2,7 @@
 
 **Versión:** 1.0.0
 **Fecha:** 2025-11-17
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Agente:** Requirements-Analyst
 
 ---

@@ -1,6 +1,6 @@
 # DIRECTIVA DE VALIDACIÓN DE SUBAGENTES
 
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Versión:** 1.0.0
 **Fecha:** 2025-11-17
 **Audiencia:** Agentes Principales (Database-Agent, Backend-Agent, Frontend-Agent)
