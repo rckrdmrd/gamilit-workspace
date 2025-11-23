@@ -1,347 +1,439 @@
-# Orchestration - Sistema de Gestión de Agentes GAMILIT
+# ORCHESTRATION - Sistema de Gestión de Agentes
 
-**Propósito:** Documentación de ejecución, planes, trazas e inventarios de los agentes de desarrollo
-
-**Versión:** 2.1.0
-**Última actualización:** 2025-11-11 (Seeds Production-Ready v2.3.2)
-
----
-
-## 🎯 OBJETIVO PRINCIPAL
-
-Esta carpeta contiene **TODO el trabajo** realizado por agentes y subagentes en el proyecto GAMILIT. Su objetivo es:
-
-1. ✅ Lograr que Database, Backend y Frontend funcionen correctamente
-2. ✅ Mantener alineación 100% entre todos los proyectos
-3. ✅ Evitar duplicaciones de código y objetos
-4. ✅ Documentar cada tarea ejecutada con trazabilidad completa
-5. ✅ Permitir reiniciar conversaciones con contexto completo
-
-**🚨 REGLA CRÍTICA:** Todo trabajo de agentes DEBE ir en `orchestration/`. NO crear carpetas `orchestration/` en `apps/`, `docs/` u otras ubicaciones.
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
+**Versión:** 1.0.0
+**Fecha:** 2025-11-17
 
 ---
 
-## 📋 PROMPTS DE AGENTES (NUEVO ⭐)
+## 📋 DESCRIPCIÓN
 
-### Para Agentes Principales
+Este directorio contiene toda la infraestructura para la gestión de agentes de desarrollo (Claude Code), incluyendo prompts, directivas, trazabilidad, inventarios y reportes.
 
-📄 **[PROMPT-AGENTES.md](./PROMPT-AGENTES.md)** - Prompt maestro para agentes principales
-
-**Aplicable a:**
-- 🗄️ **Agente Database** - DDL, seeds, migrations, validaciones DB
-- ⚙️ **Agente Backend** - NestJS, entities, services, controllers, DTOs
-- 🎨 **Agente Frontend** - React, componentes, páginas, stores, servicios
-
-**Contenido clave:**
-- Directivas obligatorias (análisis, validación, documentación)
-- Flujo de trabajo (Análisis → Plan → Ejecución → Validación → Documentación)
-- Política anti-duplicación
-- Referencias de contexto importantes
-- Política de ciclos desglosados
-- Uso de subagentes
-
-### Para Subagentes
-
-📄 **[PROMPT-SUBAGENTES.md](./PROMPT-SUBAGENTES.md)** - Prompt para subagentes especializados
-
-**Contenido clave:**
-- Errores comunes de subagentes y cómo evitarlos
-- Estructura de tareas delegadas
-- Flujo de validación obligatorio
-- Template de reportes
-- Mejores prácticas y anti-patrones
-
-**🔑 IMPORTANTE:** Los subagentes cometen errores por falta de contexto. Este prompt mitiga esos problemas.
+**Basado en:** Sistema de Orquestación de GAMILIT (mejorado y adaptado)
 
 ---
 
-## 📂 Estructura de Carpetas
+## 📁 ESTRUCTURA
 
 ```
 orchestration/
-├── README.md                           # Este archivo (índice principal)
-├── PROMPT-AGENTES.md                   # ⭐ Prompt para agentes principales
-├── PROMPT-SUBAGENTES.md                # ⭐ Prompt para subagentes
-├── PROXIMA-ACCION.md                   # Próxima tarea prioritaria
+├── README.md                          # Este archivo
 │
-├── TRAZA-TAREAS-DATABASE.md            # Historial Agente Database
-├── TRAZA-TAREAS-BACKEND.md             # Historial Agente Backend
-├── TRAZA-TAREAS-FRONTEND.md            # Historial Agente Frontend
-├── TRAZA-TAREAS-DEVOPS.md              # Historial DevOps
-├── TRAZA-TAREAS-INTEGRATION.md         # Historial Integración
-├── TRAZA-CORRECCIONES.md               # ⭐ Log de correcciones aplicadas (CORR-001+)
+├── prompts/                           # Prompts para agentes
+│   ├── PROMPT-AGENTES-PRINCIPALES.md  # Database, Backend, Frontend
+│   ├── PROMPT-SUBAGENTES.md           # Guía para subagentes
+│   ├── PROMPT-REQUIREMENTS-ANALYST.md # Análisis de requerimientos
+│   ├── PROMPT-CODE-REVIEWER.md        # Revisión de código
+│   ├── PROMPT-BUG-FIXER.md            # Corrección de bugs
+│   ├── PROMPT-FEATURE-DEVELOPER.md    # Desarrollo de features
+│   └── PROMPT-POLICY-AUDITOR.md       # Auditoría de políticas
 │
-├── ESTADO-DATABASE.json                # Estado actual Database
-├── ESTADO-BACKEND.json                 # Estado actual Backend
-├── ESTADO-FRONTEND.json                # Estado actual Frontend
-├── ESTADO-DEVOPS.json                  # Estado actual DevOps
-├── ESTADO-INTEGRATION.json             # Estado actual Integración
+├── directivas/                        # Políticas obligatorias
+│   ├── DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md
+│   ├── DIRECTIVA-ANTI-DUPLICACION.md
+│   ├── DIRECTIVA-TESTING.md
+│   └── POLITICAS-USO-AGENTES.md       # ⭐ Guía principal
 │
-├── 01-analisis/                        # Análisis realizados por agentes
-│   ├── database/
-│   ├── backend/
-│   └── frontend/
+├── trazas/                            # Trazabilidad de tareas
+│   ├── TRAZA-REQUERIMIENTOS.md        # Requerimientos del plan
+│   ├── TRAZA-CORRECCIONES.md          # Correcciones aplicadas
+│   ├── TRAZA-FEATURES.md              # Features nuevos
+│   ├── TRAZA-VALIDACIONES.md          # Validaciones/auditorías
+│   ├── TRAZA-BUGS.md                  # Bugs reportados/resueltos
+│   ├── TRAZA-TAREAS-DATABASE.md       # Historial Database
+│   ├── TRAZA-TAREAS-BACKEND.md        # Historial Backend
+│   └── TRAZA-TAREAS-FRONTEND.md       # Historial Frontend
 │
-├── 02-planes/                          # Planes de implementación
-│   ├── database/
-│   ├── backend/
-│   └── frontend/
+├── inventarios/                       # Inventarios de objetos
+│   ├── MASTER_INVENTORY.yml           # Inventario maestro con relaciones
+│   ├── DATABASE_INVENTORY.yml         # Objetos de base de datos
+│   ├── BACKEND_INVENTORY.yml          # Módulos/entities/services
+│   ├── FRONTEND_INVENTORY.yml         # Páginas/componentes/stores
+│   ├── DEPENDENCY_GRAPH.yml           # Grafo de dependencias
+│   └── TEST_COVERAGE.yml              # Cobertura de tests
 │
-├── 03-reportes/                        # Reportes generados
-│   └── sesiones/
+├── estados/                           # Estados actuales
+│   ├── ESTADO-DATABASE.json           # Estado DB
+│   ├── ESTADO-BACKEND.json            # Estado Backend
+│   ├── ESTADO-FRONTEND.json           # Estado Frontend
+│   └── ESTADO-GENERAL.json            # Estado general del proyecto
 │
-├── 04-inventarios/                     # ⭐ Inventarios consolidados
-│   ├── database/
-│   │   ├── DATABASE_INVENTORY_2025-11-11.yml  # Inventario completo DB (688 objetos)
-│   │   └── SEEDS_INVENTORY.yml                # ⭐ Inventario seeds (67 archivos)
-│   ├── BACKEND_INVENTORY.yml           # Inventario completo Backend
-│   ├── FRONTEND_INVENTORY.yml          # Inventario completo Frontend
-│   └── TYPES_INVENTORY.yml             # Inventario de tipos
+├── reportes/                          # Reportes automáticos
+│   ├── DASHBOARD_ESTADO.yml           # Dashboard de estado
+│   ├── REPORTE-CALIDAD-{FECHA}.md     # Reportes de calidad
+│   ├── REPORTE-SEMANAL-{FECHA}.md     # Resúmenes semanales
+│   └── METRICAS-DESARROLLO.yml        # Métricas de desarrollo
 │
-├── 05-sprints/                         # Seguimiento de sprints
-│   ├── SPRINT-1/
-│   └── SPRINT-2/
+├── agentes/                           # Trabajo de agentes
+│   ├── database/                      # Database-Agent
+│   │   └── {TAREA-ID}/
+│   │       ├── 01-ANALISIS.md
+│   │       ├── 02-PLAN.md
+│   │       ├── 03-EJECUCION.md
+│   │       ├── 04-VALIDACION.md
+│   │       └── 05-DOCUMENTACION.md
+│   ├── backend/                       # Backend-Agent
+│   ├── frontend/                      # Frontend-Agent
+│   ├── requirements-analyst/          # Requirements-Analyst
+│   ├── code-reviewer/                 # Code-Reviewer
+│   ├── bug-fixer/                     # Bug-Fixer
+│   ├── feature-developer/             # Feature-Developer
+│   └── policy-auditor/                # Policy-Auditor
 │
-├── 06-indices/                         # Índices de documentación
-│
-├── 07-quick-wins/                      # Quick wins ejecutados
-│
-├── 08-resumen-sesiones/                # Resúmenes por sesión
-│   └── SESION-{FECHA}.md
-│
-├── 09-guias/                           # Guías de trabajo
-│
-├── 10-matrices/                        # Matrices de trazabilidad
-│
-├── 11-deployment/                      # Documentación de despliegue
-│
-├── 12-usuarios/                        # Documentación de usuarios
-│
-├── database/                           # ⭐ Trabajo Agente Database
-│   └── {TAREA-ID}/
-│       ├── 01-ANALISIS.md
-│       ├── 02-PLAN.md
-│       ├── 03-EJECUCION.md
-│       ├── 04-VALIDACION.md
-│       └── 05-DOCUMENTACION.md
-│
-├── backend/                            # ⭐ Trabajo Agente Backend
-│   └── {TAREA-ID}/
-│
-├── frontend/                           # ⭐ Trabajo Agente Frontend
-│   └── {TAREA-ID}/
-│
-└── integracion/                        # ⭐ Trabajo multi-agente
-    └── {TAREA-ID}/
+└── templates/                         # Templates de documentación
+    ├── TEMPLATE-ANALISIS.md
+    ├── TEMPLATE-PLAN.md
+    ├── TEMPLATE-VALIDACION.md
+    └── TEMPLATE-REPORTE-CALIDAD.md
 ```
 
 ---
 
-## 🔄 Flujo de Trabajo Recomendado
+## 🚀 INICIO RÁPIDO
 
-### Para Agentes Principales
+### Para Usuarios (Desarrolladores Humanos)
 
-1. **Leer prompt:** [PROMPT-AGENTES.md](./PROMPT-AGENTES.md)
-2. **Consultar trazas:** `TRAZA-TAREAS-{TU_GRUPO}.md`
-3. **Consultar inventarios:** `04-inventarios/{TU_GRUPO}_INVENTORY.yml`
-4. **Consultar estado:** `ESTADO-{TU_GRUPO}.json`
-5. **Ejecutar tarea siguiendo:** Análisis → Plan → Ejecución → Validación → Documentación
-6. **Actualizar inventarios y trazas**
-7. **Generar reporte de sesión**
+#### 1. Lanzar Agente para Nueva Tarea
 
-### Para Subagentes (Lanzados por Agentes Principales)
+```bash
+# 1. Identificar tipo de tarea
+# - ¿Es un requerimiento del plan? → Requirements-Analyst
+# - ¿Es desarrollo completo? → Feature-Developer
+# - ¿Es solo DB/Backend/Frontend? → Agente específico
+# - ¿Es corrección de bug? → Bug-Fixer
+# - ¿Es revisión de código? → Code-Reviewer
 
-1. **Recibir contexto del Agente Principal**
-2. **Leer prompt:** [PROMPT-SUBAGENTES.md](./PROMPT-SUBAGENTES.md)
-3. **Consultar inventarios (anti-duplicación)**
-4. **Leer archivos de referencia**
-5. **Ejecutar tarea**
-6. **Validar localmente**
-7. **Actualizar inventarios y trazas**
-8. **Reportar al Agente Principal**
+# 2. Consultar política de uso
+cat orchestration/directivas/POLITICAS-USO-AGENTES.md
+
+# 3. Preparar contexto (si es necesario)
+# - Requerimientos claros
+# - Archivos de referencia
+# - Restricciones/consideraciones
+
+# 4. Lanzar agente (mediante Claude Code)
+# "Por favor, usa el {agente} para {tarea}"
+```
+
+#### 2. Monitorear Progreso
+
+```bash
+# Ver estado general
+cat orchestration/estados/ESTADO-GENERAL.json | jq '.resumen'
+
+# Ver tareas recientes de un agente
+cat orchestration/trazas/TRAZA-TAREAS-{GRUPO}.md | tail -50
+
+# Ver dashboard de estado
+cat orchestration/reportes/DASHBOARD_ESTADO.yml
+```
+
+#### 3. Revisar Resultados
+
+```bash
+# Ver documentación de tarea específica
+ls orchestration/agentes/{agente}/{TAREA-ID}/
+
+# Ver inventarios actualizados
+cat orchestration/inventarios/MASTER_INVENTORY.yml
+
+# Ver reporte de calidad
+cat orchestration/reportes/REPORTE-CALIDAD-{FECHA}.md
+```
 
 ---
 
-## 📚 Archivos Críticos de Contexto
+### Para Agentes (Claude Code)
 
-### Inventarios (Anti-Duplicación)
+#### Antes de Iniciar Tarea
 
-Consultar **SIEMPRE** antes de crear objetos:
+```bash
+# 1. Leer directivas obligatorias
+cat orchestration/directivas/POLITICAS-USO-AGENTES.md
+cat orchestration/directivas/DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md
 
-- `04-inventarios/database/DATABASE_INVENTORY_2025-11-11.yml` - 688 objetos DB catalogados
-- `04-inventarios/database/SEEDS_INVENTORY.yml` - 67 seeds (DEV + PROD) documentados ⭐
-- `04-inventarios/BACKEND_INVENTORY.yml` - 20 módulos, 80+ entities
-- `04-inventarios/FRONTEND_INVENTORY.yml` - 15 features, 180+ componentes
-- `04-inventarios/TYPES_INVENTORY.yml` - Tipos TypeScript compartidos
+# 2. Leer prompt correspondiente
+cat orchestration/prompts/PROMPT-{TU-TIPO}.md
 
-### Trazas (Historial de Tareas)
+# 3. Consultar inventarios (anti-duplicación)
+cat orchestration/inventarios/{TIPO}_INVENTORY.yml
 
-Ver qué se ha hecho:
+# 4. Ver trazas recientes (contexto)
+cat orchestration/trazas/TRAZA-TAREAS-{GRUPO}.md | tail -100
+```
 
-- `TRAZA-TAREAS-DATABASE.md` - Todas las tareas DB ejecutadas (DB-001 → DB-096)
-- `TRAZA-CORRECCIONES.md` - Log de correcciones aplicadas (CORR-001+) ⭐ NUEVO
-- `TRAZA-TAREAS-BACKEND.md` - Todas las tareas Backend ejecutadas
-- `TRAZA-TAREAS-FRONTEND.md` - Todas las tareas Frontend ejecutadas
+#### Durante Ejecución
 
-### Estados (Situación Actual)
+```bash
+# Crear carpeta de trabajo
+mkdir -p orchestration/agentes/{grupo}/{TAREA-ID}
 
-Estados en formato JSON estructurado:
+# Generar documentación por fases
+# - 01-ANALISIS.md
+# - 02-PLAN.md
+# - 03-EJECUCION.md
+# - 04-VALIDACION.md
+# - 05-DOCUMENTACION.md
 
-- `ESTADO-DATABASE.json` - Estado actual DB (schemas, tablas, versión)
-- `ESTADO-BACKEND.json` - Estado actual Backend (módulos, entities, coverage)
-- `ESTADO-FRONTEND.json` - Estado actual Frontend (componentes, páginas, coverage)
+# Actualizar inventarios en tiempo real
+vim orchestration/inventarios/{TIPO}_INVENTORY.yml
+```
+
+#### Después de Completar
+
+```bash
+# Actualizar traza
+vim orchestration/trazas/TRAZA-{TIPO}.md
+
+# Actualizar estado
+vim orchestration/estados/ESTADO-{COMPONENTE}.json
+
+# Generar reporte (si es tarea grande)
+vim orchestration/reportes/REPORTE-{TEMA}-{FECHA}.md
+```
+
+---
+
+## 📚 DOCUMENTOS CLAVE
+
+### ⭐ Lectura Obligatoria
+
+1. **[POLITICAS-USO-AGENTES.md](directivas/POLITICAS-USO-AGENTES.md)**
+   - Cuándo usar agentes vs subagentes
+   - Límites de concurrencia
+   - Gestión de errores
+   - Mejores prácticas
+
+2. **[DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md](directivas/DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md)**
+   - Qué documentar
+   - Cuándo documentar
+   - Formatos obligatorios
+
+### Por Tipo de Agente
+
+**Agentes Principales:**
+- [PROMPT-AGENTES-PRINCIPALES.md](prompts/PROMPT-AGENTES-PRINCIPALES.md)
+- [PROMPT-SUBAGENTES.md](prompts/PROMPT-SUBAGENTES.md)
+
+**Agentes Especializados:**
+- [PROMPT-REQUIREMENTS-ANALYST.md](prompts/PROMPT-REQUIREMENTS-ANALYST.md)
+- [PROMPT-CODE-REVIEWER.md](prompts/PROMPT-CODE-REVIEWER.md)
+- [PROMPT-BUG-FIXER.md](prompts/PROMPT-BUG-FIXER.md)
+- [PROMPT-FEATURE-DEVELOPER.md](prompts/PROMPT-FEATURE-DEVELOPER.md)
+- [PROMPT-POLICY-AUDITOR.md](prompts/PROMPT-POLICY-AUDITOR.md)
+
+---
+
+## 🎯 FLUJOS DE TRABAJO COMUNES
+
+### Flujo 1: Implementar Requerimiento del Plan
+
+```
+1. Requirements-Analyst analiza requerimiento
+   └─> Genera: plan detallado, dependency graph, estimaciones
+
+2. Feature-Developer implementa (coordina Database, Backend, Frontend)
+   └─> Genera: código, documentación, tests
+
+3. Code-Reviewer valida implementación
+   └─> Genera: reporte de calidad, lista de issues
+
+4. Policy-Auditor verifica cumplimiento
+   └─> Genera: reporte de auditoría
+
+5. Actualización de trazas e inventarios
+```
+
+### Flujo 2: Corregir Bug
+
+```
+1. Bug-Fixer diagnostica problema
+   └─> Genera: análisis de root cause
+
+2. Bug-Fixer implementa corrección
+   └─> Genera: fix, tests de regresión
+
+3. Bug-Fixer valida fix
+   └─> Genera: reporte de validación
+
+4. Actualización de TRAZA-BUGS.md y TRAZA-CORRECCIONES.md
+```
+
+### Flujo 3: Auditoría Semanal
+
+```
+1. Policy-Auditor ejecuta auditoría
+   └─> Valida: inventarios, documentación, estándares
+
+2. Code-Reviewer genera reporte de calidad
+   └─> Métricas: cobertura tests, deuda técnica, vulnerabilidades
+
+3. Generación de reportes semanales
+   └─> Dashboard de estado, métricas de desarrollo
+```
+
+---
+
+## 📊 MÉTRICAS Y REPORTES
+
+### Métricas Clave
+
+```yaml
+desarrollo:
+  velocity: 8.5 tareas/día
+  completitud_mvp: 35%
+  bloqueadores_activos: 2
+
+calidad:
+  cobertura_tests: 75%
+  documentacion: 90%
+  deuda_tecnica: Baja
+  vulnerabilidades: 0
+
+agentes:
+  tareas_completadas: 150
+  tasa_exito: 95%
+  errores_autocorregidos: 8
+  rollbacks: 1
+```
+
+### Reportes Automáticos
+
+**Diarios:**
+- Tareas completadas
+- Agentes activos
+- Bloqueadores
+
+**Semanales:**
+- Velocity
+- Calidad de código
+- Cumplimiento de políticas
+
+**Por Sprint:**
+- Completitud de requerimientos
+- Deuda técnica
+- Cobertura de tests
+
+---
+
+## 🔍 BÚSQUEDA Y NAVEGACIÓN
+
+### Buscar Información
+
+```bash
+# Buscar tarea específica
+grep -rn "DB-042" orchestration/trazas/
+
+# Buscar objeto en inventarios
+grep -rn "projects" orchestration/inventarios/
+
+# Buscar en documentación de agentes
+find orchestration/agentes -name "*.md" | xargs grep "{término}"
+
+# Ver últimos cambios
+ls -lt orchestration/agentes/**/*.md | head -20
+```
+
+### Consultas Comunes
+
+```bash
+# ¿Qué tareas están bloqueadas?
+grep "Estado: ❌ Bloqueado" orchestration/trazas/*.md
+
+# ¿Cuál es la completitud actual?
+cat orchestration/estados/ESTADO-GENERAL.json | jq '.resumen.completitud_general'
+
+# ¿Qué features faltan?
+grep "Estado: ⏳ Pendiente" orchestration/trazas/TRAZA-REQUERIMIENTOS.md
+```
+
+---
+
+## 🛠️ MANTENIMIENTO
+
+### Actualización de Inventarios
+
+**Frecuencia:** Después de cada tarea
+
+```bash
+# Validar inventario vs realidad
+# (script a crear)
+./scripts/validate-inventory.sh
+```
+
+### Limpieza de Archivos Antiguos
+
+**Frecuencia:** Mensual
+
+```bash
+# Archivar reportes antiguos (>3 meses)
+mkdir -p orchestration/reportes/archive/
+mv orchestration/reportes/REPORTE-*-2024-*.md orchestration/reportes/archive/
+```
+
+### Auditoría de Calidad
+
+**Frecuencia:** Semanal
+
+```bash
+# Ejecutar Policy-Auditor
+# "Por favor, ejecuta una auditoría de cumplimiento de políticas"
+```
+
+---
+
+## 🆘 TROUBLESHOOTING
+
+### Problema: Agente crea objetos duplicados
+
+**Solución:**
+1. Verificar que agente consultó inventarios
+2. Actualizar DIRECTIVA-ANTI-DUPLICACION.md
+3. Ejecutar validación de inventario
+
+### Problema: Documentación desactualizada
+
+**Solución:**
+1. Identificar gaps con Policy-Auditor
+2. Actualizar documentación faltante
+3. Marcar tarea original como incompleta hasta documentar
+
+### Problema: Bloqueador en tarea
+
+**Solución:**
+1. Documentar bloqueador en TRAZA correspondiente
+2. Notificar a stakeholders
+3. Buscar alternativas o dividir tarea
+
+---
+
+## 📖 REFERENCIAS
+
+### Proyecto Base
+- Sistema GAMILIT: `/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/orchestration`
 
 ### Documentación del Proyecto
-
-Rutas importantes en el proyecto:
-
-- `../docs/00-vision-general/VISION.md` - Visión del producto
-- `../docs/97-adr/` - Architecture Decision Records
-- `../apps/database/README.md` - Guía DDL
-- `../apps/backend/README.md` - Guía Backend
-- `../apps/frontend/README.md` - Guía Frontend
+- MVP Plan: `docs/00-overview/MVP-APP.md`
+- ADRs: `docs/adr/`
+- Análisis de mejoras: `docs/orchestration/ANALISIS-MEJORAS-SISTEMA-ORQUESTACION.md`
 
 ---
 
-## ⚠️ POLÍTICAS CRÍTICAS
+## ✅ CHECKLIST DE INICIO
 
-### 1. Anti-Duplicación
+Para nuevos usuarios del sistema:
 
-**ANTES de crear cualquier objeto:**
-```bash
-# Buscar en inventarios
-grep -r "{nombre_objeto}" orchestration/04-inventarios/
-
-# Buscar en código
-find ../apps/ -name "*{nombre_objeto}*"
-```
-
-**Si existe:** ❌ NO crear duplicado
-
-### 2. Documentación Obligatoria
-
-**DESPUÉS de cada tarea:**
-- ✅ Actualizar inventario correspondiente
-- ✅ Actualizar traza del grupo
-- ✅ Actualizar estado del componente
-- ✅ Generar documentación de la tarea
-
-### 3. Ubicación de Archivos
-
-**TODO trabajo de agentes va en `orchestration/`:**
-- ✅ `orchestration/database/TAREA-001/`
-- ✅ `orchestration/backend/TAREA-001/`
-- ✅ `orchestration/frontend/TAREA-001/`
-
-**PROHIBIDO crear orchestration/ en:**
-- ❌ `apps/database/orchestration/`
-- ❌ `apps/backend/orchestration/`
-- ❌ `docs/orchestration/`
-
-### 4. Validación de Subagentes
-
-**Los subagentes cometen errores.** Agentes principales DEBEN:
-- ✅ Validar trabajo de subagentes
-- ✅ Verificar que no haya duplicaciones
-- ✅ Verificar que sigan convenciones
-- ✅ Verificar que código compile
-- ✅ Corregir errores encontrados
+- [ ] Leer POLITICAS-USO-AGENTES.md
+- [ ] Leer DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md
+- [ ] Revisar estructura de carpetas
+- [ ] Entender flujos de trabajo comunes
+- [ ] Familiarizarse con formatos de trazas
+- [ ] Consultar prompts de agentes disponibles
 
 ---
 
-## 🎯 Estado del Proyecto
-
-### Objetivo Principal
-
-**Conseguir que todo funcione:**
-- 🔄 Database operativa y sin errores
-- 🔄 Backend funcional con entities alineadas
-- 🔄 Frontend operativo con páginas completas
-- 🔄 DB ↔ Backend ↔ Frontend 100% alineados
-
-### Grupos de Trabajo
-
-| Grupo | Agente Responsable | Última Actualización | Estado |
-|-------|-------------------|---------------------|---------|
-| **Database** | Agente Database | Ver TRAZA-TAREAS-DATABASE.md | 🟢 Activo |
-| **Backend** | Agente Backend | Ver TRAZA-TAREAS-BACKEND.md | 🟢 Activo |
-| **Frontend** | Agente Frontend | Ver TRAZA-TAREAS-FRONTEND.md | 🟢 Activo |
-| **DevOps** | Agente DevOps | Ver TRAZA-TAREAS-DEVOPS.md | 🟡 Parcial |
-| **Integración** | Multi-agente | Ver TRAZA-TAREAS-INTEGRATION.md | 🔄 Continuo |
-
----
-
-## 📖 Documentación Adicional
-
-- **Prompts:** [PROMPT-AGENTES.md](./PROMPT-AGENTES.md) | [PROMPT-SUBAGENTES.md](./PROMPT-SUBAGENTES.md)
-- **Próxima tarea:** [PROXIMA-ACCION.md](./PROXIMA-ACCION.md)
-- **Inventarios:** [04-inventarios/](./04-inventarios/)
-- **Sprints:** [05-sprints/](./05-sprints/)
-- **Resúmenes:** [08-resumen-sesiones/](./08-resumen-sesiones/)
-
----
-
-## 🚀 Quick Start
-
-### Para un nuevo Agente Principal
-
-```bash
-# 1. Leer prompt
-cat orchestration/PROMPT-AGENTES.md
-
-# 2. Ver próxima tarea
-cat orchestration/PROXIMA-ACCION.md
-
-# 3. Consultar tu traza
-cat orchestration/TRAZA-TAREAS-{TU_GRUPO}.md | tail -50
-
-# 4. Consultar inventario
-cat orchestration/04-inventarios/{TU_GRUPO}_INVENTORY.yml
-
-# 5. Crear carpeta de tarea
-mkdir -p orchestration/{tu_grupo}/TAREA-{ID}
-
-# 6. Ejecutar siguiendo flujo de 5 fases
-```
-
-### Para un nuevo Subagente
-
-```bash
-# 1. Leer prompt
-cat orchestration/PROMPT-SUBAGENTES.md
-
-# 2. Recibir contexto del Agente Principal
-# (Agente Principal debe proveer archivo de contexto)
-
-# 3. Consultar inventario (anti-duplicación)
-grep -r "{objeto}" orchestration/04-inventarios/
-
-# 4. Ejecutar y validar
-
-# 5. Reportar al Agente Principal
-```
-
----
-
-**Creado:** 2025-11-02
-**Actualizado:** 2025-11-11 (v2.1.0 - Seeds Production-Ready)
-**Mantenido por:** Tech Lead
-**Revisión requerida:** Cada sprint
-
----
-
-## 📋 Cambios Recientes (v2.1.0 - 2025-11-11)
-
-### Nuevos Archivos ⭐
-- `TRAZA-CORRECCIONES.md` - Log estructurado de correcciones (CORR-001 a CORR-005)
-- `04-inventarios/database/SEEDS_INVENTORY.yml` - Inventario completo de seeds (67 archivos)
-
-### Actualizaciones
-- `TRAZA-TAREAS-DATABASE.md` - Agregadas tareas DB-095 y DB-096
-- `04-inventarios/database/DATABASE_INVENTORY_2025-11-11.yml` - Actualizado con seeds PROD
-- Seeds PROD: 10 ejercicios → 27 ejercicios (+170%)
-- Modelo datos: Dual model → JSONB puro
-
-### Documentación
-- Ver `apps/database/README.md` v2.3.2 para detalles de seeds
-- Ver `TRAZA-CORRECCIONES.md` para correcciones detalladas (Fases 1-2)
+**Versión:** 1.0.0
+**Última actualización:** 2025-11-17
+**Mantenido por:** Tech Lead / AI Agents
+**Revisión:** Mensual
