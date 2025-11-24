@@ -49,6 +49,26 @@ metrics:
   avg_generation_time_seconds: 3.5
   export_success_rate: 98%
 
+# ============================================================================
+# TESTING
+# ============================================================================
+
+testing:
+  coverage:
+    overall: 12%  # REAL (actualizado 2025-11-23)
+    backend: 15%  # REAL (actualizado 2025-11-23)
+    frontend: 8%  # REAL (actualizado 2025-11-23)
+    database: 0%  # REAL (actualizado 2025-11-23)
+    meta_original: 90%  # Estimación inicial del proyecto
+    gap_actual: -78%  # Diferencia entre meta y realidad
+    ultima_medicion: "2025-11-23"
+    nota: |
+      Coverage REAL actualizado por Architecture-Analyst (2025-11-23).
+      Valores previos eran ESTIMACIONES optimistas del inicio del proyecto.
+      Sistema de reportes funcional con alta tasa de éxito, pero pocos tests.
+      Gap actual requiere plan de mejora (ver orchestration/roadmap/ROADMAP-TEST-COVERAGE.md).
+      Próxima medición: Mensual (Q1 2026).
+
 status:
   completion: 100%
   completion_date: "2024-11-15"

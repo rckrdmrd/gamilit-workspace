@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserStats } from '../entities';
 import { DB_SCHEMAS } from '@shared/constants';
+import { UserGamificationSummaryDto } from '../dto/user-gamification-summary.dto';
 
 /**
  * UserStatsService
@@ -221,5 +222,77 @@ export class UserStatsService {
       order: { level: 'DESC', total_xp: 'DESC' },
       take: limit,
     });
+  }
+
+  /**
+   * Obtiene resumen de gamificación del usuario
+   *
+   * @description Retorna un resumen consolidado de gamificación para uso en portales Admin/Teacher.
+   * Si el usuario no tiene stats, crea un registro inicial automáticamente.
+   *
+   * @param userId - User UUID
+   * @returns UserGamificationSummaryDto con estado actual de gamificación
+   *
+   * @usage Frontend: useUserGamification hook
+   * @endpoint GET /api/v1/gamification/users/:userId/summary
+   *
+   * @example
+   * const summary = await userStatsService.getUserGamificationSummary('550e8400-e29b-41d4-a716-446655440000');
+   * // Returns: { userId, level: 5, totalXP: 2500, mlCoins: 150, rank: 'Nacom', ... }
+   */
+  async getUserGamificationSummary(userId: string): Promise<UserGamificationSummaryDto> {
+    // 1. Obtener user_stats (o crear si no existe)
+    let userStats: UserStats;
+
+    try {
+      userStats = await this.findByUserId(userId);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        // Si no existe, crear registro inicial
+        userStats = await this.create(userId);
+      } else {
+        throw error;
+      }
+    }
+
+    // 2. Calcular progreso a siguiente nivel
+    // XP acumulada desde el nivel actual
+    const xpForCurrentLevel = this.calculateXpForLevel(userStats.level - 1);
+    const xpForNextLevel = this.calculateXpForLevel(userStats.level);
+    const xpInCurrentLevel = Math.max(0, userStats.total_xp - xpForCurrentLevel);
+    const xpNeededForLevel = xpForNextLevel - xpForCurrentLevel;
+    const progressPercent = Math.min(100, Math.max(0, Math.floor((xpInCurrentLevel / xpNeededForLevel) * 100)));
+    const xpToNext = Math.max(0, xpForNextLevel - userStats.total_xp);
+
+    // 3. Obtener achievements (de user_achievements si existe)
+    // TODO: Implementar cuando exista tabla user_achievements
+    // Por ahora retornamos array vacío
+    const achievements: string[] = [];
+    const totalAchievements = userStats.achievements_earned || 0;
+
+    // 4. Determinar color del rank (basado en current_rank)
+    const rankColors: Record<string, string> = {
+      'Ajaw': '#9E9E9E',           // Gris - Novato
+      'Nacom': '#4CAF50',          // Verde - Explorador
+      "Ah K'in": '#2196F3',        // Azul - Investigador
+      'Halach Uinic': '#9C27B0',   // Morado - Maestro
+      "K'uk'ulkan": '#FF9800',     // Naranja - Sabio/Leyenda
+    };
+
+    // 5. Construir y retornar DTO
+    const summary: UserGamificationSummaryDto = {
+      userId,
+      level: userStats.level,
+      totalXP: userStats.total_xp,
+      mlCoins: userStats.ml_coins,
+      rank: userStats.current_rank,
+      rankColor: rankColors[userStats.current_rank] || '#9E9E9E',
+      progressToNextLevel: progressPercent,
+      xpToNextLevel: xpToNext,
+      achievements,
+      totalAchievements,
+    };
+
+    return summary;
   }
 }

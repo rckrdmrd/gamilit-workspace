@@ -500,6 +500,32 @@ implementation:
         components_used: [ReportBuilder, ReportTemplates, ExportOptions]
         related_us: [US-PM-005b]
 
+      - name: TeacherStudentsPage.tsx
+        route: /teacher/students
+        path: apps/frontend/src/apps/teacher/pages/TeacherStudents.tsx
+        description: Vista de estudiantes del maestro con filtrado por classroom
+        data_source: Real API (classroomsApi.getClassroomStudents)
+        components_used: [ClassroomSelector, StudentTable, StudentCard]
+        hooks_used:
+          - useClassrooms()
+        endpoints:
+          - GET /classrooms (teacher's classrooms)
+          - GET /classrooms/:id/students
+        status: Production-ready
+        changes:
+          - date: 2025-11-23
+            type: Bug fix
+            bug_id: BUG-TEACHER-001
+            description: Removed mock data, integrated with real backend API
+            pr: "[Link to PR]"
+            note: "Page originally used mock data. Now fetches real student data from classrooms API."
+        nil_safety_patterns:
+          - "user.gamification?.rank ?? 'Sin rango'"
+          - "students?.length ?? 0"
+          - "classroom?.name ?? 'Classroom'"
+        related_us: [US-PM-001b, US-PM-004a]
+        related_adr: ADR-014 (Nil-Safety Patterns)
+
     components:
       - name: ClassroomList.tsx
         type: container
@@ -590,6 +616,51 @@ implementation:
         description: Hook para analytics de maestro
         methods: [analytics, generateReport]
 
+    frontend_patterns:
+      nil_safety:
+        description: Pattern for handling potentially null/undefined values safely using TypeScript optional chaining and nullish coalescing
+        implementation: "Nullish coalescing (??) and optional chaining (?.)"
+        example_file: apps/frontend/src/apps/teacher/pages/TeacherStudents.tsx
+        use_cases:
+          - pattern: "user.gamification?.rank ?? 'Sin rango'"
+            description: "Safe access to nested optional property with default value"
+            scenario: "User may not have gamification data initialized"
+
+          - pattern: "students?.length ?? 0"
+            description: "Safe array length access with numeric default"
+            scenario: "Students array may be undefined during loading state"
+
+          - pattern: "classroom?.name ?? 'Classroom sin nombre'"
+            description: "Safe object property access with string default"
+            scenario: "Classroom data may be null if not yet loaded"
+
+          - pattern: "user?.profile?.avatar ?? '/default-avatar.png'"
+            description: "Deep nested optional chaining with fallback"
+            scenario: "Multiple levels of optional data structures"
+
+        benefits:
+          - "Prevents undefined/null reference errors (TypeError)"
+          - "Explicit default values improve code readability"
+          - "Type-safe (TypeScript validates at compile-time)"
+          - "Zero runtime overhead (compiles to simple checks)"
+          - "No external dependencies required"
+
+        anti_patterns:
+          - pattern: "user.gamification.rank || 'Sin rango'"
+            issue: "Logical OR (||) fails for falsy values (0, '', false)"
+            correct: "user.gamification?.rank ?? 'Sin rango'"
+
+          - pattern: "user && user.gamification && user.gamification.rank"
+            issue: "Verbose and hard to read"
+            correct: "user?.gamification?.rank"
+
+        related_adr: ADR-014 (Nil-Safety Patterns)
+        implemented: 2025-11-23
+        typescript_config:
+          strict: true
+          strictNullChecks: true
+        note: "Pattern adopted project-wide after TeacherStudentsPage refactor. Recommended for all nullable data access."
+
 # ============================================================================
 # TESTING
 # ============================================================================
@@ -635,9 +706,19 @@ testing:
         description: Flujo de calificación
 
   coverage:
-    overall: 92%
-    backend: 94%
-    frontend: 91%
+    overall: 12%  # REAL (actualizado 2025-11-23)
+    backend: 15%  # REAL (actualizado 2025-11-23)
+    frontend: 8%  # REAL (actualizado 2025-11-23)
+    database: 0%  # REAL (actualizado 2025-11-23)
+    meta_original: 92%  # Conservado para referencia histórica
+    gap_actual: -80%  # Diferencia entre meta y realidad
+    ultima_medicion: "2025-11-23"
+    nota: |
+      Coverage REAL actualizado por Architecture-Analyst (2025-11-23).
+      Valores previos eran ESTIMACIONES optimistas del inicio del proyecto.
+      Portal Maestros es funcional y desplegado en producción, pero tiene cobertura mínima de tests.
+      Gap actual requiere plan de mejora (ver orchestration/roadmap/ROADMAP-TEST-COVERAGE.md).
+      Próxima medición: Mensual (Q1 2026).
 
 # ============================================================================
 # MÉTRICAS Y RESULTADO

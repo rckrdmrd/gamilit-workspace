@@ -191,7 +191,7 @@ import { useProjectStore } from '@/stores/projectStore';
 **Validación:**
 ```typescript
 // Entity
-@Entity({ schema: 'project_management', name: 'projects' })
+@Entity({ schema: 'gamification_system', name: 'user_points' })
 export class ProjectEntity {
     @Column({ type: 'varchar', length: 50 })
     code: string; // ✅ Coincide con DB: code VARCHAR(50)
@@ -224,7 +224,7 @@ async getAll(): Promise<Project[]> { } // ✅ Tipos coinciden
 // Verificar sincronización
 // apps/backend/src/shared/constants/database.constants.ts
 export const DB_SCHEMAS = {
-    PROJECT_MANAGEMENT: 'project_management', // ✅
+    PROJECT_MANAGEMENT: 'gamification_system', // ✅
 };
 
 // apps/frontend/web/src/shared/constants/api-endpoints.ts

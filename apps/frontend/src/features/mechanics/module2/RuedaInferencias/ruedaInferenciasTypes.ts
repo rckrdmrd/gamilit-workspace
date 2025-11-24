@@ -92,19 +92,41 @@ export interface RuedaInferenciasState {
  */
 export interface RuedaInferenciasAnswers {
   fragments: Record<string, string>;  // { "frag-1": "texto...", "frag-2": "texto..." }
+  fragmentStates?: Array<{            // Estado completo de cada fragmento (OBLIGATORIO para validación)
+    fragmentId: string;
+    categoryId: string;
+    userText: string;
+    timeSpent: number;
+  }>;
   categoryId?: string;                // Última categoría seleccionada (opcional)
   timeSpent?: number;                 // Tiempo total en segundos (opcional)
 }
 
 /**
- * Progress update para callbacks
+ * Progress update para callbacks (formato simple)
  */
 export interface ExerciseProgressUpdate {
-  currentFragment: number;
-  totalFragments: number;
-  score: number;
-  hintsUsed: number;
-  timeSpent: number;
+  currentFragment?: number;
+  totalFragments?: number;
+  score?: number;
+  hintsUsed?: number;
+  timeSpent?: number;
+  currentStep?: number;
+  totalSteps?: number;
+}
+
+/**
+ * Progress update con respuestas (nuevo formato para ExercisePage)
+ */
+export interface ProgressUpdateWithAnswers {
+  progress: {
+    currentStep: number;
+    totalSteps: number;
+    score: number;
+    hintsUsed: number;
+    timeSpent: number;
+  };
+  answers: RuedaInferenciasAnswers;
 }
 
 /**
@@ -128,7 +150,7 @@ export interface RuedaInferenciasExerciseProps {
   userId: string;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
-  onProgressUpdate?: (progress: ExerciseProgressUpdate) => void;
+  onProgressUpdate?: (progress: ExerciseProgressUpdate | ProgressUpdateWithAnswers) => void;
   initialData?: Partial<RuedaInferenciasState>;
   difficulty?: 'easy' | 'medium' | 'hard';
   actionsRef?: React.MutableRefObject<RuedaInferenciasActions | undefined>;
@@ -142,6 +164,7 @@ export interface WheelSpinnerProps {
   isSpinning: boolean;
   onSpinComplete: (selectedCategory: InferenceCategory) => void;
   disabled?: boolean;
+  usedCategoryIds?: string[];  // IDs de categorías ya usadas (para prevenir repetición)
 }
 
 /**

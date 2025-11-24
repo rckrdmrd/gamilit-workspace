@@ -9,7 +9,7 @@
  */
 
 import { useState } from 'react';
-import apiClient from '@/lib/api/client';
+import { apiClient } from '@/services/api/apiClient';
 import type {
   ExerciseSubmission,
   ExerciseSubmissionResult,

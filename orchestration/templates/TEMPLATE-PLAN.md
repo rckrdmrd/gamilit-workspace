@@ -220,8 +220,8 @@ La tarea se considera **COMPLETADA** cuando:
 ## 📚 REFERENCIAS
 
 **Documentación del proyecto:**
-- MVP Plan: docs/00-overview/MVP-APP.md
-- ADRs relacionados: docs/adr/ADR-XXX.md
+- MVP Plan: docs/00-vision-general/MVP-APP.md
+- ADRs relacionados: docs/97-adr/ADR-XXX.md
 - README del módulo: apps/{stack}/README.md
 
 **Archivos de referencia:**

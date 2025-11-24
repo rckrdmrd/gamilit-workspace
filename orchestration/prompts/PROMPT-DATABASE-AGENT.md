@@ -98,6 +98,144 @@ Database-Agent:
 
 ---
 
+## ⚠️ POLÍTICA DDL-FIRST (OBLIGATORIO)
+
+### Principio Fundamental
+
+**Los archivos DDL son la fuente de verdad. La base de datos es el resultado de ejecutar esos archivos.**
+
+```yaml
+Orden correcto:
+  1. Crear/actualizar archivo DDL
+  2. Validar con recreación completa
+  3. Si funciona → Commitear DDL
+  4. Si falla → Corregir DDL (NO ejecutar fix manual)
+
+Orden PROHIBIDO:
+  ❌ 1. Ejecutar ALTER/CREATE directo en psql
+  ❌ 2. "Documentar" creando DDL después
+  ❌ 3. Esperar que funcione en otros ambientes
+```
+
+### Flujo de Trabajo DDL-First
+
+#### ✅ CORRECTO: Crear Nueva Tabla
+
+```bash
+# 1. Crear archivo DDL
+vim apps/database/ddl/schemas/gamification_system/tables/05-challenges.sql
+
+# 2. Validar con recreación completa
+cd apps/database
+./drop-and-recreate-database.sh
+
+# 3. Si funciona → Commitear
+git add apps/database/ddl/schemas/gamification_system/tables/05-challenges.sql
+git commit -m "feat(db): add challenges table"
+
+# 4. Si falla → Corregir DDL y volver a paso 2
+# NO ejecutar fixes manuales en BD
+```
+
+#### ✅ CORRECTO: Modificar Tabla Existente
+
+```bash
+# 1. Actualizar DDL existente (NO crear migration)
+vim apps/database/ddl/schemas/auth_management/tables/01-users.sql
+# Agregar columna en el CREATE TABLE (NO usar ALTER TABLE)
+
+# ANTES:
+CREATE TABLE auth_management.users (
+    id UUID PRIMARY KEY,
+    username VARCHAR(50),
+    email VARCHAR(255)
+);
+
+# DESPUÉS:
+CREATE TABLE auth_management.users (
+    id UUID PRIMARY KEY,
+    username VARCHAR(50),
+    email VARCHAR(255),
+    phone_number VARCHAR(20),  -- ← Nueva columna
+    phone_verified BOOLEAN DEFAULT false
+);
+
+# 2. Validar con recreación completa
+./drop-and-recreate-database.sh
+
+# 3. Commitear DDL actualizado
+git add apps/database/ddl/schemas/auth_management/tables/01-users.sql
+git commit -m "feat(db): add phone verification to users"
+```
+
+#### ❌ PROHIBIDO: Ejecutar Cambios Directamente
+
+```bash
+# ❌ NO hacer esto
+psql -d gamilit_platform -c "ALTER TABLE auth_management.users ADD COLUMN phone_number VARCHAR(20);"
+
+# ❌ NO crear migration incremental
+echo "ALTER TABLE users ADD COLUMN phone_number VARCHAR(20);" > migrations/002-add-phone.sql
+
+# ❌ NO crear fix temporal
+echo "ALTER TABLE users ADD COLUMN phone_number VARCHAR(20);" > fix-add-phone.sql
+```
+
+### Prohibiciones Explícitas
+
+**❌ PROHIBIDO crear o usar:**
+
+```yaml
+Migrations incrementales:
+  ❌ Carpeta migrations/
+  ❌ Archivos migration-*.sql
+  ❌ Archivos 001-*, 002-*, etc. (estilo TypeORM/Prisma)
+  ❌ Estrategia ALTER TABLE como cambio principal
+
+Fixes y patches:
+  ❌ Archivos fix-*.sql
+  ❌ Archivos patch-*.sql
+  ❌ Archivos hotfix-*.sql
+  ❌ Scripts "one-time" que se vuelven permanentes
+
+Cambios directos sin DDL:
+  ❌ psql -c "ALTER TABLE ..."
+  ❌ psql -c "CREATE TABLE ..." (sin archivo DDL)
+  ❌ Cambios manuales en BD sin actualizar DDL
+```
+
+**Razón:** GAMILIT usa **Política de Carga Limpia** - la BD debe poder recrearse completamente desde archivos DDL en cualquier momento.
+
+**Ver:** [DIRECTIVA-POLITICA-CARGA-LIMPIA.md](../directivas/DIRECTIVA-POLITICA-CARGA-LIMPIA.md) para detalles completos.
+
+### Validación Obligatoria
+
+**TODO cambio DEBE validarse con recreación completa:**
+
+```bash
+# Validación estándar
+cd apps/database
+./drop-and-recreate-database.sh
+
+# Si falla la recreación:
+# → El DDL tiene un problema
+# → NO ejecutar fix manual en BD
+# → Corregir archivo DDL
+# → Volver a intentar recreación
+```
+
+**Checklist de validación:**
+```markdown
+- [ ] Recreación completa ejecuta sin errores
+- [ ] Todas las tablas se crean correctamente
+- [ ] Todos los índices y constraints se crean
+- [ ] Funciones, triggers y RLS policies funcionan
+- [ ] Seeds se cargan sin errores
+- [ ] Integridad referencial validada
+```
+
+---
+
 ## 📋 OBJETIVO PRINCIPAL DEL PROYECTO
 
 **GAMILIT** es un sistema de gamificación educativa que convierte el aprendizaje en una experiencia de juego.
@@ -210,13 +348,15 @@ apps/database/
 │       ├── gamification_system/             # Gamificación
 │       ├── educational_content/             # Contenido educativo
 │       └── analytics/                       # Análisis
-├── seeds/
-│   ├── dev/                                 # Seeds desarrollo
-│   └── prod/                                # Seeds producción
-└── migrations/                              # Migraciones versionadas
+└── seeds/
+    ├── dev/                                 # Seeds desarrollo
+    └── prod/                                # Seeds producción
 ```
 
-**❌ PROHIBIDO:** Crear archivos DDL fuera de `apps/database/ddl/`
+**❌ PROHIBIDO:**
+- Crear archivos DDL fuera de `apps/database/ddl/`
+- Crear carpeta `migrations/` o archivos de migration
+- Crear archivos `fix-*.sql` o `patch-*.sql`
 
 ### 5. VALIDACIÓN ANTI-DUPLICACIÓN
 

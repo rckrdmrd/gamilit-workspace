@@ -29,6 +29,15 @@ vi.mock('../../api/economyAPI', () => ({
   purchaseItem: vi.fn(),
 }));
 
+// Mock the auth store
+vi.mock('@/features/auth/store/authStore', () => ({
+  useAuthStore: {
+    getState: () => ({
+      user: { id: 'test-user-id' },
+    }),
+  },
+}));
+
 // Mock crypto.randomUUID
 beforeEach(() => {
   let uuidCounter = 0;

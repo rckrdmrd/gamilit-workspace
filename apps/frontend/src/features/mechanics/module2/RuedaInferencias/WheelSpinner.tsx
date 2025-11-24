@@ -5,7 +5,7 @@
  * @task FE-071
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import type { WheelSpinnerProps } from './ruedaInferenciasTypes';
 
@@ -13,31 +13,59 @@ export const WheelSpinner: React.FC<WheelSpinnerProps> = ({
   categories,
   isSpinning,
   onSpinComplete,
+  usedCategoryIds,
 }) => {
   const [rotation, setRotation] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const hasCalledOnComplete = useRef(false);
 
   // Calculate segment angle
   const segmentAngle = 360 / categories.length;
 
+  /* eslint-disable react-hooks/exhaustive-deps */
+  // NOTA: usedCategoryIds NO debe ser dependencia para evitar race condition
+  // que causa duplicación de IDs. Ver: orchestration/agentes/architecture-analyst/rueda-inferencias-bugs-2025-11-23/
   useEffect(() => {
     if (isSpinning) {
-      // Generate random rotation (3-5 full rotations + random offset)
-      const fullRotations = 3 + Math.random() * 2; // 3-5 rotations
-      const randomDegrees = Math.random() * 360;
-      const totalRotation = rotation + (fullRotations * 360) + randomDegrees;
+      hasCalledOnComplete.current = false; // Reset al empezar
+
+      // Filter out already used categories
+      const availableCategories = categories.filter(
+        cat => !usedCategoryIds?.includes(cat.id)
+      );
+
+      // If no available categories (edge case), use all
+      const selectableCategories = availableCategories.length > 0
+        ? availableCategories
+        : categories;
+
+      // Randomly select from available categories
+      const randomIndex = Math.floor(Math.random() * selectableCategories.length);
+      const selectedCategory = selectableCategories[randomIndex];
+
+      // Find index in original categories array for visual rotation
+      const visualIndex = categories.findIndex(cat => cat.id === selectedCategory.id);
+      const targetAngle = visualIndex * segmentAngle;
+
+      // Generate rotation to land on target angle
+      const fullRotations = 3 + Math.random() * 2; // 3-5 full rotations
+      const totalRotation = rotation + (fullRotations * 360) + targetAngle;
 
       setRotation(totalRotation);
 
-      // Calculate selected category after animation completes
+      // Complete spin after animation
       setTimeout(() => {
-        const normalizedRotation = totalRotation % 360;
-        const selectedIdx = Math.floor(normalizedRotation / segmentAngle) % categories.length;
-        setSelectedIndex(selectedIdx);
-        onSpinComplete(categories[selectedIdx]);
-      }, 3000); // Match animation duration
+        setSelectedIndex(visualIndex);
+
+        // SOLO llamar onSpinComplete UNA vez
+        if (!hasCalledOnComplete.current) {
+          hasCalledOnComplete.current = true;
+          onSpinComplete(selectedCategory);
+        }
+      }, 3000);
     }
   }, [isSpinning]);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   return (
     <div className="flex flex-col items-center gap-6">

@@ -1,18 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional } from 'class-validator';
+import { ReportType, ReportFormat } from '@shared/dto/reports/generate-report.dto';
 
-export enum ReportType {
-  USERS = 'users',
-  PROGRESS = 'progress',
-  GAMIFICATION = 'gamification',
-  SYSTEM = 'system',
-}
-
-export enum ReportFormat {
-  CSV = 'csv',
-  EXCEL = 'excel',
-  PDF = 'pdf',
-}
+export { ReportType, ReportFormat, GenerateReportDto } from '@shared/dto/reports/generate-report.dto';
 
 export enum ReportStatus {
   PENDING = 'pending',
@@ -77,31 +67,6 @@ export class ReportDto {
     example: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
   })
   requested_by!: string;
-}
-
-export class GenerateReportDto {
-  @ApiProperty({
-    description: 'Type of report to generate',
-    enum: ReportType,
-    example: ReportType.USERS,
-  })
-  @IsEnum(ReportType)
-  type!: ReportType;
-
-  @ApiProperty({
-    description: 'Report output format',
-    enum: ReportFormat,
-    example: ReportFormat.EXCEL,
-  })
-  @IsEnum(ReportFormat)
-  format!: ReportFormat;
-
-  @ApiPropertyOptional({
-    description: 'Report filters',
-    example: { start_date: '2025-01-01', end_date: '2025-12-31' },
-  })
-  @IsOptional()
-  filters?: Record<string, any>;
 }
 
 export class ListReportsDto {

@@ -1,6 +1,6 @@
 # DIRECTIVA DE VALIDACIÓN DE SUBAGENTES
 
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Versión:** 1.0.0
 **Fecha:** 2025-11-17
 **Audiencia:** Agentes Principales (Database-Agent, Backend-Agent, Frontend-Agent)
@@ -1087,7 +1087,7 @@ objetivos:
 
 ### Ejemplo 1: Validación Exitosa (Database)
 
-**Tarea:** Crear tabla `projects` en schema `project_management`
+**Tarea:** Crear tabla `projects` en schema `gamification_system`
 
 **Fase 1: Reporte**
 ```markdown
@@ -1096,11 +1096,11 @@ objetivos:
 
 **Fase 2: Validación Técnica**
 ```bash
-$ ls -la apps/database/ddl/schemas/project_management/tables/01-projects.sql
--rw-r--r-- 1 user user 3245 Nov 17 14:30 01-projects.sql
+$ ls -la apps/database/ddl/schemas/gamification_system/tables/01-user_points.sql
+-rw-r--r-- 1 user user 3245 Nov 17 14:30 01-user_points.sql
 ✅ Archivo existe
 
-$ psql $DATABASE_URL -f apps/database/ddl/schemas/project_management/tables/01-projects.sql
+$ psql $DATABASE_URL -f apps/database/ddl/schemas/gamification_system/tables/01-user_points.sql
 CREATE TABLE
 CREATE INDEX
 CREATE INDEX
@@ -1108,8 +1108,8 @@ ALTER TABLE
 COMMENT
 ✅ Script ejecuta sin errores
 
-$ psql $DATABASE_URL -c "\d project_management.projects"
-                                          Table "project_management.projects"
+$ psql $DATABASE_URL -c "\d gamification_system.user_points"
+                                          Table "gamification_system.user_points"
     Column     |          Type          | Collation | Nullable |      Default
 ---------------+------------------------+-----------+----------+-------------------
  id            | uuid                   |           | not null | gen_random_uuid()
@@ -1152,7 +1152,7 @@ Check constraints:
 **Fase 4: Convenciones**
 ```markdown
 - [✅] Nombre tabla: snake_case (projects)
-- [✅] Nombre archivo: 01-projects.sql (patrón {NN}-{nombre}.sql)
+- [✅] Nombre archivo: 01-user_points.sql (patrón {NN}-{nombre}.sql)
 - [✅] Índices: idx_{tabla}_{columna}
 - [✅] FK: fk_{tabla}_to_{tabla_ref}
 - [✅] CHECK: chk_{tabla}_{columna}
@@ -1163,9 +1163,9 @@ Check constraints:
 ```bash
 $ grep "projects" orchestration/inventarios/DATABASE_INVENTORY.yml
   - name: projects
-    schema: project_management
+    schema: gamification_system
     type: table
-    location: apps/database/ddl/schemas/project_management/tables/01-projects.sql
+    location: apps/database/ddl/schemas/gamification_system/tables/01-user_points.sql
     dependencies:
       - auth_management.users
 ✅ Inventario actualizado
@@ -1188,8 +1188,8 @@ $ grep -ri "projects" orchestration/inventarios/MASTER_INVENTORY.yml
 ✅ **TRABAJO APROBADO**
 
 Todas las fases pasaron validación exitosamente.
-Archivo: apps/database/ddl/schemas/project_management/tables/01-projects.sql
-Objeto: Tabla project_management.projects
+Archivo: apps/database/ddl/schemas/gamification_system/tables/01-user_points.sql
+Objeto: Tabla gamification_system.user_points
 
 Registrado en: orchestration/agentes/database/DB-042/04-VALIDACIONES/VALIDACION-SUB-001.md
 Validador: Database-Agent

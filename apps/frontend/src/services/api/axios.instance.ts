@@ -14,7 +14,7 @@
  * @module axios.instance
  */
 
-import { apiClient } from './apiClient';
+import { apiClient } from '@/services/api/apiClient';
 import type { AxiosInstance } from 'axios';
 
 // ============================================================================

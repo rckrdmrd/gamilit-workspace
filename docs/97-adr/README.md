@@ -1,8 +1,8 @@
 # Architecture Decision Records (ADR)
 
-**Carpeta:** `docs/adr/`
+**Carpeta:** `docs/97-adr/`
 **Propósito:** Documentar decisiones arquitectónicas importantes del proyecto
-**Última actualización:** 2025-11-07
+**Última actualización:** 2025-11-23
 
 ---
 
@@ -162,13 +162,168 @@ Usamos el formato [Michael Nygard ADR template](https://github.com/joelparkerhen
 
 ---
 
+### ✅ ADR-0003: Team vs Guild en Social Features
+
+**Date:** 2025-11-08
+**Status:** ✅ Accepted and Implemented
+**Deciders:** Tech Lead, Product Owner, Backend Team
+
+**Decisión:** Usar el término "Guild" en lugar de "Team" para las funcionalidades sociales de GAMILIT.
+
+**Context:**
+- Sistema de gamificación requiere grupos sociales competitivos
+- "Team" es genérico y poco gamificado
+- "Guild" evoca cultura gaming y contexto Maya
+
+**Key Points:**
+- ✅ Mayor engagement (término gamificado)
+- ✅ Coherente con temática Maya/cultura
+- ✅ Diferenciación de "classroom" (contexto académico)
+- ✅ Nomenclatura consistente en BD, backend, frontend
+
+**[Leer ADR completo →](./ADR-0003-team-vs-guild.md)**
+
+---
+
+### ✅ ADR-007: Schemas sin Tablas en PostgreSQL
+
+**Date:** 2025-11-11
+**Status:** ✅ Accepted
+**Deciders:** Database Team, Tech Lead
+
+**Decisión:** Permitir schemas vacíos (sin tablas) en PostgreSQL para reserva futura.
+
+**Context:**
+- Base de datos multi-schema requiere planificación
+- Algunos schemas se implementarán en fases futuras
+- Necesidad de estructura clara desde el inicio
+
+**Key Points:**
+- ✅ Planificación clara de estructura futura
+- ✅ Evita cambios arquitectónicos posteriores
+- ✅ Documentación de intenciones
+- ⚠️ Requiere documentación de propósito
+
+**[Leer ADR completo →](./ADR-007-schemas-sin-tablas.md)**
+
+---
+
+### ✅ ADR-008: Sistema Dual exercise_type + Categorías Pedagógicas
+
+**Date:** 2025-11-11
+**Status:** ✅ Accepted and Implemented
+**Deciders:** Database Team, Tech Lead, Product Owner
+
+**Decisión:** Implementar sistema dual con `exercise_type` (35 tipos específicos GAMILIT) + mapeo a categorías pedagógicas universales.
+
+**Context:**
+- Documentación define categorías pedagógicas genéricas
+- Implementación usa tipos específicos de GAMILIT
+- Necesidad de coherencia entre docs y código
+
+**Key Points:**
+- ✅ Mantiene granularidad de implementación
+- ✅ Provee categorización pedagógica
+- ✅ Evita refactoring masivo
+- ✅ Documenta mapeo explícito
+
+**[Leer ADR completo →](./ADR-008-sistema-dual-exercise-mechanics.md)**
+
+---
+
+### ✅ ADR-009: Duración del Ejercicio 3.4 - Podcast Argumentativo
+
+**Date:** 2025-11-23
+**Status:** ✅ Accepted and Implemented
+**Deciders:** Architecture-Analyst, Product Owner
+
+**Decisión:** Mantener duración de 2 minutos (vs 3 minutos) para el ejercicio de podcast argumentativo.
+
+**Context:**
+- Contradicción en documento de diseño de mecánicas v6.4
+- Título indicaba 2 minutos, descripción mencionaba 3 minutos
+- Necesidad de decisión definitiva
+
+**Key Points:**
+- ✅ Coherente con v6.4 ya implementado
+- ✅ Más manejable para estudiantes
+- ✅ Facilita evaluación y retroalimentación
+- ✅ Alineado con formatos digitales modernos
+- ⚠️ Menos tiempo para argumentación profunda
+
+**Estructura:** Introducción (30s) + Desarrollo (60s) + Conclusión (30s) = 120s
+
+**[Leer ADR completo →](./ADR-009-duracion-podcast-ejercicio-3-4.md)**
+
+---
+
+### ✅ ADR-026: SIMCO v2 - Estructura Modular
+
+**Date:** 2025-11-08
+**Status:** ✅ Accepted
+**Deciders:** Tech Lead, AI Engineering Team
+
+**Decisión:** Evolucionar SIMCO a v2 con estructura modular y templates estandarizados.
+
+**Context:**
+- SIMCO v1 exitoso pero sin estructura consistente
+- Necesidad de templates para diferentes tipos de carpetas
+- Escalabilidad a 300+ _MAP.md
+
+**Key Points:**
+- ✅ Templates por tipo (código, docs, tests, etc.)
+- ✅ Secciones estándar reutilizables
+- ✅ Más fácil de mantener
+- ✅ AI agents procesan estructura predecible
+
+**[Leer ADR completo →](./ADR-026-simco-v2-estructura-modular.md)**
+
+---
+
+### ✅ ADR-012: Inicialización Automática de Usuarios mediante Trigger
+
+**Date:** 2025-11-24
+**Status:** ✅ Accepted and Implemented
+**Deciders:** Architecture-Analyst, Database-Agent, Backend-Agent, Frontend-Agent
+
+**Decisión:** Implementar trigger de base de datos que inicializa automáticamente todos los registros necesarios al registrar un usuario nuevo.
+
+**Context:**
+- Bug crítico: Usuarios nuevos veían "No modules available"
+- Causa raíz: Trigger incompleto, no creaba `module_progress`
+- Gamificación rota para nuevos usuarios
+
+**Key Points:**
+- ✅ Trigger crea 4 tablas automáticamente (user_stats, comodines_inventory, user_ranks, module_progress)
+- ✅ 100% usuarios inicializados correctamente
+- ✅ 0% errores "no modules available"
+- ✅ UX mejorada: 5 módulos disponibles inmediatamente
+- ✅ Backend/Frontend compatible sin cambios
+- ✅ 5 bugs críticos corregidos (FK references, ON CONFLICT, etc.)
+
+**Bugs Fixed:**
+1. module_progress NUNCA se creaba (CRÍTICO)
+2. user_ranks sin protección contra duplicados
+3. FK reference incorrecta (profiles.id vs auth.users.id)
+4. Referencia a columna inexistente (deleted_at)
+5. Migration con FK incorrecta
+
+**Validation:**
+- ✅ Database-Agent: APROBADO para carga limpia
+- ✅ Backend-Agent: APROBADO sin cambios necesarios (riesgo BAJO)
+- ✅ Frontend-Agent: APROBADO para producción (confianza 95%+)
+
+**[Leer ADR completo →](./ADR-012-automatic-user-initialization-trigger.md)**
+
+---
+
 ## ⏳ ADRs Planeados
 
-### ADR-0003: Selección de Stack Tecnológico
+### ADR-010: Selección de Stack Tecnológico
 
 **Status:** ⏳ Planeado
 **Priority:** P1 (Alta)
-**Target Date:** 2025-11-20
+**Target Date:** 2025-12-10
 
 **Decisión a documentar:**
 - Por qué NestJS para backend (vs Express, Fastify, Koa)
@@ -184,11 +339,11 @@ Usamos el formato [Michael Nygard ADR template](https://github.com/joelparkerhen
 
 ---
 
-### ADR-0004: Arquitectura Multi-Schema en PostgreSQL
+### ADR-011: Arquitectura Multi-Schema en PostgreSQL
 
 **Status:** ⏳ Planeado
 **Priority:** P1 (Alta)
-**Target Date:** 2025-11-25
+**Target Date:** 2025-12-15
 
 **Decisión a documentar:**
 - Por qué 9 schemas separados (vs 1 schema público)
@@ -215,11 +370,11 @@ Usamos el formato [Michael Nygard ADR template](https://github.com/joelparkerhen
 
 ---
 
-### ADR-0005: Estrategia de Autenticación JWT
+### ADR-015: Estrategia de Autenticación JWT
 
 **Status:** ⏳ Planeado
 **Priority:** P2 (Media)
-**Target Date:** 2025-12-01
+**Target Date:** 2025-12-20
 
 **Decisión a documentar:**
 - Por qué JWT (vs session-based, OAuth only)
@@ -233,13 +388,15 @@ Usamos el formato [Michael Nygard ADR template](https://github.com/joelparkerhen
 
 **Esfuerzo estimado:** 2-3 horas
 
+**Nota:** Renumerado de ADR-012 a ADR-015 (ADR-012 usado para User Initialization Trigger)
+
 ---
 
-### ADR-0006: Constants SSOT System
+### ADR-013: Constants SSOT System
 
 **Status:** ⏳ Planeado
 **Priority:** P2 (Media)
-**Target Date:** 2025-12-05
+**Target Date:** 2025-12-25
 
 **Decisión a documentar:**
 - Por qué Constants SSOT (vs hardcoding)
@@ -255,11 +412,11 @@ Usamos el formato [Michael Nygard ADR template](https://github.com/joelparkerhen
 
 ---
 
-### ADR-0007: Feature-Sliced Design en Frontend
+### ADR-014: Feature-Sliced Design en Frontend
 
 **Status:** ⏳ Planeado
 **Priority:** P2 (Media)
-**Target Date:** 2025-12-10
+**Target Date:** 2025-12-30
 
 **Decisión a documentar:**
 - Por qué Feature-Sliced Design (vs Atomic Design, etc.)
@@ -279,35 +436,51 @@ Usamos el formato [Michael Nygard ADR template](https://github.com/joelparkerhen
 
 ### Por Estado
 
-**Implemented (2):**
-- [ADR-0001: Monorepo](./ADR-0001-monorepo-architecture.md)
-- [ADR-0002: SIMCO](./ADR-0002-simco-system.md)
+**Implemented (8):**
+- [ADR-0001: Monorepo Architecture](./ADR-0001-monorepo-architecture.md)
+- [ADR-0002: SIMCO System](./ADR-0002-simco-system.md)
+- [ADR-0003: Team vs Guild](./ADR-0003-team-vs-guild.md)
+- [ADR-007: Schemas sin Tablas](./ADR-007-schemas-sin-tablas.md)
+- [ADR-008: Sistema Dual exercise_type](./ADR-008-sistema-dual-exercise-mechanics.md)
+- [ADR-009: Duración Podcast Ejercicio 3.4](./ADR-009-duracion-podcast-ejercicio-3-4.md)
+- [ADR-012: Automatic User Initialization Trigger](./ADR-012-automatic-user-initialization-trigger.md)
+- [ADR-026: SIMCO v2 Estructura Modular](./ADR-026-simco-v2-estructura-modular.md)
 
 **Planned (5):**
-- ADR-0003: Stack tecnológico
-- ADR-0004: Multi-schema DB
-- ADR-0005: JWT authentication
-- ADR-0006: Constants SSOT
-- ADR-0007: Feature-Sliced Design
+- ADR-010: Stack tecnológico
+- ADR-011: Multi-schema DB
+- ADR-013: Constants SSOT
+- ADR-014: Feature-Sliced Design
+- ADR-015: JWT authentication
 
 ### Por Categoría
 
-**Architecture (2):**
+**Architecture (3):**
 - ADR-0001: Monorepo
 - ADR-0002: SIMCO
+- ADR-026: SIMCO v2
+
+**Database (3 + 1 planned):**
+- ADR-007: Schemas sin Tablas
+- ADR-008: Sistema Dual exercise_type
+- ADR-012: Automatic User Initialization Trigger
+- ADR-011: Multi-schema (planned)
 
 **Technology Stack (1 planned):**
-- ADR-0003: Stack selection
-
-**Database (1 planned):**
-- ADR-0004: Multi-schema
+- ADR-010: Stack selection (planned)
 
 **Security (1 planned):**
-- ADR-0005: JWT
+- ADR-015: JWT (planned)
 
 **Code Organization (2 planned):**
-- ADR-0006: Constants SSOT
-- ADR-0007: Feature-Sliced Design
+- ADR-013: Constants SSOT (planned)
+- ADR-014: Feature-Sliced Design (planned)
+
+**Social Features (1):**
+- ADR-0003: Team vs Guild
+
+**Content Design (1):**
+- ADR-009: Duración Podcast Ejercicio 3.4
 
 ---
 
@@ -317,20 +490,30 @@ Usamos el formato [Michael Nygard ADR template](https://github.com/joelparkerhen
 
 ```bash
 # Ver último ADR
-ls docs/adr/ | grep ADR | sort | tail -1
-# Output: ADR-0002-simco-system.md
+ls docs/97-adr/ | grep ADR | sort | tail -1
+# Output: ADR-009-duracion-podcast-ejercicio-3-4.md
 
-# Siguiente es ADR-0003
+# Siguiente es ADR-010
 ```
+
+**Convención de Numeración:**
+- **Formato estándar:** ADR-00XX (padding a 4 dígitos con ceros)
+- **Ejemplos:** ADR-0001, ADR-0002, ADR-0003, ..., ADR-0010, ADR-0011
+- **Próximo ADR:** ADR-010 (después de ADR-009)
+
+**Nota:** ADRs históricos mantienen su numeración original (ADR-007, ADR-008, ADR-026). Nuevos ADRs deben usar formato de 4 dígitos (ADR-00XX o ADR-0XXX según corresponda).
 
 ### Paso 2: Crear Archivo
 
 ```bash
-# Copiar template
-cp docs/adr/ADR-TEMPLATE.md docs/adr/ADR-0003-nombre-decision.md
+# Copiar template (si existe)
+cp docs/97-adr/ADR-TEMPLATE.md docs/97-adr/ADR-010-nombre-decision.md
+
+# O crear desde cero
+touch docs/97-adr/ADR-010-nombre-decision.md
 
 # Editar con tu editor
-code docs/adr/ADR-0003-nombre-decision.md
+code docs/97-adr/ADR-010-nombre-decision.md
 ```
 
 ### Paso 3: Llenar Secciones
@@ -415,20 +598,20 @@ Si una decisión cambia:
 
 ```bash
 # Buscar ADRs sobre "database"
-grep -i "database" docs/adr/ADR-*.md
+grep -i "database" docs/97-adr/ADR-*.md
 
 # Buscar decisiones sobre "performance"
-grep -i "performance" docs/adr/ADR-*.md
+grep -i "performance" docs/97-adr/ADR-*.md
 ```
 
 ### Por Status
 
 ```bash
 # Ver ADRs accepted
-grep "Status.*Accepted" docs/adr/ADR-*.md
+grep "Status.*Accepted" docs/97-adr/ADR-*.md
 
 # Ver ADRs deprecated
-grep "Status.*Deprecated" docs/adr/ADR-*.md
+grep "Status.*Deprecated" docs/97-adr/ADR-*.md
 ```
 
 ---
@@ -465,6 +648,6 @@ grep "Status.*Deprecated" docs/adr/ADR-*.md
 
 ---
 
-**Última actualización:** 2025-11-07
-**Total ADRs:** 2 (Accepted: 2, Planned: 5)
-**Coverage:** Architecture, Documentation, Technology Stack
+**Última actualización:** 2025-11-24
+**Total ADRs:** 8 (Accepted: 8, Planned: 5)
+**Coverage:** Architecture, Documentation, Database, Technology Stack, Social Features, Content Design, User Initialization

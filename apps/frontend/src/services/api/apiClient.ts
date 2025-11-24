@@ -6,7 +6,7 @@
  */
 
 import axios from 'axios';
-import type { AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
+import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 
 // ============================================================================
 // CONFIGURATION

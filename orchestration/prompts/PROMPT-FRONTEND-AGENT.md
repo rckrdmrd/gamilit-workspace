@@ -127,7 +127,7 @@ Frontend-Agent:
      xpRequired: number;
    }
    ```
-   Ver diseño en docs/modulos/gamification.md"
+   Ver diseño en docs/01-fase-alcance-inicial/EAI-003-gamificacion/"
 3. ESPERO a que Backend-Agent complete el endpoint
 4. Una vez listo el endpoint, procedo con BadgesPage.tsx, badgeApi.ts, etc.
 ```

@@ -1,8 +1,9 @@
-# PROMPT PARA SUBAGENTES - Sistema Administración de Obra
+# PROMPT PARA SUBAGENTES - GAMILIT
 
-**Versión:** 1.0.0
+**Versión:** 1.0.1
 **Fecha creación:** 2025-11-17
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+**Última actualización:** 2025-11-23
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Aplicable a:** Todos los subagentes lanzados por agentes principales
 
 ---
@@ -31,8 +32,8 @@ El agente principal **DEBE** proporcionarte este contexto completo:
 ```yaml
 tarea_id: "DB-042-SUB-001"
 agente_principal: "Database-Agent"
-tarea_principal: "DB-042 - Crear módulo de Proyectos"
-subtarea: "Crear tabla projects"
+tarea_principal: "DB-042 - Crear módulo de Gamificación"
+subtarea: "Crear tabla user_points"
 prioridad: "P0"
 duracion_estimada: "1.5 horas"
 ```
@@ -41,20 +42,18 @@ duracion_estimada: "1.5 horas"
 
 ```markdown
 ## Objetivo
-Crear la tabla `projects` en el schema `project_management` con las siguientes especificaciones:
+Crear la tabla `user_points` en el schema `gamification_system` con las siguientes especificaciones:
 
 ### Columnas Requeridas
 - id (UUID, PK, default gen_random_uuid())
-- code (VARCHAR(50), UNIQUE, NOT NULL)
-- name (VARCHAR(200), NOT NULL)
-- description (TEXT, nullable)
-- state (VARCHAR(100), NOT NULL)
-- city (VARCHAR(100), NOT NULL)
-- address (TEXT)
-- coordinates (GEOGRAPHY(POINT, 4326))
-- start_date (DATE, NOT NULL)
-- end_date (DATE)
-- status (VARCHAR(50), default 'planning')
+- user_id (UUID, FK → auth_management.users, NOT NULL)
+- points (INTEGER, NOT NULL, default 0)
+- level_id (UUID, FK → gamification_system.levels, nullable)
+- total_points_earned (INTEGER, NOT NULL, default 0)
+- total_points_spent (INTEGER, NOT NULL, default 0)
+- current_streak_days (INTEGER, default 0)
+- best_streak_days (INTEGER, default 0)
+- last_activity_date (DATE)
 - created_at (TIMESTAMP, default NOW())
 - updated_at (TIMESTAMP, default NOW())
 - created_by (UUID, FK a auth_management.users)
@@ -88,7 +87,7 @@ Crear la tabla `projects` en el schema `project_management` con las siguientes e
 - `orchestration/inventarios/DATABASE_INVENTORY.yml`
 
 ### Documentación
-- `docs/00-overview/MVP-APP.md` (sección 2: Proyectos y Obras)
+- `docs/00-vision-general/MVP-APP.md` (sección 2: Proyectos y Obras)
 - `orchestration/prompts/PROMPT-AGENTES-PRINCIPALES.md` (estándares de código)
 
 ### Estándares
@@ -673,7 +672,7 @@ $ find apps/database/ddl -name "*project*"
 1. ✅ `apps/database/ddl/schemas/auth_management/tables/01-users.sql` - Template
 2. ✅ `orchestration/inventarios/MASTER_INVENTORY.yml` - Anti-duplicación
 3. ✅ `orchestration/directivas/ESTANDARES-NOMENCLATURA.md` - Convenciones
-4. ✅ `docs/00-overview/MVP-APP.md` - Contexto del módulo
+4. ✅ `docs/00-vision-general/MVP-APP.md` - Contexto del módulo
 
 ## Problemas Encontrados
 

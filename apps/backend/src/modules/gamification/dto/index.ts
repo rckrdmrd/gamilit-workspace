@@ -9,6 +9,7 @@
 export * from './user-stats/create-user-stats.dto';
 export * from './user-stats/update-user-stats.dto';
 export * from './user-stats/user-stats-response.dto';
+export * from './user-gamification-summary.dto';
 
 // UserRank DTOs
 export * from './user-ranks/create-user-rank.dto';

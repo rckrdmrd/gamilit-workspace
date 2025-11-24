@@ -16,6 +16,9 @@ import { Classroom } from '@modules/social/entities/classroom.entity';
 import { ExerciseSubmission } from '@modules/progress/entities/exercise-submission.entity';
 import { ModuleProgress } from '@modules/progress/entities/module-progress.entity';
 
+// Gamification entities
+import { UserStats } from '@modules/gamification/entities/user-stats.entity';
+
 // Content entities
 import { Assignment } from '@modules/assignments/entities/assignment.entity';
 import { AssignmentSubmission } from '@modules/assignments/entities/assignment-submission.entity';
@@ -91,6 +94,9 @@ import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
 
     // Entities from 'progress' datasource
     TypeOrmModule.forFeature([ExerciseSubmission, ModuleProgress], 'progress'),
+
+    // Entities from 'gamification' datasource
+    TypeOrmModule.forFeature([UserStats], 'gamification'),
 
     // Entities from 'content' datasource
     TypeOrmModule.forFeature([Assignment, AssignmentSubmission], 'content'),

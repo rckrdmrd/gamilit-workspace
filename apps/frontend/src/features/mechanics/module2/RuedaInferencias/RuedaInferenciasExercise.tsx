@@ -95,7 +95,7 @@ const mockExercise: RuedaInferenciasExerciseType = {
   },
 };
 
-type GamePhase = 'intro' | 'spinning' | 'reading' | 'writing' | 'completed' | 'feedback';
+type GamePhase = 'intro' | 'spinning' | 'reading' | 'writing' | 'summary' | 'completed' | 'feedback';
 
 export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> = ({
   exerciseId,
@@ -114,6 +114,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
   const [isWheelSpinning, setIsWheelSpinning] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<InferenceCategory | null>(null);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [usedCategoryIds, setUsedCategoryIds] = useState<string[]>([]);
 
   // Fragment states
   const [fragmentStates, setFragmentStates] = useState<FragmentState[]>(
@@ -159,18 +160,39 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
     }
   }, [phase]);
 
-  // Progress callback
+  // Progress callback - send both progress AND answers to ExercisePage
   useEffect(() => {
     if (onProgressUpdate) {
-      onProgressUpdate({
-        currentFragment: currentFragmentIndex + 1,
-        totalFragments: exercise.content.fragments.length,
-        score,
-        hintsUsed: 0,
+      // Prepare answers in the format ExercisePage expects
+      const answers: RuedaInferenciasAnswers = {
+        fragments: fragmentStates.reduce((acc, state) => {
+          if (state.userText) {
+            acc[state.fragmentId] = state.userText;
+          }
+          return acc;
+        }, {} as Record<string, string>),
+        fragmentStates: fragmentStates.map(state => ({
+          fragmentId: state.fragmentId,
+          categoryId: state.categoryId || 'cat-literal',
+          userText: state.userText,
+          timeSpent: state.timeSpent
+        })),
         timeSpent: totalTimeSpent,
+      };
+
+      // Send both progress and answers
+      onProgressUpdate({
+        progress: {
+          currentStep: currentFragmentIndex + 1,
+          totalSteps: exercise.content.fragments.length,
+          score,
+          hintsUsed: 0,
+          timeSpent: totalTimeSpent,
+        },
+        answers: answers
       });
     }
-  }, [currentFragmentIndex, score, totalTimeSpent, onProgressUpdate]);
+  }, [currentFragmentIndex, score, totalTimeSpent, fragmentStates, onProgressUpdate, exercise.content.fragments.length]);
 
   // Character count
   useEffect(() => {
@@ -195,6 +217,9 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
         idx === currentFragmentIndex ? { ...state, categoryId: category.id } : state
       )
     );
+
+    // Track used category
+    setUsedCategoryIds(prev => [...prev, category.id]);
   };
 
   // Handle start writing
@@ -231,7 +256,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
       )
     );
 
-    // Move to next fragment or complete
+    // Move to next fragment or show summary
     if (currentFragmentIndex < exercise.content.fragments.length - 1) {
       setCurrentFragmentIndex((prev) => prev + 1);
       setPhase('intro');
@@ -240,8 +265,8 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
       setIsTimerRunning(false);
       startTimeRef.current = null;
     } else {
-      setPhase('completed');
-      handleSubmitExercise();
+      // Mostrar resumen antes de enviar
+      setPhase('summary');
     }
   }, [currentFragmentIndex, currentText, exercise.content.fragments.length]);
 
@@ -269,6 +294,12 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
           acc[state.fragmentId] = state.userText;
           return acc;
         }, {} as Record<string, string>),
+        fragmentStates: fragmentStates.map(state => ({
+          fragmentId: state.fragmentId,
+          categoryId: state.categoryId || 'cat-literal',
+          userText: state.userText,
+          timeSpent: state.timeSpent
+        })),
         categoryId: selectedCategory?.id,
         timeSpent: totalTimeSpent,
       };
@@ -276,15 +307,20 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
       const response = await submitExercise(exerciseId, userId, answers);
 
       // Show feedback
+      const feedbackMessage = typeof response.feedback === 'string'
+        ? response.feedback
+        : response.feedback?.overall || 'Ejercicio completado';
+
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
         title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
-        message: response.feedback.overall,
+        message: feedbackMessage,
         score: response.score,
-        xpEarned: response.rewards.xp,
-        mlCoinsEarned: response.rewards.mlCoins,
+        xpEarned: response.rewards?.xp || 0,
+        mlCoinsEarned: response.rewards?.mlCoins || 0,
         showConfetti: response.isPerfect,
         isCorrect: response.score >= exercise.passing_score,
+        details: (response as any).details?.byFragment,
       });
 
       setScore(response.score);
@@ -312,6 +348,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
     setCurrentText('');
     setIsTimerRunning(false);
     setIsWheelSpinning(false);
+    setUsedCategoryIds([]);
     setFragmentStates(
       exercise.content.fragments.map((frag) => ({
         fragmentId: frag.id,
@@ -332,15 +369,35 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
   useEffect(() => {
     if (actionsRef) {
       actionsRef.current = {
-        getState: () => ({
-          currentFragmentIndex,
-          fragments: fragmentStates,
-          totalTimeSpent,
-          score,
-          hintsUsed: 0,
-          isWheelSpinning,
-          selectedCategoryId: selectedCategory?.id || null,
-        }),
+        getState: () => {
+          // Prepare answers in backend format
+          const answers: RuedaInferenciasAnswers = {
+            fragments: fragmentStates.reduce((acc, state) => {
+              if (state.userText) {
+                acc[state.fragmentId] = state.userText;
+              }
+              return acc;
+            }, {} as Record<string, string>),
+            fragmentStates: fragmentStates.map(state => ({
+              fragmentId: state.fragmentId,
+              categoryId: state.categoryId || 'cat-literal',
+              userText: state.userText,
+              timeSpent: state.timeSpent
+            })),
+            timeSpent: totalTimeSpent,
+          };
+
+          return {
+            currentFragmentIndex,
+            fragments: fragmentStates,
+            totalTimeSpent,
+            score,
+            hintsUsed: 0,
+            isWheelSpinning,
+            selectedCategoryId: selectedCategory?.id || null,
+            answers, // Include answers for ExercisePage
+          };
+        },
         reset: handleReset,
         submit: handleSubmitExercise,
       };
@@ -366,14 +423,59 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 text-white shadow-lg">
             <h2 className="text-2xl font-bold mb-2">{exercise.title}</h2>
             <p className="opacity-90 mb-4">{exercise.description}</p>
-            <div className="flex items-center gap-4 text-sm">
-              <div>
-                📊 Fragmento {currentFragmentIndex + 1} de {exercise.content.fragments.length}
+            <div className="space-y-2">
+              <div className="flex items-center gap-4 text-sm">
+                <div>
+                  📊 Ronda {currentFragmentIndex + 1} de {exercise.content.fragments.length}
+                </div>
+                <div>⏱️ Tiempo: {Math.floor(totalTimeSpent / 60)}:{String(totalTimeSpent % 60).padStart(2, '0')}</div>
+                {score > 0 && <div>⭐ Puntuación: {score}/100</div>}
               </div>
-              <div>⏱️ Tiempo: {Math.floor(totalTimeSpent / 60)}:{String(totalTimeSpent % 60).padStart(2, '0')}</div>
-              {score > 0 && <div>⭐ Puntuación: {score}/100</div>}
+
+              {/* Barra de progreso visual */}
+              <div className="flex gap-2">
+                {exercise.content.fragments.map((_, idx) => (
+                  <div
+                    key={idx}
+                    className={`h-2 flex-1 rounded ${
+                      idx < currentFragmentIndex
+                        ? 'bg-green-500'
+                        : idx === currentFragmentIndex
+                        ? 'bg-blue-300 animate-pulse'
+                        : 'bg-white bg-opacity-30'
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
+
+          {/* Categorías usadas */}
+          {usedCategoryIds.length > 0 && (
+            <div className="bg-gray-50 rounded-lg p-4 border">
+              <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                Categorías seleccionadas:
+              </h4>
+              <div className="flex gap-2 flex-wrap">
+                {exercise.content.categories.map(category => {
+                  const isUsed = usedCategoryIds.includes(category.id);
+                  return (
+                    <div
+                      key={category.id}
+                      className={`px-3 py-1 rounded text-sm font-medium ${
+                        isUsed
+                          ? 'bg-green-100 border border-green-500 text-green-800'
+                          : 'bg-gray-200 text-gray-500'
+                      }`}
+                    >
+                      {category.icon} {category.name}
+                      {isUsed && ' ✓'}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Instructions (Intro Phase) */}
           {phase === 'intro' && (
@@ -421,6 +523,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                   categories={exercise.content.categories}
                   isSpinning={isWheelSpinning}
                   onSpinComplete={handleWheelSpinComplete}
+                  usedCategoryIds={usedCategoryIds}
                 />
               </motion.div>
             </AnimatePresence>
@@ -526,8 +629,67 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                     }`}
                   >
                     <Send className="w-6 h-6" />
-                    Enviar Respuesta
+                    {currentFragmentIndex < exercise.content.fragments.length - 1
+                      ? 'Guardar y Continuar'
+                      : 'Guardar Respuesta'}
                   </button>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          )}
+
+          {/* Summary Phase - Antes de enviar */}
+          {phase === 'summary' && (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key="summary"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-6"
+              >
+                <div className="bg-blue-50 rounded-lg p-6 border-2 border-blue-300">
+                  <h3 className="text-xl font-bold text-blue-900 mb-4">
+                    📋 Resumen de tus respuestas
+                  </h3>
+
+                  {fragmentStates.map((state, idx) => (
+                    <div key={idx} className="mb-4 p-4 bg-white rounded border">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="font-semibold">Ronda {idx + 1}</span>
+                        <span className="text-sm text-gray-600">
+                          ({exercise.content.categories.find(c => c.id === state.categoryId)?.name || 'Sin categoría'})
+                        </span>
+                        <CheckCircle2 className="w-4 h-4 text-green-600 ml-auto" />
+                      </div>
+                      <p className="text-sm text-gray-700 italic">
+                        "{state.userText.substring(0, 100)}{state.userText.length > 100 ? '...' : ''}"
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex justify-center gap-4">
+                  <button
+                    onClick={() => {
+                      // Volver a editar última respuesta
+                      setCurrentFragmentIndex(exercise.content.fragments.length - 1);
+                      setCurrentText(fragmentStates[exercise.content.fragments.length - 1].userText);
+                      setPhase('writing');
+                      setIsTimerRunning(true);
+                    }}
+                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-4 px-8 rounded-lg transition-all"
+                  >
+                    Editar Última Respuesta
+                  </button>
+
+                  <div className="text-center">
+                    <p className="text-sm text-gray-600 mb-2">
+                      ✅ Todas las respuestas completadas
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Usa el botón "Enviar Respuestas" para finalizar
+                    </p>
+                  </div>
                 </div>
               </motion.div>
             </AnimatePresence>

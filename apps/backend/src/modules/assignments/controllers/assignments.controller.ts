@@ -29,7 +29,7 @@ import { PatchAssignmentDto } from '../dto/patch-assignment.dto';
 import { DistributeAssignmentDto, DistributeAssignmentResponseDto } from '../dto/distribute-assignment.dto';
 import { DuplicateAssignmentDto, DuplicateAssignmentResponseDto } from '../dto/duplicate-assignment.dto';
 
-@Controller('api/teacher/assignments')
+@Controller('teacher/assignments')
 // @UseGuards(JwtAuthGuard, RolesGuard)
 // @Roles('teacher', 'admin_teacher')
 export class AssignmentsController {

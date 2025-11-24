@@ -119,7 +119,7 @@ Backend-Agent:
 2. **DELEGO a Database-Agent:**
    "Se requiere tabla gamification_system.badges para implementar BadgeEntity.
    Columnas necesarias: id (uuid), name (varchar), description (text), icon_url (varchar), xp_required (int), created_at, updated_at.
-   Ver diseño en docs/modulos/gamification.md"
+   Ver diseño en docs/01-fase-alcance-inicial/EAI-003-gamificacion/"
 3. ESPERO a que Database-Agent complete la tabla
 4. Una vez creada la tabla, procedo con BadgeEntity, BadgeService, BadgeController
 ```

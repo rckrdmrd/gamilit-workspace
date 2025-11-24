@@ -373,10 +373,23 @@ testing:
         result: Passed with 65% better performance
 
   coverage:
-    overall: 92%
+    overall: 92%  # Coverage de SCRIPTS DE MIGRACIÓN (no de funcionalidad)
     migration_scripts: 100%
     rollback_scripts: 100%
     data_validation: 95%
+    nota_importante: |
+      NOTA CRÍTICA (2025-11-23): Este coverage (92%) se refiere EXCLUSIVAMENTE a los
+      scripts de migración, rollback y validación de datos (Epic EMR-001).
+
+      NO representa el coverage de las funcionalidades migradas (auth, gamificación, etc.).
+      Para coverage real de funcionalidad, ver archivos TRACEABILITY de épicas funcionales:
+        - EAI-001 (Auth): 18% overall
+        - EAI-002 (Actividades): 20% overall
+        - EAI-003 (Gamificación): 25% overall
+        - EAI-004, EAI-005: <15% overall
+
+      Este archivo documenta UNA migración técnica exitosa con zero downtime,
+      pero NO incrementa el coverage de tests funcionales del sistema.
 
 # ============================================================================
 # MÉTRICAS Y RESULTADO

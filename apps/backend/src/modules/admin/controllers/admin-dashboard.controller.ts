@@ -13,6 +13,11 @@ import {
   PaginatedModerationQueueDto,
   PaginatedClassroomOverviewDto,
   PaginatedAssignmentSubmissionStatsDto,
+  RecentActionsQueryDto,
+  RecentActionDto,
+  AlertDto,
+  UserActivityQueryDto,
+  UserActivityDto,
 } from '../dto/dashboard';
 
 @ApiTags('Admin - Dashboard')
@@ -104,5 +109,70 @@ export class AdminDashboardController {
   })
   async getAssignmentSubmissionStats(): Promise<PaginatedAssignmentSubmissionStatsDto> {
     return await this.adminDashboardService.getAssignmentSubmissionStats(100);
+  }
+
+  // =====================================================
+  // NEW ENDPOINTS: BUG-ADMIN-002, 003, 004
+  // =====================================================
+
+  /**
+   * Get recent administrative actions
+   *
+   * BUG-ADMIN-002: Endpoint for fetching recent admin actions.
+   * Returns a list of recent administrative actions (user creations,
+   * organization updates, content approvals, etc.)
+   */
+  @Get('actions/recent')
+  @ApiOperation({
+    summary: 'Get recent admin actions',
+    description:
+      'Returns recent actions performed by administrators including user creations, ' +
+      'organization updates, content approvals, and other administrative tasks. ' +
+      'Actions are sourced from auth.users, auth.tenants, and audit logs.',
+  })
+  async getRecentActions(
+    @Query() query: RecentActionsQueryDto,
+  ): Promise<RecentActionDto[]> {
+    return await this.adminDashboardService.getRecentActions(query.limit);
+  }
+
+  /**
+   * Get active system alerts
+   *
+   * BUG-ADMIN-003: Endpoint for fetching system alerts.
+   * Returns alerts requiring admin attention from various subsystems
+   * (content, security, system health, performance)
+   */
+  @Get('alerts')
+  @ApiOperation({
+    summary: 'Get active system alerts',
+    description:
+      'Returns active alerts requiring admin attention. Alerts are generated from various ' +
+      'subsystems including content approvals, security events, user engagement, and system health. ' +
+      'Alerts are sorted by severity (critical > high > medium > low).',
+  })
+  async getAlerts(): Promise<AlertDto[]> {
+    return await this.adminDashboardService.getAlerts();
+  }
+
+  /**
+   * Get user activity analytics
+   *
+   * BUG-ADMIN-004: Endpoint for user activity analytics.
+   * Returns time-series data of user activity grouped by day/week/month
+   * for rendering activity charts in the admin dashboard.
+   */
+  @Get('analytics/user-activity')
+  @ApiOperation({
+    summary: 'Get user activity analytics',
+    description:
+      'Returns user activity data for charts grouped by time period (day/week/month). ' +
+      'Data is based on user sign-in activity and can be filtered by date range. ' +
+      'Returns arrays of labels (dates) and data (active user counts) ready for charting.',
+  })
+  async getUserActivity(
+    @Query() query: UserActivityQueryDto,
+  ): Promise<UserActivityDto> {
+    return await this.adminDashboardService.getUserActivity(query);
   }
 }

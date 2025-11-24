@@ -24,6 +24,7 @@ import { WebSocketModule } from './modules/websocket/websocket.module';
 import { TasksModule } from './modules/tasks/tasks.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { AssignmentsModule } from './modules/assignments/assignments.module';
+import { HealthModule } from './modules/health/health.module';
 
 // Shared
 import { RlsInterceptor } from './shared/interceptors/rls.interceptor';
@@ -223,6 +224,7 @@ import { RlsInterceptor } from './shared/interceptors/rls.interceptor';
     TasksModule, // Must be after NotificationsModule
     AuditModule, // Audit logging for compliance
     AssignmentsModule, // Teacher assignment management
+    HealthModule, // Health check endpoint for monitoring
   ],
   controllers: [],
   providers: [

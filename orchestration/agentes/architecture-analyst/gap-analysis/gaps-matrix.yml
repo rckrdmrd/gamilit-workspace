@@ -1,0 +1,489 @@
+# =============================================================================
+# MATRIZ DE GAPS: MÓDULOS Y EJERCICIOS GAMILIT
+# =============================================================================
+# Fecha: 2025-11-23
+# Analista: Architecture-Analyst
+# Tipo: Gap Analysis Documentación vs Implementación
+# Versión: 1.0
+# =============================================================================
+
+metadata:
+  analysis_date: "2025-11-23"
+  analyst: "Architecture-Analyst"
+  documentation_source: "docs/00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md"
+  documentation_version: "v6.4"
+  code_sources:
+    - "apps/database/seeds/prod/educational_content/01-modules.sql"
+    - "apps/database/seeds/prod/educational_content/02-exercises-module1.sql"
+    - "apps/database/seeds/prod/educational_content/03-exercises-module2.sql"
+    - "apps/database/seeds/prod/educational_content/04-exercises-module3.sql"
+    - "apps/frontend/src/apps/student/components/dashboard/ModulesSection.tsx"
+
+summary:
+  total_gaps: 6
+  critical_gaps: 4
+  high_severity_gaps: 1
+  medium_severity_gaps: 1
+  overall_coherence: 60%
+  implementation_completeness: 61%
+
+# =============================================================================
+# GAPS IDENTIFICADOS
+# =============================================================================
+
+gaps:
+  - id: GAP-MOD1-001
+    category: contenido
+    severity: critica
+    priority: P0
+    area: modulo_1
+    title: "Ejercicios Módulo 1 no coinciden con diseño pedagógico"
+    description: >
+      Los ejercicios implementados en el Módulo 1 (Comprensión Literal) NO corresponden
+      a los ejercicios especificados en el documento de diseño. Se implementaron
+      "Mapa Conceptual" y "Emparejamiento" que NO están documentados, mientras que
+      faltan "Completar Espacios" y "Verdadero/Falso" que SÍ están documentados.
+
+    evidencia_referencia:
+      file: "docs/00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md"
+      lines: "126-390"
+      content: |
+        Ejercicio 1.1: Crucigrama Científico
+        Ejercicio 1.2: Línea de Tiempo de Marie Curie
+        Ejercicio 1.3: Completar Espacios en Blanco
+        Ejercicio 1.4: Verdadero o Falso
+        Ejercicio 1.5: Sopa de Letras (BONUS)
+
+    evidencia_actual:
+      file: "apps/database/seeds/prod/educational_content/02-exercises-module1.sql"
+      lines: "1-10"
+      content: |
+        Exercises: Crucigrama, Línea de Tiempo, Sopa de Letras, Mapa Conceptual, Emparejamiento
+
+    discrepancias:
+      - type: missing
+        item: "Ejercicio 1.3: Completar Espacios en Blanco"
+        impact: "Falta actividad de vocabulario en contexto"
+      - type: missing
+        item: "Ejercicio 1.4: Verdadero o Falso"
+        impact: "Falta validación de comprensión de hechos"
+      - type: wrong_position
+        item: "Ejercicio 1.3: Sopa de Letras"
+        expected_position: "1.5"
+        actual_position: "1.3"
+        impact: "Orden pedagógico alterado"
+      - type: undocumented
+        item: "Ejercicio 1.4: Mapa Conceptual"
+        impact: "Ejercicio no validado pedagógicamente"
+      - type: undocumented
+        item: "Ejercicio 1.5: Emparejamiento"
+        impact: "Ejercicio no validado pedagógicamente"
+
+    impacto:
+      pedagogico: "Progresión de dificultad de Cassany comprometida"
+      tecnico: "3 ejercicios a refactorizar o re-documentar"
+      usuario: "Experiencia inconsistente con promesa pedagógica"
+
+    recomendacion: |
+      DECISIÓN REQUERIDA POR PRODUCT OWNER:
+      - Opción A: Actualizar seeds para implementar ejercicios 1.3, 1.4, 1.5 según diseño
+      - Opción B: Actualizar DocumentoDeDiseño para aceptar Mapa Conceptual y Emparejamiento
+      - Opción C: Híbrida - validar qué ejercicios son mejores pedagógicamente
+
+    delegacion:
+      responsable: "Product Owner (decisión) + Database-Developer (implementación)"
+      accion: "Crear ADR documentando decisión y ejecutar cambios"
+      deadline: "2025-11-29"
+
+    estado: pendiente
+    blocked_by: "Decisión Product Owner sobre qué ejercicios usar"
+
+  # ---------------------------------------------------------------------------
+
+  - id: GAP-MOD3-001
+    category: contenido
+    severity: alta
+    priority: P0
+    area: modulo_3
+    title: "Módulo 3 incompleto - Falta ejercicio 3.5"
+    description: >
+      El Módulo 3 (Comprensión Crítica) está marcado como 'published' y accesible
+      para usuarios, pero falta el ejercicio 3.5 "Matriz de Perspectivas" que está
+      documentado en el diseño pedagógico.
+
+    evidencia_referencia:
+      file: "docs/00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md"
+      lines: "729-766"
+      content: |
+        Ejercicio 3.5: Matriz de Perspectivas
+        Evento: "Marie gana el Nobel de Química en 1911 en medio de escándalo personal"
+        Objetivo: Analizar un evento desde múltiples puntos de vista diferentes
+
+    evidencia_actual:
+      file: "apps/database/seeds/prod/educational_content/04-exercises-module3.sql"
+      grep_result: "Solo 4 ejercicios encontrados (3.1-3.4)"
+
+    discrepancias:
+      - type: missing
+        item: "Ejercicio 3.5: Matriz de Perspectivas"
+        impact: "Módulo incompleto pero publicado para usuarios"
+
+    impacto:
+      pedagogico: "Falta desarrollo de pensamiento multi-perspectiva (clave en Cassany nivel 3)"
+      tecnico: "1 ejercicio a implementar"
+      usuario: "Verán 4/5 ejercicios sin explicación de por qué falta el quinto"
+      xp: "100 XP menos de los prometidos para módulo 3"
+
+    recomendacion: |
+      IMPLEMENTAR INMEDIATAMENTE ejercicio 3.5 según especificación del diseño.
+      Este es un gap simple de resolver - el diseño está completo, solo falta
+      crear el seed con el JSON correspondiente.
+
+    especificacion_tecnica:
+      exercise_type: "matriz_perspectivas"
+      order_index: 5
+      xp_reward: 100
+      ml_coins_reward: 20
+      difficulty_level: "advanced"
+      estimated_time_minutes: 30
+      config:
+        event: "Marie gana el Nobel de Química en 1911 en medio de escándalo personal"
+        perspectives:
+          - "Marie Curie misma"
+          - "Pierre Curie (póstumamente)"
+          - "Científicos contemporáneos"
+          - "La prensa de la época"
+          - "Mujeres de la época"
+          - "La sociedad polaca"
+
+    delegacion:
+      responsable: "Database-Developer"
+      accion: "Crear seed para ejercicio 3.5 basado en DocumentoDeDiseño líneas 729-766"
+      archivo: "apps/database/seeds/prod/educational_content/04-exercises-module3.sql"
+      deadline: "2025-11-27"
+
+    estado: pendiente
+    blocked_by: null
+
+  # ---------------------------------------------------------------------------
+
+  - id: GAP-MOD4-001
+    category: contenido
+    severity: critica
+    priority: P1
+    area: modulo_4
+    title: "Módulo 4 completo sin implementar (0/5 ejercicios)"
+    description: >
+      El Módulo 4 (Lectura Digital y Multimodal) está definido en la base de datos
+      con status 'backlog' y is_published=false, pero NO existen seeds de ejercicios.
+      Los 5 ejercicios están completamente documentados en el diseño pero no implementados.
+
+    evidencia_referencia:
+      file: "docs/00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md"
+      lines: "768-947"
+      content: |
+        Ejercicio 4.1: Verificador de Fake News
+        Ejercicio 4.2: Creación de Infografía Interactiva
+        Ejercicio 4.3: Quiz Estilo TikTok
+        Ejercicio 4.4: Navegación Hipertextual
+        Ejercicio 4.5: Análisis de Memes Educativos
+
+    evidencia_actual:
+      database: "Módulo existe con status='backlog', is_published=false"
+      seeds: "NO EXISTE archivo de seeds para ejercicios módulo 4"
+      frontend: "Muestra '🚧 En Construcción' pero sin info de cuántos ejercicios faltan"
+
+    discrepancias:
+      - type: missing
+        item: "5 ejercicios completos del módulo 4"
+        impact: "20% del contenido total del sistema faltante"
+
+    impacto:
+      pedagogico: "Sin módulo 4, no se desarrolla competencia digital (clave en siglo XXI)"
+      tecnico: "5 ejercicios a implementar desde cero"
+      usuario: "Ven módulo pero no pueden acceder nunca"
+      xp: "500 XP no disponibles"
+      rangos: "Afecta progresión hacia HALACH UINIC"
+
+    recomendacion: |
+      DECISIÓN ESTRATÉGICA REQUERIDA:
+      - ¿Módulo 4 está en alcance de MVP o es fase 2?
+      - Si es MVP: implementar 5 ejercicios antes de release
+      - Si es fase 2: documentar roadmap y comunicar a usuarios
+
+    delegacion:
+      responsable: "Product Owner (decisión de alcance)"
+      accion: "Definir si módulo 4 es MVP o backlog, documentar en ADR-010"
+      deadline: "2025-11-25"
+      implementacion_posterior: "Database-Developer (si se decide implementar)"
+
+    estado: pendiente
+    blocked_by: "Decisión Product Owner sobre alcance MVP"
+
+  # ---------------------------------------------------------------------------
+
+  - id: GAP-MOD5-001
+    category: contenido
+    severity: critica
+    priority: P1
+    area: modulo_5
+    title: "Módulo 5 completo sin implementar (0/3 opciones)"
+    description: >
+      El Módulo 5 (Producción y Expresión Lectora) es CRÍTICO para completar
+      el sistema de gamificación (alcanzar K'UK'ULKAN y certificación final).
+      Está en status 'backlog' sin seeds de ejercicios. Sin este módulo, el
+      sistema está incompleto al 80%.
+
+    evidencia_referencia:
+      file: "docs/00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md"
+      lines: "950-1097"
+      content: |
+        Opción A: Diario Interactivo de Marie (500 XP)
+        Opción B: Resumen Visual Progresivo - Cómic Digital (500 XP)
+        Opción C: Cápsula del Tiempo Digital (500 XP)
+        Nota: Usuario elige 1 de las 3 opciones
+
+    evidencia_actual:
+      database: "Módulo existe con status='backlog', is_published=false"
+      seeds: "NO EXISTE archivo de seeds para ejercicios módulo 5"
+      frontend: "Muestra '🚧 En Construcción'"
+
+    discrepancias:
+      - type: missing
+        item: "3 opciones de ejercicio final (producción de texto)"
+        impact: "Sistema de certificación bloqueado"
+
+    impacto:
+      pedagogico: "Falta nivel 3 de Cassany (producción de textos) - el más importante"
+      tecnico: "3 ejercicios complejos a implementar"
+      usuario:
+        - "NO pueden alcanzar rango K'UK'ULKAN (máximo rango)"
+        - "NO pueden obtener certificación final"
+        - "Sistema de gamificación bloqueado al 80%"
+      xp: "500 XP no disponibles"
+      certificacion: "BLOQUEADA - sin módulo 5 no hay certificado"
+
+    recomendacion: |
+      CRÍTICO: Sin módulo 5, el sistema NO cumple su promesa de gamificación completa.
+      - Usuarios esperan alcanzar K'UK'ULKAN (documentado en v6.4)
+      - Certificación final requiere módulo 5
+      - Modelo pedagógico Cassany queda incompleto (falta producción)
+
+      DECISIÓN REQUERIDA:
+      - ¿Módulo 5 es MVP o fase 2?
+      - Si es fase 2: COMUNICAR claramente a usuarios que certificación no está disponible
+      - Si es MVP: priorizar implementación de al menos 1 opción
+
+    delegacion:
+      responsable: "Product Owner (decisión crítica de alcance)"
+      accion: "Decidir alcance y comunicar impacto en sistema de certificación"
+      deadline: "2025-11-25"
+      implementacion_posterior: "Database-Developer + Frontend-Developer"
+
+    estado: pendiente
+    blocked_by: "Decisión Product Owner sobre alcance MVP y certificación"
+
+  # ---------------------------------------------------------------------------
+
+  - id: GAP-UX-001
+    category: experiencia_usuario
+    severity: media
+    priority: P1
+    area: frontend
+    title: "Módulos backlog visibles sin información de progreso"
+    description: >
+      Los módulos 4 y 5 se muestran en el dashboard con estado "🚧 En Construcción"
+      pero no hay información de cuántos ejercicios faltan, cuándo estarán disponibles,
+      o qué significa "en construcción" realmente.
+
+    evidencia_actual:
+      file: "apps/frontend/src/apps/student/components/dashboard/ModulesSection.tsx"
+      lines: "89-100, 280-293"
+      content: |
+        - Badge: "🚧 En Construcción"
+        - Botón: "Próximamente Disponible" (no clickeable)
+        - Sin información adicional de progreso o timeline
+
+    discrepancias:
+      - type: missing_ux_feedback
+        item: "Información de cuántos ejercicios faltan"
+        impact: "Usuario no sabe qué esperar"
+      - type: missing_ux_feedback
+        item: "Estimación de disponibilidad"
+        impact: "Usuario no sabe cuándo volver a verificar"
+
+    impacto:
+      usuario: "Frustración por módulos visibles pero inaccesibles sin explicación"
+      expectativa: "Creen que estará listo pronto, pero puede ser fase 2 (meses)"
+
+    recomendacion: |
+      Mejorar UX de módulos backlog con:
+      1. Tooltip explicando qué significa "En Construcción"
+      2. Modal al hacer click mostrando:
+         - Cuántos ejercicios faltan
+         - Estimación de disponibilidad (si hay)
+         - Sugerencia de completar módulos 1-3 mientras tanto
+      3. Actualizar badge para mostrar "X/5 ejercicios" en lugar de solo icono
+
+    delegacion:
+      responsable: "Frontend-Developer"
+      accion: "Actualizar ModulesSection.tsx con mejor feedback para módulos backlog"
+      archivo: "apps/frontend/src/apps/student/components/dashboard/ModulesSection.tsx"
+      deadline: "2025-12-06"
+
+    estado: pendiente
+    blocked_by: null
+
+  # ---------------------------------------------------------------------------
+
+  - id: GAP-DOC-001
+    category: documentacion
+    severity: alta
+    priority: P0
+    area: general
+    title: "Cambios en código sin documentar en diseño o ADRs"
+    description: >
+      Se identificaron cambios significativos entre el diseño documentado (v6.4)
+      y la implementación real, pero NO existen ADRs explicando:
+      - Por qué se cambiaron ejercicios del Módulo 1
+      - Por qué módulos 4-5 están en backlog
+      - Cuál es el alcance real del MVP
+
+    evidencia_actual:
+      adrs_revisados: "docs/97-adr/ no contiene ADR sobre alcance de módulos"
+      seeds_comments: "Seeds indican 'Migrated from DEV' pero no justifican desviaciones"
+
+    discrepancias:
+      - type: missing_documentation
+        item: "ADR sobre alcance MVP (módulos 1-3 vs 1-5)"
+        impact: "No hay trazabilidad de decisión de alcance"
+      - type: missing_documentation
+        item: "ADR o nota sobre cambio de ejercicios Módulo 1"
+        impact: "No se sabe por qué se desviaron del diseño"
+
+    impacto:
+      trazabilidad: "Pérdida de contexto de decisiones arquitectónicas"
+      mantenibilidad: "Futuros desarrolladores no sabrán qué es correcto"
+      coherencia: "Documentación de diseño vs realidad desalineadas"
+
+    recomendacion: |
+      CREAR ADR-010-alcance-mvp-modulos.md documentando:
+      - Decisión de alcance MVP (1-3 vs 1-5)
+      - Razones de negocio/técnicas para la decisión
+      - Impacto en sistema de certificación y rangos
+      - Roadmap de módulos 4-5 (si aplica)
+
+    delegacion:
+      responsable: "Architecture-Analyst + Product Owner"
+      accion: "Crear ADR-010 post-decisión de alcance"
+      archivo: "docs/97-adr/ADR-010-alcance-mvp-modulos.md"
+      deadline: "2025-11-26"
+
+    estado: pendiente
+    blocked_by: "Decisión Product Owner sobre alcance"
+
+# =============================================================================
+# PLAN DE CORRECCIÓN
+# =============================================================================
+
+correction_plan:
+  phase_1_immediate:
+    name: "Documentación y Decisiones Críticas"
+    deadline: "2025-11-29"
+    tasks:
+      - id: TASK-001
+        gap_id: GAP-DOC-001
+        title: "Crear ADR-010 alcance MVP"
+        owner: "Product Owner + Architecture-Analyst"
+        status: pending
+      - id: TASK-002
+        gap_id: GAP-MOD1-001
+        title: "Decidir estrategia Módulo 1"
+        owner: "Product Owner"
+        status: pending
+      - id: TASK-003
+        gap_id: GAP-MOD3-001
+        title: "Implementar ejercicio 3.5"
+        owner: "Database-Developer"
+        status: pending
+
+  phase_2_short_term:
+    name: "Correcciones de Implementación"
+    deadline: "2025-12-06"
+    tasks:
+      - id: TASK-004
+        gap_id: GAP-MOD1-001
+        title: "Corregir ejercicios Módulo 1 según decisión"
+        owner: "Database-Developer"
+        status: pending
+        blocked_by: "TASK-002"
+      - id: TASK-005
+        gap_id: GAP-UX-001
+        title: "Mejorar UX módulos backlog"
+        owner: "Frontend-Developer"
+        status: pending
+
+  phase_3_strategic:
+    name: "Implementación Módulos 4-5 (si en alcance)"
+    deadline: "TBD - según decisión PO"
+    tasks:
+      - id: TASK-006
+        gap_id: GAP-MOD4-001
+        title: "Implementar ejercicios Módulo 4 (si aplica)"
+        owner: "Database-Developer"
+        status: pending
+        blocked_by: "TASK-001"
+      - id: TASK-007
+        gap_id: GAP-MOD5-001
+        title: "Implementar opciones Módulo 5 (si aplica)"
+        owner: "Database-Developer"
+        status: pending
+        blocked_by: "TASK-001"
+
+# =============================================================================
+# MÉTRICAS
+# =============================================================================
+
+metrics:
+  current_state:
+    coherence_percentage: 60
+    implementation_completeness: 61
+    exercises_documented: 23
+    exercises_implemented: 14
+    exercises_missing: 9
+    exercises_incorrect: 3
+
+  target_state_option_a:
+    name: "MVP = Módulos 1-3 completos"
+    coherence_percentage: 100
+    implementation_completeness: 65
+    exercises_in_scope: 15
+    exercises_implemented: 15
+    missing_exercises: 0
+    timeline: "1 semana"
+
+  target_state_option_b:
+    name: "Sistema completo = Módulos 1-5"
+    coherence_percentage: 100
+    implementation_completeness: 100
+    exercises_in_scope: 23
+    exercises_implemented: 23
+    missing_exercises: 0
+    timeline: "3-4 semanas"
+
+# =============================================================================
+# METADATA DE TRAZABILIDAD
+# =============================================================================
+
+traceability:
+  report_generated: "2025-11-23T12:00:00-06:00"
+  reports:
+    - file: "REPORTE-DESALINEACION-MODULOS-EJERCICIOS-2025-11-23.md"
+      type: "Análisis detallado completo"
+    - file: "RESUMEN-EJECUTIVO-GAPS-2025-11-23.md"
+      type: "Resumen ejecutivo"
+    - file: "gaps-matrix.yml"
+      type: "Matriz estructurada de gaps"
+
+  next_review: "Post-correcciones P0 (2025-12-01)"
+  version: "1.0"

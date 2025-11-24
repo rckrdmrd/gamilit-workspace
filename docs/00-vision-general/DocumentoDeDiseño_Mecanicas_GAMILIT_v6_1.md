@@ -5,6 +5,9 @@
 **Versión:** 6.4 (Actualizado 2025-11-23)
 **Tipo de documento:** Documento de diseño e implementación
 
+**📚 Documentos Relacionados:**
+- ✅ **Guía de Pruebas Módulo 3:** [`GUIA-PRUEBAS-MODULO3-Respuestas-Ejemplo.md`](./GUIA-PRUEBAS-MODULO3-Respuestas-Ejemplo.md) - Ejemplos detallados de respuestas para testing QA, demos pedagógicas y validación de ejercicios
+
 **Cambios en v6.4:**
 - ✅ Ejercicio 3.4: Duración de podcast ajustada a 2 minutos (desarrollo reducido a 1 min)
 - ✅ Ejercicio 5C: Estructura de guión actualizada a 4 secciones (Introducción 30s, Mensaje Principal 90s, Reflexiones 45s, Cierre 15s)
@@ -611,22 +614,26 @@ Participar en un debate argumentado sobre decisiones controversiales de Marie Cu
 
 **Cómo resolverlo:**
 
-**Fase 1: Preparación (5 minutos)**
+**⏱ Tiempo total del ejercicio: 10 minutos**
+
+**Fase 1: Preparación (3 minutos)**
 - Recibe tu postura (asignada aleatoriamente).
 - Lee las fuentes de información disponibles.
 - Prepara 3 argumentos principales.
 - Anticipa posibles contra-argumentos.
 
-**Fase 2: Debate (10 minutos)**
+**Fase 2: Debate activo (6 minutos)**
 - **Apertura (1 min):** Presenta tu postura principal.
 - **Desarrollo (2 min):** Expón tus 3 argumentos.
 - **Réplica (2 min):** Responde a argumentos contrarios.
-- **Contra-réplica (2 min):** Defiende tu posición.
-- **Cierre (30 seg):** Conclusión contundente.
+- **Contra-réplica (1 min):** Defiende tu posición.
 
-**Fase 3: Votación**
-- Otros usuarios votan el mejor argumento.
+**Fase 3: Cierre y Votación (1 minuto)**
+- **Cierre (30 seg):** Conclusión contundente.
+- **Votación (30 seg):** Otros usuarios votan el mejor argumento.
 - Se evalúa: claridad, evidencia, persuasión.
+
+**Nota técnica:** El sistema asigna 10 minutos totales (600 segundos) para completar todo el ejercicio. Los tiempos por fase son orientativos para maximizar efectividad argumentativa.
 
 **Tips para ganar:**
 - Usa datos concretos.

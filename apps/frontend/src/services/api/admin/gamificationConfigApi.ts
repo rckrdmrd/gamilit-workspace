@@ -5,7 +5,7 @@
  * Connects to backend endpoints in AdminGamificationConfigController
  */
 
-import { apiClient } from '../apiClient';
+import { apiClient } from '@/services/api/apiClient';
 import type {
   GamificationParameter,
   MayaRank,

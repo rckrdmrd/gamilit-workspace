@@ -1,6 +1,6 @@
 # 📋 DIRECTIVA DE DOCUMENTACIÓN OBLIGATORIA
 
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Versión:** 1.0.0
 **Fecha:** 2025-11-17
 **Aplicable a:** Todos los agentes (Database, Backend, Frontend, especializados)
@@ -66,31 +66,31 @@ Esta directiva establece la **obligatoriedad** de actualizar documentación en *
 **Ejemplo DDL:**
 ```sql
 -- Comentar tabla
-COMMENT ON TABLE project_management.projects IS
-    'Proyectos habitacionales - Nivel superior de jerarquía (Proyecto > Desarrollo > Fase > Vivienda)';
+COMMENT ON TABLE gamification_system.user_points IS
+    'Sistema de gamificación - Nivel superior de jerarquía (Proyecto > Desarrollo > Fase > Vivienda)';
 
 -- Comentar columnas importantes
-COMMENT ON COLUMN project_management.projects.code IS
+COMMENT ON COLUMN gamification_system.user_points.code IS
     'Código único del proyecto (ej: PROJ-2025-001). Usado para reportes y referencias externas';
-COMMENT ON COLUMN project_management.projects.status IS
+COMMENT ON COLUMN gamification_system.user_points.status IS
     'Estado del proyecto: planning=planeación, active=en ejecución, paused=pausado, completed=completado, cancelled=cancelado';
 ```
 
 **Ejemplo Entity (JSDoc):**
 ```typescript
 /**
- * Entity para Proyectos habitacionales
+ * Entity para Sistema de gamificación
  *
  * Representa el nivel superior en la jerarquía de obra:
- * Proyecto → Desarrollo (fraccionamiento) → Fase → Vivienda
+ * Usuario → Puntos → Niveles → Badges → Challenges
  *
  * Un proyecto puede contener múltiples desarrollos (fraccionamientos),
  * cada uno con varias fases y viviendas.
  *
- * @see apps/database/ddl/schemas/project_management/tables/01-projects.sql
+ * @see apps/database/ddl/schemas/gamification_system/tables/01-user_points.sql
  * @see docs/01-requerimientos/R-002-proyectos-obras.md
  */
-@Entity({ schema: 'project_management', name: 'projects' })
+@Entity({ schema: 'gamification_system', name: 'user_points' })
 export class ProjectEntity {
     /**
      * Código único del proyecto
@@ -230,10 +230,10 @@ modules:
     completitud: 100%
 
     database:
-      schema: project_management
+      schema: gamification_system
       tables:
         - name: projects
-          file: apps/database/ddl/schemas/project_management/tables/01-projects.sql
+          file: apps/database/ddl/schemas/gamification_system/tables/01-user_points.sql
           columns: 15
           indexes: 4
           triggers: 1
@@ -246,7 +246,7 @@ modules:
       entities:
         - name: ProjectEntity
           file: entities/project.entity.ts
-          table: project_management.projects
+          table: gamification_system.user_points
           relations: [developments, budgets]
           used_in_controllers: [ProjectController]
           used_in_services: [ProjectService]
@@ -306,33 +306,34 @@ modules:
 
 **Ejemplo:**
 ```markdown
-## [DB-005] Crear Módulo de Proyectos y Obras
+## [DB-012] Crear Módulo de Sistema de Gamificación
 
 **Fecha:** 2025-11-17 09:00
 **Estado:** ✅ Completado
 **Duración:** 3h 45min (estimado: 4h)
 **Agente responsable:** Database-Agent
-**Relacionado con:** [REQ-002], [BE-008], [FE-010]
+**Relacionado con:** [REQ-005], [BE-015], [FE-018]
 
 ### Descripción
-Creado schema project_management completo con jerarquía
-Proyecto → Desarrollo → Fase → Vivienda
+Creado schema gamification_system completo con sistema de puntos, niveles,
+badges y challenges para engagement estudiantil.
 
 ### Archivos Creados
-- apps/database/ddl/schemas/project_management/00-schema.sql
-- apps/database/ddl/schemas/project_management/tables/01-projects.sql
-- apps/database/ddl/schemas/project_management/tables/02-developments.sql
-- apps/database/ddl/schemas/project_management/tables/03-phases.sql
-- apps/database/ddl/schemas/project_management/tables/04-housing_units.sql
-- apps/database/ddl/schemas/project_management/functions/01-calculate_progress.sql
-- apps/database/seeds/dev/project_management/01-projects.sql
+- apps/database/ddl/schemas/gamification_system/00-schema.sql
+- apps/database/ddl/schemas/gamification_system/tables/01-user_points.sql
+- apps/database/ddl/schemas/gamification_system/tables/02-levels.sql
+- apps/database/ddl/schemas/gamification_system/tables/03-badges.sql
+- apps/database/ddl/schemas/gamification_system/tables/04-challenges.sql
+- apps/database/ddl/schemas/gamification_system/tables/05-user_badges.sql
+- apps/database/ddl/schemas/gamification_system/functions/01-calculate_user_level.sql
+- apps/database/seeds/dev/gamification_system/01-initial_levels.sql
 
 ### Objetos Creados
-- **Schema:** project_management
-- **Tablas:** 4 (projects, developments, phases, housing_units)
-- **Funciones:** 1 (calculate_progress)
-- **Triggers:** 2 (updated_at en projects y developments)
-- **Índices:** 12
+- **Schema:** gamification_system
+- **Tablas:** 5 (user_points, levels, badges, challenges, user_badges)
+- **Funciones:** 1 (calculate_user_level)
+- **Triggers:** 2 (updated_at en user_points y challenges)
+- **Índices:** 14
 
 ### Validación
 ```bash
@@ -344,7 +345,7 @@ $ ./apps/database/create-database.sh
 ```
 
 ### Impacto
-- **Schemas afectados:** project_management (nuevo)
+- **Schemas afectados:** gamification_system (nuevo)
 - **Módulos Backend afectados:** Ninguno (aún no existen)
 - **Próximos pasos:**
   1. Backend-Agent: Crear entities (ProjectEntity, DevelopmentEntity, etc.)

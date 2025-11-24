@@ -202,11 +202,11 @@ implementation:
         schema: educational_content
         file: apps/database/seeds/prod/educational_content/02-exercises-module1.sql
         lines: 687
-        description: "6 ejercicios Module 1 - Historiador Detective (mecánicas: crucigrama, emparejamiento, sopa de letras, etc.)"
+        description: "5 ejercicios Module 1 - Historiador Detective (mecánicas: crucigrama, emparejamiento, sopa de letras, etc.)"
         rf: RF-EDU-001
         created: "2025-11-11"
-        records: 6
-        note: "JSONB completo con structure, validation_rules, feedback, metadata"
+        records: 5
+        note: "Validado 2025-11-23 post-ADR-010. Siempre fueron 5 ejercicios correctos según DocumentoDeDiseño v6.4"
 
       - name: 03-exercises-module2
         schema: educational_content
@@ -222,11 +222,12 @@ implementation:
         schema: educational_content
         file: apps/database/seeds/prod/educational_content/04-exercises-module3.sql
         lines: 683
-        description: "6 ejercicios Module 3 - Científico Pensamiento Crítico (evaluación y análisis)"
+        description: "5 ejercicios Module 3 - Científico Pensamiento Crítico (evaluación y análisis)"
         rf: RF-EDU-001
         created: "2025-11-11"
-        records: 6
-        note: "JSONB completo. Migrado DEV → PROD"
+        updated: "2025-11-23"
+        records: 5
+        note: "COMPLETADO 2025-11-23: Ejercicio 3.5 'Matriz de Perspectivas' agregado según ADR-010"
 
       - name: 05-exercises-module4
         schema: educational_content
@@ -242,11 +243,12 @@ implementation:
         schema: educational_content
         file: apps/database/seeds/prod/educational_content/06-exercises-module5.sql
         lines: 835
-        description: "5 ejercicios Module 5 - Video Carta (producción creativa con templates, prompts, rúbricas)"
+        description: "3 ejercicios Module 5 - Video Carta (producción creativa con templates, prompts, rúbricas)"
         rf: RF-EDU-001
         created: "2025-11-11"
-        records: 5
-        note: "JSONB expandido +861% (97→835 líneas). 3 templates, 5 prompts por ejercicio, rúbricas completas"
+        updated: "2025-11-23"
+        records: 3
+        note: "CORREGIDO 2025-11-23: Son 3 opciones (5A, 5B, 5C) según DocumentoDeDiseño v6.4. JSONB expandido +861% (97→835 líneas). 3 templates, 5 prompts por ejercicio, rúbricas completas"
 
       - name: 08-difficulty_criteria
         schema: educational_content
@@ -295,6 +297,26 @@ implementation:
       - DragAndDrop.tsx
 
 # ============================================================================
+# TESTING
+# ============================================================================
+
+testing:
+  coverage:
+    overall: 20%  # REAL (actualizado 2025-11-23)
+    backend: 30%  # REAL (actualizado 2025-11-23)
+    frontend: 10%  # REAL (actualizado 2025-11-23)
+    database: 0%  # REAL (actualizado 2025-11-23)
+    meta_original: 88%  # Estimación inicial del proyecto
+    gap_actual: -68%  # Diferencia entre meta y realidad
+    ultima_medicion: "2025-11-23"
+    nota: |
+      Coverage REAL actualizado por Architecture-Analyst (2025-11-23).
+      Valores previos eran ESTIMACIONES optimistas del inicio del proyecto.
+      Módulo actividades tiene tests parciales en exercise.service y module.service.
+      Gap actual requiere plan de mejora (ver orchestration/roadmap/ROADMAP-TEST-COVERAGE.md).
+      Próxima medición: Mensual (Q1 2026).
+
+# ============================================================================
 # MÉTRICAS Y RESULTADO
 # ============================================================================
 
@@ -303,24 +325,24 @@ metrics:
     database_objects: 12
     database_objects_note: "4 tablas existentes + 4 tablas nuevas (3 CEFR + 1 Sistema Dual) + 3 funciones CEFR + 1 seed CEFR"
     seeds_production: 7
-    seeds_production_note: "1 módulos + 5 exercises (modules 1-5) + 1 difficulty_criteria. Total: 27 ejercicios educativos"
-    exercises_total: 27
+    seeds_production_note: "1 módulos + 5 exercises (modules 1-5) + 1 difficulty_criteria. Total: 23 ejercicios educativos"
+    exercises_total: 23
     exercises_by_module:
       - module: "Module 1 - Historiador Detective"
-        exercises: 6
-        mechanics: "Crucigrama, Emparejamiento, Sopa de Letras, Timeline, VF, Completar"
+        exercises: 5
+        mechanics: "Crucigrama, Línea Tiempo, Completar Espacios, Verdadero/Falso, Sopa Letras"
       - module: "Module 2 - Detective Textual"
         exercises: 5
         mechanics: "Análisis de textos y comprensión"
       - module: "Module 3 - Científico Pensamiento Crítico"
-        exercises: 6
-        mechanics: "Evaluación y análisis científico"
+        exercises: 5
+        mechanics: "Tribunal, Debate, Análisis Fuentes, Podcast, Matriz Perspectivas"
       - module: "Module 4 - Creador Digital"
         exercises: 5
-        mechanics: "Producción multimedia (infografías, TikTok, etc.)"
+        mechanics: "Placeholders con is_active=false"
       - module: "Module 5 - Video Carta"
-        exercises: 5
-        mechanics: "Producción creativa con templates y rúbricas"
+        exercises: 3
+        mechanics: "Placeholders con is_active=false (3 opciones: Diario, Cómic, Cápsula)"
     backend_files: 15
     frontend_components: 12
     documentation: 7
@@ -353,6 +375,25 @@ status:
 # ============================================================================
 
 changelog:
+  - date: "2025-11-23"
+    version: "2.3"
+    author: "Architecture-Analyst"
+    changes: |
+      CORRECCIÓN POST-ADR-010: Alineación con DocumentoDeDiseño v6.4
+
+      Ejercicios corregidos:
+      - Module 1: 6 → 5 (validado: siempre fueron 5 correctos)
+      - Module 3: 6 → 5 (ejercicio 3.5 "Matriz de Perspectivas" agregado)
+      - Module 4: 5 (placeholders, is_active=false)
+      - Module 5: 5 → 3 (corrección según diseño, placeholders)
+      - Total: 27 → 23 ejercicios
+
+      Causa raíz: TRACEABILITY no actualizado tras validación ADR-010.
+      Referencias:
+        - ADR-010: DocumentoDeDiseño como Fuente de Verdad
+        - DocumentoDeDiseño v6.4 (2025-11-23)
+        - REPORTE-COHERENCIA-DOCUMENTACION-CODIGO-2025-11-23.md
+
   - date: "2025-11-11"
     version: "2.2"
     author: "Database Agent"

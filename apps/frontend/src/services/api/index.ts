@@ -10,7 +10,7 @@
 
 export { default as apiClient } from './apiClient';
 export { API_ENDPOINTS, FEATURE_FLAGS, API_CONFIG, HTTP_STATUS } from './apiConfig';
-import apiClientDefault from './apiClient';
+import apiClientDefault from '@/services/api/apiClient';
 import { API_ENDPOINTS as endpoints, FEATURE_FLAGS as flags, API_CONFIG as config, HTTP_STATUS as status } from './apiConfig';
 
 export {

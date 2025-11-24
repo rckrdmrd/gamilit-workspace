@@ -5,7 +5,7 @@
  * progress tracking, and analytics.
  */
 
-import { apiClient } from './apiClient';
+import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS, FEATURE_FLAGS } from './apiConfig';
 import { handleAPIError } from './apiErrorHandler';
 import type { ApiResponse } from './apiTypes';

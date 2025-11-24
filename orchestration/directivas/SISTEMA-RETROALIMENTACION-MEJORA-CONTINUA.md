@@ -1,6 +1,6 @@
 # SISTEMA DE RETROALIMENTACIÓN Y MEJORA CONTINUA
 
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Versión:** 1.0.0
 **Fecha:** 2025-11-17
 **Audiencia:** Agentes Principales y administradores del sistema
@@ -66,7 +66,7 @@ graph TD
   "error_category": "missing_specification",
   "error_detail": "Faltó implementar índice idx_projects_code especificado en contexto",
   "phase": "validation_technical",
-  "archivo_afectado": "apps/database/ddl/schemas/project_management/tables/01-projects.sql",
+  "archivo_afectado": "apps/database/ddl/schemas/gamification_system/tables/01-user_points.sql",
   "corrected": true,
   "iterations": 2,
   "time_to_fix_minutes": 15,
@@ -170,7 +170,7 @@ execution:               # Error durante ejecución de tarea (antes de reportar)
 ```bash
 # Agregar entrada al archivo JSONL
 cat >> orchestration/estados/FEEDBACK-SUBAGENTES.jsonl << 'EOF'
-{"timestamp":"2025-11-17T14:30:00Z","subagent":"general-purpose-001","task_id":"DB-042-SUB-001","agent_principal":"Database-Agent","error_category":"missing_specification","error_detail":"Faltó implementar índice idx_projects_code especificado en contexto","phase":"validation_technical","archivo_afectado":"apps/database/ddl/schemas/project_management/tables/01-projects.sql","corrected":true,"iterations":2,"time_to_fix_minutes":15,"context_provided":true,"reference_consulted":false,"inventory_checked":true}
+{"timestamp":"2025-11-17T14:30:00Z","subagent":"general-purpose-001","task_id":"DB-042-SUB-001","agent_principal":"Database-Agent","error_category":"missing_specification","error_detail":"Faltó implementar índice idx_projects_code especificado en contexto","phase":"validation_technical","archivo_afectado":"apps/database/ddl/schemas/gamification_system/tables/01-user_points.sql","corrected":true,"iterations":2,"time_to_fix_minutes":15,"context_provided":true,"reference_consulted":false,"inventory_checked":true}
 EOF
 ```
 

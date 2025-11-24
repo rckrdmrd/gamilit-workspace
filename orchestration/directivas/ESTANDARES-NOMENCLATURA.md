@@ -1,6 +1,6 @@
 # ESTÁNDARES DE NOMENCLATURA
 
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Versión:** 1.0.0
 **Fecha:** 2025-11-17
 **Audiencia:** Todos los agentes (Database, Backend, Frontend) y subagentes
@@ -76,7 +76,7 @@ Si existe `ProjectEntity`, entonces:
 ```sql
 -- ✅ CORRECTO
 auth_management
-project_management
+gamification_system
 budget_management
 contract_management
 
@@ -93,19 +93,16 @@ authentication    -- Sin sufijo
 
 **Ejemplos:**
 ```sql
--- Schemas del MVP
-auth_management          -- Autenticación y usuarios
-project_management       -- Proyectos y obras
-budget_management        -- Presupuestos y partidas
-contract_management      -- Contratos y subcontratos
-purchase_management      -- Compras y proveedores
-inventory_management     -- Almacenes e inventarios
-progress_management      -- Avances y números generador
-quality_management       -- Calidad postventa
-crm_management          -- CRM derechohabientes
-infonavit_management    -- INFONAVIT cumplimiento
-preconstruction_management  -- Preconstrucción y licitaciones
-security_management     -- Seguridad de obra
+-- Schemas de GAMILIT
+auth_management          -- Autenticación, usuarios y tenants
+academic_management      -- Instituciones, cursos, estudiantes, profesores
+gamification_system      -- Puntos, niveles, badges, challenges
+exercise_management      -- Ejercicios, tipos, variantes, soluciones
+progress_tracking        -- Progreso estudiantil, estadísticas, logros
+guild_management         -- Guildas, membresía, competencias, rankings
+reward_management        -- Recompensas, inventario, canje
+notification_management  -- Notificaciones, alertas, mensajería
+analytics_management     -- Métricas, reportes, dashboards
 ```
 
 ### 1.2. Tablas
@@ -240,19 +237,19 @@ boundary GEOGRAPHY(POLYGON, 4326)
 ```sql
 -- ✅ CORRECTO - Índice simple
 CREATE INDEX idx_users_email ON auth_management.users(email);
-CREATE INDEX idx_projects_code ON project_management.projects(code);
+CREATE INDEX idx_projects_code ON gamification_system.user_points(code);
 CREATE INDEX idx_contracts_status ON contract_management.contracts(status);
 
 -- ✅ CORRECTO - Índice compuesto
 CREATE INDEX idx_projects_status_created_at
-    ON project_management.projects(status, created_at);
+    ON gamification_system.user_points(status, created_at);
 
 CREATE INDEX idx_budget_items_budget_category
     ON budget_management.budget_items(budget_id, category_id);
 
 -- ✅ CORRECTO - Índice GiST (geo)
 CREATE INDEX idx_projects_coordinates
-    ON project_management.projects USING GIST(coordinates);
+    ON gamification_system.user_points USING GIST(coordinates);
 
 -- ✅ CORRECTO - Índice parcial
 CREATE INDEX idx_users_active_email
@@ -279,27 +276,45 @@ CREATE INDEX idx_email               -- Falta nombre tabla
 **Convención:** `fk_{tabla_origen}_to_{tabla_destino}`
 
 ```sql
--- ✅ CORRECTO
-ALTER TABLE project_management.projects
-ADD CONSTRAINT fk_projects_to_users
-FOREIGN KEY (created_by_id)
-REFERENCES auth_management.users(id);
+-- ✅ CORRECTO - Definir en CREATE TABLE (NO usar ALTER TABLE incremental)
+-- File: apps/database/ddl/schemas/gamification_system/tables/01-user_points.sql
+CREATE TABLE gamification_system.user_points (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_by_id UUID NOT NULL,
 
-ALTER TABLE project_management.developments
-ADD CONSTRAINT fk_developments_to_projects
-FOREIGN KEY (project_id)
-REFERENCES project_management.projects(id);
+    -- Foreign key con nomenclatura correcta
+    CONSTRAINT fk_projects_to_users
+        FOREIGN KEY (created_by_id)
+        REFERENCES auth_management.users(id)
+        ON DELETE SET NULL
+);
 
--- ✅ CORRECTO - Mismo nombre tabla destino pero columna diferente
-ALTER TABLE contract_management.contracts
-ADD CONSTRAINT fk_contracts_to_users_creator
-FOREIGN KEY (created_by_id)
-REFERENCES auth_management.users(id);
+-- File: apps/database/ddl/schemas/gamification_system/tables/02-developments.sql
+CREATE TABLE gamification_system.developments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id UUID NOT NULL,
 
-ALTER TABLE contract_management.contracts
-ADD CONSTRAINT fk_contracts_to_users_approver
-FOREIGN KEY (approved_by_id)
-REFERENCES auth_management.users(id);
+    CONSTRAINT fk_developments_to_projects
+        FOREIGN KEY (project_id)
+        REFERENCES gamification_system.user_points(id)
+        ON DELETE CASCADE
+);
+
+-- ✅ CORRECTO - Múltiples FKs a misma tabla (usar sufijo descriptivo)
+-- File: apps/database/ddl/schemas/contract_management/tables/01-contracts.sql
+CREATE TABLE contract_management.contracts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_by_id UUID NOT NULL,
+    approved_by_id UUID,
+
+    CONSTRAINT fk_contracts_to_users_creator
+        FOREIGN KEY (created_by_id)
+        REFERENCES auth_management.users(id),
+
+    CONSTRAINT fk_contracts_to_users_approver
+        FOREIGN KEY (approved_by_id)
+        REFERENCES auth_management.users(id)
+);
 
 -- ❌ INCORRECTO
 fk_project_user              -- Faltan plurales/singulares consistentes
@@ -307,29 +322,52 @@ projects_created_by_fk       -- Orden incorrecto
 fk_created_by                -- No especifica tablas
 ```
 
+**Nota:** Los cambios se aplican actualizando el archivo DDL y recreando la BD con `./drop-and-recreate-database.sh` (NO usar ALTER TABLE incremental). Ver [DIRECTIVA-POLITICA-CARGA-LIMPIA.md](DIRECTIVA-POLITICA-CARGA-LIMPIA.md).
+
 #### Check Constraints
 
 **Convención:** `chk_{tabla}_{columna}` o `chk_{tabla}_{descripción}`
 
 ```sql
--- ✅ CORRECTO - Constraint simple
-ALTER TABLE project_management.projects
-ADD CONSTRAINT chk_projects_status
-CHECK (status IN ('PLANNING', 'ACTIVE', 'PAUSED', 'COMPLETED', 'CANCELLED'));
+-- ✅ CORRECTO - Definir en CREATE TABLE
+-- File: apps/database/ddl/schemas/gamification_system/tables/01-user_points.sql
+CREATE TABLE gamification_system.user_points (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    status VARCHAR(20) NOT NULL,
 
-ALTER TABLE budget_management.budget_items
-ADD CONSTRAINT chk_budget_items_amount
-CHECK (total_amount >= 0);
+    CONSTRAINT chk_projects_status
+        CHECK (status IN ('PLANNING', 'ACTIVE', 'PAUSED', 'COMPLETED', 'CANCELLED'))
+);
+
+-- File: apps/database/ddl/schemas/budget_management/tables/01-budget_items.sql
+CREATE TABLE budget_management.budget_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    total_amount DECIMAL(15,2) NOT NULL,
+
+    CONSTRAINT chk_budget_items_amount
+        CHECK (total_amount >= 0)
+);
 
 -- ✅ CORRECTO - Constraint multi-columna
-ALTER TABLE contract_management.contracts
-ADD CONSTRAINT chk_contracts_dates
-CHECK (end_date >= start_date);
+CREATE TABLE contract_management.contracts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+
+    CONSTRAINT chk_contracts_dates
+        CHECK (end_date >= start_date)
+);
 
 -- ✅ CORRECTO - Constraint complejo
-ALTER TABLE purchase_management.purchase_orders
-ADD CONSTRAINT chk_purchase_orders_total
-CHECK (total_amount = subtotal + tax_amount);
+CREATE TABLE purchase_management.purchase_orders (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    subtotal DECIMAL(15,2) NOT NULL,
+    tax_amount DECIMAL(15,2) NOT NULL,
+    total_amount DECIMAL(15,2) NOT NULL,
+
+    CONSTRAINT chk_purchase_orders_total
+        CHECK (total_amount = subtotal + tax_amount)
+);
 
 -- ❌ INCORRECTO
 chk_status                   -- No especifica tabla
@@ -342,17 +380,32 @@ check_projects_status        -- Prefijo incorrecto
 **Convención:** `uq_{tabla}_{columna(s)}`
 
 ```sql
--- ✅ CORRECTO
-ALTER TABLE auth_management.users
-ADD CONSTRAINT uq_users_email UNIQUE (email);
+-- ✅ CORRECTO - Definir en CREATE TABLE
+-- File: apps/database/ddl/schemas/auth_management/tables/01-users.sql
+CREATE TABLE auth_management.users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) NOT NULL,
 
-ALTER TABLE project_management.projects
-ADD CONSTRAINT uq_projects_code UNIQUE (code);
+    CONSTRAINT uq_users_email UNIQUE (email)
+);
+
+-- File: apps/database/ddl/schemas/gamification_system/tables/01-user_points.sql
+CREATE TABLE gamification_system.user_points (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    code VARCHAR(50) NOT NULL,
+
+    CONSTRAINT uq_projects_code UNIQUE (code)
+);
 
 -- ✅ CORRECTO - Unique compuesto
-ALTER TABLE budget_management.budget_items
-ADD CONSTRAINT uq_budget_items_budget_code
-UNIQUE (budget_id, item_code);
+CREATE TABLE budget_management.budget_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    budget_id UUID NOT NULL,
+    item_code VARCHAR(50) NOT NULL,
+
+    CONSTRAINT uq_budget_items_budget_code
+        UNIQUE (budget_id, item_code)
+);
 
 -- ❌ INCORRECTO
 uq_email                     -- No especifica tabla
@@ -389,7 +442,7 @@ budget_total_calc           -- Sustantivo + verbo (orden incorrecto)
 
 ```sql
 -- ✅ CORRECTO
-CREATE VIEW project_management.v_active_projects AS ...;
+CREATE VIEW gamification_system.v_active_projects AS ...;
 CREATE VIEW budget_management.v_budget_summary AS ...;
 CREATE VIEW contract_management.vw_contract_details AS ...;
 
@@ -406,7 +459,7 @@ CREATE VIEW view_active_projects AS ...; -- Prefijo redundante
 ```sql
 -- ✅ CORRECTO
 CREATE TRIGGER trg_projects_before_update_timestamp
-BEFORE UPDATE ON project_management.projects
+BEFORE UPDATE ON gamification_system.user_points
 FOR EACH ROW EXECUTE FUNCTION update_timestamp();
 
 CREATE TRIGGER trg_contracts_after_insert_audit
@@ -469,9 +522,9 @@ import { Entity, Column, PrimaryGeneratedColumn, ... } from 'typeorm';
 
 /**
  * Entity representing a construction project
- * Maps to table: project_management.projects
+ * Maps to table: gamification_system.user_points
  */
-@Entity('projects', { schema: 'project_management' })
+@Entity('user_points', { schema: 'gamification_system' })
 export class ProjectEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -674,7 +727,7 @@ budget-item.controller.ts           // ✅
 **Convención:** `camelCase`, mapean a verbos HTTP
 
 ```typescript
-@Controller('projects')
+@Controller('user_points')
 export class ProjectController {
     // ✅ CORRECTO
     @Get()
@@ -866,7 +919,7 @@ export const DB_TABLES = {
         PERMISSIONS: 'permissions'
     },
     PROJECT: {
-        PROJECTS: 'projects',
+        PROJECTS: 'user_points',
         DEVELOPMENTS: 'developments',
         PHASES: 'phases'
     }
@@ -1311,7 +1364,7 @@ apps/
 
 ❌ INCORRECTO
 ProjectManagement/        -- Pascal case
-project_management/       -- Snake case
+gamification_system/       -- Snake case
 projectManagement/        -- Camel case
 ```
 
@@ -1945,6 +1998,281 @@ P3: Baja / Nice to have
 
 ---
 
+## 9. RUTAS Y CONFIGURACIÓN DE API
+
+### 9.1. Separación de Responsabilidades en URLs
+
+**Principio Fundamental:**
+
+```yaml
+baseURL: Contiene protocolo + dominio + puerto + prefijo global (/api)
+endpoint: Contiene SOLO la ruta del recurso específico
+```
+
+#### baseURL (Backend + Frontend)
+
+**Convención:** Incluir prefijo `/api` en configuración de cliente, NO en variable de entorno
+
+```typescript
+// ✅ CORRECTO - Frontend apiClient configuration
+export const apiClient = axios.create({
+  baseURL: `${import.meta.env.VITE_API_URL}/api`,
+  // Resultado: 'http://localhost:3000/api'
+});
+```
+
+```env
+# ✅ CORRECTO - Variable de entorno SIN /api
+VITE_API_URL=http://localhost:3000
+
+# ❌ INCORRECTO - NO incluir /api en variable
+VITE_API_URL=http://localhost:3000/api
+```
+
+#### Endpoints (Frontend Services)
+
+**Convención:** Path relativo, sin prefijo `/api`, con slash inicial
+
+```typescript
+// ✅ CORRECTO - Endpoints sin /api
+export const healthService = {
+  async checkHealth() {
+    const response = await apiClient.get('/health');
+    // URL final: http://localhost:3000/api/health ✅
+    return response.data;
+  },
+
+  async checkDatabase() {
+    const response = await apiClient.get('/health/database');
+    // URL final: http://localhost:3000/api/health/database ✅
+    return response.data;
+  },
+};
+```
+
+```typescript
+// ❌ INCORRECTO - NO duplicar /api
+export const healthService = {
+  async checkHealth() {
+    const response = await apiClient.get('/api/health');  // ❌
+    // URL final: http://localhost:3000/api/api/health ❌
+    return response.data;
+  },
+};
+```
+
+### 9.2. Controladores Backend (NestJS)
+
+**Convención:** Rutas sin prefijo `/api`, prefijo global en `main.ts`
+
+```typescript
+// ✅ CORRECTO - apps/backend/src/main.ts
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  // Prefijo global para toda la API
+  app.setGlobalPrefix('api');
+
+  await app.listen(3000);
+}
+bootstrap();
+```
+
+```typescript
+// ✅ CORRECTO - Controlador sin /api
+@Controller('health')  // NO incluir /api aquí
+export class HealthController {
+  @Get()              // GET /api/health
+  async checkHealth() {
+    return { status: 'ok' };
+  }
+
+  @Get('database')    // GET /api/health/database
+  async checkDatabase() {
+    return { database: 'connected' };
+  }
+}
+```
+
+```typescript
+// ❌ INCORRECTO - NO incluir /api en @Controller
+@Controller('api/health')  // ❌ Genera /api/api/health
+export class HealthController {
+  // ...
+}
+```
+
+### 9.3. Patrones de Endpoints
+
+#### Recursos Simples
+
+```typescript
+// ✅ CORRECTO
+GET    /users                 // Listar todos
+GET    /users/:id             // Obtener uno
+POST   /users                 // Crear
+PUT    /users/:id             // Actualizar completo
+PATCH  /users/:id             // Actualizar parcial
+DELETE /users/:id             // Eliminar
+```
+
+#### Recursos Anidados
+
+```typescript
+// ✅ CORRECTO
+GET    /projects/:id/tasks                    // Tareas de un proyecto
+POST   /projects/:id/tasks                    // Crear tarea en proyecto
+GET    /projects/:id/tasks/:taskId            // Una tarea específica
+GET    /projects/:id/tasks/:taskId/comments   // Comentarios de tarea
+```
+
+#### Query Parameters
+
+```typescript
+// ✅ CORRECTO - Usar objeto params
+export const userService = {
+  async searchUsers(query: string, page: number = 1) {
+    const response = await apiClient.get('/users', {
+      params: { q: query, page },  // Auto-encoding
+    });
+    return response.data;
+  },
+};
+
+// ❌ INCORRECTO - Concatenación manual
+export const userService = {
+  async searchUsers(query: string, page: number) {
+    const response = await apiClient.get(`/users?q=${query}&page=${page}`);
+    return response.data;
+  },
+};
+```
+
+### 9.4. Trailing Slashes
+
+**Regla:** NO usar trailing slashes al final de endpoints
+
+```typescript
+// ✅ CORRECTO
+const endpoint = '/health';
+const endpoint = '/users/123';
+const endpoint = '/projects/123/tasks';
+
+// ❌ EVITAR
+const endpoint = '/health/';
+const endpoint = '/users/123/';
+```
+
+### 9.5. Validación de Rutas
+
+#### Checklist de Validación
+
+```yaml
+Pre-Implementation:
+  - [ ] baseURL incluye protocolo + dominio + puerto + /api
+  - [ ] baseURL usa variable de entorno
+  - [ ] Endpoints NO incluyen /api
+  - [ ] Endpoints comienzan con /
+  - [ ] NO hay trailing slashes innecesarios
+  - [ ] @Controller NO incluye /api
+  - [ ] Prefijo global está en main.ts
+
+Post-Implementation:
+  - [ ] Probar en Network tab del navegador
+  - [ ] URL final NO tiene /api/api/
+  - [ ] Status code es correcto
+  - [ ] NO hay errores de CORS
+```
+
+### 9.6. Ejemplos Completos
+
+#### Backend Controller
+
+```typescript
+// apps/backend/src/modules/users/users.controller.ts
+
+@Controller('users')
+export class UsersController {
+  @Get()
+  async findAll(@Query('page') page: number = 1): Promise<User[]> {
+    // Ruta: GET /api/users?page=1
+    return this.usersService.findAll(page);
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string): Promise<User> {
+    // Ruta: GET /api/users/:id
+    return this.usersService.findById(id);
+  }
+
+  @Post()
+  async create(@Body() dto: CreateUserDto): Promise<User> {
+    // Ruta: POST /api/users
+    return this.usersService.create(dto);
+  }
+}
+```
+
+#### Frontend Service
+
+```typescript
+// apps/frontend/web/src/services/userService.ts
+
+import { apiClient } from '@/lib/apiClient';
+import type { User, CreateUserDto } from '@/types/user';
+
+export const userService = {
+  async findAll(page: number = 1): Promise<User[]> {
+    const response = await apiClient.get<User[]>('/users', {
+      params: { page },
+    });
+    return response.data;
+  },
+
+  async findById(id: string): Promise<User> {
+    const response = await apiClient.get<User>(`/users/${id}`);
+    return response.data;
+  },
+
+  async create(dto: CreateUserDto): Promise<User> {
+    const response = await apiClient.post<User>('/users', dto);
+    return response.data;
+  },
+};
+```
+
+### 9.7. Configuración por Ambiente
+
+```env
+# .env.development (frontend)
+VITE_API_URL=http://localhost:3000
+
+# .env.staging (frontend)
+VITE_API_URL=https://staging-api.gamilit.com
+
+# .env.production (frontend)
+VITE_API_URL=https://api.gamilit.com
+```
+
+```typescript
+// apps/frontend/web/src/lib/apiClient.ts
+export const apiClient = axios.create({
+  baseURL: `${import.meta.env.VITE_API_URL}/api`,
+  timeout: 10000,
+});
+```
+
+### 9.8. Referencias Adicionales
+
+Para detalles completos sobre configuración de API routes:
+
+- [ESTANDARES-API-ROUTES.md](./ESTANDARES-API-ROUTES.md) - Guía completa de rutas API
+- [CHECKLIST-CODE-REVIEW-API.md](./CHECKLIST-CODE-REVIEW-API.md) - Checklist de code review
+- [ESTANDARES-TESTING-API.md](./ESTANDARES-TESTING-API.md) - Testing de APIs
+- [PITFALLS-API-ROUTES.md](./PITFALLS-API-ROUTES.md) - Errores comunes y soluciones
+
+---
+
 ## REFERENCIAS
 
 - [PROMPT-AGENTES-PRINCIPALES.md](../prompts/PROMPT-AGENTES-PRINCIPALES.md) - Prompt de agentes
@@ -1955,6 +2283,8 @@ P3: Baja / Nice to have
 
 ---
 
-**Versión:** 1.1.0
-**Última actualización:** 2025-11-20
+**Versión:** 1.2.0
+**Última actualización:** 2025-11-23
 **Uso:** Referencia obligatoria para todos los agentes y subagentes
+**Changelog:**
+- v1.2.0 (2025-11-23): Agregada sección 9 "Rutas y Configuración de API"

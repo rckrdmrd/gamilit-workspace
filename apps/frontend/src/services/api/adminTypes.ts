@@ -174,6 +174,13 @@ export interface User {
   organization?: string;
   organizationId?: string;
   joinDate: string;
+  /**
+   * Last login timestamp from backend (last_sign_in_at).
+   * Backend returns Date type, but JSON serialization converts to ISO string.
+   * Transformed via transformUser() function in adminAPI.ts.
+   * @see UserDetailsDto.last_sign_in_at in backend
+   * @see transformUser() in adminAPI.ts (CORR-003)
+   */
   lastLogin?: string;
   metadata?: any;
 }
@@ -237,11 +244,19 @@ export interface AvailablePermission {
 export interface MayaRank {
   id: string;
   name: string;
+  level: number;
   minXP: number;
   maxXP: number;
+  multiplierXp: number;
+  multiplierMlCoins: number;
+  bonusMlCoins: number;
   color: string;
   icon?: string;
-  userCount?: number;
+  description: string;
+  perks: string[];
+  isActive: boolean;
+  order: number;
+  userCount?: number; // Frontend-only field
 }
 
 export interface Achievement {

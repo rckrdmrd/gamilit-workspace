@@ -135,8 +135,8 @@ Usuario: "Monitorea cambios en documentación"
 
 Workspace-Manager:
 1. DETECCIÓN:
-   - git diff muestra nuevo archivo: docs/modulos/09-sistema-notificaciones.md ✅
-   - Analizo: es nuevo módulo no planificado ✅
+   - git diff muestra nuevo archivo: docs/03-fase-extensiones/EXT-003-notificaciones/README.md ✅
+   - Analizo: es nueva épica/actualización no planificada ✅
 
 2. ANÁLISIS DE IMPACTO:
    - Requiere: DB (tabla notifications), Backend (endpoints), Frontend (componente) ✅
@@ -576,14 +576,14 @@ git diff HEAD~7 HEAD -- docs/ > /tmp/docs-changes-last-week.diff
 grep -E "^\+.*:" /tmp/docs-changes-last-week.diff | \
     grep -v "^+++" > /tmp/significant-changes.txt
 
-# Detectar nuevos módulos mencionados en docs
+# Detectar nuevas épicas en docs
 comm -13 \
-    <(git show HEAD~7:docs/modulos/ | sort) \
-    <(ls docs/modulos/ | sort) \
-    > /tmp/new-modules-in-docs.txt
+    <(git show HEAD~7:docs/01-fase-alcance-inicial/ | sort) \
+    <(ls docs/01-fase-alcance-inicial/ | sort) \
+    > /tmp/new-epics-in-docs.txt
 
 # Detectar cambios en ADRs
-git diff HEAD~7 HEAD -- docs/adr/ --name-only > /tmp/adr-changes.txt
+git diff HEAD~7 HEAD -- docs/97-adr/ --name-only > /tmp/adr-changes.txt
 ```
 
 **Análisis de impacto:**
@@ -593,9 +593,9 @@ git diff HEAD~7 HEAD -- docs/adr/ --name-only > /tmp/adr-changes.txt
 
 ### CAMBIOS DETECTADOS
 
-#### CAMBIO-001: Nuevo módulo en documentación
+#### CAMBIO-001: Nueva épica en documentación
 **Detalle:**
-- Documento: docs/modulos/09-sistema-notificaciones.md
+- Documento: docs/03-fase-extensiones/EXT-003-notificaciones/
 - Fecha detección: 2025-11-23
 - Tipo: Nuevo alcance
 - Estado anterior: No existía
@@ -617,7 +617,7 @@ git diff HEAD~7 HEAD -- docs/adr/ --name-only > /tmp/adr-changes.txt
 
 #### CAMBIO-002: Modificación en ADR
 **Detalle:**
-- Documento: docs/adr/ADR-003-estrategia-multi-tenant.md
+- Documento: docs/97-adr/ADR-003-estrategia-multi-tenant.md
 - Cambio: Modificación de estrategia de multi-tenancy
 - Fecha: 2025-11-20
 - Autor: Architecture-Analyst
@@ -634,12 +634,12 @@ git diff HEAD~7 HEAD -- docs/adr/ --name-only > /tmp/adr-changes.txt
 - [ ] Notificar a Database-Agent, Backend-Agent
 - [ ] Validar que nuevos desarrollos usen nueva estrategia
 
-#### CAMBIO-003: Eliminación de feature
+#### CAMBIO-003: Eliminación de épica
 **Detalle:**
-- Feature: Sistema de gamificación por equipos
-- Estado anterior: En TRAZA-REQUERIMIENTOS.md como REQ-025
-- Estado actual: Eliminado de docs/modulos/
-- Razón: Fuera de alcance MVP
+- Épica: EXT-011 - Sistema de equipos
+- Estado anterior: En TRAZA-REQUERIMIENTOS.md como épica planificada
+- Estado actual: Eliminada de docs/03-fase-extensiones/
+- Razón: Fuera de alcance Fase 3
 
 **Análisis de impacto:**
 - Código implementado: Ninguno (aún no desarrollado)

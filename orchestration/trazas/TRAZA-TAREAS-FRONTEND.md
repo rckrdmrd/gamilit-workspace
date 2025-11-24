@@ -3487,3 +3487,62 @@ apps/frontend/src/features/mechanics/module2/RuedaInferencias/
 **Estado:** ✅ DB-071 + BE-FE-071 + FE-071 = CADENA COMPLETADA
 **Listo para:** Testing E2E con backend real
 
+## 📋 Tareas Recientes
+
+### 2025-11-24: BUG-TEACHER-002, 003, 006, 007 - Validación de Datos Teacher Portal
+
+**Estado:** ✅ COMPLETADO
+**Agente:** Frontend-Developer
+**Prioridad:** P1 (Alto)
+**Esfuerzo:** 5 SP
+
+**Bugs Corregidos:**
+
+1. ✅ **BUG-TEACHER-002:** Mock students hardcodeados en TeacherDashboard
+   - Archivo: apps/frontend/src/apps/teacher/pages/TeacherDashboard.tsx
+   - Solución: Implementado useClassrooms() y classroomsApi.getClassroomStudents()
+   - Resultado: Estudiantes reales desde API en lugar de mock data
+
+2. ✅ **BUG-TEACHER-003:** Stats sin validación (average_score, engagement_rate)
+   - Archivo: apps/frontend/src/apps/teacher/pages/TeacherDashboard.tsx
+   - Solución: Helper safeFormat() para validar números antes de toFixed()
+   - Resultado: No más "undefined" o "null" en UI
+
+3. ✅ **BUG-TEACHER-006:** Charts con datos no validados (module_stats.map)
+   - Archivo: apps/frontend/src/apps/teacher/pages/TeacherAnalytics.tsx
+   - Solución: Filtrado con typeof checks antes de map()
+   - Resultado: Charts no se rompen con datos inválidos
+
+4. ✅ **BUG-TEACHER-007:** toFixed() falla en undefined
+   - Archivo: apps/frontend/src/apps/teacher/pages/TeacherAnalytics.tsx
+   - Solución: safeFormat() en todas las métricas
+   - Resultado: Fallbacks apropiados ('N/A', '0.0%')
+
+**Cambios Implementados:**
+
+**TeacherDashboard.tsx:**
+- [+] Helper function safeFormat() para formateo seguro
+- [+] useEffect para fetch de estudiantes reales desde classroomsApi
+- [~] Stats cards con validación (average_class_score, engagement_rate, completion_rate)
+- [~] Actividades con validación de timestamp y formateo seguro
+- [~] Reemplazado mockStudents con allStudents en PerformanceInsightsPanel, ReportGenerator, ParentCommunicationHub
+
+**TeacherAnalytics.tsx:**
+- [+] Helper function safeFormat()
+- [~] Charts validados con filter + typeof checks
+- [~] Stats cards validados (average_score, completion_rate, engagement_rate)
+- [~] Tabla de estudiantes con validación completa
+- [~] Métricas de engagement validadas (session_duration_avg, sessions_per_user)
+- [~] Comparación con período anterior validada
+- [~] Feature usage validado con empty state
+
+**Validación:**
+- ✅ Build TypeScript exitoso (sin errores)
+- ✅ 3343 modules transformed en 11.60s
+
+**Referencias:**
+- Reporte completo: orchestration/agentes/frontend/REPORTE-BUG-TEACHER-002-003-006-007-2025-11-24.md
+- Bugs originales: orchestration/reportes/REPORTE-ANALISIS-PORTALES-ADMIN-TEACHER-2025-11-23.md
+
+---
+

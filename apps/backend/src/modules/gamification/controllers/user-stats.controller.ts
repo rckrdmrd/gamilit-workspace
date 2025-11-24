@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { UserStatsService } from '../services';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
 import { JwtAuthGuard } from '@/modules/auth/guards';
+import { UserGamificationSummaryDto } from '../dto/user-gamification-summary.dto';
 
 /**
  * UserStatsController
@@ -89,6 +90,72 @@ export class UserStatsController {
   })
   async getUserStats(@Param('userId') userId: string) {
     return await this.userStatsService.findByUserId(userId);
+  }
+
+  /**
+   * Obtiene resumen de gamificación del usuario
+   *
+   * @description Endpoint para portales Admin/Teacher. Retorna resumen consolidado
+   * con nivel, XP, coins, rango y achievements. Crea stats si no existen.
+   *
+   * @param userId - ID del usuario (UUID)
+   * @returns Resumen de gamificación del usuario
+   *
+   * @example
+   * GET /api/v1/gamification/users/550e8400-e29b-41d4-a716-446655440000/summary
+   * Response: {
+   *   "userId": "550e8400-e29b-41d4-a716-446655440000",
+   *   "level": 5,
+   *   "totalXP": 2500,
+   *   "mlCoins": 150,
+   *   "rank": "Nacom",
+   *   "rankColor": "#4CAF50",
+   *   "progressToNextLevel": 60,
+   *   "xpToNextLevel": 500,
+   *   "achievements": [],
+   *   "totalAchievements": 12
+   * }
+   */
+  @Get('users/:userId/summary')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Get user gamification summary',
+    description: 'Obtiene resumen consolidado de gamificación: nivel, XP, coins, rango, achievements. Usado en portales Admin/Teacher.',
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'ID del usuario en formato UUID',
+    type: String,
+    required: true,
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Resumen de gamificación obtenido exitosamente',
+    type: UserGamificationSummaryDto,
+    schema: {
+      example: {
+        userId: '550e8400-e29b-41d4-a716-446655440000',
+        level: 5,
+        totalXP: 2500,
+        mlCoins: 150,
+        rank: 'Nacom',
+        rankColor: '#4CAF50',
+        progressToNextLevel: 60,
+        xpToNextLevel: 500,
+        achievements: ['achievement-1', 'achievement-2'],
+        totalAchievements: 12,
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'No autenticado',
+  })
+  async getUserGamificationSummary(
+    @Param('userId') userId: string,
+  ): Promise<UserGamificationSummaryDto> {
+    return await this.userStatsService.getUserGamificationSummary(userId);
   }
 
   /**
@@ -216,6 +283,39 @@ export class UserStatsController {
     @Param('userId') userId: string,
     @Body() updateData: Record<string, any>,
   ) {
-    return await this.userStatsService.updateStats(userId, updateData);
+    // Support increment operations for convenience
+    const stats = await this.userStatsService.findByUserId(userId);
+
+    // Handle total_xp_increment
+    if (updateData.total_xp_increment !== undefined) {
+      const newXP = stats.total_xp + updateData.total_xp_increment;
+      updateData.total_xp = newXP;
+      delete updateData.total_xp_increment;
+    }
+
+    // Handle ml_coins_increment
+    if (updateData.ml_coins_increment !== undefined) {
+      updateData.ml_coins = stats.ml_coins + updateData.ml_coins_increment;
+      updateData.ml_coins_earned_total = stats.ml_coins_earned_total + updateData.ml_coins_increment;
+      delete updateData.ml_coins_increment;
+    }
+
+    // Handle ml_coins_decrement
+    if (updateData.ml_coins_decrement !== undefined) {
+      updateData.ml_coins = stats.ml_coins - updateData.ml_coins_decrement;
+      updateData.ml_coins_spent_total = stats.ml_coins_spent_total + updateData.ml_coins_decrement;
+      delete updateData.ml_coins_decrement;
+    }
+
+    const updatedStats = await this.userStatsService.updateStats(userId, updateData);
+
+    // Add helpful flags for frontend
+    const response = {
+      ...updatedStats,
+      leveled_up: updatedStats.level > stats.level,
+      ranked_up: updatedStats.current_rank !== stats.current_rank,
+    };
+
+    return response;
   }
 }

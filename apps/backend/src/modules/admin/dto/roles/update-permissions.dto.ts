@@ -1,20 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsObject, IsNotEmpty } from 'class-validator';
 
-export class UpdatePermissionsDto {
-  @ApiProperty({
-    description: 'Updated permissions in JSON format',
-    example: {
-      can_create_content: true,
-      can_delete_users: false,
-      can_manage_settings: true,
-      can_view_reports: true,
-    },
-  })
-  @IsObject()
-  @IsNotEmpty()
-  permissions!: Record<string, boolean>;
-}
+export { UpdateRolePermissionsDto as UpdatePermissionsDto } from '@shared/dto/permissions/update-role-permissions.dto';
 
 export class RolePermissionsDto {
   @ApiProperty({

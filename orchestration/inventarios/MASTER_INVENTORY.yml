@@ -1,20 +1,100 @@
 # INVENTARIO MAESTRO - GAMILIT
 
-version: "1.0.0"
+version: "1.1.0"
 proyecto: "GAMILIT - Sistema de Gamificación Educativa"
-fecha_actualizacion: "2025-11-23"
+fecha_actualizacion: "2025-11-24"
+ultima_tarea: "DB-127 - Corrección Gaps Coherencia Database-Backend"
 
 # =============================================================================
 # DATABASE OBJECTS
 # =============================================================================
 
 database:
-  schemas: []
-  tables: []
+  schemas:
+    - name: "audit_logging"
+      description: "Schema para auditoría y logging de sistema"
+      status: "active"
+    - name: "auth"
+      description: "Schema para vistas de compatibilidad de autenticación"
+      status: "active"
+    - name: "social_features"
+      description: "Schema para características sociales (classrooms, teams, etc.)"
+      status: "active"
+
+  tables:
+    - name: "audit_logging.activity_log"
+      file: "apps/database/ddl/schemas/audit_logging/tables/06-activity_log.sql"
+      description: "Activity log para monitoreo de dashboard administrativo y auditoría"
+      columns:
+        - "id (uuid, PK)"
+        - "user_id (uuid, FK → auth.users)"
+        - "action_type (varchar(100))"
+        - "entity_type (varchar(50))"
+        - "entity_id (uuid)"
+        - "description (text)"
+        - "metadata (jsonb)"
+        - "ip_address (inet)"
+        - "user_agent (text)"
+        - "created_at (timestamptz)"
+        - "updated_at (timestamptz)"
+      indexes:
+        - "idx_activity_log_user_id (btree on user_id)"
+        - "idx_activity_log_created_at (btree on created_at DESC)"
+        - "idx_activity_log_action_type (btree on action_type)"
+        - "idx_activity_log_user_created (btree on user_id, created_at DESC)"
+        - "idx_activity_log_metadata (gin on metadata)"
+      rls_enabled: true
+      usado_en_backend: true
+      backend_files:
+        - "apps/backend/src/modules/admin/services/admin-dashboard.service.ts"
+      gap_resuelto: "GAP-DB-001"
+      created_date: "2025-11-24"
+      task_reference: "DB-127"
+
+    - name: "social_features.classrooms"
+      file: "apps/database/ddl/schemas/social_features/tables/03-classrooms.sql"
+      description: "Aulas virtuales para organizar estudiantes por clase"
+      columnas_clave:
+        - "is_active (boolean)"
+        - "is_archived (boolean)"
+        - "is_deleted (boolean) - SOFT DELETE"
+      indexes_especiales:
+        - "idx_classrooms_not_deleted (btree on created_at DESC WHERE is_deleted = false)"
+      gap_resuelto: "GAP-DB-003"
+      modificado_date: "2025-11-24"
+      task_reference: "DB-127"
+
   functions: []
   triggers: []
-  views: []
+
+  views:
+    - name: "auth.tenants"
+      file: "apps/database/ddl/schemas/auth/views/tenants_alias.sql"
+      description: "Vista alias para compatibilidad con queries backend que esperan auth.tenants"
+      tipo: "VIEW (alias)"
+      fuente: "auth_management.tenants"
+      usado_en_backend: true
+      backend_files:
+        - "apps/backend/src/modules/admin/services/admin-dashboard.service.ts"
+      gap_resuelto: "GAP-DB-002"
+      created_date: "2025-11-24"
+      task_reference: "DB-127"
+
   policies: []
+  seeds:
+    - name: "05-assignments"
+      file: "apps/database/seeds/prod/educational_content/05-assignments.sql"
+      description: "12 assignments demo for Teacher Portal (commit db82449)"
+      schema: "educational_content"
+      table: "assignments"
+      dependencies:
+        - "classrooms"
+        - "exercises (modules 1-3)"
+        - "teacher profile (bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb)"
+      status: "active"
+      created_date: "2025-11-23"
+      created_by: "Database-Agent"
+      task_reference: "Tarea 2 - US-AE-005 Integration"
 
 # =============================================================================
 # BACKEND MODULES

@@ -60,21 +60,36 @@ Este es el **monorepo completo** de GAMILIT (Gamificación Maya para la Lectoesc
 
 ### docs/ - Documentación Completa
 
-**Descripción:** Toda la documentación del proyecto (requerimientos, specs técnicas, guías)
+**Descripción:** Toda la documentación del proyecto organizada por **FASES** (no por tipo de documento)
 
-**Subcarpetas:**
-- `00-overview/` - Visión general, onboarding, glosario
-- `01-requerimientos/` - Product requirements, user stories, features
-- `02-especificaciones-tecnicas/` - Specs técnicas (API, DB, arquitectura)
-- `03-desarrollo/` - Guías de desarrollo, testing, deployment
-- `04-planificacion/` - Sprints, épicas, roadmap
-- `QUICK-REFERENCE/` - Guías rápidas (<5 min)
-- `adr/` - Architecture Decision Records
-- `standards/` - Estándares de código y git workflow
+**Organización:** Por fases consecutivas del proyecto (Agosto 2024 - Noviembre 2025)
 
-**Archivos:** 2,269 archivos markdown
-**_MAP.md:** ✅ docs/_MAP.md
-**Estado:** 🟢 Documentación activa y bien organizada
+**Subcarpetas principales:**
+- `00-vision-general/` - Visión, onboarding, diseño de mecánicas v6.1
+- `01-fase-alcance-inicial/` - **Fase 1** (Mes 1): Fundamentos - 6 épicas EAI-001 a EAI-006
+- `02-fase-robustecimiento/` - **Fase 2** (Mes 2): Migración BD - 1 épica EMR-001
+- `03-fase-extensiones/` - **Fase 3** (Mes 3-4): Extensiones - 10 épicas EXT-001 a EXT-010
+- `04-fase-backlog/` - **Fase 4**: Backlog futuro
+- `90-transversal/` - Docs transversales (features, inventarios, sprints, correcciones)
+- `95-guias-desarrollo/` - Guías de desarrollo
+- `96-quick-reference/` - Guías rápidas (<5 min)
+- `97-adr/` - Architecture Decision Records
+- `98-standards/` - Estándares
+- `adr/` - ADRs (ubicación alternativa)
+- `database/` - Documentación específica de BD
+- `sistema-recompensas/` - Implementación v2.3.0 (detallada)
+
+**Estructura de cada épica (EAI-XXX/, EXT-XXX/):**
+- `requerimientos/` - Product requirements
+- `especificaciones/` - Specs técnicas
+- `implementacion/` - Notas de implementación
+- `pruebas/` - Test plans
+- `historias-usuario/` - User stories
+- `README.md` - Índice de la épica
+
+**Archivos:** ~2,200 archivos markdown
+**_MAP.md:** ✅ docs/_MAP.md (si existe)
+**Estado:** 🟢 Documentación activa y bien organizada por fases
 
 ---
 

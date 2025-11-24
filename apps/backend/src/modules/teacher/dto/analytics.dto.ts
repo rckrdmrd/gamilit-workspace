@@ -4,19 +4,15 @@
 
 import { IsEnum, IsOptional, IsUUID, IsString } from 'class-validator';
 import { ApiPropertyOptional, ApiProperty } from '@nestjs/swagger';
+import { ReportFormat } from '@shared/dto/reports/generate-report.dto';
+
+export { ReportFormat } from '@shared/dto/reports/generate-report.dto';
 
 export enum TimeRange {
   SEVEN_DAYS = '7d',
   THIRTY_DAYS = '30d',
   NINETY_DAYS = '90d',
   ALL = 'all',
-}
-
-export enum ReportFormat {
-  JSON = 'json',
-  PDF = 'pdf',
-  CSV = 'csv',
-  EXCEL = 'excel',
 }
 
 export class GetAnalyticsQueryDto {

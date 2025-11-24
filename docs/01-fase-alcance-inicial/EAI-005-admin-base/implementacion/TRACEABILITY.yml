@@ -12,7 +12,130 @@ status: completed
 implementation:
   database:
     schemas: [admin_dashboard, auth_management]
+
   backend:
     module: admin
+    path: apps/backend/src/modules/admin/
+
+    services:
+      - name: admin-dashboard.service.ts
+        path: apps/backend/src/modules/admin/services/admin-dashboard.service.ts
+        description: Servicio de dashboard administrativo
+        implemented: 2025-11-23
+        methods:
+          - getRecentActions()
+          - getAlerts()
+          - getUserActivity()
+
+    controllers:
+      - name: admin-dashboard.controller.ts
+        path: apps/backend/src/modules/admin/controllers/admin-dashboard.controller.ts
+        description: Controlador de dashboard administrativo
+        implemented: 2025-11-23
+
+    endpoints:
+      dashboard:
+        - path: /admin/dashboard/actions/recent
+          method: GET
+          controller: AdminDashboardController
+          service: AdminDashboardService.getRecentActions()
+          dto_request: RecentActionsQueryDto (limit?: number)
+          dto_response: RecentActionDto[]
+          description: Returns recent admin actions from last 7 days
+          implemented: 2025-11-23
+          bug_fix: BUG-ADMIN-002
+          fields_response:
+            - id (string)
+            - action (string)
+            - actionType (string)
+            - adminId (string)
+            - adminName (string)
+            - targetType (string)
+            - targetId (string)
+            - details (object)
+            - timestamp (Date)
+            - success (boolean)
+
+        - path: /admin/dashboard/alerts
+          method: GET
+          controller: AdminDashboardController
+          service: AdminDashboardService.getAlerts()
+          dto_response: AlertDto[]
+          description: Returns active system alerts grouped by severity
+          implemented: 2025-11-23
+          bug_fix: BUG-ADMIN-003
+          fields_response:
+            - id (string)
+            - severity (string - info/warning/error/critical)
+            - title (string)
+            - message (string)
+            - details (object)
+            - timestamp (Date)
+            - acknowledged (boolean)
+
+        - path: /admin/dashboard/analytics/user-activity
+          method: GET
+          controller: AdminDashboardController
+          service: AdminDashboardService.getUserActivity()
+          dto_request: UserActivityQueryDto (startDate?: string, endDate?: string, groupBy?: string)
+          dto_response: UserActivityDto (dual format with tableData)
+          description: Returns user activity analytics for charting and tables
+          implemented: 2025-11-23
+          bug_fix: BUG-ADMIN-004
+          response_format: |
+            {
+              labels: string[],      // Para gráficos
+              data: number[],        // Para gráficos
+              tableData: Array<{     // Para tablas
+                date: string,
+                activeUsers: number,
+                newUsers: number,
+                sessions: number
+              }>
+            }
+
   frontend:
     features: [admin/dashboard, admin/users]
+
+    api_modules:
+      - name: adminAPI.ts
+        path: apps/frontend/src/lib/api/adminAPI.ts
+        description: Admin API client functions
+        implemented: 2025-11-23
+        functions:
+          - getRecentActions(limit?: number)
+          - getAlerts()
+          - getUserActivity(params?: UserActivityQuery)
+          - getMayaRanks()
+
+    hooks:
+      - name: useAdminDashboard.ts
+        path: apps/frontend/src/apps/admin/hooks/useAdminDashboard.ts
+        description: React Query hook for admin dashboard data
+        technology: React Query v5
+        implemented: 2025-11-23
+        related_adr: ADR-013 (React Query Adoption)
+        queries:
+          - recentActions (key: ['adminDashboard', 'recentActions'])
+          - alerts (key: ['adminDashboard', 'alerts'])
+          - userActivity (key: ['adminDashboard', 'userActivity'])
+
+# ============================================================================
+# TESTING
+# ============================================================================
+
+testing:
+  coverage:
+    overall: 15%  # REAL (actualizado 2025-11-23)
+    backend: 18%  # REAL (actualizado 2025-11-23)
+    frontend: 10%  # REAL (actualizado 2025-11-23)
+    database: 0%  # REAL (actualizado 2025-11-23)
+    meta_original: 88%  # Estimación inicial del proyecto
+    gap_actual: -73%  # Diferencia entre meta y realidad
+    ultima_medicion: "2025-11-23"
+    nota: |
+      Coverage REAL actualizado por Architecture-Analyst (2025-11-23).
+      Valores previos eran ESTIMACIONES optimistas del inicio del proyecto.
+      Módulo admin tiene tests parciales en algunos controllers.
+      Gap actual requiere plan de mejora (ver orchestration/roadmap/ROADMAP-TEST-COVERAGE.md).
+      Próxima medición: Mensual (Q1 2026).

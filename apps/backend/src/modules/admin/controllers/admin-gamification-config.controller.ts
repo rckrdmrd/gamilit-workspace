@@ -6,6 +6,8 @@ import {
   Body,
   UseGuards,
   Request,
+  Param,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -22,6 +24,14 @@ import {
   PreviewImpactDto,
   PreviewImpactResultDto,
   RestoreDefaultsResultDto,
+  ListParametersQueryDto,
+  ParametersListResponseDto,
+  ParameterResponseDto,
+  UpdateParameterDto,
+  UpdateParameterResponseDto,
+  MayaRanksResponseDto,
+  UpdateMayaRankDto,
+  UpdateMayaRankResponseDto,
 } from '../dto/gamification-config';
 
 /**
@@ -30,11 +40,18 @@ import {
  * @description Controller para configuración de gamificación (admin)
  * @tags Admin - Gamification Config
  *
- * Endpoints:
+ * Endpoints (Settings - Bulk):
  * - GET /settings - Obtener configuración actual
  * - PUT /settings - Actualizar configuración
  * - POST /settings/preview - Previsualizar impacto
  * - POST /settings/restore-defaults - Restaurar valores por defecto
+ *
+ * Endpoints (US-AE-005 - Parameters):
+ * - GET /parameters - Listar parámetros con filtro por categoría
+ * - GET /parameters/:id - Obtener parámetro por ID
+ * - PUT /parameters/:id - Actualizar parámetro por ID
+ * - GET /maya-ranks - Obtener configuración de rangos Maya
+ * - PUT /maya-ranks/:rankName - Actualizar umbral de rango Maya
  *
  * Guards:
  * - JwtAuthGuard: Usuario debe estar autenticado
@@ -45,6 +62,11 @@ import {
  * PUT /api/admin/gamification/settings
  * POST /api/admin/gamification/settings/preview
  * POST /api/admin/gamification/settings/restore-defaults
+ * GET /api/admin/gamification/parameters?category=xp
+ * GET /api/admin/gamification/parameters/:id
+ * PUT /api/admin/gamification/parameters/:id
+ * GET /api/admin/gamification/maya-ranks
+ * PUT /api/admin/gamification/maya-ranks/:rankName
  */
 @ApiTags('Admin - Gamification Config')
 @Controller('admin/gamification')
@@ -262,5 +284,321 @@ export class AdminGamificationConfigController {
   ): Promise<RestoreDefaultsResultDto> {
     const adminId = req.user.sub;
     return await this.gamificationConfigService.restoreDefaults(adminId);
+  }
+
+  // =====================================================
+  // US-AE-005: NEW PARAMETER-BASED ENDPOINTS
+  // =====================================================
+
+  /**
+   * List all gamification parameters
+   *
+   * @route GET /api/admin/gamification/parameters
+   * @param query Optional category filter
+   * @returns List of parameters with metadata
+   *
+   * @example Query:
+   * GET /api/admin/gamification/parameters?category=xp
+   *
+   * @example Response:
+   * {
+   *   "parameters": [
+   *     {
+   *       "id": "550e8400-e29b-41d4-a716-446655440000",
+   *       "setting_key": "gamification.xp.base_per_exercise",
+   *       "setting_value": "10",
+   *       "value_type": "number",
+   *       "min_value": 1,
+   *       "max_value": 1000,
+   *       ...
+   *     }
+   *   ],
+   *   "total": 1,
+   *   "filtered_by_category": "xp"
+   * }
+   */
+  @Get('parameters')
+  @ApiOperation({
+    summary: 'List gamification parameters',
+    description:
+      'Retrieve all gamification parameters with optional category filter. ' +
+      'Supports filtering by category (xp, ranks, coins, achievements). ' +
+      'Returns detailed information including value constraints, metadata, and audit info.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Parameters retrieved successfully',
+    type: ParametersListResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token missing or invalid',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - User is not an admin',
+  })
+  async listParameters(
+    @Query() query: ListParametersQueryDto,
+  ): Promise<ParametersListResponseDto> {
+    return await this.gamificationConfigService.listParameters(query);
+  }
+
+  /**
+   * Get a single parameter by ID
+   *
+   * @route GET /api/admin/gamification/parameters/:id
+   * @param id Parameter UUID
+   * @returns Parameter details with all metadata
+   *
+   * @example Response:
+   * {
+   *   "id": "550e8400-e29b-41d4-a716-446655440000",
+   *   "setting_key": "gamification.xp.base_per_exercise",
+   *   "setting_category": "gamification",
+   *   "setting_subcategory": "xp",
+   *   "setting_value": "10",
+   *   "value_type": "number",
+   *   "default_value": "10",
+   *   "display_name": "Base XP per Exercise",
+   *   "description": "Base XP awarded for completing an exercise",
+   *   "min_value": 1,
+   *   "max_value": 1000,
+   *   "is_readonly": false,
+   *   "is_system": false,
+   *   "updated_at": "2025-11-23T10:30:00.000Z"
+   * }
+   */
+  @Get('parameters/:id')
+  @ApiOperation({
+    summary: 'Get parameter by ID',
+    description:
+      'Retrieve detailed information about a single gamification parameter by its UUID. ' +
+      'Includes all metadata, validation rules, constraints, and audit information.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Parameter retrieved successfully',
+    type: ParameterResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token missing or invalid',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - User is not an admin',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not Found - Parameter with given ID does not exist',
+  })
+  async getParameterById(
+    @Param('id') id: string,
+  ): Promise<ParameterResponseDto> {
+    return await this.gamificationConfigService.getParameterById(id);
+  }
+
+  /**
+   * Update a parameter value by ID
+   *
+   * @route PUT /api/admin/gamification/parameters/:id
+   * @param id Parameter UUID
+   * @param dto New value
+   * @param req Express request with authenticated user
+   * @returns Update result with old/new values
+   *
+   * @example Request Body:
+   * {
+   *   "value": "15"
+   * }
+   *
+   * @example Response:
+   * {
+   *   "message": "Parameter updated successfully",
+   *   "parameter": {
+   *     "id": "550e8400-e29b-41d4-a716-446655440000",
+   *     "setting_key": "gamification.xp.base_per_exercise",
+   *     "old_value": "10",
+   *     "new_value": "15",
+   *     "updated_at": "2025-11-23T10:35:00.000Z",
+   *     "updated_by": "admin-uuid"
+   *   }
+   * }
+   */
+  @Put('parameters/:id')
+  @ApiOperation({
+    summary: 'Update parameter value',
+    description:
+      'Update a single gamification parameter value by its UUID. ' +
+      'The value is validated against parameter constraints (min/max, allowed values, type). ' +
+      'System and readonly parameters cannot be modified. ' +
+      'Change is logged in audit table with admin user ID.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Parameter updated successfully',
+    type: UpdateParameterResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      'Bad Request - Invalid value (out of range, wrong type, or parameter is readonly/system)',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token missing or invalid',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - User is not an admin',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not Found - Parameter with given ID does not exist',
+  })
+  async updateParameterById(
+    @Param('id') id: string,
+    @Body() dto: UpdateParameterDto,
+    @Request() req: any,
+  ): Promise<UpdateParameterResponseDto> {
+    const adminId = req.user.sub;
+    return await this.gamificationConfigService.updateParameterById(
+      id,
+      dto,
+      adminId,
+    );
+  }
+
+  /**
+   * Get Maya ranks configuration
+   *
+   * @route GET /api/admin/gamification/maya-ranks
+   * @returns List of ranks with thresholds and XP ranges
+   *
+   * @example Response:
+   * {
+   *   "ranks": [
+   *     {
+   *       "rank_name": "novice",
+   *       "min_xp": 0,
+   *       "max_xp": 99,
+   *       "rank_order": 0
+   *     },
+   *     {
+   *       "rank_name": "beginner",
+   *       "min_xp": 100,
+   *       "max_xp": 499,
+   *       "rank_order": 1
+   *     },
+   *     ...
+   *   ],
+   *   "total": 5,
+   *   "setting_key": "gamification.ranks.thresholds",
+   *   "setting_id": "550e8400-e29b-41d4-a716-446655440000",
+   *   "last_updated": "2025-11-23T10:00:00.000Z"
+   * }
+   */
+  @Get('maya-ranks')
+  @ApiOperation({
+    summary: 'Get Maya ranks configuration',
+    description:
+      'Retrieve all Maya rank levels with their XP thresholds and ranges. ' +
+      'Returns ranks in ascending order (novice, beginner, intermediate, advanced, expert). ' +
+      'Each rank includes min_xp, max_xp (null for highest rank), and rank_order.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Maya ranks retrieved successfully',
+    type: MayaRanksResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token missing or invalid',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - User is not an admin',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not Found - Ranks configuration not found',
+  })
+  async getMayaRanks(): Promise<MayaRanksResponseDto> {
+    return await this.gamificationConfigService.getMayaRanks();
+  }
+
+  /**
+   * Update a Maya rank threshold
+   *
+   * @route PUT /api/admin/gamification/maya-ranks/:rankName
+   * @param rankName Rank name (novice, beginner, intermediate, advanced, expert)
+   * @param dto New threshold value
+   * @param req Express request with authenticated user
+   * @returns Update result with all updated ranks
+   *
+   * @example Request Body:
+   * {
+   *   "min_xp": 150
+   * }
+   *
+   * @example Response:
+   * {
+   *   "message": "Maya rank threshold updated successfully",
+   *   "rank": {
+   *     "rank_name": "beginner",
+   *     "old_threshold": 100,
+   *     "new_threshold": 150,
+   *     "updated_at": "2025-11-23T10:40:00.000Z"
+   *   },
+   *   "all_ranks": [
+   *     { "rank_name": "novice", "min_xp": 0, "max_xp": 149, "rank_order": 0 },
+   *     { "rank_name": "beginner", "min_xp": 150, "max_xp": 499, "rank_order": 1 },
+   *     ...
+   *   ]
+   * }
+   */
+  @Put('maya-ranks/:rankName')
+  @ApiOperation({
+    summary: 'Update Maya rank threshold',
+    description:
+      'Update the minimum XP threshold for a specific Maya rank. ' +
+      'Validates that updated thresholds maintain ascending order (no overlapping ranges). ' +
+      'Returns all ranks with updated ranges to reflect the change. ' +
+      'Change is logged with admin user ID.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Rank threshold updated successfully',
+    type: UpdateMayaRankResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      'Bad Request - Invalid rank name, threshold value, or overlapping ranges detected',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token missing or invalid',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - User is not an admin',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not Found - Ranks configuration not found',
+  })
+  async updateMayaRank(
+    @Param('rankName') rankName: string,
+    @Body() dto: UpdateMayaRankDto,
+    @Request() req: any,
+  ): Promise<UpdateMayaRankResponseDto> {
+    const adminId = req.user.sub;
+    return await this.gamificationConfigService.updateMayaRank(
+      rankName,
+      dto,
+      adminId,
+    );
   }
 }

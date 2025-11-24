@@ -1,6 +1,6 @@
 # PROTOCOLO: ESCALAMIENTO AL PRODUCT OWNER
 
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Versión:** 1.0.0
 **Fecha:** 2025-11-20
 **Ámbito:** Todos los agentes (Database-Agent, Backend-Agent, Frontend-Agent) y subagentes
@@ -229,7 +229,7 @@ C) Otro formato
 Recomiendo opción A (PRJ-YYYY-NNN) porque:
 - Facilita identificar proyectos por año
 - Evita confusión al reiniciar numeración anualmente
-- Estándar en industria de construcción
+- Estándar en gestión de proyectos tecnológicos
 
 ### Acción Tomada
 
@@ -665,7 +665,7 @@ Valores: 'draft', 'planning', 'active', 'paused', 'completed', 'archived'
 
 ### Implementado En
 
-- apps/database/ddl/schemas/project_management/tables/01-projects.sql:15
+- apps/database/ddl/schemas/gamification_system/tables/01-user_points.sql:15
 
 ---
 

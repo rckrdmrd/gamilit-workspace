@@ -1,6 +1,6 @@
 # GUÍA COMPLETA: NOMENCLATURA Y ESTÁNDARES
 
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Versión:** 1.0.0
 **Fecha:** 2025-11-20
 **Ámbito:** Todos los agentes y desarrolladores
@@ -33,7 +33,7 @@ Reglas:
   - Extensión .sql
 
 ✅ Correcto:
-  - 01-projects.sql
+  - 01-user_points.sql
   - 02-developments.sql
   - 03-phases.sql
   - 10-functions-geo.sql
@@ -275,7 +275,7 @@ Reglas:
 Convención General: kebab-case o snake_case según contexto
 
 Database:
-  - snake_case para schemas: project_management
+  - snake_case para schemas: gamification_system
   - kebab-case para carpetas de código: schemas/project-management
 
 Backend:
@@ -287,7 +287,7 @@ Frontend:
   - PascalCase para componentes específicos: ProjectCard/
 
 ✅ Correcto (Database):
-  - apps/database/ddl/schemas/project_management/
+  - apps/database/ddl/schemas/gamification_system/
   - apps/database/ddl/schemas/financial_management/
 
 ✅ Correcto (Backend):
@@ -303,7 +303,7 @@ Frontend:
 ❌ Incorrecto:
   - project-Management/ (mixto)
   - ProjectManagement/ (PascalCase en carpeta)
-  - project_management/ en frontend (contexto incorrecto)
+  - gamification_system/ en frontend (contexto incorrecto)
 ```
 
 #### Carpetas de Orchestration
@@ -346,7 +346,7 @@ Reglas:
 
 ✅ Correcto:
   - auth_management
-  - project_management
+  - gamification_system
   - financial_management
   - purchasing_management
 
@@ -693,7 +693,7 @@ const API_BASE_URL = 'https://api.example.com';
 const DEFAULT_PAGE_SIZE = 20;
 
 const DB_TABLES = {
-  PROJECTS: 'projects',
+  PROJECTS: 'user_points',
   DEVELOPMENTS: 'developments',
   USERS: 'users',
 };
@@ -935,7 +935,7 @@ Convención: kebab-case
 
 ❌ Incorrecto:
   - projectManagement (camelCase)
-  - project_management (snake_case en backend)
+  - gamification_system (snake_case en backend)
   - ProjectManagement (PascalCase)
 ```
 
@@ -1118,7 +1118,7 @@ Reglas:
 | Contexto | Convención | Ejemplo |
 |----------|-----------|---------|
 | **Database** |
-| Schema | snake_case + _management | `project_management` |
+| Schema | snake_case + _management | `gamification_system` |
 | Tabla | snake_case plural | `projects` |
 | Columna | snake_case singular | `created_at` |
 | FK columna | {tabla}_id | `project_id` |
@@ -1168,7 +1168,7 @@ Excepción en constantes:
 
 ```yaml
 Evitar números excepto en:
-  - Archivos secuenciales: 01-projects.sql
+  - Archivos secuenciales: 01-user_points.sql
   - Versiones: v1, v2
   - IDs de tareas: DB-042
 

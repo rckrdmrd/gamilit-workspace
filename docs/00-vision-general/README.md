@@ -2,7 +2,7 @@
 
 **Carpeta:** `docs/00-overview/`
 **Propósito:** Punto de entrada para todos los stakeholders (desarrolladores, PM, stakeholders, nuevos miembros)
-**Última actualización:** 2025-11-07
+**Última actualización:** 2025-11-23
 
 ---
 
@@ -81,6 +81,113 @@ Esta carpeta contiene documentación de **alto nivel** para entender rápidament
 **Cuándo leerlo:**
 - Para agentes IA que necesitan contexto de la carpeta
 - Para Tech Leads planificando próximos documentos
+
+---
+
+#### [DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md](./DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md)
+**Audiencia:** Desarrolladores, PMs, diseñadores pedagógicos, QA
+**Tiempo de lectura:** 60-90 minutos (documento completo de 14,500 palabras)
+**Última actualización:** 2025-11-23 (v6.4)
+
+**Qué contiene:**
+- Especificación completa de mecánicas de gamificación GAMILIT
+- 23 ejercicios organizados en 5 módulos (Cassany)
+- Sistema de Rangos Maya (14 niveles jerárquicos)
+- Sistema de ML Coins (economía del juego)
+- Achievements, logros y misiones
+- Flujos de usuario detallados
+- Configuraciones JSONB de cada ejercicio
+- Reglas de negocio y validaciones
+
+**Cuándo leerlo:**
+- Antes de desarrollar cualquier feature de gamificación
+- Para entender las mecánicas de ejercicios (types, configs, validations)
+- Al diseñar nuevos módulos educativos
+- Durante QA para validar flujos completos
+
+---
+
+#### [GUIA-PRUEBAS-MODULO1-Respuestas-Ejemplo.md](./GUIA-PRUEBAS-MODULO1-Respuestas-Ejemplo.md)
+**Audiencia:** QA, desarrolladores frontend/backend, demos pedagógicas
+**Tiempo de lectura:** 30-40 minutos (documento completo), 5-8 min por ejercicio
+**Última actualización:** 2025-11-23
+
+**Qué contiene:**
+- Ejemplos detallados de respuestas para los 5 ejercicios del Módulo 1
+- 40+ ejemplos clasificados en 3 niveles: EXCELENTE, ACEPTABLE, INCORRECTA
+- Criterios de scoring para cada ejercicio
+- Keywords para validadores automáticos
+- Datos de prueba listos para usar
+
+**Ejercicios cubiertos (Comprensión Literal - Cassany Nivel 1):**
+- 1.1: Crucigrama Científico (6 palabras clave sobre Marie Curie)
+- 1.2: Línea de Tiempo (7 eventos cronológicos)
+- 1.3: Completar Espacios en Blanco (6 datos biográficos)
+- 1.4: Verdadero o Falso (10 afirmaciones sobre hechos explícitos)
+- 1.5: Sopa de Letras BONUS (10 palabras de vocabulario científico)
+
+**Cuándo usarlo:**
+- Durante testing manual de ejercicios del Módulo 1
+- Para crear test data en tests automatizados
+- En demos pedagógicas con stakeholders
+- Para validar componentes frontend (crucigrama, drag & drop, timers)
+- Al desarrollar/ajustar validadores backend
+
+---
+
+#### [GUIA-PRUEBAS-MODULO2-Respuestas-Ejemplo.md](./GUIA-PRUEBAS-MODULO2-Respuestas-Ejemplo.md)
+**Audiencia:** QA, desarrolladores frontend/backend, demos pedagógicas
+**Tiempo de lectura:** 35-50 minutos (documento completo), 7-10 min por ejercicio
+**Última actualización:** 2025-11-23
+
+**Qué contiene:**
+- Ejemplos detallados de respuestas para los 5 ejercicios del Módulo 2
+- 50+ ejemplos clasificados en 3 niveles: EXCELENTE, ACEPTABLE, INCORRECTA
+- Criterios de scoring para inferencias
+- Keywords para validadores de texto libre
+- Razonamiento inferencial esperado
+
+**Ejercicios cubiertos (Comprensión Inferencial - Cassany Nivel 2):**
+- 2.1: Detective Textual (4 preguntas inferenciales: causa-efecto, contexto, motivación)
+- 2.2: Relaciones Causa-Efecto (emparejamiento de causas con múltiples consecuencias)
+- 2.3: Predicción Narrativa (predicción histórica con 4 filtros de validación)
+- 2.4: Puzzle de Contexto (ordenar 4 fragmentos sintácticamente)
+- 2.5: Rueda de Inferencias (respuestas abiertas en 4 categorías: literal, inferencial, crítico, creativo)
+
+**Cuándo usarlo:**
+- Durante testing manual de ejercicios del Módulo 2
+- Para validar evaluación de respuestas abiertas (NLP básico)
+- En demos pedagógicas para mostrar pensamiento inferencial
+- Para entrenar maestros en evaluación de inferencias estudiantiles
+- Al desarrollar validadores de texto libre con keywords
+
+---
+
+#### [GUIA-PRUEBAS-MODULO3-Respuestas-Ejemplo.md](./GUIA-PRUEBAS-MODULO3-Respuestas-Ejemplo.md)
+**Audiencia:** QA, desarrolladores frontend/backend, demos pedagógicas
+**Tiempo de lectura:** 30-45 minutos (documento completo), 5-10 min por ejercicio
+**Última actualización:** 2025-11-23
+
+**Qué contiene:**
+- Ejemplos detallados de respuestas para los 5 ejercicios del Módulo 3
+- 50+ ejemplos clasificados en 3 niveles: EXCELENTE, ACEPTABLE, INCORRECTA
+- Criterios de scoring para cada ejercicio
+- Keywords para validadores automáticos
+- Datos de prueba listos para usar
+
+**Ejercicios cubiertos (Comprensión Crítica - Cassany Nivel 3):**
+- 3.1: Tribunal de Opiniones (8 afirmaciones FACT/OPINION/INTERPRETATION)
+- 3.2: Debate Digital (argumentos pro/contra con evidencia)
+- 3.3: Análisis de Fuentes (evaluación CRAAP de 5 fuentes)
+- 3.4: Podcast Argumentativo (script completo 2 minutos)
+- 3.5: Matriz de Perspectivas (6 perspectivas históricas)
+
+**Cuándo usarlo:**
+- Durante testing manual de ejercicios del Módulo 3
+- Para crear test data en tests automatizados
+- En demos pedagógicas con stakeholders
+- Para validar componentes frontend (forms, timers, validations)
+- Al desarrollar/ajustar validadores backend
 
 ---
 
@@ -186,7 +293,7 @@ Los siguientes documentos están planeados pero aún no creados:
 
 1. ✅ **Visión del producto:** [VISION.md](./VISION.md)
 2. **Arquitectura técnica:** [docs/02-especificaciones-tecnicas/arquitectura/](../02-especificaciones-tecnicas/arquitectura/)
-3. **Decisiones arquitectónicas:** [docs/adr/](../adr/)
+3. **Decisiones arquitectónicas:** [docs/97-adr/](../97-adr/)
 4. **Estándares de código:** [docs/standards/](../standards/)
 
 ---
@@ -252,6 +359,19 @@ Los siguientes documentos están planeados pero aún no creados:
 - ⏳ GLOSARIO.md (pendiente)
 - [docs/QUICK-REFERENCE/](../QUICK-REFERENCE/)
 
+**Voy a desarrollar ejercicios o gamificación:**
+- ✅ [DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md](./DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md)
+
+**Voy a hacer QA/testing de ejercicios:**
+- ✅ Módulo 1: [GUIA-PRUEBAS-MODULO1-Respuestas-Ejemplo.md](./GUIA-PRUEBAS-MODULO1-Respuestas-Ejemplo.md)
+- ✅ Módulo 2: [GUIA-PRUEBAS-MODULO2-Respuestas-Ejemplo.md](./GUIA-PRUEBAS-MODULO2-Respuestas-Ejemplo.md)
+- ✅ Módulo 3: [GUIA-PRUEBAS-MODULO3-Respuestas-Ejemplo.md](./GUIA-PRUEBAS-MODULO3-Respuestas-Ejemplo.md)
+
+**Necesito datos de prueba para ejercicios:**
+- ✅ Módulo 1: [GUIA-PRUEBAS-MODULO1-Respuestas-Ejemplo.md](./GUIA-PRUEBAS-MODULO1-Respuestas-Ejemplo.md)
+- ✅ Módulo 2: [GUIA-PRUEBAS-MODULO2-Respuestas-Ejemplo.md](./GUIA-PRUEBAS-MODULO2-Respuestas-Ejemplo.md)
+- ✅ Módulo 3: [GUIA-PRUEBAS-MODULO3-Respuestas-Ejemplo.md](./GUIA-PRUEBAS-MODULO3-Respuestas-Ejemplo.md)
+
 ---
 
 ## 🚨 Issues Conocidos
@@ -303,6 +423,7 @@ Ninguno en esta carpeta actualmente.
 
 ---
 
-**Última actualización:** 2025-11-07
-**Versión:** 1.0
+**Última actualización:** 2025-11-23
+**Versión:** 1.1
 **Método:** Sistema SIMCO - Fase 3 (Option A - Complete Content)
+**Cambios v1.1:** Agregados DocumentoDeDiseño y GUIA-PRUEBAS-MODULO3

@@ -1,96 +1,71 @@
-import { useState, useEffect } from 'react';
-import { apiClient } from '@/services/api/apiClient';
-import type { UserGamificationData } from '@shared/types';
+import { useQuery } from '@tanstack/react-query';
+import { gamificationAPI } from '@/services/api/gamificationAPI';
+import type { UserGamificationSummary } from '@/services/api/gamificationAPI';
 
 /**
  * useUserGamification Hook
  *
- * Fetches real-time gamification data for a user from the backend.
+ * @description Fetches real-time gamification data for a user using React Query.
+ * Replaces mock data with actual API call to GET /api/v1/gamification/users/:userId/summary
  *
- * TODO (Backend): Implement endpoint GET /api/users/:userId/gamification
- * Response should match UserGamificationData interface:
- * {
- *   userId: string;
- *   level: number;
- *   totalXP: number;
- *   mlCoins: number;
- *   rank: string;
- *   achievements: string[];
- * }
+ * @param userId - User UUID
+ * @returns User gamification state with loading and error states
  *
- * @param userId - The ID of the user to fetch gamification data for
- * @returns {object} Gamification data, loading state, and error state
+ * @endpoint GET /api/v1/gamification/users/:userId/summary
  *
  * @example
  * ```tsx
- * const { gamificationData, loading, error } = useUserGamification(user?.id);
+ * const { gamificationData, isLoading, error } = useUserGamification(user?.id);
  *
- * if (loading) return <LoadingSpinner />;
- * if (error) return <ErrorMessage error={error} />;
+ * if (isLoading) return <LoadingSpinner />;
+ * if (error) return <ErrorMessage error={error.message} />;
  *
- * return <GamifiedHeader gamificationData={gamificationData} />;
+ * return (
+ *   <GamifiedHeader
+ *     level={gamificationData.level}
+ *     xp={gamificationData.totalXP}
+ *     coins={gamificationData.mlCoins}
+ *     rank={gamificationData.rank}
+ *   />
+ * );
  * ```
  */
-export function useUserGamification(userId?: string) {
-  const [gamificationData, setGamificationData] = useState<UserGamificationData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export interface UseUserGamificationReturn {
+  gamificationData: UserGamificationSummary | null;
+  isLoading: boolean;
+  error: Error | null;
+}
 
-  useEffect(() => {
-    // If no userId, set null and stop loading
-    if (!userId) {
-      setGamificationData(null);
-      setLoading(false);
-      return;
-    }
-
-    const fetchGamificationData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        // TODO: Replace with real API call when backend endpoint is ready
-        // const response = await apiClient.get(`/api/users/${userId}/gamification`);
-        // setGamificationData(response.data.data);
-
-        // TEMPORARY: Mock data for development
-        // This simulates the API response structure
-        await new Promise(resolve => setTimeout(resolve, 300)); // Simulate network delay
-
-        const mockData: UserGamificationData = {
-          userId,
-          level: 15,
-          totalXP: 3250,
-          mlCoins: 1875,
-          rank: 'Investigador Experto',
-          achievements: ['first_case', 'streak_7', 'helper', 'speed_demon'],
-        };
-
-        setGamificationData(mockData);
-      } catch (err: any) {
-        console.error('Failed to fetch gamification data:', err);
-        setError(err?.message || 'Failed to load gamification data');
-
-        // Fallback to basic data if API fails
-        setGamificationData({
-          userId,
-          level: 1,
-          totalXP: 0,
-          mlCoins: 0,
-          rank: 'Novato',
-          achievements: [],
-        });
-      } finally {
-        setLoading(false);
+/**
+ * Hook to fetch user gamification data
+ */
+export function useUserGamification(
+  userId: string | undefined
+): UseUserGamificationReturn {
+  const {
+    data: gamificationData,
+    isLoading,
+    error,
+  } = useQuery<UserGamificationSummary, Error>({
+    queryKey: ['userGamification', userId],
+    queryFn: () => {
+      if (!userId) {
+        throw new Error('User ID is required');
       }
-    };
-
-    fetchGamificationData();
-  }, [userId]);
+      return gamificationAPI.getUserSummary(userId);
+    },
+    enabled: !!userId, // Solo ejecutar query si userId existe
+    staleTime: 5 * 60 * 1000, // 5 minutos - datos considerados frescos
+    gcTime: 10 * 60 * 1000, // 10 minutos - cache garbage collection
+    refetchOnWindowFocus: true, // Refrescar al volver a la ventana
+    refetchOnMount: true, // Refrescar al montar componente
+    retry: 2, // Reintentar 2 veces en caso de error
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
+  });
 
   return {
-    gamificationData,
-    loading,
-    error,
+    gamificationData: gamificationData || null,
+    isLoading,
+    error: error as Error | null,
   };
 }

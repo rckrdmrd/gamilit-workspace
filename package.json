@@ -24,13 +24,15 @@
     "backend:lint": "cd apps/backend && npm run lint",
     "backend:format": "cd apps/backend && npm run format",
     "frontend:lint": "cd apps/frontend && npm run lint",
-    "frontend:format": "cd apps/frontend && npm run format"
+    "frontend:format": "cd apps/frontend && npm run format",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
     "concurrently": "^8.2.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "husky": "^8.0.0"
   },
   "workspaces": [
     "apps/backend",
@@ -42,7 +44,9 @@
   },
   "dependencies": {
     "@types/uuid": "^10.0.0",
+    "axios": "^1.13.2",
     "exceljs": "^4.4.0",
+    "pg": "^8.16.3",
     "uuid": "^13.0.0"
   }
 }

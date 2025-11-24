@@ -1,0 +1,79 @@
+# LISTA DE ARCHIVOS AFECTADOS - Referencias Incorrectas
+# Generado: 2025-11-23
+# Workspace-Manager
+
+# =============================================================================
+# PRIORIDAD P0 - CRÍTICOS (Actualizar header de proyecto)
+# =============================================================================
+
+## DIRECTIVAS (9 archivos)
+orchestration/directivas/DIRECTIVA-CALIDAD-CODIGO.md
+orchestration/directivas/DIRECTIVA-CONTROL-VERSIONES.md
+orchestration/directivas/DIRECTIVA-DISENO-BASE-DATOS.md
+orchestration/directivas/DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md
+orchestration/directivas/DIRECTIVA-VALIDACION-SUBAGENTES.md
+orchestration/directivas/ESTANDARES-NOMENCLATURA.md
+orchestration/directivas/GUIA-NOMENCLATURA-COMPLETA.md
+orchestration/directivas/PROTOCOLO-ESCALAMIENTO-PO.md
+orchestration/directivas/SISTEMA-RETROALIMENTACION-MEJORA-CONTINUA.md
+
+## PROMPTS (2 archivos activos)
+orchestration/prompts/PROMPT-REQUIREMENTS-ANALYST.md  # ⚠️ + ruta externa línea 151
+orchestration/prompts/PROMPT-SUBAGENTES.md
+
+## AGENTES (1 archivo)
+orchestration/agentes/backend/subagentes/SA-BACKEND-005-docs-vs-codigo.md  # "GLIT Platform"
+
+## ARCHIVAR (1 archivo)
+orchestration/prompts/PROMPT-AGENTES-PRINCIPALES-OLD.md  # Mover a .archive/
+
+# =============================================================================
+# PRIORIDAD P1 - EJEMPLOS DE DOMINIO INCORRECTO
+# =============================================================================
+
+## Archivos con ejemplos inmobiliarios a reemplazar:
+orchestration/directivas/DIRECTIVA-DISENO-BASE-DATOS.md  # infonavit_management, etc.
+orchestration/directivas/DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md  # Módulo Proyectos y Obras
+orchestration/directivas/ESTANDARES-NOMENCLATURA.md  # infonavit_management
+
+# =============================================================================
+# PRIORIDAD P2 - REFERENCIAS HISTÓRICAS (REVISAR)
+# =============================================================================
+
+## Archivos informativos/históricos:
+orchestration/README.md  # Menciona fuente de reorganización (OK)
+orchestration/trazas/TRAZA-ANALISIS-ARQUITECTURA.md  # Análisis heredado (OK)
+orchestration/agentes/workspace-manager/reorganization-analysis/  # Documentación histórica (OK)
+orchestration/agentes/workspace-manager/gitignore-analysis-20251123/REPORTE-VALIDACION-WORKSPACE-INMOBILIARIA.md  # ⚠️ Revisar
+
+# =============================================================================
+# RESUMEN
+# =============================================================================
+
+Total archivos P0 (críticos): 13
+Total archivos P1 (ejemplos): 3
+Total archivos P2 (históricos): 4+
+
+# =============================================================================
+# CAMBIOS REQUERIDOS
+# =============================================================================
+
+BUSCAR:     **Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+REEMPLAZAR: **Proyecto:** GAMILIT - Sistema de Gamificación Educativa
+
+BUSCAR:     **Proyecto:** GLIT Platform
+REEMPLAZAR: **Proyecto:** GAMILIT - Sistema de Gamificación Educativa
+
+ELIMINAR:   /home/isem/workspace/worskpace-inmobiliaria/docs/00-overview/MVP-APP.md
+            (PROMPT-REQUIREMENTS-ANALYST.md línea 151)
+
+# =============================================================================
+# EJEMPLOS DE DOMINIO A REEMPLAZAR
+# =============================================================================
+
+infonavit_management      → gamification_system
+project_management        → academic_management
+construction_management   → exercise_management
+purchasing_management     → reward_management
+quality_management        → progress_tracking
+"Proyectos y Obras"       → "Ejercicios y Desafíos"

@@ -4,14 +4,14 @@
 # Fuente: Validación DB-092 (Ciclo 1-4)
 
 metadata:
-  version: "2.5.0"
+  version: "2.5.2"
   generated_date: "2025-11-11"
-  last_updated: "2025-11-19"
-  generated_by: "DB-124: Auditoría Exhaustiva Fase 1 + Soft-delete Implementation"
+  last_updated: "2025-11-24"
+  generated_by: "DOC-DB-001: Documentación completa trigger initialize_user_stats + 5 bug fixes críticos"
   database_script: "create-database.sh"
   total_ddl_files: 362  # ✅ Actualizado 2025-11-19 (+13 archivos P0+P1)
   total_seed_files: 84  # ✅ Actualizado 2025-11-19 (+2 seeds system_configuration)
-  total_schemas: 16  # ✅ Actualizado 2025-11-19 (+2 communication, notifications schemas - DB-124)
+  total_schemas: 12  # ✅ CORREGIDO 2025-11-23 (eliminados 4 schemas no implementados: storage, public, gamilit, admin_dashboard)
   script_phases: 17  # ✅ Actualizado 2025-11-19 (+1 communication phase)
   seed_breakdown:
     dev_files: 34
@@ -19,9 +19,9 @@ metadata:
     script_files: 6
     last_verification: "2025-11-19"
   last_execution: "2025-11-19 (DB-122: Implementación P0+P1 Portales)"
-  last_modification: "2025-11-19 - DB-124: Auditoría Fase 1 (Ciclos 1-3), Soft-delete en profiles/tenants (H-022), Actualización conteos reales (31 hallazgos, 3 resueltos)"
+  last_modification: "2025-11-24 - DOC-DB-001 (Database-Agent): Documentación completa de trigger initialize_user_stats (5 bug fixes críticos). Creado CHANGELOG.md, functions/README.md, actualizado database/README.md. Flujo de registro de usuario documentado con 4 tablas inicializadas. Cambio crítico: agregada inicialización de module_progress (faltaba)"
   real_database_counts:
-    schemas: 16  # +2 (communication DB-122, notifications DB-124)
+    schemas: 12  # ✅ CORREGIDO 2025-11-23 (validación PostgreSQL directa)
     tables: 121  # ✅ DB-124: Validado por parsing CREATE TABLE (+10 desde YAML previo)
     views: 8  # +3
     materialized_views: 11  # ✅ DB-124: Validado por parsing (+5 desde YAML previo)
@@ -31,7 +31,13 @@ metadata:
     indexes: 671  # +44
     policies: 241  # ✅ DB-124: Validado por parsing CREATE POLICY
     foreign_keys: 205  # ✅ DB-124: 100% válidos, 132 CASCADE (64%), 37 RESTRICT (18%)
-  discrepancies_found: "DB-124: Conteos representan objetos reales (CREATE statements), no archivos. Muchos archivos contienen múltiples objetos (ej: 24 archivos RLS = 241 policies)"
+  discrepancies_found: |
+    DB-124: Conteos representan objetos reales (CREATE statements), no archivos.
+    ACTUALIZADO 2025-11-23: Schemas corregido de 16 a 12 (eliminados 4 schemas no implementados).
+    Validación ejecutada por Architecture-Analyst mediante query PostgreSQL directo.
+    Schemas reales: audit_logging, auth, auth_management, communication, content_management,
+                    educational_content, gamification_system, lti_integration, notifications,
+                    progress_tracking, social_features, system_configuration.
 
 # ============================================================================
 # SCHEMAS
@@ -41,18 +47,6 @@ schemas:
     description: "Autenticación Supabase"
     phase: 3
     ddl_files: 8
-    tables: 2
-    functions: 0
-    triggers: 0
-    indexes: 0
-    views: 0
-    enums: 0
-    rls_policies: 0
-
-  - name: "storage"
-    description: "Storage Supabase"
-    phase: 4
-    ddl_files: 6
     tables: 2
     functions: 0
     triggers: 0
@@ -93,13 +87,27 @@ schemas:
     exercises_validation_status: "EXCELENTE - Alineación 100%"
     exercises_validation_date: "2025-11-16"
     validators_by_module:
-      module_1: 5  # word_search, crucigrama, timeline, fill_in_blank, true_false
-      module_2: 6  # detective_textual, detective_connections, prediction_scenarios, prediccion_narrativa, puzzle_contexto, construccion_hipotesis
-      module_3: 3  # rueda_inferencias, tribunal_opiniones, analisis_fuentes
-      module_4: 2  # debate_digital, podcast_argumentativo
-      module_5: 1  # matriz_perspectivas
+      module_1: 5  # word_search, crucigrama, timeline, fill_in_blank, true_false [MVP ✅]
+      module_2: 6  # detective_textual, detective_connections, prediction_scenarios, prediccion_narrativa, puzzle_contexto, construccion_hipotesis, rueda_inferencias [MVP ✅]
+      module_3: 5  # tribunal_opiniones, debate_digital, analisis_fuentes, podcast_argumentativo, matriz_perspectivas [MVP ✅]
+      module_4: 5  # (OUT OF MVP - validation skipped per PO decision 2025-11-23)
+      module_5: 3  # (OUT OF MVP - validation skipped per PO decision 2025-11-23, 3 options A/B/C)
       generic: 4   # validate_answer, validate_and_audit, validate_exercise_structure, validate_cause_effect_matching
-    notes: "DB-124 H-004: 28 funciones (era 11). DB-122: +3 tablas (classroom_modules, teacher_content, assignment_students mejorado). DB-121: Contenido 100% alineado con doc v6.2 (7 P0 corregidos, 8 P1 actualizados). DB-119: Homologación XP/ML (2,500 XP, 500 ML)"
+    validation_enhancements:
+      - date: "2025-11-24"
+        gap_id: "GAP-EJERCICIO-1.3-001"
+        function: "validate_fill_in_blank"
+        change: "Agregado soporte para múltiples alternativas válidas por espacio en blanco"
+        parameters_added:
+          - "p_content JSONB DEFAULT NULL"
+        behavior: "Lee alternatives desde content->blanks[].alternatives y valida contra correctAnswer O cualquier alternative"
+        backward_compatible: true
+        tests_passed: "7/7 (100%)"
+        affected_exercises:
+          - exercise: "1.3 - Completar Espacios en Blanco (Marie Curie)"
+            valid_combinations: 6
+            status: "✅ Corregido - Todas las combinaciones válidas aceptadas"
+    notes: "2025-11-24: validate_fill_in_blank actualizada con soporte de alternativas (GAP-EJERCICIO-1.3-001). validate_answer modificada para pasar p_content. Tests 100% exitosos. 2025-11-23: Módulos 1-3 validados para MVP (Architecture-Analyst). M4-M5 OUT OF MVP per PO. DB-124 H-004: 28 funciones (era 11). DB-122: +3 tablas (classroom_modules, teacher_content, assignment_students mejorado). DB-121: Contenido 100% alineado con doc v6.2 (7 P0 corregidos, 8 P1 actualizados). DB-119: Homologación XP/ML (2,500 XP, 500 ML)"
 
   - name: "gamification_system"
     description: "Sistema de gamificación (logros, rangos, economía)"
@@ -233,18 +241,6 @@ schemas:
     seed_rows_prod: 63  # DB-122: 26 feature flags + 37 gamification parameters
     notes: "DB-122: Sistema de feature flags y parámetros de gamificación configurables implementado"
 
-  - name: "admin_dashboard"
-    description: "Dashboard administrativo (vistas analíticas)"
-    phase: 13
-    ddl_files: 8
-    tables: 0
-    functions: 2
-    triggers: 0
-    indexes: 0
-    views: 3
-    enums: 0
-    rls_policies: 0
-
   - name: "lti_integration"
     description: "Learning Tools Interoperability 1.3"
     phase: 14
@@ -257,32 +253,6 @@ schemas:
     enums: 1
     rls_policies: 0
 
-  - name: "gamilit"
-    description: "Funciones y vistas compartidas (utilities)"
-    phase: 2
-    ddl_files: 12
-    tables: 0
-    functions: 16  # ✅ DB-124 H-005: Validado por parsing (era 5 en YAML). Incluye helpers auth (6), utilities (4), validators (3), auditoría (1), triggers (2)
-    triggers: 0
-    indexes: 0
-    views: 3
-    enums: 0
-    rls_policies: 0
-    notes: "DB-124 H-005 + Issue M6-001 CERRADO: 16 funciones encontradas. Las 4 funciones del Issue (handle_new_user, is_classroom_teacher, is_student_in_classroom, log_user_login) NO EXISTEN - funcionalidad implementada con otros nombres: initialize_user_stats(), update_user_last_login()"
-
-  - name: "public"
-    description: "Schema público PostgreSQL (deshabilitado)"
-    phase: 15
-    ddl_files: 0
-    tables: 0
-    functions: 0
-    triggers: 0
-    indexes: 0
-    views: 0
-    enums: 0
-    rls_policies: 0
-    status: "disabled"
-
 # ============================================================================
 # OBJETOS GLOBALES (Fase 1: Prerequisites)
 # ============================================================================
@@ -290,8 +260,9 @@ prerequisites:
   file: "ddl/00-prerequisites.sql"
   phase: 1
   description: "Schemas base y ENUMs globales"
-  schemas_created: 14
+  schemas_created: 12  # ✅ CORREGIDO 2025-11-23 (validación PostgreSQL real)
   enums_created: 0  # ENUMs ahora en schemas específicos
+  note: "Solo se incluyen schemas realmente implementados en la base de datos"
 
 # ============================================================================
 # RESUMEN DE OBJETOS
@@ -496,23 +467,22 @@ seeds:
 # ============================================================================
 documentation:
   schema_maps:
-    total: 14
+    total: 12  # ✅ CORREGIDO 2025-11-23 (solo schemas reales)
     coverage: "100%"
     files:
-      - "admin_dashboard/_MAP.md"
       - "audit_logging/_MAP.md"
       - "auth/_MAP.md"
       - "auth_management/_MAP.md"
+      - "communication/_MAP.md"
       - "content_management/_MAP.md"
       - "educational_content/_MAP.md"
       - "gamification_system/_MAP.md"
-      - "gamilit/_MAP.md"
       - "lti_integration/_MAP.md"
+      - "notifications/_MAP.md"
       - "progress_tracking/_MAP.md"
-      - "public/_MAP.md"
       - "social_features/_MAP.md"
-      - "storage/_MAP.md"
       - "system_configuration/_MAP.md"
+    note: "ACTUALIZADO 2025-11-23: Eliminados _MAP.md de schemas no implementados (admin_dashboard, gamilit, public, storage)"
 
 # ============================================================================
 # VALIDACIONES
@@ -550,7 +520,7 @@ validations:
     readme_updated: true
     missing_in_readme:
       - "Phase 16 was missing (FIXED 2025-11-11)"
-    schemas_with_maps: "14/14 (100%)"
+    schemas_with_maps: "12/12 (100%)"  # ✅ CORREGIDO 2025-11-23 (solo schemas reales)
 
 # ============================================================================
 # ESTADÍSTICAS DE ARCHIVOS DDL
@@ -565,13 +535,11 @@ ddl_statistics:
     system_configuration: 20 # 5.5% (DB-122: +2)
     auth_management: 18      # 5.0%
     content_management: 18   # 5.0%
-    gamilit: 12              # 3.3%
     audit_logging: 12        # 3.3%
-    admin_dashboard: 8       # 2.2%
     auth: 8                  # 2.2%
-    storage: 6               # 1.7%
     communication: 2         # 0.6% (DB-122: NUEVO)
-    public: 0                # 0.0%
+    notifications: 10        # 2.8% (DB-124)
+  note: "ACTUALIZADO 2025-11-23: Eliminados schemas no implementados (gamilit, admin_dashboard, storage, public)"
 
   largest_schemas:
     - name: "gamification_system"

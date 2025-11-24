@@ -23,6 +23,7 @@ import type {
 } from '../types/economyTypes';
 import { getBalance } from '../api/economyAPI';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { apiClient } from '@/services/api/apiClient';
 
 /**
  * Economy Store State Interface
@@ -103,64 +104,117 @@ export const useEconomyStore = create<EconomyState>()(
       error: null,
 
       // Add Coins (Earning)
-      addCoins: (amount, source, description) => {
+      addCoins: async (amount, source, description) => {
         const state = get();
-        const newBalance = state.balance.current + amount;
 
-        const transaction: Transaction = {
-          id: crypto.randomUUID(),
-          type: 'earn',
-          amount,
-          source,
-          description: description || `Earned ${amount} ML from ${source}`,
-          timestamp: new Date(),
-          balanceAfter: newBalance,
-        };
+        try {
+          set({ isLoading: true, error: null });
 
-        set({
-          balance: {
-            ...state.balance,
-            current: newBalance,
-            lifetime: state.balance.lifetime + amount,
-          },
-          transactions: [transaction, ...state.transactions],
-          error: null,
-        });
+          const userId = useAuthStore.getState().user?.id;
+          if (!userId) {
+            throw new Error('User not authenticated');
+          }
+
+          // Update stats in backend (increment ML Coins)
+          const { data } = await apiClient.patch(
+            `/gamification/users/${userId}/stats`,
+            {
+              ml_coins_increment: amount,
+              source,
+              description,
+            }
+          );
+
+          // Create transaction record locally
+          const transaction: Transaction = {
+            id: crypto.randomUUID(),
+            type: 'earn',
+            amount,
+            source,
+            description: description || `Earned ${amount} ML from ${source}`,
+            timestamp: new Date(),
+            balanceAfter: data.ml_coins,
+          };
+
+          set({
+            balance: {
+              current: data.ml_coins,
+              lifetime: data.ml_coins_earned_total,
+              spent: data.ml_coins_spent_total,
+              pending: 0,
+            },
+            transactions: [transaction, ...state.transactions],
+            isLoading: false,
+            error: null,
+          });
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Failed to add coins';
+          set({
+            isLoading: false,
+            error: errorMessage
+          });
+          throw error;
+        }
       },
 
       // Spend Coins
       spendCoins: async (amount, itemName, itemId) => {
         const state = get();
 
-        if (state.balance.current < amount) {
-          set({ error: 'Insufficient ML Coins balance' });
+        try {
+          set({ isLoading: true, error: null });
+
+          const userId = useAuthStore.getState().user?.id;
+          if (!userId) {
+            throw new Error('User not authenticated');
+          }
+
+          if (state.balance.current < amount) {
+            throw new Error('Insufficient ML Coins balance');
+          }
+
+          // Update stats in backend (decrement ML Coins)
+          const { data } = await apiClient.patch(
+            `/gamification/users/${userId}/stats`,
+            {
+              ml_coins_decrement: amount,
+              reason: `Purchased ${itemName}`,
+              item_id: itemId,
+            }
+          );
+
+          const transaction: Transaction = {
+            id: crypto.randomUUID(),
+            type: 'spend',
+            amount: -amount,
+            source: 'shop',
+            description: `Purchased ${itemName}`,
+            timestamp: new Date(),
+            balanceAfter: data.ml_coins,
+            metadata: itemId ? { itemId } : undefined,
+          };
+
+          set({
+            balance: {
+              current: data.ml_coins,
+              lifetime: data.ml_coins_earned_total,
+              spent: data.ml_coins_spent_total,
+              pending: 0,
+            },
+            transactions: [transaction, ...state.transactions],
+            isLoading: false,
+            error: null,
+          });
+
+          return true;
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Failed to spend coins';
+          set({
+            isLoading: false,
+            error: errorMessage
+          });
           return false;
         }
-
-        const newBalance = state.balance.current - amount;
-
-        const transaction: Transaction = {
-          id: crypto.randomUUID(),
-          type: 'spend',
-          amount: -amount,
-          source: 'shop',
-          description: `Purchased ${itemName}`,
-          timestamp: new Date(),
-          balanceAfter: newBalance,
-          metadata: itemId ? { itemId } : undefined,
-        };
-
-        set({
-          balance: {
-            ...state.balance,
-            current: newBalance,
-            spent: state.balance.spent + amount,
-          },
-          transactions: [transaction, ...state.transactions],
-          error: null,
-        });
-
-        return true;
       },
 
       // Update Balance
@@ -300,10 +354,13 @@ export const useEconomyStore = create<EconomyState>()(
           // Remove from cart
           state.removeFromCart(itemId);
 
+          // Get updated state after all mutations
+          const updatedState = get();
+
           return {
             success: true,
-            transactionId: state.transactions[0]?.id,
-            newBalance: state.balance.current,
+            transactionId: updatedState.transactions[0]?.id,
+            newBalance: updatedState.balance.current,
             itemsAcquired: [item],
           };
         }
@@ -348,10 +405,13 @@ export const useEconomyStore = create<EconomyState>()(
           // Clear cart
           state.clearCart();
 
+          // Get updated state after all mutations
+          const updatedState = get();
+
           return {
             success: true,
-            transactionId: state.transactions[0]?.id,
-            newBalance: state.balance.current,
+            transactionId: updatedState.transactions[0]?.id,
+            newBalance: updatedState.balance.current,
             itemsAcquired: acquiredItems,
           };
         }
@@ -492,7 +552,16 @@ export const useEconomyStore = create<EconomyState>()(
             throw new Error('User not authenticated. Please login first.');
           }
 
-          const balance = await getBalance(userId);
+          // Fetch from user stats endpoint (ML Coins are part of stats)
+          const { data } = await apiClient.get(`/gamification/users/${userId}/stats`);
+
+          const balance: MLCoinsBalance = {
+            current: data.ml_coins,
+            lifetime: data.ml_coins_earned_total,
+            spent: data.ml_coins_spent_total,
+            pending: 0, // Backend doesn't track pending
+          };
+
           set({
             balance,
             isLoading: false,

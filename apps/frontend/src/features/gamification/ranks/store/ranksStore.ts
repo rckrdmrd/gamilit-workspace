@@ -27,6 +27,8 @@ import {
   calculateTotalMultiplier,
 } from '../mockData/ranksMockData';
 import { getCurrentRank } from '../api/ranksAPI';
+import { apiClient } from '@/services/api/apiClient';
+import { useAuthStore } from '@/features/auth/store/authStore';
 
 // ============================================================================
 // STORE STATE INTERFACE
@@ -139,44 +141,70 @@ export const useRanksStore = create<RanksState>()(
        */
       addXP: async (amount: number, source: XPSource, description?: string) => {
         const state = get();
-        const currentProgress = state.userProgress;
 
-        // Create XP event
-        const xpEvent: XPEvent = {
-          id: crypto.randomUUID(),
-          amount,
-          source,
-          timestamp: new Date(),
-          description,
-        };
+        try {
+          set({ isLoading: true, error: null });
 
-        // Calculate new XP
-        const newCurrentXP = currentProgress.currentXP + amount;
-        const newTotalXP = currentProgress.totalXP + amount;
+          const userId = useAuthStore.getState().user?.id;
+          if (!userId) {
+            throw new Error('User not authenticated');
+          }
 
-        // Update state
-        set({
-          userProgress: {
-            ...currentProgress,
-            currentXP: newCurrentXP,
-            totalXP: newTotalXP,
-            lastActivityDate: new Date(),
-          },
-          xpEvents: [...state.xpEvents, xpEvent],
-        });
+          // Update stats in backend
+          const { data } = await apiClient.patch(
+            `/gamification/users/${userId}/stats`,
+            {
+              total_xp_increment: amount,
+              xp_source: source,
+              description,
+            }
+          );
 
-        // Check for level up
-        if (get().checkLevelUp()) {
-          get().levelUp();
+          // Create XP event
+          const xpEvent: XPEvent = {
+            id: crypto.randomUUID(),
+            amount,
+            source,
+            timestamp: new Date(),
+            description,
+          };
+
+          // Update state
+          set({
+            userProgress: {
+              ...state.userProgress,
+              currentXP: data.current_xp || state.userProgress.currentXP + amount,
+              totalXP: data.total_xp,
+              currentLevel: data.level,
+              xpToNextLevel: data.xp_to_next_level,
+              currentRank: data.current_rank,
+              lastActivityDate: new Date(),
+            },
+            xpEvents: [...state.xpEvents, xpEvent],
+            isLoading: false,
+            error: null,
+          });
+
+          // Check for level up (backend might handle this)
+          if (data.leveled_up) {
+            get().levelUp();
+          }
+
+          // Check for rank up
+          if (data.ranked_up || get().checkRankUp()) {
+            get().rankUp();
+          }
+
+          // Update multipliers
+          get().updateMultipliers();
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Failed to add XP';
+          set({
+            isLoading: false,
+            error: errorMessage
+          });
+          throw error;
         }
-
-        // Check for rank up
-        if (get().checkRankUp()) {
-          get().rankUp();
-        }
-
-        // Update multipliers (streak might have changed)
-        get().updateMultipliers();
       },
 
       /**
@@ -564,12 +592,39 @@ export const useRanksStore = create<RanksState>()(
       fetchUserProgress: async () => {
         set({ isLoading: true, error: null });
         try {
-          const userProgress = await getCurrentRank();
+          const userId = useAuthStore.getState().user?.id;
+          if (!userId) {
+            throw new Error('User not authenticated');
+          }
+
+          const { data } = await apiClient.get(
+            `/gamification/users/${userId}/rank-progress`
+          );
+
+          // Transform backend response to UserRankProgress
+          const userProgress: UserRankProgress = {
+            currentRank: data.current_rank,
+            currentLevel: data.level,
+            currentXP: data.current_xp,
+            xpToNextLevel: data.xp_to_next_level,
+            totalXP: data.total_xp,
+            mlCoinsEarned: data.ml_coins_earned,
+            prestigeLevel: data.prestige_level || 0,
+            multiplier: data.multiplier,
+            lastRankUp: data.last_rank_up ? new Date(data.last_rank_up) : null,
+            activityStreak: data.current_streak,
+            lastActivityDate: new Date(),
+            canRankUp: data.can_rank_up,
+            nextRank: data.next_rank,
+            canPrestige: data.can_prestige || false,
+          };
+
           set({
             userProgress,
             isLoading: false,
             error: null
           });
+
           // Update multipliers after fetching progress
           get().updateMultipliers();
         } catch (error) {

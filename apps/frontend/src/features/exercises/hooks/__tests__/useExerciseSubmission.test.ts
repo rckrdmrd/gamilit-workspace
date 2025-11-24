@@ -17,15 +17,15 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { useExerciseSubmission } from '../useExerciseSubmission';
-import apiClient from '@/lib/api/client';
+import { apiClient } from '@/services/api/apiClient';
 import type {
   ExerciseSubmission,
   ExerciseSubmissionResult,
 } from '../../types/exercise.types';
 
 // Mock the API client
-vi.mock('@/lib/api/client', () => ({
-  default: {
+vi.mock('@/services/api/apiClient', () => ({
+  apiClient: {
     post: vi.fn(),
   },
 }));

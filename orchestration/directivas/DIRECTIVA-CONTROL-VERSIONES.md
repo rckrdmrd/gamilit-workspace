@@ -1,6 +1,6 @@
 # DIRECTIVA: CONTROL DE VERSIONES Y ESTRATEGIA DE COMMITS
 
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Versión:** 1.0.0
 **Fecha:** 2025-11-20
 **Ámbito:** Todos los agentes (Database-Agent, Backend-Agent, Frontend-Agent) y subagentes
@@ -124,7 +124,7 @@ Validado: Sí (compilación + insert test exitoso)
 
 Implementación completa según contexto proporcionado.
 
-- Tabla: project_management.developments
+- Tabla: gamification_system.developments
 - FK a projects (ON DELETE CASCADE)
 - Índices: code, project_id, name
 - Validación: psql exitoso
@@ -138,7 +138,7 @@ Subagente: general-purpose-001
 ```
 [DB-042] docs: Actualizar inventarios y trazas
 
-- MASTER_INVENTORY.yml: Agregar schema project_management
+- MASTER_INVENTORY.yml: Agregar schema gamification_system
 - DATABASE_INVENTORY.yml: Agregar tabla projects
 - TRAZA-TAREAS-DATABASE.md: Registrar DB-042 completado
 
@@ -186,7 +186,7 @@ Relacionado: Feedback de análisis PostGIS"
 
 ```bash
 # Cada archivo DDL creado
-git commit -m "[DB-042] feat: Crear schema project_management
+git commit -m "[DB-042] feat: Crear schema gamification_system
 
 Validado: Sí (psql exitoso)"
 
@@ -295,10 +295,10 @@ git checkout -b feature/DB-042-modulo-proyectos
 git add orchestration/agentes/database/DB-042/01-ANALISIS.md
 git commit -m "[DB-042] docs: Completar análisis módulo Proyectos"
 
-git add apps/database/ddl/schemas/project_management/
-git commit -m "[DB-042] feat: Crear schema project_management"
+git add apps/database/ddl/schemas/gamification_system/
+git commit -m "[DB-042] feat: Crear schema gamification_system"
 
-git add apps/database/ddl/schemas/project_management/tables/01-projects.sql
+git add apps/database/ddl/schemas/gamification_system/tables/01-user_points.sql
 git commit -m "[DB-042] feat: Crear tabla projects con PostGIS"
 
 # 3. Push frecuente a remote
@@ -409,7 +409,7 @@ Antes de cada commit, verifica:
 git commit -m "[DB-042] docs: Analizar módulo Proyectos - 4 tablas identificadas"
 
 # DDL Schema
-git commit -m "[DB-042] feat: Crear schema project_management"
+git commit -m "[DB-042] feat: Crear schema gamification_system"
 
 # DDL Tabla
 git commit -m "[DB-042] feat: Crear tabla projects con PostGIS y jerarquía"

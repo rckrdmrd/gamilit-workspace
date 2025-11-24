@@ -5,7 +5,7 @@
  * Phase 4 implementation.
  */
 
-import { apiClient } from './apiClient';
+import { apiClient } from '@/services/api/apiClient';
 
 export interface Mission {
   id: string;

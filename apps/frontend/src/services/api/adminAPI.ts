@@ -15,7 +15,7 @@
  * Created for FE-051 - Admin Portal Integration
  */
 
-import { apiClient } from './apiClient';
+import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS } from './apiConfig';
 import { handleAPIError } from './apiErrorHandler';
 import type { ApiResponse } from './apiTypes';
@@ -68,6 +68,9 @@ import type {
   PaginatedResponse,
 } from './adminTypes';
 
+// Import types from admin types for dashboard functions
+import type { AdminAction, SystemAlert, UserActivityData } from '@/apps/admin/types';
+
 // ============================================================================
 // DASHBOARD
 // ============================================================================
@@ -86,6 +89,116 @@ export async function getAdminDashboard(): Promise<DashboardData> {
     return response.data.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch admin dashboard');
+  }
+}
+
+/**
+ * Get recent admin actions
+ * Backend: GET /admin/dashboard/actions/recent
+ * Status: IMPLEMENTED (Phase 2)
+ */
+export async function getRecentActions(limit: number = 10): Promise<AdminAction[]> {
+  try {
+    const response = await apiClient.get<ApiResponse<AdminAction[]>>(
+      `${API_ENDPOINTS.admin.dashboard}/actions/recent`,
+      { params: { limit } }
+    );
+
+    const actions = response.data.data;
+
+    // Transform snake_case to camelCase if needed and ensure Date objects
+    return actions.map(action => ({
+      ...action,
+      timestamp: action.timestamp instanceof Date ? action.timestamp : new Date(action.timestamp),
+    }));
+  } catch (error) {
+    throw handleAPIError(error, 'Failed to fetch recent actions');
+  }
+}
+
+/**
+ * Get system alerts
+ * Backend: GET /admin/dashboard/alerts
+ * Status: IMPLEMENTED (Phase 2)
+ */
+export async function getAlerts(): Promise<SystemAlert[]> {
+  try {
+    const response = await apiClient.get<ApiResponse<SystemAlert[]>>(
+      `${API_ENDPOINTS.admin.dashboard}/alerts`
+    );
+
+    const alerts = response.data.data;
+
+    // Ensure Date objects
+    return alerts.map(alert => ({
+      ...alert,
+      timestamp: alert.timestamp instanceof Date ? alert.timestamp : new Date(alert.timestamp),
+    }));
+  } catch (error) {
+    throw handleAPIError(error, 'Failed to fetch alerts');
+  }
+}
+
+/**
+ * Get user activity analytics
+ * Backend: GET /admin/dashboard/analytics/user-activity
+ * Status: IMPLEMENTED (Phase 2)
+ */
+export async function getUserActivity(params?: {
+  startDate?: string;
+  endDate?: string;
+  groupBy?: 'day' | 'week' | 'month';
+}): Promise<UserActivityData[]> {
+  try {
+    const response = await apiClient.get<ApiResponse<{
+      labels: string[];
+      data: number[];
+      tableData: UserActivityData[];
+    }>>(
+      `${API_ENDPOINTS.admin.dashboard}/analytics/user-activity`,
+      { params }
+    );
+
+    // Backend returns dual format: {labels, data, tableData}
+    // Frontend needs tableData for the table display
+    return response.data.data.tableData;
+  } catch (error) {
+    throw handleAPIError(error, 'Failed to fetch user activity');
+  }
+}
+
+/**
+ * Get Maya ranks
+ * Backend: GET /admin/gamification-config/maya-ranks
+ * Status: IMPLEMENTED (Phase 2)
+ */
+export async function getMayaRanks(): Promise<MayaRank[]> {
+  try {
+    const response = await apiClient.get<ApiResponse<MayaRank[]>>(
+      `${API_ENDPOINTS.admin.gamification}/maya-ranks`
+    );
+
+    const ranks = response.data.data;
+
+    // Transform snake_case keys to camelCase if needed
+    return ranks.map(rank => ({
+      id: rank.id,
+      name: rank.name,
+      level: (rank as any).level || 0,
+      minXP: (rank as any).min_xp || (rank as any).minXp || rank.minXP,
+      maxXP: (rank as any).max_xp || (rank as any).maxXp || rank.maxXP,
+      multiplierXp: (rank as any).multiplier_xp || (rank as any).multiplierXp || 1.0,
+      multiplierMlCoins: (rank as any).multiplier_ml_coins || (rank as any).multiplierMlCoins || 1.0,
+      bonusMlCoins: (rank as any).bonus_ml_coins || (rank as any).bonusMlCoins || 0,
+      color: rank.color || '#6B7280',
+      icon: rank.icon,
+      description: (rank as any).description || '',
+      perks: (rank as any).perks || [],
+      isActive: (rank as any).is_active !== undefined ? (rank as any).is_active : ((rank as any).isActive !== undefined ? (rank as any).isActive : true),
+      order: (rank as any).order !== undefined ? (rank as any).order : ((rank as any).display_order || 0),
+    }));
+  } catch (error) {
+    throw handleAPIError(error, 'Failed to fetch Maya ranks');
   }
 }
 
@@ -345,9 +458,33 @@ export async function getApprovalHistory(
 // ============================================================================
 
 /**
+ * Transforms backend user (snake_case) to frontend User type (camelCase)
+ * CORR-003: Map last_sign_in_at → lastLogin and other snake_case fields
+ */
+function transformUser(backendUser: any): User {
+  return {
+    id: backendUser.id,
+    name: backendUser.full_name || backendUser.display_name || backendUser.name || backendUser.email,
+    email: backendUser.email,
+    role: backendUser.role,
+    status: backendUser.status,
+    organization: backendUser.organization_name || backendUser.organization,
+    organizationId: backendUser.organization_id || backendUser.organizationId,
+    joinDate: backendUser.created_at || backendUser.join_date || backendUser.joinDate,
+    // ✅ CORR-003: Map last_sign_in_at → lastLogin
+    // Use nullish coalescing to preserve null values (user never logged in)
+    lastLogin: backendUser.last_sign_in_at !== undefined
+      ? backendUser.last_sign_in_at
+      : backendUser.lastLogin,
+    metadata: backendUser.metadata,
+  };
+}
+
+/**
  * Get list of users with filters
  *
  * Status: Backend IMPLEMENTED ✅
+ * CORR-003: Added proper field transformation (last_sign_in_at → lastLogin)
  */
 export async function getUsers(
   filters?: UserFilters
@@ -379,8 +516,9 @@ export async function getUsers(
 
     if (Array.isArray(backendData)) {
       // Backend returns array directly (no pagination info)
+      // ✅ CORR-003: Apply transformUser to each user
       transformed = {
-        items: backendData,
+        items: backendData.map(transformUser),
         pagination: {
           page: 1,
           totalPages: 1,
@@ -390,8 +528,9 @@ export async function getUsers(
       };
     } else if (backendData && typeof backendData === 'object') {
       // Backend returns object with data property
+      // ✅ CORR-003: Apply transformUser to each user
       transformed = {
-        items: backendData.data || [],
+        items: (backendData.data || []).map(transformUser),
         pagination: {
           page: backendData.page || 1,
           totalPages: backendData.total_pages || 0,
@@ -956,6 +1095,9 @@ export async function scheduleReport(
 export const adminAPI = {
   // Dashboard
   getDashboard: getAdminDashboard,
+  getRecentActions,
+  getAlerts,
+  getUserActivity,
 
   // Organizations
   organizations: {
@@ -1005,6 +1147,7 @@ export const adminAPI = {
     updateSettings: updateGamificationSettings,
     previewChanges: previewGamificationChanges,
     restoreDefaults: restoreGamificationDefaults,
+    getMayaRanks,
   },
 
   // Monitoring

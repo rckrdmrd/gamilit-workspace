@@ -6,3 +6,6 @@ export * from './organization-stats-summary.dto';
 export * from './moderation-queue-item.dto';
 export * from './classroom-overview.dto';
 export * from './assignment-submission-stats.dto';
+export * from './recent-actions.dto';
+export * from './alerts.dto';
+export * from './user-activity.dto';

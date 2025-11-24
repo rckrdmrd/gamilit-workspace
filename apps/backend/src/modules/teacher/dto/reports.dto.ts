@@ -2,73 +2,10 @@
  * Report Generation DTOs
  */
 
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsArray, IsString, IsDateString } from 'class-validator';
-import { ReportFormat } from './analytics.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { ReportFormat, ReportType } from '@shared/dto/reports/generate-report.dto';
 
-/**
- * Report type options
- */
-export enum ReportType {
-  STUDENT_INSIGHTS = 'student_insights',
-  CLASSROOM_SUMMARY = 'classroom_summary',
-  RISK_ANALYSIS = 'risk_analysis',
-}
-
-/**
- * DTO for generating student insights report
- */
-export class GenerateReportDto {
-  @ApiProperty({
-    description: 'Report format',
-    enum: ReportFormat,
-    example: ReportFormat.PDF,
-  })
-  @IsEnum(ReportFormat)
-  format!: ReportFormat;
-
-  @ApiProperty({
-    description: 'Report type',
-    enum: ReportType,
-    example: ReportType.STUDENT_INSIGHTS,
-  })
-  @IsEnum(ReportType)
-  type!: ReportType;
-
-  @ApiPropertyOptional({
-    description: 'List of student IDs to include in report (optional)',
-    type: [String],
-    example: ['uuid-1', 'uuid-2'],
-  })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  student_ids?: string[];
-
-  @ApiPropertyOptional({
-    description: 'Classroom ID to filter students (optional)',
-    example: 'classroom-uuid',
-  })
-  @IsOptional()
-  @IsString()
-  classroom_id?: string;
-
-  @ApiPropertyOptional({
-    description: 'Start date for data range (ISO 8601)',
-    example: '2025-01-01T00:00:00Z',
-  })
-  @IsOptional()
-  @IsDateString()
-  start_date?: string;
-
-  @ApiPropertyOptional({
-    description: 'End date for data range (ISO 8601)',
-    example: '2025-12-31T23:59:59Z',
-  })
-  @IsOptional()
-  @IsDateString()
-  end_date?: string;
-}
+export { GenerateReportDto, ReportFormat, ReportType } from '@shared/dto/reports/generate-report.dto';
 
 /**
  * Report metadata for response

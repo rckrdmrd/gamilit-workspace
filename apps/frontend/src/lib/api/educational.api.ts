@@ -9,7 +9,7 @@
  * - getExerciseById: Get a specific exercise by ID
  */
 
-import apiClient from './client';
+import apiClient from '@/services/api/apiClient';
 import type { Module, Exercise, DifficultyLevel } from '@/shared/types/educational.types';
 
 /**

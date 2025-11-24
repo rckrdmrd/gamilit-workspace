@@ -16,7 +16,7 @@
 /**
  * Base URL (configurable por entorno)
  */
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3006/api/v1';
 
 /**
  * API Endpoints por módulo

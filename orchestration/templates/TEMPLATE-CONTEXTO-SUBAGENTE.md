@@ -44,7 +44,7 @@ fecha_inicio: "{YYYY-MM-DD HH:MM}"
 {Descripción clara y específica de lo que debe hacer el subagente}
 
 Ejemplo:
-Crear la tabla `projects` en el schema `project_management`
+Crear la tabla `projects` en el schema `gamification_system`
 con soporte para geolocalización (PostGIS) y jerarquía de proyectos.
 ```
 
@@ -144,7 +144,7 @@ con soporte para geolocalización (PostGIS) y jerarquía de proyectos.
 1. **Archivo principal:**
    - Ruta COMPLETA: `{ruta completa desde raíz}`
    - Nombre EXACTO: `{nombre del archivo}`
-   - Ejemplo: `apps/database/ddl/schemas/project_management/tables/01-projects.sql`
+   - Ejemplo: `apps/database/ddl/schemas/gamification_system/tables/01-user_points.sql`
 
 2. **Archivos adicionales** (si aplica):
    - Ruta: `{ruta}`
@@ -162,7 +162,7 @@ con soporte para geolocalización (PostGIS) y jerarquía de proyectos.
 1. **Archivo:**
    - Ruta: `{ruta completa}`
    - Modificación: {descripción de qué modificar}
-   - Ejemplo: Agregar constante `PROJECTS: 'projects'` en DB_TABLES.PROJECT_MANAGEMENT
+   - Ejemplo: Agregar constante `PROJECTS: 'user_points'` en DB_TABLES.PROJECT_MANAGEMENT
 
 ❌ NO modificar archivos no especificados
 ```
@@ -217,7 +217,7 @@ con soporte para geolocalización (PostGIS) y jerarquía de proyectos.
    - Información relevante: {resumen de lo que debe leer}
 
 2. **ADR (si aplica):**
-   - Archivo: `docs/adr/ADR-{XXX}-{tema}.md`
+   - Archivo: `docs/97-adr/ADR-{XXX}-{tema}.md`
    - Decisiones relevantes: {lista}
 
 3. **Requerimiento (si aplica):**
@@ -249,7 +249,7 @@ con soporte para geolocalización (PostGIS) y jerarquía de proyectos.
 **Nombres que DEBES usar (NO cambiar):**
 
 **Archivos:**
-- Nombre: `{nombre exacto}` (ej: `01-projects.sql`)
+- Nombre: `{nombre exacto}` (ej: `01-user_points.sql`)
 - Patrón: {patrón si aplica} (ej: prefijo numérico secuencial)
 
 **Objetos de código:**

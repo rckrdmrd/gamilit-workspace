@@ -221,7 +221,7 @@ vim orchestration/reportes/REPORTE-{TEMA}-{FECHA}.md
 ### Por Tipo de Agente
 
 **Agentes Principales (Database, Backend, Frontend):**
-- [PROMPT-DATABASE-AGENT.md](prompts/PROMPT-DATABASE-AGENT.md) - PostgreSQL, DDL, seeds, migrations
+- [PROMPT-DATABASE-AGENT.md](prompts/PROMPT-DATABASE-AGENT.md) - PostgreSQL, DDL, seeds, carga limpia
 - [PROMPT-BACKEND-AGENT.md](prompts/PROMPT-BACKEND-AGENT.md) - NestJS, TypeORM, API REST
 - [PROMPT-FRONTEND-AGENT.md](prompts/PROMPT-FRONTEND-AGENT.md) - React, Zustand, interfaces
 
@@ -424,12 +424,11 @@ mv orchestration/reportes/REPORTE-*-2024-*.md orchestration/reportes/archive/
 
 ## 📖 REFERENCIAS
 
-### Proyecto Base
-- Sistema Inmobiliaria (referencia): `/home/isem/workspace/worskpace-inmobiliaria/orchestration`
-
 ### Documentación del Proyecto
 - MVP Plan: `docs/README.md`
-- Módulos: `docs/modulos/`
+- Épicas Fase 1: `docs/01-fase-alcance-inicial/` (EAI-001 a EAI-006)
+- Épicas Fase 3: `docs/03-fase-extensiones/` (EXT-001 a EXT-010)
+- ADRs: `docs/97-adr/`
 - Análisis de reorganización: `ANALISIS-REORGANIZACION-ORCHESTRATION.md`
 
 ---
@@ -447,8 +446,8 @@ Para nuevos usuarios del sistema:
 
 ---
 
-**Versión:** 1.0.0
+**Versión:** 1.1.0
 **Última actualización:** 2025-11-23
 **Mantenido por:** Tech Lead / AI Agents
 **Revisión:** Mensual
-**Reorganización:** 2025-11-23 (estructura mejorada basada en proyecto inmobiliaria)
+**Última mejora:** 2025-11-23 (alineación completa con GAMILIT, corrección de referencias)

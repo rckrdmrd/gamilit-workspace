@@ -1,6 +1,6 @@
 # DIRECTIVA: DISEÑO DE BASE DE DATOS Y NORMALIZACIÓN
 
-**Proyecto:** MVP Sistema Administración de Obra e INFONAVIT
+**Proyecto:** GAMILIT - Sistema de Gamificación Educativa
 **Versión:** 1.0.0
 **Fecha:** 2025-11-20
 **Ámbito:** Database-Agent y subagentes
@@ -17,6 +17,116 @@ Establecer criterios claros de diseño de base de datos que garanticen:
 - **Integridad** de datos con constraints apropiados
 - **Performance óptima** con indexación estratégica
 - **Mantenibilidad** a largo plazo
+
+---
+
+## 🔄 ALCANCE Y PROCESO DE IMPLEMENTACIÓN
+
+### Qué cubre esta directiva
+
+**Esta directiva define QUÉ diseñar:**
+- ✅ Niveles de normalización (3NF mínimo)
+- ✅ Cuándo desnormalizar (performance crítico)
+- ✅ Diseño de schemas y contextos
+- ✅ Claves, constraints e índices
+- ✅ Tipos de datos y estructuras
+
+**Esta directiva NO cubre CÓMO implementar:**
+- ❌ Proceso de creación/modificación de DDL
+- ❌ Flujo de trabajo para cambios en BD
+- ❌ Validación y deployment
+
+### Cómo implementar los diseños de esta directiva
+
+**IMPORTANTE:** TODO diseño documentado aquí DEBE implementarse siguiendo:
+
+**[DIRECTIVA-POLITICA-CARGA-LIMPIA.md](DIRECTIVA-POLITICA-CARGA-LIMPIA.md)** - Proceso DDL-First
+- ✅ Crear/actualizar archivo DDL en `apps/database/ddl/schemas/{schema}/`
+- ✅ Validar con recreación completa: `./drop-and-recreate-database.sh`
+- ❌ **NUNCA** ejecutar CREATE/ALTER directamente sin archivo DDL
+- ❌ **NUNCA** crear migrations incrementales
+
+**[PROMPT-DATABASE-AGENT.md](../prompts/PROMPT-DATABASE-AGENT.md)** - Workflow de 5 fases
+- Análisis → Plan → Ejecución → Validación → Documentación
+
+### Ejemplo de implementación correcta
+
+```sql
+-- ✅ CORRECTO: Diseño de esta directiva + Proceso de Política de Carga Limpia
+
+-- 1. Diseñar tabla según criterios de esta directiva
+-- File: apps/database/ddl/schemas/gamification_system/tables/05-challenges.sql
+
+DROP TABLE IF EXISTS gamification_system.challenges CASCADE;
+
+CREATE TABLE gamification_system.challenges (
+    -- Primary Key (UUID según esta directiva)
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    -- Normalización 3NF (sin dependencias transitivas)
+    code VARCHAR(50) NOT NULL UNIQUE,
+    name VARCHAR(200) NOT NULL,
+    difficulty VARCHAR(20) NOT NULL,
+
+    -- Foreign Key con nomenclatura correcta
+    required_level_id UUID,
+    CONSTRAINT fk_challenges_to_levels
+        FOREIGN KEY (required_level_id)
+        REFERENCES gamification_system.levels(id)
+        ON DELETE SET NULL,
+
+    -- Check Constraint para validar valores
+    CONSTRAINT chk_challenges_difficulty_valid
+        CHECK (difficulty IN ('easy', 'medium', 'hard', 'expert')),
+
+    -- Auditoría obligatoria
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Índices estratégicos (según criterios de performance)
+CREATE INDEX idx_challenges_difficulty ON gamification_system.challenges(difficulty);
+CREATE INDEX idx_challenges_required_level_id ON gamification_system.challenges(required_level_id);
+
+-- Comentarios (documentación)
+COMMENT ON TABLE gamification_system.challenges IS
+'Desafíos del sistema de gamificación';
+
+-- 2. Validar con recreación completa
+-- cd apps/database
+-- ./drop-and-recreate-database.sh
+
+-- 3. Si funciona → Commitear DDL
+-- git add apps/database/ddl/schemas/gamification_system/tables/05-challenges.sql
+-- git commit -m "feat(db): add challenges table"
+```
+
+```sql
+-- ❌ INCORRECTO: Buen diseño pero mal proceso
+
+-- NO hacer esto (viola Política de Carga Limpia):
+psql -d gamilit_platform -c "CREATE TABLE gamification_system.challenges (...);"
+-- Crear tabla directamente sin archivo DDL
+
+-- NO hacer esto (viola Política de Carga Limpia):
+-- File: apps/database/migrations/002-add-challenges.sql
+CREATE TABLE gamification_system.challenges (...);
+-- Usar migrations en lugar de DDL base
+```
+
+### Regla de oro
+
+```yaml
+Esta directiva te dice QUÉ crear:
+  - Tablas normalizadas (3NF)
+  - Constraints apropiados
+  - Índices estratégicos
+
+DIRECTIVA-POLITICA-CARGA-LIMPIA.md te dice CÓMO crearlo:
+  - DDL primero
+  - Validar con recreación
+  - NO migrations
+```
 
 ---
 
@@ -90,7 +200,7 @@ CREATE TABLE project_budgets (
   approved_by_id UUID,
 
   CONSTRAINT fk_project_budgets_to_projects
-    FOREIGN KEY (project_id) REFERENCES project_management.projects(id)
+    FOREIGN KEY (project_id) REFERENCES gamification_system.user_points(id)
 );
 
 -- Índice para queries frecuentes
@@ -189,7 +299,7 @@ CREATE TABLE project_budgets (
   project_code VARCHAR(50) NOT NULL,  -- Duplica projects.code
 
   CONSTRAINT fk_project_budgets_to_projects
-    FOREIGN KEY (project_id) REFERENCES project_management.projects(id)
+    FOREIGN KEY (project_id) REFERENCES gamification_system.user_points(id)
 );
 
 -- IMPORTANTE: Mantener sincronizado con trigger
@@ -287,7 +397,7 @@ CREATE TABLE project_status_history (
   changed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 
   CONSTRAINT fk_project_status_history_to_projects
-    FOREIGN KEY (project_id) REFERENCES project_management.projects(id)
+    FOREIGN KEY (project_id) REFERENCES gamification_system.user_points(id)
 );
 
 COMMENT ON TABLE project_status_history IS
@@ -304,27 +414,27 @@ COMMENT ON TABLE project_status_history IS
 Principio: Un schema por contexto de negocio (Bounded Context de DDD)
 
 Schemas obligatorios:
-  auth_management: Usuarios, roles, permisos
-  project_management: Proyectos, desarrollos, fases, viviendas
-  financial_management: Presupuestos, estimaciones, facturas
-  purchasing_management: Contratos, subcontratos, compras
-  construction_management: Avances, recursos, materiales
-  quality_management: Inspecciones, pruebas, no conformidades
-  infonavit_management: Específico INFONAVIT, cumplimiento
+  auth_management: Usuarios, roles, permisos, tenants
+  academic_management: Instituciones, cursos, estudiantes, profesores
+  gamification_system: Puntos, niveles, badges, challenges, recompensas
+  exercise_management: Ejercicios, tipos, variantes, soluciones
+  progress_tracking: Progreso estudiantil, estadísticas, logros
+  guild_management: Guildas, membresía, competencias, rankings
+  notification_management: Notificaciones, alertas, mensajería
 ```
 
 **✅ Correcto**
 
 ```sql
 -- Schema bien definido por contexto
-CREATE SCHEMA IF NOT EXISTS project_management;
-COMMENT ON SCHEMA project_management IS
-'Gestión de proyectos, desarrollos, fases y viviendas. Incluye jerarquía completa de obra.';
+CREATE SCHEMA IF NOT EXISTS gamification_system;
+COMMENT ON SCHEMA gamification_system IS
+'Sistema de gamificación: puntos, niveles, badges, challenges y recompensas. Núcleo del engagement estudiantil.';
 
-CREATE TABLE project_management.projects (...);
-CREATE TABLE project_management.developments (...);
-CREATE TABLE project_management.phases (...);
-CREATE TABLE project_management.units (...);
+CREATE TABLE gamification_system.user_points (...);
+CREATE TABLE gamification_system.levels (...);
+CREATE TABLE gamification_system.badges (...);
+CREATE TABLE gamification_system.challenges (...);
 ```
 
 **❌ Incorrecto**
@@ -400,7 +510,7 @@ CREATE TABLE developments (
 
   CONSTRAINT fk_developments_to_projects
     FOREIGN KEY (project_id)
-    REFERENCES project_management.projects(id)
+    REFERENCES gamification_system.user_points(id)
     ON DELETE CASCADE  -- Si se elimina proyecto, eliminar desarrollos
     ON UPDATE CASCADE
 );
@@ -814,29 +924,30 @@ Usar MATERIALIZED VIEW cuando:
 **Ejemplo: Vista materializada para dashboard**
 
 ```sql
--- Vista materializada con agregaciones
-CREATE MATERIALIZED VIEW dashboard_project_summary AS
+-- Vista materializada con agregaciones para dashboard estudiantil
+CREATE MATERIALIZED VIEW dashboard_student_summary AS
 SELECT
-  p.id,
-  p.code,
-  p.name,
-  p.status,
-  COUNT(DISTINCT d.id) AS total_developments,
-  COUNT(DISTINCT u.id) AS total_units,
-  COALESCE(SUM(b.total_amount), 0) AS total_budget
-FROM project_management.projects p
-LEFT JOIN project_management.developments d ON d.project_id = p.id
-LEFT JOIN project_management.units u ON u.development_id = d.id
-LEFT JOIN financial_management.budgets b ON b.project_id = p.id
-WHERE p.deleted_at IS NULL
-GROUP BY p.id, p.code, p.name, p.status;
+  s.id,
+  s.username,
+  s.email,
+  s.current_level,
+  COUNT(DISTINCT ec.id) AS total_exercises_completed,
+  COUNT(DISTINCT ub.badge_id) AS total_badges_earned,
+  COALESCE(SUM(up.points), 0) AS total_points,
+  COALESCE(AVG(ec.score), 0) AS average_score
+FROM academic_management.students s
+LEFT JOIN exercise_management.exercise_completions ec ON ec.student_id = s.id
+LEFT JOIN gamification_system.user_badges ub ON ub.user_id = s.id
+LEFT JOIN gamification_system.user_points up ON up.user_id = s.id
+WHERE s.deleted_at IS NULL
+GROUP BY s.id, s.username, s.email, s.current_level;
 
 -- Índice en vista materializada
-CREATE INDEX idx_dashboard_project_summary_status
-  ON dashboard_project_summary(status);
+CREATE INDEX idx_dashboard_student_summary_level
+  ON dashboard_student_summary(current_level);
 
 -- Refrescar periódicamente (ej: cada hora via cron)
-REFRESH MATERIALIZED VIEW CONCURRENTLY dashboard_project_summary;
+REFRESH MATERIALIZED VIEW CONCURRENTLY dashboard_student_summary;
 ```
 
 ---
@@ -905,7 +1016,8 @@ Antes de crear tabla, verificar:
 
 ---
 
-**Versión:** 1.0.0
-**Fecha:** 2025-11-20
+**Versión:** 1.1.0
+**Fecha:** 2025-11-23 (actualización: sección proceso DDL-first)
+**Fecha original:** 2025-11-20
 **Próxima revisión:** Al identificar necesidad de mejoras
 **Responsable:** Database-Agent

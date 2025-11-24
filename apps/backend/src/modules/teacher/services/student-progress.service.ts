@@ -4,7 +4,7 @@
  * Provides detailed progress information for individual students
  */
 
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
@@ -13,6 +13,7 @@ import { ModuleProgress } from '@/modules/progress/entities/module-progress.enti
 import { ClassroomMember } from '@/modules/social/entities/classroom-member.entity';
 import { Classroom } from '@/modules/social/entities/classroom.entity';
 import { User } from '@/modules/auth/entities/user.entity';
+import { UserStats } from '@/modules/gamification/entities/user-stats.entity';
 import { GetStudentProgressQueryDto, AddTeacherNoteDto, StudentNoteResponseDto } from '../dto';
 
 export interface StudentOverview {
@@ -83,6 +84,8 @@ export interface ClassComparison {
 
 @Injectable()
 export class StudentProgressService {
+  private readonly logger = new Logger(StudentProgressService.name);
+
   constructor(
     @InjectRepository(ExerciseSubmission, 'progress')
     private readonly submissionRepository: Repository<ExerciseSubmission>,
@@ -96,6 +99,8 @@ export class StudentProgressService {
     private readonly classroomRepository: Repository<Classroom>,
     @InjectRepository(User, 'auth')
     private readonly userRepository: Repository<User>,
+    @InjectRepository(UserStats, 'gamification')
+    private readonly userStatsRepository: Repository<UserStats>,
   ) {}
 
   /**
@@ -134,16 +139,28 @@ export class StudentProgressService {
       throw new NotFoundException(`Student with ID ${studentId} not found`);
     }
 
-    // TODO: Get actual gamification data (XP, ML Coins, Maya Rank, Level)
+    // CORR-002: Get real gamification data from user_stats
+    const userStats = await this.userStatsRepository.findOne({
+      where: { user_id: profile.id },
+    });
+
+    // Log warning if user_stats not found (for debugging)
+    if (!userStats) {
+      this.logger.warn(
+        `UserStats not found for profile ${profile.id}. Using default gamification values.`,
+      );
+    }
+
     return {
       id: profile.id,
       full_name: profile.full_name || profile.display_name || 'Unknown',
       username: profile.email.split('@')[0], // Simple username extraction
       email: profile.email,
-      maya_rank: 'ah_kin', // TODO: Get from gamification system
-      current_level: 12, // TODO: Calculate from XP
-      total_xp: 3450, // TODO: Get from gamification system
-      total_ml_coins: 890, // TODO: Get from gamification system
+      // CORR-002: Use real data from user_stats
+      maya_rank: userStats?.current_rank || 'Ajaw',
+      current_level: userStats?.level || 1,
+      total_xp: userStats?.total_xp || 0,
+      total_ml_coins: userStats?.ml_coins || 0,
       avatar_url: profile.avatar_url || undefined,
       joined_date: profile.created_at,
       last_login: profile.last_sign_in_at || profile.created_at,
@@ -163,13 +180,21 @@ export class StudentProgressService {
     }
 
     // Get all submissions
+    // FIX CORR-001: Use profile.id (PK) instead of profile.user_id (FK to auth.users)
+    // exercise_submissions.user_id references profiles.id, not auth.users.id
     const submissions = await this.submissionRepository.find({
-      where: { user_id: profile.user_id || undefined },
+      where: { user_id: profile.id },
     });
 
     // Get module progress
+    // FIX CORR-001: Use profile.id (PK) instead of profile.user_id
     const moduleProgresses = await this.moduleProgressRepository.find({
-      where: { user_id: profile.user_id || undefined },
+      where: { user_id: profile.id },
+    });
+
+    // CORR-002: Get real gamification data from user_stats
+    const userStats = await this.userStatsRepository.findOne({
+      where: { user_id: profile.id },
     });
 
     const completedModules = moduleProgresses.filter(
@@ -197,9 +222,10 @@ export class StudentProgressService {
       completed_exercises: completedExercises,
       average_score: averageScore,
       total_time_spent_minutes: Math.round(totalTimeSpent / 60),
-      current_streak_days: 7, // TODO: Calculate from activity dates
-      longest_streak_days: 15, // TODO: Calculate from activity dates
-      achievements_unlocked: 12, // TODO: Get from achievements system
+      // CORR-002: Use real data from user_stats
+      current_streak_days: userStats?.current_streak || 0,
+      longest_streak_days: userStats?.max_streak || 0,
+      achievements_unlocked: userStats?.achievements_earned || 0,
     };
   }
 
@@ -217,8 +243,9 @@ export class StudentProgressService {
       throw new NotFoundException(`Student with ID ${studentId} not found`);
     }
 
+    // FIX CORR-001: Use profile.id (PK) instead of profile.user_id
     const moduleProgresses = await this.moduleProgressRepository.find({
-      where: { user_id: profile.user_id || undefined },
+      where: { user_id: profile.id },
     });
 
     // TODO: Join with actual module data to get names and details
@@ -253,8 +280,9 @@ export class StudentProgressService {
     }
 
     // Build query conditions
+    // FIX CORR-001: Use profile.id (PK) instead of profile.user_id
     const whereConditions: any = {
-      user_id: profile.user_id,
+      user_id: profile.id,
     };
 
     // Apply time range filter
@@ -306,8 +334,9 @@ export class StudentProgressService {
       throw new NotFoundException(`Student with ID ${studentId} not found`);
     }
 
+    // FIX CORR-001: Use profile.id (PK) instead of profile.user_id
     const submissions = await this.submissionRepository.find({
-      where: { user_id: profile.user_id || undefined },
+      where: { user_id: profile.id },
       order: { submitted_at: 'DESC' },
     });
 

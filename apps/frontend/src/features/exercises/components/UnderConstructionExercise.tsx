@@ -3,31 +3,43 @@
  *
  * GAP-005 Resolution - Component for exercises in backlog modules
  * FECHA: 2025-11-23
- * ARCHITECTURE-ANALYST
+ * FRONTEND-DEVELOPER
  *
  * Displays a user-friendly "Under Construction" message for exercises
- * that are designed but not yet implemented (backlog status).
+ * that are designed but not yet implemented (is_active = false).
+ *
+ * Especificación: orchestration/agentes/architecture-analyst/gap-analysis/ESTRATEGIA-MODULOS-4-5-EN-CONSTRUCCION.md
  */
 
 import React from 'react';
-import { Construction, Calendar, Lightbulb, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-
-interface ExerciseData {
-  id?: string;
-  title?: string;
-  type?: string;
-  moduleTitle?: string;
-  description?: string;
-}
+import {
+  Construction,
+  AlertCircle,
+  Zap,
+  Clock,
+  Gift,
+  ArrowLeft,
+  BookOpen,
+} from 'lucide-react';
 
 interface UnderConstructionExerciseProps {
-  exercise?: ExerciseData;
-  exerciseTitle?: string;
-  moduleName?: string;
-  exerciseType?: string;
-  estimatedAvailability?: string;
+  exercise: {
+    id: string;
+    title: string;
+    subtitle?: string;
+    description: string;
+    module_id?: string;
+    module?: {
+      id: string;
+      title: string;
+      module_code: string;
+    };
+    estimated_time_minutes: number;
+    xp_reward: number;
+    ml_coins_reward: number;
+  };
   // Optional props to maintain compatibility with Exercise component interface
   onComplete?: () => void;
   onProgressUpdate?: (update: any) => void;
@@ -36,158 +48,176 @@ interface UnderConstructionExerciseProps {
 
 export const UnderConstructionExercise: React.FC<UnderConstructionExerciseProps> = ({
   exercise,
-  exerciseTitle,
-  moduleName,
-  exerciseType,
-  estimatedAvailability = 'próximamente',
 }) => {
   const navigate = useNavigate();
 
-  // Use exercise data if provided, otherwise use direct props
-  const title = exerciseTitle || exercise?.title || 'Este ejercicio';
-  const module = moduleName || exercise?.moduleTitle || 'este módulo';
-  const type = exerciseType || exercise?.type || 'ejercicio';
-
-  const handleGoBack = () => {
-    navigate(-1);
-  };
+  // Extract module ID from exercise.module_id or exercise.module.id
+  const moduleId = exercise.module?.id || exercise.module_id || '';
+  const moduleTitle = exercise.module?.title || 'el módulo';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-2xl w-full"
-      >
-        {/* Main Card */}
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-amber-200">
-          {/* Header with Construction Theme */}
-          <div className="bg-gradient-to-r from-amber-400 to-orange-500 p-8 text-white">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-              className="flex justify-center mb-4"
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100">
+      {/* Contenedor central */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-white rounded-2xl shadow-2xl p-8 sm:p-12"
+        >
+          {/* Icono de construcción grande */}
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+            className="text-center mb-6"
+          >
+            <Construction className="w-24 h-24 mx-auto text-amber-500" />
+          </motion.div>
+
+          {/* Título del ejercicio */}
+          <motion.h1
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-2"
+          >
+            {exercise.title}
+          </motion.h1>
+
+          {/* Subtítulo si existe */}
+          {exercise.subtitle && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="text-lg text-center text-gray-600 mb-6"
             >
-              <div className="bg-white bg-opacity-20 p-6 rounded-full backdrop-blur-sm">
-                <Construction className="w-16 h-16" />
-              </div>
-            </motion.div>
+              {exercise.subtitle}
+            </motion.p>
+          )}
 
-            <h1 className="text-3xl font-bold text-center mb-2">
-              🚧 Ejercicio En Construcción
-            </h1>
-            <p className="text-center text-amber-50 text-lg">
-              {title}
+          {/* Badge "En Construcción" */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5 }}
+            className="flex justify-center mb-8"
+          >
+            <span className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-100 text-amber-800 rounded-full font-semibold text-sm shadow-md">
+              <Construction className="w-5 h-5" />
+              Ejercicio en Construcción
+            </span>
+          </motion.div>
+
+          {/* Descripción del ejercicio */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="bg-gray-50 rounded-xl p-6 mb-8"
+          >
+            <h3 className="font-semibold text-gray-900 mb-3 text-lg">
+              ¿De qué trata este ejercicio?
+            </h3>
+            <p className="text-gray-700 leading-relaxed">
+              {exercise.description}
             </p>
-          </div>
+          </motion.div>
 
-          {/* Content */}
-          <div className="p-8 space-y-6">
-            {/* Main Message */}
-            <div className="text-center space-y-3">
-              <p className="text-xl text-gray-700 leading-relaxed">
-                Este ejercicio de <span className="font-semibold text-amber-600">{module}</span> está
-                actualmente en desarrollo y estará disponible {estimatedAvailability}.
+          {/* Información del ejercicio (3 cards) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8"
+          >
+            {/* XP Reward */}
+            <div className="bg-blue-50 rounded-xl p-5 text-center border border-blue-100 hover:shadow-md transition-shadow">
+              <Zap className="w-7 h-7 mx-auto text-blue-600 mb-2" />
+              <p className="text-sm text-gray-600 mb-1">Recompensa XP</p>
+              <p className="text-2xl font-bold text-blue-700">{exercise.xp_reward} XP</p>
+            </div>
+
+            {/* Tiempo estimado */}
+            <div className="bg-purple-50 rounded-xl p-5 text-center border border-purple-100 hover:shadow-md transition-shadow">
+              <Clock className="w-7 h-7 mx-auto text-purple-600 mb-2" />
+              <p className="text-sm text-gray-600 mb-1">Tiempo estimado</p>
+              <p className="text-2xl font-bold text-purple-700">
+                {exercise.estimated_time_minutes} min
               </p>
             </div>
 
-            {/* Info Boxes */}
-            <div className="grid md:grid-cols-2 gap-4 mt-8">
-              {/* What's Coming */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-                className="bg-blue-50 border-2 border-blue-200 rounded-xl p-5"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="bg-blue-100 p-2 rounded-lg">
-                    <Lightbulb className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-blue-900 mb-2">
-                      ¿Qué viene?
-                    </h3>
-                    <p className="text-sm text-blue-800">
-                      Nuevos ejercicios interactivos de lectura digital y producción de textos
-                      basados en Marie Curie.
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Estimated Date */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 }}
-                className="bg-purple-50 border-2 border-purple-200 rounded-xl p-5"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="bg-purple-100 p-2 rounded-lg">
-                    <Calendar className="w-5 h-5 text-purple-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-purple-900 mb-2">
-                      Disponibilidad
-                    </h3>
-                    <p className="text-sm text-purple-800">
-                      Los módulos 4 y 5 se encuentran fuera del alcance de entrega actual.
-                      Se liberarán en futuras actualizaciones.
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
+            {/* ML Coins */}
+            <div className="bg-amber-50 rounded-xl p-5 text-center border border-amber-100 hover:shadow-md transition-shadow">
+              <Gift className="w-7 h-7 mx-auto text-amber-600 mb-2" />
+              <p className="text-sm text-gray-600 mb-1">ML Coins</p>
+              <p className="text-2xl font-bold text-amber-700">
+                {exercise.ml_coins_reward} ML
+              </p>
             </div>
+          </motion.div>
 
-            {/* Current Modules Available */}
-            <div className="bg-green-50 border-2 border-green-200 rounded-xl p-5 mt-6">
-              <h3 className="font-semibold text-green-900 mb-3 text-center">
-                ✅ Módulos Disponibles Ahora
-              </h3>
-              <ul className="space-y-2 text-sm text-green-800">
-                <li className="flex items-center gap-2">
-                  <span className="text-green-600">•</span>
-                  <span><strong>Módulo 1:</strong> Comprensión Literal</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-green-600">•</span>
-                  <span><strong>Módulo 2:</strong> Comprensión Inferencial</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-green-600">•</span>
-                  <span><strong>Módulo 3:</strong> Comprensión Crítica y Valorativa</span>
-                </li>
-              </ul>
-            </div>
+          {/* Mensaje informativo */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="bg-amber-50 border-2 border-amber-200 rounded-xl p-6 mb-8"
+          >
+            <h3 className="font-semibold text-amber-900 mb-2 flex items-center gap-2 text-lg">
+              <AlertCircle className="w-5 h-5" />
+              Este ejercicio estará disponible próximamente
+            </h3>
+            <p className="text-amber-800 leading-relaxed">
+              Actualmente estamos trabajando en implementar este ejercicio interactivo.
+              Mientras tanto, te invitamos a completar los{' '}
+              <span className="font-semibold">Módulos 1, 2 y 3</span> que ya están
+              disponibles y completamente funcionales.
+            </p>
+          </motion.div>
 
-            {/* Action Button */}
-            <div className="flex justify-center mt-8">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleGoBack}
-                className="flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                Volver a Módulos
-              </motion.button>
-            </div>
-          </div>
-        </div>
+          {/* Botones de acción */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9 }}
+            className="flex flex-col sm:flex-row gap-4"
+          >
+            {/* Botón Volver al Módulo */}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => navigate(`/modules/${moduleId}`)}
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-semibold text-lg flex items-center justify-center gap-2 shadow-lg transition-all"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              Volver al Módulo
+            </motion.button>
 
-        {/* Footer Note */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="text-center text-gray-600 text-sm mt-6"
-        >
-          Mientras tanto, continúa explorando los módulos disponibles para ganar XP y ML Coins
-        </motion.p>
-      </motion.div>
+            {/* Botón Ver Todos los Módulos */}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => navigate('/modules')}
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl font-semibold text-lg flex items-center justify-center gap-2 shadow-lg transition-all"
+            >
+              <BookOpen className="w-5 h-5" />
+              Ver Todos los Módulos
+            </motion.button>
+          </motion.div>
+
+          {/* Información del módulo padre */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+            className="mt-8 text-center text-sm text-gray-500"
+          >
+            Parte del <span className="font-semibold">{moduleTitle}</span>
+          </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 };

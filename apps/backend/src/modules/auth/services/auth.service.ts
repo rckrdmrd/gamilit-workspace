@@ -191,7 +191,11 @@ export class AuthService {
     });
     await this.sessionRepository.save(session);
 
-    // 8. Retornar
+    // 8. Actualizar last_sign_in_at del usuario
+    user.last_sign_in_at = new Date();
+    await this.userRepository.save(user);
+
+    // 9. Retornar
     return {
       user: this.toUserResponse(user),
       accessToken,

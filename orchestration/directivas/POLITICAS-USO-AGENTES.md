@@ -22,12 +22,12 @@ Cada agente tiene una responsabilidad específica. **NO implementes fuera de tu 
 
 | Agente | SÍ HACE (Implementa) | NO HACE (Delega a) |
 |--------|---------------------|---------------------|
-| **Database-Agent** | Crear DDL, migrations, seeds | Backend entities, Frontend → Backend-Agent/Frontend-Agent |
+| **Database-Agent** | Crear DDL, seeds, RLS policies | Backend entities, Frontend → Backend-Agent/Frontend-Agent |
 | **Backend-Agent** | Crear entities, services, controllers | DDL, Seeds → Database-Agent; UI → Frontend-Agent |
 | **Frontend-Agent** | Crear components, pages, stores | Backend logic → Backend-Agent; DB → Database-Agent |
 | **Requirements-Analyst** | Analizar, documentar requerimientos | **TODO código** → Delega a Database/Backend/Frontend |
 | **Code-Reviewer** | Revisar, sugerir mejoras | **NO implementa correcciones** → Delega a agente responsable |
-| **Architecture-Analyst** | Analizar, validar, documentar (docs/, ADRs, reportes) | **TODO código en apps/** → Delega a Database/Backend/Frontend |
+| **Architecture-Analyst** | Analizar, validar, documentar (docs/, ADRs, reportes), **ORQUESTAR agentes** (Tool: Task) | **TODO código en apps/** → Orquesta o Delega a Database/Backend/Frontend |
 | **Workspace-Manager** | Organizar archivos, validar estructura | **NO modifica código** → Delega implementaciones |
 | **Bug-Fixer** | Diagnosticar y corregir bugs | (Puede implementar en todas las capas según el bug) |
 | **Feature-Developer** | Coordinar features completos | (Puede usar Database/Backend/Frontend como subagentes) |
@@ -102,7 +102,7 @@ Gap, bug, feature, etc.
 El agente que identificó la necesidad NO ejecuta:
 - Comandos de compilación (npm, docker, psql)
 - Modificaciones de código (excepto su especialidad)
-- Deploys o migrations
+- Deploys o cambios directos en BD sin DDL
 ```
 
 ---
@@ -122,14 +122,21 @@ El agente que identificó la necesidad NO ejecuta:
 - Crear nuevo schema completo
 - Modificar estructura de tablas existentes
 - Crear funciones/triggers complejos
-- Generar migrations
+- Actualizar DDL y validar con carga limpia
 
 **Subagentes disponibles:**
 - Schema-Creator
 - Table-Creator
 - Function-Creator
-- Migration-Generator
 - Seed-Generator
+- RLS-Policy-Creator
+
+**❌ PROHIBIDO:**
+- Migration-Generator (usar DDL + recreación completa)
+- Ejecutar ALTER/CREATE directamente sin DDL
+- Crear archivos fix-*.sql o patch-*.sql
+
+**Ver:** [DIRECTIVA-POLITICA-CARGA-LIMPIA.md](DIRECTIVA-POLITICA-CARGA-LIMPIA.md)
 
 #### 2. Backend-Agent
 **Responsabilidad:**
@@ -299,6 +306,7 @@ El agente que identificó la necesidad NO ejecuta:
 - Identificar gaps entre documentación y referencias
 - Proponer y documentar decisiones arquitectónicas (ADRs)
 - Validar coherencia arquitectónica del proyecto
+- **ORQUESTAR agentes especializados** para implementar gaps identificados
 
 **Cuándo usar:**
 - Análisis de nuevos proyectos de referencia
@@ -307,11 +315,20 @@ El agente que identificó la necesidad NO ejecuta:
 - Cuando se detectan desviaciones del diseño
 - Para actualizar documentación con mejores prácticas
 
+**Capacidades especiales:**
+- ✅ Puede ORQUESTAR Database-Agent, Backend-Agent, Frontend-Agent usando Tool: Task
+- ✅ Puede DELEGAR tareas mediante documentación en trazas
+- ✅ Puede usar Explore Agent para análisis de código
+- ❌ NO implementa código directamente
+
 **Subagentes disponibles:**
 - Reference-Code-Analyzer
 - Gap-Analyzer
 - Architecture-Validator
 - Documentation-Updater
+- **Database-Agent** (mediante orquestación)
+- **Backend-Agent** (mediante orquestación)
+- **Frontend-Agent** (mediante orquestación)
 
 **Genera:**
 - TRAZA-ANALISIS-ARQUITECTURA.md
@@ -319,6 +336,7 @@ El agente que identificó la necesidad NO ejecuta:
 - Reportes de análisis de referencias
 - Gap analysis y planes de actualización
 - Reportes de coherencia arquitectónica
+- Especificaciones para agentes orquestados
 
 #### 10. Workspace-Manager
 **Responsabilidad:**
@@ -525,17 +543,22 @@ concurrencia:
 ## [ROLLBACK-001] Revertir cambios de DB-045
 
 **Fecha:** 2025-11-17 11:00
-**Tarea original:** DB-045 - Agregar columnas a projects
-**Razón:** Migration rompió foreign keys en developments
+**Tarea original:** DB-045 - Agregar columnas a user_points
+**Razón:** Cambio directo en BD sin actualizar DDL causó inconsistencias
+**Problema detectado:**
+  - Se ejecutó ALTER TABLE directamente en BD
+  - DDL no fue actualizado
+  - Recreación completa falló por missing columns
 **Afectados:**
-  - apps/database/ddl/schemas/project_management/tables/01-projects.sql
-  - apps/database/migrations/20251117-add-columns-projects.sql
+  - apps/database/ddl/schemas/gamification_system/tables/01-user_points.sql
 **Rollback a:** Commit abc123def (pre DB-045)
 **Plan de corrección:**
-  1. Revisar dependencies
-  2. Crear migration más segura con IF EXISTS
-  3. Validar en ambiente dev antes de aplicar
+  1. Actualizar archivo DDL (NO crear migration)
+  2. Agregar columnas en CREATE TABLE
+  3. Validar con ./drop-and-recreate-database.sh
+  4. Commitear DDL corregido
 **Estado:** ✅ Rollback exitoso, corrección planificada
+**Lección aprendida:** Siempre actualizar DDL primero (DDL-first approach)
 ```
 
 ---

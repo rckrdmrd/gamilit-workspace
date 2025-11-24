@@ -764,7 +764,7 @@ describe('AdminOrganizationsService', () => {
       expect(result.data[0]).toEqual({
         user_id: 'user-1',
         email: 'user1@unam.mx',
-        full_name: 'Juan Pérez',
+        full_name: undefined, // Profile relation not available due to cross-datasource limitation
         role: GamilityRoleEnum.STUDENT,
         membership_role: 'member',
         membership_status: MembershipStatusEnum.ACTIVE,

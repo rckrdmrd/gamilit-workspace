@@ -159,11 +159,11 @@ export class ModulesService {
       LEFT JOIN LATERAL (
         SELECT COUNT(DISTINCT e.id) as completed
         FROM educational_content.exercises e
-        INNER JOIN progress_tracking.exercise_attempts ea
-          ON e.id = ea.exercise_id AND ea.user_id = $1
+        INNER JOIN progress_tracking.exercise_submissions es
+          ON e.id = es.exercise_id AND es.user_id = $1
         WHERE e.module_id = m.id
           AND e.is_active = true
-          AND ea.is_correct = true
+          AND es.status = 'graded'
       ) completed_ex ON true
       WHERE m.is_published = true
       ORDER BY m.order_index ASC

@@ -119,8 +119,8 @@ export class NotificationMultiChannelController {
     const notification = await this.notificationService.create({
       userId: createDto.userId,
       title: createDto.title,
-      content: createDto.content,
-      notificationType: createDto.notificationType,
+      message: createDto.message,
+      type: createDto.type,
       relatedEntityType: createDto.relatedEntityType,
       relatedEntityId: createDto.relatedEntityId,
       metadata: createDto.metadata,
@@ -128,7 +128,7 @@ export class NotificationMultiChannelController {
       expiresAt: createDto.expiresAt ? new Date(createDto.expiresAt) : undefined,
     });
 
-    return notification as NotificationResponseDto;
+    return notification;
   }
 
   /**
@@ -206,6 +206,6 @@ export class NotificationMultiChannelController {
       metadata: sendDto.metadata,
     });
 
-    return notification as NotificationResponseDto;
+    return notification;
   }
 }

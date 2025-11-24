@@ -13,7 +13,7 @@
  * - getSubmissionStats: Get submission statistics
  */
 
-import apiClient from './client';
+import apiClient from '@/services/api/apiClient';
 import type {
   ModuleProgress,
   ProgressSummary,

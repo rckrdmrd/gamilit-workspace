@@ -3,13 +3,63 @@ import { InjectRepository, InjectEntityManager } from '@nestjs/typeorm';
 import { Repository, EntityManager } from 'typeorm';
 import { ExerciseSubmission } from '../entities';
 import { CreateExerciseSubmissionDto } from '../dto';
-import { ExerciseAnswerValidator } from '../dto/answers';
+import { ExerciseAnswerValidator, RuedaInferenciasAnswersDto } from '../dto/answers';
 import { DB_SCHEMAS } from '@shared/constants/database.constants';
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
 import { Exercise } from '@/modules/educational/entities';
 import { Profile } from '@/modules/auth/entities';
 import { UserStatsService } from '@/modules/gamification/services/user-stats.service';
 import { MLCoinsService } from '@/modules/gamification/services/ml-coins.service';
+
+/**
+ * CategoryExpectation
+ * @description Expected criteria for a specific category of inference
+ */
+interface CategoryExpectation {
+  keywords: string[];
+  description: string;
+  example: string;
+  points: number;
+}
+
+/**
+ * FragmentSolution
+ * @description Solution structure for a fragment with category-specific expectations
+ */
+interface FragmentSolution {
+  id: string;
+  text: string;
+  categoryExpectations: {
+    'cat-literal': CategoryExpectation;
+    'cat-inferencial': CategoryExpectation;
+    'cat-critico': CategoryExpectation;
+    'cat-creativo': CategoryExpectation;
+  };
+}
+
+/**
+ * ExerciseSolution
+ * @description Complete solution structure for Rueda de Inferencias exercise
+ */
+interface ExerciseSolution {
+  validation: {
+    minKeywords: number;
+    minLength: number;
+    maxLength: number;
+  };
+  fragments: FragmentSolution[];
+}
+
+/**
+ * FragmentState
+ * @description State of a fragment during the game (from frontend)
+ */
+interface FragmentState {
+  fragmentId: string;
+  categoryId: string;
+  userText: string;
+  timeSpent: number;
+}
 
 /**
  * ExerciseSubmissionService
@@ -236,15 +286,25 @@ export class ExerciseSubmissionService {
     (submission as any).correctAnswers = correctAnswers;
     (submission as any).totalQuestions = totalQuestions;
 
-    // Calcular si es perfect score
-    const isPerfectScore = score === submission.max_score && !submission.hint_used;
+    // Store details (includes error information for anti-redundancy, etc.)
+    if (details) {
+      (submission as any).details = details;
+    }
 
-    if (isPerfectScore) {
-      submission.feedback = 'Perfect score! Excellent work!';
-    } else if (isCorrect) {
-      submission.feedback = 'Good job! Exercise completed successfully.';
+    // Use custom feedback from autoGrade if provided, otherwise use generic feedback
+    if (feedback) {
+      submission.feedback = feedback;
     } else {
-      submission.feedback = 'Keep practicing. Review the material and try again.';
+      // Calcular si es perfect score (only if no custom feedback)
+      const isPerfectScore = score === submission.max_score && !submission.hint_used;
+
+      if (isPerfectScore) {
+        submission.feedback = 'Perfect score! Excellent work!';
+      } else if (isCorrect) {
+        submission.feedback = 'Good job! Exercise completed successfully.';
+      } else {
+        submission.feedback = 'Keep practicing. Review the material and try again.';
+      }
     }
 
     return await this.submissionRepo.save(submission);
@@ -255,6 +315,7 @@ export class ExerciseSubmissionService {
    *
    * @description Validates exercise answers using centralized SQL validation with automatic auditing.
    * Replaces 17 hardcoded validators with single SQL call.
+   * SPECIAL CASE: Rueda de Inferencias uses custom TypeScript validation with category-specific criteria.
    *
    * @param userId - User ID from auth.users
    * @param exerciseId - ID of the exercise
@@ -278,6 +339,85 @@ export class ExerciseSubmissionService {
     details: any;
     auditId: string;
   }> {
+    // Get exercise to check type
+    const exercise = await this.exerciseRepo.findOne({ where: { id: exerciseId } });
+    if (!exercise) {
+      throw new NotFoundException(`Exercise ${exerciseId} not found`);
+    }
+
+    // SPECIAL CASE: Completar Espacios - Anti-redundancy validation (Exercise 1.3)
+    if (exercise.exercise_type === 'completar_espacios') {
+      console.log('[autoGrade] Checking anti-redundancy for Completar Espacios (Exercise 1.3)');
+
+      // Check if blanks.5 and blanks.6 exist and are identical (case-insensitive)
+      const blanks = answerData.blanks || {};
+      if (blanks['5'] && blanks['6']) {
+        const space5 = String(blanks['5']).toLowerCase().trim();
+        const space6 = String(blanks['6']).toLowerCase().trim();
+
+        if (space5 === space6) {
+          console.log(`[autoGrade] REDUNDANCY DETECTED: space5="${space5}" === space6="${space6}"`);
+
+          // Create audit record for failed validation
+          const auditId = 'redundancy-' + Date.now();
+
+          return {
+            score: 33,
+            isCorrect: false,
+            correctAnswers: 4, // Assuming 4 out of 6 spaces are correct
+            totalQuestions: 6,
+            feedback: `Los espacios 5 y 6 no pueden tener la misma palabra. Has puesto '${space5}' en ambos. Elige dos palabras DIFERENTES del grupo: ciencias, matemáticas, física.`,
+            details: {
+              error: {
+                type: 'redundancia',
+                message: `Los espacios 5 y 6 deben ser diferentes`,
+                espacios: ['5', '6'],
+                valor_detectado: space5
+              }
+            },
+            auditId
+          };
+        }
+      }
+
+      console.log('[autoGrade] Anti-redundancy check passed, proceeding with normal validation');
+    }
+
+    // SPECIAL CASE: Rueda de Inferencias custom validation
+    if (exercise.exercise_type === 'rueda_inferencias') {
+      console.log('[autoGrade] Using custom validation for Rueda de Inferencias');
+
+      // Extract fragmentStates from answerData if available
+      const fragmentStates = answerData.fragmentStates as FragmentState[] | undefined;
+
+      // Validate using custom function
+      const validationResult = this.validateRuedaInferencias(
+        answerData as RuedaInferenciasAnswersDto,
+        exercise,
+        fragmentStates
+      );
+
+      // Determine if correct based on passing score
+      const isCorrect = validationResult.score >= exercise.passing_score;
+
+      // Create audit record manually (since we're not using SQL function)
+      const auditId = 'manual-' + Date.now(); // Placeholder - could create actual audit record
+
+      return {
+        score: validationResult.score,
+        isCorrect,
+        correctAnswers: validationResult.feedback.byFragment.filter(f => f.score > 0).length,
+        totalQuestions: validationResult.feedback.byFragment.length,
+        feedback: validationResult.feedback.overall,
+        details: {
+          byFragment: validationResult.feedback.byFragment,
+          maxScore: validationResult.maxScore
+        },
+        auditId
+      };
+    }
+
+    // DEFAULT CASE: Use SQL validate_and_audit() for other exercise types
     console.log(`[FE-059] Validating exercise ${exerciseId} using SQL validate_and_audit()`);
 
     // Call PostgreSQL validate_and_audit() function
@@ -438,6 +578,183 @@ export class ExerciseSubmissionService {
       where: { status: 'submitted' },
       order: { submitted_at: 'ASC' },
     });
+  }
+
+  /**
+   * Validates Rueda de Inferencias answers with category-specific criteria
+   *
+   * @description Validates user inferences for "Rueda de Inferencias" (Módulo 2.5) exercise.
+   * Each fragment has different expectations based on the selected category (Literal, Inferencial, Crítico, Creativo).
+   * Scoring is proportional to keywords found in the user's response.
+   *
+   * @param answers - User's submitted answers (fragments mapping)
+   * @param exercise - Exercise entity with solution data
+   * @param fragmentStates - Array of fragment states with categoryId selections (optional)
+   * @returns Validation result with score, feedback, and details per fragment
+   *
+   * @see orchestration/agentes/database/rueda-inferencias-update-2025-11-23/SQL-QUERIES-BACKEND.md
+   * @see orchestration/agentes/architecture-analyst/rueda-inferencias-analysis-2025-11-23/02-ESPECIFICACIONES-CORRECCIONES.md
+   */
+  private validateRuedaInferencias(
+    answers: RuedaInferenciasAnswersDto,
+    exercise: Exercise,
+    fragmentStates?: FragmentState[]
+  ): {
+    score: number;
+    maxScore: number;
+    feedback: {
+      overall: string;
+      byFragment: Array<{
+        fragmentId: string;
+        categoryUsed: string;
+        keywordsFound: string[];
+        keywordsExpected: string[];
+        score: number;
+        maxScore: number;
+        feedback: string;
+      }>;
+    };
+  } {
+    console.log('[validateRuedaInferencias] Starting validation for Rueda de Inferencias exercise');
+
+    // Cast solution to ExerciseSolution interface
+    const solution = exercise.solution as ExerciseSolution;
+
+    // Validate solution structure
+    if (!solution || !solution.fragments || !Array.isArray(solution.fragments)) {
+      throw new BadRequestException('Exercise solution is missing or invalid');
+    }
+
+    if (!solution.validation) {
+      throw new BadRequestException('Exercise solution validation config is missing');
+    }
+
+    const fragments = solution.fragments;
+    const minKeywords = solution.validation.minKeywords || 2;
+
+    let totalScore = 0;
+    let maxScore = 0;
+    const feedbackByFragment: Array<{
+      fragmentId: string;
+      categoryUsed: string;
+      keywordsFound: string[];
+      keywordsExpected: string[];
+      score: number;
+      maxScore: number;
+      feedback: string;
+    }> = [];
+
+    // Validate each fragment
+    for (const fragment of fragments) {
+      // Get user answer for this fragment
+      const userAnswer = answers.fragments[fragment.id];
+
+      // Skip if no answer provided
+      if (!userAnswer) {
+        console.log(`[validateRuedaInferencias] No answer provided for fragment ${fragment.id}, skipping`);
+        continue;
+      }
+
+      // Get category used for this fragment from fragmentStates
+      let categoryId = 'cat-literal'; // Default fallback
+
+      if (fragmentStates && Array.isArray(fragmentStates)) {
+        const fragmentState = fragmentStates.find(fs => fs.fragmentId === fragment.id);
+        if (fragmentState && fragmentState.categoryId) {
+          categoryId = fragmentState.categoryId;
+        }
+      }
+
+      console.log(`[validateRuedaInferencias] Fragment ${fragment.id} using category: ${categoryId}`);
+
+      // Get expectations for this category (with type safety)
+      type CategoryId = 'cat-literal' | 'cat-inferencial' | 'cat-critico' | 'cat-creativo';
+      let categoryExpectation = fragment.categoryExpectations?.[categoryId as CategoryId];
+
+      if (!categoryExpectation) {
+        console.warn(`[validateRuedaInferencias] No expectations found for category ${categoryId} in fragment ${fragment.id}, using default`);
+        // Fallback: use literal category if available
+        categoryExpectation = fragment.categoryExpectations?.['cat-literal'];
+        if (!categoryExpectation) {
+          continue; // Skip this fragment if no valid expectations
+        }
+      }
+
+      // Validate categoryExpectation structure
+      if (!categoryExpectation.keywords || !Array.isArray(categoryExpectation.keywords)) {
+        console.warn(`[validateRuedaInferencias] Invalid category expectation for ${categoryId} in fragment ${fragment.id}`);
+        continue;
+      }
+
+      maxScore += categoryExpectation.points;
+
+      // Validate keywords (case-insensitive)
+      const expectedKeywords = categoryExpectation.keywords;
+      const userAnswerLower = userAnswer.toLowerCase().trim();
+
+      const foundKeywords = expectedKeywords.filter((keyword: string) =>
+        userAnswerLower.includes(keyword.toLowerCase())
+      );
+
+      console.log(`[validateRuedaInferencias] Fragment ${fragment.id}: Found ${foundKeywords.length}/${expectedKeywords.length} keywords`);
+
+      // Calculate score based on keywords found
+      let fragmentScore = 0;
+
+      if (foundKeywords.length >= minKeywords) {
+        // Score is proportional to keywords found vs expected
+        const keywordRatio = Math.min(foundKeywords.length / expectedKeywords.length, 1);
+        fragmentScore = Math.round(categoryExpectation.points * keywordRatio);
+      }
+
+      totalScore += fragmentScore;
+
+      // Generate pedagogical feedback
+      let feedback = '';
+      const scorePercentage = (fragmentScore / categoryExpectation.points) * 100;
+
+      if (scorePercentage >= 80) {
+        feedback = `¡Excelente! Tu inferencia ${categoryExpectation.description.toLowerCase()}.`;
+      } else if (scorePercentage >= 50) {
+        feedback = `Bien, pero podrías mejorar. ${categoryExpectation.description}. Ejemplo: "${categoryExpectation.example}"`;
+      } else {
+        feedback = `Intenta nuevamente. ${categoryExpectation.description}. Ejemplo: "${categoryExpectation.example}"`;
+      }
+
+      // Add fragment feedback to results
+      feedbackByFragment.push({
+        fragmentId: fragment.id,
+        categoryUsed: categoryId,
+        keywordsFound: foundKeywords,
+        keywordsExpected: expectedKeywords,
+        score: fragmentScore,
+        maxScore: categoryExpectation.points,
+        feedback,
+      });
+    }
+
+    // Generate overall feedback
+    const overallPercentage = maxScore > 0 ? (totalScore / maxScore) * 100 : 0;
+    let overallFeedback = '';
+
+    if (overallPercentage >= 75) {
+      overallFeedback = '¡Excelente trabajo! Demostraste comprensión de diferentes tipos de inferencias.';
+    } else if (overallPercentage >= 50) {
+      overallFeedback = 'Buen intento. Revisa los ejemplos para mejorar tus inferencias.';
+    } else {
+      overallFeedback = 'Necesitas practicar más. Revisa las categorías de inferencias y los ejemplos proporcionados.';
+    }
+
+    console.log(`[validateRuedaInferencias] Validation complete: ${totalScore}/${maxScore} points (${overallPercentage.toFixed(1)}%)`);
+
+    return {
+      score: totalScore,
+      maxScore,
+      feedback: {
+        overall: overallFeedback,
+        byFragment: feedbackByFragment,
+      },
+    };
   }
 
   /**

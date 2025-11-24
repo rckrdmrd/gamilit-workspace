@@ -13,6 +13,14 @@ import {
   PreviewImpactDto,
   PreviewImpactResultDto,
   RestoreDefaultsResultDto,
+  ListParametersQueryDto,
+  ParametersListResponseDto,
+  ParameterResponseDto,
+  UpdateParameterDto,
+  UpdateParameterResponseDto,
+  MayaRanksResponseDto,
+  UpdateMayaRankDto,
+  UpdateMayaRankResponseDto,
 } from '../dto/gamification-config';
 
 // Default gamification configuration (Level 1 - hardcoded)
@@ -611,5 +619,396 @@ export class GamificationConfigService {
     await this.systemSettingRepo.save(setting);
 
     this.logger.debug(`Updated setting ${key} = ${value} by admin ${adminId}`);
+  }
+
+  // =====================================================
+  // US-AE-005: NEW METHODS FOR PARAMETER-BASED ENDPOINTS
+  // =====================================================
+
+  /**
+   * List all gamification parameters with optional category filter
+   *
+   * @param query Query with optional category filter
+   * @returns List of parameters matching the filter
+   */
+  async listParameters(
+    query: ListParametersQueryDto,
+  ): Promise<ParametersListResponseDto> {
+    // Ensure defaults exist
+    await this.ensureDefaultSettings();
+
+    // Build where clause
+    const where: any = { setting_category: 'gamification' };
+    if (query.category) {
+      where.setting_subcategory = query.category;
+    }
+
+    // Fetch parameters
+    const parameters = await this.systemSettingRepo.find({ where });
+
+    // Map to response format
+    const parameterDtos: ParameterResponseDto[] = parameters.map((param) =>
+      this.mapToParameterResponse(param),
+    );
+
+    this.logger.log(
+      `Listed ${parameterDtos.length} parameters${query.category ? ` (category: ${query.category})` : ''}`,
+    );
+
+    return {
+      parameters: parameterDtos,
+      total: parameterDtos.length,
+      filtered_by_category: query.category,
+    };
+  }
+
+  /**
+   * Get a single parameter by ID
+   *
+   * @param id Parameter UUID
+   * @returns Parameter details
+   * @throws NotFoundException if parameter doesn't exist
+   */
+  async getParameterById(id: string): Promise<ParameterResponseDto> {
+    const parameter = await this.systemSettingRepo.findOne({
+      where: { id, setting_category: 'gamification' },
+    });
+
+    if (!parameter) {
+      throw new NotFoundException(`Parameter with ID ${id} not found`);
+    }
+
+    this.logger.debug(`Retrieved parameter ${parameter.setting_key} (${id})`);
+
+    return this.mapToParameterResponse(parameter);
+  }
+
+  /**
+   * Update a single parameter by ID
+   *
+   * @param id Parameter UUID
+   * @param dto New value
+   * @param adminId Admin user ID
+   * @returns Update result with old and new values
+   * @throws NotFoundException if parameter doesn't exist
+   * @throws BadRequestException if validation fails
+   */
+  async updateParameterById(
+    id: string,
+    dto: UpdateParameterDto,
+    adminId: string,
+  ): Promise<UpdateParameterResponseDto> {
+    // Fetch parameter
+    const parameter = await this.systemSettingRepo.findOne({
+      where: { id, setting_category: 'gamification' },
+    });
+
+    if (!parameter) {
+      throw new NotFoundException(`Parameter with ID ${id} not found`);
+    }
+
+    // Check if readonly or system
+    if (parameter.is_system || parameter.is_readonly) {
+      throw new BadRequestException(
+        `Parameter ${parameter.setting_key} is ${parameter.is_system ? 'system' : 'readonly'} and cannot be modified`,
+      );
+    }
+
+    // Validate value
+    this.validateParameterValue(parameter, dto.value);
+
+    // Store old value
+    const oldValue = parameter.setting_value;
+
+    // Update value
+    parameter.setting_value = dto.value;
+    parameter.updated_by = adminId;
+    await this.systemSettingRepo.save(parameter);
+
+    this.logger.log(
+      `Parameter ${parameter.setting_key} updated from "${oldValue}" to "${dto.value}" by admin ${adminId}`,
+    );
+
+    return {
+      message: 'Parameter updated successfully',
+      parameter: {
+        id: parameter.id,
+        setting_key: parameter.setting_key,
+        old_value: oldValue,
+        new_value: dto.value,
+        updated_at: parameter.updated_at.toISOString(),
+        updated_by: adminId,
+      },
+    };
+  }
+
+  /**
+   * Get Maya ranks configuration
+   *
+   * GAP-FE-004: Updated to query maya_ranks table directly instead of system_settings.
+   * Returns complete rank metadata including multipliers, colors, icons, perks, etc.
+   *
+   * @returns Maya ranks with complete metadata (13 fields per rank)
+   */
+  async getMayaRanks(): Promise<MayaRanksResponseDto> {
+    try {
+      // Query ranks directly from gamification_system.maya_ranks table
+      // Use raw query to access cross-schema table
+      const ranks = await this.systemSettingRepo.query(`
+        SELECT
+          id,
+          display_name as name,
+          rank_order as level,
+          min_xp_required as "minXp",
+          max_xp_threshold as "maxXp",
+          xp_multiplier as "multiplierXp",
+          COALESCE(xp_multiplier, 1.0) as "multiplierMlCoins",
+          ml_coins_bonus as "bonusMlCoins",
+          COALESCE(color, '#6B7280') as color,
+          icon,
+          description,
+          COALESCE(perks, '[]'::jsonb) as perks,
+          is_active as "isActive",
+          rank_order as "order"
+        FROM gamification_system.maya_ranks
+        WHERE is_active = true
+        ORDER BY rank_order ASC
+      `);
+
+      // Parse perks JSONB to array
+      const ranksWithParsedPerks = ranks.map((rank: any) => ({
+        id: rank.id,
+        name: rank.name,
+        level: rank.level,
+        minXp: parseInt(rank.minXp || '0', 10),
+        maxXp: rank.maxXp ? parseInt(rank.maxXp, 10) : null,
+        multiplierXp: parseFloat(rank.multiplierXp || '1.0'),
+        multiplierMlCoins: parseFloat(rank.multiplierMlCoins || '1.0'),
+        bonusMlCoins: parseInt(rank.bonusMlCoins || '0', 10),
+        color: rank.color,
+        icon: rank.icon,
+        description: rank.description || `Rank nivel ${rank.level}`,
+        perks: Array.isArray(rank.perks) ? rank.perks : (typeof rank.perks === 'string' ? JSON.parse(rank.perks) : []),
+        isActive: rank.isActive,
+        order: rank.order,
+      }));
+
+      this.logger.log(`Retrieved ${ranksWithParsedPerks.length} Maya ranks from database`);
+
+      // Get last updated info from system_settings (fallback for metadata)
+      const ranksSetting = await this.systemSettingRepo.findOne({
+        where: { setting_key: 'gamification.ranks.thresholds' },
+      });
+
+      return {
+        ranks: ranksWithParsedPerks,
+        total: ranksWithParsedPerks.length,
+        setting_key: ranksSetting?.setting_key || 'gamification.ranks.thresholds',
+        setting_id: ranksSetting?.id || '',
+        last_updated: ranksSetting?.updated_at?.toISOString() || new Date().toISOString(),
+        updated_by: ranksSetting?.updated_by,
+      };
+    } catch (error) {
+      this.logger.error('Error fetching Maya ranks from database', error);
+      throw new NotFoundException('Failed to load Maya ranks configuration. Verify gamification_system.maya_ranks table exists.');
+    }
+  }
+
+  /**
+   * Update a Maya rank threshold by rank name
+   *
+   * @param rankName Rank name (novice, beginner, etc.)
+   * @param dto New threshold
+   * @param adminId Admin user ID
+   * @returns Update result with all ranks
+   * @throws NotFoundException if ranks setting doesn't exist
+   * @throws BadRequestException if validation fails (overlapping ranges)
+   */
+  async updateMayaRank(
+    rankName: string,
+    dto: UpdateMayaRankDto,
+    adminId: string,
+  ): Promise<UpdateMayaRankResponseDto> {
+    // Validate rank name
+    const validRanks = ['novice', 'beginner', 'intermediate', 'advanced', 'expert'];
+    if (!validRanks.includes(rankName)) {
+      throw new BadRequestException(
+        `Invalid rank name. Must be one of: ${validRanks.join(', ')}`,
+      );
+    }
+
+    // Fetch ranks setting
+    const ranksSetting = await this.systemSettingRepo.findOne({
+      where: { setting_key: 'gamification.ranks.thresholds' },
+    });
+
+    if (!ranksSetting) {
+      throw new NotFoundException('Maya ranks configuration not found');
+    }
+
+    // Check if readonly or system
+    if (ranksSetting.is_system || ranksSetting.is_readonly) {
+      throw new BadRequestException(
+        'Ranks configuration is readonly and cannot be modified',
+      );
+    }
+
+    // Parse current thresholds
+    let thresholds: Record<string, number>;
+    try {
+      thresholds = JSON.parse(ranksSetting.setting_value);
+    } catch (error) {
+      this.logger.error('Failed to parse ranks thresholds', error);
+      throw new BadRequestException('Invalid ranks configuration');
+    }
+
+    const oldThreshold = thresholds[rankName];
+
+    // Update threshold
+    thresholds[rankName] = dto.min_xp;
+
+    // Validate no overlapping ranges (thresholds must be in ascending order)
+    const orderedThresholds = validRanks.map((name) => thresholds[name]);
+    for (let i = 1; i < orderedThresholds.length; i++) {
+      if (orderedThresholds[i] <= orderedThresholds[i - 1]) {
+        throw new BadRequestException(
+          `Invalid threshold. Rank thresholds must be in ascending order. ` +
+            `${validRanks[i - 1]}: ${orderedThresholds[i - 1]}, ${validRanks[i]}: ${orderedThresholds[i]}`,
+        );
+      }
+    }
+
+    // Save updated thresholds
+    ranksSetting.setting_value = JSON.stringify(thresholds);
+    ranksSetting.updated_by = adminId;
+    await this.systemSettingRepo.save(ranksSetting);
+
+    // Build all ranks for response
+    const ranks = validRanks.map((name, index) => {
+      const minXp = thresholds[name];
+      const nextRankMinXp =
+        index < validRanks.length - 1 ? thresholds[validRanks[index + 1]] : null;
+
+      return {
+        rank_name: name,
+        min_xp: minXp,
+        max_xp: nextRankMinXp !== null ? nextRankMinXp - 1 : null,
+        rank_order: index,
+      };
+    });
+
+    this.logger.log(
+      `Maya rank "${rankName}" updated from ${oldThreshold} to ${dto.min_xp} by admin ${adminId}`,
+    );
+
+    return {
+      message: 'Maya rank threshold updated successfully',
+      rank: {
+        rank_name: rankName,
+        old_threshold: oldThreshold,
+        new_threshold: dto.min_xp,
+        updated_at: ranksSetting.updated_at.toISOString(),
+      },
+      all_ranks: ranks,
+    };
+  }
+
+  /**
+   * Map SystemSetting entity to ParameterResponseDto
+   * @private
+   */
+  private mapToParameterResponse(
+    setting: SystemSetting,
+  ): ParameterResponseDto {
+    return {
+      id: setting.id,
+      setting_key: setting.setting_key,
+      setting_category: setting.setting_category || 'gamification',
+      setting_subcategory: setting.setting_subcategory,
+      setting_value: setting.setting_value,
+      value_type: setting.value_type,
+      default_value: setting.default_value,
+      display_name: setting.display_name,
+      description: setting.description,
+      help_text: setting.help_text,
+      is_public: setting.is_public,
+      is_readonly: setting.is_readonly,
+      is_system: setting.is_system,
+      min_value: setting.min_value,
+      max_value: setting.max_value,
+      allowed_values: setting.allowed_values,
+      validation_rules: setting.validation_rules,
+      metadata: setting.metadata,
+      created_at: setting.created_at.toISOString(),
+      updated_at: setting.updated_at.toISOString(),
+      created_by: setting.created_by,
+      updated_by: setting.updated_by,
+    };
+  }
+
+  /**
+   * Validate parameter value against constraints
+   * @private
+   * @throws BadRequestException if validation fails
+   */
+  private validateParameterValue(
+    parameter: SystemSetting,
+    value: string,
+  ): void {
+    // Validate numeric values
+    if (parameter.value_type === 'number') {
+      const numValue = parseFloat(value);
+
+      if (isNaN(numValue)) {
+        throw new BadRequestException(
+          `Invalid value for ${parameter.setting_key}. Expected a number.`,
+        );
+      }
+
+      // Check min/max constraints
+      if (parameter.min_value !== null && parameter.min_value !== undefined && numValue < parameter.min_value) {
+        throw new BadRequestException(
+          `Value ${numValue} is below minimum allowed value ${parameter.min_value} for ${parameter.setting_key}`,
+        );
+      }
+
+      if (parameter.max_value !== null && parameter.max_value !== undefined && numValue > parameter.max_value) {
+        throw new BadRequestException(
+          `Value ${numValue} exceeds maximum allowed value ${parameter.max_value} for ${parameter.setting_key}`,
+        );
+      }
+    }
+
+    // Validate boolean values
+    if (parameter.value_type === 'boolean') {
+      if (value !== 'true' && value !== 'false') {
+        throw new BadRequestException(
+          `Invalid value for ${parameter.setting_key}. Expected "true" or "false".`,
+        );
+      }
+    }
+
+    // Validate JSON values
+    if (parameter.value_type === 'json') {
+      try {
+        JSON.parse(value);
+      } catch (error) {
+        throw new BadRequestException(
+          `Invalid JSON value for ${parameter.setting_key}`,
+        );
+      }
+    }
+
+    // Check allowed values
+    if (
+      parameter.allowed_values &&
+      parameter.allowed_values.length > 0 &&
+      !parameter.allowed_values.includes(value)
+    ) {
+      throw new BadRequestException(
+        `Value "${value}" is not allowed for ${parameter.setting_key}. ` +
+          `Allowed values: ${parameter.allowed_values.join(', ')}`,
+      );
+    }
   }
 }

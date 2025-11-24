@@ -1,0 +1,590 @@
+# Matriz de Páginas por Portal - Frontend GAMILIT
+# Fecha: 2025-11-23
+# Propósito: Comparación esperado vs real de páginas implementadas por portal
+
+portales:
+  - nombre: "Student Portal"
+    esperado: 11
+    implementado: 23
+    estado: completo_expandido
+    porcentaje: 209
+
+    paginas_core:
+      - nombre: "Dashboard"
+        ruta: "/dashboard"
+        archivo: "DashboardComplete.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "StatsGrid"
+          - "QuickActionsPanel"
+          - "MissionsPanel"
+          - "RecentActivityFeed"
+          - "BottomNavigation"
+        integracion_gamificacion: si
+        usa_useUserGamification: si
+
+      - nombre: "Módulos"
+        ruta: "/progress"
+        archivo: "MyProgressPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "ProgressCard"
+          - "ProgressFilter"
+        integracion_gamificacion: si
+
+      - nombre: "Detalle de Módulo"
+        ruta: "/modules/:id"
+        archivo: "ModuleDetailPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "ExerciseAttemptCard"
+        integracion_gamificacion: si
+        usa_useUserGamification: si
+
+      - nombre: "Ejercicio"
+        ruta: "/exercise/:id"
+        archivo: "ExercisePage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "ExerciseContainer"
+          - "FeedbackModal"
+          - "HintSystem"
+          - "ScoreDisplay"
+          - "TimerWidget"
+          - "ProgressTracker"
+          - "UnderConstructionExercise"
+        integracion_gamificacion: si
+        usa_useUserGamification: si
+        nota: "Componente crítico con lazy loading de mecánicas"
+
+      - nombre: "Perfil"
+        ruta: "/profile"
+        archivo: "EnhancedProfilePage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "AchievementCard"
+          - "UserStatsCard"
+        integracion_gamificacion: si
+        usa_useUserGamification: si
+
+      - nombre: "Misiones"
+        ruta: "/missions"
+        archivo: "MissionsPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "MissionTabs"
+          - "MissionGrid"
+          - "ActiveMissionTracker"
+          - "RewardsPreview"
+        integracion_gamificacion: si
+        usa_useUserGamification: si
+
+      - nombre: "Shop"
+        ruta: "/shop"
+        archivo: "ShopPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "DetectiveCard"
+          - "Modal"
+        integracion_gamificacion: si
+        usa_useUserGamification: si
+        hooks:
+          - "useCoins"
+
+      - nombre: "Inventario"
+        ruta: "/inventory"
+        archivo: "InventoryPage.tsx"
+        estado: funcional
+        tests: no
+        integracion_gamificacion: si
+        usa_useUserGamification: si
+
+      - nombre: "Logros"
+        ruta: "/achievements"
+        archivo: "AchievementsPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "AchievementCard"
+          - "AchievementFilters"
+          - "AchievementDetailModal"
+          - "CelebrationModal"
+          - "AchievementToast"
+        integracion_gamificacion: si
+        usa_useUserGamification: si
+
+      - nombre: "Leaderboard"
+        ruta: "/leaderboard"
+        archivo: "LeaderboardPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "LeaderboardTabs"
+          - "LeaderboardTable"
+        integracion_gamificacion: si
+        nota: "Hay 2 versiones: LeaderboardPage y NewLeaderboardPage"
+
+      - nombre: "Hub de Gamificación"
+        ruta: "/gamification"
+        archivo: "GamificationPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "GamificationHero"
+          - "RanksSection"
+          - "MLCoinsSection"
+          - "AchievementsPreview"
+          - "LeaderboardPreview"
+          - "StreaksMissionsSection"
+        integracion_gamificacion: si
+        usa_useUserGamification: si
+
+    paginas_configuracion:
+      - nombre: "Ajustes"
+        ruta: "/settings"
+        archivo: "SettingsPage.tsx"
+        estado: funcional
+        tests: no
+
+      - nombre: "Notificaciones"
+        ruta: "/notifications"
+        archivo: "NotificationPreferencesPage.tsx"
+        estado: funcional
+        tests: no
+
+      - nombre: "Dispositivos"
+        ruta: "/devices"
+        archivo: "DeviceManagementSection.tsx"
+        estado: funcional
+        tests: no
+
+    paginas_sociales:
+      - nombre: "Amigos"
+        ruta: "/friends"
+        archivo: "FriendsPage.tsx"
+        estado: funcional
+        tests: no
+        integracion_gamificacion: si
+
+      - nombre: "Gremios"
+        ruta: "/guilds"
+        archivo: "GuildsPage.tsx"
+        estado: funcional
+        tests: no
+        integracion_gamificacion: si
+        usa_useUserGamification: si
+
+    paginas_auth:
+      - nombre: "Login"
+        ruta: "/login"
+        archivo: "LoginPage.tsx"
+        estado: funcional
+        tests: si
+        componentes:
+          - "LoginForm"
+
+      - nombre: "Register"
+        ruta: "/register"
+        archivo: "RegisterPage.tsx"
+        estado: funcional
+        tests: si
+        componentes:
+          - "RegisterForm"
+
+      - nombre: "Forgot Password"
+        ruta: "/forgot-password"
+        archivo: "ForgotPasswordPage.tsx"
+        estado: funcional
+        tests: no
+
+      - nombre: "Reset Password"
+        ruta: "/reset-password"
+        archivo: "PasswordResetPage.tsx"
+        estado: funcional
+        tests: no
+
+      - nombre: "Verify Email"
+        ruta: "/verify-email"
+        archivo: "EmailVerificationPage.tsx"
+        estado: funcional
+        tests: si
+
+      - nombre: "Two Factor Auth"
+        ruta: "/2fa"
+        archivo: "TwoFactorAuthPage.tsx"
+        estado: funcional
+        tests: no
+
+      - nombre: "Not Found"
+        ruta: "/404"
+        archivo: "NotFoundPage.tsx"
+        estado: funcional
+        tests: no
+
+  - nombre: "Teacher Portal"
+    esperado: 8
+    implementado: 13
+    estado: completo_expandido
+    porcentaje: 162
+
+    paginas:
+      - nombre: "Dashboard"
+        ruta: "/teacher/dashboard"
+        archivo: "TeacherDashboardPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "TeacherDashboardHero"
+          - "ClassroomsGrid"
+          - "ClassroomCard"
+          - "PendingSubmissionsList"
+          - "RecentAssignmentsList"
+          - "StudentAlerts"
+          - "QuickActionsPanel"
+
+      - nombre: "Clases"
+        ruta: "/teacher/classes"
+        archivo: "TeacherClassesPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "CreateClassroomModal"
+
+      - nombre: "Estudiantes"
+        ruta: "/teacher/students"
+        archivo: "TeacherStudentsPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "StudentMonitoringPanel"
+          - "StudentStatusCard"
+          - "StudentDetailModal"
+
+      - nombre: "Asignaciones"
+        ruta: "/teacher/assignments"
+        archivo: "TeacherAssignmentsPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "AssignmentCreator"
+          - "AssignmentWizard"
+          - "AssignmentList"
+          - "CreateAssignmentModal"
+          - "GradeSubmissionModal"
+
+      - nombre: "Analytics"
+        ruta: "/teacher/analytics"
+        archivo: "TeacherAnalyticsPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "LearningAnalyticsDashboard"
+          - "EngagementMetricsChart"
+          - "PerformanceInsightsPanel"
+
+      - nombre: "Progreso"
+        ruta: "/teacher/progress"
+        archivo: "TeacherProgressPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "ClassProgressDashboard"
+          - "ModuleCompletionCard"
+          - "ProgressChart"
+
+      - nombre: "Reportes"
+        ruta: "/teacher/reports"
+        archivo: "TeacherReportsPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "ReportGenerator"
+          - "ReportTemplateSelector"
+
+      - nombre: "Contenido"
+        ruta: "/teacher/content"
+        archivo: "TeacherContentPage.tsx"
+        estado: funcional
+        tests: no
+
+      - nombre: "Gamificación"
+        ruta: "/teacher/gamification"
+        archivo: "TeacherGamificationPage.tsx"
+        estado: funcional
+        tests: no
+
+      - nombre: "Alertas"
+        ruta: "/teacher/alerts"
+        archivo: "TeacherAlertsPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "AlertCard"
+
+      - nombre: "Monitoreo"
+        ruta: "/teacher/monitoring"
+        archivo: "TeacherMonitoringPage.tsx"
+        estado: funcional
+        tests: no
+
+      - nombre: "Comunicación"
+        ruta: "/teacher/communication"
+        archivo: "TeacherCommunicationPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "ParentCommunicationHub"
+
+      - nombre: "Recursos"
+        ruta: "/teacher/resources"
+        archivo: "TeacherResourcesPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "ResourceSharingPanel"
+
+  - nombre: "Admin Portal"
+    esperado: 6
+    implementado: 11
+    estado: completo_expandido
+    porcentaje: 183
+
+    paginas:
+      - nombre: "Dashboard"
+        ruta: "/admin/dashboard"
+        archivo: "AdminDashboardPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "AdminDashboardHero"
+          - "SystemMetricsGrid"
+          - "UserActivityChart"
+          - "QuickActionsGrid"
+          - "SystemAlertsPanel"
+          - "RecentActionsTable"
+          - "UserManagementTable"
+          - "OrganizationsTable"
+          - "SystemLogsViewer"
+
+      - nombre: "Usuarios"
+        ruta: "/admin/users"
+        archivo: "AdminUsersPage.tsx"
+        estado: funcional
+        tests: si
+        componentes:
+          - "UserDetailModal"
+          - "BulkActionsPanel"
+          - "DeactivateUserModal"
+
+      - nombre: "Instituciones"
+        ruta: "/admin/institutions"
+        archivo: "AdminInstitutionsPage.tsx"
+        estado: funcional
+        tests: no
+
+      - nombre: "Roles"
+        ruta: "/admin/roles"
+        archivo: "AdminRolesPage.tsx"
+        estado: funcional
+        tests: no
+
+      - nombre: "Contenido"
+        ruta: "/admin/content"
+        archivo: "AdminContentPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "ExerciseContentEditor"
+          - "MediaLibraryManager"
+          - "ContentVersionControl"
+
+      - nombre: "Gamificación"
+        ruta: "/admin/gamification"
+        archivo: "AdminGamificationPage.tsx"
+        estado: funcional
+        tests: no
+
+      - nombre: "Aprobaciones"
+        ruta: "/admin/approvals"
+        archivo: "AdminApprovalsPage.tsx"
+        estado: funcional
+        tests: no
+
+      - nombre: "Monitoreo"
+        ruta: "/admin/monitoring"
+        archivo: "AdminMonitoringPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "SystemPerformanceDashboard"
+          - "SystemHealthIndicators"
+          - "ErrorTrackingPanel"
+          - "UserActivityMonitor"
+          - "MetricsChart"
+
+      - nombre: "Reportes"
+        ruta: "/admin/reports"
+        archivo: "AdminReportsPage.tsx"
+        estado: funcional
+        tests: no
+
+      - nombre: "Configuración"
+        ruta: "/admin/settings"
+        archivo: "AdminSettingsPage.tsx"
+        estado: funcional
+        tests: no
+
+      - nombre: "Avanzado"
+        ruta: "/admin/advanced"
+        archivo: "AdminAdvancedPage.tsx"
+        estado: funcional
+        tests: no
+        componentes:
+          - "ABTestingDashboard"
+          - "FeatureFlagControls"
+          - "TenantManagementPanel"
+          - "EconomicInterventionPanel"
+
+# Resumen General
+resumen:
+  total_paginas_esperadas: 25
+  total_paginas_implementadas: 47
+  porcentaje_completitud: 188
+  estado: "COMPLETO con expansión significativa"
+
+  por_portal:
+    student:
+      esperado: 11
+      real: 23
+      estado: "✅ Completo (209%)"
+      categorias:
+        core: 11
+        configuracion: 3
+        sociales: 2
+        auth: 7
+
+    teacher:
+      esperado: 8
+      real: 13
+      estado: "✅ Completo (162%)"
+
+    admin:
+      esperado: 6
+      real: 11
+      estado: "✅ Completo (183%)"
+
+# Integración de Gamificación por Portal
+integracion_gamificacion:
+  student:
+    paginas_con_gamificacion: 11
+    paginas_usan_useUserGamification: 8
+    porcentaje: "48% de páginas usan gamificación"
+
+  teacher:
+    paginas_con_gamificacion: 2
+    paginas_usan_useUserGamification: 0
+    porcentaje: "15% de páginas usan gamificación"
+
+  admin:
+    paginas_con_gamificacion: 1
+    paginas_usan_useUserGamification: 0
+    porcentaje: "9% de páginas usan gamificación"
+
+# Cobertura de Tests
+cobertura_tests:
+  student:
+    paginas_con_tests: 4
+    paginas_sin_tests: 19
+    porcentaje: 17
+
+  teacher:
+    paginas_con_tests: 0
+    paginas_sin_tests: 13
+    porcentaje: 0
+
+  admin:
+    paginas_con_tests: 1
+    paginas_sin_tests: 10
+    porcentaje: 9
+
+  global:
+    paginas_con_tests: 5
+    paginas_sin_tests: 42
+    porcentaje_coverage: 11
+
+# Gaps Identificados
+gaps:
+  - id: "PG-GAP-001"
+    descripcion: "89% de páginas sin tests unitarios"
+    prioridad: "P2 (Media)"
+    estimacion: "10-13 días"
+    afectados:
+      - "42 páginas sin tests"
+
+  - id: "PG-GAP-002"
+    descripcion: "No hay navegación directa entre portales"
+    prioridad: "P2 (Media)"
+    estimacion: "1 día"
+    solucion: "Implementar role switcher para usuarios multi-rol"
+
+  - id: "PG-GAP-003"
+    descripcion: "Portales teacher y admin tienen baja integración de gamificación"
+    prioridad: "P3 (Baja)"
+    estimacion: "2-3 días"
+    nota: "Por diseño, gamificación es principalmente para estudiantes"
+
+# Componentes Reutilizables Destacados
+componentes_compartidos:
+  layout:
+    - "GamifiedHeader"
+    - "GamilitSidebar"
+    - "ResponsiveLayout"
+
+  base:
+    - "DetectiveCard"
+    - "EnhancedCard"
+    - "DetectiveButton"
+    - "ColorfulCard"
+    - "ProgressBar"
+    - "RankBadge"
+    - "StatusBadge"
+    - "Toast"
+    - "LoadingOverlay"
+
+  mechanics:
+    - "ExerciseContainer"
+    - "FeedbackModal"
+    - "HintSystem"
+    - "ScoreDisplay"
+    - "TimerWidget"
+    - "ProgressTracker"
+
+  gamification:
+    - "GamificationHero"
+    - "RanksSection"
+    - "MLCoinsSection"
+    - "AchievementsPreview"
+    - "LeaderboardPreview"
+    - "StreaksMissionsSection"
+
+  common:
+    - "Modal"
+    - "ConfirmDialog"
+    - "FormField"
+    - "DataTable"
+
+# Notas Finales
+notas:
+  - "Todos los portales superan las expectativas con funcionalidades adicionales"
+  - "Portal Student es el más desarrollado con 23 páginas (vs 11 esperadas)"
+  - "Integración de gamificación es excelente en portal Student"
+  - "89% de páginas necesitan tests unitarios"
+  - "Componentes reutilizables bien diseñados y ampliamente adoptados"
+  - "Navegación entre portales requiere re-login (mejorable)"

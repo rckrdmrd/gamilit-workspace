@@ -375,7 +375,7 @@ export const submitExercise = async (
       return await mockSubmitExercise({ exerciseId, userId, answers, startedAt: Date.now() });
     }
 
-    // Backend endpoint: POST /api/v1/progress/submissions/submit
+    // Backend endpoint: POST /api/progress/submissions/submit
     // Expected format: { userId, exerciseId, answers }
     const backendPayload = {
       userId,
@@ -384,7 +384,7 @@ export const submitExercise = async (
     };
 
     const { data } = await apiClient.post<ApiResponse<SubmitExerciseResponse>>(
-      '/v1/progress/submissions/submit',
+      '/progress/submissions/submit',
       backendPayload
     );
 
