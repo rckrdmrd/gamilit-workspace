@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
+import { useUserGamification } from '@/shared/hooks/useUserGamification';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { DataTable, Column } from '@shared/components/common/DataTable';
@@ -16,6 +17,7 @@ import type { Organization } from '../types';
  */
 export default function AdminInstitutionsPage() {
   const { user, logout } = useAuth();
+  const { gamificationData } = useUserGamification(user?.id);
 
   const {
     organizations,
@@ -36,16 +38,6 @@ export default function AdminInstitutionsPage() {
     name: '',
     plan: 'free' as 'free' | 'pro' | 'enterprise',
   });
-
-  // TODO: Replace with useUserGamification hook when backend endpoint is ready
-  const gamificationData = {
-    userId: user?.id || 'mock-admin-id',
-    level: 20,
-    totalXP: 5000,
-    mlCoins: 2500,
-    rank: 'Super Admin',
-    achievements: ['admin_master', 'org_manager'],
-  };
 
   const handleLogout = () => {
     logout();
@@ -140,7 +132,7 @@ export default function AdminInstitutionsPage() {
           enterprise: 'bg-purple-500/20 text-purple-500',
         };
         return (
-          <span className={`px-2 py-1 rounded-lg text-xs font-medium ${planColors[row.plan]}`}>
+          <span className={`rounded-lg px-2 py-1 text-xs font-medium ${planColors[row.plan]}`}>
             {row.plan.toUpperCase()}
           </span>
         );
@@ -157,8 +149,12 @@ export default function AdminInstitutionsPage() {
           suspended: 'bg-red-500/20 text-red-500',
         };
         return (
-          <span className={`px-2 py-1 rounded-lg text-xs font-medium ${statusColors[row.status]}`}>
-            {row.status === 'active' ? 'Activo' : row.status === 'inactive' ? 'Inactivo' : 'Suspendido'}
+          <span className={`rounded-lg px-2 py-1 text-xs font-medium ${statusColors[row.status]}`}>
+            {row.status === 'active'
+              ? 'Activo'
+              : row.status === 'inactive'
+                ? 'Inactivo'
+                : 'Suspendido'}
           </span>
         );
       },
@@ -169,7 +165,7 @@ export default function AdminInstitutionsPage() {
       sortable: true,
       render: (row) => (
         <div className="flex items-center gap-2">
-          <Users className="w-4 h-4 text-gray-400" />
+          <Users className="h-4 w-4 text-gray-400" />
           <span className="text-detective-text">{row.userCount}</span>
         </div>
       ),
@@ -190,20 +186,20 @@ export default function AdminInstitutionsPage() {
               e.stopPropagation();
               openEditModal(row);
             }}
-            className="p-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-500 rounded-lg transition-colors"
+            className="rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors hover:bg-blue-500/30"
             title="Editar"
           >
-            <Edit className="w-4 h-4" />
+            <Edit className="h-4 w-4" />
           </button>
           <button
             onClick={(e) => {
               e.stopPropagation();
               openFeaturesModal(row);
             }}
-            className="p-2 bg-purple-500/20 hover:bg-purple-500/30 text-purple-500 rounded-lg transition-colors"
+            className="rounded-lg bg-purple-500/20 p-2 text-purple-500 transition-colors hover:bg-purple-500/30"
             title="Feature Flags"
           >
-            <Settings className="w-4 h-4" />
+            <Settings className="h-4 w-4" />
           </button>
           <button
             onClick={(e) => {
@@ -211,10 +207,10 @@ export default function AdminInstitutionsPage() {
               setSelectedOrg(row);
               setIsDeleteDialogOpen(true);
             }}
-            className="p-2 bg-red-500/20 hover:bg-red-500/30 text-red-500 rounded-lg transition-colors"
+            className="rounded-lg bg-red-500/20 p-2 text-red-500 transition-colors hover:bg-red-500/30"
             title="Eliminar"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="h-4 w-4" />
           </button>
         </div>
       ),
@@ -241,7 +237,7 @@ export default function AdminInstitutionsPage() {
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-detective-text">Gestión de Organizaciones</h1>
-          <p className="text-detective-text-secondary mt-1">
+          <p className="mt-1 text-detective-text-secondary">
             Gestiona organizaciones, planes y suscripciones de la plataforma
           </p>
         </div>
@@ -249,14 +245,14 @@ export default function AdminInstitutionsPage() {
         {/* Create Button */}
         <div className="mb-6">
           <DetectiveButton variant="primary" onClick={() => setIsCreateModalOpen(true)}>
-            <Plus className="w-5 h-5" />
+            <Plus className="h-5 w-5" />
             Crear Organización
           </DetectiveButton>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-500">
+          <div className="mb-6 rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-500">
             <p className="font-semibold">Error:</p>
             <p>{error}</p>
           </div>
@@ -264,8 +260,8 @@ export default function AdminInstitutionsPage() {
 
         {/* Loading State */}
         {loading && !organizations.length ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-detective-orange"></div>
+          <div className="py-12 text-center">
+            <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-detective-orange"></div>
             <p className="mt-4 text-detective-text-secondary">Cargando organizaciones...</p>
           </div>
         ) : (
@@ -309,7 +305,7 @@ export default function AdminInstitutionsPage() {
             ]}
             required
           />
-          <div className="flex gap-3 justify-end pt-4">
+          <div className="flex justify-end gap-3 pt-4">
             <DetectiveButton
               variant="secondary"
               onClick={() => {
@@ -319,11 +315,7 @@ export default function AdminInstitutionsPage() {
             >
               Cancelar
             </DetectiveButton>
-            <DetectiveButton
-              variant="primary"
-              onClick={handleCreateOrg}
-              disabled={!formData.name}
-            >
+            <DetectiveButton variant="primary" onClick={handleCreateOrg} disabled={!formData.name}>
               Crear
             </DetectiveButton>
           </div>
@@ -361,7 +353,7 @@ export default function AdminInstitutionsPage() {
             ]}
             required
           />
-          <div className="flex gap-3 justify-end pt-4">
+          <div className="flex justify-end gap-3 pt-4">
             <DetectiveButton
               variant="secondary"
               onClick={() => {
@@ -387,11 +379,11 @@ export default function AdminInstitutionsPage() {
           setSelectedOrg(null);
         }}
         title={`Feature Flags - ${selectedOrg?.name}`}
-
       >
         <div className="space-y-4">
           <p className="text-sm text-gray-400">
-            Plan actual: <span className="font-bold text-detective-text">{selectedOrg?.plan.toUpperCase()}</span>
+            Plan actual:{' '}
+            <span className="font-bold text-detective-text">{selectedOrg?.plan.toUpperCase()}</span>
           </p>
           {availableFeatures.map((feature) => {
             const isEnabled = selectedOrg?.features.includes(feature.key);
@@ -399,14 +391,14 @@ export default function AdminInstitutionsPage() {
             return (
               <label
                 key={feature.key}
-                className={`flex items-center justify-between p-4 rounded-lg border ${
+                className={`flex items-center justify-between rounded-lg border p-4 ${
                   isAvailable
-                    ? 'border-gray-700 bg-detective-bg-secondary cursor-pointer hover:bg-opacity-80'
-                    : 'border-gray-800 bg-gray-900 opacity-50 cursor-not-allowed'
+                    ? 'cursor-pointer border-gray-700 bg-detective-bg-secondary hover:bg-opacity-80'
+                    : 'cursor-not-allowed border-gray-800 bg-gray-900 opacity-50'
                 }`}
               >
                 <div>
-                  <p className="text-detective-text font-medium">{feature.label}</p>
+                  <p className="font-medium text-detective-text">{feature.label}</p>
                   {!isAvailable && (
                     <p className="text-xs text-gray-500">
                       Requiere plan: {feature.plans.join(' o ')}
@@ -418,7 +410,7 @@ export default function AdminInstitutionsPage() {
                   checked={isEnabled}
                   onChange={() => handleToggleFeature(feature.key)}
                   disabled={!isAvailable}
-                  className="w-5 h-5"
+                  className="h-5 w-5"
                 />
               </label>
             );
