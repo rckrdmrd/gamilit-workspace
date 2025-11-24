@@ -1,0 +1,617 @@
+-- apps/database/seeds/prod/educational_content/05-assignments.sql
+-- =====================================================
+-- ASSIGNMENTS PARA DEMO - TEACHER PORTAL
+-- Versión: 1.0
+-- Fecha: 2025-11-23
+-- Propósito: Datos de ejemplo de asignaciones para Teacher Portal
+-- Autor: Database-Agent
+-- =====================================================
+
+-- =====================================================
+-- PREREQUISITOS
+-- =====================================================
+-- Este seed asume que ya existen:
+-- 1. Classrooms (60000000-0000-0000-0000-000000000001, 002, 003)
+-- 2. Exercises (de seeds de módulos 1, 2, 3)
+-- 3. Teacher profile (bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb - teacher@gamilit.com)
+-- 4. Students (de demo users)
+
+-- =====================================================
+-- LIMPIAR DATOS EXISTENTES (SOLO DEMO)
+-- =====================================================
+-- Eliminar relaciones primero (FK constraints)
+DELETE FROM social_features.assignment_classrooms
+WHERE assignment_id IN (
+    SELECT id FROM educational_content.assignments
+    WHERE teacher_id = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'
+);
+
+DELETE FROM educational_content.assignment_exercises
+WHERE assignment_id IN (
+    SELECT id FROM educational_content.assignments
+    WHERE teacher_id = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'
+);
+
+-- Eliminar assignments del teacher demo
+DELETE FROM educational_content.assignments
+WHERE teacher_id = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
+
+-- =====================================================
+-- ASSIGNMENTS PARA CLASSROOM: 5to A - Comprensión Lectora
+-- =====================================================
+-- Classroom ID: '60000000-0000-0000-0000-000000000001'
+-- Teacher ID: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb' (teacher@gamilit.com)
+
+-- Assignment 1: Crucigrama Científico (Módulo 1) - ACTIVE
+INSERT INTO educational_content.assignments (
+    id,
+    teacher_id,
+    title,
+    description,
+    assignment_type,
+    due_date,
+    total_points,
+    is_published
+) VALUES (
+    'aaaaaaaa-0001-0000-0000-000000000001',
+    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+    'Tarea 1: Crucigrama Científico - Marie Curie',
+    'Completa el crucigrama con términos relacionados a la biografía de Marie Curie. Presta atención a las fechas y lugares mencionados en el texto.',
+    'practice',
+    NOW() + INTERVAL '7 days',
+    100,
+    true
+);
+
+-- Relacionar con classroom
+INSERT INTO social_features.assignment_classrooms (
+    id,
+    assignment_id,
+    classroom_id
+) VALUES (
+    'cccccccc-0001-0000-0000-000000000001',
+    'aaaaaaaa-0001-0000-0000-000000000001',
+    '60000000-0000-0000-0000-000000000001'
+);
+
+-- Relacionar con exercise
+INSERT INTO educational_content.assignment_exercises (
+    id,
+    assignment_id,
+    exercise_id,
+    order_index
+) VALUES (
+    'eeeeeeee-0001-0000-0000-000000000001',
+    'aaaaaaaa-0001-0000-0000-000000000001',
+    '3a5a7e29-c035-4935-923b-c6998a730772', -- Crucigrama Científico
+    1
+);
+
+-- Assignment 2: Línea de Tiempo (Módulo 1) - ACTIVE
+INSERT INTO educational_content.assignments (
+    id,
+    teacher_id,
+    title,
+    description,
+    assignment_type,
+    due_date,
+    total_points,
+    is_published
+) VALUES (
+    'aaaaaaaa-0001-0000-0000-000000000002',
+    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+    'Tarea 2: Línea de Tiempo Histórica',
+    'Ordena cronológicamente los eventos de la vida de Marie Curie utilizando la funcionalidad de arrastrar y soltar.',
+    'practice',
+    NOW() + INTERVAL '14 days',
+    100,
+    true
+);
+
+INSERT INTO social_features.assignment_classrooms (
+    id,
+    assignment_id,
+    classroom_id
+) VALUES (
+    'cccccccc-0001-0000-0000-000000000002',
+    'aaaaaaaa-0001-0000-0000-000000000002',
+    '60000000-0000-0000-0000-000000000001'
+);
+
+INSERT INTO educational_content.assignment_exercises (
+    id,
+    assignment_id,
+    exercise_id,
+    order_index
+) VALUES (
+    'eeeeeeee-0001-0000-0000-000000000002',
+    'aaaaaaaa-0001-0000-0000-000000000002',
+    '81a07a29-9cf0-4398-ab18-9519e168b4bb', -- Línea de Tiempo
+    1
+);
+
+-- Assignment 3: Completar Espacios (Módulo 1) - ACTIVE
+INSERT INTO educational_content.assignments (
+    id,
+    teacher_id,
+    title,
+    description,
+    assignment_type,
+    due_date,
+    total_points,
+    is_published
+) VALUES (
+    'aaaaaaaa-0001-0000-0000-000000000003',
+    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+    'Tarea 3: Completar Texto Biográfico',
+    'Completa los espacios en blanco con palabras del banco de palabras proporcionado.',
+    'homework',
+    NOW() + INTERVAL '5 days',
+    100,
+    true
+);
+
+INSERT INTO social_features.assignment_classrooms (
+    id,
+    assignment_id,
+    classroom_id
+) VALUES (
+    'cccccccc-0001-0000-0000-000000000003',
+    'aaaaaaaa-0001-0000-0000-000000000003',
+    '60000000-0000-0000-0000-000000000001'
+);
+
+INSERT INTO educational_content.assignment_exercises (
+    id,
+    assignment_id,
+    exercise_id,
+    order_index
+) VALUES (
+    'eeeeeeee-0001-0000-0000-000000000003',
+    'aaaaaaaa-0001-0000-0000-000000000003',
+    '391466ac-1e28-4277-b033-0ff9595df3d6', -- Completar Espacios
+    1
+);
+
+-- Assignment 4: Detective Textual (Módulo 2) - ACTIVE
+INSERT INTO educational_content.assignments (
+    id,
+    teacher_id,
+    title,
+    description,
+    assignment_type,
+    due_date,
+    total_points,
+    is_published
+) VALUES (
+    'aaaaaaaa-0001-0000-0000-000000000004',
+    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+    'Tarea 4: Detective Textual - Inferencias',
+    'Lee los fragmentos y selecciona la inferencia correcta. Recuerda que debes deducir información que no está explícita.',
+    'practice',
+    NOW() + INTERVAL '10 days',
+    150,
+    true
+);
+
+INSERT INTO social_features.assignment_classrooms (
+    id,
+    assignment_id,
+    classroom_id
+) VALUES (
+    'cccccccc-0001-0000-0000-000000000004',
+    'aaaaaaaa-0001-0000-0000-000000000004',
+    '60000000-0000-0000-0000-000000000001'
+);
+
+INSERT INTO educational_content.assignment_exercises (
+    id,
+    assignment_id,
+    exercise_id,
+    order_index
+) VALUES (
+    'eeeeeeee-0001-0000-0000-000000000004',
+    'aaaaaaaa-0001-0000-0000-000000000004',
+    '5c6bad47-f2de-41c3-af7d-193713cb87f7', -- Detective Textual
+    1
+);
+
+-- Assignment 5: Sopa de Letras BONUS (Módulo 1) - ACTIVE
+INSERT INTO educational_content.assignments (
+    id,
+    teacher_id,
+    title,
+    description,
+    assignment_type,
+    due_date,
+    total_points,
+    is_published
+) VALUES (
+    'aaaaaaaa-0001-0000-0000-000000000005',
+    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+    'Bonus: Sopa de Letras Científica',
+    'Encuentra palabras relacionadas con Marie Curie en esta sopa de letras. Actividad opcional para ganar puntos extra.',
+    'practice',
+    NOW() + INTERVAL '8 days',
+    50,
+    true
+);
+
+INSERT INTO social_features.assignment_classrooms (
+    id,
+    assignment_id,
+    classroom_id
+) VALUES (
+    'cccccccc-0001-0000-0000-000000000005',
+    'aaaaaaaa-0001-0000-0000-000000000005',
+    '60000000-0000-0000-0000-000000000001'
+);
+
+INSERT INTO educational_content.assignment_exercises (
+    id,
+    assignment_id,
+    exercise_id,
+    order_index
+) VALUES (
+    'eeeeeeee-0001-0000-0000-000000000005',
+    'aaaaaaaa-0001-0000-0000-000000000005',
+    '820bed58-2871-480b-a93a-047bf6d7446c', -- Sopa de Letras
+    1
+);
+
+-- Assignment 6: Construcción de Hipótesis (Módulo 2) - ACTIVE
+INSERT INTO educational_content.assignments (
+    id,
+    teacher_id,
+    title,
+    description,
+    assignment_type,
+    due_date,
+    total_points,
+    is_published
+) VALUES (
+    'aaaaaaaa-0001-0000-0000-000000000006',
+    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+    'Tarea 5: Causa y Efecto - Hipótesis',
+    'Conecta causas con sus consecuencias lógicas sobre las decisiones de Marie Curie.',
+    'homework',
+    NOW() + INTERVAL '12 days',
+    150,
+    true
+);
+
+INSERT INTO social_features.assignment_classrooms (
+    id,
+    assignment_id,
+    classroom_id
+) VALUES (
+    'cccccccc-0001-0000-0000-000000000006',
+    'aaaaaaaa-0001-0000-0000-000000000006',
+    '60000000-0000-0000-0000-000000000001'
+);
+
+INSERT INTO educational_content.assignment_exercises (
+    id,
+    assignment_id,
+    exercise_id,
+    order_index
+) VALUES (
+    'eeeeeeee-0001-0000-0000-000000000006',
+    'aaaaaaaa-0001-0000-0000-000000000006',
+    'e17007a7-50d5-4902-87bc-fa4d3b31d6cd', -- Construcción de Hipótesis
+    1
+);
+
+-- =====================================================
+-- ASSIGNMENTS PARA CLASSROOM: 5to B - Lectura Digital
+-- =====================================================
+-- Classroom ID: '60000000-0000-0000-0000-000000000002'
+
+-- Assignment 7: Verdadero o Falso (Módulo 1)
+INSERT INTO educational_content.assignments (
+    id,
+    teacher_id,
+    title,
+    description,
+    assignment_type,
+    due_date,
+    total_points,
+    is_published
+) VALUES (
+    'aaaaaaaa-0001-0000-0000-000000000007',
+    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+    'Evaluación: Verdadero o Falso',
+    'Determina si las afirmaciones sobre Marie Curie son verdaderas o falsas basándote en el texto.',
+    'quiz',
+    NOW() + INTERVAL '6 days',
+    100,
+    true
+);
+
+INSERT INTO social_features.assignment_classrooms (
+    id,
+    assignment_id,
+    classroom_id
+) VALUES (
+    'cccccccc-0001-0000-0000-000000000007',
+    'aaaaaaaa-0001-0000-0000-000000000007',
+    '60000000-0000-0000-0000-000000000002'
+);
+
+INSERT INTO educational_content.assignment_exercises (
+    id,
+    assignment_id,
+    exercise_id,
+    order_index
+) VALUES (
+    'eeeeeeee-0001-0000-0000-000000000007',
+    'aaaaaaaa-0001-0000-0000-000000000007',
+    '4d43b3f6-8a1e-46c7-9c02-bf81958d927f', -- Verdadero o Falso
+    1
+);
+
+-- Assignment 8: Tribunal de Opiniones (Módulo 3)
+INSERT INTO educational_content.assignments (
+    id,
+    teacher_id,
+    title,
+    description,
+    assignment_type,
+    due_date,
+    total_points,
+    is_published
+) VALUES (
+    'aaaaaaaa-0001-0000-0000-000000000008',
+    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+    'Proyecto: Tribunal de Opiniones',
+    'Clasifica afirmaciones sobre Marie Curie según estén bien fundamentadas o no. Usa pensamiento crítico.',
+    'exam',
+    NOW() + INTERVAL '20 days',
+    200,
+    true
+);
+
+INSERT INTO social_features.assignment_classrooms (
+    id,
+    assignment_id,
+    classroom_id
+) VALUES (
+    'cccccccc-0001-0000-0000-000000000008',
+    'aaaaaaaa-0001-0000-0000-000000000008',
+    '60000000-0000-0000-0000-000000000002'
+);
+
+INSERT INTO educational_content.assignment_exercises (
+    id,
+    assignment_id,
+    exercise_id,
+    order_index
+) VALUES (
+    'eeeeeeee-0001-0000-0000-000000000008',
+    'aaaaaaaa-0001-0000-0000-000000000008',
+    'a45a4092-0878-499f-8cf4-56ad18131316', -- Tribunal de Opiniones
+    1
+);
+
+-- Assignment 9: Puzzle de Contexto (Módulo 2)
+INSERT INTO educational_content.assignments (
+    id,
+    teacher_id,
+    title,
+    description,
+    assignment_type,
+    due_date,
+    total_points,
+    is_published
+) VALUES (
+    'aaaaaaaa-0001-0000-0000-000000000009',
+    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+    'Desafío: Puzzle de Contexto',
+    'Ordena fragmentos de texto para crear una inferencia coherente sobre Marie Curie.',
+    'practice',
+    NOW() + INTERVAL '15 days',
+    150,
+    true
+);
+
+INSERT INTO social_features.assignment_classrooms (
+    id,
+    assignment_id,
+    classroom_id
+) VALUES (
+    'cccccccc-0001-0000-0000-000000000009',
+    'aaaaaaaa-0001-0000-0000-000000000009',
+    '60000000-0000-0000-0000-000000000002'
+);
+
+INSERT INTO educational_content.assignment_exercises (
+    id,
+    assignment_id,
+    exercise_id,
+    order_index
+) VALUES (
+    'eeeeeeee-0001-0000-0000-000000000009',
+    'aaaaaaaa-0001-0000-0000-000000000009',
+    'e74cec7d-6490-4fc5-96c6-6618f7f94761', -- Puzzle de Contexto
+    1
+);
+
+-- =====================================================
+-- ASSIGNMENTS PARA CLASSROOM: 6to A - Producción de Textos
+-- =====================================================
+-- Classroom ID: '60000000-0000-0000-0000-000000000003'
+
+-- Assignment 10: Debate Digital (Módulo 3)
+INSERT INTO educational_content.assignments (
+    id,
+    teacher_id,
+    title,
+    description,
+    assignment_type,
+    due_date,
+    total_points,
+    is_published
+) VALUES (
+    'aaaaaaaa-0001-0000-0000-000000000010',
+    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+    'Debate: Fama y Ciencia',
+    '¿La fama afectó negativamente la investigación de Marie Curie? Prepara argumentos a favor o en contra.',
+    'exam',
+    NOW() + INTERVAL '18 days',
+    200,
+    true
+);
+
+INSERT INTO social_features.assignment_classrooms (
+    id,
+    assignment_id,
+    classroom_id
+) VALUES (
+    'cccccccc-0001-0000-0000-000000000010',
+    'aaaaaaaa-0001-0000-0000-000000000010',
+    '60000000-0000-0000-0000-000000000003'
+);
+
+INSERT INTO educational_content.assignment_exercises (
+    id,
+    assignment_id,
+    exercise_id,
+    order_index
+) VALUES (
+    'eeeeeeee-0001-0000-0000-000000000010',
+    'aaaaaaaa-0001-0000-0000-000000000010',
+    'd99fc5c1-7cbd-4580-b3a8-bb4f04b1df52', -- Debate Digital
+    1
+);
+
+-- Assignment 11: Análisis de Fuentes (Módulo 3)
+INSERT INTO educational_content.assignments (
+    id,
+    teacher_id,
+    title,
+    description,
+    assignment_type,
+    due_date,
+    total_points,
+    is_published
+) VALUES (
+    'aaaaaaaa-0001-0000-0000-000000000011',
+    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+    'Investigación: Credibilidad de Fuentes',
+    'Evalúa la credibilidad de diferentes fuentes sobre Marie Curie usando el método CRAAP.',
+    'homework',
+    NOW() + INTERVAL '25 days',
+    200,
+    true
+);
+
+INSERT INTO social_features.assignment_classrooms (
+    id,
+    assignment_id,
+    classroom_id
+) VALUES (
+    'cccccccc-0001-0000-0000-000000000011',
+    'aaaaaaaa-0001-0000-0000-000000000011',
+    '60000000-0000-0000-0000-000000000003'
+);
+
+INSERT INTO educational_content.assignment_exercises (
+    id,
+    assignment_id,
+    exercise_id,
+    order_index
+) VALUES (
+    'eeeeeeee-0001-0000-0000-000000000011',
+    'aaaaaaaa-0001-0000-0000-000000000011',
+    '1ed97fd3-e042-456d-8369-14dfdbf92d27', -- Análisis de Fuentes
+    1
+);
+
+-- Assignment 12: Predicción Narrativa (Módulo 2) - EXTRA PARA 6to A
+INSERT INTO educational_content.assignments (
+    id,
+    teacher_id,
+    title,
+    description,
+    assignment_type,
+    due_date,
+    total_points,
+    is_published
+) VALUES (
+    'aaaaaaaa-0001-0000-0000-000000000012',
+    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+    'Actividad Extra: Predicción Narrativa',
+    'Predice cómo continúa la historia basándote en el contexto histórico y social de la época.',
+    'practice',
+    NOW() + INTERVAL '30 days',
+    150,
+    true
+);
+
+INSERT INTO social_features.assignment_classrooms (
+    id,
+    assignment_id,
+    classroom_id
+) VALUES (
+    'cccccccc-0001-0000-0000-000000000012',
+    'aaaaaaaa-0001-0000-0000-000000000012',
+    '60000000-0000-0000-0000-000000000003'
+);
+
+INSERT INTO educational_content.assignment_exercises (
+    id,
+    assignment_id,
+    exercise_id,
+    order_index
+) VALUES (
+    'eeeeeeee-0001-0000-0000-000000000012',
+    'aaaaaaaa-0001-0000-0000-000000000012',
+    '9c8eda6a-ebe1-4f82-91ee-c516cd798c17', -- Predicción Narrativa
+    1
+);
+
+-- =====================================================
+-- VALIDACIÓN
+-- =====================================================
+
+-- Verificar cantidad de assignments creados
+SELECT
+    c.name AS classroom,
+    COUNT(ac.id) AS total_assignments
+FROM social_features.classrooms c
+LEFT JOIN social_features.assignment_classrooms ac ON c.id = ac.classroom_id
+LEFT JOIN educational_content.assignments a ON ac.assignment_id = a.id
+WHERE a.teacher_id = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'
+GROUP BY c.id, c.name
+ORDER BY c.name;
+
+-- Resultado esperado:
+-- 5to A - Comprensión Lectora: 6 assignments
+-- 5to B - Lectura Digital: 3 assignments
+-- 6to A - Producción de Textos: 3 assignments
+-- TOTAL: 12 assignments
+
+-- Verificar total de assignments
+SELECT COUNT(*) as total_assignments
+FROM educational_content.assignments
+WHERE teacher_id = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
+
+-- Resultado esperado: 12
+
+-- Verificar que todos tienen classroom asignado
+SELECT
+    a.id,
+    a.title,
+    c.name AS classroom_name,
+    e.title AS exercise_title
+FROM educational_content.assignments a
+JOIN social_features.assignment_classrooms ac ON a.id = ac.assignment_id
+JOIN social_features.classrooms c ON ac.classroom_id = c.id
+JOIN educational_content.assignment_exercises ae ON a.id = ae.assignment_id
+JOIN educational_content.exercises e ON ae.exercise_id = e.id
+WHERE a.teacher_id = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'
+ORDER BY c.name, a.created_at;
+
+-- =====================================================
+-- FIN DEL SEED
+-- =====================================================
