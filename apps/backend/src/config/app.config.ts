@@ -37,7 +37,7 @@ export default registerAs('app', () => ({
   frontendUrl: process.env.FRONTEND_URL || 'http://localhost:3005',
 
   // CORS Configuration
-  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3005,http://localhost:5173',
+  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3005,http://localhost:3006',
 
   // Maintenance mode
   maintenanceMode: process.env.MAINTENANCE_MODE === 'true',
