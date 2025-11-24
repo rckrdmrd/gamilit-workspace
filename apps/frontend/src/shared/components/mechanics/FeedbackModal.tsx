@@ -4,7 +4,6 @@ import { CheckCircle2, XCircle, Info, Trophy, Sparkles } from 'lucide-react';
 import FocusTrap from 'focus-trap-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { ScoreDisplay } from './ScoreDisplay';
 import { FeedbackData } from './mechanicsTypes';
 
 export interface FeedbackModalProps {
@@ -198,6 +197,73 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({
                           </div>
                         </div>
                       )}
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Feedback detallado por fragmento */}
+                {feedback.details && Array.isArray(feedback.details) && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="mb-6 text-left"
+                  >
+                    <h4 className="font-semibold text-lg mb-3 text-detective-primary">
+                      📊 Detalles por ronda:
+                    </h4>
+                    <div className="space-y-3 max-h-80 overflow-y-auto">
+                      {feedback.details.map((detail: any, idx: number) => (
+                        <div key={idx} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                          {/* Header con puntuación */}
+                          <div className="flex justify-between items-center mb-3">
+                            <div>
+                              <span className="font-medium">Fragmento {idx + 1}</span>
+                              {detail.categoryUsed && (
+                                <span className="ml-2 text-sm text-gray-600">
+                                  ({detail.categoryUsed})
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-lg font-bold text-blue-600">
+                              {detail.score}/{detail.maxScore} pts
+                            </span>
+                          </div>
+
+                          {/* Feedback pedagógico */}
+                          <p className="text-sm text-gray-700 mb-3">{detail.feedback}</p>
+
+                          {/* Keywords encontradas */}
+                          {detail.keywordsFound && detail.keywordsFound.length > 0 && (
+                            <div className="mt-2">
+                              <p className="text-xs font-semibold text-green-700 mb-1">
+                                ✓ Palabras clave encontradas ({detail.keywordsFound.length}/{detail.keywordsExpected?.length || 0}):
+                              </p>
+                              <div className="flex flex-wrap gap-1">
+                                {detail.keywordsFound.map((keyword: string, i: number) => (
+                                  <span key={i} className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
+                                    {keyword}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Indicador visual de progreso */}
+                          <div className="mt-3">
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div
+                                className={`h-2 rounded-full transition-all ${
+                                  (detail.score / detail.maxScore) >= 0.8 ? 'bg-green-500' :
+                                  (detail.score / detail.maxScore) >= 0.5 ? 'bg-yellow-500' :
+                                  'bg-red-500'
+                                }`}
+                                style={{ width: `${Math.min((detail.score / detail.maxScore) * 100, 100)}%` }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </motion.div>
                 )}

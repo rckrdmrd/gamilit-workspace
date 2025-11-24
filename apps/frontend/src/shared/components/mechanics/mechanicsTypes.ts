@@ -21,6 +21,8 @@ export interface ExerciseFeedback {
   points?: number;
   // Legacy compatibility
   isCorrect?: boolean;
+  // Feedback detallado por fragmento (Rueda de Inferencias, etc.)
+  details?: any;
 }
 
 export interface ExerciseAttempt {

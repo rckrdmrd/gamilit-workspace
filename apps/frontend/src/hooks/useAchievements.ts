@@ -18,7 +18,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import apiClient from '@/lib/api/client';
+import { apiClient } from '@/services/api/apiClient';
 import type { Achievement } from '@/components/achievements/AchievementNotification';
 
 interface AchievementDefinition {

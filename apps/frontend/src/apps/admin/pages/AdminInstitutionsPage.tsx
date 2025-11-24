@@ -100,9 +100,11 @@ export default function AdminInstitutionsPage() {
       await toggleFeature(selectedOrg.id, feature);
 
       // Update local selected org state with the new features
-      const updatedFeatures = selectedOrg.features.includes(feature)
-        ? selectedOrg.features.filter((f) => f !== feature)
-        : [...selectedOrg.features, feature];
+      // BUG-ADMIN-007: Safe access to features array
+      const currentFeatures = selectedOrg.features ?? [];
+      const updatedFeatures = currentFeatures.includes(feature)
+        ? currentFeatures.filter((f) => f !== feature)
+        : [...currentFeatures, feature];
       setSelectedOrg({ ...selectedOrg, features: updatedFeatures });
     } catch (err) {
       console.error('Failed to toggle feature:', err);
@@ -386,7 +388,8 @@ export default function AdminInstitutionsPage() {
             <span className="font-bold text-detective-text">{selectedOrg?.plan.toUpperCase()}</span>
           </p>
           {availableFeatures.map((feature) => {
-            const isEnabled = selectedOrg?.features.includes(feature.key);
+            // BUG-ADMIN-007: Safe access to features array with fallback
+            const isEnabled = selectedOrg?.features?.includes(feature.key) ?? false;
             const isAvailable = selectedOrg && feature.plans.includes(selectedOrg.plan);
             return (
               <label

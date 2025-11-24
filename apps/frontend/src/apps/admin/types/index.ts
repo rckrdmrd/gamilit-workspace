@@ -143,7 +143,8 @@ export interface AdminAction {
 export interface SystemAlert {
   id: string;
   type: 'error' | 'warning' | 'info' | 'security';
-  severity: 'high' | 'medium' | 'low';
+  // FE-P1-005: Added 'critical' to match backend AlertDto severity enum
+  severity: 'critical' | 'high' | 'medium' | 'low';
   title: string;
   message: string;
   details: string;

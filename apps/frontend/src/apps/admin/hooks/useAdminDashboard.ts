@@ -146,84 +146,66 @@ export function useAdminDashboard(customIntervals?: Partial<RefreshIntervals>): 
 
   /**
    * Fetch recent admin actions
-   * Note: Backend endpoint /admin/actions/recent NOT yet implemented
-   * TODO: Implement in backend or use alternative data source
+   * Updated: Uses adminAPI.getRecentActions() (FE-062 / CORR-004)
+   * Endpoint: GET /admin/dashboard/actions/recent
+   * @see CORR-004 in orchestration/reportes/REPORTE-FINAL-CORRECCIONES-P0-COMPLETO-2025-11-24.md
    */
   const fetchRecentActions = useCallback(async (): Promise<void> => {
     try {
-      // Endpoint not implemented - return empty for now
-      setRecentActions([]);
+      const actions = await adminAPI.getRecentActions(10);
+      setRecentActions(actions);
       setError(null);
-
-      // TODO: When backend implements, uncomment:
-      // const response = await apiClient.get<{ success: boolean; data: AdminAction[] }>('/admin/actions/recent', {
-      //   params: { limit: 10 },
-      // });
-      // const data = response.data.success ? response.data.data : response.data as unknown as AdminAction[];
-      // const actions = data.map(action => ({
-      //   ...action,
-      //   timestamp: new Date(action.timestamp),
-      // }));
-      // setRecentActions(actions);
     } catch (err) {
       console.error('Failed to fetch recent actions:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch recent actions');
+      setRecentActions([]);
     }
   }, []);
 
   /**
    * Fetch system alerts
-   * Note: Backend endpoint /admin/alerts NOT yet implemented
-   * TODO: Implement in backend or use alternative data source
+   * Updated: Uses adminAPI.getAlerts() (FE-062 / CORR-004)
+   * Endpoint: GET /admin/dashboard/alerts
+   * @see CORR-004 in orchestration/reportes/REPORTE-FINAL-CORRECCIONES-P0-COMPLETO-2025-11-24.md
    */
   const fetchAlerts = useCallback(async (): Promise<void> => {
     try {
-      // Endpoint not implemented - return empty for now
-      setAlerts([]);
-      setError(null);
+      const alerts = await adminAPI.getAlerts();
 
-      // TODO: When backend implements, uncomment:
-      // const response = await apiClient.get<{ success: boolean; data: SystemAlert[] }>('/admin/alerts', {
-      //   params: { dismissed: false },
-      // });
-      // const data = response.data.success ? response.data.data : response.data as unknown as SystemAlert[];
-      // const parsedAlerts = data.map(alert => ({
-      //   ...alert,
-      //   timestamp: new Date(alert.timestamp),
-      //   dismissedAt: alert.dismissedAt ? new Date(alert.dismissedAt) : undefined,
-      // })).sort((a, b) => {
-      //   const severityOrder = { high: 3, medium: 2, low: 1 };
-      //   const severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
-      //   if (severityDiff !== 0) return severityDiff;
-      //   return b.timestamp.getTime() - a.timestamp.getTime();
-      // });
-      // setAlerts(parsedAlerts);
+      // Sort by severity and timestamp
+      const sortedAlerts = alerts.sort((a, b) => {
+        const severityOrder = { high: 3, medium: 2, low: 1 };
+        const severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
+        if (severityDiff !== 0) return severityDiff;
+        return b.timestamp.getTime() - a.timestamp.getTime();
+      });
+
+      setAlerts(sortedAlerts);
+      setError(null);
     } catch (err) {
       console.error('Failed to fetch alerts:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch alerts');
+      setAlerts([]);
     }
   }, []);
 
   /**
    * Fetch user activity data
-   * Note: Backend endpoint /admin/analytics/user-activity NOT yet implemented
-   * TODO: Implement in backend or use alternative data source
+   * Updated: Uses adminAPI.getUserActivity() (FE-062 / CORR-004)
+   * Endpoint: GET /admin/dashboard/analytics/user-activity
+   * @see CORR-004 in orchestration/reportes/REPORTE-FINAL-CORRECCIONES-P0-COMPLETO-2025-11-24.md
    */
   const fetchUserActivity = useCallback(async (): Promise<void> => {
     try {
-      // Endpoint not implemented - return empty for now
-      setUserActivity([]);
+      const activityData = await adminAPI.getUserActivity({
+        groupBy: 'day', // Default to daily
+      });
+      setUserActivity(activityData);
       setError(null);
-
-      // TODO: When backend implements, uncomment:
-      // const response = await apiClient.get<{ success: boolean; data: UserActivityData[] }>('/admin/analytics/user-activity', {
-      //   params: { days: 7 },
-      // });
-      // const data = response.data.success ? response.data.data : response.data as unknown as UserActivityData[];
-      // setUserActivity(data);
     } catch (err) {
       console.error('Failed to fetch user activity:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch user activity');
+      setUserActivity([]);
     }
   }, []);
 

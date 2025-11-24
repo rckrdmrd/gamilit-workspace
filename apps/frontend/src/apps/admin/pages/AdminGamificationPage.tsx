@@ -15,6 +15,8 @@ import {
   Award,
   Loader2,
 } from 'lucide-react';
+import { MayaRankSchema, ParameterSchema } from '@/services/api/schemas/adminSchemas';
+import type { MayaRank, Parameter } from '@/services/api/schemas/adminSchemas';
 
 /**
  * AdminGamificationPage - Configuración de gamificación global
@@ -153,8 +155,19 @@ export default function AdminGamificationPage() {
               </div>
 
               <div className="space-y-3">
+                {/* BUG-ADMIN-008: Validar y filtrar ranks antes de renderizar */}
                 {mayaRanks && mayaRanks.length > 0 ? (
                   mayaRanks
+                    .filter((rank) => {
+                      // Validar con Zod inline
+                      try {
+                        MayaRankSchema.parse(rank);
+                        return true;
+                      } catch (error) {
+                        console.warn('Invalid rank structure:', rank, error);
+                        return false;
+                      }
+                    })
                     .sort((a, b) => a.level - b.level)
                     .map((rank) => (
                       <div
@@ -245,7 +258,8 @@ export default function AdminGamificationPage() {
                   <Coins className="w-12 h-12 text-green-400 mx-auto mb-2" />
                   <p className="text-sm text-detective-text-secondary mb-1">Categoría Coins</p>
                   <p className="text-3xl font-bold text-green-400">
-                    {parametersData?.data.filter(p => p.category === 'coins').length || 0}
+                    {/* BUG-ADMIN-009: Safe access a category con validación */}
+                    {parametersData?.data.filter(p => p?.category === 'coins').length || 0}
                   </p>
                 </div>
               </DetectiveCard>
@@ -255,8 +269,18 @@ export default function AdminGamificationPage() {
               <h2 className="text-xl font-bold text-detective-text mb-4">Parámetros de Economía</h2>
               {parametersData && parametersData.data.length > 0 ? (
                 <div className="space-y-3">
+                  {/* BUG-ADMIN-009: Validar parámetros antes de renderizar */}
                   {parametersData.data
-                    .filter(param => param.category === 'coins' || param.category === 'bonuses')
+                    .filter((param) => {
+                      // Validar con Zod inline
+                      try {
+                        ParameterSchema.parse(param);
+                        return param.category === 'coins' || param.category === 'bonuses';
+                      } catch (error) {
+                        console.warn('Invalid parameter structure:', param, error);
+                        return false;
+                      }
+                    })
                     .map((param) => (
                       <div
                         key={param.id}
@@ -264,15 +288,19 @@ export default function AdminGamificationPage() {
                       >
                         <div>
                           <p className="font-semibold text-detective-text">{param.key}</p>
-                          <p className="text-xs text-detective-text-secondary">{param.description}</p>
+                          {param.description && (
+                            <p className="text-xs text-detective-text-secondary">{param.description}</p>
+                          )}
                         </div>
                         <div className="text-right">
                           <p className="text-lg font-bold text-detective-gold">
                             {param.value}{param.dataType === 'percentage' ? '%' : ''}
                           </p>
-                          <p className="text-xs text-detective-text-secondary">
-                            Default: {param.defaultValue}
-                          </p>
+                          {param.defaultValue && (
+                            <p className="text-xs text-detective-text-secondary">
+                              Default: {param.defaultValue}
+                            </p>
+                          )}
                         </div>
                       </div>
                     ))}

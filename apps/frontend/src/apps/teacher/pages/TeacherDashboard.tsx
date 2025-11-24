@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import {
@@ -28,6 +28,8 @@ import { ReportGenerator } from '../components/reports/ReportGenerator';
 import { ParentCommunicationHub } from '../components/collaboration/ParentCommunicationHub';
 import { ResourceSharingPanel } from '../components/collaboration/ResourceSharingPanel';
 import { useTeacherDashboard } from '../hooks/useTeacherDashboard';
+import { useClassrooms } from '../hooks/useClassrooms';
+import { classroomsApi } from '@services/api/teacher';
 
 type TabType =
   | 'overview'
@@ -41,8 +43,28 @@ type TabType =
   | 'communication'
   | 'resources';
 
+/**
+ * Safely format a number to fixed decimals
+ * @param value - Value to format
+ * @param decimals - Number of decimal places
+ * @param suffix - Optional suffix (e.g., '%')
+ * @param fallback - Fallback value if invalid
+ */
+const safeFormat = (
+  value: number | undefined | null,
+  decimals: number = 1,
+  suffix: string = '',
+  fallback: string = 'N/A'
+): string => {
+  if (typeof value !== 'number' || isNaN(value)) {
+    return fallback;
+  }
+  return `${value.toFixed(decimals)}${suffix}`;
+};
+
 export default function TeacherDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
+  const [allStudents, setAllStudents] = useState<any[]>([]);
 
   // Use real data from backend via useTeacherDashboard hook
   const {
@@ -56,14 +78,31 @@ export default function TeacherDashboard() {
 
   const classroomId = 'classroom-1'; // Mock ID - TODO: get from selected classroom
 
-  // Mock students data - TODO: replace with real data from useClassrooms hook
-  const mockStudents = [
-    { id: 's1', full_name: 'Ana García' },
-    { id: 's2', full_name: 'Carlos Ruiz' },
-    { id: 's3', full_name: 'María López' },
-    { id: 's4', full_name: 'Juan Martínez' },
-    { id: 's5', full_name: 'Laura Sánchez' },
-  ];
+  // Fetch real students from classrooms API instead of using mock data
+  const { data: classrooms } = useClassrooms();
+
+  useEffect(() => {
+    const fetchAllStudents = async () => {
+      if (!classrooms || classrooms.length === 0) {
+        setAllStudents([]);
+        return;
+      }
+
+      try {
+        const studentsPromises = classrooms.map(classroom =>
+          classroomsApi.getClassroomStudents(classroom.id)
+        );
+        const studentsArrays = await Promise.all(studentsPromises);
+        const students = studentsArrays.flat();
+        setAllStudents(students);
+      } catch (error) {
+        console.error('[TeacherDashboard] Error fetching students:', error);
+        setAllStudents([]);
+      }
+    };
+
+    fetchAllStudents();
+  }, [classrooms]);
 
   const tabs = [
     { id: 'overview', label: 'Vista General', icon: Target },
@@ -186,10 +225,10 @@ export default function TeacherDashboard() {
                   <div>
                     <p className="text-sm text-detective-text-secondary mb-1">Score Promedio</p>
                     <p className="text-3xl font-bold text-detective-gold">
-                      {stats?.average_class_score?.toFixed(1) ?? '0.0'}%
+                      {safeFormat(stats?.average_class_score, 1, '%', 'N/A')}
                     </p>
                     <p className="text-xs text-green-500 mt-1">
-                      {stats?.engagement_rate ? `${stats.engagement_rate.toFixed(1)}% engagement` : 'N/A'}
+                      {safeFormat(stats?.engagement_rate, 1, '% engagement', 'N/A')}
                     </p>
                   </div>
                   <Award className="w-10 h-10 text-detective-gold" />
@@ -201,7 +240,7 @@ export default function TeacherDashboard() {
                   <div>
                     <p className="text-sm text-detective-text-secondary mb-1">Tasa de Completitud</p>
                     <p className="text-3xl font-bold text-detective-text">
-                      {stats?.completion_rate?.toFixed(0) ?? '0'}%
+                      {safeFormat(stats?.completion_rate, 0, '%', '0%')}
                     </p>
                     <p className="text-xs text-detective-text-secondary mt-1">De ejercicios</p>
                   </div>
@@ -254,27 +293,46 @@ export default function TeacherDashboard() {
                 </h3>
                 {activities && activities.length > 0 ? (
                   <div className="space-y-3">
-                    {activities.slice(0, 5).map((activity) => {
-                      // Determine icon based on activity type
-                      // Activity types: 'submission' | 'assignment_created' | 'student_joined' | 'achievement_unlocked'
-                      const getIcon = () => {
-                        if (activity.type === 'submission') return <FileText className="w-5 h-5 text-green-500 mt-1" />;
-                        if (activity.type === 'achievement_unlocked') return <Award className="w-5 h-5 text-detective-gold mt-1" />;
-                        if (activity.type === 'assignment_created') return <Calendar className="w-5 h-5 text-blue-500 mt-1" />;
-                        if (activity.type === 'student_joined') return <Users className="w-5 h-5 text-detective-accent mt-1" />;
-                        return <Calendar className="w-5 h-5 text-detective-accent mt-1" />;
-                      };
+                    {activities
+                      .filter(activity => activity && activity.id && activity.timestamp)
+                      .slice(0, 5)
+                      .map((activity) => {
+                        // Determine icon based on activity type
+                        // Activity types: 'submission' | 'assignment_created' | 'student_joined' | 'achievement_unlocked'
+                        const getIcon = () => {
+                          if (activity.type === 'submission') return <FileText className="w-5 h-5 text-green-500 mt-1" />;
+                          if (activity.type === 'achievement_unlocked') return <Award className="w-5 h-5 text-detective-gold mt-1" />;
+                          if (activity.type === 'assignment_created') return <Calendar className="w-5 h-5 text-blue-500 mt-1" />;
+                          if (activity.type === 'student_joined') return <Users className="w-5 h-5 text-detective-accent mt-1" />;
+                          return <Calendar className="w-5 h-5 text-detective-accent mt-1" />;
+                        };
 
-                      return (
-                        <div key={activity.id} className="flex items-start gap-3 p-3 bg-detective-bg-secondary rounded-lg">
-                          {getIcon()}
-                          <div className="flex-1">
-                            <p className="text-sm text-detective-text">{activity.description}</p>
-                            <p className="text-xs text-detective-text-secondary">{activity.timestamp}</p>
+                        // Safely format timestamp
+                        const formatTimestamp = (timestamp: string) => {
+                          try {
+                            return new Date(timestamp).toLocaleString('es-ES', {
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            });
+                          } catch (e) {
+                            return timestamp; // Fallback to raw value if parsing fails
+                          }
+                        };
+
+                        return (
+                          <div key={activity.id} className="flex items-start gap-3 p-3 bg-detective-bg-secondary rounded-lg">
+                            {getIcon()}
+                            <div className="flex-1">
+                              <p className="text-sm text-detective-text">{activity.description}</p>
+                              <p className="text-xs text-detective-text-secondary">
+                                {formatTimestamp(activity.timestamp)}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
                   </div>
                 ) : (
                   <div className="text-center py-8">
@@ -336,15 +394,15 @@ export default function TeacherDashboard() {
         )}
 
         {activeTab === 'insights' && (
-          <PerformanceInsightsPanel classroomId={classroomId} students={mockStudents} />
+          <PerformanceInsightsPanel classroomId={classroomId} students={allStudents} />
         )}
 
         {activeTab === 'reports' && (
-          <ReportGenerator classroomId={classroomId} students={mockStudents} />
+          <ReportGenerator classroomId={classroomId} students={allStudents} />
         )}
 
         {activeTab === 'communication' && (
-          <ParentCommunicationHub classroomId={classroomId} students={mockStudents} />
+          <ParentCommunicationHub classroomId={classroomId} students={allStudents} />
         )}
 
         {activeTab === 'resources' && <ResourceSharingPanel />}

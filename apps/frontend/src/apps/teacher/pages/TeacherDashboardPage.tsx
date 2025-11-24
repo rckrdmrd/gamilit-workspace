@@ -13,17 +13,21 @@ import TeacherDashboard from './TeacherDashboard';
 export default function TeacherDashboardPage() {
   const { user, logout } = useAuth();
 
-  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
-  const { gamificationData } = useUserGamification(user?.id);
+  // Use useUserGamification hook with real API endpoint
+  const { gamificationData, isLoading: gamificationLoading } = useUserGamification(user?.id);
 
-  // Fallback gamification data in case hook fails or user is not loaded
+  // Fallback gamification data while loading or if data not available
   const displayGamificationData = gamificationData || {
-    userId: user?.id || 'mock-teacher-id',
-    level: 1,
+    userId: user?.id || '',
+    level: gamificationLoading ? 0 : 1,
     totalXP: 0,
     mlCoins: 0,
-    rank: 'Novato',
+    rank: gamificationLoading ? 'Cargando...' : 'Ajaw',
+    rankColor: '#9E9E9E',
+    progressToNextLevel: 0,
+    xpToNextLevel: 100,
     achievements: [],
+    totalAchievements: 0,
   };
 
   const handleLogout = () => {

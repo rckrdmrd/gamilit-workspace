@@ -18,6 +18,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import * as adminAPI from '@/services/api/adminAPI';
+import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/shared/constants/api-endpoints';
 import type { Organization, OrganizationUser, PaginatedResponse } from '../types';
 
 export interface UseOrganizationsResult {
@@ -95,6 +97,7 @@ export function useOrganizations(): UseOrganizationsResult {
    * Fetch organizations with pagination
    * Updated: Now uses adminAPI.getOrganizations()
    * Fixed: Uses items/pagination structure from PaginatedResponse
+   * BUG-ADMIN-006: Added runtime validation for response structure
    */
   const fetchOrganizations = useCallback(
     async (newPage?: number, newPageSize?: number): Promise<void> => {
@@ -106,8 +109,22 @@ export function useOrganizations(): UseOrganizationsResult {
           limit: newPageSize || pageSize,
         });
 
-        // adminAPI returns { items: T[], pagination: {...} }
-        setOrganizations(response.items);
+        // BUG-ADMIN-006: Validate response structure in runtime
+        if (!response || !Array.isArray(response.items) || !response.pagination) {
+          console.error('Invalid organizations response structure:', response);
+          setError('Estructura de respuesta inválida del servidor');
+          setOrganizations([]);
+          setTotal(0);
+          return;
+        }
+
+        // BUG-ADMIN-007: Ensure features array exists in each org
+        const validatedOrgs = response.items.map(org => ({
+          ...org,
+          features: org.features ?? [],
+        }));
+
+        setOrganizations(validatedOrgs);
         setTotal(response.pagination.totalItems);
         if (newPage) setPage(newPage);
         if (newPageSize) setPageSize(newPageSize);
@@ -125,13 +142,21 @@ export function useOrganizations(): UseOrganizationsResult {
   /**
    * Get single organization by ID
    * Updated: Now uses adminAPI.getOrganization()
+   * BUG-ADMIN-007: Added validation for features array
    */
   const getOrganization = useCallback(async (id: string): Promise<Organization> => {
     setLoading(true);
     setError(null);
     try {
       const org = await adminAPI.getOrganization(id);
-      return org;
+
+      // BUG-ADMIN-007: Ensure features array exists
+      const validatedOrg = {
+        ...org,
+        features: org.features ?? [],
+      };
+
+      return validatedOrg;
     } catch (err) {
       console.error('Failed to fetch organization:', err);
       const errorMsg = err instanceof Error ? err.message : 'Failed to fetch organization';

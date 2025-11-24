@@ -326,7 +326,7 @@ export default function AdminUsersPage() {
                     {users.map((usr) => (
                       <tr key={usr.id} className="border-b border-gray-700 hover:bg-detective-bg-secondary transition-colors">
                         <td className="px-4 py-3 text-sm text-detective-text font-medium">
-                          {usr.full_name || usr.display_name || usr.email}
+                          {usr.name}
                         </td>
                         <td className="px-4 py-3 text-sm text-detective-text-secondary flex items-center gap-2">
                           <Mail className="w-4 h-4" />
@@ -339,7 +339,7 @@ export default function AdminUsersPage() {
                           {getStatusBadge(usr.status)}
                         </td>
                         <td className="px-4 py-3 text-sm text-detective-text-secondary">
-                          {usr.organizationName || usr.organizationId || 'N/A'}
+                          {usr.organization || usr.organizationId || 'N/A'}
                         </td>
                         <td className="px-4 py-3 text-sm text-detective-text-secondary">
                           {usr.lastLogin ? new Date(usr.lastLogin).toLocaleDateString('es-ES') : 'Nunca'}
@@ -348,7 +348,7 @@ export default function AdminUsersPage() {
                           <div className="flex items-center gap-2">
                             <button
                               className="p-1 hover:bg-detective-bg rounded text-blue-400 hover:text-blue-300"
-                              onClick={() => alert(`Editar usuario: ${usr.full_name || usr.email} - Próximamente`)}
+                              onClick={() => alert(`Editar usuario: ${usr.name} - Próximamente`)}
                               title="Editar"
                             >
                               <Edit className="w-4 h-4" />
@@ -356,7 +356,7 @@ export default function AdminUsersPage() {
                             {usr.status === 'active' ? (
                               <button
                                 className="p-1 hover:bg-detective-bg rounded text-red-400 hover:text-red-300"
-                                onClick={() => handleSuspendUser(usr.id, usr.full_name || usr.email)}
+                                onClick={() => handleSuspendUser(usr.id, usr.name)}
                                 title="Suspender"
                                 disabled={loading}
                               >
@@ -365,7 +365,7 @@ export default function AdminUsersPage() {
                             ) : (
                               <button
                                 className="p-1 hover:bg-detective-bg rounded text-green-400 hover:text-green-300"
-                                onClick={() => handleUnsuspendUser(usr.id, usr.full_name || usr.email)}
+                                onClick={() => handleUnsuspendUser(usr.id, usr.name)}
                                 title="Reactivar"
                                 disabled={loading}
                               >
@@ -374,7 +374,7 @@ export default function AdminUsersPage() {
                             )}
                             <button
                               className="p-1 hover:bg-detective-bg rounded text-red-400 hover:text-red-300"
-                              onClick={() => handleDeleteUser(usr.id, usr.full_name || usr.email)}
+                              onClick={() => handleDeleteUser(usr.id, usr.name)}
                               title="Eliminar"
                               disabled={loading}
                             >

@@ -48,6 +48,7 @@ interface ExerciseData {
   completed: boolean;
   moduleTitle?: string;
   mechanicData?: any;
+  is_active?: boolean; // GAP-005: Field to detect if exercise is active
 }
 
 interface ExerciseProgress {
@@ -192,6 +193,7 @@ export default function ExercisePage() {
           completed: exerciseData.completed || false,
           moduleTitle: undefined,
           mechanicData: exerciseData,
+          is_active: exerciseData.is_active, // GAP-005: Preserve is_active field
         };
 
         console.log('Mapped exercise:', mappedExercise);
@@ -209,22 +211,13 @@ export default function ExercisePage() {
           // Continue without hints - not critical (silent fail for optional feature)
         }
 
-        // GAP-005 Resolution: Check if exercise belongs to backlog modules (4-5)
-        // Backlog exercise types from modules 4-5
-        const backlogExerciseTypes = [
-          // Module 4
-          'verificador_fakenews', 'fake_news', 'quiz_tiktok', 'navegacion_hipertextual',
-          'analisis_memes', 'infografia_interactiva', 'email_formal', 'chat_literario',
-          'ensayo_argumentativo', 'resena_critica',
-          // Module 5
-          'diario_multimedia', 'comic_digital', 'video_carta'
-        ];
+        // GAP-005 Resolution: Check if exercise is active (is_active field)
+        // If is_active = false, show UnderConstructionExercise component
+        const isActiveExercise = exerciseData.is_active !== false; // Default to true if field is missing
 
-        const isBacklogExercise = backlogExerciseTypes.includes(mappedExercise.type.toLowerCase());
-
-        if (isBacklogExercise) {
-          // Set UnderConstructionExercise component for backlog exercises
-          console.log('Exercise in backlog - showing Under Construction component');
+        if (!isActiveExercise) {
+          // Set UnderConstructionExercise component for inactive exercises
+          console.log('Exercise is inactive (is_active = false) - showing Under Construction component');
           setMechanicComponent(() => UnderConstructionExercise);
         } else {
           // Load dynamic component for active exercises

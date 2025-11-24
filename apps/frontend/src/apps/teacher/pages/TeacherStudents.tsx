@@ -3,6 +3,8 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { Modal } from '@shared/components/common/Modal';
 import { DataTable, Column } from '@shared/components/common/DataTable';
 import { Users, TrendingUp, TrendingDown, Minus, Mail } from 'lucide-react';
+import { useClassrooms } from '../hooks/useClassrooms';
+import { classroomsApi } from '@services/api/teacher';
 import type { StudentPerformance } from '../types';
 
 interface StudentExtended extends StudentPerformance {
@@ -17,74 +19,70 @@ export default function TeacherStudents() {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [filterClass, setFilterClass] = useState<string>('all');
   const [filterPerformance, setFilterPerformance] = useState<string>('all');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock data
+  // Fetch classrooms using custom hook
+  const { classrooms, loading: classroomsLoading } = useClassrooms();
+
+  // Fetch students from all classrooms
   useEffect(() => {
-    // API call: GET /api/teacher/classrooms/:id/students (loop para cada clase)
-    const mockStudents: StudentExtended[] = [
-      {
-        student_id: 's1',
-        student_name: 'Ana García',
-        email: 'ana.garcia@example.com',
-        average_score: 95,
-        completion_rate: 88,
-        last_active: '2025-10-16',
-        performance_level: 'high',
-        classroom_name: 'Español 5to A',
-      },
-      {
-        student_id: 's2',
-        student_name: 'Carlos Ruiz',
-        email: 'carlos.ruiz@example.com',
-        average_score: 72,
-        completion_rate: 65,
-        last_active: '2025-10-15',
-        performance_level: 'medium',
-        classroom_name: 'Español 5to A',
-      },
-      {
-        student_id: 's3',
-        student_name: 'María López',
-        email: 'maria.lopez@example.com',
-        average_score: 85,
-        completion_rate: 78,
-        last_active: '2025-10-16',
-        performance_level: 'high',
-        classroom_name: 'Español 5to B',
-      },
-      {
-        student_id: 's4',
-        student_name: 'Juan Martínez',
-        email: 'juan.martinez@example.com',
-        average_score: 55,
-        completion_rate: 45,
-        last_active: '2025-10-14',
-        performance_level: 'low',
-        classroom_name: 'Español 5to A',
-      },
-      {
-        student_id: 's5',
-        student_name: 'Laura Sánchez',
-        email: 'laura.sanchez@example.com',
-        average_score: 90,
-        completion_rate: 82,
-        last_active: '2025-10-16',
-        performance_level: 'high',
-        classroom_name: 'Español 6to A',
-      },
-      {
-        student_id: 's6',
-        student_name: 'Pedro Gómez',
-        email: 'pedro.gomez@example.com',
-        average_score: 68,
-        completion_rate: 60,
-        last_active: '2025-10-13',
-        performance_level: 'medium',
-        classroom_name: 'Español 5to B',
-      },
-    ];
-    setStudents(mockStudents);
-  }, []);
+    const fetchStudents = async () => {
+      if (!classrooms || classrooms.length === 0) {
+        setStudents([]);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch students from all classrooms in parallel
+        const allStudentsPromises = classrooms.map(async (classroom) => {
+          try {
+            // Call real API for each classroom
+            const classroomStudents = await classroomsApi.getClassroomStudents(classroom.id);
+
+            // Enrich student data with classroom information
+            return classroomStudents.map(student => ({
+              ...student,
+              classroom_name: classroom.name,
+              classroom_id: classroom.id,
+              // Map StudentMonitoring to StudentExtended format
+              email: student.email || 'N/A',
+              performance_level: calculatePerformanceLevel(student.score_average),
+            }));
+          } catch (err) {
+            console.error(`Error fetching students for classroom ${classroom.id}:`, err);
+            return [];
+          }
+        });
+
+        const studentsArrays = await Promise.all(allStudentsPromises);
+        const allStudents = studentsArrays.flat();
+
+        setStudents(allStudents);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching students:', error);
+        setError('Error al cargar estudiantes');
+        setLoading(false);
+      }
+    };
+
+    fetchStudents();
+  }, [classrooms]);
+
+  /**
+   * Calculate performance level based on average score
+   * @param score - Average score percentage
+   * @returns Performance level: high (>80), medium (60-80), low (<60)
+   */
+  const calculatePerformanceLevel = (score: number): 'high' | 'medium' | 'low' => {
+    if (score >= 80) return 'high';
+    if (score >= 60) return 'medium';
+    return 'low';
+  };
 
   const viewStudentDetail = (student: StudentExtended) => {
     setSelectedStudent(student);
@@ -264,9 +262,11 @@ export default function TeacherStudents() {
                 className="w-full px-4 py-2 bg-detective-bg-secondary border border-gray-700 rounded-lg text-detective-text focus:outline-none focus:border-detective-orange"
               >
                 <option value="all">Todas las clases</option>
-                <option value="Español 5to A">Español 5to A</option>
-                <option value="Español 5to B">Español 5to B</option>
-                <option value="Español 6to A">Español 6to A</option>
+                {classrooms?.map(classroom => (
+                  <option key={classroom.id} value={classroom.name}>
+                    {classroom.name}
+                  </option>
+                ))}
               </select>
             </div>
             <div>
@@ -287,13 +287,37 @@ export default function TeacherStudents() {
           </div>
         </DetectiveCard>
 
+        {/* Loading State */}
+        {(loading || classroomsLoading) && (
+          <div className="text-center py-8">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-detective-orange"></div>
+            <p className="mt-4 text-detective-text-secondary">Cargando estudiantes...</p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="bg-red-500/20 border border-red-500 rounded-lg p-4 mb-4">
+            <p className="text-red-500">{error}</p>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loading && !classroomsLoading && !error && students.length === 0 && (
+          <div className="text-center py-8 text-detective-text-secondary">
+            No se encontraron estudiantes
+          </div>
+        )}
+
         {/* Students Table */}
-        <DataTable
-          data={filteredStudents}
-          columns={columns}
-          searchPlaceholder="Buscar estudiantes..."
-          onRowClick={viewStudentDetail}
-        />
+        {!loading && !classroomsLoading && !error && students.length > 0 && (
+          <DataTable
+            data={filteredStudents}
+            columns={columns}
+            searchPlaceholder="Buscar estudiantes..."
+            onRowClick={viewStudentDetail}
+          />
+        )}
       </main>
 
       {/* Student Detail Modal */}

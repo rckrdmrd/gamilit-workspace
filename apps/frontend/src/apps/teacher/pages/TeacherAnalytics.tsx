@@ -37,6 +37,25 @@ ChartJS.register(
   Legend
 );
 
+/**
+ * Safely format a number to fixed decimals
+ * @param value - Value to format
+ * @param decimals - Number of decimal places
+ * @param suffix - Optional suffix (e.g., '%')
+ * @param fallback - Fallback value if invalid
+ */
+const safeFormat = (
+  value: number | undefined | null,
+  decimals: number = 1,
+  suffix: string = '',
+  fallback: string = 'N/A'
+): string => {
+  if (typeof value !== 'number' || isNaN(value)) {
+    return fallback;
+  }
+  return `${value.toFixed(decimals)}${suffix}`;
+};
+
 export default function TeacherAnalytics() {
   const [selectedClassroomId, setSelectedClassroomId] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'overview' | 'performance' | 'engagement'>('overview');
@@ -80,12 +99,17 @@ export default function TeacherAnalytics() {
   const loading = classroomsLoading || analyticsLoading;
   const error = analyticsError;
 
+  // Validar y filtrar module_stats antes de construir charts
   const moduleScoresChart = {
-    labels: analytics?.module_stats.map((m) => m.module_name) || [],
+    labels: analytics?.module_stats
+      ?.filter(m => m && typeof m.module_name === 'string')
+      .map(m => m.module_name) || [],
     datasets: [
       {
         label: 'Promedio de Puntuación',
-        data: analytics?.module_stats.map((m) => m.average_score) || [],
+        data: analytics?.module_stats
+          ?.filter(m => m && typeof m.average_score === 'number')
+          .map(m => m.average_score) || [],
         backgroundColor: 'rgba(249, 115, 22, 0.6)',
         borderColor: 'rgba(249, 115, 22, 1)',
         borderWidth: 1,
@@ -94,11 +118,15 @@ export default function TeacherAnalytics() {
   };
 
   const completionRateChart = {
-    labels: analytics?.module_stats.map((m) => m.module_name) || [],
+    labels: analytics?.module_stats
+      ?.filter(m => m && typeof m.module_name === 'string')
+      .map(m => m.module_name) || [],
     datasets: [
       {
         label: 'Tasa de Completitud (%)',
-        data: analytics?.module_stats.map((m) => m.completion_rate) || [],
+        data: analytics?.module_stats
+          ?.filter(m => m && typeof m.completion_rate === 'number')
+          .map(m => m.completion_rate) || [],
         backgroundColor: 'rgba(34, 197, 94, 0.6)',
         borderColor: 'rgba(34, 197, 94, 1)',
         borderWidth: 1,
@@ -301,7 +329,7 @@ export default function TeacherAnalytics() {
                   <div>
                     <p className="text-sm text-gray-400">Puntuación Promedio</p>
                     <p className="text-3xl font-bold text-detective-text">
-                      {analytics.average_score.toFixed(1)}%
+                      {safeFormat(analytics?.average_score, 1, '%')}
                     </p>
                   </div>
                 </div>
@@ -314,7 +342,7 @@ export default function TeacherAnalytics() {
                   <div>
                     <p className="text-sm text-gray-400">Tasa de Completitud</p>
                     <p className="text-3xl font-bold text-detective-text">
-                      {analytics.completion_rate.toFixed(1)}%
+                      {safeFormat(analytics?.completion_rate, 1, '%')}
                     </p>
                   </div>
                 </div>
@@ -327,7 +355,7 @@ export default function TeacherAnalytics() {
                   <div>
                     <p className="text-sm text-gray-400">Tasa de Engagement</p>
                     <p className="text-3xl font-bold text-detective-text">
-                      {analytics.engagement_rate.toFixed(1)}%
+                      {safeFormat(analytics?.engagement_rate, 1, '%')}
                     </p>
                   </div>
                 </div>
@@ -384,48 +412,65 @@ export default function TeacherAnalytics() {
                     </tr>
                   </thead>
                   <tbody>
-                    {analytics.student_performance.map((student) => (
-                      <tr
-                        key={student.student_id}
-                        className="border-b border-gray-800 hover:bg-detective-bg-secondary transition-colors"
-                      >
-                        <td className="px-4 py-3 text-detective-text font-medium">
-                          {student.student_name}
-                        </td>
-                        <td className="px-4 py-3">
-                          <span
-                            className={`font-bold ${
-                              student.average_score >= 80
-                                ? 'text-green-500'
-                                : student.average_score >= 60
-                                ? 'text-yellow-500'
-                                : 'text-red-500'
-                            }`}
-                          >
-                            {student.average_score}%
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-detective-text">
-                          {student.completion_rate}%
-                        </td>
-                        <td className="px-4 py-3 text-detective-text">
-                          {new Date(student.last_active).toLocaleDateString('es-ES')}
-                        </td>
-                        <td className="px-4 py-3">
-                          <span
-                            className={`px-2 py-1 rounded text-xs font-medium ${
-                              student.average_score >= 80
-                                ? 'bg-green-500/20 text-green-500'
-                                : student.average_score >= 60
-                                ? 'bg-yellow-500/20 text-yellow-500'
-                                : 'bg-red-500/20 text-red-500'
-                            }`}
-                          >
-                            {student.average_score >= 80 ? 'Excelente' : student.average_score >= 60 ? 'Regular' : 'Bajo'}
-                          </span>
+                    {analytics?.student_performance
+                      ?.filter(student =>
+                        student &&
+                        typeof student.student_name === 'string' &&
+                        typeof student.average_score === 'number'
+                      )
+                      .map((student) => (
+                        <tr
+                          key={student.student_id || student.student_name}
+                          className="border-b border-gray-800 hover:bg-detective-bg-secondary transition-colors"
+                        >
+                          <td className="px-4 py-3 text-detective-text font-medium">
+                            {student.student_name}
+                          </td>
+                          <td className="px-4 py-3">
+                            <span
+                              className={`font-bold ${
+                                student.average_score >= 80
+                                  ? 'text-green-500'
+                                  : student.average_score >= 60
+                                  ? 'text-yellow-500'
+                                  : 'text-red-500'
+                              }`}
+                            >
+                              {safeFormat(student.average_score, 1, '%')}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-detective-text">
+                            {safeFormat(student.completion_rate, 0, '%', '0%')}
+                          </td>
+                          <td className="px-4 py-3 text-detective-text">
+                            {student.last_active
+                              ? new Date(student.last_active).toLocaleDateString('es-ES')
+                              : 'N/A'}
+                          </td>
+                          <td className="px-4 py-3">
+                            <span
+                              className={`px-2 py-1 rounded text-xs font-medium ${
+                                student.average_score >= 80
+                                  ? 'bg-green-500/20 text-green-500'
+                                  : student.average_score >= 60
+                                  ? 'bg-yellow-500/20 text-yellow-500'
+                                  : 'bg-red-500/20 text-red-500'
+                              }`}
+                            >
+                              {student.average_score >= 80 ? 'Excelente' : student.average_score >= 60 ? 'Regular' : 'Bajo'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+
+                    {/* Empty state si no hay estudiantes */}
+                    {(!analytics?.student_performance || analytics.student_performance.length === 0) && (
+                      <tr>
+                        <td colSpan={5} className="px-4 py-8 text-center text-detective-text-secondary">
+                          No hay datos de estudiantes disponibles
                         </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -473,7 +518,7 @@ export default function TeacherAnalytics() {
                   <div>
                     <p className="text-sm text-gray-400">Duración Promedio (min)</p>
                     <p className="text-3xl font-bold text-detective-text">
-                      {engagement.session_duration_avg.toFixed(0)}
+                      {safeFormat(engagement?.session_duration_avg, 0, '', '0')}
                     </p>
                   </div>
                 </div>
@@ -487,7 +532,7 @@ export default function TeacherAnalytics() {
                   <div>
                     <p className="text-sm text-gray-400">Sesiones por Usuario</p>
                     <p className="text-3xl font-bold text-detective-text">
-                      {engagement.sessions_per_user.toFixed(1)}
+                      {safeFormat(engagement?.sessions_per_user, 1, '', '0.0')}
                     </p>
                   </div>
                 </div>
@@ -501,7 +546,7 @@ export default function TeacherAnalytics() {
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="flex items-center gap-3">
-                  {engagement.comparison_previous_period.dau_change >= 0 ? (
+                  {(engagement?.comparison_previous_period?.dau_change ?? 0) >= 0 ? (
                     <ArrowUp className="w-6 h-6 text-green-500" />
                   ) : (
                     <ArrowDown className="w-6 h-6 text-red-500" />
@@ -509,18 +554,18 @@ export default function TeacherAnalytics() {
                   <div>
                     <p className="text-sm text-gray-400">Cambio en DAU</p>
                     <p className={`text-2xl font-bold ${
-                      engagement.comparison_previous_period.dau_change >= 0
+                      (engagement?.comparison_previous_period?.dau_change ?? 0) >= 0
                         ? 'text-green-500'
                         : 'text-red-500'
                     }`}>
-                      {engagement.comparison_previous_period.dau_change >= 0 ? '+' : ''}
-                      {engagement.comparison_previous_period.dau_change.toFixed(1)}%
+                      {(engagement?.comparison_previous_period?.dau_change ?? 0) >= 0 ? '+' : ''}
+                      {safeFormat(engagement?.comparison_previous_period?.dau_change, 1, '%', '0.0%')}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  {engagement.comparison_previous_period.wau_change >= 0 ? (
+                  {(engagement?.comparison_previous_period?.wau_change ?? 0) >= 0 ? (
                     <ArrowUp className="w-6 h-6 text-green-500" />
                   ) : (
                     <ArrowDown className="w-6 h-6 text-red-500" />
@@ -528,18 +573,18 @@ export default function TeacherAnalytics() {
                   <div>
                     <p className="text-sm text-gray-400">Cambio en WAU</p>
                     <p className={`text-2xl font-bold ${
-                      engagement.comparison_previous_period.wau_change >= 0
+                      (engagement?.comparison_previous_period?.wau_change ?? 0) >= 0
                         ? 'text-green-500'
                         : 'text-red-500'
                     }`}>
-                      {engagement.comparison_previous_period.wau_change >= 0 ? '+' : ''}
-                      {engagement.comparison_previous_period.wau_change.toFixed(1)}%
+                      {(engagement?.comparison_previous_period?.wau_change ?? 0) >= 0 ? '+' : ''}
+                      {safeFormat(engagement?.comparison_previous_period?.wau_change, 1, '%', '0.0%')}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  {engagement.comparison_previous_period.engagement_change >= 0 ? (
+                  {(engagement?.comparison_previous_period?.engagement_change ?? 0) >= 0 ? (
                     <ArrowUp className="w-6 h-6 text-green-500" />
                   ) : (
                     <ArrowDown className="w-6 h-6 text-red-500" />
@@ -547,12 +592,12 @@ export default function TeacherAnalytics() {
                   <div>
                     <p className="text-sm text-gray-400">Cambio en Engagement</p>
                     <p className={`text-2xl font-bold ${
-                      engagement.comparison_previous_period.engagement_change >= 0
+                      (engagement?.comparison_previous_period?.engagement_change ?? 0) >= 0
                         ? 'text-green-500'
                         : 'text-red-500'
                     }`}>
-                      {engagement.comparison_previous_period.engagement_change >= 0 ? '+' : ''}
-                      {engagement.comparison_previous_period.engagement_change.toFixed(1)}%
+                      {(engagement?.comparison_previous_period?.engagement_change ?? 0) >= 0 ? '+' : ''}
+                      {safeFormat(engagement?.comparison_previous_period?.engagement_change, 1, '%', '0.0%')}
                     </p>
                   </div>
                 </div>
@@ -560,7 +605,7 @@ export default function TeacherAnalytics() {
             </DetectiveCard>
 
             {/* Feature Usage */}
-            {engagement.feature_usage && engagement.feature_usage.length > 0 && (
+            {engagement?.feature_usage && engagement.feature_usage.length > 0 && (
               <DetectiveCard>
                 <h3 className="text-lg font-bold text-detective-text mb-4">
                   Uso de Funcionalidades
@@ -581,24 +626,39 @@ export default function TeacherAnalytics() {
                       </tr>
                     </thead>
                     <tbody>
-                      {engagement.feature_usage.map((feature, index) => (
-                        <tr
-                          key={index}
-                          className="border-b border-gray-800 hover:bg-detective-bg-secondary transition-colors"
-                        >
-                          <td className="px-4 py-3 text-detective-text font-medium">
-                            {feature.feature_name}
-                          </td>
-                          <td className="px-4 py-3 text-detective-text">
-                            {feature.usage_count}
-                          </td>
-                          <td className="px-4 py-3 text-detective-text">
-                            {feature.unique_users}
-                          </td>
-                        </tr>
-                      ))}
+                      {engagement.feature_usage
+                        .filter(feature =>
+                          feature &&
+                          typeof feature.feature_name === 'string' &&
+                          typeof feature.usage_count === 'number'
+                        )
+                        .map((feature, index) => (
+                          <tr
+                            key={feature.feature_name || index}
+                            className="border-b border-gray-800 hover:bg-detective-bg-secondary transition-colors"
+                          >
+                            <td className="px-4 py-3 text-detective-text font-medium">
+                              {feature.feature_name}
+                            </td>
+                            <td className="px-4 py-3 text-detective-text">
+                              {feature.usage_count.toLocaleString()}
+                            </td>
+                            <td className="px-4 py-3 text-detective-text">
+                              {feature.unique_users ?? 0}
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
+                </div>
+              </DetectiveCard>
+            )}
+
+            {/* Empty state para feature usage */}
+            {(!engagement?.feature_usage || engagement.feature_usage.length === 0) && (
+              <DetectiveCard>
+                <div className="text-center py-6 text-detective-text-secondary">
+                  No hay datos de uso de características disponibles
                 </div>
               </DetectiveCard>
             )}
