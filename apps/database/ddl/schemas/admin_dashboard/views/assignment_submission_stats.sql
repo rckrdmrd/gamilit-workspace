@@ -7,6 +7,7 @@
 -- Created: 2025-11-02
 -- Updated: 2025-11-08 - Corregidas referencias de schemas y tablas
 -- Updated: 2025-11-11 - Migrado de public a admin_dashboard
+-- Updated: 2025-11-24 - Eliminada columna inexistente ac.deadline_override (ISSUE-P2-001)
 -- =============================================================================
 
 CREATE OR REPLACE VIEW admin_dashboard.assignment_submission_stats AS
@@ -32,7 +33,6 @@ SELECT
     MIN(CASE WHEN asub.score IS NOT NULL THEN asub.score ELSE NULL END) AS min_score_achieved,
     a.created_at AS assignment_created_at,
     a.due_date AS assignment_due_date,
-    ac.deadline_override AS classroom_deadline_override,
     COUNT(DISTINCT cm.student_id) AS total_students_in_classroom
 FROM
     educational_content.assignments a
@@ -46,7 +46,7 @@ WHERE
 GROUP BY
     a.id, a.title, a.assignment_type, a.total_points,
     c.id, c.name,
-    a.created_at, a.due_date, ac.deadline_override;
+    a.created_at, a.due_date;
 
 -- Documentation comment
 COMMENT ON VIEW admin_dashboard.assignment_submission_stats IS
@@ -56,6 +56,10 @@ CORRECTED (2025-11-08):
 - Fixed schema references (social_features.classrooms, educational_content.assignment_submissions)
 - Removed non-existent tables (exercise_grades, gamilit.users)
 - Fixed M2M relationships through assignment_classrooms and classroom_members
+
+CORRECTED (2025-11-24 - ISSUE-P2-001):
+- Removed ac.deadline_override column (does not exist in assignment_classrooms table)
+- Table assignment_classrooms only has: id, assignment_id, classroom_id, assigned_at
 
 Columns:
   - assignment_id: Unique identifier of the assignment
@@ -75,7 +79,6 @@ Columns:
   - min_score_achieved: Lowest score received
   - assignment_created_at: When the assignment was created
   - assignment_due_date: Global due date for the assignment
-  - classroom_deadline_override: Classroom-specific deadline override (if any)
   - total_students_in_classroom: Total number of students in the classroom
 
 Usage:

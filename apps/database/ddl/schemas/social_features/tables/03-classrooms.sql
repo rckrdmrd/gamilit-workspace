@@ -51,6 +51,7 @@ CREATE TABLE social_features.classrooms (
     meeting_url text,
     is_active boolean DEFAULT true,
     is_archived boolean DEFAULT false,
+    is_deleted boolean DEFAULT false,
     start_date date,
     end_date date,
     metadata jsonb DEFAULT '{}'::jsonb,
@@ -66,6 +67,13 @@ ALTER TABLE social_features.classrooms OWNER TO gamilit_user;
 --
 
 COMMENT ON TABLE social_features.classrooms IS 'Aulas virtuales para organizar estudiantes por clase';
+
+
+--
+-- Name: COLUMN classrooms.is_deleted; Type: COMMENT; Schema: social_features; Owner: postgres
+--
+
+COMMENT ON COLUMN social_features.classrooms.is_deleted IS 'Soft delete flag. When true, classroom is deleted but data preserved for audit. Backend filters with WHERE is_deleted = FALSE.';
 
 
 --
@@ -89,6 +97,13 @@ ALTER TABLE ONLY social_features.classrooms
 --
 
 CREATE INDEX idx_classrooms_active ON social_features.classrooms USING btree (is_active) WHERE (is_active = true);
+
+
+--
+-- Name: idx_classrooms_not_deleted; Type: INDEX; Schema: social_features; Owner: postgres
+--
+
+CREATE INDEX idx_classrooms_not_deleted ON social_features.classrooms USING btree (created_at DESC) WHERE (is_deleted = false);
 
 
 --

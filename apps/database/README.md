@@ -104,6 +104,48 @@ La documentación detallada del proyecto de base de datos está en:
 - **Guía de creación**: `docs/95-guias-desarrollo/GUIA-CREAR-BASE-DATOS.md`
 - **Guía de referencias**: `docs/95-guias-desarrollo/GUIA-REFERENCIAS-SIMCO.md`
 - **Guía de carga de usuarios**: `docs/GUIA-CARGA-USUARIOS-Y-PERFILES.md` ⭐ NUEVO
+- **CHANGELOG de Database**: `docs/database/CHANGELOG.md` ⭐ NUEVO (2025-11-24)
+- **Funciones Gamilit**: `ddl/schemas/gamilit/functions/README.md` ⭐ NUEVO (2025-11-24)
+
+## Flujo de Registro de Usuario ⭐ NUEVO
+
+### Inicialización Automática de Gamificación
+
+Al crear un nuevo usuario, el sistema inicializa automáticamente las estadísticas de gamificación mediante el trigger `initialize_user_stats()`.
+
+**Trigger:** `auth_management.profiles.trg_initialize_user_stats`
+**Función:** `gamilit.initialize_user_stats()`
+**Evento:** AFTER INSERT en `auth_management.profiles`
+
+**Tablas Inicializadas (4):**
+
+| Tabla | Propósito | Valores Iniciales |
+|-------|-----------|-------------------|
+| `gamification_system.user_stats` | Estadísticas XP/ML Coins | 100 ML Coins (bono bienvenida) |
+| `gamification_system.comodines_inventory` | Inventario de comodines | Vacío (0 de cada tipo) |
+| `gamification_system.user_ranks` | Rango Maya | Ajaw (nivel inicial) |
+| `progress_tracking.module_progress` | Progreso de módulos | not_started, 0% para todos los módulos publicados |
+
+**Flujo Completo:**
+
+```
+1. Backend: INSERT auth.users (email, password_hash)
+2. Backend: INSERT auth_management.profiles (user_id, role, tenant_id)
+3. Trigger: trg_initialize_user_stats se dispara automáticamente
+4. Función: initialize_user_stats() ejecuta 4 INSERT en paralelo
+5. Usuario listo con gamificación completa
+```
+
+**Roles con Gamificación:**
+- `student` - Estudiantes (gamificación completa)
+- `admin_teacher` - Maestros (gamificación completa)
+- `super_admin` - Administradores (gamificación completa)
+
+**Documentación Detallada:**
+- Ver: `ddl/schemas/gamilit/functions/README.md` - Sección "initialize_user_stats()"
+- Ver: `docs/database/CHANGELOG.md` - [2.5.2] 2025-11-24 (5 bug fixes)
+
+---
 
 ## Usuarios de Prueba
 
@@ -636,5 +678,32 @@ Para problemas o preguntas:
 
 ---
 
-**Última actualización:** 2025-11-11 (Validación Completa + Seeds 100% v2.3.7 - DB-111)
-**Versión del proyecto:** 2.3.7
+## Historial de Cambios Recientes
+
+### 2025-11-24 - Correcciones Críticas + Documentación
+
+**Funciones Corregidas:**
+- ✅ `initialize_user_stats()` - 5 bug fixes críticos (ver CHANGELOG.md)
+  - BUG FIX #1: Agregada inicialización de module_progress (CRÍTICO)
+  - BUG FIX #2: Corrección de errores de clave duplicada en user_ranks
+  - BUG FIX #3: Comentada función no implementada
+  - Documentación de FKs clarificada
+
+**Documentación Creada:**
+- ✅ `docs/database/CHANGELOG.md` - Historial de cambios de BD
+- ✅ `ddl/schemas/gamilit/functions/README.md` - Documentación de 16 funciones
+- ✅ README.md actualizado - Flujo de registro de usuario documentado
+
+**Validación:**
+- ✅ Carga limpia exitosa (34 segundos)
+- ✅ Tests de integración: 100% pasados
+- ✅ Documentación 100% sincronizada con código
+
+### 2025-11-11 - Validación Completa + Seeds 100% v2.3.7 - DB-111
+
+Ver secciones anteriores para detalles de DB-111, DB-100, DB-099, etc.
+
+---
+
+**Última actualización:** 2025-11-24 (Correcciones Críticas + Documentación Completa)
+**Versión del proyecto:** 2.5.2

@@ -109,7 +109,8 @@ BEGIN
                 v_config.case_sensitive,
                 v_config.normalize_text,
                 v_config.fuzzy_matching_threshold,
-                v_config.allow_partial_credit
+                v_config.allow_partial_credit,
+                v_exercise.content
             );
 
         WHEN 'validate_true_false' THEN

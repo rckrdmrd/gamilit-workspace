@@ -6,6 +6,7 @@
 -- Responsibility: SA-DB-031
 -- Created: 2025-11-02
 -- Updated: 2025-11-11 - Migrado de public a admin_dashboard
+-- Updated: 2025-11-24 - Corregido JOIN de assignments usando M2M (ISSUE-P2-001)
 -- =============================================================================
 
 CREATE OR REPLACE VIEW admin_dashboard.classroom_overview AS
@@ -35,7 +36,8 @@ FROM
     LEFT JOIN auth_management.profiles t ON c.teacher_id = t.id
     LEFT JOIN social_features.classroom_members cm ON c.id = cm.classroom_id
     LEFT JOIN auth_management.profiles u ON cm.student_id = u.id
-    LEFT JOIN educational_content.assignments a ON a.classroom_id = c.id
+    LEFT JOIN social_features.assignment_classrooms ac ON c.id = ac.classroom_id
+    LEFT JOIN educational_content.assignments a ON ac.assignment_id = a.id
     LEFT JOIN educational_content.exercises ex ON ex.module_id IN (
         SELECT id FROM educational_content.modules
     )
@@ -48,6 +50,12 @@ GROUP BY
 -- Documentation comment
 COMMENT ON VIEW admin_dashboard.classroom_overview IS
 'Provides a comprehensive overview of classroom statistics including student count, assignments, and progress.
+
+CORRECTED (2025-11-24 - ISSUE-P2-001):
+- Fixed JOIN with assignments table (M2M relationship through assignment_classrooms)
+- Changed: assignments a ON a.classroom_id = c.id (column does not exist)
+- To: assignment_classrooms ac ON c.id = ac.classroom_id, then assignments a ON ac.assignment_id = a.id
+
 Columns:
   - classroom_id: Unique identifier of the classroom
   - classroom_name: Name of the classroom

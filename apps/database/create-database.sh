@@ -498,22 +498,27 @@ execute_sql "$SEEDS_DIR/auth_management/02-auth_providers.sql" "Seeds: auth_prov
 # 16.3: Auth (usuarios de testing y demo)
 execute_sql "$SEEDS_DIR/auth/01-demo-users.sql" "Seeds: users (testing + demo)"
 
-# 16.4: Auth Management (profiles para usuarios)
+# 16.4: Educational Content (módulos) - MUST BE LOADED BEFORE PROFILES
+# REASON: initialize_user_stats() trigger needs modules to exist when creating module_progress
+execute_sql "$SEEDS_DIR/educational_content/01-modules.sql" "Seeds: modules (5)"
+
+# 16.5: Auth Management (profiles para usuarios)
+# NOTE: Trigger initialize_user_stats() fires here and creates module_progress automatically
 execute_sql "$SEEDS_DIR/auth_management/04-profiles-complete.sql" "Seeds: profiles"
 
-# 16.4.1: Content Management (templates de contenido)
+# 16.5.1: Content Management (templates de contenido)
 execute_sql "$SEEDS_DIR/content_management/01-default-templates.sql" "Seeds: content_templates"
 
-# 16.4.2: Social Features (escuelas, aulas y miembros)
+# 16.5.2: Social Features (escuelas, aulas y miembros)
 execute_sql "$SEEDS_DIR/social_features/01-schools.sql" "Seeds: schools (demo)"
 execute_sql "$SEEDS_DIR/social_features/02-classrooms.sql" "Seeds: classrooms (demo)"
 execute_sql "$SEEDS_DIR/social_features/03-classroom-members.sql" "Seeds: classroom_members (demo)"
 
-# 16.5: Educational Content (módulos y ejercicios)
-execute_sql "$SEEDS_DIR/educational_content/01-modules.sql" "Seeds: modules (5)"
+# 16.6: Educational Content (ejercicios)
 execute_sql "$SEEDS_DIR/educational_content/02-exercises-module1.sql" "Seeds: Module 1 - Literal (5 exercises)"
 execute_sql "$SEEDS_DIR/educational_content/03-exercises-module2.sql" "Seeds: Module 2 - Inferencial (5 exercises)"
 execute_sql "$SEEDS_DIR/educational_content/04-exercises-module3.sql" "Seeds: Module 3 - Crítica (5 exercises)"
+execute_sql "$SEEDS_DIR/educational_content/05-assignments.sql" "Seeds: assignments (9 demo for Teacher Portal - CORR-006)"
 # execute_sql "$SEEDS_DIR/educational_content/05-exercises-module4.sql" "Seeds: Module 4 - Digital (9 exercises)"
 # execute_sql "$SEEDS_DIR/educational_content/06-exercises-module5.sql" "Seeds: Module 5 - Creativo (3 exercises)"
 execute_sql "$SEEDS_DIR/educational_content/07-assessment-rubrics.sql" "Seeds: assessment_rubrics"
@@ -525,8 +530,10 @@ execute_sql "$SEEDS_DIR/educational_content/10-exercise_validation_config.sql" "
 # Total: 15 ejercicios production-ready (módulos 1-3) - Módulos 4-5 en backlog
 # Total seeds PROD: 38 archivos (actualizado DB-122: +63 registros feature_flags & gamification_parameters)
 
-# 16.5.1: Progress Tracking (progreso inicial de módulos)
-execute_sql "$SEEDS_DIR/progress_tracking/01-module_progress.sql" "Seeds: module_progress (initial)"
+# 16.7: Progress Tracking (progreso inicial de módulos)
+# NOTE: This seed is now REDUNDANT since initialize_user_stats() trigger creates module_progress automatically
+# KEPT for safety: ON CONFLICT DO NOTHING makes it a no-op if records already exist
+execute_sql "$SEEDS_DIR/progress_tracking/01-module_progress.sql" "Seeds: module_progress (backup/fallback)"
 
 # 16.5.2: LTI Integration (consumidores LTI)
 execute_sql "$SEEDS_DIR/lti_integration/01-lti_consumers.sql" "Seeds: lti_consumers"

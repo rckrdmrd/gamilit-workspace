@@ -348,8 +348,8 @@ BEGIN
                 {"id": "2", "position": 1, "correctAnswer": "Władysław", "alternatives": []},
                 {"id": "3", "position": 2, "correctAnswer": "Bronisława", "alternatives": []},
                 {"id": "4", "position": 3, "correctAnswer": "educación", "alternatives": []},
-                {"id": "5", "position": 4, "correctAnswer": "ciencias", "alternatives": []},
-                {"id": "6", "position": 5, "correctAnswer": "matemáticas", "alternatives": ["física"]}
+                {"id": "5", "position": 4, "correctAnswer": "ciencias", "alternatives": ["matemáticas", "física"]},
+                {"id": "6", "position": 5, "correctAnswer": "matemáticas", "alternatives": ["ciencias", "física"]}
             ]
         }'::jsonb,
         '{
@@ -360,7 +360,8 @@ BEGIN
                 "4": "educación",
                 "5": "ciencias",
                 "6": "matemáticas"
-            }
+            },
+            "note": "Espacios 5 y 6 aceptan cualquiera de: ciencias, matemáticas, física. Restricción: espacio 5 ≠ espacio 6 (no pueden ser la misma palabra)."
         }'::jsonb,
         'beginner', 100, 60,
         10, NULL, 3,

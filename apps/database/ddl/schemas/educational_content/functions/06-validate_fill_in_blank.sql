@@ -1,8 +1,10 @@
 -- ============================================================================
 -- FUNCIÓN: validate_fill_in_blank
 -- Descripción: Validador para ejercicios tipo completar espacios
+--              Soporta múltiples alternativas válidas por espacio en blanco
 -- Autor: Database Agent
 -- Fecha: 2025-11-19
+-- Última modificación: 2025-11-24 (Soporte de alternativas - GAP-EJERCICIO-1.3-001)
 -- Tarea: DB-116
 -- ============================================================================
 
@@ -14,6 +16,7 @@ CREATE OR REPLACE FUNCTION educational_content.validate_fill_in_blank(
     p_normalize_text BOOLEAN DEFAULT true,
     p_fuzzy_threshold NUMERIC DEFAULT NULL,
     p_allow_partial_credit BOOLEAN DEFAULT true,
+    p_content JSONB DEFAULT NULL,
     OUT is_correct BOOLEAN,
     OUT score INTEGER,
     OUT feedback TEXT,
@@ -26,11 +29,14 @@ AS $$
 DECLARE
     v_correct_answers JSONB;
     v_submitted_blanks JSONB;
+    v_content_blanks JSONB;
     v_total_blanks INTEGER;
     v_correct_blanks INTEGER := 0;
     v_blank_id TEXT;
     v_correct_answer TEXT;
     v_submitted_answer TEXT;
+    v_alternatives JSONB;
+    v_is_valid BOOLEAN;
     v_similarity NUMERIC;
     v_results JSONB := '[]'::jsonb;
 BEGIN
@@ -42,6 +48,11 @@ BEGIN
         RAISE EXCEPTION 'Invalid fill-in-blank format';
     END IF;
 
+    -- Extraer blanks del content (si está disponible)
+    IF p_content IS NOT NULL THEN
+        v_content_blanks := p_content->'blanks';
+    END IF;
+
     v_total_blanks := (SELECT COUNT(*) FROM jsonb_object_keys(v_correct_answers));
 
     -- Validar cada blank
@@ -50,7 +61,18 @@ BEGIN
         v_correct_answer := v_correct_answers->>v_blank_id;
         v_submitted_answer := v_submitted_blanks->>v_blank_id;
 
-        -- Normalizar
+        -- Obtener alternativas del content->blanks si existen
+        v_alternatives := NULL;
+        IF v_content_blanks IS NOT NULL THEN
+            -- Buscar el blank con este id en el array de blanks
+            SELECT elem->'alternatives'
+            INTO v_alternatives
+            FROM jsonb_array_elements(v_content_blanks) AS elem
+            WHERE elem->>'id' = v_blank_id
+            LIMIT 1;
+        END IF;
+
+        -- Normalizar respuesta correcta
         IF p_normalize_text THEN
             v_correct_answer := gamilit.normalize_text(v_correct_answer);
             v_submitted_answer := gamilit.normalize_text(COALESCE(v_submitted_answer, ''));
@@ -65,38 +87,74 @@ BEGIN
             v_submitted_answer := TRIM(v_submitted_answer);
         END IF;
 
-        -- Fuzzy matching?
+        -- Validar contra correctAnswer O alternatives
+        v_is_valid := false;
+
+        -- 1. Validar contra correctAnswer (lógica existente)
         IF p_fuzzy_threshold IS NOT NULL THEN
             v_similarity := similarity(v_correct_answer, v_submitted_answer);
-
             IF v_similarity >= p_fuzzy_threshold THEN
-                v_correct_blanks := v_correct_blanks + 1;
-                v_results := v_results || jsonb_build_object(
-                    'blank_id', v_blank_id,
-                    'is_correct', true,
-                    'similarity', v_similarity
-                );
-            ELSE
-                v_results := v_results || jsonb_build_object(
-                    'blank_id', v_blank_id,
-                    'is_correct', false,
-                    'similarity', v_similarity
-                );
+                v_is_valid := true;
             END IF;
         ELSE
-            -- Exact match
+            -- Exact match con correctAnswer
             IF v_submitted_answer = v_correct_answer THEN
-                v_correct_blanks := v_correct_blanks + 1;
-                v_results := v_results || jsonb_build_object(
-                    'blank_id', v_blank_id,
-                    'is_correct', true
-                );
-            ELSE
-                v_results := v_results || jsonb_build_object(
-                    'blank_id', v_blank_id,
-                    'is_correct', false
-                );
+                v_is_valid := true;
             END IF;
+        END IF;
+
+        -- 2. Si no es válido, validar contra alternatives (si existen)
+        IF NOT v_is_valid AND v_alternatives IS NOT NULL THEN
+            -- Iterar sobre alternatives
+            FOR i IN 0..jsonb_array_length(v_alternatives)-1
+            LOOP
+                DECLARE
+                    v_alternative TEXT;
+                BEGIN
+                    v_alternative := v_alternatives->>i;
+
+                    -- Normalizar alternativa
+                    IF p_normalize_text THEN
+                        v_alternative := gamilit.normalize_text(v_alternative);
+                    END IF;
+
+                    IF NOT p_case_sensitive THEN
+                        v_alternative := UPPER(TRIM(v_alternative));
+                    ELSE
+                        v_alternative := TRIM(v_alternative);
+                    END IF;
+
+                    -- Validar contra alternativa
+                    IF p_fuzzy_threshold IS NOT NULL THEN
+                        v_similarity := similarity(v_alternative, v_submitted_answer);
+                        IF v_similarity >= p_fuzzy_threshold THEN
+                            v_is_valid := true;
+                            EXIT;  -- Salir del loop si encontramos match
+                        END IF;
+                    ELSE
+                        IF v_submitted_answer = v_alternative THEN
+                            v_is_valid := true;
+                            EXIT;
+                        END IF;
+                    END IF;
+                END;
+            END LOOP;
+        END IF;
+
+        -- Registrar resultado
+        IF v_is_valid THEN
+            v_correct_blanks := v_correct_blanks + 1;
+            v_results := v_results || jsonb_build_object(
+                'blank_id', v_blank_id,
+                'is_correct', true,
+                'similarity', CASE WHEN p_fuzzy_threshold IS NOT NULL THEN v_similarity ELSE NULL END
+            );
+        ELSE
+            v_results := v_results || jsonb_build_object(
+                'blank_id', v_blank_id,
+                'is_correct', false,
+                'similarity', CASE WHEN p_fuzzy_threshold IS NOT NULL THEN v_similarity ELSE NULL END
+            );
         END IF;
     END LOOP;
 
@@ -130,4 +188,6 @@ $$;
 
 COMMENT ON FUNCTION educational_content.validate_fill_in_blank IS
 'Validador para ejercicios tipo completar espacios.
-Soporta fuzzy matching con threshold configurable.';
+Soporta fuzzy matching con threshold configurable.
+Soporta múltiples alternativas válidas por espacio en blanco (desde p_content->blanks[].alternatives).
+Para ejercicios sin alternativas, valida solo contra solution->correctAnswers (compatibilidad hacia atrás).';
