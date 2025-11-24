@@ -1,0 +1,262 @@
+/**
+ * TeacherClassroomsTab Component
+ *
+ * View and manage classrooms assigned to a teacher
+ *
+ * Features:
+ * - Search teacher by ID
+ * - View list of assigned classrooms
+ * - Assign multiple classrooms to teacher
+ */
+
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Search, GraduationCap, Loader2, AlertCircle, Mail, Calendar, Plus } from 'lucide-react';
+import { useClassroomTeacher } from '../../hooks/useClassroomTeacher';
+import { cn } from '@shared/utils/cn';
+
+export function TeacherClassroomsTab() {
+  const [teacherId, setTeacherId] = useState('');
+  const [searchedId, setSearchedId] = useState('');
+  const [classroomIdsToAssign, setClassroomIdsToAssign] = useState('');
+  const [showAssignModal, setShowAssignModal] = useState(false);
+
+  const { useTeacherClassrooms, assignClassroomsToTeacher } = useClassroomTeacher();
+
+  const { data: teacherData, isLoading, error } = useTeacherClassrooms(searchedId, !!searchedId);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (teacherId.trim()) {
+      setSearchedId(teacherId.trim());
+    }
+  };
+
+  const handleAssignClassrooms = () => {
+    if (!searchedId || !classroomIdsToAssign.trim()) return;
+
+    // Split by commas and clean whitespace
+    const classroomIds = classroomIdsToAssign
+      .split(',')
+      .map((id) => id.trim())
+      .filter((id) => id.length > 0);
+
+    if (classroomIds.length === 0) return;
+
+    assignClassroomsToTeacher.mutate(
+      {
+        teacherId: searchedId,
+        data: { classroomIds },
+      },
+      {
+        onSuccess: () => {
+          setClassroomIdsToAssign('');
+          setShowAssignModal(false);
+        },
+      },
+    );
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Search Form */}
+      <div className="rounded-xl bg-white p-6 shadow-md">
+        <h2 className="mb-4 text-xl font-bold text-gray-900">Buscar Teacher</h2>
+        <form onSubmit={handleSearch} className="flex gap-3">
+          <div className="flex-1">
+            <input
+              type="text"
+              value={teacherId}
+              onChange={(e) => setTeacherId(e.target.value)}
+              placeholder="Ingrese Teacher ID (UUID)"
+              className={cn(
+                'w-full rounded-lg px-4 py-3',
+                'border-2 border-gray-200',
+                'focus:border-purple-500 focus:outline-none',
+                'transition-colors',
+              )}
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={!teacherId.trim()}
+            className={cn(
+              'flex items-center gap-2 rounded-lg px-6 py-3',
+              'bg-purple-500 font-semibold text-white',
+              'transition-colors hover:bg-purple-600',
+              'disabled:cursor-not-allowed disabled:bg-gray-300',
+            )}
+          >
+            <Search className="h-5 w-5" />
+            Buscar
+          </button>
+        </form>
+      </div>
+
+      {/* Loading State */}
+      {isLoading && (
+        <div className="rounded-xl bg-white p-12 text-center shadow-md">
+          <Loader2 className="mx-auto mb-3 h-8 w-8 animate-spin text-purple-500" />
+          <p className="text-gray-600">Cargando classrooms...</p>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && searchedId && (
+        <div className="rounded-xl border-2 border-red-200 bg-red-50 p-6">
+          <div className="flex items-center gap-3 text-red-700">
+            <AlertCircle className="h-6 w-6" />
+            <div>
+              <p className="font-semibold">Error al cargar teacher</p>
+              <p className="text-sm">
+                {(error as any)?.response?.data?.message || 'Teacher no encontrado'}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Results */}
+      {teacherData && !isLoading && (
+        <div className="space-y-4">
+          {/* Teacher Info */}
+          <div className="rounded-xl bg-white p-6 shadow-md">
+            <div className="mb-4 flex items-start justify-between">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900">
+                  {teacherData.firstName} {teacherData.lastName}
+                </h3>
+                <div className="mt-1 flex items-center gap-2 text-gray-600">
+                  <Mail className="h-4 w-4" />
+                  {teacherData.email}
+                </div>
+              </div>
+              <button
+                onClick={() => setShowAssignModal(true)}
+                className={cn(
+                  'flex items-center gap-2 rounded-lg px-4 py-2',
+                  'bg-green-500 font-semibold text-white',
+                  'transition-colors hover:bg-green-600',
+                )}
+              >
+                <Plus className="h-5 w-5" />
+                Asignar Classrooms
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2 text-gray-600">
+              <GraduationCap className="h-5 w-5" />
+              <span className="font-semibold">
+                {teacherData.classroomsCount} classroom(s) asignado(s)
+              </span>
+            </div>
+          </div>
+
+          {/* Classrooms List */}
+          {teacherData.classrooms.length === 0 ? (
+            <div className="rounded-xl bg-gray-50 p-12 text-center">
+              <GraduationCap className="mx-auto mb-3 h-16 w-16 text-gray-300" />
+              <p className="font-semibold text-gray-600">
+                No hay classrooms asignados a este teacher
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {teacherData.classrooms.map((classroom) => (
+                <motion.div
+                  key={classroom.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="rounded-xl bg-white p-6 shadow-md"
+                >
+                  <div className="mb-4">
+                    <h4 className="text-lg font-bold text-gray-900">{classroom.name}</h4>
+                    <p className="text-sm text-gray-600">
+                      Grado: {classroom.grade} - Sección: {classroom.section}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <Calendar className="h-4 w-4" />
+                    Asignado: {new Date(classroom.assignedAt).toLocaleDateString('es-ES')}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Assign Classrooms Modal */}
+      {showAssignModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
+          >
+            <h3 className="mb-4 text-xl font-bold text-gray-900">Asignar Classrooms</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-gray-700">
+                  Classroom IDs (separados por comas)
+                </label>
+                <textarea
+                  value={classroomIdsToAssign}
+                  onChange={(e) => setClassroomIdsToAssign(e.target.value)}
+                  placeholder="uuid-1, uuid-2, uuid-3"
+                  rows={4}
+                  className={cn(
+                    'w-full rounded-lg px-4 py-3',
+                    'border-2 border-gray-200',
+                    'focus:border-purple-500 focus:outline-none',
+                    'resize-none',
+                  )}
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  Ingrese uno o más Classroom IDs separados por comas
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowAssignModal(false);
+                    setClassroomIdsToAssign('');
+                  }}
+                  className={cn(
+                    'flex-1 rounded-lg px-4 py-3',
+                    'bg-gray-200 font-semibold text-gray-700',
+                    'transition-colors hover:bg-gray-300',
+                  )}
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleAssignClassrooms}
+                  disabled={!classroomIdsToAssign.trim() || assignClassroomsToTeacher.isPending}
+                  className={cn(
+                    'flex-1 rounded-lg px-4 py-3',
+                    'bg-purple-500 font-semibold text-white',
+                    'transition-colors hover:bg-purple-600',
+                    'disabled:cursor-not-allowed disabled:bg-gray-300',
+                    'flex items-center justify-center gap-2',
+                  )}
+                >
+                  {assignClassroomsToTeacher.isPending ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      Asignando...
+                    </>
+                  ) : (
+                    'Asignar'
+                  )}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </div>
+  );
+}
