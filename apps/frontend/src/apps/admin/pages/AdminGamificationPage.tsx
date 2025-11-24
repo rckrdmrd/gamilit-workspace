@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
+import { useUserGamification } from '@/shared/hooks/useUserGamification';
+import { useGamificationConfig } from '../hooks/useGamificationConfig';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
@@ -11,64 +13,58 @@ import {
   TrendingUp,
   Settings,
   Award,
-  Zap,
+  Loader2,
 } from 'lucide-react';
 
 /**
  * AdminGamificationPage - Configuración de gamificación global
+ *
+ * Integrado con APIs reales (US-AE-005)
+ * Elimina datos hardcodeados y consume endpoints backend
  */
 export default function AdminGamificationPage() {
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<'ranks' | 'achievements' | 'economy' | 'stats'>('ranks');
 
-  const gamificationData = {
-    userId: user?.id || 'mock-admin-id',
-    level: 20,
-    totalXP: 5000,
-    mlCoins: 2500,
-    rank: 'Super Admin',
-    achievements: ['admin_master', 'gamification_wizard'],
-  };
+  // Cargar datos de gamificación del usuario actual (admin)
+  const { gamificationData } = useUserGamification(user?.id);
+
+  // Cargar datos desde APIs reales
+  const {
+    useParameters,
+    useMayaRanks,
+    useStats,
+  } = useGamificationConfig();
+
+  const { data: stats, isLoading: statsLoading } = useStats();
+  const { data: parametersData, isLoading: parametersLoading } = useParameters();
+  const { data: mayaRanks, isLoading: ranksLoading } = useMayaRanks();
+
+  const isLoading = statsLoading || parametersLoading || ranksLoading;
 
   const handleLogout = () => {
     logout();
     window.location.href = '/login';
   };
 
-  // Mock data de rangos Maya
-  const mayaRanks = [
-    { id: 'chuen', name: 'Chuen', minXP: 0, maxXP: 999, color: 'text-gray-400', users: 450 },
-    { id: 'oc', name: 'Oc', minXP: 1000, maxXP: 2499, color: 'text-green-400', users: 380 },
-    { id: 'manik', name: 'Manik', minXP: 2500, maxXP: 4999, color: 'text-blue-400', users: 250 },
-    { id: 'lamat', name: 'Lamat', minXP: 5000, maxXP: 9999, color: 'text-purple-400', users: 120 },
-    { id: 'muluc', name: 'Muluc', minXP: 10000, maxXP: 19999, color: 'text-orange-400', users: 35 },
-    { id: 'ahau', name: 'Ahau', minXP: 20000, maxXP: 999999, color: 'text-yellow-400', users: 15 },
-  ];
-
-  // Mock achievements
-  const achievements = [
-    { id: 'first_exercise', name: 'Primer Ejercicio', description: 'Completa tu primer ejercicio', users: 1200 },
-    { id: 'module_master', name: 'Maestro del Módulo', description: 'Completa un módulo entero', users: 450 },
-    { id: 'perfect_score', name: 'Puntuación Perfecta', description: 'Obtén 100% en un ejercicio', users: 380 },
-    { id: 'streak_7', name: 'Racha de 7 Días', description: 'Mantén una racha de 7 días', users: 150 },
-  ];
-
-  // Economy stats
-  const economyStats = {
-    totalMLCoins: 125000,
-    averagePerUser: 100,
-    dailyTransactions: 450,
-    shopItems: 25,
-    powerUps: 12,
-  };
-
-  // Global stats
-  const globalStats = {
-    totalXPEarned: 2500000,
-    totalAchievementsUnlocked: 3200,
-    averageRank: 'Manik',
-    mostActiveDay: 'Lunes',
-  };
+  // Loading state
+  if (isLoading) {
+    return (
+      <AdminLayout
+        user={user || undefined}
+        gamificationData={gamificationData}
+        organizationName="GAMILIT Platform Admin"
+        onLogout={handleLogout}
+      >
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center">
+            <Loader2 className="w-12 h-12 animate-spin text-detective-orange mx-auto mb-4" />
+            <p className="text-lg text-detective-text">Cargando configuración de gamificación...</p>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout
@@ -87,6 +83,11 @@ export default function AdminGamificationPage() {
           <p className="text-detective-text-secondary mt-1">
             Configura rangos, logros, economía y visualiza estadísticas
           </p>
+          {stats?.lastModified && (
+            <p className="text-sm text-detective-text-secondary mt-2">
+              Última modificación: {new Date(stats.lastModified).toLocaleString('es-ES')}
+            </p>
+          )}
         </div>
 
         {/* Tabs */}
@@ -142,34 +143,52 @@ export default function AdminGamificationPage() {
           <div className="space-y-4">
             <DetectiveCard>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-detective-text">Rangos Maya</h2>
-                <DetectiveButton variant="primary" size="sm" onClick={() => alert('Editar rangos')}>
+                <h2 className="text-xl font-bold text-detective-text">
+                  Rangos Maya ({mayaRanks?.length || 0})
+                </h2>
+                <DetectiveButton variant="primary" size="sm" onClick={() => alert('Editar rangos - Funcionalidad próximamente')}>
                   <Settings className="w-4 h-4" />
                   Configurar
                 </DetectiveButton>
               </div>
 
               <div className="space-y-3">
-                {mayaRanks.map((rank) => (
-                  <div
-                    key={rank.id}
-                    className="flex items-center justify-between p-4 bg-detective-bg-secondary rounded-lg"
-                  >
-                    <div className="flex items-center gap-4">
-                      <Star className={`w-8 h-8 ${rank.color}`} />
-                      <div>
-                        <h3 className={`text-lg font-bold ${rank.color}`}>{rank.name}</h3>
-                        <p className="text-sm text-detective-text-secondary">
-                          {rank.minXP} - {rank.maxXP === 999999 ? '∞' : rank.maxXP} XP
-                        </p>
+                {mayaRanks && mayaRanks.length > 0 ? (
+                  mayaRanks
+                    .sort((a, b) => a.level - b.level)
+                    .map((rank) => (
+                      <div
+                        key={rank.id}
+                        className="flex items-center justify-between p-4 bg-detective-bg-secondary rounded-lg"
+                      >
+                        <div className="flex items-center gap-4">
+                          <Star className="w-8 h-8" style={{ color: rank.color }} />
+                          <div>
+                            <h3 className="text-lg font-bold" style={{ color: rank.color }}>
+                              {rank.name}
+                            </h3>
+                            <p className="text-sm text-detective-text-secondary">
+                              {rank.minXp.toLocaleString()} - {rank.maxXp ? rank.maxXp.toLocaleString() : '∞'} XP
+                            </p>
+                            <p className="text-xs text-detective-text-secondary mt-1">
+                              Nivel {rank.level} • Mult. XP: {rank.multiplierXp}x • Mult. Coins: {rank.multiplierMlCoins}x
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          {rank.isActive ? (
+                            <span className="px-2 py-1 bg-green-900/30 text-green-400 text-xs rounded">Activo</span>
+                          ) : (
+                            <span className="px-2 py-1 bg-gray-900/30 text-gray-400 text-xs rounded">Inactivo</span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-detective-text">{rank.users}</p>
-                      <p className="text-xs text-detective-text-secondary">usuarios</p>
-                    </div>
+                    ))
+                ) : (
+                  <div className="text-center py-8 text-detective-text-secondary">
+                    No hay rangos Maya configurados
                   </div>
-                ))}
+                )}
               </div>
             </DetectiveCard>
           </div>
@@ -181,33 +200,21 @@ export default function AdminGamificationPage() {
             <DetectiveCard>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-detective-text">Logros</h2>
-                <DetectiveButton variant="primary" size="sm" onClick={() => alert('Crear logro')}>
+                <DetectiveButton variant="primary" size="sm" onClick={() => alert('Funcionalidad en desarrollo')}>
                   <Award className="w-4 h-4" />
                   Nuevo Logro
                 </DetectiveButton>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {achievements.map((achievement) => (
-                  <div
-                    key={achievement.id}
-                    className="p-4 bg-detective-bg-secondary rounded-lg hover:bg-detective-bg-secondary/70 transition-colors"
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-3">
-                        <Trophy className="w-6 h-6 text-detective-gold" />
-                        <div>
-                          <h3 className="font-bold text-detective-text">{achievement.name}</h3>
-                          <p className="text-sm text-detective-text-secondary">{achievement.description}</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-700">
-                      <span className="text-sm text-detective-text-secondary">Desbloqueado por:</span>
-                      <span className="text-lg font-bold text-blue-400">{achievement.users} usuarios</span>
-                    </div>
-                  </div>
-                ))}
+              <div className="text-center py-12 text-detective-text-secondary">
+                <Award className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                <p className="text-lg font-semibold mb-2">Achievements en desarrollo</p>
+                <p className="text-sm">
+                  La gestión de logros estará disponible en una próxima versión.
+                </p>
+                <p className="text-xs mt-2">
+                  Total de logros configurados: {stats?.totalParameters || 0}
+                </p>
               </div>
             </DetectiveCard>
           </div>
@@ -219,58 +226,70 @@ export default function AdminGamificationPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <DetectiveCard hoverable={false}>
                 <div className="text-center">
-                  <Coins className="w-12 h-12 text-detective-gold mx-auto mb-2" />
-                  <p className="text-sm text-detective-text-secondary mb-1">ML Coins en Circulación</p>
+                  <Settings className="w-12 h-12 text-detective-gold mx-auto mb-2" />
+                  <p className="text-sm text-detective-text-secondary mb-1">Parámetros Totales</p>
                   <p className="text-3xl font-bold text-detective-gold">
-                    {economyStats.totalMLCoins.toLocaleString()}
+                    {stats?.totalParameters || 0}
                   </p>
                 </div>
               </DetectiveCard>
               <DetectiveCard hoverable={false}>
                 <div className="text-center">
                   <Target className="w-12 h-12 text-blue-400 mx-auto mb-2" />
-                  <p className="text-sm text-detective-text-secondary mb-1">Promedio por Usuario</p>
-                  <p className="text-3xl font-bold text-blue-400">{economyStats.averagePerUser}</p>
+                  <p className="text-sm text-detective-text-secondary mb-1">Parámetros Activos</p>
+                  <p className="text-3xl font-bold text-blue-400">{stats?.activeParameters || 0}</p>
                 </div>
               </DetectiveCard>
               <DetectiveCard hoverable={false}>
                 <div className="text-center">
-                  <TrendingUp className="w-12 h-12 text-green-400 mx-auto mb-2" />
-                  <p className="text-sm text-detective-text-secondary mb-1">Transacciones Diarias</p>
-                  <p className="text-3xl font-bold text-green-400">{economyStats.dailyTransactions}</p>
+                  <Coins className="w-12 h-12 text-green-400 mx-auto mb-2" />
+                  <p className="text-sm text-detective-text-secondary mb-1">Categoría Coins</p>
+                  <p className="text-3xl font-bold text-green-400">
+                    {parametersData?.data.filter(p => p.category === 'coins').length || 0}
+                  </p>
                 </div>
               </DetectiveCard>
             </div>
 
             <DetectiveCard>
-              <h2 className="text-xl font-bold text-detective-text mb-4">Configuración de Economía</h2>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-detective-text mb-2">
-                      ML Coins por Ejercicio Completado
-                    </label>
-                    <input
-                      type="number"
-                      defaultValue={10}
-                      className="w-full px-4 py-2 bg-detective-bg-secondary border border-gray-600 rounded-lg text-detective-text"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-detective-text mb-2">
-                      ML Coins por Logro Desbloqueado
-                    </label>
-                    <input
-                      type="number"
-                      defaultValue={50}
-                      className="w-full px-4 py-2 bg-detective-bg-secondary border border-gray-600 rounded-lg text-detective-text"
-                    />
-                  </div>
+              <h2 className="text-xl font-bold text-detective-text mb-4">Parámetros de Economía</h2>
+              {parametersData && parametersData.data.length > 0 ? (
+                <div className="space-y-3">
+                  {parametersData.data
+                    .filter(param => param.category === 'coins' || param.category === 'bonuses')
+                    .map((param) => (
+                      <div
+                        key={param.id}
+                        className="flex items-center justify-between p-3 bg-detective-bg-secondary rounded-lg"
+                      >
+                        <div>
+                          <p className="font-semibold text-detective-text">{param.key}</p>
+                          <p className="text-xs text-detective-text-secondary">{param.description}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-bold text-detective-gold">
+                            {param.value}{param.dataType === 'percentage' ? '%' : ''}
+                          </p>
+                          <p className="text-xs text-detective-text-secondary">
+                            Default: {param.defaultValue}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  <DetectiveButton
+                    variant="primary"
+                    onClick={() => alert('Edición de parámetros - Funcionalidad próximamente')}
+                    className="w-full mt-4"
+                  >
+                    <Settings className="w-4 h-4 inline mr-2" />
+                    Configurar Parámetros
+                  </DetectiveButton>
                 </div>
-                <DetectiveButton variant="primary" onClick={() => alert('Guardar configuración')}>
-                  Guardar Configuración
-                </DetectiveButton>
-              </div>
+              ) : (
+                <div className="text-center py-8 text-detective-text-secondary">
+                  No hay parámetros de economía configurados
+                </div>
+              )}
             </DetectiveCard>
           </div>
         )}
@@ -281,35 +300,57 @@ export default function AdminGamificationPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <DetectiveCard hoverable={false}>
                 <div className="text-center">
-                  <Zap className="w-12 h-12 text-orange-400 mx-auto mb-2" />
-                  <p className="text-sm text-detective-text-secondary mb-1">XP Total Ganada</p>
+                  <Settings className="w-12 h-12 text-orange-400 mx-auto mb-2" />
+                  <p className="text-sm text-detective-text-secondary mb-1">Total Parámetros</p>
                   <p className="text-2xl font-bold text-orange-400">
-                    {globalStats.totalXPEarned.toLocaleString()}
+                    {stats?.totalParameters || 0}
                   </p>
                 </div>
               </DetectiveCard>
               <DetectiveCard hoverable={false}>
                 <div className="text-center">
                   <Award className="w-12 h-12 text-purple-400 mx-auto mb-2" />
-                  <p className="text-sm text-detective-text-secondary mb-1">Logros Desbloqueados</p>
-                  <p className="text-2xl font-bold text-purple-400">{globalStats.totalAchievementsUnlocked}</p>
+                  <p className="text-sm text-detective-text-secondary mb-1">Parámetros Activos</p>
+                  <p className="text-2xl font-bold text-purple-400">{stats?.activeParameters || 0}</p>
                 </div>
               </DetectiveCard>
               <DetectiveCard hoverable={false}>
                 <div className="text-center">
                   <Star className="w-12 h-12 text-blue-400 mx-auto mb-2" />
-                  <p className="text-sm text-detective-text-secondary mb-1">Rango Promedio</p>
-                  <p className="text-2xl font-bold text-blue-400">{globalStats.averageRank}</p>
+                  <p className="text-sm text-detective-text-secondary mb-1">Total Rangos Maya</p>
+                  <p className="text-2xl font-bold text-blue-400">{stats?.totalRanks || 0}</p>
                 </div>
               </DetectiveCard>
               <DetectiveCard hoverable={false}>
                 <div className="text-center">
                   <TrendingUp className="w-12 h-12 text-green-400 mx-auto mb-2" />
-                  <p className="text-sm text-detective-text-secondary mb-1">Día Más Activo</p>
-                  <p className="text-2xl font-bold text-green-400">{globalStats.mostActiveDay}</p>
+                  <p className="text-sm text-detective-text-secondary mb-1">Rangos Activos</p>
+                  <p className="text-2xl font-bold text-green-400">{stats?.activeRanks || 0}</p>
                 </div>
               </DetectiveCard>
             </div>
+
+            {/* Desglose por categorías */}
+            <DetectiveCard>
+              <h2 className="text-xl font-bold text-detective-text mb-4">Parámetros por Categoría</h2>
+              {parametersData && parametersData.data.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                  {(['points', 'coins', 'levels', 'ranks', 'penalties', 'bonuses'] as const).map(category => {
+                    const count = parametersData.data.filter(p => p.category === category).length;
+                    return (
+                      <div key={category} className="text-center p-4 bg-detective-bg-secondary rounded-lg">
+                        <p className="text-sm text-detective-text-secondary mb-1 capitalize">{category}</p>
+                        <p className="text-2xl font-bold text-detective-text">{count}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-detective-text-secondary">
+                  No hay datos de parámetros disponibles
+                </div>
+              )}
+            </DetectiveCard>
           </div>
         )}
       </div>
