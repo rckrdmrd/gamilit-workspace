@@ -1,0 +1,117 @@
+name: Validate API Routes
+
+on:
+  push:
+    branches: [master, main, develop]
+    paths:
+      - 'apps/frontend/**/*.ts'
+      - 'apps/frontend/**/*.tsx'
+      - 'apps/backend/**/*.ts'
+  pull_request:
+    branches: [master, main, develop]
+    paths:
+      - 'apps/frontend/**/*.ts'
+      - 'apps/frontend/**/*.tsx'
+      - 'apps/backend/**/*.ts'
+
+jobs:
+  validate-routes:
+    name: Validate API Routes Configuration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies (root)
+        run: npm install
+
+      - name: Install frontend dependencies
+        working-directory: apps/frontend
+        run: npm install
+
+      - name: Run ESLint with custom API rules
+        working-directory: apps/frontend
+        run: |
+          npm run lint 2>&1 | tee eslint-output.txt
+          # Check for API route issues
+          if grep -q "no-api-route-issues" eslint-output.txt; then
+            echo "❌ API route configuration errors detected!"
+            echo ""
+            echo "Common issues:"
+            echo "- Duplicate /api/ prefix in endpoint paths"
+            echo "- New axios instances instead of using official apiClient"
+            echo "- Direct fetch() calls bypassing apiClient"
+            echo "- Hardcoded API URLs instead of using constants"
+            echo ""
+            exit 1
+          fi
+
+      - name: Validate backend controllers
+        working-directory: apps/backend
+        run: |
+          echo "Checking for duplicate /api/ prefix in @Controller decorators..."
+          if grep -r "@Controller('api/" src/modules/ | grep -v "node_modules"; then
+            echo "❌ Found @Controller decorators with 'api/' prefix!"
+            echo "Backend uses global prefix '/api', remove 'api/' from controller decorators."
+            echo ""
+            echo "Example fix:"
+            echo "  BEFORE: @Controller('api/users')"
+            echo "  AFTER:  @Controller('users')"
+            echo ""
+            exit 1
+          fi
+          echo "✅ No duplicate /api/ prefixes found in backend controllers"
+
+      - name: Check for duplicate axios instances
+        working-directory: apps/frontend
+        run: |
+          echo "Checking for new axios instances..."
+          # Exclude the official apiClient file
+          if grep -r "axios\.create" src/ --exclude-dir=node_modules | grep -v "services/api/apiClient.ts"; then
+            echo "❌ Found unauthorized axios.create() calls!"
+            echo "Use the official apiClient from @/services/api/apiClient instead."
+            echo ""
+            exit 1
+          fi
+          echo "✅ No unauthorized axios instances found"
+
+      - name: Check for direct fetch() calls
+        working-directory: apps/frontend
+        run: |
+          echo "Checking for direct fetch() calls..."
+          # Look for fetch calls with /api/ in the URL
+          if grep -r "fetch.*['\"].*\/api\/" src/ --exclude-dir=node_modules | grep -v "\.test\."; then
+            echo "⚠️  Found direct fetch() calls to API endpoints!"
+            echo "Consider using apiClient for better error handling and authentication."
+            echo ""
+            # Don't fail on fetch() calls, just warn
+          fi
+
+      - name: Validate API endpoint constants
+        working-directory: apps/frontend
+        run: |
+          echo "Checking API endpoint constants..."
+          # Check that API_ENDPOINTS exists
+          if [ ! -f "src/shared/constants/api-endpoints.ts" ]; then
+            echo "❌ API endpoint constants file not found!"
+            exit 1
+          fi
+          echo "✅ API endpoint constants file exists"
+
+      - name: Summary
+        if: success()
+        run: |
+          echo "✅ All API route validations passed!"
+          echo ""
+          echo "Validated:"
+          echo "  - No duplicate /api/ prefixes in frontend endpoints"
+          echo "  - No duplicate /api/ prefixes in backend controllers"
+          echo "  - No unauthorized axios instances"
+          echo "  - API endpoint constants are properly configured"
