@@ -172,7 +172,7 @@ BEGIN
         'debate_digital', 2,
         '{
             "allowCounterarguments": true,
-            "timeLimit": 1500,
+            "timeLimit": 600,
             "requireEvidence": true,
             "minArguments": 3
         }'::jsonb,
@@ -408,8 +408,8 @@ BEGIN
         '{
             "audioRecording": true,
             "scriptAlternative": true,
-            "minDuration": 180,
-            "maxDuration": 300,
+            "minDuration": 120,
+            "maxDuration": 120,
             "requireStructure": true
         }'::jsonb,
         '{
