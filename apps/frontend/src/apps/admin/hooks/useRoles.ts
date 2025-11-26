@@ -66,6 +66,33 @@ export function useRoles(): UseRolesResult {
   const [error, setError] = useState<string | null>(null);
 
   // ============================================================================
+  // TRANSFORMATION HELPERS
+  // ============================================================================
+
+  /**
+   * Transform backend role format to frontend Role type
+   * Backend returns: id, name, users_count, created_at, updated_at
+   * Frontend expects: roleId, roleName, userCount, createdAt, updatedAt
+   */
+  const transformRole = useCallback((backendRole: any): Role => {
+    // System roles that cannot be deleted
+    const systemRoles = ['super_admin', 'admin_teacher', 'student'];
+
+    return {
+      roleId: backendRole.id || backendRole.roleId,
+      roleName: backendRole.name || backendRole.roleName,
+      description: backendRole.description || '',
+      userCount: backendRole.users_count ?? backendRole.userCount ?? 0,
+      isSystem:
+        backendRole.is_system ??
+        backendRole.isSystem ??
+        systemRoles.includes(backendRole.name || backendRole.roleName),
+      createdAt: backendRole.created_at || backendRole.createdAt,
+      updatedAt: backendRole.updated_at || backendRole.updatedAt,
+    };
+  }, []);
+
+  // ============================================================================
   // API CALLS - READ OPERATIONS
   // ============================================================================
 
@@ -73,14 +100,16 @@ export function useRoles(): UseRolesResult {
    * Fetch all roles with their user counts
    * Backend: GET /admin/roles
    *
-   * Response example:
+   * Backend Response:
    * ```json
    * [{
-   *   "roleId": "uuid",
-   *   "roleName": "super_admin",
+   *   "id": "uuid",
+   *   "name": "super_admin",
    *   "description": "Super Administrator",
-   *   "userCount": 2,
-   *   "isSystem": true
+   *   "users_count": 2,
+   *   "is_active": true,
+   *   "created_at": "2025-11-26T00:00:00Z",
+   *   "updated_at": "2025-11-26T00:00:00Z"
    * }]
    * ```
    */
@@ -89,6 +118,15 @@ export function useRoles(): UseRolesResult {
     setError(null);
     try {
       const rolesData = await adminAPI.getRoles();
+
+      // Defensive: Validate response exists
+      if (!rolesData) {
+        console.error('[useRoles] No data received from server');
+        setError('No se recibieron datos del servidor');
+        setRoles([]);
+        setTotal(0);
+        return;
+      }
 
       // Defensive: Validate response structure
       if (!Array.isArray(rolesData)) {
@@ -99,8 +137,12 @@ export function useRoles(): UseRolesResult {
         return;
       }
 
-      setRoles(rolesData);
-      setTotal(rolesData.length);
+      // Transform backend roles to frontend format
+      const transformedRoles = rolesData.map(transformRole);
+
+      console.log('[useRoles] Transformed roles:', transformedRoles);
+      setRoles(transformedRoles);
+      setTotal(transformedRoles.length);
     } catch (err) {
       console.error('[useRoles] Failed to fetch roles:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch roles');
@@ -109,7 +151,7 @@ export function useRoles(): UseRolesResult {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [transformRole]);
 
   /**
    * Fetch all available permissions in the system

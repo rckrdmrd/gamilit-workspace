@@ -5,6 +5,10 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { calculateScore, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import type { LecturaInferencialExerciseProps, QuestionAnswer } from './lecturaInferencialTypes';
+import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
+import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
 
 export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProps> = ({
   exercise,
@@ -18,6 +22,10 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [startTime] = useState(new Date());
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user } = useAuth();
+  const { fetchUserProgress } = useRanksStore();
+  const { fetchBalance } = useEconomyStore();
 
   const questions = exercise.content.questions;
 
@@ -60,7 +68,9 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
     }
   };
 
-  const handleCheck = useCallback(() => {
+  const handleCheck = useCallback(async () => {
+    if (isSubmitting) return;
+
     if (validated) {
       // Already validated, show results again
       const correctAnswers = answers.filter((a) => a.isCorrect).length;
@@ -96,41 +106,92 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
       return;
     }
 
-    // Validate all answers
-    const validatedAnswers: QuestionAnswer[] = questions.map((q) => {
-      const selectedOption = selectedAnswers[q.id];
-      const isCorrect = selectedOption === q.correctAnswer;
-      return {
-        questionId: q.id,
-        selectedOption,
-        isCorrect,
-        timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
-      };
-    });
+    // Check if user is authenticated
+    if (!user?.id) {
+      setFeedback({
+        type: 'error',
+        title: 'Error de Autenticación',
+        message: 'Debes estar autenticado para enviar el ejercicio.',
+      });
+      setShowFeedback(true);
+      return;
+    }
 
-    setAnswers(validatedAnswers);
-    setValidated(true);
+    setIsSubmitting(true);
 
-    // Show final results
-    const correctAnswers = validatedAnswers.filter((a) => a.isCorrect).length;
-    const totalQuestions = questions.length;
-    const finalScore = calculateScore(correctAnswers, totalQuestions);
-    const percentage = (correctAnswers / totalQuestions) * 100;
+    try {
+      // Prepare answers in backend DTO format
+      const userAnswers: Record<string, string> = {};
+      Object.entries(selectedAnswers).forEach(([questionId, optionIndex]) => {
+        userAnswers[questionId] = String(optionIndex);
+      });
 
-    setFeedback({
-      type: percentage >= 70 ? 'success' : percentage >= 50 ? 'partial' : 'error',
-      title:
-        percentage >= 70
-          ? '¡Excelente trabajo!'
-          : percentage >= 50
-            ? 'Buen intento'
-            : 'Necesitas practicar más',
-      message: `Respondiste correctamente ${correctAnswers} de ${totalQuestions} preguntas (${Math.round(percentage)}%).`,
-      score: finalScore,
-      showConfetti: percentage >= 70,
-    });
-    setShowFeedback(true);
-  }, [selectedAnswers, validated, answers, questions, startTime]);
+      // Submit to backend API
+      const response = await submitExercise(exercise.id, user.id, { questions: userAnswers });
+
+      // Validate all answers using backend response
+      const validatedAnswers: QuestionAnswer[] = questions.map((q) => {
+        const selectedOption = selectedAnswers[q.id];
+        const isCorrect = selectedOption === q.correctAnswer;
+        return {
+          questionId: q.id,
+          selectedOption,
+          isCorrect,
+          timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
+        };
+      });
+
+      setAnswers(validatedAnswers);
+      setValidated(true);
+
+      // Show backend response with rewards
+      setFeedback({
+        type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
+        title: response.isPerfect
+          ? '¡Perfecto!'
+          : response.score >= 70
+            ? '¡Buen trabajo!'
+            : 'Intenta de nuevo',
+        message:
+          response.feedback?.overall ||
+          `Has respondido correctamente ${response.correctAnswersCount} de ${response.totalQuestions} preguntas (${Math.round(response.score)}%). Ganaste ${response.rewards?.xp || 0} XP y ${response.rewards?.mlCoins || 0} ML Coins.`,
+        score: response.score,
+        showConfetti: response.isPerfect,
+      });
+      setShowFeedback(true);
+
+      // Sync stores with backend (rewards already calculated and saved by backend)
+      await fetchUserProgress();
+      await fetchBalance();
+
+      console.log('✅ [LecturaInferencial] Submission successful:', {
+        attemptId: response.attemptId,
+        score: response.score,
+        rewards: response.rewards,
+      });
+    } catch (error) {
+      console.error('❌ [LecturaInferencial] Submission error:', error);
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: 'Hubo un problema al enviar tu respuesta. Por favor, intenta nuevamente.',
+      });
+      setShowFeedback(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [
+    selectedAnswers,
+    validated,
+    answers,
+    questions,
+    startTime,
+    user,
+    exercise.id,
+    isSubmitting,
+    fetchUserProgress,
+    fetchBalance,
+  ]);
 
   const handleReset = useCallback(() => {
     setSelectedAnswers({});

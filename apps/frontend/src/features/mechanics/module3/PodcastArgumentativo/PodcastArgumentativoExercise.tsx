@@ -10,6 +10,8 @@ import type { ArgumentAnalysis } from '../../shared/aiTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
+import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
 
 interface ExerciseProps {
   exerciseId: string;
@@ -35,6 +37,8 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
   initialData,
 }) => {
   const { user } = useAuth();
+  const { fetchUserProgress } = useRanksStore();
+  const { fetchBalance } = useEconomyStore();
   const [exercise, setExercise] = useState<PodcastExercise | null>(null);
   const [recording, setRecording] = useState<Recording>({
     id: '',
@@ -232,6 +236,15 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
       // Mostrar feedback con el score del backend
       setShowFeedback(true);
       setCurrentScore(response.score);
+
+      // Sync stores with backend (rewards already calculated and saved by backend)
+      await fetchUserProgress();
+      await fetchBalance();
+
+      console.log('✅ [PodcastArgumentativo] Submission successful:', {
+        score: response.score,
+        rewards: response.rewards,
+      });
     } catch (error) {
       console.error('[PodcastArgumentativo] Error al enviar:', error);
       setFeedback({

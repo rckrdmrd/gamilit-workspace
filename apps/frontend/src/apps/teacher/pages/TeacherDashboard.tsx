@@ -31,6 +31,7 @@ import { ResourceSharingPanel } from '../components/collaboration/ResourceSharin
 import { useTeacherDashboard } from '../hooks/useTeacherDashboard';
 import { useClassrooms } from '../hooks/useClassrooms';
 import { classroomsApi } from '@services/api/teacher';
+import type { StudentMonitoring } from '../types';
 
 type TabType =
   | 'overview'
@@ -65,7 +66,7 @@ const safeFormat = (
 
 export default function TeacherDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
-  const [allStudents, setAllStudents] = useState<any[]>([]);
+  const [allStudents, setAllStudents] = useState<StudentMonitoring[]>([]);
   const [selectedClassroomId, setSelectedClassroomId] = useState<string>('');
 
   // Fetch real classrooms from backend
@@ -76,32 +77,45 @@ export default function TeacherDashboard() {
     if (classrooms && classrooms.length > 0 && !selectedClassroomId) {
       setSelectedClassroomId(classrooms[0].id);
     }
-  }, [classrooms, selectedClassroomId]);
+  }, [classrooms]);
 
   // Use real data from backend via useTeacherDashboard hook
   const { stats, activities, alerts, loading, error, refresh } = useTeacherDashboard();
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchAllStudents = async () => {
       if (!classrooms || classrooms.length === 0) {
-        setAllStudents([]);
+        if (isMounted) {
+          setAllStudents([]);
+        }
         return;
       }
 
       try {
-        const studentsPromises = classrooms.map((classroom: any) =>
+        const studentsPromises = classrooms.map((classroom) =>
           classroomsApi.getClassroomStudents(classroom.id),
         );
         const studentsArrays = await Promise.all(studentsPromises);
-        const students = studentsArrays.flat();
-        setAllStudents(students);
+        const students = studentsArrays.flatMap((response) => response.data);
+
+        if (isMounted) {
+          setAllStudents(students);
+        }
       } catch (error) {
         console.error('[TeacherDashboard] Error fetching students:', error);
-        setAllStudents([]);
+        if (isMounted) {
+          setAllStudents([]);
+        }
       }
     };
 
     fetchAllStudents();
+
+    return () => {
+      isMounted = false;
+    };
   }, [classrooms]);
 
   const tabs = [

@@ -127,9 +127,17 @@ export class GradingService {
     }
 
     submission.feedback = feedbackDto.feedback;
+
+    // Priorizar adjusted_score (porcentaje), sino usar score directo
     if (feedbackDto.adjusted_score !== undefined) {
       submission.score = Math.round((feedbackDto.adjusted_score / 100) * submission.max_score);
+    } else if (feedbackDto.score !== undefined) {
+      submission.score = feedbackDto.score;
+      if (feedbackDto.max_score !== undefined) {
+        submission.max_score = feedbackDto.max_score;
+      }
     }
+
     submission.status = 'graded';
     submission.graded_at = new Date();
 

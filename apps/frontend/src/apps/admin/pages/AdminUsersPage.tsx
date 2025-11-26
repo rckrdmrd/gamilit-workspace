@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
-import { FeatureBadge } from '@shared/components/common';
+import { FeatureBadge, ConfirmDialog } from '@shared/components/common';
 import { useUserManagement } from '../hooks/useUserManagement';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { UserDetailModal } from '../components/users/UserDetailModal';
@@ -31,8 +31,22 @@ import {
 export default function AdminUsersPage() {
   const { user, logout } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [editingUser, setEditingUser] = useState<SystemUser | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+    variant: 'danger' | 'warning' | 'info';
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+    variant: 'info',
+  });
 
   // Use useUserManagement hook for data management
   const {
@@ -79,12 +93,20 @@ export default function AdminUsersPage() {
     fetchUsers();
   }, [fetchUsers]);
 
-  // Update filters when search changes
+  // Debounce search term
   useEffect(() => {
-    if (searchTerm) {
-      setFilters({ ...filters, search: searchTerm });
-    }
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 300);
+    return () => clearTimeout(timer);
   }, [searchTerm]);
+
+  // Update filters when debounced search changes
+  useEffect(() => {
+    if (debouncedSearch !== undefined) {
+      setFilters({ ...filters, search: debouncedSearch });
+    }
+  }, [debouncedSearch]);
 
   // Handle user actions
   const handleEditUser = (usr: SystemUser) => {
@@ -126,74 +148,102 @@ export default function AdminUsersPage() {
   };
 
   const handleSuspendUser = async (userId: string, name: string) => {
-    if (confirm(`¿Suspender usuario ${name}?`)) {
-      try {
-        await suspendUser(userId);
-        showToast({
-          type: 'success',
-          title: 'Usuario suspendido',
-          message: `El usuario ${name} ha sido suspendido correctamente`,
-        });
-        await fetchUsers(); // Refresh list
-      } catch (err) {
-        showToast({
-          type: 'error',
-          title: 'Error al suspender',
-          message: 'No se pudo suspender el usuario',
-        });
-      }
-    }
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Suspender Usuario',
+      message: `¿Estás seguro de suspender a ${name}?`,
+      onConfirm: async () => {
+        try {
+          await suspendUser(userId);
+          showToast({
+            type: 'success',
+            title: 'Usuario suspendido',
+            message: `El usuario ${name} ha sido suspendido correctamente`,
+          });
+          await fetchUsers(); // Refresh list
+        } catch (err) {
+          showToast({
+            type: 'error',
+            title: 'Error al suspender',
+            message: 'No se pudo suspender el usuario',
+          });
+        } finally {
+          setConfirmDialog((prev) => ({ ...prev, isOpen: false }));
+        }
+      },
+      variant: 'warning',
+    });
   };
 
   const handleUnsuspendUser = async (userId: string, name: string) => {
-    if (confirm(`¿Reactivar usuario ${name}?`)) {
-      try {
-        await unsuspendUser(userId);
-        showToast({
-          type: 'success',
-          title: 'Usuario reactivado',
-          message: `El usuario ${name} ha sido reactivado correctamente`,
-        });
-        await fetchUsers(); // Refresh list
-      } catch (err) {
-        showToast({
-          type: 'error',
-          title: 'Error al reactivar',
-          message: 'No se pudo reactivar el usuario',
-        });
-      }
-    }
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Reactivar Usuario',
+      message: `¿Estás seguro de reactivar a ${name}?`,
+      onConfirm: async () => {
+        try {
+          await unsuspendUser(userId);
+          showToast({
+            type: 'success',
+            title: 'Usuario reactivado',
+            message: `El usuario ${name} ha sido reactivado correctamente`,
+          });
+          await fetchUsers(); // Refresh list
+        } catch (err) {
+          showToast({
+            type: 'error',
+            title: 'Error al reactivar',
+            message: 'No se pudo reactivar el usuario',
+          });
+        } finally {
+          setConfirmDialog((prev) => ({ ...prev, isOpen: false }));
+        }
+      },
+      variant: 'info',
+    });
   };
 
   const handleDeleteUser = async (userId: string, name: string) => {
-    if (confirm(`¿ELIMINAR usuario ${name}? Esta acción no se puede deshacer.`)) {
-      try {
-        await deleteUser(userId);
-        showToast({
-          type: 'success',
-          title: 'Usuario eliminado',
-          message: `El usuario ${name} ha sido eliminado correctamente`,
-        });
-        await fetchUsers(); // Refresh list
-      } catch (err) {
-        showToast({
-          type: 'error',
-          title: 'Error al eliminar',
-          message: 'No se pudo eliminar el usuario',
-        });
-      }
-    }
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Eliminar Usuario',
+      message: `¿ELIMINAR usuario ${name}? Esta acción no se puede deshacer.`,
+      onConfirm: async () => {
+        try {
+          await deleteUser(userId);
+          showToast({
+            type: 'success',
+            title: 'Usuario eliminado',
+            message: `El usuario ${name} ha sido eliminado correctamente`,
+          });
+          await fetchUsers(); // Refresh list
+        } catch (err) {
+          showToast({
+            type: 'error',
+            title: 'Error al eliminar',
+            message: 'No se pudo eliminar el usuario',
+          });
+        } finally {
+          setConfirmDialog((prev) => ({ ...prev, isOpen: false }));
+        }
+      },
+      variant: 'danger',
+    });
   };
 
-  // Calculate stats from real data
-  const stats = {
-    total: totalUsers,
-    active: users.filter((u) => u.status === 'active').length,
-    inactive: users.filter((u) => u.status === 'inactive').length,
-    students: users.filter((u) => u.role === 'student').length,
-    teachers: users.filter((u) => u.role === 'admin_teacher').length,
-    admins: users.filter((u) => u.role === 'super_admin').length,
-  };
+  // Calculate stats from real data (memoized)
+  const stats = useMemo(
+    () => ({
+      total: totalUsers,
+      active: users.filter((u) => u.status === 'active').length,
+      inactive: users.filter((u) => u.status === 'inactive').length,
+      suspended: users.filter((u) => u.status === 'suspended').length,
+      students: users.filter((u) => u.role === 'student').length,
+      teachers: users.filter((u) => u.role === 'admin_teacher').length,
+      admins: users.filter((u) => u.role === 'super_admin').length,
+    }),
+    [users, totalUsers],
+  );
 
   const getRoleBadge = (role: string) => {
     const roleColors: Record<string, string> = {
@@ -218,18 +268,24 @@ export default function AdminUsersPage() {
   };
 
   const getStatusBadge = (status: string) => {
-    if (status === 'active') {
-      return (
-        <span className="flex items-center gap-1 text-green-600">
-          <CheckCircle className="h-4 w-4" />
-          <span className="text-sm">Activo</span>
-        </span>
-      );
-    }
+    const statusConfig: Record<string, { label: string; color: string; icon: typeof CheckCircle }> =
+      {
+        active: { label: 'Activo', color: 'text-green-600', icon: CheckCircle },
+        inactive: { label: 'Inactivo', color: 'text-gray-600', icon: XCircle },
+        suspended: { label: 'Suspendido', color: 'text-red-600', icon: XCircle },
+        banned: { label: 'Baneado', color: 'text-red-700', icon: XCircle },
+        pending: { label: 'Pendiente', color: 'text-yellow-600', icon: XCircle },
+      };
+    const config = statusConfig[status] || {
+      label: status,
+      color: 'text-gray-600',
+      icon: XCircle,
+    };
+    const Icon = config.icon;
     return (
-      <span className="flex items-center gap-1 text-red-600">
-        <XCircle className="h-4 w-4" />
-        <span className="text-sm">Inactivo</span>
+      <span className={`flex items-center gap-1 ${config.color}`}>
+        <Icon className="h-4 w-4" />
+        <span className="text-sm">{config.label}</span>
       </span>
     );
   };
@@ -543,6 +599,16 @@ export default function AdminUsersPage() {
 
       {/* Toast Notifications */}
       <ToastContainer toasts={toasts} position="top-right" />
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        onClose={() => setConfirmDialog((prev) => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmDialog.onConfirm}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        variant={confirmDialog.variant}
+      />
     </AdminLayout>
   );
 }

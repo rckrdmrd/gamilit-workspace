@@ -227,8 +227,18 @@ export interface Role {
 }
 
 export interface Permission {
-  module: 'users' | 'content' | 'gamification' | 'monitoring' | 'system';
-  action: 'view' | 'create' | 'edit' | 'delete';
+  module:
+    | 'users'
+    | 'content'
+    | 'gamification'
+    | 'monitoring'
+    | 'system'
+    | 'organizations'
+    | 'reports'
+    | 'analytics'
+    | 'admin'
+    | 'roles';
+  action: 'view' | 'create' | 'edit' | 'delete' | 'manage' | 'export';
   granted: boolean;
 }
 

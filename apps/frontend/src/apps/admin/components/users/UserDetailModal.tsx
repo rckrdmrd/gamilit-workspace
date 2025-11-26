@@ -170,9 +170,7 @@ export function UserDetailModal({
   };
 
   const getStatusColor = (status: SystemUser['status']): string => {
-    return status === 'active'
-      ? 'bg-green-100 text-green-800'
-      : 'bg-red-100 text-red-800';
+    return status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
   };
 
   const getRoleBadgeColor = (role: SystemUser['role']): string => {
@@ -187,7 +185,7 @@ export function UserDetailModal({
   const getInitials = (name: string): string => {
     return name
       .split(' ')
-      .map(n => n.charAt(0))
+      .map((n) => n.charAt(0))
       .slice(0, 2)
       .join('')
       .toUpperCase();
@@ -219,7 +217,7 @@ export function UserDetailModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-gray-600 bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-gray-600 bg-opacity-50 p-4 backdrop-blur-sm"
           >
             {/* Modal */}
             <motion.div
@@ -228,25 +226,23 @@ export function UserDetailModal({
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: 'spring', duration: 0.3 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+              className="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-xl"
             >
               {/* Header with Gradient */}
               <div className="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     {/* Avatar */}
-                    <div className="h-12 w-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center mr-4">
-                      <span className="text-white font-bold text-lg">
+                    <div className="mr-4 flex h-12 w-12 items-center justify-center rounded-full bg-white bg-opacity-20">
+                      <span className="text-lg font-bold text-white">
                         {getInitials(user.full_name)}
                       </span>
                     </div>
 
                     {/* User Info */}
                     <div>
-                      <h2 className="text-xl font-bold text-white">
-                        {user.full_name}
-                      </h2>
-                      <p className="text-orange-100 text-sm">
+                      <h2 className="text-xl font-bold text-white">{user.full_name}</h2>
+                      <p className="text-sm text-orange-100">
                         {getRoleDisplayName(user.role)} • {user.email}
                       </p>
                     </div>
@@ -255,16 +251,16 @@ export function UserDetailModal({
                   {/* Status Badge & Close Button */}
                   <div className="flex items-center space-x-3">
                     <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}
+                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(user.status)}`}
                     >
                       {user.status === 'active' ? 'Activo' : 'Inactivo'}
                     </span>
                     <button
                       onClick={onClose}
-                      className="text-white hover:text-gray-200 transition-colors"
+                      className="text-white transition-colors hover:text-gray-200"
                       aria-label="Cerrar modal"
                     >
-                      <X className="w-6 h-6" />
+                      <X className="h-6 w-6" />
                     </button>
                   </div>
                 </div>
@@ -281,13 +277,13 @@ export function UserDetailModal({
                       <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 ${
+                        className={`flex items-center space-x-2 border-b-2 px-1 py-4 text-sm font-medium transition-colors ${
                           isActive
                             ? 'border-orange-500 text-orange-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                         }`}
                       >
-                        <Icon className="w-4 h-4" />
+                        <Icon className="h-4 w-4" />
                         <span>{tab.name}</span>
                       </button>
                     );
@@ -296,7 +292,7 @@ export function UserDetailModal({
               </div>
 
               {/* Tab Content */}
-              <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+              <div className="max-h-[calc(90vh-200px)] overflow-y-auto p-6">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeTab}
@@ -315,20 +311,20 @@ export function UserDetailModal({
                           {onUpdate && (
                             <button
                               onClick={() => (isEditing ? handleCancel() : setIsEditing(true))}
-                              className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                              className={`flex items-center space-x-2 rounded-lg px-4 py-2 font-medium transition-colors ${
                                 isEditing
-                                  ? 'bg-gray-500 hover:bg-gray-600 text-white'
-                                  : 'bg-orange-500 hover:bg-orange-600 text-white'
+                                  ? 'bg-gray-500 text-white hover:bg-gray-600'
+                                  : 'bg-orange-500 text-white hover:bg-orange-600'
                               }`}
                             >
                               {isEditing ? (
                                 <>
-                                  <XCircle className="w-4 h-4" />
+                                  <XCircle className="h-4 w-4" />
                                   <span>Cancelar</span>
                                 </>
                               ) : (
                                 <>
-                                  <Edit2 className="w-4 h-4" />
+                                  <Edit2 className="h-4 w-4" />
                                   <span>Editar</span>
                                 </>
                               )}
@@ -339,10 +335,10 @@ export function UserDetailModal({
                         {isEditing ? (
                           // EDIT MODE
                           <form className="space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                               {/* Full Name */}
                               <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <label className="mb-2 block text-sm font-medium text-gray-700">
                                   Nombre Completo
                                 </label>
                                 <input
@@ -351,13 +347,13 @@ export function UserDetailModal({
                                   onChange={(e) =>
                                     setEditData({ ...editData, full_name: e.target.value })
                                   }
-                                  className="w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                                  className="w-full rounded-lg border border-gray-300 px-3 py-2 transition-colors focus:border-orange-500 focus:ring-2 focus:ring-orange-500"
                                 />
                               </div>
 
                               {/* Email */}
                               <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <label className="mb-2 block text-sm font-medium text-gray-700">
                                   Correo Electrónico
                                 </label>
                                 <input
@@ -366,13 +362,13 @@ export function UserDetailModal({
                                   onChange={(e) =>
                                     setEditData({ ...editData, email: e.target.value })
                                   }
-                                  className="w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                                  className="w-full rounded-lg border border-gray-300 px-3 py-2 transition-colors focus:border-orange-500 focus:ring-2 focus:ring-orange-500"
                                 />
                               </div>
 
                               {/* Role */}
                               <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <label className="mb-2 block text-sm font-medium text-gray-700">
                                   Rango Detective
                                 </label>
                                 <select
@@ -383,17 +379,26 @@ export function UserDetailModal({
                                       role: e.target.value as SystemUser['role'],
                                     })
                                   }
-                                  className="w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                                  className="w-full rounded-lg border border-gray-300 px-3 py-2 transition-colors focus:border-orange-500 focus:ring-2 focus:ring-orange-500"
                                 >
-                                  <option value="student">{getDetectiveRoleBadge('student')} {getDetectiveRoleName('student')}</option>
-                                  <option value="admin_teacher">{getDetectiveRoleBadge('admin_teacher')} {getDetectiveRoleName('admin_teacher')}</option>
-                                  <option value="super_admin">{getDetectiveRoleBadge('super_admin')} {getDetectiveRoleName('super_admin')}</option>
+                                  <option value="student">
+                                    {getDetectiveRoleBadge('student')}{' '}
+                                    {getDetectiveRoleName('student')}
+                                  </option>
+                                  <option value="admin_teacher">
+                                    {getDetectiveRoleBadge('admin_teacher')}{' '}
+                                    {getDetectiveRoleName('admin_teacher')}
+                                  </option>
+                                  <option value="super_admin">
+                                    {getDetectiveRoleBadge('super_admin')}{' '}
+                                    {getDetectiveRoleName('super_admin')}
+                                  </option>
                                 </select>
                               </div>
 
                               {/* Status */}
                               <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <label className="mb-2 block text-sm font-medium text-gray-700">
                                   Estado
                                 </label>
                                 <select
@@ -404,7 +409,7 @@ export function UserDetailModal({
                                       status: e.target.value as SystemUser['status'],
                                     })
                                   }
-                                  className="w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                                  className="w-full rounded-lg border border-gray-300 px-3 py-2 transition-colors focus:border-orange-500 focus:ring-2 focus:ring-orange-500"
                                 >
                                   <option value="active">Activo</option>
                                   <option value="inactive">Inactivo</option>
@@ -413,7 +418,7 @@ export function UserDetailModal({
 
                               {/* Organization */}
                               <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <label className="mb-2 block text-sm font-medium text-gray-700">
                                   Organización
                                 </label>
                                 <input
@@ -425,14 +430,14 @@ export function UserDetailModal({
                                       organizationName: e.target.value,
                                     })
                                   }
-                                  className="w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                                  className="w-full rounded-lg border border-gray-300 px-3 py-2 transition-colors focus:border-orange-500 focus:ring-2 focus:ring-orange-500"
                                   placeholder="Nombre de la organización"
                                 />
                               </div>
 
                               {/* Phone */}
                               <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <label className="mb-2 block text-sm font-medium text-gray-700">
                                   Teléfono
                                 </label>
                                 <input
@@ -441,14 +446,14 @@ export function UserDetailModal({
                                   onChange={(e) =>
                                     setEditData({ ...editData, phone: e.target.value })
                                   }
-                                  className="w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                                  className="w-full rounded-lg border border-gray-300 px-3 py-2 transition-colors focus:border-orange-500 focus:ring-2 focus:ring-orange-500"
                                   placeholder="+52 123 456 7890"
                                 />
                               </div>
 
                               {/* Department */}
                               <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <label className="mb-2 block text-sm font-medium text-gray-700">
                                   Departamento
                                 </label>
                                 <input
@@ -457,14 +462,14 @@ export function UserDetailModal({
                                   onChange={(e) =>
                                     setEditData({ ...editData, department: e.target.value })
                                   }
-                                  className="w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                                  className="w-full rounded-lg border border-gray-300 px-3 py-2 transition-colors focus:border-orange-500 focus:ring-2 focus:ring-orange-500"
                                   placeholder="Tecnología, Marketing, etc."
                                 />
                               </div>
 
                               {/* Position */}
                               <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <label className="mb-2 block text-sm font-medium text-gray-700">
                                   Cargo
                                 </label>
                                 <input
@@ -473,18 +478,18 @@ export function UserDetailModal({
                                   onChange={(e) =>
                                     setEditData({ ...editData, position: e.target.value })
                                   }
-                                  className="w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                                  className="w-full rounded-lg border border-gray-300 px-3 py-2 transition-colors focus:border-orange-500 focus:ring-2 focus:ring-orange-500"
                                   placeholder="Director, Analista, etc."
                                 />
                               </div>
                             </div>
 
                             {/* Action Buttons */}
-                            <div className="flex justify-end space-x-3 pt-4 border-t">
+                            <div className="flex justify-end space-x-3 border-t pt-4">
                               <button
                                 type="button"
                                 onClick={handleCancel}
-                                className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors"
+                                className="rounded-lg bg-gray-500 px-4 py-2 font-medium text-white transition-colors hover:bg-gray-600"
                               >
                                 Cancelar
                               </button>
@@ -492,19 +497,21 @@ export function UserDetailModal({
                                 type="button"
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                                className="flex items-center space-x-2 rounded-lg bg-orange-500 px-4 py-2 font-medium text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
                               >
-                                <Save className="w-4 h-4" />
+                                <Save className="h-4 w-4" />
                                 <span>{saving ? 'Guardando...' : 'Guardar Cambios'}</span>
                               </button>
                             </div>
                           </form>
                         ) : (
                           // VIEW MODE
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div className="space-y-4">
                               <div>
-                                <dt className="text-sm font-medium text-gray-500">Nombre Completo</dt>
+                                <dt className="text-sm font-medium text-gray-500">
+                                  Nombre Completo
+                                </dt>
                                 <dd className="mt-1 text-sm text-gray-900">{user.full_name}</dd>
                               </div>
                               <div>
@@ -514,27 +521,28 @@ export function UserDetailModal({
                                 <dd className="mt-1 text-sm text-gray-900">{user.email}</dd>
                               </div>
                               <div>
-                                <dt className="text-sm font-medium text-gray-500">
-                                  Organización
-                                </dt>
+                                <dt className="text-sm font-medium text-gray-500">Organización</dt>
                                 <dd className="mt-1 text-sm text-gray-900">
                                   {user.organizationName || '-'}
                                 </dd>
                               </div>
                               <div>
                                 <dt className="text-sm font-medium text-gray-500">ID de Usuario</dt>
-                                <dd className="mt-1 text-sm text-gray-900 font-mono">{user.id}</dd>
+                                <dd className="mt-1 font-mono text-sm text-gray-900">{user.id}</dd>
                               </div>
                             </div>
 
                             <div className="space-y-4">
                               <div>
-                                <dt className="text-sm font-medium text-gray-500">Rango Detective</dt>
+                                <dt className="text-sm font-medium text-gray-500">
+                                  Rango Detective
+                                </dt>
                                 <dd className="mt-1">
                                   <span
-                                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}
+                                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getRoleBadgeColor(user.role)}`}
                                   >
-                                    {getDetectiveRoleBadge(user.role)} {getRoleDisplayName(user.role)}
+                                    {getDetectiveRoleBadge(user.role)}{' '}
+                                    {getRoleDisplayName(user.role)}
                                   </span>
                                 </dd>
                               </div>
@@ -542,7 +550,7 @@ export function UserDetailModal({
                                 <dt className="text-sm font-medium text-gray-500">Estado</dt>
                                 <dd className="mt-1">
                                   <span
-                                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}
+                                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(user.status)}`}
                                   >
                                     {user.status === 'active' ? 'Activo' : 'Inactivo'}
                                   </span>
@@ -559,7 +567,7 @@ export function UserDetailModal({
                               <div>
                                 <dt className="text-sm font-medium text-gray-500">Último Acceso</dt>
                                 <dd className="mt-1 text-sm text-gray-900">
-                                  {formatDate(user.lastLogin)}
+                                  {user.lastLogin ? formatDate(user.lastLogin) : 'Nunca'}
                                 </dd>
                               </div>
                             </div>
@@ -586,12 +594,10 @@ export function UserDetailModal({
                     {/* PERMISSIONS TAB */}
                     {activeTab === 'permissions' && (
                       <div className="space-y-6">
-                        <h3 className="text-lg font-medium text-gray-900">
-                          Permisos del Usuario
-                        </h3>
+                        <h3 className="text-lg font-medium text-gray-900">Permisos del Usuario</h3>
 
                         {/* Development Notice */}
-                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
                           <div className="flex">
                             <div className="flex-shrink-0">
                               <svg
@@ -612,8 +618,8 @@ export function UserDetailModal({
                               </h3>
                               <div className="mt-2 text-sm text-amber-700">
                                 <p>
-                                  La gestión granular de permisos será implementada en la
-                                  siguiente fase del proyecto.
+                                  La gestión granular de permisos será implementada en la siguiente
+                                  fase del proyecto.
                                 </p>
                               </div>
                             </div>
@@ -621,53 +627,53 @@ export function UserDetailModal({
                         </div>
 
                         {/* Current Role Permissions */}
-                        <div className="bg-gray-50 rounded-lg p-6">
-                          <h4 className="font-medium text-gray-900 mb-4">
+                        <div className="rounded-lg bg-gray-50 p-6">
+                          <h4 className="mb-4 font-medium text-gray-900">
                             Permisos Básicos por Rol
                           </h4>
                           <div className="space-y-3">
                             <div className="flex items-center justify-between">
                               <span className="text-sm text-gray-700">Rango Detective Actual:</span>
                               <span
-                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}
+                                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getRoleBadgeColor(user.role)}`}
                               >
                                 {getDetectiveRoleBadge(user.role)} {getRoleDisplayName(user.role)}
                               </span>
                             </div>
-                            <div className="text-sm text-gray-600 pt-3 border-t border-gray-200">
-                              Los permisos se asignan automáticamente según el rango detective del usuario
-                              en el sistema. Los rangos con más privilegios heredan los
+                            <div className="border-t border-gray-200 pt-3 text-sm text-gray-600">
+                              Los permisos se asignan automáticamente según el rango detective del
+                              usuario en el sistema. Los rangos con más privilegios heredan los
                               permisos de los rangos inferiores.
                             </div>
                           </div>
                         </div>
 
                         {/* Role Hierarchy Info */}
-                        <div className="bg-white border border-gray-200 rounded-lg p-6">
-                          <h4 className="font-medium text-gray-900 mb-4">
+                        <div className="rounded-lg border border-gray-200 bg-white p-6">
+                          <h4 className="mb-4 font-medium text-gray-900">
                             Jerarquía de Rangos Detectivescos
                           </h4>
                           <div className="space-y-3">
                             <div className="flex items-start space-x-3">
-                              <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                                <span className="text-purple-600 text-xs font-bold">1</span>
+                              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-purple-100">
+                                <span className="text-xs font-bold text-purple-600">1</span>
                               </div>
                               <div>
                                 <p className="text-sm font-medium text-gray-900">
-                                  {getDetectiveRoleBadge('super_admin')} {getDetectiveRoleName('super_admin')}
+                                  {getDetectiveRoleBadge('super_admin')}{' '}
+                                  {getDetectiveRoleName('super_admin')}
                                 </p>
-                                <p className="text-xs text-gray-500">
-                                  Acceso completo al sistema
-                                </p>
+                                <p className="text-xs text-gray-500">Acceso completo al sistema</p>
                               </div>
                             </div>
                             <div className="flex items-start space-x-3">
-                              <div className="flex-shrink-0 w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                                <span className="text-orange-600 text-xs font-bold">2</span>
+                              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-orange-100">
+                                <span className="text-xs font-bold text-orange-600">2</span>
                               </div>
                               <div>
                                 <p className="text-sm font-medium text-gray-900">
-                                  {getDetectiveRoleBadge('admin_teacher')} {getDetectiveRoleName('admin_teacher')}
+                                  {getDetectiveRoleBadge('admin_teacher')}{' '}
+                                  {getDetectiveRoleName('admin_teacher')}
                                 </p>
                                 <p className="text-xs text-gray-500">
                                   Gestión de contenido y usuarios
@@ -675,12 +681,13 @@ export function UserDetailModal({
                               </div>
                             </div>
                             <div className="flex items-start space-x-3">
-                              <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                <span className="text-blue-600 text-xs font-bold">3</span>
+                              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100">
+                                <span className="text-xs font-bold text-blue-600">3</span>
                               </div>
                               <div>
                                 <p className="text-sm font-medium text-gray-900">
-                                  {getDetectiveRoleBadge('student')} {getDetectiveRoleName('student')}
+                                  {getDetectiveRoleBadge('student')}{' '}
+                                  {getDetectiveRoleName('student')}
                                 </p>
                                 <p className="text-xs text-gray-500">
                                   Acceso a contenido educativo

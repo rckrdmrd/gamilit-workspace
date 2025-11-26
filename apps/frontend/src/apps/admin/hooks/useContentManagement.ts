@@ -20,7 +20,7 @@ import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS } from '@/config/api.config';
 import * as adminAPI from '@/services/api/adminAPI';
 import type { PendingContent } from '@/services/api/adminTypes';
-import type { MediaItem, ContentVersion, PaginatedResponse } from '../types';
+import type { MediaItem, ContentVersion } from '../types';
 
 // ============================================================================
 // TYPES
@@ -39,6 +39,52 @@ export interface Exercise {
   createdAt: string;
   updatedAt: string;
   createdBy: string;
+}
+
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
+/**
+ * Normalizes backend response to expected frontend format
+ * Backend returns: {data: T[], total, page, limit, total_pages}
+ * Frontend expects: {items: T[], pagination: {page, totalPages, totalItems, limit}}
+ */
+function normalizeResponse<T>(response: any): { items: T[]; pagination: any } {
+  // If already has expected format
+  if (response.items && response.pagination) {
+    return response;
+  }
+
+  // If has backend format {data, total, page, limit, total_pages}
+  if (response.data && Array.isArray(response.data)) {
+    return {
+      items: response.data,
+      pagination: {
+        page: response.page || 1,
+        totalPages:
+          response.total_pages || Math.ceil((response.total || 0) / (response.limit || 20)),
+        totalItems: response.total || 0,
+        limit: response.limit || 20,
+      },
+    };
+  }
+
+  // If is direct array
+  if (Array.isArray(response)) {
+    return {
+      items: response,
+      pagination: {
+        page: 1,
+        totalPages: 1,
+        totalItems: response.length,
+        limit: response.length,
+      },
+    };
+  }
+
+  // Fallback
+  return { items: [], pagination: { page: 1, totalPages: 0, totalItems: 0, limit: 20 } };
 }
 
 export interface UsePendingExercisesResult {
@@ -196,27 +242,30 @@ export function useMediaLibrary(): UseMediaLibraryResult {
       setLoading(true);
       setError(null);
       try {
-        const response = await apiClient.get<{
-          success: boolean;
-          data: PaginatedResponse<MediaItem> & { storageUsed: number; storageLimit: number };
-        }>(API_ENDPOINTS.admin.content.mediaLibrary, {
+        const response = await apiClient.get<any>(API_ENDPOINTS.admin.content.mediaLibrary, {
           params: {
             page: newPage || page,
             limit: newPageSize || pageSize,
           },
         });
 
-        const data = response.data.success
-          ? response.data.data
-          : (response.data as unknown as PaginatedResponse<MediaItem> & {
-              storageUsed: number;
-              storageLimit: number;
-            });
+        // Handle different response wrappers
+        let rawData = response.data;
+        if (response.data.success && response.data.data) {
+          rawData = response.data.data;
+        }
 
-        setMedia(data.data);
-        setTotal(data.total);
-        setStorageUsed(data.storageUsed || 0);
-        setStorageLimit(data.storageLimit || 0);
+        // Normalize the response format
+        const normalized = normalizeResponse<MediaItem>(rawData);
+
+        // Extract storage info (could be in rawData or normalized.items)
+        const storageUsed = rawData.storageUsed || rawData.storage_used || 0;
+        const storageLimit = rawData.storageLimit || rawData.storage_limit || 0;
+
+        setMedia(normalized.items);
+        setTotal(normalized.pagination.totalItems);
+        setStorageUsed(storageUsed);
+        setStorageLimit(storageLimit);
         if (newPage) setPage(newPage);
         if (newPageSize) setPageSize(newPageSize);
       } catch (err) {
@@ -454,7 +503,7 @@ export function useApprovals(): UseApprovalsResult {
     setLoading(true);
     setError(null);
     try {
-      const response = await apiClient.get('/admin/approvals');
+      const response = await apiClient.get(API_ENDPOINTS.admin.content.pending);
       const data = response.data.success ? response.data.data : response.data;
       setApprovals(data.approvals || []);
     } catch (err) {
@@ -470,7 +519,7 @@ export function useApprovals(): UseApprovalsResult {
     setLoading(true);
     setError(null);
     try {
-      await apiClient.post(`/admin/approvals/${id}/approve`);
+      await apiClient.post(API_ENDPOINTS.admin.content.approve(id));
       setApprovals((prev) => prev.filter((item) => item.id !== id));
     } catch (err) {
       console.error('Failed to approve item:', err);
@@ -486,7 +535,7 @@ export function useApprovals(): UseApprovalsResult {
     setLoading(true);
     setError(null);
     try {
-      await apiClient.post(`/admin/approvals/${id}/reject`, { reason });
+      await apiClient.post(API_ENDPOINTS.admin.content.reject(id), { reason });
       setApprovals((prev) => prev.filter((item) => item.id !== id));
     } catch (err) {
       console.error('Failed to reject item:', err);

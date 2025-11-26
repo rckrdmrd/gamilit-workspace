@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { Repository, Like, IsNull, Not, MoreThan } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import { User } from '@modules/auth/entities/user.entity';
 import {
@@ -12,10 +12,12 @@ import {
   UserStatsDto,
   UserDetailsDto,
 } from '../dto/users';
-import { UserStatusEnum } from '@shared/constants';
+import { UserStatusEnum, GamilityRoleEnum } from '@shared/constants';
 
 @Injectable()
 export class AdminUsersService {
+  private readonly logger = new Logger(AdminUsersService.name);
+
   constructor(
     @InjectRepository(User, 'auth')
     private readonly userRepo: Repository<User>,
@@ -49,14 +51,6 @@ export class AdminUsersService {
       order: { created_at: 'DESC' },
     });
 
-    // DEBUG: Log raw user data to verify last_sign_in_at is coming from DB
-    console.log('[DEBUG admin-users] First user raw data:', {
-      id: data[0]?.id,
-      email: data[0]?.email,
-      last_sign_in_at: data[0]?.last_sign_in_at,
-      last_sign_in_at_type: typeof data[0]?.last_sign_in_at,
-    });
-
     // Transform User entities to UserDetailsDto
     const transformedUsers = data.map((user) => {
       // Derive status: use deleted_at if set, otherwise use entity status field
@@ -79,16 +73,6 @@ export class AdminUsersService {
         },
         { excludeExtraneousValues: true },
       );
-
-      // DEBUG: Log transformed result
-      if (user.email?.includes('rckrdmrd')) {
-        console.log('[DEBUG admin-users] Transformed rckrdmrd:', {
-          id: transformed.id,
-          email: transformed.email,
-          last_sign_in_at: transformed.last_sign_in_at,
-          last_sign_in_at_type: typeof transformed.last_sign_in_at,
-        });
-      }
 
       return transformed;
     });
@@ -118,7 +102,17 @@ export class AdminUsersService {
 
   async deleteUser(id: string): Promise<void> {
     const user = await this.getUserDetails(id);
-    await this.userRepo.remove(user);
+
+    // Soft delete usando deleted_at
+    user.deleted_at = new Date();
+    user.raw_user_meta_data = {
+      ...user.raw_user_meta_data,
+      deleted_at: new Date().toISOString(),
+      deleted_reason: 'admin_deletion',
+      status: 'deleted',
+    };
+
+    await this.userRepo.save(user);
   }
 
   async suspendUser(id: string, suspendDto: SuspendUserDto): Promise<User> {
@@ -219,34 +213,54 @@ export class AdminUsersService {
 
     // Fix: Usar deleted_at para determinar usuarios activos/suspendidos
     const active = await this.userRepo.count({
-      where: { deleted_at: null as any } // Usuario activo = deleted_at IS NULL
+      where: { deleted_at: IsNull() },
     });
 
-    const suspended = await this.userRepo
-      .createQueryBuilder('user')
-      .where('user.deleted_at IS NOT NULL')
-      .getCount();
+    const suspended = await this.userRepo.count({
+      where: { deleted_at: Not(IsNull()) },
+    });
 
     // Fix: Usar email_confirmed_at para verificar email
     const pending = await this.userRepo.count({
-      where: { email_confirmed_at: null as any } // Email no verificado = email_confirmed_at IS NULL
+      where: { email_confirmed_at: IsNull() },
+    });
+
+    // Conteos por rol usando la columna gamilit_role
+    const students = await this.userRepo.count({
+      where: {
+        role: GamilityRoleEnum.STUDENT,
+        deleted_at: IsNull(),
+      },
+    });
+
+    const teachers = await this.userRepo.count({
+      where: {
+        role: GamilityRoleEnum.ADMIN_TEACHER,
+        deleted_at: IsNull(),
+      },
+    });
+
+    const admins = await this.userRepo.count({
+      where: {
+        role: GamilityRoleEnum.SUPER_ADMIN,
+        deleted_at: IsNull(),
+      },
     });
 
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const recent = await this.userRepo
-      .createQueryBuilder('user')
-      .where('user.created_at > :date', { date: thirtyDaysAgo })
-      .getCount();
+    const recent = await this.userRepo.count({
+      where: { created_at: MoreThan(thirtyDaysAgo) },
+    });
 
     return {
       total_users: total,
       active_users: active,
       suspended_users: suspended,
       pending_verification: pending,
-      students: 0, // TODO: Implementar conteo por rol
-      teachers: 0,
-      admins: 0,
+      students,
+      teachers,
+      admins,
       users_last_30_days: recent,
     };
   }

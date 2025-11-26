@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { useUserGamification } from '@/shared/hooks/useUserGamification';
 import { useGamificationConfig } from '../hooks/useGamificationConfig';
@@ -17,7 +17,6 @@ import {
   Edit,
   RotateCcw,
 } from 'lucide-react';
-import { MayaRankSchema, ParameterSchema } from '@/services/api/schemas/adminSchemas';
 import type { MayaRank, Parameter } from '@/services/api/schemas/adminSchemas';
 import {
   ParameterEditModal,
@@ -70,6 +69,46 @@ export default function AdminGamificationPage() {
   const { data: mayaRanks, isLoading: ranksLoading } = useMayaRanks();
 
   const isLoading = statsLoading || parametersLoading || ranksLoading;
+
+  // BUG-ADMIN-008: Validar y transformar ranks con fallbacks
+  // Backend may return snake_case fields, so we cast to any for transformation
+  const validatedRanks = useMemo(() => {
+    if (!mayaRanks || !Array.isArray(mayaRanks)) return [];
+
+    return mayaRanks
+      .map((r) => {
+        const rank = r as unknown as Record<string, unknown>;
+        return {
+          id:
+            (rank.id as string) ||
+            (rank.rank_name as string) ||
+            `rank-${(rank.level as number) || 0}`,
+          name: (rank.name as string) || (rank.rank_name as string) || 'Sin nombre',
+          level: (rank.level as number) ?? (rank.rank_order as number) ?? 0,
+          minXp: (rank.minXp as number) ?? (rank.min_xp as number) ?? 0,
+          maxXp: (rank.maxXp as number | null) ?? (rank.max_xp as number | null) ?? null,
+          multiplierXp: (rank.multiplierXp as number) ?? (rank.multiplier_xp as number) ?? 1,
+          multiplierMlCoins:
+            (rank.multiplierMlCoins as number) ?? (rank.multiplier_ml_coins as number) ?? 1,
+          bonusMlCoins: (rank.bonusMlCoins as number) ?? (rank.bonus_ml_coins as number) ?? 0,
+          color: (rank.color as string) || '#6B7280',
+          icon: (rank.icon as string | null) || null,
+          description: (rank.description as string) || '',
+          perks: Array.isArray(rank.perks) ? (rank.perks as string[]) : [],
+          isActive: (rank.isActive as boolean) ?? (rank.is_active as boolean) ?? true,
+          order: (rank.order as number) ?? (rank.rank_order as number) ?? 0,
+        };
+      })
+      .filter((rank) => rank.name && rank.name !== 'Sin nombre');
+  }, [mayaRanks]);
+
+  // BUG-ADMIN-009: Validar parámetros con fallback defensivo
+  const safeParameters = useMemo(() => {
+    if (!parametersData?.data || !Array.isArray(parametersData.data)) {
+      return [];
+    }
+    return parametersData.data;
+  }, [parametersData]);
 
   const handleLogout = () => {
     logout();
@@ -173,15 +212,15 @@ export default function AdminGamificationPage() {
             <DetectiveCard>
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xl font-bold text-detective-text">
-                  Rangos Maya ({mayaRanks?.length || 0})
+                  Rangos Maya ({validatedRanks.length})
                 </h2>
                 <DetectiveButton
                   variant="primary"
                   size="sm"
                   onClick={() => {
                     // Open selector to choose which rank to edit
-                    if (mayaRanks && mayaRanks.length > 0) {
-                      setSelectedRank(mayaRanks[0]);
+                    if (validatedRanks.length > 0) {
+                      setSelectedRank(validatedRanks[0]);
                       setRankModalOpen(true);
                     }
                   }}
@@ -192,19 +231,8 @@ export default function AdminGamificationPage() {
               </div>
 
               <div className="space-y-3">
-                {/* BUG-ADMIN-008: Validar y filtrar ranks antes de renderizar */}
-                {mayaRanks && mayaRanks.length > 0 ? (
-                  mayaRanks
-                    .filter((rank) => {
-                      // Validar con Zod inline
-                      try {
-                        MayaRankSchema.parse(rank);
-                        return true;
-                      } catch (error) {
-                        console.warn('Invalid rank structure:', rank, error);
-                        return false;
-                      }
-                    })
+                {validatedRanks.length > 0 ? (
+                  validatedRanks
                     .sort((a, b) => a.level - b.level)
                     .map((rank) => (
                       <div
@@ -285,8 +313,7 @@ export default function AdminGamificationPage() {
                   <Coins className="mx-auto mb-2 h-12 w-12 text-green-400" />
                   <p className="mb-1 text-sm text-detective-text-secondary">Categoría Coins</p>
                   <p className="text-3xl font-bold text-green-400">
-                    {/* BUG-ADMIN-009: Safe access a category con validación */}
-                    {parametersData?.data.filter((p) => p?.category === 'coins').length || 0}
+                    {safeParameters.filter((p) => p?.category === 'coins').length}
                   </p>
                 </div>
               </DetectiveCard>
@@ -294,20 +321,10 @@ export default function AdminGamificationPage() {
 
             <DetectiveCard>
               <h2 className="mb-4 text-xl font-bold text-detective-text">Parámetros de Economía</h2>
-              {parametersData && parametersData.data.length > 0 ? (
+              {safeParameters.length > 0 ? (
                 <div className="space-y-3">
-                  {/* BUG-ADMIN-009: Validar parámetros antes de renderizar */}
-                  {parametersData.data
-                    .filter((param) => {
-                      // Validar con Zod inline
-                      try {
-                        ParameterSchema.parse(param);
-                        return param.category === 'coins' || param.category === 'bonuses';
-                      } catch (error) {
-                        console.warn('Invalid parameter structure:', param, error);
-                        return false;
-                      }
-                    })
+                  {safeParameters
+                    .filter((param) => param.category === 'coins' || param.category === 'bonuses')
                     .map((param) => (
                       <div
                         key={param.id}
@@ -412,13 +429,11 @@ export default function AdminGamificationPage() {
               <h2 className="mb-4 text-xl font-bold text-detective-text">
                 Parámetros por Categoría
               </h2>
-              {parametersData && parametersData.data.length > 0 ? (
+              {safeParameters.length > 0 ? (
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
                   {(['points', 'coins', 'levels', 'ranks', 'penalties', 'bonuses'] as const).map(
                     (category) => {
-                      const count = parametersData.data.filter(
-                        (p) => p.category === category,
-                      ).length;
+                      const count = safeParameters.filter((p) => p.category === category).length;
                       return (
                         <div
                           key={category}
@@ -470,7 +485,7 @@ export default function AdminGamificationPage() {
           setSelectedRank(null);
         }}
         rank={selectedRank}
-        allRanks={mayaRanks || []}
+        allRanks={validatedRanks}
         onSuccess={() => {
           setRankModalOpen(false);
           setSelectedRank(null);
@@ -486,7 +501,7 @@ export default function AdminGamificationPage() {
       <BulkUpdateDialog
         isOpen={bulkUpdateOpen}
         onClose={() => setBulkUpdateOpen(false)}
-        parameters={parametersData?.data || []}
+        parameters={safeParameters}
         onSuccess={() => setBulkUpdateOpen(false)}
         onBulkUpdate={async (updates, reason) => {
           await bulkUpdateParameters.mutateAsync({ updates, reason });
@@ -507,13 +522,14 @@ export default function AdminGamificationPage() {
       <RestoreDefaultsDialog
         isOpen={restoreDefaultsOpen}
         onClose={() => setRestoreDefaultsOpen(false)}
-        parameters={parametersData?.data || []}
+        parameters={safeParameters}
         totalUsers={1250}
         onConfirm={async () => {
-          // Call restore defaults API
-          // Note: This endpoint is not available in the current API
+          // TODO: Implement restore defaults endpoint in backend
+          // This endpoint is not yet available in the API
           // await restoreDefaults.mutateAsync();
-          alert('Restaurar defaults - Endpoint pendiente en backend');
+          console.warn('Restore defaults endpoint not yet implemented in backend');
+          setRestoreDefaultsOpen(false);
         }}
       />
     </AdminLayout>

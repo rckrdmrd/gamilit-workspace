@@ -131,8 +131,9 @@ export default function TeacherAssignments() {
       if (!selectedSubmission) return;
 
       await gradeSubmissionAPI(data.submissionId, {
-        score: data.score,
         feedback: data.feedback,
+        score: data.score,
+        max_score: selectedSubmission.maxScore,
         grade: data.grade,
       });
 

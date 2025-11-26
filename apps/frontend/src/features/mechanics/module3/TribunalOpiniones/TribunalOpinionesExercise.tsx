@@ -6,6 +6,8 @@ import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@/shared/components/mechanics/mechanicsTypes';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
+import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
 import type {
   TribunalOpinionesExerciseProps,
   StatementEvaluation,
@@ -22,6 +24,8 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
   actionsRef,
 }) => {
   const { user } = useAuth();
+  const { fetchUserProgress } = useRanksStore();
+  const { fetchBalance } = useEconomyStore();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [evaluations, setEvaluations] = useState<Map<string, StatementEvaluation>>(new Map());
   const [currentClassification, setCurrentClassification] =
@@ -170,6 +174,15 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
         mlCoinsEarned: rewards.mlCoins,
       });
       setShowFeedback(true);
+
+      // Sync stores with backend (rewards already calculated and saved by backend)
+      await fetchUserProgress();
+      await fetchBalance();
+
+      console.log('✅ [TribunalOpiniones] Submission successful:', {
+        score: response.score,
+        rewards: response.rewards,
+      });
     } catch (error) {
       console.error('[TribunalOpiniones] Submission error:', error);
       setFeedback({
@@ -191,6 +204,8 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
     user,
     exercise.id,
     saveCurrentEvaluation,
+    fetchUserProgress,
+    fetchBalance,
   ]);
 
   // Reset handler

@@ -18,7 +18,7 @@ export enum FriendshipStatus {
   PENDING = 'pending',
   ACCEPTED = 'accepted',
   REJECTED = 'rejected',
-  BLOCKED = 'blocked'
+  BLOCKED = 'blocked',
 }
 
 export interface Friendship {
@@ -53,7 +53,7 @@ export interface FriendshipWithUser extends Friendship {
 export enum TeamMemberRole {
   OWNER = 'owner',
   ADMIN = 'admin',
-  MEMBER = 'member'
+  MEMBER = 'member',
 }
 
 export interface Team {
@@ -97,9 +97,33 @@ export interface TeamWithMembers extends Team {
 export enum ClassroomMemberRole {
   TEACHER = 'teacher',
   STUDENT = 'student',
-  ASSISTANT = 'assistant'
+  ASSISTANT = 'assistant',
 }
 
+/**
+ * Configuración de aula virtual
+ * @updated 2025-11-26 - Sincronizado con Backend/DDL
+ */
+export interface ClassroomSettings {
+  require_approval: boolean;
+  visible_in_directory: boolean;
+  allow_self_enrollment: boolean;
+}
+
+/**
+ * Horario de aula virtual
+ * @updated 2025-11-26 - Sincronizado con Backend/DDL
+ */
+export interface ClassroomSchedule {
+  day: string;
+  start_time: string;
+  end_time: string;
+}
+
+/**
+ * Aula Virtual / Classroom
+ * UPDATED 2025-11-26: Campos adicionales alineados con Backend/DDL
+ */
 export interface Classroom {
   id: string;
   name: string;
@@ -110,6 +134,28 @@ export interface Classroom {
   is_active: boolean;
   created_at: Date;
   updated_at: Date;
+
+  // Campos de contexto
+  tenant_id: string;
+  grade_level: string | null;
+  section: string | null;
+  subject: string | null;
+  academic_year: string | null;
+  semester: string | null;
+  co_teachers: string[] | null;
+
+  // Campos de capacidad
+  capacity: number;
+  current_students_count: number;
+
+  // Campos de configuración
+  settings: ClassroomSettings | null;
+  schedule: ClassroomSchedule[] | null;
+  meeting_url: string | null;
+  is_archived: boolean;
+  start_date: string | null;
+  end_date: string | null;
+  metadata: Record<string, any> | null;
 }
 
 export interface ClassroomMember {
@@ -158,7 +204,7 @@ export enum TeamChallengeStatus {
   PENDING = 'pending',
   ACTIVE = 'active',
   COMPLETED = 'completed',
-  CANCELLED = 'cancelled'
+  CANCELLED = 'cancelled',
 }
 
 export interface TeamChallenge {

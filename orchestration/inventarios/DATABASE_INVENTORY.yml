@@ -4,12 +4,12 @@
 # Fuente: Validación DB-092 (Ciclo 1-4)
 
 metadata:
-  version: "2.5.2"
+  version: "2.6.0"
   generated_date: "2025-11-11"
-  last_updated: "2025-11-24"
-  generated_by: "DOC-DB-001: Documentación completa trigger initialize_user_stats + 5 bug fixes críticos"
+  last_updated: "2025-11-26"
+  generated_by: "TEACHER-PORTAL-FIX: Tabla teacher_reports para persistencia de reportes generados"
   database_script: "create-database.sh"
-  total_ddl_files: 362  # ✅ Actualizado 2025-11-19 (+13 archivos P0+P1)
+  total_ddl_files: 365  # ✅ Actualizado 2025-11-26 (+3 teacher_reports: table, trigger, rls-policies)
   total_seed_files: 84  # ✅ Actualizado 2025-11-19 (+2 seeds system_configuration)
   total_schemas: 12  # ✅ CORREGIDO 2025-11-23 (eliminados 4 schemas no implementados: storage, public, gamilit, admin_dashboard)
   script_phases: 17  # ✅ Actualizado 2025-11-19 (+1 communication phase)
@@ -19,18 +19,18 @@ metadata:
     script_files: 6
     last_verification: "2025-11-19"
   last_execution: "2025-11-19 (DB-122: Implementación P0+P1 Portales)"
-  last_modification: "2025-11-24 - DOC-DB-001 (Database-Agent): Documentación completa de trigger initialize_user_stats (5 bug fixes críticos). Creado CHANGELOG.md, functions/README.md, actualizado database/README.md. Flujo de registro de usuario documentado con 4 tablas inicializadas. Cambio crítico: agregada inicialización de module_progress (faltaba)"
+  last_modification: "2025-11-26 - TEACHER-PORTAL-FIX (Architecture-Analyst): Agregada tabla social_features.teacher_reports para persistir metadatos de reportes generados por profesores. Incluye 15 columnas, 5 índices, 2 políticas RLS, 1 trigger updated_at. Parte de corrección Portal Teacher (TeacherReportsPage endpoints)."
   real_database_counts:
     schemas: 12  # ✅ CORREGIDO 2025-11-23 (validación PostgreSQL directa)
-    tables: 121  # ✅ DB-124: Validado por parsing CREATE TABLE (+10 desde YAML previo)
+    tables: 122  # ✅ 2025-11-26: +1 teacher_reports
     views: 8  # +3
     materialized_views: 11  # ✅ DB-124: Validado por parsing (+5 desde YAML previo)
     enums: 34
     functions: 112  # ✅ DB-124: Validado por parsing CREATE FUNCTION (+39 desde YAML previo)
-    triggers: 112  # ✅ DB-124: Validado por parsing CREATE TRIGGER (user triggers, excluye 623 triggers internos PostgreSQL)
-    indexes: 671  # +44
-    policies: 241  # ✅ DB-124: Validado por parsing CREATE POLICY
-    foreign_keys: 205  # ✅ DB-124: 100% válidos, 132 CASCADE (64%), 37 RESTRICT (18%)
+    triggers: 113  # ✅ 2025-11-26: +1 trg_teacher_reports_updated_at
+    indexes: 676  # ✅ 2025-11-26: +5 (teacher_reports indexes)
+    policies: 243  # ✅ 2025-11-26: +2 (teacher_reports policies)
+    foreign_keys: 208  # ✅ 2025-11-26: +3 (teacher_reports FKs: teacher_id, classroom_id, tenant_id)
   discrepancies_found: |
     DB-124: Conteos representan objetos reales (CREATE statements), no archivos.
     ACTUALIZADO 2025-11-23: Schemas corregido de 16 a 12 (eliminados 4 schemas no implementados).
@@ -138,14 +138,15 @@ schemas:
   - name: "social_features"
     description: "Características sociales (escuelas, aulas, equipos)"
     phase: 9
-    ddl_files: 28
-    tables: 12
+    ddl_files: 31  # 2025-11-26: +3 (teacher_reports table, trigger, rls-policies)
+    tables: 13  # 2025-11-26: +1 (teacher_reports)
     functions: 6
-    triggers: 3
-    indexes: 8
+    triggers: 4  # 2025-11-26: +1 (trg_teacher_reports_updated_at)
+    indexes: 13  # 2025-11-26: +5 (teacher_id, tenant_id, generated_at, classroom_id, report_type)
     views: 1
     enums: 1
-    rls_policies: 3
+    rls_policies: 5  # 2025-11-26: +2 (teacher_reports_teacher_policy, teacher_reports_admin_policy)
+    notes: "2025-11-26: teacher_reports table added for storing teacher-generated report metadata (Portal Teacher fix)"
 
   - name: "notifications"
     description: "Sistema de notificaciones multi-canal (in-app, email, push)"
@@ -268,18 +269,20 @@ prerequisites:
 # RESUMEN DE OBJETOS
 # ============================================================================
 summary:
-  total_objects: 763  # DB-122: +68 (6 tablas + 8 funciones + 3 vistas + 44 índices + 2 triggers + 5 otros)
+  total_objects: 772  # 2025-11-26: +9 (1 tabla + 1 trigger + 5 índices + 2 políticas)
   breakdown:
-    tables: 121  # ✅ DB-124: Validado por parsing (+12 desde conteo anterior)
+    tables: 122  # ✅ 2025-11-26: +1 teacher_reports
     functions: 112  # ✅ DB-124: Validado por parsing (+40 desde conteo anterior)
-    triggers: 112  # ✅ DB-124: User triggers (excluye 623 triggers internos PostgreSQL)
-    indexes: 117  # DB-122: +44
+    triggers: 113  # ✅ 2025-11-26: +1 trg_teacher_reports_updated_at
+    indexes: 122  # ✅ 2025-11-26: +5 (teacher_reports indexes)
     views: 8
     materialized_views: 11  # ✅ DB-124: Validado por parsing
     enums: 34
-    rls_policies: 241  # ✅ DB-124: Validado por parsing
-    fk_constraints: 205  # ✅ DB-124: 100% válidos, 132 CASCADE, 37 RESTRICT
+    rls_policies: 243  # ✅ 2025-11-26: +2 (teacher_reports policies)
+    fk_constraints: 208  # ✅ 2025-11-26: +3 (teacher_reports FKs)
   changes:
+    - "TEACHER-PORTAL-FIX (2025-11-26): Tabla social_features.teacher_reports para persistir reportes generados por profesores"
+    - "TEACHER-PORTAL-FIX (2025-11-26): +9 objetos (1 tabla, 1 trigger, 5 índices, 2 políticas RLS)"
     - "DB-124: AUDITORÍA FASE 1 - Ciclos 1-3 completados (31 hallazgos, 3 resueltos)"
     - "DB-124 H-022: Soft-delete implementado en profiles/tenants (prevención pérdida datos CASCADE)"
     - "DB-124 H-004: educational_content tiene 28 funciones (era 11 en YAML) - 21 validadores + 3 RPC + 4 helpers"
@@ -727,6 +730,9 @@ references:
 # NOTAS
 # ============================================================================
 notes:
+  - "TEACHER-PORTAL-FIX (2025-11-26): Tabla social_features.teacher_reports agregada para persistir reportes de profesores"
+  - "TEACHER-PORTAL-FIX (2025-11-26): Corrección Portal Teacher (TeacherReportsPage) - 3 endpoints backend + 1 tabla DB"
+  - "TEACHER-PORTAL-FIX (2025-11-26): Archivos creados: 08-teacher_reports.sql, 29-trg_teacher_reports_updated_at.sql, 08-teacher-reports-policies.sql"
   - "DB-124 (2025-11-19): AUDITORÍA EXHAUSTIVA FASE 1 COMPLETADA (Ciclos 1-3/10)"
   - "DB-124: 31 hallazgos identificados, 3 resueltos (H-001 notifications, H-004 educational_content, H-005 gamilit)"
   - "DB-124 H-022: Soft-delete implementado en auth_management.profiles (77 FKs) y tenants (29 FKs)"

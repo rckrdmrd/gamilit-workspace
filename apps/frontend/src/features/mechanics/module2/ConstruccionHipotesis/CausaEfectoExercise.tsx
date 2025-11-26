@@ -7,6 +7,8 @@ import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import type { CausaEfectoExerciseProps, CauseMatches } from './causaEfectoTypes';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
+import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
 
 export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
   exercise,
@@ -15,6 +17,8 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
   actionsRef,
 }) => {
   const { user } = useAuth();
+  const { fetchUserProgress } = useRanksStore();
+  const { fetchBalance } = useEconomyStore();
   const [matches, setMatches] = useState<CauseMatches>({});
   const [validated, setValidated] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -194,6 +198,10 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
         showConfetti: response.isPerfect,
       });
       setShowFeedback(true);
+
+      // Sync stores with backend (rewards already calculated and saved by backend)
+      await fetchUserProgress();
+      await fetchBalance();
 
       console.log('✅ [CausaEfecto] Submission successful:', {
         attemptId: response.attemptId,

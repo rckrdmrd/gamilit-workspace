@@ -3,7 +3,7 @@
 **Última actualización:** 2025-11-26
 **Propósito:** Planificación de correcciones y refactorings
 **Audiencia:** Tech Leads, Desarrolladores
-**Estado:** ✅ PRODUCTION READY (82.75% coherencia global)
+**Estado:** ✅ PRODUCTION READY (87.5% coherencia global - actualizado 2025-11-26)
 
 ---
 
@@ -95,10 +95,10 @@ Ver: `_MAP.md:255-281` (raíz del workspace)
 ╔════════════════════════════════════════════════════════════╗
 ║              COHERENCIA DE INTEGRACIÓN                     ║
 ╠════════════════════════════════════════════════════════════╣
-║  Database → Backend:              87.0%                    ║
-║  Database → Frontend (via APIs):  78.5%                    ║
+║  Database → Backend:              89.0%  (+2.0% P2)        ║
+║  Database → Frontend (via APIs):  86.0%  (+7.5% P2)        ║
 ║  ────────────────────────────────────────                  ║
-║  PROMEDIO GLOBAL:                 82.75%                   ║
+║  PROMEDIO GLOBAL:                 87.5%  (+4.75% P2)       ║
 ║  ESTADO:                          PRODUCTION READY         ║
 ╚════════════════════════════════════════════════════════════╝
 ```
@@ -115,9 +115,18 @@ Ver: `_MAP.md:255-281` (raíz del workspace)
 3. Corregir MayaRank KUKUKULKAN → KUKULKAN en Backend
 4. Agregar MessageTypeEnum en Frontend
 
-### P2 - Próximo Sprint
-5. Expandir tipos Frontend (User, Achievement, Classroom, ExerciseSubmission)
-6. Agregar 'unknown' a DeviceTypeEnum en Backend
+### P2 - ~~Próximo Sprint~~ ✅ COMPLETADO 2025-11-26
+5. ~~Expandir tipos Frontend (User, Achievement, Classroom, ExerciseSubmission)~~ ✅
+6. ~~Agregar 'unknown' a DeviceTypeEnum en Backend~~ ✅
+
+### Correcciones P2 Implementadas (2025-11-26)
+| Corrección | Archivos | Campos Agregados |
+|------------|----------|------------------|
+| DeviceTypeEnum | BE + FE enums.constants.ts | +1 (UNKNOWN) |
+| ExerciseSubmission | FE progress.types.ts | +12, -1 (attempt_id), rename answer_data |
+| Achievement | FE achievement.types.ts | +9 campos |
+| Classroom | FE social.types.ts | +16 campos + 2 tipos auxiliares |
+| User | FE auth.types.ts | +7 campos |
 
 ---
 

@@ -335,18 +335,31 @@ export interface ExerciseAttempt {
 /**
  * Exercise Submission
  * User's submission for an exercise
+ *
+ * @see Database: progress_tracking.exercise_submissions
+ * @see Backend: modules/progress/entities/exercise-submission.entity.ts
+ *
+ * UPDATED 2025-11-26: Alineado con Backend Entity y DDL
  */
 export interface ExerciseSubmission {
   id: string;
-  attempt_id: string;
   user_id: string;
   exercise_id: string;
-  submission_data: Record<string, any>;
+  answer_data: Record<string, any>; // Nombre correcto (antes: submission_data)
+  is_correct: boolean | null;
   score: number;
   max_score: number;
-  is_correct: boolean;
   feedback: string | null;
+  hint_used: boolean;
+  hints_count: number;
+  comodines_used: string[] | null;
+  ml_coins_spent: number;
+  time_spent_seconds: number | null;
+  attempt_number: number;
+  status: 'draft' | 'submitted' | 'graded' | 'reviewed';
+  started_at: string | null;
   submitted_at: string;
+  graded_at: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -90,6 +90,7 @@ export enum DeviceTypeEnum {
   DESKTOP = 'desktop',
   MOBILE = 'mobile',
   TABLET = 'tablet',
+  UNKNOWN = 'unknown', // v1.1: Alineado con DDL user_sessions (2025-11-26)
 }
 
 /**

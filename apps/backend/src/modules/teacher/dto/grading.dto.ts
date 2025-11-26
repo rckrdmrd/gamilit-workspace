@@ -9,6 +9,7 @@ import {
   IsOptional,
   IsEnum,
   IsUUID,
+  IsBoolean,
   Min,
   Max,
 } from 'class-validator';
@@ -32,6 +33,28 @@ export class SubmitFeedbackDto {
   @Max(100)
   @IsOptional()
   adjusted_score?: number;
+
+  @ApiPropertyOptional({ description: 'Absolute score' })
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  score?: number;
+
+  @ApiPropertyOptional({ description: 'Maximum score for the submission' })
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  max_score?: number;
+
+  @ApiPropertyOptional({ description: 'Letter grade (A-F)' })
+  @IsString()
+  @IsOptional()
+  grade?: string;
+
+  @ApiPropertyOptional({ description: 'Whether the submission is approved' })
+  @IsBoolean()
+  @IsOptional()
+  is_approved?: boolean;
 }
 
 export class GetSubmissionsQueryDto {

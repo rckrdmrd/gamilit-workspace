@@ -112,6 +112,7 @@ export class AdminMonitoringService {
 
   /**
    * Get error statistics for the specified time period
+   * FIX: Updated column names (created_at instead of timestamp) and uppercase log levels
    */
   async getErrorStats(query: ErrorStatsQueryDto): Promise<ErrorStatsDto> {
     try {
@@ -121,14 +122,14 @@ export class AdminMonitoringService {
         `
         SELECT
           COUNT(*)::int as total_errors,
-          COUNT(DISTINCT DATE(timestamp))::int as days_with_errors,
-          COUNT(CASE WHEN log_level = 'fatal' THEN 1 END)::int as fatal_errors,
-          COUNT(CASE WHEN log_level = 'error' THEN 1 END)::int as error_level_errors,
-          MIN(timestamp) as first_error_at,
-          MAX(timestamp) as last_error_at
+          COUNT(DISTINCT DATE(created_at))::int as days_with_errors,
+          COUNT(CASE WHEN log_level = 'FATAL' THEN 1 END)::int as fatal_errors,
+          COUNT(CASE WHEN log_level = 'ERROR' THEN 1 END)::int as error_level_errors,
+          MIN(created_at) as first_error_at,
+          MAX(created_at) as last_error_at
         FROM audit_logging.system_logs
-        WHERE log_level IN ('error', 'fatal')
-          AND timestamp >= NOW() - INTERVAL '${hours} hours'
+        WHERE log_level IN ('ERROR', 'FATAL')
+          AND created_at >= NOW() - INTERVAL '${hours} hours'
         `,
       );
 
@@ -151,15 +152,18 @@ export class AdminMonitoringService {
 
   /**
    * Get recent errors with details
+   * FIX: Updated column names and uppercase log levels
    */
   async getRecentErrors(query: RecentErrorsQueryDto): Promise<RecentErrorsDto> {
     try {
       const limit = query.limit || 20;
       const level = query.level || 'all';
 
-      let whereClause = `sl.log_level IN ('error', 'fatal')`;
+      let whereClause = `sl.log_level IN ('ERROR', 'FATAL')`;
       if (level !== 'all') {
-        whereClause = `sl.log_level = '${level}'`;
+        // Convert to uppercase for comparison
+        const upperLevel = level.toUpperCase();
+        whereClause = `sl.log_level = '${upperLevel}'`;
       }
 
       const result = await this.dataSource.query(
@@ -168,15 +172,15 @@ export class AdminMonitoringService {
           sl.id,
           sl.log_level,
           sl.message,
-          sl.context,
-          sl.source,
-          sl.timestamp,
+          sl.extra_data as context,
+          sl.module_name as source,
+          sl.created_at as timestamp,
           sl.user_id,
           p.display_name as user_name
         FROM audit_logging.system_logs sl
         LEFT JOIN auth_management.profiles p ON sl.user_id = p.id
         WHERE ${whereClause}
-        ORDER BY sl.timestamp DESC
+        ORDER BY sl.created_at DESC
         LIMIT ${limit}
         `,
       );
@@ -204,6 +208,7 @@ export class AdminMonitoringService {
 
   /**
    * Get error trends over time with time bucketing
+   * FIX: Updated column names and uppercase log levels
    */
   async getErrorTrends(query: ErrorTrendsQueryDto): Promise<ErrorTrendsDto> {
     try {
@@ -213,14 +218,14 @@ export class AdminMonitoringService {
       const result = await this.dataSource.query(
         `
         SELECT
-          DATE_TRUNC('${groupBy}', timestamp) as time_bucket,
+          DATE_TRUNC('${groupBy}', created_at) as time_bucket,
           COUNT(*)::int as error_count,
-          COUNT(CASE WHEN log_level = 'fatal' THEN 1 END)::int as fatal_count,
-          COUNT(CASE WHEN log_level = 'error' THEN 1 END)::int as error_count_level,
-          COUNT(DISTINCT source)::int as unique_sources
+          COUNT(CASE WHEN log_level = 'FATAL' THEN 1 END)::int as fatal_count,
+          COUNT(CASE WHEN log_level = 'ERROR' THEN 1 END)::int as error_count_level,
+          COUNT(DISTINCT module_name)::int as unique_sources
         FROM audit_logging.system_logs
-        WHERE log_level IN ('error', 'fatal')
-          AND timestamp >= NOW() - INTERVAL '${hours} hours'
+        WHERE log_level IN ('ERROR', 'FATAL')
+          AND created_at >= NOW() - INTERVAL '${hours} hours'
         GROUP BY time_bucket
         ORDER BY time_bucket DESC
         `,

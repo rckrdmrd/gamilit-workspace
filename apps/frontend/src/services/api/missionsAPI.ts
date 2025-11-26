@@ -11,6 +11,7 @@
  *
  * Deuda técnica: Consolidar ambos sistemas en el tipo canónico con `objectives[]`.
  * Ref: PLAN-IMPLEMENTACION-CORRECCIONES-2025-11-26
+ * @see apps/frontend/src/features/missions/MIGRATION-GUIDE.md
  */
 
 import { apiClient } from '@/services/api/apiClient';

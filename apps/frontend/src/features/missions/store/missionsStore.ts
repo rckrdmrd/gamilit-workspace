@@ -8,6 +8,22 @@
 import { create } from 'zustand';
 import { missionsAPI, Mission } from '@/services/api/missionsAPI';
 
+/**
+ * @deprecated ESTE STORE ESTÁ DEPRECADO - NO USAR EN CÓDIGO NUEVO
+ *
+ * Este store usa el tipo Mission legacy de @/services/api/missionsAPI
+ * que tiene `objective` (singular) en lugar de `objectives[]` (array).
+ *
+ * Para nuevas implementaciones usar:
+ * - Hook: useMissions de @/features/gamification/missions/hooks/useMissions
+ * - Types: @/features/gamification/missions/types/missionsTypes.ts
+ *
+ * Este store se mantiene temporalmente para compatibilidad con tests existentes.
+ * Será eliminado en una futura limpieza de código.
+ *
+ * Ref: orchestration/agentes/architecture-analyst/useMissions-error-analysis-2025-11-26
+ * @see apps/frontend/src/features/missions/MIGRATION-GUIDE.md
+ */
 interface MissionsState {
   dailyMissions: Mission[];
   weeklyMissions: Mission[];

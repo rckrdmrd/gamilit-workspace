@@ -93,7 +93,7 @@ export interface SystemUser {
   status: 'active' | 'inactive' | 'suspended' | 'banned' | 'pending';
   organizationId?: string;
   organizationName?: string;
-  lastLogin: string;
+  lastLogin: string | null;
   createdAt: string;
   // Alias for full_name (for backward compatibility)
   display_name?: string;
@@ -127,14 +127,14 @@ export interface SystemStats {
 // Dashboard-specific Types
 export interface SystemMetrics {
   totalUsers: number;
-  userGrowth: number; // percentage
+  userGrowth: number | null; // percentage - null if not provided by backend
   totalOrganizations: number;
-  organizationGrowth: number;
+  organizationGrowth: number | null; // null if not provided by backend
   activeSessions: number;
-  flaggedContentCount: number;
+  flaggedContentCount: number | null; // null if not provided by backend
   systemUptime: number; // seconds
-  storageUsed: number; // GB
-  storageTotal: number; // GB
+  storageUsed: number | null; // GB - null if not provided by backend
+  storageTotal: number | null; // GB - null if not provided by backend
   avgResponseTime: number; // ms
 }
 

@@ -37,8 +37,8 @@ interface SystemMetricsGridProps {
 
 interface MetricCardData {
   label: string;
-  value: number;
-  trend?: number;
+  value: number | null;
+  trend?: number | null;
   icon: React.ElementType;
   color: string;
   unit?: string;
@@ -85,7 +85,10 @@ export const SystemMetricsGrid: React.FC<SystemMetricsGridProps> = ({
         label: 'Flagged Content',
         value: metrics.flaggedContentCount,
         icon: Flag,
-        color: metrics.flaggedContentCount > 10 ? 'red' : 'yellow',
+        color:
+          metrics.flaggedContentCount !== null && metrics.flaggedContentCount > 10
+            ? 'red'
+            : 'yellow',
         tooltip: 'Content items pending moderation',
       },
       {
@@ -100,9 +103,17 @@ export const SystemMetricsGrid: React.FC<SystemMetricsGridProps> = ({
         label: 'Storage Used',
         value: metrics.storageUsed,
         icon: HardDrive,
-        color: metrics.storageUsed / metrics.storageTotal > 0.8 ? 'orange' : 'indigo',
+        color:
+          metrics.storageUsed !== null &&
+          metrics.storageTotal !== null &&
+          metrics.storageUsed / metrics.storageTotal > 0.8
+            ? 'orange'
+            : 'indigo',
         unit: 'storage',
-        tooltip: `${((metrics.storageUsed / metrics.storageTotal) * 100).toFixed(1)}% of total capacity`,
+        tooltip:
+          metrics.storageUsed !== null && metrics.storageTotal !== null
+            ? `${((metrics.storageUsed / metrics.storageTotal) * 100).toFixed(1)}% of total capacity`
+            : 'Storage data not available',
       },
     ];
   };
@@ -157,10 +168,16 @@ interface MetricCardProps {
 const MetricCard: React.FC<MetricCardProps> = ({ card, index, metrics }) => {
   const [displayValue, setDisplayValue] = useState(0);
   const Icon = card.icon;
-  const TrendIcon = card.trend !== undefined ? getTrendIcon(card.trend) : null;
+  const TrendIcon =
+    card.trend !== undefined && card.trend !== null ? getTrendIcon(card.trend) : null;
 
   // Animated counter effect
   useEffect(() => {
+    // Skip animation if value is null
+    if (card.value === null) {
+      return;
+    }
+
     const duration = 1000;
     const steps = 60;
     const increment = card.value / steps;
@@ -168,11 +185,13 @@ const MetricCard: React.FC<MetricCardProps> = ({ card, index, metrics }) => {
 
     const timer = setInterval(() => {
       currentStep++;
-      setDisplayValue(Math.min(increment * currentStep, card.value));
+      if (card.value !== null) {
+        setDisplayValue(Math.min(increment * currentStep, card.value));
 
-      if (currentStep >= steps) {
-        clearInterval(timer);
-        setDisplayValue(card.value);
+        if (currentStep >= steps) {
+          clearInterval(timer);
+          setDisplayValue(card.value);
+        }
       }
     }, duration / steps);
 
@@ -181,6 +200,11 @@ const MetricCard: React.FC<MetricCardProps> = ({ card, index, metrics }) => {
 
   // Format the display value
   const getFormattedValue = (): string => {
+    // Handle null values
+    if (card.value === null) {
+      return 'N/A';
+    }
+
     if (card.unit === 'uptime') {
       return formatUptime(card.value);
     }
@@ -229,7 +253,7 @@ const MetricCard: React.FC<MetricCardProps> = ({ card, index, metrics }) => {
             </div>
 
             {/* Trend indicator */}
-            {card.trend !== undefined && TrendIcon && (
+            {card.trend !== undefined && card.trend !== null && TrendIcon && (
               <div className={`flex items-center gap-1 ${getTrendColor(card.trend)}`}>
                 <TrendIcon className="h-4 w-4" />
                 <span className="text-sm font-semibold">{Math.abs(card.trend).toFixed(1)}%</span>
@@ -249,13 +273,13 @@ const MetricCard: React.FC<MetricCardProps> = ({ card, index, metrics }) => {
             </motion.p>
 
             {/* Additional info */}
-            {card.unit === 'storage' && (
+            {card.unit === 'storage' && metrics.storageTotal !== null && (
               <p className="text-detective-small mt-2 text-gray-500">
                 of {metrics.storageTotal} GB total
               </p>
             )}
 
-            {card.trend !== undefined && (
+            {card.trend !== undefined && card.trend !== null && (
               <p className="text-detective-small mt-2 text-gray-500">
                 {card.trend > 0 ? 'Up' : card.trend < 0 ? 'Down' : 'No change'} from last period
               </p>

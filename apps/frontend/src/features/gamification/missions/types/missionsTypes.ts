@@ -20,7 +20,8 @@ export type MissionStatus =
   | 'not_started' // Mission available but not started
   | 'in_progress' // Mission started, in progress
   | 'completed' // Mission completed, ready to claim
-  | 'claimed'; // Reward claimed
+  | 'claimed' // Reward claimed
+  | 'expired'; // Mission expired
 
 /**
  * Mission Objective from API

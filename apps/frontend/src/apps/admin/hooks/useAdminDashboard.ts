@@ -110,8 +110,14 @@ export function useAdminDashboard(
   /**
    * Transform API SystemHealth to local SystemHealth format
    * @see SystemHealthDto in backend for the actual response structure
+   * Updated: Fixed apiUptime conversion from seconds to percentage (P0)
    */
   const transformSystemHealth = (apiHealth: APISystemHealth): SystemHealth => {
+    // Convert uptime_seconds to uptime percentage
+    // Assuming 24h (86400 seconds) as 100% uptime baseline
+    const uptimeSeconds = apiHealth.uptime_seconds ?? 0;
+    const uptimePercentage = Math.min((uptimeSeconds / 86400) * 100, 100);
+
     return {
       status: apiHealth.status === 'down' ? 'critical' : apiHealth.status,
       cpu: apiHealth.cpu?.usage_percent ?? 0,
@@ -121,7 +127,7 @@ export function useAdminDashboard(
       requestsPerMin: 0, // Not provided by API
       errorRate: 0, // Not provided by API
       database: apiHealth.database?.status ?? 'down',
-      apiUptime: apiHealth.uptime_seconds ?? 0,
+      apiUptime: uptimePercentage, // Now properly converted to percentage
       lastCheck: apiHealth.timestamp,
     };
   };
@@ -159,18 +165,19 @@ export function useAdminDashboard(
   /**
    * Transform API SystemMetrics (snake_case from backend) to local SystemMetrics format
    * @see SystemMetricsDto in apps/backend/src/modules/admin/dto/system/system-metrics.dto.ts
+   * Updated: Use null instead of 0 for unavailable data (P0)
    */
   const transformSystemMetrics = (apiMetrics: APISystemMetrics): SystemMetrics => {
     return {
       totalUsers: apiMetrics.total_users ?? 0,
-      userGrowth: 0, // Not provided by backend
+      userGrowth: null, // Not provided by backend - use null to show N/A
       totalOrganizations: apiMetrics.total_organizations ?? 0,
-      organizationGrowth: 0, // Not provided by backend
+      organizationGrowth: null, // Not provided by backend - use null to show N/A
       activeSessions: apiMetrics.active_users_24h ?? 0,
-      flaggedContentCount: 0, // Not provided by backend
+      flaggedContentCount: null, // Not provided by backend - use null to show N/A
       systemUptime: 0, // Use SystemHealth for uptime
-      storageUsed: 0, // Not provided by backend
-      storageTotal: 0, // Not provided by backend
+      storageUsed: null, // Not provided by backend - use null to show N/A
+      storageTotal: null, // Not provided by backend - use null to show N/A
       avgResponseTime: apiMetrics.avg_response_time_ms ?? 0,
     };
   };
@@ -302,17 +309,33 @@ export function useAdminDashboard(
 
   /**
    * Refresh all data
+   * Updated: Uses Promise.allSettled to prevent cascade failures (P0)
    */
   const refreshAll = useCallback(async (): Promise<void> => {
     setLoading(true);
     try {
-      await Promise.all([
+      const results = await Promise.allSettled([
         fetchSystemHealth(),
         fetchMetrics(),
         fetchRecentActions(),
         fetchAlerts(),
         fetchUserActivity(),
       ]);
+
+      // Process results - log failures but don't stop execution
+      results.forEach((result, index) => {
+        if (result.status === 'rejected') {
+          const apiNames = [
+            'System Health',
+            'Metrics',
+            'Recent Actions',
+            'Alerts',
+            'User Activity',
+          ];
+          console.warn(`Failed to fetch ${apiNames[index]}:`, result.reason);
+        }
+      });
+
       setLastUpdated(new Date());
       setError(null);
     } catch (err) {

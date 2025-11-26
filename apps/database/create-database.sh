@@ -205,6 +205,7 @@ log "FASE 3: AUTH SCHEMA (Supabase)"
 execute_sql_files "$DDL_DIR/schemas/auth/enums" "*.sql" "ENUMs de autenticación"
 execute_sql_files "$DDL_DIR/schemas/auth/tables" "*.sql" "Tablas de autenticación"
 execute_sql_files "$DDL_DIR/schemas/auth/functions" "*.sql" "Funciones de autenticación"
+execute_sql_files "$DDL_DIR/schemas/auth/views" "*.sql" "Vistas de autenticación"
 
 log_success "FASE 3 completada"
 log ""
@@ -354,6 +355,7 @@ log "===========================================================================
 
 execute_sql_files "$DDL_DIR/schemas/content_management/enums" "*.sql" "ENUMs de gestión de contenido"
 execute_sql_files "$DDL_DIR/schemas/content_management/tables" "*.sql" "Tablas de gestión de contenido"
+execute_sql_files "$DDL_DIR/schemas/content_management/functions" "*.sql" "Funciones de moderación de contenido"
 execute_sql_files "$DDL_DIR/schemas/content_management/triggers" "*.sql" "Triggers de content_management"
 execute_sql_files "$DDL_DIR/schemas/content_management/indexes" "*.sql" "Índices de content_management"
 execute_sql_files "$DDL_DIR/schemas/content_management/rls-policies" "*.sql" "RLS Policies de content_management"
@@ -406,6 +408,7 @@ log "FASE 12: SYSTEM_CONFIGURATION SCHEMA"
 log "============================================================================"
 
 execute_sql_files "$DDL_DIR/schemas/system_configuration/tables" "*.sql" "Tablas de configuración"
+execute_sql_files "$DDL_DIR/schemas/system_configuration/functions" "*.sql" "Funciones de configuración (feature flags)"
 execute_sql_files "$DDL_DIR/schemas/system_configuration/triggers" "*.sql" "Triggers de configuración"
 execute_sql_files "$DDL_DIR/schemas/system_configuration/rls-policies" "*.sql" "RLS Policies de configuración"
 
@@ -420,9 +423,11 @@ log "===========================================================================
 log "FASE 13: ADMIN_DASHBOARD SCHEMA (OPCIONAL)"
 log "============================================================================"
 
+execute_sql_files "$DDL_DIR/schemas/admin_dashboard/tables" "*.sql" "Tablas de dashboard administrativo"
+execute_sql_files "$DDL_DIR/schemas/admin_dashboard/functions" "*.sql" "Funciones de dashboard administrativo"
 execute_sql_files "$DDL_DIR/schemas/admin_dashboard/views" "*.sql" "Vistas de dashboard administrativo"
 
-log_warning "FASE 13: admin_dashboard puede estar incompleto"
+log_success "FASE 13 completada"
 log ""
 
 # ============================================================================

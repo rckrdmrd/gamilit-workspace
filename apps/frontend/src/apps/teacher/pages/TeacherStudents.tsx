@@ -113,22 +113,27 @@ export default function TeacherStudents() {
     return 'low';
   };
 
-  const viewStudentDetail = async (student: StudentExtended) => {
+  const viewStudentDetail = (student: StudentExtended) => {
     setSelectedStudent(student);
 
-    // Fetch full student data from API to convert to StudentMonitoring
-    try {
-      const response = await classroomsApi.getClassroomStudents(student.classroom_id);
-      const studentData = response.data.find((s) => s.id === student.student_id);
+    // Crear objeto StudentMonitoring desde los datos ya disponibles
+    const studentMonitoring: StudentMonitoring = {
+      id: student.student_id,
+      full_name: student.student_name,
+      email: student.email,
+      status: 'active',
+      current_module: null,
+      current_exercise: null,
+      last_activity: student.last_active,
+      progress_percentage: student.completion_rate,
+      score_average: student.average_score,
+      time_spent_minutes: 0,
+      exercises_completed: 0,
+      exercises_total: 0,
+    };
 
-      if (studentData) {
-        setSelectedStudentMonitoring(studentData);
-        setIsDetailModalOpen(true);
-      }
-    } catch (err) {
-      console.error('[TeacherStudents] Error fetching student detail:', err);
-      setError('Error al cargar detalle del estudiante');
-    }
+    setSelectedStudentMonitoring(studentMonitoring);
+    setIsDetailModalOpen(true);
   };
 
   // Toggle sort direction or change field

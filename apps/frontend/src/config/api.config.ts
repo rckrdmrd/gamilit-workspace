@@ -219,16 +219,17 @@ export const API_ENDPOINTS = {
     organizationSubscription: (id: string) => `/admin/organizations/${id}/subscription`,
     organizationUsers: (id: string) => `/admin/organizations/${id}/users`,
 
-    // Approvals
-    approvals: {
-      pending: '/admin/approvals/pending',
-      approve: (id: string) => `/admin/approvals/${id}/approve`,
-      reject: (id: string) => `/admin/approvals/${id}/reject`,
-      history: '/admin/approvals/history',
-    },
-
-    // Content Management
+    // Content Management (includes approvals workflow)
     content: {
+      // Content approval workflow
+      pending: '/admin/content/pending',
+      approve: (id: string) => `/admin/content/${id}/approve`,
+      reject: (id: string) => `/admin/content/${id}/reject`,
+      history: '/admin/content/history',
+      list: '/admin/content',
+      get: (id: string) => `/admin/content/${id}`,
+
+      // Media library
       mediaLibrary: '/admin/content/media-library',
       deleteMedia: (id: string) => `/admin/content/media/${id}`,
       createVersion: '/admin/content/versions',
@@ -367,7 +368,7 @@ export const API_ENDPOINTS = {
     assignmentSubmissions: (assignmentId: string) =>
       `/teacher/assignments/${assignmentId}/submissions`,
     submission: (submissionId: string) => `/teacher/submissions/${submissionId}`,
-    gradeSubmission: (submissionId: string) => `/teacher/submissions/${submissionId}/grade`,
+    gradeSubmission: (submissionId: string) => `/teacher/submissions/${submissionId}/feedback`,
 
     // Analytics
     analytics: '/teacher/analytics',

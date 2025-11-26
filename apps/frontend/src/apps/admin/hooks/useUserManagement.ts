@@ -98,11 +98,16 @@ export function useUserManagement(): UseUserManagementResult {
       try {
         // FE-062: Use DEFAULT_PAGINATION as base instead of state to prevent circular dependency
         // Convert filters to UserFilters format (handle array role/status)
+        // TODO: Backend only supports a single value for role/status. For multiple values, backend needs updating
         const userFilters: any = {
           ...DEFAULT_PAGINATION,
           ...params,
-          role: Array.isArray(filters.role) ? filters.role[0] : filters.role,
-          status: Array.isArray(filters.status) ? filters.status[0] : filters.status,
+          role:
+            Array.isArray(filters.role) && filters.role.length > 0 ? filters.role[0] : filters.role,
+          status:
+            Array.isArray(filters.status) && filters.status.length > 0
+              ? filters.status[0]
+              : filters.status,
           organizationId: filters.organizationId,
           search: filters.search,
         };
@@ -111,17 +116,23 @@ export function useUserManagement(): UseUserManagementResult {
         const response = await adminAPI.getUsers(userFilters);
 
         // Convert User[] to SystemUser[] by mapping fields
-        const systemUsers: SystemUser[] = response.items.map((user) => ({
-          id: user.id,
-          full_name: user.name,
-          email: user.email,
-          role: user.role,
-          status: user.status,
-          organizationId: user.organizationId,
-          organizationName: user.organization,
-          lastLogin: user.lastLogin || '',
-          createdAt: user.joinDate,
-        }));
+        const systemUsers: SystemUser[] = response.items.map((user) => {
+          // Extract name from metadata if available (backend stores in raw_user_meta_data)
+          const metadata = (user as any).metadata || (user as any).raw_user_meta_data || {};
+          const fullName = metadata.full_name || metadata.display_name || user.name || user.email;
+
+          return {
+            id: user.id,
+            full_name: fullName,
+            email: user.email,
+            role: user.role,
+            status: user.status,
+            organizationId: user.organizationId,
+            organizationName: user.organization,
+            lastLogin: user.lastLogin || null,
+            createdAt: user.joinDate,
+          };
+        });
 
         setUsers(systemUsers);
         setTotalUsers(response.pagination.totalItems);

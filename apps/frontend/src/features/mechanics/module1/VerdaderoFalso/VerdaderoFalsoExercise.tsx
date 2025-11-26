@@ -8,6 +8,8 @@ import { CheckCircle, XCircle } from 'lucide-react';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
+import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
 
 export interface VerdaderoFalsoExerciseProps {
   exercise: VerdaderoFalsoData;
@@ -26,6 +28,8 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
   actionsRef,
 }) => {
   const { user } = useAuth(); // Get authenticated user
+  const { fetchUserProgress } = useRanksStore();
+  const { fetchBalance } = useEconomyStore();
   const [statements, setStatements] = useState<VerdaderoFalsoStatement[]>(
     exercise.statements.map((stmt) => ({ ...stmt, userAnswer: null })),
   );
@@ -154,6 +158,10 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
         showConfetti: response.isPerfect,
       });
       setShowFeedback(true);
+
+      // Sync stores with backend (rewards already calculated and saved by backend)
+      await fetchUserProgress();
+      await fetchBalance();
 
       console.log('✅ [VerdaderoFalso] Submission successful:', {
         attemptId: response.attemptId,

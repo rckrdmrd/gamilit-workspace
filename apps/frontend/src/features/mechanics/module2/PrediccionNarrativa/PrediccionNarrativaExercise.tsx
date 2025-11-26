@@ -13,6 +13,8 @@ import type {
 import { mockExerciseData } from './prediccionNarrativaMockData';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
+import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
 
 export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExerciseProps> = ({
   exercise = mockExerciseData,
@@ -23,6 +25,8 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
   actionsRef,
 }) => {
   const { user } = useAuth();
+  const { fetchUserProgress } = useRanksStore();
+  const { fetchBalance } = useEconomyStore();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_isSubmitting, setIsSubmitting] = useState(false);
 
@@ -174,6 +178,10 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
         showConfetti: response.isPerfect,
       });
       setShowFeedback(true);
+
+      // Sync stores with backend (rewards already calculated and saved by backend)
+      await fetchUserProgress();
+      await fetchBalance();
 
       console.log('✅ [PrediccionNarrativa] Submission successful:', {
         attemptId: response.attemptId,

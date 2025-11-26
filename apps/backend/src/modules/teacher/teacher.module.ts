@@ -34,6 +34,7 @@ import { AssignmentSubmission } from '@modules/assignments/entities/assignment-s
 import { StudentInterventionAlert } from './entities/student-intervention-alert.entity';
 import { Message, MessageParticipant } from './entities/message.entity';
 import { TeacherContent } from './entities/teacher-content.entity';
+import { TeacherReport } from './entities/teacher-report.entity';
 
 // Controllers
 import { TeacherClassroomsController } from './controllers/teacher-classrooms.controller';
@@ -60,6 +61,7 @@ import {
   ExerciseResponsesService,
 } from './services';
 import { TeacherMessagesService } from './services/teacher-messages.service';
+import { TeacherReportsService } from './services/teacher-reports.service';
 
 // Guards
 import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
@@ -116,7 +118,7 @@ import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
     TypeOrmModule.forFeature([Profile, User], 'auth'),
 
     // Entities from 'social' datasource
-    TypeOrmModule.forFeature([ClassroomMember, TeacherClassroom, Classroom], 'social'),
+    TypeOrmModule.forFeature([ClassroomMember, TeacherClassroom, Classroom, TeacherReport], 'social'),
 
     // Entities from 'progress' datasource
     TypeOrmModule.forFeature([ExerciseSubmission, ExerciseAttempt, ModuleProgress], 'progress'),
@@ -160,6 +162,7 @@ import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
     TeacherContentService,
     BonusCoinsService,
     ExerciseResponsesService,
+    TeacherReportsService,
 
     // Guards
     TeacherGuard,

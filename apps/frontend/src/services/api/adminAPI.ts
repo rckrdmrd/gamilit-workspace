@@ -381,7 +381,7 @@ export async function getPendingContent(
 ): Promise<PaginatedResponse<PendingContent>> {
   try {
     const response = await apiClient.get<PaginatedResponse<PendingContent>>(
-      API_ENDPOINTS.admin.approvals.pending,
+      API_ENDPOINTS.admin.content.pending,
       { params: filters },
     );
     return response.data;
@@ -397,7 +397,7 @@ export async function getPendingContent(
  */
 export async function approveContent(id: string): Promise<void> {
   try {
-    await apiClient.post(API_ENDPOINTS.admin.approvals.approve(id));
+    await apiClient.post(API_ENDPOINTS.admin.content.approve(id));
   } catch (error) {
     throw handleAPIError(error, `Failed to approve content ${id}`);
   }
@@ -410,7 +410,7 @@ export async function approveContent(id: string): Promise<void> {
  */
 export async function rejectContent(id: string, reason?: string): Promise<void> {
   try {
-    await apiClient.post(API_ENDPOINTS.admin.approvals.reject(id), { reason });
+    await apiClient.post(API_ENDPOINTS.admin.content.reject(id), { reason });
   } catch (error) {
     throw handleAPIError(error, `Failed to reject content ${id}`);
   }
@@ -454,7 +454,7 @@ export async function deleteMediaFile(id: string): Promise<void> {
 export async function getApprovalHistory(page = 1): Promise<PaginatedResponse<ApprovalHistory>> {
   try {
     const response = await apiClient.get<PaginatedResponse<ApprovalHistory>>(
-      API_ENDPOINTS.admin.approvals.history,
+      API_ENDPOINTS.admin.content.history,
       { params: { page } },
     );
     return response.data;

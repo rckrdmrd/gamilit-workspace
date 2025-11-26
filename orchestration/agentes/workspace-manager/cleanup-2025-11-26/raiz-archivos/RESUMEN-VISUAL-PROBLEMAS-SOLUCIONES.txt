@@ -1,0 +1,402 @@
+================================================================================
+  COMPARACIÓN VISUAL: DetectiveTextual vs LecturaInferencial - Módulo 2
+================================================================================
+
+ESTADO ACTUAL (2025-11-26):
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ DETECTIVETEXTUAL EXERCISE                                                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│ IMPORTS:                                                                     │
+│ ✓ import { submitExercise } from '@/features/progress/api/progressAPI';   │
+│ ✓ import { useAuth } from '@/features/auth/hooks/useAuth';                │
+│                                                                               │
+│ STATE:                                                                       │
+│ ✓ const { user } = useAuth();                                              │
+│ ✓ const [isSubmitting, setIsSubmitting] = useState(false);                │
+│                                                                               │
+│ HANDLECHECK (handleSubmitSolution):                                        │
+│ ✓ Valida usuario: if (!user?.id) → error                                   │
+│ ✓ Prepara DTO: { connections: [...] }                                     │
+│ ✓ await submitExercise(exerciseId, user.id, answers)  [LÍNEA 186]       │
+│ ✓ response.score      (del servidor)                                       │
+│ ✓ response.rewards    (del servidor)                                       │
+│ ✓ response.isPerfect  (del servidor)                                       │
+│ ✓ try-catch-finally                                                         │
+│                                                                               │
+│ RESULTADO: ✅ USUARIO RECIBE SCORE REAL + REWARDS                          │
+│                                                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ LECTURAINFERENCIAL EXERCISE (ACTUAL)                                        │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│ IMPORTS:                                                                     │
+│ ✗ FALTA: import { submitExercise } from '@/features/progress/api/...'      │
+│ ✗ FALTA: import { useAuth } from '@/features/auth/hooks/useAuth';          │
+│                                                                               │
+│ STATE:                                                                       │
+│ ✗ FALTA: const { user } = useAuth();                                       │
+│ ✗ FALTA: const [isSubmitting, setIsSubmitting] = useState(false);          │
+│                                                                               │
+│ HANDLECHECK:                                                                 │
+│ ✗ NO valida usuario (no hay user)                                          │
+│ ✓ Valida todas preguntas respondidas                                       │
+│ ✗ Calcula LOCALMENTE: const isCorrect = selectedOption === q.correct      │
+│ ✗ Calcula LOCALMENTE: finalScore = calculateScore(...)                    │
+│ ✗ ❌ NO LLAMA submitExercise()  [LÍNEA FALTANTE]                          │
+│ ✗ score = finalScore (local, FALSO)                                        │
+│ ✗ NO HAY rewards (nunca fueron generados)                                  │
+│ ✗ NO HAY try-catch                                                          │
+│                                                                               │
+│ RESULTADO: ❌ USUARIO RECIBE SCORE FALSO + SIN REWARDS                     │
+│                                                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+  DIFERENCIAS EXACTAS (LADO A LADO)
+================================================================================
+
+LÍNEA 1-7: IMPORTS
+│ DetectiveTextual          │ LecturaInferencial        │
+├──────────────────────────┼──────────────────────────┤
+│ ✓ import React...        │ ✓ import React...        │
+│ ✓ import { motion }      │ ✓ import { motion }      │
+│ ✓ import { Search }      │ ✓ import { BookOpen }    │
+│ ✓ import DetectiveCard   │ ✓ import DetectiveCard   │
+│ ✓ import FeedbackModal   │ ✓ import FeedbackModal   │
+│ ✓ import calculateScore  │ ✓ import calculateScore  │
+│ ✓ import types           │ ✓ import types           │
+│ ✓ submitExercise LINE17  │ ✗ FALTA LÍNEA            │
+│ ✓ useAuth LINE18         │ ✗ FALTA LÍNEA            │
+
+LÍNEA 14-15: HOOK
+│ DetectiveTextual          │ LecturaInferencial        │
+├──────────────────────────┼──────────────────────────┤
+│ const { user } = useAuth │ ✗ FALTA                  │
+
+LÍNEA 20: ESTADO
+│ DetectiveTextual          │ LecturaInferencial        │
+├──────────────────────────┼──────────────────────────┤
+│ const [_isSubmitting] =  │ ✗ FALTA                  │
+
+LÍNEA 63-133: HANDLECHECK / HANDLESUBMIT
+│ DetectiveTextual          │ LecturaInferencial        │
+├──────────────────────────┼──────────────────────────┤
+│ handleSubmitSolution()   │ handleCheck()            │
+│ ✓ async keyword          │ ✗ async keyword          │
+│ ✓ if (!user?.id) error   │ ✗ FALTA                  │
+│ ✓ setIsSubmitting(true)  │ ✗ FALTA                  │
+│ ✓ try-catch              │ ✗ NO try-catch           │
+│ ✓ await submitExercise() │ ✗ ❌ FALTA LÍNEA CRÍTICA │
+│ ✓ response.score         │ ✗ localScore (FALSO)     │
+│ ✓ response.rewards       │ ✗ SIN rewards            │
+│ ✓ finally setIsSubmit    │ ✗ FALTA                  │
+
+================================================================================
+  FLUJOS COMPARADOS
+================================================================================
+
+DETECTIVE TEXTUAL:
+  Usuario Selecciona
+        ↓
+  Hace click Verificar
+        ↓
+  handleSubmitSolution() ← async
+        ↓
+  Valida usuario
+        ↓
+  Prepara DTO
+        ↓
+  await submitExercise()  ← ENVÍA AL BACKEND ✓
+        ↓
+  response = SubmitExerciseResponse
+        ↓
+  setFeedback(response.score, response.rewards)  ✓
+        ↓
+  Modal muestra Score REAL + Rewards REALES ✓
+
+LECTURA INFERENCIAL (ACTUAL):
+  Usuario Selecciona
+        ↓
+  Hace click Verificar
+        ↓
+  handleCheck() ← NO async
+        ↓
+  ❌ NO valida usuario
+        ↓
+  Calcula LOCALMENTE correctness
+        ↓
+  ❌ NO LLAMA submitExercise()  ← NO ENVÍA AL BACKEND ❌
+        ↓
+  ❌ NO HAY response del servidor
+        ↓
+  setFeedback(finalScore LOCAL, NO rewards)  ❌
+        ↓
+  Modal muestra Score FALSO + SIN Rewards ❌
+
+================================================================================
+  LO QUE FALTA EN LECTURAINFERENCIAL (5 COSAS)
+================================================================================
+
+1. IMPORTS (2 líneas)
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ import { submitExercise } from '@/features/progress/api/...'    │
+   │ import { useAuth } from '@/features/auth/hooks/useAuth';        │
+   └─────────────────────────────────────────────────────────────────┘
+
+2. HOOK (1 línea)
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ const { user } = useAuth();                                     │
+   └─────────────────────────────────────────────────────────────────┘
+
+3. STATE (1 línea)
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ const [isSubmitting, setIsSubmitting] = useState(false);        │
+   └─────────────────────────────────────────────────────────────────┘
+
+4. ASYNC SIGNATURE (1 palabra)
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ const handleCheck = useCallback(async () => {  ← ADD 'async'    │
+   └─────────────────────────────────────────────────────────────────┘
+
+5. BACKEND CALL (6 líneas)
+   ┌─────────────────────────────────────────────────────────────────┐
+   │ const userAnswers = { ... };                                    │
+   │ const response = await submitExercise(                          │
+   │   exerciseId,                                                   │
+   │   user.id,                                                      │
+   │   { questions: userAnswers }                                    │
+   │ );                                                              │
+   │ setFeedback({ score: response.score, ... });                   │
+   └─────────────────────────────────────────────────────────────────┘
+
+================================================================================
+  PAYLOADS Y RESPUESTAS
+================================================================================
+
+REQUEST (LecturaInferencial debe enviar esto):
+┌─────────────────────────────────────────────────────────────────┐
+│ POST /api/progress/submissions/submit                           │
+│                                                                  │
+│ {                                                                │
+│   "userId": "user-123",                                         │
+│   "exerciseId": "lectura-001",                                  │
+│   "answers": {                                                   │
+│     "questions": {                                               │
+│       "q1": "0",                                                 │
+│       "q2": "1",                                                 │
+│       "q3": "2"                                                  │
+│     }                                                             │
+│   }                                                               │
+│ }                                                                │
+└─────────────────────────────────────────────────────────────────┘
+
+RESPONSE (Backend retorna esto):
+┌─────────────────────────────────────────────────────────────────┐
+│ {                                                                │
+│   "attemptId": "attempt-xyz",                                  │
+│   "score": 100,         ← IMPORTANTE: DEL SERVIDOR            │
+│   "isPerfect": true,    ← IMPORTANTE: DEL SERVIDOR            │
+│   "correctAnswersCount": 3,                                    │
+│   "totalQuestions": 3,                                         │
+│   "rewards": {          ← IMPORTANTE: AGREGADO POR BACKEND    │
+│     "mlCoins": 30,                                              │
+│     "xp": 150,                                                  │
+│     "bonuses": { ... }                                          │
+│   },                                                             │
+│   "feedback": {                                                  │
+│     "overall": "¡Perfecto!",                                   │
+│     "answerReview": [...]                                       │
+│   },                                                             │
+│   "achievements": [     ← IMPORTANTE: DESBLOQUEOS              │
+│     { id: "perfect", name: "Puntuación Perfecta", ... }        │
+│   ]                                                              │
+│ }                                                                │
+└─────────────────────────────────────────────────────────────────┘
+
+================================================================================
+  IMPACTO EN EL USUARIO
+================================================================================
+
+DETECTIVE TEXTUAL:
+┌───────────────────────────────────┐
+│ Completa el ejercicio              │
+│         ↓                           │
+│ Backend valida respuestas          │
+│         ↓                           │
+│ Backend genera rewards             │
+│         ↓                           │
+│ Usuario recibe:                    │
+│ ✓ Score validado (85/100)          │
+│ ✓ ML Coins (+20)                   │
+│ ✓ XP (+100)                        │
+│ ✓ Achievement si es perfecto       │
+│ ✓ Ranking actualizado              │
+│         ↓                           │
+│ EXPERIENCIA: COMPLETA ✓            │
+└───────────────────────────────────┘
+
+LECTURA INFERENCIAL (ACTUAL):
+┌───────────────────────────────────┐
+│ Completa el ejercicio              │
+│         ↓                           │
+│ Calcula LOCALMENTE (sin validación)│
+│         ↓                           │
+│ Backend NUNCA se entera            │
+│         ↓                           │
+│ Usuario recibe:                    │
+│ ❌ Score LOCAL (100/100 - FALSO)   │
+│ ❌ Sin ML Coins                    │
+│ ❌ Sin XP                          │
+│ ❌ Sin Achievement                 │
+│ ❌ Ranking NO se actualiza         │
+│         ↓                           │
+│ EXPERIENCIA: ROTA ❌               │
+└───────────────────────────────────┘
+
+================================================================================
+  CÓDIGO MÍNIMO A AGREGAR
+================================================================================
+
+PASO 1: Imports (después de línea 7)
+────────────────────────────────────────────────────────────────────────────
++ import { submitExercise } from '@/features/progress/api/progressAPI';
++ import { useAuth } from '@/features/auth/hooks/useAuth';
+
+
+PASO 2: Hook (después de destructuring, línea ~14)
+────────────────────────────────────────────────────────────────────────────
++ const { user } = useAuth();
+
+
+PASO 3: State (después de startTime, línea ~20)
+────────────────────────────────────────────────────────────────────────────
++ const [isSubmitting, setIsSubmitting] = useState(false);
+
+
+PASO 4: Refactorizar handleCheck (línea 63-133)
+────────────────────────────────────────────────────────────────────────────
+- const handleCheck = useCallback(() => {
++ const handleCheck = useCallback(async () => {
+  
+  if (validated) {
+    // ... keep existing code ...
+    return;
+  }
+  
+  const answeredCount = Object.keys(selectedAnswers).length;
+  if (answeredCount < questions.length) {
+    // ... keep existing code ...
+    return;
+  }
+
++ // AGREGAR: Valida usuario
++ if (!user?.id) {
++   setFeedback({
++     type: 'error',
++     title: 'Error de Autenticación',
++     message: 'Debes estar autenticado para enviar el ejercicio.',
++   });
++   setShowFeedback(true);
++   return;
++ }
+
++ setIsSubmitting(true);
+
++ try {
++   // AGREGAR: Prepara DTO
++   const userAnswers: Record<string, string> = {};
++   Object.entries(selectedAnswers).forEach(([questionId, optionIndex]) => {
++     userAnswers[questionId] = String(optionIndex);
++   });
+
++   // CRÍTICO: ENVÍA AL BACKEND
++   const response = await submitExercise(exerciseId, user.id, { 
++     questions: userAnswers 
++   });
+
++   // MARCAR COMO VALIDADO
++   setValidated(true);
+
++   // MOSTRAR FEEDBACK DEL SERVIDOR (NO LOCAL)
++   setFeedback({
++     type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
++     title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
++     message: response.feedback?.overall || `Respondiste correctamente ${response.correctAnswersCount} de ${response.totalQuestions} preguntas.`,
++     score: response.score,          // ← DEL SERVIDOR
++     showConfetti: response.isPerfect, // ← DEL SERVIDOR
++   });
+
++   setShowFeedback(true);
++ } catch (error) {
++   console.error('❌ [LecturaInferencial] Submission error:', error);
++   setFeedback({
++     type: 'error',
++     title: 'Error al Enviar',
++     message: 'Hubo un problema al enviar tu respuesta. Por favor, intenta nuevamente.',
++   });
++   setShowFeedback(true);
++ } finally {
++   setIsSubmitting(false);
++ }
+
+}, [selectedAnswers, validated, answers, questions, startTime, user, exerciseId]);
+                                                                   ^ AGREGAR: user, exerciseId
+
+
+================================================================================
+  CHECKLIST RÁPIDO
+================================================================================
+
+[ ] ¿Están los imports?
+    [ ] submitExercise
+    [ ] useAuth
+
+[ ] ¿Está el hook useAuth?
+    [ ] const { user } = useAuth();
+
+[ ] ¿Está el estado isSubmitting?
+    [ ] const [isSubmitting, setIsSubmitting] = useState(false);
+
+[ ] ¿Es async handleCheck?
+    [ ] const handleCheck = useCallback(async () => {
+
+[ ] ¿Valida usuario?
+    [ ] if (!user?.id) → error
+
+[ ] ¿Prepara DTO?
+    [ ] const userAnswers = { questions: {...} }
+
+[ ] ¿Llama submitExercise?
+    [ ] await submitExercise(exerciseId, user.id, { questions: ... })
+
+[ ] ¿Usa response del servidor?
+    [ ] score: response.score (NO local)
+    [ ] isPerfect: response.isPerfect
+
+[ ] ¿Tiene try-catch-finally?
+    [ ] try { ... }
+    [ ] catch { ... }
+    [ ] finally { setIsSubmitting(false) }
+
+[ ] ¿Actualiza dependencies?
+    [ ] useCallback deps: [..., user, exerciseId]
+
+================================================================================
+  RESUMEN FINAL
+================================================================================
+
+PROBLEMA:      LecturaInferencial NO envía al backend
+CAUSA:         Falta submitExercise() import + call
+SOLUCIÓN:      Agregar ~20 líneas (basadas en DetectiveTextual)
+ESFUERZO:      30 minutos
+RIESGO:        BAJO (solo modificar handleCheck)
+BENEFICIO:     CRÍTICO (usuario recibe rewards reales)
+
+ESTADO ACTUAL: ❌ BROKEN
+ESTADO DESEADO: ✓ FIXED (idéntico a DetectiveTextual)
+
+================================================================================

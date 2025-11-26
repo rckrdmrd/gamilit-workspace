@@ -8,6 +8,8 @@ import { saveProgress } from '@shared/components/mechanics/mechanicsTypes';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
+import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
 
 export interface CrucigramaExerciseProps {
   exercise: CrucigramaData;
@@ -27,6 +29,8 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
   actionsRef,
 }) => {
   const { user } = useAuth();
+  const { fetchUserProgress } = useRanksStore();
+  const { fetchBalance } = useEconomyStore();
   const [grid, setGrid] = useState<CrucigramaCell[][]>(
     exercise.grid.map((row) => row.map((cell) => ({ ...cell, userInput: cell.userInput || '' }))),
   );
@@ -207,6 +211,10 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
         showConfetti: response.isPerfect,
       });
       setShowFeedback(true);
+
+      // Sync stores with backend (rewards already calculated and saved by backend)
+      await fetchUserProgress();
+      await fetchBalance();
 
       console.log('✅ [Crucigrama] Submission successful:', {
         attemptId: response.attemptId,

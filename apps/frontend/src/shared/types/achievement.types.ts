@@ -92,6 +92,7 @@ export interface AchievementReward {
 /**
  * Achievement Interface
  * Complete achievement definition with all properties
+ * UPDATED 2025-11-26: Campos adicionales alineados con Backend
  */
 export interface Achievement {
   id: string;
@@ -107,6 +108,17 @@ export interface Achievement {
   rarity?: 'common' | 'rare' | 'epic' | 'legendary';
   createdAt?: string;
   updatedAt?: string;
+
+  // Configuration fields (aligned with Backend/Database schema)
+  tenant_id?: string; // Multi-tenancy support
+  difficulty_level?: 'easy' | 'medium' | 'hard' | 'expert'; // Achievement difficulty
+  is_secret: boolean; // Whether achievement is secret/hidden
+  is_active: boolean; // Whether achievement is currently active
+  is_repeatable: boolean; // Whether achievement can be earned multiple times
+  order_index: number; // Display order in lists
+  points_value: number; // Point value for this achievement
+  metadata?: Record<string, any>; // Additional flexible metadata
+  created_by?: string; // User ID who created the achievement
 }
 
 /**

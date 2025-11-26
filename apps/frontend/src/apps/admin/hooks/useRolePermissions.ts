@@ -48,13 +48,25 @@ function transformPermissionsFromBackend(backendPerms: Record<string, boolean>):
       const [, action, module] = match;
 
       // Validate action and module are valid values
-      const validActions: Permission['action'][] = ['view', 'create', 'edit', 'delete'];
+      const validActions: Permission['action'][] = [
+        'view',
+        'create',
+        'edit',
+        'delete',
+        'manage',
+        'export',
+      ];
       const validModules: Permission['module'][] = [
         'users',
         'content',
         'gamification',
         'monitoring',
         'system',
+        'organizations',
+        'reports',
+        'analytics',
+        'admin',
+        'roles',
       ];
 
       if (

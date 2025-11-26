@@ -14,6 +14,8 @@ import { CountdownTimer } from './CountdownTimer';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { submitExercise } from '@features/progress/api/progressAPI';
+import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
+import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
 import type {
   RuedaInferenciasExerciseProps,
   RuedaInferenciasExercise as RuedaInferenciasExerciseType,
@@ -95,7 +97,14 @@ const mockExercise: RuedaInferenciasExerciseType = {
   },
 };
 
-type GamePhase = 'intro' | 'spinning' | 'reading' | 'writing' | 'summary' | 'completed' | 'feedback';
+type GamePhase =
+  | 'intro'
+  | 'spinning'
+  | 'reading'
+  | 'writing'
+  | 'summary'
+  | 'completed'
+  | 'feedback';
 
 export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> = ({
   exerciseId,
@@ -105,6 +114,10 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
   initialData,
   actionsRef,
 }) => {
+  // Store hooks for syncing rewards
+  const { fetchUserProgress } = useRanksStore();
+  const { fetchBalance } = useEconomyStore();
+
   // Exercise data
   const [exercise] = useState<RuedaInferenciasExerciseType>(mockExercise);
 
@@ -125,7 +138,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
       timeSpent: 0,
       isComplete: false,
       startedAt: null,
-    }))
+    })),
   );
 
   // Current fragment text input
@@ -165,17 +178,20 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
     if (onProgressUpdate) {
       // Prepare answers in the format ExercisePage expects
       const answers: RuedaInferenciasAnswers = {
-        fragments: fragmentStates.reduce((acc, state) => {
-          if (state.userText) {
-            acc[state.fragmentId] = state.userText;
-          }
-          return acc;
-        }, {} as Record<string, string>),
-        fragmentStates: fragmentStates.map(state => ({
+        fragments: fragmentStates.reduce(
+          (acc, state) => {
+            if (state.userText) {
+              acc[state.fragmentId] = state.userText;
+            }
+            return acc;
+          },
+          {} as Record<string, string>,
+        ),
+        fragmentStates: fragmentStates.map((state) => ({
           fragmentId: state.fragmentId,
           categoryId: state.categoryId || 'cat-literal',
           userText: state.userText,
-          timeSpent: state.timeSpent
+          timeSpent: state.timeSpent,
         })),
         timeSpent: totalTimeSpent,
       };
@@ -189,10 +205,17 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
           hintsUsed: 0,
           timeSpent: totalTimeSpent,
         },
-        answers: answers
+        answers: answers,
       });
     }
-  }, [currentFragmentIndex, score, totalTimeSpent, fragmentStates, onProgressUpdate, exercise.content.fragments.length]);
+  }, [
+    currentFragmentIndex,
+    score,
+    totalTimeSpent,
+    fragmentStates,
+    onProgressUpdate,
+    exercise.content.fragments.length,
+  ]);
 
   // Character count
   useEffect(() => {
@@ -214,12 +237,12 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
     // Update fragment state
     setFragmentStates((prev) =>
       prev.map((state, idx) =>
-        idx === currentFragmentIndex ? { ...state, categoryId: category.id } : state
-      )
+        idx === currentFragmentIndex ? { ...state, categoryId: category.id } : state,
+      ),
     );
 
     // Track used category
-    setUsedCategoryIds(prev => [...prev, category.id]);
+    setUsedCategoryIds((prev) => [...prev, category.id]);
   };
 
   // Handle start writing
@@ -252,8 +275,8 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
               timeSpent,
               isComplete: true,
             }
-          : state
-      )
+          : state,
+      ),
     );
 
     // Move to next fragment or show summary
@@ -274,7 +297,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
   const handleManualSubmit = () => {
     if (characterCount < exercise.content.settings.minTextLength) {
       alert(
-        `Tu respuesta debe tener al menos ${exercise.content.settings.minTextLength} caracteres. Actualmente tienes ${characterCount}.`
+        `Tu respuesta debe tener al menos ${exercise.content.settings.minTextLength} caracteres. Actualmente tienes ${characterCount}.`,
       );
       return;
     }
@@ -290,15 +313,18 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
     try {
       // Prepare answers in backend format
       const answers: RuedaInferenciasAnswers = {
-        fragments: fragmentStates.reduce((acc, state) => {
-          acc[state.fragmentId] = state.userText;
-          return acc;
-        }, {} as Record<string, string>),
-        fragmentStates: fragmentStates.map(state => ({
+        fragments: fragmentStates.reduce(
+          (acc, state) => {
+            acc[state.fragmentId] = state.userText;
+            return acc;
+          },
+          {} as Record<string, string>,
+        ),
+        fragmentStates: fragmentStates.map((state) => ({
           fragmentId: state.fragmentId,
           categoryId: state.categoryId || 'cat-literal',
           userText: state.userText,
-          timeSpent: state.timeSpent
+          timeSpent: state.timeSpent,
         })),
         categoryId: selectedCategory?.id,
         timeSpent: totalTimeSpent,
@@ -307,13 +333,18 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
       const response = await submitExercise(exerciseId, userId, answers);
 
       // Show feedback
-      const feedbackMessage = typeof response.feedback === 'string'
-        ? response.feedback
-        : response.feedback?.overall || 'Ejercicio completado';
+      const feedbackMessage =
+        typeof response.feedback === 'string'
+          ? response.feedback
+          : response.feedback?.overall || 'Ejercicio completado';
 
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
-        title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
+        title: response.isPerfect
+          ? '¡Perfecto!'
+          : response.score >= 70
+            ? '¡Buen trabajo!'
+            : 'Intenta de nuevo',
         message: feedbackMessage,
         score: response.score,
         xpEarned: response.rewards?.xp || 0,
@@ -325,6 +356,15 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
 
       setScore(response.score);
       setShowFeedback(true);
+
+      // Sync stores with backend (rewards already calculated and saved by backend)
+      await fetchUserProgress();
+      await fetchBalance();
+
+      console.log('✅ [RuedaInferencias] Submission successful:', {
+        score: response.score,
+        rewards: response.rewards,
+      });
     } catch (error) {
       console.error('Error submitting exercise:', error);
       setFeedback({
@@ -357,7 +397,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
         timeSpent: 0,
         isComplete: false,
         startedAt: null,
-      }))
+      })),
     );
     setTotalTimeSpent(0);
     setScore(0);
@@ -372,17 +412,20 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
         getState: () => {
           // Prepare answers in backend format
           const answers: RuedaInferenciasAnswers = {
-            fragments: fragmentStates.reduce((acc, state) => {
-              if (state.userText) {
-                acc[state.fragmentId] = state.userText;
-              }
-              return acc;
-            }, {} as Record<string, string>),
-            fragmentStates: fragmentStates.map(state => ({
+            fragments: fragmentStates.reduce(
+              (acc, state) => {
+                if (state.userText) {
+                  acc[state.fragmentId] = state.userText;
+                }
+                return acc;
+              },
+              {} as Record<string, string>,
+            ),
+            fragmentStates: fragmentStates.map((state) => ({
               fragmentId: state.fragmentId,
               categoryId: state.categoryId || 'cat-literal',
               userText: state.userText,
-              timeSpent: state.timeSpent
+              timeSpent: state.timeSpent,
             })),
             timeSpent: totalTimeSpent,
           };
@@ -402,7 +445,15 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
         submit: handleSubmitExercise,
       };
     }
-  }, [actionsRef, currentFragmentIndex, fragmentStates, totalTimeSpent, score, isWheelSpinning, selectedCategory]);
+  }, [
+    actionsRef,
+    currentFragmentIndex,
+    fragmentStates,
+    totalTimeSpent,
+    score,
+    isWheelSpinning,
+    selectedCategory,
+  ]);
 
   // Validate text length
   const isTextValid =
@@ -420,15 +471,18 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 text-white shadow-lg">
-            <h2 className="text-2xl font-bold mb-2">{exercise.title}</h2>
-            <p className="opacity-90 mb-4">{exercise.description}</p>
+          <div className="rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white shadow-lg">
+            <h2 className="mb-2 text-2xl font-bold">{exercise.title}</h2>
+            <p className="mb-4 opacity-90">{exercise.description}</p>
             <div className="space-y-2">
               <div className="flex items-center gap-4 text-sm">
                 <div>
                   📊 Ronda {currentFragmentIndex + 1} de {exercise.content.fragments.length}
                 </div>
-                <div>⏱️ Tiempo: {Math.floor(totalTimeSpent / 60)}:{String(totalTimeSpent % 60).padStart(2, '0')}</div>
+                <div>
+                  ⏱️ Tiempo: {Math.floor(totalTimeSpent / 60)}:
+                  {String(totalTimeSpent % 60).padStart(2, '0')}
+                </div>
                 {score > 0 && <div>⭐ Puntuación: {score}/100</div>}
               </div>
 
@@ -441,8 +495,8 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                       idx < currentFragmentIndex
                         ? 'bg-green-500'
                         : idx === currentFragmentIndex
-                        ? 'bg-blue-300 animate-pulse'
-                        : 'bg-white bg-opacity-30'
+                          ? 'animate-pulse bg-blue-300'
+                          : 'bg-white bg-opacity-30'
                     }`}
                   />
                 ))}
@@ -452,19 +506,19 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
 
           {/* Categorías usadas */}
           {usedCategoryIds.length > 0 && (
-            <div className="bg-gray-50 rounded-lg p-4 border">
-              <h4 className="text-sm font-semibold text-gray-700 mb-2">
+            <div className="rounded-lg border bg-gray-50 p-4">
+              <h4 className="mb-2 text-sm font-semibold text-gray-700">
                 Categorías seleccionadas:
               </h4>
-              <div className="flex gap-2 flex-wrap">
-                {exercise.content.categories.map(category => {
+              <div className="flex flex-wrap gap-2">
+                {exercise.content.categories.map((category) => {
                   const isUsed = usedCategoryIds.includes(category.id);
                   return (
                     <div
                       key={category.id}
-                      className={`px-3 py-1 rounded text-sm font-medium ${
+                      className={`rounded px-3 py-1 text-sm font-medium ${
                         isUsed
-                          ? 'bg-green-100 border border-green-500 text-green-800'
+                          ? 'border border-green-500 bg-green-100 text-green-800'
                           : 'bg-gray-200 text-gray-500'
                       }`}
                     >
@@ -485,15 +539,15 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="text-center space-y-6"
+                className="space-y-6 text-center"
               >
-                <div className="bg-blue-50 rounded-lg p-6 border-2 border-blue-200">
-                  <Book className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-blue-900 mb-3">¿Cómo funciona?</h3>
-                  <div className="text-left space-y-2 text-gray-700 max-w-2xl mx-auto">
+                <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-6">
+                  <Book className="mx-auto mb-4 h-12 w-12 text-blue-600" />
+                  <h3 className="mb-3 text-xl font-semibold text-blue-900">¿Cómo funciona?</h3>
+                  <div className="mx-auto max-w-2xl space-y-2 text-left text-gray-700">
                     {exercise.content.instructions.split('\n').map((line, idx) => (
                       <div key={idx} className="flex items-start gap-2">
-                        <span className="text-blue-600 font-semibold">{line}</span>
+                        <span className="font-semibold text-blue-600">{line}</span>
                       </div>
                     ))}
                   </div>
@@ -501,9 +555,9 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
 
                 <button
                   onClick={handleSpinWheel}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg shadow-lg transition-all transform hover:scale-105 flex items-center gap-3 mx-auto"
+                  className="mx-auto flex transform items-center gap-3 rounded-lg bg-blue-600 px-8 py-4 font-bold text-white shadow-lg transition-all hover:scale-105 hover:bg-blue-700"
                 >
-                  <RotateCw className="w-6 h-6" />
+                  <RotateCw className="h-6 w-6" />
                   Girar la Ruleta
                 </button>
               </motion.div>
@@ -541,25 +595,27 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
               >
                 {/* Selected Category */}
                 <div
-                  className="rounded-lg p-6 text-white text-center shadow-lg"
+                  className="rounded-lg p-6 text-center text-white shadow-lg"
                   style={{ backgroundColor: selectedCategory.color }}
                 >
-                  <div className="text-5xl mb-3">{selectedCategory.icon}</div>
-                  <h3 className="text-2xl font-bold mb-2">{selectedCategory.name}</h3>
+                  <div className="mb-3 text-5xl">{selectedCategory.icon}</div>
+                  <h3 className="mb-2 text-2xl font-bold">{selectedCategory.name}</h3>
                   <p className="text-lg opacity-90">{selectedCategory.description}</p>
                 </div>
 
                 {/* Fragment Text */}
-                <div className="bg-gray-50 rounded-lg p-8 border-2 border-gray-300">
-                  <h4 className="text-lg font-semibold text-gray-700 mb-4">Fragmento {currentFragmentIndex + 1}:</h4>
+                <div className="rounded-lg border-2 border-gray-300 bg-gray-50 p-8">
+                  <h4 className="mb-4 text-lg font-semibold text-gray-700">
+                    Fragmento {currentFragmentIndex + 1}:
+                  </h4>
                   <p className="text-lg leading-relaxed text-gray-800">{currentFragment.text}</p>
                 </div>
 
                 <button
                   onClick={handleStartWriting}
-                  className="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-lg shadow-lg transition-all transform hover:scale-105 flex items-center gap-3 mx-auto"
+                  className="mx-auto flex transform items-center gap-3 rounded-lg bg-green-600 px-8 py-4 font-bold text-white shadow-lg transition-all hover:scale-105 hover:bg-green-700"
                 >
-                  <Send className="w-6 h-6" />
+                  <Send className="h-6 w-6" />
                   Comenzar a Escribir
                 </button>
               </motion.div>
@@ -585,15 +641,17 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
 
                 {/* Category Reminder */}
                 <div
-                  className="rounded-lg p-4 text-white text-center"
+                  className="rounded-lg p-4 text-center text-white"
                   style={{ backgroundColor: selectedCategory.color }}
                 >
-                  <span className="text-2xl mr-2">{selectedCategory.icon}</span>
-                  <span className="font-semibold">Escribe una inferencia {selectedCategory.name.toLowerCase()}</span>
+                  <span className="mr-2 text-2xl">{selectedCategory.icon}</span>
+                  <span className="font-semibold">
+                    Escribe una inferencia {selectedCategory.name.toLowerCase()}
+                  </span>
                 </div>
 
                 {/* Fragment Text */}
-                <div className="bg-gray-50 rounded-lg p-6 border-2 border-gray-200">
+                <div className="rounded-lg border-2 border-gray-200 bg-gray-50 p-6">
                   <p className="text-base leading-relaxed text-gray-800">{currentFragment.text}</p>
                 </div>
 
@@ -604,11 +662,11 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                     value={currentText}
                     onChange={(e) => setCurrentText(e.target.value)}
                     placeholder={`Escribe tu inferencia aquí (${exercise.content.settings.minTextLength}-${exercise.content.settings.maxTextLength} caracteres)...`}
-                    className="w-full h-40 p-4 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 resize-none text-base"
+                    className="h-40 w-full resize-none rounded-lg border-2 border-gray-300 p-4 text-base focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                     maxLength={exercise.content.settings.maxTextLength}
                     disabled={!isTimerRunning}
                   />
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className={`text-sm font-semibold ${getCharacterColor()}`}>
                       {characterCount} / {exercise.content.settings.maxTextLength} caracteres
                       {characterCount < exercise.content.settings.minTextLength &&
@@ -622,13 +680,13 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                   <button
                     onClick={handleManualSubmit}
                     disabled={!isTextValid || !isTimerRunning}
-                    className={`font-bold py-4 px-8 rounded-lg shadow-lg transition-all flex items-center gap-3 ${
+                    className={`flex items-center gap-3 rounded-lg px-8 py-4 font-bold shadow-lg transition-all ${
                       isTextValid && isTimerRunning
-                        ? 'bg-blue-600 hover:bg-blue-700 text-white transform hover:scale-105'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        ? 'transform bg-blue-600 text-white hover:scale-105 hover:bg-blue-700'
+                        : 'cursor-not-allowed bg-gray-300 text-gray-500'
                     }`}
                   >
-                    <Send className="w-6 h-6" />
+                    <Send className="h-6 w-6" />
                     {currentFragmentIndex < exercise.content.fragments.length - 1
                       ? 'Guardar y Continuar'
                       : 'Guardar Respuesta'}
@@ -647,22 +705,26 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-6"
               >
-                <div className="bg-blue-50 rounded-lg p-6 border-2 border-blue-300">
-                  <h3 className="text-xl font-bold text-blue-900 mb-4">
+                <div className="rounded-lg border-2 border-blue-300 bg-blue-50 p-6">
+                  <h3 className="mb-4 text-xl font-bold text-blue-900">
                     📋 Resumen de tus respuestas
                   </h3>
 
                   {fragmentStates.map((state, idx) => (
-                    <div key={idx} className="mb-4 p-4 bg-white rounded border">
-                      <div className="flex items-center gap-2 mb-2">
+                    <div key={idx} className="mb-4 rounded border bg-white p-4">
+                      <div className="mb-2 flex items-center gap-2">
                         <span className="font-semibold">Ronda {idx + 1}</span>
                         <span className="text-sm text-gray-600">
-                          ({exercise.content.categories.find(c => c.id === state.categoryId)?.name || 'Sin categoría'})
+                          (
+                          {exercise.content.categories.find((c) => c.id === state.categoryId)
+                            ?.name || 'Sin categoría'}
+                          )
                         </span>
-                        <CheckCircle2 className="w-4 h-4 text-green-600 ml-auto" />
+                        <CheckCircle2 className="ml-auto h-4 w-4 text-green-600" />
                       </div>
-                      <p className="text-sm text-gray-700 italic">
-                        "{state.userText.substring(0, 100)}{state.userText.length > 100 ? '...' : ''}"
+                      <p className="text-sm italic text-gray-700">
+                        "{state.userText.substring(0, 100)}
+                        {state.userText.length > 100 ? '...' : ''}"
                       </p>
                     </div>
                   ))}
@@ -673,17 +735,19 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                     onClick={() => {
                       // Volver a editar última respuesta
                       setCurrentFragmentIndex(exercise.content.fragments.length - 1);
-                      setCurrentText(fragmentStates[exercise.content.fragments.length - 1].userText);
+                      setCurrentText(
+                        fragmentStates[exercise.content.fragments.length - 1].userText,
+                      );
                       setPhase('writing');
                       setIsTimerRunning(true);
                     }}
-                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-4 px-8 rounded-lg transition-all"
+                    className="rounded-lg bg-gray-300 px-8 py-4 font-bold text-gray-800 transition-all hover:bg-gray-400"
                   >
                     Editar Última Respuesta
                   </button>
 
                   <div className="text-center">
-                    <p className="text-sm text-gray-600 mb-2">
+                    <p className="mb-2 text-sm text-gray-600">
                       ✅ Todas las respuestas completadas
                     </p>
                     <p className="text-xs text-gray-500">
@@ -702,11 +766,11 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
                 key="completed"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="text-center space-y-6"
+                className="space-y-6 text-center"
               >
-                <div className="bg-green-50 rounded-lg p-8 border-2 border-green-300">
-                  <CheckCircle2 className="w-16 h-16 text-green-600 mx-auto mb-4" />
-                  <h3 className="text-2xl font-bold text-green-900 mb-2">¡Ejercicio Completado!</h3>
+                <div className="rounded-lg border-2 border-green-300 bg-green-50 p-8">
+                  <CheckCircle2 className="mx-auto mb-4 h-16 w-16 text-green-600" />
+                  <h3 className="mb-2 text-2xl font-bold text-green-900">¡Ejercicio Completado!</h3>
                   <p className="text-gray-700">
                     {isSubmitting ? 'Enviando tus respuestas...' : 'Procesando resultados...'}
                   </p>

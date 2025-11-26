@@ -3,11 +3,39 @@
  * Based on backend AuthResponse.user structure
  *
  * Backend source: /src/modules/auth/auth.types.ts
+ * Backend entity: /src/modules/auth/entities/user.entity.ts (auth.users table)
+ * Backend DTO: /src/modules/auth/dto/user-response.dto.ts
+ *
+ * UPDATED 2025-11-26: Campos adicionales alineados con Backend
+ *
+ * ARCHITECTURAL NOTE - User vs Profile:
+ * ====================================
+ * - User (auth.users): Authentication-focused entity with auth credentials, roles, and status
+ * - Profile (auth_management.profiles): Rich user profile with academic context and preferences
+ *
+ * Field overlap rationale:
+ * - avatar_url, phone, status: Exist in BOTH User and Profile for architectural flexibility
+ * - User.avatar_url: Quick avatar access for auth responses (performance)
+ * - Profile.avatar_url: Canonical source managed via profile settings
+ * - Backend may return either or merge both depending on endpoint
+ *
+ * When to use which:
+ * - Use User for: Login responses, session data, quick user lookups
+ * - Use Profile for: Profile pages, settings, detailed user information
  */
 export interface User {
+  // =====================================================
+  // CORE IDENTIFIERS
+  // =====================================================
+
   id: string;
   email: string;
   role: string;
+
+  // =====================================================
+  // PERSONAL INFORMATION
+  // =====================================================
+
   firstName?: string;
   lastName?: string;
   displayName?: string;
@@ -16,32 +44,100 @@ export interface User {
    * Optional - may be computed client-side
    */
   fullName?: string;
+
+  // =====================================================
+  // PROFILE FIELDS (UPDATED 2025-11-26)
+  // =====================================================
+
+  /**
+   * Avatar/profile picture URL
+   * Maps to backend: avatar_url or Profile.avatar_url
+   */
+  avatar_url?: string;
+
+  /**
+   * Account status (active, inactive, suspended)
+   * Maps to backend: User.status field
+   * Backend returns as string with these common values
+   */
+  status?: string;
+
+  /**
+   * Contact phone number
+   * Maps to backend: User.phone field
+   */
+  phone?: string;
+
+  // =====================================================
+  // ADMINISTRATION FIELDS (UPDATED 2025-11-26)
+  // =====================================================
+
+  /**
+   * Super admin flag - Full system access
+   * Maps to backend: User.is_super_admin field
+   */
+  is_super_admin?: boolean;
+
+  /**
+   * Ban expiration timestamp (ISO string)
+   * If present, user is banned until this date
+   * Maps to backend: User.banned_until field
+   */
+  banned_until?: string;
+
+  // =====================================================
+  // VERIFICATION & ACTIVITY (UPDATED 2025-11-26)
+  // =====================================================
+
+  /**
+   * Email confirmation timestamp (ISO string)
+   * If present, email has been verified
+   * Maps to backend: User.email_confirmed_at field
+   */
+  email_confirmed_at?: string;
+
+  /**
+   * Last sign-in timestamp (ISO string)
+   * Maps to backend: User.last_sign_in_at field
+   */
+  last_sign_in_at?: string;
+
+  /**
+   * Email verification status (derived field)
+   * Computed from email_confirmed_at (true if present)
+   * May be returned by some API endpoints
+   */
+  emailVerified?: boolean;
+
+  // =====================================================
+  // ORGANIZATIONAL CONTEXT
+  // =====================================================
+
   /**
    * Account creation timestamp
    * May be returned by some API endpoints
    */
   createdAt?: string;
+
   /**
-   * Whether the user account is active
+   * Whether the user account is active (derived field)
+   * Computed from deleted_at and banned_until
    * May be returned by some API endpoints
    */
   isActive?: boolean;
+
   /**
    * Tenant ID for multi-tenant systems
    * May be returned by some API endpoints
    */
   tenantId?: string;
+
   /**
    * School ID - Links user to a school in social_features.schools
    * From backend Profile entity (auth_management.profiles.school_id)
    * May be returned by some API endpoints
    */
   schoolId?: string;
-  /**
-   * Email verification status
-   * May be returned by some API endpoints
-   */
-  emailVerified?: boolean;
 }
 
 /**
@@ -49,15 +145,13 @@ export interface User {
  * These fields are NOT returned by backend and must be handled separately or added to backend
  *
  * @see /docs-analisys/consistency-db-backend-frontend/correcciones/03-campos-faltantes-backend.md
+ *
+ * UPDATED 2025-11-26: Eliminados campos duplicados ahora presentes en User
+ * - avatar_url, isActive, emailVerified, createdAt ahora están en User base
  */
 export interface UserExtended extends User {
-  fullName: string;      // Derived from firstName/lastName/displayName
-  tenantId?: string;     // TODO: Add to backend AuthResponse
-  emailVerified: boolean; // TODO: Add to backend AuthResponse
-  isActive?: boolean;    // TODO: Add to backend AuthResponse
-  avatar?: string;       // TODO: Add to backend AuthResponse
-  createdAt?: string;    // TODO: Add to backend AuthResponse
-  updatedAt?: string;    // TODO: Add to backend AuthResponse
+  fullName: string; // REQUIRED: Derived from firstName/lastName/displayName
+  updatedAt?: string; // TODO: Add to backend AuthResponse (User has createdAt but not updatedAt)
 }
 
 /**
@@ -192,8 +286,8 @@ export interface RegisterData {
 export interface AuthResponse {
   user: User;
   token: string;
-  refreshToken?: string;  // Backend marks as optional
-  expiresIn: string;      // Backend returns this as required
+  refreshToken?: string; // Backend marks as optional
+  expiresIn: string; // Backend returns this as required
 }
 
 /**
@@ -232,9 +326,9 @@ export interface UserSessionInfo {
   browser: string;
   os: string;
   ipAddress: string;
-  location: string;      // Backend uses 'location' instead of separate country/city
-  createdAt: string;     // Backend returns as string
-  lastActivity: string;  // Backend uses 'lastActivity' not 'lastActivityAt'
+  location: string; // Backend uses 'location' instead of separate country/city
+  createdAt: string; // Backend returns as string
+  lastActivity: string; // Backend uses 'lastActivity' not 'lastActivityAt'
   isCurrent: boolean;
 }
 
@@ -292,22 +386,17 @@ export function getUserDisplayName(user: User): string {
  * Convert backend User to UserExtended
  * Fills in missing fields with defaults
  *
+ * UPDATED 2025-11-26: Simplificado - solo agrega fullName y updatedAt
+ * Los demás campos ahora están en User base interface
+ *
  * @param user - User from backend
  * @param additionalData - Optional additional data not from backend
  * @returns UserExtended object
  */
-export function toUserExtended(
-  user: User,
-  additionalData?: Partial<UserExtended>
-): UserExtended {
+export function toUserExtended(user: User, additionalData?: Partial<UserExtended>): UserExtended {
   return {
     ...user,
     fullName: getUserFullName(user),
-    tenantId: additionalData?.tenantId,
-    emailVerified: additionalData?.emailVerified ?? false,
-    isActive: additionalData?.isActive ?? true,
-    avatar: additionalData?.avatar,
-    createdAt: additionalData?.createdAt,
     updatedAt: additionalData?.updatedAt,
   };
 }

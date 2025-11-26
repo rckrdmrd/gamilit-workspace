@@ -172,7 +172,7 @@ const AdminDashboard: React.FC = () => {
         {/* Quick Actions */}
         <div className="mb-8">
           <h2 className="text-detective-subtitle mb-4">Quick Actions</h2>
-          <QuickActionsGrid flaggedContent={metrics?.flaggedContentCount} />
+          <QuickActionsGrid flaggedContent={metrics?.flaggedContentCount ?? undefined} />
         </div>
 
         {/* Two Column Layout: Recent Actions & Alerts */}

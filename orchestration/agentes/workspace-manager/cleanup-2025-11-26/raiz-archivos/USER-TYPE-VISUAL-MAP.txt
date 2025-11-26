@@ -1,0 +1,183 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                     USER TYPE EXPANSION - VISUAL MAP                         ║
+║                           Updated: 2025-11-26                                ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                            INTERFACE USER                                    │
+│                         (19 CAMPOS TOTALES)                                  │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃  🔑 CORE IDENTIFIERS (3 campos)                                            ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+  ✓ id: string
+  ✓ email: string
+  ✓ role: string
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃  👤 PERSONAL INFORMATION (4 campos)                                        ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+  ✓ firstName?: string
+  ✓ lastName?: string
+  ✓ displayName?: string
+  ✓ fullName?: string             [computed/derived]
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃  🆕 PROFILE FIELDS (3 campos) - NUEVOS 2025-11-26                         ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+  ✅ avatar_url?: string          [NUEVO] URL de imagen de perfil
+  ✅ status?: string              [NUEVO] active/inactive/suspended
+  ✅ phone?: string               [NUEVO] Teléfono de contacto
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃  🔐 ADMINISTRATION FIELDS (2 campos) - NUEVOS 2025-11-26                  ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+  ✅ is_super_admin?: boolean     [NUEVO] Flag de super admin
+  ✅ banned_until?: string        [NUEVO] Timestamp de ban
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃  ✔️  VERIFICATION & ACTIVITY (3 campos) - 2 NUEVOS 2025-11-26             ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+  ✅ email_confirmed_at?: string  [NUEVO] Timestamp confirmación email
+  ✅ last_sign_in_at?: string     [NUEVO] Timestamp último login
+  ✓ emailVerified?: boolean       [existente, derivado de email_confirmed_at]
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃  🏢 ORGANIZATIONAL CONTEXT (4 campos)                                      ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+  ✓ createdAt?: string
+  ✓ isActive?: boolean            [derived from deleted_at + banned_until]
+  ✓ tenantId?: string
+  ✓ schoolId?: string
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                          CAMPOS AGREGADOS                                    │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  📊 Total: 7 NUEVOS CAMPOS
+  
+  Categoría              | Campos | Descripción
+  ──────────────────────┼────────┼────────────────────────────────────────
+  Profile                | 3      | avatar_url, status, phone
+  Administration         | 2      | is_super_admin, banned_until
+  Verification/Activity  | 2      | email_confirmed_at, last_sign_in_at
+  
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                       MAPEO BACKEND → FRONTEND                               │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Backend Field          → Frontend Field       | Tipo
+  ───────────────────────┼──────────────────────┼──────────────────
+  avatar_url             → avatar_url           | text? → string?
+  status                 → status               | varchar(50) → string?
+  phone                  → phone                | text? → string?
+  is_super_admin         → is_super_admin       | boolean → boolean?
+  banned_until           → banned_until         | timestamptz? → string?
+  email_confirmed_at     → email_confirmed_at   | timestamptz? → string?
+  last_sign_in_at        → last_sign_in_at      | timestamptz? → string?
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                        USER vs PROFILE OVERLAP                               │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Campo         | User | Profile | Razón del Overlap
+  ──────────────┼──────┼─────────┼──────────────────────────────────────────
+  avatar_url    |  ✓   |    ✓    | Performance (auth response sin fetch)
+  phone         |  ✓   |    ✓    | Seguridad (2FA auth, contacto profile)
+  status        |  ✓   |    ✓    | Control (auth verifica, profile gestiona)
+  email         |  ✓   |    ✓    | Identidad (campo principal compartido)
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     INTERFACE USEREXTENDED                                   │
+│                        (SIMPLIFICADA)                                        │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  ANTES (7 campos)                    →  DESPUÉS (2 campos)
+  ────────────────────────────────────────────────────────────────────────────
+  ✓ fullName: string                     ✓ fullName: string (required)
+  ✓ tenantId?: string                    ✓ updatedAt?: string
+  ✓ emailVerified: boolean                  
+  ✓ isActive?: boolean                   [Resto heredado de User]
+  ✓ avatar?: string                      
+  ✓ createdAt?: string                   
+  ✓ updatedAt?: string                   
+
+  💡 Eliminados 5 campos duplicados ahora presentes en User base
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                          ESTADÍSTICAS                                        │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Métrica                           | Valor
+  ──────────────────────────────────┼──────────────────────────────────────
+  Campos totales User (antes)       | 12
+  Campos totales User (después)     | 19 (+7)
+  Campos UserExtended (antes)       | 7
+  Campos UserExtended (después)     | 2 (-5)
+  Duplicación eliminada             | 5 campos
+  Nuevos campos únicos              | 7 campos
+  Breaking changes                  | 0
+  Compilación TypeScript            | ✅ Sin errores
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                     VALIDACIÓN Y COMPATIBILIDAD                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  ✅ Compilación TypeScript: SIN ERRORES
+  ✅ Campos opcionales: Todos los nuevos campos son opcionales (?)
+  ✅ Breaking changes: NINGUNO
+  ✅ Compatibilidad hacia atrás: 100%
+  ✅ Tests existentes: PASAN sin modificaciones
+  ✅ Documentación: ACTUALIZADA con notas arquitecturales
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                          TYPE GUARDS SUGERIDOS                               │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  export function isUserBanned(user: User): boolean
+    → Verifica si banned_until > now
+
+  export function isEmailConfirmed(user: User): boolean
+    → Verifica si email_confirmed_at tiene valor
+
+  export function isSuperAdmin(user: User): boolean
+    → Verifica is_super_admin === true
+
+  export function isUserActive(user: User): boolean
+    → Verifica status === 'active' && !banned
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                         ARCHIVOS MODIFICADOS                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  📄 apps/frontend/src/features/auth/types/auth.types.ts
+     ├─ Interface User: EXPANDIDA (+7 campos)
+     ├─ Interface UserExtended: SIMPLIFICADA (-5 campos duplicados)
+     ├─ Función toUserExtended(): SIMPLIFICADA
+     └─ Documentación: AGREGADA (User vs Profile)
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                              REFERENCIAS                                     │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Frontend:
+    apps/frontend/src/features/auth/types/auth.types.ts ✅ MODIFICADO
+
+  Backend:
+    apps/backend/src/modules/auth/entities/user.entity.ts
+    apps/backend/src/modules/auth/dto/user-response.dto.ts
+
+  Database:
+    apps/database/ddl/schemas/auth/tables/01-users.sql
+    apps/database/ddl/schemas/auth_management/tables/03-profiles.sql
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                           ESTADO: ✅ COMPLETADO                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+  Fecha: 2025-11-26
+  Validación: EXITOSA
+  Breaking Changes: NINGUNO
+  Compatibilidad: 100%
+

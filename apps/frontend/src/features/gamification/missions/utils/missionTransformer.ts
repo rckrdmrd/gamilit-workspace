@@ -19,7 +19,7 @@ import type {
 export interface MissionFromAPI {
   id: string;
   mission_type: 'daily' | 'weekly' | 'special';
-  template_key: string;
+  template_id: string;
   title?: string;
   description?: string;
   objectives: Array<{
@@ -37,7 +37,7 @@ export interface MissionFromAPI {
       quantity: number;
     }>;
   };
-  status: 'active' | 'in_progress' | 'completed' | 'claimed';
+  status: 'active' | 'in_progress' | 'completed' | 'claimed' | 'expired';
   progress: number;
   created_at?: string;
   updated_at?: string;
@@ -51,8 +51,9 @@ export interface MissionFromAPI {
 /**
  * Map template_key to MissionCategory
  */
-export function mapTemplateToCategory(templateKey: string): MissionCategory {
+export function mapTemplateToCategory(templateKey: string | undefined | null): MissionCategory {
   // Template keys are in format: "daily_complete_exercises", "weekly_earn_xp", etc.
+  if (!templateKey) return 'exercises';
   const key = templateKey.toLowerCase();
 
   if (key.includes('exercise')) return 'exercises';
@@ -79,6 +80,8 @@ export function mapApiStatusToFrontend(apiStatus: string): MissionStatus {
       return 'completed';
     case 'claimed':
       return 'claimed';
+    case 'expired':
+      return 'expired';
     default:
       return 'not_started';
   }
@@ -127,13 +130,14 @@ export function getDifficultyFromTarget(
 /**
  * Generate title from template key if not provided
  */
-function generateTitle(templateKey: string): string {
+function generateTitle(templateKey: string | undefined | null): string {
+  if (!templateKey) return 'Mission';
   const key = templateKey
     .replace(/^(daily|weekly|special)_/, '')
     .replace(/_/g, ' ')
     .replace(/\b\w/g, (l) => l.toUpperCase());
 
-  return key;
+  return key || 'Mission';
 }
 
 /**
@@ -173,8 +177,9 @@ export function transformMission(apiMission: MissionFromAPI): Mission {
   // Determine mission type
   const type: MissionType = apiMission.mission_type;
 
-  // Determine category from template
-  const category = mapTemplateToCategory(apiMission.template_key);
+  // Determine category from template (with fallback for undefined)
+  const templateId = apiMission.template_id || '';
+  const category = mapTemplateToCategory(templateId);
 
   // Determine difficulty
   const difficulty = getDifficultyFromTarget(firstObjective.target, category);
@@ -198,7 +203,7 @@ export function transformMission(apiMission: MissionFromAPI): Mission {
   const mission: Mission = {
     id: apiMission.id,
     type,
-    title: apiMission.title || generateTitle(apiMission.template_key),
+    title: apiMission.title || generateTitle(templateId),
     description: apiMission.description || generateDescription(apiMission.objectives),
     category,
 

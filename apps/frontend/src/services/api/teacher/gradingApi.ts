@@ -30,17 +30,25 @@ export interface PaginatedSubmissionsResponse {
 
 /**
  * Query parameters for fetching submissions
+ * Aligned with backend GetSubmissionsQueryDto
  */
 export interface GetSubmissionsQueryDto {
+  /** Filter by classroom ID */
   classroom_id?: string;
+  /** Filter by assignment ID */
   assignment_id?: string;
+  /** Filter by student ID */
   student_id?: string;
-  status?: 'pending' | 'graded' | 'late';
+  /** Filter by submission status */
+  status?: 'pending' | 'graded' | 'needs_review';
+  /** Filter by module ID */
   module_id?: string;
-  start_date?: string;
-  end_date?: string;
+  /** Sort field */
+  sort_by?: 'date' | 'score' | 'time';
+  /** Page number (1-based) */
+  page?: number;
+  /** Items per page (max 100) */
   limit?: number;
-  offset?: number;
 }
 
 /**

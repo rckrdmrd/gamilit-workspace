@@ -62,6 +62,7 @@ export interface UseOrganizationsResult {
 
 export interface CreateOrganizationData {
   name: string;
+  slug?: string; // CORR-P0: Add slug support for organization creation
   plan: 'free' | 'basic' | 'professional' | 'enterprise';
   features?: string[];
 }
@@ -120,11 +121,14 @@ export function useOrganizations(): UseOrganizationsResult {
 
         // BUG-ADMIN-007: Ensure features array exists in each org
         // FE-003: Map API fields (tier/users) to local fields (plan/userCount)
-        const validatedOrgs = response.items.map((org) => ({
+        // CORR-P0: Map is_active → status
+        const validatedOrgs = response.items.map((org: any) => ({
           ...org,
-          features: org.features ?? [],
-          plan: org.tier,
-          userCount: org.users,
+          features: Array.isArray(org.features) ? org.features : [],
+          plan: org.tier || org.plan || 'free',
+          userCount: org.users ?? org.userCount ?? 0,
+          status: org.status || (org.is_active !== false ? 'active' : 'inactive'),
+          createdAt: org.created_at || org.createdAt || new Date().toISOString(),
         }));
 
         setOrganizations(validatedOrgs);
@@ -151,15 +155,19 @@ export function useOrganizations(): UseOrganizationsResult {
     setLoading(true);
     setError(null);
     try {
-      const org = await adminAPI.getOrganization(id);
+      // Cast to any to access both camelCase and snake_case properties from backend
+      const org = (await adminAPI.getOrganization(id)) as any;
 
       // BUG-ADMIN-007: Ensure features array exists
       // FE-003: Map API fields (tier/users) to local fields (plan/userCount)
-      const validatedOrg = {
+      // CORR-P0: Map is_active → status
+      const validatedOrg: Organization = {
         ...org,
-        features: org.features ?? [],
-        plan: org.tier,
-        userCount: org.users,
+        features: Array.isArray(org.features) ? org.features : [],
+        plan: org.tier || org.plan || 'free',
+        userCount: org.users ?? org.userCount ?? 0,
+        status: org.status || (org.is_active !== false ? 'active' : 'inactive'),
+        createdAt: org.created_at || org.createdAt || new Date().toISOString(),
       };
 
       return validatedOrg;
@@ -182,13 +190,26 @@ export function useOrganizations(): UseOrganizationsResult {
       setLoading(true);
       setError(null);
       try {
-        const newOrg = await adminAPI.createOrganization(data);
+        // CORR-P0: Ensure slug is passed if needed, transform to backend format
+        const payload: any = {
+          name: data.name,
+          subscription_tier: data.plan, // Backend expects subscription_tier
+          ...(data.slug && { slug: data.slug }),
+          ...(data.features && { features: data.features }),
+        };
+
+        // Cast to any to access both camelCase and snake_case properties from backend
+        const newOrg = (await adminAPI.createOrganization(payload)) as any;
 
         // FE-003: Map API fields (tier/users) to local fields (plan/userCount)
-        const mappedOrg = {
+        // CORR-P0: Map is_active → status
+        const mappedOrg: Organization = {
           ...newOrg,
-          plan: newOrg.tier,
-          userCount: newOrg.users,
+          features: Array.isArray(newOrg.features) ? newOrg.features : [],
+          plan: newOrg.tier || newOrg.plan || 'free',
+          userCount: newOrg.users ?? newOrg.userCount ?? 0,
+          status: newOrg.status || (newOrg.is_active !== false ? 'active' : 'inactive'),
+          createdAt: newOrg.created_at || newOrg.createdAt || new Date().toISOString(),
         };
 
         // Refresh list
@@ -216,13 +237,18 @@ export function useOrganizations(): UseOrganizationsResult {
       setLoading(true);
       setError(null);
       try {
-        const updatedOrg = await adminAPI.updateOrganization(id, data);
+        // Cast to any to access both camelCase and snake_case properties from backend
+        const updatedOrg = (await adminAPI.updateOrganization(id, data)) as any;
 
         // FE-003: Map API fields (tier/users) to local fields (plan/userCount)
-        const mappedOrg = {
+        // CORR-P0: Map is_active → status
+        const mappedOrg: Organization = {
           ...updatedOrg,
-          plan: updatedOrg.tier,
-          userCount: updatedOrg.users,
+          features: Array.isArray(updatedOrg.features) ? updatedOrg.features : [],
+          plan: updatedOrg.tier || updatedOrg.plan || 'free',
+          userCount: updatedOrg.users ?? updatedOrg.userCount ?? 0,
+          status: updatedOrg.status || (updatedOrg.is_active !== false ? 'active' : 'inactive'),
+          createdAt: updatedOrg.created_at || updatedOrg.createdAt || new Date().toISOString(),
         };
 
         // Update local state
@@ -292,13 +318,18 @@ export function useOrganizations(): UseOrganizationsResult {
       setLoading(true);
       setError(null);
       try {
-        const updatedOrg = await adminAPI.updateOrganizationFeatures(id, features);
+        // Cast to any to access both camelCase and snake_case properties from backend
+        const updatedOrg = (await adminAPI.updateOrganizationFeatures(id, features)) as any;
 
         // FE-003: Map API fields (tier/users) to local fields (plan/userCount)
-        const mappedOrg = {
+        // CORR-P0: Map is_active → status
+        const mappedOrg: Organization = {
           ...updatedOrg,
-          plan: updatedOrg.tier,
-          userCount: updatedOrg.users,
+          features: Array.isArray(updatedOrg.features) ? updatedOrg.features : [],
+          plan: updatedOrg.tier || updatedOrg.plan || 'free',
+          userCount: updatedOrg.users ?? updatedOrg.userCount ?? 0,
+          status: updatedOrg.status || (updatedOrg.is_active !== false ? 'active' : 'inactive'),
+          createdAt: updatedOrg.created_at || updatedOrg.createdAt || new Date().toISOString(),
         };
 
         // Update local state
@@ -356,15 +387,20 @@ export function useOrganizations(): UseOrganizationsResult {
           API_ENDPOINTS.admin.organizationSubscription(id),
           subscription,
         );
-        const apiOrg = response.data.success
+        // Cast to any to access both camelCase and snake_case properties from backend
+        const apiOrg: any = response.data.success
           ? response.data.data
           : (response.data as unknown as Organization);
 
         // FE-003: Map API fields (tier/users) to local fields (plan/userCount)
-        const updatedOrg = {
+        // CORR-P0: Map is_active → status
+        const updatedOrg: Organization = {
           ...apiOrg,
-          plan: apiOrg.tier || apiOrg.plan,
-          userCount: apiOrg.users || apiOrg.userCount,
+          features: Array.isArray(apiOrg.features) ? apiOrg.features : [],
+          plan: apiOrg.tier || apiOrg.plan || 'free',
+          userCount: apiOrg.users ?? apiOrg.userCount ?? 0,
+          status: apiOrg.status || (apiOrg.is_active !== false ? 'active' : 'inactive'),
+          createdAt: apiOrg.created_at || apiOrg.createdAt || new Date().toISOString(),
         };
 
         // Update local state

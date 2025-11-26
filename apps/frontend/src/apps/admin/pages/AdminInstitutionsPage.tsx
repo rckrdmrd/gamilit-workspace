@@ -36,6 +36,7 @@ export default function AdminInstitutionsPage() {
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
   const [formData, setFormData] = useState({
     name: '',
+    slug: '',
     plan: 'free' as 'free' | 'basic' | 'professional' | 'enterprise',
   });
 
@@ -46,12 +47,25 @@ export default function AdminInstitutionsPage() {
 
   const handleCreateOrg = async () => {
     try {
+      // Auto-generate slug if empty
+      const slug =
+        formData.slug ||
+        formData.name
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '') // Remove accents
+          .replace(/[^\w\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .trim();
+
       await createOrganization({
         name: formData.name,
+        slug: slug,
         plan: formData.plan,
       });
       setIsCreateModalOpen(false);
-      setFormData({ name: '', plan: 'free' });
+      setFormData({ name: '', slug: '', plan: 'free' });
     } catch (err) {
       console.error('Failed to create organization:', err);
     }
@@ -66,7 +80,7 @@ export default function AdminInstitutionsPage() {
       });
       setIsEditModalOpen(false);
       setSelectedOrg(null);
-      setFormData({ name: '', plan: 'free' });
+      setFormData({ name: '', slug: '', plan: 'free' });
     } catch (err) {
       console.error('Failed to update organization:', err);
     }
@@ -85,7 +99,7 @@ export default function AdminInstitutionsPage() {
 
   const openEditModal = (org: Organization) => {
     setSelectedOrg(org);
-    setFormData({ name: org.name, plan: org.plan });
+    setFormData({ name: org.name, slug: '', plan: org.plan });
     setIsEditModalOpen(true);
   };
 
@@ -96,18 +110,23 @@ export default function AdminInstitutionsPage() {
 
   const handleToggleFeature = async (feature: string) => {
     if (!selectedOrg) return;
-    try {
-      await toggleFeature(selectedOrg.id, feature);
 
-      // Update local selected org state with the new features
-      // BUG-ADMIN-007: Safe access to features array
-      const currentFeatures = selectedOrg.features ?? [];
+    // Save previous state for rollback
+    const previousOrg = { ...selectedOrg };
+    const currentFeatures = selectedOrg.features ?? [];
+
+    try {
+      // Optimistic update
       const updatedFeatures = currentFeatures.includes(feature)
         ? currentFeatures.filter((f) => f !== feature)
         : [...currentFeatures, feature];
       setSelectedOrg({ ...selectedOrg, features: updatedFeatures });
+
+      await toggleFeature(selectedOrg.id, feature);
     } catch (err) {
+      // Rollback on error
       console.error('Failed to toggle feature:', err);
+      setSelectedOrg(previousOrg);
     }
   };
 
@@ -286,7 +305,7 @@ export default function AdminInstitutionsPage() {
         isOpen={isCreateModalOpen}
         onClose={() => {
           setIsCreateModalOpen(false);
-          setFormData({ name: '', plan: 'free' });
+          setFormData({ name: '', slug: '', plan: 'free' });
         }}
         title="Crear Nueva Organización"
       >
@@ -298,6 +317,13 @@ export default function AdminInstitutionsPage() {
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             placeholder="Ej: Colegio San José"
             required
+          />
+          <FormField
+            label="Slug (identificador URL)"
+            name="slug"
+            value={formData.slug}
+            onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+            placeholder="ej: mi-institucion (se genera automáticamente si está vacío)"
           />
           <FormField
             label="Plan"
@@ -318,7 +344,7 @@ export default function AdminInstitutionsPage() {
               variant="secondary"
               onClick={() => {
                 setIsCreateModalOpen(false);
-                setFormData({ name: '', plan: 'free' });
+                setFormData({ name: '', slug: '', plan: 'free' });
               }}
             >
               Cancelar
@@ -336,7 +362,7 @@ export default function AdminInstitutionsPage() {
         onClose={() => {
           setIsEditModalOpen(false);
           setSelectedOrg(null);
-          setFormData({ name: '', plan: 'free' });
+          setFormData({ name: '', slug: '', plan: 'free' });
         }}
         title="Editar Organización"
       >
@@ -368,7 +394,7 @@ export default function AdminInstitutionsPage() {
               onClick={() => {
                 setIsEditModalOpen(false);
                 setSelectedOrg(null);
-                setFormData({ name: '', plan: 'free' });
+                setFormData({ name: '', slug: '', plan: 'free' });
               }}
             >
               Cancelar
