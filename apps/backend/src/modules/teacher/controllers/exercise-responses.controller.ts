@@ -92,10 +92,9 @@ export class ExerciseResponsesController {
     @Query() query: GetAttemptsQueryDto,
     @Request() req: any,
   ): Promise<AttemptsListResponseDto> {
-    const teacherId = req.user.profile.id;
-    const tenantId = req.user.profile.tenant_id;
+    const userId = req.user.id;
 
-    return this.exerciseResponsesService.getAttempts(teacherId, tenantId, query);
+    return this.exerciseResponsesService.getAttempts(userId, query);
   }
 
   /**
@@ -136,10 +135,9 @@ export class ExerciseResponsesController {
     @Param('id') id: string,
     @Request() req: any,
   ): Promise<AttemptDetailDto> {
-    const teacherId = req.user.profile.id;
-    const tenantId = req.user.profile.tenant_id;
+    const userId = req.user.id;
 
-    return this.exerciseResponsesService.getAttemptDetail(teacherId, tenantId, id);
+    return this.exerciseResponsesService.getAttemptDetail(userId, id);
   }
 
   /**
@@ -179,14 +177,9 @@ export class ExerciseResponsesController {
     @Param('studentId') studentId: string,
     @Request() req: any,
   ): Promise<AttemptResponseDto[]> {
-    const teacherId = req.user.profile.id;
-    const tenantId = req.user.profile.tenant_id;
+    const userId = req.user.id;
 
-    return this.exerciseResponsesService.getAttemptsByStudent(
-      teacherId,
-      tenantId,
-      studentId,
-    );
+    return this.exerciseResponsesService.getAttemptsByStudent(userId, studentId);
   }
 
   /**
@@ -222,13 +215,8 @@ export class ExerciseResponsesController {
     @Param('exerciseId') exerciseId: string,
     @Request() req: any,
   ): Promise<AttemptsListResponseDto> {
-    const teacherId = req.user.profile.id;
-    const tenantId = req.user.profile.tenant_id;
+    const userId = req.user.id;
 
-    return this.exerciseResponsesService.getExerciseResponses(
-      teacherId,
-      tenantId,
-      exerciseId,
-    );
+    return this.exerciseResponsesService.getExerciseResponses(userId, exerciseId);
   }
 }
