@@ -1,5 +1,4 @@
 import React from 'react';
-import { cn } from '@shared/utils';
 
 interface FooterLink {
   label: string;
@@ -13,19 +12,19 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({
   links = [],
-  copyrightText = `© ${new Date().getFullYear()} GAMILIT. Todos los derechos reservados.`
+  copyrightText = `© ${new Date().getFullYear()} GAMILIT. Todos los derechos reservados.`,
 }) => {
   return (
-    <footer className="bg-gray-100 border-t border-gray-200 py-8">
+    <footer className="border-t border-gray-200 bg-gray-100 py-8">
       <div className="container mx-auto px-4">
         {/* Links */}
         {links.length > 0 && (
-          <div className="flex flex-wrap justify-center gap-6 mb-4">
+          <div className="mb-4 flex flex-wrap justify-center gap-6">
             {links.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-gray-600 hover:text-blue-600 transition text-sm"
+                className="text-sm text-gray-600 transition hover:text-blue-600"
               >
                 {link.label}
               </a>
@@ -34,9 +33,7 @@ export const Footer: React.FC<FooterProps> = ({
         )}
 
         {/* Copyright */}
-        <div className="text-center text-gray-500 text-sm">
-          {copyrightText}
-        </div>
+        <div className="text-center text-sm text-gray-500">{copyrightText}</div>
       </div>
     </footer>
   );

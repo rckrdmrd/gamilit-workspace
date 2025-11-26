@@ -9,11 +9,9 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type {
   UserRankProgress,
-  MayaRank,
   MultiplierBreakdown,
   MultiplierSource,
   ProgressionHistoryEntry,
-  RankUpEvent,
   XPEvent,
   PrestigeProgress,
   XPSource,
@@ -26,8 +24,8 @@ import {
   getPrestigeBonusByLevel,
   calculateTotalMultiplier,
 } from '../mockData/ranksMockData';
-import { getCurrentRank } from '../api/ranksAPI';
 import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 import { useAuthStore } from '@/features/auth/store/authStore';
 
 // ============================================================================
@@ -151,14 +149,11 @@ export const useRanksStore = create<RanksState>()(
           }
 
           // Update stats in backend
-          const { data } = await apiClient.patch(
-            `/gamification/users/${userId}/stats`,
-            {
-              total_xp_increment: amount,
-              xp_source: source,
-              description,
-            }
-          );
+          const { data } = await apiClient.patch(`/gamification/users/${userId}/stats`, {
+            total_xp_increment: amount,
+            xp_source: source,
+            description,
+          });
 
           // Create XP event
           const xpEvent: XPEvent = {
@@ -201,7 +196,7 @@ export const useRanksStore = create<RanksState>()(
           const errorMessage = error instanceof Error ? error.message : 'Failed to add XP';
           set({
             isLoading: false,
-            error: errorMessage
+            error: errorMessage,
           });
           throw error;
         }
@@ -275,16 +270,6 @@ export const useRanksStore = create<RanksState>()(
         if (!nextRank) return;
 
         const newMultiplier = nextRank.multiplier;
-
-        // Create rank up event
-        const rankUpEvent: RankUpEvent = {
-          fromRank: currentProgress.currentRank,
-          toRank: nextRank.id,
-          timestamp: new Date(),
-          newBenefits: nextRank.benefits,
-          newMultiplier,
-          isPrestige: false,
-        };
 
         // Add history entry
         const historyEntry: ProgressionHistoryEntry = {
@@ -452,12 +437,12 @@ export const useRanksStore = create<RanksState>()(
 
         // Add any additional sources from state
         const additionalSources = state.multiplierBreakdown.sources.filter(
-          s => s.type !== 'rank' && s.type !== 'prestige' && s.type !== 'streak'
+          (s) => s.type !== 'rank' && s.type !== 'prestige' && s.type !== 'streak',
         );
         sources.push(...additionalSources);
 
         // Filter out expired multipliers
-        const activeSources = sources.filter(s => {
+        const activeSources = sources.filter((s) => {
           if (!s.expiresAt) return true;
           return new Date(s.expiresAt) > new Date();
         });
@@ -468,7 +453,7 @@ export const useRanksStore = create<RanksState>()(
         // Find expiring soon (within 24 hours)
         const now = new Date();
         const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-        const expiringSoon = activeSources.filter(s => {
+        const expiringSoon = activeSources.filter((s) => {
           if (!s.expiresAt) return false;
           return new Date(s.expiresAt) <= tomorrow;
         });
@@ -495,7 +480,7 @@ export const useRanksStore = create<RanksState>()(
       addMultiplierSource: (source: MultiplierSource) => {
         const state = get();
         const existingSources = state.multiplierBreakdown.sources.filter(
-          s => s.type !== source.type || s.name !== source.name
+          (s) => s.type !== source.type || s.name !== source.name,
         );
 
         set({
@@ -513,9 +498,7 @@ export const useRanksStore = create<RanksState>()(
        */
       removeMultiplierSource: (type: string) => {
         const state = get();
-        const filteredSources = state.multiplierBreakdown.sources.filter(
-          s => s.type !== type
-        );
+        const filteredSources = state.multiplierBreakdown.sources.filter((s) => s.type !== type);
 
         set({
           multiplierBreakdown: {
@@ -597,9 +580,7 @@ export const useRanksStore = create<RanksState>()(
             throw new Error('User not authenticated');
           }
 
-          const { data } = await apiClient.get(
-            `/gamification/users/${userId}/rank-progress`
-          );
+          const { data } = await apiClient.get(API_ENDPOINTS.gamification.userRankProgress(userId));
 
           // Transform backend response to UserRankProgress
           const userProgress: UserRankProgress = {
@@ -611,7 +592,7 @@ export const useRanksStore = create<RanksState>()(
             mlCoinsEarned: data.ml_coins_earned,
             prestigeLevel: data.prestige_level || 0,
             multiplier: data.multiplier,
-            lastRankUp: data.last_rank_up ? new Date(data.last_rank_up) : null,
+            lastRankUp: data.last_rank_up ? new Date(data.last_rank_up) : new Date(),
             activityStreak: data.current_streak,
             lastActivityDate: new Date(),
             canRankUp: data.can_rank_up,
@@ -622,16 +603,17 @@ export const useRanksStore = create<RanksState>()(
           set({
             userProgress,
             isLoading: false,
-            error: null
+            error: null,
           });
 
           // Update multipliers after fetching progress
           get().updateMultipliers();
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Failed to fetch user progress';
+          const errorMessage =
+            error instanceof Error ? error.message : 'Failed to fetch user progress';
           set({
             isLoading: false,
-            error: errorMessage
+            error: errorMessage,
           });
           console.error('Error fetching user progress:', error);
         }
@@ -648,8 +630,8 @@ export const useRanksStore = create<RanksState>()(
         progressionHistory: state.progressionHistory,
         xpEvents: state.xpEvents,
       }),
-    }
-  )
+    },
+  ),
 );
 
 // ============================================================================

@@ -194,7 +194,7 @@ describe('ExerciseSubmissionService - Rueda de Inferencias Validation', () => {
         score: 0,
         is_correct: false,
         time_spent_seconds: 0,
-      } as ExerciseSubmission;
+      } as unknown as ExerciseSubmission;
 
       submissionRepo.findOne.mockResolvedValue(null); // No existing submission
       submissionRepo.create.mockReturnValue(mockSubmission);
@@ -242,7 +242,7 @@ describe('ExerciseSubmissionService - Rueda de Inferencias Validation', () => {
         ml_coins_spent: 0,
         is_correct: false,
         time_spent_seconds: 0,
-      } as ExerciseSubmission;
+      } as unknown as ExerciseSubmission;
 
       submissionRepo.findOne.mockResolvedValue(null);
       submissionRepo.create.mockReturnValue(mockSubmission);
@@ -289,7 +289,7 @@ describe('ExerciseSubmissionService - Rueda de Inferencias Validation', () => {
         ml_coins_spent: 0,
         is_correct: false,
         time_spent_seconds: 0,
-      } as ExerciseSubmission;
+      } as unknown as ExerciseSubmission;
 
       submissionRepo.findOne.mockResolvedValue(null);
       submissionRepo.create.mockReturnValue(mockSubmission);
@@ -336,7 +336,7 @@ describe('ExerciseSubmissionService - Rueda de Inferencias Validation', () => {
         ml_coins_spent: 0,
         is_correct: false,
         time_spent_seconds: 0,
-      } as ExerciseSubmission;
+      } as unknown as ExerciseSubmission;
 
       submissionRepo.findOne.mockResolvedValue(null);
       submissionRepo.create.mockReturnValue(mockSubmission);
@@ -385,7 +385,7 @@ describe('ExerciseSubmissionService - Rueda de Inferencias Validation', () => {
         ml_coins_spent: 0,
         is_correct: false,
         time_spent_seconds: 0,
-      } as ExerciseSubmission;
+      } as unknown as ExerciseSubmission;
 
       submissionRepo.findOne.mockResolvedValue(null);
       submissionRepo.create.mockReturnValue(mockSubmission);
@@ -441,7 +441,7 @@ describe('ExerciseSubmissionService - Rueda de Inferencias Validation', () => {
         ml_coins_spent: 0,
         is_correct: false,
         time_spent_seconds: 0,
-      } as ExerciseSubmission;
+      } as unknown as ExerciseSubmission;
 
       submissionRepo.findOne.mockResolvedValue(null);
       submissionRepo.create.mockReturnValue(mockSubmission);
@@ -481,7 +481,7 @@ describe('ExerciseSubmissionService - Rueda de Inferencias Validation', () => {
         ml_coins_spent: 0,
         is_correct: false,
         time_spent_seconds: 0,
-      } as ExerciseSubmission;
+      } as unknown as ExerciseSubmission;
 
       submissionRepo.findOne.mockResolvedValue(null);
       submissionRepo.create.mockReturnValue(mockSubmission);
@@ -527,7 +527,7 @@ describe('ExerciseSubmissionService - Rueda de Inferencias Validation', () => {
         ml_coins_spent: 0,
         is_correct: false,
         time_spent_seconds: 0,
-      } as ExerciseSubmission;
+      } as unknown as ExerciseSubmission;
 
       submissionRepo.findOne.mockResolvedValue(null);
       submissionRepo.create.mockReturnValue(mockSubmission);
@@ -650,7 +650,7 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
         ml_coins_spent: 0,
         is_correct: false,
         time_spent_seconds: 0,
-      } as ExerciseSubmission;
+      } as unknown as ExerciseSubmission;
 
       // First call returns null (no existing submission), second call returns submitted, third returns graded
       submissionRepo.findOne
@@ -667,7 +667,9 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
       expect(result.is_correct).toBe(false);
       expect(result.feedback).toContain('no pueden tener la misma palabra');
       expect(result.feedback).toContain('ciencias');
+      // @ts-ignore - testing details property
       expect(result.details?.error?.type).toBe('redundancia');
+      // @ts-ignore - testing details property
       expect(result.details?.error?.espacios).toEqual(['5', '6']);
     });
 
@@ -694,7 +696,7 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
         status: 'submitted',
         score: 33,
         is_correct: false,
-      } as ExerciseSubmission;
+      } as unknown as ExerciseSubmission;
 
       submissionRepo.findOne
         .mockResolvedValueOnce(null)
@@ -732,7 +734,7 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
         status: 'submitted',
         score: 33,
         is_correct: false,
-      } as ExerciseSubmission;
+      } as unknown as ExerciseSubmission;
 
       submissionRepo.findOne
         .mockResolvedValueOnce(null)
@@ -770,7 +772,7 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
         status: 'submitted',
         score: 33,
         is_correct: false,
-      } as ExerciseSubmission;
+      } as unknown as ExerciseSubmission;
 
       submissionRepo.findOne
         .mockResolvedValueOnce(null)
@@ -832,7 +834,7 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
           status: 'submitted',
           score: 100,
           is_correct: true,
-        } as ExerciseSubmission;
+        } as unknown as ExerciseSubmission;
 
         submissionRepo.findOne.mockResolvedValueOnce(null).mockResolvedValueOnce(mockSubmission);
         submissionRepo.create.mockReturnValue(mockSubmission);
@@ -884,7 +886,7 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
         status: 'submitted',
         score: 83,
         is_correct: true,
-      } as ExerciseSubmission;
+      } as unknown as ExerciseSubmission;
 
       submissionRepo.findOne
         .mockResolvedValueOnce(null)
@@ -934,7 +936,7 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
         status: 'submitted',
         score: 83,
         is_correct: true,
-      } as ExerciseSubmission;
+      } as unknown as ExerciseSubmission;
 
       submissionRepo.findOne
         .mockResolvedValueOnce(null)
@@ -972,7 +974,7 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
         status: 'submitted',
         score: 33,
         is_correct: false,
-      } as ExerciseSubmission;
+      } as unknown as ExerciseSubmission;
 
       submissionRepo.findOne
         .mockResolvedValueOnce(null)

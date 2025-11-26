@@ -15,13 +15,11 @@ import {
   Lightbulb,
   TrendingUp,
   BarChart3,
-  Star,
   Coins,
   Clock,
   Target,
   Award,
 } from 'lucide-react';
-import type { PowerUp } from '@/features/gamification/social/types/powerUpsTypes';
 import type { ExerciseAttempt } from '@/apps/student/hooks/useExerciseState';
 
 interface ExerciseSidebarProps {
@@ -51,8 +49,10 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
   onUsePowerUp,
   className = '',
 }) => {
-  const { getAvailablePowerUps, getActivePowerUps, usePowerUp } = usePowerUps();
-  const [activeTab, setActiveTab] = useState<'powerups' | 'hints' | 'progress' | 'stats'>('powerups');
+  const { getAvailablePowerUps, getActivePowerUps, applyPowerUp } = usePowerUps();
+  const [activeTab, setActiveTab] = useState<'powerups' | 'hints' | 'progress' | 'stats'>(
+    'powerups',
+  );
 
   const availablePowerUps = getAvailablePowerUps();
   const activePowerUps = getActivePowerUps();
@@ -64,7 +64,7 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
   };
 
   const handleUsePowerUp = (powerUpId: string) => {
-    usePowerUp(powerUpId);
+    applyPowerUp(powerUpId);
     onUsePowerUp(powerUpId);
   };
 
@@ -80,11 +80,11 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
       {/* Toggle Button - Mobile */}
       <motion.button
         onClick={onToggle}
-        className="lg:hidden fixed right-4 top-1/2 -translate-y-1/2 z-40 bg-detective-orange text-white p-3 rounded-l-detective shadow-lg"
+        className="fixed right-4 top-1/2 z-40 -translate-y-1/2 rounded-l-detective bg-detective-orange p-3 text-white shadow-lg lg:hidden"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
       >
-        {isOpen ? <ChevronRight className="w-6 h-6" /> : <ChevronLeft className="w-6 h-6" />}
+        {isOpen ? <ChevronRight className="h-6 w-6" /> : <ChevronLeft className="h-6 w-6" />}
       </motion.button>
 
       {/* Sidebar */}
@@ -96,33 +96,33 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
             exit={{ x: '100%', opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className={`
-              fixed lg:sticky top-0 right-0 h-screen lg:h-auto
-              w-80 lg:w-full bg-white dark:bg-gray-800
-              shadow-2xl lg:shadow-none z-30 overflow-y-auto
+              fixed right-0 top-0 z-30 h-screen w-80
+              overflow-y-auto bg-white shadow-2xl dark:bg-gray-800
+              lg:sticky lg:h-auto lg:w-full lg:shadow-none
               ${className}
             `}
           >
             {/* Header */}
-            <div className="sticky top-0 bg-gradient-to-r from-detective-orange to-detective-gold p-4 z-10">
-              <div className="flex items-center justify-between mb-4">
+            <div className="sticky top-0 z-10 bg-gradient-to-r from-detective-orange to-detective-gold p-4">
+              <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xl font-bold text-white">Panel Lateral</h2>
                 <button
                   onClick={onToggle}
-                  className="lg:hidden text-white hover:bg-white/20 p-2 rounded-full transition-colors"
+                  className="rounded-full p-2 text-white transition-colors hover:bg-white/20 lg:hidden"
                 >
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="h-5 w-5" />
                 </button>
               </div>
 
               {/* ML Coins Display */}
-              <div className="flex items-center gap-2 bg-white/20 rounded-detective px-4 py-2">
-                <Coins className="w-5 h-5 text-white" />
-                <span className="text-white font-bold">{availableCoins} ML Coins</span>
+              <div className="flex items-center gap-2 rounded-detective bg-white/20 px-4 py-2">
+                <Coins className="h-5 w-5 text-white" />
+                <span className="font-bold text-white">{availableCoins} ML Coins</span>
               </div>
             </div>
 
             {/* Tabs */}
-            <div className="grid grid-cols-4 gap-1 p-2 bg-gray-100 dark:bg-gray-900">
+            <div className="grid grid-cols-4 gap-1 bg-gray-100 p-2 dark:bg-gray-900">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
@@ -130,15 +130,15 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
                     className={`
-                      p-3 rounded-detective text-xs font-semibold transition-all
+                      rounded-detective p-3 text-xs font-semibold transition-all
                       ${
                         activeTab === tab.id
                           ? 'bg-detective-orange text-white shadow-lg'
-                          : 'bg-white dark:bg-gray-800 text-detective-text-secondary hover:bg-gray-50'
+                          : 'bg-white text-detective-text-secondary hover:bg-gray-50 dark:bg-gray-800'
                       }
                     `}
                   >
-                    <Icon className="w-5 h-5 mx-auto mb-1" />
+                    <Icon className="mx-auto mb-1 h-5 w-5" />
                     {tab.label}
                   </button>
                 );
@@ -146,7 +146,7 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
             </div>
 
             {/* Content */}
-            <div className="p-4 space-y-4">
+            <div className="space-y-4 p-4">
               {/* Power-ups Tab */}
               {activeTab === 'powerups' && (
                 <motion.div
@@ -154,21 +154,21 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                   animate={{ opacity: 1, y: 0 }}
                   className="space-y-3"
                 >
-                  <h3 className="text-sm font-bold text-detective-text uppercase tracking-wide">
+                  <h3 className="text-sm font-bold uppercase tracking-wide text-detective-text">
                     Power-ups Disponibles
                   </h3>
 
                   {/* Active Power-ups */}
                   {activePowerUps.length > 0 && (
                     <div className="space-y-2">
-                      <p className="text-xs text-detective-text-secondary font-semibold">ACTIVOS</p>
+                      <p className="text-xs font-semibold text-detective-text-secondary">ACTIVOS</p>
                       {activePowerUps.map((powerUp) => (
                         <div
                           key={powerUp.powerUpId}
-                          className="bg-green-50 dark:bg-green-900/20 border-2 border-green-500 rounded-detective p-3"
+                          className="rounded-detective border-2 border-green-500 bg-green-50 p-3 dark:bg-green-900/20"
                         >
-                          <div className="flex items-center gap-2 mb-1">
-                            <Zap className="w-4 h-4 text-green-600" />
+                          <div className="mb-1 flex items-center gap-2">
+                            <Zap className="h-4 w-4 text-green-600" />
                             <span className="text-sm font-bold text-detective-text">
                               {powerUp.name}
                             </span>
@@ -185,17 +185,17 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                   {/* Available Power-ups */}
                   {availablePowerUps.length > 0 ? (
                     <div className="space-y-2">
-                      <p className="text-xs text-detective-text-secondary font-semibold">
+                      <p className="text-xs font-semibold text-detective-text-secondary">
                         DISPONIBLES
                       </p>
                       {availablePowerUps.map((powerUp) => (
                         <motion.div
                           key={powerUp.id}
                           whileHover={{ scale: 1.02 }}
-                          className="bg-white dark:bg-gray-900 border-2 border-detective-orange rounded-detective p-3"
+                          className="rounded-detective border-2 border-detective-orange bg-white p-3 dark:bg-gray-900"
                         >
-                          <div className="flex items-start gap-2 mb-2">
-                            <Zap className="w-5 h-5 text-detective-orange flex-shrink-0" />
+                          <div className="mb-2 flex items-start gap-2">
+                            <Zap className="h-5 w-5 flex-shrink-0 text-detective-orange" />
                             <div className="flex-1">
                               <p className="text-sm font-bold text-detective-text">
                                 {powerUp.name}
@@ -207,7 +207,6 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                           </div>
                           <DetectiveButton
                             variant="primary"
-
                             onClick={() => handleUsePowerUp(powerUp.id)}
                             className="w-full"
                             disabled={powerUp.status !== 'available'}
@@ -218,7 +217,7 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-detective-text-secondary italic text-center py-4">
+                    <p className="py-4 text-center text-sm italic text-detective-text-secondary">
                       No tienes power-ups disponibles
                     </p>
                   )}
@@ -232,21 +231,20 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                   animate={{ opacity: 1, y: 0 }}
                   className="space-y-3"
                 >
-                  <h3 className="text-sm font-bold text-detective-text uppercase tracking-wide">
+                  <h3 className="text-sm font-bold uppercase tracking-wide text-detective-text">
                     Sistema de Pistas
                   </h3>
 
                   <DetectiveCard variant="gold" padding="md">
-                    <div className="text-center space-y-3">
-                      <Lightbulb className="w-12 h-12 text-detective-gold mx-auto" />
+                    <div className="space-y-3 text-center">
+                      <Lightbulb className="mx-auto h-12 w-12 text-detective-gold" />
                       <p className="text-sm text-detective-text">
                         ¿Necesitas ayuda? Usa pistas para avanzar en el ejercicio
                       </p>
                       <DetectiveButton
                         variant="gold"
-
                         onClick={onOpenHints}
-                        icon={<Lightbulb className="w-4 h-4" />}
+                        icon={<Lightbulb className="h-4 w-4" />}
                         className="w-full"
                       >
                         Ver Pistas
@@ -266,7 +264,7 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                   animate={{ opacity: 1, y: 0 }}
                   className="space-y-3"
                 >
-                  <h3 className="text-sm font-bold text-detective-text uppercase tracking-wide">
+                  <h3 className="text-sm font-bold uppercase tracking-wide text-detective-text">
                     Intentos Anteriores
                   </h3>
 
@@ -274,12 +272,12 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                     <div className="space-y-2">
                       {attempts.map((attempt, index) => (
                         <DetectiveCard key={attempt.id} variant="default" padding="sm">
-                          <div className="flex items-center justify-between mb-2">
+                          <div className="mb-2 flex items-center justify-between">
                             <span className="text-xs font-semibold text-detective-text-secondary">
                               Intento {index + 1}
                             </span>
                             <span
-                              className={`px-2 py-1 rounded-full text-xs font-bold ${
+                              className={`rounded-full px-2 py-1 text-xs font-bold ${
                                 attempt.completed
                                   ? 'bg-green-100 text-green-700'
                                   : 'bg-gray-100 text-gray-700'
@@ -304,7 +302,7 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-detective-text-secondary italic text-center py-4">
+                    <p className="py-4 text-center text-sm italic text-detective-text-secondary">
                       Aún no hay intentos registrados
                     </p>
                   )}
@@ -318,7 +316,7 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                   animate={{ opacity: 1, y: 0 }}
                   className="space-y-3"
                 >
-                  <h3 className="text-sm font-bold text-detective-text uppercase tracking-wide">
+                  <h3 className="text-sm font-bold uppercase tracking-wide text-detective-text">
                     Estadísticas
                   </h3>
 
@@ -326,7 +324,7 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                     {/* Current Score */}
                     <DetectiveCard variant="default" padding="md">
                       <div className="flex items-center gap-3">
-                        <Target className="w-8 h-8 text-detective-orange" />
+                        <Target className="h-8 w-8 text-detective-orange" />
                         <div>
                           <p className="text-xs text-detective-text-secondary">Puntuación Actual</p>
                           <p className="text-2xl font-bold text-detective-text">{currentScore}</p>
@@ -337,7 +335,7 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                     {/* Best Score */}
                     <DetectiveCard variant="gold" padding="md">
                       <div className="flex items-center gap-3">
-                        <Award className="w-8 h-8 text-detective-gold" />
+                        <Award className="h-8 w-8 text-detective-gold" />
                         <div>
                           <p className="text-xs text-detective-text-secondary">Mejor Puntuación</p>
                           <p className="text-2xl font-bold text-detective-text">{bestScore}</p>
@@ -348,7 +346,7 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                     {/* Time */}
                     <DetectiveCard variant="default" padding="md">
                       <div className="flex items-center gap-3">
-                        <Clock className="w-8 h-8 text-detective-blue" />
+                        <Clock className="h-8 w-8 text-detective-blue" />
                         <div>
                           <p className="text-xs text-detective-text-secondary">Tiempo</p>
                           <p className="text-2xl font-bold text-detective-text">
@@ -361,7 +359,7 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                     {/* Hints Used */}
                     <DetectiveCard variant="default" padding="md">
                       <div className="flex items-center gap-3">
-                        <Lightbulb className="w-8 h-8 text-detective-gold" />
+                        <Lightbulb className="h-8 w-8 text-detective-gold" />
                         <div>
                           <p className="text-xs text-detective-text-secondary">Pistas Usadas</p>
                           <p className="text-2xl font-bold text-detective-text">{hintsUsed}</p>
@@ -372,10 +370,12 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                     {/* Total Attempts */}
                     <DetectiveCard variant="default" padding="md">
                       <div className="flex items-center gap-3">
-                        <TrendingUp className="w-8 h-8 text-detective-orange" />
+                        <TrendingUp className="h-8 w-8 text-detective-orange" />
                         <div>
                           <p className="text-xs text-detective-text-secondary">Total Intentos</p>
-                          <p className="text-2xl font-bold text-detective-text">{attempts.length}</p>
+                          <p className="text-2xl font-bold text-detective-text">
+                            {attempts.length}
+                          </p>
                         </div>
                       </div>
                     </DetectiveCard>
@@ -395,7 +395,7 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onToggle}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-20 lg:hidden"
+            className="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm lg:hidden"
           />
         )}
       </AnimatePresence>

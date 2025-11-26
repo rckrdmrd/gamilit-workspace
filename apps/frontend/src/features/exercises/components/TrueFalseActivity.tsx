@@ -36,7 +36,6 @@ export const TrueFalseActivity: React.FC<ExerciseComponentProps> = ({
   onComplete,
   onCancel,
   showTimer = true,
-  allowHints = false, // True/False typically doesn't need hints
 }) => {
   // State
   const [selectedAnswer, setSelectedAnswer] = useState<TrueFalseAnswer | null>(null);
@@ -62,7 +61,7 @@ export const TrueFalseActivity: React.FC<ExerciseComponentProps> = ({
         }, 3000);
       }
     },
-    onError: (error) => {
+    onError: () => {
       setFeedback({
         type: 'error',
         title: 'Error',
@@ -110,7 +109,7 @@ export const TrueFalseActivity: React.FC<ExerciseComponentProps> = ({
   };
 
   // Get correct answer
-  const correctAnswer = exercise.content.correct_answer as string;
+  const correctAnswer = (exercise.content.correct_answer || 'true') as string;
 
   // Get button style
   const getButtonStyle = (answer: TrueFalseAnswer, isTrue: boolean) => {
@@ -150,7 +149,7 @@ export const TrueFalseActivity: React.FC<ExerciseComponentProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="mx-auto max-w-4xl p-6">
       {/* Header */}
       <ExerciseHeader
         exercise={exercise}
@@ -167,8 +166,8 @@ export const TrueFalseActivity: React.FC<ExerciseComponentProps> = ({
       />
 
       {/* Question */}
-      <div className="bg-white rounded-xl border-2 border-gray-200 p-8 mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">
+      <div className="mb-6 rounded-xl border-2 border-gray-200 bg-white p-8">
+        <h2 className="mb-8 text-center text-2xl font-bold text-gray-900">
           {exercise.content.question}
         </h2>
 
@@ -178,27 +177,27 @@ export const TrueFalseActivity: React.FC<ExerciseComponentProps> = ({
             <img
               src={exercise.content.media_url}
               alt="Exercise media"
-              className="max-w-full h-auto rounded-lg border border-gray-300"
+              className="h-auto max-w-full rounded-lg border border-gray-300"
             />
           </div>
         )}
 
         {/* True/False buttons */}
-        <div className="grid grid-cols-2 gap-6 max-w-2xl mx-auto">
+        <div className="mx-auto grid max-w-2xl grid-cols-2 gap-6">
           {/* TRUE button */}
           <button
             onClick={() => handleAnswerSelect('true')}
             disabled={result !== null || isSubmitting || timer.isTimeExpired}
             className={`
-              p-8 rounded-2xl border-3 transition-all duration-300
-              flex flex-col items-center justify-center
-              disabled:cursor-not-allowed
-              transform hover:scale-105
+              border-3 flex transform flex-col items-center
+              justify-center rounded-2xl p-8 transition-all
+              duration-300
+              hover:scale-105 disabled:cursor-not-allowed
               ${getButtonStyle('true', true)}
             `}
           >
-            <div className="w-16 h-16 mb-4 rounded-full bg-current opacity-20" />
-            <Check className="w-12 h-12 mb-3" strokeWidth={3} />
+            <div className="mb-4 h-16 w-16 rounded-full bg-current opacity-20" />
+            <Check className="mb-3 h-12 w-12" strokeWidth={3} />
             <span className="text-2xl font-bold">VERDADERO</span>
             {result && correctAnswer === 'true' && (
               <span className="mt-2 text-sm font-semibold">✓ Respuesta correcta</span>
@@ -210,15 +209,15 @@ export const TrueFalseActivity: React.FC<ExerciseComponentProps> = ({
             onClick={() => handleAnswerSelect('false')}
             disabled={result !== null || isSubmitting || timer.isTimeExpired}
             className={`
-              p-8 rounded-2xl border-3 transition-all duration-300
-              flex flex-col items-center justify-center
-              disabled:cursor-not-allowed
-              transform hover:scale-105
+              border-3 flex transform flex-col items-center
+              justify-center rounded-2xl p-8 transition-all
+              duration-300
+              hover:scale-105 disabled:cursor-not-allowed
               ${getButtonStyle('false', false)}
             `}
           >
-            <div className="w-16 h-16 mb-4 rounded-full bg-current opacity-20" />
-            <X className="w-12 h-12 mb-3" strokeWidth={3} />
+            <div className="mb-4 h-16 w-16 rounded-full bg-current opacity-20" />
+            <X className="mb-3 h-12 w-12" strokeWidth={3} />
             <span className="text-2xl font-bold">FALSO</span>
             {result && correctAnswer === 'false' && (
               <span className="mt-2 text-sm font-semibold">✓ Respuesta correcta</span>
@@ -227,7 +226,7 @@ export const TrueFalseActivity: React.FC<ExerciseComponentProps> = ({
         </div>
 
         {/* Helper text */}
-        <p className="text-center text-gray-600 mt-6 text-sm">
+        <p className="mt-6 text-center text-sm text-gray-600">
           Selecciona tu respuesta y presiona "Enviar respuesta"
         </p>
       </div>
@@ -238,11 +237,7 @@ export const TrueFalseActivity: React.FC<ExerciseComponentProps> = ({
           <ExerciseFeedback
             feedback={feedback}
             explanation={result?.explanation || exercise.content.explanation}
-            onClose={
-              result?.is_correct
-                ? () => onComplete(result)
-                : () => setFeedback(null)
-            }
+            onClose={result?.is_correct ? () => onComplete(result) : () => setFeedback(null)}
           />
         </div>
       )}
@@ -252,7 +247,7 @@ export const TrueFalseActivity: React.FC<ExerciseComponentProps> = ({
         {onCancel && !result && (
           <button
             onClick={onCancel}
-            className="px-6 py-3 border-2 border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+            className="rounded-lg border-2 border-gray-300 px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50"
           >
             Cancelar
           </button>
@@ -260,19 +255,14 @@ export const TrueFalseActivity: React.FC<ExerciseComponentProps> = ({
 
         <button
           onClick={handleSubmit}
-          disabled={
-            !selectedAnswer ||
-            isSubmitting ||
-            result !== null ||
-            timer.isTimeExpired
-          }
+          disabled={!selectedAnswer || isSubmitting || result !== null || timer.isTimeExpired}
           className={`
-            px-8 py-3 rounded-lg font-semibold transition-all
-            flex items-center text-lg
+            flex items-center rounded-lg px-8 py-3
+            text-lg font-semibold transition-all
             ${
               selectedAnswer && !isSubmitting && !result && !timer.isTimeExpired
-                ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-lg'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                ? 'bg-purple-600 text-white shadow-lg hover:bg-purple-700'
+                : 'cursor-not-allowed bg-gray-300 text-gray-500'
             }
           `}
         >
@@ -283,7 +273,7 @@ export const TrueFalseActivity: React.FC<ExerciseComponentProps> = ({
           ) : (
             <>
               Enviar respuesta
-              <ChevronRight className="w-5 h-5 ml-1" />
+              <ChevronRight className="ml-1 h-5 w-5" />
             </>
           )}
         </button>

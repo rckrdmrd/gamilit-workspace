@@ -5,8 +5,9 @@
 
 CREATE TABLE progress_tracking.teacher_notes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    teacher_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    student_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    -- FK corregida: auth.users -> auth_management.profiles (2025-11-26)
+    teacher_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE RESTRICT,
+    student_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
     note TEXT NOT NULL,
     is_private BOOLEAN NOT NULL DEFAULT true,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP

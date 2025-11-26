@@ -11,7 +11,6 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/app/providers/AuthContext';
 import {
   Users,
@@ -42,8 +41,6 @@ import { cn } from '@shared/utils/cn';
 type TabType = 'friends' | 'requests' | 'search' | 'activities';
 
 export default function FriendsPage() {
-  const navigate = useNavigate();
-
   // Hooks
   const {
     friends,
@@ -70,7 +67,7 @@ export default function FriendsPage() {
   const { gamificationData } = useUserGamification(user?.id);
 
   // Filter friends based on search and online status
-  const filteredFriends = friends.filter(friend => {
+  const filteredFriends = friends.filter((friend) => {
     const matchesSearch = friend.username.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesOnline = !showOnlineOnly || friend.isOnline;
     return matchesSearch && matchesOnline;
@@ -127,8 +124,8 @@ export default function FriendsPage() {
       <main className="detective-container py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-detective-text mb-2 flex items-center gap-3">
-            <Users className="w-10 h-10 text-detective-orange" />
+          <h1 className="mb-2 flex items-center gap-3 text-4xl font-bold text-detective-text">
+            <Users className="h-10 w-10 text-detective-orange" />
             Friends & Social
           </h1>
           <p className="text-detective-text-secondary">
@@ -137,11 +134,11 @@ export default function FriendsPage() {
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
           <DetectiveCard hoverable={false}>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-detective-blue/20 rounded-full flex items-center justify-center">
-                <Users className="w-6 h-6 text-detective-blue" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-detective-blue/20">
+                <Users className="h-6 w-6 text-detective-blue" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-detective-text">{getTotalFriends()}</p>
@@ -152,8 +149,8 @@ export default function FriendsPage() {
 
           <DetectiveCard hoverable={false}>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
-                <Activity className="w-6 h-6 text-green-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500/20">
+                <Activity className="h-6 w-6 text-green-600" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-detective-text">{getOnlineCount()}</p>
@@ -164,8 +161,8 @@ export default function FriendsPage() {
 
           <DetectiveCard hoverable={false}>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-detective-orange/20 rounded-full flex items-center justify-center">
-                <Clock className="w-6 h-6 text-detective-orange" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-detective-orange/20">
+                <Clock className="h-6 w-6 text-detective-orange" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-detective-text">{pendingRequests.length}</p>
@@ -176,8 +173,8 @@ export default function FriendsPage() {
 
           <DetectiveCard hoverable={false}>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-purple-600" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-500/20">
+                <Sparkles className="h-6 w-6 text-purple-600" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-detective-text">{recommendations.length}</p>
@@ -188,12 +185,22 @@ export default function FriendsPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-2 mb-6 overflow-x-auto">
+        <div className="mb-6 flex items-center gap-2 overflow-x-auto">
           {[
             { id: 'friends' as TabType, label: 'My Friends', icon: Users, count: friends.length },
-            { id: 'requests' as TabType, label: 'Requests', icon: UserPlus, count: pendingRequests.length },
+            {
+              id: 'requests' as TabType,
+              label: 'Requests',
+              icon: UserPlus,
+              count: pendingRequests.length,
+            },
             { id: 'search' as TabType, label: 'Find Friends', icon: Search, count: 0 },
-            { id: 'activities' as TabType, label: 'Activity Feed', icon: Activity, count: activities.length },
+            {
+              id: 'activities' as TabType,
+              label: 'Activity Feed',
+              icon: Activity,
+              count: activities.length,
+            },
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -205,19 +212,21 @@ export default function FriendsPage() {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  'flex items-center gap-2 px-4 py-3 rounded-lg font-semibold transition-all whitespace-nowrap',
+                  'flex items-center gap-2 whitespace-nowrap rounded-lg px-4 py-3 font-semibold transition-all',
                   isActive
                     ? 'bg-detective-orange text-white shadow-lg'
-                    : 'bg-white text-detective-text hover:bg-detective-bg'
+                    : 'bg-white text-detective-text hover:bg-detective-bg',
                 )}
               >
-                <Icon className="w-5 h-5" />
+                <Icon className="h-5 w-5" />
                 <span>{tab.label}</span>
                 {tab.count > 0 && (
-                  <span className={cn(
-                    'px-2 py-0.5 rounded-full text-xs font-bold',
-                    isActive ? 'bg-white/20' : 'bg-detective-orange text-white'
-                  )}>
+                  <span
+                    className={cn(
+                      'rounded-full px-2 py-0.5 text-xs font-bold',
+                      isActive ? 'bg-white/20' : 'bg-detective-orange text-white',
+                    )}
+                  >
                     {tab.count}
                   </span>
                 )}
@@ -238,32 +247,32 @@ export default function FriendsPage() {
             >
               {/* Search and Filter */}
               <DetectiveCard hoverable={false} className="mb-6">
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1 relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-detective-text-secondary" />
+                <div className="flex flex-col gap-4 md:flex-row">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-detective-text-secondary" />
                     <input
                       type="text"
                       placeholder="Search friends..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border-2 border-detective-orange/30 rounded-lg focus:outline-none focus:border-detective-orange"
+                      className="w-full rounded-lg border-2 border-detective-orange/30 py-2 pl-10 pr-4 focus:border-detective-orange focus:outline-none"
                     />
                   </div>
-                  <label className="flex items-center gap-2 cursor-pointer">
+                  <label className="flex cursor-pointer items-center gap-2">
                     <input
                       type="checkbox"
                       checked={showOnlineOnly}
                       onChange={(e) => setShowOnlineOnly(e.target.checked)}
-                      className="w-4 h-4 text-detective-orange focus:ring-detective-orange rounded"
+                      className="h-4 w-4 rounded text-detective-orange focus:ring-detective-orange"
                     />
-                    <span className="text-detective-text font-medium">Online Only</span>
+                    <span className="font-medium text-detective-text">Online Only</span>
                   </label>
                 </div>
               </DetectiveCard>
 
               {/* Friends Grid */}
               {filteredFriends.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {filteredFriends.map((friend, index) => (
                     <motion.div
                       key={friend.userId}
@@ -277,13 +286,13 @@ export default function FriendsPage() {
                           <div className="flex items-start justify-between">
                             <div className="flex items-center gap-3">
                               <div className="relative">
-                                <div className="w-12 h-12 bg-gradient-to-br from-detective-orange to-detective-gold rounded-full flex items-center justify-center">
-                                  <span className="text-white text-lg font-bold">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-detective-orange to-detective-gold">
+                                  <span className="text-lg font-bold text-white">
                                     {friend.username.charAt(0).toUpperCase()}
                                   </span>
                                 </div>
                                 {friend.isOnline && (
-                                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white" />
+                                  <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white bg-green-500" />
                                 )}
                               </div>
                               <div>
@@ -298,33 +307,39 @@ export default function FriendsPage() {
 
                           {/* Stats */}
                           <div className="grid grid-cols-3 gap-2">
-                            <div className="text-center p-2 bg-detective-bg rounded-lg">
-                              <Star className="w-4 h-4 text-yellow-500 mx-auto mb-1" />
-                              <p className="text-sm font-bold text-detective-text">Lvl {friend.level}</p>
+                            <div className="rounded-lg bg-detective-bg p-2 text-center">
+                              <Star className="mx-auto mb-1 h-4 w-4 text-yellow-500" />
+                              <p className="text-sm font-bold text-detective-text">
+                                Lvl {friend.level}
+                              </p>
                             </div>
-                            <div className="text-center p-2 bg-detective-bg rounded-lg">
-                              <Zap className="w-4 h-4 text-detective-orange mx-auto mb-1" />
+                            <div className="rounded-lg bg-detective-bg p-2 text-center">
+                              <Zap className="mx-auto mb-1 h-4 w-4 text-detective-orange" />
                               <p className="text-sm font-bold text-detective-text">{friend.xp}</p>
                             </div>
-                            <div className="text-center p-2 bg-detective-bg rounded-lg">
-                              <Trophy className="w-4 h-4 text-detective-gold mx-auto mb-1" />
-                              <p className="text-sm font-bold text-detective-text">{friend.mlCoins}</p>
+                            <div className="rounded-lg bg-detective-bg p-2 text-center">
+                              <Trophy className="mx-auto mb-1 h-4 w-4 text-detective-gold" />
+                              <p className="text-sm font-bold text-detective-text">
+                                {friend.mlCoins}
+                              </p>
                             </div>
                           </div>
 
                           {/* Actions */}
                           <div className="flex gap-2">
                             <button
-                              onClick={() => {/* Navigate to profile */}}
-                              className="flex-1 px-3 py-2 bg-detective-blue text-white rounded-lg hover:bg-detective-blue-dark transition-colors text-sm font-medium"
+                              onClick={() => {
+                                /* Navigate to profile */
+                              }}
+                              className="hover:bg-detective-blue-dark flex-1 rounded-lg bg-detective-blue px-3 py-2 text-sm font-medium text-white transition-colors"
                             >
                               View Profile
                             </button>
                             <button
                               onClick={() => handleRemoveFriend(friend.userId)}
-                              className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                              className="rounded-lg bg-red-500 px-3 py-2 text-white transition-colors hover:bg-red-600"
                             >
-                              <UserX className="w-4 h-4" />
+                              <UserX className="h-4 w-4" />
                             </button>
                           </div>
                         </div>
@@ -334,15 +349,17 @@ export default function FriendsPage() {
                 </div>
               ) : (
                 <DetectiveCard hoverable={false}>
-                  <div className="text-center py-12">
-                    <Users className="w-16 h-16 text-detective-text-secondary/30 mx-auto mb-4" />
-                    <h3 className="text-xl font-bold text-detective-text mb-2">No Friends Found</h3>
-                    <p className="text-detective-text-secondary mb-4">
-                      {searchQuery ? 'Try a different search term' : 'Start connecting with fellow detectives!'}
+                  <div className="py-12 text-center">
+                    <Users className="mx-auto mb-4 h-16 w-16 text-detective-text-secondary/30" />
+                    <h3 className="mb-2 text-xl font-bold text-detective-text">No Friends Found</h3>
+                    <p className="mb-4 text-detective-text-secondary">
+                      {searchQuery
+                        ? 'Try a different search term'
+                        : 'Start connecting with fellow detectives!'}
                     </p>
                     <button
                       onClick={() => setActiveTab('search')}
-                      className="px-6 py-2 bg-detective-orange text-white rounded-lg hover:bg-detective-orange-dark transition-colors font-medium"
+                      className="rounded-lg bg-detective-orange px-6 py-2 font-medium text-white transition-colors hover:bg-detective-orange-dark"
                     >
                       Find Friends
                     </button>
@@ -366,35 +383,41 @@ export default function FriendsPage() {
                     <DetectiveCard key={request.id}>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xl font-bold">
+                          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500">
+                            <span className="text-xl font-bold text-white">
                               {request.senderName.charAt(0).toUpperCase()}
                             </span>
                           </div>
                           <div>
-                            <h3 className="font-bold text-detective-text text-lg">{request.senderName}</h3>
-                            <div className="flex items-center gap-2 mt-1">
+                            <h3 className="text-lg font-bold text-detective-text">
+                              {request.senderName}
+                            </h3>
+                            <div className="mt-1 flex items-center gap-2">
                               <RankBadge rank={request.senderRank} showIcon={false} />
-                              <span className="text-sm text-detective-text-secondary">Level {request.senderLevel}</span>
+                              <span className="text-sm text-detective-text-secondary">
+                                Level {request.senderLevel}
+                              </span>
                             </div>
                             {request.message && (
-                              <p className="text-sm text-detective-text-secondary mt-2">"{request.message}"</p>
+                              <p className="mt-2 text-sm text-detective-text-secondary">
+                                "{request.message}"
+                              </p>
                             )}
                           </div>
                         </div>
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleAcceptRequest(request.id)}
-                            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-medium flex items-center gap-2"
+                            className="flex items-center gap-2 rounded-lg bg-green-500 px-4 py-2 font-medium text-white transition-colors hover:bg-green-600"
                           >
-                            <UserCheck className="w-4 h-4" />
+                            <UserCheck className="h-4 w-4" />
                             Accept
                           </button>
                           <button
                             onClick={() => handleDeclineRequest(request.id)}
-                            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium flex items-center gap-2"
+                            className="flex items-center gap-2 rounded-lg bg-gray-500 px-4 py-2 font-medium text-white transition-colors hover:bg-gray-600"
                           >
-                            <UserX className="w-4 h-4" />
+                            <UserX className="h-4 w-4" />
                             Decline
                           </button>
                         </div>
@@ -404,9 +427,11 @@ export default function FriendsPage() {
                 </div>
               ) : (
                 <DetectiveCard hoverable={false}>
-                  <div className="text-center py-12">
-                    <Clock className="w-16 h-16 text-detective-text-secondary/30 mx-auto mb-4" />
-                    <h3 className="text-xl font-bold text-detective-text mb-2">No Pending Requests</h3>
+                  <div className="py-12 text-center">
+                    <Clock className="mx-auto mb-4 h-16 w-16 text-detective-text-secondary/30" />
+                    <h3 className="mb-2 text-xl font-bold text-detective-text">
+                      No Pending Requests
+                    </h3>
                     <p className="text-detective-text-secondary">
                       You don't have any friend requests at the moment.
                     </p>
@@ -427,24 +452,24 @@ export default function FriendsPage() {
               {/* Search Input */}
               <DetectiveCard hoverable={false} className="mb-6">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-detective-text-secondary" />
+                  <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-detective-text-secondary" />
                   <input
                     type="text"
                     placeholder="Search users by name or email..."
-                    className="w-full pl-10 pr-4 py-3 border-2 border-detective-orange/30 rounded-lg focus:outline-none focus:border-detective-orange text-lg"
+                    className="w-full rounded-lg border-2 border-detective-orange/30 py-3 pl-10 pr-4 text-lg focus:border-detective-orange focus:outline-none"
                   />
                 </div>
               </DetectiveCard>
 
               {/* Recommendations */}
-              <h2 className="text-2xl font-bold text-detective-text mb-4">Recommended Friends</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <h2 className="mb-4 text-2xl font-bold text-detective-text">Recommended Friends</h2>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {recommendations.map((rec) => (
                   <DetectiveCard key={rec.userId}>
                     <div className="space-y-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-detective-blue to-purple-500 rounded-full flex items-center justify-center">
-                          <span className="text-white text-lg font-bold">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-detective-blue to-purple-500">
+                          <span className="text-lg font-bold text-white">
                             {rec.username.charAt(0).toUpperCase()}
                           </span>
                         </div>
@@ -464,9 +489,9 @@ export default function FriendsPage() {
 
                       <button
                         onClick={() => handleSendRequest(rec.userId)}
-                        className="w-full px-4 py-2 bg-detective-orange text-white rounded-lg hover:bg-detective-orange-dark transition-colors font-medium flex items-center justify-center gap-2"
+                        className="flex w-full items-center justify-center gap-2 rounded-lg bg-detective-orange px-4 py-2 font-medium text-white transition-colors hover:bg-detective-orange-dark"
                       >
-                        <UserPlus className="w-4 h-4" />
+                        <UserPlus className="h-4 w-4" />
                         Add Friend
                       </button>
                     </div>
@@ -490,14 +515,15 @@ export default function FriendsPage() {
                     <DetectiveCard key={activity.id} hoverable={false}>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-detective-orange to-detective-gold rounded-full flex items-center justify-center">
-                            <span className="text-white font-bold">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-detective-orange to-detective-gold">
+                            <span className="font-bold text-white">
                               {activity.username.charAt(0).toUpperCase()}
                             </span>
                           </div>
                           <div>
                             <p className="text-detective-text">
-                              <span className="font-bold">{activity.username}</span> {activity.description}
+                              <span className="font-bold">{activity.username}</span>{' '}
+                              {activity.description}
                             </p>
                             <p className="text-xs text-detective-text-secondary">
                               {formatLastActive(activity.timestamp)}
@@ -507,13 +533,13 @@ export default function FriendsPage() {
                         <button
                           onClick={() => praiseActivity(activity.id)}
                           className={cn(
-                            'px-3 py-2 rounded-lg transition-colors',
+                            'rounded-lg px-3 py-2 transition-colors',
                             activity.praised
                               ? 'bg-detective-gold text-white'
-                              : 'bg-detective-bg text-detective-text hover:bg-detective-gold hover:text-white'
+                              : 'bg-detective-bg text-detective-text hover:bg-detective-gold hover:text-white',
                           )}
                         >
-                          <Trophy className="w-5 h-5" />
+                          <Trophy className="h-5 w-5" />
                         </button>
                       </div>
                     </DetectiveCard>
@@ -521,11 +547,14 @@ export default function FriendsPage() {
                 </div>
               ) : (
                 <DetectiveCard hoverable={false}>
-                  <div className="text-center py-12">
-                    <Activity className="w-16 h-16 text-detective-text-secondary/30 mx-auto mb-4" />
-                    <h3 className="text-xl font-bold text-detective-text mb-2">No Activities Yet</h3>
+                  <div className="py-12 text-center">
+                    <Activity className="mx-auto mb-4 h-16 w-16 text-detective-text-secondary/30" />
+                    <h3 className="mb-2 text-xl font-bold text-detective-text">
+                      No Activities Yet
+                    </h3>
                     <p className="text-detective-text-secondary">
-                      Friend activities will appear here when they complete exercises and unlock achievements.
+                      Friend activities will appear here when they complete exercises and unlock
+                      achievements.
                     </p>
                   </div>
                 </DetectiveCard>

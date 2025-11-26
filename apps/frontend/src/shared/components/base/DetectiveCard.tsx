@@ -37,10 +37,11 @@ export const DetectiveCard = React.forwardRef<HTMLDivElement, DetectiveCardProps
       hoverable = true,
       padding = 'md',
       onClick,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       as,
       ...props
     },
-    ref
+    ref,
   ) => {
     const isExerciseCard = variant === 'exercise';
     const isClickable = !!onClick;
@@ -74,7 +75,7 @@ export const DetectiveCard = React.forwardRef<HTMLDivElement, DetectiveCardProps
           // Clickable state
           isClickable && 'cursor-pointer',
           // Custom className
-          className
+          className,
         )}
         role={isClickable ? 'button' : undefined}
         tabIndex={isClickable ? 0 : undefined}
@@ -94,7 +95,7 @@ export const DetectiveCard = React.forwardRef<HTMLDivElement, DetectiveCardProps
         {children}
       </Component>
     );
-  }
+  },
 );
 
 DetectiveCard.displayName = 'DetectiveCard';

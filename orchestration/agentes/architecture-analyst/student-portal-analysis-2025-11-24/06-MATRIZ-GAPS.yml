@@ -1,0 +1,502 @@
+# MATRIZ DE GAPS - PORTAL STUDENT
+# Fecha: 2025-11-24
+# Analista: Architecture-Analyst
+# Formato: YAML estructurado para procesamiento automatizado
+
+metadata:
+  fecha_analisis: "2025-11-24"
+  analista: "Architecture-Analyst"
+  version: "1.0"
+  proyecto: "GAMILIT"
+  alcance: "Portal Student - Análisis completo Frontend + Backend + Database"
+
+gaps:
+  - id: STUDENT-GAP-001
+    titulo: "Misiones - Recompensas no se otorgan"
+    categoria: integracion
+    subcategoria: backend_service
+    severidad: critica
+    prioridad: P0
+    feature: missions
+    estado: pendiente
+
+    descripcion: "El método MissionsService.claimRewards() marca la misión como 'claimed' pero NO transfiere XP ni ML Coins al usuario"
+
+    capas_afectadas:
+      frontend:
+        estado: completo
+        descripcion: "Frontend espera recibir recompensas al reclamar misión completada"
+        archivos:
+          - "apps/frontend/src/services/api/missionsAPI.ts"
+          - "apps/frontend/src/features/gamification/missions/hooks/useMissions.ts"
+      backend:
+        estado: incompleto
+        descripcion: "Service marca misión como claimed pero NO otorga recompensas reales"
+        archivos:
+          - "apps/backend/src/modules/gamification/services/missions.service.ts:467"
+        evidencia_codigo: |
+          // TODO: Integrar con MLCoinsService y UserStatsService para otorgar recompensas reales.
+      database:
+        estado: completo
+        descripcion: "Tablas soportan almacenamiento de recompensas correctamente"
+        tablas:
+          - "gamification_system.missions"
+          - "gamification_system.user_stats"
+          - "gamification_system.ml_coins_transactions"
+
+    impacto:
+      usuario: "Students completan misiones pero NO reciben XP ni ML Coins prometidos"
+      funcionalidad: "Sistema de misiones no funcional - recompensas no se otorgan"
+      datos: "Discrepancia entre misiones claimed y stats de usuario"
+      gravedad: "Alta - Feature core no funciona como esperado"
+
+    recomendacion:
+      accion: "Implementar integración con MLCoinsService y UserStatsService"
+      pasos:
+        - "1. En MissionsService.claimRewards(), inyectar MLCoinsService y UserStatsService"
+        - "2. Parsear mission.rewards (JSONB) para obtener xp_reward y ml_coins_reward"
+        - "3. Llamar UserStatsService.incrementXP(userId, xp_reward)"
+        - "4. Llamar MLCoinsService.addCoins(userId, ml_coins_reward, 'mission_reward')"
+        - "5. Verificar promoción de rango si XP cambió"
+        - "6. Retornar mission con rewards actualizados"
+      estimacion_complejidad: baja
+      estimacion_tiempo: "1-2 horas"
+
+    documentos_relacionados:
+      - "orchestration/agentes/architecture-analyst/student-portal-analysis-2025-11-24/02-FRONTEND-IMPLEMENTATION.md"
+      - "orchestration/agentes/architecture-analyst/student-portal-analysis-2025-11-24/03-BACKEND-APIS.md"
+      - "apps/backend/src/modules/gamification/services/missions.service.ts"
+
+    validacion:
+      criterios:
+        - "✅ Reclamar misión completada incrementa user_stats.total_xp"
+        - "✅ Reclamar misión completada incrementa user_stats.ml_coins"
+        - "✅ Se crea registro en ml_coins_transactions con type='mission_reward'"
+        - "✅ Se verifica promoción de rango automáticamente"
+        - "✅ Response incluye recompensas otorgadas"
+      test_cases:
+        - descripcion: "Reclamar misión daily completada otorga 50 XP y 20 ML Coins"
+          pasos:
+            - "1. Completar misión daily (completar 3 ejercicios)"
+            - "2. POST /gamification/missions/:id/claim"
+            - "3. Verificar user_stats.total_xp incrementó +50"
+            - "4. Verificar user_stats.ml_coins incrementó +20"
+            - "5. Verificar transaction en ml_coins_transactions"
+
+  - id: STUDENT-GAP-002
+    titulo: "Actividades - Definición de alcance conceptual"
+    categoria: arquitectura
+    subcategoria: modelado_dominio
+    severidad: baja
+    prioridad: P3
+    feature: activities
+    estado: pendiente_decision
+
+    descripcion: "No existe feature 'Activities' como sistema independiente. Ambigüedad conceptual entre Activities y Exercises"
+
+    capas_afectadas:
+      frontend:
+        estado: no_implementado
+        descripcion: "No existen componentes ActivitiesPage ni ActivitiesAPI"
+      backend:
+        estado: no_implementado
+        descripcion: "No existen ActivitiesController ni ActivitiesService"
+      database:
+        estado: no_implementado
+        descripcion: "No existe tabla activities en educational_content"
+
+    impacto:
+      usuario: "Ninguno - concepto no afecta funcionalidad actual"
+      funcionalidad: "Ambigüedad en documentación y roadmap"
+      datos: "No aplica"
+      gravedad: "Baja - solo clarificación conceptual"
+
+    recomendacion:
+      accion: "Definir alcance de 'Activities' con stakeholders"
+      opciones:
+        opcion_a:
+          titulo: "Activities = Exercises (alias)"
+          descripcion: "Aclarar en documentación que 'Activities' es sinónimo de 'Exercises'"
+          impacto: "Solo actualización de docs, sin código"
+          estimacion: "1 hora"
+        opcion_b:
+          titulo: "Activities = Feature nueva separada"
+          descripcion: "Implementar Activities como contenedor de múltiples Exercises"
+          impacto: "Requiere implementación en 3 capas"
+          estimacion: "2-3 días"
+      decision_pendiente: true
+      requiere_aprobacion: stakeholders
+
+    documentos_relacionados:
+      - "docs/architecture/domain-model.md"
+      - "orchestration/agentes/architecture-analyst/student-portal-analysis-2025-11-24/05-CONSOLIDACION-HALLAZGOS.md"
+
+    validacion:
+      criterios:
+        - "✅ Documentación clara sobre el concepto"
+        - "✅ Stakeholders aprueban definición"
+
+  - id: STUDENT-GAP-003
+    titulo: "Ejercicios - Workaround formato envío FE-049"
+    categoria: deuda_tecnica
+    subcategoria: api_compatibility
+    severidad: media
+    prioridad: P1
+    feature: exercises
+    estado: pendiente
+
+    descripcion: "Backend acepta 2 formatos de request para envío de ejercicios. Workaround temporal que añade complejidad"
+
+    capas_afectadas:
+      frontend:
+        estado: parcial
+        descripcion: "Frontend envía formato nuevo pero backend soporta ambos"
+        archivos:
+          - "apps/frontend/src/apps/student/pages/ExercisePage.tsx:329-412"
+      backend:
+        estado: workaround_temporal
+        descripcion: "Endpoint acepta ambos formatos antiguo y nuevo. TODO: remover workaround"
+        archivos:
+          - "apps/backend/src/modules/educational/controllers/exercises.controller.ts:787-824"
+        evidencia_codigo: |
+          // Endpoint acepta AMBOS formatos de request:
+          // - Formato antiguo: { userId, submitted_answers, ... }
+          // - Formato nuevo (problemático): { answers, startedAt, hintsUsed, powerupsUsed }
+          // TODO: Remover workaround cuando Frontend se refactorice
+      database:
+        estado: completo
+        descripcion: "Database no afectada, almacena datos correctamente"
+
+    impacto:
+      usuario: "Ninguno - funciona correctamente con ambos formatos"
+      funcionalidad: "Deuda técnica, código duplicado en backend"
+      datos: "No afecta integridad de datos"
+      gravedad: "Media - riesgo de bugs por complejidad innecesaria"
+
+    recomendacion:
+      accion: "Refactorizar para usar único formato consistente"
+      pasos:
+        - "1. Validar que TODOS los componentes frontend usan formato nuevo"
+        - "2. En backend, remover soporte para formato antiguo"
+        - "3. Simplificar lógica de ExercisesController.submitExercise()"
+        - "4. Actualizar tests e2e"
+        - "5. Deploy coordinado frontend + backend"
+      estimacion_complejidad: media
+      estimacion_tiempo: "4-6 horas"
+
+    documentos_relacionados:
+      - "Issue FE-049"
+      - "apps/backend/src/modules/educational/controllers/exercises.controller.ts"
+
+    validacion:
+      criterios:
+        - "✅ Backend solo acepta formato nuevo"
+        - "✅ Tests e2e pasan con formato nuevo"
+        - "✅ No hay errores en producción post-deploy"
+
+  - id: STUDENT-GAP-004
+    titulo: "Ejercicios - Fallback a mock data en producción"
+    categoria: riesgo_produccion
+    subcategoria: error_handling
+    severidad: baja
+    prioridad: P2
+    feature: exercises
+    estado: pendiente
+
+    descripcion: "ExercisePage tiene fallback a mock data si API falla. Intencional para dev/offline, pero confuso en producción"
+
+    capas_afectadas:
+      frontend:
+        estado: implementado_con_fallback
+        descripcion: "Fallback a mock data si fetch exercise falla"
+        archivos:
+          - "apps/frontend/src/apps/student/pages/ExercisePage.tsx:233-256"
+        evidencia_codigo: |
+          } catch (error) {
+            console.error('Error loading exercise:', error);
+            // ⚠️ FALLBACK to mock data if API fails
+          }
+      backend:
+        estado: no_aplica
+      database:
+        estado: no_aplica
+
+    impacto:
+      usuario: "Confusión si ve ejercicio fake cuando API está caída"
+      funcionalidad: "Modo desarrollo útil, pero arriesgado en producción"
+      datos: "No afecta integridad (fallback es read-only)"
+      gravedad: "Baja - edge case raro"
+
+    recomendacion:
+      accion: "Deshabilitar fallback en producción con env variable"
+      pasos:
+        - "1. Añadir check: if (process.env.NODE_ENV === 'development') { fallback }"
+        - "2. En producción, mostrar error claro sin fallback"
+        - "3. Logging adecuado del error para debugging"
+      estimacion_complejidad: baja
+      estimacion_tiempo: "30 minutos"
+
+    validacion:
+      criterios:
+        - "✅ En dev: fallback funciona"
+        - "✅ En prod: NO hay fallback, muestra error"
+
+  - id: STUDENT-GAP-005
+    titulo: "Rangos - Multiplicador calculado localmente en frontend"
+    categoria: mejora
+    subcategoria: logica_negocio
+    severidad: baja
+    prioridad: P3
+    feature: ranks
+    estado: opcional
+
+    descripcion: "Multiplicador de rango se calcula en frontend. Lógica de negocio duplicada, podría centralizarse en backend"
+
+    capas_afectadas:
+      frontend:
+        estado: implementado_local
+        descripcion: "Función getRankMultiplier() en frontend calcula multiplicador"
+        archivos:
+          - "apps/frontend/src/apps/student/hooks/useDashboardData.ts:172-180"
+      backend:
+        estado: no_provee
+        descripcion: "Backend NO retorna multiplier en response de rank"
+        archivos:
+          - "apps/backend/src/modules/gamification/services/ranks.service.ts"
+      database:
+        estado: no_almacena
+        descripcion: "Multiplier no está almacenado en DB (calculado)"
+
+    impacto:
+      usuario: "Ninguno - funciona correctamente"
+      funcionalidad: "Lógica duplicada entre frontend y backend"
+      datos: "No afecta"
+      gravedad: "Baja - mejora de arquitectura, no bloqueante"
+
+    recomendacion:
+      accion: "OPCIONAL - Centralizar lógica en backend"
+      pasos:
+        - "1. Backend calcular multiplier en RanksService"
+        - "2. Incluir multiplier en response de getUserRankProgress()"
+        - "3. Frontend usar multiplier de API en lugar de calcular"
+      beneficios:
+        - "Lógica de negocio centralizada"
+        - "Más fácil actualizar multiplicadores en futuro"
+        - "Frontend más simple"
+      estimacion_complejidad: baja
+      estimacion_tiempo: "2-3 horas"
+      nota: "No es bloqueante, puede hacerse en backlog"
+
+    validacion:
+      criterios:
+        - "✅ Backend retorna multiplier en response"
+        - "✅ Frontend usa multiplier de API"
+
+  - id: STUDENT-GAP-006
+    titulo: "Perfil - Estadísticas hardcodeadas en ProfilePage"
+    categoria: integracion
+    subcategoria: frontend_api
+    severidad: alta
+    prioridad: P0
+    feature: profile
+    estado: pendiente
+
+    descripcion: "ProfilePage muestra estadísticas HARDCODED (350 coins, 12/50 logros) en lugar de consumir endpoint real"
+
+    capas_afectadas:
+      frontend:
+        estado: hardcoded
+        descripcion: "Stats son valores fijos en código, no consumen API"
+        archivos:
+          - "apps/frontend/src/apps/student/pages/ProfilePage.tsx:14-15"
+        evidencia_codigo: |
+          const stats = [
+            { label: 'ML Coins', value: '350', icon: Coins },  // ← HARDCODED
+            { label: 'Logros Desbloqueados', value: '12/50', icon: Trophy },  // ← HARDCODED
+            { label: 'Ejercicios Completados', value: '28', icon: Target },  // ← HARDCODED
+          ];
+      backend:
+        estado: completo
+        descripcion: "Endpoint /users/statistics existe y provee datos reales"
+        archivos:
+          - "apps/backend/src/modules/auth/controllers/users.controller.ts"
+        endpoints:
+          - "GET /api/users/statistics"
+      database:
+        estado: completo
+        descripcion: "user_stats tiene todos los datos necesarios"
+        tablas:
+          - "gamification_system.user_stats"
+
+    impacto:
+      usuario: "Students ven datos FAKE en su perfil (siempre 350 coins, 12/50 logros)"
+      funcionalidad: "Perfil no muestra progreso real del estudiante"
+      datos: "Datos reales existen en DB pero no se muestran"
+      gravedad: "Alta - información incorrecta al usuario"
+
+    recomendacion:
+      accion: "Conectar ProfilePage a endpoint /users/statistics"
+      pasos:
+        - "1. Crear o usar hook useUserStatistics(userId)"
+        - "2. Reemplazar stats hardcoded con datos de API"
+        - "3. Mapear response de API a formato de stats array"
+        - "4. Añadir loading state y error handling"
+      codigo_sugerido: |
+        // ProfilePage.tsx
+        const { data: userStats } = useUserStatistics(user?.id);
+
+        const stats = [
+          { label: 'ML Coins', value: userStats?.ml_coins || 0, icon: Coins },
+          { label: 'Logros Desbloqueados', value: `${userStats?.achievements_earned || 0}/50`, icon: Trophy },
+          { label: 'Ejercicios Completados', value: userStats?.exercises_completed || 0, icon: Target },
+        ];
+      estimacion_complejidad: baja
+      estimacion_tiempo: "1-2 horas"
+
+    documentos_relacionados:
+      - "apps/frontend/src/apps/student/pages/ProfilePage.tsx"
+      - "apps/backend/src/modules/auth/controllers/users.controller.ts"
+
+    validacion:
+      criterios:
+        - "✅ ProfilePage consume endpoint /users/statistics"
+        - "✅ Stats mostradas coinciden con datos de user_stats"
+        - "✅ Stats se actualizan al completar ejercicios/misiones"
+
+  - id: STUDENT-GAP-007
+    titulo: "Settings - Guardar configuraciones es mock (no persiste)"
+    categoria: integracion
+    subcategoria: frontend_api
+    severidad: alta
+    prioridad: P0
+    feature: settings
+    estado: pendiente
+
+    descripcion: "SettingsPage simula guardar configuraciones con setTimeout pero NO persiste en backend"
+
+    capas_afectadas:
+      frontend:
+        estado: mock
+        descripcion: "handleSave() simula guardado con setTimeout, no llama API"
+        archivos:
+          - "apps/frontend/src/apps/student/pages/SettingsPage.tsx:94-102"
+        evidencia_codigo: |
+          const handleSave = async () => {
+            setSaveStatus('saving');
+
+            // ⚠️ Simulate API call - NO HAY LLAMADA REAL
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            setSaveStatus('saved');
+            setTimeout(() => setSaveStatus('idle'), 2000);
+          };
+      backend:
+        estado: completo
+        descripcion: "Endpoints existen y funcionan correctamente"
+        archivos:
+          - "apps/backend/src/modules/auth/controllers/users.controller.ts"
+        endpoints:
+          - "PUT /api/users/profile"
+          - "PUT /api/users/preferences"
+          - "PUT /api/users/password"
+          - "POST /api/users/avatar"
+      database:
+        estado: completo
+        descripcion: "Tabla profiles soporta todos los campos editables"
+        tablas:
+          - "auth_management.profiles"
+
+    impacto:
+      usuario: "Students NO pueden editar su perfil/configuraciones (cambios no persisten)"
+      funcionalidad: "Settings page completamente no funcional"
+      datos: "Cambios se pierden al recargar página"
+      gravedad: "Alta - feature core no funciona"
+
+    recomendacion:
+      accion: "Conectar SettingsPage a endpoints backend"
+      pasos:
+        - "1. Crear profileAPI.ts con métodos:"
+        - "   - updateProfile(userId, data)"
+        - "   - updatePreferences(userId, preferences)"
+        - "   - uploadAvatar(userId, file)"
+        - "   - updatePassword(userId, { oldPassword, newPassword })"
+        - "2. Reemplazar handleSave() mock con llamadas API reales"
+        - "3. Añadir error handling y validación de respuestas"
+        - "4. Mostrar toast de éxito/error al usuario"
+      codigo_sugerido: |
+        // profileAPI.ts
+        export const profileAPI = {
+          updateProfile: (userId: string, data) =>
+            apiClient.put(`/users/${userId}/profile`, data),
+
+          updatePreferences: (userId: string, preferences) =>
+            apiClient.put(`/users/${userId}/preferences`, { preferences }),
+
+          uploadAvatar: (userId: string, file: File) => {
+            const formData = new FormData();
+            formData.append('avatar', file);
+            return apiClient.post(`/users/${userId}/avatar`, formData);
+          },
+
+          updatePassword: (userId: string, passwords) =>
+            apiClient.put(`/users/${userId}/password`, passwords)
+        };
+
+        // SettingsPage.tsx
+        const handleSave = async () => {
+          setSaveStatus('saving');
+          try {
+            await profileAPI.updateProfile(user.id, profile);
+            await profileAPI.updatePreferences(user.id, preferences);
+            setSaveStatus('saved');
+            toast.success('Configuración guardada correctamente');
+          } catch (error) {
+            setSaveStatus('error');
+            toast.error('Error al guardar configuración');
+          }
+        };
+      estimacion_complejidad: media
+      estimacion_tiempo: "4-6 horas"
+
+    documentos_relacionados:
+      - "apps/frontend/src/apps/student/pages/SettingsPage.tsx"
+      - "apps/backend/src/modules/auth/controllers/users.controller.ts"
+
+    validacion:
+      criterios:
+        - "✅ Guardar configuraciones persiste en DB"
+        - "✅ Recargar página muestra configuraciones guardadas"
+        - "✅ Upload de avatar actualiza avatar_url en profiles"
+        - "✅ Cambio de contraseña funciona correctamente"
+        - "✅ Error handling correcto (mensajes al usuario)"
+
+# RESUMEN
+summary:
+  total_gaps: 7
+  por_severidad:
+    critica: 2  # GAP-001, GAP-006, GAP-007
+    alta: 0
+    media: 1    # GAP-003
+    baja: 4     # GAP-002, GAP-004, GAP-005
+  por_prioridad:
+    P0: 3       # GAP-001, GAP-006, GAP-007
+    P1: 1       # GAP-003
+    P2: 1       # GAP-004
+    P3: 2       # GAP-002, GAP-005
+  por_categoria:
+    integracion: 3
+    deuda_tecnica: 1
+    arquitectura: 1
+    riesgo_produccion: 1
+    mejora: 1
+  estado_general:
+    pendiente: 6
+    pendiente_decision: 1
+    opcional: 1
+
+# NOTAS
+notas:
+  - "Gaps P0 bloquean funcionalidad core y deben resolverse en sprint actual"
+  - "GAP-002 requiere decisión de stakeholders antes de implementar"
+  - "GAP-005 es opcional, puede quedarse en backlog"
+  - "Todos los gaps tienen estimaciones y pasos detallados para resolución"

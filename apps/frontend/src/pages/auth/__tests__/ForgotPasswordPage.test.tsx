@@ -26,7 +26,7 @@ describe('ForgotPasswordPage', () => {
     return render(
       <BrowserRouter>
         <ForgotPasswordPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
   };
 
@@ -47,18 +47,14 @@ describe('ForgotPasswordPage', () => {
       renderForgotPasswordPage();
 
       expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: /send reset link/i })
-      ).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /send reset link/i })).toBeInTheDocument();
     });
 
     it('should render header with title and description', () => {
       renderForgotPasswordPage();
 
       expect(screen.getByText(/forgot password\?/i)).toBeInTheDocument();
-      expect(
-        screen.getByText(/no worries! enter your email/i)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/no worries! enter your email/i)).toBeInTheDocument();
     });
 
     it('should render email input with correct attributes', () => {
@@ -99,9 +95,7 @@ describe('ForgotPasswordPage', () => {
       renderForgotPasswordPage();
 
       expect(screen.queryByText(/check your email/i)).not.toBeInTheDocument();
-      expect(
-        screen.queryByText(/we've sent a password reset link/i)
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText(/we've sent a password reset link/i)).not.toBeInTheDocument();
     });
   });
 
@@ -140,9 +134,7 @@ describe('ForgotPasswordPage', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/we've sent a password reset link/i)
-        ).toBeInTheDocument();
+        expect(screen.getByText(/we've sent a password reset link/i)).toBeInTheDocument();
       });
     });
 
@@ -160,7 +152,7 @@ describe('ForgotPasswordPage', () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(/didn't receive the email\? check your spam folder/i)
+          screen.getByText(/didn't receive the email\? check your spam folder/i),
         ).toBeInTheDocument();
       });
     });
@@ -178,9 +170,7 @@ describe('ForgotPasswordPage', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(
-          screen.getByRole('link', { name: /back to login/i })
-        ).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: /back to login/i })).toBeInTheDocument();
       });
     });
 
@@ -217,9 +207,7 @@ describe('ForgotPasswordPage', () => {
         expect(screen.getByText(/check your email/i)).toBeInTheDocument();
       });
 
-      expect(
-        screen.queryByRole('button', { name: /send reset link/i })
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /send reset link/i })).not.toBeInTheDocument();
       expect(screen.queryByLabelText(/email address/i)).not.toBeInTheDocument();
     });
   });
@@ -340,9 +328,7 @@ describe('ForgotPasswordPage', () => {
 
       // Wait for loading to complete
       await waitFor(() => {
-        expect(
-          screen.getByText(/we've sent a password reset link/i)
-        ).toBeInTheDocument();
+        expect(screen.getByText(/we've sent a password reset link/i)).toBeInTheDocument();
       });
     });
 
@@ -362,9 +348,7 @@ describe('ForgotPasswordPage', () => {
         expect(screen.getByText(/check your email/i)).toBeInTheDocument();
       });
 
-      expect(
-        screen.queryByText(/failed to send reset link/i)
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText(/failed to send reset link/i)).not.toBeInTheDocument();
     });
   });
 
@@ -377,7 +361,8 @@ describe('ForgotPasswordPage', () => {
       const user = userEvent.setup();
 
       // Mock setTimeout to throw error
-      vi.spyOn(global, 'setTimeout').mockImplementation((callback: any) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      vi.spyOn(global, 'setTimeout').mockImplementation((_callback: any) => {
         throw new Error('Network error');
       });
 
@@ -392,9 +377,7 @@ describe('ForgotPasswordPage', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/failed to send reset link/i)
-        ).toBeInTheDocument();
+        expect(screen.getByText(/failed to send reset link/i)).toBeInTheDocument();
       });
 
       vi.restoreAllMocks();
@@ -404,7 +387,8 @@ describe('ForgotPasswordPage', () => {
       const user = userEvent.setup();
 
       // Mock setTimeout to throw error
-      vi.spyOn(global, 'setTimeout').mockImplementation((callback: any) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      vi.spyOn(global, 'setTimeout').mockImplementation((_callback: any) => {
         throw new Error('Network error');
       });
 
@@ -446,9 +430,7 @@ describe('ForgotPasswordPage', () => {
       await user.click(submitButton);
 
       // Check for loading text (will briefly appear)
-      expect(
-        screen.getByRole('button', { name: /sending/i })
-      ).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /sending/i })).toBeInTheDocument();
     });
 
     it('should disable email input during submission', async () => {
@@ -524,9 +506,7 @@ describe('ForgotPasswordPage', () => {
 
       await waitFor(() => {
         expect(emailInput).toHaveAttribute('aria-describedby', 'email-error');
-        expect(
-          screen.getByRole('alert', { name: /email is required/i })
-        ).toBeInTheDocument();
+        expect(screen.getByRole('alert', { name: /email is required/i })).toBeInTheDocument();
       });
     });
 
@@ -534,7 +514,8 @@ describe('ForgotPasswordPage', () => {
       const user = userEvent.setup();
 
       // Mock setTimeout to throw error
-      vi.spyOn(global, 'setTimeout').mockImplementation((callback: any) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      vi.spyOn(global, 'setTimeout').mockImplementation((_callback: any) => {
         throw new Error('Network error');
       });
 

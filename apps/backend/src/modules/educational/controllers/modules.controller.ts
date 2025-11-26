@@ -17,8 +17,6 @@ import { ModulesService } from '../services';
 import { CreateModuleDto, ModuleResponseDto } from '../dto';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
 import { DifficultyLevelEnum } from '@/shared/constants/enums.constants';
-import { ExercisesService } from '../services/exercises.service';
-import { ExerciseSubmissionService } from '@/modules/progress/services';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 
 /**
@@ -28,6 +26,10 @@ import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
  * Endpoints para crear, leer, actualizar y eliminar módulos educativos,
  * así como filtrar por dificultad y obtener prerequisitos.
  *
+ * IMPORTANTE: Arquitectura dual de ejercicios
+ * - exercise_attempts: Ejercicios autocorregibles (requires_manual_grading = false)
+ * - exercise_submissions: Ejercicios con calificación manual (requires_manual_grading = true)
+ *
  * @route /api/v1/educational/modules
  */
 @ApiTags('Educational - Modules')
@@ -35,8 +37,6 @@ import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 export class ModulesController {
   constructor(
     private readonly modulesService: ModulesService,
-    private readonly exercisesService: ExercisesService,
-    private readonly exerciseSubmissionService: ExerciseSubmissionService,
   ) {}
 
   /**
@@ -55,7 +55,10 @@ export class ModulesController {
    *     "order_index": 0,
    *     ...
    *   }
-   * ]
+   *
+   * IMPORTANTE: Usa getUserModules que consulta AMBAS tablas:
+   * - exercise_attempts (autocorregibles)
+   * - exercise_submissions (calificación manual)
    */
   @UseGuards(JwtAuthGuard)
   @Get('modules')
@@ -100,51 +103,8 @@ export class ModulesController {
   })
   async findAll(@Request() req: any) {
     const userId = req.user.id;
-
-    // Obtener todos los módulos
-    const modules = await this.modulesService.findAll();
-
-    // Obtener todas las submissions del usuario
-    const allSubmissions = await this.exerciseSubmissionService.findByUserId(userId);
-
-    // Crear un mapa de ejercicios completados
-    const completedExercisesMap = new Map<string, boolean>();
-    allSubmissions.forEach((submission) => {
-      if (submission.status === 'graded') {
-        completedExercisesMap.set(submission.exercise_id, true);
-      }
-    });
-
-    // Obtener todos los ejercicios
-    const allExercises = await this.exercisesService.findAll();
-
-    // Agrupar ejercicios por módulo
-    const exercisesByModule = new Map<string, any[]>();
-    allExercises.forEach((exercise) => {
-      if (!exercisesByModule.has(exercise.module_id)) {
-        exercisesByModule.set(exercise.module_id, []);
-      }
-      exercisesByModule.get(exercise.module_id)!.push(exercise);
-    });
-
-    // Calcular progreso para cada módulo
-    return modules.map((module) => {
-      const moduleExercises = exercisesByModule.get(module.id) || [];
-      const totalExercises = moduleExercises.length;
-      const completedExercises = moduleExercises.filter((ex) =>
-        completedExercisesMap.has(ex.id),
-      ).length;
-      const progress = totalExercises > 0 ? Math.round((completedExercises / totalExercises) * 100) : 0;
-      const completed = totalExercises > 0 && completedExercises === totalExercises;
-
-      return {
-        ...module,
-        total_exercises: totalExercises,
-        completed_exercises: completedExercises,
-        progress,
-        completed,
-      };
-    });
+    // Reutilizar getUserModules que ya tiene la lógica correcta para ambas tablas
+    return await this.modulesService.getUserModules(userId);
   }
 
   /**

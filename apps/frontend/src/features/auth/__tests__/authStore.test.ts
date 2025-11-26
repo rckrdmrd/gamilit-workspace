@@ -31,9 +31,15 @@ describe('Auth Store', () => {
     let store: Record<string, string> = {};
     return {
       getItem: (key: string) => store[key] || null,
-      setItem: (key: string, value: string) => { store[key] = value; },
-      removeItem: (key: string) => { delete store[key]; },
-      clear: () => { store = {}; }
+      setItem: (key: string, value: string) => {
+        store[key] = value;
+      },
+      removeItem: (key: string) => {
+        delete store[key];
+      },
+      clear: () => {
+        store = {};
+      },
     };
   })();
 
@@ -53,7 +59,7 @@ describe('Auth Store', () => {
       isAuthenticated: false,
       isLoading: false,
       error: null,
-      sessionExpiresAt: null
+      sessionExpiresAt: null,
     });
   });
 
@@ -78,11 +84,11 @@ describe('Auth Store', () => {
         email: 'admin@gamilit.com',
         fullName: 'Admin User',
         role: 'admin',
-        emailVerified: true
+        emailVerified: true,
       },
       token: 'mock-access-token',
       refreshToken: 'mock-refresh-token',
-      expiresIn: '3600'
+      expiresIn: '3600',
     };
 
     it('should login successfully with valid credentials', async () => {
@@ -129,9 +135,7 @@ describe('Auth Store', () => {
       // Assert
       const state = useAuthStore.getState();
       expect(state.sessionExpiresAt).toBeGreaterThan(beforeLogin);
-      expect(state.sessionExpiresAt).toBeLessThanOrEqual(
-        Date.now() + 7 * 24 * 60 * 60 * 1000
-      );
+      expect(state.sessionExpiresAt).toBeLessThanOrEqual(Date.now() + 7 * 24 * 60 * 60 * 1000);
     });
 
     it('should set isLoading to true during login', async () => {
@@ -185,15 +189,15 @@ describe('Auth Store', () => {
 
     it('should set error message on login failure', async () => {
       // Arrange
-      vi.mocked(authAPI.login).mockRejectedValue(
-        new Error('Usuario no encontrado')
-      );
+      vi.mocked(authAPI.login).mockRejectedValue(new Error('Usuario no encontrado'));
 
       // Act
       const { login } = useAuthStore.getState();
       try {
         await login('nonexistent@email.com', 'password');
-      } catch {}
+      } catch {
+        /* Expected error, testing error state */
+      }
 
       // Assert
       expect(useAuthStore.getState().error).toBe('Usuario no encontrado');
@@ -207,7 +211,9 @@ describe('Auth Store', () => {
       const { login } = useAuthStore.getState();
       try {
         await login('test@test.com', 'password');
-      } catch {}
+      } catch {
+        /* Expected error, testing error state */
+      }
 
       // Assert
       expect(useAuthStore.getState().error).toBe('Error al iniciar sesión');
@@ -220,7 +226,7 @@ describe('Auth Store', () => {
       email: 'newuser@gamilit.com',
       password: 'SecurePass123!',
       confirmPassword: 'SecurePass123!',
-      acceptTerms: true
+      acceptTerms: true,
     };
 
     const mockRegisterResponse = {
@@ -229,11 +235,11 @@ describe('Auth Store', () => {
         email: 'newuser@gamilit.com',
         fullName: 'New User',
         role: 'student',
-        emailVerified: false
+        emailVerified: false,
       },
       token: 'mock-register-token',
       refreshToken: 'mock-register-refresh-token',
-      expiresIn: '3600'
+      expiresIn: '3600',
     };
 
     it('should register user successfully', async () => {
@@ -283,9 +289,7 @@ describe('Auth Store', () => {
 
     it('should fail registration with error', async () => {
       // Arrange
-      vi.mocked(authAPI.register).mockRejectedValue(
-        new Error('Email ya registrado')
-      );
+      vi.mocked(authAPI.register).mockRejectedValue(new Error('Email ya registrado'));
 
       // Act & Assert
       const { register } = useAuthStore.getState();
@@ -305,7 +309,9 @@ describe('Auth Store', () => {
       const { register } = useAuthStore.getState();
       try {
         await register(mockRegisterData);
-      } catch {}
+      } catch {
+        /* Expected error, testing error state */
+      }
 
       // Assert
       expect(useAuthStore.getState().error).toBe('Error al registrar usuario');
@@ -319,11 +325,11 @@ describe('Auth Store', () => {
         email: 'test@test.com',
         fullName: 'Test User',
         role: 'student',
-        emailVerified: true
+        emailVerified: true,
       },
       token: 'mock-token',
       refreshToken: 'mock-refresh',
-      expiresIn: '3600'
+      expiresIn: '3600',
     };
 
     it('should logout correctly and clear state', async () => {
@@ -399,7 +405,7 @@ describe('Auth Store', () => {
   describe('RefreshSession', () => {
     const mockRefreshResponse = {
       token: 'new-access-token',
-      refreshToken: 'new-refresh-token'
+      refreshToken: 'new-refresh-token',
     };
 
     it('should refresh session successfully', async () => {
@@ -436,9 +442,7 @@ describe('Auth Store', () => {
 
       // Act & Assert
       const { refreshSession } = useAuthStore.getState();
-      await expect(refreshSession()).rejects.toThrow(
-        'No hay token de refresco disponible'
-      );
+      await expect(refreshSession()).rejects.toThrow('No hay token de refresco disponible');
     });
 
     it('should logout user if refresh fails', async () => {
@@ -446,11 +450,9 @@ describe('Auth Store', () => {
       useAuthStore.setState({
         refreshToken: 'old-refresh-token',
         isAuthenticated: true,
-        user: { id: '1', email: 'test@test.com' } as any
+        user: { id: '1', email: 'test@test.com' } as any,
       });
-      vi.mocked(authAPI.refreshToken).mockRejectedValue(
-        new Error('Refresh token expirado')
-      );
+      vi.mocked(authAPI.refreshToken).mockRejectedValue(new Error('Refresh token expirado'));
       vi.mocked(authAPI.logout).mockResolvedValue();
 
       // Act & Assert
@@ -477,7 +479,7 @@ describe('Auth Store', () => {
         expect(state.isLoading).toBe(false);
         expect(state.error).toBeNull();
         expect(authAPI.requestPasswordReset).toHaveBeenCalledWith({
-          email: 'user@test.com'
+          email: 'user@test.com',
         });
       });
 
@@ -499,15 +501,11 @@ describe('Auth Store', () => {
 
       it('should handle request password reset failure', async () => {
         // Arrange
-        vi.mocked(authAPI.requestPasswordReset).mockRejectedValue(
-          new Error('Email no encontrado')
-        );
+        vi.mocked(authAPI.requestPasswordReset).mockRejectedValue(new Error('Email no encontrado'));
 
         // Act & Assert
         const { requestPasswordReset } = useAuthStore.getState();
-        await expect(
-          requestPasswordReset('nonexistent@test.com')
-        ).rejects.toThrow();
+        await expect(requestPasswordReset('nonexistent@test.com')).rejects.toThrow();
 
         const state = useAuthStore.getState();
         expect(state.error).toBe('Email no encontrado');
@@ -522,7 +520,9 @@ describe('Auth Store', () => {
         const { requestPasswordReset } = useAuthStore.getState();
         try {
           await requestPasswordReset('user@test.com');
-        } catch {}
+        } catch {
+          /* Expected error, testing error state */
+        }
 
         // Assert
         expect(useAuthStore.getState().error).toBe('Error al solicitar recuperación');
@@ -544,7 +544,7 @@ describe('Auth Store', () => {
         expect(state.error).toBeNull();
         expect(authAPI.resetPassword).toHaveBeenCalledWith({
           token: 'reset-token-123',
-          newPassword: 'NewPassword123!'
+          newPassword: 'NewPassword123!',
         });
       });
 
@@ -566,15 +566,11 @@ describe('Auth Store', () => {
 
       it('should handle reset password failure', async () => {
         // Arrange
-        vi.mocked(authAPI.resetPassword).mockRejectedValue(
-          new Error('Token inválido o expirado')
-        );
+        vi.mocked(authAPI.resetPassword).mockRejectedValue(new Error('Token inválido o expirado'));
 
         // Act & Assert
         const { resetPassword } = useAuthStore.getState();
-        await expect(
-          resetPassword('invalid-token', 'NewPass123!')
-        ).rejects.toThrow();
+        await expect(resetPassword('invalid-token', 'NewPass123!')).rejects.toThrow();
 
         const state = useAuthStore.getState();
         expect(state.error).toBe('Token inválido o expirado');
@@ -589,7 +585,9 @@ describe('Auth Store', () => {
         const { resetPassword } = useAuthStore.getState();
         try {
           await resetPassword('token', 'newpass');
-        } catch {}
+        } catch {
+          /* Expected error, testing error state */
+        }
 
         // Assert
         expect(useAuthStore.getState().error).toBe('Error al restablecer contraseña');
@@ -607,8 +605,8 @@ describe('Auth Store', () => {
         email: 'test@test.com',
         fullName: 'Test User',
         role: 'student',
-        emailVerified: false
-      }
+        emailVerified: false,
+      },
     });
 
     // Update user
@@ -624,7 +622,7 @@ describe('Auth Store', () => {
     // Set valid session
     useAuthStore.setState({
       isAuthenticated: true,
-      sessionExpiresAt: Date.now() + 10000 // 10 seconds from now
+      sessionExpiresAt: Date.now() + 10000, // 10 seconds from now
     });
 
     expect(checkSession()).toBe(true);
@@ -636,7 +634,7 @@ describe('Auth Store', () => {
     // Set expired session
     useAuthStore.setState({
       isAuthenticated: true,
-      sessionExpiresAt: Date.now() - 10000 // 10 seconds ago
+      sessionExpiresAt: Date.now() - 10000, // 10 seconds ago
     });
 
     expect(checkSession()).toBe(false);

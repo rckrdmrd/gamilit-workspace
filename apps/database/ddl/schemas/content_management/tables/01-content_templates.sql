@@ -43,7 +43,8 @@ CREATE INDEX idx_templates_tenant ON content_management.content_templates USING 
 CREATE INDEX idx_templates_type ON content_management.content_templates USING btree (template_type);
 
 -- Triggers
-CREATE TRIGGER trg_content_templates_updated_at BEFORE UPDATE ON content_management.content_templates FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
+-- NOTE: Trigger trg_content_templates_updated_at movido a archivo separado
+-- Ver: content_management/triggers/08-trg_content_templates_updated_at.sql
 
 -- Foreign Keys (P2-001 CORREGIDO: ON DELETE SET NULL agregado a created_by)
 ALTER TABLE ONLY content_management.content_templates

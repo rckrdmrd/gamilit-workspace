@@ -29,7 +29,7 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
       depth: false,
       relevance: false,
       sources: false,
-    }
+    },
   );
 
   const [startTime] = useState(new Date());
@@ -73,9 +73,7 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
   // Progress tracking
   useEffect(() => {
     const progress = calculateProgress();
-    onProgressUpdate?.(
-      normalizeProgressUpdate(progress, 0, 1, 0, 0)
-    );
+    onProgressUpdate?.(normalizeProgressUpdate(progress, 0, 1, 0, 0));
   }, [title, rating, summary, analysis, recommendation, criteria]);
 
   // Auto-save functionality
@@ -118,9 +116,6 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
   // Check/Verify handler
   const handleCheck = () => {
     const score = calculateScore();
-    const timeSpent = Math.floor(
-      (new Date().getTime() - startTime.getTime()) / 1000
-    );
 
     const isComplete =
       title &&
@@ -159,12 +154,10 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
     <>
       <DetectiveCard variant="default" padding="lg" className="mb-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-detective-orange/10 to-detective-blue/10 p-6 rounded-detective mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <BookOpen className="w-8 h-8 text-detective-orange" />
-            <h1 className="text-detective-3xl font-bold text-detective-text">
-              Reseña Crítica
-            </h1>
+        <div className="mb-6 rounded-detective bg-gradient-to-r from-detective-orange/10 to-detective-blue/10 p-6">
+          <div className="mb-2 flex items-center gap-3">
+            <BookOpen className="h-8 w-8 text-detective-orange" />
+            <h1 className="text-detective-3xl font-bold text-detective-text">Reseña Crítica</h1>
           </div>
           <p className="text-detective-text-secondary">
             Escribe una reseña crítica sobre una obra relacionada con Marie Curie.
@@ -175,13 +168,11 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
         <div className="mb-6">
           <div className="space-y-4">
             <div>
-              <label className="block text-detective-text font-medium mb-2">
-                Obra a reseñar:
-              </label>
+              <label className="mb-2 block font-medium text-detective-text">Obra a reseñar:</label>
               <select
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-4 py-2 border-2 border-detective-border-medium rounded-detective focus:border-detective-orange focus:outline-none transition-colors"
+                className="w-full rounded-detective border-2 border-detective-border-medium px-4 py-2 transition-colors focus:border-detective-orange focus:outline-none"
               >
                 <option value="">Selecciona una obra...</option>
                 {works.map((work: string, idx: number) => (
@@ -193,9 +184,7 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
             </div>
 
             <div>
-              <label className="block text-detective-text font-medium mb-2">
-                Calificación:
-              </label>
+              <label className="mb-2 block font-medium text-detective-text">Calificación:</label>
               <div className="flex items-center gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <motion.button
@@ -206,17 +195,13 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
                     whileTap={{ scale: 0.9 }}
                   >
                     <Star
-                      className={`w-10 h-10 transition-all ${
-                        star <= rating
-                          ? 'fill-detective-gold text-detective-gold'
-                          : 'text-gray-300'
+                      className={`h-10 w-10 transition-all ${
+                        star <= rating ? 'fill-detective-gold text-detective-gold' : 'text-gray-300'
                       }`}
                     />
                   </motion.button>
                 ))}
-                <span className="ml-3 text-2xl font-bold text-detective-text">
-                  {rating}/5
-                </span>
+                <span className="ml-3 text-2xl font-bold text-detective-text">{rating}/5</span>
               </div>
             </div>
           </div>
@@ -226,7 +211,7 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
         <div className="mb-6">
           <div className="space-y-4">
             <div>
-              <label className="block text-detective-text font-medium mb-2">
+              <label className="mb-2 block font-medium text-detective-text">
                 Resumen ({summary.length} caracteres, mín. {minSummaryLength})
               </label>
               <textarea
@@ -234,61 +219,57 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
                 onChange={(e) => setSummary(e.target.value)}
                 rows={4}
                 placeholder="Resume brevemente la obra..."
-                className="w-full px-4 py-2 border-2 border-detective-border-medium rounded-detective focus:border-detective-orange focus:outline-none resize-none transition-colors"
+                className="w-full resize-none rounded-detective border-2 border-detective-border-medium px-4 py-2 transition-colors focus:border-detective-orange focus:outline-none"
               />
               {summary.length > 0 && summary.length < minSummaryLength && (
-                <p className="text-detective-text-secondary text-sm mt-1">
+                <p className="mt-1 text-sm text-detective-text-secondary">
                   Faltan {minSummaryLength - summary.length} caracteres
                 </p>
               )}
             </div>
 
             <div>
-              <label className="block text-detective-text font-medium mb-2">
-                Análisis Crítico ({analysis.length} caracteres, mín.{' '}
-                {minAnalysisLength})
+              <label className="mb-2 block font-medium text-detective-text">
+                Análisis Crítico ({analysis.length} caracteres, mín. {minAnalysisLength})
               </label>
               <textarea
                 value={analysis}
                 onChange={(e) => setAnalysis(e.target.value)}
                 rows={8}
                 placeholder="Analiza aspectos positivos y negativos, estilo, precisión histórica..."
-                className="w-full px-4 py-2 border-2 border-detective-border-medium rounded-detective focus:border-detective-orange focus:outline-none resize-none transition-colors"
+                className="w-full resize-none rounded-detective border-2 border-detective-border-medium px-4 py-2 transition-colors focus:border-detective-orange focus:outline-none"
               />
               {analysis.length > 0 && analysis.length < minAnalysisLength && (
-                <p className="text-detective-text-secondary text-sm mt-1">
+                <p className="mt-1 text-sm text-detective-text-secondary">
                   Faltan {minAnalysisLength - analysis.length} caracteres
                 </p>
               )}
             </div>
 
             <div>
-              <label className="block text-detective-text font-medium mb-2">
-                Recomendación ({recommendation.length} caracteres, mín.{' '}
-                {minRecommendationLength})
+              <label className="mb-2 block font-medium text-detective-text">
+                Recomendación ({recommendation.length} caracteres, mín. {minRecommendationLength})
               </label>
               <textarea
                 value={recommendation}
                 onChange={(e) => setRecommendation(e.target.value)}
                 rows={3}
                 placeholder="¿A quién recomendarías esta obra y por qué?"
-                className="w-full px-4 py-2 border-2 border-detective-border-medium rounded-detective focus:border-detective-orange focus:outline-none resize-none transition-colors"
+                className="w-full resize-none rounded-detective border-2 border-detective-border-medium px-4 py-2 transition-colors focus:border-detective-orange focus:outline-none"
               />
-              {recommendation.length > 0 &&
-                recommendation.length < minRecommendationLength && (
-                  <p className="text-detective-text-secondary text-sm mt-1">
-                    Faltan {minRecommendationLength - recommendation.length}{' '}
-                    caracteres
-                  </p>
-                )}
+              {recommendation.length > 0 && recommendation.length < minRecommendationLength && (
+                <p className="mt-1 text-sm text-detective-text-secondary">
+                  Faltan {minRecommendationLength - recommendation.length} caracteres
+                </p>
+              )}
             </div>
           </div>
         </div>
 
         {/* Criteria Checklist */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <CheckSquare className="w-5 h-5 text-detective-orange" />
+          <div className="mb-4 flex items-center gap-2">
+            <CheckSquare className="h-5 w-5 text-detective-orange" />
             <h3 className="font-bold text-detective-text">Criterios de Evaluación</h3>
           </div>
           <div className="space-y-3">
@@ -301,17 +282,15 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
             }).map(([key, label]) => (
               <label
                 key={key}
-                className="flex items-center gap-3 cursor-pointer hover:bg-detective-bg-secondary/50 p-2 rounded transition-colors"
+                className="flex cursor-pointer items-center gap-3 rounded p-2 transition-colors hover:bg-detective-bg-secondary/50"
               >
                 <input
                   type="checkbox"
                   checked={criteria[key as keyof typeof criteria]}
-                  onChange={(e) =>
-                    setCriteria({ ...criteria, [key]: e.target.checked })
-                  }
-                  className="w-5 h-5 text-detective-orange focus:ring-detective-orange border-gray-300 rounded"
+                  onChange={(e) => setCriteria({ ...criteria, [key]: e.target.checked })}
+                  className="h-5 w-5 rounded border-gray-300 text-detective-orange focus:ring-detective-orange"
                 />
-                <span className="text-detective-text text-sm">{label}</span>
+                <span className="text-sm text-detective-text">{label}</span>
               </label>
             ))}
           </div>
@@ -319,26 +298,14 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-3">
-          <DetectiveButton
-            variant="primary"
-
-            onClick={handleCheck}
-          >
+          <DetectiveButton variant="primary" onClick={handleCheck}>
             Verificar Reseña
           </DetectiveButton>
-          <DetectiveButton
-            variant="secondary"
-
-            onClick={handleReset}
-          >
+          <DetectiveButton variant="secondary" onClick={handleReset}>
             Reiniciar
           </DetectiveButton>
           {onExit && (
-            <DetectiveButton
-              variant="secondary"
-
-              onClick={onExit}
-            >
+            <DetectiveButton variant="secondary" onClick={onExit}>
               Salir
             </DetectiveButton>
           )}
@@ -353,9 +320,7 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
           onClose={() => {
             setShowFeedback(false);
             if (feedback.type === 'success' && onComplete) {
-              const timeSpent = Math.floor(
-                (new Date().getTime() - startTime.getTime()) / 1000
-              );
+              const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
               onComplete(calculateScore(), timeSpent);
             }
           }}

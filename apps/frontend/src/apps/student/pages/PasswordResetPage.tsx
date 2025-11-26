@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -25,10 +25,10 @@ export default function PasswordResetPage() {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isValid }
+    formState: { errors, isValid },
   } = useForm<PasswordResetFormData>({
     resolver: zodResolver(passwordResetSchema),
-    mode: 'onChange'
+    mode: 'onChange',
   });
 
   const watchedPassword = watch('password', '');
@@ -72,20 +72,15 @@ export default function PasswordResetPage() {
   // Token inválido
   if (!tokenValid) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary flex items-center justify-center p-4">
-        <DetectiveCard className="max-w-md w-full">
-          <div className="text-center py-8">
-            <AlertTriangle className="w-16 h-16 text-detective-danger mx-auto mb-4" />
-            <h2 className="text-detective-title text-detective-danger mb-3">
-              Token Inválido
-            </h2>
-            <p className="text-detective-body text-detective-text-secondary mb-6">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-detective-bg to-detective-bg-secondary p-4">
+        <DetectiveCard className="w-full max-w-md">
+          <div className="py-8 text-center">
+            <AlertTriangle className="mx-auto mb-4 h-16 w-16 text-detective-danger" />
+            <h2 className="text-detective-title mb-3 text-detective-danger">Token Inválido</h2>
+            <p className="text-detective-body mb-6 text-detective-text-secondary">
               El enlace de recuperación es inválido o ha expirado.
             </p>
-            <DetectiveButton
-              variant="primary"
-              onClick={() => navigate('/password-recovery')}
-            >
+            <DetectiveButton variant="primary" onClick={() => navigate('/password-recovery')}>
               Solicitar Nuevo Enlace
             </DetectiveButton>
           </div>
@@ -97,18 +92,18 @@ export default function PasswordResetPage() {
   // Reset exitoso
   if (resetSuccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary flex items-center justify-center p-4">
-        <DetectiveCard className="max-w-md w-full">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-detective-bg to-detective-bg-secondary p-4">
+        <DetectiveCard className="w-full max-w-md">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-8"
+            className="py-8 text-center"
           >
-            <CheckCircle2 className="w-16 h-16 text-detective-success mx-auto mb-4" />
-            <h2 className="text-detective-title text-detective-success mb-3">
+            <CheckCircle2 className="mx-auto mb-4 h-16 w-16 text-detective-success" />
+            <h2 className="text-detective-title mb-3 text-detective-success">
               Contraseña Actualizada
             </h2>
-            <p className="text-detective-body text-detective-text-secondary mb-4">
+            <p className="text-detective-body mb-4 text-detective-text-secondary">
               Tu contraseña ha sido actualizada exitosamente.
             </p>
             <p className="text-detective-sm text-detective-text-secondary">
@@ -121,28 +116,23 @@ export default function PasswordResetPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary flex items-center justify-center p-4">
-      <DetectiveCard className="max-w-md w-full">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-detective-bg to-detective-bg-secondary p-4">
+      <DetectiveCard className="w-full max-w-md">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Target className="w-12 h-12 text-detective-orange" />
+        <div className="mb-8 text-center">
+          <div className="mb-4 flex items-center justify-center gap-2">
+            <Target className="h-12 w-12 text-detective-orange" />
             <h1 className="text-4xl font-bold text-detective-orange">GAMILIT</h1>
           </div>
-          <h2 className="text-detective-subtitle text-detective-text mb-2">
+          <h2 className="text-detective-subtitle mb-2 text-detective-text">
             Restablecer Contraseña
           </h2>
-          <p className="text-detective-text-secondary">
-            Ingresa tu nueva contraseña
-          </p>
+          <p className="text-detective-text-secondary">Ingresa tu nueva contraseña</p>
         </div>
 
         {/* Server Errors */}
         {serverError && (
-          <FormErrorDisplay
-            errors={[serverError]}
-            onDismiss={() => setServerError('')}
-          />
+          <FormErrorDisplay errors={[serverError]} onDismiss={() => setServerError('')} />
         )}
 
         {/* Form */}
@@ -173,11 +163,10 @@ export default function PasswordResetPage() {
           <DetectiveButton
             type="submit"
             variant="primary"
-
             loading={loading}
             disabled={!isValid || loading}
             className="w-full"
-            icon={<Lock className="w-5 h-5" />}
+            icon={<Lock className="h-5 w-5" />}
           >
             {loading ? 'Actualizando...' : 'Restablecer Contraseña'}
           </DetectiveButton>

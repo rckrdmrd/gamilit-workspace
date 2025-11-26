@@ -56,3 +56,8 @@ export interface AnalisisFuentesExerciseProps {
   difficulty?: 'easy' | 'medium' | 'hard';
   actionsRef?: React.MutableRefObject<AnalisisFuentesActions | undefined>;
 }
+
+// Answers format for backend submission (matches AnalisisFuentesAnswersDto)
+export interface AnalisisFuentesAnswers {
+  ranking: string[]; // Array of source IDs ordered by credibility (most credible first)
+}

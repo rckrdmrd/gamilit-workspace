@@ -19,9 +19,11 @@ export interface MapaConceptualExerciseProps {
 
 export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
   exercise,
-  onComplete,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onComplete: _onComplete,
   onProgressUpdate,
-  actionsRef
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  actionsRef: _actionsRef,
 }) => {
   const [connections, setConnections] = useState<string[]>([]);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
@@ -35,23 +37,26 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
   // FE-055: Notify parent of progress updates WITH user answers
   useEffect(() => {
     if (onProgressUpdate) {
-      const correctCount = connections.filter(conn => correctConnections.includes(conn)).length;
+      const correctCount = connections.filter((conn) => correctConnections.includes(conn)).length;
 
       // Send both progress metadata AND user answers
       onProgressUpdate({
         progress: {
           currentStep: correctCount,
           totalSteps: correctConnections.length,
-          score: correctConnections.length > 0 ? Math.floor((correctCount / correctConnections.length) * 100) : 0,
+          score:
+            correctConnections.length > 0
+              ? Math.floor((correctCount / correctConnections.length) * 100)
+              : 0,
           hintsUsed,
           timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
         },
-        answers: { connections }
+        answers: { connections },
       });
 
       console.log('📊 [MapaConceptual] Progress update sent:', {
         correctConnections: correctCount,
-        totalExpected: correctConnections.length
+        totalExpected: correctConnections.length,
       });
     }
   }, [connections, hintsUsed, onProgressUpdate, correctConnections, startTime]);
@@ -61,7 +66,7 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
       setSelectedNode(nodeId);
     } else if (selectedNode !== nodeId) {
       const connId = `${selectedNode}-${nodeId}`;
-      setConnections(prev => [...prev, connId]);
+      setConnections((prev) => [...prev, connId]);
       setSelectedNode(null);
     }
   };
@@ -82,20 +87,27 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
   return (
     <ExerciseContainer exercise={exercise}>
       <DetectiveCard variant="default" padding="lg">
-        <div className="relative w-full h-[600px] bg-gray-50 rounded-lg">
-          <svg className="absolute inset-0 w-full h-full">
+        <div className="relative h-[600px] w-full rounded-lg bg-gray-50">
+          <svg className="absolute inset-0 h-full w-full">
             {connections.map((conn, i) => {
               const [fromId, toId] = conn.split('-');
-              const from = nodes.find(n => n.id === fromId);
-              const to = nodes.find(n => n.id === toId);
+              const from = nodes.find((n) => n.id === fromId);
+              const to = nodes.find((n) => n.id === toId);
               return from && to ? <ConnectionLine key={i} from={from} to={to} /> : null;
             })}
           </svg>
-          {nodes.map(node => (
-            <ConceptNode key={node.id} node={node} isSelected={selectedNode === node.id} onClick={() => handleNodeClick(node.id)} />
+          {nodes.map((node) => (
+            <ConceptNode
+              key={node.id}
+              node={node}
+              isSelected={selectedNode === node.id}
+              onClick={() => handleNodeClick(node.id)}
+            />
           ))}
         </div>
-        <DetectiveButton variant="gold" icon={<Check />} className="mt-4">Verificar</DetectiveButton>
+        <DetectiveButton variant="gold" icon={<Check />} className="mt-4">
+          Verificar
+        </DetectiveButton>
       </DetectiveCard>
     </ExerciseContainer>
   );

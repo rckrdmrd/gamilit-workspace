@@ -34,7 +34,8 @@ export const useGuilds = () => {
     return guildMembers.filter((m) => m.role === 'leader' || m.role === 'officer');
   };
 
-  const canJoinGuild = (guildId: string, userLevel: number = 1, userRank: string = 'Nacom') => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const canJoinGuild = (guildId: string, userLevel: number = 1, _userRank: string = 'Nacom') => {
     const guild = allGuilds.find((g) => g.id === guildId);
     if (!guild || guild.memberCount >= guild.maxMembers) return false;
 

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { CompletarEspaciosData, BlankSpace } from './completarEspaciosTypes';
-import { calculateScore, saveProgress } from '@shared/components/mechanics/mechanicsTypes';
+import { saveProgress } from '@shared/components/mechanics/mechanicsTypes';
 import { Check, X, Sparkles } from 'lucide-react';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { submitExercise } from '@/features/progress/api/progressAPI';
@@ -23,22 +23,21 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
   exercise,
   onComplete,
   onProgressUpdate,
-  actionsRef
+  actionsRef,
 }) => {
   const { user } = useAuth();
   const [blanks, setBlanks] = useState<BlankSpace[]>(
-    exercise.blanks.map(blank => ({ ...blank, userAnswer: '' }))
+    exercise.blanks.map((blank) => ({ ...blank, userAnswer: '' })),
   );
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [usedWords, setUsedWords] = useState<string[]>([]);
-  const [hintsUsed, setHintsUsed] = useState(0);
+  const [hintsUsed] = useState(0);
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [showResults, setShowResults] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const answeredCount = blanks.filter(b => b.userAnswer && b.userAnswer.trim() !== '').length;
+  const answeredCount = blanks.filter((b) => b.userAnswer && b.userAnswer.trim() !== '').length;
 
   // FE-059: Removed local validation - correctAnswer field no longer available
   // Validation is now done server-side via backend API
@@ -53,7 +52,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
     if (onProgressUpdate) {
       // Prepare user answers: blank-id: user's answer
       const userAnswers: Record<string, string> = {};
-      blanks.forEach(blank => {
+      blanks.forEach((blank) => {
         if (blank.userAnswer && blank.userAnswer.trim() !== '') {
           userAnswers[blank.id] = blank.userAnswer;
         }
@@ -68,12 +67,12 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
           hintsUsed,
           timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
         },
-        answers: { blanks: userAnswers }
+        answers: { blanks: userAnswers },
       });
 
       console.log('📊 [CompletarEspacios] Progress update sent:', {
         answered: answeredCount,
-        totalBlanks: blanks.length
+        totalBlanks: blanks.length,
       });
     }
   }, [blanks, hintsUsed, usedWords, onProgressUpdate, answeredCount, startTime, exercise.id]);
@@ -86,39 +85,39 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
   const handleBlankClick = (blankId: string) => {
     if (showResults || !selectedWord) return;
 
-    setBlanks(prev =>
-      prev.map(blank => {
+    setBlanks((prev) =>
+      prev.map((blank) => {
         if (blank.id === blankId) {
           // If blank already has an answer, return that word to available pool
           if (blank.userAnswer && blank.userAnswer.trim() !== '') {
-            setUsedWords(prevUsed => prevUsed.filter(w => w !== blank.userAnswer));
+            setUsedWords((prevUsed) => prevUsed.filter((w) => w !== blank.userAnswer));
           }
           // Set the new answer
-          setUsedWords(prevUsed => [...prevUsed, selectedWord]);
+          setUsedWords((prevUsed) => [...prevUsed, selectedWord]);
           setSelectedWord(null);
           return { ...blank, userAnswer: selectedWord };
         }
         return blank;
-      })
+      }),
     );
   };
 
   const handleClearBlank = (blankId: string) => {
     if (showResults) return;
 
-    setBlanks(prev =>
-      prev.map(blank => {
+    setBlanks((prev) =>
+      prev.map((blank) => {
         if (blank.id === blankId && blank.userAnswer) {
-          setUsedWords(prevUsed => prevUsed.filter(w => w !== blank.userAnswer));
+          setUsedWords((prevUsed) => prevUsed.filter((w) => w !== blank.userAnswer));
           return { ...blank, userAnswer: '' };
         }
         return blank;
-      })
+      }),
     );
   };
 
   const handleCheck = async () => {
-    const allAnswered = blanks.every(b => b.userAnswer && b.userAnswer.trim() !== '');
+    const allAnswered = blanks.every((b) => b.userAnswer && b.userAnswer.trim() !== '');
 
     if (!allAnswered) {
       setFeedback({
@@ -141,13 +140,12 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
       return;
     }
 
-    setIsSubmitting(true);
     setShowResults(true);
 
     try {
       // Prepare answers in backend DTO format: { blanks: { b1: "word1", b2: "word2" } }
       const answersObj: Record<string, string> = {};
-      blanks.forEach(b => {
+      blanks.forEach((b) => {
         if (b.userAnswer && b.userAnswer.trim() !== '') {
           answersObj[b.id] = b.userAnswer;
         }
@@ -155,13 +153,12 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
 
       // ✅ FIX BUG-005: Validate that at least one blank is filled
       if (Object.keys(answersObj).length === 0) {
-        setIsSubmitting(false);
         setShowResults(false);
         setFeedback({
           type: 'error',
           title: '¡Espera!',
           message: 'Debes completar al menos un espacio en blanco antes de enviar.',
-          score: 0
+          score: 0,
         });
         setShowFeedback(true);
         return;
@@ -169,7 +166,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
 
       console.log('📝 [CompletarEspacios] Submitting with answers:', {
         blankCount: Object.keys(answersObj).length,
-        totalBlanks: blanks.length
+        totalBlanks: blanks.length,
       });
 
       // Submit to backend API
@@ -178,17 +175,23 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
       // Show backend response
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
-        title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
-        message: response.feedback?.overall || `Has obtenido ${response.correctAnswersCount} de ${response.totalQuestions} respuestas correctas.`,
+        title: response.isPerfect
+          ? '¡Perfecto!'
+          : response.score >= 70
+            ? '¡Buen trabajo!'
+            : 'Intenta de nuevo',
+        message:
+          response.feedback?.overall ||
+          `Has obtenido ${response.correctAnswersCount} de ${response.totalQuestions} respuestas correctas.`,
         score: response.score,
-        showConfetti: response.isPerfect
+        showConfetti: response.isPerfect,
       });
       setShowFeedback(true);
 
       console.log('✅ [CompletarEspacios] Submission successful:', {
         attemptId: response.attemptId,
         score: response.score,
-        rewards: response.rewards
+        rewards: response.rewards,
       });
     } catch (error) {
       console.error('❌ [CompletarEspacios] Submission error:', error);
@@ -198,13 +201,11 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
         message: 'Hubo un problema al enviar tu respuesta. Por favor, intenta nuevamente.',
       });
       setShowFeedback(true);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleReset = () => {
-    setBlanks(exercise.blanks.map(blank => ({ ...blank, userAnswer: '' })));
+    setBlanks(exercise.blanks.map((blank) => ({ ...blank, userAnswer: '' })));
     setUsedWords([]);
     setSelectedWord(null);
     setShowResults(false);
@@ -217,21 +218,21 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
     if (actionsRef) {
       actionsRef.current = {
         handleReset,
-        handleCheck
+        handleCheck,
       };
     }
   }, [actionsRef, handleReset, handleCheck]);
 
   // Split text into segments with blanks
-  const renderTextWithBlanks = () => {
-    const segments: JSX.Element[] = [];
+  const renderTextWithBlanks = (): React.ReactNode[] => {
+    const segments: React.ReactNode[] = [];
     const parts = exercise.text.split('___');
 
     parts.forEach((part, index) => {
       segments.push(
         <span key={`text-${index}`} className="text-gray-800">
           {part}
-        </span>
+        </span>,
       );
 
       if (index < parts.length - 1) {
@@ -239,7 +240,9 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
 
         // Safety check: skip if blank is undefined
         if (!blank) {
-          console.warn(`[CompletarEspacios] Blank at index ${index} is undefined. Blanks length: ${blanks.length}, Parts length: ${parts.length}`);
+          console.warn(
+            `[CompletarEspacios] Blank at index ${index} is undefined. Blanks length: ${blanks.length}, Parts length: ${parts.length}`,
+          );
           return;
         }
 
@@ -253,14 +256,14 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
         segments.push(
           <motion.span
             key={`blank-${blank.id}`}
-            className={`inline-flex items-center gap-2 mx-1 px-3 py-1 rounded-lg border-2 transition-all cursor-pointer ${
+            className={`mx-1 inline-flex cursor-pointer items-center gap-2 rounded-lg border-2 px-3 py-1 transition-all ${
               showResult
                 ? isCorrect
-                  ? 'bg-green-100 border-green-500 text-green-800'
-                  : 'bg-red-100 border-red-500 text-red-800'
+                  ? 'border-green-500 bg-green-100 text-green-800'
+                  : 'border-red-500 bg-red-100 text-red-800'
                 : isAnswered
-                ? 'bg-blue-100 border-blue-500 text-blue-800'
-                : 'bg-gray-100 border-dashed border-gray-400 text-gray-500'
+                  ? 'border-blue-500 bg-blue-100 text-blue-800'
+                  : 'border-dashed border-gray-400 bg-gray-100 text-gray-500'
             } ${!showResults && 'hover:border-blue-400'}`}
             onClick={() => !isAnswered && handleBlankClick(blank.id)}
             whileHover={!showResults ? { scale: 1.05 } : {}}
@@ -277,21 +280,20 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
                     }}
                     className="text-red-500 hover:text-red-700"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="h-4 w-4" />
                   </button>
                 )}
-                {showResult && (
-                  isCorrect ? (
-                    <Check className="w-4 h-4 text-green-600" />
+                {showResult &&
+                  (isCorrect ? (
+                    <Check className="h-4 w-4 text-green-600" />
                   ) : (
-                    <X className="w-4 h-4 text-red-600" />
-                  )
-                )}
+                    <X className="h-4 w-4 text-red-600" />
+                  ))}
               </>
             ) : (
               <span className="text-sm italic">___________</span>
             )}
-          </motion.span>
+          </motion.span>,
         );
       }
     });
@@ -299,18 +301,17 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
     return segments;
   };
 
-  const availableWords = exercise.wordBank.filter(word => !usedWords.includes(word));
+  const availableWords = exercise.wordBank.filter((word) => !usedWords.includes(word));
 
   return (
     <>
-
       {/* Scenario Text */}
       {exercise.scenarioText && (
         <DetectiveCard variant="info" padding="md" className="mb-6">
           <div className="flex items-start gap-3">
             <div className="text-2xl">📖</div>
             <div>
-              <h3 className="font-bold text-lg mb-2">Contexto Histórico</h3>
+              <h3 className="mb-2 text-lg font-bold">Contexto Histórico</h3>
               <p className="text-gray-700">{exercise.scenarioText}</p>
             </div>
           </div>
@@ -319,9 +320,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
 
       {/* Instructions */}
       <div className="mb-6 text-center">
-        <h3 className="text-xl font-bold text-gray-800 mb-2">
-          ✏️ {exercise.title}
-        </h3>
+        <h3 className="mb-2 text-xl font-bold text-gray-800">✏️ {exercise.title}</h3>
         <p className="text-gray-600">
           Selecciona una palabra del banco y haz clic en el espacio que deseas completar
         </p>
@@ -329,28 +328,26 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
 
       {/* Text with Blanks */}
       <DetectiveCard variant="default" padding="lg" className="mb-6">
-        <div className="text-lg leading-relaxed">
-          {renderTextWithBlanks()}
-        </div>
+        <div className="text-lg leading-relaxed">{renderTextWithBlanks()}</div>
       </DetectiveCard>
 
       {/* Word Bank */}
       <DetectiveCard variant="default" padding="lg" className="mb-6">
-        <div className="flex items-center gap-3 mb-4">
-          <Sparkles className="w-6 h-6 text-yellow-500" />
+        <div className="mb-4 flex items-center gap-3">
+          <Sparkles className="h-6 w-6 text-yellow-500" />
           <h3 className="text-lg font-bold text-gray-800">Banco de Palabras</h3>
         </div>
-        <div className="flex flex-wrap gap-3 justify-center">
+        <div className="flex flex-wrap justify-center gap-3">
           <AnimatePresence>
             {availableWords.map((word) => (
               <motion.button
                 key={word}
                 onClick={() => handleWordSelect(word)}
                 disabled={showResults}
-                className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+                className={`rounded-lg px-6 py-3 font-semibold transition-all ${
                   selectedWord === word
-                    ? 'bg-blue-500 text-white shadow-lg scale-105'
-                    : 'bg-white text-gray-800 border-2 border-gray-300 hover:border-blue-400 hover:shadow-md'
+                    ? 'scale-105 bg-blue-500 text-white shadow-lg'
+                    : 'border-2 border-gray-300 bg-white text-gray-800 hover:border-blue-400 hover:shadow-md'
                 } ${showResults ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -364,7 +361,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
           </AnimatePresence>
         </div>
         {availableWords.length === 0 && !showResults && (
-          <div className="text-center text-gray-500 mt-4">
+          <div className="mt-4 text-center text-gray-500">
             <p className="text-sm italic">Todas las palabras han sido utilizadas</p>
           </div>
         )}
@@ -373,27 +370,26 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
       {/* FE-059: Results section removed - correct answers no longer available in frontend */}
       {/* Validation and feedback now provided by backend API */}
       {showResults && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-6"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
           <DetectiveCard variant="info" padding="lg">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">📝 Tus Respuestas</h3>
+            <h3 className="mb-4 text-lg font-bold text-gray-800">📝 Tus Respuestas</h3>
             <div className="space-y-3">
               {blanks.map((blank, index) => (
                 <div
                   key={blank.id}
-                  className="p-3 rounded-lg border-l-4 bg-blue-50 border-blue-500"
+                  className="rounded-lg border-l-4 border-blue-500 bg-blue-50 p-3"
                 >
                   <div className="flex items-start gap-3">
                     <div className="flex-shrink-0 text-2xl">📝</div>
                     <div className="flex-1">
                       <p className="font-semibold text-gray-800">Espacio {index + 1}</p>
                       <p className="text-gray-600">
-                        Tu respuesta: <span className="font-semibold">{blank.userAnswer || '(sin respuesta)'}</span>
+                        Tu respuesta:{' '}
+                        <span className="font-semibold">
+                          {blank.userAnswer || '(sin respuesta)'}
+                        </span>
                       </p>
-                      <p className="text-sm text-gray-500 mt-1">
+                      <p className="mt-1 text-sm text-gray-500">
                         La validación se procesará en el servidor
                       </p>
                     </div>

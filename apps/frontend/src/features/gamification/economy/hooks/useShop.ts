@@ -53,15 +53,13 @@ export const useShop = (shopItems: ShopItem[]) => {
         (item) =>
           item.name.toLowerCase().includes(query) ||
           item.description.toLowerCase().includes(query) ||
-          item.tags?.some((tag) => tag.toLowerCase().includes(query))
+          item.tags?.some((tag) => tag.toLowerCase().includes(query)),
       );
     }
 
     // Tags filter
     if (filters.tags && filters.tags.length > 0) {
-      items = items.filter((item) =>
-        filters.tags!.some((tag) => item.tags?.includes(tag))
-      );
+      items = items.filter((item) => filters.tags!.some((tag) => item.tags?.includes(tag)));
     }
 
     return items;
@@ -82,9 +80,10 @@ export const useShop = (shopItems: ShopItem[]) => {
         return items.sort((a, b) => a.name.localeCompare(b.name));
       case 'name_desc':
         return items.sort((a, b) => b.name.localeCompare(a.name));
-      case 'rarity':
+      case 'rarity': {
         const rarityOrder = { common: 0, rare: 1, epic: 2, legendary: 3 };
         return items.sort((a, b) => rarityOrder[b.rarity] - rarityOrder[a.rarity]);
+      }
       case 'newest':
       default:
         return items;
@@ -113,7 +112,7 @@ export const useShop = (shopItems: ShopItem[]) => {
     (category: string) => {
       return shopItems.filter((item) => item.category === category);
     },
-    [shopItems]
+    [shopItems],
   );
 
   /**
@@ -123,7 +122,7 @@ export const useShop = (shopItems: ShopItem[]) => {
     (rarity: string) => {
       return shopItems.filter((item) => item.rarity === rarity);
     },
-    [shopItems]
+    [shopItems],
   );
 
   /**
@@ -136,10 +135,10 @@ export const useShop = (shopItems: ShopItem[]) => {
         (item) =>
           item.name.toLowerCase().includes(lowerQuery) ||
           item.description.toLowerCase().includes(lowerQuery) ||
-          item.tags.some((tag) => tag.toLowerCase().includes(lowerQuery))
+          item.tags?.some((tag) => tag.toLowerCase().includes(lowerQuery)),
       );
     },
-    [shopItems]
+    [shopItems],
   );
 
   /**
@@ -162,7 +161,7 @@ export const useShop = (shopItems: ShopItem[]) => {
   const allTags = useMemo(() => {
     const tagSet = new Set<string>();
     shopItems.forEach((item) => {
-      item.tags.forEach((tag) => tagSet.add(tag));
+      item.tags?.forEach((tag) => tagSet.add(tag));
     });
     return Array.from(tagSet).sort();
   }, [shopItems]);
@@ -186,7 +185,7 @@ export const useShop = (shopItems: ShopItem[]) => {
     (id: string) => {
       return shopItems.find((item) => item.id === id);
     },
-    [shopItems]
+    [shopItems],
   );
 
   return {

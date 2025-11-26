@@ -7,7 +7,6 @@
 
 import { apiClient } from '@/services/api/apiClient';
 import { handleAPIError } from './apiErrorHandler';
-import type { ApiResponse } from './apiTypes';
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -52,12 +51,10 @@ export interface UserGamificationSummary {
  * console.log(summary.level, summary.rank, summary.mlCoins);
  * ```
  */
-export async function getUserGamificationSummary(
-  userId: string
-): Promise<UserGamificationSummary> {
+export async function getUserGamificationSummary(userId: string): Promise<UserGamificationSummary> {
   try {
     const response = await apiClient.get<UserGamificationSummary>(
-      `/v1/gamification/users/${userId}/summary`
+      `/gamification/users/${userId}/summary`,
     );
     return response.data;
   } catch (error) {

@@ -69,22 +69,14 @@ export interface ExerciseTypeMetadata {
 
 const EXERCISE_TYPE_REGISTRY: Partial<Record<ExerciseType, ExerciseTypeMetadata>> = {
   // ========== MODULE 1: Comprensión Literal ==========
-  'crucigrama_cientifico': {
-    component: null, // Lazy loaded
-    displayName: 'Crucigrama Científico',
-    category: 'literal',
-    isImplemented: false,
-    fallbackType: 'crucigrama',
-    componentPath: '/features/mechanics/module1/Crucigrama/CrucigramaExercise',
-  },
-  'crucigrama': {
+  [ExerciseType.CRUCIGRAMA]: {
     component: null,
     displayName: 'Crucigrama',
     category: 'literal',
     isImplemented: false,
     componentPath: '/features/mechanics/module1/Crucigrama/CrucigramaExercise',
   },
-  'linea_tiempo': {
+  [ExerciseType.LINEA_TIEMPO]: {
     component: null,
     displayName: 'Línea de Tiempo',
     category: 'literal',
@@ -92,28 +84,21 @@ const EXERCISE_TYPE_REGISTRY: Partial<Record<ExerciseType, ExerciseTypeMetadata>
     fallbackType: ExerciseType.CRUCIGRAMA,
     componentPath: '/features/mechanics/module1/Timeline/TimelineExercise',
   },
-  'timeline': {
-    component: null,
-    displayName: 'Timeline',
-    category: 'literal',
-    isImplemented: false,
-    componentPath: '/features/mechanics/module1/Timeline/TimelineExercise',
-  },
-  'sopa_letras': {
+  [ExerciseType.SOPA_LETRAS]: {
     component: null,
     displayName: 'Sopa de Letras',
     category: 'literal',
     isImplemented: false,
     componentPath: '/features/mechanics/module1/SopaLetras/SopaLetrasExercise',
   },
-  'mapa_conceptual': {
+  [ExerciseType.MAPA_CONCEPTUAL]: {
     component: null,
     displayName: 'Mapa Conceptual',
     category: 'literal',
     isImplemented: false,
     componentPath: '/features/mechanics/module1/MapaConceptual/MapaConceptualExercise',
   },
-  'emparejamiento': {
+  [ExerciseType.EMPAREJAMIENTO]: {
     component: null,
     displayName: 'Emparejamiento',
     category: 'literal',
@@ -122,7 +107,7 @@ const EXERCISE_TYPE_REGISTRY: Partial<Record<ExerciseType, ExerciseTypeMetadata>
   },
 
   // ========== MODULE 2: Comprensión Inferencial ==========
-  'detective_textual': {
+  [ExerciseType.DETECTIVE_TEXTUAL]: {
     component: null,
     displayName: 'Detective Textual',
     category: 'inferencial',
@@ -130,28 +115,29 @@ const EXERCISE_TYPE_REGISTRY: Partial<Record<ExerciseType, ExerciseTypeMetadata>
     componentPath: '/features/mechanics/module2/DetectiveTextual/DetectiveTextualExercise',
     requiredFeatures: ['text-analysis', 'hints'],
   },
-  'construccion_hipotesis': {
+  [ExerciseType.CONSTRUCCION_HIPOTESIS]: {
     component: null,
     displayName: 'Construcción de Hipótesis',
     category: 'inferencial',
     isImplemented: false,
-    componentPath: '/features/mechanics/module2/ConstruccionHipotesis/ConstruccionHipotesisExercise',
+    componentPath:
+      '/features/mechanics/module2/ConstruccionHipotesis/ConstruccionHipotesisExercise',
   },
-  'prediccion_narrativa': {
+  [ExerciseType.PREDICCION_NARRATIVA]: {
     component: null,
     displayName: 'Predicción Narrativa',
     category: 'inferencial',
     isImplemented: false,
     componentPath: '/features/mechanics/module2/PrediccionNarrativa/PrediccionNarrativaExercise',
   },
-  'puzzle_contexto': {
+  [ExerciseType.PUZZLE_CONTEXTO]: {
     component: null,
     displayName: 'Puzzle de Contexto',
     category: 'inferencial',
     isImplemented: false,
     componentPath: '/features/mechanics/module2/PuzzleContexto/PuzzleContextoExercise',
   },
-  'rueda_inferencias': {
+  [ExerciseType.RUEDA_INFERENCIAS]: {
     component: null,
     displayName: 'Rueda de Inferencias',
     category: 'inferencial',
@@ -160,28 +146,28 @@ const EXERCISE_TYPE_REGISTRY: Partial<Record<ExerciseType, ExerciseTypeMetadata>
   },
 
   // ========== MODULE 3: Comprensión Crítica ==========
-  'analisis_fuentes': {
+  [ExerciseType.ANALISIS_FUENTES]: {
     component: null,
     displayName: 'Análisis de Fuentes',
     category: 'critica',
     isImplemented: false,
     componentPath: '/features/mechanics/module3/AnalisisFuentes/AnalisisFuentesExercise',
   },
-  'debate_digital': {
+  [ExerciseType.DEBATE_DIGITAL]: {
     component: null,
     displayName: 'Debate Digital',
     category: 'critica',
     isImplemented: false,
     componentPath: '/features/mechanics/module3/DebateDigital/DebateDigitalExercise',
   },
-  'matriz_perspectivas': {
+  [ExerciseType.MATRIZ_PERSPECTIVAS]: {
     component: null,
     displayName: 'Matriz de Perspectivas',
     category: 'critica',
     isImplemented: false,
     componentPath: '/features/mechanics/module3/MatrizPerspectivas/MatrizPerspectivasExercise',
   },
-  'podcast_argumentativo': {
+  [ExerciseType.PODCAST_ARGUMENTATIVO]: {
     component: null,
     displayName: 'Podcast Argumentativo',
     category: 'critica',
@@ -189,7 +175,7 @@ const EXERCISE_TYPE_REGISTRY: Partial<Record<ExerciseType, ExerciseTypeMetadata>
     componentPath: '/features/mechanics/module3/PodcastArgumentativo/PodcastArgumentativoExercise',
     requiredFeatures: ['audio'],
   },
-  'tribunal_opiniones': {
+  [ExerciseType.TRIBUNAL_OPINIONES]: {
     component: null,
     displayName: 'Tribunal de Opiniones',
     category: 'critica',
@@ -198,22 +184,14 @@ const EXERCISE_TYPE_REGISTRY: Partial<Record<ExerciseType, ExerciseTypeMetadata>
   },
 
   // ========== MODULE 4: Textos Digitales y Multimediales ==========
-  'verificador_fakenews': {
+  [ExerciseType.VERIFICADOR_FAKE_NEWS]: {
     component: null,
     displayName: 'Verificador de Fake News',
     category: 'digital',
     isImplemented: false,
-    fallbackType: 'fake_news',
     componentPath: '/features/mechanics/module4/VerificadorFakeNews/VerificadorFakeNewsExercise',
   },
-  'fake_news': {
-    component: null,
-    displayName: 'Fake News',
-    category: 'digital',
-    isImplemented: false,
-    componentPath: '/features/mechanics/module4/VerificadorFakeNews/VerificadorFakeNewsExercise',
-  },
-  'quiz_tiktok': {
+  [ExerciseType.QUIZ_TIKTOK]: {
     component: null,
     displayName: 'Quiz TikTok',
     category: 'digital',
@@ -221,58 +199,32 @@ const EXERCISE_TYPE_REGISTRY: Partial<Record<ExerciseType, ExerciseTypeMetadata>
     componentPath: '/features/mechanics/module4/QuizTikTok/QuizTikTokExercise',
     requiredFeatures: ['video', 'quiz'],
   },
-  'navegacion_hipertextual': {
+  [ExerciseType.NAVEGACION_HIPERTEXTUAL]: {
     component: null,
     displayName: 'Navegación Hipertextual',
     category: 'digital',
     isImplemented: false,
-    componentPath: '/features/mechanics/module4/NavegacionHipertextual/NavegacionHipertextualExercise',
+    componentPath:
+      '/features/mechanics/module4/NavegacionHipertextual/NavegacionHipertextualExercise',
   },
-  'analisis_memes': {
+  [ExerciseType.ANALISIS_MEMES]: {
     component: null,
     displayName: 'Análisis de Memes',
     category: 'digital',
     isImplemented: false,
     componentPath: '/features/mechanics/module4/AnalisisMemes/AnalisisMemesExercise',
   },
-  'infografia_interactiva': {
+  [ExerciseType.INFOGRAFIA_INTERACTIVA]: {
     component: null,
     displayName: 'Infografía Interactiva',
     category: 'digital',
     isImplemented: false,
-    componentPath: '/features/mechanics/module4/InfografiaInteractiva/InfografiaInteractivaExercise',
-  },
-  'email_formal': {
-    component: null,
-    displayName: 'Email Formal',
-    category: 'digital',
-    isImplemented: false,
-    componentPath: '/features/mechanics/module4/EmailFormal/EmailFormalExercise',
-  },
-  'chat_literario': {
-    component: null,
-    displayName: 'Chat Literario',
-    category: 'digital',
-    isImplemented: true,
-    componentPath: '/features/mechanics/module4/ChatLiterario/ChatLiterarioExercise',
-  },
-  'ensayo_argumentativo': {
-    component: null,
-    displayName: 'Ensayo Argumentativo',
-    category: 'digital',
-    isImplemented: false,
-    componentPath: '/features/mechanics/module4/EnsayoArgumentativo/EnsayoArgumentativoExercise',
-  },
-  'resena_critica': {
-    component: null,
-    displayName: 'Reseña Crítica',
-    category: 'digital',
-    isImplemented: false,
-    componentPath: '/features/mechanics/module4/ResenaCritica/ResenaCriticaExercise',
+    componentPath:
+      '/features/mechanics/module4/InfografiaInteractiva/InfografiaInteractivaExercise',
   },
 
   // ========== MODULE 5: Producción Creativa ==========
-  'diario_multimedia': {
+  [ExerciseType.DIARIO_MULTIMEDIA]: {
     component: null,
     displayName: 'Diario Multimedia',
     category: 'creativa',
@@ -280,7 +232,7 @@ const EXERCISE_TYPE_REGISTRY: Partial<Record<ExerciseType, ExerciseTypeMetadata>
     componentPath: '/features/mechanics/module5/DiarioMultimedia/DiarioMultimediaExercise',
     requiredFeatures: ['text', 'image', 'audio', 'video'],
   },
-  'comic_digital': {
+  [ExerciseType.COMIC_DIGITAL]: {
     component: null,
     displayName: 'Cómic Digital',
     category: 'creativa',
@@ -288,7 +240,7 @@ const EXERCISE_TYPE_REGISTRY: Partial<Record<ExerciseType, ExerciseTypeMetadata>
     componentPath: '/features/mechanics/module5/ComicDigital/ComicDigitalExercise',
     requiredFeatures: ['image', 'drawing'],
   },
-  'video_carta': {
+  [ExerciseType.VIDEO_CARTA]: {
     component: null,
     displayName: 'Video Carta',
     category: 'creativa',
@@ -298,21 +250,21 @@ const EXERCISE_TYPE_REGISTRY: Partial<Record<ExerciseType, ExerciseTypeMetadata>
   },
 
   // ========== AUXILIAR ==========
-  'call_to_action': {
+  [ExerciseType.CALL_TO_ACTION]: {
     component: null,
     displayName: 'Call to Action',
     category: 'auxiliar',
     isImplemented: false,
     componentPath: '/features/mechanics/auxiliar/CallToAction/CallToActionExercise',
   },
-  'collage_prensa': {
+  [ExerciseType.COLLAGE_PRENSA]: {
     component: null,
     displayName: 'Collage de Prensa',
     category: 'auxiliar',
     isImplemented: false,
     componentPath: '/features/mechanics/auxiliar/CollagePrensa/CollajePrensaExercise',
   },
-  'comprension_auditiva': {
+  [ExerciseType.COMPRENSION_AUDITIVA]: {
     component: null,
     displayName: 'Comprensión Auditiva',
     category: 'auxiliar',
@@ -320,7 +272,7 @@ const EXERCISE_TYPE_REGISTRY: Partial<Record<ExerciseType, ExerciseTypeMetadata>
     componentPath: '/features/mechanics/auxiliar/ComprensiónAuditiva/ComprensiónAuditivaExercise',
     requiredFeatures: ['audio'],
   },
-  'texto_movimiento': {
+  [ExerciseType.TEXTO_MOVIMIENTO]: {
     component: null,
     displayName: 'Texto en Movimiento',
     category: 'auxiliar',
@@ -350,18 +302,19 @@ const FallbackExerciseComponent: ExerciseComponent = ({ exercise, onComplete }) 
       React.createElement('button', {
         key: 'btn',
         className: 'btn-detective',
-        onClick: () => onComplete({
-          exerciseId: exercise.id,
-          score: 0,
-          maxScore: exercise.max_points || 100,
-          timeSpent: 0,
-          isCorrect: false,
-          hintsUsed: 0,
-          comodinesUsed: [],
-          submittedAnswers: null,
-          xpEarned: 0,
-          mlCoinsEarned: 0,
-        }),
+        onClick: () =>
+          onComplete({
+            exerciseId: exercise.id,
+            score: 0,
+            maxScore: exercise.max_points || 100,
+            timeSpent: 0,
+            isCorrect: false,
+            hintsUsed: 0,
+            comodinesUsed: [],
+            submittedAnswers: null,
+            xpEarned: 0,
+            mlCoinsEarned: 0,
+          }),
         children: 'Marcar como Completado',
       }),
     ],
@@ -393,19 +346,16 @@ export class ExerciseFactory {
   public async createExercise(
     exercise: Exercise,
     onComplete: (result: ExerciseResult) => void,
-    onAttempt?: (attemptData: AttemptData) => void
+    onAttempt?: (attemptData: AttemptData) => void,
   ): Promise<React.ReactElement> {
     const exerciseType = this.normalizeExerciseType(exercise.type || exercise.exercise_type);
-    const metadata = this.getMetadata(exerciseType);
 
     // Try to load component
     const Component = await this.loadComponent(exerciseType);
 
     // Use fallback if component not available
     if (!Component) {
-      console.warn(
-        `Exercise type "${exerciseType}" not implemented, using fallback component`
-      );
+      console.warn(`Exercise type "${exerciseType}" not implemented, using fallback component`);
       return React.createElement(FallbackExerciseComponent, {
         exercise,
         onComplete,
@@ -426,9 +376,7 @@ export class ExerciseFactory {
   /**
    * Load component dynamically (lazy loading)
    */
-  private async loadComponent(
-    exerciseType: ExerciseType
-  ): Promise<ExerciseComponent | null> {
+  private async loadComponent(exerciseType: ExerciseType): Promise<ExerciseComponent | null> {
     // Check cache first
     if (this.componentCache.has(exerciseType)) {
       return this.componentCache.get(exerciseType)!;
@@ -453,8 +401,8 @@ export class ExerciseFactory {
         // this.componentCache.set(exerciseType, component);
         // return component;
         return null;
-      } catch (error) {
-        console.error(`Failed to load component for ${exerciseType}:`, error);
+      } catch (_error) {
+        console.error(`Failed to load component for ${exerciseType}:`, _error);
         return null;
       }
     }
@@ -490,20 +438,26 @@ export class ExerciseFactory {
    * Get all exercise types by category
    */
   public getTypesByCategory(
-    category: 'literal' | 'inferencial' | 'critica' | 'digital' | 'creativa' | 'auxiliar'
+    category: 'literal' | 'inferencial' | 'critica' | 'digital' | 'creativa' | 'auxiliar',
   ): ExerciseType[] {
-    return Object.entries(this.registry)
-      .filter(([_, metadata]) => metadata.category === category)
-      .map(([type]) => type as ExerciseType);
+    return (
+      Object.entries(this.registry)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        .filter(([_, metadata]) => metadata.category === category)
+        .map(([type]) => type as ExerciseType)
+    );
   }
 
   /**
    * Get all implemented exercise types
    */
   public getImplementedTypes(): ExerciseType[] {
-    return Object.entries(this.registry)
-      .filter(([_, metadata]) => metadata.isImplemented)
-      .map(([type]) => type as ExerciseType);
+    return (
+      Object.entries(this.registry)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        .filter(([_, metadata]) => metadata.isImplemented)
+        .map(([type]) => type as ExerciseType)
+    );
   }
 
   /**
@@ -520,7 +474,7 @@ export class ExerciseFactory {
         }
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
 
     return {
@@ -552,10 +506,7 @@ export class ExerciseFactory {
   /**
    * Register a new component (for testing or dynamic loading)
    */
-  public registerComponent(
-    exerciseType: ExerciseType,
-    component: ExerciseComponent
-  ): void {
+  public registerComponent(exerciseType: ExerciseType, component: ExerciseComponent): void {
     this.componentCache.set(exerciseType, component);
     if (this.registry[exerciseType]) {
       this.registry[exerciseType]!.component = component;
@@ -577,7 +528,7 @@ export const exerciseFactory = ExerciseFactory.getInstance();
 export const createExercise = async (
   exercise: Exercise,
   onComplete: (result: ExerciseResult) => void,
-  onAttempt?: (attemptData: AttemptData) => void
+  onAttempt?: (attemptData: AttemptData) => void,
 ) => {
   return exerciseFactory.createExercise(exercise, onComplete, onAttempt);
 };

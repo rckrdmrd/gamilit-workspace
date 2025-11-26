@@ -3,7 +3,8 @@
  */
 
 import { useLeaderboardsStore } from '../store/leaderboardsStore';
-import type { LeaderboardType, TimePeriod } from '../types/leaderboardsTypes';
+// Types used in store, keeping for documentation
+// import type { LeaderboardType, TimePeriod } from '../types/leaderboardsTypes';
 
 export const useLeaderboards = () => {
   const {

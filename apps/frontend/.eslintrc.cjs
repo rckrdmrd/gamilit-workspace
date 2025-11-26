@@ -14,7 +14,18 @@ module.exports = {
       { allowConstantExport: true },
     ],
     '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+      },
+    ],
     // Custom rule to prevent API route issues (auto-fix enabled)
     'rulesdir/no-api-route-issues': 'error',
+    // Prevent hardcoded API routes - must use API_ENDPOINTS from apiConfig.ts
+    // Note: Manual review required for routes. Run: grep -r "apiClient\\.get.*'/v1" apps/frontend/src
+    // ESQuery regex limitations prevent automated checking. See README.md for API configuration guidelines.
   },
 };

@@ -22,10 +22,10 @@
 
 import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useEconomyStore } from '../store/economyStore';
-import type { ShopItem, Transaction, ShopCategory } from '../types/economyTypes';
+import type { ShopItem, ShopCategory } from '../types/economyTypes';
 
 // Mock API
 vi.mock('../api/economyAPI', () => ({
@@ -69,7 +69,7 @@ const TransactionHistory: React.FC = () => {
 
 // Test wrapper for cart
 const ShoppingCart: React.FC = () => {
-  const { cart, getCartTotal, addToCart, removeFromCart, clearCart } = useEconomyStore();
+  const { cart, getCartTotal, removeFromCart, clearCart } = useEconomyStore();
 
   return (
     <div>
@@ -338,13 +338,10 @@ describe('Economy Integration Tests', () => {
 
   describe('Purchase Flow', () => {
     it('should purchase individual item successfully', async () => {
-      const { addCoins, purchaseItem, addToInventory } = useEconomyStore.getState();
+      const { addCoins, addToInventory } = useEconomyStore.getState();
 
       // Setup: add enough coins
       addCoins(150, 'test');
-
-      // Mock successful purchase
-      const result = await purchaseItem('power-up-1');
 
       // For this test, we simulate what purchaseItem should do:
       // 1. Check balance
@@ -401,6 +398,7 @@ describe('Economy Integration Tests', () => {
         const cart = useEconomyStore.getState().cart;
         cart.forEach((cartItem) => {
           // Extract base ShopItem (remove cart-specific fields)
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { quantity, addedAt, ...shopItem } = cartItem;
           for (let i = 0; i < quantity; i++) {
             addToInventory(shopItem as ShopItem);
@@ -517,7 +515,7 @@ describe('Economy Integration Tests', () => {
 
       addCoins(50, 'test', 'Test transaction');
 
-      const { rerender } = render(<TransactionHistory />);
+      render(<TransactionHistory />);
 
       expect(screen.getByTestId('transaction-count')).toHaveTextContent('1');
 
@@ -529,7 +527,6 @@ describe('Economy Integration Tests', () => {
     });
 
     it('should update cart UI when items added', async () => {
-      const user = userEvent.setup();
       const { addToCart } = useEconomyStore.getState();
 
       const { rerender } = render(<ShoppingCart />);
@@ -545,7 +542,7 @@ describe('Economy Integration Tests', () => {
     });
 
     it('should remove from cart via UI button', async () => {
-      const user = userEvent.setup();
+      const _user = userEvent.setup();
       const { addToCart } = useEconomyStore.getState();
 
       addToCart(mockPowerUp);
@@ -556,7 +553,7 @@ describe('Economy Integration Tests', () => {
       expect(screen.getByTestId('cart-count')).toHaveTextContent('2');
 
       const removeButton = screen.getAllByText('Remove')[0];
-      await user.click(removeButton);
+      await _user.click(removeButton);
 
       rerender(<ShoppingCart />);
 
@@ -564,7 +561,7 @@ describe('Economy Integration Tests', () => {
     });
 
     it('should clear cart via UI button', async () => {
-      const user = userEvent.setup();
+      const _user = userEvent.setup();
       const { addToCart } = useEconomyStore.getState();
 
       addToCart(mockPowerUp);
@@ -573,7 +570,7 @@ describe('Economy Integration Tests', () => {
       const { rerender } = render(<ShoppingCart />);
 
       const clearButton = screen.getByText('Clear Cart');
-      await user.click(clearButton);
+      await _user.click(clearButton);
 
       rerender(<ShoppingCart />);
 

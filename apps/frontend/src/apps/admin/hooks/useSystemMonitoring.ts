@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 import type { SystemHealth, SystemAlert } from '../types';
 
 export interface UseSystemMonitoringResult {
@@ -42,8 +43,8 @@ interface HealthSnapshot {
 }
 
 const HEALTH_CHECK_INTERVAL = 10000; // 10 seconds
-const ALERT_CHECK_INTERVAL = 5000;   // 5 seconds
-const MAX_HISTORY_LENGTH = 60;       // Keep 10 minutes of history at 10s intervals
+const ALERT_CHECK_INTERVAL = 5000; // 5 seconds
+const MAX_HISTORY_LENGTH = 60; // Keep 10 minutes of history at 10s intervals
 
 export function useSystemMonitoring(): UseSystemMonitoringResult {
   // State
@@ -67,8 +68,12 @@ export function useSystemMonitoring(): UseSystemMonitoringResult {
    */
   const fetchHealth = useCallback(async (): Promise<void> => {
     try {
-      const response = await apiClient.get<{ success: boolean; data: SystemHealth }>('/admin/health');
-      const data = response.data.success ? response.data.data : response.data as unknown as SystemHealth;
+      const response = await apiClient.get<{ success: boolean; data: SystemHealth }>(
+        '/admin/health',
+      );
+      const data = response.data.success
+        ? response.data.data
+        : (response.data as unknown as SystemHealth);
 
       setHealth(data);
 
@@ -82,7 +87,7 @@ export function useSystemMonitoring(): UseSystemMonitoringResult {
         status: data.status,
       };
 
-      setHealthHistory(prev => {
+      setHealthHistory((prev) => {
         const updated = [...prev, snapshot];
         // Keep only last MAX_HISTORY_LENGTH items
         return updated.slice(-MAX_HISTORY_LENGTH);
@@ -100,20 +105,23 @@ export function useSystemMonitoring(): UseSystemMonitoringResult {
    */
   const fetchAlerts = useCallback(async (): Promise<void> => {
     try {
-      const response = await apiClient.get<{ success: boolean; data: SystemAlert[] }>('/admin/alerts', {
-        params: { dismissed: false, limit: 50 },
-      });
-      const data = response.data.success ? response.data.data : response.data as unknown as SystemAlert[];
+      const response = await apiClient.get<{ success: boolean; data: SystemAlert[] }>(
+        API_ENDPOINTS.admin.alerts,
+        { params: { dismissed: false, limit: 50 } },
+      );
+      const data = response.data.success
+        ? response.data.data
+        : (response.data as unknown as SystemAlert[]);
 
       // Parse and sort alerts
       const alerts = data
-        .map(alert => ({
+        .map((alert) => ({
           ...alert,
           timestamp: new Date(alert.timestamp),
         }))
         .sort((a, b) => {
-          // Sort by severity (high > medium > low) then by timestamp (newest first)
-          const severityOrder = { high: 3, medium: 2, low: 1 };
+          // Sort by severity (critical > high > medium > low) then by timestamp (newest first)
+          const severityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
           const severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
           return severityDiff !== 0 ? severityDiff : b.timestamp.getTime() - a.timestamp.getTime();
         });
@@ -182,22 +190,22 @@ export function useSystemMonitoring(): UseSystemMonitoringResult {
   const acknowledgeAlert = useCallback(async (alertId: string): Promise<void> => {
     try {
       // Optimistic update
-      setActiveAlerts(prev => prev.map(alert =>
-        alert.id === alertId ? { ...alert, dismissed: true } : alert
-      ));
+      setActiveAlerts((prev) =>
+        prev.map((alert) => (alert.id === alertId ? { ...alert, dismissed: true } : alert)),
+      );
 
       await apiClient.post(`/admin/alerts/${alertId}/dismiss`);
 
       // Remove from active alerts after animation
       setTimeout(() => {
-        setActiveAlerts(prev => prev.filter(alert => alert.id !== alertId));
+        setActiveAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
       }, 300);
     } catch (err) {
       console.error('Failed to acknowledge alert:', err);
       // Revert optimistic update
-      setActiveAlerts(prev => prev.map(alert =>
-        alert.id === alertId ? { ...alert, dismissed: false } : alert
-      ));
+      setActiveAlerts((prev) =>
+        prev.map((alert) => (alert.id === alertId ? { ...alert, dismissed: false } : alert)),
+      );
       throw err;
     }
   }, []);
@@ -207,8 +215,7 @@ export function useSystemMonitoring(): UseSystemMonitoringResult {
    */
   const clearAllAlerts = useCallback(async (): Promise<void> => {
     try {
-      // Optimistic update
-      const previousAlerts = activeAlerts;
+      // Optimistic update - store previous for potential revert
       setActiveAlerts([]);
 
       await apiClient.post('/admin/alerts/dismiss-all');
@@ -256,7 +263,7 @@ export function useSystemMonitoring(): UseSystemMonitoringResult {
   // ============================================================================
 
   const alertCount = activeAlerts.length;
-  const criticalAlertCount = activeAlerts.filter(a => a.severity === 'high').length;
+  const criticalAlertCount = activeAlerts.filter((a) => a.severity === 'high').length;
 
   // ============================================================================
   // RETURN

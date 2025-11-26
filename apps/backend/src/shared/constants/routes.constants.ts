@@ -12,14 +12,19 @@
  */
 
 /**
- * API Version
+ * API Version (configurable desde .env)
  */
-export const API_VERSION = 'v1';
+export const API_VERSION = process.env.API_VERSION || 'v1';
+
+/**
+ * API Prefix (configurable desde .env)
+ */
+export const API_PREFIX = process.env.API_PREFIX || 'api';
 
 /**
  * API Base Path
  */
-export const API_BASE = `/api/${API_VERSION}`;
+export const API_BASE = `/${API_PREFIX}/${API_VERSION}`;
 
 /**
  * API Routes por módulo
@@ -321,6 +326,298 @@ export const API_ROUTES = {
     MEDIA_BY_UPLOADER: (userId: string) => `/content/media-files/users/${userId}`,
     GENERATE_THUMBNAIL: (id: string) => `/content/media-files/${id}/thumbnail`,
     INCREMENT_MEDIA_COUNTER: (id: string, counterType: string) => `/content/media-files/${id}/increment/${counterType}`,
+  },
+
+  // Admin Module
+  ADMIN: {
+    BASE: '/admin',
+
+    // Dashboard
+    DASHBOARD: '/admin/dashboard',
+    DASHBOARD_STATS: '/admin/dashboard/stats',
+    DASHBOARD_RECENT_ACTIVITY: '/admin/dashboard/recent-activity',
+    DASHBOARD_USER_STATS: '/admin/dashboard/user-stats',
+    DASHBOARD_ORGANIZATION_STATS: '/admin/dashboard/organization-stats',
+    DASHBOARD_MODERATION_QUEUE: '/admin/dashboard/moderation-queue',
+    DASHBOARD_CLASSROOM_OVERVIEW: '/admin/dashboard/classroom-overview',
+    DASHBOARD_ASSIGNMENT_STATS: '/admin/dashboard/assignment-stats',
+    DASHBOARD_ACTIONS_RECENT: '/admin/dashboard/actions/recent',
+    DASHBOARD_ALERTS: '/admin/dashboard/alerts',
+    DASHBOARD_ANALYTICS_USER_ACTIVITY: '/admin/dashboard/analytics/user-activity',
+
+    // System Alerts
+    ALERTS: {
+      BASE: '/admin/alerts',
+      BY_ID: (id: string) => `/admin/alerts/${id}`,
+      STATS_SUMMARY: '/admin/alerts/stats/summary',
+      ACKNOWLEDGE: (id: string) => `/admin/alerts/${id}/acknowledge`,
+      RESOLVE: (id: string) => `/admin/alerts/${id}/resolve`,
+      SUPPRESS: (id: string) => `/admin/alerts/${id}/suppress`,
+    },
+
+    // Analytics
+    ANALYTICS: {
+      BASE: '/admin/analytics',
+      OVERVIEW: '/admin/analytics/overview',
+      ENGAGEMENT: '/admin/analytics/engagement',
+      GAMIFICATION: '/admin/analytics/gamification',
+      ACTIVITY_TIMELINE: '/admin/analytics/activity-timeline',
+      TOP_USERS: '/admin/analytics/top-users',
+      RETENTION: '/admin/analytics/retention',
+      EXPORT: '/admin/analytics/export',
+    },
+
+    // Monitoring
+    MONITORING: {
+      BASE: '/admin/monitoring',
+      METRICS: '/admin/monitoring/metrics',
+      METRICS_HISTORY: '/admin/monitoring/metrics/history',
+      ERRORS_STATS: '/admin/monitoring/errors/stats',
+      ERRORS_RECENT: '/admin/monitoring/errors/recent',
+      ERRORS_TRENDS: '/admin/monitoring/errors/trends',
+    },
+
+    // Progress
+    PROGRESS: {
+      BASE: '/admin/progress',
+      OVERVIEW: '/admin/progress/overview',
+      CLASSROOM: (id: string) => `/admin/progress/classrooms/${id}`,
+      STUDENT: (id: string) => `/admin/progress/students/${id}`,
+      MODULE: (id: string) => `/admin/progress/modules/${id}`,
+      EXERCISE: (id: string) => `/admin/progress/exercises/${id}`,
+      EXPORT: '/admin/progress/export',
+    },
+
+    // Reports
+    REPORTS: {
+      BASE: '/admin/reports',
+      GENERATE: '/admin/reports/generate',
+      BY_ID: (id: string) => `/admin/reports/${id}`,
+      DOWNLOAD: (id: string) => `/admin/reports/${id}/download`,
+    },
+
+    // Logs
+    LOGS: '/admin/logs',
+
+    // System
+    SYSTEM: {
+      BASE: '/admin/system',
+      HEALTH: '/admin/system/health',
+      METRICS: '/admin/system/metrics',
+      AUDIT_LOG: '/admin/system/audit-log',
+      CONFIG: '/admin/system/config',
+      CONFIG_CATEGORY: (category: string) => `/admin/system/config/${category}`,
+      MAINTENANCE: '/admin/system/maintenance',
+      MAINTENANCE_CLEANUP_LOGS: '/admin/system/maintenance/cleanup-logs',
+      MAINTENANCE_CLEANUP_ACTIVITY: '/admin/system/maintenance/cleanup-activity',
+      MAINTENANCE_OPTIMIZE_DATABASE: '/admin/system/maintenance/optimize-database',
+      MAINTENANCE_CLEAR_CACHE: '/admin/system/maintenance/clear-cache',
+      MAINTENANCE_CLEANUP_SESSIONS: '/admin/system/maintenance/cleanup-sessions',
+    },
+
+    // Settings
+    SETTINGS: '/admin/settings',
+
+    // Organizations
+    ORGANIZATIONS: '/admin/organizations',
+    ORGANIZATION_BY_ID: (id: string) => `/admin/organizations/${id}`,
+    ORGANIZATION_STATS: (id: string) => `/admin/organizations/${id}/stats`,
+    ORGANIZATION_USERS: (id: string) => `/admin/organizations/${id}/users`,
+    ORGANIZATION_SUBSCRIPTION: (id: string) => `/admin/organizations/${id}/subscription`,
+    ORGANIZATION_FEATURES: (id: string) => `/admin/organizations/${id}/features`,
+
+    // Users Management
+    USERS: '/admin/users',
+    USER_BY_ID: (id: string) => `/admin/users/${id}`,
+    USER_STATS: '/admin/users/stats',
+    USER_SUSPEND: (id: string) => `/admin/users/${id}/suspend`,
+    USER_ACTIVATE: (id: string) => `/admin/users/${id}/activate`,
+    USER_UNSUSPEND: (id: string) => `/admin/users/${id}/unsuspend`,
+    USER_DEACTIVATE: (id: string) => `/admin/users/${id}/deactivate`,
+    USER_RESET_PASSWORD: (id: string) => `/admin/users/${id}/reset-password`,
+    USER_BULK_SUSPEND: '/admin/users/bulk/suspend',
+    USER_BULK_DELETE: '/admin/users/bulk/delete',
+    USER_BULK_UPDATE_ROLE: '/admin/users/bulk/update-role',
+
+    // Roles & Permissions
+    ROLES: {
+      BASE: '/admin/roles',
+      PERMISSIONS: '/admin/roles/permissions',
+      ROLE_PERMISSIONS: (id: string) => `/admin/roles/${id}/permissions`,
+    },
+
+    // Classrooms Management
+    CLASSROOMS: '/admin/classrooms',
+    CLASSROOM_BY_ID: (id: string) => `/admin/classrooms/${id}`,
+    CLASSROOM_TEACHERS: (classroomId: string) => `/admin/classrooms/${classroomId}/teachers`,
+    CLASSROOM_STUDENTS: (classroomId: string) => `/admin/classrooms/${classroomId}/students`,
+
+    // Classroom Teachers REST
+    CLASSROOM_TEACHERS_REST: {
+      BASE: '/admin/classroom-teachers',
+      CLASSROOM_TEACHERS: (classroomId: string) => `/admin/classrooms/${classroomId}/teachers`,
+      TEACHER_CLASSROOMS: (teacherId: string) => `/admin/teachers/${teacherId}/classrooms`,
+      BULK: '/admin/classroom-teachers/bulk',
+    },
+
+    // Content Moderation
+    CONTENT: {
+      BASE: '/admin/content',
+      PENDING: '/admin/content/pending',
+      EXERCISES_PENDING: '/admin/content/exercises/pending',
+      APPROVE: (id: string) => `/admin/content/${id}/approve`,
+      EXERCISES_APPROVE: (id: string) => `/admin/content/exercises/${id}/approve`,
+      REJECT: (id: string) => `/admin/content/${id}/reject`,
+      EXERCISES_REJECT: (id: string) => `/admin/content/exercises/${id}/reject`,
+      VERSION: '/admin/content/version',
+      MEDIA: '/admin/content/media',
+    },
+
+    // Bulk Operations
+    BULK_OPERATIONS: {
+      BASE: '/admin/bulk-operations',
+      SUSPEND_USERS: '/admin/bulk-operations/suspend-users',
+      ACTIVATE_USERS: '/admin/bulk-operations/activate-users',
+      UPDATE_ROLE: '/admin/bulk-operations/update-role',
+      DELETE_USERS: '/admin/bulk-operations/delete-users',
+      BY_ID: (id: string) => `/admin/bulk-operations/${id}`,
+    },
+
+    // Gamification Configuration
+    GAMIFICATION_CONFIG: {
+      BASE: '/admin/gamification/config',
+      SETTINGS: '/admin/gamification/config/settings',
+      PREVIEW: '/admin/gamification/config/settings/preview',
+      RESTORE_DEFAULTS: '/admin/gamification/config/settings/restore-defaults',
+      PARAMETERS: '/admin/gamification/config/parameters',
+      PARAMETER_BY_ID: (id: string) => `/admin/gamification/config/parameters/${id}`,
+      MAYA_RANKS: '/admin/gamification/config/maya-ranks',
+      MAYA_RANK: (rankName: string) => `/admin/gamification/config/maya-ranks/${rankName}`,
+    },
+  },
+
+  // Teacher Module
+  TEACHER: {
+    BASE: '/teacher',
+
+    // Dashboard
+    DASHBOARD: '/teacher/dashboard',
+    DASHBOARD_STATS: '/teacher/dashboard/stats',
+    DASHBOARD_ACTIVITIES: '/teacher/dashboard/activities',
+    DASHBOARD_ALERTS: '/teacher/dashboard/alerts',
+    DASHBOARD_TOP_PERFORMERS: '/teacher/dashboard/top-performers',
+    DASHBOARD_MODULE_PROGRESS: '/teacher/dashboard/module-progress',
+
+    // Classrooms
+    CLASSROOMS: '/teacher/classrooms',
+    CLASSROOM_BY_ID: (id: string) => `/teacher/classrooms/${id}`,
+    CLASSROOM_TEACHERS: (classroomId: string) => `/teacher/classrooms/${classroomId}/teachers`,
+    CLASSROOM_STUDENTS: (classroomId: string) => `/teacher/classrooms/${classroomId}/students`,
+    CLASSROOM_STATS: (id: string) => `/teacher/classrooms/${id}/stats`,
+    CLASSROOM_PROGRESS: (id: string) => `/teacher/classrooms/${id}/progress`,
+    CLASSROOM_STUDENT_BLOCK: (classroomId: string, studentId: string) =>
+      `/teacher/classrooms/${classroomId}/students/${studentId}/block`,
+    CLASSROOM_STUDENT_UNBLOCK: (classroomId: string, studentId: string) =>
+      `/teacher/classrooms/${classroomId}/students/${studentId}/unblock`,
+    CLASSROOM_STUDENT_PERMISSIONS: (classroomId: string, studentId: string) =>
+      `/teacher/classrooms/${classroomId}/students/${studentId}/permissions`,
+
+    // Students
+    STUDENT_PROGRESS: (studentId: string) => `/teacher/students/${studentId}/progress`,
+    STUDENT_OVERVIEW: (studentId: string) => `/teacher/students/${studentId}/overview`,
+    STUDENT_STATS: (studentId: string) => `/teacher/students/${studentId}/stats`,
+    STUDENT_NOTES: (studentId: string) => `/teacher/students/${studentId}/notes`,
+    STUDENT_ADD_NOTE: (studentId: string) => `/teacher/students/${studentId}/note`,
+    STUDENT_INSIGHTS: (studentId: string) => `/teacher/students/${studentId}/insights`,
+    STUDENT_BONUS: (studentId: string) => `/teacher/students/${studentId}/bonus`,
+
+    // Intervention Alerts
+    ALERTS: {
+      BASE: '/teacher/alerts',
+      BY_ID: (id: string) => `/teacher/alerts/${id}`,
+      ACKNOWLEDGE: (id: string) => `/teacher/alerts/${id}/acknowledge`,
+      RESOLVE: (id: string) => `/teacher/alerts/${id}/resolve`,
+      DISMISS: (id: string) => `/teacher/alerts/${id}/dismiss`,
+      STUDENT_HISTORY: (studentId: string) => `/teacher/alerts/student/${studentId}/history`,
+      GENERATE: '/teacher/alerts/generate',
+    },
+
+    // Messages/Communication
+    MESSAGES: {
+      BASE: '/teacher/messages',
+      BY_ID: (id: string) => `/teacher/messages/${id}`,
+      CONVERSATIONS: '/teacher/messages/conversations',
+      UNREAD_COUNT: '/teacher/messages/unread-count',
+      MARK_READ: (id: string) => `/teacher/messages/${id}/read`,
+      CLASSROOM_ANNOUNCEMENT: (classroomId: string) =>
+        `/teacher/messages/classroom/${classroomId}/announcement`,
+      STUDENT_FEEDBACK: (studentId: string) =>
+        `/teacher/messages/student/${studentId}/feedback`,
+    },
+
+    // Content Management
+    CONTENT: {
+      BASE: '/teacher/content',
+      BY_ID: (id: string) => `/teacher/content/${id}`,
+      CLONE: (id: string) => `/teacher/content/${id}/clone`,
+      PUBLISH: (id: string) => `/teacher/content/${id}/publish`,
+    },
+
+    // Submissions
+    SUBMISSIONS: '/teacher/submissions',
+    SUBMISSION_BY_ID: (id: string) => `/teacher/submissions/${id}`,
+    SUBMISSION_FEEDBACK: (submissionId: string) =>
+      `/teacher/submissions/${submissionId}/feedback`,
+    SUBMISSIONS_BULK_GRADE: '/teacher/submissions/bulk-grade',
+
+    // Assignments & Grades
+    ASSIGNMENTS: '/teacher/assignments',
+    ASSIGNMENT_BY_ID: (id: string) => `/teacher/assignments/${id}`,
+    GRADES: '/teacher/grades',
+    GRADE_BY_ID: (id: string) => `/teacher/grades/${id}`,
+
+    // Analytics
+    ANALYTICS: '/teacher/analytics',
+    ANALYTICS_CLASSROOM: (id: string) => `/teacher/analytics/classroom/${id}`,
+    ANALYTICS_ASSIGNMENT: (id: string) => `/teacher/analytics/assignment/${id}`,
+    ANALYTICS_ENGAGEMENT: '/teacher/analytics/engagement',
+    ANALYTICS_REPORTS: '/teacher/analytics/reports',
+    ANALYTICS_ECONOMY: '/teacher/analytics/economy', // GAP-ST-005
+    ANALYTICS_STUDENTS_ECONOMY: '/teacher/analytics/students-economy', // GAP-ST-006
+    ANALYTICS_ACHIEVEMENTS: '/teacher/analytics/achievements', // GAP-ST-007
+
+    // Reports
+    REPORTS: '/teacher/reports',
+    REPORT_BY_ID: (id: string) => `/teacher/reports/${id}`,
+    REPORTS_GENERATE: '/teacher/reports/generate',
+  },
+
+  // Notifications Module
+  NOTIFICATIONS: {
+    BASE: '/notifications',
+
+    // User Notifications
+    USER_NOTIFICATIONS: (userId: string) => `/notifications/users/${userId}`,
+    UNREAD_NOTIFICATIONS: (userId: string) => `/notifications/users/${userId}/unread`,
+    NOTIFICATION_BY_ID: (id: string) => `/notifications/${id}`,
+
+    // Mark as Read
+    MARK_READ: (id: string) => `/notifications/${id}/read`,
+    MARK_ALL_READ: (userId: string) => `/notifications/users/${userId}/mark-all-read`,
+
+    // Mark as Unread
+    MARK_UNREAD: (id: string) => `/notifications/${id}/unread`,
+
+    // Delete
+    DELETE_NOTIFICATION: (id: string) => `/notifications/${id}`,
+    DELETE_ALL: (userId: string) => `/notifications/users/${userId}`,
+
+    // Preferences
+    PREFERENCES: (userId: string) => `/notifications/users/${userId}/preferences`,
+    UPDATE_PREFERENCES: (userId: string) => `/notifications/users/${userId}/preferences`,
+
+    // Stats
+    STATS: (userId: string) => `/notifications/users/${userId}/stats`,
   },
 
   // Health & Monitoring

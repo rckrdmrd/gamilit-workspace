@@ -7,6 +7,9 @@
 import { Request } from 'express';
 import { PoolClient } from 'pg';
 
+// Export Intervention Alerts types
+export * from './intervention-alerts.types';
+
 /**
  * User Interface (from auth.users table)
  */

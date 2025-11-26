@@ -6,7 +6,6 @@ import type {
   Achievement,
   UserAchievement,
   AchievementStatus,
-  ACHIEVEMENT_CATEGORY_COLORS,
 } from '@/shared/types/achievement.types';
 
 /**
@@ -94,11 +93,11 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
     <div
       className={cn(
         'relative rounded-lg border-2 p-4 transition-all duration-200',
-        'hover:scale-105 hover:shadow-lg cursor-pointer',
+        'cursor-pointer hover:scale-105 hover:shadow-lg',
         getCategoryColor(achievement.category),
         isLocked && 'opacity-60 grayscale',
         onClick && 'cursor-pointer',
-        className
+        className,
       )}
       onClick={onClick}
       role="button"
@@ -114,11 +113,11 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
       {achievement.rarity && !isHidden && (
         <div
           className={cn(
-            'absolute top-2 right-2 px-2 py-1 rounded text-xs font-semibold',
+            'absolute right-2 top-2 rounded px-2 py-1 text-xs font-semibold',
             achievement.rarity === 'legendary' && 'bg-yellow-100 text-yellow-800',
             achievement.rarity === 'epic' && 'bg-purple-100 text-purple-800',
             achievement.rarity === 'rare' && 'bg-blue-100 text-blue-800',
-            achievement.rarity === 'common' && 'bg-gray-100 text-gray-600'
+            achievement.rarity === 'common' && 'bg-gray-100 text-gray-600',
           )}
         >
           {achievement.rarity.toUpperCase()}
@@ -126,17 +125,17 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
       )}
 
       {/* Icon/Badge */}
-      <div className="flex justify-center mb-3">
+      <div className="mb-3 flex justify-center">
         <div
           className={cn(
-            'w-16 h-16 rounded-full flex items-center justify-center text-3xl',
-            isLocked ? 'bg-gray-200' : 'bg-white shadow-md'
+            'flex h-16 w-16 items-center justify-center rounded-full text-3xl',
+            isLocked ? 'bg-gray-200' : 'bg-white shadow-md',
           )}
         >
           {isHidden ? (
             <span className="text-gray-400">???</span>
           ) : isLocked ? (
-            <Lock className="w-8 h-8 text-gray-400" />
+            <Lock className="h-8 w-8 text-gray-400" />
           ) : (
             <span>{achievement.icon || '🏆'}</span>
           )}
@@ -146,30 +145,25 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
       {/* Title */}
       <h3
         className={cn(
-          'text-center font-bold text-lg mb-2',
-          isLocked ? 'text-gray-500' : 'text-gray-900'
+          'mb-2 text-center text-lg font-bold',
+          isLocked ? 'text-gray-500' : 'text-gray-900',
         )}
       >
         {isHidden ? 'Logro Oculto' : achievement.name}
       </h3>
 
       {/* Description */}
-      <p
-        className={cn(
-          'text-center text-sm mb-3',
-          isLocked ? 'text-gray-400' : 'text-gray-600'
-        )}
-      >
+      <p className={cn('mb-3 text-center text-sm', isLocked ? 'text-gray-400' : 'text-gray-600')}>
         {isHidden ? 'Sigue jugando para descubrir este logro...' : achievement.description}
       </p>
 
       {/* Category Badge */}
       {!isHidden && (
-        <div className="flex justify-center mb-3">
+        <div className="mb-3 flex justify-center">
           <span
             className={cn(
-              'px-3 py-1 rounded-full text-xs font-medium',
-              getCategoryBadgeColor(achievement.category)
+              'rounded-full px-3 py-1 text-xs font-medium',
+              getCategoryBadgeColor(achievement.category),
             )}
           >
             {achievement.category.toUpperCase()}
@@ -180,13 +174,13 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
       {/* Progress Bar (for in-progress achievements) */}
       {isInProgress && !isHidden && (
         <div className="mb-3">
-          <div className="flex justify-between text-xs text-gray-600 mb-1">
+          <div className="mb-1 flex justify-between text-xs text-gray-600">
             <span>Progreso</span>
             <span>{Math.round(progress)}%</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+          <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
             <div
-              className="bg-gradient-to-r from-blue-500 to-purple-500 h-full rounded-full transition-all duration-300"
+              className="h-full rounded-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -194,28 +188,28 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
       )}
 
       {/* Status Badge */}
-      <div className="flex justify-center mb-3">
+      <div className="mb-3 flex justify-center">
         {isLocked && (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-            <Lock className="w-3 h-3 mr-1" />
+          <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
+            <Lock className="mr-1 h-3 w-3" />
             Bloqueado
           </span>
         )}
         {isInProgress && (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-            <Trophy className="w-3 h-3 mr-1" />
+          <span className="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
+            <Trophy className="mr-1 h-3 w-3" />
             En Progreso {Math.round(progress)}%
           </span>
         )}
         {isEarned && !isClaimed && (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-            <CheckCircle className="w-3 h-3 mr-1" />
+          <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
+            <CheckCircle className="mr-1 h-3 w-3" />
             Ganado
           </span>
         )}
         {isClaimed && (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-            <Gift className="w-3 h-3 mr-1" />
+          <span className="inline-flex items-center rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-800">
+            <Gift className="mr-1 h-3 w-3" />
             Reclamado
           </span>
         )}
@@ -223,17 +217,17 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
 
       {/* Rewards (if not hidden) */}
       {!isHidden && achievement.rewards && (
-        <div className="border-t border-gray-200 pt-3 mt-3">
+        <div className="mt-3 border-t border-gray-200 pt-3">
           <div className="flex justify-center space-x-4 text-sm">
             {achievement.rewards.xp > 0 && (
               <div className="flex items-center text-yellow-600">
-                <Trophy className="w-4 h-4 mr-1" />
+                <Trophy className="mr-1 h-4 w-4" />
                 <span className="font-semibold">{achievement.rewards.xp} XP</span>
               </div>
             )}
             {achievement.rewards.mlCoins > 0 && (
               <div className="flex items-center text-purple-600">
-                <Gift className="w-4 h-4 mr-1" />
+                <Gift className="mr-1 h-4 w-4" />
                 <span className="font-semibold">{achievement.rewards.mlCoins} ML</span>
               </div>
             )}
@@ -243,7 +237,7 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
 
       {/* Earned Date (if earned) */}
       {isEarned && userAchievement?.earnedAt && !isHidden && (
-        <div className="text-center text-xs text-gray-500 mt-2">
+        <div className="mt-2 text-center text-xs text-gray-500">
           Ganado {formatRelativeTime(userAchievement.earnedAt)}
         </div>
       )}

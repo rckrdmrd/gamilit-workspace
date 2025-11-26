@@ -271,14 +271,23 @@ export interface AnalyticsFilter {
 }
 
 // Additional types for new pages
+/**
+ * Classroom interface
+ *
+ * Aligned with backend TeacherClassroomResponseDto
+ * @see apps/backend/src/modules/teacher/dto/classroom-response.dto.ts
+ *
+ * Note: student_count is an alias for current_students_count from backend
+ * Dates are returned as ISO strings from API (JSON serialization)
+ */
 export interface Classroom {
   id: string;
   name: string;
   subject: string;
   grade_level: string;
-  student_count: number;
-  created_at: string;
-  updated_at: string;
+  student_count: number; // Backend: current_students_count
+  created_at: string; // ISO string
+  updated_at: string; // ISO string
   teacher_id: string;
 }
 
@@ -299,6 +308,10 @@ export interface Submission {
   score?: number;
   submitted_at: string;
   graded_at?: string;
+  // Optional properties used in example components
+  exercise_title?: string;
+  max_score?: number;
+  grade?: number;
 }
 
 export interface ClassroomAnalytics {
@@ -308,6 +321,10 @@ export interface ClassroomAnalytics {
   engagement_rate: number;
   module_stats: ModuleStats[];
   student_performance: StudentPerformance[];
+  average_time_on_task?: number;
+  first_attempt_success_rate?: number;
+  most_used_exercises?: Array<{ exercise_name: string; usage_count: number }>;
+  activity_heatmap?: Array<{ day: number; hour: number; activity_count: number }>;
 }
 
 export interface ModuleStats {

@@ -7,7 +7,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Download, Filter, Search } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { apiClient } from '@/services/api/apiClient';
 import type { SystemLog, LogFilter } from '../../types';
@@ -50,9 +50,11 @@ export const SystemLogsViewer: React.FC = () => {
   };
 
   const handleExport = () => {
-    const logText = logs.map(log =>
-      `[${log.timestamp}] [${log.level.toUpperCase()}] [${log.source}] ${log.message}`
-    ).join('\n');
+    const logText = logs
+      .map(
+        (log) => `[${log.timestamp}] [${log.level.toUpperCase()}] [${log.source}] ${log.message}`,
+      )
+      .join('\n');
 
     const blob = new Blob([logText], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -65,10 +67,10 @@ export const SystemLogsViewer: React.FC = () => {
 
   return (
     <DetectiveCard>
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <h3 className="text-detective-subtitle">System Logs</h3>
         <div className="flex items-center gap-2">
-          <label className="flex items-center gap-2 text-detective-small">
+          <label className="text-detective-small flex items-center gap-2">
             <input
               type="checkbox"
               checked={autoScroll}
@@ -79,16 +81,16 @@ export const SystemLogsViewer: React.FC = () => {
           </label>
           <button
             onClick={handleExport}
-            className="flex items-center gap-2 px-4 py-2 bg-detective-bg-secondary rounded-lg hover:bg-detective-bg-tertiary"
+            className="hover:bg-detective-bg-tertiary flex items-center gap-2 rounded-lg bg-detective-bg-secondary px-4 py-2"
           >
-            <Download className="w-4 h-4" />
+            <Download className="h-4 w-4" />
             Export
           </button>
         </div>
       </div>
 
       {/* Level Filter */}
-      <div className="flex gap-2 mb-4">
+      <div className="mb-4 flex gap-2">
         {['info', 'warning', 'error', 'critical'].map((level) => (
           <button
             key={level}
@@ -99,7 +101,7 @@ export const SystemLogsViewer: React.FC = () => {
                 : [...currentLevels, level as any];
               setFilter({ ...filter, level: newLevels as any });
             }}
-            className={`px-3 py-1.5 rounded-md text-xs capitalize transition-colors ${
+            className={`rounded-md px-3 py-1.5 text-xs capitalize transition-colors ${
               filter.level?.includes(level as any)
                 ? getLevelColor(level)
                 : 'bg-detective-bg-secondary text-gray-400'
@@ -111,37 +113,39 @@ export const SystemLogsViewer: React.FC = () => {
       </div>
 
       {/* Logs */}
-      <div className="max-h-[600px] overflow-y-auto custom-scrollbar space-y-2">
+      <div className="custom-scrollbar max-h-[600px] space-y-2 overflow-y-auto">
         {loading ? (
-          <div className="text-center py-8 text-gray-400">Loading logs...</div>
+          <div className="py-8 text-center text-gray-400">Loading logs...</div>
         ) : logs.length === 0 ? (
-          <div className="text-center py-8 text-gray-400">No logs in selected time range</div>
+          <div className="py-8 text-center text-gray-400">No logs in selected time range</div>
         ) : (
           logs.map((log) => (
             <motion.div
               key={log.id}
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              className={`p-3 rounded-lg border-l-4 ${getLevelColor(log.level)} bg-detective-bg-secondary`}
+              className={`rounded-lg border-l-4 p-3 ${getLevelColor(log.level)} bg-detective-bg-secondary`}
             >
-              <div className="flex items-start justify-between gap-2 mb-1">
+              <div className="mb-1 flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <span className={`px-2 py-0.5 rounded text-xs font-semibold uppercase ${getLevelColor(log.level)}`}>
+                  <span
+                    className={`rounded px-2 py-0.5 text-xs font-semibold uppercase ${getLevelColor(log.level)}`}
+                  >
                     {log.level}
                   </span>
                   <span className="text-detective-small text-gray-500">{log.source}</span>
                 </div>
                 <span className="text-xs text-gray-500">
-                  {new Date(log.timestamp).toLocaleTimeString()}
+                  {log.timestamp ? new Date(log.timestamp).toLocaleTimeString('es-ES') : 'N/A'}
                 </span>
               </div>
               <p className="text-detective-small text-gray-300">{log.message}</p>
               {log.details && (
                 <details className="mt-2">
-                  <summary className="text-xs text-gray-400 cursor-pointer hover:text-white">
+                  <summary className="cursor-pointer text-xs text-gray-400 hover:text-white">
                     View details
                   </summary>
-                  <pre className="mt-2 p-2 bg-detective-bg rounded text-xs text-gray-400 overflow-x-auto">
+                  <pre className="mt-2 overflow-x-auto rounded bg-detective-bg p-2 text-xs text-gray-400">
                     {JSON.stringify(log.details, null, 2)}
                   </pre>
                 </details>

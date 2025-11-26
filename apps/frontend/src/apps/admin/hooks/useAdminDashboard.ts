@@ -18,7 +18,12 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 import * as adminAPI from '@/services/api/adminAPI';
+import type {
+  SystemHealth as APISystemHealth,
+  SystemMetrics as APISystemMetrics,
+} from '@/services/api/adminTypes';
 import type {
   SystemHealth,
   SystemMetrics,
@@ -64,14 +69,16 @@ interface RefreshIntervals {
 }
 
 const DEFAULT_INTERVALS: RefreshIntervals = {
-  health: 10000,      // 10 seconds
-  metrics: 30000,     // 30 seconds
-  actions: 60000,     // 60 seconds
-  alerts: 5000,       // 5 seconds (real-time-ish)
-  activity: 300000,   // 5 minutes
+  health: 10000, // 10 seconds
+  metrics: 30000, // 30 seconds
+  actions: 60000, // 60 seconds
+  alerts: 5000, // 5 seconds (real-time-ish)
+  activity: 300000, // 5 minutes
 };
 
-export function useAdminDashboard(customIntervals?: Partial<RefreshIntervals>): UseAdminDashboardResult {
+export function useAdminDashboard(
+  customIntervals?: Partial<RefreshIntervals>,
+): UseAdminDashboardResult {
   // Merge custom intervals with defaults
   const intervals = { ...DEFAULT_INTERVALS, ...customIntervals };
 
@@ -101,13 +108,33 @@ export function useAdminDashboard(customIntervals?: Partial<RefreshIntervals>): 
   // ============================================================================
 
   /**
+   * Transform API SystemHealth to local SystemHealth format
+   * @see SystemHealthDto in backend for the actual response structure
+   */
+  const transformSystemHealth = (apiHealth: APISystemHealth): SystemHealth => {
+    return {
+      status: apiHealth.status === 'down' ? 'critical' : apiHealth.status,
+      cpu: apiHealth.cpu?.usage_percent ?? 0,
+      memory: apiHealth.memory?.usage_percent ?? 0,
+      uptime: apiHealth.uptime_seconds ?? 0,
+      activeUsers: 0, // Not provided by API directly in SystemHealth
+      requestsPerMin: 0, // Not provided by API
+      errorRate: 0, // Not provided by API
+      database: apiHealth.database?.status ?? 'down',
+      apiUptime: apiHealth.uptime_seconds ?? 0,
+      lastCheck: apiHealth.timestamp,
+    };
+  };
+
+  /**
    * Fetch system health status
    * Updated: Now uses adminAPI.getSystemHealth()
    */
   const fetchSystemHealth = useCallback(async (): Promise<void> => {
     try {
-      const data = await adminAPI.getSystemHealth();
-      setSystemHealth(data);
+      const apiData = await adminAPI.getSystemHealth();
+      const transformedData = transformSystemHealth(apiData);
+      setSystemHealth(transformedData);
       setError(null);
     } catch (err) {
       console.error('Failed to fetch system health:', err);
@@ -130,13 +157,33 @@ export function useAdminDashboard(customIntervals?: Partial<RefreshIntervals>): 
   }, []);
 
   /**
+   * Transform API SystemMetrics (snake_case from backend) to local SystemMetrics format
+   * @see SystemMetricsDto in apps/backend/src/modules/admin/dto/system/system-metrics.dto.ts
+   */
+  const transformSystemMetrics = (apiMetrics: APISystemMetrics): SystemMetrics => {
+    return {
+      totalUsers: apiMetrics.total_users ?? 0,
+      userGrowth: 0, // Not provided by backend
+      totalOrganizations: apiMetrics.total_organizations ?? 0,
+      organizationGrowth: 0, // Not provided by backend
+      activeSessions: apiMetrics.active_users_24h ?? 0,
+      flaggedContentCount: 0, // Not provided by backend
+      systemUptime: 0, // Use SystemHealth for uptime
+      storageUsed: 0, // Not provided by backend
+      storageTotal: 0, // Not provided by backend
+      avgResponseTime: apiMetrics.avg_response_time_ms ?? 0,
+    };
+  };
+
+  /**
    * Fetch system metrics
    * Updated: Now uses adminAPI.getSystemMetrics()
    */
   const fetchMetrics = useCallback(async (): Promise<void> => {
     try {
-      const data = await adminAPI.getSystemMetrics();
-      setMetrics(data);
+      const apiData = await adminAPI.getSystemMetrics();
+      const transformedData = transformSystemMetrics(apiData);
+      setMetrics(transformedData);
       setError(null);
     } catch (err) {
       console.error('Failed to fetch metrics:', err);
@@ -174,7 +221,7 @@ export function useAdminDashboard(customIntervals?: Partial<RefreshIntervals>): 
 
       // Sort by severity and timestamp
       const sortedAlerts = alerts.sort((a, b) => {
-        const severityOrder = { high: 3, medium: 2, low: 1 };
+        const severityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
         const severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
         if (severityDiff !== 0) return severityDiff;
         return b.timestamp.getTime() - a.timestamp.getTime();
@@ -282,26 +329,26 @@ export function useAdminDashboard(customIntervals?: Partial<RefreshIntervals>): 
   const dismissAlert = useCallback(async (alertId: string): Promise<void> => {
     try {
       // Optimistic update
-      setAlerts(prev => prev.map(alert =>
-        alert.id === alertId
-          ? { ...alert, dismissed: true, dismissedAt: new Date() }
-          : alert
-      ));
+      setAlerts((prev) =>
+        prev.map((alert) =>
+          alert.id === alertId ? { ...alert, dismissed: true, dismissedAt: new Date() } : alert,
+        ),
+      );
 
-      await apiClient.post(`/admin/alerts/${alertId}/dismiss`);
+      await apiClient.post(`${API_ENDPOINTS.admin.alerts}/${alertId}/dismiss`);
 
       // Remove dismissed alert after animation
       setTimeout(() => {
-        setAlerts(prev => prev.filter(alert => alert.id !== alertId));
+        setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
       }, 300);
     } catch (err) {
       console.error('Failed to dismiss alert:', err);
       // Revert optimistic update on error
-      setAlerts(prev => prev.map(alert =>
-        alert.id === alertId
-          ? { ...alert, dismissed: false, dismissedAt: undefined }
-          : alert
-      ));
+      setAlerts((prev) =>
+        prev.map((alert) =>
+          alert.id === alertId ? { ...alert, dismissed: false, dismissedAt: undefined } : alert,
+        ),
+      );
       throw err;
     }
   }, []);
@@ -317,7 +364,7 @@ export function useAdminDashboard(customIntervals?: Partial<RefreshIntervals>): 
     setIsPaused(true);
 
     // Clear all intervals
-    Object.values(intervalsRef.current).forEach(interval => {
+    Object.values(intervalsRef.current).forEach((interval) => {
       if (interval) clearInterval(interval);
     });
     intervalsRef.current = {};
@@ -349,7 +396,7 @@ export function useAdminDashboard(customIntervals?: Partial<RefreshIntervals>): 
     if (isPaused) return;
 
     // Clear existing intervals
-    Object.values(intervalsRef.current).forEach(interval => {
+    Object.values(intervalsRef.current).forEach((interval) => {
       if (interval) clearInterval(interval);
     });
 
@@ -362,11 +409,19 @@ export function useAdminDashboard(customIntervals?: Partial<RefreshIntervals>): 
 
     // Cleanup on unmount
     return () => {
-      Object.values(intervalsRef.current).forEach(interval => {
+      Object.values(intervalsRef.current).forEach((interval) => {
         if (interval) clearInterval(interval);
       });
     };
-  }, [isPaused, intervals, fetchSystemHealth, fetchMetrics, fetchRecentActions, fetchAlerts, fetchUserActivity]);
+  }, [
+    isPaused,
+    intervals,
+    fetchSystemHealth,
+    fetchMetrics,
+    fetchRecentActions,
+    fetchAlerts,
+    fetchUserActivity,
+  ]);
 
   // ============================================================================
   // RETURN

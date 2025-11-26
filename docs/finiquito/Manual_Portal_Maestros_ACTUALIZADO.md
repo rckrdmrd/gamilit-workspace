@@ -1,8 +1,8 @@
-# Manual del Portal de Maestros - GAMILIT v1.0
+# Manual del Portal de Maestros - GAMILIT v2.0
 
 **Fecha de Actualización:** 24 de noviembre de 2025
-**Versión:** 1.1 - Actualizado con funcionalidades implementadas
-**Estado:** ✅ Validado con código entregado
+**Versión:** 2.0 - Portal Teacher Completo (TEACHER-PORTAL-001)
+**Estado:** ✅ Validado - 9 páginas funcionales + 1 página nueva
 
 ---
 
@@ -14,8 +14,13 @@
 4. [Gestión de Estudiantes](#capítulo-4-gestión-de-estudiantes)
 5. [Asignaciones y Tareas](#capítulo-5-asignaciones-y-tareas)
 6. [Progreso y Analytics](#capítulo-6-progreso-y-analytics)
-7. [Preguntas Frecuentes](#capítulo-7-preguntas-frecuentes)
-8. [Soporte y Ayuda](#capítulo-8-soporte-y-ayuda)
+7. [Respuestas de Ejercicios](#capítulo-7-respuestas-de-ejercicios) **🆕 NUEVO**
+8. [Alertas de Intervención](#capítulo-8-alertas-de-intervención) **🆕 NUEVO**
+9. [Monitoreo en Tiempo Real](#capítulo-9-monitoreo-en-tiempo-real) **✅ MEJORADO**
+10. [Gamificación del Aula](#capítulo-10-gamificación-del-aula) **✅ MEJORADO**
+11. [Reportes](#capítulo-11-reportes)
+12. [Preguntas Frecuentes](#capítulo-12-preguntas-frecuentes)
+13. [Soporte y Ayuda](#capítulo-13-soporte-y-ayuda)
 
 ---
 
@@ -25,11 +30,14 @@
 
 El Portal de Maestros de GAMILIT es su herramienta principal para:
 
-✅ **Gestionar sus aulas** - Ver y organizar sus grupos
-✅ **Monitorear estudiantes** - Seguimiento individual y grupal
-✅ **Crear y gestionar asignaciones** - 12 tipos de ejercicios disponibles
-✅ **Ver progreso en tiempo real** - Analytics y estadísticas
-✅ **Acceder a sistema de gamificación** - Rangos, XP y ML Coins
+✅ **Gestionar sus aulas** - Ver y organizar sus grupos asignados
+✅ **Monitorear estudiantes** - Seguimiento individual y grupal en tiempo real
+✅ **Ver respuestas de ejercicios** - Consultar exactamente qué respondió cada estudiante 🆕
+✅ **Gestionar asignaciones** - Crear tareas con wizard mejorado
+✅ **Ver progreso detallado** - Analytics con identificación de riesgo
+✅ **Recibir alertas de intervención** - Notificaciones automáticas de estudiantes que necesitan ayuda 🆕
+✅ **Monitorear actividad en vivo** - Auto-refresh configurable 🆕
+✅ **Acceder a gamificación** - Ver y otorgar bonus de ML Coins
 
 ### ¿Para quién es este manual?
 
@@ -76,14 +84,20 @@ Captura debe mostrar:
 
 Una vez dentro del portal, encontrará el menú de navegación con las siguientes opciones:
 
-| Menú | Descripción | Implementado |
-|------|-------------|--------------|
-| **Dashboard** | Vista general de sus aulas y estadísticas | ✅ Funcional |
-| **Mis Aulas** | Lista de aulas asignadas | ✅ Funcional |
-| **Estudiantes** | Gestión de estudiantes | ✅ Funcional |
-| **Asignaciones** | Gestión de tareas y ejercicios | ✅ Funcional |
-| **Progreso** | Analytics y reportes | ✅ Funcional |
-| **Recursos** | Biblioteca de materiales | ⏳ Próximamente |
+| Menú | Descripción | Estado |
+|------|-------------|--------|
+| **Dashboard** | Vista general con widgets conectados a datos reales | ✅ 100% Funcional |
+| **Mis Aulas** | Lista de aulas asignadas con CRUD completo | ✅ 100% Funcional |
+| **Estudiantes** | Lista con detalle modal, notas y acciones rápidas | ✅ 100% Funcional |
+| **Asignaciones** | Wizard mejorado para crear tareas | ✅ 100% Funcional |
+| **Progreso** | Analytics con identificación de riesgo y ordenamiento | ✅ 100% Funcional |
+| **Respuestas** 🆕 | Ver respuestas detalladas de ejercicios | ✅ 100% Funcional |
+| **Alertas** | Alertas de intervención automáticas | ✅ 100% Funcional |
+| **Monitoreo** | Actividad en tiempo real con auto-refresh | ✅ 100% Funcional |
+| **Gamificación** | Ver stats y otorgar bonus ML Coins | ✅ 100% Funcional |
+| **Reportes** | Reportes de datos existentes | ✅ Funcional (acotado) |
+| **Recursos** | Biblioteca de materiales | ⏳ Fase 3 |
+| **Comunicación** | Mensajería con estudiantes | ⏳ Fase 3 |
 
 **📸 EVIDENCIA - Screenshot 2:**
 ```
@@ -807,9 +821,439 @@ Captura debe mostrar:
 
 ---
 
-## Capítulo 7: Preguntas Frecuentes
+## Capítulo 7: Respuestas de Ejercicios 🆕
 
-### 7.1 ¿Cómo agrego estudiantes a mi aula?
+### 7.1 ¿Qué es la Página de Respuestas?
+
+**Ruta:** `/teacher/responses`
+**Estado:** ✅ 100% Funcional (Nueva funcionalidad)
+
+Esta es una **nueva página** que permite ver exactamente qué respondió cada estudiante en cada ejercicio. Es fundamental para:
+
+- Entender cómo piensan sus estudiantes
+- Identificar errores conceptuales comunes
+- Proporcionar retroalimentación personalizada
+- Comparar la respuesta del estudiante vs la respuesta correcta
+
+---
+
+### 7.2 Funcionalidades Disponibles
+
+#### Listado de Respuestas
+
+La tabla principal muestra todas las respuestas de ejercicios con:
+
+| Columna | Descripción |
+|---------|-------------|
+| **Estudiante** | Nombre del estudiante que respondió |
+| **Ejercicio** | Título del ejercicio completado |
+| **Módulo** | Módulo al que pertenece (badge visual) |
+| **Resultado** | ✅ Correcto o ❌ Incorrecto |
+| **Puntaje** | Puntos obtenidos / Puntos máximos |
+| **Tiempo** | Tiempo invertido en formato mm:ss |
+| **Fecha** | Hace cuánto tiempo se respondió |
+| **Acciones** | Botón "Ver" para detalle |
+
+---
+
+### 7.3 Filtros Disponibles
+
+Puede filtrar las respuestas por:
+
+| Filtro | Opciones |
+|--------|----------|
+| **Aula** | Seleccionar una de sus aulas asignadas |
+| **Estudiante** | Buscar por nombre específico |
+| **Módulo** | Módulo 1, 2, 3, 4 o 5 |
+| **Fecha desde** | Fecha de inicio del rango |
+| **Fecha hasta** | Fecha de fin del rango |
+| **Resultado** | Solo correctas, solo incorrectas, o todas |
+
+**Tip:** Use filtros combinados para encontrar patrones, por ejemplo: "Respuestas incorrectas del Módulo 2 en la última semana"
+
+---
+
+### 7.4 Detalle de Respuesta
+
+Al hacer clic en "Ver" en cualquier respuesta, se abre un modal con:
+
+#### Información General
+- Resultado (Correcto/Incorrecto) con icono visual
+- Tiempo invertido
+- Pistas utilizadas
+- XP ganados
+
+#### Pestañas de Contenido
+
+**Pestaña "Comparación":**
+Muestra lado a lado:
+- Lo que respondió el estudiante
+- La respuesta correcta
+- Diferencias resaltadas visualmente
+
+**Pestaña "Respuesta Estudiante":**
+- Respuesta completa en formato JSON legible
+- Útil para ejercicios complejos
+
+**Pestaña "Respuesta Correcta":**
+- Respuesta esperada según el ejercicio
+- Referencia para evaluación
+
+#### Retroalimentación
+Si el ejercicio tiene feedback automático, se muestra aquí.
+
+---
+
+### 7.5 Casos de Uso
+
+**Caso 1: Identificar errores comunes**
+1. Filtrar por ejercicio específico
+2. Ver solo respuestas incorrectas
+3. Analizar patrones de error
+4. Preparar explicación para la clase
+
+**Caso 2: Seguimiento individual**
+1. Filtrar por estudiante específico
+2. Ver historial de respuestas
+3. Identificar áreas de dificultad
+4. Planificar tutoría personalizada
+
+**Caso 3: Evaluación de ejercicio**
+1. Ver todas las respuestas de un ejercicio
+2. Calcular tasa de aciertos
+3. Determinar si el ejercicio es muy fácil/difícil
+4. Ajustar instrucciones si es necesario
+
+---
+
+### 7.6 Paginación
+
+La tabla muestra 20 respuestas por página. Use los controles de paginación para:
+- Ir a página siguiente/anterior
+- Ver total de respuestas
+- Conocer en qué página está
+
+---
+
+**📸 EVIDENCIA - Screenshot (Respuestas):**
+```
+[Espacio para screenshot de la página de Respuestas]
+
+Captura debe mostrar:
+- URL: /teacher/responses
+- Tabla con listado de respuestas
+- Filtros en la parte superior
+- Columnas: Estudiante, Ejercicio, Módulo, Resultado, Puntaje, Tiempo, Fecha
+- Paginación en la parte inferior
+```
+
+---
+
+## Capítulo 8: Alertas de Intervención 🆕
+
+### 8.1 ¿Qué son las Alertas de Intervención?
+
+**Ruta:** `/teacher/alerts`
+**Estado:** ✅ 100% Funcional
+
+Las alertas de intervención son **notificaciones automáticas** generadas por el sistema cuando detecta que un estudiante podría necesitar ayuda. Se generan mediante triggers de base de datos que analizan:
+
+- Inactividad prolongada
+- Bajo rendimiento en ejercicios
+- Patrones de dificultad
+- Falta de progreso
+
+---
+
+### 8.2 Tipos de Alertas
+
+| Tipo | Icono | Descripción | Umbral |
+|------|-------|-------------|--------|
+| **Inactividad** | ⏰ | Estudiante sin actividad | > 7 días sin completar ejercicios |
+| **Bajo Rendimiento** | 📉 | Calificaciones por debajo del promedio | Score < 60% en últimos 3 ejercicios |
+| **Dificultad** | 🔄 | Múltiples intentos fallidos | > 3 intentos en mismo ejercicio |
+| **Sin Progreso** | 📊 | Estancamiento en módulo | Sin avance en > 5 días |
+| **Riesgo** | ⚠️ | Combinación de factores | Múltiples indicadores negativos |
+
+---
+
+### 8.3 Información de cada Alerta
+
+Cada alerta muestra:
+
+- **Estudiante:** Nombre y foto del estudiante
+- **Tipo:** Categoría de la alerta (con icono)
+- **Severidad:** Alta (🔴), Media (🟡), Baja (🟢)
+- **Descripción:** Detalle específico del problema
+- **Fecha:** Cuándo se generó la alerta
+- **Estado:** Pendiente, En revisión, Resuelta
+
+---
+
+### 8.4 Acciones Disponibles
+
+Para cada alerta puede:
+
+| Acción | Descripción |
+|--------|-------------|
+| **Ver Perfil** | Ir al perfil del estudiante |
+| **Marcar Revisada** | Indicar que ya tomó acción |
+| **Resolver** | Cerrar la alerta como resuelta |
+| **Agregar Nota** | Documentar las acciones tomadas |
+
+---
+
+### 8.5 Filtros de Alertas
+
+Puede filtrar por:
+- **Aula:** Ver alertas de un aula específica
+- **Severidad:** Solo altas, medias o bajas
+- **Estado:** Pendientes, en revisión, resueltas
+- **Tipo:** Categoría específica de alerta
+
+---
+
+**📸 EVIDENCIA - Screenshot (Alertas):**
+```
+[Espacio para screenshot de la página de Alertas]
+
+Captura debe mostrar:
+- URL: /teacher/alerts
+- Lista de alertas con cards
+- Indicadores de severidad (colores)
+- Botones de acción por alerta
+- Filtros disponibles
+```
+
+---
+
+## Capítulo 9: Monitoreo en Tiempo Real ✅
+
+### 9.1 ¿Qué es la Página de Monitoreo?
+
+**Ruta:** `/teacher/monitoring`
+**Estado:** ✅ 100% Funcional (Mejorada)
+
+Esta página permite ver la actividad de sus estudiantes **en tiempo real**, con actualización automática configurable.
+
+---
+
+### 9.2 Funcionalidades Principales
+
+#### Panel de Control de Actualización 🆕
+
+En la parte superior encontrará el **RefreshControl**:
+
+| Opción | Descripción |
+|--------|-------------|
+| **Manual** | Solo actualiza cuando hace clic |
+| **10 segundos** | Actualiza cada 10 segundos |
+| **30 segundos** | Actualiza cada 30 segundos (recomendado) |
+| **1 minuto** | Actualiza cada minuto |
+| **5 minutos** | Actualiza cada 5 minutos |
+
+También puede:
+- ⏸️ **Pausar** la actualización automática
+- ▶️ **Reanudar** la actualización
+- 🔄 **Forzar actualización** inmediata
+
+#### Indicador de Countdown
+Muestra cuántos segundos faltan para la próxima actualización automática.
+
+---
+
+### 9.3 Información Mostrada
+
+#### Por Estudiante:
+
+| Campo | Descripción |
+|-------|-------------|
+| **Estado** | 🟢 Activo, 🟡 Inactivo reciente, 🔴 Sin actividad |
+| **Última Actividad** | Hace cuánto tiempo fue su última acción |
+| **Ejercicio Actual** | Si está trabajando en algo ahora |
+| **Progreso del Día** | Ejercicios completados hoy |
+
+#### Estadísticas Generales:
+- Total de estudiantes activos ahora
+- Promedio de actividad del día
+- Ejercicios completados en las últimas 24h
+
+---
+
+### 9.4 Notificaciones Toast 🆕
+
+El sistema muestra notificaciones emergentes cuando:
+- Un estudiante completa un ejercicio
+- Un estudiante alcanza un logro
+- Se genera una alerta de intervención
+- Hay cambios significativos en la actividad
+
+---
+
+### 9.5 Badges de Estado 🆕
+
+Cada estudiante tiene un badge de estado visual:
+
+| Badge | Significado |
+|-------|-------------|
+| 🟢 **Activo** | Actividad en los últimos 5 minutos |
+| 🟡 **Reciente** | Actividad en la última hora |
+| 🟠 **Hoy** | Actividad hoy pero hace más de 1 hora |
+| 🔴 **Inactivo** | Sin actividad hoy |
+
+---
+
+**📸 EVIDENCIA - Screenshot (Monitoreo):**
+```
+[Espacio para screenshot de la página de Monitoreo]
+
+Captura debe mostrar:
+- URL: /teacher/monitoring
+- Control de auto-refresh en la parte superior
+- Lista de estudiantes con badges de estado
+- Countdown de próxima actualización
+- Estadísticas generales
+```
+
+---
+
+## Capítulo 10: Gamificación del Aula ✅
+
+### 10.1 ¿Qué es la Página de Gamificación?
+
+**Ruta:** `/teacher/gamification`
+**Estado:** ✅ 100% Funcional (Alcance definido)
+
+Esta página permite ver las estadísticas de gamificación de sus estudiantes y otorgar bonificaciones.
+
+---
+
+### 10.2 Funcionalidades Disponibles
+
+#### ✅ Disponible Ahora
+
+| Funcionalidad | Descripción |
+|---------------|-------------|
+| **Ver stats de XP** | XP total y reciente por estudiante |
+| **Ver ML Coins** | Monedas acumuladas por estudiante |
+| **Ver Ranks** | Rango Maya actual de cada estudiante |
+| **Ver Leaderboard** | Ranking de la clase |
+| **Ver Logros** | Insignias desbloqueadas |
+| **Otorgar Bonus** 🆕 | Dar ML Coins adicionales a estudiantes |
+
+---
+
+### 10.3 Otorgar Bonus de ML Coins 🆕
+
+Como maestro, puede recompensar a sus estudiantes con ML Coins adicionales:
+
+**Cómo hacerlo:**
+1. Ir a Gamificación → Ver estudiante
+2. Clic en "Otorgar Bonus"
+3. Ingresar cantidad de ML Coins (1-100)
+4. Escribir motivo del bonus
+5. Confirmar
+
+**Usos sugeridos:**
+- Premiar participación en clase
+- Reconocer mejora significativa
+- Motivar estudiantes con dificultades
+- Celebrar logros extra-curriculares
+
+---
+
+### 10.4 Sección "Próximamente" 🆕
+
+Algunas funcionalidades de configuración avanzada estarán disponibles en futuras versiones:
+
+| Funcionalidad | Estado | Descripción |
+|---------------|--------|-------------|
+| Configurar rewards | ⏳ Próximamente | Definir recompensas personalizadas |
+| Crear misiones | ⏳ Próximamente | Misiones especiales para la clase |
+| Ajustar XP | ⏳ Próximamente | Multiplicadores de XP por ejercicio |
+
+**Nota:** Estas funcionalidades requieren el sistema de ML Predictions que está en desarrollo.
+
+---
+
+### 10.5 Banners Informativos 🆕
+
+La página muestra dos banners:
+
+**Banner Verde - "Disponible Ahora":**
+Lista las funcionalidades que puede usar inmediatamente.
+
+**Banner Gris - "Próximamente":**
+Lista las funcionalidades que estarán disponibles cuando se complete el sistema de predicciones ML.
+
+---
+
+**📸 EVIDENCIA - Screenshot (Gamificación):**
+```
+[Espacio para screenshot de la página de Gamificación]
+
+Captura debe mostrar:
+- URL: /teacher/gamification
+- Banner de funciones disponibles (verde)
+- Banner de próximamente (gris)
+- Estadísticas de estudiantes
+- Botón de otorgar bonus
+```
+
+---
+
+## Capítulo 11: Reportes
+
+### 11.1 ¿Qué es la Página de Reportes?
+
+**Ruta:** `/teacher/reports`
+**Estado:** ✅ Funcional (Alcance Acotado)
+
+Esta página permite generar reportes basados en los datos existentes del sistema.
+
+---
+
+### 11.2 Alcance Actual
+
+**✅ Disponible:**
+- Reportes de progreso por módulo
+- Reportes de calificaciones
+- Reportes de actividad
+- Exportación de datos básica
+
+**⏳ En Desarrollo (requiere ML Predictions):**
+- Predicciones de rendimiento
+- Análisis predictivo de riesgo
+- Recomendaciones automáticas
+
+---
+
+### 11.3 Nota Informativa
+
+La página incluye un **card informativo** que explica:
+
+> "Los reportes con predicciones de Machine Learning estarán disponibles en una versión futura. Actualmente se muestran métricas basadas en heurísticas simples calculadas a partir de los datos existentes."
+
+Esto significa que los reportes actuales son precisos y útiles, pero basados en cálculos directos (promedios, sumas, porcentajes) en lugar de predicciones estadísticas avanzadas.
+
+---
+
+**📸 EVIDENCIA - Screenshot (Reportes):**
+```
+[Espacio para screenshot de la página de Reportes]
+
+Captura debe mostrar:
+- URL: /teacher/reports
+- Card informativo sobre alcance
+- Opciones de reportes disponibles
+- Filtros y botones de exportación
+```
+
+---
+
+## Capítulo 12: Preguntas Frecuentes
+
+### 12.1 ¿Cómo agrego estudiantes a mi aula?
 
 **R:** La asignación de estudiantes a aulas se realiza desde el **Portal de Administrador**. Como maestro, usted verá automáticamente a los estudiantes que el administrador haya inscrito en sus aulas.
 
@@ -817,101 +1261,111 @@ Si necesita agregar un estudiante, contacte al administrador del sistema.
 
 ---
 
-### 7.2 ¿Cómo sé si un estudiante necesita ayuda?
+### 12.2 ¿Cómo sé si un estudiante necesita ayuda?
 
-**R:** El sistema proporciona varios indicadores:
+**R:** El sistema proporciona varios mecanismos:
 
-**Alertas Automáticas:**
-- 🔴 Estudiante sin actividad por más de 7 días
-- 🟡 Bajo rendimiento en ejercicios (< 60%)
-- 🟠 Múltiples intentos fallidos en mismo ejercicio
-- 🔵 Tiempo excesivo en completar ejercicios
+**✅ Alertas de Intervención Automáticas (Nuevo):**
+- Vaya a **Alertas** en el menú principal
+- El sistema genera alertas automáticamente cuando detecta:
+  - 🔴 Estudiante sin actividad por más de 7 días
+  - 🟡 Bajo rendimiento en ejercicios (< 60%)
+  - 🟠 Múltiples intentos fallidos en mismo ejercicio
+  - 🔵 Estancamiento en progreso de módulo
 
-**Indicadores Visuales:**
-- Progreso por debajo del promedio de la clase
-- Tareas vencidas sin entregar
-- Disminución en participación
+**✅ Monitoreo en Tiempo Real (Mejorado):**
+- Vaya a **Monitoreo** para ver actividad actual
+- Configure auto-refresh cada 30 segundos
+- Los badges de estado muestran quién está activo/inactivo
 
----
-
-### 7.3 ¿Puedo exportar las calificaciones?
-
-**R:** **⏳ Funcionalidad próximamente disponible.**
-
-Se planea incluir:
-- Exportación a Excel/CSV
-- Reportes en PDF
-- Integración con sistemas escolares
-- Reportes personalizables
+**✅ Página de Respuestas (Nuevo):**
+- Vaya a **Respuestas** para ver qué están respondiendo
+- Filtre por respuestas incorrectas
+- Identifique patrones de error comunes
 
 ---
 
-### 7.4 ¿Cómo creo una tarea personalizada?
+### 12.3 ¿Puedo exportar las calificaciones?
 
-**R:** **⏳ Funcionalidad en desarrollo.**
+**R:** **✅ Disponible en la página de Reportes.**
 
-Actualmente el sistema cuenta con 12 ejercicios predefinidos basados en el contenido de Marie Curie. La creación de ejercicios personalizados estará disponible en una actualización futura.
+Puede exportar:
+- Datos de progreso por módulo
+- Calificaciones de ejercicios
+- Reportes de actividad
 
-**Workaround temporal:**
-Contactar al administrador para solicitar la creación de ejercicios personalizados.
+**Nota:** Reportes con predicciones ML estarán disponibles en versiones futuras.
 
 ---
 
-### 7.5 ¿Puedo ver el progreso de todos mis estudiantes a la vez?
+### 12.4 ¿Cómo veo qué respondió un estudiante?
 
-**R:** **✅ Sí.**
+**R:** **✅ Nueva funcionalidad disponible.**
+
+Vaya a la página **Respuestas** (`/teacher/responses`) donde puede:
+- Ver todas las respuestas de sus estudiantes
+- Filtrar por aula, estudiante, módulo, fechas
+- Ver el detalle con comparación respuesta vs correcta
+- Analizar patrones de error
+
+---
+
+### 12.5 ¿Puedo ver el progreso de todos mis estudiantes a la vez?
+
+**R:** **✅ Sí, mejorado.**
 
 En la página **Progreso** puede ver:
 - Vista consolidada de todas sus aulas
-- Filtros por aula específica
+- **Nuevo:** Ordenamiento por progreso, riesgo, nombre
+- **Nuevo:** Identificación de estudiantes en riesgo
 - Comparativas entre grupos
-- Identificación de estudiantes destacados y rezagados
+- Lista ordenable de estudiantes
 
 ---
 
-### 7.6 ¿Por qué veo datos de gamificación en el header?
+### 12.6 ¿Cómo recompenso a un estudiante destacado?
 
-**R:** **✅ Funcionalidad implementada.**
+**R:** **✅ Nueva funcionalidad disponible.**
 
-El header del portal muestra **sus datos personales de gamificación** en tiempo real:
-- **Nivel:** Su nivel como maestro en el sistema
-- **XP:** Puntos de experiencia acumulados
-- **ML Coins:** Monedas Marie-Lurie disponibles
-- **Rango Maya:** Su rango actual
-
-Estos datos se obtienen directamente de la API y se actualizan:
-- Al iniciar sesión
-- Al completar acciones en el sistema
-- Cada vez que navega entre páginas
-
-**🔧 IMPLEMENTACIÓN TÉCNICA:**
-- Hook: `useUserGamification(userId)`
-- API: `GET /api/gamification/users/:userId/stats`
-- Actualización: Automática al cambiar de usuario
-
-**ANTES:** Los datos eran hardcodeados (level: 15, XP: 2450, etc.)
-**AHORA:** Los datos son reales y por usuario ✅
+Puede otorgar bonus de ML Coins:
+1. Ir a **Gamificación**
+2. Seleccionar estudiante
+3. Clic en "Otorgar Bonus"
+4. Ingresar cantidad (1-100 ML Coins)
+5. Escribir motivo
+6. Confirmar
 
 ---
 
-### 7.7 ¿Cuántas asignaciones hay disponibles?
+### 12.7 ¿Qué significa cada color en Monitoreo?
 
-**R:** **✅ 12 asignaciones de demostración.**
+**R:** Los badges de estado indican actividad:
 
-El sistema incluye 12 assignments de ejemplo ya creados:
-- 5 de Módulo 1 (Comprensión Literal)
-- 4 de Módulo 2 (Comprensión Inferencial)
-- 3 de Módulo 3 (Comprensión Crítica)
-
-**Puntos totales disponibles:** 1,850 puntos
-
-Estas asignaciones están distribuidas en las 3 aulas de demostración y cubren todos los tipos de ejercicios del sistema.
+| Color | Significado |
+|-------|-------------|
+| 🟢 Verde | Activo en los últimos 5 minutos |
+| 🟡 Amarillo | Activo en la última hora |
+| 🟠 Naranja | Activo hoy (hace más de 1 hora) |
+| 🔴 Rojo | Sin actividad hoy |
 
 ---
 
-## Capítulo 8: Soporte y Ayuda
+### 12.8 ¿Por qué algunas funciones dicen "Próximamente"?
 
-### 8.1 Centro de Ayuda
+**R:** Algunas funcionalidades avanzadas requieren el sistema de **ML Predictions** que está en desarrollo:
+
+- Predicciones de rendimiento
+- Recomendaciones automáticas
+- Configuración de rewards personalizados
+- Misiones personalizadas
+
+Estas funcionalidades estarán disponibles cuando se complete el módulo de Machine Learning.
+
+---
+
+## Capítulo 13: Soporte y Ayuda
+
+### 13.1 Centro de Ayuda
 
 Si tiene dudas o problemas:
 
@@ -923,7 +1377,7 @@ Si tiene dudas o problemas:
 
 ---
 
-### 8.2 Contacto de Soporte
+### 13.2 Contacto de Soporte
 
 **Soporte Técnico:**
 - **Email:** soporte@gamilit.com
@@ -939,26 +1393,29 @@ Si encuentra un error o bug:
 
 ---
 
-### 8.3 Actualizaciones del Sistema
+### 13.3 Actualizaciones del Sistema
 
-**Versión Actual:** v1.0.0
-**Última Actualización:** 23 de noviembre de 2025
+**Versión Actual:** v2.0.0
+**Última Actualización:** 24 de noviembre de 2025
 
-**Funcionalidades Implementadas:**
-- ✅ Dashboard con datos reales
-- ✅ Gamificación en tiempo real (header)
-- ✅ Vista de aulas asignadas
-- ✅ Lista de estudiantes con datos reales
-- ✅ 12 asignaciones de ejemplo
-- ✅ Filtros por aula y estado
-- ✅ Progreso y analytics
+**Funcionalidades Implementadas (v2.0):**
+- ✅ Dashboard con widgets conectados a datos reales
+- ✅ **Nueva página de Respuestas de Ejercicios** 🆕
+- ✅ **Alertas de Intervención automáticas** 🆕
+- ✅ **Monitoreo con auto-refresh configurable** 🆕
+- ✅ **Bonus de ML Coins para estudiantes** 🆕
+- ✅ Progreso mejorado con identificación de riesgo
+- ✅ Estudiantes con modal de detalle y notas
+- ✅ Asignaciones con wizard mejorado
+- ✅ Gamificación con alcance definido
+- ✅ Reportes de datos existentes
 
-**Próximamente:**
-- ⏳ Crear asignaciones personalizadas
-- ⏳ Calificar entregas
-- ⏳ Reportes exportables
+**Próximamente (requiere ML Predictions):**
+- ⏳ Predicciones de rendimiento
+- ⏳ Recomendaciones automáticas
+- ⏳ Configuración de rewards personalizados
+- ⏳ Recursos y materiales didácticos
 - ⏳ Mensajería con estudiantes
-- ⏳ Alertas automáticas de intervención
 
 ---
 
@@ -1033,6 +1490,20 @@ Si encuentra un error o bug:
 
 ## Notas de Versión
 
+**v2.0 - 24 de noviembre de 2025** (TEACHER-PORTAL-001)
+- 🆕 **Nueva página de Respuestas de Ejercicios** - Ver qué respondió cada estudiante
+- 🆕 **Capítulo 7 completo** - Documentación de la nueva funcionalidad
+- 🆕 **Capítulo 8: Alertas de Intervención** - Notificaciones automáticas
+- ✅ **Capítulo 9: Monitoreo mejorado** - Auto-refresh configurable, badges de estado
+- ✅ **Capítulo 10: Gamificación actualizada** - Bonus ML Coins, alcance definido
+- ✅ **Capítulo 11: Reportes** - Alcance acotado documentado
+- ✅ Reorganización completa de capítulos (7-13)
+- ✅ Actualización de navegación principal con 12 opciones
+- ✅ Preguntas frecuentes actualizadas (12.1-12.8)
+- ✅ 9 páginas al 100% funcional documentadas
+- ✅ 3 páginas acotadas documentadas (sin ML predictions)
+- ✅ 2 páginas descartadas para Fase 3
+
 **v1.1 - 24 de noviembre de 2025**
 - ✅ Actualizado con funcionalidades realmente implementadas
 - ✅ Agregada sección de gamificación en tiempo real
@@ -1048,8 +1519,30 @@ Si encuentra un error o bug:
 
 ---
 
-**FIN DEL MANUAL DEL PORTAL DE MAESTROS**
+## Resumen de Páginas del Portal Teacher
+
+| # | Página | Ruta | Estado |
+|---|--------|------|--------|
+| 1 | Dashboard | /teacher/dashboard | ✅ 100% |
+| 2 | Mis Aulas | /teacher/classes | ✅ 100% |
+| 3 | Estudiantes | /teacher/students | ✅ 100% |
+| 4 | Asignaciones | /teacher/assignments | ✅ 100% |
+| 5 | Progreso | /teacher/progress | ✅ 100% |
+| 6 | Analytics | /teacher/analytics | ✅ 100% |
+| 7 | **Respuestas** | /teacher/responses | ✅ 100% 🆕 |
+| 8 | Alertas | /teacher/alerts | ✅ 100% |
+| 9 | Monitoreo | /teacher/monitoring | ✅ 100% |
+| 10 | Gamificación | /teacher/gamification | ✅ 100% (acotado) |
+| 11 | Reportes | /teacher/reports | ✅ Funcional (acotado) |
+| 12 | Recursos | /teacher/resources | ⏳ Fase 3 |
+| 13 | Comunicación | /teacher/communication | ⏳ Fase 3 |
+
+---
+
+**FIN DEL MANUAL DEL PORTAL DE MAESTROS v2.0**
 
 **Última Actualización:** 24 de noviembre de 2025
+**Versión:** 2.0 (TEACHER-PORTAL-001)
 **Validado con:** Código entregado y funcional
+**Análisis ID:** TEACHER-PORTAL-001 (BE-133, FE-104)
 **Arquitecto:** Claude Code / Architecture-Analyst

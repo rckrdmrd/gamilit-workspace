@@ -7,11 +7,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import * as inventoryAPI from '../api/inventoryAPI';
-import type {
-  PowerUpInventory,
-  PowerUpType,
-  AvailablePowerUp,
-} from '../api/inventoryAPI';
+import type { PowerUpInventory, PowerUpType } from '../api/inventoryAPI';
 
 // ============================================================================
 // QUERY KEYS
@@ -80,10 +76,7 @@ export const usePurchasePowerUp = () => {
     onSuccess: (data) => {
       // Update inventory cache with the new data
       if (authUser?.id) {
-        queryClient.setQueryData(
-          inventoryKeys.user(authUser.id),
-          data.inventory
-        );
+        queryClient.setQueryData(inventoryKeys.user(authUser.id), data.inventory);
         // Invalidate to refetch from server
         queryClient.invalidateQueries({
           queryKey: inventoryKeys.user(authUser.id),
@@ -101,25 +94,16 @@ export const useUsePowerUp = () => {
   const authUser = useAuthStore((state) => state.user);
 
   return useMutation({
-    mutationFn: ({
-      powerupType,
-      exerciseId,
-    }: {
-      powerupType: PowerUpType;
-      exerciseId: string;
-    }) => {
+    mutationFn: ({ powerupType, exerciseId }: { powerupType: PowerUpType; exerciseId: string }) => {
       if (!authUser?.id) {
         throw new Error('User not authenticated');
       }
-      return inventoryAPI.usePowerUp(authUser.id, powerupType, exerciseId);
+      return inventoryAPI.applyPowerUp(authUser.id, powerupType, exerciseId);
     },
     onSuccess: (data) => {
       // Update inventory cache with the new data
       if (authUser?.id) {
-        queryClient.setQueryData(
-          inventoryKeys.user(authUser.id),
-          data.remainingPowerups
-        );
+        queryClient.setQueryData(inventoryKeys.user(authUser.id), data.remainingPowerups);
         // Invalidate to refetch from server
         queryClient.invalidateQueries({
           queryKey: inventoryKeys.user(authUser.id),
@@ -194,7 +178,7 @@ export const useInventoryManagement = (userId?: string) => {
 
     // Mutations
     purchasePowerUp: purchaseMutation.mutate,
-    usePowerUp: useMutation.mutate,
+    applyPowerUp: useMutation.mutate,
     isPurchasing: purchaseMutation.isPending,
     isUsing: useMutation.isPending,
 

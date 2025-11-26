@@ -21,8 +21,8 @@ import type {
   MissionType,
   MissionActionResult,
   MissionRewardsSummary,
-  TrackedMission,
 } from '../types/missionsTypes';
+import { transformMissions, type MissionFromAPI } from '../utils/missionTransformer';
 
 const API_BASE = '/gamification/missions';
 const REFRESH_INTERVAL = 60000; // 60 seconds
@@ -60,7 +60,8 @@ interface UseMissionsResult {
 /**
  * Main useMissions hook
  */
-export function useMissions(userId?: string): UseMissionsResult {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function useMissions(_userId?: string): UseMissionsResult {
   // State
   const [dailyMissions, setDailyMissions] = useState<Mission[]>([]);
   const [weeklyMissions, setWeeklyMissions] = useState<Mission[]>([]);
@@ -187,7 +188,7 @@ export function useMissions(userId?: string): UseMissionsResult {
    */
   const updateMissionInState = useCallback((updatedMission: Mission) => {
     const updateFn = (missions: Mission[]) =>
-      missions.map(m => (m.id === updatedMission.id ? updatedMission : m));
+      missions.map((m) => (m.id === updatedMission.id ? updatedMission : m));
 
     if (updatedMission.type === 'daily') {
       setDailyMissions(updateFn);
@@ -202,7 +203,7 @@ export function useMissions(userId?: string): UseMissionsResult {
    * Track a mission
    */
   const trackMission = useCallback((missionId: string) => {
-    setTrackedMissionIds(prev => {
+    setTrackedMissionIds((prev) => {
       if (prev.includes(missionId)) return prev;
 
       // Limit to MAX_TRACKED_MISSIONS
@@ -218,129 +219,138 @@ export function useMissions(userId?: string): UseMissionsResult {
    * Untrack a mission
    */
   const untrackMission = useCallback((missionId: string) => {
-    setTrackedMissionIds(prev => prev.filter(id => id !== missionId));
+    setTrackedMissionIds((prev) => prev.filter((id) => id !== missionId));
   }, []);
 
   /**
    * Check if mission is tracked
    */
-  const isTracked = useCallback((missionId: string): boolean => {
-    return trackedMissionIds.includes(missionId);
-  }, [trackedMissionIds]);
+  const isTracked = useCallback(
+    (missionId: string): boolean => {
+      return trackedMissionIds.includes(missionId);
+    },
+    [trackedMissionIds],
+  );
 
   /**
    * Start a mission
    */
-  const startMission = useCallback(async (missionId: string): Promise<MissionActionResult> => {
-    try {
-      // TODO: Call real API
-      // const response = await fetch(`${API_BASE}/${missionId}/start`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      // });
-      // const data = await response.json();
+  const startMission = useCallback(
+    async (missionId: string): Promise<MissionActionResult> => {
+      try {
+        // TODO: Call real API
+        // const response = await fetch(`${API_BASE}/${missionId}/start`, {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        // });
+        // const data = await response.json();
 
-      // Mock implementation
-      const allMissions = [...dailyMissions, ...weeklyMissions, ...specialMissions];
-      const mission = allMissions.find(m => m.id === missionId);
+        // Mock implementation
+        const allMissions = [...dailyMissions, ...weeklyMissions, ...specialMissions];
+        const mission = allMissions.find((m) => m.id === missionId);
 
-      if (!mission) {
-        return {
-          success: false,
-          message: 'Misión no encontrada',
+        if (!mission) {
+          return {
+            success: false,
+            message: 'Misión no encontrada',
+          };
+        }
+
+        if (mission.status !== 'not_started') {
+          return {
+            success: false,
+            message: 'La misión ya fue iniciada',
+          };
+        }
+
+        // Update mission status
+        const updatedMission = {
+          ...mission,
+          status: 'in_progress' as const,
+          startedAt: new Date(),
         };
-      }
-
-      if (mission.status !== 'not_started') {
-        return {
-          success: false,
-          message: 'La misión ya fue iniciada',
-        };
-      }
-
-      // Update mission status
-      const updatedMission = {
-        ...mission,
-        status: 'in_progress' as const,
-        startedAt: new Date(),
-      };
-
-      // Update state
-      updateMissionInState(updatedMission);
-
-      return {
-        success: true,
-        message: 'Misión iniciada con éxito',
-        mission: updatedMission,
-      };
-    } catch (err) {
-      console.error('Error starting mission:', err);
-      return {
-        success: false,
-        message: 'Error al iniciar la misión',
-      };
-    }
-  }, [dailyMissions, weeklyMissions, specialMissions, updateMissionInState]);
-
-  /**
-   * Claim mission reward
-   */
-  const claimReward = useCallback(async (missionId: string): Promise<MissionActionResult> => {
-    try {
-      // Call real API
-      const response = await apiClient.post(`${API_BASE}/${missionId}/claim`);
-      const data = response.data;
-
-      if (data.success) {
-        const { mission: updatedMission, rewards } = data.data;
 
         // Update state
         updateMissionInState(updatedMission);
 
-        // Update stats
-        setStats(prev => ({
-          ...prev,
-          totalXPEarned: prev.totalXPEarned + rewards.xp,
-          totalMLCoinsEarned: prev.totalMLCoinsEarned + rewards.mlCoins,
-        }));
-
-        // Remove from tracked missions
-        untrackMission(missionId);
-
-        // Refresh missions
-        await fetchMissions();
-
         return {
           success: true,
-          message: 'Recompensa reclamada',
+          message: 'Misión iniciada con éxito',
           mission: updatedMission,
-          rewards,
         };
-      } else {
+      } catch (err) {
+        console.error('Error starting mission:', err);
         return {
           success: false,
-          message: data.error?.message || 'Error al reclamar la recompensa',
+          message: 'Error al iniciar la misión',
         };
       }
-    } catch (err) {
-      console.error('Error claiming reward:', err);
-      return {
-        success: false,
-        message: 'Error al reclamar la recompensa',
-      };
-    }
-  }, [fetchMissions, untrackMission, updateMissionInState]);
+    },
+    [dailyMissions, weeklyMissions, specialMissions, updateMissionInState],
+  );
+
+  /**
+   * Claim mission reward
+   */
+  const claimReward = useCallback(
+    async (missionId: string): Promise<MissionActionResult> => {
+      try {
+        // Call real API
+        const response = await apiClient.post(`${API_BASE}/${missionId}/claim`);
+        const data = response.data;
+
+        if (data.success) {
+          const { mission: updatedMission, rewards } = data.data;
+
+          // Update state
+          updateMissionInState(updatedMission);
+
+          // Update stats
+          setStats((prev) => ({
+            ...prev,
+            totalXPEarned: prev.totalXPEarned + rewards.xp,
+            totalMLCoinsEarned: prev.totalMLCoinsEarned + rewards.mlCoins,
+          }));
+
+          // Remove from tracked missions
+          untrackMission(missionId);
+
+          // Refresh missions
+          await fetchMissions();
+
+          return {
+            success: true,
+            message: 'Recompensa reclamada',
+            mission: updatedMission,
+            rewards,
+          };
+        } else {
+          return {
+            success: false,
+            message: data.error?.message || 'Error al reclamar la recompensa',
+          };
+        }
+      } catch (err) {
+        console.error('Error claiming reward:', err);
+        return {
+          success: false,
+          message: 'Error al reclamar la recompensa',
+        };
+      }
+    },
+    [fetchMissions, untrackMission, updateMissionInState],
+  );
 
   // Computed: All missions
   const allMissions = useMemo(
     () => [...dailyMissions, ...weeklyMissions, ...specialMissions],
-    [dailyMissions, weeklyMissions, specialMissions]
+    [dailyMissions, weeklyMissions, specialMissions],
   );
 
   // Computed: Active (tracked) missions
   const activeMissions = useMemo(
-    () => allMissions.filter(m => trackedMissionIds.includes(m.id)),
-    [allMissions, trackedMissionIds]
+    () => allMissions.filter((m) => trackedMissionIds.includes(m.id)),
+    [allMissions, trackedMissionIds],
   );
 
   // Computed: Rewards summary
@@ -349,31 +359,31 @@ export function useMissions(userId?: string): UseMissionsResult {
       currentTab === 'daily'
         ? dailyMissions
         : currentTab === 'weekly'
-        ? weeklyMissions
-        : specialMissions;
+          ? weeklyMissions
+          : specialMissions;
 
     const potential = currentMissions
-      .filter(m => m.status !== 'claimed')
+      .filter((m) => m.status !== 'claimed')
       .reduce(
         (acc, m) => ({
           xp: acc.xp + m.xpReward,
           mlCoins: acc.mlCoins + m.mlCoinsReward,
         }),
-        { xp: 0, mlCoins: 0 }
+        { xp: 0, mlCoins: 0 },
       );
 
     const earned = currentMissions
-      .filter(m => m.status === 'claimed')
+      .filter((m) => m.status === 'claimed')
       .reduce(
         (acc, m) => ({
           xp: acc.xp + m.xpReward,
           mlCoins: acc.mlCoins + m.mlCoinsReward,
         }),
-        { xp: 0, mlCoins: 0 }
+        { xp: 0, mlCoins: 0 },
       );
 
-    const allDailyComplete = dailyMissions.every(m => m.status === 'claimed');
-    const allWeeklyComplete = weeklyMissions.every(m => m.status === 'claimed');
+    const allDailyComplete = dailyMissions.every((m) => m.status === 'claimed');
+    const allWeeklyComplete = weeklyMissions.every((m) => m.status === 'claimed');
 
     const bonusXP = (allDailyComplete ? 500 : 0) + (allWeeklyComplete ? 2000 : 0);
     const bonusMLCoins = (allDailyComplete ? 100 : 0) + (allWeeklyComplete ? 500 : 0);
@@ -425,13 +435,20 @@ export function useMissions(userId?: string): UseMissionsResult {
  */
 async function fetchMissionsByType(type: MissionType): Promise<Mission[]> {
   try {
-    const response = await apiClient.get(`${API_BASE}/${type}`);
+    const response = await apiClient.get<{
+      success: boolean;
+      data: { missions: MissionFromAPI[]; count: number };
+    }>(`${API_BASE}/${type}`);
     // API returns { success: true, data: { missions: [...], count: number } }
     if (response.data.success && response.data.data?.missions) {
-      return response.data.data.missions;
+      // Apply transformer to convert API format to frontend format
+      return transformMissions(response.data.data.missions);
     }
     // Fallback if structure is different
-    return Array.isArray(response.data) ? response.data : [];
+    if (Array.isArray(response.data)) {
+      return transformMissions(response.data as MissionFromAPI[]);
+    }
+    return [];
   } catch (error) {
     console.error(`Error fetching ${type} missions:`, error);
     // Return empty array on error instead of mock data
@@ -460,4 +477,3 @@ async function fetchMissionStats(): Promise<MissionStats> {
     throw error;
   }
 }
-

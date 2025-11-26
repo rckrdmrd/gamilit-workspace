@@ -6,13 +6,8 @@ import { useAuthStore } from '../store/authStore';
  * Handles session validation and automatic token refresh
  */
 export const useSession = () => {
-  const {
-    isAuthenticated,
-    sessionExpiresAt,
-    checkSession,
-    refreshSession,
-    logout
-  } = useAuthStore();
+  const { isAuthenticated, sessionExpiresAt, checkSession, refreshSession, logout } =
+    useAuthStore();
 
   // Check session on mount and periodically
   useEffect(() => {
@@ -22,7 +17,7 @@ export const useSession = () => {
 
       // Check every minute
       const interval = setInterval(() => {
-        const isValid = checkSession();
+        checkSession();
 
         // Refresh token if expiring soon (< 1 hour)
         if (sessionExpiresAt && sessionExpiresAt - Date.now() < 60 * 60 * 1000) {
@@ -41,6 +36,6 @@ export const useSession = () => {
     isAuthenticated,
     sessionExpiresAt,
     checkSession,
-    refreshSession
+    refreshSession,
   };
 };

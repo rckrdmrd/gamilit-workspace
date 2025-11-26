@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like, MoreThan } from 'typeorm';
+import { plainToInstance } from 'class-transformer';
 import { Tenant } from '@modules/auth/entities/tenant.entity';
 import { Membership } from '@modules/auth/entities/membership.entity';
 import {
@@ -36,6 +37,33 @@ export class AdminOrganizationsService {
     @InjectRepository(Profile, 'auth')
     private readonly profileRepo: Repository<Profile>,
   ) {}
+
+  /**
+   * Transform Tenant entity to OrganizationDto
+   * Ensures all fields are properly serialized including dates
+   */
+  private transformTenantToDto(tenant: Tenant): OrganizationDto {
+    return plainToInstance(
+      OrganizationDto,
+      {
+        id: tenant.id,
+        name: tenant.name,
+        slug: tenant.slug,
+        domain: tenant.domain,
+        logo_url: tenant.logo_url,
+        subscription_tier: tenant.subscription_tier,
+        max_users: tenant.max_users,
+        max_storage_gb: tenant.max_storage_gb,
+        is_active: tenant.is_active,
+        trial_ends_at: tenant.trial_ends_at,
+        settings: tenant.settings || {},
+        metadata: tenant.metadata || {},
+        created_at: tenant.created_at,
+        updated_at: tenant.updated_at,
+      },
+      { excludeExtraneousValues: true },
+    );
+  }
 
   /**
    * List organizations with filters and pagination
@@ -82,7 +110,7 @@ export class AdminOrganizationsService {
       .getManyAndCount();
 
     return {
-      items: data as any,
+      items: data.map((tenant) => this.transformTenantToDto(tenant)),
       pagination: {
         page,
         totalPages: Math.ceil(total / limit),
@@ -102,7 +130,7 @@ export class AdminOrganizationsService {
       throw new NotFoundException(`Organization ${id} not found`);
     }
 
-    return tenant as any;
+    return this.transformTenantToDto(tenant);
   }
 
   /**
@@ -145,7 +173,7 @@ export class AdminOrganizationsService {
     });
 
     const saved = await this.tenantRepo.save(tenant);
-    return saved as any;
+    return this.transformTenantToDto(saved);
   }
 
   /**
@@ -165,7 +193,7 @@ export class AdminOrganizationsService {
     Object.assign(tenant, updateDto);
 
     const updated = await this.tenantRepo.save(tenant);
-    return updated as any;
+    return this.transformTenantToDto(updated);
   }
 
   /**
@@ -348,7 +376,7 @@ export class AdminOrganizationsService {
     }
 
     const updated = await this.tenantRepo.save(tenant);
-    return updated as any;
+    return this.transformTenantToDto(updated);
   }
 
   /**
@@ -377,6 +405,6 @@ export class AdminOrganizationsService {
     };
 
     const updated = await this.tenantRepo.save(tenant);
-    return updated as any;
+    return this.transformTenantToDto(updated);
   }
 }

@@ -26,7 +26,6 @@ import {
   Key,
   Layers,
   Link,
-  Lock,
   Moon,
   Puzzle,
   Search,
@@ -51,43 +50,43 @@ import { useAchievements } from '../../hooks/useAchievements';
 
 // Icon mapping for achievement icons
 const achievementIconMap: Record<string, LucideIcon> = {
-  'footprints': Footprints,
-  'target': Target,
+  footprints: Footprints,
+  target: Target,
   'book-open': BookOpen,
   'graduation-cap': GraduationCap,
-  'compass': Compass,
-  'trophy': Trophy,
-  'zap': Zap,
-  'star': Star,
-  'flame': Flame,
-  'award': Award,
-  'sunrise': Sunrise,
-  'moon': Moon,
-  'calendar': Calendar,
+  compass: Compass,
+  trophy: Trophy,
+  zap: Zap,
+  star: Star,
+  flame: Flame,
+  award: Award,
+  sunrise: Sunrise,
+  moon: Moon,
+  calendar: Calendar,
   'trending-up': TrendingUp,
-  'shield': Shield,
+  shield: Shield,
   'check-circle': CheckCircle,
-  'sparkles': Sparkles,
-  'search': Search,
-  'timer': Timer,
-  'link': Link,
-  'check': Check,
-  'crown': Crown,
-  'brain': Brain,
-  'layers': Layers,
-  'focus': Target,
+  sparkles: Sparkles,
+  search: Search,
+  timer: Timer,
+  link: Link,
+  check: Check,
+  crown: Crown,
+  brain: Brain,
+  layers: Layers,
+  focus: Target,
   'user-plus': UserPlus,
-  'users': Users,
-  'flag': Flag,
+  users: Users,
+  flag: Flag,
   'heart-handshake': HeartHandshake,
   'users-round': UsersRound,
   'thumbs-up': ThumbsUp,
-  'handshake': Handshake,
-  'egg': Egg,
-  'clock': Clock,
-  'key': Key,
-  'puzzle': Puzzle,
-  'gem': Gem,
+  handshake: Handshake,
+  egg: Egg,
+  clock: Clock,
+  key: Key,
+  puzzle: Puzzle,
+  gem: Gem,
 };
 
 export const AchievementNotification: React.FC = () => {
@@ -104,7 +103,7 @@ export const AchievementNotification: React.FC = () => {
   }, [recentUnlocks, dismissNotification]);
 
   return (
-    <div className="fixed top-20 right-4 z-50 space-y-2">
+    <div className="fixed right-4 top-20 z-50 space-y-2">
       <AnimatePresence>
         {recentUnlocks.slice(0, 3).map((unlock) => {
           const IconComponent = achievementIconMap[unlock.achievement.icon] || Award;
@@ -115,28 +114,28 @@ export const AchievementNotification: React.FC = () => {
               initial={{ opacity: 0, x: 100, scale: 0.8 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 100, scale: 0.8 }}
-              className="bg-white rounded-detective shadow-detective-lg p-4 max-w-sm cursor-pointer hover:shadow-detective"
+              className="max-w-sm cursor-pointer rounded-detective bg-white p-4 shadow-detective-lg hover:shadow-detective"
               onClick={() => dismissNotification(unlock.achievement.id)}
             >
               <div className="flex items-start gap-3">
-                <div className="bg-gradient-to-br from-detective-gold to-detective-orange p-2 rounded-lg">
-                  <IconComponent className="w-6 h-6 text-white" />
+                <div className="rounded-lg bg-gradient-to-br from-detective-gold to-detective-orange p-2">
+                  <IconComponent className="h-6 w-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-detective-sm font-semibold text-detective-orange mb-1">
+                  <p className="mb-1 text-detective-sm font-semibold text-detective-orange">
                     Logro Desbloqueado!
                   </p>
                   <p className="text-detective-base font-bold text-detective-text">
                     {unlock.achievement.title}
                   </p>
-                  <div className="flex items-center gap-3 mt-2">
-                    <span className="text-detective-sm text-detective-text-secondary flex items-center gap-1">
-                      <Coins className="w-4 h-4 text-detective-gold" />
-                      +{unlock.achievement.mlCoinsReward}
+                  <div className="mt-2 flex items-center gap-3">
+                    <span className="flex items-center gap-1 text-detective-sm text-detective-text-secondary">
+                      <Coins className="h-4 w-4 text-detective-gold" />+
+                      {unlock.achievement.mlCoinsReward}
                     </span>
-                    <span className="text-detective-sm text-detective-text-secondary flex items-center gap-1">
-                      <Zap className="w-4 h-4 text-detective-orange" />
-                      +{unlock.achievement.xpReward}
+                    <span className="flex items-center gap-1 text-detective-sm text-detective-text-secondary">
+                      <Zap className="h-4 w-4 text-detective-orange" />+
+                      {unlock.achievement.xpReward}
                     </span>
                   </div>
                 </div>
@@ -147,7 +146,7 @@ export const AchievementNotification: React.FC = () => {
                   }}
                   className="text-detective-text-secondary hover:text-detective-text"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="h-5 w-5" />
                 </button>
               </div>
             </motion.div>

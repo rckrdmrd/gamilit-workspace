@@ -1,12 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Users,
-  BookOpen,
-  ClipboardCheck,
-  TrendingUp,
-  Award,
-} from 'lucide-react';
+import { Users, BookOpen, ClipboardCheck, TrendingUp } from 'lucide-react';
 import type { TeacherStats } from '../../types';
 
 interface TeacherDashboardHeroProps {
@@ -74,11 +68,11 @@ const StatCard: React.FC<StatCardProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300"
+      className="rounded-xl bg-white p-6 shadow-lg transition-shadow duration-300 hover:shadow-xl"
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-sm font-medium text-gray-600 mb-2">{label}</p>
+          <p className="mb-2 text-sm font-medium text-gray-600">{label}</p>
           <div className="flex items-baseline gap-2">
             <motion.p
               initial={{ scale: 0.5 }}
@@ -86,8 +80,8 @@ const StatCard: React.FC<StatCardProps> = ({
               transition={{
                 duration: 0.5,
                 delay: index * 0.1 + 0.3,
-                type: "spring",
-                stiffness: 100
+                type: 'spring',
+                stiffness: 100,
               }}
               className={`text-4xl font-bold ${colorClass}`}
             >
@@ -101,7 +95,7 @@ const StatCard: React.FC<StatCardProps> = ({
               )}
             </motion.p>
           </div>
-          <p className="text-xs text-gray-500 mt-2">{subtitle}</p>
+          <p className="mt-2 text-xs text-gray-500">{subtitle}</p>
         </div>
         <motion.div
           initial={{ scale: 0, rotate: -180 }}
@@ -109,11 +103,11 @@ const StatCard: React.FC<StatCardProps> = ({
           transition={{
             duration: 0.6,
             delay: index * 0.1 + 0.2,
-            type: "spring"
+            type: 'spring',
           }}
-          className={`p-3 rounded-full ${colorClass.replace('text-', 'bg-').replace('500', '100')}`}
+          className={`rounded-full p-3 ${colorClass.replace('text-', 'bg-').replace('500', '100')}`}
         >
-          <Icon className={`w-6 h-6 ${colorClass}`} />
+          <Icon className={`h-6 w-6 ${colorClass}`} />
         </motion.div>
       </div>
     </motion.div>
@@ -123,14 +117,14 @@ const StatCard: React.FC<StatCardProps> = ({
 // Skeleton loader for stats
 const StatCardSkeleton: React.FC = () => {
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 animate-pulse">
+    <div className="animate-pulse rounded-xl bg-white p-6 shadow-lg">
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <div className="h-4 bg-gray-200 rounded w-24 mb-3"></div>
-          <div className="h-10 bg-gray-300 rounded w-20 mb-2"></div>
-          <div className="h-3 bg-gray-200 rounded w-32"></div>
+          <div className="mb-3 h-4 w-24 rounded bg-gray-200"></div>
+          <div className="mb-2 h-10 w-20 rounded bg-gray-300"></div>
+          <div className="h-3 w-32 rounded bg-gray-200"></div>
         </div>
-        <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
+        <div className="h-12 w-12 rounded-full bg-gray-200"></div>
       </div>
     </div>
   );
@@ -180,11 +174,11 @@ export const TeacherDashboardHero: React.FC<TeacherDashboardHeroProps> = ({
   ];
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-8 mb-8 shadow-2xl">
+    <div className="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-8 shadow-2xl">
       {/* Decorative background elements */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/3 translate-y-1/3"></div>
+        <div className="absolute left-0 top-0 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"></div>
+        <div className="absolute bottom-0 right-0 h-96 w-96 translate-x-1/3 translate-y-1/3 rounded-full bg-white"></div>
       </div>
 
       {/* Content */}
@@ -195,16 +189,14 @@ export const TeacherDashboardHero: React.FC<TeacherDashboardHeroProps> = ({
           transition={{ duration: 0.6 }}
           className="mb-8"
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
+          <h1 className="mb-2 text-4xl font-bold text-white md:text-5xl">
             {getGreeting()}, {teacherName}!
           </h1>
-          <p className="text-blue-100 text-lg">
-            Here's your classroom overview for today
-          </p>
+          <p className="text-lg text-blue-100">Here's your classroom overview for today</p>
         </motion.div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {loading ? (
             <>
               {[1, 2, 3, 4].map((i) => (
@@ -212,9 +204,7 @@ export const TeacherDashboardHero: React.FC<TeacherDashboardHeroProps> = ({
               ))}
             </>
           ) : (
-            statCards.map((stat, index) => (
-              <StatCard key={stat.label} {...stat} index={index} />
-            ))
+            statCards.map((stat, index) => <StatCard key={stat.label} {...stat} index={index} />)
           )}
         </div>
       </div>

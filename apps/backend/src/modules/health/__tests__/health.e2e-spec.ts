@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, HttpStatus } from '@nestjs/common';
+// @ts-ignore - supertest types not available
 import * as request from 'supertest';
 import { HealthModule } from '../health.module';
 import { ConfigModule } from '@nestjs/config';
@@ -120,10 +121,10 @@ describe('HealthController (e2e)', () => {
     it('should return health status', () => {
       return request(app.getHttpServer())
         .get('/health')
-        .expect((res) => {
+        .expect((res: any) => {
           expect([HttpStatus.OK, HttpStatus.SERVICE_UNAVAILABLE]).toContain(res.status);
         })
-        .expect((res) => {
+        .expect((res: any) => {
           expect(res.body).toHaveProperty('status');
           expect(res.body).toHaveProperty('timestamp');
           expect(res.body).toHaveProperty('uptime');
@@ -136,7 +137,7 @@ describe('HealthController (e2e)', () => {
     it('should return valid timestamp', () => {
       return request(app.getHttpServer())
         .get('/health')
-        .expect((res) => {
+        .expect((res: any) => {
           expect(res.body.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
           const timestamp = new Date(res.body.timestamp);
           expect(timestamp.getTime()).toBeGreaterThan(0);
@@ -146,7 +147,7 @@ describe('HealthController (e2e)', () => {
     it('should return numeric uptime', () => {
       return request(app.getHttpServer())
         .get('/health')
-        .expect((res) => {
+        .expect((res: any) => {
           expect(typeof res.body.uptime).toBe('number');
           expect(res.body.uptime).toBeGreaterThanOrEqual(0);
         });
@@ -155,7 +156,7 @@ describe('HealthController (e2e)', () => {
     it('should include database check', () => {
       return request(app.getHttpServer())
         .get('/health')
-        .expect((res) => {
+        .expect((res: any) => {
           expect(res.body.checks).toHaveProperty('database');
           expect(res.body.checks.database).toHaveProperty('status');
           expect(res.body.checks.database).toHaveProperty('responseTime');
@@ -166,7 +167,7 @@ describe('HealthController (e2e)', () => {
     it('should include tables check', () => {
       return request(app.getHttpServer())
         .get('/health')
-        .expect((res) => {
+        .expect((res: any) => {
           expect(res.body.checks).toHaveProperty('tables');
           expect(res.body.checks.tables).toHaveProperty('status');
           expect(res.body.checks.tables).toHaveProperty('responseTime');
@@ -177,7 +178,7 @@ describe('HealthController (e2e)', () => {
     it('should return 200 OK when healthy', () => {
       return request(app.getHttpServer())
         .get('/health')
-        .expect((res) => {
+        .expect((res: any) => {
           if (res.body.status === 'healthy') {
             expect(res.status).toBe(HttpStatus.OK);
           }
@@ -187,7 +188,7 @@ describe('HealthController (e2e)', () => {
     it('should return 503 when unhealthy', () => {
       return request(app.getHttpServer())
         .get('/health')
-        .expect((res) => {
+        .expect((res: any) => {
           if (res.body.status === 'unhealthy' || res.body.status === 'degraded') {
             expect(res.status).toBe(HttpStatus.SERVICE_UNAVAILABLE);
           }
@@ -198,7 +199,7 @@ describe('HealthController (e2e)', () => {
       const startTime = Date.now();
       return request(app.getHttpServer())
         .get('/health')
-        .expect((res) => {
+        .expect((res: any) => {
           const duration = Date.now() - startTime;
           expect(duration).toBeLessThan(5000); // 5 seconds max
         });
@@ -207,7 +208,7 @@ describe('HealthController (e2e)', () => {
     it('should not require authentication', () => {
       return request(app.getHttpServer())
         .get('/health')
-        .expect((res) => {
+        .expect((res: any) => {
           // Should not return 401 Unauthorized
           expect(res.status).not.toBe(HttpStatus.UNAUTHORIZED);
         });
@@ -222,7 +223,7 @@ describe('HealthController (e2e)', () => {
     it('should include version information', () => {
       return request(app.getHttpServer())
         .get('/health')
-        .expect((res) => {
+        .expect((res: any) => {
           expect(res.body.version).toBeDefined();
           expect(typeof res.body.version).toBe('string');
         });
@@ -235,7 +236,7 @@ describe('HealthController (e2e)', () => {
 
       const responses = await Promise.all(requests);
 
-      responses.forEach((res) => {
+      responses.forEach((res: any) => {
         expect([HttpStatus.OK, HttpStatus.SERVICE_UNAVAILABLE]).toContain(res.status);
         expect(res.body).toHaveProperty('status');
       });

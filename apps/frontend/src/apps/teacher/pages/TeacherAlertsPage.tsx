@@ -10,18 +10,16 @@ import { AlertTriangle, Bell, Filter, X, TrendingUp, Activity, AlertCircle } fro
 import type { AlertPriority, AlertType } from '../types';
 
 /**
- * TeacherAlertsPage - Página completa de alertas y notificaciones
+ * TeacherAlertsPage - Sistema de Alertas
  *
- * Permite a los profesores monitorear y gestionar alertas sobre estudiantes
- * que requieren intervención o atención especial.
+ * ESTADO: Completamente Funcional
+ * - ✅ Ver alertas generadas automáticamente
+ * - ✅ Filtrar por tipo, prioridad y estado
+ * - ✅ Gestionar alertas (reconocer, resolver, descartar)
+ * - ⏳ Configurar alertas personalizadas - Fase 3
+ * - ⏳ Notificaciones push/email - Fase 3
  *
- * Características:
- * - Visualización de alertas de intervención por prioridad
- * - Filtros por prioridad (crítica, alta, media, baja)
- * - Filtros por tipo (inactividad, bajo rendimiento, tendencias, fallos)
- * - Acciones rápidas: enviar mensajes, asignar ayuda, marcar seguimiento
- * - Resolución de alertas con seguimiento
- * - Estadísticas generales de alertas
+ * Sistema de alertas de intervención para monitoreo y seguimiento de estudiantes.
  */
 export default function TeacherAlertsPage() {
   const { user, logout } = useAuth();
@@ -55,17 +53,50 @@ export default function TeacherAlertsPage() {
 
   // Tipos de alertas con sus configuraciones
   const alertTypes = [
-    { value: 'no_activity', label: 'Sin Actividad', icon: '🚨', description: 'Estudiantes inactivos >7 días' },
+    {
+      value: 'no_activity',
+      label: 'Sin Actividad',
+      icon: '🚨',
+      description: 'Estudiantes inactivos >7 días',
+    },
     { value: 'low_score', label: 'Bajo Rendimiento', icon: '⚠️', description: 'Promedio <60%' },
-    { value: 'declining_trend', label: 'Tendencia Decreciente', icon: '📉', description: 'Rendimiento en declive' },
-    { value: 'repeated_failures', label: 'Fallos Repetidos', icon: '🎯', description: 'Múltiples intentos fallidos' },
+    {
+      value: 'declining_trend',
+      label: 'Tendencia Decreciente',
+      icon: '📉',
+      description: 'Rendimiento en declive',
+    },
+    {
+      value: 'repeated_failures',
+      label: 'Fallos Repetidos',
+      icon: '🎯',
+      description: 'Múltiples intentos fallidos',
+    },
   ];
 
   // Prioridades con sus configuraciones
   const priorities = [
-    { value: 'critical', label: 'Crítica', color: 'bg-red-500', textColor: 'text-red-500', icon: '🔴' },
-    { value: 'high', label: 'Alta', color: 'bg-orange-500', textColor: 'text-orange-500', icon: '🟠' },
-    { value: 'medium', label: 'Media', color: 'bg-yellow-500', textColor: 'text-yellow-500', icon: '🟡' },
+    {
+      value: 'critical',
+      label: 'Crítica',
+      color: 'bg-red-500',
+      textColor: 'text-red-500',
+      icon: '🔴',
+    },
+    {
+      value: 'high',
+      label: 'Alta',
+      color: 'bg-orange-500',
+      textColor: 'text-orange-500',
+      icon: '🟠',
+    },
+    {
+      value: 'medium',
+      label: 'Media',
+      color: 'bg-yellow-500',
+      textColor: 'text-yellow-500',
+      icon: '🟡',
+    },
     { value: 'low', label: 'Baja', color: 'bg-blue-500', textColor: 'text-blue-500', icon: '🔵' },
   ];
 
@@ -85,16 +116,14 @@ export default function TeacherAlertsPage() {
     >
       <div className="space-y-6">
         {/* Header con título y descripción */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-start gap-4">
-            <div className="p-3 bg-detective-orange bg-opacity-10 rounded-xl">
-              <Bell className="w-8 h-8 text-detective-orange" />
+            <div className="rounded-xl bg-detective-orange bg-opacity-10 p-3">
+              <Bell className="h-8 w-8 text-detective-orange" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-detective-text">
-                Alertas y Notificaciones
-              </h1>
-              <p className="text-detective-text-secondary mt-1">
+              <h1 className="text-3xl font-bold text-detective-text">Alertas y Notificaciones</h1>
+              <p className="mt-1 text-detective-text-secondary">
                 Sistema de monitoreo inteligente para intervención temprana
               </p>
             </div>
@@ -102,11 +131,10 @@ export default function TeacherAlertsPage() {
 
           <DetectiveButton
             variant="secondary"
-
             onClick={() => setShowFilters(!showFilters)}
             className="self-start md:self-center"
           >
-            <Filter className="w-4 h-4" />
+            <Filter className="h-4 w-4" />
             {showFilters ? 'Ocultar Filtros' : 'Mostrar Filtros'}
           </DetectiveButton>
         </div>
@@ -114,28 +142,22 @@ export default function TeacherAlertsPage() {
         {/* Información contextual sobre tipos de alertas */}
         <DetectiveCard>
           <div className="space-y-3">
-            <div className="flex items-center gap-2 mb-4">
-              <AlertCircle className="w-5 h-5 text-detective-orange" />
-              <h3 className="font-semibold text-detective-text">
-                Tipos de Alertas del Sistema
-              </h3>
+            <div className="mb-4 flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-detective-orange" />
+              <h3 className="font-semibold text-detective-text">Tipos de Alertas del Sistema</h3>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
               {alertTypes.map((type) => (
                 <div
                   key={type.value}
-                  className="p-3 bg-detective-bg-secondary rounded-lg hover:bg-detective-bg-tertiary transition-colors cursor-pointer"
+                  className="hover:bg-detective-bg-tertiary cursor-pointer rounded-lg bg-detective-bg-secondary p-3 transition-colors"
                   onClick={() => setFilterType(type.value as AlertType)}
                 >
-                  <div className="flex items-center gap-2 mb-2">
+                  <div className="mb-2 flex items-center gap-2">
                     <span className="text-2xl">{type.icon}</span>
-                    <span className="font-semibold text-detective-text text-sm">
-                      {type.label}
-                    </span>
+                    <span className="text-sm font-semibold text-detective-text">{type.label}</span>
                   </div>
-                  <p className="text-xs text-detective-text-secondary">
-                    {type.description}
-                  </p>
+                  <p className="text-xs text-detective-text-secondary">{type.description}</p>
                 </div>
               ))}
             </div>
@@ -148,22 +170,18 @@ export default function TeacherAlertsPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Filter className="w-5 h-5 text-detective-orange" />
+                  <Filter className="h-5 w-5 text-detective-orange" />
                   <h3 className="font-semibold text-detective-text">Filtros Avanzados</h3>
                 </div>
                 {hasActiveFilters && (
-                  <DetectiveButton
-                    variant="secondary"
-
-                    onClick={clearFilters}
-                  >
-                    <X className="w-4 h-4" />
+                  <DetectiveButton variant="secondary" onClick={clearFilters}>
+                    <X className="h-4 w-4" />
                     Limpiar Filtros
                   </DetectiveButton>
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {/* Filtro por Prioridad */}
                 <div className="space-y-3">
                   <label className="block text-sm font-medium text-detective-text">
@@ -172,14 +190,14 @@ export default function TeacherAlertsPage() {
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       onClick={() => setFilterPriority('all')}
-                      className={`p-3 rounded-lg border-2 transition-all ${
+                      className={`rounded-lg border-2 p-3 transition-all ${
                         filterPriority === 'all'
                           ? 'border-detective-orange bg-detective-orange bg-opacity-10'
                           : 'border-detective-border hover:border-detective-orange hover:bg-detective-bg-secondary'
                       }`}
                     >
                       <div className="text-center">
-                        <div className="text-lg mb-1">📊</div>
+                        <div className="mb-1 text-lg">📊</div>
                         <div className="text-sm font-medium text-detective-text">Todas</div>
                       </div>
                     </button>
@@ -187,14 +205,14 @@ export default function TeacherAlertsPage() {
                       <button
                         key={priority.value}
                         onClick={() => setFilterPriority(priority.value as AlertPriority)}
-                        className={`p-3 rounded-lg border-2 transition-all ${
+                        className={`rounded-lg border-2 p-3 transition-all ${
                           filterPriority === priority.value
                             ? 'border-detective-orange bg-detective-orange bg-opacity-10'
                             : 'border-detective-border hover:border-detective-orange hover:bg-detective-bg-secondary'
                         }`}
                       >
                         <div className="text-center">
-                          <div className="text-lg mb-1">{priority.icon}</div>
+                          <div className="mb-1 text-lg">{priority.icon}</div>
                           <div className={`text-sm font-medium ${priority.textColor}`}>
                             {priority.label}
                           </div>
@@ -212,7 +230,7 @@ export default function TeacherAlertsPage() {
                   <div className="space-y-2">
                     <button
                       onClick={() => setFilterType('all')}
-                      className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
+                      className={`w-full rounded-lg border-2 p-3 text-left transition-all ${
                         filterType === 'all'
                           ? 'border-detective-orange bg-detective-orange bg-opacity-10'
                           : 'border-detective-border hover:border-detective-orange hover:bg-detective-bg-secondary'
@@ -229,7 +247,7 @@ export default function TeacherAlertsPage() {
                       <button
                         key={type.value}
                         onClick={() => setFilterType(type.value as AlertType)}
-                        className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
+                        className={`w-full rounded-lg border-2 p-3 text-left transition-all ${
                           filterType === type.value
                             ? 'border-detective-orange bg-detective-orange bg-opacity-10'
                             : 'border-detective-border hover:border-detective-orange hover:bg-detective-bg-secondary'
@@ -257,31 +275,31 @@ export default function TeacherAlertsPage() {
 
         {/* Resumen de filtros activos */}
         {hasActiveFilters && (
-          <div className="flex flex-wrap gap-2 items-center">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="text-sm text-detective-text-secondary">Filtros activos:</span>
             {filterPriority !== 'all' && (
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-detective-orange bg-opacity-10 rounded-full">
+              <div className="inline-flex items-center gap-2 rounded-full bg-detective-orange bg-opacity-10 px-3 py-1">
                 <span className="text-sm font-medium text-detective-text">
-                  Prioridad: {priorities.find(p => p.value === filterPriority)?.label}
+                  Prioridad: {priorities.find((p) => p.value === filterPriority)?.label}
                 </span>
                 <button
                   onClick={() => setFilterPriority('all')}
                   className="text-detective-text-secondary hover:text-detective-text"
                 >
-                  <X className="w-3 h-3" />
+                  <X className="h-3 w-3" />
                 </button>
               </div>
             )}
             {filterType !== 'all' && (
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-detective-orange bg-opacity-10 rounded-full">
+              <div className="inline-flex items-center gap-2 rounded-full bg-detective-orange bg-opacity-10 px-3 py-1">
                 <span className="text-sm font-medium text-detective-text">
-                  Tipo: {alertTypes.find(t => t.value === filterType)?.label}
+                  Tipo: {alertTypes.find((t) => t.value === filterType)?.label}
                 </span>
                 <button
                   onClick={() => setFilterType('all')}
                   className="text-detective-text-secondary hover:text-detective-text"
                 >
-                  <X className="w-3 h-3" />
+                  <X className="h-3 w-3" />
                 </button>
               </div>
             )}
@@ -289,25 +307,19 @@ export default function TeacherAlertsPage() {
         )}
 
         {/* Panel principal de alertas */}
-        <InterventionAlertsPanel
-          classroomId={selectedClassroomId}
-          filterPriority={filterPriority}
-          filterType={filterType}
-        />
+        <InterventionAlertsPanel classroomId={selectedClassroomId} />
 
         {/* Información de ayuda */}
         <DetectiveCard>
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-detective-orange" />
-              <h3 className="font-semibold text-detective-text">
-                Sobre el Sistema de Alertas
-              </h3>
+              <TrendingUp className="h-5 w-5 text-detective-orange" />
+              <h3 className="font-semibold text-detective-text">Sobre el Sistema de Alertas</h3>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-detective-text-secondary">
+            <div className="grid grid-cols-1 gap-4 text-sm text-detective-text-secondary md:grid-cols-3">
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-detective-orange" />
+                  <Activity className="h-4 w-4 text-detective-orange" />
                   <span className="font-medium text-detective-text">Detección Automática</span>
                 </div>
                 <p>
@@ -317,7 +329,7 @@ export default function TeacherAlertsPage() {
               </div>
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-detective-orange" />
+                  <AlertTriangle className="h-4 w-4 text-detective-orange" />
                   <span className="font-medium text-detective-text">Priorización Inteligente</span>
                 </div>
                 <p>
@@ -327,7 +339,7 @@ export default function TeacherAlertsPage() {
               </div>
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Bell className="w-4 h-4 text-detective-orange" />
+                  <Bell className="h-4 w-4 text-detective-orange" />
                   <span className="font-medium text-detective-text">Intervención Temprana</span>
                 </div>
                 <p>

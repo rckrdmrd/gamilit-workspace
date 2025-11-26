@@ -44,10 +44,7 @@ export default function GamificationTestPage() {
   const progression = useProgression();
 
   const addResult = (name: string, status: TestStatus, message: string) => {
-    setTestResults((prev) => [
-      ...prev,
-      { name, status, message, timestamp: new Date() },
-    ]);
+    setTestResults((prev) => [...prev, { name, status, message, timestamp: new Date() }]);
   };
 
   const clearResults = () => {
@@ -65,13 +62,17 @@ export default function GamificationTestPage() {
         addResult(
           'XP Leaderboard',
           'success',
-          `Loaded ${newLeaderboards.xpLeaderboard.length} entries. Your rank: ${newLeaderboards.myXpRank || 'N/A'}`
+          `Loaded ${newLeaderboards.xpLeaderboard.length} entries. Your rank: ${newLeaderboards.myXpRank || 'N/A'}`,
         );
       } else {
         addResult('XP Leaderboard', 'error', 'No entries found');
       }
     } catch (error) {
-      addResult('XP Leaderboard', 'error', error instanceof Error ? error.message : 'Unknown error');
+      addResult(
+        'XP Leaderboard',
+        'error',
+        error instanceof Error ? error.message : 'Unknown error',
+      );
     }
   };
 
@@ -85,13 +86,17 @@ export default function GamificationTestPage() {
         addResult(
           'Coins Leaderboard',
           'success',
-          `Loaded ${newLeaderboards.coinsLeaderboard.length} entries. Your rank: ${newLeaderboards.myCoinsRank || 'N/A'}`
+          `Loaded ${newLeaderboards.coinsLeaderboard.length} entries. Your rank: ${newLeaderboards.myCoinsRank || 'N/A'}`,
         );
       } else {
         addResult('Coins Leaderboard', 'error', 'No entries found');
       }
     } catch (error) {
-      addResult('Coins Leaderboard', 'error', error instanceof Error ? error.message : 'Unknown error');
+      addResult(
+        'Coins Leaderboard',
+        'error',
+        error instanceof Error ? error.message : 'Unknown error',
+      );
     }
   };
 
@@ -105,13 +110,17 @@ export default function GamificationTestPage() {
         addResult(
           'Streaks Leaderboard',
           'success',
-          `Loaded ${newLeaderboards.streaksLeaderboard.length} entries. Your rank: ${newLeaderboards.myStreaksRank || 'N/A'}`
+          `Loaded ${newLeaderboards.streaksLeaderboard.length} entries. Your rank: ${newLeaderboards.myStreaksRank || 'N/A'}`,
         );
       } else {
         addResult('Streaks Leaderboard', 'error', 'No entries found');
       }
     } catch (error) {
-      addResult('Streaks Leaderboard', 'error', error instanceof Error ? error.message : 'Unknown error');
+      addResult(
+        'Streaks Leaderboard',
+        'error',
+        error instanceof Error ? error.message : 'Unknown error',
+      );
     }
   };
 
@@ -125,13 +134,17 @@ export default function GamificationTestPage() {
         addResult(
           'Global Leaderboard',
           'success',
-          `Loaded ${newLeaderboards.globalLeaderboard.length} entries. Your rank: ${newLeaderboards.myGlobalRank || 'N/A'}`
+          `Loaded ${newLeaderboards.globalLeaderboard.length} entries. Your rank: ${newLeaderboards.myGlobalRank || 'N/A'}`,
         );
       } else {
         addResult('Global Leaderboard', 'error', 'No entries found');
       }
     } catch (error) {
-      addResult('Global Leaderboard', 'error', error instanceof Error ? error.message : 'Unknown error');
+      addResult(
+        'Global Leaderboard',
+        'error',
+        error instanceof Error ? error.message : 'Unknown error',
+      );
     }
   };
 
@@ -144,7 +157,7 @@ export default function GamificationTestPage() {
         addResult(
           'Achievements',
           'success',
-          `Loaded ${achievements.achievements.length} achievements. Unlocked: ${achievements.unlockedAchievements.length}`
+          `Loaded ${achievements.achievements.length} achievements. Unlocked: ${achievements.unlockedAchievements.length}`,
         );
       } else {
         addResult('Achievements', 'error', 'No achievements found');
@@ -161,7 +174,7 @@ export default function GamificationTestPage() {
       addResult(
         'Progression',
         'success',
-        `Level ${currentLevel} | ${currentXP}/${progression.xpToNextLevel} XP | Total: ${totalXP} | Streak: ${activityStreak} days`
+        `Level ${currentLevel} | ${currentXP}/${progression.xpToNextLevel} XP | Total: ${totalXP} | Streak: ${activityStreak} days`,
       );
     } catch (error) {
       addResult('Progression', 'error', error instanceof Error ? error.message : 'Unknown error');
@@ -171,18 +184,22 @@ export default function GamificationTestPage() {
   const testStreakIndicator = async () => {
     addResult('Streak Indicator', 'running', 'Rendering Streak Indicator...');
     try {
-      // Check if userProgress exists
-      if (progression.userProgress) {
+      // Check if activityStreak exists
+      if (progression.activityStreak !== undefined) {
         addResult(
           'Streak Indicator',
           'success',
-          `Current streak: ${progression.activityStreak} days | Max: ${progression.userProgress.maxStreak || 0} days`
+          `Current streak: ${progression.activityStreak} days`,
         );
       } else {
-        addResult('Streak Indicator', 'error', 'No user progress data');
+        addResult('Streak Indicator', 'error', 'No activity streak data');
       }
     } catch (error) {
-      addResult('Streak Indicator', 'error', error instanceof Error ? error.message : 'Unknown error');
+      addResult(
+        'Streak Indicator',
+        'error',
+        error instanceof Error ? error.message : 'Unknown error',
+      );
     }
   };
 
@@ -216,35 +233,35 @@ export default function GamificationTestPage() {
   const getStatusIcon = (status: TestStatus) => {
     switch (status) {
       case 'success':
-        return <CheckCircle className="w-5 h-5 text-green-500" />;
+        return <CheckCircle className="h-5 w-5 text-green-500" />;
       case 'error':
-        return <XCircle className="w-5 h-5 text-red-500" />;
+        return <XCircle className="h-5 w-5 text-red-500" />;
       case 'running':
-        return <RefreshCw className="w-5 h-5 text-blue-500 animate-spin" />;
+        return <RefreshCw className="h-5 w-5 animate-spin text-blue-500" />;
       default:
-        return <AlertCircle className="w-5 h-5 text-gray-400" />;
+        return <AlertCircle className="h-5 w-5 text-gray-400" />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+    <div className="min-h-screen bg-gray-50 p-6 dark:bg-gray-900">
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6"
+          className="mb-6 rounded-xl bg-white p-6 shadow-lg dark:bg-gray-800"
         >
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-detective-text mb-2">
+              <h1 className="mb-2 text-3xl font-bold text-detective-text">
                 Gamification Integration Tests
               </h1>
               <p className="text-detective-text-secondary">
                 Sprint 3 - Frontend Integration Test Suite
               </p>
             </div>
-            <Trophy className="w-12 h-12 text-detective-gold" />
+            <Trophy className="h-12 w-12 text-detective-gold" />
           </div>
 
           <div className="flex gap-3">
@@ -253,9 +270,9 @@ export default function GamificationTestPage() {
               whileTap={{ scale: 0.98 }}
               onClick={runAllTests}
               disabled={isTestingAll}
-              className="flex items-center gap-2 px-6 py-3 bg-detective-orange text-white rounded-lg font-semibold hover:bg-detective-orange-dark transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 rounded-lg bg-detective-orange px-6 py-3 font-semibold text-white transition-colors hover:bg-detective-orange-dark disabled:opacity-50"
             >
-              <Play className="w-5 h-5" />
+              <Play className="h-5 w-5" />
               Run All Tests
             </motion.button>
 
@@ -263,59 +280,59 @@ export default function GamificationTestPage() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={clearResults}
-              className="flex items-center gap-2 px-6 py-3 bg-gray-200 dark:bg-gray-700 text-detective-text rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+              className="flex items-center gap-2 rounded-lg bg-gray-200 px-6 py-3 font-semibold text-detective-text transition-colors hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
             >
-              <RefreshCw className="w-5 h-5" />
+              <RefreshCw className="h-5 w-5" />
               Clear Results
             </motion.button>
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Individual Tests */}
           <div className="space-y-4">
-            <h2 className="text-xl font-bold text-detective-text mb-4">Individual Tests</h2>
+            <h2 className="mb-4 text-xl font-bold text-detective-text">Individual Tests</h2>
 
             {/* Test Buttons */}
             <div className="grid grid-cols-2 gap-3">
               <TestButton
-                icon={<Star className="w-5 h-5" />}
+                icon={<Star className="h-5 w-5" />}
                 label="XP Leaderboard"
                 onClick={testXPLeaderboard}
                 disabled={isTestingAll}
               />
               <TestButton
-                icon={<Coins className="w-5 h-5" />}
+                icon={<Coins className="h-5 w-5" />}
                 label="Coins Leaderboard"
                 onClick={testCoinsLeaderboard}
                 disabled={isTestingAll}
               />
               <TestButton
-                icon={<Flame className="w-5 h-5" />}
+                icon={<Flame className="h-5 w-5" />}
                 label="Streaks Leaderboard"
                 onClick={testStreaksLeaderboard}
                 disabled={isTestingAll}
               />
               <TestButton
-                icon={<Trophy className="w-5 h-5" />}
+                icon={<Trophy className="h-5 w-5" />}
                 label="Global Leaderboard"
                 onClick={testGlobalLeaderboard}
                 disabled={isTestingAll}
               />
               <TestButton
-                icon={<Trophy className="w-5 h-5" />}
+                icon={<Trophy className="h-5 w-5" />}
                 label="Achievements"
                 onClick={testAchievements}
                 disabled={isTestingAll}
               />
               <TestButton
-                icon={<Star className="w-5 h-5" />}
+                icon={<Star className="h-5 w-5" />}
                 label="Progression"
                 onClick={testProgression}
                 disabled={isTestingAll}
               />
               <TestButton
-                icon={<Flame className="w-5 h-5" />}
+                icon={<Flame className="h-5 w-5" />}
                 label="Streak Indicator"
                 onClick={testStreakIndicator}
                 disabled={isTestingAll}
@@ -324,8 +341,8 @@ export default function GamificationTestPage() {
             </div>
 
             {/* Live Preview - Streak Indicator */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-bold text-detective-text mb-4">
+            <div className="rounded-xl bg-white p-6 shadow-lg dark:bg-gray-800">
+              <h3 className="mb-4 text-lg font-bold text-detective-text">
                 Live Preview: Streak Indicator
               </h3>
               <div className="space-y-4">
@@ -336,12 +353,12 @@ export default function GamificationTestPage() {
           </div>
 
           {/* Test Results */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-bold text-detective-text mb-4">Test Results</h2>
+          <div className="rounded-xl bg-white p-6 shadow-lg dark:bg-gray-800">
+            <h2 className="mb-4 text-xl font-bold text-detective-text">Test Results</h2>
 
-            <div className="space-y-2 max-h-[600px] overflow-y-auto">
+            <div className="max-h-[600px] space-y-2 overflow-y-auto">
               {testResults.length === 0 ? (
-                <div className="text-center py-12 text-detective-text-secondary">
+                <div className="py-12 text-center text-detective-text-secondary">
                   No tests run yet. Click "Run All Tests" or select individual tests.
                 </div>
               ) : (
@@ -352,22 +369,23 @@ export default function GamificationTestPage() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
                     className={cn(
-                      "p-4 rounded-lg border-2",
-                      result.status === 'success' && "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800",
-                      result.status === 'error' && "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800",
-                      result.status === 'running' && "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
+                      'rounded-lg border-2 p-4',
+                      result.status === 'success' &&
+                        'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20',
+                      result.status === 'error' &&
+                        'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20',
+                      result.status === 'running' &&
+                        'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20',
                     )}
                   >
                     <div className="flex items-start gap-3">
                       {getStatusIcon(result.status)}
                       <div className="flex-1">
-                        <div className="font-semibold text-detective-text mb-1">
-                          {result.name}
-                        </div>
+                        <div className="mb-1 font-semibold text-detective-text">{result.name}</div>
                         <div className="text-sm text-detective-text-secondary">
                           {result.message}
                         </div>
-                        <div className="text-xs text-detective-text-secondary mt-1">
+                        <div className="mt-1 text-xs text-detective-text-secondary">
                           {result.timestamp.toLocaleTimeString()}
                         </div>
                       </div>
@@ -379,7 +397,7 @@ export default function GamificationTestPage() {
 
             {/* Summary */}
             {testResults.length > 0 && (
-              <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+              <div className="mt-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
                     <div className="text-2xl font-bold text-green-600 dark:text-green-400">
@@ -418,21 +436,15 @@ interface TestButtonProps {
   className?: string;
 }
 
-const TestButton: React.FC<TestButtonProps> = ({
-  icon,
-  label,
-  onClick,
-  disabled,
-  className
-}) => (
+const TestButton: React.FC<TestButtonProps> = ({ icon, label, onClick, disabled, className }) => (
   <motion.button
     whileHover={{ scale: 1.02 }}
     whileTap={{ scale: 0.98 }}
     onClick={onClick}
     disabled={disabled}
     className={cn(
-      "flex items-center gap-2 p-4 bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 hover:border-detective-orange transition-colors disabled:opacity-50",
-      className
+      'flex items-center gap-2 rounded-lg border-2 border-gray-200 bg-white p-4 transition-colors hover:border-detective-orange disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800',
+      className,
     )}
   >
     {icon}

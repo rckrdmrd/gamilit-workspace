@@ -19,6 +19,10 @@ import {
   AvailableClassroomsFiltersDto,
   ClassroomAssignmentResponseDto,
   AssignmentHistoryResponseDto,
+  ClassroomListItemDto,
+  TeacherListItemDto,
+  ListClassroomsQueryDto,
+  ListTeachersQueryDto,
 } from '../dto/classroom-assignments';
 
 /**
@@ -474,5 +478,365 @@ export class ClassroomAssignmentsService {
     }
 
     return classroom;
+  }
+
+  // =====================================================
+  // REST ENDPOINT HELPER METHODS (NEW - US-AE-007)
+  // =====================================================
+
+  /**
+   * Get all teachers assigned to a classroom
+   * Helper method for REST endpoint GET /admin/classrooms/:classroomId/teachers
+   *
+   * @param classroomId Classroom UUID
+   * @returns Classroom info with list of teachers
+   */
+  async getClassroomWithTeachers(classroomId: string): Promise<{
+    classroom: {
+      id: string;
+      name: string;
+      grade: string;
+      section: string;
+    };
+    teachers: Array<{
+      id: string;
+      full_name: string;
+      email: string;
+      role: string;
+      assigned_at: Date;
+    }>;
+  }> {
+    // 1. Validate classroom exists
+    const classroom = await this.validateClassroom(classroomId);
+
+    // 2. Get all assignments for this classroom
+    const assignments = await this.teacherClassroomRepo.find({
+      where: { classroom_id: classroomId },
+      order: { assigned_at: 'DESC' },
+    });
+
+    // 3. Get teacher profiles
+    const teacherIds = assignments.map((a) => a.teacher_id);
+    const teachers =
+      teacherIds.length > 0
+        ? await this.profileRepo.find({
+            where: { id: In(teacherIds) },
+          })
+        : [];
+
+    // 4. Map to response format
+    const teachersData = assignments.map((assignment) => {
+      const teacher = teachers.find((t) => t.id === assignment.teacher_id);
+      return {
+        id: teacher?.id || assignment.teacher_id,
+        full_name: teacher?.full_name || teacher?.display_name || 'Unknown',
+        email: teacher?.email || '',
+        role: teacher?.role || '',
+        assigned_at: assignment.assigned_at,
+      };
+    });
+
+    return {
+      classroom: {
+        id: classroom.id,
+        name: classroom.name,
+        grade: classroom.grade_level || '',
+        section: classroom.section || '',
+      },
+      teachers: teachersData,
+    };
+  }
+
+  /**
+   * Get all classrooms assigned to a teacher with teacher info
+   * Helper method for REST endpoint GET /admin/teachers/:teacherId/classrooms
+   *
+   * @param teacherId Teacher UUID
+   * @returns Teacher info with list of classrooms
+   */
+  async getTeacherWithClassrooms(teacherId: string): Promise<{
+    teacher: {
+      id: string;
+      full_name: string;
+      email: string;
+      role: string;
+    };
+    classrooms: Array<{
+      id: string;
+      name: string;
+      grade: string;
+      section: string;
+      student_count: number;
+      assigned_at: Date;
+    }>;
+  }> {
+    // 1. Validate teacher exists
+    const teacher = await this.validateTeacher(teacherId);
+
+    // 2. Get all assignments for this teacher
+    const assignments = await this.teacherClassroomRepo.find({
+      where: { teacher_id: teacherId },
+      order: { assigned_at: 'DESC' },
+    });
+
+    // 3. Get classroom details
+    const classroomIds = assignments.map((a) => a.classroom_id);
+    const classrooms =
+      classroomIds.length > 0
+        ? await this.classroomRepo.find({
+            where: { id: In(classroomIds) },
+          })
+        : [];
+
+    // 4. Map to response format
+    const classroomsData = assignments.map((assignment) => {
+      const classroom = classrooms.find((c) => c.id === assignment.classroom_id);
+      return {
+        id: assignment.classroom_id,
+        name: classroom?.name || 'Unknown',
+        grade: classroom?.grade_level || '',
+        section: classroom?.section || '',
+        student_count: classroom?.current_students_count || 0,
+        assigned_at: assignment.assigned_at,
+      };
+    });
+
+    return {
+      teacher: {
+        id: teacher.id,
+        full_name: teacher.full_name || teacher.display_name || 'Unknown',
+        email: teacher.email || '',
+        role: teacher.role || '',
+      },
+      classrooms: classroomsData,
+    };
+  }
+
+  /**
+   * List all classroom-teacher assignments with pagination
+   * Helper method for REST endpoint GET /admin/classroom-teachers
+   *
+   * @param query Query parameters (schoolId, page, limit)
+   * @returns Paginated list of assignments
+   */
+  async listAllAssignmentsPaginated(query: {
+    schoolId?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<{
+    data: Array<{
+      id: string;
+      classroom_id: string;
+      classroom_name: string;
+      teacher_id: string;
+      teacher_name: string;
+      role: string;
+      assigned_at: Date;
+    }>;
+    total: number;
+    page: number;
+    limit: number;
+  }> {
+    const page = query.page || 1;
+    const limit = query.limit || 20;
+    const skip = (page - 1) * limit;
+
+    // Build query
+    const queryBuilder = this.teacherClassroomRepo
+      .createQueryBuilder('tc')
+      .skip(skip)
+      .take(limit)
+      .orderBy('tc.assigned_at', 'DESC');
+
+    // Filter by school/tenant if provided (join with classroom to get tenant_id)
+    if (query.schoolId) {
+      queryBuilder
+        .innerJoin('tc.classroom', 'classroom')
+        .andWhere('classroom.tenant_id = :schoolId', {
+          schoolId: query.schoolId,
+        });
+    }
+
+    const [assignments, total] = await queryBuilder.getManyAndCount();
+
+    // Get classroom and teacher details
+    const classroomIds = assignments.map((a) => a.classroom_id);
+    const teacherIds = assignments.map((a) => a.teacher_id);
+
+    const classrooms =
+      classroomIds.length > 0
+        ? await this.classroomRepo.find({
+            where: { id: In(classroomIds) },
+          })
+        : [];
+
+    const teachers =
+      teacherIds.length > 0
+        ? await this.profileRepo.find({
+            where: { id: In(teacherIds) },
+          })
+        : [];
+
+    // Map to response format
+    const data = assignments.map((assignment) => {
+      const classroom = classrooms.find((c) => c.id === assignment.classroom_id);
+      const teacher = teachers.find((t) => t.id === assignment.teacher_id);
+
+      return {
+        id: assignment.id,
+        classroom_id: assignment.classroom_id,
+        classroom_name: classroom?.name || 'Unknown',
+        teacher_id: assignment.teacher_id,
+        teacher_name: teacher?.full_name || teacher?.display_name || 'Unknown',
+        role: assignment.role,
+        assigned_at: assignment.assigned_at,
+      };
+    });
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+    };
+  }
+
+  /**
+   * Bulk assign multiple teacher-classroom pairs
+   * Helper method for REST endpoint POST /admin/classroom-teachers/bulk
+   *
+   * @param assignments Array of teacher-classroom pairs
+   * @returns Results with successful and failed assignments
+   */
+  async bulkAssignPairs(
+    assignments: Array<{ teacherId: string; classroomId: string }>,
+  ): Promise<{
+    assigned: number;
+    successful: any[];
+    failed: Array<{ teacherId: string; classroomId: string; reason: string }>;
+  }> {
+    const successful: any[] = [];
+    const failed: Array<{
+      teacherId: string;
+      classroomId: string;
+      reason: string;
+    }> = [];
+
+    for (const pair of assignments) {
+      try {
+        const result = await this.assignClassroomToTeacher({
+          teacherId: pair.teacherId,
+          classroomId: pair.classroomId,
+        });
+        successful.push(result);
+      } catch (error) {
+        failed.push({
+          teacherId: pair.teacherId,
+          classroomId: pair.classroomId,
+          reason: error instanceof Error ? error.message : 'Unknown error',
+        });
+      }
+    }
+
+    return {
+      assigned: successful.length,
+      successful,
+      failed,
+    };
+  }
+
+  // =====================================================
+  // LIST ENDPOINTS FOR DROPDOWNS (NEW)
+  // =====================================================
+
+  /**
+   * List all classrooms for dropdown/select
+   * Helper method for REST endpoint GET /admin/classrooms/list
+   *
+   * @param query Query parameters (search, limit, schoolId)
+   * @returns Simplified list of classrooms
+   */
+  async listClassrooms(
+    query: ListClassroomsQueryDto,
+  ): Promise<ClassroomListItemDto[]> {
+    const limit = query.limit || 50;
+    const queryBuilder = this.classroomRepo
+      .createQueryBuilder('classroom')
+      .where('classroom.is_active = :isActive', { isActive: true })
+      .orderBy('classroom.name', 'ASC')
+      .take(limit);
+
+    // Filter by search (name)
+    if (query.search) {
+      queryBuilder.andWhere('classroom.name ILIKE :search', {
+        search: `%${query.search}%`,
+      });
+    }
+
+    // Filter by school/tenant if provided
+    if (query.schoolId) {
+      queryBuilder.andWhere('classroom.tenant_id = :schoolId', {
+        schoolId: query.schoolId,
+      });
+    }
+
+    const classrooms = await queryBuilder.getMany();
+
+    // Map to simplified DTO
+    return classrooms.map((classroom) => ({
+      id: classroom.id,
+      name: classroom.name,
+      grade: classroom.grade_level,
+      section: classroom.section,
+      school_name: undefined, // TODO: Add school join if needed
+      student_count: classroom.current_students_count || 0,
+    }));
+  }
+
+  /**
+   * List all teachers for dropdown/select
+   * Helper method for REST endpoint GET /admin/teachers/list
+   *
+   * @param query Query parameters (search, limit, schoolId)
+   * @returns Simplified list of teachers
+   */
+  async listTeachers(
+    query: ListTeachersQueryDto,
+  ): Promise<TeacherListItemDto[]> {
+    const limit = query.limit || 50;
+    const queryBuilder = this.profileRepo
+      .createQueryBuilder('profile')
+      .where('profile.role IN (:...roles)', {
+        roles: [GamilityRoleEnum.ADMIN_TEACHER, GamilityRoleEnum.SUPER_ADMIN],
+      })
+      .orderBy('profile.full_name', 'ASC')
+      .take(limit);
+
+    // Filter by search (name or email)
+    if (query.search) {
+      queryBuilder.andWhere(
+        '(profile.full_name ILIKE :search OR profile.display_name ILIKE :search OR profile.email ILIKE :search)',
+        {
+          search: `%${query.search}%`,
+        },
+      );
+    }
+
+    // Filter by school/tenant if provided
+    if (query.schoolId) {
+      queryBuilder.andWhere('profile.tenant_id = :schoolId', {
+        schoolId: query.schoolId,
+      });
+    }
+
+    const teachers = await queryBuilder.getMany();
+
+    // Map to simplified DTO
+    return teachers.map((teacher) => ({
+      id: teacher.id,
+      display_name: teacher.full_name || teacher.display_name || 'Unknown',
+      email: teacher.email,
+      role: teacher.role,
+    }));
   }
 }

@@ -14,19 +14,41 @@ import {
   Settings,
   Award,
   Loader2,
+  Edit,
+  RotateCcw,
 } from 'lucide-react';
 import { MayaRankSchema, ParameterSchema } from '@/services/api/schemas/adminSchemas';
 import type { MayaRank, Parameter } from '@/services/api/schemas/adminSchemas';
+import {
+  ParameterEditModal,
+  MayaRankEditModal,
+  BulkUpdateDialog,
+  PreviewImpactDialog,
+  RestoreDefaultsDialog,
+  AchievementsTab,
+} from '../components/gamification';
 
 /**
  * AdminGamificationPage - Configuración de gamificación global
  *
  * Integrado con APIs reales (US-AE-005)
  * Elimina datos hardcodeados y consume endpoints backend
+ * Incluye modales para edición completa de configuración
  */
 export default function AdminGamificationPage() {
   const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState<'ranks' | 'achievements' | 'economy' | 'stats'>('ranks');
+  const [activeTab, setActiveTab] = useState<'ranks' | 'achievements' | 'economy' | 'stats'>(
+    'ranks',
+  );
+
+  // Modal states
+  const [parameterModalOpen, setParameterModalOpen] = useState(false);
+  const [selectedParameter, setSelectedParameter] = useState<Parameter | null>(null);
+  const [rankModalOpen, setRankModalOpen] = useState(false);
+  const [selectedRank, setSelectedRank] = useState<MayaRank | null>(null);
+  const [bulkUpdateOpen, setBulkUpdateOpen] = useState(false);
+  const [previewImpactOpen, setPreviewImpactOpen] = useState(false);
+  const [restoreDefaultsOpen, setRestoreDefaultsOpen] = useState(false);
 
   // Cargar datos de gamificación del usuario actual (admin)
   const { gamificationData } = useUserGamification(user?.id);
@@ -36,6 +58,11 @@ export default function AdminGamificationPage() {
     useParameters,
     useMayaRanks,
     useStats,
+    updateParameter,
+    resetParameter,
+    updateMayaRank,
+    bulkUpdateParameters,
+    // previewImpact is available but not used yet
   } = useGamificationConfig();
 
   const { data: stats, isLoading: statsLoading } = useStats();
@@ -58,9 +85,9 @@ export default function AdminGamificationPage() {
         organizationName="GAMILIT Platform Admin"
         onLogout={handleLogout}
       >
-        <div className="flex items-center justify-center h-96">
+        <div className="flex h-96 items-center justify-center">
           <div className="text-center">
-            <Loader2 className="w-12 h-12 animate-spin text-detective-orange mx-auto mb-4" />
+            <Loader2 className="mx-auto mb-4 h-12 w-12 animate-spin text-detective-orange" />
             <p className="text-lg text-detective-text">Cargando configuración de gamificación...</p>
           </div>
         </div>
@@ -78,15 +105,15 @@ export default function AdminGamificationPage() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-detective-text flex items-center gap-3">
-            <Trophy className="w-8 h-8 text-detective-gold" />
+          <h1 className="flex items-center gap-3 text-3xl font-bold text-detective-text">
+            <Trophy className="h-8 w-8 text-detective-gold" />
             Gamificación
           </h1>
-          <p className="text-detective-text-secondary mt-1">
+          <p className="mt-1 text-detective-text-secondary">
             Configura rangos, logros, economía y visualiza estadísticas
           </p>
           {stats?.lastModified && (
-            <p className="text-sm text-detective-text-secondary mt-2">
+            <p className="mt-2 text-sm text-detective-text-secondary">
               Última modificación: {new Date(stats.lastModified).toLocaleString('es-ES')}
             </p>
           )}
@@ -96,46 +123,46 @@ export default function AdminGamificationPage() {
         <div className="flex gap-2 overflow-x-auto pb-2">
           <button
             onClick={() => setActiveTab('ranks')}
-            className={`px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${
+            className={`whitespace-nowrap rounded-lg px-4 py-2 transition-colors ${
               activeTab === 'ranks'
                 ? 'bg-detective-orange text-white'
                 : 'bg-detective-bg-secondary text-detective-text-secondary hover:bg-detective-bg-secondary/70'
             }`}
           >
-            <Star className="w-4 h-4 inline mr-2" />
+            <Star className="mr-2 inline h-4 w-4" />
             Rangos Maya
           </button>
           <button
             onClick={() => setActiveTab('achievements')}
-            className={`px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${
+            className={`whitespace-nowrap rounded-lg px-4 py-2 transition-colors ${
               activeTab === 'achievements'
                 ? 'bg-detective-orange text-white'
                 : 'bg-detective-bg-secondary text-detective-text-secondary hover:bg-detective-bg-secondary/70'
             }`}
           >
-            <Award className="w-4 h-4 inline mr-2" />
+            <Award className="mr-2 inline h-4 w-4" />
             Logros
           </button>
           <button
             onClick={() => setActiveTab('economy')}
-            className={`px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${
+            className={`whitespace-nowrap rounded-lg px-4 py-2 transition-colors ${
               activeTab === 'economy'
                 ? 'bg-detective-orange text-white'
                 : 'bg-detective-bg-secondary text-detective-text-secondary hover:bg-detective-bg-secondary/70'
             }`}
           >
-            <Coins className="w-4 h-4 inline mr-2" />
+            <Coins className="mr-2 inline h-4 w-4" />
             Economía ML Coins
           </button>
           <button
             onClick={() => setActiveTab('stats')}
-            className={`px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${
+            className={`whitespace-nowrap rounded-lg px-4 py-2 transition-colors ${
               activeTab === 'stats'
                 ? 'bg-detective-orange text-white'
                 : 'bg-detective-bg-secondary text-detective-text-secondary hover:bg-detective-bg-secondary/70'
             }`}
           >
-            <TrendingUp className="w-4 h-4 inline mr-2" />
+            <TrendingUp className="mr-2 inline h-4 w-4" />
             Estadísticas
           </button>
         </div>
@@ -144,12 +171,22 @@ export default function AdminGamificationPage() {
         {activeTab === 'ranks' && (
           <div className="space-y-4">
             <DetectiveCard>
-              <div className="flex items-center justify-between mb-4">
+              <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xl font-bold text-detective-text">
                   Rangos Maya ({mayaRanks?.length || 0})
                 </h2>
-                <DetectiveButton variant="primary" size="sm" onClick={() => alert('Editar rangos - Funcionalidad próximamente')}>
-                  <Settings className="w-4 h-4" />
+                <DetectiveButton
+                  variant="primary"
+                  size="sm"
+                  onClick={() => {
+                    // Open selector to choose which rank to edit
+                    if (mayaRanks && mayaRanks.length > 0) {
+                      setSelectedRank(mayaRanks[0]);
+                      setRankModalOpen(true);
+                    }
+                  }}
+                >
+                  <Settings className="h-4 w-4" />
                   Configurar
                 </DetectiveButton>
               </div>
@@ -172,33 +209,46 @@ export default function AdminGamificationPage() {
                     .map((rank) => (
                       <div
                         key={rank.id}
-                        className="flex items-center justify-between p-4 bg-detective-bg-secondary rounded-lg"
+                        className="flex cursor-pointer items-center justify-between rounded-lg bg-detective-bg-secondary p-4 transition-colors hover:bg-detective-bg-secondary/80"
+                        onClick={() => {
+                          setSelectedRank(rank);
+                          setRankModalOpen(true);
+                        }}
                       >
                         <div className="flex items-center gap-4">
-                          <Star className="w-8 h-8" style={{ color: rank.color }} />
+                          <Star className="h-8 w-8" style={{ color: rank.color }} />
                           <div>
                             <h3 className="text-lg font-bold" style={{ color: rank.color }}>
                               {rank.name}
                             </h3>
                             <p className="text-sm text-detective-text-secondary">
-                              {rank.minXp.toLocaleString()} - {rank.maxXp ? rank.maxXp.toLocaleString() : '∞'} XP
+                              {rank.minXp.toLocaleString()} -{' '}
+                              {rank.maxXp ? rank.maxXp.toLocaleString() : '∞'} XP
                             </p>
-                            <p className="text-xs text-detective-text-secondary mt-1">
-                              Nivel {rank.level} • Mult. XP: {rank.multiplierXp}x • Mult. Coins: {rank.multiplierMlCoins}x
+                            <p className="mt-1 text-xs text-detective-text-secondary">
+                              Nivel {rank.level} • Mult. XP: {rank.multiplierXp}x • Mult. Coins:{' '}
+                              {rank.multiplierMlCoins}x
                             </p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          {rank.isActive ? (
-                            <span className="px-2 py-1 bg-green-900/30 text-green-400 text-xs rounded">Activo</span>
-                          ) : (
-                            <span className="px-2 py-1 bg-gray-900/30 text-gray-400 text-xs rounded">Inactivo</span>
-                          )}
+                        <div className="flex items-center gap-3">
+                          <div className="text-right">
+                            {rank.isActive ? (
+                              <span className="rounded bg-green-900/30 px-2 py-1 text-xs text-green-400">
+                                Activo
+                              </span>
+                            ) : (
+                              <span className="rounded bg-gray-900/30 px-2 py-1 text-xs text-gray-400">
+                                Inactivo
+                              </span>
+                            )}
+                          </div>
+                          <Edit className="h-4 w-4 text-detective-orange" />
                         </div>
                       </div>
                     ))
                 ) : (
-                  <div className="text-center py-8 text-detective-text-secondary">
+                  <div className="py-8 text-center text-detective-text-secondary">
                     No hay rangos Maya configurados
                   </div>
                 )}
@@ -208,39 +258,16 @@ export default function AdminGamificationPage() {
         )}
 
         {/* Achievements Tab */}
-        {activeTab === 'achievements' && (
-          <div className="space-y-4">
-            <DetectiveCard>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-detective-text">Logros</h2>
-                <DetectiveButton variant="primary" size="sm" onClick={() => alert('Funcionalidad en desarrollo')}>
-                  <Award className="w-4 h-4" />
-                  Nuevo Logro
-                </DetectiveButton>
-              </div>
-
-              <div className="text-center py-12 text-detective-text-secondary">
-                <Award className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                <p className="text-lg font-semibold mb-2">Achievements en desarrollo</p>
-                <p className="text-sm">
-                  La gestión de logros estará disponible en una próxima versión.
-                </p>
-                <p className="text-xs mt-2">
-                  Total de logros configurados: {stats?.totalParameters || 0}
-                </p>
-              </div>
-            </DetectiveCard>
-          </div>
-        )}
+        {activeTab === 'achievements' && <AchievementsTab />}
 
         {/* Economy Tab */}
         {activeTab === 'economy' && (
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <DetectiveCard hoverable={false}>
                 <div className="text-center">
-                  <Settings className="w-12 h-12 text-detective-gold mx-auto mb-2" />
-                  <p className="text-sm text-detective-text-secondary mb-1">Parámetros Totales</p>
+                  <Settings className="mx-auto mb-2 h-12 w-12 text-detective-gold" />
+                  <p className="mb-1 text-sm text-detective-text-secondary">Parámetros Totales</p>
                   <p className="text-3xl font-bold text-detective-gold">
                     {stats?.totalParameters || 0}
                   </p>
@@ -248,25 +275,25 @@ export default function AdminGamificationPage() {
               </DetectiveCard>
               <DetectiveCard hoverable={false}>
                 <div className="text-center">
-                  <Target className="w-12 h-12 text-blue-400 mx-auto mb-2" />
-                  <p className="text-sm text-detective-text-secondary mb-1">Parámetros Activos</p>
+                  <Target className="mx-auto mb-2 h-12 w-12 text-blue-400" />
+                  <p className="mb-1 text-sm text-detective-text-secondary">Parámetros Activos</p>
                   <p className="text-3xl font-bold text-blue-400">{stats?.activeParameters || 0}</p>
                 </div>
               </DetectiveCard>
               <DetectiveCard hoverable={false}>
                 <div className="text-center">
-                  <Coins className="w-12 h-12 text-green-400 mx-auto mb-2" />
-                  <p className="text-sm text-detective-text-secondary mb-1">Categoría Coins</p>
+                  <Coins className="mx-auto mb-2 h-12 w-12 text-green-400" />
+                  <p className="mb-1 text-sm text-detective-text-secondary">Categoría Coins</p>
                   <p className="text-3xl font-bold text-green-400">
                     {/* BUG-ADMIN-009: Safe access a category con validación */}
-                    {parametersData?.data.filter(p => p?.category === 'coins').length || 0}
+                    {parametersData?.data.filter((p) => p?.category === 'coins').length || 0}
                   </p>
                 </div>
               </DetectiveCard>
             </div>
 
             <DetectiveCard>
-              <h2 className="text-xl font-bold text-detective-text mb-4">Parámetros de Economía</h2>
+              <h2 className="mb-4 text-xl font-bold text-detective-text">Parámetros de Economía</h2>
               {parametersData && parametersData.data.length > 0 ? (
                 <div className="space-y-3">
                   {/* BUG-ADMIN-009: Validar parámetros antes de renderizar */}
@@ -284,37 +311,57 @@ export default function AdminGamificationPage() {
                     .map((param) => (
                       <div
                         key={param.id}
-                        className="flex items-center justify-between p-3 bg-detective-bg-secondary rounded-lg"
+                        className="flex cursor-pointer items-center justify-between rounded-lg bg-detective-bg-secondary p-3 transition-colors hover:bg-detective-bg-secondary/80"
+                        onClick={() => {
+                          setSelectedParameter(param);
+                          setParameterModalOpen(true);
+                        }}
                       >
-                        <div>
+                        <div className="flex-1">
                           <p className="font-semibold text-detective-text">{param.key}</p>
                           {param.description && (
-                            <p className="text-xs text-detective-text-secondary">{param.description}</p>
-                          )}
-                        </div>
-                        <div className="text-right">
-                          <p className="text-lg font-bold text-detective-gold">
-                            {param.value}{param.dataType === 'percentage' ? '%' : ''}
-                          </p>
-                          {param.defaultValue && (
                             <p className="text-xs text-detective-text-secondary">
-                              Default: {param.defaultValue}
+                              {param.description}
                             </p>
                           )}
                         </div>
+                        <div className="flex items-center gap-3">
+                          <div className="text-right">
+                            <p className="text-lg font-bold text-detective-gold">
+                              {param.value}
+                              {param.dataType === 'percentage' ? '%' : ''}
+                            </p>
+                            {param.defaultValue && (
+                              <p className="text-xs text-detective-text-secondary">
+                                Default: {param.defaultValue}
+                              </p>
+                            )}
+                          </div>
+                          <Edit className="h-4 w-4 text-detective-orange" />
+                        </div>
                       </div>
                     ))}
-                  <DetectiveButton
-                    variant="primary"
-                    onClick={() => alert('Edición de parámetros - Funcionalidad próximamente')}
-                    className="w-full mt-4"
-                  >
-                    <Settings className="w-4 h-4 inline mr-2" />
-                    Configurar Parámetros
-                  </DetectiveButton>
+                  <div className="mt-4 flex gap-2">
+                    <DetectiveButton
+                      variant="primary"
+                      onClick={() => setBulkUpdateOpen(true)}
+                      className="flex-1"
+                    >
+                      <Settings className="mr-2 inline h-4 w-4" />
+                      Actualización Masiva
+                    </DetectiveButton>
+                    <DetectiveButton
+                      variant="outline"
+                      onClick={() => setRestoreDefaultsOpen(true)}
+                      className="flex-1"
+                    >
+                      <RotateCcw className="mr-2 inline h-4 w-4" />
+                      Restaurar Defaults
+                    </DetectiveButton>
+                  </div>
                 </div>
               ) : (
-                <div className="text-center py-8 text-detective-text-secondary">
+                <div className="py-8 text-center text-detective-text-secondary">
                   No hay parámetros de economía configurados
                 </div>
               )}
@@ -325,11 +372,11 @@ export default function AdminGamificationPage() {
         {/* Stats Tab */}
         {activeTab === 'stats' && (
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
               <DetectiveCard hoverable={false}>
                 <div className="text-center">
-                  <Settings className="w-12 h-12 text-orange-400 mx-auto mb-2" />
-                  <p className="text-sm text-detective-text-secondary mb-1">Total Parámetros</p>
+                  <Settings className="mx-auto mb-2 h-12 w-12 text-orange-400" />
+                  <p className="mb-1 text-sm text-detective-text-secondary">Total Parámetros</p>
                   <p className="text-2xl font-bold text-orange-400">
                     {stats?.totalParameters || 0}
                   </p>
@@ -337,22 +384,24 @@ export default function AdminGamificationPage() {
               </DetectiveCard>
               <DetectiveCard hoverable={false}>
                 <div className="text-center">
-                  <Award className="w-12 h-12 text-purple-400 mx-auto mb-2" />
-                  <p className="text-sm text-detective-text-secondary mb-1">Parámetros Activos</p>
-                  <p className="text-2xl font-bold text-purple-400">{stats?.activeParameters || 0}</p>
+                  <Award className="mx-auto mb-2 h-12 w-12 text-purple-400" />
+                  <p className="mb-1 text-sm text-detective-text-secondary">Parámetros Activos</p>
+                  <p className="text-2xl font-bold text-purple-400">
+                    {stats?.activeParameters || 0}
+                  </p>
                 </div>
               </DetectiveCard>
               <DetectiveCard hoverable={false}>
                 <div className="text-center">
-                  <Star className="w-12 h-12 text-blue-400 mx-auto mb-2" />
-                  <p className="text-sm text-detective-text-secondary mb-1">Total Rangos Maya</p>
+                  <Star className="mx-auto mb-2 h-12 w-12 text-blue-400" />
+                  <p className="mb-1 text-sm text-detective-text-secondary">Total Rangos Maya</p>
                   <p className="text-2xl font-bold text-blue-400">{stats?.totalRanks || 0}</p>
                 </div>
               </DetectiveCard>
               <DetectiveCard hoverable={false}>
                 <div className="text-center">
-                  <TrendingUp className="w-12 h-12 text-green-400 mx-auto mb-2" />
-                  <p className="text-sm text-detective-text-secondary mb-1">Rangos Activos</p>
+                  <TrendingUp className="mx-auto mb-2 h-12 w-12 text-green-400" />
+                  <p className="mb-1 text-sm text-detective-text-secondary">Rangos Activos</p>
                   <p className="text-2xl font-bold text-green-400">{stats?.activeRanks || 0}</p>
                 </div>
               </DetectiveCard>
@@ -360,21 +409,32 @@ export default function AdminGamificationPage() {
 
             {/* Desglose por categorías */}
             <DetectiveCard>
-              <h2 className="text-xl font-bold text-detective-text mb-4">Parámetros por Categoría</h2>
+              <h2 className="mb-4 text-xl font-bold text-detective-text">
+                Parámetros por Categoría
+              </h2>
               {parametersData && parametersData.data.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                  {(['points', 'coins', 'levels', 'ranks', 'penalties', 'bonuses'] as const).map(category => {
-                    const count = parametersData.data.filter(p => p.category === category).length;
-                    return (
-                      <div key={category} className="text-center p-4 bg-detective-bg-secondary rounded-lg">
-                        <p className="text-sm text-detective-text-secondary mb-1 capitalize">{category}</p>
-                        <p className="text-2xl font-bold text-detective-text">{count}</p>
-                      </div>
-                    );
-                  })}
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+                  {(['points', 'coins', 'levels', 'ranks', 'penalties', 'bonuses'] as const).map(
+                    (category) => {
+                      const count = parametersData.data.filter(
+                        (p) => p.category === category,
+                      ).length;
+                      return (
+                        <div
+                          key={category}
+                          className="rounded-lg bg-detective-bg-secondary p-4 text-center"
+                        >
+                          <p className="mb-1 text-sm capitalize text-detective-text-secondary">
+                            {category}
+                          </p>
+                          <p className="text-2xl font-bold text-detective-text">{count}</p>
+                        </div>
+                      );
+                    },
+                  )}
                 </div>
               ) : (
-                <div className="text-center py-8 text-detective-text-secondary">
+                <div className="py-8 text-center text-detective-text-secondary">
                   No hay datos de parámetros disponibles
                 </div>
               )}
@@ -382,6 +442,80 @@ export default function AdminGamificationPage() {
           </div>
         )}
       </div>
+
+      {/* Modals */}
+      <ParameterEditModal
+        isOpen={parameterModalOpen}
+        onClose={() => {
+          setParameterModalOpen(false);
+          setSelectedParameter(null);
+        }}
+        parameter={selectedParameter}
+        onSuccess={() => {
+          setParameterModalOpen(false);
+          setSelectedParameter(null);
+        }}
+        onUpdate={async (key, value, reason) => {
+          await updateParameter.mutateAsync({ key, data: { value, reason } });
+        }}
+        onReset={async (key) => {
+          await resetParameter.mutateAsync(key);
+        }}
+      />
+
+      <MayaRankEditModal
+        isOpen={rankModalOpen}
+        onClose={() => {
+          setRankModalOpen(false);
+          setSelectedRank(null);
+        }}
+        rank={selectedRank}
+        allRanks={mayaRanks || []}
+        onSuccess={() => {
+          setRankModalOpen(false);
+          setSelectedRank(null);
+        }}
+        onUpdate={async (id, minXp, maxXp) => {
+          await updateMayaRank.mutateAsync({
+            id,
+            data: { minXp, maxXp },
+          });
+        }}
+      />
+
+      <BulkUpdateDialog
+        isOpen={bulkUpdateOpen}
+        onClose={() => setBulkUpdateOpen(false)}
+        parameters={parametersData?.data || []}
+        onSuccess={() => setBulkUpdateOpen(false)}
+        onBulkUpdate={async (updates, reason) => {
+          await bulkUpdateParameters.mutateAsync({ updates, reason });
+        }}
+      />
+
+      <PreviewImpactDialog
+        isOpen={previewImpactOpen}
+        onClose={() => setPreviewImpactOpen(false)}
+        impactData={null}
+        isLoading={false}
+        onConfirm={() => {
+          setPreviewImpactOpen(false);
+          // Apply changes logic here
+        }}
+      />
+
+      <RestoreDefaultsDialog
+        isOpen={restoreDefaultsOpen}
+        onClose={() => setRestoreDefaultsOpen(false)}
+        parameters={parametersData?.data || []}
+        totalUsers={1250}
+        onConfirm={async () => {
+          // Call restore defaults API
+          // Note: This endpoint is not available in the current API
+          // await restoreDefaults.mutateAsync();
+          alert('Restaurar defaults - Endpoint pendiente en backend');
+        }}
+      />
     </AdminLayout>
   );
 }

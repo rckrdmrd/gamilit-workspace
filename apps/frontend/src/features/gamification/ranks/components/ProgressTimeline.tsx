@@ -78,12 +78,11 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
   showAll = false,
   className = '',
 }) => {
-  const progressionHistory = useRanksStore(state => state.progressionHistory);
-  const userProgress = useRanksStore(state => state.userProgress);
+  const progressionHistory = useRanksStore((state) => state.progressionHistory);
 
   // Sort history by timestamp (most recent first)
   const sortedHistory = [...progressionHistory].sort(
-    (a, b) => b.timestamp.getTime() - a.timestamp.getTime()
+    (a, b) => b.timestamp.getTime() - a.timestamp.getTime(),
   );
 
   // Apply limit if not showing all
@@ -91,13 +90,11 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
 
   if (displayedHistory.length === 0) {
     return (
-      <div className={cn('text-center py-12', className)}>
+      <div className={cn('py-12 text-center', className)}>
         <div className="text-detective-text-secondary">
-          <TrendingUp className="w-12 h-12 mx-auto mb-3 opacity-50" />
+          <TrendingUp className="mx-auto mb-3 h-12 w-12 opacity-50" />
           <p>Aún no hay historial de progresión</p>
-          <p className="text-sm mt-1">
-            Completa ejercicios para empezar tu viaje
-          </p>
+          <p className="mt-1 text-sm">Completa ejercicios para empezar tu viaje</p>
         </div>
       </div>
     );
@@ -107,9 +104,7 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
     <div className={cn('space-y-4', className)}>
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold text-detective-text">
-          Historial de Progreso
-        </h3>
+        <h3 className="text-lg font-bold text-detective-text">Historial de Progreso</h3>
         <div className="text-sm text-detective-text-secondary">
           {progressionHistory.length} evento{progressionHistory.length !== 1 ? 's' : ''}
         </div>
@@ -118,7 +113,7 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
       {/* Timeline */}
       <div className="relative">
         {/* Vertical line */}
-        <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-200" />
+        <div className="absolute bottom-0 left-6 top-0 w-0.5 bg-gray-200" />
 
         {/* Timeline entries */}
         <div className="space-y-6">
@@ -137,32 +132,29 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
                 {/* Icon */}
                 <div
                   className={cn(
-                    'absolute left-0 w-12 h-12 rounded-full flex items-center justify-center',
+                    'absolute left-0 flex h-12 w-12 items-center justify-center rounded-full',
                     iconColor,
-                    'text-white shadow-md'
+                    'text-white shadow-md',
                   )}
                 >
-                  <Icon className="w-6 h-6" />
+                  <Icon className="h-6 w-6" />
                 </div>
 
                 {/* Content */}
-                <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div className="rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-semibold text-detective-text">
-                          {entry.title}
-                        </h4>
+                      <div className="mb-1 flex items-center gap-2">
+                        <h4 className="font-semibold text-detective-text">{entry.title}</h4>
                         {entry.rank && (
                           <RankBadgeAdvanced
                             rank={entry.rank}
-
                             showPrestige={false}
                             animated={false}
                           />
                         )}
                       </div>
-                      <p className="text-sm text-detective-text-secondary mb-2">
+                      <p className="mb-2 text-sm text-detective-text-secondary">
                         {entry.description}
                       </p>
                       <div className="flex items-center gap-4 text-xs text-detective-text-secondary">
@@ -188,9 +180,9 @@ export const ProgressTimeline: React.FC<ProgressTimelineProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="text-center mt-6"
+            className="mt-6 text-center"
           >
-            <button className="px-4 py-2 text-sm text-detective-orange hover:text-detective-orange-dark font-medium">
+            <button className="px-4 py-2 text-sm font-medium text-detective-orange hover:text-detective-orange-dark">
               Ver todos ({progressionHistory.length - limit} más)
             </button>
           </motion.div>

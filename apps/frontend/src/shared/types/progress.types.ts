@@ -10,7 +10,9 @@ export enum ProgressStatus {
   NOT_STARTED = 'not_started',
   IN_PROGRESS = 'in_progress',
   COMPLETED = 'completed',
-  MASTERED = 'mastered'
+  NEEDS_REVIEW = 'needs_review', // FE-004: Added for sync with backend
+  MASTERED = 'mastered',
+  ABANDONED = 'abandoned', // FE-004: Added for sync with backend
 }
 
 /**

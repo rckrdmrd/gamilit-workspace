@@ -44,7 +44,6 @@ type SortOrder = 'asc' | 'desc';
 export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
   actions,
   loading = false,
-  onRefresh,
 }) => {
   // State
   const [searchTerm, setSearchTerm] = useState('');
@@ -71,7 +70,7 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
         (action) =>
           action.adminName.toLowerCase().includes(search) ||
           action.action.toLowerCase().includes(search) ||
-          action.targetType.toLowerCase().includes(search)
+          action.targetType.toLowerCase().includes(search),
       );
     }
 
@@ -128,9 +127,17 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
   };
 
   const handleExportCSV = () => {
-    const headers = ['Timestamp', 'Admin', 'Action', 'Target Type', 'Target ID', 'Status', 'Details'];
+    const headers = [
+      'Timestamp',
+      'Admin',
+      'Action',
+      'Target Type',
+      'Target ID',
+      'Status',
+      'Details',
+    ];
     const rows = filteredAndSortedActions.map((action) => [
-      new Date(action.timestamp).toLocaleString(),
+      action.timestamp ? new Date(action.timestamp).toLocaleString('es-ES') : 'N/A',
       action.adminName,
       action.action,
       action.targetType,
@@ -167,7 +174,7 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
     const color = badgeColors[actionType] || 'bg-gray-500/20 text-gray-500 border-gray-500/30';
 
     return (
-      <span className={`px-2 py-1 rounded-md text-xs font-semibold border ${color}`}>
+      <span className={`rounded-md border px-2 py-1 text-xs font-semibold ${color}`}>
         {actionType.toUpperCase()}
       </span>
     );
@@ -175,12 +182,12 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
 
   const getSortIcon = (field: SortField) => {
     if (sortField !== field) {
-      return <ChevronsUpDown className="w-4 h-4 text-gray-500" />;
+      return <ChevronsUpDown className="h-4 w-4 text-gray-500" />;
     }
     return sortOrder === 'asc' ? (
-      <ChevronUp className="w-4 h-4 text-detective-orange" />
+      <ChevronUp className="h-4 w-4 text-detective-orange" />
     ) : (
-      <ChevronDown className="w-4 h-4 text-detective-orange" />
+      <ChevronDown className="h-4 w-4 text-detective-orange" />
     );
   };
 
@@ -191,38 +198,38 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
   return (
     <DetectiveCard>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <h3 className="text-detective-subtitle">Recent Admin Actions</h3>
         <button
           onClick={handleExportCSV}
-          className="flex items-center gap-2 px-4 py-2 bg-detective-bg-secondary rounded-lg hover:bg-detective-bg-tertiary transition-colors"
+          className="hover:bg-detective-bg-tertiary flex items-center gap-2 rounded-lg bg-detective-bg-secondary px-4 py-2 transition-colors"
         >
-          <Download className="w-4 h-4" />
+          <Download className="h-4 w-4" />
           <span className="text-detective-small">Export CSV</span>
         </button>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
+      <div className="mb-6 flex flex-col gap-4 md:flex-row">
         {/* Search */}
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
           <input
             type="text"
             placeholder="Search actions..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-detective-bg-secondary border border-gray-700 rounded-lg text-detective-text placeholder-gray-500 focus:outline-none focus:border-detective-orange"
+            className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary py-2 pl-10 pr-4 text-detective-text placeholder-gray-500 focus:border-detective-orange focus:outline-none"
           />
         </div>
 
         {/* Type Filter */}
         <div className="relative">
-          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <Filter className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="pl-10 pr-8 py-2 bg-detective-bg-secondary border border-gray-700 rounded-lg text-detective-text focus:outline-none focus:border-detective-orange appearance-none"
+            className="appearance-none rounded-lg border border-gray-700 bg-detective-bg-secondary py-2 pl-10 pr-8 text-detective-text focus:border-detective-orange focus:outline-none"
           >
             <option value="all">All Types</option>
             <option value="create">Create</option>
@@ -242,44 +249,44 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
           <thead>
             <tr className="border-b border-gray-700">
               <th
-                className="px-4 py-3 text-left cursor-pointer hover:bg-detective-bg-secondary transition-colors"
+                className="cursor-pointer px-4 py-3 text-left transition-colors hover:bg-detective-bg-secondary"
                 onClick={() => handleSort('timestamp')}
               >
-                <div className="flex items-center gap-2 text-detective-small text-gray-400">
+                <div className="text-detective-small flex items-center gap-2 text-gray-400">
                   <span>Timestamp</span>
                   {getSortIcon('timestamp')}
                 </div>
               </th>
               <th
-                className="px-4 py-3 text-left cursor-pointer hover:bg-detective-bg-secondary transition-colors"
+                className="cursor-pointer px-4 py-3 text-left transition-colors hover:bg-detective-bg-secondary"
                 onClick={() => handleSort('adminName')}
               >
-                <div className="flex items-center gap-2 text-detective-small text-gray-400">
+                <div className="text-detective-small flex items-center gap-2 text-gray-400">
                   <span>Admin</span>
                   {getSortIcon('adminName')}
                 </div>
               </th>
               <th
-                className="px-4 py-3 text-left cursor-pointer hover:bg-detective-bg-secondary transition-colors"
+                className="cursor-pointer px-4 py-3 text-left transition-colors hover:bg-detective-bg-secondary"
                 onClick={() => handleSort('action')}
               >
-                <div className="flex items-center gap-2 text-detective-small text-gray-400">
+                <div className="text-detective-small flex items-center gap-2 text-gray-400">
                   <span>Action</span>
                   {getSortIcon('action')}
                 </div>
               </th>
-              <th className="px-4 py-3 text-left text-detective-small text-gray-400">Type</th>
+              <th className="text-detective-small px-4 py-3 text-left text-gray-400">Type</th>
               <th
-                className="px-4 py-3 text-left cursor-pointer hover:bg-detective-bg-secondary transition-colors"
+                className="cursor-pointer px-4 py-3 text-left transition-colors hover:bg-detective-bg-secondary"
                 onClick={() => handleSort('targetType')}
               >
-                <div className="flex items-center gap-2 text-detective-small text-gray-400">
+                <div className="text-detective-small flex items-center gap-2 text-gray-400">
                   <span>Target</span>
                   {getSortIcon('targetType')}
                 </div>
               </th>
-              <th className="px-4 py-3 text-center text-detective-small text-gray-400">Status</th>
-              <th className="px-4 py-3 text-center text-detective-small text-gray-400">Actions</th>
+              <th className="text-detective-small px-4 py-3 text-center text-gray-400">Status</th>
+              <th className="text-detective-small px-4 py-3 text-center text-gray-400">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -292,7 +299,7 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                       >
-                        <Filter className="w-5 h-5" />
+                        <Filter className="h-5 w-5" />
                       </motion.div>
                       <span>Loading actions...</span>
                     </div>
@@ -312,15 +319,17 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ delay: index * 0.03 }}
-                    className="border-b border-gray-800 hover:bg-detective-bg-secondary transition-colors"
+                    className="border-b border-gray-800 transition-colors hover:bg-detective-bg-secondary"
                   >
-                    <td className="px-4 py-3 text-detective-small">
-                      {new Date(action.timestamp).toLocaleString()}
+                    <td className="text-detective-small px-4 py-3">
+                      {action.timestamp
+                        ? new Date(action.timestamp).toLocaleString('es-ES')
+                        : 'N/A'}
                     </td>
-                    <td className="px-4 py-3 text-detective-small">{action.adminName}</td>
-                    <td className="px-4 py-3 text-detective-small">{action.action}</td>
+                    <td className="text-detective-small px-4 py-3">{action.adminName}</td>
+                    <td className="text-detective-small px-4 py-3">{action.action}</td>
                     <td className="px-4 py-3">{getActionTypeBadge(action.actionType)}</td>
-                    <td className="px-4 py-3 text-detective-small">
+                    <td className="text-detective-small px-4 py-3">
                       <div>
                         <div className="font-semibold">{action.targetType}</div>
                         {action.targetName && (
@@ -330,18 +339,18 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
                     </td>
                     <td className="px-4 py-3 text-center">
                       {action.success ? (
-                        <CheckCircle className="w-5 h-5 text-green-500 mx-auto" />
+                        <CheckCircle className="mx-auto h-5 w-5 text-green-500" />
                       ) : (
-                        <XCircle className="w-5 h-5 text-red-500 mx-auto" />
+                        <XCircle className="mx-auto h-5 w-5 text-red-500" />
                       )}
                     </td>
                     <td className="px-4 py-3 text-center">
                       <button
                         onClick={() => handleViewDetails(action)}
-                        className="p-2 hover:bg-detective-bg-tertiary rounded-lg transition-colors"
+                        className="hover:bg-detective-bg-tertiary rounded-lg p-2 transition-colors"
                         title="View details"
                       >
-                        <Eye className="w-4 h-4 text-detective-orange" />
+                        <Eye className="h-4 w-4 text-detective-orange" />
                       </button>
                     </td>
                   </motion.tr>
@@ -354,7 +363,7 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-700">
+        <div className="mt-6 flex items-center justify-between border-t border-gray-700 pt-4">
           <div className="text-detective-small text-gray-400">
             Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
             {Math.min(currentPage * itemsPerPage, filteredAndSortedActions.length)} of{' '}
@@ -364,7 +373,7 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="px-4 py-2 bg-detective-bg-secondary rounded-lg hover:bg-detective-bg-tertiary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="hover:bg-detective-bg-tertiary rounded-lg bg-detective-bg-secondary px-4 py-2 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
               Previous
             </button>
@@ -385,10 +394,10 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
                   <button
                     key={pageNum}
                     onClick={() => setCurrentPage(pageNum)}
-                    className={`w-10 h-10 rounded-lg transition-colors ${
+                    className={`h-10 w-10 rounded-lg transition-colors ${
                       currentPage === pageNum
                         ? 'bg-detective-orange text-white'
-                        : 'bg-detective-bg-secondary hover:bg-detective-bg-tertiary'
+                        : 'hover:bg-detective-bg-tertiary bg-detective-bg-secondary'
                     }`}
                   >
                     {pageNum}
@@ -399,7 +408,7 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-detective-bg-secondary rounded-lg hover:bg-detective-bg-tertiary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="hover:bg-detective-bg-tertiary rounded-lg bg-detective-bg-secondary px-4 py-2 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
               Next
             </button>
@@ -415,7 +424,11 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
             <div className="space-y-3">
               <div>
                 <span className="text-detective-small text-gray-400">Timestamp:</span>
-                <p className="text-detective-base">{new Date(selectedAction.timestamp).toLocaleString()}</p>
+                <p className="text-detective-base">
+                  {selectedAction.timestamp
+                    ? new Date(selectedAction.timestamp).toLocaleString('es-ES')
+                    : 'N/A'}
+                </p>
               </div>
               <div>
                 <span className="text-detective-small text-gray-400">Admin:</span>
@@ -437,13 +450,15 @@ export const RecentActionsTable: React.FC<RecentActionsTableProps> = ({
               </div>
               <div>
                 <span className="text-detective-small text-gray-400">Status:</span>
-                <p className={`text-detective-base ${selectedAction.success ? 'text-green-500' : 'text-red-500'}`}>
+                <p
+                  className={`text-detective-base ${selectedAction.success ? 'text-green-500' : 'text-red-500'}`}
+                >
                   {selectedAction.success ? 'Success' : 'Failed'}
                 </p>
               </div>
               <div>
                 <span className="text-detective-small text-gray-400">Details:</span>
-                <p className="text-detective-base mt-1 p-3 bg-detective-bg-secondary rounded-lg">
+                <p className="mt-1 rounded-lg bg-detective-bg-secondary p-3 text-detective-base">
                   {selectedAction.details}
                 </p>
               </div>

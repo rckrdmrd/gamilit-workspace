@@ -7,13 +7,12 @@ import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
 import { fetchPodcastExercise, analyzeRecording } from './podcastArgumentativoAPI';
 import type { PodcastExercise, Recording } from './podcastArgumentativoTypes';
 import type { ArgumentAnalysis } from '../../shared/aiTypes';
-import { saveProgress as saveProgressUtil, loadProgress, clearProgress } from '@/shared/utils/storage';
+import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
+import { submitExercise } from '@/features/progress/api/progressAPI';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 interface ExerciseProps {
-  moduleId: number;
-  lessonId: number;
   exerciseId: string;
-  userId: string;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
   onProgressUpdate?: (progress: number) => void;
@@ -29,32 +28,34 @@ interface ExerciseState {
 }
 
 export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
-  moduleId,
-  lessonId,
   exerciseId,
-  userId,
   onComplete,
   onExit,
   onProgressUpdate,
   initialData,
-  difficulty = 'medium'
 }) => {
+  const { user } = useAuth();
   const [exercise, setExercise] = useState<PodcastExercise | null>(null);
   const [recording, setRecording] = useState<Recording>({
     id: '',
     audioBlob: null,
     transcription: '',
     analysis: null,
-    duration: 0
+    duration: 0,
   });
   const [isRecording, setIsRecording] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [timer, setTimer] = useState(0);
   const [analysis, setAnalysis] = useState<ArgumentAnalysis | null>(null);
   const [currentScore, setCurrentScore] = useState(initialData?.currentScore || 0);
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
   const [timeSpent, setTimeSpent] = useState(0);
+  const [scriptText, setScriptText] = useState('');
+  const [selectedTopic, setSelectedTopic] = useState<{ id: string; text: string } | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | undefined>(undefined);
+  const [feedback, setFeedback] = useState<any>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const actionsRef = useRef<any>(null);
 
@@ -100,6 +101,10 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
   const loadExercise = async () => {
     const data = await fetchPodcastExercise('podcast-1');
     setExercise(data);
+    // Inicializar tema seleccionado con el del ejercicio
+    if (data?.topic) {
+      setSelectedTopic({ id: 'topic-1', text: data.topic });
+    }
   };
 
   const saveProgress = () => {
@@ -107,7 +112,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
       hasRecording: recording.audioBlob !== null,
       recordingDuration: recording.duration,
       currentScore,
-      analyzed: analysis !== null
+      analyzed: analysis !== null,
     };
     saveProgressUtil(exerciseId, state);
   };
@@ -139,6 +144,13 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
       mediaRecorderRef.current.stop();
       mediaRecorderRef.current.stream.getTracks().forEach((track) => track.stop());
       setIsRecording(false);
+
+      // Generar URL del audio grabado (simulado en este caso)
+      // En producción, aquí subirías el blob a un servidor y obtendrías la URL real
+      if (recording.audioBlob) {
+        const url = URL.createObjectURL(recording.audioBlob);
+        setAudioUrl(url);
+      }
     }
   };
 
@@ -152,6 +164,11 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
       setRecording((prev) => ({ ...prev, transcription: mockTranscription }));
       setAnalysis(result);
 
+      // Guardar la transcripción como scriptText si no hay texto escrito manualmente
+      if (!scriptText) {
+        setScriptText(mockTranscription);
+      }
+
       // Calculate score based on analysis metrics
       const avgScore = (result.clarity + result.logic + result.evidence + result.persuasion) / 4;
       const newScore = Math.round(avgScore * 100);
@@ -161,15 +178,71 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
     }
   };
 
-  const handleComplete = () => {
-    setShowFeedback(true);
-  };
+  const handleComplete = async () => {
+    // Validación de autenticación
+    if (!user?.id) {
+      alert('Debes estar autenticado para enviar el ejercicio.');
+      return;
+    }
 
-  const calculateFinalScore = () => {
-    const baseScore = currentScore;
-    const timeBonus = timer <= (exercise?.timeLimit || 300) ? 20 : 0;
-    const completionBonus = recording.audioBlob && analysis ? 10 : 0;
-    return Math.min(100, baseScore + timeBonus + completionBonus);
+    // Determinar el guión a enviar (escrito manualmente o transcripción del audio)
+    const finalScript = scriptText || recording.transcription;
+
+    // Validación de longitud mínima del guión (200 caracteres)
+    if (!finalScript || finalScript.length < 200) {
+      alert(
+        `El guión debe tener al menos 200 caracteres. Actualmente tiene ${finalScript?.length || 0} caracteres.`,
+      );
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Preparar respuestas según el formato PodcastArgumentativoAnswers
+      const answers = {
+        topicId: selectedTopic?.id || 'topic-1',
+        script: finalScript,
+        audioUrl: audioUrl || undefined,
+      };
+
+      // Enviar al backend
+      const response = await submitExercise(exercise?.id || exerciseId, user.id, answers);
+
+      // Extraer rewards de la respuesta
+      const rewards = response.rewards || { mlCoins: 0, xp: 0, bonuses: {} };
+
+      // Crear objeto de feedback con rewards
+      setFeedback({
+        type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
+        title: response.isPerfect
+          ? '¡Excelente Argumentación!'
+          : response.score >= 70
+            ? 'Buen Trabajo'
+            : 'Sigue Practicando',
+        message:
+          response.feedback?.overall ||
+          `Has completado el podcast argumentativo con ${response.score} puntos.`,
+        score: response.score,
+        showConfetti: response.isPerfect,
+        xpEarned: rewards.xp,
+        mlCoinsEarned: rewards.mlCoins,
+      });
+
+      // Mostrar feedback con el score del backend
+      setShowFeedback(true);
+      setCurrentScore(response.score);
+    } catch (error) {
+      console.error('[PodcastArgumentativo] Error al enviar:', error);
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: 'Hubo un error al enviar tu podcast. Por favor intenta nuevamente.',
+      });
+      setShowFeedback(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
@@ -185,7 +258,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
       actionsRef.current = {
         handleReset,
         handleCheck: handleComplete,
-        getState: () => ({ recording, currentScore, analysis })
+        getState: () => ({ recording, currentScore, analysis }),
       };
     }
   }, [recording, currentScore, analysis]);
@@ -198,7 +271,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
 
   if (!exercise) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-detective-orange-50 to-detective-blue-50">
+      <div className="from-detective-orange-50 to-detective-blue-50 flex h-screen items-center justify-center bg-gradient-to-br">
         <div className="text-detective-lg text-detective-text-secondary">Cargando ejercicio...</div>
       </div>
     );
@@ -212,34 +285,35 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-r from-detective-blue to-detective-orange rounded-detective-lg p-6 text-white shadow-detective-lg"
+            className="rounded-detective-lg bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-detective-lg"
           >
-            <div className="flex items-center gap-3 mb-2">
-              <FileAudio className="w-8 h-8" />
+            <div className="mb-2 flex items-center gap-3">
+              <FileAudio className="h-8 w-8" />
               <h1 className="text-detective-3xl font-bold">Podcast Argumentativo</h1>
             </div>
-            <p className="text-detective-lg mb-2">{exercise.topic}</p>
-            <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3">
+            <p className="mb-2 text-detective-lg">{exercise.topic}</p>
+            <div className="rounded-lg bg-white/20 p-3 backdrop-blur-sm">
               <p>{exercise.prompt}</p>
             </div>
           </motion.div>
 
           {/* Recording Controls */}
-          <div className="bg-white rounded-detective p-6 border-2 border-detective-border-light mt-6">
-            <div className="text-center mb-6">
-              <div className="text-6xl font-bold text-detective-orange mb-2">{formatTime(timer)}</div>
+          <div className="mt-6 rounded-detective border-2 border-detective-border-light bg-white p-6">
+            <div className="mb-6 text-center">
+              <div className="mb-2 text-6xl font-bold text-detective-orange">
+                {formatTime(timer)}
+              </div>
               <div className="text-detective-sm text-detective-text-secondary">
                 Tiempo límite: {formatTime(exercise.timeLimit)}
               </div>
             </div>
 
-            <div className="flex justify-center gap-4 mb-6">
+            <div className="mb-6 flex justify-center gap-4">
               {!isRecording && !recording.audioBlob && (
                 <DetectiveButton
                   variant="primary"
-
                   onClick={startRecording}
-                  icon={<Mic className="w-6 h-6" />}
+                  icon={<Mic className="h-6 w-6" />}
                   className="bg-red-500 hover:bg-red-600"
                 >
                   Iniciar Grabación
@@ -248,10 +322,9 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
               {isRecording && (
                 <DetectiveButton
                   variant="secondary"
-
                   onClick={stopRecording}
-                  icon={<Square className="w-6 h-6" />}
-                  className="bg-gray-800 hover:bg-gray-900 animate-pulse"
+                  icon={<Square className="h-6 w-6" />}
+                  className="animate-pulse bg-gray-800 hover:bg-gray-900"
                 >
                   Detener Grabación
                 </DetectiveButton>
@@ -260,15 +333,14 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
 
             {recording.audioBlob && (
               <div className="space-y-4">
-                <div className="flex items-center justify-center gap-4 p-4 bg-detective-bg rounded-lg">
-                  <FileAudio className="w-6 h-6 text-detective-orange" />
+                <div className="flex items-center justify-center gap-4 rounded-lg bg-detective-bg p-4">
+                  <FileAudio className="h-6 w-6 text-detective-orange" />
                   <span className="text-detective-base font-medium">
                     Grabación completada ({formatTime(recording.duration)})
                   </span>
                 </div>
                 <DetectiveButton
                   variant="primary"
-
                   onClick={handleAnalyze}
                   disabled={analyzing}
                   loading={analyzing}
@@ -282,9 +354,11 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
 
           {/* Transcription */}
           {recording.transcription && (
-            <div className="bg-white rounded-detective p-6 border-2 border-detective-border-light">
-              <h3 className="text-detective-lg font-semibold text-detective-blue mb-3">Transcripción</h3>
-              <p className="text-detective-sm text-detective-text leading-relaxed p-4 bg-gray-50 rounded-lg">
+            <div className="rounded-detective border-2 border-detective-border-light bg-white p-6">
+              <h3 className="mb-3 text-detective-lg font-semibold text-detective-blue">
+                Transcripción
+              </h3>
+              <p className="rounded-lg bg-gray-50 p-4 text-detective-sm leading-relaxed text-detective-text">
                 {recording.transcription}
               </p>
             </div>
@@ -293,34 +367,36 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
           {/* Analysis Results */}
           {analysis && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <div className="bg-white rounded-detective p-6 border-2 border-detective-border-light">
-                <h3 className="text-detective-lg font-semibold text-detective-blue mb-4">
+              <div className="rounded-detective border-2 border-detective-border-light bg-white p-6">
+                <h3 className="mb-4 text-detective-lg font-semibold text-detective-blue">
                   Análisis del Argumento
                 </h3>
 
                 {/* Metrics Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
                   {[
                     { label: 'Claridad', value: analysis.clarity, color: 'text-blue-600' },
                     { label: 'Lógica', value: analysis.logic, color: 'text-green-600' },
                     { label: 'Evidencia', value: analysis.evidence, color: 'text-orange-600' },
-                    { label: 'Persuasión', value: analysis.persuasion, color: 'text-purple-600' }
+                    { label: 'Persuasión', value: analysis.persuasion, color: 'text-purple-600' },
                   ].map((metric) => (
-                    <div key={metric.label} className="text-center p-4 bg-detective-bg rounded-lg">
+                    <div key={metric.label} className="rounded-lg bg-detective-bg p-4 text-center">
                       <div className={`text-3xl font-bold ${metric.color} mb-1`}>
                         {Math.round(metric.value * 100)}
                       </div>
-                      <div className="text-detective-xs text-detective-text-secondary">{metric.label}</div>
+                      <div className="text-detective-xs text-detective-text-secondary">
+                        {metric.label}
+                      </div>
                     </div>
                   ))}
                 </div>
 
                 {/* Feedback */}
                 <div className="mb-4">
-                  <h4 className="text-detective-base font-semibold mb-2">Retroalimentación</h4>
+                  <h4 className="mb-2 text-detective-base font-semibold">Retroalimentación</h4>
                   <ul className="space-y-1">
                     {analysis.feedback.map((f, idx) => (
-                      <li key={idx} className="text-detective-sm flex items-start gap-2">
+                      <li key={idx} className="flex items-start gap-2 text-detective-sm">
                         <span className="text-green-600">✓</span>
                         <span>{f}</span>
                       </li>
@@ -330,10 +406,10 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
 
                 {/* Improvements */}
                 <div>
-                  <h4 className="text-detective-base font-semibold mb-2">Áreas de Mejora</h4>
+                  <h4 className="mb-2 text-detective-base font-semibold">Áreas de Mejora</h4>
                   <ul className="space-y-1">
                     {analysis.improvements.map((i, idx) => (
-                      <li key={idx} className="text-detective-sm flex items-start gap-2">
+                      <li key={idx} className="flex items-start gap-2 text-detective-sm">
                         <span className="text-detective-orange">→</span>
                         <span>{i}</span>
                       </li>
@@ -345,53 +421,42 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
           )}
 
           {/* Action Buttons */}
-          <div className="flex justify-center gap-4 mt-6">
+          <div className="mt-6 flex justify-center gap-4">
             {onExit && (
-              <DetectiveButton
-                variant="secondary"
-
-                onClick={onExit}
-              >
+              <DetectiveButton variant="secondary" onClick={onExit}>
                 Salir
               </DetectiveButton>
             )}
-            <DetectiveButton
-              variant="gold"
-
-              onClick={handleReset}
-            >
+            <DetectiveButton variant="gold" onClick={handleReset}>
               Reiniciar
             </DetectiveButton>
             <DetectiveButton
               variant="primary"
-
               onClick={handleComplete}
-              disabled={!analysis}
+              disabled={!analysis || isSubmitting}
+              loading={isSubmitting}
             >
-              Completar Ejercicio
+              {isSubmitting ? 'Enviando...' : 'Completar Ejercicio'}
             </DetectiveButton>
           </div>
         </div>
       </DetectiveCard>
 
       {/* Feedback Modal */}
-      <FeedbackModal
-        isOpen={showFeedback}
-        feedback={{
-          type: currentScore >= 70 ? 'success' : 'partial',
-          title: currentScore >= 70 ? '¡Excelente Argumentación!' : 'Buen Trabajo',
-          message: `Has completado el podcast argumentativo con ${currentScore} puntos.`,
-          score: calculateFinalScore(),
-          showConfetti: currentScore >= 70
-        }}
-        onClose={() => {
-          setShowFeedback(false);
-          if (currentScore >= 70) {
-            onComplete?.(calculateFinalScore(), timeSpent);
-          }
-        }}
-        onRetry={handleReset}
-      />
+      {feedback && (
+        <FeedbackModal
+          isOpen={showFeedback}
+          feedback={feedback}
+          onClose={() => {
+            setShowFeedback(false);
+            // Llamar a onComplete después de cerrar el feedback si el score es aprobatorio
+            if (feedback.type === 'success' || (feedback.score && feedback.score >= 70)) {
+              onComplete?.(feedback.score || currentScore, timeSpent);
+            }
+          }}
+          onRetry={handleReset}
+        />
+      )}
     </>
   );
 };

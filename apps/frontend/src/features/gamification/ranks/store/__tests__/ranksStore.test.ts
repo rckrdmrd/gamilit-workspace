@@ -18,7 +18,11 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useRanksStore } from '../ranksStore';
-import type { UserRankProgress, MultiplierSource, MultiplierSourceType } from '../../types/ranksTypes';
+import type {
+  UserRankProgress,
+  MultiplierSource,
+  MultiplierSourceType,
+} from '../../types/ranksTypes';
 import * as ranksAPI from '../../api/ranksAPI';
 
 // Mock the API module
@@ -140,9 +144,7 @@ describe('RanksStore', () => {
       await addXP(50, 'exercise_completion');
 
       const state = useRanksStore.getState();
-      expect(state.userProgress.lastActivityDate.getTime()).toBeGreaterThan(
-        beforeDate.getTime()
-      );
+      expect(state.userProgress.lastActivityDate.getTime()).toBeGreaterThan(beforeDate.getTime());
     });
 
     it('should check for level up', async () => {
@@ -210,9 +212,7 @@ describe('RanksStore', () => {
       const state = useRanksStore.getState();
       expect(state.progressionHistory.length).toBeGreaterThan(0);
 
-      const levelUpEntry = state.progressionHistory.find(
-        (entry) => entry.type === 'level_up'
-      );
+      const levelUpEntry = state.progressionHistory.find((entry) => entry.type === 'level_up');
       expect(levelUpEntry).toBeDefined();
     });
 
@@ -330,19 +330,12 @@ describe('RanksStore', () => {
       rankUp();
 
       const state = useRanksStore.getState();
-      const rankUpEntry = state.progressionHistory.find(
-        (entry) => entry.type === 'rank_up'
-      );
+      const rankUpEntry = state.progressionHistory.find((entry) => entry.type === 'rank_up');
       expect(rankUpEntry).toBeDefined();
     });
 
     it('should update multipliers after rank up', () => {
-      const { rankUp, updateMultipliers } = useRanksStore.getState();
-
-      const updateMultipliersSpy = vi.spyOn(
-        useRanksStore.getState(),
-        'updateMultipliers'
-      );
+      const { rankUp } = useRanksStore.getState();
 
       useRanksStore.setState({
         userProgress: {
@@ -484,9 +477,7 @@ describe('RanksStore', () => {
       await prestige();
 
       const state = useRanksStore.getState();
-      const prestigeEntry = state.progressionHistory.find(
-        (entry) => entry.type === 'prestige'
-      );
+      const prestigeEntry = state.progressionHistory.find((entry) => entry.type === 'prestige');
       expect(prestigeEntry).toBeDefined();
     });
   });
@@ -521,9 +512,7 @@ describe('RanksStore', () => {
       updateMultipliers();
 
       const state = useRanksStore.getState();
-      const prestigeSource = state.multiplierBreakdown.sources.find(
-        (s) => s.type === 'prestige'
-      );
+      const prestigeSource = state.multiplierBreakdown.sources.find((s) => s.type === 'prestige');
       expect(prestigeSource).toBeDefined();
     });
 
@@ -540,9 +529,7 @@ describe('RanksStore', () => {
       updateMultipliers();
 
       const state = useRanksStore.getState();
-      const streakSource = state.multiplierBreakdown.sources.find(
-        (s) => s.type === 'streak'
-      );
+      const streakSource = state.multiplierBreakdown.sources.find((s) => s.type === 'streak');
       expect(streakSource).toBeDefined();
     });
 
@@ -561,13 +548,12 @@ describe('RanksStore', () => {
 
       const state = useRanksStore.getState();
       expect(state.multiplierBreakdown.sources).toContainEqual(
-        expect.objectContaining({ type: 'event' })
+        expect.objectContaining({ type: 'event' }),
       );
     });
 
     it('should remove multiplier source by type', () => {
-      const { addMultiplierSource, removeMultiplierSource } =
-        useRanksStore.getState();
+      const { addMultiplierSource, removeMultiplierSource } = useRanksStore.getState();
 
       const customSource: MultiplierSource = {
         type: 'event',
@@ -581,9 +567,7 @@ describe('RanksStore', () => {
       removeMultiplierSource('event');
 
       const state = useRanksStore.getState();
-      const eventSource = state.multiplierBreakdown.sources.find(
-        (s) => s.type === 'event'
-      );
+      const eventSource = state.multiplierBreakdown.sources.find((s) => s.type === 'event');
       expect(eventSource).toBeUndefined();
     });
 
@@ -610,8 +594,7 @@ describe('RanksStore', () => {
     });
 
     it('should identify expiring multipliers', () => {
-      const { addMultiplierSource, updateMultipliers } =
-        useRanksStore.getState();
+      const { addMultiplierSource, updateMultipliers } = useRanksStore.getState();
 
       const tomorrow = new Date();
       tomorrow.setHours(tomorrow.getHours() + 12); // 12 hours from now
@@ -734,8 +717,7 @@ describe('RanksStore', () => {
     });
 
     it('should open and close prestige modal', () => {
-      const { openPrestigeModal, closePrestigeModal } =
-        useRanksStore.getState();
+      const { openPrestigeModal, closePrestigeModal } = useRanksStore.getState();
 
       openPrestigeModal();
       expect(useRanksStore.getState().showPrestigeModal).toBe(true);
@@ -781,7 +763,7 @@ describe('RanksStore', () => {
   describe('Fetch User Progress (API)', () => {
     it('should set loading state during fetch', async () => {
       vi.mocked(ranksAPI.getCurrentRank).mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 100))
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
       );
 
       const { fetchUserProgress } = useRanksStore.getState();
@@ -808,9 +790,7 @@ describe('RanksStore', () => {
     });
 
     it('should handle API errors', async () => {
-      vi.mocked(ranksAPI.getCurrentRank).mockRejectedValue(
-        new Error('Network error')
-      );
+      vi.mocked(ranksAPI.getCurrentRank).mockRejectedValue(new Error('Network error'));
 
       const { fetchUserProgress } = useRanksStore.getState();
       await fetchUserProgress();
@@ -861,8 +841,7 @@ describe('RanksStore', () => {
     });
 
     it('should get active multipliers', () => {
-      const { addMultiplierSource, getActiveMultipliers } =
-        useRanksStore.getState();
+      const { addMultiplierSource, getActiveMultipliers } = useRanksStore.getState();
 
       const source: MultiplierSource = {
         type: 'event',

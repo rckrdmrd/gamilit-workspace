@@ -1,0 +1,440 @@
+# MATRIZ DE GAPS - ANÁLISIS DE RUTAS API
+# Fecha: 2025-11-24
+# Analista: Architecture-Analyst
+# Alcance: Rutas API en 3 portales (Student, Teacher, Admin)
+# Enfoque: Portal Admin y API de Gamificación
+
+gaps:
+  # ========================================================================
+  # GAPS CRÍTICOS (P0) - Impiden funcionamiento correcto
+  # ========================================================================
+
+  - id: GAP-001
+    categoria: rutas-api
+    severidad: critica
+    area: portal-admin-alerts
+    descripcion: "Ruta de alerts en frontend no coincide con backend"
+    evidencia_frontend: |
+      Archivo: apps/frontend/src/apps/admin/hooks/useSystemMonitoring.ts:103
+      Ruta: GET /admin/alerts
+
+      Archivo: apps/frontend/src/apps/admin/hooks/useAdminDashboard.ts:291
+      Ruta: POST /admin/alerts/${alertId}/dismiss
+
+      Archivo: apps/frontend/src/services/api/apiConfig.ts:304
+      alerts: '/admin/alerts'
+    evidencia_backend: |
+      Archivo: apps/backend/src/modules/admin/controllers/admin-dashboard.controller.ts
+      Ruta esperada: GET /api/v1/admin/dashboard/alerts
+      Controller: AdminDashboardController
+      Método: getAlerts()
+    impacto: |
+      - Portal admin no puede cargar alertas del sistema
+      - Página de dashboard muestra error 404 en consola
+      - Funcionalidad de dismiss alerts no funciona
+      - Afecta a todos los usuarios admin
+    recomendacion: |
+      OPCIÓN A (PREFERIDA): Actualizar frontend para usar /admin/dashboard/alerts
+      - Modificar apiConfig.ts línea 304
+      - Actualizar useSystemMonitoring.ts línea 103
+      - Actualizar useAdminDashboard.ts línea 291
+
+      OPCIÓN B: Agregar alias en backend para /admin/alerts (no recomendado)
+    documentos_afectados:
+      - apps/frontend/src/services/api/apiConfig.ts
+      - apps/frontend/src/apps/admin/hooks/useSystemMonitoring.ts
+      - apps/frontend/src/apps/admin/hooks/useAdminDashboard.ts
+    prioridad: P0
+    estado: pendiente
+    agente_responsable: Frontend-Developer
+    estimacion_esfuerzo: 30 minutos
+    test_validacion: |
+      1. Cargar dashboard admin
+      2. Verificar que no hay error 404 en consola para /admin/alerts
+      3. Verificar que se cargan las alertas correctamente
+      4. Probar dismiss de una alerta
+
+  - id: GAP-002
+    categoria: rutas-api
+    severidad: critica
+    area: portal-admin-classroom-teacher
+    descripcion: "Duplicación de prefijo /api en classroomTeacherApi.ts"
+    evidencia_frontend: |
+      Archivo: apps/frontend/src/services/api/admin/classroomTeacherApi.ts:13
+      const BASE_URL = '/api/admin'
+
+      Problema: apiClient ya tiene baseURL = 'http://localhost:3006/api'
+      Resultado: Rutas finales son /api/api/admin/... (404)
+    evidencia_backend: |
+      Rutas esperadas:
+      - /api/v1/admin/classrooms/{id}/teachers
+      - /api/v1/admin/teachers/{id}/classrooms
+      - /api/v1/admin/classroom-teachers
+    impacto: |
+      - Todas las llamadas a classroom-teacher API fallan con 404
+      - Asignación de profesores a aulas no funciona
+      - Gestión de aulas en portal admin rota
+    recomendacion: |
+      Cambiar BASE_URL de '/api/admin' a '/admin'
+      O mejor: usar /v1/admin para incluir versionamiento correcto
+    documentos_afectados:
+      - apps/frontend/src/services/api/admin/classroomTeacherApi.ts
+    prioridad: P0
+    estado: pendiente
+    agente_responsable: Frontend-Developer
+    estimacion_esfuerzo: 15 minutos
+    test_validacion: |
+      1. Ir a gestión de aulas en admin
+      2. Intentar asignar profesor a aula
+      3. Verificar que no hay error 404
+      4. Verificar que asignación se guarda correctamente
+
+  - id: GAP-003
+    categoria: rutas-api
+    severidad: critica
+    area: portal-admin-aprobaciones
+    descripcion: "Hook useApprovals usa rutas que no existen en backend"
+    evidencia_frontend: |
+      Archivo: apps/frontend/src/apps/admin/hooks/useContentManagement.ts:438
+      Ruta: GET /admin/approvals (no existe)
+
+      Línea 455: POST /admin/approvals/${id}/approve (no existe)
+      Línea 474: POST /admin/approvals/${id}/reject (no existe)
+    evidencia_backend: |
+      Rutas correctas:
+      - GET /api/v1/admin/content/pending
+      - POST /api/v1/admin/content/:id/approve
+      - POST /api/v1/admin/content/:id/reject
+      - GET /api/v1/admin/content/exercises/pending (alias)
+    impacto: |
+      - Página AdminApprovalsPage usa mock data (no conecta con backend real)
+      - Hook useApprovals() falla en todas las llamadas
+      - ContentApprovalQueue component no funciona
+      - Aprobación de contenido educativo no operativa
+    recomendacion: |
+      OPCIÓN A: Usar hook usePendingExercises existente (ya conectado correctamente)
+      OPCIÓN B: Actualizar useApprovals para usar rutas correctas /admin/content/*
+
+      Nota: usePendingExercises ya usa adminAPI correctamente (líneas 100, 126, 148)
+      Recomendación: Deprecar useApprovals y migrar todo a usePendingExercises
+    documentos_afectados:
+      - apps/frontend/src/apps/admin/hooks/useContentManagement.ts
+      - apps/frontend/src/apps/admin/pages/AdminApprovalsPage.tsx
+      - apps/frontend/src/apps/admin/components/content/ContentApprovalQueue.tsx
+    prioridad: P0
+    estado: pendiente
+    agente_responsable: Frontend-Developer
+    estimacion_esfuerzo: 2 horas
+    test_validacion: |
+      1. Crear contenido pendiente de aprobación
+      2. Ir a página de aprobaciones en admin
+      3. Verificar que se listan contenidos pendientes reales (no mock)
+      4. Aprobar un contenido
+      5. Verificar que se aprueba en base de datos
+
+  - id: GAP-004
+    categoria: configuracion
+    severidad: critica
+    area: variables-entorno-produccion
+    descripcion: "VITE_API_URL hardcodeado a localhost, no preparado para producción"
+    evidencia_frontend: |
+      Archivo: apps/frontend/src/config/env.ts
+      VITE_API_URL default: http://localhost:3006/api
+
+      Problema: Cuando se despliegue a producción (IP: 74.208.126.102),
+      las rutas seguirán apuntando a localhost si no se configura variable de entorno
+    evidencia_actual: |
+      Variable de producción debería ser:
+      VITE_API_URL=http://74.208.126.102:3006/api
+
+      No hay verificación de que esta variable esté configurada antes de build
+    impacto: |
+      - En producción, frontend intentará conectar a localhost (falla)
+      - Todas las llamadas API fallan en servidor productivo
+      - Aplicación completamente no funcional en producción
+      - Error crítico de configuración
+    recomendacion: |
+      1. Crear archivo .env.production con variables de producción
+      2. Agregar validación en build para verificar VITE_API_URL
+      3. Agregar documentación de variables de entorno requeridas
+      4. Considerar usar variables relativas si frontend y backend están en mismo dominio
+    documentos_afectados:
+      - apps/frontend/.env.production (crear)
+      - apps/frontend/src/config/env.ts (agregar validación)
+      - docs/deployment/environment-variables.md (crear)
+    prioridad: P0
+    estado: pendiente
+    agente_responsable: DevOps-Agent
+    estimacion_esfuerzo: 1 hora
+    test_validacion: |
+      1. Hacer build de producción
+      2. Desplegar en servidor 74.208.126.102
+      3. Verificar que las llamadas API van a 74.208.126.102:3006
+      4. Verificar que no hay intentos de conectar a localhost
+
+  # ========================================================================
+  # GAPS ALTOS (P1) - Causan inconsistencias importantes
+  # ========================================================================
+
+  - id: GAP-005
+    categoria: versionamiento
+    severidad: alta
+    area: inconsistencia-versionamiento-api
+    descripcion: "Versionamiento inconsistente entre portales (v1 vs sin versión)"
+    evidencia_frontend: |
+      Portal Student:
+      - gamificationAPI.ts usa /v1/gamification/... ✓
+
+      Portal Admin:
+      - apiConfig.ts define /api/v1 como base ✓
+      - classroomTeacherApi usa /api/admin (sin v1) ✗
+      - useApprovals usa /admin/approvals (sin v1) ✗
+
+      Portal Teacher:
+      - teacher APIs usan /teacher/... (sin v1) ✗
+    evidencia_backend: |
+      Backend SIEMPRE usa versionamiento:
+      - Prefijo global: 'api'
+      - Versión: 'v1'
+      - Todas las rutas: /api/v1/*
+    impacto: |
+      - Rutas sin v1 fallan con 404
+      - Futura migración a v2 será problemática
+      - Inconsistencia entre portales
+      - Mantenimiento complejo
+    recomendacion: |
+      Estandarizar TODAS las rutas para usar /v1/ explícitamente:
+      1. Actualizar apiConfig.ts para incluir v1 en todas las rutas
+      2. Actualizar servicios específicos (classroomTeacherApi, teacherApi)
+      3. Agregar test para validar que todas las rutas tienen versionamiento
+      4. Documentar estándar de versionamiento en ESTANDARES-NOMENCLATURA.md
+    documentos_afectados:
+      - apps/frontend/src/services/api/apiConfig.ts
+      - apps/frontend/src/services/api/admin/classroomTeacherApi.ts
+      - apps/frontend/src/services/api/teacher/*.ts
+      - orchestration/directivas/ESTANDARES-NOMENCLATURA.md
+    prioridad: P1
+    estado: pendiente
+    agente_responsable: Frontend-Developer
+    estimacion_esfuerzo: 3 horas
+    test_validacion: |
+      1. Grep por todas las rutas API en frontend
+      2. Verificar que todas incluyen /v1/
+      3. Ejecutar suite de tests de integración
+      4. Verificar que no hay rutas sin versión
+
+  - id: GAP-006
+    categoria: arquitectura
+    severidad: alta
+    area: centralizacion-configuracion
+    descripcion: "Configuración de rutas dispersa entre múltiples archivos"
+    evidencia_frontend: |
+      Definiciones de rutas encontradas en:
+      1. apps/frontend/src/services/api/apiConfig.ts (centralizado) ✓
+      2. apps/frontend/src/services/api/admin/classroomTeacherApi.ts (hardcoded) ✗
+      3. apps/frontend/src/services/api/teacher/*.ts (hardcoded) ✗
+      4. apps/frontend/src/apps/admin/hooks/useContentManagement.ts (hardcoded) ✗
+      5. apps/frontend/src/services/api/gamificationAPI.ts (parcial) ~
+    evidencia_actual: |
+      apiConfig.ts tiene 417 líneas con endpoints bien organizados,
+      pero muchos servicios lo ignoran y definen rutas propias
+    impacto: |
+      - Difícil encontrar todas las rutas
+      - Cambios de API requieren modificar múltiples archivos
+      - Riesgo de inconsistencias
+      - Violación de DRY (Don't Repeat Yourself)
+    recomendacion: |
+      1. Migrar TODAS las rutas a apiConfig.ts
+      2. Prohibir definición de rutas fuera de apiConfig.ts
+      3. Crear eslint rule para detectar hardcoded API paths
+      4. Refactorizar servicios para importar de apiConfig
+    documentos_afectados:
+      - Todos los archivos de servicios API
+      - .eslintrc (agregar rule)
+      - docs/architecture/api-configuration.md (crear)
+    prioridad: P1
+    estado: pendiente
+    agente_responsable: Frontend-Developer
+    estimacion_esfuerzo: 4 horas
+    test_validacion: |
+      1. Grep por strings con '/api/' o '/admin/' o '/teacher/'
+      2. Verificar que solo aparecen en apiConfig.ts
+      3. Ejecutar lint y verificar que no hay warnings
+
+  - id: GAP-007
+    categoria: gamificacion
+    severidad: alta
+    area: referencia-gamificacion-consola
+    descripcion: "Referencias de gamificación en consola fallan tras recrear base de datos"
+    evidencia_reportada: |
+      Usuario reporta: "al rehacer la base de datos falla en todos los portales
+      (student/teacher/admin) la referencia del frontend que muestra en consola
+      con la gamificación"
+    evidencia_tecnica: |
+      Posibles causas:
+      1. Rutas incorrectas (GAP-001, GAP-002, GAP-003 arriba)
+      2. Seeds de gamificación no se cargan correctamente
+      3. Foreign keys rotos entre usuarios y gamificación
+      4. Tenant ID incorrecto en headers
+    impacto: |
+      - Componentes de gamificación no cargan
+      - Errores 404 o 500 en consola
+      - UX degradada (sin puntos, achievements, ranks)
+      - Afecta a TODOS los portales
+    recomendacion: |
+      1. Resolver GAP-001 a GAP-003 primero (rutas incorrectas)
+      2. Validar que seeds de gamificación se cargan en orden correcto
+      3. Verificar que drop-and-recreate-database.sh incluye gamificación
+      4. Agregar logging en frontend para capturar errores específicos
+      5. Implementar error boundary para gamificación
+    documentos_afectados:
+      - orchestration/scripts/drop-and-recreate-database.sh
+      - apps/database/seeds/
+      - apps/frontend error boundaries
+    prioridad: P1
+    estado: pendiente
+    agente_responsable: Backend-Developer + Database-Developer
+    estimacion_esfuerzo: 2-3 horas (después de resolver GAP-001 a GAP-003)
+    test_validacion: |
+      1. Ejecutar drop-and-recreate-database.sh
+      2. Iniciar backend y frontend
+      3. Login en cada portal (student, teacher, admin)
+      4. Verificar que NO hay errores en consola relacionados con gamificación
+      5. Verificar que componentes de gamificación cargan correctamente
+
+  # ========================================================================
+  # GAPS MEDIOS (P2) - Mejoras arquitectónicas
+  # ========================================================================
+
+  - id: GAP-008
+    categoria: tipos-typescript
+    severidad: media
+    area: sincronizacion-tipos-dtos
+    descripcion: "Tipos TypeScript frontend no sincronizados con DTOs backend"
+    evidencia_frontend: |
+      Ejemplo: AlertDto en frontend puede no coincidir con backend
+
+      Backend AlertDto (actualizado GAP-FE-003):
+      - type: 'error' | 'warning' | 'info' | 'security'
+      - dismissed: boolean
+
+      Frontend puede tener tipos diferentes o desactualizados
+    evidencia_backend: |
+      Archivo: apps/backend/src/modules/admin/dto/dashboard/alerts.dto.ts
+      Cambió de 'acknowledged' a 'dismissed' recientemente
+    impacto: |
+      - Type errors en desarrollo
+      - Runtime errors por campos inexistentes
+      - Lógica incorrecta basada en tipos desactualizados
+    recomendacion: |
+      1. Usar herramienta de generación automática de tipos (openapi-typescript)
+      2. O crear proceso manual de sincronización DTOs
+      3. Agregar validación en CI/CD para detectar desincronización
+      4. Documentar proceso en docs/development/type-sync.md
+    documentos_afectados:
+      - apps/frontend/src/types/
+      - apps/backend/src/modules/*/dto/
+      - .github/workflows/ (CI/CD)
+    prioridad: P2
+    estado: pendiente
+    agente_responsable: Backend-Developer + Frontend-Developer
+    estimacion_esfuerzo: 1 día (setup inicial) + mantenimiento continuo
+
+  - id: GAP-009
+    categoria: documentacion
+    severidad: media
+    area: falta-documentacion-apis
+    descripcion: "Falta documentación de todas las rutas API y sus contratos"
+    evidencia_actual: |
+      Backend tiene Swagger en /api/docs pero:
+      - No está actualizado o completo
+      - Frontend no tiene documentación de cómo consumir APIs
+      - No hay ejemplos de requests/responses
+    impacto: |
+      - Desarrolladores no saben qué rutas están disponibles
+      - Trial and error para descubrir APIs
+      - Errores frecuentes de integración
+    recomendacion: |
+      1. Completar decoradores Swagger en todos los controllers
+      2. Generar documentación estática desde Swagger
+      3. Crear guía de integración frontend-backend
+      4. Agregar ejemplos de uso en docs/api/
+    documentos_afectados:
+      - apps/backend/src/modules/*/controllers/*.controller.ts (decoradores)
+      - docs/api/ (crear)
+      - README-API.md (crear)
+    prioridad: P2
+    estado: pendiente
+    agente_responsable: Backend-Developer
+    estimacion_esfuerzo: 2 días
+
+  - id: GAP-010
+    categoria: testing
+    severidad: media
+    area: falta-tests-integracion-apis
+    descripcion: "Falta suite de tests de integración frontend-backend"
+    evidencia_actual: |
+      No hay tests que validen:
+      - Que rutas frontend coinciden con backend
+      - Que contratos (request/response) son compatibles
+      - Que cambios en backend no rompen frontend
+    impacto: |
+      - Bugs se descubren en runtime
+      - Deployments rompen funcionalidad
+      - No hay confianza en refactors
+    recomendacion: |
+      1. Crear suite de tests E2E con Playwright/Cypress
+      2. Agregar contract testing (Pact o similar)
+      3. Ejecutar en CI/CD antes de merge
+    documentos_afectados:
+      - tests/e2e/ (crear)
+      - tests/contract/ (crear)
+      - .github/workflows/ci.yml
+    prioridad: P2
+    estado: pendiente
+    agente_responsable: QA + DevOps
+    estimacion_esfuerzo: 3-4 días
+
+# ========================================================================
+# RESUMEN ESTADÍSTICO
+# ========================================================================
+
+resumen:
+  total_gaps: 10
+  criticos: 4
+  altos: 3
+  medios: 3
+  areas_afectadas:
+    - portal-admin (6 gaps)
+    - gamificacion (2 gaps)
+    - configuracion (2 gaps)
+    - arquitectura (2 gaps)
+  esfuerzo_total_estimado: "15-20 horas desarrollo + 1 semana mejoras arquitectónicas"
+  agentes_involucrados:
+    - Frontend-Developer (7 gaps)
+    - Backend-Developer (3 gaps)
+    - Database-Developer (1 gap)
+    - DevOps-Agent (2 gaps)
+
+# ========================================================================
+# PRIORIZACIÓN PARA RESOLUCIÓN
+# ========================================================================
+
+plan_resolucion:
+  fase_1_inmediata:
+    - GAP-002  # 15 min - Fix duplicación /api
+    - GAP-001  # 30 min - Fix alerts route
+    - GAP-004  # 1 hora - Variables producción
+
+  fase_2_corto_plazo:
+    - GAP-003  # 2 horas - Fix aprobaciones
+    - GAP-007  # 2-3 horas - Fix gamificación (después de fase 1)
+
+  fase_3_mediano_plazo:
+    - GAP-005  # 3 horas - Versionamiento consistente
+    - GAP-006  # 4 horas - Centralizar configuración
+
+  fase_4_mejoras_arquitectura:
+    - GAP-008  # 1 día - Sync tipos TS
+    - GAP-009  # 2 días - Documentación APIs
+    - GAP-010  # 3-4 días - Tests integración

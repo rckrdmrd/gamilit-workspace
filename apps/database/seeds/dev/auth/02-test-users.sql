@@ -21,7 +21,11 @@ SET search_path TO auth, auth_management, public;
 -- =====================================================
 -- STEP 1: Create users in auth.users
 -- =====================================================
+-- IMPORTANTE: UUIDs predecibles para consistencia con seeds PROD
+-- Password: "Test1234" (bcrypt hasheado dinámicamente)
+-- =====================================================
 INSERT INTO auth.users (
+    id,                      -- ✅ UUID predecible explícito
     email,
     encrypted_password,
     role,
@@ -33,8 +37,9 @@ INSERT INTO auth.users (
 ) VALUES
 -- Admin de Prueba
 (
+    'dddddddd-dddd-dddd-dddd-dddddddddddd'::uuid,  -- ✅ UUID predecible
     'admin@gamilit.com',
-    '$2b$10$pkqX0/v7H3F5TBTuDTaoYeBjH581pXpjlcNcYmMtXofd/2HjfTuga',
+    '$2b$10$pkqX0/v7H3F5TBTuDTaoYeBjH581pXpjlcNcYmMtXofd/2HjfTuga',  -- Password: Test1234
     'super_admin',
     NOW(),
     '{"name": "Admin Gamilit", "description": "Usuario administrador de testing"}'::jsonb,
@@ -45,8 +50,9 @@ INSERT INTO auth.users (
 
 -- Maestro de Prueba
 (
+    'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee'::uuid,  -- ✅ UUID predecible
     'teacher@gamilit.com',
-    '$2b$10$pkqX0/v7H3F5TBTuDTaoYeBjH581pXpjlcNcYmMtXofd/2HjfTuga',
+    '$2b$10$pkqX0/v7H3F5TBTuDTaoYeBjH581pXpjlcNcYmMtXofd/2HjfTuga',  -- Password: Test1234
     'admin_teacher',
     NOW(),
     '{"name": "Teacher Gamilit", "description": "Usuario maestro de testing"}'::jsonb,
@@ -57,8 +63,9 @@ INSERT INTO auth.users (
 
 -- Estudiante de Prueba
 (
+    'ffffffff-ffff-ffff-ffff-ffffffffffff'::uuid,  -- ✅ UUID predecible
     'student@gamilit.com',
-    '$2b$10$pkqX0/v7H3F5TBTuDTaoYeBjH581pXpjlcNcYmMtXofd/2HjfTuga',
+    '$2b$10$pkqX0/v7H3F5TBTuDTaoYeBjH581pXpjlcNcYmMtXofd/2HjfTuga',  -- Password: Test1234
     'student',
     NOW(),
     '{"name": "Student Gamilit", "description": "Usuario estudiante de testing"}'::jsonb,
@@ -78,28 +85,28 @@ ON CONFLICT (email) DO UPDATE SET
 -- =====================================================
 -- STEP 2: Create profiles in auth_management.profiles
 -- =====================================================
--- Note: We disable the trigger temporarily because it has a bug
--- that tries to insert into comodines_inventory using the wrong ID
+-- IMPORTANTE: profiles.id = auth.users.id (unificación de IDs)
+-- El trigger initialize_user_stats() se ejecutará automáticamente
 -- =====================================================
 
--- Disable trigger temporarily (requires superuser)
--- ALTER TABLE auth_management.profiles DISABLE TRIGGER trg_initialize_user_stats;
-
 INSERT INTO auth_management.profiles (
+    id,                      -- ✅ profiles.id = auth.users.id (consistente)
     tenant_id,
-    user_id,
+    user_id,                 -- ✅ FK a auth.users.id
     email,
     display_name,
     full_name,
     role,
     status,
     email_verified,
+    preferences,
     created_at,
     updated_at
 )
 SELECT
+    u.id as id,              -- ✅ profiles.id = auth.users.id
     '00000000-0000-0000-0000-000000000001'::uuid as tenant_id,
-    u.id as user_id,
+    u.id as user_id,         -- ✅ user_id = auth.users.id
     u.email,
     CASE
         WHEN u.email = 'admin@gamilit.com' THEN 'Admin Gamilit'
@@ -111,23 +118,28 @@ SELECT
         WHEN u.email = 'teacher@gamilit.com' THEN 'Teacher Gamilit'
         WHEN u.email = 'student@gamilit.com' THEN 'Student Gamilit'
     END as full_name,
-    u.role,
-    'active'::user_status as status,
+    u.role::auth_management.gamilit_role,
+    'active'::auth_management.user_status as status,
     true as email_verified,
+    jsonb_build_object(
+        'theme', 'detective',
+        'language', 'es',
+        'timezone', 'America/Mexico_City',
+        'sound_enabled', true,
+        'notifications_enabled', true
+    ) as preferences,
     NOW() as created_at,
     NOW() as updated_at
 FROM auth.users u
 WHERE u.email IN ('admin@gamilit.com', 'teacher@gamilit.com', 'student@gamilit.com')
-ON CONFLICT (email) DO UPDATE SET
-    status = 'active'::user_status,
+ON CONFLICT (id) DO UPDATE SET
+    status = 'active'::auth_management.user_status,
     email_verified = true,
     display_name = EXCLUDED.display_name,
     full_name = EXCLUDED.full_name,
-    role = EXCLUDED.role,
+    role = EXCLUDED.role::auth_management.gamilit_role,
+    preferences = EXCLUDED.preferences,
     updated_at = NOW();
-
--- Re-enable trigger
--- ALTER TABLE auth_management.profiles ENABLE TRIGGER trg_initialize_user_stats;
 
 -- =====================================================
 -- Verification
@@ -196,18 +208,16 @@ END $$;
 -- =====================================================
 -- IMPORTANT NOTES
 -- =====================================================
--- 1. The trigger trg_initialize_user_stats has a bug that causes
---    FK violation when creating profiles. If you get an error about
---    comodines_inventory FK, you need to disable/enable the trigger
---    using these commands as superuser (postgres):
+-- 1. ✅ El trigger trg_initialize_user_stats funciona correctamente
+--    porque usamos profiles.id = auth.users.id (unificación de IDs)
+--    NO es necesario deshabilitar el trigger.
 --
---    ALTER TABLE auth_management.profiles DISABLE TRIGGER trg_initialize_user_stats;
---    -- Run the INSERT INTO auth_management.profiles
---    ALTER TABLE auth_management.profiles ENABLE TRIGGER trg_initialize_user_stats;
+-- 2. ✅ Este seed es para DEV/STAGING únicamente (NO producción).
 --
--- 2. This seed file should ONLY be used in development and staging.
---    DO NOT run in production.
+-- 3. ✅ Todos los usuarios comparten password "Test1234" (testing).
 --
--- 3. All users share the same password (Test1234) for convenience.
---    Change passwords after deployment if needed.
+-- 4. ✅ UUIDs predecibles para consistencia con ambiente PROD:
+--    - admin@gamilit.com:   dddddddd-dddd-dddd-dddd-dddddddddddd
+--    - teacher@gamilit.com: eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee
+--    - student@gamilit.com: ffffffff-ffff-ffff-ffff-ffffffffffff
 -- =====================================================

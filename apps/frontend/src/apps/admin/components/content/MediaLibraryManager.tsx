@@ -5,7 +5,8 @@ import { useMediaLibrary } from '../../hooks/useContentManagement';
 import { Upload, Image, Video, Music, Trash2, Search, Tag, HardDrive } from 'lucide-react';
 
 export const MediaLibraryManager: React.FC = () => {
-  const { media, loading, storageUsed, storageLimit, uploadFile, deleteFile, bulkDelete } = useMediaLibrary();
+  const { media, loading, storageUsed, storageLimit, uploadFile, deleteFile, bulkDelete } =
+    useMediaLibrary();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'image' | 'video' | 'audio'>('all');
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
@@ -56,7 +57,7 @@ export const MediaLibraryManager: React.FC = () => {
     .filter(
       (file) =>
         file.filename.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        file.tags?.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+        file.tags?.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase())),
     );
 
   const storagePercentage = storageLimit > 0 ? (storageUsed / storageLimit) * 100 : 0;
@@ -64,13 +65,13 @@ export const MediaLibraryManager: React.FC = () => {
   const getFileIcon = (type: string) => {
     switch (type) {
       case 'image':
-        return <Image className="w-6 h-6" />;
+        return <Image className="h-6 w-6" />;
       case 'video':
-        return <Video className="w-6 h-6" />;
+        return <Video className="h-6 w-6" />;
       case 'audio':
-        return <Music className="w-6 h-6" />;
+        return <Music className="h-6 w-6" />;
       default:
-        return <Image className="w-6 h-6" />;
+        return <Image className="h-6 w-6" />;
     }
   };
 
@@ -84,7 +85,7 @@ export const MediaLibraryManager: React.FC = () => {
     return (
       <DetectiveCard>
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-detective-orange border-t-transparent"></div>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-detective-orange border-t-transparent"></div>
         </div>
       </DetectiveCard>
     );
@@ -99,8 +100,7 @@ export const MediaLibraryManager: React.FC = () => {
           {selectedFiles.length > 0 && (
             <DetectiveButton
               variant="primary"
-
-              icon={<Trash2 className="w-4 h-4" />}
+              icon={<Trash2 className="h-4 w-4" />}
               onClick={handleBulkDelete}
               className="bg-red-500 hover:bg-red-600"
             >
@@ -110,7 +110,7 @@ export const MediaLibraryManager: React.FC = () => {
           <label className="cursor-pointer">
             <DetectiveButton
               variant="primary"
-              icon={<Upload className="w-4 h-4" />}
+              icon={<Upload className="h-4 w-4" />}
               disabled={uploading}
               loading={uploading}
               as="span"
@@ -129,29 +129,29 @@ export const MediaLibraryManager: React.FC = () => {
       </div>
 
       {/* Storage Usage */}
-      <DetectiveCard className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/30">
+      <DetectiveCard className="border border-blue-500/30 bg-gradient-to-br from-blue-500/10 to-blue-600/5">
         <div className="flex items-center gap-4">
-          <HardDrive className="w-8 h-8 text-blue-500" />
+          <HardDrive className="h-8 w-8 text-blue-500" />
           <div className="flex-1">
-            <div className="flex items-center justify-between mb-2">
+            <div className="mb-2 flex items-center justify-between">
               <span className="text-detective-base">Storage Usage</span>
               <span className="text-detective-base font-bold">
                 {formatFileSize(storageUsed)} / {formatFileSize(storageLimit)}
               </span>
             </div>
-            <div className="h-3 bg-detective-bg-secondary rounded-full overflow-hidden">
+            <div className="h-3 overflow-hidden rounded-full bg-detective-bg-secondary">
               <div
                 className={`h-full transition-all ${
                   storagePercentage > 90
                     ? 'bg-gradient-to-r from-red-500 to-red-400'
                     : storagePercentage > 70
-                    ? 'bg-gradient-to-r from-yellow-500 to-yellow-400'
-                    : 'bg-gradient-to-r from-blue-500 to-blue-400'
+                      ? 'bg-gradient-to-r from-yellow-500 to-yellow-400'
+                      : 'bg-gradient-to-r from-blue-500 to-blue-400'
                 }`}
                 style={{ width: `${storagePercentage}%` }}
               ></div>
             </div>
-            <div className="flex items-center justify-between mt-1 text-detective-small text-gray-400">
+            <div className="text-detective-small mt-1 flex items-center justify-between text-gray-400">
               <span>{storagePercentage.toFixed(1)}% used</span>
               <span>{media.length} files</span>
             </div>
@@ -161,9 +161,9 @@ export const MediaLibraryManager: React.FC = () => {
 
       {/* Filters */}
       <DetectiveCard>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               placeholder="Search files or tags..."
@@ -177,7 +177,7 @@ export const MediaLibraryManager: React.FC = () => {
               <button
                 key={type}
                 onClick={() => setFilterType(type)}
-                className={`flex-1 px-4 py-2 rounded-lg transition-colors ${
+                className={`flex-1 rounded-lg px-4 py-2 transition-colors ${
                   filterType === type
                     ? 'bg-detective-orange text-white'
                     : 'bg-detective-bg-secondary text-gray-400 hover:bg-detective-bg-secondary/70'
@@ -191,10 +191,10 @@ export const MediaLibraryManager: React.FC = () => {
       </DetectiveCard>
 
       {/* Media Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
         {filteredMedia.length === 0 ? (
-          <div className="col-span-full text-center py-12 text-gray-400">
-            <Upload className="w-12 h-12 mx-auto mb-2" />
+          <div className="col-span-full py-12 text-center text-gray-400">
+            <Upload className="mx-auto mb-2 h-12 w-12" />
             <p>No media files found</p>
           </div>
         ) : (
@@ -204,31 +204,35 @@ export const MediaLibraryManager: React.FC = () => {
             return (
               <DetectiveCard
                 key={file.id}
-                className={`relative group ${isSelected ? 'ring-2 ring-detective-orange' : ''}`}
+                className={`group relative ${isSelected ? 'ring-2 ring-detective-orange' : ''}`}
                 padding="none"
               >
                 {/* Checkbox */}
-                <div className="absolute top-2 left-2 z-10">
+                <div className="absolute left-2 top-2 z-10">
                   <input
                     type="checkbox"
                     checked={isSelected}
                     onChange={() => toggleSelectFile(file.id)}
-                    className="w-5 h-5 rounded border-2 border-detective-orange"
+                    className="h-5 w-5 rounded border-2 border-detective-orange"
                   />
                 </div>
 
                 {/* Delete Button */}
                 <button
                   onClick={() => deleteFile(file.id)}
-                  className="absolute top-2 right-2 z-10 p-2 bg-red-500/80 hover:bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute right-2 top-2 z-10 rounded-lg bg-red-500/80 p-2 text-white opacity-0 transition-opacity hover:bg-red-500 group-hover:opacity-100"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="h-4 w-4" />
                 </button>
 
                 {/* Thumbnail */}
-                <div className="aspect-square bg-detective-bg-secondary flex items-center justify-center overflow-hidden">
+                <div className="flex aspect-square items-center justify-center overflow-hidden bg-detective-bg-secondary">
                   {file.type === 'image' ? (
-                    <img src={file.url} alt={file.filename} className="w-full h-full object-cover" />
+                    <img
+                      src={file.url}
+                      alt={file.filename}
+                      className="h-full w-full object-cover"
+                    />
                   ) : (
                     <div className="text-gray-400">{getFileIcon(file.type)}</div>
                   )}
@@ -236,17 +240,20 @@ export const MediaLibraryManager: React.FC = () => {
 
                 {/* Info */}
                 <div className="p-3">
-                  <p className="text-detective-small font-semibold truncate" title={file.filename}>
+                  <p className="text-detective-small truncate font-semibold" title={file.filename}>
                     {file.filename}
                   </p>
                   <p className="text-xs text-gray-400">{formatFileSize(file.size)}</p>
 
                   {/* Tags */}
                   {file.tags && file.tags.length > 0 && (
-                    <div className="flex items-center gap-1 mt-2 flex-wrap">
-                      <Tag className="w-3 h-3 text-gray-500" />
+                    <div className="mt-2 flex flex-wrap items-center gap-1">
+                      <Tag className="h-3 w-3 text-gray-500" />
                       {file.tags.slice(0, 2).map((tag) => (
-                        <span key={tag} className="px-2 py-0.5 bg-detective-orange/20 text-detective-orange rounded text-xs">
+                        <span
+                          key={tag}
+                          className="rounded bg-detective-orange/20 px-2 py-0.5 text-xs text-detective-orange"
+                        >
                           {tag}
                         </span>
                       ))}
@@ -256,8 +263,10 @@ export const MediaLibraryManager: React.FC = () => {
                     </div>
                   )}
 
-                  <p className="text-xs text-gray-500 mt-2">
-                    {new Date(file.uploadedAt).toLocaleDateString('es-ES')}
+                  <p className="mt-2 text-xs text-gray-500">
+                    {file.uploadedAt
+                      ? new Date(file.uploadedAt).toLocaleDateString('es-ES')
+                      : 'N/A'}
                   </p>
                 </div>
               </DetectiveCard>
@@ -267,14 +276,18 @@ export const MediaLibraryManager: React.FC = () => {
       </div>
 
       {/* Upload Instructions */}
-      <DetectiveCard className="bg-blue-500/10 border border-blue-500/30">
+      <DetectiveCard className="border border-blue-500/30 bg-blue-500/10">
         <div className="flex items-start gap-3">
-          <Upload className="w-5 h-5 text-blue-500 mt-1" />
+          <Upload className="mt-1 h-5 w-5 text-blue-500" />
           <div>
-            <p className="text-detective-base text-blue-500 font-semibold mb-1">Upload Guidelines</p>
-            <ul className="text-detective-small text-gray-400 space-y-1">
+            <p className="mb-1 text-detective-base font-semibold text-blue-500">
+              Upload Guidelines
+            </p>
+            <ul className="text-detective-small space-y-1 text-gray-400">
               <li>Max file size: 10 MB</li>
-              <li>Supported formats: Images (JPG, PNG, GIF), Videos (MP4, WebM), Audio (MP3, WAV)</li>
+              <li>
+                Supported formats: Images (JPG, PNG, GIF), Videos (MP4, WebM), Audio (MP3, WAV)
+              </li>
               <li>Files are automatically optimized for web delivery</li>
             </ul>
           </div>

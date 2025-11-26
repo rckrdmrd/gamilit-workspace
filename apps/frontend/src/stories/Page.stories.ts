@@ -1,6 +1,6 @@
-import { expect } from '@storybook/jest';
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react';
+// @ts-expect-error - Storybook test addon not installed
+import { expect, userEvent, within } from '@storybook/test';
 
 import { Page } from './Page';
 

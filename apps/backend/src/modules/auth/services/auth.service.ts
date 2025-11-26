@@ -14,6 +14,16 @@ import {
 } from '../dto';
 import { DB_SCHEMAS, DB_TABLES, GamilityRoleEnum, UserStatusEnum } from '@shared/constants';
 
+// Gamification entities
+import { UserStats } from '@/modules/gamification/entities/user-stats.entity';
+import { UserRank } from '@/modules/gamification/entities/user-rank.entity';
+import { UserAchievement } from '@/modules/gamification/entities/user-achievement.entity';
+import { Achievement } from '@/modules/gamification/entities/achievement.entity';
+import { MLCoinsTransaction } from '@/modules/gamification/entities/ml-coins-transaction.entity';
+
+// Progress tracking entities
+import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
+
 /**
  * AuthService
  *
@@ -49,13 +59,35 @@ export class AuthService {
     @InjectRepository(AuthAttempt, 'auth')
     private readonly attemptRepository: Repository<AuthAttempt>,
 
+    @InjectRepository(UserStats, 'gamification')
+    private readonly userStatsRepository: Repository<UserStats>,
+
+    @InjectRepository(UserRank, 'gamification')
+    private readonly userRanksRepository: Repository<UserRank>,
+
+    @InjectRepository(UserAchievement, 'gamification')
+    private readonly userAchievementsRepository: Repository<UserAchievement>,
+
+    @InjectRepository(Achievement, 'gamification')
+    private readonly achievementsRepository: Repository<Achievement>,
+
+    @InjectRepository(MLCoinsTransaction, 'gamification')
+    private readonly mlCoinsTransactionsRepository: Repository<MLCoinsTransaction>,
+
+    @InjectRepository(ExerciseSubmission, 'progress')
+    private readonly exerciseSubmissionsRepository: Repository<ExerciseSubmission>,
+
     private readonly jwtService: JwtService,
   ) {}
 
   /**
    * Registrar nuevo usuario
    */
-  async register(dto: RegisterUserDto, ip?: string, userAgent?: string): Promise<UserResponseDto> {
+  async register(
+    dto: RegisterUserDto,
+    ip?: string,
+    userAgent?: string,
+  ): Promise<{ user: UserResponseDto; accessToken: string; refreshToken: string }> {
     // 1. Validar email único
     const existingUser = await this.userRepository.findOne({
       where: { email: dto.email },
@@ -116,8 +148,42 @@ export class AuthService {
     // 6. Registrar intento exitoso
     await this.logAuthAttempt(user.id, dto.email, true, ip, userAgent);
 
-    // 7. Retornar usuario sin password
-    return this.toUserResponse(user);
+    // 7. Generar tokens JWT (auto-login después del registro)
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
+    const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
+
+    // 8. Crear sesión en la base de datos
+    const hashedRefreshToken = crypto.createHash('sha256').update(refreshToken).digest('hex');
+    const sessionToken = crypto.randomBytes(32).toString('hex'); // Generar session token único
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 días
+
+    const session = this.sessionRepository.create({
+      user_id: profile.id, // IMPORTANT: user_id references profiles.id, not users.id
+      tenant_id: profile.tenant_id,
+      session_token: sessionToken,
+      refresh_token: hashedRefreshToken,
+      ip_address: ip || null,
+      user_agent: userAgent || null,
+      device_type: this.detectDeviceType(userAgent),
+      browser: this.detectBrowser(userAgent),
+      os: this.detectOS(userAgent),
+      expires_at: expiresAt,
+      last_activity_at: new Date(),
+      is_active: true,
+    });
+    await this.sessionRepository.save(session);
+
+    // 9. Actualizar last_sign_in_at del usuario
+    user.last_sign_in_at = new Date();
+    await this.userRepository.save(user);
+
+    // 10. Retornar usuario con tokens
+    return {
+      user: this.toUserResponse(user),
+      accessToken,
+      refreshToken,
+    };
   }
 
   /**
@@ -416,18 +482,77 @@ export class AuthService {
 
   /**
    * Obtener estadísticas del usuario
+   *
+   * @description Obtiene estadísticas reales desde las tablas de gamificación y progreso.
+   * Reemplaza la implementación mock con consultas a base de datos.
+   *
+   * @param userId - UUID del usuario
+   * @returns UserStatistics con datos reales de la base de datos
+   *
+   * @implements GAP-008 - Real database queries for user statistics
+   *
+   * Estadísticas calculadas:
+   * - total_ml_coins: Balance actual de ML Coins (user_stats.ml_coins_balance - actualizado por triggers)
+   * - total_xp: Total XP acumulada (user_stats.total_xp)
+   * - current_rank: Rango Maya actual (user_ranks.current_rank)
+   * - achievements_earned: Total de logros desbloqueados (user_achievements.is_completed = true)
+   * - total_achievements: Total de logros disponibles en el sistema
+   * - total_exercises: Ejercicios completados (user_stats.exercises_completed - incluye autocorregibles)
+   * - modules_completed: Módulos completados (user_stats.modules_completed)
+   * - login_streak: Racha de días consecutivos (user_stats.current_streak)
+   *
+   * IMPORTANTE: Los ejercicios tienen arquitectura dual:
+   * - exercise_attempts → Ejercicios autocorregibles (requires_manual_grading = false)
+   * - exercise_submissions → Ejercicios con calificación manual (requires_manual_grading = true)
+   * El trigger trg_update_user_stats_on_exercise actualiza exercises_completed automáticamente.
    */
   async getUserStatistics(userId: string): Promise<any> {
-    // TODO: Implementar consultas a tablas de gamificación, progreso, etc.
-    // Por ahora, retornamos estadísticas de ejemplo
+    // Query 1: User Stats (XP, ML Coins, exercises, modules, streak)
+    // Single query to get ALL core stats from user_stats table
+    // These values are maintained by database triggers for accuracy
+    const userStats = await this.userStatsRepository.findOne({
+      where: { user_id: userId },
+    });
+
+    // Use trigger-maintained values from user_stats (more reliable than counting)
+    const total_xp = userStats?.total_xp || 0;
+    const total_ml_coins = userStats?.ml_coins || 0; // ml_coins = balance actual
+    const total_exercises = userStats?.exercises_completed || 0;
+    const modules_completed = userStats?.modules_completed || 0;
+    const login_streak = userStats?.current_streak || 0;
+
+    // Query 2: Current Rank (Maya rank system)
+    // Gets the current active rank for the user
+    const userRank = await this.userRanksRepository.findOne({
+      where: { user_id: userId, is_current: true },
+    });
+
+    // Default to 'Ajaw' (lowest rank) if user has no rank yet
+    const current_rank = userRank?.current_rank || 'Ajaw';
+
+    // Query 3: Achievements Earned (unlocked achievements)
+    // Counts user_achievements where is_completed = true
+    const achievements_earned = await this.userAchievementsRepository.count({
+      where: { user_id: userId, is_completed: true },
+    });
+
+    // Query 4: Total Achievements Available
+    // Counts all active achievements in the system
+    const total_achievements = await this.achievementsRepository.count({
+      where: { is_active: true },
+    });
+
+    // Return matching frontend UserStatistics interface
+    // IMPORTANT: Field names MUST match frontend expectations
     return {
-      total_xp: 0,
-      total_ml_coins: 0,
-      total_exercises: 0,
-      total_achievements: 0,
-      current_rank: 'Nacom',
-      modules_completed: 0,
-      login_streak: 0,
+      total_xp,
+      total_ml_coins,
+      total_exercises,
+      total_achievements,
+      current_rank,
+      modules_completed,
+      login_streak,
+      achievements_earned, // Optional field for additional frontend usage
     };
   }
 

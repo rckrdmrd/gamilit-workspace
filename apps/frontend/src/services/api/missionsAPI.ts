@@ -3,15 +3,34 @@
  *
  * API client for missions endpoints.
  * Phase 4 implementation.
+ *
+ * @deprecated Este módulo usa una definición de Mission legacy con `objective` singular.
+ * Para nuevas implementaciones, usar:
+ * - Tipos: @/features/gamification/missions/types/missionsTypes.ts
+ * - Transformer: @/features/gamification/missions/utils/missionTransformer.ts
+ *
+ * Deuda técnica: Consolidar ambos sistemas en el tipo canónico con `objectives[]`.
+ * Ref: PLAN-IMPLEMENTACION-CORRECCIONES-2025-11-26
  */
 
 import { apiClient } from '@/services/api/apiClient';
 
+/**
+ * @deprecated Usar Mission de @/features/gamification/missions/types/missionsTypes.ts
+ */
 export interface Mission {
   id: string;
   userId: string;
   type: 'daily' | 'weekly' | 'special';
-  category: 'exercises' | 'modules' | 'score' | 'streak' | 'achievements' | 'social' | 'coins' | 'xp';
+  category:
+    | 'exercises'
+    | 'modules'
+    | 'score'
+    | 'streak'
+    | 'achievements'
+    | 'social'
+    | 'coins'
+    | 'xp';
   title: string;
   description: string;
   objective: {

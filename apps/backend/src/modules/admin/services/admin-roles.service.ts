@@ -27,12 +27,34 @@ export class AdminRolesService {
       order: { name: 'ASC' },
     });
 
+    // Map role names from Role entity to GamilityRoleEnum values for UserRole queries
+    const roleNameToEnum: Record<string, string> = {
+      'student': 'student',
+      'teacher': 'admin_teacher',
+      'admin': 'super_admin',
+      'super_admin': 'super_admin',
+      'admin_teacher': 'admin_teacher',
+    };
+
     // Get user counts for each role
     const rolesWithCounts = await Promise.all(
       roles.map(async (role) => {
-        const usersCount = await this.userRoleRepo.count({
-          where: { role: role.name as any },
-        });
+        // Map the role name to the corresponding GamilityRoleEnum value
+        const enumValue = roleNameToEnum[role.name] || role.name;
+
+        let usersCount = 0;
+        try {
+          usersCount = await this.userRoleRepo.count({
+            where: {
+              role: enumValue as any,
+              is_active: true
+            },
+          });
+        } catch (error) {
+          // If role name doesn't match GamilityRoleEnum, default to 0
+          console.warn(`Could not count users for role ${role.name}:`, error);
+          usersCount = 0;
+        }
 
         return {
           id: role.id,

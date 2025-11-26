@@ -21,6 +21,14 @@ export interface LeaderboardPosition {
   entry: LeaderboardEntry;
 }
 
+/**
+ * Mission interface simplificada para Dashboard/UI
+ *
+ * @note Esta es una versión simplificada para componentes de UI del dashboard.
+ * Para el sistema completo de missions, usar:
+ * - Tipos: @/features/gamification/missions/types/missionsTypes.ts
+ * - Store: @/features/missions/store/missionsStore.ts
+ */
 export interface Mission {
   id: string;
   title: string;
@@ -73,21 +81,15 @@ export function useGamificationData(userId: string) {
 
     try {
       // Fetch all data in parallel
-      const [
-        rankRes,
-        coinsRes,
-        achievementsRes,
-        leaderboardRes,
-        missionsRes,
-        streaksRes,
-      ] = await Promise.all([
-        apiClient.get(`/gamification/ranks/user/${userId}`),
-        apiClient.get(`/gamification/coins/${userId}`),
-        apiClient.get(`/gamification/users/${userId}/achievements?limit=6`),
-        apiClient.get(`/gamification/leaderboard/user/${userId}/position`),
-        apiClient.get(`/gamification/missions/daily`),
-        apiClient.get(`/gamification/streaks/${userId}`),
-      ]);
+      const [rankRes, coinsRes, achievementsRes, leaderboardRes, missionsRes, streaksRes] =
+        await Promise.all([
+          apiClient.get(`/gamification/ranks/user/${userId}`),
+          apiClient.get(`/gamification/coins/${userId}`),
+          apiClient.get(`/gamification/users/${userId}/achievements?limit=6`),
+          apiClient.get(`/gamification/leaderboard/user/${userId}/position`),
+          apiClient.get(`/gamification/missions/daily`),
+          apiClient.get(`/gamification/streaks/${userId}`),
+        ]);
 
       setData({
         user: {

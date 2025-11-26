@@ -10,31 +10,20 @@
  * ~180 lines
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
-import {
-  Target,
-  TrendingUp,
-  Coins,
-  Flame,
-  Sparkles,
-  Zap,
-} from 'lucide-react';
+import { Target, TrendingUp, Coins, Flame, Zap } from 'lucide-react';
 import type { MissionStats } from '../types/missionsTypes';
-import { cn } from '@shared/utils/cn';
 
 interface MissionsPageHeroProps {
   stats: MissionStats;
 }
 
 export function MissionsPageHero({ stats }: MissionsPageHeroProps) {
-  const todayProgress = stats.todayTotal > 0
-    ? Math.round((stats.todayCompleted / stats.todayTotal) * 100)
-    : 0;
+  const todayProgress =
+    stats.todayTotal > 0 ? Math.round((stats.todayCompleted / stats.todayTotal) * 100) : 0;
 
-  const weekProgress = stats.weekTotal > 0
-    ? Math.round((stats.weekCompleted / stats.weekTotal) * 100)
-    : 0;
+  const weekProgress =
+    stats.weekTotal > 0 ? Math.round((stats.weekCompleted / stats.weekTotal) * 100) : 0;
 
   const statsCards = [
     {
@@ -75,11 +64,13 @@ export function MissionsPageHero({ stats }: MissionsPageHeroProps) {
     },
   ];
 
+  const cn = (...classes: (string | boolean | undefined)[]) => classes.filter(Boolean).join(' ');
+
   return (
     <motion.section
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="relative bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white py-12 overflow-hidden"
+      className="relative overflow-hidden bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 py-12 text-white"
     >
       {/* Animated Background Elements */}
       <div className="absolute inset-0 opacity-20">
@@ -103,31 +94,25 @@ export function MissionsPageHero({ stats }: MissionsPageHeroProps) {
               top: `${Math.random() * 100}%`,
             }}
           >
-            {i % 3 === 0 ? (
-              <Target className="w-8 h-8" />
-            ) : i % 3 === 1 ? (
-              <Sparkles className="w-6 h-6" />
-            ) : (
-              <Zap className="w-7 h-7" />
-            )}
+            {i % 3 === 0 ? <Target className="h-8 w-8" /> : <Zap className="h-7 w-7" />}
           </motion.div>
         ))}
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container relative z-10 mx-auto px-4">
         {/* Title & Subtitle */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-center mb-8"
+          className="mb-8 text-center"
         >
-          <h1 className="text-4xl md:text-5xl font-bold mb-3 flex items-center justify-center gap-3">
-            <Target className="w-10 h-10 md:w-12 md:h-12" />
+          <h1 className="mb-3 flex items-center justify-center gap-3 text-4xl font-bold md:text-5xl">
+            <Target className="h-10 w-10 md:h-12 md:w-12" />
             Misiones Diarias y Semanales
           </h1>
-          <p className="text-xl md:text-2xl opacity-90">
+          <p className="text-xl opacity-90 md:text-2xl">
             Completa misiones para ganar recompensas increíbles
           </p>
         </motion.div>
@@ -145,7 +130,7 @@ export function MissionsPageHero({ stats }: MissionsPageHeroProps) {
               },
             },
           }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
         >
           {statsCards.map((card, index) => {
             const Icon = card.icon;
@@ -159,55 +144,45 @@ export function MissionsPageHero({ stats }: MissionsPageHeroProps) {
                 }}
                 whileHover={{ scale: 1.05, y: -5 }}
                 className={cn(
-                  'bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-lg',
+                  'rounded-xl bg-white/95 p-6 shadow-lg backdrop-blur-sm',
                   'border-2',
                   card.borderColor,
-                  'transition-all duration-300'
+                  'transition-all duration-300',
                 )}
               >
                 {/* Icon */}
                 <div
                   className={cn(
-                    'w-14 h-14 rounded-xl mb-4',
+                    'mb-4 h-14 w-14 rounded-xl',
                     'bg-gradient-to-br',
                     card.color,
                     'flex items-center justify-center',
-                    'shadow-md'
+                    'shadow-md',
                   )}
                 >
-                  <Icon className="w-7 h-7 text-white" />
+                  <Icon className="h-7 w-7 text-white" />
                 </div>
 
                 {/* Label */}
-                <div className="text-sm font-semibold text-gray-600 mb-1">
-                  {card.label}
-                </div>
+                <div className="mb-1 text-sm font-semibold text-gray-600">{card.label}</div>
 
                 {/* Value */}
-                <div className="text-3xl font-bold text-gray-800 mb-2">
-                  {card.value}
-                </div>
+                <div className="mb-2 text-3xl font-bold text-gray-800">{card.value}</div>
 
                 {/* Subtext */}
-                <div className="text-xs text-gray-500">
-                  {card.subtext}
-                </div>
+                <div className="text-xs text-gray-500">{card.subtext}</div>
 
                 {/* Progress Bar (for completed stats) */}
                 {(index === 0 || index === 1) && (
                   <div className="mt-3">
-                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-2 overflow-hidden rounded-full bg-gray-200">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{
                           width: `${index === 0 ? todayProgress : weekProgress}%`,
                         }}
                         transition={{ duration: 1, delay: 0.5 }}
-                        className={cn(
-                          'h-full bg-gradient-to-r',
-                          card.color,
-                          'rounded-full'
-                        )}
+                        className={cn('h-full bg-gradient-to-r', card.color, 'rounded-full')}
                       />
                     </div>
                   </div>
@@ -219,7 +194,7 @@ export function MissionsPageHero({ stats }: MissionsPageHeroProps) {
       </div>
 
       {/* Decorative Gradient Overlay */}
-      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white/10 to-transparent pointer-events-none" />
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white/10 to-transparent" />
     </motion.section>
   );
 }

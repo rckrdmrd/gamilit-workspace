@@ -18,6 +18,7 @@ export * from './user-ranks/user-rank-response.dto';
 // Achievement DTOs
 export * from './achievements/create-achievement.dto';
 export * from './achievements/update-achievement.dto';
+export * from './achievements/update-achievement-status.dto';
 export * from './achievements/achievement-response.dto';
 
 // ML Coins DTOs

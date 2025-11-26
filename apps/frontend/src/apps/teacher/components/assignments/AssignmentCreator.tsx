@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, List } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { AssignmentWizard } from './AssignmentWizard';
 import { AssignmentList } from './AssignmentList';
 import type { Assignment } from '../../types';
+import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 
 interface AssignmentCreatorProps {
   classroomId: string;
@@ -48,12 +50,11 @@ export function AssignmentCreator({ classroomId }: AssignmentCreatorProps) {
     const fetchAssignments = async () => {
       try {
         setLoading(true);
-        // Simulación - reemplazar con llamada real
-        const response = await fetch(`/api/classroom/assignments?classroom_id=${classroomId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setAssignments(data.assignments || []);
-        }
+        const response = await apiClient.get(API_ENDPOINTS.teacher.assignments, {
+          params: { classroom_id: classroomId },
+        });
+        const data = response.data;
+        setAssignments(data.assignments || []);
       } catch (error) {
         console.error('Error fetching assignments:', error);
         // Mock data para desarrollo
@@ -99,24 +100,14 @@ export function AssignmentCreator({ classroomId }: AssignmentCreatorProps) {
 
   const handleCreateAssignment = async (data: any) => {
     try {
-      const response = await fetch('/api/classroom/assignments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...data,
-          classroom_id: classroomId,
-        }),
+      const response = await apiClient.post(API_ENDPOINTS.teacher.createAssignment, {
+        ...data,
+        classroom_id: classroomId,
       });
 
-      if (response.ok) {
-        const newAssignment = await response.json();
-        setAssignments([newAssignment, ...assignments]);
-        setShowWizard(false);
-      } else {
-        console.error('Error creating assignment');
-      }
+      const newAssignment = response.data;
+      setAssignments([newAssignment, ...assignments]);
+      setShowWizard(false);
     } catch (error) {
       console.error('Error:', error);
       // Para desarrollo, agregar mock
@@ -137,7 +128,7 @@ export function AssignmentCreator({ classroomId }: AssignmentCreatorProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <List className="w-8 h-8 text-detective-orange" />
+          <List className="h-8 w-8 text-detective-orange" />
           <div>
             <h2 className="text-2xl font-bold text-detective-text">Asignaciones</h2>
             <p className="text-detective-text-secondary">Gestiona y crea nuevas asignaciones</p>
@@ -145,7 +136,7 @@ export function AssignmentCreator({ classroomId }: AssignmentCreatorProps) {
         </div>
         {!showWizard && (
           <DetectiveButton onClick={() => setShowWizard(true)}>
-            <Plus className="w-5 h-5" />
+            <Plus className="h-5 w-5" />
             Nueva Asignación
           </DetectiveButton>
         )}
@@ -161,7 +152,7 @@ export function AssignmentCreator({ classroomId }: AssignmentCreatorProps) {
         />
       ) : loading ? (
         <DetectiveCard>
-          <div className="text-center py-12">
+          <div className="py-12 text-center">
             <p className="text-detective-text-secondary">Cargando asignaciones...</p>
           </div>
         </DetectiveCard>

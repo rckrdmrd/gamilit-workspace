@@ -10,16 +10,21 @@
  */
 
 import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS, FEATURE_FLAGS } from '@/services/api/apiConfig';
+import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
 import { handleAPIError } from '@/services/api/apiErrorHandler';
-import type { ApiResponse, PaginatedResponse, TimePeriod } from '@/services/api/apiTypes';
+import type { ApiResponse, TimePeriod } from '@/services/api/apiTypes';
 
 // Import types from feature modules
 import type { Achievement, AchievementStats } from '../types/achievementsTypes';
 import type { PowerUp, PowerUpInventory, ActivePowerUp } from '../types/powerUpsTypes';
 import type { LeaderboardEntry, LeaderboardType } from '../types/leaderboardsTypes';
 import type { Guild, GuildMember, GuildChallenge, GuildRole } from '../types/guildsTypes';
-import type { Friend, FriendRequest, FriendActivity, FriendRecommendation } from '../types/friendsTypes';
+import type {
+  Friend,
+  FriendRequest,
+  FriendActivity,
+  FriendRecommendation,
+} from '../types/friendsTypes';
 
 // ============================================================================
 // ACHIEVEMENTS API
@@ -40,7 +45,7 @@ export const getAchievements = async (category?: string): Promise<Achievement[]>
 
     const { data } = await apiClient.get<ApiResponse<Achievement[]>>(
       API_ENDPOINTS.achievements.list,
-      { params: { category } }
+      { params: { category } },
     );
 
     return data.data;
@@ -73,7 +78,7 @@ export const getAchievement = async (achievementId: string): Promise<Achievement
     }
 
     const { data } = await apiClient.get<ApiResponse<Achievement>>(
-      API_ENDPOINTS.achievements.get(achievementId)
+      API_ENDPOINTS.achievements.get(achievementId),
     );
 
     return data.data;
@@ -107,7 +112,7 @@ export const unlockAchievement = async (achievementId: string): Promise<Achievem
     }
 
     const { data } = await apiClient.post<ApiResponse<Achievement>>(
-      API_ENDPOINTS.achievements.unlockSpecific(achievementId)
+      API_ENDPOINTS.achievements.unlockSpecific(achievementId),
     );
 
     return data.data;
@@ -125,7 +130,7 @@ export const unlockAchievement = async (achievementId: string): Promise<Achievem
  */
 export const updateAchievementProgress = async (
   achievementId: string,
-  current: number
+  current: number,
 ): Promise<Achievement> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -146,7 +151,7 @@ export const updateAchievementProgress = async (
 
     const { data } = await apiClient.patch<ApiResponse<Achievement>>(
       API_ENDPOINTS.achievements.updateProgress(achievementId),
-      { current }
+      { current },
     );
 
     return data.data;
@@ -177,7 +182,7 @@ export const getAchievementStats = async (): Promise<AchievementStats> => {
     }
 
     const { data } = await apiClient.get<ApiResponse<AchievementStats>>(
-      API_ENDPOINTS.achievements.stats
+      API_ENDPOINTS.achievements.stats,
     );
 
     return data.data;
@@ -202,9 +207,7 @@ export const getPowerUps = async (): Promise<PowerUp[]> => {
       return [];
     }
 
-    const { data } = await apiClient.get<ApiResponse<PowerUp[]>>(
-      API_ENDPOINTS.powerups.list
-    );
+    const { data } = await apiClient.get<ApiResponse<PowerUp[]>>(API_ENDPOINTS.powerups.list);
 
     return data.data;
   } catch (error) {
@@ -221,7 +224,7 @@ export const getPowerUps = async (): Promise<PowerUp[]> => {
  */
 export const purchasePowerUp = async (
   powerUpId: string,
-  quantity: number = 1
+  quantity: number = 1,
 ): Promise<PowerUpInventory> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -236,7 +239,7 @@ export const purchasePowerUp = async (
 
     const { data } = await apiClient.post<ApiResponse<PowerUpInventory>>(
       API_ENDPOINTS.powerups.purchaseSpecific(powerUpId),
-      { quantity }
+      { quantity },
     );
 
     return data.data;
@@ -251,7 +254,7 @@ export const purchasePowerUp = async (
  * @param powerUpId - Power-up ID to use
  * @returns Active power-up data
  */
-export const usePowerUp = async (powerUpId: string): Promise<ActivePowerUp> => {
+export const activatePowerUp = async (powerUpId: string): Promise<ActivePowerUp> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 600));
@@ -270,7 +273,7 @@ export const usePowerUp = async (powerUpId: string): Promise<ActivePowerUp> => {
     }
 
     const { data } = await apiClient.post<ApiResponse<ActivePowerUp>>(
-      API_ENDPOINTS.powerups.useSpecific(powerUpId)
+      API_ENDPOINTS.powerups.useSpecific(powerUpId),
     );
 
     return data.data;
@@ -297,7 +300,7 @@ export const getPowerUpInventory = async (): Promise<PowerUpInventory> => {
     }
 
     const { data } = await apiClient.get<ApiResponse<PowerUpInventory>>(
-      API_ENDPOINTS.powerups.inventory
+      API_ENDPOINTS.powerups.inventory,
     );
 
     return data.data;
@@ -319,7 +322,7 @@ export const getActivePowerUps = async (): Promise<ActivePowerUp[]> => {
     }
 
     const { data } = await apiClient.get<ApiResponse<ActivePowerUp[]>>(
-      API_ENDPOINTS.powerups.active
+      API_ENDPOINTS.powerups.active,
     );
 
     return data.data;
@@ -343,7 +346,7 @@ export const getActivePowerUps = async (): Promise<ActivePowerUp[]> => {
 export const getLeaderboard = async (
   type: LeaderboardType,
   period: TimePeriod = 'all-time',
-  limit: number = 100
+  limit: number = 100,
 ): Promise<LeaderboardEntry[]> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -353,7 +356,7 @@ export const getLeaderboard = async (
 
     const { data } = await apiClient.get<ApiResponse<LeaderboardEntry[]>>(
       API_ENDPOINTS.leaderboards.byTypeAndPeriod(type, period),
-      { params: { limit } }
+      { params: { limit } },
     );
 
     return data.data;
@@ -371,7 +374,7 @@ export const getLeaderboard = async (
  */
 export const getUserLeaderboardRank = async (
   type: LeaderboardType,
-  period: TimePeriod = 'all-time'
+  period: TimePeriod = 'all-time',
 ): Promise<LeaderboardEntry> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -393,7 +396,7 @@ export const getUserLeaderboardRank = async (
 
     const { data } = await apiClient.get<ApiResponse<LeaderboardEntry>>(
       API_ENDPOINTS.leaderboards.userRank,
-      { params: { type, period } }
+      { params: { type, period } },
     );
 
     return data.data;
@@ -420,10 +423,9 @@ export const getXPLeaderboard = async (limit: number = 100, offset: number = 0):
       return [];
     }
 
-    const { data } = await apiClient.get<ApiResponse<any[]>>(
-      API_ENDPOINTS.leaderboards.xp,
-      { params: { limit, offset } }
-    );
+    const { data } = await apiClient.get<ApiResponse<any[]>>(API_ENDPOINTS.leaderboards.xp, {
+      params: { limit, offset },
+    });
 
     return data.data;
   } catch (error) {
@@ -438,17 +440,19 @@ export const getXPLeaderboard = async (limit: number = 100, offset: number = 0):
  * @param offset - Offset for pagination (default 0)
  * @returns Coins leaderboard entries
  */
-export const getCoinsLeaderboard = async (limit: number = 100, offset: number = 0): Promise<any[]> => {
+export const getCoinsLeaderboard = async (
+  limit: number = 100,
+  offset: number = 0,
+): Promise<any[]> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       return [];
     }
 
-    const { data } = await apiClient.get<ApiResponse<any[]>>(
-      API_ENDPOINTS.leaderboards.coins,
-      { params: { limit, offset } }
-    );
+    const { data } = await apiClient.get<ApiResponse<any[]>>(API_ENDPOINTS.leaderboards.coins, {
+      params: { limit, offset },
+    });
 
     return data.data;
   } catch (error) {
@@ -463,17 +467,19 @@ export const getCoinsLeaderboard = async (limit: number = 100, offset: number = 
  * @param offset - Offset for pagination (default 0)
  * @returns Streaks leaderboard entries
  */
-export const getStreaksLeaderboard = async (limit: number = 100, offset: number = 0): Promise<any[]> => {
+export const getStreaksLeaderboard = async (
+  limit: number = 100,
+  offset: number = 0,
+): Promise<any[]> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       return [];
     }
 
-    const { data } = await apiClient.get<ApiResponse<any[]>>(
-      API_ENDPOINTS.leaderboards.streaks,
-      { params: { limit, offset } }
-    );
+    const { data } = await apiClient.get<ApiResponse<any[]>>(API_ENDPOINTS.leaderboards.streaks, {
+      params: { limit, offset },
+    });
 
     return data.data;
   } catch (error) {
@@ -488,7 +494,10 @@ export const getStreaksLeaderboard = async (limit: number = 100, offset: number 
  * @param offset - Offset for pagination (default 0)
  * @returns Global leaderboard entries
  */
-export const getGlobalLeaderboard = async (limit: number = 100, offset: number = 0): Promise<any[]> => {
+export const getGlobalLeaderboard = async (
+  limit: number = 100,
+  offset: number = 0,
+): Promise<any[]> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -497,7 +506,7 @@ export const getGlobalLeaderboard = async (limit: number = 100, offset: number =
 
     const { data } = await apiClient.get<ApiResponse<any[]>>(
       API_ENDPOINTS.leaderboards.globalView,
-      { params: { limit, offset } }
+      { params: { limit, offset } },
     );
 
     return data.data;
@@ -512,7 +521,9 @@ export const getGlobalLeaderboard = async (limit: number = 100, offset: number =
  * @param type - Leaderboard type ('xp', 'coins', 'streaks', 'global')
  * @returns User's rank data
  */
-export const getMyLeaderboardRank = async (type: 'xp' | 'coins' | 'streaks' | 'global'): Promise<{ rank: number }> => {
+export const getMyLeaderboardRank = async (
+  type: 'xp' | 'coins' | 'streaks' | 'global',
+): Promise<{ rank: number }> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 300));
@@ -520,7 +531,7 @@ export const getMyLeaderboardRank = async (type: 'xp' | 'coins' | 'streaks' | 'g
     }
 
     const { data } = await apiClient.get<ApiResponse<{ rank: number }>>(
-      API_ENDPOINTS.leaderboards.myRank(type)
+      API_ENDPOINTS.leaderboards.myRank(type),
     );
 
     return data.data;
@@ -550,10 +561,9 @@ export const getGuilds = async (filters?: {
       return [];
     }
 
-    const { data } = await apiClient.get<ApiResponse<Guild[]>>(
-      API_ENDPOINTS.guilds.list,
-      { params: filters }
-    );
+    const { data } = await apiClient.get<ApiResponse<Guild[]>>(API_ENDPOINTS.guilds.list, {
+      params: filters,
+    });
 
     return data.data;
   } catch (error) {
@@ -594,9 +604,7 @@ export const getGuild = async (guildId: string): Promise<Guild> => {
       };
     }
 
-    const { data } = await apiClient.get<ApiResponse<Guild>>(
-      API_ENDPOINTS.guilds.get(guildId)
-    );
+    const { data } = await apiClient.get<ApiResponse<Guild>>(API_ENDPOINTS.guilds.get(guildId));
 
     return data.data;
   } catch (error) {
@@ -641,7 +649,7 @@ export const createGuild = async (guildData: {
 
     const { data } = await apiClient.post<ApiResponse<Guild>>(
       API_ENDPOINTS.guilds.create,
-      guildData
+      guildData,
     );
 
     return data.data;
@@ -663,9 +671,7 @@ export const joinGuild = async (guildId: string): Promise<Guild> => {
       return await getGuild(guildId);
     }
 
-    const { data } = await apiClient.post<ApiResponse<Guild>>(
-      API_ENDPOINTS.guilds.join(guildId)
-    );
+    const { data } = await apiClient.post<ApiResponse<Guild>>(API_ENDPOINTS.guilds.join(guildId));
 
     return data.data;
   } catch (error) {
@@ -706,7 +712,7 @@ export const getGuildMembers = async (guildId: string): Promise<GuildMember[]> =
     }
 
     const { data } = await apiClient.get<ApiResponse<GuildMember[]>>(
-      API_ENDPOINTS.guilds.members(guildId)
+      API_ENDPOINTS.guilds.members(guildId),
     );
 
     return data.data;
@@ -726,7 +732,7 @@ export const getGuildMembers = async (guildId: string): Promise<GuildMember[]> =
 export const updateMemberRole = async (
   guildId: string,
   memberId: string,
-  role: GuildRole
+  role: GuildRole,
 ): Promise<GuildMember> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -746,7 +752,7 @@ export const updateMemberRole = async (
 
     const { data } = await apiClient.patch<ApiResponse<GuildMember>>(
       API_ENDPOINTS.guilds.updateMemberRole(guildId, memberId),
-      { role }
+      { role },
     );
 
     return data.data;
@@ -769,7 +775,7 @@ export const getGuildChallenges = async (guildId: string): Promise<GuildChalleng
     }
 
     const { data } = await apiClient.get<ApiResponse<GuildChallenge[]>>(
-      API_ENDPOINTS.guilds.challenges(guildId)
+      API_ENDPOINTS.guilds.challenges(guildId),
     );
 
     return data.data;
@@ -794,9 +800,7 @@ export const getFriends = async (): Promise<Friend[]> => {
       return [];
     }
 
-    const { data } = await apiClient.get<ApiResponse<Friend[]>>(
-      API_ENDPOINTS.friends.list
-    );
+    const { data } = await apiClient.get<ApiResponse<Friend[]>>(API_ENDPOINTS.friends.list);
 
     return data.data;
   } catch (error) {
@@ -829,7 +833,7 @@ export const sendFriendRequest = async (userId: string): Promise<FriendRequest> 
 
     const { data } = await apiClient.post<ApiResponse<FriendRequest>>(
       API_ENDPOINTS.friends.request,
-      { userId }
+      { userId },
     );
 
     return data.data;
@@ -851,7 +855,7 @@ export const getFriendRequests = async (): Promise<FriendRequest[]> => {
     }
 
     const { data } = await apiClient.get<ApiResponse<FriendRequest[]>>(
-      API_ENDPOINTS.friends.requests
+      API_ENDPOINTS.friends.requests,
     );
 
     return data.data;
@@ -887,7 +891,7 @@ export const acceptFriendRequest = async (requestId: string): Promise<Friend> =>
     }
 
     const { data } = await apiClient.post<ApiResponse<Friend>>(
-      API_ENDPOINTS.friends.accept(requestId)
+      API_ENDPOINTS.friends.accept(requestId),
     );
 
     return data.data;
@@ -947,7 +951,7 @@ export const getFriendRecommendations = async (): Promise<FriendRecommendation[]
     }
 
     const { data } = await apiClient.get<ApiResponse<FriendRecommendation[]>>(
-      API_ENDPOINTS.friends.recommendations
+      API_ENDPOINTS.friends.recommendations,
     );
 
     return data.data;
@@ -971,7 +975,7 @@ export const getFriendActivities = async (limit?: number): Promise<FriendActivit
 
     const { data } = await apiClient.get<ApiResponse<FriendActivity[]>>(
       API_ENDPOINTS.friends.activities,
-      { params: { limit } }
+      { params: { limit } },
     );
 
     return data.data;
@@ -995,7 +999,7 @@ export default {
   // Power-ups
   getPowerUps,
   purchasePowerUp,
-  usePowerUp,
+  activatePowerUp,
   getPowerUpInventory,
   getActivePowerUps,
 

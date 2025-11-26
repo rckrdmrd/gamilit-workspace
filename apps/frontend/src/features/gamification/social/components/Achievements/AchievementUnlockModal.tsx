@@ -3,7 +3,7 @@
  * Celebration modal when achievement is unlocked
  */
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Award,
@@ -26,7 +26,6 @@ import {
   Key,
   Layers,
   Link,
-  Lock,
   Moon,
   Puzzle,
   Search,
@@ -51,43 +50,43 @@ import { ConfettiCelebration } from '../../../../../shared/components/celebratio
 
 // Icon mapping for achievement icons
 const achievementIconMap: Record<string, LucideIcon> = {
-  'footprints': Footprints,
-  'target': Target,
+  footprints: Footprints,
+  target: Target,
   'book-open': BookOpen,
   'graduation-cap': GraduationCap,
-  'compass': Compass,
-  'trophy': Trophy,
-  'zap': Zap,
-  'star': Star,
-  'flame': Flame,
-  'award': Award,
-  'sunrise': Sunrise,
-  'moon': Moon,
-  'calendar': Calendar,
+  compass: Compass,
+  trophy: Trophy,
+  zap: Zap,
+  star: Star,
+  flame: Flame,
+  award: Award,
+  sunrise: Sunrise,
+  moon: Moon,
+  calendar: Calendar,
   'trending-up': TrendingUp,
-  'shield': Shield,
+  shield: Shield,
   'check-circle': CheckCircle,
-  'sparkles': Sparkles,
-  'search': Search,
-  'timer': Timer,
-  'link': Link,
-  'check': Check,
-  'crown': Crown,
-  'brain': Brain,
-  'layers': Layers,
-  'focus': Target,
+  sparkles: Sparkles,
+  search: Search,
+  timer: Timer,
+  link: Link,
+  check: Check,
+  crown: Crown,
+  brain: Brain,
+  layers: Layers,
+  focus: Target,
   'user-plus': UserPlus,
-  'users': Users,
-  'flag': Flag,
+  users: Users,
+  flag: Flag,
   'heart-handshake': HeartHandshake,
   'users-round': UsersRound,
   'thumbs-up': ThumbsUp,
-  'handshake': Handshake,
-  'egg': Egg,
-  'clock': Clock,
-  'key': Key,
-  'puzzle': Puzzle,
-  'gem': Gem,
+  handshake: Handshake,
+  egg: Egg,
+  clock: Clock,
+  key: Key,
+  puzzle: Puzzle,
+  gem: Gem,
 };
 
 interface AchievementUnlockModalProps {
@@ -120,7 +119,7 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
         onClick={onClose}
       >
         {/* Enhanced Confetti System */}
@@ -137,24 +136,24 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.5, opacity: 0, y: 50 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-white rounded-detective p-8 max-w-md w-full shadow-detective-lg relative overflow-hidden"
+          className="relative w-full max-w-md overflow-hidden rounded-detective bg-white p-8 shadow-detective-lg"
         >
           {/* Celebration Header */}
-          <div className="text-center mb-6">
+          <div className="mb-6 text-center">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 0.5, times: [0, 0.5, 1] }}
-              className="inline-block p-6 rounded-full bg-gradient-to-br from-detective-gold to-detective-orange mb-4"
+              className="mb-4 inline-block rounded-full bg-gradient-to-br from-detective-gold to-detective-orange p-6"
             >
-              <IconComponent className="w-16 h-16 text-white" />
+              <IconComponent className="h-16 w-16 text-white" />
             </motion.div>
 
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-detective-3xl font-bold text-detective-text mb-2"
+              className="mb-2 text-detective-3xl font-bold text-detective-text"
             >
               Logro Desbloqueado!
             </motion.h2>
@@ -174,7 +173,7 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="text-center text-detective-text-secondary mb-6"
+            className="mb-6 text-center text-detective-text-secondary"
           >
             {achievement.description}
           </motion.p>
@@ -184,10 +183,10 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="flex justify-center gap-8 mb-6 p-4 bg-detective-bg rounded-detective"
+            className="mb-6 flex justify-center gap-8 rounded-detective bg-detective-bg p-4"
           >
             <div className="text-center">
-              <Coins className="w-8 h-8 text-detective-gold mx-auto mb-2" />
+              <Coins className="mx-auto mb-2 h-8 w-8 text-detective-gold" />
               <p className="text-detective-2xl font-bold text-detective-text">
                 +{achievement.mlCoinsReward}
               </p>
@@ -195,7 +194,7 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
             </div>
 
             <div className="text-center">
-              <Zap className="w-8 h-8 text-detective-orange mx-auto mb-2" />
+              <Zap className="mx-auto mb-2 h-8 w-8 text-detective-orange" />
               <p className="text-detective-2xl font-bold text-detective-text">
                 +{achievement.xpReward}
               </p>
@@ -212,7 +211,7 @@ export const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
           >
             <button
               onClick={onClose}
-              className="flex-1 bg-detective-orange text-white py-3 rounded-detective font-semibold hover:bg-detective-orange-dark transition-colors"
+              className="flex-1 rounded-detective bg-detective-orange py-3 font-semibold text-white transition-colors hover:bg-detective-orange-dark"
             >
               Continuar
             </button>

@@ -107,9 +107,9 @@ CREATE INDEX idx_schools_tenant ON social_features.schools USING btree (tenant_i
 
 --
 -- Name: schools trg_schools_updated_at; Type: TRIGGER; Schema: social_features; Owner: postgres
+-- NOTE: Trigger movido a archivo separado para evitar duplicación
+-- Ver: social_features/triggers/27-trg_schools_updated_at.sql
 --
-
-CREATE TRIGGER trg_schools_updated_at BEFORE UPDATE ON social_features.schools FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
 
 
 --

@@ -1,352 +1,377 @@
-import React, { useState, useEffect } from 'react';
-import toast from 'react-hot-toast';
-import { AlertTriangle, Filter, RefreshCw, Bell } from 'lucide-react';
+import { useState } from 'react';
+import { AlertCircle, CheckCircle, XCircle, Clock, AlertTriangle, Filter } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
-import { AlertCard } from './AlertCard';
-import type { InterventionAlert, AlertPriority, AlertType } from '../../types';
+import { useInterventionAlerts } from '../../hooks/useInterventionAlerts';
+import {
+  InterventionAlertSeverity,
+  InterventionAlertStatus,
+  InterventionAlertType,
+  StudentInterventionAlert,
+} from '@/services/api/teacher/interventionAlertsApi';
+import toast from 'react-hot-toast';
 
 interface InterventionAlertsPanelProps {
-  classroomId: string;
-  filterPriority?: AlertPriority | 'all';
-  filterType?: AlertType | 'all';
+  classroomId?: string;
 }
 
-export function InterventionAlertsPanel({
-  classroomId,
-  filterPriority: externalPriorityFilter,
-  filterType: externalTypeFilter,
-}: InterventionAlertsPanelProps) {
-  const [alerts, setAlerts] = useState<InterventionAlert[]>([]);
-  const [filteredAlerts, setFilteredAlerts] = useState<InterventionAlert[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showResolved, setShowResolved] = useState(false);
-  const [priorityFilter, setPriorityFilter] = useState<AlertPriority | 'all'>('all');
-  const [typeFilter, setTypeFilter] = useState<AlertType | 'all'>('all');
+export function InterventionAlertsPanel({ classroomId }: InterventionAlertsPanelProps) {
+  const {
+    alerts,
+    total,
+    loading,
+    error,
+    filters,
+    pagination,
+    acknowledgeAlert,
+    resolveAlert,
+    dismissAlert,
+    updateFilters,
+    nextPage,
+    prevPage,
+    refresh,
+  } = useInterventionAlerts(classroomId ? { classroom_id: classroomId } : {});
 
-  useEffect(() => {
-    fetchAlerts();
-  }, [classroomId]);
+  const [selectedAlert, setSelectedAlert] = useState<StudentInterventionAlert | null>(null);
+  const [showResolveModal, setShowResolveModal] = useState(false);
+  const [resolutionNotes, setResolutionNotes] = useState('');
 
-  useEffect(() => {
-    if (externalPriorityFilter) {
-      setPriorityFilter(externalPriorityFilter);
+  const getSeverityColor = (severity: InterventionAlertSeverity): string => {
+    switch (severity) {
+      case InterventionAlertSeverity.CRITICAL:
+        return 'text-red-600 bg-red-100';
+      case InterventionAlertSeverity.HIGH:
+        return 'text-orange-600 bg-orange-100';
+      case InterventionAlertSeverity.MEDIUM:
+        return 'text-yellow-600 bg-yellow-100';
+      case InterventionAlertSeverity.LOW:
+        return 'text-blue-600 bg-blue-100';
+      default:
+        return 'text-gray-600 bg-gray-100';
     }
-    if (externalTypeFilter) {
-      setTypeFilter(externalTypeFilter);
+  };
+
+  const getSeverityIcon = (severity: InterventionAlertSeverity) => {
+    switch (severity) {
+      case InterventionAlertSeverity.CRITICAL:
+        return <XCircle className="h-5 w-5" />;
+      case InterventionAlertSeverity.HIGH:
+        return <AlertTriangle className="h-5 w-5" />;
+      case InterventionAlertSeverity.MEDIUM:
+        return <AlertCircle className="h-5 w-5" />;
+      case InterventionAlertSeverity.LOW:
+        return <Clock className="h-5 w-5" />;
+      default:
+        return <AlertCircle className="h-5 w-5" />;
     }
-  }, [externalPriorityFilter, externalTypeFilter]);
+  };
 
-  useEffect(() => {
-    filterAlerts();
-  }, [alerts, showResolved, priorityFilter, typeFilter]);
+  const getAlertTypeLabel = (type: InterventionAlertType): string => {
+    const labels: Record<InterventionAlertType, string> = {
+      [InterventionAlertType.NO_ACTIVITY]: 'Sin Actividad',
+      [InterventionAlertType.LOW_SCORE]: 'Bajo Rendimiento',
+      [InterventionAlertType.DECLINING_TREND]: 'Tendencia Decreciente',
+      [InterventionAlertType.REPEATED_FAILURES]: 'Fallos Repetidos',
+      [InterventionAlertType.EXCESSIVE_TIME]: 'Tiempo Excesivo',
+      [InterventionAlertType.LOW_ENGAGEMENT]: 'Bajo Engagement',
+    };
+    return labels[type] || type;
+  };
 
-  const fetchAlerts = async () => {
+  const handleAcknowledge = async (alertId: string) => {
     try {
-      setLoading(true);
-      setError(null);
-
-      const response = await fetch(`/api/classroom/alerts/${classroomId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch alerts');
-      }
-
-      const data = await response.json();
-      setAlerts(data.alerts || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
-      console.error('Error fetching alerts:', err);
-
-      // Mock data para desarrollo
-      setAlerts([
-        {
-          id: 'alert1',
-          student_id: 's1',
-          student_name: 'Ana García',
-          type: 'no_activity',
-          priority: 'critical',
-          message: 'Sin actividad por más de 7 días',
-          details: {
-            days_inactive: 10,
-          },
-          created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-          resolved: false,
-        },
-        {
-          id: 'alert2',
-          student_id: 's2',
-          student_name: 'Carlos Ruiz',
-          type: 'low_score',
-          priority: 'high',
-          message: 'Promedio por debajo del 60% en módulo',
-          details: {
-            average_score: 45,
-            module_name: 'Descubrimientos Científicos',
-          },
-          created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-          resolved: false,
-        },
-        {
-          id: 'alert3',
-          student_id: 's3',
-          student_name: 'María López',
-          type: 'declining_trend',
-          priority: 'medium',
-          message: 'Tendencia decreciente en rendimiento',
-          details: {
-            average_score: 65,
-            module_name: 'Los Primeros Pasos de Marie Curie',
-          },
-          created_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
-          resolved: false,
-        },
-        {
-          id: 'alert4',
-          student_id: 's4',
-          student_name: 'Juan Martínez',
-          type: 'repeated_failures',
-          priority: 'high',
-          message: 'Múltiples intentos fallidos en ejercicio específico',
-          details: {
-            failure_count: 5,
-            exercise_name: 'Crucigrama: Elementos químicos',
-            module_name: 'Descubrimientos Científicos',
-          },
-          created_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
-          resolved: false,
-        },
-        {
-          id: 'alert5',
-          student_id: 's5',
-          student_name: 'Laura Sánchez',
-          type: 'no_activity',
-          priority: 'high',
-          message: 'Sin actividad por más de 7 días',
-          details: {
-            days_inactive: 8,
-          },
-          created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-          resolved: true,
-          actions_taken: ['Mensaje enviado', 'Reunión programada', 'Material adicional asignado'],
-        },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterAlerts = () => {
-    let filtered = alerts;
-
-    if (!showResolved) {
-      filtered = filtered.filter((alert) => !alert.resolved);
-    }
-
-    if (priorityFilter !== 'all') {
-      filtered = filtered.filter((alert) => alert.priority === priorityFilter);
-    }
-
-    if (typeFilter !== 'all') {
-      filtered = filtered.filter((alert) => alert.type === typeFilter);
-    }
-
-    // Sort by priority and date
-    filtered.sort((a, b) => {
-      const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
-      const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
-      if (priorityDiff !== 0) return priorityDiff;
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    });
-
-    setFilteredAlerts(filtered);
-  };
-
-  const handleSendMessage = async (alertId: string) => {
-    console.log('Send message for alert:', alertId);
-    toast('Funcionalidad de envío de mensaje pendiente de integración', {
-      duration: 3000,
-      icon: '✉️',
-    });
-  };
-
-  const handleAssignHelp = async (alertId: string) => {
-    console.log('Assign help for alert:', alertId);
-    toast('Funcionalidad de asignación de ayuda pendiente de integración', {
-      duration: 3000,
-      icon: '🤝',
-    });
-  };
-
-  const handleMarkForFollowUp = async (alertId: string) => {
-    console.log('Mark for follow-up:', alertId);
-    toast('Funcionalidad de seguimiento pendiente de integración', {
-      duration: 3000,
-      icon: '📋',
-    });
-  };
-
-  const handleResolve = async (alertId: string) => {
-    try {
-      // Actualizar en backend
-      await fetch(`/api/classroom/alerts/${alertId}/resolve`, {
-        method: 'POST',
+      await acknowledgeAlert(alertId);
+      toast.success('Alerta reconocida exitosamente', {
+        duration: 3000,
+        icon: '✅',
       });
-
-      // Actualizar estado local
-      setAlerts((prev) =>
-        prev.map((alert) => (alert.id === alertId ? { ...alert, resolved: true } : alert))
-      );
-    } catch (error) {
-      console.error('Error resolving alert:', error);
+    } catch (err) {
+      console.error('Error acknowledging alert:', err);
+      toast.error('Error al reconocer la alerta. Por favor intenta nuevamente.', {
+        duration: 4000,
+      });
     }
   };
 
-  const unresolvedCount = alerts.filter((a) => !a.resolved).length;
-  const criticalCount = alerts.filter((a) => !a.resolved && a.priority === 'critical').length;
-  const highCount = alerts.filter((a) => !a.resolved && a.priority === 'high').length;
+  const handleResolve = async () => {
+    if (!selectedAlert) return;
+    try {
+      await resolveAlert(selectedAlert.id, resolutionNotes);
+      setShowResolveModal(false);
+      setResolutionNotes('');
+      setSelectedAlert(null);
+      toast.success('Alerta resuelta exitosamente', {
+        duration: 3000,
+        icon: '✅',
+      });
+    } catch (err) {
+      console.error('Error resolving alert:', err);
+      toast.error('Error al resolver la alerta. Por favor intenta nuevamente.', {
+        duration: 4000,
+      });
+    }
+  };
+
+  const handleDismiss = async (alertId: string) => {
+    if (confirm('¿Estás seguro de que quieres descartar esta alerta?')) {
+      try {
+        await dismissAlert(alertId);
+        toast.success('Alerta descartada exitosamente', {
+          duration: 3000,
+          icon: '🗑️',
+        });
+      } catch (err) {
+        console.error('Error dismissing alert:', err);
+        toast.error('Error al descartar la alerta. Por favor intenta nuevamente.', {
+          duration: 4000,
+        });
+      }
+    }
+  };
 
   if (loading) {
     return (
       <DetectiveCard>
-        <div className="text-center py-12">
-          <RefreshCw className="w-8 h-8 text-detective-orange animate-spin mx-auto mb-4" />
-          <p className="text-detective-text-secondary">Cargando alertas...</p>
+        <div className="flex items-center justify-center py-8">
+          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-detective-orange"></div>
+          <span className="ml-3">Cargando alertas...</span>
+        </div>
+      </DetectiveCard>
+    );
+  }
+
+  if (error) {
+    return (
+      <DetectiveCard>
+        <div className="p-4 text-red-600">
+          <p>Error al cargar alertas: {error.message}</p>
+          <DetectiveButton onClick={refresh} className="mt-2">
+            Reintentar
+          </DetectiveButton>
         </div>
       </DetectiveCard>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <AlertTriangle className="w-8 h-8 text-detective-orange" />
-          <div>
-            <h2 className="text-2xl font-bold text-detective-text">Alertas de Intervención</h2>
-            <p className="text-detective-text-secondary">
-              Monitoreo automático de estudiantes que requieren atención
-            </p>
-          </div>
-        </div>
-        <DetectiveButton onClick={fetchAlerts} variant="secondary">
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          Actualizar
-        </DetectiveButton>
-      </div>
-
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <DetectiveCard hoverable={false}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-2xl font-bold text-detective-text">{unresolvedCount}</p>
-              <p className="text-sm text-detective-text-secondary">Alertas Pendientes</p>
-            </div>
-            <Bell className="w-8 h-8 text-detective-orange" />
-          </div>
-        </DetectiveCard>
-
-        <DetectiveCard hoverable={false}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-2xl font-bold text-red-500">{criticalCount}</p>
-              <p className="text-sm text-detective-text-secondary">Críticas</p>
-            </div>
-          </div>
-        </DetectiveCard>
-
-        <DetectiveCard hoverable={false}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-2xl font-bold text-orange-500">{highCount}</p>
-              <p className="text-sm text-detective-text-secondary">Alta Prioridad</p>
-            </div>
-          </div>
-        </DetectiveCard>
-
-        <DetectiveCard hoverable={false}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-2xl font-bold text-green-500">
-                {alerts.filter((a) => a.resolved).length}
-              </p>
-              <p className="text-sm text-detective-text-secondary">Resueltas</p>
-            </div>
-          </div>
-        </DetectiveCard>
-      </div>
-
-      {/* Filters */}
+    <div className="space-y-4">
+      {/* Filtros */}
       <DetectiveCard>
-        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-          <div className="flex flex-wrap gap-2">
-            <DetectiveButton
-              variant={priorityFilter === 'all' ? 'primary' : 'secondary'}
+        <div className="flex items-center gap-4 p-4">
+          <Filter className="h-5 w-5 text-detective-orange" />
+          <select
+            value={filters.severity || ''}
+            onChange={(e) =>
+              updateFilters({
+                severity: (e.target.value as InterventionAlertSeverity) || undefined,
+              })
+            }
+            className="rounded border px-3 py-2"
+          >
+            <option value="">Todas las severidades</option>
+            <option value={InterventionAlertSeverity.CRITICAL}>Crítica</option>
+            <option value={InterventionAlertSeverity.HIGH}>Alta</option>
+            <option value={InterventionAlertSeverity.MEDIUM}>Media</option>
+            <option value={InterventionAlertSeverity.LOW}>Baja</option>
+          </select>
 
-              onClick={() => setPriorityFilter('all')}
-            >
-              Todas
-            </DetectiveButton>
-            <DetectiveButton
-              variant={priorityFilter === 'critical' ? 'primary' : 'secondary'}
+          <select
+            value={filters.alert_type || ''}
+            onChange={(e) =>
+              updateFilters({ alert_type: (e.target.value as InterventionAlertType) || undefined })
+            }
+            className="rounded border px-3 py-2"
+          >
+            <option value="">Todos los tipos</option>
+            <option value={InterventionAlertType.NO_ACTIVITY}>Sin Actividad</option>
+            <option value={InterventionAlertType.LOW_SCORE}>Bajo Rendimiento</option>
+            <option value={InterventionAlertType.DECLINING_TREND}>Tendencia Decreciente</option>
+            <option value={InterventionAlertType.REPEATED_FAILURES}>Fallos Repetidos</option>
+          </select>
 
-              onClick={() => setPriorityFilter('critical')}
-            >
-              Críticas
-            </DetectiveButton>
-            <DetectiveButton
-              variant={priorityFilter === 'high' ? 'primary' : 'secondary'}
+          <select
+            value={filters.status || ''}
+            onChange={(e) =>
+              updateFilters({ status: (e.target.value as InterventionAlertStatus) || undefined })
+            }
+            className="rounded border px-3 py-2"
+          >
+            <option value="">Todos los estados</option>
+            <option value={InterventionAlertStatus.ACTIVE}>Activas</option>
+            <option value={InterventionAlertStatus.ACKNOWLEDGED}>Reconocidas</option>
+            <option value={InterventionAlertStatus.RESOLVED}>Resueltas</option>
+          </select>
 
-              onClick={() => setPriorityFilter('high')}
-            >
-              Altas
-            </DetectiveButton>
-            <DetectiveButton
-              variant={priorityFilter === 'medium' ? 'primary' : 'secondary'}
-
-              onClick={() => setPriorityFilter('medium')}
-            >
-              Medias
-            </DetectiveButton>
-          </div>
-          <label className="flex items-center gap-2 text-sm text-detective-text">
-            <input
-              type="checkbox"
-              checked={showResolved}
-              onChange={(e) => setShowResolved(e.target.checked)}
-              className="rounded border-detective-orange text-detective-orange focus:ring-detective-orange"
-            />
-            Mostrar resueltas
-          </label>
+          <DetectiveButton onClick={refresh} size="sm">
+            Actualizar
+          </DetectiveButton>
         </div>
       </DetectiveCard>
 
-      {/* Alerts List */}
-      {filteredAlerts.length === 0 ? (
+      {/* Lista de alertas */}
+      {alerts.length === 0 ? (
         <DetectiveCard>
-          <div className="text-center py-12">
-            <Bell className="w-16 h-16 text-detective-text-secondary mx-auto mb-4" />
-            <p className="text-detective-text-secondary">
-              {showResolved
-                ? 'No hay alertas con los filtros seleccionados'
-                : 'No hay alertas pendientes. ¡Excelente trabajo!'}
-            </p>
+          <div className="py-8 text-center text-gray-500">
+            <CheckCircle className="mx-auto mb-2 h-12 w-12 text-green-500" />
+            <p>No hay alertas pendientes</p>
           </div>
         </DetectiveCard>
       ) : (
-        <div className="space-y-4">
-          {filteredAlerts.map((alert) => (
-            <AlertCard
-              key={alert.id}
-              alert={alert}
-              onSendMessage={handleSendMessage}
-              onAssignHelp={handleAssignHelp}
-              onMarkForFollowUp={handleMarkForFollowUp}
-              onResolve={handleResolve}
-            />
+        <div className="space-y-3">
+          {alerts.map((alert) => (
+            <DetectiveCard key={alert.id}>
+              <div className="p-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="mb-2 flex items-center gap-3">
+                      <span
+                        className={`flex items-center gap-1 rounded px-2 py-1 text-sm font-medium ${getSeverityColor(
+                          alert.severity,
+                        )}`}
+                      >
+                        {getSeverityIcon(alert.severity)}
+                        {alert.severity.toUpperCase()}
+                      </span>
+                      <span className="text-sm text-gray-600">
+                        {getAlertTypeLabel(alert.alert_type)}
+                      </span>
+                    </div>
+
+                    <h3 className="mb-1 text-lg font-bold">{alert.title}</h3>
+                    <p className="mb-2 text-gray-600">{alert.description}</p>
+
+                    <div className="text-sm text-gray-500">
+                      <p>
+                        <strong>Estudiante:</strong> {alert.student_name}
+                      </p>
+                      {alert.classroom_name && (
+                        <p>
+                          <strong>Clase:</strong> {alert.classroom_name}
+                        </p>
+                      )}
+                      <p>
+                        <strong>Generada:</strong> {new Date(alert.generated_at).toLocaleString()}
+                      </p>
+                      {alert.metrics && (
+                        <div className="mt-2">
+                          <strong>Métricas:</strong>
+                          <pre className="mt-1 rounded bg-gray-100 p-2 text-xs">
+                            {JSON.stringify(alert.metrics, null, 2)}
+                          </pre>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="ml-4 flex flex-col gap-2">
+                    {alert.status === InterventionAlertStatus.ACTIVE && (
+                      <>
+                        <DetectiveButton size="sm" onClick={() => handleAcknowledge(alert.id)}>
+                          Reconocer
+                        </DetectiveButton>
+                        <DetectiveButton
+                          size="sm"
+                          onClick={() => {
+                            setSelectedAlert(alert);
+                            setShowResolveModal(true);
+                          }}
+                        >
+                          Resolver
+                        </DetectiveButton>
+                      </>
+                    )}
+                    {alert.status === InterventionAlertStatus.ACKNOWLEDGED && (
+                      <DetectiveButton
+                        size="sm"
+                        onClick={() => {
+                          setSelectedAlert(alert);
+                          setShowResolveModal(true);
+                        }}
+                      >
+                        Resolver
+                      </DetectiveButton>
+                    )}
+                    <DetectiveButton
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDismiss(alert.id)}
+                    >
+                      Descartar
+                    </DetectiveButton>
+                  </div>
+                </div>
+
+                {alert.status === InterventionAlertStatus.RESOLVED && alert.resolution_notes && (
+                  <div className="mt-3 rounded bg-green-50 p-3">
+                    <p className="text-sm text-green-800">
+                      <strong>Resolución:</strong> {alert.resolution_notes}
+                    </p>
+                    <p className="mt-1 text-xs text-green-600">
+                      Resuelto el {new Date(alert.resolved_at!).toLocaleString()}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </DetectiveCard>
           ))}
+        </div>
+      )}
+
+      {/* Paginación */}
+      {total > pagination.limit && (
+        <DetectiveCard>
+          <div className="flex items-center justify-between p-4">
+            <p className="text-sm text-gray-600">
+              Mostrando {pagination.offset + 1} -{' '}
+              {Math.min(pagination.offset + pagination.limit, total)} de {total}
+            </p>
+            <div className="flex gap-2">
+              <DetectiveButton size="sm" onClick={prevPage} disabled={pagination.offset === 0}>
+                Anterior
+              </DetectiveButton>
+              <DetectiveButton
+                size="sm"
+                onClick={nextPage}
+                disabled={pagination.offset + pagination.limit >= total}
+              >
+                Siguiente
+              </DetectiveButton>
+            </div>
+          </div>
+        </DetectiveCard>
+      )}
+
+      {/* Modal de Resolución */}
+      {showResolveModal && selectedAlert && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <DetectiveCard className="w-full max-w-md">
+            <div className="p-6">
+              <h3 className="mb-4 text-xl font-bold">Resolver Alerta</h3>
+              <p className="mb-4 text-gray-600">{selectedAlert.title}</p>
+              <textarea
+                className="mb-4 w-full rounded border p-3"
+                rows={4}
+                placeholder="Describe las acciones tomadas para resolver esta alerta..."
+                value={resolutionNotes}
+                onChange={(e) => setResolutionNotes(e.target.value)}
+              />
+              <div className="flex justify-end gap-2">
+                <DetectiveButton
+                  variant="outline"
+                  onClick={() => {
+                    setShowResolveModal(false);
+                    setResolutionNotes('');
+                    setSelectedAlert(null);
+                  }}
+                >
+                  Cancelar
+                </DetectiveButton>
+                <DetectiveButton onClick={handleResolve} disabled={!resolutionNotes.trim()}>
+                  Resolver
+                </DetectiveButton>
+              </div>
+            </div>
+          </DetectiveCard>
         </div>
       )}
     </div>

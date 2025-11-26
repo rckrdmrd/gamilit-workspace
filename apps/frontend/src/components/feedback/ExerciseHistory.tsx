@@ -16,9 +16,18 @@
  * - Filtros por resultado
  */
 
-import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, TrendingUp, Zap, Coins, Check, X, ChevronDown, ChevronUp } from 'lucide-react';
-import type { ExerciseAttempt } from '@/features/exercises/types';
+import { useState, useEffect } from 'react';
+import {
+  Calendar,
+  Clock,
+  TrendingUp,
+  Zap,
+  Coins,
+  Check,
+  X,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react';
 
 interface ExerciseHistoryProps {
   exerciseId: string;
@@ -27,22 +36,26 @@ interface ExerciseHistoryProps {
   showAnswers?: boolean;
 }
 
-interface AttemptWithDetails extends ExerciseAttempt {
+interface AttemptWithDetails {
+  id: string;
+  user_id: string;
+  exercise_id: string;
+  attempt_number: number;
+  answer: string;
+  is_correct: boolean;
+  xp_earned: number;
+  ml_coins_earned: number;
+  time_spent_seconds: number;
+  submitted_at: Date;
   answer_given?: string | string[];
   correct_answer?: string | string[];
   expanded?: boolean;
   score_percentage?: number;
-  // user_id inherited from ExerciseAttempt
-  submitted_answers?: any;
-  hints_used?: number;
-  comodines_used?: any[];
-  metadata?: any;
 }
 
 export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
   exerciseId,
   userId,
-  maxAttempts = 10,
   showAnswers = true,
 }) => {
   const [attempts, setAttempts] = useState<AttemptWithDetails[]>([]);
@@ -168,61 +181,61 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-xl border-2 border-gray-200 p-8 text-center">
-        <div className="animate-spin w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full mx-auto"></div>
-        <p className="text-gray-600 mt-3">Cargando historial...</p>
+      <div className="rounded-xl border-2 border-gray-200 bg-white p-8 text-center">
+        <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-purple-600 border-t-transparent"></div>
+        <p className="mt-3 text-gray-600">Cargando historial...</p>
       </div>
     );
   }
 
   if (attempts.length === 0) {
     return (
-      <div className="bg-white rounded-xl border-2 border-gray-200 p-8 text-center">
-        <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-          <TrendingUp className="w-8 h-8 text-gray-400" />
+      <div className="rounded-xl border-2 border-gray-200 bg-white p-8 text-center">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+          <TrendingUp className="h-8 w-8 text-gray-400" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Sin intentos aún</h3>
+        <h3 className="mb-2 text-lg font-semibold text-gray-900">Sin intentos aún</h3>
         <p className="text-gray-600">Este ejercicio no tiene intentos registrados todavía.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl border-2 border-gray-200">
+    <div className="rounded-xl border-2 border-gray-200 bg-white">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h3 className="text-xl font-bold text-gray-900 mb-2">Historial de Intentos</h3>
+      <div className="border-b border-gray-200 px-6 py-4">
+        <h3 className="mb-2 text-xl font-bold text-gray-900">Historial de Intentos</h3>
         <p className="text-sm text-gray-600">{totalAttempts} intento(s) registrado(s)</p>
       </div>
 
       {/* Statistics */}
-      <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-purple-600">{totalAttempts}</div>
-            <div className="text-xs text-gray-600 mt-1">Total Intentos</div>
+            <div className="mt-1 text-xs text-gray-600">Total Intentos</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-green-600">{successRate}%</div>
-            <div className="text-xs text-gray-600 mt-1">Tasa de éxito</div>
+            <div className="mt-1 text-xs text-gray-600">Tasa de éxito</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-blue-600">{bestScore}%</div>
-            <div className="text-xs text-gray-600 mt-1">Mejor puntuación</div>
+            <div className="mt-1 text-xs text-gray-600">Mejor puntuación</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-orange-600">{totalXP}</div>
-            <div className="text-xs text-gray-600 mt-1">XP Total ganado</div>
+            <div className="mt-1 text-xs text-gray-600">XP Total ganado</div>
           </div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="px-6 py-3 border-b border-gray-200 flex items-center gap-2">
-        <span className="text-sm text-gray-600 font-semibold">Filtrar:</span>
+      <div className="flex items-center gap-2 border-b border-gray-200 px-6 py-3">
+        <span className="text-sm font-semibold text-gray-600">Filtrar:</span>
         <button
           onClick={() => setFilter('all')}
-          className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+          className={`rounded-lg px-3 py-1 text-sm font-medium transition-colors ${
             filter === 'all'
               ? 'bg-purple-600 text-white'
               : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -232,7 +245,7 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
         </button>
         <button
           onClick={() => setFilter('correct')}
-          className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+          className={`rounded-lg px-3 py-1 text-sm font-medium transition-colors ${
             filter === 'correct'
               ? 'bg-green-600 text-white'
               : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -242,7 +255,7 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
         </button>
         <button
           onClick={() => setFilter('incorrect')}
-          className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+          className={`rounded-lg px-3 py-1 text-sm font-medium transition-colors ${
             filter === 'incorrect'
               ? 'bg-red-600 text-white'
               : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -253,7 +266,7 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
       </div>
 
       {/* Timeline */}
-      <div className="px-6 py-4 max-h-[500px] overflow-y-auto">
+      <div className="max-h-[500px] overflow-y-auto px-6 py-4">
         <div className="space-y-3">
           {filteredAttempts.map((attempt, index) => {
             const isExpanded = expandedAttempts.has(attempt.id);
@@ -263,33 +276,28 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
               <div
                 key={attempt.id}
                 className={`
-                  relative border-2 rounded-lg transition-all
+                  relative rounded-lg border-2 transition-all
                   ${
-                    attempt.is_correct
-                      ? 'border-green-300 bg-green-50'
-                      : 'border-red-300 bg-red-50'
+                    attempt.is_correct ? 'border-green-300 bg-green-50' : 'border-red-300 bg-red-50'
                   }
                   ${isLatest ? 'ring-2 ring-purple-400' : ''}
                 `}
               >
                 {/* Main info */}
-                <button
-                  onClick={() => toggleExpanded(attempt.id)}
-                  className="w-full p-4 text-left"
-                >
+                <button onClick={() => toggleExpanded(attempt.id)} className="w-full p-4 text-left">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       {/* Status icon */}
                       <div
                         className={`
-                          w-10 h-10 rounded-full flex items-center justify-center
+                          flex h-10 w-10 items-center justify-center rounded-full
                           ${attempt.is_correct ? 'bg-green-600' : 'bg-red-600'}
                         `}
                       >
                         {attempt.is_correct ? (
-                          <Check className="w-6 h-6 text-white" />
+                          <Check className="h-6 w-6 text-white" />
                         ) : (
-                          <X className="w-6 h-6 text-white" />
+                          <X className="h-6 w-6 text-white" />
                         )}
                       </div>
 
@@ -298,18 +306,18 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
                         <div className="font-semibold text-gray-900">
                           Intento #{attempt.attempt_number}
                           {isLatest && (
-                            <span className="ml-2 px-2 py-0.5 bg-purple-600 text-white text-xs rounded-full">
+                            <span className="ml-2 rounded-full bg-purple-600 px-2 py-0.5 text-xs text-white">
                               Más reciente
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-3 text-sm text-gray-600 mt-1">
+                        <div className="mt-1 flex items-center gap-3 text-sm text-gray-600">
                           <span className="flex items-center">
-                            <Calendar className="w-3 h-3 mr-1" />
+                            <Calendar className="mr-1 h-3 w-3" />
                             {formatDate(attempt.submitted_at)}
                           </span>
                           <span className="flex items-center">
-                            <Clock className="w-3 h-3 mr-1" />
+                            <Clock className="mr-1 h-3 w-3" />
                             {formatTime(attempt.time_spent_seconds ?? 0)}
                           </span>
                         </div>
@@ -323,14 +331,12 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
                           {attempt.score_percentage}%
                         </div>
                         {attempt.is_correct && (
-                          <div className="flex items-center gap-2 text-xs mt-1">
-                            <span className="flex items-center text-purple-600 font-semibold">
-                              <Zap className="w-3 h-3 mr-0.5" />
-                              +{attempt.xp_earned}
+                          <div className="mt-1 flex items-center gap-2 text-xs">
+                            <span className="flex items-center font-semibold text-purple-600">
+                              <Zap className="mr-0.5 h-3 w-3" />+{attempt.xp_earned}
                             </span>
-                            <span className="flex items-center text-yellow-600 font-semibold">
-                              <Coins className="w-3 h-3 mr-0.5" />
-                              +{attempt.ml_coins_earned}
+                            <span className="flex items-center font-semibold text-yellow-600">
+                              <Coins className="mr-0.5 h-3 w-3" />+{attempt.ml_coins_earned}
                             </span>
                           </div>
                         )}
@@ -338,9 +344,9 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
 
                       {/* Expand icon */}
                       {isExpanded ? (
-                        <ChevronUp className="w-5 h-5 text-gray-500" />
+                        <ChevronUp className="h-5 w-5 text-gray-500" />
                       ) : (
-                        <ChevronDown className="w-5 h-5 text-gray-500" />
+                        <ChevronDown className="h-5 w-5 text-gray-500" />
                       )}
                     </div>
                   </div>
@@ -348,20 +354,20 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
 
                 {/* Expanded details */}
                 {isExpanded && showAnswers && (
-                  <div className="px-4 pb-4 border-t border-gray-200 bg-white">
-                    <div className="pt-4 space-y-3">
+                  <div className="border-t border-gray-200 bg-white px-4 pb-4">
+                    <div className="space-y-3 pt-4">
                       {/* Answer given */}
                       <div>
-                        <div className="text-xs font-semibold text-gray-700 mb-1">
+                        <div className="mb-1 text-xs font-semibold text-gray-700">
                           Respuesta dada:
                         </div>
                         <div
                           className={`
-                            p-3 rounded-lg border-2 font-medium
+                            rounded-lg border-2 p-3 font-medium
                             ${
                               attempt.is_correct
-                                ? 'bg-green-50 border-green-300 text-green-900'
-                                : 'bg-red-50 border-red-300 text-red-900'
+                                ? 'border-green-300 bg-green-50 text-green-900'
+                                : 'border-red-300 bg-red-50 text-red-900'
                             }
                           `}
                         >
@@ -374,10 +380,10 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
                       {/* Correct answer (if incorrect) */}
                       {!attempt.is_correct && attempt.correct_answer && (
                         <div>
-                          <div className="text-xs font-semibold text-gray-700 mb-1">
+                          <div className="mb-1 text-xs font-semibold text-gray-700">
                             Respuesta correcta:
                           </div>
-                          <div className="p-3 rounded-lg border-2 border-green-300 bg-green-50 text-green-900 font-medium">
+                          <div className="rounded-lg border-2 border-green-300 bg-green-50 p-3 font-medium text-green-900">
                             {Array.isArray(attempt.correct_answer)
                               ? attempt.correct_answer.join(', ')
                               : attempt.correct_answer}
@@ -387,13 +393,13 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
 
                       {/* Additional stats */}
                       <div className="grid grid-cols-2 gap-3 pt-2">
-                        <div className="p-2 bg-gray-50 rounded-lg">
+                        <div className="rounded-lg bg-gray-50 p-2">
                           <div className="text-xs text-gray-600">Tiempo empleado</div>
                           <div className="font-semibold text-gray-900">
                             {formatTime(attempt.time_spent_seconds ?? 0)}
                           </div>
                         </div>
-                        <div className="p-2 bg-gray-50 rounded-lg">
+                        <div className="rounded-lg bg-gray-50 p-2">
                           <div className="text-xs text-gray-600">Puntuación</div>
                           <div className="font-semibold text-gray-900">
                             {attempt.score_percentage}%
@@ -411,8 +417,8 @@ export const ExerciseHistory: React.FC<ExerciseHistoryProps> = ({
 
       {/* Footer */}
       {filteredAttempts.length === 0 && filter !== 'all' && (
-        <div className="px-6 py-4 border-t border-gray-200 text-center">
-          <p className="text-gray-600 text-sm">
+        <div className="border-t border-gray-200 px-6 py-4 text-center">
+          <p className="text-sm text-gray-600">
             No hay intentos que coincidan con el filtro seleccionado.
           </p>
         </div>

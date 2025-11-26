@@ -48,7 +48,7 @@ export function validatePasswordStrength(password: string): PasswordStrength {
   if (/[a-z]/.test(password)) score++; // lowercase
   if (/[A-Z]/.test(password)) score++; // uppercase
   if (/\d/.test(password)) score++; // number
-  if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) score++; // special char
+  if (/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) score++; // special char
 
   // Common patterns penalty
   if (/^(123|abc|qwe|pass|admin)/i.test(password)) score = Math.max(0, score - 2);
@@ -106,7 +106,7 @@ export function getPasswordCriteria(password: string): PasswordCriteria {
     hasUppercase: /[A-Z]/.test(password),
     hasLowercase: /[a-z]/.test(password),
     hasNumber: /\d/.test(password),
-    hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+    hasSpecialChar: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password),
   };
 }
 
@@ -122,7 +122,7 @@ export function validateEmail(email: string): boolean {
 
   // RFC 5322 compliant regex (simplified)
   const emailRegex =
-    /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
   if (!emailRegex.test(email)) return false;
 
@@ -161,7 +161,7 @@ export function sanitizeInput(input: string): string {
     '/': '&#x2F;',
   };
 
-  return input.replace(/[&<>"'\/]/g, (char) => htmlEntities[char] || char);
+  return input.replace(/[&<>"'/]/g, (char) => htmlEntities[char] || char);
 }
 
 /**

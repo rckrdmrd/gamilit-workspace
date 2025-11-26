@@ -59,7 +59,8 @@ CREATE INDEX idx_marie_content_tags ON content_management.marie_curie_content US
 CREATE INDEX idx_marie_content_tenant ON content_management.marie_curie_content USING btree (tenant_id);
 
 -- Triggers
-CREATE TRIGGER trg_marie_curie_content_updated_at BEFORE UPDATE ON content_management.marie_curie_content FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
+-- NOTE: Trigger trg_marie_curie_content_updated_at movido a archivo separado
+-- Ver: content_management/triggers/09-trg_marie_curie_content_updated_at.sql
 
 -- Foreign Keys
 ALTER TABLE ONLY content_management.marie_curie_content

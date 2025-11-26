@@ -162,9 +162,7 @@ describe('Notifications Integration Tests', () => {
     });
 
     it('should handle fetch errors', async () => {
-      vi.mocked(notificationsAPI.getNotifications).mockRejectedValue(
-        new Error('Network error')
-      );
+      vi.mocked(notificationsAPI.getNotifications).mockRejectedValue(new Error('Network error'));
 
       const { fetchNotifications } = useNotificationsStore.getState();
 
@@ -195,9 +193,7 @@ describe('Notifications Integration Tests', () => {
     });
 
     it('should handle unread count errors silently', async () => {
-      vi.mocked(notificationsAPI.getUnreadCount).mockRejectedValue(
-        new Error('Failed to fetch')
-      );
+      vi.mocked(notificationsAPI.getUnreadCount).mockRejectedValue(new Error('Failed to fetch'));
 
       const { fetchUnreadCount } = useNotificationsStore.getState();
 
@@ -303,9 +299,7 @@ describe('Notifications Integration Tests', () => {
     });
 
     it('should handle mark all as read errors', async () => {
-      vi.mocked(notificationsAPI.markAllAsRead).mockRejectedValue(
-        new Error('Batch update failed')
-      );
+      vi.mocked(notificationsAPI.markAllAsRead).mockRejectedValue(new Error('Batch update failed'));
 
       const { markAllAsRead } = useNotificationsStore.getState();
 
@@ -357,9 +351,7 @@ describe('Notifications Integration Tests', () => {
     });
 
     it('should handle delete errors', async () => {
-      vi.mocked(notificationsAPI.deleteNotification).mockRejectedValue(
-        new Error('Delete failed')
-      );
+      vi.mocked(notificationsAPI.deleteNotification).mockRejectedValue(new Error('Delete failed'));
 
       const { deleteNotification } = useNotificationsStore.getState();
 
@@ -381,7 +373,7 @@ describe('Notifications Integration Tests', () => {
       vi.mocked(notificationsAPI.getNotifications).mockResolvedValue(mockNotificationsResponse);
       await useNotificationsStore.getState().fetchNotifications();
 
-      vi.mocked(notificationsAPI.clearAll).mockResolvedValue(undefined);
+      vi.mocked(notificationsAPI.clearAll).mockResolvedValue(0);
 
       const { clearAll } = useNotificationsStore.getState();
 

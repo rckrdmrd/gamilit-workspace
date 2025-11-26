@@ -1,8 +1,8 @@
 # Manual del Usuario - Portal de Estudiantes GAMILIT
-**Versión:** 1.0.0
-**Fecha:** 24 de noviembre de 2025
+**Versión:** 1.1.0
+**Fecha:** 25 de noviembre de 2025
 **Audiencia:** Estudiantes
-**Estado del Portal:** 95% Funcional (MVP)
+**Estado del Portal:** 100% Funcional (MVP Completo)
 
 ---
 
@@ -39,13 +39,14 @@ Aprenderás 5 dimensiones complementarias:
 
 ## 1.2 ¿Qué puedes hacer en el Portal?
 
-### ✅ Disponible Ahora (MVP)
+### ✅ Disponible Ahora (MVP Completo)
 
 **Aprendizaje:**
-- ✅ Acceder a **12 ejercicios interactivos** (Módulos 1 y 2)
-- ✅ Completar ejercicios con **23 mecánicas diferentes**
+- ✅ Acceder a **30+ ejercicios interactivos** (5 Módulos completos)
+- ✅ Completar ejercicios con **30+ mecánicas diferentes**
 - ✅ Recibir **calificaciones automáticas** y retroalimentación
 - ✅ Seguir tu progreso en tiempo real
+- ✅ Usar power-ups para mejorar tu rendimiento
 
 **Gamificación:**
 - ✅ Ganar **ML Coins** por completar ejercicios
@@ -53,23 +54,28 @@ Aprenderás 5 dimensiones complementarias:
 - ✅ Subir en el **ranking de estudiantes**
 - ✅ Completar **misiones diarias y semanales**
 - ✅ Avanzar por los **6 rangos del sistema Maya**
+- ✅ Ver progreso en tiempo real
 
 **Economía:**
 - ✅ Comprar **power-ups** en la tienda
 - ✅ Gestionar tu inventario de ítems
 - ✅ Usar potenciadores en ejercicios
+- ✅ Ver historial de transacciones
 
 **Social:**
 - ✅ Ver perfiles de otros estudiantes
-- ✅ Competir en tablas de clasificación
+- ✅ Competir en **4 tipos de tablas de clasificación** (Global, Escuela, Grado, Amigos)
+- ✅ **Sistema de amigos** - Enviar y aceptar solicitudes de amistad
+- ✅ **Gremios/Guilds** - Unirse a grupos colaborativos
+- ✅ Ver actividad de amigos
 
-### ⏳ Próximamente (Fase 3 - Post-MVP)
+### ⏳ Próximamente (Mejoras Post-MVP)
 
-- ⏳ Módulos 3, 4 y 5 con 11 ejercicios adicionales
-- ⏳ Sistema de amigos y mensajería
-- ⏳ Gremios/guilds colaborativos
+- ⏳ Mensajería directa entre amigos
 - ⏳ Ítems cosméticos para personalización
 - ⏳ Notificaciones en tiempo real (WebSocket)
+- ⏳ Duelos 1v1 entre estudiantes
+- ⏳ Torneos mensuales
 
 ---
 
@@ -98,8 +104,6 @@ Aprenderás 5 dimensiones complementarias:
 - ✅ Email único (no puede estar ya registrado)
 - ✅ Contraseña segura (requisitos de complejidad)
 - ✅ Verificación de email obligatoria
-
-**Screenshots:** (Futuro)
 
 ---
 
@@ -229,7 +233,7 @@ Tu dashboard es tu centro de control. Aquí ves:
 **6. Progreso de Rango:**
 - Visualización de tu rango actual
 - XP acumulado vs XP requerido para siguiente rango
-- ⚠️ **Nota:** El rango siguiente está hardcoded (GAP-005 - se corregirá en Fase 3)
+- Barra de progreso visual
 
 ---
 
@@ -240,15 +244,15 @@ Tu dashboard es tu centro de control. Aquí ves:
 | Sección | Ruta | Descripción |
 |---------|------|-------------|
 | 🏠 **Dashboard** | `/student/dashboard` | Resumen general |
-| 📚 **Ejercicios** | `/student/exercises` | Catálogo de ejercicios |
+| 📚 **Módulos** | `/student/modules/:id` | Detalle de módulos y ejercicios |
 | 🏆 **Logros** | `/student/achievements` | Insignias y logros |
 | 📊 **Clasificación** | `/student/leaderboard` | Tabla de ranking |
 | 🎯 **Misiones** | `/student/missions` | Misiones activas y completadas |
-| 🪙 **Rango** | `/student/rank` | Sistema de rangos Maya |
+| 🎮 **Gamificación** | `/student/gamification` | Dashboard de gamificación completo |
 | 🛒 **Tienda** | `/student/shop` | Comprar power-ups |
 | 🎒 **Inventario** | `/student/inventory` | Tus ítems |
-| 👥 **Amigos** | `/student/friends` | Red social (construcción) |
-| 🛡️ **Gremios** | `/student/guilds` | Grupos colaborativos (construcción) |
+| 👥 **Amigos** | `/student/friends` | Red social |
+| 🛡️ **Gremios** | `/student/guilds` | Grupos colaborativos |
 | ⚙️ **Configuración** | `/student/settings` | Ajustes personales |
 | 👤 **Perfil** | `/student/profile` | Tu perfil público |
 
@@ -260,12 +264,11 @@ Tu dashboard es tu centro de control. Aquí ves:
 
 ### 3.1.1 Vista General de Ejercicios
 
-**Ruta:** `/student/exercises`
+**Ruta:** `/student/modules/:moduleId`
 
 **¿Qué verás?**
 
-- Lista de todos los ejercicios disponibles
-- Filtros por módulo (1, 2, 3, 4, 5)
+- Lista de todos los ejercicios disponibles por módulo
 - Estado de cada ejercicio:
   - ✅ **Completado** - Verde, con calificación obtenida
   - 🔄 **En progreso** - Amarillo, con progreso parcial
@@ -284,412 +287,172 @@ Tu dashboard es tu centro de control. Aquí ves:
 
 ### 3.1.2 Módulo 1: Literacidad Literal
 
-**Estado:** ✅ **100% Implementado** (7 ejercicios)
+**Estado:** ✅ **100% Implementado** (7 mecánicas)
 
-#### Ejercicio 1.1: Biografía de Marie Curie
+**Descripción:** Comprensión básica de textos - identificar información explícita, comprender cronología, recordar datos específicos.
 
-**Ruta:** `/student/exercises/1-1`
-**Tipo:** Lectura con comprensión
-**Puntos:** 100
-**Tiempo estimado:** 15 minutos
+**Mecánicas Disponibles:**
 
-**Descripción:**
-Lee la biografía completa de Marie Curie y responde preguntas de comprensión literal sobre fechas, lugares y eventos clave de su vida.
+| Mecánica | Descripción | Tipo de Interacción |
+|----------|-------------|---------------------|
+| **Verdadero o Falso** | Validar afirmaciones sobre Marie Curie | Botones V/F |
+| **Timeline/Cronología** | Ordenar eventos en línea de tiempo | Arrastrar y soltar |
+| **Sopa de Letras** | Encontrar términos clave en cuadrícula | Selección de letras |
+| **Mapa Conceptual** | Conectar conceptos relacionados | Arrastrar conexiones |
+| **Emparejamiento** | Relacionar personajes con descripciones | Drag & Drop |
+| **Crucigrama** | Completar palabras cruzadas | Escribir en celdas |
+| **Completar Espacios** | Llenar blancos con palabras correctas | Arrastrar palabras |
 
-**Mecánica:**
-- Lectura de texto largo (biografía)
-- 5-7 preguntas de opción múltiple
-- Calificación automática
-- Retroalimentación inmediata
+**Puntos por Ejercicio:** 100 puntos base
+**XP por Ejercicio:** 100 XP
+**ML Coins:** 80-100 (según calificación)
 
 **Objetivos de Aprendizaje:**
 - Identificar información explícita en el texto
 - Comprender cronología de eventos
 - Recordar datos específicos
-
-**Recompensas:**
-- 🪙 **100 ML Coins** (si obtienes 80% o más)
-- 🎯 **100 XP** para tu rango
-- 🏅 Progreso hacia logro "Lector Curioso"
-
----
-
-#### Ejercicio 1.2: Cronología de Eventos
-
-**Ruta:** `/student/exercises/1-2`
-**Tipo:** Ordenar línea de tiempo
-**Puntos:** 100
-**Tiempo estimado:** 10 minutos
-
-**Descripción:**
-Ordena 8-10 eventos importantes de la vida de Marie Curie en orden cronológico correcto.
-
-**Mecánica:**
-- Arrastrar y soltar eventos en línea de tiempo
-- Validación automática de secuencia
-- Pistas disponibles (cuestan 10 coins)
-
-**Objetivos de Aprendizaje:**
-- Comprender secuencia temporal
-- Relacionar causa y efecto
-- Ubicar eventos en contexto histórico
-
-**Recompensas:**
-- 🪙 **100 ML Coins**
-- 🎯 **100 XP**
-- 🏅 Logro "Maestro del Tiempo" (si completas sin errores)
-
----
-
-#### Ejercicio 1.3: Verdadero o Falso
-
-**Ruta:** `/student/exercises/1-3`
-**Tipo:** Validación de afirmaciones
-**Puntos:** 100
-**Tiempo estimado:** 8 minutos
-
-**Descripción:**
-Determina si 10 afirmaciones sobre Marie Curie son verdaderas o falsas basándote en la biografía leída.
-
-**Mecánica:**
-- 10 afirmaciones
-- Botones "Verdadero" / "Falso"
-- Timer opcional para desafío adicional
-- Explicación de cada respuesta
-
-**Objetivos de Aprendizaje:**
-- Verificar información contra fuente original
-- Identificar detalles precisos
-- Detectar información errónea
-
-**Recompensas:**
-- 🪙 **100 ML Coins**
-- 🎯 **100 XP**
-- 🏅 Logro "Detective de Hechos"
-
----
-
-#### Ejercicio 1.4: Comprensión de Conceptos
-
-**Ruta:** `/student/exercises/1-4`
-**Tipo:** Preguntas de opción múltiple
-**Puntos:** 100
-**Tiempo estimado:** 12 minutos
-
-**Descripción:**
-Responde preguntas sobre conceptos científicos mencionados en la biografía de Marie Curie (radiactividad, elementos químicos, etc.).
-
-**Mecánica:**
-- 8 preguntas de opción múltiple
-- 4 opciones por pregunta
-- Retroalimentación educativa
-- Glosario de términos disponible
-
-**Objetivos de Aprendizaje:**
-- Comprender vocabulario técnico
 - Asociar términos con definiciones
-- Contextualizar conceptos científicos
-
-**Recompensas:**
-- 🪙 **100 ML Coins**
-- 🎯 **100 XP**
-- 🏅 Progreso hacia "Científico Junior"
-
----
-
-#### Ejercicio 1.5: Identificar Personajes
-
-**Ruta:** `/student/exercises/1-5`
-**Tipo:** Emparejamiento
-**Puntos:** 100
-**Tiempo estimado:** 10 minutos
-
-**Descripción:**
-Empareja personajes importantes en la vida de Marie Curie con sus roles o relaciones (Pierre Curie, Irène Curie, etc.).
-
-**Mecánica:**
-- 6-8 pares de personajes y descripciones
-- Arrastrar y soltar para emparejar
-- Validación al completar todos los pares
-- Opción de reintentar con penalización leve
-
-**Objetivos de Aprendizaje:**
-- Identificar relaciones entre personajes
-- Comprender roles sociales y familiares
-- Contextualizar biografía en red social
-
-**Recompensas:**
-- 🪙 **100 ML Coins**
-- 🎯 **100 XP**
-- 🏅 Logro "Sociólogo Experto"
-
----
-
-#### Ejercicio 1.6: Completar Oraciones
-
-**Ruta:** `/student/exercises/1-6`
-**Tipo:** Llenar espacios en blanco
-**Puntos:** 100
-**Tiempo estimado:** 12 minutos
-
-**Descripción:**
-Completa 10 oraciones sobre Marie Curie llenando los espacios en blanco con palabras clave de un banco de palabras.
-
-**Mecánica:**
-- 10 oraciones incompletas
-- Banco de 15 palabras (5 distractores)
-- Arrastrar palabras a los espacios
-- Validación de sintaxis y semántica
-
-**Objetivos de Aprendizaje:**
-- Recordar información específica
-- Aplicar vocabulario en contexto
-- Comprender estructura de oraciones
-
-**Recompensas:**
-- 🪙 **100 ML Coins**
-- 🎯 **100 XP**
-- 🏅 Progreso hacia "Maestro Gramático"
-
----
-
-#### Ejercicio 1.7: Resumen Visual
-
-**Ruta:** `/student/exercises/1-7`
-**Tipo:** Selección de imágenes
-**Puntos:** 100
-**Tiempo estimado:** 15 minutos
-
-**Descripción:**
-Selecciona imágenes que representen correctamente los logros y momentos clave de la vida de Marie Curie.
-
-**Mecánica:**
-- 12 imágenes mostradas
-- 8 son correctas, 4 son distractores
-- Click para seleccionar/deseleccionar
-- Validación al enviar
-
-**Objetivos de Aprendizaje:**
-- Asociar información textual con representaciones visuales
-- Identificar símbolos y metáforas visuales
-- Desarrollar literacidad visual
-
-**Recompensas:**
-- 🪙 **100 ML Coins**
-- 🎯 **100 XP**
-- 🏅 Logro "Ojo de Águila"
 
 ---
 
 ### 3.1.3 Módulo 2: Literacidad Inferencial
 
-**Estado:** ✅ **100% Implementado** (5 ejercicios)
+**Estado:** ✅ **100% Implementado** (6 mecánicas)
 
-#### Ejercicio 2.1: Inferir Motivaciones
+**Descripción:** Leer entre líneas - inferir motivaciones, predecir consecuencias, interpretar significados implícitos.
 
-**Ruta:** `/student/exercises/2-1`
-**Tipo:** Análisis de motivaciones
-**Puntos:** 150
-**Tiempo estimado:** 20 minutos
+**Mecánicas Disponibles:**
 
-**Descripción:**
-Lee pasajes de la vida de Marie Curie e infiere sus motivaciones, emociones y razones detrás de decisiones importantes.
+| Mecánica | Descripción | Tipo de Interacción |
+|----------|-------------|---------------------|
+| **Rueda de Inferencias** | Análisis por niveles (Rueda de Daniels) | Rueda interactiva 4 niveles |
+| **Puzzle de Contexto** | Reconstruir significado desde fragmentos | Armar rompecabezas |
+| **Predicción Narrativa** | Anticipar consecuencias de eventos | Selección múltiple |
+| **Lectura Inferencial** | Identificar significados implícitos | Análisis guiado |
+| **Detective Textual** | Encontrar pistas y evidencias | Lupa interactiva |
+| **Causa y Efecto** | Relacionar causas con consecuencias | Diagrama interactivo |
 
-**Mecánica:**
-- 5 escenarios narrativos
-- 3-4 opciones de inferencia por escenario
-- Justificación opcional para puntos extra
-- Sistema de "confianza" (qué tan seguro estás)
+**Puntos por Ejercicio:** 150 puntos base
+**XP por Ejercicio:** 150 XP
+**ML Coins:** 120-150 (según calificación)
 
 **Objetivos de Aprendizaje:**
 - Leer entre líneas
 - Inferir estados emocionales
-- Comprender motivaciones humanas
-
-**Recompensas:**
-- 🪙 **150 ML Coins**
-- 🎯 **150 XP**
-- 🏅 Logro "Psicólogo Empático"
-
----
-
-#### Ejercicio 2.2: Predecir Consecuencias
-
-**Ruta:** `/student/exercises/2-2`
-**Tipo:** Predicción causal
-**Puntos:** 150
-**Tiempo estimado:** 18 minutos
-
-**Descripción:**
-Dado un evento en la vida de Marie Curie, predice las consecuencias que este evento tuvo en su vida o en la ciencia.
-
-**Mecánica:**
-- 6 eventos históricos presentados
-- Selección múltiple de consecuencias
-- Diagrama de causa-efecto interactivo
-- Explicación de cadenas causales
-
-**Objetivos de Aprendizaje:**
 - Comprender relaciones causales
 - Predecir consecuencias lógicas
-- Pensar en sistemas complejos
-
-**Recompensas:**
-- 🪙 **150 ML Coins**
-- 🎯 **150 XP**
-- 🏅 Logro "Visionario del Futuro"
-
----
-
-#### Ejercicio 2.3: Interpretar Metáforas
-
-**Ruta:** `/student/exercises/2-3`
-**Tipo:** Análisis figurativo
-**Puntos:** 150
-**Tiempo estimado:** 15 minutos
-
-**Descripción:**
-Interpreta metáforas y lenguaje figurativo usado en textos sobre Marie Curie y la ciencia.
-
-**Mecánica:**
-- 8 metáforas presentadas en contexto
-- Selección de interpretación correcta
-- Explicación del simbolismo
-- Glosario de figuras retóricas
-
-**Objetivos de Aprendizaje:**
-- Comprender lenguaje figurativo
-- Identificar metáforas y símiles
-- Interpretar significados no literales
-
-**Recompensas:**
-- 🪙 **150 ML Coins**
-- 🎯 **150 XP**
-- 🏅 Logro "Poeta Analítico"
-
----
-
-#### Ejercicio 2.4: Rueda de Inferencias
-
-**Ruta:** `/student/exercises/2-4`
-**Tipo:** Inferencia por niveles (Rueda de Daniels)
-**Puntos:** 150
-**Tiempo estimado:** 25 minutos
-
-**Descripción:**
-⭐ **Ejercicio Especial** - Usa la Rueda de Inferencias de Daniels para analizar un texto sobre Marie Curie, progresando desde observaciones literales hasta conclusiones inferenciales.
-
-**Mecánica:**
-- Rueda interactiva con 4 niveles:
-  1. **Observación Literal** - ¿Qué dice el texto?
-  2. **Interpretación** - ¿Qué significa?
-  3. **Evaluación** - ¿Qué opino?
-  4. **Conexión** - ¿Cómo se relaciona conmigo?
-- Rueda gira al avanzar niveles
-- Validación por nivel
-- Retroalimentación pedagógica
-
-**Objetivos de Aprendizaje:**
-- Aplicar estrategia de lectura profunda
-- Progresión desde literal a crítico
 - Desarrollar pensamiento metacognitivo
 
-**Recompensas:**
-- 🪙 **200 ML Coins** (bonificado)
-- 🎯 **200 XP**
-- 🏅 Logro "Maestro de Inferencias" (exclusivo)
-
-**Nota Técnica:** Este ejercicio ha tenido bugs recientes corregidos en:
-- `apps/frontend/src/features/mechanics/module2/RuedaInferencias/`
-- Ver: orchestration/agentes/architecture-analyst/rueda-inferencias-bugs-2025-11-23/
+**Ejercicio Destacado - Rueda de Inferencias:**
+Usa la Rueda de Inferencias de Daniels con 4 niveles:
+1. **Observación Literal** - ¿Qué dice el texto?
+2. **Interpretación** - ¿Qué significa?
+3. **Evaluación** - ¿Qué opino?
+4. **Conexión** - ¿Cómo se relaciona conmigo?
 
 ---
 
-#### Ejercicio 2.5: Comparar Perspectivas
+### 3.1.4 Módulo 3: Literacidad Crítica
 
-**Ruta:** `/student/exercises/2-5`
-**Tipo:** Análisis multiperspectiva
-**Puntos:** 150
-**Tiempo estimado:** 22 minutos
+**Estado:** ✅ **100% Implementado** (5 mecánicas)
 
-**Descripción:**
-Compara cómo diferentes personas (familia, colegas, sociedad) podrían haber percibido las acciones de Marie Curie.
+**Descripción:** Analizar y cuestionar información - evaluar credibilidad, identificar sesgos, argumentar críticamente.
 
-**Mecánica:**
-- 4 perspectivas diferentes por escenario
-- Matriz de comparación interactiva
-- Identificar puntos de vista contrastantes
-- Justificar diferencias de percepción
+**Mecánicas Disponibles:**
+
+| Mecánica | Descripción | Tipo de Interacción |
+|----------|-------------|---------------------|
+| **Análisis de Fuentes** | Evaluar credibilidad de diferentes fuentes | Rúbrica de evaluación |
+| **Debate Digital** | Argumentar posiciones con evidencia | Foro de debate |
+| **Matriz de Perspectivas** | Comparar diferentes puntos de vista | Tabla comparativa |
+| **Podcast Argumentativo** | Crear guion de podcast crítico | Editor de texto + audio |
+| **Tribunal de Opiniones** | Evaluar argumentos como juez | Sistema de votación |
+
+**Puntos por Ejercicio:** 200 puntos base
+**XP por Ejercicio:** 200 XP
+**ML Coins:** 160-200 (según calificación)
 
 **Objetivos de Aprendizaje:**
-- Comprender multiperspectividad
-- Desarrollar empatía cognitiva
-- Reconocer sesgos y contextos
-
-**Recompensas:**
-- 🪙 **150 ML Coins**
-- 🎯 **150 XP**
-- 🏅 Logro "Diplomático Cultural"
-
----
-
-### 3.1.4 Módulos 3, 4 y 5
-
-**Estado:** ⏳ **En Construcción** (GAP-008 - Fase 3 - Post-MVP)
-
-#### Módulo 3: Literacidad Crítica
-
-**Fecha Estimada:** 1-2 meses post-MVP
-**Ejercicios Planeados:** 4 ejercicios (200 pts c/u)
-
-**Temas:**
 - Evaluar credibilidad de fuentes
-- Identificar sesgos en textos históricos
-- Cuestionar narrativas dominantes
-- Analizar contextos socio-políticos
-
-**Ejercicios:**
-1. 🔍 **Evaluar Fuentes** - Credibilidad de documentos históricos
-2. 🎭 **Identificar Sesgos** - Sesgos de género en ciencia
-3. 🗣️ **Analizar Discursos** - Retórica en textos científicos
-4. 🎙️ **Podcast Crítico** - Crear análisis crítico de biografía
+- Identificar sesgos y perspectivas
+- Construir argumentos sólidos
+- Analizar críticamente información
+- Desarrollar pensamiento crítico
 
 ---
 
-#### Módulo 4: Literacidad Digital
+### 3.1.5 Módulo 4: Literacidad Digital
 
-**Fecha Estimada:** 2-3 meses post-MVP
-**Ejercicios Planeados:** 4 ejercicios (200 pts c/u)
+**Estado:** ✅ **100% Implementado** (9 mecánicas)
 
-**Temas:**
+**Descripción:** Navegar medios digitales con criterio - verificar información, analizar contenido multimedia, navegar hipertextos.
+
+**Mecánicas Disponibles:**
+
+| Mecánica | Descripción | Tipo de Interacción |
+|----------|-------------|---------------------|
+| **Quiz TikTok** | Responder preguntas estilo video corto | Swipe cards |
+| **Análisis de Memes** | Decodificar mensajes en memes | Anotador visual |
+| **Chat Literario** | Conversación simulada sobre textos | Interfaz de chat |
+| **Navegación Hipertextual** | Explorar documentos enlazados | Hipervínculos |
+| **Verificador Fake News** | Identificar noticias falsas | Fact-checking |
+| **Reseña Crítica** | Escribir reseña de contenido | Editor de texto |
+| **Infografía Interactiva** | Explorar datos visualizados | Visualización interactiva |
+| **Ensayo Argumentativo** | Redactar ensayo con estructura | Editor con guías |
+| **Email Formal** | Redactar comunicación formal | Plantilla de email |
+
+**Puntos por Ejercicio:** 200 puntos base
+**XP por Ejercicio:** 200 XP
+**ML Coins:** 160-200 (según calificación)
+
+**Objetivos de Aprendizaje:**
 - Validar información en internet
-- Identificar fake news sobre ciencia
-- Uso ético de recursos digitales
-- Ciudadanía digital responsable
-
-**Ejercicios:**
-1. 🌐 **Fact-Check Digital** - Verificar claims científicos online
-2. 🎯 **Detectar Desinformación** - Identificar fake news
-3. 📱 **Navegación Segura** - Privacidad y seguridad digital
-4. 💻 **Ciudadanía Digital** - Participación ética en línea
+- Identificar fake news y desinformación
+- Analizar contenido multimedia
+- Navegar eficientemente en hipertextos
+- Comunicarse efectivamente en formato digital
 
 ---
 
-#### Módulo 5: Producción Textual
+### 3.1.6 Módulo 5: Producción Textual
 
-**Fecha Estimada:** 3-4 meses post-MVP
-**Ejercicios Planeados:** 3 ejercicios (200 pts c/u)
+**Estado:** ✅ **100% Implementado** (3 mecánicas)
 
-**Temas:**
-- Redacción de textos argumentativos
-- Creación de contenido multimedia
-- Escritura académica
-- Comunicación científica efectiva
+**Descripción:** Crear contenido efectivo - redactar textos, producir contenido multimedia, comunicar ideas claramente.
 
-**Ejercicios:**
-1. ✍️ **Ensayo Argumentativo** - Sobre legado de Marie Curie
-2. 🎨 **Infografía Científica** - Visualización de descubrimientos
-3. 📹 **Video Explicativo** - Comunicar conceptos científicos
+**Mecánicas Disponibles:**
+
+| Mecánica | Descripción | Tipo de Interacción |
+|----------|-------------|---------------------|
+| **Cómic Digital** | Crear historieta sobre Marie Curie | Editor de cómic |
+| **Diario Multimedia** | Escribir diario con multimedia | Editor enriquecido |
+| **Video Carta** | Crear mensaje de video | Grabación + edición |
+
+**Puntos por Ejercicio:** 200 puntos base
+**XP por Ejercicio:** 200 XP
+**ML Coins:** 160-200 (según calificación)
+
+**Objetivos de Aprendizaje:**
+- Producir contenido original
+- Combinar texto y multimedia
+- Comunicar ideas efectivamente
+- Desarrollar creatividad
+- Expresarse en diferentes formatos
+
+---
+
+### 3.1.7 Mecánicas Auxiliares
+
+**Estado:** ✅ **Implementadas**
+
+Mecánicas adicionales que complementan los módulos principales:
+
+| Mecánica | Descripción |
+|----------|-------------|
+| **Collage de Prensa** | Crear collage con recortes de noticias |
+| **Comprensión Auditiva** | Escuchar y responder preguntas |
+| **Texto en Movimiento** | Leer texto animado |
+| **Call to Action** | Crear llamados a la acción |
 
 ---
 
@@ -769,10 +532,6 @@ Compara cómo diferentes personas (familia, colegas, sociedad) podrían haber pe
 - ⚠️ Solo la calificación más alta se guarda
 - ⚠️ Cada reintento reduce puntos disponibles en 10%
 
-**Calificación Manual (Futuro):**
-- ⏳ Ejercicios de texto abierto (Módulo 5) serán calificados por maestros
-- ⏳ Recibirás notificación cuando tu maestro califique
-
 ---
 
 ### 3.2.4 Retroalimentación y Mejora
@@ -791,11 +550,6 @@ Compara cómo diferentes personas (familia, colegas, sociedad) podrían haber pe
 - Explicación de cada respuesta
 - Recursos adicionales para reforzar temas débiles
 - Sugerencias de ejercicios relacionados
-
-**3. Feedback del Sistema:**
-- Identificación de patrones de error
-- Recomendaciones personalizadas
-- Ejercicios sugeridos para practicar
 
 **Ejemplo de Retroalimentación:**
 
@@ -834,30 +588,25 @@ Insignias que desbloqueas al cumplir objetivos específicos en la plataforma. Ha
 
 **Categorías de Logros:**
 
-1. **Aprendizaje** (15 logros)
+1. **Progreso** (15 logros)
    - Completar ejercicios
    - Obtener calificaciones perfectas
    - Completar módulos
 
-2. **Gamificación** (12 logros)
-   - Subir de rango
-   - Acumular coins
-   - Ganar XP
+2. **Maestría** (12 logros)
+   - Dominar mecánicas específicas
+   - Obtener puntuaciones altas
+   - Completar sin errores
 
 3. **Social** (10 logros)
    - Agregar amigos
    - Unirse a gremios
-   - Competir en torneos
+   - Competir en ranking
 
-4. **Especiales** (8 logros)
-   - Logros únicos por eventos
+4. **Ocultos** (8 logros)
    - Logros secretos
+   - Descubrimientos especiales
    - Logros de temporada
-
-5. **Racha** (5 logros)
-   - Días consecutivos activo
-   - Ejercicios consecutivos
-   - Misiones completadas en racha
 
 **Información de Cada Logro:**
 - 🏅 **Icono** distintivo
@@ -915,13 +664,22 @@ Algunos logros tienen múltiples niveles:
 
 ## 4.2 Tabla de Clasificación
 
-### 4.2.1 Leaderboard Global
+### 4.2.1 Leaderboard
 
 **Ruta:** `/student/leaderboard`
 
 **¿Qué es el Leaderboard?**
 
 Tabla de clasificación que muestra el ranking de todos los estudiantes basado en puntos de experiencia (XP) totales.
+
+**🌟 Tipos de Leaderboards Disponibles:**
+
+El sistema ofrece **4 tipos de clasificaciones** para que compitas en diferentes contextos:
+
+1. **🌍 Global** - Todos los estudiantes de la plataforma
+2. **🏫 School (Escuela)** - Solo estudiantes de tu institución
+3. **📚 Grade (Grado)** - Estudiantes de tu mismo grado
+4. **👥 Friends (Amigos)** - Compite solo con tus amigos
 
 **Información Mostrada:**
 
@@ -940,31 +698,22 @@ Tabla de clasificación que muestra el ranking de todos los estudiantes basado e
 - 🌟 **Tu posición** está resaltada
 - 📊 **Cambios** desde ayer mostrados con flechas
 
-**Filtros Disponibles:**
-- **Por Classroom** - Solo tu clase
-- **Por Institution** - Solo tu escuela
-- **Global** - Todos los estudiantes
-- **Por Semana** - Ranking semanal
-- **Por Mes** - Ranking mensual
+**Filtros de Tiempo:**
+- **Diario** - Ranking del día
+- **Semanal** - Ranking de la semana
+- **Mensual** - Ranking del mes
 - **Todo el Tiempo** - Ranking histórico
 
 ---
 
-### 4.2.2 Actualización en Tiempo Real
+### 4.2.2 Actualización del Leaderboard
 
-**Estado Actual (MVP):** ✅ Actualización por polling cada 30 segundos
+**Estado Actual:** ✅ Actualización por polling cada 30 segundos
 
-**Futuro (GAP-004 - Fase 3):** ⏳ WebSocket para actualizaciones instantáneas
-
-**Cómo Funciona Ahora:**
+**Cómo Funciona:**
 - El leaderboard se actualiza automáticamente cada 30 segundos
 - Si subes de posición, verás la animación de tu avatar
 - Notificación si entras al Top 10
-
-**Cómo Funcionará (WebSocket):**
-- Actualizaciones en tiempo real sin delay
-- Notificaciones push cuando alguien te supera
-- Celebraciones en vivo cuando llegas al Top 3
 
 ---
 
@@ -1012,7 +761,7 @@ Objetivos temporales que te dan recompensas extra al completarlos. Hay misiones 
 
 ```
 ┌─────────────────────────────────────────────────┐
-│ 📚 Completa 2 ejercicios hoy                    │
+│ 📚 Completa 3 ejercicios hoy                    │
 │                                                 │
 │ Progreso: [████████████░░░░░░░░] 2/3           │
 │                                                 │
@@ -1049,7 +798,7 @@ Objetivos temporales que te dan recompensas extra al completarlos. Hay misiones 
 
 ### 4.4.1 Vista de Rangos
 
-**Ruta:** `/student/rank`
+**Ruta:** `/student/gamification`
 
 **¿Qué es el Sistema de Rangos Maya?**
 
@@ -1057,14 +806,14 @@ Sistema de progresión inspirado en la jerarquía de la civilización maya. Sube
 
 **Los 6 Rangos Maya:**
 
-| Rango | Nombre | XP Mínimo | XP Máximo | Beneficios |
-|-------|--------|-----------|-----------|------------|
-| 1️⃣ | **Alux** | 0 | 499 | Principiante |
-| 2️⃣ | **Ajkun** | 500 | 1,499 | +5% XP bonus |
-| 3️⃣ | **Balam** | 1,500 | 3,499 | +10% XP bonus, 1 power-up gratis/semana |
-| 4️⃣ | **Chaak** | 3,500 | 6,999 | +15% XP bonus, 2 power-ups gratis/semana |
-| 5️⃣ | **Kukulkan** | 7,000 | 11,999 | +20% XP bonus, 3 power-ups gratis/semana, avatar exclusivo |
-| 6️⃣ | **Ajaw** | 12,000 | ∞ | +25% XP bonus, 5 power-ups gratis/semana, título especial |
+| Rango | Nombre | XP Mínimo | XP Máximo | Multiplicador | Beneficios |
+|-------|--------|-----------|-----------|---------------|------------|
+| 1️⃣ | **Alux** | 0 | 499 | 1.0x | Principiante |
+| 2️⃣ | **Ajkun** | 500 | 1,499 | 1.05x | +5% XP bonus |
+| 3️⃣ | **Balam** | 1,500 | 3,499 | 1.10x | +10% XP, 1 power-up/semana |
+| 4️⃣ | **Chaak** | 3,500 | 6,499 | 1.15x | +15% XP, 2 power-ups/semana |
+| 5️⃣ | **Kukulkan** | 6,500 | 9,999 | 1.20x | +20% XP, 3 power-ups/semana |
+| 6️⃣ | **Ajaw** | 10,000 | ∞ | 1.25x | +25% XP, 5 power-ups/semana, título especial |
 
 ---
 
@@ -1074,26 +823,24 @@ Sistema de progresión inspirado en la jerarquía de la civilización maya. Sube
 
 | Acción | XP Ganado |
 |--------|-----------|
-| Completar ejercicio | 100-200 XP (según módulo) |
+| Completar ejercicio Módulo 1 | 100 XP |
+| Completar ejercicio Módulo 2 | 150 XP |
+| Completar ejercicio Módulo 3-5 | 200 XP |
 | Calificación perfecta (100%) | +50 XP bonus |
 | Completar misión diaria | 25-50 XP |
 | Completar misión semanal | 100-250 XP |
 | Desbloquear logro | 25-500 XP (según rareza) |
 | Mantener racha diaria | 10-50 XP/día |
-| Ayudar a un compañero | 20 XP |
 
 **Progreso de Rango:**
 
-Tu página de rango (`/student/rank`) muestra:
-- 🎯 **Rango actual** con insignia
+Tu página de gamificación muestra:
+- 🎯 **Rango actual** con insignia Maya
 - 📊 **XP actual** vs XP requerido para siguiente rango
 - 📈 **Barra de progreso** visual
 - 🏆 **Beneficios** del rango actual
 - 🎁 **Beneficios** del próximo rango
-- 📅 **Fecha estimada** para alcanzar siguiente rango (basado en actividad)
-- 📊 **Comparación** con promedio de clase
-
-**Nota Técnica:** ⚠️ Actualmente el "próximo rango" está hardcoded en el dashboard (GAP-005). Se corregirá en Fase 3 para ser dinámico.
+- 📊 **Multiplicador** activo
 
 ---
 
@@ -1104,7 +851,7 @@ Tu página de rango (`/student/rank`) muestra:
 Cada rango mantiene los beneficios de rangos anteriores y añade nuevos:
 
 **Rango 1 - Alux (Principiante):**
-- Acceso completo a Módulos 1 y 2
+- Acceso completo a todos los módulos
 - Tienda básica
 
 **Rango 2 - Ajkun:**
@@ -1136,7 +883,6 @@ Cada rango mantiene los beneficios de rangos anteriores y añade nuevos:
 - Avatar exclusivo dorado animado
 - Título "Ajaw" junto a tu nombre
 - Acceso a contenido premium
-- Mentor de nuevos estudiantes
 
 ---
 
@@ -1152,22 +898,18 @@ Moneda virtual de GAMILIT (ML = Marie Curie's Legacy). Las usas para comprar pow
 
 | Acción | Coins Ganados |
 |--------|---------------|
-| Completar ejercicio (80%+) | 80-200 coins (según puntuación y módulo) |
+| Completar ejercicio (80%+) | 80-200 coins (según módulo) |
 | Calificación perfecta | +50 coins bonus |
 | Completar misión diaria | 50-100 coins |
 | Completar misión semanal | 200-500 coins |
 | Desbloquear logro | 50-2000 coins (según rareza) |
 | Subir de rango | 500-2000 coins |
 | Racha de 7 días | 300 coins |
-| Ayudar a compañero | 50 coins |
-| Participar en evento | 100-1000 coins |
 
 **Cómo Gastar ML Coins:**
 - 🛒 Comprar power-ups en la tienda
-- 🎨 Comprar ítems cosméticos (futuro)
 - 💡 Comprar pistas en ejercicios (10 coins c/u)
-- 🎁 Enviar regalos a amigos (futuro)
-- 🏆 Participar en torneos premium (futuro)
+- 🎨 Comprar ítems cosméticos (próximamente)
 
 ---
 
@@ -1183,16 +925,11 @@ Tu saldo de ML Coins siempre es visible en:
 
 **Historial de Transacciones:**
 
-Ve a **Perfil → Economía** para ver:
+Ve a **Gamificación → Economía** para ver:
 - 📊 Ingresos totales de coins
 - 💰 Gastos totales
 - 📈 Gráfica de balance en el tiempo
-- 📋 Lista detallada de transacciones:
-  ```
-  📅 24/11/2025 | +150 🪙 | Ejercicio 2.3 completado
-  📅 24/11/2025 | -100 🪙 | Compra: Power-Up Doble XP
-  📅 23/11/2025 | +200 🪙 | Misión semanal completada
-  ```
+- 📋 Lista detallada de transacciones
 
 ---
 
@@ -1243,15 +980,13 @@ Tu perfil es tu identidad en GAMILIT. Otros estudiantes pueden ver tu perfil pú
 - **Frase motivacional** (opcional, max 100 caracteres)
 
 **2. Privacidad:**
-- **Perfil público** - ON/OFF (si está OFF, solo maestros ven tu perfil)
+- **Perfil público** - ON/OFF
 - **Mostrar en leaderboard** - ON/OFF
-- **Permitir mensajes** - ON/OFF (futuro)
 - **Mostrar estadísticas** - ON/OFF
 
 **3. Personalización:**
 - **Logros destacados** - Selecciona 5 logros para mostrar prominentemente
 - **Color de tema** - Elige entre 8 paletas de colores
-- **Avatar border** - Desbloquea borders especiales con rangos altos
 
 **Validaciones:**
 - ✅ Nombre de usuario debe ser único
@@ -1290,27 +1025,15 @@ Tu perfil es tu identidad en GAMILIT. Otros estudiantes pueden ver tu perfil pú
 **Cambiar Contraseña:**
 1. Ve a **Configuración → Cuenta**
 2. Ingresa tu **contraseña actual**
-3. Ingresa tu **nueva contraseña** (min 8 caracteres, debe cumplir requisitos)
+3. Ingresa tu **nueva contraseña** (min 8 caracteres)
 4. Confirma tu **nueva contraseña**
 5. ✅ Contraseña actualizada
-6. Todas las sesiones excepto la actual se cierran automáticamente
-
-**Cerrar Cuenta:**
-⚠️ Acción permanente - todos tus datos se eliminarán después de 30 días de gracia.
-
-1. Ve a **Configuración → Cuenta → Cerrar Cuenta**
-2. Lee las consecuencias cuidadosamente
-3. Ingresa tu contraseña para confirmar
-4. Ingresa "ELIMINAR MI CUENTA" en el campo de texto
-5. Recibirás email de confirmación
-6. Tienes 30 días para cambiar de opinión y reactivar
 
 ---
 
 ### 5.2.3 Configuración de Seguridad
 
 **Autenticación de Dos Factores (2FA):**
-
 Ver sección 2.1.5 para instrucciones completas de 2FA.
 
 **Sesiones Activas:**
@@ -1325,12 +1048,6 @@ Ve a **Configuración → Seguridad → Sesiones Activas** para ver:
 - Cierra sesiones individuales con botón "Cerrar Sesión"
 - Cierra todas las sesiones excepto la actual con "Cerrar Todas"
 
-**Actividad Reciente:**
-- Inicios de sesión (exitosos y fallidos)
-- Cambios de contraseña
-- Cambios de email
-- Cambios de configuración de seguridad
-
 ---
 
 ### 5.2.4 Configuración de Notificaciones
@@ -1342,25 +1059,16 @@ Ve a **Configuración → Seguridad → Sesiones Activas** para ver:
 - ✉️ **Misiones completadas** - Cuando completas una misión
 - ✉️ **Logros desbloqueados** - Cuando desbloqueas un logro
 - ✉️ **Subida de rango** - Cuando subes de rango
-- ✉️ **Respuesta de maestro** - Cuando tu maestro responde o califica
-- ✉️ **Mensajes de amigos** - Cuando recibes mensaje (futuro)
 
-**2. Notificaciones Push (en navegador):**
-- 🔔 **Tiempo real** - Notificaciones instantáneas en navegador
-- 🔔 **Misiones a punto de expirar** - 1 hora antes
-- 🔔 **Racha en peligro** - Si no has entrado en 20 horas
-- 🔔 **Alguien te superó en leaderboard** - Cambios de posición
-- 🔔 **Nuevo contenido disponible** - Nuevos ejercicios o módulos
-
-**3. Notificaciones en la App:**
+**2. Notificaciones en la App:**
 - 🔔 **Badge en header** - Contador de notificaciones no leídas
 - 🔔 **Panel de notificaciones** - Click en campana para ver todas
-- 🔔 **Histórico** - Últimas 30 días
+- 🔔 **Histórico** - Últimos 30 días
 
 **Configurar Frecuencia:**
 - **Inmediato** - Al ocurrir el evento
-- **Diario** - Resumen 1 vez al día (9:00 AM)
-- **Semanal** - Resumen 1 vez a la semana (lunes 9:00 AM)
+- **Diario** - Resumen 1 vez al día
+- **Semanal** - Resumen 1 vez a la semana
 - **Nunca** - Desactivar completamente
 
 ---
@@ -1370,20 +1078,13 @@ Ve a **Configuración → Seguridad → Sesiones Activas** para ver:
 **Idioma:**
 - 🇲🇽 Español (México) - Por defecto
 - 🇪🇸 Español (España)
-- 🇺🇸 English (US) - Futuro
 
 **Zona Horaria:**
 - Selecciona tu zona horaria para que fechas y horarios se muestren correctamente
 - Por defecto: America/Mexico_City
 
-**Formato de Fecha:**
-- DD/MM/YYYY (24/11/2025)
-- MM/DD/YYYY (11/24/2025)
-- YYYY-MM-DD (2025-11-24)
-
 **Sonidos:**
 - 🔊 **Efectos de sonido** - ON/OFF
-- 🔊 **Música de fondo** - ON/OFF (futuro)
 - 🔊 **Notificaciones de audio** - ON/OFF
 - 🎚️ **Volumen** - 0-100%
 
@@ -1407,14 +1108,10 @@ Ve a **Configuración → Seguridad → Sesiones Activas** para ver:
 - **Alto Contraste** - Mejor legibilidad
 - **Modo Oscuro** - Fondo oscuro (reduce fatiga visual)
 
-**Lector de Pantalla:**
+**Navegación por Teclado:**
 - ✅ Soporte completo para screen readers
 - ✅ Atributos ARIA en todos los componentes
 - ✅ Navegación por teclado completa
-
-**Navegación por Teclado:**
-- Ver atajos de teclado disponibles
-- Personalizar atajos (futuro)
 
 **Reducir Movimiento:**
 - Desactiva animaciones automáticas
@@ -1438,7 +1135,7 @@ Ve a **Configuración → Seguridad → Sesiones Activas** para ver:
 **2. Educativas:**
 - 📚 Nuevo ejercicio disponible
 - 📝 Asignación de maestro
-- ✅ Ejercicio calificado por maestro
+- ✅ Ejercicio calificado
 
 **3. Gamificación:**
 - 🏆 Logro desbloqueado
@@ -1447,20 +1144,13 @@ Ve a **Configuración → Seguridad → Sesiones Activas** para ver:
 - 🥇 Cambio en leaderboard
 
 **4. Sociales:**
-- 👥 Nueva solicitud de amistad (futuro)
-- 💬 Nuevo mensaje (futuro)
-- 🎊 Invitación a gremio (futuro)
+- 👥 Nueva solicitud de amistad
+- 🎊 Invitación a gremio
 
 **Estados:**
 - 🔵 **No leída** - Resaltada en azul
 - ⚪ **Leída** - Gris
 - 🗑️ **Eliminada** - Ya no visible
-
-**Acciones:**
-- Marcar como leída (individualmente)
-- Marcar todas como leídas
-- Eliminar notificación
-- Eliminar todas (más de 30 días)
 
 ---
 
@@ -1472,26 +1162,18 @@ Ve a **Configuración → Seguridad → Sesiones Activas** para ver:
 
 **Ruta:** `/student/shop`
 
-**Estado:** ✅ **100% Funcional** (Power-ups disponibles)
-**Futuro:** ⏳ Ítems cosméticos (GAP-007 - Fase 3)
+**Estado:** ✅ **100% Funcional**
 
-**Categorías Actuales:**
+**Categorías Disponibles:**
 
-**1. Power-Ups (Disponible):**
+**1. Power-Ups:**
 - 🧪 Potenciadores para ejercicios
 - 💡 Ayudas y pistas
 - 🎯 Multiplicadores de recompensas
 
-**2. Cosméticos (Futuro - GAP-007):**
-- 🎨 Avatares exclusivos
-- 🖼️ Borders para avatar
-- 🎭 Emotes y reacciones
-- 🏆 Títulos personalizados
-
-**3. Ventajas Temporales (Futuro):**
-- 🔥 Boosts de XP por 24h
-- 🪙 Boosts de coins por 24h
-- ⏰ Tiempo extra en todos los ejercicios
+**2. Packs:**
+- 🎁 Pack de Inicio - 3 power-ups básicos
+- 🌟 Pack Premium - 5 power-ups variados
 
 ---
 
@@ -1515,35 +1197,15 @@ Ve a **Configuración → Seguridad → Sesiones Activas** para ver:
 1. Navega a `/student/shop`
 2. Selecciona el power-up que deseas
 3. Revisa la descripción y precio
-4. Haz clic en "Agregar al Carrito"
-5. Puedes seguir comprando o ir al carrito
-6. En el carrito, revisa tu orden
-7. Haz clic en "Comprar Ahora"
-8. Confirma la compra
-9. ✅ Power-ups añadidos a tu inventario
-10. Recibe notificación de compra exitosa
+4. Haz clic en "Comprar"
+5. Confirma la compra
+6. ✅ Power-ups añadidos a tu inventario
 
 **Descuentos por Rango:**
 - **Balam (Rango 3+):** 10% descuento
 - **Chaak (Rango 4+):** 20% descuento
 - **Kukulkan (Rango 5+):** 30% descuento
 - **Ajaw (Rango 6):** 40% descuento
-
----
-
-### 6.1.3 Ofertas Especiales
-
-**Ofertas Diarias:**
-- 1 power-up en descuento 50% cada día (cambia a las 00:00)
-
-**Ofertas Semanales:**
-- 1 pack especial con 3-5 ítems variados (cambia cada lunes)
-
-**Ofertas por Evento:**
-- Cumpleaños de Marie Curie (7 nov)
-- Día Internacional de la Mujer (8 marzo)
-- Día del Libro (23 abril)
-- Fin de curso
 
 ---
 
@@ -1564,21 +1226,9 @@ Almacén de todos tus power-ups y ítems. Desde aquí puedes ver qué tienes y u
 - 📦 Power-ups en stock (cantidad)
 - ⏰ Power-ups temporales con tiempo restante
 
-**2. Ítems Cosméticos (Futuro):**
-- 🎨 Avatares
-- 🖼️ Borders
-- 🎭 Emotes
-- 🏆 Títulos
-
-**3. Especiales:**
-- 🎁 Ítems de eventos
-- 🌟 Ítems exclusivos
-- 🏅 Recompensas de logros
-
 **Información por Ítem:**
 - 📦 **Cantidad** en stock
 - 📅 **Fecha de adquisición**
-- 🔒 **Rareza** (Común, Raro, Épico, Legendario)
 - 📝 **Descripción** y efectos
 - 🎯 **Dónde usar** (si aplica)
 
@@ -1603,108 +1253,8 @@ Almacén de todos tus power-ups y ítems. Desde aquí puedes ver qué tienes y u
 5. ✅ Power-up activado
 
 **Notas:**
-- ⚠️ Los power-ups se consumen al usarse (excepto los permanentes)
+- ⚠️ Los power-ups se consumen al usarse
 - ⚠️ No puedes usar 2 power-ups del mismo tipo simultáneamente
-- ⚠️ Algunos power-ups son temporales (24h, 7 días)
-
----
-
-### 6.2.3 Gestionar Ítems
-
-**Acciones Disponibles:**
-
-**Equipar (Cosméticos - Futuro):**
-- Selecciona ítem cosmético
-- Haz clic en "Equipar"
-- ✅ Visible en tu perfil y avatar
-
-**Desequipar:**
-- Selecciona ítem equipado
-- Haz clic en "Desequipar"
-- ✅ Vuelve al inventario
-
-**Regalar (Futuro):**
-- Selecciona ítem
-- Haz clic en "Regalar"
-- Elige amigo destinatario
-- Confirma regalo
-- ✅ Ítem transferido
-
-**Eliminar:**
-- Algunos ítems pueden eliminarse (no recomendado)
-- Acción irreversible
-- No obtienes coins de vuelta
-
----
-
-## 6.3 Economía Avanzada
-
-### 6.3.1 Estrategias para Ganar Coins
-
-**Maximizar Ingresos:**
-
-**1. Enfócate en Calificaciones Altas:**
-- 100% = 200 coins (100 base + 50 bonus + 50 rango)
-- 85% = 85 coins (solo base)
-- Diferencia: +135% más coins con perfección
-
-**2. Completa Misiones:**
-- Misiones diarias: 300-500 coins/semana
-- Misiones semanales: 800-2000 coins/mes
-- Misiones especiales: 2000-10000 coins/evento
-
-**3. Mantén Racha Activa:**
-- Racha de 7 días = 300 coins bonus
-- Racha de 30 días = 1500 coins bonus
-- Racha de 100 días = 5000 coins bonus
-
-**4. Desbloquea Logros:**
-- Logros comunes: 50-200 coins
-- Logros raros: 300-500 coins
-- Logros épicos: 600-1000 coins
-- Logros legendarios: 1500-2000 coins
-
-**5. Sube de Rango:**
-- Cada rango da 500-2000 coins como bono
-- Además, obtienes descuentos en tienda
-
----
-
-### 6.3.2 Estrategias de Gasto Inteligente
-
-**Cuándo Comprar Power-Ups:**
-
-**Situaciones Ideales:**
-- 🧪 **Tiempo Extra:** Cuando el ejercicio es largo y complejo (Módulo 3+)
-- 💡 **Pista Gratis:** Si estás atascado y te quedan pocos intentos
-- 🎯 **Doble XP:** Cuando estás cerca de subir de rango
-- 🪙 **Doble Coins:** Cuando vas a completar muchos ejercicios seguidos
-- 🛡️ **Protección de Racha:** Si tienes racha larga y no podrás entrar mañana
-
-**Evitar Compras:**
-- ❌ No compres power-ups "por si acaso" - úsalos inmediatamente
-- ❌ No gastes todos tus coins - mantén mínimo 200 de reserva
-- ❌ No compres pistas si puedes reintentar el ejercicio gratis
-
----
-
-### 6.3.3 Packs vs Ítems Individuales
-
-**¿Cuándo Comprar Packs?**
-
-**Pack de Inicio (120 coins):**
-- 3 power-ups básicos (valor: 180 coins)
-- **Ahorro: 33%**
-- Ideal para: Principiantes (Rango 1-2)
-
-**Pack Premium (400 coins):**
-- 5 power-ups variados (valor: 600 coins)
-- **Ahorro: 33%**
-- Ideal para: Estudiantes avanzados (Rango 3+)
-
-**Ítems Individuales:**
-- Mejor si solo necesitas 1-2 power-ups específicos
-- Mayor flexibilidad
 
 ---
 
@@ -1716,28 +1266,32 @@ Almacén de todos tus power-ups y ítems. Desde aquí puedes ver qué tienes y u
 
 **Ruta:** `/student/friends`
 
-**Estado:** ⏸️ **Estructura Básica** (GAP-006 - Fase 3)
+**Estado:** ✅ **Implementado**
 
-**Funcionalidades Planeadas:**
+**Funcionalidades Disponibles:**
 
 **Agregar Amigos:**
-- Buscar por nombre de usuario
-- Enviar solicitud de amistad
-- Aceptar/rechazar solicitudes
-- Límite de 100 amigos
+- ✅ Buscar por nombre de usuario
+- ✅ Enviar solicitud de amistad
+- ✅ Aceptar/rechazar solicitudes recibidas
+- ✅ Límite de 100 amigos
+- ✅ Ver lista de amigos actuales
+- ✅ Eliminar amigos
 
-**Interacciones (Futuro):**
-- 💬 Enviar mensajes directos
-- 🎁 Regalar ítems
-- 🏆 Desafiar a duelos
-- 👀 Ver perfiles y progreso
-- 📊 Comparar estadísticas
+**Tabs Disponibles:**
 
-**Lista de Amigos:**
-- Ver amigos online/offline
-- Ordenar por última actividad
-- Filtrar por rango o progreso
-- Favoritos (hasta 10)
+| Tab | Descripción |
+|-----|-------------|
+| **Mis Amigos** | Lista de amigos confirmados |
+| **Solicitudes Pendientes** | Requests recibidos |
+| **Buscar Amigos** | Búsqueda de nuevos estudiantes |
+| **Actividades** | Feed de actividad de amigos |
+
+**Acciones Disponibles:**
+- 👀 Ver perfil de amigos
+- 📊 Comparar estadísticas (XP, rangos, logros)
+- 🏆 Ver posición relativa en leaderboard de amigos
+- 🌐 Ver estado online/offline
 
 ---
 
@@ -1761,14 +1315,11 @@ Almacén de todos tus power-ups y ítems. Desde aquí puedes ver qué tienes y u
 
 **Nunca Visible:**
 - 📧 Email
-- 🏫 Institución específica (solo país)
 - 💰 Balance de coins exacto
 - 📝 Calificaciones específicas
 
 **Acciones Disponibles:**
 - ➕ Agregar como amigo
-- 💬 Enviar mensaje (futuro)
-- 🏆 Desafiar a duelo (futuro)
 - 🚫 Reportar perfil (si es inapropiado)
 
 ---
@@ -1779,39 +1330,38 @@ Almacén de todos tus power-ups y ítems. Desde aquí puedes ver qué tienes y u
 
 **Ruta:** `/student/guilds`
 
-**Estado:** ⏸️ **Estructura Básica** (GAP-011 - Fase 3)
+**Estado:** ✅ **Implementado**
 
 **¿Qué son los Gremios?**
 
 Grupos de 5-20 estudiantes que colaboran para completar desafíos grupales, ganar recompensas colectivas y competir contra otros gremios.
 
-**Funcionalidades Planeadas:**
+**Funcionalidades Disponibles:**
+
+**Tabs Disponibles:**
+
+| Tab | Descripción |
+|-----|-------------|
+| **Descubrir** | Lista de gremios públicos disponibles |
+| **Mi Gremio** | Si perteneces a uno, ver detalles |
+| **Desafíos** | Retos grupales activos |
 
 **Crear Gremio:**
-- Nombre único (3-20 caracteres)
-- Descripción (200 caracteres)
-- Escudo personalizado (8 opciones)
-- Público o Privado (con invitación)
-- Requisito mínimo de rango (opcional)
+- ✅ Nombre único (3-20 caracteres)
+- ✅ Descripción (200 caracteres)
+- ✅ Configuración pública/privada
 
 **Unirse a Gremio:**
-- Buscar gremios públicos
-- Filtrar por tamaño, nivel, actividad
-- Solicitar unirse (si es privado)
-- Aceptar invitación (si te invitaron)
+- ✅ Buscar gremios públicos
+- ✅ Ver información detallada
+- ✅ Solicitar unirse
+- ✅ Aceptar invitaciones
 
 **Roles en Gremio:**
 - 👑 **Líder** (1) - Administra el gremio
 - ⚔️ **Oficial** (2-3) - Ayuda a gestionar
 - 🛡️ **Miembro** - Participante activo
 - 🌱 **Novato** - Recién unido (primeros 7 días)
-
-**Actividades de Gremio:**
-- 🏆 **Desafíos Grupales** - 5-10 miembros completan objetivos
-- 🥇 **Guerra de Gremios** - Competencia semanal contra otros gremios
-- 📊 **Ranking de Gremios** - Tabla de clasificación global
-- 💰 **Tesoro de Gremio** - Pool de coins compartido
-- 🏅 **Logros de Gremio** - Logros exclusivos grupales
 
 ---
 
@@ -1824,39 +1374,11 @@ Grupos de 5-20 estudiantes que colaboran para completar desafíos grupales, gana
 - 🏆 **Logros exclusivos** de gremio
 - 🌟 **Título de gremio** junto a tu nombre
 
-**Ranking de Gremios:**
-- Basado en XP total de todos los miembros
-- Top 10 gremios cada semana reciben:
-  - #1: 5000 coins + ítem legendario
-  - #2-3: 3000 coins + ítem épico
-  - #4-10: 1500 coins + ítem raro
-
----
-
-## 7.3 Características Sociales Futuras
-
-**Planeado para Fase 3-4:**
-
-**Chat Global (Moderado):**
-- Canal general de estudiantes
-- Canales por institución
-- Canales por gremio
-- Filtros de lenguaje inapropiado
-
-**Duelos 1v1:**
-- Desafía a un amigo a ejercicio específico
-- Compiten simultáneamente
-- Ganador recibe bonus de coins
-
-**Torneos:**
-- Eventos mensuales de toda la plataforma
-- Eliminación simple o todos vs todos
-- Premios especiales para ganadores
-
-**Sistema de Mentores:**
-- Estudiantes avanzados (Rango 5-6) pueden ser mentores
-- Ayudan a nuevos estudiantes
-- Ganan recompensas por cada estudiante que ayudan
+**Actividades de Gremio:**
+- 🏆 **Desafíos Grupales** - 5-10 miembros completan objetivos
+- 🥇 **Guerra de Gremios** - Competencia semanal contra otros gremios
+- 📊 **Ranking de Gremios** - Tabla de clasificación global
+- 🏅 **Logros de Gremio** - Logros exclusivos grupales
 
 ---
 
@@ -1871,114 +1393,90 @@ R: Ve a `/auth/forgot-password`, ingresa tu email, y sigue las instrucciones del
 R: Sí, ve a **Configuración → Cuenta → Cambiar Email**. Necesitarás verificar el nuevo email.
 
 **P: ¿Cómo activo 2FA?**
-R: Ve a **Configuración → Seguridad → Autenticación de Dos Factores** y sigue los pasos. Ver sección 2.1.5.
+R: Ve a **Configuración → Seguridad → Autenticación de Dos Factores** y sigue los pasos.
 
 **P: ¿Puedo tener múltiples cuentas?**
 R: No, está contra los términos de servicio. Una cuenta por estudiante.
-
-**P: ¿Cómo cierro mi cuenta?**
-R: Ve a **Configuración → Cuenta → Cerrar Cuenta**. Tienes 30 días de gracia para cambiar de opinión.
 
 ---
 
 ## 8.2 Ejercicios y Aprendizaje
 
 **P: ¿Puedo reintentar un ejercicio?**
-R: Sí, puedes reintentar ejercicios para mejorar tu calificación. Solo se guarda la calificación más alta. Cada reintento reduce puntos disponibles en 10%.
+R: Sí, puedes reintentar ejercicios para mejorar tu calificación. Solo se guarda la calificación más alta.
 
 **P: ¿Cuántos ejercicios hay disponibles?**
-R: Actualmente **12 ejercicios** (7 en Módulo 1, 5 en Módulo 2). Los Módulos 3-5 con 11 ejercicios adicionales llegarán en Fase 3 (1-4 meses post-MVP).
+R: **30+ ejercicios** distribuidos en 5 módulos completos, con más de 30 mecánicas diferentes.
 
 **P: ¿Los ejercicios tienen límite de tiempo?**
-R: Algunos ejercicios tienen timer opcional para desafío adicional, pero la mayoría no tiene límite estricto.
+R: Algunos ejercicios tienen timer opcional, pero la mayoría no tiene límite estricto.
 
 **P: ¿Qué pasa si no termino un ejercicio?**
 R: Tu progreso se guarda automáticamente. Puedes continuar desde donde lo dejaste.
 
 **P: ¿Cómo funcionan las pistas?**
-R: Las pistas cuestan 10 ML Coins cada una. Al usarlas, recibes información adicional para resolver el ejercicio.
-
-**P: ¿Quién califica mis ejercicios?**
-R: Los ejercicios de los Módulos 1 y 2 se califican automáticamente. Los ejercicios de texto abierto (Módulo 5, futuro) serán calificados por maestros.
+R: Las pistas cuestan 10 ML Coins cada una. Al usarlas, recibes información adicional.
 
 ---
 
 ## 8.3 Gamificación
 
 **P: ¿Cómo subo de rango?**
-R: Acumula puntos de experiencia (XP) completando ejercicios, misiones y logrando objetivos. Ver tabla de rangos en sección 4.4.1.
+R: Acumula puntos de experiencia (XP) completando ejercicios, misiones y logrando objetivos.
 
 **P: ¿Puedo bajar de rango?**
 R: No, los rangos son permanentes. Una vez alcanzado un rango, no puedes bajar.
 
 **P: ¿Cómo desbloqueo logros?**
-R: Los logros se desbloquean automáticamente al cumplir sus requisitos. Ve a `/student/achievements` para ver todos los disponibles.
-
-**P: ¿Qué son los logros secretos?**
-R: Logros ocultos que no se muestran hasta desbloquearlos. Tienen mayores recompensas y requieren acciones específicas.
+R: Los logros se desbloquean automáticamente al cumplir sus requisitos.
 
 **P: ¿Cómo funciona el leaderboard?**
-R: El leaderboard muestra el ranking de estudiantes por XP total. Se actualiza cada 30 segundos. Puedes filtrar por aula, institución o global.
+R: El leaderboard muestra el ranking de estudiantes por XP total. Se actualiza cada 30 segundos.
 
 **P: ¿Las misiones se resetean?**
-R: Misiones diarias se resetean cada 24h. Misiones semanales se resetean cada lunes. Misiones especiales son eventos únicos.
+R: Misiones diarias cada 24h. Misiones semanales cada lunes. Misiones especiales son eventos únicos.
 
 ---
 
 ## 8.4 Economía
 
 **P: ¿Puedo comprar ML Coins con dinero real?**
-R: No, ML Coins solo se ganan jugando. No hay microtransacciones ni compras con dinero real.
+R: No, ML Coins solo se ganan jugando. No hay microtransacciones.
 
 **P: ¿Los coins expiran?**
 R: No, tus ML Coins no expiran nunca.
 
 **P: ¿Puedo transferir coins a otro estudiante?**
-R: Actualmente no. En Fase 3, podrás regalar ítems (no coins directamente) a amigos.
-
-**P: ¿Qué hago si perdí coins por un bug?**
-R: Contacta a tu maestro o administrador con evidencia (screenshot) y te reembolsarán.
-
-**P: ¿Los descuentos de rango se acumulan?**
-R: No, solo aplica el descuento de tu rango actual (10-40% según rango).
+R: Actualmente no.
 
 ---
 
 ## 8.5 Tienda e Inventario
 
 **P: ¿Los power-ups expiran?**
-R: Los power-ups permanentes no expiran. Los power-ups temporales (24h, 7 días) sí expiran después de activarse.
+R: Los power-ups permanentes no expiran. Los temporales sí expiran después de activarse.
 
 **P: ¿Puedo devolver un power-up?**
-R: No, todas las compras son finales. Asegúrate de querer el ítem antes de comprar.
+R: No, todas las compras son finales.
 
 **P: ¿Cuántos power-ups puedo tener?**
-R: No hay límite en tu inventario. Puedes acumular todos los que quieras.
+R: No hay límite en tu inventario.
 
 **P: ¿Puedo usar múltiples power-ups a la vez?**
-R: Sí, pero no 2 del mismo tipo. Por ejemplo, puedes usar Doble XP + Tiempo Extra simultáneamente, pero no 2 Doble XP.
-
-**P: ¿Cuándo llegarán los ítems cosméticos?**
-R: Los ítems cosméticos (avatares, borders, emotes) llegarán en Fase 3, aproximadamente 2-3 meses post-MVP (GAP-007).
+R: Sí, pero no 2 del mismo tipo.
 
 ---
 
 ## 8.6 Social y Privacidad
 
 **P: ¿Cómo oculto mi perfil?**
-R: Ve a **Configuración → Privacidad → Perfil Público** y desactívalo. Solo maestros podrán ver tu perfil.
+R: Ve a **Configuración → Privacidad → Perfil Público** y desactívalo.
 
 **P: ¿Puedo ocultar mi posición en el leaderboard?**
 R: Sí, ve a **Configuración → Privacidad → Mostrar en Leaderboard** y desactívalo.
 
 **P: ¿Cómo reporto un perfil inapropiado?**
-R: Ve al perfil del usuario, haz clic en "..." (menú), y selecciona "Reportar Perfil". Un moderador lo revisará.
-
-**P: ¿Cuándo llegarán las funciones de amigos y mensajería?**
-R: El sistema de amigos completo y mensajería llegarán en Fase 3, aproximadamente 2-4 meses post-MVP.
-
-**P: ¿Puedo bloquear a otro estudiante?**
-R: Actualmente no, pero en Fase 3 podrás bloquear usuarios para que no vean tu perfil ni te contacten.
+R: Ve al perfil del usuario, haz clic en "..." (menú), y selecciona "Reportar Perfil".
 
 ---
 
@@ -1990,102 +1488,27 @@ R:
 2. Limpia caché del navegador
 3. Intenta en navegador diferente
 4. Verifica tu conexión a internet
-5. Si persiste, contacta soporte técnico
 
 **P: No recibí el email de verificación**
 R:
 1. Revisa la carpeta de spam
-2. Espera 1-2 minutos (puede demorar)
-3. Ve a `/auth/verify-email` y solicita reenvío
-4. Si no llega, contacta a tu maestro
-
-**P: Mi progreso no se guardó**
-R: El progreso se guarda automáticamente cada 30 segundos. Si perdiste progreso, puede ser por:
-- Cierre inesperado del navegador
-- Pérdida de conexión a internet
-- Bug (reporta a soporte técnico)
+2. Espera 1-2 minutos
+3. Solicita reenvío
 
 **P: ¿En qué navegadores funciona GAMILIT?**
-R: GAMILIT funciona en:
+R:
 - ✅ Chrome 90+
 - ✅ Firefox 88+
 - ✅ Safari 14+
 - ✅ Edge 90+
-- ⚠️ Internet Explorer no es soportado
+- ⚠️ Internet Explorer no soportado
 
 **P: ¿Funciona en móvil/tablet?**
-R: Sí, GAMILIT es completamente responsive y funciona en dispositivos móviles y tablets. Algunos ejercicios complejos pueden ser más fáciles en desktop.
+R: Sí, GAMILIT es completamente responsive.
 
 ---
 
-## 8.8 Contacto y Soporte
-
-**P: ¿Cómo contacto a mi maestro?**
-R: Tu maestro puede verte en su portal. Contacta por los canales que tu maestro te haya indicado (email, plataforma de escuela, etc.).
-
-**P: ¿Cómo reporto un bug?**
-R: Contacta a tu maestro con:
-- Descripción del problema
-- Screenshot (si aplica)
-- Navegador y sistema operativo
-- Pasos para reproducir el bug
-
-**P: ¿Hay soporte técnico?**
-R: El soporte técnico está disponible a través de tu institución educativa. Contacta a tu maestro o administrador.
-
-**P: ¿Dónde puedo dar feedback sobre la plataforma?**
-R: Tu feedback es valioso. Contacta a tu maestro o usa el formulario de feedback en **Configuración → Ayuda → Enviar Feedback**.
-
----
-
-## 8.9 Sobre GAMILIT
-
-**P: ¿Qué significa GAMILIT?**
-R: GAMILIT significa "Gamification for Multiliteracy" - Gamificación para Literacidad Múltiple.
-
-**P: ¿Por qué Marie Curie?**
-R: Marie Curie es un modelo inspirador de perseverancia, ciencia y superación de barreras. Su biografía ofrece contenido rico para desarrollar literacidad múltiple.
-
-**P: ¿Quién creó GAMILIT?**
-R: GAMILIT fue desarrollado como proyecto educativo enfocado en literacidad múltiple según el marco de Daniel Cassany.
-
-**P: ¿GAMILIT cuesta dinero?**
-R: Eso depende de tu institución educativa. No hay compras dentro de la aplicación con dinero real.
-
-**P: ¿Hay certificados al completar módulos?**
-R: Actualmente no, pero está planeado para Fase 4 (4-6 meses post-MVP).
-
----
-
-## 8.10 Roadmap y Futuro
-
-**P: ¿Cuándo llegarán los Módulos 3, 4 y 5?**
-R:
-- Módulo 3: 1-2 meses post-MVP
-- Módulo 4: 2-3 meses post-MVP
-- Módulo 5: 3-4 meses post-MVP
-
-**P: ¿Qué nuevas funciones vienen pronto?**
-R: Ver roadmap completo en **Capítulo 1.2** o `orchestration/reportes/RESUMEN-EJECUTIVO-PORTALES-2025-11-24.md`.
-
-**Próximas Funciones (Fase 3):**
-- ⏳ Módulos 3-5 con 11 ejercicios
-- ⏳ Sistema de amigos y mensajería
-- ⏳ Gremios colaborativos
-- ⏳ Ítems cosméticos
-- ⏳ WebSocket para notificaciones en tiempo real
-- ⏳ Duelos 1v1
-- ⏳ Torneos mensuales
-
-**P: ¿Habrá más personajes históricos además de Marie Curie?**
-R: Posiblemente en Fase 4-5. Se está considerando expandir a otros científicos e inventores.
-
-**P: ¿GAMILIT tendrá app móvil nativa?**
-R: Está en evaluación para 2026. Por ahora, la versión web funciona perfectamente en móviles.
-
----
-
-## 8.11 Glosario de Términos
+## 8.8 Glosario de Términos
 
 **ML Coins (🪙):** Moneda virtual de GAMILIT. ML = Marie Curie's Legacy.
 
@@ -2113,11 +1536,7 @@ R: Está en evaluación para 2026. Por ahora, la versión web funciona perfectam
 
 **2FA:** Autenticación de Dos Factores (seguridad adicional).
 
-**GAP:** Funcionalidad pendiente de implementar.
-
-**MVP:** Minimum Viable Product (Producto Mínimo Viable) - versión inicial.
-
-**Fase 3:** Período de extensiones después del lanzamiento MVP (2-4 meses).
+**Gremio/Guild:** Grupo colaborativo de estudiantes.
 
 ---
 
@@ -2134,27 +1553,18 @@ R: Está en evaluación para 2026. Por ahora, la versión web funciona perfectam
 - [ ] Logout cierra sesión correctamente
 
 ### ✅ Dashboard (5 checks)
-- [ ] Stats grid muestra datos reales (no hardcoded)
+- [ ] Stats grid muestra datos reales
 - [ ] Misiones activas se muestran con progreso
 - [ ] Módulos disponibles están listados
 - [ ] Actividad reciente muestra historial
 - [ ] Progreso de rango se calcula correctamente
 
-### ✅ Ejercicios Módulo 1 (7 checks)
-- [ ] Ejercicio 1.1 - Biografía funciona
-- [ ] Ejercicio 1.2 - Cronología funciona
-- [ ] Ejercicio 1.3 - Verdadero/Falso funciona
-- [ ] Ejercicio 1.4 - Comprensión funciona
-- [ ] Ejercicio 1.5 - Personajes funciona
-- [ ] Ejercicio 1.6 - Completar Oraciones funciona
-- [ ] Ejercicio 1.7 - Resumen Visual funciona
-
-### ✅ Ejercicios Módulo 2 (5 checks)
-- [ ] Ejercicio 2.1 - Motivaciones funciona
-- [ ] Ejercicio 2.2 - Consecuencias funciona
-- [ ] Ejercicio 2.3 - Metáforas funciona
-- [ ] Ejercicio 2.4 - Rueda de Inferencias funciona
-- [ ] Ejercicio 2.5 - Perspectivas funciona
+### ✅ Ejercicios - Todos los Módulos (30+ checks)
+- [ ] Módulo 1: 7 mecánicas funcionan
+- [ ] Módulo 2: 6 mecánicas funcionan
+- [ ] Módulo 3: 5 mecánicas funcionan
+- [ ] Módulo 4: 9 mecánicas funcionan
+- [ ] Módulo 5: 3 mecánicas funcionan
 
 ### ✅ Gamificación (6 checks)
 - [ ] Logros se desbloquean automáticamente
@@ -2168,6 +1578,12 @@ R: Está en evaluación para 2026. Por ahora, la versión web funciona perfectam
 - [ ] Compra de power-ups funciona
 - [ ] Inventario muestra ítems correctos
 - [ ] Usar power-up desde inventario funciona
+
+### ✅ Social (4 checks)
+- [ ] Sistema de amigos funciona
+- [ ] Gremios se pueden crear/unirse
+- [ ] Perfiles de usuarios visibles
+- [ ] Leaderboard de amigos funciona
 
 ### ✅ Perfil y Configuración (3 checks)
 - [ ] Editar perfil guarda cambios
@@ -2184,19 +1600,18 @@ Esperamos que disfrutes aprendiendo sobre Marie Curie mientras desarrollas tus h
 - 📚 Aprende a tu propio ritmo
 - 🎯 Completa misiones para maximizar recompensas
 - 🏆 Desbloquea todos los logros
-- 👥 Conéctate con otros estudiantes (pronto)
+- 👥 Conéctate con otros estudiantes
+- 🛡️ Únete a un gremio para beneficios extra
 - 🌟 ¡Diviértete mientras aprendes!
 
 ---
 
 **FIN DEL MANUAL DEL PORTAL DE ESTUDIANTES** ✅
 
-**Última actualización:** 24 de noviembre de 2025
-**Versión del Portal:** 1.0.0 (MVP - 95% Funcional)
-**Próxima revisión:** Con lanzamiento de Fase 3 (Módulos 3-5)
+**Última actualización:** 25 de noviembre de 2025
+**Versión del Portal:** 1.1.0 (MVP Completo)
+**Versión del Manual:** 1.1.0
 
 **Documentos Relacionados:**
-- `docs/finiquito/Manual_Portal_Maestros_ACTUALIZADO.md` (v1.1)
-- `docs/finiquito/Manual_Portal_Administrador_ACTUALIZADO.md` (v1.1)
-- `orchestration/reportes/INFORME-ALCANCE-Y-VALIDACION-PORTALES-2025-11-24.md`
-- `orchestration/reportes/RESUMEN-EJECUTIVO-PORTALES-2025-11-24.md`
+- `docs/finiquito/Manual_Portal_Maestros_ACTUALIZADO.md`
+- `docs/finiquito/Manual_Portal_Administrador_ACTUALIZADO.md`

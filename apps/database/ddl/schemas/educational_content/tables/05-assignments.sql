@@ -5,7 +5,9 @@
 
 CREATE TABLE educational_content.assignments (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    teacher_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    -- FK corregida: auth.users -> auth_management.profiles (ISS-003 P2 - 2025-11-26)
+    -- Cambio de CASCADE a RESTRICT para prevenir pérdida de datos al eliminar teachers
+    teacher_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE RESTRICT,
     title VARCHAR(255) NOT NULL,
     description TEXT,
     assignment_type VARCHAR(50) NOT NULL CHECK (assignment_type IN ('practice', 'quiz', 'exam', 'homework')),

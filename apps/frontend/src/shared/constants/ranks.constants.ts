@@ -20,17 +20,17 @@ export enum MayaRank {
   NACOM = 'Nacom',
   AH_KIN = "Ah K'in",
   HALACH_UINIC = 'Halach Uinic',
-  KUKUKULKAN = "K'uk'ulkan"
+  KUKULKAN = "K'uk'ulkan",
 }
 
 export interface RankConfig {
   id: MayaRank;
   name: string;
   level: number;
-  xpMin: number;              // ✅ NUEVO: XP mínimo (fuente de verdad)
-  xpMax: number | null;       // ✅ NUEVO: XP máximo (null = sin límite)
-  mlCoinsBonus: number;       // ✅ CAMBIADO: De "required" a "bonus"
-  xpMultiplier: number;       // ✅ CAMBIADO: De "multiplier" genérico a específico XP
+  xpMin: number; // ✅ NUEVO: XP mínimo (fuente de verdad)
+  xpMax: number | null; // ✅ NUEVO: XP máximo (null = sin límite)
+  mlCoinsBonus: number; // ✅ CAMBIADO: De "required" a "bonus"
+  xpMultiplier: number; // ✅ CAMBIADO: De "multiplier" genérico a específico XP
   description: string;
   color: string;
   icon: string;
@@ -48,10 +48,10 @@ export const MAYA_RANKS: Record<MayaRank, RankConfig> = {
     xpMin: 0,
     xpMax: 499,
     mlCoinsBonus: 0,
-    xpMultiplier: 1.00,
+    xpMultiplier: 1.0,
     description: 'Señor - Inicio del camino del conocimiento',
     color: '#8B4513',
-    icon: '🌱'
+    icon: '🌱',
   },
   [MayaRank.NACOM]: {
     id: MayaRank.NACOM,
@@ -60,10 +60,10 @@ export const MAYA_RANKS: Record<MayaRank, RankConfig> = {
     xpMin: 500,
     xpMax: 999,
     mlCoinsBonus: 100,
-    xpMultiplier: 1.10,
+    xpMultiplier: 1.1,
     description: 'Capitán de Guerra - Guerrero en entrenamiento',
     color: '#CD7F32',
-    icon: '⚔️'
+    icon: '⚔️',
   },
   [MayaRank.AH_KIN]: {
     id: MayaRank.AH_KIN,
@@ -75,7 +75,7 @@ export const MAYA_RANKS: Record<MayaRank, RankConfig> = {
     xpMultiplier: 1.15,
     description: 'Sacerdote del Sol - Guía del conocimiento',
     color: '#C0C0C0',
-    icon: '☀️'
+    icon: '☀️',
   },
   [MayaRank.HALACH_UINIC]: {
     id: MayaRank.HALACH_UINIC,
@@ -84,13 +84,13 @@ export const MAYA_RANKS: Record<MayaRank, RankConfig> = {
     xpMin: 1500,
     xpMax: 2249,
     mlCoinsBonus: 500,
-    xpMultiplier: 1.20,
+    xpMultiplier: 1.2,
     description: 'Hombre Verdadero - Líder de la comunidad',
     color: '#FFD700',
-    icon: '👑'
+    icon: '👑',
   },
-  [MayaRank.KUKUKULKAN]: {
-    id: MayaRank.KUKUKULKAN,
+  [MayaRank.KUKULKAN]: {
+    id: MayaRank.KUKULKAN,
     name: "K'uk'ulkan",
     level: 5,
     xpMin: 2250,
@@ -99,8 +99,8 @@ export const MAYA_RANKS: Record<MayaRank, RankConfig> = {
     xpMultiplier: 1.25,
     description: 'Serpiente Emplumada - Maestro legendario',
     color: '#9B59B6',
-    icon: '🐉'
-  }
+    icon: '🐉',
+  },
 };
 
 /**
@@ -111,7 +111,7 @@ export const MAYA_RANKS_ORDERED: RankConfig[] = [
   MAYA_RANKS[MayaRank.NACOM],
   MAYA_RANKS[MayaRank.AH_KIN],
   MAYA_RANKS[MayaRank.HALACH_UINIC],
-  MAYA_RANKS[MayaRank.KUKUKULKAN]
+  MAYA_RANKS[MayaRank.KUKULKAN],
 ];
 
 /**
@@ -125,7 +125,7 @@ export const getRankById = (rankId: MayaRank): RankConfig => {
  * Obtener siguiente rango
  */
 export const getNextRank = (currentRank: MayaRank): RankConfig | null => {
-  const currentIndex = MAYA_RANKS_ORDERED.findIndex(r => r.id === currentRank);
+  const currentIndex = MAYA_RANKS_ORDERED.findIndex((r) => r.id === currentRank);
   if (currentIndex === -1 || currentIndex === MAYA_RANKS_ORDERED.length - 1) {
     return null; // Ya está en el rango máximo
   }
@@ -136,10 +136,7 @@ export const getNextRank = (currentRank: MayaRank): RankConfig | null => {
  * Calcular progreso al siguiente rango (0-100%)
  * ✅ v2.0: Ahora basado en XP (antes usaba ML Coins incorrectamente)
  */
-export const calculateRankProgress = (
-  currentRank: MayaRank,
-  currentXP: number
-): number => {
+export const calculateRankProgress = (currentRank: MayaRank, currentXP: number): number => {
   const nextRank = getNextRank(currentRank);
   if (!nextRank) return 100; // Máximo rango alcanzado
 

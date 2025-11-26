@@ -145,9 +145,9 @@ CREATE INDEX idx_missions_user_type_status ON gamification_system.missions USING
 
 --
 -- Name: missions missions_updated_at; Type: TRIGGER; Schema: gamification_system; Owner: postgres
+-- NOTE: Trigger movido a archivo separado para evitar duplicación
+-- Ver: gamification_system/triggers/17-missions_updated_at.sql
 --
-
-CREATE TRIGGER missions_updated_at BEFORE UPDATE ON gamification_system.missions FOR EACH ROW EXECUTE FUNCTION gamification_system.update_missions_updated_at();
 
 
 --

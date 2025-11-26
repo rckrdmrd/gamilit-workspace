@@ -1,6 +1,5 @@
-import React from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { User, Clock, Target, TrendingUp } from 'lucide-react';
+import { User, Clock, Target, TrendingUp, Activity, BookOpen } from 'lucide-react';
 import type { StudentMonitoring } from '../../types';
 
 interface StudentStatusCardProps {
@@ -8,44 +7,75 @@ interface StudentStatusCardProps {
   onClick?: () => void;
 }
 
+type StatusInfo = {
+  color: string;
+  bgColor: string;
+  textColor: string;
+  label: string;
+  icon: React.ReactNode;
+  description: string;
+};
+
 export function StudentStatusCard({ student, onClick }: StudentStatusCardProps) {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-500';
-      case 'inactive':
-        return 'bg-yellow-500';
-      case 'offline':
-        return 'bg-red-500';
-      default:
-        return 'bg-gray-500';
-    }
-  };
+  /**
+   * Get detailed status information based on last activity time
+   *
+   * Status criteria:
+   * - Activo (verde): Actividad en últimos 5 min
+   * - En ejercicio (azul): Tiene ejercicio en progreso
+   * - Inactivo (gris): Sin actividad > 5 min
+   * - Desconectado (rojo): Sin actividad > 30 min
+   */
+  const getStatusInfo = (student: StudentMonitoring): StatusInfo => {
+    const now = new Date();
+    const last = new Date(student.last_activity);
+    const diffMins = Math.floor((now.getTime() - last.getTime()) / 60000);
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'Activo';
-      case 'inactive':
-        return 'Inactivo';
-      case 'offline':
-        return 'Offline';
-      default:
-        return 'Desconocido';
+    // Activo: menos de 5 minutos
+    if (diffMins < 5) {
+      return {
+        color: 'border-green-500',
+        bgColor: 'bg-green-500',
+        textColor: 'text-green-500',
+        label: 'Activo',
+        icon: <Activity className="h-4 w-4" />,
+        description: 'Activo ahora',
+      };
     }
-  };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'active':
-        return '🟢';
-      case 'inactive':
-        return '🟡';
-      case 'offline':
-        return '🔴';
-      default:
-        return '⚪';
+    // En ejercicio: tiene ejercicio actual y menos de 30 min
+    if (student.current_exercise && diffMins < 30) {
+      return {
+        color: 'border-blue-500',
+        bgColor: 'bg-blue-500',
+        textColor: 'text-blue-500',
+        label: 'En ejercicio',
+        icon: <BookOpen className="h-4 w-4" />,
+        description: 'Resolviendo ejercicio',
+      };
     }
+
+    // Desconectado: más de 30 minutos
+    if (diffMins >= 30) {
+      return {
+        color: 'border-red-500',
+        bgColor: 'bg-red-500',
+        textColor: 'text-red-500',
+        label: 'Desconectado',
+        icon: <div className="h-2 w-2 rounded-full bg-red-500" />,
+        description: 'Fuera de línea',
+      };
+    }
+
+    // Inactivo: entre 5 y 30 minutos
+    return {
+      color: 'border-gray-500',
+      bgColor: 'bg-gray-500',
+      textColor: 'text-gray-500',
+      label: 'Inactivo',
+      icon: <div className="h-2 w-2 rounded-full bg-gray-500" />,
+      description: 'Sin actividad reciente',
+    };
   };
 
   const getTimeSinceLastActivity = (lastActivity: string) => {
@@ -54,7 +84,9 @@ export function StudentStatusCard({ student, onClick }: StudentStatusCardProps) 
     const diffMs = now.getTime() - last.getTime();
     const diffMins = Math.floor(diffMs / 60000);
 
-    if (diffMins < 60) {
+    if (diffMins < 1) {
+      return 'Hace un momento';
+    } else if (diffMins < 60) {
       return `Hace ${diffMins} min`;
     } else if (diffMins < 1440) {
       return `Hace ${Math.floor(diffMins / 60)} hrs`;
@@ -63,14 +95,19 @@ export function StudentStatusCard({ student, onClick }: StudentStatusCardProps) 
     }
   };
 
+  const statusInfo = getStatusInfo(student);
+
   return (
-    <DetectiveCard onClick={onClick} className="cursor-pointer hover:border-detective-orange">
+    <DetectiveCard
+      onClick={onClick}
+      className={`cursor-pointer transition-all duration-200 hover:border-detective-orange ${statusInfo.color} border-l-4`}
+    >
       <div className="space-y-4">
-        {/* Header */}
+        {/* Header with improved status badge */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-detective-bg-secondary rounded-full">
-              <User className="w-5 h-5 text-detective-orange" />
+            <div className="rounded-full bg-detective-bg-secondary p-2">
+              <User className="h-5 w-5 text-detective-orange" />
             </div>
             <div>
               <h3 className="font-bold text-detective-text">{student.full_name}</h3>
@@ -78,24 +115,31 @@ export function StudentStatusCard({ student, onClick }: StudentStatusCardProps) 
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-lg">{getStatusIcon(student.status)}</span>
-            <span className={`px-2 py-1 rounded text-xs font-semibold text-white ${getStatusColor(student.status)}`}>
-              {getStatusText(student.status)}
-            </span>
+            <div
+              className={`flex items-center gap-2 rounded-lg px-3 py-1.5 ${statusInfo.bgColor} border bg-opacity-10 ${statusInfo.color}`}
+            >
+              <span className={statusInfo.textColor}>{statusInfo.icon}</span>
+              <span className={`text-xs font-semibold ${statusInfo.textColor}`}>
+                {statusInfo.label}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Current Activity */}
+        {/* Current Activity with enhanced visual */}
         {student.current_module && (
-          <div className="bg-detective-bg-secondary p-3 rounded-lg">
-            <p className="text-xs text-detective-text-secondary mb-1">Trabajando en:</p>
-            <p className="text-sm font-semibold text-detective-text">
-              {student.current_module}
+          <div
+            className={`rounded-lg border-l-2 p-3 ${student.current_exercise ? 'border-blue-400 bg-blue-50' : 'border-detective-border bg-detective-bg-secondary'}`}
+          >
+            <p className="mb-1 flex items-center gap-1 text-xs text-detective-text-secondary">
+              <BookOpen className="h-3 w-3" />
+              Trabajando en:
             </p>
+            <p className="text-sm font-semibold text-detective-text">{student.current_module}</p>
             {student.current_exercise && (
-              <p className="text-xs text-detective-text-secondary mt-1">
-                Ejercicio: {student.current_exercise}
-              </p>
+              <div className="mt-2 border-t border-blue-200 pt-2">
+                <p className="text-xs font-medium text-blue-600">{student.current_exercise}</p>
+              </div>
             )}
           </div>
         )}
@@ -103,8 +147,8 @@ export function StudentStatusCard({ student, onClick }: StudentStatusCardProps) 
         {/* Stats Grid */}
         <div className="grid grid-cols-3 gap-3">
           <div className="text-center">
-            <div className="flex items-center justify-center gap-1 mb-1">
-              <Target className="w-4 h-4 text-detective-orange" />
+            <div className="mb-1 flex items-center justify-center gap-1">
+              <Target className="h-4 w-4 text-detective-orange" />
             </div>
             <p className="text-lg font-bold text-detective-text">
               {student.exercises_completed}/{student.exercises_total}
@@ -113,8 +157,8 @@ export function StudentStatusCard({ student, onClick }: StudentStatusCardProps) 
           </div>
 
           <div className="text-center">
-            <div className="flex items-center justify-center gap-1 mb-1">
-              <TrendingUp className="w-4 h-4 text-detective-gold" />
+            <div className="mb-1 flex items-center justify-center gap-1">
+              <TrendingUp className="h-4 w-4 text-detective-gold" />
             </div>
             <p className="text-lg font-bold text-detective-text">
               {student.score_average.toFixed(0)}%
@@ -123,8 +167,8 @@ export function StudentStatusCard({ student, onClick }: StudentStatusCardProps) 
           </div>
 
           <div className="text-center">
-            <div className="flex items-center justify-center gap-1 mb-1">
-              <Clock className="w-4 h-4 text-detective-accent" />
+            <div className="mb-1 flex items-center justify-center gap-1">
+              <Clock className="text-detective-accent h-4 w-4" />
             </div>
             <p className="text-lg font-bold text-detective-text">
               {Math.floor(student.time_spent_minutes / 60)}h
@@ -135,22 +179,22 @@ export function StudentStatusCard({ student, onClick }: StudentStatusCardProps) 
 
         {/* Progress Bar */}
         <div>
-          <div className="flex justify-between items-center mb-2">
+          <div className="mb-2 flex items-center justify-between">
             <span className="text-xs text-detective-text-secondary">Progreso General</span>
             <span className="text-xs font-semibold text-detective-text">
               {student.progress_percentage.toFixed(0)}%
             </span>
           </div>
-          <div className="w-full bg-detective-bg-secondary rounded-full h-2">
+          <div className="h-2 w-full rounded-full bg-detective-bg-secondary">
             <div
-              className="bg-gradient-to-r from-detective-orange to-detective-gold h-2 rounded-full transition-all duration-300"
+              className="h-2 rounded-full bg-gradient-to-r from-detective-orange to-detective-gold transition-all duration-300"
               style={{ width: `${student.progress_percentage}%` }}
             />
           </div>
         </div>
 
         {/* Last Activity */}
-        <div className="flex items-center justify-between pt-2 border-t border-detective-bg-secondary">
+        <div className="flex items-center justify-between border-t border-detective-bg-secondary pt-2">
           <span className="text-xs text-detective-text-secondary">Última actividad:</span>
           <span className="text-xs font-semibold text-detective-text">
             {getTimeSinceLastActivity(student.last_activity)}

@@ -28,12 +28,12 @@ export const QuickActionsCardExample: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="space-y-8 p-6">
       <h1 className="text-2xl font-bold">Ejemplos de QuickActionsCard</h1>
 
       {/* Ejemplo 1: Uso básico */}
       <section>
-        <h2 className="text-xl font-semibold mb-4">1. Uso Básico</h2>
+        <h2 className="mb-4 text-xl font-semibold">1. Uso Básico</h2>
         <QuickActionsCard
           onContinueCase={handleContinueCase}
           onViewProgress={handleViewProgress}
@@ -43,7 +43,7 @@ export const QuickActionsCardExample: React.FC = () => {
 
       {/* Ejemplo 2: Con información personalizada */}
       <section>
-        <h2 className="text-xl font-semibold mb-4">2. Con Datos Personalizados</h2>
+        <h2 className="mb-4 text-xl font-semibold">2. Con Datos Personalizados</h2>
         <QuickActionsCard
           onContinueCase={handleContinueCase}
           onViewProgress={handleViewProgress}
@@ -56,7 +56,7 @@ export const QuickActionsCardExample: React.FC = () => {
 
       {/* Ejemplo 3: Reto diario completado */}
       <section>
-        <h2 className="text-xl font-semibold mb-4">3. Reto Diario Completado</h2>
+        <h2 className="mb-4 text-xl font-semibold">3. Reto Diario Completado</h2>
         <QuickActionsCard
           onContinueCase={handleContinueCase}
           onViewProgress={handleViewProgress}
@@ -69,7 +69,7 @@ export const QuickActionsCardExample: React.FC = () => {
 
       {/* Ejemplo 4: Integración con estado real */}
       <section>
-        <h2 className="text-xl font-semibold mb-4">4. Con Estado del Usuario</h2>
+        <h2 className="mb-4 text-xl font-semibold">4. Con Estado del Usuario</h2>
         <QuickActionsCardWithState />
       </section>
     </div>
@@ -81,7 +81,7 @@ export const QuickActionsCardExample: React.FC = () => {
  */
 const QuickActionsCardWithState: React.FC = () => {
   const navigate = useNavigate();
-  const [userProgress, setUserProgress] = React.useState({
+  const [userProgress] = React.useState({
     currentCase: 'El Enigma del Parque',
     completionPercentage: 60,
     hasCompletedDailyChallenge: false,
@@ -124,15 +124,15 @@ export const DashboardWithQuickActions: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-orange-100 p-6">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Dashboard del Detective</h1>
+      <div className="mx-auto max-w-7xl">
+        <h1 className="mb-6 text-3xl font-bold">Dashboard del Detective</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Columna principal */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="space-y-6 lg:col-span-2">
             {/* Otros componentes del dashboard */}
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <h2 className="text-xl font-semibold mb-4">Estadísticas</h2>
+            <div className="rounded-lg bg-white p-6 shadow-md">
+              <h2 className="mb-4 text-xl font-semibold">Estadísticas</h2>
               <p className="text-gray-600">Aquí van las estadísticas...</p>
             </div>
           </div>
@@ -149,8 +149,8 @@ export const DashboardWithQuickActions: React.FC = () => {
             />
 
             {/* Otros widgets del sidebar */}
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <h2 className="text-xl font-semibold mb-4">Misiones</h2>
+            <div className="rounded-lg bg-white p-6 shadow-md">
+              <h2 className="mb-4 text-xl font-semibold">Misiones</h2>
               <p className="text-gray-600">Lista de misiones...</p>
             </div>
           </div>

@@ -5,7 +5,6 @@
  */
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { useInventoryManagement } from '@/features/gamification/economy/hooks/useInventoryQuery';
 import type { PowerUpType } from '@/features/gamification/economy/api/inventoryAPI';
@@ -20,33 +19,23 @@ interface PowerUpCardProps {
   onUse: () => void;
 }
 
-const PowerUpCard: React.FC<PowerUpCardProps> = ({
-  type,
-  name,
-  description,
-  icon,
-  available,
-  cost,
-  onUse,
-}) => {
+const PowerUpCard: React.FC<PowerUpCardProps> = ({ name, description, icon, available, onUse }) => {
   return (
-    <div className="bg-white rounded-detective shadow-card p-4 border-2 border-detective-orange/20 hover:border-detective-orange transition-all">
+    <div className="rounded-detective border-2 border-detective-orange/20 bg-white p-4 shadow-card transition-all hover:border-detective-orange">
       <div className="flex items-start gap-3">
         <div className="text-4xl">{icon}</div>
         <div className="flex-1">
           <h3 className="text-detective-lg font-bold text-detective-text">{name}</h3>
-          <p className="text-detective-sm text-detective-text-secondary mb-2">{description}</p>
+          <p className="mb-2 text-detective-sm text-detective-text-secondary">{description}</p>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Icons.Package className="w-4 h-4 text-detective-orange" />
-              <span className="text-detective-sm font-semibold">
-                Disponibles: {available}
-              </span>
+              <Icons.Package className="h-4 w-4 text-detective-orange" />
+              <span className="text-detective-sm font-semibold">Disponibles: {available}</span>
             </div>
             <button
               onClick={onUse}
               disabled={available <= 0}
-              className="px-3 py-1 bg-detective-orange text-white rounded-detective text-detective-sm font-semibold disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-detective-orange-dark transition-colors"
+              className="rounded-detective bg-detective-orange px-3 py-1 text-detective-sm font-semibold text-white transition-colors hover:bg-detective-orange-dark disabled:cursor-not-allowed disabled:bg-gray-300"
             >
               Usar
             </button>
@@ -58,22 +47,22 @@ const PowerUpCard: React.FC<PowerUpCardProps> = ({
 };
 
 export const PowerUpInventory: React.FC = () => {
-  const { inventory, isLoading, isError, getTotalPowerUps, usePowerUp, isUsing } =
+  const { inventory, isLoading, isError, getTotalPowerUps, applyPowerUp, isUsing } =
     useInventoryManagement();
-  const [selectedType, setSelectedType] = useState<PowerUpType | null>(null);
+  const [, setSelectedType] = useState<PowerUpType | null>(null);
 
   const handleUse = (type: PowerUpType) => {
     setSelectedType(type);
     // In a real scenario, you would prompt for exerciseId
     // For now, using a placeholder
     const exerciseId = 'placeholder-exercise-id';
-    usePowerUp({ powerupType: type, exerciseId });
+    applyPowerUp({ powerupType: type, exerciseId });
   };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Icons.Loader className="w-8 h-8 animate-spin text-detective-orange" />
+        <Icons.Loader className="h-8 w-8 animate-spin text-detective-orange" />
         <span className="ml-3 text-detective-lg text-detective-text-secondary">
           Cargando inventario...
         </span>
@@ -83,12 +72,10 @@ export const PowerUpInventory: React.FC = () => {
 
   if (isError) {
     return (
-      <div className="text-center py-12 bg-red-50 rounded-detective border border-red-200">
-        <Icons.AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-        <p className="text-detective-lg text-red-700 mb-2">Error al cargar inventario</p>
-        <p className="text-detective-base text-red-600">
-          Por favor, intenta recargar la página
-        </p>
+      <div className="rounded-detective border border-red-200 bg-red-50 py-12 text-center">
+        <Icons.AlertCircle className="mx-auto mb-4 h-16 w-16 text-red-500" />
+        <p className="mb-2 text-detective-lg text-red-700">Error al cargar inventario</p>
+        <p className="text-detective-base text-red-600">Por favor, intenta recargar la página</p>
       </div>
     );
   }
@@ -126,28 +113,22 @@ export const PowerUpInventory: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-detective-2xl font-bold text-detective-text">Mi Inventario</h2>
-        <div className="flex items-center gap-2 bg-detective-bg px-4 py-2 rounded-detective">
-          <Icons.Package className="w-5 h-5 text-detective-orange" />
-          <span className="font-semibold text-detective-text">
-            {totalPowerUps} Power-ups
-          </span>
+        <div className="flex items-center gap-2 rounded-detective bg-detective-bg px-4 py-2">
+          <Icons.Package className="h-5 w-5 text-detective-orange" />
+          <span className="font-semibold text-detective-text">{totalPowerUps} Power-ups</span>
         </div>
       </div>
 
       {totalPowerUps > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {powerUpsList.map((powerUp) => (
-            <PowerUpCard
-              key={powerUp.type}
-              {...powerUp}
-              onUse={() => handleUse(powerUp.type)}
-            />
+            <PowerUpCard key={powerUp.type} {...powerUp} onUse={() => handleUse(powerUp.type)} />
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 bg-white rounded-detective shadow-card">
-          <Icons.Package className="w-16 h-16 text-gray-200 mx-auto mb-4" />
-          <p className="text-detective-lg text-detective-text-secondary mb-2">
+        <div className="rounded-detective bg-white py-12 text-center shadow-card">
+          <Icons.Package className="mx-auto mb-4 h-16 w-16 text-gray-200" />
+          <p className="mb-2 text-detective-lg text-detective-text-secondary">
             No tienes power-ups en tu inventario
           </p>
           <p className="text-detective-base text-detective-text-secondary">
@@ -157,9 +138,9 @@ export const PowerUpInventory: React.FC = () => {
       )}
 
       {isUsing && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-detective p-6 shadow-xl">
-            <Icons.Loader className="w-8 h-8 animate-spin text-detective-orange mx-auto" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="rounded-detective bg-white p-6 shadow-xl">
+            <Icons.Loader className="mx-auto h-8 w-8 animate-spin text-detective-orange" />
             <p className="mt-3 text-detective-text">Usando power-up...</p>
           </div>
         </div>

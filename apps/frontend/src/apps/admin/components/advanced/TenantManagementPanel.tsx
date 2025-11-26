@@ -29,7 +29,7 @@ interface Tenant {
   name: string;
   domain: string;
   status: 'active' | 'suspended' | 'trial';
-  plan: 'free' | 'pro' | 'enterprise';
+  plan: 'free' | 'basic' | 'professional' | 'enterprise';
   users: number;
   storage: number;
   storageLimit: number;
@@ -44,7 +44,7 @@ export const TenantManagementPanel: React.FC = () => {
       name: 'Escuela Primaria Central',
       domain: 'central.gamilit.com',
       status: 'active',
-      plan: 'pro',
+      plan: 'professional',
       users: 450,
       storage: 25.5,
       storageLimit: 100,
@@ -113,22 +113,28 @@ export const TenantManagementPanel: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Building2 className="w-8 h-8 text-detective-orange" />
+          <Building2 className="h-8 w-8 text-detective-orange" />
           <div>
             <h2 className="text-detective-subtitle">Multi-tenant Management</h2>
-            <p className="text-detective-small text-gray-400">{tenants.length} tenants configured</p>
+            <p className="text-detective-small text-gray-400">
+              {tenants.length} tenants configured
+            </p>
           </div>
         </div>
-        <DetectiveButton variant="primary" icon={<Plus className="w-4 h-4" />} onClick={handleCreate}>
+        <DetectiveButton
+          variant="primary"
+          icon={<Plus className="h-4 w-4" />}
+          onClick={handleCreate}
+        >
           New Tenant
         </DetectiveButton>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <DetectiveCard className="bg-gradient-to-br from-green-500/10 to-green-600/5 border border-green-500/30">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <DetectiveCard className="border border-green-500/30 bg-gradient-to-br from-green-500/10 to-green-600/5">
           <div className="flex items-center gap-3">
-            <Power className="w-6 h-6 text-green-500" />
+            <Power className="h-6 w-6 text-green-500" />
             <div>
               <p className="text-detective-small text-gray-400">Active</p>
               <p className="text-2xl font-bold text-green-500">
@@ -138,9 +144,9 @@ export const TenantManagementPanel: React.FC = () => {
           </div>
         </DetectiveCard>
 
-        <DetectiveCard className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 border border-yellow-500/30">
+        <DetectiveCard className="border border-yellow-500/30 bg-gradient-to-br from-yellow-500/10 to-yellow-600/5">
           <div className="flex items-center gap-3">
-            <TrendingUp className="w-6 h-6 text-yellow-500" />
+            <TrendingUp className="h-6 w-6 text-yellow-500" />
             <div>
               <p className="text-detective-small text-gray-400">Trial</p>
               <p className="text-2xl font-bold text-yellow-500">
@@ -150,9 +156,9 @@ export const TenantManagementPanel: React.FC = () => {
           </div>
         </DetectiveCard>
 
-        <DetectiveCard className="bg-gradient-to-br from-red-500/10 to-red-600/5 border border-red-500/30">
+        <DetectiveCard className="border border-red-500/30 bg-gradient-to-br from-red-500/10 to-red-600/5">
           <div className="flex items-center gap-3">
-            <PowerOff className="w-6 h-6 text-red-500" />
+            <PowerOff className="h-6 w-6 text-red-500" />
             <div>
               <p className="text-detective-small text-gray-400">Suspended</p>
               <p className="text-2xl font-bold text-red-500">
@@ -162,9 +168,9 @@ export const TenantManagementPanel: React.FC = () => {
           </div>
         </DetectiveCard>
 
-        <DetectiveCard className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/30">
+        <DetectiveCard className="border border-blue-500/30 bg-gradient-to-br from-blue-500/10 to-blue-600/5">
           <div className="flex items-center gap-3">
-            <Users className="w-6 h-6 text-blue-500" />
+            <Users className="h-6 w-6 text-blue-500" />
             <div>
               <p className="text-detective-small text-gray-400">Total Users</p>
               <p className="text-2xl font-bold text-blue-500">
@@ -181,9 +187,9 @@ export const TenantManagementPanel: React.FC = () => {
           <h3 className="text-detective-subtitle mb-4">
             {editingTenant.id ? 'Edit Tenant' : 'Create New Tenant'}
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block text-detective-small text-gray-400 mb-2">Tenant Name *</label>
+              <label className="text-detective-small mb-2 block text-gray-400">Tenant Name *</label>
               <input
                 type="text"
                 className="input-detective"
@@ -193,7 +199,7 @@ export const TenantManagementPanel: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-detective-small text-gray-400 mb-2">Domain *</label>
+              <label className="text-detective-small mb-2 block text-gray-400">Domain *</label>
               <input
                 type="text"
                 className="input-detective"
@@ -203,26 +209,34 @@ export const TenantManagementPanel: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-detective-small text-gray-400 mb-2">Plan</label>
+              <label className="text-detective-small mb-2 block text-gray-400">Plan</label>
               <select
                 className="input-detective"
                 value={editingTenant.plan || 'free'}
                 onChange={(e) =>
-                  setEditingTenant({ ...editingTenant, plan: e.target.value as 'free' | 'pro' | 'enterprise' })
+                  setEditingTenant({
+                    ...editingTenant,
+                    plan: e.target.value as 'free' | 'basic' | 'professional' | 'enterprise',
+                  })
                 }
               >
                 <option value="free">Free</option>
-                <option value="pro">Pro</option>
+                <option value="basic">Basic</option>
+                <option value="professional">Professional</option>
                 <option value="enterprise">Enterprise</option>
               </select>
             </div>
             <div>
-              <label className="block text-detective-small text-gray-400 mb-2">Storage Limit (GB)</label>
+              <label className="text-detective-small mb-2 block text-gray-400">
+                Storage Limit (GB)
+              </label>
               <input
                 type="number"
                 className="input-detective"
                 value={editingTenant.storageLimit || 10}
-                onChange={(e) => setEditingTenant({ ...editingTenant, storageLimit: parseFloat(e.target.value) })}
+                onChange={(e) =>
+                  setEditingTenant({ ...editingTenant, storageLimit: parseFloat(e.target.value) })
+                }
                 min="1"
               />
             </div>
@@ -239,7 +253,7 @@ export const TenantManagementPanel: React.FC = () => {
       )}
 
       {/* Tenants List */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="space-y-4">
           <h3 className="text-detective-base font-semibold">All Tenants</h3>
           {tenants.map((tenant) => (
@@ -250,24 +264,26 @@ export const TenantManagementPanel: React.FC = () => {
               }`}
               onClick={() => setSelectedTenant(tenant.id)}
             >
-              <div className="flex items-start justify-between mb-3">
+              <div className="mb-3 flex items-start justify-between">
                 <div>
                   <h4 className="text-detective-base font-semibold">{tenant.name}</h4>
                   <p className="text-detective-small text-gray-400">{tenant.domain}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <span
-                    className={`px-2 py-1 rounded text-xs font-bold ${
+                    className={`rounded px-2 py-1 text-xs font-bold ${
                       tenant.status === 'active'
-                        ? 'bg-green-500/20 text-green-500 border border-green-500/30'
+                        ? 'border border-green-500/30 bg-green-500/20 text-green-500'
                         : tenant.status === 'trial'
-                        ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30'
-                        : 'bg-red-500/20 text-red-500 border border-red-500/30'
+                          ? 'border border-yellow-500/30 bg-yellow-500/20 text-yellow-500'
+                          : 'border border-red-500/30 bg-red-500/20 text-red-500'
                     }`}
                   >
                     {tenant.status.toUpperCase()}
                   </span>
-                  <span className="px-2 py-1 bg-blue-500/20 text-blue-500 rounded text-xs">{tenant.plan}</span>
+                  <span className="rounded bg-blue-500/20 px-2 py-1 text-xs text-blue-500">
+                    {tenant.plan}
+                  </span>
                 </div>
               </div>
 
@@ -284,7 +300,7 @@ export const TenantManagementPanel: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mt-3 h-2 bg-detective-bg-secondary rounded-full overflow-hidden">
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-detective-bg-secondary">
                 <div
                   className="h-full bg-gradient-to-r from-detective-orange to-yellow-500"
                   style={{ width: `${(tenant.storage / tenant.storageLimit) * 100}%` }}
@@ -299,13 +315,12 @@ export const TenantManagementPanel: React.FC = () => {
           {selectedTenantData ? (
             <div className="space-y-4">
               <DetectiveCard>
-                <div className="flex items-center justify-between mb-4">
+                <div className="mb-4 flex items-center justify-between">
                   <h3 className="text-detective-subtitle">{selectedTenantData.name}</h3>
                   <div className="flex gap-2">
                     <DetectiveButton
                       variant="blue"
-
-                      icon={<Edit className="w-4 h-4" />}
+                      icon={<Edit className="h-4 w-4" />}
                       onClick={() => setEditingTenant(selectedTenantData)}
                     >
                       Edit
@@ -313,8 +328,7 @@ export const TenantManagementPanel: React.FC = () => {
                     {selectedTenantData.status === 'active' ? (
                       <DetectiveButton
                         variant="primary"
-
-                        icon={<PowerOff className="w-4 h-4" />}
+                        icon={<PowerOff className="h-4 w-4" />}
                         onClick={() => handleSuspend(selectedTenantData.id)}
                         className="bg-red-500 hover:bg-red-600"
                       >
@@ -323,8 +337,7 @@ export const TenantManagementPanel: React.FC = () => {
                     ) : (
                       <DetectiveButton
                         variant="green"
-
-                        icon={<Power className="w-4 h-4" />}
+                        icon={<Power className="h-4 w-4" />}
                         onClick={() => handleActivate(selectedTenantData.id)}
                       >
                         Activate
@@ -334,57 +347,67 @@ export const TenantManagementPanel: React.FC = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-detective-bg-secondary rounded-lg">
+                  <div className="flex items-center justify-between rounded-lg bg-detective-bg-secondary p-3">
                     <span className="text-detective-small text-gray-400">Domain</span>
-                    <span className="text-detective-base font-mono">{selectedTenantData.domain}</span>
+                    <span className="font-mono text-detective-base">
+                      {selectedTenantData.domain}
+                    </span>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-detective-bg-secondary rounded-lg">
+                  <div className="flex items-center justify-between rounded-lg bg-detective-bg-secondary p-3">
                     <span className="text-detective-small text-gray-400">Plan</span>
                     <span className="text-detective-base uppercase">{selectedTenantData.plan}</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-detective-bg-secondary rounded-lg">
+                  <div className="flex items-center justify-between rounded-lg bg-detective-bg-secondary p-3">
                     <span className="text-detective-small text-gray-400">Created</span>
                     <span className="text-detective-base">
-                      {new Date(selectedTenantData.createdAt).toLocaleDateString('es-ES')}
+                      {selectedTenantData.createdAt
+                        ? new Date(selectedTenantData.createdAt).toLocaleDateString('es-ES')
+                        : 'N/A'}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-detective-bg-secondary rounded-lg">
+                  <div className="flex items-center justify-between rounded-lg bg-detective-bg-secondary p-3">
                     <span className="text-detective-small text-gray-400">Last Active</span>
                     <span className="text-detective-base">
-                      {new Date(selectedTenantData.lastActive).toLocaleString('es-ES')}
+                      {selectedTenantData.lastActive
+                        ? new Date(selectedTenantData.lastActive).toLocaleString('es-ES')
+                        : 'N/A'}
                     </span>
                   </div>
                 </div>
               </DetectiveCard>
 
               <DetectiveCard>
-                <h4 className="text-detective-base font-semibold mb-3">Usage Statistics</h4>
+                <h4 className="mb-3 text-detective-base font-semibold">Usage Statistics</h4>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-                    <Users className="w-6 h-6 text-blue-500 mb-2" />
+                  <div className="rounded-lg border border-blue-500/30 bg-blue-500/10 p-3">
+                    <Users className="mb-2 h-6 w-6 text-blue-500" />
                     <p className="text-detective-small text-gray-400">Users</p>
                     <p className="text-2xl font-bold text-blue-500">{selectedTenantData.users}</p>
                   </div>
-                  <div className="p-3 bg-purple-500/10 border border-purple-500/30 rounded-lg">
-                    <Database className="w-6 h-6 text-purple-500 mb-2" />
+                  <div className="rounded-lg border border-purple-500/30 bg-purple-500/10 p-3">
+                    <Database className="mb-2 h-6 w-6 text-purple-500" />
                     <p className="text-detective-small text-gray-400">Storage Used</p>
-                    <p className="text-2xl font-bold text-purple-500">{selectedTenantData.storage}GB</p>
+                    <p className="text-2xl font-bold text-purple-500">
+                      {selectedTenantData.storage}GB
+                    </p>
                   </div>
                 </div>
               </DetectiveCard>
 
-              <DetectiveCard className="bg-yellow-500/10 border border-yellow-500/30">
-                <h4 className="text-detective-base font-semibold mb-2 text-yellow-500">Tenant Isolation</h4>
+              <DetectiveCard className="border border-yellow-500/30 bg-yellow-500/10">
+                <h4 className="mb-2 text-detective-base font-semibold text-yellow-500">
+                  Tenant Isolation
+                </h4>
                 <p className="text-detective-small text-gray-400">
-                  All tenant data is isolated at the database level. Users from different tenants cannot access each
-                  other's data.
+                  All tenant data is isolated at the database level. Users from different tenants
+                  cannot access each other's data.
                 </p>
               </DetectiveCard>
             </div>
           ) : (
             <DetectiveCard>
-              <div className="text-center py-12 text-gray-400">
-                <Building2 className="w-12 h-12 mx-auto mb-2" />
+              <div className="py-12 text-center text-gray-400">
+                <Building2 className="mx-auto mb-2 h-12 w-12" />
                 <p>Select a tenant to view details</p>
               </div>
             </DetectiveCard>

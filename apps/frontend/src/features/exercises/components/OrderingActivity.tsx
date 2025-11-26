@@ -18,7 +18,15 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, ChevronUp, ChevronDown, Shuffle, GripVertical, Check, X } from 'lucide-react';
+import {
+  ChevronRight,
+  ChevronUp,
+  ChevronDown,
+  Shuffle,
+  GripVertical,
+  Check,
+  X,
+} from 'lucide-react';
 import { ExerciseHeader } from './ExerciseHeader';
 import { ExerciseFeedback } from './ExerciseFeedback';
 import { useExerciseSubmission } from '../hooks/useExerciseSubmission';
@@ -41,7 +49,6 @@ export const OrderingActivity: React.FC<ExerciseComponentProps> = ({
   onComplete,
   onCancel,
   showTimer = true,
-  allowHints = true,
 }) => {
   // Parse items from exercise content
   const originalItems: OrderableItem[] = React.useMemo(() => {
@@ -102,7 +109,7 @@ export const OrderingActivity: React.FC<ExerciseComponentProps> = ({
         }, 3000);
       }
     },
-    onError: (error) => {
+    onError: () => {
       setFeedback({
         type: 'error',
         title: 'Error',
@@ -209,7 +216,7 @@ export const OrderingActivity: React.FC<ExerciseComponentProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="mx-auto max-w-4xl p-6">
       {/* Header */}
       <ExerciseHeader
         exercise={exercise}
@@ -226,25 +233,23 @@ export const OrderingActivity: React.FC<ExerciseComponentProps> = ({
       />
 
       {/* Main content */}
-      <div className="bg-white rounded-xl border-2 border-gray-200 p-8 mb-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">
-            {exercise.content.question}
-          </h2>
+      <div className="mb-6 rounded-xl border-2 border-gray-200 bg-white p-8">
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-gray-900">{exercise.content.question}</h2>
           <button
             onClick={handleShuffle}
             disabled={result !== null}
-            className="flex items-center gap-2 px-4 py-2 border-2 border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center gap-2 rounded-lg border-2 border-gray-300 px-4 py-2 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <Shuffle className="w-4 h-4" />
+            <Shuffle className="h-4 w-4" />
             Mezclar
           </button>
         </div>
 
         {/* Instructions */}
-        <p className="text-gray-600 mb-6">
-          Ordena los siguientes elementos en la secuencia correcta. Puedes arrastrarlos o usar
-          los botones de flechas.
+        <p className="mb-6 text-gray-600">
+          Ordena los siguientes elementos en la secuencia correcta. Puedes arrastrarlos o usar los
+          botones de flechas.
         </p>
 
         {/* Ordered list */}
@@ -261,14 +266,14 @@ export const OrderingActivity: React.FC<ExerciseComponentProps> = ({
                 onDragOver={(e) => handleDragOver(e, index)}
                 onDragEnd={handleDragEnd}
                 className={`
-                  relative flex items-center gap-4 p-4 rounded-lg border-2
+                  relative flex items-center gap-4 rounded-lg border-2 p-4
                   transition-all duration-200
                   ${
                     !isValidated
-                      ? 'bg-white border-gray-300 hover:border-purple-400 hover:shadow-md'
+                      ? 'border-gray-300 bg-white hover:border-purple-400 hover:shadow-md'
                       : isCorrect
-                      ? 'bg-green-50 border-green-500'
-                      : 'bg-red-50 border-red-500'
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-red-500 bg-red-50'
                   }
                   ${draggedIndex === index ? 'opacity-50' : ''}
                   ${result ? 'cursor-default' : 'cursor-move'}
@@ -277,14 +282,14 @@ export const OrderingActivity: React.FC<ExerciseComponentProps> = ({
                 {/* Position number */}
                 <div
                   className={`
-                    w-10 h-10 rounded-full flex items-center justify-center
-                    font-bold text-lg flex-shrink-0
+                    flex h-10 w-10 flex-shrink-0 items-center justify-center
+                    rounded-full text-lg font-bold
                     ${
                       !isValidated
                         ? 'bg-purple-100 text-purple-700'
                         : isCorrect
-                        ? 'bg-green-600 text-white'
-                        : 'bg-red-600 text-white'
+                          ? 'bg-green-600 text-white'
+                          : 'bg-red-600 text-white'
                     }
                   `}
                 >
@@ -292,9 +297,7 @@ export const OrderingActivity: React.FC<ExerciseComponentProps> = ({
                 </div>
 
                 {/* Drag handle */}
-                {!result && (
-                  <GripVertical className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                )}
+                {!result && <GripVertical className="h-5 w-5 flex-shrink-0 text-gray-400" />}
 
                 {/* Content */}
                 <div className="flex-1">
@@ -305,11 +308,11 @@ export const OrderingActivity: React.FC<ExerciseComponentProps> = ({
                 {isValidated && (
                   <div className="flex-shrink-0">
                     {isCorrect ? (
-                      <Check className="w-6 h-6 text-green-600" />
+                      <Check className="h-6 w-6 text-green-600" />
                     ) : (
                       <div className="flex items-center gap-2">
-                        <X className="w-6 h-6 text-red-600" />
-                        <span className="text-sm text-red-600 font-semibold">
+                        <X className="h-6 w-6 text-red-600" />
+                        <span className="text-sm font-semibold text-red-600">
                           Posición correcta: {item.correctPosition + 1}
                         </span>
                       </div>
@@ -319,22 +322,22 @@ export const OrderingActivity: React.FC<ExerciseComponentProps> = ({
 
                 {/* Move buttons */}
                 {!result && (
-                  <div className="flex flex-col gap-1 flex-shrink-0">
+                  <div className="flex flex-shrink-0 flex-col gap-1">
                     <button
                       onClick={() => moveItem(index, 'up')}
                       disabled={index === 0}
-                      className="p-1 rounded hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      className="rounded p-1 transition-colors hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-30"
                       title="Mover arriba"
                     >
-                      <ChevronUp className="w-5 h-5 text-gray-600" />
+                      <ChevronUp className="h-5 w-5 text-gray-600" />
                     </button>
                     <button
                       onClick={() => moveItem(index, 'down')}
                       disabled={index === items.length - 1}
-                      className="p-1 rounded hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      className="rounded p-1 transition-colors hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-30"
                       title="Mover abajo"
                     >
-                      <ChevronDown className="w-5 h-5 text-gray-600" />
+                      <ChevronDown className="h-5 w-5 text-gray-600" />
                     </button>
                   </div>
                 )}
@@ -344,10 +347,10 @@ export const OrderingActivity: React.FC<ExerciseComponentProps> = ({
         </div>
 
         {/* Helper text */}
-        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
           <p className="text-sm text-blue-800">
-            💡 <strong>Tip:</strong> Puedes arrastrar los elementos para reordenarlos
-            rápidamente, o usar las flechas ↑↓ para moverlos uno por uno.
+            💡 <strong>Tip:</strong> Puedes arrastrar los elementos para reordenarlos rápidamente, o
+            usar las flechas ↑↓ para moverlos uno por uno.
           </p>
         </div>
       </div>
@@ -358,11 +361,7 @@ export const OrderingActivity: React.FC<ExerciseComponentProps> = ({
           <ExerciseFeedback
             feedback={feedback}
             explanation={result?.explanation || exercise.content.explanation}
-            onClose={
-              result?.is_correct
-                ? () => onComplete(result)
-                : () => setFeedback(null)
-            }
+            onClose={result?.is_correct ? () => onComplete(result) : () => setFeedback(null)}
           />
         </div>
       )}
@@ -372,7 +371,7 @@ export const OrderingActivity: React.FC<ExerciseComponentProps> = ({
         {onCancel && !result && (
           <button
             onClick={onCancel}
-            className="px-6 py-3 border-2 border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+            className="rounded-lg border-2 border-gray-300 px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50"
           >
             Cancelar
           </button>
@@ -382,12 +381,12 @@ export const OrderingActivity: React.FC<ExerciseComponentProps> = ({
           onClick={handleSubmit}
           disabled={isSubmitting || result !== null || timer.isTimeExpired}
           className={`
-            px-8 py-3 rounded-lg font-semibold transition-all
-            flex items-center text-lg
+            flex items-center rounded-lg px-8 py-3
+            text-lg font-semibold transition-all
             ${
               !isSubmitting && !result && !timer.isTimeExpired
-                ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-lg'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                ? 'bg-purple-600 text-white shadow-lg hover:bg-purple-700'
+                : 'cursor-not-allowed bg-gray-300 text-gray-500'
             }
           `}
         >
@@ -398,7 +397,7 @@ export const OrderingActivity: React.FC<ExerciseComponentProps> = ({
           ) : (
             <>
               Verificar orden
-              <ChevronRight className="w-5 h-5 ml-1" />
+              <ChevronRight className="ml-1 h-5 w-5" />
             </>
           )}
         </button>

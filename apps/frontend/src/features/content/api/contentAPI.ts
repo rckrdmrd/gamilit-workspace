@@ -18,7 +18,7 @@
  */
 
 import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS, FEATURE_FLAGS } from '@/services/api/apiConfig';
+import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
 import { handleAPIError } from '@/services/api/apiErrorHandler';
 import type { ApiResponse } from '@/services/api/apiTypes';
 
@@ -77,7 +77,7 @@ export type ExerciseType =
  * Maya rank enum - Official names
  * @see /docs/01-requerimientos/gamificacion/01-RANGOS-MAYA.md
  */
-export type RangoMaya = 'Ajaw' | 'Nacom' | 'Ah K\'in' | 'Halach Uinic' | 'K\'uk\'ulkan';
+export type RangoMaya = 'Ajaw' | 'Nacom' | "Ah K'in" | 'Halach Uinic' | "K'uk'ulkan";
 
 /**
  * Module summary response
@@ -267,7 +267,7 @@ const mockExercises: ExerciseSummary[] = [
  * @returns Paginated list of modules
  */
 export const getModules = async (
-  params?: PaginationParams & { difficulty?: DifficultyLevel }
+  params?: PaginationParams & { difficulty?: DifficultyLevel },
 ): Promise<PaginatedResponse<ModuleResponse>> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -285,7 +285,7 @@ export const getModules = async (
 
     const { data } = await apiClient.get<ApiResponse<ModuleResponse[]>>(
       API_ENDPOINTS.educational.modules,
-      { params }
+      { params },
     );
 
     return {
@@ -324,7 +324,7 @@ export const getModule = async (moduleId: string): Promise<ModuleDetailResponse>
     }
 
     const { data } = await apiClient.get<ApiResponse<ModuleDetailResponse>>(
-      API_ENDPOINTS.educational.module(moduleId)
+      API_ENDPOINTS.educational.module(moduleId),
     );
 
     return data.data;
@@ -352,7 +352,7 @@ export const getModuleExercises = async (moduleId: string): Promise<ExerciseSumm
     }
 
     const { data } = await apiClient.get<ApiResponse<ExerciseSummary[]>>(
-      API_ENDPOINTS.educational.moduleExercises(moduleId)
+      API_ENDPOINTS.educational.moduleExercises(moduleId),
     );
 
     return data.data;
@@ -387,7 +387,9 @@ export const getLessons = async (moduleId: string): Promise<ExerciseSummary[]> =
  * @returns List of exercises
  */
 export const getExercises = async (lessonId: string): Promise<ExerciseSummary[]> => {
-  console.warn('[contentAPI] getExercises(lessonId) is deprecated. Backend does not have lessons. Use getModuleExercises instead.');
+  console.warn(
+    '[contentAPI] getExercises(lessonId) is deprecated. Backend does not have lessons. Use getModuleExercises instead.',
+  );
   return getModuleExercises(lessonId);
 };
 
@@ -428,7 +430,7 @@ export const getExercise = async (exerciseId: string): Promise<ExerciseResponse>
     }
 
     const { data } = await apiClient.get<ApiResponse<ExerciseResponse>>(
-      API_ENDPOINTS.educational.exercise(exerciseId)
+      API_ENDPOINTS.educational.exercise(exerciseId),
     );
 
     return data.data;
@@ -446,7 +448,11 @@ export const getExercise = async (exerciseId: string): Promise<ExerciseResponse>
  * @returns Paginated list of exercises
  */
 export const getAllExercises = async (
-  params?: PaginationParams & { moduleId?: string; type?: ExerciseType; difficulty?: DifficultyLevel }
+  params?: PaginationParams & {
+    moduleId?: string;
+    type?: ExerciseType;
+    difficulty?: DifficultyLevel;
+  },
 ): Promise<PaginatedResponse<ExerciseSummary>> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -464,7 +470,7 @@ export const getAllExercises = async (
 
     const { data } = await apiClient.get<ApiResponse<ExerciseSummary[]>>(
       API_ENDPOINTS.educational.exercises,
-      { params }
+      { params },
     );
 
     return {
@@ -500,7 +506,7 @@ export const checkModuleAccess = async (moduleId: string): Promise<ModuleAccessR
     }
 
     const { data } = await apiClient.get<ApiResponse<ModuleAccessResponse>>(
-      API_ENDPOINTS.educational.moduleAccess(moduleId)
+      API_ENDPOINTS.educational.moduleAccess(moduleId),
     );
 
     return data.data;
@@ -536,7 +542,7 @@ export const getUserModules = async (userId: string): Promise<UserModuleResponse
     }
 
     const { data } = await apiClient.get<ApiResponse<UserModuleResponse[]>>(
-      API_ENDPOINTS.educational.userModules(userId)
+      API_ENDPOINTS.educational.userModules(userId),
     );
 
     return data.data;

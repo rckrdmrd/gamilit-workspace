@@ -18,7 +18,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
-import { RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
+import { RefreshCw, ChevronDown } from 'lucide-react';
 import {
   AdminDashboardHero,
   SystemMetricsGrid,
@@ -66,7 +66,7 @@ const AdminDashboard: React.FC = () => {
   // ============================================================================
 
   const toggleSection = (section: string) => {
-    setCollapsedSections(prev => ({
+    setCollapsedSections((prev) => ({
       ...prev,
       [section]: !prev[section],
     }));
@@ -82,12 +82,14 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={{
-        id: 'mock-admin-dashboard-id',
-        email: 'admin@gamilit.com',
-        role: 'super_admin',
-        displayName: 'Admin Dashboard'
-      }} />
+      <GamifiedHeader
+        user={{
+          id: 'mock-admin-dashboard-id',
+          email: 'admin@gamilit.com',
+          role: 'super_admin',
+          displayName: 'Admin Dashboard',
+        }}
+      />
 
       <main className="detective-container py-8">
         {/* Header */}
@@ -111,7 +113,7 @@ const AdminDashboard: React.FC = () => {
               {/* Pause/Resume auto-refresh */}
               <button
                 onClick={isPaused ? resumeRefresh : pauseRefresh}
-                className={`px-4 py-2 rounded-lg transition-colors ${
+                className={`rounded-lg px-4 py-2 transition-colors ${
                   isPaused
                     ? 'bg-green-500/20 text-green-500 hover:bg-green-500/30'
                     : 'bg-yellow-500/20 text-yellow-500 hover:bg-yellow-500/30'
@@ -124,13 +126,13 @@ const AdminDashboard: React.FC = () => {
               <motion.button
                 onClick={handleRefreshAll}
                 disabled={loading}
-                className={`flex items-center gap-2 px-4 py-2 bg-detective-orange rounded-lg hover:bg-detective-orange-dark transition-colors ${
-                  loading ? 'opacity-50 cursor-not-allowed' : ''
+                className={`flex items-center gap-2 rounded-lg bg-detective-orange px-4 py-2 transition-colors hover:bg-detective-orange-dark ${
+                  loading ? 'cursor-not-allowed opacity-50' : ''
                 }`}
                 whileHover={!loading ? { scale: 1.05 } : {}}
                 whileTap={!loading ? { scale: 0.95 } : {}}
               >
-                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                 <span>Refresh All</span>
               </motion.button>
             </div>
@@ -141,7 +143,7 @@ const AdminDashboard: React.FC = () => {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg"
+              className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 p-4"
             >
               <p className="text-detective-base text-red-500">Error: {error}</p>
             </motion.div>
@@ -170,13 +172,11 @@ const AdminDashboard: React.FC = () => {
         {/* Quick Actions */}
         <div className="mb-8">
           <h2 className="text-detective-subtitle mb-4">Quick Actions</h2>
-          <QuickActionsGrid
-            flaggedContent={metrics?.flaggedContentCount}
-          />
+          <QuickActionsGrid flaggedContent={metrics?.flaggedContentCount} />
         </div>
 
         {/* Two Column Layout: Recent Actions & Alerts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Recent Actions */}
           <CollapsibleSection
             title="Recent Admin Actions"
@@ -198,11 +198,7 @@ const AdminDashboard: React.FC = () => {
             isCollapsed={collapsedSections.alerts}
             onToggle={() => toggleSection('alerts')}
           >
-            <SystemAlertsPanel
-              alerts={alerts}
-              loading={loading}
-              onDismiss={dismissAlert}
-            />
+            <SystemAlertsPanel alerts={alerts} loading={loading} onDismiss={dismissAlert} />
           </CollapsibleSection>
         </div>
 
@@ -221,38 +217,42 @@ const AdminDashboard: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="mt-8 p-6 bg-detective-bg-secondary border border-gray-700 rounded-lg"
+          className="mt-8 rounded-lg border border-gray-700 bg-detective-bg-secondary p-6"
         >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div className="grid grid-cols-2 gap-6 text-center md:grid-cols-4">
             <div>
-              <p className="text-detective-small text-gray-400 mb-1">System Status</p>
-              <p className={`text-detective-base font-semibold ${
-                systemHealth?.status === 'healthy'
-                  ? 'text-green-500'
-                  : systemHealth?.status === 'degraded'
-                  ? 'text-yellow-500'
-                  : 'text-red-500'
-              }`}>
+              <p className="text-detective-small mb-1 text-gray-400">System Status</p>
+              <p
+                className={`text-detective-base font-semibold ${
+                  systemHealth?.status === 'healthy'
+                    ? 'text-green-500'
+                    : systemHealth?.status === 'degraded'
+                      ? 'text-yellow-500'
+                      : 'text-red-500'
+                }`}
+              >
                 {systemHealth?.status?.toUpperCase() || 'UNKNOWN'}
               </p>
             </div>
             <div>
-              <p className="text-detective-small text-gray-400 mb-1">Active Sessions</p>
+              <p className="text-detective-small mb-1 text-gray-400">Active Sessions</p>
               <p className="text-detective-base font-semibold text-detective-orange">
                 {metrics?.activeSessions || 0}
               </p>
             </div>
             <div>
-              <p className="text-detective-small text-gray-400 mb-1">Pending Alerts</p>
+              <p className="text-detective-small mb-1 text-gray-400">Pending Alerts</p>
               <p className="text-detective-base font-semibold text-detective-orange">
                 {alerts.length}
               </p>
             </div>
             <div>
-              <p className="text-detective-small text-gray-400 mb-1">Auto-Refresh</p>
-              <p className={`text-detective-base font-semibold ${
-                isPaused ? 'text-yellow-500' : 'text-green-500'
-              }`}>
+              <p className="text-detective-small mb-1 text-gray-400">Auto-Refresh</p>
+              <p
+                className={`text-detective-base font-semibold ${
+                  isPaused ? 'text-yellow-500' : 'text-green-500'
+                }`}
+              >
                 {isPaused ? 'PAUSED' : 'ACTIVE'}
               </p>
             </div>
@@ -285,22 +285,17 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   return (
     <div className="mb-8">
       <div
-        className="flex items-center justify-between mb-4 cursor-pointer group"
+        className="group mb-4 flex cursor-pointer items-center justify-between"
         onClick={onToggle}
       >
         <div>
-          <h2 className="text-detective-subtitle group-hover:text-detective-orange transition-colors">
+          <h2 className="text-detective-subtitle transition-colors group-hover:text-detective-orange">
             {title}
           </h2>
-          {subtitle && (
-            <p className="text-detective-small text-gray-400">{subtitle}</p>
-          )}
+          {subtitle && <p className="text-detective-small text-gray-400">{subtitle}</p>}
         </div>
-        <motion.div
-          animate={{ rotate: isCollapsed ? 0 : 180 }}
-          transition={{ duration: 0.2 }}
-        >
-          <ChevronDown className="w-5 h-5 text-gray-400 group-hover:text-detective-orange transition-colors" />
+        <motion.div animate={{ rotate: isCollapsed ? 0 : 180 }} transition={{ duration: 0.2 }}>
+          <ChevronDown className="h-5 w-5 text-gray-400 transition-colors group-hover:text-detective-orange" />
         </motion.div>
       </div>
 

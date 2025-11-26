@@ -6,7 +6,7 @@
 
 import { useCallback, useMemo } from 'react';
 import { useEconomyStore } from '../store/economyStore';
-import type { Transaction, TransactionFilters, AnalyticsPeriod } from '../types/economyTypes';
+import type { Transaction, AnalyticsPeriod } from '../types/economyTypes';
 
 export const useTransactions = () => {
   const transactions = useEconomyStore((state) => state.transactions);
@@ -41,7 +41,7 @@ export const useTransactions = () => {
 
       return transactions.filter((t) => t.timestamp >= dateFrom);
     },
-    [transactions]
+    [transactions],
   );
 
   /**
@@ -68,7 +68,7 @@ export const useTransactions = () => {
         .filter((t) => t.type === 'earn')
         .reduce((sum, t) => sum + t.amount, 0);
     },
-    [getTransactionsByPeriod]
+    [getTransactionsByPeriod],
   );
 
   /**
@@ -78,12 +78,10 @@ export const useTransactions = () => {
     (period: AnalyticsPeriod = 'all'): number => {
       const periodTransactions = getTransactionsByPeriod(period);
       return Math.abs(
-        periodTransactions
-          .filter((t) => t.type === 'spend')
-          .reduce((sum, t) => sum + t.amount, 0)
+        periodTransactions.filter((t) => t.type === 'spend').reduce((sum, t) => sum + t.amount, 0),
       );
     },
-    [getTransactionsByPeriod]
+    [getTransactionsByPeriod],
   );
 
   /**
@@ -93,7 +91,7 @@ export const useTransactions = () => {
     (period: AnalyticsPeriod = 'all'): number => {
       return getTotalEarned(period) - getTotalSpent(period);
     },
-    [getTotalEarned, getTotalSpent]
+    [getTotalEarned, getTotalSpent],
   );
 
   /**
@@ -105,7 +103,7 @@ export const useTransactions = () => {
       if (!type) return periodTransactions.length;
       return periodTransactions.filter((t) => t.type === type).length;
     },
-    [getTransactionsByPeriod]
+    [getTransactionsByPeriod],
   );
 
   /**
@@ -123,7 +121,7 @@ export const useTransactions = () => {
       const total = filtered.reduce((sum, t) => sum + Math.abs(t.amount), 0);
       return Math.round(total / filtered.length);
     },
-    [getTransactionsByPeriod]
+    [getTransactionsByPeriod],
   );
 
   /**
@@ -139,10 +137,10 @@ export const useTransactions = () => {
       if (filtered.length === 0) return null;
 
       return filtered.reduce((largest, current) =>
-        Math.abs(current.amount) > Math.abs(largest.amount) ? current : largest
+        Math.abs(current.amount) > Math.abs(largest.amount) ? current : largest,
       );
     },
-    [getTransactionsByPeriod]
+    [getTransactionsByPeriod],
   );
 
   /**
@@ -162,7 +160,7 @@ export const useTransactions = () => {
 
       return grouped;
     },
-    [getTransactionsByPeriod]
+    [getTransactionsByPeriod],
   );
 
   /**
@@ -183,7 +181,7 @@ export const useTransactions = () => {
         .slice(0, limit)
         .map(([source, amount]) => ({ source, amount }));
     },
-    [getTransactionsByPeriod]
+    [getTransactionsByPeriod],
   );
 
   /**
@@ -198,7 +196,7 @@ export const useTransactions = () => {
 
       return Math.round(((currentTotal - previousTotal) / previousTotal) * 100);
     },
-    [getTotalEarned]
+    [getTotalEarned],
   );
 
   /**
@@ -208,7 +206,7 @@ export const useTransactions = () => {
     (limit: number = 10): Transaction[] => {
       return transactions.slice(0, limit);
     },
-    [transactions]
+    [transactions],
   );
 
   /**

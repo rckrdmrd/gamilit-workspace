@@ -113,10 +113,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_update_feature_flags_timestamp
-    BEFORE UPDATE ON system_configuration.feature_flags
-    FOR EACH ROW
-    EXECUTE FUNCTION system_configuration.update_feature_flags_timestamp();
+-- NOTE: Trigger trigger_update_feature_flags_timestamp movido a archivo separado
+-- Ver: system_configuration/triggers/29-trg_feature_flags_updated_at.sql
 
 -- =============================================================================
 -- Helper function to check if feature is enabled for a context

@@ -9,6 +9,12 @@ export { useAnalytics, useStudentInsights } from './useAnalytics';
 export { useGrading } from './useGrading';
 export { useClassrooms } from './useClassrooms';
 export { useAssignments } from './useAssignments';
+export { useInterventionAlerts } from './useInterventionAlerts';
+export { useTeacherMessages } from './useTeacherMessages';
+export { useGrantBonus } from './useGrantBonus';
+export { useEconomyAnalytics } from './useEconomyAnalytics'; // GAP-ST-005
+export { useStudentsEconomy } from './useStudentsEconomy'; // GAP-ST-006
+export { useAchievementsStats } from './useAchievementsStats'; // GAP-ST-007
 
 // Legacy hooks (kept for backward compatibility)
 export { useClassroomData } from './useClassroomData';
@@ -21,3 +27,6 @@ export type { UseAnalyticsReturn, UseStudentInsightsReturn, StudentInsights } fr
 export type { UseGradingReturn } from './useGrading';
 export type { UseClassroomsReturn } from './useClassrooms';
 export type { UseAssignmentsReturn } from './useAssignments';
+export type { UseInterventionAlertsReturn, AlertFilters } from './useInterventionAlerts';
+export type { UseTeacherMessagesReturn, MessageFilters } from './useTeacherMessages';
+export type { UseGrantBonusReturn } from './useGrantBonus';

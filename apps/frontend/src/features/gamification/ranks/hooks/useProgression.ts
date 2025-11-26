@@ -4,7 +4,7 @@
  * Custom hook for managing XP progression, leveling, and rank ups.
  */
 
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useRanksStore } from '../store/ranksStore';
 import type { XPSource, ProgressionHistoryEntry } from '../types/ranksTypes';
 
@@ -43,25 +43,22 @@ interface UseProgressionReturn {
   // Utilities
   canLevelUp: boolean;
   canRankUp: boolean;
-
-  // User progress data from store
-  userProgress?: any; // Type depends on store definition
 }
 
 /**
  * Custom hook to manage progression
  */
 export function useProgression(): UseProgressionReturn {
-  const userProgress = useRanksStore(state => state.userProgress);
-  const progressionHistory = useRanksStore(state => state.progressionHistory);
-  const isRankingUp = useRanksStore(state => state.isRankingUp);
-  const showRankUpModal = useRanksStore(state => state.showRankUpModal);
+  const userProgress = useRanksStore((state) => state.userProgress);
+  const progressionHistory = useRanksStore((state) => state.progressionHistory);
+  const isRankingUp = useRanksStore((state) => state.isRankingUp);
+  const showRankUpModal = useRanksStore((state) => state.showRankUpModal);
 
-  const addXP = useRanksStore(state => state.addXP);
-  const checkLevelUp = useRanksStore(state => state.checkLevelUp);
-  const checkRankUp = useRanksStore(state => state.checkRankUp);
-  const closeRankUpModal = useRanksStore(state => state.closeRankUpModal);
-  const getRecentHistory = useRanksStore(state => state.getRecentHistory);
+  const addXP = useRanksStore((state) => state.addXP);
+  const checkLevelUp = useRanksStore((state) => state.checkLevelUp);
+  const checkRankUp = useRanksStore((state) => state.checkRankUp);
+  const closeRankUpModal = useRanksStore((state) => state.closeRankUpModal);
+  const getRecentHistory = useRanksStore((state) => state.getRecentHistory);
 
   // Calculate level progress percentage
   const levelProgress = useMemo(() => {

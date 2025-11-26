@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
-import { InjectConnection } from '@nestjs/typeorm';
-import { Connection } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 import { AuthAttempt } from '@modules/auth/entities/auth-attempt.entity';
 import { User } from '@modules/auth/entities/user.entity';
 import { Tenant } from '@modules/auth/entities/tenant.entity';
@@ -31,10 +31,10 @@ import {
 @Injectable()
 export class AdminSystemService {
   constructor(
-    @InjectConnection('auth')
-    private readonly authConnection: Connection,
-    @InjectConnection('educational')
-    private readonly educationalConnection: Connection,
+    @InjectDataSource('auth')
+    private readonly authConnection: DataSource,
+    @InjectDataSource('educational')
+    private readonly educationalConnection: DataSource,
     @InjectRepository(AuthAttempt, 'auth')
     private readonly authAttemptRepo: Repository<AuthAttempt>,
     @InjectRepository(User, 'auth')

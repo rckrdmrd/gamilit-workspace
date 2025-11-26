@@ -6,8 +6,8 @@
  */
 
 import { useState } from 'react';
-import { submitExercise } from '../api';
-import type { SubmitExerciseResponse } from '../api';
+import { submitExercise } from '../api/progressAPI';
+import type { SubmitExerciseResponse } from '../api/progressAPI';
 
 interface ExerciseSubmissionExampleProps {
   exerciseId: string;
@@ -24,8 +24,9 @@ export function ExerciseSubmissionExample({
   const [result, setResult] = useState<SubmitExerciseResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
-  const [exerciseStartTime] = useState(Date.now());
-  const [hintsUsed, setHintsUsed] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_exerciseStartTime] = useState(Date.now());
+  const [_hintsUsed, _setHintsUsed] = useState(0);
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -33,14 +34,7 @@ export function ExerciseSubmissionExample({
 
     try {
       // Submit the exercise
-      const submissionResult = await submitExercise(exerciseId, {
-        userId,
-        answers,
-        startedAt: exerciseStartTime,
-        hintsUsed,
-        powerupsUsed: [], // Add powerups if needed
-        sessionId: `session_${Date.now()}`,
-      });
+      const submissionResult = await submitExercise(exerciseId, userId, answers);
 
       setResult(submissionResult);
       onComplete?.(submissionResult);
@@ -83,18 +77,12 @@ export function ExerciseSubmissionExample({
       </div>
 
       {/* Hints Button */}
-      <button
-        onClick={() => setHintsUsed((prev) => prev + 1)}
-        disabled={isSubmitting}
-      >
-        Use Hint ({hintsUsed} used)
+      <button onClick={() => _setHintsUsed((prev) => prev + 1)} disabled={isSubmitting}>
+        Use Hint ({_hintsUsed} used)
       </button>
 
       {/* Submit Button */}
-      <button
-        onClick={handleSubmit}
-        disabled={isSubmitting || Object.keys(answers).length === 0}
-      >
+      <button onClick={handleSubmit} disabled={isSubmitting || Object.keys(answers).length === 0}>
         {isSubmitting ? 'Submitting...' : 'Submit Exercise'}
       </button>
 
@@ -115,7 +103,7 @@ export function ExerciseSubmissionExample({
             <h4>Score: {result.score}/100</h4>
             {result.isPerfect && <p>Perfect Score!</p>}
             <p>
-              Correct: {result.correctAnswers}/{result.totalQuestions}
+              Correct: {result.correctAnswersCount}/{result.totalQuestions}
             </p>
           </div>
 
@@ -181,18 +169,15 @@ export function ExerciseSubmissionExample({
             <h5>Answer Review:</h5>
             <ul>
               {result.feedback.answerReview.map((review) => (
-                <li
-                  key={review.questionId}
-                  style={{ color: review.isCorrect ? 'green' : 'red' }}
-                >
+                <li key={review.questionId} style={{ color: review.isCorrect ? 'green' : 'red' }}>
                   <strong>Question {review.questionId}:</strong>{' '}
                   {review.isCorrect ? '✓ Correct' : '✗ Incorrect'}
                   {!review.isCorrect && (
                     <>
                       <br />
-                      Your answer: {review.userAnswer}
+                      Your answer: {String(review.userAnswer)}
                       <br />
-                      Correct answer: {review.correctAnswer}
+                      Correct answer: {String(review.correctAnswer)}
                       {review.explanation && (
                         <>
                           <br />

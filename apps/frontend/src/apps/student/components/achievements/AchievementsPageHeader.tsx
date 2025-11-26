@@ -6,16 +6,14 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Trophy, Sparkles, Coins, Zap, Award, Lock, TrendingUp } from 'lucide-react';
+import { Trophy, Sparkles, Coins, Zap, Award, TrendingUp } from 'lucide-react';
 import type { AchievementStatistics } from './types';
 
 interface AchievementsPageHeaderProps {
   statistics: AchievementStatistics;
 }
 
-export const AchievementsPageHeader: React.FC<AchievementsPageHeaderProps> = ({
-  statistics,
-}) => {
+export const AchievementsPageHeader: React.FC<AchievementsPageHeaderProps> = ({ statistics }) => {
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -43,7 +41,7 @@ export const AchievementsPageHeader: React.FC<AchievementsPageHeaderProps> = ({
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="relative bg-gradient-to-br from-detective-orange via-orange-500 to-detective-gold text-white py-16 overflow-hidden"
+      className="relative overflow-hidden bg-gradient-to-br from-detective-orange via-orange-500 to-detective-gold py-16 text-white"
     >
       {/* Animated Background Elements */}
       <div className="absolute inset-0 opacity-20">
@@ -67,42 +65,38 @@ export const AchievementsPageHeader: React.FC<AchievementsPageHeaderProps> = ({
               top: `${Math.random() * 100}%`,
             }}
           >
-            <Sparkles className="w-4 h-4" />
+            <Sparkles className="h-4 w-4" />
           </motion.div>
         ))}
       </div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+      <div className="container relative z-10 mx-auto px-4">
+        <div className="flex flex-col items-center justify-between gap-8 lg:flex-row">
           {/* Left Side - Title and Stats */}
           <motion.div variants={itemVariants} className="flex-1 text-center lg:text-left">
             {/* Title */}
-            <div className="flex items-center justify-center lg:justify-start gap-4 mb-6">
-              <div className="p-4 bg-white/20 backdrop-blur-sm rounded-2xl">
-                <Trophy className="w-12 h-12" />
+            <div className="mb-6 flex items-center justify-center gap-4 lg:justify-start">
+              <div className="rounded-2xl bg-white/20 p-4 backdrop-blur-sm">
+                <Trophy className="h-12 w-12" />
               </div>
               <div>
-                <h1 className="text-5xl md:text-6xl font-bold mb-2">
-                  Tus Logros
-                </h1>
-                <p className="text-xl opacity-90">
-                  Celebrando tus conquistas
-                </p>
+                <h1 className="mb-2 text-5xl font-bold md:text-6xl">Tus Logros</h1>
+                <p className="text-xl opacity-90">Celebrando tus conquistas</p>
               </div>
             </div>
 
             {/* Stats Grid */}
             <motion.div
               variants={containerVariants}
-              className="grid grid-cols-2 md:grid-cols-4 gap-4"
+              className="grid grid-cols-2 gap-4 md:grid-cols-4"
             >
               {/* Total Achievements */}
               <motion.div
                 variants={itemVariants}
                 whileHover={{ scale: 1.05 }}
-                className="bg-white/20 backdrop-blur-md rounded-xl p-4 border-2 border-white/30"
+                className="rounded-xl border-2 border-white/30 bg-white/20 p-4 backdrop-blur-md"
               >
-                <Award className="w-8 h-8 mb-2 mx-auto lg:mx-0" />
+                <Award className="mx-auto mb-2 h-8 w-8 lg:mx-0" />
                 <div className="text-3xl font-bold">
                   {statistics.unlocked}/{statistics.total}
                 </div>
@@ -113,12 +107,10 @@ export const AchievementsPageHeader: React.FC<AchievementsPageHeaderProps> = ({
               <motion.div
                 variants={itemVariants}
                 whileHover={{ scale: 1.05 }}
-                className="bg-white/20 backdrop-blur-md rounded-xl p-4 border-2 border-white/30"
+                className="rounded-xl border-2 border-white/30 bg-white/20 p-4 backdrop-blur-md"
               >
-                <TrendingUp className="w-8 h-8 mb-2 mx-auto lg:mx-0" />
-                <div className="text-3xl font-bold">
-                  {statistics.completionRate.toFixed(0)}%
-                </div>
+                <TrendingUp className="mx-auto mb-2 h-8 w-8 lg:mx-0" />
+                <div className="text-3xl font-bold">{statistics.completionRate.toFixed(0)}%</div>
                 <div className="text-sm opacity-90">Completado</div>
               </motion.div>
 
@@ -126,9 +118,9 @@ export const AchievementsPageHeader: React.FC<AchievementsPageHeaderProps> = ({
               <motion.div
                 variants={itemVariants}
                 whileHover={{ scale: 1.05 }}
-                className="bg-white/20 backdrop-blur-md rounded-xl p-4 border-2 border-white/30"
+                className="rounded-xl border-2 border-white/30 bg-white/20 p-4 backdrop-blur-md"
               >
-                <Coins className="w-8 h-8 mb-2 mx-auto lg:mx-0" />
+                <Coins className="mx-auto mb-2 h-8 w-8 lg:mx-0" />
                 <div className="text-3xl font-bold">
                   {statistics.mlCoinsEarned.toLocaleString()}
                 </div>
@@ -139,24 +131,19 @@ export const AchievementsPageHeader: React.FC<AchievementsPageHeaderProps> = ({
               <motion.div
                 variants={itemVariants}
                 whileHover={{ scale: 1.05 }}
-                className="bg-white/20 backdrop-blur-md rounded-xl p-4 border-2 border-white/30"
+                className="rounded-xl border-2 border-white/30 bg-white/20 p-4 backdrop-blur-md"
               >
-                <Zap className="w-8 h-8 mb-2 mx-auto lg:mx-0" />
-                <div className="text-3xl font-bold">
-                  {statistics.pointsEarned.toLocaleString()}
-                </div>
+                <Zap className="mx-auto mb-2 h-8 w-8 lg:mx-0" />
+                <div className="text-3xl font-bold">{statistics.pointsEarned.toLocaleString()}</div>
                 <div className="text-sm opacity-90">XP Ganado</div>
               </motion.div>
             </motion.div>
           </motion.div>
 
           {/* Right Side - Circular Progress */}
-          <motion.div
-            variants={itemVariants}
-            className="flex-shrink-0"
-          >
+          <motion.div variants={itemVariants} className="flex-shrink-0">
             <div className="relative">
-              <svg width="200" height="200" className="transform -rotate-90">
+              <svg width="200" height="200" className="-rotate-90 transform">
                 {/* Background circle */}
                 <circle
                   cx="100"
@@ -178,15 +165,13 @@ export const AchievementsPageHeader: React.FC<AchievementsPageHeaderProps> = ({
                   strokeDasharray={circumference}
                   initial={{ strokeDashoffset: circumference }}
                   animate={{ strokeDashoffset }}
-                  transition={{ duration: 1.5, ease: "easeOut" }}
+                  transition={{ duration: 1.5, ease: 'easeOut' }}
                 />
               </svg>
 
               {/* Center Text */}
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <div className="text-5xl font-bold">
-                  {statistics.completionRate.toFixed(0)}%
-                </div>
+                <div className="text-5xl font-bold">{statistics.completionRate.toFixed(0)}%</div>
                 <div className="text-sm opacity-90">Completado</div>
               </div>
             </div>

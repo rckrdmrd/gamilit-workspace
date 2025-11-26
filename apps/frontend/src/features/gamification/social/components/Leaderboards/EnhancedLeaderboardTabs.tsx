@@ -13,7 +13,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, School, Users, GraduationCap, Shield } from 'lucide-react';
-import type { LeaderboardType } from '../../types/leaderboardsTypes';
 import { cn } from '@shared/utils/cn';
 
 export type ExtendedLeaderboardType = 'global' | 'school' | 'grade' | 'friends' | 'guild';
@@ -37,31 +36,31 @@ const tabs: TabConfig[] = [
     type: 'global',
     label: 'Global',
     icon: Globe,
-    description: 'Usuarios de todo el mundo'
+    description: 'Usuarios de todo el mundo',
   },
   {
     type: 'school',
     label: 'Escuela',
     icon: School,
-    description: 'Usuarios de tu escuela'
+    description: 'Usuarios de tu escuela',
   },
   {
     type: 'grade',
     label: 'Grado',
     icon: GraduationCap,
-    description: 'Usuarios de tu mismo grado'
+    description: 'Usuarios de tu mismo grado',
   },
   {
     type: 'friends',
     label: 'Amigos',
     icon: Users,
-    description: 'Tus amigos'
+    description: 'Tus amigos',
   },
   {
     type: 'guild',
     label: 'Gremio',
     icon: Shield,
-    description: 'Miembros de tu gremio'
+    description: 'Miembros de tu gremio',
   },
 ];
 
@@ -69,12 +68,12 @@ export const EnhancedLeaderboardTabs: React.FC<EnhancedLeaderboardTabsProps> = (
   selectedType,
   onTypeChange,
   counts = {},
-  className
+  className,
 }) => {
   return (
     <div className={cn('relative', className)}>
       {/* Tabs Container */}
-      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-detective-orange scrollbar-track-gray-200">
+      <div className="scrollbar-thin scrollbar-thumb-detective-orange scrollbar-track-gray-200 flex gap-2 overflow-x-auto pb-2">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = selectedType === tab.type;
@@ -87,24 +86,30 @@ export const EnhancedLeaderboardTabs: React.FC<EnhancedLeaderboardTabsProps> = (
               whileTap={{ scale: 0.98 }}
               onClick={() => onTypeChange(tab.type)}
               className={cn(
-                'relative flex items-center gap-2 px-5 py-3 rounded-lg font-semibold whitespace-nowrap transition-all group',
+                'group relative flex items-center gap-2 whitespace-nowrap rounded-lg px-5 py-3 font-semibold transition-all',
                 isActive
                   ? 'bg-detective-orange text-white shadow-lg shadow-orange-500/50'
-                  : 'bg-white text-detective-text hover:bg-detective-bg shadow-md hover:shadow-lg'
+                  : 'bg-white text-detective-text shadow-md hover:bg-detective-bg hover:shadow-lg',
               )}
             >
               {/* Icon */}
               <motion.div
-                animate={isActive ? {
-                  rotate: [0, 10, -10, 0],
-                  scale: [1, 1.1, 1]
-                } : {}}
+                animate={
+                  isActive
+                    ? {
+                        rotate: [0, 10, -10, 0],
+                        scale: [1, 1.1, 1],
+                      }
+                    : {}
+                }
                 transition={{ duration: 0.5 }}
               >
-                <Icon className={cn(
-                  'w-5 h-5 transition-colors',
-                  isActive ? 'text-white' : 'text-detective-orange'
-                )} />
+                <Icon
+                  className={cn(
+                    'h-5 w-5 transition-colors',
+                    isActive ? 'text-white' : 'text-detective-orange',
+                  )}
+                />
               </motion.div>
 
               {/* Label */}
@@ -128,10 +133,8 @@ export const EnhancedLeaderboardTabs: React.FC<EnhancedLeaderboardTabsProps> = (
                   animate={{ scale: 1 }}
                   transition={{ type: 'spring', bounce: 0.5 }}
                   className={cn(
-                    'min-w-[24px] h-6 px-2 rounded-full flex items-center justify-center text-xs font-bold',
-                    isActive
-                      ? 'bg-white text-detective-orange'
-                      : 'bg-detective-orange text-white'
+                    'flex h-6 min-w-[24px] items-center justify-center rounded-full px-2 text-xs font-bold',
+                    isActive ? 'bg-white text-detective-orange' : 'bg-detective-orange text-white',
                   )}
                 >
                   {count > 999 ? `${Math.floor(count / 1000)}k` : count}
@@ -154,11 +157,11 @@ export const EnhancedLeaderboardTabs: React.FC<EnhancedLeaderboardTabsProps> = (
                     initial={{ opacity: 0, y: 10, scale: 0.8 }}
                     whileHover={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.8 }}
-                    className="absolute -bottom-12 left-1/2 -translate-x-1/2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg whitespace-nowrap pointer-events-none z-10 opacity-0 group-hover:opacity-100"
+                    className="pointer-events-none absolute -bottom-12 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-2 text-xs text-white opacity-0 group-hover:opacity-100"
                     transition={{ duration: 0.2 }}
                   >
                     {tab.description}
-                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45" />
+                    <div className="absolute -top-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 bg-gray-900" />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -174,7 +177,7 @@ export const EnhancedLeaderboardTabs: React.FC<EnhancedLeaderboardTabsProps> = (
         animate={{ opacity: 1, y: 0 }}
         className="mt-2 text-sm text-detective-text-secondary md:hidden"
       >
-        {tabs.find(t => t.type === selectedType)?.description}
+        {tabs.find((t) => t.type === selectedType)?.description}
       </motion.div>
     </div>
   );

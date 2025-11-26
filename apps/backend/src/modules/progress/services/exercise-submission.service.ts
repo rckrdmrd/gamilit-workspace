@@ -196,6 +196,17 @@ export class ExerciseSubmissionService {
       throw new NotFoundException(`Exercise ${exerciseId} not found`);
     }
 
+    // ✅ FIX 2025-11-24: Arquitectura dual - Validar tipo de ejercicio
+    // Este servicio es SOLO para ejercicios que requieren revisión manual
+    // Los ejercicios autocorregibles deben usar ExerciseAttemptService
+    if (!exercise.requires_manual_grading) {
+      throw new BadRequestException(
+        'This exercise is auto-graded and allows multiple attempts. ' +
+        'It should not use the submission service. ' +
+        'This is a system configuration error - please report to support.'
+      );
+    }
+
     // FE-059: Validate answer structure BEFORE saving to database
     console.log(`[FE-059] Validating answer structure for exercise type: ${exercise.exercise_type}`);
     await ExerciseAnswerValidator.validate(exercise.exercise_type, answers);
@@ -203,13 +214,17 @@ export class ExerciseSubmissionService {
     // Verificar si ya existe un envío previo
     const existingSubmission = await this.findByUserAndExercise(profileId, exerciseId);
 
-    if (existingSubmission && existingSubmission.status === 'graded') {
+    // ✅ FIX 2025-11-24: Para ejercicios de revisión manual, solo una entrega permitida
+    if (existingSubmission) {
       throw new BadRequestException(
-        'Exercise already submitted and graded. Cannot resubmit.',
+        'You have already submitted this exercise. ' +
+        'Only one submission is allowed for teacher-graded exercises. ' +
+        'Please wait for your teacher to review your work.'
       );
     }
 
-    // Crear o actualizar submission
+    // ✅ FIX 2025-11-24: Ya no hay actualización - solo una entrega permitida
+    // Si hay submission previa, ya se rechazó arriba, así que aquí siempre creamos nuevo
     const submissionData: CreateExerciseSubmissionDto = {
       user_id: profileId,  // FIXED: usar profileId en lugar de userId
       exercise_id: exerciseId,
@@ -217,20 +232,8 @@ export class ExerciseSubmissionService {
       max_score: 100,
     };
 
-    let submission: ExerciseSubmission;
-
-    if (existingSubmission) {
-      // Actualizar submission existente
-      Object.assign(existingSubmission, {
-        answer_data: answers,
-        submitted_at: new Date(),
-        status: 'submitted',
-      });
-      submission = await this.submissionRepo.save(existingSubmission);
-    } else {
-      // Crear nuevo submission
-      submission = await this.create(submissionData);
-    }
+    // Crear nuevo submission (único permitido)
+    let submission = await this.create(submissionData);
 
     // Auto-grade si es posible
     submission = await this.gradeSubmission(submission.id);
@@ -816,10 +819,144 @@ export class ExerciseSubmissionService {
       'exercise'
     );
 
+    // ✅ FIX BUG-002: Actualizar module_progress después de completar ejercicio
+    await this.updateModuleProgressAfterCompletion(
+      submission.user_id,
+      submission.exercise_id,
+      xpEarned,
+      mlCoinsEarned
+    );
+
     return {
       submission,
       xp_earned: xpEarned,
       ml_coins_earned: mlCoinsEarned,
     };
+  }
+
+  /**
+   * Actualiza el progreso del módulo después de completar un ejercicio correctamente
+   *
+   * @description Esta función replica la lógica del trigger update_module_progress_on_exercise_complete
+   * para exercise_submissions (ya que el trigger original solo funciona con exercise_attempts)
+   *
+   * @param userId - ID del usuario
+   * @param exerciseId - ID del ejercicio completado
+   * @param xpEarned - XP ganado en el ejercicio
+   * @param mlCoinsEarned - ML Coins ganados en el ejercicio
+   */
+  private async updateModuleProgressAfterCompletion(
+    userId: string,
+    exerciseId: string,
+    xpEarned: number,
+    mlCoinsEarned: number
+  ): Promise<void> {
+    try {
+      // Obtener module_id del ejercicio
+      const exercise = await this.exerciseRepo.findOne({ where: { id: exerciseId } });
+      if (!exercise?.module_id) {
+        console.warn(`[BUG-002 FIX] Exercise ${exerciseId} has no module_id - skipping progress update`);
+        return;
+      }
+
+      const moduleId = exercise.module_id;
+      console.log(`[BUG-002 FIX] Updating module progress for user ${userId}, module ${moduleId}`);
+
+      // Verificar si es el primer envío correcto para ESTE ejercicio específico
+      const previousCorrectSubmissions = await this.submissionRepo.count({
+        where: {
+          user_id: userId,
+          exercise_id: exerciseId,
+          is_correct: true,
+        }
+      });
+
+      // Si hay más de 1 (incluyendo el actual), no es el primero - solo actualizar timestamp
+      if (previousCorrectSubmissions > 1) {
+        await this.entityManager.query(`
+          UPDATE progress_tracking.module_progress
+          SET last_accessed_at = NOW(), updated_at = NOW()
+          WHERE user_id = $1 AND module_id = $2
+        `, [userId, moduleId]);
+        console.log(`[BUG-002 FIX] Not first correct submission - only updated timestamps`);
+        return;
+      }
+
+      // Contar total de ejercicios activos en el módulo
+      const totalExercisesResult = await this.exerciseRepo.count({
+        where: { module_id: moduleId, is_active: true }
+      });
+      const totalExercises = totalExercisesResult || 0;
+
+      // Contar ejercicios correctos ÚNICOS del usuario en este módulo
+      const completedExercisesResult = await this.entityManager.query(`
+        SELECT COUNT(DISTINCT es.exercise_id) as count
+        FROM progress_tracking.exercise_submissions es
+        JOIN educational_content.exercises e ON e.id = es.exercise_id
+        WHERE es.user_id = $1
+          AND e.module_id = $2
+          AND es.is_correct = true
+      `, [userId, moduleId]);
+      const completedExercises = parseInt(completedExercisesResult[0]?.count || '0', 10);
+
+      // Calcular porcentaje de progreso
+      const progressPercentage = totalExercises > 0
+        ? Math.round((completedExercises / totalExercises) * 100 * 100) / 100
+        : 0;
+
+      // Determinar nuevo status
+      let newStatus: string;
+      if (progressPercentage >= 100) {
+        newStatus = 'completed';
+      } else if (progressPercentage > 0) {
+        newStatus = 'in_progress';
+      } else {
+        newStatus = 'not_started';
+      }
+
+      console.log(`[BUG-002 FIX] Module progress: ${completedExercises}/${totalExercises} (${progressPercentage}%) - Status: ${newStatus}`);
+
+      // Actualizar o insertar module_progress usando UPSERT
+      await this.entityManager.query(`
+        INSERT INTO progress_tracking.module_progress (
+          user_id,
+          module_id,
+          status,
+          progress_percentage,
+          completed_exercises,
+          total_exercises,
+          total_xp_earned,
+          total_ml_coins_earned,
+          started_at,
+          last_accessed_at,
+          completed_at
+        ) VALUES (
+          $1, $2, $3::progress_tracking.progress_status, $4, $5, $6, $7, $8, NOW(), NOW(),
+          CASE WHEN $3 = 'completed' THEN NOW() ELSE NULL END
+        )
+        ON CONFLICT (user_id, module_id) DO UPDATE SET
+          status = $3::progress_tracking.progress_status,
+          progress_percentage = $4,
+          completed_exercises = $5,
+          total_exercises = $6,
+          total_xp_earned = progress_tracking.module_progress.total_xp_earned + $7,
+          total_ml_coins_earned = progress_tracking.module_progress.total_ml_coins_earned + $8,
+          last_accessed_at = NOW(),
+          completed_at = CASE
+            WHEN $3 = 'completed' AND progress_tracking.module_progress.completed_at IS NULL
+            THEN NOW()
+            ELSE progress_tracking.module_progress.completed_at
+          END,
+          updated_at = NOW()
+      `, [userId, moduleId, newStatus, progressPercentage, completedExercises, totalExercises, xpEarned, mlCoinsEarned]);
+
+      console.log(`[BUG-002 FIX] ✅ Module progress updated successfully`);
+
+    } catch (error) {
+      // Log error pero no bloquear el claim de rewards
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error(`[BUG-002 FIX] ❌ Error updating module progress: ${errorMessage}`);
+      // No throw - la actualización de progreso no debe bloquear la respuesta
+    }
   }
 }

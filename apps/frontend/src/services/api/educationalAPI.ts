@@ -6,7 +6,7 @@
  */
 
 import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS, FEATURE_FLAGS } from './apiConfig';
+import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
 import { handleAPIError } from './apiErrorHandler';
 import type { ApiResponse } from './apiTypes';
 import type { Module, Exercise } from '@shared/types';
@@ -125,7 +125,12 @@ export interface UserAnalytics {
  */
 export interface UserActivity {
   id: string;
-  type: 'exercise_completed' | 'achievement_unlocked' | 'streak_milestone' | 'level_up' | 'module_completed';
+  type:
+    | 'exercise_completed'
+    | 'achievement_unlocked'
+    | 'streak_milestone'
+    | 'level_up'
+    | 'module_completed';
   title: string;
   description: string;
   timestamp: Date;
@@ -276,9 +281,7 @@ export const getModules = async (): Promise<Module[]> => {
     }
 
     // Backend returns modules array directly, not wrapped in { data: {...} }
-    const { data } = await apiClient.get<Module[]>(
-      API_ENDPOINTS.educational.modules
-    );
+    const { data } = await apiClient.get<Module[]>(API_ENDPOINTS.educational.modules);
 
     return data;
   } catch (error) {
@@ -302,9 +305,7 @@ export const getModule = async (moduleId: string): Promise<Module> => {
     }
 
     // Backend returns module directly, not wrapped in { data: {...} }
-    const { data } = await apiClient.get<Module>(
-      API_ENDPOINTS.educational.module(moduleId)
-    );
+    const { data } = await apiClient.get<Module>(API_ENDPOINTS.educational.module(moduleId));
 
     return data;
   } catch (error) {
@@ -327,7 +328,7 @@ export const checkModuleAccess = async (moduleId: string): Promise<boolean> => {
 
     // Backend returns data directly, not wrapped in { data: {...} }
     const { data } = await apiClient.get<{ hasAccess: boolean }>(
-      API_ENDPOINTS.educational.moduleAccess(moduleId)
+      API_ENDPOINTS.educational.moduleAccess(moduleId),
     );
 
     return data.hasAccess;
@@ -357,9 +358,7 @@ export const getUserModules = async (userId: string): Promise<Module[]> => {
     }
 
     console.log('📡 [educationalAPI] Making HTTP GET request to backend...');
-    const { data } = await apiClient.get<Module[]>(
-      API_ENDPOINTS.educational.userModules(userId)
-    );
+    const { data } = await apiClient.get<Module[]>(API_ENDPOINTS.educational.userModules(userId));
 
     console.log('✅ [educationalAPI] Backend response received:', {
       isArray: Array.isArray(data),
@@ -404,10 +403,9 @@ export const getExercises = async (filters?: {
     }
 
     // Backend returns exercises array directly, not wrapped in { data: {...} }
-    const { data } = await apiClient.get<any[]>(
-      API_ENDPOINTS.educational.exercises,
-      { params: filters }
-    );
+    const { data } = await apiClient.get<any[]>(API_ENDPOINTS.educational.exercises, {
+      params: filters,
+    });
 
     // Transform backend response to frontend format
     return transformExercises(data);
@@ -431,7 +429,7 @@ export const getModuleExercises = async (moduleId: string): Promise<Exercise[]> 
 
     // Backend returns exercises array directly, not wrapped in { data: {...} }
     const { data } = await apiClient.get<any[]>(
-      API_ENDPOINTS.educational.moduleExercises(moduleId)
+      API_ENDPOINTS.educational.moduleExercises(moduleId),
     );
 
     // Transform backend response to frontend format
@@ -457,9 +455,7 @@ export const getExercise = async (exerciseId: string): Promise<Exercise> => {
     }
 
     // Backend returns exercise directly, not wrapped in { data: {...} }
-    const { data } = await apiClient.get<any>(
-      API_ENDPOINTS.educational.exercise(exerciseId)
-    );
+    const { data } = await apiClient.get<any>(API_ENDPOINTS.educational.exercise(exerciseId));
 
     // Transform backend response to frontend format
     return transformExercise(data);
@@ -477,7 +473,7 @@ export const getExercise = async (exerciseId: string): Promise<Exercise> => {
  */
 export const submitExercise = async (
   exerciseId: string,
-  submission: Omit<ExerciseSubmission, 'exerciseId'>
+  submission: Omit<ExerciseSubmission, 'exerciseId'>,
 ): Promise<ExerciseSubmissionResult> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -494,12 +490,14 @@ export const submitExercise = async (
         rewards: {
           xp: isPerfect ? 150 : 100,
           mlCoins: isPerfect ? 30 : 20,
-          bonuses: isPerfect ? [
-            { type: 'perfect_score', amount: 50, reason: 'Perfect Score Bonus' }
-          ] : undefined,
+          bonuses: isPerfect
+            ? [{ type: 'perfect_score', amount: 50, reason: 'Perfect Score Bonus' }]
+            : undefined,
         },
         feedback: {
-          overall: isPerfect ? '¡Excelente trabajo! Respuesta perfecta.' : 'Buen intento, sigue practicando.',
+          overall: isPerfect
+            ? '¡Excelente trabajo! Respuesta perfecta.'
+            : 'Buen intento, sigue practicando.',
           answerReview: [
             { questionId: '1', isCorrect: true, userAnswer: 'respuesta1' },
             { questionId: '2', isCorrect: true, userAnswer: 'respuesta2' },
@@ -509,13 +507,32 @@ export const submitExercise = async (
             { questionId: '6', isCorrect: true, userAnswer: 'respuesta6' },
             { questionId: '7', isCorrect: true, userAnswer: 'respuesta7' },
             { questionId: '8', isCorrect: true, userAnswer: 'respuesta8' },
-            { questionId: '9', isCorrect: false, userAnswer: 'respuesta9', correctAnswer: 'correcta9', explanation: 'Revisa el concepto de fotosíntesis' },
-            { questionId: '10', isCorrect: false, userAnswer: 'respuesta10', correctAnswer: 'correcta10', explanation: 'La respuesta se encuentra en el segundo párrafo' },
+            {
+              questionId: '9',
+              isCorrect: false,
+              userAnswer: 'respuesta9',
+              correctAnswer: 'correcta9',
+              explanation: 'Revisa el concepto de fotosíntesis',
+            },
+            {
+              questionId: '10',
+              isCorrect: false,
+              userAnswer: 'respuesta10',
+              correctAnswer: 'correcta10',
+              explanation: 'La respuesta se encuentra en el segundo párrafo',
+            },
           ],
         },
-        achievements: isPerfect ? [
-          { id: 'perfect-score', name: 'Perfect Score', description: 'Completaste el ejercicio con 100%', icon: 'trophy' }
-        ] : undefined,
+        achievements: isPerfect
+          ? [
+              {
+                id: 'perfect-score',
+                name: 'Perfect Score',
+                description: 'Completaste el ejercicio con 100%',
+                icon: 'trophy',
+              },
+            ]
+          : undefined,
         rankUp: null,
         createdAt: new Date().toISOString(),
         explanations: {
@@ -528,7 +545,7 @@ export const submitExercise = async (
     // Backend returns submission result directly, not wrapped in { data: {...} }
     const { data } = await apiClient.post<ExerciseSubmissionResult>(
       `${API_ENDPOINTS.educational.exercise(exerciseId)}/submit`,
-      submission
+      submission,
     );
 
     return data;
@@ -553,16 +570,19 @@ export const saveExerciseProgress = async (
     hintsUsed?: number;
     timeSpent?: number;
     answers?: unknown;
-  }
+  },
 ): Promise<{ success: boolean }> => {
   try {
     // Save progress locally (localStorage)
     // Progress is automatically saved to DB when exercise is submitted
     const key = `exercise_progress_${exerciseId}`;
-    localStorage.setItem(key, JSON.stringify({
-      ...progressData,
-      timestamp: new Date().toISOString(),
-    }));
+    localStorage.setItem(
+      key,
+      JSON.stringify({
+        ...progressData,
+        timestamp: new Date().toISOString(),
+      }),
+    );
 
     // Return success immediately
     return { success: true };
@@ -579,7 +599,7 @@ export const saveExerciseProgress = async (
  * @returns List of hints available for the exercise
  */
 export const getExerciseHints = async (
-  exerciseId: string
+  exerciseId: string,
 ): Promise<Array<{ id: string; text: string; cost: number; order: number }>> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -641,7 +661,7 @@ export const getUserProgress = async (userId: string): Promise<UserDashboardData
 
     // Backend returns user progress data directly, not wrapped in { data: {...} }
     const { data } = await apiClient.get<UserDashboardData>(
-      API_ENDPOINTS.educational.userProgress(userId)
+      API_ENDPOINTS.educational.userProgress(userId),
     );
 
     return data;
@@ -659,7 +679,7 @@ export const getUserProgress = async (userId: string): Promise<UserDashboardData
  */
 export const getModuleProgress = async (
   userId: string,
-  moduleId: string
+  moduleId: string,
 ): Promise<ModuleProgress> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -675,7 +695,7 @@ export const getModuleProgress = async (
 
     // Backend returns module progress directly, not wrapped in { data: {...} }
     const { data } = await apiClient.get<ModuleProgress>(
-      API_ENDPOINTS.educational.moduleProgress(userId, moduleId)
+      API_ENDPOINTS.educational.moduleProgress(userId, moduleId),
     );
 
     return data;
@@ -708,7 +728,7 @@ export const getUserDashboard = async (userId: string): Promise<UserDashboardDat
 
     // Backend returns dashboard data directly, not wrapped in { data: {...} }
     const { data } = await apiClient.get<UserDashboardData>(
-      API_ENDPOINTS.educational.userDashboard(userId)
+      API_ENDPOINTS.educational.userDashboard(userId),
     );
 
     return data;
@@ -726,7 +746,7 @@ export const getUserDashboard = async (userId: string): Promise<UserDashboardDat
  */
 export const getExerciseAttempts = async (
   userId: string,
-  exerciseId?: string
+  exerciseId?: string,
 ): Promise<ExerciseProgress[]> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -746,7 +766,7 @@ export const getExerciseAttempts = async (
     // Backend returns exercise attempts array directly, not wrapped in { data: {...} }
     const { data } = await apiClient.get<ExerciseProgress[]>(
       API_ENDPOINTS.educational.exerciseAttempts(userId),
-      { params: { exerciseId } }
+      { params: { exerciseId } },
     );
 
     return data;
@@ -768,7 +788,7 @@ export const getExerciseAttempts = async (
  */
 export const getUserAnalytics = async (
   userId: string,
-  timeframe: string = 'month'
+  timeframe: string = 'month',
 ): Promise<UserAnalytics> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -790,7 +810,7 @@ export const getUserAnalytics = async (
     // Backend returns analytics data directly, not wrapped in { data: {...} }
     const { data } = await apiClient.get<UserAnalytics>(
       API_ENDPOINTS.educational.userAnalytics(userId),
-      { params: { timeframe } }
+      { params: { timeframe } },
     );
 
     return data;
@@ -810,7 +830,10 @@ export const getUserAnalytics = async (
  * @param limit - Maximum number of activities to return
  * @returns List of recent activities
  */
-export const getUserActivities = async (userId: string, limit: number = 10): Promise<UserActivity[]> => {
+export const getUserActivities = async (
+  userId: string,
+  limit: number = 10,
+): Promise<UserActivity[]> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -818,10 +841,9 @@ export const getUserActivities = async (userId: string, limit: number = 10): Pro
       return [];
     }
 
-    const { data } = await apiClient.get<any[]>(
-      API_ENDPOINTS.educational.userActivities(userId),
-      { params: { limit } }
-    );
+    const { data } = await apiClient.get<any[]>(API_ENDPOINTS.progress.recentActivities(userId), {
+      params: { limit },
+    });
 
     // Backend returns array directly, not wrapped in { data: {...} }
     // Transform backend format to frontend format
@@ -844,11 +866,11 @@ export const getUserActivities = async (userId: string, limit: number = 10): Pro
  */
 function mapActivityAction(action: string): UserActivity['type'] {
   const actionMap: Record<string, UserActivity['type']> = {
-    'completed_exercise': 'exercise_completed',
-    'completed_module': 'module_completed',
-    'unlocked_achievement': 'achievement_unlocked',
-    'reached_streak': 'streak_milestone',
-    'leveled_up': 'level_up',
+    completed_exercise: 'exercise_completed',
+    completed_module: 'module_completed',
+    unlocked_achievement: 'achievement_unlocked',
+    reached_streak: 'streak_milestone',
+    leveled_up: 'level_up',
   };
   return actionMap[action] || 'exercise_completed';
 }
@@ -873,7 +895,7 @@ export const getActivityStats = async (userId: string): Promise<ActivityStats> =
     }
 
     const { data } = await apiClient.get<ApiResponse<ActivityStats>>(
-      API_ENDPOINTS.educational.activityStats(userId)
+      API_ENDPOINTS.educational.activityStats(userId),
     );
 
     return {
@@ -896,7 +918,7 @@ export const getActivityStats = async (userId: string): Promise<ActivityStats> =
 export const getUserActivitiesByType = async (
   userId: string,
   type: 'exercise_completed' | 'achievement_unlocked' | 'module_completed',
-  limit: number = 10
+  limit: number = 10,
 ): Promise<UserActivity[]> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -907,10 +929,10 @@ export const getUserActivitiesByType = async (
     // Backend returns activities array directly, not wrapped in { data: {...} }
     const { data } = await apiClient.get<UserActivity[]>(
       API_ENDPOINTS.educational.activitiesByType(userId, type),
-      { params: { limit } }
+      { params: { limit } },
     );
 
-    return data.map(activity => ({
+    return data.map((activity) => ({
       ...activity,
       timestamp: new Date(activity.timestamp),
     }));

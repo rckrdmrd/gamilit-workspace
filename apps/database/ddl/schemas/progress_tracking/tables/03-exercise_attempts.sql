@@ -107,9 +107,9 @@ CREATE INDEX idx_exercise_attempts_user_exercise_date ON progress_tracking.exerc
 
 --
 -- Name: exercise_attempts trg_update_user_stats_on_exercise; Type: TRIGGER; Schema: progress_tracking; Owner: postgres
+-- NOTE: Trigger movido a archivo separado para evitar duplicación
+-- Ver: progress_tracking/triggers/21-trg_update_user_stats_on_exercise.sql
 --
-
-CREATE TRIGGER trg_update_user_stats_on_exercise AFTER INSERT ON progress_tracking.exercise_attempts FOR EACH ROW EXECUTE FUNCTION gamilit.update_user_stats_on_exercise_complete();
 
 
 --

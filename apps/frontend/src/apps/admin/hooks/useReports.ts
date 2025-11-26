@@ -1,251 +1,266 @@
 /**
  * useReports Hook
  *
- * Manages system reports generation, listing, and download.
- * Updated: 2025-11-19 - Created for AdminReportsPage integration (FE-059)
+ * Custom hook for managing admin reports with auto-refresh capabilities
+ * Integrates with backend Reports API (in-memory storage)
+ *
+ * @author Frontend-Agent
+ * @date 2025-11-24
+ * @updated Complete rewrite with auto-refresh and proper typing
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { adminAPI } from '@/services/api/adminAPI';
+import type {
+  Report,
+  ReportListFilters,
+  GenerateReportParams,
+  PaginatedResponse,
+} from '@/services/api/adminTypes';
 
-export interface ReportType {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  color: string;
-  formats: string[];
+interface UseReportsOptions {
+  autoRefresh?: boolean;
+  refreshInterval?: number;
+  initialFilters?: ReportListFilters;
 }
 
-export interface GeneratedReport {
-  id: string;
-  type: string;
-  name: string;
-  generatedAt: string;
-  size: string;
-  format: string;
-  downloadUrl?: string;
-}
-
-export interface ReportGenerationParams {
-  type: string;
-  startDate: string;
-  endDate: string;
-  format: 'pdf' | 'excel' | 'csv' | 'json';
-  filters?: Record<string, any>;
-}
-
-export interface ReportStats {
-  totalGenerated: number;
-  downloadsThisMonth: number;
-  lastReportTime: string;
-  mostGenerated: string;
-}
-
-export interface UseReportsResult {
+interface UseReportsReturn {
   // Data
-  reports: GeneratedReport[];
-  reportTypes: ReportType[];
-  stats: ReportStats | null;
-
-  // State
-  loading: boolean;
-  generating: boolean;
+  reports: Report[];
+  isLoading: boolean;
   error: string | null;
+  pagination: PaginatedResponse<Report>['pagination'] | null;
 
   // Actions
-  fetchReports: () => Promise<void>;
-  generateReport: (params: ReportGenerationParams) => Promise<void>;
-  downloadReport: (reportId: string) => Promise<void>;
+  generateReport: (params: GenerateReportParams) => Promise<Report>;
+  refreshReports: () => Promise<void>;
+  downloadReport: (reportId: string, filename?: string) => Promise<void>;
   deleteReport: (reportId: string) => Promise<void>;
+  setFilters: (filters: ReportListFilters) => void;
+
+  // Status
+  hasPendingReports: boolean;
 }
 
-// Mock report types until backend provides them
-const DEFAULT_REPORT_TYPES: ReportType[] = [
-  {
-    id: 'users',
-    name: 'Reporte de Usuarios',
-    description: 'Información completa de usuarios registrados y actividad',
-    icon: 'Users',
-    color: 'text-blue-500',
-    formats: ['pdf', 'excel', 'csv'],
-  },
-  {
-    id: 'progress',
-    name: 'Reporte de Progreso',
-    description: 'Progreso de estudiantes por módulo y ejercicio',
-    icon: 'TrendingUp',
-    color: 'text-green-500',
-    formats: ['pdf', 'excel'],
-  },
-  {
-    id: 'exercises',
-    name: 'Reporte de Ejercicios',
-    description: 'Estadísticas de ejercicios completados y rendimiento',
-    icon: 'BookOpen',
-    color: 'text-purple-500',
-    formats: ['pdf', 'excel', 'csv'],
-  },
-  {
-    id: 'gamification',
-    name: 'Reporte de Gamificación',
-    description: 'Uso de logros, rangos y ML Coins',
-    icon: 'Trophy',
-    color: 'text-detective-gold',
-    formats: ['pdf', 'excel'],
-  },
-  {
-    id: 'usage',
-    name: 'Reporte de Uso de Plataforma',
-    description: 'Estadísticas de acceso y tiempo de uso',
-    icon: 'Clock',
-    color: 'text-orange-500',
-    formats: ['pdf', 'excel', 'csv', 'json'],
-  },
-  {
-    id: 'completion',
-    name: 'Reporte de Completitud',
-    description: 'Tasas de completitud por institución y módulo',
-    icon: 'CheckCircle',
-    color: 'text-green-500',
-    formats: ['pdf', 'excel'],
-  },
-];
+/**
+ * Hook for managing admin reports
+ *
+ * Features:
+ * - Automatic refresh when pending/generating reports exist
+ * - Manual refresh capability
+ * - Download reports as files
+ * - Delete reports
+ * - Filtering and pagination
+ */
+export function useReports(options: UseReportsOptions = {}): UseReportsReturn {
+  const {
+    autoRefresh = true,
+    refreshInterval = 5000,
+    initialFilters = { page: 1, limit: 20 },
+  } = options;
 
-export function useReports(): UseReportsResult {
   // State
-  const [reports, setReports] = useState<GeneratedReport[]>([]);
-  const [reportTypes] = useState<ReportType[]>(DEFAULT_REPORT_TYPES);
-  const [stats, setStats] = useState<ReportStats | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [generating, setGenerating] = useState(false);
+  const [reports, setReports] = useState<Report[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<PaginatedResponse<Report>['pagination'] | null>(
+    null,
+  );
+  const [filters, setFilters] = useState<ReportListFilters>(initialFilters);
+
+  // Refs for auto-refresh management
+  const refreshTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const isMountedRef = useRef(true);
 
   /**
-   * Fetch list of generated reports
+   * Check if there are reports in pending/generating state
    */
-  const fetchReports = useCallback(async (): Promise<void> => {
-    setLoading(true);
-    setError(null);
+  const hasPendingReports = reports.some(
+    (report) => report.status === 'pending' || report.status === 'generating',
+  );
+
+  /**
+   * Fetch reports from API
+   */
+  const fetchReports = useCallback(async (fetchFilters: ReportListFilters) => {
     try {
-      const response = await adminAPI.reports.list();
-      setReports(response);
+      setIsLoading(true);
+      setError(null);
 
-      // Calculate stats from reports
-      if (response.length > 0) {
-        const now = new Date();
-        const thisMonth = response.filter(r => {
-          const generatedDate = new Date(r.generatedAt);
-          return generatedDate.getMonth() === now.getMonth() &&
-                 generatedDate.getFullYear() === now.getFullYear();
-        });
+      const response = await adminAPI.reports.list(fetchFilters);
 
-        // Count by type
-        const typeCounts: Record<string, number> = {};
-        response.forEach(r => {
-          typeCounts[r.type] = (typeCounts[r.type] || 0) + 1;
-        });
-        const mostGenerated = Object.entries(typeCounts)
-          .sort(([,a], [,b]) => b - a)[0]?.[0] || 'N/A';
-
-        const sortedByDate = [...response].sort((a, b) =>
-          new Date(b.generatedAt).getTime() - new Date(a.generatedAt).getTime()
-        );
-
-        setStats({
-          totalGenerated: response.length,
-          downloadsThisMonth: thisMonth.length,
-          lastReportTime: sortedByDate[0]?.generatedAt || 'N/A',
-          mostGenerated: DEFAULT_REPORT_TYPES.find(t => t.id === mostGenerated)?.name || mostGenerated,
-        });
-      } else {
-        setStats({
-          totalGenerated: 0,
-          downloadsThisMonth: 0,
-          lastReportTime: 'Nunca',
-          mostGenerated: 'N/A',
-        });
+      if (isMountedRef.current) {
+        setReports(response.items);
+        setPagination(response.pagination);
       }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error al cargar reportes';
-      setError(message);
-      console.error('Failed to fetch reports:', err);
+    } catch (err: any) {
+      if (isMountedRef.current) {
+        setError(err.message || 'Failed to fetch reports');
+        console.error('[useReports] Error fetching reports:', err);
+      }
     } finally {
-      setLoading(false);
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
     }
   }, []);
+
+  /**
+   * Refresh reports manually
+   */
+  const refreshReports = useCallback(async () => {
+    await fetchReports(filters);
+  }, [filters, fetchReports]);
 
   /**
    * Generate a new report
    */
-  const generateReport = useCallback(async (params: ReportGenerationParams): Promise<void> => {
-    setGenerating(true);
-    setError(null);
-    try {
-      await adminAPI.reports.generate(params);
+  const generateReport = useCallback(
+    async (params: GenerateReportParams): Promise<Report> => {
+      try {
+        setError(null);
+        const report = await adminAPI.reports.generate(params);
 
-      // Refresh report list
-      await fetchReports();
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error al generar reporte';
-      setError(message);
-      console.error('Failed to generate report:', err);
-      throw err;
-    } finally {
-      setGenerating(false);
-    }
-  }, [fetchReports]);
+        // Refresh list to include new report
+        await fetchReports(filters);
+
+        return report;
+      } catch (err: any) {
+        const errorMessage = err.message || 'Failed to generate report';
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      }
+    },
+    [filters, fetchReports],
+  );
 
   /**
    * Download a report
    */
-  const downloadReport = useCallback(async (reportId: string): Promise<void> => {
-    try {
-      await adminAPI.reports.download(reportId);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error al descargar reporte';
-      setError(message);
-      console.error('Failed to download report:', err);
-      throw err;
-    }
-  }, []);
+  const downloadReport = useCallback(
+    async (reportId: string, filename?: string): Promise<void> => {
+      try {
+        setError(null);
+
+        // Find report to get metadata
+        const report = reports.find((r) => r.id === reportId);
+        if (!report) {
+          throw new Error('Report not found');
+        }
+
+        if (report.status !== 'completed') {
+          throw new Error('Report is not ready for download');
+        }
+
+        // Download blob
+        const blob = await adminAPI.reports.download(reportId);
+
+        // Create download link
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+
+        // Generate filename if not provided
+        const defaultFilename = `report-${report.type}-${new Date().toISOString().split('T')[0]}.${report.format}`;
+        link.download = filename || defaultFilename;
+
+        // Trigger download
+        document.body.appendChild(link);
+        link.click();
+
+        // Cleanup
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } catch (err: any) {
+        const errorMessage = err.message || 'Failed to download report';
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      }
+    },
+    [reports],
+  );
 
   /**
    * Delete a report
    */
-  const deleteReport = useCallback(async (reportId: string): Promise<void> => {
-    setError(null);
-    try {
-      await adminAPI.reports.delete(reportId);
+  const deleteReport = useCallback(
+    async (reportId: string): Promise<void> => {
+      try {
+        setError(null);
+        await adminAPI.reports.delete(reportId);
 
-      // Update local state
-      setReports(prev => prev.filter(r => r.id !== reportId));
+        // Refresh list after deletion
+        await fetchReports(filters);
+      } catch (err: any) {
+        const errorMessage = err.message || 'Failed to delete report';
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      }
+    },
+    [filters, fetchReports],
+  );
 
-      // Refresh stats
-      await fetchReports();
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error al eliminar reporte';
-      setError(message);
-      console.error('Failed to delete report:', err);
-      throw err;
+  /**
+   * Initial fetch and filter changes
+   */
+  useEffect(() => {
+    fetchReports(filters);
+  }, [filters, fetchReports]);
+
+  /**
+   * Auto-refresh for pending/generating reports
+   */
+  useEffect(() => {
+    if (!autoRefresh || !hasPendingReports) {
+      // Clear existing timer
+      if (refreshTimerRef.current) {
+        clearInterval(refreshTimerRef.current);
+        refreshTimerRef.current = null;
+      }
+      return;
     }
-  }, [fetchReports]);
+
+    // Set up refresh timer
+    refreshTimerRef.current = setInterval(() => {
+      fetchReports(filters);
+    }, refreshInterval);
+
+    // Cleanup
+    return () => {
+      if (refreshTimerRef.current) {
+        clearInterval(refreshTimerRef.current);
+        refreshTimerRef.current = null;
+      }
+    };
+  }, [autoRefresh, hasPendingReports, refreshInterval, filters, fetchReports]);
+
+  /**
+   * Cleanup on unmount
+   */
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+      if (refreshTimerRef.current) {
+        clearInterval(refreshTimerRef.current);
+      }
+    };
+  }, []);
 
   return {
     // Data
     reports,
-    reportTypes,
-    stats,
-
-    // State
-    loading,
-    generating,
+    isLoading,
     error,
+    pagination,
 
     // Actions
-    fetchReports,
     generateReport,
+    refreshReports,
     downloadReport,
     deleteReport,
+    setFilters,
+
+    // Status
+    hasPendingReports,
   };
 }

@@ -4,14 +4,13 @@
  */
 
 import { create } from 'zustand';
-import type { Achievement, AchievementUnlockNotification, AchievementStats } from '../types/achievementsTypes';
+import type {
+  Achievement,
+  AchievementUnlockNotification,
+  AchievementStats,
+} from '../types/achievementsTypes';
 import { allAchievements } from '../mockData/achievementsMockData';
-import {
-  getUserAchievements,
-  mapAchievementsToFrontend,
-  updateAchievementProgress as apiUpdateProgress,
-  checkAchievements as apiCheckAchievements
-} from '../api/achievementsAPI';
+import { getUserAchievements, mapAchievementsToFrontend } from '../api/achievementsAPI';
 
 interface AchievementsStore {
   achievements: Achievement[];
@@ -73,13 +72,14 @@ export const useAchievementsStore = create<AchievementsStore>((set) => ({
       };
 
       const updatedAchievements = state.achievements.map((a) =>
-        a.id === achievementId ? updatedAchievement : a
+        a.id === achievementId ? updatedAchievement : a,
       );
 
       const notification: AchievementUnlockNotification = {
         achievement: updatedAchievement,
         timestamp: new Date(),
-        showConfetti: updatedAchievement.rarity === 'epic' || updatedAchievement.rarity === 'legendary',
+        showConfetti:
+          updatedAchievement.rarity === 'epic' || updatedAchievement.rarity === 'legendary',
       };
 
       return {
@@ -154,13 +154,13 @@ export const useAchievementsStore = create<AchievementsStore>((set) => ({
         unlockedAchievements: achievements.filter((a) => a.isUnlocked),
         stats: calculateStats(achievements),
         isLoading: false,
-        error: null
+        error: null,
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to fetch achievements';
       set({
         isLoading: false,
-        error: errorMessage
+        error: errorMessage,
       });
       console.error('Error fetching achievements:', error);
 

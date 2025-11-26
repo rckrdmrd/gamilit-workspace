@@ -36,7 +36,7 @@ export default function AdminInstitutionsPage() {
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
   const [formData, setFormData] = useState({
     name: '',
-    plan: 'free' as 'free' | 'pro' | 'enterprise',
+    plan: 'free' as 'free' | 'basic' | 'professional' | 'enterprise',
   });
 
   const handleLogout = () => {
@@ -128,9 +128,10 @@ export default function AdminInstitutionsPage() {
       label: 'Plan',
       sortable: true,
       render: (row) => {
-        const planColors = {
+        const planColors: Record<string, string> = {
           free: 'bg-gray-500/20 text-gray-500',
-          pro: 'bg-blue-500/20 text-blue-500',
+          basic: 'bg-green-500/20 text-green-500',
+          professional: 'bg-blue-500/20 text-blue-500',
           enterprise: 'bg-purple-500/20 text-purple-500',
         };
         return (
@@ -220,9 +221,13 @@ export default function AdminInstitutionsPage() {
   ];
 
   const availableFeatures = [
-    { key: 'analytics', label: 'Analytics Avanzado', plans: ['pro', 'enterprise'] },
-    { key: 'custom_branding', label: 'Branding Personalizado', plans: ['pro', 'enterprise'] },
-    { key: 'api_access', label: 'Acceso API', plans: ['pro', 'enterprise'] },
+    { key: 'analytics', label: 'Analytics Avanzado', plans: ['professional', 'enterprise'] },
+    {
+      key: 'custom_branding',
+      label: 'Branding Personalizado',
+      plans: ['professional', 'enterprise'],
+    },
+    { key: 'api_access', label: 'Acceso API', plans: ['professional', 'enterprise'] },
     { key: 'white_label', label: 'White Label', plans: ['enterprise'] },
     { key: 'sso', label: 'Single Sign-On', plans: ['enterprise'] },
     { key: 'custom_reports', label: 'Reportes Personalizados', plans: ['enterprise'] },
@@ -302,7 +307,8 @@ export default function AdminInstitutionsPage() {
             onChange={(value) => setFormData({ ...formData, plan: value as any })}
             options={[
               { value: 'free', label: 'Free' },
-              { value: 'pro', label: 'Pro' },
+              { value: 'basic', label: 'Basic' },
+              { value: 'professional', label: 'Professional' },
               { value: 'enterprise', label: 'Enterprise' },
             ]}
             required
@@ -350,7 +356,8 @@ export default function AdminInstitutionsPage() {
             onChange={(value) => setFormData({ ...formData, plan: value as any })}
             options={[
               { value: 'free', label: 'Free' },
-              { value: 'pro', label: 'Pro' },
+              { value: 'basic', label: 'Basic' },
+              { value: 'professional', label: 'Professional' },
               { value: 'enterprise', label: 'Enterprise' },
             ]}
             required

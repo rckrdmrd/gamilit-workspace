@@ -40,7 +40,7 @@
  */
 
 import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS, FEATURE_FLAGS } from '@/services/api/apiConfig';
+import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
 import { handleAPIError } from '@/services/api/apiErrorHandler';
 import type { ApiResponse, PaginatedResponse, PaginationParams } from '@/services/api/apiTypes';
 import type {
@@ -79,7 +79,7 @@ const mockGetBalance = async (): Promise<MLCoinsBalance> => {
  */
 const mockEarnCoins = async (
   amount: number,
-  source: EarningSource | string
+  source: EarningSource | string,
 ): Promise<Transaction> => {
   await new Promise((resolve) => setTimeout(resolve, 800));
   const newBalance = 250 + amount;
@@ -121,7 +121,7 @@ export const getBalance = async (userId: string): Promise<MLCoinsBalance> => {
     }
 
     const { data } = await apiClient.get<ApiResponse<MLCoinsBalance>>(
-      API_ENDPOINTS.economy.balance(userId)
+      API_ENDPOINTS.economy.balance(userId),
     );
 
     return data.data;
@@ -150,7 +150,7 @@ export const earnCoins = async (
   source: EarningSource | string,
   userId: string,
   description?: string,
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, unknown>,
 ): Promise<Transaction> => {
   try {
     if (!userId) {
@@ -162,13 +162,13 @@ export const earnCoins = async (
     }
 
     const { data } = await apiClient.post<ApiResponse<Transaction>>(
-      API_ENDPOINTS.economy.earn(userId),
+      `${API_ENDPOINTS.economy.balance(userId)}/earn`,
       {
         amount,
         source,
         description,
         metadata,
-      }
+      },
     );
 
     return data.data;
@@ -197,7 +197,7 @@ export const spendCoins = async (
   itemName: string,
   userId: string,
   itemId?: string,
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, unknown>,
 ): Promise<Transaction> => {
   try {
     if (!userId) {
@@ -221,13 +221,13 @@ export const spendCoins = async (
     }
 
     const { data } = await apiClient.post<ApiResponse<Transaction>>(
-      API_ENDPOINTS.economy.spend(userId),
+      `${API_ENDPOINTS.economy.balance(userId)}/spend`,
       {
         amount,
         itemName,
         itemId,
         metadata,
-      }
+      },
     );
 
     return data.data;
@@ -256,7 +256,7 @@ export const spendCoins = async (
 export const getTransactions = async (
   userId: string,
   pagination?: PaginationParams,
-  filters?: TransactionFilters
+  filters?: TransactionFilters,
 ): Promise<PaginatedResponse<Transaction>> => {
   try {
     if (!userId) {
@@ -284,7 +284,7 @@ export const getTransactions = async (
           ...pagination,
           ...filters,
         },
-      }
+      },
     );
 
     return data.data;
@@ -317,7 +317,7 @@ export const getTransaction = async (transactionId: string): Promise<Transaction
     // TODO: Backend needs endpoint for single transaction by ID
     // For now, using transactions endpoint (may need adjustment)
     const { data } = await apiClient.get<ApiResponse<Transaction>>(
-      `${API_ENDPOINTS.economy.transactions(transactionId)}`
+      `${API_ENDPOINTS.economy.transactions(transactionId)}`,
     );
 
     return data.data;
@@ -341,7 +341,7 @@ export const getTransaction = async (transactionId: string): Promise<Transaction
 export const getShopItems = async (
   filters?: ShopFilters,
   sortBy?: ShopSortBy,
-  pagination?: PaginationParams
+  pagination?: PaginationParams,
 ): Promise<PaginatedResponse<ShopItem>> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -366,7 +366,7 @@ export const getShopItems = async (
           sortBy,
           ...pagination,
         },
-      }
+      },
     );
 
     return data.data;
@@ -400,7 +400,7 @@ export const getShopItem = async (itemId: string): Promise<ShopItem> => {
     }
 
     const { data } = await apiClient.get<ApiResponse<ShopItem>>(
-      API_ENDPOINTS.economy.shopItem(itemId)
+      API_ENDPOINTS.economy.shopItem(itemId),
     );
 
     return data.data;
@@ -422,7 +422,7 @@ export const getShopItem = async (itemId: string): Promise<ShopItem> => {
  */
 export const purchaseItem = async (
   itemId: string,
-  quantity: number = 1
+  quantity: number = 1,
 ): Promise<PurchaseResult> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -440,7 +440,7 @@ export const purchaseItem = async (
       {
         itemId,
         quantity,
-      }
+      },
     );
 
     return data.data;
@@ -469,13 +469,13 @@ export const purchaseCart = async (items: CartItem[]): Promise<PurchaseResult> =
     }
 
     const { data } = await apiClient.post<ApiResponse<PurchaseResult>>(
-      API_ENDPOINTS.economy.purchaseCart,
+      API_ENDPOINTS.economy.purchase,
       {
         items: items.map((item) => ({
           itemId: item.id,
           quantity: item.quantity,
         })),
-      }
+      },
     );
 
     return data.data;
@@ -491,9 +491,10 @@ export const purchaseCart = async (items: CartItem[]): Promise<PurchaseResult> =
 /**
  * Get user inventory
  *
+ * @param userId - User ID to get inventory for
  * @returns User inventory with owned items
  */
-export const getInventory = async (): Promise<UserInventory> => {
+export const getInventory = async (userId: string): Promise<UserInventory> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 600));
@@ -504,11 +505,11 @@ export const getInventory = async (): Promise<UserInventory> => {
       };
     }
 
-    const { data } = await apiClient.get<ApiResponse<UserInventory>>(
-      API_ENDPOINTS.economy.inventory
+    const response = await apiClient.get<ApiResponse<UserInventory>>(
+      API_ENDPOINTS.economy.inventory(userId),
     );
 
-    return data.data;
+    return response.data.data;
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -527,7 +528,7 @@ export const removeFromInventory = async (itemId: string): Promise<void> => {
       return;
     }
 
-    await apiClient.delete(API_ENDPOINTS.economy.inventoryItem(itemId));
+    await apiClient.delete(API_ENDPOINTS.economy.inventoryItem('current-user', itemId));
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -565,9 +566,7 @@ export const getEconomyStats = async (): Promise<EconomyStats> => {
       };
     }
 
-    const { data } = await apiClient.get<ApiResponse<EconomyStats>>(
-      '/gamification/economy/stats'
-    );
+    const { data } = await apiClient.get<ApiResponse<EconomyStats>>('/gamification/economy/stats');
 
     return data.data;
   } catch (error) {

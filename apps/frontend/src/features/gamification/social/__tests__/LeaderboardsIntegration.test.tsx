@@ -17,9 +17,9 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useLeaderboardsStore } from '../store/leaderboardsStore';
-import type { LeaderboardEntry, LeaderboardType, TimePeriod } from '../types/leaderboardsTypes';
+import type { LeaderboardEntry } from '../types/leaderboardsTypes';
 import * as socialAPI from '../api/socialAPI';
-import { FEATURE_FLAGS } from '@/services/api/apiConfig';
+import { FEATURE_FLAGS } from '@/config/api.config';
 
 // Mock the API module
 vi.mock('../api/socialAPI', () => ({
@@ -89,6 +89,7 @@ describe('Leaderboards Integration Tests', () => {
     vi.clearAllMocks();
 
     // Set default mock mode
+    // @ts-expect-error - Test override of readonly property
     FEATURE_FLAGS.USE_MOCK_DATA = true;
   });
 
@@ -150,6 +151,7 @@ describe('Leaderboards Integration Tests', () => {
     });
 
     it('should fetch from API when USE_MOCK_DATA is false', async () => {
+      // @ts-expect-error - Test override of readonly property
       FEATURE_FLAGS.USE_MOCK_DATA = false;
 
       vi.mocked(socialAPI.getLeaderboard).mockResolvedValue(mockLeaderboardEntries);
@@ -180,6 +182,7 @@ describe('Leaderboards Integration Tests', () => {
     });
 
     it('should handle API errors gracefully', async () => {
+      // @ts-expect-error - Test override of readonly property
       FEATURE_FLAGS.USE_MOCK_DATA = false;
 
       vi.mocked(socialAPI.getLeaderboard).mockRejectedValue(new Error('Network error'));
@@ -226,6 +229,7 @@ describe('Leaderboards Integration Tests', () => {
     });
 
     it('should fetch from API when USE_MOCK_DATA is false', async () => {
+      // @ts-expect-error - Test override of readonly property
       FEATURE_FLAGS.USE_MOCK_DATA = false;
 
       vi.mocked(socialAPI.getLeaderboard).mockResolvedValue(mockLeaderboardEntries);
@@ -255,6 +259,7 @@ describe('Leaderboards Integration Tests', () => {
     });
 
     it('should handle API errors on period change', async () => {
+      // @ts-expect-error - Test override of readonly property
       FEATURE_FLAGS.USE_MOCK_DATA = false;
 
       vi.mocked(socialAPI.getLeaderboard).mockRejectedValue(new Error('Timeout'));
@@ -305,6 +310,7 @@ describe('Leaderboards Integration Tests', () => {
     });
 
     it('should handle refresh errors', async () => {
+      // @ts-expect-error - Test override of readonly property
       FEATURE_FLAGS.USE_MOCK_DATA = false;
 
       vi.mocked(socialAPI.getLeaderboard).mockRejectedValue(new Error('Refresh failed'));
@@ -357,6 +363,7 @@ describe('Leaderboards Integration Tests', () => {
 
   describe('User Rank', () => {
     it('should track user rank when available', async () => {
+      // @ts-expect-error - Test override of readonly property
       FEATURE_FLAGS.USE_MOCK_DATA = false;
 
       vi.mocked(socialAPI.getLeaderboard).mockResolvedValue(mockLeaderboardEntries);
@@ -384,6 +391,7 @@ describe('Leaderboards Integration Tests', () => {
     });
 
     it('should set user rank to null when not found', async () => {
+      // @ts-expect-error - Test override of readonly property
       FEATURE_FLAGS.USE_MOCK_DATA = false;
 
       vi.mocked(socialAPI.getLeaderboard).mockResolvedValue(mockLeaderboardEntries);
@@ -405,6 +413,7 @@ describe('Leaderboards Integration Tests', () => {
 
   describe('Fallback to Mock Data', () => {
     it('should fallback to mock data on API error', async () => {
+      // @ts-expect-error - Test override of readonly property
       FEATURE_FLAGS.USE_MOCK_DATA = false;
 
       vi.mocked(socialAPI.getLeaderboard).mockRejectedValue(new Error('API Error'));

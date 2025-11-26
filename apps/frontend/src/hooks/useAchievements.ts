@@ -226,7 +226,9 @@ export const useAchievements = (options: UseAchievementsOptions) => {
       const { data: stats } = await apiClient.get(`/gamification/users/${userId}/stats`);
 
       // Fetch unlocked achievements
-      const { data: achievements } = await apiClient.get(`/gamification/users/${userId}/achievements`);
+      const { data: achievements } = await apiClient.get(
+        `/gamification/users/${userId}/achievements`,
+      );
 
       const progress: UserProgress = {
         exercises_completed: stats.exercises_completed || 0,
@@ -243,8 +245,8 @@ export const useAchievements = (options: UseAchievementsOptions) => {
       setUserProgress(progress);
 
       // Store already unlocked achievement IDs
-      const unlocked = new Set(
-        achievements.filter((a: any) => a.isUnlocked).map((a: any) => a.achievement_id)
+      const unlocked = new Set<string>(
+        achievements.filter((a: any) => a.isUnlocked).map((a: any) => a.achievement_id as string),
       );
       setUnlockedAchievements(unlocked);
     } catch (error) {
@@ -322,7 +324,9 @@ export const useAchievements = (options: UseAchievementsOptions) => {
         if (checkCondition(definition.condition, userProgress)) {
           // Unlock achievement via API
           try {
-            await apiClient.post(`/gamification/users/${userId}/achievements/${definition.id}/unlock`);
+            await apiClient.post(
+              `/gamification/users/${userId}/achievements/${definition.id}/unlock`,
+            );
 
             // Add to unlocked set
             setUnlockedAchievements((prev) => new Set([...prev, definition.id]));
@@ -409,7 +413,7 @@ export const useAchievements = (options: UseAchievementsOptions) => {
 
       return Math.min(100, Math.round((currentValue / condition.value) * 100));
     },
-    [userProgress]
+    [userProgress],
   );
 
   // Initial fetch

@@ -9,13 +9,14 @@ import { ProgressTracker } from '@shared/components/mechanics/ProgressTracker';
 import { ScoreDisplay } from '@shared/components/mechanics/ScoreDisplay';
 import { TikTokCard } from './TikTokCard';
 import { QuizTikTokData } from './quizTikTokTypes';
-import { calculateScore, saveProgress, FeedbackData, DifficultyLevel } from '@shared/components/mechanics/mechanicsTypes';
+import {
+  calculateScore,
+  saveProgress,
+  FeedbackData,
+} from '@shared/components/mechanics/mechanicsTypes';
 
 interface ExerciseProps {
-  moduleId: number;
-  lessonId: number;
   exerciseId: string;
-  userId: string;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
   onProgressUpdate?: (progress: number) => void;
@@ -38,55 +39,62 @@ const getDefaultExercise = (exerciseId: string, difficulty: string): QuizTikTokD
   topic: 'Marie Curie',
   hints: [],
   questions: [
-      {
-        id: 'q1',
-        question: '¿En qué año nació Marie Curie?',
-        options: ['1867', '1875', '1880', '1890'],
-        correctAnswer: 0,
-        backgroundColor: '#1f2937'
-      },
-      {
-        id: 'q2',
-        question: '¿Cuántos Premios Nobel ganó Marie Curie?',
-        options: ['1', '2', '3', '4'],
-        correctAnswer: 1,
-        backgroundColor: '#7c3aed'
-      },
-      {
-        id: 'q3',
-        question: '¿Qué elementos descubrió Marie Curie?',
-        options: ['Uranio y Plutonio', 'Polonio y Radio', 'Helio y Neón', 'Oro y Plata'],
-        correctAnswer: 1,
-        backgroundColor: '#ea580c'
-      },
-      {
-        id: 'q4',
-        question: '¿Cuál fue la primera universidad en admitir a Marie Curie como profesora?',
-        options: ['Universidad de Oxford', 'Universidad de Cambridge', 'Universidad de la Sorbona', 'Universidad de Berlín'],
-        correctAnswer: 2,
-        backgroundColor: '#2563eb'
-      },
-      {
-        id: 'q5',
-        question: '¿En qué campos ganó sus Premios Nobel?',
-        options: ['Física y Medicina', 'Física y Química', 'Química y Medicina', 'Física y Literatura'],
-        correctAnswer: 1,
-        backgroundColor: '#059669'
-      }
-  ]
+    {
+      id: 'q1',
+      question: '¿En qué año nació Marie Curie?',
+      options: ['1867', '1875', '1880', '1890'],
+      correctAnswer: 0,
+      backgroundColor: '#1f2937',
+    },
+    {
+      id: 'q2',
+      question: '¿Cuántos Premios Nobel ganó Marie Curie?',
+      options: ['1', '2', '3', '4'],
+      correctAnswer: 1,
+      backgroundColor: '#7c3aed',
+    },
+    {
+      id: 'q3',
+      question: '¿Qué elementos descubrió Marie Curie?',
+      options: ['Uranio y Plutonio', 'Polonio y Radio', 'Helio y Neón', 'Oro y Plata'],
+      correctAnswer: 1,
+      backgroundColor: '#ea580c',
+    },
+    {
+      id: 'q4',
+      question: '¿Cuál fue la primera universidad en admitir a Marie Curie como profesora?',
+      options: [
+        'Universidad de Oxford',
+        'Universidad de Cambridge',
+        'Universidad de la Sorbona',
+        'Universidad de Berlín',
+      ],
+      correctAnswer: 2,
+      backgroundColor: '#2563eb',
+    },
+    {
+      id: 'q5',
+      question: '¿En qué campos ganó sus Premios Nobel?',
+      options: [
+        'Física y Medicina',
+        'Física y Química',
+        'Química y Medicina',
+        'Física y Literatura',
+      ],
+      correctAnswer: 1,
+      backgroundColor: '#059669',
+    },
+  ],
 });
 
 export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
-  moduleId,
-  lessonId,
   exerciseId,
-  userId,
   onComplete,
   onExit,
   onProgressUpdate,
   initialData,
   difficulty = 'medium',
-  exercise
+  exercise,
 }) => {
   const defaultExercise = getDefaultExercise(exerciseId, difficulty);
   const currentExercise = exercise || defaultExercise;
@@ -117,7 +125,9 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
 
   // Calculate current score
   const calculateCurrentScore = () => {
-    const correct = answers.filter((ans, idx) => ans === currentExercise.questions[idx].correctAnswer).length;
+    const correct = answers.filter(
+      (ans, idx) => ans === currentExercise.questions[idx].correctAnswer,
+    ).length;
     return Math.floor((correct / currentExercise.questions.length) * 100);
   };
 
@@ -146,9 +156,9 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
   // Handle swipe navigation
   const handleSwipe = (direction: 'up' | 'down') => {
     if (direction === 'down' && currentIndex < currentExercise.questions.length - 1) {
-      setCurrentIndex(prev => prev + 1);
+      setCurrentIndex((prev) => prev + 1);
     } else if (direction === 'up' && currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
+      setCurrentIndex((prev) => prev - 1);
     }
   };
 
@@ -171,30 +181,39 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
 
   // Handle check/verification
   const handleCheck = async (finalAnswers: number[] = answers) => {
-    const correct = finalAnswers.filter((ans, idx) => ans === currentExercise.questions[idx].correctAnswer).length;
+    const correct = finalAnswers.filter(
+      (ans, idx) => ans === currentExercise.questions[idx].correctAnswer,
+    ).length;
 
     if (finalAnswers.length < currentExercise.questions.length) {
       setFeedback({
         type: 'error',
         title: 'Quiz Incompleto',
         message: `Has respondido ${finalAnswers.length} de ${currentExercise.questions.length} preguntas.`,
-        showConfetti: false
+        showConfetti: false,
       });
       setShowFeedback(true);
       return;
     }
 
-    const endTime = new Date();
-    const timeSpentSeconds = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
-
     const score = calculateScore(correct, currentExercise.questions.length);
 
     setFeedback({
-      type: correct === currentExercise.questions.length ? 'success' : correct >= currentExercise.questions.length / 2 ? 'partial' : 'error',
-      title: correct === currentExercise.questions.length ? '¡Perfect!' : correct >= currentExercise.questions.length / 2 ? 'Buen intento' : 'Sigue practicando',
+      type:
+        correct === currentExercise.questions.length
+          ? 'success'
+          : correct >= currentExercise.questions.length / 2
+            ? 'partial'
+            : 'error',
+      title:
+        correct === currentExercise.questions.length
+          ? '¡Perfect!'
+          : correct >= currentExercise.questions.length / 2
+            ? 'Buen intento'
+            : 'Sigue practicando',
       message: `Respondiste correctamente ${correct} de ${currentExercise.questions.length} preguntas (${Math.round((correct / currentExercise.questions.length) * 100)}%).`,
       score: correct >= currentExercise.questions.length / 2 ? score : undefined,
-      showConfetti: correct === currentExercise.questions.length
+      showConfetti: correct === currentExercise.questions.length,
     });
     setShowFeedback(true);
   };
@@ -216,7 +235,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
       type: 'info',
       title: 'Progreso Guardado',
       message: 'Tu progreso ha sido guardado correctamente.',
-      showConfetti: false
+      showConfetti: false,
     });
     setShowFeedback(true);
   };
@@ -229,18 +248,18 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
       specificActions: [
         {
           label: 'Guardar',
-          icon: <Save className="w-4 h-4" />,
+          icon: <Save className="h-4 w-4" />,
           onClick: handleSave,
-          variant: 'blue'
-        }
-      ]
+          variant: 'blue',
+        },
+      ],
     };
   }, [currentIndex, answers]);
 
   return (
-    <div className="relative w-full h-screen bg-black overflow-hidden">
+    <div className="relative h-screen w-full overflow-hidden bg-black">
       {/* Main TikTok-style vertical content */}
-      <div className="relative w-full max-w-md h-screen mx-auto bg-black">
+      <div className="relative mx-auto h-screen w-full max-w-md bg-black">
         <AnimatePresence mode="wait">
           <TikTokCard
             key={currentIndex}
@@ -251,14 +270,14 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
         </AnimatePresence>
 
         {/* Navigation Controls - Bottom */}
-        <div className="absolute bottom-24 left-0 right-0 flex justify-center gap-4 z-20">
+        <div className="absolute bottom-24 left-0 right-0 z-20 flex justify-center gap-4">
           <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
             <DetectiveButton
               variant="secondary"
               onClick={() => handleSwipe('up')}
               disabled={currentIndex === 0}
               icon={<ChevronUp />}
-              className="bg-white/20 backdrop-blur-md border-white/30 text-white"
+              className="border-white/30 bg-white/20 text-white backdrop-blur-md"
             >
               Anterior
             </DetectiveButton>
@@ -269,7 +288,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
               onClick={() => handleSwipe('down')}
               disabled={currentIndex === currentExercise.questions.length - 1}
               icon={<ChevronDown />}
-              className="bg-white/20 backdrop-blur-md border-white/30 text-white"
+              className="border-white/30 bg-white/20 text-white backdrop-blur-md"
             >
               Siguiente
             </DetectiveButton>
@@ -277,23 +296,23 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
         </div>
 
         {/* Progress Indicator - Bottom */}
-        <div className="absolute bottom-8 left-0 right-0 text-center text-white text-sm font-medium z-20 flex items-center justify-center gap-3">
-          <span className="bg-black/50 backdrop-blur-md px-4 py-2 rounded-full">
+        <div className="absolute bottom-8 left-0 right-0 z-20 flex items-center justify-center gap-3 text-center text-sm font-medium text-white">
+          <span className="rounded-full bg-black/50 px-4 py-2 backdrop-blur-md">
             Pregunta {currentIndex + 1} / {currentExercise.questions.length}
           </span>
-          <span className="bg-detective-orange/80 backdrop-blur-md px-4 py-2 rounded-full">
+          <span className="rounded-full bg-detective-orange/80 px-4 py-2 backdrop-blur-md">
             {answers.length} respondidas
           </span>
         </div>
 
         {/* Sidebar Toggle Button - Top Right */}
-        <div className="absolute top-4 right-4 z-30">
+        <div className="absolute right-4 top-4 z-30">
           <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
             <DetectiveButton
               variant="gold"
               onClick={() => setShowSidebar(!showSidebar)}
               icon={showSidebar ? <X /> : <Menu />}
-              className="bg-white/20 backdrop-blur-md border-white/30 text-white"
+              className="border-white/30 bg-white/20 text-white backdrop-blur-md"
             >
               {showSidebar ? 'Cerrar' : 'Menú'}
             </DetectiveButton>
@@ -301,12 +320,12 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
         </div>
 
         {/* Exit Button - Top Left */}
-        <div className="absolute top-4 left-4 z-30">
+        <div className="absolute left-4 top-4 z-30">
           <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
             <DetectiveButton
               variant="secondary"
               onClick={onExit}
-              className="bg-white/20 backdrop-blur-md border-white/30 text-white"
+              className="border-white/30 bg-white/20 text-white backdrop-blur-md"
             >
               Salir
             </DetectiveButton>
@@ -322,15 +341,16 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="absolute top-0 right-0 w-80 h-full bg-gradient-to-br from-detective-orange-50 to-detective-blue-50 shadow-detective-lg z-40 overflow-y-auto"
+            className="from-detective-orange-50 to-detective-blue-50 absolute right-0 top-0 z-40 h-full w-80 overflow-y-auto bg-gradient-to-br shadow-detective-lg"
           >
-            <div className="p-6 space-y-4">
+            <div className="space-y-4 p-6">
               {/* Close Button */}
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-detective-2xl font-bold text-detective-text">Panel de Control</h2>
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-detective-2xl font-bold text-detective-text">
+                  Panel de Control
+                </h2>
                 <DetectiveButton
                   variant="secondary"
-
                   onClick={() => setShowSidebar(false)}
                   icon={<X />}
                 >
@@ -353,7 +373,11 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
-                <ProgressTracker currentStep={calculateProgress()} totalSteps={100} variant="circular" />
+                <ProgressTracker
+                  currentStep={calculateProgress()}
+                  totalSteps={100}
+                  variant="circular"
+                />
               </motion.div>
 
               {/* Score Display */}
@@ -372,20 +396,20 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
                 transition={{ delay: 0.4 }}
               >
                 <DetectiveCard variant="default" padding="md">
-                  <h3 className="font-bold text-detective-text mb-3 flex items-center gap-2">
-                    <Award className="w-5 h-5 text-detective-orange" />
+                  <h3 className="mb-3 flex items-center gap-2 font-bold text-detective-text">
+                    <Award className="h-5 w-5 text-detective-orange" />
                     Estado de Preguntas
                   </h3>
                   <div className="space-y-2">
                     {currentExercise.questions.map((_, idx) => (
                       <div
                         key={idx}
-                        className={`flex items-center justify-between p-2 rounded-detective transition-colors ${
+                        className={`flex items-center justify-between rounded-detective p-2 transition-colors ${
                           idx === currentIndex
                             ? 'bg-detective-orange text-white'
                             : answers[idx] !== undefined
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-gray-100 text-gray-600'
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-gray-100 text-gray-600'
                         }`}
                       >
                         <span className="font-medium">Pregunta {idx + 1}</span>
@@ -393,8 +417,8 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
                           {idx === currentIndex
                             ? 'Actual'
                             : answers[idx] !== undefined
-                            ? 'Respondida'
-                            : 'Pendiente'}
+                              ? 'Respondida'
+                              : 'Pendiente'}
                         </span>
                       </div>
                     ))}
@@ -418,11 +442,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
                     >
                       Guardar Progreso
                     </DetectiveButton>
-                    <DetectiveButton
-                      variant="gold"
-                      onClick={handleReset}
-                      className="w-full"
-                    >
+                    <DetectiveButton variant="gold" onClick={handleReset} className="w-full">
                       Reiniciar Quiz
                     </DetectiveButton>
                     <DetectiveButton
@@ -444,7 +464,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
                 transition={{ delay: 0.6 }}
               >
                 <DetectiveCard variant="default" padding="md">
-                  <h3 className="font-bold text-detective-text mb-3">Instrucciones</h3>
+                  <h3 className="mb-3 font-bold text-detective-text">Instrucciones</h3>
                   <div className="space-y-2 text-detective-sm text-detective-text-secondary">
                     <p>• Selecciona una respuesta para cada pregunta</p>
                     <p>• Usa los botones para navegar entre preguntas</p>

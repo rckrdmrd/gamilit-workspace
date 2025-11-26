@@ -11,12 +11,10 @@
  * ~200 lines
  */
 
-import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Target, Search } from 'lucide-react';
+import { Target } from 'lucide-react';
 import type { Mission, MissionStatus } from '../types/missionsTypes';
 import { MissionCard } from './MissionCard';
-import { cn } from '@shared/utils/cn';
 
 interface MissionGridProps {
   missions: Mission[];
@@ -41,14 +39,12 @@ export function MissionGrid({
 }: MissionGridProps) {
   // Filter missions by status
   const filteredMissions =
-    statusFilter === 'all'
-      ? missions
-      : missions.filter(m => m.status === statusFilter);
+    statusFilter === 'all' ? missions : missions.filter((m) => m.status === statusFilter);
 
   // Loading skeleton
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {[...Array(6)].map((_, i) => (
           <MissionCardSkeleton key={i} />
         ))}
@@ -63,10 +59,7 @@ export function MissionGrid({
 
   // Grid with missions
   return (
-    <motion.div
-      layout
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-    >
+    <motion.div layout className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       <AnimatePresence mode="popLayout">
         {filteredMissions.map((mission, index) => (
           <motion.div
@@ -99,37 +92,37 @@ export function MissionGrid({
  */
 function MissionCardSkeleton() {
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 border-2 border-gray-200">
+    <div className="rounded-xl border-2 border-gray-200 bg-white p-6 shadow-md">
       <div className="animate-pulse">
         {/* Icon and Title */}
-        <div className="flex items-start gap-4 mb-4">
-          <div className="w-16 h-16 bg-gray-200 rounded-xl" />
+        <div className="mb-4 flex items-start gap-4">
+          <div className="h-16 w-16 rounded-xl bg-gray-200" />
           <div className="flex-1">
-            <div className="h-5 bg-gray-200 rounded mb-2 w-3/4" />
-            <div className="h-4 bg-gray-200 rounded w-full" />
+            <div className="mb-2 h-5 w-3/4 rounded bg-gray-200" />
+            <div className="h-4 w-full rounded bg-gray-200" />
           </div>
         </div>
 
         {/* Progress */}
         <div className="mb-4">
-          <div className="flex justify-between mb-2">
-            <div className="h-4 bg-gray-200 rounded w-20" />
-            <div className="h-4 bg-gray-200 rounded w-16" />
+          <div className="mb-2 flex justify-between">
+            <div className="h-4 w-20 rounded bg-gray-200" />
+            <div className="h-4 w-16 rounded bg-gray-200" />
           </div>
-          <div className="h-3 bg-gray-200 rounded-full" />
+          <div className="h-3 rounded-full bg-gray-200" />
         </div>
 
         {/* Rewards */}
-        <div className="flex gap-3 mb-4">
-          <div className="h-10 bg-gray-200 rounded-lg w-24" />
-          <div className="h-10 bg-gray-200 rounded-lg w-24" />
+        <div className="mb-4 flex gap-3">
+          <div className="h-10 w-24 rounded-lg bg-gray-200" />
+          <div className="h-10 w-24 rounded-lg bg-gray-200" />
         </div>
 
         {/* Timer */}
-        <div className="h-4 bg-gray-200 rounded mb-4 w-32" />
+        <div className="mb-4 h-4 w-32 rounded bg-gray-200" />
 
         {/* Button */}
-        <div className="h-12 bg-gray-200 rounded-lg" />
+        <div className="h-12 rounded-lg bg-gray-200" />
       </div>
     </div>
   );
@@ -147,7 +140,7 @@ function MissionGridEmpty({ message }: MissionGridEmptyProps) {
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="flex flex-col items-center justify-center py-16 px-4"
+      className="flex flex-col items-center justify-center px-4 py-16"
     >
       <motion.div
         animate={{
@@ -161,8 +154,8 @@ function MissionGridEmpty({ message }: MissionGridEmptyProps) {
         className="mb-6"
       >
         <div className="relative">
-          <div className="w-32 h-32 bg-gradient-to-br from-orange-100 to-amber-100 rounded-full flex items-center justify-center">
-            <Target className="w-16 h-16 text-orange-400" />
+          <div className="flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-orange-100 to-amber-100">
+            <Target className="h-16 w-16 text-orange-400" />
           </div>
 
           {/* Animated rings */}
@@ -176,34 +169,30 @@ function MissionGridEmpty({ message }: MissionGridEmptyProps) {
               repeat: Infinity,
               ease: 'easeInOut',
             }}
-            className="absolute inset-0 border-4 border-orange-300 rounded-full"
+            className="absolute inset-0 rounded-full border-4 border-orange-300"
           />
         </div>
       </motion.div>
 
-      <h3 className="text-2xl font-bold text-gray-800 mb-2 text-center">
-        No hay misiones
-      </h3>
-      <p className="text-gray-600 text-center max-w-md">
-        {message}
-      </p>
+      <h3 className="mb-2 text-center text-2xl font-bold text-gray-800">No hay misiones</h3>
+      <p className="max-w-md text-center text-gray-600">{message}</p>
 
       {/* Decorative elements */}
       <div className="mt-8 flex items-center gap-4">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-          className="w-2 h-2 bg-orange-400 rounded-full"
+          className="h-2 w-2 rounded-full bg-orange-400"
         />
         <motion.div
           animate={{ rotate: -360 }}
           transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-          className="w-3 h-3 bg-amber-400 rounded-full"
+          className="h-3 w-3 rounded-full bg-amber-400"
         />
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-          className="w-2 h-2 bg-orange-400 rounded-full"
+          className="h-2 w-2 rounded-full bg-orange-400"
         />
       </div>
     </motion.div>

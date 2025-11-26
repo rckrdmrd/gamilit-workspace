@@ -11,7 +11,9 @@
  */
 
 import axiosInstance from '../axios.instance';
+import { API_ENDPOINTS } from '@/config/api.config';
 import type { Classroom, StudentMonitoring } from '@apps/teacher/types';
+import type { PaginatedResponse } from '@shared/types/api-responses';
 
 // ============================================================================
 // TYPES
@@ -36,6 +38,41 @@ export interface GetClassroomStudentsQueryDto {
   sort_order?: 'asc' | 'desc';
 }
 
+/**
+ * Classroom progress data
+ */
+export interface ClassroomProgressData {
+  id: string;
+  name: string;
+  student_count: number;
+  active_students: number;
+  average_completion: number;
+  average_score: number;
+  total_exercises: number;
+  completed_exercises: number;
+}
+
+/**
+ * Module progress item
+ */
+export interface ModuleProgressItem {
+  module_id: string;
+  module_name: string;
+  completion_percentage: number;
+  average_score: number;
+  students_completed: number;
+  students_total: number;
+  average_time_minutes: number;
+}
+
+/**
+ * Response for classroom progress endpoint
+ */
+export interface ClassroomProgressResponse {
+  classroomData: ClassroomProgressData;
+  moduleProgress: ModuleProgressItem[];
+}
+
 // ============================================================================
 // CLASSROOMS API CLASS
 // ============================================================================
@@ -47,22 +84,22 @@ export interface GetClassroomStudentsQueryDto {
  * Full CRUD will be available in Phase 2.
  */
 class ClassroomsAPI {
-  private readonly baseUrl = '/classrooms';
-
   /**
    * Get all classrooms for the authenticated teacher
    *
-   * Returns a list of classrooms where the authenticated user is the teacher
+   * Returns a paginated list of classrooms where the authenticated user is the teacher
    * or co-teacher. Supports filtering by status, grade level, and subject.
    *
    * @param query - Optional query parameters for filtering
-   * @returns Promise<Classroom[]> List of classrooms
+   * @returns Promise<PaginatedResponse<Classroom>> Paginated list of classrooms
    * @throws Error if request fails
    *
    * @example
    * ```typescript
    * // Get all classrooms
-   * const classrooms = await classroomsApi.getClassrooms();
+   * const response = await classroomsApi.getClassrooms();
+   * const classrooms = response.data;
+   * const pagination = response.pagination;
    *
    * // Get only active classrooms
    * const active = await classroomsApi.getClassrooms({ status: 'active' });
@@ -73,16 +110,19 @@ class ClassroomsAPI {
    *   subject: 'Math'
    * });
    *
-   * classrooms.forEach(classroom => {
+   * response.data.forEach(classroom => {
    *   console.log(`${classroom.name} - ${classroom.student_count} students`);
    * });
    * ```
    */
-  async getClassrooms(query?: GetClassroomsQueryDto): Promise<Classroom[]> {
+  async getClassrooms(query?: GetClassroomsQueryDto): Promise<PaginatedResponse<Classroom>> {
     try {
-      const { data } = await axiosInstance.get<Classroom[]>(this.baseUrl, {
-        params: query,
-      });
+      const { data } = await axiosInstance.get<PaginatedResponse<Classroom>>(
+        API_ENDPOINTS.teacher.classrooms,
+        {
+          params: query,
+        },
+      );
       return data;
     } catch (error) {
       console.error('[ClassroomsAPI] Error fetching classrooms:', error);
@@ -113,7 +153,7 @@ class ClassroomsAPI {
   async getClassroomById(classroomId: string): Promise<Classroom> {
     try {
       const { data } = await axiosInstance.get<Classroom>(
-        `${this.baseUrl}/${classroomId}`
+        API_ENDPOINTS.teacher.classroom(classroomId),
       );
       return data;
     } catch (error) {
@@ -125,18 +165,19 @@ class ClassroomsAPI {
   /**
    * Get students in a classroom
    *
-   * Returns a list of students enrolled in the specified classroom with
+   * Returns a paginated list of students enrolled in the specified classroom with
    * monitoring data including current activity, progress, scores, and status.
    *
    * @param classroomId - ID of the classroom
    * @param query - Optional query parameters for filtering and sorting
-   * @returns Promise<StudentMonitoring[]> List of students with monitoring data
+   * @returns Promise<PaginatedResponse<StudentMonitoring>> Paginated list of students with monitoring data
    * @throws Error if request fails
    *
    * @example
    * ```typescript
    * // Get all students in classroom
-   * const students = await classroomsApi.getClassroomStudents('classroom-123');
+   * const response = await classroomsApi.getClassroomStudents('classroom-123');
+   * const students = response.data;
    *
    * // Get only active students, sorted by score
    * const activeStudents = await classroomsApi.getClassroomStudents('classroom-123', {
@@ -145,7 +186,7 @@ class ClassroomsAPI {
    *   sort_order: 'desc'
    * });
    *
-   * students.forEach(student => {
+   * response.data.forEach(student => {
    *   console.log(`${student.full_name}: ${student.progress_percentage}% complete`);
    *   console.log(`Average score: ${student.score_average}%`);
    *   console.log(`Last activity: ${student.last_activity}`);
@@ -154,12 +195,12 @@ class ClassroomsAPI {
    */
   async getClassroomStudents(
     classroomId: string,
-    query?: GetClassroomStudentsQueryDto
-  ): Promise<StudentMonitoring[]> {
+    query?: GetClassroomStudentsQueryDto,
+  ): Promise<PaginatedResponse<StudentMonitoring>> {
     try {
-      const { data } = await axiosInstance.get<StudentMonitoring[]>(
-        `${this.baseUrl}/${classroomId}/students`,
-        { params: query }
+      const { data } = await axiosInstance.get<PaginatedResponse<StudentMonitoring>>(
+        API_ENDPOINTS.teacher.classroomStudents(classroomId),
+        { params: query },
       );
       return data;
     } catch (error) {
@@ -198,12 +239,50 @@ class ClassroomsAPI {
     completed_exercises: number;
   }> {
     try {
-      const { data } = await axiosInstance.get(
-        `${this.baseUrl}/${classroomId}/stats`
-      );
+      const { data } = await axiosInstance.get(API_ENDPOINTS.teacher.classroomStats(classroomId));
       return data;
     } catch (error) {
       console.error('[ClassroomsAPI] Error fetching classroom stats:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get classroom progress data
+   *
+   * Returns comprehensive progress data for a classroom including general statistics
+   * and module-specific progress. Shows completion rates, average scores, active students,
+   * and detailed module progress.
+   *
+   * @param classroomId - ID of the classroom
+   * @returns Promise<ClassroomProgressResponse> Classroom data and module progress
+   * @throws Error if request fails
+   *
+   * @example
+   * ```typescript
+   * const progress = await classroomsApi.getClassroomProgress('classroom-123');
+   *
+   * console.log(`Classroom: ${progress.classroomData.name}`);
+   * console.log(`Active students: ${progress.classroomData.active_students}/${progress.classroomData.student_count}`);
+   * console.log(`Average completion: ${progress.classroomData.average_completion}%`);
+   * console.log(`Average score: ${progress.classroomData.average_score}%`);
+   *
+   * progress.moduleProgress.forEach(module => {
+   *   console.log(`\nModule: ${module.module_name}`);
+   *   console.log(`Completion: ${module.completion_percentage}%`);
+   *   console.log(`Average score: ${module.average_score}%`);
+   *   console.log(`Students completed: ${module.students_completed}/${module.students_total}`);
+   * });
+   * ```
+   */
+  async getClassroomProgress(classroomId: string): Promise<ClassroomProgressResponse> {
+    try {
+      const { data } = await axiosInstance.get<ClassroomProgressResponse>(
+        `${API_ENDPOINTS.teacher.classroom(classroomId)}/progress`,
+      );
+      return data;
+    } catch (error) {
+      console.error('[ClassroomsAPI] Error fetching classroom progress:', error);
       throw error;
     }
   }
@@ -238,8 +317,8 @@ class ClassroomsAPI {
   }): Promise<Classroom> {
     try {
       const { data: responseData } = await axiosInstance.post<Classroom>(
-        this.baseUrl,
-        data
+        API_ENDPOINTS.teacher.createClassroom,
+        data,
       );
       return responseData;
     } catch (error) {
@@ -272,12 +351,12 @@ class ClassroomsAPI {
       name: string;
       subject: string;
       grade_level: string;
-    }>
+    }>,
   ): Promise<Classroom> {
     try {
       const { data: responseData } = await axiosInstance.put<Classroom>(
-        `${this.baseUrl}/${id}`,
-        data
+        API_ENDPOINTS.teacher.updateClassroom(id),
+        data,
       );
       return responseData;
     } catch (error) {
@@ -303,7 +382,7 @@ class ClassroomsAPI {
    */
   async deleteClassroom(id: string): Promise<void> {
     try {
-      await axiosInstance.delete(`${this.baseUrl}/${id}`);
+      await axiosInstance.delete(API_ENDPOINTS.teacher.deleteClassroom(id));
     } catch (error) {
       console.error('[ClassroomsAPI] Error deleting classroom:', error);
       throw error;

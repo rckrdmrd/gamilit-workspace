@@ -18,6 +18,7 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA social_features TO gamilit_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON social_features.classrooms TO gamilit_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON social_features.classroom_members TO gamilit_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON social_features.teams TO gamilit_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON social_features.teacher_classrooms TO gamilit_user;
 
 -- Comentarios sobre permisos
 COMMENT ON SCHEMA social_features IS

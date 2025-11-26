@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
-import { Coins, TrendingUp, TrendingDown, Settings, DollarSign, Gift, AlertTriangle } from 'lucide-react';
+import {
+  Coins,
+  TrendingUp,
+  TrendingDown,
+  Settings,
+  DollarSign,
+  Gift,
+  AlertTriangle,
+} from 'lucide-react';
 
 interface EconomyStats {
   totalCoinsInCirculation: number;
@@ -77,7 +85,12 @@ export const EconomicInterventionPanel: React.FC = () => {
       return;
     }
 
-    if (!confirm(`Add ${coinsAmount} coins to user ${targetUser}? This will be logged in audit trail.`)) return;
+    if (
+      !confirm(
+        `Add ${coinsAmount} coins to user ${targetUser}? This will be logged in audit trail.`,
+      )
+    )
+      return;
 
     try {
       // API call would go here
@@ -98,7 +111,12 @@ export const EconomicInterventionPanel: React.FC = () => {
       return;
     }
 
-    if (!confirm(`Remove ${coinsAmount} coins from user ${targetUser}? This will be logged in audit trail.`)) return;
+    if (
+      !confirm(
+        `Remove ${coinsAmount} coins from user ${targetUser}? This will be logged in audit trail.`,
+      )
+    )
+      return;
 
     try {
       console.log('Removing coins:', { targetUser, coinsAmount });
@@ -115,7 +133,7 @@ export const EconomicInterventionPanel: React.FC = () => {
   const handleAdjustRates = async () => {
     if (
       !confirm(
-        `Adjust earning rate to ${earningRate}% and spending cost to ${spendingCost}%? This affects all users immediately.`
+        `Adjust earning rate to ${earningRate}% and spending cost to ${spendingCost}%? This affects all users immediately.`,
       )
     )
       return;
@@ -131,19 +149,26 @@ export const EconomicInterventionPanel: React.FC = () => {
   };
 
   const handleToggleEvent = (id: string) => {
-    setEvents((prev) => prev.map((event) => (event.id === id ? { ...event, active: !event.active } : event)));
+    setEvents((prev) =>
+      prev.map((event) => (event.id === id ? { ...event, active: !event.active } : event)),
+    );
   };
 
-  const inflationStatus = stats.inflationRate > 5 ? 'critical' : stats.inflationRate > 3 ? 'warning' : 'healthy';
+  const inflationStatus =
+    stats.inflationRate > 5 ? 'critical' : stats.inflationRate > 3 ? 'warning' : 'healthy';
   const inflationColor =
-    inflationStatus === 'critical' ? 'text-red-500' : inflationStatus === 'warning' ? 'text-yellow-500' : 'text-green-500';
+    inflationStatus === 'critical'
+      ? 'text-red-500'
+      : inflationStatus === 'warning'
+        ? 'text-yellow-500'
+        : 'text-green-500';
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Coins className="w-8 h-8 text-detective-orange" />
+          <Coins className="h-8 w-8 text-detective-orange" />
           <div>
             <h2 className="text-detective-subtitle">Economic Intervention Panel</h2>
             <p className="text-detective-small text-gray-400">ML Coins economy management</p>
@@ -152,14 +177,14 @@ export const EconomicInterventionPanel: React.FC = () => {
         <div className="flex gap-2">
           <DetectiveButton
             variant="primary"
-            icon={<DollarSign className="w-4 h-4" />}
+            icon={<DollarSign className="h-4 w-4" />}
             onClick={() => setShowAddCoins(!showAddCoins)}
           >
             Manage Coins
           </DetectiveButton>
           <DetectiveButton
             variant="blue"
-            icon={<Settings className="w-4 h-4" />}
+            icon={<Settings className="h-4 w-4" />}
             onClick={() => setAdjustingRates(!adjustingRates)}
           >
             Adjust Rates
@@ -168,54 +193,65 @@ export const EconomicInterventionPanel: React.FC = () => {
       </div>
 
       {/* Warning Banner */}
-      <DetectiveCard className="bg-red-500/10 border border-red-500/30">
+      <DetectiveCard className="border border-red-500/30 bg-red-500/10">
         <div className="flex items-start gap-3">
-          <AlertTriangle className="w-6 h-6 text-red-500 mt-1" />
+          <AlertTriangle className="mt-1 h-6 w-6 text-red-500" />
           <div>
-            <h3 className="text-detective-base font-semibold text-red-500 mb-1">Critical Actions - Use with Caution</h3>
+            <h3 className="mb-1 text-detective-base font-semibold text-red-500">
+              Critical Actions - Use with Caution
+            </h3>
             <p className="text-detective-small text-gray-400">
-              All economic interventions are logged and audited. Improper use can destabilize the economy and affect
-              user experience. Always validate impact predictions before applying changes.
+              All economic interventions are logged and audited. Improper use can destabilize the
+              economy and affect user experience. Always validate impact predictions before applying
+              changes.
             </p>
           </div>
         </div>
       </DetectiveCard>
 
       {/* Economy Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <DetectiveCard className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 border border-yellow-500/30">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <DetectiveCard className="border border-yellow-500/30 bg-gradient-to-br from-yellow-500/10 to-yellow-600/5">
           <div className="flex items-center gap-3">
-            <Coins className="w-6 h-6 text-yellow-500" />
+            <Coins className="h-6 w-6 text-yellow-500" />
             <div>
               <p className="text-detective-small text-gray-400">Total in Circulation</p>
-              <p className="text-2xl font-bold text-yellow-500">{stats.totalCoinsInCirculation.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-yellow-500">
+                {stats.totalCoinsInCirculation.toLocaleString()}
+              </p>
             </div>
           </div>
         </DetectiveCard>
 
-        <DetectiveCard className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/30">
+        <DetectiveCard className="border border-blue-500/30 bg-gradient-to-br from-blue-500/10 to-blue-600/5">
           <div className="flex items-center gap-3">
-            <TrendingUp className="w-6 h-6 text-blue-500" />
+            <TrendingUp className="h-6 w-6 text-blue-500" />
             <div>
               <p className="text-detective-small text-gray-400">Avg User Balance</p>
-              <p className="text-2xl font-bold text-blue-500">{stats.averageUserBalance.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-blue-500">
+                {stats.averageUserBalance.toLocaleString()}
+              </p>
             </div>
           </div>
         </DetectiveCard>
 
-        <DetectiveCard className="bg-gradient-to-br from-green-500/10 to-green-600/5 border border-green-500/30">
+        <DetectiveCard className="border border-green-500/30 bg-gradient-to-br from-green-500/10 to-green-600/5">
           <div className="flex items-center gap-3">
-            <TrendingUp className="w-6 h-6 text-green-500" />
+            <TrendingUp className="h-6 w-6 text-green-500" />
             <div>
               <p className="text-detective-small text-gray-400">Daily Earnings</p>
-              <p className="text-2xl font-bold text-green-500">{stats.dailyEarnings.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-green-500">
+                {stats.dailyEarnings.toLocaleString()}
+              </p>
             </div>
           </div>
         </DetectiveCard>
 
-        <DetectiveCard className={`bg-gradient-to-br from-${inflationStatus === 'critical' ? 'red' : inflationStatus === 'warning' ? 'yellow' : 'green'}-500/10 to-${inflationStatus === 'critical' ? 'red' : inflationStatus === 'warning' ? 'yellow' : 'green'}-600/5 border border-${inflationStatus === 'critical' ? 'red' : inflationStatus === 'warning' ? 'yellow' : 'green'}-500/30`}>
+        <DetectiveCard
+          className={`bg-gradient-to-br from-${inflationStatus === 'critical' ? 'red' : inflationStatus === 'warning' ? 'yellow' : 'green'}-500/10 to-${inflationStatus === 'critical' ? 'red' : inflationStatus === 'warning' ? 'yellow' : 'green'}-600/5 border border-${inflationStatus === 'critical' ? 'red' : inflationStatus === 'warning' ? 'yellow' : 'green'}-500/30`}
+        >
           <div className="flex items-center gap-3">
-            <TrendingUp className={`w-6 h-6 ${inflationColor}`} />
+            <TrendingUp className={`h-6 w-6 ${inflationColor}`} />
             <div>
               <p className="text-detective-small text-gray-400">Inflation Rate</p>
               <p className={`text-2xl font-bold ${inflationColor}`}>{stats.inflationRate}%</p>
@@ -228,9 +264,11 @@ export const EconomicInterventionPanel: React.FC = () => {
       {showAddCoins && (
         <DetectiveCard className="border-2 border-detective-orange">
           <h3 className="text-detective-subtitle mb-4">Manual Coin Adjustment</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block text-detective-small text-gray-400 mb-2">User ID or Email</label>
+              <label className="text-detective-small mb-2 block text-gray-400">
+                User ID or Email
+              </label>
               <input
                 type="text"
                 className="input-detective"
@@ -240,7 +278,9 @@ export const EconomicInterventionPanel: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-detective-small text-gray-400 mb-2">Amount (ML Coins)</label>
+              <label className="text-detective-small mb-2 block text-gray-400">
+                Amount (ML Coins)
+              </label>
               <input
                 type="number"
                 className="input-detective"
@@ -252,12 +292,16 @@ export const EconomicInterventionPanel: React.FC = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <DetectiveButton variant="green" icon={<DollarSign className="w-4 h-4" />} onClick={handleAddCoins}>
+            <DetectiveButton
+              variant="green"
+              icon={<DollarSign className="h-4 w-4" />}
+              onClick={handleAddCoins}
+            >
               Add Coins
             </DetectiveButton>
             <DetectiveButton
               variant="primary"
-              icon={<TrendingDown className="w-4 h-4" />}
+              icon={<TrendingDown className="h-4 w-4" />}
               onClick={handleRemoveCoins}
               className="bg-red-500 hover:bg-red-600"
             >
@@ -274,9 +318,9 @@ export const EconomicInterventionPanel: React.FC = () => {
       {adjustingRates && (
         <DetectiveCard className="border-2 border-detective-orange">
           <h3 className="text-detective-subtitle mb-4">Adjust Economic Rates</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+          <div className="mb-4 grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
-              <label className="block text-detective-small text-gray-400 mb-2">
+              <label className="text-detective-small mb-2 block text-gray-400">
                 Earning Rate Multiplier: {earningRate}%
               </label>
               <input
@@ -288,12 +332,16 @@ export const EconomicInterventionPanel: React.FC = () => {
                 onChange={(e) => setEarningRate(parseInt(e.target.value))}
                 className="w-full"
               />
-              <p className="text-xs text-gray-500 mt-1">
-                {earningRate < 100 ? 'Decreased earnings' : earningRate > 100 ? 'Increased earnings' : 'Normal rate'}
+              <p className="mt-1 text-xs text-gray-500">
+                {earningRate < 100
+                  ? 'Decreased earnings'
+                  : earningRate > 100
+                    ? 'Increased earnings'
+                    : 'Normal rate'}
               </p>
             </div>
             <div>
-              <label className="block text-detective-small text-gray-400 mb-2">
+              <label className="text-detective-small mb-2 block text-gray-400">
                 Spending Cost Multiplier: {spendingCost}%
               </label>
               <input
@@ -305,26 +353,32 @@ export const EconomicInterventionPanel: React.FC = () => {
                 onChange={(e) => setSpendingCost(parseInt(e.target.value))}
                 className="w-full"
               />
-              <p className="text-xs text-gray-500 mt-1">
-                {spendingCost < 100 ? 'Discounted prices' : spendingCost > 100 ? 'Increased prices' : 'Normal prices'}
+              <p className="mt-1 text-xs text-gray-500">
+                {spendingCost < 100
+                  ? 'Discounted prices'
+                  : spendingCost > 100
+                    ? 'Increased prices'
+                    : 'Normal prices'}
               </p>
             </div>
           </div>
 
           {/* Impact Prediction */}
-          <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg mb-4">
-            <h4 className="text-detective-base font-semibold text-blue-500 mb-2">Impact Prediction</h4>
-            <div className="grid grid-cols-2 gap-4 text-detective-small">
+          <div className="mb-4 rounded-lg border border-blue-500/30 bg-blue-500/10 p-4">
+            <h4 className="mb-2 text-detective-base font-semibold text-blue-500">
+              Impact Prediction
+            </h4>
+            <div className="text-detective-small grid grid-cols-2 gap-4">
               <div>
                 <p className="text-gray-400">Expected daily earnings change:</p>
-                <p className="text-detective-text font-bold">
+                <p className="font-bold text-detective-text">
                   {((earningRate - 100) / 100) * stats.dailyEarnings > 0 ? '+' : ''}
                   {(((earningRate - 100) / 100) * stats.dailyEarnings).toFixed(0)} coins/day
                 </p>
               </div>
               <div>
                 <p className="text-gray-400">Expected spending change:</p>
-                <p className="text-detective-text font-bold">
+                <p className="font-bold text-detective-text">
                   {((spendingCost - 100) / 100) * stats.dailySpending > 0 ? '+' : ''}
                   {(((spendingCost - 100) / 100) * stats.dailySpending).toFixed(0)} coins/day
                 </p>
@@ -350,13 +404,17 @@ export const EconomicInterventionPanel: React.FC = () => {
           {events.map((event) => (
             <div
               key={event.id}
-              className={`p-4 rounded-lg border ${
-                event.active ? 'border-green-500/30 bg-green-500/10' : 'border-gray-500/30 bg-gray-500/10'
+              className={`rounded-lg border p-4 ${
+                event.active
+                  ? 'border-green-500/30 bg-green-500/10'
+                  : 'border-gray-500/30 bg-gray-500/10'
               }`}
             >
-              <div className="flex items-start justify-between mb-2">
+              <div className="mb-2 flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <Gift className={`w-5 h-5 ${event.active ? 'text-green-500' : 'text-gray-400'}`} />
+                  <Gift
+                    className={`h-5 w-5 ${event.active ? 'text-green-500' : 'text-gray-400'}`}
+                  />
                   <div>
                     <h4 className="text-detective-base font-semibold">{event.name}</h4>
                     <p className="text-detective-small text-gray-400">{event.description}</p>
@@ -364,28 +422,34 @@ export const EconomicInterventionPanel: React.FC = () => {
                 </div>
                 <button
                   onClick={() => handleToggleEvent(event.id)}
-                  className={`px-3 py-1 rounded text-xs font-bold ${
+                  className={`rounded px-3 py-1 text-xs font-bold ${
                     event.active
-                      ? 'bg-green-500/20 text-green-500 border border-green-500/30'
-                      : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+                      ? 'border border-green-500/30 bg-green-500/20 text-green-500'
+                      : 'border border-gray-500/30 bg-gray-500/20 text-gray-400'
                   }`}
                 >
                   {event.active ? 'ACTIVE' : 'INACTIVE'}
                 </button>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 mt-3 text-detective-small">
+              <div className="text-detective-small mt-3 grid grid-cols-3 gap-4">
                 <div>
                   <p className="text-gray-400">Multiplier</p>
-                  <p className="text-detective-text font-bold">{event.multiplier}x</p>
+                  <p className="font-bold text-detective-text">{event.multiplier}x</p>
                 </div>
                 <div>
                   <p className="text-gray-400">Start Date</p>
-                  <p className="text-detective-text">{new Date(event.startDate).toLocaleDateString('es-ES')}</p>
+                  <p className="text-detective-text">
+                    {event.startDate
+                      ? new Date(event.startDate).toLocaleDateString('es-ES')
+                      : 'N/A'}
+                  </p>
                 </div>
                 <div>
                   <p className="text-gray-400">End Date</p>
-                  <p className="text-detective-text">{new Date(event.endDate).toLocaleDateString('es-ES')}</p>
+                  <p className="text-detective-text">
+                    {event.endDate ? new Date(event.endDate).toLocaleDateString('es-ES') : 'N/A'}
+                  </p>
                 </div>
               </div>
             </div>
@@ -394,36 +458,38 @@ export const EconomicInterventionPanel: React.FC = () => {
       </DetectiveCard>
 
       {/* Economy Health */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <DetectiveCard>
           <h3 className="text-detective-subtitle mb-4">Economy Health Indicators</h3>
           <div className="space-y-4">
             <div>
-              <div className="flex items-center justify-between mb-2">
+              <div className="mb-2 flex items-center justify-between">
                 <span className="text-detective-small text-gray-400">Daily Flow Balance</span>
                 <span className="text-detective-base font-bold text-green-500">
                   +{(stats.dailyEarnings - stats.dailySpending).toLocaleString()} coins
                 </span>
               </div>
-              <div className="h-2 bg-detective-bg-secondary rounded-full overflow-hidden">
+              <div className="h-2 overflow-hidden rounded-full bg-detective-bg-secondary">
                 <div
                   className="h-full bg-gradient-to-r from-red-500 to-green-500"
                   style={{ width: `${(stats.dailySpending / stats.dailyEarnings) * 100}%` }}
                 ></div>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Spending is {((stats.dailySpending / stats.dailyEarnings) * 100).toFixed(1)}% of earnings
+              <p className="mt-1 text-xs text-gray-500">
+                Spending is {((stats.dailySpending / stats.dailyEarnings) * 100).toFixed(1)}% of
+                earnings
               </p>
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-2">
+              <div className="mb-2 flex items-center justify-between">
                 <span className="text-detective-small text-gray-400">Wealth Distribution</span>
                 <span className="text-detective-base">Median: {stats.medianUserBalance}</span>
               </div>
               <p className="text-xs text-gray-500">
-                Average is {((stats.averageUserBalance / stats.medianUserBalance - 1) * 100).toFixed(1)}% higher than
-                median
+                Average is{' '}
+                {((stats.averageUserBalance / stats.medianUserBalance - 1) * 100).toFixed(1)}%
+                higher than median
               </p>
             </div>
           </div>
@@ -434,14 +500,19 @@ export const EconomicInterventionPanel: React.FC = () => {
           <h3 className="text-detective-subtitle mb-4">Top Coin Holders</h3>
           <div className="space-y-2">
             {stats.topEarners.map((user, index) => (
-              <div key={user.userId} className="flex items-center justify-between p-3 bg-detective-bg-secondary rounded-lg">
+              <div
+                key={user.userId}
+                className="flex items-center justify-between rounded-lg bg-detective-bg-secondary p-3"
+              >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-detective-orange/20 flex items-center justify-center text-detective-orange font-bold">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-detective-orange/20 font-bold text-detective-orange">
                     {index + 1}
                   </div>
                   <span className="text-detective-base">{user.userName}</span>
                 </div>
-                <span className="text-detective-base font-bold text-yellow-500">{user.balance.toLocaleString()}</span>
+                <span className="text-detective-base font-bold text-yellow-500">
+                  {user.balance.toLocaleString()}
+                </span>
               </div>
             ))}
           </div>

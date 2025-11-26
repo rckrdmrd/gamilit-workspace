@@ -8,9 +8,9 @@ import {
   HelpCircle,
   Play,
 } from 'lucide-react';
-import type { Exercise, ExerciseType } from '@/shared/types/educational.types';
+import type { Exercise } from '@/shared/types/educational.types';
+import { ExerciseType } from '@/shared/types/educational.types';
 import type { ExerciseAttempt } from '@/shared/types/progress.types';
-import { formatScore, formatAttemptCount } from '@/shared/utils/formatters';
 
 interface ExerciseAttemptCardProps {
   exercise: Exercise;
@@ -40,6 +40,15 @@ export const ExerciseAttemptCard: React.FC<ExerciseAttemptCardProps> = ({
   attempts = [],
   onStart,
 }) => {
+  // Helper functions to format score and attempt count
+  const formatScore = (score: number, maxScore: number) => {
+    return `${score}/${maxScore}`;
+  };
+
+  const formatAttemptCount = (count: number) => {
+    return count === 1 ? '1 attempt' : `${count} attempts`;
+  };
+
   // Calculate status and best score
   const hasAttempts = attempts.length > 0;
   const completedAttempts = attempts.filter((a) => a.status === 'completed');
@@ -55,13 +64,14 @@ export const ExerciseAttemptCard: React.FC<ExerciseAttemptCardProps> = ({
 
   // Get icon for exercise type
   const getExerciseIcon = (type: ExerciseType) => {
-    const iconMap: Record<ExerciseType, React.ComponentType<{ className?: string }>> = {
-      multiple_choice: ListChecks,
-      code_completion: Code,
-      true_false: HelpCircle,
-      fill_in_blank: FileText,
-      coding_challenge: Code,
-      matching: ListChecks,
+    const iconMap: Partial<Record<ExerciseType, React.ComponentType<{ className?: string }>>> = {
+      [ExerciseType.CRUCIGRAMA]: ListChecks,
+      [ExerciseType.LINEA_TIEMPO]: FileText,
+      [ExerciseType.SOPA_LETRAS]: Code,
+      [ExerciseType.MAPA_CONCEPTUAL]: FileText,
+      [ExerciseType.EMPAREJAMIENTO]: ListChecks,
+      [ExerciseType.VERDADERO_FALSO]: HelpCircle,
+      [ExerciseType.COMPLETAR_ESPACIOS]: FileText,
     };
     return iconMap[type] || FileText;
   };
@@ -88,28 +98,28 @@ export const ExerciseAttemptCard: React.FC<ExerciseAttemptCardProps> = ({
   return (
     <div
       className="
-        bg-white rounded-lg shadow-sm border border-gray-200 p-4
-        transition-all duration-200 hover:shadow-md hover:border-orange-300
+        rounded-lg border border-gray-200 bg-white p-4 shadow-sm
+        transition-all duration-200 hover:border-orange-300 hover:shadow-md
       "
     >
       <div className="flex items-start space-x-4">
         {/* Exercise Icon */}
         <div className="flex-shrink-0">
-          <div className="w-12 h-12 rounded-lg bg-orange-50 flex items-center justify-center">
-            <Icon className="w-6 h-6 text-orange-600" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-50">
+            <Icon className="h-6 w-6 text-orange-600" />
           </div>
         </div>
 
         {/* Exercise Info */}
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           {/* Title and Status */}
-          <div className="flex items-start justify-between mb-2">
-            <h4 className="text-base font-semibold text-gray-900 line-clamp-1 mr-2">
+          <div className="mb-2 flex items-start justify-between">
+            <h4 className="mr-2 line-clamp-1 text-base font-semibold text-gray-900">
               {exercise.title}
             </h4>
             <span
               className={`
-                px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap flex-shrink-0
+                flex-shrink-0 whitespace-nowrap rounded-full px-2 py-1 text-xs font-semibold
                 ${getStatusColor()}
               `}
             >
@@ -118,14 +128,14 @@ export const ExerciseAttemptCard: React.FC<ExerciseAttemptCardProps> = ({
           </div>
 
           {/* Description */}
-          <p className="text-sm text-gray-600 mb-3 line-clamp-2">{exercise.description}</p>
+          <p className="mb-3 line-clamp-2 text-sm text-gray-600">{exercise.description}</p>
 
           {/* Stats Row */}
-          <div className="flex items-center space-x-4 mb-3">
+          <div className="mb-3 flex items-center space-x-4">
             {/* Exercise Type */}
             <div className="flex items-center space-x-1">
               <span className="text-xs text-gray-500">Type:</span>
-              <span className="text-xs font-medium text-gray-700 capitalize">
+              <span className="text-xs font-medium capitalize text-gray-700">
                 {exercise.type.replace('_', ' ')}
               </span>
             </div>
@@ -133,7 +143,7 @@ export const ExerciseAttemptCard: React.FC<ExerciseAttemptCardProps> = ({
             {/* Attempts Count */}
             {hasAttempts && (
               <div className="flex items-center space-x-1">
-                <PlayCircle className="w-3 h-3 text-gray-500" />
+                <PlayCircle className="h-3 w-3 text-gray-500" />
                 <span className="text-xs font-medium text-gray-700">
                   {formatAttemptCount(attempts.length)}
                 </span>
@@ -143,9 +153,9 @@ export const ExerciseAttemptCard: React.FC<ExerciseAttemptCardProps> = ({
             {/* Best Score */}
             {hasCompleted && (
               <div className="flex items-center space-x-1">
-                <CheckCircle className="w-3 h-3 text-green-500" />
+                <CheckCircle className="h-3 w-3 text-green-500" />
                 <span className="text-xs font-medium text-gray-700">
-                  Best: {formatScore(bestScore, exercise.max_score)}
+                  Best: {formatScore(bestScore, exercise.max_score || exercise.max_points)}
                 </span>
               </div>
             )}
@@ -160,13 +170,13 @@ export const ExerciseAttemptCard: React.FC<ExerciseAttemptCardProps> = ({
           <button
             onClick={onStart}
             className="
-              w-full sm:w-auto inline-flex items-center justify-center space-x-2
-              px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-lg
-              hover:bg-orange-700 transition-colors
-              focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2
+              inline-flex w-full items-center justify-center space-x-2 rounded-lg
+              bg-orange-600 px-4 py-2 text-sm font-medium text-white transition-colors
+              hover:bg-orange-700 focus:outline-none
+              focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 sm:w-auto
             "
           >
-            <Play className="w-4 h-4" />
+            <Play className="h-4 w-4" />
             <span>{buttonText}</span>
           </button>
         </div>
@@ -174,18 +184,18 @@ export const ExerciseAttemptCard: React.FC<ExerciseAttemptCardProps> = ({
 
       {/* Progress Indicator for In Progress */}
       {inProgressAttempt && status === 'in_progress' && (
-        <div className="mt-4 pt-4 border-t border-gray-100">
-          <div className="flex items-center justify-between mb-1">
+        <div className="mt-4 border-t border-gray-100 pt-4">
+          <div className="mb-1 flex items-center justify-between">
             <span className="text-xs font-medium text-gray-700">Current Progress</span>
             <span className="text-xs font-semibold text-orange-600">
-              {formatScore(inProgressAttempt.score, exercise.max_score)}
+              {formatScore(inProgressAttempt.score, exercise.max_score || exercise.max_points)}
             </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
             <div
-              className="bg-orange-600 h-1.5 rounded-full transition-all duration-300"
+              className="h-1.5 rounded-full bg-orange-600 transition-all duration-300"
               style={{
-                width: `${(inProgressAttempt.score / exercise.max_score) * 100}%`,
+                width: `${(inProgressAttempt.score / (exercise.max_score || exercise.max_points)) * 100}%`,
               }}
             />
           </div>

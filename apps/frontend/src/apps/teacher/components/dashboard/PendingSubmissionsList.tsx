@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  User,
   Clock,
   FileCheck,
   Eye,
@@ -65,23 +64,23 @@ const SubmissionCard: React.FC<{
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3, delay: index * 0.03 }}
-      className={`bg-white rounded-lg border-l-4 ${priorityColor} border border-gray-200 hover:shadow-lg transition-all duration-300 p-5 relative`}
+      className={`rounded-lg border-l-4 bg-white ${priorityColor} relative border border-gray-200 p-5 transition-all duration-300 hover:shadow-lg`}
     >
       {/* Selection Checkbox */}
-      <div className="absolute top-4 left-4">
+      <div className="absolute left-4 top-4">
         <input
           type="checkbox"
           checked={selected}
           onChange={() => onSelect(submission.id)}
-          className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
+          className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
       <div className="ml-8">
         {/* Student Info */}
-        <div className="flex items-start justify-between mb-3">
+        <div className="mb-3 flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-500 font-bold text-white">
               {submission.studentName.charAt(0)}
             </div>
             <div>
@@ -92,22 +91,20 @@ const SubmissionCard: React.FC<{
 
           {/* Priority Badge */}
           {priority === 'high' && (
-            <span className="flex items-center gap-1 px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">
-              <AlertTriangle className="w-3 h-3" />
+            <span className="flex items-center gap-1 rounded-full bg-red-100 px-2 py-1 text-xs font-semibold text-red-700">
+              <AlertTriangle className="h-3 w-3" />
               Urgent
             </span>
           )}
         </div>
 
         {/* Assignment Info */}
-        <div className="mb-3 p-3 bg-gray-50 rounded-lg">
+        <div className="mb-3 rounded-lg bg-gray-50 p-3">
           <div className="flex items-start gap-2">
-            <FileText className="w-4 h-4 text-gray-600 mt-0.5" />
+            <FileText className="mt-0.5 h-4 w-4 text-gray-600" />
             <div className="flex-1">
-              <p className="font-semibold text-gray-800 text-sm">
-                {submission.assignmentTitle}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-sm font-semibold text-gray-800">{submission.assignmentTitle}</p>
+              <p className="mt-1 text-xs text-gray-500">
                 {submission.answers.length} exercises completed
               </p>
             </div>
@@ -115,13 +112,13 @@ const SubmissionCard: React.FC<{
         </div>
 
         {/* Metadata */}
-        <div className="flex items-center gap-4 mb-4 text-sm text-gray-600">
+        <div className="mb-4 flex items-center gap-4 text-sm text-gray-600">
           <div className="flex items-center gap-1">
-            <Clock className="w-4 h-4" />
+            <Clock className="h-4 w-4" />
             <span>{getTimeAgo(submission.submittedAt)}</span>
           </div>
           <div className="flex items-center gap-1">
-            <Calendar className="w-4 h-4" />
+            <Calendar className="h-4 w-4" />
             <span>
               {submission.submittedAt.toLocaleDateString('en-US', {
                 month: 'short',
@@ -132,18 +129,14 @@ const SubmissionCard: React.FC<{
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-blue-50 rounded-lg p-3">
-            <p className="text-xs text-blue-600 font-medium mb-1">Questions</p>
-            <p className="text-lg font-bold text-blue-700">
-              {submission.answers.length}
-            </p>
+        <div className="mb-4 grid grid-cols-2 gap-3">
+          <div className="rounded-lg bg-blue-50 p-3">
+            <p className="mb-1 text-xs font-medium text-blue-600">Questions</p>
+            <p className="text-lg font-bold text-blue-700">{submission.answers.length}</p>
           </div>
-          <div className="bg-purple-50 rounded-lg p-3">
-            <p className="text-xs text-purple-600 font-medium mb-1">Max Score</p>
-            <p className="text-lg font-bold text-purple-700">
-              {submission.maxScore} pts
-            </p>
+          <div className="rounded-lg bg-purple-50 p-3">
+            <p className="mb-1 text-xs font-medium text-purple-600">Max Score</p>
+            <p className="text-lg font-bold text-purple-700">{submission.maxScore} pts</p>
           </div>
         </div>
 
@@ -151,16 +144,16 @@ const SubmissionCard: React.FC<{
         <div className="flex items-center gap-2">
           <button
             onClick={() => onGrade(submission.id)}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 text-sm font-semibold"
+            className="flex flex-1 transform items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
           >
-            <CheckCircle className="w-4 h-4" />
+            <CheckCircle className="h-4 w-4" />
             Grade Now
           </button>
           <button
             onClick={() => onView(submission.id)}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-semibold"
+            className="flex items-center justify-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-200"
           >
-            <Eye className="w-4 h-4" />
+            <Eye className="h-4 w-4" />
             Preview
           </button>
         </div>
@@ -174,42 +167,40 @@ const EmptyState: React.FC = () => {
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="text-center py-12 bg-gradient-to-br from-green-50 to-blue-50 rounded-xl"
+      className="rounded-xl bg-gradient-to-br from-green-50 to-blue-50 py-12 text-center"
     >
-      <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <FileCheck className="w-10 h-10 text-green-600" />
+      <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
+        <FileCheck className="h-10 w-10 text-green-600" />
       </div>
-      <h3 className="text-xl font-bold text-gray-800 mb-2">All Caught Up!</h3>
-      <p className="text-gray-600 text-sm">
-        No pending submissions to grade at the moment
-      </p>
+      <h3 className="mb-2 text-xl font-bold text-gray-800">All Caught Up!</h3>
+      <p className="text-sm text-gray-600">No pending submissions to grade at the moment</p>
     </motion.div>
   );
 };
 
 const SkeletonCard: React.FC = () => {
   return (
-    <div className="bg-white rounded-lg border-l-4 border-l-gray-300 border border-gray-200 p-5 animate-pulse">
-      <div className="flex items-start justify-between mb-3">
+    <div className="animate-pulse rounded-lg border border-l-4 border-gray-200 border-l-gray-300 bg-white p-5">
+      <div className="mb-3 flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gray-200 rounded-full" />
+          <div className="h-12 w-12 rounded-full bg-gray-200" />
           <div>
-            <div className="h-4 w-32 bg-gray-200 rounded mb-2" />
-            <div className="h-3 w-20 bg-gray-200 rounded" />
+            <div className="mb-2 h-4 w-32 rounded bg-gray-200" />
+            <div className="h-3 w-20 rounded bg-gray-200" />
           </div>
         </div>
       </div>
-      <div className="mb-3 p-3 bg-gray-50 rounded-lg">
-        <div className="h-4 w-48 bg-gray-200 rounded mb-1" />
-        <div className="h-3 w-32 bg-gray-200 rounded" />
+      <div className="mb-3 rounded-lg bg-gray-50 p-3">
+        <div className="mb-1 h-4 w-48 rounded bg-gray-200" />
+        <div className="h-3 w-32 rounded bg-gray-200" />
       </div>
-      <div className="flex gap-4 mb-4">
-        <div className="h-4 w-24 bg-gray-200 rounded" />
-        <div className="h-4 w-24 bg-gray-200 rounded" />
+      <div className="mb-4 flex gap-4">
+        <div className="h-4 w-24 rounded bg-gray-200" />
+        <div className="h-4 w-24 rounded bg-gray-200" />
       </div>
       <div className="flex gap-2">
-        <div className="flex-1 h-10 bg-gray-200 rounded-lg" />
-        <div className="h-10 w-24 bg-gray-200 rounded-lg" />
+        <div className="h-10 flex-1 rounded-lg bg-gray-200" />
+        <div className="h-10 w-24 rounded-lg bg-gray-200" />
       </div>
     </div>
   );
@@ -221,9 +212,7 @@ export const PendingSubmissionsList: React.FC<PendingSubmissionsListProps> = ({
   onGradeSubmission,
   onViewSubmission,
 }) => {
-  const [selectedSubmissions, setSelectedSubmissions] = useState<Set<string>>(
-    new Set()
-  );
+  const [selectedSubmissions, setSelectedSubmissions] = useState<Set<string>>(new Set());
   const [sortBy, setSortBy] = useState<'oldest' | 'newest'>('oldest');
 
   const sortedSubmissions = [...submissions].sort((a, b) => {
@@ -275,19 +264,19 @@ export const PendingSubmissionsList: React.FC<PendingSubmissionsListProps> = ({
   return (
     <div>
       {/* Header with Controls */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <input
             type="checkbox"
             checked={selectedSubmissions.size === submissions.length}
             onChange={handleSelectAll}
-            className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
+            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500"
           />
           <h3 className="text-lg font-bold text-gray-800">
             Pending Submissions ({submissions.length})
           </h3>
           {selectedSubmissions.size > 0 && (
-            <span className="text-sm text-blue-600 font-medium">
+            <span className="text-sm font-medium text-blue-600">
               {selectedSubmissions.size} selected
             </span>
           )}
@@ -297,15 +286,15 @@ export const PendingSubmissionsList: React.FC<PendingSubmissionsListProps> = ({
           {selectedSubmissions.size > 0 && (
             <button
               onClick={handleBulkGrade}
-              className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-semibold"
+              className="flex items-center gap-2 rounded-lg bg-green-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-green-600"
             >
-              <CheckCircle className="w-4 h-4" />
+              <CheckCircle className="h-4 w-4" />
               Grade Selected
             </button>
           )}
           <button
             onClick={() => setSortBy('oldest')}
-            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
               sortBy === 'oldest'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -315,7 +304,7 @@ export const PendingSubmissionsList: React.FC<PendingSubmissionsListProps> = ({
           </button>
           <button
             onClick={() => setSortBy('newest')}
-            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
               sortBy === 'newest'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'

@@ -47,9 +47,7 @@ const shouldSimulateError = (): boolean => {
  * Main AI Analysis Service
  * Analyzes text based on context and type
  */
-export const analyzeWithAI = async (
-  request: AIAnalysisRequest
-): Promise<AIAnalysisResponse> => {
+export const analyzeWithAI = async (request: AIAnalysisRequest): Promise<AIAnalysisResponse> => {
   await simulateDelay(getRandomDelay());
 
   if (shouldSimulateError()) {
@@ -65,7 +63,7 @@ export const analyzeWithAI = async (
  */
 export const generateAIDebateResponse = async (
   userArgument: string,
-  debateTopic: string = 'scientificRisks'
+  debateTopic: string = 'scientificRisks',
 ): Promise<AIDebateResponse> => {
   await simulateDelay(getRandomDelay(1500, 3000));
 
@@ -73,14 +71,10 @@ export const generateAIDebateResponse = async (
     throw new Error('Unable to generate debate response. Please retry.');
   }
 
-  const response =
-    debateResponses[debateTopic] || debateResponses.scientificRisks;
+  const response = debateResponses[debateTopic] || debateResponses.scientificRisks;
 
   // Simulate dynamic scoring based on user argument length and complexity
-  const argumentScore = Math.min(
-    0.95,
-    0.6 + userArgument.split(' ').length * 0.002
-  );
+  const argumentScore = Math.min(0.95, 0.6 + userArgument.split(' ').length * 0.002);
 
   return {
     ...response,
@@ -92,9 +86,7 @@ export const generateAIDebateResponse = async (
  * Check Fact Accuracy
  * Verifies claims against historical records
  */
-export const checkFactAccuracy = async (
-  claim: string
-): Promise<FactCheckResult> => {
+export const checkFactAccuracy = async (claim: string): Promise<FactCheckResult> => {
   await simulateDelay(getRandomDelay(800, 1500));
 
   if (shouldSimulateError()) {
@@ -123,8 +115,7 @@ export const checkFactAccuracy = async (
         credibility: 0.8,
       },
     ],
-    explanation:
-      'Esta afirmación requiere verificación adicional con fuentes primarias.',
+    explanation: 'Esta afirmación requiere verificación adicional con fuentes primarias.',
     alternativeClaims: [],
   };
 };
@@ -133,9 +124,7 @@ export const checkFactAccuracy = async (
  * Analyze Source Credibility
  * Evaluates reliability and bias of sources
  */
-export const analyzeSourceCredibility = async (
-  sourceUrl: string
-): Promise<SourceCredibility> => {
+export const analyzeSourceCredibility = async (sourceUrl: string): Promise<SourceCredibility> => {
   await simulateDelay(getRandomDelay(1000, 2000));
 
   if (shouldSimulateError()) {
@@ -168,7 +157,7 @@ export const analyzeSourceCredibility = async (
  */
 export const validateHypothesis = async (
   hypothesis: string,
-  variables: string[]
+  variables: string[],
 ): Promise<HypothesisValidation> => {
   await simulateDelay(getRandomDelay(1500, 2500));
 
@@ -213,7 +202,7 @@ export const validateHypothesis = async (
  * Provides AI-powered inference hints for detective mechanic
  */
 export const generateInferenceSuggestions = async (
-  evidenceCollected: string[]
+  evidenceCollected: string[],
 ): Promise<InferenceSuggestion[]> => {
   await simulateDelay(getRandomDelay(1200, 2200));
 
@@ -236,8 +225,8 @@ export const generateInferenceSuggestions = async (
  * Generates story continuation for prediction mechanic
  */
 export const continueNarrative = async (
-  storyBeginning: string,
-  userPrediction: string
+  _storyBeginning: string,
+  userPrediction: string,
 ): Promise<NarrativeContinuation> => {
   await simulateDelay(getRandomDelay(2000, 3500));
 
@@ -248,9 +237,7 @@ export const continueNarrative = async (
   // Calculate prediction accuracy based on keywords
   const predictionWords = userPrediction.toLowerCase().split(' ');
   const keyWords = ['descubrimiento', 'radio', 'investigación', 'laboratorio'];
-  const matchCount = keyWords.filter((kw) =>
-    predictionWords.some((pw) => pw.includes(kw))
-  ).length;
+  const matchCount = keyWords.filter((kw) => predictionWords.some((pw) => pw.includes(kw))).length;
   const accuracy = 0.5 + (matchCount / keyWords.length) * 0.4;
 
   return {
@@ -263,9 +250,7 @@ export const continueNarrative = async (
  * Analyze Argument Structure
  * Evaluates podcast/written arguments for critical thinking
  */
-export const analyzeArgument = async (
-  argumentText: string
-): Promise<ArgumentAnalysis> => {
+export const analyzeArgument = async (argumentText: string): Promise<ArgumentAnalysis> => {
   await simulateDelay(getRandomDelay(1500, 2500));
 
   if (shouldSimulateError()) {
@@ -301,8 +286,8 @@ export const analyzeArgument = async (
  * Creates diverse viewpoints for perspective matrix
  */
 export const generatePerspectives = async (
-  topic: string,
-  count: number = 3
+  _topic: string,
+  count: number = 3,
 ): Promise<PerspectiveGeneration[]> => {
   await simulateDelay(getRandomDelay(2000, 3500));
 
@@ -319,7 +304,7 @@ export const generatePerspectives = async (
  * Checks if context puzzle pieces are correctly assembled
  */
 export const validateContextAssembly = async (
-  assembledPieces: { id: string; content: string }[]
+  assembledPieces: { id: string; content: string }[],
 ): Promise<{
   isCorrect: boolean;
   score: number;
@@ -358,7 +343,8 @@ export const validateContextAssembly = async (
  */
 export const generateHint = async (
   mechanicType: string,
-  currentProgress: number
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _currentProgress: number,
 ): Promise<string> => {
   await simulateDelay(getRandomDelay(500, 1000));
 

@@ -126,7 +126,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
       // Prepare registration data for API
       // Backend only expects: email, password, first_name (optional), last_name (optional)
-      const registrationData = {
+      const registrationData: any = {
         email: data.email,
         password: data.password,
         // Split full_name into first_name and last_name if provided
@@ -182,25 +182,20 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
       {/* Global Error Alert */}
       {(authError || errors.root) && (
         <div
-          className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-start gap-3"
+          className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-800"
           role="alert"
           aria-live="assertive"
         >
-          <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+          <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0" />
           <div className="flex-1">
-            <p className="font-medium text-sm">
-              {authError || errors.root?.message}
-            </p>
+            <p className="text-sm font-medium">{authError || errors.root?.message}</p>
           </div>
         </div>
       )}
 
       {/* Email Field */}
       <div>
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
+        <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-700">
           Correo Electrónico
         </label>
         <input
@@ -208,14 +203,10 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           type="email"
           autoComplete="email"
           className={`
-            w-full px-4 py-3 border rounded-lg
-            focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent
-            transition-colors duration-200
-            ${
-              errors.email
-                ? 'border-red-300 bg-red-50'
-                : 'border-gray-300 bg-white'
-            }
+            w-full rounded-lg border px-4 py-3
+            transition-colors duration-200 focus:border-transparent focus:outline-none
+            focus:ring-2 focus:ring-orange-500
+            ${errors.email ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white'}
           `}
           placeholder="tu@ejemplo.com"
           aria-invalid={errors.email ? 'true' : 'false'}
@@ -232,25 +223,18 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
       {/* Full Name Field (Optional) */}
       <div>
-        <label
-          htmlFor="full_name"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
-          Nombre Completo <span className="text-gray-400 text-xs">(opcional)</span>
+        <label htmlFor="full_name" className="mb-2 block text-sm font-medium text-gray-700">
+          Nombre Completo <span className="text-xs text-gray-400">(opcional)</span>
         </label>
         <input
           id="full_name"
           type="text"
           autoComplete="name"
           className={`
-            w-full px-4 py-3 border rounded-lg
-            focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent
-            transition-colors duration-200
-            ${
-              errors.full_name
-                ? 'border-red-300 bg-red-50'
-                : 'border-gray-300 bg-white'
-            }
+            w-full rounded-lg border px-4 py-3
+            transition-colors duration-200 focus:border-transparent focus:outline-none
+            focus:ring-2 focus:ring-orange-500
+            ${errors.full_name ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white'}
           `}
           placeholder="Juan Pérez"
           aria-invalid={errors.full_name ? 'true' : 'false'}
@@ -259,11 +243,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           {...register('full_name')}
         />
         {errors.full_name && (
-          <p
-            id="full-name-error"
-            className="mt-2 text-sm text-red-600"
-            role="alert"
-          >
+          <p id="full-name-error" className="mt-2 text-sm text-red-600" role="alert">
             {errors.full_name.message}
           </p>
         )}
@@ -272,23 +252,16 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
       {/* Role Selection (Optional) */}
       {showRoleSelection && (
         <div>
-          <label
-            htmlFor="role"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
+          <label htmlFor="role" className="mb-2 block text-sm font-medium text-gray-700">
             Rol
           </label>
           <select
             id="role"
             className={`
-              w-full px-4 py-3 border rounded-lg
-              focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent
-              transition-colors duration-200
-              ${
-                errors.role
-                  ? 'border-red-300 bg-red-50'
-                  : 'border-gray-300 bg-white'
-              }
+              w-full rounded-lg border px-4 py-3
+              transition-colors duration-200 focus:border-transparent focus:outline-none
+              focus:ring-2 focus:ring-orange-500
+              ${errors.role ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white'}
             `}
             aria-invalid={errors.role ? 'true' : 'false'}
             aria-describedby={errors.role ? 'role-error' : undefined}
@@ -309,10 +282,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
       {/* Password Field */}
       <div>
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
+        <label htmlFor="password" className="mb-2 block text-sm font-medium text-gray-700">
           Contraseña
         </label>
         <div className="relative">
@@ -321,60 +291,50 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             type={showPassword ? 'text' : 'password'}
             autoComplete="new-password"
             className={`
-              w-full px-4 py-3 pr-12 border rounded-lg
-              focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent
-              transition-colors duration-200
-              ${
-                errors.password
-                  ? 'border-red-300 bg-red-50'
-                  : 'border-gray-300 bg-white'
-              }
+              w-full rounded-lg border px-4 py-3 pr-12
+              transition-colors duration-200 focus:border-transparent focus:outline-none
+              focus:ring-2 focus:ring-orange-500
+              ${errors.password ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white'}
             `}
             placeholder="Crea una contraseña segura"
             aria-invalid={errors.password ? 'true' : 'false'}
-            aria-describedby={
-              errors.password ? 'password-error' : 'password-strength'
-            }
+            aria-describedby={errors.password ? 'password-error' : 'password-strength'}
             disabled={isSubmitting}
             {...register('password')}
           />
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:text-gray-700 focus:outline-none"
             aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
             disabled={isSubmitting}
           >
-            {showPassword ? (
-              <EyeOff className="w-5 h-5" />
-            ) : (
-              <Eye className="w-5 h-5" />
-            )}
+            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>
         </div>
 
         {/* Password Strength Indicator */}
         {password && (
           <div id="password-strength" className="mt-2">
-            <div className="flex items-center justify-between mb-1">
+            <div className="mb-1 flex items-center justify-between">
               <span className="text-xs text-gray-600">Fortaleza de la contraseña:</span>
               <span
                 className={`text-xs font-medium ${
                   passwordStrength.strength === 'weak'
                     ? 'text-red-600'
                     : passwordStrength.strength === 'medium'
-                    ? 'text-yellow-600'
-                    : 'text-green-600'
+                      ? 'text-yellow-600'
+                      : 'text-green-600'
                 }`}
               >
                 {passwordStrength.strength === 'weak'
                   ? 'Débil'
                   : passwordStrength.strength === 'medium'
-                  ? 'Media'
-                  : 'Fuerte'}
+                    ? 'Media'
+                    : 'Fuerte'}
               </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
               <div
                 className={`h-full transition-all duration-300 ${getStrengthColor()}`}
                 style={{ width: getStrengthWidth() }}
@@ -384,11 +344,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
         )}
 
         {errors.password && (
-          <p
-            id="password-error"
-            className="mt-2 text-sm text-red-600"
-            role="alert"
-          >
+          <p id="password-error" className="mt-2 text-sm text-red-600" role="alert">
             {errors.password.message}
           </p>
         )}
@@ -396,10 +352,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
       {/* Confirm Password Field */}
       <div>
-        <label
-          htmlFor="confirmPassword"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
+        <label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium text-gray-700">
           Confirmar Contraseña
         </label>
         <div className="relative">
@@ -408,45 +361,29 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             type={showConfirmPassword ? 'text' : 'password'}
             autoComplete="new-password"
             className={`
-              w-full px-4 py-3 pr-12 border rounded-lg
-              focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent
-              transition-colors duration-200
-              ${
-                errors.confirmPassword
-                  ? 'border-red-300 bg-red-50'
-                  : 'border-gray-300 bg-white'
-              }
+              w-full rounded-lg border px-4 py-3 pr-12
+              transition-colors duration-200 focus:border-transparent focus:outline-none
+              focus:ring-2 focus:ring-orange-500
+              ${errors.confirmPassword ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white'}
             `}
             placeholder="Vuelve a ingresar tu contraseña"
             aria-invalid={errors.confirmPassword ? 'true' : 'false'}
-            aria-describedby={
-              errors.confirmPassword ? 'confirm-password-error' : undefined
-            }
+            aria-describedby={errors.confirmPassword ? 'confirm-password-error' : undefined}
             disabled={isSubmitting}
             {...register('confirmPassword')}
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword((prev) => !prev)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700"
-            aria-label={
-              showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
-            }
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:text-gray-700 focus:outline-none"
+            aria-label={showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
             disabled={isSubmitting}
           >
-            {showConfirmPassword ? (
-              <EyeOff className="w-5 h-5" />
-            ) : (
-              <Eye className="w-5 h-5" />
-            )}
+            {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>
         </div>
         {errors.confirmPassword && (
-          <p
-            id="confirm-password-error"
-            className="mt-2 text-sm text-red-600"
-            role="alert"
-          >
+          <p id="confirm-password-error" className="mt-2 text-sm text-red-600" role="alert">
             {errors.confirmPassword.message}
           </p>
         )}
@@ -459,24 +396,22 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             id="terms_accepted"
             type="checkbox"
             className={`
-              h-4 w-4 mt-1 text-orange-600 focus:ring-orange-500 border-gray-300 rounded cursor-pointer
+              mt-1 h-4 w-4 cursor-pointer rounded border-gray-300 text-orange-600 focus:ring-orange-500
               ${errors.terms_accepted ? 'border-red-500' : ''}
             `}
             aria-invalid={errors.terms_accepted ? 'true' : 'false'}
-            aria-describedby={
-              errors.terms_accepted ? 'terms-error' : undefined
-            }
+            aria-describedby={errors.terms_accepted ? 'terms-error' : undefined}
             disabled={isSubmitting}
             {...register('terms_accepted')}
           />
           <label
             htmlFor="terms_accepted"
-            className="ml-2 block text-sm text-gray-700 cursor-pointer"
+            className="ml-2 block cursor-pointer text-sm text-gray-700"
           >
             Acepto los{' '}
             <a
               href="/terms"
-              className="text-orange-600 hover:text-orange-500 underline"
+              className="text-orange-600 underline hover:text-orange-500"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -485,7 +420,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             y la{' '}
             <a
               href="/privacy"
-              className="text-orange-600 hover:text-orange-500 underline"
+              className="text-orange-600 underline hover:text-orange-500"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -505,21 +440,21 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
         type="submit"
         disabled={isSubmitting}
         className="
-          w-full flex items-center justify-center gap-2
-          px-4 py-3 bg-orange-600 text-white font-medium rounded-lg
-          hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500
-          disabled:bg-gray-400 disabled:cursor-not-allowed
-          transition-colors duration-200
+          flex w-full items-center justify-center gap-2
+          rounded-lg bg-orange-600 px-4 py-3 font-medium text-white
+          transition-colors duration-200 hover:bg-orange-700 focus:outline-none focus:ring-2
+          focus:ring-orange-500 focus:ring-offset-2
+          disabled:cursor-not-allowed disabled:bg-gray-400
         "
       >
         {isSubmitting ? (
           <>
-            <Loader2 className="w-5 h-5 animate-spin" />
+            <Loader2 className="h-5 w-5 animate-spin" />
             <span>Creando cuenta...</span>
           </>
         ) : (
           <>
-            <CheckCircle2 className="w-5 h-5" />
+            <CheckCircle2 className="h-5 w-5" />
             <span>Crear Cuenta</span>
           </>
         )}

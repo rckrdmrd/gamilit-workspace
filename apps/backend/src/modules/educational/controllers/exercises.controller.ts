@@ -11,10 +11,11 @@ import {
   Request,
   UseGuards,
   NotFoundException,
+  Optional,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { ExercisesService } from '../services';
 import { CreateExerciseDto, ExerciseResponseDto } from '../dto';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
@@ -42,6 +43,9 @@ export class ExercisesController {
     private readonly exerciseAttemptService: ExerciseAttemptService,
     @InjectRepository(Profile, 'auth')
     private readonly profileRepo: Repository<Profile>,
+    @Optional()
+    @InjectDataSource('educational')
+    private readonly dataSource?: DataSource,
   ) {}
 
   /**
@@ -145,14 +149,31 @@ export class ExercisesController {
     // Obtener todos los ejercicios
     const exercises = await this.exercisesService.findAll();
 
-    // Obtener todas las submissions del usuario de una sola vez para eficiencia
-    const allSubmissions = await this.exerciseSubmissionService.findByUserId(userId);
+    // FIX 2025-11-24: Convert auth.users.id → profiles.id
+    // exercise_submissions.user_id references profiles.id (not auth.users.id)
+    const profileId = await this.getProfileId(userId);
 
-    // Crear un mapa de ejercicios completados
+    // Obtener todas las submissions del usuario de una sola vez para eficiencia
+    const allSubmissions = await this.exerciseSubmissionService.findByUserId(profileId);
+
+    // FIX BUG-002: También obtener exercise_attempts para ejercicios auto-calificados
+    // Los ejercicios como Crucigrama usan exercise_attempts, no exercise_submissions
+    const allAttempts = await this.exerciseAttemptService.findByUserId(profileId);
+
+    // Crear un mapa de ejercicios completados (de submissions Y attempts)
     const completedExercisesMap = new Map<string, boolean>();
+
+    // Marcar como completados los ejercicios con submissions calificadas
     allSubmissions.forEach((submission) => {
       if (submission.status === 'graded') {
         completedExercisesMap.set(submission.exercise_id, true);
+      }
+    });
+
+    // Marcar como completados los ejercicios con intentos correctos (auto-calificados)
+    allAttempts.forEach((attempt) => {
+      if (attempt.is_correct) {
+        completedExercisesMap.set(attempt.exercise_id, true);
       }
     });
 
@@ -275,19 +296,29 @@ export class ExercisesController {
       throw new NotFoundException(`Exercise with ID ${id} not found`);
     }
 
+    // FIX 2025-11-24: Convert auth.users.id → profiles.id
+    const profileId = await this.getProfileId(userId);
+
     // FE-061: Mejorar validación de completed
     // Verificar si el usuario ha completado este ejercicio con validaciones adicionales
-    const submission = await this.exerciseSubmissionService.findByUserAndExercise(userId, id);
+    const submission = await this.exerciseSubmissionService.findByUserAndExercise(profileId, id);
 
     // Validar que:
     // 1. Existe submission
     // 2. Status es 'graded'
     // 3. Score es >= passing_score (70 por defecto)
-    const completed = submission
+    let completed = submission
       && submission.status === 'graded'
       && submission.score >= (exercise.passing_score || 70)
       ? true
       : false;
+
+    // FIX BUG-002: También verificar exercise_attempts para ejercicios auto-calificados
+    if (!completed) {
+      const attempts = await this.exerciseAttemptService.findByUserAndExercise(profileId, id);
+      // Si tiene al menos un intento correcto, está completado
+      completed = attempts.some((attempt) => attempt.is_correct);
+    }
 
     // FE-061: Exercise ya viene sanitizado del service (sanitizeExercise)
     // NO re-sanitizar para evitar duplicación y sobreescritura
@@ -837,57 +868,110 @@ export class ExercisesController {
       submittedAnswersStructure: JSON.stringify(submittedAnswers, null, 2).substring(0, 500)
     });
 
-    // Delegar al ExerciseSubmissionService que maneja la lógica completa
-    const submission = await this.exerciseSubmissionService.submitExercise(
-      userId,  // Service hace su propia conversión internamente (redundante pero OK)
-      exerciseId,
-      submittedAnswers,
+    // ✅ FIX 2025-11-24: Arquitectura dual - Obtener tipo de ejercicio
+    const exercise = await this.exercisesService.findById(exerciseId);
+    if (!exercise) {
+      throw new NotFoundException(`Exercise ${exerciseId} not found`);
+    }
+
+    // ✅ FIX 2025-11-24: SOLO ejercicios autocorregibles en este flujo
+    // Todos los ejercicios actuales son autocorregibles (requires_manual_grading = false)
+    if (exercise.requires_manual_grading) {
+      // Ruta para ejercicios de revisión manual (futuro)
+      const submission = await this.exerciseSubmissionService.submitExercise(
+        userId,
+        exerciseId,
+        submittedAnswers,
+      );
+      return {
+        score: submission.score || 0,
+        isPerfect: false,
+        rewards: {
+          xp: 0, // XP se otorga después de revisión del maestro
+          mlCoins: 0,
+          bonuses: [],
+        },
+        rankUp: null,
+        message: 'Submission sent for teacher review',
+      };
+    }
+
+    // ✅ FLUJO PRINCIPAL: Ejercicios autocorregibles (práctica ilimitada)
+
+    // 1. Obtener intentos previos para calcular attempt_number
+    const previousAttempts = await this.exerciseAttemptService.findByUserAndExercise(
+      profileId,
+      exerciseId
     );
+    const attemptNumber = previousAttempts.length + 1;
 
-    // Calcular recompensas basadas en el score
-    const score = submission.score || 0;
-    const hintsUsed = body.hintsUsed || 0;
-    const comodinesUsed = body.powerupsUsed || [];
+    // 2. Validar respuesta con PostgreSQL
+    if (!this.dataSource) {
+      throw new Error('DataSource not available. Educational database connection not initialized.');
+    }
 
-    // Calcular XP: 2 XP por punto, con penalización por hints
-    const baseXp = score * 2;
-    const hintPenalty = hintsUsed * 10; // 10 XP de penalización por hint
-    const xpEarned = Math.max(0, baseXp - hintPenalty);
+    const validationResult = await this.dataSource.query(`
+      SELECT * FROM educational_content.validate_and_audit(
+        $1::UUID,  -- exercise_id
+        $2::UUID,  -- user_id (profileId)
+        $3::JSONB, -- submitted_answer
+        $4::INTEGER -- attempt_number
+      )
+    `, [exerciseId, profileId, JSON.stringify(submittedAnswers), attemptNumber]);
 
-    // Calcular ML Coins: 1 coin por cada 2 puntos, con penalización por comodines
-    const baseCoins = Math.floor(score / 2);
-    const comodinPenalty = comodinesUsed.length * 2; // 2 coins de penalización por comodín
-    const mlCoinsEarned = Math.max(0, baseCoins - comodinPenalty);
+    const validationData = validationResult[0];
+    const score = validationData.score || 0;
+    // FIX: is_correct debe basarse en passing_score, no solo en la función SQL
+    // La función SQL puede retornar is_correct=false aunque score >= passing_score
+    const isCorrect = score >= (exercise.passing_score || 70);
+    const feedback = validationData.feedback || '';
 
-    // FE-061: CRÍTICO - Usar profileId (no userId) para exercise_attempts
-    // Guardar en exercise_attempts para disparar trigger de user_stats
-    // El trigger actualiza automáticamente: total_xp, ml_coins, exercises_completed
+    // 3. ✅ ANTI-FARMING: XP solo en PRIMER acierto
+
+    const hasCorrectAttemptBefore = previousAttempts.some((attempt: any) => attempt.is_correct);
+    const isFirstCorrectAttempt = !hasCorrectAttemptBefore && isCorrect;
+
+    let xpEarned = 0;
+    let mlCoinsEarned = 0;
+
+    if (isFirstCorrectAttempt) {
+      // Solo otorgar XP en el primer acierto
+      xpEarned = exercise.xp_reward || 0;
+      mlCoinsEarned = exercise.ml_coins_reward || 0;
+
+      // Aplicar multiplicador de rango (futuro)
+      // const userRank = await this.getUserRank(profileId);
+      // xpEarned = Math.round(xpEarned * this.getRankMultiplier(userRank));
+    }
+
+    // 3. Crear attempt (trigger actualiza user_stats automáticamente)
     await this.exerciseAttemptService.create({
-      user_id: profileId,  // ✅ FE-061 FIX: Usar profileId (profiles.id) no userId (auth.users.id)
+      user_id: profileId,
       exercise_id: exerciseId,
       submitted_answers: submittedAnswers,
-      is_correct: score >= 60, // 60% es aprobatorio
+      is_correct: isCorrect,
       score: score,
+      xp_earned: xpEarned,
+      ml_coins_earned: mlCoinsEarned,
       time_spent_seconds: body.startedAt
         ? Math.floor((Date.now() - body.startedAt) / 1000)
         : undefined,
-      hints_used: hintsUsed,
-      comodines_used: comodinesUsed,
-      xp_earned: xpEarned,
-      ml_coins_earned: mlCoinsEarned,
+      hints_used: body.hintsUsed || 0,
+      comodines_used: body.powerupsUsed || [],
     });
 
-    // Transformar respuesta a formato esperado por Frontend (Issue FE-049)
-    // Frontend espera: { score, rewards: { xp, mlCoins, bonuses }, rankUp }
+    // 4. Transformar respuesta a formato esperado por Frontend
     const response = {
       score: score,
-      isPerfect: score === 100 && hintsUsed === 0,
+      isPerfect: score === 100 && (body.hintsUsed || 0) === 0,
       rewards: {
         xp: xpEarned,
         mlCoins: mlCoinsEarned,
-        bonuses: [], // TODO: Implementar bonos cuando Frontend envíe respuestas reales
+        bonuses: [],
       },
-      rankUp: null, // TODO: Implementar lógica de rank up
+      feedback: feedback,
+      isFirstCorrectAttempt: isFirstCorrectAttempt,
+      rankUp: null, // TODO: Detectar rank up desde user_stats
     };
 
     return response;

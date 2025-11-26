@@ -210,9 +210,9 @@ ALTER TABLE ONLY gamification_system.comodines_inventory
 
 --
 -- Name: comodines_inventory trg_comodines_inventory_updated_at; Type: TRIGGER; Schema: gamification_system; Owner: postgres
+-- NOTE: Trigger movido a archivo separado para evitar duplicación
+-- Ver: gamification_system/triggers/16-trg_comodines_inventory_updated_at.sql
 --
-
-CREATE TRIGGER trg_comodines_inventory_updated_at BEFORE UPDATE ON gamification_system.comodines_inventory FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
 
 
 --

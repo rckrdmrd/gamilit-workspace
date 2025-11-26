@@ -4,28 +4,33 @@
  * Unit and integration tests for the LiveLeaderboard component
  */
 
-import React from 'react';
-import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { LiveLeaderboard } from './LiveLeaderboard';
-import type { LeaderboardEntry, LeaderboardTypeVariant } from './LiveLeaderboard';
+import type { LeaderboardTypeVariant } from './LiveLeaderboard';
+import { vi } from 'vitest';
 
 // Mock framer-motion to avoid animation issues in tests
-jest.mock('framer-motion', () => ({
+vi.mock('framer-motion', () => ({
   motion: {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
-    img: ({ children, ...props }: any) => <img {...props} />,
-    tr: ({ children, ...props }: any) => <tr {...props}>{children}</tr>,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    button: ({ children: _children, ...props }: any) => <button {...props}>{_children}</button>,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    img: ({ children: _imgChildren, ...props }: any) => <img {...props} />,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    tr: ({ children: _trChildren, ...props }: any) => <tr {...props}>{_trChildren}</tr>,
   },
-  AnimatePresence: ({ children }: any) => children,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  AnimatePresence: ({ children: _apChildren }: any) => _apChildren,
 }));
 
 describe('LiveLeaderboard', () => {
   const mockUserId = 'test-user-123';
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   // ============================================================================
@@ -95,18 +100,13 @@ describe('LiveLeaderboard', () => {
     });
 
     it('should handle user click callback', async () => {
-      const mockOnUserClick = jest.fn();
-      render(
-        <LiveLeaderboard
-          userId={mockUserId}
-          onUserClick={mockOnUserClick}
-        />
-      );
+      const mockOnUserClick = vi.fn();
+      render(<LiveLeaderboard userId={mockUserId} onUserClick={mockOnUserClick} />);
 
       await waitFor(() => {
-        const entries = screen.getAllByRole('button').filter(
-          (el) => el.className.includes('rounded-lg')
-        );
+        const entries = screen
+          .getAllByRole('button')
+          .filter((el) => el.className.includes('rounded-lg'));
         if (entries.length > 0) {
           fireEvent.click(entries[0]);
         }
@@ -135,9 +135,7 @@ describe('LiveLeaderboard', () => {
 
   describe('Props', () => {
     it('should respect autoRefresh prop', () => {
-      const { rerender } = render(
-        <LiveLeaderboard userId={mockUserId} autoRefresh={false} />
-      );
+      const { rerender } = render(<LiveLeaderboard userId={mockUserId} autoRefresh={false} />);
       expect(screen.getByText('Actualizar')).toBeInTheDocument();
 
       rerender(<LiveLeaderboard userId={mockUserId} autoRefresh={true} />);
@@ -154,7 +152,7 @@ describe('LiveLeaderboard', () => {
 
     it('should apply custom className', () => {
       const { container } = render(
-        <LiveLeaderboard userId={mockUserId} className="custom-class" />
+        <LiveLeaderboard userId={mockUserId} className="custom-class" />,
       );
       expect(container.firstChild).toHaveClass('custom-class');
     });
@@ -174,9 +172,12 @@ describe('LiveLeaderboard', () => {
     it('should show entries after loading', async () => {
       render(<LiveLeaderboard userId={mockUserId} />);
 
-      await waitFor(() => {
-        expect(screen.getByText(/participantes/i)).toBeInTheDocument();
-      }, { timeout: 3000 });
+      await waitFor(
+        () => {
+          expect(screen.getByText(/participantes/i)).toBeInTheDocument();
+        },
+        { timeout: 3000 },
+      );
     });
   });
 
@@ -337,13 +338,7 @@ describe('LiveLeaderboard', () => {
     });
 
     it('should handle zero refresh interval', () => {
-      render(
-        <LiveLeaderboard
-          userId={mockUserId}
-          autoRefresh={true}
-          refreshInterval={0}
-        />
-      );
+      render(<LiveLeaderboard userId={mockUserId} autoRefresh={true} refreshInterval={0} />);
       expect(screen.getByText('Actualizar')).toBeInTheDocument();
     });
 
@@ -359,7 +354,7 @@ describe('LiveLeaderboard', () => {
 
   describe('Integration', () => {
     it('should work with all props combined', async () => {
-      const mockOnUserClick = jest.fn();
+      const mockOnUserClick = vi.fn();
 
       render(
         <LiveLeaderboard
@@ -370,7 +365,7 @@ describe('LiveLeaderboard', () => {
           itemsPerPage={15}
           onUserClick={mockOnUserClick}
           className="custom-leaderboard"
-        />
+        />,
       );
 
       await waitFor(() => {

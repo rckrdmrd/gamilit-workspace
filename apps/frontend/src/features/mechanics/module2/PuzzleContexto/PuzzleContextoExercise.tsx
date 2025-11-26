@@ -4,8 +4,8 @@ import { Puzzle, Check, GripVertical, RotateCcw } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
-import type { PuzzleContextoExerciseProps, Fragment, PuzzleContextoState } from './puzzleContextoTypes';
-import { calculateScore, saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import type { PuzzleContextoExerciseProps, Fragment } from './puzzleContextoTypes';
+import { saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { mockPuzzleData } from './puzzleContextoMockData';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
@@ -19,7 +19,8 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
   actionsRef,
 }) => {
   const { user } = useAuth();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_isSubmitting, setIsSubmitting] = useState(false);
 
   // Shuffle fragments initially
   const shuffleArray = <T,>(array: T[]): T[] => {
@@ -33,12 +34,15 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
 
   const [fragments, setFragments] = useState<Fragment[]>(
     initialData?.currentOrder
-      ? initialData.currentOrder.map(id => exercise.fragments.find(f => f.id === id)!).filter(Boolean)
-      : shuffleArray(exercise.fragments)
+      ? initialData.currentOrder
+          .map((id) => exercise.fragments.find((f) => f.id === id)!)
+          .filter(Boolean)
+      : shuffleArray(exercise.fragments),
   );
   const [showResults, setShowResults] = useState(false);
-  const [hintsUsed, setHintsUsed] = useState(initialData?.hintsUsed || 0);
-  const [startTime] = useState(new Date());
+  const [hintsUsed] = useState(initialData?.hintsUsed || 0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_startTime] = useState(new Date());
   const [timeSpent, setTimeSpent] = useState(initialData?.timeSpent || 0);
   const [score, setScore] = useState(initialData?.score || 0);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -47,7 +51,7 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
   // Timer
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeSpent(prev => prev + 1);
+      setTimeSpent((prev) => prev + 1);
     }, 1000);
     return () => clearInterval(timer);
   }, []);
@@ -56,7 +60,7 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
   useEffect(() => {
     const autoSaveInterval = setInterval(() => {
       saveProgress(exercise.id, {
-        currentOrder: fragments.map(f => f.id),
+        currentOrder: fragments.map((f) => f.id),
         isComplete: showResults,
         score,
         timeSpent,
@@ -90,12 +94,12 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
       onProgressUpdate({
         progress: {
           currentStep: currentStage, // FE-044 FIX: 1=Ordering, 2=Verified
-          totalSteps: totalStages,   // FE-044 FIX: 2 stages total
+          totalSteps: totalStages, // FE-044 FIX: 2 stages total
           score: showResults ? score : 0,
           hintsUsed,
           timeSpent,
         },
-        answers: { questions: userAnswers },  // BE-FE-062: Wrap in questions object
+        answers: { questions: userAnswers }, // BE-FE-062: Wrap in questions object
       });
     }
   }, [fragments, showResults, score, hintsUsed, timeSpent, onProgressUpdate]);
@@ -131,17 +135,23 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
       // Show backend response
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
-        title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
-        message: response.feedback?.overall || `Has ordenado ${response.correctAnswersCount} de ${response.totalQuestions} fragmentos correctamente.`,
+        title: response.isPerfect
+          ? '¡Perfecto!'
+          : response.score >= 70
+            ? '¡Buen trabajo!'
+            : 'Intenta de nuevo',
+        message:
+          response.feedback?.overall ||
+          `Has ordenado ${response.correctAnswersCount} de ${response.totalQuestions} fragmentos correctamente.`,
         score: response.score,
-        showConfetti: response.isPerfect
+        showConfetti: response.isPerfect,
       });
       setShowFeedback(true);
 
       console.log('✅ [PuzzleContexto] Submission successful:', {
         attemptId: response.attemptId,
         score: response.score,
-        rewards: response.rewards
+        rewards: response.rewards,
       });
     } catch (error) {
       console.error('❌ [PuzzleContexto] Submission error:', error);
@@ -169,7 +179,7 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
     if (actionsRef) {
       actionsRef.current = {
         getState: () => ({
-          currentOrder: fragments.map(f => f.id),
+          currentOrder: fragments.map((f) => f.id),
           isComplete: showResults,
           score,
           timeSpent,
@@ -181,20 +191,22 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
     }
   }, [fragments, showResults, score, timeSpent, hintsUsed, actionsRef]);
 
-  const getFragmentStyle = (fragment: Fragment, index: number) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const getFragmentStyle = (_fragment: Fragment, _index: number) => {
     // FE-059: Removed visual validation - correctOrder field no longer available
     // Visual feedback disabled until backend integration
     return 'border-detective-orange/30 bg-white hover:border-detective-orange hover:shadow-lg';
   };
 
-  const getFragmentIcon = (fragment: Fragment, index: number) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const getFragmentIcon = (_fragment: Fragment, _index: number) => {
     // FE-059: Removed visual validation - correctOrder field no longer available
     // Icon feedback disabled until backend integration
     return null;
   };
 
   // Build the current inference from fragments
-  const currentInference = fragments.map(f => f.text).join(' ');
+  const currentInference = fragments.map((f) => f.text).join(' ');
 
   return (
     <>
@@ -209,20 +221,20 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
             className="rounded-detective p-6 shadow-detective-lg"
             style={{
               background: 'linear-gradient(to right, #1e3a8a, #f97316)',
-              color: 'white'
+              color: 'white',
             }}
           >
-            <div className="flex items-center gap-3 mb-2">
-              <Puzzle className="w-8 h-8 text-white" />
+            <div className="mb-2 flex items-center gap-3">
+              <Puzzle className="h-8 w-8 text-white" />
               <h1 className="text-detective-3xl font-bold text-white">{exercise.title}</h1>
             </div>
             {exercise.subtitle && (
-              <p className="text-detective-base text-white mb-4" style={{ opacity: 0.9 }}>
+              <p className="mb-4 text-detective-base text-white" style={{ opacity: 0.9 }}>
                 {exercise.subtitle}
               </p>
             )}
             {exercise.description && (
-              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+              <div className="rounded-lg bg-white/20 p-4 backdrop-blur-sm">
                 <p className="text-detective-sm font-medium text-gray-900">Objetivo:</p>
                 <p className="text-detective-base text-gray-900">{exercise.description}</p>
               </div>
@@ -231,8 +243,8 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
 
           {/* Instructions */}
           {exercise.instructions && (
-            <div className="bg-blue-50 border-l-4 border-detective-blue p-4 rounded-detective">
-              <p className="text-detective-sm text-detective-text leading-relaxed">
+            <div className="rounded-detective border-l-4 border-detective-blue bg-blue-50 p-4">
+              <p className="text-detective-sm leading-relaxed text-detective-text">
                 <strong>Instrucciones:</strong> {exercise.instructions}
               </p>
             </div>
@@ -240,10 +252,10 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
 
           {/* Fragments to Order */}
           <div>
-            <h3 className="text-detective-lg font-semibold text-detective-blue mb-3">
+            <h3 className="mb-3 text-detective-lg font-semibold text-detective-blue">
               Fragmentos Desordenados
             </h3>
-            <p className="text-detective-sm text-detective-text-secondary mb-4">
+            <p className="mb-4 text-detective-sm text-detective-text-secondary">
               Arrastra los fragmentos para ordenarlos correctamente
             </p>
 
@@ -258,13 +270,13 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
                   <motion.div
                     whileHover={!showResults ? { scale: 1.02 } : {}}
                     whileTap={!showResults ? { scale: 0.98 } : {}}
-                    className={`flex items-center gap-3 p-4 border-2 rounded-detective transition-all ${getFragmentStyle(
+                    className={`flex items-center gap-3 rounded-detective border-2 p-4 transition-all ${getFragmentStyle(
                       fragment,
-                      index
+                      index,
                     )} ${!showResults ? 'cursor-move' : 'cursor-default'}`}
                   >
-                    {!showResults && <GripVertical className="w-5 h-5 text-gray-400" />}
-                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-detective-orange/20 text-detective-orange font-bold flex items-center justify-center text-detective-sm">
+                    {!showResults && <GripVertical className="h-5 w-5 text-gray-400" />}
+                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-detective-orange/20 text-detective-sm font-bold text-detective-orange">
                       {fragment.label}
                     </span>
                     <div className="flex-1">
@@ -279,11 +291,11 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
 
           {/* Current Inference Preview */}
           <div>
-            <h3 className="text-detective-lg font-semibold text-detective-blue mb-3">
+            <h3 className="mb-3 text-detective-lg font-semibold text-detective-blue">
               Inferencia Actual
             </h3>
-            <div className="bg-purple-50 border-2 border-purple-200 p-6 rounded-detective">
-              <p className="text-detective-base text-detective-text leading-relaxed italic">
+            <div className="rounded-detective border-2 border-purple-200 bg-purple-50 p-6">
+              <p className="text-detective-base italic leading-relaxed text-detective-text">
                 "{currentInference}"
               </p>
             </div>
@@ -291,15 +303,12 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
 
           {/* Correct Inference (after validation) */}
           {showResults && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <h3 className="text-detective-lg font-semibold text-green-600 mb-3">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <h3 className="mb-3 text-detective-lg font-semibold text-green-600">
                 Inferencia Correcta
               </h3>
-              <div className="bg-green-50 border-2 border-green-200 p-6 rounded-detective">
-                <p className="text-detective-base text-detective-text leading-relaxed font-medium">
+              <div className="rounded-detective border-2 border-green-200 bg-green-50 p-6">
+                <p className="text-detective-base font-medium leading-relaxed text-detective-text">
                   "{exercise.completeInference}"
                 </p>
               </div>
@@ -307,7 +316,7 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
           )}
 
           {/* Action Buttons */}
-          <div className="flex justify-center gap-4 pt-6 border-t border-gray-200">
+          <div className="flex justify-center gap-4 border-t border-gray-200 pt-6">
             {onExit && (
               <DetectiveButton variant="secondary" size="md" onClick={onExit}>
                 Salir
@@ -318,7 +327,7 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
                 <DetectiveButton
                   variant="secondary"
                   size="md"
-                  icon={<RotateCcw className="w-5 h-5" />}
+                  icon={<RotateCcw className="h-5 w-5" />}
                   onClick={handleReset}
                 >
                   Mezclar de Nuevo
@@ -326,7 +335,7 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
                 <DetectiveButton
                   variant="gold"
                   size="md"
-                  icon={<Check className="w-5 h-5" />}
+                  icon={<Check className="h-5 w-5" />}
                   onClick={handleCheck}
                 >
                   Verificar Orden

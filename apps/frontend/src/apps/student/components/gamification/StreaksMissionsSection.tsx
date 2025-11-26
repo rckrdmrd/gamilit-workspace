@@ -4,20 +4,24 @@
  * Displays user's current streak, longest streak, and daily missions with progress
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
-import {
-  Flame,
-  Trophy,
-  Target,
-  Check,
-  Clock,
-  Coins,
-  Zap,
-  Gift,
-  Calendar,
-} from 'lucide-react';
+import { Flame, Trophy, Target, Check, Clock, Coins, Zap, Gift, Calendar } from 'lucide-react';
 import type { StreakData, Mission } from '../../hooks/useGamificationData';
+
+// Local helper functions for this component's specific Mission type
+const getMissionProgressLocal = (mission: Mission) => {
+  return {
+    current: mission.progress ?? 0,
+    target: mission.required ?? 0,
+  };
+};
+
+const getMissionRewardsLocal = (mission: Mission) => {
+  return {
+    xp: mission.reward?.xp ?? 0,
+    mlCoins: mission.reward?.coins ?? 0,
+  };
+};
 
 interface StreaksMissionsSectionProps {
   streaks: StreakData;
@@ -50,13 +54,13 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-detective-text flex items-center gap-2">
-          <Flame className="w-7 h-7 text-orange-600" />
+        <h2 className="flex items-center gap-2 text-2xl font-bold text-detective-text">
+          <Flame className="h-7 w-7 text-orange-600" />
           Rachas y Misiones
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Streaks Section */}
         <div className="space-y-4">
           {/* Current Streak */}
@@ -64,11 +68,11 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1 }}
-            className="bg-gradient-to-br from-orange-50 via-red-50 to-orange-50 rounded-xl p-6 shadow-lg border-2 border-orange-300"
+            className="rounded-xl border-2 border-orange-300 bg-gradient-to-br from-orange-50 via-red-50 to-orange-50 p-6 shadow-lg"
           >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-detective-text flex items-center gap-2">
-                <Flame className="w-5 h-5 text-orange-600" />
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="flex items-center gap-2 font-semibold text-detective-text">
+                <Flame className="h-5 w-5 text-orange-600" />
                 Racha Actual
               </h3>
               <motion.div
@@ -81,25 +85,23 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
                   duration: 2,
                 }}
               >
-                <Flame className="w-8 h-8 text-orange-600" fill="currentColor" />
+                <Flame className="h-8 w-8 text-orange-600" fill="currentColor" />
               </motion.div>
             </div>
 
-            <div className="text-center mb-4">
+            <div className="mb-4 text-center">
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 150, delay: 0.3 }}
                 className="inline-flex items-baseline gap-2"
               >
-                <span className="text-6xl font-bold text-orange-600">
-                  {streaks.currentStreak}
-                </span>
+                <span className="text-6xl font-bold text-orange-600">{streaks.currentStreak}</span>
                 <span className="text-2xl font-semibold text-orange-500">días</span>
               </motion.div>
             </div>
 
-            <p className="text-center text-detective-text-secondary mb-4">
+            <p className="mb-4 text-center text-detective-text-secondary">
               ¡Sigue así! Completa al menos un ejercicio hoy para mantener tu racha.
             </p>
 
@@ -113,23 +115,21 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
                     initial={{ opacity: 0, scale: 0 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.4 + index * 0.05 }}
-                    className={`aspect-square rounded-lg flex items-center justify-center ${
-                      isActive
-                        ? 'bg-orange-500 text-white'
-                        : 'bg-gray-200 text-gray-400'
+                    className={`flex aspect-square items-center justify-center rounded-lg ${
+                      isActive ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-400'
                     }`}
                   >
                     {isActive ? (
-                      <Flame className="w-4 h-4" fill="currentColor" />
+                      <Flame className="h-4 w-4" fill="currentColor" />
                     ) : (
-                      <div className="w-2 h-2 bg-gray-400 rounded-full" />
+                      <div className="h-2 w-2 rounded-full bg-gray-400" />
                     )}
                   </motion.div>
                 );
               })}
             </div>
 
-            <div className="mt-4 pt-4 border-t border-orange-200">
+            <div className="mt-4 border-t border-orange-200 pt-4">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-detective-text-secondary">Última actividad:</span>
                 <span className="font-semibold text-detective-text">
@@ -147,21 +147,19 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="bg-white rounded-xl p-6 shadow-md border border-gray-200"
+            className="rounded-xl border border-gray-200 bg-white p-6 shadow-md"
           >
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-semibold text-detective-text flex items-center gap-2 mb-2">
-                  <Trophy className="w-5 h-5 text-detective-gold" />
+                <h3 className="mb-2 flex items-center gap-2 font-semibold text-detective-text">
+                  <Trophy className="h-5 w-5 text-detective-gold" />
                   Mejor Racha
                 </h3>
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-bold text-detective-gold">
                     {streaks.longestStreak}
                   </span>
-                  <span className="text-lg font-semibold text-detective-text-secondary">
-                    días
-                  </span>
+                  <span className="text-lg font-semibold text-detective-text-secondary">días</span>
                 </div>
               </div>
               <motion.div
@@ -173,7 +171,7 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
                   duration: 3,
                 }}
               >
-                <Trophy className="w-16 h-16 text-detective-gold" />
+                <Trophy className="h-16 w-16 text-detective-gold" />
               </motion.div>
             </div>
 
@@ -181,10 +179,10 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200"
+                className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50 p-3"
               >
-                <p className="text-sm font-medium text-yellow-800 flex items-center gap-2">
-                  <Gift className="w-4 h-4" />
+                <p className="flex items-center gap-2 text-sm font-medium text-yellow-800">
+                  <Gift className="h-4 w-4" />
                   ¡Récord personal! Sigue así para superar tu mejor marca.
                 </p>
               </motion.div>
@@ -197,15 +195,15 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-xl p-6 shadow-md border border-gray-200"
+          className="rounded-xl border border-gray-200 bg-white p-6 shadow-md"
         >
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-detective-text flex items-center gap-2">
-              <Target className="w-5 h-5 text-detective-orange" />
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="flex items-center gap-2 font-semibold text-detective-text">
+              <Target className="h-5 w-5 text-detective-orange" />
               Misiones Diarias
             </h3>
             <div className="flex items-center gap-1 text-xs text-detective-text-secondary">
-              <Clock className="w-4 h-4" />
+              <Clock className="h-4 w-4" />
               <span>
                 Renueva en{' '}
                 {new Date(missions[0]?.expiresAt || new Date()).toLocaleTimeString('es-ES', {
@@ -229,93 +227,101 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + index * 0.1 }}
-                  className={`p-4 rounded-lg border-2 transition-all ${
+                  className={`rounded-lg border-2 p-4 transition-all ${
                     isCompleted && !isClaimed
-                      ? 'bg-green-50 border-green-300 shadow-md'
+                      ? 'border-green-300 bg-green-50 shadow-md'
                       : isClaimed
-                      ? 'bg-gray-50 border-gray-200 opacity-60'
-                      : 'bg-white border-gray-200'
+                        ? 'border-gray-200 bg-gray-50 opacity-60'
+                        : 'border-gray-200 bg-white'
                   }`}
                 >
-                  <div className="flex items-start gap-3 mb-3">
+                  <div className="mb-3 flex items-start gap-3">
                     <div
-                      className={`p-2 rounded-lg ${
+                      className={`rounded-lg p-2 ${
                         isCompleted
                           ? 'bg-green-500'
                           : 'bg-gradient-to-br from-detective-orange to-detective-gold'
                       }`}
                     >
                       {isCompleted ? (
-                        <Check className="w-5 h-5 text-white" />
+                        <Check className="h-5 w-5 text-white" />
                       ) : (
-                        <Icon className="w-5 h-5 text-white" />
+                        <Icon className="h-5 w-5 text-white" />
                       )}
                     </div>
 
                     <div className="flex-1">
-                      <h4 className="font-semibold text-detective-text mb-1">
-                        {mission.title}
-                      </h4>
-                      <p className="text-sm text-detective-text-secondary mb-2">
+                      <h4 className="mb-1 font-semibold text-detective-text">{mission.title}</h4>
+                      <p className="mb-2 text-sm text-detective-text-secondary">
                         {mission.description}
                       </p>
 
                       {/* Progress Bar */}
-                      {!isClaimed && (
-                        <>
-                          <div className="flex items-center justify-between text-xs text-detective-text-secondary mb-2">
-                            <span>Progreso</span>
-                            <span className="font-semibold">
-                              {mission.progress}/{mission.required}
-                            </span>
-                          </div>
-                          <div className="h-2 bg-gray-200 rounded-full overflow-hidden mb-3">
-                            <motion.div
-                              className={`h-full ${
-                                isCompleted
-                                  ? 'bg-green-500'
-                                  : 'bg-gradient-to-r from-detective-orange to-detective-gold'
-                              }`}
-                              initial={{ width: 0 }}
-                              animate={{ width: `${progress}%` }}
-                              transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
-                            />
-                          </div>
-                        </>
-                      )}
+                      {!isClaimed &&
+                        (() => {
+                          const { current, target } = getMissionProgressLocal(mission);
+                          return (
+                            <>
+                              <div className="mb-2 flex items-center justify-between text-xs text-detective-text-secondary">
+                                <span>Progreso</span>
+                                <span className="font-semibold">
+                                  {current}/{target}
+                                </span>
+                              </div>
+                              <div className="mb-3 h-2 overflow-hidden rounded-full bg-gray-200">
+                                <motion.div
+                                  className={`h-full ${
+                                    isCompleted
+                                      ? 'bg-green-500'
+                                      : 'bg-gradient-to-r from-detective-orange to-detective-gold'
+                                  }`}
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${progress}%` }}
+                                  transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
+                                />
+                              </div>
+                            </>
+                          );
+                        })()}
 
                       {/* Rewards */}
-                      <div className="flex items-center gap-4 mb-3">
-                        <div className="flex items-center gap-1 text-sm">
-                          <Coins className="w-4 h-4 text-detective-gold" />
-                          <span className="font-semibold text-detective-text">
-                            +{mission.reward.coins} ML
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1 text-sm">
-                          <Zap className="w-4 h-4 text-detective-orange" />
-                          <span className="font-semibold text-detective-text">
-                            +{mission.reward.xp} XP
-                          </span>
-                        </div>
-                      </div>
+                      {(() => {
+                        const { xp, mlCoins } = getMissionRewardsLocal(mission);
+                        return (
+                          <div className="mb-3 flex items-center gap-4">
+                            <div className="flex items-center gap-1 text-sm">
+                              <Coins className="h-4 w-4 text-detective-gold" />
+                              <span className="font-semibold text-detective-text">
+                                +{mlCoins} ML
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1 text-sm">
+                              <Zap className="h-4 w-4 text-detective-orange" />
+                              <span className="font-semibold text-detective-text">+{xp} XP</span>
+                            </div>
+                          </div>
+                        );
+                      })()}
 
                       {/* Claim Button */}
                       {isCompleted && !isClaimed && (
                         <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
                           onClick={() => handleClaimReward(mission.id)}
-                          className="w-full px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                          disabled={true}
+                          title="Próximamente"
+                          className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-gray-300 px-4 py-2 font-semibold text-gray-500 opacity-60 shadow-sm transition-all"
                         >
-                          <Gift className="w-4 h-4" />
+                          <Gift className="h-4 w-4" />
                           Reclamar Recompensa
+                          <span className="ml-2 rounded bg-gray-200 px-2 py-0.5 text-xs">
+                            Próximamente
+                          </span>
                         </motion.button>
                       )}
 
                       {isClaimed && (
                         <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
-                          <Check className="w-4 h-4" />
+                          <Check className="h-4 w-4" />
                           <span>Recompensa reclamada</span>
                         </div>
                       )}
@@ -327,8 +333,8 @@ export function StreaksMissionsSection({ streaks, missions }: StreaksMissionsSec
           </div>
 
           {missions.length === 0 && (
-            <div className="text-center py-8 text-detective-text-secondary">
-              <Target className="w-12 h-12 mx-auto mb-3 opacity-50" />
+            <div className="py-8 text-center text-detective-text-secondary">
+              <Target className="mx-auto mb-3 h-12 w-12 opacity-50" />
               <p>No hay misiones disponibles en este momento</p>
             </div>
           )}

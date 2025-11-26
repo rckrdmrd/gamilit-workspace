@@ -5,19 +5,8 @@
  * requirements for next rank, and rank history
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
-import {
-  Award,
-  Zap,
-  Check,
-  Lock,
-  TrendingUp,
-  Star,
-  Target,
-  Clock,
-  Trophy,
-} from 'lucide-react';
+import { Award, Zap, Check, Lock, TrendingUp, Star, Target, Clock, Trophy } from 'lucide-react';
 import type { RankData } from '../../hooks/useDashboardData';
 
 interface RanksSectionProps {
@@ -89,13 +78,19 @@ const ALL_RANKS: RankInfo[] = [
 ];
 
 export function RanksSection({ data }: RanksSectionProps) {
-  const currentRankIndex = ALL_RANKS.findIndex(r => r.id === data.currentRank);
+  const currentRankIndex = ALL_RANKS.findIndex((r) => r.id === data.currentRank);
   const currentRankInfo = ALL_RANKS[currentRankIndex];
   const nextRankInfo = ALL_RANKS[currentRankIndex + 1];
 
   // Requirements for next rank (mock data - would come from API)
   const requirements = [
-    { id: 1, label: 'Alcanzar 1000 XP', progress: data.currentXP, required: data.nextRankXP, completed: false },
+    {
+      id: 1,
+      label: 'Alcanzar 1000 XP',
+      progress: data.currentXP,
+      required: data.nextRankXP,
+      completed: false,
+    },
     { id: 2, label: 'Completar 5 módulos', progress: 3, required: 5, completed: false },
     { id: 3, label: 'Obtener 10 logros', progress: 8, required: 10, completed: false },
     { id: 4, label: 'Mantener racha de 7 días', progress: 7, required: 7, completed: true },
@@ -110,22 +105,22 @@ export function RanksSection({ data }: RanksSectionProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-detective-text flex items-center gap-2">
-          <Trophy className="w-7 h-7 text-detective-orange" />
+        <h2 className="flex items-center gap-2 text-2xl font-bold text-detective-text">
+          <Trophy className="h-7 w-7 text-detective-orange" />
           Rangos y Progresión
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Current Rank Showcase */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-xl p-6 shadow-md border border-gray-200"
+          className="rounded-xl border border-gray-200 bg-white p-6 shadow-md"
         >
-          <h3 className="font-semibold text-detective-text mb-4 flex items-center gap-2">
-            <Award className="w-5 h-5 text-detective-orange" />
+          <h3 className="mb-4 flex items-center gap-2 font-semibold text-detective-text">
+            <Award className="h-5 w-5 text-detective-orange" />
             Tu Rango Actual
           </h3>
 
@@ -143,7 +138,7 @@ export function RanksSection({ data }: RanksSectionProps) {
               className="relative mb-4"
             >
               <div
-                className={`w-24 h-24 rounded-full bg-gradient-to-br ${currentRankInfo.color} flex items-center justify-center text-5xl shadow-xl border-4 border-white`}
+                className={`h-24 w-24 rounded-full bg-gradient-to-br ${currentRankInfo.color} flex items-center justify-center border-4 border-white text-5xl shadow-xl`}
               >
                 {currentRankInfo.icon}
               </div>
@@ -167,7 +162,7 @@ export function RanksSection({ data }: RanksSectionProps) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-2xl font-bold text-detective-text mb-2"
+              className="mb-2 text-2xl font-bold text-detective-text"
             >
               {currentRankInfo.name}
             </motion.h4>
@@ -176,7 +171,7 @@ export function RanksSection({ data }: RanksSectionProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="text-sm text-detective-text-secondary mb-4"
+              className="mb-4 text-sm text-detective-text-secondary"
             >
               {currentRankInfo.description}
             </motion.p>
@@ -186,30 +181,24 @@ export function RanksSection({ data }: RanksSectionProps) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="w-full grid grid-cols-3 gap-3"
+              className="grid w-full grid-cols-3 gap-3"
             >
-              <div className="bg-detective-bg rounded-lg p-3">
-                <div className="text-xs text-detective-text-secondary mb-1">Nivel</div>
-                <div className="text-xl font-bold text-detective-text">
-                  {currentRankInfo.level}
-                </div>
+              <div className="rounded-lg bg-detective-bg p-3">
+                <div className="mb-1 text-xs text-detective-text-secondary">Nivel</div>
+                <div className="text-xl font-bold text-detective-text">{currentRankInfo.level}</div>
               </div>
 
-              <div className="bg-detective-bg rounded-lg p-3">
-                <div className="text-xs text-detective-text-secondary mb-1">XP</div>
-                <div className="text-xl font-bold text-detective-text">
-                  {data.currentXP}
-                </div>
+              <div className="rounded-lg bg-detective-bg p-3">
+                <div className="mb-1 text-xs text-detective-text-secondary">XP</div>
+                <div className="text-xl font-bold text-detective-text">{data.currentXP}</div>
               </div>
 
-              <div className="bg-detective-bg rounded-lg p-3">
-                <div className="flex items-center justify-center gap-1 text-xs text-detective-text-secondary mb-1">
-                  <Zap className="w-3 h-3" />
+              <div className="rounded-lg bg-detective-bg p-3">
+                <div className="mb-1 flex items-center justify-center gap-1 text-xs text-detective-text-secondary">
+                  <Zap className="h-3 w-3" />
                   <span>Multi.</span>
                 </div>
-                <div className="text-xl font-bold text-detective-orange">
-                  {data.multiplier}x
-                </div>
+                <div className="text-xl font-bold text-detective-orange">{data.multiplier}x</div>
               </div>
             </motion.div>
           </div>
@@ -221,25 +210,23 @@ export function RanksSection({ data }: RanksSectionProps) {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-xl p-6 shadow-md border border-gray-200"
+            className="rounded-xl border border-gray-200 bg-white p-6 shadow-md"
           >
-            <h3 className="font-semibold text-detective-text mb-4 flex items-center gap-2">
-              <Target className="w-5 h-5 text-detective-orange" />
+            <h3 className="mb-4 flex items-center gap-2 font-semibold text-detective-text">
+              <Target className="h-5 w-5 text-detective-orange" />
               Requisitos para {nextRankInfo.name}
             </h3>
 
             {/* Next Rank Preview */}
-            <div className="mb-4 p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg border border-orange-200">
+            <div className="mb-4 rounded-lg border border-orange-200 bg-gradient-to-r from-orange-50 to-amber-50 p-4">
               <div className="flex items-center gap-3">
                 <div
-                  className={`w-12 h-12 rounded-full bg-gradient-to-br ${nextRankInfo.color} flex items-center justify-center text-2xl shadow-md`}
+                  className={`h-12 w-12 rounded-full bg-gradient-to-br ${nextRankInfo.color} flex items-center justify-center text-2xl shadow-md`}
                 >
                   {nextRankInfo.icon}
                 </div>
                 <div className="flex-1">
-                  <div className="font-semibold text-detective-text">
-                    {nextRankInfo.name}
-                  </div>
+                  <div className="font-semibold text-detective-text">{nextRankInfo.name}</div>
                   <div className="text-xs text-detective-text-secondary">
                     Nivel {nextRankInfo.level} • Multiplicador {nextRankInfo.multiplier}x
                   </div>
@@ -259,24 +246,20 @@ export function RanksSection({ data }: RanksSectionProps) {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 + index * 0.1 }}
-                    className={`p-3 rounded-lg border ${
-                      isCompleted
-                        ? 'bg-green-50 border-green-200'
-                        : 'bg-gray-50 border-gray-200'
+                    className={`rounded-lg border p-3 ${
+                      isCompleted ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="mb-2 flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         {isCompleted ? (
-                          <Check className="w-5 h-5 text-green-600" />
+                          <Check className="h-5 w-5 text-green-600" />
                         ) : (
-                          <div className="w-5 h-5 rounded-full border-2 border-gray-300" />
+                          <div className="h-5 w-5 rounded-full border-2 border-gray-300" />
                         )}
                         <span
                           className={`text-sm font-medium ${
-                            isCompleted
-                              ? 'text-green-700'
-                              : 'text-detective-text'
+                            isCompleted ? 'text-green-700' : 'text-detective-text'
                           }`}
                         >
                           {req.label}
@@ -289,7 +272,7 @@ export function RanksSection({ data }: RanksSectionProps) {
 
                     {/* Progress Bar */}
                     {!isCompleted && (
-                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-2 overflow-hidden rounded-full bg-gray-200">
                         <motion.div
                           className="h-full bg-gradient-to-r from-detective-orange to-detective-gold"
                           initial={{ width: 0 }}
@@ -303,14 +286,14 @@ export function RanksSection({ data }: RanksSectionProps) {
               })}
             </div>
 
-            <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-3">
               <div className="flex items-start gap-2">
-                <Star className="w-5 h-5 text-blue-600 mt-0.5" />
+                <Star className="mt-0.5 h-5 w-5 text-blue-600" />
                 <div>
                   <p className="text-sm font-medium text-blue-900">
                     Completa todos los requisitos para ascender
                   </p>
-                  <p className="text-xs text-blue-700 mt-1">
+                  <p className="mt-1 text-xs text-blue-700">
                     Tu multiplicador aumentará a {nextRankInfo.multiplier}x
                   </p>
                 </div>
@@ -325,16 +308,16 @@ export function RanksSection({ data }: RanksSectionProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="bg-white rounded-xl p-6 shadow-md border border-gray-200"
+        className="rounded-xl border border-gray-200 bg-white p-6 shadow-md"
       >
-        <h3 className="font-semibold text-detective-text mb-6 flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-detective-orange" />
+        <h3 className="mb-6 flex items-center gap-2 font-semibold text-detective-text">
+          <TrendingUp className="h-5 w-5 text-detective-orange" />
           Escalera de Rangos
         </h3>
 
         <div className="relative">
           {/* Vertical connector line */}
-          <div className="absolute left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-gray-300 via-detective-orange to-detective-gold" />
+          <div className="absolute bottom-0 left-8 top-0 w-1 bg-gradient-to-b from-gray-300 via-detective-orange to-detective-gold" />
 
           <div className="space-y-4">
             {ALL_RANKS.map((rank, index) => {
@@ -348,21 +331,19 @@ export function RanksSection({ data }: RanksSectionProps) {
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.5 + index * 0.1 }}
-                  className={`relative flex items-center gap-4 p-4 rounded-lg border-2 transition-all ${
+                  className={`relative flex items-center gap-4 rounded-lg border-2 p-4 transition-all ${
                     isCurrentRank
-                      ? 'bg-gradient-to-r from-orange-50 to-amber-50 border-detective-orange shadow-lg'
+                      ? 'border-detective-orange bg-gradient-to-r from-orange-50 to-amber-50 shadow-lg'
                       : isPastRank
-                      ? 'bg-green-50 border-green-200'
-                      : 'bg-gray-50 border-gray-200 opacity-60'
+                        ? 'border-green-200 bg-green-50'
+                        : 'border-gray-200 bg-gray-50 opacity-60'
                   }`}
                 >
                   {/* Rank Icon */}
                   <div className="relative z-10">
                     <motion.div
-                      className={`w-16 h-16 rounded-full bg-gradient-to-br ${rank.color} flex items-center justify-center text-3xl shadow-lg border-4 ${
-                        isCurrentRank
-                          ? 'border-white scale-110'
-                          : 'border-white/50'
+                      className={`h-16 w-16 rounded-full bg-gradient-to-br ${rank.color} flex items-center justify-center border-4 text-3xl shadow-lg ${
+                        isCurrentRank ? 'scale-110 border-white' : 'border-white/50'
                       }`}
                       animate={
                         isCurrentRank
@@ -385,18 +366,18 @@ export function RanksSection({ data }: RanksSectionProps) {
 
                     {/* Status Badge */}
                     {isPastRank && (
-                      <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center border-2 border-white">
-                        <Check className="w-4 h-4 text-white" />
+                      <div className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-green-500">
+                        <Check className="h-4 w-4 text-white" />
                       </div>
                     )}
                     {isFutureRank && (
-                      <div className="absolute -top-1 -right-1 w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center border-2 border-white">
-                        <Lock className="w-4 h-4 text-white" />
+                      <div className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-gray-400">
+                        <Lock className="h-4 w-4 text-white" />
                       </div>
                     )}
                     {isCurrentRank && (
                       <motion.div
-                        className="absolute -top-1 -right-1 w-6 h-6 bg-detective-orange rounded-full flex items-center justify-center border-2 border-white"
+                        className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-detective-orange"
                         animate={{
                           scale: [1, 1.2, 1],
                         }}
@@ -405,37 +386,33 @@ export function RanksSection({ data }: RanksSectionProps) {
                           duration: 1.5,
                         }}
                       >
-                        <Star className="w-4 h-4 text-white" fill="white" />
+                        <Star className="h-4 w-4 text-white" fill="white" />
                       </motion.div>
                     )}
                   </div>
 
                   {/* Rank Info */}
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="text-lg font-bold text-detective-text">
-                        {rank.name}
-                      </h4>
+                    <div className="mb-1 flex items-center gap-2">
+                      <h4 className="text-lg font-bold text-detective-text">{rank.name}</h4>
                       {isCurrentRank && (
-                        <span className="px-2 py-0.5 bg-detective-orange text-white text-xs font-semibold rounded-full">
+                        <span className="rounded-full bg-detective-orange px-2 py-0.5 text-xs font-semibold text-white">
                           ACTUAL
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-detective-text-secondary mb-2">
-                      {rank.description}
-                    </p>
+                    <p className="mb-2 text-sm text-detective-text-secondary">{rank.description}</p>
                     <div className="flex items-center gap-4 text-xs text-detective-text-secondary">
                       <div className="flex items-center gap-1">
-                        <Trophy className="w-3 h-3" />
+                        <Trophy className="h-3 w-3" />
                         <span>Nivel {rank.level}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Target className="w-3 h-3" />
+                        <Target className="h-3 w-3" />
                         <span>{rank.xpRequired} XP</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Zap className="w-3 h-3" />
+                        <Zap className="h-3 w-3" />
                         <span>{rank.multiplier}x</span>
                       </div>
                     </div>
@@ -452,16 +429,16 @@ export function RanksSection({ data }: RanksSectionProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.9 }}
-        className="bg-white rounded-xl p-6 shadow-md border border-gray-200"
+        className="rounded-xl border border-gray-200 bg-white p-6 shadow-md"
       >
-        <h3 className="font-semibold text-detective-text mb-4 flex items-center gap-2">
-          <Clock className="w-5 h-5 text-detective-orange" />
+        <h3 className="mb-4 flex items-center gap-2 font-semibold text-detective-text">
+          <Clock className="h-5 w-5 text-detective-orange" />
           Historial de Rangos
         </h3>
 
         <div className="space-y-3">
           {rankHistory.map((entry, index) => {
-            const rankInfo = ALL_RANKS.find(r => r.id === entry.rank);
+            const rankInfo = ALL_RANKS.find((r) => r.id === entry.rank);
             if (!rankInfo) return null;
 
             return (
@@ -470,17 +447,15 @@ export function RanksSection({ data }: RanksSectionProps) {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 1.0 + index * 0.1 }}
-                className="flex items-center gap-4 p-3 bg-detective-bg rounded-lg"
+                className="flex items-center gap-4 rounded-lg bg-detective-bg p-3"
               >
                 <div
-                  className={`w-12 h-12 rounded-full bg-gradient-to-br ${rankInfo.color} flex items-center justify-center text-2xl shadow-md`}
+                  className={`h-12 w-12 rounded-full bg-gradient-to-br ${rankInfo.color} flex items-center justify-center text-2xl shadow-md`}
                 >
                   {rankInfo.icon}
                 </div>
                 <div className="flex-1">
-                  <div className="font-medium text-detective-text">
-                    {rankInfo.name}
-                  </div>
+                  <div className="font-medium text-detective-text">{rankInfo.name}</div>
                   <div className="text-xs text-detective-text-secondary">
                     {entry.xp} XP alcanzados
                   </div>

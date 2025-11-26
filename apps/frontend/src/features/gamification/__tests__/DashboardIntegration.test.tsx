@@ -25,7 +25,6 @@ import { useAchievementsStore } from '../social/store/achievementsStore';
 import { useEconomyStore } from '../economy/store/economyStore';
 import { useRanksStore } from '../ranks/store/ranksStore';
 import type { Achievement } from '../social/types/achievementsTypes';
-import type { ShopItem, ShopCategory } from '../economy/types/economyTypes';
 
 // Mock APIs
 vi.mock('../social/api/achievementsAPI');
@@ -84,9 +83,9 @@ const ActivityFeed: React.FC = () => {
 
   // Combine and sort all events by timestamp
   const allEvents = [
-    ...recentUnlocks.map(u => ({ type: 'achievement', time: u.timestamp, data: u })),
-    ...transactions.slice(0, 5).map(t => ({ type: 'transaction', time: t.timestamp, data: t })),
-    ...xpEvents.slice(0, 5).map(x => ({ type: 'xp', time: x.timestamp, data: x })),
+    ...recentUnlocks.map((u) => ({ type: 'achievement', time: u.timestamp, data: u })),
+    ...transactions.slice(0, 5).map((t) => ({ type: 'transaction', time: t.timestamp, data: t })),
+    ...xpEvents.slice(0, 5).map((x) => ({ type: 'xp', time: x.timestamp, data: x })),
   ].sort((a, b) => b.time.getTime() - a.time.getTime());
 
   return (
@@ -123,22 +122,9 @@ describe('Dashboard Integration Tests', () => {
       mlCoins: 50,
       xp: 100,
     },
+    mlCoinsReward: 50,
+    xpReward: 100,
     rarity: 'common',
-  };
-
-  const mockPowerUp: ShopItem = {
-    id: 'power-1',
-    name: 'Power Up',
-    description: 'Boost your performance',
-    category: 'premium' as ShopCategory,
-    price: 100,
-    icon: '⚡',
-    rarity: 'common',
-    stock: 10,
-    available: true,
-    metadata: {
-      stackable: false,
-    },
   };
 
   // ============================================================================
@@ -179,15 +165,6 @@ describe('Dashboard Integration Tests', () => {
       cart: [],
       inventory: [],
       shopItems: [],
-      purchaseHistory: [],
-      economyStats: {
-        totalEarned: 0,
-        totalSpent: 0,
-        netBalance: 0,
-        transactionCount: 0,
-        averageTransaction: 0,
-        itemsOwned: 0,
-      },
       isLoading: false,
       error: null,
     });
@@ -205,6 +182,9 @@ describe('Dashboard Integration Tests', () => {
         mlCoinsEarned: 0,
         lastRankUp: new Date(),
         lastActivityDate: new Date(),
+        activityStreak: 0,
+        canRankUp: false,
+        canPrestige: false,
       },
       prestigeProgress: {
         level: 0,
@@ -297,7 +277,6 @@ describe('Dashboard Integration Tests', () => {
       spendCoins(100, 'purchase');
 
       const economyState = useEconomyStore.getState();
-      const ranksState = useRanksStore.getState();
 
       // Spent coins count toward rank progression
       expect(economyState.balance.spent).toBe(100);
@@ -387,12 +366,15 @@ describe('Dashboard Integration Tests', () => {
           currentXP: 250,
           totalXP: 750,
           xpToNextLevel: 300,
-          nextRank: "Halach Uinic",
+          nextRank: 'Halach Uinic',
           prestigeLevel: 0,
           multiplier: 1.0,
           mlCoinsEarned: 0,
           lastRankUp: new Date(),
           lastActivityDate: new Date(),
+          activityStreak: 5,
+          canRankUp: false,
+          canPrestige: false,
         },
       });
 
@@ -564,6 +546,9 @@ describe('Dashboard Integration Tests', () => {
           mlCoinsEarned: 0,
           lastRankUp: new Date(),
           lastActivityDate: new Date(),
+          activityStreak: 5,
+          canRankUp: false,
+          canPrestige: false,
         },
       });
 
@@ -586,8 +571,8 @@ describe('Dashboard Integration Tests', () => {
       expect(ecoState.transactions.length).toBe(3);
 
       // Verify transaction types
-      const earnTransactions = ecoState.transactions.filter(t => t.type === 'earn');
-      const spendTransactions = ecoState.transactions.filter(t => t.type === 'spend');
+      const earnTransactions = ecoState.transactions.filter((t) => t.type === 'earn');
+      const spendTransactions = ecoState.transactions.filter((t) => t.type === 'spend');
       expect(earnTransactions.length).toBe(2);
       expect(spendTransactions.length).toBe(1);
     });

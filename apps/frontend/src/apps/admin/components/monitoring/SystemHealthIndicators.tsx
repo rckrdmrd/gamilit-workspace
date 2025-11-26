@@ -12,24 +12,31 @@ interface HealthCheckProps {
   uptime?: number;
 }
 
-const HealthCheck: React.FC<HealthCheckProps> = ({ name, status, latency, details, icon, uptime }) => {
+const HealthCheck: React.FC<HealthCheckProps> = ({
+  name,
+  status,
+  latency,
+  details,
+  icon,
+  uptime,
+}) => {
   const statusConfig = {
     healthy: {
-      icon: <CheckCircle className="w-5 h-5" />,
+      icon: <CheckCircle className="h-5 w-5" />,
       color: 'text-green-500',
       bg: 'bg-green-500/10',
       border: 'border-green-500/30',
       label: 'HEALTHY',
     },
     degraded: {
-      icon: <AlertCircle className="w-5 h-5" />,
+      icon: <AlertCircle className="h-5 w-5" />,
       color: 'text-yellow-500',
       bg: 'bg-yellow-500/10',
       border: 'border-yellow-500/30',
       label: 'DEGRADED',
     },
     down: {
-      icon: <XCircle className="w-5 h-5" />,
+      icon: <XCircle className="h-5 w-5" />,
       color: 'text-red-500',
       bg: 'bg-red-500/10',
       border: 'border-red-500/30',
@@ -40,8 +47,8 @@ const HealthCheck: React.FC<HealthCheckProps> = ({ name, status, latency, detail
   const config = statusConfig[status];
 
   return (
-    <div className={`p-4 rounded-lg border ${config.border} ${config.bg}`}>
-      <div className="flex items-start justify-between mb-3">
+    <div className={`rounded-lg border p-4 ${config.border} ${config.bg}`}>
+      <div className="mb-3 flex items-start justify-between">
         <div className="flex items-center gap-3">
           <div className={`${config.color}`}>{icon}</div>
           <div>
@@ -52,18 +59,20 @@ const HealthCheck: React.FC<HealthCheckProps> = ({ name, status, latency, detail
         <div className={`flex items-center gap-1 ${config.color}`}>{config.icon}</div>
       </div>
 
-      <div className="flex items-center gap-4 text-detective-small">
-        <div className={`px-2 py-1 rounded ${config.bg} ${config.color} border ${config.border} font-bold`}>
+      <div className="text-detective-small flex items-center gap-4">
+        <div
+          className={`rounded px-2 py-1 ${config.bg} ${config.color} border ${config.border} font-bold`}
+        >
           {config.label}
         </div>
         {latency !== undefined && (
           <div className="text-gray-400">
-            Latency: <span className="text-detective-text font-semibold">{latency}ms</span>
+            Latency: <span className="font-semibold text-detective-text">{latency}ms</span>
           </div>
         )}
         {uptime !== undefined && (
           <div className="text-gray-400">
-            Uptime: <span className="text-green-500 font-semibold">{uptime.toFixed(2)}%</span>
+            Uptime: <span className="font-semibold text-green-500">{uptime.toFixed(2)}%</span>
           </div>
         )}
       </div>
@@ -78,7 +87,7 @@ export const SystemHealthIndicators: React.FC = () => {
     return (
       <DetectiveCard>
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-detective-orange border-t-transparent"></div>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-detective-orange border-t-transparent"></div>
         </div>
       </DetectiveCard>
     );
@@ -91,7 +100,7 @@ export const SystemHealthIndicators: React.FC = () => {
       status: health?.api?.status || 'healthy',
       latency: health?.api?.latency || 45,
       details: 'Node.js Server',
-      icon: <Server className="w-6 h-6" />,
+      icon: <Server className="h-6 w-6" />,
       uptime: health?.api?.uptime || 99.98,
     },
     {
@@ -99,7 +108,7 @@ export const SystemHealthIndicators: React.FC = () => {
       status: health?.database?.status || 'healthy',
       latency: health?.database?.latency || 12,
       details: `${health?.database?.connections || 15}/100 connections`,
-      icon: <Database className="w-6 h-6" />,
+      icon: <Database className="h-6 w-6" />,
       uptime: health?.database?.uptime || 99.99,
     },
     {
@@ -107,7 +116,7 @@ export const SystemHealthIndicators: React.FC = () => {
       status: health?.redis?.status || 'healthy',
       latency: health?.redis?.latency || 3,
       details: 'In-memory cache',
-      icon: <Zap className="w-6 h-6" />,
+      icon: <Zap className="h-6 w-6" />,
       uptime: health?.redis?.uptime || 99.95,
     },
     {
@@ -115,7 +124,7 @@ export const SystemHealthIndicators: React.FC = () => {
       status: health?.external?.status || 'healthy',
       latency: health?.external?.latency || 250,
       details: 'OpenAI, Payment Gateway',
-      icon: <Globe className="w-6 h-6" />,
+      icon: <Globe className="h-6 w-6" />,
       uptime: health?.external?.uptime || 99.5,
     },
   ];
@@ -123,8 +132,8 @@ export const SystemHealthIndicators: React.FC = () => {
   const overallStatus = healthChecks.every((check) => check.status === 'healthy')
     ? 'healthy'
     : healthChecks.some((check) => check.status === 'down')
-    ? 'down'
-    : 'degraded';
+      ? 'down'
+      : 'degraded';
 
   const overallConfig = {
     healthy: { color: 'text-green-500', bg: 'bg-green-500/20', label: 'ALL SYSTEMS OPERATIONAL' },
@@ -139,7 +148,7 @@ export const SystemHealthIndicators: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Server className="w-8 h-8 text-detective-orange" />
+          <Server className="h-8 w-8 text-detective-orange" />
           <div>
             <h2 className="text-detective-subtitle">System Health Indicators</h2>
             <p className="text-detective-small text-gray-400">Status page format</p>
@@ -152,11 +161,11 @@ export const SystemHealthIndicators: React.FC = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             {overallStatus === 'healthy' ? (
-              <CheckCircle className="w-12 h-12" />
+              <CheckCircle className="h-12 w-12" />
             ) : overallStatus === 'degraded' ? (
-              <AlertCircle className="w-12 h-12" />
+              <AlertCircle className="h-12 w-12" />
             ) : (
-              <XCircle className="w-12 h-12" />
+              <XCircle className="h-12 w-12" />
             )}
             <div>
               <p className="text-2xl font-bold">{config.label}</p>
@@ -168,14 +177,18 @@ export const SystemHealthIndicators: React.FC = () => {
           <div className="text-right">
             <p className="text-detective-small opacity-80">Average Uptime (30 days)</p>
             <p className="text-3xl font-bold">
-              {(healthChecks.reduce((acc, check) => acc + (check.uptime || 0), 0) / healthChecks.length).toFixed(2)}%
+              {(
+                healthChecks.reduce((acc, check) => acc + (check.uptime || 0), 0) /
+                healthChecks.length
+              ).toFixed(2)}
+              %
             </p>
           </div>
         </div>
       </DetectiveCard>
 
       {/* Health Checks */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {healthChecks.map((check) => (
           <HealthCheck key={check.name} {...check} />
         ))}
@@ -187,11 +200,11 @@ export const SystemHealthIndicators: React.FC = () => {
         <div className="space-y-4">
           {healthChecks.map((check) => (
             <div key={check.name}>
-              <div className="flex items-center justify-between mb-2">
+              <div className="mb-2 flex items-center justify-between">
                 <span className="text-detective-base">{check.name}</span>
-                <span className="text-green-500 font-bold">{check.uptime?.toFixed(2)}%</span>
+                <span className="font-bold text-green-500">{check.uptime?.toFixed(2)}%</span>
               </div>
-              <div className="h-2 bg-detective-bg-secondary rounded-full overflow-hidden">
+              <div className="h-2 overflow-hidden rounded-full bg-detective-bg-secondary">
                 <div
                   className="h-full bg-gradient-to-r from-green-500 to-green-400"
                   style={{ width: `${check.uptime}%` }}
@@ -208,17 +221,19 @@ export const SystemHealthIndicators: React.FC = () => {
         <div className="space-y-3">
           {health?.incidents && health.incidents.length > 0 ? (
             health.incidents.map((incident: any, index: number) => (
-              <div key={index} className="p-3 bg-detective-bg-secondary rounded-lg">
-                <div className="flex items-center justify-between mb-2">
+              <div key={index} className="rounded-lg bg-detective-bg-secondary p-3">
+                <div className="mb-2 flex items-center justify-between">
                   <span className="text-detective-base font-semibold">{incident.title}</span>
                   <span className="text-detective-small text-gray-400">
-                    {new Date(incident.timestamp).toLocaleDateString('es-ES')}
+                    {incident.timestamp
+                      ? new Date(incident.timestamp).toLocaleDateString('es-ES')
+                      : 'N/A'}
                   </span>
                 </div>
                 <p className="text-detective-small text-gray-400">{incident.description}</p>
                 <div className="mt-2 flex items-center gap-2">
                   <span
-                    className={`px-2 py-1 rounded text-xs ${
+                    className={`rounded px-2 py-1 text-xs ${
                       incident.resolved
                         ? 'bg-green-500/20 text-green-500'
                         : 'bg-yellow-500/20 text-yellow-500'
@@ -233,8 +248,8 @@ export const SystemHealthIndicators: React.FC = () => {
               </div>
             ))
           ) : (
-            <div className="text-center py-8 text-gray-400">
-              <CheckCircle className="w-12 h-12 mx-auto mb-2 text-green-500" />
+            <div className="py-8 text-center text-gray-400">
+              <CheckCircle className="mx-auto mb-2 h-12 w-12 text-green-500" />
               <p>No incidents in the last 90 days</p>
             </div>
           )}
@@ -244,11 +259,11 @@ export const SystemHealthIndicators: React.FC = () => {
       {/* Response Time Chart */}
       <DetectiveCard>
         <h3 className="text-detective-subtitle mb-4">Average Response Times (Last 24h)</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {healthChecks.map((check) => (
-            <div key={check.name} className="text-center p-4 bg-detective-bg-secondary rounded-lg">
+            <div key={check.name} className="rounded-lg bg-detective-bg-secondary p-4 text-center">
               <div className="mb-2">{check.icon}</div>
-              <p className="text-detective-small text-gray-400 mb-1">{check.name}</p>
+              <p className="text-detective-small mb-1 text-gray-400">{check.name}</p>
               <p className="text-2xl font-bold text-detective-orange">{check.latency}ms</p>
             </div>
           ))}

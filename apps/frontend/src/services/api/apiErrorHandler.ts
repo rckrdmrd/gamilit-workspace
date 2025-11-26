@@ -20,12 +20,7 @@ export class APIError extends Error {
   public readonly data?: any;
   public readonly timestamp: string;
 
-  constructor(
-    statusCode: number,
-    message: string,
-    code: string = 'API_ERROR',
-    data?: any
-  ) {
+  constructor(statusCode: number, message: string, code: string = 'API_ERROR', data?: any) {
     super(message);
     this.name = 'APIError';
     this.statusCode = statusCode;
@@ -98,7 +93,7 @@ export class AccountSuspendedError extends APIError {
   constructor(
     message: string = 'Account has been suspended',
     suspensionDetails?: { isPermanent: boolean; suspendedUntil?: string; reason?: string },
-    data?: any
+    data?: any,
   ) {
     super(403, message, 'ACCOUNT_SUSPENDED', data);
     this.name = 'AccountSuspendedError';
@@ -176,9 +171,9 @@ export class TimeoutError extends APIError {
 /**
  * Handle Axios errors and convert to APIError
  * @param error - The error to handle
- * @param contextMessage - Optional context message for better error descriptions
+ * @param _contextMessage - Optional context message for better error descriptions (reserved for future use)
  */
-export const handleAPIError = (error: unknown, contextMessage?: string): APIError => {
+export const handleAPIError = (error: unknown, _contextMessage?: string): APIError => {
   // Check if it's already an APIError
   if (error instanceof APIError) {
     return error;
@@ -215,7 +210,10 @@ export const handleAPIError = (error: unknown, contextMessage?: string): APIErro
       case 401:
         // Check for specific account status errors
         if (errorCode === 'ACCOUNT_INACTIVE') {
-          return new AccountInactiveError(message || 'Your account has been deactivated', errorData);
+          return new AccountInactiveError(
+            message || 'Your account has been deactivated',
+            errorData,
+          );
         }
         return new AuthenticationError(message || 'Authentication required', errorData);
 
@@ -226,7 +224,7 @@ export const handleAPIError = (error: unknown, contextMessage?: string): APIErro
           return new AccountSuspendedError(
             message || 'Your account has been suspended',
             suspensionDetails,
-            errorData
+            errorData,
           );
         }
         return new AuthorizationError(message || 'Access forbidden', errorData);
@@ -237,13 +235,14 @@ export const handleAPIError = (error: unknown, contextMessage?: string): APIErro
       case 422:
         return new ValidationError(message || 'Validation failed', errorData);
 
-      case 429:
+      case 429: {
         const retryAfter = axiosError.response.headers['retry-after'];
         return new RateLimitError(
           message || 'Rate limit exceeded',
           retryAfter ? parseInt(retryAfter) : undefined,
-          errorData
+          errorData,
         );
+      }
 
       case 500:
       case 502:
@@ -292,10 +291,7 @@ export const isNetworkError = (error: unknown): boolean => {
  * Check if error is an authentication error
  */
 export const isAuthError = (error: unknown): boolean => {
-  return (
-    error instanceof AuthenticationError ||
-    (isAPIError(error) && error.statusCode === 401)
-  );
+  return error instanceof AuthenticationError || (isAPIError(error) && error.statusCode === 401);
 };
 
 /**
@@ -312,10 +308,7 @@ export const isValidationError = (error: unknown): boolean => {
  * Check if error is a rate limit error
  */
 export const isRateLimitError = (error: unknown): boolean => {
-  return (
-    error instanceof RateLimitError ||
-    (isAPIError(error) && error.statusCode === 429)
-  );
+  return error instanceof RateLimitError || (isAPIError(error) && error.statusCode === 429);
 };
 
 // ============================================================================
@@ -350,7 +343,7 @@ export const formatErrorMessage = (error: unknown): string => {
       const suspendedUntil = new Date(details.suspendedUntil).toLocaleDateString('es-ES', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric'
+        day: 'numeric',
       });
       const reason = details.reason ? ` Razón: ${details.reason}` : '';
       return `Tu cuenta está suspendida hasta el ${suspendedUntil}.${reason}`;

@@ -6,7 +6,7 @@
 
 import { useCallback } from 'react';
 import { useEconomyStore } from '../store/economyStore';
-import type { EarningSource, MLCoinsBalance } from '../types/economyTypes';
+import type { EarningSource } from '../types/economyTypes';
 
 export const useCoins = () => {
   const balance = useEconomyStore((state) => state.balance);
@@ -22,7 +22,7 @@ export const useCoins = () => {
     (amount: number, source: EarningSource | string, description?: string) => {
       addCoins(amount, source, description);
     },
-    [addCoins]
+    [addCoins],
   );
 
   /**

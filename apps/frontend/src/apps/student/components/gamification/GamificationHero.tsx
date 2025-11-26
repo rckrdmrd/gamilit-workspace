@@ -8,7 +8,7 @@
 import React from 'react';
 import { motion, useSpring, useTransform } from 'framer-motion';
 import { Coins, Zap, TrendingUp, Award, Star } from 'lucide-react';
-import type { RankData, MLCoinsData } from '../../hooks/useDashboardData';
+import type { RankData } from '../../hooks/useDashboardData';
 
 interface GamificationHeroProps {
   user: {
@@ -28,36 +28,35 @@ const MAYA_RANKS = {
     name: 'Ajaw - Señor',
     icon: '🏹',
     color: 'from-gray-600 to-gray-800',
-    level: 1
+    level: 1,
   },
   Nacom: {
     name: 'Nacom - Capitán de Guerra',
     icon: '🔍',
     color: 'from-blue-600 to-blue-800',
-    level: 2
+    level: 2,
   },
-  'Ah K\'in': {
-    name: 'Ah K\'in - Sacerdote del Sol',
+  "Ah K'in": {
+    name: "Ah K'in - Sacerdote del Sol",
     icon: '🗡️',
     color: 'from-purple-600 to-purple-800',
-    level: 3
+    level: 3,
   },
   'Halach Uinic': {
     name: 'Halach Uinic - Hombre Verdadero',
     icon: '⚔️',
     color: 'from-orange-600 to-red-700',
-    level: 4
+    level: 4,
   },
-  'K\'uk\'ulkan': {
-    name: 'K\'uk\'ulkan - Serpiente Emplumada',
+  "K'uk'ulkan": {
+    name: "K'uk'ulkan - Serpiente Emplumada",
     icon: '👑',
     color: 'from-yellow-500 to-orange-600',
-    level: 5
+    level: 5,
   },
 };
 
 export function GamificationHero({
-  user,
   rankData,
   mlCoins,
   currentXP,
@@ -83,16 +82,12 @@ export function GamificationHero({
     xpSpring.set(currentXP);
   }, [mlCoins, currentXP, coinsSpring, xpSpring]);
 
-  const displayCoins = useTransform(coinsSpring, (value) =>
-    Math.round(value).toLocaleString()
-  );
+  const displayCoins = useTransform(coinsSpring, (value) => Math.round(value).toLocaleString());
 
-  const displayXP = useTransform(xpSpring, (value) =>
-    Math.round(value).toLocaleString()
-  );
+  const displayXP = useTransform(xpSpring, (value) => Math.round(value).toLocaleString());
 
   return (
-    <div className="relative bg-gradient-to-br from-orange-600 via-orange-700 to-orange-800 rounded-2xl shadow-2xl overflow-hidden">
+    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-600 via-orange-700 to-orange-800 shadow-2xl">
       {/* Animated background pattern */}
       <div className="absolute inset-0 opacity-10">
         <motion.div
@@ -114,7 +109,7 @@ export function GamificationHero({
 
       {/* Content */}
       <div className="relative z-10 p-8 md:p-12">
-        <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
+        <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-start">
           {/* Left: Rank Badge */}
           <div className="flex flex-col items-center text-center lg:w-1/4">
             <motion.div
@@ -128,11 +123,13 @@ export function GamificationHero({
               whileHover={{
                 scale: 1.1,
                 rotate: [0, -5, 5, -5, 0],
-                transition: { duration: 0.5 }
+                transition: { duration: 0.5 },
               }}
               className="relative mb-4"
             >
-              <div className={`w-32 h-32 rounded-full bg-gradient-to-br ${rankInfo.color} flex items-center justify-center text-6xl shadow-2xl border-4 border-white/30`}>
+              <div
+                className={`h-32 w-32 rounded-full bg-gradient-to-br ${rankInfo.color} flex items-center justify-center border-4 border-white/30 text-6xl shadow-2xl`}
+              >
                 {rankInfo.icon}
               </div>
 
@@ -140,11 +137,11 @@ export function GamificationHero({
               {[...Array(3)].map((_, i) => (
                 <motion.div
                   key={i}
-                  className="absolute w-2 h-2 bg-yellow-400 rounded-full"
+                  className="absolute h-2 w-2 rounded-full bg-yellow-400"
                   initial={{
                     x: 0,
                     y: 0,
-                    opacity: 0
+                    opacity: 0,
                   }}
                   animate={{
                     x: [0, Math.random() * 40 - 20],
@@ -164,7 +161,7 @@ export function GamificationHero({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-3xl font-bold text-white mb-2"
+              className="mb-2 text-3xl font-bold text-white"
             >
               {rankInfo.name}
             </motion.h2>
@@ -173,7 +170,7 @@ export function GamificationHero({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="text-white/80 text-sm"
+              className="text-sm text-white/80"
             >
               Nivel {rankInfo.level} • {rankData.currentRank}
             </motion.p>
@@ -182,38 +179,36 @@ export function GamificationHero({
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4 }}
-              className="mt-4 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full flex items-center gap-2"
+              className="mt-4 flex items-center gap-2 rounded-full bg-white/20 px-4 py-2 backdrop-blur-sm"
             >
-              <Zap className="w-5 h-5 text-yellow-300" />
-              <span className="text-white font-bold">{rankData.multiplier}x Multiplicador</span>
+              <Zap className="h-5 w-5 text-yellow-300" />
+              <span className="font-bold text-white">{rankData.multiplier}x Multiplicador</span>
             </motion.div>
           </div>
 
           {/* Center: XP Progress */}
-          <div className="flex-1 lg:w-1/2 w-full">
+          <div className="w-full flex-1 lg:w-1/2">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <h3 className="text-white/90 text-lg mb-2 font-semibold">
+              <h3 className="mb-2 text-lg font-semibold text-white/90">
                 Tu Progreso de un Vistazo
               </h3>
 
               {/* XP Progress Bar */}
               <div className="mb-6">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-white/80 text-sm">
-                    Progreso al siguiente rango
-                  </span>
-                  <span className="text-white font-bold text-lg">
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="text-sm text-white/80">Progreso al siguiente rango</span>
+                  <span className="text-lg font-bold text-white">
                     {Math.round(progressPercent)}%
                   </span>
                 </div>
 
-                <div className="relative h-8 bg-black/30 rounded-full overflow-hidden backdrop-blur-sm border border-white/20">
+                <div className="relative h-8 overflow-hidden rounded-full border border-white/20 bg-black/30 backdrop-blur-sm">
                   <motion.div
-                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500 rounded-full flex items-center justify-end pr-4"
+                    className="absolute inset-y-0 left-0 flex items-center justify-end rounded-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500 pr-4"
                     initial={{ width: 0 }}
                     animate={{ width: `${progressPercent}%` }}
                     transition={{
@@ -232,7 +227,7 @@ export function GamificationHero({
                         duration: 1.5,
                       }}
                     >
-                      <Star className="w-5 h-5 text-white" fill="white" />
+                      <Star className="h-5 w-5 text-white" fill="white" />
                     </motion.div>
 
                     {/* Shine effect */}
@@ -252,13 +247,13 @@ export function GamificationHero({
 
                   {/* XP text inside bar */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-white font-bold text-sm drop-shadow-lg">
+                    <span className="text-sm font-bold text-white drop-shadow-lg">
                       <motion.span>{displayXP}</motion.span> / {nextRankXP.toLocaleString()} XP
                     </span>
                   </div>
                 </div>
 
-                <p className="text-white/70 text-sm mt-2">
+                <p className="mt-2 text-sm text-white/70">
                   {xpRemaining.toLocaleString()} XP restantes para subir de rango
                 </p>
               </div>
@@ -269,11 +264,11 @@ export function GamificationHero({
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
-                  className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20"
+                  className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm"
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <TrendingUp className="w-4 h-4 text-green-300" />
-                    <span className="text-white/80 text-xs">Nivel</span>
+                  <div className="mb-2 flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-green-300" />
+                    <span className="text-xs text-white/80">Nivel</span>
                   </div>
                   <p className="text-2xl font-bold text-white">{rankInfo.level}</p>
                 </motion.div>
@@ -282,11 +277,11 @@ export function GamificationHero({
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.7 }}
-                  className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20"
+                  className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm"
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <Zap className="w-4 h-4 text-yellow-300" />
-                    <span className="text-white/80 text-xs">XP Total</span>
+                  <div className="mb-2 flex items-center gap-2">
+                    <Zap className="h-4 w-4 text-yellow-300" />
+                    <span className="text-xs text-white/80">XP Total</span>
                   </div>
                   <p className="text-2xl font-bold text-white">
                     <motion.span>{displayXP}</motion.span>
@@ -297,11 +292,11 @@ export function GamificationHero({
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 }}
-                  className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20"
+                  className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm"
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <Award className="w-4 h-4 text-purple-300" />
-                    <span className="text-white/80 text-xs">Multiplicador</span>
+                  <div className="mb-2 flex items-center gap-2">
+                    <Award className="h-4 w-4 text-purple-300" />
+                    <span className="text-xs text-white/80">Multiplicador</span>
                   </div>
                   <p className="text-2xl font-bold text-white">{rankData.multiplier}x</p>
                 </motion.div>
@@ -310,14 +305,14 @@ export function GamificationHero({
           </div>
 
           {/* Right: ML Coins */}
-          <div className="lg:w-1/4 w-full">
+          <div className="w-full lg:w-1/4">
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
-              className="bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 rounded-2xl p-6 shadow-2xl border-4 border-white/30"
+              className="rounded-2xl border-4 border-white/30 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 p-6 shadow-2xl"
             >
-              <div className="flex items-center justify-center mb-4">
+              <div className="mb-4 flex items-center justify-center">
                 <motion.div
                   animate={{
                     scale: [1, 1.1, 1],
@@ -329,11 +324,11 @@ export function GamificationHero({
                     ease: 'easeInOut',
                   }}
                 >
-                  <Coins className="w-12 h-12 text-white drop-shadow-lg" />
+                  <Coins className="h-12 w-12 text-white drop-shadow-lg" />
                 </motion.div>
               </div>
 
-              <h3 className="text-white/90 text-sm text-center mb-2 font-semibold">
+              <h3 className="mb-2 text-center text-sm font-semibold text-white/90">
                 Saldo ML Coins
               </h3>
 
@@ -347,10 +342,10 @@ export function GamificationHero({
                   delay: 0.6,
                 }}
               >
-                <motion.p className="text-5xl font-bold text-white drop-shadow-lg mb-1">
+                <motion.p className="mb-1 text-5xl font-bold text-white drop-shadow-lg">
                   <motion.span>{displayCoins}</motion.span>
                 </motion.p>
-                <p className="text-white/80 text-lg font-semibold">ML</p>
+                <p className="text-lg font-semibold text-white/80">ML</p>
               </motion.div>
 
               {/* Floating coin animation */}
@@ -358,7 +353,7 @@ export function GamificationHero({
                 {[...Array(3)].map((_, i) => (
                   <motion.div
                     key={i}
-                    className="absolute left-1/2 transform -translate-x-1/2"
+                    className="absolute left-1/2 -translate-x-1/2 transform"
                     initial={{ y: 0, opacity: 0 }}
                     animate={{
                       y: [-30, 0],
@@ -371,7 +366,7 @@ export function GamificationHero({
                       ease: 'easeOut',
                     }}
                   >
-                    <Coins className="w-6 h-6 text-white" />
+                    <Coins className="h-6 w-6 text-white" />
                   </motion.div>
                 ))}
               </div>

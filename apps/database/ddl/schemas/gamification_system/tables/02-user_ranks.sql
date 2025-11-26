@@ -87,10 +87,8 @@ ALTER TABLE ONLY gamification_system.user_ranks
 -- =====================================================================================
 -- Triggers
 -- =====================================================================================
-
-CREATE TRIGGER trg_user_ranks_updated_at
-    BEFORE UPDATE ON gamification_system.user_ranks
-    FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
+-- NOTE: Trigger trg_user_ranks_updated_at movido a archivo separado
+-- Ver: gamification_system/triggers/19-trg_user_ranks_updated_at.sql
 
 -- =====================================================================================
 -- Permissions

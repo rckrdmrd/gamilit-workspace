@@ -8,7 +8,6 @@
  * - NO hardcoded unlock logic
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
 import { BookOpen, CheckCircle, Clock, Star, Lock, Shield, TrendingUp } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -50,7 +49,6 @@ export function ModuleGridCardEnhanced({
     missingPrerequisites,
     requiredRango,
     currentRango,
-    hasRangoAccess,
     prerequisitesProgress,
     getAccessMessage,
     isLoading,
@@ -59,7 +57,7 @@ export function ModuleGridCardEnhanced({
     userId,
     userRango,
     completedModuleIds,
-    onAccessDenied: (reason) => {
+    onAccessDenied: (reason: 'prerequisites' | 'rango' | 'both') => {
       console.log('Module access denied:', reason);
     },
   });
@@ -73,10 +71,10 @@ export function ModuleGridCardEnhanced({
   // ========== Render Loading State ==========
   if (isLoading) {
     return (
-      <div className="bg-white rounded-xl border-2 border-gray-200 p-6 h-64 animate-pulse">
-        <div className="h-12 bg-gray-200 rounded mb-4"></div>
-        <div className="h-4 bg-gray-200 rounded mb-2"></div>
-        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+      <div className="h-64 animate-pulse rounded-xl border-2 border-gray-200 bg-white p-6">
+        <div className="mb-4 h-12 rounded bg-gray-200"></div>
+        <div className="mb-2 h-4 rounded bg-gray-200"></div>
+        <div className="h-4 w-3/4 rounded bg-gray-200"></div>
       </div>
     );
   }
@@ -93,68 +91,68 @@ export function ModuleGridCardEnhanced({
     >
       <DetectiveCard
         onClick={isClickable ? onClick : undefined}
-        className={`h-full flex flex-col touch-manipulation min-h-[44px] ${
+        className={`flex h-full min-h-[44px] touch-manipulation flex-col ${
           isClickable ? 'cursor-pointer' : 'cursor-not-allowed'
-        } ${isLocked ? 'grayscale opacity-60' : ''} border-2 ${
+        } ${isLocked ? 'opacity-60 grayscale' : ''} border-2 ${
           isCompleted
             ? 'border-yellow-300 bg-gradient-to-br from-yellow-50 to-orange-50'
             : isLocked
-            ? 'border-gray-300 bg-gray-50'
-            : 'border-gray-200'
+              ? 'border-gray-300 bg-gray-50'
+              : 'border-gray-200'
         }`}
       >
         {/* Lock Overlay - Enhanced with detailed info */}
         {isLocked && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/90 rounded-xl z-10">
-            <div className="text-center px-4">
-              <div className="bg-gray-600 rounded-full p-4 mb-3 mx-auto w-fit">
+          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-white/90">
+            <div className="px-4 text-center">
+              <div className="mx-auto mb-3 w-fit rounded-full bg-gray-600 p-4">
                 {lockReason === 'rango' ? (
-                  <Shield className="w-8 h-8 text-white" />
+                  <Shield className="h-8 w-8 text-white" />
                 ) : (
-                  <Lock className="w-8 h-8 text-white" />
+                  <Lock className="h-8 w-8 text-white" />
                 )}
               </div>
 
-              <p className="text-sm font-semibold text-gray-800 mb-2">Módulo Bloqueado</p>
+              <p className="mb-2 text-sm font-semibold text-gray-800">Módulo Bloqueado</p>
 
               {showAccessDetails && (
-                <div className="text-xs text-gray-600 space-y-1">
+                <div className="space-y-1 text-xs text-gray-600">
                   <p>{getAccessMessage()}</p>
 
                   {/* Prerequisites Progress */}
                   {lockReason === 'prerequisites' && missingPrerequisites.length > 0 && (
-                    <div className="mt-3 bg-white rounded-lg p-2">
-                      <div className="flex items-center justify-between mb-1">
+                    <div className="mt-3 rounded-lg bg-white p-2">
+                      <div className="mb-1 flex items-center justify-between">
                         <span className="text-xs font-medium text-gray-700">Progreso</span>
                         <span className="text-xs font-bold text-orange-600">
                           {prerequisitesProgress}%
                         </span>
                       </div>
-                      <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-1.5 overflow-hidden rounded-full bg-gray-200">
                         <div
-                          className="h-full bg-gradient-to-r from-orange-400 to-orange-600 rounded-full"
+                          className="h-full rounded-full bg-gradient-to-r from-orange-400 to-orange-600"
                           style={{ width: `${prerequisitesProgress}%` }}
                         />
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {missingPrerequisites.length} módulo{missingPrerequisites.length > 1 ? 's' : ''} pendiente{missingPrerequisites.length > 1 ? 's' : ''}
+                      <p className="mt-1 text-xs text-gray-500">
+                        {missingPrerequisites.length} módulo
+                        {missingPrerequisites.length > 1 ? 's' : ''} pendiente
+                        {missingPrerequisites.length > 1 ? 's' : ''}
                       </p>
                     </div>
                   )}
 
                   {/* Rango Info */}
                   {lockReason === 'rango' && requiredRango && (
-                    <div className="mt-3 bg-white rounded-lg p-2">
+                    <div className="mt-3 rounded-lg bg-white p-2">
                       <div className="flex items-center justify-center gap-2 text-xs">
-                        <Shield className="w-4 h-4 text-purple-500" />
+                        <Shield className="h-4 w-4 text-purple-500" />
                         <span className="font-semibold text-purple-700">
                           Requiere: {requiredRango}
                         </span>
                       </div>
                       {currentRango && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          Tu rango: {currentRango}
-                        </p>
+                        <p className="mt-1 text-xs text-gray-500">Tu rango: {currentRango}</p>
                       )}
                     </div>
                   )}
@@ -166,39 +164,39 @@ export function ModuleGridCardEnhanced({
 
         {/* Completion Badge */}
         {isCompleted && (
-          <div className="absolute -top-3 -right-3 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-full p-3 shadow-lg shadow-yellow-300/50 z-20">
-            <Star className="w-5 h-5 text-white fill-white" />
+          <div className="absolute -right-3 -top-3 z-20 rounded-full bg-gradient-to-r from-yellow-500 to-yellow-600 p-3 shadow-lg shadow-yellow-300/50">
+            <Star className="h-5 w-5 fill-white text-white" />
           </div>
         )}
 
         {/* Rango Badge (if required) */}
         {!isLocked && requiredRango && (
-          <div className="absolute -top-2 -left-2 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full p-2 shadow-lg z-20">
-            <Shield className="w-4 h-4 text-white" />
+          <div className="absolute -left-2 -top-2 z-20 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 p-2 shadow-lg">
+            <Shield className="h-4 w-4 text-white" />
           </div>
         )}
 
         {/* Header */}
-        <div className="flex items-start justify-between mb-4">
+        <div className="mb-4 flex items-start justify-between">
           <div className="flex items-center gap-3">
             <motion.div
-              className={`p-3 rounded-lg ${
+              className={`rounded-lg p-3 ${
                 isCompleted
                   ? 'bg-detective-success/10'
                   : isInProgress
-                  ? 'bg-detective-orange/10'
-                  : 'bg-detective-bg-secondary'
+                    ? 'bg-detective-orange/10'
+                    : 'bg-detective-bg-secondary'
               }`}
               whileHover={!isLocked ? { rotate: 360 } : undefined}
               transition={{ duration: 0.5 }}
             >
               <BookOpen
-                className={`w-12 h-12 ${
+                className={`h-12 w-12 ${
                   isCompleted
                     ? 'text-detective-success'
                     : isInProgress
-                    ? 'text-detective-orange'
-                    : 'text-detective-text-secondary'
+                      ? 'text-detective-orange'
+                      : 'text-detective-text-secondary'
                 }`}
               />
             </motion.div>
@@ -209,13 +207,13 @@ export function ModuleGridCardEnhanced({
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 15 }}
               >
-                <CheckCircle className="w-5 h-5 text-detective-success" />
+                <CheckCircle className="h-5 w-5 text-detective-success" />
               </motion.div>
             )}
           </div>
 
-          <div className="flex items-center gap-2 px-2 py-1 bg-detective-bg-secondary rounded text-xs font-semibold text-detective-text">
-            <Clock className="w-3 h-3" />
+          <div className="flex items-center gap-2 rounded bg-detective-bg-secondary px-2 py-1 text-xs font-semibold text-detective-text">
+            <Clock className="h-3 w-3" />
             <span>
               {module.completed_exercises}/{module.exercises_count}
             </span>
@@ -223,34 +221,30 @@ export function ModuleGridCardEnhanced({
         </div>
 
         {/* Content */}
-        <div className="flex-1 mb-4">
-          <h3 className="text-lg font-bold text-detective-text mb-2 line-clamp-2">
+        <div className="mb-4 flex-1">
+          <h3 className="mb-2 line-clamp-2 text-lg font-bold text-detective-text">
             {module.title}
           </h3>
           {module.subtitle && (
-            <p className="text-xs text-detective-text-secondary mb-2 line-clamp-1">
+            <p className="mb-2 line-clamp-1 text-xs text-detective-text-secondary">
               {module.subtitle}
             </p>
           )}
-          <p className="text-sm text-detective-text-secondary line-clamp-2">
-            {module.description}
-          </p>
+          <p className="line-clamp-2 text-sm text-detective-text-secondary">{module.description}</p>
         </div>
 
         {/* Rewards Info (if module has rewards) */}
         {(module.xp_reward || module.ml_coins_reward) && (
-          <div className="flex items-center gap-3 mb-3 px-3 py-2 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg">
+          <div className="mb-3 flex items-center gap-3 rounded-lg bg-gradient-to-r from-yellow-50 to-orange-50 px-3 py-2">
             {module.xp_reward && (
               <div className="flex items-center gap-1">
-                <TrendingUp className="w-3 h-3 text-orange-600" />
-                <span className="text-xs font-semibold text-orange-700">
-                  {module.xp_reward} XP
-                </span>
+                <TrendingUp className="h-3 w-3 text-orange-600" />
+                <span className="text-xs font-semibold text-orange-700">{module.xp_reward} XP</span>
               </div>
             )}
             {module.ml_coins_reward && (
               <div className="flex items-center gap-1">
-                <Star className="w-3 h-3 text-yellow-600" />
+                <Star className="h-3 w-3 text-yellow-600" />
                 <span className="text-xs font-semibold text-yellow-700">
                   {module.ml_coins_reward} ML
                 </span>
@@ -261,12 +255,12 @@ export function ModuleGridCardEnhanced({
 
         {/* Progress Bar */}
         <div className="mb-3">
-          <div className="flex items-center justify-between mb-2">
+          <div className="mb-2 flex items-center justify-between">
             <span className="text-xs font-medium text-detective-text">Progreso</span>
             <span className="text-xs font-bold text-detective-orange">{progress}%</span>
           </div>
 
-          <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
+          <div className="relative h-3 overflow-hidden rounded-full bg-gray-200">
             <motion.div
               className={`absolute inset-y-0 left-0 rounded-full ${
                 isCompleted
@@ -281,33 +275,33 @@ export function ModuleGridCardEnhanced({
         </div>
 
         {/* Stats */}
-        <div className="flex items-center justify-between pt-3 border-t border-detective-bg-secondary">
+        <div className="flex items-center justify-between border-t border-detective-bg-secondary pt-3">
           <div className="flex items-center gap-1 text-xs text-detective-text-secondary">
-            <Star className="w-3 h-3 text-detective-gold fill-detective-gold" />
+            <Star className="h-3 w-3 fill-detective-gold text-detective-gold" />
             <span>{Math.round((progress / 100) * 50)} pts</span>
           </div>
 
           {isInProgress && (
-            <span className="px-2 py-1 bg-detective-orange/10 text-detective-orange rounded text-xs font-medium">
+            <span className="rounded bg-detective-orange/10 px-2 py-1 text-xs font-medium text-detective-orange">
               En progreso
             </span>
           )}
 
           {isCompleted && (
-            <span className="px-2 py-1 bg-detective-success/10 text-detective-success rounded text-xs font-medium">
+            <span className="rounded bg-detective-success/10 px-2 py-1 text-xs font-medium text-detective-success">
               Completado
             </span>
           )}
 
           {!isInProgress && !isCompleted && !isLocked && (
-            <span className="px-2 py-1 bg-detective-bg-secondary text-detective-text-secondary rounded text-xs font-medium">
+            <span className="rounded bg-detective-bg-secondary px-2 py-1 text-xs font-medium text-detective-text-secondary">
               Sin iniciar
             </span>
           )}
 
           {isLocked && (
-            <span className="px-2 py-1 bg-gray-200 text-gray-600 rounded text-xs font-medium flex items-center gap-1">
-              <Lock className="w-3 h-3" />
+            <span className="flex items-center gap-1 rounded bg-gray-200 px-2 py-1 text-xs font-medium text-gray-600">
+              <Lock className="h-3 w-3" />
               Bloqueado
             </span>
           )}

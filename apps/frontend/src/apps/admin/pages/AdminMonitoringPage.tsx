@@ -1,27 +1,49 @@
 import React, { useState } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '../layouts/AdminLayout';
-import { SystemPerformanceDashboard } from '../components/monitoring/SystemPerformanceDashboard';
-import { UserActivityMonitor } from '../components/monitoring/UserActivityMonitor';
-import { ErrorTrackingPanel } from '../components/monitoring/ErrorTrackingPanel';
-import { SystemHealthIndicators } from '../components/monitoring/SystemHealthIndicators';
+import { LogsViewer } from '../components/monitoring/LogsViewer';
+import { MetricsTab } from '../components/monitoring/MetricsTab';
+import { ErrorTrackingTab } from '../components/monitoring/ErrorTrackingTab';
+import { AlertasTab } from '../components/monitoring/AlertasTab';
+import { useMonitoring } from '../hooks/useMonitoring';
+import { useAlerts } from '../hooks/useAlerts';
+import { Activity, AlertTriangle, FileText, XCircle } from 'lucide-react';
 
 /**
  * AdminMonitoringPage - Monitoreo del sistema en tiempo real
- * Updated: 2025-11-19 - Migrated to use AdminLayout with sidebar
+ *
+ * Estado: COMPLETO ✅
+ * - Tab "Logs" (Audit Log) - IMPLEMENTADO
+ * - Tab "Métricas" - IMPLEMENTADO
+ * - Tab "Error Tracking" - IMPLEMENTADO
+ * - Tab "Alertas" - IMPLEMENTADO
+ *
+ * Updated: 2025-11-24 - Completed all monitoring tabs (Plan 4)
  */
 const AdminMonitoringPage: React.FC = () => {
   const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState<'performance' | 'activity' | 'errors' | 'health'>('performance');
+  const [activeTab, setActiveTab] = useState<'metrics' | 'logs' | 'errors' | 'alerts'>('logs');
 
-  const tabs = [
-    { id: 'performance' as const, label: 'Performance Dashboard', component: SystemPerformanceDashboard },
-    { id: 'activity' as const, label: 'User Activity', component: UserActivityMonitor },
-    { id: 'errors' as const, label: 'Error Tracking', component: ErrorTrackingPanel },
-    { id: 'health' as const, label: 'System Health', component: SystemHealthIndicators },
-  ];
+  // Monitoring hook for metrics and errors
+  const {
+    metrics,
+    errorStats,
+    recentErrors,
+    errorTrends,
+    isLoading: monitoringLoading,
+    refreshAll: refreshMonitoring,
+  } = useMonitoring();
 
-  // TODO: Replace with useUserGamification hook when backend endpoint is ready
+  // Alerts hook for alerts integration
+  const {
+    alerts,
+    stats: alertStats,
+    isLoading: alertsLoading,
+    fetchAlerts,
+    acknowledgeAlert,
+    resolveAlert,
+  } = useAlerts();
+
   const gamificationData = {
     userId: user?.id || 'mock-admin-id',
     level: 20,
@@ -36,8 +58,6 @@ const AdminMonitoringPage: React.FC = () => {
     window.location.href = '/login';
   };
 
-  const ActiveComponent = tabs.find((tab) => tab.id === activeTab)?.component || SystemPerformanceDashboard;
-
   return (
     <AdminLayout
       user={user || undefined}
@@ -48,31 +68,104 @@ const AdminMonitoringPage: React.FC = () => {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-detective-text">Monitoreo del Sistema</h1>
-          <p className="text-detective-text-secondary mt-1">
+          <div className="mb-2 flex items-center gap-3">
+            <Activity className="h-8 w-8 text-purple-500" />
+            <h1 className="text-3xl font-bold text-detective-text">Monitoreo del Sistema</h1>
+          </div>
+          <p className="mt-1 text-detective-text-secondary">
             Monitorea el rendimiento, actividad y salud del sistema en tiempo real
           </p>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 overflow-x-auto">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${
-                activeTab === tab.id
-                  ? 'bg-detective-orange text-white'
-                  : 'bg-detective-bg-secondary text-detective-text hover:bg-opacity-80'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div className="flex gap-2 border-b border-gray-700">
+          <button
+            onClick={() => setActiveTab('logs')}
+            className={`border-b-2 px-4 py-3 font-medium transition-colors ${
+              activeTab === 'logs'
+                ? 'border-blue-500 text-blue-400'
+                : 'border-transparent text-gray-400 hover:text-gray-300'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Logs
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('metrics')}
+            className={`border-b-2 px-4 py-3 font-medium transition-colors ${
+              activeTab === 'metrics'
+                ? 'border-blue-500 text-blue-400'
+                : 'border-transparent text-gray-400 hover:text-gray-300'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Activity className="h-4 w-4" />
+              Métricas
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('errors')}
+            className={`border-b-2 px-4 py-3 font-medium transition-colors ${
+              activeTab === 'errors'
+                ? 'border-blue-500 text-blue-400'
+                : 'border-transparent text-gray-400 hover:text-gray-300'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <XCircle className="h-4 w-4" />
+              Error Tracking
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('alerts')}
+            className={`border-b-2 px-4 py-3 font-medium transition-colors ${
+              activeTab === 'alerts'
+                ? 'border-blue-500 text-blue-400'
+                : 'border-transparent text-gray-400 hover:text-gray-300'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4" />
+              Alertas
+            </div>
+          </button>
         </div>
 
-        {/* Content */}
-        <ActiveComponent />
+        {/* Tab Content */}
+        <div className="mt-6">
+          {activeTab === 'logs' && <LogsViewer />}
+
+          {activeTab === 'metrics' && (
+            <MetricsTab
+              metrics={metrics}
+              isLoading={monitoringLoading}
+              onRefresh={refreshMonitoring}
+            />
+          )}
+
+          {activeTab === 'errors' && (
+            <ErrorTrackingTab
+              stats={errorStats}
+              recentErrors={recentErrors}
+              trends={errorTrends}
+              isLoading={monitoringLoading}
+              onRefresh={refreshMonitoring}
+            />
+          )}
+
+          {activeTab === 'alerts' && (
+            <AlertasTab
+              alerts={alerts}
+              stats={alertStats}
+              isLoading={alertsLoading}
+              onRefresh={fetchAlerts}
+              onAcknowledge={acknowledgeAlert}
+              onResolve={resolveAlert}
+            />
+          )}
+        </div>
       </div>
     </AdminLayout>
   );

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Calendar, Users, Target, Clock, MoreVertical } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import type { Assignment } from '../../types';
@@ -43,8 +42,8 @@ export function AssignmentList({ assignments, onEdit, onDelete }: AssignmentList
   if (assignments.length === 0) {
     return (
       <DetectiveCard>
-        <div className="text-center py-12">
-          <Target className="w-16 h-16 text-detective-text-secondary mx-auto mb-4" />
+        <div className="py-12 text-center">
+          <Target className="mx-auto mb-4 h-16 w-16 text-detective-text-secondary" />
           <p className="text-detective-text-secondary">No hay asignaciones creadas</p>
         </div>
       </DetectiveCard>
@@ -57,27 +56,23 @@ export function AssignmentList({ assignments, onEdit, onDelete }: AssignmentList
         <DetectiveCard key={assignment.id} hoverable={false}>
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <div className="flex items-start justify-between mb-3">
+              <div className="mb-3 flex items-start justify-between">
                 <div>
-                  <h3 className="text-lg font-bold text-detective-text mb-1">
-                    {assignment.title}
-                  </h3>
-                  <p className="text-sm text-detective-text-secondary">
-                    {assignment.module_name}
-                  </p>
+                  <h3 className="mb-1 text-lg font-bold text-detective-text">{assignment.title}</h3>
+                  <p className="text-sm text-detective-text-secondary">{assignment.module_name}</p>
                 </div>
                 <span
-                  className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${getStatusColor(
-                    assignment.status
+                  className={`rounded-full px-3 py-1 text-xs font-semibold text-white ${getStatusColor(
+                    assignment.status,
                   )}`}
                 >
                   {getStatusText(assignment.status)}
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+              <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4">
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-detective-orange" />
+                  <Calendar className="h-4 w-4 text-detective-orange" />
                   <div>
                     <p className="text-xs text-detective-text-secondary">Fecha límite</p>
                     <p className="text-sm font-semibold text-detective-text">
@@ -87,7 +82,7 @@ export function AssignmentList({ assignments, onEdit, onDelete }: AssignmentList
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-detective-gold" />
+                  <Users className="h-4 w-4 text-detective-gold" />
                   <div>
                     <p className="text-xs text-detective-text-secondary">Estudiantes</p>
                     <p className="text-sm font-semibold text-detective-text">
@@ -97,7 +92,7 @@ export function AssignmentList({ assignments, onEdit, onDelete }: AssignmentList
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Target className="w-4 h-4 text-detective-accent" />
+                  <Target className="text-detective-accent h-4 w-4" />
                   <div>
                     <p className="text-xs text-detective-text-secondary">Ejercicios</p>
                     <p className="text-sm font-semibold text-detective-text">
@@ -107,7 +102,7 @@ export function AssignmentList({ assignments, onEdit, onDelete }: AssignmentList
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-detective-orange" />
+                  <Clock className="h-4 w-4 text-detective-orange" />
                   <div>
                     <p className="text-xs text-detective-text-secondary">Intentos</p>
                     <p className="text-sm font-semibold text-detective-text">
@@ -118,16 +113,14 @@ export function AssignmentList({ assignments, onEdit, onDelete }: AssignmentList
               </div>
 
               <div className="flex items-center gap-4 text-xs text-detective-text-secondary">
-                <span>
-                  Creada: {new Date(assignment.created_at).toLocaleDateString('es-ES')}
-                </span>
+                <span>Creada: {new Date(assignment.created_at).toLocaleDateString('es-ES')}</span>
                 {assignment.allow_powerups && (
-                  <span className="px-2 py-1 bg-detective-bg-secondary rounded">
+                  <span className="rounded bg-detective-bg-secondary px-2 py-1">
                     Power-ups permitidos
                   </span>
                 )}
                 {assignment.custom_points && (
-                  <span className="px-2 py-1 bg-detective-bg-secondary rounded">
+                  <span className="rounded bg-detective-bg-secondary px-2 py-1">
                     {assignment.custom_points} puntos
                   </span>
                 )}
@@ -136,8 +129,8 @@ export function AssignmentList({ assignments, onEdit, onDelete }: AssignmentList
 
             {(onEdit || onDelete) && (
               <div className="ml-4">
-                <button className="p-2 hover:bg-detective-bg-secondary rounded-lg transition-colors">
-                  <MoreVertical className="w-5 h-5 text-detective-text-secondary" />
+                <button className="rounded-lg p-2 transition-colors hover:bg-detective-bg-secondary">
+                  <MoreVertical className="h-5 w-5 text-detective-text-secondary" />
                 </button>
               </div>
             )}

@@ -9,9 +9,14 @@
 // ============================================================================
 
 export { default as apiClient } from './apiClient';
-export { API_ENDPOINTS, FEATURE_FLAGS, API_CONFIG, HTTP_STATUS } from './apiConfig';
+export { API_ENDPOINTS, FEATURE_FLAGS, API_CONFIG, HTTP_STATUS } from '@/config/api.config';
 import apiClientDefault from '@/services/api/apiClient';
-import { API_ENDPOINTS as endpoints, FEATURE_FLAGS as flags, API_CONFIG as config, HTTP_STATUS as status } from './apiConfig';
+import {
+  API_ENDPOINTS as endpoints,
+  FEATURE_FLAGS as flags,
+  API_CONFIG as config,
+  HTTP_STATUS as status,
+} from '@/config/api.config';
 
 export {
   setAuthToken,
@@ -92,6 +97,21 @@ export { default as apiInterceptors } from './apiInterceptors';
 
 export { adminAPI, default as adminAPIDefault } from './adminAPI';
 export type * from './adminTypes';
+
+// ============================================================================
+// PROFILE API
+// ============================================================================
+
+export { profileAPI, default as profileAPIDefault } from './profileAPI';
+export type {
+  UpdateProfileDto,
+  UpdatePreferencesDto,
+  UpdatePasswordDto,
+  ProfileUpdateResponse,
+  PreferencesUpdateResponse,
+  AvatarUploadResponse,
+  PasswordUpdateResponse,
+} from './profileAPI';
 
 // ============================================================================
 // DEFAULT EXPORT

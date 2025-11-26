@@ -12,6 +12,7 @@
 --   P0: Added ON DELETE SET NULL to created_by/reviewed_by FKs
 --   P1: Added idx_exercises_prerequisites GIN index
 --   P1: Added CHECK constraints for time validations
+--   P0: Added requires_manual_grading column (2025-11-24) - Arquitectura dual ejercicios
 --
 -- 📚 Documentación:
 -- Requerimiento: docs/01-requerimientos/03-contenido-educativo/RF-EDU-001-mecanicas-ejercicios.md
@@ -37,6 +38,11 @@ CREATE TABLE educational_content.exercises (
     solution jsonb,
     rubric jsonb,
     auto_gradable boolean DEFAULT true,
+
+    -- Arquitectura dual de ejercicios (2025-11-24)
+    -- TRUE: Requiere revisión del maestro (usar exercise_submissions)
+    -- FALSE: Autocorregible (usar exercise_attempts)
+    requires_manual_grading boolean DEFAULT false,
 
     -- Contenido pedagógico expandido (DB-125: 2025-11-19)
     objective TEXT,
@@ -103,9 +109,11 @@ CREATE INDEX idx_exercises_order ON educational_content.exercises USING btree (m
 CREATE INDEX idx_exercises_prerequisites ON educational_content.exercises USING gin (prerequisites);
 CREATE INDEX idx_exercises_search ON educational_content.exercises USING gin (to_tsvector('spanish'::regconfig, ((COALESCE(title, ''::text) || ' '::text) || COALESCE(description, ''::text))));
 CREATE INDEX idx_exercises_type ON educational_content.exercises USING btree (exercise_type);
+CREATE INDEX idx_exercises_requires_manual_grading ON educational_content.exercises USING btree (requires_manual_grading) WHERE (is_active = true);
 
 -- Triggers
-CREATE TRIGGER trg_exercises_updated_at BEFORE UPDATE ON educational_content.exercises FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
+-- NOTE: Trigger trg_exercises_updated_at movido a archivo separado
+-- Ver: educational_content/triggers/12-trg_exercises_updated_at.sql
 
 -- Foreign Keys
 ALTER TABLE ONLY educational_content.exercises
@@ -146,3 +154,9 @@ COMMENT ON COLUMN educational_content.exercises.recommended_strategy IS
 
 COMMENT ON COLUMN educational_content.exercises.pedagogical_notes IS
 'Notas metodológicas para educadores (100-400 palabras). Contexto pedagógico, relación con competencias, y alineación con modelo Cassany.';
+
+COMMENT ON COLUMN educational_content.exercises.requires_manual_grading IS
+'Arquitectura dual de ejercicios (2025-11-24):
+TRUE: Requiere revisión del maestro → usar exercise_submissions
+FALSE: Autocorregible → usar exercise_attempts
+Determina el flujo de trabajo: práctica ilimitada vs evaluación formal única.';

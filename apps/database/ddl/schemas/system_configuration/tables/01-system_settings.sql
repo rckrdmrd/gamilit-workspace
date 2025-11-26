@@ -66,8 +66,8 @@ CREATE INDEX idx_settings_public ON system_configuration.system_settings USING b
 -- =====================================================
 -- Triggers
 -- =====================================================
-
-CREATE TRIGGER trg_system_settings_updated_at BEFORE UPDATE ON system_configuration.system_settings FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
+-- NOTE: Trigger trg_system_settings_updated_at movido a archivo separado
+-- Ver: system_configuration/triggers/30-trg_system_settings_updated_at.sql
 
 -- =====================================================
 -- Foreign Keys

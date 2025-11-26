@@ -62,9 +62,7 @@ export const EmailFormalExercise: React.FC<ExerciseProps> = ({
   // Progress tracking
   useEffect(() => {
     const progress = calculateProgress();
-    onProgressUpdate?.(
-      normalizeProgressUpdate(progress, 0, 1, 0, 0)
-    );
+    onProgressUpdate?.(normalizeProgressUpdate(progress, 0, 1, 0, 0));
   }, [to, subject, body, analysis]);
 
   // Auto-save functionality
@@ -87,8 +85,7 @@ export const EmailFormalExercise: React.FC<ExerciseProps> = ({
     const formalWords = ['estimado', 'cordialmente', 'atentamente', 'distinguido', 'apreciado'];
     const formalityScore =
       formalWords.filter(
-        (word) =>
-          body.toLowerCase().includes(word) || subject.toLowerCase().includes(word)
+        (word) => body.toLowerCase().includes(word) || subject.toLowerCase().includes(word),
       ).length * 20;
 
     const hasGreeting = /^(estimado|distinguido|apreciado)/i.test(body);
@@ -110,12 +107,14 @@ export const EmailFormalExercise: React.FC<ExerciseProps> = ({
     setAnalysis(newAnalysis);
   };
 
-  // Use template
-  const useTemplate = (templateId: string) => {
+  // Apply template
+  const applyTemplate = (templateId: string) => {
     const template = templates.find((t) => t.id === templateId);
     if (template) {
       setSubject(`${template.purpose}`);
-      setBody(`${template.greeting} Dr./Dra.,\n\n[Escribe tu mensaje aquí]\n\nAtentamente,\n[Tu nombre]`);
+      setBody(
+        `${template.greeting} Dr./Dra.,\n\n[Escribe tu mensaje aquí]\n\nAtentamente,\n[Tu nombre]`,
+      );
     }
   };
 
@@ -130,9 +129,9 @@ export const EmailFormalExercise: React.FC<ExerciseProps> = ({
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Exercise Description */}
-          <div className="bg-gradient-to-r from-detective-blue to-detective-orange rounded-detective p-6 text-white shadow-detective-lg">
-            <div className="flex items-center gap-3 mb-2">
-              <Mail className="w-8 h-8" />
+          <div className="rounded-detective bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-detective-lg">
+            <div className="mb-2 flex items-center gap-3">
+              <Mail className="h-8 w-8" />
               <h2 className="text-detective-2xl font-bold">Redacción de Email Formal</h2>
             </div>
             <p className="text-detective-base opacity-90">
@@ -141,173 +140,157 @@ export const EmailFormalExercise: React.FC<ExerciseProps> = ({
           </div>
           {/* Templates Card */}
           <DetectiveCard variant="default" padding="lg">
-                  <label className="block text-detective-text font-medium mb-3">
-                    Plantillas:
-                  </label>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {templates.map((template) => (
-                      <motion.div key={template.id} whileHover={{ scale: 1.02 }}>
-                        <DetectiveButton
-                          variant="secondary"
-
-                          onClick={() => useTemplate(template.id)}
-                          className="w-full h-auto p-3 text-left"
-                        >
-                          <p className="font-medium text-detective-text text-sm">
-                            {template.name}
-                          </p>
-                          <p className="text-detective-text-secondary text-xs mt-1">
-                            {template.purpose}
-                          </p>
-                        </DetectiveButton>
-                      </motion.div>
-                    ))}
-                  </div>
+            <label className="mb-3 block font-medium text-detective-text">Plantillas:</label>
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+              {templates.map((template) => (
+                <motion.div key={template.id} whileHover={{ scale: 1.02 }}>
+                  <DetectiveButton
+                    variant="secondary"
+                    onClick={() => applyTemplate(template.id)}
+                    className="h-auto w-full p-3 text-left"
+                  >
+                    <p className="text-sm font-medium text-detective-text">{template.name}</p>
+                    <p className="mt-1 text-xs text-detective-text-secondary">{template.purpose}</p>
+                  </DetectiveButton>
+                </motion.div>
+              ))}
+            </div>
           </DetectiveCard>
 
           {/* Email Form Card */}
           <DetectiveCard variant="default" padding="lg">
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-detective-text font-medium mb-2">
-                        Para:
-                      </label>
-                      <input
-                        type="email"
-                        value={to}
-                        onChange={(e) => setTo(e.target.value)}
-                        placeholder="destinatario@universidad.edu"
-                        className="w-full px-4 py-2 border-2 border-detective-border-medium rounded-detective focus:border-detective-orange focus:outline-none transition-colors"
-                      />
-                    </div>
+            <div className="space-y-4">
+              <div>
+                <label className="mb-2 block font-medium text-detective-text">Para:</label>
+                <input
+                  type="email"
+                  value={to}
+                  onChange={(e) => setTo(e.target.value)}
+                  placeholder="destinatario@universidad.edu"
+                  className="w-full rounded-detective border-2 border-detective-border-medium px-4 py-2 transition-colors focus:border-detective-orange focus:outline-none"
+                />
+              </div>
 
-                    <div>
-                      <label className="block text-detective-text font-medium mb-2">
-                        Asunto:
-                      </label>
-                      <input
-                        type="text"
-                        value={subject}
-                        onChange={(e) => setSubject(e.target.value)}
-                        placeholder="Consulta sobre investigaciones de Marie Curie"
-                        className="w-full px-4 py-2 border-2 border-detective-border-medium rounded-detective focus:border-detective-orange focus:outline-none transition-colors"
-                      />
-                    </div>
+              <div>
+                <label className="mb-2 block font-medium text-detective-text">Asunto:</label>
+                <input
+                  type="text"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  placeholder="Consulta sobre investigaciones de Marie Curie"
+                  className="w-full rounded-detective border-2 border-detective-border-medium px-4 py-2 transition-colors focus:border-detective-orange focus:outline-none"
+                />
+              </div>
 
-                    <div>
-                      <label className="block text-detective-text font-medium mb-2">
-                        Cuerpo del mensaje:
-                      </label>
-                      <textarea
-                        value={body}
-                        onChange={(e) => setBody(e.target.value)}
-                        rows={12}
-                        placeholder="Escribe tu mensaje formal aquí..."
-                        className="w-full px-4 py-2 border-2 border-detective-border-medium rounded-detective focus:border-detective-orange focus:outline-none resize-none transition-colors"
-                      />
-                      <p className="text-detective-text-secondary text-sm mt-1">
-                        {body.length} caracteres
-                      </p>
-                    </div>
+              <div>
+                <label className="mb-2 block font-medium text-detective-text">
+                  Cuerpo del mensaje:
+                </label>
+                <textarea
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  rows={12}
+                  placeholder="Escribe tu mensaje formal aquí..."
+                  className="w-full resize-none rounded-detective border-2 border-detective-border-medium px-4 py-2 transition-colors focus:border-detective-orange focus:outline-none"
+                />
+                <p className="mt-1 text-sm text-detective-text-secondary">
+                  {body.length} caracteres
+                </p>
+              </div>
 
-                    <DetectiveButton
-                      variant="primary"
-
-                      onClick={analyzeTone}
-                      className="w-full"
-                      icon={<Send className="w-5 h-5" />}
-                    >
-                      Analizar Tono y Formalidad
-                    </DetectiveButton>
-                  </div>
+              <DetectiveButton
+                variant="primary"
+                onClick={analyzeTone}
+                className="w-full"
+                icon={<Send className="h-5 w-5" />}
+              >
+                Analizar Tono y Formalidad
+              </DetectiveButton>
+            </div>
           </DetectiveCard>
 
           {/* Analysis Results Card */}
           {analysis && (
             <DetectiveCard variant="default" padding="lg">
-                    <h3 className="text-detective-xl font-bold text-detective-text mb-4">
-                      Análisis del Email
-                    </h3>
+              <h3 className="mb-4 text-detective-xl font-bold text-detective-text">
+                Análisis del Email
+              </h3>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                      <div>
-                        <p className="text-detective-text-secondary text-sm mb-2">
-                          Formalidad
-                        </p>
-                        <div className="relative">
-                          <p className={`text-3xl font-bold mb-2 ${getMetricColor(analysis.formality)}`}>
-                            {analysis.formality}%
-                          </p>
-                          <div className="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
-                            <div
-                              style={{ width: `${analysis.formality}%` }}
-                              className="bg-detective-blue transition-all"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-detective-text-secondary text-sm mb-2">Claridad</p>
-                        <div className="relative">
-                          <p className={`text-3xl font-bold mb-2 ${getMetricColor(analysis.clarity)}`}>
-                            {analysis.clarity}%
-                          </p>
-                          <div className="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
-                            <div
-                              style={{ width: `${analysis.clarity}%` }}
-                              className="bg-detective-gold transition-all"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-detective-text-secondary text-sm mb-2">
-                          Profesionalismo
-                        </p>
-                        <div className="relative">
-                          <p className={`text-3xl font-bold mb-2 ${getMetricColor(analysis.professionalism)}`}>
-                            {analysis.professionalism}%
-                          </p>
-                          <div className="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
-                            <div
-                              style={{ width: `${analysis.professionalism}%` }}
-                              className="bg-detective-orange transition-all"
-                            />
-                          </div>
-                        </div>
-                      </div>
+              <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+                <div>
+                  <p className="mb-2 text-sm text-detective-text-secondary">Formalidad</p>
+                  <div className="relative">
+                    <p className={`mb-2 text-3xl font-bold ${getMetricColor(analysis.formality)}`}>
+                      {analysis.formality}%
+                    </p>
+                    <div className="flex h-2 overflow-hidden rounded bg-gray-200 text-xs">
+                      <div
+                        style={{ width: `${analysis.formality}%` }}
+                        className="bg-detective-blue transition-all"
+                      />
                     </div>
+                  </div>
+                </div>
+                <div>
+                  <p className="mb-2 text-sm text-detective-text-secondary">Claridad</p>
+                  <div className="relative">
+                    <p className={`mb-2 text-3xl font-bold ${getMetricColor(analysis.clarity)}`}>
+                      {analysis.clarity}%
+                    </p>
+                    <div className="flex h-2 overflow-hidden rounded bg-gray-200 text-xs">
+                      <div
+                        style={{ width: `${analysis.clarity}%` }}
+                        className="bg-detective-gold transition-all"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <p className="mb-2 text-sm text-detective-text-secondary">Profesionalismo</p>
+                  <div className="relative">
+                    <p
+                      className={`mb-2 text-3xl font-bold ${getMetricColor(analysis.professionalism)}`}
+                    >
+                      {analysis.professionalism}%
+                    </p>
+                    <div className="flex h-2 overflow-hidden rounded bg-gray-200 text-xs">
+                      <div
+                        style={{ width: `${analysis.professionalism}%` }}
+                        className="bg-detective-orange transition-all"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-                    {analysis.suggestions.length > 0 && (
-                      <div className="bg-yellow-50 border-2 border-yellow-200 rounded-detective p-4">
-                        <div className="flex items-start gap-2">
-                          <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-1" />
-                          <div>
-                            <p className="font-medium text-detective-text mb-2">
-                              Sugerencias de mejora:
-                            </p>
-                            <ul className="list-disc list-inside space-y-1">
-                              {analysis.suggestions.map((suggestion, idx) => (
-                                <li key={idx} className="text-detective-text-secondary">
-                                  {suggestion}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+              {analysis.suggestions.length > 0 && (
+                <div className="rounded-detective border-2 border-yellow-200 bg-yellow-50 p-4">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="mt-1 h-5 w-5 flex-shrink-0 text-yellow-600" />
+                    <div>
+                      <p className="mb-2 font-medium text-detective-text">Sugerencias de mejora:</p>
+                      <ul className="list-inside list-disc space-y-1">
+                        {analysis.suggestions.map((suggestion, idx) => (
+                          <li key={idx} className="text-detective-text-secondary">
+                            {suggestion}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
 
-                    {analysis.suggestions.length === 0 && (
-                      <div className="bg-green-50 border-2 border-green-200 rounded-detective p-4">
-                        <div className="flex items-center gap-2">
-                          <CheckCircle className="w-6 h-6 text-green-600" />
-                          <p className="font-medium text-green-800">
-                            ¡Excelente! Tu email cumple con los estándares formales.
-                          </p>
-                        </div>
-                      </div>
-                    )}
+              {analysis.suggestions.length === 0 && (
+                <div className="rounded-detective border-2 border-green-200 bg-green-50 p-4">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-6 w-6 text-green-600" />
+                    <p className="font-medium text-green-800">
+                      ¡Excelente! Tu email cumple con los estándares formales.
+                    </p>
+                  </div>
+                </div>
+              )}
             </DetectiveCard>
           )}
         </div>
@@ -321,13 +304,9 @@ export const EmailFormalExercise: React.FC<ExerciseProps> = ({
           onClose={() => {
             setShowFeedback(false);
             if (feedback.type === 'success' && onComplete) {
-              const timeSpent = Math.floor(
-                (new Date().getTime() - startTime.getTime()) / 1000
-              );
+              const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
               const avgScore = analysis
-                ? Math.round(
-                    (analysis.formality + analysis.clarity + analysis.professionalism) / 3
-                  )
+                ? Math.round((analysis.formality + analysis.clarity + analysis.professionalism) / 3)
                 : 0;
               onComplete(avgScore, timeSpent);
             }

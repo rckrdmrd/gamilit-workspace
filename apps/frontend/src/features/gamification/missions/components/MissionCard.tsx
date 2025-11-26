@@ -36,6 +36,7 @@ import {
 import type { Mission, MissionCategory } from '../types/missionsTypes';
 import { cn } from '@shared/utils/cn';
 import { getColorSchemeById } from '@shared/utils/colorPalette';
+import { getMissionProgress, getMissionRewards } from '../utils/missionHelpers';
 
 interface MissionCardProps {
   mission: Mission;
@@ -136,14 +137,16 @@ export function MissionCard({
   const difficultyColor = getDifficultyColor(mission.difficulty);
 
   // Timer color (red if < 1 hour)
-  const isUrgent = mission.expiresAt ? new Date(mission.expiresAt).getTime() - new Date().getTime() < 3600000 : false;
+  const isUrgent = mission.expiresAt
+    ? new Date(mission.expiresAt).getTime() - new Date().getTime() < 3600000
+    : false;
 
   return (
     <>
       {/* Confetti */}
       <AnimatePresence>
         {showConfetti && (
-          <div className="fixed inset-0 pointer-events-none z-50">
+          <div className="pointer-events-none fixed inset-0 z-50">
             <Confetti
               width={window.innerWidth}
               height={window.innerHeight}
@@ -163,22 +166,19 @@ export function MissionCard({
         exit={{ opacity: 0, scale: 0.95 }}
         whileHover={{ y: -5 }}
         className={cn(
-          'relative bg-white rounded-xl shadow-md overflow-hidden',
+          'relative overflow-hidden rounded-xl bg-white shadow-md',
           'border-2 transition-all duration-300',
           statusStyles.border,
           statusStyles.shadow,
-          mission.status === 'claimed' && 'opacity-70'
+          mission.status === 'claimed' && 'opacity-70',
         )}
       >
         {/* Status Badge (Top Right) */}
-        <div className="absolute top-3 right-3 z-10">
+        <div className="absolute right-3 top-3 z-10">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className={cn(
-              'px-3 py-1 rounded-full text-xs font-bold',
-              statusStyles.badge
-            )}
+            className={cn('rounded-full px-3 py-1 text-xs font-bold', statusStyles.badge)}
           >
             {getStatusLabel(mission.status)}
           </motion.div>
@@ -186,8 +186,8 @@ export function MissionCard({
 
         {/* Difficulty Badge (Top Left) */}
         {mission.difficulty && (
-          <div className="absolute top-3 left-3 z-10">
-            <div className={cn('px-2 py-1 rounded-md text-xs font-semibold', difficultyColor)}>
+          <div className="absolute left-3 top-3 z-10">
+            <div className={cn('rounded-md px-2 py-1 text-xs font-semibold', difficultyColor)}>
               {mission.difficulty.toUpperCase()}
             </div>
           </div>
@@ -196,27 +196,27 @@ export function MissionCard({
         {/* Card Content */}
         <div className={cn('p-6', statusStyles.background)}>
           {/* Icon */}
-          <div className="flex items-start gap-4 mb-4 mt-6">
+          <div className="mb-4 mt-6 flex items-start gap-4">
             <div
               className={cn(
-                'flex-shrink-0 w-16 h-16 rounded-xl',
+                'h-16 w-16 flex-shrink-0 rounded-xl',
                 'flex items-center justify-center',
                 'bg-gradient-to-br',
                 colorScheme?.iconGradient || 'from-blue-500 to-cyan-500',
-                'shadow-md'
+                'shadow-md',
               )}
             >
-              <CategoryIcon className="w-8 h-8 text-white" />
+              <CategoryIcon className="h-8 w-8 text-white" />
             </div>
 
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
               {/* Title */}
-              <h3 className="text-lg font-bold text-gray-800 mb-1 line-clamp-1">
+              <h3 className="mb-1 line-clamp-1 text-lg font-bold text-gray-800">
                 {mission.title || 'Sin título'}
               </h3>
 
               {/* Description */}
-              <p className="text-sm text-gray-600 line-clamp-2">
+              <p className="line-clamp-2 text-sm text-gray-600">
                 {mission.description || 'Sin descripción'}
               </p>
             </div>
@@ -224,15 +224,20 @@ export function MissionCard({
 
           {/* Progress */}
           <div className="mb-4">
-            <div className="flex items-center justify-between text-sm mb-2">
-              <span className="font-semibold text-gray-700">Progreso</span>
-              <span className="font-bold text-gray-800">
-                {mission.currentValue ?? 0} / {mission.targetValue ?? 0}
-              </span>
-            </div>
+            {(() => {
+              const { current, target } = getMissionProgress(mission);
+              return (
+                <div className="mb-2 flex items-center justify-between text-sm">
+                  <span className="font-semibold text-gray-700">Progreso</span>
+                  <span className="font-bold text-gray-800">
+                    {current} / {target}
+                  </span>
+                </div>
+              );
+            })()}
 
             {/* Progress Bar */}
-            <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+            <div className="h-3 overflow-hidden rounded-full bg-gray-200">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${mission.progress ?? 0}%` }}
@@ -240,45 +245,46 @@ export function MissionCard({
                 className={cn(
                   'h-full bg-gradient-to-r',
                   colorScheme?.progressGradient || 'from-blue-500 to-cyan-500',
-                  'rounded-full'
+                  'rounded-full',
                 )}
               />
             </div>
-            <div className="text-right text-xs text-gray-500 mt-1">
+            <div className="mt-1 text-right text-xs text-gray-500">
               {mission.progress ?? 0}% completado
             </div>
           </div>
 
           {/* Rewards */}
-          <div className="flex items-center gap-3 mb-4">
-            <div className="flex items-center gap-2 bg-amber-50 px-3 py-2 rounded-lg border border-amber-200">
-              <Coins className="w-4 h-4 text-amber-600" />
-              <span className="text-sm font-bold text-amber-700">
-                {mission.mlCoinsReward ?? 0}
-              </span>
-            </div>
+          {(() => {
+            const { xp, mlCoins } = getMissionRewards(mission);
+            return (
+              <div className="mb-4 flex items-center gap-3">
+                <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
+                  <Coins className="h-4 w-4 text-amber-600" />
+                  <span className="text-sm font-bold text-amber-700">{mlCoins}</span>
+                </div>
 
-            <div className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
-              <Zap className="w-4 h-4 text-blue-600" />
-              <span className="text-sm font-bold text-blue-700">
-                {mission.xpReward ?? 0} XP
-              </span>
-            </div>
+                <div className="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2">
+                  <Zap className="h-4 w-4 text-blue-600" />
+                  <span className="text-sm font-bold text-blue-700">{xp} XP</span>
+                </div>
 
-            {mission.bonusMultiplier && (
-              <div className="flex items-center gap-1 bg-purple-50 px-2 py-1 rounded-lg border border-purple-200">
-                <Star className="w-3 h-3 text-purple-600" />
-                <span className="text-xs font-bold text-purple-700">
-                  {mission.bonusMultiplier}x
-                </span>
+                {mission.bonusMultiplier && (
+                  <div className="flex items-center gap-1 rounded-lg border border-purple-200 bg-purple-50 px-2 py-1">
+                    <Star className="h-3 w-3 text-purple-600" />
+                    <span className="text-xs font-bold text-purple-700">
+                      {mission.bonusMultiplier}x
+                    </span>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            );
+          })()}
 
           {/* Timer */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm">
-              <Clock className={cn('w-4 h-4', isUrgent ? 'text-red-500' : 'text-gray-500')} />
+              <Clock className={cn('h-4 w-4', isUrgent ? 'text-red-500' : 'text-gray-500')} />
               <span className={cn('font-semibold', isUrgent ? 'text-red-600' : 'text-gray-600')}>
                 Renueva en: {timeRemaining}
               </span>
@@ -289,14 +295,14 @@ export function MissionCard({
               <button
                 onClick={() => onTrack(mission.id)}
                 className={cn(
-                  'p-2 rounded-lg transition-colors',
+                  'rounded-lg p-2 transition-colors',
                   isTracked
                     ? 'bg-orange-500 text-white'
-                    : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                    : 'bg-gray-200 text-gray-600 hover:bg-gray-300',
                 )}
                 title={isTracked ? 'Rastreando' : 'Rastrear misión'}
               >
-                <Eye className="w-4 h-4" />
+                <Eye className="h-4 w-4" />
               </button>
             )}
           </div>
@@ -309,13 +315,13 @@ export function MissionCard({
                 whileTap={{ scale: 0.98 }}
                 onClick={() => onStart?.(mission.id)}
                 className={cn(
-                  'w-full py-3 rounded-lg font-semibold',
-                  'bg-gray-600 hover:bg-gray-700 text-white',
+                  'w-full rounded-lg py-3 font-semibold',
+                  'bg-gray-600 text-white hover:bg-gray-700',
                   'flex items-center justify-center gap-2',
-                  'transition-colors shadow-md'
+                  'shadow-md transition-colors',
                 )}
               >
-                <Play className="w-5 h-5" />
+                <Play className="h-5 w-5" />
                 Iniciar Misión
               </motion.button>
             )}
@@ -324,13 +330,13 @@ export function MissionCard({
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 className={cn(
-                  'w-full py-3 rounded-lg font-semibold',
+                  'w-full rounded-lg py-3 font-semibold',
                   'bg-blue-600 text-white',
                   'flex items-center justify-center gap-2',
-                  'shadow-md cursor-default'
+                  'cursor-default shadow-md',
                 )}
               >
-                <Target className="w-5 h-5" />
+                <Target className="h-5 w-5" />
                 En Progreso
               </motion.button>
             )}
@@ -348,15 +354,15 @@ export function MissionCard({
                   repeat: Infinity,
                 }}
                 className={cn(
-                  'w-full py-3 rounded-lg font-semibold',
+                  'w-full rounded-lg py-3 font-semibold',
                   'bg-gradient-to-r from-green-500 to-emerald-500',
                   'hover:from-green-600 hover:to-emerald-600',
                   'text-white',
                   'flex items-center justify-center gap-2',
-                  'shadow-lg'
+                  'shadow-lg',
                 )}
               >
-                <Gift className="w-5 h-5" />
+                <Gift className="h-5 w-5" />
                 Reclamar Recompensa
               </motion.button>
             )}
@@ -364,14 +370,14 @@ export function MissionCard({
             {mission.status === 'claimed' && (
               <div
                 className={cn(
-                  'w-full py-3 rounded-lg font-semibold',
+                  'w-full rounded-lg py-3 font-semibold',
                   'bg-gradient-to-r from-yellow-400 to-amber-400',
                   'text-white',
                   'flex items-center justify-center gap-2',
-                  'shadow-md'
+                  'shadow-md',
                 )}
               >
-                <Check className="w-5 h-5" />
+                <Check className="h-5 w-5" />
                 Completado
               </div>
             )}
@@ -396,18 +402,6 @@ function getCategoryIcon(category: MissionCategory) {
     streak: Flame,
   };
   return icons[category] || BookOpen;
-}
-
-function getCategoryGradient(category: MissionCategory): string {
-  const gradients: Record<MissionCategory, string> = {
-    exercises: 'from-blue-500 to-cyan-500',
-    xp: 'from-yellow-500 to-orange-500',
-    time: 'from-purple-500 to-pink-500',
-    social: 'from-green-500 to-emerald-500',
-    achievement: 'from-amber-500 to-orange-500',
-    streak: 'from-red-500 to-orange-500',
-  };
-  return gradients[category];
 }
 
 function getStatusStyles(status: Mission['status'], colorScheme: any) {

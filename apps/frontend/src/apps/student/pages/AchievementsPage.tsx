@@ -35,7 +35,10 @@ import { ProgressTreeVisualizer } from '@/features/gamification/social/component
 // Hooks & Store
 import { useAchievements } from '@/features/gamification/social/hooks/useAchievements';
 import { useAuthStore } from '@/features/auth/store/authStore';
-import type { Achievement, AchievementCategory } from '@/features/gamification/social/types/achievementsTypes';
+import type {
+  Achievement,
+  AchievementCategory,
+} from '@/features/gamification/social/types/achievementsTypes';
 
 // Utils
 import { cn } from '@shared/utils/cn';
@@ -43,7 +46,12 @@ import { cn } from '@shared/utils/cn';
 type FilterOption = 'all' | 'locked' | 'unlocked';
 type SortOption = 'date' | 'rarity' | 'category' | 'name';
 
-const categories: { value: AchievementCategory | 'all'; label: string; icon: React.ElementType; color: string }[] = [
+const categories: {
+  value: AchievementCategory | 'all';
+  label: string;
+  icon: React.ElementType;
+  color: string;
+}[] = [
   { value: 'all', label: 'Todos', icon: Trophy, color: 'from-purple-500 to-pink-500' },
   { value: 'progress', label: 'Progreso', icon: TrendingUp, color: 'from-blue-500 to-cyan-500' },
   { value: 'mastery', label: 'Maestria', icon: Award, color: 'from-orange-500 to-red-500' },
@@ -102,22 +110,21 @@ export default function AchievementsPage() {
 
     // Category filter
     if (selectedCategory !== 'all') {
-      filtered = filtered.filter(a => a.category === selectedCategory);
+      filtered = filtered.filter((a) => a.category === selectedCategory);
     }
 
     // Locked/Unlocked filter
     if (lockedFilter === 'locked') {
-      filtered = filtered.filter(a => !a.isUnlocked);
+      filtered = filtered.filter((a) => !a.isUnlocked);
     } else if (lockedFilter === 'unlocked') {
-      filtered = filtered.filter(a => a.isUnlocked);
+      filtered = filtered.filter((a) => a.isUnlocked);
     }
 
     // Search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(a =>
-        a.title.toLowerCase().includes(query) ||
-        a.description.toLowerCase().includes(query)
+      filtered = filtered.filter(
+        (a) => a.title.toLowerCase().includes(query) || a.description.toLowerCase().includes(query),
       );
     }
 
@@ -131,10 +138,11 @@ export default function AchievementsPage() {
           return b.unlockedAt.getTime() - a.unlockedAt.getTime();
         });
         break;
-      case 'rarity':
+      case 'rarity': {
         const rarityOrder = { legendary: 0, epic: 1, rare: 2, common: 3 };
         sorted.sort((a, b) => rarityOrder[a.rarity] - rarityOrder[b.rarity]);
         break;
+      }
       case 'category':
         sorted.sort((a, b) => a.category.localeCompare(b.category));
         break;
@@ -149,16 +157,17 @@ export default function AchievementsPage() {
   // Featured achievement (most recent legendary/epic unlock)
   const featuredAchievement = useMemo(() => {
     return unlockedAchievements
-      .filter(a => a.rarity === 'legendary' || a.rarity === 'epic')
+      .filter((a) => a.rarity === 'legendary' || a.rarity === 'epic')
       .sort((a, b) => {
         if (!a.unlockedAt || !b.unlockedAt) return 0;
         return b.unlockedAt.getTime() - a.unlockedAt.getTime();
       })[0];
   }, [unlockedAchievements]);
 
-  const completionPercentage = stats.totalAchievements > 0
-    ? Math.round((stats.unlockedAchievements / stats.totalAchievements) * 100)
-    : 0;
+  const completionPercentage =
+    stats.totalAchievements > 0
+      ? Math.round((stats.unlockedAchievements / stats.totalAchievements) * 100)
+      : 0;
 
   const handleAchievementClick = (achievement: Achievement) => {
     setSelectedAchievement(achievement);
@@ -174,11 +183,14 @@ export default function AchievementsPage() {
 
   // Save filter preferences to localStorage
   useEffect(() => {
-    localStorage.setItem('achievements_filters', JSON.stringify({
-      category: selectedCategory,
-      lockedFilter,
-      sortBy,
-    }));
+    localStorage.setItem(
+      'achievements_filters',
+      JSON.stringify({
+        category: selectedCategory,
+        lockedFilter,
+        sortBy,
+      }),
+    );
   }, [selectedCategory, lockedFilter, sortBy]);
 
   // Load filter preferences from localStorage
@@ -202,7 +214,7 @@ export default function AchievementsPage() {
       <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 text-white py-12 relative overflow-hidden"
+        className="relative overflow-hidden bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 py-12 text-white"
       >
         {/* Animated Background Elements */}
         <div className="absolute inset-0 opacity-20">
@@ -227,13 +239,13 @@ export default function AchievementsPage() {
                 top: `${Math.random() * 100}%`,
               }}
             >
-              <Sparkles className="w-6 h-6" />
+              <Sparkles className="h-6 w-6" />
             </motion.div>
           ))}
         </div>
 
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="container relative z-10 mx-auto px-4">
+          <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
             {/* Stats */}
             <div className="flex-1">
               <motion.div
@@ -241,40 +253,38 @@ export default function AchievementsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
-                <h1 className="text-4xl md:text-5xl font-bold mb-4 flex items-center gap-3">
-                  <Trophy className="w-12 h-12" />
+                <h1 className="mb-4 flex items-center gap-3 text-4xl font-bold md:text-5xl">
+                  <Trophy className="h-12 w-12" />
                   Sala de Trofeos
                 </h1>
-                <p className="text-xl opacity-90 mb-6">
-                  Tu coleccion de logros y conquistas
-                </p>
+                <p className="mb-6 text-xl opacity-90">Tu coleccion de logros y conquistas</p>
               </motion.div>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-4"
+                className="grid grid-cols-2 gap-4 md:grid-cols-4"
               >
-                <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+                <div className="rounded-lg bg-white/20 p-4 backdrop-blur-sm">
                   <div className="text-3xl font-bold">{stats.unlockedAchievements}</div>
                   <div className="text-sm opacity-80">Desbloqueados</div>
                 </div>
-                <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+                <div className="rounded-lg bg-white/20 p-4 backdrop-blur-sm">
                   <div className="text-3xl font-bold">{completionPercentage}%</div>
                   <div className="text-sm opacity-80">Completado</div>
                 </div>
-                <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
-                  <div className="text-3xl font-bold flex items-center gap-1">
+                <div className="rounded-lg bg-white/20 p-4 backdrop-blur-sm">
+                  <div className="flex items-center gap-1 text-3xl font-bold">
                     {stats.totalMlCoinsEarned}
-                    <Coins className="w-5 h-5" />
+                    <Coins className="h-5 w-5" />
                   </div>
                   <div className="text-sm opacity-80">ML Ganados</div>
                 </div>
-                <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
-                  <div className="text-3xl font-bold flex items-center gap-1">
+                <div className="rounded-lg bg-white/20 p-4 backdrop-blur-sm">
+                  <div className="flex items-center gap-1 text-3xl font-bold">
                     {stats.totalXpEarned}
-                    <Zap className="w-5 h-5" />
+                    <Zap className="h-5 w-5" />
                   </div>
                   <div className="text-sm opacity-80">XP Ganado</div>
                 </div>
@@ -287,15 +297,15 @@ export default function AchievementsPage() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4 }}
-                className="bg-white/20 backdrop-blur-md rounded-xl p-6 max-w-xs"
+                className="max-w-xs rounded-xl bg-white/20 p-6 backdrop-blur-md"
               >
-                <div className="text-sm opacity-90 mb-2">Logro Destacado</div>
+                <div className="mb-2 text-sm opacity-90">Logro Destacado</div>
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                    <Trophy className="w-8 h-8 text-white" />
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-yellow-400 to-orange-500">
+                    <Trophy className="h-8 w-8 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg">{featuredAchievement.title}</h3>
+                    <h3 className="text-lg font-bold">{featuredAchievement.title}</h3>
                     <p className="text-sm opacity-80">{featuredAchievement.description}</p>
                   </div>
                 </div>
@@ -307,34 +317,31 @@ export default function AchievementsPage() {
 
       {/* Filters & Search */}
       <section className="container mx-auto px-4 py-6">
-        <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="rounded-xl bg-white p-6 shadow-lg">
           {/* Mobile Filter Toggle */}
-          <div className="md:hidden mb-4">
+          <div className="mb-4 md:hidden">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="w-full flex items-center justify-between px-4 py-3 bg-detective-bg rounded-lg"
+              className="flex w-full items-center justify-between rounded-lg bg-detective-bg px-4 py-3"
             >
               <span className="flex items-center gap-2 font-semibold text-detective-text">
-                <Filter className="w-5 h-5" />
+                <Filter className="h-5 w-5" />
                 Filtros
               </span>
               <motion.div
                 animate={{ rotate: showFilters ? 180 : 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <ArrowUp className="w-5 h-5" />
+                <ArrowUp className="h-5 w-5" />
               </motion.div>
             </button>
           </div>
 
           {/* Filters */}
-          <div className={cn(
-            "space-y-4",
-            !showFilters && "hidden md:block"
-          )}>
+          <div className={cn('space-y-4', !showFilters && 'hidden md:block')}>
             {/* Category Filters */}
             <div>
-              <label className="text-sm font-semibold text-detective-text-secondary mb-2 block">
+              <label className="mb-2 block text-sm font-semibold text-detective-text-secondary">
                 Categoria
               </label>
               <div className="flex flex-wrap gap-2">
@@ -349,13 +356,13 @@ export default function AchievementsPage() {
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setSelectedCategory(cat.value)}
                       className={cn(
-                        "flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all",
+                        'flex items-center gap-2 rounded-lg px-4 py-2 font-semibold transition-all',
                         isActive
                           ? `bg-gradient-to-r ${cat.color} text-white shadow-lg`
-                          : 'bg-detective-bg text-detective-text hover:bg-detective-bg-secondary'
+                          : 'bg-detective-bg text-detective-text hover:bg-detective-bg-secondary',
                       )}
                     >
-                      <Icon className="w-4 h-4" />
+                      <Icon className="h-4 w-4" />
                       <span>{cat.label}</span>
                     </motion.button>
                   );
@@ -364,16 +371,16 @@ export default function AchievementsPage() {
             </div>
 
             {/* Search and Additional Filters */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               {/* Search */}
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-detective-text-secondary" />
+                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-detective-text-secondary" />
                 <input
                   type="text"
                   placeholder="Buscar logros..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border-2 border-gray-200 rounded-lg focus:border-detective-orange focus:outline-none"
+                  className="w-full rounded-lg border-2 border-gray-200 py-2 pl-10 pr-4 focus:border-detective-orange focus:outline-none"
                 />
               </div>
 
@@ -381,7 +388,7 @@ export default function AchievementsPage() {
               <select
                 value={lockedFilter}
                 onChange={(e) => setLockedFilter(e.target.value as FilterOption)}
-                className="px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-detective-orange focus:outline-none"
+                className="rounded-lg border-2 border-gray-200 px-4 py-2 focus:border-detective-orange focus:outline-none"
               >
                 <option value="all">Todos los logros</option>
                 <option value="unlocked">Solo desbloqueados</option>
@@ -392,7 +399,7 @@ export default function AchievementsPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-detective-orange focus:outline-none"
+                className="rounded-lg border-2 border-gray-200 px-4 py-2 focus:border-detective-orange focus:outline-none"
               >
                 <option value="date">Ordenar por fecha</option>
                 <option value="rarity">Ordenar por rareza</option>
@@ -414,29 +421,29 @@ export default function AchievementsPage() {
 
         {/* Loading State */}
         {isLoading && (
-          <div className="text-center py-16">
+          <div className="py-16 text-center">
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
               className="inline-block"
             >
-              <Trophy className="w-16 h-16 text-detective-orange" />
+              <Trophy className="h-16 w-16 text-detective-orange" />
             </motion.div>
-            <p className="text-detective-text-secondary mt-4">Cargando logros...</p>
+            <p className="mt-4 text-detective-text-secondary">Cargando logros...</p>
           </div>
         )}
 
         {/* Error State */}
         {error && !isLoading && (
-          <div className="text-center py-16 bg-red-50 rounded-lg">
-            <div className="text-red-500 mb-4">
-              <Award className="w-16 h-16 mx-auto" />
+          <div className="rounded-lg bg-red-50 py-16 text-center">
+            <div className="mb-4 text-red-500">
+              <Award className="mx-auto h-16 w-16" />
             </div>
-            <h3 className="text-xl font-bold text-red-700 mb-2">Error al cargar logros</h3>
-            <p className="text-red-600 mb-4">{error}</p>
+            <h3 className="mb-2 text-xl font-bold text-red-700">Error al cargar logros</h3>
+            <p className="mb-4 text-red-600">{error}</p>
             <button
               onClick={() => user?.id && fetchAchievements(user.id)}
-              className="px-6 py-2 bg-detective-orange text-white rounded-lg hover:bg-detective-orange-dark transition-colors"
+              className="rounded-lg bg-detective-orange px-6 py-2 text-white transition-colors hover:bg-detective-orange-dark"
             >
               Reintentar
             </button>
@@ -447,7 +454,7 @@ export default function AchievementsPage() {
         {!isLoading && !error && filteredAchievements.length > 0 ? (
           <motion.div
             layout
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
           >
             {filteredAchievements.map((achievement, index) => (
               <motion.div
@@ -468,23 +475,21 @@ export default function AchievementsPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center py-16"
+            className="py-16 text-center"
           >
-            <Search className="w-24 h-24 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-detective-text mb-2">
+            <Search className="mx-auto mb-4 h-24 w-24 text-gray-300" />
+            <h3 className="mb-2 text-2xl font-bold text-detective-text">
               No se encontraron logros
             </h3>
-            <p className="text-detective-text-secondary">
-              Intenta ajustar tus filtros de busqueda
-            </p>
+            <p className="text-detective-text-secondary">Intenta ajustar tus filtros de busqueda</p>
           </motion.div>
         ) : null}
       </section>
 
       {/* Progress Tree */}
       <section className="container mx-auto px-4 py-8">
-        <h2 className="text-2xl font-bold text-detective-text mb-6 flex items-center gap-2">
-          <Target className="w-6 h-6 text-detective-orange" />
+        <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-detective-text">
+          <Target className="h-6 w-6 text-detective-orange" />
           Arbol de Progreso
         </h2>
         <ProgressTreeVisualizer />
@@ -496,7 +501,9 @@ export default function AchievementsPage() {
           <AchievementUnlockModal
             achievement={selectedAchievement}
             onClose={handleCloseModal}
-            showConfetti={selectedAchievement.rarity === 'legendary' || selectedAchievement.rarity === 'epic'}
+            showConfetti={
+              selectedAchievement.rarity === 'legendary' || selectedAchievement.rarity === 'epic'
+            }
           />
         )}
       </AnimatePresence>

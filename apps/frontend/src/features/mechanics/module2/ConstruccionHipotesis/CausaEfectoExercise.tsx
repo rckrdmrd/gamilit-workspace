@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, CheckCircle, XCircle, GripVertical } from 'lucide-react';
+import { ArrowRight, GripVertical } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
-import { calculateScore, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import type {
-  CausaEfectoExerciseProps,
-  CauseMatches,
-} from './causaEfectoTypes';
+import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import type { CausaEfectoExerciseProps, CauseMatches } from './causaEfectoTypes';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 
@@ -25,14 +22,15 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
   const [startTime] = useState(new Date());
   const [draggedConsequence, setDraggedConsequence] = useState<string | null>(null);
   const [dragOverCause, setDragOverCause] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_isSubmitting, setIsSubmitting] = useState(false);
 
   const { causes, consequences } = exercise.content;
 
   // Initialize empty matches for all causes
   useEffect(() => {
     const initialMatches: CauseMatches = {};
-    causes.forEach(cause => {
+    causes.forEach((cause) => {
       initialMatches[cause.id] = [];
     });
     setMatches(initialMatches);
@@ -46,7 +44,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
       // FE-059: Prepare user answers in backend DTO format
       // Backend expects: { causes: { c1: ["cons1", "cons2"] } }
       const userAnswers: Record<string, string[]> = {};
-      Object.keys(matches).forEach(causeId => {
+      Object.keys(matches).forEach((causeId) => {
         if (matches[causeId].length > 0) {
           userAnswers[causeId] = matches[causeId];
         }
@@ -66,7 +64,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
 
       console.log('📊 [CausaEfecto] Progress update sent:', {
         totalMatches,
-        totalConsequences: consequences.length
+        totalConsequences: consequences.length,
       });
     }
   }, [matches, startTime, onProgressUpdate, consequences.length]);
@@ -105,12 +103,12 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
 
     if (!consequenceId) return;
 
-    setMatches(prev => {
+    setMatches((prev) => {
       const newMatches = { ...prev };
 
       // Remove from all causes first
-      Object.keys(newMatches).forEach(cId => {
-        newMatches[cId] = newMatches[cId].filter(id => id !== consequenceId);
+      Object.keys(newMatches).forEach((cId) => {
+        newMatches[cId] = newMatches[cId].filter((id) => id !== consequenceId);
       });
 
       // Add to new cause
@@ -126,14 +124,14 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
   const handleRemoveConsequence = (causeId: string, consequenceId: string) => {
     if (validated) return;
 
-    setMatches(prev => ({
+    setMatches((prev) => ({
       ...prev,
-      [causeId]: prev[causeId].filter(id => id !== consequenceId),
+      [causeId]: prev[causeId].filter((id) => id !== consequenceId),
     }));
   };
 
   const isConsequenceAssigned = (consequenceId: string): boolean => {
-    return Object.values(matches).some(arr => arr.includes(consequenceId));
+    return Object.values(matches).some((arr) => arr.includes(consequenceId));
   };
 
   // FE-059: Removed getMatchCounts() - uses sanitized correctCauseIds field
@@ -170,7 +168,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
     try {
       // Prepare answers in backend DTO format: { causes: { c1: ["cons1", "cons2"] } }
       const userAnswers: Record<string, string[]> = {};
-      Object.keys(matches).forEach(causeId => {
+      Object.keys(matches).forEach((causeId) => {
         if (matches[causeId].length > 0) {
           userAnswers[causeId] = matches[causeId];
         }
@@ -182,19 +180,25 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
       // Show backend response
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
-        title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
-        message: response.feedback?.overall || `Has establecido ${response.correctAnswersCount} de ${response.totalQuestions} relaciones correctas.`,
+        title: response.isPerfect
+          ? '¡Perfecto!'
+          : response.score >= 70
+            ? '¡Buen trabajo!'
+            : 'Intenta de nuevo',
+        message:
+          response.feedback?.overall ||
+          `Has establecido ${response.correctAnswersCount} de ${response.totalQuestions} relaciones correctas.`,
         score: response.score,
         xpEarned: response.rewards?.xp,
         mlCoinsEarned: response.rewards?.mlCoins,
-        showConfetti: response.isPerfect
+        showConfetti: response.isPerfect,
       });
       setShowFeedback(true);
 
       console.log('✅ [CausaEfecto] Submission successful:', {
         attemptId: response.attemptId,
         score: response.score,
-        rewards: response.rewards
+        rewards: response.rewards,
       });
     } catch (error) {
       console.error('❌ [CausaEfecto] Submission error:', error);
@@ -211,7 +215,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
 
   const handleReset = useCallback(() => {
     const initialMatches: CauseMatches = {};
-    causes.forEach(cause => {
+    causes.forEach((cause) => {
       initialMatches[cause.id] = [];
     });
     setMatches(initialMatches);
@@ -243,11 +247,11 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
             className="rounded-detective p-6 shadow-detective-lg"
             style={{
               background: 'linear-gradient(to right, #1e3a8a, #f97316)',
-              color: 'white'
+              color: 'white',
             }}
           >
-            <div className="flex items-center gap-3 mb-2">
-              <ArrowRight className="w-8 h-8 text-white" />
+            <div className="mb-2 flex items-center gap-3">
+              <ArrowRight className="h-8 w-8 text-white" />
               <h1 className="text-detective-3xl font-bold text-white">{exercise.title}</h1>
             </div>
             <p className="text-detective-base text-white" style={{ opacity: 0.9 }}>
@@ -256,14 +260,20 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
           </div>
 
           {/* Instructions */}
-          <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded">
-            <p className="text-detective-sm text-detective-text leading-relaxed font-semibold mb-2">
+          <div className="rounded border-l-4 border-amber-400 bg-amber-50 p-4">
+            <p className="mb-2 text-detective-sm font-semibold leading-relaxed text-detective-text">
               📋 Cómo funciona:
             </p>
-            <ul className="text-detective-sm text-detective-text leading-relaxed list-disc list-inside space-y-1">
-              <li><strong>Arrastra</strong> las consecuencias desde la columna derecha</li>
-              <li><strong>Suéltalas</strong> en la causa correspondiente en la columna izquierda</li>
-              <li>Cada causa puede tener <strong>1-3 consecuencias</strong></li>
+            <ul className="list-inside list-disc space-y-1 text-detective-sm leading-relaxed text-detective-text">
+              <li>
+                <strong>Arrastra</strong> las consecuencias desde la columna derecha
+              </li>
+              <li>
+                <strong>Suéltalas</strong> en la causa correspondiente en la columna izquierda
+              </li>
+              <li>
+                Cada causa puede tener <strong>1-3 consecuencias</strong>
+              </li>
               <li>Piensa en efectos inmediatos, a largo plazo e impacto en otros</li>
             </ul>
           </div>
@@ -271,16 +281,18 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
           {/* Progress */}
           <div className="flex items-center justify-between">
             <div className="text-detective-sm text-detective-text-secondary">
-              Consecuencias asignadas: {Object.values(matches).reduce((sum, arr) => sum + arr.length, 0)} / {consequences.length}
+              Consecuencias asignadas:{' '}
+              {Object.values(matches).reduce((sum, arr) => sum + arr.length, 0)} /{' '}
+              {consequences.length}
             </div>
             {/* FE-059: Removed correctness display - validation is server-side only */}
           </div>
 
           {/* Two-column layout: Causes | Consequences */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* LEFT: Causes (drop zones) */}
             <div className="space-y-4">
-              <h3 className="text-detective-lg font-bold text-detective-blue mb-4 flex items-center gap-2">
+              <h3 className="mb-4 flex items-center gap-2 text-detective-lg font-bold text-detective-blue">
                 <span className="text-2xl">←</span> CAUSAS (Suelta aquí)
               </h3>
               {causes.map((cause, idx) => {
@@ -296,17 +308,13 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
                     onDragOver={(e) => handleDragOver(e, cause.id)}
                     onDragLeave={handleDragLeave}
                     onDrop={(e) => handleDrop(e, cause.id)}
-                    className={`bg-white border-2 rounded-lg p-4 transition-all ${
-                      isDragOver
-                        ? 'border-orange-500 bg-orange-50 scale-105'
-                        : 'border-blue-300'
+                    className={`rounded-lg border-2 bg-white p-4 transition-all ${
+                      isDragOver ? 'scale-105 border-orange-500 bg-orange-50' : 'border-blue-300'
                     } ${!validated ? 'min-h-[120px]' : ''}`}
                   >
-                    <div className="flex items-start gap-2 mb-3">
-                      <span className="text-detective-2xl font-bold text-blue-600">
-                        {idx + 1}
-                      </span>
-                      <p className="text-detective-sm font-medium text-detective-text flex-1">
+                    <div className="mb-3 flex items-start gap-2">
+                      <span className="text-detective-2xl font-bold text-blue-600">{idx + 1}</span>
+                      <p className="flex-1 text-detective-sm font-medium text-detective-text">
                         {cause.text}
                       </p>
                     </div>
@@ -314,8 +322,8 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
                     {/* Matched consequences */}
                     {matchedConsequences.length > 0 && (
                       <div className="mt-3 space-y-2 pl-8">
-                        {matchedConsequences.map(cId => {
-                          const consequence = consequences.find(c => c.id === cId);
+                        {matchedConsequences.map((cId) => {
+                          const consequence = consequences.find((c) => c.id === cId);
                           if (!consequence) return null;
 
                           // FE-059: Removed correctness validation - correctCauseIds field not available
@@ -324,7 +332,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
                           return (
                             <div
                               key={cId}
-                              className="p-3 rounded-lg border-2 text-detective-xs relative group bg-orange-50 border-orange-300 text-orange-900"
+                              className="group relative rounded-lg border-2 border-orange-300 bg-orange-50 p-3 text-detective-xs text-orange-900"
                             >
                               <div className="flex items-center gap-2">
                                 {/* FE-059: Removed CheckCircle/XCircle icons - no local validation */}
@@ -332,7 +340,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
                                 {!validated && (
                                   <button
                                     onClick={() => handleRemoveConsequence(cause.id, cId)}
-                                    className="text-red-600 hover:text-red-800 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    className="text-red-600 opacity-0 transition-opacity hover:text-red-800 group-hover:opacity-100"
                                     title="Quitar"
                                   >
                                     ✕
@@ -346,8 +354,8 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
                     )}
 
                     {matchedConsequences.length === 0 && !validated && (
-                      <div className="flex items-center justify-center py-6 border-2 border-dashed border-gray-300 rounded-lg mt-2">
-                        <p className="text-detective-xs text-gray-400 italic text-center">
+                      <div className="mt-2 flex items-center justify-center rounded-lg border-2 border-dashed border-gray-300 py-6">
+                        <p className="text-center text-detective-xs italic text-gray-400">
                           Arrastra consecuencias aquí →
                         </p>
                       </div>
@@ -359,7 +367,7 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
 
             {/* RIGHT: Consequences (draggable) */}
             <div className="space-y-4">
-              <h3 className="text-detective-lg font-bold text-detective-orange mb-4 flex items-center gap-2">
+              <h3 className="mb-4 flex items-center gap-2 text-detective-lg font-bold text-detective-orange">
                 CONSECUENCIAS (Arrastra) <span className="text-2xl">→</span>
               </h3>
               <div className="space-y-3">
@@ -381,17 +389,17 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
                         draggable={!validated}
                         onDragStart={(e) => handleDragStart(e, consequence.id)}
                         onDragEnd={handleDragEnd}
-                        className={`p-4 rounded-lg border-2 cursor-move transition-all ${
+                        className={`cursor-move rounded-lg border-2 p-4 transition-all ${
                           isDragging
-                            ? 'opacity-50 scale-95'
-                            : 'bg-white border-gray-300 hover:border-orange-400 hover:shadow-md'
+                            ? 'scale-95 opacity-50'
+                            : 'border-gray-300 bg-white hover:border-orange-400 hover:shadow-md'
                         } ${validated ? 'cursor-not-allowed' : ''}`}
                       >
                         <div className="flex items-center gap-3">
                           {!validated && (
-                            <GripVertical className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                            <GripVertical className="h-5 w-5 flex-shrink-0 text-gray-400" />
                           )}
-                          <span className="text-detective-sm text-detective-text flex-1">
+                          <span className="flex-1 text-detective-sm text-detective-text">
                             {consequence.text}
                           </span>
                         </div>
@@ -401,8 +409,8 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
                 })}
 
                 {/* If all consequences are assigned */}
-                {consequences.filter(c => !isConsequenceAssigned(c.id)).length === 0 && (
-                  <div className="text-center py-8 text-gray-400 text-detective-sm italic">
+                {consequences.filter((c) => !isConsequenceAssigned(c.id)).length === 0 && (
+                  <div className="py-8 text-center text-detective-sm italic text-gray-400">
                     Todas las consecuencias han sido asignadas
                   </div>
                 )}

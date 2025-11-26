@@ -72,26 +72,6 @@ export const RankBadgeAdvanced: React.FC<RankBadgeAdvancedProps> = ({
   const config = sizeConfig[size];
 
   // Animation variants
-  const badgeVariants = {
-    initial: { scale: 0.95, opacity: 0 },
-    animate: {
-      scale: 1,
-      opacity: 1,
-    },
-    hover: {
-      scale: 1.05,
-    },
-    tap: {
-      scale: 0.95,
-    },
-  };
-
-  const glowVariants = {
-    initial: { opacity: 0.5 },
-    animate: {
-      opacity: [0.5, 1, 0.5],
-    },
-  };
 
   // Prestige stars array
   const prestigeStars = Array.from({ length: Math.min(prestigeLevel, 5) }, (_, i) => i);
@@ -113,7 +93,7 @@ export const RankBadgeAdvanced: React.FC<RankBadgeAdvancedProps> = ({
         'text-white',
         onClick && 'cursor-pointer',
         showGlow && 'shadow-lg',
-        className
+        className,
       )}
       title={showTooltip ? `${rankData.nameSpanish} (${rankData.name})` : undefined}
     >
@@ -132,13 +112,11 @@ export const RankBadgeAdvanced: React.FC<RankBadgeAdvancedProps> = ({
       <MayaIcon rank={rank} size={config.icon} className="flex-shrink-0" />
 
       {/* Rank Name */}
-      {showName && (
-        <span className="font-bold tracking-wide">{rankData.name}</span>
-      )}
+      {showName && <span className="font-bold tracking-wide">{rankData.name}</span>}
 
       {/* Prestige Stars */}
       {showPrestige && prestigeLevel > 0 && (
-        <div className="flex items-center gap-0.5 ml-1">
+        <div className="ml-1 flex items-center gap-0.5">
           {prestigeStars.map((_, index) => (
             <motion.div
               key={index}
@@ -154,14 +132,11 @@ export const RankBadgeAdvanced: React.FC<RankBadgeAdvancedProps> = ({
                   : undefined
               }
             >
-              <PrestigeStarIcon
-                size={config.prestigeStar}
-                className="text-yellow-300"
-              />
+              <PrestigeStarIcon size={config.prestigeStar} className="text-yellow-300" />
             </motion.div>
           ))}
           {prestigeLevel > 5 && (
-            <span className="text-xs font-bold ml-0.5">+{prestigeLevel - 5}</span>
+            <span className="ml-0.5 text-xs font-bold">+{prestigeLevel - 5}</span>
           )}
         </div>
       )}

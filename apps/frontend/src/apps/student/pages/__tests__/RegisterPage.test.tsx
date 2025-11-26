@@ -9,7 +9,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import RegisterPage from '../RegisterPage';
@@ -54,7 +54,7 @@ describe('RegisterPage', () => {
     return render(
       <BrowserRouter>
         <RegisterPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
   };
 
@@ -105,7 +105,13 @@ describe('RegisterPage', () => {
 
       vi.mocked(mockRegister).mockResolvedValueOnce({
         success: true,
-        user: { id: '1', email: 'test@example.com', fullName: 'Test User', role: 'student', emailVerified: true },
+        user: {
+          id: '1',
+          email: 'test@example.com',
+          fullName: 'Test User',
+          role: 'student',
+          emailVerified: true,
+        },
       });
 
       renderComponent();
@@ -127,7 +133,13 @@ describe('RegisterPage', () => {
 
       vi.mocked(mockRegister).mockResolvedValueOnce({
         success: true,
-        user: { id: '1', email: 'test@example.com', fullName: 'Test User', role: 'student', emailVerified: true },
+        user: {
+          id: '1',
+          email: 'test@example.com',
+          fullName: 'Test User',
+          role: 'student',
+          emailVerified: true,
+        },
       });
 
       renderComponent();
@@ -151,7 +163,13 @@ describe('RegisterPage', () => {
 
       vi.mocked(mockRegister).mockResolvedValueOnce({
         success: true,
-        user: { id: '1', email: 'test@example.com', fullName: 'Test User', role: 'student', emailVerified: true },
+        user: {
+          id: '1',
+          email: 'test@example.com',
+          fullName: 'Test User',
+          role: 'student',
+          emailVerified: true,
+        },
       });
 
       renderComponent();
@@ -170,7 +188,13 @@ describe('RegisterPage', () => {
 
       vi.mocked(mockRegister).mockResolvedValueOnce({
         success: true,
-        user: { id: '1', email: 'test@example.com', fullName: 'Test User', role: 'student', emailVerified: true },
+        user: {
+          id: '1',
+          email: 'test@example.com',
+          fullName: 'Test User',
+          role: 'student',
+          emailVerified: true,
+        },
       });
 
       renderComponent();
@@ -199,7 +223,13 @@ describe('RegisterPage', () => {
 
       vi.mocked(mockRegister).mockResolvedValueOnce({
         success: true,
-        user: { id: '1', email: 'test@example.com', fullName: 'Test User', role: 'student', emailVerified: true },
+        user: {
+          id: '1',
+          email: 'test@example.com',
+          fullName: 'Test User',
+          role: 'student',
+          emailVerified: true,
+        },
       });
 
       renderComponent();
@@ -385,7 +415,7 @@ describe('RegisterPage', () => {
 
       // Mock slow registration
       vi.mocked(mockRegister).mockImplementationOnce(
-        () => new Promise(resolve => setTimeout(() => resolve({ success: true }), 1000))
+        () => new Promise((resolve) => setTimeout(() => resolve({ success: true }), 1000)),
       );
 
       renderComponent();

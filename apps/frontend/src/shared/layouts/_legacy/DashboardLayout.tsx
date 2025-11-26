@@ -4,8 +4,7 @@ import { useAuthStore } from '@/features/auth/store/authStore';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { GamifiedHeader } from '@/shared/components/layout/GamifiedHeader';
 import { GamilitSidebar } from '@/shared/components/layout/GamilitSidebar';
-import { gamificationApi } from '@/lib/api/gamification.api';
-import type { UserGamificationData } from '@/shared/components/layout/GamifiedHeader';
+import type { UserGamificationData } from '@shared/types';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -46,8 +45,7 @@ interface DashboardLayoutProps {
  * ```
  */
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
-  const { user, logout } = useAuth();
-  const { logout: zustandLogout } = useAuthStore();
+  const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -59,15 +57,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
 
     // STEP 1: Clear ALL localStorage IMMEDIATELY (nuclear option)
     console.log('🚪 [handleLogout] Clearing ALL localStorage...');
-    const keysToRemove = [
-      'auth-token',
-      'refresh-token',
-      'auth-storage',
-      'is_logging_out'
-    ];
+    const keysToRemove = ['auth-token', 'refresh-token', 'auth-storage', 'is_logging_out'];
 
     // Clear specific keys
-    keysToRemove.forEach(key => {
+    keysToRemove.forEach((key) => {
       localStorage.removeItem(key);
       console.log(`🚪 [handleLogout] Removed: ${key}`);
     });
@@ -87,7 +80,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
       isAuthenticated: false,
       sessionExpiresAt: null,
       error: null,
-      isLoading: false
+      isLoading: false,
     });
 
     // STEP 4: Force immediate redirect (no async, no waiting)
@@ -106,31 +99,30 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
       if (!user?.id) return;
 
       try {
-        const [stats, coins] = await Promise.all([
-          gamificationApi.getUserStats(user.id),
-          gamificationApi.getMLCoinsBalance(user.id),
-        ]);
+        // TODO: Re-enable when API is ready
+        // const [stats, coins] = await Promise.all([
+        //   gamificationApi.getUserStats(user.id),
+        //   gamificationApi.getMLCoinsBalance(user.id),
+        // ]);
 
         setGamificationData({
-          experience: stats.totalPoints || 0,
-          experienceProgress: stats.experienceProgress || 0,
-          level: stats.level || 1,
-          rank: 'Detective Novato', // TODO: Calculate from level
-          mlCoins: coins.balance || 0,
-          currentStreak: stats.current_streak || 0,
-          badges: [], // TODO: Fetch badges
+          userId: user.id,
+          totalXP: 0,
+          level: 1,
+          rank: 'Detective Novato',
+          mlCoins: 0,
+          achievements: [],
         });
       } catch (err) {
         console.error('Failed to load gamification data:', err);
         // Use default values on error
         setGamificationData({
-          experience: 0,
-          experienceProgress: 0,
+          userId: user.id,
+          totalXP: 0,
           level: 1,
           rank: 'Detective Novato',
           mlCoins: 0,
-          currentStreak: 0,
-          badges: [],
+          achievements: [],
         });
       }
     };
@@ -155,12 +147,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         onClose={handleSidebarClose}
         currentPath={location.pathname}
         onNavigate={handleNavigate}
-        userRole={user?.role as 'student' | 'teacher' | 'admin' || 'student'}
+        userRole={(user?.role as 'student' | 'teacher' | 'admin') || 'student'}
         moduleProgress={[]} // TODO: Fetch module progress
       />
 
       {/* Main content area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col overflow-hidden">
         {/* GamifiedHeader - Detective Theme */}
         <GamifiedHeader
           user={user || undefined}
@@ -172,9 +164,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto bg-gradient-to-br from-orange-50 via-yellow-50 to-orange-100">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            {children}
-          </div>
+          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">{children}</div>
         </main>
       </div>
     </div>

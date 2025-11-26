@@ -3,7 +3,7 @@
  */
 
 import { motion } from 'framer-motion';
-import { TrendingDown, ShoppingBag, PieChart } from 'lucide-react';
+import { TrendingDown, PieChart } from 'lucide-react';
 import { mockSpendingCategoryData } from '../../mockData/economyMockData';
 import { useEconomyStore } from '../../store/economyStore';
 
@@ -12,15 +12,13 @@ export const SpendingAnalytics: React.FC = () => {
   const data = mockSpendingCategoryData;
 
   return (
-    <div className="bg-white rounded-detective shadow-card p-6">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-3 bg-detective-danger/10 rounded-full">
-          <TrendingDown className="w-6 h-6 text-detective-danger" />
+    <div className="rounded-detective bg-white p-6 shadow-card">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="rounded-full bg-detective-danger/10 p-3">
+          <TrendingDown className="h-6 w-6 text-detective-danger" />
         </div>
         <div>
-          <h2 className="text-detective-2xl font-bold text-detective-text">
-            Spending Analytics
-          </h2>
+          <h2 className="text-detective-2xl font-bold text-detective-text">Spending Analytics</h2>
           <p className="text-detective-sm text-detective-text-secondary">
             Where your ML Coins are going
           </p>
@@ -28,27 +26,21 @@ export const SpendingAnalytics: React.FC = () => {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
-        <div className="p-4 bg-detective-bg rounded-detective">
-          <p className="text-detective-sm text-detective-text-secondary mb-1">
-            Total Spent
-          </p>
+      <div className="mb-8 grid grid-cols-3 gap-4">
+        <div className="rounded-detective bg-detective-bg p-4">
+          <p className="mb-1 text-detective-sm text-detective-text-secondary">Total Spent</p>
           <p className="text-detective-xl font-bold text-detective-danger">
             {stats.totalSpent.toLocaleString()} ML
           </p>
         </div>
-        <div className="p-4 bg-detective-bg rounded-detective">
-          <p className="text-detective-sm text-detective-text-secondary mb-1">
-            Favorite Category
-          </p>
-          <p className="text-detective-xl font-bold text-detective-text capitalize">
+        <div className="rounded-detective bg-detective-bg p-4">
+          <p className="mb-1 text-detective-sm text-detective-text-secondary">Favorite Category</p>
+          <p className="text-detective-xl font-bold capitalize text-detective-text">
             {stats.favoriteCategory}
           </p>
         </div>
-        <div className="p-4 bg-detective-bg rounded-detective">
-          <p className="text-detective-sm text-detective-text-secondary mb-1">
-            Biggest Purchase
-          </p>
+        <div className="rounded-detective bg-detective-bg p-4">
+          <p className="mb-1 text-detective-sm text-detective-text-secondary">Biggest Purchase</p>
           <p className="text-detective-xl font-bold text-detective-text">
             {stats.biggestPurchase.amount} ML
           </p>
@@ -57,8 +49,8 @@ export const SpendingAnalytics: React.FC = () => {
 
       {/* Category Breakdown */}
       <div className="space-y-4">
-        <h3 className="font-bold text-detective-lg text-detective-text flex items-center gap-2">
-          <PieChart className="w-5 h-5" />
+        <h3 className="flex items-center gap-2 text-detective-lg font-bold text-detective-text">
+          <PieChart className="h-5 w-5" />
           Spending by Category
         </h3>
         {data.map((category, index) => (
@@ -71,11 +63,8 @@ export const SpendingAnalytics: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div
-                  className="w-4 h-4 rounded-full"
-                  style={{ backgroundColor: category.color }}
-                />
-                <span className="font-medium text-detective-text capitalize">
+                <div className="h-4 w-4 rounded-full" style={{ backgroundColor: category.color }} />
+                <span className="font-medium capitalize text-detective-text">
                   {category.category}
                 </span>
               </div>
@@ -88,7 +77,7 @@ export const SpendingAnalytics: React.FC = () => {
                 </p>
               </div>
             </div>
-            <div className="relative h-2 bg-detective-bg rounded-full overflow-hidden">
+            <div className="relative h-2 overflow-hidden rounded-full bg-detective-bg">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${category.percentage}%` }}

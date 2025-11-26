@@ -6,8 +6,15 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAchievementsStore } from '@/features/gamification/social/store/achievementsStore';
-import type { Achievement, AchievementCategory, AchievementRarity } from '@/features/gamification/social/types/achievementsTypes';
-import type { AchievementFiltersState, AchievementStatisticsData, FilterStatus, SortOption } from '../components/achievements/types';
+import type {
+  Achievement,
+  AchievementCategory,
+  AchievementRarity,
+} from '@/features/gamification/social/types/achievementsTypes';
+import type {
+  AchievementFiltersState,
+  AchievementStatisticsData,
+} from '../components/achievements/types';
 
 const DEBOUNCE_DELAY = 300;
 
@@ -48,12 +55,7 @@ const DEFAULT_FILTERS: AchievementFiltersState = {
 
 export const useAchievementsEnhanced = (): UseAchievementsEnhancedResult => {
   // Store
-  const {
-    achievements,
-    unlockedAchievements,
-    stats,
-    refreshAchievements,
-  } = useAchievementsStore();
+  const { achievements, refreshAchievements } = useAchievementsStore();
 
   // Local state
   const [filters, setFilters] = useState<AchievementFiltersState>(DEFAULT_FILTERS);
@@ -72,88 +74,95 @@ export const useAchievementsEnhanced = (): UseAchievementsEnhancedResult => {
   }, [filters.searchQuery]);
 
   // Filter function
-  const filterAchievements = useCallback((achievements: Achievement[]): Achievement[] => {
-    let filtered = [...achievements];
+  const filterAchievements = useCallback(
+    (achievements: Achievement[]): Achievement[] => {
+      let filtered = [...achievements];
 
-    // Category filter
-    if (filters.category !== 'all') {
-      filtered = filtered.filter(a => a.category === filters.category);
-    }
-
-    // Rarity filter
-    if (filters.rarity !== 'all') {
-      filtered = filtered.filter(a => a.rarity === filters.rarity);
-    }
-
-    // Status filter
-    if (filters.status !== 'all') {
-      if (filters.status === 'unlocked') {
-        filtered = filtered.filter(a => a.isUnlocked);
-      } else if (filters.status === 'locked') {
-        filtered = filtered.filter(a => !a.isUnlocked);
-      } else if (filters.status === 'in_progress') {
-        filtered = filtered.filter(a => !a.isUnlocked && a.progress && a.progress.current > 0);
+      // Category filter
+      if (filters.category !== 'all') {
+        filtered = filtered.filter((a) => a.category === filters.category);
       }
-    }
 
-    // Search filter
-    if (debouncedSearchQuery.trim()) {
-      const query = debouncedSearchQuery.toLowerCase();
-      filtered = filtered.filter(a =>
-        a.title.toLowerCase().includes(query) ||
-        a.description.toLowerCase().includes(query)
-      );
-    }
+      // Rarity filter
+      if (filters.rarity !== 'all') {
+        filtered = filtered.filter((a) => a.rarity === filters.rarity);
+      }
 
-    return filtered;
-  }, [filters.category, filters.rarity, filters.status, debouncedSearchQuery]);
+      // Status filter
+      if (filters.status !== 'all') {
+        if (filters.status === 'unlocked') {
+          filtered = filtered.filter((a) => a.isUnlocked);
+        } else if (filters.status === 'locked') {
+          filtered = filtered.filter((a) => !a.isUnlocked);
+        } else if (filters.status === 'in_progress') {
+          filtered = filtered.filter((a) => !a.isUnlocked && a.progress && a.progress.current > 0);
+        }
+      }
+
+      // Search filter
+      if (debouncedSearchQuery.trim()) {
+        const query = debouncedSearchQuery.toLowerCase();
+        filtered = filtered.filter(
+          (a) =>
+            a.title.toLowerCase().includes(query) || a.description.toLowerCase().includes(query),
+        );
+      }
+
+      return filtered;
+    },
+    [filters.category, filters.rarity, filters.status, debouncedSearchQuery],
+  );
 
   // Sort function
-  const sortAchievements = useCallback((achievements: Achievement[]): Achievement[] => {
-    const sorted = [...achievements];
+  const sortAchievements = useCallback(
+    (achievements: Achievement[]): Achievement[] => {
+      const sorted = [...achievements];
 
-    switch (filters.sortBy) {
-      case 'recent':
-        sorted.sort((a, b) => {
-          if (!a.unlockedAt && !b.unlockedAt) return 0;
-          if (!a.unlockedAt) return 1;
-          if (!b.unlockedAt) return -1;
-          return new Date(b.unlockedAt).getTime() - new Date(a.unlockedAt).getTime();
-        });
-        break;
+      switch (filters.sortBy) {
+        case 'recent':
+          sorted.sort((a, b) => {
+            if (!a.unlockedAt && !b.unlockedAt) return 0;
+            if (!a.unlockedAt) return 1;
+            if (!b.unlockedAt) return -1;
+            return new Date(b.unlockedAt).getTime() - new Date(a.unlockedAt).getTime();
+          });
+          break;
 
-      case 'alphabetical':
-        sorted.sort((a, b) => a.title.localeCompare(b.title));
-        break;
+        case 'alphabetical':
+          sorted.sort((a, b) => a.title.localeCompare(b.title));
+          break;
 
-      case 'rarity':
-        const rarityOrder: Record<AchievementRarity, number> = {
-          legendary: 0,
-          epic: 1,
-          rare: 2,
-          common: 3,
-        };
-        sorted.sort((a, b) => rarityOrder[a.rarity] - rarityOrder[b.rarity]);
-        break;
-
-      case 'progress':
-        sorted.sort((a, b) => {
-          const getProgress = (ach: Achievement) => {
-            if (ach.isUnlocked) return 100;
-            if (!ach.progress) return 0;
-            return (ach.progress.current / ach.progress.required) * 100;
+        case 'rarity': {
+          const rarityOrder: Record<AchievementRarity, number> = {
+            legendary: 0,
+            epic: 1,
+            rare: 2,
+            common: 3,
           };
+          sorted.sort((a, b) => rarityOrder[a.rarity] - rarityOrder[b.rarity]);
+          break;
+        }
 
-          return getProgress(b) - getProgress(a);
-        });
-        break;
+        case 'progress':
+          sorted.sort((a, b) => {
+            const getProgress = (ach: Achievement) => {
+              if (ach.isUnlocked) return 100;
+              if (!ach.progress) return 0;
+              return (ach.progress.current / ach.progress.required) * 100;
+            };
 
-      default:
-        break;
-    }
+            return getProgress(b) - getProgress(a);
+          });
+          break;
 
-    return sorted;
-  }, [filters.sortBy]);
+        default:
+          break;
+      }
+
+      return sorted;
+    },
+    [filters.sortBy],
+  );
 
   // Filtered and sorted achievements
   const filteredAchievements = useMemo(() => {
@@ -164,20 +173,20 @@ export const useAchievementsEnhanced = (): UseAchievementsEnhancedResult => {
   // Calculate statistics
   const statistics = useMemo((): AchievementStatisticsData => {
     const total = achievements.length;
-    const unlocked = achievements.filter(a => a.isUnlocked).length;
+    const unlocked = achievements.filter((a) => a.isUnlocked).length;
     const locked = total - unlocked;
     const inProgress = achievements.filter(
-      a => !a.isUnlocked && a.progress && a.progress.current > 0
+      (a) => !a.isUnlocked && a.progress && a.progress.current > 0,
     ).length;
     const completionRate = total > 0 ? (unlocked / total) * 100 : 0;
 
     // Calculate points and coins earned
     const pointsEarned = achievements
-      .filter(a => a.isUnlocked)
+      .filter((a) => a.isUnlocked)
       .reduce((sum, a) => sum + a.xpReward, 0);
 
     const mlCoinsEarned = achievements
-      .filter(a => a.isUnlocked)
+      .filter((a) => a.isUnlocked)
       .reduce((sum, a) => sum + a.mlCoinsReward, 0);
 
     // By rarity
@@ -187,9 +196,11 @@ export const useAchievementsEnhanced = (): UseAchievementsEnhancedResult => {
       epic: 0,
       legendary: 0,
     };
-    achievements.filter(a => a.isUnlocked).forEach(a => {
-      byRarity[a.rarity]++;
-    });
+    achievements
+      .filter((a) => a.isUnlocked)
+      .forEach((a) => {
+        byRarity[a.rarity]++;
+      });
 
     // By category
     const byCategory: Record<AchievementCategory, number> = {
@@ -203,13 +214,15 @@ export const useAchievementsEnhanced = (): UseAchievementsEnhancedResult => {
       collection: 0,
       hidden: 0,
     };
-    achievements.filter(a => a.isUnlocked).forEach(a => {
-      byCategory[a.category]++;
-    });
+    achievements
+      .filter((a) => a.isUnlocked)
+      .forEach((a) => {
+        byCategory[a.category]++;
+      });
 
     // Recent unlocks (last 5)
     const recentUnlocks = achievements
-      .filter(a => a.isUnlocked && a.unlockedAt)
+      .filter((a) => a.isUnlocked && a.unlockedAt)
       .sort((a, b) => {
         if (!a.unlockedAt || !b.unlockedAt) return 0;
         return new Date(b.unlockedAt).getTime() - new Date(a.unlockedAt).getTime();
@@ -224,7 +237,7 @@ export const useAchievementsEnhanced = (): UseAchievementsEnhancedResult => {
       common: 1,
     };
     const rarestUnlocked = achievements
-      .filter(a => a.isUnlocked)
+      .filter((a) => a.isUnlocked)
       .sort((a, b) => rarityValues[b.rarity] - rarityValues[a.rarity])
       .slice(0, 3);
 
@@ -245,7 +258,7 @@ export const useAchievementsEnhanced = (): UseAchievementsEnhancedResult => {
 
   // Filter management
   const setFilter = useCallback((key: keyof AchievementFiltersState, value: any) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    setFilters((prev) => ({ ...prev, [key]: value }));
   }, []);
 
   const clearFilters = useCallback(() => {
@@ -259,7 +272,7 @@ export const useAchievementsEnhanced = (): UseAchievementsEnhancedResult => {
 
   const currentIndex = useMemo(() => {
     if (!selectedAchievement) return -1;
-    return filteredAchievements.findIndex(a => a.id === selectedAchievement.id);
+    return filteredAchievements.findIndex((a) => a.id === selectedAchievement.id);
   }, [selectedAchievement, filteredAchievements]);
 
   const hasNext = currentIndex >= 0 && currentIndex < filteredAchievements.length - 1;

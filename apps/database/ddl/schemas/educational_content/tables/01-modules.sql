@@ -96,7 +96,8 @@ CREATE INDEX idx_modules_reviewed_by ON educational_content.modules USING btree 
 CREATE INDEX idx_modules_approved_by ON educational_content.modules USING btree (approved_by);
 
 -- Triggers
-CREATE TRIGGER trg_modules_updated_at BEFORE UPDATE ON educational_content.modules FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
+-- NOTE: Trigger trg_modules_updated_at movido a archivo separado
+-- Ver: educational_content/triggers/14-trg_modules_updated_at.sql
 
 -- Foreign Keys
 -- P1 Enhancement: Added ON DELETE SET NULL to preserve historical records when users are deleted

@@ -7,7 +7,7 @@ interface MagnifyingGlassProps {
   onDiscoverClue?: (clue: string) => void;
 }
 
-export const MagnifyingGlass: React.FC<MagnifyingGlassProps> = ({ text, onDiscoverClue }) => {
+export const MagnifyingGlass: React.FC<MagnifyingGlassProps> = ({ text }) => {
   const [zoom, setZoom] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [active, setActive] = useState(false);
@@ -21,37 +21,43 @@ export const MagnifyingGlass: React.FC<MagnifyingGlassProps> = ({ text, onDiscov
 
   return (
     <div className="relative">
-      <div className="flex items-center gap-2 mb-4">
+      <div className="mb-4 flex items-center gap-2">
         <button
           onClick={() => setActive(!active)}
-          className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all ${
+          className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-all ${
             active ? 'bg-detective-orange text-white' : 'bg-white text-detective-text'
           }`}
         >
-          <Search className="w-4 h-4" />
+          <Search className="h-4 w-4" />
           {active ? 'Desactivar Lupa' : 'Activar Lupa'}
         </button>
         {active && (
           <div className="flex items-center gap-2">
-            <button onClick={() => setZoom(Math.max(1, zoom - 0.5))} className="p-2 bg-white rounded-lg">
-              <ZoomOut className="w-4 h-4" />
+            <button
+              onClick={() => setZoom(Math.max(1, zoom - 0.5))}
+              className="rounded-lg bg-white p-2"
+            >
+              <ZoomOut className="h-4 w-4" />
             </button>
             <span className="text-detective-sm">{zoom}x</span>
-            <button onClick={() => setZoom(Math.min(3, zoom + 0.5))} className="p-2 bg-white rounded-lg">
-              <ZoomIn className="w-4 h-4" />
+            <button
+              onClick={() => setZoom(Math.min(3, zoom + 0.5))}
+              className="rounded-lg bg-white p-2"
+            >
+              <ZoomIn className="h-4 w-4" />
             </button>
           </div>
         )}
       </div>
       <div
         onMouseMove={handleMouseMove}
-        className={`relative p-6 bg-white rounded-lg border-2 ${active ? 'border-detective-orange' : 'border-gray-200'} ${active ? 'cursor-none' : 'cursor-text'}`}
+        className={`relative rounded-lg border-2 bg-white p-6 ${active ? 'border-detective-orange' : 'border-gray-200'} ${active ? 'cursor-none' : 'cursor-text'}`}
         style={{ lineHeight: '1.8' }}
       >
         <p className="text-detective-base text-detective-text">{text}</p>
         {active && (
           <motion.div
-            className="absolute pointer-events-none"
+            className="pointer-events-none absolute"
             animate={{ x: position.x - 50, y: position.y - 50 }}
             style={{
               width: 100,

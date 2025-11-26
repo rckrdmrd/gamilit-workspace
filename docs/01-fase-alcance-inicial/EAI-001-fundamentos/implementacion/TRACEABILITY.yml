@@ -603,6 +603,93 @@ status:
     La funcionalidad está implementada y funciona, pero requiere urgentemente tests.
 
 # ============================================================================
+# BUG FIXES POST-IMPLEMENTACIÓN
+# ============================================================================
+
+bug_fixes:
+  - id: GAP-003
+    date: "2025-11-24"
+    severity: critical
+    title: "Module Progress Trigger Missing"
+    description: |
+      Usuarios nuevos no tenían module_progress inicializado, causando error
+      "No modules available" en dashboard de estudiante.
+
+    root_cause: |
+      La función gamilit.initialize_user_stats() solo creaba 3 de 4 tablas necesarias:
+      - ✅ user_stats
+      - ✅ comodines_inventory
+      - ✅ user_ranks
+      - ❌ module_progress (FALTABA)
+
+    solution: |
+      Actualizada función initialize_user_stats() para crear module_progress
+      automáticamente al registrar usuario. Ahora crea 1 registro por cada
+      módulo publicado (típicamente 5 registros).
+
+    files_modified:
+      database:
+        - apps/database/ddl/schemas/gamilit/functions/04-initialize_user_stats.sql
+      documentation:
+        - docs/97-adr/ADR-012-automatic-user-initialization-trigger.md
+        - docs/01-fase-alcance-inicial/EAI-001-fundamentos/requerimientos/RF-INIT-001-inicializacion-automatica-usuario.md
+        - docs/01-fase-alcance-inicial/EAI-001-fundamentos/especificaciones/ET-INIT-001-trigger-inicializacion.md
+        - docs/90-transversal/FUNCIONES-UTILITARIAS-GAMILIT.md
+        - docs/90-transversal/FLUJO-INICIALIZACION-USUARIO.md
+        - docs/90-transversal/DIAGRAMA-DEPENDENCIAS-INITIALIZE-USER-STATS.md
+        - docs/90-transversal/inventarios/DATABASE_INVENTORY.yml
+
+    validation:
+      - description: "Todos los usuarios tienen module_progress"
+        query: |
+          SELECT COUNT(*) FROM auth_management.profiles p
+          WHERE role IN ('student', 'admin_teacher', 'super_admin')
+          AND NOT EXISTS (
+            SELECT 1 FROM progress_tracking.module_progress mp
+            WHERE mp.user_id = p.id
+          );
+        expected_result: "0 usuarios sin module_progress"
+        actual_result: "✅ 0 usuarios (100% inicializados)"
+
+      - description: "Nuevos usuarios tienen 5 módulos"
+        expected_modules: 5
+        actual_modules: 5
+        status: "✅ PASS"
+
+    metrics:
+      before:
+        users_with_module_progress: "0%"
+        dashboard_error_rate: "100%"
+        time_to_platform_ready: "∞ (bloqueados)"
+
+      after:
+        users_with_module_progress: "100%"
+        dashboard_error_rate: "0%"
+        time_to_platform_ready: "0 segundos"
+
+    references:
+      requirement: docs/01-fase-alcance-inicial/EAI-001-fundamentos/requerimientos/RF-INIT-001-inicializacion-automatica-usuario.md
+      specification: docs/01-fase-alcance-inicial/EAI-001-fundamentos/especificaciones/ET-INIT-001-trigger-inicializacion.md
+      adr: docs/97-adr/ADR-012-automatic-user-initialization-trigger.md
+      validation_report: orchestration/agentes/architecture-analyst/analisis-estado-proyecto-2025-11-24/VALIDACION-GAP-003-MODULE-PROGRESS.md
+      dependencies_report: orchestration/agentes/architecture-analyst/analisis-estado-proyecto-2025-11-24/VALIDACION-DEPENDENCIAS-INITIALIZE-USER-STATS.md
+      validation_conflicts: orchestration/agentes/architecture-analyst/analisis-estado-proyecto-2025-11-24/VALIDACION-CONFLICTOS-DUPLICIDADES-REFERENCIAS.md
+      validation_final: orchestration/agentes/architecture-analyst/analisis-estado-proyecto-2025-11-24/VALIDACION-FINAL-EXHAUSTIVA.md
+      traza_database: orchestration/trazas/TRAZA-TAREAS-DATABASE.md
+      traza_architecture: orchestration/trazas/TRAZA-ANALISIS-ARQUITECTURA.md
+
+    impact:
+      ux: "CRÍTICO - Usuarios pueden usar plataforma inmediatamente después de registro"
+      technical: "Trigger automático elimina necesidad de código en backend"
+      maintenance: "Reducción de complejidad en auth.service.ts"
+
+    lessons_learned:
+      - "Validación exhaustiva pre-corrección evitó duplicación de objetos (ROI 8x-16x)"
+      - "Triggers de base de datos garantizan consistencia mejor que código backend"
+      - "Documentación de dependencias crítica para prevenir errores futuros"
+      - "Política de carga limpia (no migrations) funcionó correctamente"
+
+# ============================================================================
 # DEPENDENCIAS
 # ============================================================================
 

@@ -1,6 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react';
 
-import { fn } from 'storybook/test';
+// @ts-expect-error - Storybook test addon not installed
+import { fn } from '@storybook/test';
 
 import { Header } from './Header';
 

@@ -6,7 +6,7 @@
  */
 
 import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS, FEATURE_FLAGS } from '@/services/api/apiConfig';
+import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
 import { handleAPIError } from '@/services/api/apiErrorHandler';
 import type { ApiResponse } from '@/services/api/apiTypes';
 
@@ -209,17 +209,16 @@ const mockSubmitExercise = async (submission: SubmissionRequest): Promise<Submis
  */
 export const getMechanics = async (
   type?: MechanicType,
-  difficulty?: DifficultyLevel
+  difficulty?: DifficultyLevel,
 ): Promise<Mechanic[]> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       return await mockGetMechanics();
     }
 
-    const { data } = await apiClient.get<ApiResponse<Mechanic[]>>(
-      API_ENDPOINTS.mechanics.list,
-      { params: { type, difficulty } }
-    );
+    const { data } = await apiClient.get<ApiResponse<Mechanic[]>>(API_ENDPOINTS.mechanics.list, {
+      params: { type, difficulty },
+    });
 
     return data.data;
   } catch (error) {
@@ -241,7 +240,7 @@ export const getMechanic = async (mechanicId: string): Promise<Mechanic> => {
     }
 
     const { data } = await apiClient.get<ApiResponse<Mechanic>>(
-      API_ENDPOINTS.mechanics.get(mechanicId)
+      API_ENDPOINTS.mechanics.get(mechanicId),
     );
 
     return data.data;
@@ -257,7 +256,7 @@ export const getMechanic = async (mechanicId: string): Promise<Mechanic> => {
  * @returns Submission result with score and feedback
  */
 export const submitExercise = async (
-  submission: SubmissionRequest
+  submission: SubmissionRequest,
 ): Promise<SubmissionResponse> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -268,20 +267,20 @@ export const submitExercise = async (
     // Ensure startedAt is not in the future (account for clock skew)
     const calculatedStartedAt = submission.metadata?.startedAt
       ? submission.metadata.startedAt.getTime()
-      : Date.now() - (submission.timeSpent * 1000);
+      : Date.now() - submission.timeSpent * 1000;
 
     const backendPayload = {
       answers: submission.answers,
       startedAt: Math.min(calculatedStartedAt, Date.now() - 1000), // Ensure it's at least 1 second in the past
       hintsUsed: submission.hintsUsed || 0,
-      powerupsUsed: [] // TODO: Add powerups support
+      powerupsUsed: [], // TODO: Add powerups support
     };
 
     console.log('[submitExercise] Sending payload:', JSON.stringify(backendPayload, null, 2));
 
     const { data } = await apiClient.post<ApiResponse<SubmissionResponse>>(
       `/educational/exercises/${submission.mechanicId}/submit`,
-      backendPayload
+      backendPayload,
     );
 
     return data.data;
@@ -316,7 +315,7 @@ export const getUserProgress = async (mechanicId?: string): Promise<UserProgress
 
     const { data } = await apiClient.get<ApiResponse<UserProgress[]>>(
       API_ENDPOINTS.mechanics.progress,
-      { params: { mechanicId } }
+      { params: { mechanicId } },
     );
 
     return data.data;
@@ -351,7 +350,7 @@ export const getHint = async (request: HintRequest): Promise<HintResponse> => {
 
     const { data } = await apiClient.post<ApiResponse<HintResponse>>(
       API_ENDPOINTS.mechanics.hints(request.mechanicId),
-      { questionIndex: request.questionIndex, level: request.hintLevel }
+      { questionIndex: request.questionIndex, level: request.hintLevel },
     );
 
     return data.data;
@@ -382,7 +381,7 @@ export const getScoringCriteria = async (mechanicId: string): Promise<ScoringCri
 
     const { data } = await apiClient.get<ApiResponse<ScoringCriteria>>(
       API_ENDPOINTS.mechanics.scoring,
-      { params: { mechanicId } }
+      { params: { mechanicId } },
     );
 
     return data.data;
@@ -400,7 +399,7 @@ export const getScoringCriteria = async (mechanicId: string): Promise<ScoringCri
  */
 export const validateAnswer = async (
   mechanicId: string,
-  answer: unknown
+  answer: unknown,
 ): Promise<{ isValid: boolean; message?: string }> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -410,7 +409,7 @@ export const validateAnswer = async (
 
     const { data } = await apiClient.post<ApiResponse<{ isValid: boolean; message?: string }>>(
       API_ENDPOINTS.mechanics.validate,
-      { mechanicId, answer }
+      { mechanicId, answer },
     );
 
     return data.data;

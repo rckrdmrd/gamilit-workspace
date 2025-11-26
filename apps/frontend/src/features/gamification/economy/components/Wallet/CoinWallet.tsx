@@ -11,9 +11,7 @@ import { useTransactions } from '../../hooks/useTransactions';
 
 export const CoinWallet: React.FC = () => {
   const { balance, getSpendingPercentage, getBalanceTier } = useCoins();
-  const { getTotalEarned, getTotalSpent, getRecentTransactions } = useTransactions();
-
-  const recentTransactions = getRecentTransactions(5);
+  const { getTotalEarned, getTotalSpent } = useTransactions();
   const totalEarned7d = getTotalEarned('7d');
   const totalSpent7d = getTotalSpent('7d');
   const netChange = totalEarned7d - totalSpent7d;
@@ -33,41 +31,39 @@ export const CoinWallet: React.FC = () => {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-br from-detective-orange to-detective-gold p-8 rounded-detective shadow-orange-lg"
+        className="rounded-detective bg-gradient-to-br from-detective-orange to-detective-gold p-8 shadow-orange-lg"
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-white/20 rounded-full">
-              <Wallet className="w-6 h-6 text-white" />
+            <div className="rounded-full bg-white/20 p-3">
+              <Wallet className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h2 className="text-white text-detective-base font-medium opacity-90">
+              <h2 className="text-detective-base font-medium text-white opacity-90">
                 Your ML Coins Wallet
               </h2>
-              <p className="text-white/80 text-detective-sm">{tierMessages[balanceTier]}</p>
+              <p className="text-detective-sm text-white/80">{tierMessages[balanceTier]}</p>
             </div>
           </div>
           <CoinBalanceWidget balance={balance.current} showLabel={false} />
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mt-6">
-          <div className="bg-white/10 backdrop-blur-sm rounded-detective p-4">
-            <p className="text-white/70 text-detective-sm mb-1">Lifetime Earned</p>
-            <p className="text-white text-detective-xl font-bold">
+        <div className="mt-6 grid grid-cols-3 gap-4">
+          <div className="rounded-detective bg-white/10 p-4 backdrop-blur-sm">
+            <p className="mb-1 text-detective-sm text-white/70">Lifetime Earned</p>
+            <p className="text-detective-xl font-bold text-white">
               {balance.lifetime.toLocaleString()} ML
             </p>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-detective p-4">
-            <p className="text-white/70 text-detective-sm mb-1">Total Spent</p>
-            <p className="text-white text-detective-xl font-bold">
+          <div className="rounded-detective bg-white/10 p-4 backdrop-blur-sm">
+            <p className="mb-1 text-detective-sm text-white/70">Total Spent</p>
+            <p className="text-detective-xl font-bold text-white">
               {balance.spent.toLocaleString()} ML
             </p>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-detective p-4">
-            <p className="text-white/70 text-detective-sm mb-1">Spending Rate</p>
-            <p className="text-white text-detective-xl font-bold">
-              {getSpendingPercentage()}%
-            </p>
+          <div className="rounded-detective bg-white/10 p-4 backdrop-blur-sm">
+            <p className="mb-1 text-detective-sm text-white/70">Spending Rate</p>
+            <p className="text-detective-xl font-bold text-white">{getSpendingPercentage()}%</p>
           </div>
         </div>
       </motion.div>
@@ -78,15 +74,13 @@ export const CoinWallet: React.FC = () => {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-detective shadow-card p-6"
+          className="rounded-detective bg-white p-6 shadow-card"
         >
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-detective-success/20 rounded-full">
-              <TrendingUp className="w-5 h-5 text-detective-success" />
+          <div className="mb-2 flex items-center gap-3">
+            <div className="rounded-full bg-detective-success/20 p-2">
+              <TrendingUp className="h-5 w-5 text-detective-success" />
             </div>
-            <span className="text-detective-text-secondary text-detective-sm">
-              Earned (7d)
-            </span>
+            <span className="text-detective-sm text-detective-text-secondary">Earned (7d)</span>
           </div>
           <p className="text-detective-2xl font-bold text-detective-success">
             +{totalEarned7d.toLocaleString()} ML
@@ -97,15 +91,13 @@ export const CoinWallet: React.FC = () => {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-detective shadow-card p-6"
+          className="rounded-detective bg-white p-6 shadow-card"
         >
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-detective-danger/20 rounded-full">
-              <TrendingDown className="w-5 h-5 text-detective-danger" />
+          <div className="mb-2 flex items-center gap-3">
+            <div className="rounded-full bg-detective-danger/20 p-2">
+              <TrendingDown className="h-5 w-5 text-detective-danger" />
             </div>
-            <span className="text-detective-text-secondary text-detective-sm">
-              Spent (7d)
-            </span>
+            <span className="text-detective-sm text-detective-text-secondary">Spent (7d)</span>
           </div>
           <p className="text-detective-2xl font-bold text-detective-danger">
             -{totalSpent7d.toLocaleString()} ML
@@ -116,18 +108,23 @@ export const CoinWallet: React.FC = () => {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-detective shadow-card p-6"
+          className="rounded-detective bg-white p-6 shadow-card"
         >
-          <div className="flex items-center gap-3 mb-2">
-            <div className={`p-2 rounded-full ${netChange >= 0 ? 'bg-detective-success/20' : 'bg-detective-danger/20'}`}>
-              <Zap className={`w-5 h-5 ${netChange >= 0 ? 'text-detective-success' : 'text-detective-danger'}`} />
+          <div className="mb-2 flex items-center gap-3">
+            <div
+              className={`rounded-full p-2 ${netChange >= 0 ? 'bg-detective-success/20' : 'bg-detective-danger/20'}`}
+            >
+              <Zap
+                className={`h-5 w-5 ${netChange >= 0 ? 'text-detective-success' : 'text-detective-danger'}`}
+              />
             </div>
-            <span className="text-detective-text-secondary text-detective-sm">
-              Net Change
-            </span>
+            <span className="text-detective-sm text-detective-text-secondary">Net Change</span>
           </div>
-          <p className={`text-detective-2xl font-bold ${netChange >= 0 ? 'text-detective-success' : 'text-detective-danger'}`}>
-            {netChange >= 0 ? '+' : ''}{netChange.toLocaleString()} ML
+          <p
+            className={`text-detective-2xl font-bold ${netChange >= 0 ? 'text-detective-success' : 'text-detective-danger'}`}
+          >
+            {netChange >= 0 ? '+' : ''}
+            {netChange.toLocaleString()} ML
           </p>
         </motion.div>
       </div>

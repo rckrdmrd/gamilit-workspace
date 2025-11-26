@@ -38,15 +38,15 @@ const MOCK_USERS: MockUser[] = [
     email: 'admin@gamilit.com',
     fullName: 'Marie Curie',
     role: 'admin',
-    emailVerified: true
+    emailVerified: true,
   },
   {
     id: '2',
     email: 'detective@gamilit.com',
     fullName: 'Detective Gamilit',
     role: 'student',
-    emailVerified: true
-  }
+    emailVerified: true,
+  },
 ];
 
 // Contraseña válida para pruebas: Password123!
@@ -59,30 +59,27 @@ const failedAttempts: Record<string, number> = {};
  * Mock de login con validación de credenciales
  * Simula rate limiting después de 3 intentos fallidos
  */
-export const mockLogin = async (
-  email: string,
-  password: string
-): Promise<MockLoginResponse> => {
+export const mockLogin = async (email: string, password: string): Promise<MockLoginResponse> => {
   // Simular delay de red
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   // Verificar rate limiting
   const attempts = failedAttempts[email] || 0;
   if (attempts >= 3) {
     return {
       success: false,
-      error: 'Cuenta bloqueada temporalmente. Intenta nuevamente en 15 minutos.'
+      error: 'Cuenta bloqueada temporalmente. Intenta nuevamente en 15 minutos.',
     };
   }
 
   // Buscar usuario
-  const user = MOCK_USERS.find(u => u.email.toLowerCase() === email.toLowerCase());
+  const user = MOCK_USERS.find((u) => u.email.toLowerCase() === email.toLowerCase());
 
   if (!user || password !== VALID_PASSWORD) {
     failedAttempts[email] = (failedAttempts[email] || 0) + 1;
     return {
       success: false,
-      error: 'Credenciales inválidas'
+      error: 'Credenciales inválidas',
     };
   }
 
@@ -92,7 +89,7 @@ export const mockLogin = async (
   return {
     success: true,
     token: 'mock-jwt-token-' + Date.now(),
-    user
+    user,
   };
 };
 
@@ -106,17 +103,15 @@ export const mockRegister = async (data: {
   password: string;
 }): Promise<MockRegisterResponse> => {
   // Simular delay de red
-  await new Promise(resolve => setTimeout(resolve, 1500));
+  await new Promise((resolve) => setTimeout(resolve, 1500));
 
   // Verificar si el email ya existe
-  const existingUser = MOCK_USERS.find(
-    u => u.email.toLowerCase() === data.email.toLowerCase()
-  );
+  const existingUser = MOCK_USERS.find((u) => u.email.toLowerCase() === data.email.toLowerCase());
 
   if (existingUser) {
     return {
       success: false,
-      error: 'Este email ya está registrado'
+      error: 'Este email ya está registrado',
     };
   }
 
@@ -127,7 +122,7 @@ export const mockRegister = async (data: {
     email: data.email,
     fullName: data.fullName,
     role: 'student',
-    emailVerified: true // Always verified - email verification is disabled
+    emailVerified: true, // Always verified - email verification is disabled
   };
 
   // Agregar a la base de datos mock
@@ -136,7 +131,7 @@ export const mockRegister = async (data: {
   return {
     success: true,
     message: 'Usuario registrado exitosamente. Ya puedes iniciar sesión.',
-    user: newUser
+    user: newUser,
   };
 };
 
@@ -145,15 +140,15 @@ export const mockRegister = async (data: {
  * Simula envío de email de recuperación
  */
 export const mockPasswordRecovery = async (
-  email: string
+  _email: string,
 ): Promise<MockPasswordRecoveryResponse> => {
   // Simular delay de red
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   // Por seguridad, siempre retornar éxito (no revelar si el email existe)
   return {
     success: true,
-    message: 'Si el email existe, recibirás un enlace de recuperación en breve.'
+    message: 'Si el email existe, recibirás un enlace de recuperación en breve.',
   };
 };
 
@@ -163,22 +158,22 @@ export const mockPasswordRecovery = async (
  */
 export const mockPasswordReset = async (
   token: string,
-  newPassword: string
+  _newPassword: string,
 ): Promise<MockPasswordRecoveryResponse> => {
   // Simular delay de red
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   // Validar token (mock simple)
   if (!token || token.length < 10) {
     return {
       success: false,
-      error: 'Token inválido o expirado'
+      error: 'Token inválido o expirado',
     };
   }
 
   return {
     success: true,
-    message: 'Contraseña actualizada exitosamente. Ya puedes iniciar sesión.'
+    message: 'Contraseña actualizada exitosamente. Ya puedes iniciar sesión.',
   };
 };
 
@@ -191,22 +186,22 @@ export const mockPasswordReset = async (
  * This function is kept for backward compatibility only.
  */
 export const mockEmailVerification = async (
-  token: string
+  token: string,
 ): Promise<MockPasswordRecoveryResponse> => {
   // Simular delay de red
-  await new Promise(resolve => setTimeout(resolve, 800));
+  await new Promise((resolve) => setTimeout(resolve, 800));
 
   // Validar token
   if (!token || token.length < 10) {
     return {
       success: false,
-      error: 'Token de verificación inválido o expirado'
+      error: 'Token de verificación inválido o expirado',
     };
   }
 
   return {
     success: true,
-    message: 'Email verificado exitosamente. Tu cuenta está activada.'
+    message: 'Email verificado exitosamente. Tu cuenta está activada.',
   };
 };
 
@@ -215,22 +210,22 @@ export const mockEmailVerification = async (
  * Simula validación de código 2FA
  */
 export const mockTwoFactorVerification = async (
-  code: string
+  code: string,
 ): Promise<MockPasswordRecoveryResponse> => {
   // Simular delay de red
-  await new Promise(resolve => setTimeout(resolve, 600));
+  await new Promise((resolve) => setTimeout(resolve, 600));
 
   // Código válido mock: 123456
   if (code === '123456') {
     return {
       success: true,
-      message: 'Código verificado exitosamente'
+      message: 'Código verificado exitosamente',
     };
   }
 
   return {
     success: false,
-    error: 'Código inválido o expirado'
+    error: 'Código inválido o expirado',
   };
 };
 
@@ -243,10 +238,10 @@ export const mockTwoFactorVerification = async (
  */
 export const mockResendVerificationCode = async (): Promise<MockPasswordRecoveryResponse> => {
   // Simular delay de red
-  await new Promise(resolve => setTimeout(resolve, 500));
+  await new Promise((resolve) => setTimeout(resolve, 500));
 
   return {
     success: true,
-    message: 'Código de verificación reenviado'
+    message: 'Código de verificación reenviado',
   };
 };

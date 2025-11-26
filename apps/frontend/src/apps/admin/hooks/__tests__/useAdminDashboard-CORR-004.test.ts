@@ -13,7 +13,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { apiClient } from '@/services/api/apiClient';
-import * as adminAPI from '@/services/api/adminAPI';
 import { useAdminDashboard } from '../useAdminDashboard';
 import type { AdminAction, SystemAlert, UserActivityData } from '../../types';
 
@@ -41,7 +40,7 @@ describe('useAdminDashboard - CORR-004: Real API Integration', () => {
       await waitFor(() => {
         expect(apiClient.get).toHaveBeenCalledWith(
           '/admin/dashboard/actions/recent',
-          expect.objectContaining({ params: { limit: 10 } })
+          expect.objectContaining({ params: { limit: 10 } }),
         );
       });
     });
@@ -55,10 +54,7 @@ describe('useAdminDashboard - CORR-004: Real API Integration', () => {
 
       await waitFor(() => {
         // FE-P1-002: Backend getAlerts() does NOT accept params
-        expect(apiClient.get).toHaveBeenCalledWith(
-          '/admin/dashboard/alerts',
-          expect.anything()
-        );
+        expect(apiClient.get).toHaveBeenCalledWith('/admin/dashboard/alerts', expect.anything());
       });
     });
 
@@ -73,7 +69,7 @@ describe('useAdminDashboard - CORR-004: Real API Integration', () => {
         // FE-P1-003: Backend expects groupBy param, not days
         expect(apiClient.get).toHaveBeenCalledWith(
           '/admin/dashboard/analytics/user-activity',
-          expect.objectContaining({ params: { groupBy: 'day' } })
+          expect.objectContaining({ params: { groupBy: 'day' } }),
         );
       });
     });
@@ -118,10 +114,13 @@ describe('useAdminDashboard - CORR-004: Real API Integration', () => {
 
       const { result } = renderHook(() => useAdminDashboard());
 
-      await waitFor(() => {
-        expect(result.current.recentActions.length).toBeGreaterThan(0);
-        expect(result.current.recentActions[0].adminName).toBe('John Doe');
-      }, { timeout: 3000 });
+      await waitFor(
+        () => {
+          expect(result.current.recentActions.length).toBeGreaterThan(0);
+          expect(result.current.recentActions[0].adminName).toBe('John Doe');
+        },
+        { timeout: 3000 },
+      );
     });
 
     it('should convert timestamp to Date object', async () => {
@@ -142,11 +141,14 @@ describe('useAdminDashboard - CORR-004: Real API Integration', () => {
 
       const { result } = renderHook(() => useAdminDashboard());
 
-      await waitFor(() => {
-        if (result.current.recentActions.length > 0) {
-          expect(result.current.recentActions[0].timestamp).toBeInstanceOf(Date);
-        }
-      }, { timeout: 3000 });
+      await waitFor(
+        () => {
+          if (result.current.recentActions.length > 0) {
+            expect(result.current.recentActions[0].timestamp).toBeInstanceOf(Date);
+          }
+        },
+        { timeout: 3000 },
+      );
     });
 
     it('should handle API errors gracefully', async () => {
@@ -159,10 +161,13 @@ describe('useAdminDashboard - CORR-004: Real API Integration', () => {
 
       const { result } = renderHook(() => useAdminDashboard());
 
-      await waitFor(() => {
-        // Should fallback to empty array, not crash
-        expect(result.current.recentActions).toEqual([]);
-      }, { timeout: 3000 });
+      await waitFor(
+        () => {
+          // Should fallback to empty array, not crash
+          expect(result.current.recentActions).toEqual([]);
+        },
+        { timeout: 3000 },
+      );
     });
   });
 
@@ -191,10 +196,13 @@ describe('useAdminDashboard - CORR-004: Real API Integration', () => {
 
       const { result } = renderHook(() => useAdminDashboard());
 
-      await waitFor(() => {
-        expect(result.current.alerts.length).toBeGreaterThan(0);
-        expect(result.current.alerts[0].title).toBe('High CPU Usage');
-      }, { timeout: 3000 });
+      await waitFor(
+        () => {
+          expect(result.current.alerts.length).toBeGreaterThan(0);
+          expect(result.current.alerts[0].title).toBe('High CPU Usage');
+        },
+        { timeout: 3000 },
+      );
     });
 
     it('should sort alerts by severity', async () => {
@@ -222,12 +230,15 @@ describe('useAdminDashboard - CORR-004: Real API Integration', () => {
 
       const { result } = renderHook(() => useAdminDashboard());
 
-      await waitFor(() => {
-        if (result.current.alerts.length >= 2) {
-          // High severity should be first after sorting
-          expect(result.current.alerts[0].severity).toBe('high');
-        }
-      }, { timeout: 3000 });
+      await waitFor(
+        () => {
+          if (result.current.alerts.length >= 2) {
+            // High severity should be first after sorting
+            expect(result.current.alerts[0].severity).toBe('high');
+          }
+        },
+        { timeout: 3000 },
+      );
     });
 
     it('should handle API errors gracefully', async () => {
@@ -240,9 +251,12 @@ describe('useAdminDashboard - CORR-004: Real API Integration', () => {
 
       const { result } = renderHook(() => useAdminDashboard());
 
-      await waitFor(() => {
-        expect(result.current.alerts).toEqual([]);
-      }, { timeout: 3000 });
+      await waitFor(
+        () => {
+          expect(result.current.alerts).toEqual([]);
+        },
+        { timeout: 3000 },
+      );
     });
   });
 
@@ -274,11 +288,14 @@ describe('useAdminDashboard - CORR-004: Real API Integration', () => {
 
       const { result } = renderHook(() => useAdminDashboard());
 
-      await waitFor(() => {
-        expect(result.current.userActivity.length).toBeGreaterThan(0);
-        expect(result.current.userActivity[0].date).toBe('2025-11-20');
-        expect(result.current.userActivity[0].activeUsers).toBe(45);
-      }, { timeout: 3000 });
+      await waitFor(
+        () => {
+          expect(result.current.userActivity.length).toBeGreaterThan(0);
+          expect(result.current.userActivity[0].date).toBe('2025-11-20');
+          expect(result.current.userActivity[0].activeUsers).toBe(45);
+        },
+        { timeout: 3000 },
+      );
     });
 
     it('should handle API errors gracefully', async () => {
@@ -291,9 +308,12 @@ describe('useAdminDashboard - CORR-004: Real API Integration', () => {
 
       const { result } = renderHook(() => useAdminDashboard());
 
-      await waitFor(() => {
-        expect(result.current.userActivity).toEqual([]);
-      }, { timeout: 3000 });
+      await waitFor(
+        () => {
+          expect(result.current.userActivity).toEqual([]);
+        },
+        { timeout: 3000 },
+      );
     });
   });
 
@@ -302,7 +322,13 @@ describe('useAdminDashboard - CORR-004: Real API Integration', () => {
       const mockActions: Partial<AdminAction>[] = [{ id: 'test', adminName: 'Test' } as any];
       const mockAlerts: Partial<SystemAlert>[] = [{ id: 'test', title: 'Test' } as any];
       const mockActivity: UserActivityData[] = [
-        { date: '2025-11-24', activeUsers: 100, newRegistrations: 5, totalSessions: 200, avgSessionDuration: 30 }
+        {
+          date: '2025-11-24',
+          activeUsers: 100,
+          newRegistrations: 5,
+          totalSessions: 200,
+          avgSessionDuration: 30,
+        },
       ];
 
       (apiClient.get as ReturnType<typeof vi.fn>).mockImplementation((url) => {
@@ -320,12 +346,15 @@ describe('useAdminDashboard - CORR-004: Real API Integration', () => {
 
       const { result } = renderHook(() => useAdminDashboard());
 
-      await waitFor(() => {
-        // All 3 sections should have data (NOT empty)
-        expect(result.current.recentActions.length).toBeGreaterThan(0);
-        expect(result.current.alerts.length).toBeGreaterThan(0);
-        expect(result.current.userActivity.length).toBeGreaterThan(0);
-      }, { timeout: 5000 });
+      await waitFor(
+        () => {
+          // All 3 sections should have data (NOT empty)
+          expect(result.current.recentActions.length).toBeGreaterThan(0);
+          expect(result.current.alerts.length).toBeGreaterThan(0);
+          expect(result.current.userActivity.length).toBeGreaterThan(0);
+        },
+        { timeout: 5000 },
+      );
     });
 
     it('should call REAL API endpoints, not TODOs', async () => {
@@ -338,7 +367,7 @@ describe('useAdminDashboard - CORR-004: Real API Integration', () => {
       await waitFor(() => {
         // Verify actual endpoint paths (NOT commented out TODOs)
         const calls = (apiClient.get as ReturnType<typeof vi.fn>).mock.calls;
-        const endpoints = calls.map(call => call[0]);
+        const endpoints = calls.map((call) => call[0]);
 
         expect(endpoints).toContain('/admin/dashboard/actions/recent');
         expect(endpoints).toContain('/admin/dashboard/alerts');

@@ -3,7 +3,11 @@
 // Converts ExerciseData from ExercisePage to specific mechanic formats
 // ============================================
 
-import { BaseExercise, DifficultyLevel, DifficultyLevelEnum, Hint } from '@shared/components/mechanics/mechanicsTypes';
+import {
+  BaseExercise,
+  DifficultyLevel,
+  DifficultyLevelEnum,
+} from '@shared/components/mechanics/mechanicsTypes';
 
 /**
  * Generic ExerciseData type from ExercisePage
@@ -28,10 +32,10 @@ export interface ExerciseData {
 const mapDifficulty = (difficulty: any): DifficultyLevel => {
   // Handle legacy string values
   const legacyMap: Record<string, DifficultyLevel> = {
-    'facil': DifficultyLevelEnum.BEGINNER,
-    'medio': DifficultyLevelEnum.INTERMEDIATE,
-    'dificil': DifficultyLevelEnum.ADVANCED,
-    'experto': DifficultyLevelEnum.PROFICIENT,
+    facil: DifficultyLevelEnum.BEGINNER,
+    medio: DifficultyLevelEnum.INTERMEDIATE,
+    dificil: DifficultyLevelEnum.ADVANCED,
+    experto: DifficultyLevelEnum.PROFICIENT,
   };
 
   // If it's a legacy value, map it
@@ -50,36 +54,10 @@ const mapDifficulty = (difficulty: any): DifficultyLevel => {
 };
 
 /**
- * Generates default hints if none are provided
- * Backend expects hints as string[], not objects
- */
-const generateDefaultHints = (type: string): Hint[] => {
-  return [
-    'Lee cuidadosamente las instrucciones',
-    'Presta atención a los detalles',
-    'Revisa tu respuesta antes de enviar',
-  ];
-};
-
-/**
  * Converts ExerciseData to BaseExercise format
  * This creates the base structure that all mechanics extend from
  */
 export const adaptToBaseExercise = (exercise: ExerciseData): BaseExercise => {
-  // Ensure hints is always string[] (Backend format)
-  let hints: Hint[] = generateDefaultHints(exercise.type);
-
-  if (exercise.mechanicData?.hints) {
-    // If hints come from backend as string[], use them directly
-    if (Array.isArray(exercise.mechanicData.hints) && typeof exercise.mechanicData.hints[0] === 'string') {
-      hints = exercise.mechanicData.hints;
-    }
-    // If hints are in old object format, extract text
-    else if (Array.isArray(exercise.mechanicData.hints) && typeof exercise.mechanicData.hints[0] === 'object') {
-      hints = exercise.mechanicData.hints.map((h: any) => h.text || h);
-    }
-  }
-
   return {
     id: exercise.id,
     title: exercise.title,
@@ -188,8 +166,8 @@ export const adaptToCrucigramaData = (exercise: ExerciseData): any => {
 
     return {
       ...base,
-      grid: content.grid,              // Pre-built grid WITHOUT answers
-      clues: content.clues || [],       // Clues WITHOUT answer field
+      grid: content.grid, // Pre-built grid WITHOUT answers
+      clues: content.clues || [], // Clues WITHOUT answer field
       rows: content.gridConfig.rows,
       cols: content.gridConfig.cols,
     };
@@ -247,7 +225,9 @@ export const adaptToCrucigramaData = (exercise: ExerciseData): any => {
     const words = content.words || [];
 
     const vertical = (content.clues.vertical || []).map((c: any) => {
-      const wordData = words.find((w: any) => w.clueNumber === c.number && w.direction === 'vertical');
+      const wordData = words.find(
+        (w: any) => w.clueNumber === c.number && w.direction === 'vertical',
+      );
       return {
         ...c,
         id: `v${c.number}`,
@@ -259,7 +239,9 @@ export const adaptToCrucigramaData = (exercise: ExerciseData): any => {
     });
 
     const horizontal = (content.clues.horizontal || []).map((c: any) => {
-      const wordData = words.find((w: any) => w.clueNumber === c.number && w.direction === 'horizontal');
+      const wordData = words.find(
+        (w: any) => w.clueNumber === c.number && w.direction === 'horizontal',
+      );
       return {
         ...c,
         id: `h${c.number}`,
@@ -330,7 +312,7 @@ export const adaptToEmparejamientoData = (exercise: ExerciseData): any => {
 
   // Convert pairs to cards format
   const pairs = content.pairs || [];
-  const cards = [];
+  const cards: any[] = [];
 
   pairs.forEach((pair: any) => {
     cards.push({
@@ -574,7 +556,8 @@ export const adaptToTribunalOpinionesData = (exercise: ExerciseData): any => {
   // Build config object with defaults
   const tribunalConfig = {
     dragAndDrop: config.dragAndDrop !== undefined ? config.dragAndDrop : false,
-    requireJustification: config.requireJustification !== undefined ? config.requireJustification : false,
+    requireJustification:
+      config.requireJustification !== undefined ? config.requireJustification : false,
     showHints: config.showHints !== undefined ? config.showHints : true,
   };
 
@@ -591,19 +574,21 @@ export const adaptToTribunalOpinionesData = (exercise: ExerciseData): any => {
     evaluationCriteria: content.evaluationCriteria || {
       evidencia: '¿Hay datos verificables que respalden la afirmación?',
       logica: '¿El razonamiento es válido y coherente?',
-      falacias: '¿Evita errores lógicos comunes?'
+      falacias: '¿Evita errores lógicos comunes?',
     },
     classificationHelp: content.classificationHelp || {
       hecho: 'Dato verificable objetivamente con fuentes documentadas',
       opinion: 'Juicio de valor subjetivo sin criterios objetivos de verificación',
-      interpretacion: 'Deducción razonable basada en evidencia pero no 100% demostrable'
-    }
+      interpretacion: 'Deducción razonable basada en evidencia pero no 100% demostrable',
+    },
   };
 
   return {
     ...base,
     description: exercise.description || '',
-    instructions: exercise.mechanicData?.instructions || 'Clasifica cada afirmación y evalúa si está bien fundamentada.',
+    instructions:
+      exercise.mechanicData?.instructions ||
+      'Clasifica cada afirmación y evalúa si está bien fundamentada.',
     config: tribunalConfig,
     content: tribunalContent,
   };

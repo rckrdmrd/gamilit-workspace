@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { VerdaderoFalsoData, VerdaderoFalsoStatement } from './verdaderoFalsoTypes';
-import { calculateScore, saveProgress } from '@shared/components/mechanics/mechanicsTypes';
+import { saveProgress } from '@shared/components/mechanics/mechanicsTypes';
 import { CheckCircle, XCircle } from 'lucide-react';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { submitExercise } from '@/features/progress/api/progressAPI';
@@ -23,20 +23,19 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
   exercise,
   onComplete,
   onProgressUpdate,
-  actionsRef
+  actionsRef,
 }) => {
   const { user } = useAuth(); // Get authenticated user
   const [statements, setStatements] = useState<VerdaderoFalsoStatement[]>(
-    exercise.statements.map(stmt => ({ ...stmt, userAnswer: null }))
+    exercise.statements.map((stmt) => ({ ...stmt, userAnswer: null })),
   );
-  const [hintsUsed, setHintsUsed] = useState(0);
+  const [hintsUsed] = useState(0);
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [showResults, setShowResults] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const answeredCount = statements.filter(s => s.userAnswer !== null).length;
+  const answeredCount = statements.filter((s) => s.userAnswer !== null).length;
 
   // FE-059: Removed local validation - correctAnswer field no longer available
   // Validation is now done server-side via backend API
@@ -51,8 +50,8 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
     if (onProgressUpdate) {
       // Prepare user answers in backend format (statement-id: boolean)
       const userAnswers: Record<string, boolean> = {};
-      statements.forEach(stmt => {
-        if (stmt.userAnswer !== null) {
+      statements.forEach((stmt) => {
+        if (stmt.userAnswer !== null && stmt.userAnswer !== undefined) {
           // BE-FE-064: Ensure ID is string
           userAnswers[String(stmt.id)] = stmt.userAnswer;
         }
@@ -67,12 +66,12 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
           hintsUsed,
           timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
         },
-        answers: { statements: userAnswers }  // BE-FE-064: Wrap in 'statements' key to match DTO
+        answers: { statements: userAnswers }, // BE-FE-064: Wrap in 'statements' key to match DTO
       });
 
       console.log('📊 [VerdaderoFalso] Progress update sent:', {
         answered: answeredCount,
-        totalQuestions: statements.length
+        totalQuestions: statements.length,
       });
     }
   }, [statements, hintsUsed, onProgressUpdate, answeredCount, startTime, exercise.id]);
@@ -80,10 +79,8 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
   const handleAnswer = (statementId: string, answer: boolean) => {
     if (showResults) return; // No cambiar respuestas después de verificar
 
-    setStatements(prev =>
-      prev.map(stmt =>
-        stmt.id === statementId ? { ...stmt, userAnswer: answer } : stmt
-      )
+    setStatements((prev) =>
+      prev.map((stmt) => (stmt.id === statementId ? { ...stmt, userAnswer: answer } : stmt)),
     );
   };
 
@@ -92,10 +89,10 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
     console.log('🔍 [VerdaderoFalso] Statements data types:', {
       firstStatementId: statements[0]?.id,
       idType: typeof statements[0]?.id,
-      sampleStatement: statements[0]
+      sampleStatement: statements[0],
     });
 
-    const allAnswered = statements.every(s => s.userAnswer !== null);
+    const allAnswered = statements.every((s) => s.userAnswer !== null);
 
     if (!allAnswered) {
       setFeedback({
@@ -118,14 +115,13 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
       return;
     }
 
-    setIsSubmitting(true);
     setShowResults(true);
 
     try {
       // Prepare answers in backend DTO format: { statements: { "1": true, "2": false } }
       const statementsAnswers: Record<string, boolean> = {};
-      statements.forEach(s => {
-        if (s.userAnswer !== null) {
+      statements.forEach((s) => {
+        if (s.userAnswer !== null && s.userAnswer !== undefined) {
           // BE-FE-064: Ensure ID is string (DB stores as number, need to convert)
           statementsAnswers[String(s.id)] = s.userAnswer;
         }
@@ -137,7 +133,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
       console.log('📝 [VerdaderoFalso] Submitting answers:', {
         answersCount: Object.keys(statementsAnswers).length,
         sampleIds: Object.keys(statementsAnswers).slice(0, 3),
-        payload: answersObj
+        payload: answersObj,
       });
 
       // Submit to backend API
@@ -146,17 +142,23 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
       // Show backend response
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
-        title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
-        message: response.feedback?.overall || `Has obtenido ${response.correctAnswersCount} de ${response.totalQuestions} respuestas correctas.`,
+        title: response.isPerfect
+          ? '¡Perfecto!'
+          : response.score >= 70
+            ? '¡Buen trabajo!'
+            : 'Intenta de nuevo',
+        message:
+          response.feedback?.overall ||
+          `Has obtenido ${response.correctAnswersCount} de ${response.totalQuestions} respuestas correctas.`,
         score: response.score,
-        showConfetti: response.isPerfect
+        showConfetti: response.isPerfect,
       });
       setShowFeedback(true);
 
       console.log('✅ [VerdaderoFalso] Submission successful:', {
         attemptId: response.attemptId,
         score: response.score,
-        rewards: response.rewards
+        rewards: response.rewards,
       });
     } catch (error) {
       console.error('❌ [VerdaderoFalso] Submission error:', error);
@@ -166,13 +168,11 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
         message: 'Hubo un problema al enviar tu respuesta. Por favor, intenta nuevamente.',
       });
       setShowFeedback(true);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleReset = () => {
-    setStatements(exercise.statements.map(stmt => ({ ...stmt, userAnswer: null })));
+    setStatements(exercise.statements.map((stmt) => ({ ...stmt, userAnswer: null })));
     setShowResults(false);
     setFeedback(null);
     setShowFeedback(false);
@@ -183,21 +183,20 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
     if (actionsRef) {
       actionsRef.current = {
         handleReset,
-        handleCheck
+        handleCheck,
       };
     }
   }, [actionsRef, handleReset, handleCheck]);
 
   return (
     <>
-
       {/* Context Text */}
       {exercise.contextText && (
         <DetectiveCard variant="info" padding="md" className="mb-6">
           <div className="flex items-start gap-3">
             <div className="text-2xl">📖</div>
             <div>
-              <h3 className="font-bold text-lg mb-2">Contexto Histórico</h3>
+              <h3 className="mb-2 text-lg font-bold">Contexto Histórico</h3>
               <p className="text-gray-700">{exercise.contextText}</p>
             </div>
           </div>
@@ -206,17 +205,13 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
 
       {/* Question Header */}
       <div className="mb-6 text-center">
-        <h3 className="text-xl font-bold text-gray-800 mb-2">
-          ❓ {exercise.title}
-        </h3>
+        <h3 className="mb-2 text-xl font-bold text-gray-800">❓ {exercise.title}</h3>
       </div>
 
       {/* Statements */}
-      <div className="space-y-4 max-w-4xl mx-auto">
+      <div className="mx-auto max-w-4xl space-y-4">
         <AnimatePresence>
           {statements.map((statement, index) => {
-            const isAnswered = statement.userAnswer !== null;
-
             // FE-059: Removed local validation - correctAnswer field no longer available
             // Visual feedback disabled until backend integration
             const isCorrect = false; // Will be determined by backend
@@ -237,38 +232,36 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
                   <div className="space-y-4">
                     {/* Statement */}
                     <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+                      <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-700">
                         {index + 1}
                       </div>
-                      <p className="flex-1 text-lg text-gray-800 pt-1">
-                        {statement.statement}
-                      </p>
+                      <p className="flex-1 pt-1 text-lg text-gray-800">{statement.statement}</p>
                     </div>
 
                     {/* Answer Buttons */}
-                    <div className="flex gap-4 ml-11">
+                    <div className="ml-11 flex gap-4">
                       <button
                         onClick={() => handleAnswer(statement.id, true)}
                         disabled={showResults}
-                        className={`flex-1 px-6 py-3 rounded-lg font-semibold transition-all ${
+                        className={`flex-1 rounded-lg px-6 py-3 font-semibold transition-all ${
                           statement.userAnswer === true
-                            ? 'bg-green-500 text-white shadow-lg scale-105'
+                            ? 'scale-105 bg-green-500 text-white shadow-lg'
                             : 'bg-gray-100 text-gray-700 hover:bg-green-100 hover:text-green-700'
                         } ${showResults ? 'cursor-not-allowed opacity-75' : 'cursor-pointer'} flex items-center justify-center gap-2`}
                       >
-                        <CheckCircle className="w-5 h-5" />
+                        <CheckCircle className="h-5 w-5" />
                         Verdadero
                       </button>
                       <button
                         onClick={() => handleAnswer(statement.id, false)}
                         disabled={showResults}
-                        className={`flex-1 px-6 py-3 rounded-lg font-semibold transition-all ${
+                        className={`flex-1 rounded-lg px-6 py-3 font-semibold transition-all ${
                           statement.userAnswer === false
-                            ? 'bg-red-500 text-white shadow-lg scale-105'
+                            ? 'scale-105 bg-red-500 text-white shadow-lg'
                             : 'bg-gray-100 text-gray-700 hover:bg-red-100 hover:text-red-700'
                         } ${showResults ? 'cursor-not-allowed opacity-75' : 'cursor-pointer'} flex items-center justify-center gap-2`}
                       >
-                        <XCircle className="w-5 h-5" />
+                        <XCircle className="h-5 w-5" />
                         Falso
                       </button>
                     </div>
@@ -278,12 +271,10 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
-                        className="ml-11 mt-4 p-4 bg-white bg-opacity-50 rounded-lg border-l-4 border-blue-500"
+                        className="ml-11 mt-4 rounded-lg border-l-4 border-blue-500 bg-white bg-opacity-50 p-4"
                       >
                         <div className="flex items-start gap-2">
-                          <div className="text-2xl flex-shrink-0">
-                            {isCorrect ? '✅' : '❌'}
-                          </div>
+                          <div className="flex-shrink-0 text-2xl">{isCorrect ? '✅' : '❌'}</div>
                           <p className="text-gray-700">{statement.explanation}</p>
                         </div>
                       </motion.div>
@@ -313,7 +304,6 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
           }}
         />
       )}
-
     </>
   );
 };

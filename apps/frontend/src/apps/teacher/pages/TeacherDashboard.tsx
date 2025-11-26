@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
+import { SkeletonStats, SkeletonCard } from '@shared/components/loading';
 import {
   Users,
   TrendingUp,
@@ -12,9 +13,9 @@ import {
   Share2,
   Target,
   Award,
-  Loader2,
   AlertCircle,
   RefreshCw,
+  ChevronDown,
 } from 'lucide-react';
 
 // Import components
@@ -54,7 +55,7 @@ const safeFormat = (
   value: number | undefined | null,
   decimals: number = 1,
   suffix: string = '',
-  fallback: string = 'N/A'
+  fallback: string = 'N/A',
 ): string => {
   if (typeof value !== 'number' || isNaN(value)) {
     return fallback;
@@ -65,21 +66,20 @@ const safeFormat = (
 export default function TeacherDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [allStudents, setAllStudents] = useState<any[]>([]);
+  const [selectedClassroomId, setSelectedClassroomId] = useState<string>('');
+
+  // Fetch real classrooms from backend
+  const { classrooms, loading: classroomsLoading } = useClassrooms();
+
+  // Set first classroom as default when classrooms load
+  useEffect(() => {
+    if (classrooms && classrooms.length > 0 && !selectedClassroomId) {
+      setSelectedClassroomId(classrooms[0].id);
+    }
+  }, [classrooms, selectedClassroomId]);
 
   // Use real data from backend via useTeacherDashboard hook
-  const {
-    stats,
-    activities,
-    alerts,
-    loading,
-    error,
-    refresh,
-  } = useTeacherDashboard();
-
-  const classroomId = 'classroom-1'; // Mock ID - TODO: get from selected classroom
-
-  // Fetch real students from classrooms API instead of using mock data
-  const { data: classrooms } = useClassrooms();
+  const { stats, activities, alerts, loading, error, refresh } = useTeacherDashboard();
 
   useEffect(() => {
     const fetchAllStudents = async () => {
@@ -89,8 +89,8 @@ export default function TeacherDashboard() {
       }
 
       try {
-        const studentsPromises = classrooms.map(classroom =>
-          classroomsApi.getClassroomStudents(classroom.id)
+        const studentsPromises = classrooms.map((classroom: any) =>
+          classroomsApi.getClassroomStudents(classroom.id),
         );
         const studentsArrays = await Promise.all(studentsPromises);
         const students = studentsArrays.flat();
@@ -122,33 +122,59 @@ export default function TeacherDashboard() {
       <main className="detective-container py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-4xl font-bold text-detective-text mb-2">
+              <h1 className="mb-2 text-4xl font-bold text-detective-text">
                 Dashboard del Profesor
               </h1>
               <p className="text-detective-text-secondary">
                 Gestiona tu aula, monitorea estudiantes y genera analíticas avanzadas
               </p>
             </div>
-            {!loading && !error && (
-              <DetectiveButton
-                onClick={refresh}
-                variant="secondary"
-                className="flex items-center gap-2"
-              >
-                <RefreshCw className="w-4 h-4" />
-                Actualizar
-              </DetectiveButton>
-            )}
+            <div className="flex items-center gap-3">
+              {/* Classroom Selector */}
+              {!classroomsLoading && classrooms && classrooms.length > 0 && (
+                <div className="relative">
+                  <select
+                    value={selectedClassroomId}
+                    onChange={(e) => setSelectedClassroomId(e.target.value)}
+                    className="border-detective-border cursor-pointer appearance-none rounded-lg border bg-detective-bg-secondary px-4 py-2 pr-10 text-detective-text focus:border-detective-orange focus:outline-none"
+                  >
+                    {classrooms.map((classroom: any) => (
+                      <option key={classroom.id} value={classroom.id}>
+                        {classroom.name || `Clase ${classroom.id}`}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-detective-text-secondary" />
+                </div>
+              )}
+              {!loading && !error && (
+                <DetectiveButton
+                  onClick={refresh}
+                  variant="secondary"
+                  className="flex items-center gap-2"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  Actualizar
+                </DetectiveButton>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Loading State */}
         {loading && (
-          <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="w-12 h-12 text-detective-orange animate-spin mb-4" />
-            <p className="text-detective-text-secondary">Cargando datos del dashboard...</p>
+          <div className="space-y-6">
+            {/* Stats Skeleton */}
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+              <SkeletonStats count={4} />
+            </div>
+            {/* Content Skeleton */}
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <SkeletonCard variant="large" />
+              <SkeletonCard variant="large" />
+            </div>
           </div>
         )}
 
@@ -156,19 +182,19 @@ export default function TeacherDashboard() {
         {error && !loading && (
           <DetectiveCard variant="danger">
             <div className="flex items-start gap-4">
-              <AlertCircle className="w-8 h-8 text-red-500 flex-shrink-0" />
+              <AlertCircle className="h-8 w-8 flex-shrink-0 text-red-500" />
               <div className="flex-1">
-                <h3 className="text-lg font-bold text-detective-text mb-2">
+                <h3 className="mb-2 text-lg font-bold text-detective-text">
                   Error al cargar datos
                 </h3>
-                <p className="text-detective-text-secondary mb-4">
+                <p className="mb-4 text-detective-text-secondary">
                   No se pudieron cargar los datos del dashboard. Por favor, intenta nuevamente.
                 </p>
-                <p className="text-sm text-red-400 mb-4 font-mono bg-red-950 p-2 rounded">
+                <p className="mb-4 rounded bg-red-950 p-2 font-mono text-sm text-red-400">
                   {error.message}
                 </p>
                 <DetectiveButton onClick={refresh} variant="primary">
-                  <RefreshCw className="w-4 h-4" />
+                  <RefreshCw className="h-4 w-4" />
                   Reintentar
                 </DetectiveButton>
               </div>
@@ -181,20 +207,20 @@ export default function TeacherDashboard() {
           <>
             {/* Navigation Tabs */}
             <div className="mb-8 overflow-x-auto">
-              <div className="flex gap-2 min-w-max pb-2">
+              <div className="flex min-w-max gap-2 pb-2">
                 {tabs.map((tab) => {
                   const Icon = tab.icon;
                   return (
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id as TabType)}
-                      className={`flex items-center gap-2 px-4 py-3 rounded-lg font-semibold transition-all ${
+                      className={`flex items-center gap-2 rounded-lg px-4 py-3 font-semibold transition-all ${
                         activeTab === tab.id
                           ? 'bg-detective-orange text-white shadow-lg'
                           : 'bg-detective-bg-secondary text-detective-text hover:bg-opacity-80'
                       }`}
                     >
-                      <Icon className="w-5 h-5" />
+                      <Icon className="h-5 w-5" />
                       <span>{tab.label}</span>
                     </button>
                   );
@@ -203,209 +229,246 @@ export default function TeacherDashboard() {
             </div>
 
             {/* Content Area */}
-        {activeTab === 'overview' && (
-          <div className="space-y-6">
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <DetectiveCard hoverable={false}>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-detective-text-secondary mb-1">Estudiantes</p>
-                    <p className="text-3xl font-bold text-detective-text">
-                      {stats?.active_students ?? 0}/{stats?.total_students ?? 0}
-                    </p>
-                    <p className="text-xs text-detective-text-secondary mt-1">Activos hoy</p>
-                  </div>
-                  <Users className="w-10 h-10 text-detective-orange" />
-                </div>
-              </DetectiveCard>
+            {activeTab === 'overview' && (
+              <div className="space-y-6">
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+                  <DetectiveCard hoverable={false}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="mb-1 text-sm text-detective-text-secondary">Estudiantes</p>
+                        <p className="text-3xl font-bold text-detective-text">
+                          {stats?.active_students ?? 0}/{stats?.total_students ?? 0}
+                        </p>
+                        <p className="mt-1 text-xs text-detective-text-secondary">Activos hoy</p>
+                      </div>
+                      <Users className="h-10 w-10 text-detective-orange" />
+                    </div>
+                  </DetectiveCard>
 
-              <DetectiveCard hoverable={false}>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-detective-text-secondary mb-1">Score Promedio</p>
-                    <p className="text-3xl font-bold text-detective-gold">
-                      {safeFormat(stats?.average_class_score, 1, '%', 'N/A')}
-                    </p>
-                    <p className="text-xs text-green-500 mt-1">
-                      {safeFormat(stats?.engagement_rate, 1, '% engagement', 'N/A')}
-                    </p>
-                  </div>
-                  <Award className="w-10 h-10 text-detective-gold" />
-                </div>
-              </DetectiveCard>
+                  <DetectiveCard hoverable={false}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="mb-1 text-sm text-detective-text-secondary">Score Promedio</p>
+                        <p className="text-3xl font-bold text-detective-gold">
+                          {safeFormat(stats?.average_class_score, 1, '%', 'N/A')}
+                        </p>
+                        <p className="mt-1 text-xs text-green-500">
+                          {safeFormat(stats?.engagement_rate, 1, '% engagement', 'N/A')}
+                        </p>
+                      </div>
+                      <Award className="h-10 w-10 text-detective-gold" />
+                    </div>
+                  </DetectiveCard>
 
-              <DetectiveCard hoverable={false}>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-detective-text-secondary mb-1">Tasa de Completitud</p>
-                    <p className="text-3xl font-bold text-detective-text">
-                      {safeFormat(stats?.completion_rate, 0, '%', '0%')}
-                    </p>
-                    <p className="text-xs text-detective-text-secondary mt-1">De ejercicios</p>
-                  </div>
-                  <Target className="w-10 h-10 text-detective-accent" />
-                </div>
-              </DetectiveCard>
+                  <DetectiveCard hoverable={false}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="mb-1 text-sm text-detective-text-secondary">
+                          Tasa de Completitud
+                        </p>
+                        <p className="text-3xl font-bold text-detective-text">
+                          {safeFormat(stats?.completion_rate, 0, '%', '0%')}
+                        </p>
+                        <p className="mt-1 text-xs text-detective-text-secondary">De ejercicios</p>
+                      </div>
+                      <Target className="text-detective-accent h-10 w-10" />
+                    </div>
+                  </DetectiveCard>
 
-              <DetectiveCard hoverable={false}>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-detective-text-secondary mb-1">Alertas Pendientes</p>
-                    <p className="text-3xl font-bold text-red-500">
-                      {alerts?.length ?? stats?.pending_alerts ?? 0}
-                    </p>
-                    <p className="text-xs text-detective-text-secondary mt-1">Requieren atención</p>
-                  </div>
-                  <AlertTriangle className="w-10 h-10 text-red-500" />
+                  <DetectiveCard hoverable={false}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="mb-1 text-sm text-detective-text-secondary">
+                          Alertas Pendientes
+                        </p>
+                        <p className="text-3xl font-bold text-red-500">
+                          {alerts?.length ?? stats?.pending_alerts ?? 0}
+                        </p>
+                        <p className="mt-1 text-xs text-detective-text-secondary">
+                          Requieren atención
+                        </p>
+                      </div>
+                      <AlertTriangle className="h-10 w-10 text-red-500" />
+                    </div>
+                  </DetectiveCard>
                 </div>
-              </DetectiveCard>
-            </div>
 
-            {/* Quick Actions */}
-            <DetectiveCard>
-              <h3 className="text-xl font-bold text-detective-text mb-4">Acciones Rápidas</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <DetectiveButton onClick={() => setActiveTab('monitoring')} variant="secondary">
-                  <Users className="w-5 h-5" />
-                  Ver Estudiantes
-                </DetectiveButton>
-                <DetectiveButton onClick={() => setActiveTab('assignments')} variant="secondary">
-                  <Calendar className="w-5 h-5" />
-                  Nueva Asignación
-                </DetectiveButton>
-                <DetectiveButton onClick={() => setActiveTab('alerts')} variant="secondary">
-                  <AlertTriangle className="w-5 h-5" />
-                  Ver Alertas
-                </DetectiveButton>
-                <DetectiveButton onClick={() => setActiveTab('reports')} variant="secondary">
-                  <FileText className="w-5 h-5" />
-                  Generar Reporte
-                </DetectiveButton>
+                {/* Quick Actions */}
+                <DetectiveCard>
+                  <h3 className="mb-4 text-xl font-bold text-detective-text">Acciones Rápidas</h3>
+                  <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                    <DetectiveButton onClick={() => setActiveTab('monitoring')} variant="secondary">
+                      <Users className="h-5 w-5" />
+                      Ver Estudiantes
+                    </DetectiveButton>
+                    <DetectiveButton
+                      onClick={() => setActiveTab('assignments')}
+                      variant="secondary"
+                    >
+                      <Calendar className="h-5 w-5" />
+                      Nueva Asignación
+                    </DetectiveButton>
+                    <DetectiveButton onClick={() => setActiveTab('alerts')} variant="secondary">
+                      <AlertTriangle className="h-5 w-5" />
+                      Ver Alertas
+                    </DetectiveButton>
+                    <DetectiveButton onClick={() => setActiveTab('reports')} variant="secondary">
+                      <FileText className="h-5 w-5" />
+                      Generar Reporte
+                    </DetectiveButton>
+                  </div>
+                </DetectiveCard>
+
+                {/* Recent Activity Preview */}
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                  <DetectiveCard>
+                    <h3 className="mb-4 text-lg font-bold text-detective-text">
+                      Actividad Reciente
+                    </h3>
+                    {activities && activities.length > 0 ? (
+                      <div className="space-y-3">
+                        {activities
+                          .filter((activity) => activity && activity.id && activity.timestamp)
+                          .slice(0, 5)
+                          .map((activity) => {
+                            // Determine icon based on activity type
+                            // Activity types: 'submission' | 'assignment_created' | 'student_joined' | 'achievement_unlocked'
+                            const getIcon = () => {
+                              if (activity.type === 'submission')
+                                return <FileText className="mt-1 h-5 w-5 text-green-500" />;
+                              if (activity.type === 'achievement_unlocked')
+                                return <Award className="mt-1 h-5 w-5 text-detective-gold" />;
+                              if (activity.type === 'assignment_created')
+                                return <Calendar className="mt-1 h-5 w-5 text-blue-500" />;
+                              if (activity.type === 'student_joined')
+                                return <Users className="text-detective-accent mt-1 h-5 w-5" />;
+                              return <Calendar className="text-detective-accent mt-1 h-5 w-5" />;
+                            };
+
+                            // Safely format timestamp
+                            const formatTimestamp = (timestamp: string) => {
+                              try {
+                                return new Date(timestamp).toLocaleString('es-ES', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                });
+                              } catch (e) {
+                                return timestamp; // Fallback to raw value if parsing fails
+                              }
+                            };
+
+                            return (
+                              <div
+                                key={activity.id}
+                                className="flex items-start gap-3 rounded-lg bg-detective-bg-secondary p-3"
+                              >
+                                {getIcon()}
+                                <div className="flex-1">
+                                  <p className="text-sm text-detective-text">
+                                    {activity.description}
+                                  </p>
+                                  <p className="text-xs text-detective-text-secondary">
+                                    {formatTimestamp(activity.timestamp)}
+                                  </p>
+                                </div>
+                              </div>
+                            );
+                          })}
+                      </div>
+                    ) : (
+                      <div className="py-8 text-center">
+                        <Calendar className="mx-auto mb-2 h-12 w-12 text-detective-text-secondary opacity-50" />
+                        <p className="text-detective-text-secondary">No hay actividad reciente</p>
+                      </div>
+                    )}
+                  </DetectiveCard>
+
+                  <DetectiveCard>
+                    <h3 className="mb-4 text-lg font-bold text-detective-text">
+                      Próximas Fechas Límite
+                    </h3>
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-3 rounded-lg bg-detective-bg-secondary p-3">
+                        <Calendar className="mt-1 h-5 w-5 text-detective-orange" />
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-detective-text">
+                            Práctica Semanal: Marie Curie
+                          </p>
+                          <p className="text-xs text-detective-text-secondary">Vence en 2 días</p>
+                          <p className="text-xs text-detective-text-secondary">
+                            15/25 estudiantes completaron
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3 rounded-lg bg-detective-bg-secondary p-3">
+                        <Calendar className="mt-1 h-5 w-5 text-detective-orange" />
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-detective-text">
+                            Evaluación: Descubrimientos
+                          </p>
+                          <p className="text-xs text-detective-text-secondary">Vence en 5 días</p>
+                          <p className="text-xs text-detective-text-secondary">
+                            8/25 estudiantes completaron
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </DetectiveCard>
+                </div>
               </div>
-            </DetectiveCard>
+            )}
 
-            {/* Recent Activity Preview */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {activeTab === 'monitoring' && selectedClassroomId && (
+              <StudentMonitoringPanel classroomId={selectedClassroomId} />
+            )}
+
+            {activeTab === 'assignments' && selectedClassroomId && (
+              <AssignmentCreator classroomId={selectedClassroomId} />
+            )}
+
+            {activeTab === 'progress' && selectedClassroomId && (
+              <ClassProgressDashboard classroomId={selectedClassroomId} />
+            )}
+
+            {activeTab === 'alerts' && selectedClassroomId && (
+              <InterventionAlertsPanel classroomId={selectedClassroomId} />
+            )}
+
+            {activeTab === 'analytics' && selectedClassroomId && (
+              <LearningAnalyticsDashboard classroomId={selectedClassroomId} />
+            )}
+
+            {activeTab === 'insights' && selectedClassroomId && (
+              <PerformanceInsightsPanel classroomId={selectedClassroomId} students={allStudents} />
+            )}
+
+            {activeTab === 'reports' && selectedClassroomId && (
+              <ReportGenerator classroomId={selectedClassroomId} students={allStudents} />
+            )}
+
+            {activeTab === 'communication' && selectedClassroomId && (
+              <ParentCommunicationHub classroomId={selectedClassroomId} students={allStudents} />
+            )}
+
+            {/* No Classroom Selected State */}
+            {!selectedClassroomId && activeTab !== 'overview' && activeTab !== 'resources' && (
               <DetectiveCard>
-                <h3 className="text-lg font-bold text-detective-text mb-4">
-                  Actividad Reciente
-                </h3>
-                {activities && activities.length > 0 ? (
-                  <div className="space-y-3">
-                    {activities
-                      .filter(activity => activity && activity.id && activity.timestamp)
-                      .slice(0, 5)
-                      .map((activity) => {
-                        // Determine icon based on activity type
-                        // Activity types: 'submission' | 'assignment_created' | 'student_joined' | 'achievement_unlocked'
-                        const getIcon = () => {
-                          if (activity.type === 'submission') return <FileText className="w-5 h-5 text-green-500 mt-1" />;
-                          if (activity.type === 'achievement_unlocked') return <Award className="w-5 h-5 text-detective-gold mt-1" />;
-                          if (activity.type === 'assignment_created') return <Calendar className="w-5 h-5 text-blue-500 mt-1" />;
-                          if (activity.type === 'student_joined') return <Users className="w-5 h-5 text-detective-accent mt-1" />;
-                          return <Calendar className="w-5 h-5 text-detective-accent mt-1" />;
-                        };
-
-                        // Safely format timestamp
-                        const formatTimestamp = (timestamp: string) => {
-                          try {
-                            return new Date(timestamp).toLocaleString('es-ES', {
-                              month: 'short',
-                              day: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            });
-                          } catch (e) {
-                            return timestamp; // Fallback to raw value if parsing fails
-                          }
-                        };
-
-                        return (
-                          <div key={activity.id} className="flex items-start gap-3 p-3 bg-detective-bg-secondary rounded-lg">
-                            {getIcon()}
-                            <div className="flex-1">
-                              <p className="text-sm text-detective-text">{activity.description}</p>
-                              <p className="text-xs text-detective-text-secondary">
-                                {formatTimestamp(activity.timestamp)}
-                              </p>
-                            </div>
-                          </div>
-                        );
-                      })}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <Calendar className="w-12 h-12 text-detective-text-secondary mx-auto mb-2 opacity-50" />
-                    <p className="text-detective-text-secondary">No hay actividad reciente</p>
-                  </div>
-                )}
-              </DetectiveCard>
-
-              <DetectiveCard>
-                <h3 className="text-lg font-bold text-detective-text mb-4">
-                  Próximas Fechas Límite
-                </h3>
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3 p-3 bg-detective-bg-secondary rounded-lg">
-                    <Calendar className="w-5 h-5 text-detective-orange mt-1" />
-                    <div className="flex-1">
-                      <p className="text-sm text-detective-text font-semibold">
-                        Práctica Semanal: Marie Curie
-                      </p>
-                      <p className="text-xs text-detective-text-secondary">Vence en 2 días</p>
-                      <p className="text-xs text-detective-text-secondary">15/25 estudiantes completaron</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3 p-3 bg-detective-bg-secondary rounded-lg">
-                    <Calendar className="w-5 h-5 text-detective-orange mt-1" />
-                    <div className="flex-1">
-                      <p className="text-sm text-detective-text font-semibold">
-                        Evaluación: Descubrimientos
-                      </p>
-                      <p className="text-xs text-detective-text-secondary">Vence en 5 días</p>
-                      <p className="text-xs text-detective-text-secondary">8/25 estudiantes completaron</p>
-                    </div>
-                  </div>
+                <div className="py-12 text-center">
+                  <Users className="mx-auto mb-4 h-16 w-16 text-detective-text-secondary opacity-50" />
+                  <h3 className="mb-2 text-lg font-bold text-detective-text">
+                    Selecciona una Clase
+                  </h3>
+                  <p className="text-detective-text-secondary">
+                    Por favor, selecciona una clase del menú superior para ver esta sección
+                  </p>
                 </div>
               </DetectiveCard>
-            </div>
-          </div>
-        )}
+            )}
 
-        {activeTab === 'monitoring' && (
-          <StudentMonitoringPanel classroomId={classroomId} />
-        )}
-
-        {activeTab === 'assignments' && (
-          <AssignmentCreator classroomId={classroomId} />
-        )}
-
-        {activeTab === 'progress' && (
-          <ClassProgressDashboard classroomId={classroomId} />
-        )}
-
-        {activeTab === 'alerts' && (
-          <InterventionAlertsPanel classroomId={classroomId} />
-        )}
-
-        {activeTab === 'analytics' && (
-          <LearningAnalyticsDashboard classroomId={classroomId} />
-        )}
-
-        {activeTab === 'insights' && (
-          <PerformanceInsightsPanel classroomId={classroomId} students={allStudents} />
-        )}
-
-        {activeTab === 'reports' && (
-          <ReportGenerator classroomId={classroomId} students={allStudents} />
-        )}
-
-        {activeTab === 'communication' && (
-          <ParentCommunicationHub classroomId={classroomId} students={allStudents} />
-        )}
-
-        {activeTab === 'resources' && <ResourceSharingPanel />}
+            {activeTab === 'resources' && <ResourceSharingPanel />}
           </>
         )}
       </main>

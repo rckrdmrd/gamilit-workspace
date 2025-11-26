@@ -1,4 +1,3 @@
-import React from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { useUserGamification } from '@/shared/hooks/useUserGamification';
 import { TeacherLayout } from '../layouts/TeacherLayout';

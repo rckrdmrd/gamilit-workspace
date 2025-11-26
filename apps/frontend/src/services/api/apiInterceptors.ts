@@ -4,7 +4,7 @@
  * Additional request/response interceptors for logging, caching, and monitoring
  */
 
-import type { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
 // ============================================================================
 // REQUEST INTERCEPTORS
@@ -13,7 +13,9 @@ import type { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } fr
 /**
  * Add timestamp to request
  */
-export const timestampInterceptor = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+export const timestampInterceptor = (
+  config: InternalAxiosRequestConfig,
+): InternalAxiosRequestConfig => {
   // Add request timestamp to headers
   if (config.headers) {
     config.headers['X-Request-Time'] = new Date().toISOString();
@@ -28,7 +30,9 @@ export const timestampInterceptor = (config: InternalAxiosRequestConfig): Intern
 /**
  * Add client version to request
  */
-export const versionInterceptor = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+export const versionInterceptor = (
+  config: InternalAxiosRequestConfig,
+): InternalAxiosRequestConfig => {
   const version = import.meta.env.VITE_APP_VERSION || '1.0.0';
 
   if (config.headers) {
@@ -41,7 +45,9 @@ export const versionInterceptor = (config: InternalAxiosRequestConfig): Internal
 /**
  * Add request ID for tracing
  */
-export const requestIdInterceptor = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+export const requestIdInterceptor = (
+  config: InternalAxiosRequestConfig,
+): InternalAxiosRequestConfig => {
   // Generate unique request ID
   const requestId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
@@ -55,7 +61,9 @@ export const requestIdInterceptor = (config: InternalAxiosRequestConfig): Intern
 /**
  * Cache control interceptor
  */
-export const cacheControlInterceptor = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+export const cacheControlInterceptor = (
+  config: InternalAxiosRequestConfig,
+): InternalAxiosRequestConfig => {
   // Add cache control headers for GET requests
   if (config.method?.toLowerCase() === 'get' && config.headers) {
     // Check if cache is explicitly disabled
@@ -154,7 +162,7 @@ const transformDates = (obj: any): any => {
   if (typeof obj === 'object') {
     const transformed: any = {};
     for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
         transformed[key] = transformDates(obj[key]);
       }
     }
@@ -231,9 +239,8 @@ export const analyticsInterceptor = {
   response: (response: AxiosResponse): AxiosResponse => {
     // Track successful API response
     if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
-      const config = response.config as any;
-      const duration = config.metadata?.startTime ? Date.now() - config.metadata.startTime : 0;
-
+      // const config = response.config as any;
+      // const duration = config.metadata?.startTime ? Date.now() - config.metadata.startTime : 0;
       // Example: trackEvent('api_response_success', {
       //   url: config.url,
       //   status: response.status,

@@ -210,11 +210,8 @@ CREATE INDEX IF NOT EXISTS idx_user_stats_perfect_scores
 -- =====================================================
 -- TRIGGERS
 -- =====================================================
--- Auto-update updated_at timestamp
-CREATE TRIGGER trg_user_stats_updated_at
-    BEFORE UPDATE ON gamification_system.user_stats
-    FOR EACH ROW
-    EXECUTE FUNCTION gamilit.update_updated_at_column();
+-- NOTE: Trigger trg_user_stats_updated_at movido a archivo separado
+-- Ver: gamification_system/triggers/20-trg_user_stats_updated_at.sql
 
 -- =====================================================
 -- ROW LEVEL SECURITY (RLS)

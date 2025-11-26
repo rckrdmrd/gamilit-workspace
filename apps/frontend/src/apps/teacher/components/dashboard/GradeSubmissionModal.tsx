@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, CheckCircle, AlertCircle, Loader, Award, FileText, User, Calendar } from 'lucide-react';
+import { X, CheckCircle, AlertCircle, Loader, Award, FileText, Calendar } from 'lucide-react';
 import type { DashboardSubmission, GradeSubmissionData } from '../../types';
 
 interface GradeSubmissionModalProps {
@@ -120,7 +120,7 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
           />
 
           {/* Modal */}
@@ -129,37 +129,39 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ type: "spring", duration: 0.5 }}
-              className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+              transition={{ type: 'spring', duration: 0.5 }}
+              className="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-5 flex items-center justify-between">
+              <div className="flex items-center justify-between bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-5">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-white/20 rounded-lg">
-                    <Award className="w-6 h-6 text-white" />
+                  <div className="rounded-lg bg-white/20 p-2">
+                    <Award className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <h2 className="text-2xl font-bold text-white">Grade Submission</h2>
-                    <p className="text-purple-100 text-sm">{submission.studentName} - {submission.assignmentTitle}</p>
+                    <p className="text-sm text-purple-100">
+                      {submission.studentName} - {submission.assignmentTitle}
+                    </p>
                   </div>
                 </div>
                 <button
                   onClick={handleClose}
                   disabled={isSubmitting}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-colors disabled:opacity-50"
+                  className="rounded-lg p-2 transition-colors hover:bg-white/20 disabled:opacity-50"
                 >
-                  <X className="w-6 h-6 text-white" />
+                  <X className="h-6 w-6 text-white" />
                 </button>
               </div>
 
               {/* Content */}
-              <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+              <div className="max-h-[calc(90vh-200px)] overflow-y-auto p-6">
                 {/* Student Info */}
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 mb-6">
+                <div className="mb-6 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 p-4">
                   <div className="grid grid-cols-3 gap-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-lg font-bold text-white">
                         {submission.studentName.charAt(0)}
                       </div>
                       <div>
@@ -168,7 +170,7 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Calendar className="w-5 h-5 text-gray-600" />
+                      <Calendar className="h-5 w-5 text-gray-600" />
                       <div>
                         <p className="text-xs text-gray-600">Submitted</p>
                         <p className="font-semibold text-gray-800">
@@ -182,7 +184,7 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <FileText className="w-5 h-5 text-gray-600" />
+                      <FileText className="h-5 w-5 text-gray-600" />
                       <div>
                         <p className="text-xs text-gray-600">Attempt</p>
                         <p className="font-semibold text-gray-800">#{submission.attemptNumber}</p>
@@ -192,10 +194,10 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
                 </div>
 
                 {/* Current Grade Display */}
-                <div className="bg-white rounded-xl border-2 border-gray-200 p-6 mb-6">
+                <div className="mb-6 rounded-xl border-2 border-gray-200 bg-white p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600 mb-1">Current Score</p>
+                      <p className="mb-1 text-sm text-gray-600">Current Score</p>
                       <div className="flex items-baseline gap-3">
                         <p className="text-4xl font-bold text-gray-800">
                           {totalScore} <span className="text-xl text-gray-500">/ {maxScore}</span>
@@ -205,26 +207,29 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
                         </p>
                       </div>
                     </div>
-                    <div className={`px-8 py-4 rounded-xl ${getGradeColor(letterGrade)}`}>
+                    <div className={`rounded-xl px-8 py-4 ${getGradeColor(letterGrade)}`}>
                       <p className="text-5xl font-bold">{letterGrade}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Answers and Scoring */}
-                <div className="space-y-4 mb-6">
+                <div className="mb-6 space-y-4">
                   <h3 className="text-lg font-bold text-gray-800">Exercise Responses</h3>
                   {submission.answers.map((answer, index) => (
-                    <div key={answer.exerciseId} className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                      <div className="flex items-start justify-between mb-3">
+                    <div
+                      key={answer.exerciseId}
+                      className="rounded-xl border border-gray-200 bg-gray-50 p-5"
+                    >
+                      <div className="mb-3 flex items-start justify-between">
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="px-2 py-0.5 bg-blue-500 text-white text-xs font-bold rounded">
+                          <div className="mb-2 flex items-center gap-2">
+                            <span className="rounded bg-blue-500 px-2 py-0.5 text-xs font-bold text-white">
                               Q{index + 1}
                             </span>
                             <h4 className="font-semibold text-gray-800">{answer.exerciseTitle}</h4>
                           </div>
-                          <div className="bg-white rounded-lg p-3 mb-3">
+                          <div className="mb-3 rounded-lg bg-white p-3">
                             <p className="text-sm text-gray-700">{answer.answer}</p>
                           </div>
                         </div>
@@ -239,13 +244,17 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
                           max={answer.maxPoints}
                           value={scores[answer.exerciseId] ?? ''}
                           onChange={(e) =>
-                            handleScoreChange(answer.exerciseId, parseFloat(e.target.value) || 0, answer.maxPoints)
+                            handleScoreChange(
+                              answer.exerciseId,
+                              parseFloat(e.target.value) || 0,
+                              answer.maxPoints,
+                            )
                           }
                           placeholder="0"
-                          className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-center font-bold"
+                          className="w-20 rounded-lg border border-gray-300 px-3 py-2 text-center font-bold focus:border-transparent focus:ring-2 focus:ring-purple-500"
                         />
                         <span className="text-sm text-gray-600">/ {answer.maxPoints} points</span>
-                        <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden ml-4">
+                        <div className="ml-4 h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
                           <div
                             className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-300"
                             style={{
@@ -260,7 +269,7 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
 
                 {/* Feedback */}
                 <div className="mb-6">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="mb-2 block text-sm font-semibold text-gray-700">
                     Feedback (Optional)
                   </label>
                   <textarea
@@ -268,7 +277,7 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
                     onChange={(e) => setFeedback(e.target.value)}
                     rows={4}
                     placeholder="Provide constructive feedback to help the student improve..."
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
+                    className="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 transition-all focus:border-transparent focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
 
@@ -279,10 +288,12 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      className="p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3 mb-4"
+                      className="mb-4 flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 p-4"
                     >
-                      <CheckCircle className="w-5 h-5 text-green-600" />
-                      <p className="text-sm font-medium text-green-800">Grade submitted successfully!</p>
+                      <CheckCircle className="h-5 w-5 text-green-600" />
+                      <p className="text-sm font-medium text-green-800">
+                        Grade submitted successfully!
+                      </p>
                     </motion.div>
                   )}
 
@@ -291,9 +302,9 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3 mb-4"
+                      className="mb-4 flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4"
                     >
-                      <AlertCircle className="w-5 h-5 text-red-600" />
+                      <AlertCircle className="h-5 w-5 text-red-600" />
                       <p className="text-sm font-medium text-red-800">{errorMessage}</p>
                     </motion.div>
                   )}
@@ -301,13 +312,13 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
               </div>
 
               {/* Footer Actions */}
-              <div className="border-t border-gray-200 px-6 py-4 bg-gray-50">
+              <div className="border-t border-gray-200 bg-gray-50 px-6 py-4">
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={handleClose}
                     disabled={isSubmitting}
-                    className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-white transition-colors font-semibold disabled:opacity-50"
+                    className="flex-1 rounded-lg border border-gray-300 px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-white disabled:opacity-50"
                   >
                     Cancel
                   </button>
@@ -315,16 +326,16 @@ export const GradeSubmissionModal: React.FC<GradeSubmissionModalProps> = ({
                     type="button"
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all font-semibold disabled:opacity-50 disabled:transform-none flex items-center justify-center gap-2"
+                    className="flex flex-1 transform items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-500 px-6 py-3 font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-lg disabled:transform-none disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader className="w-5 h-5 animate-spin" />
+                        <Loader className="h-5 w-5 animate-spin" />
                         Submitting...
                       </>
                     ) : (
                       <>
-                        <CheckCircle className="w-5 h-5" />
+                        <CheckCircle className="h-5 w-5" />
                         Submit Grade
                       </>
                     )}

@@ -15,14 +15,8 @@
  * ~150 lines
  */
 
-import React from 'react';
 import { motion } from 'framer-motion';
-import {
-  Calendar,
-  CalendarRange,
-  Star,
-  Filter,
-} from 'lucide-react';
+import { Calendar, CalendarRange, Star, Filter } from 'lucide-react';
 import type { MissionType, MissionStatus, Mission } from '../types/missionsTypes';
 import { cn } from '@shared/utils/cn';
 
@@ -47,7 +41,7 @@ export function MissionTabs({
 }: MissionTabsProps) {
   // Count incomplete missions for badges
   const getIncompletCount = (missions: Mission[]) =>
-    missions.filter(m => m.status !== 'claimed').length;
+    missions.filter((m) => m.status !== 'claimed').length;
 
   const tabs = [
     {
@@ -81,11 +75,11 @@ export function MissionTabs({
   ];
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+    <div className="mb-6 rounded-xl bg-white p-6 shadow-md">
       {/* Main Tabs */}
-      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 mb-6">
+      <div className="mb-6 flex flex-col items-stretch justify-between gap-4 lg:flex-row lg:items-center">
         <div className="flex flex-wrap gap-2">
-          {tabs.map(tab => {
+          {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = currentTab === tab.id;
 
@@ -96,14 +90,14 @@ export function MissionTabs({
                 whileTap={{ scale: 0.97 }}
                 onClick={() => onTabChange(tab.id)}
                 className={cn(
-                  'relative flex items-center gap-3 px-6 py-3 rounded-lg font-semibold',
+                  'relative flex items-center gap-3 rounded-lg px-6 py-3 font-semibold',
                   'transition-all duration-300',
                   isActive
                     ? `bg-gradient-to-r ${getTabGradient(tab.color)} text-white shadow-lg`
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
                 )}
               >
-                <Icon className="w-5 h-5" />
+                <Icon className="h-5 w-5" />
                 <span>{tab.label}</span>
 
                 {/* Count Badge */}
@@ -113,11 +107,9 @@ export function MissionTabs({
                     animate={{ scale: 1 }}
                     className={cn(
                       'flex items-center justify-center',
-                      'min-w-[24px] h-6 px-2',
+                      'h-6 min-w-[24px] px-2',
                       'rounded-full text-xs font-bold',
-                      isActive
-                        ? 'bg-white/30 text-white'
-                        : `bg-${tab.color}-500 text-white`
+                      isActive ? 'bg-white/30 text-white' : `bg-${tab.color}-500 text-white`,
                     )}
                   >
                     {tab.count}
@@ -128,7 +120,7 @@ export function MissionTabs({
                 {isActive && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute inset-0 bg-white/20 rounded-lg"
+                    className="absolute inset-0 rounded-lg bg-white/20"
                     transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                   />
                 )}
@@ -139,20 +131,20 @@ export function MissionTabs({
 
         {/* Status Filter Dropdown */}
         <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-gray-500" />
+          <Filter className="h-4 w-4 text-gray-500" />
           <select
             value={statusFilter}
-            onChange={e => onStatusFilterChange(e.target.value as MissionStatus | 'all')}
+            onChange={(e) => onStatusFilterChange(e.target.value as MissionStatus | 'all')}
             className={cn(
-              'px-4 py-2 rounded-lg',
+              'rounded-lg px-4 py-2',
               'border-2 border-gray-200',
               'focus:border-orange-500 focus:outline-none',
               'bg-white text-gray-700',
-              'font-semibold cursor-pointer',
-              'transition-colors'
+              'cursor-pointer font-semibold',
+              'transition-colors',
             )}
           >
-            {statusFilters.map(filter => (
+            {statusFilters.map((filter) => (
               <option key={filter.value} value={filter.value}>
                 {filter.label}
               </option>
@@ -171,20 +163,20 @@ export function MissionTabs({
       >
         {currentTab === 'daily' && (
           <p>
-            <span className="font-semibold text-blue-600">Misiones Diarias:</span> Nuevas
-            misiones cada día. ¡Completa todas para obtener un bonus especial!
+            <span className="font-semibold text-blue-600">Misiones Diarias:</span> Nuevas misiones
+            cada día. ¡Completa todas para obtener un bonus especial!
           </p>
         )}
         {currentTab === 'weekly' && (
           <p>
-            <span className="font-semibold text-purple-600">Misiones Semanales:</span>{' '}
-            Desafíos que se renuevan cada semana. Más difíciles, mejores recompensas.
+            <span className="font-semibold text-purple-600">Misiones Semanales:</span> Desafíos que
+            se renuevan cada semana. Más difíciles, mejores recompensas.
           </p>
         )}
         {currentTab === 'special' && (
           <p>
-            <span className="font-semibold text-orange-600">Misiones Especiales:</span>{' '}
-            Eventos limitados con recompensas únicas. ¡No las dejes pasar!
+            <span className="font-semibold text-orange-600">Misiones Especiales:</span> Eventos
+            limitados con recompensas únicas. ¡No las dejes pasar!
           </p>
         )}
       </motion.div>

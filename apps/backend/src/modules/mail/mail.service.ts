@@ -23,7 +23,7 @@ export class MailService {
   private readonly frontendUrl: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
+    this.frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3005');
     this.initializeTransporter();
   }
 

@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Brackets } from 'typeorm';
+import { plainToInstance } from 'class-transformer';
 import { Module } from '@modules/educational/entities/module.entity';
 import { Exercise } from '@modules/educational/entities/exercise.entity';
 import { ContentTemplate } from '@modules/content/entities/content-template.entity';
@@ -673,8 +674,13 @@ export class AdminContentService {
       .orderBy('media.created_at', 'DESC')
       .getManyAndCount();
 
+    // Transform MediaFile entities to MediaFileResponseDto
+    const transformedData = data.map((media) =>
+      plainToInstance(MediaFileResponseDto, media, { excludeExtraneousValues: true }),
+    );
+
     return {
-      data: data as any,
+      data: transformedData,
       total,
       page,
       limit,

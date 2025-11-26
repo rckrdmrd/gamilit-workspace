@@ -18,8 +18,8 @@
  * - Animaciones de conexión
  */
 
-import React, { useState, useEffect, useRef } from 'react';
-import { ChevronRight, X, Link2, Check, Shuffle } from 'lucide-react';
+import React, { useState } from 'react';
+import { ChevronRight, X, Link2, Check } from 'lucide-react';
 import { ExerciseHeader } from './ExerciseHeader';
 import { ExerciseFeedback } from './ExerciseFeedback';
 import { useExerciseSubmission } from '../hooks/useExerciseSubmission';
@@ -49,7 +49,6 @@ export const MatchingActivity: React.FC<ExerciseComponentProps> = ({
   onComplete,
   onCancel,
   showTimer = true,
-  allowHints = true,
 }) => {
   // Parse matching pairs from exercise content
   const { leftItems, rightItems } = React.useMemo(() => {
@@ -99,9 +98,6 @@ export const MatchingActivity: React.FC<ExerciseComponentProps> = ({
   const [selectedRight, setSelectedRight] = useState<string | null>(null);
   const [attemptNumber, setAttemptNumber] = useState(1);
   const [feedback, setFeedback] = useState<FeedbackType | null>(null);
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-
-  const containerRef = useRef<HTMLDivElement>(null);
 
   // Hooks
   const { submitExercise, isSubmitting, result } = useExerciseSubmission({
@@ -111,8 +107,8 @@ export const MatchingActivity: React.FC<ExerciseComponentProps> = ({
         title: result.is_correct
           ? '¡Emparejamiento perfecto! 🎉'
           : result.score_percentage >= 50
-          ? 'Parcialmente correcto 😊'
-          : 'Emparejamientos incorrectos 😔',
+            ? 'Parcialmente correcto 😊'
+            : 'Emparejamientos incorrectos 😔',
         message: result.feedback,
         xpEarned: result.xp_earned,
         mlCoinsEarned: result.ml_coins_earned,
@@ -126,7 +122,7 @@ export const MatchingActivity: React.FC<ExerciseComponentProps> = ({
         }, 3000);
       }
     },
-    onError: (error) => {
+    onError: () => {
       setFeedback({
         type: 'error',
         title: 'Error',
@@ -256,7 +252,7 @@ export const MatchingActivity: React.FC<ExerciseComponentProps> = ({
     leftItems.length > 0 ? Math.round((matches.length / leftItems.length) * 100) : 0;
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="mx-auto max-w-6xl p-6">
       {/* Header */}
       <ExerciseHeader
         exercise={exercise}
@@ -273,36 +269,34 @@ export const MatchingActivity: React.FC<ExerciseComponentProps> = ({
       />
 
       {/* Main content */}
-      <div className="bg-white rounded-xl border-2 border-gray-200 p-6 mb-6">
+      <div className="mb-6 rounded-xl border-2 border-gray-200 bg-white p-6">
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">
-              {exercise.content.question}
-            </h2>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-xl font-bold text-gray-900">{exercise.content.question}</h2>
             <span className="text-sm text-gray-600">
               {matches.length}/{leftItems.length} emparejados ({completionPercentage}%)
             </span>
           </div>
 
           {/* Progress bar */}
-          <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+          <div className="mb-4 h-2 w-full rounded-full bg-gray-200">
             <div
-              className="bg-purple-600 h-2 rounded-full transition-all duration-300"
+              className="h-2 rounded-full bg-purple-600 transition-all duration-300"
               style={{ width: `${completionPercentage}%` }}
             />
           </div>
 
-          <p className="text-gray-600 mb-6">
-            Haz clic en un elemento de cada columna para emparejarlos. Puedes deshacer
-            haciendo clic en la ✕ de cada par.
+          <p className="mb-6 text-gray-600">
+            Haz clic en un elemento de cada columna para emparejarlos. Puedes deshacer haciendo clic
+            en la ✕ de cada par.
           </p>
         </div>
 
         {/* Matching grid */}
-        <div ref={containerRef} className="grid grid-cols-2 gap-8 relative">
+        <div className="relative grid grid-cols-2 gap-8">
           {/* Left column */}
           <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Columna A:</h3>
+            <h3 className="mb-3 text-sm font-semibold text-gray-700">Columna A:</h3>
             {leftItems.map((item) => {
               const isMatched = isItemMatched(item.id);
               const isSelected = selectedLeft === item.id;
@@ -314,21 +308,19 @@ export const MatchingActivity: React.FC<ExerciseComponentProps> = ({
                 <button
                   key={item.id}
                   onClick={() => handleItemClick(item.id, 'left')}
-                  onMouseEnter={() => setHoveredItem(item.id)}
-                  onMouseLeave={() => setHoveredItem(null)}
                   disabled={result !== null}
                   className={`
-                    w-full p-4 rounded-lg border-2 text-left transition-all
+                    w-full rounded-lg border-2 p-4 text-left transition-all
                     ${
                       isValidated
                         ? isCorrect
-                          ? 'bg-green-50 border-green-500'
-                          : 'bg-red-50 border-red-500'
+                          ? 'border-green-500 bg-green-50'
+                          : 'border-red-500 bg-red-50'
                         : isSelected
-                        ? 'bg-purple-100 border-purple-500 ring-2 ring-purple-200'
-                        : isMatched
-                        ? 'bg-blue-50 border-blue-400'
-                        : 'bg-white border-gray-300 hover:border-purple-400 hover:shadow-md'
+                          ? 'border-purple-500 bg-purple-100 ring-2 ring-purple-200'
+                          : isMatched
+                            ? 'border-blue-400 bg-blue-50'
+                            : 'border-gray-300 bg-white hover:border-purple-400 hover:shadow-md'
                     }
                     ${result ? 'cursor-default' : isMatched ? 'cursor-pointer' : 'cursor-pointer'}
                   `}
@@ -338,15 +330,13 @@ export const MatchingActivity: React.FC<ExerciseComponentProps> = ({
                     {isValidated && (
                       <span className="ml-2">
                         {isCorrect ? (
-                          <Check className="w-5 h-5 text-green-600" />
+                          <Check className="h-5 w-5 text-green-600" />
                         ) : (
-                          <X className="w-5 h-5 text-red-600" />
+                          <X className="h-5 w-5 text-red-600" />
                         )}
                       </span>
                     )}
-                    {isMatched && !isValidated && (
-                      <Link2 className="w-5 h-5 text-blue-600" />
-                    )}
+                    {isMatched && !isValidated && <Link2 className="h-5 w-5 text-blue-600" />}
                   </div>
                 </button>
               );
@@ -355,7 +345,7 @@ export const MatchingActivity: React.FC<ExerciseComponentProps> = ({
 
           {/* Right column */}
           <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Columna B:</h3>
+            <h3 className="mb-3 text-sm font-semibold text-gray-700">Columna B:</h3>
             {rightItems.map((item) => {
               const isMatched = isItemMatched(item.id);
               const isSelected = selectedRight === item.id;
@@ -367,21 +357,19 @@ export const MatchingActivity: React.FC<ExerciseComponentProps> = ({
                 <button
                   key={item.id}
                   onClick={() => handleItemClick(item.id, 'right')}
-                  onMouseEnter={() => setHoveredItem(item.id)}
-                  onMouseLeave={() => setHoveredItem(null)}
                   disabled={result !== null}
                   className={`
-                    w-full p-4 rounded-lg border-2 text-left transition-all
+                    w-full rounded-lg border-2 p-4 text-left transition-all
                     ${
                       isValidated
                         ? isCorrect
-                          ? 'bg-green-50 border-green-500'
-                          : 'bg-red-50 border-red-500'
+                          ? 'border-green-500 bg-green-50'
+                          : 'border-red-500 bg-red-50'
                         : isSelected
-                        ? 'bg-purple-100 border-purple-500 ring-2 ring-purple-200'
-                        : isMatched
-                        ? 'bg-blue-50 border-blue-400'
-                        : 'bg-white border-gray-300 hover:border-purple-400 hover:shadow-md'
+                          ? 'border-purple-500 bg-purple-100 ring-2 ring-purple-200'
+                          : isMatched
+                            ? 'border-blue-400 bg-blue-50'
+                            : 'border-gray-300 bg-white hover:border-purple-400 hover:shadow-md'
                     }
                     ${result ? 'cursor-default' : isMatched ? 'cursor-pointer' : 'cursor-pointer'}
                   `}
@@ -391,15 +379,13 @@ export const MatchingActivity: React.FC<ExerciseComponentProps> = ({
                     {isValidated && (
                       <span className="ml-2">
                         {isCorrect ? (
-                          <Check className="w-5 h-5 text-green-600" />
+                          <Check className="h-5 w-5 text-green-600" />
                         ) : (
-                          <X className="w-5 h-5 text-red-600" />
+                          <X className="h-5 w-5 text-red-600" />
                         )}
                       </span>
                     )}
-                    {isMatched && !isValidated && (
-                      <Link2 className="w-5 h-5 text-blue-600" />
-                    )}
+                    {isMatched && !isValidated && <Link2 className="h-5 w-5 text-blue-600" />}
                   </div>
                 </button>
               );
@@ -409,10 +395,8 @@ export const MatchingActivity: React.FC<ExerciseComponentProps> = ({
 
         {/* Current matches */}
         {matches.length > 0 && (
-          <div className="mt-8 p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">
-              Emparejamientos actuales:
-            </h3>
+          <div className="mt-8 rounded-lg border-2 border-gray-200 bg-gray-50 p-4">
+            <h3 className="mb-3 text-sm font-semibold text-gray-700">Emparejamientos actuales:</h3>
             <div className="space-y-2">
               {matches.map((match, index) => {
                 const leftItem = leftItems.find((i) => i.id === match.leftId);
@@ -424,36 +408,34 @@ export const MatchingActivity: React.FC<ExerciseComponentProps> = ({
                   <div
                     key={`${match.leftId}-${match.rightId}`}
                     className={`
-                      flex items-center gap-3 p-3 rounded-lg border
+                      flex items-center gap-3 rounded-lg border p-3
                       ${
                         isValidated
                           ? isCorrect
-                            ? 'bg-green-50 border-green-300'
-                            : 'bg-red-50 border-red-300'
-                          : 'bg-white border-gray-300'
+                            ? 'border-green-300 bg-green-50'
+                            : 'border-red-300 bg-red-50'
+                          : 'border-gray-300 bg-white'
                       }
                     `}
                   >
-                    <span className="font-medium text-gray-900 min-w-[40px]">
-                      #{index + 1}
-                    </span>
+                    <span className="min-w-[40px] font-medium text-gray-900">#{index + 1}</span>
                     <span className="flex-1 text-gray-800">{leftItem?.content}</span>
                     <span className="text-gray-400">↔</span>
                     <span className="flex-1 text-gray-800">{rightItem?.content}</span>
                     {isValidated ? (
                       isCorrect ? (
-                        <Check className="w-5 h-5 text-green-600" />
+                        <Check className="h-5 w-5 text-green-600" />
                       ) : (
-                        <X className="w-5 h-5 text-red-600" />
+                        <X className="h-5 w-5 text-red-600" />
                       )
                     ) : (
                       !result && (
                         <button
                           onClick={() => removeMatch(match.leftId, match.rightId)}
-                          className="p-1 hover:bg-red-100 rounded transition-colors"
+                          className="rounded p-1 transition-colors hover:bg-red-100"
                           title="Deshacer emparejamiento"
                         >
-                          <X className="w-4 h-4 text-red-600" />
+                          <X className="h-4 w-4 text-red-600" />
                         </button>
                       )
                     )}
@@ -465,11 +447,11 @@ export const MatchingActivity: React.FC<ExerciseComponentProps> = ({
         )}
 
         {/* Helper text */}
-        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
           <p className="text-sm text-blue-800">
-            💡 <strong>Tip:</strong> Haz clic en un elemento de la Columna A y luego en un
-            elemento de la Columna B para emparejarlos. Puedes cambiar los emparejamientos
-            haciendo clic en la ✕.
+            💡 <strong>Tip:</strong> Haz clic en un elemento de la Columna A y luego en un elemento
+            de la Columna B para emparejarlos. Puedes cambiar los emparejamientos haciendo clic en
+            la ✕.
           </p>
         </div>
       </div>
@@ -494,7 +476,7 @@ export const MatchingActivity: React.FC<ExerciseComponentProps> = ({
         {onCancel && !result && (
           <button
             onClick={onCancel}
-            className="px-6 py-3 border-2 border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+            className="rounded-lg border-2 border-gray-300 px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50"
           >
             Cancelar
           </button>
@@ -503,18 +485,15 @@ export const MatchingActivity: React.FC<ExerciseComponentProps> = ({
         <button
           onClick={handleSubmit}
           disabled={
-            isSubmitting ||
-            result !== null ||
-            timer.isTimeExpired ||
-            completionPercentage < 100
+            isSubmitting || result !== null || timer.isTimeExpired || completionPercentage < 100
           }
           className={`
-            px-8 py-3 rounded-lg font-semibold transition-all
-            flex items-center text-lg
+            flex items-center rounded-lg px-8 py-3
+            text-lg font-semibold transition-all
             ${
               completionPercentage === 100 && !isSubmitting && !result && !timer.isTimeExpired
-                ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-lg'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                ? 'bg-purple-600 text-white shadow-lg hover:bg-purple-700'
+                : 'cursor-not-allowed bg-gray-300 text-gray-500'
             }
           `}
         >
@@ -525,7 +504,7 @@ export const MatchingActivity: React.FC<ExerciseComponentProps> = ({
           ) : (
             <>
               Verificar emparejamientos
-              <ChevronRight className="w-5 h-5 ml-1" />
+              <ChevronRight className="ml-1 h-5 w-5" />
             </>
           )}
         </button>

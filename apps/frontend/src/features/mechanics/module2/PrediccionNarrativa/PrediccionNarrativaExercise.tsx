@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, CheckCircle, XCircle, AlertCircle, Lightbulb } from 'lucide-react';
+import { BookOpen, AlertCircle, Lightbulb } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
-import { calculateScore, saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import type {
   PrediccionNarrativaExerciseProps,
-  Scenario,
   ScenarioAnswer,
   PredictionOption,
 } from './prediccionNarrativaTypes';
@@ -24,19 +23,22 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
   actionsRef,
 }) => {
   const { user } = useAuth();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize answers for all scenarios
   const [answers, setAnswers] = useState<ScenarioAnswer[]>(
-    initialData?.answers || exercise.scenarios.map(s => ({
-      scenarioId: s.id,
-      selectedPredictionId: null,
-      isCorrect: null,
-    }))
+    initialData?.answers ||
+      exercise.scenarios.map((s) => ({
+        scenarioId: s.id,
+        selectedPredictionId: null,
+        isCorrect: null,
+      })),
   );
   const [showResults, setShowResults] = useState(initialData?.showResults || false);
   const [hintsUsed, setHintsUsed] = useState(initialData?.hintsUsed || 0);
-  const [startTime] = useState(new Date());
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_startTime] = useState(new Date());
   const [timeSpent, setTimeSpent] = useState(initialData?.timeSpent || 0);
   const [score, setScore] = useState(initialData?.score || 0);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -45,12 +47,12 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
   const [showHint, setShowHint] = useState(false);
 
   const currentScenario = exercise.scenarios[currentScenarioIndex];
-  const currentAnswer = answers.find(a => a.scenarioId === currentScenario.id);
+  const currentAnswer = answers.find((a) => a.scenarioId === currentScenario.id);
 
   // Timer
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeSpent(prev => prev + 1);
+      setTimeSpent((prev) => prev + 1);
     }, 1000);
     return () => clearInterval(timer);
   }, []);
@@ -73,14 +75,14 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
   // FE-055 & FE-059: Progress update callback with user answers
   useEffect(() => {
     if (onProgressUpdate) {
-      const answeredCount = answers.filter(a => a.selectedPredictionId !== null).length;
+      const answeredCount = answers.filter((a) => a.selectedPredictionId !== null).length;
 
       // FE-059: Removed local correctCount calculation - uses sanitized isCorrect field
 
       // Prepare user answers in backend format
       // Backend expects: { scenarios: { s1: "pred_a" } }
       const userAnswers: Record<string, string> = {};
-      answers.forEach(answer => {
+      answers.forEach((answer) => {
         if (answer.selectedPredictionId) {
           userAnswers[answer.scenarioId] = answer.selectedPredictionId;
         }
@@ -99,7 +101,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
 
       console.log('📊 [PrediccionNarrativa] Progress update sent:', {
         answered: answeredCount,
-        totalScenarios: exercise.scenarios.length
+        totalScenarios: exercise.scenarios.length,
       });
     }
   }, [answers, hintsUsed, timeSpent, onProgressUpdate, exercise.scenarios.length]);
@@ -107,21 +109,21 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
   const handleSelectPrediction = (predictionId: string) => {
     if (showResults) return;
 
-    setAnswers(prev =>
-      prev.map(answer =>
+    setAnswers((prev) =>
+      prev.map((answer) =>
         answer.scenarioId === currentScenario.id
           ? { ...answer, selectedPredictionId: predictionId, isCorrect: null }
-          : answer
-      )
+          : answer,
+      ),
     );
   };
 
   const handleCheck = async () => {
     // Check if all scenarios are answered
-    const allAnswered = answers.every(a => a.selectedPredictionId !== null);
+    const allAnswered = answers.every((a) => a.selectedPredictionId !== null);
 
     if (!allAnswered) {
-      const answeredCount = answers.filter(a => a.selectedPredictionId !== null).length;
+      const answeredCount = answers.filter((a) => a.selectedPredictionId !== null).length;
       setFeedback({
         type: 'error',
         title: 'Ejercicio Incompleto',
@@ -148,7 +150,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
     try {
       // Prepare answers in backend DTO format: { scenarios: { s1: "pred_a" } }
       const userAnswers: Record<string, string> = {};
-      answers.forEach(answer => {
+      answers.forEach((answer) => {
         if (answer.selectedPredictionId) {
           userAnswers[answer.scenarioId] = answer.selectedPredictionId;
         }
@@ -160,17 +162,23 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
       // Show backend response
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
-        title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
-        message: response.feedback?.overall || `Has predicho ${response.correctAnswersCount} de ${response.totalQuestions} escenarios correctamente.`,
+        title: response.isPerfect
+          ? '¡Perfecto!'
+          : response.score >= 70
+            ? '¡Buen trabajo!'
+            : 'Intenta de nuevo',
+        message:
+          response.feedback?.overall ||
+          `Has predicho ${response.correctAnswersCount} de ${response.totalQuestions} escenarios correctamente.`,
         score: response.score,
-        showConfetti: response.isPerfect
+        showConfetti: response.isPerfect,
       });
       setShowFeedback(true);
 
       console.log('✅ [PrediccionNarrativa] Submission successful:', {
         attemptId: response.attemptId,
         score: response.score,
-        rewards: response.rewards
+        rewards: response.rewards,
       });
     } catch (error) {
       console.error('❌ [PrediccionNarrativa] Submission error:', error);
@@ -187,11 +195,11 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
 
   const handleReset = () => {
     setAnswers(
-      exercise.scenarios.map(s => ({
+      exercise.scenarios.map((s) => ({
         scenarioId: s.id,
         selectedPredictionId: null,
         isCorrect: null,
-      }))
+      })),
     );
     setShowResults(false);
     setScore(0);
@@ -203,22 +211,22 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
 
   const handleNext = () => {
     if (currentScenarioIndex < exercise.scenarios.length - 1) {
-      setCurrentScenarioIndex(prev => prev + 1);
+      setCurrentScenarioIndex((prev) => prev + 1);
       setShowHint(false);
     }
   };
 
   const handlePrevious = () => {
     if (currentScenarioIndex > 0) {
-      setCurrentScenarioIndex(prev => prev - 1);
+      setCurrentScenarioIndex((prev) => prev - 1);
       setShowHint(false);
     }
   };
 
   const toggleHint = () => {
-    setShowHint(prev => !prev);
+    setShowHint((prev) => !prev);
     if (!showHint) {
-      setHintsUsed(prev => prev + 1);
+      setHintsUsed((prev) => prev + 1);
     }
   };
 
@@ -244,7 +252,8 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
   };
 
   // FE-059: Removed validation icons - isCorrect field no longer available
-  const getOptionIcon = (prediction: PredictionOption) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const getOptionIcon = (_prediction: PredictionOption) => {
     // No correctness feedback until backend integration
     return null;
   };
@@ -262,20 +271,20 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
             className="rounded-detective p-6 shadow-detective-lg"
             style={{
               background: 'linear-gradient(to right, #1e3a8a, #f97316)',
-              color: 'white'
+              color: 'white',
             }}
           >
-            <div className="flex items-center gap-3 mb-2">
-              <BookOpen className="w-8 h-8 text-white" />
+            <div className="mb-2 flex items-center gap-3">
+              <BookOpen className="h-8 w-8 text-white" />
               <h1 className="text-detective-3xl font-bold text-white">{exercise.title}</h1>
             </div>
             {exercise.subtitle && (
-              <p className="text-detective-base text-white mb-4" style={{ opacity: 0.9 }}>
+              <p className="mb-4 text-detective-base text-white" style={{ opacity: 0.9 }}>
                 {exercise.subtitle}
               </p>
             )}
             {exercise.description && (
-              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+              <div className="rounded-lg bg-white/20 p-4 backdrop-blur-sm">
                 <p className="text-detective-sm font-medium text-gray-900">Objetivo:</p>
                 <p className="text-detective-base text-gray-900">{exercise.description}</p>
               </div>
@@ -288,7 +297,8 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
               Escenario {currentScenarioIndex + 1} de {exercise.scenarios.length}
             </span>
             <span>
-              {answers.filter(a => a.selectedPredictionId !== null).length} de {exercise.scenarios.length} respondidos
+              {answers.filter((a) => a.selectedPredictionId !== null).length} de{' '}
+              {exercise.scenarios.length} respondidos
             </span>
           </div>
 
@@ -302,25 +312,25 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
               className="space-y-6"
             >
               {/* Context */}
-              <div className="bg-blue-50 border-l-4 border-detective-blue p-4 rounded-detective">
-                <h3 className="text-detective-base font-semibold text-detective-blue mb-2">
+              <div className="rounded-detective border-l-4 border-detective-blue bg-blue-50 p-4">
+                <h3 className="mb-2 text-detective-base font-semibold text-detective-blue">
                   Contexto Histórico
                 </h3>
                 <p className="text-detective-sm text-detective-text">{currentScenario.context}</p>
               </div>
 
               {/* Beginning of narrative */}
-              <div className="bg-purple-50 border-2 border-purple-200 p-6 rounded-detective">
-                <h3 className="text-detective-lg font-semibold text-detective-blue mb-3">
+              <div className="rounded-detective border-2 border-purple-200 bg-purple-50 p-6">
+                <h3 className="mb-3 text-detective-lg font-semibold text-detective-blue">
                   Inicio de la Historia
                 </h3>
-                <p className="text-detective-base text-detective-text leading-relaxed italic">
+                <p className="text-detective-base italic leading-relaxed text-detective-text">
                   "{currentScenario.beginning}"
                 </p>
               </div>
 
               {/* Question */}
-              <div className="text-center py-4">
+              <div className="py-4 text-center">
                 <h3 className="text-detective-xl font-bold text-detective-orange">
                   {currentScenario.question}
                 </h3>
@@ -335,12 +345,12 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
                     disabled={showResults}
                     whileHover={!showResults ? { scale: 1.02 } : {}}
                     whileTap={!showResults ? { scale: 0.98 } : {}}
-                    className={`w-full text-left p-4 border-2 rounded-detective transition-all ${getOptionStyle(
-                      prediction
+                    className={`w-full rounded-detective border-2 p-4 text-left transition-all ${getOptionStyle(
+                      prediction,
                     )} ${!showResults ? 'cursor-pointer' : 'cursor-default'}`}
                   >
                     <div className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-detective-orange/20 text-detective-orange font-bold flex items-center justify-center text-detective-sm">
+                      <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-detective-orange/20 text-detective-sm font-bold text-detective-orange">
                         {String.fromCharCode(65 + index)}
                       </span>
                       <div className="flex-1">
@@ -349,7 +359,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
                           <motion.div
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
-                            className="mt-3 pt-3 border-t border-gray-300"
+                            className="mt-3 border-t border-gray-300 pt-3"
                           >
                             <p className="text-detective-sm text-detective-text-secondary">
                               {prediction.explanation}
@@ -369,7 +379,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
                   <DetectiveButton
                     variant="secondary"
                     size="sm"
-                    icon={<Lightbulb className="w-4 h-4" />}
+                    icon={<Lightbulb className="h-4 w-4" />}
                     onClick={toggleHint}
                   >
                     {showHint ? 'Ocultar Pista' : 'Ver Pista Contextual'}
@@ -381,10 +391,10 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="mt-3 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-detective"
+                        className="mt-3 rounded-detective border-l-4 border-yellow-400 bg-yellow-50 p-4"
                       >
                         <div className="flex items-start gap-2">
-                          <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                          <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-600" />
                           <p className="text-detective-sm text-yellow-800">
                             {currentScenario.contextualHint}
                           </p>
@@ -398,7 +408,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
           </AnimatePresence>
 
           {/* Navigation & Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-gray-200">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-gray-200 pt-6">
             <div className="flex gap-2">
               <DetectiveButton
                 variant="secondary"
@@ -409,11 +419,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
                 ← Anterior
               </DetectiveButton>
               {currentScenarioIndex < exercise.scenarios.length - 1 && (
-                <DetectiveButton
-                  variant="secondary"
-                  size="md"
-                  onClick={handleNext}
-                >
+                <DetectiveButton variant="secondary" size="md" onClick={handleNext}>
                   Siguiente →
                 </DetectiveButton>
               )}
@@ -430,7 +436,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
                   variant="gold"
                   size="md"
                   onClick={handleCheck}
-                  disabled={answers.some(a => a.selectedPredictionId === null)}
+                  disabled={answers.some((a) => a.selectedPredictionId === null)}
                 >
                   Verificar Respuestas
                 </DetectiveButton>

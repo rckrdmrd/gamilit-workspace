@@ -23,7 +23,7 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { useRanksStore } from '../store/ranksStore';
-import type { UserRankProgress, XPSource, MultiplierSourceType } from '../types/ranksTypes';
+import type { UserRankProgress, MultiplierSourceType } from '../types/ranksTypes';
 
 // Mock API
 vi.mock('../api/ranksAPI', () => ({
@@ -59,9 +59,11 @@ describe('Ranks Integration Tests', () => {
     prestigeLevel: 0,
     multiplier: 1.0,
     mlCoinsEarned: 0,
-    mlCoinsEarned: 0,
     lastRankUp: new Date(),
     lastActivityDate: new Date(),
+    activityStreak: 0,
+    canRankUp: false,
+    canPrestige: false,
   };
 
   beforeEach(() => {
@@ -72,13 +74,22 @@ describe('Ranks Integration Tests', () => {
       userProgress: { ...initialProgress },
       prestigeProgress: {
         level: 0,
-        bonusMultiplier: 0,
-        totalRankUps: 0,
-        canPrestige: false,
+        totalPrestiges: 0,
+        totalXPAllTime: 0,
+        totalMLCoinsAllTime: 0,
+        lastPrestigeDate: null,
+        activeBonuses: [],
+        cumulativeMultiplier: 1.0,
       },
       multiplierBreakdown: {
         base: 1.0,
-        rank: 0,
+        rank: {
+          type: 'rank',
+          name: 'Nacom',
+          value: 1.0,
+          isPermanent: true,
+          description: 'Base rank multiplier',
+        },
         sources: [],
         hasExpiringSoon: false,
         expiringSoon: [],
@@ -173,7 +184,7 @@ describe('Ranks Integration Tests', () => {
       // Add enough XP to level up (initial xpToNextLevel is 100)
       await addXP(100, 'daily_challenge');
 
-      const canLevelUp = checkLevelUp();
+      checkLevelUp();
       // checkLevelUp is called automatically in addXP, which triggers levelUp
       // So the user should already be level 2
       const state = useRanksStore.getState();
@@ -255,9 +266,7 @@ describe('Ranks Integration Tests', () => {
       rankUp();
 
       const state = useRanksStore.getState();
-      const rankUpEntries = state.progressionHistory.filter(
-        (entry) => entry.type === 'rank_up'
-      );
+      const rankUpEntries = state.progressionHistory.filter((entry) => entry.type === 'rank_up');
       expect(rankUpEntries.length).toBeGreaterThan(0);
     });
 
@@ -441,13 +450,15 @@ describe('Ranks Integration Tests', () => {
       const { addHistoryEntry } = useRanksStore.getState();
 
       addHistoryEntry({
+        id: 'entry-1',
         type: 'rank_up',
         timestamp: new Date(),
-        details: {
-          fromRank: 'Nacom',
-          toRank: 'Ajaw',
-          level: 10,
-        },
+        title: 'Rank Up',
+        description: 'Ranked up from Nacom to Ajaw',
+        rank: 'Nacom',
+        xpSnapshot: 100,
+        levelSnapshot: 1,
+        multiplierSnapshot: 1.0,
       });
 
       const state = useRanksStore.getState();
@@ -461,9 +472,15 @@ describe('Ranks Integration Tests', () => {
       // Add multiple entries
       for (let i = 0; i < 10; i++) {
         addHistoryEntry({
+          id: `entry-${i}`,
           type: 'level_up',
           timestamp: new Date(),
-          details: { level: i + 1 },
+          title: `Level ${i + 1}`,
+          description: `Level ${i + 1} achieved`,
+          rank: 'Nacom',
+          xpSnapshot: 100 * i,
+          levelSnapshot: i + 1,
+          multiplierSnapshot: 1.0,
         });
       }
 
@@ -487,7 +504,7 @@ describe('Ranks Integration Tests', () => {
         },
       });
 
-      const { rerender } = render(<RankDisplay />);
+      render(<RankDisplay />);
 
       expect(screen.getByTestId('current-rank')).toHaveTextContent('Ajaw');
       expect(screen.getByTestId('current-level')).toHaveTextContent('5');
@@ -508,7 +525,7 @@ describe('Ranks Integration Tests', () => {
       // the user levels up and has 50 overflow XP
       const state = useRanksStore.getState();
       expect(screen.getByTestId('current-xp')).toHaveTextContent(
-        state.userProgress.currentXP.toString()
+        state.userProgress.currentXP.toString(),
       );
     });
   });

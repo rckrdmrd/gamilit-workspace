@@ -17,7 +17,7 @@
  * - Feedback por cada blank
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { ChevronRight, GripVertical, Check, X } from 'lucide-react';
 import { ExerciseHeader } from './ExerciseHeader';
 import { ExerciseFeedback } from './ExerciseFeedback';
@@ -47,7 +47,6 @@ export const FillBlankActivity: React.FC<ExerciseComponentProps> = ({
   onComplete,
   onCancel,
   showTimer = true,
-  allowHints = true,
 }) => {
   // Parse blanks from exercise content
   // Expected format: correct_answer as JSON string with array of blanks
@@ -58,11 +57,13 @@ export const FillBlankActivity: React.FC<ExerciseComponentProps> = ({
       }
       // If it's already an array, treat each item as a blank
       if (Array.isArray(exercise.content.correct_answer)) {
-        return exercise.content.correct_answer.map((answer, index) => ({
-          id: `blank-${index}`,
-          position: index,
-          correctAnswer: answer,
-        }));
+        return (exercise.content.correct_answer as string[]).map(
+          (answer: string, index: number) => ({
+            id: `blank-${index}`,
+            position: index,
+            correctAnswer: answer,
+          }),
+        );
       }
     } catch (e) {
       console.error('Failed to parse blanks:', e);
@@ -74,7 +75,7 @@ export const FillBlankActivity: React.FC<ExerciseComponentProps> = ({
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [attemptNumber, setAttemptNumber] = useState(1);
   const [feedback, setFeedback] = useState<FeedbackType | null>(null);
-  const [wordBank, setWordBank] = useState<WordBankItem[]>([]);
+  const [wordBank] = useState<WordBankItem[]>([]);
   const [useWordBank] = useState(false); // TODO: Make this configurable
   const [validationState, setValidationState] = useState<Record<string, boolean>>({});
 
@@ -88,8 +89,8 @@ export const FillBlankActivity: React.FC<ExerciseComponentProps> = ({
         title: result.is_correct
           ? '¡Perfecto! 🎉'
           : result.score_percentage >= 50
-          ? 'Parcialmente correcto 😊'
-          : 'Incorrecto 😔',
+            ? 'Parcialmente correcto 😊'
+            : 'Incorrecto 😔',
         message: result.feedback,
         xpEarned: result.xp_earned,
         mlCoinsEarned: result.ml_coins_earned,
@@ -103,7 +104,7 @@ export const FillBlankActivity: React.FC<ExerciseComponentProps> = ({
         }, 3000);
       }
     },
-    onError: (error) => {
+    onError: () => {
       setFeedback({
         type: 'error',
         title: 'Error',
@@ -157,9 +158,7 @@ export const FillBlankActivity: React.FC<ExerciseComponentProps> = ({
       ? blank.correctAnswer
       : [blank.correctAnswer];
 
-    return correctAnswers.some(
-      (correct) => normalizeText(correct) === normalizedAnswer
-    );
+    return correctAnswers.some((correct) => normalizeText(correct) === normalizedAnswer);
   };
 
   // Validate all answers before submission
@@ -225,11 +224,7 @@ export const FillBlankActivity: React.FC<ExerciseComponentProps> = ({
     while ((match = blankRegex.exec(text)) !== null) {
       // Add text before blank
       if (match.index > lastIndex) {
-        parts.push(
-          <span key={`text-${lastIndex}`}>
-            {text.substring(lastIndex, match.index)}
-          </span>
-        );
+        parts.push(<span key={`text-${lastIndex}`}>{text.substring(lastIndex, match.index)}</span>);
       }
 
       const blank = blanks[blankIndex];
@@ -256,32 +251,34 @@ export const FillBlankActivity: React.FC<ExerciseComponentProps> = ({
     const isCorrect = validationState[blank.id];
 
     return (
-      <span key={blank.id} className="inline-flex items-center mx-1">
+      <span key={blank.id} className="mx-1 inline-flex items-center">
         <input
-          ref={(el) => (inputRefs.current[blank.id] = el)}
+          ref={(el) => {
+            inputRefs.current[blank.id] = el;
+          }}
           type="text"
           value={value}
           onChange={(e) => handleAnswerChange(blank.id, e.target.value)}
           placeholder={blank.placeholder || '___'}
           disabled={result !== null || isSubmitting}
           className={`
-            inline-block px-3 py-1 border-2 rounded-md text-center
-            min-w-[120px] font-semibold transition-all
+            inline-block min-w-[120px] rounded-md border-2 px-3 py-1
+            text-center font-semibold transition-all
             ${
               !isValidated
                 ? 'border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
                 : isCorrect
-                ? 'border-green-500 bg-green-50 text-green-800'
-                : 'border-red-500 bg-red-50 text-red-800'
+                  ? 'border-green-500 bg-green-50 text-green-800'
+                  : 'border-red-500 bg-red-50 text-red-800'
             }
           `}
         />
         {isValidated && (
           <span className="ml-1">
             {isCorrect ? (
-              <Check className="w-4 h-4 text-green-600" />
+              <Check className="h-4 w-4 text-green-600" />
             ) : (
-              <X className="w-4 h-4 text-red-600" />
+              <X className="h-4 w-4 text-red-600" />
             )}
           </span>
         )}
@@ -291,12 +288,11 @@ export const FillBlankActivity: React.FC<ExerciseComponentProps> = ({
 
   // Calculate completion percentage
   const filledBlanks = blanks.filter((blank) => answers[blank.id]?.trim()).length;
-  const completionPercentage = blanks.length > 0
-    ? Math.round((filledBlanks / blanks.length) * 100)
-    : 0;
+  const completionPercentage =
+    blanks.length > 0 ? Math.round((filledBlanks / blanks.length) * 100) : 0;
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="mx-auto max-w-4xl p-6">
       {/* Header */}
       <ExerciseHeader
         exercise={exercise}
@@ -313,9 +309,9 @@ export const FillBlankActivity: React.FC<ExerciseComponentProps> = ({
       />
 
       {/* Question with blanks */}
-      <div className="bg-white rounded-xl border-2 border-gray-200 p-8 mb-6">
+      <div className="mb-6 rounded-xl border-2 border-gray-200 bg-white p-8">
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-gray-700">
               Completa los espacios en blanco:
             </h2>
@@ -325,18 +321,16 @@ export const FillBlankActivity: React.FC<ExerciseComponentProps> = ({
           </div>
 
           {/* Progress bar */}
-          <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
+          <div className="mb-6 h-2 w-full rounded-full bg-gray-200">
             <div
-              className="bg-purple-600 h-2 rounded-full transition-all duration-300"
+              className="h-2 rounded-full bg-purple-600 transition-all duration-300"
               style={{ width: `${completionPercentage}%` }}
             />
           </div>
         </div>
 
         {/* Question text with inputs */}
-        <div className="text-xl leading-relaxed text-gray-900">
-          {renderQuestion()}
-        </div>
+        <div className="text-xl leading-relaxed text-gray-900">{renderQuestion()}</div>
 
         {/* Media (if present) */}
         {exercise.content.media_url && exercise.content.media_type === 'image' && (
@@ -344,32 +338,30 @@ export const FillBlankActivity: React.FC<ExerciseComponentProps> = ({
             <img
               src={exercise.content.media_url}
               alt="Exercise media"
-              className="max-w-full h-auto rounded-lg border border-gray-300"
+              className="h-auto max-w-full rounded-lg border border-gray-300"
             />
           </div>
         )}
 
         {/* Word bank (if enabled) */}
         {useWordBank && wordBank.length > 0 && (
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">
-              Banco de palabras:
-            </h3>
+          <div className="mt-6 rounded-lg border-2 border-gray-200 bg-gray-50 p-4">
+            <h3 className="mb-3 text-sm font-semibold text-gray-700">Banco de palabras:</h3>
             <div className="flex flex-wrap gap-2">
               {wordBank.map((item) => (
                 <button
                   key={item.id}
                   disabled={item.used}
                   className={`
-                    px-4 py-2 rounded-lg border-2 font-medium transition-all
+                    rounded-lg border-2 px-4 py-2 font-medium transition-all
                     ${
                       item.used
-                        ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed'
-                        : 'bg-white border-purple-300 text-purple-700 hover:bg-purple-50 hover:border-purple-400 cursor-move'
+                        ? 'cursor-not-allowed border-gray-300 bg-gray-200 text-gray-400'
+                        : 'cursor-move border-purple-300 bg-white text-purple-700 hover:border-purple-400 hover:bg-purple-50'
                     }
                   `}
                 >
-                  <GripVertical className="w-4 h-4 inline mr-1" />
+                  <GripVertical className="mr-1 inline h-4 w-4" />
                   {item.word}
                 </button>
               ))}
@@ -378,9 +370,9 @@ export const FillBlankActivity: React.FC<ExerciseComponentProps> = ({
         )}
 
         {/* Hint text */}
-        <p className="mt-6 text-sm text-gray-600 italic">
-          💡 Tip: No te preocupes por mayúsculas o espacios extras, el sistema
-          validará tu respuesta de forma inteligente.
+        <p className="mt-6 text-sm italic text-gray-600">
+          💡 Tip: No te preocupes por mayúsculas o espacios extras, el sistema validará tu respuesta
+          de forma inteligente.
         </p>
       </div>
 
@@ -401,10 +393,8 @@ export const FillBlankActivity: React.FC<ExerciseComponentProps> = ({
 
       {/* Correct answers (show after submission if incorrect) */}
       {result && !result.is_correct && (
-        <div className="mb-6 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg">
-          <h3 className="text-sm font-semibold text-blue-900 mb-2">
-            Respuestas correctas:
-          </h3>
+        <div className="mb-6 rounded-lg border-2 border-blue-200 bg-blue-50 p-4">
+          <h3 className="mb-2 text-sm font-semibold text-blue-900">Respuestas correctas:</h3>
           <ul className="space-y-1">
             {blanks.map((blank, index) => {
               const correctAnswers = Array.isArray(blank.correctAnswer)
@@ -426,7 +416,7 @@ export const FillBlankActivity: React.FC<ExerciseComponentProps> = ({
         {onCancel && !result && (
           <button
             onClick={onCancel}
-            className="px-6 py-3 border-2 border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+            className="rounded-lg border-2 border-gray-300 px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50"
           >
             Cancelar
           </button>
@@ -435,18 +425,15 @@ export const FillBlankActivity: React.FC<ExerciseComponentProps> = ({
         <button
           onClick={handleSubmit}
           disabled={
-            isSubmitting ||
-            result !== null ||
-            timer.isTimeExpired ||
-            completionPercentage < 100
+            isSubmitting || result !== null || timer.isTimeExpired || completionPercentage < 100
           }
           className={`
-            px-8 py-3 rounded-lg font-semibold transition-all
-            flex items-center text-lg
+            flex items-center rounded-lg px-8 py-3
+            text-lg font-semibold transition-all
             ${
               completionPercentage === 100 && !isSubmitting && !result && !timer.isTimeExpired
-                ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-lg'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                ? 'bg-purple-600 text-white shadow-lg hover:bg-purple-700'
+                : 'cursor-not-allowed bg-gray-300 text-gray-500'
             }
           `}
         >
@@ -457,7 +444,7 @@ export const FillBlankActivity: React.FC<ExerciseComponentProps> = ({
           ) : (
             <>
               Enviar respuesta
-              <ChevronRight className="w-5 h-5 ml-1" />
+              <ChevronRight className="ml-1 h-5 w-5" />
             </>
           )}
         </button>

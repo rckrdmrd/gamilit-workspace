@@ -157,9 +157,9 @@ CREATE INDEX idx_module_progress_user_status_updated ON progress_tracking.module
 
 --
 -- Name: module_progress trg_module_progress_updated_at; Type: TRIGGER; Schema: progress_tracking; Owner: postgres
+-- NOTE: Trigger movido a archivo separado para evitar duplicación
+-- Ver: progress_tracking/triggers/23-trg_module_progress_updated_at.sql
 --
-
-CREATE TRIGGER trg_module_progress_updated_at BEFORE UPDATE ON progress_tracking.module_progress FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
 
 
 --

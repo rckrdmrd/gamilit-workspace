@@ -45,9 +45,8 @@ CREATE INDEX IF NOT EXISTS idx_user_roles_tenant_id ON auth_management.user_role
 CREATE INDEX IF NOT EXISTS idx_user_roles_user_id ON auth_management.user_roles USING btree (user_id);
 
 -- Triggers
-CREATE TRIGGER trg_user_roles_updated_at
-    BEFORE UPDATE ON auth_management.user_roles
-    FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
+-- NOTE: Trigger trg_user_roles_updated_at movido a archivo separado
+-- Ver: auth_management/triggers/07-trg_user_roles_updated_at.sql
 
 -- Comments
 COMMENT ON TABLE auth_management.user_roles IS 'Asignaciones de roles a usuarios con permisos específicos';

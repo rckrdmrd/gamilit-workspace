@@ -47,7 +47,8 @@ CREATE INDEX idx_rubrics_module_id ON educational_content.assessment_rubrics USI
 CREATE INDEX idx_rubrics_created_by ON educational_content.assessment_rubrics USING btree (created_by);
 
 -- Triggers
-CREATE TRIGGER trg_assessment_rubrics_updated_at BEFORE UPDATE ON educational_content.assessment_rubrics FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
+-- NOTE: Trigger trg_assessment_rubrics_updated_at movido a archivo separado
+-- Ver: educational_content/triggers/11-trg_assessment_rubrics_updated_at.sql
 
 -- Foreign Keys
 ALTER TABLE ONLY educational_content.assessment_rubrics

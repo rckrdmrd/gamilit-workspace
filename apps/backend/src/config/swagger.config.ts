@@ -10,7 +10,7 @@ export const swaggerConfig = new DocumentBuilder()
     'support@gamilit.com',
   )
   .setLicense('MIT', 'https://opensource.org/licenses/MIT')
-  .addServer('http://localhost:3000', 'Local Development')
+  .addServer(`http://localhost:${process.env.PORT || 3006}`, 'Local Development')
   .addServer('https://api.gamilit.com', 'Production')
 
   // Authentication

@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// Legacy Dashboard - unused vars are intentional in error handling patterns
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Zap, Coins, TrendingUp, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/app/providers/AuthContext';
@@ -8,16 +10,29 @@ import { AchievementsGrid } from '@/shared/components/AchievementsGrid';
 import { SkeletonStats } from '@/shared/components/Skeleton';
 import { gamificationApi } from '@/lib/api/gamification.api';
 import { educationalApi } from '@/lib/api/educational.api';
-import { progressApi, type PendingActivity, type RecentActivity } from '@/lib/api/progress.api';
-import type { UserStats, MLCoinsBalance } from '@/lib/api/gamification.api';
+import { progressApi, type RecentActivity } from '@/lib/api/progress.api';
+import type { PendingActivity as DashboardPendingActivity } from '@/components/_legacy/dashboard-migration-sprint/PendingActivitiesList';
 import type { UserAchievement } from '@/shared/types/achievement.types';
-import { AchievementStatus } from '@/shared/types/achievement.types';
 import type { Module } from '@/shared/types/educational.types';
 import type { ModuleProgress } from '@/shared/types/progress.types';
 import { MotivationalBanner } from '@/components/_legacy/dashboard-migration-sprint/MotivationalBanner';
 import { ModulesGrid } from '@/components/_legacy/dashboard-migration-sprint/ModulesGrid';
 import { PendingActivitiesList } from '@/components/_legacy/dashboard-migration-sprint/PendingActivitiesList';
 import { RecentActivityFeed } from '@/components/_legacy/dashboard-migration-sprint/RecentActivityFeed';
+
+// Local types
+interface UserStats {
+  totalPoints: number;
+  level?: number;
+  experienceProgress?: number;
+  tasksCompleted?: number;
+  currentStreak?: number;
+}
+
+interface MLCoinsBalance {
+  balance: number;
+  totalEarned?: number;
+}
 
 /**
  * DashboardPage Component
@@ -49,7 +64,7 @@ export const DashboardPage: React.FC = () => {
   // State for modules and progress
   const [modules, setModules] = useState<Module[]>([]);
   const [moduleProgress, setModuleProgress] = useState<Record<string, ModuleProgress>>({});
-  const [pendingActivities, setPendingActivities] = useState<PendingActivity[]>([]);
+  const [pendingActivities, setPendingActivities] = useState<DashboardPendingActivity[]>([]);
   const [recentActivities, setRecentActivities] = useState<RecentActivity[]>([]);
   const [dailyStats, setDailyStats] = useState<{ exercises_completed: number } | null>(null);
 
@@ -60,7 +75,7 @@ export const DashboardPage: React.FC = () => {
   const [isLoadingModules, setIsLoadingModules] = useState(true);
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
   const [isLoadingActivities, setIsLoadingActivities] = useState(true);
-  const [isLoadingDailyStats, setIsLoadingDailyStats] = useState(true);
+  const [_isLoadingDailyStats, setIsLoadingDailyStats] = useState(true);
 
   // Error states - track errors per data type
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -72,12 +87,15 @@ export const DashboardPage: React.FC = () => {
 
       try {
         setIsLoadingStats(true);
-        setErrors(prev => { const { stats, ...rest } = prev; return rest; }); // Clear stats error
+        setErrors((prev) => {
+          const { stats: _stats, ...rest } = prev;
+          return rest;
+        }); // Clear stats error
         const data = await gamificationApi.getUserStats(user.id);
-        setStats(data);
+        setStats(data as any);
       } catch (err) {
         console.error('Failed to load user stats:', err);
-        setErrors(prev => ({ ...prev, stats: 'Failed to load stats. Please try again.' }));
+        setErrors((prev) => ({ ...prev, stats: 'Failed to load stats. Please try again.' }));
       } finally {
         setIsLoadingStats(false);
       }
@@ -93,12 +111,18 @@ export const DashboardPage: React.FC = () => {
 
       try {
         setIsLoadingAchievements(true);
-        setErrors(prev => { const { achievements, ...rest } = prev; return rest; }); // Clear achievements error
+        setErrors((prev) => {
+          const { achievements: _achievements, ...rest } = prev;
+          return rest;
+        }); // Clear achievements error
         const data = await gamificationApi.getUserAchievements(user.id);
         setAchievements(data);
       } catch (err) {
         console.error('Failed to load achievements:', err);
-        setErrors(prev => ({ ...prev, achievements: 'Failed to load achievements. Please try again.' }));
+        setErrors((prev) => ({
+          ...prev,
+          achievements: 'Failed to load achievements. Please try again.',
+        }));
       } finally {
         setIsLoadingAchievements(false);
       }
@@ -114,12 +138,15 @@ export const DashboardPage: React.FC = () => {
 
       try {
         setIsLoadingCoins(true);
-        setErrors(prev => { const { mlCoins, ...rest } = prev; return rest; }); // Clear mlCoins error
+        setErrors((prev) => {
+          const { mlCoins: _mlCoins, ...rest } = prev;
+          return rest;
+        }); // Clear mlCoins error
         const data = await gamificationApi.getMLCoinsBalance(user.id);
-        setMlCoins(data);
+        setMlCoins(data as any);
       } catch (err) {
         console.error('Failed to load ML coins:', err);
-        setErrors(prev => ({ ...prev, mlCoins: 'Failed to load ML Coins. Please try again.' }));
+        setErrors((prev) => ({ ...prev, mlCoins: 'Failed to load ML Coins. Please try again.' }));
       } finally {
         setIsLoadingCoins(false);
       }
@@ -133,12 +160,15 @@ export const DashboardPage: React.FC = () => {
     const loadModules = async () => {
       try {
         setIsLoadingModules(true);
-        setErrors(prev => { const { modules, ...rest } = prev; return rest; }); // Clear modules error
+        setErrors((prev) => {
+          const { modules: _modules, ...rest } = prev;
+          return rest;
+        }); // Clear modules error
         const data = await educationalApi.getModules();
         setModules(data);
       } catch (err) {
         console.error('Failed to load modules:', err);
-        setErrors(prev => ({ ...prev, modules: 'Failed to load modules. Please try again.' }));
+        setErrors((prev) => ({ ...prev, modules: 'Failed to load modules. Please try again.' }));
       } finally {
         setIsLoadingModules(false);
       }
@@ -154,28 +184,42 @@ export const DashboardPage: React.FC = () => {
 
       try {
         setIsLoadingProgress(true);
-        setErrors(prev => { const { progress, ...rest } = prev; return rest; }); // Clear progress error
+        setErrors((prev) => {
+          const { progress: _progress, ...rest } = prev;
+          return rest;
+        }); // Clear progress error
         const progressData = await progressApi.getUserProgress(user.id);
 
         // Convert array to Record<moduleId, ModuleProgress>
-        const progressMap = progressData.reduce((acc, progress) => {
-          acc[progress.module_id] = progress;
-          return acc;
-        }, {} as Record<string, ModuleProgress>);
+        const progressMap = progressData.reduce(
+          (acc, progress) => {
+            acc[progress.module_id] = progress;
+            return acc;
+          },
+          {} as Record<string, ModuleProgress>,
+        );
 
         setModuleProgress(progressMap);
 
         // Fetch pending activities from backend
         try {
           const pending = await progressApi.getPendingActivities(user.id, { limit: 5 });
-          setPendingActivities(pending);
+          // Transform to dashboard format
+          setPendingActivities(
+            pending.map((p) => ({
+              id: p.id,
+              title: p.title,
+              type: p.type as any,
+              dueDate: p.due_date,
+            })) as any,
+          );
         } catch (pendingErr) {
           console.error('Failed to load pending activities:', pendingErr);
           // Don't set error state, just show empty activities list
         }
       } catch (err) {
         console.error('Failed to load progress:', err);
-        setErrors(prev => ({ ...prev, progress: 'Failed to load progress. Please try again.' }));
+        setErrors((prev) => ({ ...prev, progress: 'Failed to load progress. Please try again.' }));
       } finally {
         setIsLoadingProgress(false);
       }
@@ -191,12 +235,15 @@ export const DashboardPage: React.FC = () => {
 
       try {
         setIsLoadingActivities(true);
-        setErrors(prev => { const { recentActivities, ...rest } = prev; return rest; }); // Clear error
+        setErrors((prev) => {
+          const { recentActivities: _recentActivities, ...rest } = prev;
+          return rest;
+        }); // Clear error
         const data = await progressApi.getRecentActivities(user.id, { limit: 10 });
         setRecentActivities(data);
       } catch (err) {
         console.error('Failed to load recent activities:', err);
-        setErrors(prev => ({ ...prev, recentActivities: 'Failed to load recent activities.' }));
+        setErrors((prev) => ({ ...prev, recentActivities: 'Failed to load recent activities.' }));
       } finally {
         setIsLoadingActivities(false);
       }
@@ -212,7 +259,10 @@ export const DashboardPage: React.FC = () => {
 
       try {
         setIsLoadingDailyStats(true);
-        setErrors(prev => { const { dailyStats, ...rest } = prev; return rest; }); // Clear error
+        setErrors((prev) => {
+          const { dailyStats: _dailyStats, ...rest } = prev;
+          return rest;
+        }); // Clear error
         const data = await progressApi.getSessionStats(user.id, 'daily');
         setDailyStats({ exercises_completed: (data as any).exercises_completed ?? 0 });
       } catch (err) {
@@ -232,12 +282,15 @@ export const DashboardPage: React.FC = () => {
     if (!user?.id) return;
     try {
       setIsLoadingStats(true);
-      setErrors(prev => { const { stats, ...rest } = prev; return rest; });
+      setErrors((prev) => {
+        const { stats: _stats, ...rest } = prev;
+        return rest;
+      });
       const data = await gamificationApi.getUserStats(user.id);
-      setStats(data);
+      setStats(data as any);
     } catch (err) {
       console.error('Failed to load user stats:', err);
-      setErrors(prev => ({ ...prev, stats: 'Failed to load stats. Please try again.' }));
+      setErrors((prev) => ({ ...prev, stats: 'Failed to load stats. Please try again.' }));
     } finally {
       setIsLoadingStats(false);
     }
@@ -247,12 +300,18 @@ export const DashboardPage: React.FC = () => {
     if (!user?.id) return;
     try {
       setIsLoadingAchievements(true);
-      setErrors(prev => { const { achievements, ...rest } = prev; return rest; });
+      setErrors((prev) => {
+        const { achievements: _achievements, ...rest } = prev;
+        return rest;
+      });
       const data = await gamificationApi.getUserAchievements(user.id);
       setAchievements(data);
     } catch (err) {
       console.error('Failed to load achievements:', err);
-      setErrors(prev => ({ ...prev, achievements: 'Failed to load achievements. Please try again.' }));
+      setErrors((prev) => ({
+        ...prev,
+        achievements: 'Failed to load achievements. Please try again.',
+      }));
     } finally {
       setIsLoadingAchievements(false);
     }
@@ -262,12 +321,15 @@ export const DashboardPage: React.FC = () => {
     if (!user?.id) return;
     try {
       setIsLoadingCoins(true);
-      setErrors(prev => { const { mlCoins, ...rest } = prev; return rest; });
+      setErrors((prev) => {
+        const { mlCoins: _mlCoins, ...rest } = prev;
+        return rest;
+      });
       const data = await gamificationApi.getMLCoinsBalance(user.id);
-      setMlCoins(data);
+      setMlCoins(data as any);
     } catch (err) {
       console.error('Failed to load ML coins:', err);
-      setErrors(prev => ({ ...prev, mlCoins: 'Failed to load ML Coins. Please try again.' }));
+      setErrors((prev) => ({ ...prev, mlCoins: 'Failed to load ML Coins. Please try again.' }));
     } finally {
       setIsLoadingCoins(false);
     }
@@ -276,12 +338,15 @@ export const DashboardPage: React.FC = () => {
   const retryModules = useCallback(async () => {
     try {
       setIsLoadingModules(true);
-      setErrors(prev => { const { modules, ...rest } = prev; return rest; });
+      setErrors((prev) => {
+        const { modules: _modules, ...rest } = prev;
+        return rest;
+      });
       const data = await educationalApi.getModules();
       setModules(data);
     } catch (err) {
       console.error('Failed to load modules:', err);
-      setErrors(prev => ({ ...prev, modules: 'Failed to load modules. Please try again.' }));
+      setErrors((prev) => ({ ...prev, modules: 'Failed to load modules. Please try again.' }));
     } finally {
       setIsLoadingModules(false);
     }
@@ -291,25 +356,39 @@ export const DashboardPage: React.FC = () => {
     if (!user?.id) return;
     try {
       setIsLoadingProgress(true);
-      setErrors(prev => { const { progress, ...rest } = prev; return rest; });
+      setErrors((prev) => {
+        const { progress: _progress, ...rest } = prev;
+        return rest;
+      });
       const progressData = await progressApi.getUserProgress(user.id);
 
-      const progressMap = progressData.reduce((acc, progress) => {
-        acc[progress.module_id] = progress;
-        return acc;
-      }, {} as Record<string, ModuleProgress>);
+      const progressMap = progressData.reduce(
+        (acc, progress) => {
+          acc[progress.module_id] = progress;
+          return acc;
+        },
+        {} as Record<string, ModuleProgress>,
+      );
 
       setModuleProgress(progressMap);
 
       try {
         const pending = await progressApi.getPendingActivities(user.id, { limit: 5 });
-        setPendingActivities(pending);
+        // Transform to dashboard format
+        setPendingActivities(
+          pending.map((p) => ({
+            id: p.id,
+            title: p.title,
+            type: p.type as any,
+            dueDate: p.due_date,
+          })) as any,
+        );
       } catch (pendingErr) {
         console.error('Failed to load pending activities:', pendingErr);
       }
     } catch (err) {
       console.error('Failed to load progress:', err);
-      setErrors(prev => ({ ...prev, progress: 'Failed to load progress. Please try again.' }));
+      setErrors((prev) => ({ ...prev, progress: 'Failed to load progress. Please try again.' }));
     } finally {
       setIsLoadingProgress(false);
     }
@@ -319,30 +398,43 @@ export const DashboardPage: React.FC = () => {
     if (!user?.id) return;
     try {
       setIsLoadingActivities(true);
-      setErrors(prev => { const { recentActivities, ...rest } = prev; return rest; });
+      setErrors((prev) => {
+        const { recentActivities: _recentActivities, ...rest } = prev;
+        return rest;
+      });
       const data = await progressApi.getRecentActivities(user.id, { limit: 10 });
       setRecentActivities(data);
     } catch (err) {
       console.error('Failed to load recent activities:', err);
-      setErrors(prev => ({ ...prev, recentActivities: 'Failed to load recent activities.' }));
+      setErrors((prev) => ({ ...prev, recentActivities: 'Failed to load recent activities.' }));
     } finally {
       setIsLoadingActivities(false);
     }
   }, [user?.id]);
 
   // Map error keys to retry handlers
-  const retryHandlers = useMemo(() => ({
-    stats: retryStats,
-    achievements: retryAchievements,
-    mlCoins: retryMLCoins,
-    modules: retryModules,
-    progress: retryProgress,
-    recentActivities: retryRecentActivities,
-  }), [retryStats, retryAchievements, retryMLCoins, retryModules, retryProgress, retryRecentActivities]);
+  const retryHandlers = useMemo(
+    () => ({
+      stats: retryStats,
+      achievements: retryAchievements,
+      mlCoins: retryMLCoins,
+      modules: retryModules,
+      progress: retryProgress,
+      recentActivities: retryRecentActivities,
+    }),
+    [
+      retryStats,
+      retryAchievements,
+      retryMLCoins,
+      retryModules,
+      retryProgress,
+      retryRecentActivities,
+    ],
+  );
 
   // Retry all failed API calls
   const handleRetryAll = useCallback(async () => {
-    const retryPromises = Object.keys(errors).map(key => {
+    const retryPromises = Object.keys(errors).map((key) => {
       const handler = retryHandlers[key as keyof typeof retryHandlers];
       return handler ? handler() : Promise.resolve();
     });
@@ -356,34 +448,41 @@ export const DashboardPage: React.FC = () => {
   }, [user?.email]);
 
   // Handle module click
-  const handleModuleClick = useCallback((moduleId: string) => {
-    navigate(`/modules/${moduleId}`);
-  }, [navigate]);
+  const handleModuleClick = useCallback(
+    (moduleId: string) => {
+      navigate(`/modules/${moduleId}`);
+    },
+    [navigate],
+  );
 
   // Handle pending activity click
-  const handleActivityClick = useCallback((activityId: string) => {
-    // Activity ID format is "activity-{moduleId}", extract module ID
-    const moduleId = activityId.replace('activity-', '');
-    navigate(`/modules/${moduleId}`);
-  }, [navigate]);
+  const handleActivityClick = useCallback(
+    (activityId: string) => {
+      // Activity ID format is "activity-{moduleId}", extract module ID
+      const moduleId = activityId.replace('activity-', '');
+      navigate(`/modules/${moduleId}`);
+    },
+    [navigate],
+  );
 
   // Handle recent activity click
-  const handleRecentActivityClick = useCallback((activity: RecentActivity) => {
-    // Navigate based on entity type
-    if (activity.entity_type === 'module') {
-      navigate(`/modules/${activity.entity_id}`);
-    } else if (activity.entity_type === 'exercise') {
-      // Navigate to module page (could be enhanced to go directly to exercise)
-      navigate(`/modules/${activity.entity_id}`);
-    }
-    // Add more navigation cases as needed
-  }, [navigate]);
+  const handleRecentActivityClick = useCallback(
+    (activity: RecentActivity) => {
+      // Navigate based on entity type
+      if (activity.entity_type === 'module') {
+        navigate(`/modules/${activity.entity_id}`);
+      } else if (activity.entity_type === 'exercise') {
+        // Navigate to module page (could be enhanced to go directly to exercise)
+        navigate(`/modules/${activity.entity_id}`);
+      }
+      // Add more navigation cases as needed
+    },
+    [navigate],
+  );
 
   // Count unlocked achievements
   const unlockedAchievementsCount = useMemo(() => {
-    return achievements.filter(a =>
-      a.status === AchievementStatus.EARNED || a.status === AchievementStatus.CLAIMED
-    ).length;
+    return achievements.filter((a) => a.status === 'earned' || a.status === 'claimed').length;
   }, [achievements]);
 
   // Prepare user stats for MotivationalBanner
@@ -410,10 +509,7 @@ export const DashboardPage: React.FC = () => {
     <DashboardLayout>
       {/* Motivational Banner */}
       <div className="mb-8">
-        <MotivationalBanner
-          userName={userDisplayName}
-          userStats={motivationalStats}
-        />
+        <MotivationalBanner userName={userDisplayName} userStats={motivationalStats} />
       </div>
 
       {/* Error Alerts */}
@@ -422,18 +518,21 @@ export const DashboardPage: React.FC = () => {
           {errorEntries.map(([key, message]) => {
             const retryHandler = retryHandlers[key as keyof typeof retryHandlers];
             return (
-              <div key={key} className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start space-x-3">
-                <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+              <div
+                key={key}
+                className="flex items-start space-x-3 rounded-lg border border-red-200 bg-red-50 p-4"
+              >
+                <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
                 <div className="flex-1">
-                  <h3 className="text-sm font-medium text-red-800 capitalize">
+                  <h3 className="text-sm font-medium capitalize text-red-800">
                     Error Loading {key.replace(/([A-Z])/g, ' $1').trim()}
                   </h3>
-                  <p className="text-sm text-red-700 mt-1">{message}</p>
+                  <p className="mt-1 text-sm text-red-700">{message}</p>
                 </div>
                 {retryHandler && (
                   <button
                     onClick={retryHandler}
-                    className="px-3 py-1.5 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors flex-shrink-0"
+                    className="flex-shrink-0 rounded bg-red-600 px-3 py-1.5 text-sm text-white transition-colors hover:bg-red-700"
                   >
                     Retry
                   </button>
@@ -444,7 +543,7 @@ export const DashboardPage: React.FC = () => {
           {errorEntries.length > 1 && (
             <button
               onClick={handleRetryAll}
-              className="w-full px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors font-medium"
+              className="w-full rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
             >
               Retry All ({errorEntries.length})
             </button>
@@ -453,7 +552,7 @@ export const DashboardPage: React.FC = () => {
       )}
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         {/* Total XP */}
         {isLoadingStats ? (
           <SkeletonStats />
@@ -511,11 +610,11 @@ export const DashboardPage: React.FC = () => {
 
       {/* Recent Achievements Section */}
       <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900">Recent Achievements</h2>
           <a
             href="/achievements"
-            className="text-sm font-medium text-orange-600 hover:text-orange-700 transition-colors"
+            className="text-sm font-medium text-orange-600 transition-colors hover:text-orange-700"
           >
             View All
           </a>
@@ -549,12 +648,12 @@ export const DashboardPage: React.FC = () => {
 
       {/* Recent Activity Section */}
       <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900">Recent Activity</h2>
           {recentActivities.length > 0 && (
             <a
               href="/activity"
-              className="text-sm font-medium text-orange-600 hover:text-orange-700 transition-colors"
+              className="text-sm font-medium text-orange-600 transition-colors hover:text-orange-700"
             >
               View All
             </a>

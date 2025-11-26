@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -48,10 +48,10 @@ export default function LoginPage() {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isValid }
+    formState: { errors, isValid },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    mode: 'onChange'
+    mode: 'onChange',
   });
 
   const watchedEmail = watch('email', '');
@@ -103,7 +103,8 @@ export default function LoginPage() {
       if (error instanceof AccountInactiveError) {
         setAccountStatusError({
           type: 'inactive',
-          message: error.message || 'Tu cuenta ha sido desactivada. Por favor, contacta a tu maestro.'
+          message:
+            error.message || 'Tu cuenta ha sido desactivada. Por favor, contacta a tu maestro.',
         });
         return; // Don't count as failed login attempt
       }
@@ -112,7 +113,7 @@ export default function LoginPage() {
         setAccountStatusError({
           type: 'suspended',
           message: error.message || 'Tu cuenta ha sido suspendida.',
-          suspensionDetails: error.suspensionDetails
+          suspensionDetails: error.suspensionDetails,
         });
         return; // Don't count as failed login attempt
       }
@@ -132,22 +133,26 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-orange-100 flex items-center justify-center p-4 relative">
+    <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-orange-50 via-yellow-50 to-orange-100 p-4">
       {/* Connection Status Badge - Top Right */}
-      <div className="absolute top-4 right-4">
-        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium shadow-lg ${
-          isOnline ? 'bg-green-50 text-green-700 border-2 border-green-200' : 'bg-red-50 text-red-700 border-2 border-red-200'
-        }`}>
+      <div className="absolute right-4 top-4">
+        <div
+          className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium shadow-lg ${
+            isOnline
+              ? 'border-2 border-green-200 bg-green-50 text-green-700'
+              : 'border-2 border-red-200 bg-red-50 text-red-700'
+          }`}
+        >
           {isOnline ? (
             <>
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <Wifi className="w-4 h-4" />
+              <div className="h-2 w-2 animate-pulse rounded-full bg-green-500"></div>
+              <Wifi className="h-4 w-4" />
               <span>Conectado</span>
             </>
           ) : (
             <>
-              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-              <WifiOff className="w-4 h-4" />
+              <div className="h-2 w-2 rounded-full bg-red-500"></div>
+              <WifiOff className="h-4 w-4" />
               <span>Sin conexión</span>
             </>
           )}
@@ -161,17 +166,17 @@ export default function LoginPage() {
         className="w-full max-w-md"
       >
         {/* Login Card with enhanced shadow */}
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <div className="overflow-hidden rounded-2xl bg-white shadow-2xl">
           {/* Header with gradient background */}
-          <div className="bg-gradient-to-r from-orange-600 to-orange-700 p-8 text-center relative overflow-hidden">
+          <div className="relative overflow-hidden bg-gradient-to-r from-orange-600 to-orange-700 p-8 text-center">
             {/* Decorative elements */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
 
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-              className="relative inline-block p-4 bg-white/10 backdrop-blur-sm rounded-full mb-4"
+              transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
+              className="relative mb-4 inline-block rounded-full bg-white/10 p-4 backdrop-blur-sm"
             >
               <span className="text-5xl">🕵️‍♂️</span>
             </motion.div>
@@ -180,7 +185,7 @@ export default function LoginPage() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-3xl font-bold text-white mb-2 relative"
+              className="relative mb-2 text-3xl font-bold text-white"
             >
               GAMILIT Detective Platform
             </motion.h1>
@@ -189,7 +194,7 @@ export default function LoginPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="text-orange-100 relative"
+              className="relative text-orange-100"
             >
               Resuelve misterios mientras aprendes
             </motion.p>
@@ -202,21 +207,18 @@ export default function LoginPage() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-amber-50 border-2 border-amber-400 rounded-lg p-4 mb-4"
+                className="mb-4 rounded-lg border-2 border-amber-400 bg-amber-50 p-4"
               >
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
-                    <Ban className="w-6 h-6 text-amber-600" />
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-amber-100">
+                    <Ban className="h-6 w-6 text-amber-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-amber-900 mb-1">
-                      Cuenta Desactivada
-                    </h3>
-                    <p className="text-sm text-amber-800 mb-2">
-                      {accountStatusError.message}
-                    </p>
+                    <h3 className="mb-1 font-semibold text-amber-900">Cuenta Desactivada</h3>
+                    <p className="mb-2 text-sm text-amber-800">{accountStatusError.message}</p>
                     <p className="text-xs text-amber-700">
-                      Si crees que esto es un error, contacta a tu maestro o al administrador del sistema.
+                      Si crees que esto es un error, contacta a tu maestro o al administrador del
+                      sistema.
                     </p>
                   </div>
                 </div>
@@ -228,32 +230,34 @@ export default function LoginPage() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-red-50 border-2 border-red-400 rounded-lg p-4 mb-4"
+                className="mb-4 rounded-lg border-2 border-red-400 bg-red-50 p-4"
               >
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                    <Clock className="w-6 h-6 text-red-600" />
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-100">
+                    <Clock className="h-6 w-6 text-red-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-red-900 mb-1">
+                    <h3 className="mb-1 font-semibold text-red-900">
                       {accountStatusError.suspensionDetails?.isPermanent
                         ? 'Cuenta Suspendida Permanentemente'
                         : 'Cuenta Suspendida Temporalmente'}
                     </h3>
                     {accountStatusError.suspensionDetails?.suspendedUntil && (
-                      <p className="text-sm text-red-800 mb-1">
+                      <p className="mb-1 text-sm text-red-800">
                         Suspendida hasta:{' '}
                         <strong>
-                          {new Date(accountStatusError.suspensionDetails.suspendedUntil).toLocaleDateString('es-ES', {
+                          {new Date(
+                            accountStatusError.suspensionDetails.suspendedUntil,
+                          ).toLocaleDateString('es-ES', {
                             year: 'numeric',
                             month: 'long',
-                            day: 'numeric'
+                            day: 'numeric',
                           })}
                         </strong>
                       </p>
                     )}
                     {accountStatusError.suspensionDetails?.reason && (
-                      <p className="text-sm text-red-800 mb-2">
+                      <p className="mb-2 text-sm text-red-800">
                         <strong>Razón:</strong> {accountStatusError.suspensionDetails.reason}
                       </p>
                     )}
@@ -272,25 +276,20 @@ export default function LoginPage() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 flex items-start gap-2"
+                className="mb-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3"
               >
-                <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-500" />
                 <p className="text-detective-sm text-amber-700">
-                  {3 - failedAttempts} {failedAttempts === 2 ? 'intento' : 'intentos'} restantes antes del bloqueo temporal
+                  {3 - failedAttempts} {failedAttempts === 2 ? 'intento' : 'intentos'} restantes
+                  antes del bloqueo temporal
                 </p>
               </motion.div>
             )}
 
             {/* Server Errors */}
             {serverError && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-              >
-                <FormErrorDisplay
-                  errors={[serverError]}
-                  onDismiss={() => setServerError('')}
-                />
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+                <FormErrorDisplay errors={[serverError]} onDismiss={() => setServerError('')} />
               </motion.div>
             )}
 
@@ -331,9 +330,9 @@ export default function LoginPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
-                className="flex items-center justify-between mb-6"
+                className="mb-6 flex items-center justify-between"
               >
-                <label className="flex items-center gap-2 text-sm text-detective-text cursor-pointer hover:text-detective-orange transition-colors">
+                <label className="flex cursor-pointer items-center gap-2 text-sm text-detective-text transition-colors hover:text-detective-orange">
                   <input
                     type="checkbox"
                     {...register('rememberMe')}
@@ -344,7 +343,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => navigate('/password-recovery')}
-                  className="text-sm text-detective-orange hover:text-detective-orange-dark font-medium transition-colors"
+                  className="text-sm font-medium text-detective-orange transition-colors hover:text-detective-orange-dark"
                 >
                   ¿Olvidaste tu contraseña?
                 </button>
@@ -355,7 +354,7 @@ export default function LoginPage() {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
-                  className="bg-gray-100 border border-gray-300 rounded-lg p-4 mb-6 text-center"
+                  className="mb-6 rounded-lg border border-gray-300 bg-gray-100 p-4 text-center"
                 >
                   <p className="text-detective-sm text-detective-text-secondary">
                     [CAPTCHA Placeholder - Integrar en producción]
@@ -371,11 +370,10 @@ export default function LoginPage() {
                 <DetectiveButton
                   type="submit"
                   variant="primary"
-
                   loading={authLoading}
                   disabled={!isValid || authLoading}
-                  className="w-full shadow-lg hover:shadow-xl transition-shadow"
-                  icon={<Lock className="w-5 h-5" />}
+                  className="w-full shadow-lg transition-shadow hover:shadow-xl"
+                  icon={<Lock className="h-5 w-5" />}
                 >
                   {authLoading ? 'Verificando...' : 'Iniciar Sesión'}
                 </DetectiveButton>
@@ -387,12 +385,12 @@ export default function LoginPage() {
                 transition={{ delay: 0.7 }}
                 className="mt-6 text-center"
               >
-                <p className="text-detective-text-secondary text-sm">
+                <p className="text-sm text-detective-text-secondary">
                   ¿No tienes cuenta?{' '}
                   <button
                     type="button"
                     onClick={() => navigate('/register')}
-                    className="text-detective-orange hover:text-detective-orange-dark font-semibold transition-colors"
+                    className="font-semibold text-detective-orange transition-colors hover:text-detective-orange-dark"
                   >
                     Únete al equipo
                   </button>
@@ -406,25 +404,31 @@ export default function LoginPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
-                className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg space-y-3"
+                className="mt-6 space-y-3 rounded-lg border border-blue-200 bg-blue-50 p-4"
               >
-                <p className="text-detective-sm text-blue-800 font-semibold mb-2">
+                <p className="mb-2 text-detective-sm font-semibold text-blue-800">
                   🔑 Credenciales de prueba (Backend real):
                 </p>
                 <div className="space-y-2 text-detective-xs text-blue-700">
-                  <div className="bg-white/60 p-2 rounded">
-                    <strong>👨‍🎓 Alumno:</strong><br />
-                    Email: student@gamilit.com<br />
+                  <div className="rounded bg-white/60 p-2">
+                    <strong>👨‍🎓 Alumno:</strong>
+                    <br />
+                    Email: student@gamilit.com
+                    <br />
                     Password: Test1234
                   </div>
-                  <div className="bg-white/60 p-2 rounded">
-                    <strong>👩‍🏫 Maestro:</strong><br />
-                    Email: teacher@gamilit.com<br />
+                  <div className="rounded bg-white/60 p-2">
+                    <strong>👩‍🏫 Maestro:</strong>
+                    <br />
+                    Email: teacher@gamilit.com
+                    <br />
                     Password: Test1234
                   </div>
-                  <div className="bg-white/60 p-2 rounded">
-                    <strong>🔐 Admin:</strong><br />
-                    Email: admin@gamilit.com<br />
+                  <div className="rounded bg-white/60 p-2">
+                    <strong>🔐 Admin:</strong>
+                    <br />
+                    Email: admin@gamilit.com
+                    <br />
                     Password: Test1234
                   </div>
                 </div>
@@ -438,7 +442,7 @@ export default function LoginPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.9 }}
-          className="text-center text-gray-600 text-sm mt-6"
+          className="mt-6 text-center text-sm text-gray-600"
         >
           © 2025 Gamilit Platform. Todos los derechos reservados.
         </motion.p>

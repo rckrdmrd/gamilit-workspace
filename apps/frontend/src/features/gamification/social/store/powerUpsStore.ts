@@ -14,7 +14,7 @@ interface PowerUpsStore {
 
   // Actions
   purchasePowerUp: (powerUpId: string) => boolean;
-  usePowerUp: (powerUpId: string) => boolean;
+  applyPowerUp: (powerUpId: string) => boolean;
   refreshActivePowerUps: () => void;
   addMlCoins: (amount: number) => void;
   deductMlCoins: (amount: number) => boolean;
@@ -77,7 +77,7 @@ export const usePowerUpsStore = create<PowerUpsStore>((set, get) => ({
     return true;
   },
 
-  usePowerUp: (powerUpId: string) => {
+  applyPowerUp: (powerUpId: string) => {
     const state = get();
     const powerUp = state.powerUps.find((p) => p.id === powerUpId);
 
@@ -90,13 +90,19 @@ export const usePowerUpsStore = create<PowerUpsStore>((set, get) => ({
       const updatedPowerUps = state.powerUps.map((p) => {
         if (p.id === powerUpId) {
           const expiresAt = p.duration ? new Date(now.getTime() + p.duration * 60000) : undefined;
-          const cooldownEndsAt = p.cooldown ? new Date(now.getTime() + p.cooldown * 60000) : undefined;
+          const cooldownEndsAt = p.cooldown
+            ? new Date(now.getTime() + p.cooldown * 60000)
+            : undefined;
 
           return {
             ...p,
             quantity: p.quantity - 1,
             usageCount: p.usageCount + 1,
-            status: p.duration ? ('active' as const) : p.cooldown ? ('cooldown' as const) : ('available' as const),
+            status: p.duration
+              ? ('active' as const)
+              : p.cooldown
+                ? ('cooldown' as const)
+                : ('available' as const),
             activatedAt: now,
             expiresAt,
             cooldownEndsAt,

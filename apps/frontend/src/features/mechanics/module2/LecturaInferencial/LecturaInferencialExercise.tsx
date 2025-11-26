@@ -4,10 +4,7 @@ import { BookOpen, CheckCircle, XCircle } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { calculateScore, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import type {
-  LecturaInferencialExerciseProps,
-  QuestionAnswer,
-} from './lecturaInferencialTypes';
+import type { LecturaInferencialExerciseProps, QuestionAnswer } from './lecturaInferencialTypes';
 
 export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProps> = ({
   exercise,
@@ -28,7 +25,6 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
   useEffect(() => {
     if (onProgressUpdate) {
       const answeredCount = Object.keys(selectedAnswers).length;
-      const score = validated ? calculateCurrentScore() : 0;
 
       // Prepare user answers in backend DTO format
       const userAnswers: Record<string, string> = {};
@@ -44,28 +40,22 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
           hintsUsed: 0,
           timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
         },
-        answers: { questions: userAnswers }  // FE-066: Wrap in 'questions' key to match DTO
+        answers: { questions: userAnswers }, // FE-066: Wrap in 'questions' key to match DTO
       });
 
       console.log('📊 [LecturaInferencial] Progress update sent:', {
         answered: answeredCount,
         totalQuestions: questions.length,
-        answersFormat: Object.keys(userAnswers).length > 0 ? 'valid' : 'empty'
+        answersFormat: Object.keys(userAnswers).length > 0 ? 'valid' : 'empty',
       });
     }
   }, [selectedAnswers, validated, startTime, onProgressUpdate, questions.length]);
 
-  const calculateCurrentScore = () => {
-    if (answers.length === 0) return 0;
-    const correctAnswers = answers.filter((a) => a.isCorrect).length;
-    return calculateScore(correctAnswers, questions.length);
-  };
-
   const handleSelectOption = (questionId: string, optionIndex: number) => {
     if (!validated) {
-      setSelectedAnswers(prev => ({
+      setSelectedAnswers((prev) => ({
         ...prev,
-        [questionId]: optionIndex
+        [questionId]: optionIndex,
       }));
     }
   };
@@ -80,7 +70,12 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
 
       setFeedback({
         type: percentage >= 70 ? 'success' : percentage >= 50 ? 'partial' : 'error',
-        title: percentage >= 70 ? '¡Excelente trabajo!' : percentage >= 50 ? 'Buen intento' : 'Necesitas practicar más',
+        title:
+          percentage >= 70
+            ? '¡Excelente trabajo!'
+            : percentage >= 50
+              ? 'Buen intento'
+              : 'Necesitas practicar más',
         message: `Respondiste correctamente ${correctAnswers} de ${totalQuestions} preguntas (${Math.round(percentage)}%).`,
         score: finalScore,
         showConfetti: percentage >= 70,
@@ -102,7 +97,7 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
     }
 
     // Validate all answers
-    const validatedAnswers: QuestionAnswer[] = questions.map(q => {
+    const validatedAnswers: QuestionAnswer[] = questions.map((q) => {
       const selectedOption = selectedAnswers[q.id];
       const isCorrect = selectedOption === q.correctAnswer;
       return {
@@ -124,7 +119,12 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
 
     setFeedback({
       type: percentage >= 70 ? 'success' : percentage >= 50 ? 'partial' : 'error',
-      title: percentage >= 70 ? '¡Excelente trabajo!' : percentage >= 50 ? 'Buen intento' : 'Necesitas practicar más',
+      title:
+        percentage >= 70
+          ? '¡Excelente trabajo!'
+          : percentage >= 50
+            ? 'Buen intento'
+            : 'Necesitas practicar más',
       message: `Respondiste correctamente ${correctAnswers} de ${totalQuestions} preguntas (${Math.round(percentage)}%).`,
       score: finalScore,
       showConfetti: percentage >= 70,
@@ -175,11 +175,11 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
             className="rounded-detective p-6 shadow-detective-lg"
             style={{
               background: 'linear-gradient(to right, #1e3a8a, #f97316)',
-              color: 'white'
+              color: 'white',
             }}
           >
-            <div className="flex items-center gap-3 mb-2">
-              <BookOpen className="w-8 h-8 text-white" />
+            <div className="mb-2 flex items-center gap-3">
+              <BookOpen className="h-8 w-8 text-white" />
               <h1 className="text-detective-3xl font-bold text-white">{exercise.title}</h1>
             </div>
             <p className="text-detective-base text-white" style={{ opacity: 0.9 }}>
@@ -188,23 +188,23 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
           </div>
 
           {/* Reading Passage */}
-          <div className="bg-amber-50 border-2 border-amber-200 rounded-detective p-6">
-            <h3 className="text-detective-lg font-semibold text-detective-blue mb-4">
+          <div className="rounded-detective border-2 border-amber-200 bg-amber-50 p-6">
+            <h3 className="mb-4 text-detective-lg font-semibold text-detective-blue">
               Pasaje de Lectura
             </h3>
-            <p className="text-detective-base text-detective-text leading-relaxed whitespace-pre-line">
+            <p className="whitespace-pre-line text-detective-base leading-relaxed text-detective-text">
               {exercise.content.passage}
             </p>
           </div>
 
           {/* Progress Indicator */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <div className="text-detective-sm text-detective-text-secondary">
               Preguntas respondidas: {Object.keys(selectedAnswers).length} de {questions.length}
             </div>
             {validated && (
               <div className="text-detective-sm font-bold text-detective-blue">
-                Correctas: {answers.filter(a => a.isCorrect).length} / {questions.length}
+                Correctas: {answers.filter((a) => a.isCorrect).length} / {questions.length}
               </div>
             )}
           </div>
@@ -213,7 +213,7 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
           <div className="space-y-6">
             {questions.map((question, qIdx) => {
               const selectedOption = selectedAnswers[question.id];
-              const answer = answers.find(a => a.questionId === question.id);
+              const answer = answers.find((a) => a.questionId === question.id);
 
               return (
                 <motion.div
@@ -221,16 +221,16 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: qIdx * 0.1 }}
-                  className="bg-white border-2 border-detective-border-light rounded-detective p-6"
+                  className="rounded-detective border-2 border-detective-border-light bg-white p-6"
                 >
                   {/* Question Header */}
-                  <div className="flex items-start justify-between mb-4">
+                  <div className="mb-4 flex items-start justify-between">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="mb-2 flex items-center gap-2">
                         <span className="text-detective-sm font-bold text-detective-orange">
                           Pregunta {qIdx + 1}
                         </span>
-                        <span className="px-3 py-1 bg-purple-100 text-purple-800 text-detective-xs font-bold rounded-lg">
+                        <span className="rounded-lg bg-purple-100 px-3 py-1 text-detective-xs font-bold text-purple-800">
                           {getInferenceTypeLabel(question.inference_type)}
                         </span>
                       </div>
@@ -241,13 +241,14 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
                   </div>
 
                   {/* Options in 2-column grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-2">
                     {question.options.map((option, idx) => {
                       const isSelected = selectedOption === idx;
                       const isCorrect = idx === question.correctAnswer;
                       const showCorrectness = validated;
 
-                      let optionClasses = 'p-4 rounded-lg border-2 cursor-pointer transition-all text-left';
+                      let optionClasses =
+                        'p-4 rounded-lg border-2 cursor-pointer transition-all text-left';
 
                       if (showCorrectness) {
                         if (isCorrect) {
@@ -259,9 +260,11 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
                         }
                       } else {
                         if (isSelected) {
-                          optionClasses += ' bg-detective-orange border-detective-orange text-white';
+                          optionClasses +=
+                            ' bg-detective-orange border-detective-orange text-white';
                         } else {
-                          optionClasses += ' bg-white border-gray-300 text-detective-text hover:border-detective-orange';
+                          optionClasses +=
+                            ' bg-white border-gray-300 text-detective-text hover:border-detective-orange';
                         }
                       }
 
@@ -275,23 +278,25 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
                           className={optionClasses}
                         >
                           <div className="flex items-center gap-3">
-                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                              showCorrectness && isCorrect
-                                ? 'bg-green-500 border-green-500'
-                                : showCorrectness && isSelected && !isCorrect
-                                ? 'bg-red-500 border-red-500'
-                                : isSelected
-                                ? 'bg-white border-white'
-                                : 'border-current'
-                            }`}>
+                            <div
+                              className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border-2 ${
+                                showCorrectness && isCorrect
+                                  ? 'border-green-500 bg-green-500'
+                                  : showCorrectness && isSelected && !isCorrect
+                                    ? 'border-red-500 bg-red-500'
+                                    : isSelected
+                                      ? 'border-white bg-white'
+                                      : 'border-current'
+                              }`}
+                            >
                               {showCorrectness && isCorrect && (
-                                <CheckCircle className="w-4 h-4 text-white" />
+                                <CheckCircle className="h-4 w-4 text-white" />
                               )}
                               {showCorrectness && isSelected && !isCorrect && (
-                                <XCircle className="w-4 h-4 text-white" />
+                                <XCircle className="h-4 w-4 text-white" />
                               )}
                               {!showCorrectness && isSelected && (
-                                <div className="w-3 h-3 rounded-full bg-detective-orange" />
+                                <div className="h-3 w-3 rounded-full bg-detective-orange" />
                               )}
                             </div>
                             <span className="text-detective-sm">{option}</span>
@@ -306,13 +311,13 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className={`p-4 rounded-lg border-2 ${
+                      className={`rounded-lg border-2 p-4 ${
                         answer?.isCorrect
-                          ? 'bg-green-50 border-green-300'
-                          : 'bg-blue-50 border-blue-300'
+                          ? 'border-green-300 bg-green-50'
+                          : 'border-blue-300 bg-blue-50'
                       }`}
                     >
-                      <p className="text-detective-sm font-medium mb-2">
+                      <p className="mb-2 text-detective-sm font-medium">
                         {answer?.isCorrect ? '✓ Explicación:' : '📘 Explicación:'}
                       </p>
                       <p className="text-detective-sm text-detective-text">

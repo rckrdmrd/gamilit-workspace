@@ -1,9 +1,9 @@
 import React from 'react';
-import { Trophy, Flame, Medal, Crown, Loader } from 'lucide-react';
+import { Trophy, Crown, Loader } from 'lucide-react';
 import { Avatar } from './Avatar';
 import { cn } from '@shared/utils';
-import { formatXP, formatStreak, formatRank } from '@/shared/utils/format.util';
-import type { LeaderboardEntry, RANK_LABELS, RANK_COLORS, RANK_ICONS } from '@/shared/types/leaderboard.types';
+import { formatXP, formatStreak } from '@/shared/utils/format.util';
+import type { LeaderboardEntry } from '@/shared/types/leaderboard.types';
 import { MayaRank } from '@/shared/constants/ranks.constants';
 
 /**
@@ -26,7 +26,7 @@ const getRankColor = (rank: MayaRank): string => {
     [MayaRank.NACOM]: 'text-bronze-600',
     [MayaRank.AH_KIN]: 'text-silver-600',
     [MayaRank.HALACH_UINIC]: 'text-yellow-600',
-    [MayaRank.KUKUKULKAN]: 'text-purple-600',
+    [MayaRank.KUKULKAN]: 'text-purple-600',
   };
   return colors[rank] || 'text-gray-600';
 };
@@ -40,7 +40,7 @@ const getRankLabel = (rank: MayaRank): string => {
     [MayaRank.NACOM]: 'Nacom',
     [MayaRank.AH_KIN]: "Ah K'in",
     [MayaRank.HALACH_UINIC]: 'Halach Uinic',
-    [MayaRank.KUKUKULKAN]: "K'uk'ulkan",
+    [MayaRank.KUKULKAN]: "K'uk'ulkan",
   };
   return labels[rank] || String(rank);
 };
@@ -59,30 +59,30 @@ const getRankBadge = (rank: number): React.ReactNode => {
  * Skeleton Loading Row
  */
 const SkeletonRow: React.FC = () => (
-  <tr className="border-b border-gray-200 animate-pulse">
+  <tr className="animate-pulse border-b border-gray-200">
     <td className="px-6 py-4">
-      <div className="w-8 h-8 bg-gray-200 rounded" />
+      <div className="h-8 w-8 rounded bg-gray-200" />
     </td>
     <td className="px-6 py-4">
       <div className="flex items-center space-x-3">
-        <div className="w-10 h-10 bg-gray-200 rounded-full" />
-        <div className="w-32 h-4 bg-gray-200 rounded" />
+        <div className="h-10 w-10 rounded-full bg-gray-200" />
+        <div className="h-4 w-32 rounded bg-gray-200" />
       </div>
     </td>
     <td className="px-6 py-4">
-      <div className="w-20 h-4 bg-gray-200 rounded" />
+      <div className="h-4 w-20 rounded bg-gray-200" />
     </td>
     <td className="px-6 py-4">
-      <div className="w-12 h-4 bg-gray-200 rounded" />
+      <div className="h-4 w-12 rounded bg-gray-200" />
     </td>
     <td className="px-6 py-4">
-      <div className="w-24 h-4 bg-gray-200 rounded" />
+      <div className="h-4 w-24 rounded bg-gray-200" />
     </td>
     <td className="px-6 py-4">
-      <div className="w-16 h-4 bg-gray-200 rounded" />
+      <div className="h-4 w-16 rounded bg-gray-200" />
     </td>
     <td className="px-6 py-4">
-      <div className="w-12 h-4 bg-gray-200 rounded" />
+      <div className="h-4 w-12 rounded bg-gray-200" />
     </td>
   </tr>
 );
@@ -96,20 +96,16 @@ const MobileCard: React.FC<{ entry: LeaderboardEntry; isCurrentUser: boolean }> 
 }) => (
   <div
     className={cn(
-      'bg-white rounded-lg border-2 p-4 mb-4',
+      'mb-4 rounded-lg border-2 bg-white p-4',
       isCurrentUser ? 'border-orange-500 bg-orange-50' : 'border-gray-200',
-      entry.rank <= 3 && 'border-yellow-400 bg-yellow-50'
+      entry.rank <= 3 && 'border-yellow-400 bg-yellow-50',
     )}
   >
     {/* Rank & User */}
-    <div className="flex items-center justify-between mb-3">
+    <div className="mb-3 flex items-center justify-between">
       <div className="flex items-center space-x-3">
         <div className="flex-shrink-0">{getRankBadge(entry.rank)}</div>
-        <Avatar
-          src={entry.avatar}
-          alt={entry.username}
-          name={entry.username}
-        />
+        <Avatar src={entry.avatar} alt={entry.username} name={entry.username} />
         <div>
           <p className="font-semibold text-gray-900">
             {entry.username}
@@ -124,22 +120,22 @@ const MobileCard: React.FC<{ entry: LeaderboardEntry; isCurrentUser: boolean }> 
 
     {/* Stats Grid */}
     <div className="grid grid-cols-2 gap-3">
-      <div className="bg-white rounded p-2">
+      <div className="rounded bg-white p-2">
         <p className="text-xs text-gray-600">XP Total</p>
         <p className="text-sm font-bold text-gray-900">{formatXP(entry.totalXP)}</p>
       </div>
-      <div className="bg-white rounded p-2">
+      <div className="rounded bg-white p-2">
         <p className="text-xs text-gray-600">Nivel</p>
         <p className="text-sm font-bold text-gray-900">{entry.level}</p>
       </div>
-      <div className="bg-white rounded p-2">
+      <div className="rounded bg-white p-2">
         <p className="text-xs text-gray-600">Racha</p>
         <p className="text-sm font-bold text-orange-600">{formatStreak(entry.streak)}</p>
       </div>
-      <div className="bg-white rounded p-2">
+      <div className="rounded bg-white p-2">
         <p className="text-xs text-gray-600">Logros</p>
         <p className="text-sm font-bold text-yellow-600">
-          <Trophy className="w-3 h-3 inline mr-1" />
+          <Trophy className="mr-1 inline h-3 w-3" />
           {entry.achievementCount}
         </p>
       </div>
@@ -176,36 +172,36 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
   // Show skeleton while loading
   if (isLoading) {
     return (
-      <div className={cn('bg-white rounded-lg border border-gray-200 overflow-hidden', className)}>
+      <div className={cn('overflow-hidden rounded-lg border border-gray-200 bg-white', className)}>
         {/* Desktop Table */}
-        <div className="hidden md:block overflow-x-auto">
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="border-b border-gray-200 bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Rank
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Usuario
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   XP Total
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Nivel
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Rango
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Racha
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Logros
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-200 bg-white">
               {[...Array(10)].map((_, i) => (
                 <SkeletonRow key={i} />
               ))}
@@ -214,8 +210,8 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
         </div>
 
         {/* Mobile Loading */}
-        <div className="md:hidden p-4">
-          <Loader className="w-8 h-8 text-orange-600 animate-spin mx-auto" />
+        <div className="p-4 md:hidden">
+          <Loader className="mx-auto h-8 w-8 animate-spin text-orange-600" />
         </div>
       </div>
     );
@@ -224,47 +220,45 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
   // Empty state
   if (!entries || entries.length === 0) {
     return (
-      <div className={cn('bg-white rounded-lg border border-gray-200 p-12 text-center', className)}>
-        <Trophy className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay datos de clasificación</h3>
-        <p className="text-gray-600">
-          Sé el primero en aparecer en esta tabla de clasificación.
-        </p>
+      <div className={cn('rounded-lg border border-gray-200 bg-white p-12 text-center', className)}>
+        <Trophy className="mx-auto mb-4 h-16 w-16 text-gray-300" />
+        <h3 className="mb-2 text-lg font-semibold text-gray-900">No hay datos de clasificación</h3>
+        <p className="text-gray-600">Sé el primero en aparecer en esta tabla de clasificación.</p>
       </div>
     );
   }
 
   return (
-    <div className={cn('bg-white rounded-lg border border-gray-200 overflow-hidden', className)}>
+    <div className={cn('overflow-hidden rounded-lg border border-gray-200 bg-white', className)}>
       {/* Desktop Table View */}
-      <div className="hidden md:block overflow-x-auto">
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200 sticky top-0">
+          <thead className="sticky top-0 border-b border-gray-200 bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Rank
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Usuario
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 XP Total
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Nivel
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Rango
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Racha
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                 Logros
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-200 bg-white">
             {entries.map((entry) => {
               const isCurrentUser = currentUserId && entry.userId === currentUserId;
               const isTopThree = entry.rank <= 3;
@@ -273,29 +267,25 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
                 <tr
                   key={entry.userId}
                   className={cn(
-                    'hover:bg-gray-50 transition-colors',
+                    'transition-colors hover:bg-gray-50',
                     isCurrentUser && 'bg-orange-50 hover:bg-orange-100',
-                    isTopThree && 'bg-yellow-50 hover:bg-yellow-100'
+                    isTopThree && 'bg-yellow-50 hover:bg-yellow-100',
                   )}
                 >
                   {/* Rank */}
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="whitespace-nowrap px-6 py-4">
                     <div className="flex items-center">{getRankBadge(entry.rank)}</div>
                   </td>
 
                   {/* User */}
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="whitespace-nowrap px-6 py-4">
                     <div className="flex items-center space-x-3">
-                      <Avatar
-                        src={entry.avatar}
-                        alt={entry.username}
-                        name={entry.username}
-                      />
+                      <Avatar src={entry.avatar} alt={entry.username} name={entry.username} />
                       <div>
                         <p className="font-semibold text-gray-900">
                           {entry.username}
                           {isCurrentUser && (
-                            <span className="ml-2 text-xs text-orange-600 font-normal">(Tú)</span>
+                            <span className="ml-2 text-xs font-normal text-orange-600">(Tú)</span>
                           )}
                         </p>
                         {entry.firstName && entry.lastName && (
@@ -308,42 +298,42 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
                   </td>
 
                   {/* Total XP */}
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="whitespace-nowrap px-6 py-4">
                     <span className="text-sm font-semibold text-gray-900">
                       {formatXP(entry.totalXP)}
                     </span>
                   </td>
 
                   {/* Level */}
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="whitespace-nowrap px-6 py-4">
                     <span className="text-sm font-semibold text-blue-600">{entry.level}</span>
                   </td>
 
                   {/* Maya Rank */}
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="whitespace-nowrap px-6 py-4">
                     <span
                       className={cn(
-                        'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold',
+                        'inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold',
                         getRankColor(entry.currentRank),
-                        'bg-opacity-10'
+                        'bg-opacity-10',
                       )}
                     >
-                      <Crown className="w-3 h-3 mr-1" />
+                      <Crown className="mr-1 h-3 w-3" />
                       {getRankLabel(entry.currentRank)}
                     </span>
                   </td>
 
                   {/* Streak */}
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="whitespace-nowrap px-6 py-4">
                     <span className="text-sm font-semibold text-orange-600">
                       {formatStreak(entry.streak)}
                     </span>
                   </td>
 
                   {/* Achievements */}
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="whitespace-nowrap px-6 py-4">
                     <span className="inline-flex items-center text-sm font-semibold text-yellow-600">
-                      <Trophy className="w-4 h-4 mr-1" />
+                      <Trophy className="mr-1 h-4 w-4" />
                       {entry.achievementCount}
                     </span>
                   </td>
@@ -355,9 +345,9 @@ export const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
       </div>
 
       {/* Mobile Card View */}
-      <div className="md:hidden p-4">
+      <div className="p-4 md:hidden">
         {entries.map((entry) => {
-          const isCurrentUser = currentUserId && entry.userId === currentUserId;
+          const isCurrentUser = !!(currentUserId && entry.userId === currentUserId);
           return <MobileCard key={entry.userId} entry={entry} isCurrentUser={isCurrentUser} />;
         })}
       </div>

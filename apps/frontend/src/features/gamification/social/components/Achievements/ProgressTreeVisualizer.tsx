@@ -17,7 +17,7 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 export const ProgressTreeVisualizer: React.FC = () => {
-  const { getAchievementsByCategory, stats } = useAchievements();
+  const { getAchievementsByCategory } = useAchievements();
 
   const categories = [
     { name: 'progress', label: 'Progreso', icon: 'TrendingUp', color: 'bg-blue-500' },
@@ -28,10 +28,8 @@ export const ProgressTreeVisualizer: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-6 rounded-detective shadow-card">
-        <h2 className="text-detective-2xl font-bold text-detective-text mb-6">
-          Árbol de Progreso
-        </h2>
+      <div className="rounded-detective bg-white p-6 shadow-card">
+        <h2 className="mb-6 text-detective-2xl font-bold text-detective-text">Árbol de Progreso</h2>
 
         <div className="space-y-8">
           {categories.map((category) => {
@@ -45,8 +43,8 @@ export const ProgressTreeVisualizer: React.FC = () => {
               <div key={category.name} className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${category.color}`}>
-                      <Icon className="w-5 h-5 text-white" />
+                    <div className={`rounded-lg p-2 ${category.color}`}>
+                      <Icon className="h-5 w-5 text-white" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-detective-text">{category.label}</h3>
@@ -60,7 +58,7 @@ export const ProgressTreeVisualizer: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                <div className="h-3 w-full overflow-hidden rounded-full bg-gray-200">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${percentage}%` }}
@@ -69,7 +67,7 @@ export const ProgressTreeVisualizer: React.FC = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-8 md:grid-cols-12 gap-2">
+                <div className="grid grid-cols-8 gap-2 md:grid-cols-12">
                   {achievements.map((achievement, index) => {
                     const AchIcon = iconMap[achievement.icon] || Award;
                     return (
@@ -79,13 +77,13 @@ export const ProgressTreeVisualizer: React.FC = () => {
                         animate={{ scale: 1 }}
                         transition={{ delay: index * 0.02 }}
                         title={achievement.title}
-                        className={`aspect-square rounded-lg flex items-center justify-center ${
+                        className={`flex aspect-square items-center justify-center rounded-lg ${
                           achievement.isUnlocked
                             ? `${category.color} text-white`
                             : 'bg-gray-200 text-gray-400'
                         }`}
                       >
-                        <AchIcon className="w-4 h-4" />
+                        <AchIcon className="h-4 w-4" />
                       </motion.div>
                     );
                   })}

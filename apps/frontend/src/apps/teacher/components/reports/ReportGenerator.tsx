@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { FileText, Download, Calendar, Users } from 'lucide-react';
+import { FileText, Download } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { InputDetective } from '@shared/components/base/InputDetective';
 import { ReportTemplateSelector } from './ReportTemplateSelector';
 import type { ReportConfig, ReportFormat } from '../../types';
+import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 
 interface ReportGeneratorProps {
   classroomId: string;
@@ -34,37 +36,35 @@ export function ReportGenerator({ classroomId, students }: ReportGeneratorProps)
     try {
       setGenerating(true);
 
-      const response = await fetch('/api/reports/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const response = await apiClient.post(
+        API_ENDPOINTS.teacher.reports.generate,
+        {
           ...config,
           classroom_id: classroomId,
           template_id: selectedTemplate,
-          type: selectedTemplate.includes('progress') ? 'progress' :
-                selectedTemplate.includes('evaluation') ? 'evaluation' :
-                selectedTemplate.includes('intervention') ? 'intervention' : 'custom',
-        }),
-      });
+          type: selectedTemplate.includes('progress')
+            ? 'progress'
+            : selectedTemplate.includes('evaluation')
+              ? 'evaluation'
+              : selectedTemplate.includes('intervention')
+                ? 'intervention'
+                : 'custom',
+        },
+        {
+          responseType: 'blob',
+        },
+      );
 
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `report-${selectedTemplate}-${Date.now()}.${config.format === 'excel' ? 'xlsx' : config.format}`;
-        a.click();
-        toast.success('Reporte generado exitosamente', {
-          duration: 3000,
-          icon: '📊',
-        });
-      } else {
-        toast.error('Error al generar el reporte. Por favor, intenta de nuevo.', {
-          duration: 4000,
-        });
-      }
+      const blob = response.data;
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `report-${selectedTemplate}-${Date.now()}.${config.format === 'excel' ? 'xlsx' : config.format}`;
+      a.click();
+      toast.success('Reporte generado exitosamente', {
+        duration: 3000,
+        icon: '📊',
+      });
     } catch (error) {
       console.error('Error:', error);
       toast.error('Error al generar el reporte. Verifica tu conexión.', {
@@ -95,16 +95,18 @@ export function ReportGenerator({ classroomId, students }: ReportGeneratorProps)
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <FileText className="w-8 h-8 text-detective-orange" />
+        <FileText className="h-8 w-8 text-detective-orange" />
         <div>
           <h2 className="text-2xl font-bold text-detective-text">Generador de Reportes</h2>
-          <p className="text-detective-text-secondary">Crea reportes personalizados para análisis</p>
+          <p className="text-detective-text-secondary">
+            Crea reportes personalizados para análisis
+          </p>
         </div>
       </div>
 
       {/* Template Selection */}
       <div>
-        <h3 className="text-lg font-bold text-detective-text mb-4">1. Selecciona una Plantilla</h3>
+        <h3 className="mb-4 text-lg font-bold text-detective-text">1. Selecciona una Plantilla</h3>
         <ReportTemplateSelector
           selectedTemplate={selectedTemplate}
           onSelect={setSelectedTemplate}
@@ -115,13 +117,13 @@ export function ReportGenerator({ classroomId, students }: ReportGeneratorProps)
       {selectedTemplate && (
         <>
           <div>
-            <h3 className="text-lg font-bold text-detective-text mb-4">2. Configura el Reporte</h3>
+            <h3 className="mb-4 text-lg font-bold text-detective-text">2. Configura el Reporte</h3>
             <DetectiveCard>
               <div className="space-y-4">
                 {/* Date Range */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-detective-text mb-2">
+                    <label className="mb-2 block text-sm font-semibold text-detective-text">
                       Fecha de Inicio
                     </label>
                     <InputDetective
@@ -131,7 +133,7 @@ export function ReportGenerator({ classroomId, students }: ReportGeneratorProps)
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-detective-text mb-2">
+                    <label className="mb-2 block text-sm font-semibold text-detective-text">
                       Fecha de Fin
                     </label>
                     <InputDetective
@@ -144,14 +146,14 @@ export function ReportGenerator({ classroomId, students }: ReportGeneratorProps)
 
                 {/* Format */}
                 <div>
-                  <label className="block text-sm font-semibold text-detective-text mb-2">
+                  <label className="mb-2 block text-sm font-semibold text-detective-text">
                     Formato de Exportación
                   </label>
                   <div className="flex gap-3">
                     {(['pdf', 'excel', 'csv'] as ReportFormat[]).map((format) => (
                       <label
                         key={format}
-                        className="flex items-center gap-2 p-3 bg-detective-bg-secondary rounded-lg cursor-pointer hover:bg-opacity-80 transition-colors"
+                        className="flex cursor-pointer items-center gap-2 rounded-lg bg-detective-bg-secondary p-3 transition-colors hover:bg-opacity-80"
                       >
                         <input
                           type="radio"
@@ -160,7 +162,7 @@ export function ReportGenerator({ classroomId, students }: ReportGeneratorProps)
                           onChange={() => setConfig({ ...config, format })}
                           className="text-detective-orange focus:ring-detective-orange"
                         />
-                        <span className="text-detective-text uppercase">{format}</span>
+                        <span className="uppercase text-detective-text">{format}</span>
                       </label>
                     ))}
                   </div>
@@ -171,7 +173,9 @@ export function ReportGenerator({ classroomId, students }: ReportGeneratorProps)
 
           {/* Student Selection */}
           <div>
-            <h3 className="text-lg font-bold text-detective-text mb-4">3. Selecciona Estudiantes</h3>
+            <h3 className="mb-4 text-lg font-bold text-detective-text">
+              3. Selecciona Estudiantes
+            </h3>
             <DetectiveCard>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -182,11 +186,11 @@ export function ReportGenerator({ classroomId, students }: ReportGeneratorProps)
                     Seleccionar Todos
                   </DetectiveButton>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-64 overflow-y-auto">
+                <div className="grid max-h-64 grid-cols-2 gap-2 overflow-y-auto md:grid-cols-3">
                   {students.map((student) => (
                     <label
                       key={student.id}
-                      className="flex items-center gap-2 p-2 bg-detective-bg-secondary rounded cursor-pointer hover:bg-opacity-80 transition-colors"
+                      className="flex cursor-pointer items-center gap-2 rounded bg-detective-bg-secondary p-2 transition-colors hover:bg-opacity-80"
                     >
                       <input
                         type="checkbox"
@@ -207,9 +211,8 @@ export function ReportGenerator({ classroomId, students }: ReportGeneratorProps)
             <DetectiveButton
               onClick={handleGenerate}
               disabled={generating || !config.student_ids?.length}
-
             >
-              <Download className="w-5 h-5" />
+              <Download className="h-5 w-5" />
               {generating ? 'Generando...' : 'Generar Reporte'}
             </DetectiveButton>
           </div>

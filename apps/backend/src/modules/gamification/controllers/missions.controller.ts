@@ -464,11 +464,14 @@ export class MissionsController {
    * @description Marca una misión como 'claimed' y otorga las recompensas al usuario.
    * Solo se pueden reclamar misiones con status 'completed'.
    *
-   * TODO: Integrar con MLCoinsService y UserStatsService para otorgar recompensas reales.
+   * Las recompensas incluyen:
+   * - ML Coins: Se agregan al balance del usuario y se registra transacción
+   * - XP: Se agrega al total_xp del usuario y puede subir de nivel
+   * - Promoción de rango: Si el XP otorgado hace que el usuario alcance un nuevo rango Maya, se promueve automáticamente
    *
    * @param id - ID de la misión (UUID)
    * @param req - Request con usuario autenticado (JWT)
-   * @returns Objeto con misión actualizada y recompensas otorgadas
+   * @returns Objeto con misión actualizada, recompensas e información de promoción de rango
    *
    * @throws {NotFoundException} Si la misión no existe
    * @throws {BadRequestException} Si la misión no pertenece al usuario, no está completada, o ya fue reclamada
@@ -477,7 +480,7 @@ export class MissionsController {
    * POST /api/v1/gamification/missions/880e8400-e29b-41d4-a716-446655440000/claim
    * Authorization: Bearer <token>
    *
-   * Response 200:
+   * Response 200 (sin promoción de rango):
    * {
    *   "mission": {
    *     "id": "880e8400-e29b-41d4-a716-446655440000",
@@ -488,6 +491,29 @@ export class MissionsController {
    *   "rewards": {
    *     "ml_coins": 25,
    *     "xp": 50
+   *   },
+   *   "rewards_granted": {
+   *     "xp_awarded": 50,
+   *     "ml_coins_awarded": 25,
+   *     "rank_promotion": false,
+   *     "new_rank": null,
+   *     "previous_rank": null
+   *   }
+   * }
+   *
+   * Response 200 (con promoción de rango):
+   * {
+   *   "mission": {...},
+   *   "rewards": {
+   *     "ml_coins": 25,
+   *     "xp": 50
+   *   },
+   *   "rewards_granted": {
+   *     "xp_awarded": 50,
+   *     "ml_coins_awarded": 25,
+   *     "rank_promotion": true,
+   *     "new_rank": "Nacom",
+   *     "previous_rank": "Ajaw"
    *   }
    * }
    */
@@ -495,7 +521,7 @@ export class MissionsController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Claim mission rewards',
-    description: 'Reclama las recompensas de una misión completada y las otorga al usuario',
+    description: 'Reclama las recompensas de una misión completada, otorga XP y ML Coins, y verifica promoción de rango',
   })
   @ApiParam({
     name: 'id',
@@ -517,6 +543,13 @@ export class MissionsController {
         rewards: {
           ml_coins: 25,
           xp: 50,
+        },
+        rewards_granted: {
+          xp_awarded: 50,
+          ml_coins_awarded: 25,
+          rank_promotion: true,
+          new_rank: 'Nacom',
+          previous_rank: 'Ajaw',
         },
       },
     },

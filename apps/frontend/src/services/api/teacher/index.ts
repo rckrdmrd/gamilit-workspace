@@ -16,6 +16,12 @@ export { analyticsApi, AnalyticsAPI } from './analyticsApi';
 export { gradingApi, GradingAPI } from './gradingApi';
 export { classroomsApi, ClassroomsAPI } from './classroomsApi';
 export { assignmentsApi, AssignmentsAPI } from './assignmentsApi';
+export { interventionAlertsApi } from './interventionAlertsApi';
+export { teacherMessagesApi } from './teacherMessagesApi';
+export { teacherContentApi } from './teacherContentApi';
+export { bonusCoinsApi, BonusCoinsAPI } from './bonusCoinsApi';
+export { exerciseResponsesApi } from './exerciseResponsesApi';
+export type { ExerciseResponsesAPI } from './exerciseResponsesApi';
 
 // ============================================================================
 // TYPES
@@ -40,6 +46,7 @@ export type {
   GetEngagementMetricsDto,
   GenerateReportsDto,
   Report,
+  StudentInsights,
 } from './analyticsApi';
 
 // Grading types
@@ -48,12 +55,16 @@ export type {
   SubmitFeedbackDto,
   BulkGradeDto,
   SubmissionDetail,
+  PaginatedSubmissionsResponse,
 } from './gradingApi';
 
 // Classrooms types
 export type {
   GetClassroomsQueryDto,
   GetClassroomStudentsQueryDto,
+  ClassroomProgressData,
+  ModuleProgressItem,
+  ClassroomProgressResponse,
 } from './classroomsApi';
 
 // Assignments types
@@ -64,3 +75,59 @@ export type {
   GetAssignmentsQueryDto,
   GetSubmissionsQueryDto as GetAssignmentSubmissionsQueryDto,
 } from './assignmentsApi';
+
+// Intervention Alerts types
+export type {
+  StudentInterventionAlert,
+  InterventionAlertsListResponse,
+  GetAlertsParams,
+  ResolveAlertData,
+  InterventionAlertType,
+  InterventionAlertSeverity,
+  InterventionAlertStatus,
+  // Deprecated aliases (remove after 2025-12-08)
+  Alert,
+  AlertsListResponse,
+  AlertType,
+  AlertSeverity,
+  AlertStatus,
+} from './interventionAlertsApi';
+
+// Teacher Messages types
+export type {
+  Message,
+  MessagesListResponse,
+  GetMessagesParams,
+  SendMessageData,
+  SendAnnouncementData,
+  SendFeedbackData,
+  Conversation,
+  MessageType,
+  MessageRecipient,
+  UnreadCountResponse,
+  SuccessResponse,
+} from './teacherMessagesApi';
+
+// Teacher Content types
+export type {
+  TeacherContent,
+  ContentListResponse,
+  GetContentParams,
+  CreateContentData,
+  UpdateContentData,
+  CloneContentData,
+  TeacherContentType,
+  TeacherContentStatus,
+  TeacherContentVisibility,
+} from './teacherContentApi';
+
+// Bonus Coins types
+export type { GrantBonusRequest, GrantBonusResponse } from './bonusCoinsApi';
+
+// Exercise Responses types
+export type {
+  GetAttemptsQuery,
+  AttemptResponse,
+  AttemptDetailResponse,
+  AttemptsListResponse,
+} from './exerciseResponsesApi';

@@ -13,6 +13,8 @@ const QUERY_KEYS = {
   classroomTeachers: (classroomId: string) => ['classroom-teachers', 'classroom', classroomId],
   teacherClassrooms: (teacherId: string) => ['classroom-teachers', 'teacher', teacherId],
   allAssignments: (query?: any) => ['classroom-teachers', 'all', query],
+  classroomsList: (search?: string) => ['classrooms-list', search],
+  teachersList: (search?: string) => ['teachers-list', search],
 };
 
 export function useClassroomTeacher() {
@@ -45,6 +47,22 @@ export function useClassroomTeacher() {
       queryKey: QUERY_KEYS.allAssignments(query),
       queryFn: () => classroomTeacherApi.listAllAssignments(query),
       staleTime: 1000 * 60 * 2, // 2 min
+    });
+  };
+
+  const useClassroomsList = (search?: string) => {
+    return useQuery({
+      queryKey: QUERY_KEYS.classroomsList(search),
+      queryFn: () => classroomTeacherApi.listClassroomsForDropdown({ search, limit: 50 }),
+      staleTime: 1000 * 60 * 5, // 5 min
+    });
+  };
+
+  const useTeachersList = (search?: string) => {
+    return useQuery({
+      queryKey: QUERY_KEYS.teachersList(search),
+      queryFn: () => classroomTeacherApi.listTeachersForDropdown({ search, limit: 50 }),
+      staleTime: 1000 * 60 * 5, // 5 min
     });
   };
 
@@ -127,6 +145,8 @@ export function useClassroomTeacher() {
     useClassroomTeachers,
     useTeacherClassrooms,
     useAllAssignments,
+    useClassroomsList,
+    useTeachersList,
     // Mutations
     assignTeacherToClassroom,
     removeTeacherFromClassroom,

@@ -13,7 +13,7 @@
  * - Empty states
  */
 
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Crown,
@@ -23,12 +23,10 @@ import {
   ChevronDown,
   ChevronsUpDown,
   Target,
-  ArrowUp,
-  User
+  User,
 } from 'lucide-react';
 import type { LeaderboardEntry } from '../../types/leaderboardsTypes';
 import { RankChangeIndicator } from './RankChangeIndicator';
-import { cn } from '@shared/utils/cn';
 
 interface AdvancedLeaderboardTableProps {
   entries: LeaderboardEntry[];
@@ -78,7 +76,7 @@ export const AdvancedLeaderboardTable: React.FC<AdvancedLeaderboardTableProps> =
   onUserClick,
   showTopThreeInPodium = true,
   itemsPerPage = 50,
-  className
+  className,
 }) => {
   const [sortColumn, setSortColumn] = useState<SortColumn>('rank');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
@@ -87,9 +85,7 @@ export const AdvancedLeaderboardTable: React.FC<AdvancedLeaderboardTableProps> =
   const userRowRef = useRef<HTMLTableRowElement>(null);
 
   // Filter entries if showing top 3 in podium
-  const displayEntries = showTopThreeInPodium
-    ? entries.filter(e => e.rank > 3)
-    : entries;
+  const displayEntries = showTopThreeInPodium ? entries.filter((e) => e.rank > 3) : entries;
 
   // Sorting logic
   const sortedEntries = useMemo(() => {
@@ -140,7 +136,7 @@ export const AdvancedLeaderboardTable: React.FC<AdvancedLeaderboardTableProps> =
   const handleJumpToUser = () => {
     if (!currentUserId) return;
 
-    const userIndex = sortedEntries.findIndex(e => e.userId === currentUserId);
+    const userIndex = sortedEntries.findIndex((e) => e.userId === currentUserId);
     if (userIndex === -1) return;
 
     const userPage = Math.floor(userIndex / itemsPerPage) + 1;
@@ -155,20 +151,15 @@ export const AdvancedLeaderboardTable: React.FC<AdvancedLeaderboardTableProps> =
   };
 
   // Find current user entry
-  const currentUserEntry = entries.find(e => e.userId === currentUserId);
-  const userIsInCurrentPage = paginatedEntries.some(e => e.userId === currentUserId);
+  const currentUserEntry = entries.find((e) => e.userId === currentUserId);
+  const userIsInCurrentPage = paginatedEntries.some((e) => e.userId === currentUserId);
 
   if (entries.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
-          <User className="w-16 h-16 text-detective-text-secondary mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-detective-text mb-2">
-            No hay datos disponibles
-          </h3>
+      <div className="rounded-xl bg-white p-12 text-center shadow-lg">
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+          <User className="mx-auto mb-4 h-16 w-16 text-detective-text-secondary" />
+          <h3 className="mb-2 text-xl font-bold text-detective-text">No hay datos disponibles</h3>
           <p className="text-detective-text-secondary">
             No se encontraron entradas para este período
           </p>
@@ -176,6 +167,8 @@ export const AdvancedLeaderboardTable: React.FC<AdvancedLeaderboardTableProps> =
       </div>
     );
   }
+
+  const cn = (...classes: (string | boolean | undefined)[]) => classes.filter(Boolean).join(' ');
 
   return (
     <div className={cn('space-y-4', className)}>
@@ -187,15 +180,15 @@ export const AdvancedLeaderboardTable: React.FC<AdvancedLeaderboardTableProps> =
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={handleJumpToUser}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-detective-orange text-white rounded-lg font-semibold hover:bg-detective-orange-dark transition-colors shadow-md"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-detective-orange px-4 py-3 font-semibold text-white shadow-md transition-colors hover:bg-detective-orange-dark"
         >
-          <Target className="w-5 h-5" />
+          <Target className="h-5 w-5" />
           <span>Ir a mi posición (#{currentUserEntry.rank})</span>
         </motion.button>
       )}
 
       {/* Table Container */}
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+      <div className="overflow-hidden rounded-xl bg-white shadow-lg">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gradient-to-r from-detective-blue to-detective-orange text-white">
@@ -204,31 +197,34 @@ export const AdvancedLeaderboardTable: React.FC<AdvancedLeaderboardTableProps> =
                   <th
                     key={column.key}
                     className={cn(
-                      'px-4 py-4 font-bold text-sm',
+                      'px-4 py-4 text-sm font-bold',
                       column.hideOnMobile && 'hidden md:table-cell',
                       column.align === 'center' && 'text-center',
                       column.align === 'right' && 'text-right',
                       column.align === 'left' && 'text-left',
-                      column.sortable && 'cursor-pointer select-none hover:bg-white/10 transition-colors'
+                      column.sortable &&
+                        'cursor-pointer select-none transition-colors hover:bg-white/10',
                     )}
                     onClick={() => column.sortable && handleSort(column.key)}
                   >
-                    <div className={cn(
-                      'flex items-center gap-2',
-                      column.align === 'center' && 'justify-center',
-                      column.align === 'right' && 'justify-end'
-                    )}>
+                    <div
+                      className={cn(
+                        'flex items-center gap-2',
+                        column.align === 'center' && 'justify-center',
+                        column.align === 'right' && 'justify-end',
+                      )}
+                    >
                       <span>{column.label}</span>
                       {column.sortable && (
                         <span>
                           {sortColumn === column.key ? (
                             sortDirection === 'asc' ? (
-                              <ChevronUp className="w-4 h-4" />
+                              <ChevronUp className="h-4 w-4" />
                             ) : (
-                              <ChevronDown className="w-4 h-4" />
+                              <ChevronDown className="h-4 w-4" />
                             )
                           ) : (
-                            <ChevronsUpDown className="w-4 h-4 opacity-50" />
+                            <ChevronsUpDown className="h-4 w-4 opacity-50" />
                           )}
                         </span>
                       )}
@@ -257,10 +253,13 @@ export const AdvancedLeaderboardTable: React.FC<AdvancedLeaderboardTableProps> =
                       onClick={() => onUserClick?.(entry.userId)}
                       className={cn(
                         'border-b border-gray-100 transition-all',
-                        isCurrentUser && 'bg-detective-orange/10 border-detective-orange border-l-4',
+                        isCurrentUser &&
+                          'border-l-4 border-detective-orange bg-detective-orange/10',
                         isHighlighted && 'animate-pulse',
-                        !isCurrentUser && 'hover:bg-detective-bg cursor-pointer',
-                        entry.rank <= 10 && !isCurrentUser && 'bg-gradient-to-r from-purple-50/30 to-transparent'
+                        !isCurrentUser && 'cursor-pointer hover:bg-detective-bg',
+                        entry.rank <= 10 &&
+                          !isCurrentUser &&
+                          'bg-gradient-to-r from-purple-50/30 to-transparent',
                       )}
                     >
                       {/* Rank */}
@@ -272,12 +271,10 @@ export const AdvancedLeaderboardTable: React.FC<AdvancedLeaderboardTableProps> =
                               animate={{ scale: 1, rotate: 0 }}
                               transition={{ type: 'spring', bounce: 0.5 }}
                             >
-                              <Icon className={cn('w-6 h-6', rankColor)} />
+                              <Icon className={cn('h-6 w-6', rankColor)} />
                             </motion.div>
                           ) : (
-                            <span className={cn('font-bold text-lg', rankColor)}>
-                              {entry.rank}
-                            </span>
+                            <span className={cn('text-lg font-bold', rankColor)}>{entry.rank}</span>
                           )}
                         </div>
                       </td>
@@ -288,25 +285,27 @@ export const AdvancedLeaderboardTable: React.FC<AdvancedLeaderboardTableProps> =
                           <motion.img
                             src={entry.avatar}
                             alt={entry.username}
-                            className="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
+                            className="h-10 w-10 rounded-full border-2 border-gray-200 object-cover"
                             whileHover={{ scale: 1.1 }}
                             onError={(e) => {
                               e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(entry.username)}&background=f97316&color=fff`;
                             }}
                           />
                           <div className="min-w-0">
-                            <p className={cn(
-                              'font-semibold truncate',
-                              isCurrentUser ? 'text-detective-orange' : 'text-detective-text'
-                            )}>
+                            <p
+                              className={cn(
+                                'truncate font-semibold',
+                                isCurrentUser ? 'text-detective-orange' : 'text-detective-text',
+                              )}
+                            >
                               {entry.username}
                               {isCurrentUser && (
-                                <span className="ml-2 text-xs bg-detective-orange text-white px-2 py-0.5 rounded-full">
+                                <span className="ml-2 rounded-full bg-detective-orange px-2 py-0.5 text-xs text-white">
                                   Tú
                                 </span>
                               )}
                             </p>
-                            <p className="text-sm text-detective-text-secondary truncate">
+                            <p className="truncate text-sm text-detective-text-secondary">
                               {entry.rankBadge}
                             </p>
                           </div>
@@ -314,26 +313,25 @@ export const AdvancedLeaderboardTable: React.FC<AdvancedLeaderboardTableProps> =
                       </td>
 
                       {/* XP */}
-                      <td className="px-4 py-4 text-right hidden md:table-cell">
+                      <td className="hidden px-4 py-4 text-right md:table-cell">
                         <span className="font-bold text-detective-text">
                           {entry.xp.toLocaleString()}
                         </span>
                       </td>
 
                       {/* ML Coins */}
-                      <td className="px-4 py-4 text-right hidden md:table-cell">
+                      <td className="hidden px-4 py-4 text-right md:table-cell">
                         <span className="font-semibold text-detective-gold">
                           {entry.mlCoins.toLocaleString()}
                         </span>
                       </td>
 
                       {/* Change */}
-                      <td className="px-4 py-4 text-center hidden md:table-cell">
+                      <td className="hidden px-4 py-4 text-center md:table-cell">
                         <div className="flex justify-center">
                           <RankChangeIndicator
                             change={entry.change}
                             changeType={entry.changeType}
-
                           />
                         </div>
                       </td>
@@ -347,10 +345,11 @@ export const AdvancedLeaderboardTable: React.FC<AdvancedLeaderboardTableProps> =
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="border-t border-gray-200 px-4 py-4 bg-detective-bg">
+          <div className="border-t border-gray-200 bg-detective-bg px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="text-sm text-detective-text-secondary">
-                Mostrando {startIndex + 1} - {Math.min(endIndex, sortedEntries.length)} de {sortedEntries.length}
+                Mostrando {startIndex + 1} - {Math.min(endIndex, sortedEntries.length)} de{' '}
+                {sortedEntries.length}
               </div>
 
               <div className="flex items-center gap-2">
@@ -359,7 +358,7 @@ export const AdvancedLeaderboardTable: React.FC<AdvancedLeaderboardTableProps> =
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                   disabled={currentPage === 1}
-                  className="px-4 py-2 rounded-lg font-semibold bg-white text-detective-text hover:bg-detective-orange hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-detective-text"
+                  className="rounded-lg bg-white px-4 py-2 font-semibold text-detective-text transition-colors hover:bg-detective-orange hover:text-white disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-detective-text"
                 >
                   Anterior
                 </motion.button>
@@ -384,10 +383,10 @@ export const AdvancedLeaderboardTable: React.FC<AdvancedLeaderboardTableProps> =
                         whileTap={{ scale: 0.9 }}
                         onClick={() => setCurrentPage(pageNum)}
                         className={cn(
-                          'w-10 h-10 rounded-lg font-bold transition-colors',
+                          'h-10 w-10 rounded-lg font-bold transition-colors',
                           currentPage === pageNum
                             ? 'bg-detective-orange text-white'
-                            : 'bg-white text-detective-text hover:bg-detective-bg'
+                            : 'bg-white text-detective-text hover:bg-detective-bg',
                         )}
                       >
                         {pageNum}
@@ -401,7 +400,7 @@ export const AdvancedLeaderboardTable: React.FC<AdvancedLeaderboardTableProps> =
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                   disabled={currentPage === totalPages}
-                  className="px-4 py-2 rounded-lg font-semibold bg-white text-detective-text hover:bg-detective-orange hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-detective-text"
+                  className="rounded-lg bg-white px-4 py-2 font-semibold text-detective-text transition-colors hover:bg-detective-orange hover:text-white disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-detective-text"
                 >
                   Siguiente
                 </motion.button>

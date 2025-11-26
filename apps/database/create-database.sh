@@ -496,7 +496,8 @@ execute_sql "$SEEDS_DIR/auth_management/01-tenants.sql" "Seeds: tenants"
 execute_sql "$SEEDS_DIR/auth_management/02-auth_providers.sql" "Seeds: auth_providers"
 
 # 16.3: Auth (usuarios de testing y demo)
-execute_sql "$SEEDS_DIR/auth/01-demo-users.sql" "Seeds: users (testing + demo)"
+execute_sql "$SEEDS_DIR/auth/01-demo-users.sql" "Seeds: users (testing)"
+execute_sql "$SEEDS_DIR/auth/02-production-users.sql" "Seeds: users (production - 13 usuarios)"
 
 # 16.4: Educational Content (módulos) - MUST BE LOADED BEFORE PROFILES
 # REASON: initialize_user_stats() trigger needs modules to exist when creating module_progress
@@ -504,7 +505,8 @@ execute_sql "$SEEDS_DIR/educational_content/01-modules.sql" "Seeds: modules (5)"
 
 # 16.5: Auth Management (profiles para usuarios)
 # NOTE: Trigger initialize_user_stats() fires here and creates module_progress automatically
-execute_sql "$SEEDS_DIR/auth_management/04-profiles-complete.sql" "Seeds: profiles"
+execute_sql "$SEEDS_DIR/auth_management/04-profiles-complete.sql" "Seeds: profiles (testing + demo - 22)"
+execute_sql "$SEEDS_DIR/auth_management/06-profiles-production.sql" "Seeds: profiles (production - 13 usuarios)"
 
 # 16.5.1: Content Management (templates de contenido)
 execute_sql "$SEEDS_DIR/content_management/01-default-templates.sql" "Seeds: content_templates"
@@ -548,7 +550,8 @@ execute_sql "$SEEDS_DIR/gamification_system/06-user_ranks.sql" "Seeds: user_rank
 execute_sql "$SEEDS_DIR/gamification_system/07-ml_coins_transactions.sql" "Seeds: ml_coins_transactions"
 execute_sql "$SEEDS_DIR/gamification_system/08-user_achievements.sql" "Seeds: user_achievements"
 execute_sql "$SEEDS_DIR/gamification_system/09-comodines_inventory.sql" "Seeds: comodines_inventory"
-execute_sql "$SEEDS_DIR/gamification_system/10-missions-init.sql" "Seeds: missions initialization (student)"
+# DEPRECADO 2025-11-24: Misiones ahora se crean automáticamente via gamilit.initialize_user_missions()
+# execute_sql "$SEEDS_DIR/gamification_system/10-missions-init.sql" "Seeds: missions initialization (student)"
 
 log_success "FASE 16 completada - Seeds de PROD cargados"
 log ""

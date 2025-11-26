@@ -4,7 +4,7 @@ import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { CrucigramaGrid } from './CrucigramaGrid';
 import { CrucigramaClue } from './CrucigramaClue';
 import { CrucigramaData, CrucigramaCell } from './crucigramaTypes';
-import { calculateScore, saveProgress } from '@shared/components/mechanics/mechanicsTypes';
+import { saveProgress } from '@shared/components/mechanics/mechanicsTypes';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
@@ -23,28 +23,22 @@ export interface CrucigramaExerciseProps {
 export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
   exercise,
   onComplete,
-  onSubmit,
   onProgressUpdate,
-  actionsRef
+  actionsRef,
 }) => {
   const { user } = useAuth();
   const [grid, setGrid] = useState<CrucigramaCell[][]>(
-    exercise.grid.map((row) =>
-      row.map((cell) => ({ ...cell, userInput: cell.userInput || '' }))
-    )
+    exercise.grid.map((row) => row.map((cell) => ({ ...cell, userInput: cell.userInput || '' }))),
   );
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
   const [completedClues, setCompletedClues] = useState<Set<string>>(new Set());
-  const [hintsUsed, setHintsUsed] = useState(0);
-  const [availableCoins, setAvailableCoins] = useState(100);
+  const [hintsUsed] = useState(0);
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
-  const [currentScore, setCurrentScore] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // FE-059: Calculate clue length from grid instead of using answer field
-  const getClueLength = (clue: typeof exercise.clues[0]): number => {
+  const getClueLength = (clue: (typeof exercise.clues)[0]): number => {
     let length = 0;
     if (clue.direction === 'horizontal') {
       for (let i = 0; i < grid[0].length; i++) {
@@ -131,12 +125,12 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
           hintsUsed,
           timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
         },
-        answers: { clues: userAnswers }
+        answers: { clues: userAnswers },
       });
 
       console.log('📊 [Crucigrama] Progress update sent:', {
         completedClues: newCompleted.size,
-        totalClues: exercise.clues.length
+        totalClues: exercise.clues.length,
       });
     }
   }, [grid, hintsUsed, exercise.clues, exercise.id, onProgressUpdate, startTime]);
@@ -145,25 +139,6 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
     const newGrid = grid.map((r) => r.map((c) => ({ ...c })));
     newGrid[row][col].userInput = value.toUpperCase();
     setGrid(newGrid);
-  };
-
-  const handleUseHint = (hint: { id: string; text: string; cost: number }) => {
-    setHintsUsed((prev) => {
-      const newHintsUsed = prev + 1;
-      // Notify parent of hints used change
-      if (onProgressUpdate) {
-        onProgressUpdate({
-          currentStep: completedClues.size,
-          totalSteps: exercise.clues.length,
-          score: Math.floor((completedClues.size / exercise.clues.length) * 100),
-          hintsUsed: newHintsUsed,
-          timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
-        });
-      }
-      return newHintsUsed;
-    });
-    setAvailableCoins((prev) => prev - hint.cost);
-    alert(`Pista: ${hint.text}`);
   };
 
   const handleCheck = async () => {
@@ -189,8 +164,6 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
       setShowFeedback(true);
       return;
     }
-
-    setIsSubmitting(true);
 
     try {
       // Prepare answers in backend DTO format: { clues: { c1: "WORD1", c2: "WORD2" } }
@@ -222,17 +195,23 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
       // Show backend response
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
-        title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
-        message: response.feedback?.overall || `Has obtenido ${response.correctAnswersCount} de ${response.totalQuestions} respuestas correctas.`,
+        title: response.isPerfect
+          ? '¡Perfecto!'
+          : response.score >= 70
+            ? '¡Buen trabajo!'
+            : 'Intenta de nuevo',
+        message:
+          response.feedback?.overall ||
+          `Has obtenido ${response.correctAnswersCount} de ${response.totalQuestions} respuestas correctas.`,
         score: response.score,
-        showConfetti: response.isPerfect
+        showConfetti: response.isPerfect,
       });
       setShowFeedback(true);
 
       console.log('✅ [Crucigrama] Submission successful:', {
         attemptId: response.attemptId,
         score: response.score,
-        rewards: response.rewards
+        rewards: response.rewards,
       });
     } catch (error) {
       console.error('❌ [Crucigrama] Submission error:', error);
@@ -242,17 +221,11 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
         message: 'Hubo un problema al enviar tu respuesta. Por favor, intenta nuevamente.',
       });
       setShowFeedback(true);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleReset = () => {
-    setGrid(
-      exercise.grid.map((row) =>
-        row.map((cell) => ({ ...cell, userInput: '' }))
-      )
-    );
+    setGrid(exercise.grid.map((row) => row.map((cell) => ({ ...cell, userInput: '' }))));
     setCompletedClues(new Set());
     setSelectedCell(null);
   };
@@ -262,7 +235,7 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
     if (actionsRef) {
       actionsRef.current = {
         handleReset,
-        handleCheck
+        handleCheck,
       };
     }
   }, [actionsRef, handleReset, handleCheck]);
@@ -270,9 +243,9 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
   return (
     <>
       {/* Main Content */}
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid gap-6 lg:grid-cols-3">
         {/* Grid */}
-        <div className="lg:col-span-2 flex justify-center">
+        <div className="flex justify-center lg:col-span-2">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -289,11 +262,7 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
 
         {/* Clues - Unified Display */}
         <div>
-          <CrucigramaClue
-            clues={exercise.clues}
-            completedClues={completedClues}
-            direction="all"
-          />
+          <CrucigramaClue clues={exercise.clues} completedClues={completedClues} direction="all" />
         </div>
       </div>
 

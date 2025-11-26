@@ -2,11 +2,17 @@
 **Sistema de comprensión lectora gamificado basado en Daniel Cassany**
 **Texto base:** Biografía de Marie Curie
 
-**Versión:** 6.4 (Actualizado 2025-11-23)
+**Versión:** 6.5 (Actualizado 2025-11-24)
 **Tipo de documento:** Documento de diseño e implementación
 
 **📚 Documentos Relacionados:**
 - ✅ **Guía de Pruebas Módulo 3:** [`GUIA-PRUEBAS-MODULO3-Respuestas-Ejemplo.md`](./GUIA-PRUEBAS-MODULO3-Respuestas-Ejemplo.md) - Ejemplos detallados de respuestas para testing QA, demos pedagógicas y validación de ejercicios
+
+**Cambios en v6.5:**
+- ✅ Umbral XP K'uk'ulkan ajustado de 2,250 a 1,900 XP (ahora alcanzable con M1-M3)
+- ✅ Umbral XP máximo Halach Uinic ajustado de 2,249 a 1,899 XP
+- ✅ Documentación de progresión actualizada: 1,950 XP disponibles en M1-M3 = K'uk'ulkan alcanzable
+- ✅ Seeds sincronizados: dev/prod/staging actualizados a v2.1
 
 **Cambios en v6.4:**
 - ✅ Ejercicio 3.4: Duración de podcast ajustada a 2 minutos (desarrollo reducido a 1 min)
@@ -99,8 +105,8 @@ Los usuarios avanzan de rango acumulando **Puntos de Experiencia (XP)** al compl
 | 1     | **AJAW**         | 0                | 499              | -                | 1.00x            | 🔸 N/I                 |
 | 2     | **NACOM**        | 500              | 999              | +100 ML          | 1.10x (+10%)     | 🔸 N/I                 |
 | 3     | **AH K´IN**      | 1,000            | 1,499            | +250 ML          | 1.15x (+15%)     | 🔸 N/I                 |
-| 4     | **HALACH UINIC** | 1,500            | 2,249            | +500 ML          | 1.20x (+20%)     | 🔸 N/I                 |
-| 5     | **K´UK´ULKAN**   | 2,250            | ∞                | +1,000 ML        | 1.25x (+25%)     | 🔸 N/I                 |
+| 4     | **HALACH UINIC** | 1,500            | 1,899            | +500 ML          | 1.20x (+20%)     | 🔸 N/I                 |
+| 5     | **K´UK´ULKAN**   | 1,900            | ∞                | +1,000 ML        | 1.25x (+25%)     | 🔸 N/I                 |
 
 **🔸 N/I = No Implementado:** El multiplicador ML Coins está en backlog (fase futura). Actualmente solo se aplica el multiplicador XP y el bonus único de ML Coins al subir de rango.
 
@@ -119,10 +125,10 @@ Los usuarios avanzan de rango acumulando **Puntos de Experiencia (XP)** al compl
 |-------------------|---------------|-------------------------------------------|---------------------|-----------------|
 | Ajaw → Nacom      | 500 XP        | ~5 ejercicios                             | 1 módulo            | 2-3 días        |
 | Nacom → Ah K'in   | 1,000 XP      | ~10 ejercicios                            | 2 módulos           | 5-7 días        |
-| Ah K'in → Halach  | 1,500 XP      | ~15 ejercicios                            | 3 módulos           | 10-14 días      |
-| Halach → K'uk'ulkan | 2,250 XP    | ~22-23 ejercicios                         | 4.5 módulos         | 3-4 semanas     |
+| Ah K'in → Halach  | 1,500 XP      | ~15 ejercicios                            | 3 módulos parcial   | 10-14 días      |
+| Halach → K'uk'ulkan | 1,900 XP    | ~19 ejercicios                            | 3 módulos completos | 2-3 semanas     |
 
-**Progresión completa:** Completar todos los 5 módulos (23 ejercicios) otorga ~2,500 XP, suficiente para alcanzar K'uk'ulkan.
+**Progresión completa:** Completar los módulos 1-3 (15 ejercicios + bonus) otorga ~1,950 XP, suficiente para alcanzar K'uk'ulkan.
 
 ---
 

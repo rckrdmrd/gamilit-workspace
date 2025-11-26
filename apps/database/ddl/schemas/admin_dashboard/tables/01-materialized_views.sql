@@ -4,6 +4,7 @@
 -- Priority: P1 - Important for dashboard performance
 -- User Story: US-ADM-003 (Admin Dashboard), US-ANA-001 (Dashboard Analytics)
 -- Created: 2025-11-19
+-- CORRECCIÓN 2025-11-24: Alineados nombres de campos con user_stats tabla real
 -- =============================================================================
 
 -- =============================================================================
@@ -47,13 +48,14 @@ SELECT
     -- Gamification statistics
     (SELECT COUNT(*) FROM gamification_system.user_stats) as total_gamification_users,
     (SELECT AVG(total_xp)::INTEGER FROM gamification_system.user_stats) as avg_user_xp,
-    (SELECT AVG(ml_coins_balance)::INTEGER FROM gamification_system.user_stats) as avg_user_ml_coins,
+    (SELECT AVG(ml_coins)::INTEGER FROM gamification_system.user_stats) as avg_user_ml_coins,
     (SELECT SUM(total_xp)::BIGINT FROM gamification_system.user_stats) as total_xp_system,
-    (SELECT SUM(ml_coins_balance)::BIGINT FROM gamification_system.user_stats) as total_ml_coins_system,
+    (SELECT SUM(ml_coins)::BIGINT FROM gamification_system.user_stats) as total_ml_coins_system,
 
     -- System health
     (SELECT COUNT(*) FROM system_configuration.feature_flags WHERE is_enabled = TRUE) as enabled_features_count,
-    (SELECT COUNT(*) FROM audit_logging.system_events WHERE created_at >= NOW() - INTERVAL '1 hour' AND severity = 'error') as errors_last_hour;
+    -- Corregido: audit_logging.system_events -> audit_logging.system_logs (2025-11-26)
+    (SELECT COUNT(*) FROM audit_logging.system_logs WHERE created_at >= NOW() - INTERVAL '1 hour' AND log_level = 'error') as errors_last_hour;
 
 -- Create unique index for concurrent refresh
 CREATE UNIQUE INDEX idx_system_overview_mv_snapshot
@@ -82,23 +84,23 @@ SELECT
 
     -- Gamification stats
     COALESCE(us.total_xp, 0) as total_xp,
-    COALESCE(us.current_level, 1) as current_level,
+    COALESCE(us.level, 1) as current_level,
     COALESCE(us.current_rank::TEXT, 'ajaw') as current_rank,
-    COALESCE(us.ml_coins_balance, 0) as ml_coins,
-    COALESCE(us.total_ml_coins_earned, 0) as ml_coins_earned,
+    COALESCE(us.ml_coins, 0) as ml_coins,
+    COALESCE(us.ml_coins_earned_total, 0) as ml_coins_earned,
 
     -- Activity metrics
-    COALESCE(us.total_exercises_completed, 0) as exercises_completed,
-    COALESCE(us.total_missions_completed, 0) as missions_completed,
-    COALESCE(us.current_streak_days, 0) as current_streak,
-    COALESCE(us.longest_streak_days, 0) as longest_streak,
+    COALESCE(us.exercises_completed, 0) as exercises_completed,
+    COALESCE(us.modules_completed, 0) as missions_completed,
+    COALESCE(us.current_streak, 0) as current_streak,
+    COALESCE(us.max_streak, 0) as longest_streak,
     us.last_activity_at,
 
     -- Engagement score (0-100)
     LEAST(100, (
-        COALESCE(us.total_exercises_completed, 0) * 2 +
-        COALESCE(us.total_missions_completed, 0) * 10 +
-        COALESCE(us.current_streak_days, 0) * 5
+        COALESCE(us.exercises_completed, 0) * 2 +
+        COALESCE(us.modules_completed, 0) * 10 +
+        COALESCE(us.current_streak, 0) * 5
     ) / 10) as engagement_score,
 
     -- Classroom participation (for students)
@@ -187,14 +189,14 @@ SELECT
     ), 0) as avg_student_xp,
 
     COALESCE((
-        SELECT AVG(us.current_level)::DECIMAL(4,1)
+        SELECT AVG(us.level)::DECIMAL(4,1)
         FROM gamification_system.user_stats us
         JOIN social_features.classroom_members cm ON cm.student_id = us.user_id
         WHERE cm.classroom_id = c.id AND cm.is_active = TRUE
     ), 1) as avg_student_level,
 
     COALESCE((
-        SELECT AVG(us.total_exercises_completed)::INTEGER
+        SELECT AVG(us.exercises_completed)::INTEGER
         FROM gamification_system.user_stats us
         JOIN social_features.classroom_members cm ON cm.student_id = us.user_id
         WHERE cm.classroom_id = c.id AND cm.is_active = TRUE

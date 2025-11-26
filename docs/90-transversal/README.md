@@ -2,7 +2,7 @@
 
 **Tipo:** Contenido Cross-Cutting
 **Estado:** ✅ Completado 100%
-**Última actualización:** 2025-11-08
+**Última actualización:** 2025-11-24 (TEACHER-PORTAL-001)
 
 ---
 
@@ -154,6 +154,16 @@ RF-GAM-001 (Achievements)
 - Bug fixes históricos
 - Mejoras implementadas
 - Technical debt tracking
+- **BUG-FIX-TEACHER-PORTAL-TESTING-2025-11-24.md** (BUG-003, BUG-004)
+- **BUG-FIX-ADMIN-ENDPOINTS-2025-11-24.md**
+
+### Desarrollo Teacher Portal (TEACHER-PORTAL-001)
+- **DESARROLLO-TEACHER-PORTAL-COMPLETO-2025-11-24.md** - Documentación técnica completa
+  - 9 páginas desarrolladas/mejoradas
+  - 1 página nueva (TeacherExerciseResponsesPage)
+  - 3 páginas acotadas (sin ML predictions)
+  - 4 endpoints backend nuevos
+  - 15+ componentes frontend nuevos
 
 ### Features Cross-Cutting
 - Features que impactan múltiples módulos

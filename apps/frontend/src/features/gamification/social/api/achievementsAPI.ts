@@ -13,7 +13,7 @@
  */
 
 import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS } from '@/services/api/apiConfig';
+import { API_ENDPOINTS } from '@/config/api.config';
 import { handleAPIError } from '@/services/api/apiErrorHandler';
 import type { ApiResponse } from '@/services/api/apiTypes';
 import type { Achievement } from '../types/achievementsTypes';
@@ -85,9 +85,9 @@ export interface AchievementWithProgress extends BackendAchievement {
  */
 export const getAllAchievements = async (): Promise<BackendAchievement[]> => {
   try {
-    const { data } = await apiClient.get<ApiResponse<{ achievements: BackendAchievement[]; total: number }>>(
-      API_ENDPOINTS.achievements.list
-    );
+    const { data } = await apiClient.get<
+      ApiResponse<{ achievements: BackendAchievement[]; total: number }>
+    >(API_ENDPOINTS.gamification.achievements);
 
     return data.data.achievements;
   } catch (error) {
@@ -107,29 +107,31 @@ export const getUserAchievements = async (userId: string): Promise<AchievementWi
     const allAchievements = await getAllAchievements();
 
     // Get user's achievement progress
-    const { data } = await apiClient.get<ApiResponse<{ achievements: BackendUserAchievement[]; total: number }>>(
-      `/gamification/users/${userId}/achievements`
-    );
+    const { data } = await apiClient.get<
+      ApiResponse<{ achievements: BackendUserAchievement[]; total: number }>
+    >(`/gamification/users/${userId}/achievements`);
 
     const userAchievements = data.data.achievements;
 
     // Merge achievements with user progress
-    const achievementsWithProgress: AchievementWithProgress[] = allAchievements.map((achievement) => {
-      const userProgress = userAchievements.find((ua) => ua.achievementId === achievement.id);
+    const achievementsWithProgress: AchievementWithProgress[] = allAchievements.map(
+      (achievement) => {
+        const userProgress = userAchievements.find((ua) => ua.achievementId === achievement.id);
 
-      return {
-        ...achievement,
-        isUnlocked: userProgress?.isCompleted || false,
-        unlockedAt: userProgress?.completedAt ? new Date(userProgress.completedAt) : undefined,
-        progress: userProgress
-          ? {
-              current: userProgress.progress,
-              required: userProgress.maxProgress,
-            }
-          : undefined,
-        completionPercentage: userProgress?.completionPercentage,
-      };
-    });
+        return {
+          ...achievement,
+          isUnlocked: userProgress?.isCompleted || false,
+          unlockedAt: userProgress?.completedAt ? new Date(userProgress.completedAt) : undefined,
+          progress: userProgress
+            ? {
+                current: userProgress.progress,
+                required: userProgress.maxProgress,
+              }
+            : undefined,
+          completionPercentage: userProgress?.completionPercentage,
+        };
+      },
+    );
 
     return achievementsWithProgress;
   } catch (error) {
@@ -146,7 +148,7 @@ export const getUserAchievements = async (userId: string): Promise<AchievementWi
 export const getAchievementById = async (achievementId: string): Promise<BackendAchievement> => {
   try {
     const { data } = await apiClient.get<ApiResponse<BackendAchievement>>(
-      API_ENDPOINTS.achievements.get(achievementId)
+      API_ENDPOINTS.gamification.achievement(achievementId),
     );
 
     return data.data;
@@ -164,11 +166,11 @@ export const getAchievementById = async (achievementId: string): Promise<Backend
  */
 export const getAchievementProgress = async (
   userId: string,
-  achievementId: string
+  achievementId: string,
 ): Promise<BackendUserAchievement> => {
   try {
     const { data } = await apiClient.get<ApiResponse<BackendUserAchievement>>(
-      `/gamification/achievements/user/${userId}/progress/${achievementId}`
+      `/gamification/achievements/user/${userId}/progress/${achievementId}`,
     );
 
     return data.data;
@@ -188,12 +190,12 @@ export const getAchievementProgress = async (
 export const updateAchievementProgress = async (
   userId: string,
   achievementId: string,
-  increment: number
+  increment: number,
 ): Promise<BackendUserAchievement> => {
   try {
     const { data } = await apiClient.put<ApiResponse<BackendUserAchievement>>(
       `/gamification/achievements/user/${userId}/progress/${achievementId}`,
-      { increment }
+      { increment },
     );
 
     return data.data;
@@ -211,11 +213,11 @@ export const updateAchievementProgress = async (
  */
 export const unlockAchievement = async (
   userId: string,
-  achievementId: string
+  achievementId: string,
 ): Promise<BackendAchievement> => {
   try {
     const { data } = await apiClient.post<ApiResponse<BackendAchievement>>(
-      `/gamification/achievements/user/${userId}/unlock/${achievementId}`
+      `/gamification/achievements/user/${userId}/unlock/${achievementId}`,
     );
 
     return data.data;
@@ -235,7 +237,7 @@ export const unlockAchievement = async (
 export const checkAchievements = async (
   userId: string,
   conditionType: string,
-  currentValue: number
+  currentValue: number,
 ): Promise<BackendAchievement[]> => {
   try {
     const { data } = await apiClient.post<
@@ -286,7 +288,7 @@ const mapCategory = (backendCategory: string): 'progress' | 'mastery' | 'social'
  */
 export const mapToFrontendAchievement = (
   backendAchievement: BackendAchievement,
-  userProgress?: BackendUserAchievement
+  userProgress?: BackendUserAchievement,
 ): Achievement => {
   return {
     id: backendAchievement.id,
@@ -306,7 +308,9 @@ export const mapToFrontendAchievement = (
         }
       : undefined,
     requirements: backendAchievement.conditions.requirements,
-    isHidden: backendAchievement.category.toLowerCase() === 'hidden' || backendAchievement.category.toLowerCase() === 'special',
+    isHidden:
+      backendAchievement.category.toLowerCase() === 'hidden' ||
+      backendAchievement.category.toLowerCase() === 'special',
   };
 };
 
@@ -319,7 +323,7 @@ export const mapToFrontendAchievement = (
  */
 export const mapAchievementsToFrontend = (
   backendAchievements: BackendAchievement[],
-  userAchievements?: BackendUserAchievement[]
+  userAchievements?: BackendUserAchievement[],
 ): Achievement[] => {
   return backendAchievements.map((achievement) => {
     const userProgress = userAchievements?.find((ua) => ua.achievementId === achievement.id);

@@ -17,6 +17,7 @@ ALTER TABLE social_features.friendships ENABLE ROW LEVEL SECURITY;
 ALTER TABLE social_features.teams ENABLE ROW LEVEL SECURITY;
 ALTER TABLE social_features.team_members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE social_features.team_challenges ENABLE ROW LEVEL SECURITY;
+ALTER TABLE social_features.teacher_classrooms ENABLE ROW LEVEL SECURITY;
 
 -- Comentarios
 COMMENT ON TABLE social_features.schools IS 'RLS enabled: Escuelas con aislamiento por tenant';
@@ -26,3 +27,4 @@ COMMENT ON TABLE social_features.friendships IS 'RLS enabled: Amistades - gesti√
 COMMENT ON TABLE social_features.teams IS 'RLS enabled: Equipos de trabajo colaborativo';
 COMMENT ON TABLE social_features.team_members IS 'RLS enabled: Miembros de equipos - visibilidad entre miembros';
 COMMENT ON TABLE social_features.team_challenges IS 'RLS enabled: Desaf√≠os de equipo - visibilidad para miembros';
+COMMENT ON TABLE social_features.teacher_classrooms IS 'RLS enabled: Asignaciones profesor-aula con control por rol';

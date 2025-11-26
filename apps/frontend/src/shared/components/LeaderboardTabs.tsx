@@ -1,7 +1,7 @@
 import React from 'react';
 import { Globe, School, Users } from 'lucide-react';
 import { cn } from '@shared/utils';
-import type { LeaderboardType, LEADERBOARD_TYPE_LABELS } from '@/shared/types/leaderboard.types';
+import type { LeaderboardType } from '@/shared/types/leaderboard.types';
 
 /**
  * LeaderboardTabs Props
@@ -28,17 +28,17 @@ const TABS: Array<{
   {
     type: 'global',
     label: 'Global',
-    icon: <Globe className="w-5 h-5" />,
+    icon: <Globe className="h-5 w-5" />,
   },
   {
     type: 'school',
     label: 'Escuela',
-    icon: <School className="w-5 h-5" />,
+    icon: <School className="h-5 w-5" />,
   },
   {
     type: 'classroom',
     label: 'Clase',
-    icon: <Users className="w-5 h-5" />,
+    icon: <Users className="h-5 w-5" />,
   },
 ];
 
@@ -83,9 +83,9 @@ export const LeaderboardTabs: React.FC<LeaderboardTabsProps> = ({
   };
 
   return (
-    <div className={cn('bg-white rounded-lg border border-gray-200', className)}>
+    <div className={cn('rounded-lg border border-gray-200 bg-white', className)}>
       {/* Tabs Container */}
-      <div className="flex overflow-x-auto scrollbar-hide" role="tablist">
+      <div className="scrollbar-hide flex overflow-x-auto" role="tablist">
         {TABS.map((tab) => {
           const isActive = activeTab === tab.type;
           const count = counts?.[tab.type];
@@ -100,16 +100,18 @@ export const LeaderboardTabs: React.FC<LeaderboardTabsProps> = ({
               onClick={() => onTabChange(tab.type)}
               onKeyDown={(e) => handleKeyDown(e, tab.type)}
               className={cn(
-                'flex-1 min-w-[120px] px-6 py-4 flex items-center justify-center space-x-2',
-                'font-semibold text-sm transition-all duration-200',
-                'border-b-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-inset',
+                'flex min-w-[120px] flex-1 items-center justify-center space-x-2 px-6 py-4',
+                'text-sm font-semibold transition-all duration-200',
+                'border-b-2 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-orange-500',
                 isActive
                   ? 'border-orange-600 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
               )}
             >
               {/* Icon */}
-              <span className={cn('transition-colors', isActive ? 'text-orange-600' : 'text-gray-400')}>
+              <span
+                className={cn('transition-colors', isActive ? 'text-orange-600' : 'text-gray-400')}
+              >
                 {tab.icon}
               </span>
 
@@ -120,10 +122,8 @@ export const LeaderboardTabs: React.FC<LeaderboardTabsProps> = ({
               {count !== undefined && count > 0 && (
                 <span
                   className={cn(
-                    'ml-2 px-2 py-0.5 rounded-full text-xs font-semibold',
-                    isActive
-                      ? 'bg-orange-100 text-orange-700'
-                      : 'bg-gray-100 text-gray-600'
+                    'ml-2 rounded-full px-2 py-0.5 text-xs font-semibold',
+                    isActive ? 'bg-orange-100 text-orange-700' : 'bg-gray-100 text-gray-600',
                   )}
                 >
                   {count}

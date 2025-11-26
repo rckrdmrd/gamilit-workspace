@@ -1,4 +1,3 @@
-import React from 'react';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 
 interface DataPoint {
@@ -45,8 +44,8 @@ export function ProgressChart({
 
   if (type === 'bar') {
     return (
-      <div className="bg-detective-bg-secondary p-6 rounded-lg">
-        <h3 className="text-lg font-bold text-detective-text mb-6">{title}</h3>
+      <div className="rounded-lg bg-detective-bg-secondary p-6">
+        <h3 className="mb-6 text-lg font-bold text-detective-text">{title}</h3>
         <div className="space-y-4" style={{ minHeight: height }}>
           {data.map((item, index) => {
             const percentage = (item.value / maxValue) * 100;
@@ -55,16 +54,16 @@ export function ProgressChart({
 
             return (
               <div key={index}>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-detective-text font-medium">{item.label}</span>
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-sm font-medium text-detective-text">{item.label}</span>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-bold text-detective-text">
                       {item.value.toFixed(0)}%
                     </span>
-                    <Trend className={`w-4 h-4 ${trendColor}`} />
+                    <Trend className={`h-4 w-4 ${trendColor}`} />
                   </div>
                 </div>
-                <div className="w-full bg-detective-bg rounded-full h-3 overflow-hidden">
+                <div className="h-3 w-full overflow-hidden rounded-full bg-detective-bg">
                   <div
                     className={`${getColor(index, item.color)} h-3 rounded-full transition-all duration-500`}
                     style={{ width: `${percentage}%` }}
@@ -80,18 +79,18 @@ export function ProgressChart({
 
   if (type === 'line') {
     return (
-      <div className="bg-detective-bg-secondary p-6 rounded-lg">
-        <h3 className="text-lg font-bold text-detective-text mb-6">{title}</h3>
+      <div className="rounded-lg bg-detective-bg-secondary p-6">
+        <h3 className="mb-6 text-lg font-bold text-detective-text">{title}</h3>
         <div className="relative" style={{ height }}>
-          <svg className="w-full h-full" viewBox="0 0 800 300" preserveAspectRatio="none">
+          <svg className="h-full w-full" viewBox="0 0 800 300" preserveAspectRatio="none">
             {/* Grid lines */}
             {[0, 25, 50, 75, 100].map((y) => (
               <line
                 key={y}
                 x1="0"
-                y1={300 - (y * 3)}
+                y1={300 - y * 3}
                 x2="800"
-                y2={300 - (y * 3)}
+                y2={300 - y * 3}
                 stroke="currentColor"
                 className="text-detective-border opacity-30"
                 strokeWidth="1"
@@ -103,7 +102,7 @@ export function ProgressChart({
               points={data
                 .map((item, index) => {
                   const x = (index / (data.length - 1)) * 800;
-                  const y = 300 - (item.value * 3);
+                  const y = 300 - item.value * 3;
                   return `${x},${y}`;
                 })
                 .join(' ')}
@@ -116,7 +115,7 @@ export function ProgressChart({
             {/* Data points */}
             {data.map((item, index) => {
               const x = (index / (data.length - 1)) * 800;
-              const y = 300 - (item.value * 3);
+              const y = 300 - item.value * 3;
               return (
                 <circle
                   key={index}
@@ -131,7 +130,7 @@ export function ProgressChart({
           </svg>
 
           {/* X-axis labels */}
-          <div className="flex justify-between mt-2">
+          <div className="mt-2 flex justify-between">
             {data.map((item, index) => (
               <span key={index} className="text-xs text-detective-text-secondary">
                 {item.label}
@@ -148,8 +147,8 @@ export function ProgressChart({
     let currentAngle = -90;
 
     return (
-      <div className="bg-detective-bg-secondary p-6 rounded-lg">
-        <h3 className="text-lg font-bold text-detective-text mb-6">{title}</h3>
+      <div className="rounded-lg bg-detective-bg-secondary p-6">
+        <h3 className="mb-6 text-lg font-bold text-detective-text">{title}</h3>
         <div className="flex items-center justify-center gap-8">
           <div className="relative" style={{ width: height, height }}>
             <svg width={height} height={height} viewBox="0 0 200 200">
@@ -201,7 +200,7 @@ export function ProgressChart({
             <div className="space-y-2">
               {data.map((item, index) => (
                 <div key={index} className="flex items-center gap-2">
-                  <div className={`w-4 h-4 rounded ${getColor(index, item.color)}`} />
+                  <div className={`h-4 w-4 rounded ${getColor(index, item.color)}`} />
                   <span className="text-sm text-detective-text">
                     {item.label}: {item.value.toFixed(0)}%
                   </span>

@@ -344,4 +344,15 @@ export class AchievementsService {
       unclaimed_rewards: unclaimedRewards,
     };
   }
+
+  /**
+   * Actualiza el estado activo/inactivo de un achievement
+   */
+  async updateAchievementStatus(id: string, isActive: boolean): Promise<Achievement> {
+    const achievement = await this.findById(id);
+
+    achievement.is_active = isActive;
+
+    return await this.achievementRepo.save(achievement);
+  }
 }

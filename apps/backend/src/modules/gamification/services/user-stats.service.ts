@@ -122,26 +122,39 @@ export class UserStatsService {
   }
 
   /**
-   * Añade XP al usuario y verifica si sube de nivel
+   * Añade XP al usuario
+   *
+   * FIX 2025-11-24: Simplificado para solo acumular XP.
+   * La promoción de rango es manejada automáticamente por el trigger
+   * trg_check_rank_promotion_on_xp_gain en la base de datos.
+   *
+   * Ver: apps/database/ddl/schemas/gamification_system/triggers/trg_check_rank_promotion_on_xp_gain.sql
+   * Documentación: docs/01-fase-alcance-inicial/EAI-003-gamificacion/especificaciones/ET-GAM-003-rangos-maya.md
+   *
+   * @param userId - ID del usuario
+   * @param xpAmount - Cantidad de XP a añadir
+   * @returns UserStats actualizado con nuevo total_xp
    */
   async addXp(userId: string, xpAmount: number): Promise<UserStats> {
     const stats = await this.findByUserId(userId);
+
+    // Solo acumular XP total
+    // El trigger de base de datos se encarga automáticamente de:
+    // 1. Verificar si alcanzó umbral de próximo rango
+    // 2. Llamar a check_rank_promotion()
+    // 3. Promover con promote_to_next_rank() si corresponde
+    // 4. Actualizar current_rank, otorgar ML Coins bonus, etc.
     stats.total_xp += xpAmount;
 
-    // Verificar si sube de nivel
-    while (stats.total_xp >= stats.xp_to_next_level) {
-      stats.total_xp -= stats.xp_to_next_level;
-      stats.level += 1;
-      stats.xp_to_next_level = this.calculateXpForLevel(stats.level);
-
-      // Verificar promoción de rango
-      await this.checkRankPromotion(stats);
-    }
-
+    // Guardar (el trigger AFTER UPDATE se ejecuta automáticamente)
     return await this.userStatsRepo.save(stats);
   }
 
   /**
+   * @deprecated 2025-11-24 - Ya no se usa. La promoción de rango es manejada
+   * automáticamente por el trigger trg_check_rank_promotion_on_xp_gain en la base de datos.
+   * Este método será eliminado en versiones futuras.
+   *
    * Verifica si el usuario debe ser promovido de rango
    * Lógica: cada X niveles, promoción a siguiente rango
    */

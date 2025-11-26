@@ -4,16 +4,9 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  TrendingUp,
-  TrendingDown,
-  Filter,
-  Calendar,
-  Search,
-  ChevronDown,
-} from 'lucide-react';
+import { TrendingUp, TrendingDown, Filter, Calendar, Search, ChevronDown } from 'lucide-react';
 import { useTransactions } from '../../hooks/useTransactions';
-import type { TransactionType, AnalyticsPeriod } from '../../types/economyTypes';
+import type { TransactionType } from '../../types/economyTypes';
 
 interface TransactionHistoryProps {
   limit?: number;
@@ -32,9 +25,7 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   const filteredTransactions = transactions
     .filter((t) => filterType === 'all' || t.type === filterType)
     .filter((t) =>
-      searchQuery
-        ? t.description.toLowerCase().includes(searchQuery.toLowerCase())
-        : true
+      searchQuery ? t.description.toLowerCase().includes(searchQuery.toLowerCase()) : true,
     )
     .slice(0, limit);
 
@@ -51,36 +42,34 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-detective shadow-card p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-detective-2xl font-bold text-detective-text">
-          Transaction History
-        </h3>
+    <div className="rounded-detective bg-white p-6 shadow-card">
+      <div className="mb-6 flex items-center justify-between">
+        <h3 className="text-detective-2xl font-bold text-detective-text">Transaction History</h3>
         {showFilters && (
           <div className="flex items-center gap-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-detective-text-secondary" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-detective-text-secondary" />
               <input
                 type="text"
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 pr-4 py-2 border border-detective-orange/30 rounded-detective focus:outline-none focus:border-detective-orange"
+                className="rounded-detective border border-detective-orange/30 py-2 pl-9 pr-4 focus:border-detective-orange focus:outline-none"
               />
             </div>
             <div className="relative">
               <button
                 onClick={() => setShowFilterMenu(!showFilterMenu)}
-                className="flex items-center gap-2 px-4 py-2 bg-detective-orange/10 border border-detective-orange/30 rounded-detective hover:bg-detective-orange/20 transition-colors"
+                className="flex items-center gap-2 rounded-detective border border-detective-orange/30 bg-detective-orange/10 px-4 py-2 transition-colors hover:bg-detective-orange/20"
               >
-                <Filter className="w-4 h-4" />
+                <Filter className="h-4 w-4" />
                 <span className="text-detective-sm">
                   {filterType === 'all' ? 'All' : filterType === 'earn' ? 'Earned' : 'Spent'}
                 </span>
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className="h-4 w-4" />
               </button>
               {showFilterMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-detective shadow-card-hover border border-detective-orange/20 overflow-hidden z-10">
+                <div className="absolute right-0 z-10 mt-2 w-48 overflow-hidden rounded-detective border border-detective-orange/20 bg-white shadow-card-hover">
                   {(['all', 'earn', 'spend'] as const).map((type) => (
                     <button
                       key={type}
@@ -88,9 +77,13 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                         setFilterType(type);
                         setShowFilterMenu(false);
                       }}
-                      className="w-full px-4 py-2 text-left hover:bg-detective-bg transition-colors"
+                      className="w-full px-4 py-2 text-left transition-colors hover:bg-detective-bg"
                     >
-                      {type === 'all' ? 'All Transactions' : type === 'earn' ? 'Earned Only' : 'Spent Only'}
+                      {type === 'all'
+                        ? 'All Transactions'
+                        : type === 'earn'
+                          ? 'Earned Only'
+                          : 'Spent Only'}
                     </button>
                   ))}
                 </div>
@@ -102,8 +95,8 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
 
       <div className="space-y-3">
         {filteredTransactions.length === 0 ? (
-          <div className="text-center py-12 text-detective-text-secondary">
-            <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
+          <div className="py-12 text-center text-detective-text-secondary">
+            <Calendar className="mx-auto mb-4 h-12 w-12 opacity-50" />
             <p>No transactions found</p>
           </div>
         ) : (
@@ -113,19 +106,19 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="flex items-center justify-between p-4 bg-detective-bg rounded-detective hover:bg-detective-bg-secondary transition-colors"
+              className="flex items-center justify-between rounded-detective bg-detective-bg p-4 transition-colors hover:bg-detective-bg-secondary"
             >
               <div className="flex items-center gap-4">
                 <div
                   className={`
-                    p-2 rounded-full
+                    rounded-full p-2
                     ${transaction.type === 'earn' ? 'bg-detective-success/20' : 'bg-detective-danger/20'}
                   `}
                 >
                   {transaction.type === 'earn' ? (
-                    <TrendingUp className="w-5 h-5 text-detective-success" />
+                    <TrendingUp className="h-5 w-5 text-detective-success" />
                   ) : (
-                    <TrendingDown className="w-5 h-5 text-detective-danger" />
+                    <TrendingDown className="h-5 w-5 text-detective-danger" />
                   )}
                 </div>
                 <div>
@@ -136,7 +129,7 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                 </div>
               </div>
               <div className="text-right">
-                <p className={`font-bold text-detective-lg ${getTransactionColor(transaction)}`}>
+                <p className={`text-detective-lg font-bold ${getTransactionColor(transaction)}`}>
                   {formatTransactionAmount(transaction)}
                 </p>
                 <p className="text-detective-sm text-detective-text-secondary">
@@ -150,7 +143,7 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
 
       {transactions.length > limit && (
         <div className="mt-6 text-center">
-          <button className="text-detective-orange hover:text-detective-orange-dark font-medium">
+          <button className="font-medium text-detective-orange hover:text-detective-orange-dark">
             View All Transactions ({transactions.length})
           </button>
         </div>

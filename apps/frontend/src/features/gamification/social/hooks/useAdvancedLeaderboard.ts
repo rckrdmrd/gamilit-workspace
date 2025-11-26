@@ -58,16 +58,18 @@ const AUTO_REFRESH_INTERVAL = 60000; // 60 seconds
 
 // Mock data generator - Replace with actual API calls
 const generateMockData = (
-  type: ExtendedLeaderboardType,
+  _type: ExtendedLeaderboardType,
   count: number = 100,
-  currentUserId: string = 'user-123'
+  currentUserId: string = 'user-123',
 ): LeaderboardEntry[] => {
   const mockUsers = Array.from({ length: count }, (_, i) => ({
     rank: i + 1,
     userId: i === 50 ? currentUserId : `user-${i}`,
     username: i === 50 ? 'Tú' : `Usuario ${i + 1}`,
     avatar: `https://ui-avatars.com/api/?name=User${i + 1}&background=f97316&color=fff`,
-    rankBadge: ['Principiante', 'Intermedio', 'Avanzado', 'Experto', 'Maestro'][Math.floor(i / 20) % 5],
+    rankBadge: ['Principiante', 'Intermedio', 'Avanzado', 'Experto', 'Maestro'][
+      Math.floor(i / 20) % 5
+    ],
     score: 10000 - i * 100 + Math.random() * 50,
     xp: 10000 - i * 100 + Math.random() * 50,
     mlCoins: Math.floor(Math.random() * 1000) + 100,
@@ -81,7 +83,7 @@ const generateMockData = (
 
 export const useAdvancedLeaderboard = (
   initialTab: ExtendedLeaderboardType = 'global',
-  currentUserId?: string
+  currentUserId?: string,
 ): UseLeaderboardResult => {
   // State
   const [currentTab, setCurrentTab] = useState<ExtendedLeaderboardType>(initialTab);
@@ -94,13 +96,12 @@ export const useAdvancedLeaderboard = (
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
 
   // Generate cache key
-  const getCacheKey = useCallback((
-    tab: ExtendedLeaderboardType,
-    period: TimePeriod,
-    metricType: Metric
-  ) => {
-    return `${tab}-${period}-${metricType}`;
-  }, []);
+  const getCacheKey = useCallback(
+    (tab: ExtendedLeaderboardType, period: TimePeriod, metricType: Metric) => {
+      return `${tab}-${period}-${metricType}`;
+    },
+    [],
+  );
 
   // Check if cache is valid
   const isCacheValid = useCallback((cacheEntry: LeaderboardCache | undefined): boolean => {
@@ -109,47 +110,50 @@ export const useAdvancedLeaderboard = (
   }, []);
 
   // Fetch leaderboard data
-  const fetchLeaderboard = useCallback(async (
-    tab: ExtendedLeaderboardType,
-    period: TimePeriod,
-    metricType: Metric,
-    forceRefresh = false
-  ) => {
-    const cacheKey = getCacheKey(tab, period, metricType);
-    const cachedData = cache.get(cacheKey);
+  const fetchLeaderboard = useCallback(
+    async (
+      tab: ExtendedLeaderboardType,
+      period: TimePeriod,
+      metricType: Metric,
+      forceRefresh = false,
+    ) => {
+      const cacheKey = getCacheKey(tab, period, metricType);
+      const cachedData = cache.get(cacheKey);
 
-    // Return cached data if valid and not forcing refresh
-    if (!forceRefresh && isCacheValid(cachedData)) {
-      setLeaderboardData(cachedData!.data);
-      return;
-    }
+      // Return cached data if valid and not forcing refresh
+      if (!forceRefresh && isCacheValid(cachedData)) {
+        setLeaderboardData(cachedData!.data);
+        return;
+      }
 
-    setLoading(true);
-    setError(null);
+      setLoading(true);
+      setError(null);
 
-    try {
-      // TODO: Replace with actual API calls
-      // const response = await fetch(`/api/gamification/leaderboard/${tab}?period=${period}&metric=${metricType}`);
-      // const data = await response.json();
+      try {
+        // TODO: Replace with actual API calls
+        // const response = await fetch(`/api/gamification/leaderboard/${tab}?period=${period}&metric=${metricType}`);
+        // const data = await response.json();
 
-      // Mock data for now
-      const data = generateMockData(tab, 100, currentUserId);
+        // Mock data for now
+        const data = generateMockData(tab, 100, currentUserId);
 
-      // Update cache
-      const newCache = new Map(cache);
-      newCache.set(cacheKey, {
-        data,
-        timestamp: Date.now()
-      });
-      setCache(newCache);
-      setLeaderboardData(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al cargar el leaderboard');
-      console.error('Error fetching leaderboard:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [cache, getCacheKey, isCacheValid, currentUserId]);
+        // Update cache
+        const newCache = new Map(cache);
+        newCache.set(cacheKey, {
+          data,
+          timestamp: Date.now(),
+        });
+        setCache(newCache);
+        setLeaderboardData(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error al cargar el leaderboard');
+        console.error('Error fetching leaderboard:', err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [cache, getCacheKey, isCacheValid, currentUserId],
+  );
 
   // Initial fetch and tab/filter changes
   useEffect(() => {
@@ -170,16 +174,17 @@ export const useAdvancedLeaderboard = (
     if (!searchQuery.trim()) return leaderboardData;
 
     const query = searchQuery.toLowerCase();
-    return leaderboardData.filter(entry =>
-      entry.username.toLowerCase().includes(query) ||
-      entry.rankBadge.toLowerCase().includes(query)
+    return leaderboardData.filter(
+      (entry) =>
+        entry.username.toLowerCase().includes(query) ||
+        entry.rankBadge.toLowerCase().includes(query),
     );
   }, [leaderboardData, searchQuery]);
 
   // Get user position
   const userPosition = useMemo(() => {
     if (!currentUserId) return null;
-    return filteredLeaderboard.find(e => e.userId === currentUserId) || null;
+    return filteredLeaderboard.find((e) => e.userId === currentUserId) || null;
   }, [filteredLeaderboard, currentUserId]);
 
   // Get top three
@@ -188,13 +193,16 @@ export const useAdvancedLeaderboard = (
   }, [filteredLeaderboard]);
 
   // Tab counts (mock data - replace with actual API)
-  const tabCounts = useMemo<Partial<Record<ExtendedLeaderboardType, number>>>(() => ({
-    global: 10000,
-    school: 500,
-    grade: 100,
-    friends: 25,
-    guild: 50,
-  }), []);
+  const tabCounts = useMemo<Partial<Record<ExtendedLeaderboardType, number>>>(
+    () => ({
+      global: 10000,
+      school: 500,
+      grade: 100,
+      friends: 25,
+      guild: 50,
+    }),
+    [],
+  );
 
   // Refresh function
   const refresh = useCallback(async () => {
@@ -202,19 +210,22 @@ export const useAdvancedLeaderboard = (
   }, [currentTab, timePeriod, metric, fetchLeaderboard]);
 
   // Export function
-  const exportData = useCallback(async (format: 'csv' | 'pdf') => {
-    try {
-      exportLeaderboard(format, {
-        entries: filteredLeaderboard,
-        leaderboardType: currentTab,
-        timePeriod,
-        metric
-      });
-    } catch (err) {
-      console.error('Error exporting data:', err);
-      setError('Error al exportar los datos');
-    }
-  }, [filteredLeaderboard, currentTab, timePeriod, metric]);
+  const exportData = useCallback(
+    async (format: 'csv' | 'pdf') => {
+      try {
+        exportLeaderboard(format, {
+          entries: filteredLeaderboard,
+          leaderboardType: currentTab,
+          timePeriod,
+          metric,
+        });
+      } catch (err) {
+        console.error('Error exporting data:', err);
+        setError('Error al exportar los datos');
+      }
+    },
+    [filteredLeaderboard, currentTab, timePeriod, metric],
+  );
 
   // Set tab handler
   const setTab = useCallback((tab: ExtendedLeaderboardType) => {

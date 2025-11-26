@@ -134,9 +134,9 @@ CREATE INDEX idx_achievements_secret ON gamification_system.achievements USING b
 
 --
 -- Name: achievements trg_achievements_updated_at; Type: TRIGGER; Schema: gamification_system; Owner: postgres
+-- NOTE: Trigger movido a archivo separado para evitar duplicación
+-- Ver: gamification_system/triggers/15-trg_achievements_updated_at.sql
 --
-
-CREATE TRIGGER trg_achievements_updated_at BEFORE UPDATE ON gamification_system.achievements FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
 
 
 --

@@ -5,10 +5,10 @@
  */
 
 import { create } from 'zustand';
-import type { LeaderboardData, LeaderboardType, TimePeriod, LeaderboardEntry } from '../types/leaderboardsTypes';
+import type { LeaderboardData, LeaderboardType, TimePeriod } from '../types/leaderboardsTypes';
 import { getLeaderboardByType as getMockLeaderboardByType } from '../mockData/leaderboardsMockData';
 import { getLeaderboard, getUserLeaderboardRank } from '../api/socialAPI';
-import { FEATURE_FLAGS } from '@/services/api/apiConfig';
+import { FEATURE_FLAGS } from '@/config/api.config';
 
 interface LeaderboardsStore {
   currentLeaderboard: LeaderboardData;

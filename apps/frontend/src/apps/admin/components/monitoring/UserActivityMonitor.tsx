@@ -14,29 +14,35 @@ export const UserActivityMonitor: React.FC = () => {
   };
 
   const topUsers = activities
-    .reduce((acc, activity) => {
-      const existing = acc.find((u) => u.userId === activity.userId);
-      if (existing) {
-        existing.count++;
-      } else {
-        acc.push({ userId: activity.userId, userName: activity.userName, count: 1 });
-      }
-      return acc;
-    }, [] as { userId: string; userName: string; count: number }[])
+    .reduce(
+      (acc, activity) => {
+        const existing = acc.find((u) => u.userId === activity.userId);
+        if (existing) {
+          existing.count++;
+        } else {
+          acc.push({ userId: activity.userId, userName: activity.userName, count: 1 });
+        }
+        return acc;
+      },
+      [] as { userId: string; userName: string; count: number }[],
+    )
     .sort((a, b) => b.count - a.count)
     .slice(0, 5);
 
-  const activityByHour = activities.reduce((acc, activity) => {
-    const hour = new Date(activity.timestamp).getHours();
-    acc[hour] = (acc[hour] || 0) + 1;
-    return acc;
-  }, {} as Record<number, number>);
+  const activityByHour = activities.reduce(
+    (acc, activity) => {
+      const hour = new Date(activity.timestamp).getHours();
+      acc[hour] = (acc[hour] || 0) + 1;
+      return acc;
+    },
+    {} as Record<number, number>,
+  );
 
   if (loading) {
     return (
       <DetectiveCard>
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-detective-orange border-t-transparent"></div>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-detective-orange border-t-transparent"></div>
         </div>
       </DetectiveCard>
     );
@@ -47,23 +53,27 @@ export const UserActivityMonitor: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Users className="w-8 h-8 text-detective-orange" />
+          <Users className="h-8 w-8 text-detective-orange" />
           <div>
             <h2 className="text-detective-subtitle">User Activity Monitor</h2>
             <p className="text-detective-small text-gray-400">Real-time user tracking</p>
           </div>
         </div>
-        <DetectiveButton variant="blue" icon={<Download className="w-4 h-4" />} onClick={handleExport}>
+        <DetectiveButton
+          variant="blue"
+          icon={<Download className="h-4 w-4" />}
+          onClick={handleExport}
+        >
           Export CSV
         </DetectiveButton>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <DetectiveCard className="bg-gradient-to-br from-green-500/10 to-green-600/5 border border-green-500/30">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <DetectiveCard className="border border-green-500/30 bg-gradient-to-br from-green-500/10 to-green-600/5">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-green-500/20 rounded-lg">
-              <Users className="w-6 h-6 text-green-500" />
+            <div className="rounded-lg bg-green-500/20 p-3">
+              <Users className="h-6 w-6 text-green-500" />
             </div>
             <div>
               <p className="text-detective-small text-gray-400">Online Now</p>
@@ -72,10 +82,10 @@ export const UserActivityMonitor: React.FC = () => {
           </div>
         </DetectiveCard>
 
-        <DetectiveCard className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/30">
+        <DetectiveCard className="border border-blue-500/30 bg-gradient-to-br from-blue-500/10 to-blue-600/5">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-blue-500/20 rounded-lg">
-              <Clock className="w-6 h-6 text-blue-500" />
+            <div className="rounded-lg bg-blue-500/20 p-3">
+              <Clock className="h-6 w-6 text-blue-500" />
             </div>
             <div>
               <p className="text-detective-small text-gray-400">Active Sessions</p>
@@ -84,10 +94,10 @@ export const UserActivityMonitor: React.FC = () => {
           </div>
         </DetectiveCard>
 
-        <DetectiveCard className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/30">
+        <DetectiveCard className="border border-purple-500/30 bg-gradient-to-br from-purple-500/10 to-purple-600/5">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-purple-500/20 rounded-lg">
-              <Clock className="w-6 h-6 text-purple-500" />
+            <div className="rounded-lg bg-purple-500/20 p-3">
+              <Clock className="h-6 w-6 text-purple-500" />
             </div>
             <div>
               <p className="text-detective-small text-gray-400">Total Activities</p>
@@ -99,13 +109,13 @@ export const UserActivityMonitor: React.FC = () => {
 
       {/* Filters */}
       <DetectiveCard>
-        <div className="flex items-center gap-3 mb-4">
-          <Filter className="w-5 h-5 text-detective-orange" />
+        <div className="mb-4 flex items-center gap-3">
+          <Filter className="h-5 w-5 text-detective-orange" />
           <h3 className="text-detective-subtitle">Filters</h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div>
-            <label className="block text-detective-small text-gray-400 mb-2">Role</label>
+            <label className="text-detective-small mb-2 block text-gray-400">Role</label>
             <select
               className="input-detective"
               value={filters.role}
@@ -118,7 +128,7 @@ export const UserActivityMonitor: React.FC = () => {
             </select>
           </div>
           <div>
-            <label className="block text-detective-small text-gray-400 mb-2">Date From</label>
+            <label className="text-detective-small mb-2 block text-gray-400">Date From</label>
             <input
               type="date"
               className="input-detective"
@@ -127,7 +137,7 @@ export const UserActivityMonitor: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-detective-small text-gray-400 mb-2">Action</label>
+            <label className="text-detective-small mb-2 block text-gray-400">Action</label>
             <input
               type="text"
               className="input-detective"
@@ -146,10 +156,10 @@ export const UserActivityMonitor: React.FC = () => {
           {topUsers.map((user, index) => (
             <div
               key={user.userId}
-              className="flex items-center justify-between p-3 bg-detective-bg-secondary rounded-lg"
+              className="flex items-center justify-between rounded-lg bg-detective-bg-secondary p-3"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-detective-orange/20 flex items-center justify-center text-detective-orange font-bold">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-detective-orange/20 font-bold text-detective-orange">
                   {index + 1}
                 </div>
                 <div>
@@ -169,20 +179,20 @@ export const UserActivityMonitor: React.FC = () => {
       {/* Activity Timeline */}
       <DetectiveCard>
         <h3 className="text-detective-subtitle mb-4">Activity by Hour (Last 24h)</h3>
-        <div className="flex items-end justify-between gap-2 h-40">
+        <div className="flex h-40 items-end justify-between gap-2">
           {Array.from({ length: 24 }, (_, i) => {
             const count = activityByHour[i] || 0;
             const maxCount = Math.max(...Object.values(activityByHour), 1);
             const height = (count / maxCount) * 100;
 
             return (
-              <div key={i} className="flex-1 flex flex-col items-center gap-2">
-                <div className="relative w-full group">
+              <div key={i} className="flex flex-1 flex-col items-center gap-2">
+                <div className="group relative w-full">
                   <div
-                    className="w-full bg-gradient-to-t from-detective-orange to-detective-orange/50 rounded-t transition-all"
+                    className="w-full rounded-t bg-gradient-to-t from-detective-orange to-detective-orange/50 transition-all"
                     style={{ height: `${height}%`, minHeight: count > 0 ? '4px' : '0' }}
                   ></div>
-                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-black/80 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
                     {count} activities
                   </div>
                 </div>
@@ -200,7 +210,7 @@ export const UserActivityMonitor: React.FC = () => {
           {activities.slice(0, 10).map((activity) => (
             <div
               key={activity.id}
-              className="flex items-center justify-between p-3 bg-detective-bg-secondary rounded-lg hover:bg-detective-bg-secondary/70 transition-colors"
+              className="flex items-center justify-between rounded-lg bg-detective-bg-secondary p-3 transition-colors hover:bg-detective-bg-secondary/70"
             >
               <div className="flex-1">
                 <p className="text-detective-base font-semibold">{activity.userName}</p>
@@ -208,11 +218,13 @@ export const UserActivityMonitor: React.FC = () => {
               </div>
               <div className="text-right">
                 <p className="text-detective-small text-gray-400">
-                  {new Date(activity.timestamp).toLocaleString('es-ES')}
+                  {activity.timestamp
+                    ? new Date(activity.timestamp).toLocaleString('es-ES')
+                    : 'N/A'}
                 </p>
                 {activity.ipAddress && (
                   <div className="flex items-center gap-1 text-xs text-gray-500">
-                    <MapPin className="w-3 h-3" />
+                    <MapPin className="h-3 w-3" />
                     {activity.ipAddress}
                   </div>
                 )}

@@ -44,9 +44,7 @@ let mockAuthContextValue = {
 };
 
 vi.mock('@/app/providers/AuthContext', () => ({
-  AuthProvider: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
+  AuthProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   useAuth: () => mockAuthContextValue,
 }));
 
@@ -69,7 +67,7 @@ describe('RegisterForm', () => {
     return render(
       <BrowserRouter>
         <RegisterForm {...props} />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
   };
 
@@ -107,9 +105,7 @@ describe('RegisterForm', () => {
       expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/i agree to the/i)).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: /create account/i })
-      ).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /create account/i })).toBeInTheDocument();
     });
 
     it('should render email input with correct attributes', () => {
@@ -136,10 +132,7 @@ describe('RegisterForm', () => {
       const passwordInput = screen.getByLabelText(/^password$/i);
       expect(passwordInput).toHaveAttribute('type', 'password');
       expect(passwordInput).toHaveAttribute('autoComplete', 'new-password');
-      expect(passwordInput).toHaveAttribute(
-        'placeholder',
-        'Create a strong password'
-      );
+      expect(passwordInput).toHaveAttribute('placeholder', 'Create a strong password');
     });
 
     it('should render confirm password input', () => {
@@ -147,10 +140,7 @@ describe('RegisterForm', () => {
 
       const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
       expect(confirmPasswordInput).toHaveAttribute('type', 'password');
-      expect(confirmPasswordInput).toHaveAttribute(
-        'autoComplete',
-        'new-password'
-      );
+      expect(confirmPasswordInput).toHaveAttribute('autoComplete', 'new-password');
     });
 
     it('should render two password visibility toggle buttons', () => {
@@ -207,12 +197,8 @@ describe('RegisterForm', () => {
 
       // Check options
       expect(screen.getByRole('option', { name: /student/i })).toBeInTheDocument();
-      expect(
-        screen.getByRole('option', { name: /teacher\/admin/i })
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('option', { name: /super admin/i })
-      ).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: /teacher\/admin/i })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: /super admin/i })).toBeInTheDocument();
     });
   });
 
@@ -377,9 +363,7 @@ describe('RegisterForm', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/password must be at least 8 characters/i)
-        ).toBeInTheDocument();
+        expect(screen.getByText(/password must be at least 8 characters/i)).toBeInTheDocument();
       });
     });
 
@@ -434,9 +418,7 @@ describe('RegisterForm', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/you must accept the terms/i)
-        ).toBeInTheDocument();
+        expect(screen.getByText(/you must accept the terms/i)).toBeInTheDocument();
       });
     });
 
@@ -654,7 +636,6 @@ describe('RegisterForm', () => {
 
   describe('Form Submission - Error', () => {
     it('should display error message when registration fails', async () => {
-      const user = userEvent.setup();
       mockAuthContextValue.error = 'Email already exists';
       renderRegisterForm();
 
@@ -663,7 +644,6 @@ describe('RegisterForm', () => {
     });
 
     it('should display error with alert role for accessibility', async () => {
-      const user = userEvent.setup();
       mockAuthContextValue.error = 'Registration failed';
       renderRegisterForm();
 
@@ -705,9 +685,7 @@ describe('RegisterForm', () => {
   describe('Loading States', () => {
     it('should show loading state during form submission', async () => {
       const user = userEvent.setup();
-      mockRegister.mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 1000))
-      );
+      mockRegister.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 1000)));
       renderRegisterForm();
 
       const emailInput = screen.getByLabelText(/email address/i);
@@ -725,16 +703,12 @@ describe('RegisterForm', () => {
       await user.click(submitButton);
 
       // Check for loading text
-      expect(
-        screen.getByRole('button', { name: /creating account/i })
-      ).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /creating account/i })).toBeInTheDocument();
     });
 
     it('should disable all inputs during form submission', async () => {
       const user = userEvent.setup();
-      mockRegister.mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 1000))
-      );
+      mockRegister.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 1000)));
       renderRegisterForm();
 
       const emailInput = screen.getByLabelText(/email address/i);
@@ -763,9 +737,7 @@ describe('RegisterForm', () => {
 
     it('should disable password toggle buttons during submission', async () => {
       const user = userEvent.setup();
-      mockRegister.mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 1000))
-      );
+      mockRegister.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 1000)));
       renderRegisterForm();
 
       const emailInput = screen.getByLabelText(/email address/i);
@@ -875,7 +847,6 @@ describe('RegisterForm', () => {
     });
 
     it('should have role="alert" for error messages', async () => {
-      const user = userEvent.setup();
       mockAuthContextValue.error = 'Registration failed';
       renderRegisterForm();
 
@@ -890,10 +861,7 @@ describe('RegisterForm', () => {
       const passwordInput = screen.getByLabelText(/^password$/i);
       await user.type(passwordInput, 'password123');
 
-      expect(passwordInput).toHaveAttribute(
-        'aria-describedby',
-        'password-strength'
-      );
+      expect(passwordInput).toHaveAttribute('aria-describedby', 'password-strength');
     });
   });
 
@@ -939,9 +907,7 @@ describe('RegisterForm', () => {
 
     it('should disable role select during submission', async () => {
       const user = userEvent.setup();
-      mockRegister.mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 1000))
-      );
+      mockRegister.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 1000)));
       renderRegisterForm({ showRoleSelection: true });
 
       const emailInput = screen.getByLabelText(/email address/i);

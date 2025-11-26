@@ -14,6 +14,9 @@ import type {
 
 export interface UseGradingReturn {
   submissions: Submission[];
+  total: number;
+  page: number;
+  limit: number;
   pendingCount: number;
   loading: boolean;
   error: Error | null;
@@ -25,6 +28,9 @@ export interface UseGradingReturn {
 
 export function useGrading(filters?: GetSubmissionsQueryDto): UseGradingReturn {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(20);
   const [pendingCount, setPendingCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -34,10 +40,13 @@ export function useGrading(filters?: GetSubmissionsQueryDto): UseGradingReturn {
       setLoading(true);
       setError(null);
 
-      const data = await gradingApi.getSubmissions(filters);
-      setSubmissions(data);
+      const response = await gradingApi.getSubmissions(filters);
+      setSubmissions(response.submissions);
+      setTotal(response.total);
+      setPage(response.page);
+      setLimit(response.limit);
 
-      const pending = data.filter((s) => s.status === 'pending').length;
+      const pending = response.submissions.filter((s) => s.status === 'pending').length;
       setPendingCount(pending);
     } catch (err) {
       console.error('[useGrading] Error:', err);
@@ -65,7 +74,7 @@ export function useGrading(filters?: GetSubmissionsQueryDto): UseGradingReturn {
         throw err;
       }
     },
-    [fetchSubmissions]
+    [fetchSubmissions],
   );
 
   const bulkGrade = useCallback(
@@ -78,11 +87,14 @@ export function useGrading(filters?: GetSubmissionsQueryDto): UseGradingReturn {
         throw err;
       }
     },
-    [fetchSubmissions]
+    [fetchSubmissions],
   );
 
   return {
     submissions,
+    total,
+    page,
+    limit,
     pendingCount,
     loading,
     error,

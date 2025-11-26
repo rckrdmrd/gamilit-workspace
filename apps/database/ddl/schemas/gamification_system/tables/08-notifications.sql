@@ -124,9 +124,9 @@ CREATE INDEX idx_notifications_user_read ON gamification_system.notifications US
 
 --
 -- Name: notifications notifications_updated_at; Type: TRIGGER; Schema: gamification_system; Owner: postgres
+-- NOTE: Trigger movido a archivo separado para evitar duplicación
+-- Ver: gamification_system/triggers/18-notifications_updated_at.sql
 --
-
-CREATE TRIGGER notifications_updated_at BEFORE UPDATE ON gamification_system.notifications FOR EACH ROW EXECUTE FUNCTION gamification_system.update_notifications_updated_at();
 
 
 --

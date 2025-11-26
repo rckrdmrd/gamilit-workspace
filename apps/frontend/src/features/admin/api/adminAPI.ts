@@ -6,7 +6,7 @@
  */
 
 import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS, FEATURE_FLAGS } from '@/services/api/apiConfig';
+import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
 import { handleAPIError } from '@/services/api/apiErrorHandler';
 import type { User } from '@features/auth/types/auth.types';
 import type { ApiResponse } from '@/services/api/apiTypes';
@@ -46,9 +46,10 @@ export interface DeactivateUserRequest {
  * Map backend user response to frontend User type
  */
 const mapBackendUserToFrontend = (backendUser: any): User => {
-  const fullName = backendUser.displayName ||
-                   `${backendUser.firstName || ''} ${backendUser.lastName || ''}`.trim() ||
-                   backendUser.email.split('@')[0];
+  const fullName =
+    backendUser.displayName ||
+    `${backendUser.firstName || ''} ${backendUser.lastName || ''}`.trim() ||
+    backendUser.email.split('@')[0];
 
   return {
     id: backendUser.id,
@@ -76,7 +77,7 @@ const mockGetUsersList = async (filters?: UserListFilters): Promise<UserListResp
       role: 'student',
       emailVerified: true,
       isActive: true,
-      createdAt: '2024-01-15T10:00:00Z'
+      createdAt: '2024-01-15T10:00:00Z',
     },
     {
       id: '2',
@@ -85,7 +86,7 @@ const mockGetUsersList = async (filters?: UserListFilters): Promise<UserListResp
       role: 'admin_teacher',
       emailVerified: true,
       isActive: true,
-      createdAt: '2024-01-10T10:00:00Z'
+      createdAt: '2024-01-10T10:00:00Z',
     },
     {
       id: '3',
@@ -94,7 +95,7 @@ const mockGetUsersList = async (filters?: UserListFilters): Promise<UserListResp
       role: 'super_admin',
       emailVerified: true,
       isActive: true,
-      createdAt: '2024-01-05T10:00:00Z'
+      createdAt: '2024-01-05T10:00:00Z',
     },
     {
       id: '4',
@@ -103,7 +104,7 @@ const mockGetUsersList = async (filters?: UserListFilters): Promise<UserListResp
       role: 'student',
       emailVerified: true,
       isActive: false,
-      createdAt: '2024-02-01T10:00:00Z'
+      createdAt: '2024-02-01T10:00:00Z',
     },
     {
       id: '5',
@@ -112,7 +113,7 @@ const mockGetUsersList = async (filters?: UserListFilters): Promise<UserListResp
       role: 'admin_teacher',
       emailVerified: true,
       isActive: true,
-      createdAt: '2024-02-15T10:00:00Z'
+      createdAt: '2024-02-15T10:00:00Z',
     },
     {
       id: '6',
@@ -121,7 +122,7 @@ const mockGetUsersList = async (filters?: UserListFilters): Promise<UserListResp
       role: 'student',
       emailVerified: false,
       isActive: false,
-      createdAt: '2024-03-01T10:00:00Z'
+      createdAt: '2024-03-01T10:00:00Z',
     },
   ];
 
@@ -130,18 +131,19 @@ const mockGetUsersList = async (filters?: UserListFilters): Promise<UserListResp
 
   if (filters?.search) {
     const searchLower = filters.search.toLowerCase();
-    filtered = filtered.filter(u =>
-      (u.fullName ?? '').toLowerCase().includes(searchLower) ||
-      u.email.toLowerCase().includes(searchLower)
+    filtered = filtered.filter(
+      (u) =>
+        (u.fullName ?? '').toLowerCase().includes(searchLower) ||
+        u.email.toLowerCase().includes(searchLower),
     );
   }
 
   if (filters?.role) {
-    filtered = filtered.filter(u => u.role === filters.role);
+    filtered = filtered.filter((u) => u.role === filters.role);
   }
 
   if (filters?.is_active !== undefined && filters?.is_active !== 'all') {
-    filtered = filtered.filter(u => u.isActive === filters.is_active);
+    filtered = filtered.filter((u) => u.isActive === filters.is_active);
   }
 
   const page = filters?.page || 1;
@@ -161,7 +163,8 @@ const mockGetUsersList = async (filters?: UserListFilters): Promise<UserListResp
 /**
  * Mock activate user for development
  */
-const mockActivateUser = async (userId: string, request?: ActivateUserRequest): Promise<User> => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const mockActivateUser = async (userId: string, _request?: ActivateUserRequest): Promise<User> => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
   return {
@@ -175,7 +178,10 @@ const mockActivateUser = async (userId: string, request?: ActivateUserRequest): 
 /**
  * Mock deactivate user for development
  */
-const mockDeactivateUser = async (userId: string, request: DeactivateUserRequest): Promise<User> => {
+const mockDeactivateUser = async (
+  userId: string,
+  request: DeactivateUserRequest,
+): Promise<User> => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
   if (!request.reason || request.reason.length < 10) {
@@ -218,10 +224,9 @@ export const getUsersList = async (filters?: UserListFilters): Promise<UserListR
     if (filters?.limit) params.limit = filters.limit;
 
     // Real API call
-    const response = await apiClient.get<ApiResponse<any>>(
-      API_ENDPOINTS.admin.users.list,
-      { params }
-    );
+    const response = await apiClient.get<ApiResponse<any>>(API_ENDPOINTS.admin.users.list, {
+      params,
+    });
 
     // Extract and map backend response to frontend format
     const data = response.data.data;
@@ -245,7 +250,7 @@ export const getUsersList = async (filters?: UserListFilters): Promise<UserListR
  */
 export const activateUser = async (
   userId: string,
-  request?: ActivateUserRequest
+  request?: ActivateUserRequest,
 ): Promise<User> => {
   try {
     // Use mock data if feature flag is enabled
@@ -256,7 +261,7 @@ export const activateUser = async (
     // Real API call
     const response = await apiClient.post<ApiResponse<any>>(
       API_ENDPOINTS.admin.users.activate(userId),
-      request || {}
+      request || {},
     );
 
     // Extract and map backend response to frontend format
@@ -275,7 +280,7 @@ export const activateUser = async (
  */
 export const deactivateUser = async (
   userId: string,
-  request: DeactivateUserRequest
+  request: DeactivateUserRequest,
 ): Promise<User> => {
   try {
     // Use mock data if feature flag is enabled
@@ -286,7 +291,7 @@ export const deactivateUser = async (
     // Real API call
     const response = await apiClient.post<ApiResponse<any>>(
       API_ENDPOINTS.admin.users.deactivate(userId),
-      request
+      request,
     );
 
     // Extract and map backend response to frontend format

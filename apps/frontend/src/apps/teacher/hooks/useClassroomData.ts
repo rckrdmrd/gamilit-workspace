@@ -1,12 +1,30 @@
+/**
+ * useClassroomData Hook
+ *
+ * Legacy hook refactored to use classroomsApi service.
+ * This hook is functional and provides backward compatibility with existing components.
+ *
+ * Fetches comprehensive classroom progress data including general stats and module progress.
+ *
+ * @param classroomId - ID of the classroom to fetch data for
+ * @returns Object with classroom data, module progress, loading state, error state, and refresh function
+ *
+ * @example
+ * ```typescript
+ * const { data, moduleProgress, loading, error, refresh } = useClassroomData(classroomId);
+ * ```
+ */
+
 import { useState, useEffect } from 'react';
-import { apiClient } from '@/services/api/apiClient';
-import type { ClassroomData, ModuleProgress } from '../types';
+import { classroomsApi } from '@services/api/teacher';
+import type { ClassroomData, ModuleProgress, StudentMonitoring } from '../types';
 
 export function useClassroomData(classroomId: string) {
   const [data, setData] = useState<ClassroomData | null>(null);
   const [moduleProgress, setModuleProgress] = useState<ModuleProgress[]>([]);
+  const [students, setStudents] = useState<StudentMonitoring[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const fetchClassroomData = async () => {
@@ -14,19 +32,21 @@ export function useClassroomData(classroomId: string) {
         setLoading(true);
         setError(null);
 
-        // Fetch classroom general data
-        const classroomResponse = await apiClient.get(`/classroom/${classroomId}`);
-        const classroomData = classroomResponse.data.data;
+        // Fetch classroom progress data and students in parallel
+        const [progressResponse, studentsResponse] = await Promise.all([
+          classroomsApi.getClassroomProgress(classroomId),
+          classroomsApi.getClassroomStudents(classroomId),
+        ]);
 
-        // Fetch module progress
-        const progressResponse = await apiClient.get(`/analytics/classroom/${classroomId}/modules`);
-        const progressData = progressResponse.data.data;
+        // Response structure: { classroomData: {...}, moduleProgress: [...] }
+        const { classroomData, moduleProgress: modules } = progressResponse;
 
         setData(classroomData);
-        setModuleProgress(progressData.modules || []);
+        setModuleProgress(modules || []);
+        setStudents(studentsResponse.data || []);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
-        console.error('Error fetching classroom data:', err);
+        setError(err instanceof Error ? err : new Error('Unknown error'));
+        console.error('[useClassroomData] Error fetching classroom data:', err);
       } finally {
         setLoading(false);
       }
@@ -42,16 +62,22 @@ export function useClassroomData(classroomId: string) {
 
     try {
       setLoading(true);
-      const classroomResponse = await apiClient.get(`/classroom/${classroomId}`);
-      const classroomData = classroomResponse.data.data;
+      setError(null);
 
-      const progressResponse = await apiClient.get(`/analytics/classroom/${classroomId}/modules`);
-      const progressData = progressResponse.data.data;
+      // Fetch classroom progress data and students in parallel
+      const [progressResponse, studentsResponse] = await Promise.all([
+        classroomsApi.getClassroomProgress(classroomId),
+        classroomsApi.getClassroomStudents(classroomId),
+      ]);
+
+      const { classroomData, moduleProgress: modules } = progressResponse;
 
       setData(classroomData);
-      setModuleProgress(progressData.modules || []);
+      setModuleProgress(modules || []);
+      setStudents(studentsResponse.data || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err : new Error('Unknown error'));
+      console.error('[useClassroomData] Error refreshing classroom data:', err);
     } finally {
       setLoading(false);
     }
@@ -60,6 +86,7 @@ export function useClassroomData(classroomId: string) {
   return {
     data,
     moduleProgress,
+    students,
     loading,
     error,
     refresh,

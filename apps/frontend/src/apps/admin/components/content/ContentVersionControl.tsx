@@ -49,7 +49,8 @@ export const ContentVersionControl: React.FC = () => {
   const [compareVersion, setCompareVersion] = useState<string | null>(null);
 
   const handleRestore = async (versionId: string) => {
-    if (!confirm('Restore to this version? Current changes will be saved as a new version.')) return;
+    if (!confirm('Restore to this version? Current changes will be saved as a new version.'))
+      return;
 
     try {
       // API call to restore version
@@ -69,7 +70,7 @@ export const ContentVersionControl: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <GitBranch className="w-8 h-8 text-detective-orange" />
+          <GitBranch className="h-8 w-8 text-detective-orange" />
           <div>
             <h2 className="text-detective-subtitle">Content Version Control</h2>
             <p className="text-detective-small text-gray-400">Track and restore content changes</p>
@@ -77,12 +78,12 @@ export const ContentVersionControl: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Version History */}
         <div className="lg:col-span-1">
           <DetectiveCard>
-            <div className="flex items-center gap-2 mb-4">
-              <History className="w-5 h-5 text-detective-orange" />
+            <div className="mb-4 flex items-center gap-2">
+              <History className="h-5 w-5 text-detective-orange" />
               <h3 className="text-detective-subtitle">Version History</h3>
             </div>
 
@@ -90,31 +91,37 @@ export const ContentVersionControl: React.FC = () => {
               {versions.map((version, index) => (
                 <div
                   key={version.id}
-                  className={`p-3 rounded-lg cursor-pointer transition-colors ${
+                  className={`cursor-pointer rounded-lg p-3 transition-colors ${
                     selectedVersion === version.id
-                      ? 'bg-detective-orange/20 border border-detective-orange'
+                      ? 'border border-detective-orange bg-detective-orange/20'
                       : 'bg-detective-bg-secondary hover:bg-detective-bg-secondary/70'
                   }`}
                   onClick={() => setSelectedVersion(version.id)}
                 >
-                  <div className="flex items-center justify-between mb-1">
+                  <div className="mb-1 flex items-center justify-between">
                     <span className="text-detective-base font-bold">{version.version}</span>
                     {index === 0 && (
-                      <span className="px-2 py-0.5 bg-green-500/20 text-green-500 rounded text-xs">CURRENT</span>
+                      <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs text-green-500">
+                        CURRENT
+                      </span>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2 text-detective-small text-gray-400 mb-2">
-                    <User className="w-3 h-3" />
+                  <div className="text-detective-small mb-2 flex items-center gap-2 text-gray-400">
+                    <User className="h-3 w-3" />
                     <span>{version.author}</span>
                   </div>
 
-                  <div className="flex items-center gap-2 text-detective-small text-gray-400">
-                    <Calendar className="w-3 h-3" />
-                    <span>{new Date(version.timestamp).toLocaleString('es-ES')}</span>
+                  <div className="text-detective-small flex items-center gap-2 text-gray-400">
+                    <Calendar className="h-3 w-3" />
+                    <span>
+                      {version.timestamp
+                        ? new Date(version.timestamp).toLocaleString('es-ES')
+                        : 'N/A'}
+                    </span>
                   </div>
 
-                  <div className="flex items-center gap-3 mt-2 text-xs">
+                  <div className="mt-2 flex items-center gap-3 text-xs">
                     <span className="text-green-500">+{version.changesSummary.added}</span>
                     <span className="text-yellow-500">~{version.changesSummary.modified}</span>
                     <span className="text-red-500">-{version.changesSummary.deleted}</span>
@@ -130,18 +137,19 @@ export const ContentVersionControl: React.FC = () => {
           {selectedVersionData ? (
             <div className="space-y-4">
               <DetectiveCard>
-                <div className="flex items-center justify-between mb-4">
+                <div className="mb-4 flex items-center justify-between">
                   <div>
                     <h3 className="text-detective-subtitle">{selectedVersionData.version}</h3>
                     <p className="text-detective-small text-gray-400">
                       by {selectedVersionData.author} on{' '}
-                      {new Date(selectedVersionData.timestamp).toLocaleString('es-ES')}
+                      {selectedVersionData.timestamp
+                        ? new Date(selectedVersionData.timestamp).toLocaleString('es-ES')
+                        : 'N/A'}
                     </p>
                   </div>
                   <DetectiveButton
                     variant="blue"
-
-                    icon={<RotateCcw className="w-4 h-4" />}
+                    icon={<RotateCcw className="h-4 w-4" />}
                     onClick={() => handleRestore(selectedVersionData.id)}
                     disabled={versions[0].id === selectedVersionData.id}
                   >
@@ -149,27 +157,31 @@ export const ContentVersionControl: React.FC = () => {
                   </DetectiveButton>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+                <div className="mb-4 grid grid-cols-3 gap-4">
+                  <div className="rounded-lg border border-green-500/30 bg-green-500/10 p-3">
                     <p className="text-detective-small text-gray-400">Added</p>
-                    <p className="text-2xl font-bold text-green-500">+{selectedVersionData.changesSummary.added}</p>
+                    <p className="text-2xl font-bold text-green-500">
+                      +{selectedVersionData.changesSummary.added}
+                    </p>
                   </div>
-                  <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                  <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-3">
                     <p className="text-detective-small text-gray-400">Modified</p>
                     <p className="text-2xl font-bold text-yellow-500">
                       ~{selectedVersionData.changesSummary.modified}
                     </p>
                   </div>
-                  <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                  <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3">
                     <p className="text-detective-small text-gray-400">Deleted</p>
-                    <p className="text-2xl font-bold text-red-500">-{selectedVersionData.changesSummary.deleted}</p>
+                    <p className="text-2xl font-bold text-red-500">
+                      -{selectedVersionData.changesSummary.deleted}
+                    </p>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="text-detective-base font-semibold mb-2">Changes:</h4>
-                  <div className="p-3 bg-detective-bg-secondary rounded-lg">
-                    <pre className="text-detective-small text-gray-300 whitespace-pre-wrap">
+                  <h4 className="mb-2 text-detective-base font-semibold">Changes:</h4>
+                  <div className="rounded-lg bg-detective-bg-secondary p-3">
+                    <pre className="text-detective-small whitespace-pre-wrap text-gray-300">
                       {selectedVersionData.changes}
                     </pre>
                   </div>
@@ -178,7 +190,7 @@ export const ContentVersionControl: React.FC = () => {
 
               {/* Compare Versions */}
               <DetectiveCard>
-                <h4 className="text-detective-base font-semibold mb-3">Compare with:</h4>
+                <h4 className="mb-3 text-detective-base font-semibold">Compare with:</h4>
                 <select
                   className="input-detective mb-4"
                   value={compareVersion || ''}
@@ -189,7 +201,8 @@ export const ContentVersionControl: React.FC = () => {
                     .filter((v) => v.id !== selectedVersion)
                     .map((v) => (
                       <option key={v.id} value={v.id}>
-                        {v.version} - {new Date(v.timestamp).toLocaleDateString('es-ES')}
+                        {v.version} -{' '}
+                        {v.timestamp ? new Date(v.timestamp).toLocaleDateString('es-ES') : 'N/A'}
                       </option>
                     ))}
                 </select>
@@ -197,21 +210,23 @@ export const ContentVersionControl: React.FC = () => {
                 {compareVersionData && (
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-detective-small text-gray-400 mb-2">
+                      <p className="text-detective-small mb-2 text-gray-400">
                         {selectedVersionData.version} (Selected)
                       </p>
-                      <div className="p-3 bg-detective-bg-secondary rounded-lg">
-                        <pre className="text-xs text-gray-300 whitespace-pre-wrap">
+                      <div className="rounded-lg bg-detective-bg-secondary p-3">
+                        <pre className="whitespace-pre-wrap text-xs text-gray-300">
                           {selectedVersionData.changes}
                         </pre>
                       </div>
                     </div>
                     <div>
-                      <p className="text-detective-small text-gray-400 mb-2">
+                      <p className="text-detective-small mb-2 text-gray-400">
                         {compareVersionData.version} (Compare)
                       </p>
-                      <div className="p-3 bg-detective-bg-secondary rounded-lg">
-                        <pre className="text-xs text-gray-300 whitespace-pre-wrap">{compareVersionData.changes}</pre>
+                      <div className="rounded-lg bg-detective-bg-secondary p-3">
+                        <pre className="whitespace-pre-wrap text-xs text-gray-300">
+                          {compareVersionData.changes}
+                        </pre>
                       </div>
                     </div>
                   </div>
@@ -220,21 +235,23 @@ export const ContentVersionControl: React.FC = () => {
 
               {/* Audit Trail */}
               <DetectiveCard>
-                <h4 className="text-detective-base font-semibold mb-3">Audit Trail</h4>
+                <h4 className="mb-3 text-detective-base font-semibold">Audit Trail</h4>
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between p-2 bg-detective-bg-secondary rounded">
+                  <div className="flex items-center justify-between rounded bg-detective-bg-secondary p-2">
                     <span className="text-detective-small">Created by</span>
                     <span className="text-detective-small text-detective-orange">
                       {selectedVersionData.author}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between p-2 bg-detective-bg-secondary rounded">
+                  <div className="flex items-center justify-between rounded bg-detective-bg-secondary p-2">
                     <span className="text-detective-small">Created at</span>
                     <span className="text-detective-small text-gray-400">
-                      {new Date(selectedVersionData.timestamp).toLocaleString('es-ES')}
+                      {selectedVersionData.timestamp
+                        ? new Date(selectedVersionData.timestamp).toLocaleString('es-ES')
+                        : 'N/A'}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between p-2 bg-detective-bg-secondary rounded">
+                  <div className="flex items-center justify-between rounded bg-detective-bg-secondary p-2">
                     <span className="text-detective-small">Total changes</span>
                     <span className="text-detective-small text-gray-400">
                       {selectedVersionData.changesSummary.added +
@@ -247,8 +264,8 @@ export const ContentVersionControl: React.FC = () => {
             </div>
           ) : (
             <DetectiveCard>
-              <div className="text-center py-12 text-gray-400">
-                <GitBranch className="w-12 h-12 mx-auto mb-2" />
+              <div className="py-12 text-center text-gray-400">
+                <GitBranch className="mx-auto mb-2 h-12 w-12" />
                 <p>Select a version to view details</p>
               </div>
             </DetectiveCard>

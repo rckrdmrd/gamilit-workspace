@@ -10,14 +10,14 @@
  * @version 2.0 (2025-11-11) - Migrado a est\u00e1ndar CEFR (8 niveles: A1-C2+)
  */
 export enum DifficultyLevel {
-  BEGINNER = 'beginner',               // A1
-  ELEMENTARY = 'elementary',           // A2
+  BEGINNER = 'beginner', // A1
+  ELEMENTARY = 'elementary', // A2
   PRE_INTERMEDIATE = 'pre_intermediate', // B1
-  INTERMEDIATE = 'intermediate',       // B2
+  INTERMEDIATE = 'intermediate', // B2
   UPPER_INTERMEDIATE = 'upper_intermediate', // C1
-  ADVANCED = 'advanced',               // C2
-  PROFICIENT = 'proficient',           // C2+
-  NATIVE = 'native'                    // Nativo
+  ADVANCED = 'advanced', // C2
+  PROFICIENT = 'proficient', // C2+
+  NATIVE = 'native', // Nativo
 }
 
 /**
@@ -92,7 +92,7 @@ export enum ContentStatus {
   IN_REVIEW = 'in_review',
   APPROVED = 'approved',
   PUBLISHED = 'published',
-  ARCHIVED = 'archived'
+  ARCHIVED = 'archived',
 }
 
 /**
@@ -670,7 +670,8 @@ export type ExerciseConfig = Record<string, any>;
  * Module data combined with user progress
  */
 export interface ModuleWithProgress extends Module {
-  progress?: {
+  /** User's detailed progress for this module (distinct from Module.progress which is a simple percentage) */
+  userProgress?: {
     status: string;
     progress_percentage: number;
     exercises_completed: number;

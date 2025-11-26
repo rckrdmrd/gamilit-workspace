@@ -119,8 +119,8 @@ export class NotificationMultiChannelController {
     const notification = await this.notificationService.create({
       userId: createDto.userId,
       title: createDto.title,
-      message: createDto.message,
-      type: createDto.type,
+      content: createDto.message,
+      notificationType: createDto.type,
       relatedEntityType: createDto.relatedEntityType,
       relatedEntityId: createDto.relatedEntityId,
       metadata: createDto.metadata,
@@ -128,7 +128,7 @@ export class NotificationMultiChannelController {
       expiresAt: createDto.expiresAt ? new Date(createDto.expiresAt) : undefined,
     });
 
-    return notification;
+    return this.mapToResponseDto(notification);
   }
 
   /**
@@ -206,6 +206,23 @@ export class NotificationMultiChannelController {
       metadata: sendDto.metadata,
     });
 
-    return notification;
+    return this.mapToResponseDto(notification);
+  }
+
+  /**
+   * Maps Notification entity to NotificationResponseDto
+   */
+  private mapToResponseDto(notification: any): NotificationResponseDto {
+    return {
+      id: notification.id,
+      userId: notification.userId,
+      type: notification.notificationType,
+      title: notification.title,
+      message: notification.content,
+      data: notification.metadata,
+      read: notification.isRead,
+      createdAt: notification.createdAt,
+      updatedAt: notification.createdAt, // Entity doesn't have updatedAt, use createdAt
+    };
   }
 }

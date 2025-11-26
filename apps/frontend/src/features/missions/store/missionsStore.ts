@@ -67,13 +67,13 @@ export const useMissionsStore = create<MissionsState>((set, get) => ({
       // Update mission status to 'claimed'
       set((state) => ({
         dailyMissions: state.dailyMissions.map((m) =>
-          m.id === missionId ? { ...m, status: 'claimed' as const } : m
+          m.id === missionId ? { ...m, status: 'claimed' as const } : m,
         ),
         weeklyMissions: state.weeklyMissions.map((m) =>
-          m.id === missionId ? { ...m, status: 'claimed' as const } : m
+          m.id === missionId ? { ...m, status: 'claimed' as const } : m,
         ),
         specialMissions: state.specialMissions.map((m) =>
-          m.id === missionId ? { ...m, status: 'claimed' as const } : m
+          m.id === missionId ? { ...m, status: 'claimed' as const } : m,
         ),
       }));
     } catch (error: any) {
@@ -94,8 +94,12 @@ export const useMissionsStore = create<MissionsState>((set, get) => ({
       const updateMission = (missions: Mission[]) =>
         missions.map((m) => {
           if (m.id !== missionId) return m;
+
+          // Update the objective
           const newObjective = { ...m.objective, current };
-          const isCompleted = current >= m.objective.target;
+          const target = newObjective.target;
+          const isCompleted = current >= target;
+
           return {
             ...m,
             objective: newObjective,

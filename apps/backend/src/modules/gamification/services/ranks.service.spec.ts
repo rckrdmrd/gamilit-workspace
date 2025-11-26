@@ -177,7 +177,7 @@ describe('RanksService', () => {
     });
 
     it('should return config for maximum rank (K\'uk\'ulkan)', () => {
-      const config = service.getRankConfig(MayaRank.KUKUKULKAN);
+      const config = service.getRankConfig(MayaRank.KUKULKAN);
 
       expect(config).toMatchObject({
         xp_min: 2250,
@@ -247,7 +247,7 @@ describe('RanksService', () => {
     it('should handle maximum rank (K\'uk\'ulkan)', async () => {
       mockUserRankRepository.findOne.mockResolvedValue({
         ...mockCurrentRank,
-        current_rank: MayaRank.KUKUKULKAN,
+        current_rank: MayaRank.KUKULKAN,
       });
       mockUserStatsService.findByUserId.mockResolvedValue({
         ...mockUserStats,
@@ -257,7 +257,7 @@ describe('RanksService', () => {
       const result = await service.calculateRankProgress(mockUserId);
 
       expect(result).toMatchObject({
-        current_rank: MayaRank.KUKUKULKAN,
+        current_rank: MayaRank.KUKULKAN,
         next_rank: null,
         progress_percentage: 100,
         xp_remaining: 0,
@@ -295,7 +295,7 @@ describe('RanksService', () => {
     it('should return false when user is at maximum rank', async () => {
       mockUserRankRepository.findOne.mockResolvedValue({
         ...mockCurrentRank,
-        current_rank: MayaRank.KUKUKULKAN,
+        current_rank: MayaRank.KUKULKAN,
       });
       mockUserStatsService.findByUserId.mockResolvedValue({
         ...mockUserStats,
@@ -383,7 +383,7 @@ describe('RanksService', () => {
     it('should throw BadRequestException if already at max rank', async () => {
       mockUserRankRepository.findOne.mockResolvedValue({
         ...mockCurrentRank,
-        current_rank: MayaRank.KUKUKULKAN,
+        current_rank: MayaRank.KUKULKAN,
       });
       // Mock de checkPromotionEligibility para que retorne false (max rank)
       jest.spyOn(service, 'checkPromotionEligibility').mockResolvedValue(false);

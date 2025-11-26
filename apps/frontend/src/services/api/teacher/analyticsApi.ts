@@ -11,11 +11,8 @@
  */
 
 import axiosInstance from '../axios.instance';
-import type {
-  ClassroomAnalytics,
-  EngagementMetrics,
-  AnalyticsFilter,
-} from '@apps/teacher/types';
+import { API_ENDPOINTS } from '@/config/api.config';
+import type { ClassroomAnalytics, EngagementMetrics } from '@apps/teacher/types';
 
 // ============================================================================
 // TYPES
@@ -93,6 +90,111 @@ export interface StudentInsights {
 }
 
 // ============================================================================
+// ECONOMY ANALYTICS TYPES (GAP-ST-005)
+// ============================================================================
+
+/**
+ * Distribution of students by ML Coins balance range
+ */
+export interface EconomyDistribution {
+  range: string;
+  count: number;
+  percentage: number;
+}
+
+/**
+ * Top earner information
+ */
+export interface TopEarner {
+  student_id: string;
+  student_name: string;
+  earned_this_week: number;
+}
+
+/**
+ * Economy trend data point
+ */
+export interface EconomyTrend {
+  date: string;
+  total_earned: number;
+  total_spent: number;
+}
+
+/**
+ * Economy Analytics Response
+ * ML Coins economy metrics for teacher's classrooms
+ */
+export interface EconomyAnalytics {
+  total_circulation: number;
+  average_balance: number;
+  total_earned_today: number;
+  total_spent_today: number;
+  distribution: EconomyDistribution[];
+  top_earners: TopEarner[];
+  trends: EconomyTrend[];
+  wealth_distribution: {
+    top_10_percent: number;
+    bottom_50_percent: number;
+  };
+}
+
+/**
+ * Query parameters for economy analytics
+ */
+export interface GetEconomyAnalyticsDto {
+  classroom_id?: string;
+}
+
+// ============================================================================
+// STUDENT ECONOMY TYPES (GAP-ST-006)
+// ============================================================================
+
+/**
+ * Individual student economy data
+ */
+export interface StudentEconomy {
+  id: string;
+  name: string;
+  balance: number;
+  earned_this_week: number;
+  spent_this_week: number;
+  rank: string;
+  level: number;
+}
+
+/**
+ * Students economy response
+ */
+export interface StudentsEconomyResponse {
+  students: StudentEconomy[];
+  total: number;
+}
+
+// ============================================================================
+// ACHIEVEMENTS STATS TYPES (GAP-ST-007)
+// ============================================================================
+
+/**
+ * Achievement with unlock stats
+ */
+export interface AchievementStats {
+  id: string;
+  name: string;
+  description: string;
+  reward: number;
+  unlocked_count: number;
+}
+
+/**
+ * Achievements stats response
+ */
+export interface AchievementsStatsResponse {
+  achievements: AchievementStats[];
+  total_achievements: number;
+  total_unlocks: number;
+}
+
+// ============================================================================
 // ANALYTICS API CLASS
 // ============================================================================
 
@@ -103,8 +205,6 @@ export interface StudentInsights {
  * engagement metrics, and report generation.
  */
 class AnalyticsAPI {
-  private readonly baseUrl = '/teacher/analytics';
-
   /**
    * Get classroom analytics
    *
@@ -133,13 +233,11 @@ class AnalyticsAPI {
    * });
    * ```
    */
-  async getClassroomAnalytics(
-    query?: GetAnalyticsQueryDto
-  ): Promise<ClassroomAnalytics> {
+  async getClassroomAnalytics(query?: GetAnalyticsQueryDto): Promise<ClassroomAnalytics> {
     try {
       const { data } = await axiosInstance.get<ClassroomAnalytics>(
-        this.baseUrl,
-        { params: query }
+        API_ENDPOINTS.teacher.analytics,
+        { params: query },
       );
       return data;
     } catch (error) {
@@ -176,13 +274,11 @@ class AnalyticsAPI {
    * console.log(`Avg session: ${dailyEngagement.session_duration_avg} min`);
    * ```
    */
-  async getEngagementMetrics(
-    query?: GetEngagementMetricsDto
-  ): Promise<EngagementMetrics> {
+  async getEngagementMetrics(query?: GetEngagementMetricsDto): Promise<EngagementMetrics> {
     try {
       const { data } = await axiosInstance.get<EngagementMetrics>(
-        `${this.baseUrl}/engagement`,
-        { params: query }
+        API_ENDPOINTS.teacher.engagementMetrics,
+        { params: query },
       );
       return data;
     } catch (error) {
@@ -240,8 +336,8 @@ class AnalyticsAPI {
   async generateReport(config: GenerateReportsDto): Promise<Report> {
     try {
       const { data } = await axiosInstance.post<Report>(
-        `${this.baseUrl}/report`,
-        config
+        API_ENDPOINTS.teacher.generateReport,
+        config,
       );
       return data;
     } catch (error) {
@@ -282,7 +378,7 @@ class AnalyticsAPI {
   async getReportStatus(reportId: string): Promise<Report> {
     try {
       const { data } = await axiosInstance.get<Report>(
-        `${this.baseUrl}/report/${reportId}`
+        API_ENDPOINTS.teacher.reportStatus(reportId),
       );
       return data;
     } catch (error) {
@@ -326,11 +422,100 @@ class AnalyticsAPI {
   async getStudentInsights(studentId: string): Promise<StudentInsights> {
     try {
       const { data } = await axiosInstance.get<StudentInsights>(
-        `/teacher/students/${studentId}/insights`
+        API_ENDPOINTS.teacher.studentInsights(studentId),
       );
       return data;
     } catch (error) {
       console.error('[AnalyticsAPI] Error fetching student insights:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get ML Coins economy analytics for teacher's classrooms
+   *
+   * Returns comprehensive economy metrics including total circulation,
+   * distribution by balance range, top earners, trends, and wealth distribution.
+   *
+   * @param query - Optional query parameters (classroom_id)
+   * @returns Promise<EconomyAnalytics> Economy analytics data
+   * @throws Error if request fails
+   *
+   * @example
+   * ```typescript
+   * // Get economy analytics for all classrooms
+   * const economy = await analyticsApi.getEconomyAnalytics();
+   *
+   * // Get economy analytics for specific classroom
+   * const classroomEconomy = await analyticsApi.getEconomyAnalytics({
+   *   classroom_id: 'classroom-123'
+   * });
+   *
+   * console.log(`Total circulation: ${economy.total_circulation} ML`);
+   * console.log(`Average balance: ${economy.average_balance} ML`);
+   * console.log(`Top earner: ${economy.top_earners[0]?.student_name}`);
+   * ```
+   *
+   * @see GAP-ST-005
+   */
+  async getEconomyAnalytics(query?: GetEconomyAnalyticsDto): Promise<EconomyAnalytics> {
+    try {
+      const { data } = await axiosInstance.get<EconomyAnalytics>(
+        API_ENDPOINTS.teacher.economyAnalytics,
+        { params: query },
+      );
+      return data;
+    } catch (error) {
+      console.error('[AnalyticsAPI] Error fetching economy analytics:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get students economy data for teacher's classrooms
+   *
+   * Returns list of students with their ML Coins balance, weekly earnings/spending,
+   * Maya rank, and level.
+   *
+   * @param query - Optional query parameters (classroom_id)
+   * @returns Promise<StudentsEconomyResponse> Students economy data
+   * @throws Error if request fails
+   *
+   * @see GAP-ST-006
+   */
+  async getStudentsEconomy(query?: GetEconomyAnalyticsDto): Promise<StudentsEconomyResponse> {
+    try {
+      const { data } = await axiosInstance.get<StudentsEconomyResponse>(
+        API_ENDPOINTS.teacher.studentsEconomy,
+        { params: query },
+      );
+      return data;
+    } catch (error) {
+      console.error('[AnalyticsAPI] Error fetching students economy:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get achievements stats for teacher's classrooms
+   *
+   * Returns all achievements with unlock counts (how many students have unlocked each).
+   *
+   * @param query - Optional query parameters (classroom_id)
+   * @returns Promise<AchievementsStatsResponse> Achievements stats data
+   * @throws Error if request fails
+   *
+   * @see GAP-ST-007
+   */
+  async getAchievementsStats(query?: GetEconomyAnalyticsDto): Promise<AchievementsStatsResponse> {
+    try {
+      const { data } = await axiosInstance.get<AchievementsStatsResponse>(
+        API_ENDPOINTS.teacher.achievementsStats,
+        { params: query },
+      );
+      return data;
+    } catch (error) {
+      console.error('[AnalyticsAPI] Error fetching achievements stats:', error);
       throw error;
     }
   }

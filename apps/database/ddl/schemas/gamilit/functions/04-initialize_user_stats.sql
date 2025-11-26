@@ -81,9 +81,8 @@ BEGIN
           AND m.status = 'published'
         ON CONFLICT (user_id, module_id) DO NOTHING;
 
-        -- NEW: Initialize daily and weekly missions for new users
-        -- This ensures missions are available immediately after registration
-        -- PERFORM gamilit.initialize_user_missions(NEW.user_id);  -- TODO: Implementar función (BUG FIX #3: Keep commented for now)
+        -- Initialize daily and weekly missions for new users
+        PERFORM gamilit.initialize_user_missions(NEW.id);
     END IF;
 
     RETURN NEW;

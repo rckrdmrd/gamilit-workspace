@@ -6,8 +6,8 @@
  */
 
 import { useState, useEffect } from 'react';
-import { getProgress, getModuleProgress, getUserActivities } from '../api';
-import type { UserProgressOverview, ModuleProgressDetail, Activity } from '../api';
+import { getProgress, getModuleProgress, getUserActivities } from '../api/progressAPI';
+import type { UserProgressOverview, ModuleProgressDetail, Activity } from '../api/progressAPI';
 
 interface ProgressDashboardExampleProps {
   userId: string;
@@ -19,14 +19,14 @@ export function ProgressDashboardExample({ userId }: ProgressDashboardExamplePro
   const [moduleDetail, setModuleDetail] = useState<ModuleProgressDetail | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [_error, _setError] = useState<string | null>(null);
 
   // Load initial progress data
   useEffect(() => {
     const loadProgress = async () => {
       try {
         setIsLoading(true);
-        setError(null);
+        _setError(null);
 
         const [progressData, activitiesData] = await Promise.all([
           getProgress(userId),
@@ -37,7 +37,7 @@ export function ProgressDashboardExample({ userId }: ProgressDashboardExamplePro
         setActivities(activitiesData);
       } catch (err: any) {
         console.error('Error loading progress:', err);
-        setError('Error al cargar el progreso. Por favor intenta nuevamente.');
+        _setError('Error al cargar el progreso. Por favor intenta nuevamente.');
       } finally {
         setIsLoading(false);
       }
@@ -69,8 +69,8 @@ export function ProgressDashboardExample({ userId }: ProgressDashboardExamplePro
     return <div>Loading progress...</div>;
   }
 
-  if (error) {
-    return <div style={{ color: 'red' }}>{error}</div>;
+  if (_error) {
+    return <div style={{ color: 'red' }}>{_error}</div>;
   }
 
   if (!progress) {
@@ -149,8 +149,7 @@ export function ProgressDashboardExample({ userId }: ProgressDashboardExamplePro
                 marginBottom: '1rem',
                 borderRadius: '8px',
                 cursor: 'pointer',
-                backgroundColor:
-                  selectedModule === module.moduleId ? '#f0f0f0' : 'white',
+                backgroundColor: selectedModule === module.moduleId ? '#f0f0f0' : 'white',
               }}
               onClick={() => setSelectedModule(module.moduleId)}
             >
@@ -159,8 +158,7 @@ export function ProgressDashboardExample({ userId }: ProgressDashboardExamplePro
                 <strong>Progress:</strong> {module.progressPercentage}%
               </div>
               <div>
-                <strong>Exercises:</strong> {module.completedExercises}/
-                {module.totalExercises}
+                <strong>Exercises:</strong> {module.completedExercises}/{module.totalExercises}
               </div>
               <div>
                 <strong>Average Score:</strong> {module.averageScore.toFixed(1)}
@@ -206,13 +204,11 @@ export function ProgressDashboardExample({ userId }: ProgressDashboardExamplePro
           </div>
           {moduleDetail.completedAt && (
             <div>
-              <strong>Completed:</strong>{' '}
-              {new Date(moduleDetail.completedAt).toLocaleDateString()}
+              <strong>Completed:</strong> {new Date(moduleDetail.completedAt).toLocaleDateString()}
             </div>
           )}
           <div>
-            <strong>Total Time:</strong> {Math.floor(moduleDetail.totalTimeSpent / 60)}{' '}
-            minutes
+            <strong>Total Time:</strong> {Math.floor(moduleDetail.totalTimeSpent / 60)} minutes
           </div>
 
           {/* Strengths & Weaknesses */}
@@ -252,14 +248,9 @@ export function ProgressDashboardExample({ userId }: ProgressDashboardExamplePro
               </thead>
               <tbody>
                 {moduleDetail.exerciseProgress.map((exercise) => (
-                  <tr
-                    key={exercise.exerciseId}
-                    style={{ borderBottom: '1px solid #eee' }}
-                  >
+                  <tr key={exercise.exerciseId} style={{ borderBottom: '1px solid #eee' }}>
                     <td style={{ padding: '0.5rem' }}>{exercise.exerciseTitle}</td>
-                    <td style={{ textAlign: 'center', padding: '0.5rem' }}>
-                      {exercise.attempts}
-                    </td>
+                    <td style={{ textAlign: 'center', padding: '0.5rem' }}>{exercise.attempts}</td>
                     <td style={{ textAlign: 'center', padding: '0.5rem' }}>
                       {exercise.bestScore}
                       {exercise.perfectScore && ' 🏆'}

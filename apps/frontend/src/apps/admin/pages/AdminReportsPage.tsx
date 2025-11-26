@@ -1,58 +1,59 @@
+/**
+ * AdminReportsPage - Report Generation and Management
+ *
+ * Complete UI for generating and managing system reports
+ * Features:
+ * - Report generation form with filters
+ * - Reports list with auto-refresh for pending reports
+ * - Download and delete capabilities
+ * - Beta warning banner (in-memory storage)
+ *
+ * @author Frontend-Agent
+ * @date 2025-11-24
+ * @status MVP Complete - Backend uses in-memory storage
+ */
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '../layouts/AdminLayout';
-import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { useReports } from '../hooks/useReports';
-import { useUserGamification } from '@shared/hooks/useUserGamification';
-import {
-  FileText,
-  Download,
-  Calendar,
-  Filter,
-  TrendingUp,
-  Users,
-  BookOpen,
-  Trophy,
-  Clock,
-  CheckCircle,
-} from 'lucide-react';
+import { ReportGenerationForm } from '../components/reports/ReportGenerationForm';
+import { ReportsList } from '../components/reports/ReportsList';
+import { BetaBanner } from '../components/reports/BetaBanner';
+import type { GenerateReportParams } from '@/services/api/adminTypes';
 
-/**
- * AdminReportsPage - Generación de reportes del sistema
- * Updated: 2025-11-19 - Integrated with useReports hook (FE-059)
- */
 export default function AdminReportsPage() {
   const { user, logout } = useAuth();
-  const [startDate, setStartDate] = useState('2025-11-01');
-  const [endDate, setEndDate] = useState('2025-11-19');
-  const [reportType, setReportType] = useState('users');
-  const [reportFormat, setReportFormat] = useState<'pdf' | 'excel' | 'csv' | 'json'>('pdf');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [toast, setToast] = useState<{
+    type: 'success' | 'error';
+    message: string;
+  } | null>(null);
 
-  // Use useReports hook
+  // Initialize reports hook
   const {
     reports,
-    reportTypes,
-    stats,
-    loading,
-    generating,
+    isLoading,
     error,
-    fetchReports,
+    pagination,
     generateReport,
+    refreshReports,
     downloadReport,
-  } = useReports();
+    deleteReport,
+    hasPendingReports,
+  } = useReports({
+    autoRefresh: true,
+    refreshInterval: 5000,
+  });
 
-  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
-  const { gamificationData } = useUserGamification(user?.id);
-
-  // Fallback gamification data in case hook fails or user is not loaded
-  const displayGamificationData = gamificationData || {
+  // Gamification data for layout
+  const gamificationData = {
     userId: user?.id || 'mock-admin-id',
-    level: 1,
-    totalXP: 0,
-    mlCoins: 0,
-    rank: 'Novato',
-    achievements: [],
+    level: 20,
+    totalXP: 5000,
+    mlCoins: 2500,
+    rank: 'Super Admin',
+    achievements: ['admin_master', 'analytics_expert'],
   };
 
   const handleLogout = () => {
@@ -60,259 +61,228 @@ export default function AdminReportsPage() {
     window.location.href = '/login';
   };
 
-  // Fetch reports on mount
-  useEffect(() => {
-    fetchReports();
-  }, [fetchReports]);
+  /**
+   * Handle report generation
+   */
+  const handleGenerateReport = async (params: GenerateReportParams) => {
+    setIsGenerating(true);
+    setToast(null);
 
-  // Icon mapping
-  const iconMap: Record<string, any> = {
-    Users,
-    TrendingUp,
-    BookOpen,
-    Trophy,
-    Clock,
-    CheckCircle,
-  };
-
-  const handleGenerateReport = async () => {
     try {
-      await generateReport({
-        type: reportType,
-        startDate,
-        endDate,
-        format: reportFormat,
+      await generateReport(params);
+      setToast({
+        type: 'success',
+        message: 'Reporte generado exitosamente. Se está procesando...',
       });
-      alert('Reporte generado correctamente');
-    } catch (err) {
-      alert('Error al generar reporte');
+    } catch (err: any) {
+      setToast({
+        type: 'error',
+        message: err.message || 'Error al generar reporte',
+      });
+    } finally {
+      setIsGenerating(false);
     }
   };
+
+  /**
+   * Handle report download
+   */
+  const handleDownloadReport = async (reportId: string) => {
+    setToast(null);
+    try {
+      await downloadReport(reportId);
+      setToast({
+        type: 'success',
+        message: 'Reporte descargado exitosamente',
+      });
+    } catch (err: any) {
+      setToast({
+        type: 'error',
+        message: err.message || 'Error al descargar reporte',
+      });
+    }
+  };
+
+  /**
+   * Handle report deletion
+   */
+  const handleDeleteReport = async (reportId: string) => {
+    setToast(null);
+    try {
+      await deleteReport(reportId);
+      setToast({
+        type: 'success',
+        message: 'Reporte eliminado exitosamente',
+      });
+    } catch (err: any) {
+      setToast({
+        type: 'error',
+        message: err.message || 'Error al eliminar reporte',
+      });
+    }
+  };
+
+  /**
+   * Auto-dismiss toast after 5 seconds
+   */
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   return (
     <AdminLayout
       user={user || undefined}
-      gamificationData={displayGamificationData}
+      gamificationData={gamificationData}
       organizationName="GAMILIT Platform Admin"
       onLogout={handleLogout}
     >
-      <div className="space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-detective-text flex items-center gap-3">
-            <FileText className="w-8 h-8 text-blue-500" />
-            Reportes del Sistema
+      <div className="mx-auto max-w-7xl">
+        {/* Page Header */}
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Generación de Reportes
           </h1>
-          <p className="text-detective-text-secondary mt-1">
-            Genera y descarga reportes detallados de la plataforma
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            Genera y gestiona reportes del sistema en diferentes formatos
           </p>
         </div>
 
-        {/* Generate Report Form */}
-        <DetectiveCard>
-          <h2 className="text-xl font-bold text-detective-text mb-4">Generar Nuevo Reporte</h2>
+        {/* Beta Warning Banner */}
+        <BetaBanner dismissible={true} />
 
-          <div className="space-y-4">
-            {/* Report Type Selection */}
-            <div>
-              <label className="block text-sm font-medium text-detective-text mb-2">
-                Tipo de Reporte
-              </label>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {reportTypes.map((type) => {
-                  const Icon = iconMap[type.icon] || FileText;
-                  return (
-                    <button
-                      key={type.id}
-                      onClick={() => setReportType(type.id)}
-                      className={`p-4 rounded-lg text-left transition-all ${
-                        reportType === type.id
-                          ? 'bg-detective-orange/20 border-2 border-detective-orange'
-                          : 'bg-detective-bg-secondary hover:bg-detective-bg-secondary/70 border-2 border-transparent'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3 mb-2">
-                        <Icon className={`w-6 h-6 ${type.color}`} />
-                        <h3 className="font-bold text-detective-text text-sm">{type.name}</h3>
-                      </div>
-                      <p className="text-xs text-detective-text-secondary">{type.description}</p>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Date Range */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-detective-text mb-2 flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
-                  Fecha Inicio
-                </label>
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full px-4 py-2 bg-detective-bg-secondary border border-gray-600 rounded-lg text-detective-text focus:outline-none focus:ring-2 focus:ring-detective-orange"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-detective-text mb-2 flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
-                  Fecha Fin
-                </label>
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full px-4 py-2 bg-detective-bg-secondary border border-gray-600 rounded-lg text-detective-text focus:outline-none focus:ring-2 focus:ring-detective-orange"
-                />
-              </div>
-            </div>
-
-            {/* Format Selection */}
-            <div>
-              <label className="block text-sm font-medium text-detective-text mb-2 flex items-center gap-2">
-                <Filter className="w-4 h-4" />
-                Formato
-              </label>
-              <select
-                value={reportFormat}
-                onChange={(e) => setReportFormat(e.target.value as any)}
-                className="w-full px-4 py-2 bg-detective-bg-secondary border border-gray-600 rounded-lg text-detective-text focus:outline-none focus:ring-2 focus:ring-detective-orange"
-              >
-                <option value="pdf">PDF</option>
-                <option value="excel">Excel (XLSX)</option>
-                <option value="csv">CSV</option>
-                <option value="json">JSON</option>
-              </select>
-            </div>
-
-            {/* Generate Button */}
-            <div className="flex gap-2">
-              <DetectiveButton
-                variant="primary"
-                onClick={handleGenerateReport}
-                disabled={generating}
-                className="flex-1"
-              >
-                {generating ? (
-                  <>
-                    <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    Generando...
-                  </>
+        {/* Toast Notifications */}
+        {toast && (
+          <div
+            className={`mb-6 rounded-md p-4 ${
+              toast.type === 'success'
+                ? 'border border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20'
+                : 'border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20'
+            }`}
+          >
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                {toast.type === 'success' ? (
+                  <svg
+                    className="h-5 w-5 text-green-400"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
                 ) : (
-                  <>
-                    <FileText className="w-5 h-5" />
-                    Generar Reporte
-                  </>
+                  <svg
+                    className="h-5 w-5 text-red-400"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
                 )}
-              </DetectiveButton>
-              <DetectiveButton
-                variant="outline"
-                onClick={() => alert('Preview del reporte - Próximamente')}
-                disabled={generating}
-              >
-                Vista Previa
-              </DetectiveButton>
+              </div>
+              <div className="ml-3">
+                <p
+                  className={`text-sm font-medium ${
+                    toast.type === 'success'
+                      ? 'text-green-800 dark:text-green-300'
+                      : 'text-red-800 dark:text-red-300'
+                  }`}
+                >
+                  {toast.message}
+                </p>
+              </div>
+              <div className="ml-auto pl-3">
+                <button
+                  onClick={() => setToast(null)}
+                  className={`inline-flex rounded-md p-1.5 ${
+                    toast.type === 'success'
+                      ? 'text-green-500 hover:bg-green-100 dark:hover:bg-green-900/40'
+                      : 'text-red-500 hover:bg-red-100 dark:hover:bg-red-900/40'
+                  } transition-colors focus:outline-none focus:ring-2`}
+                >
+                  <svg
+                    className="h-5 w-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
-        </DetectiveCard>
-
-        {/* Error Message */}
-        {error && (
-          <DetectiveCard>
-            <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4 text-red-500">
-              <p className="font-semibold">Error:</p>
-              <p>{error}</p>
-            </div>
-          </DetectiveCard>
         )}
 
-        {/* Generated Reports History */}
-        <DetectiveCard>
-          <h2 className="text-xl font-bold text-detective-text mb-4">Reportes Generados</h2>
+        {/* Error Display */}
+        {error && !toast && (
+          <div className="mb-6 rounded-md border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg
+                  className="h-5 w-5 text-red-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-red-800 dark:text-red-300">Error</h3>
+                <div className="mt-2 text-sm text-red-700 dark:text-red-200">{error}</div>
+              </div>
+            </div>
+          </div>
+        )}
 
-          {loading && reports.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-detective-orange"></div>
-              <p className="mt-4 text-detective-text-secondary">Cargando reportes...</p>
-            </div>
-          ) : reports.length === 0 ? (
-            <div className="text-center py-8 text-detective-text-secondary">
-              <FileText className="w-16 h-16 mx-auto mb-4 opacity-50" />
-              <p>No hay reportes generados aún</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {reports.map((report) => {
-                const reportTypeData = reportTypes.find((t) => t.id === report.type);
-                const Icon = reportTypeData ? iconMap[reportTypeData.icon] || FileText : FileText;
-                return (
-                  <div
-                    key={report.id}
-                    className="flex items-center justify-between p-4 bg-detective-bg-secondary rounded-lg hover:bg-detective-bg-secondary/70 transition-colors"
-                  >
-                    <div className="flex items-center gap-4">
-                      <Icon className={`w-6 h-6 ${reportTypeData?.color || 'text-gray-500'}`} />
-                      <div>
-                        <h3 className="font-bold text-detective-text">{report.name}</h3>
-                        <p className="text-sm text-detective-text-secondary">
-                          Generado: {new Date(report.generatedAt).toLocaleString('es-ES')} • {report.size} • {report.format}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <DetectiveButton
-                        variant="outline"
-                        size="sm"
-                        onClick={() => downloadReport(report.id)}
-                      >
-                        <Download className="w-4 h-4" />
-                        Descargar
-                      </DetectiveButton>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </DetectiveCard>
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Report Generation Form */}
+          <div className="lg:col-span-1">
+            <ReportGenerationForm onSubmit={handleGenerateReport} isGenerating={isGenerating} />
+          </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <DetectiveCard hoverable={false}>
-            <div className="text-center">
-              <FileText className="w-10 h-10 text-blue-500 mx-auto mb-2" />
-              <p className="text-sm text-detective-text-secondary mb-1">Reportes Generados</p>
-              <p className="text-2xl font-bold text-detective-text">{stats?.totalGenerated || 0}</p>
-            </div>
-          </DetectiveCard>
-          <DetectiveCard hoverable={false}>
-            <div className="text-center">
-              <Download className="w-10 h-10 text-green-500 mx-auto mb-2" />
-              <p className="text-sm text-detective-text-secondary mb-1">Descargas Este Mes</p>
-              <p className="text-2xl font-bold text-green-500">{stats?.downloadsThisMonth || 0}</p>
-            </div>
-          </DetectiveCard>
-          <DetectiveCard hoverable={false}>
-            <div className="text-center">
-              <Clock className="w-10 h-10 text-orange-500 mx-auto mb-2" />
-              <p className="text-sm text-detective-text-secondary mb-1">Último Reporte</p>
-              <p className="text-sm font-bold text-orange-500">
-                {stats?.lastReportTime && stats.lastReportTime !== 'Nunca'
-                  ? new Date(stats.lastReportTime).toLocaleDateString('es-ES')
-                  : 'Nunca'}
-              </p>
-            </div>
-          </DetectiveCard>
-          <DetectiveCard hoverable={false}>
-            <div className="text-center">
-              <TrendingUp className="w-10 h-10 text-purple-500 mx-auto mb-2" />
-              <p className="text-sm text-detective-text-secondary mb-1">Más Generado</p>
-              <p className="text-sm font-bold text-purple-500">{stats?.mostGenerated || 'N/A'}</p>
-            </div>
-          </DetectiveCard>
+          {/* Reports List */}
+          <div className="lg:col-span-2">
+            <ReportsList
+              reports={reports}
+              isLoading={isLoading}
+              hasPendingReports={hasPendingReports}
+              onDownload={handleDownloadReport}
+              onDelete={handleDeleteReport}
+              onRefresh={refreshReports}
+            />
+
+            {/* Pagination Info */}
+            {pagination && pagination.totalItems > 0 && (
+              <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
+                Mostrando {reports.length} de {pagination.totalItems} reportes
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </AdminLayout>

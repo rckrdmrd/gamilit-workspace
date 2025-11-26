@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/app/providers/AuthContext';
 import { ProtectedRoute } from '@/shared/components/ProtectedRoute';
 import { LoginPage } from '@/pages/auth/LoginPage';
@@ -36,6 +37,9 @@ import TeacherMonitoringPage from '@/apps/teacher/pages/TeacherMonitoringPage';
 import TeacherProgressPage from '@/apps/teacher/pages/TeacherProgressPage';
 import TeacherReportsPage from '@/apps/teacher/pages/TeacherReportsPage';
 import TeacherResourcesPage from '@/apps/teacher/pages/TeacherResourcesPage';
+import TeacherClassesPage from '@/apps/teacher/pages/TeacherClassesPage';
+import TeacherStudentsPage from '@/apps/teacher/pages/TeacherStudentsPage';
+import TeacherExerciseResponsesPage from '@/apps/teacher/pages/TeacherExerciseResponsesPage';
 
 // Admin Portal Pages
 import AdminDashboardPage from '@/apps/admin/pages/AdminDashboardPage';
@@ -43,12 +47,15 @@ import AdminInstitutionsPage from '@/apps/admin/pages/AdminInstitutionsPage';
 import AdminUsersPage from '@/apps/admin/pages/AdminUsersPage';
 import AdminRolesPage from '@/apps/admin/pages/AdminRolesPage';
 import AdminContentPage from '@/apps/admin/pages/AdminContentPage';
-import AdminApprovalsPage from '@/apps/admin/pages/AdminApprovalsPage';
 import AdminGamificationPage from '@/apps/admin/pages/AdminGamificationPage';
 import AdminMonitoringPage from '@/apps/admin/pages/AdminMonitoringPage';
 import AdminAdvancedPage from '@/apps/admin/pages/AdminAdvancedPage';
 import AdminReportsPage from '@/apps/admin/pages/AdminReportsPage';
 import AdminSettingsPage from '@/apps/admin/pages/AdminSettingsPage';
+import AdminAlertsPage from '@/apps/admin/pages/AdminAlertsPage';
+import AdminAnalyticsPage from '@/apps/admin/pages/AdminAnalyticsPage';
+import AdminProgressPage from '@/apps/admin/pages/AdminProgressPage';
+import AdminClassroomTeacherPage from '@/apps/admin/pages/AdminClassroomTeacherPage';
 
 /**
  * App Component
@@ -73,6 +80,30 @@ import AdminSettingsPage from '@/apps/admin/pages/AdminSettingsPage';
 function App() {
   return (
     <AuthProvider>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#333',
+            color: '#fff',
+          },
+          success: {
+            duration: 3000,
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            duration: 4000,
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
       <Router>
         <Routes>
           {/* Public routes */}
@@ -178,10 +209,34 @@ function App() {
             }
           />
           <Route
+            path="/teacher/responses"
+            element={
+              <ProtectedRoute>
+                <TeacherExerciseResponsesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/teacher/resources"
             element={
               <ProtectedRoute>
                 <TeacherResourcesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher/classes"
+            element={
+              <ProtectedRoute>
+                <TeacherClassesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher/students"
+            element={
+              <ProtectedRoute>
+                <TeacherStudentsPage />
               </ProtectedRoute>
             }
           />
@@ -228,14 +283,6 @@ function App() {
             }
           />
           <Route
-            path="/admin/approvals"
-            element={
-              <ProtectedRoute allowedRoles={['super_admin']}>
-                <AdminApprovalsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/admin/gamification"
             element={
               <ProtectedRoute allowedRoles={['super_admin']}>
@@ -272,6 +319,38 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['super_admin']}>
                 <AdminSettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/alerts"
+            element={
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <AdminAlertsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/analytics"
+            element={
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <AdminAnalyticsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/progress"
+            element={
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <AdminProgressPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/classroom-teachers"
+            element={
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <AdminClassroomTeacherPage />
               </ProtectedRoute>
             }
           />

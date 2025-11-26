@@ -38,6 +38,16 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 // Constants
 import { DB_SCHEMAS } from '@/shared/constants';
 
+// Gamification entities for getUserStatistics (GAP-008)
+import { UserStats } from '@/modules/gamification/entities/user-stats.entity';
+import { UserRank } from '@/modules/gamification/entities/user-rank.entity';
+import { UserAchievement } from '@/modules/gamification/entities/user-achievement.entity';
+import { Achievement } from '@/modules/gamification/entities/achievement.entity';
+import { MLCoinsTransaction } from '@/modules/gamification/entities/ml-coins-transaction.entity';
+
+// Progress tracking entities for getUserStatistics (GAP-008)
+import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
+
 /**
  * AuthModule
  *
@@ -92,6 +102,26 @@ import { DB_SCHEMAS } from '@/shared/constants';
         SecurityEvent, // ✨ NUEVO - P0 (Auditoría de seguridad)
       ],
       'auth',
+    ),
+
+    // TypeORM entities - Connection 'gamification' for getUserStatistics (GAP-008)
+    TypeOrmModule.forFeature(
+      [
+        UserStats,
+        UserRank,
+        UserAchievement,
+        Achievement,
+        MLCoinsTransaction,
+      ],
+      'gamification',
+    ),
+
+    // TypeORM entities - Connection 'progress' for getUserStatistics (GAP-008)
+    TypeOrmModule.forFeature(
+      [
+        ExerciseSubmission,
+      ],
+      'progress',
     ),
   ],
   controllers: [AuthController, PasswordController, UsersController],

@@ -31,10 +31,9 @@ vi.mock('../../api/achievementsAPI', () => ({
 // Mock data
 const mockAchievement: Achievement = {
   id: 'ach-1',
+  title: 'First Steps',
   name: 'First Steps',
-  nameSpanish: 'Primeros Pasos',
   description: 'Complete your first exercise',
-  descriptionSpanish: 'Completa tu primer ejercicio',
   icon: 'trophy',
   category: 'progress',
   rarity: 'common',
@@ -148,9 +147,7 @@ describe('AchievementsStore', () => {
 
       const state = useAchievementsStore.getState();
       expect(state.unlockedAchievements).toHaveLength(2);
-      expect(state.unlockedAchievements.some((a) => a.id === 'ach-1')).toBe(
-        true
-      );
+      expect(state.unlockedAchievements.some((a) => a.id === 'ach-1')).toBe(true);
     });
 
     it('should create notification for unlocked achievement', () => {
@@ -177,9 +174,7 @@ describe('AchievementsStore', () => {
       unlockAchievement('ach-epic');
 
       const state = useAchievementsStore.getState();
-      const notification = state.recentUnlocks.find(
-        (n) => n.achievement.id === 'ach-epic'
-      );
+      const notification = state.recentUnlocks.find((n) => n.achievement.id === 'ach-epic');
 
       expect(notification?.showConfetti).toBe(true);
     });
@@ -236,9 +231,7 @@ describe('AchievementsStore', () => {
       updateProgress('ach-no-progress', 5);
 
       const state = useAchievementsStore.getState();
-      const achievement = state.achievements.find(
-        (a) => a.id === 'ach-no-progress'
-      );
+      const achievement = state.achievements.find((a) => a.id === 'ach-no-progress');
 
       expect(achievement?.progress).toBeUndefined();
     });
@@ -270,8 +263,7 @@ describe('AchievementsStore', () => {
     it('should NOT auto-unlock if already unlocked', () => {
       const { updateProgress } = useAchievementsStore.getState();
 
-      const initialUnlockedCount =
-        useAchievementsStore.getState().unlockedAchievements.length;
+      const initialUnlockedCount = useAchievementsStore.getState().unlockedAchievements.length;
 
       updateProgress('ach-2', 10); // already unlocked
 
@@ -295,9 +287,7 @@ describe('AchievementsStore', () => {
 
       const state = useAchievementsStore.getState();
       expect(state.unlockedAchievements).toHaveLength(2);
-      expect(state.unlockedAchievements.some((a) => a.id === 'ach-1')).toBe(
-        true
-      );
+      expect(state.unlockedAchievements.some((a) => a.id === 'ach-1')).toBe(true);
     });
   });
 
@@ -307,8 +297,7 @@ describe('AchievementsStore', () => {
 
   describe('Dismiss Notification', () => {
     it('should remove notification from recentUnlocks', () => {
-      const { unlockAchievement, dismissNotification } =
-        useAchievementsStore.getState();
+      const { unlockAchievement, dismissNotification } = useAchievementsStore.getState();
 
       // First unlock to create notification
       unlockAchievement('ach-1');
@@ -330,8 +319,7 @@ describe('AchievementsStore', () => {
         ],
       });
 
-      const { unlockAchievement, dismissNotification } =
-        useAchievementsStore.getState();
+      const { unlockAchievement, dismissNotification } = useAchievementsStore.getState();
 
       unlockAchievement('ach-1');
       unlockAchievement('ach-3');
@@ -397,9 +385,7 @@ describe('AchievementsStore', () => {
       // Manually unlock an achievement
       const updatedAchievements = useAchievementsStore
         .getState()
-        .achievements.map((a) =>
-          a.id === 'ach-1' ? { ...a, isUnlocked: true } : a
-        );
+        .achievements.map((a) => (a.id === 'ach-1' ? { ...a, isUnlocked: true } : a));
 
       useAchievementsStore.setState({
         achievements: updatedAchievements,
@@ -415,10 +401,8 @@ describe('AchievementsStore', () => {
     it('should maintain existing state except stats', () => {
       const { refreshAchievements } = useAchievementsStore.getState();
 
-      const achievementsCount = useAchievementsStore.getState().achievements
-        .length;
-      const notificationsCount =
-        useAchievementsStore.getState().recentUnlocks.length;
+      const achievementsCount = useAchievementsStore.getState().achievements.length;
+      const notificationsCount = useAchievementsStore.getState().recentUnlocks.length;
 
       refreshAchievements();
 
@@ -435,7 +419,7 @@ describe('AchievementsStore', () => {
   describe('Fetch Achievements (API)', () => {
     it('should set loading state during fetch', async () => {
       vi.mocked(achievementsAPI.getUserAchievements).mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 100))
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
       );
 
       const { fetchAchievements } = useAchievementsStore.getState();
@@ -450,31 +434,21 @@ describe('AchievementsStore', () => {
     it('should fetch and update achievements from API', async () => {
       const mockAPIAchievements = [mockAchievement, mockUnlockedAchievement];
 
-      vi.mocked(achievementsAPI.getUserAchievements).mockResolvedValue(
-        mockAPIAchievements as any
-      );
-      vi.mocked(achievementsAPI.mapAchievementsToFrontend).mockReturnValue(
-        mockAPIAchievements
-      );
+      vi.mocked(achievementsAPI.getUserAchievements).mockResolvedValue(mockAPIAchievements as any);
+      vi.mocked(achievementsAPI.mapAchievementsToFrontend).mockReturnValue(mockAPIAchievements);
 
       const { fetchAchievements } = useAchievementsStore.getState();
       await fetchAchievements('user-123');
 
-      expect(achievementsAPI.getUserAchievements).toHaveBeenCalledWith(
-        'user-123'
-      );
+      expect(achievementsAPI.getUserAchievements).toHaveBeenCalledWith('user-123');
       expect(achievementsAPI.mapAchievementsToFrontend).toHaveBeenCalled();
     });
 
     it('should update state after successful fetch', async () => {
       const mockAPIAchievements = [mockUnlockedAchievement];
 
-      vi.mocked(achievementsAPI.getUserAchievements).mockResolvedValue(
-        mockAPIAchievements as any
-      );
-      vi.mocked(achievementsAPI.mapAchievementsToFrontend).mockReturnValue(
-        mockAPIAchievements
-      );
+      vi.mocked(achievementsAPI.getUserAchievements).mockResolvedValue(mockAPIAchievements as any);
+      vi.mocked(achievementsAPI.mapAchievementsToFrontend).mockReturnValue(mockAPIAchievements);
 
       const { fetchAchievements } = useAchievementsStore.getState();
       await fetchAchievements('user-123');
@@ -487,9 +461,7 @@ describe('AchievementsStore', () => {
     });
 
     it('should handle API errors', async () => {
-      vi.mocked(achievementsAPI.getUserAchievements).mockRejectedValue(
-        new Error('Network error')
-      );
+      vi.mocked(achievementsAPI.getUserAchievements).mockRejectedValue(new Error('Network error'));
 
       const { fetchAchievements } = useAchievementsStore.getState();
       await fetchAchievements('user-123');
@@ -500,9 +472,7 @@ describe('AchievementsStore', () => {
     });
 
     it('should set generic error message for non-Error failures', async () => {
-      vi.mocked(achievementsAPI.getUserAchievements).mockRejectedValue(
-        'String error'
-      );
+      vi.mocked(achievementsAPI.getUserAchievements).mockRejectedValue('String error');
 
       const { fetchAchievements } = useAchievementsStore.getState();
       await fetchAchievements('user-123');
@@ -514,12 +484,8 @@ describe('AchievementsStore', () => {
     it('should calculate stats after fetching', async () => {
       const mockAPIAchievements = [mockUnlockedAchievement];
 
-      vi.mocked(achievementsAPI.getUserAchievements).mockResolvedValue(
-        mockAPIAchievements as any
-      );
-      vi.mocked(achievementsAPI.mapAchievementsToFrontend).mockReturnValue(
-        mockAPIAchievements
-      );
+      vi.mocked(achievementsAPI.getUserAchievements).mockResolvedValue(mockAPIAchievements as any);
+      vi.mocked(achievementsAPI.mapAchievementsToFrontend).mockReturnValue(mockAPIAchievements);
 
       const { fetchAchievements } = useAchievementsStore.getState();
       await fetchAchievements('user-123');
@@ -634,10 +600,8 @@ describe('AchievementsStore', () => {
     it('should NOT unlock already unlocked achievement', () => {
       const { unlockAchievement } = useAchievementsStore.getState();
 
-      const unlockedCount =
-        useAchievementsStore.getState().unlockedAchievements.length;
-      const notificationsCount =
-        useAchievementsStore.getState().recentUnlocks.length;
+      const unlockedCount = useAchievementsStore.getState().unlockedAchievements.length;
+      const notificationsCount = useAchievementsStore.getState().recentUnlocks.length;
 
       // Try to unlock already unlocked achievement
       unlockAchievement('ach-2');
@@ -657,9 +621,7 @@ describe('AchievementsStore', () => {
 
       const state = useAchievementsStore.getState();
       expect(state.achievements).toEqual(initialState.achievements);
-      expect(state.unlockedAchievements).toEqual(
-        initialState.unlockedAchievements
-      );
+      expect(state.unlockedAchievements).toEqual(initialState.unlockedAchievements);
     });
 
     it('should handle update progress with invalid achievement ID', () => {
@@ -675,12 +637,10 @@ describe('AchievementsStore', () => {
     });
 
     it('should handle dismiss notification with invalid ID', () => {
-      const { unlockAchievement, dismissNotification } =
-        useAchievementsStore.getState();
+      const { unlockAchievement, dismissNotification } = useAchievementsStore.getState();
 
       unlockAchievement('ach-1');
-      const notificationsCount =
-        useAchievementsStore.getState().recentUnlocks.length;
+      const notificationsCount = useAchievementsStore.getState().recentUnlocks.length;
 
       // Try to dismiss non-existent notification
       dismissNotification('invalid-id');

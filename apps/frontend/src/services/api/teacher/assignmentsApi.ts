@@ -8,6 +8,7 @@
  */
 
 import axiosInstance from '../axios.instance';
+import { API_ENDPOINTS } from '@/config/api.config';
 import type { Assignment, Submission, Exercise } from '@apps/teacher/types';
 
 // ============================================================================
@@ -76,9 +77,6 @@ export interface GetSubmissionsQueryDto {
  * submission management, and grading.
  */
 class AssignmentsAPI {
-  private readonly baseUrl = '/assignments';
-  private readonly submissionsUrl = '/submissions';
-
   /**
    * Get all assignments for the authenticated teacher
    *
@@ -105,7 +103,7 @@ class AssignmentsAPI {
    */
   async getAssignments(query?: GetAssignmentsQueryDto): Promise<Assignment[]> {
     try {
-      const { data } = await axiosInstance.get<Assignment[]>(this.baseUrl, {
+      const { data } = await axiosInstance.get<Assignment[]>(API_ENDPOINTS.teacher.assignments, {
         params: query,
       });
       return data;
@@ -134,7 +132,7 @@ class AssignmentsAPI {
   async getAssignmentById(assignmentId: string): Promise<Assignment> {
     try {
       const { data } = await axiosInstance.get<Assignment>(
-        `${this.baseUrl}/${assignmentId}`
+        API_ENDPOINTS.teacher.assignment(assignmentId),
       );
       return data;
     } catch (error) {
@@ -167,8 +165,8 @@ class AssignmentsAPI {
   async createAssignment(data: CreateAssignmentDto): Promise<Assignment> {
     try {
       const { data: responseData } = await axiosInstance.post<Assignment>(
-        this.baseUrl,
-        data
+        API_ENDPOINTS.teacher.createAssignment,
+        data,
       );
       return responseData;
     } catch (error) {
@@ -195,14 +193,11 @@ class AssignmentsAPI {
    * });
    * ```
    */
-  async updateAssignment(
-    assignmentId: string,
-    data: UpdateAssignmentDto
-  ): Promise<Assignment> {
+  async updateAssignment(assignmentId: string, data: UpdateAssignmentDto): Promise<Assignment> {
     try {
       const { data: responseData } = await axiosInstance.put<Assignment>(
-        `${this.baseUrl}/${assignmentId}`,
-        data
+        API_ENDPOINTS.teacher.updateAssignment(assignmentId),
+        data,
       );
       return responseData;
     } catch (error) {
@@ -227,7 +222,7 @@ class AssignmentsAPI {
    */
   async deleteAssignment(assignmentId: string): Promise<void> {
     try {
-      await axiosInstance.delete(`${this.baseUrl}/${assignmentId}`);
+      await axiosInstance.delete(API_ENDPOINTS.teacher.deleteAssignment(assignmentId));
     } catch (error) {
       console.error('[AssignmentsAPI] Error deleting assignment:', error);
       throw error;
@@ -262,12 +257,12 @@ class AssignmentsAPI {
    */
   async getAssignmentSubmissions(
     assignmentId: string,
-    query?: GetSubmissionsQueryDto
+    query?: GetSubmissionsQueryDto,
   ): Promise<Submission[]> {
     try {
       const { data } = await axiosInstance.get<Submission[]>(
-        `${this.baseUrl}/${assignmentId}/submissions`,
-        { params: query }
+        API_ENDPOINTS.teacher.assignmentSubmissions(assignmentId),
+        { params: query },
       );
       return data;
     } catch (error) {
@@ -295,7 +290,7 @@ class AssignmentsAPI {
   async getSubmissionById(submissionId: string): Promise<Submission> {
     try {
       const { data } = await axiosInstance.get<Submission>(
-        `${this.submissionsUrl}/${submissionId}`
+        API_ENDPOINTS.teacher.submission(submissionId),
       );
       return data;
     } catch (error) {
@@ -323,14 +318,11 @@ class AssignmentsAPI {
    * });
    * ```
    */
-  async gradeSubmission(
-    submissionId: string,
-    data: GradeSubmissionDto
-  ): Promise<Submission> {
+  async gradeSubmission(submissionId: string, data: GradeSubmissionDto): Promise<Submission> {
     try {
       const { data: responseData } = await axiosInstance.post<Submission>(
-        `${this.submissionsUrl}/${submissionId}/grade`,
-        data
+        API_ENDPOINTS.teacher.gradeSubmission(submissionId),
+        data,
       );
       return responseData;
     } catch (error) {
@@ -355,7 +347,7 @@ class AssignmentsAPI {
    */
   async getAvailableExercises(): Promise<Exercise[]> {
     try {
-      const { data } = await axiosInstance.get<Exercise[]>('/exercises');
+      const { data } = await axiosInstance.get<Exercise[]>(API_ENDPOINTS.educational.exercises);
       return data;
     } catch (error) {
       console.error('[AssignmentsAPI] Error fetching exercises:', error);

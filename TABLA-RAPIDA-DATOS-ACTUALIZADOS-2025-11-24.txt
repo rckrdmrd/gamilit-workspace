@@ -1,0 +1,416 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║              TABLA RÁPIDA - DATOS ACTUALIZADOS PORTAL ESTUDIANTE           ║
+║                           GAMILIT V6.1 - 2025-11-24                        ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 1. ACCIONES DEL ESTUDIANTE → TABLAS ACTUALIZADAS                           │
+└────────────────────────────────────────────────────────────────────────────┘
+
+ACCIÓN: Enviar Ejercicio Correctamente
+├─ Tablas actualizadas: 7
+├─ exercise_attempts
+│  ├─ submitted_answers, is_correct, score
+│  ├─ xp_earned, ml_coins_earned, hints_used
+│  └─ attempt_number (auto), submitted_at
+├─ user_stats (UPDATE 5 veces)
+│  ├─ total_xp += 65 (TRIGGER sensible)
+│  ├─ ml_coins += 8
+│  ├─ exercises_completed += 1
+│  ├─ perfect_scores += 1 (si score=100)
+│  └─ updated_at = NOW()
+├─ module_progress (UPSERT)
+│  ├─ progress_percentage = 40 (ej: 2/5)
+│  ├─ completed_exercises = 2
+│  ├─ status = in_progress
+│  └─ total_xp_earned += 65
+├─ ml_coins_transactions (INSERT auditoría)
+│  ├─ amount: 8, type: EARNED_EXERCISE
+│  ├─ balance_before/after
+│  └─ reference_id: exercise_id
+├─ missions (UPDATE dinámico)
+│  ├─ objectives[0].current += 1
+│  ├─ progress recalculado
+│  └─ status → completed (si alcanzó target)
+├─ user_ranks (INSERT si alcanza umbral)
+│  ├─ rank_name: Nacom → Ah K'in
+│  ├─ unlock_date: NOW()
+│  └─ bonus_ml_coins: +50
+└─ exercise_validation_audit (INSERT auto)
+   ├─ audit_id generado automáticamente
+   └─ Referencia en exercise_submissions si aplica
+
+LATENCIA TÍPICA: 100-200ms
+IMPACTO: ALTO (7 tablas, múltiples campos)
+
+---
+
+ACCIÓN: Comprar Power-up en Shop
+├─ Tablas actualizadas: 3
+├─ user_stats
+│  ├─ ml_coins -= 50
+│  └─ ml_coins_spent_total += 50
+├─ ml_coins_transactions (INSERT)
+│  ├─ amount: -50 (negativo)
+│  ├─ type: SPENT_SHOP
+│  └─ reference_id: shop_item_id
+└─ comodines_inventory (INSERT)
+   ├─ user_id, comodin_id
+   ├─ quantity: 1
+   └─ unlocked_at: NOW()
+
+VALIDACIONES:
+├─ Balance >= 50 (error si no)
+└─ Amount > 0
+
+LATENCIA: 50-100ms
+IMPACTO: MEDIO
+
+---
+
+ACCIÓN: Reclamar Recompensa de Misión
+├─ Tablas actualizadas: 2
+├─ user_stats (UPDATE múltiple)
+│  ├─ ml_coins += 25 (ejemplo: misión diaria)
+│  ├─ total_xp += 50 (TRIGGER para rank check)
+│  └─ updated_at = NOW()
+├─ ml_coins_transactions (INSERT auditoría)
+│  ├─ amount: 25
+│  ├─ type: EARNED_MISSION
+│  └─ reference_id: mission_id
+└─ missions
+   └─ status → claimed
+
+LATENCIA: 50-100ms
+IMPACTO: BAJO-MEDIO
+
+---
+
+ACCIÓN: Editar Perfil
+├─ Tabla actualizada: 1
+├─ auth_management.profiles
+│  ├─ display_name
+│  ├─ bio
+│  ├─ avatar_url
+│  ├─ notification_preferences (JSONB)
+│  ├─ privacy_settings (JSONB)
+│  ├─ metadata (JSONB)
+│  └─ updated_at = NOW()
+└─ Validaciones: NINGUNA (frontend)
+
+LATENCIA: 20-50ms
+IMPACTO: BAJO (1 tabla, 1 escritura)
+
+---
+
+ACCIÓN: Auto-save Cada 30s
+├─ Base de datos: NO ESCRIBE
+├─ localStorage: ESCRIBE (frontend only)
+└─ Estado: {progress, answers, timestamp}
+
+LATENCIA: 0ms (local)
+IMPACTO: NINGUNO
+
+---
+
+ACCIÓN: Acceder al Dashboard
+├─ Tabla actualizada: 1* (TRIGGER automático)
+├─ user_stats
+│  ├─ last_activity_at = NOW() (auto)
+│  ├─ last_login_at (si primer acceso del día)
+│  └─ updated_at = NOW()
+└─ *TRIGGER automático, no escritura directa
+
+LATENCIA: 10-20ms
+IMPACTO: MÍNIMO
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 2. RESUMEN DE TABLAS - QUÉ SE GUARDA                                      │
+└────────────────────────────────────────────────────────────────────────────┘
+
+TABLA: progress_tracking.exercise_attempts
+├─ Propósito: Cada intento de ejercicio
+├─ Insert/Update: INSERT (múltiples permitidos)
+├─ Campos principales:
+│  ├─ id (UUID, PK)
+│  ├─ user_id (FK → profiles.id)
+│  ├─ exercise_id (FK → exercises.id)
+│  ├─ attempt_number (1, 2, 3, ...)
+│  ├─ submitted_answers (JSONB)
+│  ├─ is_correct (BOOLEAN) ← validate_and_audit()
+│  ├─ score (0-100) ← validate_and_audit()
+│  ├─ time_spent_seconds (INTEGER)
+│  ├─ hints_used (INTEGER)
+│  ├─ comodines_used (JSONB array)
+│  ├─ xp_earned (INTEGER)
+│  ├─ ml_coins_earned (INTEGER)
+│  └─ submitted_at (TIMESTAMP)
+├─ Índices: 5
+│  ├─ user_id
+│  ├─ exercise_id
+│  ├─ (user_id, exercise_id)
+│  ├─ (user_id, exercise_id, submitted_at DESC)
+│  └─ submitted_at DESC
+└─ Triggers: 1
+   └─ trg_update_user_stats_on_exercise (AFTER INSERT)
+
+---
+
+TABLA: gamification_system.user_stats
+├─ Propósito: Estadísticas de gamificación del usuario
+├─ Insert/Update: UPDATE (múltiple por ejercicio)
+├─ Campos principales:
+│  ├─ id (UUID, PK)
+│  ├─ user_id (UUID, FK, UNIQUE)
+│  ├─ level (INTEGER, default: 1)
+│  ├─ total_xp (INTEGER) ← TRIGGER SENSIBLE
+│  ├─ xp_to_next_level (INTEGER)
+│  ├─ current_rank (ENUM: Ajaw, ..., K'uk'ulkan)
+│  ├─ rank_progress (NUMERIC 0-100)
+│  ├─ ml_coins (INTEGER, default: 100)
+│  ├─ ml_coins_earned_total (INTEGER)
+│  ├─ ml_coins_spent_total (INTEGER)
+│  ├─ ml_coins_earned_today (INTEGER)
+│  ├─ exercises_completed (INTEGER)
+│  ├─ perfect_scores (INTEGER)
+│  ├─ current_streak (INTEGER)
+│  ├─ max_streak (INTEGER)
+│  ├─ last_activity_at (TIMESTAMP)
+│  ├─ last_login_at (TIMESTAMP)
+│  └─ metadata (JSONB)
+├─ Índices: 10
+│  ├─ user_id (UNIQUE)
+│  ├─ level DESC
+│  ├─ ml_coins DESC
+│  ├─ current_streak DESC
+│  ├─ global_rank_position
+│  ├─ current_rank
+│  ├─ perfect_scores DESC
+│  └─ (tenant_id, level DESC) - leaderboard
+└─ Triggers: 2
+   ├─ trg_check_rank_promotion_on_xp_gain (AFTER UPDATE total_xp)
+   └─ trg_user_stats_updated_at (AFTER UPDATE)
+
+---
+
+TABLA: progress_tracking.module_progress
+├─ Propósito: Progreso del estudiante por módulo
+├─ Insert/Update: UPSERT (1 por módulo)
+├─ Campos principales:
+│  ├─ id (UUID, PK)
+│  ├─ user_id (UUID, FK)
+│  ├─ module_id (UUID, FK)
+│  ├─ status (ENUM: not_started, in_progress, completed)
+│  ├─ progress_percentage (0-100)
+│  ├─ completed_exercises (INTEGER)
+│  ├─ total_exercises (INTEGER)
+│  ├─ total_xp_earned (INTEGER)
+│  ├─ total_ml_coins_earned (INTEGER)
+│  ├─ started_at (TIMESTAMP)
+│  ├─ completed_at (TIMESTAMP)
+│  ├─ last_accessed_at (TIMESTAMP)
+│  └─ metadata (JSONB)
+├─ Constraint: progress_percentage 0-100
+├─ Índices: 6
+│  ├─ user_id
+│  ├─ module_id
+│  ├─ status (filtrado: completed)
+│  ├─ status (filtrado: not_started/in_progress)
+│  └─ (user_id, status, updated_at DESC)
+└─ Unique: (user_id, module_id)
+
+---
+
+TABLA: gamification_system.ml_coins_transactions
+├─ Propósito: Auditoría de economía virtual
+├─ Insert/Update: INSERT ONLY (no se modifica)
+├─ Campos principales:
+│  ├─ id (UUID, PK)
+│  ├─ user_id (UUID, FK)
+│  ├─ amount (INTEGER, puede ser negativo)
+│  ├─ transaction_type (ENUM)
+│  │  ├─ EARNED_EXERCISE
+│  │  ├─ EARNED_MISSION
+│  │  ├─ SPENT_HINT
+│  │  ├─ SPENT_SHOP
+│  │  └─ SPENT_POWER_UP
+│  ├─ balance_before (INTEGER)
+│  ├─ balance_after (INTEGER)
+│  ├─ description (VARCHAR)
+│  ├─ reference_id (UUID)
+│  ├─ reference_type (ENUM: exercise, mission, item)
+│  ├─ multiplier (NUMERIC, default: 1.0)
+│  ├─ metadata (JSONB)
+│  └─ created_at (TIMESTAMP)
+├─ Índices: 3
+│  ├─ user_id
+│  ├─ (user_id, created_at DESC)
+│  └─ transaction_type
+└─ Constraints: NONE (append-only)
+
+---
+
+TABLA: gamification_system.missions
+├─ Propósito: Misiones gamificadas del usuario
+├─ Insert/Update: UPDATE (progreso dinámico)
+├─ Campos principales:
+│  ├─ id (UUID, PK)
+│  ├─ user_id (UUID, FK)
+│  ├─ mission_type (ENUM: DAILY, WEEKLY, SPECIAL)
+│  ├─ title (VARCHAR)
+│  ├─ description (TEXT)
+│  ├─ objectives (JSONB array):
+│  │  ├─ type (ENUM: complete_exercises, correct_streak, study_time)
+│  │  ├─ target (INTEGER)
+│  │  ├─ current (INTEGER) ← INCREMENTA
+│  │  └─ description (VARCHAR)
+│  ├─ progress (INTEGER 0-100)
+│  ├─ status (ENUM: active, in_progress, completed, claimed)
+│  ├─ rewards (JSONB):
+│  │  ├─ ml_coins (INTEGER)
+│  │  └─ xp (INTEGER)
+│  ├─ start_date (TIMESTAMP)
+│  ├─ end_date (TIMESTAMP)
+│  ├─ created_at (TIMESTAMP)
+│  └─ updated_at (TIMESTAMP)
+├─ Índices: 3
+│  ├─ user_id
+│  ├─ mission_type
+│  └─ (user_id, status)
+└─ Triggers: 1
+   └─ trg_missions_updated_at (AFTER UPDATE)
+
+---
+
+TABLA: gamification_system.user_ranks
+├─ Propósito: Histórico de promociones a rangos
+├─ Insert/Update: INSERT ONLY (5 máximo)
+├─ Campos principales:
+│  ├─ id (UUID, PK)
+│  ├─ user_id (UUID, FK)
+│  ├─ rank_name (ENUM: Ajaw, Nacom, Ah K'in, Halach Uinic, K'uk'ulkan)
+│  ├─ rank_number (INTEGER 1-5)
+│  ├─ xp_at_promotion (INTEGER)
+│  ├─ bonus_ml_coins (INTEGER)
+│  ├─ unlock_date (TIMESTAMP)
+│  └─ metadata (JSONB)
+├─ Índices: 2
+│  ├─ user_id
+│  └─ rank_name
+└─ Creación: AUTOMÁTICA (TRIGGER en user_stats)
+
+---
+
+TABLA: auth_management.profiles
+├─ Propósito: Información de perfil del usuario
+├─ Insert/Update: UPDATE (edición manual)
+├─ Campos principales:
+│  ├─ id (UUID, PK)
+│  ├─ user_id (UUID, FK)
+│  ├─ display_name (VARCHAR)
+│  ├─ bio (TEXT)
+│  ├─ avatar_url (VARCHAR)
+│  ├─ location (VARCHAR)
+│  ├─ notification_preferences (JSONB)
+│  ├─ privacy_settings (JSONB)
+│  ├─ metadata (JSONB)
+│  ├─ created_at (TIMESTAMP)
+│  └─ updated_at (TIMESTAMP)
+├─ Índices: 1
+│  └─ user_id (UNIQUE)
+└─ FK: user_id → auth.users.id
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 3. TRIGGERS AUTOMÁTICOS                                                   │
+└────────────────────────────────────────────────────────────────────────────┘
+
+TRIGGER: trg_check_rank_promotion_on_xp_gain
+├─ Se ejecuta: AFTER UPDATE en user_stats.total_xp
+├─ Condición: Si NEW.total_xp >= umbral del siguiente rango
+├─ Acciones:
+│  ├─ CALL promote_to_next_rank()
+│  ├─ UPDATE current_rank = siguiente
+│  ├─ INSERT user_ranks (histórico)
+│  ├─ UPDATE ml_coins += 50 (bonus)
+│  └─ CALL check_and_award_achievements()
+└─ Ejemplo: 3000 XP → Promoción de Ajaw a Nacom
+
+TRIGGER: trg_update_user_stats_on_exercise
+├─ Se ejecuta: AFTER INSERT en exercise_attempts
+├─ Acciones:
+│  ├─ UPDATE user_stats.exercises_completed += 1
+│  ├─ UPDATE user_stats.total_score += score
+│  └─ UPDATE user_stats.updated_at = NOW()
+└─ Frecuencia: Cada intento
+
+TRIGGER: trg_module_progress_updated_at
+├─ Se ejecuta: AFTER UPDATE en module_progress
+├─ Acciones:
+│  └─ UPDATE updated_at = NOW()
+└─ Frecuencia: Cada actualización de progreso
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 4. FÓRMULAS DE CÁLCULO                                                    │
+└────────────────────────────────────────────────────────────────────────────┘
+
+XP GANADO:
+├─ Base XP = score (0-100)
+├─ Penalización: -10 XP por hint usado
+├─ Fórmula: MAX(0, score - (hints_used * 10))
+├─ Ejemplo: 85 - (2 * 10) = 65 XP
+└─ Rango final: 0-100 XP por ejercicio
+
+ML COINS GANADOS:
+├─ Base coins = FLOOR(score / 10)
+├─ Penalización: -2 coins por comodín usado
+├─ Fórmula: MAX(0, FLOOR(score/10) - (comodines_used * 2))
+├─ Ejemplo: FLOOR(85/10) - 0 = 8 coins
+└─ Rango final: 0-10 coins por ejercicio
+
+PROGRESS PERCENTAGE:
+├─ Fórmula: (completed_exercises / total_exercises) * 100
+├─ Ejemplo: (2 / 5) * 100 = 40%
+├─ Rounding: Redondeado a entero
+└─ Range: 0-100%
+
+RANK PROGRESS:
+├─ Fórmula: ((actual_xp - rank_min_xp) / (rank_max_xp - rank_min_xp)) * 100
+├─ Ejemplo: ((1500 - 1000) / (3000 - 1000)) * 100 = 25%
+└─ Range: 0-100%
+
+┌────────────────────────────────────────────────────────────────────────────┐
+│ 5. VALIDACIONES Y CONSTRAINTS                                             │
+└────────────────────────────────────────────────────────────────────────────┘
+
+VALIDACIÓN PRE-INSERT:
+├─ exercise_answers: ExerciseAnswerValidator.validate()
+│  └─ Si falla: RECHAZA sin tocar BD
+├─ ml_coins balance: spendCoins() valida saldo suficiente
+│  └─ Si falla: Lanza BadRequestException
+└─ exercise_submissions: Una sola entrada permitida
+   └─ Si existe: Lanza BadRequestException
+
+CONSTRAINT BASE DE DATOS:
+├─ user_stats.level > 0
+├─ user_stats.ml_coins >= 0
+├─ user_stats.rank_progress BETWEEN 0 AND 100
+├─ module_progress.progress_percentage BETWEEN 0 AND 100
+├─ exercise_attempts.score >= 0
+├─ exercise_attempts.attempt_number > 0
+├─ user_stats.user_id UNIQUE
+├─ module_progress (user_id, module_id) UNIQUE
+└─ Foreign keys en todas las referencias
+
+LÓGICA DE NEGOCIO:
+├─ Rango solo sube (nunca baja)
+├─ Misión se completa una sola vez
+├─ Monedas NO pueden ser negativas (validación spendCoins)
+├─ Ejercicio autocorregible: múltiples intentos permitidos
+└─ Ejercicio teacher-graded: 1 sola entrega permitida
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Documento generado: 2025-11-24
+Analista: Sistema de Búsqueda de Código
+Codebase: GAMILIT V6.1
+

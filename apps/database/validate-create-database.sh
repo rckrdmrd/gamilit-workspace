@@ -236,7 +236,8 @@ check_file "$SEEDS_DIR/gamification_system/06-user_ranks.sql" "gamification_syst
 check_file "$SEEDS_DIR/gamification_system/07-ml_coins_transactions.sql" "gamification_system/07-ml_coins_transactions.sql"
 check_file "$SEEDS_DIR/gamification_system/08-user_achievements.sql" "gamification_system/08-user_achievements.sql"
 check_file "$SEEDS_DIR/gamification_system/09-comodines_inventory.sql" "gamification_system/09-comodines_inventory.sql"
-check_file "$SEEDS_DIR/gamification_system/10-missions-init.sql" "gamification_system/10-missions-init.sql"
+# DEPRECADO 2025-11-24: Misiones ahora se crean automáticamente via gamilit.initialize_user_missions()
+# check_file "$SEEDS_DIR/gamification_system/10-missions-init.sql" "gamification_system/10-missions-init.sql"
 echo ""
 
 echo -e "${BLUE}============================================================================${NC}"

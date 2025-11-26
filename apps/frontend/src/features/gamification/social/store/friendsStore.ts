@@ -3,14 +3,18 @@
  */
 
 import { create } from 'zustand';
-import type { Friend, FriendRequest, FriendRecommendation, FriendActivity } from '../types/friendsTypes';
+import type {
+  Friend,
+  FriendRequest,
+  FriendRecommendation,
+  FriendActivity,
+} from '../types/friendsTypes';
 import {
   friendsMockData,
   friendRequestsMockData,
   friendRecommendationsMockData,
   friendActivitiesMockData,
   getOnlineFriends,
-  getPendingFriendRequests
 } from '../mockData/friendsMockData';
 
 interface FriendsStore {
@@ -124,13 +128,14 @@ export const useFriendsStore = create<FriendsStore>((set) => ({
   praiseActivity: (activityId: string) => {
     set((state) => ({
       activities: state.activities.map((a) =>
-        a.id === activityId ? { ...a, praised: !a.praised } : a
+        a.id === activityId ? { ...a, praised: !a.praised } : a,
       ),
     }));
   },
 
   refreshFriends: () => {
-    set((state) => ({
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    set((_state) => ({
       onlineFriends: getOnlineFriends(),
     }));
   },

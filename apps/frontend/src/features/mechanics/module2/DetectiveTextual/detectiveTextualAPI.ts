@@ -3,10 +3,11 @@
  */
 
 import { generateInferenceSuggestions, generateHint } from '../../shared/aiService';
-import type { Investigation, DetectiveProgress, AIHint } from './detectiveTextualTypes';
+import type { DetectiveProgress, AIHint } from './detectiveTextualTypes';
 import { mockInvestigation } from './detectiveTextualMockData';
 
-export const fetchInvestigation = async (id: string): Promise<Investigation> => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const fetchInvestigation = async (_id: string) => {
   await new Promise((resolve) => setTimeout(resolve, 500));
   return mockInvestigation;
 };
@@ -14,9 +15,12 @@ export const fetchInvestigation = async (id: string): Promise<Investigation> => 
 // FE-059: Mock validation function - no longer uses correctConnections (sanitized field)
 // In real backend integration, validation will be done server-side
 export const validateConnection = async (
-  fromEvidenceId: string,
-  toEvidenceId: string,
-  relationship: string
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _fromEvidenceId: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _toEvidenceId: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _relationship: string,
 ): Promise<{ isCorrect: boolean; feedback: string; score: number }> => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -48,7 +52,7 @@ export const getAIInferences = async (discoveredEvidence: string[]) => {
 // FE-059: Mock submit function - no longer uses correctConnections (sanitized field)
 // In real backend integration, validation will be done server-side
 export const submitSolution = async (
-  progress: DetectiveProgress
+  progress: DetectiveProgress,
 ): Promise<{ score: number; feedback: string; completed: boolean }> => {
   await new Promise((resolve) => setTimeout(resolve, 1500));
 
@@ -59,9 +63,10 @@ export const submitSolution = async (
 
   return {
     score: 0, // Will be calculated by backend
-    feedback: hasConnections && hasDiscoveredEvidence
-      ? 'Has completado la investigación. La validación final se procesará en el servidor.'
-      : 'Necesitas crear más conexiones entre las evidencias.',
+    feedback:
+      hasConnections && hasDiscoveredEvidence
+        ? 'Has completado la investigación. La validación final se procesará en el servidor.'
+        : 'Necesitas crear más conexiones entre las evidencias.',
     completed: hasConnections && hasDiscoveredEvidence,
   };
 };

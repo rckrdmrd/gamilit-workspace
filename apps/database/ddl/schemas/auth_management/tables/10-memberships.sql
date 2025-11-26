@@ -45,9 +45,8 @@ CREATE INDEX IF NOT EXISTS idx_memberships_tenant_id ON auth_management.membersh
 CREATE INDEX IF NOT EXISTS idx_memberships_user_id ON auth_management.memberships USING btree (user_id);
 
 -- Triggers
-CREATE TRIGGER trg_memberships_updated_at
-    BEFORE UPDATE ON auth_management.memberships
-    FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
+-- NOTE: Trigger trg_memberships_updated_at movido a archivo separado
+-- Ver: auth_management/triggers/02-trg_memberships_updated_at.sql
 
 -- Comments
 COMMENT ON TABLE auth_management.memberships IS 'Relaciones usuario-tenant con permisos y restricciones';

@@ -11,7 +11,7 @@
 
 -- =====================================================
 -- TABLE: gamification_system.notifications
--- Policies: 3 (SELECT: 1, UPDATE: 1, INSERT: 1)
+-- Policies: 4 (SELECT: 2, UPDATE: 1, INSERT: 1)
 -- =====================================================
 
 DROP POLICY IF EXISTS notifications_read_own ON gamification_system.notifications;
@@ -61,6 +61,21 @@ CREATE POLICY notifications_insert_system
 COMMENT ON POLICY notifications_insert_system ON gamification_system.notifications IS
     'Only system can create notifications (via SECURITY DEFINER functions)';
 
+-- AGREGADO 2025-11-24: Policy para que admin pueda ver todas las notificaciones (DB-003)
+DROP POLICY IF EXISTS notifications_select_admin ON gamification_system.notifications;
+
+-- Policy: notifications_select_admin
+-- Purpose: Admins can read all notifications for monitoring and support
+CREATE POLICY notifications_select_admin
+    ON gamification_system.notifications
+    AS PERMISSIVE
+    FOR SELECT
+    TO public
+    USING (gamilit.is_admin());
+
+COMMENT ON POLICY notifications_select_admin ON gamification_system.notifications IS
+    'Admins can view all notifications for monitoring and support purposes';
+
 -- =====================================================
 -- TABLE: gamification_system.leaderboard_metadata
 -- Policies: 2 (SELECT: 1, ALL: 1)
@@ -102,7 +117,7 @@ COMMENT ON POLICY leaderboard_metadata_manage_admin ON gamification_system.leade
 -- =====================================================
 -- SUMMARY: gamification_system schema
 -- =====================================================
--- Total policies: 26
+-- Total policies: 27
 -- Tables with policies: 9
 -- - ml_coins_transactions: 4 policies (3 SELECT, 1 INSERT)
 -- - achievements: 2 policies (1 SELECT, 1 ALL)
@@ -111,6 +126,6 @@ COMMENT ON POLICY leaderboard_metadata_manage_admin ON gamification_system.leade
 -- - user_stats: 4 policies (3 SELECT, 1 UPDATE)
 -- - user_ranks: 2 policies (1 SELECT, 1 UPDATE)
 -- - missions: 2 policies (1 SELECT, 1 ALL)
--- - notifications: 3 policies (1 SELECT, 1 UPDATE, 1 INSERT)
+-- - notifications: 4 policies (2 SELECT, 1 UPDATE, 1 INSERT)
 -- - leaderboard_metadata: 2 policies (1 SELECT, 1 ALL)
 -- =====================================================

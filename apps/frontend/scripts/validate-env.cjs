@@ -18,10 +18,12 @@ const path = require('path');
 
 const REQUIRED_VARS = {
   development: [
-    'VITE_API_URL',
+    'VITE_API_HOST',
+    'VITE_API_PROTOCOL',
   ],
   production: [
-    'VITE_API_URL',
+    'VITE_API_HOST',
+    'VITE_API_PROTOCOL',
     'VITE_APP_ENV',
   ],
 };
@@ -102,28 +104,42 @@ function validateEnv(env, mode) {
 
   // Production-specific validations
   if (mode === 'production') {
-    // 1. Check API_URL doesn't point to localhost
-    if (env.VITE_API_URL && containsLocalhost(env.VITE_API_URL)) {
+    // 1. Check API_HOST doesn't point to localhost
+    if (env.VITE_API_HOST && containsLocalhost(env.VITE_API_HOST)) {
       errors.push(
-        `VITE_API_URL points to localhost in production: ${env.VITE_API_URL}`
+        `VITE_API_HOST points to localhost in production: ${env.VITE_API_HOST}`
       );
     }
 
-    // 2. Check WS_URL doesn't point to localhost
-    if (env.VITE_WS_URL && containsLocalhost(env.VITE_WS_URL)) {
+    // 2. Check WS_HOST doesn't point to localhost
+    if (env.VITE_WS_HOST && containsLocalhost(env.VITE_WS_HOST)) {
       errors.push(
-        `VITE_WS_URL points to localhost in production: ${env.VITE_WS_URL}`
+        `VITE_WS_HOST points to localhost in production: ${env.VITE_WS_HOST}`
       );
     }
 
-    // 3. Check APP_ENV is set to production
+    // 3. Check API_PROTOCOL is https in production
+    if (env.VITE_API_PROTOCOL && env.VITE_API_PROTOCOL !== 'https') {
+      warnings.push(
+        `VITE_API_PROTOCOL should be 'https' in production: ${env.VITE_API_PROTOCOL}`
+      );
+    }
+
+    // 4. Check WS_PROTOCOL is wss in production
+    if (env.VITE_WS_PROTOCOL && env.VITE_WS_PROTOCOL !== 'wss') {
+      warnings.push(
+        `VITE_WS_PROTOCOL should be 'wss' in production: ${env.VITE_WS_PROTOCOL}`
+      );
+    }
+
+    // 5. Check APP_ENV is set to production
     if (env.VITE_APP_ENV !== 'production') {
       warnings.push(
         `VITE_APP_ENV is not set to 'production': ${env.VITE_APP_ENV}`
       );
     }
 
-    // 4. Check DEBUG flags are disabled
+    // 6. Check DEBUG flags are disabled
     if (env.VITE_ENABLE_DEBUG === 'true') {
       warnings.push('VITE_ENABLE_DEBUG is enabled in production');
     }
@@ -132,7 +148,7 @@ function validateEnv(env, mode) {
       errors.push('VITE_MOCK_API is enabled in production');
     }
 
-    // 5. Check analytics is enabled
+    // 7. Check analytics is enabled
     if (env.VITE_ENABLE_ANALYTICS !== 'true') {
       warnings.push('VITE_ENABLE_ANALYTICS is not enabled in production');
     }

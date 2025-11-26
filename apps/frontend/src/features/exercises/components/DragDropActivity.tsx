@@ -18,7 +18,7 @@
  * - Undo/Reset functionality
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { ChevronRight, RotateCcw, GripVertical, Check, X } from 'lucide-react';
 import { ExerciseHeader } from './ExerciseHeader';
 import { ExerciseFeedback } from './ExerciseFeedback';
@@ -54,7 +54,6 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
   onComplete,
   onCancel,
   showTimer = true,
-  allowHints = true,
 }) => {
   // Parse drag-drop data from exercise content
   const items: DraggableItem[] = React.useMemo(() => {
@@ -95,7 +94,7 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
 
   // State
   const [droppedItems, setDroppedItems] = useState<Map<string, string[]>>(
-    new Map(dropZones.map((zone) => [zone.id, []]))
+    new Map(dropZones.map((zone) => [zone.id, []])),
   );
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [draggedFrom, setDraggedFrom] = useState<string | null>(null);
@@ -111,8 +110,8 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
         title: result.is_correct
           ? '¡Perfecto! 🎉'
           : result.score_percentage >= 50
-          ? 'Parcialmente correcto 😊'
-          : 'Incorrecto 😔',
+            ? 'Parcialmente correcto 😊'
+            : 'Incorrecto 😔',
         message: result.feedback,
         xpEarned: result.xp_earned,
         mlCoinsEarned: result.ml_coins_earned,
@@ -126,7 +125,7 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
         }, 3000);
       }
     },
-    onError: (error) => {
+    onError: () => {
       setFeedback({
         type: 'error',
         title: 'Error',
@@ -175,7 +174,7 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
         const prevItems = newMap.get(draggedFrom) || [];
         newMap.set(
           draggedFrom,
-          prevItems.filter((id) => id !== draggedItem)
+          prevItems.filter((id) => id !== draggedItem),
         );
       }
 
@@ -216,7 +215,7 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
       const items = newMap.get(zoneId) || [];
       newMap.set(
         zoneId,
-        items.filter((id) => id !== itemId)
+        items.filter((id) => id !== itemId),
       );
       return newMap;
     });
@@ -279,7 +278,7 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
       ([zoneId, itemIds]) => ({
         dropZoneId: zoneId,
         itemIds,
-      })
+      }),
     );
 
     await submitExercise({
@@ -297,10 +296,11 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
 
   // Calculate completion
   const placedCount = items.filter((item) => !isInBank(item.id)).length;
-  const completionPercentage = items.length > 0 ? Math.round((placedCount / items.length) * 100) : 0;
+  const completionPercentage =
+    items.length > 0 ? Math.round((placedCount / items.length) * 100) : 0;
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="mx-auto max-w-6xl p-6">
       {/* Header */}
       <ExerciseHeader
         exercise={exercise}
@@ -317,12 +317,10 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
       />
 
       {/* Main content */}
-      <div className="bg-white rounded-xl border-2 border-gray-200 p-6 mb-6">
+      <div className="mb-6 rounded-xl border-2 border-gray-200 bg-white p-6">
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">
-              {exercise.content.question}
-            </h2>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-xl font-bold text-gray-900">{exercise.content.question}</h2>
             <div className="flex items-center gap-3">
               <span className="text-sm text-gray-600">
                 {placedCount}/{items.length} colocados ({completionPercentage}%)
@@ -330,29 +328,27 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
               <button
                 onClick={handleReset}
                 disabled={result !== null}
-                className="flex items-center gap-1 px-3 py-1 text-sm border-2 border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-1 rounded-lg border-2 border-gray-300 px-3 py-1 text-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <RotateCcw className="w-4 h-4" />
+                <RotateCcw className="h-4 w-4" />
                 Reiniciar
               </button>
             </div>
           </div>
 
           {/* Progress bar */}
-          <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
+          <div className="mb-6 h-2 w-full rounded-full bg-gray-200">
             <div
-              className="bg-purple-600 h-2 rounded-full transition-all duration-300"
+              className="h-2 rounded-full bg-purple-600 transition-all duration-300"
               style={{ width: `${completionPercentage}%` }}
             />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Drop Zones */}
-          <div className="lg:col-span-2 space-y-4">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">
-              Zonas de colocación:
-            </h3>
+          <div className="space-y-4 lg:col-span-2">
+            <h3 className="mb-3 text-sm font-semibold text-gray-700">Zonas de colocación:</h3>
             {dropZones.map((zone) => {
               const zoneItems = droppedItems.get(zone.id) || [];
               return (
@@ -361,7 +357,7 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, zone.id)}
                   className={`
-                    min-h-[120px] p-4 rounded-lg border-2 border-dashed
+                    min-h-[120px] rounded-lg border-2 border-dashed p-4
                     transition-all
                     ${
                       draggedItem && draggedFrom !== zone.id
@@ -370,9 +366,9 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
                     }
                   `}
                 >
-                  <h4 className="font-semibold text-gray-900 mb-3">{zone.label}</h4>
+                  <h4 className="mb-3 font-semibold text-gray-900">{zone.label}</h4>
                   {zone.description && (
-                    <p className="text-sm text-gray-600 mb-3">{zone.description}</p>
+                    <p className="mb-3 text-sm text-gray-600">{zone.description}</p>
                   )}
 
                   <div className="flex flex-wrap gap-2">
@@ -390,30 +386,28 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
                           onDragStart={(e) => handleDragStart(e, item.id, zone.id)}
                           onDragEnd={handleDragEnd}
                           className={`
-                            relative group px-4 py-2 rounded-lg border-2 cursor-move
+                            group relative cursor-move rounded-lg border-2 px-4 py-2
                             transition-all
                             ${
                               !isValidated
-                                ? 'bg-white border-purple-300 hover:border-purple-400 hover:shadow-md'
+                                ? 'border-purple-300 bg-white hover:border-purple-400 hover:shadow-md'
                                 : isCorrect
-                                ? 'bg-green-50 border-green-500'
-                                : 'bg-red-50 border-red-500'
+                                  ? 'border-green-500 bg-green-50'
+                                  : 'border-red-500 bg-red-50'
                             }
                             ${draggedItem === item.id ? 'opacity-50' : ''}
                             ${result ? 'cursor-default' : ''}
                           `}
                         >
                           <div className="flex items-center gap-2">
-                            {!result && (
-                              <GripVertical className="w-4 h-4 text-gray-400" />
-                            )}
+                            {!result && <GripVertical className="h-4 w-4 text-gray-400" />}
                             <span className="font-medium text-gray-900">{item.content}</span>
                             {isValidated && (
                               <span className="ml-1">
                                 {isCorrect ? (
-                                  <Check className="w-4 h-4 text-green-600" />
+                                  <Check className="h-4 w-4 text-green-600" />
                                 ) : (
-                                  <X className="w-4 h-4 text-red-600" />
+                                  <X className="h-4 w-4 text-red-600" />
                                 )}
                               </span>
                             )}
@@ -422,9 +416,9 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
                           {!result && (
                             <button
                               onClick={() => handleRemoveFromZone(zone.id, item.id)}
-                              className="absolute -top-2 -right-2 w-5 h-5 bg-gray-600 hover:bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                              className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-gray-600 text-white opacity-0 transition-opacity hover:bg-red-600 group-hover:opacity-100"
                             >
-                              <X className="w-3 h-3" />
+                              <X className="h-3 w-3" />
                             </button>
                           )}
                         </div>
@@ -432,9 +426,7 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
                     })}
 
                     {zoneItems.length === 0 && (
-                      <p className="text-sm text-gray-400 italic">
-                        Arrastra elementos aquí
-                      </p>
+                      <p className="text-sm italic text-gray-400">Arrastra elementos aquí</p>
                     )}
                   </div>
                 </div>
@@ -444,14 +436,12 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
 
           {/* Item Bank */}
           <div className="lg:col-span-1">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">
-              Banco de elementos:
-            </h3>
+            <h3 className="mb-3 text-sm font-semibold text-gray-700">Banco de elementos:</h3>
             <div
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, 'bank')}
               className={`
-                min-h-[200px] p-4 rounded-lg border-2 border-dashed
+                min-h-[200px] rounded-lg border-2 border-dashed p-4
                 ${
                   draggedItem && draggedFrom !== 'bank'
                     ? 'border-gray-400 bg-gray-100'
@@ -467,32 +457,32 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
                     onDragStart={(e) => handleDragStart(e, item.id)}
                     onDragEnd={handleDragEnd}
                     className={`
-                      px-4 py-2 bg-white border-2 border-gray-300 rounded-lg
-                      cursor-move hover:border-purple-400 hover:shadow-md
-                      transition-all
+                      cursor-move rounded-lg border-2 border-gray-300 bg-white px-4
+                      py-2 transition-all hover:border-purple-400
+                      hover:shadow-md
                       ${draggedItem === item.id ? 'opacity-50' : ''}
                       ${result ? 'cursor-default opacity-50' : ''}
                     `}
                   >
                     <div className="flex items-center gap-2">
-                      <GripVertical className="w-4 h-4 text-gray-400" />
+                      <GripVertical className="h-4 w-4 text-gray-400" />
                       <span className="font-medium text-gray-900">{item.content}</span>
                     </div>
                   </div>
                 ))}
 
                 {bankItems.length === 0 && (
-                  <p className="text-sm text-gray-400 italic text-center py-8">
+                  <p className="py-8 text-center text-sm italic text-gray-400">
                     {result ? 'Todos los elementos colocados' : 'Todos los elementos están en uso'}
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-3">
               <p className="text-xs text-blue-800">
-                💡 <strong>Tip:</strong> Arrastra los elementos desde el banco hacia las
-                zonas correctas. Puedes moverlos entre zonas si te equivocas.
+                💡 <strong>Tip:</strong> Arrastra los elementos desde el banco hacia las zonas
+                correctas. Puedes moverlos entre zonas si te equivocas.
               </p>
             </div>
           </div>
@@ -519,7 +509,7 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
         {onCancel && !result && (
           <button
             onClick={onCancel}
-            className="px-6 py-3 border-2 border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+            className="rounded-lg border-2 border-gray-300 px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50"
           >
             Cancelar
           </button>
@@ -528,18 +518,15 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
         <button
           onClick={handleSubmit}
           disabled={
-            isSubmitting ||
-            result !== null ||
-            timer.isTimeExpired ||
-            completionPercentage < 100
+            isSubmitting || result !== null || timer.isTimeExpired || completionPercentage < 100
           }
           className={`
-            px-8 py-3 rounded-lg font-semibold transition-all
-            flex items-center text-lg
+            flex items-center rounded-lg px-8 py-3
+            text-lg font-semibold transition-all
             ${
               completionPercentage === 100 && !isSubmitting && !result && !timer.isTimeExpired
-                ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-lg'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                ? 'bg-purple-600 text-white shadow-lg hover:bg-purple-700'
+                : 'cursor-not-allowed bg-gray-300 text-gray-500'
             }
           `}
         >
@@ -550,7 +537,7 @@ export const DragDropActivity: React.FC<ExerciseComponentProps> = ({
           ) : (
             <>
               Enviar respuesta
-              <ChevronRight className="w-5 h-5 ml-1" />
+              <ChevronRight className="ml-1 h-5 w-5" />
             </>
           )}
         </button>

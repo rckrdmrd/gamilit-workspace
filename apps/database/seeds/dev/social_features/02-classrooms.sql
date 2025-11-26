@@ -320,9 +320,30 @@ BEGIN
         updated_at = NOW();
 
     -- =====================================================================
+    -- SYNC teacher_classrooms (many-to-many)
+    -- =====================================================================
+    -- Asegurar que todos los classrooms tienen su entrada en teacher_classrooms
+    -- Esto es necesario porque algunos servicios usan classrooms.teacher_id
+    -- y otros usan la tabla teacher_classrooms
+    -- =====================================================================
+    INSERT INTO social_features.teacher_classrooms (id, teacher_id, classroom_id, tenant_id, role, assigned_at, created_at)
+    SELECT
+        gen_random_uuid(),
+        c.teacher_id,
+        c.id,
+        c.tenant_id,
+        'owner',
+        c.created_at,
+        NOW()
+    FROM social_features.classrooms c
+    WHERE c.teacher_id IS NOT NULL
+    ON CONFLICT DO NOTHING;
+
+    -- =====================================================================
     -- Verificación de inserción
     -- =====================================================================
     RAISE NOTICE 'Aulas creadas exitosamente para 3 escuelas';
     RAISE NOTICE 'SF-015-CDMX: 3 aulas | ST-042-NL: 2 aulas | CP-AE-JAL: 2 aulas';
+    RAISE NOTICE 'Sincronización teacher_classrooms ejecutada';
 
 END $$;

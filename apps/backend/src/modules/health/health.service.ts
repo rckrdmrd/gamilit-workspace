@@ -140,8 +140,9 @@ export class HealthService {
             );
             return { schema, table, exists: result[0].exists };
           } catch (error) {
-            this.logger.warn(`Failed to check table ${schema}.${table}: ${error.message}`);
-            return { schema, table, exists: false, error: error.message };
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            this.logger.warn(`Failed to check table ${schema}.${table}: ${errorMessage}`);
+            return { schema, table, exists: false, error: errorMessage };
           }
         }),
       );

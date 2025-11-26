@@ -16,9 +16,10 @@
  */
 
 import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS } from './apiConfig';
+import { API_ENDPOINTS } from '@/config/api.config';
 import { handleAPIError } from './apiErrorHandler';
-import type { ApiResponse } from './apiTypes';
+// Note: ApiResponse type was removed because the interceptor in apiClient.ts
+// automatically unwraps { success, data } responses, so response.data is already T
 import type {
   // Dashboard
   DashboardData,
@@ -43,27 +44,32 @@ import type {
   // Gamification
   GamificationSettings,
   MayaRank,
-  Achievement,
-  EconomyConfig,
-  GamificationStats,
   // Monitoring
   SystemHealth,
   SystemMetrics,
   LogEntry,
   LogFilters,
   MaintenanceMode,
+  AuditLogEntry,
+  AuditLogFilters,
   // Settings
   SystemConfig,
   SettingsCategory,
-  GeneralSettings,
-  EmailSettings,
-  NotificationSettings,
-  SecuritySettings,
-  MaintenanceSettings,
   // Reports
   Report,
   GenerateReportParams,
   ReportListFilters,
+  // Alerts
+  Alert,
+  AlertFilters,
+  AlertsStats,
+  // Analytics
+  AnalyticsOverview,
+  EngagementAnalytics,
+  GamificationAnalytics,
+  ActivityTimeline,
+  TopUsers,
+  RetentionAnalytics,
   // Common
   PaginatedResponse,
 } from './adminTypes';
@@ -83,10 +89,8 @@ import type { AdminAction, SystemAlert, UserActivityData } from '@/apps/admin/ty
  */
 export async function getAdminDashboard(): Promise<DashboardData> {
   try {
-    const response = await apiClient.get<ApiResponse<DashboardData>>(
-      API_ENDPOINTS.admin.dashboard
-    );
-    return response.data.data;
+    const response = await apiClient.get<DashboardData>(API_ENDPOINTS.admin.dashboard);
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch admin dashboard');
   }
@@ -99,15 +103,21 @@ export async function getAdminDashboard(): Promise<DashboardData> {
  */
 export async function getRecentActions(limit: number = 10): Promise<AdminAction[]> {
   try {
-    const response = await apiClient.get<ApiResponse<AdminAction[]>>(
+    const response = await apiClient.get<AdminAction[]>(
       `${API_ENDPOINTS.admin.dashboard}/actions/recent`,
-      { params: { limit } }
+      { params: { limit } },
     );
 
-    const actions = response.data.data;
+    const actions = response.data;
+
+    // Defensive: Handle when backend doesn't return data
+    if (!actions || !Array.isArray(actions)) {
+      console.warn('[adminAPI] getRecentActions: Backend returned no data, returning empty array');
+      return [];
+    }
 
     // Transform snake_case to camelCase if needed and ensure Date objects
-    return actions.map(action => ({
+    return actions.map((action) => ({
       ...action,
       timestamp: action.timestamp instanceof Date ? action.timestamp : new Date(action.timestamp),
     }));
@@ -123,14 +133,18 @@ export async function getRecentActions(limit: number = 10): Promise<AdminAction[
  */
 export async function getAlerts(): Promise<SystemAlert[]> {
   try {
-    const response = await apiClient.get<ApiResponse<SystemAlert[]>>(
-      `${API_ENDPOINTS.admin.dashboard}/alerts`
-    );
+    const response = await apiClient.get<SystemAlert[]>(`${API_ENDPOINTS.admin.dashboard}/alerts`);
 
-    const alerts = response.data.data;
+    const alerts = response.data;
+
+    // Defensive: Handle when backend doesn't return data
+    if (!alerts || !Array.isArray(alerts)) {
+      console.warn('[adminAPI] getAlerts: Backend returned no data, returning empty array');
+      return [];
+    }
 
     // Ensure Date objects
-    return alerts.map(alert => ({
+    return alerts.map((alert) => ({
       ...alert,
       timestamp: alert.timestamp instanceof Date ? alert.timestamp : new Date(alert.timestamp),
     }));
@@ -150,18 +164,15 @@ export async function getUserActivity(params?: {
   groupBy?: 'day' | 'week' | 'month';
 }): Promise<UserActivityData[]> {
   try {
-    const response = await apiClient.get<ApiResponse<{
+    const response = await apiClient.get<{
       labels: string[];
       data: number[];
       tableData: UserActivityData[];
-    }>>(
-      `${API_ENDPOINTS.admin.dashboard}/analytics/user-activity`,
-      { params }
-    );
+    }>(`${API_ENDPOINTS.admin.dashboard}/analytics/user-activity`, { params });
 
     // Backend returns dual format: {labels, data, tableData}
     // Frontend needs tableData for the table display
-    return response.data.data.tableData;
+    return response.data.tableData;
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch user activity');
   }
@@ -174,28 +185,35 @@ export async function getUserActivity(params?: {
  */
 export async function getMayaRanks(): Promise<MayaRank[]> {
   try {
-    const response = await apiClient.get<ApiResponse<MayaRank[]>>(
-      `${API_ENDPOINTS.admin.gamification}/maya-ranks`
+    const response = await apiClient.get<MayaRank[]>(
+      `${API_ENDPOINTS.admin.gamification}/maya-ranks`,
     );
 
-    const ranks = response.data.data;
+    const ranks = response.data;
 
     // Transform snake_case keys to camelCase if needed
-    return ranks.map(rank => ({
+    return ranks.map((rank) => ({
       id: rank.id,
       name: rank.name,
       level: (rank as any).level || 0,
       minXP: (rank as any).min_xp || (rank as any).minXp || rank.minXP,
       maxXP: (rank as any).max_xp || (rank as any).maxXp || rank.maxXP,
       multiplierXp: (rank as any).multiplier_xp || (rank as any).multiplierXp || 1.0,
-      multiplierMlCoins: (rank as any).multiplier_ml_coins || (rank as any).multiplierMlCoins || 1.0,
+      multiplierMlCoins:
+        (rank as any).multiplier_ml_coins || (rank as any).multiplierMlCoins || 1.0,
       bonusMlCoins: (rank as any).bonus_ml_coins || (rank as any).bonusMlCoins || 0,
       color: rank.color || '#6B7280',
       icon: rank.icon,
       description: (rank as any).description || '',
       perks: (rank as any).perks || [],
-      isActive: (rank as any).is_active !== undefined ? (rank as any).is_active : ((rank as any).isActive !== undefined ? (rank as any).isActive : true),
-      order: (rank as any).order !== undefined ? (rank as any).order : ((rank as any).display_order || 0),
+      isActive:
+        (rank as any).is_active !== undefined
+          ? (rank as any).is_active
+          : (rank as any).isActive !== undefined
+            ? (rank as any).isActive
+            : true,
+      order:
+        (rank as any).order !== undefined ? (rank as any).order : (rank as any).display_order || 0,
     }));
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch Maya ranks');
@@ -212,14 +230,14 @@ export async function getMayaRanks(): Promise<MayaRank[]> {
  * Status: Backend IMPLEMENTED ✅
  */
 export async function getOrganizations(
-  filters?: OrganizationFilters
+  filters?: OrganizationFilters,
 ): Promise<PaginatedResponse<Organization>> {
   try {
-    const response = await apiClient.get<ApiResponse<PaginatedResponse<Organization>>>(
+    const response = await apiClient.get<PaginatedResponse<Organization>>(
       API_ENDPOINTS.admin.organizations.list,
-      { params: filters }
+      { params: filters },
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch organizations');
   }
@@ -232,10 +250,8 @@ export async function getOrganizations(
  */
 export async function getOrganization(id: string): Promise<Organization> {
   try {
-    const response = await apiClient.get<ApiResponse<Organization>>(
-      API_ENDPOINTS.admin.organizations.get(id)
-    );
-    return response.data.data;
+    const response = await apiClient.get<Organization>(API_ENDPOINTS.admin.organizations.get(id));
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, `Failed to fetch organization ${id}`);
   }
@@ -246,15 +262,13 @@ export async function getOrganization(id: string): Promise<Organization> {
  *
  * Status: Backend IMPLEMENTED ✅
  */
-export async function createOrganization(
-  data: Partial<Organization>
-): Promise<Organization> {
+export async function createOrganization(data: Partial<Organization>): Promise<Organization> {
   try {
-    const response = await apiClient.post<ApiResponse<Organization>>(
+    const response = await apiClient.post<Organization>(
       API_ENDPOINTS.admin.organizations.create,
-      data
+      data,
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to create organization');
   }
@@ -267,14 +281,14 @@ export async function createOrganization(
  */
 export async function updateOrganization(
   id: string,
-  updates: Partial<Organization>
+  updates: Partial<Organization>,
 ): Promise<Organization> {
   try {
-    const response = await apiClient.put<ApiResponse<Organization>>(
+    const response = await apiClient.put<Organization>(
       API_ENDPOINTS.admin.organizations.update(id),
-      updates
+      updates,
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, `Failed to update organization ${id}`);
   }
@@ -300,14 +314,14 @@ export async function deleteOrganization(id: string): Promise<void> {
  */
 export async function getOrganizationUsers(
   id: string,
-  page = 1
+  page = 1,
 ): Promise<PaginatedResponse<OrganizationUser>> {
   try {
-    const response = await apiClient.get<ApiResponse<PaginatedResponse<OrganizationUser>>>(
+    const response = await apiClient.get<PaginatedResponse<OrganizationUser>>(
       API_ENDPOINTS.admin.organizations.users(id),
-      { params: { page } }
+      { params: { page } },
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, `Failed to fetch users for organization ${id}`);
   }
@@ -320,14 +334,14 @@ export async function getOrganizationUsers(
  */
 export async function updateOrganizationSubscription(
   id: string,
-  subscription: any
+  subscription: any,
 ): Promise<Organization> {
   try {
-    const response = await apiClient.patch<ApiResponse<Organization>>(
+    const response = await apiClient.patch<Organization>(
       API_ENDPOINTS.admin.organizations.updateSubscription(id),
-      subscription
+      subscription,
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, `Failed to update subscription for organization ${id}`);
   }
@@ -340,14 +354,14 @@ export async function updateOrganizationSubscription(
  */
 export async function updateOrganizationFeatures(
   id: string,
-  features: string[]
+  features: string[],
 ): Promise<Organization> {
   try {
-    const response = await apiClient.patch<ApiResponse<Organization>>(
+    const response = await apiClient.patch<Organization>(
       API_ENDPOINTS.admin.organizations.updateFeatures(id),
-      { features }
+      { features },
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, `Failed to update features for organization ${id}`);
   }
@@ -363,14 +377,14 @@ export async function updateOrganizationFeatures(
  * Status: Backend IMPLEMENTED ✅
  */
 export async function getPendingContent(
-  filters?: ContentFilters
+  filters?: ContentFilters,
 ): Promise<PaginatedResponse<PendingContent>> {
   try {
-    const response = await apiClient.get<ApiResponse<PaginatedResponse<PendingContent>>>(
+    const response = await apiClient.get<PaginatedResponse<PendingContent>>(
       API_ENDPOINTS.admin.approvals.pending,
-      { params: filters }
+      { params: filters },
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch pending content');
   }
@@ -407,15 +421,13 @@ export async function rejectContent(id: string, reason?: string): Promise<void> 
  *
  * Status: Backend IMPLEMENTED ✅
  */
-export async function getMediaLibrary(
-  filters?: any
-): Promise<PaginatedResponse<MediaFile>> {
+export async function getMediaLibrary(filters?: any): Promise<PaginatedResponse<MediaFile>> {
   try {
-    const response = await apiClient.get<ApiResponse<PaginatedResponse<MediaFile>>>(
+    const response = await apiClient.get<PaginatedResponse<MediaFile>>(
       API_ENDPOINTS.admin.content.mediaLibrary,
-      { params: filters }
+      { params: filters },
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch media library');
   }
@@ -439,15 +451,13 @@ export async function deleteMediaFile(id: string): Promise<void> {
  *
  * Status: Backend NOT implemented (P2)
  */
-export async function getApprovalHistory(
-  page = 1
-): Promise<PaginatedResponse<ApprovalHistory>> {
+export async function getApprovalHistory(page = 1): Promise<PaginatedResponse<ApprovalHistory>> {
   try {
-    const response = await apiClient.get<ApiResponse<PaginatedResponse<ApprovalHistory>>>(
+    const response = await apiClient.get<PaginatedResponse<ApprovalHistory>>(
       API_ENDPOINTS.admin.approvals.history,
-      { params: { page } }
+      { params: { page } },
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch approval history');
   }
@@ -458,26 +468,53 @@ export async function getApprovalHistory(
 // ============================================================================
 
 /**
+ * Safely converts a date value to ISO string
+ * Handles Date objects, strings, null, and undefined
+ */
+function safeToISOString(value: any): string | undefined {
+  if (!value) return undefined;
+
+  // If already a string, validate it's a proper date
+  if (typeof value === 'string') {
+    const date = new Date(value);
+    return isNaN(date.getTime()) ? undefined : value;
+  }
+
+  // If Date object, convert to ISO string
+  if (value instanceof Date) {
+    return isNaN(value.getTime()) ? undefined : value.toISOString();
+  }
+
+  return undefined;
+}
+
+/**
  * Transforms backend user (snake_case) to frontend User type (camelCase)
  * CORR-003: Map last_sign_in_at → lastLogin and other snake_case fields
  */
 function transformUser(backendUser: any): User {
-  return {
+  // Get last login from either last_sign_in_at (snake_case) or lastLogin (camelCase)
+  const rawLastLogin = backendUser.last_sign_in_at ?? backendUser.lastLogin;
+
+  const user: User = {
     id: backendUser.id,
-    name: backendUser.full_name || backendUser.display_name || backendUser.name || backendUser.email,
+    name:
+      backendUser.full_name || backendUser.display_name || backendUser.name || backendUser.email,
     email: backendUser.email,
     role: backendUser.role,
     status: backendUser.status,
     organization: backendUser.organization_name || backendUser.organization,
     organizationId: backendUser.organization_id || backendUser.organizationId,
     joinDate: backendUser.created_at || backendUser.join_date || backendUser.joinDate,
-    // ✅ CORR-003: Map last_sign_in_at → lastLogin
-    // Use nullish coalescing to preserve null values (user never logged in)
-    lastLogin: backendUser.last_sign_in_at !== undefined
-      ? backendUser.last_sign_in_at
-      : backendUser.lastLogin,
-    metadata: backendUser.metadata,
+    // ✅ CORR-003: Map last_sign_in_at → lastLogin with safe conversion
+    lastLogin: safeToISOString(rawLastLogin),
   };
+
+  if (backendUser.metadata) {
+    user.metadata = backendUser.metadata;
+  }
+
+  return user;
 }
 
 /**
@@ -486,29 +523,27 @@ function transformUser(backendUser: any): User {
  * Status: Backend IMPLEMENTED ✅
  * CORR-003: Added proper field transformation (last_sign_in_at → lastLogin)
  */
-export async function getUsers(
-  filters?: UserFilters
-): Promise<PaginatedResponse<User>> {
+export async function getUsers(filters?: UserFilters): Promise<PaginatedResponse<User>> {
   try {
     // FE-062: Transform pagination params to match backend ListUsersDto
     // Backend expects 'limit' not 'pageSize', and doesn't support sortBy/sortOrder yet
     let transformedFilters: any = undefined;
     if (filters) {
-      const { pageSize, sortBy, sortOrder, ...rest } = filters as any;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { pageSize, sortBy: _sortBy, sortOrder: _sortOrder, ...rest } = filters as any;
       transformedFilters = {
         ...rest,
-        ...(pageSize && { limit: pageSize }),  // Map pageSize → limit
+        ...(pageSize && { limit: pageSize }), // Map pageSize → limit
       };
     }
 
     // Backend returns different structure than expected
     // Need to check what actually comes back
-    const response = await apiClient.get<ApiResponse<any>>(
-      API_ENDPOINTS.admin.users.list,
-      { params: transformedFilters }
-    );
+    const response = await apiClient.get<any>(API_ENDPOINTS.admin.users.list, {
+      params: transformedFilters,
+    });
 
-    const backendData = response.data.data;
+    const backendData = response.data;
 
     // FE-062: Handle different response structures from backend
     // Backend may return either a direct array or an object with data property
@@ -524,7 +559,7 @@ export async function getUsers(
           totalPages: 1,
           totalItems: backendData.length,
           limit: backendData.length,
-        }
+        },
       };
     } else if (backendData && typeof backendData === 'object') {
       // Backend returns object with data property
@@ -536,13 +571,13 @@ export async function getUsers(
           totalPages: backendData.total_pages || 0,
           totalItems: backendData.total || 0,
           limit: backendData.limit || 20,
-        }
+        },
       };
     } else {
       // Fallback for unexpected response structure
       transformed = {
         items: [],
-        pagination: { page: 1, totalPages: 0, totalItems: 0, limit: 20 }
+        pagination: { page: 1, totalPages: 0, totalItems: 0, limit: 20 },
       };
     }
 
@@ -559,10 +594,8 @@ export async function getUsers(
  */
 export async function getUser(id: string): Promise<UserDetails> {
   try {
-    const response = await apiClient.get<ApiResponse<UserDetails>>(
-      API_ENDPOINTS.admin.users.get(id)
-    );
-    return response.data.data;
+    const response = await apiClient.get<UserDetails>(API_ENDPOINTS.admin.users.get(id));
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, `Failed to fetch user ${id}`);
   }
@@ -573,16 +606,10 @@ export async function getUser(id: string): Promise<UserDetails> {
  *
  * Status: Backend IMPLEMENTED ✅
  */
-export async function updateUser(
-  id: string,
-  updates: Partial<User>
-): Promise<User> {
+export async function updateUser(id: string, updates: Partial<User>): Promise<User> {
   try {
-    const response = await apiClient.put<ApiResponse<User>>(
-      API_ENDPOINTS.admin.users.update(id),
-      updates
-    );
-    return response.data.data;
+    const response = await apiClient.put<User>(API_ENDPOINTS.admin.users.update(id), updates);
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, `Failed to update user ${id}`);
   }
@@ -608,10 +635,8 @@ export async function deleteUser(id: string): Promise<void> {
  */
 export async function activateUser(id: string): Promise<User> {
   try {
-    const response = await apiClient.post<ApiResponse<User>>(
-      API_ENDPOINTS.admin.users.activate(id)
-    );
-    return response.data.data;
+    const response = await apiClient.post<User>(API_ENDPOINTS.admin.users.activate(id));
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, `Failed to activate user ${id}`);
   }
@@ -624,10 +649,8 @@ export async function activateUser(id: string): Promise<User> {
  */
 export async function deactivateUser(id: string): Promise<User> {
   try {
-    const response = await apiClient.post<ApiResponse<User>>(
-      API_ENDPOINTS.admin.users.deactivate(id)
-    );
-    return response.data.data;
+    const response = await apiClient.post<User>(API_ENDPOINTS.admin.users.deactivate(id));
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, `Failed to deactivate user ${id}`);
   }
@@ -640,10 +663,8 @@ export async function deactivateUser(id: string): Promise<User> {
  */
 export async function suspendUser(id: string): Promise<User> {
   try {
-    const response = await apiClient.post<ApiResponse<User>>(
-      API_ENDPOINTS.admin.users.suspend(id)
-    );
-    return response.data.data;
+    const response = await apiClient.post<User>(API_ENDPOINTS.admin.users.suspend(id));
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, `Failed to suspend user ${id}`);
   }
@@ -656,10 +677,8 @@ export async function suspendUser(id: string): Promise<User> {
  */
 export async function unsuspendUser(id: string): Promise<User> {
   try {
-    const response = await apiClient.post<ApiResponse<User>>(
-      API_ENDPOINTS.admin.users.unsuspend(id)
-    );
-    return response.data.data;
+    const response = await apiClient.post<User>(API_ENDPOINTS.admin.users.unsuspend(id));
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, `Failed to unsuspend user ${id}`);
   }
@@ -676,10 +695,8 @@ export async function unsuspendUser(id: string): Promise<User> {
  */
 export async function getRoles(): Promise<Role[]> {
   try {
-    const response = await apiClient.get<ApiResponse<Role[]>>(
-      API_ENDPOINTS.admin.roles.list
-    );
-    return response.data.data;
+    const response = await apiClient.get<Role[]>(API_ENDPOINTS.admin.roles.list);
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch roles');
   }
@@ -692,30 +709,49 @@ export async function getRoles(): Promise<Role[]> {
  */
 export async function getRolePermissions(roleId: string): Promise<RolePermissions> {
   try {
-    const response = await apiClient.get<ApiResponse<RolePermissions>>(
-      API_ENDPOINTS.admin.roles.permissions(roleId)
+    const response = await apiClient.get<RolePermissions>(
+      API_ENDPOINTS.admin.roles.permissions(roleId),
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, `Failed to fetch permissions for role ${roleId}`);
   }
 }
 
 /**
+ * Transform frontend Permission[] to backend Record<string, boolean>
+ * @internal
+ */
+function transformPermissionsToBackend(permissions: Permission[]): Record<string, boolean> {
+  const backendPerms: Record<string, boolean> = {};
+  permissions.forEach((perm) => {
+    const key = `can_${perm.action}_${perm.module}`;
+    backendPerms[key] = perm.granted;
+  });
+  return backendPerms;
+}
+
+/**
  * Update role permissions
  *
  * Status: Backend NOT implemented (P0)
+ *
+ * NOTE: Backend expects permissions as Record<string, boolean>, not Permission[]
+ * This function transforms frontend Permission[] to backend format before sending
  */
 export async function updateRolePermissions(
   roleId: string,
-  permissions: Permission[]
+  permissions: Permission[],
 ): Promise<RolePermissions> {
   try {
-    const response = await apiClient.put<ApiResponse<RolePermissions>>(
+    // Transform frontend Permission[] to backend Record<string, boolean>
+    const backendPermissions = transformPermissionsToBackend(permissions);
+
+    const response = await apiClient.put<RolePermissions>(
       API_ENDPOINTS.admin.roles.updatePermissions(roleId),
-      { permissions }
+      { permissions: backendPermissions },
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, `Failed to update permissions for role ${roleId}`);
   }
@@ -728,10 +764,10 @@ export async function updateRolePermissions(
  */
 export async function getAvailablePermissions(): Promise<AvailablePermission[]> {
   try {
-    const response = await apiClient.get<ApiResponse<AvailablePermission[]>>(
-      API_ENDPOINTS.admin.roles.availablePermissions
+    const response = await apiClient.get<AvailablePermission[]>(
+      API_ENDPOINTS.admin.roles.availablePermissions,
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch available permissions');
   }
@@ -748,10 +784,10 @@ export async function getAvailablePermissions(): Promise<AvailablePermission[]> 
  */
 export async function getGamificationSettings(): Promise<GamificationSettings> {
   try {
-    const response = await apiClient.get<ApiResponse<GamificationSettings>>(
-      API_ENDPOINTS.admin.gamification.settings
+    const response = await apiClient.get<GamificationSettings>(
+      API_ENDPOINTS.admin.gamification.settings,
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch gamification settings');
   }
@@ -763,17 +799,17 @@ export async function getGamificationSettings(): Promise<GamificationSettings> {
  * Status: Backend NOT implemented (P1)
  */
 export async function updateGamificationSettings(
-  category: 'ranks' | 'achievements' | 'economy',
-  data: any
+  _category: 'ranks' | 'achievements' | 'economy',
+  _data: any,
 ): Promise<GamificationSettings> {
   try {
-    const response = await apiClient.put<ApiResponse<GamificationSettings>>(
+    const response = await apiClient.put<GamificationSettings>(
       API_ENDPOINTS.admin.gamification.updateSettings,
-      { category, data }
+      { category: _category, data: _data },
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
-    throw handleAPIError(error, `Failed to update gamification ${category}`);
+    throw handleAPIError(error, `Failed to update gamification ${_category}`);
   }
 }
 
@@ -782,13 +818,12 @@ export async function updateGamificationSettings(
  *
  * Status: Backend NOT implemented (P1)
  */
-export async function previewGamificationChanges(changes: any): Promise<any> {
+export async function previewGamificationChanges(_changes: any): Promise<any> {
   try {
-    const response = await apiClient.post<ApiResponse<any>>(
-      API_ENDPOINTS.admin.gamification.previewChanges,
-      { changes }
-    );
-    return response.data.data;
+    const response = await apiClient.post<any>(API_ENDPOINTS.admin.gamification.previewChanges, {
+      changes: _changes,
+    });
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to preview gamification changes');
   }
@@ -801,10 +836,10 @@ export async function previewGamificationChanges(changes: any): Promise<any> {
  */
 export async function restoreGamificationDefaults(): Promise<GamificationSettings> {
   try {
-    const response = await apiClient.post<ApiResponse<GamificationSettings>>(
-      API_ENDPOINTS.admin.gamification.restoreDefaults
+    const response = await apiClient.post<GamificationSettings>(
+      API_ENDPOINTS.admin.gamification.restoreDefaults,
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to restore gamification defaults');
   }
@@ -821,10 +856,15 @@ export async function restoreGamificationDefaults(): Promise<GamificationSetting
  */
 export async function getSystemHealth(): Promise<SystemHealth> {
   try {
-    const response = await apiClient.get<ApiResponse<SystemHealth>>(
-      API_ENDPOINTS.admin.system.health
-    );
-    return response.data.data;
+    const response = await apiClient.get<SystemHealth>(API_ENDPOINTS.admin.system.health);
+
+    // Note: apiClient interceptor already unwraps { success, data } to just data
+    // So response.data IS the SystemHealth object directly
+    if (!response.data) {
+      throw new Error('Backend returned no health data');
+    }
+
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch system health');
   }
@@ -837,10 +877,14 @@ export async function getSystemHealth(): Promise<SystemHealth> {
  */
 export async function getSystemMetrics(): Promise<SystemMetrics> {
   try {
-    const response = await apiClient.get<ApiResponse<SystemMetrics>>(
-      API_ENDPOINTS.admin.system.metrics
-    );
-    return response.data.data;
+    const response = await apiClient.get<SystemMetrics>(API_ENDPOINTS.admin.system.metrics);
+
+    // Note: apiClient interceptor already unwraps { success, data } to just data
+    if (!response.data) {
+      throw new Error('Backend returned no metrics data');
+    }
+
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch system metrics');
   }
@@ -851,17 +895,69 @@ export async function getSystemMetrics(): Promise<SystemMetrics> {
  *
  * Status: Backend NOT implemented (P1)
  */
-export async function getSystemLogs(
-  filters?: LogFilters
-): Promise<PaginatedResponse<LogEntry>> {
+export async function getSystemLogs(filters?: LogFilters): Promise<PaginatedResponse<LogEntry>> {
   try {
-    const response = await apiClient.get<ApiResponse<PaginatedResponse<LogEntry>>>(
+    const response = await apiClient.get<PaginatedResponse<LogEntry>>(
       API_ENDPOINTS.admin.system.logs,
-      { params: filters }
+      { params: filters },
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch system logs');
+  }
+}
+
+/**
+ * Get audit logs (authentication attempts)
+ *
+ * Status: Backend IMPLEMENTED ✅
+ * Endpoint: GET /admin/system/audit-log
+ */
+export async function getAuditLogs(
+  filters?: AuditLogFilters,
+): Promise<PaginatedResponse<AuditLogEntry>> {
+  try {
+    // Transform frontend filters to backend params
+    const params: any = {};
+    if (filters?.page) params.page = filters.page;
+    if (filters?.limit) params.limit = filters.limit;
+    if (filters?.userId) params.user_id = filters.userId;
+    if (filters?.email) params.email = filters.email;
+    if (filters?.ipAddress) params.ip_address = filters.ipAddress;
+    if (filters?.success !== undefined) params.success = filters.success;
+    if (filters?.startDate) params.start_date = filters.startDate;
+    if (filters?.endDate) params.end_date = filters.endDate;
+
+    const response = await apiClient.get<any>(
+      `${API_ENDPOINTS.admin.system.logs.replace('/logs', '/audit-log')}`,
+      { params },
+    );
+
+    const backendData = response.data;
+
+    // Transform backend response (snake_case) to frontend format (camelCase)
+    const logs = (backendData.data || []).map((log: any) => ({
+      id: log.id,
+      userId: log.user_id,
+      email: log.email,
+      ipAddress: log.ip_address,
+      userAgent: log.user_agent,
+      success: log.success,
+      failureReason: log.failure_reason,
+      attemptedAt: log.attempted_at,
+    }));
+
+    return {
+      items: logs,
+      pagination: {
+        page: backendData.page || 1,
+        totalPages: backendData.total_pages || 0,
+        totalItems: backendData.total || 0,
+        limit: backendData.limit || 50,
+      },
+    };
+  } catch (error) {
+    throw handleAPIError(error, 'Failed to fetch audit logs');
   }
 }
 
@@ -872,14 +968,14 @@ export async function getSystemLogs(
  */
 export async function toggleMaintenanceMode(
   enabled: boolean,
-  message?: string
+  message?: string,
 ): Promise<MaintenanceMode> {
   try {
-    const response = await apiClient.post<ApiResponse<MaintenanceMode>>(
-      API_ENDPOINTS.admin.system.maintenance,
-      { enabled, message }
-    );
-    return response.data.data;
+    const response = await apiClient.post<MaintenanceMode>(API_ENDPOINTS.admin.system.maintenance, {
+      enabled,
+      message,
+    });
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to toggle maintenance mode');
   }
@@ -896,10 +992,8 @@ export async function toggleMaintenanceMode(
  */
 export async function getSystemConfig(): Promise<SystemConfig> {
   try {
-    const response = await apiClient.get<ApiResponse<SystemConfig>>(
-      API_ENDPOINTS.admin.system.config
-    );
-    return response.data.data;
+    const response = await apiClient.get<SystemConfig>(API_ENDPOINTS.admin.system.config);
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch system config');
   }
@@ -912,11 +1006,8 @@ export async function getSystemConfig(): Promise<SystemConfig> {
  */
 export async function updateSystemConfig(config: SystemConfig): Promise<SystemConfig> {
   try {
-    const response = await apiClient.post<ApiResponse<SystemConfig>>(
-      API_ENDPOINTS.admin.system.config,
-      config
-    );
-    return response.data.data;
+    const response = await apiClient.post<SystemConfig>(API_ENDPOINTS.admin.system.config, config);
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to update system config');
   }
@@ -929,10 +1020,10 @@ export async function updateSystemConfig(config: SystemConfig): Promise<SystemCo
  */
 export async function getConfigCategories(): Promise<SettingsCategory[]> {
   try {
-    const response = await apiClient.get<ApiResponse<SettingsCategory[]>>(
-      API_ENDPOINTS.admin.system.configCategories
+    const response = await apiClient.get<SettingsCategory[]>(
+      API_ENDPOINTS.admin.system.configCategories,
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch config categories');
   }
@@ -945,10 +1036,8 @@ export async function getConfigCategories(): Promise<SettingsCategory[]> {
  */
 export async function getCategoryConfig(category: SettingsCategory): Promise<any> {
   try {
-    const response = await apiClient.get<ApiResponse<any>>(
-      API_ENDPOINTS.admin.system.categoryConfig(category)
-    );
-    return response.data.data;
+    const response = await apiClient.get<any>(API_ENDPOINTS.admin.system.categoryConfig(category));
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, `Failed to fetch config for category ${category}`);
   }
@@ -961,14 +1050,14 @@ export async function getCategoryConfig(category: SettingsCategory): Promise<any
  */
 export async function updateCategoryConfig(
   category: SettingsCategory,
-  settings: any
+  _settings: any,
 ): Promise<any> {
   try {
-    const response = await apiClient.put<ApiResponse<any>>(
+    const response = await apiClient.put<any>(
       API_ENDPOINTS.admin.system.categoryConfig(category),
-      settings
+      _settings,
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, `Failed to update config for category ${category}`);
   }
@@ -981,14 +1070,14 @@ export async function updateCategoryConfig(
  */
 export async function validateConfig(
   category: SettingsCategory,
-  settings: any
+  _settings: any,
 ): Promise<{ valid: boolean; errors?: any[] }> {
   try {
-    const response = await apiClient.post<ApiResponse<{ valid: boolean; errors?: any[] }>>(
+    const response = await apiClient.post<{ valid: boolean; errors?: any[] }>(
       API_ENDPOINTS.admin.system.validateConfig,
-      { category, settings }
+      { category, settings: _settings },
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to validate config');
   }
@@ -1001,15 +1090,12 @@ export async function validateConfig(
 /**
  * Generate report
  *
- * Status: Backend NOT implemented (P2)
+ * Status: Backend IMPLEMENTED ✅ (in-memory storage)
  */
 export async function generateReport(params: GenerateReportParams): Promise<Report> {
   try {
-    const response = await apiClient.post<ApiResponse<Report>>(
-      API_ENDPOINTS.admin.reports.generate,
-      params
-    );
-    return response.data.data;
+    const response = await apiClient.post<Report>(API_ENDPOINTS.admin.reports.generate, params);
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, 'Failed to generate report');
   }
@@ -1018,17 +1104,25 @@ export async function generateReport(params: GenerateReportParams): Promise<Repo
 /**
  * Get list of reports
  *
- * Status: Backend NOT implemented (P2)
+ * Status: Backend IMPLEMENTED ✅ (in-memory storage)
  */
-export async function getReports(
-  filters?: ReportListFilters
-): Promise<PaginatedResponse<Report>> {
+export async function getReports(filters?: ReportListFilters): Promise<PaginatedResponse<Report>> {
   try {
-    const response = await apiClient.get<ApiResponse<PaginatedResponse<Report>>>(
-      API_ENDPOINTS.admin.reports.list,
-      { params: filters }
-    );
-    return response.data.data;
+    const response = await apiClient.get<any>(API_ENDPOINTS.admin.reports.list, {
+      params: filters,
+    });
+
+    // Backend returns PaginatedReportsDto, transform to PaginatedResponse
+    const backendData = response.data;
+    return {
+      items: backendData.data || [],
+      pagination: {
+        page: backendData.page || 1,
+        totalPages: backendData.total_pages || 0,
+        totalItems: backendData.total || 0,
+        limit: backendData.limit || 20,
+      },
+    };
   } catch (error) {
     throw handleAPIError(error, 'Failed to fetch reports');
   }
@@ -1037,14 +1131,13 @@ export async function getReports(
 /**
  * Download report
  *
- * Status: Backend NOT implemented (P2)
+ * Status: Backend IMPLEMENTED ✅ (in-memory storage)
  */
 export async function downloadReport(reportId: string): Promise<Blob> {
   try {
-    const response = await apiClient.get(
-      API_ENDPOINTS.admin.reports.download(reportId),
-      { responseType: 'blob' }
-    );
+    const response = await apiClient.get(API_ENDPOINTS.admin.reports.download(reportId), {
+      responseType: 'blob',
+    });
     return response.data;
   } catch (error) {
     throw handleAPIError(error, `Failed to download report ${reportId}`);
@@ -1054,7 +1147,7 @@ export async function downloadReport(reportId: string): Promise<Blob> {
 /**
  * Delete report
  *
- * Status: Backend NOT implemented (P2)
+ * Status: Backend IMPLEMENTED ✅ (in-memory storage)
  */
 export async function deleteReport(reportId: string): Promise<void> {
   try {
@@ -1069,18 +1162,381 @@ export async function deleteReport(reportId: string): Promise<void> {
  *
  * Status: Backend NOT implemented (P2)
  */
-export async function scheduleReport(
-  reportId: string,
-  schedule: any
-): Promise<Report> {
+export async function scheduleReport(reportId: string, schedule: any): Promise<Report> {
   try {
-    const response = await apiClient.post<ApiResponse<Report>>(
+    const response = await apiClient.post<Report>(
       API_ENDPOINTS.admin.reports.schedule(reportId),
-      schedule
+      schedule,
     );
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw handleAPIError(error, `Failed to schedule report ${reportId}`);
+  }
+}
+
+// ============================================================================
+// ALERTS
+// ============================================================================
+
+/**
+ * List alerts with filters
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function listAlerts(filters?: AlertFilters): Promise<PaginatedResponse<Alert>> {
+  try {
+    const response = await apiClient.get<any>(API_ENDPOINTS.admin.alerts, { params: filters });
+
+    const backendData = response.data;
+
+    // Transform backend response to PaginatedResponse
+    return {
+      items: backendData.data || [],
+      pagination: {
+        page: backendData.page || 1,
+        totalPages: backendData.total_pages || 0,
+        totalItems: backendData.total || 0,
+        limit: backendData.limit || 20,
+      },
+    };
+  } catch (error) {
+    throw handleAPIError(error, 'Failed to fetch alerts');
+  }
+}
+
+/**
+ * Get alert by ID
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function getAlertById(id: string): Promise<Alert> {
+  try {
+    const response = await apiClient.get<Alert>(`${API_ENDPOINTS.admin.alerts}/${id}`);
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, `Failed to fetch alert ${id}`);
+  }
+}
+
+/**
+ * Get alerts statistics
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function getAlertsStats(): Promise<AlertsStats> {
+  try {
+    const response = await apiClient.get<AlertsStats>(
+      `${API_ENDPOINTS.admin.alerts}/stats/summary`,
+    );
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, 'Failed to fetch alerts stats');
+  }
+}
+
+/**
+ * Create manual alert
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function createAlert(data: Partial<Alert>): Promise<Alert> {
+  try {
+    const response = await apiClient.post<Alert>(API_ENDPOINTS.admin.alerts, data);
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, 'Failed to create alert');
+  }
+}
+
+/**
+ * Acknowledge alert
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function acknowledgeAlert(id: string, note?: string): Promise<Alert> {
+  try {
+    const response = await apiClient.patch<Alert>(
+      `${API_ENDPOINTS.admin.alerts}/${id}/acknowledge`,
+      { acknowledgment_note: note },
+    );
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, `Failed to acknowledge alert ${id}`);
+  }
+}
+
+/**
+ * Resolve alert
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function resolveAlert(id: string, note: string): Promise<Alert> {
+  try {
+    const response = await apiClient.patch<Alert>(`${API_ENDPOINTS.admin.alerts}/${id}/resolve`, {
+      resolution_note: note,
+    });
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, `Failed to resolve alert ${id}`);
+  }
+}
+
+/**
+ * Suppress alert
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function suppressAlert(id: string): Promise<Alert> {
+  try {
+    const response = await apiClient.patch<Alert>(`${API_ENDPOINTS.admin.alerts}/${id}/suppress`);
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, `Failed to suppress alert ${id}`);
+  }
+}
+
+// ============================================================================
+// ANALYTICS
+// ============================================================================
+
+/**
+ * Get analytics overview
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function getAnalyticsOverview(): Promise<AnalyticsOverview> {
+  try {
+    const response = await apiClient.get<AnalyticsOverview>(API_ENDPOINTS.admin.analytics.overview);
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, 'Failed to fetch analytics overview');
+  }
+}
+
+/**
+ * Get engagement analytics
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function getEngagementAnalytics(params?: {
+  role?: string;
+  date_from?: string;
+  date_to?: string;
+}): Promise<EngagementAnalytics> {
+  try {
+    const response = await apiClient.get<EngagementAnalytics>(
+      API_ENDPOINTS.admin.analytics.engagement,
+      { params },
+    );
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, 'Failed to fetch engagement analytics');
+  }
+}
+
+/**
+ * Get gamification analytics
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function getGamificationAnalytics(): Promise<GamificationAnalytics> {
+  try {
+    const response = await apiClient.get<GamificationAnalytics>(
+      API_ENDPOINTS.admin.analytics.gamification,
+    );
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, 'Failed to fetch gamification analytics');
+  }
+}
+
+/**
+ * Get activity timeline
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function getActivityTimeline(params?: { days?: number }): Promise<ActivityTimeline> {
+  try {
+    const response = await apiClient.get<ActivityTimeline>(
+      API_ENDPOINTS.admin.analytics.activityTimeline,
+      { params },
+    );
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, 'Failed to fetch activity timeline');
+  }
+}
+
+/**
+ * Get top users
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function getTopUsers(params?: {
+  metric?: 'xp' | 'exercises' | 'streak';
+  limit?: number;
+  role?: string;
+}): Promise<TopUsers> {
+  try {
+    const response = await apiClient.get<TopUsers>(API_ENDPOINTS.admin.analytics.topUsers, {
+      params,
+    });
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, 'Failed to fetch top users');
+  }
+}
+
+/**
+ * Get retention analytics
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function getRetentionAnalytics(): Promise<RetentionAnalytics> {
+  try {
+    const response = await apiClient.get<RetentionAnalytics>(
+      API_ENDPOINTS.admin.analytics.retention,
+    );
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, 'Failed to fetch retention analytics');
+  }
+}
+
+/**
+ * Export analytics to CSV
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function exportAnalyticsCSV(params: {
+  type: 'overview' | 'users' | 'engagement' | 'gamification';
+  format: 'csv';
+}): Promise<Blob> {
+  try {
+    const response = await apiClient.get(API_ENDPOINTS.admin.analytics.export, {
+      params,
+      responseType: 'blob',
+    });
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, 'Failed to export analytics');
+  }
+}
+
+// ============================================================================
+// PROGRESS
+// ============================================================================
+
+/**
+ * Get progress overview
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function getProgressOverview(): Promise<import('./adminTypes').ProgressOverview> {
+  try {
+    const response = await apiClient.get<import('./adminTypes').ProgressOverview>(
+      API_ENDPOINTS.admin.progress.overview,
+    );
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, 'Failed to fetch progress overview');
+  }
+}
+
+/**
+ * Get classroom progress
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function getClassroomProgress(
+  classroomId: string,
+): Promise<import('./adminTypes').ClassroomProgress> {
+  try {
+    const response = await apiClient.get<import('./adminTypes').ClassroomProgress>(
+      API_ENDPOINTS.admin.progress.classroom(classroomId),
+    );
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, `Failed to fetch classroom progress for ${classroomId}`);
+  }
+}
+
+/**
+ * Get student progress
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function getStudentProgress(
+  studentId: string,
+  filters?: { classroom_id?: string; module_id?: string },
+): Promise<import('./adminTypes').StudentProgress> {
+  try {
+    const response = await apiClient.get<import('./adminTypes').StudentProgress>(
+      API_ENDPOINTS.admin.progress.student(studentId),
+      { params: filters },
+    );
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, `Failed to fetch student progress for ${studentId}`);
+  }
+}
+
+/**
+ * Get module progress stats
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function getModuleProgress(
+  moduleId: string,
+  params?: { classroom_id?: string },
+): Promise<import('./adminTypes').ModuleProgressStats> {
+  try {
+    const response = await apiClient.get<import('./adminTypes').ModuleProgressStats>(
+      API_ENDPOINTS.admin.progress.module(moduleId),
+      { params },
+    );
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, `Failed to fetch module progress for ${moduleId}`);
+  }
+}
+
+/**
+ * Get exercise statistics
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function getExerciseStats(
+  exerciseId: string,
+): Promise<import('./adminTypes').ExerciseStats> {
+  try {
+    const response = await apiClient.get<import('./adminTypes').ExerciseStats>(
+      API_ENDPOINTS.admin.progress.exercise(exerciseId),
+    );
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, `Failed to fetch exercise stats for ${exerciseId}`);
+  }
+}
+
+/**
+ * Export progress to CSV
+ *
+ * Status: Backend IMPLEMENTED ✅
+ */
+export async function exportProgressCSV(params: {
+  type: 'students' | 'classrooms' | 'modules';
+  classroom_id?: string;
+  format?: 'csv';
+}): Promise<Blob> {
+  try {
+    const response = await apiClient.get(API_ENDPOINTS.admin.progress.export, {
+      params: { ...params, format: 'csv' },
+      responseType: 'blob',
+    });
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, 'Failed to export progress data');
   }
 }
 
@@ -1155,7 +1611,62 @@ export const adminAPI = {
     getHealth: getSystemHealth,
     getMetrics: getSystemMetrics,
     getLogs: getSystemLogs,
+    getAuditLogs: getAuditLogs,
     toggleMaintenance: toggleMaintenanceMode,
+    // Extended monitoring endpoints
+    getExtendedMetrics: async () => {
+      try {
+        const response = await apiClient.get<import('./adminTypes').ExtendedSystemMetrics>(
+          API_ENDPOINTS.admin.monitoring.metrics,
+        );
+        return response.data;
+      } catch (error) {
+        throw handleAPIError(error, 'Failed to fetch extended metrics');
+      }
+    },
+    getMetricsHistory: async (params?: { hours?: number }) => {
+      try {
+        const response = await apiClient.get<import('./adminTypes').MetricsHistoryDataPoint[]>(
+          API_ENDPOINTS.admin.monitoring.metricsHistory,
+          { params },
+        );
+        return response.data;
+      } catch (error) {
+        throw handleAPIError(error, 'Failed to fetch metrics history');
+      }
+    },
+    getErrorStats: async (params?: { hours?: number }) => {
+      try {
+        const response = await apiClient.get<import('./adminTypes').ErrorStats>(
+          API_ENDPOINTS.admin.monitoring.errorStats,
+          { params },
+        );
+        return response.data;
+      } catch (error) {
+        throw handleAPIError(error, 'Failed to fetch error stats');
+      }
+    },
+    getRecentErrors: async (params?: { limit?: number; level?: string }) => {
+      try {
+        const response = await apiClient.get<{ errors: import('./adminTypes').RecentError[] }>(
+          API_ENDPOINTS.admin.monitoring.recentErrors,
+          { params },
+        );
+        return response.data;
+      } catch (error) {
+        throw handleAPIError(error, 'Failed to fetch recent errors');
+      }
+    },
+    getErrorTrends: async (params?: { hours?: number; group_by?: string }) => {
+      try {
+        const response = await apiClient.get<{
+          trends: import('./adminTypes').ErrorTrendDataPoint[];
+        }>(API_ENDPOINTS.admin.monitoring.errorTrends, { params });
+        return response.data;
+      } catch (error) {
+        throw handleAPIError(error, 'Failed to fetch error trends');
+      }
+    },
   },
 
   // Settings
@@ -1175,6 +1686,38 @@ export const adminAPI = {
     download: downloadReport,
     delete: deleteReport,
     schedule: scheduleReport,
+  },
+
+  // Alerts
+  alerts: {
+    list: listAlerts,
+    getById: getAlertById,
+    getStats: getAlertsStats,
+    create: createAlert,
+    acknowledge: acknowledgeAlert,
+    resolve: resolveAlert,
+    suppress: suppressAlert,
+  },
+
+  // Analytics
+  analytics: {
+    getOverview: getAnalyticsOverview,
+    getEngagement: getEngagementAnalytics,
+    getGamification: getGamificationAnalytics,
+    getActivityTimeline,
+    getTopUsers,
+    getRetention: getRetentionAnalytics,
+    exportCSV: exportAnalyticsCSV,
+  },
+
+  // Progress
+  progress: {
+    getOverview: getProgressOverview,
+    getClassroomProgress,
+    getStudentProgress,
+    getModuleProgress,
+    getExerciseStats,
+    exportCSV: exportProgressCSV,
   },
 };
 

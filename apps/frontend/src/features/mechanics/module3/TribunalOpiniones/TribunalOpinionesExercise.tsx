@@ -11,7 +11,7 @@ import type {
   StatementEvaluation,
   StatementClassification,
   StatementVerdict,
-  TribunalOpinionesAnswers
+  TribunalOpinionesAnswers,
 } from './tribunalOpinionesTypes';
 import { CLASSIFICATION_OPTIONS, VERDICT_OPTIONS } from './tribunalOpinionesTypes';
 
@@ -19,12 +19,13 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
   exercise,
   onComplete,
   onProgressUpdate,
-  actionsRef
+  actionsRef,
 }) => {
   const { user } = useAuth();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [evaluations, setEvaluations] = useState<Map<string, StatementEvaluation>>(new Map());
-  const [currentClassification, setCurrentClassification] = useState<StatementClassification | null>(null);
+  const [currentClassification, setCurrentClassification] =
+    useState<StatementClassification | null>(null);
   const [currentVerdict, setCurrentVerdict] = useState<StatementVerdict | null>(null);
   const [currentJustification, setCurrentJustification] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
@@ -58,7 +59,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
     if (onProgressUpdate) {
       const evaluatedCount = evaluations.size;
       const answers: TribunalOpinionesAnswers = {
-        evaluations: Array.from(evaluations.values())
+        evaluations: Array.from(evaluations.values()),
       };
 
       onProgressUpdate({
@@ -67,9 +68,9 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
           totalSteps: totalStatements,
           score: 0,
           hintsUsed,
-          timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000)
+          timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
         },
-        answers
+        answers,
       });
     }
   }, [evaluations, totalStatements, hintsUsed, onProgressUpdate, startTime]);
@@ -81,9 +82,9 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
         statementId: currentStatement.id,
         classification: currentClassification,
         verdict: currentVerdict,
-        justification: currentJustification.trim() || undefined
+        justification: currentJustification.trim() || undefined,
       };
-      setEvaluations(prev => new Map(prev).set(currentStatement.id, evaluation));
+      setEvaluations((prev) => new Map(prev).set(currentStatement.id, evaluation));
       return true;
     }
     return false;
@@ -93,14 +94,14 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
   const handleNext = useCallback(() => {
     saveCurrentEvaluation();
     if (currentIndex < totalStatements - 1) {
-      setCurrentIndex(prev => prev + 1);
+      setCurrentIndex((prev) => prev + 1);
     }
   }, [currentIndex, totalStatements, saveCurrentEvaluation]);
 
   const handlePrevious = useCallback(() => {
     saveCurrentEvaluation();
     if (currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
+      setCurrentIndex((prev) => prev - 1);
     }
   }, [currentIndex, saveCurrentEvaluation]);
 
@@ -116,7 +117,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
         statementId: currentStatement.id,
         classification: currentClassification,
         verdict: currentVerdict,
-        justification: currentJustification.trim() || undefined
+        justification: currentJustification.trim() || undefined,
       });
     }
 
@@ -124,7 +125,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
       setFeedback({
         type: 'error',
         title: 'Ejercicio Incompleto',
-        message: `Has evaluado ${currentEvaluations.size} de ${totalStatements} afirmaciones. Evalúa todas antes de enviar.`
+        message: `Has evaluado ${currentEvaluations.size} de ${totalStatements} afirmaciones. Evalúa todas antes de enviar.`,
       });
       setShowFeedback(true);
       return;
@@ -134,7 +135,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
       setFeedback({
         type: 'error',
         title: 'Error de Autenticación',
-        message: 'Debes estar autenticado para enviar el ejercicio.'
+        message: 'Debes estar autenticado para enviar el ejercicio.',
       });
       setShowFeedback(true);
       return;
@@ -144,17 +145,29 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
 
     try {
       const answers: TribunalOpinionesAnswers = {
-        evaluations: Array.from(currentEvaluations.values())
+        evaluations: Array.from(currentEvaluations.values()),
       };
 
       const response = await submitExercise(exercise.id, user.id, answers);
 
+      // Extraer rewards de la respuesta
+      const rewards = response.rewards || { mlCoins: 0, xp: 0, bonuses: {} };
+
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
-        title: response.isPerfect ? '¡Excelente Juicio Crítico!' : response.score >= 70 ? '¡Buen Análisis!' : 'Sigue Practicando',
-        message: response.feedback?.overall || `Has clasificado correctamente ${response.correctAnswersCount} de ${response.totalQuestions} afirmaciones.`,
+        title: response.isPerfect
+          ? '¡Excelente Juicio Crítico!'
+          : response.score >= 70
+            ? '¡Buen Análisis!'
+            : 'Sigue Practicando',
+        message:
+          response.feedback?.overall ||
+          `Has clasificado correctamente ${response.correctAnswersCount} de ${response.totalQuestions} afirmaciones.`,
         score: response.score,
-        showConfetti: response.isPerfect
+        showConfetti: response.isPerfect,
+        // Agregar rewards
+        xpEarned: rewards.xp,
+        mlCoinsEarned: rewards.mlCoins,
       });
       setShowFeedback(true);
     } catch (error) {
@@ -162,13 +175,23 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
       setFeedback({
         type: 'error',
         title: 'Error al Enviar',
-        message: 'Hubo un problema al enviar tu respuesta. Intenta nuevamente.'
+        message: 'Hubo un problema al enviar tu respuesta. Intenta nuevamente.',
       });
       setShowFeedback(true);
     } finally {
       setIsSubmitting(false);
     }
-  }, [evaluations, currentStatement, currentClassification, currentVerdict, currentJustification, totalStatements, user, exercise.id, saveCurrentEvaluation]);
+  }, [
+    evaluations,
+    currentStatement,
+    currentClassification,
+    currentVerdict,
+    currentJustification,
+    totalStatements,
+    user,
+    exercise.id,
+    saveCurrentEvaluation,
+  ]);
 
   // Reset handler
   const handleReset = useCallback(() => {
@@ -191,18 +214,27 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
           score: 0,
           timeSpent: Math.floor((new Date().getTime() - startTime.getTime()) / 1000),
           hintsUsed,
-          isComplete: evaluations.size === totalStatements
+          isComplete: evaluations.size === totalStatements,
         }),
         reset: handleReset,
-        validate: handleCheck
+        validate: handleCheck,
       };
     }
-  }, [actionsRef, evaluations, currentIndex, startTime, hintsUsed, totalStatements, handleReset, handleCheck]);
+  }, [
+    actionsRef,
+    evaluations,
+    currentIndex,
+    startTime,
+    hintsUsed,
+    totalStatements,
+    handleReset,
+    handleCheck,
+  ]);
 
   if (!currentStatement) {
     return (
       <DetectiveCard variant="default" padding="lg">
-        <div className="text-center py-8">
+        <div className="py-8 text-center">
           <p className="text-gray-500">No hay afirmaciones para evaluar.</p>
         </div>
       </DetectiveCard>
@@ -210,28 +242,27 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
   }
 
   const isCurrentComplete = currentClassification && currentVerdict;
-  const evaluatedCount = evaluations.size + (isCurrentComplete && !evaluations.has(currentStatement.id) ? 1 : 0);
+  const evaluatedCount =
+    evaluations.size + (isCurrentComplete && !evaluations.has(currentStatement.id) ? 1 : 0);
 
   return (
     <>
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Header */}
-          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl p-6 text-white">
-            <div className="flex items-center gap-3 mb-2">
-              <Scale className="w-8 h-8" />
+          <div className="rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white">
+            <div className="mb-2 flex items-center gap-3">
+              <Scale className="h-8 w-8" />
               <h1 className="text-2xl font-bold">Tribunal de Opiniones</h1>
             </div>
             <p className="text-white/90">
               Clasifica cada afirmación y evalúa si está bien fundamentada
             </p>
             <div className="mt-3 flex items-center gap-4 text-sm">
-              <span className="bg-white/20 px-3 py-1 rounded-full">
+              <span className="rounded-full bg-white/20 px-3 py-1">
                 Afirmación {currentIndex + 1} de {totalStatements}
               </span>
-              <span className="bg-white/20 px-3 py-1 rounded-full">
-                {evaluatedCount} evaluadas
-              </span>
+              <span className="rounded-full bg-white/20 px-3 py-1">{evaluatedCount} evaluadas</span>
             </div>
           </div>
 
@@ -242,14 +273,12 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="bg-gray-50 rounded-xl p-6 border-2 border-gray-200"
+              className="rounded-xl border-2 border-gray-200 bg-gray-50 p-6"
             >
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">Afirmación:</h3>
-              <p className="text-xl text-gray-900 leading-relaxed">
-                "{currentStatement.text}"
-              </p>
+              <h3 className="mb-2 text-lg font-semibold text-gray-800">Afirmación:</h3>
+              <p className="text-xl leading-relaxed text-gray-900">"{currentStatement.text}"</p>
               {currentStatement.source && (
-                <p className="mt-2 text-sm text-gray-500 italic">
+                <p className="mt-2 text-sm italic text-gray-500">
                   Fuente: {currentStatement.source}
                 </p>
               )}
@@ -261,18 +290,18 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
             <h3 className="text-lg font-semibold text-gray-800">
               Paso 1: ¿Qué tipo de afirmación es?
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {CLASSIFICATION_OPTIONS.map(option => (
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+              {CLASSIFICATION_OPTIONS.map((option) => (
                 <button
                   key={option.value}
                   onClick={() => setCurrentClassification(option.value)}
-                  className={`p-4 rounded-xl border-2 transition-all text-left ${
+                  className={`rounded-xl border-2 p-4 text-left transition-all ${
                     currentClassification === option.value
-                      ? `${option.color} ring-2 ring-offset-2 ring-current`
-                      : 'bg-white border-gray-200 hover:border-gray-300'
+                      ? `${option.color} ring-2 ring-current ring-offset-2`
+                      : 'border-gray-200 bg-white hover:border-gray-300'
                   }`}
                 >
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="mb-1 flex items-center gap-2">
                     <span className="text-2xl">{option.icon}</span>
                     <span className="font-bold">{option.label}</span>
                   </div>
@@ -287,18 +316,18 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
             <h3 className="text-lg font-semibold text-gray-800">
               Paso 2: ¿Está bien fundamentada?
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {VERDICT_OPTIONS.map(option => (
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+              {VERDICT_OPTIONS.map((option) => (
                 <button
                   key={option.value}
                   onClick={() => setCurrentVerdict(option.value)}
-                  className={`p-4 rounded-xl border-2 transition-all text-left ${
+                  className={`rounded-xl border-2 p-4 text-left transition-all ${
                     currentVerdict === option.value
-                      ? `${option.color} ring-2 ring-offset-2 ring-current`
-                      : 'bg-white border-gray-200 hover:border-gray-300'
+                      ? `${option.color} ring-2 ring-current ring-offset-2`
+                      : 'border-gray-200 bg-white hover:border-gray-300'
                   }`}
                 >
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="mb-1 flex items-center gap-2">
                     <span className="text-2xl">{option.icon}</span>
                     <span className="font-bold">{option.label}</span>
                   </div>
@@ -317,23 +346,23 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
               value={currentJustification}
               onChange={(e) => setCurrentJustification(e.target.value)}
               placeholder="Explica en 2-3 líneas por qué clasificaste así esta afirmación..."
-              className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all resize-none"
+              className="w-full resize-none rounded-xl border-2 border-gray-200 p-4 transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
               rows={3}
               maxLength={300}
             />
-            <p className="text-sm text-gray-500 text-right">
+            <p className="text-right text-sm text-gray-500">
               {currentJustification.length}/300 caracteres
             </p>
           </div>
 
           {/* Navigation & Actions */}
-          <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+          <div className="flex items-center justify-between border-t border-gray-200 pt-4">
             <button
               onClick={handlePrevious}
               disabled={currentIndex === 0}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 transition-all hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="h-5 w-5" />
               Anterior
             </button>
 
@@ -342,19 +371,19 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
                 <button
                   onClick={handleNext}
                   disabled={!isCurrentComplete}
-                  className="flex items-center gap-2 px-6 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  className="flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-2 text-white transition-all hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Siguiente
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="h-5 w-5" />
                 </button>
               ) : (
                 <button
                   onClick={handleCheck}
                   disabled={isSubmitting || evaluatedCount < totalStatements}
-                  className="flex items-center gap-2 px-6 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  className="flex items-center gap-2 rounded-lg bg-green-600 px-6 py-2 text-white transition-all hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isSubmitting ? 'Enviando...' : 'Enviar Evaluaciones'}
-                  <Send className="w-5 h-5" />
+                  <Send className="h-5 w-5" />
                 </button>
               )}
             </div>
@@ -362,17 +391,18 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
             <button
               onClick={handleNext}
               disabled={currentIndex === totalStatements - 1}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 transition-all hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Siguiente
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="h-5 w-5" />
             </button>
           </div>
 
           {/* Progress Dots */}
           <div className="flex justify-center gap-2 pt-4">
             {statements.map((stmt, idx) => {
-              const isEvaluated = evaluations.has(stmt.id) || (idx === currentIndex && isCurrentComplete);
+              const isEvaluated =
+                evaluations.has(stmt.id) || (idx === currentIndex && isCurrentComplete);
               return (
                 <button
                   key={stmt.id}
@@ -380,9 +410,9 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
                     saveCurrentEvaluation();
                     setCurrentIndex(idx);
                   }}
-                  className={`w-3 h-3 rounded-full transition-all ${
+                  className={`h-3 w-3 rounded-full transition-all ${
                     idx === currentIndex
-                      ? 'bg-indigo-600 scale-125'
+                      ? 'scale-125 bg-indigo-600'
                       : isEvaluated
                         ? 'bg-green-500'
                         : 'bg-gray-300'

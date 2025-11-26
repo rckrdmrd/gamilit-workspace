@@ -12,7 +12,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Crown, Medal, Award, Star, TrendingUp } from 'lucide-react';
+import { Crown, Medal, Award, TrendingUp } from 'lucide-react';
 import type { LeaderboardEntry } from '../../types/leaderboardsTypes';
 import { cn } from '@shared/utils/cn';
 
@@ -36,7 +36,7 @@ const PodiumPosition = ({
   rank,
   height,
   gradient,
-  delay
+  delay,
 }: {
   entry: LeaderboardEntry;
   rank: number;
@@ -53,7 +53,8 @@ const PodiumPosition = ({
   const Icon = iconMap[rank as keyof typeof iconMap];
 
   const avatarSize = rank === 1 ? 'w-24 h-24' : rank === 2 ? 'w-20 h-20' : 'w-18 h-18';
-  const borderColor = rank === 1 ? 'border-yellow-400' : rank === 2 ? 'border-gray-400' : 'border-orange-400';
+  const borderColor =
+    rank === 1 ? 'border-yellow-400' : rank === 2 ? 'border-gray-400' : 'border-orange-400';
   const badgeSize = rank === 1 ? 'w-12 h-12 text-xl' : 'w-10 h-10 text-lg';
   const textSize = rank === 1 ? 'text-xl' : 'text-lg';
 
@@ -65,7 +66,7 @@ const PodiumPosition = ({
         duration: 0.8,
         delay,
         type: 'spring',
-        bounce: 0.4
+        bounce: 0.4,
       }}
       className="flex flex-col items-center"
     >
@@ -74,16 +75,16 @@ const PodiumPosition = ({
         <motion.div
           animate={{
             rotate: [-5, 5, -5],
-            y: [0, -5, 0]
+            y: [0, -5, 0],
           }}
           transition={{
             duration: 2,
             repeat: Infinity,
-            ease: 'easeInOut'
+            ease: 'easeInOut',
           }}
           className="mb-2"
         >
-          <Crown className="w-10 h-10 text-yellow-400 drop-shadow-lg" fill="currentColor" />
+          <Crown className="h-10 w-10 text-yellow-400 drop-shadow-lg" fill="currentColor" />
         </motion.div>
       )}
 
@@ -96,11 +97,7 @@ const PodiumPosition = ({
         <motion.img
           src={entry.avatar}
           alt={entry.username}
-          className={cn(
-            avatarSize,
-            'rounded-full border-4 object-cover shadow-2xl',
-            borderColor
-          )}
+          className={cn(avatarSize, 'rounded-full border-4 object-cover shadow-2xl', borderColor)}
           onError={(e) => {
             e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(entry.username)}&background=${rank === 1 ? 'fbbf24' : rank === 2 ? '9ca3af' : 'fb923c'}&color=fff`;
           }}
@@ -113,27 +110,27 @@ const PodiumPosition = ({
           animate={{ scale: 1 }}
           transition={{ delay: delay + 0.3, type: 'spring', bounce: 0.6 }}
           className={cn(
-            'absolute -bottom-2 -right-2 rounded-full flex items-center justify-center text-white font-bold shadow-xl',
+            'absolute -bottom-2 -right-2 flex items-center justify-center rounded-full font-bold text-white shadow-xl',
             `bg-gradient-to-br ${gradient}`,
             badgeSize,
-            rank === 1 && 'ring-4 ring-yellow-200 ring-offset-2'
+            rank === 1 && 'ring-4 ring-yellow-200 ring-offset-2',
           )}
         >
-          <Icon className="w-5 h-5" />
+          <Icon className="h-5 w-5" />
         </motion.div>
 
         {/* Glow Effect for #1 */}
         {rank === 1 && (
           <motion.div
-            className="absolute inset-0 rounded-full blur-xl opacity-50 bg-gradient-to-r from-yellow-400 to-orange-500 -z-10"
+            className="absolute inset-0 -z-10 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 opacity-50 blur-xl"
             animate={{
               scale: [1, 1.2, 1],
-              opacity: [0.5, 0.7, 0.5]
+              opacity: [0.5, 0.7, 0.5],
             }}
             transition={{
               duration: 2,
               repeat: Infinity,
-              ease: 'easeInOut'
+              ease: 'easeInOut',
             }}
           />
         )}
@@ -144,19 +141,19 @@ const PodiumPosition = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: delay + 0.4 }}
-        className="text-center px-2 w-full"
+        className="w-full px-2 text-center"
       >
-        <h3 className={cn(
-          'font-bold text-detective-text mb-1 truncate',
-          textSize,
-          rank === 1 && 'text-detective-gold'
-        )}>
+        <h3
+          className={cn(
+            'mb-1 truncate font-bold text-detective-text',
+            textSize,
+            rank === 1 && 'text-detective-gold',
+          )}
+        >
           {entry.username}
         </h3>
 
-        <p className="text-sm text-detective-text-secondary mb-2">
-          {entry.rankBadge}
-        </p>
+        <p className="mb-2 text-sm text-detective-text-secondary">{entry.rankBadge}</p>
 
         {/* Score */}
         <motion.div
@@ -164,12 +161,14 @@ const PodiumPosition = ({
           animate={{ scale: 1 }}
           transition={{ delay: delay + 0.5, type: 'spring' }}
           className={cn(
-            'font-bold mb-2',
-            rank === 1 ? 'text-2xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500' : 'text-xl text-detective-text'
+            'mb-2 font-bold',
+            rank === 1
+              ? 'bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-2xl text-transparent'
+              : 'text-xl text-detective-text',
           )}
         >
           {entry.score.toLocaleString()}
-          <span className="text-sm ml-1 text-detective-text-secondary">XP</span>
+          <span className="ml-1 text-sm text-detective-text-secondary">XP</span>
         </motion.div>
 
         {/* Change Indicator */}
@@ -180,14 +179,18 @@ const PodiumPosition = ({
             transition={{ delay: delay + 0.6 }}
             className={cn(
               'flex items-center justify-center gap-1 text-sm font-semibold',
-              entry.changeType === 'up' ? 'text-green-500' : entry.changeType === 'down' ? 'text-red-500' : 'text-gray-500'
+              entry.changeType === 'up'
+                ? 'text-green-500'
+                : entry.changeType === 'down'
+                  ? 'text-red-500'
+                  : 'text-gray-500',
             )}
           >
-            <TrendingUp className={cn(
-              'w-4 h-4',
-              entry.changeType === 'down' && 'rotate-180'
-            )} />
-            <span>{entry.changeType === 'up' ? '+' : '-'}{Math.abs(entry.change)}</span>
+            <TrendingUp className={cn('h-4 w-4', entry.changeType === 'down' && 'rotate-180')} />
+            <span>
+              {entry.changeType === 'up' ? '+' : '-'}
+              {Math.abs(entry.change)}
+            </span>
           </motion.div>
         )}
       </motion.div>
@@ -199,8 +202,8 @@ const PodiumPosition = ({
         transition={{ duration: 0.6, delay: delay + 0.2 }}
         style={{ height }}
         className={cn(
-          'w-full mt-4 rounded-t-lg shadow-xl relative overflow-hidden',
-          `bg-gradient-to-b ${gradient}`
+          'relative mt-4 w-full overflow-hidden rounded-t-lg shadow-xl',
+          `bg-gradient-to-b ${gradient}`,
         )}
       >
         {/* Podium Number */}
@@ -222,7 +225,7 @@ const PodiumPosition = ({
           transition={{
             duration: 2,
             repeat: Infinity,
-            repeatDelay: 1
+            repeatDelay: 1,
           }}
         />
       </motion.div>
@@ -252,7 +255,7 @@ const Confetti = ({ show }: { show: boolean }) => {
   if (!show) return null;
 
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
       {particles.map((particle) => (
         <motion.div
           key={particle.id}
@@ -260,18 +263,18 @@ const Confetti = ({ show }: { show: boolean }) => {
             x: `${particle.x}%`,
             y: `${particle.y}%`,
             rotate: particle.rotation,
-            opacity: 1
+            opacity: 1,
           }}
           animate={{
             y: '120%',
             x: `${particle.x + (Math.random() - 0.5) * 30}%`,
             rotate: particle.rotation + 720,
-            opacity: 0
+            opacity: 0,
           }}
           transition={{
             duration: 3,
             delay: particle.delay,
-            ease: 'easeIn'
+            ease: 'easeIn',
           }}
           style={{
             position: 'absolute',
@@ -286,10 +289,7 @@ const Confetti = ({ show }: { show: boolean }) => {
   );
 };
 
-export const LeaderboardPodium: React.FC<LeaderboardPodiumProps> = ({
-  topThree,
-  className
-}) => {
+export const LeaderboardPodium: React.FC<LeaderboardPodiumProps> = ({ topThree, className }) => {
   const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
@@ -302,9 +302,9 @@ export const LeaderboardPodium: React.FC<LeaderboardPodiumProps> = ({
 
   // Ensure we have all three positions (pad with null if needed)
   const positions = [
-    topThree.find(e => e.rank === 2),
-    topThree.find(e => e.rank === 1),
-    topThree.find(e => e.rank === 3),
+    topThree.find((e) => e.rank === 2),
+    topThree.find((e) => e.rank === 1),
+    topThree.find((e) => e.rank === 3),
   ];
 
   return (
@@ -313,7 +313,7 @@ export const LeaderboardPodium: React.FC<LeaderboardPodiumProps> = ({
       <Confetti show={showConfetti && !!positions[1]} />
 
       {/* Desktop/Tablet View */}
-      <div className="hidden md:grid md:grid-cols-3 gap-8 items-end">
+      <div className="hidden items-end gap-8 md:grid md:grid-cols-3">
         {/* 2nd Place */}
         {positions[0] && (
           <PodiumPosition
@@ -349,7 +349,7 @@ export const LeaderboardPodium: React.FC<LeaderboardPodiumProps> = ({
       </div>
 
       {/* Mobile View - Vertical Stack */}
-      <div className="md:hidden space-y-6">
+      <div className="space-y-6 md:hidden">
         {positions[1] && (
           <PodiumPosition
             entry={positions[1]}

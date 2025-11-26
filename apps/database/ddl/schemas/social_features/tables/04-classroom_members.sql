@@ -106,16 +106,16 @@ CREATE INDEX idx_classroom_members_student ON social_features.classroom_members 
 
 --
 -- Name: classroom_members trg_classroom_members_updated_at; Type: TRIGGER; Schema: social_features; Owner: postgres
+-- NOTE: Trigger movido a archivo separado para evitar duplicación
+-- Ver: social_features/triggers/24-trg_classroom_members_updated_at.sql
 --
-
-CREATE TRIGGER trg_classroom_members_updated_at BEFORE UPDATE ON social_features.classroom_members FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
 
 
 --
 -- Name: classroom_members trg_update_classroom_count; Type: TRIGGER; Schema: social_features; Owner: postgres
+-- NOTE: Trigger movido a archivo separado para evitar duplicación
+-- Ver: social_features/triggers/25-trg_update_classroom_count.sql
 --
-
-CREATE TRIGGER trg_update_classroom_count AFTER INSERT OR DELETE ON social_features.classroom_members FOR EACH ROW EXECUTE FUNCTION gamilit.update_classroom_member_count();
 
 
 --

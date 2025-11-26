@@ -9,11 +9,10 @@ import { io, Socket } from 'socket.io-client';
 import { useNotificationsStore } from '../store/notificationsStore';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { getAuthToken } from '@/services/api/apiClient';
+import { API_CONFIG } from '@/config/api.config';
 
-// Use VITE_WS_URL if available, otherwise derive from VITE_API_URL
-const WEBSOCKET_URL = import.meta.env.VITE_WS_URL ||
-                     import.meta.env.VITE_API_URL?.replace('/api', '') ||
-                     'http://localhost:3006';
+// Use unified API config for WebSocket URL
+const WEBSOCKET_URL = API_CONFIG.wsURL;
 
 /**
  * Check if JWT token is valid (not expired)
@@ -26,7 +25,7 @@ function isTokenValid(token: string): boolean {
     // Check if token is expired
     const now = Math.floor(Date.now() / 1000);
     return payload.exp > now;
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }
@@ -90,8 +89,8 @@ export function useWebSocket(): UseWebSocketReturn {
 
       try {
         // Attempt to refresh the token
-        const { refreshToken } = useAuthStore.getState();
-        await refreshToken();
+        const { refreshSession } = useAuthStore.getState();
+        await refreshSession();
 
         // Get the new token after refresh
         token = getAuthToken();
@@ -118,8 +117,8 @@ export function useWebSocket(): UseWebSocketReturn {
       reconnectionDelayMax: 5000,
       reconnectionAttempts: 5,
       auth: {
-        token: token
-      }
+        token: token,
+      },
     });
 
     // Connection events
@@ -128,8 +127,9 @@ export function useWebSocket(): UseWebSocketReturn {
       isConnectedRef.current = true;
     });
 
-    socket.on('authenticated', (data: any) => {
-      console.log('✅ WebSocket authenticated:', data);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    socket.on('authenticated', (_data: any) => {
+      console.log('✅ WebSocket authenticated');
     });
 
     socket.on('disconnect', (reason: string) => {
@@ -142,7 +142,9 @@ export function useWebSocket(): UseWebSocketReturn {
       if (!error.message.includes('Authentication') && !error.message.includes('authentication')) {
         console.error('❌ WebSocket connection error:', error);
       } else {
-        console.log('ℹ️ WebSocket authentication required. Please login to enable real-time notifications.');
+        console.log(
+          'ℹ️ WebSocket authentication required. Please login to enable real-time notifications.',
+        );
       }
       isConnectedRef.current = false;
     });
@@ -155,14 +157,28 @@ export function useWebSocket(): UseWebSocketReturn {
     socket.on('new_notification', (data: WebSocketNotification) => {
       console.log('📨 New notification received via WebSocket:', data);
 
+      // Map WebSocket notification type to system notification type
+      const mapNotificationType = (type: string): any => {
+        const typeMap: Record<string, string> = {
+          achievement_unlocked: 'achievement_unlocked',
+          rank_up: 'rank_promoted',
+          streak_milestone: 'mission_completed',
+          coins_earned: 'coins_received',
+          xp_earned: 'coins_received',
+        };
+        return typeMap[type] || 'system_announcement';
+      };
+
       // Transform to match Notification type
       const notification = {
-        ...data.notification,
+        id: data.notification.id,
+        userId: data.notification.userId,
+        type: mapNotificationType(data.notification.type),
+        title: data.notification.title,
+        message: data.notification.message,
         data: data.notification.metadata || {},
-        readAt: null,
-        createdAt: new Date(data.notification.createdAt),
-        expiresAt: null,
-        status: 'unread' as const
+        status: 'unread' as const,
+        createdAt: data.notification.createdAt,
       };
 
       // Add to notifications store (automatically increments unreadCount)
@@ -173,18 +189,21 @@ export function useWebSocket(): UseWebSocketReturn {
     });
 
     // Listen for notification read events
-    socket.on('notification_read', (data: { notificationId: string; timestamp: string }) => {
-      console.log('✅ Notification marked as read:', data.notificationId);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    socket.on('notification_read', (_data: { notificationId: string; timestamp: string }) => {
+      console.log('✅ Notification marked as read');
     });
 
     // Listen for notification deleted events
-    socket.on('notification_deleted', (data: { notificationId: string; timestamp: string }) => {
-      console.log('🗑️ Notification deleted:', data.notificationId);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    socket.on('notification_deleted', (_data: { notificationId: string; timestamp: string }) => {
+      console.log('🗑️ Notification deleted');
     });
 
     // Listen for unread count updates
-    socket.on('unread_count_updated', (data: { count: number; timestamp: string }) => {
-      console.log('🔢 Unread count updated:', data.count);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    socket.on('unread_count_updated', (_data: { count: number; timestamp: string }) => {
+      console.log('🔢 Unread count updated');
       // The store will be updated via fetchUnreadCount
       fetchUnreadCount();
     });
@@ -230,7 +249,7 @@ export function useWebSocket(): UseWebSocketReturn {
         body: notification.message,
         icon: '/logo.png', // Add your logo path
         tag: notification.id,
-        requireInteraction: false
+        requireInteraction: false,
       });
     } else if (Notification.permission !== 'denied') {
       // Request permission
@@ -240,7 +259,7 @@ export function useWebSocket(): UseWebSocketReturn {
             body: notification.message,
             icon: '/logo.png',
             tag: notification.id,
-            requireInteraction: false
+            requireInteraction: false,
           });
         }
       });
@@ -269,7 +288,7 @@ export function useWebSocket(): UseWebSocketReturn {
   return {
     isConnected: isConnectedRef.current,
     sendMessage,
-    disconnect
+    disconnect,
   };
 }
 

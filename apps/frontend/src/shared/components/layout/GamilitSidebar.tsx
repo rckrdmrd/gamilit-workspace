@@ -50,6 +50,8 @@ import {
   CheckCircle,
   Activity,
   Wrench,
+  School,
+  ClipboardList,
 } from 'lucide-react';
 import { cn } from '@shared/utils';
 
@@ -144,7 +146,7 @@ const defaultModules: SidebarModuleProgress[] = [
  * Get navigation items based on user role
  */
 const getNavigationItems = (
-  userRole: 'student' | 'teacher' | 'admin' = 'student'
+  userRole: 'student' | 'teacher' | 'admin' = 'student',
 ): NavigationItem[] => {
   const baseItems = [
     {
@@ -189,6 +191,18 @@ const getNavigationItems = (
 
   const teacherItems = [
     {
+      id: 'classes',
+      label: 'Mis Aulas',
+      path: '/teacher/classes',
+      icon: 'School',
+    },
+    {
+      id: 'students',
+      label: 'Estudiantes',
+      path: '/teacher/students',
+      icon: 'Users',
+    },
+    {
       id: 'monitoring',
       label: 'Monitoreo',
       path: '/teacher/monitoring',
@@ -199,6 +213,12 @@ const getNavigationItems = (
       label: 'Asignaciones',
       path: '/teacher/assignments',
       icon: 'Calendar',
+    },
+    {
+      id: 'responses',
+      label: 'Respuestas',
+      path: '/teacher/responses',
+      icon: 'ClipboardList',
     },
     {
       id: 'progress',
@@ -276,12 +296,6 @@ const getNavigationItems = (
       icon: 'BookOpen',
     },
     {
-      id: 'approvals',
-      label: 'Aprobaciones',
-      path: '/admin/approvals',
-      icon: 'CheckCircle',
-    },
-    {
       id: 'gamification',
       label: 'Gamificación',
       path: '/admin/gamification',
@@ -292,6 +306,12 @@ const getNavigationItems = (
       label: 'Monitoreo',
       path: '/admin/monitoring',
       icon: 'Activity',
+    },
+    {
+      id: 'alerts',
+      label: 'Alertas',
+      path: '/admin/alerts',
+      icon: 'AlertTriangle',
     },
     {
       id: 'advanced',
@@ -310,6 +330,12 @@ const getNavigationItems = (
       label: 'Configuración',
       path: '/admin/settings',
       icon: 'Settings',
+    },
+    {
+      id: 'classroom-teachers',
+      label: 'Classrooms-Teachers',
+      path: '/admin/classroom-teachers',
+      icon: 'Users',
     },
   ];
 
@@ -348,6 +374,8 @@ const IconMap = {
   CheckCircle,
   Activity,
   Wrench,
+  School,
+  ClipboardList,
 };
 
 /**
@@ -371,9 +399,9 @@ const Badge: React.FC<{
   return (
     <span
       className={cn(
-        'inline-flex items-center font-medium rounded-full border',
+        'inline-flex items-center rounded-full border font-medium',
         variantClasses[variant],
-        sizeClasses[size]
+        sizeClasses[size],
       )}
     >
       {children}
@@ -389,7 +417,8 @@ const ProgressBar: React.FC<{
   size?: 'sm' | 'md' | 'lg';
   variant?: 'detective' | 'success';
   showPercentage?: boolean;
-}> = ({ value, size = 'md', variant = 'detective', showPercentage = true }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+}> = ({ value, size = 'md', variant = 'detective', showPercentage: _showPercentage = true }) => {
   const sizeClasses = {
     sm: 'h-1.5',
     md: 'h-2',
@@ -403,7 +432,7 @@ const ProgressBar: React.FC<{
 
   return (
     <div className="w-full">
-      <div className={cn('bg-gray-200 rounded-full overflow-hidden', sizeClasses[size])}>
+      <div className={cn('overflow-hidden rounded-full bg-gray-200', sizeClasses[size])}>
         <motion.div
           className={cn('h-full rounded-full', variantClasses[variant])}
           initial={{ width: 0 }}
@@ -457,8 +486,7 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
   const totalProgress =
     userRole === 'student'
       ? Math.round(
-          moduleProgress.reduce((acc, module) => acc + module.progress, 0) /
-            moduleProgress.length
+          moduleProgress.reduce((acc, module) => acc + module.progress, 0) / moduleProgress.length,
         )
       : 0;
 
@@ -481,27 +509,23 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
       {/* Sidebar */}
       <motion.aside
         className={cn(
-          'fixed left-0 top-0 z-50 h-full w-80 bg-white border-r border-gray-200',
+          'fixed left-0 top-0 z-50 h-full w-80 border-r border-gray-200 bg-white',
           'transform transition-transform duration-300 ease-in-out lg:translate-x-0',
-          'overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300',
+          'scrollbar-thin scrollbar-thumb-gray-300 overflow-y-auto',
           isOpen ? 'translate-x-0' : '-translate-x-full',
-          className
+          className,
         )}
         initial={false}
         animate={{ x: isOpen ? 0 : -320 }}
         transition={{ type: 'tween', duration: 0.3 }}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex h-full flex-col">
           {/* Header Section */}
-          <div className="p-6 border-b border-gray-100">
+          <div className="border-b border-gray-100 p-6">
             <div className="flex items-center space-x-3">
-              <img
-                src="/logo_gamilit.png"
-                alt="Gamilit"
-                className="h-8 w-8 object-contain"
-              />
+              <img src="/logo_gamilit.png" alt="Gamilit" className="h-8 w-8 object-contain" />
               <div>
-                <h2 className="text-lg font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
+                <h2 className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-lg font-bold text-transparent">
                   Gamilit
                 </h2>
                 <p className="text-xs text-gray-500">Detectives de la Lectura</p>
@@ -513,8 +537,7 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
           <nav className="p-4">
             <div className="space-y-2">
               {navigationItems.map((item) => {
-                const IconComponent =
-                  IconMap[item.icon as keyof typeof IconMap] || Home;
+                const IconComponent = IconMap[item.icon as keyof typeof IconMap] || Home;
                 const isActive = currentPath === item.path;
 
                 return (
@@ -522,19 +545,17 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
                     key={item.id}
                     onClick={() => handleNavClick(item.path)}
                     className={cn(
-                      'w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left',
-                      'transition-all duration-200 group',
+                      'flex w-full items-center space-x-3 rounded-lg px-3 py-2 text-left',
+                      'group transition-all duration-200',
                       isActive
                         ? 'bg-orange-100 text-orange-700 shadow-sm'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
                     )}
                   >
                     <IconComponent
                       className={cn(
                         'h-5 w-5 transition-colors duration-200',
-                        isActive
-                          ? 'text-orange-600'
-                          : 'text-gray-400 group-hover:text-gray-600'
+                        isActive ? 'text-orange-600' : 'text-gray-400 group-hover:text-gray-600',
                       )}
                     />
                     <span className="font-medium">{item.label}</span>
@@ -548,16 +569,14 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
           {userRole === 'student' && (
             <div className="flex-1 p-4">
               <div className="mb-4">
-                <h3 className="text-sm font-semibold text-gray-900 mb-2">
-                  Casos de Detective
-                </h3>
-                <p className="text-xs text-gray-500 mb-4">
+                <h3 className="mb-2 text-sm font-semibold text-gray-900">Casos de Detective</h3>
+                <p className="mb-4 text-xs text-gray-500">
                   Resuelve casos para mejorar tu comprensión lectora
                 </p>
               </div>
 
               <div className="space-y-3">
-                {moduleProgress.map((module, index) => {
+                {moduleProgress.map((module) => {
                   const IconComponent = module.icon;
                   const isCompleted = module.progress === 100;
 
@@ -566,25 +585,25 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
                       key={module.id}
                       onClick={() => handleModuleClick(module.id, module.isUnlocked)}
                       className={cn(
-                        'w-full p-4 rounded-xl border text-left transition-all duration-200',
+                        'w-full rounded-xl border p-4 text-left transition-all duration-200',
                         module.isUnlocked
-                          ? 'border-gray-200 bg-white hover:shadow-md hover:border-orange-200 cursor-pointer'
-                          : 'border-gray-100 bg-gray-50 cursor-not-allowed opacity-60',
-                        isCompleted && 'border-green-200 bg-green-50'
+                          ? 'cursor-pointer border-gray-200 bg-white hover:border-orange-200 hover:shadow-md'
+                          : 'cursor-not-allowed border-gray-100 bg-gray-50 opacity-60',
+                        isCompleted && 'border-green-200 bg-green-50',
                       )}
                       whileHover={module.isUnlocked ? { scale: 1.02 } : {}}
                       whileTap={module.isUnlocked ? { scale: 0.98 } : {}}
                       disabled={!module.isUnlocked}
                     >
-                      <div className="flex items-start justify-between mb-3">
+                      <div className="mb-3 flex items-start justify-between">
                         <div className="flex items-center space-x-3">
                           <div
                             className={cn(
-                              'p-2 rounded-lg',
+                              'rounded-lg p-2',
                               module.isUnlocked
                                 ? 'bg-orange-100 text-orange-600'
                                 : 'bg-gray-100 text-gray-400',
-                              isCompleted && 'bg-green-100 text-green-600'
+                              isCompleted && 'bg-green-100 text-green-600',
                             )}
                           >
                             {isCompleted ? (
@@ -598,8 +617,8 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
                           <div className="flex-1">
                             <h4
                               className={cn(
-                                'font-medium text-sm',
-                                module.isUnlocked ? 'text-gray-900' : 'text-gray-500'
+                                'text-sm font-medium',
+                                module.isUnlocked ? 'text-gray-900' : 'text-gray-500',
                               )}
                             >
                               {module.title}
@@ -607,7 +626,7 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
                             <p
                               className={cn(
                                 'text-xs',
-                                module.isUnlocked ? 'text-gray-600' : 'text-gray-400'
+                                module.isUnlocked ? 'text-gray-600' : 'text-gray-400',
                               )}
                             >
                               {module.subtitle}
@@ -615,11 +634,7 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
                           </div>
                         </div>
 
-                        {isCompleted && (
-                          <Badge variant="success">
-                            Completado
-                          </Badge>
-                        )}
+                        {isCompleted && <Badge variant="success">Completado</Badge>}
                       </div>
 
                       {/* Progress bar */}
@@ -627,7 +642,6 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
                         <div className="space-y-2">
                           <ProgressBar
                             value={module.progress}
-
                             variant={isCompleted ? 'success' : 'detective'}
                             showPercentage={false}
                           />
@@ -636,7 +650,7 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
                             <span
                               className={cn(
                                 'font-medium',
-                                isCompleted ? 'text-green-600' : 'text-orange-600'
+                                isCompleted ? 'text-green-600' : 'text-orange-600',
                               )}
                             >
                               {module.progress}%
@@ -646,7 +660,7 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
                       )}
 
                       {!module.isUnlocked && (
-                        <div className="text-xs text-gray-400 mt-2">
+                        <div className="mt-2 text-xs text-gray-400">
                           Completa el caso anterior para desbloquear
                         </div>
                       )}
@@ -659,21 +673,12 @@ export const GamilitSidebar: React.FC<GamilitSidebarProps> = ({
 
           {/* Total Progress Footer - Only for students */}
           {userRole === 'student' && (
-            <div className="p-4 border-t border-gray-100">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-medium text-gray-700">
-                  Progreso Total
-                </span>
-                <span className="text-sm font-medium text-orange-600">
-                  {totalProgress}%
-                </span>
+            <div className="border-t border-gray-100 p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">Progreso Total</span>
+                <span className="text-sm font-medium text-orange-600">{totalProgress}%</span>
               </div>
-              <ProgressBar
-                value={totalProgress}
-
-                variant="detective"
-                showPercentage={false}
-              />
+              <ProgressBar value={totalProgress} variant="detective" showPercentage={false} />
             </div>
           )}
         </div>

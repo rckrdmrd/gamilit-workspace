@@ -1,236 +1,123 @@
 /**
- * Centralized Environment Configuration
+ * Environment configuration for GAMILIT Platform
  *
- * Single source of truth for all environment variables.
- * Provides type-safe access and validation.
+ * IMPORTANT: All required environment variables must be defined in .env files
+ * - Development: .env or .env.development
+ * - Production: .env.production
  *
- * IMPORTANT: All environment variables must be prefixed with VITE_
- * to be accessible in the browser.
+ * This configuration uses granular variables to build URLs instead of legacy monolithic URLs
  */
-
-// ============================================================================
-// ENVIRONMENT VARIABLE VALIDATION
-// ============================================================================
 
 /**
- * Validates that required environment variables are present
- * Throws error if critical variables are missing in production
+ * Get optional environment variable with default value
  */
-function validateEnvironment(): void {
-  const env = import.meta.env.MODE || 'development';
-
-  // In production, ensure API_URL is not localhost
-  if (env === 'production') {
-    const apiUrl = import.meta.env.VITE_API_URL;
-
-    if (!apiUrl) {
-      console.error('❌ CRITICAL: VITE_API_URL is not defined in production');
-      throw new Error('VITE_API_URL must be defined in production environment');
-    }
-
-    if (apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1')) {
-      console.error('❌ CRITICAL: VITE_API_URL points to localhost in production:', apiUrl);
-      throw new Error('VITE_API_URL cannot point to localhost in production');
-    }
-
-    console.log('✅ Environment validation passed');
-  }
+function getOptionalEnv(key: string, defaultValue: string): string {
+  const value = import.meta.env[key];
+  return value && value !== 'undefined' ? value : defaultValue;
 }
 
-// Run validation on module load
-validateEnvironment();
-
-// ============================================================================
-// API CONFIGURATION
-// ============================================================================
+/**
+ * Parse boolean environment variable
+ */
+function parseBooleanEnv(key: string, defaultValue: boolean): boolean {
+  const value = import.meta.env[key];
+  if (!value || value === 'undefined') {
+    return defaultValue;
+  }
+  return value === 'true' || value === '1';
+}
 
 /**
- * API Configuration
- * Centralized configuration for all API endpoints
+ * Parse number environment variable
  */
-export const API_CONFIG = {
-  /**
-   * Base API URL
-   * Required: Must be set via VITE_API_URL environment variable
-   */
-  BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:3006/api',
+function parseNumberEnv(key: string, defaultValue: number): number {
+  const value = import.meta.env[key];
+  if (!value || value === 'undefined') {
+    return defaultValue;
+  }
+  const parsed = Number(value);
+  return isNaN(parsed) ? defaultValue : parsed;
+}
 
-  /**
-   * WebSocket URL
-   * Derived from VITE_WS_URL or VITE_API_URL
-   */
-  WS_URL:
-    import.meta.env.VITE_WS_URL ||
-    import.meta.env.VITE_API_URL?.replace('/api', '') ||
-    'http://localhost:3006',
+// Build API URL from granular variables
+const apiProtocol = getOptionalEnv('VITE_API_PROTOCOL', 'http');
+const apiHost = getOptionalEnv('VITE_API_HOST', 'localhost:3006');
+const apiVersion = getOptionalEnv('VITE_API_VERSION', 'v1');
 
-  /**
-   * Request timeout in milliseconds
-   */
-  TIMEOUT: Number(import.meta.env.VITE_API_TIMEOUT) || 30000,
+const wsProtocol = getOptionalEnv('VITE_WS_PROTOCOL', 'ws');
+const wsHost = getOptionalEnv('VITE_WS_HOST', apiHost);
 
-  /**
-   * Enable debug logging for API calls
-   */
-  DEBUG: import.meta.env.VITE_DEBUG_API === 'true',
+// Environment configuration
+export const env = {
+  // Mode
+  isDevelopment: import.meta.env.MODE === 'development',
+  isProduction: import.meta.env.MODE === 'production',
+  mode: import.meta.env.MODE,
+
+  // API Configuration (built from granular variables)
+  apiUrl: `${apiProtocol}://${apiHost}/api/${apiVersion}`,
+  wsUrl: `${wsProtocol}://${wsHost}`,
+
+  // Granular config (for components that need it)
+  api: {
+    protocol: apiProtocol,
+    host: apiHost,
+    version: apiVersion,
+    get baseUrl() {
+      return `${apiProtocol}://${apiHost}/api/${apiVersion}`;
+    },
+  },
+  ws: {
+    protocol: wsProtocol,
+    host: wsHost,
+    get url() {
+      return `${wsProtocol}://${wsHost}`;
+    },
+  },
+
+  // App Configuration (OPTIONAL with defaults)
+  appName: getOptionalEnv('VITE_APP_NAME', 'GAMILIT Platform'),
+  apiTimeout: parseNumberEnv('VITE_API_TIMEOUT', 30000),
+
+  // Feature Flags (OPTIONAL with defaults)
+  enableGamification: parseBooleanEnv('VITE_ENABLE_GAMIFICATION', true),
+  enableSocialFeatures: parseBooleanEnv('VITE_ENABLE_SOCIAL_FEATURES', true),
+
+  // Debug/Development (OPTIONAL with defaults)
+  debugApi: parseBooleanEnv('VITE_DEBUG_API', false),
+  mockApi: parseBooleanEnv('VITE_MOCK_API', false),
 } as const;
 
-// ============================================================================
-// APPLICATION CONFIGURATION
-// ============================================================================
-
-/**
- * Application Configuration
- */
-export const APP_CONFIG = {
-  /**
-   * Application name
-   */
-  NAME: import.meta.env.VITE_APP_NAME || 'GAMILIT Platform',
-
-  /**
-   * Application version
-   */
-  VERSION: import.meta.env.VITE_APP_VERSION || '1.0.0',
-
-  /**
-   * Application environment
-   */
-  ENV: import.meta.env.VITE_APP_ENV || import.meta.env.MODE || 'development',
-
-  /**
-   * Is production environment
-   */
-  IS_PRODUCTION: import.meta.env.MODE === 'production',
-
-  /**
-   * Is development environment
-   */
-  IS_DEVELOPMENT: import.meta.env.MODE === 'development',
-} as const;
-
-// ============================================================================
-// FEATURE FLAGS
-// ============================================================================
-
-/**
- * Feature Flags
- * Control feature availability via environment variables
- */
-export const FEATURE_FLAGS = {
-  /**
-   * Enable gamification features
-   */
-  GAMIFICATION: import.meta.env.VITE_ENABLE_GAMIFICATION !== 'false',
-
-  /**
-   * Enable social features (friends, guilds)
-   */
-  SOCIAL: import.meta.env.VITE_ENABLE_SOCIAL_FEATURES !== 'false',
-
-  /**
-   * Enable analytics tracking
-   */
-  ANALYTICS: import.meta.env.VITE_ENABLE_ANALYTICS === 'true',
-
-  /**
-   * Enable debug mode
-   */
-  DEBUG: import.meta.env.VITE_ENABLE_DEBUG === 'true',
-
-  /**
-   * Enable Storybook
-   */
-  STORYBOOK: import.meta.env.VITE_ENABLE_STORYBOOK === 'true',
-
-  /**
-   * Use mock data instead of real API
-   */
-  MOCK_API: import.meta.env.VITE_MOCK_API === 'true',
-
-  /**
-   * Use mock data for exercises and content
-   */
-  MOCK_DATA: import.meta.env.VITE_USE_MOCK_DATA === 'true',
-} as const;
-
-// ============================================================================
-// AUTHENTICATION CONFIGURATION
-// ============================================================================
-
-/**
- * Authentication Configuration
- */
-export const AUTH_CONFIG = {
-  /**
-   * JWT token expiration time
-   */
-  JWT_EXPIRATION: import.meta.env.VITE_JWT_EXPIRATION || '7d',
-} as const;
-
-// ============================================================================
-// EXTERNAL SERVICES CONFIGURATION
-// ============================================================================
-
-/**
- * External Services Configuration
- */
-export const EXTERNAL_SERVICES = {
-  /**
-   * Google Analytics ID
-   */
-  GOOGLE_ANALYTICS_ID: import.meta.env.VITE_GOOGLE_ANALYTICS_ID || '',
-
-  /**
-   * Sentry DSN for error tracking
-   */
-  SENTRY_DSN: import.meta.env.VITE_SENTRY_DSN || '',
-
-  /**
-   * AI Service URL
-   */
-  AI_SERVICE_URL: import.meta.env.VITE_AI_SERVICE_URL || '',
-} as const;
-
-// ============================================================================
-// LOGGING
-// ============================================================================
-
-/**
- * Log Level
- */
-export const LOG_LEVEL = import.meta.env.VITE_LOG_LEVEL ||
-  (APP_CONFIG.IS_PRODUCTION ? 'error' : 'info');
-
-// ============================================================================
-// EXPORTS
-// ============================================================================
-
-/**
- * Environment Configuration
- * Centralized export of all environment-based configuration
- */
-export const ENV = {
-  API: API_CONFIG,
-  APP: APP_CONFIG,
-  FEATURES: FEATURE_FLAGS,
-  AUTH: AUTH_CONFIG,
-  EXTERNAL: EXTERNAL_SERVICES,
-  LOG_LEVEL,
-} as const;
-
-export default ENV;
-
-// ============================================================================
-// RUNTIME LOGGING
-// ============================================================================
-
-// Log configuration on load (development only)
-if (APP_CONFIG.IS_DEVELOPMENT && FEATURE_FLAGS.DEBUG) {
-  console.log('🔧 Environment Configuration Loaded:', {
-    mode: import.meta.env.MODE,
-    apiUrl: API_CONFIG.BASE_URL,
-    wsUrl: API_CONFIG.WS_URL,
-    features: FEATURE_FLAGS,
+// Validation: Log configuration in development
+if (env.isDevelopment) {
+  console.log('[ENV] Configuration loaded:', {
+    mode: env.mode,
+    apiUrl: env.apiUrl,
+    wsUrl: env.wsUrl,
+    appName: env.appName,
+    enableGamification: env.enableGamification,
+    enableSocialFeatures: env.enableSocialFeatures,
   });
 }
+
+// Validation: Warn if using localhost in production
+if (env.isProduction && env.api.host.includes('localhost')) {
+  console.error(
+    '[ENV] ERROR: Production build is using localhost API URL!\n' +
+      'This will cause the application to fail in production.\n' +
+      'Please set VITE_API_HOST to the production server domain in .env.production',
+  );
+  throw new Error('Invalid production configuration: VITE_API_HOST points to localhost');
+}
+
+// Validation: Ensure protocols are valid
+if (!['http', 'https'].includes(env.api.protocol)) {
+  throw new Error('VITE_API_PROTOCOL must be either "http" or "https"');
+}
+
+if (!['ws', 'wss'].includes(env.ws.protocol)) {
+  throw new Error('VITE_WS_PROTOCOL must be either "ws" or "wss"');
+}
+
+// Export for reference
+export default env;

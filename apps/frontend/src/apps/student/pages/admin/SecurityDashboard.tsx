@@ -1,4 +1,3 @@
-import React from 'react';
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { SecurityEventsList } from '@features/auth/components/SecurityEventsList';
@@ -17,21 +16,23 @@ export default function SecurityDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary">
-      <GamifiedHeader user={{
-        id: 'mock-security-dashboard-id',
-        email: 'admin@glit.com',
-        role: 'super_admin',
-        displayName: 'Admin Security'
-      }} />
+      <GamifiedHeader
+        user={{
+          id: 'mock-security-dashboard-id',
+          email: 'admin@glit.com',
+          role: 'super_admin',
+          displayName: 'Admin Security',
+        }}
+      />
 
       <main className="detective-container py-8">
         <h1 className="text-detective-title mb-6">Dashboard de Seguridad</h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat) => (
             <DetectiveCard key={stat.label}>
               <div className="flex items-center gap-3">
-                <stat.icon className={`w-8 h-8 ${stat.color}`} />
+                <stat.icon className={`h-8 w-8 ${stat.color}`} />
                 <div>
                   <p className="text-detective-small">{stat.label}</p>
                   <p className="text-2xl font-bold text-detective-text">{stat.value}</p>
@@ -41,7 +42,7 @@ export default function SecurityDashboard() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
           <DetectiveCard>
             <h2 className="text-detective-subtitle mb-4">Eventos de Seguridad Recientes</h2>
             <SecurityEventsList />

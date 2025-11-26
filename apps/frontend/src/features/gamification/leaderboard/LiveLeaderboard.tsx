@@ -39,7 +39,7 @@ import {
   Award,
   BarChart3,
   Users,
-  Clock
+  Clock,
 } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
 
@@ -93,29 +93,29 @@ const TABS: TabConfig[] = [
     label: 'XP Total',
     icon: Zap,
     description: 'Clasificación por experiencia acumulada',
-    sortKey: 'xp'
+    sortKey: 'xp',
   },
   {
     type: 'completion',
     label: 'Completado',
     icon: BarChart3,
     description: 'Clasificación por porcentaje completado',
-    sortKey: 'completionPercentage'
+    sortKey: 'completionPercentage',
   },
   {
     type: 'streak',
     label: 'Racha',
     icon: Flame,
     description: 'Clasificación por días consecutivos',
-    sortKey: 'streak'
+    sortKey: 'streak',
   },
   {
     type: 'detective',
     label: 'Detective',
     icon: Target,
     description: 'Ranking general de detectives',
-    sortKey: 'score'
-  }
+    sortKey: 'score',
+  },
 ];
 
 // ============================================================================
@@ -134,13 +134,6 @@ const getRankColor = (rank: number): string => {
   if (rank === 2) return 'from-gray-300 to-gray-500';
   if (rank === 3) return 'from-orange-400 to-orange-600';
   return 'from-detective-blue to-detective-orange';
-};
-
-const getRankTextColor = (rank: number): string => {
-  if (rank === 1) return 'text-yellow-500';
-  if (rank === 2) return 'text-gray-400';
-  if (rank === 3) return 'text-orange-500';
-  return 'text-detective-text';
 };
 
 const getScoreForType = (entry: LeaderboardEntry, type: LeaderboardTypeVariant): number => {
@@ -177,10 +170,52 @@ const formatScoreForType = (score: number, type: LeaderboardTypeVariant): string
 
 const generateMockLeaderboardData = (
   currentUserId: string,
-  type: LeaderboardTypeVariant
+  type: LeaderboardTypeVariant,
 ): LeaderboardEntry[] => {
-  const firstNames = ['Ana', 'Carlos', 'María', 'Luis', 'Sofia', 'Diego', 'Valentina', 'Miguel', 'Isabella', 'Javier', 'Camila', 'Pablo', 'Lucía', 'Andrés', 'Elena', 'Fernando', 'Daniela', 'Ricardo', 'Gabriela', 'Sebastián'];
-  const lastNames = ['García', 'Rodríguez', 'Martínez', 'López', 'González', 'Pérez', 'Sánchez', 'Ramírez', 'Torres', 'Flores', 'Rivera', 'Gómez', 'Díaz', 'Cruz', 'Morales', 'Jiménez', 'Hernández', 'Vargas', 'Castro', 'Ruiz'];
+  const firstNames = [
+    'Ana',
+    'Carlos',
+    'María',
+    'Luis',
+    'Sofia',
+    'Diego',
+    'Valentina',
+    'Miguel',
+    'Isabella',
+    'Javier',
+    'Camila',
+    'Pablo',
+    'Lucía',
+    'Andrés',
+    'Elena',
+    'Fernando',
+    'Daniela',
+    'Ricardo',
+    'Gabriela',
+    'Sebastián',
+  ];
+  const lastNames = [
+    'García',
+    'Rodríguez',
+    'Martínez',
+    'López',
+    'González',
+    'Pérez',
+    'Sánchez',
+    'Ramírez',
+    'Torres',
+    'Flores',
+    'Rivera',
+    'Gómez',
+    'Díaz',
+    'Cruz',
+    'Morales',
+    'Jiménez',
+    'Hernández',
+    'Vargas',
+    'Castro',
+    'Ruiz',
+  ];
   const ranks = ['Nacom', 'Ajaw', "Ah K'in", 'Halach Uinic', "K'uk'ulkan"];
 
   const entries: LeaderboardEntry[] = [];
@@ -200,13 +235,13 @@ const generateMockLeaderboardData = (
 
     switch (type) {
       case 'xp':
-        xp = 15000 - (rank * 200) + Math.floor(Math.random() * 100);
+        xp = 15000 - rank * 200 + Math.floor(Math.random() * 100);
         score = xp;
         completionPercentage = 60 + Math.random() * 30;
         streak = Math.floor(Math.random() * 30) + 1;
         break;
       case 'completion':
-        completionPercentage = 100 - (rank * 2) + Math.random() * 2;
+        completionPercentage = 100 - rank * 2 + Math.random() * 2;
         score = Math.floor(completionPercentage * 100);
         xp = Math.floor(Math.random() * 10000) + 5000;
         streak = Math.floor(Math.random() * 30) + 1;
@@ -219,7 +254,7 @@ const generateMockLeaderboardData = (
         break;
       case 'detective':
       default:
-        score = 10000 - (rank * 150) + Math.floor(Math.random() * 100);
+        score = 10000 - rank * 150 + Math.floor(Math.random() * 100);
         xp = score * 1.5;
         completionPercentage = 60 + Math.random() * 30;
         streak = Math.floor(Math.random() * 30) + 1;
@@ -252,7 +287,7 @@ const generateMockLeaderboardData = (
       mlCoins: Math.floor(score * 0.5),
       change,
       changeType,
-      isCurrentUser
+      isCurrentUser,
     });
   }
 
@@ -273,7 +308,7 @@ interface TypeSelectorProps {
 
 const TypeSelector: React.FC<TypeSelectorProps> = ({ selectedType, onTypeChange }) => {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-detective-orange scrollbar-track-gray-200">
+    <div className="scrollbar-thin scrollbar-thumb-detective-orange scrollbar-track-gray-200 flex gap-2 overflow-x-auto pb-2">
       {TABS.map((tab) => {
         const Icon = tab.icon;
         const isActive = selectedType === tab.type;
@@ -285,23 +320,29 @@ const TypeSelector: React.FC<TypeSelectorProps> = ({ selectedType, onTypeChange 
             whileTap={{ scale: 0.98 }}
             onClick={() => onTypeChange(tab.type)}
             className={cn(
-              'relative flex items-center gap-2 px-5 py-3 rounded-lg font-semibold whitespace-nowrap transition-all group min-w-fit',
+              'group relative flex min-w-fit items-center gap-2 whitespace-nowrap rounded-lg px-5 py-3 font-semibold transition-all',
               isActive
                 ? 'bg-gradient-to-r from-detective-orange to-pink-500 text-white shadow-lg shadow-orange-500/50'
-                : 'bg-white text-detective-text hover:bg-detective-bg shadow-md hover:shadow-lg'
+                : 'bg-white text-detective-text shadow-md hover:bg-detective-bg hover:shadow-lg',
             )}
           >
             <motion.div
-              animate={isActive ? {
-                rotate: [0, 10, -10, 0],
-                scale: [1, 1.1, 1]
-              } : {}}
+              animate={
+                isActive
+                  ? {
+                      rotate: [0, 10, -10, 0],
+                      scale: [1, 1.1, 1],
+                    }
+                  : {}
+              }
               transition={{ duration: 0.5 }}
             >
-              <Icon className={cn(
-                'w-5 h-5 transition-colors',
-                isActive ? 'text-white' : 'text-detective-orange'
-              )} />
+              <Icon
+                className={cn(
+                  'h-5 w-5 transition-colors',
+                  isActive ? 'text-white' : 'text-detective-orange',
+                )}
+              />
             </motion.div>
 
             <span>{tab.label}</span>
@@ -342,25 +383,22 @@ const UserRankCard: React.FC<UserRankCardProps> = ({ userEntry, type }) => {
       className="relative overflow-hidden rounded-xl shadow-2xl"
     >
       {/* Gradient Background */}
-      <div className={cn(
-        'absolute inset-0 bg-gradient-to-r',
-        gradient
-      )} />
+      <div className={cn('absolute inset-0 bg-gradient-to-r', gradient)} />
 
       {/* Animated Background Pattern */}
       <motion.div
         className="absolute inset-0 opacity-10"
         style={{
           backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)',
-          backgroundSize: '20px 20px'
+          backgroundSize: '20px 20px',
         }}
         animate={{
-          backgroundPosition: ['0px 0px', '20px 20px']
+          backgroundPosition: ['0px 0px', '20px 20px'],
         }}
         transition={{
           duration: 2,
           repeat: Infinity,
-          ease: 'linear'
+          ease: 'linear',
         }}
       />
 
@@ -373,9 +411,9 @@ const UserRankCard: React.FC<UserRankCardProps> = ({ userEntry, type }) => {
             <motion.div
               whileHover={{ scale: 1.1, rotate: 360 }}
               transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-              className="p-3 bg-white/20 rounded-full backdrop-blur-sm"
+              className="rounded-full bg-white/20 p-3 backdrop-blur-sm"
             >
-              <Icon className="w-8 h-8" />
+              <Icon className="h-8 w-8" />
             </motion.div>
 
             {/* Avatar */}
@@ -383,7 +421,7 @@ const UserRankCard: React.FC<UserRankCardProps> = ({ userEntry, type }) => {
               <motion.img
                 src={userEntry.avatar}
                 alt={userEntry.username}
-                className="w-16 h-16 rounded-full border-4 border-white shadow-lg object-cover"
+                className="h-16 w-16 rounded-full border-4 border-white object-cover shadow-lg"
                 onError={(e) => {
                   e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userEntry.username)}&background=8b5cf6&color=fff`;
                 }}
@@ -395,12 +433,14 @@ const UserRankCard: React.FC<UserRankCardProps> = ({ userEntry, type }) => {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.3, type: 'spring', bounce: 0.5 }}
-                className="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg"
+                className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-lg"
               >
-                <span className={cn(
-                  'font-bold text-sm',
-                  userEntry.rank <= 3 ? 'text-yellow-500' : 'text-purple-600'
-                )}>
+                <span
+                  className={cn(
+                    'text-sm font-bold',
+                    userEntry.rank <= 3 ? 'text-yellow-500' : 'text-purple-600',
+                  )}
+                >
                   #{userEntry.rank}
                 </span>
               </motion.div>
@@ -408,7 +448,7 @@ const UserRankCard: React.FC<UserRankCardProps> = ({ userEntry, type }) => {
 
             {/* User Details */}
             <div>
-              <h3 className="text-xl font-bold mb-1">Tu Posición</h3>
+              <h3 className="mb-1 text-xl font-bold">Tu Posición</h3>
               <p className="text-sm opacity-90">{userEntry.rankBadge}</p>
             </div>
           </div>
@@ -419,7 +459,7 @@ const UserRankCard: React.FC<UserRankCardProps> = ({ userEntry, type }) => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: 'spring', bounce: 0.4 }}
-              className="text-4xl font-bold mb-1"
+              className="mb-1 text-4xl font-bold"
             >
               {formattedScore}
             </motion.div>
@@ -431,17 +471,18 @@ const UserRankCard: React.FC<UserRankCardProps> = ({ userEntry, type }) => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 }}
                 className={cn(
-                  'flex items-center justify-end gap-1 text-sm font-semibold px-3 py-1 rounded-full',
-                  userEntry.changeType === 'up' ? 'bg-green-500/20' : 'bg-red-500/20'
+                  'flex items-center justify-end gap-1 rounded-full px-3 py-1 text-sm font-semibold',
+                  userEntry.changeType === 'up' ? 'bg-green-500/20' : 'bg-red-500/20',
                 )}
               >
                 {userEntry.changeType === 'up' ? (
-                  <TrendingUp className="w-4 h-4" />
+                  <TrendingUp className="h-4 w-4" />
                 ) : (
-                  <TrendingDown className="w-4 h-4" />
+                  <TrendingDown className="h-4 w-4" />
                 )}
                 <span>
-                  {userEntry.changeType === 'up' ? '+' : '-'}{Math.abs(userEntry.change)}
+                  {userEntry.changeType === 'up' ? '+' : '-'}
+                  {Math.abs(userEntry.change)}
                 </span>
               </motion.div>
             )}
@@ -449,14 +490,14 @@ const UserRankCard: React.FC<UserRankCardProps> = ({ userEntry, type }) => {
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-3 gap-3 mt-4">
+        <div className="mt-4 grid grid-cols-3 gap-3">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center"
+            className="rounded-lg bg-white/10 p-3 text-center backdrop-blur-sm"
           >
-            <div className="text-xl font-bold mb-1">{userEntry.xp.toLocaleString()}</div>
+            <div className="mb-1 text-xl font-bold">{userEntry.xp.toLocaleString()}</div>
             <div className="text-xs opacity-75">XP</div>
           </motion.div>
 
@@ -464,9 +505,11 @@ const UserRankCard: React.FC<UserRankCardProps> = ({ userEntry, type }) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center"
+            className="rounded-lg bg-white/10 p-3 text-center backdrop-blur-sm"
           >
-            <div className="text-xl font-bold mb-1">{userEntry.completionPercentage.toFixed(0)}%</div>
+            <div className="mb-1 text-xl font-bold">
+              {userEntry.completionPercentage.toFixed(0)}%
+            </div>
             <div className="text-xs opacity-75">Completado</div>
           </motion.div>
 
@@ -474,10 +517,10 @@ const UserRankCard: React.FC<UserRankCardProps> = ({ userEntry, type }) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center"
+            className="rounded-lg bg-white/10 p-3 text-center backdrop-blur-sm"
           >
-            <div className="flex items-center justify-center gap-1 text-xl font-bold mb-1">
-              <Flame className="w-5 h-5" />
+            <div className="mb-1 flex items-center justify-center gap-1 text-xl font-bold">
+              <Flame className="h-5 w-5" />
               {userEntry.streak}
             </div>
             <div className="text-xs opacity-75">Racha</div>
@@ -502,14 +545,13 @@ const LeaderboardEntryRow: React.FC<LeaderboardEntryRowProps> = ({
   entry,
   type,
   index,
-  onUserClick
+  onUserClick,
 }) => {
   const RankIcon = getRankIcon(entry.rank);
   const isTopThree = entry.rank <= 3;
   const score = getScoreForType(entry, type);
   const formattedScore = formatScoreForType(score, type);
   const rankColor = getRankColor(entry.rank);
-  const rankTextColor = getRankTextColor(entry.rank);
 
   return (
     <motion.div
@@ -518,19 +560,21 @@ const LeaderboardEntryRow: React.FC<LeaderboardEntryRowProps> = ({
       transition={{ delay: index * 0.05, duration: 0.3 }}
       onClick={() => onUserClick?.(entry.userId)}
       className={cn(
-        'flex items-center gap-4 p-4 rounded-lg transition-all cursor-pointer',
+        'flex cursor-pointer items-center gap-4 rounded-lg p-4 transition-all',
         entry.isCurrentUser
-          ? 'bg-detective-orange bg-opacity-10 border-2 border-detective-orange shadow-lg'
-          : 'bg-white hover:shadow-md hover:scale-[1.01]'
+          ? 'border-2 border-detective-orange bg-detective-orange bg-opacity-10 shadow-lg'
+          : 'bg-white hover:scale-[1.01] hover:shadow-md',
       )}
     >
       {/* Rank */}
-      <div className={cn(
-        'flex items-center justify-center w-14 h-14 rounded-full font-bold text-white shrink-0',
-        isTopThree ? `bg-gradient-to-br ${rankColor}` : 'bg-detective-blue'
-      )}>
+      <div
+        className={cn(
+          'flex h-14 w-14 shrink-0 items-center justify-center rounded-full font-bold text-white',
+          isTopThree ? `bg-gradient-to-br ${rankColor}` : 'bg-detective-blue',
+        )}
+      >
         {isTopThree && RankIcon ? (
-          <RankIcon className="w-7 h-7" />
+          <RankIcon className="h-7 w-7" />
         ) : (
           <span className="text-lg">#{entry.rank}</span>
         )}
@@ -540,7 +584,7 @@ const LeaderboardEntryRow: React.FC<LeaderboardEntryRowProps> = ({
       <motion.img
         src={entry.avatar}
         alt={entry.username}
-        className="w-12 h-12 rounded-full object-cover border-2 border-gray-200 shrink-0"
+        className="h-12 w-12 shrink-0 rounded-full border-2 border-gray-200 object-cover"
         whileHover={{ scale: 1.1 }}
         onError={(e) => {
           e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(entry.username)}&background=f97316&color=fff`;
@@ -548,25 +592,27 @@ const LeaderboardEntryRow: React.FC<LeaderboardEntryRowProps> = ({
       />
 
       {/* User Info */}
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <p className={cn(
-            'font-semibold truncate',
-            entry.isCurrentUser ? 'text-detective-orange' : 'text-detective-text'
-          )}>
+          <p
+            className={cn(
+              'truncate font-semibold',
+              entry.isCurrentUser ? 'text-detective-orange' : 'text-detective-text',
+            )}
+          >
             {entry.username}
           </p>
           {entry.isCurrentUser && (
-            <span className="text-xs bg-detective-orange text-white px-2 py-0.5 rounded-full shrink-0">
+            <span className="shrink-0 rounded-full bg-detective-orange px-2 py-0.5 text-xs text-white">
               Tú
             </span>
           )}
         </div>
-        <div className="flex items-center gap-2 mt-1">
+        <div className="mt-1 flex items-center gap-2">
           <p className="text-sm text-detective-text-secondary">{entry.rankBadge}</p>
           {type === 'streak' && (
             <div className="flex items-center gap-1 text-orange-500">
-              <Flame className="w-4 h-4" />
+              <Flame className="h-4 w-4" />
               <span className="text-xs font-semibold">{entry.streak}d</span>
             </div>
           )}
@@ -574,26 +620,32 @@ const LeaderboardEntryRow: React.FC<LeaderboardEntryRowProps> = ({
       </div>
 
       {/* Score */}
-      <div className="text-right shrink-0">
-        <p className={cn(
-          'font-bold text-lg',
-          entry.isCurrentUser ? 'text-detective-orange' : 'text-detective-text'
-        )}>
+      <div className="shrink-0 text-right">
+        <p
+          className={cn(
+            'text-lg font-bold',
+            entry.isCurrentUser ? 'text-detective-orange' : 'text-detective-text',
+          )}
+        >
           {formattedScore}
         </p>
 
         {/* Change Indicator */}
-        <div className="flex items-center gap-1 justify-end mt-1">
-          {entry.changeType === 'up' && <TrendingUp className="w-4 h-4 text-green-500" />}
-          {entry.changeType === 'down' && <TrendingDown className="w-4 h-4 text-red-500" />}
-          {entry.changeType === 'same' && <Minus className="w-4 h-4 text-gray-400" />}
-          {entry.changeType === 'new' && <Sparkles className="w-4 h-4 text-detective-gold" />}
-          <span className={cn(
-            'text-sm font-medium',
-            entry.changeType === 'up' ? 'text-green-500' :
-            entry.changeType === 'down' ? 'text-red-500' :
-            'text-gray-400'
-          )}>
+        <div className="mt-1 flex items-center justify-end gap-1">
+          {entry.changeType === 'up' && <TrendingUp className="h-4 w-4 text-green-500" />}
+          {entry.changeType === 'down' && <TrendingDown className="h-4 w-4 text-red-500" />}
+          {entry.changeType === 'same' && <Minus className="h-4 w-4 text-gray-400" />}
+          {entry.changeType === 'new' && <Sparkles className="h-4 w-4 text-detective-gold" />}
+          <span
+            className={cn(
+              'text-sm font-medium',
+              entry.changeType === 'up'
+                ? 'text-green-500'
+                : entry.changeType === 'down'
+                  ? 'text-red-500'
+                  : 'text-gray-400',
+            )}
+          >
             {Math.abs(entry.change) > 0 ? Math.abs(entry.change) : '-'}
           </span>
         </div>
@@ -613,7 +665,7 @@ export const LiveLeaderboard: React.FC<LiveLeaderboardProps> = ({
   refreshInterval = 30000,
   itemsPerPage = 20,
   onUserClick,
-  className
+  className,
 }) => {
   const [selectedType, setSelectedType] = useState<LeaderboardTypeVariant>(initialType);
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
@@ -627,7 +679,7 @@ export const LiveLeaderboard: React.FC<LiveLeaderboardProps> = ({
 
     try {
       // Simulate API call - replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       const data = generateMockLeaderboardData(userId, selectedType);
       setEntries(data);
@@ -665,7 +717,7 @@ export const LiveLeaderboard: React.FC<LiveLeaderboardProps> = ({
   };
 
   // Get user entry
-  const userEntry = entries.find(e => e.isCurrentUser);
+  const userEntry = entries.find((e) => e.isCurrentUser);
 
   // Get visible entries (limit to itemsPerPage)
   const visibleEntries = entries.slice(0, itemsPerPage);
@@ -673,13 +725,11 @@ export const LiveLeaderboard: React.FC<LiveLeaderboardProps> = ({
   return (
     <div className={cn('space-y-6', className)}>
       {/* Header */}
-      <div className="flex items-center justify-between gap-4 flex-wrap">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-detective-text mb-2">
-            Tabla de Clasificación
-          </h2>
+          <h2 className="mb-2 text-3xl font-bold text-detective-text">Tabla de Clasificación</h2>
           <div className="flex items-center gap-2 text-sm text-detective-text-secondary">
-            <Clock className="w-4 h-4" />
+            <Clock className="h-4 w-4" />
             <span>Última actualización: {lastUpdated.toLocaleTimeString()}</span>
           </div>
         </div>
@@ -690,9 +740,9 @@ export const LiveLeaderboard: React.FC<LiveLeaderboardProps> = ({
           whileTap={{ scale: 0.95 }}
           onClick={handleRefresh}
           disabled={isRefreshing}
-          className="flex items-center gap-2 px-4 py-2 bg-detective-orange text-white rounded-lg font-semibold hover:bg-detective-orange-dark transition-colors disabled:opacity-50 shadow-md"
+          className="flex items-center gap-2 rounded-lg bg-detective-orange px-4 py-2 font-semibold text-white shadow-md transition-colors hover:bg-detective-orange-dark disabled:opacity-50"
         >
-          <RefreshCw className={cn('w-5 h-5', isRefreshing && 'animate-spin')} />
+          <RefreshCw className={cn('h-5 w-5', isRefreshing && 'animate-spin')} />
           <span>Actualizar</span>
         </motion.button>
       </div>
@@ -702,26 +752,24 @@ export const LiveLeaderboard: React.FC<LiveLeaderboardProps> = ({
 
       {/* Loading State */}
       {loading && entries.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-lg p-12 text-center">
+        <div className="rounded-xl bg-white p-12 text-center shadow-lg">
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-            className="w-16 h-16 border-4 border-detective-orange border-t-transparent rounded-full mx-auto mb-4"
+            className="mx-auto mb-4 h-16 w-16 rounded-full border-4 border-detective-orange border-t-transparent"
           />
           <p className="text-detective-text-secondary">Cargando clasificación...</p>
         </div>
       ) : (
         <>
           {/* User Rank Card */}
-          {userEntry && (
-            <UserRankCard userEntry={userEntry} type={selectedType} />
-          )}
+          {userEntry && <UserRankCard userEntry={userEntry} type={selectedType} />}
 
           {/* Leaderboard Table */}
-          <div className="bg-detective-bg rounded-xl p-6 shadow-lg">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-detective-text flex items-center gap-2">
-                <Users className="w-6 h-6 text-detective-orange" />
+          <div className="rounded-xl bg-detective-bg p-6 shadow-lg">
+            <div className="mb-6 flex items-center justify-between">
+              <h3 className="flex items-center gap-2 text-xl font-bold text-detective-text">
+                <Users className="h-6 w-6 text-detective-orange" />
                 Top {itemsPerPage}
               </h3>
               <div className="text-sm text-detective-text-secondary">
@@ -749,10 +797,10 @@ export const LiveLeaderboard: React.FC<LiveLeaderboardProps> = ({
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-12"
+                className="py-12 text-center"
               >
-                <Trophy className="w-16 h-16 text-detective-text-secondary mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-detective-text mb-2">
+                <Trophy className="mx-auto mb-4 h-16 w-16 text-detective-text-secondary" />
+                <h3 className="mb-2 text-xl font-bold text-detective-text">
                   No hay datos disponibles
                 </h3>
                 <p className="text-detective-text-secondary">

@@ -75,11 +75,8 @@ CREATE INDEX idx_alerts_type ON audit_logging.system_alerts USING btree (alert_t
 -- =====================================================
 -- Triggers
 -- =====================================================
-
-CREATE TRIGGER trg_system_alerts_updated_at
-    BEFORE UPDATE ON audit_logging.system_alerts
-    FOR EACH ROW
-    EXECUTE FUNCTION gamilit.update_updated_at_column();
+-- NOTE: Trigger trg_system_alerts_updated_at movido a archivo separado
+-- Ver: audit_logging/triggers/01-trg_system_alerts_updated_at.sql
 
 -- =====================================================
 -- Row Level Security

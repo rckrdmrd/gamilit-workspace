@@ -26,6 +26,7 @@ import {
   ChevronRight,
   Activity,
   BarChart3,
+  Info,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -74,7 +75,9 @@ export default function EnhancedProfilePage() {
   const { gamificationData } = useUserGamification(user?.id);
 
   // Local state
-  const [selectedTab, setSelectedTab] = useState<'overview' | 'stats' | 'history' | 'achievements'>('overview');
+  const [selectedTab, setSelectedTab] = useState<'overview' | 'stats' | 'history' | 'achievements'>(
+    'overview',
+  );
 
   // Load data
   useEffect(() => {
@@ -135,7 +138,7 @@ export default function EnhancedProfilePage() {
   ];
 
   const recentAchievements = achievements
-    .filter(a => a.isUnlocked)
+    .filter((a) => a.isUnlocked)
     .sort((a, b) => {
       if (!a.unlockedAt || !b.unlockedAt) return 0;
       return b.unlockedAt.getTime() - a.unlockedAt.getTime();
@@ -155,39 +158,36 @@ export default function EnhancedProfilePage() {
 
       <main className="container mx-auto px-4 py-8">
         {/* Hero Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 rounded-2xl p-8 text-white shadow-xl">
-            <div className="flex flex-col md:flex-row items-center gap-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+          <div className="rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 p-8 text-white shadow-xl">
+            <div className="flex flex-col items-center gap-6 md:flex-row">
               {/* Avatar */}
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                className="w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-4 border-white/30"
+                transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+                className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-white/30 bg-white/20 backdrop-blur-sm"
               >
-                <User className="w-16 h-16" />
+                <User className="h-16 w-16" />
               </motion.div>
 
               {/* User Info */}
               <div className="flex-1 text-center md:text-left">
-                <h1 className="text-4xl font-bold mb-2">{user?.fullName || 'Detective'}</h1>
-                <p className="text-white/80 mb-4 flex items-center gap-2 justify-center md:justify-start">
-                  <Mail className="w-4 h-4" />
+                <h1 className="mb-2 text-4xl font-bold">{user?.fullName || 'Detective'}</h1>
+                <p className="mb-4 flex items-center justify-center gap-2 text-white/80 md:justify-start">
+                  <Mail className="h-4 w-4" />
                   {user?.email}
                 </p>
-                <div className="flex items-center gap-4 justify-center md:justify-start flex-wrap">
+                <div className="flex flex-wrap items-center justify-center gap-4 md:justify-start">
                   <RankBadge rank={(userProgress?.currentRank as any) || 'nacom'} showIcon={true} />
                   <StreakIndicator variant="compact" />
                 </div>
-                <p className="text-white/70 text-sm mt-4 flex items-center gap-2 justify-center md:justify-start">
-                  <Calendar className="w-4 h-4" />
-                  Miembro desde: {new Date(user?.createdAt || Date.now()).toLocaleDateString('es-MX', {
+                <p className="mt-4 flex items-center justify-center gap-2 text-sm text-white/70 md:justify-start">
+                  <Calendar className="h-4 w-4" />
+                  Miembro desde:{' '}
+                  {new Date(user?.createdAt || Date.now()).toLocaleDateString('es-MX', {
                     year: 'numeric',
-                    month: 'long'
+                    month: 'long',
                   })}
                 </p>
               </div>
@@ -202,9 +202,9 @@ export default function EnhancedProfilePage() {
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="bg-white/20 backdrop-blur-sm rounded-lg p-4 text-center"
+                      className="rounded-lg bg-white/20 p-4 text-center backdrop-blur-sm"
                     >
-                      <Icon className="w-8 h-8 mx-auto mb-2" />
+                      <Icon className="mx-auto mb-2 h-8 w-8" />
                       <div className="text-2xl font-bold">{stat.value}</div>
                       <div className="text-sm opacity-80">{stat.label}</div>
                     </motion.div>
@@ -231,13 +231,13 @@ export default function EnhancedProfilePage() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setSelectedTab(tab.id as any)}
                 className={cn(
-                  "flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap",
+                  'flex items-center gap-2 whitespace-nowrap rounded-lg px-6 py-3 font-semibold transition-all',
                   selectedTab === tab.id
                     ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
+                    : 'bg-white text-gray-700 hover:bg-gray-50',
                 )}
               >
-                <Icon className="w-5 h-5" />
+                <Icon className="h-5 w-5" />
                 <span>{tab.label}</span>
               </motion.button>
             );
@@ -252,7 +252,7 @@ export default function EnhancedProfilePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+              className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"
             >
               {stats.map((stat, index) => {
                 const Icon = stat.icon;
@@ -265,16 +265,12 @@ export default function EnhancedProfilePage() {
                   >
                     <DetectiveCard hoverable className="h-full">
                       <div className="flex items-center gap-4">
-                        <div className={cn("p-3 rounded-lg", stat.bgColor)}>
-                          <Icon className={cn("w-8 h-8", stat.color)} />
+                        <div className={cn('rounded-lg p-3', stat.bgColor)}>
+                          <Icon className={cn('h-8 w-8', stat.color)} />
                         </div>
                         <div>
-                          <p className="text-3xl font-bold text-detective-text">
-                            {stat.value}
-                          </p>
-                          <p className="text-sm text-detective-text-secondary">
-                            {stat.label}
-                          </p>
+                          <p className="text-3xl font-bold text-detective-text">{stat.value}</p>
+                          <p className="text-sm text-detective-text-secondary">{stat.label}</p>
                         </div>
                       </div>
                     </DetectiveCard>
@@ -294,68 +290,98 @@ export default function EnhancedProfilePage() {
             >
               {/* Activity Chart */}
               <DetectiveCard>
-                <h3 className="text-xl font-bold text-detective-text mb-6 flex items-center gap-2">
-                  <Activity className="w-6 h-6 text-detective-orange" />
-                  Actividad de los últimos 7 días
-                </h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <AreaChart data={activityData}>
-                    <defs>
-                      <linearGradient id="colorXp" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8}/>
-                        <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
-                      </linearGradient>
-                      <linearGradient id="colorCoins" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#EAB308" stopOpacity={0.8}/>
-                        <stop offset="95%" stopColor="#EAB308" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis
-                      dataKey="date"
-                      tickFormatter={(value) => new Date(value).toLocaleDateString('es-MX', { month: 'short', day: 'numeric' })}
-                    />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Area
-                      type="monotone"
-                      dataKey="xp"
-                      stroke="#3B82F6"
-                      fillOpacity={1}
-                      fill="url(#colorXp)"
-                      name="XP Ganado"
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="coins"
-                      stroke="#EAB308"
-                      fillOpacity={1}
-                      fill="url(#colorCoins)"
-                      name="ML Coins"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
+                <div className="relative">
+                  {/* Demo Data Badge */}
+                  <div className="absolute right-2 top-2 z-10">
+                    <span className="inline-flex items-center gap-1 rounded border border-yellow-500/30 bg-yellow-500/20 px-2 py-1 text-xs font-medium text-yellow-700">
+                      <Info className="h-3 w-3" />
+                      Datos de demostración
+                    </span>
+                  </div>
+
+                  <h3 className="mb-6 flex items-center gap-2 text-xl font-bold text-detective-text">
+                    <Activity className="h-6 w-6 text-detective-orange" />
+                    Actividad de los últimos 7 días
+                  </h3>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <AreaChart data={activityData}>
+                      <defs>
+                        <linearGradient id="colorXp" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
+                          <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
+                        </linearGradient>
+                        <linearGradient id="colorCoins" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#EAB308" stopOpacity={0.8} />
+                          <stop offset="95%" stopColor="#EAB308" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis
+                        dataKey="date"
+                        tickFormatter={(value) =>
+                          new Date(value).toLocaleDateString('es-MX', {
+                            month: 'short',
+                            day: 'numeric',
+                          })
+                        }
+                      />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Area
+                        type="monotone"
+                        dataKey="xp"
+                        stroke="#3B82F6"
+                        fillOpacity={1}
+                        fill="url(#colorXp)"
+                        name="XP Ganado"
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="coins"
+                        stroke="#EAB308"
+                        fillOpacity={1}
+                        fill="url(#colorCoins)"
+                        name="ML Coins"
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
               </DetectiveCard>
 
               {/* Exercises Chart */}
               <DetectiveCard>
-                <h3 className="text-xl font-bold text-detective-text mb-6 flex items-center gap-2">
-                  <Target className="w-6 h-6 text-detective-orange" />
-                  Ejercicios Completados
-                </h3>
-                <ResponsiveContainer width="100%" height={250}>
-                  <BarChart data={activityData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis
-                      dataKey="date"
-                      tickFormatter={(value) => new Date(value).toLocaleDateString('es-MX', { month: 'short', day: 'numeric' })}
-                    />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="exercises" fill="#A855F7" name="Ejercicios" />
-                  </BarChart>
-                </ResponsiveContainer>
+                <div className="relative">
+                  {/* Demo Data Badge */}
+                  <div className="absolute right-2 top-2 z-10">
+                    <span className="inline-flex items-center gap-1 rounded border border-yellow-500/30 bg-yellow-500/20 px-2 py-1 text-xs font-medium text-yellow-700">
+                      <Info className="h-3 w-3" />
+                      Datos de demostración
+                    </span>
+                  </div>
+
+                  <h3 className="mb-6 flex items-center gap-2 text-xl font-bold text-detective-text">
+                    <Target className="h-6 w-6 text-detective-orange" />
+                    Ejercicios Completados
+                  </h3>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <BarChart data={activityData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis
+                        dataKey="date"
+                        tickFormatter={(value) =>
+                          new Date(value).toLocaleDateString('es-MX', {
+                            month: 'short',
+                            day: 'numeric',
+                          })
+                        }
+                      />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="exercises" fill="#A855F7" name="Ejercicios" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </DetectiveCard>
             </motion.div>
           )}
@@ -368,71 +394,93 @@ export default function EnhancedProfilePage() {
               exit={{ opacity: 0, y: -20 }}
             >
               <DetectiveCard>
-                <h3 className="text-xl font-bold text-detective-text mb-6 flex items-center gap-2">
-                  <TrendingUp className="w-6 h-6 text-detective-orange" />
-                  Historial de Ascensos de Rango
-                </h3>
+                <div className="relative">
+                  {/* Demo Data Badge */}
+                  <div className="absolute right-2 top-2 z-10">
+                    <span className="inline-flex items-center gap-1 rounded border border-yellow-500/30 bg-yellow-500/20 px-2 py-1 text-xs font-medium text-yellow-700">
+                      <Info className="h-3 w-3" />
+                      Datos de demostración
+                    </span>
+                  </div>
 
-                {/* Rank History Timeline */}
-                <div className="space-y-6">
-                  {rankHistory.map((entry, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="flex items-center gap-4 relative"
-                    >
-                      {/* Timeline Line */}
-                      {index < rankHistory.length - 1 && (
-                        <div className="absolute left-8 top-16 w-0.5 h-12 bg-gradient-to-b from-purple-500 to-pink-500"></div>
-                      )}
+                  <h3 className="mb-6 flex items-center gap-2 text-xl font-bold text-detective-text">
+                    <TrendingUp className="h-6 w-6 text-detective-orange" />
+                    Historial de Ascensos de Rango
+                  </h3>
 
-                      {/* Rank Badge */}
-                      <div className="relative z-10">
-                        <RankBadge rank={entry.rank as any} showIcon />
-                      </div>
+                  {/* Rank History Timeline */}
+                  <div className="space-y-6">
+                    {rankHistory.map((entry, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="relative flex items-center gap-4"
+                      >
+                        {/* Timeline Line */}
+                        {index < rankHistory.length - 1 && (
+                          <div className="absolute left-8 top-16 h-12 w-0.5 bg-gradient-to-b from-purple-500 to-pink-500"></div>
+                        )}
 
-                      {/* Details */}
-                      <div className="flex-1 bg-detective-bg p-4 rounded-lg">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-bold text-detective-text capitalize">{entry.rank}</h4>
-                            <p className="text-sm text-detective-text-secondary">
-                              Alcanzado el {entry.achievedAt.toLocaleDateString('es-MX', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                              })}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-2xl font-bold text-detective-orange">{entry.xpRequired} XP</p>
-                            <p className="text-sm text-detective-text-secondary">Requerido</p>
+                        {/* Rank Badge */}
+                        <div className="relative z-10">
+                          <RankBadge rank={entry.rank as any} showIcon />
+                        </div>
+
+                        {/* Details */}
+                        <div className="flex-1 rounded-lg bg-detective-bg p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h4 className="font-bold capitalize text-detective-text">
+                                {entry.rank}
+                              </h4>
+                              <p className="text-sm text-detective-text-secondary">
+                                Alcanzado el{' '}
+                                {entry.achievedAt.toLocaleDateString('es-MX', {
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                })}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-2xl font-bold text-detective-orange">
+                                {entry.xpRequired} XP
+                              </p>
+                              <p className="text-sm text-detective-text-secondary">Requerido</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Next Rank Progress */}
-                <div className="mt-8 p-6 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg">
-                  <h4 className="font-bold text-detective-text mb-4 flex items-center gap-2">
-                    <Star className="w-5 h-5 text-detective-orange" />
-                    Próximo Rango
-                  </h4>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-semibold">Progreso hacia {(userProgress?.nextRank as any) || 'Batab'}</span>
-                    <span className="text-sm font-semibold">{userProgress?.currentXP || 0} / {(userProgress?.nextRank as any)?.xpRequired || 500} XP</span>
+                      </motion.div>
+                    ))}
                   </div>
-                  <div className="w-full bg-white/50 rounded-full h-4 overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${((userProgress?.currentXP || 0) / ((userProgress?.nextRank as any)?.xpRequired || 500)) * 100}%` }}
-                      transition={{ duration: 1, ease: "easeOut" }}
-                      className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
-                    />
+
+                  {/* Next Rank Progress */}
+                  <div className="mt-8 rounded-lg bg-gradient-to-r from-purple-100 to-pink-100 p-6">
+                    <h4 className="mb-4 flex items-center gap-2 font-bold text-detective-text">
+                      <Star className="h-5 w-5 text-detective-orange" />
+                      Próximo Rango
+                    </h4>
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-sm font-semibold">
+                        Progreso hacia {(userProgress?.nextRank as any) || 'Batab'}
+                      </span>
+                      <span className="text-sm font-semibold">
+                        {userProgress?.currentXP || 0} /{' '}
+                        {(userProgress?.nextRank as any)?.xpRequired || 500} XP
+                      </span>
+                    </div>
+                    <div className="h-4 w-full overflow-hidden rounded-full bg-white/50">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{
+                          width: `${((userProgress?.currentXP || 0) / ((userProgress?.nextRank as any)?.xpRequired || 500)) * 100}%`,
+                        }}
+                        transition={{ duration: 1, ease: 'easeOut' }}
+                        className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
+                      />
+                    </div>
                   </div>
                 </div>
               </DetectiveCard>
@@ -447,17 +495,17 @@ export default function EnhancedProfilePage() {
               exit={{ opacity: 0, y: -20 }}
             >
               <DetectiveCard>
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-detective-text flex items-center gap-2">
-                    <Trophy className="w-6 h-6 text-detective-orange" />
+                <div className="mb-6 flex items-center justify-between">
+                  <h3 className="flex items-center gap-2 text-xl font-bold text-detective-text">
+                    <Trophy className="h-6 w-6 text-detective-orange" />
                     Logros Recientes
                   </h3>
                   <button
                     onClick={() => navigate('/achievements')}
-                    className="flex items-center gap-2 text-detective-orange hover:text-detective-orange-dark font-semibold"
+                    className="flex items-center gap-2 font-semibold text-detective-orange hover:text-detective-orange-dark"
                   >
                     Ver todos
-                    <ChevronRight className="w-5 h-5" />
+                    <ChevronRight className="h-5 w-5" />
                   </button>
                 </div>
 
@@ -469,29 +517,34 @@ export default function EnhancedProfilePage() {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className="flex items-center gap-4 p-4 bg-detective-bg rounded-lg hover:bg-detective-bg-secondary transition-colors cursor-pointer"
+                        className="flex cursor-pointer items-center gap-4 rounded-lg bg-detective-bg p-4 transition-colors hover:bg-detective-bg-secondary"
                         onClick={() => navigate('/achievements')}
                       >
-                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
-                          <Trophy className="w-6 h-6 text-white" />
+                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-yellow-400 to-orange-500">
+                          <Trophy className="h-6 w-6 text-white" />
                         </div>
                         <div className="flex-1">
                           <h4 className="font-bold text-detective-text">{achievement.title}</h4>
-                          <p className="text-sm text-detective-text-secondary">{achievement.description}</p>
+                          <p className="text-sm text-detective-text-secondary">
+                            {achievement.description}
+                          </p>
                         </div>
                         <div className="text-right">
-                          <p className="font-semibold text-detective-orange flex items-center gap-1">
-                            +{achievement.mlCoinsReward} <Coins className="w-4 h-4" />
+                          <p className="flex items-center gap-1 font-semibold text-detective-orange">
+                            +{achievement.mlCoinsReward} <Coins className="h-4 w-4" />
                           </p>
                           <p className="text-xs text-detective-text-secondary">
-                            {achievement.unlockedAt?.toLocaleDateString('es-MX', { month: 'short', day: 'numeric' })}
+                            {achievement.unlockedAt?.toLocaleDateString('es-MX', {
+                              month: 'short',
+                              day: 'numeric',
+                            })}
                           </p>
                         </div>
                       </motion.div>
                     ))
                   ) : (
-                    <div className="text-center py-8 text-detective-text-secondary">
-                      <Trophy className="w-16 h-16 mx-auto mb-4 opacity-30" />
+                    <div className="py-8 text-center text-detective-text-secondary">
+                      <Trophy className="mx-auto mb-4 h-16 w-16 opacity-30" />
                       <p>No has desbloqueado logros aún</p>
                       <p className="text-sm">¡Completa ejercicios para empezar!</p>
                     </div>

@@ -184,4 +184,24 @@ export class ExerciseSubmission {
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
   updated_at!: Date;
+
+  // =====================================================
+  // COMPUTED/VIRTUAL PROPERTIES
+  // =====================================================
+
+  /**
+   * NOTE: xp_earned and ml_coins_earned are stored in exercise_attempts table
+   * To get these values, join with exercise_attempts using:
+   * - user_id
+   * - exercise_id
+   * - attempt_number
+   *
+   * Example query:
+   * SELECT es.*, ea.xp_earned, ea.ml_coins_earned
+   * FROM progress_tracking.exercise_submissions es
+   * LEFT JOIN progress_tracking.exercise_attempts ea
+   *   ON ea.user_id = es.user_id
+   *   AND ea.exercise_id = es.exercise_id
+   *   AND ea.attempt_number = es.attempt_number
+   */
 }

@@ -8,7 +8,7 @@
  */
 
 import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS, FEATURE_FLAGS } from '@/services/api/apiConfig';
+import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
 import { handleAPIError } from '@/services/api/apiErrorHandler';
 import type { ApiResponse } from '@/services/api/apiTypes';
 
@@ -223,7 +223,7 @@ export interface UserDashboard {
  * Mock submit exercise
  */
 const mockSubmitExercise = async (
-  submission: SubmitExerciseRequest
+  submission: SubmitExerciseRequest,
 ): Promise<SubmitExerciseResponse> => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -247,9 +247,7 @@ const mockSubmitExercise = async (
       },
     },
     feedback: {
-      overall: isPerfect
-        ? 'Excelente trabajo!'
-        : 'Buen intento! Sigue practicando.',
+      overall: isPerfect ? 'Excelente trabajo!' : 'Buen intento! Sigue practicando.',
       answerReview: Array.from({ length: 10 }, (_, i) => ({
         questionId: `q${i + 1}`,
         isCorrect: i < correctAnswers,
@@ -321,7 +319,7 @@ const mockGetUserProgress = async (userId: string): Promise<UserProgressOverview
  */
 const mockGetModuleProgress = async (
   userId: string,
-  moduleId: string
+  moduleId: string,
 ): Promise<ModuleProgressDetail> => {
   await new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -368,7 +366,7 @@ const mockGetModuleProgress = async (
 export const submitExercise = async (
   exerciseId: string,
   userId: string,
-  answers: unknown
+  answers: unknown,
 ): Promise<SubmitExerciseResponse> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -385,7 +383,7 @@ export const submitExercise = async (
 
     const { data } = await apiClient.post<ApiResponse<SubmitExerciseResponse>>(
       '/progress/submissions/submit',
-      backendPayload
+      backendPayload,
     );
 
     return data.data;
@@ -407,7 +405,7 @@ export const getProgress = async (userId: string): Promise<UserProgressOverview>
     }
 
     const { data } = await apiClient.get<ApiResponse<UserProgressOverview>>(
-      API_ENDPOINTS.educational.userProgress(userId)
+      API_ENDPOINTS.educational.userProgress(userId),
     );
 
     return data.data;
@@ -425,7 +423,7 @@ export const getProgress = async (userId: string): Promise<UserProgressOverview>
  */
 export const getModuleProgress = async (
   userId: string,
-  moduleId: string
+  moduleId: string,
 ): Promise<ModuleProgressDetail> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -433,7 +431,7 @@ export const getModuleProgress = async (
     }
 
     const { data } = await apiClient.get<ApiResponse<ModuleProgressDetail>>(
-      API_ENDPOINTS.educational.moduleProgress(userId, moduleId)
+      API_ENDPOINTS.educational.moduleProgress(userId, moduleId),
     );
 
     return data.data;
@@ -451,7 +449,7 @@ export const getModuleProgress = async (
  */
 export const getExerciseAttempts = async (
   userId: string,
-  filters?: { exerciseId?: string; moduleId?: string }
+  filters?: { exerciseId?: string; moduleId?: string },
 ): Promise<ExerciseAttempt[]> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -482,7 +480,7 @@ export const getExerciseAttempts = async (
 
     const { data } = await apiClient.get<ApiResponse<ExerciseAttempt[]>>(
       API_ENDPOINTS.educational.exerciseAttempts(userId),
-      { params: filters }
+      { params: filters },
     );
 
     return data.data;
@@ -498,10 +496,7 @@ export const getExerciseAttempts = async (
  * @param limit - Optional limit (default: 10)
  * @returns List of recent activities
  */
-export const getUserActivities = async (
-  userId: string,
-  limit = 10
-): Promise<Activity[]> => {
+export const getUserActivities = async (userId: string, limit = 10): Promise<Activity[]> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 400));
@@ -523,7 +518,7 @@ export const getUserActivities = async (
 
     const { data } = await apiClient.get<ApiResponse<Activity[]>>(
       API_ENDPOINTS.educational.userActivities(userId),
-      { params: { limit } }
+      { params: { limit } },
     );
 
     return data.data;
@@ -552,7 +547,7 @@ export const getActivityStats = async (userId: string): Promise<ActivityStats> =
     }
 
     const { data } = await apiClient.get<ApiResponse<ActivityStats>>(
-      API_ENDPOINTS.educational.activityStats(userId)
+      API_ENDPOINTS.educational.activityStats(userId),
     );
 
     return data.data;
@@ -572,7 +567,7 @@ export const getActivityStats = async (userId: string): Promise<ActivityStats> =
 export const getUserActivitiesByType = async (
   userId: string,
   type: 'exercise_completed' | 'achievement_unlocked' | 'module_completed',
-  limit = 10
+  limit = 10,
 ): Promise<Activity[]> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -582,7 +577,7 @@ export const getUserActivitiesByType = async (
 
     const { data } = await apiClient.get<ApiResponse<Activity[]>>(
       API_ENDPOINTS.educational.activitiesByType(userId, type),
-      { params: { limit } }
+      { params: { limit } },
     );
 
     return data.data;
@@ -626,7 +621,7 @@ export const getUserDashboard = async (userId: string): Promise<UserDashboard> =
     }
 
     const { data } = await apiClient.get<ApiResponse<UserDashboard>>(
-      API_ENDPOINTS.educational.userDashboard(userId)
+      API_ENDPOINTS.educational.userDashboard(userId),
     );
 
     return data.data;

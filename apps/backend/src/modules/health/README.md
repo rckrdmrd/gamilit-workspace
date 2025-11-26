@@ -6,7 +6,7 @@ Production-ready health check endpoint for monitoring and load balancer integrat
 
 ```bash
 # Check health
-curl http://localhost:3000/api/health | jq '.'
+curl http://localhost:3006/api/health | jq '.'
 
 # Expected response (healthy)
 {
@@ -64,7 +64,7 @@ npm test -- health.controller.spec.ts
 livenessProbe:
   httpGet:
     path: /api/health
-    port: 3000
+    port: 3006
   periodSeconds: 10
 ```
 
@@ -72,7 +72,7 @@ livenessProbe:
 
 ```yaml
 healthcheck:
-  test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+  test: ["CMD", "curl", "-f", "http://localhost:3006/api/health"]
   interval: 30s
 ```
 
@@ -86,7 +86,7 @@ health_check uri=/api/health;
 
 Full documentation available in:
 - `/orchestration/agentes/backend/backend-health-endpoint-2025-11-23/REPORTE-HEALTH-ENDPOINT.md`
-- Swagger UI: `http://localhost:3000/api/docs`
+- Swagger UI: `http://localhost:3006/api/docs`
 
 ## Performance
 

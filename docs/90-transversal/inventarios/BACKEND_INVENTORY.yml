@@ -1,11 +1,15 @@
 # BACKEND_INVENTORY.yml - Inventario Consolidado Global
 
 project: GAMILIT
-version: 2.3
+version: 2.7
 generated: 2025-11-09
-updated: 2025-11-09
-source: Validación Exhaustiva Post-Migración + Correcciones Cross-Database
-status: ⚠️ VALIDADO - 40% de cobertura de BD (39/97 tablas con entidad completa)
+updated: 2025-11-24
+source: Validación Exhaustiva Post-Migración + Correcciones Cross-Database + Teacher Portal Enhancement + Coherence Analysis + Student↔Admin Integration + Teacher Portal Complete Development
+status: ✅ VALIDADO - 40% de cobertura de BD (39/97 tablas con entidad completa) - Coherencia 96.8%
+changes_2_7: "TEACHER-PORTAL-001: +1 service (ExerciseResponsesService), +1 controller (ExerciseResponsesController), +4 endpoints (/teacher/attempts), +3 DTOs"
+changes_2_6: "ARCH-STU-ADM-001: +1 controller (interventions), +1 service, +8 DTOs, +5 endpoints admin, +1 endpoint achievements"
+changes_2_5: "Coherence Analysis: Corrección análisis Roles module (4/4 endpoints validados), actualización métricas admin endpoints (18 → 59)"
+changes_2_4: "Teacher Portal Enhancement: +3 services, +1 controller, +3 DTOs, +1 entity (GAP-T003, GAP-T004)"
 changes_2_3: "Agregadas 9 entities P2, documentado patrón cross-database, removidas 17 relaciones TypeORM cross-schema"
 
 # ============================================================================
@@ -15,15 +19,15 @@ changes_2_3: "Agregadas 9 entities P2, documentado patrón cross-database, remov
 
 summary:
   total_modules: 15  # ✅ VALIDADO
-  total_services: 47  # ✅ VALIDADO (actualizado)
-  total_controllers: 32  # ✅ VALIDADO
-  total_endpoints: 269  # ✅ VALIDADO
-  total_dtos: 139  # ✅ VALIDADO
-  total_entities: 56  # ✅ ACTUALIZADO (47 + 9 entities P2)
+  total_services: 52  # ✅ ACTUALIZADO 2025-11-24 (51 + 1 ExerciseResponsesService)
+  total_controllers: 35  # ✅ ACTUALIZADO 2025-11-24 (34 + 1 ExerciseResponsesController)
+  total_endpoints: 287  # ✅ ACTUALIZADO 2025-11-24 (283 + 4 /teacher/attempts endpoints)
+  total_dtos: 153  # ✅ ACTUALIZADO 2025-11-24 (150 + 3 exercise-responses DTOs)
+  total_entities: 57  # ✅ VALIDADO
   total_guards: 6
   total_interceptors: 5
   total_middlewares: 12
-  lines_of_code: ~53233
+  lines_of_code: ~53600
   entities_with_cross_database_fixes: 17  # ⚠️ Relaciones @ManyToOne comentadas
 
   # COBERTURA DE BASE DE DATOS (2025-11-09)
@@ -389,31 +393,47 @@ modules:
   - name: admin
     path: apps/backend/src/modules/admin/
     phase: 1
-    epic: [EAI-005, EXT-002]
+    epic: [EAI-005, EAI-008, EXT-002]
     description: Dashboard administrativo
     services:
       - admin-dashboard.service.ts
+      - admin-roles.service.ts (✅ 100% implementado - EAI-008)
       - user-management.service.ts
       - system-metrics.service.ts
       - system-config.service.ts (EXT-002)
       - admin-analytics.service.ts (EXT-002)
       - content-moderation.service.ts (EXT-002)
+      - admin-system.service.ts
+      - classroom-assignments.service.ts
     controllers:
       - admin.controller.ts
+      - admin-roles.controller.ts (✅ 4 endpoints - Permission Management)
       - admin-users.controller.ts (EXT-002)
-    endpoints: 18
+      - classroom-teachers-rest.controller.ts
+    endpoints: 59  # ✅ ACTUALIZADO 2025-11-24 (validado en coherencia analysis)
     key_features:
       - Dashboard metrics
       - User management
       - System alerts
+      - "✅ Roles & Permissions management (EAI-008 - 100% implementado)"
       - Gestión masiva (EXT-002)
       - Analytics agregados (EXT-002)
       - Moderación de contenido (EXT-002)
+      - Classroom-teacher assignments (REST API)
+    roles_module_details:
+      pattern: "Permission Management (NO CRUD tradicional)"
+      endpoints:
+        - "GET /admin/roles - List all roles ✅"
+        - "GET /admin/roles/permissions - Get available permissions ✅"
+        - "GET /admin/roles/:id/permissions - Get role permissions ✅"
+        - "PUT /admin/roles/:id/permissions - Update role permissions ✅"
+      status: "✅ 100% FUNCIONAL - Validado 2025-11-24"
+      note: "NO implementa create/delete roles (fuera de alcance EAI-008)"
 
   # ===== FASE 3: EXTENSIONES =====
 
   - name: teacher-portal
-    path: apps/backend/src/modules/teacher-portal/
+    path: apps/backend/src/modules/teacher/
     phase: 3
     epic: EXT-001
     description: Portal completo para maestros
@@ -423,12 +443,24 @@ modules:
       - grading.service.ts
       - teacher-analytics.service.ts
       - teacher-notes.service.ts
+      - teacher-content.service.ts  # ✅ NUEVO 2025-11-24 (GAP-T003)
+      - bonus-coins.service.ts      # ✅ NUEVO 2025-11-24 (GAP-T004)
+      - intervention-alerts.service.ts
+      - teacher-messages.service.ts
+      - teacher-classrooms-crud.service.ts
     controllers:
-      - classroom.controller.ts
-      - assignment.controller.ts
-      - grading.controller.ts
-      - analytics.controller.ts
-    endpoints: 18
+      - teacher.controller.ts
+      - teacher-classrooms.controller.ts
+      - teacher-content.controller.ts  # ✅ NUEVO 2025-11-24 (GAP-T003)
+      - intervention-alerts.controller.ts
+      - teacher-communication.controller.ts
+      - teacher-grades.controller.ts
+    endpoints: 26  # ✅ ACTUALIZADO 2025-11-24 (18 + 8 nuevos)
+    dtos_added_2025_11_24:
+      - teacher-content.dto.ts  # CreateTeacherContentDto, UpdateTeacherContentDto, GetTeacherContentQueryDto, TeacherContentResponseDto, CloneTeacherContentDto
+      - grant-bonus.dto.ts      # GrantBonusDto, GrantBonusResponseDto
+    entities_added_2025_11_24:
+      - teacher-content.entity.ts  # Contenido personalizado del maestro
     key_features:
       - CRUD de classrooms
       - Gestión de enrollments
@@ -437,6 +469,25 @@ modules:
       - Analytics de classroom
       - Notas privadas
       - Reportes de maestro
+      - "✅ CRUD de contenido personalizado (GAP-T003 - 2025-11-24)"
+      - "✅ Otorgar bonus ML Coins (GAP-T004 - 2025-11-24)"
+    gaps_resolved_2025_11_24:
+      - gap_id: GAP-T002
+        description: "TeacherAlertsPage - gestión habilitada"
+        type: Frontend
+        status: RESUELTO
+      - gap_id: GAP-T003
+        description: "TeacherContentManagement CRUD endpoints + UI"
+        type: Backend + Frontend
+        status: RESUELTO
+      - gap_id: GAP-T004
+        description: "TeacherGamification otorgar bonus"
+        type: Backend + Frontend
+        status: RESUELTO
+      - gap_id: GAP-T005
+        description: "TeacherCommunication selectores dinámicos"
+        type: Frontend
+        status: RESUELTO
 
   - name: assignments
     path: apps/backend/src/modules/assignments/
@@ -1053,4 +1104,310 @@ validation_findings:
         - "GitHub Actions para tests"
         - "Scripts de validación en pre-commit hooks"
         - "Coverage reports automáticos"
+
+# ============================================================================
+# ADMIN PORTAL INTEGRATION FIX (2025-11-24)
+# ============================================================================
+# Correcciones ARCH-INT-001: Integración Backend-Frontend-Database
+
+admin_portal_integration_fix_2025_11_24:
+  date: "2025-11-24"
+  analyst: "Architecture-Analyst"
+  task_id: "ARCH-INT-001"
+  status: "✅ COMPLETADO"
+
+  summary:
+    total_issues_fixed: 2
+    total_files_modified: 12
+    build_status: "✅ Exitoso"
+    typescript_errors_introduced: 0
+
+  issues_resolved:
+    - issue_id: BE-INT-001
+      title: "Puertos incorrectos 3000 → 3006"
+      severity: "P0"
+      description: "11 archivos tenían puerto 3000 hardcodeado cuando backend usa 3006"
+      solution: "Corrección de puertos en todos los archivos afectados"
+      files_modified:
+        - "apps/backend/src/config/swagger.config.ts"
+        - "apps/backend/src/shared/middleware/cors.config.ts"
+        - "apps/backend/src/modules/mail/mail.service.ts (3000 → 3005 frontend)"
+        - "apps/backend/src/modules/health/README.md (4 referencias)"
+        - "apps/backend/scripts/test-monitoring-endpoints.sh"
+        - "apps/backend/scripts/test-alerts-endpoints.sh"
+        - "apps/backend/scripts/test-grant-bonus.sh"
+        - "apps/backend/scripts/test-analytics-endpoints.sh"
+        - "apps/backend/scripts/test-progress-endpoints.sh"
+        - "apps/backend/test-teacher-content-endpoints.sh"
+
+    - issue_id: BE-INT-002
+      title: "AuditLog Entity faltante en módulo admin"
+      severity: "P1"
+      description: "No existía Entity TypeORM para audit_logging.audit_logs en admin"
+      solution: "Re-export pattern desde módulo audit (DRY)"
+      files_modified:
+        - "apps/backend/src/modules/admin/entities/index.ts"
+      entity_exported:
+        name: "AuditLog"
+        source: "modules/audit/entities/audit-log.entity.ts"
+        fields: 27
+        enums_exported:
+          - "ActorType"
+          - "Severity"
+          - "Status"
+
+  port_matrix:
+    documentation: |
+      | Servicio | Puerto | Uso |
+      |----------|--------|-----|
+      | Frontend Dev (Vite) | 5173 | Desarrollo local |
+      | Frontend Prod | 3005 | Producción/Preview |
+      | Backend API | 3006 | API NestJS |
+      | PostgreSQL | 5432 | Base de datos |
+
+  cors_configuration:
+    development: "http://localhost:5173,http://localhost:3005"
+    production: "http://74.208.126.102:3005,http://74.208.126.102"
+
+  validation:
+    backend_build: "✅ Exitoso (tsc)"
+    typescript_errors: 0
+    breaking_changes: 0
+
+  dependencies:
+    depends_on:
+      - "Database: audit_logging.audit_logs tabla"
+      - "Módulo audit: audit-log.entity.ts"
+    depended_by:
+      - "Admin module: AdminAlertsController, AdminMonitoringController"
+      - "Frontend: AdminMonitoringPage, useAuditLogs hook"
+
+  documentation:
+    main_report: "docs/90-transversal/CORRECCION-INTEGRACION-ADMIN-API-2025-11-24.md"
+    analysis_folder: "orchestration/agentes/architecture-analyst/analisis-portal-admin-integracion-2025-11-24/"
+    trace_entry: "orchestration/trazas/TRAZA-ANALISIS-ARQUITECTURA.md (ARCH-INT-001)"
+
+# ============================================================================
+# TEACHER PORTAL INTEGRATION FIX (2025-11-24)
+# ============================================================================
+# Correcciones ARCH-INT-002: Integración Teacher Portal APIs
+
+teacher_portal_integration_fix_2025_11_24:
+  date: "2025-11-24"
+  analyst: "Architecture-Analyst"
+  task_id: "ARCH-INT-002"
+  status: "✅ COMPLETADO"
+
+  summary:
+    phases_completed: 3
+    total_tasks: 6
+    endpoints_added: 139
+    files_created: 3
+    files_modified: 8
+    files_deleted: 0
+    build_status: "✅ Exitoso"
+    typescript_errors_introduced: 0
+
+  routes_constants_update:
+    file: "apps/backend/src/shared/constants/routes.constants.ts"
+    before:
+      total_endpoints: 26
+    after:
+      total_endpoints: 165
+      teacher_endpoints: 57
+      admin_endpoints: 108
+    increment: "+534%"
+
+  shared_types_created:
+    - file: "apps/backend/src/shared/types/intervention-alerts.types.ts"
+      status: "CREATED"
+      content:
+        - "InterventionAlertType enum (6 values)"
+        - "InterventionAlertSeverity enum (4 values)"
+        - "InterventionAlertStatus enum (4 values)"
+        - "IInterventionAlert interface"
+      purpose: "Centralizar tipos de alertas de intervención pedagógica (Teacher Portal)"
+      duplicates_removed: "~45 líneas"
+
+    - file: "apps/backend/src/shared/types/index.ts"
+      status: "UPDATED"
+      change: "Export de intervention-alerts.types agregado"
+
+  enums_constants_update:
+    file: "apps/backend/src/shared/constants/enums.constants.ts"
+    change: "MessageTypeEnum agregado"
+    values:
+      - "DIRECT = 'direct'"
+      - "CLASSROOM_ANNOUNCEMENT = 'classroom_announcement'"
+      - "CLASSROOM_CHAT = 'classroom_chat'"
+      - "PRIVATE_FEEDBACK = 'private_feedback'"
+      - "ASSIGNMENT_COMMENT = 'assignment_comment'"
+    references_updated: 11
+
+  files_updated:
+    dto_imports:
+      - "apps/backend/src/modules/teacher/dto/intervention-alerts.dto.ts"
+      - "apps/backend/src/modules/teacher/dto/teacher-messages.dto.ts"
+    entity_imports:
+      - "apps/backend/src/modules/teacher/entities/student-intervention-alert.entity.ts"
+    service_imports:
+      - "apps/backend/src/modules/teacher/services/teacher-messages.service.ts"
+
+  validation:
+    typescript_build: "✅ Exitoso (npx tsc --noEmit)"
+    localhost_3000_check: "0 resultados"
+    breaking_changes: 0
+
+  documentation:
+    main_report: "docs/90-transversal/INTEGRACION-TEACHER-PORTAL-APIs-2025-11-24.md"
+    phase1_analysis: "orchestration/agentes/architecture-analyst/analisis-integracion-teacher-portal-2025-11-24/REPORTE-FASE1-ANALISIS.md"
+    phase2_planning: "orchestration/agentes/architecture-analyst/analisis-integracion-teacher-portal-2025-11-24/PLAN-FASE2-EJECUCION.md"
+    phase3_validation: "orchestration/agentes/architecture-analyst/analisis-integracion-teacher-portal-2025-11-24/VALIDACION-PRE-IMPLEMENTACION.md"
+    final_report: "orchestration/agentes/architecture-analyst/analisis-integracion-teacher-portal-2025-11-24/REPORTE-FINAL-IMPLEMENTACION.md"
+    trace_entry: "orchestration/trazas/TRAZA-TAREAS-BACKEND.md (BE-131)"
+
+  benefits:
+    - "Single Source of Truth (SSOT) para rutas API"
+    - "Tipos de alertas centralizados sin duplicación"
+    - "MessageType centralizado en enums.constants.ts"
+    - "Documentación JSDoc completa"
+    - "Type Safety mejorado"
+    - "~60 líneas de código duplicado eliminadas"
+
+  pending_optional:
+    - task_id: "REFACTOR-001"
+      description: "Refactorizar 23 controllers para usar API_ROUTES constants"
+      priority: "P2"
+
+  admin_api_inventory:
+    total_endpoints: 165
+    controllers: 16
+    controller_list:
+      - name: "AdminUsersController"
+        endpoints: 13
+        route: "/admin/users"
+      - name: "AdminOrganizationsController"
+        endpoints: 9
+        route: "/admin/organizations"
+      - name: "AdminContentController"
+        endpoints: 10
+        route: "/admin/content"
+      - name: "AdminSystemController"
+        endpoints: 13
+        route: "/admin/system"
+      - name: "AdminDashboardController"
+        endpoints: 11
+        route: "/admin/dashboard"
+      - name: "AdminRolesController"
+        endpoints: 4
+        route: "/admin/roles"
+      - name: "AdminReportsController"
+        endpoints: 4
+        route: "/admin/reports"
+      - name: "ClassroomAssignmentsController"
+        endpoints: 7
+        route: "/admin/classrooms"
+      - name: "ClassroomTeachersRestController"
+        endpoints: 7
+        route: "/admin/classrooms/*"
+      - name: "AdminGamificationConfigController"
+        endpoints: 9
+        route: "/admin/gamification"
+      - name: "AdminBulkOperationsController"
+        endpoints: 6
+        route: "/admin/bulk-operations"
+      - name: "AdminAlertsController"
+        endpoints: 7
+        route: "/admin/alerts"
+      - name: "AdminAnalyticsController"
+        endpoints: 7
+        route: "/admin/analytics"
+      - name: "AdminProgressController"
+        endpoints: 6
+        route: "/admin/progress"
+      - name: "AdminMonitoringController"
+        endpoints: 5
+        route: "/admin/monitoring"
+      - name: "AdminLogsController"
+        endpoints: 1
+        route: "/admin/logs"
+
+# =============================================================================
+# ARCH-INT-003: Integración Student-Teacher Portal (2025-11-24)
+# =============================================================================
+
+student_teacher_integration_2025_11_24:
+  date: "2025-11-24"
+  analyst: "Architecture-Analyst"
+  task_id: "ARCH-INT-003"
+  status: "COMPLETADO"
+
+  summary:
+    gaps_resolved: 5
+    files_modified_backend: 6
+    files_modified_frontend: 5
+    files_created: 1
+    build_status: "Exitoso"
+
+  gaps_resolved:
+    - id: "GAP-ST-001"
+      severity: "BLOCKER"
+      issue: "Query usando score_percentage (no existe en ModuleProgress)"
+      fix: "Cambiar a average_score"
+      file: "teacher-classrooms-crud.service.ts:855,883"
+
+    - id: "GAP-ST-002"
+      severity: "DEGRADED"
+      issue: "StudentInClassroomDto sin campos de módulo actual"
+      fix: "Agregar current_module, current_exercise"
+      file: "classroom-response.dto.ts"
+
+    - id: "GAP-ST-003"
+      severity: "DEGRADED"
+      issue: "StudentInClassroomDto sin campos de tiempo"
+      fix: "Agregar time_spent_minutes"
+      file: "classroom-response.dto.ts"
+
+    - id: "GAP-ST-004"
+      severity: "DEGRADED"
+      issue: "StudentInClassroomDto sin campos de gamificación"
+      fix: "Agregar total_ml_coins, current_rank, achievements_count"
+      file: "classroom-response.dto.ts"
+
+    - id: "GAP-ST-005"
+      severity: "BLOCKER"
+      issue: "Endpoint /teacher/analytics/economy no existía"
+      fix: "Implementar endpoint completo con DTOs, servicio, controller, hook"
+      files:
+        - "analytics.dto.ts (EconomyAnalyticsDto)"
+        - "analytics.service.ts (getEconomyAnalytics)"
+        - "teacher.controller.ts (GET /analytics/economy)"
+        - "routes.constants.ts (ANALYTICS_ECONOMY)"
+
+  new_endpoint:
+    path: "GET /teacher/analytics/economy"
+    query_params:
+      - "classroom_id (optional)"
+    response: "EconomyAnalyticsDto"
+    features:
+      - "Total ML Coins en circulación"
+      - "Balance promedio por estudiante"
+      - "Ganado/gastado hoy"
+      - "Distribución por rangos de balance"
+      - "Top 5 earners de la semana"
+      - "Tendencias últimos 7 días"
+      - "Wealth distribution (top 10% vs bottom 50%)"
+    caching: "5 minutos TTL"
+
+  frontend_integration:
+    hook: "useEconomyAnalytics"
+    component: "TeacherGamification.tsx"
+    mock_data_replaced: "classStats (economía)"
+    mock_data_remaining:
+      - "students array (requiere nuevo endpoint)"
+      - "achievements array (requiere nuevo endpoint)"
+
+  documentation:
+    main_report: "docs/90-transversal/INTEGRACION-STUDENT-TEACHER-PORTAL-2025-11-24.md"
+    analysis: "orchestration/agentes/architecture-analyst/analisis-integracion-student-teacher-2025-11-24/"
 

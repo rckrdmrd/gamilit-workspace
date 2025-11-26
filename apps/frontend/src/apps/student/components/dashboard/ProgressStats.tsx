@@ -1,13 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import {
-  BookOpen,
-  Target,
-  TrendingUp,
-  Clock,
-  Flame,
-  Award,
-} from 'lucide-react';
+import { BookOpen, Target, TrendingUp, Clock, Flame, Award } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import type { ProgressData } from '../../hooks/useDashboardData';
 
@@ -21,10 +13,10 @@ export function ProgressStats({ data, loading }: ProgressStatsProps) {
     return (
       <DetectiveCard className="h-full">
         <div className="animate-pulse">
-          <div className="h-6 bg-detective-bg-secondary rounded w-1/2 mb-4" />
+          <div className="mb-4 h-6 w-1/2 rounded bg-detective-bg-secondary" />
           <div className="grid grid-cols-2 gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-20 bg-detective-bg-secondary rounded" />
+              <div key={i} className="h-20 rounded bg-detective-bg-secondary" />
             ))}
           </div>
         </div>
@@ -86,22 +78,11 @@ export function ProgressStats({ data, loading }: ProgressStatsProps) {
     },
   ];
 
-  const formatTime = (minutes: number): string => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    if (hours > 0) {
-      return `${hours}h ${mins}m`;
-    }
-    return `${mins}m`;
-  };
-
   return (
     <DetectiveCard className="h-full">
-      <h3 className="text-lg font-bold text-detective-text mb-4">
-        Estadísticas de Progreso
-      </h3>
+      <h3 className="mb-4 text-lg font-bold text-detective-text">Estadísticas de Progreso</h3>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
         {stats.map((stat, index) => {
           const Icon = stat.icon;
 
@@ -113,28 +94,26 @@ export function ProgressStats({ data, loading }: ProgressStatsProps) {
               whileHover={{ scale: 1.05, y: -4 }}
               transition={{
                 delay: index * 0.05,
-                duration: 0.2
+                duration: 0.2,
               }}
-              className={`p-4 ${stat.bgGradient} rounded-lg border-2 ${stat.borderColor} shadow-md hover:shadow-xl transition-all cursor-pointer`}
+              className={`p-4 ${stat.bgGradient} rounded-lg border-2 ${stat.borderColor} cursor-pointer shadow-md transition-all hover:shadow-xl`}
             >
-              <div className="flex items-start justify-between mb-2">
-                <div className={`p-2 rounded-lg bg-white/70 ${stat.color}`}>
-                  <Icon className={`w-5 h-5`} />
+              <div className="mb-2 flex items-start justify-between">
+                <div className={`rounded-lg bg-white/70 p-2 ${stat.color}`}>
+                  <Icon className={`h-5 w-5`} />
                 </div>
                 {stat.progress !== undefined && (
-                  <span className="text-xs font-bold text-detective-text bg-white/70 px-2 py-1 rounded-full">
+                  <span className="rounded-full bg-white/70 px-2 py-1 text-xs font-bold text-detective-text">
                     {Math.round(stat.progress)}%
                   </span>
                 )}
               </div>
 
-              <p className="text-2xl font-bold text-detective-text mb-1">
-                {stat.value}
-              </p>
-              <p className="text-xs text-detective-text-secondary font-medium">{stat.label}</p>
+              <p className="mb-1 text-2xl font-bold text-detective-text">{stat.value}</p>
+              <p className="text-xs font-medium text-detective-text-secondary">{stat.label}</p>
 
               {stat.progress !== undefined && (
-                <div className="mt-3 h-2 bg-white/70 rounded-full overflow-hidden shadow-inner">
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/70 shadow-inner">
                   <motion.div
                     className={`h-full ${stat.color.replace('text-', 'bg-')} rounded-full shadow-sm`}
                     initial={{ width: 0 }}
@@ -153,14 +132,12 @@ export function ProgressStats({ data, loading }: ProgressStatsProps) {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-4 p-3 bg-gradient-to-r from-detective-gold/10 to-detective-orange/10 rounded-lg border border-detective-gold/20"
+          className="mt-4 rounded-lg border border-detective-gold/20 bg-gradient-to-r from-detective-gold/10 to-detective-orange/10 p-3"
         >
           <div className="flex items-center gap-2">
-            <Flame className="w-5 h-5 text-detective-gold" />
+            <Flame className="h-5 w-5 text-detective-gold" />
             <div>
-              <p className="text-sm font-semibold text-detective-text">
-                ¡Racha impresionante!
-              </p>
+              <p className="text-sm font-semibold text-detective-text">¡Racha impresionante!</p>
               <p className="text-xs text-detective-text-secondary">
                 Mantén tu racha para ganar bonificaciones extras
               </p>

@@ -6,6 +6,7 @@
 -- Returns: TABLE (old_rank, new_rank, rank_up, reward_coins)
 -- Created: 2025-11-02
 -- Updated: 2025-11-11 - Refactorizado para usar maya_rank ENUM y leer de maya_ranks table
+-- Updated: 2025-11-24 - Fixed INSERT to ml_coins_transactions to include balance_before and balance_after
 -- =====================================================
 
 CREATE OR REPLACE FUNCTION gamification_system.update_user_rank(
@@ -22,6 +23,8 @@ DECLARE
     v_old_rank gamification_system.maya_rank;
     v_new_rank gamification_system.maya_rank;
     v_coins_reward INTEGER := 0;
+    v_current_balance INTEGER;
+    v_new_balance INTEGER;
 BEGIN
     -- Obtener XP y rango actual
     SELECT COALESCE(us.total_xp, 0), COALESCE(ur.current_rank, 'Ajaw'::gamification_system.maya_rank)
@@ -52,10 +55,18 @@ BEGIN
 
     -- Si hubo cambio de rango
     IF v_new_rank != v_old_rank THEN
+        -- Obtener balance actual ANTES de actualizar
+        SELECT COALESCE(ml_coins, 0) INTO v_current_balance
+        FROM gamification_system.user_stats
+        WHERE user_id = p_user_id;
+
+        -- Calcular nuevo balance
+        v_new_balance := v_current_balance + v_coins_reward;
+
         -- Actualizar coins en user_stats
         UPDATE gamification_system.user_stats
         SET
-            ml_coins = COALESCE(ml_coins, 0) + v_coins_reward,
+            ml_coins = v_new_balance,
             updated_at = NOW()
         WHERE user_id = p_user_id;
 
@@ -65,13 +76,15 @@ BEGIN
         ON CONFLICT (user_id)
         DO UPDATE SET current_rank = v_new_rank, updated_at = NOW();
 
-        -- Registrar transacción de coins
+        -- Registrar transacción de coins con balance_before y balance_after
         INSERT INTO gamification_system.ml_coins_transactions (
-            user_id, amount, transaction_type, description
+            user_id, amount, balance_before, balance_after, transaction_type, description
         ) VALUES (
             p_user_id,
             v_coins_reward,
-            'RANK_UP',
+            v_current_balance,
+            v_new_balance,
+            'earned_rank'::gamification_system.transaction_type,
             'Ascendiste al rango ' || v_new_rank
         );
     END IF;

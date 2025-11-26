@@ -1,0 +1,228 @@
+# Admin Monitoring Page - Architecture Diagram
+# ============================================
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         AdminMonitoringPage.tsx                         │
+│                                                                         │
+│  ┌───────────────────────────────────────────────────────────────────┐ │
+│  │  AdminLayout (wrapper)                                            │ │
+│  │  ┌──────────────────────────────────────────────────────────────┐ │ │
+│  │  │  Header: "Monitoreo del Sistema"                             │ │ │
+│  │  └──────────────────────────────────────────────────────────────┘ │ │
+│  │  ┌──────────────────────────────────────────────────────────────┐ │ │
+│  │  │  Tab Navigation (4 tabs)                                     │ │ │
+│  │  │  [Logs] [Métricas] [Error Tracking] [Alertas]               │ │ │
+│  │  └──────────────────────────────────────────────────────────────┘ │ │
+│  └───────────────────────────────────────────────────────────────────┘ │
+│                                                                         │
+│  Hooks Used:                                                            │
+│  ┌─────────────────────────────────────┐  ┌─────────────────────────┐ │
+│  │  useMonitoring() ✨ NEW             │  │  useAlerts() (existing) │ │
+│  │  ├─ metrics                         │  │  ├─ alerts              │ │
+│  │  ├─ errorStats                      │  │  ├─ stats               │ │
+│  │  ├─ recentErrors                    │  │  ├─ acknowledgeAlert()  │ │
+│  │  ├─ errorTrends                     │  │  └─ resolveAlert()      │ │
+│  │  └─ refreshAll()                    │  └─────────────────────────┘ │
+│  └─────────────────────────────────────┘                                │
+└─────────────────────────────────────────────────────────────────────────┘
+
+
+# Tab 1: LogsViewer (existing)
+┌─────────────────────────────────────────────────────────────────────────┐
+│                              LogsViewer.tsx                              │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │  Audit Log Table (authentication attempts)                        │  │
+│  │  Columns: User | Email | IP | Success | Timestamp | Actions       │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────┘
+
+
+# Tab 2: MetricsTab ✨ NEW
+┌─────────────────────────────────────────────────────────────────────────┐
+│                              MetricsTab.tsx                              │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │  Controls: [Auto-refresh toggle] [Manual Refresh] [Last Updated]  │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │  Metrics Grid (6 cards)                                           │  │
+│  │  ┌──────────────┬──────────────┬──────────────┐                  │  │
+│  │  │ Memory Usage │ CPU Load Avg │  Heap Usage  │                  │  │
+│  │  │   75.2%      │    1.23      │    65.8%     │                  │  │
+│  │  │ [Progress]   │ 1m/5m/15m    │  [Progress]  │                  │  │
+│  │  └──────────────┴──────────────┴──────────────┘                  │  │
+│  │  ┌──────────────┬──────────────┬──────────────┐                  │  │
+│  │  │Process Uptime│Active Handles│Active Requests│                  │  │
+│  │  │   5d 12h     │     142      │      8       │                  │  │
+│  │  └──────────────┴──────────────┴──────────────┘                  │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │  System Information                                               │  │
+│  │  Platform: Linux | Arch: x64 | Node: v20.x.x                     │  │
+│  │  Hostname: server-01 | System Uptime: 45d 8h                     │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────┘
+   └─ Data Source: GET /admin/monitoring/metrics
+
+
+# Tab 3: ErrorTrackingTab ✨ NEW
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          ErrorTrackingTab.tsx                            │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │  Controls: [Period: 24h|48h|7d] [Refresh]                         │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │  Statistics Grid (4 cards)                                        │  │
+│  │  ┌──────────────┬──────────────┬──────────────┬─────────────────┐ │  │
+│  │  │Total Errors  │Fatal Errors  │Days w/Errors │  Last Error     │ │  │
+│  │  │     156      │      12      │      5       │ 2h ago          │ │  │
+│  │  └──────────────┴──────────────┴──────────────┴─────────────────┘ │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │  Error Trends (Bar Chart)                                         │  │
+│  │  Nov 24 00:00 ▓▓▓▓▓▓▓▓░░░░░░░░  15 errors (2 fatal)              │  │
+│  │  Nov 24 01:00 ▓▓▓▓▓░░░░░░░░░░░   8 errors (1 fatal)              │  │
+│  │  Nov 24 02:00 ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░  23 errors (3 fatal)              │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │  Recent Errors Table                  [Filter: All|Error|Fatal]   │  │
+│  │  ┌─────────────────────────────────────────────────────────────┐  │  │
+│  │  │ [FATAL] Database connection lost - 15m ago [View] [Copy]    │  │  │
+│  │  │ [ERROR] API timeout on /api/users - 1h ago [View] [Copy]    │  │  │
+│  │  │ [ERROR] Validation failed: email - 2h ago [View] [Copy]     │  │  │
+│  │  └─────────────────────────────────────────────────────────────┘  │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────┘
+   ├─ Data Source: GET /admin/monitoring/errors/stats
+   ├─ Data Source: GET /admin/monitoring/errors/recent
+   └─ Data Source: GET /admin/monitoring/errors/trends
+
+
+# Tab 4: AlertasTab ✨ NEW
+┌─────────────────────────────────────────────────────────────────────────┐
+│                             AlertasTab.tsx                               │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │  Header: "Integración de Alertas"    [View All Alerts →]          │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │  Statistics Grid (4 cards)                                        │  │
+│  │  ┌──────────────┬──────────────┬──────────────┬─────────────────┐ │  │
+│  │  │ Open Alerts  │Acknowledged  │  Resolved    │  Avg Time       │ │  │
+│  │  │     23       │      8       │     142      │   2.3h          │ │  │
+│  │  └──────────────┴──────────────┴──────────────┴─────────────────┘ │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │  Recent Alerts (Last 10)             [Filter: All|Critical|...]   │  │
+│  │  ┌─────────────────────────────────────────────────────────────┐  │  │
+│  │  │ [CRITICAL] [OPEN] High CPU usage detected - 5m ago          │  │  │
+│  │  │ Description: CPU at 95% for 5+ minutes                      │  │  │
+│  │  │ Affected: 150 users | Module: API                           │  │  │
+│  │  │                        [Acknowledge] [Resolve]              │  │  │
+│  │  ├─────────────────────────────────────────────────────────────┤  │  │
+│  │  │ [HIGH] [ACKNOWLEDGED] Database latency spike - 1h ago       │  │  │
+│  │  │ Description: Query times > 1000ms                           │  │  │
+│  │  │ Acknowledged by: Admin User                                 │  │  │
+│  │  │                                     [Resolve]               │  │  │
+│  │  └─────────────────────────────────────────────────────────────┘  │  │
+│  │  [View All Alerts (23 total) →]                                   │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────┘
+   ├─ Data Source: GET /admin/alerts (reuses useAlerts hook)
+   ├─ Data Source: GET /admin/alerts/stats/summary
+   ├─ Action: PATCH /admin/alerts/:id/acknowledge
+   └─ Action: PATCH /admin/alerts/:id/resolve
+
+
+# API Architecture
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           adminAPI.ts (Updated)                          │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │  monitoring: {                                                    │  │
+│  │    // Existing                                                    │  │
+│  │    getHealth()                                                    │  │
+│  │    getMetrics()                                                   │  │
+│  │    getLogs()                                                      │  │
+│  │    getAuditLogs()                                                 │  │
+│  │    toggleMaintenance()                                            │  │
+│  │    // ✨ NEW                                                      │  │
+│  │    getExtendedMetrics()      → /admin/monitoring/metrics         │  │
+│  │    getMetricsHistory(params) → /admin/monitoring/metrics/history │  │
+│  │    getErrorStats(params)     → /admin/monitoring/errors/stats    │  │
+│  │    getRecentErrors(params)   → /admin/monitoring/errors/recent   │  │
+│  │    getErrorTrends(params)    → /admin/monitoring/errors/trends   │  │
+│  │  }                                                                │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────┘
+
+
+# TypeScript Interfaces (adminTypes.ts)
+┌─────────────────────────────────────────────────────────────────────────┐
+│                      New Interfaces (5 added) ✨                         │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │  interface ExtendedSystemMetrics {                                │  │
+│  │    timestamp: string;                                             │  │
+│  │    memory: { total_mb, used_mb, free_mb, usage_percent, ... }    │  │
+│  │    cpu: { user_ms, system_ms, load_average[], cores }            │  │
+│  │    system: { platform, arch, hostname, uptime_seconds, ... }     │  │
+│  │    process: { pid, uptime_seconds, active_handles, ... }         │  │
+│  │  }                                                                │  │
+│  │                                                                   │  │
+│  │  interface ErrorStats {                                           │  │
+│  │    total_errors, days_with_errors, fatal_errors, ...             │  │
+│  │  }                                                                │  │
+│  │                                                                   │  │
+│  │  interface RecentError {                                          │  │
+│  │    id, log_level, message, context, source, timestamp, ...       │  │
+│  │  }                                                                │  │
+│  │                                                                   │  │
+│  │  interface ErrorTrendDataPoint {                                  │  │
+│  │    time_bucket, error_count, fatal_count, ...                    │  │
+│  │  }                                                                │  │
+│  │                                                                   │  │
+│  │  interface MetricsHistoryDataPoint {                              │  │
+│  │    timestamp, memory_usage_percent, cpu_load, heap_usage_mb      │  │
+│  │  }                                                                │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────┘
+
+
+# Component Hierarchy
+AdminMonitoringPage
+├── AdminLayout (wrapper)
+│   ├── Header
+│   ├── Tab Navigation
+│   └── Tab Content
+│       ├── Tab 1: LogsViewer (existing)
+│       │   └── useAuditLogs hook
+│       ├── Tab 2: MetricsTab ✨ NEW
+│       │   ├── Auto-refresh controls
+│       │   ├── 6 Metric cards
+│       │   └── System info panel
+│       ├── Tab 3: ErrorTrackingTab ✨ NEW
+│       │   ├── Time period selector
+│       │   ├── 4 Statistics cards
+│       │   ├── Error trends chart
+│       │   └── Recent errors table
+│       └── Tab 4: AlertasTab ✨ NEW
+│           ├── 4 Statistics cards
+│           ├── Recent alerts list
+│           ├── Quick actions
+│           └── Link to full Alerts page
+│
+└── Hooks Used
+    ├── useAuth() - User authentication
+    ├── useMonitoring() ✨ NEW - Metrics & errors
+    └── useAlerts() - Alerts integration
+
+
+# Success Indicators
+✅ All 4 tabs functional
+✅ Real-time data display
+✅ Auto-refresh working
+✅ Interactive controls
+✅ Responsive design
+✅ TypeScript type-safe
+✅ Error handling complete
+✅ Loading states implemented
+✅ Design system compliance
+✅ Backend integration ready
+

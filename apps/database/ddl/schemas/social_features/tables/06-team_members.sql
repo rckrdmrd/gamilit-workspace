@@ -95,8 +95,9 @@ ALTER TABLE ONLY social_features.team_members
 -- Name: team_members team_members_user_id_fkey; Type: FK CONSTRAINT; Schema: social_features; Owner: postgres
 --
 
+-- FK corregida: auth.users -> auth_management.profiles (2025-11-26)
 ALTER TABLE ONLY social_features.team_members
-    ADD CONSTRAINT team_members_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+    ADD CONSTRAINT team_members_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth_management.profiles(id) ON DELETE CASCADE;
 
 
 --

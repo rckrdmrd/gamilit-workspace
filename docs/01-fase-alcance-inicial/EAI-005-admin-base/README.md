@@ -2,8 +2,35 @@
 
 **Proyecto:** GAMILIT
 **Versión:** 2.0 (RFC-0001)
-**Última actualización:** 2025-11-02
+**Última actualización:** 2025-11-24
 **Estado:** ✅ Completada (Fase 1 - Mes 1)
+
+---
+
+## ⚠️ NOTA IMPORTANTE SOBRE IMPLEMENTACIÓN REAL (2025-11-24)
+
+**Discrepancia Alcance vs Implementación:**
+
+El alcance definido en este documento (EAI-005) describe funcionalidades básicas de gestión de aulas que fueron **implementadas en el Portal de Maestros** (`/teacher/*`), NO en el Portal Admin (`/admin/*`).
+
+El **Portal de Administración** implementado (`/admin/*`) es un **sistema avanzado de Fase 2-3** que excede significativamente el alcance inicial documentado aquí. Incluye:
+- Dashboard ejecutivo con métricas del sistema
+- Gestión completa de usuarios y organizaciones (multi-tenant)
+- Aprobación de contenido y moderación
+- Configuración de gamificación
+- Sistema de reportes y auditoría
+- Monitoreo del sistema
+
+**Para más detalles:**
+- Ver: `docs/97-adr/ADR-017-admin-portal-avanzado-vs-alcance-inicial.md`
+- Ver: `orchestration/agentes/architecture-analyst/analisis-portal-admin-alcances-2025-11-24/`
+- Ver: `docs/90-transversal/inventarios/INVENTARIO-ADMIN-PORTAL-EXT-002.md`
+
+**Funcionalidades de EAI-005 (este documento) implementadas en:**
+- Portal de Maestros: `/teacher/classrooms/*` (US-ADM-001, US-ADM-002, US-ADM-004)
+- Portal Admin: Dashboard de actividad (US-ADM-007 parcial)
+
+Este documento se mantiene como referencia histórica del **alcance inicial planeado**.
 
 ---
 

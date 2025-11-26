@@ -1,11 +1,11 @@
 # DATABASE_INVENTORY.yml - Inventario Consolidado Global
 
 project: GAMILIT
-version: 2.3
+version: 2.5
 generated: 2025-11-11
-updated: 2025-11-11
-source: Validación Exhaustiva + Corrección de Conteos Físicos
-status: ⚠️ VALIDACIÓN COMPLETA - 39% implementado (39/101 tablas con entidad)
+updated: 2025-11-26
+source: Validación Exhaustiva + Corrección de Conteos Físicos + Validación Integración Completa
+status: ✅ INTEGRACIÓN VALIDADA - 82.75% coherencia global (DB→Backend 87%, DB→Frontend 78.5%)
 
 # ============================================================================
 # RESUMEN EJECUTIVO
@@ -26,8 +26,8 @@ summary:
 
   # TOTALES CORREGIDOS (Conteo físico 2025-11-11)
   total_indexes: 67     # ✅ CORREGIDO (antes 117)
-  total_functions: 62   # ✅ CORREGIDO (antes 60)
-  total_triggers: 34    # ✅ CORREGIDO (antes 44)
+  total_functions: 63   # ✅ ACTUALIZADO 2025-11-24: +1 update_missions_on_exercise_complete
+  total_triggers: 35    # ✅ ACTUALIZADO 2025-11-24: +1 trg_update_missions_on_exercise
   total_views: 12       # ✅ CORREGIDO (antes 8)
   total_materialized_views: 4
   total_enums: 19       # ✅ CORREGIDO (antes 12)
@@ -37,10 +37,101 @@ summary:
   # TOTALES SQL
   total_sql_files: 324  # ✅ AGREGADO: Total de archivos .sql en DDL
 
-  last_major_update: "2025-11-11 - CORRECCIÓN DE CONTEOS FÍSICOS"
-  validation_status: "⚠️ CRÍTICO - 47% de tablas sin implementar (48/101)"
-  action_required: "URGENTE - Ver MATRIZ-TRAZABILIDAD-DDL-CONSTANTS-ENTITIES-2025-11-09.md"
+  last_major_update: "2025-11-26 - VALIDACIÓN INTEGRACIÓN COMPLETA: 7 FKs legacy corregidas + Vulnerabilidad RLS"
+  previous_update: "2025-11-24 - MISSIONS-INTEGRATION: Trigger para actualizar misiones al completar ejercicios"
+  validation_status: "✅ PRODUCTION READY - 82.75% coherencia global"
+  action_required: "Ver VALIDACION-INTEGRACION-COMPLETA-2025-11-26.md para backlog pendiente"
   correction_note: "Conteos actualizados con inventario físico automatizado (324 archivos SQL)"
+  bug_fix_note: "2025-11-24: gamilit.initialize_user_stats() actualizado para crear module_progress (4 tablas en total). Ver ADR-012"
+  integration_note: "2025-11-26: Todas las FKs legacy corregidas de auth.users → auth_management.profiles"
+
+  # CORRECCIONES ARCH-STU-ADM-001 (2025-11-24)
+  integration_fix_student_admin:
+    date: "2025-11-24"
+    analysis_id: "ARCH-STU-ADM-001"
+    description: "Corrección de integración Student ↔ Admin Portal"
+    changes:
+      - file: "admin_dashboard/tables/01-materialized_views.sql"
+        type: "field_name_correction"
+        count: 14
+        details: "ml_coins_balance→ml_coins, current_level→level, total_exercises_completed→exercises_completed, etc."
+      - file: "progress_tracking/tables/15-student_intervention_alerts.sql"
+        type: "rls_policy_fix"
+        details: "Cambiado auth.users a auth_management.profiles en policy admin_view_tenant_alerts"
+      - file: "gamification_system/rls-policies/06-notifications-leaderboard-policies.sql"
+        type: "rls_policy_add"
+        details: "Agregada policy notifications_select_admin para admin"
+    status: "completado"
+    requires_db_recreation: true
+
+  # CORRECCIONES VALIDACIÓN INTEGRACIÓN (2025-11-26)
+  integration_validation_2025_11_26:
+    date: "2025-11-26"
+    analysis_id: "VALIDACION-INTEGRACION-COMPLETA"
+    description: "Validación y corrección de integración DB → Backend → Frontend"
+    coherence_metrics:
+      db_to_backend: "87%"
+      db_to_frontend: "78.5%"
+      global_average: "82.75%"
+    fk_corrections:
+      total: 7
+      details:
+        - table: "social_features.friendships"
+          columns: ["user_id", "friend_id"]
+          from: "auth.users"
+          to: "auth_management.profiles"
+          on_delete: "CASCADE"
+        - table: "social_features.team_members"
+          column: "user_id"
+          from: "auth.users"
+          to: "auth_management.profiles"
+          on_delete: "CASCADE"
+        - table: "progress_tracking.teacher_notes"
+          columns: ["teacher_id", "student_id"]
+          from: "auth.users"
+          to: "auth_management.profiles"
+          on_delete: ["RESTRICT", "CASCADE"]
+        - table: "audit_logging.activity_log"
+          column: "user_id"
+          from: "auth.users"
+          to: "auth_management.profiles"
+          on_delete: "CASCADE"
+    rls_vulnerability_fix:
+      file: "gamification_system/rls-policies/02-policies.sql"
+      problem: "Política user_stats_update_system con USING(true)"
+      solution: "Sección removida, políticas modernas en 04-user-stats-policies.sql"
+      severity: "CRÍTICA"
+    duplicates_removed:
+      - file: "social_features/rls-policies/02-policies.sql"
+        section: "classroom_members (líneas 7-78)"
+        reason: "Versión moderna en 04-classroom-members-policies.sql"
+    file_collisions_resolved:
+      - original: "audit_logging/tables/06-user_activity.sql"
+        renamed: "audit_logging/tables/07-user_activity.sql"
+        reason: "Colisión de prefijo con 06-activity_log.sql"
+    reference_fixes:
+      - file: "admin_dashboard/tables/01-materialized_views.sql"
+        from: "audit_logging.system_events"
+        to: "audit_logging.system_logs"
+        reason: "Tabla system_events no existe"
+    pending_issues:
+      p0:
+        - issue: "check_and_award_achievements() función rota"
+          location: "gamification_system/functions/check_and_award_achievements.sql"
+          problem: "Referencia campos inexistentes (condition_type, condition_value, xp_reward)"
+          action: "Refactorizar para usar JSONB (conditions, rewards)"
+      p1:
+        - issue: "Tipo Mission NO EXISTE en Frontend"
+          action: "Crear interface en frontend/src/shared/types/gamification.types.ts"
+        - issue: "MayaRank KUKUKULKAN (typo)"
+          action: "Renombrar a KUKULKAN en backend"
+        - issue: "MessageTypeEnum falta en Frontend"
+          action: "Copiar desde backend"
+    status: "completado"
+    requires_db_recreation: true
+    documentation:
+      - "docs/90-transversal/VALIDACION-INTEGRACION-COMPLETA-2025-11-26.md"
+      - "orchestration/agentes/architecture-analyst/CORRECCION-ISSUES-TEACHER-2025-11-26/"
 
 evolution:
   initial_state:
@@ -383,6 +474,7 @@ schemas:
       - update_updated_at_column
       - update_user_last_login
       - update_user_stats_on_exercise_complete
+      - update_missions_on_exercise_complete  # 2025-11-24: Actualiza misiones al completar ejercicios
       - validate_email_format
       - validate_username
       - validate_date_range

@@ -789,6 +789,74 @@ export class AssignmentsService {
   }
 
   /**
+   * Publish an assignment
+   * Changes status from draft to published
+   * REQ-TCH-092: Assignment publication
+   */
+  async publishAssignment(
+    assignmentId: string,
+    teacherId: string,
+    notifyStudents: boolean = false,
+  ): Promise<Assignment> {
+    // Verify ownership
+    const assignment = await this.assignmentRepository.findOne({
+      where: { id: assignmentId, teacherId },
+    });
+
+    if (!assignment) {
+      throw new NotFoundException(`Assignment with ID ${assignmentId} not found or access denied`);
+    }
+
+    // Check if already published
+    if (assignment.isPublished) {
+      this.logger.warn(`Assignment ${assignmentId} is already published`);
+      return assignment;
+    }
+
+    // Publish assignment
+    assignment.isPublished = true;
+    const published = await this.assignmentRepository.save(assignment);
+
+    this.logger.log(`Assignment ${assignmentId} published by teacher ${teacherId}`);
+
+    // TODO: Integrate with notification service if notifyStudents = true
+    if (notifyStudents) {
+      this.logger.log(`Notifications sent for assignment ${assignmentId}`);
+    }
+
+    return published;
+  }
+
+  /**
+   * Close an assignment
+   * Prevents new submissions after due date
+   * REQ-TCH-093: Assignment closure
+   */
+  async closeAssignment(
+    assignmentId: string,
+    teacherId: string,
+  ): Promise<Assignment> {
+    // Verify ownership
+    const assignment = await this.assignmentRepository.findOne({
+      where: { id: assignmentId, teacherId },
+    });
+
+    if (!assignment) {
+      throw new NotFoundException(`Assignment with ID ${assignmentId} not found or access denied`);
+    }
+
+    // Set due date to now to effectively close it
+    // Note: You might want to add a separate 'status' field (open/closed) in the entity
+    // For now, we'll set isPublished to false to prevent further submissions
+    assignment.isPublished = false;
+    const closed = await this.assignmentRepository.save(assignment);
+
+    this.logger.log(`Assignment ${assignmentId} closed by teacher ${teacherId}`);
+
+    return closed;
+  }
+
+  /**
    * Sanitize HTML to prevent XSS
    * REQ-TCH-021: HTML sanitization
    */

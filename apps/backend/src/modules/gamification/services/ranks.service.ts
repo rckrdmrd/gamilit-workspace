@@ -93,12 +93,12 @@ export class RanksService {
       xp_min: 1500,
       xp_max: 2249,
       ml_coins_bonus: 500,
-      next_rank: MayaRank.KUKUKULKAN,
+      next_rank: MayaRank.KUKULKAN,
       name: 'Halach Uinic',
       description: 'Hombre Verdadero - Líder de la comunidad',
       order: 4,
     },
-    [MayaRank.KUKUKULKAN]: {
+    [MayaRank.KUKULKAN]: {
       xp_min: 2250,
       xp_max: Infinity,
       ml_coins_bonus: 1000,

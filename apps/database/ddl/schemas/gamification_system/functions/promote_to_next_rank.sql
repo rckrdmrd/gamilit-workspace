@@ -23,20 +23,34 @@ DECLARE
     v_ml_coins_bonus INTEGER;
     v_achievement_id UUID;
     v_old_rank_achieved_at TIMESTAMPTZ;
+    v_current_balance INTEGER;
+    v_new_balance INTEGER;
 BEGIN
-    -- Obtener datos actuales
+    -- Obtener datos actuales de user_stats
     SELECT
         current_rank,
-        total_xp,
-        rank_achieved_at,
-        EXTRACT(DAY FROM gamilit.now_mexico() - COALESCE(rank_achieved_at, created_at))::INTEGER
+        total_xp
     INTO
         v_old_rank,
-        v_total_xp,
-        v_old_rank_achieved_at,
-        v_days_in_old_rank
+        v_total_xp
     FROM gamification_system.user_stats
     WHERE user_id = p_user_id;
+
+    -- Obtener fecha del rango anterior desde user_ranks
+    SELECT achieved_at
+    INTO v_old_rank_achieved_at
+    FROM gamification_system.user_ranks
+    WHERE user_id = p_user_id AND is_current = true;
+
+    -- Si no hay registro en user_ranks, usar created_at de user_stats
+    IF v_old_rank_achieved_at IS NULL THEN
+        SELECT created_at INTO v_old_rank_achieved_at
+        FROM gamification_system.user_stats
+        WHERE user_id = p_user_id;
+    END IF;
+
+    -- Calcular días en el rango anterior
+    v_days_in_old_rank := EXTRACT(DAY FROM gamilit.now_mexico() - v_old_rank_achieved_at)::INTEGER;
 
     -- Verificar que el usuario existe
     IF NOT FOUND THEN
@@ -55,13 +69,21 @@ BEGIN
         v_ml_coins_bonus := 0;
     END IF;
 
+    -- Obtener balance actual ANTES del cambio con row lock
+    SELECT ml_coins INTO v_current_balance
+    FROM gamification_system.user_stats
+    WHERE user_id = p_user_id
+    FOR UPDATE;
+
+    -- Calcular nuevo balance
+    v_new_balance := COALESCE(v_current_balance, 0) + v_ml_coins_bonus;
+
     -- 1. Actualizar current_rank en user_stats
+    -- Solo actualizar current_rank y ml_coins (no hay columnas achieved_at, previous_rank, etc.)
     UPDATE gamification_system.user_stats
     SET
         current_rank = p_new_rank,
-        previous_rank = v_old_rank,
-        rank_achieved_at = gamilit.now_mexico(),
-        ml_coins = COALESCE(ml_coins, 0) + v_ml_coins_bonus,
+        ml_coins = v_new_balance,
         updated_at = gamilit.now_mexico()
     WHERE user_id = p_user_id;
 
@@ -96,13 +118,17 @@ BEGIN
     INSERT INTO gamification_system.ml_coins_transactions (
         user_id,
         amount,
+        balance_before,
+        balance_after,
         transaction_type,
         description,
         metadata
     ) VALUES (
         p_user_id,
         v_ml_coins_bonus,
-        'RANK_UP',
+        v_current_balance,
+        v_new_balance,
+        'earned_rank'::gamification_system.transaction_type,
         'Ascendiste al rango ' || p_new_rank::TEXT,
         jsonb_build_object(
             'old_rank', v_old_rank::TEXT,

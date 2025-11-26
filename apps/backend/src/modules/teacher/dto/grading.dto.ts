@@ -40,6 +40,16 @@ export class GetSubmissionsQueryDto {
   @IsOptional()
   status?: SubmissionStatus;
 
+  @ApiPropertyOptional({ description: 'Filter by assignment ID' })
+  @IsUUID()
+  @IsOptional()
+  assignment_id?: string;
+
+  @ApiPropertyOptional({ description: 'Filter by classroom ID' })
+  @IsUUID()
+  @IsOptional()
+  classroom_id?: string;
+
   @ApiPropertyOptional({ description: 'Filter by module ID' })
   @IsUUID()
   @IsOptional()

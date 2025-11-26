@@ -14,18 +14,35 @@ import { Classroom } from '@modules/social/entities/classroom.entity';
 
 // Progress entities
 import { ExerciseSubmission } from '@modules/progress/entities/exercise-submission.entity';
+import { ExerciseAttempt } from '@modules/progress/entities/exercise-attempt.entity';
 import { ModuleProgress } from '@modules/progress/entities/module-progress.entity';
+
+// Educational entities
+import { Module as EducationalModule } from '@modules/educational/entities/module.entity';
+import { Exercise } from '@modules/educational/entities/exercise.entity';
 
 // Gamification entities
 import { UserStats } from '@modules/gamification/entities/user-stats.entity';
+import { Achievement } from '@modules/gamification/entities/achievement.entity';
+import { UserAchievement } from '@modules/gamification/entities/user-achievement.entity';
 
 // Content entities
 import { Assignment } from '@modules/assignments/entities/assignment.entity';
 import { AssignmentSubmission } from '@modules/assignments/entities/assignment-submission.entity';
 
+// Teacher entities
+import { StudentInterventionAlert } from './entities/student-intervention-alert.entity';
+import { Message, MessageParticipant } from './entities/message.entity';
+import { TeacherContent } from './entities/teacher-content.entity';
+
 // Controllers
 import { TeacherClassroomsController } from './controllers/teacher-classrooms.controller';
 import { TeacherController } from './controllers/teacher.controller';
+import { TeacherGradesController } from './controllers/teacher-grades.controller';
+import { InterventionAlertsController } from './controllers/intervention-alerts.controller';
+import { TeacherCommunicationController } from './controllers/teacher-communication.controller';
+import { TeacherContentController } from './controllers/teacher-content.controller';
+import { ExerciseResponsesController } from './controllers/exercise-responses.controller';
 
 // Services
 import {
@@ -36,7 +53,13 @@ import {
   AnalyticsService,
   StudentRiskAlertService,
   ReportsService,
+  TeacherClassroomsCrudService,
+  InterventionAlertsService,
+  TeacherContentService,
+  BonusCoinsService,
+  ExerciseResponsesService,
 } from './services';
+import { TeacherMessagesService } from './services/teacher-messages.service';
 
 // Guards
 import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
@@ -60,6 +83,8 @@ import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
  * Controllers:
  * - TeacherClassroomsController: Gestión de estudiantes en aulas
  * - TeacherController: Analytics, progress, grading, insights, reports
+ * - TeacherGradesController: Grades management (view of submissions with scores)
+ * - TeacherCommunicationController: Comunicación con estudiantes (mensajes, anuncios, feedback)
  *
  * Services:
  * - StudentBlockingService: Bloqueo y permisos de estudiantes
@@ -69,6 +94,7 @@ import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
  * - AnalyticsService: Analytics and student insights (with caching)
  * - StudentRiskAlertService: Automated risk monitoring (CRON)
  * - ReportsService: PDF/Excel report generation
+ * - TeacherMessagesService: Comunicación con estudiantes (mensajes, anuncios, feedback)
  *
  * Guards:
  * - TeacherGuard: Verificar rol de profesor
@@ -93,15 +119,32 @@ import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
     TypeOrmModule.forFeature([ClassroomMember, TeacherClassroom, Classroom], 'social'),
 
     // Entities from 'progress' datasource
-    TypeOrmModule.forFeature([ExerciseSubmission, ModuleProgress], 'progress'),
+    TypeOrmModule.forFeature([ExerciseSubmission, ExerciseAttempt, ModuleProgress], 'progress'),
+
+    // Entities from 'educational' datasource
+    TypeOrmModule.forFeature([EducationalModule, Exercise], 'educational'),
 
     // Entities from 'gamification' datasource
-    TypeOrmModule.forFeature([UserStats], 'gamification'),
+    TypeOrmModule.forFeature([UserStats, Achievement, UserAchievement], 'gamification'),
 
     // Entities from 'content' datasource
-    TypeOrmModule.forFeature([Assignment, AssignmentSubmission], 'content'),
+    TypeOrmModule.forFeature([Assignment, AssignmentSubmission, TeacherContent], 'content'),
+
+    // Entities from 'progress' datasource (teacher entities)
+    TypeOrmModule.forFeature([StudentInterventionAlert], 'progress'),
+
+    // Entities from 'communication' datasource (teacher messages)
+    TypeOrmModule.forFeature([Message, MessageParticipant], 'communication'),
   ],
-  controllers: [TeacherClassroomsController, TeacherController],
+  controllers: [
+    TeacherClassroomsController,
+    TeacherController,
+    TeacherGradesController,
+    InterventionAlertsController,
+    TeacherCommunicationController,
+    TeacherContentController,
+    ExerciseResponsesController,
+  ],
   providers: [
     // Core services
     StudentBlockingService,
@@ -111,6 +154,12 @@ import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
     AnalyticsService,
     StudentRiskAlertService,
     ReportsService,
+    TeacherClassroomsCrudService,
+    InterventionAlertsService,
+    TeacherMessagesService,
+    TeacherContentService,
+    BonusCoinsService,
+    ExerciseResponsesService,
 
     // Guards
     TeacherGuard,
@@ -123,6 +172,10 @@ import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
     GradingService,
     AnalyticsService,
     ReportsService,
+    TeacherClassroomsCrudService,
+    TeacherMessagesService,
+    TeacherContentService,
+    ExerciseResponsesService,
   ],
 })
 export class TeacherModule {}

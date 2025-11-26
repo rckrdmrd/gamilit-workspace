@@ -50,18 +50,14 @@ describe('useExerciseTimer', () => {
     });
 
     it('should initialize with time limit', () => {
-      const { result } = renderHook(() =>
-        useExerciseTimer({ timeLimitSeconds: 300 })
-      );
+      const { result } = renderHook(() => useExerciseTimer({ timeLimitSeconds: 300 }));
 
       expect(result.current.remainingSeconds).toBe(300);
       expect(result.current.formattedRemaining).toBe('05:00');
     });
 
     it('should autoStart if option is true', () => {
-      const { result } = renderHook(() =>
-        useExerciseTimer({ autoStart: true })
-      );
+      const { result } = renderHook(() => useExerciseTimer({ autoStart: true }));
 
       expect(result.current.isRunning).toBe(true);
     });
@@ -196,7 +192,7 @@ describe('useExerciseTimer', () => {
 
     it('should calculate remaining time with time limit', () => {
       const { result } = renderHook(() =>
-        useExerciseTimer({ timeLimitSeconds: 60, autoStart: true })
+        useExerciseTimer({ timeLimitSeconds: 60, autoStart: true }),
       );
 
       expect(result.current.remainingSeconds).toBe(60);
@@ -210,7 +206,7 @@ describe('useExerciseTimer', () => {
 
     it('should continue counting after time limit is reached', () => {
       const { result } = renderHook(() =>
-        useExerciseTimer({ timeLimitSeconds: 5, autoStart: true })
+        useExerciseTimer({ timeLimitSeconds: 5, autoStart: true }),
       );
 
       act(() => {
@@ -260,7 +256,7 @@ describe('useExerciseTimer', () => {
 
     it('should provide formatted remaining time when time limit is set', () => {
       const { result } = renderHook(() =>
-        useExerciseTimer({ timeLimitSeconds: 120, autoStart: true })
+        useExerciseTimer({ timeLimitSeconds: 120, autoStart: true }),
       );
 
       act(() => {
@@ -277,17 +273,13 @@ describe('useExerciseTimer', () => {
 
   describe('Auto Start', () => {
     it('should start immediately when autoStart is true', () => {
-      const { result } = renderHook(() =>
-        useExerciseTimer({ autoStart: true })
-      );
+      const { result } = renderHook(() => useExerciseTimer({ autoStart: true }));
 
       expect(result.current.isRunning).toBe(true);
     });
 
     it('should not start automatically when autoStart is false', () => {
-      const { result } = renderHook(() =>
-        useExerciseTimer({ autoStart: false })
-      );
+      const { result } = renderHook(() => useExerciseTimer({ autoStart: false }));
 
       expect(result.current.isRunning).toBe(false);
     });
@@ -301,12 +293,12 @@ describe('useExerciseTimer', () => {
     it('should call onTimeExpired when time limit is reached', () => {
       const onTimeExpired = vi.fn();
 
-      const { result } = renderHook(() =>
+      renderHook(() =>
         useExerciseTimer({
           timeLimitSeconds: 10,
           onTimeExpired,
           autoStart: true,
-        })
+        }),
       );
 
       expect(onTimeExpired).not.toHaveBeenCalled();
@@ -323,7 +315,7 @@ describe('useExerciseTimer', () => {
         useExerciseTimer({
           timeLimitSeconds: 5,
           autoStart: true,
-        })
+        }),
       );
 
       expect(result.current.isTimeExpired).toBe(false);
@@ -340,7 +332,7 @@ describe('useExerciseTimer', () => {
         useExerciseTimer({
           timeLimitSeconds: 3,
           autoStart: true,
-        })
+        }),
       );
 
       act(() => {

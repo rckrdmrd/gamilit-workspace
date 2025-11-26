@@ -164,9 +164,9 @@ CREATE POLICY exercise_submissions_update_own ON progress_tracking.exercise_subm
 
 --
 -- Name: exercise_submissions exercise_submissions_updated_at; Type: TRIGGER; Schema: progress_tracking; Owner: postgres
+-- NOTE: Trigger movido a archivo separado para evitar duplicación
+-- Ver: progress_tracking/triggers/22-exercise_submissions_updated_at.sql
 --
-
-CREATE TRIGGER exercise_submissions_updated_at BEFORE UPDATE ON progress_tracking.exercise_submissions FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
 
 
 --

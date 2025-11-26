@@ -17,15 +17,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  AlertTriangle,
-  AlertCircle,
-  Info,
-  Shield,
-  X,
-  Eye,
-  CheckCircle,
-} from 'lucide-react';
+import { AlertTriangle, AlertCircle, Info, Shield, X, Eye, CheckCircle } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { Modal } from '@shared/components/common/Modal';
 import type { SystemAlert } from '../../types';
@@ -123,7 +115,7 @@ export const SystemAlertsPanel: React.FC<SystemAlertsPanelProps> = ({
   return (
     <DetectiveCard>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <div>
           <h3 className="text-detective-subtitle">System Alerts</h3>
           <p className="text-detective-small text-gray-400">
@@ -134,7 +126,7 @@ export const SystemAlertsPanel: React.FC<SystemAlertsPanelProps> = ({
         {alerts.length > 0 && onDismissAll && (
           <button
             onClick={onDismissAll}
-            className="px-4 py-2 bg-detective-bg-secondary rounded-lg hover:bg-detective-bg-tertiary transition-colors text-detective-small"
+            className="hover:bg-detective-bg-tertiary text-detective-small rounded-lg bg-detective-bg-secondary px-4 py-2 transition-colors"
           >
             Dismiss All
           </button>
@@ -142,7 +134,7 @@ export const SystemAlertsPanel: React.FC<SystemAlertsPanelProps> = ({
       </div>
 
       {/* Alerts List */}
-      <div className="space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar">
+      <div className="custom-scrollbar max-h-[600px] space-y-3 overflow-y-auto">
         <AnimatePresence mode="popLayout">
           {loading ? (
             <div className="flex items-center justify-center py-12">
@@ -150,7 +142,7 @@ export const SystemAlertsPanel: React.FC<SystemAlertsPanelProps> = ({
                 animate={{ rotate: 360 }}
                 transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
               >
-                <AlertCircle className="w-8 h-8 text-gray-500" />
+                <AlertCircle className="h-8 w-8 text-gray-500" />
               </motion.div>
             </div>
           ) : alerts.length === 0 ? (
@@ -159,8 +151,8 @@ export const SystemAlertsPanel: React.FC<SystemAlertsPanelProps> = ({
               animate={{ opacity: 1, scale: 1 }}
               className="py-12 text-center"
             >
-              <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-              <h4 className="text-detective-base font-semibold mb-2">All Systems Operational</h4>
+              <CheckCircle className="mx-auto mb-4 h-16 w-16 text-green-500" />
+              <h4 className="mb-2 text-detective-base font-semibold">All Systems Operational</h4>
               <p className="text-detective-small text-gray-400">No active alerts or warnings</p>
             </motion.div>
           ) : (
@@ -184,38 +176,42 @@ export const SystemAlertsPanel: React.FC<SystemAlertsPanelProps> = ({
       <Modal isOpen={showDetailsModal} onClose={() => setShowDetailsModal(false)}>
         {selectedAlert && (
           <div className="p-6">
-            <div className="flex items-start gap-4 mb-6">
+            <div className="mb-6 flex items-start gap-4">
               {(() => {
                 const Icon = getAlertIcon(selectedAlert.type);
                 const colors = getAlertColors(selectedAlert.severity);
                 return (
                   <div className={`p-3 ${colors.bg} rounded-lg`}>
-                    <Icon className={`w-6 h-6 ${colors.icon}`} />
+                    <Icon className={`h-6 w-6 ${colors.icon}`} />
                   </div>
                 );
               })()}
               <div className="flex-1">
                 <h3 className="text-detective-subtitle mb-1">{selectedAlert.title}</h3>
-                <div className="flex items-center gap-3 text-detective-small text-gray-400">
+                <div className="text-detective-small flex items-center gap-3 text-gray-400">
                   <span className="capitalize">{selectedAlert.type}</span>
                   <span>•</span>
                   <span className="capitalize">{selectedAlert.severity} severity</span>
                   <span>•</span>
-                  <span>{new Date(selectedAlert.timestamp).toLocaleString()}</span>
+                  <span>
+                    {selectedAlert.timestamp
+                      ? new Date(selectedAlert.timestamp).toLocaleString('es-ES')
+                      : 'N/A'}
+                  </span>
                 </div>
               </div>
             </div>
 
             <div className="space-y-4">
               <div>
-                <h4 className="text-detective-base font-semibold mb-2">Message</h4>
+                <h4 className="mb-2 text-detective-base font-semibold">Message</h4>
                 <p className="text-detective-small text-gray-400">{selectedAlert.message}</p>
               </div>
 
               <div>
-                <h4 className="text-detective-base font-semibold mb-2">Details</h4>
-                <div className="p-4 bg-detective-bg-secondary rounded-lg">
-                  <pre className="text-detective-small text-gray-400 whitespace-pre-wrap font-mono">
+                <h4 className="mb-2 text-detective-base font-semibold">Details</h4>
+                <div className="rounded-lg bg-detective-bg-secondary p-4">
+                  <pre className="text-detective-small whitespace-pre-wrap font-mono text-gray-400">
                     {selectedAlert.details}
                   </pre>
                 </div>
@@ -223,11 +219,14 @@ export const SystemAlertsPanel: React.FC<SystemAlertsPanelProps> = ({
 
               {selectedAlert.affectedResources && selectedAlert.affectedResources.length > 0 && (
                 <div>
-                  <h4 className="text-detective-base font-semibold mb-2">Affected Resources</h4>
+                  <h4 className="mb-2 text-detective-base font-semibold">Affected Resources</h4>
                   <ul className="space-y-1">
                     {selectedAlert.affectedResources.map((resource, i) => (
-                      <li key={i} className="text-detective-small text-gray-400 flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 bg-detective-orange rounded-full" />
+                      <li
+                        key={i}
+                        className="text-detective-small flex items-center gap-2 text-gray-400"
+                      >
+                        <div className="h-1.5 w-1.5 rounded-full bg-detective-orange" />
                         {resource}
                       </li>
                     ))}
@@ -236,13 +235,13 @@ export const SystemAlertsPanel: React.FC<SystemAlertsPanelProps> = ({
               )}
 
               <div>
-                <h4 className="text-detective-base font-semibold mb-2">Source</h4>
+                <h4 className="mb-2 text-detective-base font-semibold">Source</h4>
                 <p className="text-detective-small text-gray-400">{selectedAlert.source}</p>
               </div>
 
               {selectedAlert.actionRequired && (
-                <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-                  <p className="text-detective-small text-yellow-500 font-semibold">
+                <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-4">
+                  <p className="text-detective-small font-semibold text-yellow-500">
                     ⚠️ Action Required
                   </p>
                 </div>
@@ -288,24 +287,26 @@ const AlertCard: React.FC<AlertCardProps> = ({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -100, transition: { duration: 0.2 } }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
-      className={`p-4 ${colors.bg} border-l-4 ${colors.border} rounded-lg group hover:shadow-lg transition-shadow`}
+      className={`p-4 ${colors.bg} border-l-4 ${colors.border} group rounded-lg transition-shadow hover:shadow-lg`}
     >
       <div className="flex items-start gap-3">
         {/* Icon */}
         <div className="mt-0.5">
-          <Icon className={`w-5 h-5 ${colors.icon}`} />
+          <Icon className={`h-5 w-5 ${colors.icon}`} />
         </div>
 
         {/* Content */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2 mb-2">
-            <h4 className="text-detective-base font-semibold truncate">{alert.title}</h4>
-            <span className={`text-xs px-2 py-0.5 rounded-full ${colors.bg} ${colors.text} border ${colors.border} whitespace-nowrap`}>
+        <div className="min-w-0 flex-1">
+          <div className="mb-2 flex items-start justify-between gap-2">
+            <h4 className="truncate text-detective-base font-semibold">{alert.title}</h4>
+            <span
+              className={`rounded-full px-2 py-0.5 text-xs ${colors.bg} ${colors.text} border ${colors.border} whitespace-nowrap`}
+            >
               {alert.severity.toUpperCase()}
             </span>
           </div>
 
-          <p className="text-detective-small text-gray-400 mb-3 line-clamp-2">{alert.message}</p>
+          <p className="text-detective-small mb-3 line-clamp-2 text-gray-400">{alert.message}</p>
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 text-xs text-gray-500">
@@ -315,25 +316,25 @@ const AlertCard: React.FC<AlertCardProps> = ({
               {alert.actionRequired && (
                 <>
                   <span>•</span>
-                  <span className="text-yellow-500 font-semibold">Action Required</span>
+                  <span className="font-semibold text-yellow-500">Action Required</span>
                 </>
               )}
             </div>
 
-            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center gap-2 opacity-0 transition-opacity group-hover:opacity-100">
               <button
                 onClick={() => onViewDetails(alert)}
-                className="p-1.5 hover:bg-detective-bg-secondary rounded-lg transition-colors"
+                className="rounded-lg p-1.5 transition-colors hover:bg-detective-bg-secondary"
                 title="View details"
               >
-                <Eye className="w-4 h-4 text-gray-400 hover:text-white" />
+                <Eye className="h-4 w-4 text-gray-400 hover:text-white" />
               </button>
               <button
                 onClick={() => onDismiss(alert.id)}
-                className="p-1.5 hover:bg-detective-bg-secondary rounded-lg transition-colors"
+                className="rounded-lg p-1.5 transition-colors hover:bg-detective-bg-secondary"
                 title="Dismiss alert"
               >
-                <X className="w-4 h-4 text-gray-400 hover:text-white" />
+                <X className="h-4 w-4 text-gray-400 hover:text-white" />
               </button>
             </div>
           </div>

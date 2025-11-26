@@ -1,5 +1,12 @@
-import React from 'react';
-import { AlertTriangle, AlertCircle, Info, XCircle, MessageSquare, BookOpen, CheckCircle } from 'lucide-react';
+import {
+  AlertTriangle,
+  AlertCircle,
+  Info,
+  XCircle,
+  MessageSquare,
+  BookOpen,
+  CheckCircle,
+} from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import type { InterventionAlert } from '../../types';
@@ -98,12 +105,12 @@ export function AlertCard({
       <div className="space-y-4">
         {/* Header */}
         <div className="flex items-start justify-between">
-          <div className="flex items-start gap-3 flex-1">
-            <div className={`p-2 rounded-lg ${config.bgColor}`}>
-              <Icon className={`w-5 h-5 ${config.color}`} />
+          <div className="flex flex-1 items-start gap-3">
+            <div className={`rounded-lg p-2 ${config.bgColor}`}>
+              <Icon className={`h-5 w-5 ${config.color}`} />
             </div>
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="mb-1 flex items-center gap-2">
                 <span className="text-lg">{getAlertIcon(alert.type)}</span>
                 <h3 className="font-bold text-detective-text">{alert.student_name}</h3>
               </div>
@@ -111,11 +118,11 @@ export function AlertCard({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className={`px-2 py-1 rounded text-xs font-bold text-white ${config.badge}`}>
+            <span className={`rounded px-2 py-1 text-xs font-bold text-white ${config.badge}`}>
               {config.text}
             </span>
             {alert.resolved && (
-              <span className="px-2 py-1 rounded text-xs font-bold text-white bg-green-500">
+              <span className="rounded bg-green-500 px-2 py-1 text-xs font-bold text-white">
                 RESUELTO
               </span>
             )}
@@ -123,7 +130,7 @@ export function AlertCard({
         </div>
 
         {/* Details */}
-        <div className={`p-3 rounded-lg ${config.bgColor}`}>
+        <div className={`rounded-lg p-3 ${config.bgColor}`}>
           <div className="space-y-2 text-sm text-detective-text">
             {alert.details.days_inactive !== undefined && (
               <p>
@@ -155,12 +162,12 @@ export function AlertCard({
 
         {/* Actions Taken */}
         {alert.actions_taken && alert.actions_taken.length > 0 && (
-          <div className="bg-detective-bg-secondary p-3 rounded-lg">
-            <p className="text-xs text-detective-text-secondary mb-2">Acciones tomadas:</p>
+          <div className="rounded-lg bg-detective-bg-secondary p-3">
+            <p className="mb-2 text-xs text-detective-text-secondary">Acciones tomadas:</p>
             <ul className="space-y-1">
               {alert.actions_taken.map((action, index) => (
                 <li key={index} className="flex items-center gap-2 text-sm text-detective-text">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <CheckCircle className="h-4 w-4 text-green-500" />
                   {action}
                 </li>
               ))}
@@ -170,36 +177,20 @@ export function AlertCard({
 
         {/* Quick Actions */}
         {!alert.resolved && (
-          <div className="flex flex-wrap gap-2 pt-2 border-t border-detective-border">
-            <DetectiveButton
-              variant="secondary"
-
-              onClick={() => onSendMessage?.(alert.id)}
-            >
-              <MessageSquare className="w-4 h-4" />
+          <div className="border-detective-border flex flex-wrap gap-2 border-t pt-2">
+            <DetectiveButton variant="secondary" onClick={() => onSendMessage?.(alert.id)}>
+              <MessageSquare className="h-4 w-4" />
               Enviar Mensaje
             </DetectiveButton>
-            <DetectiveButton
-              variant="secondary"
-
-              onClick={() => onAssignHelp?.(alert.id)}
-            >
-              <BookOpen className="w-4 h-4" />
+            <DetectiveButton variant="secondary" onClick={() => onAssignHelp?.(alert.id)}>
+              <BookOpen className="h-4 w-4" />
               Asignar Ayuda
             </DetectiveButton>
-            <DetectiveButton
-              variant="secondary"
-
-              onClick={() => onMarkForFollowUp?.(alert.id)}
-            >
+            <DetectiveButton variant="secondary" onClick={() => onMarkForFollowUp?.(alert.id)}>
               Marcar Seguimiento
             </DetectiveButton>
-            <DetectiveButton
-              variant="primary"
-
-              onClick={() => onResolve?.(alert.id)}
-            >
-              <CheckCircle className="w-4 h-4" />
+            <DetectiveButton variant="primary" onClick={() => onResolve?.(alert.id)}>
+              <CheckCircle className="h-4 w-4" />
               Resolver
             </DetectiveButton>
           </div>

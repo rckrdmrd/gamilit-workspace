@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, FileText, Loader, CheckCircle, AlertCircle, Calendar, Plus, Trash2 } from 'lucide-react';
+import { X, FileText, Loader, CheckCircle, AlertCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -15,11 +15,17 @@ interface CreateAssignmentModalProps {
 
 const assignmentSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters').max(100, 'Title is too long'),
-  description: z.string().min(10, 'Description must be at least 10 characters').max(1000, 'Description is too long'),
+  description: z
+    .string()
+    .min(10, 'Description must be at least 10 characters')
+    .max(1000, 'Description is too long'),
   classroomId: z.string().min(1, 'Please select a classroom'),
   exerciseIds: z.array(z.string()).min(1, 'Please add at least one exercise'),
   dueDate: z.string().min(1, 'Due date is required'),
-  maxAttempts: z.number().min(1, 'Must allow at least 1 attempt').max(10, 'Cannot exceed 10 attempts'),
+  maxAttempts: z
+    .number()
+    .min(1, 'Must allow at least 1 attempt')
+    .max(10, 'Cannot exceed 10 attempts'),
 });
 
 type AssignmentFormData = z.infer<typeof assignmentSchema>;
@@ -115,7 +121,7 @@ export const CreateAssignmentModal: React.FC<CreateAssignmentModalProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
           />
 
           {/* Modal */}
@@ -124,47 +130,50 @@ export const CreateAssignmentModal: React.FC<CreateAssignmentModalProps> = ({
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ type: "spring", duration: 0.5 }}
-              className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden"
+              transition={{ type: 'spring', duration: 0.5 }}
+              className="max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="bg-gradient-to-r from-green-600 to-teal-600 px-6 py-5 flex items-center justify-between">
+              <div className="flex items-center justify-between bg-gradient-to-r from-green-600 to-teal-600 px-6 py-5">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-white/20 rounded-lg">
-                    <FileText className="w-6 h-6 text-white" />
+                  <div className="rounded-lg bg-white/20 p-2">
+                    <FileText className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <h2 className="text-2xl font-bold text-white">Create New Assignment</h2>
-                    <p className="text-green-100 text-sm">Assign work to your students</p>
+                    <p className="text-sm text-green-100">Assign work to your students</p>
                   </div>
                 </div>
                 <button
                   onClick={handleClose}
                   disabled={isSubmitting}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-colors disabled:opacity-50"
+                  className="rounded-lg p-2 transition-colors hover:bg-white/20 disabled:opacity-50"
                 >
-                  <X className="w-6 h-6 text-white" />
+                  <X className="h-6 w-6 text-white" />
                 </button>
               </div>
 
               {/* Form */}
-              <form onSubmit={handleSubmit(onFormSubmit)} className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+              <form
+                onSubmit={handleSubmit(onFormSubmit)}
+                className="max-h-[calc(90vh-120px)] overflow-y-auto p-6"
+              >
                 <div className="space-y-5">
                   {/* Assignment Title */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="mb-2 block text-sm font-semibold text-gray-700">
                       Assignment Title <span className="text-red-500">*</span>
                     </label>
                     <input
                       {...register('title')}
                       type="text"
                       placeholder="e.g., Week 5 Practice - Variables and Functions"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                      className="w-full rounded-lg border border-gray-300 px-4 py-3 transition-all focus:border-transparent focus:ring-2 focus:ring-green-500"
                     />
                     {errors.title && (
-                      <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
+                      <p className="mt-1 flex items-center gap-1 text-sm text-red-600">
+                        <AlertCircle className="h-4 w-4" />
                         {errors.title.message}
                       </p>
                     )}
@@ -173,12 +182,12 @@ export const CreateAssignmentModal: React.FC<CreateAssignmentModalProps> = ({
                   {/* Classroom and Due Date */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className="mb-2 block text-sm font-semibold text-gray-700">
                         Classroom <span className="text-red-500">*</span>
                       </label>
                       <select
                         {...register('classroomId')}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                        className="w-full rounded-lg border border-gray-300 px-4 py-3 transition-all focus:border-transparent focus:ring-2 focus:ring-green-500"
                       >
                         <option value="">Select classroom...</option>
                         {classrooms.map((classroom) => (
@@ -188,26 +197,26 @@ export const CreateAssignmentModal: React.FC<CreateAssignmentModalProps> = ({
                         ))}
                       </select>
                       {errors.classroomId && (
-                        <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                          <AlertCircle className="w-4 h-4" />
+                        <p className="mt-1 flex items-center gap-1 text-sm text-red-600">
+                          <AlertCircle className="h-4 w-4" />
                           {errors.classroomId.message}
                         </p>
                       )}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      <label className="mb-2 block text-sm font-semibold text-gray-700">
                         Due Date <span className="text-red-500">*</span>
                       </label>
                       <input
                         {...register('dueDate')}
                         type="date"
                         min={minDate}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                        className="w-full rounded-lg border border-gray-300 px-4 py-3 transition-all focus:border-transparent focus:ring-2 focus:ring-green-500"
                       />
                       {errors.dueDate && (
-                        <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                          <AlertCircle className="w-4 h-4" />
+                        <p className="mt-1 flex items-center gap-1 text-sm text-red-600">
+                          <AlertCircle className="h-4 w-4" />
                           {errors.dueDate.message}
                         </p>
                       )}
@@ -216,7 +225,7 @@ export const CreateAssignmentModal: React.FC<CreateAssignmentModalProps> = ({
 
                   {/* Max Attempts */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="mb-2 block text-sm font-semibold text-gray-700">
                       Max Attempts <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -224,11 +233,11 @@ export const CreateAssignmentModal: React.FC<CreateAssignmentModalProps> = ({
                       type="number"
                       min="1"
                       max="10"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                      className="w-full rounded-lg border border-gray-300 px-4 py-3 transition-all focus:border-transparent focus:ring-2 focus:ring-green-500"
                     />
                     {errors.maxAttempts && (
-                      <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
+                      <p className="mt-1 flex items-center gap-1 text-sm text-red-600">
+                        <AlertCircle className="h-4 w-4" />
                         {errors.maxAttempts.message}
                       </p>
                     )}
@@ -236,18 +245,18 @@ export const CreateAssignmentModal: React.FC<CreateAssignmentModalProps> = ({
 
                   {/* Description */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="mb-2 block text-sm font-semibold text-gray-700">
                       Description <span className="text-red-500">*</span>
                     </label>
                     <textarea
                       {...register('description')}
                       rows={3}
                       placeholder="Provide instructions or context for this assignment..."
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none"
+                      className="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 transition-all focus:border-transparent focus:ring-2 focus:ring-green-500"
                     />
                     {errors.description && (
-                      <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
+                      <p className="mt-1 flex items-center gap-1 text-sm text-red-600">
+                        <AlertCircle className="h-4 w-4" />
                         {errors.description.message}
                       </p>
                     )}
@@ -255,14 +264,14 @@ export const CreateAssignmentModal: React.FC<CreateAssignmentModalProps> = ({
 
                   {/* Exercise Selection */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    <label className="mb-3 block text-sm font-semibold text-gray-700">
                       Select Exercises <span className="text-red-500">*</span>
                     </label>
-                    <div className="space-y-2 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3">
+                    <div className="max-h-60 space-y-2 overflow-y-auto rounded-lg border border-gray-200 p-3">
                       {MOCK_EXERCISES.map((exercise) => (
                         <label
                           key={exercise.id}
-                          className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                          className={`flex cursor-pointer items-center gap-3 rounded-lg border-2 p-3 transition-all ${
                             selectedExercises.includes(exercise.id)
                               ? 'border-green-500 bg-green-50'
                               : 'border-gray-200 hover:border-gray-300'
@@ -272,23 +281,26 @@ export const CreateAssignmentModal: React.FC<CreateAssignmentModalProps> = ({
                             type="checkbox"
                             checked={selectedExercises.includes(exercise.id)}
                             onChange={() => toggleExercise(exercise.id)}
-                            className="w-4 h-4 text-green-600 rounded focus:ring-2 focus:ring-green-500"
+                            className="h-4 w-4 rounded text-green-600 focus:ring-2 focus:ring-green-500"
                           />
                           <div className="flex-1">
                             <p className="font-medium text-gray-800">{exercise.title}</p>
-                            <p className="text-xs text-gray-500 capitalize">{exercise.difficulty}</p>
+                            <p className="text-xs capitalize text-gray-500">
+                              {exercise.difficulty}
+                            </p>
                           </div>
                         </label>
                       ))}
                     </div>
                     {errors.exerciseIds && (
-                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
+                      <p className="mt-2 flex items-center gap-1 text-sm text-red-600">
+                        <AlertCircle className="h-4 w-4" />
                         {errors.exerciseIds.message}
                       </p>
                     )}
                     <p className="mt-2 text-sm text-gray-600">
-                      {selectedExercises.length} exercise{selectedExercises.length !== 1 ? 's' : ''} selected
+                      {selectedExercises.length} exercise{selectedExercises.length !== 1 ? 's' : ''}{' '}
+                      selected
                     </p>
                   </div>
 
@@ -299,9 +311,9 @@ export const CreateAssignmentModal: React.FC<CreateAssignmentModalProps> = ({
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0 }}
-                        className="p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3"
+                        className="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 p-4"
                       >
-                        <CheckCircle className="w-5 h-5 text-green-600" />
+                        <CheckCircle className="h-5 w-5 text-green-600" />
                         <p className="text-sm font-medium text-green-800">
                           Assignment created successfully!
                         </p>
@@ -313,9 +325,9 @@ export const CreateAssignmentModal: React.FC<CreateAssignmentModalProps> = ({
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0 }}
-                        className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3"
+                        className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4"
                       >
-                        <AlertCircle className="w-5 h-5 text-red-600" />
+                        <AlertCircle className="h-5 w-5 text-red-600" />
                         <p className="text-sm font-medium text-red-800">{errorMessage}</p>
                       </motion.div>
                     )}
@@ -323,28 +335,28 @@ export const CreateAssignmentModal: React.FC<CreateAssignmentModalProps> = ({
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-3 mt-6 pt-6 border-t border-gray-200">
+                <div className="mt-6 flex items-center gap-3 border-t border-gray-200 pt-6">
                   <button
                     type="button"
                     onClick={handleClose}
                     disabled={isSubmitting}
-                    className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-semibold disabled:opacity-50"
+                    className="flex-1 rounded-lg border border-gray-300 px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all font-semibold disabled:opacity-50 disabled:transform-none flex items-center justify-center gap-2"
+                    className="flex flex-1 transform items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-green-500 to-teal-500 px-6 py-3 font-semibold text-white transition-all hover:-translate-y-0.5 hover:shadow-lg disabled:transform-none disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader className="w-5 h-5 animate-spin" />
+                        <Loader className="h-5 w-5 animate-spin" />
                         Creating...
                       </>
                     ) : (
                       <>
-                        <FileText className="w-5 h-5" />
+                        <FileText className="h-5 w-5" />
                         Create Assignment
                       </>
                     )}

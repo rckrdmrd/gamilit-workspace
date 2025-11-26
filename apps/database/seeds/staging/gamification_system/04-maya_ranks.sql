@@ -4,9 +4,9 @@
 -- Description: Configuración de rangos maya del sistema de gamificación
 -- Environment: PRODUCTION
 -- Records: 5
--- Date: 2025-11-16 (Updated)
--- Version: 2.0
--- Source: ESPECIFICACION-TECNICA-RANGOS-MAYA-v2.0.md
+-- Date: 2025-11-24 (Updated)
+-- Version: 2.1
+-- Source: ESPECIFICACION-TECNICA-RANGOS-MAYA-v2.1.md
 -- =====================================================
 
 SET search_path TO gamification_system, public;
@@ -102,7 +102,7 @@ INSERT INTO gamification_system.maya_ranks (
         'Halach Uinic',
         'Hombre Verdadero - Líder de la comunidad',
         1500,
-        2249,
+        1899,
         500,
         1.20,
         0,
@@ -120,7 +120,7 @@ INSERT INTO gamification_system.maya_ranks (
         'K''uk''ulkan',
         'K''uk''ulkan',
         'Serpiente Emplumada - Maestro legendario',
-        2250,
+        1900,
         NULL,  -- Sin límite superior
         1000,
         1.25,
@@ -176,6 +176,22 @@ FROM gamification_system.maya_ranks
 ORDER BY rank_order;
 
 -- =====================================================
+-- MIGRATION NOTES v2.1 (2025-11-24)
+-- =====================================================
+-- CAMBIOS RESPECTO A v2.0:
+-- - Ajustados umbrales XP para K'uk'ulkan alcanzable solo con M1-M3
+-- - v2.0: K'uk'ulkan desde 2,250+ XP (inalcanzable con 1,950 XP disponibles)
+-- - v2.1: K'uk'ulkan desde 1,900 XP (alcanzable con M1-M3)
+-- - XP máximo disponible M1-M3: 1,950 XP
+-- - Permite alcanzar rango máximo completando los 3 primeros módulos
+--
+-- DISTRIBUCIÓN v2.1:
+-- - Ajaw:         0-499 XP (< 1 módulo)
+-- - Nacom:        500-999 XP (1 módulo)
+-- - Ah K'in:      1,000-1,499 XP (2 módulos)
+-- - Halach Uinic: 1,500-1,899 XP (3 módulos parcial)
+-- - K'uk'ulkan:   1,900+ XP (3 módulos completos con excelencia)
+--
 -- MIGRATION NOTES v2.0 (2025-11-16)
 -- =====================================================
 -- CAMBIOS RESPECTO A v1.0:
@@ -186,13 +202,6 @@ ORDER BY rank_order;
 -- - XP multipliers más conservadores (1.00 → 1.25)
 -- - Perks actualizados y ampliados
 --
--- DISTRIBUCIÓN v2.0:
--- - Ajaw:         0-499 XP (< 1 módulo)
--- - Nacom:        500-999 XP (1 módulo)
--- - Ah K'in:      1,000-1,499 XP (2 módulos)
--- - Halach Uinic: 1,500-2,249 XP (3+ módulos)
--- - K'uk'ulkan:   2,250+ XP (casi todos los módulos con excelencia)
---
 -- BENEFICIOS:
 -- - Configuración actualizable sin deploy
 -- - Funciones SQL pueden consultar directamente
@@ -201,7 +210,7 @@ ORDER BY rank_order;
 -- - Sincronización con: calculate_user_rank, update_user_rank, etc.
 --
 -- DOCUMENTACIÓN:
--- - Especificación: docs/00-vision-general/ESPECIFICACION-TECNICA-RANGOS-MAYA-v2.0.md
+-- - Especificación: docs/00-vision-general/ESPECIFICACION-TECNICA-RANGOS-MAYA-v2.1.md
 -- - Documento de diseño: docs/00-vision-general/DocumentoDiseño_Mecanicas_GAMILIT_v6.2.md
--- - Script de migración: scripts/migrations/2025-11-16_ajustar-umbrales-xp-rangos-v2.sql
+-- - Análisis gamificación: orchestration/agentes/architecture-analyst/analisis-gamificacion-modulos-2025-11-24/
 -- =====================================================

@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Param, Body, UseGuards, HttpCode, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, UseGuards, HttpCode, HttpStatus, Query, ParseUUIDPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { AchievementsService } from '../services';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
-import { GrantAchievementDto } from '../dto';
+import { GrantAchievementDto, UpdateAchievementStatusDto } from '../dto';
 import { JwtAuthGuard } from '@/modules/auth/guards';
 
 /**
@@ -392,5 +392,89 @@ export class AchievementsController {
     @Param('achievementId') achievementId: string,
   ) {
     return await this.achievementsService.claimRewards(userId, achievementId);
+  }
+
+  /**
+   * Actualiza el estado activo/inactivo de un achievement
+   *
+   * @param id - ID del achievement (UUID)
+   * @param dto - DTO con el nuevo estado (is_active)
+   * @returns Achievement actualizado
+   *
+   * @example
+   * PATCH /api/v1/gamification/achievements/550e8400-e29b-41d4-a716-446655440000
+   * Request: {
+   *   "is_active": false
+   * }
+   * Response: {
+   *   "success": true,
+   *   "achievement": {
+   *     "id": "550e8400-e29b-41d4-a716-446655440000",
+   *     "name": "Primer Paso",
+   *     "description": "Completa tu primer ejercicio",
+   *     "is_active": false,
+   *     ...
+   *   }
+   * }
+   */
+  @Patch('achievements/:id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Toggle achievement active status',
+    description: 'Actualiza el estado activo/inactivo de un achievement. Usado por el panel de administración.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID del achievement en formato UUID',
+    type: String,
+    required: true,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Estado del achievement actualizado exitosamente',
+    schema: {
+      example: {
+        success: true,
+        achievement: {
+          id: '550e8400-e29b-41d4-a716-446655440000',
+          name: 'Primer Paso',
+          description: 'Completa tu primer ejercicio',
+          category: 'starter',
+          icon: 'trophy',
+          is_secret: false,
+          is_active: false,
+          is_repeatable: false,
+          ml_coins_reward: 50,
+          conditions: { type: 'progress', exercises_completed: 1 },
+          rewards: { xp: 100, badge: null, ml_coins: 50 },
+          order_index: 1,
+          points_value: 100,
+          created_at: '2024-01-15T10:30:00Z',
+          updated_at: '2024-01-15T12:45:00Z',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Datos inválidos en la solicitud',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Achievement no encontrado',
+  })
+  async updateAchievementStatus(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateAchievementStatusDto,
+  ): Promise<{ success: boolean; achievement: any }> {
+    const achievement = await this.achievementsService.updateAchievementStatus(
+      id,
+      dto.is_active,
+    );
+
+    return {
+      success: true,
+      achievement,
+    };
   }
 }

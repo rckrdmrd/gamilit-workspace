@@ -6,7 +6,7 @@
  */
 
 import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS, FEATURE_FLAGS } from '@/services/api/apiConfig';
+import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
 import { handleAPIError } from '@/services/api/apiErrorHandler';
 import type {
   User,
@@ -143,10 +143,7 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
     }
 
     // Real API call
-    const response = await apiClient.post<any>(
-      API_ENDPOINTS.auth.login,
-      credentials
-    );
+    const response = await apiClient.post<any>(API_ENDPOINTS.auth.login, credentials);
 
     console.log('✅ [authAPI] Login response received:', {
       hasData: !!response.data,
@@ -190,10 +187,7 @@ export const register = async (registerData: RegisterData): Promise<AuthResponse
     };
 
     // Real API call
-    const response = await apiClient.post<any>(
-      API_ENDPOINTS.auth.register,
-      backendRegisterData
-    );
+    const response = await apiClient.post<any>(API_ENDPOINTS.auth.register, backendRegisterData);
 
     console.log('✅ [authAPI] Register response received:', {
       hasData: !!response.data,
@@ -245,7 +239,7 @@ export const refreshToken = async (refreshToken: string): Promise<{ token: strin
     // Real API call
     const response = await apiClient.post<ApiResponse<{ token: string }>>(
       API_ENDPOINTS.auth.refresh,
-      { refreshToken }
+      { refreshToken },
     );
 
     // Extract data from wrapped response
@@ -286,9 +280,7 @@ export const verifyEmail = async (token: string): Promise<void> => {
  * @param request - Email to send reset link to
  * @returns Success status
  */
-export const requestPasswordReset = async (
-  request: PasswordResetRequest
-): Promise<void> => {
+export const requestPasswordReset = async (request: PasswordResetRequest): Promise<void> => {
   try {
     // Use mock data if feature flag is enabled
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -333,7 +325,7 @@ export const resetPassword = async (request: PasswordResetConfirm): Promise<void
  */
 export const changePassword = async (
   currentPassword: string,
-  newPassword: string
+  newPassword: string,
 ): Promise<void> => {
   try {
     // Use mock data if feature flag is enabled
@@ -374,7 +366,7 @@ export const getCurrentUser = async (): Promise<User> => {
 
     // Real API call - backend returns { success: true, data: { user: {...} } }
     const response = await apiClient.get<ApiResponse<{ user: any }>>(
-      API_ENDPOINTS.auth.getCurrentUser
+      API_ENDPOINTS.auth.getCurrentUser,
     );
 
     // Extract and map user from backend format to frontend format
@@ -420,7 +412,7 @@ export const updateProfile = async (updates: Partial<User>): Promise<User> => {
     // Real API call
     const response = await apiClient.patch<ApiResponse<any>>(
       API_ENDPOINTS.auth.updateProfile,
-      backendUpdates
+      backendUpdates,
     );
 
     // Extract and map backend response to frontend format
@@ -449,9 +441,7 @@ export const checkSession = async (): Promise<SessionInfo> => {
     }
 
     // Real API call
-    const response = await apiClient.get<ApiResponse<SessionInfo>>(
-      '/auth/session'
-    );
+    const response = await apiClient.get<ApiResponse<SessionInfo>>('/auth/session');
 
     // Extract data from wrapped response
     return response.data.data;
@@ -509,7 +499,7 @@ export const getSessions = async (): Promise<UserSessionInfo[]> => {
 
     // Real API call
     const response = await apiClient.get<ApiResponse<{ sessions: UserSessionInfo[] }>>(
-      API_ENDPOINTS.auth.getSessions
+      API_ENDPOINTS.auth.getSessions,
     );
 
     // Extract and return sessions from wrapped response

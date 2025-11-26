@@ -77,18 +77,10 @@ CREATE INDEX IF NOT EXISTS idx_profiles_tenant_role_status ON auth_management.pr
 CREATE INDEX IF NOT EXISTS idx_profiles_user_id ON auth_management.profiles USING btree (user_id);
 CREATE INDEX IF NOT EXISTS idx_profiles_school_id ON auth_management.profiles USING btree (school_id) WHERE (school_id IS NOT NULL);
 
--- Triggers
-CREATE TRIGGER trg_audit_profile_changes
-    AFTER UPDATE ON auth_management.profiles
-    FOR EACH ROW EXECUTE FUNCTION gamilit.audit_profile_changes();
-
-CREATE TRIGGER trg_initialize_user_stats
-    AFTER INSERT ON auth_management.profiles
-    FOR EACH ROW EXECUTE FUNCTION gamilit.initialize_user_stats();
-
-CREATE TRIGGER trg_profiles_updated_at
-    BEFORE UPDATE ON auth_management.profiles
-    FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
+-- NOTE: Triggers movidos a archivos separados en triggers/ para evitar duplicación
+-- Ver: triggers/03-trg_audit_profile_changes.sql
+-- Ver: triggers/04-trg_initialize_user_stats.sql
+-- Ver: triggers/05-trg_profiles_updated_at.sql
 
 -- Row Level Security Policies
 CREATE POLICY profiles_select_admin ON auth_management.profiles

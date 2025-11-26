@@ -129,9 +129,9 @@ CREATE INDEX idx_classrooms_teacher ON social_features.classrooms USING btree (t
 
 --
 -- Name: classrooms trg_classrooms_updated_at; Type: TRIGGER; Schema: social_features; Owner: postgres
+-- NOTE: Trigger movido a archivo separado para evitar duplicación
+-- Ver: social_features/triggers/26-trg_classrooms_updated_at.sql
 --
-
-CREATE TRIGGER trg_classrooms_updated_at BEFORE UPDATE ON social_features.classrooms FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
 
 
 --

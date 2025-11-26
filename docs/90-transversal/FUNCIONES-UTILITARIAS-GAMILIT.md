@@ -193,7 +193,9 @@ USING (gamilit.is_admin());
 
 **Archivo:** `apps/database/ddl/schemas/gamilit/functions/04-initialize_user_stats.sql`
 
-**Propósito:** Inicializa estadísticas de gamificación para un nuevo usuario
+**Propósito:** Inicializa automáticamente todos los registros necesarios para que un nuevo usuario pueda usar la plataforma inmediatamente
+
+**Última actualización:** 2025-11-24 (Bug fix GAP-003 - Agregada inicialización de module_progress)
 
 **Firma:**
 ```sql
@@ -214,15 +216,51 @@ EXECUTE FUNCTION gamilit.initialize_user_stats();
 ```
 
 **Comportamiento:**
-- Crea registro en `gamification_system.user_stats` con valores iniciales:
-  - `total_xp = 0`
-  - `level = 1`
-  - `ml_coins_balance = 0`
-  - `current_streak = 0`
-- Se ejecuta automáticamente al crear un perfil
+Crea automáticamente registros en **4 tablas** cuando se crea un nuevo usuario:
+
+**1. Estadísticas de Gamificación** (`gamification_system.user_stats`)
+- `user_id` → auth.users.id
+- `total_xp = 0`
+- `level = 1`
+- `ml_coins = 100` (monedas de bienvenida)
+- `current_streak = 0`
+- Estrategia: `ON CONFLICT (user_id) DO NOTHING`
+
+**2. Inventario de Comodines** (`gamification_system.comodines_inventory`)
+- `user_id` → profiles.id
+- Inventario vacío inicializado
+- Estrategia: `ON CONFLICT (user_id) DO NOTHING`
+
+**3. Rango Maya** (`gamification_system.user_ranks`)
+- `user_id` → auth.users.id
+- `current_rank = 'Ajaw'` (rango inicial)
+- Estrategia: `WHERE NOT EXISTS` (tabla sin constraint UNIQUE)
+
+**4. Progreso de Módulos** (`progress_tracking.module_progress`)
+- `user_id` → profiles.id
+- `module_id` → modules.id
+- Un registro por cada módulo publicado
+- `status = 'not_started'`
+- `progress_percentage = 0`
+- Estrategia: `ON CONFLICT (user_id, module_id) DO NOTHING`
+
+**Dependencias:**
+- Lee de: `educational_content.modules` (WHERE is_published = true AND status = 'published')
+- Inserta en: 4 tablas (user_stats, comodines_inventory, user_ranks, module_progress)
+
+**Resultado:**
+- Usuario puede ver todos los módulos disponibles inmediatamente
+- Gamificación funciona desde el primer momento
+- 0 errores en dashboard de estudiante
+- UX perfecta: registro → plataforma lista en 0 segundos
 
 **Usado por:**
-- Trigger en `auth_management.profiles` (INSERT)
+- Trigger `trg_initialize_user_stats` en `auth_management.profiles` (AFTER INSERT)
+
+**Documentación adicional:**
+- ADR: `docs/97-adr/ADR-012-automatic-user-initialization-trigger.md`
+- Flujo completo: `docs/90-transversal/FLUJO-INICIALIZACION-USUARIO.md`
+- Dependencias: `docs/90-transversal/DIAGRAMA-DEPENDENCIAS-INITIALIZE-USER-STATS.md`
 
 ---
 

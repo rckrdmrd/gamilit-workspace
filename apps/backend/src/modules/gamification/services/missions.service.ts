@@ -5,6 +5,7 @@ import { Mission, MissionTypeEnum, MissionStatusEnum, MissionObjective, MissionR
 import { MissionStatsDto } from '../dto/missions/mission-stats.dto';
 import { MLCoinsService } from './ml-coins.service';
 import { UserStatsService } from './user-stats.service';
+import { RanksService } from './ranks.service';
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 
@@ -40,6 +41,7 @@ export class MissionsService {
     private readonly profileRepo: Repository<Profile>,
     private readonly mlCoinsService: MLCoinsService,
     private readonly userStatsService: UserStatsService,
+    private readonly ranksService: RanksService,
   ) {}
 
   /**
@@ -447,11 +449,11 @@ export class MissionsService {
    * Reclama las recompensas de una misión completada
    *
    * @description Marca una misión como 'claimed' y registra la fecha de reclamación.
-   * TODO: Integrar con MLCoinsService y UserStatsService para otorgar recompensas reales.
+   * Otorga recompensas reales (XP y ML Coins) al usuario y verifica promoción de rango.
    *
    * @param missionId - ID de la misión (UUID)
    * @param userId - ID del usuario (UUID)
-   * @returns Objeto con misión actualizada y recompensas otorgadas
+   * @returns Objeto con misión actualizada, recompensas otorgadas e información de promoción
    *
    * @throws {NotFoundException} Si la misión no existe
    * @throws {BadRequestException} Si la misión no pertenece al usuario, no está completada, o ya fue reclamada
@@ -460,6 +462,7 @@ export class MissionsService {
    * const result = await service.claimRewards(missionId, userId);
    * // result.mission.status === 'claimed'
    * // result.rewards === { ml_coins: 50, xp: 100 }
+   * // result.rewards_granted === { xp_awarded: 50, ml_coins_awarded: 25, rank_promotion: true, new_rank: 'Nacom' }
    */
   async claimRewards(
     missionId: string,
@@ -467,6 +470,13 @@ export class MissionsService {
   ): Promise<{
     mission: Mission;
     rewards: MissionRewards;
+    rewards_granted: {
+      xp_awarded: number;
+      ml_coins_awarded: number;
+      rank_promotion: boolean;
+      new_rank: string | null;
+      previous_rank: string | null;
+    };
   }> {
     // CRITICAL FIX: Convert auth.users.id → profiles.id
     const profileId = await this.getProfileId(userId);
@@ -496,11 +506,29 @@ export class MissionsService {
       throw new BadRequestException('Rewards have already been claimed for this mission');
     }
 
+    // Obtener rango actual antes de otorgar recompensas
+    let previousRank: string | null = null;
+    let newRank: string | null = null;
+    let rankPromoted = false;
+
+    try {
+      const currentRankRecord = await this.ranksService.getCurrentRank(userId);
+      previousRank = currentRankRecord.current_rank;
+    } catch (error: unknown) {
+      this.logger.warn(
+        `Could not fetch current rank for user ${userId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+
     // Marcar como reclamada
     mission.status = MissionStatusEnum.CLAIMED;
     mission.claimed_at = new Date();
 
     await this.missionsRepo.save(mission);
+
+    // Variables para tracking de recompensas otorgadas
+    let mlCoinsAwarded = 0;
+    let xpAwarded = 0;
 
     // Otorgar recompensas - ML Coins
     if (mission.rewards?.ml_coins && mission.rewards.ml_coins > 0) {
@@ -513,6 +541,7 @@ export class MissionsService {
           missionId,
           'mission',
         );
+        mlCoinsAwarded = mission.rewards.ml_coins;
         this.logger.log(
           `Awarded ${mission.rewards.ml_coins} ML Coins to user ${userId} for mission ${missionId}`,
         );
@@ -531,6 +560,7 @@ export class MissionsService {
           userId,
           mission.rewards.xp,
         );
+        xpAwarded = mission.rewards.xp;
         this.logger.log(
           `Awarded ${mission.rewards.xp} XP to user ${userId} for mission ${missionId}`,
         );
@@ -542,9 +572,34 @@ export class MissionsService {
       }
     }
 
+    // Verificar si hubo promoción de rango después de otorgar XP
+    try {
+      const currentRankRecord = await this.ranksService.getCurrentRank(userId);
+      newRank = currentRankRecord.current_rank;
+
+      // Detectar si hubo promoción comparando rangos
+      if (previousRank && newRank && previousRank !== newRank) {
+        rankPromoted = true;
+        this.logger.log(
+          `User ${userId} promoted from ${previousRank} to ${newRank} after claiming mission ${missionId}`,
+        );
+      }
+    } catch (error: unknown) {
+      this.logger.warn(
+        `Could not verify rank promotion for user ${userId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+
     return {
       mission,
       rewards: mission.rewards,
+      rewards_granted: {
+        xp_awarded: xpAwarded,
+        ml_coins_awarded: mlCoinsAwarded,
+        rank_promotion: rankPromoted,
+        new_rank: rankPromoted ? newRank : null,
+        previous_rank: rankPromoted ? previousRank : null,
+      },
     };
   }
 

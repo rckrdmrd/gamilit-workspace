@@ -1,24 +1,48 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { Modal } from '@shared/components/common/Modal';
 import { DataTable, Column } from '@shared/components/common/DataTable';
-import { Users, TrendingUp, TrendingDown, Minus, Mail } from 'lucide-react';
+import {
+  Users,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Search,
+  Filter,
+  SortAsc,
+  SortDesc,
+} from 'lucide-react';
 import { useClassrooms } from '../hooks/useClassrooms';
 import { classroomsApi } from '@services/api/teacher';
-import type { StudentPerformance } from '../types';
+import { StudentDetailModal } from '../components/monitoring/StudentDetailModal';
+import type { StudentMonitoring } from '../types';
 
-interface StudentExtended extends StudentPerformance {
+interface StudentExtended {
+  student_id: string;
+  student_name: string;
   email: string;
+  average_score: number;
+  completion_rate: number;
   performance_level: 'high' | 'medium' | 'low';
   classroom_name: string;
+  classroom_id: string;
+  last_active: string;
+  score_average: number;
 }
+
+type SortField = 'student_name' | 'average_score' | 'completion_rate' | 'last_active';
+type SortDirection = 'asc' | 'desc';
 
 export default function TeacherStudents() {
   const [students, setStudents] = useState<StudentExtended[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<StudentExtended | null>(null);
+  const [selectedStudentMonitoring, setSelectedStudentMonitoring] =
+    useState<StudentMonitoring | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [filterClass, setFilterClass] = useState<string>('all');
   const [filterPerformance, setFilterPerformance] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortField, setSortField] = useState<SortField>('student_name');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,17 +64,22 @@ export default function TeacherStudents() {
         // Fetch students from all classrooms in parallel
         const allStudentsPromises = classrooms.map(async (classroom) => {
           try {
-            // Call real API for each classroom
-            const classroomStudents = await classroomsApi.getClassroomStudents(classroom.id);
+            // Call real API for each classroom (returns PaginatedResponse)
+            const response = await classroomsApi.getClassroomStudents(classroom.id);
+            const classroomStudents = response.data;
 
             // Enrich student data with classroom information
-            return classroomStudents.map(student => ({
-              ...student,
+            return classroomStudents.map((student) => ({
+              student_id: student.id,
+              student_name: student.full_name,
+              email: student.email || 'N/A',
+              average_score: student.score_average,
+              completion_rate: student.progress_percentage,
+              performance_level: calculatePerformanceLevel(student.score_average),
               classroom_name: classroom.name,
               classroom_id: classroom.id,
-              // Map StudentMonitoring to StudentExtended format
-              email: student.email || 'N/A',
-              performance_level: calculatePerformanceLevel(student.score_average),
+              last_active: student.last_activity,
+              score_average: student.score_average,
             }));
           } catch (err) {
             console.error(`Error fetching students for classroom ${classroom.id}:`, err);
@@ -84,23 +113,106 @@ export default function TeacherStudents() {
     return 'low';
   };
 
-  const viewStudentDetail = (student: StudentExtended) => {
+  const viewStudentDetail = async (student: StudentExtended) => {
     setSelectedStudent(student);
-    // API call: GET /api/teacher/analytics/student/:id
-    setIsDetailModalOpen(true);
+
+    // Fetch full student data from API to convert to StudentMonitoring
+    try {
+      const response = await classroomsApi.getClassroomStudents(student.classroom_id);
+      const studentData = response.data.find((s) => s.id === student.student_id);
+
+      if (studentData) {
+        setSelectedStudentMonitoring(studentData);
+        setIsDetailModalOpen(true);
+      }
+    } catch (err) {
+      console.error('[TeacherStudents] Error fetching student detail:', err);
+      setError('Error al cargar detalle del estudiante');
+    }
   };
 
-  const filteredStudents = students.filter((student) => {
-    const classMatch = filterClass === 'all' || student.classroom_name === filterClass;
-    const performanceMatch = filterPerformance === 'all' || student.performance_level === filterPerformance;
-    return classMatch && performanceMatch;
-  });
+  // Toggle sort direction or change field
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  // Memoized filtered and sorted students
+  const filteredAndSortedStudents = useMemo(() => {
+    let result = [...students];
+
+    // Apply filters
+    result = result.filter((student) => {
+      const classMatch = filterClass === 'all' || student.classroom_name === filterClass;
+      const performanceMatch =
+        filterPerformance === 'all' || student.performance_level === filterPerformance;
+      const searchMatch =
+        searchQuery === '' ||
+        student.student_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        student.email.toLowerCase().includes(searchQuery.toLowerCase());
+
+      return classMatch && performanceMatch && searchMatch;
+    });
+
+    // Apply sorting
+    result.sort((a, b) => {
+      let aValue: string | number;
+      let bValue: string | number;
+
+      switch (sortField) {
+        case 'student_name':
+          aValue = a.student_name.toLowerCase();
+          bValue = b.student_name.toLowerCase();
+          break;
+        case 'average_score':
+          aValue = a.average_score;
+          bValue = b.average_score;
+          break;
+        case 'completion_rate':
+          aValue = a.completion_rate;
+          bValue = b.completion_rate;
+          break;
+        case 'last_active':
+          aValue = new Date(a.last_active).getTime();
+          bValue = new Date(b.last_active).getTime();
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return result;
+  }, [students, filterClass, filterPerformance, searchQuery, sortField, sortDirection]);
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) return null;
+    return sortDirection === 'asc' ? (
+      <SortAsc className="ml-1 inline h-4 w-4" />
+    ) : (
+      <SortDesc className="ml-1 inline h-4 w-4" />
+    );
+  };
 
   const columns: Column<StudentExtended>[] = [
     {
       key: 'student_name',
-      label: 'Nombre',
-      sortable: true,
+      label: (
+        <button
+          onClick={() => handleSort('student_name')}
+          className="flex items-center transition-colors hover:text-detective-orange"
+        >
+          Nombre {getSortIcon('student_name')}
+        </button>
+      ),
+      sortable: false,
       render: (row) => (
         <div>
           <p className="font-medium text-detective-text">{row.student_name}</p>
@@ -115,8 +227,15 @@ export default function TeacherStudents() {
     },
     {
       key: 'average_score',
-      label: 'Puntuación',
-      sortable: true,
+      label: (
+        <button
+          onClick={() => handleSort('average_score')}
+          className="flex items-center transition-colors hover:text-detective-orange"
+        >
+          Puntuación {getSortIcon('average_score')}
+        </button>
+      ),
+      sortable: false,
       render: (row) => (
         <div className="flex items-center gap-2">
           <span
@@ -124,36 +243,43 @@ export default function TeacherStudents() {
               row.average_score >= 80
                 ? 'text-green-500'
                 : row.average_score >= 60
-                ? 'text-yellow-500'
-                : 'text-red-500'
+                  ? 'text-yellow-500'
+                  : 'text-red-500'
             }`}
           >
             {row.average_score}%
           </span>
           {row.average_score >= 80 ? (
-            <TrendingUp className="w-4 h-4 text-green-500" />
+            <TrendingUp className="h-4 w-4 text-green-500" />
           ) : row.average_score >= 60 ? (
-            <Minus className="w-4 h-4 text-yellow-500" />
+            <Minus className="h-4 w-4 text-yellow-500" />
           ) : (
-            <TrendingDown className="w-4 h-4 text-red-500" />
+            <TrendingDown className="h-4 w-4 text-red-500" />
           )}
         </div>
       ),
     },
     {
       key: 'completion_rate',
-      label: 'Completitud',
-      sortable: true,
+      label: (
+        <button
+          onClick={() => handleSort('completion_rate')}
+          className="flex items-center transition-colors hover:text-detective-orange"
+        >
+          Completitud {getSortIcon('completion_rate')}
+        </button>
+      ),
+      sortable: false,
       render: (row) => (
         <div className="flex items-center gap-2">
-          <div className="flex-1 bg-gray-700 rounded-full h-2 w-24">
+          <div className="h-2 w-24 flex-1 rounded-full bg-gray-700">
             <div
               className={`h-2 rounded-full ${
                 row.completion_rate >= 70
                   ? 'bg-green-500'
                   : row.completion_rate >= 50
-                  ? 'bg-yellow-500'
-                  : 'bg-red-500'
+                    ? 'bg-yellow-500'
+                    : 'bg-red-500'
               }`}
               style={{ width: `${row.completion_rate}%` }}
             />
@@ -178,7 +304,9 @@ export default function TeacherStudents() {
           low: 'Bajo',
         };
         return (
-          <span className={`px-2 py-1 rounded-lg text-xs font-medium ${performanceColors[row.performance_level]}`}>
+          <span
+            className={`rounded-lg px-2 py-1 text-xs font-medium ${performanceColors[row.performance_level]}`}
+          >
             {performanceLabels[row.performance_level]}
           </span>
         );
@@ -186,8 +314,15 @@ export default function TeacherStudents() {
     },
     {
       key: 'last_active',
-      label: 'Última Actividad',
-      sortable: true,
+      label: (
+        <button
+          onClick={() => handleSort('last_active')}
+          className="flex items-center transition-colors hover:text-detective-orange"
+        >
+          Última Actividad {getSortIcon('last_active')}
+        </button>
+      ),
+      sortable: false,
       render: (row) => new Date(row.last_active).toLocaleDateString('es-ES'),
     },
   ];
@@ -203,17 +338,17 @@ export default function TeacherStudents() {
       <main className="detective-container py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-detective-text mb-2">Estudiantes</h1>
+          <h1 className="mb-2 text-4xl font-bold text-detective-text">Estudiantes</h1>
           <p className="text-detective-text-secondary">
             Monitorea el progreso y rendimiento de todos tus estudiantes
           </p>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
           <DetectiveCard>
             <div className="flex items-center gap-3">
-              <Users className="w-8 h-8 text-blue-500" />
+              <Users className="h-8 w-8 text-blue-500" />
               <div>
                 <p className="text-sm text-gray-400">Total Estudiantes</p>
                 <p className="text-2xl font-bold text-detective-text">{students.length}</p>
@@ -222,7 +357,7 @@ export default function TeacherStudents() {
           </DetectiveCard>
           <DetectiveCard>
             <div className="flex items-center gap-3">
-              <TrendingUp className="w-8 h-8 text-green-500" />
+              <TrendingUp className="h-8 w-8 text-green-500" />
               <div>
                 <p className="text-sm text-gray-400">Alto Rendimiento</p>
                 <p className="text-2xl font-bold text-green-500">{performanceStats.high}</p>
@@ -231,7 +366,7 @@ export default function TeacherStudents() {
           </DetectiveCard>
           <DetectiveCard>
             <div className="flex items-center gap-3">
-              <Minus className="w-8 h-8 text-yellow-500" />
+              <Minus className="h-8 w-8 text-yellow-500" />
               <div>
                 <p className="text-sm text-gray-400">Rendimiento Medio</p>
                 <p className="text-2xl font-bold text-yellow-500">{performanceStats.medium}</p>
@@ -240,7 +375,7 @@ export default function TeacherStudents() {
           </DetectiveCard>
           <DetectiveCard>
             <div className="flex items-center gap-3">
-              <TrendingDown className="w-8 h-8 text-red-500" />
+              <TrendingDown className="h-8 w-8 text-red-500" />
               <div>
                 <p className="text-sm text-gray-400">Bajo Rendimiento</p>
                 <p className="text-2xl font-bold text-red-500">{performanceStats.low}</p>
@@ -249,62 +384,91 @@ export default function TeacherStudents() {
           </DetectiveCard>
         </div>
 
-        {/* Filters */}
+        {/* Search and Filters */}
         <DetectiveCard className="mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-4">
+            {/* Search Bar */}
             <div>
-              <label className="block text-sm font-medium text-detective-text mb-2">
-                Filtrar por Clase
+              <label className="mb-2 block flex items-center gap-2 text-sm font-medium text-detective-text">
+                <Search className="h-4 w-4" />
+                Buscar Estudiante
               </label>
-              <select
-                value={filterClass}
-                onChange={(e) => setFilterClass(e.target.value)}
-                className="w-full px-4 py-2 bg-detective-bg-secondary border border-gray-700 rounded-lg text-detective-text focus:outline-none focus:border-detective-orange"
-              >
-                <option value="all">Todas las clases</option>
-                {classrooms?.map(classroom => (
-                  <option key={classroom.id} value={classroom.name}>
-                    {classroom.name}
-                  </option>
-                ))}
-              </select>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar por nombre o email..."
+                className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
+              />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-detective-text mb-2">
-                Filtrar por Rendimiento
-              </label>
-              <select
-                value={filterPerformance}
-                onChange={(e) => setFilterPerformance(e.target.value)}
-                className="w-full px-4 py-2 bg-detective-bg-secondary border border-gray-700 rounded-lg text-detective-text focus:outline-none focus:border-detective-orange"
-              >
-                <option value="all">Todos</option>
-                <option value="high">Alto</option>
-                <option value="medium">Medio</option>
-                <option value="low">Bajo</option>
-              </select>
+
+            {/* Filters */}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div>
+                <label className="mb-2 block flex items-center gap-2 text-sm font-medium text-detective-text">
+                  <Filter className="h-4 w-4" />
+                  Filtrar por Clase
+                </label>
+                <select
+                  value={filterClass}
+                  onChange={(e) => setFilterClass(e.target.value)}
+                  className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
+                >
+                  <option value="all">Todas las clases</option>
+                  {classrooms?.map((classroom) => (
+                    <option key={classroom.id} value={classroom.name}>
+                      {classroom.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="mb-2 block flex items-center gap-2 text-sm font-medium text-detective-text">
+                  <Filter className="h-4 w-4" />
+                  Filtrar por Rendimiento
+                </label>
+                <select
+                  value={filterPerformance}
+                  onChange={(e) => setFilterPerformance(e.target.value)}
+                  className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
+                >
+                  <option value="all">Todos</option>
+                  <option value="high">Alto</option>
+                  <option value="medium">Medio</option>
+                  <option value="low">Bajo</option>
+                </select>
+              </div>
             </div>
+
+            {/* Active Filters Info */}
+            {(searchQuery || filterClass !== 'all' || filterPerformance !== 'all') && (
+              <div className="flex items-center gap-2 text-sm text-detective-text-secondary">
+                <span>
+                  Mostrando {filteredAndSortedStudents.length} de {students.length} estudiantes
+                </span>
+              </div>
+            )}
           </div>
         </DetectiveCard>
 
         {/* Loading State */}
         {(loading || classroomsLoading) && (
-          <div className="text-center py-8">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-detective-orange"></div>
+          <div className="py-8 text-center">
+            <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-detective-orange"></div>
             <p className="mt-4 text-detective-text-secondary">Cargando estudiantes...</p>
           </div>
         )}
 
         {/* Error State */}
         {error && (
-          <div className="bg-red-500/20 border border-red-500 rounded-lg p-4 mb-4">
+          <div className="mb-4 rounded-lg border border-red-500 bg-red-500/20 p-4">
             <p className="text-red-500">{error}</p>
           </div>
         )}
 
         {/* Empty State */}
         {!loading && !classroomsLoading && !error && students.length === 0 && (
-          <div className="text-center py-8 text-detective-text-secondary">
+          <div className="py-8 text-center text-detective-text-secondary">
             No se encontraron estudiantes
           </div>
         )}
@@ -312,139 +476,26 @@ export default function TeacherStudents() {
         {/* Students Table */}
         {!loading && !classroomsLoading && !error && students.length > 0 && (
           <DataTable
-            data={filteredStudents}
+            data={filteredAndSortedStudents}
             columns={columns}
-            searchPlaceholder="Buscar estudiantes..."
+            searchPlaceholder=""
             onRowClick={viewStudentDetail}
           />
         )}
       </main>
 
-      {/* Student Detail Modal */}
-      <Modal
-        isOpen={isDetailModalOpen}
-        onClose={() => {
-          setIsDetailModalOpen(false);
-          setSelectedStudent(null);
-        }}
-        title={`Detalle - ${selectedStudent?.student_name}`}
-
-      >
-        {selectedStudent && (
-          <div className="space-y-6">
-            {/* Overall Stats */}
-            <div>
-              <h3 className="text-lg font-bold text-detective-text mb-4">Estadísticas Generales</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 bg-detective-bg-secondary rounded-lg">
-                  <p className="text-sm text-gray-400 mb-1">Puntuación Promedio</p>
-                  <p className="text-2xl font-bold text-detective-text">
-                    {selectedStudent.average_score}%
-                  </p>
-                </div>
-                <div className="p-4 bg-detective-bg-secondary rounded-lg">
-                  <p className="text-sm text-gray-400 mb-1">Tasa de Completitud</p>
-                  <p className="text-2xl font-bold text-detective-text">
-                    {selectedStudent.completion_rate}%
-                  </p>
-                </div>
-                <div className="p-4 bg-detective-bg-secondary rounded-lg">
-                  <p className="text-sm text-gray-400 mb-1">Nivel de Rendimiento</p>
-                  <span
-                    className={`inline-block px-3 py-1 rounded-lg text-sm font-medium ${
-                      selectedStudent.performance_level === 'high'
-                        ? 'bg-green-500/20 text-green-500'
-                        : selectedStudent.performance_level === 'medium'
-                        ? 'bg-yellow-500/20 text-yellow-500'
-                        : 'bg-red-500/20 text-red-500'
-                    }`}
-                  >
-                    {selectedStudent.performance_level === 'high'
-                      ? 'Alto'
-                      : selectedStudent.performance_level === 'medium'
-                      ? 'Medio'
-                      : 'Bajo'}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Performance by Module */}
-            <div>
-              <h3 className="text-lg font-bold text-detective-text mb-4">Rendimiento por Módulo</h3>
-              <div className="space-y-3">
-                {[
-                  { module: 'Módulo 1: Biografías', score: 92, completed: true },
-                  { module: 'Módulo 2: Descubrimientos', score: 88, completed: true },
-                  { module: 'Módulo 3: Narrativas', score: 95, completed: false },
-                  { module: 'Módulo 4: Medios Digitales', score: 0, completed: false },
-                ].map((mod, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 bg-detective-bg-secondary rounded-lg"
-                  >
-                    <div className="flex-1">
-                      <p className="text-detective-text font-medium">{mod.module}</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <div className="flex-1 bg-gray-700 rounded-full h-2 max-w-xs">
-                          <div
-                            className="h-2 rounded-full bg-detective-orange"
-                            style={{ width: `${mod.score}%` }}
-                          />
-                        </div>
-                        <span className="text-sm text-detective-text">{mod.score}%</span>
-                      </div>
-                    </div>
-                    <span
-                      className={`px-2 py-1 rounded text-xs font-medium ${
-                        mod.completed
-                          ? 'bg-green-500/20 text-green-500'
-                          : 'bg-gray-500/20 text-gray-500'
-                      }`}
-                    >
-                      {mod.completed ? 'Completado' : 'En progreso'}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Recent Activity */}
-            <div>
-              <h3 className="text-lg font-bold text-detective-text mb-4">Actividad Reciente</h3>
-              <div className="space-y-2">
-                {[
-                  { action: 'Completó "Biografía Marie Curie"', time: 'Hace 2 horas', score: 95 },
-                  { action: 'Intentó "Crucigrama Científico"', time: 'Hace 1 día', score: 88 },
-                  { action: 'Completó "Quiz Descubrimientos"', time: 'Hace 2 días', score: 92 },
-                ].map((activity, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 bg-detective-bg-secondary rounded-lg"
-                  >
-                    <div>
-                      <p className="text-detective-text text-sm">{activity.action}</p>
-                      <p className="text-xs text-gray-400">{activity.time}</p>
-                    </div>
-                    <span className="text-sm font-bold text-green-500">{activity.score}%</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Action Button */}
-            <div className="pt-4 border-t border-gray-700">
-              <button
-                onClick={() => alert('Función de mensajería (integrar con backend)')}
-                className="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
-              >
-                <Mail className="w-5 h-5" />
-                Enviar Mensaje
-              </button>
-            </div>
-          </div>
-        )}
-      </Modal>
+      {/* Student Detail Modal with Enhanced Features */}
+      {isDetailModalOpen && selectedStudentMonitoring && selectedStudent && (
+        <StudentDetailModal
+          student={selectedStudentMonitoring}
+          classroomId={selectedStudent.classroom_id}
+          onClose={() => {
+            setIsDetailModalOpen(false);
+            setSelectedStudent(null);
+            setSelectedStudentMonitoring(null);
+          }}
+        />
+      )}
     </div>
   );
 }

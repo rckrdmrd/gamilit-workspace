@@ -4,13 +4,12 @@
  */
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { useAchievements } from '../../hooks/useAchievements';
 import { AchievementCard } from './AchievementCard';
 
 export const TrophyRoom: React.FC = () => {
-  const { unlockedAchievements, stats } = useAchievements();
+  const { unlockedAchievements } = useAchievements();
 
   const legendaryAchievements = unlockedAchievements.filter((a) => a.rarity === 'legendary');
   const epicAchievements = unlockedAchievements.filter((a) => a.rarity === 'epic');
@@ -20,18 +19,16 @@ export const TrophyRoom: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-detective-orange to-detective-gold p-8 rounded-detective text-white">
+      <div className="rounded-detective bg-gradient-to-r from-detective-orange to-detective-gold p-8 text-white">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-detective-3xl font-bold mb-2">Sala de Trofeos</h1>
-            <p className="text-detective-lg opacity-90">
-              Tus logros más preciados
-            </p>
+            <h1 className="mb-2 text-detective-3xl font-bold">Sala de Trofeos</h1>
+            <p className="text-detective-lg opacity-90">Tus logros más preciados</p>
           </div>
-          <Icons.Trophy className="w-20 h-20 opacity-50" />
+          <Icons.Trophy className="h-20 w-20 opacity-50" />
         </div>
 
-        <div className="grid grid-cols-4 gap-4 mt-6">
+        <div className="mt-6 grid grid-cols-4 gap-4">
           <div className="text-center">
             <p className="text-detective-3xl font-bold">{legendaryAchievements.length}</p>
             <p className="text-detective-sm opacity-80">Legendarios</p>
@@ -54,11 +51,11 @@ export const TrophyRoom: React.FC = () => {
       {/* Legendary Section */}
       {legendaryAchievements.length > 0 && (
         <div>
-          <h2 className="text-detective-2xl font-bold text-detective-text mb-4 flex items-center gap-2">
-            <Icons.Crown className="w-6 h-6 text-detective-gold" />
+          <h2 className="mb-4 flex items-center gap-2 text-detective-2xl font-bold text-detective-text">
+            <Icons.Crown className="h-6 w-6 text-detective-gold" />
             Legendarios
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {legendaryAchievements.map((achievement) => (
               <AchievementCard key={achievement.id} achievement={achievement} />
             ))}
@@ -69,11 +66,11 @@ export const TrophyRoom: React.FC = () => {
       {/* Epic Section */}
       {epicAchievements.length > 0 && (
         <div>
-          <h2 className="text-detective-2xl font-bold text-detective-text mb-4 flex items-center gap-2">
-            <Icons.Star className="w-6 h-6 text-detective-orange" />
+          <h2 className="mb-4 flex items-center gap-2 text-detective-2xl font-bold text-detective-text">
+            <Icons.Star className="h-6 w-6 text-detective-orange" />
             Épicos
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {epicAchievements.map((achievement) => (
               <AchievementCard key={achievement.id} achievement={achievement} />
             ))}
@@ -84,10 +81,8 @@ export const TrophyRoom: React.FC = () => {
       {/* Rare and Common in tabs or collapsed */}
       {(rareAchievements.length > 0 || commonAchievements.length > 0) && (
         <div>
-          <h2 className="text-detective-2xl font-bold text-detective-text mb-4">
-            Otros Logros
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <h2 className="mb-4 text-detective-2xl font-bold text-detective-text">Otros Logros</h2>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {[...rareAchievements, ...commonAchievements].map((achievement) => (
               <AchievementCard key={achievement.id} achievement={achievement} />
             ))}
@@ -96,12 +91,12 @@ export const TrophyRoom: React.FC = () => {
       )}
 
       {unlockedAchievements.length === 0 && (
-        <div className="text-center py-12">
-          <Icons.Trophy className="w-24 h-24 text-gray-200 mx-auto mb-4" />
+        <div className="py-12 text-center">
+          <Icons.Trophy className="mx-auto mb-4 h-24 w-24 text-gray-200" />
           <p className="text-detective-xl text-detective-text-secondary">
             Aún no has desbloqueado ningún logro
           </p>
-          <p className="text-detective-base text-detective-text-secondary mt-2">
+          <p className="mt-2 text-detective-base text-detective-text-secondary">
             Completa ejercicios para comenzar tu colección
           </p>
         </div>

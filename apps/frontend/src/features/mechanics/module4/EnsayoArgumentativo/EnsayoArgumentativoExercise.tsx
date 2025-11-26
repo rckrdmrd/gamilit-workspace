@@ -3,21 +3,15 @@ import { motion } from 'framer-motion';
 import { FileText, CheckCircle, List, Lightbulb, Save } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
-import { calculateScore, saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-
-interface EssaySection {
-  title: string;
-  content: string;
-  wordCount: number;
-}
+import {
+  calculateScore,
+  saveProgress,
+  FeedbackData,
+} from '@shared/components/mechanics/mechanicsTypes';
 
 interface ExerciseProps {
-  moduleId: number;
-  lessonId: number;
   exerciseId: string;
-  userId: string;
   onComplete?: (score: number, timeSpent: number) => void;
-  onExit?: () => void;
   onProgressUpdate?: (progress: number) => void;
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
@@ -35,11 +29,9 @@ interface ExerciseState {
 
 export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
   exerciseId,
-  userId,
   onComplete,
   onProgressUpdate,
   initialData,
-  difficulty = 'medium'
 }) => {
   const [topic, setTopic] = useState(initialData?.topic || '');
   const [thesis, setThesis] = useState(initialData?.thesis || '');
@@ -74,22 +66,30 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
   ];
 
   const countWords = (text: string) => {
-    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+    return text
+      .trim()
+      .split(/\s+/)
+      .filter((word) => word.length > 0).length;
   };
 
-  const totalWords = countWords(introduction) + countWords(argument1) +
-                     countWords(argument2) + countWords(argument3) + countWords(conclusion);
+  const totalWords =
+    countWords(introduction) +
+    countWords(argument1) +
+    countWords(argument2) +
+    countWords(argument3) +
+    countWords(conclusion);
 
   const calculateProgress = () => {
     const sections = [introduction, argument1, argument2, argument3, conclusion];
-    const completed = sections.filter(s => countWords(s) >= 80).length;
+    const completed = sections.filter((s) => countWords(s) >= 80).length;
     return (completed / sections.length) * 100;
   };
 
   const getSuggestions = () => {
     const suggestions: string[] = [];
     if (!thesis) suggestions.push('Define una tesis clara antes de comenzar');
-    if (countWords(introduction) < 100) suggestions.push('Desarrolla más la introducción (mínimo 100 palabras)');
+    if (countWords(introduction) < 100)
+      suggestions.push('Desarrolla más la introducción (mínimo 100 palabras)');
     if (countWords(argument1) < 80) suggestions.push('Fortalece el primer argumento');
     if (countWords(argument2) < 80) suggestions.push('Desarrolla el segundo argumento');
     if (countWords(argument3) < 80) suggestions.push('Expande el tercer argumento');
@@ -109,7 +109,13 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
   useEffect(() => {
     const interval = setInterval(() => {
       const currentState: ExerciseState = {
-        topic, thesis, introduction, argument1, argument2, argument3, conclusion
+        topic,
+        thesis,
+        introduction,
+        argument1,
+        argument2,
+        argument3,
+        conclusion,
       };
       saveProgress(exerciseId, currentState);
     }, 30000);
@@ -127,7 +133,17 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
     setTimeSpent(elapsed);
 
     onProgressUpdate?.(progress);
-  }, [topic, thesis, introduction, argument1, argument2, argument3, conclusion, onProgressUpdate, startTime]);
+  }, [
+    topic,
+    thesis,
+    introduction,
+    argument1,
+    argument2,
+    argument3,
+    conclusion,
+    onProgressUpdate,
+    startTime,
+  ]);
 
   // Handle check/verification
   const handleCheck = async () => {
@@ -138,13 +154,12 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
         type: 'error',
         title: 'Ensayo Incompleto',
         message: `Has completado ${Math.round(progress)}% del ensayo. Completa todas las secciones para finalizar.`,
-        showConfetti: false
+        showConfetti: false,
       });
       setShowFeedback(true);
       return;
     }
 
-    const endTime = new Date();
     const score = calculateScore(5, 5);
 
     setFeedback({
@@ -152,7 +167,7 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
       title: '¡Ensayo Completado!',
       message: `Excelente trabajo. Has completado todas las secciones del ensayo con un total de ${totalWords} palabras.`,
       score,
-      showConfetti: true
+      showConfetti: true,
     });
     setShowFeedback(true);
   };
@@ -173,7 +188,13 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
   // Handle save
   const handleSave = () => {
     const currentState: ExerciseState = {
-      topic, thesis, introduction, argument1, argument2, argument3, conclusion
+      topic,
+      thesis,
+      introduction,
+      argument1,
+      argument2,
+      argument3,
+      conclusion,
     };
     saveProgress(exerciseId, currentState);
 
@@ -181,7 +202,7 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
       type: 'info',
       title: 'Progreso Guardado',
       message: 'Tu trabajo ha sido guardado correctamente.',
-      showConfetti: false
+      showConfetti: false,
     });
     setShowFeedback(true);
   };
@@ -194,11 +215,11 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
       specificActions: [
         {
           label: 'Guardar',
-          icon: <Save className="w-4 h-4" />,
+          icon: <Save className="h-4 w-4" />,
           onClick: handleSave,
-          variant: 'blue'
-        }
-      ]
+          variant: 'blue',
+        },
+      ],
     };
   }, [topic, thesis, introduction, argument1, argument2, argument3, conclusion]);
 
@@ -207,9 +228,9 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Exercise Description */}
-          <div className="bg-gradient-to-r from-detective-blue to-detective-orange rounded-detective p-6 text-white shadow-detective-lg">
-            <div className="flex items-center gap-3 mb-2">
-              <FileText className="w-8 h-8" />
+          <div className="rounded-detective bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-detective-lg">
+            <div className="mb-2 flex items-center gap-3">
+              <FileText className="h-8 w-8" />
               <h2 className="text-detective-2xl font-bold">Ensayo Argumentativo</h2>
             </div>
             <p className="text-detective-base opacity-90">
@@ -225,27 +246,33 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
             <DetectiveCard variant="default" padding="lg">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-detective-text font-medium mb-2">Tema del ensayo:</label>
+                  <label className="mb-2 block font-medium text-detective-text">
+                    Tema del ensayo:
+                  </label>
                   <select
                     value={topic}
                     onChange={(e) => setTopic(e.target.value)}
-                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-detective focus:border-detective-orange focus:outline-none transition-colors"
+                    className="w-full rounded-detective border-2 border-gray-300 px-4 py-2 transition-colors focus:border-detective-orange focus:outline-none"
                   >
                     <option value="">Selecciona un tema...</option>
                     {topics.map((t, idx) => (
-                      <option key={idx} value={t}>{t}</option>
+                      <option key={idx} value={t}>
+                        {t}
+                      </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-detective-text font-medium mb-2">Tesis (Idea principal):</label>
+                  <label className="mb-2 block font-medium text-detective-text">
+                    Tesis (Idea principal):
+                  </label>
                   <input
                     type="text"
                     value={thesis}
                     onChange={(e) => setThesis(e.target.value)}
                     placeholder="Ejemplo: Marie Curie revolucionó la ciencia moderna..."
-                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-detective focus:border-detective-orange focus:outline-none transition-colors"
+                    className="w-full rounded-detective border-2 border-gray-300 px-4 py-2 transition-colors focus:border-detective-orange focus:outline-none"
                   />
                 </div>
               </div>
@@ -260,8 +287,8 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
             <DetectiveCard variant="default" padding="lg">
               <div className="space-y-4">
                 <div>
-                  <label className="flex items-center gap-2 text-detective-text font-medium mb-2">
-                    <span className="w-3 h-3 bg-blue-400 rounded-full" />
+                  <label className="mb-2 flex items-center gap-2 font-medium text-detective-text">
+                    <span className="h-3 w-3 rounded-full bg-blue-400" />
                     Introducción ({countWords(introduction)} palabras, mín. 100)
                   </label>
                   <textarea
@@ -269,13 +296,13 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
                     onChange={(e) => setIntroduction(e.target.value)}
                     rows={6}
                     placeholder="Presenta el tema, contexto histórico y tu tesis..."
-                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-detective focus:border-detective-orange focus:outline-none resize-none transition-colors"
+                    className="w-full resize-none rounded-detective border-2 border-gray-300 px-4 py-2 transition-colors focus:border-detective-orange focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="flex items-center gap-2 text-detective-text font-medium mb-2">
-                    <span className="w-3 h-3 bg-green-400 rounded-full" />
+                  <label className="mb-2 flex items-center gap-2 font-medium text-detective-text">
+                    <span className="h-3 w-3 rounded-full bg-green-400" />
                     Argumento 1 ({countWords(argument1)} palabras, mín. 80)
                   </label>
                   <textarea
@@ -283,13 +310,13 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
                     onChange={(e) => setArgument1(e.target.value)}
                     rows={5}
                     placeholder="Desarrolla tu primer argumento con evidencia..."
-                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-detective focus:border-detective-orange focus:outline-none resize-none transition-colors"
+                    className="w-full resize-none rounded-detective border-2 border-gray-300 px-4 py-2 transition-colors focus:border-detective-orange focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="flex items-center gap-2 text-detective-text font-medium mb-2">
-                    <span className="w-3 h-3 bg-yellow-400 rounded-full" />
+                  <label className="mb-2 flex items-center gap-2 font-medium text-detective-text">
+                    <span className="h-3 w-3 rounded-full bg-yellow-400" />
                     Argumento 2 ({countWords(argument2)} palabras, mín. 80)
                   </label>
                   <textarea
@@ -297,13 +324,13 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
                     onChange={(e) => setArgument2(e.target.value)}
                     rows={5}
                     placeholder="Presenta tu segundo argumento..."
-                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-detective focus:border-detective-orange focus:outline-none resize-none transition-colors"
+                    className="w-full resize-none rounded-detective border-2 border-gray-300 px-4 py-2 transition-colors focus:border-detective-orange focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="flex items-center gap-2 text-detective-text font-medium mb-2">
-                    <span className="w-3 h-3 bg-purple-400 rounded-full" />
+                  <label className="mb-2 flex items-center gap-2 font-medium text-detective-text">
+                    <span className="h-3 w-3 rounded-full bg-purple-400" />
                     Argumento 3 ({countWords(argument3)} palabras, mín. 80)
                   </label>
                   <textarea
@@ -311,13 +338,13 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
                     onChange={(e) => setArgument3(e.target.value)}
                     rows={5}
                     placeholder="Desarrolla tu tercer argumento..."
-                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-detective focus:border-detective-orange focus:outline-none resize-none transition-colors"
+                    className="w-full resize-none rounded-detective border-2 border-gray-300 px-4 py-2 transition-colors focus:border-detective-orange focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="flex items-center gap-2 text-detective-text font-medium mb-2">
-                    <span className="w-3 h-3 bg-orange-400 rounded-full" />
+                  <label className="mb-2 flex items-center gap-2 font-medium text-detective-text">
+                    <span className="h-3 w-3 rounded-full bg-orange-400" />
                     Conclusión ({countWords(conclusion)} palabras, mín. 100)
                   </label>
                   <textarea
@@ -325,7 +352,7 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
                     onChange={(e) => setConclusion(e.target.value)}
                     rows={6}
                     placeholder="Resume tus argumentos y refuerza tu tesis..."
-                    className="w-full px-4 py-2 border-2 border-gray-300 rounded-detective focus:outline-none resize-none transition-colors"
+                    className="w-full resize-none rounded-detective border-2 border-gray-300 px-4 py-2 transition-colors focus:outline-none"
                   />
                 </div>
               </div>
@@ -334,42 +361,54 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
 
           {/* Statistics Summary */}
           <DetectiveCard variant="default" padding="md">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
               <div className="text-center">
-                <List className="w-6 h-6 text-detective-orange mx-auto mb-2" />
+                <List className="mx-auto mb-2 h-6 w-6 text-detective-orange" />
                 <p className="text-3xl font-bold text-detective-orange">{totalWords}</p>
-                <p className="text-detective-text-secondary text-sm">Palabras totales</p>
+                <p className="text-sm text-detective-text-secondary">Palabras totales</p>
               </div>
               <div className="text-center">
-                <Lightbulb className="w-6 h-6 text-detective-gold mx-auto mb-2" />
+                <Lightbulb className="mx-auto mb-2 h-6 w-6 text-detective-gold" />
                 <p className="text-3xl font-bold text-detective-text">{calculateProgress()}%</p>
-                <p className="text-detective-text-secondary text-sm">Progreso</p>
+                <p className="text-sm text-detective-text-secondary">Progreso</p>
               </div>
               <div className="text-center">
-                <CheckCircle className="w-6 h-6 text-detective-blue mx-auto mb-2" />
+                <CheckCircle className="mx-auto mb-2 h-6 w-6 text-detective-blue" />
                 <p className="text-3xl font-bold text-detective-text">{currentScore}</p>
-                <p className="text-detective-text-secondary text-sm">Puntuación</p>
+                <p className="text-sm text-detective-text-secondary">Puntuación</p>
               </div>
               <div className="text-center">
-                <FileText className="w-6 h-6 text-detective-text mx-auto mb-2" />
+                <FileText className="mx-auto mb-2 h-6 w-6 text-detective-text" />
                 <p className="text-3xl font-bold text-detective-text">
-                  {[introduction, argument1, argument2, argument3, conclusion].filter(s => countWords(s) >= 80).length}/5
+                  {
+                    [introduction, argument1, argument2, argument3, conclusion].filter(
+                      (s) => countWords(s) >= 80,
+                    ).length
+                  }
+                  /5
                 </p>
-                <p className="text-detective-text-secondary text-sm">Secciones completas</p>
+                <p className="text-sm text-detective-text-secondary">Secciones completas</p>
               </div>
             </div>
           </DetectiveCard>
 
           {/* Suggestions or Completion Status */}
           {getSuggestions().length > 0 ? (
-            <DetectiveCard variant="default" padding="md" className="bg-yellow-50 border-2 border-yellow-200">
-              <p className="font-medium text-detective-text mb-2 flex items-center gap-2">
-                <Lightbulb className="w-5 h-5 text-yellow-600" />
+            <DetectiveCard
+              variant="default"
+              padding="md"
+              className="border-2 border-yellow-200 bg-yellow-50"
+            >
+              <p className="mb-2 flex items-center gap-2 font-medium text-detective-text">
+                <Lightbulb className="h-5 w-5 text-yellow-600" />
                 Sugerencias:
               </p>
               <ul className="space-y-1">
                 {getSuggestions().map((suggestion, idx) => (
-                  <li key={idx} className="text-detective-text-secondary text-sm flex items-start gap-2">
+                  <li
+                    key={idx}
+                    className="flex items-start gap-2 text-sm text-detective-text-secondary"
+                  >
                     <span className="text-yellow-600">•</span>
                     {suggestion}
                   </li>
@@ -377,9 +416,13 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
               </ul>
             </DetectiveCard>
           ) : totalWords > 0 ? (
-            <DetectiveCard variant="default" padding="md" className="bg-green-50 border-2 border-green-200">
+            <DetectiveCard
+              variant="default"
+              padding="md"
+              className="border-2 border-green-200 bg-green-50"
+            >
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-green-600" />
+                <CheckCircle className="h-5 w-5 text-green-600" />
                 <p className="font-medium text-green-800">¡Ensayo completo!</p>
               </div>
             </DetectiveCard>

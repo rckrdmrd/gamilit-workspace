@@ -17,11 +17,12 @@ import {
   ChevronDown,
   SortAsc,
   Lock,
-  Unlock,
-  TrendingUp,
 } from 'lucide-react';
 import type { AchievementFiltersState, CategoryConfig, RarityConfig } from './types';
-import type { AchievementCategory, AchievementRarity } from '@/features/gamification/social/types/achievementsTypes';
+import type {
+  AchievementCategory,
+  AchievementRarity,
+} from '@/features/gamification/social/types/achievementsTypes';
 
 interface AchievementFiltersProps {
   filters: AchievementFiltersState;
@@ -116,9 +117,9 @@ const rarities: RarityConfig[] = [
 // Icon mapping
 const iconComponents = {
   'book-open': BookOpen,
-  'trophy': Trophy,
-  'users': Users,
-  'star': Star,
+  trophy: Trophy,
+  users: Users,
+  star: Star,
 };
 
 export const AchievementFilters: React.FC<AchievementFiltersProps> = ({
@@ -160,23 +161,23 @@ export const AchievementFilters: React.FC<AchievementFiltersProps> = ({
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl shadow-xl p-6"
+        className="rounded-2xl bg-white p-6 shadow-xl"
       >
         {/* Mobile Filter Toggle */}
-        <div className="lg:hidden mb-4">
+        <div className="mb-4 lg:hidden">
           <button
             onClick={() => setShowMobileFilters(!showMobileFilters)}
-            className="w-full flex items-center justify-between px-4 py-3 bg-detective-bg rounded-lg hover:bg-detective-bg-secondary transition-colors"
+            className="flex w-full items-center justify-between rounded-lg bg-detective-bg px-4 py-3 transition-colors hover:bg-detective-bg-secondary"
           >
             <span className="flex items-center gap-2 font-semibold text-detective-text">
-              <Filter className="w-5 h-5" />
+              <Filter className="h-5 w-5" />
               Filtros {hasActiveFilters && `(${resultsCount} resultados)`}
             </span>
             <motion.div
               animate={{ rotate: showMobileFilters ? 180 : 0 }}
               transition={{ duration: 0.2 }}
             >
-              <ChevronDown className="w-5 h-5" />
+              <ChevronDown className="h-5 w-5" />
             </motion.div>
           </button>
         </div>
@@ -194,24 +195,24 @@ export const AchievementFilters: React.FC<AchievementFiltersProps> = ({
           >
             {/* Search Bar */}
             <div>
-              <label className="block text-sm font-semibold text-detective-text mb-2">
+              <label className="mb-2 block text-sm font-semibold text-detective-text">
                 Buscar Logros
               </label>
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-detective-text-secondary" />
+                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-detective-text-secondary" />
                 <input
                   type="text"
                   placeholder="Buscar por nombre o descripción..."
                   value={filters.searchQuery}
                   onChange={handleSearchChange}
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-detective-orange focus:outline-none transition-colors text-detective-text"
+                  className="w-full rounded-xl border-2 border-gray-200 py-3 pl-12 pr-4 text-detective-text transition-colors focus:border-detective-orange focus:outline-none"
                 />
                 {filters.searchQuery && (
                   <button
                     onClick={() => onFilterChange({ searchQuery: '' })}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-detective-text-secondary hover:text-detective-text"
                   >
-                    <X className="w-5 h-5" />
+                    <X className="h-5 w-5" />
                   </button>
                 )}
               </div>
@@ -219,7 +220,7 @@ export const AchievementFilters: React.FC<AchievementFiltersProps> = ({
 
             {/* Category Filters */}
             <div>
-              <label className="block text-sm font-semibold text-detective-text mb-3">
+              <label className="mb-3 block text-sm font-semibold text-detective-text">
                 Categoría
               </label>
               <div className="flex flex-wrap gap-2">
@@ -233,13 +234,13 @@ export const AchievementFilters: React.FC<AchievementFiltersProps> = ({
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleCategoryChange(cat.value)}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all ${
+                      className={`flex items-center gap-2 rounded-xl px-4 py-2 font-semibold transition-all ${
                         isActive
                           ? `bg-gradient-to-r ${cat.gradient} text-white shadow-lg`
                           : 'bg-detective-bg text-detective-text hover:bg-detective-bg-secondary'
                       }`}
                     >
-                      <Icon className="w-4 h-4" />
+                      <Icon className="h-4 w-4" />
                       <span>{cat.label}</span>
                     </motion.button>
                   );
@@ -249,9 +250,7 @@ export const AchievementFilters: React.FC<AchievementFiltersProps> = ({
 
             {/* Rarity Filters */}
             <div>
-              <label className="block text-sm font-semibold text-detective-text mb-3">
-                Rareza
-              </label>
+              <label className="mb-3 block text-sm font-semibold text-detective-text">Rareza</label>
               <div className="flex flex-wrap gap-2">
                 {rarities.map((rarity) => {
                   const isActive = filters.rarity === rarity.value;
@@ -262,7 +261,7 @@ export const AchievementFilters: React.FC<AchievementFiltersProps> = ({
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleRarityChange(rarity.value)}
-                      className={`px-4 py-2 rounded-xl font-semibold transition-all border-2 ${
+                      className={`rounded-xl border-2 px-4 py-2 font-semibold transition-all ${
                         isActive
                           ? `bg-gradient-to-r ${rarity.gradient} text-white ${rarity.glowColor} shadow-lg`
                           : `${rarity.borderColor} ${rarity.color} bg-white hover:${rarity.glowColor}`
@@ -276,46 +275,46 @@ export const AchievementFilters: React.FC<AchievementFiltersProps> = ({
             </div>
 
             {/* Status and Sort */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {/* Status Filter */}
               <div>
-                <label className="block text-sm font-semibold text-detective-text mb-2">
+                <label className="mb-2 block text-sm font-semibold text-detective-text">
                   Estado
                 </label>
                 <div className="relative">
                   <select
                     value={filters.status}
                     onChange={handleStatusChange}
-                    className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-detective-orange focus:outline-none appearance-none transition-colors text-detective-text bg-white"
+                    className="w-full appearance-none rounded-xl border-2 border-gray-200 bg-white py-3 pl-10 pr-4 text-detective-text transition-colors focus:border-detective-orange focus:outline-none"
                   >
                     <option value="all">Todos los logros</option>
                     <option value="unlocked">Solo desbloqueados</option>
                     <option value="locked">Solo bloqueados</option>
                     <option value="in_progress">En progreso</option>
                   </select>
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-detective-text-secondary pointer-events-none" />
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-detective-text-secondary pointer-events-none" />
+                  <Lock className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-detective-text-secondary" />
+                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-detective-text-secondary" />
                 </div>
               </div>
 
               {/* Sort Dropdown */}
               <div>
-                <label className="block text-sm font-semibold text-detective-text mb-2">
+                <label className="mb-2 block text-sm font-semibold text-detective-text">
                   Ordenar por
                 </label>
                 <div className="relative">
                   <select
                     value={filters.sortBy}
                     onChange={handleSortChange}
-                    className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-detective-orange focus:outline-none appearance-none transition-colors text-detective-text bg-white"
+                    className="w-full appearance-none rounded-xl border-2 border-gray-200 bg-white py-3 pl-10 pr-4 text-detective-text transition-colors focus:border-detective-orange focus:outline-none"
                   >
                     <option value="recent">Recién desbloqueados</option>
                     <option value="alphabetical">Alfabético</option>
                     <option value="rarity">Rareza (mayor primero)</option>
                     <option value="progress">Progreso (más cerca)</option>
                   </select>
-                  <SortAsc className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-detective-text-secondary pointer-events-none" />
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-detective-text-secondary pointer-events-none" />
+                  <SortAsc className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-detective-text-secondary" />
+                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-detective-text-secondary" />
                 </div>
               </div>
             </div>
@@ -325,16 +324,17 @@ export const AchievementFilters: React.FC<AchievementFiltersProps> = ({
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="flex items-center justify-between pt-4 border-t border-gray-200"
+                className="flex items-center justify-between border-t border-gray-200 pt-4"
               >
                 <span className="text-sm text-detective-text-secondary">
-                  {resultsCount} resultado{resultsCount !== 1 ? 's' : ''} encontrado{resultsCount !== 1 ? 's' : ''}
+                  {resultsCount} resultado{resultsCount !== 1 ? 's' : ''} encontrado
+                  {resultsCount !== 1 ? 's' : ''}
                 </span>
                 <button
                   onClick={onClearFilters}
-                  className="flex items-center gap-2 px-4 py-2 text-detective-orange hover:text-detective-orange-dark font-semibold transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 font-semibold text-detective-orange transition-colors hover:text-detective-orange-dark"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="h-4 w-4" />
                   Limpiar filtros
                 </button>
               </motion.div>

@@ -9,7 +9,7 @@
  */
 
 import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS, FEATURE_FLAGS } from '@/services/api/apiConfig';
+import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
 import { handleAPIError } from '@/services/api/apiErrorHandler';
 import type { ApiResponse } from '@/services/api/apiTypes';
 
@@ -82,7 +82,8 @@ export interface UsePowerUpResult {
 /**
  * Mock get inventory
  */
-const mockGetInventory = async (userId: string): Promise<PowerUpInventory> => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const mockGetInventory = async (_userId: string): Promise<PowerUpInventory> => {
   await new Promise((resolve) => setTimeout(resolve, 500));
   return {
     pistas: {
@@ -112,7 +113,7 @@ const mockGetInventory = async (userId: string): Promise<PowerUpInventory> => {
 const mockPurchasePowerUp = async (
   userId: string,
   powerupType: PowerUpType,
-  quantity: number
+  quantity: number,
 ): Promise<PurchasePowerUpResult> => {
   await new Promise((resolve) => setTimeout(resolve, 800));
   const costs: Record<PowerUpType, number> = {
@@ -136,7 +137,8 @@ const mockPurchasePowerUp = async (
 const mockUsePowerUp = async (
   userId: string,
   powerupType: PowerUpType,
-  exerciseId: string
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _exerciseId: string,
 ): Promise<UsePowerUpResult> => {
   await new Promise((resolve) => setTimeout(resolve, 600));
   return {
@@ -210,7 +212,7 @@ export const getInventory = async (userId: string): Promise<PowerUpInventory> =>
     }
 
     const { data } = await apiClient.get<ApiResponse<PowerUpInventory>>(
-      `/gamification/powerups/${userId}`
+      `/gamification/powerups/${userId}`,
     );
 
     return data.data;
@@ -230,7 +232,7 @@ export const getInventory = async (userId: string): Promise<PowerUpInventory> =>
 export const purchasePowerUp = async (
   userId: string,
   powerupType: PowerUpType,
-  quantity: number = 1
+  quantity: number = 1,
 ): Promise<PurchasePowerUpResult> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -243,7 +245,7 @@ export const purchasePowerUp = async (
         userId,
         powerupType,
         quantity,
-      }
+      },
     );
 
     return data.data;
@@ -260,10 +262,10 @@ export const purchasePowerUp = async (
  * @param exerciseId - Exercise ID where power-up is being used
  * @returns Use result
  */
-export const usePowerUp = async (
+export const applyPowerUp = async (
   userId: string,
   powerupType: PowerUpType,
-  exerciseId: string
+  exerciseId: string,
 ): Promise<UsePowerUpResult> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -276,7 +278,7 @@ export const usePowerUp = async (
         userId,
         powerupType,
         exerciseId,
-      }
+      },
     );
 
     return data.data;
@@ -297,7 +299,7 @@ export const getAvailablePowerUps = async (): Promise<AvailablePowerUp[]> => {
     }
 
     const { data } = await apiClient.get<ApiResponse<AvailablePowerUp[]>>(
-      '/gamification/powerups/available'
+      '/gamification/powerups/available',
     );
 
     return data.data;
@@ -313,6 +315,6 @@ export const getAvailablePowerUps = async (): Promise<AvailablePowerUp[]> => {
 export default {
   getInventory,
   purchasePowerUp,
-  usePowerUp,
+  applyPowerUp,
   getAvailablePowerUps,
 };

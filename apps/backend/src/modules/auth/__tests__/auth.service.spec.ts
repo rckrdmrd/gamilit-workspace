@@ -167,8 +167,11 @@ describe('AuthService', () => {
       expect(mockProfileRepository.save).toHaveBeenCalled();
       expect(mockAttemptRepository.create).toHaveBeenCalled();
       expect(result).toBeDefined();
-      expect(result.id).toBe('user-1');
-      expect(result.email).toBe('test@example.com');
+      expect(result.user).toBeDefined();
+      expect(result.user.id).toBe('user-1');
+      expect(result.user.email).toBe('test@example.com');
+      expect(result.accessToken).toBeDefined();
+      expect(result.refreshToken).toBeDefined();
       // Password should not be exposed in response
     });
 

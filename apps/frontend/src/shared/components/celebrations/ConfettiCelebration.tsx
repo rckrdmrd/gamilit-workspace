@@ -28,7 +28,8 @@ export interface ConfettiCelebrationProps {
 export const ConfettiCelebration: React.FC<ConfettiCelebrationProps> = ({
   isActive,
   show: showProp,
-  rarity = 'common',  // Default rarity
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  rarity: _rarity = 'common', // Default rarity, reserved for future use
   duration = 3000,
   onComplete,
 }) => {
@@ -36,7 +37,7 @@ export const ConfettiCelebration: React.FC<ConfettiCelebrationProps> = ({
   const active = showProp ?? isActive ?? false;
   const [showState, setShowState] = useState(false);
 
-  // TODO: Use rarity to adjust confetti intensity/colors in future implementation
+  // TODO: Use _rarity to adjust confetti intensity/colors in future implementation
   // For now, it's accepted but not used
 
   useEffect(() => {
@@ -53,9 +54,9 @@ export const ConfettiCelebration: React.FC<ConfettiCelebrationProps> = ({
   if (!showState) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-50 flex items-center justify-center">
+    <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center">
       {/* Placeholder - replace with react-confetti when available */}
-      <div className="text-6xl animate-bounce">🎉</div>
+      <div className="animate-bounce text-6xl">🎉</div>
     </div>
   );
 };

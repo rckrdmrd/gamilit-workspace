@@ -3,7 +3,6 @@
  */
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { usePowerUps } from '../../hooks/usePowerUps';
 import { PowerUpCard } from './PowerUpCard';
@@ -36,18 +35,16 @@ export const PowerUpShop: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header with Balance */}
-      <div className="bg-gradient-to-r from-detective-orange to-detective-gold p-6 rounded-detective text-white">
+      <div className="rounded-detective bg-gradient-to-r from-detective-orange to-detective-gold p-6 text-white">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-detective-3xl font-bold mb-2">Tienda de Power-ups</h1>
-            <p className="text-detective-lg opacity-90">
-              Mejora tu experiencia de aprendizaje
-            </p>
+            <h1 className="mb-2 text-detective-3xl font-bold">Tienda de Power-ups</h1>
+            <p className="text-detective-lg opacity-90">Mejora tu experiencia de aprendizaje</p>
           </div>
           <div className="text-right">
-            <p className="text-detective-sm opacity-80 mb-1">Tu Balance</p>
+            <p className="mb-1 text-detective-sm opacity-80">Tu Balance</p>
             <div className="flex items-center gap-2 text-detective-3xl font-bold">
-              <Icons.Coins className="w-8 h-8" />
+              <Icons.Coins className="h-8 w-8" />
               {userMlCoins} ML
             </div>
           </div>
@@ -56,11 +53,11 @@ export const PowerUpShop: React.FC = () => {
 
       {/* Core Power-ups */}
       <div>
-        <h2 className="text-detective-2xl font-bold text-detective-text mb-4 flex items-center gap-2">
-          <Icons.Zap className="w-6 h-6 text-detective-orange" />
+        <h2 className="mb-4 flex items-center gap-2 text-detective-2xl font-bold text-detective-text">
+          <Icons.Zap className="h-6 w-6 text-detective-orange" />
           Power-ups Básicos
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {corePowerUps.map((powerUp) => (
             <PowerUpCard
               key={powerUp.id}
@@ -74,11 +71,11 @@ export const PowerUpShop: React.FC = () => {
 
       {/* Advanced Power-ups */}
       <div>
-        <h2 className="text-detective-2xl font-bold text-detective-text mb-4 flex items-center gap-2">
-          <Icons.Crown className="w-6 h-6 text-detective-gold" />
+        <h2 className="mb-4 flex items-center gap-2 text-detective-2xl font-bold text-detective-text">
+          <Icons.Crown className="h-6 w-6 text-detective-gold" />
           Power-ups Avanzados
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {advancedPowerUps.map((powerUp) => (
             <PowerUpCard
               key={powerUp.id}

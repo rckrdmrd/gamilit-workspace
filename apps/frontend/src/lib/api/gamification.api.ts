@@ -6,7 +6,6 @@ import type {
 } from '@/shared/types/achievement.types';
 import type {
   LeaderboardResponse,
-  LeaderboardEntry,
   LeaderboardType,
   LeaderboardTimePeriod,
 } from '@/shared/types/leaderboard.types';
@@ -53,7 +52,7 @@ export const gamificationApi = {
    * @returns User rank with progress
    */
   getUserRank: async (userId: string): Promise<UserRank> => {
-    const { data} = await apiClient.get<UserRank>(`/gamification/users/${userId}/rank`);
+    const { data } = await apiClient.get<UserRank>(`/gamification/users/${userId}/rank`);
     return data;
   },
 
@@ -90,7 +89,9 @@ export const gamificationApi = {
    * @returns Single achievement details
    */
   getAchievementById: async (achievementId: string): Promise<Achievement> => {
-    const { data } = await apiClient.get<Achievement>(`/gamification/achievements/${achievementId}`);
+    const { data } = await apiClient.get<Achievement>(
+      `/gamification/achievements/${achievementId}`,
+    );
     return data;
   },
 
@@ -101,7 +102,7 @@ export const gamificationApi = {
    */
   getUserAchievements: async (userId: string): Promise<UserAchievement[]> => {
     const { data } = await apiClient.get<UserAchievement[]>(
-      `/gamification/users/${userId}/achievements`
+      `/gamification/users/${userId}/achievements`,
     );
     return data;
   },
@@ -113,7 +114,7 @@ export const gamificationApi = {
    */
   getAchievementSummary: async (userId: string): Promise<AchievementSummary> => {
     const { data } = await apiClient.get<AchievementSummary>(
-      `/gamification/users/${userId}/achievements/summary`
+      `/gamification/users/${userId}/achievements/summary`,
     );
     return data;
   },
@@ -127,7 +128,7 @@ export const gamificationApi = {
   claimAchievement: async (userId: string, achievementId: string): Promise<UserAchievement> => {
     const { data } = await apiClient.post<UserAchievement>(
       `/gamification/users/${userId}/achievements/${achievementId}/claim`,
-      {}
+      {},
     );
     return data;
   },
@@ -146,7 +147,7 @@ export const gamificationApi = {
   getGlobalLeaderboard: async (
     limit: number = 100,
     offset: number = 0,
-    timePeriod?: LeaderboardTimePeriod
+    timePeriod?: LeaderboardTimePeriod,
   ): Promise<LeaderboardResponse> => {
     const params = new URLSearchParams({
       limit: limit.toString(),
@@ -158,7 +159,7 @@ export const gamificationApi = {
     }
 
     const { data } = await apiClient.get<LeaderboardResponse>(
-      `/gamification/leaderboard/global?${params.toString()}`
+      `/gamification/leaderboard/global?${params.toString()}`,
     );
     return data;
   },
@@ -175,7 +176,7 @@ export const gamificationApi = {
     schoolId: string,
     limit: number = 100,
     offset: number = 0,
-    timePeriod?: LeaderboardTimePeriod
+    timePeriod?: LeaderboardTimePeriod,
   ): Promise<LeaderboardResponse> => {
     const params = new URLSearchParams({
       limit: limit.toString(),
@@ -187,7 +188,7 @@ export const gamificationApi = {
     }
 
     const { data } = await apiClient.get<LeaderboardResponse>(
-      `/gamification/leaderboard/schools/${schoolId}?${params.toString()}`
+      `/gamification/leaderboard/schools/${schoolId}?${params.toString()}`,
     );
     return data;
   },
@@ -204,7 +205,7 @@ export const gamificationApi = {
     classroomId: string,
     limit: number = 100,
     offset: number = 0,
-    timePeriod?: LeaderboardTimePeriod
+    timePeriod?: LeaderboardTimePeriod,
   ): Promise<LeaderboardResponse> => {
     const params = new URLSearchParams({
       limit: limit.toString(),
@@ -216,7 +217,7 @@ export const gamificationApi = {
     }
 
     const { data } = await apiClient.get<LeaderboardResponse>(
-      `/gamification/leaderboard/classrooms/${classroomId}?${params.toString()}`
+      `/gamification/leaderboard/classrooms/${classroomId}?${params.toString()}`,
     );
     return data;
   },
@@ -235,7 +236,7 @@ export const gamificationApi = {
     id?: string,
     limit: number = 100,
     offset: number = 0,
-    timePeriod?: LeaderboardTimePeriod
+    timePeriod?: LeaderboardTimePeriod,
   ): Promise<LeaderboardResponse> => {
     switch (type) {
       case 'global':

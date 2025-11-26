@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { MessageSquare, Send, FileText, Users } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { InputDetective } from '@shared/components/base/InputDetective';
+import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 
 interface ParentCommunicationHubProps {
   classroomId: string;
@@ -18,9 +20,24 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
   const [sending, setSending] = useState(false);
 
   const templates = [
-    { id: 'progress', name: 'Actualización de Progreso', content: 'Estimado padre/madre,\n\nMe complace informarle sobre el progreso de {student_name} en nuestra clase...' },
-    { id: 'achievement', name: 'Logro Destacado', content: 'Estimado padre/madre,\n\n¡Felicitaciones! {student_name} ha alcanzado un logro importante...' },
-    { id: 'concern', name: 'Área de Mejora', content: 'Estimado padre/madre,\n\nMe gustaría conversar sobre algunas áreas donde {student_name} podría mejorar...' },
+    {
+      id: 'progress',
+      name: 'Actualización de Progreso',
+      content:
+        'Estimado padre/madre,\n\nMe complace informarle sobre el progreso de {student_name} en nuestra clase...',
+    },
+    {
+      id: 'achievement',
+      name: 'Logro Destacado',
+      content:
+        'Estimado padre/madre,\n\n¡Felicitaciones! {student_name} ha alcanzado un logro importante...',
+    },
+    {
+      id: 'concern',
+      name: 'Área de Mejora',
+      content:
+        'Estimado padre/madre,\n\nMe gustaría conversar sobre algunas áreas donde {student_name} podría mejorar...',
+    },
   ];
 
   const handleSend = async () => {
@@ -34,16 +51,12 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
 
     try {
       setSending(true);
-      await fetch('/api/classroom/communications', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          classroom_id: classroomId,
-          recipient_type: 'parent',
-          recipient_ids: selectedStudents,
-          subject,
-          body,
-        }),
+      await apiClient.post(API_ENDPOINTS.teacher.sendCommunication, {
+        classroom_id: classroomId,
+        recipient_type: 'parent',
+        recipient_ids: selectedStudents,
+        subject,
+        body,
       });
       toast.success(`Mensajes enviados exitosamente a ${selectedStudents.length} padres`, {
         duration: 4000,
@@ -62,7 +75,7 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
   };
 
   const loadTemplate = (templateId: string) => {
-    const t = templates.find(t => t.id === templateId);
+    const t = templates.find((t) => t.id === templateId);
     if (t) {
       setSubject(t.name);
       setBody(t.content);
@@ -73,18 +86,18 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <MessageSquare className="w-8 h-8 text-detective-orange" />
+        <MessageSquare className="h-8 w-8 text-detective-orange" />
         <div>
           <h2 className="text-2xl font-bold text-detective-text">Comunicación con Padres</h2>
           <p className="text-detective-text-secondary">Envía actualizaciones a padres de familia</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Templates */}
         <DetectiveCard>
-          <h3 className="text-lg font-bold text-detective-text mb-4 flex items-center gap-2">
-            <FileText className="w-5 h-5" />
+          <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-detective-text">
+            <FileText className="h-5 w-5" />
             Plantillas
           </h3>
           <div className="space-y-2">
@@ -92,7 +105,7 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
               <button
                 key={t.id}
                 onClick={() => loadTemplate(t.id)}
-                className={`w-full text-left p-3 rounded-lg transition-colors ${
+                className={`w-full rounded-lg p-3 text-left transition-colors ${
                   template === t.id
                     ? 'bg-detective-orange text-white'
                     : 'bg-detective-bg-secondary text-detective-text hover:bg-opacity-80'
@@ -105,11 +118,13 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
         </DetectiveCard>
 
         {/* Message Form */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="space-y-4 lg:col-span-2">
           <DetectiveCard>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-detective-text mb-2">Asunto</label>
+                <label className="mb-2 block text-sm font-semibold text-detective-text">
+                  Asunto
+                </label>
                 <InputDetective
                   type="text"
                   value={subject}
@@ -118,15 +133,17 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-detective-text mb-2">Mensaje</label>
+                <label className="mb-2 block text-sm font-semibold text-detective-text">
+                  Mensaje
+                </label>
                 <textarea
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
                   rows={10}
-                  className="w-full bg-detective-bg-secondary border border-detective-border rounded-lg px-4 py-2 text-detective-text focus:outline-none focus:border-detective-orange"
+                  className="border-detective-border w-full rounded-lg border bg-detective-bg-secondary px-4 py-2 text-detective-text focus:border-detective-orange focus:outline-none"
                   placeholder="Escribe tu mensaje aquí..."
                 />
-                <p className="text-xs text-detective-text-secondary mt-2">
+                <p className="mt-2 text-xs text-detective-text-secondary">
                   Usa {'{student_name}'} para incluir el nombre del estudiante automáticamente
                 </p>
               </div>
@@ -136,19 +153,19 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
           <DetectiveCard>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-detective-text flex items-center gap-2">
-                  <Users className="w-5 h-5" />
+                <h3 className="flex items-center gap-2 text-lg font-bold text-detective-text">
+                  <Users className="h-5 w-5" />
                   Destinatarios
                 </h3>
                 <span className="text-sm text-detective-text-secondary">
                   {selectedStudents.length} seleccionados
                 </span>
               </div>
-              <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
+              <div className="grid max-h-48 grid-cols-2 gap-2 overflow-y-auto">
                 {students.map((student) => (
                   <label
                     key={student.id}
-                    className="flex items-center gap-2 p-2 bg-detective-bg-secondary rounded cursor-pointer hover:bg-opacity-80"
+                    className="flex cursor-pointer items-center gap-2 rounded bg-detective-bg-secondary p-2 hover:bg-opacity-80"
                   >
                     <input
                       type="checkbox"
@@ -157,7 +174,7 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
                         if (e.target.checked) {
                           setSelectedStudents([...selectedStudents, student.id]);
                         } else {
-                          setSelectedStudents(selectedStudents.filter(id => id !== student.id));
+                          setSelectedStudents(selectedStudents.filter((id) => id !== student.id));
                         }
                       }}
                       className="rounded border-detective-orange text-detective-orange focus:ring-detective-orange"
@@ -171,7 +188,7 @@ export function ParentCommunicationHub({ classroomId, students }: ParentCommunic
 
           <div className="flex justify-end">
             <DetectiveButton onClick={handleSend} disabled={sending}>
-              <Send className="w-5 h-5" />
+              <Send className="h-5 w-5" />
               {sending ? 'Enviando...' : 'Enviar Mensajes'}
             </DetectiveButton>
           </div>

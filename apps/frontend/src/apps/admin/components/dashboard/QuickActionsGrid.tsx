@@ -15,15 +15,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import {
-  Users,
-  Building,
-  Flag,
-  FileText,
-  BarChart3,
-  Settings,
-  ArrowRight,
-} from 'lucide-react';
+import { Users, Building, Flag, FileText, BarChart3, Settings, ArrowRight } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 
 interface QuickAction {
@@ -41,10 +33,7 @@ interface QuickActionsGridProps {
   flaggedContent?: number;
 }
 
-export const QuickActionsGrid: React.FC<QuickActionsGridProps> = ({
-  pendingApprovals = 0,
-  flaggedContent = 0,
-}) => {
+export const QuickActionsGrid: React.FC<QuickActionsGridProps> = ({ flaggedContent = 0 }) => {
   // ============================================================================
   // ACTIONS DATA
   // ============================================================================
@@ -106,7 +95,7 @@ export const QuickActionsGrid: React.FC<QuickActionsGridProps> = ({
   // ============================================================================
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {actions.map((action, index) => (
         <QuickActionCard key={action.title} action={action} index={index} />
       ))}
@@ -129,12 +118,32 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({ action, index }) => {
   // Get color classes
   const getColorClasses = (color: string) => {
     const colorMap: Record<string, { text: string; border: string; hover: string }> = {
-      blue: { text: 'text-blue-500', border: 'border-blue-500/30', hover: 'hover:border-blue-500/50' },
-      purple: { text: 'text-purple-500', border: 'border-purple-500/30', hover: 'hover:border-purple-500/50' },
+      blue: {
+        text: 'text-blue-500',
+        border: 'border-blue-500/30',
+        hover: 'hover:border-blue-500/50',
+      },
+      purple: {
+        text: 'text-purple-500',
+        border: 'border-purple-500/30',
+        hover: 'hover:border-purple-500/50',
+      },
       red: { text: 'text-red-500', border: 'border-red-500/30', hover: 'hover:border-red-500/50' },
-      green: { text: 'text-green-500', border: 'border-green-500/30', hover: 'hover:border-green-500/50' },
-      orange: { text: 'text-orange-500', border: 'border-orange-500/30', hover: 'hover:border-orange-500/50' },
-      gray: { text: 'text-gray-500', border: 'border-gray-500/30', hover: 'hover:border-gray-500/50' },
+      green: {
+        text: 'text-green-500',
+        border: 'border-green-500/30',
+        hover: 'hover:border-green-500/50',
+      },
+      orange: {
+        text: 'text-orange-500',
+        border: 'border-orange-500/30',
+        hover: 'hover:border-orange-500/50',
+      },
+      gray: {
+        text: 'text-gray-500',
+        border: 'border-gray-500/30',
+        hover: 'hover:border-gray-500/50',
+      },
     };
     return colorMap[color] || colorMap.blue;
   };
@@ -149,20 +158,22 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({ action, index }) => {
     >
       <Link to={action.link}>
         <DetectiveCard
-          className={`group border ${colors.border} ${colors.hover} transition-all duration-300 hover-lift relative overflow-hidden`}
+          className={`group border ${colors.border} ${colors.hover} hover-lift relative overflow-hidden transition-all duration-300`}
         >
           {/* Background gradient */}
-          <div className={`absolute inset-0 bg-gradient-to-br ${action.gradient} opacity-50 group-hover:opacity-100 transition-opacity duration-300`} />
+          <div
+            className={`absolute inset-0 bg-gradient-to-br ${action.gradient} opacity-50 transition-opacity duration-300 group-hover:opacity-100`}
+          />
 
           <div className="relative">
-            <div className="flex items-start justify-between mb-4">
+            <div className="mb-4 flex items-start justify-between">
               {/* Icon */}
               <motion.div
-                className={`p-4 bg-detective-bg-secondary rounded-xl`}
+                className={`rounded-xl bg-detective-bg-secondary p-4`}
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ duration: 0.2 }}
               >
-                <Icon className={`w-8 h-8 ${colors.text}`} />
+                <Icon className={`h-8 w-8 ${colors.text}`} />
               </motion.div>
 
               {/* Badge */}
@@ -170,7 +181,7 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({ action, index }) => {
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="px-3 py-1 bg-red-500 text-white rounded-full text-sm font-bold"
+                  className="rounded-full bg-red-500 px-3 py-1 text-sm font-bold text-white"
                 >
                   {action.badge > 99 ? '99+' : action.badge}
                 </motion.div>
@@ -179,22 +190,20 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({ action, index }) => {
 
             {/* Content */}
             <div className="mb-4">
-              <h3 className="text-detective-subtitle mb-2 group-hover:text-detective-orange transition-colors">
+              <h3 className="text-detective-subtitle mb-2 transition-colors group-hover:text-detective-orange">
                 {action.title}
               </h3>
-              <p className="text-detective-small text-gray-400">
-                {action.description}
-              </p>
+              <p className="text-detective-small text-gray-400">{action.description}</p>
             </div>
 
             {/* Arrow indicator */}
-            <div className="flex items-center gap-2 text-detective-small text-gray-500 group-hover:text-detective-orange transition-colors">
+            <div className="text-detective-small flex items-center gap-2 text-gray-500 transition-colors group-hover:text-detective-orange">
               <span>Go to section</span>
               <motion.div
                 animate={{ x: [0, 5, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
               >
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="h-4 w-4" />
               </motion.div>
             </div>
           </div>

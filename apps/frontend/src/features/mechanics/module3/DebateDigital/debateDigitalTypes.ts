@@ -50,3 +50,11 @@ export interface DebateDigitalExerciseProps {
   difficulty?: 'easy' | 'medium' | 'hard';
   actionsRef?: React.MutableRefObject<DebateDigitalActions | undefined>;
 }
+
+// Answers format for backend submission
+export interface DebateDigitalAnswers {
+  position: 'a_favor' | 'en_contra' | 'neutral';
+  response: string; // Full debate conversation or final argument
+  arguments?: string[]; // Array of user arguments
+  messageCount?: number; // Number of messages exchanged
+}

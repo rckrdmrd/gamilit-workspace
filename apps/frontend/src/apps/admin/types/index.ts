@@ -11,22 +11,36 @@ export interface SystemHealth {
   errorRate: number;
   database: 'healthy' | 'degraded' | 'down';
   apiUptime: number;
-  lastCheck: string;
+  lastCheck?: string;
 }
 
 export interface Organization {
   id: string;
   name: string;
-  plan: 'free' | 'pro' | 'enterprise';
+  type?: 'school' | 'university' | 'corporate' | 'individual';
+  // Use 'tier' as primary field (aligned with backend/DB)
+  tier?: 'free' | 'basic' | 'professional' | 'enterprise';
+  // Alias for backward compatibility
+  plan: 'free' | 'basic' | 'professional' | 'enterprise';
   status: 'active' | 'inactive' | 'suspended';
+  // Use 'users' as primary field (aligned with backend/DB)
+  users?: number;
+  // Alias for backward compatibility
   userCount: number;
   createdAt: string;
   features: string[];
   subscription?: {
+    tier?: string;
     startDate: string;
-    endDate: string;
+    endDate?: string;
     autoRenew: boolean;
   };
+  contact?: {
+    email: string;
+    phone?: string;
+    address?: string;
+  };
+  updatedAt?: string;
 }
 
 export interface OrganizationUser {
@@ -76,7 +90,7 @@ export interface SystemUser {
   email: string;
   role: 'super_admin' | 'admin_teacher' | 'student';
   department?: string;
-  status: 'active' | 'inactive';
+  status: 'active' | 'inactive' | 'suspended' | 'banned' | 'pending';
   organizationId?: string;
   organizationName?: string;
   lastLogin: string;

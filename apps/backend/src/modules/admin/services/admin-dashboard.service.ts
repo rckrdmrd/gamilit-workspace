@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/typeorm';
-import { Connection } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThanOrEqual } from 'typeorm';
 import { User } from '@modules/auth/entities/user.entity';
@@ -32,10 +32,10 @@ import {
 @Injectable()
 export class AdminDashboardService {
   constructor(
-    @InjectConnection('auth')
-    private readonly authConnection: Connection,
-    @InjectConnection('educational')
-    private readonly educationalConnection: Connection,
+    @InjectDataSource('auth')
+    private readonly authConnection: DataSource,
+    @InjectDataSource('educational')
+    private readonly educationalConnection: DataSource,
     @InjectRepository(User, 'auth')
     private readonly userRepo: Repository<User>,
     @InjectRepository(Tenant, 'auth')
@@ -543,12 +543,11 @@ export class AdminDashboardService {
           'user_created' as action_type,
           u.id as target_id,
           'user' as target_type,
-          COALESCE(u.created_by_id, u.id) as admin_id,
-          COALESCE(admin.email, 'Sistema') as admin_name,
+          u.id as admin_id,
+          'Sistema' as admin_name,
           'Usuario ' || u.email || ' creado' as details,
           u.created_at as timestamp
         FROM auth.users u
-        LEFT JOIN auth.users admin ON admin.id = u.created_by_id
         WHERE u.created_at >= NOW() - INTERVAL '7 days'
         ORDER BY u.created_at DESC
         LIMIT $1`,
@@ -563,12 +562,11 @@ export class AdminDashboardService {
           'organization_updated' as action_type,
           t.id as target_id,
           'organization' as target_type,
-          COALESCE(t.updated_by_id, t.created_by_id) as admin_id,
-          COALESCE(admin.email, 'Sistema') as admin_name,
+          t.id as admin_id,
+          'Sistema' as admin_name,
           'Organización ' || t.name || ' actualizada' as details,
           t.updated_at as timestamp
-        FROM auth.tenants t
-        LEFT JOIN auth.users admin ON admin.id = COALESCE(t.updated_by_id, t.created_by_id)
+        FROM auth_management.tenants t
         WHERE t.updated_at >= NOW() - INTERVAL '7 days'
         AND t.updated_at != t.created_at
         ORDER BY t.updated_at DESC
@@ -716,7 +714,7 @@ export class AdminDashboardService {
       const flaggedContent = await this.authConnection.query(
         `SELECT COUNT(*) as count
          FROM content_management.flagged_content
-         WHERE resolved = false`,
+         WHERE status = 'pending'`,
       );
 
       const flaggedCount = parseInt(flaggedContent[0]?.count || '0', 10);

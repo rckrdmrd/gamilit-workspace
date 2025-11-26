@@ -29,7 +29,7 @@ const ConfettiParticle: React.FC<{ delay: number }> = ({ delay }) => {
 
   return (
     <motion.div
-      className="absolute w-2 h-2 rounded-full"
+      className="absolute h-2 w-2 rounded-full"
       style={{
         backgroundColor: color,
         left: `${startX}%`,
@@ -56,7 +56,7 @@ const ConfettiParticle: React.FC<{ delay: number }> = ({ delay }) => {
  */
 export const RankUpModal: React.FC<RankUpModalProps> = ({ isOpen, onClose }) => {
   const { closeRankUpModal } = useProgression();
-  const { currentRank, previousRank, currentLevel, prestigeLevel } = useRank();
+  const { currentRank, previousRank, prestigeLevel } = useRank();
 
   // Generate confetti particles
   const confettiCount = 50;
@@ -87,10 +87,10 @@ export const RankUpModal: React.FC<RankUpModalProps> = ({ isOpen, onClose }) => 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
           >
             {/* Confetti */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
               {confettiParticles.map((i) => (
                 <ConfettiParticle key={i} delay={i * 0.02} />
               ))}
@@ -103,22 +103,22 @@ export const RankUpModal: React.FC<RankUpModalProps> = ({ isOpen, onClose }) => 
               exit={{ scale: 0.8, opacity: 0, y: 50 }}
               transition={{ type: 'spring', damping: 20, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 overflow-hidden"
+              className="mx-4 w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl"
             >
               {/* Close Button */}
               <button
                 onClick={handleClose}
-                className="absolute top-4 right-4 z-10 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                className="absolute right-4 top-4 z-10 rounded-full bg-gray-100 p-2 transition-colors hover:bg-gray-200"
               >
-                <X className="w-5 h-5 text-gray-600" />
+                <X className="h-5 w-5 text-gray-600" />
               </button>
 
               {/* Header with gradient background */}
               <div
                 className={cn(
-                  'relative px-8 pt-12 pb-8 text-white',
+                  'relative px-8 pb-8 pt-12 text-white',
                   'bg-gradient-to-br',
-                  currentRank.gradient
+                  currentRank.gradient,
                 )}
               >
                 {/* Trophy Icon */}
@@ -126,10 +126,10 @@ export const RankUpModal: React.FC<RankUpModalProps> = ({ isOpen, onClose }) => 
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
-                  className="flex justify-center mb-4"
+                  className="mb-4 flex justify-center"
                 >
-                  <div className="p-4 bg-white/20 rounded-full backdrop-blur-sm">
-                    <Trophy className="w-12 h-12" />
+                  <div className="rounded-full bg-white/20 p-4 backdrop-blur-sm">
+                    <Trophy className="h-12 w-12" />
                   </div>
                 </motion.div>
 
@@ -138,7 +138,7 @@ export const RankUpModal: React.FC<RankUpModalProps> = ({ isOpen, onClose }) => 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
-                  className="text-3xl font-bold text-center mb-2"
+                  className="mb-2 text-center text-3xl font-bold"
                 >
                   ¡Felicitaciones!
                 </motion.h2>
@@ -154,7 +154,7 @@ export const RankUpModal: React.FC<RankUpModalProps> = ({ isOpen, onClose }) => 
               </div>
 
               {/* Content */}
-              <div className="px-8 py-6 space-y-6">
+              <div className="space-y-6 px-8 py-6">
                 {/* Rank Progression */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -166,11 +166,10 @@ export const RankUpModal: React.FC<RankUpModalProps> = ({ isOpen, onClose }) => 
                     <>
                       <RankBadgeAdvanced
                         rank={previousRank.id}
-
                         prestigeLevel={prestigeLevel}
                         animated={false}
                       />
-                      <ChevronRight className="w-6 h-6 text-gray-400" />
+                      <ChevronRight className="h-6 w-6 text-gray-400" />
                     </>
                   )}
                   <motion.div
@@ -180,7 +179,6 @@ export const RankUpModal: React.FC<RankUpModalProps> = ({ isOpen, onClose }) => 
                   >
                     <RankBadgeAdvanced
                       rank={currentRank.id}
-
                       prestigeLevel={prestigeLevel}
                       showGlow={true}
                     />
@@ -192,14 +190,12 @@ export const RankUpModal: React.FC<RankUpModalProps> = ({ isOpen, onClose }) => 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.9 }}
-                  className="text-center space-y-2"
+                  className="space-y-2 text-center"
                 >
                   <h3 className="text-2xl font-bold text-detective-text">
                     {currentRank.nameSpanish}
                   </h3>
-                  <p className="text-detective-text-secondary">
-                    {currentRank.description}
-                  </p>
+                  <p className="text-detective-text-secondary">{currentRank.description}</p>
                 </motion.div>
 
                 {/* New Benefits */}
@@ -207,10 +203,10 @@ export const RankUpModal: React.FC<RankUpModalProps> = ({ isOpen, onClose }) => 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.0 }}
-                  className="bg-amber-50 rounded-lg p-4 space-y-3"
+                  className="space-y-3 rounded-lg bg-amber-50 p-4"
                 >
                   <div className="flex items-center gap-2 text-amber-800">
-                    <Sparkles className="w-5 h-5" />
+                    <Sparkles className="h-5 w-5" />
                     <h4 className="font-semibold">Beneficios Desbloqueados</h4>
                   </div>
                   <ul className="space-y-2">
@@ -222,7 +218,7 @@ export const RankUpModal: React.FC<RankUpModalProps> = ({ isOpen, onClose }) => 
                         transition={{ delay: 1.1 + index * 0.1 }}
                         className="flex items-start gap-2 text-sm text-detective-text"
                       >
-                        <span className="text-amber-500 mt-0.5">✓</span>
+                        <span className="mt-0.5 text-amber-500">✓</span>
                         <span>{benefit}</span>
                       </motion.li>
                     ))}
@@ -236,7 +232,7 @@ export const RankUpModal: React.FC<RankUpModalProps> = ({ isOpen, onClose }) => 
                   transition={{ delay: 1.2 }}
                   className="text-center"
                 >
-                  <div className="inline-block bg-gradient-to-r from-detective-orange to-detective-orange-dark text-white px-6 py-3 rounded-full font-bold text-lg">
+                  <div className="inline-block rounded-full bg-gradient-to-r from-detective-orange to-detective-orange-dark px-6 py-3 text-lg font-bold text-white">
                     {currentRank.multiplier.toFixed(2)}x Multiplicador
                   </div>
                 </motion.div>
@@ -247,7 +243,7 @@ export const RankUpModal: React.FC<RankUpModalProps> = ({ isOpen, onClose }) => 
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.3 }}
                   onClick={handleClose}
-                  className="w-full bg-detective-blue hover:bg-detective-blue/90 text-white font-semibold py-3 rounded-lg transition-colors"
+                  className="w-full rounded-lg bg-detective-blue py-3 font-semibold text-white transition-colors hover:bg-detective-blue/90"
                 >
                   ¡Continuar!
                 </motion.button>

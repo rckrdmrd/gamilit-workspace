@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Search, Filter, MoreVertical, UserCheck, UserX, Trash2, Key } from 'lucide-react';
+import { Search, UserCheck, UserX, Trash2, Key } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { useUserManagement } from '../../hooks/useUserManagement';
 import { getDetectiveRoleName, getDetectiveRoleBadge } from '@shared/utils/detectiveRoles';
@@ -30,16 +30,16 @@ export const UserManagementTable: React.FC = () => {
 
   return (
     <DetectiveCard>
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <h3 className="text-detective-subtitle">User Management</h3>
         <div className="flex gap-2">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
             <input
               type="text"
               placeholder="Search users..."
               onChange={(e) => setFilters({ search: e.target.value })}
-              className="pl-10 pr-4 py-2 bg-detective-bg-secondary border border-gray-700 rounded-lg text-detective-text"
+              className="rounded-lg border border-gray-700 bg-detective-bg-secondary py-2 pl-10 pr-4 text-detective-text"
             />
           </div>
         </div>
@@ -49,13 +49,17 @@ export const UserManagementTable: React.FC = () => {
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-700">
-              <th className="px-4 py-3 text-left text-detective-small text-gray-400">Email</th>
-              <th className="px-4 py-3 text-left text-detective-small text-gray-400">Detective</th>
-              <th className="px-4 py-3 text-left text-detective-small text-gray-400">Rango Detective</th>
-              <th className="px-4 py-3 text-left text-detective-small text-gray-400">Departamento</th>
-              <th className="px-4 py-3 text-left text-detective-small text-gray-400">Status</th>
-              <th className="px-4 py-3 text-left text-detective-small text-gray-400">Last Login</th>
-              <th className="px-4 py-3 text-center text-detective-small text-gray-400">Actions</th>
+              <th className="text-detective-small px-4 py-3 text-left text-gray-400">Email</th>
+              <th className="text-detective-small px-4 py-3 text-left text-gray-400">Detective</th>
+              <th className="text-detective-small px-4 py-3 text-left text-gray-400">
+                Rango Detective
+              </th>
+              <th className="text-detective-small px-4 py-3 text-left text-gray-400">
+                Departamento
+              </th>
+              <th className="text-detective-small px-4 py-3 text-left text-gray-400">Status</th>
+              <th className="text-detective-small px-4 py-3 text-left text-gray-400">Last Login</th>
+              <th className="text-detective-small px-4 py-3 text-center text-gray-400">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -77,14 +81,14 @@ export const UserManagementTable: React.FC = () => {
                   key={user.id}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="border-b border-gray-800 hover:bg-detective-bg-secondary transition-colors"
+                  className="border-b border-gray-800 transition-colors hover:bg-detective-bg-secondary"
                 >
-                  <td className="px-4 py-3 text-detective-small">{user.email}</td>
-                  <td className="px-4 py-3 text-detective-small">
+                  <td className="text-detective-small px-4 py-3">{user.email}</td>
+                  <td className="text-detective-small px-4 py-3">
                     <span>🕵️ {user.full_name}</span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="px-2 py-1 bg-blue-500/20 text-blue-500 rounded-md text-xs">
+                    <span className="rounded-md bg-blue-500/20 px-2 py-1 text-xs text-blue-500">
                       {getDetectiveRoleBadge(user.role)} {getDetectiveRoleName(user.role)}
                     </span>
                   </td>
@@ -93,7 +97,7 @@ export const UserManagementTable: React.FC = () => {
                   </td>
                   <td className="px-4 py-3">
                     <span
-                      className={`px-2 py-1 rounded-md text-xs ${
+                      className={`rounded-md px-2 py-1 text-xs ${
                         user.status === 'active'
                           ? 'bg-green-500/20 text-green-500'
                           : 'bg-red-500/20 text-red-500'
@@ -102,39 +106,41 @@ export const UserManagementTable: React.FC = () => {
                       {user.status === 'active' ? '✅' : '❌'} {user.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-detective-small text-gray-400">
-                    {new Date(user.lastLogin).toLocaleDateString()}
+                  <td className="text-detective-small px-4 py-3 text-gray-400">
+                    {(() => {
+                      if (!user.lastLogin || user.lastLogin === '') return 'Nunca';
+                      const date = new Date(user.lastLogin);
+                      return isNaN(date.getTime()) ? 'Nunca' : date.toLocaleDateString('es-ES');
+                    })()}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-center gap-2">
                       <button
                         onClick={() =>
-                          user.status === 'active'
-                            ? suspendUser(user.id)
-                            : unsuspendUser(user.id)
+                          user.status === 'active' ? suspendUser(user.id) : unsuspendUser(user.id)
                         }
-                        className="p-2 hover:bg-detective-bg-tertiary rounded-lg transition-colors"
+                        className="hover:bg-detective-bg-tertiary rounded-lg p-2 transition-colors"
                         title={user.status === 'active' ? 'Suspend user' : 'Unsuspend user'}
                       >
                         {user.status === 'active' ? (
-                          <UserX className="w-4 h-4 text-yellow-500" />
+                          <UserX className="h-4 w-4 text-yellow-500" />
                         ) : (
-                          <UserCheck className="w-4 h-4 text-green-500" />
+                          <UserCheck className="h-4 w-4 text-green-500" />
                         )}
                       </button>
                       <button
                         onClick={() => resetPassword(user.id)}
-                        className="p-2 hover:bg-detective-bg-tertiary rounded-lg transition-colors"
+                        className="hover:bg-detective-bg-tertiary rounded-lg p-2 transition-colors"
                         title="Reset password"
                       >
-                        <Key className="w-4 h-4 text-blue-500" />
+                        <Key className="h-4 w-4 text-blue-500" />
                       </button>
                       <button
                         onClick={() => deleteUser(user.id)}
-                        className="p-2 hover:bg-detective-bg-tertiary rounded-lg transition-colors"
+                        className="hover:bg-detective-bg-tertiary rounded-lg p-2 transition-colors"
                         title="Delete user"
                       >
-                        <Trash2 className="w-4 h-4 text-red-500" />
+                        <Trash2 className="h-4 w-4 text-red-500" />
                       </button>
                     </div>
                   </td>

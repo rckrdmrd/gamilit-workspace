@@ -199,7 +199,7 @@ describe('RanksController', () => {
     it('should handle user at maximum rank', async () => {
       const maxRankProgress = {
         ...mockRankProgress,
-        current_rank: MayaRank.KUKUKULKAN,
+        current_rank: MayaRank.KUKULKAN,
         next_rank: null,
         progress_percentage: 100,
         is_max_rank: true,

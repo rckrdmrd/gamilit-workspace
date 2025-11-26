@@ -14,10 +14,13 @@
  * Route: /student/missions
  */
 
-import React, { useState, useMemo, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import type { MissionStatus, MissionType } from '@/features/gamification/missions/types/missionsTypes';
+import { useState, useMemo, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
+import type {
+  MissionStatus,
+  MissionType,
+} from '@/features/gamification/missions/types/missionsTypes';
 
 // Components
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
@@ -31,11 +34,7 @@ import { useMissions } from '@/features/gamification/missions/hooks/useMissions'
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 
-// Utils
-import { cn } from '@shared/utils/cn';
-
 export default function MissionsPage() {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user, logout } = useAuth();
 
@@ -58,7 +57,6 @@ export default function MissionsPage() {
     trackMission,
     untrackMission,
     isTracked,
-    stats,
     rewardsSummary,
     loading,
     error,
@@ -139,7 +137,7 @@ export default function MissionsPage() {
   };
 
   // Check if all missions completed
-  const allCompleted = currentMissions.every(m => m.status === 'claimed');
+  const allCompleted = currentMissions.every((m) => m.status === 'claimed');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
@@ -154,19 +152,16 @@ export default function MissionsPage() {
       />
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Error Display */}
         {error && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-red-50 border-2 border-red-300 text-red-800 rounded-lg p-4 mb-6"
+            className="mb-6 rounded-lg border-2 border-red-300 bg-red-50 p-4 text-red-800"
           >
             <p className="font-semibold">{error}</p>
-            <button
-              onClick={refresh}
-              className="mt-2 text-sm underline hover:no-underline"
-            >
+            <button onClick={refresh} className="mt-2 text-sm underline hover:no-underline">
               Reintentar
             </button>
           </motion.div>
@@ -188,19 +183,22 @@ export default function MissionsPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl p-6 mb-6 text-center"
+            className="mb-6 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 p-6 text-center text-white"
           >
-            <h3 className="text-2xl font-bold mb-2">
-              ¡Increíble! 🎉
-            </h3>
+            <h3 className="mb-2 text-2xl font-bold">¡Increíble! 🎉</h3>
             <p className="text-lg">
-              Has completado todas las misiones {currentTab === 'daily' ? 'diarias' : currentTab === 'weekly' ? 'semanales' : 'especiales'}
+              Has completado todas las misiones{' '}
+              {currentTab === 'daily'
+                ? 'diarias'
+                : currentTab === 'weekly'
+                  ? 'semanales'
+                  : 'especiales'}
             </p>
           </motion.div>
         )}
 
         {/* Main Grid + Sidebar Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Missions Grid (Left - 2 cols on desktop) */}
           <div className="lg:col-span-2">
             <MissionGrid
@@ -227,10 +225,7 @@ export default function MissionsPage() {
 
         {/* Rewards Preview Banner */}
         {currentMissions.length > 0 && (
-          <RewardsPreview
-            summary={rewardsSummary}
-            currentTab={currentTab}
-          />
+          <RewardsPreview summary={rewardsSummary} currentTab={currentTab} />
         )}
       </div>
 

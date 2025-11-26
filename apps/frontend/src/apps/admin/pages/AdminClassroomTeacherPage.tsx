@@ -14,6 +14,9 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Users, GraduationCap } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
+import { useAuth } from '@features/auth/hooks/useAuth';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { AdminLayout } from '../layouts/AdminLayout';
 
 // Import tab components
 import { ClassroomTeachersTab } from '../components/classroom-teacher/ClassroomTeachersTab';
@@ -22,7 +25,24 @@ import { TeacherClassroomsTab } from '../components/classroom-teacher/TeacherCla
 type TabType = 'classroom' | 'teacher';
 
 export default function AdminClassroomTeacherPage() {
+  const { user, logout } = useAuth();
+  const { gamificationData } = useUserGamification(user?.id);
   const [currentTab, setCurrentTab] = useState<TabType>('classroom');
+
+  // Fallback gamification data
+  const displayGamificationData = gamificationData || {
+    userId: user?.id || 'mock-admin-id',
+    level: 1,
+    totalXP: 0,
+    mlCoins: 0,
+    rank: 'Novato',
+    achievements: [],
+  };
+
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/login';
+  };
 
   const tabs = [
     {
@@ -42,16 +62,25 @@ export default function AdminClassroomTeacherPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="mx-auto max-w-7xl">
+    <AdminLayout
+      user={user || undefined}
+      gamificationData={displayGamificationData}
+      organizationName="GAMILIT Platform Admin"
+      onLogout={handleLogout}
+    >
+      <div className="space-y-6">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="mb-2 text-3xl font-bold text-gray-900">Asignaciones Classroom-Teacher</h1>
-          <p className="text-gray-600">Gestiona las asignaciones entre classrooms y teachers</p>
+          <h1 className="mb-2 text-3xl font-bold text-detective-text">
+            Asignaciones Classroom-Teacher
+          </h1>
+          <p className="text-detective-text-secondary">
+            Gestiona las asignaciones entre classrooms y teachers
+          </p>
         </div>
 
         {/* Tabs */}
-        <div className="mb-6 rounded-xl bg-white p-6 shadow-md">
+        <div className="bg-detective-card-bg mb-6 rounded-xl p-6 shadow-md">
           <div className="mb-4 flex flex-wrap gap-3">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -68,7 +97,7 @@ export default function AdminClassroomTeacherPage() {
                     'transition-all duration-300',
                     isActive
                       ? `bg-gradient-to-r ${getTabGradient(tab.color)} text-white shadow-lg`
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+                      : 'bg-detective-bg-secondary text-detective-text hover:bg-detective-bg',
                   )}
                 >
                   <Icon className="h-5 w-5" />
@@ -92,7 +121,7 @@ export default function AdminClassroomTeacherPage() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="text-sm text-gray-600"
+            className="text-sm text-detective-text-secondary"
           >
             {tabs.find((t) => t.id === currentTab)?.description}
           </motion.div>
@@ -109,7 +138,7 @@ export default function AdminClassroomTeacherPage() {
           {currentTab === 'teacher' && <TeacherClassroomsTab />}
         </motion.div>
       </div>
-    </div>
+    </AdminLayout>
   );
 }
 

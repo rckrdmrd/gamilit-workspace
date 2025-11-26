@@ -5,11 +5,29 @@
  * Exports all components, hooks, and types
  */
 
-// Components
-export * from './components';
+// Components - explicit exports to avoid duplicates
+export {
+  MultipleChoiceActivity,
+  TrueFalseActivity,
+  FillBlankActivity,
+  DragDropActivity,
+  OrderingActivity,
+  MatchingActivity,
+  ExerciseHeader,
+  ExerciseFeedback,
+} from './components';
 
-// Hooks
-export * from './hooks';
+// Hooks - explicit exports to avoid duplicates
+export { useExerciseSubmission, useExerciseTimer, useExerciseRewards } from './hooks';
 
-// Types
-export * from './types';
+// Types - explicit exports to avoid duplicates
+export type {
+  Exercise,
+  ExerciseContent,
+  ExerciseHint,
+  ExerciseSubmission,
+  ExerciseSubmissionResult,
+  ExerciseComponentProps,
+  ExerciseTimer,
+  MultipleChoiceOption,
+} from './types';

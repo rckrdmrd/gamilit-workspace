@@ -87,15 +87,23 @@ describe('AuthController', () => {
 
     it('should register a new user successfully', async () => {
       // Arrange
-      mockAuthService.register.mockResolvedValue(mockUserResponse);
+      const mockRegisterResponse = {
+        user: mockUserResponse,
+        accessToken: 'mock-access-token',
+        refreshToken: 'mock-refresh-token',
+      };
+      mockAuthService.register.mockResolvedValue(mockRegisterResponse);
 
       // Act
       const result = await controller.register(registerDto, mockRequest);
 
       // Assert
       expect(result).toBeDefined();
-      expect(result.id).toBe('user-1');
-      expect(result.email).toBe('test@example.com');
+      expect(result.user).toBeDefined();
+      expect(result.user.id).toBe('user-1');
+      expect(result.user.email).toBe('test@example.com');
+      expect(result.accessToken).toBe('mock-access-token');
+      expect(result.refreshToken).toBe('mock-refresh-token');
       expect(mockAuthService.register).toHaveBeenCalledWith(
         registerDto,
         mockRequest.ip,
@@ -105,7 +113,12 @@ describe('AuthController', () => {
 
     it('should pass IP address and user agent to service', async () => {
       // Arrange
-      mockAuthService.register.mockResolvedValue(mockUserResponse);
+      const mockRegisterResponse = {
+        user: mockUserResponse,
+        accessToken: 'mock-access-token',
+        refreshToken: 'mock-refresh-token',
+      };
+      mockAuthService.register.mockResolvedValue(mockRegisterResponse);
 
       // Act
       await controller.register(registerDto, mockRequest);

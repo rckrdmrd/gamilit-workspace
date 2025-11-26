@@ -15,9 +15,9 @@
  * Total: 18 tests
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { useFriendsStore } from '../store/friendsStore';
-import type { Friend, FriendRequest, FriendRecommendation } from '../types/friendsTypes';
+import type { FriendRequest } from '../types/friendsTypes';
 
 describe('Friends Integration Tests', () => {
   // ============================================================================
@@ -26,8 +26,6 @@ describe('Friends Integration Tests', () => {
 
   beforeEach(() => {
     // Reset store to initial state
-    const { friends, friendRequests, recommendations, activities, onlineFriends } = useFriendsStore.getState();
-
     // Keep initial mock data structure
     useFriendsStore.setState({
       friends: [],

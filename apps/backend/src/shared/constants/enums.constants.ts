@@ -162,7 +162,7 @@ export enum MayaRank {
   NACOM = 'Nacom',                  // Nivel 2: Capitán de guerra (1,000-2,999 XP)
   AH_KIN = 'Ah K\'in',              // Nivel 3: Sacerdote del sol (3,000-5,999 XP)
   HALACH_UINIC = 'Halach Uinic',    // Nivel 4: Hombre verdadero (6,000-9,999 XP)
-  KUKUKULKAN = 'K\'uk\'ulkan',      // Nivel 5: Serpiente emplumada (10,000+ XP)
+  KUKULKAN = 'K\'uk\'ulkan',        // Nivel 5: Serpiente emplumada (10,000+ XP) - Corregido ortografia 2025-11-26
 }
 
 /**
@@ -248,6 +248,25 @@ export enum AchievementTypeEnum {
   MILESTONE = 'milestone',
   SPECIAL = 'special',
   RANK_PROMOTION = 'rank_promotion',
+}
+
+/**
+ * Tipos de mensajes del sistema de comunicación Teacher-Student
+ * @context Teacher Portal - Communication feature
+ * @version 1.0
+ * @synchronized-with frontend/services/api/teacher/teacherMessagesApi.ts
+ */
+export enum MessageTypeEnum {
+  /** Mensaje directo entre profesor y estudiante */
+  DIRECT = 'direct',
+  /** Anuncio a toda el aula */
+  CLASSROOM_ANNOUNCEMENT = 'classroom_announcement',
+  /** Chat grupal del aula */
+  CLASSROOM_CHAT = 'classroom_chat',
+  /** Feedback privado sobre desempeño */
+  PRIVATE_FEEDBACK = 'private_feedback',
+  /** Comentario en una asignación */
+  ASSIGNMENT_COMMENT = 'assignment_comment',
 }
 
 /**

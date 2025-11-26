@@ -7,21 +7,11 @@
 
 import axios from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
+import { API_CONFIG, FEATURE_FLAGS } from '@/config/api.config';
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
-
-/**
- * Get API base URL from environment variables
- * Defaults to localhost:3006 for development
- */
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3006/api';
-
-/**
- * Default timeout for API requests (30 seconds)
- */
-const DEFAULT_TIMEOUT = 30000;
 
 // ============================================================================
 // AXIOS INSTANCE
@@ -29,10 +19,11 @@ const DEFAULT_TIMEOUT = 30000;
 
 /**
  * Base Axios instance with default configuration
+ * Uses unified API config from @/config/api.config
  */
 export const apiClient: AxiosInstance = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: DEFAULT_TIMEOUT,
+  baseURL: API_CONFIG.baseURL,
+  timeout: API_CONFIG.timeout,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -60,7 +51,7 @@ apiClient.interceptors.request.use(
     }
 
     // Log request in debug mode
-    if (import.meta.env.VITE_DEBUG_API === 'true') {
+    if (FEATURE_FLAGS.DEBUG_API) {
       console.log('[API Request]', {
         method: config.method?.toUpperCase(),
         url: config.url,
@@ -73,7 +64,7 @@ apiClient.interceptors.request.use(
   (error) => {
     console.error('[API Request Error]', error);
     return Promise.reject(error);
-  }
+  },
 );
 
 // ============================================================================
@@ -86,12 +77,23 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
     // Log response in debug mode
-    if (import.meta.env.VITE_DEBUG_API === 'true') {
+    if (FEATURE_FLAGS.DEBUG_API) {
       console.log('[API Response]', {
         status: response.status,
         url: response.config.url,
         data: response.data,
       });
+    }
+
+    // Unwrap backend response format: { success, data, timestamp, path }
+    // Extract the inner "data" field if it exists (from TransformResponseInterceptor)
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'success' in response.data &&
+      'data' in response.data
+    ) {
+      response.data = response.data.data;
     }
 
     return response;
@@ -111,7 +113,7 @@ apiClient.interceptors.response.use(
           throw new Error('No refresh token available');
         }
 
-        const { data } = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+        const { data } = await axios.post(`${API_CONFIG.baseURL}/auth/refresh`, {
           refreshToken,
         });
 
@@ -150,7 +152,7 @@ apiClient.interceptors.response.use(
       // Silent fail for optional endpoints (hints, avatars, etc.)
       const url = error.config?.url || '';
       const optionalEndpoints = ['/hints', '/avatar', '/profile-picture', '/badges'];
-      const isOptional = optionalEndpoints.some(endpoint => url.includes(endpoint));
+      const isOptional = optionalEndpoints.some((endpoint) => url.includes(endpoint));
 
       if (!isOptional) {
         console.error('[API] Resource not found:', error.config.url);
@@ -163,7 +165,7 @@ apiClient.interceptors.response.use(
     }
 
     // Log error in debug mode
-    if (import.meta.env.VITE_DEBUG_API === 'true') {
+    if (FEATURE_FLAGS.DEBUG_API) {
       console.error('[API Error]', {
         status: error.response?.status,
         url: error.config?.url,
@@ -173,7 +175,7 @@ apiClient.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 // ============================================================================

@@ -335,7 +335,33 @@ WHERE p.role IN ('student', 'admin_teacher', 'super_admin')
 1. `apps/database/ddl/schemas/progress_tracking/functions/initialize_module_progress_for_user.sql`
 2. `apps/database/ddl/schemas/auth_management/triggers/03-initialize-module-progress.sql`
 
-**DDL Requerido:**
+---
+
+> ⚠️ **NOTA CRÍTICA - ACTUALIZACIÓN 2025-11-24 03:30:00**
+>
+> **Este código SQL propuesto es HISTÓRICO y NO DEBE EJECUTARSE.**
+>
+> **La funcionalidad ya está correctamente implementada en:**
+> - **Función:** `gamilit.initialize_user_stats()`
+> - **Trigger:** `trg_initialize_user_stats`
+> - **Ubicación:** `apps/database/ddl/schemas/gamilit/functions/04-initialize_user_stats.sql`
+> - **Última actualización:** 2025-11-24 03:05 CST (incluye inicialización de module_progress)
+>
+> **Ejecutar este código causaría:**
+> - ❌ Duplicación de objetos con nombres incorrectos
+> - ❌ Conflictos con el trigger existente `trg_initialize_user_stats`
+> - ❌ Uso de esquema incorrecto (`progress_tracking` en lugar de `gamilit`)
+> - ❌ Estructura de columnas obsoleta
+>
+> **Validación completa en:**
+> - `orchestration/agentes/architecture-analyst/analisis-estado-proyecto-2025-11-24/VALIDACION-GAP-003-MODULE-PROGRESS.md`
+> - `orchestration/agentes/architecture-analyst/analisis-estado-proyecto-2025-11-24/VALIDACION-DEPENDENCIAS-INITIALIZE-USER-STATS.md`
+>
+> **Estado actual:** ✅ Todos los usuarios tienen module_progress correctamente inicializado por el trigger existente.
+
+---
+
+**DDL Requerido (OBSOLETO - NO EJECUTAR):**
 ```sql
 -- 1. Crear función
 CREATE OR REPLACE FUNCTION progress_tracking.initialize_module_progress_for_user()

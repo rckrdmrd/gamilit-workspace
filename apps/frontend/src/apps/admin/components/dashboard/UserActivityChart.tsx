@@ -29,7 +29,7 @@ import {
   Legend,
   Filler,
 } from 'chart.js';
-import { Calendar, Download, TrendingUp } from 'lucide-react';
+import { Download, TrendingUp } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import type { UserActivityData } from '../../types';
 
@@ -43,7 +43,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
 interface UserActivityChartProps {
@@ -108,74 +108,77 @@ export const UserActivityChart: React.FC<UserActivityChartProps> = ({ data, load
   // CHART OPTIONS
   // ============================================================================
 
-  const chartOptions = useMemo(() => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    interaction: {
-      mode: 'index' as const,
-      intersect: false,
-    },
-    plugins: {
-      legend: {
-        display: showLegend,
-        position: 'top' as const,
-        labels: {
-          color: '#9ca3af',
-          font: {
-            family: "'Inter', sans-serif",
-            size: 12,
-          },
-          padding: 15,
-          usePointStyle: true,
-        },
+  const chartOptions = useMemo(
+    () => ({
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: 'index' as const,
+        intersect: false,
       },
-      tooltip: {
-        enabled: true,
-        backgroundColor: 'rgba(26, 29, 41, 0.95)',
-        titleColor: '#fff',
-        bodyColor: '#9ca3af',
-        borderColor: '#374151',
-        borderWidth: 1,
-        padding: 12,
-        displayColors: true,
-        callbacks: {
-          label: function (context: any) {
-            return `${context.dataset.label}: ${context.parsed.y.toLocaleString()}`;
+      plugins: {
+        legend: {
+          display: showLegend,
+          position: 'top' as const,
+          labels: {
+            color: '#9ca3af',
+            font: {
+              family: "'Inter', sans-serif",
+              size: 12,
+            },
+            padding: 15,
+            usePointStyle: true,
           },
         },
-      },
-    },
-    scales: {
-      x: {
-        grid: {
-          color: 'rgba(55, 65, 81, 0.3)',
-          drawBorder: false,
-        },
-        ticks: {
-          color: '#9ca3af',
-          font: {
-            size: 11,
+        tooltip: {
+          enabled: true,
+          backgroundColor: 'rgba(26, 29, 41, 0.95)',
+          titleColor: '#fff',
+          bodyColor: '#9ca3af',
+          borderColor: '#374151',
+          borderWidth: 1,
+          padding: 12,
+          displayColors: true,
+          callbacks: {
+            label: function (context: any) {
+              return `${context.dataset.label}: ${context.parsed.y.toLocaleString()}`;
+            },
           },
         },
       },
-      y: {
-        grid: {
-          color: 'rgba(55, 65, 81, 0.3)',
-          drawBorder: false,
-        },
-        ticks: {
-          color: '#9ca3af',
-          font: {
-            size: 11,
+      scales: {
+        x: {
+          grid: {
+            color: 'rgba(55, 65, 81, 0.3)',
+            drawBorder: false,
           },
-          callback: function (value: any) {
-            return value.toLocaleString();
+          ticks: {
+            color: '#9ca3af',
+            font: {
+              size: 11,
+            },
           },
         },
-        beginAtZero: true,
+        y: {
+          grid: {
+            color: 'rgba(55, 65, 81, 0.3)',
+            drawBorder: false,
+          },
+          ticks: {
+            color: '#9ca3af',
+            font: {
+              size: 11,
+            },
+            callback: function (value: any) {
+              return value.toLocaleString();
+            },
+          },
+          beginAtZero: true,
+        },
       },
-    },
-  }), [showLegend]);
+    }),
+    [showLegend],
+  );
 
   // ============================================================================
   // HANDLERS
@@ -209,13 +212,13 @@ export const UserActivityChart: React.FC<UserActivityChartProps> = ({ data, load
   if (loading || !chartData) {
     return (
       <DetectiveCard>
-        <div className="flex items-center justify-center h-96">
+        <div className="flex h-96 items-center justify-center">
           <div className="text-center">
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
             >
-              <TrendingUp className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+              <TrendingUp className="mx-auto mb-4 h-12 w-12 text-gray-500" />
             </motion.div>
             <p className="text-detective-base text-gray-400">Loading activity data...</p>
           </div>
@@ -227,7 +230,7 @@ export const UserActivityChart: React.FC<UserActivityChartProps> = ({ data, load
   return (
     <DetectiveCard>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <div>
           <h3 className="text-detective-subtitle">User Activity</h3>
           <p className="text-detective-small text-gray-400">Last 7 days</p>
@@ -235,10 +238,10 @@ export const UserActivityChart: React.FC<UserActivityChartProps> = ({ data, load
 
         <div className="flex items-center gap-2">
           {/* Chart type selector */}
-          <div className="flex items-center gap-1 bg-detective-bg-secondary rounded-lg p-1">
+          <div className="flex items-center gap-1 rounded-lg bg-detective-bg-secondary p-1">
             <button
               onClick={() => setChartType('line')}
-              className={`px-3 py-1.5 rounded-md text-xs transition-colors ${
+              className={`rounded-md px-3 py-1.5 text-xs transition-colors ${
                 chartType === 'line'
                   ? 'bg-detective-orange text-white'
                   : 'text-gray-400 hover:text-white'
@@ -248,7 +251,7 @@ export const UserActivityChart: React.FC<UserActivityChartProps> = ({ data, load
             </button>
             <button
               onClick={() => setChartType('bar')}
-              className={`px-3 py-1.5 rounded-md text-xs transition-colors ${
+              className={`rounded-md px-3 py-1.5 text-xs transition-colors ${
                 chartType === 'bar'
                   ? 'bg-detective-orange text-white'
                   : 'text-gray-400 hover:text-white'
@@ -258,7 +261,7 @@ export const UserActivityChart: React.FC<UserActivityChartProps> = ({ data, load
             </button>
             <button
               onClick={() => setChartType('both')}
-              className={`px-3 py-1.5 rounded-md text-xs transition-colors ${
+              className={`rounded-md px-3 py-1.5 text-xs transition-colors ${
                 chartType === 'both'
                   ? 'bg-detective-orange text-white'
                   : 'text-gray-400 hover:text-white'
@@ -271,7 +274,7 @@ export const UserActivityChart: React.FC<UserActivityChartProps> = ({ data, load
           {/* Toggle legend */}
           <button
             onClick={() => setShowLegend(!showLegend)}
-            className="px-3 py-1.5 bg-detective-bg-secondary rounded-lg hover:bg-detective-bg-tertiary transition-colors text-xs"
+            className="hover:bg-detective-bg-tertiary rounded-lg bg-detective-bg-secondary px-3 py-1.5 text-xs transition-colors"
           >
             {showLegend ? 'Hide' : 'Show'} Legend
           </button>
@@ -279,31 +282,31 @@ export const UserActivityChart: React.FC<UserActivityChartProps> = ({ data, load
           {/* Export button */}
           <button
             onClick={handleExportChart}
-            className="p-2 bg-detective-bg-secondary rounded-lg hover:bg-detective-bg-tertiary transition-colors"
+            className="hover:bg-detective-bg-tertiary rounded-lg bg-detective-bg-secondary p-2 transition-colors"
             title="Export chart"
           >
-            <Download className="w-4 h-4" />
+            <Download className="h-4 w-4" />
           </button>
         </div>
       </div>
 
       {/* Statistics Cards */}
       {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="p-3 bg-detective-bg-secondary rounded-lg">
-            <p className="text-detective-small text-gray-400 mb-1">Avg Active Users</p>
+        <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+          <div className="rounded-lg bg-detective-bg-secondary p-3">
+            <p className="text-detective-small mb-1 text-gray-400">Avg Active Users</p>
             <p className="text-xl font-bold text-blue-500">{stats.avgActive.toLocaleString()}</p>
           </div>
-          <div className="p-3 bg-detective-bg-secondary rounded-lg">
-            <p className="text-detective-small text-gray-400 mb-1">Avg New Users</p>
+          <div className="rounded-lg bg-detective-bg-secondary p-3">
+            <p className="text-detective-small mb-1 text-gray-400">Avg New Users</p>
             <p className="text-xl font-bold text-purple-500">{stats.avgNew.toLocaleString()}</p>
           </div>
-          <div className="p-3 bg-detective-bg-secondary rounded-lg">
-            <p className="text-detective-small text-gray-400 mb-1">Total Active</p>
+          <div className="rounded-lg bg-detective-bg-secondary p-3">
+            <p className="text-detective-small mb-1 text-gray-400">Total Active</p>
             <p className="text-xl font-bold text-green-500">{stats.totalActive.toLocaleString()}</p>
           </div>
-          <div className="p-3 bg-detective-bg-secondary rounded-lg">
-            <p className="text-detective-small text-gray-400 mb-1">Total New</p>
+          <div className="rounded-lg bg-detective-bg-secondary p-3">
+            <p className="text-detective-small mb-1 text-gray-400">Total New</p>
             <p className="text-xl font-bold text-orange-500">{stats.totalNew.toLocaleString()}</p>
           </div>
         </div>

@@ -86,7 +86,6 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
   achievements = [],
   moduleId,
   exerciseId = 'unknown',
-  onClose,
   onRetry,
   onNextExercise,
   rankUp,
@@ -96,7 +95,10 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
   const [showConfetti, setShowConfetti] = useState(false);
   const [animatedXP, setAnimatedXP] = useState(0);
   const [animatedCoins, setAnimatedCoins] = useState(0);
-  const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
 
   // Gamification hooks
   const { addXP, checkRankUp } = useProgression();
@@ -126,7 +128,9 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
       // Check for rank up
       const didRankUp = checkRankUp();
       if (didRankUp) {
-        console.log('🎉 ¡Felicidades! Has subido de rango. Revisa tu perfil para ver tu nuevo rango.');
+        console.log(
+          '🎉 ¡Felicidades! Has subido de rango. Revisa tu perfil para ver tu nuevo rango.',
+        );
       }
 
       // Unlock achievements
@@ -251,7 +255,7 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
       icon: achievement.iconUrl || achievement.icon || '🏆',
       rarity: achievement.rarity || 'common',
       mlCoinsReward: achievement.mlCoinsReward || 0,
-      xpReward: achievement.xpReward || 0
+      xpReward: achievement.xpReward || 0,
     };
   };
 
@@ -285,11 +289,11 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.8, y: 50 }}
           transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-          className="relative bg-white dark:bg-gray-800 rounded-detective shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-detective bg-white shadow-2xl dark:bg-gray-800"
         >
           {/* Header */}
           <div
-            className={`p-8 rounded-t-detective ${
+            className={`rounded-t-detective p-8 ${
               success
                 ? 'bg-gradient-to-br from-green-500 to-emerald-600'
                 : 'bg-gradient-to-br from-orange-500 to-red-600'
@@ -301,22 +305,22 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
               transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
               className="text-center"
             >
-              <div className="mx-auto w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mb-4">
+              <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white/20">
                 {success ? (
-                  <Trophy className="w-12 h-12 text-white" />
+                  <Trophy className="h-12 w-12 text-white" />
                 ) : (
-                  <Target className="w-12 h-12 text-white" />
+                  <Target className="h-12 w-12 text-white" />
                 )}
               </div>
-              <h2 className="text-3xl font-bold text-white mb-2">
+              <h2 className="mb-2 text-3xl font-bold text-white">
                 {success ? '¡Ejercicio Completado!' : 'Ejercicio Enviado'}
               </h2>
-              <p className="text-white/90 text-lg">{getPerformanceMessage()}</p>
+              <p className="text-lg text-white/90">{getPerformanceMessage()}</p>
             </motion.div>
           </div>
 
           {/* Content */}
-          <div className="p-8 space-y-6">
+          <div className="space-y-6 p-8">
             {/* Score Display */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -325,7 +329,7 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
               className="text-center"
             >
               <div className="relative inline-block">
-                <svg className="w-40 h-40 transform -rotate-90">
+                <svg className="h-40 w-40 -rotate-90 transform">
                   <circle
                     cx="80"
                     cy="80"
@@ -356,9 +360,7 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
                   <span className="text-sm text-detective-text-secondary">/ {maxScore}</span>
                 </div>
               </div>
-              <p className="mt-4 text-2xl font-bold text-detective-text">
-                {getScorePercentage()}%
-              </p>
+              <p className="mt-4 text-2xl font-bold text-detective-text">{getScorePercentage()}%</p>
             </motion.div>
 
             {/* Rewards */}
@@ -370,9 +372,9 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
                 className="grid grid-cols-2 gap-4"
               >
                 {/* XP Gained */}
-                <div className="bg-gradient-to-br from-detective-orange to-orange-600 rounded-detective p-6 text-white text-center">
-                  <Star className="w-8 h-8 mx-auto mb-2" />
-                  <p className="text-sm opacity-90 mb-1">XP Ganado</p>
+                <div className="rounded-detective bg-gradient-to-br from-detective-orange to-orange-600 p-6 text-center text-white">
+                  <Star className="mx-auto mb-2 h-8 w-8" />
+                  <p className="mb-1 text-sm opacity-90">XP Ganado</p>
                   <motion.p
                     className="text-3xl font-bold"
                     key={animatedXP}
@@ -384,9 +386,9 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
                 </div>
 
                 {/* ML Coins Gained */}
-                <div className="bg-gradient-to-br from-detective-gold to-yellow-600 rounded-detective p-6 text-white text-center">
-                  <Coins className="w-8 h-8 mx-auto mb-2" />
-                  <p className="text-sm opacity-90 mb-1">ML Coins</p>
+                <div className="rounded-detective bg-gradient-to-br from-detective-gold to-yellow-600 p-6 text-center text-white">
+                  <Coins className="mx-auto mb-2 h-8 w-8" />
+                  <p className="mb-1 text-sm opacity-90">ML Coins</p>
                   <motion.p
                     className="text-3xl font-bold"
                     key={animatedCoins}
@@ -404,24 +406,24 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="bg-gray-50 dark:bg-gray-900 rounded-detective p-6 space-y-3"
+              className="space-y-3 rounded-detective bg-gray-50 p-6 dark:bg-gray-900"
             >
-              <h3 className="font-bold text-detective-text mb-4 flex items-center gap-2">
-                <Zap className="w-5 h-5 text-detective-orange" />
+              <h3 className="mb-4 flex items-center gap-2 font-bold text-detective-text">
+                <Zap className="h-5 w-5 text-detective-orange" />
                 Estadísticas del Ejercicio
               </h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-detective-blue" />
+                  <Clock className="h-4 w-4 text-detective-blue" />
                   <span className="text-detective-text-secondary">Tiempo:</span>
-                  <span className="font-semibold text-detective-text ml-auto">
+                  <span className="ml-auto font-semibold text-detective-text">
                     {formatTime(timeSpent)}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Star className="w-4 h-4 text-detective-gold" />
+                  <Star className="h-4 w-4 text-detective-gold" />
                   <span className="text-detective-text-secondary">Pistas usadas:</span>
-                  <span className="font-semibold text-detective-text ml-auto">{hintsUsed}</span>
+                  <span className="ml-auto font-semibold text-detective-text">{hintsUsed}</span>
                 </div>
               </div>
             </motion.div>
@@ -432,22 +434,24 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.7, type: 'spring', stiffness: 200 }}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 p-6 rounded-detective text-white"
+                className="rounded-detective bg-gradient-to-r from-purple-500 to-pink-500 p-6 text-white"
               >
                 <div className="text-center">
-                  <Crown className="w-16 h-16 mx-auto mb-3" />
-                  <h3 className="text-2xl font-bold mb-2">¡Rango Mejorado!</h3>
-                  <p className="text-lg mb-3">
-                    {rankUp.previousRank && <span className="opacity-75">{rankUp.previousRank} → </span>}
+                  <Crown className="mx-auto mb-3 h-16 w-16" />
+                  <h3 className="mb-2 text-2xl font-bold">¡Rango Mejorado!</h3>
+                  <p className="mb-3 text-lg">
+                    {rankUp.previousRank && (
+                      <span className="opacity-75">{rankUp.previousRank} → </span>
+                    )}
                     <span className="font-bold">{rankUp.newRank}</span>
                   </p>
-                  <div className="grid grid-cols-2 gap-4 mt-4">
-                    <div className="bg-white/20 rounded-lg p-3">
-                      <p className="text-sm opacity-90 mb-1">Bonus ML Coins</p>
+                  <div className="mt-4 grid grid-cols-2 gap-4">
+                    <div className="rounded-lg bg-white/20 p-3">
+                      <p className="mb-1 text-sm opacity-90">Bonus ML Coins</p>
                       <p className="text-2xl font-bold">+{rankUp.bonusMLCoins}</p>
                     </div>
-                    <div className="bg-white/20 rounded-lg p-3">
-                      <p className="text-sm opacity-90 mb-1">Nuevo Multiplicador</p>
+                    <div className="rounded-lg bg-white/20 p-3">
+                      <p className="mb-1 text-sm opacity-90">Nuevo Multiplicador</p>
                       <p className="text-2xl font-bold">{rankUp.newMultiplier}x</p>
                     </div>
                   </div>
@@ -461,15 +465,15 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.75, type: 'spring', stiffness: 200 }}
-                className="bg-gradient-to-r from-orange-500 to-red-500 p-6 rounded-detective text-white"
+                className="rounded-detective bg-gradient-to-r from-orange-500 to-red-500 p-6 text-white"
               >
                 <div className="text-center">
-                  <Flame className="w-16 h-16 mx-auto mb-3" />
-                  <h3 className="text-2xl font-bold mb-2">¡Racha Alcanzada!</h3>
-                  <p className="text-3xl font-bold mb-2">{streakInfo.currentStreak} días</p>
-                  <p className="text-lg mb-3">¡Sigue así!</p>
-                  <div className="bg-white/20 rounded-lg p-3 mt-4">
-                    <p className="text-sm opacity-90 mb-1">Recompensa de Racha</p>
+                  <Flame className="mx-auto mb-3 h-16 w-16" />
+                  <h3 className="mb-2 text-2xl font-bold">¡Racha Alcanzada!</h3>
+                  <p className="mb-2 text-3xl font-bold">{streakInfo.currentStreak} días</p>
+                  <p className="mb-3 text-lg">¡Sigue así!</p>
+                  <div className="mt-4 rounded-lg bg-white/20 p-3">
+                    <p className="mb-1 text-sm opacity-90">Recompensa de Racha</p>
                     <p className="text-2xl font-bold">+{streakInfo.reward} ML Coins</p>
                   </div>
                 </div>
@@ -484,8 +488,8 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
                 transition={{ delay: 0.8 }}
                 className="space-y-3"
               >
-                <h3 className="font-bold text-detective-text flex items-center gap-2">
-                  <Award className="w-5 h-5 text-detective-gold" />
+                <h3 className="flex items-center gap-2 font-bold text-detective-text">
+                  <Award className="h-5 w-5 text-detective-gold" />
                   ¡Logros Desbloqueados!
                 </h3>
                 <div className="space-y-2">
@@ -498,22 +502,22 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.9 + index * 0.1 }}
                         className={`bg-gradient-to-r ${getRarityColor(
-                          display.rarity
-                        )} p-4 rounded-detective text-white`}
+                          display.rarity,
+                        )} rounded-detective p-4 text-white`}
                       >
                         <div className="flex items-center gap-3">
                           <span className="text-3xl">{display.icon}</span>
                           <div className="flex-1">
                             <p className="font-bold">{display.name}</p>
                             <p className="text-sm opacity-90">{display.description}</p>
-                            <div className="flex gap-2 mt-2">
+                            <div className="mt-2 flex gap-2">
                               {display.mlCoinsReward > 0 && (
-                                <span className="px-2 py-1 bg-white/20 rounded-full text-xs font-semibold">
+                                <span className="rounded-full bg-white/20 px-2 py-1 text-xs font-semibold">
                                   +{display.mlCoinsReward} 💰
                                 </span>
                               )}
                               {display.xpReward > 0 && (
-                                <span className="px-2 py-1 bg-white/20 rounded-full text-xs font-semibold">
+                                <span className="rounded-full bg-white/20 px-2 py-1 text-xs font-semibold">
                                   +{display.xpReward} ⭐
                                 </span>
                               )}
@@ -532,12 +536,12 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9 }}
-              className="flex flex-col sm:flex-row gap-3 pt-4"
+              className="flex flex-col gap-3 pt-4 sm:flex-row"
             >
               <DetectiveButton
                 variant="secondary"
                 onClick={() => navigate(`/modules/${moduleId}`)}
-                icon={<ArrowLeft className="w-4 h-4" />}
+                icon={<ArrowLeft className="h-4 w-4" />}
                 className="flex-1"
               >
                 Volver al Módulo
@@ -547,7 +551,7 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
                 <DetectiveButton
                   variant="blue"
                   onClick={onRetry}
-                  icon={<RotateCcw className="w-4 h-4" />}
+                  icon={<RotateCcw className="h-4 w-4" />}
                   className="flex-1"
                 >
                   Reintentar
@@ -558,7 +562,7 @@ export const CompletionModal: React.FC<CompletionModalProps> = ({
                 <DetectiveButton
                   variant="primary"
                   onClick={onNextExercise}
-                  icon={<ChevronRight className="w-4 h-4" />}
+                  icon={<ChevronRight className="h-4 w-4" />}
                   className="flex-1"
                 >
                   Siguiente Ejercicio

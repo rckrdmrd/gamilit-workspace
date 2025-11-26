@@ -5,6 +5,8 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import compression from 'compression';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
+import { API_PREFIX, API_VERSION } from './shared/constants/routes.constants';
+import { TransformResponseInterceptor } from './shared/interceptors/transform-response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -13,11 +15,12 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
-  // Global prefix
-  app.setGlobalPrefix('api');
+  // Global prefix with versioning (from unified constants)
+  app.setGlobalPrefix(`${API_PREFIX}/${API_VERSION}`);
 
   // CORS configuration - Supports multiple origins separated by comma
-  const corsOrigin = configService.get<string>('app.corsOrigin') || 'http://localhost:3005,http://localhost:5173';
+  // Default origins include frontend (3005) and backend (3006) for Swagger
+  const corsOrigin = configService.get<string>('app.corsOrigin') || 'http://localhost:3005,http://localhost:3006';
   const allowedOrigins = corsOrigin.split(',').map(origin => origin.trim());
 
   app.enableCors({
@@ -59,6 +62,9 @@ async function bootstrap() {
     }),
   );
 
+  // Global response transformation interceptor
+  app.useGlobalInterceptors(new TransformResponseInterceptor());
+
   // Swagger documentation
   const swaggerConfig = new DocumentBuilder()
     .setTitle('GAMILIT API')
@@ -80,7 +86,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api/docs', app, document, {
+  SwaggerModule.setup(`${API_PREFIX}/${API_VERSION}/docs`, app, document, {
     customSiteTitle: 'GAMILIT API Documentation',
     customCss: '.swagger-ui .topbar { display: none }',
   });
@@ -97,7 +103,7 @@ async function bootstrap() {
 ║   🚀 GAMILIT Backend API Server                              ║
 ║                                                               ║
 ║   🌍 Server running at: http://localhost:${port}                 ║
-║   📚 API Docs: http://localhost:${port}/api/docs               ║
+║   📚 API Docs: http://localhost:${port}/${API_PREFIX}/${API_VERSION}/docs    ║
 ║   🔧 Environment: ${nodeEnv.padEnd(11)}                            ║
 ║   🔒 CORS Origins: ${allowedOrigins.length} configured                   ║
 ║                                                               ║

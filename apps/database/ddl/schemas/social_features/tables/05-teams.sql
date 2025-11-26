@@ -122,9 +122,9 @@ CREATE INDEX idx_teams_xp ON social_features.teams USING btree (total_xp DESC);
 
 --
 -- Name: teams trg_teams_updated_at; Type: TRIGGER; Schema: social_features; Owner: postgres
+-- NOTE: Trigger movido a archivo separado para evitar duplicación
+-- Ver: social_features/triggers/28-trg_teams_updated_at.sql
 --
-
-CREATE TRIGGER trg_teams_updated_at BEFORE UPDATE ON social_features.teams FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
 
 
 --

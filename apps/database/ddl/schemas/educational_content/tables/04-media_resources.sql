@@ -64,7 +64,8 @@ CREATE INDEX idx_media_tenant_id ON educational_content.media_resources USING bt
 CREATE INDEX idx_media_type ON educational_content.media_resources USING btree (media_type);
 
 -- Triggers
-CREATE TRIGGER trg_media_resources_updated_at BEFORE UPDATE ON educational_content.media_resources FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
+-- NOTE: Trigger trg_media_resources_updated_at movido a archivo separado
+-- Ver: educational_content/triggers/13-trg_media_resources_updated_at.sql
 
 -- Foreign Keys
 ALTER TABLE ONLY educational_content.media_resources

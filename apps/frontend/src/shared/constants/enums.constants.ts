@@ -48,7 +48,7 @@ export enum UserStatusEnum {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
   SUSPENDED = 'suspended',
-  BANNED = 'banned',      // v1.1: NUEVO - Usuario baneado permanentemente
+  BANNED = 'banned', // v1.1: NUEVO - Usuario baneado permanentemente
   PENDING = 'pending',
 }
 
@@ -140,14 +140,14 @@ export enum MembershipStatusEnum {
  * 8. NATIVE ⭐⭐⭐⭐⭐ - Nativo, dominio total del idioma
  */
 export enum DifficultyLevelEnum {
-  BEGINNER = 'beginner',              // A1
-  ELEMENTARY = 'elementary',          // A2
+  BEGINNER = 'beginner', // A1
+  ELEMENTARY = 'elementary', // A2
   PRE_INTERMEDIATE = 'pre_intermediate', // B1
-  INTERMEDIATE = 'intermediate',      // B2
+  INTERMEDIATE = 'intermediate', // B2
   UPPER_INTERMEDIATE = 'upper_intermediate', // C1
-  ADVANCED = 'advanced',              // C2
-  PROFICIENT = 'proficient',          // C2+
-  NATIVE = 'native',                  // Nativo
+  ADVANCED = 'advanced', // C2
+  PROFICIENT = 'proficient', // C2+
+  NATIVE = 'native', // Nativo
 }
 
 /**
@@ -158,11 +158,11 @@ export enum DifficultyLevelEnum {
  * @version 1.0 (2025-11-03) - Homologación de rangos legacy a correctos
  */
 export enum MayaRank {
-  AJAW = 'Ajaw',                    // Nivel 1: Señor, líder supremo (0-999 XP)
-  NACOM = 'Nacom',                  // Nivel 2: Capitán de guerra (1,000-2,999 XP)
-  AH_KIN = 'Ah K\'in',              // Nivel 3: Sacerdote del sol (3,000-5,999 XP)
-  HALACH_UINIC = 'Halach Uinic',    // Nivel 4: Hombre verdadero (6,000-9,999 XP)
-  KUKUKULKAN = 'K\'uk\'ulkan',      // Nivel 5: Serpiente emplumada (10,000+ XP)
+  AJAW = 'Ajaw', // Nivel 1: Señor, líder supremo (0-999 XP)
+  NACOM = 'Nacom', // Nivel 2: Capitán de guerra (1,000-2,999 XP)
+  AH_KIN = "Ah K'in", // Nivel 3: Sacerdote del sol (3,000-5,999 XP)
+  HALACH_UINIC = 'Halach Uinic', // Nivel 4: Hombre verdadero (6,000-9,999 XP)
+  KUKULKAN = "K'uk'ulkan", // Nivel 5: Serpiente emplumada (10,000+ XP)
 }
 
 /**
@@ -205,24 +205,24 @@ export enum ComodinTypeEnum {
  */
 export enum TransactionTypeEnum {
   // ========== EARNED (Ingresos - 7 tipos) ==========
-  EARNED_EXERCISE = 'earned_exercise',        // +5-50 coins por ejercicio
-  EARNED_MODULE = 'earned_module',            // +100-300 coins por módulo
-  EARNED_ACHIEVEMENT = 'earned_achievement',  // +50-500 coins por logro
-  EARNED_RANK = 'earned_rank',                // +100-1000 coins por rango
-  EARNED_STREAK = 'earned_streak',            // +10-100 coins por racha
-  EARNED_DAILY = 'earned_daily',              // +50 coins por login diario
-  EARNED_BONUS = 'earned_bonus',              // Bonus especial por eventos
+  EARNED_EXERCISE = 'earned_exercise', // +5-50 coins por ejercicio
+  EARNED_MODULE = 'earned_module', // +100-300 coins por módulo
+  EARNED_ACHIEVEMENT = 'earned_achievement', // +50-500 coins por logro
+  EARNED_RANK = 'earned_rank', // +100-1000 coins por rango
+  EARNED_STREAK = 'earned_streak', // +10-100 coins por racha
+  EARNED_DAILY = 'earned_daily', // +50 coins por login diario
+  EARNED_BONUS = 'earned_bonus', // Bonus especial por eventos
 
   // ========== SPENT (Gastos - 3 tipos) ==========
-  SPENT_POWERUP = 'spent_powerup',            // -15 a -40 coins por comodín
-  SPENT_HINT = 'spent_hint',                  // -10 coins por pista
-  SPENT_RETRY = 'spent_retry',                // -20 coins por reintento
+  SPENT_POWERUP = 'spent_powerup', // -15 a -40 coins por comodín
+  SPENT_HINT = 'spent_hint', // -10 coins por pista
+  SPENT_RETRY = 'spent_retry', // -20 coins por reintento
 
   // ========== ADMIN/SISTEMA (4 tipos) ==========
-  ADMIN_ADJUSTMENT = 'admin_adjustment',      // Ajuste manual (+ o -)
-  REFUND = 'refund',                          // Devolución de coins
-  BONUS = 'bonus',                            // Bonus general del sistema
-  WELCOME_BONUS = 'welcome_bonus',            // +100 coins al registrarse
+  ADMIN_ADJUSTMENT = 'admin_adjustment', // Ajuste manual (+ o -)
+  REFUND = 'refund', // Devolución de coins
+  BONUS = 'bonus', // Bonus general del sistema
+  WELCOME_BONUS = 'welcome_bonus', // +100 coins al registrarse
 }
 
 /**
@@ -251,6 +251,35 @@ export enum AchievementTypeEnum {
 }
 
 /**
+ * Tipos de mensajes del sistema de comunicacion Teacher-Student
+ * @context Teacher Portal - Communication feature
+ * @version 1.0 (2025-11-26)
+ * @synchronized-with backend/src/shared/constants/enums.constants.ts:259-270
+ *
+ * IMPORTANTE:
+ * - Este enum esta sincronizado con el backend
+ * - Total: 6 tipos de mensajes
+ * - Incluye valor 'system' presente en constraint de BD
+ */
+export enum MessageTypeEnum {
+  /** Mensaje directo entre profesor y estudiante */
+  DIRECT = 'direct',
+  /** Anuncio a toda el aula */
+  CLASSROOM_ANNOUNCEMENT = 'classroom_announcement',
+  /** Chat grupal del aula */
+  CLASSROOM_CHAT = 'classroom_chat',
+  /** Feedback privado sobre desempeno */
+  PRIVATE_FEEDBACK = 'private_feedback',
+  /** Comentario en una asignacion */
+  ASSIGNMENT_COMMENT = 'assignment_comment',
+  /** Mensajes generados por el sistema */
+  SYSTEM = 'system',
+}
+
+/** Alias para compatibilidad con codigo existente */
+export type MessageType = MessageTypeEnum;
+
+/**
  * Tipos de notificaciones del sistema
  * @see DDL: gamification_system.notification_type ENUM
  * @see Docs: docs/02-especificaciones-tecnicas/tipos-compartidos/TYPES-NOTIFICATIONS.md
@@ -271,14 +300,14 @@ export enum NotificationTypeEnum {
   ACHIEVEMENT_UNLOCKED = 'achievement_unlocked',
   RANK_UP = 'rank_up',
   FRIEND_REQUEST = 'friend_request',
-  GUILD_INVITATION = 'guild_invitation',      // v2.0: Renombrado de TEAM_INVITE
+  GUILD_INVITATION = 'guild_invitation', // v2.0: Renombrado de TEAM_INVITE
   MISSION_COMPLETED = 'mission_completed',
-  LEVEL_UP = 'level_up',                      // v2.0: NUEVO
-  MESSAGE_RECEIVED = 'message_received',      // v2.0: NUEVO
+  LEVEL_UP = 'level_up', // v2.0: NUEVO
+  MESSAGE_RECEIVED = 'message_received', // v2.0: NUEVO
   SYSTEM_ANNOUNCEMENT = 'system_announcement',
-  ML_COINS_EARNED = 'ml_coins_earned',       // v2.0: NUEVO
-  STREAK_MILESTONE = 'streak_milestone',      // v2.0: NUEVO
-  EXERCISE_FEEDBACK = 'exercise_feedback',    // v2.0: NUEVO
+  ML_COINS_EARNED = 'ml_coins_earned', // v2.0: NUEVO
+  STREAK_MILESTONE = 'streak_milestone', // v2.0: NUEVO
+  EXERCISE_FEEDBACK = 'exercise_feedback', // v2.0: NUEVO
 }
 
 /**
@@ -293,9 +322,9 @@ export enum NotificationTypeEnum {
  * - Valor por defecto en BD: 'medium'
  */
 export enum NotificationPriorityEnum {
-  LOW = 'low',          // Prioridad baja: Notificaciones informativas, sin urgencia
-  MEDIUM = 'medium',    // Prioridad media: Notificaciones estándar (DEFAULT)
-  HIGH = 'high',        // Prioridad alta: Notificaciones urgentes que requieren atención inmediata
+  LOW = 'low', // Prioridad baja: Notificaciones informativas, sin urgencia
+  MEDIUM = 'medium', // Prioridad media: Notificaciones estándar (DEFAULT)
+  HIGH = 'high', // Prioridad alta: Notificaciones urgentes que requieren atención inmediata
   CRITICAL = 'critical', // v1.1: NUEVO - Prioridad crítica: Alertas del sistema, emergencias
 }
 
@@ -331,7 +360,7 @@ export const NOTIFICATION_TYPES = Object.values(NotificationTypeEnum);
  */
 export const NOTIFICATION_PRIORITY_BY_TYPE = {
   [NotificationPriorityEnum.CRITICAL]: [
-    NotificationTypeEnum.SYSTEM_ANNOUNCEMENT,  // Mensajes críticos del sistema
+    NotificationTypeEnum.SYSTEM_ANNOUNCEMENT, // Mensajes críticos del sistema
   ],
   [NotificationPriorityEnum.HIGH]: [
     NotificationTypeEnum.MESSAGE_RECEIVED,
@@ -382,7 +411,7 @@ export enum ContentStatusEnum {
   DRAFT = 'draft',
   PUBLISHED = 'published',
   ARCHIVED = 'archived',
-  UNDER_REVIEW = 'under_review',  // v1.1: RENOMBRADO de 'reviewing'
+  UNDER_REVIEW = 'under_review', // v1.1: RENOMBRADO de 'reviewing'
 }
 
 /**
@@ -513,9 +542,9 @@ export enum ProgressStatusEnum {
   NOT_STARTED = 'not_started',
   IN_PROGRESS = 'in_progress',
   COMPLETED = 'completed',
-  NEEDS_REVIEW = 'needs_review',  // v1.1: RENOMBRADO de 'reviewed'
+  NEEDS_REVIEW = 'needs_review', // v1.1: RENOMBRADO de 'reviewed'
   MASTERED = 'mastered',
-  ABANDONED = 'abandoned',  // v1.2: AGREGADO para sincronización con DDL
+  ABANDONED = 'abandoned', // v1.2: AGREGADO para sincronización con DDL
 }
 
 /**

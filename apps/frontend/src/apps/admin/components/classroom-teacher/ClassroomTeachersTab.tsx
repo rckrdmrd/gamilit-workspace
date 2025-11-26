@@ -21,9 +21,12 @@ import {
   Users,
   Mail,
   Calendar,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { useClassroomTeacher } from '../../hooks/useClassroomTeacher';
 import { cn } from '@shared/utils/cn';
+import toast from 'react-hot-toast';
 
 export function ClassroomTeachersTab() {
   const [classroomId, setClassroomId] = useState('');
@@ -31,26 +34,65 @@ export function ClassroomTeachersTab() {
   const [teacherIdToAssign, setTeacherIdToAssign] = useState('');
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [teacherToRemove, setTeacherToRemove] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const { useClassroomTeachers, assignTeacherToClassroom, removeTeacherFromClassroom } =
     useClassroomTeacher();
 
   const { data: classroomData, isLoading, error } = useClassroomTeachers(searchedId, !!searchedId);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (classroomId.trim()) {
-      setSearchedId(classroomId.trim());
+  // UUID validation helper
+  const isValidUUID = (uuid: string): boolean => {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(uuid);
+  };
+
+  // Copy ID to clipboard
+  const handleCopyId = async (id: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(id);
+      setCopiedId(id);
+      toast.success(`${label} ID copiado`);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (error) {
+      toast.error('Error al copiar ID');
     }
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedId = classroomId.trim();
+
+    if (!trimmedId) {
+      toast.error('Ingrese un Classroom ID');
+      return;
+    }
+
+    if (!isValidUUID(trimmedId)) {
+      toast.error('Formato de UUID inválido');
+      return;
+    }
+
+    setSearchedId(trimmedId);
+  };
+
   const handleAssignTeacher = () => {
-    if (!searchedId || !teacherIdToAssign.trim()) return;
+    const trimmedTeacherId = teacherIdToAssign.trim();
+
+    if (!searchedId || !trimmedTeacherId) {
+      toast.error('Ingrese un Teacher ID');
+      return;
+    }
+
+    if (!isValidUUID(trimmedTeacherId)) {
+      toast.error('Formato de UUID inválido para Teacher ID');
+      return;
+    }
 
     assignTeacherToClassroom.mutate(
       {
         classroomId: searchedId,
-        data: { teacherId: teacherIdToAssign.trim() },
+        data: { teacherId: trimmedTeacherId },
       },
       {
         onSuccess: () => {
@@ -187,7 +229,7 @@ export function ClassroomTeachersTab() {
                   className="rounded-xl bg-white p-6 shadow-md"
                 >
                   <div className="mb-4 flex items-start justify-between">
-                    <div>
+                    <div className="flex-1">
                       <h4 className="text-lg font-bold text-gray-900">
                         {teacher.firstName} {teacher.lastName}
                       </h4>
@@ -196,22 +238,42 @@ export function ClassroomTeachersTab() {
                         {teacher.email}
                       </div>
                     </div>
-                    <button
-                      onClick={() => setTeacherToRemove(teacher.id)}
-                      className={cn(
-                        'rounded-lg p-2',
-                        'text-red-500 hover:bg-red-50',
-                        'transition-colors',
-                      )}
-                      title="Remover teacher"
-                    >
-                      <UserMinus className="h-5 w-5" />
-                    </button>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => handleCopyId(teacher.id, 'Teacher')}
+                        className={cn(
+                          'rounded-lg p-2',
+                          'text-gray-500 hover:bg-gray-50',
+                          'transition-colors',
+                        )}
+                        title="Copiar Teacher ID"
+                      >
+                        {copiedId === teacher.id ? (
+                          <Check className="h-5 w-5 text-green-500" />
+                        ) : (
+                          <Copy className="h-5 w-5" />
+                        )}
+                      </button>
+                      <button
+                        onClick={() => setTeacherToRemove(teacher.id)}
+                        className={cn(
+                          'rounded-lg p-2',
+                          'text-red-500 hover:bg-red-50',
+                          'transition-colors',
+                        )}
+                        title="Remover teacher"
+                      >
+                        <UserMinus className="h-5 w-5" />
+                      </button>
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-2 text-sm text-gray-500">
                     <Calendar className="h-4 w-4" />
-                    Asignado: {new Date(teacher.assignedAt).toLocaleDateString('es-ES')}
+                    Asignado:{' '}
+                    {teacher.assignedAt
+                      ? new Date(teacher.assignedAt).toLocaleDateString('es-ES')
+                      : 'N/A'}
                   </div>
                 </motion.div>
               ))}

@@ -26,39 +26,30 @@ export const RankComparison: React.FC<RankComparisonProps> = ({
   showNextRank = true,
   className = '',
 }) => {
-  const { currentRank, nextRank, compareToNext, compareToRank } = useRank();
+  const { compareToNext, compareToRank } = useRank();
 
   // Get comparison data
-  const comparison = targetRank
-    ? compareToRank(targetRank)
-    : showNextRank
-    ? compareToNext()
-    : null;
+  const comparison = targetRank ? compareToRank(targetRank) : showNextRank ? compareToNext() : null;
 
   if (!comparison) {
     return (
-      <div className={cn('text-center py-8', className)}>
+      <div className={cn('py-8 text-center', className)}>
         <div className="text-detective-text-secondary">
           <p>Has alcanzado el rango máximo</p>
-          <p className="text-sm mt-1">Considera prestigiar para continuar progresando</p>
+          <p className="mt-1 text-sm">Considera prestigiar para continuar progresando</p>
         </div>
       </div>
     );
   }
 
-  const { current, target, mlCoinsDifference, multiplierIncrease, newBenefits } =
-    comparison;
+  const { current, target, mlCoinsDifference, multiplierIncrease, newBenefits } = comparison;
 
   return (
     <div className={cn('space-y-6', className)}>
       {/* Header */}
       <div className="text-center">
-        <h3 className="text-xl font-bold text-detective-text mb-2">
-          Comparación de Rangos
-        </h3>
-        <p className="text-sm text-detective-text-secondary">
-          Progreso hacia el siguiente rango
-        </p>
+        <h3 className="mb-2 text-xl font-bold text-detective-text">Comparación de Rangos</h3>
+        <p className="text-sm text-detective-text-secondary">Progreso hacia el siguiente rango</p>
       </div>
 
       {/* Rank Badges Comparison */}
@@ -68,35 +59,21 @@ export const RankComparison: React.FC<RankComparisonProps> = ({
         className="flex items-center justify-center gap-6"
       >
         <div className="flex flex-col items-center gap-3">
-          <RankBadgeAdvanced
-            rank={current.id}
-
-            showGlow={false}
-            animated={false}
-          />
+          <RankBadgeAdvanced rank={current.id} showGlow={false} animated={false} />
           <div className="text-center">
-            <div className="font-bold text-detective-text">
-              {current.nameSpanish}
-            </div>
+            <div className="font-bold text-detective-text">{current.nameSpanish}</div>
             <div className="text-sm text-detective-text-secondary">
               {current.multiplier.toFixed(2)}x multiplicador
             </div>
           </div>
         </div>
 
-        <ArrowRight className="w-8 h-8 text-gray-400" />
+        <ArrowRight className="h-8 w-8 text-gray-400" />
 
         <div className="flex flex-col items-center gap-3">
-          <RankBadgeAdvanced
-            rank={target.id}
-
-            showGlow={true}
-            animated={true}
-          />
+          <RankBadgeAdvanced rank={target.id} showGlow={true} animated={true} />
           <div className="text-center">
-            <div className="font-bold text-detective-text">
-              {target.nameSpanish}
-            </div>
+            <div className="font-bold text-detective-text">{target.nameSpanish}</div>
             <div className="text-sm text-detective-text-secondary">
               {target.multiplier.toFixed(2)}x multiplicador
             </div>
@@ -109,23 +86,21 @@ export const RankComparison: React.FC<RankComparisonProps> = ({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6"
+        className="rounded-xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-6"
       >
-        <h4 className="font-bold text-detective-text mb-4">
+        <h4 className="mb-4 font-bold text-detective-text">
           Requisitos para alcanzar {target.nameSpanish}
         </h4>
 
         <div className="space-y-3">
           {/* ML Coins Required */}
-          <div className="flex items-center justify-between p-3 bg-white rounded-lg">
+          <div className="flex items-center justify-between rounded-lg bg-white p-3">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg">
-                <Coins className="w-5 h-5 text-white" />
+              <div className="rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 p-2">
+                <Coins className="h-5 w-5 text-white" />
               </div>
               <div>
-                <div className="font-semibold text-detective-text">
-                  ML Coins Necesarios
-                </div>
+                <div className="font-semibold text-detective-text">ML Coins Necesarios</div>
                 <div className="text-sm text-detective-text-secondary">
                   {target.mlCoinsRequired.toLocaleString()} ML Coins en total
                 </div>
@@ -135,22 +110,18 @@ export const RankComparison: React.FC<RankComparisonProps> = ({
               <div className="text-2xl font-bold text-amber-600">
                 {mlCoinsDifference.toLocaleString()}
               </div>
-              <div className="text-xs text-detective-text-secondary">
-                más por ganar
-              </div>
+              <div className="text-xs text-detective-text-secondary">más por ganar</div>
             </div>
           </div>
 
           {/* Multiplier Increase */}
-          <div className="flex items-center justify-between p-3 bg-white rounded-lg">
+          <div className="flex items-center justify-between rounded-lg bg-white p-3">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg">
-                <Zap className="w-5 h-5 text-white" />
+              <div className="rounded-lg bg-gradient-to-br from-purple-400 to-pink-500 p-2">
+                <Zap className="h-5 w-5 text-white" />
               </div>
               <div>
-                <div className="font-semibold text-detective-text">
-                  Aumento de Multiplicador
-                </div>
+                <div className="font-semibold text-detective-text">Aumento de Multiplicador</div>
                 <div className="text-sm text-detective-text-secondary">
                   De {current.multiplier.toFixed(2)}x a {target.multiplier.toFixed(2)}x
                 </div>
@@ -169,13 +140,11 @@ export const RankComparison: React.FC<RankComparisonProps> = ({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6"
+          className="rounded-xl border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 p-6"
         >
-          <div className="flex items-center gap-2 mb-4">
-            <CheckCircle className="w-5 h-5 text-green-600" />
-            <h4 className="font-bold text-detective-text">
-              Beneficios que Desbloquearás
-            </h4>
+          <div className="mb-4 flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-green-600" />
+            <h4 className="font-bold text-detective-text">Beneficios que Desbloquearás</h4>
           </div>
 
           <ul className="space-y-2">
@@ -185,10 +154,10 @@ export const RankComparison: React.FC<RankComparisonProps> = ({
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 + index * 0.05 }}
-                className="flex items-start gap-3 p-3 bg-white rounded-lg"
+                className="flex items-start gap-3 rounded-lg bg-white p-3"
               >
-                <div className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
+                <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-green-100">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
                 </div>
                 <span className="text-detective-text">{benefit}</span>
               </motion.li>
@@ -202,11 +171,9 @@ export const RankComparison: React.FC<RankComparisonProps> = ({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="text-center p-6 bg-gradient-to-r from-detective-orange to-detective-orange-dark rounded-xl text-white"
+        className="rounded-xl bg-gradient-to-r from-detective-orange to-detective-orange-dark p-6 text-center text-white"
       >
-        <p className="font-semibold text-lg mb-1">
-          ¡Sigue así, Detective!
-        </p>
+        <p className="mb-1 text-lg font-semibold">¡Sigue así, Detective!</p>
         <p className="text-sm opacity-90">
           Estás a {mlCoinsDifference.toLocaleString()} ML Coins de alcanzar {target.nameSpanish}
         </p>

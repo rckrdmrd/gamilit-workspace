@@ -10,3 +10,8 @@ export { useAdminDashboard } from './useAdminDashboard';
 export { useSystemMonitoring } from './useSystemMonitoring';
 export { useUserManagement } from './useUserManagement';
 export { useOrganizations } from './useOrganizations';
+export { useRoles } from './useRoles';
+export { useRolePermissions } from './useRolePermissions';
+export { useAlerts } from './useAlerts';
+export { useProgress } from './useProgress';
+export { useMonitoring } from './useMonitoring';

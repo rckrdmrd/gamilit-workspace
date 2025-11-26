@@ -6,16 +6,25 @@ import { useState, useEffect, useCallback } from 'react';
 import { classroomsApi } from '@services/api/teacher';
 import type { Classroom, StudentMonitoring } from '@apps/teacher/types';
 import type { GetClassroomsQueryDto } from '@services/api/teacher';
+import type { PaginationInfo } from '@shared/types/api-responses';
 
 export interface UseClassroomsReturn {
   classrooms: Classroom[];
+  pagination: PaginationInfo | null;
   selectedClassroom: Classroom | null;
   students: StudentMonitoring[];
   loading: boolean;
   error: Error | null;
   selectClassroom: (id: string | null) => Promise<void>;
-  createClassroom: (data: { name: string; subject: string; grade_level: string }) => Promise<Classroom>;
-  updateClassroom: (id: string, data: Partial<{ name: string; subject: string; grade_level: string }>) => Promise<Classroom>;
+  createClassroom: (data: {
+    name: string;
+    subject: string;
+    grade_level: string;
+  }) => Promise<Classroom>;
+  updateClassroom: (
+    id: string,
+    data: Partial<{ name: string; subject: string; grade_level: string }>,
+  ) => Promise<Classroom>;
   deleteClassroom: (id: string) => Promise<void>;
   refreshStudents: () => Promise<void>;
   refresh: () => Promise<void>;
@@ -23,6 +32,7 @@ export interface UseClassroomsReturn {
 
 export function useClassrooms(filters?: GetClassroomsQueryDto): UseClassroomsReturn {
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
+  const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [selectedClassroom, setSelectedClassroom] = useState<Classroom | null>(null);
   const [students, setStudents] = useState<StudentMonitoring[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,8 +43,9 @@ export function useClassrooms(filters?: GetClassroomsQueryDto): UseClassroomsRet
       setLoading(true);
       setError(null);
 
-      const data = await classroomsApi.getClassrooms(filters);
-      setClassrooms(data);
+      const response = await classroomsApi.getClassrooms(filters);
+      setClassrooms(response.data);
+      setPagination(response.pagination);
     } catch (err) {
       console.error('[useClassrooms] Error:', err);
       setError(err as Error);
@@ -45,8 +56,8 @@ export function useClassrooms(filters?: GetClassroomsQueryDto): UseClassroomsRet
 
   const fetchClassroomStudents = useCallback(async (classroomId: string) => {
     try {
-      const data = await classroomsApi.getClassroomStudents(classroomId);
-      setStudents(data);
+      const response = await classroomsApi.getClassroomStudents(classroomId);
+      setStudents(response.data);
     } catch (err) {
       console.error('[useClassrooms] Error fetching students:', err);
     }
@@ -72,7 +83,7 @@ export function useClassrooms(filters?: GetClassroomsQueryDto): UseClassroomsRet
         console.error('[useClassrooms] Error selecting classroom:', err);
       }
     },
-    [fetchClassroomStudents]
+    [fetchClassroomStudents],
   );
 
   const refreshStudents = useCallback(async () => {
@@ -92,14 +103,11 @@ export function useClassrooms(filters?: GetClassroomsQueryDto): UseClassroomsRet
         throw err;
       }
     },
-    [fetchClassrooms]
+    [fetchClassrooms],
   );
 
   const updateClassroom = useCallback(
-    async (
-      id: string,
-      data: Partial<{ name: string; subject: string; grade_level: string }>
-    ) => {
+    async (id: string, data: Partial<{ name: string; subject: string; grade_level: string }>) => {
       try {
         const updatedClassroom = await classroomsApi.updateClassroom(id, data);
         await fetchClassrooms(); // Refresh list
@@ -109,7 +117,7 @@ export function useClassrooms(filters?: GetClassroomsQueryDto): UseClassroomsRet
         throw err;
       }
     },
-    [fetchClassrooms]
+    [fetchClassrooms],
   );
 
   const deleteClassroom = useCallback(
@@ -122,11 +130,12 @@ export function useClassrooms(filters?: GetClassroomsQueryDto): UseClassroomsRet
         throw err;
       }
     },
-    [fetchClassrooms]
+    [fetchClassrooms],
   );
 
   return {
     classrooms,
+    pagination,
     selectedClassroom,
     students,
     loading,

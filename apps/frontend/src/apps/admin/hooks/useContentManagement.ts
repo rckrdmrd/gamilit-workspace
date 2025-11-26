@@ -17,8 +17,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 import * as adminAPI from '@/services/api/adminAPI';
-import type { PendingExercise, MediaItem, ContentVersion, PaginatedResponse } from '../types';
+import type { PendingContent } from '@/services/api/adminTypes';
+import type { MediaItem, ContentVersion, PaginatedResponse } from '../types';
 
 // ============================================================================
 // TYPES
@@ -40,7 +42,7 @@ export interface Exercise {
 }
 
 export interface UsePendingExercisesResult {
-  pendingExercises: PendingExercise[];
+  pendingExercises: PendingContent[];
   loading: boolean;
   error: string | null;
   total: number;
@@ -85,7 +87,7 @@ export interface UseContentVersionsResult {
 // ============================================================================
 
 export function usePendingExercises(): UsePendingExercisesResult {
-  const [pendingExercises, setPendingExercises] = useState<PendingExercise[]>([]);
+  const [pendingExercises, setPendingExercises] = useState<PendingContent[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
@@ -115,52 +117,46 @@ export function usePendingExercises(): UsePendingExercisesResult {
         setLoading(false);
       }
     },
-    [page, pageSize]
+    [page, pageSize],
   );
 
-  const approveExercise = useCallback(
-    async (id: string): Promise<void> => {
-      setLoading(true);
-      setError(null);
-      try {
-        await adminAPI.approveContent(id);
+  const approveExercise = useCallback(async (id: string): Promise<void> => {
+    setLoading(true);
+    setError(null);
+    try {
+      await adminAPI.approveContent(id);
 
-        // Remove from pending list
-        setPendingExercises((prev) => prev.filter((ex) => ex.id !== id));
-        setTotal((prev) => prev - 1);
-      } catch (err) {
-        console.error('Failed to approve exercise:', err);
-        const errorMsg = err instanceof Error ? err.message : 'Failed to approve exercise';
-        setError(errorMsg);
-        throw new Error(errorMsg);
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
+      // Remove from pending list
+      setPendingExercises((prev) => prev.filter((ex) => ex.id !== id));
+      setTotal((prev) => prev - 1);
+    } catch (err) {
+      console.error('Failed to approve exercise:', err);
+      const errorMsg = err instanceof Error ? err.message : 'Failed to approve exercise';
+      setError(errorMsg);
+      throw new Error(errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  const rejectExercise = useCallback(
-    async (id: string, reason: string): Promise<void> => {
-      setLoading(true);
-      setError(null);
-      try {
-        await adminAPI.rejectContent(id, reason);
+  const rejectExercise = useCallback(async (id: string, reason: string): Promise<void> => {
+    setLoading(true);
+    setError(null);
+    try {
+      await adminAPI.rejectContent(id, reason);
 
-        // Remove from pending list
-        setPendingExercises((prev) => prev.filter((ex) => ex.id !== id));
-        setTotal((prev) => prev - 1);
-      } catch (err) {
-        console.error('Failed to reject exercise:', err);
-        const errorMsg = err instanceof Error ? err.message : 'Failed to reject exercise';
-        setError(errorMsg);
-        throw new Error(errorMsg);
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
+      // Remove from pending list
+      setPendingExercises((prev) => prev.filter((ex) => ex.id !== id));
+      setTotal((prev) => prev - 1);
+    } catch (err) {
+      console.error('Failed to reject exercise:', err);
+      const errorMsg = err instanceof Error ? err.message : 'Failed to reject exercise';
+      setError(errorMsg);
+      throw new Error(errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchPendingExercises();
@@ -212,7 +208,10 @@ export function useMediaLibrary(): UseMediaLibraryResult {
 
         const data = response.data.success
           ? response.data.data
-          : (response.data as unknown as PaginatedResponse<MediaItem> & { storageUsed: number; storageLimit: number });
+          : (response.data as unknown as PaginatedResponse<MediaItem> & {
+              storageUsed: number;
+              storageLimit: number;
+            });
 
         setMedia(data.data);
         setTotal(data.total);
@@ -228,7 +227,7 @@ export function useMediaLibrary(): UseMediaLibraryResult {
         setLoading(false);
       }
     },
-    [page, pageSize]
+    [page, pageSize],
   );
 
   const uploadFile = useCallback(
@@ -245,10 +244,12 @@ export function useMediaLibrary(): UseMediaLibraryResult {
           formData,
           {
             headers: { 'Content-Type': 'multipart/form-data' },
-          }
+          },
         );
 
-        const newMedia = response.data.success ? response.data.data : (response.data as unknown as MediaItem);
+        const newMedia = response.data.success
+          ? response.data.data
+          : (response.data as unknown as MediaItem);
 
         // Refresh media list
         await fetchMedia();
@@ -263,52 +264,48 @@ export function useMediaLibrary(): UseMediaLibraryResult {
         setLoading(false);
       }
     },
-    [fetchMedia]
+    [fetchMedia],
   );
 
-  const deleteMedia = useCallback(
-    async (id: string): Promise<void> => {
-      setLoading(true);
-      setError(null);
-      try {
-        await apiClient.delete(API_ENDPOINTS.admin.content.deleteMedia(id));
+  const deleteMedia = useCallback(async (id: string): Promise<void> => {
+    setLoading(true);
+    setError(null);
+    try {
+      await apiClient.delete(API_ENDPOINTS.admin.content.deleteMedia(id));
 
-        // Remove from local state
-        setMedia((prev) => prev.filter((m) => m.id !== id));
-        setTotal((prev) => prev - 1);
-      } catch (err) {
-        console.error('Failed to delete media:', err);
-        const errorMsg = err instanceof Error ? err.message : 'Failed to delete media';
-        setError(errorMsg);
-        throw new Error(errorMsg);
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
+      // Remove from local state
+      setMedia((prev) => prev.filter((m) => m.id !== id));
+      setTotal((prev) => prev - 1);
+    } catch (err) {
+      console.error('Failed to delete media:', err);
+      const errorMsg = err instanceof Error ? err.message : 'Failed to delete media';
+      setError(errorMsg);
+      throw new Error(errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  const bulkDelete = useCallback(
-    async (ids: string[]): Promise<void> => {
-      setLoading(true);
-      setError(null);
-      try {
-        await Promise.all(ids.map((id) => apiClient.delete(API_ENDPOINTS.admin.content.deleteMedia(id))));
+  const bulkDelete = useCallback(async (ids: string[]): Promise<void> => {
+    setLoading(true);
+    setError(null);
+    try {
+      await Promise.all(
+        ids.map((id) => apiClient.delete(API_ENDPOINTS.admin.content.deleteMedia(id))),
+      );
 
-        // Remove from local state
-        setMedia((prev) => prev.filter((m) => !ids.includes(m.id)));
-        setTotal((prev) => prev - ids.length);
-      } catch (err) {
-        console.error('Failed to bulk delete media:', err);
-        const errorMsg = err instanceof Error ? err.message : 'Failed to bulk delete media';
-        setError(errorMsg);
-        throw new Error(errorMsg);
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
+      // Remove from local state
+      setMedia((prev) => prev.filter((m) => !ids.includes(m.id)));
+      setTotal((prev) => prev - ids.length);
+    } catch (err) {
+      console.error('Failed to bulk delete media:', err);
+      const errorMsg = err instanceof Error ? err.message : 'Failed to bulk delete media';
+      setError(errorMsg);
+      throw new Error(errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchMedia();
@@ -350,10 +347,12 @@ export function useContentVersions(): UseContentVersionsResult {
         API_ENDPOINTS.admin.content.createVersion,
         {
           params: contentId ? { contentId } : undefined,
-        }
+        },
       );
 
-      const data = response.data.success ? response.data.data : (response.data as unknown as ContentVersion[]);
+      const data = response.data.success
+        ? response.data.data
+        : (response.data as unknown as ContentVersion[]);
       setVersions(data);
     } catch (err) {
       console.error('Failed to fetch versions:', err);
@@ -364,34 +363,33 @@ export function useContentVersions(): UseContentVersionsResult {
     }
   }, []);
 
-  const createVersion = useCallback(
-    async (contentId: string, changes: string): Promise<void> => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await apiClient.post<{ success: boolean; data: ContentVersion }>(
-          API_ENDPOINTS.admin.content.createVersion,
-          {
-            contentId,
-            changes,
-          }
-        );
+  const createVersion = useCallback(async (contentId: string, changes: string): Promise<void> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await apiClient.post<{ success: boolean; data: ContentVersion }>(
+        API_ENDPOINTS.admin.content.createVersion,
+        {
+          contentId,
+          changes,
+        },
+      );
 
-        const newVersion = response.data.success ? response.data.data : (response.data as unknown as ContentVersion);
+      const newVersion = response.data.success
+        ? response.data.data
+        : (response.data as unknown as ContentVersion);
 
-        // Add to versions list
-        setVersions((prev) => [newVersion, ...prev]);
-      } catch (err) {
-        console.error('Failed to create version:', err);
-        const errorMsg = err instanceof Error ? err.message : 'Failed to create version';
-        setError(errorMsg);
-        throw new Error(errorMsg);
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
+      // Add to versions list
+      setVersions((prev) => [newVersion, ...prev]);
+    } catch (err) {
+      console.error('Failed to create version:', err);
+      const errorMsg = err instanceof Error ? err.message : 'Failed to create version';
+      setError(errorMsg);
+      throw new Error(errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   return {
     versions,
@@ -426,7 +424,28 @@ export interface UseApprovalsResult {
   refresh: () => Promise<void>;
 }
 
+/**
+ * @deprecated Use usePendingExercises instead
+ * This hook uses incorrect routes that don't exist in backend:
+ * - GET /admin/approvals (should be /v1/admin/content/pending)
+ * - POST /admin/approvals/:id/approve (should be /v1/admin/content/:id/approve)
+ *
+ * Migration path:
+ * Replace `useApprovals()` with `usePendingExercises()`
+ * The API contracts are compatible.
+ *
+ * @see usePendingExercises for correct implementation
+ * @see GAP-003 in orchestration/agentes/architecture-analyst/analisis-rutas-api-2025-11-24/
+ */
 export function useApprovals(): UseApprovalsResult {
+  // Add console warning in development
+  if (process.env.NODE_ENV === 'development') {
+    console.warn(
+      '[DEPRECATED] useApprovals hook is deprecated. Use usePendingExercises instead. ' +
+        'This hook uses incorrect API routes. See GAP-003 for details.',
+    );
+  }
+
   const [approvals, setApprovals] = useState<ApprovalItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -447,43 +466,37 @@ export function useApprovals(): UseApprovalsResult {
     }
   }, []);
 
-  const approve = useCallback(
-    async (id: string): Promise<void> => {
-      setLoading(true);
-      setError(null);
-      try {
-        await apiClient.post(`/admin/approvals/${id}/approve`);
-        setApprovals((prev) => prev.filter((item) => item.id !== id));
-      } catch (err) {
-        console.error('Failed to approve item:', err);
-        const errorMsg = err instanceof Error ? err.message : 'Failed to approve item';
-        setError(errorMsg);
-        throw new Error(errorMsg);
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
+  const approve = useCallback(async (id: string): Promise<void> => {
+    setLoading(true);
+    setError(null);
+    try {
+      await apiClient.post(`/admin/approvals/${id}/approve`);
+      setApprovals((prev) => prev.filter((item) => item.id !== id));
+    } catch (err) {
+      console.error('Failed to approve item:', err);
+      const errorMsg = err instanceof Error ? err.message : 'Failed to approve item';
+      setError(errorMsg);
+      throw new Error(errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  const reject = useCallback(
-    async (id: string, reason: string): Promise<void> => {
-      setLoading(true);
-      setError(null);
-      try {
-        await apiClient.post(`/admin/approvals/${id}/reject`, { reason });
-        setApprovals((prev) => prev.filter((item) => item.id !== id));
-      } catch (err) {
-        console.error('Failed to reject item:', err);
-        const errorMsg = err instanceof Error ? err.message : 'Failed to reject item';
-        setError(errorMsg);
-        throw new Error(errorMsg);
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
+  const reject = useCallback(async (id: string, reason: string): Promise<void> => {
+    setLoading(true);
+    setError(null);
+    try {
+      await apiClient.post(`/admin/approvals/${id}/reject`, { reason });
+      setApprovals((prev) => prev.filter((item) => item.id !== id));
+    } catch (err) {
+      console.error('Failed to reject item:', err);
+      const errorMsg = err instanceof Error ? err.message : 'Failed to reject item';
+      setError(errorMsg);
+      throw new Error(errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchApprovals();
@@ -547,5 +560,13 @@ export function useExercises() {
     fetchExercises();
   }, []);
 
-  return { exercises, loading, createExercise, updateExercise, deleteExercise, duplicateExercise, refresh: fetchExercises };
+  return {
+    exercises,
+    loading,
+    createExercise,
+    updateExercise,
+    deleteExercise,
+    duplicateExercise,
+    refresh: fetchExercises,
+  };
 }

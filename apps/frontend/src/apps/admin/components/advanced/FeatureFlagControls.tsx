@@ -95,22 +95,30 @@ export const FeatureFlagControls: React.FC = () => {
 
   const handleToggle = (id: string) => {
     setFlags((prev) =>
-      prev.map((flag) => (flag.id === id ? { ...flag, enabled: !flag.enabled, updatedAt: new Date().toISOString() } : flag))
+      prev.map((flag) =>
+        flag.id === id
+          ? { ...flag, enabled: !flag.enabled, updatedAt: new Date().toISOString() }
+          : flag,
+      ),
     );
   };
 
   const handleUpdateRollout = (id: string, percentage: number) => {
     setFlags((prev) =>
       prev.map((flag) =>
-        flag.id === id ? { ...flag, rolloutPercentage: percentage, updatedAt: new Date().toISOString() } : flag
-      )
+        flag.id === id
+          ? { ...flag, rolloutPercentage: percentage, updatedAt: new Date().toISOString() }
+          : flag,
+      ),
     );
   };
 
   const handleSave = () => {
     if (!editingFlag) return;
     setFlags((prev) =>
-      prev.map((flag) => (flag.id === editingFlag.id ? { ...editingFlag, updatedAt: new Date().toISOString() } : flag))
+      prev.map((flag) =>
+        flag.id === editingFlag.id ? { ...editingFlag, updatedAt: new Date().toISOString() } : flag,
+      ),
     );
     setEditingFlag(null);
   };
@@ -118,7 +126,11 @@ export const FeatureFlagControls: React.FC = () => {
   // Mock history data
   const flagHistory = [
     { timestamp: '2024-10-15T10:30:00Z', action: 'Rollout increased to 25%', by: 'admin@glit.com' },
-    { timestamp: '2024-10-10T14:20:00Z', action: 'Enabled for admin_teacher role', by: 'admin@glit.com' },
+    {
+      timestamp: '2024-10-10T14:20:00Z',
+      action: 'Enabled for admin_teacher role',
+      by: 'admin@glit.com',
+    },
     { timestamp: '2024-09-01T09:00:00Z', action: 'Feature flag created', by: 'admin@glit.com' },
   ];
 
@@ -127,7 +139,7 @@ export const FeatureFlagControls: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Flag className="w-8 h-8 text-detective-orange" />
+          <Flag className="h-8 w-8 text-detective-orange" />
           <div>
             <h2 className="text-detective-subtitle">Feature Flag Controls</h2>
             <p className="text-detective-small text-gray-400">{flags.length} feature flags</p>
@@ -136,30 +148,34 @@ export const FeatureFlagControls: React.FC = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <DetectiveCard className="bg-gradient-to-br from-green-500/10 to-green-600/5 border border-green-500/30">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <DetectiveCard className="border border-green-500/30 bg-gradient-to-br from-green-500/10 to-green-600/5">
           <div className="flex items-center gap-3">
-            <ToggleRight className="w-6 h-6 text-green-500" />
+            <ToggleRight className="h-6 w-6 text-green-500" />
             <div>
               <p className="text-detective-small text-gray-400">Enabled</p>
-              <p className="text-2xl font-bold text-green-500">{flags.filter((f) => f.enabled).length}</p>
+              <p className="text-2xl font-bold text-green-500">
+                {flags.filter((f) => f.enabled).length}
+              </p>
             </div>
           </div>
         </DetectiveCard>
 
-        <DetectiveCard className="bg-gradient-to-br from-red-500/10 to-red-600/5 border border-red-500/30">
+        <DetectiveCard className="border border-red-500/30 bg-gradient-to-br from-red-500/10 to-red-600/5">
           <div className="flex items-center gap-3">
-            <ToggleLeft className="w-6 h-6 text-red-500" />
+            <ToggleLeft className="h-6 w-6 text-red-500" />
             <div>
               <p className="text-detective-small text-gray-400">Disabled</p>
-              <p className="text-2xl font-bold text-red-500">{flags.filter((f) => !f.enabled).length}</p>
+              <p className="text-2xl font-bold text-red-500">
+                {flags.filter((f) => !f.enabled).length}
+              </p>
             </div>
           </div>
         </DetectiveCard>
 
-        <DetectiveCard className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/30">
+        <DetectiveCard className="border border-blue-500/30 bg-gradient-to-br from-blue-500/10 to-blue-600/5">
           <div className="flex items-center gap-3">
-            <Calendar className="w-6 h-6 text-blue-500" />
+            <Calendar className="h-6 w-6 text-blue-500" />
             <div>
               <p className="text-detective-small text-gray-400">Scheduled</p>
               <p className="text-2xl font-bold text-blue-500">
@@ -174,9 +190,9 @@ export const FeatureFlagControls: React.FC = () => {
       {editingFlag && (
         <DetectiveCard className="border-2 border-detective-orange">
           <h3 className="text-detective-subtitle mb-4">Edit Feature Flag</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block text-detective-small text-gray-400 mb-2">Name</label>
+              <label className="text-detective-small mb-2 block text-gray-400">Name</label>
               <input
                 type="text"
                 className="input-detective"
@@ -185,7 +201,7 @@ export const FeatureFlagControls: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-detective-small text-gray-400 mb-2">Key</label>
+              <label className="text-detective-small mb-2 block text-gray-400">Key</label>
               <input
                 type="text"
                 className="input-detective font-mono"
@@ -194,7 +210,7 @@ export const FeatureFlagControls: React.FC = () => {
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-detective-small text-gray-400 mb-2">Description</label>
+              <label className="text-detective-small mb-2 block text-gray-400">Description</label>
               <textarea
                 className="input-detective"
                 rows={2}
@@ -203,53 +219,75 @@ export const FeatureFlagControls: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-detective-small text-gray-400 mb-2">Target Roles</label>
+              <label className="text-detective-small mb-2 block text-gray-400">Target Roles</label>
               <input
                 type="text"
                 className="input-detective"
                 value={editingFlag.targetRoles.join(', ')}
                 onChange={(e) =>
-                  setEditingFlag({ ...editingFlag, targetRoles: e.target.value.split(',').map((r) => r.trim()) })
+                  setEditingFlag({
+                    ...editingFlag,
+                    targetRoles: e.target.value.split(',').map((r) => r.trim()),
+                  })
                 }
                 placeholder="student, admin_teacher"
               />
             </div>
             <div>
-              <label className="block text-detective-small text-gray-400 mb-2">Target Users</label>
+              <label className="text-detective-small mb-2 block text-gray-400">Target Users</label>
               <input
                 type="text"
                 className="input-detective"
                 value={editingFlag.targetUsers.join(', ')}
                 onChange={(e) =>
-                  setEditingFlag({ ...editingFlag, targetUsers: e.target.value.split(',').map((u) => u.trim()) })
+                  setEditingFlag({
+                    ...editingFlag,
+                    targetUsers: e.target.value.split(',').map((u) => u.trim()),
+                  })
                 }
                 placeholder="user1@test.com, user2@test.com"
               />
             </div>
             <div>
-              <label className="block text-detective-small text-gray-400 mb-2">Scheduled Activation</label>
+              <label className="text-detective-small mb-2 block text-gray-400">
+                Scheduled Activation
+              </label>
               <input
                 type="datetime-local"
                 className="input-detective"
-                value={editingFlag.scheduledActivation ? editingFlag.scheduledActivation.slice(0, 16) : ''}
+                value={
+                  editingFlag.scheduledActivation
+                    ? editingFlag.scheduledActivation.slice(0, 16)
+                    : ''
+                }
                 onChange={(e) =>
                   setEditingFlag({
                     ...editingFlag,
-                    scheduledActivation: e.target.value ? new Date(e.target.value).toISOString() : undefined,
+                    scheduledActivation: e.target.value
+                      ? new Date(e.target.value).toISOString()
+                      : undefined,
                   })
                 }
               />
             </div>
             <div>
-              <label className="block text-detective-small text-gray-400 mb-2">Scheduled Deactivation</label>
+              <label className="text-detective-small mb-2 block text-gray-400">
+                Scheduled Deactivation
+              </label>
               <input
                 type="datetime-local"
                 className="input-detective"
-                value={editingFlag.scheduledDeactivation ? editingFlag.scheduledDeactivation.slice(0, 16) : ''}
+                value={
+                  editingFlag.scheduledDeactivation
+                    ? editingFlag.scheduledDeactivation.slice(0, 16)
+                    : ''
+                }
                 onChange={(e) =>
                   setEditingFlag({
                     ...editingFlag,
-                    scheduledDeactivation: e.target.value ? new Date(e.target.value).toISOString() : undefined,
+                    scheduledDeactivation: e.target.value
+                      ? new Date(e.target.value).toISOString()
+                      : undefined,
                   })
                 }
               />
@@ -270,30 +308,36 @@ export const FeatureFlagControls: React.FC = () => {
       <div className="space-y-4">
         {flags.map((flag) => (
           <DetectiveCard key={flag.id}>
-            <div className="flex items-start justify-between mb-4">
+            <div className="mb-4 flex items-start justify-between">
               <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
+                <div className="mb-2 flex items-center gap-3">
                   <h4 className="text-detective-base font-semibold">{flag.name}</h4>
                   <button
                     onClick={() => handleToggle(flag.id)}
-                    className={`flex items-center gap-2 px-3 py-1 rounded-lg transition-colors ${
+                    className={`flex items-center gap-2 rounded-lg px-3 py-1 transition-colors ${
                       flag.enabled
-                        ? 'bg-green-500/20 text-green-500 border border-green-500/30'
-                        : 'bg-red-500/20 text-red-500 border border-red-500/30'
+                        ? 'border border-green-500/30 bg-green-500/20 text-green-500'
+                        : 'border border-red-500/30 bg-red-500/20 text-red-500'
                     }`}
                   >
-                    {flag.enabled ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />}
-                    <span className="text-xs font-bold">{flag.enabled ? 'ENABLED' : 'DISABLED'}</span>
+                    {flag.enabled ? (
+                      <ToggleRight className="h-4 w-4" />
+                    ) : (
+                      <ToggleLeft className="h-4 w-4" />
+                    )}
+                    <span className="text-xs font-bold">
+                      {flag.enabled ? 'ENABLED' : 'DISABLED'}
+                    </span>
                   </button>
-                  <span className="px-2 py-1 bg-detective-orange/20 text-detective-orange rounded text-xs font-mono">
+                  <span className="rounded bg-detective-orange/20 px-2 py-1 font-mono text-xs text-detective-orange">
                     {flag.key}
                   </span>
                 </div>
-                <p className="text-detective-small text-gray-400 mb-3">{flag.description}</p>
+                <p className="text-detective-small mb-3 text-gray-400">{flag.description}</p>
 
                 {/* Rollout Percentage */}
                 <div className="mb-3">
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="mb-2 flex items-center justify-between">
                     <label className="text-detective-small text-gray-400">Rollout Percentage</label>
                     <span className="text-detective-base font-bold text-detective-orange">
                       {flag.rolloutPercentage}%
@@ -306,7 +350,7 @@ export const FeatureFlagControls: React.FC = () => {
                     step="5"
                     value={flag.rolloutPercentage}
                     onChange={(e) => handleUpdateRollout(flag.id, parseInt(e.target.value))}
-                    className="w-full h-2 bg-detective-bg-secondary rounded-lg appearance-none cursor-pointer"
+                    className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-detective-bg-secondary"
                     style={{
                       background: `linear-gradient(to right, #f97316 0%, #f97316 ${flag.rolloutPercentage}%, #1f2937 ${flag.rolloutPercentage}%, #1f2937 100%)`,
                     }}
@@ -314,11 +358,11 @@ export const FeatureFlagControls: React.FC = () => {
                 </div>
 
                 {/* Targeting */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                   {flag.targetRoles.length > 0 && (
-                    <div className="p-2 bg-blue-500/10 border border-blue-500/30 rounded">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Users className="w-4 h-4 text-blue-500" />
+                    <div className="rounded border border-blue-500/30 bg-blue-500/10 p-2">
+                      <div className="mb-1 flex items-center gap-2">
+                        <Users className="h-4 w-4 text-blue-500" />
                         <span className="text-detective-small text-blue-500">Target Roles</span>
                       </div>
                       <p className="text-xs text-gray-400">{flag.targetRoles.join(', ')}</p>
@@ -326,35 +370,45 @@ export const FeatureFlagControls: React.FC = () => {
                   )}
 
                   {flag.targetUsers.length > 0 && (
-                    <div className="p-2 bg-purple-500/10 border border-purple-500/30 rounded">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Users className="w-4 h-4 text-purple-500" />
+                    <div className="rounded border border-purple-500/30 bg-purple-500/10 p-2">
+                      <div className="mb-1 flex items-center gap-2">
+                        <Users className="h-4 w-4 text-purple-500" />
                         <span className="text-detective-small text-purple-500">Target Users</span>
                       </div>
-                      <p className="text-xs text-gray-400">{flag.targetUsers.length} specific users</p>
+                      <p className="text-xs text-gray-400">
+                        {flag.targetUsers.length} specific users
+                      </p>
                     </div>
                   )}
 
                   {flag.scheduledActivation && (
-                    <div className="p-2 bg-green-500/10 border border-green-500/30 rounded">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Calendar className="w-4 h-4 text-green-500" />
-                        <span className="text-detective-small text-green-500">Scheduled Activation</span>
+                    <div className="rounded border border-green-500/30 bg-green-500/10 p-2">
+                      <div className="mb-1 flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-green-500" />
+                        <span className="text-detective-small text-green-500">
+                          Scheduled Activation
+                        </span>
                       </div>
                       <p className="text-xs text-gray-400">
-                        {new Date(flag.scheduledActivation).toLocaleString('es-ES')}
+                        {flag.scheduledActivation
+                          ? new Date(flag.scheduledActivation).toLocaleString('es-ES')
+                          : 'N/A'}
                       </p>
                     </div>
                   )}
 
                   {flag.scheduledDeactivation && (
-                    <div className="p-2 bg-red-500/10 border border-red-500/30 rounded">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Calendar className="w-4 h-4 text-red-500" />
-                        <span className="text-detective-small text-red-500">Scheduled Deactivation</span>
+                    <div className="rounded border border-red-500/30 bg-red-500/10 p-2">
+                      <div className="mb-1 flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-red-500" />
+                        <span className="text-detective-small text-red-500">
+                          Scheduled Deactivation
+                        </span>
                       </div>
                       <p className="text-xs text-gray-400">
-                        {new Date(flag.scheduledDeactivation).toLocaleString('es-ES')}
+                        {flag.scheduledDeactivation
+                          ? new Date(flag.scheduledDeactivation).toLocaleString('es-ES')
+                          : 'N/A'}
                       </p>
                     </div>
                   )}
@@ -362,20 +416,22 @@ export const FeatureFlagControls: React.FC = () => {
 
                 {/* Meta */}
                 <div className="mt-3 flex items-center gap-4 text-xs text-gray-500">
-                  <span>Updated: {new Date(flag.updatedAt).toLocaleString('es-ES')}</span>
+                  <span>
+                    Updated:{' '}
+                    {flag.updatedAt ? new Date(flag.updatedAt).toLocaleString('es-ES') : 'N/A'}
+                  </span>
                   <span>By: {flag.lastChangedBy}</span>
                 </div>
               </div>
 
               {/* Actions */}
-              <div className="flex flex-col gap-2 ml-4">
+              <div className="ml-4 flex flex-col gap-2">
                 <DetectiveButton variant="blue" onClick={() => setEditingFlag(flag)}>
                   Edit
                 </DetectiveButton>
                 <DetectiveButton
                   variant="primary"
-
-                  icon={<History className="w-4 h-4" />}
+                  icon={<History className="h-4 w-4" />}
                   onClick={() => setShowHistory(showHistory === flag.id ? null : flag.id)}
                 >
                   History
@@ -385,15 +441,17 @@ export const FeatureFlagControls: React.FC = () => {
 
             {/* History */}
             {showHistory === flag.id && (
-              <div className="mt-4 p-3 bg-detective-bg-secondary rounded-lg">
-                <h5 className="text-detective-small font-semibold mb-2">Change History</h5>
+              <div className="mt-4 rounded-lg bg-detective-bg-secondary p-3">
+                <h5 className="text-detective-small mb-2 font-semibold">Change History</h5>
                 <div className="space-y-2">
                   {flagHistory.map((entry, idx) => (
                     <div key={idx} className="flex items-center justify-between text-xs">
                       <span className="text-gray-400">{entry.action}</span>
                       <div className="text-right">
                         <p className="text-gray-500">{entry.by}</p>
-                        <p className="text-gray-600">{new Date(entry.timestamp).toLocaleString('es-ES')}</p>
+                        <p className="text-gray-600">
+                          {new Date(entry.timestamp).toLocaleString('es-ES')}
+                        </p>
                       </div>
                     </div>
                   ))}

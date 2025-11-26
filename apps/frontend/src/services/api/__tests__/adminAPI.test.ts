@@ -18,7 +18,7 @@ vi.mock('../apiClient', () => ({
 
 // Mock error handler
 vi.mock('../apiErrorHandler', () => ({
-  handleAPIError: vi.fn((error, message) => {
+  handleAPIError: vi.fn((_error, message) => {
     throw new Error(message);
   }),
 }));
@@ -339,7 +339,7 @@ describe('adminAPI.getUsers - CORR-003', () => {
       // ✅ All users should be transformed
       expect(result.items).toHaveLength(3);
 
-      result.items.forEach((user, index) => {
+      result.items.forEach((user) => {
         // Should have camelCase fields
         expect(user.name).toBeDefined();
         expect(user.email).toBeDefined();

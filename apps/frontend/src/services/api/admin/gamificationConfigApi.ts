@@ -6,6 +6,7 @@
  */
 
 import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
 import type {
   GamificationParameter,
   MayaRank,
@@ -18,7 +19,8 @@ import type {
   ListParametersQuery,
 } from '@/types/admin/gamification.types';
 
-const BASE_URL = '/admin/gamification/config';
+// Use API_ENDPOINTS from unified config (without /v1, that's in API_CONFIG.baseURL)
+const BASE_URL = API_ENDPOINTS.admin.gamificationConfig;
 
 /**
  * Gamification Configuration API
@@ -64,14 +66,8 @@ export const gamificationConfigApi = {
    * @param data New value and optional reason
    * @returns Updated parameter
    */
-  async updateParameter(
-    key: string,
-    data: UpdateParameterDto
-  ): Promise<GamificationParameter> {
-    const response = await apiClient.patch(
-      `${BASE_URL}/parameters/${key}`,
-      data
-    );
+  async updateParameter(key: string, data: UpdateParameterDto): Promise<GamificationParameter> {
+    const response = await apiClient.patch(`${BASE_URL}/parameters/${key}`, data);
     return response.data;
   },
 
@@ -82,9 +78,7 @@ export const gamificationConfigApi = {
    * @returns Reset parameter
    */
   async resetParameter(key: string): Promise<GamificationParameter> {
-    const response = await apiClient.post(
-      `${BASE_URL}/parameters/${key}/reset`
-    );
+    const response = await apiClient.post(`${BASE_URL}/parameters/${key}/reset`);
     return response.data;
   },
 
@@ -95,12 +89,9 @@ export const gamificationConfigApi = {
    * @returns Update result
    */
   async bulkUpdateParameters(
-    data: BulkUpdateParametersDto
+    data: BulkUpdateParametersDto,
   ): Promise<{ updated: number; parameters: GamificationParameter[] }> {
-    const response = await apiClient.post(
-      `${BASE_URL}/parameters/bulk-update`,
-      data
-    );
+    const response = await apiClient.post(`${BASE_URL}/parameters/bulk-update`, data);
     return response.data;
   },
 
@@ -136,14 +127,8 @@ export const gamificationConfigApi = {
    * @param data Rank updates
    * @returns Updated rank
    */
-  async updateMayaRank(
-    id: string,
-    data: UpdateMayaRankDto
-  ): Promise<MayaRank> {
-    const response = await apiClient.patch(
-      `${BASE_URL}/maya-ranks/${id}`,
-      data
-    );
+  async updateMayaRank(id: string, data: UpdateMayaRankDto): Promise<MayaRank> {
+    const response = await apiClient.patch(`${BASE_URL}/maya-ranks/${id}`, data);
     return response.data;
   },
 

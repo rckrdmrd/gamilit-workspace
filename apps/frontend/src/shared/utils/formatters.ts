@@ -122,9 +122,10 @@ export const formatAttemptCount = (count: number): string => {
  * Get status badge color
  * @param status - Progress status
  * @returns Tailwind color class
+ * FE-004: Updated to include needs_review and abandoned states
  */
 export const getStatusBadgeColor = (
-  status: 'not_started' | 'in_progress' | 'completed' | 'mastered'
+  status: 'not_started' | 'in_progress' | 'completed' | 'needs_review' | 'mastered' | 'abandoned',
 ): string => {
   switch (status) {
     case 'not_started':
@@ -133,8 +134,12 @@ export const getStatusBadgeColor = (
       return 'bg-blue-100 text-blue-800';
     case 'completed':
       return 'bg-green-100 text-green-800';
+    case 'needs_review':
+      return 'bg-yellow-100 text-yellow-800';
     case 'mastered':
       return 'bg-purple-100 text-purple-800';
+    case 'abandoned':
+      return 'bg-red-100 text-red-800';
     default:
       return 'bg-gray-100 text-gray-800';
   }
@@ -145,26 +150,76 @@ export const getStatusBadgeColor = (
  * @param difficulty - Difficulty level (CEFR or simple)
  * @returns Tailwind color class
  */
-export const getDifficultyBadgeColor = (
-  difficulty: string
-): string => {
+export const getDifficultyBadgeColor = (difficulty: string): string => {
   // Normalize to lowercase for consistent matching
   const level = difficulty.toLowerCase();
 
   // CEFR levels (8 levels)
   switch (level) {
-    case 'beginner':     // A1
-    case 'elementary':   // A2
+    case 'beginner': // A1
+    case 'elementary': // A2
       return 'bg-green-100 text-green-800';
     case 'pre_intermediate': // B1
-    case 'intermediate':     // B2
+    case 'intermediate': // B2
       return 'bg-yellow-100 text-yellow-800';
     case 'upper_intermediate': // C1
-    case 'advanced':           // C2
-    case 'proficient':         // C2+
+    case 'advanced': // C2
+    case 'proficient': // C2+
     case 'native':
       return 'bg-red-100 text-red-800';
     default:
       return 'bg-gray-100 text-gray-800';
   }
+};
+
+/**
+ * Format date safely, handling null/undefined values
+ * @param dateValue - Date value (string, Date, null, undefined)
+ * @param locale - Locale for formatting (default: 'es-ES')
+ * @param options - Intl.DateTimeFormatOptions
+ * @param fallback - Text to show if date is invalid (default: 'N/A')
+ * @returns Formatted date or fallback
+ * @example
+ * formatDateSafe('2025-01-15') // '15/01/2025'
+ * formatDateSafe(null) // 'N/A'
+ * formatDateSafe('invalid-date') // 'N/A'
+ */
+export const formatDateSafe = (
+  dateValue: string | Date | null | undefined,
+  locale: string = 'es-ES',
+  options: Intl.DateTimeFormatOptions = { dateStyle: 'short' },
+  fallback: string = 'N/A',
+): string => {
+  if (!dateValue) return fallback;
+
+  const date = typeof dateValue === 'string' ? new Date(dateValue) : dateValue;
+  if (isNaN(date.getTime())) return fallback;
+
+  return date.toLocaleDateString(locale, options);
+};
+
+/**
+ * Format datetime safely, handling null/undefined values
+ * @param dateValue - Date value (string, Date, null, undefined)
+ * @param locale - Locale for formatting (default: 'es-ES')
+ * @param options - Intl.DateTimeFormatOptions
+ * @param fallback - Text to show if datetime is invalid (default: 'N/A')
+ * @returns Formatted datetime or fallback
+ * @example
+ * formatDateTimeSafe('2025-01-15T14:30:00') // '15/01/2025, 14:30'
+ * formatDateTimeSafe(null) // 'N/A'
+ * formatDateTimeSafe('invalid-date') // 'N/A'
+ */
+export const formatDateTimeSafe = (
+  dateValue: string | Date | null | undefined,
+  locale: string = 'es-ES',
+  options: Intl.DateTimeFormatOptions = { dateStyle: 'short', timeStyle: 'short' },
+  fallback: string = 'N/A',
+): string => {
+  if (!dateValue) return fallback;
+
+  const date = typeof dateValue === 'string' ? new Date(dateValue) : dateValue;
+  if (isNaN(date.getTime())) return fallback;
+
+  return date.toLocaleString(locale, options);
 };

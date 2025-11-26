@@ -15,7 +15,7 @@ export const LEADERBOARD_TYPES = {
   XP: 'xp',
   COMPLETION: 'completion',
   STREAK: 'streak',
-  DETECTIVE: 'detective'
+  DETECTIVE: 'detective',
 } as const;
 
 export interface LeaderboardTypeConfig {
@@ -40,13 +40,14 @@ export const LEADERBOARD_TYPE_CONFIGS: Record<LeaderboardTypeVariant, Leaderboar
     shortLabel: 'XP',
     icon: Zap,
     description: 'Clasificación por experiencia acumulada',
-    longDescription: 'Ranking basado en la experiencia total ganada completando misiones, resolviendo casos y participando en actividades',
+    longDescription:
+      'Ranking basado en la experiencia total ganada completando misiones, resolviendo casos y participando en actividades',
     color: '#eab308',
     gradientFrom: '#fbbf24',
     gradientTo: '#f59e0b',
     sortKey: 'xp',
     formatPattern: '{value} XP',
-    unit: 'XP'
+    unit: 'XP',
   },
   completion: {
     type: 'completion',
@@ -54,13 +55,14 @@ export const LEADERBOARD_TYPE_CONFIGS: Record<LeaderboardTypeVariant, Leaderboar
     shortLabel: 'Comp.',
     icon: BarChart3,
     description: 'Clasificación por porcentaje completado',
-    longDescription: 'Ranking basado en el porcentaje de contenido completado, incluyendo misiones, lecciones y desafíos',
+    longDescription:
+      'Ranking basado en el porcentaje de contenido completado, incluyendo misiones, lecciones y desafíos',
     color: '#10b981',
     gradientFrom: '#34d399',
     gradientTo: '#059669',
     sortKey: 'completionPercentage',
     formatPattern: '{value}%',
-    unit: '%'
+    unit: '%',
   },
   streak: {
     type: 'streak',
@@ -68,13 +70,14 @@ export const LEADERBOARD_TYPE_CONFIGS: Record<LeaderboardTypeVariant, Leaderboar
     shortLabel: 'Racha',
     icon: Flame,
     description: 'Clasificación por días consecutivos',
-    longDescription: 'Ranking basado en la racha más larga de días consecutivos de actividad en la plataforma',
+    longDescription:
+      'Ranking basado en la racha más larga de días consecutivos de actividad en la plataforma',
     color: '#f97316',
     gradientFrom: '#fb923c',
     gradientTo: '#ea580c',
     sortKey: 'streak',
     formatPattern: '{value} días',
-    unit: 'días'
+    unit: 'días',
   },
   detective: {
     type: 'detective',
@@ -82,14 +85,15 @@ export const LEADERBOARD_TYPE_CONFIGS: Record<LeaderboardTypeVariant, Leaderboar
     shortLabel: 'Det.',
     icon: Target,
     description: 'Ranking general de detectives',
-    longDescription: 'Ranking general que combina XP, completitud, racha y otros factores para determinar los mejores detectives',
+    longDescription:
+      'Ranking general que combina XP, completitud, racha y otros factores para determinar los mejores detectives',
     color: '#8b5cf6',
     gradientFrom: '#a78bfa',
     gradientTo: '#7c3aed',
     sortKey: 'score',
     formatPattern: '{value}',
-    unit: 'puntos'
-  }
+    unit: 'puntos',
+  },
 };
 
 // ============================================================================
@@ -120,7 +124,7 @@ export const RANK_TIERS: RankTierConfig[] = [
     gradientTo: '#f59e0b',
     icon: Crown,
     badge: '🥇',
-    description: 'Primer lugar - El mejor detective'
+    description: 'Primer lugar - El mejor detective',
   },
   {
     tier: 'silver',
@@ -132,7 +136,7 @@ export const RANK_TIERS: RankTierConfig[] = [
     gradientTo: '#9ca3af',
     icon: Medal,
     badge: '🥈',
-    description: 'Segundo lugar - Casi en la cima'
+    description: 'Segundo lugar - Casi en la cima',
   },
   {
     tier: 'bronze',
@@ -144,7 +148,7 @@ export const RANK_TIERS: RankTierConfig[] = [
     gradientTo: '#ea580c',
     icon: Trophy,
     badge: '🥉',
-    description: 'Tercer lugar - En el podio'
+    description: 'Tercer lugar - En el podio',
   },
   {
     tier: 'top10',
@@ -156,7 +160,7 @@ export const RANK_TIERS: RankTierConfig[] = [
     gradientTo: '#7c3aed',
     icon: Target,
     badge: '🏆',
-    description: 'Entre los 10 mejores'
+    description: 'Entre los 10 mejores',
   },
   {
     tier: 'top50',
@@ -168,7 +172,7 @@ export const RANK_TIERS: RankTierConfig[] = [
     gradientTo: '#2563eb',
     icon: Target,
     badge: '⭐',
-    description: 'Entre los 50 mejores'
+    description: 'Entre los 50 mejores',
   },
   {
     tier: 'standard',
@@ -179,8 +183,8 @@ export const RANK_TIERS: RankTierConfig[] = [
     gradientTo: '#6b7280',
     icon: Target,
     badge: '👤',
-    description: 'Clasificación estándar'
-  }
+    description: 'Clasificación estándar',
+  },
 ];
 
 // ============================================================================
@@ -200,7 +204,7 @@ export const DISPLAY_CONFIG = {
   PODIUM_SIZE: 3,
   LOADING_TIMEOUT: 5000, // 5 seconds
   ERROR_RETRY_DELAY: 3000, // 3 seconds
-  MAX_RETRIES: 3
+  MAX_RETRIES: 3,
 } as const;
 
 // ============================================================================
@@ -225,7 +229,7 @@ export const CHANGE_INDICATORS: Record<string, ChangeIndicatorConfig> = {
     bgColor: 'bg-green-50',
     textColor: 'text-green-600',
     icon: '↗',
-    description: 'Mejoró su posición'
+    description: 'Mejoró su posición',
   },
   down: {
     type: 'down',
@@ -234,7 +238,7 @@ export const CHANGE_INDICATORS: Record<string, ChangeIndicatorConfig> = {
     bgColor: 'bg-red-50',
     textColor: 'text-red-600',
     icon: '↘',
-    description: 'Descendió en la clasificación'
+    description: 'Descendió en la clasificación',
   },
   same: {
     type: 'same',
@@ -243,7 +247,7 @@ export const CHANGE_INDICATORS: Record<string, ChangeIndicatorConfig> = {
     bgColor: 'bg-gray-50',
     textColor: 'text-gray-600',
     icon: '—',
-    description: 'Mantiene su posición'
+    description: 'Mantiene su posición',
   },
   new: {
     type: 'new',
@@ -252,8 +256,8 @@ export const CHANGE_INDICATORS: Record<string, ChangeIndicatorConfig> = {
     bgColor: 'bg-amber-50',
     textColor: 'text-amber-600',
     icon: '✨',
-    description: 'Nueva entrada en la clasificación'
-  }
+    description: 'Nueva entrada en la clasificación',
+  },
 };
 
 // ============================================================================
@@ -268,50 +272,54 @@ export interface MotivationalMessage {
 
 export const MOTIVATIONAL_MESSAGES: MotivationalMessage[] = [
   {
-    condition: (rank) => rank === 1,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    condition: (rank, _percentile) => rank === 1,
     message: '¡Eres el número 1! ¡Increíble trabajo!',
-    emoji: '👑'
+    emoji: '👑',
   },
   {
-    condition: (rank) => rank === 2,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    condition: (rank, _percentile) => rank === 2,
     message: '¡Casi en la cima! ¡Sigue así!',
-    emoji: '🥈'
+    emoji: '🥈',
   },
   {
-    condition: (rank) => rank === 3,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    condition: (rank, _percentile) => rank === 3,
     message: '¡En el podio! ¡Excelente trabajo!',
-    emoji: '🥉'
+    emoji: '🥉',
   },
   {
-    condition: (rank) => rank <= 10,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    condition: (rank, _percentile) => rank <= 10,
     message: '¡En el Top 10! ¡Eres un crack!',
-    emoji: '🏆'
+    emoji: '🏆',
   },
   {
-    condition: (rank, percentile) => percentile >= 90,
+    condition: (_rank, percentile) => percentile >= 90,
     message: '¡En el Top 10%! ¡Impresionante!',
-    emoji: '⭐'
+    emoji: '⭐',
   },
   {
-    condition: (rank, percentile) => percentile >= 75,
+    condition: (_rank, percentile) => percentile >= 75,
     message: '¡En el Top 25%! ¡Muy bien!',
-    emoji: '💪'
+    emoji: '💪',
   },
   {
-    condition: (rank, percentile) => percentile >= 50,
+    condition: (_rank, percentile) => percentile >= 50,
     message: '¡Por encima del promedio! ¡Vamos!',
-    emoji: '📈'
+    emoji: '📈',
   },
   {
-    condition: (rank, percentile) => percentile >= 25,
+    condition: (_rank, percentile) => percentile >= 25,
     message: '¡Sigue escalando posiciones!',
-    emoji: '🚀'
+    emoji: '🚀',
   },
   {
     condition: () => true,
     message: '¡Cada paso cuenta! ¡Adelante!',
-    emoji: '💫'
-  }
+    emoji: '💫',
+  },
 ];
 
 // ============================================================================
@@ -324,7 +332,7 @@ export const API_ENDPOINTS = {
   GET_USER_STATS: '/api/leaderboard/stats/:userId',
   GET_TOP_N: '/api/leaderboard/:type/top/:n',
   GET_AROUND_RANK: '/api/leaderboard/:type/around/:rank',
-  REFRESH_LEADERBOARD: '/api/leaderboard/:type/refresh'
+  REFRESH_LEADERBOARD: '/api/leaderboard/:type/refresh',
 } as const;
 
 // ============================================================================
@@ -338,7 +346,7 @@ export const ERROR_MESSAGES = {
   TIMEOUT: 'La solicitud tardó demasiado. Por favor, intenta nuevamente.',
   INVALID_DATA: 'Datos de clasificación inválidos.',
   UNAUTHORIZED: 'No tienes permiso para ver esta clasificación.',
-  SERVER_ERROR: 'Error del servidor. Intenta más tarde.'
+  SERVER_ERROR: 'Error del servidor. Intenta más tarde.',
 } as const;
 
 // ============================================================================
@@ -351,7 +359,7 @@ export const SUCCESS_MESSAGES = {
   ENTERED_TOP_10: '¡Entraste al Top 10!',
   ENTERED_TOP_3: '¡Entraste al podio!',
   REACHED_FIRST: '¡Llegaste al primer lugar!',
-  STREAK_MILESTONE: '¡Nuevo récord de racha!'
+  STREAK_MILESTONE: '¡Nuevo récord de racha!',
 } as const;
 
 // ============================================================================
@@ -363,7 +371,7 @@ export const EMPTY_STATE_MESSAGES = {
   NO_PARTICIPANTS: 'Aún no hay participantes',
   NOT_RANKED: 'Aún no tienes una clasificación',
   LOADING: 'Cargando clasificación...',
-  ERROR: 'Error al cargar la clasificación'
+  ERROR: 'Error al cargar la clasificación',
 } as const;
 
 // ============================================================================
@@ -381,7 +389,7 @@ export const FEATURE_FLAGS = {
   ENABLE_NOTIFICATIONS: true,
   SHOW_PODIUM: true,
   SHOW_CHANGE_INDICATORS: true,
-  SHOW_STATS_BREAKDOWN: true
+  SHOW_STATS_BREAKDOWN: true,
 } as const;
 
 // ============================================================================
@@ -392,35 +400,35 @@ export const THEME_COLORS = {
   primary: {
     blue: '#2563eb',
     orange: '#f97316',
-    gold: '#fbbf24'
+    gold: '#fbbf24',
   },
   text: {
     primary: '#1f2937',
     secondary: '#6b7280',
-    tertiary: '#9ca3af'
+    tertiary: '#9ca3af',
   },
   background: {
     primary: '#ffffff',
     secondary: '#f9fafb',
-    tertiary: '#f3f4f6'
+    tertiary: '#f3f4f6',
   },
   border: {
     primary: '#e5e7eb',
-    secondary: '#d1d5db'
+    secondary: '#d1d5db',
   },
   rank: {
     gold: '#fbbf24',
     silver: '#d1d5db',
     bronze: '#fb923c',
     top10: '#a78bfa',
-    standard: '#6b7280'
+    standard: '#6b7280',
   },
   change: {
     up: '#10b981',
     down: '#ef4444',
     same: '#6b7280',
-    new: '#f59e0b'
-  }
+    new: '#f59e0b',
+  },
 } as const;
 
 // ============================================================================
@@ -433,7 +441,7 @@ export const BREAKPOINTS = {
   md: 768,
   lg: 1024,
   xl: 1280,
-  '2xl': 1536
+  '2xl': 1536,
 } as const;
 
 // ============================================================================
@@ -445,5 +453,5 @@ export const Z_INDEX = {
   dropdown: 10,
   modal: 50,
   tooltip: 100,
-  notification: 200
+  notification: 200,
 } as const;

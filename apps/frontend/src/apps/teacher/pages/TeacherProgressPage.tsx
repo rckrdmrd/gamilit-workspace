@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { TeacherLayout } from '../layouts/TeacherLayout';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
@@ -18,6 +19,7 @@ import { BarChart3, RefreshCw, Filter, ChevronDown, Loader2, AlertCircle } from 
  * - Análisis por módulo
  */
 export default function TeacherProgressPage() {
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { classrooms, loading, error, refresh } = useClassrooms();
   const [selectedClassroomId, setSelectedClassroomId] = useState<string>('all');
@@ -44,13 +46,15 @@ export default function TeacherProgressPage() {
   // Obtener el nombre de la clase seleccionada
   const selectedClassroomName = useMemo(() => {
     if (selectedClassroomId === 'all') return 'Todas las clases';
+    if (!classrooms || !Array.isArray(classrooms)) return 'Clase no encontrada';
     const classroom = classrooms.find((c) => c.id === selectedClassroomId);
     return classroom?.name || 'Clase no encontrada';
   }, [selectedClassroomId, classrooms]);
 
   // Estadísticas generales de todas las clases
   const overallStats = useMemo(() => {
-    if (classrooms.length === 0) {
+    // Add defensive check: ensure classrooms is an array before using array methods
+    if (!classrooms || !Array.isArray(classrooms) || classrooms.length === 0) {
       return {
         totalStudents: 0,
         averageScore: 0,
@@ -74,15 +78,13 @@ export default function TeacherProgressPage() {
     >
       <div className="space-y-6">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-detective-orange bg-opacity-10 rounded-lg">
-              <BarChart3 className="w-8 h-8 text-detective-orange" />
+            <div className="rounded-lg bg-detective-orange bg-opacity-10 p-3">
+              <BarChart3 className="h-8 w-8 text-detective-orange" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-detective-text">
-                Progreso Académico
-              </h1>
+              <h1 className="text-3xl font-bold text-detective-text">Progreso Académico</h1>
               <p className="text-detective-text-secondary">
                 Monitorea el rendimiento y avance de tus estudiantes
               </p>
@@ -96,7 +98,7 @@ export default function TeacherProgressPage() {
               onClick={refresh}
               className="self-start md:self-auto"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="h-4 w-4" />
               Actualizar
             </DetectiveButton>
           )}
@@ -105,7 +107,7 @@ export default function TeacherProgressPage() {
         {/* Loading State */}
         {loading && (
           <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="w-12 h-12 text-detective-orange animate-spin mb-4" />
+            <Loader2 className="mb-4 h-12 w-12 animate-spin text-detective-orange" />
             <p className="text-detective-text-secondary">Cargando datos de progreso...</p>
           </div>
         )}
@@ -114,19 +116,19 @@ export default function TeacherProgressPage() {
         {error && !loading && (
           <DetectiveCard variant="danger">
             <div className="flex items-start gap-4">
-              <AlertCircle className="w-8 h-8 text-red-500 flex-shrink-0" />
+              <AlertCircle className="h-8 w-8 flex-shrink-0 text-red-500" />
               <div className="flex-1">
-                <h3 className="text-lg font-bold text-detective-text mb-2">
+                <h3 className="mb-2 text-lg font-bold text-detective-text">
                   Error al cargar progreso
                 </h3>
-                <p className="text-detective-text-secondary mb-4">
+                <p className="mb-4 text-detective-text-secondary">
                   No se pudieron cargar los datos de progreso. Por favor, intenta nuevamente.
                 </p>
-                <p className="text-sm text-red-400 mb-4 font-mono bg-red-950 p-2 rounded">
+                <p className="mb-4 rounded bg-red-950 p-2 font-mono text-sm text-red-400">
                   {error.message}
                 </p>
                 <DetectiveButton onClick={refresh} variant="primary">
-                  <RefreshCw className="w-4 h-4" />
+                  <RefreshCw className="h-4 w-4" />
                   Reintentar
                 </DetectiveButton>
               </div>
@@ -136,12 +138,10 @@ export default function TeacherProgressPage() {
 
         {/* Overall Stats Cards - Solo cuando se ve "Todas las clases" */}
         {selectedClassroomId === 'all' && !loading && !error && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <DetectiveCard hoverable={false}>
               <div className="text-center">
-                <p className="text-detective-text-secondary text-sm mb-2">
-                  Total de Estudiantes
-                </p>
+                <p className="mb-2 text-sm text-detective-text-secondary">Total de Estudiantes</p>
                 <p className="text-4xl font-bold text-detective-text">
                   {overallStats.totalStudents}
                 </p>
@@ -150,9 +150,7 @@ export default function TeacherProgressPage() {
 
             <DetectiveCard hoverable={false}>
               <div className="text-center">
-                <p className="text-detective-text-secondary text-sm mb-2">
-                  Promedio General
-                </p>
+                <p className="mb-2 text-sm text-detective-text-secondary">Promedio General</p>
                 <p className="text-4xl font-bold text-detective-gold">
                   {overallStats.averageScore.toFixed(0)}%
                 </p>
@@ -161,10 +159,8 @@ export default function TeacherProgressPage() {
 
             <DetectiveCard hoverable={false}>
               <div className="text-center">
-                <p className="text-detective-text-secondary text-sm mb-2">
-                  Clases Activas
-                </p>
-                <p className="text-4xl font-bold text-detective-accent">
+                <p className="mb-2 text-sm text-detective-text-secondary">Clases Activas</p>
+                <p className="text-detective-accent text-4xl font-bold">
                   {overallStats.activeClasses}
                 </p>
               </div>
@@ -175,11 +171,11 @@ export default function TeacherProgressPage() {
         {/* Classroom Selector */}
         {!loading && !error && (
           <DetectiveCard hoverable={false}>
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-3">
-                <Filter className="w-5 h-5 text-detective-orange" />
+                <Filter className="h-5 w-5 text-detective-orange" />
                 <div>
-                  <label className="text-sm font-medium text-detective-text-secondary block mb-1">
+                  <label className="mb-1 block text-sm font-medium text-detective-text-secondary">
                     Filtrar por Clase
                   </label>
                   <p className="text-xs text-detective-text-secondary">
@@ -192,13 +188,13 @@ export default function TeacherProgressPage() {
               <div className="relative">
                 <button
                   onClick={() => setShowClassroomDropdown(!showClassroomDropdown)}
-                  className="w-full md:w-80 px-4 py-3 bg-detective-bg-secondary border-2 border-detective-border rounded-lg text-left flex items-center justify-between hover:border-detective-orange transition-colors"
+                  className="border-detective-border flex w-full items-center justify-between rounded-lg border-2 bg-detective-bg-secondary px-4 py-3 text-left transition-colors hover:border-detective-orange md:w-80"
                 >
-                  <span className="text-detective-text font-medium truncate">
+                  <span className="truncate font-medium text-detective-text">
                     {selectedClassroomName}
                   </span>
                   <ChevronDown
-                    className={`w-5 h-5 text-detective-text-secondary transition-transform ${
+                    className={`h-5 w-5 text-detective-text-secondary transition-transform ${
                       showClassroomDropdown ? 'rotate-180' : ''
                     }`}
                   />
@@ -206,63 +202,64 @@ export default function TeacherProgressPage() {
 
                 {/* Dropdown Menu */}
                 {showClassroomDropdown && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-detective-card border-2 border-detective-border rounded-lg shadow-detective-lg z-50 max-h-80 overflow-y-auto">
-                  {/* All Classes Option */}
-                  <button
-                    onClick={() => {
-                      setSelectedClassroomId('all');
-                      setShowClassroomDropdown(false);
-                    }}
-                    className={`w-full px-4 py-3 text-left hover:bg-detective-bg-secondary transition-colors ${
-                      selectedClassroomId === 'all'
-                        ? 'bg-detective-orange bg-opacity-10 text-detective-orange font-semibold'
-                        : 'text-detective-text'
-                    }`}
-                  >
-                    <div>
-                      <p className="font-medium">Todas las clases</p>
-                      <p className="text-xs text-detective-text-secondary mt-0.5">
-                        Vista general de {classrooms.length} clase(s)
-                      </p>
-                    </div>
-                  </button>
-
-                  {/* Divider */}
-                  {classrooms.length > 0 && (
-                    <div className="border-t border-detective-border my-1"></div>
-                  )}
-
-                  {/* Individual Classrooms */}
-                  {classrooms.map((classroom) => (
+                  <div className="bg-detective-card border-detective-border absolute left-0 right-0 top-full z-50 mt-2 max-h-80 overflow-y-auto rounded-lg border-2 shadow-detective-lg">
+                    {/* All Classes Option */}
                     <button
-                      key={classroom.id}
                       onClick={() => {
-                        setSelectedClassroomId(classroom.id);
+                        setSelectedClassroomId('all');
                         setShowClassroomDropdown(false);
                       }}
-                      className={`w-full px-4 py-3 text-left hover:bg-detective-bg-secondary transition-colors ${
-                        selectedClassroomId === classroom.id
-                          ? 'bg-detective-orange bg-opacity-10 text-detective-orange font-semibold'
+                      className={`w-full px-4 py-3 text-left transition-colors hover:bg-detective-bg-secondary ${
+                        selectedClassroomId === 'all'
+                          ? 'bg-detective-orange bg-opacity-10 font-semibold text-detective-orange'
                           : 'text-detective-text'
                       }`}
                     >
                       <div>
-                        <p className="font-medium">{classroom.name}</p>
-                        <p className="text-xs text-detective-text-secondary mt-0.5">
-                          {classroom.student_count} estudiante(s) • {classroom.grade_level} • {classroom.subject}
+                        <p className="font-medium">Todas las clases</p>
+                        <p className="mt-0.5 text-xs text-detective-text-secondary">
+                          Vista general de {classrooms.length} clase(s)
                         </p>
                       </div>
                     </button>
-                  ))}
 
-                  {/* Empty State */}
-                  {classrooms.length === 0 && (
-                    <div className="px-4 py-6 text-center text-detective-text-secondary">
-                      <p className="text-sm">No hay clases disponibles</p>
-                      <p className="text-xs mt-1">Crea una clase para comenzar</p>
-                    </div>
-                  )}
-                </div>
+                    {/* Divider */}
+                    {classrooms.length > 0 && (
+                      <div className="border-detective-border my-1 border-t"></div>
+                    )}
+
+                    {/* Individual Classrooms */}
+                    {classrooms.map((classroom) => (
+                      <button
+                        key={classroom.id}
+                        onClick={() => {
+                          setSelectedClassroomId(classroom.id);
+                          setShowClassroomDropdown(false);
+                        }}
+                        className={`w-full px-4 py-3 text-left transition-colors hover:bg-detective-bg-secondary ${
+                          selectedClassroomId === classroom.id
+                            ? 'bg-detective-orange bg-opacity-10 font-semibold text-detective-orange'
+                            : 'text-detective-text'
+                        }`}
+                      >
+                        <div>
+                          <p className="font-medium">{classroom.name}</p>
+                          <p className="mt-0.5 text-xs text-detective-text-secondary">
+                            {classroom.student_count} estudiante(s) • {classroom.grade_level} •{' '}
+                            {classroom.subject}
+                          </p>
+                        </div>
+                      </button>
+                    ))}
+
+                    {/* Empty State */}
+                    {classrooms.length === 0 && (
+                      <div className="px-4 py-6 text-center text-detective-text-secondary">
+                        <p className="text-sm">No hay clases disponibles</p>
+                        <p className="mt-1 text-xs">Crea una clase para comenzar</p>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
@@ -274,14 +271,12 @@ export default function TeacherProgressPage() {
           <ClassProgressDashboard classroomId={selectedClassroomId} />
         ) : !loading && !error ? (
           <DetectiveCard hoverable={false}>
-            <div className="text-center py-16">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-detective-orange bg-opacity-10 rounded-full mb-4">
-                <BarChart3 className="w-8 h-8 text-detective-orange" />
+            <div className="py-16 text-center">
+              <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-detective-orange bg-opacity-10">
+                <BarChart3 className="h-8 w-8 text-detective-orange" />
               </div>
-              <h3 className="text-xl font-bold text-detective-text mb-2">
-                Selecciona una clase
-              </h3>
-              <p className="text-detective-text-secondary max-w-md mx-auto">
+              <h3 className="mb-2 text-xl font-bold text-detective-text">Selecciona una clase</h3>
+              <p className="mx-auto max-w-md text-detective-text-secondary">
                 Para ver el progreso detallado, análisis por módulos y estudiantes rezagados,
                 selecciona una clase específica del menú desplegable superior.
               </p>
@@ -289,7 +284,7 @@ export default function TeacherProgressPage() {
                 <DetectiveButton
                   variant="primary"
                   className="mt-6"
-                  onClick={() => window.location.href = '/teacher/classrooms'}
+                  onClick={() => navigate('/teacher/classes')}
                 >
                   Crear Primera Clase
                 </DetectiveButton>
@@ -301,52 +296,52 @@ export default function TeacherProgressPage() {
         {/* Info Card - Tips para el Teacher */}
         {!loading && !error && (
           <DetectiveCard hoverable={false}>
-          <div className="flex items-start gap-4">
-            <div className="flex-shrink-0 p-3 bg-detective-accent bg-opacity-10 rounded-lg">
-              <BarChart3 className="w-6 h-6 text-detective-accent" />
+            <div className="flex items-start gap-4">
+              <div className="bg-detective-accent flex-shrink-0 rounded-lg bg-opacity-10 p-3">
+                <BarChart3 className="text-detective-accent h-6 w-6" />
+              </div>
+              <div className="flex-1">
+                <h3 className="mb-2 text-lg font-bold text-detective-text">
+                  Consejos para el Seguimiento de Progreso
+                </h3>
+                <ul className="space-y-2 text-sm text-detective-text-secondary">
+                  <li className="flex items-start gap-2">
+                    <span className="mt-0.5 font-bold text-detective-orange">•</span>
+                    <span>
+                      Revisa las alertas de estudiantes rezagados semanalmente para intervenir a
+                      tiempo
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-0.5 font-bold text-detective-orange">•</span>
+                    <span>
+                      Los gráficos de progreso por módulo te ayudan a identificar temas que
+                      necesitan refuerzo
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-0.5 font-bold text-detective-orange">•</span>
+                    <span>
+                      Exporta reportes en PDF o Excel para compartir con directivos o padres de
+                      familia
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-0.5 font-bold text-detective-orange">•</span>
+                    <span>
+                      Compara el rendimiento entre clases para adaptar tus estrategias de enseñanza
+                    </span>
+                  </li>
+                </ul>
+              </div>
             </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-bold text-detective-text mb-2">
-                Consejos para el Seguimiento de Progreso
-              </h3>
-              <ul className="space-y-2 text-sm text-detective-text-secondary">
-                <li className="flex items-start gap-2">
-                  <span className="text-detective-orange font-bold mt-0.5">•</span>
-                  <span>
-                    Revisa las alertas de estudiantes rezagados semanalmente para intervenir a tiempo
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-detective-orange font-bold mt-0.5">•</span>
-                  <span>
-                    Los gráficos de progreso por módulo te ayudan a identificar temas que necesitan refuerzo
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-detective-orange font-bold mt-0.5">•</span>
-                  <span>
-                    Exporta reportes en PDF o Excel para compartir con directivos o padres de familia
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-detective-orange font-bold mt-0.5">•</span>
-                  <span>
-                    Compara el rendimiento entre clases para adaptar tus estrategias de enseñanza
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </div>
           </DetectiveCard>
         )}
       </div>
 
       {/* Click Outside Handler for Dropdown */}
       {showClassroomDropdown && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => setShowClassroomDropdown(false)}
-        />
+        <div className="fixed inset-0 z-40" onClick={() => setShowClassroomDropdown(false)} />
       )}
     </TeacherLayout>
   );

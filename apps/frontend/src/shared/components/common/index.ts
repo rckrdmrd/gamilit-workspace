@@ -10,3 +10,9 @@ export type { FormFieldProps } from './FormField';
 
 export { ConfirmDialog } from './ConfirmDialog';
 export type { ConfirmDialogProps } from './ConfirmDialog';
+
+export { UnderConstruction } from './UnderConstruction';
+export type { UnderConstructionProps } from './UnderConstruction';
+
+export { FeatureBadge } from './FeatureBadge';
+export type { FeatureBadgeProps } from './FeatureBadge';

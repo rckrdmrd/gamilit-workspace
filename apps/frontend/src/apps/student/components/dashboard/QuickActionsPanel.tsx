@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen, Trophy, Target, Calendar, Settings, Bell } from 'lucide-react';
+import { BookOpen, Trophy, Target, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface QuickAction {
@@ -51,12 +51,10 @@ export function QuickActionsPanel() {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white rounded-detective p-4 shadow-card-detective">
-      <h3 className="text-lg font-bold text-detective-text mb-4">
-        Acciones Rápidas
-      </h3>
+    <div className="rounded-detective bg-white p-4 shadow-card-detective">
+      <h3 className="mb-4 text-lg font-bold text-detective-text">Acciones Rápidas</h3>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {quickActions.map((action, index) => {
           const Icon = action.icon;
 
@@ -64,7 +62,7 @@ export function QuickActionsPanel() {
             <motion.button
               key={action.id}
               onClick={() => navigate(action.path)}
-              className={`flex flex-col items-center justify-center p-4 ${action.bgColor} rounded-lg hover:shadow-md transition-shadow touch-manipulation min-w-[44px] min-h-[44px]`}
+              className={`flex flex-col items-center justify-center p-4 ${action.bgColor} min-h-[44px] min-w-[44px] touch-manipulation rounded-lg transition-shadow hover:shadow-md`}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: index * 0.05 }}
@@ -82,9 +80,9 @@ export function QuickActionsPanel() {
                   ease: 'easeInOut',
                 }}
               >
-                <Icon className={`w-6 h-6 ${action.color} mb-2`} />
+                <Icon className={`h-6 w-6 ${action.color} mb-2`} />
               </motion.div>
-              <span className="text-xs font-medium text-detective-text text-center">
+              <span className="text-center text-xs font-medium text-detective-text">
                 {action.label}
               </span>
             </motion.button>

@@ -21,7 +21,6 @@ import type {
   TransactionFilters,
   EconomyStats,
 } from '../types/economyTypes';
-import { getBalance } from '../api/economyAPI';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { apiClient } from '@/services/api/apiClient';
 
@@ -33,7 +32,7 @@ interface EconomyState {
   balance: MLCoinsBalance;
   transactions: Transaction[];
   inventory: ShopItem[];
-  shopItems?: ShopItem[];  // Legacy/alias for inventory
+  shopItems?: ShopItem[]; // Legacy/alias for inventory
   cart: CartItem[];
   isLoading: boolean;
   error: string | null;
@@ -116,14 +115,11 @@ export const useEconomyStore = create<EconomyState>()(
           }
 
           // Update stats in backend (increment ML Coins)
-          const { data } = await apiClient.patch(
-            `/gamification/users/${userId}/stats`,
-            {
-              ml_coins_increment: amount,
-              source,
-              description,
-            }
-          );
+          const { data } = await apiClient.patch(`/gamification/users/${userId}/stats`, {
+            ml_coins_increment: amount,
+            source,
+            description,
+          });
 
           // Create transaction record locally
           const transaction: Transaction = {
@@ -151,7 +147,7 @@ export const useEconomyStore = create<EconomyState>()(
           const errorMessage = error instanceof Error ? error.message : 'Failed to add coins';
           set({
             isLoading: false,
-            error: errorMessage
+            error: errorMessage,
           });
           throw error;
         }
@@ -174,14 +170,11 @@ export const useEconomyStore = create<EconomyState>()(
           }
 
           // Update stats in backend (decrement ML Coins)
-          const { data } = await apiClient.patch(
-            `/gamification/users/${userId}/stats`,
-            {
-              ml_coins_decrement: amount,
-              reason: `Purchased ${itemName}`,
-              item_id: itemId,
-            }
-          );
+          const { data } = await apiClient.patch(`/gamification/users/${userId}/stats`, {
+            ml_coins_decrement: amount,
+            reason: `Purchased ${itemName}`,
+            item_id: itemId,
+          });
 
           const transaction: Transaction = {
             id: crypto.randomUUID(),
@@ -211,7 +204,7 @@ export const useEconomyStore = create<EconomyState>()(
           const errorMessage = error instanceof Error ? error.message : 'Failed to spend coins';
           set({
             isLoading: false,
-            error: errorMessage
+            error: errorMessage,
           });
           return false;
         }
@@ -274,7 +267,7 @@ export const useEconomyStore = create<EconomyState>()(
             cart: state.cart.map((cartItem) =>
               cartItem.id === item.id
                 ? { ...cartItem, quantity: cartItem.quantity + quantity }
-                : cartItem
+                : cartItem,
             ),
           });
         } else {
@@ -303,9 +296,7 @@ export const useEconomyStore = create<EconomyState>()(
         }
 
         set((state) => ({
-          cart: state.cart.map((item) =>
-            item.id === itemId ? { ...item, quantity } : item
-          ),
+          cart: state.cart.map((item) => (item.id === itemId ? { ...item, quantity } : item)),
         }));
       },
 
@@ -468,13 +459,12 @@ export const useEconomyStore = create<EconomyState>()(
         state.inventory.forEach((item) => {
           categorySpending[item.category] = (categorySpending[item.category] || 0) + item.price;
         });
-        const favoriteCategory = Object.entries(categorySpending).sort(
-          ([, a], [, b]) => b - a
-        )[0]?.[0] || 'cosmetics';
+        const favoriteCategory =
+          Object.entries(categorySpending).sort(([, a], [, b]) => b - a)[0]?.[0] || 'cosmetics';
 
         // Find biggest purchase
         const biggestTransaction = spendTransactions.sort(
-          (a, b) => Math.abs(b.amount) - Math.abs(a.amount)
+          (a, b) => Math.abs(b.amount) - Math.abs(a.amount),
         )[0];
 
         // Find top earning source
@@ -565,13 +555,13 @@ export const useEconomyStore = create<EconomyState>()(
           set({
             balance,
             isLoading: false,
-            error: null
+            error: null,
           });
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Failed to fetch balance';
           set({
             isLoading: false,
-            error: errorMessage
+            error: errorMessage,
           });
           console.error('Error fetching balance:', error);
         }
@@ -580,6 +570,6 @@ export const useEconomyStore = create<EconomyState>()(
     {
       name: 'glit-economy-storage',
       version: 1,
-    }
-  )
+    },
+  ),
 );

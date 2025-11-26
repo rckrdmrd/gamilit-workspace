@@ -112,7 +112,7 @@ export const AdminDashboardHero: React.FC<AdminDashboardHeroProps> = ({
       <DetectiveCard className="border-2 border-dashed border-gray-700">
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
-            <Activity className="w-12 h-12 text-gray-500 mx-auto mb-4 animate-pulse" />
+            <Activity className="mx-auto mb-4 h-12 w-12 animate-pulse text-gray-500" />
             <p className="text-detective-base text-gray-400">Loading system health...</p>
           </div>
         </div>
@@ -146,15 +146,15 @@ export const AdminDashboardHero: React.FC<AdminDashboardHeroProps> = ({
 
         <div className="relative">
           {/* Header */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="relative">
                 <div className={`p-3 ${statusColors.bg} rounded-xl`}>
-                  <Activity className={`w-8 h-8 ${statusColors.text}`} />
+                  <Activity className={`h-8 w-8 ${statusColors.text}`} />
                 </div>
                 {/* Status indicator dot */}
                 <motion.div
-                  className={`absolute -top-1 -right-1 w-4 h-4 ${statusColors.dot} rounded-full border-2 border-detective-bg`}
+                  className={`absolute -right-1 -top-1 h-4 w-4 ${statusColors.dot} rounded-full border-2 border-detective-bg`}
                   animate={health.status === 'critical' ? { scale: [1, 1.2, 1] } : {}}
                   transition={{ duration: 1, repeat: Infinity }}
                 />
@@ -162,13 +162,16 @@ export const AdminDashboardHero: React.FC<AdminDashboardHeroProps> = ({
 
               <div>
                 <h2 className="text-detective-subtitle">System Health Monitor</h2>
-                <div className="flex items-center gap-2 mt-1">
+                <div className="mt-1 flex items-center gap-2">
                   <span className={`text-detective-base font-semibold ${statusColors.text}`}>
                     {health.status.toUpperCase()}
                   </span>
                   <span className="text-detective-small text-gray-500">•</span>
                   <span className="text-detective-small text-gray-400">
-                    Last updated: {new Date(health.lastCheck).toLocaleTimeString()}
+                    Last updated:{' '}
+                    {health.lastCheck
+                      ? new Date(health.lastCheck).toLocaleTimeString('es-ES')
+                      : 'N/A'}
                   </span>
                 </div>
               </div>
@@ -179,33 +182,33 @@ export const AdminDashboardHero: React.FC<AdminDashboardHeroProps> = ({
               <motion.button
                 onClick={onRefresh}
                 disabled={loading}
-                className={`p-3 bg-detective-bg-secondary rounded-lg hover:bg-detective-bg-tertiary transition-colors ${
-                  loading ? 'opacity-50 cursor-not-allowed' : ''
+                className={`hover:bg-detective-bg-tertiary rounded-lg bg-detective-bg-secondary p-3 transition-colors ${
+                  loading ? 'cursor-not-allowed opacity-50' : ''
                 }`}
                 whileHover={!loading ? { scale: 1.05 } : {}}
                 whileTap={!loading ? { scale: 0.95 } : {}}
               >
                 <RefreshCw
-                  className={`w-5 h-5 text-detective-orange ${loading ? 'animate-spin' : ''}`}
+                  className={`h-5 w-5 text-detective-orange ${loading ? 'animate-spin' : ''}`}
                 />
               </motion.button>
             )}
           </div>
 
           {/* Metrics Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
             {/* CPU Usage */}
             <motion.div
-              className="p-4 bg-detective-bg-secondary rounded-lg"
+              className="rounded-lg bg-detective-bg-secondary p-4"
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="flex items-center gap-2 mb-2">
-                <Cpu className={`w-4 h-4 ${cpuColor}`} />
+              <div className="mb-2 flex items-center gap-2">
+                <Cpu className={`h-4 w-4 ${cpuColor}`} />
                 <span className="text-detective-small text-gray-400">CPU</span>
               </div>
               <p className={`text-2xl font-bold ${cpuColor}`}>{health.cpu.toFixed(1)}%</p>
-              <div className="mt-2 h-1.5 bg-detective-bg rounded-full overflow-hidden">
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-detective-bg">
                 <motion.div
                   className={`h-full ${cpuColor.replace('text', 'bg')}`}
                   initial={{ width: 0 }}
@@ -217,16 +220,16 @@ export const AdminDashboardHero: React.FC<AdminDashboardHeroProps> = ({
 
             {/* Memory Usage */}
             <motion.div
-              className="p-4 bg-detective-bg-secondary rounded-lg"
+              className="rounded-lg bg-detective-bg-secondary p-4"
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="flex items-center gap-2 mb-2">
-                <HardDrive className={`w-4 h-4 ${memoryColor}`} />
+              <div className="mb-2 flex items-center gap-2">
+                <HardDrive className={`h-4 w-4 ${memoryColor}`} />
                 <span className="text-detective-small text-gray-400">Memory</span>
               </div>
               <p className={`text-2xl font-bold ${memoryColor}`}>{health.memory.toFixed(1)}%</p>
-              <div className="mt-2 h-1.5 bg-detective-bg rounded-full overflow-hidden">
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-detective-bg">
                 <motion.div
                   className={`h-full ${memoryColor.replace('text', 'bg')}`}
                   initial={{ width: 0 }}
@@ -238,68 +241,70 @@ export const AdminDashboardHero: React.FC<AdminDashboardHeroProps> = ({
 
             {/* Uptime */}
             <motion.div
-              className="p-4 bg-detective-bg-secondary rounded-lg"
+              className="rounded-lg bg-detective-bg-secondary p-4"
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="flex items-center gap-2 mb-2">
-                <Clock className="w-4 h-4 text-blue-500" />
+              <div className="mb-2 flex items-center gap-2">
+                <Clock className="h-4 w-4 text-blue-500" />
                 <span className="text-detective-small text-gray-400">Uptime</span>
               </div>
               <p className="text-2xl font-bold text-blue-500">{formatUptime(health.uptime)}</p>
-              <p className="text-detective-small text-gray-500 mt-1">
+              <p className="text-detective-small mt-1 text-gray-500">
                 {health.apiUptime.toFixed(2)}% API
               </p>
             </motion.div>
 
             {/* Active Users */}
             <motion.div
-              className="p-4 bg-detective-bg-secondary rounded-lg"
+              className="rounded-lg bg-detective-bg-secondary p-4"
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="flex items-center gap-2 mb-2">
-                <Users className="w-4 h-4 text-purple-500" />
+              <div className="mb-2 flex items-center gap-2">
+                <Users className="h-4 w-4 text-purple-500" />
                 <span className="text-detective-small text-gray-400">Active Users</span>
               </div>
               <p className="text-2xl font-bold text-purple-500">
                 {formatNumber(health.activeUsers)}
               </p>
-              <p className="text-detective-small text-gray-500 mt-1">online now</p>
+              <p className="text-detective-small mt-1 text-gray-500">online now</p>
             </motion.div>
 
             {/* Requests Per Minute */}
             <motion.div
-              className="p-4 bg-detective-bg-secondary rounded-lg"
+              className="rounded-lg bg-detective-bg-secondary p-4"
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="flex items-center gap-2 mb-2">
-                <Zap className="w-4 h-4 text-amber-500" />
+              <div className="mb-2 flex items-center gap-2">
+                <Zap className="h-4 w-4 text-amber-500" />
                 <span className="text-detective-small text-gray-400">Req/Min</span>
               </div>
               <p className="text-2xl font-bold text-amber-500">
                 {formatNumber(health.requestsPerMin)}
               </p>
-              <p className="text-detective-small text-gray-500 mt-1">requests</p>
+              <p className="text-detective-small mt-1 text-gray-500">requests</p>
             </motion.div>
 
             {/* Error Rate */}
             <motion.div
-              className="p-4 bg-detective-bg-secondary rounded-lg"
+              className="rounded-lg bg-detective-bg-secondary p-4"
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="flex items-center gap-2 mb-2">
+              <div className="mb-2 flex items-center gap-2">
                 {health.errorRate > 5 ? (
-                  <AlertTriangle className={`w-4 h-4 ${errorRateColor}`} />
+                  <AlertTriangle className={`h-4 w-4 ${errorRateColor}`} />
                 ) : (
-                  <TrendingUp className={`w-4 h-4 ${errorRateColor}`} />
+                  <TrendingUp className={`h-4 w-4 ${errorRateColor}`} />
                 )}
                 <span className="text-detective-small text-gray-400">Error Rate</span>
               </div>
-              <p className={`text-2xl font-bold ${errorRateColor}`}>{health.errorRate.toFixed(2)}%</p>
-              <p className="text-detective-small text-gray-500 mt-1">of requests</p>
+              <p className={`text-2xl font-bold ${errorRateColor}`}>
+                {health.errorRate.toFixed(2)}%
+              </p>
+              <p className="text-detective-small mt-1 text-gray-500">of requests</p>
             </motion.div>
           </div>
 
@@ -308,17 +313,17 @@ export const AdminDashboardHero: React.FC<AdminDashboardHeroProps> = ({
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
-              className={`mt-4 p-4 ${statusColors.bg} ${statusColors.border} border rounded-lg`}
+              className={`mt-4 p-4 ${statusColors.bg} ${statusColors.border} rounded-lg border`}
             >
               <div className="flex items-start gap-3">
-                <AlertTriangle className={`w-5 h-5 ${statusColors.text} mt-0.5`} />
+                <AlertTriangle className={`h-5 w-5 ${statusColors.text} mt-0.5`} />
                 <div>
                   <p className={`text-detective-base font-semibold ${statusColors.text}`}>
                     {health.status === 'critical'
                       ? 'Critical System Issues Detected'
                       : 'System Performance Degraded'}
                   </p>
-                  <p className="text-detective-small text-gray-400 mt-1">
+                  <p className="text-detective-small mt-1 text-gray-400">
                     {health.status === 'critical'
                       ? 'Immediate action required. Check system logs for details.'
                       : 'Performance is below optimal levels. Monitor closely.'}

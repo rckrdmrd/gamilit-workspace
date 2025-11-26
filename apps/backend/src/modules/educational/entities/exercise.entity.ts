@@ -191,6 +191,18 @@ export class Exercise {
   auto_gradable!: boolean;
 
   /**
+   * Si el ejercicio requiere revisión manual del maestro
+   *
+   * @description
+   * - true: Entregas formales (ensayos, proyectos) → usa exercise_submissions
+   * - false: Ejercicios autocorregibles (práctica) → usa exercise_attempts
+   *
+   * @version 1.0 (2025-11-24) - Arquitectura dual attempts/submissions
+   */
+  @Column({ type: 'boolean', default: false })
+  requires_manual_grading!: boolean;
+
+  /**
    * Nivel de dificultad del ejercicio
    *
    * @see DDL: educational_content.exercises.difficulty_level (educational_content.difficulty_level ENUM)

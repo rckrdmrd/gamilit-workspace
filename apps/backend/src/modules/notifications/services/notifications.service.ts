@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { NotificationTypeEnum } from '@shared/constants/enums.constants';
+import { NotificationTypeEnum, NotificationPriorityEnum } from '@shared/constants/enums.constants';
 import { Notification } from '../entities/notification.entity';
 import { NotificationResponseDto } from '../dto/notification-response.dto';
 import { CreateNotificationDto } from '../dto/create-notification.dto';
@@ -204,11 +204,12 @@ export class NotificationsService {
   ): Promise<NotificationResponseDto> {
     const notification = this.notificationRepository.create({
       userId: createDto.userId,
-      type: createDto.type,
+      type: createDto.type as NotificationTypeEnum,
       title: createDto.title,
       message: createDto.message,
       data: createDto.data || null,
       read: false,
+      priority: NotificationPriorityEnum.MEDIUM,
     });
 
     const saved = await this.notificationRepository.save(notification);
@@ -239,11 +240,12 @@ export class NotificationsService {
     const entities = notifications.map((dto) =>
       this.notificationRepository.create({
         userId: dto.userId,
-        type: dto.type,
+        type: dto.type as NotificationTypeEnum,
         title: dto.title,
         message: dto.message,
         data: dto.data || null,
         read: false,
+        priority: NotificationPriorityEnum.MEDIUM,
       }),
     );
 

@@ -11,7 +11,6 @@ import type {
   UserAchievement,
   AchievementFilter as AchievementFilterType,
   AchievementSummary,
-  AchievementStatus,
 } from '@/shared/types/achievement.types';
 
 /**
@@ -32,7 +31,7 @@ import type {
  * - Real-time filter/sort (client-side)
  */
 export const AchievementsPage: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, logout: _logout } = useAuth();
 
   // State for data
   const [allAchievements, setAllAchievements] = useState<Achievement[]>([]);
@@ -146,7 +145,7 @@ export const AchievementsPage: React.FC = () => {
       filtered = filtered.filter(
         (item) =>
           item.achievement.name.toLowerCase().includes(query) ||
-          item.achievement.description.toLowerCase().includes(query)
+          item.achievement.description.toLowerCase().includes(query),
       );
     }
 
@@ -162,7 +161,7 @@ export const AchievementsPage: React.FC = () => {
           case 'progress':
             compareResult = (a.userAchievement?.progress || 0) - (b.userAchievement?.progress || 0);
             break;
-          case 'earnedDate':
+          case 'earnedDate': {
             const dateA = a.userAchievement?.earnedAt
               ? new Date(a.userAchievement.earnedAt).getTime()
               : 0;
@@ -171,12 +170,14 @@ export const AchievementsPage: React.FC = () => {
               : 0;
             compareResult = dateA - dateB;
             break;
-          case 'rarity':
+          }
+          case 'rarity': {
             const rarityOrder = { common: 1, rare: 2, epic: 3, legendary: 4 };
             const rarityA = rarityOrder[a.achievement.rarity || 'common'] || 0;
             const rarityB = rarityOrder[b.achievement.rarity || 'common'] || 0;
             compareResult = rarityA - rarityB;
             break;
+          }
         }
 
         return filter.sortOrder === 'asc' ? compareResult : -compareResult;
@@ -212,7 +213,9 @@ export const AchievementsPage: React.FC = () => {
     if (summary) return summary;
 
     const total = allAchievements.length;
-    const earned = userAchievements.filter((ua) => ua.status === 'earned' || ua.status === 'claimed').length;
+    const earned = userAchievements.filter(
+      (ua) => ua.status === 'earned' || ua.status === 'claimed',
+    ).length;
     const claimed = userAchievements.filter((ua) => ua.status === 'claimed').length;
     const inProgress = userAchievements.filter((ua) => ua.status === 'in_progress').length;
     const locked = total - earned;
@@ -262,7 +265,7 @@ export const AchievementsPage: React.FC = () => {
 
       // Update local state
       setUserAchievements((prev) =>
-        prev.map((ua) => (ua.achievementId === achievementId ? updatedAchievement : ua))
+        prev.map((ua) => (ua.achievementId === achievementId ? updatedAchievement : ua)),
       );
 
       // Close modal
@@ -287,163 +290,161 @@ export const AchievementsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-      <GamifiedHeader user={user} onLogout={logout} />
+      <GamifiedHeader user={user || undefined} onLogout={_logout} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-          <Trophy className="w-8 h-8 mr-3 text-yellow-600" />
-          Logros
-        </h1>
-        <p className="text-gray-600 mt-2">
-          Desbloquea logros completando desafíos y alcanzando metas. ¡Reclama tus recompensas!
-        </p>
-      </div>
-
-      {/* Error Alert */}
-      {error && (
-        <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-start space-x-3">
-          <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
-          <div className="flex-1">
-            <h3 className="text-sm font-medium text-red-800">Error</h3>
-            <p className="text-sm text-red-700 mt-1">{error}</p>
-            <button
-              onClick={handleRetry}
-              className="mt-3 px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors"
-            >
-              Reintentar
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Summary Stats */}
-      {!isLoading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <p className="text-sm text-gray-600">Total</p>
-            <p className="text-3xl font-bold text-gray-900">{displaySummary.total}</p>
-          </div>
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <p className="text-sm text-gray-600">Ganados</p>
-            <p className="text-3xl font-bold text-green-600">{displaySummary.earned}</p>
-          </div>
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <p className="text-sm text-gray-600">Completado</p>
-            <p className="text-3xl font-bold text-purple-600">
-              {Math.round(displaySummary.completionPercentage)}%
-            </p>
-          </div>
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <p className="text-sm text-gray-600">En Progreso</p>
-            <p className="text-3xl font-bold text-blue-600">{displaySummary.inProgress}</p>
-          </div>
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <p className="text-sm text-gray-600">Bloqueados</p>
-            <p className="text-3xl font-bold text-gray-400">{displaySummary.locked}</p>
-          </div>
-        </div>
-      )}
-
-      {/* Latest Earned (mini showcase) */}
-      {!isLoading && displaySummary.recentlyEarned.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Recientemente Ganados</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {displaySummary.recentlyEarned.map((userAch) => {
-              const achievement = allAchievements.find((a) => a.id === userAch.achievementId);
-              if (!achievement) return null;
-              return (
-                <AchievementCard
-                  key={userAch.id}
-                  achievement={achievement}
-                  userAchievement={userAch}
-                  onClick={() => handleAchievementClick(achievement, userAch)}
-                />
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Filters */}
-      <div className="mb-6">
-        <AchievementFilter currentFilter={filter} onFilterChange={setFilter} />
-      </div>
-
-      {/* Achievements Grid */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Todos los Logros ({visibleAchievements.length})
-        </h2>
-
-        {/* Loading State */}
-        {isLoading && (
-          <div className="flex justify-center items-center py-12">
-            <Loader className="w-8 h-8 text-orange-600 animate-spin" />
-            <span className="ml-3 text-gray-600">Cargando logros...</span>
-          </div>
-        )}
-
-        {/* Empty State */}
-        {!isLoading && visibleAchievements.length === 0 && (
-          <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-            <Trophy className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No se encontraron logros</h3>
-            <p className="text-gray-600">
-              Intenta ajustar tus filtros para ver más logros.
-            </p>
-          </div>
-        )}
-
-        {/* Grid */}
-        {!isLoading && visibleAchievements.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {visibleAchievements.map((item) => (
-              <AchievementCard
-                key={item.achievement.id}
-                achievement={item.achievement}
-                userAchievement={item.userAchievement}
-                onClick={() => handleAchievementClick(item.achievement, item.userAchievement)}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Hidden Achievements Section */}
-      {!isLoading && hiddenAchievements.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Logros Ocultos ({hiddenAchievements.length})
-          </h2>
-          <p className="text-gray-600 mb-4">
-            Estos logros están ocultos hasta que los desbloquees. ¡Sigue explorando!
+          <h1 className="flex items-center text-3xl font-bold text-gray-900">
+            <Trophy className="mr-3 h-8 w-8 text-yellow-600" />
+            Logros
+          </h1>
+          <p className="mt-2 text-gray-600">
+            Desbloquea logros completando desafíos y alcanzando metas. ¡Reclama tus recompensas!
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {hiddenAchievements.map((item) => (
-              <AchievementCard
-                key={item.achievement.id}
-                achievement={item.achievement}
-                userAchievement={item.userAchievement}
-                onClick={() => handleAchievementClick(item.achievement, item.userAchievement)}
-              />
-            ))}
-          </div>
         </div>
-      )}
 
-      {/* Achievement Modal */}
-      {selectedAchievement && (
-        <AchievementModal
-          achievement={selectedAchievement}
-          userAchievement={selectedUserAchievement}
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          onClaimRewards={handleClaimRewards}
-        />
-      )}
+        {/* Error Alert */}
+        {error && (
+          <div className="mb-6 flex items-start space-x-3 rounded-lg border border-red-200 bg-red-50 p-4">
+            <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
+            <div className="flex-1">
+              <h3 className="text-sm font-medium text-red-800">Error</h3>
+              <p className="mt-1 text-sm text-red-700">{error}</p>
+              <button
+                onClick={handleRetry}
+                className="mt-3 rounded-lg bg-red-600 px-4 py-2 text-sm text-white transition-colors hover:bg-red-700"
+              >
+                Reintentar
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Summary Stats */}
+        {!isLoading && (
+          <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
+            <div className="rounded-lg border border-gray-200 bg-white p-4">
+              <p className="text-sm text-gray-600">Total</p>
+              <p className="text-3xl font-bold text-gray-900">{displaySummary.total}</p>
+            </div>
+            <div className="rounded-lg border border-gray-200 bg-white p-4">
+              <p className="text-sm text-gray-600">Ganados</p>
+              <p className="text-3xl font-bold text-green-600">{displaySummary.earned}</p>
+            </div>
+            <div className="rounded-lg border border-gray-200 bg-white p-4">
+              <p className="text-sm text-gray-600">Completado</p>
+              <p className="text-3xl font-bold text-purple-600">
+                {Math.round(displaySummary.completionPercentage)}%
+              </p>
+            </div>
+            <div className="rounded-lg border border-gray-200 bg-white p-4">
+              <p className="text-sm text-gray-600">En Progreso</p>
+              <p className="text-3xl font-bold text-blue-600">{displaySummary.inProgress}</p>
+            </div>
+            <div className="rounded-lg border border-gray-200 bg-white p-4">
+              <p className="text-sm text-gray-600">Bloqueados</p>
+              <p className="text-3xl font-bold text-gray-400">{displaySummary.locked}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Latest Earned (mini showcase) */}
+        {!isLoading && displaySummary.recentlyEarned.length > 0 && (
+          <div className="mb-8">
+            <h2 className="mb-4 text-xl font-bold text-gray-900">Recientemente Ganados</h2>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              {displaySummary.recentlyEarned.map((userAch) => {
+                const achievement = allAchievements.find((a) => a.id === userAch.achievementId);
+                if (!achievement) return null;
+                return (
+                  <AchievementCard
+                    key={userAch.id}
+                    achievement={achievement}
+                    userAchievement={userAch}
+                    onClick={() => handleAchievementClick(achievement, userAch)}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Filters */}
+        <div className="mb-6">
+          <AchievementFilter currentFilter={filter} onFilterChange={setFilter} />
+        </div>
+
+        {/* Achievements Grid */}
+        <div className="mb-8">
+          <h2 className="mb-4 text-2xl font-bold text-gray-900">
+            Todos los Logros ({visibleAchievements.length})
+          </h2>
+
+          {/* Loading State */}
+          {isLoading && (
+            <div className="flex items-center justify-center py-12">
+              <Loader className="h-8 w-8 animate-spin text-orange-600" />
+              <span className="ml-3 text-gray-600">Cargando logros...</span>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!isLoading && visibleAchievements.length === 0 && (
+            <div className="rounded-lg border border-gray-200 bg-white p-12 text-center">
+              <Trophy className="mx-auto mb-4 h-16 w-16 text-gray-300" />
+              <h3 className="mb-2 text-lg font-semibold text-gray-900">No se encontraron logros</h3>
+              <p className="text-gray-600">Intenta ajustar tus filtros para ver más logros.</p>
+            </div>
+          )}
+
+          {/* Grid */}
+          {!isLoading && visibleAchievements.length > 0 && (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {visibleAchievements.map((item) => (
+                <AchievementCard
+                  key={item.achievement.id}
+                  achievement={item.achievement}
+                  userAchievement={item.userAchievement}
+                  onClick={() => handleAchievementClick(item.achievement, item.userAchievement)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Hidden Achievements Section */}
+        {!isLoading && hiddenAchievements.length > 0 && (
+          <div className="mb-8">
+            <h2 className="mb-4 text-2xl font-bold text-gray-900">
+              Logros Ocultos ({hiddenAchievements.length})
+            </h2>
+            <p className="mb-4 text-gray-600">
+              Estos logros están ocultos hasta que los desbloquees. ¡Sigue explorando!
+            </p>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {hiddenAchievements.map((item) => (
+                <AchievementCard
+                  key={item.achievement.id}
+                  achievement={item.achievement}
+                  userAchievement={item.userAchievement}
+                  onClick={() => handleAchievementClick(item.achievement, item.userAchievement)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Achievement Modal */}
+        {selectedAchievement && (
+          <AchievementModal
+            achievement={selectedAchievement}
+            userAchievement={selectedUserAchievement}
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            onClaimRewards={handleClaimRewards}
+          />
+        )}
       </div>
     </div>
   );

@@ -369,13 +369,38 @@ BEGIN
 END $$;
 
 -- =====================================================
+-- SYNC teacher_classrooms (many-to-many)
+-- =====================================================
+-- Asegurar que todos los classrooms tienen su entrada en teacher_classrooms
+-- Esto es necesario porque algunos servicios usan classrooms.teacher_id
+-- y otros usan la tabla teacher_classrooms
+-- =====================================================
+
+INSERT INTO social_features.teacher_classrooms (id, teacher_id, classroom_id, tenant_id, role, assigned_at, created_at)
+SELECT
+    gen_random_uuid(),
+    c.teacher_id,
+    c.id,
+    c.tenant_id,
+    'owner',
+    c.created_at,
+    NOW()
+FROM social_features.classrooms c
+WHERE c.teacher_id IS NOT NULL
+ON CONFLICT DO NOTHING;
+
+-- =====================================================
 -- Listado de aulas
 -- =====================================================
 
 DO $$
 DECLARE
     classroom_record RECORD;
+    tc_count INTEGER;
 BEGIN
+    -- Contar teacher_classrooms sincronizados
+    SELECT COUNT(*) INTO tc_count FROM social_features.teacher_classrooms;
+
     RAISE NOTICE '';
     RAISE NOTICE 'Listado de aulas demo:';
     RAISE NOTICE '========================================';
@@ -396,4 +421,5 @@ BEGIN
     END LOOP;
 
     RAISE NOTICE '========================================';
+    RAISE NOTICE 'teacher_classrooms sincronizados: %', tc_count;
 END $$;

@@ -7,6 +7,9 @@ import { DB_SCHEMAS } from '@shared/constants/database.constants';
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
 import { MLCoinsService } from '@/modules/gamification/services/ml-coins.service';
 import { UserStatsService } from '@/modules/gamification/services/user-stats.service';
+import { MissionsService } from '@/modules/gamification/services/missions.service';
+import { MissionTypeEnum } from '@/modules/gamification/entities/mission.entity';
+import { Exercise } from '@/modules/educational/entities';
 
 /**
  * ExerciseAttemptService
@@ -26,8 +29,11 @@ export class ExerciseAttemptService {
   constructor(
     @InjectRepository(ExerciseAttempt, 'progress')
     private readonly attemptRepo: Repository<ExerciseAttempt>,
+    @InjectRepository(Exercise, 'educational')
+    private readonly exerciseRepo: Repository<Exercise>,
     private readonly mlCoinsService: MLCoinsService,
     private readonly userStatsService: UserStatsService,
+    private readonly missionsService: MissionsService,
     @InjectEntityManager('progress')
     private readonly entityManager: EntityManager,
   ) {}
@@ -56,7 +62,23 @@ export class ExerciseAttemptService {
       },
     });
 
-    return await this.attemptRepo.save(newAttempt);
+    const savedAttempt = await this.attemptRepo.save(newAttempt);
+
+    // ✅ FIX BUG-002: Actualizar module_progress después de crear el intento
+    // Solo actualizar si el intento fue correcto y hubo rewards
+    if (savedAttempt.is_correct && (savedAttempt.xp_earned > 0 || savedAttempt.ml_coins_earned > 0)) {
+      await this.updateModuleProgressAfterCompletion(
+        savedAttempt.user_id,
+        savedAttempt.exercise_id,
+        savedAttempt.xp_earned,
+        savedAttempt.ml_coins_earned,
+      );
+
+      // Actualizar progreso de misiones diarias/semanales
+      await this.updateMissionsProgress(savedAttempt.user_id, savedAttempt.is_correct);
+    }
+
+    return savedAttempt;
   }
 
   /**
@@ -402,6 +424,185 @@ export class ExerciseAttemptService {
         );
         // Continue execution - don't fail the entire operation
       }
+    }
+
+    // ✅ FIX BUG-002: Actualizar module_progress después de completar ejercicio
+    await this.updateModuleProgressAfterCompletion(userId, exerciseId, xpEarned, mlCoinsEarned);
+  }
+
+  /**
+   * Actualiza el progreso del módulo después de completar un ejercicio correctamente
+   *
+   * @description Esta función replica la lógica del trigger update_module_progress_on_exercise_complete
+   * para garantizar que el progreso se actualice correctamente después de cada ejercicio.
+   *
+   * @param userId - ID del usuario (profiles.id)
+   * @param exerciseId - ID del ejercicio completado
+   * @param xpEarned - XP ganado en el ejercicio
+   * @param mlCoinsEarned - ML Coins ganados en el ejercicio
+   *
+   * @private
+   */
+  private async updateModuleProgressAfterCompletion(
+    userId: string,
+    exerciseId: string,
+    xpEarned: number,
+    mlCoinsEarned: number
+  ): Promise<void> {
+    try {
+      // Obtener module_id del ejercicio
+      const exercise = await this.exerciseRepo.findOne({ where: { id: exerciseId } });
+      if (!exercise?.module_id) {
+        this.logger.warn(`[BUG-002 FIX] Exercise ${exerciseId} has no module_id - skipping progress update`);
+        return;
+      }
+
+      const moduleId = exercise.module_id;
+      this.logger.log(`[BUG-002 FIX] Updating module progress for user ${userId}, module ${moduleId}`);
+
+      // Verificar si es el primer intento correcto para ESTE ejercicio específico
+      const previousCorrectAttempts = await this.attemptRepo.count({
+        where: {
+          user_id: userId,
+          exercise_id: exerciseId,
+          is_correct: true,
+        }
+      });
+
+      // Si hay más de 1 (incluyendo el actual), no es el primero - solo actualizar timestamp
+      if (previousCorrectAttempts > 1) {
+        await this.entityManager.query(`
+          UPDATE progress_tracking.module_progress
+          SET last_accessed_at = NOW(), updated_at = NOW()
+          WHERE user_id = $1 AND module_id = $2
+        `, [userId, moduleId]);
+        this.logger.log(`[BUG-002 FIX] Not first correct attempt - only updated timestamps`);
+        return;
+      }
+
+      // Contar total de ejercicios activos en el módulo
+      const totalExercisesResult = await this.exerciseRepo.count({
+        where: { module_id: moduleId, is_active: true }
+      });
+      const totalExercises = totalExercisesResult || 0;
+
+      // Contar ejercicios correctos ÚNICOS del usuario en este módulo (usando exercise_attempts)
+      const completedExercisesResult = await this.entityManager.query(`
+        SELECT COUNT(DISTINCT ea.exercise_id) as count
+        FROM progress_tracking.exercise_attempts ea
+        JOIN educational_content.exercises e ON e.id = ea.exercise_id
+        WHERE ea.user_id = $1
+          AND e.module_id = $2
+          AND ea.is_correct = true
+      `, [userId, moduleId]);
+      const completedExercises = parseInt(completedExercisesResult[0]?.count || '0', 10);
+
+      // Calcular porcentaje de progreso
+      const progressPercentage = totalExercises > 0
+        ? Math.round((completedExercises / totalExercises) * 100 * 100) / 100
+        : 0;
+
+      // Determinar nuevo status
+      let newStatus: string;
+      if (progressPercentage >= 100) {
+        newStatus = 'completed';
+      } else if (progressPercentage > 0) {
+        newStatus = 'in_progress';
+      } else {
+        newStatus = 'not_started';
+      }
+
+      this.logger.log(`[BUG-002 FIX] Module progress: ${completedExercises}/${totalExercises} (${progressPercentage}%) - Status: ${newStatus}`);
+
+      // Actualizar o insertar module_progress usando UPSERT
+      await this.entityManager.query(`
+        INSERT INTO progress_tracking.module_progress (
+          user_id,
+          module_id,
+          status,
+          progress_percentage,
+          completed_exercises,
+          total_exercises,
+          total_xp_earned,
+          total_ml_coins_earned,
+          started_at,
+          last_accessed_at,
+          completed_at
+        ) VALUES (
+          $1, $2, $3::progress_tracking.progress_status, $4, $5, $6, $7, $8, NOW(), NOW(),
+          CASE WHEN $3 = 'completed' THEN NOW() ELSE NULL END
+        )
+        ON CONFLICT (user_id, module_id) DO UPDATE SET
+          status = $3::progress_tracking.progress_status,
+          progress_percentage = $4,
+          completed_exercises = $5,
+          total_exercises = $6,
+          total_xp_earned = progress_tracking.module_progress.total_xp_earned + $7,
+          total_ml_coins_earned = progress_tracking.module_progress.total_ml_coins_earned + $8,
+          last_accessed_at = NOW(),
+          completed_at = CASE
+            WHEN $3 = 'completed' AND progress_tracking.module_progress.completed_at IS NULL
+            THEN NOW()
+            ELSE progress_tracking.module_progress.completed_at
+          END,
+          updated_at = NOW()
+      `, [userId, moduleId, newStatus, progressPercentage, completedExercises, totalExercises, xpEarned, mlCoinsEarned]);
+
+      this.logger.log(`[BUG-002 FIX] ✅ Module progress updated successfully`);
+
+    } catch (error) {
+      // Log error pero no bloquear el claim de rewards
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.logger.error(`[BUG-002 FIX] ❌ Error updating module progress: ${errorMessage}`);
+      // No throw - la actualización de progreso no debe bloquear la respuesta
+    }
+  }
+
+  /**
+   * Actualiza el progreso de misiones después de completar un ejercicio correctamente
+   * @param userId - ID del usuario (auth.users.id - será convertido a profiles.id internamente)
+   * @param isCorrect - Si el ejercicio fue completado correctamente
+   */
+  private async updateMissionsProgress(userId: string, isCorrect: boolean): Promise<void> {
+    if (!isCorrect) return;
+
+    try {
+      // Obtener misiones diarias y semanales activas del usuario
+      const [dailyMissions, weeklyMissions] = await Promise.all([
+        this.missionsService.findByTypeAndUser(userId, MissionTypeEnum.DAILY),
+        this.missionsService.findByTypeAndUser(userId, MissionTypeEnum.WEEKLY),
+      ]);
+
+      const allMissions = [...dailyMissions, ...weeklyMissions];
+
+      // Actualizar cada misión que tenga objetivo 'complete_exercises'
+      for (const mission of allMissions) {
+        // Solo procesar misiones activas o en progreso
+        if (mission.status !== 'active' && mission.status !== 'in_progress') continue;
+
+        // Verificar si la misión tiene objetivo de completar ejercicios
+        const hasExerciseObjective = mission.objectives.some(
+          obj => obj.type === 'complete_exercises',
+        );
+
+        if (hasExerciseObjective) {
+          try {
+            await this.missionsService.updateProgress(
+              mission.id,
+              userId,
+              'complete_exercises',
+              1,
+            );
+            this.logger.log(`Mission ${mission.id} progress updated for user ${userId}`);
+          } catch (missionError) {
+            // Log pero no bloquear si una misión específica falla
+            this.logger.warn(`Failed to update mission ${mission.id}`, missionError);
+          }
+        }
+      }
+    } catch (error) {
+      // No bloquear el flujo principal si falla la actualización de misiones
+      this.logger.warn(`Failed to update missions progress for user ${userId}`, error);
     }
   }
 }

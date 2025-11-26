@@ -6,26 +6,14 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import {
-  TrendingUp,
-  Clock,
-  Award,
-  Target,
-  Sparkles,
-  Trophy,
-  Flame,
-  Star,
-} from 'lucide-react';
+import { TrendingUp, Clock, Award, Target, Sparkles, Trophy, Flame, Star } from 'lucide-react';
 import type { AchievementStatisticsData as AchievementStats } from './types';
-import type { Achievement } from '@/features/gamification/social/types/achievementsTypes';
 
 interface AchievementStatisticsProps {
   statistics: AchievementStats;
 }
 
-export const AchievementStatistics: React.FC<AchievementStatisticsProps> = ({
-  statistics,
-}) => {
+export const AchievementStatistics: React.FC<AchievementStatisticsProps> = ({ statistics }) => {
   // Category icons
   const categoryIcons = {
     progress: TrendingUp,
@@ -76,35 +64,33 @@ export const AchievementStatistics: React.FC<AchievementStatisticsProps> = ({
       >
         {/* Section Title */}
         <motion.div variants={itemVariants} className="text-center">
-          <h2 className="text-3xl font-bold text-detective-text mb-2 flex items-center justify-center gap-3">
-            <Target className="w-8 h-8 text-detective-orange" />
+          <h2 className="mb-2 flex items-center justify-center gap-3 text-3xl font-bold text-detective-text">
+            <Target className="h-8 w-8 text-detective-orange" />
             Estadísticas de Logros
           </h2>
-          <p className="text-detective-text-secondary">
-            Tu progreso en números
-          </p>
+          <p className="text-detective-text-secondary">Tu progreso en números</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Completion Rate Card */}
           <motion.div
             variants={itemVariants}
             whileHover={{ scale: 1.02 }}
-            className="bg-white rounded-2xl shadow-xl p-6 border-2 border-gray-100"
+            className="rounded-2xl border-2 border-gray-100 bg-white p-6 shadow-xl"
           >
-            <h3 className="text-xl font-bold text-detective-text mb-4 flex items-center gap-2">
-              <TrendingUp className="w-6 h-6 text-detective-orange" />
+            <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-detective-text">
+              <TrendingUp className="h-6 w-6 text-detective-orange" />
               Tasa de Completación
             </h3>
             <div className="flex items-center justify-center">
               <div className="text-center">
-                <div className="text-6xl font-bold text-detective-orange mb-2">
+                <div className="mb-2 text-6xl font-bold text-detective-orange">
                   {statistics.completionRate.toFixed(0)}%
                 </div>
                 <p className="text-detective-text-secondary">
                   {statistics.unlocked} de {statistics.total} logros
                 </p>
-                <div className="mt-4 h-2 w-64 bg-gray-200 rounded-full overflow-hidden">
+                <div className="mt-4 h-2 w-64 overflow-hidden rounded-full bg-gray-200">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${statistics.completionRate}%` }}
@@ -120,10 +106,10 @@ export const AchievementStatistics: React.FC<AchievementStatisticsProps> = ({
           <motion.div
             variants={itemVariants}
             whileHover={{ scale: 1.02 }}
-            className="bg-white rounded-2xl shadow-xl p-6 border-2 border-gray-100"
+            className="rounded-2xl border-2 border-gray-100 bg-white p-6 shadow-xl"
           >
-            <h3 className="text-xl font-bold text-detective-text mb-4 flex items-center gap-2">
-              <Clock className="w-6 h-6 text-detective-orange" />
+            <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-detective-text">
+              <Clock className="h-6 w-6 text-detective-orange" />
               Recientes Desbloqueados
             </h3>
             {statistics.recentUnlocks.length > 0 ? (
@@ -134,13 +120,11 @@ export const AchievementStatistics: React.FC<AchievementStatisticsProps> = ({
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="flex items-center gap-3 p-3 bg-detective-bg rounded-xl hover:bg-detective-bg-secondary transition-colors"
+                    className="flex items-center gap-3 rounded-xl bg-detective-bg p-3 transition-colors hover:bg-detective-bg-secondary"
                   >
-                    <Trophy className="w-8 h-8 text-detective-gold" />
+                    <Trophy className="h-8 w-8 text-detective-gold" />
                     <div className="flex-1">
-                      <div className="font-semibold text-detective-text">
-                        {achievement.title}
-                      </div>
+                      <div className="font-semibold text-detective-text">{achievement.title}</div>
                       <div className="text-sm text-detective-text-secondary">
                         {achievement.unlockedAt &&
                           new Date(achievement.unlockedAt).toLocaleDateString('es-ES', {
@@ -153,7 +137,7 @@ export const AchievementStatistics: React.FC<AchievementStatisticsProps> = ({
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-detective-text-secondary">
+              <div className="py-8 text-center text-detective-text-secondary">
                 Aún no has desbloqueado ningún logro
               </div>
             )}
@@ -163,36 +147,44 @@ export const AchievementStatistics: React.FC<AchievementStatisticsProps> = ({
           <motion.div
             variants={itemVariants}
             whileHover={{ scale: 1.02 }}
-            className="bg-white rounded-2xl shadow-xl p-6 border-2 border-gray-100"
+            className="rounded-2xl border-2 border-gray-100 bg-white p-6 shadow-xl"
           >
-            <h3 className="text-xl font-bold text-detective-text mb-4 flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-detective-orange" />
+            <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-detective-text">
+              <Sparkles className="h-6 w-6 text-detective-orange" />
               Por Rareza
             </h3>
             <div className="space-y-3">
               {Object.entries(statistics.byRarity).map(([rarity, count]) => (
                 <div key={rarity}>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className={`font-semibold capitalize ${rarityColors[rarity as keyof typeof rarityColors]}`}>
-                      {rarity === 'common' ? 'Común' :
-                       rarity === 'rare' ? 'Rara' :
-                       rarity === 'epic' ? 'Épica' : 'Legendaria'}
+                  <div className="mb-1 flex items-center justify-between">
+                    <span
+                      className={`font-semibold capitalize ${rarityColors[rarity as keyof typeof rarityColors]}`}
+                    >
+                      {rarity === 'common'
+                        ? 'Común'
+                        : rarity === 'rare'
+                          ? 'Rara'
+                          : rarity === 'epic'
+                            ? 'Épica'
+                            : 'Legendaria'}
                     </span>
                     <span className="text-detective-text-secondary">{count}</span>
                   </div>
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="h-2 overflow-hidden rounded-full bg-gray-200">
                     <motion.div
                       initial={{ width: 0 }}
-                      animate={{ width: statistics.total > 0 ? `${(count / statistics.total) * 100}%` : '0%' }}
+                      animate={{
+                        width: statistics.total > 0 ? `${(count / statistics.total) * 100}%` : '0%',
+                      }}
                       transition={{ duration: 1, ease: 'easeOut' }}
                       className={`h-full ${
                         rarity === 'legendary'
                           ? 'bg-gradient-to-r from-yellow-400 to-detective-gold'
                           : rarity === 'epic'
-                          ? 'bg-gradient-to-r from-purple-400 to-purple-600'
-                          : rarity === 'rare'
-                          ? 'bg-gradient-to-r from-green-400 to-green-600'
-                          : 'bg-gradient-to-r from-gray-400 to-gray-600'
+                            ? 'bg-gradient-to-r from-purple-400 to-purple-600'
+                            : rarity === 'rare'
+                              ? 'bg-gradient-to-r from-green-400 to-green-600'
+                              : 'bg-gradient-to-r from-gray-400 to-gray-600'
                       }`}
                     />
                   </div>
@@ -205,10 +197,10 @@ export const AchievementStatistics: React.FC<AchievementStatisticsProps> = ({
           <motion.div
             variants={itemVariants}
             whileHover={{ scale: 1.02 }}
-            className="bg-white rounded-2xl shadow-xl p-6 border-2 border-gray-100"
+            className="rounded-2xl border-2 border-gray-100 bg-white p-6 shadow-xl"
           >
-            <h3 className="text-xl font-bold text-detective-text mb-4 flex items-center gap-2">
-              <Award className="w-6 h-6 text-detective-orange" />
+            <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-detective-text">
+              <Award className="h-6 w-6 text-detective-orange" />
               Por Categoría
             </h3>
             <div className="grid grid-cols-2 gap-4">
@@ -220,14 +212,18 @@ export const AchievementStatistics: React.FC<AchievementStatisticsProps> = ({
                   <motion.div
                     key={category}
                     whileHover={{ scale: 1.05 }}
-                    className={`p-4 rounded-xl bg-gradient-to-br ${gradient} text-white`}
+                    className={`rounded-xl bg-gradient-to-br p-4 ${gradient} text-white`}
                   >
-                    <Icon className="w-8 h-8 mb-2" />
+                    <Icon className="mb-2 h-8 w-8" />
                     <div className="text-3xl font-bold">{count}</div>
-                    <div className="text-sm opacity-90 capitalize">
-                      {category === 'progress' ? 'Progreso' :
-                       category === 'mastery' ? 'Maestría' :
-                       category === 'social' ? 'Social' : 'Ocultos'}
+                    <div className="text-sm capitalize opacity-90">
+                      {category === 'progress'
+                        ? 'Progreso'
+                        : category === 'mastery'
+                          ? 'Maestría'
+                          : category === 'social'
+                            ? 'Social'
+                            : 'Ocultos'}
                     </div>
                   </motion.div>
                 );
@@ -239,7 +235,7 @@ export const AchievementStatistics: React.FC<AchievementStatisticsProps> = ({
         {/* Motivational Message */}
         <motion.div
           variants={itemVariants}
-          className="bg-gradient-to-r from-detective-orange to-detective-gold rounded-2xl p-8 text-white text-center shadow-2xl"
+          className="rounded-2xl bg-gradient-to-r from-detective-orange to-detective-gold p-8 text-center text-white shadow-2xl"
         >
           <motion.div
             animate={{
@@ -251,12 +247,12 @@ export const AchievementStatistics: React.FC<AchievementStatisticsProps> = ({
               repeat: Infinity,
               repeatDelay: 3,
             }}
-            className="inline-block mb-4"
+            className="mb-4 inline-block"
           >
-            <Flame className="w-16 h-16" />
+            <Flame className="h-16 w-16" />
           </motion.div>
-          <h3 className="text-3xl font-bold mb-2">¡Sigue Así!</h3>
-          <p className="text-xl opacity-90 mb-4">
+          <h3 className="mb-2 text-3xl font-bold">¡Sigue Así!</h3>
+          <p className="mb-4 text-xl opacity-90">
             {statistics.locked > 0
               ? `Tienes ${statistics.locked} logros más esperándote`
               : '¡Has desbloqueado todos los logros disponibles!'}

@@ -76,6 +76,79 @@ Implementado en `src/app/providers/AuthContext.tsx`:
 - Persistencia de sesión en localStorage
 - Auto-refresh de token
 
+## API Configuration
+
+### Definición de Rutas
+
+**REGLA OBLIGATORIA:** TODAS las rutas API deben estar definidas en:
+`src/services/api/apiConfig.ts`
+
+Este archivo es el ÚNICO source of truth para rutas de API. NUNCA hardcodees rutas fuera de apiConfig.ts.
+
+### Uso Correcto
+
+✅ **CORRECTO:**
+```typescript
+import { API_ENDPOINTS } from '@/services/api/apiConfig';
+
+// Usar endpoints centralizados
+await apiClient.get(API_ENDPOINTS.admin.dashboard.alerts);
+await axiosInstance.get(API_ENDPOINTS.teacher.classrooms);
+await apiClient.post(API_ENDPOINTS.auth.login, credentials);
+```
+
+❌ **INCORRECTO:**
+```typescript
+// Hardcoded routes - PROHIBIDO
+await apiClient.get('/v1/admin/dashboard/alerts');
+await axiosInstance.get('/v1/teacher/classrooms');
+await apiClient.post('/v1/auth/login', credentials);
+
+// BASE_URL hardcoded - PROHIBIDO
+const BASE_URL = '/v1/teacher';
+await apiClient.get(`${BASE_URL}/classrooms`);
+```
+
+### Agregar Nueva Ruta
+
+1. Agregar a `apiConfig.ts`:
+```typescript
+export const API_ENDPOINTS = {
+  admin: {
+    newFeature: '/v1/admin/new-feature',
+    newFeatureDetail: (id: string) => `/v1/admin/new-feature/${id}`,
+  },
+};
+```
+
+2. Usar en código:
+```typescript
+import { API_ENDPOINTS } from '@/services/api/apiConfig';
+
+// Simple endpoint
+await apiClient.get(API_ENDPOINTS.admin.newFeature);
+
+// Endpoint con parámetros
+await apiClient.get(API_ENDPOINTS.admin.newFeatureDetail('123'));
+```
+
+### Validación Automática
+
+El linter detectará automáticamente rutas hardcodeadas:
+
+```bash
+npm run lint
+# Error: API routes must be imported from apiConfig.ts
+# Do not hardcode routes starting with /v1/
+```
+
+**Beneficios:**
+- Cambio centralizado de rutas
+- Autocomplete y type safety
+- Detección automática de errores
+- Fácil refactorización
+- Documentación implícita de todos los endpoints
+
 ## Scripts
 
 ```bash

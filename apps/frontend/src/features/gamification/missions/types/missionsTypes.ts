@@ -7,20 +7,43 @@
 export type MissionType = 'daily' | 'weekly' | 'special';
 
 export type MissionCategory =
-  | 'exercises'    // Complete exercises
-  | 'xp'           // Earn XP
-  | 'time'         // Time spent learning
-  | 'social'       // Social interactions
-  | 'achievement'  // Unlock achievements
-  | 'streak';      // Maintain streaks
+  | 'exercises' // Complete exercises
+  | 'xp' // Earn XP
+  | 'time' // Time spent learning
+  | 'social' // Social interactions
+  | 'achievement' // Unlock achievements
+  | 'streak'; // Maintain streaks
 
 export type MissionDifficulty = 'easy' | 'medium' | 'hard';
 
 export type MissionStatus =
-  | 'not_started'  // Mission available but not started
-  | 'in_progress'  // Mission started, in progress
-  | 'completed'    // Mission completed, ready to claim
-  | 'claimed';     // Reward claimed
+  | 'not_started' // Mission available but not started
+  | 'in_progress' // Mission started, in progress
+  | 'completed' // Mission completed, ready to claim
+  | 'claimed'; // Reward claimed
+
+/**
+ * Mission Objective from API
+ */
+export interface MissionObjective {
+  type: string;
+  target: number;
+  current: number;
+  description?: string;
+  modules_visited?: string[];
+}
+
+/**
+ * Mission Rewards from API
+ */
+export interface MissionRewardsFromAPI {
+  ml_coins?: number;
+  xp?: number;
+  items?: Array<{
+    type: string;
+    quantity: number;
+  }>;
+}
 
 /**
  * Core Mission Interface
@@ -32,14 +55,18 @@ export interface Mission {
   description: string;
   category: MissionCategory;
 
-  // Progress tracking
+  // Progress tracking (computed from objectives for backwards compatibility)
   targetValue: number;
   currentValue: number;
   progress: number; // percentage (0-100)
 
-  // Rewards
+  // Rewards (computed from rewards object for backwards compatibility)
   xpReward: number;
   mlCoinsReward: number;
+
+  // API data structures
+  objectives: MissionObjective[];
+  rewards: MissionRewardsFromAPI;
 
   // Metadata
   icon: string;

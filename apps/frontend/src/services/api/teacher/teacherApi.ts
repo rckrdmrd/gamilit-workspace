@@ -11,6 +11,7 @@
  */
 
 import axiosInstance from '../axios.instance';
+import { API_ENDPOINTS } from '@/config/api.config';
 import type {
   TeacherDashboardStats,
   InterventionAlert,
@@ -46,8 +47,6 @@ export interface Activity {
  * activities, alerts, performers, and module progress.
  */
 class TeacherDashboardAPI {
-  private readonly baseUrl = '/teacher/dashboard';
-
   /**
    * Get classroom statistics for the authenticated teacher
    *
@@ -68,7 +67,7 @@ class TeacherDashboardAPI {
   async getDashboardStats(): Promise<TeacherDashboardStats> {
     try {
       const { data } = await axiosInstance.get<TeacherDashboardStats>(
-        `${this.baseUrl}/stats`
+        API_ENDPOINTS.teacher.dashboard.stats,
       );
       return data;
     } catch (error) {
@@ -99,10 +98,10 @@ class TeacherDashboardAPI {
   async getRecentActivities(limit: number = 10): Promise<Activity[]> {
     try {
       const { data } = await axiosInstance.get<Activity[]>(
-        `${this.baseUrl}/activities`,
+        API_ENDPOINTS.teacher.dashboard.activities,
         {
           params: { limit },
-        }
+        },
       );
       return data;
     } catch (error) {
@@ -132,8 +131,8 @@ class TeacherDashboardAPI {
    */
   async getStudentAlerts(): Promise<InterventionAlert[]> {
     try {
-      const { data} = await axiosInstance.get<InterventionAlert[]>(
-        `${this.baseUrl}/alerts`
+      const { data } = await axiosInstance.get<InterventionAlert[]>(
+        API_ENDPOINTS.teacher.dashboard.alerts,
       );
       return data;
     } catch (error) {
@@ -164,10 +163,10 @@ class TeacherDashboardAPI {
   async getTopPerformers(limit: number = 5): Promise<StudentPerformance[]> {
     try {
       const { data } = await axiosInstance.get<StudentPerformance[]>(
-        `${this.baseUrl}/top-performers`,
+        API_ENDPOINTS.teacher.dashboard.topPerformers,
         {
           params: { limit },
-        }
+        },
       );
       return data;
     } catch (error) {
@@ -197,7 +196,7 @@ class TeacherDashboardAPI {
   async getModuleProgressSummary(): Promise<ModuleProgress[]> {
     try {
       const { data } = await axiosInstance.get<ModuleProgress[]>(
-        `${this.baseUrl}/module-progress`
+        API_ENDPOINTS.teacher.dashboard.moduleProgress,
       );
       return data;
     } catch (error) {

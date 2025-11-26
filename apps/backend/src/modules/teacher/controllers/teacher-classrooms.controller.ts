@@ -2,9 +2,12 @@ import {
   Controller,
   Post,
   Get,
+  Put,
+  Delete,
   Patch,
   Param,
   Body,
+  Query,
   UseGuards,
   Request,
 } from '@nestjs/common';
@@ -14,23 +17,47 @@ import {
   ApiBearerAuth,
   ApiResponse,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { TeacherGuard, ClassroomOwnershipGuard } from '../guards';
 import { StudentBlockingService } from '../services/student-blocking.service';
+import { TeacherClassroomsCrudService } from '../services/teacher-classrooms-crud.service';
 import {
   BlockStudentDto,
   UpdatePermissionsDto,
   StudentPermissionsResponseDto,
 } from '../dto/student-blocking';
+import {
+  CreateTeacherClassroomDto,
+  UpdateTeacherClassroomDto,
+  GetClassroomsQueryDto,
+  GetClassroomStudentsQueryDto,
+  TeacherClassroomResponseDto,
+  TeacherClassroomDetailResponseDto,
+  ClassroomStatsDto,
+  TeacherInClassroomDto,
+  PaginatedTeacherClassroomsResponseDto,
+  PaginatedStudentsResponseDto,
+} from '../dto';
 
 /**
  * TeacherClassroomsController
  *
- * @description Controller para gestión de estudiantes en aulas por profesores
+ * @description Controller para gestión completa de classrooms por profesores
  * @tags Teacher - Classrooms
  *
- * Endpoints:
+ * Endpoints CRUD:
+ * - GET / - Listar classrooms del teacher
+ * - GET /:id - Obtener classroom por ID
+ * - POST / - Crear nuevo classroom
+ * - PUT /:id - Actualizar classroom
+ * - DELETE /:id - Eliminar classroom
+ * - GET /:id/students - Listar estudiantes del classroom
+ * - GET /:id/stats - Estadísticas del classroom
+ * - GET /:classroomId/teachers - Listar teachers del classroom
+ *
+ * Endpoints de Student Management:
  * - POST /:classroomId/students/:studentId/block - Bloquear estudiante
  * - POST /:classroomId/students/:studentId/unblock - Desbloquear estudiante
  * - GET /:classroomId/students/:studentId/permissions - Ver permisos
@@ -39,16 +66,437 @@ import {
  * Guards:
  * - JwtAuthGuard: Usuario debe estar autenticado
  * - TeacherGuard: Usuario debe ser profesor
- * - ClassroomOwnershipGuard: Profesor debe tener acceso al aula
+ * - ClassroomOwnershipGuard: Profesor debe tener acceso al aula (para rutas específicas)
  */
 @ApiTags('Teacher - Classrooms')
 @Controller('teacher/classrooms')
-@UseGuards(JwtAuthGuard, TeacherGuard, ClassroomOwnershipGuard)
+@UseGuards(JwtAuthGuard, TeacherGuard)
 @ApiBearerAuth()
 export class TeacherClassroomsController {
   constructor(
     private readonly studentBlockingService: StudentBlockingService,
+    private readonly classroomsCrudService: TeacherClassroomsCrudService,
   ) {}
+
+  // ============================================================================
+  // CLASSROOM CRUD ENDPOINTS
+  // ============================================================================
+
+  /**
+   * Lista todos los classrooms del teacher autenticado
+   *
+   * @route GET /api/v1/teacher/classrooms
+   * @param query Parámetros de búsqueda y filtrado
+   * @param req Request con datos del usuario autenticado
+   * @returns Lista paginada de classrooms
+   */
+  @Get()
+  @ApiOperation({
+    summary: 'Get all classrooms for authenticated teacher',
+    description:
+      'Returns a paginated list of classrooms where the authenticated user is assigned as teacher or owner. Supports filtering by status, grade level, subject, and search.',
+  })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
+  @ApiQuery({ name: 'search', required: false, type: String })
+  @ApiQuery({ name: 'status', required: false, enum: ['active', 'inactive', 'archived', 'all'] })
+  @ApiQuery({ name: 'grade_level', required: false, type: String })
+  @ApiQuery({ name: 'subject', required: false, type: String })
+  @ApiResponse({
+    status: 200,
+    description: 'Classrooms retrieved successfully',
+    type: PaginatedTeacherClassroomsResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - Invalid or missing JWT token',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - User is not a teacher',
+  })
+  async getClassrooms(
+    @Query() query: GetClassroomsQueryDto,
+    @Request() req: any,
+  ): Promise<PaginatedTeacherClassroomsResponseDto> {
+    const teacherId = req.user.sub;
+    return await this.classroomsCrudService.getClassrooms(teacherId, query);
+  }
+
+  /**
+   * Crea un nuevo classroom
+   *
+   * @route POST /api/v1/teacher/classrooms
+   * @param dto Datos del classroom a crear
+   * @param req Request con datos del usuario autenticado
+   * @returns Classroom creado
+   */
+  @Post()
+  @ApiOperation({
+    summary: 'Create new classroom',
+    description:
+      'Creates a new classroom with the authenticated teacher as owner. Automatically assigns tenant_id from teacher profile.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Classroom created successfully',
+    type: TeacherClassroomResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request - Invalid data or missing tenant_id',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Conflict - Classroom code already exists',
+  })
+  async createClassroom(
+    @Body() dto: CreateTeacherClassroomDto,
+    @Request() req: any,
+  ): Promise<TeacherClassroomResponseDto> {
+    const teacherId = req.user.sub;
+    return await this.classroomsCrudService.createClassroom(teacherId, dto);
+  }
+
+  /**
+   * Obtiene un classroom específico por ID
+   *
+   * @route GET /api/v1/teacher/classrooms/:id
+   * @param id ID del classroom
+   * @param req Request con datos del usuario autenticado
+   * @returns Classroom con información detallada
+   */
+  @Get(':id')
+  @ApiOperation({
+    summary: 'Get classroom by ID',
+    description:
+      'Returns detailed information about a specific classroom. Teacher must have access to the classroom.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Classroom UUID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Classroom retrieved successfully',
+    type: TeacherClassroomDetailResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Classroom not found',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Teacher does not have access to this classroom',
+  })
+  async getClassroomById(
+    @Param('id') id: string,
+    @Request() req: any,
+  ): Promise<TeacherClassroomDetailResponseDto> {
+    const teacherId = req.user.sub;
+    return await this.classroomsCrudService.getClassroomById(id, teacherId);
+  }
+
+  /**
+   * Actualiza un classroom existente
+   *
+   * @route PUT /api/v1/teacher/classrooms/:id
+   * @param id ID del classroom
+   * @param dto Datos a actualizar
+   * @param req Request con datos del usuario autenticado
+   * @returns Classroom actualizado
+   */
+  @Put(':id')
+  @ApiOperation({
+    summary: 'Update classroom',
+    description:
+      'Updates an existing classroom. Only teachers with access to the classroom can update it.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Classroom UUID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Classroom updated successfully',
+    type: TeacherClassroomResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Classroom not found',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Teacher does not have access to this classroom',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Conflict - Classroom code already exists',
+  })
+  async updateClassroom(
+    @Param('id') id: string,
+    @Body() dto: UpdateTeacherClassroomDto,
+    @Request() req: any,
+  ): Promise<TeacherClassroomResponseDto> {
+    const teacherId = req.user.sub;
+    return await this.classroomsCrudService.updateClassroom(id, teacherId, dto);
+  }
+
+  /**
+   * Elimina (soft delete) un classroom
+   *
+   * @route DELETE /api/v1/teacher/classrooms/:id
+   * @param id ID del classroom
+   * @param req Request con datos del usuario autenticado
+   * @returns Resultado de la operación
+   */
+  @Delete(':id')
+  @ApiOperation({
+    summary: 'Delete classroom',
+    description:
+      'Soft deletes a classroom by marking it as archived and inactive. Only the classroom owner can delete it. Cannot delete classrooms with active students.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Classroom UUID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Classroom deleted (archived) successfully',
+    schema: {
+      example: {
+        success: true,
+        message: 'Classroom "Matemáticas 5A" has been archived successfully',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Classroom not found',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Only the classroom owner can delete it',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request - Cannot delete classroom with active students',
+  })
+  async deleteClassroom(
+    @Param('id') id: string,
+    @Request() req: any,
+  ): Promise<{ success: boolean; message: string }> {
+    const teacherId = req.user.sub;
+    return await this.classroomsCrudService.deleteClassroom(id, teacherId);
+  }
+
+  /**
+   * Obtiene estudiantes de un classroom
+   *
+   * @route GET /api/v1/teacher/classrooms/:id/students
+   * @param id ID del classroom
+   * @param query Parámetros de búsqueda y ordenamiento
+   * @param req Request con datos del usuario autenticado
+   * @returns Lista paginada de estudiantes
+   */
+  @Get(':id/students')
+  @ApiOperation({
+    summary: 'Get students in classroom',
+    description:
+      'Returns a paginated list of students enrolled in the classroom with progress data. Supports filtering by status, search, and sorting.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Classroom UUID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, type: Number, example: 20 })
+  @ApiQuery({ name: 'search', required: false, type: String })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: ['active', 'inactive', 'withdrawn', 'completed', 'all'],
+  })
+  @ApiQuery({
+    name: 'sort_by',
+    required: false,
+    enum: ['name', 'progress', 'score', 'last_activity'],
+  })
+  @ApiQuery({ name: 'sort_order', required: false, enum: ['asc', 'desc'] })
+  @ApiResponse({
+    status: 200,
+    description: 'Students retrieved successfully',
+    type: PaginatedStudentsResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Classroom not found',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Teacher does not have access to this classroom',
+  })
+  async getClassroomStudents(
+    @Param('id') id: string,
+    @Query() query: GetClassroomStudentsQueryDto,
+    @Request() req: any,
+  ): Promise<PaginatedStudentsResponseDto> {
+    const teacherId = req.user.sub;
+    return await this.classroomsCrudService.getClassroomStudents(id, teacherId, query);
+  }
+
+  /**
+   * Obtiene estadísticas de un classroom
+   *
+   * @route GET /api/v1/teacher/classrooms/:id/stats
+   * @param id ID del classroom
+   * @param req Request con datos del usuario autenticado
+   * @returns Estadísticas del classroom
+   */
+  @Get(':id/stats')
+  @ApiOperation({
+    summary: 'Get classroom statistics',
+    description:
+      'Returns aggregated statistics for the classroom including student counts, average progress, completion rates, and engagement metrics.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Classroom UUID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Statistics retrieved successfully',
+    type: ClassroomStatsDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Classroom not found',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Teacher does not have access to this classroom',
+  })
+  async getClassroomStats(
+    @Param('id') id: string,
+    @Request() req: any,
+  ): Promise<ClassroomStatsDto> {
+    const teacherId = req.user.sub;
+    return await this.classroomsCrudService.getClassroomStats(id, teacherId);
+  }
+
+  /**
+   * Obtiene teachers asignados a un classroom
+   *
+   * @route GET /api/v1/teacher/classrooms/:classroomId/teachers
+   * @param classroomId ID del classroom
+   * @param req Request con datos del usuario autenticado
+   * @returns Lista de teachers en el classroom
+   */
+  @Get(':classroomId/teachers')
+  @ApiOperation({
+    summary: 'Get teachers in classroom',
+    description:
+      'Returns a list of all teachers assigned to the classroom including their roles (owner, teacher, assistant).',
+  })
+  @ApiParam({
+    name: 'classroomId',
+    description: 'Classroom UUID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Teachers retrieved successfully',
+    type: [TeacherInClassroomDto],
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Classroom not found',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Teacher does not have access to this classroom',
+  })
+  async getClassroomTeachers(
+    @Param('classroomId') classroomId: string,
+    @Request() req: any,
+  ): Promise<TeacherInClassroomDto[]> {
+    const teacherId = req.user.sub;
+    return await this.classroomsCrudService.getClassroomTeachers(classroomId, teacherId);
+  }
+
+  /**
+   * Obtiene el progreso completo de un classroom
+   *
+   * @route GET /api/v1/teacher/classrooms/:id/progress
+   * @param id ID del classroom
+   * @param req Request con datos del usuario autenticado
+   * @returns Progreso del classroom con datos generales y progreso por módulo
+   */
+  @Get(':id/progress')
+  @ApiOperation({
+    summary: 'Get classroom progress',
+    description:
+      'Returns comprehensive progress data for a classroom including general statistics and module-specific progress. Shows completion rates, average scores, active students, and detailed module progress.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Classroom UUID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Classroom progress retrieved successfully',
+    type: 'ClassroomProgressResponseDto',
+    schema: {
+      example: {
+        classroomData: {
+          id: '123e4567-e89b-12d3-a456-426614174000',
+          name: 'Matemáticas 5A',
+          student_count: 25,
+          active_students: 22,
+          average_completion: 75.5,
+          average_score: 85.3,
+          total_exercises: 50,
+          completed_exercises: 40,
+        },
+        moduleProgress: [
+          {
+            module_id: '456e7890-a12b-34c5-d678-901234567890',
+            module_name: 'Módulo 1: Marie Curie - Primera Exploración',
+            completion_percentage: 68.5,
+            average_score: 82.7,
+            students_completed: 18,
+            students_total: 25,
+            average_time_minutes: 120.5,
+          },
+        ],
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Classroom not found',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Teacher does not have access to this classroom',
+  })
+  async getClassroomProgress(
+    @Param('id') id: string,
+    @Request() req: any,
+  ): Promise<any> {
+    const teacherId = req.user.sub;
+    return await this.classroomsCrudService.getClassroomProgress(id, teacherId);
+  }
+
+  // ============================================================================
+  // STUDENT MANAGEMENT ENDPOINTS (Existing)
+  // ============================================================================
 
   /**
    * Bloquea un estudiante en un aula

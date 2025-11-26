@@ -210,6 +210,26 @@ import { RlsInterceptor } from './shared/interceptors/rls.interceptor';
       inject: [ConfigService],
     }),
 
+    // Database connection for 'communication' schema
+    TypeOrmModule.forRootAsync({
+      name: 'communication',  // 9th datasource for teacher-student communication
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('database.host'),
+        port: configService.get('database.port'),
+        username: configService.get('database.username'),
+        password: configService.get('database.password'),
+        database: configService.get('database.database'),
+        entities: [__dirname + '/modules/teacher/entities/message*.entity{.ts,.js}'],
+        synchronize: configService.get('database.synchronize', false),
+        logging: configService.get('database.logging'),
+        ssl: configService.get('database.ssl'),
+        extra: configService.get('database.extra'),
+      }),
+      inject: [ConfigService],
+    }),
+
     // Application modules
     AuthModule,
     EducationalModule,

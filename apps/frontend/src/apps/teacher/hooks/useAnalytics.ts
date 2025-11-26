@@ -10,8 +10,7 @@ import type {
   GetEngagementMetricsDto,
   GenerateReportsDto,
   Report,
-  StudentInsights as ApiStudentInsights,
-} from '@services/api/teacher';
+} from '@services/api/teacher/analyticsApi';
 
 /**
  * Student Insights Interface
@@ -52,7 +51,7 @@ export interface UseAnalyticsReturn {
 
 export function useAnalytics(
   analyticsQuery?: GetAnalyticsQueryDto,
-  engagementQuery?: GetEngagementMetricsDto
+  engagementQuery?: GetEngagementMetricsDto,
 ): UseAnalyticsReturn {
   const [analytics, setAnalytics] = useState<ClassroomAnalytics | null>(null);
   const [engagement, setEngagement] = useState<EngagementMetrics | null>(null);

@@ -11,29 +11,75 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, GraduationCap, Loader2, AlertCircle, Mail, Calendar, Plus } from 'lucide-react';
+import {
+  Search,
+  GraduationCap,
+  Loader2,
+  AlertCircle,
+  Mail,
+  Calendar,
+  Plus,
+  X,
+  Copy,
+  Check,
+} from 'lucide-react';
 import { useClassroomTeacher } from '../../hooks/useClassroomTeacher';
 import { cn } from '@shared/utils/cn';
+import toast from 'react-hot-toast';
 
 export function TeacherClassroomsTab() {
   const [teacherId, setTeacherId] = useState('');
   const [searchedId, setSearchedId] = useState('');
   const [classroomIdsToAssign, setClassroomIdsToAssign] = useState('');
   const [showAssignModal, setShowAssignModal] = useState(false);
+  const [classroomToRemove, setClassroomToRemove] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const { useTeacherClassrooms, assignClassroomsToTeacher } = useClassroomTeacher();
+  const { useTeacherClassrooms, assignClassroomsToTeacher, removeTeacherFromClassroom } =
+    useClassroomTeacher();
 
   const { data: teacherData, isLoading, error } = useTeacherClassrooms(searchedId, !!searchedId);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (teacherId.trim()) {
-      setSearchedId(teacherId.trim());
+  // UUID validation helper
+  const isValidUUID = (uuid: string): boolean => {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(uuid);
+  };
+
+  // Copy ID to clipboard
+  const handleCopyId = async (id: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(id);
+      setCopiedId(id);
+      toast.success(`${label} ID copiado`);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (error) {
+      toast.error('Error al copiar ID');
     }
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedId = teacherId.trim();
+
+    if (!trimmedId) {
+      toast.error('Ingrese un Teacher ID');
+      return;
+    }
+
+    if (!isValidUUID(trimmedId)) {
+      toast.error('Formato de UUID inválido');
+      return;
+    }
+
+    setSearchedId(trimmedId);
+  };
+
   const handleAssignClassrooms = () => {
-    if (!searchedId || !classroomIdsToAssign.trim()) return;
+    if (!searchedId || !classroomIdsToAssign.trim()) {
+      toast.error('Ingrese al menos un Classroom ID');
+      return;
+    }
 
     // Split by commas and clean whitespace
     const classroomIds = classroomIdsToAssign
@@ -41,7 +87,17 @@ export function TeacherClassroomsTab() {
       .map((id) => id.trim())
       .filter((id) => id.length > 0);
 
-    if (classroomIds.length === 0) return;
+    if (classroomIds.length === 0) {
+      toast.error('Ingrese IDs válidos');
+      return;
+    }
+
+    // Validate all UUIDs
+    const invalidIds = classroomIds.filter((id) => !isValidUUID(id));
+    if (invalidIds.length > 0) {
+      toast.error(`UUID inválido: ${invalidIds[0]}`);
+      return;
+    }
 
     assignClassroomsToTeacher.mutate(
       {
@@ -52,6 +108,22 @@ export function TeacherClassroomsTab() {
         onSuccess: () => {
           setClassroomIdsToAssign('');
           setShowAssignModal(false);
+        },
+      },
+    );
+  };
+
+  const handleRemoveClassroom = (classroomId: string) => {
+    if (!searchedId) return;
+
+    removeTeacherFromClassroom.mutate(
+      {
+        classroomId,
+        teacherId: searchedId,
+      },
+      {
+        onSuccess: () => {
+          setClassroomToRemove(null);
         },
       },
     );
@@ -169,16 +241,49 @@ export function TeacherClassroomsTab() {
                   animate={{ opacity: 1, y: 0 }}
                   className="rounded-xl bg-white p-6 shadow-md"
                 >
-                  <div className="mb-4">
-                    <h4 className="text-lg font-bold text-gray-900">{classroom.name}</h4>
-                    <p className="text-sm text-gray-600">
-                      Grado: {classroom.grade} - Sección: {classroom.section}
-                    </p>
+                  <div className="mb-4 flex items-start justify-between">
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold text-gray-900">{classroom.name}</h4>
+                      <p className="text-sm text-gray-600">
+                        Grado: {classroom.grade} - Sección: {classroom.section}
+                      </p>
+                    </div>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => handleCopyId(classroom.id, 'Classroom')}
+                        className={cn(
+                          'rounded-lg p-2',
+                          'text-gray-500 hover:bg-gray-50',
+                          'transition-colors',
+                        )}
+                        title="Copiar Classroom ID"
+                      >
+                        {copiedId === classroom.id ? (
+                          <Check className="h-5 w-5 text-green-500" />
+                        ) : (
+                          <Copy className="h-5 w-5" />
+                        )}
+                      </button>
+                      <button
+                        onClick={() => setClassroomToRemove(classroom.id)}
+                        className={cn(
+                          'rounded-lg p-2',
+                          'text-red-500 hover:bg-red-50',
+                          'transition-colors',
+                        )}
+                        title="Remover classroom"
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-2 text-sm text-gray-500">
                     <Calendar className="h-4 w-4" />
-                    Asignado: {new Date(classroom.assignedAt).toLocaleDateString('es-ES')}
+                    Asignado:{' '}
+                    {classroom.assignedAt
+                      ? new Date(classroom.assignedAt).toLocaleDateString('es-ES')
+                      : 'N/A'}
                   </div>
                 </motion.div>
               ))}
@@ -253,6 +358,55 @@ export function TeacherClassroomsTab() {
                   )}
                 </button>
               </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Remove Classroom Confirmation */}
+      {classroomToRemove && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
+          >
+            <h3 className="mb-4 text-xl font-bold text-gray-900">Confirmar Remoción</h3>
+            <p className="mb-6 text-gray-600">
+              ¿Está seguro que desea remover este classroom del teacher?
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setClassroomToRemove(null)}
+                className={cn(
+                  'flex-1 rounded-lg px-4 py-3',
+                  'bg-gray-200 font-semibold text-gray-700',
+                  'transition-colors hover:bg-gray-300',
+                )}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => handleRemoveClassroom(classroomToRemove)}
+                disabled={removeTeacherFromClassroom.isPending}
+                className={cn(
+                  'flex-1 rounded-lg px-4 py-3',
+                  'bg-red-500 font-semibold text-white',
+                  'transition-colors hover:bg-red-600',
+                  'disabled:cursor-not-allowed disabled:bg-gray-300',
+                  'flex items-center justify-center gap-2',
+                )}
+              >
+                {removeTeacherFromClassroom.isPending ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Removiendo...
+                  </>
+                ) : (
+                  'Remover'
+                )}
+              </button>
             </div>
           </motion.div>
         </div>

@@ -15,7 +15,7 @@ import { ContentTemplate } from '@modules/content/entities/content-template.enti
 import { MediaFile } from '@modules/content/entities/media-file.entity';
 import { Classroom } from '@modules/social/entities/classroom.entity';
 import { TeacherClassroom } from '@modules/social/entities/teacher-classroom.entity';
-import { SystemSetting, FeatureFlag, NotificationSettings, BulkOperation } from './entities'; // ✨ NUEVO - P1/P2 (System Configuration + Bulk Ops)
+import { SystemSetting, FeatureFlag, NotificationSettings, BulkOperation, SystemAlert } from './entities'; // ✨ NUEVO - P1/P2 (System Configuration + Bulk Ops + Alerts)
 import { AdminUsersController } from './controllers/admin-users.controller';
 import { AdminOrganizationsController } from './controllers/admin-organizations.controller';
 import { AdminContentController } from './controllers/admin-content.controller';
@@ -25,8 +25,14 @@ import { AdminRolesController } from './controllers/admin-roles.controller';
 import { AdminReportsController } from './controllers/admin-reports.controller';
 import { AdminLogsController } from './controllers/admin-logs.controller';
 import { ClassroomAssignmentsController } from './controllers/classroom-assignments.controller';
+import { ClassroomTeachersRestController } from './controllers/classroom-teachers-rest.controller';
 import { AdminGamificationConfigController } from './controllers/admin-gamification-config.controller';
 import { AdminBulkOperationsController } from './controllers/admin-bulk-operations.controller';
+import { AdminAlertsController } from './controllers/admin-alerts.controller';
+import { AdminAnalyticsController } from './controllers/admin-analytics.controller';
+import { AdminProgressController } from './controllers/admin-progress.controller';
+import { AdminMonitoringController } from './controllers/admin-monitoring.controller';
+import { AdminInterventionsController } from './controllers/admin-interventions.controller';
 import { AdminUsersService } from './services/admin-users.service';
 import { AdminOrganizationsService } from './services/admin-organizations.service';
 import { AdminContentService } from './services/admin-content.service';
@@ -37,6 +43,11 @@ import { AdminReportsService } from './services/admin-reports.service';
 import { ClassroomAssignmentsService } from './services/classroom-assignments.service';
 import { GamificationConfigService } from './services/gamification-config.service';
 import { BulkOperationsService } from './services/bulk-operations.service';
+import { AdminAlertsService } from './services/admin-alerts.service';
+import { AdminAnalyticsService } from './services/admin-analytics.service';
+import { AdminProgressService } from './services/admin-progress.service';
+import { AdminMonitoringService } from './services/admin-monitoring.service';
+import { AdminInterventionsService } from './services/admin-interventions.service';
 import { AdminGuard } from './guards/admin.guard';
 
 @Module({
@@ -45,6 +56,8 @@ import { AdminGuard } from './guards/admin.guard';
     TypeOrmModule.forFeature([EducationalModule, Exercise, ContentApproval], 'educational'),
     TypeOrmModule.forFeature([ContentTemplate, MediaFile], 'content'),
     TypeOrmModule.forFeature([Classroom, TeacherClassroom], 'social'),
+    TypeOrmModule.forFeature([SystemAlert], 'audit'),
+    TypeOrmModule.forFeature([], 'progress'), // For AdminInterventionsService (student_intervention_alerts)
   ],
   controllers: [
     AdminUsersController,
@@ -56,8 +69,14 @@ import { AdminGuard } from './guards/admin.guard';
     AdminReportsController,
     AdminLogsController,
     ClassroomAssignmentsController,
+    ClassroomTeachersRestController, // NEW: REST endpoints for US-AE-007
     AdminGamificationConfigController,
     AdminBulkOperationsController,
+    AdminAlertsController, // NEW: System alerts management
+    AdminAnalyticsController, // NEW: Analytics endpoints (Plan 2)
+    AdminProgressController, // NEW: Progress tracking endpoints (Plan 3)
+    AdminMonitoringController, // NEW: Monitoring endpoints (Plan 4)
+    AdminInterventionsController, // NEW: Student intervention alerts (BE-001)
   ],
   providers: [
     AdminUsersService,
@@ -70,6 +89,11 @@ import { AdminGuard } from './guards/admin.guard';
     ClassroomAssignmentsService,
     GamificationConfigService,
     BulkOperationsService,
+    AdminAlertsService, // NEW: System alerts service
+    AdminAnalyticsService, // NEW: Analytics service (Plan 2)
+    AdminProgressService, // NEW: Progress tracking service (Plan 3)
+    AdminMonitoringService, // NEW: Monitoring service (Plan 4)
+    AdminInterventionsService, // NEW: Student intervention alerts service (BE-001)
     AdminGuard,
   ],
   exports: [
@@ -83,6 +107,11 @@ import { AdminGuard } from './guards/admin.guard';
     ClassroomAssignmentsService,
     GamificationConfigService,
     BulkOperationsService,
+    AdminAlertsService, // NEW: Export alerts service for use in other modules
+    AdminAnalyticsService, // NEW: Export analytics service for use in other modules
+    AdminProgressService, // NEW: Export progress service for use in other modules
+    AdminMonitoringService, // NEW: Export monitoring service for use in other modules
+    AdminInterventionsService, // NEW: Export interventions service for use in other modules (BE-001)
   ],
 })
 export class AdminModule {}

@@ -139,12 +139,10 @@ export const MyProgressPage: React.FC = () => {
     filtered.sort((a, b) => {
       switch (filter.sortBy) {
         case 'progress':
-          return (
-            (b.progress?.progress_percentage || 0) - (a.progress?.progress_percentage || 0)
-          );
+          return (b.progress?.progress_percentage || 0) - (a.progress?.progress_percentage || 0);
         case 'name':
           return a.module.title.localeCompare(b.module.title);
-        case 'last_accessed':
+        case 'last_accessed': {
           const aDate = a.progress?.last_accessed_at
             ? new Date(a.progress.last_accessed_at).getTime()
             : 0;
@@ -152,6 +150,7 @@ export const MyProgressPage: React.FC = () => {
             ? new Date(b.progress.last_accessed_at).getTime()
             : 0;
           return bDate - aDate;
+        }
         default:
           return 0;
       }
@@ -172,161 +171,162 @@ export const MyProgressPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100">
-      <GamifiedHeader user={user} onLogout={logout} />
+      <GamifiedHeader user={user || undefined} onLogout={logout} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">My Progress</h1>
-        <p className="text-gray-600 mt-2">
-          Track your learning journey and see how far you've come.
-        </p>
-      </div>
-
-      {/* Error Alert */}
-      {error && (
-        <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-start space-x-3">
-          <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
-          <div className="flex-1">
-            <h3 className="text-sm font-medium text-red-800">Error Loading Data</h3>
-            <p className="text-sm text-red-700 mt-1">{error}</p>
-            <button
-              onClick={handleRetry}
-              className="mt-3 px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors"
-            >
-              Retry
-            </button>
-          </div>
+          <h1 className="text-3xl font-bold text-gray-900">My Progress</h1>
+          <p className="mt-2 text-gray-600">
+            Track your learning journey and see how far you've come.
+          </p>
         </div>
-      )}
 
-      {/* Stats Overview */}
-      <div className="mb-8">
-        {isLoadingSummary ? (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-white rounded-lg border border-gray-200 p-5 animate-pulse">
-                <div className="h-10 w-10 bg-gray-200 rounded-lg mb-3" />
-                <div className="h-8 w-16 bg-gray-200 rounded mb-2" />
-                <div className="h-4 w-24 bg-gray-200 rounded mb-1" />
-                <div className="h-3 w-20 bg-gray-200 rounded" />
-              </div>
-            ))}
+        {/* Error Alert */}
+        {error && (
+          <div className="mb-6 flex items-start space-x-3 rounded-lg border border-red-200 bg-red-50 p-4">
+            <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
+            <div className="flex-1">
+              <h3 className="text-sm font-medium text-red-800">Error Loading Data</h3>
+              <p className="mt-1 text-sm text-red-700">{error}</p>
+              <button
+                onClick={handleRetry}
+                className="mt-3 rounded-lg bg-red-600 px-4 py-2 text-sm text-white transition-colors hover:bg-red-700"
+              >
+                Retry
+              </button>
+            </div>
           </div>
-        ) : summary ? (
-          <StatsOverview summary={summary} />
-        ) : null}
-      </div>
+        )}
 
-      {/* Filters */}
-      {!isLoading && modules.length > 0 && (
-        <ProgressFilter currentFilter={filter} onFilterChange={setFilter} />
-      )}
+        {/* Stats Overview */}
+        <div className="mb-8">
+          {isLoadingSummary ? (
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+              {[...Array(4)].map((_, i) => (
+                <div
+                  key={i}
+                  className="animate-pulse rounded-lg border border-gray-200 bg-white p-5"
+                >
+                  <div className="mb-3 h-10 w-10 rounded-lg bg-gray-200" />
+                  <div className="mb-2 h-8 w-16 rounded bg-gray-200" />
+                  <div className="mb-1 h-4 w-24 rounded bg-gray-200" />
+                  <div className="h-3 w-20 rounded bg-gray-200" />
+                </div>
+              ))}
+            </div>
+          ) : summary ? (
+            <StatsOverview summary={summary} />
+          ) : null}
+        </div>
 
-      {/* Progress List */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-gray-900">All Modules</h2>
-          {!isLoading && (
-            <span className="text-sm text-gray-600">
-              {filteredModules.length} {filteredModules.length === 1 ? 'module' : 'modules'}
-            </span>
+        {/* Filters */}
+        {!isLoading && modules.length > 0 && (
+          <ProgressFilter currentFilter={filter} onFilterChange={setFilter} />
+        )}
+
+        {/* Progress List */}
+        <div>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-gray-900">All Modules</h2>
+            {!isLoading && (
+              <span className="text-sm text-gray-600">
+                {filteredModules.length} {filteredModules.length === 1 ? 'module' : 'modules'}
+              </span>
+            )}
+          </div>
+
+          {/* Loading Skeletons */}
+          {isLoading && (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {[...Array(6)].map((_, i) => (
+                <div
+                  key={i}
+                  className="animate-pulse overflow-hidden rounded-lg border border-gray-200 bg-white"
+                >
+                  <div className="h-32 bg-gray-200" />
+                  <div className="p-4">
+                    <div className="mb-2 h-6 w-3/4 rounded bg-gray-200" />
+                    <div className="mb-2 h-4 w-full rounded bg-gray-200" />
+                    <div className="mb-4 h-4 w-2/3 rounded bg-gray-200" />
+                    <div className="mb-4 h-2 w-full rounded bg-gray-200" />
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="h-12 rounded bg-gray-200" />
+                      <div className="h-12 rounded bg-gray-200" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Progress Cards Grid */}
+          {!isLoading && filteredModules.length > 0 && (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {filteredModules.map(({ module, progress }) => (
+                <ProgressCard
+                  key={module.id}
+                  module={module}
+                  progress={progress}
+                  onClick={() => handleModuleClick(module.id)}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!isLoading && filteredModules.length === 0 && modules.length > 0 && (
+            <div className="rounded-lg border border-gray-200 bg-white p-12 text-center">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                <TrendingUp className="h-8 w-8 text-gray-400" />
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-gray-900">No modules found</h3>
+              <p className="mx-auto max-w-md text-gray-600">
+                No modules match your current filters. Try adjusting your filter settings.
+              </p>
+              <button
+                onClick={() => setFilter({ status: 'all', difficulty: 'all', sortBy: 'progress' })}
+                className="mt-4 rounded-lg bg-orange-600 px-4 py-2 text-sm text-white transition-colors hover:bg-orange-700"
+              >
+                Clear Filters
+              </button>
+            </div>
+          )}
+
+          {/* No Modules Available */}
+          {!isLoading && modules.length === 0 && (
+            <div className="rounded-lg border border-gray-200 bg-white p-12 text-center">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                <TrendingUp className="h-8 w-8 text-gray-400" />
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-gray-900">No modules available</h3>
+              <p className="mx-auto max-w-md text-gray-600">
+                There are no learning modules available at the moment. Check back soon!
+              </p>
+            </div>
           )}
         </div>
 
-        {/* Loading Skeletons */}
-        {isLoading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-lg border border-gray-200 overflow-hidden animate-pulse"
-              >
-                <div className="h-32 bg-gray-200" />
-                <div className="p-4">
-                  <div className="h-6 w-3/4 bg-gray-200 rounded mb-2" />
-                  <div className="h-4 w-full bg-gray-200 rounded mb-2" />
-                  <div className="h-4 w-2/3 bg-gray-200 rounded mb-4" />
-                  <div className="h-2 w-full bg-gray-200 rounded mb-4" />
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="h-12 bg-gray-200 rounded" />
-                    <div className="h-12 bg-gray-200 rounded" />
-                  </div>
+        {/* Learning Path Section - Placeholder */}
+        {!isLoading && modules.length > 0 && (
+          <div className="mt-12">
+            <h2 className="mb-4 text-2xl font-bold text-gray-900">Recommended Next</h2>
+            <div className="rounded-lg border border-gray-200 bg-white p-8">
+              <div className="py-8 text-center">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                  <TrendingUp className="h-8 w-8 text-gray-400" />
                 </div>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">
+                  Personalized Recommendations Coming Soon
+                </h3>
+                <p className="mx-auto max-w-md text-gray-600">
+                  {/* TODO: Implement ML-based learning path recommendations */}
+                  Get AI-powered module recommendations based on your progress and learning style.
+                </p>
               </div>
-            ))}
-          </div>
-        )}
-
-        {/* Progress Cards Grid */}
-        {!isLoading && filteredModules.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredModules.map(({ module, progress }) => (
-              <ProgressCard
-                key={module.id}
-                module={module}
-                progress={progress}
-                onClick={() => handleModuleClick(module.id)}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Empty State */}
-        {!isLoading && filteredModules.length === 0 && modules.length > 0 && (
-          <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <TrendingUp className="w-8 h-8 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No modules found</h3>
-            <p className="text-gray-600 max-w-md mx-auto">
-              No modules match your current filters. Try adjusting your filter settings.
-            </p>
-            <button
-              onClick={() =>
-                setFilter({ status: 'all', difficulty: 'all', sortBy: 'progress' })
-              }
-              className="mt-4 px-4 py-2 bg-orange-600 text-white text-sm rounded-lg hover:bg-orange-700 transition-colors"
-            >
-              Clear Filters
-            </button>
-          </div>
-        )}
-
-        {/* No Modules Available */}
-        {!isLoading && modules.length === 0 && (
-          <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <TrendingUp className="w-8 h-8 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No modules available</h3>
-            <p className="text-gray-600 max-w-md mx-auto">
-              There are no learning modules available at the moment. Check back soon!
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* Learning Path Section - Placeholder */}
-      {!isLoading && modules.length > 0 && (
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Recommended Next</h2>
-          <div className="bg-white rounded-lg border border-gray-200 p-8">
-            <div className="text-center py-8">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="w-8 h-8 text-gray-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Personalized Recommendations Coming Soon
-              </h3>
-              <p className="text-gray-600 max-w-md mx-auto">
-                {/* TODO: Implement ML-based learning path recommendations */}
-                Get AI-powered module recommendations based on your progress and learning style.
-              </p>
             </div>
           </div>
-        </div>
-      )}
+        )}
       </div>
     </div>
   );

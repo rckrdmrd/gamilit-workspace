@@ -55,18 +55,24 @@ export class AuthController {
    */
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Registrar nuevo usuario' })
+  @ApiOperation({ summary: 'Registrar nuevo usuario con auto-login' })
   @ApiResponse({
     status: 201,
-    description: 'Usuario registrado exitosamente',
-    type: UserResponseDto,
+    description: 'Usuario registrado exitosamente con tokens de autenticación',
+    schema: {
+      properties: {
+        user: { type: 'object' },
+        accessToken: { type: 'string' },
+        refreshToken: { type: 'string' },
+      },
+    },
   })
   @ApiResponse({ status: 409, description: 'Email ya registrado' })
   @ApiBody({ type: RegisterUserDto })
   async register(
     @Body() dto: RegisterUserDto,
     @Request() req: any,
-  ): Promise<UserResponseDto> {
+  ): Promise<{ user: UserResponseDto; accessToken: string; refreshToken: string }> {
     const ip = req.ip;
     const userAgent = req.headers['user-agent'];
     return await this.authService.register(dto, ip, userAgent);

@@ -17,7 +17,6 @@ interface LeaderboardLayoutProps {
 export const LeaderboardLayout: React.FC<LeaderboardLayoutProps> = ({
   entries,
   showTopThree = true,
-  highlightUser = true,
 }) => {
   const topThree = showTopThree ? entries.slice(0, 3) : [];
   const remaining = showTopThree ? entries.slice(3) : entries;
@@ -26,7 +25,7 @@ export const LeaderboardLayout: React.FC<LeaderboardLayoutProps> = ({
     <div className="space-y-6">
       {/* Top 3 Podium */}
       {showTopThree && topThree.length > 0 && (
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="mb-8 grid grid-cols-3 gap-4">
           {/* 2nd Place */}
           {topThree[1] && (
             <motion.div
@@ -39,20 +38,22 @@ export const LeaderboardLayout: React.FC<LeaderboardLayoutProps> = ({
                 <img
                   src={topThree[1].avatar}
                   alt={topThree[1].username}
-                  className="w-20 h-20 rounded-full border-4 border-gray-400 object-cover"
+                  className="h-20 w-20 rounded-full border-4 border-gray-400 object-cover"
                   onError={(e) => {
                     e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(topThree[1].username)}&background=9ca3af&color=fff`;
                   }}
                 />
-                <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-gradient-to-br from-gray-300 to-gray-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                <div className="absolute -bottom-2 -right-2 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-gray-300 to-gray-500 text-lg font-bold text-white shadow-lg">
                   2
                 </div>
               </div>
-              <h3 className="font-bold text-detective-text text-center truncate w-full px-2">
+              <h3 className="w-full truncate px-2 text-center font-bold text-detective-text">
                 {topThree[1].username}
               </h3>
-              <p className="text-detective-sm text-detective-text-secondary">{topThree[1].rankBadge}</p>
-              <p className="text-detective-lg font-bold text-detective-text mt-2">
+              <p className="text-detective-sm text-detective-text-secondary">
+                {topThree[1].rankBadge}
+              </p>
+              <p className="mt-2 text-detective-lg font-bold text-detective-text">
                 {topThree[1].score.toLocaleString()}
               </p>
             </motion.div>
@@ -79,20 +80,22 @@ export const LeaderboardLayout: React.FC<LeaderboardLayoutProps> = ({
                 <img
                   src={topThree[0].avatar}
                   alt={topThree[0].username}
-                  className="w-24 h-24 rounded-full border-4 border-yellow-400 object-cover shadow-xl"
+                  className="h-24 w-24 rounded-full border-4 border-yellow-400 object-cover shadow-xl"
                   onError={(e) => {
                     e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(topThree[0].username)}&background=fbbf24&color=fff`;
                   }}
                 />
-                <div className="absolute -bottom-2 -right-2 w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-xl animate-gold-shine">
+                <div className="absolute -bottom-2 -right-2 flex h-12 w-12 animate-gold-shine items-center justify-center rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 text-xl font-bold text-white shadow-xl">
                   1
                 </div>
               </div>
-              <h3 className="font-bold text-detective-text text-lg text-center truncate w-full px-2">
+              <h3 className="w-full truncate px-2 text-center text-lg font-bold text-detective-text">
                 {topThree[0].username}
               </h3>
-              <p className="text-detective-sm text-detective-text-secondary">{topThree[0].rankBadge}</p>
-              <p className="text-detective-xl font-bold text-detective-gold mt-2">
+              <p className="text-detective-sm text-detective-text-secondary">
+                {topThree[0].rankBadge}
+              </p>
+              <p className="mt-2 text-detective-xl font-bold text-detective-gold">
                 {topThree[0].score.toLocaleString()}
               </p>
             </motion.div>
@@ -110,20 +113,22 @@ export const LeaderboardLayout: React.FC<LeaderboardLayoutProps> = ({
                 <img
                   src={topThree[2].avatar}
                   alt={topThree[2].username}
-                  className="w-20 h-20 rounded-full border-4 border-orange-400 object-cover"
+                  className="h-20 w-20 rounded-full border-4 border-orange-400 object-cover"
                   onError={(e) => {
                     e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(topThree[2].username)}&background=fb923c&color=fff`;
                   }}
                 />
-                <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                <div className="absolute -bottom-2 -right-2 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-orange-400 to-orange-600 text-lg font-bold text-white shadow-lg">
                   3
                 </div>
               </div>
-              <h3 className="font-bold text-detective-text text-center truncate w-full px-2">
+              <h3 className="w-full truncate px-2 text-center font-bold text-detective-text">
                 {topThree[2].username}
               </h3>
-              <p className="text-detective-sm text-detective-text-secondary">{topThree[2].rankBadge}</p>
-              <p className="text-detective-lg font-bold text-detective-text mt-2">
+              <p className="text-detective-sm text-detective-text-secondary">
+                {topThree[2].rankBadge}
+              </p>
+              <p className="mt-2 text-detective-lg font-bold text-detective-text">
                 {topThree[2].score.toLocaleString()}
               </p>
             </motion.div>

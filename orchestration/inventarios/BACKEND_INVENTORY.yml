@@ -4,23 +4,23 @@
 # Fuente: Validación VAL-001
 
 metadata:
-  version: "2.3.1"
+  version: "2.3.2"
   generated_date: "2025-11-11"
-  last_updated: "2025-11-15"
-  generated_by: "Validación completa de documentación - Revisión exhaustiva"
+  last_updated: "2025-11-26"
+  generated_by: "Backend-Agent - Actualización de conteo de DTOs módulo admin"
   framework: "NestJS 11.1.8 + TypeScript 5.x + TypeORM 0.3.x"
   database: "PostgreSQL 16"
   package_manager: "npm"
   total_modules: 13  # ✅ Verificado 2025-11-15
   total_entities: 76  # ✅ Actualizado 2025-11-15 (count real verificado con find)
-  total_dtos: 195  # ✅ Actualizado 2025-11-15 (count real verificado con find)
+  total_dtos: 313  # ✅ Actualizado 2025-11-26 (195 previo + 118 admin = 313)
   total_services: 64  # ✅ Actualizado 2025-11-15 (count real verificado con find)
   total_controllers: 47  # ✅ Actualizado 2025-11-15 (count real verificado con find)
   total_endpoints: 356  # ✅ NUEVO 2025-11-11 (count de @Get, @Post, @Put, @Delete, @Patch)
   typescript_errors: 0  # ✅ Validado 2025-11-11 (npm run build successful)
   build_status: "✅ PASSING"  # ✅ Validado 2025-11-11
   coherencia_bd: "97%"  # ✅ Validado 2025-11-11 (76/103 tablas con entity, resto auxiliares)
-  discrepancies_found: "8 entities, 34 DTOs, 12 services, 8 controllers adicionales no documentados previamente"
+  discrepancies_found: "Inventario de DTOs del módulo admin corregido: 0 → 118 DTOs documentados"
 
 # ============================================================================
 # MÓDULOS (Modules)
@@ -51,7 +51,23 @@ modules:
     entities: 3
     services: 4
     controllers: 4
-    dtos: 0
+    dtos: 118
+    dtos_by_subfolder:
+      alerts: 7
+      analytics: 10
+      bulk_operations: 5
+      classroom_assignments: 17
+      content: 10
+      dashboard: 11
+      gamification_config: 8
+      interventions: 5
+      monitoring: 5
+      organizations: 9
+      progress: 12
+      reports: 1
+      roles: 2
+      system: 9
+      users: 7
     main_features:
       - "Gestión de usuarios"
       - "Gestión de organizaciones"
@@ -59,6 +75,10 @@ modules:
       - "Configuración del sistema"
       - "Feature flags"
       - "System settings"
+      - "Alertas e intervenciones"
+      - "Analytics y reportes"
+      - "Monitoreo de sistema"
+      - "Progreso de estudiantes"
     status: "✅ Active"
 
   - name: "educational"
@@ -793,8 +813,9 @@ entities:
 # DTOS (Data Transfer Objects)
 # ============================================================================
 dtos:
-  count: 150
+  count: 268
   by_module:
+    admin: 118
     auth: 37
     assignments: 4
     audit: 1
@@ -1062,10 +1083,10 @@ datasources:
 # ESTADÍSTICAS
 # ============================================================================
 statistics:
-  total_files: 400
+  total_files: 518
   breakdown:
     entities: 64
-    dtos: 150
+    dtos: 268
     services: 52
     controllers: 38
     modules: 14
@@ -1165,6 +1186,44 @@ notes:
 # CHANGELOG / MODIFICACIONES RECIENTES
 # ============================================================================
 changelog:
+  - date: "2025-11-26"
+    tarea_id: "INVENTORY-UPDATE-001"
+    type: "Documentation Update"
+    module: "admin"
+    component: "BACKEND_INVENTORY.yml"
+    description: "Actualización de conteo de DTOs del módulo admin"
+    changes:
+      - "Corregido conteo de DTOs del módulo admin: 0 → 118"
+      - "Agregado desglose detallado por subcarpeta (15 subcarpetas)"
+      - "Actualizado metadata con nueva versión 2.3.2"
+      - "Actualizado total_dtos global: 195 → 313"
+      - "Actualizado total_files: 400 → 518"
+      - "Agregadas nuevas main_features del módulo admin"
+    impact:
+      - "Mejora de trazabilidad del inventario backend"
+      - "Documentación ahora refleja la realidad del código"
+      - "Facilita auditorías futuras del módulo admin"
+    dtos_by_subfolder:
+      alerts: 7
+      analytics: 10
+      bulk_operations: 5
+      classroom_assignments: 17
+      content: 10
+      dashboard: 11
+      gamification_config: 8
+      interventions: 5
+      monitoring: 5
+      organizations: 9
+      progress: 12
+      reports: 1
+      roles: 2
+      system: 9
+      users: 7
+    files_modified:
+      - "orchestration/inventarios/BACKEND_INVENTORY.yml"
+    documentation:
+      - "orchestration/inventarios/BACKEND_INVENTORY.yml"
+
   - date: "2025-11-17"
     tarea_id: "BE-091"
     type: "Bug Fix - Critical"

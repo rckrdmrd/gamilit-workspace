@@ -4,10 +4,6 @@ import { EvidenceBoard } from './EvidenceBoard';
 import { MagnifyingGlass } from './MagnifyingGlass';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
-import {
-  validateConnection,
-  submitSolution,
-} from './detectiveTextualAPI';
 import type {
   Investigation,
   DetectiveProgress,
@@ -16,7 +12,7 @@ import type {
   DetectiveTextualExerciseProps,
   DetectiveTextualState,
 } from './detectiveTextualTypes';
-import { calculateScore, saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { mockInvestigation } from './detectiveTextualMockData';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
@@ -29,7 +25,8 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
   actionsRef,
 }) => {
   const { user } = useAuth();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_isSubmitting, setIsSubmitting] = useState(false);
 
   // Load exercise data based on exerciseId
   const [investigation, setInvestigation] = useState<Investigation | null>(mockInvestigation);
@@ -44,10 +41,12 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
   });
   const [loading] = useState(false);
   const [selectedEvidence] = useState<Evidence | null>(null);
-  const [startTime] = useState(new Date());
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
-  const [availableCoins, setAvailableCoins] = useState(50); // Detective coins for hints/tools
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_availableCoins, setAvailableCoins] = useState(50); // Detective coins for hints/tools
 
   // Load investigation data on mount if needed
   useEffect(() => {
@@ -73,35 +72,31 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
     return () => clearInterval(autoSaveInterval);
   }, [progress, investigation]);
 
-  // FE-055 & FE-059: Progress update callback with user answers
+  // Progress update callback
   useEffect(() => {
     if (onProgressUpdate && investigation) {
-      // Prepare user answers for backend
-      // Note: Backend DTO format for Detective Textual needs to be defined
-      // TODO: Confirm DTO structure with backend - currently using questions format
-      const userAnswers: Record<string, string> = {};
-      progress.connections.forEach((conn, index) => {
-        // Map connections to question format (placeholder)
-        userAnswers[`q${index + 1}`] = `${conn.fromEvidenceId}-${conn.toEvidenceId}-${conn.relationship}`;
-      });
-
       onProgressUpdate({
-        progress: {
-          currentStep: progress.discoveredEvidence.length,
-          totalSteps: investigation.availableEvidence.length,
-          score: 0, // FE-059: Score calculated by backend only
-          hintsUsed: progress.hintsUsed,
-          timeSpent: progress.timeSpent,
-        },
-        answers: { questions: userAnswers }  // BE-FE-062: Wrap in 'questions' key to match DTO
+        currentStep: progress.discoveredEvidence.length,
+        totalSteps: investigation.availableEvidence.length,
+        score: progress.score,
+        hintsUsed: progress.hintsUsed,
+        timeSpent: progress.timeSpent,
       });
 
       console.log('📊 [DetectiveTextual] Progress update sent:', {
         discoveredEvidence: progress.discoveredEvidence.length,
-        connections: progress.connections.length
+        connections: progress.connections.length,
       });
     }
-  }, [progress.discoveredEvidence.length, progress.connections, progress.hintsUsed, progress.timeSpent, investigation, onProgressUpdate]);
+  }, [
+    progress.discoveredEvidence.length,
+    progress.connections,
+    progress.hintsUsed,
+    progress.timeSpent,
+    progress.score,
+    investigation,
+    onProgressUpdate,
+  ]);
 
   // Timer
   useEffect(() => {
@@ -110,7 +105,6 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
     }, 1000);
     return () => clearInterval(timer);
   }, []);
-
 
   const handleDiscoverEvidence = (evidenceId: string) => {
     if (!progress.discoveredEvidence.includes(evidenceId)) {
@@ -122,11 +116,7 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
     }
   };
 
-  const handleCreateConnection = async (
-    fromId: string,
-    toId: string,
-    relationship: string
-  ) => {
+  const handleCreateConnection = async (fromId: string, toId: string, relationship: string) => {
     // FE-059: Removed local validation - isCorrect field no longer available
     // Validation will be done server-side when solution is submitted
 
@@ -186,10 +176,10 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
     try {
       // Prepare answers in backend DTO format
       // Format connections as serialized objects for backend validation
-      const connectionsData = progress.connections.map(conn => ({
+      const connectionsData = progress.connections.map((conn) => ({
         from: conn.fromEvidenceId,
         to: conn.toEvidenceId,
-        relationship: conn.relationship
+        relationship: conn.relationship,
       }));
 
       // Submit to backend API
@@ -198,17 +188,23 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
       // Show backend response
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
-        title: response.isPerfect ? '¡Perfecto!' : response.score >= 70 ? '¡Buen trabajo!' : 'Intenta de nuevo',
-        message: response.feedback?.overall || `Has identificado ${response.correctAnswersCount} de ${response.totalQuestions} conexiones correctamente.`,
+        title: response.isPerfect
+          ? '¡Perfecto!'
+          : response.score >= 70
+            ? '¡Buen trabajo!'
+            : 'Intenta de nuevo',
+        message:
+          response.feedback?.overall ||
+          `Has identificado ${response.correctAnswersCount} de ${response.totalQuestions} conexiones correctamente.`,
         score: response.score,
-        showConfetti: response.isPerfect
+        showConfetti: response.isPerfect,
       });
       setShowFeedback(true);
 
       console.log('✅ [DetectiveTextual] Submission successful:', {
         attemptId: response.attemptId,
         score: response.score,
-        rewards: response.rewards
+        rewards: response.rewards,
       });
     } catch (error) {
       console.error('❌ [DetectiveTextual] Submission error:', error);
@@ -267,12 +263,19 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
         actionsRef.current = undefined;
       }
     };
-  }, [actionsRef, getState, handleReset, handleSubmitSolution, handleDiscoverEvidence, handleCreateConnection]);
+  }, [
+    actionsRef,
+    getState,
+    handleReset,
+    handleSubmitSolution,
+    handleDiscoverEvidence,
+    handleCreateConnection,
+  ]);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-detective-blue text-detective-xl">Cargando investigación...</div>
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-detective-xl text-detective-blue">Cargando investigación...</div>
       </div>
     );
   }
@@ -287,13 +290,13 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Exercise Description */}
-          <div className="bg-gradient-to-r from-detective-blue to-detective-orange rounded-detective p-6 text-white shadow-detective-lg">
-            <div className="flex items-center gap-3 mb-2">
-              <Search className="w-8 h-8" />
+          <div className="rounded-detective bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-detective-lg">
+            <div className="mb-2 flex items-center gap-3">
+              <Search className="h-8 w-8" />
               <h2 className="text-detective-2xl font-bold">{investigation.title}</h2>
             </div>
-            <p className="text-detective-base opacity-90 mb-4">{investigation.description}</p>
-            <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+            <p className="mb-4 text-detective-base opacity-90">{investigation.description}</p>
+            <div className="rounded-lg bg-white/20 p-4 backdrop-blur-sm">
               <p className="font-medium text-gray-900">Misterio a resolver:</p>
               <p className="text-detective-base text-gray-900">{investigation.mystery}</p>
             </div>
@@ -308,9 +311,7 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
           />
 
           {/* Magnifying Glass Tool */}
-          {selectedEvidence && (
-            <MagnifyingGlass text={selectedEvidence.content} />
-          )}
+          {selectedEvidence && <MagnifyingGlass text={selectedEvidence.content} />}
         </div>
       </DetectiveCard>
 

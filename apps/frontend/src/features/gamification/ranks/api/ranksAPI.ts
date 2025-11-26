@@ -39,21 +39,15 @@
  */
 
 import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS, FEATURE_FLAGS } from '@/services/api/apiConfig';
+import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
 import { handleAPIError } from '@/services/api/apiErrorHandler';
 import type { ApiResponse } from '@/services/api/apiTypes';
 import type {
   UserRankProgress,
-  MayaRank,
-  AddXPRequest,
-  AddXPResponse,
   RankUpEvent,
-  PrestigeRequest,
-  PrestigeResponse,
   MultiplierBreakdown,
   MultiplierSource,
   ProgressionHistoryEntry,
-  XPSource,
 } from '../types/ranksTypes';
 import { MOCK_USER_NACOM } from '../mockData/ranksMockData';
 
@@ -67,25 +61,6 @@ import { MOCK_USER_NACOM } from '../mockData/ranksMockData';
 const mockGetCurrentRank = async (): Promise<UserRankProgress> => {
   await new Promise((resolve) => setTimeout(resolve, 500));
   return MOCK_USER_NACOM;
-};
-
-/**
- * Mock add XP
- */
-const mockAddXP = async (
-  amount: number,
-  source: XPSource,
-  description?: string
-): Promise<AddXPResponse> => {
-  await new Promise((resolve) => setTimeout(resolve, 800));
-
-  return {
-    success: true,
-    newXP: MOCK_USER_NACOM.currentXP + amount,
-    newLevel: MOCK_USER_NACOM.currentLevel,
-    leveledUp: false,
-    rankedUp: false,
-  };
 };
 
 // ============================================================================
@@ -104,7 +79,7 @@ export const getCurrentRank = async (): Promise<UserRankProgress> => {
     }
 
     const { data } = await apiClient.get<ApiResponse<UserRankProgress>>(
-      API_ENDPOINTS.ranks.current
+      API_ENDPOINTS.ranks.current,
     );
 
     return data.data;
@@ -135,7 +110,7 @@ export const getProgressionStats = async (userId: string): Promise<UserRankProgr
     }
 
     const { data } = await apiClient.get<ApiResponse<UserRankProgress>>(
-      API_ENDPOINTS.ranks.rankProgress(userId)
+      API_ENDPOINTS.ranks.rankProgress(userId),
     );
 
     return data.data;
@@ -247,7 +222,7 @@ export const rankUp = async (userId: string): Promise<RankUpEvent> => {
     }
 
     const { data } = await apiClient.post<ApiResponse<RankUpEvent>>(
-      API_ENDPOINTS.ranks.promote(userId)
+      API_ENDPOINTS.ranks.promote(userId),
     );
 
     return data.data;
@@ -314,7 +289,7 @@ export const prestige = async (confirmed: boolean): Promise<PrestigeResponse> =>
  */
 export const getProgressionHistory = async (
   userId: string,
-  limit?: number
+  limit?: number,
 ): Promise<ProgressionHistoryEntry[]> => {
   try {
     if (!userId) {
@@ -340,7 +315,7 @@ export const getProgressionHistory = async (
 
     const { data } = await apiClient.get<ApiResponse<ProgressionHistoryEntry[]>>(
       API_ENDPOINTS.ranks.history(userId),
-      { params: { limit } }
+      { params: { limit } },
     );
 
     return data.data;
@@ -386,7 +361,7 @@ export const getMultipliers = async (userId: string): Promise<MultiplierBreakdow
 
     // Note: Backend returns multiplier info in rank-progress endpoint
     const { data } = await apiClient.get<ApiResponse<MultiplierBreakdown>>(
-      API_ENDPOINTS.ranks.multipliers(userId)
+      API_ENDPOINTS.ranks.multipliers(userId),
     );
 
     return data.data;
@@ -413,7 +388,7 @@ export const getMultipliers = async (userId: string): Promise<MultiplierBreakdow
  */
 export const addMultiplier = async (
   source: MultiplierSource,
-  userId: string
+  userId: string,
 ): Promise<MultiplierBreakdown> => {
   try {
     if (!userId) {
@@ -442,7 +417,7 @@ export const addMultiplier = async (
     // Currently using multipliers endpoint (may need adjustment)
     const { data } = await apiClient.post<ApiResponse<MultiplierBreakdown>>(
       API_ENDPOINTS.ranks.multipliers(userId),
-      source
+      source,
     );
 
     return data.data;

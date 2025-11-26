@@ -12,7 +12,7 @@
 --
 -- =====================================================
 -- DEPENDENCIAS:
--- - auth.users (user_id FK)
+-- - auth_management.profiles (user_id FK) - Corregido 2025-11-26
 -- - gamilit.now_mexico() function
 -- - gamilit.update_updated_at_column() function
 -- =====================================================
@@ -65,9 +65,9 @@ CREATE TABLE IF NOT EXISTS audit_logging.activity_log (
     -- =====================================================
     CONSTRAINT activity_log_pkey PRIMARY KEY (id),
 
-    -- Foreign Keys
+    -- Foreign Keys (FK corregida: auth.users -> auth_management.profiles - 2025-11-26)
     CONSTRAINT activity_log_user_id_fkey FOREIGN KEY (user_id)
-        REFERENCES auth.users(id) ON DELETE CASCADE
+        REFERENCES auth_management.profiles(id) ON DELETE CASCADE
 );
 
 -- =====================================================

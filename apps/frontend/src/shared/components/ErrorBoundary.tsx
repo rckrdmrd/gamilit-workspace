@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -35,15 +35,15 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       }
 
       return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-50">
-          <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-            <h2 className="text-2xl font-bold text-red-600 mb-4">Oops! Algo salió mal</h2>
-            <p className="text-gray-700 mb-4">
+        <div className="flex min-h-screen items-center justify-center bg-gray-50">
+          <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
+            <h2 className="mb-4 text-2xl font-bold text-red-600">Oops! Algo salió mal</h2>
+            <p className="mb-4 text-gray-700">
               {this.state.error?.message || 'Ha ocurrido un error inesperado.'}
             </p>
             <button
               onClick={this.handleReset}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
+              className="w-full rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
             >
               Intentar de nuevo
             </button>

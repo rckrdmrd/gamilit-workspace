@@ -117,7 +117,7 @@ export const RANK_ICONS: Record<MayaRank, string> = {
   [MayaRank.NACOM]: '⚔️',
   [MayaRank.AH_KIN]: '☀️',
   [MayaRank.HALACH_UINIC]: '👑',
-  [MayaRank.KUKUKULKAN]: '🐉',
+  [MayaRank.KUKULKAN]: '🐉',
 };
 
 /**
@@ -128,7 +128,7 @@ export const RANK_COLORS: Record<MayaRank, string> = {
   [MayaRank.NACOM]: '#CD7F32',
   [MayaRank.AH_KIN]: '#C0C0C0',
   [MayaRank.HALACH_UINIC]: '#FFD700',
-  [MayaRank.KUKUKULKAN]: '#9B59B6',
+  [MayaRank.KUKULKAN]: '#9B59B6',
 };
 
 /**
@@ -139,7 +139,7 @@ export const RANK_LABELS: Record<MayaRank, string> = {
   [MayaRank.NACOM]: 'Nacom',
   [MayaRank.AH_KIN]: "Ah K'in",
   [MayaRank.HALACH_UINIC]: 'Halach Uinic',
-  [MayaRank.KUKUKULKAN]: "K'uk'ulkan",
+  [MayaRank.KUKULKAN]: "K'uk'ulkan",
 };
 
 /**

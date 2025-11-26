@@ -7,15 +7,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
-import {
-  ArrowLeft,
-  Clock,
-  Star,
-  Coins,
-  Target,
-  Timer,
-  TrendingUp,
-} from 'lucide-react';
+import { ArrowLeft, Star, Coins, Target, Timer, TrendingUp } from 'lucide-react';
 
 interface ExerciseHeaderProps {
   moduleId: string;
@@ -85,15 +77,14 @@ export const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="bg-white dark:bg-gray-800 shadow-md border-b-4 border-detective-orange"
+      className="border-b-4 border-detective-orange bg-white shadow-md dark:bg-gray-800"
     >
       <div className="detective-container py-6">
         {/* Back Button */}
         <div className="mb-4">
           <DetectiveButton
             variant="blue"
-
-            icon={<ArrowLeft className="w-4 h-4" />}
+            icon={<ArrowLeft className="h-4 w-4" />}
             onClick={() => navigate(`/modules/${moduleId}`)}
           >
             Volver al Módulo
@@ -101,33 +92,33 @@ export const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({
         </div>
 
         {/* Main Header Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Left: Title and Description */}
           <div className="lg:col-span-2">
-            <div className="flex items-start gap-3 mb-3">
-              <Target className="w-8 h-8 text-detective-orange flex-shrink-0 mt-1" />
+            <div className="mb-3 flex items-start gap-3">
+              <Target className="mt-1 h-8 w-8 flex-shrink-0 text-detective-orange" />
               <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2 flex-wrap">
-                  <h1 className="text-2xl lg:text-3xl font-bold text-detective-text">
+                <div className="mb-2 flex flex-wrap items-center gap-3">
+                  <h1 className="text-2xl font-bold text-detective-text lg:text-3xl">
                     {exerciseTitle}
                   </h1>
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-bold border-2 ${difficultyConfig.color}`}
+                    className={`rounded-full border-2 px-3 py-1 text-xs font-bold ${difficultyConfig.color}`}
                   >
                     {difficultyConfig.icon} {difficultyConfig.label}
                   </span>
                 </div>
-                <p className="text-detective-text-secondary leading-relaxed">
+                <p className="leading-relaxed text-detective-text-secondary">
                   {exerciseDescription}
                 </p>
               </div>
             </div>
 
             {/* Progress Indicator */}
-            <div className="flex items-center gap-2 mt-4">
-              <TrendingUp className="w-5 h-5 text-detective-orange" />
+            <div className="mt-4 flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-detective-orange" />
               <div className="flex-1">
-                <div className="flex items-center justify-between mb-1">
+                <div className="mb-1 flex items-center justify-between">
                   <span className="text-sm font-semibold text-detective-text">
                     Intento {currentAttempt} de {maxAttempts}
                   </span>
@@ -135,7 +126,7 @@ export const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({
                     {Math.round((currentAttempt / maxAttempts) * 100)}%
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${(currentAttempt / maxAttempts) * 100}%` }}
@@ -148,53 +139,51 @@ export const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({
           </div>
 
           {/* Right: Stats Cards */}
-          <div className="lg:col-span-1 grid grid-cols-2 lg:grid-cols-1 gap-3">
+          <div className="grid grid-cols-2 gap-3 lg:col-span-1 lg:grid-cols-1">
             {/* XP Reward */}
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className="bg-gradient-to-br from-detective-orange to-orange-600 rounded-detective p-4 text-white shadow-lg"
+              className="rounded-detective bg-gradient-to-br from-detective-orange to-orange-600 p-4 text-white shadow-lg"
             >
-              <div className="flex items-center gap-2 mb-1">
-                <Star className="w-5 h-5" />
+              <div className="mb-1 flex items-center gap-2">
+                <Star className="h-5 w-5" />
                 <span className="text-xs font-semibold uppercase tracking-wide opacity-90">
                   Recompensa XP
                 </span>
               </div>
               <p className="text-3xl font-bold">{xpReward}</p>
-              <p className="text-xs opacity-75 mt-1">Puntos de experiencia</p>
+              <p className="mt-1 text-xs opacity-75">Puntos de experiencia</p>
             </motion.div>
 
             {/* ML Coins Reward */}
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className="bg-gradient-to-br from-detective-gold to-yellow-600 rounded-detective p-4 text-white shadow-lg"
+              className="rounded-detective bg-gradient-to-br from-detective-gold to-yellow-600 p-4 text-white shadow-lg"
             >
-              <div className="flex items-center gap-2 mb-1">
-                <Coins className="w-5 h-5" />
+              <div className="mb-1 flex items-center gap-2">
+                <Coins className="h-5 w-5" />
                 <span className="text-xs font-semibold uppercase tracking-wide opacity-90">
                   ML Coins
                 </span>
               </div>
               <p className="text-3xl font-bold">{mlCoinsReward}</p>
-              <p className="text-xs opacity-75 mt-1">Monedas de recompensa</p>
+              <p className="mt-1 text-xs opacity-75">Monedas de recompensa</p>
             </motion.div>
 
             {/* Timer */}
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className="bg-gradient-to-br from-detective-blue to-blue-600 rounded-detective p-4 text-white shadow-lg"
+              className="rounded-detective bg-gradient-to-br from-detective-blue to-blue-600 p-4 text-white shadow-lg"
             >
-              <div className="flex items-center gap-2 mb-1">
-                <Timer className="w-5 h-5" />
+              <div className="mb-1 flex items-center gap-2">
+                <Timer className="h-5 w-5" />
                 <span className="text-xs font-semibold uppercase tracking-wide opacity-90">
                   {timeLimit ? 'Tiempo Límite' : 'Tiempo Transcurrido'}
                 </span>
               </div>
               <p className="text-3xl font-bold">{formatTime(timeElapsed)}</p>
               {timeLimit && (
-                <p className="text-xs opacity-75 mt-1">
-                  Límite: {formatTime(timeLimit)}
-                </p>
+                <p className="mt-1 text-xs opacity-75">Límite: {formatTime(timeLimit)}</p>
               )}
             </motion.div>
 
@@ -202,16 +191,16 @@ export const ExerciseHeader: React.FC<ExerciseHeaderProps> = ({
             {score !== undefined && (
               <motion.div
                 whileHover={{ scale: 1.02 }}
-                className="bg-gradient-to-br from-green-500 to-green-700 rounded-detective p-4 text-white shadow-lg"
+                className="rounded-detective bg-gradient-to-br from-green-500 to-green-700 p-4 text-white shadow-lg"
               >
-                <div className="flex items-center gap-2 mb-1">
-                  <Target className="w-5 h-5" />
+                <div className="mb-1 flex items-center gap-2">
+                  <Target className="h-5 w-5" />
                   <span className="text-xs font-semibold uppercase tracking-wide opacity-90">
                     Puntuación
                   </span>
                 </div>
                 <p className="text-3xl font-bold">{score}</p>
-                <p className="text-xs opacity-75 mt-1">Puntos actuales</p>
+                <p className="mt-1 text-xs opacity-75">Puntos actuales</p>
               </motion.div>
             )}
           </div>

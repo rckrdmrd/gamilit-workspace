@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
+import { plainToInstance } from 'class-transformer';
 import { User } from '@modules/auth/entities/user.entity';
 import {
   ListUsersDto,
@@ -9,6 +10,7 @@ import {
   ResetPasswordDto,
   PaginatedUsersDto,
   UserStatsDto,
+  UserDetailsDto,
 } from '../dto/users';
 import { UserStatusEnum } from '@shared/constants';
 
@@ -47,8 +49,52 @@ export class AdminUsersService {
       order: { created_at: 'DESC' },
     });
 
+    // DEBUG: Log raw user data to verify last_sign_in_at is coming from DB
+    console.log('[DEBUG admin-users] First user raw data:', {
+      id: data[0]?.id,
+      email: data[0]?.email,
+      last_sign_in_at: data[0]?.last_sign_in_at,
+      last_sign_in_at_type: typeof data[0]?.last_sign_in_at,
+    });
+
+    // Transform User entities to UserDetailsDto
+    const transformedUsers = data.map((user) => {
+      // Derive status: use deleted_at if set, otherwise use entity status field
+      const computedStatus = user.deleted_at ? 'suspended' : (user.status || 'active');
+
+      const transformed = plainToInstance(
+        UserDetailsDto,
+        {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          tenant_id: undefined, // tenant_id is not in User entity (managed via profiles)
+          status: computedStatus,
+          email_verified: !!user.email_confirmed_at,
+          email_confirmed_at: user.email_confirmed_at,
+          last_sign_in_at: user.last_sign_in_at,
+          raw_user_meta_data: user.raw_user_meta_data || {},
+          created_at: user.created_at,
+          updated_at: user.updated_at,
+        },
+        { excludeExtraneousValues: true },
+      );
+
+      // DEBUG: Log transformed result
+      if (user.email?.includes('rckrdmrd')) {
+        console.log('[DEBUG admin-users] Transformed rckrdmrd:', {
+          id: transformed.id,
+          email: transformed.email,
+          last_sign_in_at: transformed.last_sign_in_at,
+          last_sign_in_at_type: typeof transformed.last_sign_in_at,
+        });
+      }
+
+      return transformed;
+    });
+
     return {
-      data: data as any,
+      data: transformedUsers,
       total,
       page,
       limit,

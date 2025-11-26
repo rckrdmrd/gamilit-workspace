@@ -118,6 +118,13 @@ export class ModulesService {
   /**
    * Obtener módulos con progreso del usuario
    *
+   * IMPORTANTE: Arquitectura dual de ejercicios
+   * - exercise_attempts: Ejercicios autocorregibles (requires_manual_grading = false)
+   * - exercise_submissions: Ejercicios con calificación manual (requires_manual_grading = true)
+   *
+   * El query debe consultar AMBAS tablas para obtener el conteo correcto de ejercicios completados.
+   * Preferimos usar module_progress.completed_exercises que es actualizado por triggers.
+   *
    * @param userId - ID del usuario
    * @returns Módulos con información de progreso incluida
    */
@@ -134,17 +141,19 @@ export class ModulesService {
         m.order_index,
         m.thumbnail_url as icon,
         m.subjects as category,
+        -- Usar module_progress si existe, sino calcular de ambas tablas
         COALESCE(mp.progress_percentage,
           CASE
             WHEN total_ex.total > 0 THEN (CAST(completed_ex.completed AS DECIMAL) / total_ex.total) * 100
             ELSE 0
           END, 0) as progress,
-        COALESCE(completed_ex.completed, 0) as "completedExercises",
-        COALESCE(total_ex.total, 0) as "totalExercises",
+        -- Usar module_progress.completed_exercises si existe, sino calcular
+        COALESCE(mp.completed_exercises, completed_ex.completed, 0) as "completedExercises",
+        COALESCE(mp.total_exercises, total_ex.total, 0) as "totalExercises",
         CASE
           WHEN mp.status = 'completed' THEN 'completed'
           WHEN mp.status = 'in_progress' THEN 'in_progress'
-          WHEN completed_ex.completed > 0 THEN 'in_progress'
+          WHEN COALESCE(mp.completed_exercises, completed_ex.completed, 0) > 0 THEN 'in_progress'
           WHEN mp.status IS NULL OR mp.status = 'not_started' THEN 'available'
           ELSE 'available'
         END as status
@@ -157,13 +166,27 @@ export class ModulesService {
         WHERE e.module_id = m.id AND e.is_active = true
       ) total_ex ON true
       LEFT JOIN LATERAL (
-        SELECT COUNT(DISTINCT e.id) as completed
-        FROM educational_content.exercises e
-        INNER JOIN progress_tracking.exercise_submissions es
-          ON e.id = es.exercise_id AND es.user_id = $1
-        WHERE e.module_id = m.id
-          AND e.is_active = true
-          AND es.status = 'graded'
+        -- Contar ejercicios completados de AMBAS tablas (arquitectura dual)
+        SELECT COUNT(DISTINCT exercise_id) as completed
+        FROM (
+          -- Ejercicios autocorregibles correctos (exercise_attempts)
+          SELECT ea.exercise_id
+          FROM progress_tracking.exercise_attempts ea
+          INNER JOIN educational_content.exercises e ON e.id = ea.exercise_id
+          WHERE ea.user_id = $1
+            AND e.module_id = m.id
+            AND e.is_active = true
+            AND ea.is_correct = true
+          UNION
+          -- Ejercicios con calificación manual calificados (exercise_submissions)
+          SELECT es.exercise_id
+          FROM progress_tracking.exercise_submissions es
+          INNER JOIN educational_content.exercises e ON e.id = es.exercise_id
+          WHERE es.user_id = $1
+            AND e.module_id = m.id
+            AND e.is_active = true
+            AND es.status = 'graded'
+        ) all_completed
       ) completed_ex ON true
       WHERE m.is_published = true
       ORDER BY m.order_index ASC

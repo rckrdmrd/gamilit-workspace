@@ -18,6 +18,17 @@ import type { Submission } from '@apps/teacher/types';
 // ============================================================================
 
 /**
+ * Paginated submissions response from backend
+ * Matches grading.service.ts:114 structure
+ */
+export interface PaginatedSubmissionsResponse {
+  submissions: Submission[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+/**
  * Query parameters for fetching submissions
  */
 export interface GetSubmissionsQueryDto {
@@ -94,22 +105,25 @@ class GradingAPI {
   /**
    * Get submissions with optional filters
    *
-   * Returns a list of exercise submissions filtered by classroom, assignment,
-   * student, status, module, or date range. Supports pagination.
+   * Returns a paginated list of exercise submissions filtered by classroom,
+   * assignment, student, status, module, or date range.
    *
    * @param filters - Optional query parameters for filtering
-   * @returns Promise<Submission[]> List of submissions
+   * @returns Promise<PaginatedSubmissionsResponse> Paginated submissions data
    * @throws Error if request fails
    *
    * @example
    * ```typescript
    * // Get all pending submissions
-   * const pending = await gradingApi.getSubmissions({ status: 'pending' });
+   * const response = await gradingApi.getSubmissions({ status: 'pending' });
+   * console.log(`Found ${response.total} pending submissions`);
+   * const submissions = response.submissions;
    *
-   * // Get submissions for specific assignment
+   * // Get submissions for specific assignment with pagination
    * const assignmentSubs = await gradingApi.getSubmissions({
    *   assignment_id: 'assignment-123',
-   *   limit: 20
+   *   limit: 20,
+   *   page: 1
    * });
    *
    * // Get submissions for specific student in date range
@@ -120,9 +134,9 @@ class GradingAPI {
    * });
    * ```
    */
-  async getSubmissions(filters?: GetSubmissionsQueryDto): Promise<Submission[]> {
+  async getSubmissions(filters?: GetSubmissionsQueryDto): Promise<PaginatedSubmissionsResponse> {
     try {
-      const { data } = await axiosInstance.get<Submission[]>(this.baseUrl, {
+      const { data } = await axiosInstance.get<PaginatedSubmissionsResponse>(this.baseUrl, {
         params: filters,
       });
       return data;
@@ -159,9 +173,7 @@ class GradingAPI {
    */
   async getSubmissionById(submissionId: string): Promise<SubmissionDetail> {
     try {
-      const { data } = await axiosInstance.get<SubmissionDetail>(
-        `${this.baseUrl}/${submissionId}`
-      );
+      const { data } = await axiosInstance.get<SubmissionDetail>(`${this.baseUrl}/${submissionId}`);
       return data;
     } catch (error) {
       console.error('[GradingAPI] Error fetching submission details:', error);
@@ -193,14 +205,11 @@ class GradingAPI {
    * console.log(`Graded: ${graded.student_name} - ${graded.grade}`);
    * ```
    */
-  async submitFeedback(
-    submissionId: string,
-    feedback: SubmitFeedbackDto
-  ): Promise<Submission> {
+  async submitFeedback(submissionId: string, feedback: SubmitFeedbackDto): Promise<Submission> {
     try {
       const { data } = await axiosInstance.post<Submission>(
         `${this.baseUrl}/${submissionId}/feedback`,
-        feedback
+        feedback,
       );
       return data;
     } catch (error) {
@@ -276,11 +285,11 @@ class GradingAPI {
    */
   async getPendingCount(classroomId?: string): Promise<number> {
     try {
-      const submissions = await this.getSubmissions({
+      const response = await this.getSubmissions({
         status: 'pending',
         classroom_id: classroomId,
       });
-      return submissions.length;
+      return response.total;
     } catch (error) {
       console.error('[GradingAPI] Error fetching pending count:', error);
       throw error;

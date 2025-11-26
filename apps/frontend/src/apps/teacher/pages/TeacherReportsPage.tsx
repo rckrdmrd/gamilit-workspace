@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { TeacherLayout } from '../layouts/TeacherLayout';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
@@ -15,8 +15,12 @@ import {
   Filter,
   ChevronDown,
   RefreshCw,
+  Lock,
+  Info,
 } from 'lucide-react';
 import type { ReportType, ReportFormat } from '../types';
+import axiosInstance from '@services/api/axios.instance';
+import { API_ENDPOINTS } from '@/config/api.config';
 
 interface RecentReport {
   id: string;
@@ -88,15 +92,11 @@ export default function TeacherReportsPage() {
     try {
       setLoading(true);
 
-      // Cargar aulas
-      const classroomsResponse = await fetch('/api/teacher/classrooms', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth-token')}`,
-        },
-      });
+      // Cargar aulas usando API configurada
+      const classroomsResponse = await axiosInstance.get(API_ENDPOINTS.teacher.classrooms);
 
-      if (classroomsResponse.ok) {
-        const classroomsData = await classroomsResponse.json();
+      if (classroomsResponse.data) {
+        const classroomsData = classroomsResponse.data;
         setClassrooms(classroomsData);
         if (classroomsData.length > 0) {
           setSelectedClassroom(classroomsData[0].id);
@@ -117,15 +117,12 @@ export default function TeacherReportsPage() {
 
   const loadStudents = async (classroomId: string) => {
     try {
-      const response = await fetch(`/api/teacher/classrooms/${classroomId}/students`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth-token')}`,
-        },
-      });
+      const response = await axiosInstance.get(
+        API_ENDPOINTS.teacher.classroomStudents(classroomId),
+      );
 
-      if (response.ok) {
-        const data = await response.json();
-        setStudents(data);
+      if (response.data) {
+        setStudents(response.data);
       }
     } catch (error) {
       console.error('Error loading students:', error);
@@ -142,16 +139,8 @@ export default function TeacherReportsPage() {
 
   const loadRecentReports = async () => {
     try {
-      const response = await fetch('/api/reports/recent', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth-token')}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setRecentReports(data);
-      }
+      const response = await axiosInstance.get(API_ENDPOINTS.teacher.reports.recent);
+      setRecentReports(response.data);
     } catch (error) {
       console.error('Error loading recent reports:', error);
       // Fallback con datos mock
@@ -192,16 +181,8 @@ export default function TeacherReportsPage() {
 
   const loadReportStats = async () => {
     try {
-      const response = await fetch('/api/reports/stats', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth-token')}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setReportStats(data);
-      }
+      const response = await axiosInstance.get(API_ENDPOINTS.teacher.reports.stats);
+      setReportStats(response.data);
     } catch (error) {
       console.error('Error loading report stats:', error);
       // Fallback con datos mock
@@ -214,31 +195,20 @@ export default function TeacherReportsPage() {
     }
   };
 
-  const handleReportGenerated = async (report: any) => {
-    console.log('Reporte generado:', report);
-    // Recargar la lista de reportes recientes
-    await loadRecentReports();
-    await loadReportStats();
-  };
-
   const downloadReport = async (reportId: string) => {
     try {
-      const response = await fetch(`/api/reports/${reportId}/download`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth-token')}`,
-        },
+      const response = await axiosInstance.get(API_ENDPOINTS.teacher.reports.download(reportId), {
+        responseType: 'blob',
       });
 
-      if (response.ok) {
-        const blob = await response.blob();
-        const report = recentReports.find((r) => r.id === reportId);
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${report?.name || 'report'}.${report?.format || 'pdf'}`;
-        a.click();
-        window.URL.revokeObjectURL(url);
-      }
+      const blob = response.data;
+      const report = recentReports.find((r) => r.id === reportId);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${report?.name || 'report'}.${report?.format || 'pdf'}`;
+      a.click();
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error downloading report:', error);
       alert('Error al descargar el reporte. Por favor, intenta nuevamente.');
@@ -296,7 +266,7 @@ export default function TeacherReportsPage() {
   };
 
   const filteredReports = recentReports.filter(
-    (report) => filterType === 'all' || report.type === filterType
+    (report) => filterType === 'all' || report.type === filterType,
   );
 
   if (loading) {
@@ -307,9 +277,9 @@ export default function TeacherReportsPage() {
         organizationName="GLIT Platform"
         onLogout={handleLogout}
       >
-        <div className="flex items-center justify-center min-h-screen">
+        <div className="flex min-h-screen items-center justify-center">
           <div className="text-center">
-            <RefreshCw className="w-12 h-12 text-detective-orange animate-spin mx-auto mb-4" />
+            <RefreshCw className="mx-auto mb-4 h-12 w-12 animate-spin text-detective-orange" />
             <p className="text-detective-text-secondary">Cargando datos...</p>
           </div>
         </div>
@@ -326,35 +296,32 @@ export default function TeacherReportsPage() {
     >
       <div className="space-y-6 p-6">
         {/* Header */}
-        <div className="flex justify-between items-start">
+        <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-detective-text mb-2">
-              Reportes y Estadísticas
-            </h1>
+            <h1 className="mb-2 text-3xl font-bold text-detective-text">Reportes y Estadísticas</h1>
             <p className="text-detective-text-secondary">
               Genera reportes personalizados y analiza el desempeño de tus estudiantes
             </p>
           </div>
           <DetectiveButton
             variant="secondary"
-
             onClick={() => {
               loadRecentReports();
               loadReportStats();
             }}
           >
-            <RefreshCw className="w-4 h-4" />
+            <RefreshCw className="h-4 w-4" />
             Actualizar
           </DetectiveButton>
         </div>
 
         {/* Stats Cards */}
         {reportStats && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             <DetectiveCard>
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-detective-orange bg-opacity-10 rounded-lg">
-                  <FileText className="w-6 h-6 text-detective-orange" />
+                <div className="rounded-lg bg-detective-orange bg-opacity-10 p-3">
+                  <FileText className="h-6 w-6 text-detective-orange" />
                 </div>
                 <div>
                   <p className="text-sm text-detective-text-secondary">Total Generados</p>
@@ -367,8 +334,8 @@ export default function TeacherReportsPage() {
 
             <DetectiveCard>
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-green-500 bg-opacity-10 rounded-lg">
-                  <Calendar className="w-6 h-6 text-green-500" />
+                <div className="rounded-lg bg-green-500 bg-opacity-10 p-3">
+                  <Calendar className="h-6 w-6 text-green-500" />
                 </div>
                 <div>
                   <p className="text-sm text-detective-text-secondary">Último Reporte</p>
@@ -381,12 +348,12 @@ export default function TeacherReportsPage() {
 
             <DetectiveCard>
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-detective-accent bg-opacity-10 rounded-lg">
-                  <TrendingUp className="w-6 h-6 text-detective-accent" />
+                <div className="bg-detective-accent rounded-lg bg-opacity-10 p-3">
+                  <TrendingUp className="text-detective-accent h-6 w-6" />
                 </div>
                 <div>
                   <p className="text-sm text-detective-text-secondary">Formato Preferido</p>
-                  <p className="text-lg font-bold text-detective-text uppercase">
+                  <p className="text-lg font-bold uppercase text-detective-text">
                     {reportStats.mostUsedFormat}
                   </p>
                 </div>
@@ -395,8 +362,8 @@ export default function TeacherReportsPage() {
 
             <DetectiveCard>
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-detective-gold bg-opacity-10 rounded-lg">
-                  <Users className="w-6 h-6 text-detective-gold" />
+                <div className="rounded-lg bg-detective-gold bg-opacity-10 p-3">
+                  <Users className="h-6 w-6 text-detective-gold" />
                 </div>
                 <div>
                   <p className="text-sm text-detective-text-secondary">Promedio Estudiantes</p>
@@ -412,15 +379,15 @@ export default function TeacherReportsPage() {
         {/* Classroom Selector */}
         <DetectiveCard>
           <div className="flex items-center gap-4">
-            <Users className="w-6 h-6 text-detective-orange" />
+            <Users className="h-6 w-6 text-detective-orange" />
             <div className="flex-1">
-              <label className="block text-sm font-semibold text-detective-text mb-2">
+              <label className="mb-2 block text-sm font-semibold text-detective-text">
                 Selecciona un Aula
               </label>
               <select
                 value={selectedClassroom}
                 onChange={(e) => setSelectedClassroom(e.target.value)}
-                className="w-full px-4 py-2 bg-detective-bg-secondary text-detective-text border border-detective-orange rounded-lg focus:outline-none focus:ring-2 focus:ring-detective-orange"
+                className="w-full rounded-lg border border-detective-orange bg-detective-bg-secondary px-4 py-2 text-detective-text focus:outline-none focus:ring-2 focus:ring-detective-orange"
               >
                 {classrooms.length === 0 ? (
                   <option value="">No hay aulas disponibles</option>
@@ -438,28 +405,21 @@ export default function TeacherReportsPage() {
 
         {/* Report Generator */}
         {selectedClassroom && students.length > 0 && (
-          <ReportGenerator
-            classroomId={selectedClassroom}
-            students={students}
-          />
+          <ReportGenerator classroomId={selectedClassroom} students={students} />
         )}
 
         {/* Recent Reports Section */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Clock className="w-6 h-6 text-detective-orange" />
+              <Clock className="h-6 w-6 text-detective-orange" />
               <h2 className="text-2xl font-bold text-detective-text">Reportes Recientes</h2>
             </div>
-            <DetectiveButton
-              variant="secondary"
-
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              <Filter className="w-4 h-4" />
+            <DetectiveButton variant="secondary" onClick={() => setShowFilters(!showFilters)}>
+              <Filter className="h-4 w-4" />
               Filtrar
               <ChevronDown
-                className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`}
+                className={`h-4 w-4 transition-transform ${showFilters ? 'rotate-180' : ''}`}
               />
             </DetectiveButton>
           </div>
@@ -470,7 +430,7 @@ export default function TeacherReportsPage() {
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setFilterType('all')}
-                  className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                  className={`rounded-lg px-4 py-2 font-semibold transition-colors ${
                     filterType === 'all'
                       ? 'bg-detective-orange text-white'
                       : 'bg-detective-bg-secondary text-detective-text hover:bg-opacity-80'
@@ -483,7 +443,7 @@ export default function TeacherReportsPage() {
                     <button
                       key={type}
                       onClick={() => setFilterType(type)}
-                      className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                      className={`rounded-lg px-4 py-2 font-semibold transition-colors ${
                         filterType === type
                           ? 'bg-detective-orange text-white'
                           : 'bg-detective-bg-secondary text-detective-text hover:bg-opacity-80'
@@ -491,7 +451,7 @@ export default function TeacherReportsPage() {
                     >
                       {getReportTypeLabel(type)}
                     </button>
-                  )
+                  ),
                 )}
               </div>
             </DetectiveCard>
@@ -500,14 +460,14 @@ export default function TeacherReportsPage() {
           {/* Reports List */}
           {filteredReports.length === 0 ? (
             <DetectiveCard>
-              <div className="text-center py-12">
-                <FileText className="w-16 h-16 text-detective-text-secondary mx-auto mb-4 opacity-50" />
-                <p className="text-detective-text-secondary text-lg">
+              <div className="py-12 text-center">
+                <FileText className="mx-auto mb-4 h-16 w-16 text-detective-text-secondary opacity-50" />
+                <p className="text-lg text-detective-text-secondary">
                   {filterType === 'all'
                     ? 'No hay reportes generados aún'
                     : `No hay reportes de tipo "${getReportTypeLabel(filterType as ReportType)}"`}
                 </p>
-                <p className="text-detective-text-secondary text-sm mt-2">
+                <p className="mt-2 text-sm text-detective-text-secondary">
                   Genera tu primer reporte usando el formulario anterior
                 </p>
               </div>
@@ -515,49 +475,48 @@ export default function TeacherReportsPage() {
           ) : (
             <div className="grid grid-cols-1 gap-4">
               {filteredReports.map((report) => (
-                <DetectiveCard key={report.id} className="hover:border-detective-orange transition-colors">
+                <DetectiveCard
+                  key={report.id}
+                  className="transition-colors hover:border-detective-orange"
+                >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-start gap-4 flex-1">
-                      <div className="p-3 bg-detective-bg-secondary rounded-lg">
-                        <FileText className="w-6 h-6 text-detective-orange" />
+                    <div className="flex flex-1 items-start gap-4">
+                      <div className="rounded-lg bg-detective-bg-secondary p-3">
+                        <FileText className="h-6 w-6 text-detective-orange" />
                       </div>
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
+                        <div className="mb-1 flex items-center gap-2">
                           <h3 className="font-bold text-detective-text">{report.name}</h3>
                           <span
-                            className={`px-2 py-1 text-xs font-bold rounded ${getReportTypeColor(
-                              report.type
+                            className={`rounded px-2 py-1 text-xs font-bold ${getReportTypeColor(
+                              report.type,
                             )}`}
                           >
                             {getReportTypeLabel(report.type)}
                           </span>
-                          <span className="px-2 py-1 text-xs font-bold rounded bg-detective-bg-secondary text-detective-text">
+                          <span className="rounded bg-detective-bg-secondary px-2 py-1 text-xs font-bold text-detective-text">
                             {getFormatIcon(report.format)}
                           </span>
                         </div>
                         <div className="flex items-center gap-4 text-sm text-detective-text-secondary">
                           <span className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
+                            <Calendar className="h-4 w-4" />
                             {report.period}
                           </span>
                           <span className="flex items-center gap-1">
-                            <Users className="w-4 h-4" />
+                            <Users className="h-4 w-4" />
                             {report.studentCount} estudiantes
                           </span>
                           <span className="flex items-center gap-1">
-                            <Clock className="w-4 h-4" />
+                            <Clock className="h-4 w-4" />
                             {formatDate(report.generatedAt)}
                           </span>
                           <span>{report.size}</span>
                         </div>
                       </div>
                     </div>
-                    <DetectiveButton
-                      variant="primary"
-
-                      onClick={() => downloadReport(report.id)}
-                    >
-                      <Download className="w-4 h-4" />
+                    <DetectiveButton variant="primary" onClick={() => downloadReport(report.id)}>
+                      <Download className="h-4 w-4" />
                       Descargar
                     </DetectiveButton>
                   </div>
@@ -568,16 +527,16 @@ export default function TeacherReportsPage() {
         </div>
 
         {/* Info Section */}
-        <DetectiveCard className="bg-detective-orange bg-opacity-5 border-detective-orange">
+        <DetectiveCard className="border-detective-orange bg-detective-orange bg-opacity-5">
           <div className="flex items-start gap-4">
-            <div className="p-3 bg-detective-orange text-white rounded-lg">
-              <TrendingUp className="w-6 h-6" />
+            <div className="rounded-lg bg-detective-orange p-3 text-white">
+              <TrendingUp className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="font-bold text-detective-text mb-2">Tipos de Reportes Disponibles</h3>
+              <h3 className="mb-2 font-bold text-detective-text">Tipos de Reportes Disponibles</h3>
               <ul className="space-y-2 text-sm text-detective-text-secondary">
                 <li className="flex items-start gap-2">
-                  <span className="text-detective-orange mt-1">•</span>
+                  <span className="mt-1 text-detective-orange">•</span>
                   <div>
                     <strong className="text-detective-text">Reporte de Progreso:</strong> Análisis
                     completo del progreso de estudiantes, incluyendo completitud por módulo, scores
@@ -585,7 +544,7 @@ export default function TeacherReportsPage() {
                   </div>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-detective-orange mt-1">•</span>
+                  <span className="mt-1 text-detective-orange">•</span>
                   <div>
                     <strong className="text-detective-text">Reporte de Evaluación:</strong>{' '}
                     Evaluación integral del rendimiento con scores finales, logros alcanzados y
@@ -593,29 +552,88 @@ export default function TeacherReportsPage() {
                   </div>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-detective-orange mt-1">•</span>
+                  <span className="mt-1 text-detective-orange">•</span>
                   <div>
                     <strong className="text-detective-text">Reporte de Intervención:</strong>{' '}
-                    Identifica estudiantes que requieren atención especial, con alertas y acciones de
-                    seguimiento.
+                    Identifica estudiantes que requieren atención especial, con alertas y acciones
+                    de seguimiento.
                   </div>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-detective-orange mt-1">•</span>
+                  <span className="mt-1 text-detective-orange">•</span>
                   <div>
                     <strong className="text-detective-text">Reporte Personalizado:</strong> Crea
                     reportes con métricas específicas según tus necesidades.
                   </div>
                 </li>
               </ul>
-              <p className="text-sm text-detective-text-secondary mt-4">
-                <strong className="text-detective-text">Formatos de exportación:</strong> PDF (lectura
-                y presentación), Excel (análisis y manipulación de datos), CSV (integración con otras
-                herramientas).
+              <p className="mt-4 text-sm text-detective-text-secondary">
+                <strong className="text-detective-text">Formatos de exportación:</strong> PDF
+                (lectura y presentación), Excel (análisis y manipulación de datos), CSV (integración
+                con otras herramientas).
               </p>
             </div>
           </div>
         </DetectiveCard>
+
+        {/* ML Analysis Info Card */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <DetectiveCard className="border-blue-500 bg-blue-500 bg-opacity-5">
+            <div className="flex items-start gap-4">
+              <div className="rounded-lg bg-blue-500 p-3 text-white">
+                <Info className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="mb-2 font-bold text-detective-text">Análisis de Riesgo Incluido</h3>
+                <p className="mb-3 text-sm text-detective-text-secondary">
+                  Los reportes generados incluyen análisis de riesgo basado en datos históricos y
+                  métricas de rendimiento. Estos cálculos ayudan a identificar estudiantes que
+                  podrían necesitar intervención.
+                </p>
+                <div className="flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2 text-xs text-blue-600">
+                  <Info className="h-4 w-4" />
+                  <span className="font-semibold">Nota:</span>
+                  <span>Las predicciones actuales se basan en heurísticas simples</span>
+                </div>
+              </div>
+            </div>
+          </DetectiveCard>
+
+          <DetectiveCard className="border-purple-500 bg-purple-500 bg-opacity-5">
+            <div className="flex items-start gap-4">
+              <div className="rounded-lg bg-purple-500 p-3 text-white">
+                <Lock className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="mb-2 flex items-center gap-2 font-bold text-detective-text">
+                  Análisis Predictivo Avanzado
+                  <span className="rounded bg-purple-500 px-2 py-1 text-xs font-bold text-white">
+                    PRÓXIMAMENTE
+                  </span>
+                </h3>
+                <p className="text-sm text-detective-text-secondary">
+                  Próximamente estará disponible análisis predictivo avanzado con Machine Learning,
+                  incluyendo modelos de predicción de abandono, recomendaciones personalizadas
+                  basadas en IA, y análisis de patrones de aprendizaje.
+                </p>
+                <ul className="mt-3 space-y-1 text-xs text-detective-text-secondary">
+                  <li className="flex items-center gap-2">
+                    <span className="text-purple-500">▸</span>
+                    Modelos de ML entrenados con datos históricos
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-purple-500">▸</span>
+                    Predicciones de rendimiento futuro
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-purple-500">▸</span>
+                    Recomendaciones de intervención automatizadas
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </DetectiveCard>
+        </div>
       </div>
     </TeacherLayout>
   );

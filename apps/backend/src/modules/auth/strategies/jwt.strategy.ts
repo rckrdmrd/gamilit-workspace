@@ -46,8 +46,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     // Retornar user para req.user (sin password)
     // Fix: Usar deleted_at y email_confirmed_at en lugar de status y email_verified
+    // Fix: Incluir 'sub' para compatibilidad con controladores que usan req.user.sub
     return {
       id: user.id,
+      sub: user.id, // 🔧 FIX: Agregar 'sub' para compatibilidad con req.user.sub
       email: user.email,
       role: user.role,
       is_active: !user.deleted_at, // Usuario activo si no está eliminado

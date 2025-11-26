@@ -77,6 +77,12 @@ export class TeacherClassroom {
   @JoinColumn({ name: 'classroom_id' })
   classroom!: Classroom;
 
+  /**
+   * ID del tenant propietario (FK → auth_management.tenants)
+   */
+  @Column({ type: 'uuid' })
+  tenant_id!: string;
+
   // =====================================================
   // ROLE & STATUS
   // =====================================================

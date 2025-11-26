@@ -825,8 +825,12 @@ load_seeds() {
         "$SEEDS_DIR/auth_management/01-tenants.sql"
         "$SEEDS_DIR/auth_management/02-auth_providers.sql"
         "$SEEDS_DIR/auth/01-demo-users.sql"
-        "$SEEDS_DIR/auth/02-test-users.sql"
+        "$SEEDS_DIR/auth/02-production-users.sql"           # ✅ PROD: Usuarios reales (13)
+        "$SEEDS_DIR/auth/02-test-users.sql"                 # ✅ DEV: Usuarios de prueba (3)
         "$SEEDS_DIR/auth_management/03-profiles.sql"
+        "$SEEDS_DIR/auth_management/04-profiles-testing.sql"  # ✅ PROD: Profiles @gamilit.com (3)
+        "$SEEDS_DIR/auth_management/05-profiles-demo.sql"     # ✅ PROD: Profiles demo (20)
+        "$SEEDS_DIR/auth_management/06-profiles-production.sql"  # ✅ PROD: Profiles reales (13)
         "$SEEDS_DIR/auth_management/04-user_roles.sql"
         "$SEEDS_DIR/auth_management/05-user_preferences.sql"
         "$SEEDS_DIR/auth_management/06-auth_attempts.sql"
@@ -834,8 +838,9 @@ load_seeds() {
         "$SEEDS_DIR/system_configuration/01-system_settings.sql"
         "$SEEDS_DIR/system_configuration/02-feature_flags.sql"
         "$SEEDS_DIR/gamification_system/01-achievement_categories.sql"
-        "$SEEDS_DIR/gamification_system/02-achievements.sql"
-        "$SEEDS_DIR/gamification_system/03-leaderboard_metadata.sql"
+        "$SEEDS_DIR/gamification_system/02-leaderboard_metadata.sql"
+        "$SEEDS_DIR/gamification_system/03-maya_ranks.sql"
+        "$SEEDS_DIR/gamification_system/04-achievements.sql"
         "$SEEDS_DIR/gamification_system/04-initialize_user_gamification.sql"
         "$SEEDS_DIR/educational_content/01-modules.sql"
         "$SEEDS_DIR/educational_content/02-exercises-module1.sql"

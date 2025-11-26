@@ -15,7 +15,7 @@
  * Total: 18 tests
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useExerciseRewards } from '../useExerciseRewards';
 import type { ExerciseHint } from '../../types/exercise.types';
@@ -52,9 +52,7 @@ describe('useExerciseRewards', () => {
 
   describe('Hook Initialization', () => {
     it('should initialize with default state', () => {
-      const { result } = renderHook(() =>
-        useExerciseRewards({ initialMLCoins: 100 })
-      );
+      const { result } = renderHook(() => useExerciseRewards({ initialMLCoins: 100 }));
 
       expect(result.current.mlCoinsBalance).toBe(100);
       expect(result.current.mlCoinsSpent).toBe(0);
@@ -70,7 +68,7 @@ describe('useExerciseRewards', () => {
         useExerciseRewards({
           initialMLCoins: 50,
           onMLCoinsChange,
-        })
+        }),
       );
 
       expect(result.current.mlCoinsBalance).toBe(50);
@@ -83,27 +81,21 @@ describe('useExerciseRewards', () => {
 
   describe('Hint Affordability', () => {
     it('should return true when user can afford hint', () => {
-      const { result } = renderHook(() =>
-        useExerciseRewards({ initialMLCoins: 100 })
-      );
+      const { result } = renderHook(() => useExerciseRewards({ initialMLCoins: 100 }));
 
       expect(result.current.canAffordHint(mockHint1)).toBe(true);
       expect(result.current.canAffordHint(mockHint2)).toBe(true);
     });
 
     it('should return false when user cannot afford hint', () => {
-      const { result } = renderHook(() =>
-        useExerciseRewards({ initialMLCoins: 5 })
-      );
+      const { result } = renderHook(() => useExerciseRewards({ initialMLCoins: 5 }));
 
       expect(result.current.canAffordHint(mockHint1)).toBe(false);
       expect(result.current.canAffordHint(mockExpensiveHint)).toBe(false);
     });
 
     it('should return true when balance exactly matches hint cost', () => {
-      const { result } = renderHook(() =>
-        useExerciseRewards({ initialMLCoins: 10 })
-      );
+      const { result } = renderHook(() => useExerciseRewards({ initialMLCoins: 10 }));
 
       expect(result.current.canAffordHint(mockHint1)).toBe(true);
     });
@@ -115,9 +107,7 @@ describe('useExerciseRewards', () => {
 
   describe('Unlock Hints', () => {
     it('should unlock hint and deduct ML Coins', () => {
-      const { result } = renderHook(() =>
-        useExerciseRewards({ initialMLCoins: 100 })
-      );
+      const { result } = renderHook(() => useExerciseRewards({ initialMLCoins: 100 }));
 
       act(() => {
         const success = result.current.unlockHint(mockHint1);
@@ -130,9 +120,7 @@ describe('useExerciseRewards', () => {
     });
 
     it('should not unlock hint if insufficient funds', () => {
-      const { result } = renderHook(() =>
-        useExerciseRewards({ initialMLCoins: 5 })
-      );
+      const { result } = renderHook(() => useExerciseRewards({ initialMLCoins: 5 }));
 
       act(() => {
         const success = result.current.unlockHint(mockHint1);
@@ -145,9 +133,7 @@ describe('useExerciseRewards', () => {
     });
 
     it('should not charge for already unlocked hint', () => {
-      const { result } = renderHook(() =>
-        useExerciseRewards({ initialMLCoins: 100 })
-      );
+      const { result } = renderHook(() => useExerciseRewards({ initialMLCoins: 100 }));
 
       // First unlock
       act(() => {
@@ -167,9 +153,7 @@ describe('useExerciseRewards', () => {
     });
 
     it('should unlock multiple hints and track spent coins', () => {
-      const { result } = renderHook(() =>
-        useExerciseRewards({ initialMLCoins: 100 })
-      );
+      const { result } = renderHook(() => useExerciseRewards({ initialMLCoins: 100 }));
 
       // Split into separate act() calls to allow state updates
       act(() => {
@@ -194,9 +178,7 @@ describe('useExerciseRewards', () => {
 
   describe('XP Calculations', () => {
     it('should calculate full XP for correct answer without hints', () => {
-      const { result } = renderHook(() =>
-        useExerciseRewards({ initialMLCoins: 100 })
-      );
+      const { result } = renderHook(() => useExerciseRewards({ initialMLCoins: 100 }));
 
       const xp = result.current.calculateXPEarned(100, true, 0);
 
@@ -204,9 +186,7 @@ describe('useExerciseRewards', () => {
     });
 
     it('should apply penalty for hints used', () => {
-      const { result } = renderHook(() =>
-        useExerciseRewards({ initialMLCoins: 100 })
-      );
+      const { result } = renderHook(() => useExerciseRewards({ initialMLCoins: 100 }));
 
       // 1 hint = 10% penalty
       const xpWith1Hint = result.current.calculateXPEarned(100, true, 1);
@@ -222,9 +202,7 @@ describe('useExerciseRewards', () => {
     });
 
     it('should return 0 XP for incorrect answer', () => {
-      const { result } = renderHook(() =>
-        useExerciseRewards({ initialMLCoins: 100 })
-      );
+      const { result } = renderHook(() => useExerciseRewards({ initialMLCoins: 100 }));
 
       const xp = result.current.calculateXPEarned(100, false, 0);
 
@@ -238,9 +216,7 @@ describe('useExerciseRewards', () => {
 
   describe('ML Coins Calculations', () => {
     it('should calculate full ML Coins for correct answer without hints', () => {
-      const { result } = renderHook(() =>
-        useExerciseRewards({ initialMLCoins: 100 })
-      );
+      const { result } = renderHook(() => useExerciseRewards({ initialMLCoins: 100 }));
 
       const coins = result.current.calculateMLCoinsEarned(50, true, 0);
 
@@ -248,9 +224,7 @@ describe('useExerciseRewards', () => {
     });
 
     it('should apply penalty for hints used', () => {
-      const { result } = renderHook(() =>
-        useExerciseRewards({ initialMLCoins: 100 })
-      );
+      const { result } = renderHook(() => useExerciseRewards({ initialMLCoins: 100 }));
 
       // 1 hint = 5% penalty
       const coinsWith1Hint = result.current.calculateMLCoinsEarned(100, true, 1);
@@ -266,9 +240,7 @@ describe('useExerciseRewards', () => {
     });
 
     it('should return 0 ML Coins for incorrect answer', () => {
-      const { result } = renderHook(() =>
-        useExerciseRewards({ initialMLCoins: 100 })
-      );
+      const { result } = renderHook(() => useExerciseRewards({ initialMLCoins: 100 }));
 
       const coins = result.current.calculateMLCoinsEarned(50, false, 0);
 
@@ -282,9 +254,7 @@ describe('useExerciseRewards', () => {
 
   describe('Add ML Coins', () => {
     it('should add ML Coins to balance', () => {
-      const { result } = renderHook(() =>
-        useExerciseRewards({ initialMLCoins: 100 })
-      );
+      const { result } = renderHook(() => useExerciseRewards({ initialMLCoins: 100 }));
 
       act(() => {
         result.current.addMLCoins(50);
@@ -300,7 +270,7 @@ describe('useExerciseRewards', () => {
         useExerciseRewards({
           initialMLCoins: 100,
           onMLCoinsChange,
-        })
+        }),
       );
 
       act(() => {
@@ -318,9 +288,7 @@ describe('useExerciseRewards', () => {
 
   describe('Reset Functionality', () => {
     it('should reset spent coins and unlocked hints', () => {
-      const { result } = renderHook(() =>
-        useExerciseRewards({ initialMLCoins: 100 })
-      );
+      const { result } = renderHook(() => useExerciseRewards({ initialMLCoins: 100 }));
 
       // Unlock some hints (separate act() calls for state batching)
       act(() => {
@@ -358,7 +326,7 @@ describe('useExerciseRewards', () => {
         useExerciseRewards({
           initialMLCoins: 100,
           onMLCoinsChange,
-        })
+        }),
       );
 
       // Start: 100 ML Coins

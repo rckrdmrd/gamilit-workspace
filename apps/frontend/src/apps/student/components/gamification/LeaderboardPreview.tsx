@@ -59,30 +59,16 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
   const [filter, setFilter] = useState<LeaderboardFilter>('global');
 
   const filters: { id: LeaderboardFilter; label: string; icon: React.ReactNode }[] = [
-    { id: 'global', label: 'Global', icon: <Globe className="w-4 h-4" /> },
-    { id: 'school', label: 'Escuela', icon: <School className="w-4 h-4" /> },
-    { id: 'grade', label: 'Grado', icon: <Users className="w-4 h-4" /> },
-    { id: 'friends', label: 'Amigos', icon: <UserPlus className="w-4 h-4" /> },
+    { id: 'global', label: 'Global', icon: <Globe className="h-4 w-4" /> },
+    { id: 'school', label: 'Escuela', icon: <School className="h-4 w-4" /> },
+    { id: 'grade', label: 'Grado', icon: <Users className="h-4 w-4" /> },
+    { id: 'friends', label: 'Amigos', icon: <UserPlus className="h-4 w-4" /> },
   ];
-
-  const getRankColor = (rank: number) => {
-    if (rank === 1) return 'from-yellow-400 to-yellow-600';
-    if (rank === 2) return 'from-gray-300 to-gray-500';
-    if (rank === 3) return 'from-orange-400 to-orange-600';
-    return 'from-blue-500 to-cyan-500';
-  };
-
-  const getRankIcon = (rank: number) => {
-    if (rank === 1) return Trophy;
-    if (rank === 2) return Medal;
-    if (rank === 3) return Award;
-    return Users;
-  };
 
   if (!position) {
     return (
-      <div className="text-center py-12">
-        <Users className="w-12 h-12 text-detective-text-secondary mx-auto mb-4" />
+      <div className="py-12 text-center">
+        <Users className="mx-auto mb-4 h-12 w-12 text-detective-text-secondary" />
         <p className="text-detective-text-secondary">No hay datos de clasificación disponibles</p>
       </div>
     );
@@ -90,9 +76,9 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h2 className="text-2xl font-bold text-detective-text flex items-center gap-2">
-          <Trophy className="w-7 h-7 text-blue-600" />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="flex items-center gap-2 text-2xl font-bold text-detective-text">
+          <Trophy className="h-7 w-7 text-blue-600" />
           Dónde Te Encuentras
         </h2>
 
@@ -104,10 +90,10 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setFilter(f.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
+              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
                 filter === f.id
                   ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-white text-detective-text-secondary border border-gray-200 hover:border-blue-600'
+                  : 'border border-gray-200 bg-white text-detective-text-secondary hover:border-blue-600'
               }`}
             >
               {f.icon}
@@ -122,7 +108,7 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1 }}
-        className="bg-gradient-to-r from-blue-50 via-cyan-50 to-blue-50 rounded-xl p-6 shadow-lg border-2 border-blue-200"
+        className="rounded-xl border-2 border-blue-200 bg-gradient-to-r from-blue-50 via-cyan-50 to-blue-50 p-6 shadow-lg"
       >
         <div className="flex items-center gap-6">
           {/* Position Badge */}
@@ -132,7 +118,7 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
             transition={{ type: 'spring', stiffness: 150, delay: 0.3 }}
             className="relative"
           >
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center shadow-xl border-4 border-white">
+            <div className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-white bg-gradient-to-br from-blue-500 to-cyan-600 shadow-xl">
               <div className="text-center">
                 <div className="text-3xl font-bold text-white">#{position.position}</div>
                 <div className="text-xs text-white/80">Posición</div>
@@ -159,7 +145,7 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-2xl font-bold text-detective-text mb-2"
+              className="mb-2 text-2xl font-bold text-detective-text"
             >
               {position.entry.username}
             </motion.h3>
@@ -170,7 +156,7 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
               >
-                <div className="text-xs text-detective-text-secondary mb-1">Puntos</div>
+                <div className="mb-1 text-xs text-detective-text-secondary">Puntos</div>
                 <div className="text-xl font-bold text-detective-text">
                   {position.entry.score.toLocaleString()}
                 </div>
@@ -181,7 +167,7 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
               >
-                <div className="text-xs text-detective-text-secondary mb-1">Top</div>
+                <div className="mb-1 text-xs text-detective-text-secondary">Top</div>
                 <div className="text-xl font-bold text-blue-600">
                   {position.percentile.toFixed(1)}%
                 </div>
@@ -192,24 +178,24 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.7 }}
               >
-                <div className="text-xs text-detective-text-secondary mb-1">Cambio</div>
+                <div className="mb-1 text-xs text-detective-text-secondary">Cambio</div>
                 <div className="flex items-center gap-1">
                   {position.entry.changeType === 'up' && (
-                    <TrendingUp className="w-5 h-5 text-green-600" />
+                    <TrendingUp className="h-5 w-5 text-green-600" />
                   )}
                   {position.entry.changeType === 'down' && (
-                    <TrendingDown className="w-5 h-5 text-red-600" />
+                    <TrendingDown className="h-5 w-5 text-red-600" />
                   )}
                   {position.entry.changeType === 'same' && (
-                    <Minus className="w-5 h-5 text-gray-400" />
+                    <Minus className="h-5 w-5 text-gray-400" />
                   )}
                   <span
                     className={`text-xl font-bold ${
                       position.entry.changeType === 'up'
                         ? 'text-green-600'
                         : position.entry.changeType === 'down'
-                        ? 'text-red-600'
-                        : 'text-gray-400'
+                          ? 'text-red-600'
+                          : 'text-gray-400'
                     }`}
                   >
                     {Math.abs(position.entry.change) > 0 ? Math.abs(position.entry.change) : '-'}
@@ -226,15 +212,15 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8 }}
-        className="bg-white rounded-xl p-6 shadow-md border border-gray-200"
+        className="rounded-xl border border-gray-200 bg-white p-6 shadow-md"
       >
-        <h3 className="font-semibold text-detective-text mb-4 flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-detective-gold" />
+        <h3 className="mb-4 flex items-center gap-2 font-semibold text-detective-text">
+          <Sparkles className="h-5 w-5 text-detective-gold" />
           Top 3 Líderes
         </h3>
 
         {/* Podium Display */}
-        <div className="flex items-end justify-center gap-4 mb-6">
+        <div className="mb-6 flex items-end justify-center gap-4">
           {/* 2nd Place */}
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -245,13 +231,13 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
             <img
               src={mockTop3[1].avatar}
               alt={mockTop3[1].username}
-              className="w-16 h-16 rounded-full border-4 border-gray-300 mb-2"
+              className="mb-2 h-16 w-16 rounded-full border-4 border-gray-300"
             />
-            <div className="w-20 h-24 bg-gradient-to-t from-gray-300 to-gray-400 rounded-t-lg flex flex-col items-center justify-center text-white shadow-lg">
-              <Medal className="w-8 h-8 mb-1" />
+            <div className="flex h-24 w-20 flex-col items-center justify-center rounded-t-lg bg-gradient-to-t from-gray-300 to-gray-400 text-white shadow-lg">
+              <Medal className="mb-1 h-8 w-8" />
               <span className="text-2xl font-bold">2</span>
             </div>
-            <p className="text-xs font-semibold text-detective-text mt-2 text-center">
+            <p className="mt-2 text-center text-xs font-semibold text-detective-text">
               {mockTop3[1].username.split(' ')[0]}
             </p>
             <p className="text-xs text-detective-text-secondary">
@@ -278,14 +264,14 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
               <img
                 src={mockTop3[0].avatar}
                 alt={mockTop3[0].username}
-                className="w-20 h-20 rounded-full border-4 border-yellow-400 mb-2"
+                className="mb-2 h-20 w-20 rounded-full border-4 border-yellow-400"
               />
             </motion.div>
-            <div className="w-24 h-32 bg-gradient-to-t from-yellow-400 to-yellow-500 rounded-t-lg flex flex-col items-center justify-center text-white shadow-xl">
-              <Trophy className="w-10 h-10 mb-1" />
+            <div className="flex h-32 w-24 flex-col items-center justify-center rounded-t-lg bg-gradient-to-t from-yellow-400 to-yellow-500 text-white shadow-xl">
+              <Trophy className="mb-1 h-10 w-10" />
               <span className="text-3xl font-bold">1</span>
             </div>
-            <p className="text-sm font-bold text-detective-text mt-2 text-center">
+            <p className="mt-2 text-center text-sm font-bold text-detective-text">
               {mockTop3[0].username.split(' ')[0]}
             </p>
             <p className="text-xs text-detective-text-secondary">
@@ -303,13 +289,13 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
             <img
               src={mockTop3[2].avatar}
               alt={mockTop3[2].username}
-              className="w-16 h-16 rounded-full border-4 border-orange-400 mb-2"
+              className="mb-2 h-16 w-16 rounded-full border-4 border-orange-400"
             />
-            <div className="w-20 h-20 bg-gradient-to-t from-orange-400 to-orange-500 rounded-t-lg flex flex-col items-center justify-center text-white shadow-lg">
-              <Award className="w-8 h-8 mb-1" />
+            <div className="flex h-20 w-20 flex-col items-center justify-center rounded-t-lg bg-gradient-to-t from-orange-400 to-orange-500 text-white shadow-lg">
+              <Award className="mb-1 h-8 w-8" />
               <span className="text-2xl font-bold">3</span>
             </div>
-            <p className="text-xs font-semibold text-detective-text mt-2 text-center">
+            <p className="mt-2 text-center text-xs font-semibold text-detective-text">
               {mockTop3[2].username.split(' ')[0]}
             </p>
             <p className="text-xs text-detective-text-secondary">
@@ -330,11 +316,11 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => navigate('/student/leaderboard')}
-          className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+          className="flex items-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 font-semibold text-white shadow-lg transition-all hover:shadow-xl"
         >
-          <Trophy className="w-5 h-5" />
+          <Trophy className="h-5 w-5" />
           Ver Clasificación Completa
-          <ArrowRight className="w-5 h-5" />
+          <ArrowRight className="h-5 w-5" />
         </motion.button>
       </motion.div>
     </div>

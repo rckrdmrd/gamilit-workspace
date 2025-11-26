@@ -47,13 +47,15 @@ class NotificationService {
       console.log('🔍 Loading notifications for user:', userId);
 
       // Try to fetch notifications from API (backend handles user from JWT token)
-      const response = await apiClient.get<{ success: boolean; data: Notification[] }>(`/notifications`);
+      const response = await apiClient.get<{ success: boolean; data: Notification[] }>(
+        `/notifications`,
+      );
 
       if (response.data?.success && response.data.data && response.data.data.length > 0) {
         console.log('✅ Real notifications loaded from API:', response.data.data.length);
-        return response.data.data.map(n => ({
+        return response.data.data.map((n) => ({
           ...n,
-          timestamp: this.getRelativeTime(n.timestamp)
+          timestamp: this.getRelativeTime(n.timestamp),
         }));
       }
 
@@ -108,7 +110,7 @@ class NotificationService {
         message: 'Tu aventura de aprendizaje ha comenzado',
         timestamp: 'Hace 5 minutos',
         read: false,
-        actionUrl: '/dashboard'
+        actionUrl: '/dashboard',
       },
       {
         id: 'daily_streak',
@@ -117,7 +119,7 @@ class NotificationService {
         message: 'Resuelve un caso hoy para continuar tu racha de 5 días',
         timestamp: 'Hace 1 hora',
         read: false,
-        actionUrl: '/dashboard'
+        actionUrl: '/dashboard',
       },
       {
         id: 'new_quest',
@@ -126,15 +128,16 @@ class NotificationService {
         message: 'Se ha desbloqueado "El Misterio del Teorema Perdido"',
         timestamp: 'Hace 2 horas',
         read: true,
-        actionUrl: '/dashboard'
-      }
+        actionUrl: '/dashboard',
+      },
     ];
   }
 
   /**
    * Generate dynamic notifications based on user activity simulation
    */
-  private generateDynamicNotifications(userId: string): Notification[] {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private generateDynamicNotifications(_userId: string): Notification[] {
     const now = new Date();
     const notifications: Notification[] = [];
 
@@ -144,20 +147,20 @@ class NotificationService {
         type: 'case_solved' as const,
         title: '🕵️ Caso Resuelto',
         message: 'Completaste "El Enigma de los Números Primos". +75 XP ganados.',
-        reward: { xp: 75, ml: 30 }
+        reward: { xp: 75, ml: 30 },
       },
       {
         type: 'module_progress' as const,
         title: '📖 Progreso en Módulo',
         message: 'Avanzaste 15% en "Comprensión Inferencial". ¡Excelente detective!',
-        reward: { xp: 25, ml: 10 }
+        reward: { xp: 25, ml: 10 },
       },
       {
         type: 'level_milestone' as const,
         title: '🎯 Hito Alcanzado',
         message: 'Estás a solo 50 XP de subir al nivel 3. ¡Sigue investigando!',
-        reward: undefined
-      }
+        reward: undefined,
+      },
     ];
 
     // Create notifications from activities
@@ -165,14 +168,18 @@ class NotificationService {
       const timestamp = new Date(now.getTime() - (index + 1) * 2 * 60 * 60 * 1000); // 2h intervals
       notifications.push({
         id: `dynamic_${activity.type}_${index}`,
-        type: activity.type === 'case_solved' ? 'achievement' :
-              activity.type === 'level_milestone' ? 'reminder' : 'level_up',
+        type:
+          activity.type === 'case_solved'
+            ? 'achievement'
+            : activity.type === 'level_milestone'
+              ? 'reminder'
+              : 'level_up',
         title: activity.title,
         message: activity.message,
         timestamp: this.getRelativeTime(timestamp.toISOString()),
         read: Math.random() > 0.5,
         actionUrl: '/dashboard',
-        metadata: activity.reward || {}
+        metadata: activity.reward || {},
       });
     });
 
@@ -188,8 +195,8 @@ class NotificationService {
       metadata: {
         quest: 'detective_master',
         progress: 3,
-        total: 5
-      }
+        total: 5,
+      },
     });
 
     return notifications;
@@ -231,11 +238,11 @@ class NotificationService {
 
     switch (unit) {
       case 'minuto':
-        return now - (value * 60 * 1000);
+        return now - value * 60 * 1000;
       case 'hora':
-        return now - (value * 60 * 60 * 1000);
+        return now - value * 60 * 60 * 1000;
       case 'día':
-        return now - (value * 24 * 60 * 60 * 1000);
+        return now - value * 24 * 60 * 60 * 1000;
       default:
         return now;
     }
@@ -248,16 +255,14 @@ class NotificationService {
     try {
       // Try to update via API
       await apiClient.patch(`/notifications/${notificationId}/read`, {
-        userId
+        userId,
       });
 
       console.log('✅ Notification marked as read');
     } catch (error) {
       console.log('Could not mark notification as read via API, storing locally');
       // Store in localStorage as fallback
-      const readNotifications = JSON.parse(
-        localStorage.getItem('glit_read_notifications') || '[]'
-      );
+      const readNotifications = JSON.parse(localStorage.getItem('glit_read_notifications') || '[]');
       if (!readNotifications.includes(notificationId)) {
         readNotifications.push(notificationId);
         localStorage.setItem('glit_read_notifications', JSON.stringify(readNotifications));
@@ -271,7 +276,7 @@ class NotificationService {
   async getUnreadCount(userId: string): Promise<number> {
     try {
       const notifications = await this.getUserNotifications(userId);
-      return notifications.filter(n => !n.read).length;
+      return notifications.filter((n) => !n.read).length;
     } catch (error) {
       console.error('Error getting unread count:', error);
       return 0;
@@ -283,14 +288,14 @@ class NotificationService {
    */
   async createNotification(
     userId: string,
-    notification: Omit<Notification, 'id' | 'timestamp' | 'read'>
+    notification: Omit<Notification, 'id' | 'timestamp' | 'read'>,
   ): Promise<void> {
     try {
       await apiClient.post('/notifications/send', {
         userId,
         ...notification,
         timestamp: new Date().toISOString(),
-        read: false
+        read: false,
       });
 
       console.log('✅ Notification created via API');

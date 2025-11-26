@@ -2,18 +2,14 @@ import React, { useState } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { useExercises, Exercise } from '../../hooks/useContentManagement';
-import { useSanitizedHTML } from '@shared/hooks/useSanitizedHTML';
 import { Plus, Edit, Copy, Trash2, Eye, Save, X } from 'lucide-react';
 
 export const ExerciseContentEditor: React.FC = () => {
-  const { exercises, loading, createExercise, updateExercise, deleteExercise, duplicateExercise } = useExercises();
+  const { exercises, loading, createExercise, updateExercise, deleteExercise, duplicateExercise } =
+    useExercises();
   const [editingExercise, setEditingExercise] = useState<Partial<Exercise> | null>(null);
   const [previewMode, setPreviewMode] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
-
-  // Sanitize HTML content to prevent XSS attacks (GLIT-SEC-005)
-  // Admin role allows full educational content including iframes from trusted domains
-  const sanitizedInstructions = useSanitizedHTML(editingExercise?.instructions || '', { role: 'admin' });
 
   const handleCreate = () => {
     setEditingExercise({
@@ -73,7 +69,7 @@ export const ExerciseContentEditor: React.FC = () => {
     return (
       <DetectiveCard>
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-detective-orange border-t-transparent"></div>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-detective-orange border-t-transparent"></div>
         </div>
       </DetectiveCard>
     );
@@ -84,7 +80,11 @@ export const ExerciseContentEditor: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-detective-subtitle">Exercise Content Editor</h2>
-        <DetectiveButton variant="primary" icon={<Plus className="w-4 h-4" />} onClick={handleCreate}>
+        <DetectiveButton
+          variant="primary"
+          icon={<Plus className="h-4 w-4" />}
+          onClick={handleCreate}
+        >
           New Exercise
         </DetectiveButton>
       </div>
@@ -92,26 +92,28 @@ export const ExerciseContentEditor: React.FC = () => {
       {/* Editor Modal */}
       {editingExercise && (
         <DetectiveCard className="border-2 border-detective-orange">
-          <div className="flex items-center justify-between mb-6">
+          <div className="mb-6 flex items-center justify-between">
             <h3 className="text-detective-subtitle">
               {editingExercise.id ? 'Edit Exercise' : 'Create New Exercise'}
             </h3>
             <div className="flex items-center gap-2">
               <DetectiveButton
                 variant="blue"
-
-                icon={previewMode ? <Edit className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                icon={previewMode ? <Edit className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 onClick={() => setPreviewMode(!previewMode)}
               >
                 {previewMode ? 'Edit' : 'Preview'}
               </DetectiveButton>
-              <DetectiveButton variant="green" icon={<Save className="w-4 h-4" />} onClick={handleSave}>
+              <DetectiveButton
+                variant="green"
+                icon={<Save className="h-4 w-4" />}
+                onClick={handleSave}
+              >
                 Save
               </DetectiveButton>
               <DetectiveButton
                 variant="primary"
-
-                icon={<X className="w-4 h-4" />}
+                icon={<X className="h-4 w-4" />}
                 onClick={() => setEditingExercise(null)}
               >
                 Cancel
@@ -120,37 +122,41 @@ export const ExerciseContentEditor: React.FC = () => {
           </div>
 
           {previewMode ? (
-            <div className="p-6 bg-detective-bg-secondary rounded-lg">
-              <h4 className="text-xl font-bold mb-2">{editingExercise.title || 'Untitled Exercise'}</h4>
-              <p className="text-gray-400 mb-4">{editingExercise.description}</p>
-              <div className="flex gap-2 mb-4">
-                <span className="px-3 py-1 bg-detective-orange/20 text-detective-orange rounded-lg text-sm">
+            <div className="rounded-lg bg-detective-bg-secondary p-6">
+              <h4 className="mb-2 text-xl font-bold">
+                {editingExercise.title || 'Untitled Exercise'}
+              </h4>
+              <p className="mb-4 text-gray-400">{editingExercise.description}</p>
+              <div className="mb-4 flex gap-2">
+                <span className="rounded-lg bg-detective-orange/20 px-3 py-1 text-sm text-detective-orange">
                   {editingExercise.difficulty}
                 </span>
-                <span className="px-3 py-1 bg-blue-500/20 text-blue-500 rounded-lg text-sm">
+                <span className="rounded-lg bg-blue-500/20 px-3 py-1 text-sm text-blue-500">
                   {editingExercise.points} points
                 </span>
               </div>
               <div
                 className="prose prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: sanitizedInstructions }}
+                dangerouslySetInnerHTML={{ __html: editingExercise.instructions || '' }}
               />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div>
-                <label className="block text-detective-small text-gray-400 mb-2">Title *</label>
+                <label className="text-detective-small mb-2 block text-gray-400">Title *</label>
                 <input
                   type="text"
                   className="input-detective"
                   value={editingExercise.title || ''}
-                  onChange={(e) => setEditingExercise({ ...editingExercise, title: e.target.value })}
+                  onChange={(e) =>
+                    setEditingExercise({ ...editingExercise, title: e.target.value })
+                  }
                   placeholder="Exercise title..."
                 />
               </div>
 
               <div>
-                <label className="block text-detective-small text-gray-400 mb-2">Type</label>
+                <label className="text-detective-small mb-2 block text-gray-400">Type</label>
                 <select
                   className="input-detective"
                   value={editingExercise.type || 'multiple-choice'}
@@ -165,7 +171,7 @@ export const ExerciseContentEditor: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-detective-small text-gray-400 mb-2">Difficulty</label>
+                <label className="text-detective-small mb-2 block text-gray-400">Difficulty</label>
                 <select
                   className="input-detective"
                   value={editingExercise.difficulty || 'facil'}
@@ -184,41 +190,49 @@ export const ExerciseContentEditor: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-detective-small text-gray-400 mb-2">Points</label>
+                <label className="text-detective-small mb-2 block text-gray-400">Points</label>
                 <input
                   type="number"
                   className="input-detective"
                   value={editingExercise.points || 100}
-                  onChange={(e) => setEditingExercise({ ...editingExercise, points: parseInt(e.target.value) })}
+                  onChange={(e) =>
+                    setEditingExercise({ ...editingExercise, points: parseInt(e.target.value) })
+                  }
                   min="0"
                   step="10"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-detective-small text-gray-400 mb-2">Description</label>
+                <label className="text-detective-small mb-2 block text-gray-400">Description</label>
                 <textarea
                   className="input-detective"
                   rows={3}
                   value={editingExercise.description || ''}
-                  onChange={(e) => setEditingExercise({ ...editingExercise, description: e.target.value })}
+                  onChange={(e) =>
+                    setEditingExercise({ ...editingExercise, description: e.target.value })
+                  }
                   placeholder="Brief description..."
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-detective-small text-gray-400 mb-2">Instructions (HTML supported)</label>
+                <label className="text-detective-small mb-2 block text-gray-400">
+                  Instructions (HTML supported)
+                </label>
                 <textarea
                   className="input-detective font-mono text-sm"
                   rows={8}
                   value={editingExercise.instructions || ''}
-                  onChange={(e) => setEditingExercise({ ...editingExercise, instructions: e.target.value })}
+                  onChange={(e) =>
+                    setEditingExercise({ ...editingExercise, instructions: e.target.value })
+                  }
                   placeholder="<p>Complete the following exercise...</p>"
                 />
               </div>
 
               <div>
-                <label className="block text-detective-small text-gray-400 mb-2">Status</label>
+                <label className="text-detective-small mb-2 block text-gray-400">Status</label>
                 <select
                   className="input-detective"
                   value={editingExercise.status || 'draft'}
@@ -246,36 +260,36 @@ export const ExerciseContentEditor: React.FC = () => {
           {exercises.map((exercise) => (
             <div
               key={exercise.id}
-              className="p-4 bg-detective-bg-secondary rounded-lg hover:bg-detective-bg-secondary/70 transition-colors"
+              className="rounded-lg bg-detective-bg-secondary p-4 transition-colors hover:bg-detective-bg-secondary/70"
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h4 className="text-detective-base font-semibold mb-1">{exercise.title}</h4>
-                  <p className="text-detective-small text-gray-400 mb-2">{exercise.description}</p>
+                  <h4 className="mb-1 text-detective-base font-semibold">{exercise.title}</h4>
+                  <p className="text-detective-small mb-2 text-gray-400">{exercise.description}</p>
                   <div className="flex items-center gap-2">
                     <span
-                      className={`px-2 py-1 rounded text-xs ${
+                      className={`rounded px-2 py-1 text-xs ${
                         exercise.difficulty === 'facil'
                           ? 'bg-green-500/20 text-green-500'
                           : exercise.difficulty === 'medio'
-                          ? 'bg-yellow-500/20 text-yellow-500'
-                          : exercise.difficulty === 'dificil'
-                          ? 'bg-red-500/20 text-red-500'
-                          : 'bg-purple-500/20 text-purple-500'
+                            ? 'bg-yellow-500/20 text-yellow-500'
+                            : exercise.difficulty === 'dificil'
+                              ? 'bg-red-500/20 text-red-500'
+                              : 'bg-purple-500/20 text-purple-500'
                       }`}
                     >
                       {exercise.difficulty}
                     </span>
-                    <span className="px-2 py-1 bg-blue-500/20 text-blue-500 rounded text-xs">
+                    <span className="rounded bg-blue-500/20 px-2 py-1 text-xs text-blue-500">
                       {exercise.points} pts
                     </span>
                     <span
-                      className={`px-2 py-1 rounded text-xs ${
+                      className={`rounded px-2 py-1 text-xs ${
                         exercise.status === 'published'
                           ? 'bg-green-500/20 text-green-500'
                           : exercise.status === 'draft'
-                          ? 'bg-gray-500/20 text-gray-400'
-                          : 'bg-orange-500/20 text-orange-500'
+                            ? 'bg-gray-500/20 text-gray-400'
+                            : 'bg-orange-500/20 text-orange-500'
                       }`}
                     >
                       {exercise.status}
@@ -286,37 +300,36 @@ export const ExerciseContentEditor: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleEdit(exercise)}
-                    className="p-2 hover:bg-blue-500/20 text-blue-500 rounded transition-colors"
+                    className="rounded p-2 text-blue-500 transition-colors hover:bg-blue-500/20"
                     title="Edit"
                   >
-                    <Edit className="w-4 h-4" />
+                    <Edit className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => handleDuplicate(exercise.id)}
-                    className="p-2 hover:bg-purple-500/20 text-purple-500 rounded transition-colors"
+                    className="rounded p-2 text-purple-500 transition-colors hover:bg-purple-500/20"
                     title="Duplicate"
                   >
-                    <Copy className="w-4 h-4" />
+                    <Copy className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => setShowDeleteConfirm(exercise.id)}
-                    className="p-2 hover:bg-red-500/20 text-red-500 rounded transition-colors"
+                    className="rounded p-2 text-red-500 transition-colors hover:bg-red-500/20"
                     title="Delete"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
               </div>
 
               {showDeleteConfirm === exercise.id && (
-                <div className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-                  <p className="text-sm text-red-500 mb-3">
+                <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3">
+                  <p className="mb-3 text-sm text-red-500">
                     Are you sure you want to delete this exercise? This action cannot be undone.
                   </p>
                   <div className="flex gap-2">
                     <DetectiveButton
                       variant="primary"
-
                       onClick={() => handleDelete(exercise.id)}
                       className="bg-red-500 hover:bg-red-600"
                     >

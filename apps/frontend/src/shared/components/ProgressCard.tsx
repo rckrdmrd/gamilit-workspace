@@ -39,7 +39,10 @@ export const ProgressCard: React.FC<ProgressCardProps> = ({ module, progress, on
   const status = progress?.status || 'not_started';
   const exercisesCompleted = progress?.completed_exercises || 0;
   const exercisesTotal = progress?.total_exercises || 0;
-  const timeSpent = progress?.time_spent_seconds || (typeof progress?.time_spent === 'number' ? progress?.time_spent : 0) || 0;
+  const timeSpent =
+    progress?.time_spent_seconds ||
+    (typeof progress?.time_spent === 'number' ? progress?.time_spent : 0) ||
+    0;
   const lastAccessed = progress?.last_accessed_at;
 
   // Truncate description
@@ -52,8 +55,8 @@ export const ProgressCard: React.FC<ProgressCardProps> = ({ module, progress, on
     <div
       onClick={onClick}
       className={`
-        bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden
-        transition-all duration-200 hover:shadow-md hover:scale-[1.02]
+        overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm
+        transition-all duration-200 hover:scale-[1.02] hover:shadow-md
         ${onClick ? 'cursor-pointer' : ''}
       `}
       role={onClick ? 'button' : undefined}
@@ -67,23 +70,23 @@ export const ProgressCard: React.FC<ProgressCardProps> = ({ module, progress, on
       aria-label={`${module.title} - ${status}`}
     >
       {/* Module Header with Icon/Thumbnail */}
-      <div className="relative h-32 bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
+      <div className="relative flex h-32 items-center justify-center bg-gradient-to-br from-orange-500 to-orange-600">
         {module.thumbnail_url ? (
           <img
             src={module.thumbnail_url}
             alt={module.title}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
           />
         ) : (
-          <BookOpen className="w-16 h-16 text-white opacity-80" />
+          <BookOpen className="h-16 w-16 text-white opacity-80" />
         )}
 
         {/* Difficulty Badge */}
-        <div className="absolute top-3 right-3">
+        <div className="absolute right-3 top-3">
           <span
             className={`
-              px-2 py-1 text-xs font-semibold rounded-full
-              ${getDifficultyBadgeColor(module.difficulty)}
+              rounded-full px-2 py-1 text-xs font-semibold
+              ${getDifficultyBadgeColor(String(module.difficulty || 'beginner'))}
             `}
           >
             {module.difficulty}
@@ -94,13 +97,13 @@ export const ProgressCard: React.FC<ProgressCardProps> = ({ module, progress, on
       {/* Card Content */}
       <div className="p-4">
         {/* Title and Status Badge */}
-        <div className="flex items-start justify-between mb-2">
-          <h3 className="text-lg font-semibold text-gray-900 flex-1 mr-2 line-clamp-2">
+        <div className="mb-2 flex items-start justify-between">
+          <h3 className="mr-2 line-clamp-2 flex-1 text-lg font-semibold text-gray-900">
             {module.title}
           </h3>
           <span
             className={`
-              px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap flex-shrink-0
+              flex-shrink-0 whitespace-nowrap rounded-full px-2 py-1 text-xs font-semibold
               ${getStatusBadgeColor(status)}
             `}
           >
@@ -109,20 +112,20 @@ export const ProgressCard: React.FC<ProgressCardProps> = ({ module, progress, on
         </div>
 
         {/* Description */}
-        <p className="text-sm text-gray-600 mb-4 line-clamp-2">{truncatedDescription}</p>
+        <p className="mb-4 line-clamp-2 text-sm text-gray-600">{truncatedDescription}</p>
 
         {/* Progress Bar */}
         {progress && (
           <div className="mb-4">
-            <div className="flex items-center justify-between mb-1">
+            <div className="mb-1 flex items-center justify-between">
               <span className="text-xs font-medium text-gray-700">Progress</span>
               <span className="text-xs font-semibold text-orange-600">
                 {formatProgressPercentage(progressPercentage)}
               </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
               <div
-                className="bg-orange-600 h-2 rounded-full transition-all duration-300"
+                className="h-2 rounded-full bg-orange-600 transition-all duration-300"
                 style={{ width: `${progressPercentage}%` }}
                 role="progressbar"
                 aria-valuenow={progressPercentage}
@@ -134,13 +137,13 @@ export const ProgressCard: React.FC<ProgressCardProps> = ({ module, progress, on
         )}
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-100">
+        <div className="grid grid-cols-2 gap-3 border-t border-gray-100 pt-3">
           {/* Exercises Completed */}
           <div className="flex items-center space-x-2">
-            <TrendingUp className="w-4 h-4 text-gray-500 flex-shrink-0" />
+            <TrendingUp className="h-4 w-4 flex-shrink-0 text-gray-500" />
             <div className="min-w-0">
               <p className="text-xs text-gray-500">Exercises</p>
-              <p className="text-sm font-semibold text-gray-900 truncate">
+              <p className="truncate text-sm font-semibold text-gray-900">
                 {exercisesCompleted}/{exercisesTotal}
               </p>
             </div>
@@ -148,10 +151,10 @@ export const ProgressCard: React.FC<ProgressCardProps> = ({ module, progress, on
 
           {/* Time Spent */}
           <div className="flex items-center space-x-2">
-            <Clock className="w-4 h-4 text-gray-500 flex-shrink-0" />
+            <Clock className="h-4 w-4 flex-shrink-0 text-gray-500" />
             <div className="min-w-0">
               <p className="text-xs text-gray-500">Time Spent</p>
-              <p className="text-sm font-semibold text-gray-900 truncate">
+              <p className="truncate text-sm font-semibold text-gray-900">
                 {formatTimeSpent(timeSpent)}
               </p>
             </div>
@@ -160,12 +163,10 @@ export const ProgressCard: React.FC<ProgressCardProps> = ({ module, progress, on
 
         {/* Last Accessed */}
         {lastAccessed && (
-          <div className="mt-3 pt-3 border-t border-gray-100">
+          <div className="mt-3 border-t border-gray-100 pt-3">
             <p className="text-xs text-gray-500">
               Last accessed{' '}
-              <span className="font-medium text-gray-700">
-                {formatRelativeTime(lastAccessed)}
-              </span>
+              <span className="font-medium text-gray-700">{formatRelativeTime(lastAccessed)}</span>
             </p>
           </div>
         )}

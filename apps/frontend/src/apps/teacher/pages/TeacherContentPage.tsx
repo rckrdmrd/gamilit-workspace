@@ -1,11 +1,20 @@
-import React from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { TeacherLayout } from '../layouts/TeacherLayout';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 import TeacherContentManagement from './TeacherContentManagement';
+import { UnderConstruction } from '@shared/components/UnderConstruction';
+
+// ============================================================================
+// FEATURE FLAG - Cambiar a false para habilitar la funcionalidad completa
+// ============================================================================
+const SHOW_UNDER_CONSTRUCTION = true;
 
 /**
  * TeacherContentPage - Página de gestión de contenido educativo
+ *
+ * ESTADO: Descartada para Fase 2 (no depende de actividad del estudiante)
+ * La funcionalidad está implementada pero deshabilitada temporalmente.
+ * Cambiar SHOW_UNDER_CONSTRUCTION a false para habilitar.
  */
 export default function TeacherContentPage() {
   const { user, logout } = useAuth();
@@ -27,6 +36,38 @@ export default function TeacherContentPage() {
     logout();
     window.location.href = '/login';
   };
+
+  // ============================================================================
+  // FEATURE FLAG CHECK - Under Construction
+  // ============================================================================
+
+  if (SHOW_UNDER_CONSTRUCTION) {
+    return (
+      <TeacherLayout
+        user={user ?? undefined}
+        gamificationData={displayGamificationData}
+        organizationName="Escuela Primaria Miguel Hidalgo"
+        onLogout={handleLogout}
+      >
+        <UnderConstruction
+          title="Gestión de Contenido"
+          description="El módulo de gestión de contenido está en desarrollo. Pronto podrás crear y administrar ejercicios personalizados para tus estudiantes."
+          upcomingFeatures={[
+            'Creación de ejercicios personalizados',
+            'Edición y duplicación de contenido',
+            'Biblioteca de plantillas',
+            'Organización por módulos y temas',
+            'Vista previa de ejercicios',
+            'Publicación y programación',
+          ]}
+        />
+      </TeacherLayout>
+    );
+  }
+
+  // ============================================================================
+  // MAIN RENDER - Funcionalidad completa (cuando SHOW_UNDER_CONSTRUCTION = false)
+  // ============================================================================
 
   return (
     <TeacherLayout

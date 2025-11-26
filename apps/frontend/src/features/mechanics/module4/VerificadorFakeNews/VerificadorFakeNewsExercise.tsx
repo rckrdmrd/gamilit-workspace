@@ -5,7 +5,13 @@ import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { ArticleParser } from './ArticleParser';
 import { FactCheckDashboard } from './FactCheckDashboard';
 import { mockArticles, mockFactCheckResults } from './verificadorFakeNewsMockData';
-import { Claim, FactCheckResult, ExerciseProps, VerificadorState, NewsArticle } from './verificadorFakeNewsTypes';
+import {
+  Claim,
+  FactCheckResult,
+  ExerciseProps,
+  VerificadorState,
+  NewsArticle,
+} from './verificadorFakeNewsTypes';
 import { FeedbackData, normalizeProgressUpdate } from '@shared/components/mechanics/mechanicsTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 
@@ -17,14 +23,18 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
   exercise,
 }) => {
   // State management
-  const [selectedArticleId, setSelectedArticleId] = useState(initialData?.selectedArticleId || mockArticles[0].id);
+  const [selectedArticleId, setSelectedArticleId] = useState(
+    initialData?.selectedArticleId || mockArticles[0].id,
+  );
   const [claims, setClaims] = useState<Claim[]>(initialData?.claims || []);
   const [results, setResults] = useState<FactCheckResult[]>(initialData?.results || []);
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
 
-  const selectedArticle = exercise?.articles?.find((a: NewsArticle) => a.id === selectedArticleId) || mockArticles.find((a: NewsArticle) => a.id === selectedArticleId);
+  const selectedArticle =
+    exercise?.articles?.find((a: NewsArticle) => a.id === selectedArticleId) ||
+    mockArticles.find((a: NewsArticle) => a.id === selectedArticleId);
   const articles = exercise?.articles || mockArticles;
 
   // Calculate progress
@@ -38,7 +48,9 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
     if (results.length === 0) return 0;
 
     const verifiedCount = results.length;
-    const accurateVerifications = results.filter(r => r.verdict === 'true' || r.verdict === 'false').length;
+    const accurateVerifications = results.filter(
+      (r) => r.verdict === 'true' || r.verdict === 'false',
+    ).length;
     const avgConfidence = results.reduce((sum, r) => sum + r.confidence, 0) / results.length;
 
     const verificationScore = (verifiedCount / Math.max(claims.length, 1)) * 40;
@@ -53,13 +65,7 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
     const progress = calculateProgress();
     const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     onProgressUpdate?.(
-      normalizeProgressUpdate(
-        progress,
-        results.length,
-        Math.max(claims.length, 1),
-        0,
-        timeSpent
-      )
+      normalizeProgressUpdate(progress, results.length, Math.max(claims.length, 1), 0, timeSpent),
     );
   }, [claims, results]);
 
@@ -71,7 +77,7 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
         claims,
         results,
       };
-      saveProgressUtil(exerciseId, currentState);
+      saveProgressUtil(exerciseId || '', currentState);
     }, 30000); // Every 30 seconds
 
     return () => clearInterval(autoSaveInterval);
@@ -82,7 +88,11 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
     const newClaim: Claim = {
       id: `claim-${Date.now()}`,
       text,
-      context: selectedArticle?.content.slice(Math.max(0, start - 50), Math.min(selectedArticle.content.length, end + 50)) || '',
+      context:
+        selectedArticle?.content.slice(
+          Math.max(0, start - 50),
+          Math.min(selectedArticle.content.length, end + 50),
+        ) || '',
       position: { start, end },
     };
     setClaims([...claims, newClaim]);
@@ -124,24 +134,24 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Exercise Description */}
-          <div className="bg-gradient-to-r from-detective-blue to-detective-orange rounded-detective p-6 text-white shadow-detective-lg">
-            <div className="flex items-center gap-3 mb-2">
-              <Shield className="w-8 h-8" />
+          <div className="rounded-detective bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-detective-lg">
+            <div className="mb-2 flex items-center gap-3">
+              <Shield className="h-8 w-8" />
               <h2 className="text-detective-2xl font-bold">Verificador de Noticias Falsas</h2>
             </div>
-            <p className="text-detective-base opacity-90 mb-4">
+            <p className="mb-4 text-detective-base opacity-90">
               Analiza artículos sobre Marie Curie y verifica la veracidad de las afirmaciones.
             </p>
 
-            <div className="flex gap-4 items-center">
-              <label className="text-white font-medium">Selecciona un artículo:</label>
+            <div className="flex items-center gap-4">
+              <label className="font-medium text-white">Selecciona un artículo:</label>
               <select
                 value={selectedArticleId}
                 onChange={(e) => {
                   setSelectedArticleId(e.target.value);
                   handleReset();
                 }}
-                className="px-4 py-2 border-2 border-white/30 rounded-detective bg-white/10 text-white focus:border-white focus:outline-none transition-colors"
+                className="rounded-detective border-2 border-white/30 bg-white/10 px-4 py-2 text-white transition-colors focus:border-white focus:outline-none"
               >
                 {articles.map((article) => (
                   <option key={article.id} value={article.id} className="text-detective-text">
@@ -153,7 +163,7 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
           </div>
 
           {/* Main Content - Article and Dashboard */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {selectedArticle && (
               <ArticleParser
                 article={selectedArticle}
@@ -171,34 +181,37 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
           {/* Score Summary */}
           {results.length > 0 && (
             <DetectiveCard variant="default" padding="lg">
-              <h3 className="text-detective-2xl font-bold mb-4 text-detective-text">
+              <h3 className="mb-4 text-detective-2xl font-bold text-detective-text">
                 Resumen de Verificación
               </h3>
-              <p className="text-detective-text-secondary mb-4">
+              <p className="mb-4 text-detective-text-secondary">
                 Has verificado {results.length} afirmación(es).
               </p>
               <div className="grid grid-cols-3 gap-4">
-                <div className="bg-green-50 border-2 border-green-200 rounded-detective p-4 text-center">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <CheckCircle className="w-6 h-6 text-green-600" />
+                <div className="rounded-detective border-2 border-green-200 bg-green-50 p-4 text-center">
+                  <div className="mb-2 flex items-center justify-center gap-2">
+                    <CheckCircle className="h-6 w-6 text-green-600" />
                     <p className="text-3xl font-bold text-green-600">
                       {results.filter((r) => r.verdict === 'true').length}
                     </p>
                   </div>
                   <p className="text-sm text-detective-text">Verdaderas</p>
                 </div>
-                <div className="bg-red-50 border-2 border-red-200 rounded-detective p-4 text-center">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <XCircle className="w-6 h-6 text-red-600" />
+                <div className="rounded-detective border-2 border-red-200 bg-red-50 p-4 text-center">
+                  <div className="mb-2 flex items-center justify-center gap-2">
+                    <XCircle className="h-6 w-6 text-red-600" />
                     <p className="text-3xl font-bold text-red-600">
                       {results.filter((r) => r.verdict === 'false').length}
                     </p>
                   </div>
                   <p className="text-sm text-detective-text">Falsas</p>
                 </div>
-                <div className="bg-blue-50 border-2 border-blue-200 rounded-detective p-4 text-center">
-                  <p className="text-3xl font-bold text-detective-blue mb-2">
-                    {Math.round((results.reduce((sum, r) => sum + r.confidence, 0) / results.length) * 100)}%
+                <div className="rounded-detective border-2 border-blue-200 bg-blue-50 p-4 text-center">
+                  <p className="mb-2 text-3xl font-bold text-detective-blue">
+                    {Math.round(
+                      (results.reduce((sum, r) => sum + r.confidence, 0) / results.length) * 100,
+                    )}
+                    %
                   </p>
                   <p className="text-sm text-detective-text">Confianza Promedio</p>
                 </div>
@@ -216,9 +229,7 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
           onClose={() => {
             setShowFeedback(false);
             if (feedback.type === 'success' && onComplete) {
-              const timeSpent = Math.floor(
-                (new Date().getTime() - startTime.getTime()) / 1000
-              );
+              const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
               onComplete(calculateScore(), timeSpent);
             }
           }}

@@ -1,5 +1,6 @@
 import React from 'react';
-import { motion, PanInfo, useAnimation } from 'framer-motion';
+import { motion, useAnimation } from 'framer-motion';
+import type { PanInfo } from 'framer-motion';
 import { useSwipeableElement } from '../../hooks/useSwipeGesture';
 
 interface SwipeableContainerProps {
@@ -41,14 +42,14 @@ export function SwipeableContainer({
     setPullDistance(0);
   };
 
-  const handlePan = (event: PointerEvent, info: PanInfo) => {
+  const handlePan = (_event: PointerEvent, info: PanInfo) => {
     if (!enablePullToRefresh || window.scrollY > 0) return;
 
     const distance = Math.max(0, info.offset.y);
     setPullDistance(Math.min(distance, 120));
   };
 
-  const handlePanEnd = async (event: PointerEvent, info: PanInfo) => {
+  const handlePanEnd = async (_event: PointerEvent, info: PanInfo) => {
     if (!enablePullToRefresh || !onRefresh) {
       setPullDistance(0);
       return;
@@ -91,14 +92,14 @@ export function SwipeableContainer({
       {/* Pull to refresh indicator */}
       {enablePullToRefresh && pullDistance > 0 && (
         <motion.div
-          className="absolute top-0 left-0 right-0 flex items-center justify-center"
+          className="absolute left-0 right-0 top-0 flex items-center justify-center"
           initial={{ opacity: 0, y: -40 }}
           animate={{
             opacity: pullDistance > 40 ? 1 : pullDistance / 40,
             y: -40 + pullDistance / 2,
           }}
         >
-          <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-lg border border-detective-bg-secondary">
+          <div className="flex items-center gap-2 rounded-full border border-detective-bg-secondary bg-white px-4 py-2 shadow-lg">
             <motion.div
               animate={{
                 rotate: isRefreshing ? 360 : pullDistance * 3,
@@ -120,8 +121,8 @@ export function SwipeableContainer({
               {isRefreshing
                 ? 'Actualizando...'
                 : pullDistance > 80
-                ? 'Suelta para actualizar'
-                : 'Desliza para actualizar'}
+                  ? 'Suelta para actualizar'
+                  : 'Desliza para actualizar'}
             </span>
           </div>
         </motion.div>
@@ -130,7 +131,7 @@ export function SwipeableContainer({
       {/* Touch feedback */}
       {isSwiping && (
         <motion.div
-          className="absolute inset-0 bg-detective-orange pointer-events-none"
+          className="pointer-events-none absolute inset-0 bg-detective-orange"
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.05 }}
           exit={{ opacity: 0 }}

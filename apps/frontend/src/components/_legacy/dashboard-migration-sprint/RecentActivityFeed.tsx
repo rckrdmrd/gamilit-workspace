@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { Clock, BookOpen, Award, TrendingUp, Coins, Play } from 'lucide-react';
 import type { RecentActivity } from '@/lib/api/progress.api';
 import { ActivityAction } from '@/lib/api/progress.api';
@@ -14,12 +14,15 @@ interface RecentActivityFeedProps {
 /**
  * Activity display configuration map (constant, defined outside component)
  */
-const ACTIVITY_DISPLAY_CONFIG: Record<ActivityAction, {
-  icon: typeof BookOpen;
-  color: string;
-  bgColor: string;
-  borderColor: string;
-}> = {
+const ACTIVITY_DISPLAY_CONFIG: Record<
+  ActivityAction,
+  {
+    icon: typeof BookOpen;
+    color: string;
+    bgColor: string;
+    borderColor: string;
+  }
+> = {
   [ActivityAction.COMPLETED_MODULE]: {
     icon: BookOpen,
     color: 'text-green-600',
@@ -105,12 +108,12 @@ export const RecentActivityFeed: React.FC<RecentActivityFeedProps> = ({
         {[...Array(5)].map((_, i) => (
           <div
             key={i}
-            className="flex items-start gap-3 p-4 bg-white rounded-lg border border-gray-200 animate-pulse"
+            className="flex animate-pulse items-start gap-3 rounded-lg border border-gray-200 bg-white p-4"
           >
-            <div className="w-10 h-10 bg-gray-200 rounded-lg flex-shrink-0" />
+            <div className="h-10 w-10 flex-shrink-0 rounded-lg bg-gray-200" />
             <div className="flex-1 space-y-2">
-              <div className="h-4 bg-gray-200 rounded w-3/4" />
-              <div className="h-3 bg-gray-200 rounded w-1/2" />
+              <div className="h-4 w-3/4 rounded bg-gray-200" />
+              <div className="h-3 w-1/2 rounded bg-gray-200" />
             </div>
           </div>
         ))}
@@ -120,12 +123,10 @@ export const RecentActivityFeed: React.FC<RecentActivityFeedProps> = ({
 
   if (activities.length === 0) {
     return (
-      <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
-        <BookOpen className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-        <p className="text-gray-600 font-medium">No hay actividades recientes</p>
-        <p className="text-gray-500 text-sm mt-1">
-          Comienza un módulo para ver tu actividad aquí
-        </p>
+      <div className="rounded-xl border border-gray-200 bg-white py-12 text-center">
+        <BookOpen className="mx-auto mb-3 h-12 w-12 text-gray-400" />
+        <p className="font-medium text-gray-600">No hay actividades recientes</p>
+        <p className="mt-1 text-sm text-gray-500">Comienza un módulo para ver tu actividad aquí</p>
       </div>
     );
   }
@@ -140,42 +141,43 @@ export const RecentActivityFeed: React.FC<RecentActivityFeedProps> = ({
             key={activity.id}
             onClick={() => onActivityClick?.(activity)}
             className={`
-              flex items-start gap-3 p-4 bg-white rounded-lg border transition-all duration-200
+              flex items-start gap-3 rounded-lg border bg-white p-4 transition-all duration-200
               ${borderColor}
-              ${onActivityClick ? 'cursor-pointer hover:shadow-md hover:scale-[1.01]' : ''}
+              ${onActivityClick ? 'cursor-pointer hover:scale-[1.01] hover:shadow-md' : ''}
             `}
           >
             {/* Icon */}
-            <div className={`w-10 h-10 ${bgColor} rounded-lg flex items-center justify-center flex-shrink-0`}>
-              <Icon className={`w-5 h-5 ${color}`} />
+            <div
+              className={`h-10 w-10 ${bgColor} flex flex-shrink-0 items-center justify-center rounded-lg`}
+            >
+              <Icon className={`h-5 w-5 ${color}`} />
             </div>
 
             {/* Content */}
-            <div className="flex-1 min-w-0">
-              <p className="text-gray-900 font-medium leading-snug">
-                {activity.description}
-              </p>
+            <div className="min-w-0 flex-1">
+              <p className="font-medium leading-snug text-gray-900">{activity.description}</p>
 
               {/* Metadata */}
               {activity.metadata && (
-                <div className="flex items-center gap-3 mt-2 text-sm">
+                <div className="mt-2 flex items-center gap-3 text-sm">
                   {activity.metadata.xp_earned && (
-                    <span className="text-purple-600 font-medium">
+                    <span className="font-medium text-purple-600">
                       +{activity.metadata.xp_earned} XP
                     </span>
                   )}
                   {activity.metadata.ml_coins_earned && (
-                    <span className="text-amber-600 font-medium">
+                    <span className="font-medium text-amber-600">
                       +{activity.metadata.ml_coins_earned} ML
                     </span>
                   )}
-                  {activity.metadata.score !== undefined && activity.metadata.max_score !== undefined && (
-                    <span className="text-gray-600">
-                      {activity.metadata.score}/{activity.metadata.max_score} pts
-                    </span>
-                  )}
+                  {activity.metadata.score !== undefined &&
+                    activity.metadata.max_score !== undefined && (
+                      <span className="text-gray-600">
+                        {activity.metadata.score}/{activity.metadata.max_score} pts
+                      </span>
+                    )}
                   {activity.metadata.difficulty && (
-                    <span className="text-gray-500 capitalize">
+                    <span className="capitalize text-gray-500">
                       {activity.metadata.difficulty.replace('_', ' ')}
                     </span>
                   )}
@@ -188,7 +190,7 @@ export const RecentActivityFeed: React.FC<RecentActivityFeedProps> = ({
               )}
 
               {/* Time */}
-              <p className="text-gray-500 text-xs mt-2">
+              <p className="mt-2 text-xs text-gray-500">
                 {formatRelativeTime(activity.created_at)}
               </p>
             </div>

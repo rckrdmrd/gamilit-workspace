@@ -89,8 +89,8 @@ export function useSettings(initialSection: SettingsCategory = 'general'): UseSe
     setLoading(true);
     setError(null);
     try {
-      const data = await adminAPI.settings.getConfig(category);
-      setSettings(prev => ({
+      const data = await adminAPI.settings.getCategoryConfig(category);
+      setSettings((prev) => ({
         ...prev,
         [category]: data,
       }));
@@ -106,32 +106,35 @@ export function useSettings(initialSection: SettingsCategory = 'general'): UseSe
   /**
    * Update settings for a specific category
    */
-  const updateSettings = useCallback(async (category: SettingsCategory, data: any): Promise<void> => {
-    setSaving(true);
-    setError(null);
-    setSuccessMessage(null);
-    try {
-      await adminAPI.settings.updateConfig(category, data);
+  const updateSettings = useCallback(
+    async (category: SettingsCategory, data: any): Promise<void> => {
+      setSaving(true);
+      setError(null);
+      setSuccessMessage(null);
+      try {
+        await adminAPI.settings.updateCategoryConfig(category, data);
 
-      // Update local state
-      setSettings(prev => ({
-        ...prev,
-        [category]: data,
-      }));
+        // Update local state
+        setSettings((prev) => ({
+          ...prev,
+          [category]: data,
+        }));
 
-      setSuccessMessage('Configuración guardada correctamente');
+        setSuccessMessage('Configuración guardada correctamente');
 
-      // Clear success message after 3 seconds
-      setTimeout(() => setSuccessMessage(null), 3000);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error al guardar configuración';
-      setError(message);
-      console.error('Failed to update settings:', err);
-      throw err;
-    } finally {
-      setSaving(false);
-    }
-  }, []);
+        // Clear success message after 3 seconds
+        setTimeout(() => setSuccessMessage(null), 3000);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Error al guardar configuración';
+        setError(message);
+        console.error('Failed to update settings:', err);
+        throw err;
+      } finally {
+        setSaving(false);
+      }
+    },
+    [],
+  );
 
   /**
    * Reset settings to defaults for a category
@@ -140,10 +143,12 @@ export function useSettings(initialSection: SettingsCategory = 'general'): UseSe
     setSaving(true);
     setError(null);
     try {
-      const defaults = await adminAPI.settings.resetDefaults(category);
+      // Note: resetDefaults endpoint not available in adminAPI yet
+      // Using getCategoryConfig to reload defaults as temporary workaround
+      const defaults = await adminAPI.settings.getCategoryConfig(category);
 
       // Update local state
-      setSettings(prev => ({
+      setSettings((prev) => ({
         ...prev,
         [category]: defaults,
       }));
@@ -170,7 +175,7 @@ export function useSettings(initialSection: SettingsCategory = 'general'): UseSe
       // await adminAPI.settings.testEmail();
 
       // Temporary mock
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       setSuccessMessage('Email de prueba enviado correctamente');
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
@@ -216,14 +221,14 @@ export function useSettings(initialSection: SettingsCategory = 'general'): UseSe
       // await adminAPI.maintenance.createBackup();
 
       // Temporary mock
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // Update maintenance settings with new backup time
       const now = new Date().toISOString();
-      setSettings(prev => ({
+      setSettings((prev) => ({
         ...prev,
         maintenance: {
-          ...prev.maintenance as MaintenanceSettings,
+          ...(prev.maintenance as MaintenanceSettings),
           lastBackup: now,
         },
       }));
@@ -248,7 +253,7 @@ export function useSettings(initialSection: SettingsCategory = 'general'): UseSe
       // await adminAPI.maintenance.clearCache();
 
       // Temporary mock
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       setSuccessMessage('Caché del sistema limpiada correctamente');
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {

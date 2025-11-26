@@ -5,7 +5,18 @@ import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { Modal } from '@shared/components/common/Modal';
 import { FormField } from '@shared/components/common/FormField';
 import { ConfirmDialog } from '@shared/components/common/ConfirmDialog';
-import { Users, Plus, Edit, Trash2, Search, BookOpen, GraduationCap, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import {
+  Users,
+  Plus,
+  Edit,
+  Trash2,
+  Search,
+  BookOpen,
+  GraduationCap,
+  Loader2,
+  AlertCircle,
+  RefreshCw,
+} from 'lucide-react';
 import { useClassrooms } from '../hooks/useClassrooms';
 import type { Classroom } from '../types';
 
@@ -35,10 +46,11 @@ export default function TeacherClasses() {
 
   // Search functionality
   useEffect(() => {
-    const filtered = classrooms.filter((classroom) =>
-      classroom.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      classroom.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      classroom.grade_level.toLowerCase().includes(searchTerm.toLowerCase())
+    const filtered = classrooms.filter(
+      (classroom) =>
+        classroom.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        classroom.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        classroom.grade_level.toLowerCase().includes(searchTerm.toLowerCase()),
     );
     setFilteredClassrooms(filtered);
   }, [searchTerm, classrooms]);
@@ -101,34 +113,29 @@ export default function TeacherClasses() {
       <main className="detective-container py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-detective-text mb-2">Mis Clases</h1>
-          <p className="text-detective-text-secondary">
-            Gestiona tus clases y estudiantes
-          </p>
+          <h1 className="mb-2 text-4xl font-bold text-detective-text">Mis Clases</h1>
+          <p className="text-detective-text-secondary">Gestiona tus clases y estudiantes</p>
         </div>
 
         {/* Search and Create */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <div className="mb-6 flex flex-col gap-4 md:flex-row">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               placeholder="Buscar clases..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-detective-bg-secondary border border-gray-700 rounded-lg text-detective-text placeholder-gray-500 focus:outline-none focus:border-detective-orange"
+              className="w-full rounded-lg border border-gray-700 bg-detective-bg-secondary py-3 pl-10 pr-4 text-detective-text placeholder-gray-500 focus:border-detective-orange focus:outline-none"
             />
           </div>
-          <DetectiveButton
-            variant="primary"
-            onClick={() => setIsCreateModalOpen(true)}
-          >
-            <Plus className="w-5 h-5" />
+          <DetectiveButton variant="primary" onClick={() => setIsCreateModalOpen(true)}>
+            <Plus className="h-5 w-5" />
             Crear Nueva Clase
           </DetectiveButton>
           {!loading && !error && (
             <DetectiveButton variant="secondary" onClick={refresh}>
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="h-4 w-4" />
               Actualizar
             </DetectiveButton>
           )}
@@ -138,19 +145,19 @@ export default function TeacherClasses() {
         {error && !loading && (
           <DetectiveCard variant="danger" className="mb-6">
             <div className="flex items-start gap-4">
-              <AlertCircle className="w-8 h-8 text-red-500 flex-shrink-0" />
+              <AlertCircle className="h-8 w-8 flex-shrink-0 text-red-500" />
               <div className="flex-1">
-                <h3 className="text-lg font-bold text-detective-text mb-2">
+                <h3 className="mb-2 text-lg font-bold text-detective-text">
                   Error al cargar clases
                 </h3>
-                <p className="text-detective-text-secondary mb-4">
+                <p className="mb-4 text-detective-text-secondary">
                   No se pudieron cargar las clases. Por favor, intenta nuevamente.
                 </p>
-                <p className="text-sm text-red-400 mb-4 font-mono bg-red-950 p-2 rounded">
+                <p className="mb-4 rounded bg-red-950 p-2 font-mono text-sm text-red-400">
                   {error.message}
                 </p>
                 <DetectiveButton onClick={refresh} variant="primary">
-                  <RefreshCw className="w-4 h-4" />
+                  <RefreshCw className="h-4 w-4" />
                   Reintentar
                 </DetectiveButton>
               </div>
@@ -161,76 +168,74 @@ export default function TeacherClasses() {
         {/* Loading State */}
         {loading && (
           <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="w-12 h-12 text-detective-orange animate-spin mb-4" />
+            <Loader2 className="mb-4 h-12 w-12 animate-spin text-detective-orange" />
             <p className="text-detective-text-secondary">Cargando clases...</p>
           </div>
         )}
 
         {/* Classrooms Grid */}
         {!loading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredClassrooms.map((classroom) => (
-            <DetectiveCard
-              key={classroom.id}
-              className="cursor-pointer hover:border-detective-orange transition-colors"
-              onClick={() => navigate(`/teacher/classes/${classroom.id}`)}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-blue-500/20 rounded-lg">
-                    <BookOpen className="w-6 h-6 text-blue-500" />
+              <DetectiveCard
+                key={classroom.id}
+                className="cursor-pointer transition-colors hover:border-detective-orange"
+                onClick={() => navigate(`/teacher/progress?classroomId=${classroom.id}`)}
+              >
+                <div className="mb-4 flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-lg bg-blue-500/20 p-3">
+                      <BookOpen className="h-6 w-6 text-blue-500" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-detective-text">{classroom.name}</h3>
+                      <p className="text-sm text-gray-400">{classroom.subject}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-detective-text">
-                      {classroom.name}
-                    </h3>
-                    <p className="text-sm text-gray-400">{classroom.subject}</p>
+                </div>
+
+                <div className="mb-4 space-y-2">
+                  <div className="flex items-center gap-2 text-sm text-detective-text">
+                    <GraduationCap className="h-4 w-4 text-gray-400" />
+                    <span>{classroom.grade_level}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-detective-text">
+                    <Users className="h-4 w-4 text-gray-400" />
+                    <span>{classroom.student_count} estudiantes</span>
                   </div>
                 </div>
-              </div>
 
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center gap-2 text-sm text-detective-text">
-                  <GraduationCap className="w-4 h-4 text-gray-400" />
-                  <span>{classroom.grade_level}</span>
+                <div className="flex gap-2 border-t border-gray-700 pt-4">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openEditModal(classroom);
+                    }}
+                    className="flex-1 rounded-lg bg-blue-500/20 px-3 py-2 text-sm font-medium text-blue-500 transition-colors hover:bg-blue-500/30"
+                  >
+                    <Edit className="mr-1 inline h-4 w-4" />
+                    Editar
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openDeleteDialog(classroom);
+                    }}
+                    className="flex-1 rounded-lg bg-red-500/20 px-3 py-2 text-sm font-medium text-red-500 transition-colors hover:bg-red-500/30"
+                  >
+                    <Trash2 className="mr-1 inline h-4 w-4" />
+                    Eliminar
+                  </button>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-detective-text">
-                  <Users className="w-4 h-4 text-gray-400" />
-                  <span>{classroom.student_count} estudiantes</span>
-                </div>
-              </div>
-
-              <div className="flex gap-2 pt-4 border-t border-gray-700">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openEditModal(classroom);
-                  }}
-                  className="flex-1 px-3 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-500 rounded-lg transition-colors text-sm font-medium"
-                >
-                  <Edit className="w-4 h-4 inline mr-1" />
-                  Editar
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openDeleteDialog(classroom);
-                  }}
-                  className="flex-1 px-3 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-500 rounded-lg transition-colors text-sm font-medium"
-                >
-                  <Trash2 className="w-4 h-4 inline mr-1" />
-                  Eliminar
-                </button>
-              </div>
-            </DetectiveCard>
+              </DetectiveCard>
             ))}
           </div>
         )}
 
         {!loading && filteredClassrooms.length === 0 && (
-          <div className="text-center py-12">
-            <BookOpen className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-lg">
+          <div className="py-12 text-center">
+            <BookOpen className="mx-auto mb-4 h-16 w-16 text-gray-600" />
+            <p className="text-lg text-gray-400">
               {searchTerm ? 'No se encontraron clases' : 'No tienes clases creadas aún'}
             </p>
           </div>
@@ -279,7 +284,7 @@ export default function TeacherClasses() {
             ]}
             required
           />
-          <div className="flex gap-3 justify-end pt-4">
+          <div className="flex justify-end gap-3 pt-4">
             <DetectiveButton
               variant="secondary"
               onClick={() => {
@@ -341,7 +346,7 @@ export default function TeacherClasses() {
             ]}
             required
           />
-          <div className="flex gap-3 justify-end pt-4">
+          <div className="flex justify-end gap-3 pt-4">
             <DetectiveButton
               variant="secondary"
               onClick={() => {

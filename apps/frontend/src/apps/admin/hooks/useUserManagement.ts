@@ -42,6 +42,7 @@ export interface UseUserManagementResult {
   suspendUser: (userId: string, reason?: string) => Promise<void>;
   unsuspendUser: (userId: string) => Promise<void>;
   deleteUser: (userId: string) => Promise<void>;
+  updateUser: (userId: string, data: Partial<SystemUser>) => Promise<void>;
   updateUserRole: (userId: string, role: string) => Promise<void>;
   resetPassword: (userId: string) => Promise<void>;
 
@@ -87,52 +88,72 @@ export function useUserManagement(): UseUserManagementResult {
    * Updated: Now uses adminAPI.getUsers() instead of direct apiClient call
    * Fixed: Uses items/pagination structure from PaginatedResponse
    * Fixed FE-062: Removed pagination from deps to prevent infinite loop
+   * Fixed: Convert User type to SystemUser type
    */
-  const fetchUsers = useCallback(async (params?: Partial<PaginationParams>): Promise<void> => {
-    setLoading(true);
-    setError(null);
+  const fetchUsers = useCallback(
+    async (params?: Partial<PaginationParams>): Promise<void> => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      // FE-062: Use DEFAULT_PAGINATION as base instead of state to prevent circular dependency
-      const queryParams = {
-        ...DEFAULT_PAGINATION,
-        ...params,
-        ...filters,
-      };
+      try {
+        // FE-062: Use DEFAULT_PAGINATION as base instead of state to prevent circular dependency
+        // Convert filters to UserFilters format (handle array role/status)
+        const userFilters: any = {
+          ...DEFAULT_PAGINATION,
+          ...params,
+          role: Array.isArray(filters.role) ? filters.role[0] : filters.role,
+          status: Array.isArray(filters.status) ? filters.status[0] : filters.status,
+          organizationId: filters.organizationId,
+          search: filters.search,
+        };
 
-      // Use adminAPI instead of direct apiClient call
-      const response = await adminAPI.getUsers(queryParams);
+        // Use adminAPI instead of direct apiClient call
+        const response = await adminAPI.getUsers(userFilters);
 
-      // adminAPI returns { items: T[], pagination: {...} }
-      setUsers(response.items);
-      setTotalUsers(response.pagination.totalItems);
-      setPagination(prev => ({
-        ...prev,
-        ...params,
-        page: response.pagination.page,
-      }));
-    } catch (err) {
-      console.error('Failed to fetch users:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch users');
-    } finally {
-      setLoading(false);
-    }
-  }, [filters]);
+        // Convert User[] to SystemUser[] by mapping fields
+        const systemUsers: SystemUser[] = response.items.map((user) => ({
+          id: user.id,
+          full_name: user.name,
+          email: user.email,
+          role: user.role,
+          status: user.status,
+          organizationId: user.organizationId,
+          organizationName: user.organization,
+          lastLogin: user.lastLogin || '',
+          createdAt: user.joinDate,
+        }));
+
+        setUsers(systemUsers);
+        setTotalUsers(response.pagination.totalItems);
+        setPagination((prev) => ({
+          ...prev,
+          ...params,
+          page: response.pagination.page,
+        }));
+      } catch (err) {
+        console.error('Failed to fetch users:', err);
+        setError(err instanceof Error ? err.message : 'Failed to fetch users');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [filters],
+  );
 
   // ============================================================================
   // SELECTION MANAGEMENT
   // ============================================================================
 
   const selectUser = useCallback((userId: string): void => {
-    setSelectedUsers(prev => [...new Set([...prev, userId])]);
+    setSelectedUsers((prev) => [...new Set([...prev, userId])]);
   }, []);
 
   const deselectUser = useCallback((userId: string): void => {
-    setSelectedUsers(prev => prev.filter(id => id !== userId));
+    setSelectedUsers((prev) => prev.filter((id) => id !== userId));
   }, []);
 
   const selectAllUsers = useCallback((): void => {
-    setSelectedUsers(users.map(u => u.id));
+    setSelectedUsers(users.map((u) => u.id));
   }, [users]);
 
   const deselectAllUsers = useCallback((): void => {
@@ -140,10 +161,8 @@ export function useUserManagement(): UseUserManagementResult {
   }, []);
 
   const toggleUserSelection = useCallback((userId: string): void => {
-    setSelectedUsers(prev =>
-      prev.includes(userId)
-        ? prev.filter(id => id !== userId)
-        : [...prev, userId]
+    setSelectedUsers((prev) =>
+      prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId],
     );
   }, []);
 
@@ -155,80 +174,126 @@ export function useUserManagement(): UseUserManagementResult {
    * Suspend a user
    * Updated: Now uses adminAPI.suspendUser()
    */
-  const suspendUser = useCallback(async (userId: string, reason?: string): Promise<void> => {
-    try {
-      // Optimistic update
-      setUsers(prev => prev.map(user =>
-        user.id === userId ? { ...user, status: 'inactive' as const } : user
-      ));
+  const suspendUser = useCallback(
+    async (userId: string): Promise<void> => {
+      try {
+        // Optimistic update
+        setUsers((prev) =>
+          prev.map((user) =>
+            user.id === userId ? { ...user, status: 'inactive' as const } : user,
+          ),
+        );
 
-      await adminAPI.suspendUser(userId);
-    } catch (err) {
-      console.error('Failed to suspend user:', err);
-      // Revert on error
-      await fetchUsers();
-      throw err;
-    }
-  }, [fetchUsers]);
+        await adminAPI.suspendUser(userId);
+      } catch (err) {
+        console.error('Failed to suspend user:', err);
+        // Revert on error
+        await fetchUsers();
+        throw err;
+      }
+    },
+    [fetchUsers],
+  );
 
   /**
    * Unsuspend a user
    * Updated: Now uses adminAPI.unsuspendUser()
    */
-  const unsuspendUser = useCallback(async (userId: string): Promise<void> => {
-    try {
-      // Optimistic update
-      setUsers(prev => prev.map(user =>
-        user.id === userId ? { ...user, status: 'active' as const } : user
-      ));
+  const unsuspendUser = useCallback(
+    async (userId: string): Promise<void> => {
+      try {
+        // Optimistic update
+        setUsers((prev) =>
+          prev.map((user) => (user.id === userId ? { ...user, status: 'active' as const } : user)),
+        );
 
-      await adminAPI.unsuspendUser(userId);
-    } catch (err) {
-      console.error('Failed to unsuspend user:', err);
-      // Revert on error
-      await fetchUsers();
-      throw err;
-    }
-  }, [fetchUsers]);
+        await adminAPI.unsuspendUser(userId);
+      } catch (err) {
+        console.error('Failed to unsuspend user:', err);
+        // Revert on error
+        await fetchUsers();
+        throw err;
+      }
+    },
+    [fetchUsers],
+  );
 
   /**
    * Delete a user
    * Updated: Now uses adminAPI.deleteUser()
    */
-  const deleteUser = useCallback(async (userId: string): Promise<void> => {
-    try {
-      // Optimistic update
-      setUsers(prev => prev.filter(user => user.id !== userId));
-      setTotalUsers(prev => prev - 1);
+  const deleteUser = useCallback(
+    async (userId: string): Promise<void> => {
+      try {
+        // Optimistic update
+        setUsers((prev) => prev.filter((user) => user.id !== userId));
+        setTotalUsers((prev) => prev - 1);
 
-      await adminAPI.deleteUser(userId);
-    } catch (err) {
-      console.error('Failed to delete user:', err);
-      // Revert on error
-      await fetchUsers();
-      throw err;
-    }
-  }, [fetchUsers]);
+        await adminAPI.deleteUser(userId);
+      } catch (err) {
+        console.error('Failed to delete user:', err);
+        // Revert on error
+        await fetchUsers();
+        throw err;
+      }
+    },
+    [fetchUsers],
+  );
+
+  /**
+   * Update user data (full update)
+   * Updated: Now uses adminAPI.updateUser()
+   */
+  const updateUser = useCallback(
+    async (userId: string, data: Partial<SystemUser>): Promise<void> => {
+      try {
+        // Optimistic update
+        setUsers((prev) => prev.map((user) => (user.id === userId ? { ...user, ...data } : user)));
+
+        // Transform SystemUser fields to User fields for API
+        const updatePayload: any = {};
+        if (data.full_name) updatePayload.name = data.full_name;
+        if (data.email) updatePayload.email = data.email;
+        if (data.role) updatePayload.role = data.role;
+        if (data.status) updatePayload.status = data.status;
+        if (data.organizationId) updatePayload.organizationId = data.organizationId;
+
+        await adminAPI.updateUser(userId, updatePayload);
+      } catch (err) {
+        console.error('Failed to update user:', err);
+        // Revert on error
+        await fetchUsers();
+        throw err;
+      }
+    },
+    [fetchUsers],
+  );
 
   /**
    * Update user role
    * Updated: Now uses adminAPI.updateUser()
    */
-  const updateUserRole = useCallback(async (userId: string, role: string): Promise<void> => {
-    try {
-      // Optimistic update
-      setUsers(prev => prev.map(user =>
-        user.id === userId ? { ...user, role: role as any } : user
-      ));
+  const updateUserRole = useCallback(
+    async (userId: string, role: string): Promise<void> => {
+      try {
+        // Validate role type
+        const validRole = role as 'student' | 'admin_teacher' | 'super_admin';
 
-      await adminAPI.updateUser(userId, { role });
-    } catch (err) {
-      console.error('Failed to update user role:', err);
-      // Revert on error
-      await fetchUsers();
-      throw err;
-    }
-  }, [fetchUsers]);
+        // Optimistic update
+        setUsers((prev) =>
+          prev.map((user) => (user.id === userId ? { ...user, role: validRole } : user)),
+        );
+
+        await adminAPI.updateUser(userId, { role: validRole });
+      } catch (err) {
+        console.error('Failed to update user role:', err);
+        // Revert on error
+        await fetchUsers();
+        throw err;
+      }
+    },
+    [fetchUsers],
+  );
 
   /**
    * Reset user password
@@ -249,77 +314,92 @@ export function useUserManagement(): UseUserManagementResult {
   /**
    * Bulk suspend users
    */
-  const bulkSuspend = useCallback(async (userIds: string[]): Promise<BulkActionResult> => {
-    try {
-      const response = await apiClient.post<{ success: boolean; data: BulkActionResult }>(
-        '/admin/users/bulk/suspend',
-        { userIds }
-      );
+  const bulkSuspend = useCallback(
+    async (userIds: string[]): Promise<BulkActionResult> => {
+      try {
+        const response = await apiClient.post<{ success: boolean; data: BulkActionResult }>(
+          '/admin/users/bulk/suspend',
+          { userIds },
+        );
 
-      const result = response.data.success ? response.data.data : response.data as unknown as BulkActionResult;
+        const result = response.data.success
+          ? response.data.data
+          : (response.data as unknown as BulkActionResult);
 
-      // Refresh user list
-      await fetchUsers();
+        // Refresh user list
+        await fetchUsers();
 
-      return result;
-    } catch (err) {
-      console.error('Failed to bulk suspend users:', err);
-      throw err;
-    }
-  }, [fetchUsers]);
+        return result;
+      } catch (err) {
+        console.error('Failed to bulk suspend users:', err);
+        throw err;
+      }
+    },
+    [fetchUsers],
+  );
 
   /**
    * Bulk delete users
    */
-  const bulkDelete = useCallback(async (userIds: string[]): Promise<BulkActionResult> => {
-    try {
-      const response = await apiClient.post<{ success: boolean; data: BulkActionResult }>(
-        '/admin/users/bulk/delete',
-        { userIds }
-      );
+  const bulkDelete = useCallback(
+    async (userIds: string[]): Promise<BulkActionResult> => {
+      try {
+        const response = await apiClient.post<{ success: boolean; data: BulkActionResult }>(
+          '/admin/users/bulk/delete',
+          { userIds },
+        );
 
-      const result = response.data.success ? response.data.data : response.data as unknown as BulkActionResult;
+        const result = response.data.success
+          ? response.data.data
+          : (response.data as unknown as BulkActionResult);
 
-      // Refresh user list
-      await fetchUsers();
+        // Refresh user list
+        await fetchUsers();
 
-      return result;
-    } catch (err) {
-      console.error('Failed to bulk delete users:', err);
-      throw err;
-    }
-  }, [fetchUsers]);
+        return result;
+      } catch (err) {
+        console.error('Failed to bulk delete users:', err);
+        throw err;
+      }
+    },
+    [fetchUsers],
+  );
 
   /**
    * Bulk update user roles
    */
-  const bulkUpdateRole = useCallback(async (userIds: string[], role: string): Promise<BulkActionResult> => {
-    try {
-      const response = await apiClient.post<{ success: boolean; data: BulkActionResult }>(
-        '/admin/users/bulk/update-role',
-        { userIds, role }
-      );
+  const bulkUpdateRole = useCallback(
+    async (userIds: string[], role: string): Promise<BulkActionResult> => {
+      try {
+        const response = await apiClient.post<{ success: boolean; data: BulkActionResult }>(
+          '/admin/users/bulk/update-role',
+          { userIds, role },
+        );
 
-      const result = response.data.success ? response.data.data : response.data as unknown as BulkActionResult;
+        const result = response.data.success
+          ? response.data.data
+          : (response.data as unknown as BulkActionResult);
 
-      // Refresh user list
-      await fetchUsers();
+        // Refresh user list
+        await fetchUsers();
 
-      return result;
-    } catch (err) {
-      console.error('Failed to bulk update roles:', err);
-      throw err;
-    }
-  }, [fetchUsers]);
+        return result;
+      } catch (err) {
+        console.error('Failed to bulk update roles:', err);
+        throw err;
+      }
+    },
+    [fetchUsers],
+  );
 
   // ============================================================================
   // FILTERING
   // ============================================================================
 
   const setFilters = useCallback((newFilters: Partial<UserManagementFilters>): void => {
-    setFiltersState(prev => ({ ...prev, ...newFilters }));
+    setFiltersState((prev) => ({ ...prev, ...newFilters }));
     // Reset to page 1 when filters change
-    setPagination(prev => ({ ...prev, page: 1 }));
+    setPagination((prev) => ({ ...prev, page: 1 }));
   }, []);
 
   const clearFilters = useCallback((): void => {
@@ -332,24 +412,24 @@ export function useUserManagement(): UseUserManagementResult {
   // ============================================================================
 
   const goToPage = useCallback((page: number): void => {
-    setPagination(prev => ({ ...prev, page }));
+    setPagination((prev) => ({ ...prev, page }));
   }, []);
 
   const nextPage = useCallback((): void => {
     const totalPages = Math.ceil(totalUsers / pagination.pageSize);
     if (pagination.page < totalPages) {
-      setPagination(prev => ({ ...prev, page: prev.page + 1 }));
+      setPagination((prev) => ({ ...prev, page: prev.page + 1 }));
     }
   }, [totalUsers, pagination.pageSize, pagination.page]);
 
   const prevPage = useCallback((): void => {
     if (pagination.page > 1) {
-      setPagination(prev => ({ ...prev, page: prev.page - 1 }));
+      setPagination((prev) => ({ ...prev, page: prev.page - 1 }));
     }
   }, [pagination.page]);
 
   const setPageSize = useCallback((size: number): void => {
-    setPagination(prev => ({ ...prev, pageSize: size, page: 1 }));
+    setPagination((prev) => ({ ...prev, pageSize: size, page: 1 }));
   }, []);
 
   // ============================================================================
@@ -387,6 +467,7 @@ export function useUserManagement(): UseUserManagementResult {
     suspendUser,
     unsuspendUser,
     deleteUser,
+    updateUser,
     updateUserRole,
     resetPassword,
 

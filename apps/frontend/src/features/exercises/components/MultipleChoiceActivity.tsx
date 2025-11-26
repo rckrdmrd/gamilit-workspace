@@ -19,15 +19,14 @@
  * - Animaciones de éxito/error
  */
 
-import React, { useState, useEffect } from 'react';
-import { Lightbulb, Coins, Clock, ChevronRight, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { Lightbulb, Coins, ChevronRight } from 'lucide-react';
 import { ExerciseHeader } from './ExerciseHeader';
 import { ExerciseFeedback } from './ExerciseFeedback';
 import { useExerciseSubmission } from '../hooks/useExerciseSubmission';
 import { useExerciseTimer } from '../hooks/useExerciseTimer';
 import { useExerciseRewards } from '../hooks/useExerciseRewards';
 import type {
-  Exercise,
   ExerciseComponentProps,
   ExerciseHint,
   ExerciseFeedback as FeedbackType,
@@ -66,7 +65,7 @@ export const MultipleChoiceActivity: React.FC<ExerciseComponentProps> = ({
         }, 3000);
       }
     },
-    onError: (error) => {
+    onError: () => {
       setFeedback({
         type: 'error',
         title: 'Error',
@@ -136,7 +135,7 @@ export const MultipleChoiceActivity: React.FC<ExerciseComponentProps> = ({
   };
 
   // Get option style based on state
-  const getOptionStyle = (optionId: string, isCorrect: boolean) => {
+  const getOptionStyle = (optionId: string, _isCorrect: boolean) => {
     const isSelected = selectedOption === optionId;
 
     if (!result) {
@@ -155,7 +154,7 @@ export const MultipleChoiceActivity: React.FC<ExerciseComponentProps> = ({
       return 'border-red-500 bg-red-50 ring-2 ring-red-200';
     }
 
-    if (isCorrect) {
+    if (_isCorrect) {
       return 'border-green-500 bg-green-50';
     }
 
@@ -163,7 +162,7 @@ export const MultipleChoiceActivity: React.FC<ExerciseComponentProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="mx-auto max-w-4xl p-6">
       {/* Header */}
       <ExerciseHeader
         exercise={exercise}
@@ -180,10 +179,8 @@ export const MultipleChoiceActivity: React.FC<ExerciseComponentProps> = ({
       />
 
       {/* Question */}
-      <div className="bg-white rounded-xl border-2 border-gray-200 p-8 mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          {exercise.content.question}
-        </h2>
+      <div className="mb-6 rounded-xl border-2 border-gray-200 bg-white p-8">
+        <h2 className="mb-6 text-2xl font-bold text-gray-900">{exercise.content.question}</h2>
 
         {/* Media (if present) */}
         {exercise.content.media_url && exercise.content.media_type === 'image' && (
@@ -191,30 +188,30 @@ export const MultipleChoiceActivity: React.FC<ExerciseComponentProps> = ({
             <img
               src={exercise.content.media_url}
               alt="Exercise media"
-              className="max-w-full h-auto rounded-lg border border-gray-300"
+              className="h-auto max-w-full rounded-lg border border-gray-300"
             />
           </div>
         )}
 
         {/* Options */}
         <div className="space-y-3">
-          {options.map((option, index) => (
+          {options.map((option) => (
             <button
               key={option.id}
               onClick={() => handleOptionSelect(option.id)}
               disabled={result !== null || isSubmitting || timer.isTimeExpired}
               className={`
-                w-full p-4 rounded-lg border-2 transition-all duration-200
-                flex items-center text-left
+                flex w-full items-center rounded-lg border-2 p-4
+                text-left transition-all duration-200
                 disabled:cursor-not-allowed
-                ${getOptionStyle(option.id, option.is_correct)}
+                ${getOptionStyle(option.id, option.is_correct ?? false)}
               `}
             >
               {/* Option label (A, B, C, D) */}
               <div
                 className={`
-                  w-10 h-10 rounded-full flex items-center justify-center
-                  font-bold text-lg mr-4 flex-shrink-0
+                  mr-4 flex h-10 w-10 flex-shrink-0 items-center
+                  justify-center rounded-full text-lg font-bold
                   ${
                     selectedOption === option.id
                       ? result
@@ -223,8 +220,8 @@ export const MultipleChoiceActivity: React.FC<ExerciseComponentProps> = ({
                           : 'bg-red-600 text-white'
                         : 'bg-purple-600 text-white'
                       : result && option.is_correct
-                      ? 'bg-green-600 text-white'
-                      : 'bg-gray-200 text-gray-700'
+                        ? 'bg-green-600 text-white'
+                        : 'bg-gray-200 text-gray-700'
                   }
                 `}
               >
@@ -232,14 +229,10 @@ export const MultipleChoiceActivity: React.FC<ExerciseComponentProps> = ({
               </div>
 
               {/* Option text */}
-              <span className="text-base font-medium text-gray-900 flex-1">
-                {option.text}
-              </span>
+              <span className="flex-1 text-base font-medium text-gray-900">{option.text}</span>
 
               {/* Check mark for correct answer */}
-              {result && option.is_correct && (
-                <span className="text-green-600 ml-2">✓</span>
-              )}
+              {result && option.is_correct && <span className="ml-2 text-green-600">✓</span>}
             </button>
           ))}
         </div>
@@ -247,20 +240,16 @@ export const MultipleChoiceActivity: React.FC<ExerciseComponentProps> = ({
 
       {/* Hints Section */}
       {allowHints && exercise.hints && exercise.hints.length > 0 && (
-        <div className="bg-white rounded-xl border-2 border-gray-200 p-6 mb-6">
+        <div className="mb-6 rounded-xl border-2 border-gray-200 bg-white p-6">
           <button
             onClick={() => setShowHints(!showHints)}
-            className="flex items-center justify-between w-full text-left"
+            className="flex w-full items-center justify-between text-left"
           >
             <div className="flex items-center">
-              <Lightbulb className="w-5 h-5 text-yellow-600 mr-2" />
-              <span className="font-semibold text-gray-900">
-                Pistas ({exercise.hints.length})
-              </span>
+              <Lightbulb className="mr-2 h-5 w-5 text-yellow-600" />
+              <span className="font-semibold text-gray-900">Pistas ({exercise.hints.length})</span>
             </div>
-            <span className="text-gray-500 text-sm">
-              {showHints ? 'Ocultar' : 'Mostrar'}
-            </span>
+            <span className="text-sm text-gray-500">{showHints ? 'Ocultar' : 'Mostrar'}</span>
           </button>
 
           {showHints && (
@@ -272,34 +261,29 @@ export const MultipleChoiceActivity: React.FC<ExerciseComponentProps> = ({
                   const canAfford = rewards.canAffordHint(hint);
 
                   return (
-                    <div
-                      key={hint.id}
-                      className="p-4 border-2 border-gray-200 rounded-lg"
-                    >
+                    <div key={hint.id} className="rounded-lg border-2 border-gray-200 p-4">
                       {isUnlocked ? (
                         <div className="flex items-start">
-                          <Lightbulb className="w-5 h-5 text-yellow-600 mr-2 mt-0.5" />
+                          <Lightbulb className="mr-2 mt-0.5 h-5 w-5 text-yellow-600" />
                           <p className="text-gray-700">{hint.text}</p>
                         </div>
                       ) : (
                         <div className="flex items-center justify-between">
-                          <span className="text-gray-600">
-                            Pista #{hint.order}
-                          </span>
+                          <span className="text-gray-600">Pista #{hint.order}</span>
                           <button
                             onClick={() => handleUnlockHint(hint)}
                             disabled={!canAfford || result !== null}
                             className={`
-                              flex items-center px-3 py-1 rounded-lg text-sm font-semibold
+                              flex items-center rounded-lg px-3 py-1 text-sm font-semibold
                               transition-colors
                               ${
                                 canAfford && !result
-                                  ? 'bg-yellow-500 hover:bg-yellow-600 text-white'
-                                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                  ? 'bg-yellow-500 text-white hover:bg-yellow-600'
+                                  : 'cursor-not-allowed bg-gray-300 text-gray-500'
                               }
                             `}
                           >
-                            <Coins className="w-4 h-4 mr-1" />
+                            <Coins className="mr-1 h-4 w-4" />
                             {hint.ml_coins_cost} ML Coins
                           </button>
                         </div>
@@ -318,11 +302,7 @@ export const MultipleChoiceActivity: React.FC<ExerciseComponentProps> = ({
           <ExerciseFeedback
             feedback={feedback}
             explanation={result?.explanation || exercise.content.explanation}
-            onClose={
-              result?.is_correct
-                ? () => onComplete(result)
-                : () => setFeedback(null)
-            }
+            onClose={result?.is_correct ? () => onComplete(result) : () => setFeedback(null)}
           />
         </div>
       )}
@@ -331,15 +311,13 @@ export const MultipleChoiceActivity: React.FC<ExerciseComponentProps> = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4 text-sm">
           {/* ML Coins balance */}
-          <span className="flex items-center text-yellow-600 font-semibold">
-            <Coins className="w-4 h-4 mr-1" />
+          <span className="flex items-center font-semibold text-yellow-600">
+            <Coins className="mr-1 h-4 w-4" />
             {rewards.mlCoinsBalance} ML Coins
           </span>
 
           {rewards.mlCoinsSpent > 0 && (
-            <span className="text-gray-600">
-              ({rewards.mlCoinsSpent} gastados en pistas)
-            </span>
+            <span className="text-gray-600">({rewards.mlCoinsSpent} gastados en pistas)</span>
           )}
         </div>
 
@@ -347,7 +325,7 @@ export const MultipleChoiceActivity: React.FC<ExerciseComponentProps> = ({
           {onCancel && !result && (
             <button
               onClick={onCancel}
-              className="px-6 py-3 border-2 border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+              className="rounded-lg border-2 border-gray-300 px-6 py-3 font-semibold text-gray-700 transition-colors hover:bg-gray-50"
             >
               Cancelar
             </button>
@@ -355,19 +333,14 @@ export const MultipleChoiceActivity: React.FC<ExerciseComponentProps> = ({
 
           <button
             onClick={handleSubmit}
-            disabled={
-              !selectedOption ||
-              isSubmitting ||
-              result !== null ||
-              timer.isTimeExpired
-            }
+            disabled={!selectedOption || isSubmitting || result !== null || timer.isTimeExpired}
             className={`
-              px-6 py-3 rounded-lg font-semibold transition-all
-              flex items-center
+              flex items-center rounded-lg px-6 py-3
+              font-semibold transition-all
               ${
                 selectedOption && !isSubmitting && !result && !timer.isTimeExpired
-                  ? 'bg-purple-600 hover:bg-purple-700 text-white'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  ? 'bg-purple-600 text-white hover:bg-purple-700'
+                  : 'cursor-not-allowed bg-gray-300 text-gray-500'
               }
             `}
           >
@@ -378,7 +351,7 @@ export const MultipleChoiceActivity: React.FC<ExerciseComponentProps> = ({
             ) : (
               <>
                 Enviar respuesta
-                <ChevronRight className="w-5 h-5 ml-1" />
+                <ChevronRight className="ml-1 h-5 w-5" />
               </>
             )}
           </button>

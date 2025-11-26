@@ -1,24 +1,55 @@
-import React, { useState } from 'react';
+/**
+ * AdminRolesPage - Roles & Permissions Management
+ *
+ * Comprehensive page for managing system roles and their permissions.
+ *
+ * Features:
+ * - List all roles with user counts
+ * - View and edit role permissions
+ * - System roles (cannot be deleted)
+ * - Permission management by module (users, content, gamification, monitoring, system)
+ * - Real-time updates via backend API
+ *
+ * Backend Integration:
+ * - GET /admin/roles - List roles
+ * - GET /admin/roles/permissions - Available permissions
+ * - GET /admin/roles/:id/permissions - Role permissions
+ * - PUT /admin/roles/:id/permissions - Update permissions
+ *
+ * Status: ✅ MVP - Backend Integrated (2025-11-24)
+ */
+
+import { useState, useEffect } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '../layouts/AdminLayout';
-import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { DetectiveButton } from '@shared/components/base/DetectiveButton';
-import {
-  ShieldCheck,
-  Edit,
-  Trash2,
-  Plus,
-  Check,
-  X,
-} from 'lucide-react';
+import { useRoles } from '../hooks/useRoles';
+import { useRolePermissions } from '../hooks/useRolePermissions';
+import { Card } from '@shared/components/Card';
+import { Button } from '@shared/components/Button';
+import { LoadingSpinner } from '@shared/components/LoadingSpinner';
+import type { Permission } from '@/services/api/adminTypes';
 
-/**
- * AdminRolesPage - Gestión de roles y permisos
- */
 export default function AdminRolesPage() {
   const { user, logout } = useAuth();
-  const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
+  // Hooks
+  const { roles, loading: rolesLoading, error: rolesError, refetch } = useRoles();
+  const {
+    rolePermissions,
+    loading: permissionsLoading,
+    error: permissionsError,
+    fetchRolePermissions,
+    updatePermissions,
+    reset: resetPermissions,
+  } = useRolePermissions();
+
+  // Local state
+  const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
+  const [editingPermissions, setEditingPermissions] = useState<Permission[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Gamification data for header
   const gamificationData = {
     userId: user?.id || 'mock-admin-id',
     level: 20,
@@ -33,103 +64,103 @@ export default function AdminRolesPage() {
     window.location.href = '/login';
   };
 
-  // Mock data de roles
-  const mockRoles = [
-    {
-      id: 'student',
-      name: 'Estudiante',
-      description: 'Usuario estudiante con acceso a ejercicios y gamificación',
-      userCount: 1250,
-      color: 'bg-blue-500',
-    },
-    {
-      id: 'admin_teacher',
-      name: 'Profesor',
-      description: 'Usuario profesor con capacidad de monitoreo y gestión de clase',
-      userCount: 45,
-      color: 'bg-purple-500',
-    },
-    {
-      id: 'super_admin',
-      name: 'Super Administrador',
-      description: 'Acceso total al sistema con permisos de configuración',
-      userCount: 3,
-      color: 'bg-red-500',
-    },
-  ];
+  // ============================================================================
+  // ROLE SELECTION
+  // ============================================================================
 
-  // Permisos disponibles por módulo
-  const permissions = {
-    users: {
-      name: 'Usuarios',
-      items: [
-        { id: 'users.view', label: 'Ver usuarios' },
-        { id: 'users.create', label: 'Crear usuarios' },
-        { id: 'users.edit', label: 'Editar usuarios' },
-        { id: 'users.delete', label: 'Eliminar usuarios' },
-      ],
-    },
-    content: {
-      name: 'Contenido',
-      items: [
-        { id: 'content.view', label: 'Ver contenido' },
-        { id: 'content.create', label: 'Crear contenido' },
-        { id: 'content.edit', label: 'Editar contenido' },
-        { id: 'content.approve', label: 'Aprobar contenido' },
-        { id: 'content.delete', label: 'Eliminar contenido' },
-      ],
-    },
-    gamification: {
-      name: 'Gamificación',
-      items: [
-        { id: 'gamification.view', label: 'Ver gamificación' },
-        { id: 'gamification.config', label: 'Configurar gamificación' },
-        { id: 'gamification.awards', label: 'Otorgar premios' },
-      ],
-    },
-    monitoring: {
-      name: 'Monitoreo',
-      items: [
-        { id: 'monitoring.view', label: 'Ver reportes' },
-        { id: 'monitoring.export', label: 'Exportar datos' },
-        { id: 'monitoring.analytics', label: 'Ver analíticas' },
-      ],
-    },
-    system: {
-      name: 'Sistema',
-      items: [
-        { id: 'system.config', label: 'Configurar sistema' },
-        { id: 'system.roles', label: 'Gestionar roles' },
-        { id: 'system.logs', label: 'Ver logs del sistema' },
-      ],
-    },
+  const handleSelectRole = async (roleId: string) => {
+    setSelectedRoleId(roleId);
+    setSuccessMessage(null);
+    await fetchRolePermissions(roleId);
   };
 
-  // Matriz de permisos por rol (mock)
-  const rolePermissions: Record<string, string[]> = {
-    student: [
-      'content.view',
-      'gamification.view',
-    ],
-    admin_teacher: [
-      'users.view',
-      'content.view',
-      'content.create',
-      'content.edit',
-      'gamification.view',
-      'gamification.awards',
-      'monitoring.view',
-      'monitoring.export',
-      'monitoring.analytics',
-    ],
-    super_admin: Object.values(permissions).flatMap((module) =>
-      module.items.map((p) => p.id)
-    ),
+  // When rolePermissions loads, copy to editing state
+  useEffect(() => {
+    if (rolePermissions) {
+      setEditingPermissions([...rolePermissions.permissions]);
+    }
+  }, [rolePermissions]);
+
+  // ============================================================================
+  // PERMISSION MANAGEMENT
+  // ============================================================================
+
+  const togglePermission = (module: string, action: string) => {
+    setEditingPermissions((prev) =>
+      prev.map((perm) =>
+        perm.module === module && perm.action === action
+          ? { ...perm, granted: !perm.granted }
+          : perm,
+      ),
+    );
   };
 
-  const hasPermission = (roleId: string, permissionId: string) => {
-    return rolePermissions[roleId]?.includes(permissionId) || false;
+  const handleSavePermissions = async () => {
+    if (!rolePermissions || !selectedRoleId) return;
+
+    setIsSaving(true);
+    setSuccessMessage(null);
+
+    try {
+      await updatePermissions(selectedRoleId, editingPermissions);
+      setSuccessMessage('Permisos actualizados exitosamente');
+
+      // Refetch roles to update user counts if needed
+      await refetch();
+    } catch (error) {
+      console.error('Failed to save permissions:', error);
+      // Error is already set in hook
+    } finally {
+      setIsSaving(false);
+    }
   };
+
+  const handleCancelEdit = () => {
+    setSelectedRoleId(null);
+    resetPermissions();
+    setEditingPermissions([]);
+    setSuccessMessage(null);
+  };
+
+  // ============================================================================
+  // RENDER HELPERS
+  // ============================================================================
+
+  const groupPermissionsByModule = (permissions: Permission[]) => {
+    const grouped: Record<string, Permission[]> = {};
+    permissions.forEach((perm) => {
+      if (!grouped[perm.module]) {
+        grouped[perm.module] = [];
+      }
+      grouped[perm.module].push(perm);
+    });
+    return grouped;
+  };
+
+  const getModuleIcon = (module: string): string => {
+    const icons: Record<string, string> = {
+      users: '👥',
+      content: '📚',
+      gamification: '🎮',
+      monitoring: '📊',
+      system: '⚙️',
+    };
+    return icons[module] || '📋';
+  };
+
+  const getActionLabel = (action: string): string => {
+    const labels: Record<string, string> = {
+      view: 'Ver',
+      create: 'Crear',
+      edit: 'Editar',
+      delete: 'Eliminar',
+    };
+    return labels[action] || action;
+  };
+
+  // ============================================================================
+  // RENDER
+  // ============================================================================
 
   return (
     <AdminLayout
@@ -138,163 +169,207 @@ export default function AdminRolesPage() {
       organizationName="GAMILIT Platform Admin"
       onLogout={handleLogout}
     >
-      <div className="space-y-6">
+      <div className="space-y-6 p-6">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-detective-text flex items-center gap-3">
-            <ShieldCheck className="w-8 h-8 text-purple-500" />
-            Roles y Permisos
-          </h1>
-          <p className="text-detective-text-secondary mt-1">
-            Gestiona roles de usuario y asigna permisos de acceso
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Roles y Permisos</h1>
+            <p className="mt-1 text-gray-600">
+              Gestiona los roles del sistema y sus permisos granulares
+            </p>
+          </div>
+          <Button onClick={() => refetch()} disabled={rolesLoading} variant="secondary">
+            🔄 Actualizar
+          </Button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Roles List */}
-          <div className="lg:col-span-1">
-            <DetectiveCard>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-detective-text">Roles</h2>
-                <DetectiveButton
-                  variant="primary"
-                  size="sm"
-                  onClick={() => alert('Crear rol - Próximamente')}
-                >
-                  <Plus className="w-4 h-4" />
-                </DetectiveButton>
-              </div>
+        {/* Error Messages */}
+        {rolesError && (
+          <Card className="border-red-200 bg-red-50">
+            <div className="text-red-800">
+              <strong>Error:</strong> {rolesError}
+            </div>
+          </Card>
+        )}
 
-              <div className="space-y-3">
-                {mockRoles.map((role) => (
-                  <button
-                    key={role.id}
-                    onClick={() => setSelectedRole(role.id)}
-                    className={`w-full p-4 rounded-lg text-left transition-all ${
-                      selectedRole === role.id
-                        ? 'bg-detective-orange/20 border-2 border-detective-orange'
-                        : 'bg-detective-bg-secondary hover:bg-detective-bg-secondary/70 border-2 border-transparent'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className={`w-3 h-3 rounded-full ${role.color}`} />
-                      <h3 className="font-bold text-detective-text">{role.name}</h3>
-                    </div>
-                    <p className="text-sm text-detective-text-secondary mb-2">
-                      {role.description}
-                    </p>
-                    <p className="text-xs text-detective-text-secondary">
-                      {role.userCount} usuarios
-                    </p>
-                  </button>
-                ))}
-              </div>
-            </DetectiveCard>
+        {permissionsError && (
+          <Card className="border-red-200 bg-red-50">
+            <div className="text-red-800">
+              <strong>Error:</strong> {permissionsError}
+            </div>
+          </Card>
+        )}
+
+        {/* Success Message */}
+        {successMessage && (
+          <Card className="border-green-200 bg-green-50">
+            <div className="text-green-800">
+              <strong>✓ Éxito:</strong> {successMessage}
+            </div>
+          </Card>
+        )}
+
+        {/* Loading State */}
+        {rolesLoading && !roles.length && (
+          <div className="flex items-center justify-center py-12">
+            <LoadingSpinner />
+            <span className="ml-3 text-gray-600">Cargando roles...</span>
           </div>
+        )}
 
-          {/* Permissions Matrix */}
-          <div className="lg:col-span-2">
-            <DetectiveCard>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-detective-text">
-                  Permisos
-                  {selectedRole && (
-                    <span className="ml-2 text-detective-orange">
-                      - {mockRoles.find((r) => r.id === selectedRole)?.name}
-                    </span>
-                  )}
-                </h2>
-                {selectedRole && (
-                  <div className="flex gap-2">
-                    <DetectiveButton
-                      variant="outline"
-                      size="sm"
-                      onClick={() => alert('Editar rol - Próximamente')}
-                    >
-                      <Edit className="w-4 h-4" />
-                      Editar
-                    </DetectiveButton>
-                    <DetectiveButton
-                      variant="danger"
-                      size="sm"
-                      onClick={() => alert('Eliminar rol - Próximamente')}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      Eliminar
-                    </DetectiveButton>
-                  </div>
-                )}
-              </div>
-
-              {!selectedRole ? (
-                <div className="text-center py-12 text-detective-text-secondary">
-                  <ShieldCheck className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                  <p>Selecciona un rol para ver sus permisos</p>
+        {/* Main Content - Two Column Layout */}
+        {!rolesLoading && roles.length > 0 && (
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {/* Left Column - Roles List */}
+            <div className="lg:col-span-1">
+              <Card>
+                <div className="border-b border-gray-200 p-4">
+                  <h2 className="text-xl font-semibold text-gray-900">Roles del Sistema</h2>
+                  <p className="mt-1 text-sm text-gray-600">{roles.length} roles totales</p>
                 </div>
-              ) : (
-                <div className="space-y-6">
-                  {Object.entries(permissions).map(([moduleKey, module]) => (
-                    <div key={moduleKey}>
-                      <h3 className="text-lg font-bold text-detective-text mb-3 flex items-center gap-2">
-                        {module.name}
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {module.items.map((permission) => {
-                          const isGranted = hasPermission(selectedRole, permission.id);
-                          return (
-                            <div
-                              key={permission.id}
-                              className={`flex items-center justify-between p-3 rounded-lg ${
-                                isGranted
-                                  ? 'bg-green-900/20 border border-green-500/30'
-                                  : 'bg-detective-bg-secondary border border-gray-700'
-                              }`}
-                            >
-                              <span className="text-sm text-detective-text">
-                                {permission.label}
+                <div className="divide-y divide-gray-200">
+                  {roles.map((role) => (
+                    <button
+                      key={role.roleId}
+                      onClick={() => handleSelectRole(role.roleId)}
+                      className={`w-full p-4 text-left transition-colors hover:bg-gray-50 ${
+                        selectedRoleId === role.roleId
+                          ? 'border-l-4 border-blue-500 bg-blue-50'
+                          : ''
+                      }`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900">
+                            {role.roleName}
+                            {role.isSystem && (
+                              <span className="ml-2 rounded bg-gray-200 px-2 py-0.5 text-xs text-gray-700">
+                                Sistema
                               </span>
-                              {isGranted ? (
-                                <Check className="w-5 h-5 text-green-500" />
-                              ) : (
-                                <X className="w-5 h-5 text-gray-500" />
-                              )}
-                            </div>
-                          );
-                        })}
+                            )}
+                          </h3>
+                          <p className="mt-1 text-sm text-gray-600">{role.description}</p>
+                          <p className="mt-2 text-xs text-gray-500">
+                            👥 {role.userCount} usuario{role.userCount !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                        {selectedRoleId === role.roleId && (
+                          <span className="text-blue-500">▶</span>
+                        )}
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
-              )}
-            </DetectiveCard>
-          </div>
-        </div>
+              </Card>
+            </div>
 
-        {/* Summary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <DetectiveCard hoverable={false}>
-            <div className="text-center">
-              <p className="text-sm text-detective-text-secondary mb-1">Total Roles</p>
-              <p className="text-3xl font-bold text-detective-text">{mockRoles.length}</p>
+            {/* Right Column - Permissions Editor */}
+            <div className="lg:col-span-2">
+              {!selectedRoleId && (
+                <Card>
+                  <div className="p-12 text-center text-gray-500">
+                    <div className="mb-4 text-6xl">🔐</div>
+                    <h3 className="mb-2 text-lg font-semibold text-gray-700">Selecciona un rol</h3>
+                    <p>Elige un rol de la lista para ver y editar sus permisos</p>
+                  </div>
+                </Card>
+              )}
+
+              {selectedRoleId && permissionsLoading && (
+                <Card>
+                  <div className="flex items-center justify-center py-12">
+                    <LoadingSpinner />
+                    <span className="ml-3 text-gray-600">Cargando permisos...</span>
+                  </div>
+                </Card>
+              )}
+
+              {selectedRoleId && rolePermissions && !permissionsLoading && (
+                <Card>
+                  <div className="border-b border-gray-200 p-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h2 className="text-xl font-semibold text-gray-900">
+                          Permisos: {rolePermissions.role.roleName}
+                        </h2>
+                        <p className="mt-1 text-sm text-gray-600">
+                          {rolePermissions.role.description}
+                        </p>
+                      </div>
+                      <Button onClick={handleCancelEdit} variant="secondary" size="sm">
+                        ✕ Cerrar
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6 p-6">
+                    {/* Permissions by Module */}
+                    {Object.entries(groupPermissionsByModule(editingPermissions)).map(
+                      ([module, perms]) => (
+                        <div key={module} className="space-y-3">
+                          <h3 className="flex items-center text-lg font-semibold text-gray-800">
+                            <span className="mr-2">{getModuleIcon(module)}</span>
+                            {module.charAt(0).toUpperCase() + module.slice(1)}
+                          </h3>
+                          <div className="grid grid-cols-2 gap-3">
+                            {perms.map((perm) => (
+                              <label
+                                key={`${perm.module}-${perm.action}`}
+                                className={`flex cursor-pointer items-center rounded-lg border p-3 transition-colors ${
+                                  perm.granted
+                                    ? 'border-green-300 bg-green-50'
+                                    : 'border-gray-300 bg-gray-50 hover:border-gray-400'
+                                }`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={perm.granted}
+                                  onChange={() => togglePermission(perm.module, perm.action)}
+                                  className="h-4 w-4 rounded text-green-600 focus:ring-green-500"
+                                />
+                                <span className="ml-3 text-sm font-medium text-gray-900">
+                                  {getActionLabel(perm.action)}
+                                </span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      ),
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center justify-end space-x-3 border-t border-gray-200 pt-4">
+                      <Button onClick={handleCancelEdit} variant="secondary" disabled={isSaving}>
+                        Cancelar
+                      </Button>
+                      <Button onClick={handleSavePermissions} disabled={isSaving}>
+                        {isSaving ? (
+                          <>
+                            <LoadingSpinner className="mr-2 h-4 w-4" />
+                            Guardando...
+                          </>
+                        ) : (
+                          '💾 Guardar Permisos'
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              )}
             </div>
-          </DetectiveCard>
-          <DetectiveCard hoverable={false}>
-            <div className="text-center">
-              <p className="text-sm text-detective-text-secondary mb-1">Total Usuarios</p>
-              <p className="text-3xl font-bold text-blue-500">
-                {mockRoles.reduce((sum, role) => sum + role.userCount, 0)}
-              </p>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!rolesLoading && roles.length === 0 && !rolesError && (
+          <Card>
+            <div className="p-12 text-center text-gray-500">
+              <div className="mb-4 text-6xl">🔐</div>
+              <h3 className="mb-2 text-lg font-semibold text-gray-700">No hay roles disponibles</h3>
+              <p>No se encontraron roles en el sistema</p>
             </div>
-          </DetectiveCard>
-          <DetectiveCard hoverable={false}>
-            <div className="text-center">
-              <p className="text-sm text-detective-text-secondary mb-1">Total Permisos</p>
-              <p className="text-3xl font-bold text-purple-500">
-                {Object.values(permissions).reduce((sum, module) => sum + module.items.length, 0)}
-              </p>
-            </div>
-          </DetectiveCard>
-        </div>
+          </Card>
+        )}
       </div>
     </AdminLayout>
   );

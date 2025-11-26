@@ -7,12 +7,20 @@
  * @module progressTypes
  */
 
-// Import shared enums
-import { DifficultyLevel } from '@shared/types/educational.types';
+// Import shared enums (re-exported below)
 
 // ============================================================================
 // ENUMS
 // ============================================================================
+
+/**
+ * Difficulty levels for exercises
+ */
+export enum DifficultyLevel {
+  BEGINNER = 'beginner',
+  INTERMEDIATE = 'intermediate',
+  ADVANCED = 'advanced',
+}
 
 /**
  * Activity types
@@ -47,9 +55,9 @@ export enum PowerupType {
 export enum MayaRank {
   AJAW = 'Ajaw',
   NACOM = 'Nacom',
-  AH_KIN = 'Ah K\'in',
+  AH_KIN = "Ah K'in",
   HALACH_UINIC = 'Halach Uinic',
-  KUKULKAN = 'K\'uk\'ulkan',
+  KUKULKAN = "K'uk'ulkan",
 }
 
 // ============================================================================

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { useErrorTracking } from '../../hooks/useAdminData';
-import { AlertTriangle, CheckCircle, XCircle, TrendingUp, ChevronDown, ChevronUp } from 'lucide-react';
+import { AlertTriangle, CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
 
 const severityColors = {
   low: { bg: 'bg-blue-500/10', text: 'text-blue-500', border: 'border-blue-500/30' },
@@ -21,7 +21,7 @@ export const ErrorTrackingPanel: React.FC = () => {
       acc[error.severity] = (acc[error.severity] || 0) + 1;
       return acc;
     },
-    {} as Record<string, number>
+    {} as Record<string, number>,
   );
 
   const errorsByType = errors.reduce(
@@ -29,14 +29,14 @@ export const ErrorTrackingPanel: React.FC = () => {
       acc[error.type] = (acc[error.type] || 0) + 1;
       return acc;
     },
-    {} as Record<string, number>
+    {} as Record<string, number>,
   );
 
   if (loading) {
     return (
       <DetectiveCard>
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-detective-orange border-t-transparent"></div>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-detective-orange border-t-transparent"></div>
         </div>
       </DetectiveCard>
     );
@@ -47,7 +47,7 @@ export const ErrorTrackingPanel: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <AlertTriangle className="w-8 h-8 text-detective-orange" />
+          <AlertTriangle className="h-8 w-8 text-detective-orange" />
           <div>
             <h2 className="text-detective-subtitle">Error Tracking & Alerting</h2>
             <p className="text-detective-small text-gray-400">Last 24 hours</p>
@@ -59,7 +59,7 @@ export const ErrorTrackingPanel: React.FC = () => {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {(['critical', 'high', 'medium', 'low'] as const).map((severity) => {
           const colors = severityColors[severity];
           const count = errorsBySeverity[severity] || 0;
@@ -73,10 +73,10 @@ export const ErrorTrackingPanel: React.FC = () => {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-detective-small text-gray-400 uppercase">{severity}</p>
+                  <p className="text-detective-small uppercase text-gray-400">{severity}</p>
                   <p className={`text-3xl font-bold ${colors.text}`}>{count}</p>
                 </div>
-                <AlertTriangle className={`w-8 h-8 ${colors.text}`} />
+                <AlertTriangle className={`h-8 w-8 ${colors.text}`} />
               </div>
             </DetectiveCard>
           );
@@ -87,7 +87,7 @@ export const ErrorTrackingPanel: React.FC = () => {
       <DetectiveCard>
         <div className="flex items-center gap-4">
           <div className="flex-1">
-            <label className="block text-detective-small text-gray-400 mb-2">Severity</label>
+            <label className="text-detective-small mb-2 block text-gray-400">Severity</label>
             <select
               className="input-detective"
               value={filters.severity || ''}
@@ -101,7 +101,7 @@ export const ErrorTrackingPanel: React.FC = () => {
             </select>
           </div>
           <div className="flex-1">
-            <label className="block text-detective-small text-gray-400 mb-2">Status</label>
+            <label className="text-detective-small mb-2 block text-gray-400">Status</label>
             <select
               className="input-detective"
               value={filters.resolved === undefined ? '' : filters.resolved ? 'true' : 'false'}
@@ -135,11 +135,11 @@ export const ErrorTrackingPanel: React.FC = () => {
                 <div key={type} className="space-y-1">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-400">{type}</span>
-                    <span className="text-detective-orange font-bold">
+                    <span className="font-bold text-detective-orange">
                       {count} ({percentage}%)
                     </span>
                   </div>
-                  <div className="h-2 bg-detective-bg-secondary rounded-full overflow-hidden">
+                  <div className="h-2 overflow-hidden rounded-full bg-detective-bg-secondary">
                     <div
                       className="h-full bg-gradient-to-r from-detective-orange to-red-500"
                       style={{ width: `${percentage}%` }}
@@ -156,8 +156,8 @@ export const ErrorTrackingPanel: React.FC = () => {
         <h3 className="text-detective-subtitle mb-4">Recent Errors</h3>
         <div className="space-y-3">
           {errors.length === 0 ? (
-            <div className="text-center py-8 text-gray-400">
-              <CheckCircle className="w-12 h-12 mx-auto mb-2 text-green-500" />
+            <div className="py-8 text-center text-gray-400">
+              <CheckCircle className="mx-auto mb-2 h-12 w-12 text-green-500" />
               <p>No errors found with current filters</p>
             </div>
           ) : (
@@ -168,46 +168,54 @@ export const ErrorTrackingPanel: React.FC = () => {
               return (
                 <div
                   key={error.id}
-                  className={`p-4 rounded-lg border ${colors.border} ${colors.bg} ${
+                  className={`rounded-lg border p-4 ${colors.border} ${colors.bg} ${
                     error.resolved ? 'opacity-60' : ''
                   }`}
                 >
-                  <div className="flex items-start justify-between mb-2">
+                  <div className="mb-2 flex items-start justify-between">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className={`px-2 py-1 rounded text-xs font-bold ${colors.text} border border-current`}>
+                      <div className="mb-1 flex items-center gap-2">
+                        <span
+                          className={`rounded px-2 py-1 text-xs font-bold ${colors.text} border border-current`}
+                        >
                           {error.severity.toUpperCase()}
                         </span>
                         <span className="text-detective-small text-gray-400">{error.type}</span>
                         {error.resolved && (
-                          <span className="px-2 py-1 rounded text-xs bg-green-500/20 text-green-500 border border-green-500/30">
+                          <span className="rounded border border-green-500/30 bg-green-500/20 px-2 py-1 text-xs text-green-500">
                             RESOLVED
                           </span>
                         )}
                       </div>
                       <p className="text-detective-base font-semibold">{error.message}</p>
-                      <p className="text-detective-small text-gray-400 mt-1">{error.endpoint}</p>
+                      <p className="text-detective-small mt-1 text-gray-400">{error.endpoint}</p>
                     </div>
                     <button
                       onClick={() => setExpandedError(isExpanded ? null : error.id)}
-                      className="p-2 hover:bg-white/5 rounded transition-colors"
+                      className="rounded p-2 transition-colors hover:bg-white/5"
                     >
-                      {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                      {isExpanded ? (
+                        <ChevronUp className="h-5 w-5" />
+                      ) : (
+                        <ChevronDown className="h-5 w-5" />
+                      )}
                     </button>
                   </div>
 
-                  <div className="flex items-center gap-4 text-detective-small text-gray-400">
+                  <div className="text-detective-small flex items-center gap-4 text-gray-400">
                     <span>Frequency: {error.frequency}x</span>
                     <span>Affected Users: {error.affectedUsers}</span>
-                    <span>{new Date(error.timestamp).toLocaleString('es-ES')}</span>
+                    <span>
+                      {error.timestamp ? new Date(error.timestamp).toLocaleString('es-ES') : 'N/A'}
+                    </span>
                   </div>
 
                   {isExpanded && (
                     <div className="mt-4 space-y-3">
                       {error.stackTrace && (
-                        <div className="p-3 bg-black/30 rounded-lg">
-                          <p className="text-detective-small text-gray-400 mb-2">Stack Trace:</p>
-                          <pre className="text-xs text-gray-300 overflow-x-auto font-mono">
+                        <div className="rounded-lg bg-black/30 p-3">
+                          <p className="text-detective-small mb-2 text-gray-400">Stack Trace:</p>
+                          <pre className="overflow-x-auto font-mono text-xs text-gray-300">
                             {error.stackTrace}
                           </pre>
                         </div>
@@ -215,8 +223,7 @@ export const ErrorTrackingPanel: React.FC = () => {
                       {!error.resolved && (
                         <DetectiveButton
                           variant="green"
-
-                          icon={<CheckCircle className="w-4 h-4" />}
+                          icon={<CheckCircle className="h-4 w-4" />}
                           onClick={() => markAsResolved(error.id)}
                         >
                           Mark as Resolved

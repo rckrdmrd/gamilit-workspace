@@ -76,7 +76,8 @@ CREATE INDEX idx_media_files_type ON content_management.media_files USING btree 
 CREATE INDEX idx_media_files_uploaded_by ON content_management.media_files USING btree (uploaded_by);
 
 -- Triggers
-CREATE TRIGGER trg_media_files_updated_at BEFORE UPDATE ON content_management.media_files FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
+-- NOTE: Trigger trg_media_files_updated_at movido a archivo separado
+-- Ver: content_management/triggers/10-trg_media_files_updated_at.sql
 
 -- Foreign Keys
 ALTER TABLE ONLY content_management.media_files

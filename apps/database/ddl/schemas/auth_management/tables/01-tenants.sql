@@ -43,9 +43,8 @@ CREATE INDEX IF NOT EXISTS idx_tenants_active ON auth_management.tenants(is_acti
 CREATE INDEX IF NOT EXISTS idx_tenants_settings_gin ON auth_management.tenants USING gin (settings);
 
 -- Triggers
-CREATE TRIGGER trg_tenants_updated_at
-    BEFORE UPDATE ON auth_management.tenants
-    FOR EACH ROW EXECUTE FUNCTION gamilit.update_updated_at_column();
+-- NOTE: Trigger trg_tenants_updated_at movido a archivo separado
+-- Ver: auth_management/triggers/06-trg_tenants_updated_at.sql
 
 -- Comments
 COMMENT ON TABLE auth_management.tenants IS 'Tenants para soporte multi-tenancy - aislamiento de datos por organización';

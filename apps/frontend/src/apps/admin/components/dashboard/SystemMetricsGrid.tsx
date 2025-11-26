@@ -46,57 +46,10 @@ interface MetricCardData {
   tooltip?: string;
 }
 
-export const SystemMetricsGrid: React.FC<SystemMetricsGridProps> = ({ metrics, loading = false }) => {
-  // ============================================================================
-  // HELPERS
-  // ============================================================================
-
-  /**
-   * Format large numbers
-   */
-  const formatNumber = (num: number): string => {
-    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-    return num.toLocaleString();
-  };
-
-  /**
-   * Format storage size
-   */
-  const formatStorage = (gb: number, total: number): string => {
-    const percentage = ((gb / total) * 100).toFixed(1);
-    return `${gb.toFixed(1)} GB / ${total} GB (${percentage}%)`;
-  };
-
-  /**
-   * Format uptime
-   */
-  const formatUptime = (seconds: number): string => {
-    const days = Math.floor(seconds / 86400);
-    const hours = Math.floor((seconds % 86400) / 3600);
-
-    if (days > 0) return `${days}d ${hours}h`;
-    return `${hours}h`;
-  };
-
-  /**
-   * Get trend color
-   */
-  const getTrendColor = (trend: number): string => {
-    if (trend > 0) return 'text-green-500';
-    if (trend < 0) return 'text-red-500';
-    return 'text-gray-500';
-  };
-
-  /**
-   * Get trend icon
-   */
-  const getTrendIcon = (trend: number) => {
-    if (trend > 0) return TrendingUp;
-    if (trend < 0) return TrendingDown;
-    return Minus;
-  };
-
+export const SystemMetricsGrid: React.FC<SystemMetricsGridProps> = ({
+  metrics,
+  loading = false,
+}) => {
   // ============================================================================
   // METRIC CARDS DATA
   // ============================================================================
@@ -160,14 +113,14 @@ export const SystemMetricsGrid: React.FC<SystemMetricsGridProps> = ({ metrics, l
 
   if (loading || !metrics) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {[...Array(6)].map((_, i) => (
           <DetectiveCard key={i} className="animate-pulse">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-detective-bg-secondary rounded-lg" />
+              <div className="h-12 w-12 rounded-lg bg-detective-bg-secondary" />
               <div className="flex-1">
-                <div className="h-4 bg-detective-bg-secondary rounded w-24 mb-2" />
-                <div className="h-6 bg-detective-bg-secondary rounded w-16" />
+                <div className="mb-2 h-4 w-24 rounded bg-detective-bg-secondary" />
+                <div className="h-6 w-16 rounded bg-detective-bg-secondary" />
               </div>
             </div>
           </DetectiveCard>
@@ -183,7 +136,7 @@ export const SystemMetricsGrid: React.FC<SystemMetricsGridProps> = ({ metrics, l
   const metricCards = getMetricCards();
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {metricCards.map((card, index) => (
         <MetricCard key={card.label} card={card} index={index} metrics={metrics} />
       ))}
@@ -261,31 +214,31 @@ const MetricCard: React.FC<MetricCardProps> = ({ card, index, metrics }) => {
       transition={{ duration: 0.3, delay: index * 0.05 }}
     >
       <DetectiveCard
-        className={`border ${colors.border} group hover-lift relative overflow-hidden`}
+        className={`border ${colors.border} hover-lift group relative overflow-hidden`}
         title={card.tooltip}
       >
         {/* Background gradient */}
-        <div className={`absolute inset-0 ${colors.bg} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+        <div
+          className={`absolute inset-0 ${colors.bg} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
+        />
 
         <div className="relative">
-          <div className="flex items-start justify-between mb-3">
+          <div className="mb-3 flex items-start justify-between">
             <div className={`p-3 ${colors.bg} rounded-lg`}>
-              <Icon className={`w-6 h-6 ${colors.text}`} />
+              <Icon className={`h-6 w-6 ${colors.text}`} />
             </div>
 
             {/* Trend indicator */}
             {card.trend !== undefined && TrendIcon && (
               <div className={`flex items-center gap-1 ${getTrendColor(card.trend)}`}>
-                <TrendIcon className="w-4 h-4" />
-                <span className="text-sm font-semibold">
-                  {Math.abs(card.trend).toFixed(1)}%
-                </span>
+                <TrendIcon className="h-4 w-4" />
+                <span className="text-sm font-semibold">{Math.abs(card.trend).toFixed(1)}%</span>
               </div>
             )}
           </div>
 
           <div>
-            <p className="text-detective-small text-gray-400 mb-1">{card.label}</p>
+            <p className="text-detective-small mb-1 text-gray-400">{card.label}</p>
             <motion.p
               className={`text-3xl font-bold ${colors.text}`}
               initial={{ scale: 1 }}
@@ -297,13 +250,13 @@ const MetricCard: React.FC<MetricCardProps> = ({ card, index, metrics }) => {
 
             {/* Additional info */}
             {card.unit === 'storage' && (
-              <p className="text-detective-small text-gray-500 mt-2">
+              <p className="text-detective-small mt-2 text-gray-500">
                 of {metrics.storageTotal} GB total
               </p>
             )}
 
             {card.trend !== undefined && (
-              <p className="text-detective-small text-gray-500 mt-2">
+              <p className="text-detective-small mt-2 text-gray-500">
                 {card.trend > 0 ? 'Up' : card.trend < 0 ? 'Down' : 'No change'} from last period
               </p>
             )}
@@ -378,14 +331,16 @@ const MiniSparkline: React.FC<MiniSparklineProps> = ({ data, color }) => {
   const min = Math.min(...data);
   const range = max - min || 1;
 
-  const points = data.map((value, index) => {
-    const x = (index / (data.length - 1)) * 100;
-    const y = ((max - value) / range) * 100;
-    return `${x},${y}`;
-  }).join(' ');
+  const points = data
+    .map((value, index) => {
+      const x = (index / (data.length - 1)) * 100;
+      const y = ((max - value) / range) * 100;
+      return `${x},${y}`;
+    })
+    .join(' ');
 
   return (
-    <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <svg className="h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
       <polyline
         points={points}
         fill="none"

@@ -8,7 +8,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { LiveLeaderboard } from './LiveLeaderboard';
-import type { LiveLeaderboardProps } from './LiveLeaderboard';
 
 // ============================================================================
 // STORY METADATA
@@ -43,9 +42,9 @@ function MyPage() {
   return <LiveLeaderboard userId="user-123" initialType="xp" />;
 }
 \`\`\`
-        `
-      }
-    }
+        `,
+      },
+    },
   },
   tags: ['autodocs'],
   argTypes: {
@@ -54,8 +53,8 @@ function MyPage() {
       description: 'Current user ID for highlighting',
       table: {
         type: { summary: 'string' },
-        defaultValue: { summary: 'required' }
-      }
+        defaultValue: { summary: 'required' },
+      },
     },
     initialType: {
       control: 'select',
@@ -63,48 +62,48 @@ function MyPage() {
       description: 'Initial leaderboard type to display',
       table: {
         type: { summary: 'LeaderboardTypeVariant' },
-        defaultValue: { summary: 'detective' }
-      }
+        defaultValue: { summary: 'detective' },
+      },
     },
     autoRefresh: {
       control: 'boolean',
       description: 'Enable automatic refresh',
       table: {
         type: { summary: 'boolean' },
-        defaultValue: { summary: 'true' }
-      }
+        defaultValue: { summary: 'true' },
+      },
     },
     refreshInterval: {
       control: 'number',
       description: 'Refresh interval in milliseconds',
       table: {
         type: { summary: 'number' },
-        defaultValue: { summary: '30000' }
-      }
+        defaultValue: { summary: '30000' },
+      },
     },
     itemsPerPage: {
       control: 'number',
       description: 'Number of entries to display',
       table: {
         type: { summary: 'number' },
-        defaultValue: { summary: '20' }
-      }
+        defaultValue: { summary: '20' },
+      },
     },
     onUserClick: {
       action: 'user-clicked',
       description: 'Callback when user entry is clicked',
       table: {
-        type: { summary: '(userId: string) => void' }
-      }
+        type: { summary: '(userId: string) => void' },
+      },
     },
     className: {
       control: 'text',
       description: 'Additional CSS classes',
       table: {
-        type: { summary: 'string' }
-      }
-    }
-  }
+        type: { summary: 'string' },
+      },
+    },
+  },
 };
 
 export default meta;
@@ -120,8 +119,8 @@ type Story = StoryObj<typeof LiveLeaderboard>;
 export const Default: Story = {
   args: {
     userId: 'current-user-123',
-    initialType: 'detective'
-  }
+    initialType: 'detective',
+  },
 };
 
 /**
@@ -130,15 +129,16 @@ export const Default: Story = {
 export const XPLeaderboard: Story = {
   args: {
     userId: 'current-user-123',
-    initialType: 'xp'
+    initialType: 'xp',
   },
   parameters: {
     docs: {
       description: {
-        story: 'Leaderboard sorted by total XP accumulated. Shows user rankings based on experience points.'
-      }
-    }
-  }
+        story:
+          'Leaderboard sorted by total XP accumulated. Shows user rankings based on experience points.',
+      },
+    },
+  },
 };
 
 /**
@@ -147,15 +147,16 @@ export const XPLeaderboard: Story = {
 export const CompletionLeaderboard: Story = {
   args: {
     userId: 'current-user-123',
-    initialType: 'completion'
+    initialType: 'completion',
   },
   parameters: {
     docs: {
       description: {
-        story: 'Leaderboard sorted by completion percentage. Shows how much content each user has completed.'
-      }
-    }
-  }
+        story:
+          'Leaderboard sorted by completion percentage. Shows how much content each user has completed.',
+      },
+    },
+  },
 };
 
 /**
@@ -164,15 +165,16 @@ export const CompletionLeaderboard: Story = {
 export const StreakLeaderboard: Story = {
   args: {
     userId: 'current-user-123',
-    initialType: 'streak'
+    initialType: 'streak',
   },
   parameters: {
     docs: {
       description: {
-        story: 'Leaderboard sorted by streak. Shows users with the longest consecutive days of activity.'
-      }
-    }
-  }
+        story:
+          'Leaderboard sorted by streak. Shows users with the longest consecutive days of activity.',
+      },
+    },
+  },
 };
 
 /**
@@ -182,15 +184,16 @@ export const NoAutoRefresh: Story = {
   args: {
     userId: 'current-user-123',
     initialType: 'detective',
-    autoRefresh: false
+    autoRefresh: false,
   },
   parameters: {
     docs: {
       description: {
-        story: 'Leaderboard with auto-refresh disabled. Users must manually click the refresh button.'
-      }
-    }
-  }
+        story:
+          'Leaderboard with auto-refresh disabled. Users must manually click the refresh button.',
+      },
+    },
+  },
 };
 
 /**
@@ -201,15 +204,15 @@ export const FastRefresh: Story = {
     userId: 'current-user-123',
     initialType: 'detective',
     autoRefresh: true,
-    refreshInterval: 10000
+    refreshInterval: 10000,
   },
   parameters: {
     docs: {
       description: {
-        story: 'Leaderboard with faster refresh interval (10 seconds instead of default 30).'
-      }
-    }
-  }
+        story: 'Leaderboard with faster refresh interval (10 seconds instead of default 30).',
+      },
+    },
+  },
 };
 
 /**
@@ -219,15 +222,15 @@ export const Top10Only: Story = {
   args: {
     userId: 'current-user-123',
     initialType: 'detective',
-    itemsPerPage: 10
+    itemsPerPage: 10,
   },
   parameters: {
     docs: {
       description: {
-        story: 'Leaderboard showing only the top 10 entries.'
-      }
-    }
-  }
+        story: 'Leaderboard showing only the top 10 entries.',
+      },
+    },
+  },
 };
 
 /**
@@ -237,15 +240,15 @@ export const Top15: Story = {
   args: {
     userId: 'current-user-123',
     initialType: 'detective',
-    itemsPerPage: 15
+    itemsPerPage: 15,
   },
   parameters: {
     docs: {
       description: {
-        story: 'Leaderboard showing 15 entries for a more compact view.'
-      }
-    }
-  }
+        story: 'Leaderboard showing 15 entries for a more compact view.',
+      },
+    },
+  },
 };
 
 /**
@@ -258,15 +261,15 @@ export const WithClickHandler: Story = {
     onUserClick: (userId: string) => {
       console.log('User clicked:', userId);
       alert(`Clicked on user: ${userId}`);
-    }
+    },
   },
   parameters: {
     docs: {
       description: {
-        story: 'Leaderboard with click handler. Clicking on a user entry triggers a callback.'
-      }
-    }
-  }
+        story: 'Leaderboard with click handler. Clicking on a user entry triggers a callback.',
+      },
+    },
+  },
 };
 
 /**
@@ -276,15 +279,15 @@ export const CustomStyling: Story = {
   args: {
     userId: 'current-user-123',
     initialType: 'detective',
-    className: 'max-w-6xl mx-auto p-8 bg-gray-50 rounded-2xl'
+    className: 'max-w-6xl mx-auto p-8 bg-gray-50 rounded-2xl',
   },
   parameters: {
     docs: {
       description: {
-        story: 'Leaderboard with custom styling applied via className prop.'
-      }
-    }
-  }
+        story: 'Leaderboard with custom styling applied via className prop.',
+      },
+    },
+  },
 };
 
 /**
@@ -294,18 +297,18 @@ export const MobileView: Story = {
   args: {
     userId: 'current-user-123',
     initialType: 'detective',
-    itemsPerPage: 10
+    itemsPerPage: 10,
   },
   parameters: {
     viewport: {
-      defaultViewport: 'mobile1'
+      defaultViewport: 'mobile1',
     },
     docs: {
       description: {
-        story: 'Leaderboard optimized for mobile viewport. Shows responsive design adaptations.'
-      }
-    }
-  }
+        story: 'Leaderboard optimized for mobile viewport. Shows responsive design adaptations.',
+      },
+    },
+  },
 };
 
 /**
@@ -315,18 +318,18 @@ export const TabletView: Story = {
   args: {
     userId: 'current-user-123',
     initialType: 'detective',
-    itemsPerPage: 15
+    itemsPerPage: 15,
   },
   parameters: {
     viewport: {
-      defaultViewport: 'tablet'
+      defaultViewport: 'tablet',
     },
     docs: {
       description: {
-        story: 'Leaderboard on tablet viewport. Shows layout adaptations for medium screens.'
-      }
-    }
-  }
+        story: 'Leaderboard on tablet viewport. Shows layout adaptations for medium screens.',
+      },
+    },
+  },
 };
 
 /**
@@ -336,18 +339,18 @@ export const DesktopView: Story = {
   args: {
     userId: 'current-user-123',
     initialType: 'detective',
-    itemsPerPage: 20
+    itemsPerPage: 20,
   },
   parameters: {
     viewport: {
-      defaultViewport: 'desktop'
+      defaultViewport: 'desktop',
     },
     docs: {
       description: {
-        story: 'Leaderboard on desktop viewport. Shows full features with expanded layout.'
-      }
-    }
-  }
+        story: 'Leaderboard on desktop viewport. Shows full features with expanded layout.',
+      },
+    },
+  },
 };
 
 /**
@@ -356,22 +359,22 @@ export const DesktopView: Story = {
 export const DarkBackground: Story = {
   args: {
     userId: 'current-user-123',
-    initialType: 'detective'
+    initialType: 'detective',
   },
   decorators: [
     (Story) => (
-      <div className="bg-gray-900 min-h-screen p-8">
+      <div className="min-h-screen bg-gray-900 p-8">
         <Story />
       </div>
-    )
+    ),
   ],
   parameters: {
     docs: {
       description: {
-        story: 'Leaderboard on a dark background. Shows contrast and readability.'
-      }
-    }
-  }
+        story: 'Leaderboard on a dark background. Shows contrast and readability.',
+      },
+    },
+  },
 };
 
 /**
@@ -380,22 +383,22 @@ export const DarkBackground: Story = {
 export const GradientBackground: Story = {
   args: {
     userId: 'current-user-123',
-    initialType: 'xp'
+    initialType: 'xp',
   },
   decorators: [
     (Story) => (
-      <div className="bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 min-h-screen p-8">
+      <div className="min-h-screen bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 p-8">
         <Story />
       </div>
-    )
+    ),
   ],
   parameters: {
     docs: {
       description: {
-        story: 'Leaderboard on a gradient background. Shows visual appeal in different contexts.'
-      }
-    }
-  }
+        story: 'Leaderboard on a gradient background. Shows visual appeal in different contexts.',
+      },
+    },
+  },
 };
 
 /**
@@ -403,9 +406,9 @@ export const GradientBackground: Story = {
  */
 export const AllTypesShowcase: Story = {
   render: () => (
-    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 p-6 bg-gray-50">
+    <div className="grid grid-cols-1 gap-6 bg-gray-50 p-6 xl:grid-cols-2">
       <div>
-        <h3 className="text-2xl font-bold mb-4 text-center">XP Leaderboard</h3>
+        <h3 className="mb-4 text-center text-2xl font-bold">XP Leaderboard</h3>
         <LiveLeaderboard
           userId="current-user-123"
           initialType="xp"
@@ -414,7 +417,7 @@ export const AllTypesShowcase: Story = {
         />
       </div>
       <div>
-        <h3 className="text-2xl font-bold mb-4 text-center">Completion</h3>
+        <h3 className="mb-4 text-center text-2xl font-bold">Completion</h3>
         <LiveLeaderboard
           userId="current-user-123"
           initialType="completion"
@@ -423,7 +426,7 @@ export const AllTypesShowcase: Story = {
         />
       </div>
       <div>
-        <h3 className="text-2xl font-bold mb-4 text-center">Streak</h3>
+        <h3 className="mb-4 text-center text-2xl font-bold">Streak</h3>
         <LiveLeaderboard
           userId="current-user-123"
           initialType="streak"
@@ -432,7 +435,7 @@ export const AllTypesShowcase: Story = {
         />
       </div>
       <div>
-        <h3 className="text-2xl font-bold mb-4 text-center">Detective</h3>
+        <h3 className="mb-4 text-center text-2xl font-bold">Detective</h3>
         <LiveLeaderboard
           userId="current-user-123"
           initialType="detective"
@@ -445,10 +448,10 @@ export const AllTypesShowcase: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'All four leaderboard types displayed side by side for comparison.'
-      }
-    }
-  }
+        story: 'All four leaderboard types displayed side by side for comparison.',
+      },
+    },
+  },
 };
 
 /**
@@ -457,22 +460,22 @@ export const AllTypesShowcase: Story = {
 export const DashboardIntegration: Story = {
   render: () => (
     <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">Detective Dashboard</h1>
+      <div className="mx-auto max-w-7xl">
+        <h1 className="mb-8 text-4xl font-bold text-gray-900">Detective Dashboard</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h3 className="text-xl font-bold mb-4">Quick Stats</h3>
+        <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="rounded-xl bg-white p-6 shadow-lg">
+            <h3 className="mb-4 text-xl font-bold">Quick Stats</h3>
             <div className="space-y-4">
-              <div className="bg-blue-50 rounded-lg p-4">
+              <div className="rounded-lg bg-blue-50 p-4">
                 <p className="text-sm text-gray-600">Total XP</p>
                 <p className="text-2xl font-bold text-blue-600">12,450</p>
               </div>
-              <div className="bg-green-50 rounded-lg p-4">
+              <div className="rounded-lg bg-green-50 p-4">
                 <p className="text-sm text-gray-600">Completion</p>
                 <p className="text-2xl font-bold text-green-600">85%</p>
               </div>
-              <div className="bg-orange-50 rounded-lg p-4">
+              <div className="rounded-lg bg-orange-50 p-4">
                 <p className="text-sm text-gray-600">Current Streak</p>
                 <p className="text-2xl font-bold text-orange-600">24 days</p>
               </div>
@@ -480,11 +483,7 @@ export const DashboardIntegration: Story = {
           </div>
 
           <div className="lg:col-span-2">
-            <LiveLeaderboard
-              userId="current-user-123"
-              initialType="detective"
-              itemsPerPage={15}
-            />
+            <LiveLeaderboard userId="current-user-123" initialType="detective" itemsPerPage={15} />
           </div>
         </div>
       </div>
@@ -494,47 +493,52 @@ export const DashboardIntegration: Story = {
     layout: 'fullscreen',
     docs: {
       description: {
-        story: 'Example of LiveLeaderboard integrated into a dashboard layout with sidebar stats.'
-      }
-    }
+        story: 'Example of LiveLeaderboard integrated into a dashboard layout with sidebar stats.',
+      },
+    },
+  },
+};
+
+/**
+ * Loading State Wrapper Component
+ */
+const LoadingStateWrapper: React.FC = () => {
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    setTimeout(() => setIsLoading(false), 3000);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="rounded-xl bg-white p-12 text-center shadow-lg">
+          <div className="mx-auto mb-4 h-16 w-16 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+          <p className="text-gray-600">Cargando clasificación...</p>
+        </div>
+      </div>
+    );
   }
+
+  return (
+    <div className="container mx-auto p-6">
+      <LiveLeaderboard userId="current-user-123" />
+    </div>
+  );
 };
 
 /**
  * Loading State - Simulated loading
  */
 export const LoadingState: Story = {
-  render: () => {
-    const [isLoading, setIsLoading] = React.useState(true);
-
-    React.useEffect(() => {
-      setTimeout(() => setIsLoading(false), 3000);
-    }, []);
-
-    if (isLoading) {
-      return (
-        <div className="container mx-auto p-6">
-          <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-            <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-gray-600">Cargando clasificación...</p>
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div className="container mx-auto p-6">
-        <LiveLeaderboard userId="current-user-123" />
-      </div>
-    );
-  },
+  render: () => <LoadingStateWrapper />,
   parameters: {
     docs: {
       description: {
-        story: 'Shows loading state before displaying the leaderboard.'
-      }
-    }
-  }
+        story: 'Shows loading state before displaying the leaderboard.',
+      },
+    },
+  },
 };
 
 /**
@@ -546,13 +550,14 @@ export const Playground: Story = {
     initialType: 'detective',
     autoRefresh: true,
     refreshInterval: 30000,
-    itemsPerPage: 20
+    itemsPerPage: 20,
   },
   parameters: {
     docs: {
       description: {
-        story: 'Interactive playground to test all component props. Use the controls panel to adjust settings.'
-      }
-    }
-  }
+        story:
+          'Interactive playground to test all component props. Use the controls panel to adjust settings.',
+      },
+    },
+  },
 };

@@ -1,50 +1,47 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { TrendingUp, Download, Users, Target, Clock, Award } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { ProgressChart } from './ProgressChart';
 import { ModuleCompletionCard } from './ModuleCompletionCard';
+import { StudentProgressList } from './StudentProgressList';
+import { StudentDetailModal } from '../monitoring/StudentDetailModal';
 import { useClassroomData } from '../../hooks/useClassroomData';
+import { apiClient } from '@/services/api/apiClient';
+import { API_ENDPOINTS } from '@/config/api.config';
+import type { StudentMonitoring } from '../../types';
 
 interface ClassProgressDashboardProps {
   classroomId: string;
 }
 
 export function ClassProgressDashboard({ classroomId }: ClassProgressDashboardProps) {
-  const { data, moduleProgress, loading, error, refresh } = useClassroomData(classroomId);
-  const [exportFormat, setExportFormat] = useState<'pdf' | 'excel'>('pdf');
+  const { data, moduleProgress, students, loading, error, refresh } = useClassroomData(classroomId);
+  const [selectedStudent, setSelectedStudent] = useState<StudentMonitoring | null>(null);
 
   const handleExport = async (format: 'pdf' | 'excel') => {
     try {
-      const response = await fetch(`/api/reports/generate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const response = await apiClient.post(
+        API_ENDPOINTS.teacher.reports.generate,
+        {
           type: 'progress',
           classroom_id: classroomId,
           format,
-        }),
-      });
+        },
+        { responseType: 'blob' },
+      );
 
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `progress-report-${classroomId}.${format === 'excel' ? 'xlsx' : 'pdf'}`;
-        a.click();
-        toast.success(`Reporte exportado como ${format.toUpperCase()}`, {
-          duration: 3000,
-          icon: '📊',
-        });
-      } else {
-        toast.error('Error al exportar el reporte. Por favor, intenta de nuevo.', {
-          duration: 4000,
-        });
-      }
+      const blob = response.data;
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `progress-report-${classroomId}.${format === 'excel' ? 'xlsx' : 'pdf'}`;
+      a.click();
+      toast.success(`Reporte exportado como ${format.toUpperCase()}`, {
+        duration: 3000,
+        icon: '📊',
+      });
     } catch (error) {
       console.error('Error exporting report:', error);
       toast.error('Error al exportar el reporte. Verifica tu conexión.', {
@@ -59,7 +56,7 @@ export function ClassProgressDashboard({ classroomId }: ClassProgressDashboardPr
   if (loading) {
     return (
       <DetectiveCard>
-        <div className="text-center py-12">
+        <div className="py-12 text-center">
           <p className="text-detective-text-secondary">Cargando datos de progreso...</p>
         </div>
       </DetectiveCard>
@@ -69,8 +66,8 @@ export function ClassProgressDashboard({ classroomId }: ClassProgressDashboardPr
   if (error || !data) {
     return (
       <DetectiveCard>
-        <div className="text-center py-8">
-          <p className="text-red-500">Error al cargar datos: {error}</p>
+        <div className="py-8 text-center">
+          <p className="text-red-500">Error al cargar datos: {error?.message}</p>
           <DetectiveButton onClick={refresh} variant="secondary" className="mt-4">
             Reintentar
           </DetectiveButton>
@@ -84,81 +81,71 @@ export function ClassProgressDashboard({ classroomId }: ClassProgressDashboardPr
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <TrendingUp className="w-8 h-8 text-detective-orange" />
+          <TrendingUp className="h-8 w-8 text-detective-orange" />
           <div>
             <h2 className="text-2xl font-bold text-detective-text">Progreso de Clase</h2>
-            <p className="text-detective-text-secondary">
-              Vista general del rendimiento del aula
-            </p>
+            <p className="text-detective-text-secondary">Vista general del rendimiento del aula</p>
           </div>
         </div>
         <div className="flex gap-2">
-          <DetectiveButton
-            variant="secondary"
-
-            onClick={() => handleExport('pdf')}
-          >
-            <Download className="w-4 h-4" />
+          <DetectiveButton variant="secondary" onClick={() => handleExport('pdf')}>
+            <Download className="h-4 w-4" />
             Exportar PDF
           </DetectiveButton>
-          <DetectiveButton
-            variant="secondary"
-
-            onClick={() => handleExport('excel')}
-          >
-            <Download className="w-4 h-4" />
+          <DetectiveButton variant="secondary" onClick={() => handleExport('excel')}>
+            <Download className="h-4 w-4" />
             Exportar Excel
           </DetectiveButton>
         </div>
       </div>
 
       {/* Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
         <DetectiveCard hoverable={false}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-detective-text-secondary mb-1">Completitud General</p>
+              <p className="mb-1 text-sm text-detective-text-secondary">Completitud General</p>
               <p className="text-3xl font-bold text-detective-text">
                 {data.average_completion.toFixed(0)}%
               </p>
             </div>
-            <Target className="w-10 h-10 text-detective-orange" />
+            <Target className="h-10 w-10 text-detective-orange" />
           </div>
         </DetectiveCard>
 
         <DetectiveCard hoverable={false}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-detective-text-secondary mb-1">Score Promedio</p>
+              <p className="mb-1 text-sm text-detective-text-secondary">Score Promedio</p>
               <p className="text-3xl font-bold text-detective-gold">
                 {data.average_score.toFixed(0)}%
               </p>
             </div>
-            <Award className="w-10 h-10 text-detective-gold" />
+            <Award className="h-10 w-10 text-detective-gold" />
           </div>
         </DetectiveCard>
 
         <DetectiveCard hoverable={false}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-detective-text-secondary mb-1">Estudiantes Activos</p>
+              <p className="mb-1 text-sm text-detective-text-secondary">Estudiantes Activos</p>
               <p className="text-3xl font-bold text-detective-text">
                 {data.active_students}/{data.student_count}
               </p>
             </div>
-            <Users className="w-10 h-10 text-detective-accent" />
+            <Users className="text-detective-accent h-10 w-10" />
           </div>
         </DetectiveCard>
 
         <DetectiveCard hoverable={false}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-detective-text-secondary mb-1">Ejercicios Completados</p>
+              <p className="mb-1 text-sm text-detective-text-secondary">Ejercicios Completados</p>
               <p className="text-3xl font-bold text-detective-text">
                 {data.completed_exercises}/{data.total_exercises}
               </p>
             </div>
-            <Clock className="w-10 h-10 text-detective-orange" />
+            <Clock className="h-10 w-10 text-detective-orange" />
           </div>
         </DetectiveCard>
       </div>
@@ -167,13 +154,11 @@ export function ClassProgressDashboard({ classroomId }: ClassProgressDashboardPr
       {laggingStudentsCount > 0 && (
         <DetectiveCard hoverable={false}>
           <div className="flex items-start gap-4">
-            <div className="p-3 bg-yellow-500 bg-opacity-10 rounded-lg">
-              <Users className="w-6 h-6 text-yellow-500" />
+            <div className="rounded-lg bg-yellow-500 bg-opacity-10 p-3">
+              <Users className="h-6 w-6 text-yellow-500" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-detective-text mb-1">
-                Estudiantes Rezagados
-              </h3>
+              <h3 className="mb-1 text-lg font-bold text-detective-text">Estudiantes Rezagados</h3>
               <p className="text-detective-text-secondary">
                 Se identificaron aproximadamente {laggingStudentsCount} estudiante(s) con progreso
                 menor al 50%. Considera intervenir para apoyarlos.
@@ -184,7 +169,7 @@ export function ClassProgressDashboard({ classroomId }: ClassProgressDashboardPr
       )}
 
       {/* Module Progress Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <ProgressChart
           title="Completitud por Módulo"
           data={moduleProgress.map((m) => ({
@@ -199,7 +184,12 @@ export function ClassProgressDashboard({ classroomId }: ClassProgressDashboardPr
           data={moduleProgress.map((m) => ({
             label: m.module_name.substring(0, 20) + '...',
             value: m.average_score,
-            color: m.average_score >= 80 ? 'bg-green-500' : m.average_score >= 60 ? 'bg-yellow-500' : 'bg-red-500',
+            color:
+              m.average_score >= 80
+                ? 'bg-green-500'
+                : m.average_score >= 60
+                  ? 'bg-yellow-500'
+                  : 'bg-red-500',
           }))}
           type="bar"
         />
@@ -217,8 +207,8 @@ export function ClassProgressDashboard({ classroomId }: ClassProgressDashboardPr
 
       {/* Module Cards Grid */}
       <div>
-        <h3 className="text-xl font-bold text-detective-text mb-4">Detalle por Módulo</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <h3 className="mb-4 text-xl font-bold text-detective-text">Detalle por Módulo</h3>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {moduleProgress.map((module) => (
             <ModuleCompletionCard key={module.module_id} module={module} />
           ))}
@@ -229,37 +219,43 @@ export function ClassProgressDashboard({ classroomId }: ClassProgressDashboardPr
       <DetectiveCard hoverable={false}>
         <div className="space-y-4">
           <h3 className="text-lg font-bold text-detective-text">Resumen de Rendimiento</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-detective-bg-secondary p-4 rounded-lg">
-              <p className="text-sm text-detective-text-secondary mb-2">
-                Tasa de Finalización
-              </p>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="rounded-lg bg-detective-bg-secondary p-4">
+              <p className="mb-2 text-sm text-detective-text-secondary">Tasa de Finalización</p>
               <p className="text-2xl font-bold text-detective-text">
                 {((data.completed_exercises / data.total_exercises) * 100).toFixed(0)}%
               </p>
             </div>
-            <div className="bg-detective-bg-secondary p-4 rounded-lg">
-              <p className="text-sm text-detective-text-secondary mb-2">
-                Engagement Rate
-              </p>
+            <div className="rounded-lg bg-detective-bg-secondary p-4">
+              <p className="mb-2 text-sm text-detective-text-secondary">Engagement Rate</p>
               <p className="text-2xl font-bold text-detective-text">
                 {((data.active_students / data.student_count) * 100).toFixed(0)}%
               </p>
             </div>
-            <div className="bg-detective-bg-secondary p-4 rounded-lg">
-              <p className="text-sm text-detective-text-secondary mb-2">
+            <div className="rounded-lg bg-detective-bg-secondary p-4">
+              <p className="mb-2 text-sm text-detective-text-secondary">
                 Módulos Promedio Completados
               </p>
               <p className="text-2xl font-bold text-detective-text">
                 {(
-                  moduleProgress.reduce((sum, m) => sum + (m.completion_percentage === 100 ? 1 : 0), 0) /
-                  data.student_count
+                  moduleProgress.reduce(
+                    (sum, m) => sum + (m.completion_percentage === 100 ? 1 : 0),
+                    0,
+                  ) / data.student_count
                 ).toFixed(1)}
               </p>
             </div>
           </div>
         </div>
       </DetectiveCard>
+
+      {/* Student Progress List */}
+      <StudentProgressList students={students} onStudentClick={setSelectedStudent} />
+
+      {/* Student Detail Modal */}
+      {selectedStudent && (
+        <StudentDetailModal student={selectedStudent} onClose={() => setSelectedStudent(null)} />
+      )}
     </div>
   );
 }

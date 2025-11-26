@@ -110,8 +110,7 @@ export const debateResponses: Record<string, AIDebateResponse> = {
     rhetoricalAnalysis: [
       {
         device: 'Pregunta retórica',
-        explanation:
-          'Usa una pregunta para involucrar al oponente y dirigir el pensamiento',
+        explanation: 'Usa una pregunta para involucrar al oponente y dirigir el pensamiento',
       },
       {
         device: 'Apelación a consecuencias',
@@ -227,10 +226,7 @@ export const sourceCredibilityData: Record<string, SourceCredibility> = {
     credibilityScore: 0.78,
     biasLevel: 'center',
     factualReporting: 'medium',
-    warnings: [
-      'Contenido editable por usuarios',
-      'Requiere verificación con fuentes primarias',
-    ],
+    warnings: ['Contenido editable por usuarios', 'Requiere verificación con fuentes primarias'],
     strengths: [
       'Referencias citadas disponibles',
       'Proceso de revisión comunitaria',
@@ -283,8 +279,7 @@ export const argumentAnalyses: Record<string, ArgumentAnalysis> = {
 export const perspectiveGenerations: Record<string, PerspectiveGeneration> = {
   historicalContext: {
     perspective: 'Contexto Histórico de Principios del Siglo XX',
-    viewpoint:
-      'En 1900, la sociedad tenía expectativas muy limitadas para las mujeres en ciencia',
+    viewpoint: 'En 1900, la sociedad tenía expectativas muy limitadas para las mujeres en ciencia',
     arguments: [
       'Las universidades raramente admitían mujeres en programas científicos',
       'Los laboratorios no estaban equipados para investigadoras femeninas',
@@ -307,8 +302,7 @@ export const perspectiveGenerations: Record<string, PerspectiveGeneration> = {
   },
   scientificEthics: {
     perspective: 'Ética Científica Moderna',
-    viewpoint:
-      'La seguridad del investigador debe ser una prioridad ética fundamental',
+    viewpoint: 'La seguridad del investigador debe ser una prioridad ética fundamental',
     arguments: [
       'Los descubrimientos no justifican el sacrificio de vidas humanas',
       'Protocolos de seguridad modernos permiten investigación segura',
@@ -328,8 +322,7 @@ export const perspectiveGenerations: Record<string, PerspectiveGeneration> = {
   },
   genderEquality: {
     perspective: 'Igualdad de Género en Ciencia',
-    viewpoint:
-      'Marie Curie es un símbolo de la lucha por la igualdad en STEM',
+    viewpoint: 'Marie Curie es un símbolo de la lucha por la igualdad en STEM',
     arguments: [
       'Demostró que las capacidades científicas no dependen del género',
       'Abrió camino para futuras generaciones de científicas',
@@ -352,7 +345,8 @@ export const perspectiveGenerations: Record<string, PerspectiveGeneration> = {
 // General AI Analysis Mock Response
 export function generateMockAnalysis(
   text: string,
-  context: string
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _context: string,
 ): AIAnalysisResponse {
   const wordCount = text.split(' ').length;
   const complexity = wordCount > 100 ? 'high' : wordCount > 50 ? 'medium' : 'low';

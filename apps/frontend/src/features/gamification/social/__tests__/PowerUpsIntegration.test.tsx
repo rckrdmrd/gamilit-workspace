@@ -105,7 +105,7 @@ describe('PowerUps Integration Tests', () => {
       expect(state).toHaveProperty('inventory');
       expect(state).toHaveProperty('userMlCoins');
       expect(state).toHaveProperty('purchasePowerUp');
-      expect(state).toHaveProperty('usePowerUp');
+      expect(state).toHaveProperty('applyPowerUp');
       expect(state).toHaveProperty('refreshActivePowerUps');
       expect(state).toHaveProperty('addMlCoins');
       expect(state).toHaveProperty('deductMlCoins');
@@ -189,10 +189,10 @@ describe('PowerUps Integration Tests', () => {
 
   describe('Use PowerUp Flow', () => {
     it('should use powerup with duration (set to active)', () => {
-      const { purchasePowerUp, usePowerUp } = usePowerUpsStore.getState();
+      const { purchasePowerUp, applyPowerUp } = usePowerUpsStore.getState();
 
       purchasePowerUp('powerup-vision'); // has duration
-      usePowerUp('powerup-vision');
+      applyPowerUp('powerup-vision');
 
       const state = usePowerUpsStore.getState();
       const powerUp = state.powerUps.find((p) => p.id === 'powerup-vision');
@@ -204,10 +204,10 @@ describe('PowerUps Integration Tests', () => {
     });
 
     it('should use powerup with cooldown (set to cooldown)', () => {
-      const { purchasePowerUp, usePowerUp } = usePowerUpsStore.getState();
+      const { purchasePowerUp, applyPowerUp } = usePowerUpsStore.getState();
 
       purchasePowerUp('powerup-retry'); // has cooldown
-      usePowerUp('powerup-retry');
+      applyPowerUp('powerup-retry');
 
       const state = usePowerUpsStore.getState();
       const powerUp = state.powerUps.find((p) => p.id === 'powerup-retry');
@@ -218,10 +218,10 @@ describe('PowerUps Integration Tests', () => {
     });
 
     it('should use instant powerup (no duration, no cooldown)', () => {
-      const { purchasePowerUp, usePowerUp } = usePowerUpsStore.getState();
+      const { purchasePowerUp, applyPowerUp } = usePowerUpsStore.getState();
 
       purchasePowerUp('powerup-hint'); // instant effect
-      usePowerUp('powerup-hint');
+      applyPowerUp('powerup-hint');
 
       const state = usePowerUpsStore.getState();
       const powerUp = state.powerUps.find((p) => p.id === 'powerup-hint');
@@ -231,9 +231,9 @@ describe('PowerUps Integration Tests', () => {
     });
 
     it('should not use powerup if not owned', () => {
-      const { usePowerUp } = usePowerUpsStore.getState();
+      const { applyPowerUp } = usePowerUpsStore.getState();
 
-      const success = usePowerUp('powerup-hint');
+      const success = applyPowerUp('powerup-hint');
 
       expect(success).toBe(false);
 
@@ -263,10 +263,10 @@ describe('PowerUps Integration Tests', () => {
     });
 
     it('should track active powerups in inventory', () => {
-      const { purchasePowerUp, usePowerUp } = usePowerUpsStore.getState();
+      const { purchasePowerUp, applyPowerUp } = usePowerUpsStore.getState();
 
       purchasePowerUp('powerup-vision'); // has duration
-      usePowerUp('powerup-vision');
+      applyPowerUp('powerup-vision');
 
       const state = usePowerUpsStore.getState();
 
@@ -276,13 +276,13 @@ describe('PowerUps Integration Tests', () => {
     });
 
     it('should calculate total usages in inventory', () => {
-      const { purchasePowerUp, usePowerUp } = usePowerUpsStore.getState();
+      const { purchasePowerUp, applyPowerUp } = usePowerUpsStore.getState();
 
       purchasePowerUp('powerup-hint');
       purchasePowerUp('powerup-vision');
 
-      usePowerUp('powerup-hint');
-      usePowerUp('powerup-vision');
+      applyPowerUp('powerup-hint');
+      applyPowerUp('powerup-vision');
 
       const state = usePowerUpsStore.getState();
 
@@ -338,10 +338,10 @@ describe('PowerUps Integration Tests', () => {
 
   describe('Refresh Active PowerUps', () => {
     it('should expire active powerups after duration', () => {
-      const { purchasePowerUp, usePowerUp, refreshActivePowerUps } = usePowerUpsStore.getState();
+      const { purchasePowerUp, applyPowerUp, refreshActivePowerUps } = usePowerUpsStore.getState();
 
       purchasePowerUp('powerup-vision'); // 30 min duration, no cooldown
-      usePowerUp('powerup-vision');
+      applyPowerUp('powerup-vision');
 
       // Manually set expiresAt to past
       const state = usePowerUpsStore.getState();
@@ -361,10 +361,10 @@ describe('PowerUps Integration Tests', () => {
     });
 
     it('should clear cooldown after cooldown period', () => {
-      const { purchasePowerUp, usePowerUp, refreshActivePowerUps } = usePowerUpsStore.getState();
+      const { purchasePowerUp, applyPowerUp, refreshActivePowerUps } = usePowerUpsStore.getState();
 
       purchasePowerUp('powerup-retry'); // has cooldown
-      usePowerUp('powerup-retry');
+      applyPowerUp('powerup-retry');
 
       // Manually set cooldownEndsAt to past
       const state = usePowerUpsStore.getState();

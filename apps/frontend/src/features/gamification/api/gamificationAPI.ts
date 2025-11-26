@@ -15,9 +15,9 @@
  */
 
 import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS, FEATURE_FLAGS } from '@/services/api/apiConfig';
+import { API_ENDPOINTS } from '@/config/api.config';
 import { handleAPIError } from '@/services/api/apiErrorHandler';
-import type { ApiResponse, PaginatedResponse } from '@/services/api/apiTypes';
+import type { ApiResponse } from '@/services/api/apiTypes';
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -77,7 +77,15 @@ export interface UserMission {
   id: string;
   userId: string;
   type: 'daily' | 'weekly' | 'special';
-  category: 'exercises' | 'modules' | 'score' | 'streak' | 'achievements' | 'social' | 'coins' | 'xp';
+  category:
+    | 'exercises'
+    | 'modules'
+    | 'score'
+    | 'streak'
+    | 'achievements'
+    | 'social'
+    | 'coins'
+    | 'xp';
   title: string;
   description: string;
   objective: {
@@ -277,7 +285,7 @@ export interface LeaderboardFilters {
 export const getUserStats = async (userId: string): Promise<UserStats> => {
   try {
     const { data } = await apiClient.get<ApiResponse<UserStats>>(
-      `/gamification/stats/${userId}`
+      API_ENDPOINTS.gamification.userStats(userId),
     );
     return data.data;
   } catch (error) {
@@ -298,7 +306,7 @@ export const getUserStats = async (userId: string): Promise<UserStats> => {
 export const getUserRank = async (userId: string): Promise<UserRank> => {
   try {
     const { data } = await apiClient.get<ApiResponse<UserRank>>(
-      `/gamification/ranks/user/${userId}`
+      `/gamification/ranks/user/${userId}`,
     );
     return data.data;
   } catch (error) {
@@ -313,9 +321,7 @@ export const getUserRank = async (userId: string): Promise<UserRank> => {
  */
 export const getAllRanks = async (): Promise<any[]> => {
   try {
-    const { data } = await apiClient.get<ApiResponse<any[]>>(
-      '/gamification/ranks'
-    );
+    const { data } = await apiClient.get<ApiResponse<any[]>>('/gamification/ranks');
     return data.data;
   } catch (error) {
     throw handleAPIError(error);
@@ -331,7 +337,7 @@ export const getAllRanks = async (): Promise<any[]> => {
 export const getRankHistory = async (userId: string): Promise<RankHistoryEntry[]> => {
   try {
     const { data } = await apiClient.get<ApiResponse<RankHistoryEntry[]>>(
-      `/gamification/ranks/history/${userId}`
+      `/gamification/ranks/history/${userId}`,
     );
     return data.data;
   } catch (error) {
@@ -348,7 +354,7 @@ export const getRankHistory = async (userId: string): Promise<RankHistoryEntry[]
 export const getUserMultiplier = async (userId: string): Promise<{ multiplier: number }> => {
   try {
     const { data } = await apiClient.get<ApiResponse<{ multiplier: number }>>(
-      `/gamification/ranks/multiplier/${userId}`
+      `/gamification/ranks/multiplier/${userId}`,
     );
     return data.data;
   } catch (error) {
@@ -362,10 +368,12 @@ export const getUserMultiplier = async (userId: string): Promise<{ multiplier: n
  * @param userId - User ID
  * @returns Promotion eligibility
  */
-export const checkPromotion = async (userId: string): Promise<{ canPromote: boolean; reason?: string }> => {
+export const checkPromotion = async (
+  userId: string,
+): Promise<{ canPromote: boolean; reason?: string }> => {
   try {
     const { data } = await apiClient.post<ApiResponse<{ canPromote: boolean; reason?: string }>>(
-      `/gamification/ranks/check-promotion/${userId}`
+      `/gamification/ranks/check-promotion/${userId}`,
     );
     return data.data;
   } catch (error) {
@@ -382,7 +390,7 @@ export const checkPromotion = async (userId: string): Promise<{ canPromote: bool
 export const promoteUser = async (userId: string): Promise<UserRank> => {
   try {
     const { data } = await apiClient.post<ApiResponse<UserRank>>(
-      `/gamification/ranks/promote/${userId}`
+      `/gamification/ranks/promote/${userId}`,
     );
     return data.data;
   } catch (error) {
@@ -402,7 +410,7 @@ export const promoteUser = async (userId: string): Promise<UserRank> => {
 export const getDailyMissions = async (): Promise<UserMission[]> => {
   try {
     const { data } = await apiClient.get<ApiResponse<{ missions: UserMission[] }>>(
-      '/gamification/missions/daily'
+      '/gamification/missions/daily',
     );
     return data.data.missions;
   } catch (error) {
@@ -418,7 +426,7 @@ export const getDailyMissions = async (): Promise<UserMission[]> => {
 export const getWeeklyMissions = async (): Promise<UserMission[]> => {
   try {
     const { data } = await apiClient.get<ApiResponse<{ missions: UserMission[] }>>(
-      '/gamification/missions/weekly'
+      '/gamification/missions/weekly',
     );
     return data.data.missions;
   } catch (error) {
@@ -434,7 +442,7 @@ export const getWeeklyMissions = async (): Promise<UserMission[]> => {
 export const getSpecialMissions = async (): Promise<UserMission[]> => {
   try {
     const { data } = await apiClient.get<ApiResponse<{ missions: UserMission[] }>>(
-      '/gamification/missions/special'
+      '/gamification/missions/special',
     );
     return data.data.missions;
   } catch (error) {
@@ -451,12 +459,12 @@ export const getSpecialMissions = async (): Promise<UserMission[]> => {
  */
 export const getUserMissions = async (
   userId: string,
-  filters?: { type?: string; status?: string }
+  filters?: { type?: string; status?: string },
 ): Promise<UserMission[]> => {
   try {
     const { data } = await apiClient.get<ApiResponse<UserMission[]>>(
       `/gamification/missions/user/${userId}`,
-      { params: filters }
+      { params: filters },
     );
     return data.data;
   } catch (error) {
@@ -473,7 +481,7 @@ export const getUserMissions = async (
 export const getMissionProgress = async (missionId: string): Promise<UserMission> => {
   try {
     const { data } = await apiClient.get<ApiResponse<UserMission>>(
-      `/gamification/missions/${missionId}/progress`
+      `/gamification/missions/${missionId}/progress`,
     );
     return data.data;
   } catch (error) {
@@ -490,7 +498,7 @@ export const getMissionProgress = async (missionId: string): Promise<UserMission
 export const claimMissionRewards = async (missionId: string): Promise<UserMission> => {
   try {
     const { data } = await apiClient.post<ApiResponse<UserMission>>(
-      `/gamification/missions/${missionId}/claim`
+      `/gamification/missions/${missionId}/claim`,
     );
     return data.data;
   } catch (error) {
@@ -507,7 +515,7 @@ export const claimMissionRewards = async (missionId: string): Promise<UserMissio
 export const getUserMissionStats = async (userId: string): Promise<MissionStats> => {
   try {
     const { data } = await apiClient.get<ApiResponse<MissionStats>>(
-      `/gamification/missions/stats/${userId}`
+      `/gamification/missions/stats/${userId}`,
     );
     return data.data;
   } catch (error) {
@@ -526,9 +534,7 @@ export const getUserMissionStats = async (userId: string): Promise<MissionStats>
  */
 export const getAllAchievements = async (): Promise<Achievement[]> => {
   try {
-    const { data } = await apiClient.get<ApiResponse<Achievement[]>>(
-      '/gamification/achievements'
-    );
+    const { data } = await apiClient.get<ApiResponse<Achievement[]>>('/gamification/achievements');
     return data.data;
   } catch (error) {
     throw handleAPIError(error);
@@ -544,7 +550,7 @@ export const getAllAchievements = async (): Promise<Achievement[]> => {
 export const getUserAchievements = async (userId: string): Promise<UserAchievement[]> => {
   try {
     const { data } = await apiClient.get<ApiResponse<UserAchievement[]>>(
-      `/gamification/users/${userId}/achievements`
+      `/gamification/users/${userId}/achievements`,
     );
     return data.data;
   } catch (error) {
@@ -558,11 +564,13 @@ export const getUserAchievements = async (userId: string): Promise<UserAchieveme
  * @param request - Unlock achievement request
  * @returns Updated achievement
  */
-export const unlockAchievement = async (request: UnlockAchievementRequest): Promise<UserAchievement> => {
+export const unlockAchievement = async (
+  request: UnlockAchievementRequest,
+): Promise<UserAchievement> => {
   try {
     const { data } = await apiClient.post<ApiResponse<UserAchievement>>(
       '/gamification/achievements/unlock',
-      request
+      request,
     );
     return data.data;
   } catch (error) {
@@ -582,9 +590,7 @@ export const unlockAchievement = async (request: UnlockAchievementRequest): Prom
  */
 export const getCoinBalance = async (userId: string): Promise<CoinBalance> => {
   try {
-    const { data } = await apiClient.get<ApiResponse<CoinBalance>>(
-      `/gamification/coins/${userId}`
-    );
+    const { data } = await apiClient.get<ApiResponse<CoinBalance>>(`/gamification/coins/${userId}`);
     return data.data;
   } catch (error) {
     throw handleAPIError(error);
@@ -600,12 +606,12 @@ export const getCoinBalance = async (userId: string): Promise<CoinBalance> => {
  */
 export const getCoinTransactions = async (
   userId: string,
-  filters?: { limit?: number; offset?: number; type?: 'earn' | 'spend' }
+  filters?: { limit?: number; offset?: number; type?: 'earn' | 'spend' },
 ): Promise<CoinTransaction[]> => {
   try {
     const { data } = await apiClient.get<ApiResponse<CoinTransaction[]>>(
       `/gamification/coins/transactions/${userId}`,
-      { params: filters }
+      { params: filters },
     );
     return data.data;
   } catch (error) {
@@ -622,7 +628,7 @@ export const getCoinTransactions = async (
 export const getEarningStats = async (userId: string): Promise<EarningStats> => {
   try {
     const { data } = await apiClient.get<ApiResponse<EarningStats>>(
-      `/gamification/coins/stats/${userId}`
+      `/gamification/coins/stats/${userId}`,
     );
     return data.data;
   } catch (error) {
@@ -647,7 +653,7 @@ export const earnCoins = async (
   reason: string,
   transactionType: string,
   referenceId?: string,
-  referenceType?: string
+  referenceType?: string,
 ): Promise<CoinTransaction> => {
   try {
     const { data } = await apiClient.post<ApiResponse<CoinTransaction>>(
@@ -658,8 +664,8 @@ export const earnCoins = async (
         reason,
         transactionType,
         referenceId,
-        referenceType
-      }
+        referenceType,
+      },
     );
     return data.data;
   } catch (error) {
@@ -684,7 +690,7 @@ export const spendCoins = async (
   item: string,
   transactionType: string,
   referenceId?: string,
-  referenceType?: string
+  referenceType?: string,
 ): Promise<CoinTransaction> => {
   try {
     const { data } = await apiClient.post<ApiResponse<CoinTransaction>>(
@@ -695,8 +701,8 @@ export const spendCoins = async (
         item,
         transactionType,
         referenceId,
-        referenceType
-      }
+        referenceType,
+      },
     );
     return data.data;
   } catch (error) {
@@ -714,11 +720,13 @@ export const spendCoins = async (
  * @param filters - Optional filters
  * @returns Leaderboard entries
  */
-export const getGlobalLeaderboard = async (filters?: LeaderboardFilters): Promise<LeaderboardResponse> => {
+export const getGlobalLeaderboard = async (
+  filters?: LeaderboardFilters,
+): Promise<LeaderboardResponse> => {
   try {
     const { data } = await apiClient.get<ApiResponse<LeaderboardResponse>>(
       '/gamification/leaderboard/global',
-      { params: filters }
+      { params: filters },
     );
     return data.data;
   } catch (error) {
@@ -735,12 +743,12 @@ export const getGlobalLeaderboard = async (filters?: LeaderboardFilters): Promis
  */
 export const getSchoolLeaderboard = async (
   schoolId: string,
-  filters?: LeaderboardFilters
+  filters?: LeaderboardFilters,
 ): Promise<LeaderboardResponse> => {
   try {
     const { data } = await apiClient.get<ApiResponse<LeaderboardResponse>>(
       `/gamification/leaderboard/school/${schoolId}`,
-      { params: filters }
+      { params: filters },
     );
     return data.data;
   } catch (error) {
@@ -757,12 +765,12 @@ export const getSchoolLeaderboard = async (
  */
 export const getClassroomLeaderboard = async (
   classroomId: string,
-  filters?: LeaderboardFilters
+  filters?: LeaderboardFilters,
 ): Promise<LeaderboardResponse> => {
   try {
     const { data } = await apiClient.get<ApiResponse<LeaderboardResponse>>(
       `/gamification/leaderboard/classroom/${classroomId}`,
-      { params: filters }
+      { params: filters },
     );
     return data.data;
   } catch (error) {
@@ -776,11 +784,13 @@ export const getClassroomLeaderboard = async (
  * @param filters - Optional filters
  * @returns Leaderboard entries
  */
-export const getWeeklyLeaderboard = async (filters?: LeaderboardFilters): Promise<LeaderboardResponse> => {
+export const getWeeklyLeaderboard = async (
+  filters?: LeaderboardFilters,
+): Promise<LeaderboardResponse> => {
   try {
     const { data } = await apiClient.get<ApiResponse<LeaderboardResponse>>(
       '/gamification/leaderboard/weekly',
-      { params: filters }
+      { params: filters },
     );
     return data.data;
   } catch (error) {
@@ -794,11 +804,13 @@ export const getWeeklyLeaderboard = async (filters?: LeaderboardFilters): Promis
  * @param filters - Optional filters
  * @returns Leaderboard entries
  */
-export const getCoinsLeaderboard = async (filters?: LeaderboardFilters): Promise<LeaderboardResponse> => {
+export const getCoinsLeaderboard = async (
+  filters?: LeaderboardFilters,
+): Promise<LeaderboardResponse> => {
   try {
     const { data } = await apiClient.get<ApiResponse<LeaderboardResponse>>(
       '/gamification/coins/leaderboard',
-      { params: filters }
+      { params: filters },
     );
     return data.data;
   } catch (error) {
@@ -812,10 +824,12 @@ export const getCoinsLeaderboard = async (filters?: LeaderboardFilters): Promise
  * @param userId - User ID
  * @returns User positions
  */
-export const getUserLeaderboardPosition = async (userId: string): Promise<UserLeaderboardPosition> => {
+export const getUserLeaderboardPosition = async (
+  userId: string,
+): Promise<UserLeaderboardPosition> => {
   try {
     const { data } = await apiClient.get<ApiResponse<UserLeaderboardPosition>>(
-      `/gamification/leaderboard/user/${userId}/position`
+      `/gamification/leaderboard/user/${userId}/position`,
     );
     return data.data;
   } catch (error) {

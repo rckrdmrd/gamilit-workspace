@@ -14,11 +14,10 @@
  */
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import { LoginForm } from '../LoginForm';
-import { AuthProvider } from '@/app/providers/AuthContext';
 
 // Mock react-router-dom navigate
 const mockNavigate = vi.fn();
@@ -51,7 +50,7 @@ describe('LoginForm', () => {
     return render(
       <BrowserRouter>
         <LoginForm {...props} />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
   };
 
@@ -421,9 +420,7 @@ describe('LoginForm', () => {
   describe('Loading States', () => {
     it('should show loading state during submission', async () => {
       const user = userEvent.setup();
-      mockLogin.mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 100))
-      );
+      mockLogin.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
 
       renderLoginForm();
 
@@ -444,9 +441,7 @@ describe('LoginForm', () => {
 
     it('should disable inputs during submission', async () => {
       const user = userEvent.setup();
-      mockLogin.mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 100))
-      );
+      mockLogin.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
 
       renderLoginForm();
 
@@ -466,9 +461,7 @@ describe('LoginForm', () => {
 
     it('should disable password toggle during submission', async () => {
       const user = userEvent.setup();
-      mockLogin.mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 100))
-      );
+      mockLogin.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
 
       renderLoginForm();
 

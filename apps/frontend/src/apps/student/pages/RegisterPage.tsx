@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,10 +24,10 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isValid }
+    formState: { errors, isValid },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    mode: 'onChange'
+    mode: 'onChange',
   });
 
   const watchedFullName = watch('fullName', '');
@@ -46,7 +46,7 @@ export default function RegisterPage() {
         email: data.email,
         password: data.password,
         confirmPassword: data.confirmPassword,
-        acceptTerms: true
+        acceptTerms: true,
       });
 
       setRegistrationSuccess(true);
@@ -64,18 +64,16 @@ export default function RegisterPage() {
   // Mostrar mensaje de éxito
   if (registrationSuccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary flex items-center justify-center p-4">
-        <DetectiveCard className="max-w-md w-full">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-detective-bg to-detective-bg-secondary p-4">
+        <DetectiveCard className="w-full max-w-md">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-8"
+            className="py-8 text-center"
           >
-            <CheckCircle2 className="w-16 h-16 text-detective-success mx-auto mb-4" />
-            <h2 className="text-detective-title text-detective-success mb-3">
-              Cuenta Creada
-            </h2>
-            <p className="text-detective-body text-detective-text-secondary mb-4">
+            <CheckCircle2 className="mx-auto mb-4 h-16 w-16 text-detective-success" />
+            <h2 className="text-detective-title mb-3 text-detective-success">Cuenta Creada</h2>
+            <p className="text-detective-body mb-4 text-detective-text-secondary">
               Tu cuenta ha sido creada exitosamente. Ya puedes iniciar sesión.
             </p>
             <p className="text-detective-sm text-detective-text-secondary">
@@ -88,25 +86,20 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-detective-bg to-detective-bg-secondary flex items-center justify-center p-4">
-      <DetectiveCard className="max-w-md w-full">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-detective-bg to-detective-bg-secondary p-4">
+      <DetectiveCard className="w-full max-w-md">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Target className="w-12 h-12 text-detective-orange" />
+        <div className="mb-8 text-center">
+          <div className="mb-4 flex items-center justify-center gap-2">
+            <Target className="h-12 w-12 text-detective-orange" />
             <h1 className="text-4xl font-bold text-detective-orange">GAMILIT</h1>
           </div>
-          <p className="text-detective-text-secondary">
-            Únete a la academia de detectives
-          </p>
+          <p className="text-detective-text-secondary">Únete a la academia de detectives</p>
         </div>
 
         {/* Server Errors */}
         {serverError && (
-          <FormErrorDisplay
-            errors={[serverError]}
-            onDismiss={() => setServerError('')}
-          />
+          <FormErrorDisplay errors={[serverError]} onDismiss={() => setServerError('')} />
         )}
 
         {/* Form */}
@@ -119,7 +112,7 @@ export default function RegisterPage() {
               {...register('fullName')}
               value={watchedFullName}
               error={errors.fullName?.message}
-              icon={<User className="w-5 h-5" />}
+              icon={<User className="h-5 w-5" />}
             />
           </div>
 
@@ -159,25 +152,25 @@ export default function RegisterPage() {
 
           {/* Terms and Conditions */}
           <div className="mb-6">
-            <label className="flex items-start gap-2 text-sm text-detective-text cursor-pointer">
+            <label className="flex cursor-pointer items-start gap-2 text-sm text-detective-text">
               <input
                 type="checkbox"
                 {...register('acceptTerms')}
-                className="rounded border-amber-200 text-detective-orange focus:ring-detective-orange mt-0.5 flex-shrink-0"
+                className="mt-0.5 flex-shrink-0 rounded border-amber-200 text-detective-orange focus:ring-detective-orange"
               />
               <span>
                 Acepto los{' '}
                 <button
                   type="button"
-                  className="text-detective-orange hover:text-detective-orange-dark underline"
+                  className="text-detective-orange underline hover:text-detective-orange-dark"
                   onClick={() => window.open('/terms', '_blank')}
                 >
                   términos y condiciones
-                </button>
-                {' '}y la{' '}
+                </button>{' '}
+                y la{' '}
                 <button
                   type="button"
-                  className="text-detective-orange hover:text-detective-orange-dark underline"
+                  className="text-detective-orange underline hover:text-detective-orange-dark"
                   onClick={() => window.open('/privacy', '_blank')}
                 >
                   política de privacidad
@@ -185,7 +178,7 @@ export default function RegisterPage() {
               </span>
             </label>
             {errors.acceptTerms && (
-              <p className="text-detective-danger text-detective-sm mt-1">
+              <p className="mt-1 text-detective-sm text-detective-danger">
                 {errors.acceptTerms.message}
               </p>
             )}
@@ -194,22 +187,21 @@ export default function RegisterPage() {
           <DetectiveButton
             type="submit"
             variant="primary"
-
             loading={loading}
             disabled={!isValid || loading}
             className="w-full"
-            icon={<UserPlus className="w-5 h-5" />}
+            icon={<UserPlus className="h-5 w-5" />}
           >
             {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
           </DetectiveButton>
 
           <div className="mt-6 text-center">
-            <p className="text-detective-text-secondary text-sm">
+            <p className="text-sm text-detective-text-secondary">
               ¿Ya tienes cuenta?{' '}
               <button
                 type="button"
                 onClick={() => navigate('/login')}
-                className="text-detective-orange hover:text-detective-orange-dark font-semibold transition-colors"
+                className="font-semibold text-detective-orange transition-colors hover:text-detective-orange-dark"
               >
                 Inicia sesión aquí
               </button>

@@ -68,7 +68,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           isAuthenticated: false,
           sessionExpiresAt: null,
           error: null,
-          isLoading: false
+          isLoading: false,
         });
 
         console.log('🚪 [AuthProvider] Auth cleared - user should stay on login page');
@@ -99,14 +99,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           isAuthenticated: true,
           sessionExpiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
           isLoading: false,
-          error: null
+          error: null,
         });
 
         console.log('✅ [AuthContext] Session restored - both systems synchronized', {
           userId: userData.id,
-          email: userData.email
+          email: userData.email,
         });
-
       } catch (err) {
         // Token is invalid or expired, clear storage
         console.error('Failed to load user profile:', err);
@@ -123,7 +122,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           isAuthenticated: false,
           sessionExpiresAt: null,
           error: null,
-          isLoading: false
+          isLoading: false,
         });
       } finally {
         setIsLoading(false);
@@ -167,29 +166,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // 2. Update authStore (Zustand) - Direct state update to avoid duplicate API call
       useAuthStore.setState({
         user: userData,
-        token: response.token || localStorage.getItem('auth-token') || '',
+        token: response.accessToken || localStorage.getItem('auth-token') || '',
         refreshToken: response.refreshToken || localStorage.getItem('refresh-token') || '',
         isAuthenticated: true,
         sessionExpiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
         isLoading: false,
-        error: null
+        error: null,
       });
 
       console.log('✅ [AuthContext] Login successful - both systems synchronized', {
         userId: userData.id,
         email: userData.email,
-        role: userData.role
+        role: userData.role,
       });
-
     } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Login failed. Please check your credentials.';
+      const errorMessage =
+        err.response?.data?.message || 'Login failed. Please check your credentials.';
       setError(errorMessage);
 
       // Also update authStore error
       useAuthStore.setState({
         error: errorMessage,
         isLoading: false,
-        isAuthenticated: false
+        isAuthenticated: false,
       });
 
       throw new Error(errorMessage);
@@ -237,16 +236,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // 2. Update authStore
       useAuthStore.setState({
         user: userProfile,
-        token: response.token || localStorage.getItem('auth-token') || '',
+        token: response.accessToken || localStorage.getItem('auth-token') || '',
         refreshToken: response.refreshToken || localStorage.getItem('refresh-token') || '',
         isAuthenticated: true,
         sessionExpiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000,
         isLoading: false,
-        error: null
+        error: null,
       });
 
       console.log('✅ [AuthContext] Registration successful - both systems synchronized');
-
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || 'Registration failed. Please try again.';
       setError(errorMessage);
@@ -255,7 +253,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       useAuthStore.setState({
         error: errorMessage,
         isLoading: false,
-        isAuthenticated: false
+        isAuthenticated: false,
       });
 
       throw new Error(errorMessage);
@@ -307,18 +305,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       useAuthStore.setState({
         ...currentState,
         user: userData,
-        error: null
+        error: null,
       });
 
       console.log('✅ [AuthContext] User profile refreshed - both systems synchronized');
-
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || 'Failed to refresh user profile.';
       setError(errorMessage);
 
       // Also update authStore error
       useAuthStore.setState({
-        error: errorMessage
+        error: errorMessage,
       });
 
       throw new Error(errorMessage);

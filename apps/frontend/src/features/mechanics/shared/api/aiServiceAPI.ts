@@ -6,8 +6,7 @@
  */
 
 import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS, FEATURE_FLAGS } from '@/services/api/apiConfig';
-import { handleAPIError } from '@/services/api/apiErrorHandler';
+import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
 import type { ApiResponse } from '@/services/api/apiTypes';
 
 // ============================================================================
@@ -182,7 +181,8 @@ export interface SuggestionsResponse {
 /**
  * Mock text analysis
  */
-const mockAnalyzeText = async (request: TextAnalysisRequest): Promise<TextAnalysisResponse> => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const mockAnalyzeText = async (_request: TextAnalysisRequest): Promise<TextAnalysisResponse> => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
   return {
@@ -222,7 +222,8 @@ const mockAnalyzeText = async (request: TextAnalysisRequest): Promise<TextAnalys
  * Mock generate response
  */
 const mockGenerateResponse = async (
-  request: GenerateResponseRequest
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _request: GenerateResponseRequest,
 ): Promise<GenerateResponseResponse> => {
   await new Promise((resolve) => setTimeout(resolve, 1200));
 
@@ -251,20 +252,16 @@ const mockGenerateResponse = async (
  * @returns Analysis results
  */
 export const analyzeText = async (request: TextAnalysisRequest): Promise<TextAnalysisResponse> => {
-  try {
-    if (FEATURE_FLAGS.USE_MOCK_DATA || !FEATURE_FLAGS.ENABLE_AI) {
-      return await mockAnalyzeText(request);
-    }
-
-    const { data } = await apiClient.post<ApiResponse<TextAnalysisResponse>>(
-      API_ENDPOINTS.ai.analyzeText,
-      request
-    );
-
-    return data.data;
-  } catch (error) {
-    throw handleAPIError(error);
+  if (FEATURE_FLAGS.USE_MOCK_DATA || !FEATURE_FLAGS.ENABLE_AI) {
+    return await mockAnalyzeText(request);
   }
+
+  const { data } = await apiClient.post<ApiResponse<TextAnalysisResponse>>(
+    API_ENDPOINTS.ai.analyzeText,
+    request,
+  );
+
+  return data.data;
 };
 
 /**
@@ -274,22 +271,18 @@ export const analyzeText = async (request: TextAnalysisRequest): Promise<TextAna
  * @returns Generated response
  */
 export const generateResponse = async (
-  request: GenerateResponseRequest
+  request: GenerateResponseRequest,
 ): Promise<GenerateResponseResponse> => {
-  try {
-    if (FEATURE_FLAGS.USE_MOCK_DATA || !FEATURE_FLAGS.ENABLE_AI) {
-      return await mockGenerateResponse(request);
-    }
-
-    const { data } = await apiClient.post<ApiResponse<GenerateResponseResponse>>(
-      API_ENDPOINTS.ai.generateResponse,
-      request
-    );
-
-    return data.data;
-  } catch (error) {
-    throw handleAPIError(error);
+  if (FEATURE_FLAGS.USE_MOCK_DATA || !FEATURE_FLAGS.ENABLE_AI) {
+    return await mockGenerateResponse(request);
   }
+
+  const { data } = await apiClient.post<ApiResponse<GenerateResponseResponse>>(
+    API_ENDPOINTS.ai.generateResponse,
+    request,
+  );
+
+  return data.data;
 };
 
 /**
@@ -299,34 +292,29 @@ export const generateResponse = async (
  * @returns Fact check result
  */
 export const checkFact = async (request: FactCheckRequest): Promise<FactCheckResponse> => {
-  try {
-    if (FEATURE_FLAGS.USE_MOCK_DATA || !FEATURE_FLAGS.ENABLE_AI) {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      return {
-        isFactual: true,
-        confidence: 0.88,
-        rating: 'mostly-true',
-        explanation:
-          'La afirmación es mayormente verdadera según las fuentes disponibles.',
-        sources: [
-          {
-            title: 'Fuente Académica 1',
-            url: 'https://example.com/source1',
-            relevance: 0.9,
-          },
-        ],
-      };
-    }
-
-    const { data } = await apiClient.post<ApiResponse<FactCheckResponse>>(
-      API_ENDPOINTS.ai.checkFact,
-      request
-    );
-
-    return data.data;
-  } catch (error) {
-    throw handleAPIError(error);
+  if (FEATURE_FLAGS.USE_MOCK_DATA || !FEATURE_FLAGS.ENABLE_AI) {
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    return {
+      isFactual: true,
+      confidence: 0.88,
+      rating: 'mostly-true',
+      explanation: 'La afirmación es mayormente verdadera según las fuentes disponibles.',
+      sources: [
+        {
+          title: 'Fuente Académica 1',
+          url: 'https://example.com/source1',
+          relevance: 0.9,
+        },
+      ],
+    };
   }
+
+  const { data } = await apiClient.post<ApiResponse<FactCheckResponse>>(
+    API_ENDPOINTS.ai.checkFact,
+    request,
+  );
+
+  return data.data;
 };
 
 /**
@@ -336,35 +324,30 @@ export const checkFact = async (request: FactCheckRequest): Promise<FactCheckRes
  * @returns Validation result
  */
 export const validateHypothesis = async (
-  request: ValidateHypothesisRequest
+  request: ValidateHypothesisRequest,
 ): Promise<ValidateHypothesisResponse> => {
-  try {
-    if (FEATURE_FLAGS.USE_MOCK_DATA || !FEATURE_FLAGS.ENABLE_AI) {
-      await new Promise((resolve) => setTimeout(resolve, 1300));
-      return {
-        isValid: true,
-        strength: 'moderate',
-        confidence: 0.75,
-        supportingEvidence: request.evidence.slice(0, 2),
-        contradictingEvidence: [],
-        suggestions: [
-          'Considera agregar más evidencia experimental',
-          'Revisa las fuentes alternativas',
-        ],
-        reasoning:
-          'La hipótesis tiene fundamentos sólidos pero requiere más evidencia.',
-      };
-    }
-
-    const { data } = await apiClient.post<ApiResponse<ValidateHypothesisResponse>>(
-      API_ENDPOINTS.ai.validateHypothesis,
-      request
-    );
-
-    return data.data;
-  } catch (error) {
-    throw handleAPIError(error);
+  if (FEATURE_FLAGS.USE_MOCK_DATA || !FEATURE_FLAGS.ENABLE_AI) {
+    await new Promise((resolve) => setTimeout(resolve, 1300));
+    return {
+      isValid: true,
+      strength: 'moderate',
+      confidence: 0.75,
+      supportingEvidence: request.evidence.slice(0, 2),
+      contradictingEvidence: [],
+      suggestions: [
+        'Considera agregar más evidencia experimental',
+        'Revisa las fuentes alternativas',
+      ],
+      reasoning: 'La hipótesis tiene fundamentos sólidos pero requiere más evidencia.',
+    };
   }
+
+  const { data } = await apiClient.post<ApiResponse<ValidateHypothesisResponse>>(
+    API_ENDPOINTS.ai.validateHypothesis,
+    request,
+  );
+
+  return data.data;
 };
 
 /**
@@ -374,51 +357,47 @@ export const validateHypothesis = async (
  * @returns Assistance result
  */
 export const getReadingAssistance = async (
-  request: ReadingAssistanceRequest
+  request: ReadingAssistanceRequest,
 ): Promise<ReadingAssistanceResponse> => {
-  try {
-    if (FEATURE_FLAGS.USE_MOCK_DATA || !FEATURE_FLAGS.ENABLE_AI) {
-      await new Promise((resolve) => setTimeout(resolve, 900));
+  if (FEATURE_FLAGS.USE_MOCK_DATA || !FEATURE_FLAGS.ENABLE_AI) {
+    await new Promise((resolve) => setTimeout(resolve, 900));
 
-      let result = '';
-      switch (request.assistanceType) {
-        case 'simplify':
-          result = 'Texto simplificado: ' + request.text.substring(0, 100) + '...';
-          break;
-        case 'explain':
-          result = 'Explicación: Este texto trata sobre...';
-          break;
-        case 'summarize':
-          result = 'Resumen: ' + request.text.substring(0, 50) + '...';
-          break;
-        case 'define':
-          result = `Definición de "${request.word}": término relacionado con...`;
-          break;
-        case 'translate':
-          result = 'Traducción: ' + request.text;
-          break;
-      }
-
-      return {
-        result,
-        originalText: request.text,
-        confidence: 0.85,
-        metadata: {
-          changes: 5,
-          readabilityImprovement: 15,
-        },
-      };
+    let result = '';
+    switch (request.assistanceType) {
+      case 'simplify':
+        result = 'Texto simplificado: ' + request.text.substring(0, 100) + '...';
+        break;
+      case 'explain':
+        result = 'Explicación: Este texto trata sobre...';
+        break;
+      case 'summarize':
+        result = 'Resumen: ' + request.text.substring(0, 50) + '...';
+        break;
+      case 'define':
+        result = `Definición de "${request.word}": término relacionado con...`;
+        break;
+      case 'translate':
+        result = 'Traducción: ' + request.text;
+        break;
     }
 
-    const { data } = await apiClient.post<ApiResponse<ReadingAssistanceResponse>>(
-      API_ENDPOINTS.ai.improveReading,
-      request
-    );
-
-    return data.data;
-  } catch (error) {
-    throw handleAPIError(error);
+    return {
+      result,
+      originalText: request.text,
+      confidence: 0.85,
+      metadata: {
+        changes: 5,
+        readabilityImprovement: 15,
+      },
+    };
   }
+
+  const { data } = await apiClient.post<ApiResponse<ReadingAssistanceResponse>>(
+    API_ENDPOINTS.ai.improveReading,
+    request,
+  );
+
+  return data.data;
 };
 
 /**
@@ -427,35 +406,29 @@ export const getReadingAssistance = async (
  * @param request - Suggestions request
  * @returns Suggestions
  */
-export const getSuggestions = async (
-  request: SuggestionsRequest
-): Promise<SuggestionsResponse> => {
-  try {
-    if (FEATURE_FLAGS.USE_MOCK_DATA || !FEATURE_FLAGS.ENABLE_AI) {
-      await new Promise((resolve) => setTimeout(resolve, 700));
-      return {
-        suggestions: [
-          {
-            type: 'grammar',
-            message: 'Considera usar un verbo más preciso',
-            severity: 'info',
-            position: { start: 10, end: 20 },
-            replacement: 'ejemplo',
-          },
-        ],
-        score: 85,
-      };
-    }
-
-    const { data } = await apiClient.post<ApiResponse<SuggestionsResponse>>(
-      API_ENDPOINTS.ai.getSuggestions,
-      request
-    );
-
-    return data.data;
-  } catch (error) {
-    throw handleAPIError(error);
+export const getSuggestions = async (request: SuggestionsRequest): Promise<SuggestionsResponse> => {
+  if (FEATURE_FLAGS.USE_MOCK_DATA || !FEATURE_FLAGS.ENABLE_AI) {
+    await new Promise((resolve) => setTimeout(resolve, 700));
+    return {
+      suggestions: [
+        {
+          type: 'grammar',
+          message: 'Considera usar un verbo más preciso',
+          severity: 'info',
+          position: { start: 10, end: 20 },
+          replacement: 'ejemplo',
+        },
+      ],
+      score: 85,
+    };
   }
+
+  const { data } = await apiClient.post<ApiResponse<SuggestionsResponse>>(
+    API_ENDPOINTS.ai.getSuggestions,
+    request,
+  );
+
+  return data.data;
 };
 
 // ============================================================================

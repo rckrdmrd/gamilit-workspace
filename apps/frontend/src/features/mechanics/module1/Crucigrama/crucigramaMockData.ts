@@ -1,4 +1,4 @@
-import { CrucigramaData } from './crucigramaTypes';
+import { CrucigramaData, CrucigramaClue } from './crucigramaTypes';
 import { DifficultyLevel } from '@shared/types/educational.types';
 
 // Helper function to create grid
@@ -9,8 +9,8 @@ const createGrid = (rows: number, cols: number): CrucigramaData['grid'] => {
       col,
       letter: '',
       isBlack: false,
-      userInput: ''
-    }))
+      userInput: '',
+    })),
   );
 };
 
@@ -18,7 +18,8 @@ export const mockCrucigramaExercises: CrucigramaData[] = [
   {
     id: 'crucigrama-001',
     title: 'Crucigrama Científico: Descubrimientos de Marie Curie',
-    description: 'Resuelve este crucigrama de 15×15 sobre los descubrimientos científicos de Marie Curie. Basado en PDF oficial v3.0',
+    description:
+      'Resuelve este crucigrama de 15×15 sobre los descubrimientos científicos de Marie Curie. Basado en PDF oficial v3.0',
     difficulty: DifficultyLevel.INTERMEDIATE,
     estimatedTime: 600, // 10 minutos
     topic: 'Marie Curie - Módulo 1: Comprensión Literal',
@@ -26,18 +27,18 @@ export const mockCrucigramaExercises: CrucigramaData[] = [
       {
         id: 'hint-001',
         text: 'El elemento descubierto por Marie Curie tiene símbolo Ra',
-        cost: 15
+        cost: 15,
       },
       {
         id: 'hint-002',
         text: 'El fenómeno descubierto por los Curie está en la fila 5',
-        cost: 15
+        cost: 15,
       },
       {
         id: 'hint-003',
         text: 'Marie Curie fue la primera mujer en recibir este galardón (vertical, fila 1)',
-        cost: 15
-      }
+        cost: 15,
+      },
     ],
     rows: 15,
     cols: 15,
@@ -89,56 +90,50 @@ export const mockCrucigramaExercises: CrucigramaData[] = [
         number: 1,
         direction: 'horizontal',
         clue: 'Fenómeno descubierto por los Curie',
-        answer: 'RADIACTIVIDAD',
         startRow: 4,
-        startCol: 0
+        startCol: 0,
       },
       {
         id: 'clue-2',
         number: 2,
         direction: 'vertical',
         clue: 'Elemento nombrado por la patria de Marie',
-        answer: 'POLONIO',
         startRow: 1,
-        startCol: 4
+        startCol: 4,
       },
       {
         id: 'clue-3',
         number: 3,
         direction: 'horizontal',
         clue: 'Elemento que brilla en la oscuridad',
-        answer: 'RADIO',
         startRow: 7,
-        startCol: 2
+        startCol: 2,
       },
       {
         id: 'clue-4',
         number: 4,
         direction: 'vertical',
         clue: 'Premio ganado dos veces',
-        answer: 'NOBEL',
         startRow: 0,
-        startCol: 9
+        startCol: 9,
       },
       {
         id: 'clue-5',
         number: 5,
         direction: 'horizontal',
         clue: 'Universidad francesa donde estudió',
-        answer: 'SORBONA',
         startRow: 9,
-        startCol: 3
+        startCol: 3,
       },
       {
         id: 'clue-6',
         number: 6,
         direction: 'vertical',
         clue: 'Apellido de Marie',
-        answer: 'CURIE',
         startRow: 2,
-        startCol: 11
-      }
-    ]
+        startCol: 11,
+      },
+    ] as CrucigramaClue[],
   },
   {
     id: 'crucigrama-002',
@@ -151,13 +146,13 @@ export const mockCrucigramaExercises: CrucigramaData[] = [
       {
         id: 'hint-004',
         text: 'Marie Curie nació en este país europeo',
-        cost: 5
+        cost: 5,
       },
       {
         id: 'hint-005',
         text: 'El nombre de su esposo científico',
-        cost: 8
-      }
+        cost: 8,
+      },
     ],
     rows: 8,
     cols: 8,
@@ -186,38 +181,34 @@ export const mockCrucigramaExercises: CrucigramaData[] = [
         number: 1,
         direction: 'horizontal',
         clue: 'País donde nació Marie Curie',
-        answer: 'POLONIA',
         startRow: 1,
-        startCol: 1
+        startCol: 1,
       },
       {
         id: 'clue-9',
         number: 2,
         direction: 'vertical',
         clue: 'Nombre real de Marie Curie',
-        answer: 'MARIA',
         startRow: 0,
-        startCol: 3
+        startCol: 3,
       },
       {
         id: 'clue-10',
         number: 3,
         direction: 'horizontal',
         clue: 'Nombre de su esposo y colaborador',
-        answer: 'PIERRE',
         startRow: 3,
-        startCol: 2
+        startCol: 2,
       },
       {
         id: 'clue-11',
         number: 5,
         direction: 'horizontal',
         clue: 'Ciudad donde vivió y trabajó Marie Curie',
-        answer: 'PARIS',
         startRow: 5,
-        startCol: 3
-      }
-    ]
+        startCol: 3,
+      },
+    ] as CrucigramaClue[],
   },
   {
     id: 'crucigrama-003',
@@ -230,13 +221,13 @@ export const mockCrucigramaExercises: CrucigramaData[] = [
       {
         id: 'hint-006',
         text: 'Marie Curie fue pionera en el tratamiento del cáncer con este método',
-        cost: 12
+        cost: 12,
       },
       {
         id: 'hint-007',
         text: 'La unidad de radioactividad lleva su nombre',
-        cost: 15
-      }
+        cost: 15,
+      },
     ],
     rows: 12,
     cols: 12,
@@ -247,28 +238,25 @@ export const mockCrucigramaExercises: CrucigramaData[] = [
         number: 1,
         direction: 'horizontal',
         clue: 'Tratamiento contra el cáncer desarrollado a partir de sus descubrimientos',
-        answer: 'RADIOTERAPIA',
         startRow: 2,
-        startCol: 0
+        startCol: 0,
       },
       {
         id: 'clue-13',
         number: 2,
         direction: 'vertical',
         clue: 'Unidad de medida de radioactividad nombrada en su honor',
-        answer: 'CURIO',
         startRow: 0,
-        startCol: 5
+        startCol: 5,
       },
       {
         id: 'clue-14',
         number: 3,
         direction: 'horizontal',
         clue: 'Instituto fundado por Marie Curie',
-        answer: 'RADIUM',
         startRow: 6,
-        startCol: 3
-      }
-    ]
-  }
+        startCol: 3,
+      },
+    ] as CrucigramaClue[],
+  },
 ];

@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { motion, useSpring, useTransform } from 'framer-motion';
 import { Coins, TrendingUp, TrendingDown, Clock, Sparkles } from 'lucide-react';
-import { EnhancedCard } from '@shared/components/base/EnhancedCard';
 import { getColorSchemeByName } from '@shared/utils/colorPalette';
 import { cn } from '@shared/utils/cn';
 import type { MLCoinsData } from '../../hooks/useDashboardData';
@@ -26,9 +25,7 @@ export function MLCoinsWidget({ data, loading }: MLCoinsWidgetProps) {
     }
   }, [data?.balance, balanceSpring]);
 
-  const displayBalance = useTransform(balanceSpring, (value) =>
-    Math.round(value).toLocaleString()
-  );
+  const displayBalance = useTransform(balanceSpring, (value) => Math.round(value).toLocaleString());
 
   if (loading || !data) {
     return (
@@ -36,19 +33,19 @@ export function MLCoinsWidget({ data, loading }: MLCoinsWidgetProps) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className={cn(
-          'relative bg-white rounded-xl shadow-md overflow-hidden',
-          'border-2 h-full p-6',
+          'relative overflow-hidden rounded-xl bg-white shadow-md',
+          'h-full border-2 p-6',
           colorScheme.border,
-          colorScheme.shadow
+          colorScheme.shadow,
         )}
       >
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/2 mb-4" />
-          <div className="h-10 bg-gray-200 rounded w-3/4 mb-6" />
+          <div className="mb-4 h-6 w-1/2 rounded bg-gray-200" />
+          <div className="mb-6 h-10 w-3/4 rounded bg-gray-200" />
           <div className="space-y-3">
-            <div className="h-4 bg-gray-200 rounded" />
-            <div className="h-4 bg-gray-200 rounded" />
-            <div className="h-4 bg-gray-200 rounded" />
+            <div className="h-4 rounded bg-gray-200" />
+            <div className="h-4 rounded bg-gray-200" />
+            <div className="h-4 rounded bg-gray-200" />
           </div>
         </div>
       </motion.div>
@@ -64,34 +61,30 @@ export function MLCoinsWidget({ data, loading }: MLCoinsWidgetProps) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4 }}
       className={cn(
-        'relative bg-white rounded-xl shadow-lg overflow-hidden',
-        'border-2 h-full max-h-[600px]',
+        'relative overflow-hidden rounded-xl bg-white shadow-lg',
+        'h-full max-h-[600px] border-2',
         colorScheme.border,
-        colorScheme.shadow
+        colorScheme.shadow,
       )}
     >
       {/* Gradient background overlay */}
       <div
-        className={cn(
-          'absolute inset-0 opacity-10',
-          'bg-gradient-to-br',
-          colorScheme.iconGradient
-        )}
+        className={cn('absolute inset-0 opacity-10', 'bg-gradient-to-br', colorScheme.iconGradient)}
       />
 
       {/* Content */}
-      <div className="relative z-10 p-6 overflow-y-auto h-full">
+      <div className="relative z-10 h-full overflow-y-auto p-6">
         {/* Header with colorful icon */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div
               className={cn(
-                'w-12 h-12 rounded-xl flex items-center justify-center',
+                'flex h-12 w-12 items-center justify-center rounded-xl',
                 'bg-gradient-to-br shadow-md',
-                colorScheme.iconGradient
+                colorScheme.iconGradient,
               )}
             >
-              <Coins className="w-7 h-7 text-white" />
+              <Coins className="h-7 w-7 text-white" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-gray-900">ML Coins</h3>
@@ -109,36 +102,36 @@ export function MLCoinsWidget({ data, loading }: MLCoinsWidgetProps) {
               ease: 'easeInOut',
             }}
           >
-            <Sparkles className="w-6 h-6 text-amber-500" />
+            <Sparkles className="h-6 w-6 text-amber-500" />
           </motion.div>
         </div>
 
         {/* Balance with gradient */}
-        <div className="mb-6 p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200">
+        <div className="mb-6 rounded-xl border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-4">
           <motion.div
-            className="text-5xl font-black mb-2 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent"
+            className="mb-2 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-5xl font-black text-transparent"
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
             transition={{ type: 'spring', stiffness: 200 }}
           >
             <motion.span>{displayBalance}</motion.span>
-            <span className="text-3xl ml-2">ML</span>
+            <span className="ml-2 text-3xl">ML</span>
           </motion.div>
 
           {/* Today's change with badge */}
           <div className="flex items-center gap-2">
             <div
               className={cn(
-                'flex items-center gap-1 px-3 py-1 rounded-full text-sm font-semibold',
+                'flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold',
                 isPositive
-                  ? 'bg-green-100 text-green-700 border border-green-300'
-                  : 'bg-red-100 text-red-700 border border-red-300'
+                  ? 'border border-green-300 bg-green-100 text-green-700'
+                  : 'border border-red-300 bg-red-100 text-red-700',
               )}
             >
               {isPositive ? (
-                <TrendingUp className="w-4 h-4" />
+                <TrendingUp className="h-4 w-4" />
               ) : (
-                <TrendingDown className="w-4 h-4" />
+                <TrendingDown className="h-4 w-4" />
               )}
               <span>
                 {isPositive ? '+' : ''}
@@ -150,22 +143,20 @@ export function MLCoinsWidget({ data, loading }: MLCoinsWidgetProps) {
         </div>
 
         {/* Stats with colorful cards */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
+        <div className="mb-6 grid grid-cols-2 gap-3">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border-2 border-green-200"
+            className="rounded-xl border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 p-4"
           >
-            <div className="flex items-center gap-2 mb-2">
-              <div className="p-1.5 bg-green-500 rounded-lg">
-                <TrendingUp className="w-3.5 h-3.5 text-white" />
+            <div className="mb-2 flex items-center gap-2">
+              <div className="rounded-lg bg-green-500 p-1.5">
+                <TrendingUp className="h-3.5 w-3.5 text-white" />
               </div>
               <span className="text-xs font-semibold text-green-700">Ganado</span>
             </div>
-            <p className="text-2xl font-black text-green-700">
-              +{data.todayEarned}
-            </p>
+            <p className="text-2xl font-black text-green-700">+{data.todayEarned}</p>
             <p className="text-xs text-green-600">ML hoy</p>
           </motion.div>
 
@@ -173,25 +164,23 @@ export function MLCoinsWidget({ data, loading }: MLCoinsWidgetProps) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="p-4 bg-gradient-to-br from-red-50 to-rose-50 rounded-xl border-2 border-red-200"
+            className="rounded-xl border-2 border-red-200 bg-gradient-to-br from-red-50 to-rose-50 p-4"
           >
-            <div className="flex items-center gap-2 mb-2">
-              <div className="p-1.5 bg-red-500 rounded-lg">
-                <TrendingDown className="w-3.5 h-3.5 text-white" />
+            <div className="mb-2 flex items-center gap-2">
+              <div className="rounded-lg bg-red-500 p-1.5">
+                <TrendingDown className="h-3.5 w-3.5 text-white" />
               </div>
               <span className="text-xs font-semibold text-red-700">Gastado</span>
             </div>
-            <p className="text-2xl font-black text-red-700">
-              -{data.todaySpent}
-            </p>
+            <p className="text-2xl font-black text-red-700">-{data.todaySpent}</p>
             <p className="text-xs text-red-600">ML hoy</p>
           </motion.div>
         </div>
 
         {/* Recent transactions with colorful cards */}
         <div>
-          <h4 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-            <Clock className="w-4 h-4 text-gray-600" />
+          <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-gray-900">
+            <Clock className="h-4 w-4 text-gray-600" />
             Transacciones Recientes
           </h4>
           <div className="space-y-2">
@@ -202,34 +191,34 @@ export function MLCoinsWidget({ data, loading }: MLCoinsWidgetProps) {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 + index * 0.1 }}
                 className={cn(
-                  'flex items-center justify-between p-3 rounded-lg border-2 transition-all duration-200',
-                  'hover:shadow-md hover:-translate-y-0.5',
+                  'flex items-center justify-between rounded-lg border-2 p-3 transition-all duration-200',
+                  'hover:-translate-y-0.5 hover:shadow-md',
                   transaction.type === 'earned'
-                    ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200'
-                    : 'bg-gradient-to-r from-red-50 to-rose-50 border-red-200'
+                    ? 'border-green-200 bg-gradient-to-r from-green-50 to-emerald-50'
+                    : 'border-red-200 bg-gradient-to-r from-red-50 to-rose-50',
                 )}
               >
-                <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="flex min-w-0 flex-1 items-center gap-3">
                   <div
                     className={cn(
-                      'flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-sm',
+                      'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl shadow-sm',
                       transaction.type === 'earned'
                         ? 'bg-gradient-to-br from-green-500 to-emerald-500'
-                        : 'bg-gradient-to-br from-red-500 to-rose-500'
+                        : 'bg-gradient-to-br from-red-500 to-rose-500',
                     )}
                   >
                     {transaction.type === 'earned' ? (
-                      <TrendingUp className="w-5 h-5 text-white" />
+                      <TrendingUp className="h-5 w-5 text-white" />
                     ) : (
-                      <TrendingDown className="w-5 h-5 text-white" />
+                      <TrendingDown className="h-5 w-5 text-white" />
                     )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-gray-900">
                       {transaction.description}
                     </p>
                     <div className="flex items-center gap-1 text-xs text-gray-600">
-                      <Clock className="w-3 h-3" />
+                      <Clock className="h-3 w-3" />
                       <span>
                         {new Date(transaction.timestamp).toLocaleTimeString('es-ES', {
                           hour: '2-digit',
@@ -241,10 +230,8 @@ export function MLCoinsWidget({ data, loading }: MLCoinsWidgetProps) {
                 </div>
                 <div
                   className={cn(
-                    'text-lg font-black flex-shrink-0 px-2 py-1 rounded-lg',
-                    transaction.type === 'earned'
-                      ? 'text-green-700'
-                      : 'text-red-700'
+                    'flex-shrink-0 rounded-lg px-2 py-1 text-lg font-black',
+                    transaction.type === 'earned' ? 'text-green-700' : 'text-red-700',
                   )}
                 >
                   {transaction.type === 'earned' ? '+' : '-'}

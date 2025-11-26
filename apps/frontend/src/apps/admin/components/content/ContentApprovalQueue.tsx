@@ -2,7 +2,14 @@ import React, { useState } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { useApprovals } from '../../hooks/useContentManagement';
-import { CheckCircle, XCircle, Clock, FileText, Image as ImageIcon, MessageSquare } from 'lucide-react';
+import {
+  CheckCircle,
+  XCircle,
+  Clock,
+  FileText,
+  Image as ImageIcon,
+  MessageSquare,
+} from 'lucide-react';
 
 export const ContentApprovalQueue: React.FC = () => {
   const { approvals, loading, approve, reject } = useApprovals();
@@ -41,13 +48,13 @@ export const ContentApprovalQueue: React.FC = () => {
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'exercise':
-        return <FileText className="w-5 h-5" />;
+        return <FileText className="h-5 w-5" />;
       case 'media':
-        return <ImageIcon className="w-5 h-5" />;
+        return <ImageIcon className="h-5 w-5" />;
       case 'content':
-        return <MessageSquare className="w-5 h-5" />;
+        return <MessageSquare className="h-5 w-5" />;
       default:
-        return <FileText className="w-5 h-5" />;
+        return <FileText className="h-5 w-5" />;
     }
   };
 
@@ -55,7 +62,7 @@ export const ContentApprovalQueue: React.FC = () => {
     return (
       <DetectiveCard>
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-detective-orange border-t-transparent"></div>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-detective-orange border-t-transparent"></div>
         </div>
       </DetectiveCard>
     );
@@ -66,7 +73,7 @@ export const ContentApprovalQueue: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Clock className="w-8 h-8 text-detective-orange" />
+          <Clock className="h-8 w-8 text-detective-orange" />
           <div>
             <h2 className="text-detective-subtitle">Content Approval Queue</h2>
             <p className="text-detective-small text-gray-400">{pendingCount} pending approvals</p>
@@ -75,10 +82,10 @@ export const ContentApprovalQueue: React.FC = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <DetectiveCard className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 border border-yellow-500/30">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <DetectiveCard className="border border-yellow-500/30 bg-gradient-to-br from-yellow-500/10 to-yellow-600/5">
           <div className="flex items-center gap-3">
-            <Clock className="w-8 h-8 text-yellow-500" />
+            <Clock className="h-8 w-8 text-yellow-500" />
             <div>
               <p className="text-detective-small text-gray-400">Pending</p>
               <p className="text-3xl font-bold text-yellow-500">{pendingCount}</p>
@@ -86,9 +93,9 @@ export const ContentApprovalQueue: React.FC = () => {
           </div>
         </DetectiveCard>
 
-        <DetectiveCard className="bg-gradient-to-br from-green-500/10 to-green-600/5 border border-green-500/30">
+        <DetectiveCard className="border border-green-500/30 bg-gradient-to-br from-green-500/10 to-green-600/5">
           <div className="flex items-center gap-3">
-            <CheckCircle className="w-8 h-8 text-green-500" />
+            <CheckCircle className="h-8 w-8 text-green-500" />
             <div>
               <p className="text-detective-small text-gray-400">Approved</p>
               <p className="text-3xl font-bold text-green-500">{approvedCount}</p>
@@ -96,9 +103,9 @@ export const ContentApprovalQueue: React.FC = () => {
           </div>
         </DetectiveCard>
 
-        <DetectiveCard className="bg-gradient-to-br from-red-500/10 to-red-600/5 border border-red-500/30">
+        <DetectiveCard className="border border-red-500/30 bg-gradient-to-br from-red-500/10 to-red-600/5">
           <div className="flex items-center gap-3">
-            <XCircle className="w-8 h-8 text-red-500" />
+            <XCircle className="h-8 w-8 text-red-500" />
             <div>
               <p className="text-detective-small text-gray-400">Rejected</p>
               <p className="text-3xl font-bold text-red-500">{rejectedCount}</p>
@@ -111,8 +118,8 @@ export const ContentApprovalQueue: React.FC = () => {
       <div className="space-y-4">
         {approvals.length === 0 ? (
           <DetectiveCard>
-            <div className="text-center py-12 text-gray-400">
-              <CheckCircle className="w-12 h-12 mx-auto mb-2 text-green-500" />
+            <div className="py-12 text-center text-gray-400">
+              <CheckCircle className="mx-auto mb-2 h-12 w-12 text-green-500" />
               <p>No items in approval queue</p>
             </div>
           </DetectiveCard>
@@ -124,19 +131,19 @@ export const ContentApprovalQueue: React.FC = () => {
                 item.status === 'pending'
                   ? 'border border-yellow-500/30'
                   : item.status === 'approved'
-                  ? 'border border-green-500/30 opacity-60'
-                  : 'border border-red-500/30 opacity-60'
+                    ? 'border border-green-500/30 opacity-60'
+                    : 'border border-red-500/30 opacity-60'
               }
             >
               <div className="flex items-start gap-4">
                 {/* Type Icon */}
                 <div
-                  className={`p-3 rounded-lg ${
+                  className={`rounded-lg p-3 ${
                     item.type === 'exercise'
                       ? 'bg-blue-500/20 text-blue-500'
                       : item.type === 'media'
-                      ? 'bg-purple-500/20 text-purple-500'
-                      : 'bg-orange-500/20 text-orange-500'
+                        ? 'bg-purple-500/20 text-purple-500'
+                        : 'bg-orange-500/20 text-orange-500'
                   }`}
                 >
                   {getTypeIcon(item.type)}
@@ -144,34 +151,37 @@ export const ContentApprovalQueue: React.FC = () => {
 
                 {/* Content */}
                 <div className="flex-1">
-                  <div className="flex items-start justify-between mb-2">
+                  <div className="mb-2 flex items-start justify-between">
                     <div>
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="mb-1 flex items-center gap-2">
                         <h4 className="text-detective-base font-semibold">{item.title}</h4>
                         <span
-                          className={`px-2 py-0.5 rounded text-xs font-bold ${
+                          className={`rounded px-2 py-0.5 text-xs font-bold ${
                             item.status === 'pending'
-                              ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30'
+                              ? 'border border-yellow-500/30 bg-yellow-500/20 text-yellow-500'
                               : item.status === 'approved'
-                              ? 'bg-green-500/20 text-green-500 border border-green-500/30'
-                              : 'bg-red-500/20 text-red-500 border border-red-500/30'
+                                ? 'border border-green-500/30 bg-green-500/20 text-green-500'
+                                : 'border border-red-500/30 bg-red-500/20 text-red-500'
                           }`}
                         >
                           {item.status.toUpperCase()}
                         </span>
                       </div>
                       <p className="text-detective-small text-gray-400">
-                        Submitted by <span className="text-detective-orange">{item.submittedBy}</span> on{' '}
-                        {new Date(item.submittedAt).toLocaleDateString('es-ES')}
+                        Submitted by{' '}
+                        <span className="text-detective-orange">{item.submittedBy}</span> on{' '}
+                        {item.submittedAt
+                          ? new Date(item.submittedAt).toLocaleDateString('es-ES')
+                          : 'N/A'}
                       </p>
                     </div>
                     <span
-                      className={`px-2 py-1 rounded text-xs ${
+                      className={`rounded px-2 py-1 text-xs ${
                         item.type === 'exercise'
                           ? 'bg-blue-500/20 text-blue-500'
                           : item.type === 'media'
-                          ? 'bg-purple-500/20 text-purple-500'
-                          : 'bg-orange-500/20 text-orange-500'
+                            ? 'bg-purple-500/20 text-purple-500'
+                            : 'bg-orange-500/20 text-orange-500'
                       }`}
                     >
                       {item.type}
@@ -179,8 +189,8 @@ export const ContentApprovalQueue: React.FC = () => {
                   </div>
 
                   {/* Content Preview */}
-                  <div className="p-3 bg-detective-bg-secondary rounded-lg mb-3">
-                    <pre className="text-detective-small text-gray-400 whitespace-pre-wrap">
+                  <div className="mb-3 rounded-lg bg-detective-bg-secondary p-3">
+                    <pre className="text-detective-small whitespace-pre-wrap text-gray-400">
                       {JSON.stringify(item.content, null, 2).slice(0, 200)}
                       {JSON.stringify(item.content).length > 200 && '...'}
                     </pre>
@@ -190,7 +200,7 @@ export const ContentApprovalQueue: React.FC = () => {
                   {item.status === 'pending' && (
                     <div className="flex items-center gap-2">
                       {rejectingId === item.id ? (
-                        <div className="flex-1 flex gap-2">
+                        <div className="flex flex-1 gap-2">
                           <input
                             type="text"
                             placeholder="Rejection reason..."
@@ -201,7 +211,6 @@ export const ContentApprovalQueue: React.FC = () => {
                           />
                           <DetectiveButton
                             variant="primary"
-
                             onClick={() => handleReject(item.id)}
                             className="bg-red-500 hover:bg-red-600"
                           >
@@ -215,16 +224,14 @@ export const ContentApprovalQueue: React.FC = () => {
                         <>
                           <DetectiveButton
                             variant="green"
-
-                            icon={<CheckCircle className="w-4 h-4" />}
+                            icon={<CheckCircle className="h-4 w-4" />}
                             onClick={() => handleApprove(item.id)}
                           >
                             Approve
                           </DetectiveButton>
                           <DetectiveButton
                             variant="primary"
-
-                            icon={<XCircle className="w-4 h-4" />}
+                            icon={<XCircle className="h-4 w-4" />}
                             onClick={() => setRejectingId(item.id)}
                             className="bg-red-500 hover:bg-red-600"
                           >
@@ -237,7 +244,7 @@ export const ContentApprovalQueue: React.FC = () => {
 
                   {/* Rejection Reason */}
                   {item.status === 'rejected' && (
-                    <div className="p-2 bg-red-500/10 border border-red-500/30 rounded text-detective-small text-red-400">
+                    <div className="text-detective-small rounded border border-red-500/30 bg-red-500/10 p-2 text-red-400">
                       Rejection reason: {item.content?.rejectionReason || 'No reason provided'}
                     </div>
                   )}
@@ -259,13 +266,13 @@ export const ContentApprovalQueue: React.FC = () => {
               .map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between p-3 bg-detective-bg-secondary rounded-lg"
+                  className="flex items-center justify-between rounded-lg bg-detective-bg-secondary p-3"
                 >
                   <div className="flex items-center gap-3">
                     {item.status === 'approved' ? (
-                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      <CheckCircle className="h-5 w-5 text-green-500" />
                     ) : (
-                      <XCircle className="w-5 h-5 text-red-500" />
+                      <XCircle className="h-5 w-5 text-red-500" />
                     )}
                     <div>
                       <p className="text-detective-base">{item.title}</p>
@@ -281,7 +288,9 @@ export const ContentApprovalQueue: React.FC = () => {
                       {item.status.toUpperCase()}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {new Date(item.submittedAt).toLocaleDateString('es-ES')}
+                      {item.submittedAt
+                        ? new Date(item.submittedAt).toLocaleDateString('es-ES')
+                        : 'N/A'}
                     </p>
                   </div>
                 </div>

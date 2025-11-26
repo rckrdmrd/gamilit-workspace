@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
-import { Image, Type, Download, Plus } from 'lucide-react';
-import { FileUploader, UploadedFile, ExportButton } from '../../../../shared/components/media';
+import { Image, Type, Plus } from 'lucide-react';
+
+interface UploadedFile {
+  id: string;
+  name: string;
+  url: string;
+  type: string;
+}
 
 interface CollageElement {
   id: string;
@@ -15,7 +21,6 @@ interface CollageElement {
 
 export const CollagePrensaExercise: React.FC = () => {
   const [elements, setElements] = useState<CollageElement[]>([]);
-  const [uploadedImages, setUploadedImages] = useState<UploadedFile[]>([]);
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
 
   const addHeadline = () => {
@@ -62,76 +67,75 @@ export const CollagePrensaExercise: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-detective-bg p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="bg-white rounded-detective shadow-card p-6">
-          <div className="flex items-center justify-between mb-4">
+      <div className="mx-auto max-w-7xl space-y-6">
+        <div className="rounded-detective bg-white p-6 shadow-card">
+          <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Image className="w-8 h-8 text-detective-orange" />
+              <Image className="h-8 w-8 text-detective-orange" />
               <h1 className="text-3xl font-bold text-detective-text">Collage de Prensa</h1>
             </div>
-            <ExportButton
-              data={{}}
-              filename="collage-prensa"
-            />
           </div>
           <p className="text-detective-text-secondary">
             Crea un collage estilo periódico sobre Marie Curie y sus logros científicos.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className="bg-white rounded-detective shadow-card p-6 space-y-4">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+          <div className="space-y-4 rounded-detective bg-white p-6 shadow-card">
             <h3 className="font-bold text-detective-text">Herramientas</h3>
 
             <button
               onClick={addHeadline}
-              className="w-full flex items-center gap-2 px-4 py-3 bg-detective-orange text-white rounded-detective hover:bg-detective-orange-dark transition-colors font-medium"
+              className="flex w-full items-center gap-2 rounded-detective bg-detective-orange px-4 py-3 font-medium text-white transition-colors hover:bg-detective-orange-dark"
             >
-              <Plus className="w-5 h-5" />
+              <Plus className="h-5 w-5" />
               Titular
             </button>
 
             <button
               onClick={addText}
-              className="w-full flex items-center gap-2 px-4 py-3 bg-detective-blue text-white rounded-detective hover:bg-detective-blue/90 transition-colors font-medium"
+              className="flex w-full items-center gap-2 rounded-detective bg-detective-blue px-4 py-3 font-medium text-white transition-colors hover:bg-detective-blue/90"
             >
-              <Type className="w-5 h-5" />
+              <Type className="h-5 w-5" />
               Texto
             </button>
 
             <div>
-              <p className="text-detective-text font-medium mb-2">Agregar Imágenes:</p>
-              <FileUploader
-                acceptedTypes={['image/*']}
-                maxSizeMB={10}
-                onUpload={(files: UploadedFile[]) => {
-                  setUploadedImages(files);
-                  files.forEach((file: UploadedFile) => addImage(file));
+              <p className="mb-2 font-medium text-detective-text">Agregar Imágenes:</p>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const url = URL.createObjectURL(file);
+                    addImage({ id: Date.now().toString(), name: file.name, url, type: file.type });
+                  }
                 }}
-                multiple
+                className="w-full rounded-detective border-2 border-gray-300 px-4 py-2"
               />
             </div>
 
-            <div className="pt-4 border-t">
-              <p className="text-detective-text-secondary text-sm">
+            <div className="border-t pt-4">
+              <p className="text-sm text-detective-text-secondary">
                 💡 Arrastra los elementos en el canvas para organizarlos
               </p>
             </div>
           </div>
 
-          <div className="lg:col-span-3 bg-white rounded-detective shadow-card p-6">
+          <div className="rounded-detective bg-white p-6 shadow-card lg:col-span-3">
             <div
-              className="relative bg-yellow-50 border-4 border-detective-text overflow-hidden"
+              className="relative overflow-hidden border-4 border-detective-text bg-yellow-50"
               style={{ aspectRatio: '3/4', minHeight: '800px' }}
             >
-              <div className="absolute top-4 left-4 right-4 text-center border-b-4 border-detective-text pb-2 mb-4">
+              <div className="absolute left-4 right-4 top-4 mb-4 border-b-4 border-detective-text pb-2 text-center">
                 <h2 className="font-serif text-4xl font-bold text-detective-text">
                   LE JOURNAL SCIENTIFIQUE
                 </h2>
-                <p className="text-detective-text-secondary text-sm">Paris, 1903</p>
+                <p className="text-sm text-detective-text-secondary">Paris, 1903</p>
               </div>
 
-              {elements.map(element => (
+              {elements.map((element) => (
                 <div
                   key={element.id}
                   onClick={() => setSelectedElement(element.id)}
@@ -147,17 +151,21 @@ export const CollagePrensaExercise: React.FC = () => {
                   }}
                 >
                   {element.type === 'headline' && (
-                    <div className="bg-detective-text text-white p-3 font-bold text-center text-xl">
+                    <div className="bg-detective-text p-3 text-center text-xl font-bold text-white">
                       {element.content}
                     </div>
                   )}
                   {element.type === 'text' && (
-                    <div className="bg-white p-3 border-2 border-detective-text text-sm">
+                    <div className="border-2 border-detective-text bg-white p-3 text-sm">
                       {element.content}
                     </div>
                   )}
                   {element.type === 'image' && (
-                    <img src={element.content} alt="" className="w-full h-full object-cover border-2 border-detective-text" />
+                    <img
+                      src={element.content}
+                      alt=""
+                      className="h-full w-full border-2 border-detective-text object-cover"
+                    />
                   )}
                 </div>
               ))}
@@ -165,7 +173,7 @@ export const CollagePrensaExercise: React.FC = () => {
               {elements.length === 0 && (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center text-detective-text-secondary">
-                    <Image className="w-20 h-20 mx-auto mb-4 opacity-30" />
+                    <Image className="mx-auto mb-4 h-20 w-20 opacity-30" />
                     <p className="text-lg">Comienza agregando elementos</p>
                     <p className="text-sm">para crear tu collage de prensa</p>
                   </div>

@@ -17,6 +17,8 @@ DECLARE
     v_user_achievement RECORD;
     v_achievement RECORD;
     v_already_claimed BOOLEAN;
+    v_current_balance INTEGER;
+    v_new_balance INTEGER;
 BEGIN
     -- Verificar que el usuario tiene el logro
     SELECT * INTO v_user_achievement
@@ -53,11 +55,20 @@ BEGIN
     WHERE user_id = p_user_id
     AND achievement_id = p_achievement_id;
 
+    -- Obtener balance actual ANTES de actualizar (con row lock)
+    SELECT ml_coins INTO v_current_balance
+    FROM gamification_system.user_stats
+    WHERE user_id = p_user_id
+    FOR UPDATE;
+
+    -- Calcular nuevo balance
+    v_new_balance := COALESCE(v_current_balance, 0) + v_achievement.ml_coins_reward;
+
     -- Otorgar recompensas
     UPDATE gamification_system.user_stats
     SET
         total_xp = total_xp + v_achievement.xp_reward,
-        ml_coins = ml_coins + v_achievement.ml_coins_reward,
+        ml_coins = v_new_balance,
         updated_at = NOW()
     WHERE user_id = p_user_id;
 
@@ -66,12 +77,16 @@ BEGIN
         INSERT INTO gamification_system.ml_coins_transactions (
             user_id,
             amount,
+            balance_before,
+            balance_after,
             transaction_type,
             description
         ) VALUES (
             p_user_id,
             v_achievement.ml_coins_reward,
-            'ACHIEVEMENT_REWARD',
+            v_current_balance,
+            v_new_balance,
+            'earned_achievement'::gamification_system.transaction_type,
             'Recompensa reclamada: ' || v_achievement.name
         );
     END IF;

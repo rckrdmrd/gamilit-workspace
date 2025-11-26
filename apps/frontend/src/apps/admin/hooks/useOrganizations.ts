@@ -19,7 +19,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as adminAPI from '@/services/api/adminAPI';
 import { apiClient } from '@/services/api/apiClient';
-import { API_ENDPOINTS } from '@/shared/constants/api-endpoints';
+import { API_ENDPOINTS } from '@/config/api.config';
 import type { Organization, OrganizationUser, PaginatedResponse } from '../types';
 
 export interface UseOrganizationsResult {
@@ -62,13 +62,13 @@ export interface UseOrganizationsResult {
 
 export interface CreateOrganizationData {
   name: string;
-  plan: 'free' | 'pro' | 'enterprise';
+  plan: 'free' | 'basic' | 'professional' | 'enterprise';
   features?: string[];
 }
 
 export interface UpdateOrganizationData {
   name?: string;
-  plan?: 'free' | 'pro' | 'enterprise';
+  plan?: 'free' | 'basic' | 'professional' | 'enterprise';
   status?: 'active' | 'inactive' | 'suspended';
 }
 
@@ -119,9 +119,12 @@ export function useOrganizations(): UseOrganizationsResult {
         }
 
         // BUG-ADMIN-007: Ensure features array exists in each org
-        const validatedOrgs = response.items.map(org => ({
+        // FE-003: Map API fields (tier/users) to local fields (plan/userCount)
+        const validatedOrgs = response.items.map((org) => ({
           ...org,
           features: org.features ?? [],
+          plan: org.tier,
+          userCount: org.users,
         }));
 
         setOrganizations(validatedOrgs);
@@ -136,7 +139,7 @@ export function useOrganizations(): UseOrganizationsResult {
         setLoading(false);
       }
     },
-    [page, pageSize]
+    [page, pageSize],
   );
 
   /**
@@ -151,9 +154,12 @@ export function useOrganizations(): UseOrganizationsResult {
       const org = await adminAPI.getOrganization(id);
 
       // BUG-ADMIN-007: Ensure features array exists
+      // FE-003: Map API fields (tier/users) to local fields (plan/userCount)
       const validatedOrg = {
         ...org,
         features: org.features ?? [],
+        plan: org.tier,
+        userCount: org.users,
       };
 
       return validatedOrg;
@@ -178,10 +184,17 @@ export function useOrganizations(): UseOrganizationsResult {
       try {
         const newOrg = await adminAPI.createOrganization(data);
 
+        // FE-003: Map API fields (tier/users) to local fields (plan/userCount)
+        const mappedOrg = {
+          ...newOrg,
+          plan: newOrg.tier,
+          userCount: newOrg.users,
+        };
+
         // Refresh list
         await fetchOrganizations();
 
-        return newOrg;
+        return mappedOrg;
       } catch (err) {
         console.error('Failed to create organization:', err);
         const errorMsg = err instanceof Error ? err.message : 'Failed to create organization';
@@ -191,7 +204,7 @@ export function useOrganizations(): UseOrganizationsResult {
         setLoading(false);
       }
     },
-    [fetchOrganizations]
+    [fetchOrganizations],
   );
 
   /**
@@ -205,15 +218,22 @@ export function useOrganizations(): UseOrganizationsResult {
       try {
         const updatedOrg = await adminAPI.updateOrganization(id, data);
 
+        // FE-003: Map API fields (tier/users) to local fields (plan/userCount)
+        const mappedOrg = {
+          ...updatedOrg,
+          plan: updatedOrg.tier,
+          userCount: updatedOrg.users,
+        };
+
         // Update local state
-        setOrganizations((prev) => prev.map((org) => (org.id === id ? updatedOrg : org)));
+        setOrganizations((prev) => prev.map((org) => (org.id === id ? mappedOrg : org)));
 
         // Update selected if it's the one being updated
         if (selectedOrganization?.id === id) {
-          setSelectedOrganization(updatedOrg);
+          setSelectedOrganization(mappedOrg);
         }
 
-        return updatedOrg;
+        return mappedOrg;
       } catch (err) {
         console.error('Failed to update organization:', err);
         const errorMsg = err instanceof Error ? err.message : 'Failed to update organization';
@@ -223,7 +243,7 @@ export function useOrganizations(): UseOrganizationsResult {
         setLoading(false);
       }
     },
-    [selectedOrganization, fetchOrganizations]
+    [selectedOrganization, fetchOrganizations],
   );
 
   /**
@@ -256,7 +276,7 @@ export function useOrganizations(): UseOrganizationsResult {
         setLoading(false);
       }
     },
-    [selectedOrganization, fetchOrganizations]
+    [selectedOrganization, fetchOrganizations],
   );
 
   // ============================================================================
@@ -272,14 +292,21 @@ export function useOrganizations(): UseOrganizationsResult {
       setLoading(true);
       setError(null);
       try {
-        const updatedOrg = await adminAPI.updateOrganizationFeatures(id, { features });
+        const updatedOrg = await adminAPI.updateOrganizationFeatures(id, features);
+
+        // FE-003: Map API fields (tier/users) to local fields (plan/userCount)
+        const mappedOrg = {
+          ...updatedOrg,
+          plan: updatedOrg.tier,
+          userCount: updatedOrg.users,
+        };
 
         // Update local state
-        setOrganizations((prev) => prev.map((org) => (org.id === id ? updatedOrg : org)));
+        setOrganizations((prev) => prev.map((org) => (org.id === id ? mappedOrg : org)));
 
         // Update selected if it's the one being updated
         if (selectedOrganization?.id === id) {
-          setSelectedOrganization(updatedOrg);
+          setSelectedOrganization(mappedOrg);
         }
       } catch (err) {
         console.error('Failed to update feature flags:', err);
@@ -290,7 +317,7 @@ export function useOrganizations(): UseOrganizationsResult {
         setLoading(false);
       }
     },
-    [selectedOrganization]
+    [selectedOrganization],
   );
 
   /**
@@ -310,7 +337,7 @@ export function useOrganizations(): UseOrganizationsResult {
 
       await updateFeatureFlags(id, newFeatures);
     },
-    [organizations, updateFeatureFlags]
+    [organizations, updateFeatureFlags],
   );
 
   // ============================================================================
@@ -326,10 +353,19 @@ export function useOrganizations(): UseOrganizationsResult {
       setError(null);
       try {
         const response = await apiClient.patch<{ success: boolean; data: Organization }>(
-          API_ENDPOINTS.admin.organizations.updateSubscription(id),
-          subscription
+          API_ENDPOINTS.admin.organizationSubscription(id),
+          subscription,
         );
-        const updatedOrg = response.data.success ? response.data.data : (response.data as unknown as Organization);
+        const apiOrg = response.data.success
+          ? response.data.data
+          : (response.data as unknown as Organization);
+
+        // FE-003: Map API fields (tier/users) to local fields (plan/userCount)
+        const updatedOrg = {
+          ...apiOrg,
+          plan: apiOrg.tier || apiOrg.plan,
+          userCount: apiOrg.users || apiOrg.userCount,
+        };
 
         // Update local state
         setOrganizations((prev) => prev.map((org) => (org.id === id ? updatedOrg : org)));
@@ -347,7 +383,7 @@ export function useOrganizations(): UseOrganizationsResult {
         setLoading(false);
       }
     },
-    [selectedOrganization]
+    [selectedOrganization],
   );
 
   // ============================================================================
@@ -362,15 +398,15 @@ export function useOrganizations(): UseOrganizationsResult {
       setLoading(true);
       setError(null);
       try {
-        const response = await apiClient.get<{ success: boolean; data: PaginatedResponse<OrganizationUser> }>(
-          API_ENDPOINTS.admin.organizations.users(id),
-          {
-            params: {
-              page: userPage || 1,
-              limit: userPageSize || 20,
-            },
-          }
-        );
+        const response = await apiClient.get<{
+          success: boolean;
+          data: PaginatedResponse<OrganizationUser>;
+        }>(API_ENDPOINTS.admin.organizationUsers(id), {
+          params: {
+            page: userPage || 1,
+            limit: userPageSize || 20,
+          },
+        });
 
         const data = response.data.success
           ? response.data.data
@@ -385,7 +421,7 @@ export function useOrganizations(): UseOrganizationsResult {
         setLoading(false);
       }
     },
-    []
+    [],
   );
 
   // ============================================================================
@@ -413,7 +449,7 @@ export function useOrganizations(): UseOrganizationsResult {
         console.error('Failed to select organization:', err);
       }
     },
-    [getOrganization, fetchOrganizationUsers]
+    [getOrganization, fetchOrganizationUsers],
   );
 
   // ============================================================================

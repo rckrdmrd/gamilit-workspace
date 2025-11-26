@@ -18,7 +18,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { ApiBearerAuth, ApiTags, ApiOperation, ApiProduces } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiOperation, ApiProduces, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from '@/modules/auth/guards/roles.guard';
 import { Roles } from '@/modules/auth/decorators/roles.decorator';
@@ -29,6 +29,7 @@ import {
   GradingService,
   AnalyticsService,
   ReportsService,
+  BonusCoinsService,
 } from '../services';
 import {
   SubmitFeedbackDto,
@@ -42,6 +43,11 @@ import {
   GenerateReportsDto,
   StudentInsightsResponseDto,
   ReportFormat,
+  GrantBonusDto,
+  GrantBonusResponseDto,
+  EconomyAnalyticsDto,
+  StudentsEconomyResponseDto,
+  AchievementsStatsResponseDto,
 } from '../dto';
 import { GenerateReportDto } from '../dto/reports.dto';
 
@@ -57,6 +63,7 @@ export class TeacherController {
     private readonly gradingService: GradingService,
     private readonly analyticsService: AnalyticsService,
     private readonly reportsService: ReportsService,
+    private readonly bonusCoinsService: BonusCoinsService,
   ) {}
 
   // =====================================================
@@ -174,7 +181,10 @@ export class TeacherController {
   // =====================================================
 
   @Get('submissions')
-  @ApiOperation({ summary: 'Get submissions with filters' })
+  @ApiOperation({
+    summary: 'Get submissions with filters',
+    description: 'Retrieve exercise submissions with optional filters for assignment, classroom, student, status, and module. Supports pagination and sorting.'
+  })
   async getSubmissions(@Query() query: GetSubmissionsQueryDto) {
     return this.gradingService.getSubmissions(query);
   }
@@ -267,6 +277,69 @@ export class TeacherController {
     return this.analyticsService.generateReports(teacherId, query);
   }
 
+  @Get('analytics/economy')
+  @ApiOperation({
+    summary: 'Get ML Coins economy analytics',
+    description:
+      'Retrieve comprehensive ML Coins economy analytics for teacher\'s classrooms including ' +
+      'total circulation, distribution by balance range, top earners, and wealth distribution metrics. ' +
+      'Optionally filter by specific classroom ID.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Economy analytics retrieved successfully',
+    type: EconomyAnalyticsDto,
+  })
+  async getEconomyAnalytics(
+    @Request() req: any,
+    @Query('classroom_id') classroomId?: string,
+  ): Promise<EconomyAnalyticsDto> {
+    const teacherId = req.user.profile.id;
+    return this.analyticsService.getEconomyAnalytics(teacherId, classroomId);
+  }
+
+  @Get('analytics/students-economy')
+  @ApiOperation({
+    summary: 'Get students economy data',
+    description:
+      'Retrieve ML Coins economy data for all students in teacher\'s classrooms. ' +
+      'Includes balance, weekly earnings/spending, Maya rank, and level. ' +
+      'Optionally filter by specific classroom ID.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Students economy data retrieved successfully',
+    type: StudentsEconomyResponseDto,
+  })
+  async getStudentsEconomy(
+    @Request() req: any,
+    @Query('classroom_id') classroomId?: string,
+  ): Promise<StudentsEconomyResponseDto> {
+    const teacherId = req.user.profile.id;
+    return this.analyticsService.getStudentsEconomy(teacherId, classroomId);
+  }
+
+  @Get('analytics/achievements')
+  @ApiOperation({
+    summary: 'Get achievements stats for classrooms',
+    description:
+      'Retrieve all achievements with unlock counts for students in teacher\'s classrooms. ' +
+      'Shows how many students have unlocked each achievement. ' +
+      'Optionally filter by specific classroom ID.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Achievements stats retrieved successfully',
+    type: AchievementsStatsResponseDto,
+  })
+  async getAchievementsStats(
+    @Request() req: any,
+    @Query('classroom_id') classroomId?: string,
+  ): Promise<AchievementsStatsResponseDto> {
+    const teacherId = req.user.profile.id;
+    return this.analyticsService.getAchievementsStats(teacherId, classroomId);
+  }
+
   // =====================================================
   // REPORT GENERATION ENDPOINTS (PDF/Excel with Insights)
   // =====================================================
@@ -306,5 +379,43 @@ export class TeacherController {
     });
 
     res.status(HttpStatus.OK).send(buffer);
+  }
+
+  // =====================================================
+  // BONUS ML COINS ENDPOINTS
+  // =====================================================
+
+  @Post('students/:studentId/bonus')
+  @ApiOperation({
+    summary: 'Grant bonus ML Coins to student',
+    description:
+      'Grant bonus ML Coins to a student as a reward for good behavior, participation, ' +
+      'or special achievements. Validates that the teacher has access to the student ' +
+      '(student must be in one of the teacher\'s classrooms).',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Bonus granted successfully',
+    type: GrantBonusResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid input (amount out of range or reason too short)',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Teacher does not have access to this student',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Student not found',
+  })
+  async grantBonus(
+    @Param('studentId') studentId: string,
+    @Body() dto: GrantBonusDto,
+    @Request() req: any,
+  ): Promise<GrantBonusResponseDto> {
+    const teacherId = req.user.profile.id;
+    return this.bonusCoinsService.grantBonus(teacherId, studentId, dto);
   }
 }
