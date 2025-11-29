@@ -49,16 +49,17 @@ export enum PowerupType {
 // Removed duplicate enum - imported from educational.types instead
 
 /**
- * Maya ranks - Official names
+ * Maya ranks - Import from SSOT and re-export
+ *
+ * IMPORTANTE: NO definir MayaRank aquí. Importar desde SSOT.
+ * @see SSOT: @shared/constants/ranks.constants.ts
  * @see /docs/01-requerimientos/gamificacion/01-RANGOS-MAYA.md
+ *
+ * P2-001: Consolidación de types - eliminado enum duplicado
  */
-export enum MayaRank {
-  AJAW = 'Ajaw',
-  NACOM = 'Nacom',
-  AH_KIN = "Ah K'in",
-  HALACH_UINIC = 'Halach Uinic',
-  KUKULKAN = "K'uk'ulkan",
-}
+import { MayaRank } from '@shared/constants/ranks.constants';
+import type { Achievement as FullAchievement } from '@shared/types/achievement.types';
+export { MayaRank };
 
 // ============================================================================
 // SUBMISSION TYPES
@@ -129,14 +130,15 @@ export interface AnswerReview {
 }
 
 /**
- * Achievement info
+ * Achievement info for submission responses
+ *
+ * NOTA: Tipo derivado del SSOT para respuestas de submission.
+ * Para el tipo completo, usar Achievement de @shared/types/achievement.types
+ *
+ * @see SSOT: @shared/types/achievement.types.ts
+ * P2-001: Consolidación de types
  */
-export interface Achievement {
-  id: string;
-  name: string;
-  icon: string;
-  rarity: string;
-}
+export type Achievement = Pick<FullAchievement, 'id' | 'name' | 'icon' | 'rarity'>;
 
 /**
  * Rank up information

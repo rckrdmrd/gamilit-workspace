@@ -8,160 +8,160 @@ import { Expose } from 'class-transformer';
  */
 export class UserStatsResponseDto {
   @Expose()
-  id!: string;
+    id!: string;
 
   @Expose()
-  user_id!: string;
+    user_id!: string;
 
   @Expose()
-  tenant_id?: string;
+    tenant_id?: string;
 
   // =====================================================
   // LEVEL & XP SYSTEM
   // =====================================================
 
   @Expose()
-  level!: number;
+    level!: number;
 
   @Expose()
-  total_xp!: number;
+    total_xp!: number;
 
   @Expose()
-  xp_to_next_level!: number;
+    xp_to_next_level!: number;
 
   // =====================================================
   // RANK SYSTEM
   // =====================================================
 
   @Expose()
-  current_rank!: string;
+    current_rank!: string;
 
   @Expose()
-  rank_progress!: number;
+    rank_progress!: number;
 
   // =====================================================
   // ML COINS SYSTEM
   // =====================================================
 
   @Expose()
-  ml_coins!: number;
+    ml_coins!: number;
 
   @Expose()
-  ml_coins_earned_total!: number;
+    ml_coins_earned_total!: number;
 
   @Expose()
-  ml_coins_spent_total!: number;
+    ml_coins_spent_total!: number;
 
   @Expose()
-  ml_coins_earned_today!: number;
+    ml_coins_earned_today!: number;
 
   @Expose()
-  last_ml_coins_reset?: Date;
+    last_ml_coins_reset?: Date;
 
   // =====================================================
   // STREAK SYSTEM
   // =====================================================
 
   @Expose()
-  current_streak!: number;
+    current_streak!: number;
 
   @Expose()
-  max_streak!: number;
+    max_streak!: number;
 
   @Expose()
-  streak_started_at?: Date;
+    streak_started_at?: Date;
 
   @Expose()
-  days_active_total!: number;
+    days_active_total!: number;
 
   // =====================================================
   // PROGRESS & COMPLETION
   // =====================================================
 
   @Expose()
-  exercises_completed!: number;
+    exercises_completed!: number;
 
   @Expose()
-  modules_completed!: number;
+    modules_completed!: number;
 
   @Expose()
-  total_score!: number;
+    total_score!: number;
 
   @Expose()
-  average_score?: number;
+    average_score?: number;
 
   @Expose()
-  perfect_scores!: number;
+    perfect_scores!: number;
 
   // =====================================================
   // ACHIEVEMENTS & REWARDS
   // =====================================================
 
   @Expose()
-  achievements_earned!: number;
+    achievements_earned!: number;
 
   @Expose()
-  certificates_earned!: number;
+    certificates_earned!: number;
 
   // =====================================================
   // TIME TRACKING
   // =====================================================
 
   @Expose()
-  total_time_spent!: string;
+    total_time_spent!: string;
 
   @Expose()
-  weekly_time_spent!: string;
+    weekly_time_spent!: string;
 
   @Expose()
-  sessions_count!: number;
+    sessions_count!: number;
 
   // =====================================================
   // PERIODIC METRICS
   // =====================================================
 
   @Expose()
-  weekly_xp!: number;
+    weekly_xp!: number;
 
   @Expose()
-  monthly_xp!: number;
+    monthly_xp!: number;
 
   @Expose()
-  weekly_exercises!: number;
+    weekly_exercises!: number;
 
   // =====================================================
   // RANKING POSITIONS
   // =====================================================
 
   @Expose()
-  global_rank_position?: number;
+    global_rank_position?: number;
 
   @Expose()
-  class_rank_position?: number;
+    class_rank_position?: number;
 
   @Expose()
-  school_rank_position?: number;
+    school_rank_position?: number;
 
   // =====================================================
   // ACTIVITY TIMESTAMPS
   // =====================================================
 
   @Expose()
-  last_activity_at?: Date;
+    last_activity_at?: Date;
 
   @Expose()
-  last_login_at?: Date;
+    last_login_at?: Date;
 
   // =====================================================
   // METADATA & AUDIT
   // =====================================================
 
   @Expose()
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   @Expose()
-  created_at!: Date;
+    created_at!: Date;
 
   @Expose()
-  updated_at!: Date;
+    updated_at!: Date;
 }

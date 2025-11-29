@@ -18,7 +18,7 @@ export class AddChallengeParticipantDto {
     format: 'uuid',
   })
   @IsUUID('4')
-  challenge_id!: string;
+    challenge_id!: string;
 
   /**
    * ID del usuario participante
@@ -28,7 +28,7 @@ export class AddChallengeParticipantDto {
     format: 'uuid',
   })
   @IsUUID('4')
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del usuario que invita (opcional)
@@ -40,5 +40,5 @@ export class AddChallengeParticipantDto {
   })
   @IsOptional()
   @IsUUID('4')
-  invited_by?: string;
+    invited_by?: string;
 }

@@ -5,24 +5,30 @@
 
 .notification-bell-button {
   position: relative;
-  background: none;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
   cursor: pointer;
   padding: 8px;
-  border-radius: 8px;
-  transition: background-color 0.2s;
+  border-radius: 9999px;
+  transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .notification-bell-button:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.notification-bell-button:active {
+  transform: scale(0.95);
 }
 
 .bell-icon {
-  font-size: 24px;
+  font-size: 20px;
   display: block;
+  filter: brightness(0) invert(1);
 }
 
 .notification-badge {

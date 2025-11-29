@@ -2,6 +2,7 @@
  * Progress Types
  * Type definitions for Progress Module API responses
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 /**
  * Progress Status Enum
@@ -229,13 +230,13 @@ export interface ModuleProgress {
    * Performance analytics (JSONB)
    * Detailed metrics about user's performance patterns
    */
-  performance_analytics: Record<string, any>;
+  performance_analytics: Record<string, unknown>;
 
   /**
    * System observations (JSONB)
    * AI/ML system observations about learning patterns
    */
-  system_observations: Record<string, any>;
+  system_observations: Record<string, unknown>;
 
   // =====================================================
   // NOTES & FEEDBACK
@@ -258,7 +259,7 @@ export interface ModuleProgress {
   /**
    * Additional metadata (JSONB)
    */
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 /**
@@ -345,7 +346,7 @@ export interface ExerciseSubmission {
   id: string;
   user_id: string;
   exercise_id: string;
-  answer_data: Record<string, any>; // Nombre correcto (antes: submission_data)
+  answer_data: Record<string, unknown>; // Nombre correcto (antes: submission_data)
   is_correct: boolean | null;
   score: number;
   max_score: number;

@@ -7,3 +7,5 @@
 
 export * from './create-exercise.dto';
 export * from './exercise-response.dto';
+export * from './submit-exercise.dto';
+export * from './submit-exercise-response.dto';

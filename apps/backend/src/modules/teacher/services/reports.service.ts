@@ -1,7 +1,8 @@
 /**
  * Reports Service
  *
- * Generates PDF and Excel reports with student insights
+ * Generates PDF and Excel reports with student insights.
+ * Persists generated reports to local filesystem and database.
  */
 
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
@@ -12,6 +13,8 @@ import { Profile } from '@/modules/auth/entities/profile.entity';
 import { Classroom } from '@/modules/social/entities/classroom.entity';
 import { ClassroomMember } from '@/modules/social/entities/classroom-member.entity';
 import { AnalyticsService } from './analytics.service';
+import { StorageService } from './storage.service';
+import { TeacherReportsService } from './teacher-reports.service';
 import { StudentInsightsResponseDto, ReportFormat } from '../dto/analytics.dto';
 import { GenerateReportDto, ReportType, ReportMetadataDto } from '../dto/reports.dto';
 import { v4 as uuidv4 } from 'uuid';
@@ -53,15 +56,19 @@ export class ReportsService {
     @InjectRepository(ClassroomMember, 'social')
     private readonly classroomMemberRepository: Repository<ClassroomMember>,
     private readonly analyticsService: AnalyticsService,
+    private readonly storageService: StorageService,
+    private readonly teacherReportsService: TeacherReportsService,
   ) {}
 
   /**
    * Generate report based on request DTO
+   * Now persists the report to filesystem and database
    */
   async generateReport(
     dto: GenerateReportDto,
     userId: string,
-  ): Promise<{ buffer: Buffer; metadata: ReportMetadataDto }> {
+    tenantId: string,
+  ): Promise<{ buffer: Buffer; metadata: ReportMetadataDto; reportId: string }> {
     this.logger.log(`Generating ${dto.format} report of type ${dto.type} for user ${userId}`);
 
     // Gather report data
@@ -69,28 +76,72 @@ export class ReportsService {
 
     // Generate report based on format
     let buffer: Buffer;
+    const fileExtension = dto.format === ReportFormat.PDF ? 'pdf' : 'xlsx';
     if (dto.format === ReportFormat.PDF) {
       buffer = await this.generatePDFReport(reportData);
     } else {
       buffer = await this.generateExcelReport(reportData);
     }
 
-    // Create metadata
+    // Generate report name
+    const reportName = this.generateReportName(dto.type, dto.format);
+
+    // Persist file to storage
+    const saveResult = await this.storageService.saveFile(
+      buffer,
+      `${reportName}.${fileExtension}`,
+      userId, // Use teacherId as subdirectory
+    );
+
+    // Persist metadata to database
+    const savedReport = await this.teacherReportsService.createReport({
+      teacherId: userId,
+      tenantId: tenantId,
+      reportName: reportName,
+      reportType: dto.type,
+      reportFormat: dto.format === ReportFormat.PDF ? 'pdf' : 'excel',
+      classroomId: dto.classroom_id,
+      studentCount: reportData.student_insights.length,
+      periodStart: dto.start_date,
+      periodEnd: dto.end_date,
+      filePath: saveResult.filePath,
+      fileSizeBytes: saveResult.fileSizeBytes,
+    });
+
+    // Create metadata response
     const metadata: ReportMetadataDto = {
-      report_id: reportData.metadata.report_id,
+      report_id: savedReport.id,
       type: reportData.metadata.type,
       format: reportData.metadata.format,
-      generated_at: reportData.metadata.generated_at,
+      generated_at: savedReport.generatedAt,
       generated_by: userId,
       student_count: reportData.student_insights.length,
-      file_size: buffer.length,
+      file_size: saveResult.fileSizeBytes,
     };
 
     this.logger.log(
-      `Report generated successfully: ${metadata.report_id} (${metadata.file_size} bytes, ${metadata.student_count} students)`,
+      `Report generated and persisted successfully: ${savedReport.id} (${saveResult.fileSizeBytes} bytes, ${metadata.student_count} students)`,
     );
 
-    return { buffer, metadata };
+    return { buffer, metadata, reportId: savedReport.id };
+  }
+
+  /**
+   * Generate a descriptive report name
+   */
+  private generateReportName(type: ReportType, format: ReportFormat): string {
+    const typeLabels: Record<ReportType, string> = {
+      [ReportType.USERS]: 'Reporte-Usuarios',
+      [ReportType.PROGRESS]: 'Reporte-Progreso',
+      [ReportType.GAMIFICATION]: 'Reporte-Gamificacion',
+      [ReportType.SYSTEM]: 'Reporte-Sistema',
+      [ReportType.STUDENT_INSIGHTS]: 'Reporte-Insights',
+      [ReportType.CLASSROOM_SUMMARY]: 'Reporte-Clase',
+      [ReportType.RISK_ANALYSIS]: 'Reporte-Riesgo',
+    };
+
+    const dateStr = new Date().toISOString().split('T')[0];
+    return `${typeLabels[type] || 'Reporte'}-${dateStr}`;
   }
 
   /**
@@ -148,7 +199,7 @@ export class ReportsService {
     });
 
     const allInsights = (await Promise.all(insightsPromises)).filter(i => i !== null) as Array<
-      StudentInsightsResponseDto & { student_name: string; student_id: string }
+    StudentInsightsResponseDto & { student_name: string; student_id: string }
     >;
 
     // Calculate summary statistics
@@ -416,13 +467,13 @@ export class ReportsService {
   </div>
 
   ${
-    highRiskStudents.length > 0
-      ? `
+  highRiskStudents.length > 0
+    ? `
   <div class="section alert">
     <h2>⚠️ Estudiantes que Requieren Atención Inmediata</h2>
     ${highRiskStudents
-      .map(
-        student => `
+    .map(
+      student => `
       <div class="student-card high-risk">
         <div class="student-name">${student.student_name}</div>
         <div class="metrics">
@@ -447,21 +498,21 @@ export class ReportsService {
         </div>
       </div>
     `,
-      )
-      .join('')}
+    )
+    .join('')}
   </div>
   `
-      : ''
-  }
+    : ''
+}
 
   ${
-    mediumRiskStudents.length > 0
-      ? `
+  mediumRiskStudents.length > 0
+    ? `
   <div class="section">
     <h2>Estudiantes con Riesgo Moderado</h2>
     ${mediumRiskStudents
-      .map(
-        student => `
+    .map(
+      student => `
       <div class="student-card medium-risk">
         <div class="student-name">${student.student_name}</div>
         <div class="metrics">
@@ -486,12 +537,12 @@ export class ReportsService {
         </div>
       </div>
     `,
-      )
-      .join('')}
+    )
+    .join('')}
   </div>
   `
-      : ''
-  }
+    : ''
+}
 
   <div class="footer">
     <p>Generado por GAMILIT Platform - Sistema de Análisis Estudiantil</p>

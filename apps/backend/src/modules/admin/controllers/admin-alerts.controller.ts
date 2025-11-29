@@ -79,7 +79,7 @@ export class AdminAlertsController {
   @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing JWT token' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
   async listAlerts(@Query() query: ListAlertsDto): Promise<PaginatedAlertsDto> {
-    return await this.alertsService.listAlerts(query);
+    return this.alertsService.listAlerts(query);
   }
 
   /**
@@ -104,7 +104,7 @@ export class AdminAlertsController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
   async getAlertsStats(): Promise<AlertsStatsDto> {
-    return await this.alertsService.getAlertsStats();
+    return this.alertsService.getAlertsStats();
   }
 
   /**
@@ -127,7 +127,7 @@ export class AdminAlertsController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
   async getAlertById(@Param('id') id: string): Promise<AlertResponseDto> {
-    return await this.alertsService.getAlertById(id);
+    return this.alertsService.getAlertById(id);
   }
 
   /**
@@ -152,10 +152,10 @@ export class AdminAlertsController {
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
   async createAlert(
     @Body() createDto: CreateAlertDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<AlertResponseDto> {
     const userId = req.user?.id || req.user?.sub;
-    return await this.alertsService.createAlert(createDto, userId);
+    return this.alertsService.createAlert(createDto, userId);
   }
 
   /**
@@ -183,11 +183,11 @@ export class AdminAlertsController {
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
   async acknowledgeAlert(
     @Param('id') id: string,
-    @Body() dto: AcknowledgeAlertDto,
-    @Request() req: any,
+      @Body() dto: AcknowledgeAlertDto,
+      @Request() req: any,
   ): Promise<AlertResponseDto> {
     const userId = req.user?.id || req.user?.sub;
-    return await this.alertsService.acknowledgeAlert(id, dto.acknowledgment_note, userId);
+    return this.alertsService.acknowledgeAlert(id, dto.acknowledgment_note, userId);
   }
 
   /**
@@ -215,11 +215,11 @@ export class AdminAlertsController {
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
   async resolveAlert(
     @Param('id') id: string,
-    @Body() dto: ResolveAlertDto,
-    @Request() req: any,
+      @Body() dto: ResolveAlertDto,
+      @Request() req: any,
   ): Promise<AlertResponseDto> {
     const userId = req.user?.id || req.user?.sub;
-    return await this.alertsService.resolveAlert(id, dto.resolution_note, userId);
+    return this.alertsService.resolveAlert(id, dto.resolution_note, userId);
   }
 
   /**
@@ -243,6 +243,6 @@ export class AdminAlertsController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
   async suppressAlert(@Param('id') id: string): Promise<AlertResponseDto> {
-    return await this.alertsService.suppressAlert(id);
+    return this.alertsService.suppressAlert(id);
   }
 }

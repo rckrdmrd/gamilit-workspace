@@ -62,7 +62,7 @@ export function useMonitoring(): UseMonitoringReturn {
     try {
       const data = await adminAPI.monitoring.getExtendedMetrics();
       setMetrics(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[useMonitoring] Error fetching metrics:', err);
       // Don't block UI for metrics fetch errors
     }
@@ -75,7 +75,7 @@ export function useMonitoring(): UseMonitoringReturn {
     try {
       const data = await adminAPI.monitoring.getErrorStats({ hours });
       setErrorStats(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[useMonitoring] Error fetching error stats:', err);
     }
   }, []);
@@ -87,7 +87,7 @@ export function useMonitoring(): UseMonitoringReturn {
     try {
       const data = await adminAPI.monitoring.getRecentErrors({ limit, level: 'all' });
       setRecentErrors(data.errors || []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[useMonitoring] Error fetching recent errors:', err);
       setRecentErrors([]);
     }
@@ -100,7 +100,7 @@ export function useMonitoring(): UseMonitoringReturn {
     try {
       const data = await adminAPI.monitoring.getErrorTrends({ hours, group_by: 'hour' });
       setErrorTrends(data.trends || []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[useMonitoring] Error fetching error trends:', err);
       setErrorTrends([]);
     }
@@ -120,7 +120,7 @@ export function useMonitoring(): UseMonitoringReturn {
         fetchRecentErrors(20),
         fetchErrorTrends(24),
       ]);
-    } catch (err: any) {
+    } catch (err: unknown) {
       const errorMessage = err?.message || 'Error al cargar datos de monitoreo';
       setError(errorMessage);
       console.error('[useMonitoring] Error refreshing all:', err);

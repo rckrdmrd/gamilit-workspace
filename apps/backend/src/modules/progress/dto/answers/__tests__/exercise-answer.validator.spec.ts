@@ -37,42 +37,42 @@ describe('ExerciseAnswerValidator', () => {
         clues: {
           h1: 'SORBONA',
           h2: 'NOBEL',
-          v1: 'MARIE'
-        }
+          v1: 'MARIE',
+        },
       };
 
       await expect(
-        ExerciseAnswerValidator.validate('crucigrama', validAnswers)
+        ExerciseAnswerValidator.validate('crucigrama', validAnswers),
       ).resolves.not.toThrow();
     });
 
     it('should reject malformed crucigrama answers', async () => {
       const invalidAnswers = {
-        wrongField: 'value'
+        wrongField: 'value',
       };
 
       await expect(
-        ExerciseAnswerValidator.validate('crucigrama', invalidAnswers)
+        ExerciseAnswerValidator.validate('crucigrama', invalidAnswers),
       ).rejects.toThrow(BadRequestException);
     });
 
     it('should validate word search answers', async () => {
       const validAnswers = {
-        words: ['MARIE', 'CURIE', 'NOBEL']
+        words: ['MARIE', 'CURIE', 'NOBEL'],
       };
 
       await expect(
-        ExerciseAnswerValidator.validate('sopa_letras', validAnswers)
+        ExerciseAnswerValidator.validate('sopa_letras', validAnswers),
       ).resolves.not.toThrow();
     });
 
     it('should reject empty word search array', async () => {
       const invalidAnswers = {
-        words: []
+        words: [],
       };
 
       await expect(
-        ExerciseAnswerValidator.validate('sopa_letras', invalidAnswers)
+        ExerciseAnswerValidator.validate('sopa_letras', invalidAnswers),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -81,22 +81,22 @@ describe('ExerciseAnswerValidator', () => {
         statements: {
           s1: true,
           s2: false,
-          s3: true
-        }
+          s3: true,
+        },
       };
 
       await expect(
-        ExerciseAnswerValidator.validate('verdadero_falso', validAnswers)
+        ExerciseAnswerValidator.validate('verdadero_falso', validAnswers),
       ).resolves.not.toThrow();
     });
 
     it('should validate timeline answers', async () => {
       const validAnswers = {
-        events: ['evt1', 'evt3', 'evt2', 'evt4']
+        events: ['evt1', 'evt3', 'evt2', 'evt4'],
       };
 
       await expect(
-        ExerciseAnswerValidator.validate('linea_tiempo', validAnswers)
+        ExerciseAnswerValidator.validate('linea_tiempo', validAnswers),
       ).resolves.not.toThrow();
     });
 
@@ -105,12 +105,12 @@ describe('ExerciseAnswerValidator', () => {
         blanks: {
           b1: 'radioactividad',
           b2: 'Polonio',
-          b3: 'Radio'
-        }
+          b3: 'Radio',
+        },
       };
 
       await expect(
-        ExerciseAnswerValidator.validate('completar_espacios', validAnswers)
+        ExerciseAnswerValidator.validate('completar_espacios', validAnswers),
       ).resolves.not.toThrow();
     });
   });
@@ -120,8 +120,8 @@ describe('ExerciseAnswerValidator', () => {
       const validAnswers = {
         clues: {
           h1: 'SORBONA',
-          h2: 'NOBEL'
-        }
+          h2: 'NOBEL',
+        },
       };
 
       const result = await ExerciseAnswerValidator.validateAndTransform('crucigrama', validAnswers);
@@ -131,11 +131,11 @@ describe('ExerciseAnswerValidator', () => {
 
     it('should throw error for invalid answers', async () => {
       const invalidAnswers = {
-        wrongField: 'value'
+        wrongField: 'value',
       };
 
       await expect(
-        ExerciseAnswerValidator.validateAndTransform('crucigrama', invalidAnswers)
+        ExerciseAnswerValidator.validateAndTransform('crucigrama', invalidAnswers),
       ).rejects.toThrow(BadRequestException);
     });
   });
@@ -156,7 +156,7 @@ describe('ExerciseAnswerValidator', () => {
       'analisis_fuentes',
       'debate_digital',
       'podcast_argumentativo',
-      'matriz_perspectivas'
+      'matriz_perspectivas',
     ];
 
     exerciseTypes.forEach(type => {

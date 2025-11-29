@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * TeacherAssignments - Enhanced page for managing assignments
  *
@@ -27,6 +28,7 @@ import {
   Target,
 } from 'lucide-react';
 import { useAssignments } from '../hooks/useAssignments';
+import { useClassrooms } from '../hooks/useClassrooms';
 import { ImprovedAssignmentWizard } from '../components/assignments/ImprovedAssignmentWizard';
 import { AssignmentCard } from '../components/assignments/AssignmentCard';
 import { SubmissionsModal } from '../components/assignments/SubmissionsModal';
@@ -45,6 +47,9 @@ export default function TeacherAssignments() {
     refresh,
   } = useAssignments();
 
+  // Get classrooms data
+  const { classrooms, selectedClassroom, loading: classroomsLoading } = useClassrooms();
+
   // Modal states
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [isSubmissionsModalOpen, setIsSubmissionsModalOpen] = useState(false);
@@ -56,8 +61,8 @@ export default function TeacherAssignments() {
   const [selectedSubmission, setSelectedSubmission] = useState<DashboardSubmission | null>(null);
   const [submissionsLoading, setSubmissionsLoading] = useState(false);
 
-  // Temporary classroom ID - In real implementation, get from context or props
-  const classroomId = 'temp-classroom-id';
+  // Get classroom ID from selected classroom or first available
+  const classroomId = selectedClassroom?.id ?? classrooms[0]?.id;
 
   /**
    * Handle assignment creation
@@ -73,7 +78,7 @@ export default function TeacherAssignments() {
         exercise_ids: data.exercise_ids,
       });
       setIsWizardOpen(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[TeacherAssignments] Error creating assignment:', err);
       alert('Error al crear la asignación. Por favor intenta nuevamente.');
     }
@@ -89,7 +94,7 @@ export default function TeacherAssignments() {
       const data = await getSubmissionsAPI(assignment.id);
       setSubmissions(data);
       setIsSubmissionsModalOpen(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[TeacherAssignments] Error fetching submissions:', err);
       alert('Error al cargar las entregas. Por favor intenta nuevamente.');
     } finally {
@@ -101,6 +106,10 @@ export default function TeacherAssignments() {
    * Open grading modal for a submission
    */
   const handleGradeSubmission = (submission: Submission) => {
+    // Calculate maxScore from assignment exercises
+    const maxScore =
+      selectedAssignment?.exercises?.reduce((sum, ex) => sum + (ex.points || 10), 0) || 100;
+
     // Convert Submission to DashboardSubmission format
     const dashboardSubmission: DashboardSubmission = {
       id: submission.id,
@@ -108,15 +117,15 @@ export default function TeacherAssignments() {
       assignmentTitle: selectedAssignment?.title || '',
       studentId: submission.student_id,
       studentName: submission.student_name,
-      answers: [], // TODO: Fetch actual answers from submission details
+      answers: [], // Answers not available in submissions list - would need separate fetch
       score: submission.score || null,
-      maxScore: 100, // TODO: Calculate from exercises
+      maxScore: maxScore,
       grade: null,
       feedback: null,
       status: submission.status === 'graded' ? 'graded' : 'pending',
       submittedAt: new Date(submission.submitted_at),
       gradedAt: submission.graded_at ? new Date(submission.graded_at) : null,
-      attemptNumber: 1, // TODO: Get from submission
+      attemptNumber: 1, // Default attempt number
     };
 
     setSelectedSubmission(dashboardSubmission);
@@ -142,7 +151,7 @@ export default function TeacherAssignments() {
         const updatedSubmissions = await getSubmissionsAPI(selectedAssignment.id);
         setSubmissions(updatedSubmissions);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[TeacherAssignments] Error grading submission:', err);
       throw err;
     }
@@ -175,6 +184,22 @@ export default function TeacherAssignments() {
             Crea y gestiona asignaciones para tus estudiantes
           </p>
         </div>
+
+        {/* No Classrooms State */}
+        {!classroomsLoading && classrooms.length === 0 && (
+          <DetectiveCard variant="warning">
+            <div className="py-16 text-center">
+              <AlertCircle className="mx-auto mb-4 h-20 w-20 text-yellow-500 opacity-50" />
+              <h3 className="mb-2 text-xl font-bold text-detective-text">
+                No hay clases disponibles
+              </h3>
+              <p className="mb-6 text-detective-text-secondary">
+                Necesitas crear o tener asignada al menos una clase para poder gestionar
+                asignaciones.
+              </p>
+            </div>
+          </DetectiveCard>
+        )}
 
         {/* Stats Cards */}
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
@@ -244,7 +269,7 @@ export default function TeacherAssignments() {
         )}
 
         {/* Create Button & Refresh */}
-        {!loading && !error && (
+        {!loading && !error && classrooms.length > 0 && (
           <div className="mb-6 flex gap-3">
             <DetectiveButton variant="primary" onClick={() => setIsWizardOpen(true)}>
               <Plus className="h-5 w-5" />

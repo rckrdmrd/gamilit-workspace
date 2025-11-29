@@ -99,10 +99,10 @@ export class ClassroomsController {
     description: 'Error interno del servidor',
   })
   async findAll(
-    @Query('schoolId') schoolId?: string,
+  @Query('schoolId') schoolId?: string,
     @Query('teacherId') teacherId?: string,
   ) {
-    return await this.classroomsService.findAll(schoolId, teacherId);
+    return this.classroomsService.findAll(schoolId, teacherId);
   }
 
   /**
@@ -141,7 +141,7 @@ export class ClassroomsController {
     description: 'Aula con el código especificado no encontrada',
   })
   async findByCode(@Param('code') code: string) {
-    return await this.classroomsService.findByCode(code);
+    return this.classroomsService.findByCode(code);
   }
 
   /**
@@ -207,7 +207,7 @@ export class ClassroomsController {
     description: 'Aula no encontrada',
   })
   async findById(@Param('id') id: string) {
-    return await this.classroomsService.findById(id);
+    return this.classroomsService.findById(id);
   }
 
   /**
@@ -288,7 +288,7 @@ export class ClassroomsController {
     },
   })
   async create(@Body() createDto: CreateClassroomDto) {
-    return await this.classroomsService.create(createDto);
+    return this.classroomsService.create(createDto);
   }
 
   /**
@@ -336,10 +336,10 @@ export class ClassroomsController {
     description: 'El nuevo código ya existe en otra aula',
   })
   async update(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() updateDto: Partial<CreateClassroomDto>,
   ) {
-    return await this.classroomsService.update(id, updateDto);
+    return this.classroomsService.update(id, updateDto);
   }
 
   /**
@@ -382,7 +382,7 @@ export class ClassroomsController {
     description: 'Aula no encontrada',
   })
   async delete(@Param('id') id: string) {
-    return await this.classroomsService.delete(id);
+    return this.classroomsService.delete(id);
   }
 
   /**
@@ -426,7 +426,7 @@ export class ClassroomsController {
     description: 'Aula no encontrada',
   })
   async getClassroomStats(@Param('id') id: string) {
-    return await this.classroomsService.getClassroomStats(id);
+    return this.classroomsService.getClassroomStats(id);
   }
 
   /**
@@ -469,7 +469,7 @@ export class ClassroomsController {
     },
   })
   async getActiveClassrooms(@Param('teacherId') teacherId: string) {
-    return await this.classroomsService.getActiveClassrooms(teacherId);
+    return this.classroomsService.getActiveClassrooms(teacherId);
   }
 
   /**
@@ -529,10 +529,10 @@ export class ClassroomsController {
     description: 'Aula o estudiante no encontrado',
   })
   async enrollStudent(
-    @Param('classroomId') classroomId: string,
+  @Param('classroomId') classroomId: string,
     @Param('studentId') studentId: string,
   ) {
-    return await this.classroomsService.enrollStudent(classroomId, studentId);
+    return this.classroomsService.enrollStudent(classroomId, studentId);
   }
 
   /**
@@ -581,10 +581,10 @@ export class ClassroomsController {
     description: 'Aula o estudiante no encontrado',
   })
   async removeStudent(
-    @Param('classroomId') classroomId: string,
+  @Param('classroomId') classroomId: string,
     @Param('studentId') studentId: string,
   ) {
-    return await this.classroomsService.removeStudent(classroomId, studentId);
+    return this.classroomsService.removeStudent(classroomId, studentId);
   }
 
   /**
@@ -639,10 +639,10 @@ export class ClassroomsController {
     description: 'Aula no encontrada',
   })
   async updateSchedule(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() body: { schedule: any[] },
   ) {
-    return await this.classroomsService.updateSchedule(id, body.schedule);
+    return this.classroomsService.updateSchedule(id, body.schedule);
   }
 
   /**
@@ -683,6 +683,6 @@ export class ClassroomsController {
     },
   })
   async getMembers(@Param('classroomId') classroomId: string) {
-    return await this.classroomMembersService.findByClassroomId(classroomId);
+    return this.classroomMembersService.findByClassroomId(classroomId);
   }
 }

@@ -36,13 +36,13 @@ export class User {
    * Identificador único del usuario (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * Correo electrónico único del usuario
    */
   @Column({ type: 'text', unique: true })
-  email!: string;
+    email!: string;
 
   /**
    * Contraseña encriptada del usuario
@@ -50,7 +50,7 @@ export class User {
    */
   @Column({ type: 'text', name: 'encrypted_password' })
   @Exclude()
-  encrypted_password!: string;
+    encrypted_password!: string;
 
   /**
    * Rol del usuario en el sistema (student, admin_teacher, super_admin)
@@ -64,7 +64,7 @@ export class User {
     default: GamilityRoleEnum.STUDENT,
     name: 'gamilit_role', // ← FIX: Mapear a columna correcta
   })
-  role!: GamilityRoleEnum;
+    role!: GamilityRoleEnum;
 
   /**
    * ID del tenant al que pertenece el usuario
@@ -83,7 +83,7 @@ export class User {
     length: 50,
     default: 'active',
   })
-  status!: string;
+    status!: string;
 
   /**
    * Indica si el email ha sido verificado
@@ -97,21 +97,21 @@ export class User {
    * Fecha y hora de confirmación del email
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  email_confirmed_at?: Date;
+    email_confirmed_at?: Date;
 
   /**
    * Número de teléfono del usuario
    * IMPORTANTE: Campo agregado para alineación con DDL auth.users
    */
   @Column({ type: 'text', nullable: true })
-  phone?: string;
+    phone?: string;
 
   /**
    * Fecha y hora de confirmación del teléfono
    * IMPORTANTE: Campo agregado para alineación con DDL auth.users
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  phone_confirmed_at?: Date;
+    phone_confirmed_at?: Date;
 
   /**
    * Indica si el usuario es super administrador
@@ -119,7 +119,7 @@ export class User {
    * Super admin tiene acceso total al sistema sin restricciones
    */
   @Column({ type: 'boolean', default: false })
-  is_super_admin!: boolean;
+    is_super_admin!: boolean;
 
   /**
    * Fecha y hora hasta la cual el usuario está baneado
@@ -127,37 +127,37 @@ export class User {
    * IMPORTANTE: Campo agregado para alineación con DDL auth.users
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  banned_until?: Date;
+    banned_until?: Date;
 
   /**
    * Fecha y hora del último inicio de sesión
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  last_sign_in_at?: Date;
+    last_sign_in_at?: Date;
 
   /**
    * Metadatos adicionales del usuario en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-  raw_user_meta_data!: Record<string, any>;
+    raw_user_meta_data!: Record<string, any>;
 
   /**
    * Fecha y hora de eliminación lógica (soft delete)
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  deleted_at?: Date;
+    deleted_at?: Date;
 
   /**
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización del registro
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   // =====================================================
   // Relaciones
@@ -187,7 +187,7 @@ export class User {
     joinColumn: { name: 'user_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' },
   })
-  roles?: Role[];
+    roles?: Role[];
 
   // Relaciones futuras:
   // @OneToMany(() => UserSession, (session) => session.user)

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback } from 'react';
 import { adminAPI } from '@/services/api/adminAPI';
 import type { SystemConfig } from '@/services/api/adminTypes';
@@ -11,7 +12,7 @@ import type { SystemConfig } from '@/services/api/adminTypes';
 export function useSystemConfig(
   category?: 'general' | 'email' | 'notifications' | 'security' | 'maintenance',
 ) {
-  const [config, setConfig] = useState<Record<string, any> | null>(null);
+  const [config, setConfig] = useState<Record<string, unknown> | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,7 +33,7 @@ export function useSystemConfig(
       }
       setConfig(data);
       return data;
-    } catch (err: any) {
+    } catch (err: unknown) {
       const errorMessage = err?.message || 'Failed to fetch system configuration';
       setError(errorMessage);
       throw err;
@@ -45,7 +46,7 @@ export function useSystemConfig(
    * Update configuration (by category or full config)
    */
   const updateConfig = useCallback(
-    async (values: Record<string, any>) => {
+    async (values: Record<string, unknown>) => {
       setIsLoading(true);
       setError(null);
       try {
@@ -59,7 +60,7 @@ export function useSystemConfig(
         }
         setConfig(data);
         return data;
-      } catch (err: any) {
+      } catch (err: unknown) {
         const errorMessage = err?.message || 'Failed to update system configuration';
         setError(errorMessage);
         throw err;

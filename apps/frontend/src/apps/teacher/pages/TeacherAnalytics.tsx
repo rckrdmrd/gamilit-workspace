@@ -196,7 +196,7 @@ export default function TeacherAnalytics() {
       } else {
         alert('El reporte está siendo generado. Por favor intenta nuevamente en unos momentos.');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[TeacherAnalytics] Error exporting CSV:', err);
       alert('Error al generar el reporte. Por favor intenta nuevamente.');
     }

@@ -20,11 +20,11 @@ import { NotificationsCronService } from './services/notifications-cron.service'
   ],
   providers: [
     // MissionsCronService, // TODO: Uncomment when missions module is implemented
-    NotificationsCronService
+    NotificationsCronService,
   ],
   exports: [
     // MissionsCronService, // TODO: Uncomment when missions module is implemented
-    NotificationsCronService
+    NotificationsCronService,
   ],
 })
 export class TasksModule {}

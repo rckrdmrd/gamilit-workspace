@@ -1,11 +1,11 @@
 -- ============================================================================
 -- SEED: exercise_validation_config
--- Descripción: Configuración de validación para 15 tipos de ejercicios
+-- Descripción: Configuración de validación para 17 tipos de ejercicios
 -- Autor: Database Agent
 -- Fecha: 2025-11-19
+-- Actualizado: 2025-11-28 (BUG-002, BUG-003 - Agregados mapa_conceptual y emparejamiento)
 -- Tarea: DB-116 (Handoff FE-059)
--- Alcance: Módulos 1, 2, 3 (15 tipos reales)
--- NOTA: mapa_conceptual y emparejamiento NO existen en el ENUM exercise_type
+-- Alcance: Módulos 1, 2, 3 (17 tipos implementados)
 -- ============================================================================
 
 INSERT INTO educational_content.exercise_validation_config (
@@ -23,7 +23,7 @@ INSERT INTO educational_content.exercise_validation_config (
 ) VALUES
 
 -- ============================================================================
--- MÓDULO 1: COMPRENSIÓN LITERAL (5 tipos)
+-- MÓDULO 1: COMPRENSIÓN LITERAL (7 tipos)
 -- ============================================================================
 
 -- 1.1. CRUCIGRAMA
@@ -131,6 +131,50 @@ INSERT INTO educational_content.exercise_validation_config (
     '{
         "submitted": {"statements": {"stmt1": false, "stmt2": true, "stmt3": true, "stmt4": false}},
         "solution": {"correctAnswers": {"stmt1": false, "stmt2": true, "stmt3": true, "stmt4": false}},
+        "result": {"is_correct": true, "score": 100}
+    }'::jsonb
+),
+
+-- 1.6. MAPA CONCEPTUAL
+(
+    'mapa_conceptual',
+    'validate_mapa_conceptual',
+    false,
+    true,
+    NULL,
+    false,
+    '{
+        "score_per_connection": true,
+        "allow_partial_graph": true
+    }'::jsonb,
+    100,
+    70,
+    'Validación de mapa conceptual: verifica conexiones entre conceptos',
+    '{
+        "submitted": {"connections": [{"from": "concept1", "to": "concept2", "label": "relaciona"}]},
+        "solution": {"connections": [{"from": "concept1", "to": "concept2", "label": "relaciona"}]},
+        "result": {"is_correct": true, "score": 100}
+    }'::jsonb
+),
+
+-- 1.7. EMPAREJAMIENTO
+(
+    'emparejamiento',
+    'validate_emparejamiento',
+    false,
+    true,
+    NULL,
+    true,
+    '{
+        "score_per_match": true,
+        "allow_partial_matches": true
+    }'::jsonb,
+    100,
+    70,
+    'Validación de emparejamiento: verifica pares correctos',
+    '{
+        "submitted": {"matches": {"item1": "pair1", "item2": "pair2"}},
+        "solution": {"correctMatches": {"item1": "pair1", "item2": "pair2"}},
         "result": {"is_correct": true, "score": 100}
     }'::jsonb
 ),
@@ -390,7 +434,7 @@ DO UPDATE SET
 -- VERIFICACIÓN
 -- ============================================================================
 
--- Verificar que se cargaron las 15 configuraciones
+-- Verificar que se cargaron las 17 configuraciones
 DO $$
 DECLARE
     v_count INTEGER;
@@ -398,10 +442,10 @@ BEGIN
     SELECT COUNT(*) INTO v_count
     FROM educational_content.exercise_validation_config;
 
-    IF v_count < 15 THEN
-        RAISE WARNING 'Solo se cargaron % configuraciones. Se esperaban 15.', v_count;
+    IF v_count < 17 THEN
+        RAISE WARNING 'Solo se cargaron % configuraciones. Se esperaban 17.', v_count;
     ELSE
-        RAISE NOTICE 'Configuraciones cargadas correctamente: % de 15', v_count;
+        RAISE NOTICE 'Configuraciones cargadas correctamente: % de 17', v_count;
     END IF;
 END $$;
 

@@ -20,7 +20,7 @@ export class CreateVersionDto {
   })
   @IsUUID()
   @IsNotEmpty()
-  content_id!: string;
+    content_id!: string;
 
   @ApiProperty({
     description: 'Type of content to version',
@@ -31,7 +31,7 @@ export class CreateVersionDto {
     message: 'content_type must be one of: module, exercise, template',
   })
   @IsNotEmpty()
-  content_type!: 'module' | 'exercise' | 'template';
+    content_type!: 'module' | 'exercise' | 'template';
 
   @ApiProperty({
     description: 'Optional notes describing the changes in this version',
@@ -42,7 +42,7 @@ export class CreateVersionDto {
   @IsOptional()
   @IsString()
   @MaxLength(500)
-  version_notes?: string;
+    version_notes?: string;
 
   @ApiProperty({
     description:
@@ -56,5 +56,5 @@ export class CreateVersionDto {
   @Matches(/^\d+\.\d+\.\d+$/, {
     message: 'new_version must be in semver format (x.y.z)',
   })
-  new_version?: string;
+    new_version?: string;
 }

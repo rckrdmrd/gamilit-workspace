@@ -3,7 +3,7 @@
  *
  * Provides filtering controls for exercise responses including:
  * - Classroom selector
- * - Student selector (filtered by classroom)
+ * - Student search (text input with debounce)
  * - Module selector
  * - Date range picker
  * - Correctness filter (correct/incorrect)
@@ -12,9 +12,9 @@
  * @component
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Filter, X, Calendar, CheckCircle, XCircle, Users, School } from 'lucide-react';
+import { Filter, X, Calendar, CheckCircle, XCircle, School, Search } from 'lucide-react';
 import { useClassrooms } from '@apps/teacher/hooks/useClassrooms';
 import type { GetAttemptsQuery } from '@services/api/teacher';
 
@@ -53,16 +53,37 @@ const FilterSection: React.FC<{
 // ============================================================================
 
 export const ResponseFilters: React.FC<ResponseFiltersProps> = ({ filters, onChange, onClear }) => {
-  const { classrooms, students, selectClassroom } = useClassrooms();
+  const { classrooms } = useClassrooms();
   const [isExpanded, setIsExpanded] = useState(true);
   const [selectedClassroomId, setSelectedClassroomId] = useState<string>('');
+  const [studentSearchInput, setStudentSearchInput] = useState<string>('');
 
-  // Load students when classroom is selected
+  // Use refs to avoid stale closure issues without causing re-renders
+  const filtersRef = useRef(filters);
+  const onChangeRef = useRef(onChange);
+
+  // Update refs when props change
   useEffect(() => {
-    if (selectedClassroomId) {
-      selectClassroom(selectedClassroomId);
-    }
-  }, [selectedClassroomId, selectClassroom]);
+    filtersRef.current = filters;
+    onChangeRef.current = onChange;
+  }, [filters, onChange]);
+
+  // Debounce student search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const currentSearch = filtersRef.current.student_search || '';
+      const newSearch = studentSearchInput.trim();
+
+      if (newSearch !== currentSearch) {
+        onChangeRef.current({
+          ...filtersRef.current,
+          student_search: newSearch || undefined,
+          student_id: undefined, // Clear student_id when using search
+        });
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [studentSearchInput]);
 
   const handleClassroomChange = (classroomId: string) => {
     setSelectedClassroomId(classroomId);
@@ -70,13 +91,6 @@ export const ResponseFilters: React.FC<ResponseFiltersProps> = ({ filters, onCha
       ...filters,
       classroom_id: classroomId || undefined,
       student_id: undefined, // Clear student when classroom changes
-    });
-  };
-
-  const handleStudentChange = (studentId: string) => {
-    onChange({
-      ...filters,
-      student_id: studentId || undefined,
     });
   };
 
@@ -101,6 +115,7 @@ export const ResponseFilters: React.FC<ResponseFiltersProps> = ({ filters, onCha
 
   const handleClear = () => {
     setSelectedClassroomId('');
+    setStudentSearchInput('');
     onClear();
   };
 
@@ -167,23 +182,17 @@ export const ResponseFilters: React.FC<ResponseFiltersProps> = ({ filters, onCha
               </select>
             </FilterSection>
 
-            {/* Student Selector */}
-            <FilterSection icon={<Users className="h-4 w-4" />} label="Estudiante">
-              <select
-                value={filters.student_id || ''}
-                onChange={(e) => handleStudentChange(e.target.value)}
-                disabled={!selectedClassroomId}
-                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-detective-orange disabled:cursor-not-allowed disabled:bg-gray-100"
-              >
-                <option value="">Todos los estudiantes</option>
-                {students.map((student) => (
-                  <option key={student.id} value={student.id}>
-                    {student.full_name}
-                  </option>
-                ))}
-              </select>
-              {!selectedClassroomId && (
-                <p className="mt-1 text-xs text-gray-500">Selecciona un aula primero</p>
+            {/* Student Search */}
+            <FilterSection icon={<Search className="h-4 w-4" />} label="Buscar Estudiante">
+              <input
+                type="text"
+                value={studentSearchInput}
+                onChange={(e) => setStudentSearchInput(e.target.value)}
+                placeholder="Buscar por nombre..."
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-detective-orange"
+              />
+              {studentSearchInput && (
+                <p className="mt-1 text-xs text-gray-500">Buscando: "{studentSearchInput}"</p>
               )}
             </FilterSection>
           </div>

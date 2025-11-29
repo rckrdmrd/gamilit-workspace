@@ -19,7 +19,7 @@ export class PodcastArgumentativoAnswersDto {
    */
   @IsString()
   @IsNotEmpty({ message: 'topicId is required' })
-  topicId!: string;
+    topicId!: string;
 
   /**
    * Podcast script (minimum 200 characters)
@@ -27,12 +27,12 @@ export class PodcastArgumentativoAnswersDto {
   @IsString()
   @IsNotEmpty({ message: 'script is required' })
   @MinLength(200, { message: 'script must be at least 200 characters' })
-  script!: string;
+    script!: string;
 
   /**
    * Optional URL to uploaded audio file
    */
   @IsString()
   @IsOptional()
-  audioUrl?: string;
+    audioUrl?: string;
 }

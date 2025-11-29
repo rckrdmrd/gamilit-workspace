@@ -13,11 +13,11 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 export class MediaFileResponseDto {
   @ApiProperty({ description: 'ID del archivo' })
   @Expose()
-  id!: string;
+    id!: string;
 
   @ApiPropertyOptional({ description: 'ID del tenant' })
   @Expose()
-  tenant_id?: string;
+    tenant_id?: string;
 
   // =====================================================
   // FILE IDENTIFICATION
@@ -25,23 +25,23 @@ export class MediaFileResponseDto {
 
   @ApiProperty({ description: 'Nombre del archivo en el sistema' })
   @Expose()
-  filename!: string;
+    filename!: string;
 
   @ApiProperty({ description: 'Nombre original del archivo' })
   @Expose()
-  original_filename!: string;
+    original_filename!: string;
 
   @ApiPropertyOptional({ description: 'Extensión del archivo' })
   @Expose()
-  file_extension?: string;
+    file_extension?: string;
 
   @ApiPropertyOptional({ description: 'Tipo MIME' })
   @Expose()
-  mime_type?: string;
+    mime_type?: string;
 
   @ApiPropertyOptional({ description: 'Tamaño en bytes' })
   @Expose()
-  file_size_bytes?: number;
+    file_size_bytes?: number;
 
   // =====================================================
   // FILE TYPE & CATEGORIZATION
@@ -49,15 +49,15 @@ export class MediaFileResponseDto {
 
   @ApiProperty({ description: 'Tipo de medio' })
   @Expose()
-  media_type!: MediaTypeEnum;
+    media_type!: MediaTypeEnum;
 
   @ApiPropertyOptional({ description: 'Categoría del archivo' })
   @Expose()
-  category?: string;
+    category?: string;
 
   @ApiPropertyOptional({ description: 'Subcategoría' })
   @Expose()
-  subcategory?: string;
+    subcategory?: string;
 
   // =====================================================
   // STORAGE & URLS
@@ -65,19 +65,19 @@ export class MediaFileResponseDto {
 
   @ApiProperty({ description: 'Ruta de almacenamiento' })
   @Expose()
-  storage_path!: string;
+    storage_path!: string;
 
   @ApiPropertyOptional({ description: 'URL pública' })
   @Expose()
-  public_url?: string;
+    public_url?: string;
 
   @ApiPropertyOptional({ description: 'URL del CDN' })
   @Expose()
-  cdn_url?: string;
+    cdn_url?: string;
 
   @ApiPropertyOptional({ description: 'URL de thumbnail' })
   @Expose()
-  thumbnail_url?: string;
+    thumbnail_url?: string;
 
   // =====================================================
   // MEDIA PROPERTIES
@@ -85,27 +85,27 @@ export class MediaFileResponseDto {
 
   @ApiPropertyOptional({ description: 'Ancho en píxeles' })
   @Expose()
-  width?: number;
+    width?: number;
 
   @ApiPropertyOptional({ description: 'Alto en píxeles' })
   @Expose()
-  height?: number;
+    height?: number;
 
   @ApiPropertyOptional({ description: 'Duración en segundos' })
   @Expose()
-  duration_seconds?: number;
+    duration_seconds?: number;
 
   @ApiPropertyOptional({ description: 'Bitrate' })
   @Expose()
-  bitrate?: number;
+    bitrate?: number;
 
   @ApiPropertyOptional({ description: 'Resolución' })
   @Expose()
-  resolution?: string;
+    resolution?: string;
 
   @ApiPropertyOptional({ description: 'Perfil de color' })
   @Expose()
-  color_profile?: string;
+    color_profile?: string;
 
   // =====================================================
   // DESCRIPTIVE METADATA
@@ -113,27 +113,27 @@ export class MediaFileResponseDto {
 
   @ApiPropertyOptional({ description: 'Texto alternativo' })
   @Expose()
-  alt_text?: string;
+    alt_text?: string;
 
   @ApiPropertyOptional({ description: 'Leyenda' })
   @Expose()
-  caption?: string;
+    caption?: string;
 
   @ApiPropertyOptional({ description: 'Descripción' })
   @Expose()
-  description?: string;
+    description?: string;
 
   @ApiPropertyOptional({ description: 'Copyright' })
   @Expose()
-  copyright_info?: string;
+    copyright_info?: string;
 
   @ApiPropertyOptional({ description: 'Licencia' })
   @Expose()
-  license?: string;
+    license?: string;
 
   @ApiPropertyOptional({ description: 'Atribución' })
   @Expose()
-  attribution?: string;
+    attribution?: string;
 
   // =====================================================
   // PROCESSING STATUS
@@ -141,11 +141,11 @@ export class MediaFileResponseDto {
 
   @ApiProperty({ description: 'Estado de procesamiento' })
   @Expose()
-  processing_status!: ProcessingStatusEnum;
+    processing_status!: ProcessingStatusEnum;
 
   @ApiProperty({ description: 'Información de procesamiento' })
   @Expose()
-  processing_info!: Record<string, any>;
+    processing_info!: Record<string, any>;
 
   // =====================================================
   // SEARCH & ORGANIZATION
@@ -153,15 +153,15 @@ export class MediaFileResponseDto {
 
   @ApiPropertyOptional({ description: 'Etiquetas' })
   @Expose()
-  tags?: string[];
+    tags?: string[];
 
   @ApiPropertyOptional({ description: 'Palabras clave' })
   @Expose()
-  keywords?: string[];
+    keywords?: string[];
 
   @ApiPropertyOptional({ description: 'Ruta de carpeta lógica' })
   @Expose()
-  folder_path?: string;
+    folder_path?: string;
 
   // =====================================================
   // USAGE STATISTICS
@@ -169,15 +169,15 @@ export class MediaFileResponseDto {
 
   @ApiProperty({ description: 'Contador de usos' })
   @Expose()
-  usage_count!: number;
+    usage_count!: number;
 
   @ApiProperty({ description: 'Contador de descargas' })
   @Expose()
-  download_count!: number;
+    download_count!: number;
 
   @ApiProperty({ description: 'Contador de visualizaciones' })
   @Expose()
-  view_count!: number;
+    view_count!: number;
 
   // =====================================================
   // STATUS FLAGS
@@ -185,15 +185,15 @@ export class MediaFileResponseDto {
 
   @ApiProperty({ description: 'Archivo público' })
   @Expose()
-  is_public!: boolean;
+    is_public!: boolean;
 
   @ApiProperty({ description: 'Archivo activo' })
   @Expose()
-  is_active!: boolean;
+    is_active!: boolean;
 
   @ApiProperty({ description: 'Archivo optimizado' })
   @Expose()
-  is_optimized!: boolean;
+    is_optimized!: boolean;
 
   // =====================================================
   // UPLOAD INFORMATION
@@ -201,11 +201,11 @@ export class MediaFileResponseDto {
 
   @ApiPropertyOptional({ description: 'ID del uploader' })
   @Expose()
-  uploaded_by?: string;
+    uploaded_by?: string;
 
   @ApiPropertyOptional({ description: 'ID de sesión de carga' })
   @Expose()
-  upload_session_id?: string;
+    upload_session_id?: string;
 
   // =====================================================
   // TECHNICAL METADATA
@@ -213,11 +213,11 @@ export class MediaFileResponseDto {
 
   @ApiProperty({ description: 'Datos EXIF' })
   @Expose()
-  exif_data!: Record<string, any>;
+    exif_data!: Record<string, any>;
 
   @ApiProperty({ description: 'Metadatos adicionales' })
   @Expose()
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   // =====================================================
   // AUDIT TIMESTAMPS
@@ -225,9 +225,9 @@ export class MediaFileResponseDto {
 
   @ApiProperty({ description: 'Fecha de creación' })
   @Expose()
-  created_at!: Date;
+    created_at!: Date;
 
   @ApiProperty({ description: 'Fecha de última actualización' })
   @Expose()
-  updated_at!: Date;
+    updated_at!: Date;
 }

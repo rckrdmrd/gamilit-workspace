@@ -46,28 +46,28 @@ export class AdminUsersController {
   @Get()
   @ApiOperation({ summary: 'List users with filters and pagination' })
   async listUsers(@Query() query: ListUsersDto): Promise<PaginatedUsersDto> {
-    return await this.adminUsersService.listUsers(query);
+    return this.adminUsersService.listUsers(query);
   }
 
   @Get('stats')
   @ApiOperation({ summary: 'Get user statistics' })
   async getUserStats(): Promise<UserStatsDto> {
-    return await this.adminUsersService.getUserStats();
+    return this.adminUsersService.getUserStats();
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get user details by ID' })
   async getUserDetails(@Param('id') id: string): Promise<User> {
-    return await this.adminUsersService.getUserDetails(id);
+    return this.adminUsersService.getUserDetails(id);
   }
 
   @Put(':id')
   @ApiOperation({ summary: 'Update user information' })
   async updateUser(
     @Param('id') id: string,
-    @Body() updateDto: UpdateUserDto,
+      @Body() updateDto: UpdateUserDto,
   ): Promise<User> {
-    return await this.adminUsersService.updateUser(id, updateDto);
+    return this.adminUsersService.updateUser(id, updateDto);
   }
 
   @Delete(':id')
@@ -81,15 +81,15 @@ export class AdminUsersController {
   @ApiOperation({ summary: 'Suspend user account' })
   async suspendUser(
     @Param('id') id: string,
-    @Body() suspendDto: SuspendUserDto,
+      @Body() suspendDto: SuspendUserDto,
   ): Promise<User> {
-    return await this.adminUsersService.suspendUser(id, suspendDto);
+    return this.adminUsersService.suspendUser(id, suspendDto);
   }
 
   @Post(':id/activate')
   @ApiOperation({ summary: 'Activate suspended user account' })
   async activateUser(@Param('id') id: string): Promise<User> {
-    return await this.adminUsersService.activateUser(id);
+    return this.adminUsersService.activateUser(id);
   }
 
   @Post(':id/unsuspend')
@@ -98,7 +98,7 @@ export class AdminUsersController {
     description: 'Removes suspension from a user account, restoring normal access. Alias for activate endpoint.',
   })
   async unsuspendUser(@Param('id') id: string): Promise<User> {
-    return await this.adminUsersService.unsuspendUser(id);
+    return this.adminUsersService.unsuspendUser(id);
   }
 
   @Post(':id/deactivate')
@@ -108,9 +108,9 @@ export class AdminUsersController {
   })
   async deactivateUser(
     @Param('id') id: string,
-    @Body() deactivateDto: SuspendUserDto,
+      @Body() deactivateDto: SuspendUserDto,
   ): Promise<User> {
-    return await this.adminUsersService.deactivateUser(id, deactivateDto);
+    return this.adminUsersService.deactivateUser(id, deactivateDto);
   }
 
   @Post(':id/reset-password')
@@ -120,9 +120,9 @@ export class AdminUsersController {
   })
   async resetPassword(
     @Param('id') id: string,
-    @Body() resetDto: ResetPasswordDto,
+      @Body() resetDto: ResetPasswordDto,
   ): Promise<{ success: boolean; message: string }> {
-    return await this.adminUsersService.resetPassword(id, resetDto);
+    return this.adminUsersService.resetPassword(id, resetDto);
   }
 
   // ===============================================
@@ -137,10 +137,10 @@ export class AdminUsersController {
   })
   async bulkSuspend(
     @Body() dto: BulkSuspendUsersDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<BulkOperationStatusDto> {
     const adminId = req.user?.id || req.user?.sub;
-    return await this.bulkOpsService.bulkSuspendUsers(dto, adminId);
+    return this.bulkOpsService.bulkSuspendUsers(dto, adminId);
   }
 
   @Post('bulk/delete')
@@ -151,10 +151,10 @@ export class AdminUsersController {
   })
   async bulkDelete(
     @Body() dto: BulkDeleteUsersDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<BulkOperationStatusDto> {
     const adminId = req.user?.id || req.user?.sub;
-    return await this.bulkOpsService.bulkDeleteUsers(dto, adminId);
+    return this.bulkOpsService.bulkDeleteUsers(dto, adminId);
   }
 
   @Post('bulk/update-role')
@@ -165,9 +165,9 @@ export class AdminUsersController {
   })
   async bulkUpdateRole(
     @Body() dto: BulkUpdateRoleDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<BulkOperationStatusDto> {
     const adminId = req.user?.id || req.user?.sub;
-    return await this.bulkOpsService.bulkUpdateRole(dto, adminId);
+    return this.bulkOpsService.bulkUpdateRole(dto, adminId);
   }
 }

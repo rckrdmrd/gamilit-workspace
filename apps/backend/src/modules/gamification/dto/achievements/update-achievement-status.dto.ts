@@ -18,5 +18,5 @@ export class UpdateAchievementStatusDto {
     type: Boolean,
   })
   @IsBoolean()
-  is_active!: boolean;
+    is_active!: boolean;
 }

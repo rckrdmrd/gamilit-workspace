@@ -39,86 +39,86 @@ export enum InterventionStatus {
  */
 export class InterventionAlertDto {
   @ApiProperty({ description: 'Alert ID (UUID)' })
-  id!: string;
+    id!: string;
 
   @ApiProperty({ description: 'Student ID (UUID)' })
-  student_id!: string;
+    student_id!: string;
 
   @ApiProperty({ description: 'Student full name' })
-  student_name!: string;
+    student_name!: string;
 
   @ApiProperty({ description: 'Student email' })
-  student_email!: string;
+    student_email!: string;
 
   @ApiPropertyOptional({ description: 'Classroom ID (UUID)' })
-  classroom_id?: string;
+    classroom_id?: string;
 
   @ApiPropertyOptional({ description: 'Classroom name' })
-  classroom_name?: string;
+    classroom_name?: string;
 
   @ApiProperty({
     enum: InterventionAlertType,
     description: 'Type of intervention alert',
     example: 'low_score',
   })
-  alert_type!: InterventionAlertType;
+    alert_type!: InterventionAlertType;
 
   @ApiProperty({
     enum: InterventionSeverity,
     description: 'Severity level of the alert',
     example: 'high',
   })
-  severity!: InterventionSeverity;
+    severity!: InterventionSeverity;
 
   @ApiProperty({ description: 'Alert title/summary' })
-  title!: string;
+    title!: string;
 
   @ApiPropertyOptional({ description: 'Detailed alert description' })
-  description?: string;
+    description?: string;
 
   @ApiPropertyOptional({
     description: 'Additional metrics and context data',
     example: { average_score: 45, exercises_failed: 3 },
   })
-  metrics?: Record<string, any>;
+    metrics?: Record<string, any>;
 
   @ApiProperty({
     enum: InterventionStatus,
     description: 'Current status of the alert',
     default: 'active',
   })
-  status!: InterventionStatus;
+    status!: InterventionStatus;
 
   @ApiProperty({ description: 'When the alert was generated' })
-  generated_at!: Date;
+    generated_at!: Date;
 
   @ApiPropertyOptional({ description: 'When the alert was acknowledged' })
-  acknowledged_at?: Date;
+    acknowledged_at?: Date;
 
   @ApiPropertyOptional({ description: 'ID of admin who acknowledged' })
-  acknowledged_by?: string;
+    acknowledged_by?: string;
 
   @ApiPropertyOptional({ description: 'Name of admin who acknowledged' })
-  acknowledged_by_name?: string;
+    acknowledged_by_name?: string;
 
   @ApiPropertyOptional({ description: 'When the alert was resolved' })
-  resolved_at?: Date;
+    resolved_at?: Date;
 
   @ApiPropertyOptional({ description: 'ID of admin who resolved' })
-  resolved_by?: string;
+    resolved_by?: string;
 
   @ApiPropertyOptional({ description: 'Name of admin who resolved' })
-  resolved_by_name?: string;
+    resolved_by_name?: string;
 
   @ApiPropertyOptional({ description: 'Resolution notes' })
-  resolution_notes?: string;
+    resolution_notes?: string;
 
   @ApiProperty({ description: 'Tenant ID' })
-  tenant_id!: string;
+    tenant_id!: string;
 
   @ApiProperty({ description: 'Record creation timestamp' })
-  created_at!: Date;
+    created_at!: Date;
 
   @ApiProperty({ description: 'Last update timestamp' })
-  updated_at!: Date;
+    updated_at!: Date;
 }

@@ -15,5 +15,5 @@ export class UpdateFriendshipStatusDto {
    * Valores: accepted, rejected, blocked
    */
   @IsEnum(FriendshipStatusEnum)
-  status!: string;
+    status!: string;
 }

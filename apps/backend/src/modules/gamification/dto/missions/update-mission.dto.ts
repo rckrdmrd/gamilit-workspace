@@ -21,7 +21,7 @@ export class UpdateMissionDto {
   })
   @IsOptional()
   @IsObject()
-  objectives?: MissionObjectiveDto[];
+    objectives?: MissionObjectiveDto[];
 
   @ApiPropertyOptional({
     description: 'Recompensas actualizadas',
@@ -29,7 +29,7 @@ export class UpdateMissionDto {
   })
   @IsOptional()
   @IsObject()
-  rewards?: MissionRewardsDto;
+    rewards?: MissionRewardsDto;
 
   @ApiPropertyOptional({
     description: 'Estado de la misión',
@@ -38,7 +38,7 @@ export class UpdateMissionDto {
   })
   @IsOptional()
   @IsEnum(MissionStatusEnum)
-  status?: MissionStatusEnum;
+    status?: MissionStatusEnum;
 
   @ApiPropertyOptional({
     description: 'Progreso (0-100)',
@@ -48,7 +48,7 @@ export class UpdateMissionDto {
   @IsNumber()
   @Min(0)
   @Max(100)
-  progress?: number;
+    progress?: number;
 
   @ApiPropertyOptional({
     description: 'Fecha de finalización',
@@ -57,7 +57,7 @@ export class UpdateMissionDto {
   @IsOptional()
   @IsDate()
   @Type(() => Date)
-  end_date?: Date;
+    end_date?: Date;
 
   @ApiPropertyOptional({
     description: 'Fecha de completado',
@@ -66,7 +66,7 @@ export class UpdateMissionDto {
   @IsOptional()
   @IsDate()
   @Type(() => Date)
-  completed_at?: Date;
+    completed_at?: Date;
 
   @ApiPropertyOptional({
     description: 'Fecha de reclamado de recompensas',
@@ -75,5 +75,5 @@ export class UpdateMissionDto {
   @IsOptional()
   @IsDate()
   @Type(() => Date)
-  claimed_at?: Date;
+    claimed_at?: Date;
 }

@@ -32,7 +32,7 @@ export class CreateTenantDto {
   @IsString()
   @MinLength(1, { message: 'El nombre del tenant no puede estar vacío' })
   @MaxLength(500, { message: 'El nombre del tenant no puede exceder 500 caracteres' })
-  name!: string;
+    name!: string;
 
   /**
    * Slug URL-friendly único para el tenant
@@ -46,7 +46,7 @@ export class CreateTenantDto {
   @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
     message: 'El slug solo puede contener letras minúsculas, números y guiones (sin espacios)',
   })
-  slug!: string;
+    slug!: string;
 
   /**
    * Dominio personalizado del tenant (opcional)
@@ -56,7 +56,7 @@ export class CreateTenantDto {
   @IsString()
   @IsOptional()
   @MaxLength(255, { message: 'El dominio no puede exceder 255 caracteres' })
-  domain?: string;
+    domain?: string;
 
   /**
    * URL del logo del tenant (opcional)
@@ -66,7 +66,7 @@ export class CreateTenantDto {
   @IsString()
   @IsOptional()
   @IsUrl({}, { message: 'La URL del logo debe ser válida' })
-  logo_url?: string;
+    logo_url?: string;
 
   /**
    * Nivel de suscripción del tenant
@@ -77,7 +77,7 @@ export class CreateTenantDto {
     message: `El tier de suscripción debe ser uno de: ${Object.values(SubscriptionTierEnum).join(', ')}`,
   })
   @IsOptional()
-  subscription_tier?: SubscriptionTierEnum = SubscriptionTierEnum.FREE;
+    subscription_tier?: SubscriptionTierEnum = SubscriptionTierEnum.FREE;
 
   /**
    * Número máximo de usuarios permitidos
@@ -88,7 +88,7 @@ export class CreateTenantDto {
   @IsInt({ message: 'El máximo de usuarios debe ser un número entero' })
   @Min(1, { message: 'El máximo de usuarios debe ser al menos 1' })
   @IsOptional()
-  max_users?: number = 100;
+    max_users?: number = 100;
 
   /**
    * Almacenamiento máximo en GB
@@ -99,7 +99,7 @@ export class CreateTenantDto {
   @IsInt({ message: 'El máximo de storage debe ser un número entero' })
   @Min(1, { message: 'El máximo de storage debe ser al menos 1 GB' })
   @IsOptional()
-  max_storage_gb?: number = 5;
+    max_storage_gb?: number = 5;
 
   /**
    * Estado activo del tenant
@@ -108,7 +108,7 @@ export class CreateTenantDto {
    */
   @IsBoolean({ message: 'is_active debe ser un valor booleano' })
   @IsOptional()
-  is_active?: boolean = true;
+    is_active?: boolean = true;
 
   /**
    * Fecha de fin del período de prueba (opcional)
@@ -117,7 +117,7 @@ export class CreateTenantDto {
    */
   @IsDateString({}, { message: 'La fecha de fin de prueba debe estar en formato ISO 8601' })
   @IsOptional()
-  trial_ends_at?: Date;
+    trial_ends_at?: Date;
 
   /**
    * Configuraciones del tenant (JSONB)
@@ -126,7 +126,7 @@ export class CreateTenantDto {
    */
   @IsObject({ message: 'Las configuraciones deben ser un objeto JSON válido' })
   @IsOptional()
-  settings?: Record<string, any>;
+    settings?: Record<string, any>;
 
   /**
    * Metadata adicional del tenant (JSONB)
@@ -135,5 +135,5 @@ export class CreateTenantDto {
    */
   @IsObject({ message: 'La metadata debe ser un objeto JSON válido' })
   @IsOptional()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

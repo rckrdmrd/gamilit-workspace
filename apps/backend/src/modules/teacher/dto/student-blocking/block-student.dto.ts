@@ -37,7 +37,7 @@ export class BlockStudentDto {
   @IsNotEmpty({ message: 'La razón del bloqueo es requerida' })
   @IsString()
   @MaxLength(500, { message: 'La razón no puede exceder 500 caracteres' })
-  reason!: string;
+    reason!: string;
 
   @ApiProperty({
     description: 'Tipo de bloqueo',
@@ -48,7 +48,7 @@ export class BlockStudentDto {
   @IsEnum(BlockType, {
     message: 'El tipo de bloqueo debe ser "full" o "partial"',
   })
-  block_type!: BlockType;
+    block_type!: BlockType;
 
   @ApiPropertyOptional({
     description:
@@ -72,7 +72,7 @@ export class BlockStudentDto {
     message: 'Todos los IDs de módulos deben ser UUIDs válidos',
   })
   @IsOptional()
-  blocked_modules?: string[];
+    blocked_modules?: string[];
 
   @ApiPropertyOptional({
     description: 'IDs de ejercicios bloqueados (opcional)',
@@ -85,5 +85,5 @@ export class BlockStudentDto {
     each: true,
     message: 'Todos los IDs de ejercicios deben ser UUIDs válidos',
   })
-  blocked_exercises?: string[];
+    blocked_exercises?: string[];
 }

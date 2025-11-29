@@ -36,25 +36,25 @@ export class AssignmentClassroom {
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID de la asignación
    */
   @Column({ type: 'uuid' })
-  assignment_id!: string;
+    assignment_id!: string;
 
   /**
    * ID del aula
    */
   @Column({ type: 'uuid' })
-  classroom_id!: string;
+    classroom_id!: string;
 
   /**
    * Fecha y hora de asignación
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  assigned_at!: Date;
+    assigned_at!: Date;
 
   // =====================================================
   // Relaciones
@@ -69,7 +69,7 @@ export class AssignmentClassroom {
    */
   @ManyToOne(() => Classroom, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'classroom_id', referencedColumnName: 'id' })
-  classroom?: Classroom;
+    classroom?: Classroom;
 
   /**
    * Asignación asociada

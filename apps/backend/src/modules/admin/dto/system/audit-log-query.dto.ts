@@ -9,7 +9,7 @@ export class AuditLogQueryDto {
   })
   @IsOptional()
   @IsString()
-  user_id?: string;
+    user_id?: string;
 
   @ApiPropertyOptional({
     description: 'Filter by email',
@@ -17,7 +17,7 @@ export class AuditLogQueryDto {
   })
   @IsOptional()
   @IsString()
-  email?: string;
+    email?: string;
 
   @ApiPropertyOptional({
     description: 'Filter by IP address',
@@ -25,7 +25,7 @@ export class AuditLogQueryDto {
   })
   @IsOptional()
   @IsString()
-  ip_address?: string;
+    ip_address?: string;
 
   @ApiPropertyOptional({
     description: 'Filter by success status',
@@ -34,7 +34,7 @@ export class AuditLogQueryDto {
   @IsOptional()
   @IsBoolean()
   @Type(() => Boolean)
-  success?: boolean;
+    success?: boolean;
 
   @ApiPropertyOptional({
     description: 'Start date for filtering (ISO 8601)',
@@ -42,7 +42,7 @@ export class AuditLogQueryDto {
   })
   @IsOptional()
   @IsDateString()
-  start_date?: string;
+    start_date?: string;
 
   @ApiPropertyOptional({
     description: 'End date for filtering (ISO 8601)',
@@ -50,7 +50,7 @@ export class AuditLogQueryDto {
   })
   @IsOptional()
   @IsDateString()
-  end_date?: string;
+    end_date?: string;
 
   @ApiPropertyOptional({
     description: 'Page number for pagination',
@@ -61,7 +61,7 @@ export class AuditLogQueryDto {
   @IsInt()
   @Min(1)
   @Type(() => Number)
-  page?: number;
+    page?: number;
 
   @ApiPropertyOptional({
     description: 'Number of items per page',
@@ -72,5 +72,5 @@ export class AuditLogQueryDto {
   @IsInt()
   @Min(1)
   @Type(() => Number)
-  limit?: number;
+    limit?: number;
 }

@@ -74,6 +74,7 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
   useEffect(() => {
     const progress = calculateProgress();
     onProgressUpdate?.(normalizeProgressUpdate(progress, 0, 1, 0, 0));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title, rating, summary, analysis, recommendation, criteria]);
 
   // Auto-save functionality
@@ -113,8 +114,8 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
     setShowFeedback(false);
   };
 
-  // Check/Verify handler
-  const handleCheck = () => {
+  // Check/Verify handler (prepared for future use)
+  const _handleCheck = () => {
     const score = calculateScore();
 
     const isComplete =
@@ -298,9 +299,6 @@ export const ResenaCriticaExercise: React.FC<ExerciseProps> = ({
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-3">
-          <DetectiveButton variant="primary" onClick={handleCheck}>
-            Verificar Reseña
-          </DetectiveButton>
           <DetectiveButton variant="secondary" onClick={handleReset}>
             Reiniciar
           </DetectiveButton>

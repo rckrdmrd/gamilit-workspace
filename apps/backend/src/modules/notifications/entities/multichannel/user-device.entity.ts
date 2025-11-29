@@ -70,7 +70,7 @@ import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
 @Index(['lastUsedAt'])
 export class UserDevice {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario propietario del dispositivo
@@ -81,7 +81,7 @@ export class UserDevice {
    * FK en DB: → auth_management.users(id) ON DELETE CASCADE
    */
   @Column({ name: 'user_id', type: 'uuid' })
-  userId!: string;
+    userId!: string;
 
   /**
    * Token del dispositivo para push notifications
@@ -107,7 +107,7 @@ export class UserDevice {
    * @maxLength 500 (soporta tokens largos)
    */
   @Column({ name: 'device_token', type: 'varchar', length: 500 })
-  deviceToken!: string;
+    deviceToken!: string;
 
   /**
    * Tipo de dispositivo/plataforma
@@ -127,7 +127,7 @@ export class UserDevice {
    * - En desarrollo, puede simular con 'test'
    */
   @Column({ name: 'device_type', type: 'varchar', length: 50 })
-  deviceType!: string;
+    deviceType!: string;
 
   /**
    * Nombre descriptivo del dispositivo
@@ -147,7 +147,7 @@ export class UserDevice {
    * @optional Si no se proporciona, usar deviceType genérico
    */
   @Column({ name: 'device_name', type: 'varchar', length: 255, nullable: true })
-  deviceName?: string;
+    deviceName?: string;
 
   /**
    * Indica si el dispositivo está activo para recibir push
@@ -168,7 +168,7 @@ export class UserDevice {
    * - Desactivar NO elimina el registro (permite reactivar)
    */
   @Column({ name: 'is_active', type: 'boolean', default: true })
-  isActive!: boolean;
+    isActive!: boolean;
 
   /**
    * Última vez que se usó el dispositivo
@@ -190,8 +190,8 @@ export class UserDevice {
    * @optional Se llena en el primer uso después de registro
    */
   @Column({ name: 'last_used_at', type: 'timestamp with time zone', nullable: true })
-  lastUsedAt?: Date;
+    lastUsedAt?: Date;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
-  createdAt!: Date;
+    createdAt!: Date;
 }

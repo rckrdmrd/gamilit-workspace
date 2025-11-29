@@ -12,21 +12,21 @@ class ConnectionDto {
    */
   @IsString()
   @IsNotEmpty({ message: 'from is required' })
-  from!: string;
+    from!: string;
 
   /**
    * Target evidence ID
    */
   @IsString()
   @IsNotEmpty({ message: 'to is required' })
-  to!: string;
+    to!: string;
 
   /**
    * Relationship type (e.g., "causa", "efecto", "contraste")
    */
   @IsString()
   @IsNotEmpty({ message: 'relationship is required' })
-  relationship!: string;
+    relationship!: string;
 }
 
 /**
@@ -54,7 +54,7 @@ export class DetectiveConnectionsAnswersDto {
   @ValidateNested({ each: true })
   @Type(() => ConnectionDto)
   @IsNotEmpty({ message: 'connections array is required' })
-  connections!: ConnectionDto[];
+    connections!: ConnectionDto[];
 
   constructor() {
     this.connections = [];

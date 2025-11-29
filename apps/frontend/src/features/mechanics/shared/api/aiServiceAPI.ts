@@ -181,7 +181,6 @@ export interface SuggestionsResponse {
 /**
  * Mock text analysis
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const mockAnalyzeText = async (_request: TextAnalysisRequest): Promise<TextAnalysisResponse> => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -222,7 +221,6 @@ const mockAnalyzeText = async (_request: TextAnalysisRequest): Promise<TextAnaly
  * Mock generate response
  */
 const mockGenerateResponse = async (
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _request: GenerateResponseRequest,
 ): Promise<GenerateResponseResponse> => {
   await new Promise((resolve) => setTimeout(resolve, 1200));

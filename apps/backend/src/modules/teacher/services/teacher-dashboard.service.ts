@@ -353,7 +353,7 @@ export class TeacherDashboardService {
         student_id: student.id,
         student_name: student.full_name || student.display_name || 'Unknown',
         total_xp: totalXP,
-        current_level: Math.floor(totalXP / 500) + 1, // Simple level calculation
+        current_level: Math.floor(Math.sqrt(totalXP / 100)) + 1, // Formula DB: FLOOR(SQRT(XP/100)) + 1
         exercises_completed: studentSubmissions.length,
         average_score: Math.round(avgScore),
       });

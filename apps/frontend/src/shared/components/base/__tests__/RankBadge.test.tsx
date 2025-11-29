@@ -14,6 +14,7 @@
  *
  * Total: 27 tests
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -29,11 +30,7 @@ vi.mock('@shared/utils', () => ({
 // Mock lucide-react Crown icon
 vi.mock('lucide-react', () => ({
   Crown: ({ className, 'aria-hidden': ariaHidden }: any) => (
-    <svg
-      className={className}
-      aria-hidden={ariaHidden}
-      data-testid="crown-icon"
-    />
+    <svg className={className} aria-hidden={ariaHidden} data-testid="crown-icon" />
   ),
 }));
 
@@ -253,7 +250,7 @@ describe('RankBadge', () => {
   describe('Styling', () => {
     it('should apply custom className', () => {
       const { container } = render(
-        <RankBadge rank="detective_novato" className="custom-badge-class" />
+        <RankBadge rank="detective_novato" className="custom-badge-class" />,
       );
 
       const badge = container.firstChild as HTMLElement;
@@ -326,13 +323,7 @@ describe('RankBadge', () => {
       'comisario',
     ];
 
-    const mayaRanks: RankType[] = [
-      'al_mehen',
-      'chilan',
-      'batab',
-      'halach_uinik',
-      'kukulkan',
-    ];
+    const mayaRanks: RankType[] = ['al_mehen', 'chilan', 'batab', 'halach_uinik', 'kukulkan'];
 
     it('should render all detective ranks in progression order', () => {
       detectiveRanks.forEach((rank) => {

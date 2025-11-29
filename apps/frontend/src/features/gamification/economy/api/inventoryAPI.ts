@@ -82,7 +82,6 @@ export interface UsePowerUpResult {
 /**
  * Mock get inventory
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const mockGetInventory = async (_userId: string): Promise<PowerUpInventory> => {
   await new Promise((resolve) => setTimeout(resolve, 500));
   return {
@@ -137,7 +136,6 @@ const mockPurchasePowerUp = async (
 const mockUsePowerUp = async (
   userId: string,
   powerupType: PowerUpType,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _exerciseId: string,
 ): Promise<UsePowerUpResult> => {
   await new Promise((resolve) => setTimeout(resolve, 600));
@@ -212,7 +210,7 @@ export const getInventory = async (userId: string): Promise<PowerUpInventory> =>
     }
 
     const { data } = await apiClient.get<ApiResponse<PowerUpInventory>>(
-      `/gamification/powerups/${userId}`,
+      API_ENDPOINTS.powerups.inventory(userId),
     );
 
     return data.data;
@@ -299,7 +297,7 @@ export const getAvailablePowerUps = async (): Promise<AvailablePowerUp[]> => {
     }
 
     const { data } = await apiClient.get<ApiResponse<AvailablePowerUp[]>>(
-      '/gamification/powerups/available',
+      API_ENDPOINTS.powerups.list,
     );
 
     return data.data;

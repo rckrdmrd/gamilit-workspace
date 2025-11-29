@@ -19,7 +19,7 @@ export class DistributeRewardsDto {
   })
   @IsInt()
   @Min(0)
-  base_xp!: number;
+    base_xp!: number;
 
   /**
    * ML Coins base para todos los participantes
@@ -31,7 +31,7 @@ export class DistributeRewardsDto {
   })
   @IsInt()
   @Min(0)
-  base_coins!: number;
+    base_coins!: number;
 
   /**
    * Multiplicador de bonus para el ganador
@@ -46,5 +46,5 @@ export class DistributeRewardsDto {
   @IsOptional()
   @IsNumber()
   @Min(1)
-  winner_multiplier?: number;
+    winner_multiplier?: number;
 }

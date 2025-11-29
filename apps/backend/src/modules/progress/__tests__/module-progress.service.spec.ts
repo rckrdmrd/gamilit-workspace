@@ -663,6 +663,9 @@ describe('ModuleProgressService', () => {
         status: ProgressStatusEnum.COMPLETED,
         total_xp_earned: 100,
         total_ml_coins_earned: 50,
+        total_exercises: 10,
+        completed_exercises: 10,
+        total_score: 85,
       },
       {
         id: 'p2',
@@ -670,6 +673,9 @@ describe('ModuleProgressService', () => {
         status: ProgressStatusEnum.IN_PROGRESS,
         total_xp_earned: 75,
         total_ml_coins_earned: 30,
+        total_exercises: 8,
+        completed_exercises: 4,
+        total_score: 70,
       },
       {
         id: 'p3',
@@ -677,6 +683,9 @@ describe('ModuleProgressService', () => {
         status: ProgressStatusEnum.COMPLETED,
         total_xp_earned: 120,
         total_ml_coins_earned: 60,
+        total_exercises: 12,
+        completed_exercises: 12,
+        total_score: 90,
       },
     ];
 
@@ -695,6 +704,11 @@ describe('ModuleProgressService', () => {
       expect(result.completion_rate).toBe(66.67); // 2/3 * 100
       expect(result.total_xp_earned).toBe(295); // 100+75+120
       expect(result.total_ml_coins_earned).toBe(140); // 50+30+60
+      expect(result.total_exercises).toBe(30); // 10+8+12
+      expect(result.completed_exercises).toBe(26); // 10+4+12
+      expect(result.average_score).toBe(81.67); // (85+70+90)/3
+      expect(result.current_streak).toBe(0); // TODO: from user_stats
+      expect(result.longest_streak).toBe(0); // TODO: from user_stats
     });
 
     it('should return zeros when no progress found', async () => {
@@ -711,6 +725,11 @@ describe('ModuleProgressService', () => {
       expect(result.completion_rate).toBe(0);
       expect(result.total_xp_earned).toBe(0);
       expect(result.total_ml_coins_earned).toBe(0);
+      expect(result.total_exercises).toBe(0);
+      expect(result.completed_exercises).toBe(0);
+      expect(result.average_score).toBe(0);
+      expect(result.current_streak).toBe(0);
+      expect(result.longest_streak).toBe(0);
     });
 
     it('should calculate completion_rate correctly', async () => {
@@ -748,6 +767,54 @@ describe('ModuleProgressService', () => {
       // Assert
       expect(result.total_xp_earned).toBe(350);
       expect(result.total_ml_coins_earned).toBe(175);
+    });
+
+    it('should calculate average_score only from modules with score > 0', async () => {
+      // Arrange
+      const progressWithScores = [
+        { ...mockUserProgress[0], total_score: 100 },
+        { ...mockUserProgress[1], total_score: 0 }, // Should not be included
+        { ...mockUserProgress[2], total_score: 80 },
+      ];
+      mockRepository.find.mockResolvedValue(progressWithScores);
+
+      // Act
+      const result = await service.getUserProgressSummary('user-1');
+
+      // Assert
+      expect(result.average_score).toBe(90); // (100+80)/2
+    });
+
+    it('should return 0 for average_score when all modules have score 0', async () => {
+      // Arrange
+      const progressNoScores = [
+        { ...mockUserProgress[0], total_score: 0 },
+        { ...mockUserProgress[1], total_score: 0 },
+      ];
+      mockRepository.find.mockResolvedValue(progressNoScores);
+
+      // Act
+      const result = await service.getUserProgressSummary('user-1');
+
+      // Assert
+      expect(result.average_score).toBe(0);
+    });
+
+    it('should sum exercises correctly', async () => {
+      // Arrange
+      const progressWithExercises = [
+        { ...mockUserProgress[0], total_exercises: 15, completed_exercises: 12 },
+        { ...mockUserProgress[1], total_exercises: 20, completed_exercises: 10 },
+        { ...mockUserProgress[2], total_exercises: 10, completed_exercises: 5 },
+      ];
+      mockRepository.find.mockResolvedValue(progressWithExercises);
+
+      // Act
+      const result = await service.getUserProgressSummary('user-1');
+
+      // Assert
+      expect(result.total_exercises).toBe(45); // 15+20+10
+      expect(result.completed_exercises).toBe(27); // 12+10+5
     });
   });
 

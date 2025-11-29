@@ -26,7 +26,7 @@ export class MediaService {
    * Obtener todos los recursos multimedia
    */
   async findAll(): Promise<MediaResource[]> {
-    return await this.mediaRepo.find({
+    return this.mediaRepo.find({
       order: { created_at: 'DESC' },
     });
   }
@@ -35,7 +35,7 @@ export class MediaService {
    * Obtener un recurso multimedia por ID
    */
   async findById(id: string): Promise<MediaResource | null> {
-    return await this.mediaRepo.findOne({ where: { id } });
+    return this.mediaRepo.findOne({ where: { id } });
   }
 
   /**
@@ -48,7 +48,7 @@ export class MediaService {
     }
 
     const media = this.mediaRepo.create(mediaData);
-    return await this.mediaRepo.save(media);
+    return this.mediaRepo.save(media);
   }
 
   /**
@@ -162,7 +162,7 @@ export class MediaService {
    * Obtener recursos multimedia activos
    */
   async findActive(): Promise<MediaResource[]> {
-    return await this.mediaRepo.find({
+    return this.mediaRepo.find({
       where: { is_active: true },
       order: { created_at: 'DESC' },
     });
@@ -172,7 +172,7 @@ export class MediaService {
    * Obtener recursos multimedia por categoría
    */
   async findByCategory(category: string): Promise<MediaResource[]> {
-    return await this.mediaRepo.find({
+    return this.mediaRepo.find({
       where: { category },
       order: { created_at: 'DESC' },
     });
@@ -182,7 +182,7 @@ export class MediaService {
    * Obtener recursos multimedia públicos (listos para estudiantes)
    */
   async findPublic(): Promise<MediaResource[]> {
-    return await this.mediaRepo.find({
+    return this.mediaRepo.find({
       where: {
         is_public: true,
         is_active: true,

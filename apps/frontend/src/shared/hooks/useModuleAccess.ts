@@ -33,7 +33,6 @@ export interface UseModuleAccessReturn {
 
 export function useModuleAccess({
   module,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   userId: _userId,
   userRango,
   completedModuleIds = [],

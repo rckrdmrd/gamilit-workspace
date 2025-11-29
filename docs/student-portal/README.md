@@ -1,7 +1,7 @@
 # DOCUMENTACIÓN TÉCNICA - STUDENT PORTAL
 ## GAMILIT Platform
 
-**Última actualización:** 2025-11-24
+**Última actualización:** 2025-11-29
 **Estado:** ✅ Documentación Completa
 **Sprint:** Correcciones P0 (Gaps Críticos)
 
@@ -11,14 +11,15 @@
 
 ### 🎯 Resumen Ejecutivo
 
-Este directorio contiene la documentación técnica completa de las **correcciones P0** implementadas en el Student Portal de GAMILIT. Se documentaron 4 gaps críticos que impedían funcionalidad core del sistema:
+Este directorio contiene la documentación técnica completa de las **correcciones P0** implementadas en el Student Portal de GAMILIT. Se documentaron 5 gaps críticos que impedían funcionalidad core del sistema:
 
 - **GAP-001:** Misiones no otorgaban recompensas reales
+- **GAP-002:** Misiones no actualizaban progreso correctamente (tipos desalineados BD/Backend)
 - **GAP-006:** Perfil mostraba estadísticas hardcodeadas
 - **GAP-007:** Settings no persistía cambios
 - **GAP-008:** Backend getUserStatistics() devolvía mock data
 
-**Resultado:** 33/33 criterios de aceptación cumplidos ✅
+**Resultado:** 39/39 criterios de aceptación cumplidos ✅
 
 ---
 
@@ -29,6 +30,7 @@ docs/student-portal/
 ├── README.md (este archivo)
 ├── gaps/
 │   ├── STUDENT-GAP-001-missions-rewards.md
+│   ├── STUDENT-GAP-002-missions-update-progress.md
 │   ├── STUDENT-GAP-006-profile-stats.md
 │   ├── STUDENT-GAP-007-settings-persistence.md
 │   └── STUDENT-GAP-008-backend-statistics.md
@@ -38,6 +40,7 @@ docs/student-portal/
 │   └── DEPENDENCY-MATRIX.md
 └── traces/
     ├── TRACE-P0-CORRECTIONS.md
+    ├── TRACE-GAP-002.md
     └── TRACE-GAP-008.md
 ```
 
@@ -61,7 +64,8 @@ docs/student-portal/
    - Estado final del sistema
 
 **Luego revisa gaps específicos:**
-- [GAP-001: Misiones](./gaps/STUDENT-GAP-001-missions-rewards.md) - Recompensas ahora funcionan ✅
+- [GAP-001: Misiones Recompensas](./gaps/STUDENT-GAP-001-missions-rewards.md) - Recompensas ahora funcionan ✅
+- [GAP-002: Misiones Progreso](./gaps/STUDENT-GAP-002-missions-update-progress.md) - Progreso se actualiza vía triggers BD ✅
 - [GAP-006: Perfil](./gaps/STUDENT-GAP-006-profile-stats.md) - Stats dinámicos ✅
 - [GAP-007: Settings](./gaps/STUDENT-GAP-007-settings-persistence.md) - Cambios se guardan ✅
 - [GAP-008: Backend Stats](./gaps/STUDENT-GAP-008-backend-statistics.md) - Backend real implementado ✅
@@ -203,6 +207,48 @@ docs/student-portal/
 - ✅ Dependencias (4 consume, 2 es consumido por)
 - ✅ Validación (4 escenarios manuales)
 - ✅ Trazabilidad (flujo de 14 pasos)
+
+---
+
+### GAP-002: Misiones - Progreso No Se Actualiza Correctamente
+
+**📄 Documento:** [STUDENT-GAP-002-missions-update-progress.md](./gaps/STUDENT-GAP-002-missions-update-progress.md)
+
+**Problema:**
+- Misiones diarias/semanales generadas por backend tenían tipos de objetivos incorrectos
+- Backend generaba: `correct_streak`, `study_time`, `consecutive_days`
+- Triggers BD esperaban: `earn_xp`, `use_comodines`, `daily_streak`
+- Solo la misión `complete_exercises` se actualizaba correctamente
+
+**Solución:**
+- Alineación de tipos de objetivos en `generateDailyMissions()` y `generateWeeklyMissions()`
+- Backend ahora genera misiones con tipos que los triggers BD reconocen
+- Principio: **Triggers BD como fuente de verdad**
+
+**Archivos modificados:**
+- `apps/backend/src/modules/gamification/services/missions.service.ts`
+
+**Cambios específicos:**
+| Misión | Tipo Anterior | Tipo Correcto |
+|--------|---------------|---------------|
+| Daily 2 | `correct_streak` | `earn_xp` |
+| Daily 3 | `study_time` | `use_comodines` |
+| Weekly 2 | `consecutive_days` | `daily_streak` |
+
+**Criterios cumplidos:** 6/6 ✅
+
+**Validación:**
+- ✅ Build backend sin errores
+- ✅ BD recreada completamente (política de carga limpia validada)
+- ✅ Todos los triggers de misiones cargados correctamente
+
+**Secciones del documento:**
+- ✅ Descripción del problema (causa raíz identificada)
+- ✅ Solución propuesta (alineación con triggers BD)
+- ✅ Mapeo de triggers de BD
+- ✅ Criterios de aceptación
+- ✅ Plan de validación
+- ✅ Validación final
 
 ---
 
@@ -551,12 +597,12 @@ docs/student-portal/
 | Gap | Prioridad | Estado | Sprint |
 |-----|-----------|--------|--------|
 | GAP-001 | P0 | ✅ Resuelto | Completado |
+| **GAP-002** | **P0** | **✅ Resuelto** | **Completado (2025-11-29)** |
 | GAP-006 | P0 | ✅ Resuelto | Completado |
 | GAP-007 | P0 | ✅ Resuelto | Completado |
-| **GAP-008** | **P0** | **✅ Resuelto** | **Completado** |
+| GAP-008 | P0 | ✅ Resuelto | Completado |
 | GAP-003 | P1 | 🟡 Pendiente | Próximo |
 | GAP-004 | P2 | 🟡 Pendiente | Próximo |
-| GAP-002 | P3 | 🟢 Backlog | - |
 | GAP-005 | P3 | 🟢 Backlog | - |
 
 ### Calidad del Código
@@ -564,10 +610,10 @@ docs/student-portal/
 | Métrica | Valor | Evaluación |
 |---------|-------|------------|
 | TypeScript errors | 0 | ✅ Excelente |
-| Criterios cumplidos | 33/33 (100%) | ✅ Excelente |
+| Criterios cumplidos | 39/39 (100%) | ✅ Excelente |
 | Unit tests | 0 | ❌ Pendiente |
-| Manual tests | 23 escenarios | ✅ Completo |
-| Documentación | ~5,150 líneas | ✅ Exhaustivo |
+| Manual tests | 29 escenarios | ✅ Completo |
+| Documentación | ~5,400 líneas | ✅ Exhaustivo |
 
 ---
 
@@ -683,10 +729,10 @@ docs/student-portal/
 ---
 
 **README generado:** 2025-11-24
-**Última actualización:** 2025-11-24 (Post-GAP-008)
-**Versión:** 1.1.0
+**Última actualización:** 2025-11-29 (Post-GAP-002)
+**Versión:** 1.2.0
 **Estado:** ✅ COMPLETO
 
 ---
 
-_Para cualquier pregunta sobre esta documentación, revisar la [Traza Completa](./traces/TRACE-P0-CORRECTIONS.md) y [TRACE-GAP-008](./traces/TRACE-GAP-008.md) que contienen la cronología detallada de todo el proceso._
+_Para cualquier pregunta sobre esta documentación, revisar la [Traza Completa](./traces/TRACE-P0-CORRECTIONS.md), [TRACE-GAP-002](./traces/TRACE-GAP-002.md) y [TRACE-GAP-008](./traces/TRACE-GAP-008.md) que contienen la cronología detallada de todo el proceso._

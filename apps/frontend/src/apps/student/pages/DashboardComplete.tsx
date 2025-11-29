@@ -6,12 +6,14 @@ import { MissionsPanel } from '../components/dashboard/MissionsPanel';
 import { ModulesSection } from '../components/dashboard/ModulesSection';
 import { RecentActivityPanel } from '../components/dashboard/RecentActivityPanel';
 import { RankProgressWidget } from '../components/dashboard/RankProgressWidget';
+import { QuickActionsWidget } from '../components/dashboard/QuickActionsWidget';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useDashboardData } from '../hooks/useDashboardData';
 import { useMissions } from '@/features/gamification/missions/hooks/useMissions';
 import { useUserModules } from '../hooks/useUserModules';
 import { useRecentActivities } from '../hooks/useRecentActivities';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { useUserClassroom } from '../hooks/useUserClassroom';
 
 export default function DashboardComplete() {
   console.log('🚀 [DashboardComplete] Component rendering...');
@@ -23,6 +25,15 @@ export default function DashboardComplete() {
     isAuthenticated: !!user,
     userId: user?.id,
     userEmail: user?.email,
+  });
+
+  // Get user's primary classroom (type-safe approach)
+  // Note: Users can be in multiple classrooms. This returns the primary/active one.
+  const { classroomId: userClassroomId } = useUserClassroom(user?.id);
+
+  console.log('🏫 [DashboardComplete] Classroom info:', {
+    classroomId: userClassroomId,
+    hasClassroom: !!userClassroomId,
   });
 
   // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
@@ -39,8 +50,14 @@ export default function DashboardComplete() {
     error: missionsError,
   } = useMissions();
 
-  // Modules data from backend
-  const { modules: userModules, loading: modulesLoading, error: modulesError } = useUserModules();
+  // Modules data from backend - filtered by classroom if user has one
+  const {
+    modules: userModules,
+    loading: modulesLoading,
+    error: modulesError,
+  } = useUserModules({
+    classroomId: userClassroomId,
+  });
 
   // Activities data from backend
   const {
@@ -150,6 +167,11 @@ export default function DashboardComplete() {
             detectivescas.
           </p>
         </motion.div>
+
+        {/* Quick Actions Widget */}
+        <div className="mb-6">
+          <QuickActionsWidget />
+        </div>
 
         {/* Error Display */}
         {error && (

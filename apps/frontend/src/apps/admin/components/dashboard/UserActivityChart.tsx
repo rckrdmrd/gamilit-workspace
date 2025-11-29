@@ -13,6 +13,7 @@
  * - Legend toggle
  * - Export chart image
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';

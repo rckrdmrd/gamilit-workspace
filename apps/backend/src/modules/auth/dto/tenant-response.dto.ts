@@ -15,83 +15,83 @@ export class TenantResponseDto {
    * ID único del tenant (UUID)
    */
   @Expose()
-  id!: string;
+    id!: string;
 
   /**
    * Nombre completo del tenant/organización
    */
   @Expose()
-  name!: string;
+    name!: string;
 
   /**
    * Slug URL-friendly único para el tenant
    */
   @Expose()
-  slug!: string;
+    slug!: string;
 
   /**
    * Dominio personalizado del tenant (nullable)
    */
   @Expose()
-  domain!: string | null;
+    domain!: string | null;
 
   /**
    * URL del logo del tenant (nullable)
    */
   @Expose()
-  logo_url!: string | null;
+    logo_url!: string | null;
 
   /**
    * Nivel de suscripción del tenant
    */
   @Expose()
-  subscription_tier!: SubscriptionTierEnum;
+    subscription_tier!: SubscriptionTierEnum;
 
   /**
    * Número máximo de usuarios permitidos
    */
   @Expose()
-  max_users!: number;
+    max_users!: number;
 
   /**
    * Almacenamiento máximo en GB
    */
   @Expose()
-  max_storage_gb!: number;
+    max_storage_gb!: number;
 
   /**
    * Estado activo del tenant
    */
   @Expose()
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Fecha de fin del período de prueba (nullable)
    */
   @Expose()
-  trial_ends_at!: Date | null;
+    trial_ends_at!: Date | null;
 
   /**
    * Configuraciones del tenant (JSONB)
    */
   @Expose()
-  settings!: Record<string, any>;
+    settings!: Record<string, any>;
 
   /**
    * Metadata adicional del tenant (JSONB)
    */
   @Expose()
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   /**
    * Fecha de creación del tenant
    */
   @Expose()
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de última actualización del tenant
    */
   @Expose()
-  updated_at!: Date;
+    updated_at!: Date;
 }

@@ -20,7 +20,7 @@ export class RegisterUserDto {
    * @example "nuevo.estudiante@gamilit.com"
    */
   @IsEmail({}, { message: 'El email debe ser válido' })
-  email!: string;
+    email!: string;
 
   /**
    * Contraseña del usuario (será hasheada)
@@ -30,7 +30,7 @@ export class RegisterUserDto {
    */
   @IsString({ message: 'La contraseña debe ser un texto' })
   @MinLength(8, { message: 'La contraseña debe tener al menos 8 caracteres' })
-  password!: string;
+    password!: string;
 
   /**
    * Metadatos adicionales del usuario (JSON)
@@ -39,7 +39,7 @@ export class RegisterUserDto {
    */
   @IsObject({ message: 'Los metadatos deben ser un objeto JSON' })
   @IsOptional()
-  raw_user_meta_data?: Record<string, any>;
+    raw_user_meta_data?: Record<string, any>;
 
   // Campos opcionales adicionales para registro:
   // Nota: Estos campos se podrían mapear al Profile (auth_management.profiles)
@@ -50,7 +50,7 @@ export class RegisterUserDto {
    */
   @IsString({ message: 'El nombre debe ser un texto' })
   @IsOptional()
-  first_name?: string;
+    first_name?: string;
 
   /**
    * Apellido del usuario (opcional)
@@ -58,5 +58,14 @@ export class RegisterUserDto {
    */
   @IsString({ message: 'El apellido debe ser un texto' })
   @IsOptional()
-  last_name?: string;
+    last_name?: string;
+
+  /**
+   * ID de la escuela del estudiante (opcional)
+   * @example "660e8400-e29b-41d4-a716-446655440010"
+   * @note FK a social_features.schools
+   */
+  @IsString({ message: 'El ID de escuela debe ser un texto' })
+  @IsOptional()
+    school_id?: string;
 }

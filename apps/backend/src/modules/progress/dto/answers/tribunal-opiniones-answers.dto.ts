@@ -8,7 +8,7 @@ import { Type } from 'class-transformer';
 export enum StatementClassification {
   HECHO = 'hecho',           // Verifiable fact
   OPINION = 'opinion',       // Subjective value judgment
-  INTERPRETACION = 'interpretacion' // Reasonable deduction based on evidence
+  INTERPRETACION = 'interpretacion', // Reasonable deduction based on evidence
 }
 
 /**
@@ -17,7 +17,7 @@ export enum StatementClassification {
 export enum StatementVerdict {
   BIEN_FUNDAMENTADA = 'bien_fundamentada',        // ✅ Solid evidence + valid logic
   PARCIALMENTE_FUNDAMENTADA = 'parcialmente_fundamentada', // ⚠️ Has evidence but limited
-  SIN_FUNDAMENTO = 'sin_fundamento'               // ❌ No evidence or invalid logic
+  SIN_FUNDAMENTO = 'sin_fundamento',               // ❌ No evidence or invalid logic
 }
 
 /**
@@ -26,21 +26,21 @@ export enum StatementVerdict {
 export class StatementEvaluation {
   @IsString()
   @IsNotEmpty()
-  statementId!: string;
+    statementId!: string;
 
   @IsEnum(StatementClassification, {
-    message: 'classification must be hecho, opinion, or interpretacion'
+    message: 'classification must be hecho, opinion, or interpretacion',
   })
-  classification!: StatementClassification;
+    classification!: StatementClassification;
 
   @IsEnum(StatementVerdict, {
-    message: 'verdict must be bien_fundamentada, parcialmente_fundamentada, or sin_fundamento'
+    message: 'verdict must be bien_fundamentada, parcialmente_fundamentada, or sin_fundamento',
   })
-  verdict!: StatementVerdict;
+    verdict!: StatementVerdict;
 
   @IsString()
   @IsOptional()
-  justification?: string; // 2-3 line justification (optional but recommended)
+    justification?: string; // 2-3 line justification (optional but recommended)
 }
 
 /**
@@ -75,7 +75,7 @@ export class TribunalOpinionesAnswersDto {
   @ValidateNested({ each: true })
   @Type(() => StatementEvaluation)
   @IsNotEmpty({ message: 'evaluations array is required' })
-  evaluations!: StatementEvaluation[];
+    evaluations!: StatementEvaluation[];
 
   constructor() {
     this.evaluations = [];

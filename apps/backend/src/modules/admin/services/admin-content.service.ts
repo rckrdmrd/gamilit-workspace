@@ -13,7 +13,7 @@ import { MediaFile } from '@modules/content/entities/media-file.entity';
 import {
   ContentApproval,
   ContentApprovalStatus,
-  ContentApprovalType
+  ContentApprovalType,
 } from '@modules/educational/entities/content-approval.entity';
 import {
   ListContentDto,

@@ -66,7 +66,7 @@ export interface ProfileUpdateResponse {
  */
 export interface PreferencesUpdateResponse {
   id: string;
-  preferences: Record<string, any>;
+  preferences: Record<string, unknown>;
   updated_at: string;
 }
 

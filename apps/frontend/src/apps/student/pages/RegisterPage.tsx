@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,7 +10,8 @@ import { PasswordInput } from '@features/auth/components/PasswordInput';
 import { FormErrorDisplay } from '@features/auth/components/FormErrorDisplay';
 import { registerSchema, RegisterFormData } from '@features/auth/schemas/authSchemas';
 import { useAuthStore } from '@features/auth/store/authStore';
-import { Target, UserPlus, User, CheckCircle2 } from 'lucide-react';
+import { schoolsAPI, School } from '@/services/api/schoolsAPI';
+import { Target, UserPlus, User, CheckCircle2, School as SchoolIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function RegisterPage() {
@@ -19,6 +20,8 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState<string>('');
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [schools, setSchools] = useState<School[]>([]);
+  const [loadingSchools, setLoadingSchools] = useState(true);
 
   const {
     register,
@@ -35,6 +38,24 @@ export default function RegisterPage() {
   const watchedPassword = watch('password', '');
   const watchedConfirmPassword = watch('confirmPassword', '');
 
+  // Fetch schools on component mount
+  useEffect(() => {
+    const fetchSchools = async () => {
+      try {
+        setLoadingSchools(true);
+        const schoolsList = await schoolsAPI.getSchools();
+        setSchools(schoolsList);
+      } catch (error) {
+        console.error('Error loading schools:', error);
+        // Don't block registration if schools fail to load
+      } finally {
+        setLoadingSchools(false);
+      }
+    };
+
+    fetchSchools();
+  }, []);
+
   const onSubmit = async (data: RegisterFormData) => {
     setLoading(true);
     setServerError('');
@@ -47,6 +68,7 @@ export default function RegisterPage() {
         password: data.password,
         confirmPassword: data.confirmPassword,
         acceptTerms: true,
+        schoolId: data.schoolId, // Include selected school if any
       });
 
       setRegistrationSuccess(true);
@@ -54,8 +76,10 @@ export default function RegisterPage() {
       setTimeout(() => {
         navigate('/login');
       }, 2000);
-    } catch (error: any) {
-      setServerError(error.message || 'Error de conexión. Intenta nuevamente.');
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Error de conexión. Intenta nuevamente.';
+      setServerError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -148,6 +172,50 @@ export default function RegisterPage() {
               error={errors.confirmPassword?.message}
               showStrengthMeter={false}
             />
+          </div>
+
+          {/* School Selection - Optional */}
+          <div className="mb-4">
+            <label htmlFor="schoolId" className="text-detective-body mb-2 block font-medium">
+              Escuela (Opcional)
+            </label>
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-detective-text-secondary">
+                <SchoolIcon className="h-5 w-5" />
+              </div>
+              <select
+                id="schoolId"
+                {...register('schoolId')}
+                disabled={loadingSchools}
+                className="input-detective input-detective-md w-full appearance-none bg-white pl-10"
+              >
+                <option value="">
+                  {loadingSchools ? 'Cargando escuelas...' : 'Selecciona tu escuela (opcional)'}
+                </option>
+                {schools.map((school) => (
+                  <option key={school.id} value={school.id}>
+                    {school.name} {school.city ? `- ${school.city}` : ''}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-detective-text-secondary">
+                <svg
+                  className="h-4 w-4 fill-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                </svg>
+              </div>
+            </div>
+            {errors.schoolId && (
+              <p className="mt-1 text-detective-sm text-detective-danger">
+                {errors.schoolId.message}
+              </p>
+            )}
+            <p className="mt-1 text-detective-sm text-detective-text-secondary">
+              Puedes seleccionar tu escuela ahora o agregarla más tarde en tu perfil
+            </p>
           </div>
 
           {/* Terms and Conditions */}

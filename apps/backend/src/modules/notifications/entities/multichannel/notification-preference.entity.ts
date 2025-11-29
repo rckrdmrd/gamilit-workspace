@@ -56,7 +56,7 @@ import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
 @Index(['userId', 'notificationType'], { unique: true })
 export class NotificationPreference {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario
@@ -67,7 +67,7 @@ export class NotificationPreference {
    * FK en DB: → auth_management.users(id) ON DELETE CASCADE
    */
   @Column({ name: 'user_id', type: 'uuid' })
-  userId!: string;
+    userId!: string;
 
   /**
    * Tipo de notificación
@@ -88,7 +88,7 @@ export class NotificationPreference {
    * @unique (combinado con user_id)
    */
   @Column({ name: 'notification_type', type: 'varchar', length: 50 })
-  notificationType!: string;
+    notificationType!: string;
 
   /**
    * Habilitar notificaciones in-app (popups dentro de la aplicación)
@@ -103,7 +103,7 @@ export class NotificationPreference {
    * Es el canal más común y menos intrusivo
    */
   @Column({ name: 'in_app_enabled', type: 'boolean', default: true })
-  inAppEnabled!: boolean;
+    inAppEnabled!: boolean;
 
   /**
    * Habilitar notificaciones por email
@@ -122,7 +122,7 @@ export class NotificationPreference {
    * - system_announcement
    */
   @Column({ name: 'email_enabled', type: 'boolean', default: true })
-  emailEnabled!: boolean;
+    emailEnabled!: boolean;
 
   /**
    * Habilitar notificaciones push (móvil y web)
@@ -143,11 +143,11 @@ export class NotificationPreference {
    * IMPORTANTE: Si no hay dispositivos registrados, este canal se ignora
    */
   @Column({ name: 'push_enabled', type: 'boolean', default: false })
-  pushEnabled!: boolean;
+    pushEnabled!: boolean;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
-  createdAt!: Date;
+    createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
-  updatedAt!: Date;
+    updatedAt!: Date;
 }

@@ -35,7 +35,7 @@ export class TeamChallenge {
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   // =====================================================
   // CORE IDENTIFIERS
@@ -46,7 +46,7 @@ export class TeamChallenge {
    * UNIQUE con challenge_id: Cada equipo puede participar una vez por desafío
    */
   @Column({ type: 'uuid' })
-  team_id!: string;
+    team_id!: string;
 
   /**
    * ID del desafío/challenge
@@ -54,7 +54,7 @@ export class TeamChallenge {
    * Puede ser: educational_content.exercises, módulos, misiones, etc.
    */
   @Column({ type: 'uuid' })
-  challenge_id!: string;
+    challenge_id!: string;
 
   // =====================================================
   // STATUS & STATE
@@ -69,7 +69,7 @@ export class TeamChallenge {
     length: 20,
     default: TeamChallengeStatusEnum.ACTIVE,
   })
-  status!: string;
+    status!: string;
 
   // =====================================================
   // TIMESTAMPS
@@ -79,14 +79,14 @@ export class TeamChallenge {
    * Fecha y hora de inicio del desafío
    */
   @Column({ type: 'timestamp with time zone' })
-  started_at!: Date;
+    started_at!: Date;
 
   /**
    * Fecha y hora de completación del desafío
    * NULL = aún no completado
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  completed_at?: Date;
+    completed_at?: Date;
 
   // =====================================================
   // SCORE & PERFORMANCE
@@ -96,5 +96,5 @@ export class TeamChallenge {
    * Puntuación obtenida en el desafío
    */
   @Column({ type: 'integer', default: 0 })
-  score!: number;
+    score!: number;
 }

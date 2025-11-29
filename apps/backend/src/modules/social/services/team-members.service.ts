@@ -57,7 +57,7 @@ export class TeamMembersService {
       role: dto.role || TeamMemberRoleEnum.MEMBER,
     });
 
-    return await this.teamMemberRepo.save(member);
+    return this.teamMemberRepo.save(member);
   }
 
   /**
@@ -66,7 +66,7 @@ export class TeamMembersService {
    * @returns Lista de miembros ordenados por fecha de ingreso
    */
   async findByTeamId(teamId: string): Promise<TeamMember[]> {
-    return await this.teamMemberRepo.find({
+    return this.teamMemberRepo.find({
       where: { team_id: teamId },
       order: { joined_at: 'ASC' },
     });
@@ -78,7 +78,7 @@ export class TeamMembersService {
    * @returns Lista de membresías ordenadas por fecha de ingreso
    */
   async findByUserId(userId: string): Promise<TeamMember[]> {
-    return await this.teamMemberRepo.find({
+    return this.teamMemberRepo.find({
       where: { user_id: userId },
       order: { joined_at: 'DESC' },
     });
@@ -140,7 +140,7 @@ export class TeamMembersService {
     }
 
     member.role = role;
-    return await this.teamMemberRepo.save(member);
+    return this.teamMemberRepo.save(member);
   }
 
   /**
@@ -173,7 +173,7 @@ export class TeamMembersService {
     }
 
     member.left_at = new Date();
-    return await this.teamMemberRepo.save(member);
+    return this.teamMemberRepo.save(member);
   }
 
   /**
@@ -182,7 +182,7 @@ export class TeamMembersService {
    * @returns Lista de miembros activos ordenados por rol
    */
   async getActiveMembers(teamId: string): Promise<TeamMember[]> {
-    return await this.teamMemberRepo.find({
+    return this.teamMemberRepo.find({
       where: {
         team_id: teamId,
         left_at: IsNull(),
@@ -234,6 +234,6 @@ export class TeamMembersService {
 
     // Promover al nuevo owner
     newOwnerMember.role = TeamMemberRoleEnum.OWNER;
-    return await this.teamMemberRepo.save(newOwnerMember);
+    return this.teamMemberRepo.save(newOwnerMember);
   }
 }

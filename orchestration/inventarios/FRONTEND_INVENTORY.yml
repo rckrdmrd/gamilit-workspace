@@ -1,1330 +1,922 @@
-# FRONTEND INVENTORY - GAMILIT
-# Inventario completo de objetos del frontend
-# Generado: 2025-01-11
-# Actualizado: 2025-11-11 (FE-046 Corrections)
+# FRONTEND_INVENTORY.yml - Inventario Consolidado Global
 
-metadata:
-  version: "2.3.8"
-  generated_date: "2025-01-11"
-  last_updated: "2025-11-26"
-  updated_by: "Frontend-Agent - Actualización inventario admin portal"
-  framework: "React 18 + TypeScript + Vite"
-  package_manager: "npm"
-  total_components: 195  # ✅ Actualizado 2025-11-26 (138 portal + 57 shared)
-  total_pages: 62  # ✅ Actualizado 2025-11-26 (28 student + 21 teacher + 16 admin)
-  total_stores: 2  # ✅ Actualizado 2025-11-15 (verificado con find)
-  total_hooks: 2  # ✅ Actualizado 2025-11-15 (verificado con find)
-  total_types: 12
-  total_api_services: 11
-
-  # Build Status
-  build:
-    status: "FAILING"
-    typescript_errors: 52
-    typescript_warnings: 470
-    last_build: "2025-11-11"
-    errors_baseline: 55
-    errors_reduction: "-5.5%"
-
-  # Coherence Metrics
-  coherence:
-    with_backend: "70%"
-    with_database: "68%"
-    enums_sync: "100%"
-    overall: "69%"
-
-  # Recent Changes (FE-051)
-  recent_corrections:
-    task_id: "FE-051"
-    date: "2025-11-11"
-    type: "infrastructure - api integration"
-    impact: "CRITICAL - Admin portal 100% specified and ready for backend implementation"
-    files_created: 2
-    files_modified: 2
-    total_lines_code: 1620
-    api_methods: 60
-    typescript_interfaces: 40
-    handoffs_created: 7
-    created_files:
-      - "services/api/adminAPI.ts (950 lines)"
-      - "services/api/adminTypes.ts (520 lines)"
-    modified_files:
-      - "services/api/apiConfig.ts (+150 lines)"
-      - "services/api/index.ts (+2 exports)"
-    handoff_documents:
-      - "HANDOFF-FE-051-DASHBOARD-TO-BE.md"
-      - "HANDOFF-FE-051-USERS-TO-BE.md"
-      - "HANDOFF-FE-051-ROLES-TO-BE.md"
-      - "HANDOFF-FE-051-GAMIFICATION-TO-BE.md"
-      - "HANDOFF-FE-051-MONITORING-TO-BE.md"
-      - "HANDOFF-FE-051-SETTINGS-TO-BE.md"
-      - "HANDOFF-FE-051-REPORTS-TO-BE.md"
+project: GAMILIT
+version: 3.0
+generated: 2025-11-08
+updated: 2025-11-29
+source: Inventario Real del Frontend Implementado + Clean Load Policy Validation Phase 4
+status: Actualizado con reconteo real completo (Phase 4 Execution)
+last_analysis: 2025-11-29 - Architecture-Analyst: Reconteo real con find para sincronización de inventario
 
 # ============================================================================
-# PORTALES (Apps)
+# RESUMEN EJECUTIVO
 # ============================================================================
-portals:
-  - name: "student"
-    description: "Portal para estudiantes"
-    path: "apps/frontend/src/apps/student"
-    pages: 28  # ✅ Actualizado 2025-11-15 (count real de archivos)
-    role: "student"
-    main_features:
-      - "Dashboard de progreso"
-      - "Ejercicios interactivos"
-      - "Gamificación (logros, rangos, ML Coins)"
-      - "Social (amigos, leaderboard, equipos)"
-      - "Perfil y configuración"
-    status: "✅ Active"
-    notes: "Incluye 3 páginas adicionales: DeviceManagementSection, NotificationPreferencesPage, admin/"
 
-  - name: "teacher"
-    description: "Portal para profesores"
-    path: "apps/frontend/src/apps/teacher"
-    pages: 21  # ✅ Verificado 2025-11-15 (count exacto)
-    role: "admin_teacher"
-    main_features:
-      - "Dashboard de clase"
-      - "Monitoreo de estudiantes"
-      - "Asignaciones y tareas"
-      - "Reportes de progreso"
-      - "Gestión de contenido"
-      - "Comunicación con padres"
-    status: "✅ Active"
+summary:
+  total_files: 845  # ✅ Reconteo real 2025-11-29 (477 TSX + 368 TS)
+  total_components: 477  # ✅ Reconteo real 2025-11-29 (archivos .tsx)
+  total_hooks: 87  # ✅ Reconteo real 2025-11-29 (use*.ts + use*.tsx)
+  total_features: 10
+  total_pages: 30  # ✅ ACTUALIZADO 2025-11-29
+  total_stores: 11
+  total_api_services: 15  # Sin cambios (usa apiClient existente)
+  total_mechanics: 33
+  total_routes: 20  # ✅ ACTUALIZADO 2025-11-29
+  lines_of_code: ~95000  # Estimado basado en aumento de archivos
 
-  - name: "admin"
-    description: "Portal administrativo"
-    path: "apps/frontend/src/apps/admin"
-    pages: 16  # ✅ Actualizado 2025-11-26 (count real de archivos)
-    components: 58  # ✅ Actualizado 2025-11-26 (58 componentes verificados)
-    role: "super_admin"
-    main_features:
-      - "Dashboard del sistema"
-      - "Gestión de usuarios"
-      - "Gestión de organizaciones"
-      - "Gestión de contenido"
-      - "Monitoreo del sistema"
-      - "Configuración avanzada"
-      - "Analytics y reportes"
-      - "Alertas del sistema"
-      - "Seguimiento de progreso"
-    status: "✅ Active"
-    notes: "Incluye 5 páginas nuevas (Dashboard, Alerts, Analytics, Progress, ClassroomTeacher) y 58 componentes especializados verificados"
+  changes_from_v2_9:
+    pages_created: 1  # AdminAssignmentsPage.tsx (289 LOC)
+    hooks_created: 1  # useAdminAssignments.ts (292 LOC)
+    components_created: 4  # AssignmentsTable, AssignmentDetailModal, AssignmentFilters, index
+    routes_added: 1  # /admin/assignments (super_admin only)
+    total_loc_added: 1258
+    epic: EXT-002
+    user_story: US-AE-009
+    note: "US-AE-009: Admin Assignments View - Visualización completa de tareas para super_admin con filtros, paginación y detalle"
+    files_created:
+      - apps/frontend/src/apps/admin/pages/AdminAssignmentsPage.tsx
+      - apps/frontend/src/apps/admin/hooks/useAdminAssignments.ts
+      - apps/frontend/src/apps/admin/components/assignments/AssignmentsTable.tsx
+      - apps/frontend/src/apps/admin/components/assignments/AssignmentDetailModal.tsx
+      - apps/frontend/src/apps/admin/components/assignments/AssignmentFilters.tsx
+      - apps/frontend/src/apps/admin/components/assignments/index.ts
 
-# ============================================================================
-# PÁGINAS (Pages)
-# ============================================================================
-pages:
-  student:
-    count: 25
-    files:
-      # Authentication
-      - name: "LoginPage.tsx"
-        route: "/login"
-        description: "Página de inicio de sesión"
-        status: "✅ Active"
+  changes_from_v2_8:
+    files_deleted: 4  # EvidenceBoard.tsx, MagnifyingGlass.tsx, AIHintSystem.tsx, detectiveTextualAPI.ts
+    files_rewritten: 4  # detectiveTextualTypes.ts, detectiveTextualSchemas.ts, detectiveTextualMockData.ts, DetectiveTextualExercise.tsx
+    components_removed: 3  # EvidenceBoard, MagnifyingGlass, AIHintSystem
+    api_services_removed: 1  # detectiveTextualAPI (reemplazado por progressAPI)
+    mechanic_restored: "DetectiveTextual (Módulo 2.1)"
+    note: "FE-106: Restauración de mecánica Detective Textual a selección múltiple según Documento de Diseño"
 
-      - name: "RegisterPage.tsx"
-        route: "/register"
-        description: "Página de registro"
-        status: "✅ Active"
+  changes_from_v2_7:
+    pages_created: 1  # TeacherExerciseResponsesPage
+    pages_improved: 9  # Dashboard, Progress, Students, Analytics, Alerts, Monitoring, Classes, Assignments, Gamification
+    pages_scoped: 3  # Reports, Analytics, Gamification (sin ML predictions)
+    pages_discarded: 3  # Resources, Communication, Content
+    components_created: 15  # ResponsesTable, ResponseDetailModal, etc.
+    hooks_created: 1  # useExerciseResponses
+    api_services_created: 1  # exerciseResponsesApi
+    note: "TEACHER-PORTAL-001: Desarrollo completo del Portal Teacher con nueva página de respuestas"
 
-      - name: "PasswordRecoveryPage.tsx"
-        route: "/password-recovery"
-        description: "Recuperación de contraseña"
-        status: "✅ Active"
+  changes_from_v2_6:
+    types_updated: 4  # adminTypes.ts, progress.types.ts, leaderboard.types.ts, enums.constants.ts
+    fields_added: 15  # +15 campos en adminTypes.ts (gamificación, submissions)
+    enum_states_added: 2  # NEEDS_REVIEW, ABANDONED en ProgressStatus
+    typo_fixed: 1  # KUKUKULKAN → KUKULKAN
+    files_modified: 8  # 5 archivos typo + 2 types + 1 formatters
+    note: "ARCH-STU-ADM-001: Corrección integración Student↔Admin Portal"
 
-      - name: "PasswordResetPage.tsx"
-        route: "/password-reset"
-        description: "Reseteo de contraseña"
-        status: "✅ Active"
+  changes_from_v2_5:
+    total_files: +15  # +12 teacher portal + 2 types + 1 config
+    total_components: +4
+    total_hooks: +4
+    total_api_services: +4
+    coherence_fixes: 1  # FE-101: Alert interface collision
+    note: "Coherence Analysis: Alert → SystemAlert/StudentInterventionAlert renaming"
 
-      - name: "EmailVerificationPage.tsx"
-        route: "/verify-email"
-        description: "Verificación de email"
-        status: "✅ Active"
+  changes_from_v2_4:
+    total_files: +12
+    total_components: +4
+    total_hooks: +4
+    total_api_services: +4
+    note: "Teacher Portal Enhancement - GAPs T002, T003, T004, T005 resueltos"
 
-      - name: "TwoFactorAuthPage.tsx"
-        route: "/2fa"
-        description: "Autenticación de dos factores"
-        status: "✅ Active"
+  changes_from_v2_2:
+    total_files: +20
+    total_components: +4
+    total_pages: +15
+    total_routes: +15
+    note: "Implementadas 15 rutas que estaban como TODO, agregadas páginas auth, corregidos usuarios hardcodeados"
 
-      # Main Dashboard
-      - name: "DashboardComplete.tsx"
-        route: "/dashboard"
-        description: "Dashboard principal del estudiante"
-        status: "✅ Active"
-
-      # Educational
-      - name: "ModuleDetailPage.tsx"
-        route: "/modules/:id"
-        description: "Detalle de módulo educativo"
-        status: "✅ Active"
-
-      - name: "ExercisePage.tsx"
-        route: "/exercises/:id"
-        description: "Página de ejercicio interactivo"
-        status: "✅ Active"
-
-      # Gamification
-      - name: "GamificationPage.tsx"
-        route: "/gamification"
-        description: "Hub de gamificación"
-        status: "✅ Active"
-
-      - name: "GamificationTestPage.tsx"
-        route: "/gamification-test"
-        description: "Página de prueba de gamificación"
-        status: "🔵 Dev Only"
-
-      - name: "AchievementsPage.tsx"
-        route: "/achievements"
-        description: "Página de logros"
-        status: "✅ Active"
-
-      - name: "LeaderboardPage.tsx"
-        route: "/leaderboard"
-        description: "Tabla de clasificación"
-        status: "✅ Active"
-
-      - name: "NewLeaderboardPage.tsx"
-        route: "/leaderboard-new"
-        description: "Nueva tabla de clasificación"
-        status: "🔵 Beta"
-
-      - name: "MissionsPage.tsx"
-        route: "/missions"
-        description: "Misiones diarias/semanales"
-        status: "✅ Active"
-
-      - name: "ShopPage.tsx"
-        route: "/shop"
-        description: "Tienda de ML Coins"
-        status: "✅ Active"
-
-      - name: "InventoryPage.tsx"
-        route: "/inventory"
-        description: "Inventario de comodines"
-        status: "✅ Active"
-
-      # Social
-      - name: "FriendsPage.tsx"
-        route: "/friends"
-        description: "Lista de amigos"
-        status: "✅ Active"
-
-      - name: "GuildsPage.tsx"
-        route: "/guilds"
-        description: "Equipos/Gremios"
-        status: "✅ Active"
-
-      # Profile
-      - name: "ProfilePage.tsx"
-        route: "/profile"
-        description: "Perfil de usuario"
-        status: "✅ Active"
-
-      - name: "EnhancedProfilePage.tsx"
-        route: "/profile-enhanced"
-        description: "Perfil mejorado"
-        status: "🔵 Beta"
-
-      - name: "SettingsPage.tsx"
-        route: "/settings"
-        description: "Configuración de cuenta"
-        status: "✅ Active"
-
-      # Error Pages
-      - name: "NotFoundPage.tsx"
-        route: "/404"
-        description: "Página no encontrada"
-        status: "✅ Active"
-
-  teacher:
-    count: 21
-    files:
-      # Dashboard
-      - name: "TeacherDashboard.tsx"
-        route: "/teacher/dashboard"
-        description: "Dashboard principal del profesor"
-        status: "✅ Active"
-
-      - name: "TeacherDashboardNew.tsx"
-        route: "/teacher/dashboard-new"
-        description: "Nuevo dashboard del profesor"
-        status: "🔵 Beta"
-
-      - name: "TeacherDashboardPage.tsx"
-        route: "/teacher"
-        description: "Página principal del profesor"
-        status: "✅ Active"
-
-      # Classes & Students
-      - name: "TeacherClasses.tsx"
-        route: "/teacher/classes"
-        description: "Gestión de clases"
-        status: "✅ Active"
-
-      - name: "TeacherClassesPage.tsx"
-        route: "/teacher/classes-management"
-        description: "Administración de clases"
-        status: "✅ Active"
-
-      - name: "TeacherStudents.tsx"
-        route: "/teacher/students"
-        description: "Lista de estudiantes"
-        status: "✅ Active"
-
-      - name: "TeacherStudentsPage.tsx"
-        route: "/teacher/students-management"
-        description: "Administración de estudiantes"
-        status: "✅ Active"
-
-      # Assignments
-      - name: "TeacherAssignments.tsx"
-        route: "/teacher/assignments"
-        description: "Tareas y asignaciones"
-        status: "✅ Active"
-
-      - name: "TeacherAssignmentsPage.tsx"
-        route: "/teacher/assignments-management"
-        description: "Administración de asignaciones"
-        status: "✅ Active"
-
-      # Monitoring & Progress
-      - name: "TeacherMonitoringPage.tsx"
-        route: "/teacher/monitoring"
-        description: "Monitoreo en tiempo real"
-        status: "✅ Active"
-
-      - name: "TeacherProgressPage.tsx"
-        route: "/teacher/progress"
-        description: "Seguimiento de progreso"
-        status: "✅ Active"
-
-      - name: "TeacherAlertsPage.tsx"
-        route: "/teacher/alerts"
-        description: "Alertas de intervención"
-        status: "✅ Active"
-
-      # Analytics & Reports
-      - name: "TeacherAnalytics.tsx"
-        route: "/teacher/analytics"
-        description: "Análisis de datos"
-        status: "✅ Active"
-
-      - name: "TeacherAnalyticsPage.tsx"
-        route: "/teacher/analytics-detailed"
-        description: "Análisis detallado"
-        status: "✅ Active"
-
-      - name: "TeacherReportsPage.tsx"
-        route: "/teacher/reports"
-        description: "Generación de reportes"
-        status: "✅ Active"
-
-      # Content Management
-      - name: "TeacherContentManagement.tsx"
-        route: "/teacher/content"
-        description: "Gestión de contenido"
-        status: "✅ Active"
-
-      - name: "TeacherContentPage.tsx"
-        route: "/teacher/content-management"
-        description: "Administración de contenido"
-        status: "✅ Active"
-
-      # Gamification
-      - name: "TeacherGamification.tsx"
-        route: "/teacher/gamification"
-        description: "Panel de gamificación"
-        status: "✅ Active"
-
-      - name: "TeacherGamificationPage.tsx"
-        route: "/teacher/gamification-management"
-        description: "Gestión de gamificación"
-        status: "✅ Active"
-
-      # Communication & Resources
-      - name: "TeacherCommunicationPage.tsx"
-        route: "/teacher/communication"
-        description: "Comunicación con padres"
-        status: "✅ Active"
-
-      - name: "TeacherResourcesPage.tsx"
-        route: "/teacher/resources"
-        description: "Recursos educativos"
-        status: "✅ Active"
-
-  admin:
-    count: 16
-    files:
-      # Main Dashboard
-      - name: "AdminDashboard.tsx"
-        route: "/admin"
-        description: "Dashboard principal del portal administrativo"
-        status: "✅ Active"
-
-      - name: "AdminDashboardPage.tsx"
-        route: "/admin/dashboard"
-        description: "Dashboard administrativo detallado"
-        status: "✅ Active"
-
-      # Core Management
-      - name: "AdminInstitutionsPage.tsx"
-        route: "/admin/institutions"
-        description: "Gestión de instituciones educativas"
-        status: "✅ Active"
-
-      - name: "AdminUsersPage.tsx"
-        route: "/admin/users"
-        description: "Gestión de usuarios del sistema"
-        status: "✅ Active"
-
-      - name: "AdminRolesPage.tsx"
-        route: "/admin/roles"
-        description: "Gestión de roles y permisos"
-        status: "✅ Active"
-
-      # Content Management
-      - name: "AdminContentPage.tsx"
-        route: "/admin/content"
-        description: "Gestión de contenido educativo"
-        status: "✅ Active"
-
-      - name: "AdminApprovalsPage.tsx"
-        route: "/admin/approvals"
-        description: "Aprobación de contenido de profesores"
-        status: "✅ Active"
-
-      # Gamification
-      - name: "AdminGamificationPage.tsx"
-        route: "/admin/gamification"
-        description: "Configuración de gamificación (rangos, logros, economía)"
-        status: "✅ Active"
-
-      # Monitoring & Analytics
-      - name: "AdminMonitoringPage.tsx"
-        route: "/admin/monitoring"
-        description: "Monitoreo del sistema y logs"
-        status: "✅ Active"
-
-      - name: "AdminAlertsPage.tsx"
-        route: "/admin/alerts"
-        description: "Gestión de alertas del sistema"
-        status: "✅ Active"
-        notes: "Nuevo - Agregado 2025-11-26"
-
-      - name: "AdminAnalyticsPage.tsx"
-        route: "/admin/analytics"
-        description: "Analytics y métricas del sistema"
-        status: "✅ Active"
-        notes: "Nuevo - Agregado 2025-11-26"
-
-      # Progress & Reports
-      - name: "AdminProgressPage.tsx"
-        route: "/admin/progress"
-        description: "Seguimiento de progreso de estudiantes"
-        status: "✅ Active"
-        notes: "Nuevo - Agregado 2025-11-26"
-
-      - name: "AdminReportsPage.tsx"
-        route: "/admin/reports"
-        description: "Generación y gestión de reportes"
-        status: "✅ Active"
-
-      # Classroom Management
-      - name: "AdminClassroomTeacherPage.tsx"
-        route: "/admin/classroom-teachers"
-        description: "Gestión de asignaciones de aulas y profesores"
-        status: "✅ Active"
-        notes: "Nuevo - Agregado 2025-11-26"
-
-      # System
-      - name: "AdminAdvancedPage.tsx"
-        route: "/admin/advanced"
-        description: "Herramientas avanzadas del sistema"
-        status: "✅ Active"
-
-      - name: "AdminSettingsPage.tsx"
-        route: "/admin/settings"
-        description: "Configuración general de la plataforma"
-        status: "✅ Active"
+stack:
+  framework: React 19.2.0
+  build_tool: Vite 7.1.10
+  language: TypeScript 5.9.3
+  state_management: Zustand 5.0.8
+  routing: React Router DOM 7.9.4
+  styling: TailwindCSS 4.1.14
+  forms: React Hook Form 7.65.0
+  validation: Zod 4.1.12
+  http_client: Axios 1.12.2
+  websocket: Socket.io Client 4.8.1
+  icons: Lucide React 0.545.0
+  animations: Framer Motion 12.23.24
+  charts: Recharts 3.3.0
 
 # ============================================================================
-# COMPONENTES COMPARTIDOS (Shared Components)
+# FEATURES IMPLEMENTADAS (10)
 # ============================================================================
-shared_components:
-  count: 49
-  categories:
-    base:
-      count: 10
-      description: "Componentes base reutilizables"
-      files:
-        - "Button.tsx"
-        - "Card.tsx"
-        - "Input.tsx"
-        - "Modal.tsx"
-        - "Avatar.tsx"
-        - "ProgressBar.tsx"
-        - "LoadingOverlay.tsx"
-        - "Toast.tsx"
-        - "StatusBadge.tsx"
-        - "RankBadge.tsx"
-        - "DetectiveButton.tsx"
-        - "DetectiveCard.tsx"
-        - "EnhancedCard.tsx"
-        - "ColorfulCard.tsx"
-        - "InputDetective.tsx"
 
-    layout:
-      count: 3
-      description: "Componentes de layout"
-      files:
-        - "Header.tsx"
-        - "Footer.tsx"
-        - "Sidebar.tsx"
-        - "GamilitSidebar.tsx"
-        - "GamifiedHeader.tsx"
-
-    common:
-      count: 4
-      description: "Componentes comunes"
-      files:
-        - "ConfirmDialog.tsx"
-        - "DataTable.tsx"
-        - "FormField.tsx"
-        - "Modal.tsx"
-
-    gamification:
-      count: 8
-      description: "Componentes de gamificación"
-      files:
-        - "AchievementCard.tsx"
-        - "AchievementFilter.tsx"
-        - "AchievementModal.tsx"
-        - "AchievementsGrid.tsx"
-        - "LeaderboardTable.tsx"
-        - "LeaderboardTabs.tsx"
-        - "UserStatsCard.tsx"
-        - "StatsOverview.tsx"
-
-    progress:
-      count: 3
-      description: "Componentes de progreso"
-      files:
-        - "ProgressCard.tsx"
-        - "ProgressFilter.tsx"
-        - "ExerciseAttemptCard.tsx"
-
-    mechanics:
-      count: 6
-      description: "Componentes de mecánicas de ejercicios"
-      files:
-        - "ExerciseContainer.tsx"
-        - "FeedbackModal.tsx"
-        - "HintSystem.tsx"
-        - "ProgressTracker.tsx"
-        - "ScoreDisplay.tsx"
-        - "TimerWidget.tsx"
-
-    celebrations:
-      count: 1
-      description: "Componentes de celebraciones"
-      files:
-        - "ConfettiCelebration.tsx"
-
-    timeline:
-      count: 1
-      description: "Componentes de línea de tiempo"
-      files:
-        - "ActivityTimeline.tsx"
-
-    utility:
-      count: 3
-      description: "Componentes utilitarios"
-      files:
-        - "ErrorBoundary.tsx"
-        - "LoadingSpinner.tsx"
-        - "ProtectedRoute.tsx"
-        - "Skeleton.tsx"
-
-# ============================================================================
-# FEATURES (Componentes por Feature)
-# ============================================================================
 features:
-  auth:
-    description: "Autenticación y autorización"
-    components: 11
-    files:
-      - "LoginForm.tsx"
-      - "RegisterForm.tsx"
-      - "PasswordInput.tsx"
-      - "PasswordStrengthMeter.tsx"
-      - "EmailInput.tsx"
-      - "FormErrorDisplay.tsx"
-      - "SessionsList.tsx"
-      - "SessionTimeoutWarning.tsx"
-      - "SecurityEventsList.tsx"
-      - "RoleSelector.tsx"
-      - "PermissionMatrix.tsx"
-      - "UserTable.tsx"
+  - name: auth
+    path: src/features/auth/
+    phase: 1
+    epic: EAI-001
+    components: 16
+    hooks: 5
+    stores: 3
+    api_files: 3
+    types: 1
+    tests: 1
+    status: completed
 
-  admin:
-    description: "Componentes administrativos"
-    components: 2
-    files:
-      - "ActivateUserModal.tsx"
-      - "DeactivateUserModal.tsx"
+  - name: gamification
+    path: src/features/gamification/
+    phase: 1
+    epic: EAI-003
+    components: 74
+    hooks: 15
+    stores: 11
+    api_files: 7
+    types: 8
+    tests: 1
+    status: completed
 
-  exercises:
-    description: "Actividades de ejercicios"
-    components: 9
-    files:
-      - "ExerciseHeader.tsx"
-      - "ExerciseFeedback.tsx"
-      - "MultipleChoiceActivity.tsx"
-      - "TrueFalseActivity.tsx"
-      - "FillBlankActivity.tsx"
-      - "MatchingActivity.tsx"
-      - "DragDropActivity.tsx"
-      - "OrderingActivity.tsx"
-
-  notifications:
-    description: "Sistema de notificaciones"
-    components: 2
-    files:
-      - "NotificationBell.tsx"
-      - "NotificationDropdown.tsx"
-
-  gamification:
-    description: "Componentes de gamificación"
-    components: 1
-    files:
-      - "StreakIndicator.tsx"
+  - name: mechanics
+    path: src/features/mechanics/
+    phase: 1
+    epic: EAI-002
+    components: 61
+    hooks: 1
+    api_files: 2
+    status: completed
+    total_mechanics: 33
 
 # ============================================================================
-# COMPONENTES ADMIN (Admin Portal Components)
+# TESTING
 # ============================================================================
-admin_components:
-  count: 58
-  path: "apps/frontend/src/apps/admin/components"
-  last_updated: "2025-11-26"
-  categories:
-    alerts:
-      count: 7
-      description: "Componentes de gestión de alertas del sistema"
-      files:
-        - "AcknowledgeAlertModal.tsx"
-        - "AlertCard.tsx"
-        - "AlertDetailsModal.tsx"
-        - "AlertFilters.tsx"
-        - "AlertsList.tsx"
-        - "AlertsStats.tsx"
-        - "ResolveAlertModal.tsx"
+# ⚠️ CRÍTICO: Test coverage muy bajo - necesita mejora urgente
 
-    analytics:
-      count: 4
-      description: "Componentes de analytics y métricas"
-      files:
-        - "EngagementTab.tsx"
-        - "GamificationTab.tsx"
-        - "OverviewTab.tsx"
-        - "RetentionTab.tsx"
+testing:
+  unit_tests:
+    total: 8
+    coverage: 13%
+    files_tested:
+      - apps/student/pages/__tests__/EmailVerificationPage.test.tsx
+      - apps/student/pages/__tests__/LoginPage.test.tsx
+      - apps/student/pages/__tests__/RegisterPage.test.tsx
+      - apps/student/pages/admin/__tests__/UserManagementPage.test.tsx
+      - features/admin/components/__tests__/DeactivateUserModal.test.tsx
+      - features/auth/__tests__/authStore.test.ts
+      - features/gamification/leaderboard/LiveLeaderboard.test.tsx
+      - shared/hooks/useSanitizedHTML.test.ts
 
-    gamification:
-      count: 6
-      description: "Componentes de configuración de gamificación"
-      files:
-        - "AchievementsTab.tsx"
-        - "BulkUpdateDialog.tsx"
-        - "MayaRankEditModal.tsx"
-        - "ParameterEditModal.tsx"
-        - "PreviewImpactDialog.tsx"
-        - "RestoreDefaultsDialog.tsx"
+  overall_coverage: 13%
+  coverage_goal: 40%
+  gap: -27%
+  priority: CRÍTICA
 
-    monitoring:
-      count: 9
-      description: "Componentes de monitoreo del sistema"
-      files:
-        - "AlertasTab.tsx"
-        - "ErrorTrackingPanel.tsx"
-        - "ErrorTrackingTab.tsx"
-        - "LogsViewer.tsx"
-        - "MetricsChart.tsx"
-        - "MetricsTab.tsx"
-        - "SystemHealthIndicators.tsx"
-        - "SystemPerformanceDashboard.tsx"
-        - "UserActivityMonitor.tsx"
-
-    progress:
-      count: 5
-      description: "Componentes de seguimiento de progreso"
-      files:
-        - "ClassroomSelector.tsx"
-        - "ClassroomsView.tsx"
-        - "OverviewView.tsx"
-        - "StudentDetailView.tsx"
-        - "StudentSearch.tsx"
-
-    reports:
-      count: 3
-      description: "Componentes de generación de reportes"
-      files:
-        - "BetaBanner.tsx"
-        - "ReportGenerationForm.tsx"
-        - "ReportsList.tsx"
-
-    settings:
-      count: 2
-      description: "Componentes de configuración del sistema"
-      files:
-        - "GeneralSettings.tsx"
-        - "SecuritySettings.tsx"
-
-    advanced:
-      count: 4
-      description: "Componentes de herramientas avanzadas"
-      files:
-        - "ABTestingDashboard.tsx"
-        - "EconomicInterventionPanel.tsx"
-        - "FeatureFlagControls.tsx"
-        - "TenantManagementPanel.tsx"
-
-    classroom_teacher:
-      count: 2
-      description: "Componentes de gestión de aulas y profesores"
-      files:
-        - "ClassroomTeachersTab.tsx"
-        - "TeacherClassroomsTab.tsx"
-
-    content:
-      count: 4
-      description: "Componentes de gestión de contenido"
-      files:
-        - "ContentApprovalQueue.tsx"
-        - "ContentVersionControl.tsx"
-        - "ExerciseContentEditor.tsx"
-        - "MediaLibraryManager.tsx"
-
-    dashboard:
-      count: 9
-      description: "Componentes del dashboard administrativo"
-      files:
-        - "AdminDashboardHero.tsx"
-        - "OrganizationsTable.tsx"
-        - "QuickActionsGrid.tsx"
-        - "RecentActionsTable.tsx"
-        - "SystemAlertsPanel.tsx"
-        - "SystemLogsViewer.tsx"
-        - "SystemMetricsGrid.tsx"
-        - "UserActivityChart.tsx"
-        - "UserManagementTable.tsx"
-
-    users:
-      count: 3
-      description: "Componentes de gestión de usuarios"
-      files:
-        - "BulkActionsPanel.tsx"
-        - "UserDetailModal.tsx"
-        - "UserDetailModal.example.tsx"
+  untested:
+    components_without_tests: ~371
+    hooks_tested: 1 de 68 (1.5%)
+    stores_tested: 1 de 11 (9%)
+    apis_tested: 0 de 11 (0%)
+    e2e_tests: 0
 
 # ============================================================================
-# STORES (Zustand State Management)
+# ESTADO DE IMPLEMENTACIÓN
 # ============================================================================
-stores:
-  count: 11
-  framework: "Zustand"
-  files:
-    - name: "authStore.ts"
-      path: "features/auth/store"
-      description: "Estado de autenticación"
-      main_state:
-        - "user"
-        - "token"
-        - "isAuthenticated"
-        - "isLoading"
-      status: "✅ Active"
 
-    - name: "notificationsStore.ts"
-      path: "features/notifications/store"
-      description: "Estado de notificaciones"
-      main_state:
-        - "notifications"
-        - "unreadCount"
-      status: "✅ Active"
+implementation_status:
+  completed:
+    - "✅ Sistema de autenticación completo"
+    - "✅ 33 mecánicas educativas implementadas"
+    - "✅ Sistema de gamificación robusto"
+    - "✅ Portal de estudiantes (core features)"
 
-    - name: "missionsStore.ts"
-      path: "features/missions/store"
-      description: "Estado de misiones"
-      main_state:
-        - "missions"
-        - "activeMissions"
-        - "completedMissions"
-      status: "✅ Active"
+  partial:
+    - "⚠️ Portal de administración (básico)"
+    - "⚠️ Testing (solo 8 tests)"
+    - "⚠️ PWA (configurado pero no activado)"
 
-    - name: "ranksStore.ts"
-      path: "features/gamification/ranks/store"
-      description: "Estado de rangos Maya"
-      main_state:
-        - "currentRank"
-        - "xp"
-        - "nextRank"
-      status: "✅ Active"
-
-    - name: "economyStore.ts"
-      path: "features/gamification/economy/store"
-      description: "Estado de economía (ML Coins)"
-      main_state:
-        - "balance"
-        - "transactions"
-      status: "✅ Active"
-
-    - name: "achievementsStore.ts"
-      path: "features/gamification/social/store"
-      description: "Estado de logros"
-      main_state:
-        - "achievements"
-        - "unlockedAchievements"
-      status: "✅ Active"
-
-    - name: "leaderboardsStore.ts"
-      path: "features/gamification/social/store"
-      description: "Estado de leaderboards"
-      main_state:
-        - "rankings"
-        - "userRank"
-      status: "✅ Active"
-
-    - name: "newLeaderboardsStore.ts"
-      path: "features/gamification/social/store"
-      description: "Nuevo estado de leaderboards"
-      main_state:
-        - "rankings"
-        - "filters"
-      status: "🔵 Beta"
-
-    - name: "guildsStore.ts"
-      path: "features/gamification/social/store"
-      description: "Estado de equipos/guilds"
-      main_state:
-        - "guilds"
-        - "userGuild"
-      status: "✅ Active"
-
-    - name: "friendsStore.ts"
-      path: "features/gamification/social/store"
-      description: "Estado de amigos"
-      main_state:
-        - "friends"
-        - "friendRequests"
-      status: "✅ Active"
-
-    - name: "powerUpsStore.ts"
-      path: "features/gamification/social/store"
-      description: "Estado de power-ups/comodines"
-      main_state:
-        - "inventory"
-        - "activeBoosts"
-      status: "✅ Active"
+  not_implemented:
+    - "❌ Feature 'Education' (directorio vacío)"
 
 # ============================================================================
-# HOOKS PERSONALIZADOS (Custom Hooks)
+# RUTAS IMPLEMENTADAS (React Router v7)
 # ============================================================================
-hooks:
-  count: 17
-  categories:
-    core:
-      - name: "useAuth.ts"
-        description: "Hook de autenticación"
-        returns: "user, login, logout, isAuthenticated"
+# Actualizado: 2025-11-09
+# Total: 18 rutas (15 nuevas implementadas desde v2.2)
 
-      - name: "useFetch.ts"
-        description: "Hook para fetch de datos"
-        returns: "data, loading, error, refetch"
+routing:
+  router_version: "React Router DOM 7.9.4"
+  total_routes: 18
+  public_routes: 5
+  protected_routes: 13
 
-    utility:
-      - name: "useDebounce.ts"
-        description: "Hook de debounce"
-        returns: "debouncedValue"
-
-      - name: "useToggle.ts"
-        description: "Hook de toggle"
-        returns: "[value, toggle]"
-
-      - name: "useLocalStorage.ts"
-        description: "Hook de localStorage"
-        returns: "[value, setValue]"
-
-      - name: "useMediaQuery.ts"
-        description: "Hook de media queries"
-        returns: "matches"
-
-      - name: "useClickOutside.ts"
-        description: "Hook de click fuera"
-        returns: "ref"
-
-      - name: "useIntersectionObserver.ts"
-        description: "Hook de intersection observer"
-        returns: "isIntersecting, ref"
-
-      - name: "usePrevious.ts"
-        description: "Hook para valor anterior"
-        returns: "previousValue"
-
-    forms:
-      - name: "useForm.ts"
-        description: "Hook de formularios"
-        returns: "values, errors, handleChange, handleSubmit"
-
-    ui:
-      - name: "useSanitizedHTML.ts"
-        description: "Hook para HTML sanitizado"
-        returns: "sanitizedHTML"
-
-    navigation:
-      - name: "useNavigation.ts"
-        description: "Hook de navegación"
-        returns: "navigate, goBack, goForward"
-
-    educational:
-      - name: "useModules.ts"
-        description: "Hook de módulos educativos"
-        returns: "modules, loading, error"
-
-      - name: "useModuleAccess.ts"
-        description: "Hook de acceso a módulos"
-        returns: "hasAccess, isLocked"
-
-      - name: "useExerciseAttempts.ts"
-        description: "Hook de intentos de ejercicios"
-        returns: "attempts, submitAttempt"
-
-    social:
-      - name: "useUserClassroom.ts"
-        description: "Hook de aula del usuario"
-        returns: "classroom, members"
-
-# ============================================================================
-# SERVICIOS API (API Services)
-# ============================================================================
-api_services:
-  count: 11
-  base_url: "http://localhost:3006/api"
-  files:
-    - name: "apiClient.ts"
-      description: "Cliente API base (Axios)"
-      exports:
-        - "apiClient"
-        - "get"
-        - "post"
-        - "put"
-        - "delete"
-
-    - name: "apiConfig.ts"
-      description: "Configuración de API"
-      exports:
-        - "API_BASE_URL"
-        - "API_TIMEOUT"
-        - "API_ENDPOINTS"
-
-    - name: "apiTypes.ts"
-      description: "Tipos de API"
-      exports:
-        - "ApiResponse<T>"
-        - "ApiError"
-        - "PaginatedResponse<T>"
-
-    - name: "apiInterceptors.ts"
-      description: "Interceptores de API"
-      exports:
-        - "requestInterceptor"
-        - "responseInterceptor"
-        - "errorInterceptor"
-
-    - name: "apiErrorHandler.ts"
-      description: "Manejador de errores de API"
-      exports:
-        - "handleApiError"
-        - "isNetworkError"
-        - "isAuthError"
-
-    - name: "axios.instance.ts"
-      description: "Instancia de Axios configurada"
-      exports:
-        - "axiosInstance"
-
-    - name: "educationalAPI.ts"
-      description: "API de contenido educativo"
-      endpoints:
-        - "GET /educational/modules"
-        - "GET /educational/modules/:id"
-        - "GET /educational/exercises"
-        - "GET /educational/exercises/:id"
-        - "POST /educational/exercises/:id/submit"
-
-    - name: "notificationsAPI.ts"
-      description: "API de notificaciones"
-      endpoints:
-        - "GET /notifications"
-        - "PUT /notifications/:id/read"
-        - "DELETE /notifications/:id"
-        - "PUT /notifications/read-all"
-
-    - name: "missionsAPI.ts"
-      description: "API de misiones"
-      endpoints:
-        - "GET /gamification/missions"
-        - "GET /gamification/missions/active"
-        - "POST /gamification/missions/:id/claim"
-
-    - name: "adminAPI.ts"
-      description: "API del portal administrativo"
-      status: "✅ Ready for backend implementation"
-      created: "2025-11-11 (FE-051)"
-      lines_of_code: 950
-      methods_count: 60
-      categories:
-        - "Dashboard (1 endpoint)"
-        - "Organizations (4 endpoints)"
-        - "Content Management (4 endpoints)"
-        - "Users (5 endpoints)"
-        - "Roles & Permissions (4 endpoints)"
-        - "Gamification (9 endpoints)"
-        - "Monitoring (2 endpoints)"
-        - "Settings (4 endpoints)"
-        - "Reports (5 endpoints)"
-      total_endpoints: 52
-      endpoints_implemented: 22
-      endpoints_pending: 30
-      handoffs:
-        - "HANDOFF-FE-051-DASHBOARD-TO-BE.md (P0, 8h, 1 endpoint)"
-        - "HANDOFF-FE-051-USERS-TO-BE.md (P0, 6h, 5 endpoints)"
-        - "HANDOFF-FE-051-ROLES-TO-BE.md (P0, 10h, 4 endpoints)"
-        - "HANDOFF-FE-051-GAMIFICATION-TO-BE.md (P1, 12h, 9 endpoints)"
-        - "HANDOFF-FE-051-MONITORING-TO-BE.md (P1, 4h, 2 endpoints)"
-        - "HANDOFF-FE-051-SETTINGS-TO-BE.md (P1, 6h, 4 endpoints)"
-        - "HANDOFF-FE-051-REPORTS-TO-BE.md (P2, 8h, 5 endpoints)"
-
-    - name: "adminTypes.ts"
-      description: "Tipos TypeScript para portal administrativo"
-      status: "✅ Complete"
-      created: "2025-11-11 (FE-051)"
-      lines_of_code: 520
-      interfaces_count: 40
-      main_types:
-        - "DashboardData"
-        - "Organization"
-        - "User"
-        - "Role"
-        - "Permission"
-        - "Content"
-        - "GamificationConfig"
-        - "SystemMetrics"
-        - "Report"
-
-    - name: "index.ts"
-      description: "Exportaciones centralizadas"
-      exports: "All API services"
-
-# ============================================================================
-# TIPOS TYPESCRIPT (Types)
-# ============================================================================
-types:
-  count: 12
-  files:
-    - name: "auth.types.ts"
-      description: "Tipos de autenticación"
-      main_types:
-        - "User"
-        - "LoginCredentials"
-        - "RegisterData"
-        - "AuthToken"
-        - "Session"
-
-    - name: "educational.types.ts"
-      description: "Tipos de contenido educativo"
-      main_types:
-        - "Module"
-        - "Exercise"
-        - "ExerciseAttempt"
-        - "ExerciseSubmission"
-
-    - name: "gamification.types.ts"
-      description: "Tipos de gamificación"
-      main_types:
-        - "UserStats"
-        - "UserRank"
-        - "MayaRank"
-        - "Transaction"
-
-    - name: "achievement.types.ts"
-      description: "Tipos de logros"
-      main_types:
-        - "Achievement"
-        - "UserAchievement"
-        - "AchievementCategory"
-
-    - name: "progress.types.ts"
-      description: "Tipos de progreso"
-      main_types:
-        - "ModuleProgress"
-        - "LearningSession"
-        - "ProgressStatus"
-
-    - name: "social.types.ts"
-      description: "Tipos de características sociales"
-      main_types:
-        - "Friendship"
-        - "Classroom"
-        - "Team"
-        - "School"
-
-    - name: "leaderboard.types.ts"
-      description: "Tipos de leaderboard"
-      main_types:
-        - "LeaderboardEntry"
-        - "LeaderboardMetadata"
-        - "LeaderboardFilter"
-
-    - name: "content.types.ts"
-      description: "Tipos de contenido"
-      main_types:
-        - "ContentTemplate"
-        - "MarieCurieContent"
-        - "MediaFile"
-
-    - name: "media.types.ts"
-      description: "Tipos de media"
-      main_types:
-        - "MediaResource"
-        - "MediaType"
-        - "ProcessingStatus"
-
-    - name: "users.types.ts"
-      description: "Tipos de usuarios"
-      main_types:
-        - "UserProfile"
-        - "UserPreferences"
-        - "UserRole"
-
-    - name: "profile.types.ts"
-      description: "Tipos de perfil"
-      main_types:
-        - "Profile"
-        - "ProfileStats"
-        - "ProfileSettings"
-
-    - name: "index.ts"
-      description: "Exportaciones centralizadas"
-      exports: "All types"
-
-# ============================================================================
-# CONSTANTS (Constantes)
-# ============================================================================
-constants:
-  - name: "enums.constants.ts"
-    path: "shared/constants"
-    description: "ENUMs sincronizados con Backend/Database"
-    total_enums: 25
-    main_enums:
-      - "DifficultyLevelEnum"
-      - "MayaRank"
-      - "TransactionTypeEnum"
-      - "NotificationTypeEnum"
-      - "NotificationPriorityEnum"
-      - "ProgressStatusEnum"
-      - "ContentStatusEnum"
-      - "ExerciseTypeEnum"
-      - "UserStatusEnum"
-      - "AuthProviderEnum"
-
-# ============================================================================
-# RUTAS (Routes)
-# ============================================================================
-routes:
   public:
-    - "/"
-    - "/login"
-    - "/register"
-    - "/password-recovery"
-    - "/password-reset"
-    - "/verify-email"
+    - path: /login
+      component: LoginPage
+      status: ✅ Implementada
+      date: 2025-11-08
+
+    - path: /register
+      component: RegisterPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+    - path: /forgot-password
+      component: ForgotPasswordPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+    - path: /reset-password
+      component: PasswordResetPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+    - path: /verify-email
+      component: EmailVerificationPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
 
   protected:
-    student:
-      - "/dashboard"
-      - "/modules/:id"
-      - "/exercises/:id"
-      - "/achievements"
-      - "/leaderboard"
-      - "/missions"
-      - "/friends"
-      - "/guilds"
-      - "/profile"
-      - "/settings"
+    - path: /
+      redirect: /dashboard
+      status: ✅ Redirect activo
 
-    teacher:
-      - "/teacher"
-      - "/teacher/dashboard"
-      - "/teacher/classes"
-      - "/teacher/students"
-      - "/teacher/assignments"
-      - "/teacher/progress"
-      - "/teacher/analytics"
-      - "/teacher/reports"
+    - path: /dashboard
+      component: DashboardPage
+      status: ✅ Implementada
+      date: 2025-11-08
 
-    admin:
-      - "/admin"
-      - "/admin/dashboard"
-      - "/admin/organizations"
-      - "/admin/content"
-      - "/admin/monitoring"
+    - path: /progress
+      component: MyProgressPage
+      status: ✅ Implementada
+      date: 2025-11-08
 
-# ============================================================================
-# ESTADÍSTICAS
-# ============================================================================
-statistics:
-  total_files: 332  # ✅ Actualizado 2025-11-26
-  breakdown:
-    pages: 62  # ✅ +5 (16 admin vs 11 anterior)
-    shared_components: 49
-    feature_components: 25
-    admin_components: 58  # ✅ Nuevo - Agregado 2025-11-26
-    stores: 11
-    hooks: 17
-    types: 12
-    api_services: 10
-    other: 98  # ✅ Ajustado por nuevos componentes admin
+    - path: /modules/:moduleId
+      component: ModuleDetailPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
 
-  largest_portals:
-    - name: "student"
-      files: 150
-      percentage: "45%"
+    - path: /achievements
+      component: AchievementsPage
+      status: ✅ Implementada
+      date: 2025-11-08
 
-    - name: "teacher"
-      files: 100
-      percentage: "30%"
+    - path: /leaderboard
+      component: LeaderboardPage
+      status: ✅ Implementada
+      date: 2025-11-08
 
-    - name: "admin"
-      files: 83  # ✅ Actualizado: 16 pages + 59 components + 8 otros
-      percentage: "25%"
+    - path: /exercises/:exerciseId
+      component: ExercisePage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+      note: "Antes era placeholder, ahora completamente funcional"
 
-  code_quality:
-    typescript_coverage: "100%"
-    component_tests: "15%"
-    eslint_compliance: "95%"
+    - path: /missions
+      component: MissionsPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
 
-# ============================================================================
-# ESTADO DEL PROYECTO
-# ============================================================================
-project_status:
-  build_status: "✅ Passing"
-  typescript_errors: 0
-  eslint_warnings: 12
-  bundle_size: "~2.5 MB (gzipped)"
-  performance_score: "85/100"
+    - path: /profile
+      component: EnhancedProfilePage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
 
-  areas_improvement:
-    - "Aumentar cobertura de tests (15% → 70%)"
-    - "Optimizar bundle size (code splitting)"
-    - "Agregar más tests de integración"
-    - "Mejorar accesibilidad (a11y)"
-    - "Documentar componentes con Storybook"
+    - path: /settings
+      component: SettingsPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+    - path: /friends
+      component: FriendsPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+    - path: /shop
+      component: ShopPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+    - path: /inventory
+      component: InventoryPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
+
+    - path: /guilds
+      component: GuildsPage
+      status: ✅ Implementada (NUEVA)
+      date: 2025-11-09
 
 # ============================================================================
-# PRÓXIMAS ACCIONES
+# ARQUITECTURA DE AUTENTICACIÓN
 # ============================================================================
-next_actions:
-  immediate:
-    - action: "Completar tests de componentes críticos"
-      priority: "P1"
-      time_estimate: "2 semanas"
+# Actualizado: 2025-11-09
 
-    - action: "Implementar code splitting por ruta"
-      priority: "P1"
-      time_estimate: "1 semana"
+authentication:
+  context: AuthProvider
+  location: src/app/providers/AuthContext.tsx
+  features:
+    - "Login/Logout con JWT"
+    - "Registro de usuarios"
+    - "Recuperación de contraseña"
+    - "Verificación de email"
+    - "Protected routes con ProtectedRoute component"
+    - "Persistencia de sesión en localStorage"
+    - "Auto-refresh de token"
 
-  short_term:
-    - action: "Documentar componentes en Storybook"
+  components:
+    - ProtectedRoute (src/shared/components/ProtectedRoute.tsx)
+    - LoginPage
+    - RegisterPage
+    - ForgotPasswordPage
+    - PasswordResetPage
+    - EmailVerificationPage
+
+# ============================================================================
+# CORRECCIONES APLICADAS (2025-11-09)
+# ============================================================================
+
+corrections_2025_11_09:
+  pages_fixed:
+    - file: apps/student/pages/ModuleDetailPage.tsx
+      issue: "Usuario hardcodeado mockUser"
+      fix: "Removido mockUser, usando datos reales de API"
+
+    - file: apps/student/pages/InventoryPage.tsx
+      issue: "Usuario hardcodeado mockUserInventory"
+      fix: "Removido mock, usando datos reales de API"
+
+    - file: apps/student/pages/SettingsPage.tsx
+      issue: "Usuario hardcodeado mockUser"
+      fix: "Removido mock, usando useAuth() hook"
+
+    - file: apps/student/pages/ProfilePage.tsx
+      issue: "Usuario hardcodeado mockUser"
+      fix: "Removido mock, usando useAuth() hook"
+
+    - file: apps/student/pages/ShopPage.tsx
+      issue: "Usuario hardcodeado mockUserStats"
+      fix: "Removido mock, usando datos reales de gamificación"
+
+    - file: apps/student/pages/GuildsPage.tsx
+      issue: "Usuario hardcodeado mockGuilds"
+      fix: "Removido mock, usando datos reales de API"
+
+    - file: apps/student/pages/FriendsPage.tsx
+      issue: "Usuario hardcodeado mockFriends"
+      fix: "Removido mock, usando datos reales de API"
+
+    - file: apps/student/pages/ExercisePage.tsx
+      issue: "Usuario hardcodeado mockStudentId"
+      fix: "Removido mock, usando user.id real"
+
+  mechanics_fixed:
+    - file: features/mechanics/module2/ConstruccionHipotesis/ConstruccionHipotesisExercise.tsx
+      fix: "Removido studentId hardcodeado"
+
+    - file: features/mechanics/module2/PuzzleContexto/PuzzleContextoExercise.tsx
+      fix: "Removido studentId hardcodeado"
+
+    - file: features/mechanics/module2/RuedaInferencias/RuedaInferenciasExercise.tsx
+      fix: "Removido studentId hardcodeado"
+
+    - file: features/mechanics/module4/AnalisisMemes/AnalisisMemesExercise.tsx
+      fix: "Removido studentId hardcodeado"
+
+    - file: features/mechanics/module4/EnsayoArgumentativo/EnsayoArgumentativoExercise.tsx
+      fix: "Removido studentId hardcodeado"
+
+  react_router_v7:
+    - file: App.tsx
+      fix: "Removidos warnings de future flags (v7_startTransition, v7_relativeSplatPath)"
+      note: "React Router v7 ya incluye estos comportamientos por defecto"
+
+# ============================================================================
+# TEACHER PORTAL ENHANCEMENT (2025-11-24)
+# ============================================================================
+# GAPs resueltos: T002, T003, T004, T005
+
+teacher_portal_enhancement_2025_11_24:
+  date: "2025-11-24"
+  analyst: "Architecture-Analyst"
+  status: "✅ COMPLETADO"
+
+  gaps_resolved:
+    - gap_id: GAP-T002
+      title: "TeacherAlertsPage gestión habilitada"
+      type: "Frontend Only"
+      description: "Botones de gestión conectados con endpoints existentes"
+      files_modified:
+        - "apps/frontend/src/apps/teacher/pages/TeacherAlertsPage.tsx"
+        - "apps/frontend/src/apps/teacher/components/alerts/InterventionAlertsPanel.tsx"
+      changes:
+        - "Habilitados botones: Acknowledge, Resolve, Dismiss"
+        - "Agregado toast notifications (react-hot-toast)"
+        - "Removido banner 'Sistema de Alertas Básico'"
+
+    - gap_id: GAP-T003
+      title: "TeacherContentManagement CRUD completo"
+      type: "Backend + Frontend"
+      description: "CRUD completo para contenido personalizado del maestro"
+      files_created:
+        - "apps/frontend/src/services/api/teacher/teacherContentApi.ts"
+        - "apps/frontend/src/apps/teacher/hooks/useTeacherContent.ts"
+      files_modified:
+        - "apps/frontend/src/apps/teacher/pages/TeacherContentManagement.tsx"
+        - "apps/frontend/src/services/api/teacher/index.ts"
+      features:
+        - "Listar contenido con filtros (módulo, tipo, estado)"
+        - "Crear nuevo contenido"
+        - "Editar contenido existente"
+        - "Eliminar contenido (soft delete)"
+        - "Clonar contenido"
+        - "Publicar contenido"
+
+    - gap_id: GAP-T004
+      title: "TeacherGamification otorgar bonus"
+      type: "Backend + Frontend"
+      description: "Sistema para otorgar ML Coins bonus a estudiantes"
+      files_created:
+        - "apps/frontend/src/services/api/teacher/bonusCoinsApi.ts"
+        - "apps/frontend/src/apps/teacher/hooks/useGrantBonus.ts"
+      files_modified:
+        - "apps/frontend/src/apps/teacher/pages/TeacherGamification.tsx"
+      features:
+        - "Modal para otorgar bonus"
+        - "Validación de monto (1-1000 ML Coins)"
+        - "Campo obligatorio de razón (min 10 caracteres)"
+        - "Feedback visual de éxito/error"
+
+    - gap_id: GAP-T005
+      title: "TeacherCommunication selectores dinámicos"
+      type: "Frontend Only"
+      description: "Selectores de clase/estudiante con datos reales"
+      files_modified:
+        - "apps/frontend/src/apps/teacher/pages/TeacherCommunicationPage.tsx"
+        - "apps/frontend/src/apps/teacher/components/communication/AnnouncementForm.tsx"
+        - "apps/frontend/src/apps/teacher/components/communication/FeedbackForm.tsx"
+      changes:
+        - "Reemplazados placeholders por dropdowns dinámicos"
+        - "Selector de clase usando useClassrooms()"
+        - "Selector cascada: clase -> estudiante"
+
+  new_api_services:
+    - name: teacherContentApi
+      path: "apps/frontend/src/services/api/teacher/teacherContentApi.ts"
+      methods:
+        - getContent (GET /teacher/content)
+        - getContentById (GET /teacher/content/:id)
+        - createContent (POST /teacher/content)
+        - updateContent (PUT /teacher/content/:id)
+        - deleteContent (DELETE /teacher/content/:id)
+        - cloneContent (POST /teacher/content/:id/clone)
+        - publishContent (POST /teacher/content/:id/publish)
+
+    - name: bonusCoinsApi
+      path: "apps/frontend/src/services/api/teacher/bonusCoinsApi.ts"
+      methods:
+        - grantBonus (POST /teacher/students/:studentId/bonus)
+
+    - name: interventionAlertsApi
+      path: "apps/frontend/src/services/api/teacher/interventionAlertsApi.ts"
+      methods:
+        - getAlerts
+        - getAlertById
+        - acknowledgeAlert
+        - resolveAlert
+        - dismissAlert
+
+    - name: teacherMessagesApi
+      path: "apps/frontend/src/services/api/teacher/teacherMessagesApi.ts"
+      methods:
+        - getMessages
+        - sendMessage
+        - markAsRead
+
+  new_hooks:
+    - name: useTeacherContent
+      path: "apps/frontend/src/apps/teacher/hooks/useTeacherContent.ts"
+      purpose: "Estado y operaciones CRUD para contenido del maestro"
+
+    - name: useGrantBonus
+      path: "apps/frontend/src/apps/teacher/hooks/useGrantBonus.ts"
+      purpose: "Estado y validaciones para otorgar bonus ML Coins"
+
+    - name: useInterventionAlerts
+      path: "apps/frontend/src/apps/teacher/hooks/useInterventionAlerts.ts"
+      purpose: "Estado y operaciones para alertas de intervención"
+
+    - name: useTeacherMessages
+      path: "apps/frontend/src/apps/teacher/hooks/useTeacherMessages.ts"
+      purpose: "Estado y operaciones para mensajería del maestro"
+
+  global_changes:
+    - file: "apps/frontend/src/App.tsx"
+      change: "Agregado Toaster de react-hot-toast para notificaciones globales"
+
+  teacher_portal_status_post_fix:
+    total_pages: 13
+    fully_functional: 10  # 77% (antes 62%)
+    partially_functional: 2  # 15%
+    placeholder: 1  # 8%
+    improvement: "+15% funcionalidad"
+    remaining_placeholder: "TeacherResourcesPage (GAP-T001 - Fase 3)"
+
+# ============================================================================
+# COHERENCE ANALYSIS FIXES (2025-11-24)
+# ============================================================================
+# Correcciones P0 implementadas post-análisis arquitectónico
+
+coherence_analysis_fixes_2025_11_24:
+  date: "2025-11-24"
+  analyst: "Architecture-Analyst"
+  task_id: "FE-101"
+  status: "✅ COMPLETADO"
+
+  alert_interface_collision_fix:
+    priority: "P0 - CRÍTICO"
+    issue: "Name collision entre dos interfaces 'Alert' diferentes"
+    impact: "Riesgo de errores TypeScript al importar ambas en el mismo archivo"
+
+    collision_details:
+      file_1:
+        path: "apps/frontend/src/services/api/adminTypes.ts"
+        line: 581
+        interface: "Alert (System monitoring alerts)"
+        properties: 29
+        purpose: "Alertas de monitoreo del sistema"
+
+      file_2:
+        path: "apps/frontend/src/services/api/teacher/interventionAlertsApi.ts"
+        line: 39
+        interface: "Alert (Student intervention alerts)"
+        properties: 17
+        purpose: "Alertas de intervención estudiantil"
+
+    solution_implemented:
+      approach: "Semantic renaming with backwards compatibility"
+
+      adminTypes_changes:
+        - "Alert → SystemAlert"
+        - "AlertSeverity → SystemAlertSeverity"
+        - "AlertStatus → SystemAlertStatus"
+        - "AlertType → SystemAlertType"
+        - "Added deprecated aliases for gradual migration"
+
+      interventionAlertsApi_changes:
+        - "Alert → StudentInterventionAlert"
+        - "AlertType → InterventionAlertType"
+        - "AlertSeverity → InterventionAlertSeverity"
+        - "AlertStatus → InterventionAlertStatus"
+        - "AlertsListResponse → InterventionAlertsListResponse"
+        - "Added deprecated aliases for backwards compatibility"
+
+    files_modified:
+      total: 15
+      type_definitions: 2
+      admin_components: 9
+      teacher_components: 3
+      other: 1
+
+      list:
+        - "apps/frontend/src/services/api/adminTypes.ts"
+        - "apps/frontend/src/services/api/teacher/interventionAlertsApi.ts"
+        - "apps/frontend/src/apps/admin/pages/AdminMonitoringPage.tsx"
+        - "apps/frontend/src/apps/admin/pages/AdminSettingsPage.tsx"
+        - "apps/frontend/src/apps/admin/components/monitoring/LogsViewer.tsx"
+        - "apps/frontend/src/apps/admin/components/monitoring/SystemAlertsTable.tsx"
+        - "apps/frontend/src/apps/admin/components/monitoring/AlertDetailsModal.tsx"
+        - "apps/frontend/src/apps/admin/components/settings/GeneralSettings.tsx"
+        - "apps/frontend/src/apps/admin/components/settings/EmailSettings.tsx"
+        - "apps/frontend/src/apps/admin/components/settings/NotificationSettings.tsx"
+        - "apps/frontend/src/apps/admin/components/settings/BackupSettings.tsx"
+        - "apps/frontend/src/apps/admin/components/settings/ApiKeysSettings.tsx"
+        - "apps/frontend/src/apps/teacher/pages/TeacherAlertsPage.tsx"
+        - "apps/frontend/src/apps/teacher/components/alerts/InterventionAlertsPanel.tsx"
+        - "apps/frontend/src/apps/teacher/components/alerts/AlertFilters.tsx"
+
+    validation:
+      typescript_check: "0 errors ✅"
+      build_result: "Success (12.13s) ✅"
+      name_collisions: 0
+      backwards_compatibility: "Maintained via deprecated aliases ✅"
+
+    deprecated_aliases:
+      removal_timeline: "1 sprint (2025-12-08)"
+      migration_guide: |
+        // Admin code
+        import { Alert } from 'adminTypes'  // ⚠️ DEPRECATED
+        import { SystemAlert } from 'adminTypes'  // ✅ NEW
+
+        // Teacher code
+        import { Alert } from 'interventionAlertsApi'  // ⚠️ DEPRECATED
+        import { StudentInterventionAlert } from 'interventionAlertsApi'  // ✅ NEW
+
+    documentation:
+      implementation_report: "orchestration/agentes/frontend/fix-alert-interface-collision-2025-11-24/IMPLEMENTATION-REPORT.md"
+      files_modified_list: "orchestration/agentes/frontend/fix-alert-interface-collision-2025-11-24/FILES-MODIFIED.md"
+      trace_updated: "orchestration/trazas/TRAZA-TAREAS-FRONTEND.md (FE-101)"
+
+  coherence_metrics_update:
+    before:
+      issues_p0: 1
+      coherence: "95.3%"
+
+    after:
+      issues_p0: 0
+      coherence: "96.8%"
+      improvement: "+1.5%"
+
+# ============================================================================
+# ADMIN PORTAL INTEGRATION FIX (2025-11-24)
+# ============================================================================
+# Correcciones ARCH-INT-001: Integración Backend-Frontend-Database
+
+admin_portal_integration_fix_2025_11_24:
+  date: "2025-11-24"
+  analyst: "Architecture-Analyst"
+  task_id: "ARCH-INT-001"
+  status: "✅ COMPLETADO"
+
+  summary:
+    total_issues_fixed: 5
+    total_files_modified: 23
+    build_status: "✅ Exitoso"
+    typescript_errors_introduced: 0
+
+  issues_resolved:
+    - issue_id: FE-INT-001
+      title: "Endpoints hardcodeados centralizados"
+      severity: "P0"
+      description: "18 endpoints hardcodeados en servicios API"
+      solution: "Migración a api.config.ts centralizado"
+      files_modified:
+        - "apps/frontend/src/config/api.config.ts"
+        - "apps/frontend/src/services/api/adminAPI.ts"
+        - "apps/frontend/src/services/api/admin/classroomTeacherApi.ts"
+      endpoints_centralized:
+        monitoring: 5
+        progress: 6
+        classroomTeachers: 4
+        bulk: 3
+        total: 18
+
+    - issue_id: FE-INT-002
+      title: ".env.production HTTPS sin SSL"
+      severity: "P1"
+      description: "HTTPS/WSS configurado pero servidor sin certificado SSL"
+      solution: "Cambiar a HTTP/WS, documentar configuración temporal"
+      files_modified:
+        - "apps/frontend/.env.production"
+      changes:
+        - "VITE_API_PROTOCOL: https → http"
+        - "VITE_WS_PROTOCOL: wss → ws"
+        - "Documentación de IP temporal agregada"
+
+    - issue_id: FE-INT-003
+      title: "Tipos desincronizados con DB"
+      severity: "P1"
+      description: "User.status y Organization.tier no alineados con enums de BD"
+      solution: "Sincronización de tipos + export de type aliases"
+      files_modified:
+        - "apps/frontend/src/services/api/adminTypes.ts"
+        - "apps/frontend/src/apps/admin/types/index.ts"
+        - "apps/frontend/src/apps/admin/components/dashboard/OrganizationsTable.tsx"
+        - "apps/frontend/src/apps/admin/hooks/useOrganizations.ts"
+        - "apps/frontend/src/apps/admin/pages/AdminInstitutionsPage.tsx"
+        - "apps/frontend/src/apps/admin/components/advanced/TenantManagementPanel.tsx"
+      type_changes:
+        - "User.status: +banned, +pending"
+        - "Organization.tier: premium → professional"
+        - "UserStatus type alias: exported"
+        - "SubscriptionTier type alias: exported"
+
+  api_config_structure:
+    file: "apps/frontend/src/config/api.config.ts"
+    sections_added:
+      - name: "admin.monitoring"
+        endpoints:
+          - "metrics: '/admin/monitoring/metrics'"
+          - "metricsHistory: '/admin/monitoring/metrics/history'"
+          - "errorStats: '/admin/monitoring/errors/stats'"
+          - "recentErrors: '/admin/monitoring/errors/recent'"
+          - "errorTrends: '/admin/monitoring/errors/trends'"
+
+      - name: "admin.progress"
+        endpoints:
+          - "overview: '/admin/progress/overview'"
+          - "classroom: (id) => '/admin/progress/classrooms/${id}'"
+          - "student: (id) => '/admin/progress/students/${id}'"
+          - "module: (id) => '/admin/progress/modules/${id}'"
+          - "exercise: (id) => '/admin/progress/exercises/${id}'"
+          - "export: '/admin/progress/export'"
+
+      - name: "admin.classroomTeachers"
+        endpoints:
+          - "list: '/admin/classroom-teachers'"
+          - "bulk: '/admin/classroom-teachers/bulk'"
+          - "byClassroom: (id) => '/admin/classrooms/${id}/teachers'"
+          - "byTeacher: (id) => '/admin/teachers/${id}/classrooms'"
+
+      - name: "admin.bulk"
+        endpoints:
+          - "suspendUsers: '/admin/users/bulk/suspend'"
+          - "deleteUsers: '/admin/users/bulk/delete'"
+          - "updateRole: '/admin/users/bulk/update-role'"
+
+  validation:
+    backend_build: "✅ Exitoso"
+    frontend_build: "✅ Exitoso (14.78s)"
+    typescript_errors: 0
+    breaking_changes: 0
+
+  dependencies:
+    depends_on:
+      - "Backend API: 16 controladores admin"
+      - "Database: system_alerts, audit_logs, profiles, tenants"
+    depended_by:
+      - "Todas las páginas del portal admin (10 páginas)"
+      - "Hooks: useAdminDashboard, useOrganizations, useContentManagement, useSystemMonitoring"
+
+  documentation:
+    main_report: "docs/90-transversal/CORRECCION-INTEGRACION-ADMIN-API-2025-11-24.md"
+    analysis_folder: "orchestration/agentes/architecture-analyst/analisis-portal-admin-integracion-2025-11-24/"
+    trace_entry: "orchestration/trazas/TRAZA-ANALISIS-ARQUITECTURA.md (ARCH-INT-001)"
+
+  metrics_improvement:
+    db_backend_frontend_sync:
+      before: "65/100"
+      after: "85/100"
+      improvement: "+20 points"
+
+    centralized_endpoints:
+      before: "~70%"
+      after: "100%"
+      improvement: "+30%"
+
+    correct_ports:
+      before: "~70%"
+      after: "100%"
+      improvement: "+30%"
+
+  pending_backlog:
+    - task_id: "CLEAN-001"
+      description: "Eliminar archivos deprecated (apiConfig.deprecated.ts, api-endpoints.deprecated.ts)"
       priority: "P2"
-      time_estimate: "3 semanas"
 
-    - action: "Agregar tests de integración con Playwright"
-      priority: "P2"
-      time_estimate: "2 semanas"
+    - task_id: "SSL-001"
+      description: "Configurar certificado SSL en servidor"
+      priority: "P1"
 
-  long_term:
-    - action: "Migrar a React Server Components"
-      priority: "P3"
-      time_estimate: "2 meses"
+    - task_id: "DNS-001"
+      description: "Configurar dominio api.gamilit.com"
+      priority: "P1"
 
 # ============================================================================
-# REFERENCIAS
+# TEACHER PORTAL INTEGRATION FIX (2025-11-24)
 # ============================================================================
-references:
-  validation_report: "orchestration/integracion/VAL-001/02-REPORTE-VALIDACION-COHERENCIA.md"
-  analysis_document: "orchestration/integracion/VAL-001/01-ANALISIS.md"
-  package_json: "apps/frontend/package.json"
-  readme: "apps/frontend/README.md"
+# Correcciones ARCH-INT-002: Integración Teacher Portal APIs
+
+teacher_portal_integration_fix_2025_11_24:
+  date: "2025-11-24"
+  analyst: "Architecture-Analyst"
+  task_id: "ARCH-INT-002"
+  status: "✅ COMPLETADO"
+
+  summary:
+    phases_completed: 3
+    files_deleted: 1
+    types_synced: true
+    build_status: "✅ Exitoso"
+
+  files_deleted:
+    - file: "apps/frontend/src/shared/constants/api-endpoints.deprecated.ts"
+      status: "DELETED"
+      reason: "Archivo deprecado sin imports activos"
+      replaced_by: "apps/frontend/src/config/api.config.ts"
+
+  types_synchronization:
+    intervention_alerts:
+      frontend_file: "apps/frontend/src/services/api/teacher/interventionAlertsApi.ts"
+      backend_file: "apps/backend/src/shared/types/intervention-alerts.types.ts"
+      status: "100% sincronizado"
+      comment_added: "// Synchronized with backend: apps/backend/src/shared/types/intervention-alerts.types.ts"
+      types_aligned:
+        - "InterventionAlertType"
+        - "InterventionAlertSeverity"
+        - "InterventionAlertStatus"
+        - "StudentInterventionAlert"
+
+  documentation:
+    main_report: "docs/90-transversal/INTEGRACION-TEACHER-PORTAL-APIs-2025-11-24.md"
+    final_report: "orchestration/agentes/architecture-analyst/analisis-integracion-teacher-portal-2025-11-24/REPORTE-FINAL-IMPLEMENTACION.md"
+    trace_entry: "orchestration/trazas/TRAZA-TAREAS-FRONTEND.md (FE-103)"
+
+  validation:
+    build_result: "✅ Exitoso"
+    type_check_result: "✅ Sin errores"
+    deprecated_files_remaining: 0
+
+  notes:
+    - "api-endpoints.deprecated.ts eliminado (sin imports activos)"
+    - "apiConfig.deprecated.ts ya había sido eliminado previamente"
+    - "Tipos de InterventionAlert sincronizados con backend"
+    - "Comentarios de sincronización agregados en archivo frontend"
 
 # ============================================================================
-# NOTAS
+# DETECTIVE TEXTUAL RESTORATION (2025-11-28)
 # ============================================================================
-notes:
-  - "Inventario generado mediante análisis estático de estructura de archivos"
-  - "Conteos basados en glob patterns y análisis de código"
-  - "Estado de componentes validado mediante compilación TypeScript"
-  - "Sincronización de ENUMs validada al 100% con Backend/Database"
-  - "Total de ~333 archivos TypeScript/React en el proyecto (actualizado 2025-11-26)"
-  - "Arquitectura modular bien organizada por features y portales"
-  - "Score general del frontend: 90/100 (Excelente)"
+# FE-106: Restauración de mecánica incorrecta a diseño original
 
-# ============================================================================
-# CHANGELOG - ÚLTIMA ACTUALIZACIÓN (2025-11-26)
-# ============================================================================
-changelog:
-  version: "2.3.8"
-  date: "2025-11-26"
-  updated_by: "Frontend-Agent"
-  task: "Actualización inventario admin portal"
+detective_textual_restoration_2025_11_28:
+  date: "2025-11-28"
+  analyst: "Architecture-Analyst"
+  task_id: "FE-106"
+  status: "✅ COMPLETADO"
 
-  changes:
-    pages_added:
-      count: 5
-      files:
-        - "AdminDashboard.tsx (página principal /admin)"
-        - "AdminAlertsPage.tsx (gestión de alertas)"
-        - "AdminAnalyticsPage.tsx (analytics y métricas)"
-        - "AdminProgressPage.tsx (seguimiento de progreso)"
-        - "AdminClassroomTeacherPage.tsx (gestión aulas-profesores)"
+  summary:
+    mechanic_name: "Detective Textual"
+    module: "Módulo 2 - Ejercicio 2.1"
+    issue: "Mecánica implementada incorrectamente (conexiones en lugar de selección múltiple)"
+    resolution: "Reescritura completa del componente según Documento de Diseño"
 
-    components_added:
-      count: 58
-      categories:
-        - "alerts/ (7 componentes)"
-        - "analytics/ (4 componentes)"
-        - "gamification/ (6 componentes)"
-        - "monitoring/ (9 componentes)"
-        - "progress/ (5 componentes)"
-        - "reports/ (3 componentes)"
-        - "settings/ (2 componentes)"
-        - "advanced/ (4 componentes)"
-        - "classroom_teacher/ (2 componentes)"
-        - "content/ (4 componentes)"
-        - "dashboard/ (9 componentes)"
-        - "users/ (3 componentes)"
-      notes: "Componentes especializados del portal administrativo documentados y verificados"
+  incorrect_implementation:
+    description: "EvidenceBoard con conexiones entre piezas de evidencia"
+    components_removed:
+      - file: "EvidenceBoard.tsx"
+        purpose: "Tablero de evidencias con conexiones"
+        status: "ELIMINADO"
+      - file: "MagnifyingGlass.tsx"
+        purpose: "Herramienta de zoom"
+        status: "ELIMINADO"
+      - file: "AIHintSystem.tsx"
+        purpose: "Sistema de pistas AI"
+        status: "ELIMINADO"
+      - file: "detectiveTextualAPI.ts"
+        purpose: "API específica (obsoleta)"
+        status: "ELIMINADO"
 
-    metrics_updated:
-      - "total_components: 163 → 195 (+32)"
-      - "total_pages: 61 → 62 (+1)"
-      - "admin pages: 11 → 16 (+5)"
-      - "admin components: 0 → 58 (+58 documentados)"
-      - "total_files: 300 → 332 (+32)"
+  correct_implementation:
+    description: "Selección múltiple con inferencia textual según Documento de Diseño"
+    mechanic_flow:
+      - "1. Mostrar pasaje de lectura"
+      - "2. Presentar preguntas de inferencia"
+      - "3. Usuario selecciona 1 de 4 opciones"
+      - "4. Mostrar explicación post-respuesta"
 
-    impact:
-      - "✅ Inventario admin completo al 100%"
-      - "✅ Trazabilidad mejorada para componentes admin"
-      - "✅ Base para futuras migraciones y refactors"
-      - "✅ Coherencia entre código real y documentación"
+    files_rewritten:
+      - file: "detectiveTextualTypes.ts"
+        changes:
+          - "Nueva interface InferenceQuestion"
+          - "Nueva interface DetectiveTextualExercise"
+          - "inference_type: causa_efecto | contexto_situacional | motivacion"
+
+      - file: "detectiveTextualSchemas.ts"
+        changes:
+          - "Schema Zod inferenceQuestionSchema"
+          - "Schema Zod detectiveTextualExerciseSchema"
+          - "Validación de 4 opciones por pregunta"
+
+      - file: "detectiveTextualMockData.ts"
+        changes:
+          - "Datos mock sincronizados con seeds DB"
+          - "4 preguntas sobre Marie Curie"
+          - "Tipos de inferencia: causa_efecto, contexto_situacional, motivacion"
+
+      - file: "DetectiveTextualExercise.tsx"
+        changes:
+          - "Nuevo componente QuestionCard"
+          - "Interfaz de selección múltiple"
+          - "Barra de progreso por pregunta"
+          - "Modal de feedback con explicación"
+          - "Integración con progressAPI"
+
+  backend_alignment:
+    dto: "DetectiveTextualAnswersDto"
+    format: '{ "questions": { "q1": "1", "q2": "0", ... } }'
+    status: "✅ Alineado"
+
+  database_alignment:
+    seeds_file: "03-exercises-module2.sql"
+    structure: "passage + questions + options + correctAnswer"
+    status: "✅ Sin cambios necesarios (seeds correctos)"
+
+  clean_load_directive:
+    violated: false
+    reason: "No se realizaron cambios en base de datos"
+    directive_file: "orchestration/directivas/DIRECTIVA-POLITICA-CARGA-LIMPIA.md"
+
+  validation:
+    typescript_check: "✅ Sin errores en archivos DetectiveTextual"
+    design_document_alignment: "✅ Mecánica coincide con DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md"
+    backend_dto_alignment: "✅ Formato de respuesta coincide"
+    seeds_alignment: "✅ Datos mock sincronizados"
+
+  documentation:
+    design_document: "docs/00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md"
+    seeds_file: "apps/database/seeds/dev/educational_content/03-exercises-module2.sql"
+    trace_entry: "orchestration/trazas/TRAZA-TAREAS-FRONTEND.md (FE-106)"
+
+  path_structure:
+    location: "apps/frontend/src/features/mechanics/module2/DetectiveTextual/"
+    files:
+      - "detectiveTextualTypes.ts (reescrito)"
+      - "detectiveTextualSchemas.ts (reescrito)"
+      - "detectiveTextualMockData.ts (reescrito)"
+      - "DetectiveTextualExercise.tsx (reescrito)"
+      - "index.ts (sin cambios)"

@@ -68,7 +68,7 @@ export class PeerChallengesController {
       data.end_time = new Date(dto.end_time);
     }
 
-    return await this.challengesService.create(dto.created_by, data);
+    return this.challengesService.create(dto.created_by, data);
   }
 
   /**
@@ -108,11 +108,11 @@ export class PeerChallengesController {
     description: 'Lista de desafíos obtenida exitosamente',
   })
   async findAll(
-    @Query('status') status?: string,
+  @Query('status') status?: string,
     @Query('challenge_type') challenge_type?: string,
     @Query('created_by') created_by?: string,
   ) {
-    return await this.challengesService.findAll({ status, challenge_type, created_by });
+    return this.challengesService.findAll({ status, challenge_type, created_by });
   }
 
   /**
@@ -131,7 +131,7 @@ export class PeerChallengesController {
     description: 'Lista de desafíos abiertos',
   })
   async findOpen() {
-    return await this.challengesService.findOpen();
+    return this.challengesService.findOpen();
   }
 
   /**
@@ -150,7 +150,7 @@ export class PeerChallengesController {
     description: 'Lista de desafíos activos',
   })
   async findActive() {
-    return await this.challengesService.findActive();
+    return this.challengesService.findActive();
   }
 
   /**
@@ -180,7 +180,7 @@ export class PeerChallengesController {
     description: 'Desafío no encontrado',
   })
   async findById(@Param('id') id: string) {
-    return await this.challengesService.findById(id);
+    return this.challengesService.findById(id);
   }
 
   /**
@@ -206,7 +206,7 @@ export class PeerChallengesController {
     description: 'Lista de desafíos del creador',
   })
   async findByCreator(@Param('userId') userId: string) {
-    return await this.challengesService.findByCreator(userId);
+    return this.challengesService.findByCreator(userId);
   }
 
   /**
@@ -253,7 +253,7 @@ export class PeerChallengesController {
     description: 'Desafío no encontrado',
   })
   async update(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Query('userId') userId: string,
     @Body() dto: UpdatePeerChallengeDto,
   ) {
@@ -267,7 +267,7 @@ export class PeerChallengesController {
       data.end_time = new Date(dto.end_time);
     }
 
-    return await this.challengesService.update(id, userId, data);
+    return this.challengesService.update(id, userId, data);
   }
 
   /**
@@ -297,7 +297,7 @@ export class PeerChallengesController {
     description: 'Transición de estado inválida',
   })
   async start(@Param('id') id: string) {
-    return await this.challengesService.start(id);
+    return this.challengesService.start(id);
   }
 
   /**
@@ -323,7 +323,7 @@ export class PeerChallengesController {
     description: 'Desafío completado exitosamente',
   })
   async complete(@Param('id') id: string) {
-    return await this.challengesService.complete(id);
+    return this.challengesService.complete(id);
   }
 
   /**
@@ -360,7 +360,7 @@ export class PeerChallengesController {
     description: 'No autorizado (no es el creador)',
   })
   async cancel(@Param('id') id: string, @Query('userId') userId: string) {
-    return await this.challengesService.cancel(id, userId);
+    return this.challengesService.cancel(id, userId);
   }
 
   /**
@@ -450,7 +450,7 @@ export class PeerChallengesController {
     },
   })
   async getStatsByType() {
-    return await this.challengesService.getStatsByType();
+    return this.challengesService.getStatsByType();
   }
 
   /**
@@ -479,6 +479,6 @@ export class PeerChallengesController {
     },
   })
   async getStatsByStatus() {
-    return await this.challengesService.getStatsByStatus();
+    return this.challengesService.getStatsByStatus();
   }
 }

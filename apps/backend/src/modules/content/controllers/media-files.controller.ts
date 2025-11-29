@@ -42,10 +42,10 @@ export class MediaFilesController {
   @ApiQuery({ name: 'status', required: false, description: 'Estado de procesamiento (uploading, processing, ready, error, optimizing)' })
   @ApiResponse({ status: 200, description: 'Lista de archivos obtenida exitosamente', type: [MediaFileResponseDto] })
   async findAll(
-    @Query('fileType') fileType?: string,
+  @Query('fileType') fileType?: string,
     @Query('status') status?: string,
   ) {
-    return await this.mediaService.findAll(fileType, status);
+    return this.mediaService.findAll(fileType, status);
   }
 
   /**
@@ -61,7 +61,7 @@ export class MediaFilesController {
   @ApiResponse({ status: 200, description: 'Archivo obtenido exitosamente', type: MediaFileResponseDto })
   @ApiResponse({ status: 404, description: 'Archivo no encontrado' })
   async findById(@Param('id') id: string) {
-    return await this.mediaService.findById(id);
+    return this.mediaService.findById(id);
   }
 
   /**
@@ -78,7 +78,7 @@ export class MediaFilesController {
   @ApiResponse({ status: 201, description: 'Archivo registrado exitosamente', type: MediaFileResponseDto })
   @ApiResponse({ status: 400, description: 'Datos inválidos' })
   async create(@Body() dto: CreateMediaFileDto) {
-    return await this.mediaService.create(dto);
+    return this.mediaService.create(dto);
   }
 
   /**
@@ -94,10 +94,10 @@ export class MediaFilesController {
   @ApiResponse({ status: 200, description: 'Archivo actualizado exitosamente', type: MediaFileResponseDto })
   @ApiResponse({ status: 404, description: 'Archivo no encontrado' })
   async update(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() dto: Partial<CreateMediaFileDto>,
   ) {
-    return await this.mediaService.update(id, dto);
+    return this.mediaService.update(id, dto);
   }
 
   /**
@@ -128,7 +128,7 @@ export class MediaFilesController {
   @ApiParam({ name: 'fileType', description: 'Tipo de archivo (image, video, audio, document, etc.)' })
   @ApiResponse({ status: 200, description: 'Archivos obtenidos exitosamente', type: [MediaFileResponseDto] })
   async findByType(@Param('fileType') fileType: string) {
-    return await this.mediaService.findByType(fileType);
+    return this.mediaService.findByType(fileType);
   }
 
   /**
@@ -144,7 +144,7 @@ export class MediaFilesController {
   @ApiResponse({ status: 200, description: 'Archivos encontrados exitosamente', type: [MediaFileResponseDto] })
   async findByTags(@Query('tags') tags: string) {
     const tagsArray = tags.split(',').map(t => t.trim());
-    return await this.mediaService.findByTags(tagsArray);
+    return this.mediaService.findByTags(tagsArray);
   }
 
   /**
@@ -173,10 +173,10 @@ export class MediaFilesController {
   @ApiResponse({ status: 200, description: 'Estado actualizado exitosamente', type: MediaFileResponseDto })
   @ApiResponse({ status: 404, description: 'Archivo no encontrado' })
   async updateProcessingStatus(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body('status') status: ProcessingStatusEnum,
   ) {
-    return await this.mediaService.updateProcessingStatus(id, status);
+    return this.mediaService.updateProcessingStatus(id, status);
   }
 
   /**
@@ -206,7 +206,7 @@ export class MediaFilesController {
     },
   })
   async getFileStats() {
-    return await this.mediaService.getFileStats();
+    return this.mediaService.getFileStats();
   }
 
   /**
@@ -221,7 +221,7 @@ export class MediaFilesController {
   @ApiParam({ name: 'userId', description: 'ID del usuario uploader (UUID)' })
   @ApiResponse({ status: 200, description: 'Archivos obtenidos exitosamente', type: [MediaFileResponseDto] })
   async findByUploader(@Param('userId') userId: string) {
-    return await this.mediaService.findByUploader(userId);
+    return this.mediaService.findByUploader(userId);
   }
 
   /**
@@ -237,7 +237,7 @@ export class MediaFilesController {
   @ApiResponse({ status: 200, description: 'Thumbnail generado exitosamente', type: MediaFileResponseDto })
   @ApiResponse({ status: 404, description: 'Archivo no encontrado' })
   async generateThumbnail(@Param('id') id: string) {
-    return await this.mediaService.generateThumbnail(id);
+    return this.mediaService.generateThumbnail(id);
   }
 
   /**
@@ -254,9 +254,9 @@ export class MediaFilesController {
   @ApiResponse({ status: 200, description: 'Contador incrementado exitosamente', type: MediaFileResponseDto })
   @ApiResponse({ status: 404, description: 'Archivo no encontrado' })
   async incrementCounter(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Param('counterType') counterType: 'usage' | 'download' | 'view',
   ) {
-    return await this.mediaService.incrementCounter(id, counterType);
+    return this.mediaService.incrementCounter(id, counterType);
   }
 }

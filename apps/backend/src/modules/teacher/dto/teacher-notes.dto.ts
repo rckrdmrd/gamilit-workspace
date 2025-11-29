@@ -8,7 +8,7 @@ export class AddTeacherNoteDto {
   })
   @IsString()
   @IsNotEmpty()
-  note!: string;
+    note!: string;
 
   @ApiPropertyOptional({
     description: 'Classroom ID context for the note',
@@ -16,28 +16,28 @@ export class AddTeacherNoteDto {
   })
   @IsOptional()
   @IsUUID()
-  classroom_id?: string;
+    classroom_id?: string;
 }
 
 export class StudentNoteResponseDto {
   @ApiProperty({ description: 'Student ID' })
-  student_id!: string;
+    student_id!: string;
 
   @ApiProperty({ description: 'Student email' })
-  email!: string;
+    email!: string;
 
   @ApiProperty({ description: 'Student full name' })
-  full_name?: string;
+    full_name?: string;
 
   @ApiProperty({ description: 'Classroom ID' })
-  classroom_id!: string;
+    classroom_id!: string;
 
   @ApiProperty({ description: 'Classroom name' })
-  classroom_name?: string;
+    classroom_name?: string;
 
   @ApiProperty({ description: 'Teacher notes about the student' })
-  teacher_notes?: string;
+    teacher_notes?: string;
 
   @ApiProperty({ description: 'Last updated timestamp' })
-  updated_at!: Date;
+    updated_at!: Date;
 }

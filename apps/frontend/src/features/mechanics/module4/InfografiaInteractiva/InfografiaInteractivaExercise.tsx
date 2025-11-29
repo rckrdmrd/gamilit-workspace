@@ -126,6 +126,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
   }, [cards, exerciseId]);
 
   // Update progress
+
   useEffect(() => {
     const progress = calculateProgress();
 
@@ -139,6 +140,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
     if (allRevealed && !showFeedback) {
       setTimeout(() => handleCheck(), 1000);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cards, onProgressUpdate, startTime]);
 
   // Handle card click
@@ -231,6 +233,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
   };
 
   // Attach actions to ref
+
   useEffect(() => {
     actionsRef.current = {
       handleReset,
@@ -250,7 +253,8 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
         },
       ],
     };
-  }, [cards]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actionsRef]);
 
   return (
     <>
@@ -305,9 +309,6 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
           </DetectiveButton>
           <DetectiveButton variant="gold" icon={<Download />} onClick={handleExport}>
             Exportar
-          </DetectiveButton>
-          <DetectiveButton variant="primary" onClick={handleCheck}>
-            Verificar Exploración
           </DetectiveButton>
         </div>
       </DetectiveCard>

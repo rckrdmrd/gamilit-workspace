@@ -15,7 +15,7 @@ export class ListTeachersQueryDto {
   })
   @IsOptional()
   @IsString()
-  search?: string;
+    search?: string;
 
   @ApiPropertyOptional({
     description: 'Límite de resultados (default: 50, max: 100)',
@@ -28,7 +28,7 @@ export class ListTeachersQueryDto {
   @IsInt()
   @Min(1)
   @Max(100)
-  limit?: number;
+    limit?: number;
 
   @ApiPropertyOptional({
     description: 'ID de la escuela/tenant (filtrar por tenant)',
@@ -36,5 +36,5 @@ export class ListTeachersQueryDto {
   })
   @IsOptional()
   @IsString()
-  schoolId?: string;
+    schoolId?: string;
 }

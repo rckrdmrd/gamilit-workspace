@@ -61,7 +61,7 @@ export class TeamsService {
       metadata: dto.metadata || {},
     });
 
-    return await this.teamRepo.save(team);
+    return this.teamRepo.save(team);
   }
 
   /**
@@ -72,7 +72,7 @@ export class TeamsService {
   async findAll(classroomId?: string): Promise<Team[]> {
     const whereCondition = classroomId ? { classroom_id: classroomId } : {};
 
-    return await this.teamRepo.find({
+    return this.teamRepo.find({
       where: whereCondition,
       order: { total_xp: 'DESC' },
     });
@@ -139,7 +139,7 @@ export class TeamsService {
     Object.assign(team, dto);
     team.last_activity_at = new Date();
 
-    return await this.teamRepo.save(team);
+    return this.teamRepo.save(team);
   }
 
   /**
@@ -180,7 +180,7 @@ export class TeamsService {
     team.current_members_count += 1;
     team.last_activity_at = new Date();
 
-    return await this.teamRepo.save(team);
+    return this.teamRepo.save(team);
   }
 
   /**
@@ -204,7 +204,7 @@ export class TeamsService {
 
     team.last_activity_at = new Date();
 
-    return await this.teamRepo.save(team);
+    return this.teamRepo.save(team);
   }
 
   /**
@@ -229,7 +229,7 @@ export class TeamsService {
 
     team.last_activity_at = new Date();
 
-    return await this.teamRepo.save(team);
+    return this.teamRepo.save(team);
   }
 
   /**
@@ -249,7 +249,7 @@ export class TeamsService {
     team.total_xp += xp;
     team.last_activity_at = new Date();
 
-    return await this.teamRepo.save(team);
+    return this.teamRepo.save(team);
   }
 
   /**
@@ -258,7 +258,7 @@ export class TeamsService {
    * @returns Lista de equipos ordenados por XP y score
    */
   async getLeaderboard(classroomId: string): Promise<Team[]> {
-    return await this.teamRepo.find({
+    return this.teamRepo.find({
       where: {
         classroom_id: classroomId,
         is_active: true,

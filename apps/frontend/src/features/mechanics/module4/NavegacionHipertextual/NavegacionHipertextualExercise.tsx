@@ -11,7 +11,6 @@ import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
   exerciseId,
   onComplete,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onProgressUpdate: _onProgressUpdate,
   initialData,
   exercise,

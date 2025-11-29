@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Trophy, User, Settings } from 'lucide-react';
+import { Home, BookOpen, Trophy, Bell, User, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useNotificationsStore } from '@/features/notifications/store/notificationsStore';
 
 interface NavigationItem {
   id: string;
@@ -34,6 +35,13 @@ const navigationItems: NavigationItem[] = [
     ariaLabel: 'Ver Gamificación y Logros',
   },
   {
+    id: 'notifications',
+    label: 'Alerts',
+    icon: Bell,
+    path: '/notifications',
+    ariaLabel: 'Ver Notificaciones',
+  },
+  {
     id: 'profile',
     label: 'Profile',
     icon: User,
@@ -52,6 +60,11 @@ const navigationItems: NavigationItem[] = [
 export function BottomNavigation() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { unreadCount, fetchUnreadCount } = useNotificationsStore();
+
+  useEffect(() => {
+    fetchUnreadCount();
+  }, [fetchUnreadCount]);
 
   const isActive = (path: string) => {
     if (path === '/') {
@@ -66,11 +79,11 @@ export function BottomNavigation() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-detective-bg-secondary shadow-lg md:hidden"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-detective-bg-secondary bg-white shadow-lg md:hidden"
       role="navigation"
       aria-label="Navegación Principal"
     >
-      <div className="flex items-center justify-around h-16 px-2">
+      <div className="flex h-16 items-center justify-around px-1">
         {navigationItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);
@@ -79,7 +92,7 @@ export function BottomNavigation() {
             <button
               key={item.id}
               onClick={() => handleNavigation(item.path)}
-              className="relative flex flex-col items-center justify-center min-w-[44px] min-h-[44px] flex-1 gap-1 touch-manipulation"
+              className="relative flex min-h-[44px] min-w-[44px] flex-1 touch-manipulation flex-col items-center justify-center gap-1"
               aria-label={item.ariaLabel}
               aria-currentStep={active ? 'page' : undefined}
             >
@@ -87,7 +100,7 @@ export function BottomNavigation() {
               {active && (
                 <motion.div
                   layoutId="activeTab"
-                  className="absolute inset-0 bg-detective-bg rounded-lg"
+                  className="absolute inset-0 rounded-lg bg-detective-bg"
                   initial={false}
                   transition={{
                     type: 'spring',
@@ -111,21 +124,30 @@ export function BottomNavigation() {
                 }}
               >
                 <Icon
-                  className={`w-6 h-6 transition-colors ${
-                    active
-                      ? 'text-detective-orange'
-                      : 'text-detective-text-secondary'
+                  className={`h-6 w-6 transition-colors ${
+                    active ? 'text-detective-orange' : 'text-detective-text-secondary'
                   }`}
                   strokeWidth={active ? 2.5 : 2}
                 />
+
+                {/* Notification Badge */}
+                {item.id === 'notifications' && unreadCount > 0 && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute -right-1 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1"
+                  >
+                    <span className="text-[10px] font-bold text-white">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  </motion.div>
+                )}
               </motion.div>
 
               {/* Label */}
               <span
                 className={`relative z-10 text-xs font-medium transition-colors ${
-                  active
-                    ? 'text-detective-orange'
-                    : 'text-detective-text-secondary'
+                  active ? 'text-detective-orange' : 'text-detective-text-secondary'
                 }`}
               >
                 {item.label}
@@ -134,7 +156,7 @@ export function BottomNavigation() {
               {/* Active indicator dot */}
               {active && (
                 <motion.div
-                  className="absolute bottom-1 w-1 h-1 bg-detective-orange rounded-full"
+                  className="absolute bottom-1 h-1 w-1 rounded-full bg-detective-orange"
                   layoutId="activeIndicator"
                   initial={false}
                   transition={{

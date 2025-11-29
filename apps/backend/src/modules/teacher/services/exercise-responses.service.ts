@@ -5,9 +5,9 @@
  * @module teacher/services/exercise-responses
  */
 
-import { Injectable, NotFoundException, ForbiddenException, UnauthorizedException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable, NotFoundException, ForbiddenException, UnauthorizedException, InternalServerErrorException } from '@nestjs/common';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { ExerciseAttempt } from '@/modules/progress/entities/exercise-attempt.entity';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import {
@@ -36,6 +36,8 @@ export class ExerciseResponsesService {
     private readonly attemptRepository: Repository<ExerciseAttempt>,
     @InjectRepository(Profile, 'auth')
     private readonly profileRepository: Repository<Profile>,
+    @InjectDataSource('progress')
+    private readonly dataSource: DataSource,
   ) {}
 
   /**
@@ -76,125 +78,176 @@ export class ExerciseResponsesService {
     userId: string,
     query: GetAttemptsQueryDto,
   ): Promise<AttemptsListResponseDto> {
-    // Get teacher's profile first
-    const teacherProfile = await this.getTeacherProfile(userId);
-    const teacherId = teacherProfile.id;
-    const tenantId = teacherProfile.tenant_id;
+    try {
+      // Get teacher's profile first
+      const teacherProfile = await this.getTeacherProfile(userId);
+      const teacherId = teacherProfile.id;
+      const tenantId = teacherProfile.tenant_id;
 
-    const qb = this.attemptRepository
-      .createQueryBuilder('attempt')
-      .leftJoin('"auth_management"."profiles"', 'profile', 'profile.user_id = attempt.user_id')
-      .leftJoin('"educational_content"."exercises"', 'exercise', 'exercise.id = attempt.exercise_id')
-      .leftJoin('"educational_content"."modules"', 'module', 'module.id = exercise.module_id')
-      .leftJoin(
-        '"social_features"."classroom_members"',
-        'cm',
-        'cm.student_id = profile.id',
-      )
-      .leftJoin('"social_features"."classrooms"', 'c', 'c.id = cm.classroom_id')
-      .where(
-        '(c.teacher_id = :teacherId OR EXISTS (SELECT 1 FROM "social_features"."teacher_classrooms" tc WHERE tc.teacher_id = :teacherId AND tc.classroom_id = c.id))',
-        { teacherId },
-      )
-      .andWhere('profile.tenant_id = :tenantId', { tenantId });
+      // Pagination
+      const page = query.page || 1;
+      const limit = query.limit || 20;
+      const offset = (page - 1) * limit;
 
-    // Filters
-    if (query.student_id) {
-      qb.andWhere('profile.id = :studentId', { studentId: query.student_id });
+      // Sorting
+      const sortField = query.sort_by === 'score'
+        ? 'attempt.score'
+        : query.sort_by === 'time'
+          ? 'attempt.time_spent_seconds'
+          : 'attempt.submitted_at';
+      const sortOrder = query.sort_order?.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
+
+      // Build WHERE conditions dynamically
+      const conditions: string[] = [
+        '(c.teacher_id = $1 OR EXISTS (SELECT 1 FROM social_features.teacher_classrooms tc WHERE tc.teacher_id = $1 AND tc.classroom_id = c.id))',
+        'profile.tenant_id = $2',
+      ];
+      const params: any[] = [teacherId, tenantId];
+      let paramIndex = 3;
+
+      if (query.student_id) {
+        conditions.push(`profile.id = $${paramIndex}`);
+        params.push(query.student_id);
+        paramIndex++;
+      }
+
+      if (query.exercise_id) {
+        conditions.push(`attempt.exercise_id = $${paramIndex}`);
+        params.push(query.exercise_id);
+        paramIndex++;
+      }
+
+      if (query.module_id) {
+        conditions.push(`exercise.module_id = $${paramIndex}`);
+        params.push(query.module_id);
+        paramIndex++;
+      }
+
+      if (query.classroom_id) {
+        conditions.push(`c.id = $${paramIndex}`);
+        params.push(query.classroom_id);
+        paramIndex++;
+      }
+
+      if (query.from_date) {
+        conditions.push(`attempt.submitted_at >= $${paramIndex}`);
+        params.push(query.from_date);
+        paramIndex++;
+      }
+
+      if (query.to_date) {
+        conditions.push(`attempt.submitted_at <= $${paramIndex}`);
+        params.push(query.to_date);
+        paramIndex++;
+      }
+
+      if (query.is_correct !== undefined) {
+        conditions.push(`attempt.is_correct = $${paramIndex}`);
+        params.push(query.is_correct);
+        paramIndex++;
+      }
+
+      if (query.student_search) {
+        const searchPattern = `%${query.student_search}%`;
+        conditions.push(`(
+          profile.first_name ILIKE $${paramIndex}
+          OR profile.last_name ILIKE $${paramIndex}
+          OR CONCAT(profile.first_name, ' ', profile.last_name) ILIKE $${paramIndex}
+        )`);
+        params.push(searchPattern);
+        paramIndex++;
+      }
+
+      const whereClause = conditions.join(' AND ');
+
+      // Main query using raw SQL for cross-schema JOINs
+      const sql = `
+        SELECT
+          attempt.id AS attempt_id,
+          attempt.user_id AS attempt_user_id,
+          attempt.exercise_id AS attempt_exercise_id,
+          attempt.attempt_number AS attempt_attempt_number,
+          attempt.submitted_answers AS attempt_submitted_answers,
+          attempt.is_correct AS attempt_is_correct,
+          attempt.score AS attempt_score,
+          attempt.time_spent_seconds AS attempt_time_spent_seconds,
+          attempt.hints_used AS attempt_hints_used,
+          attempt.comodines_used AS attempt_comodines_used,
+          attempt.xp_earned AS attempt_xp_earned,
+          attempt.ml_coins_earned AS attempt_ml_coins_earned,
+          attempt.submitted_at AS attempt_submitted_at,
+          profile.id AS profile_id,
+          profile.first_name AS profile_first_name,
+          profile.last_name AS profile_last_name,
+          exercise.id AS exercise_id,
+          exercise.title AS exercise_title,
+          module.id AS module_id,
+          module.title AS module_name
+        FROM progress_tracking.exercise_attempts attempt
+        LEFT JOIN auth_management.profiles profile ON profile.user_id = attempt.user_id
+        LEFT JOIN educational_content.exercises exercise ON exercise.id = attempt.exercise_id
+        LEFT JOIN educational_content.modules module ON module.id = exercise.module_id
+        LEFT JOIN social_features.classroom_members cm ON cm.student_id = profile.id
+        LEFT JOIN social_features.classrooms c ON c.id = cm.classroom_id
+        WHERE ${whereClause}
+        ORDER BY ${sortField} ${sortOrder}
+        LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
+      `;
+
+      params.push(limit, offset);
+
+      // Execute main query
+      const rawResults = await this.dataSource.query(sql, params);
+
+      // Count query (separate for efficiency)
+      const countSql = `
+        SELECT COUNT(DISTINCT attempt.id) as total
+        FROM progress_tracking.exercise_attempts attempt
+        LEFT JOIN auth_management.profiles profile ON profile.user_id = attempt.user_id
+        LEFT JOIN social_features.classroom_members cm ON cm.student_id = profile.id
+        LEFT JOIN social_features.classrooms c ON c.id = cm.classroom_id
+        LEFT JOIN educational_content.exercises exercise ON exercise.id = attempt.exercise_id
+        WHERE ${whereClause}
+      `;
+
+      // Remove LIMIT/OFFSET params for count query
+      const countParams = params.slice(0, -2);
+      const countResult = await this.dataSource.query(countSql, countParams);
+      const total = parseInt(countResult[0]?.total || '0', 10);
+
+      // Transform raw results to DTOs
+      const data: AttemptResponseDto[] = rawResults.map((row: any) => ({
+        id: row.attempt_id,
+        student_id: row.attempt_user_id,
+        student_name: `${row.profile_first_name || ''} ${row.profile_last_name || ''}`.trim() || 'Unknown',
+        exercise_id: row.attempt_exercise_id,
+        exercise_title: row.exercise_title || 'Unknown Exercise',
+        module_name: row.module_name || 'Unknown Module',
+        attempt_number: row.attempt_attempt_number,
+        submitted_answers: row.attempt_submitted_answers,
+        is_correct: row.attempt_is_correct ?? false,
+        score: row.attempt_score ?? 0,
+        time_spent_seconds: row.attempt_time_spent_seconds ?? 0,
+        hints_used: row.attempt_hints_used,
+        comodines_used: row.attempt_comodines_used,
+        xp_earned: row.attempt_xp_earned,
+        ml_coins_earned: row.attempt_ml_coins_earned,
+        submitted_at: row.attempt_submitted_at ? new Date(row.attempt_submitted_at).toISOString() : new Date().toISOString(),
+      }));
+
+      return {
+        data,
+        total,
+        page,
+        limit,
+        total_pages: Math.ceil(total / limit),
+      };
+    } catch (error: any) {
+      console.error('ExerciseResponsesService.getAttempts ERROR:', error);
+      throw new InternalServerErrorException(
+        `getAttempts failed: ${error?.message || String(error)}`,
+      );
     }
-
-    if (query.exercise_id) {
-      qb.andWhere('attempt.exercise_id = :exerciseId', { exerciseId: query.exercise_id });
-    }
-
-    if (query.module_id) {
-      qb.andWhere('exercise.module_id = :moduleId', { moduleId: query.module_id });
-    }
-
-    if (query.classroom_id) {
-      qb.andWhere('c.id = :classroomId', { classroomId: query.classroom_id });
-    }
-
-    if (query.from_date) {
-      qb.andWhere('attempt.submitted_at >= :fromDate', { fromDate: query.from_date });
-    }
-
-    if (query.to_date) {
-      qb.andWhere('attempt.submitted_at <= :toDate', { toDate: query.to_date });
-    }
-
-    if (query.is_correct !== undefined) {
-      qb.andWhere('attempt.is_correct = :isCorrect', { isCorrect: query.is_correct });
-    }
-
-    // Sorting
-    const sortField = query.sort_by === 'score'
-      ? 'attempt.score'
-      : query.sort_by === 'time'
-      ? 'attempt.time_spent_seconds'
-      : 'attempt.submitted_at';
-
-    const sortOrder = query.sort_order?.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
-    qb.orderBy(sortField, sortOrder);
-
-    // Pagination
-    const page = query.page || 1;
-    const limit = query.limit || 20;
-    qb.skip((page - 1) * limit).take(limit);
-
-    // Select specific fields
-    qb.select([
-      'attempt.id',
-      'attempt.user_id',
-      'attempt.exercise_id',
-      'attempt.attempt_number',
-      'attempt.submitted_answers',
-      'attempt.is_correct',
-      'attempt.score',
-      'attempt.time_spent_seconds',
-      'attempt.hints_used',
-      'attempt.comodines_used',
-      'attempt.xp_earned',
-      'attempt.ml_coins_earned',
-      'attempt.submitted_at',
-      'profile.id',
-      'profile.first_name',
-      'profile.last_name',
-      'exercise.id',
-      'exercise.title',
-      'module.id',
-      'module.name',
-    ]);
-
-    const [attempts, total] = await qb.getManyAndCount();
-
-    // Transform to DTOs
-    const data: AttemptResponseDto[] = attempts.map((attempt: any) => ({
-      id: attempt.id,
-      student_id: attempt.user_id,
-      student_name: `${attempt.profile?.first_name || ''} ${attempt.profile?.last_name || ''}`.trim() || 'Unknown',
-      exercise_id: attempt.exercise_id,
-      exercise_title: attempt.exercise?.title || 'Unknown Exercise',
-      module_name: attempt.exercise?.module?.name || 'Unknown Module',
-      attempt_number: attempt.attempt_number,
-      submitted_answers: attempt.submitted_answers,
-      is_correct: attempt.is_correct ?? false,
-      score: attempt.score ?? 0,
-      time_spent_seconds: attempt.time_spent_seconds ?? 0,
-      hints_used: attempt.hints_used,
-      comodines_used: attempt.comodines_used,
-      xp_earned: attempt.xp_earned,
-      ml_coins_earned: attempt.ml_coins_earned,
-      submitted_at: attempt.submitted_at.toISOString(),
-    }));
-
-    return {
-      data,
-      total,
-      page,
-      limit,
-      total_pages: Math.ceil(total / limit),
-    };
   }
 
   /**
@@ -262,54 +315,84 @@ export class ExerciseResponsesService {
     const teacherId = teacherProfile.id;
     const tenantId = teacherProfile.tenant_id;
 
-    const qb = this.attemptRepository
-      .createQueryBuilder('attempt')
-      .leftJoinAndSelect('"auth_management"."profiles"', 'profile', 'profile.user_id = attempt.user_id')
-      .leftJoinAndSelect('"educational_content"."exercises"', 'exercise', 'exercise.id = attempt.exercise_id')
-      .leftJoinAndSelect('"educational_content"."modules"', 'module', 'module.id = exercise.module_id')
-      .leftJoin(
-        '"social_features"."classroom_members"',
-        'cm',
-        'cm.student_id = profile.id',
-      )
-      .leftJoin('"social_features"."classrooms"', 'c', 'c.id = cm.classroom_id')
-      .where('attempt.id = :attemptId', { attemptId })
-      .andWhere('profile.tenant_id = :tenantId', { tenantId })
-      .andWhere(
-        '(c.teacher_id = :teacherId OR EXISTS (SELECT 1 FROM "social_features"."teacher_classrooms" tc WHERE tc.teacher_id = :teacherId AND tc.classroom_id = c.id))',
-        { teacherId },
-      );
+    // Raw SQL query for cross-schema JOINs
+    const sql = `
+      SELECT
+        attempt.id AS attempt_id,
+        attempt.user_id AS attempt_user_id,
+        attempt.exercise_id AS attempt_exercise_id,
+        attempt.attempt_number AS attempt_attempt_number,
+        attempt.submitted_answers AS attempt_submitted_answers,
+        attempt.is_correct AS attempt_is_correct,
+        attempt.score AS attempt_score,
+        attempt.time_spent_seconds AS attempt_time_spent_seconds,
+        attempt.hints_used AS attempt_hints_used,
+        attempt.comodines_used AS attempt_comodines_used,
+        attempt.xp_earned AS attempt_xp_earned,
+        attempt.ml_coins_earned AS attempt_ml_coins_earned,
+        attempt.submitted_at AS attempt_submitted_at,
+        profile.id AS profile_id,
+        profile.first_name AS profile_first_name,
+        profile.last_name AS profile_last_name,
+        exercise.id AS exercise_id,
+        exercise.title AS exercise_title,
+        exercise.exercise_type AS exercise_type,
+        exercise.content AS exercise_content,
+        exercise.max_points AS exercise_max_points,
+        module.id AS module_id,
+        module.title AS module_name
+      FROM progress_tracking.exercise_attempts attempt
+      LEFT JOIN auth_management.profiles profile ON profile.user_id = attempt.user_id
+      LEFT JOIN educational_content.exercises exercise ON exercise.id = attempt.exercise_id
+      LEFT JOIN educational_content.modules module ON module.id = exercise.module_id
+      LEFT JOIN social_features.classroom_members cm ON cm.student_id = profile.id
+      LEFT JOIN social_features.classrooms c ON c.id = cm.classroom_id
+      WHERE attempt.id = $1
+        AND profile.tenant_id = $2
+        AND (c.teacher_id = $3 OR EXISTS (SELECT 1 FROM social_features.teacher_classrooms tc WHERE tc.teacher_id = $3 AND tc.classroom_id = c.id))
+      LIMIT 1
+    `;
 
-    const attempt = await qb.getOne();
+    const results = await this.dataSource.query(sql, [attemptId, tenantId, teacherId]);
+    const row = results[0];
 
-    if (!attempt) {
+    if (!row) {
       throw new NotFoundException(`Attempt ${attemptId} not found or access denied`);
     }
 
-    // Cast to any to access joined data
-    const attemptData = attempt as any;
+    // Parse exercise content if it's a string
+    let exerciseContent: any = {};
+    if (row.exercise_content) {
+      try {
+        exerciseContent = typeof row.exercise_content === 'string'
+          ? JSON.parse(row.exercise_content)
+          : row.exercise_content;
+      } catch {
+        exerciseContent = {};
+      }
+    }
 
     return {
-      id: attempt.id,
-      student_id: attempt.user_id,
-      student_name: `${attemptData.profile?.first_name || ''} ${attemptData.profile?.last_name || ''}`.trim() || 'Unknown',
-      exercise_id: attempt.exercise_id,
-      exercise_title: attemptData.exercise?.title || 'Unknown Exercise',
-      module_name: attemptData.exercise?.module?.name || 'Unknown Module',
-      attempt_number: attempt.attempt_number,
-      submitted_answers: attempt.submitted_answers,
-      is_correct: attempt.is_correct ?? false,
-      score: attempt.score ?? 0,
-      time_spent_seconds: attempt.time_spent_seconds ?? 0,
-      hints_used: attempt.hints_used,
-      comodines_used: attempt.comodines_used,
-      xp_earned: attempt.xp_earned,
-      ml_coins_earned: attempt.ml_coins_earned,
-      submitted_at: attempt.submitted_at.toISOString(),
+      id: row.attempt_id,
+      student_id: row.attempt_user_id,
+      student_name: `${row.profile_first_name || ''} ${row.profile_last_name || ''}`.trim() || 'Unknown',
+      exercise_id: row.attempt_exercise_id,
+      exercise_title: row.exercise_title || 'Unknown Exercise',
+      module_name: row.module_name || 'Unknown Module',
+      attempt_number: row.attempt_attempt_number,
+      submitted_answers: row.attempt_submitted_answers,
+      is_correct: row.attempt_is_correct ?? false,
+      score: row.attempt_score ?? 0,
+      time_spent_seconds: row.attempt_time_spent_seconds ?? 0,
+      hints_used: row.attempt_hints_used,
+      comodines_used: row.attempt_comodines_used,
+      xp_earned: row.attempt_xp_earned,
+      ml_coins_earned: row.attempt_ml_coins_earned,
+      submitted_at: row.attempt_submitted_at ? new Date(row.attempt_submitted_at).toISOString() : new Date().toISOString(),
       // Additional detail fields
-      correct_answer: attemptData.exercise?.correct_answer || {},
-      exercise_type: attemptData.exercise?.exercise_type || 'unknown',
-      max_score: attemptData.exercise?.max_score || 100,
+      correct_answer: exerciseContent?.correct_answers || [],
+      exercise_type: row.exercise_type || 'unknown',
+      max_score: row.exercise_max_points || 100,
     };
   }
 
@@ -329,26 +412,21 @@ export class ExerciseResponsesService {
     const teacherId = teacherProfile.id;
     const tenantId = teacherProfile.tenant_id;
 
-    const qb = this.attemptRepository
-      .createQueryBuilder('attempt')
-      .leftJoin('"auth_management"."profiles"', 'profile', 'profile.user_id = attempt.user_id')
-      .leftJoin(
-        '"social_features"."classroom_members"',
-        'cm',
-        'cm.student_id = profile.id',
-      )
-      .leftJoin('"social_features"."classrooms"', 'c', 'c.id = cm.classroom_id')
-      .where('profile.id = :studentId', { studentId })
-      .andWhere('profile.tenant_id = :tenantId', { tenantId })
-      .andWhere(
-        '(c.teacher_id = :teacherId OR EXISTS (SELECT 1 FROM "social_features"."teacher_classrooms" tc WHERE tc.teacher_id = :teacherId AND tc.classroom_id = c.id))',
-        { teacherId },
-      )
-      .limit(1);
+    // Raw SQL for cross-schema verification
+    const sql = `
+      SELECT 1
+      FROM auth_management.profiles profile
+      LEFT JOIN social_features.classroom_members cm ON cm.student_id = profile.id
+      LEFT JOIN social_features.classrooms c ON c.id = cm.classroom_id
+      WHERE profile.id = $1
+        AND profile.tenant_id = $2
+        AND (c.teacher_id = $3 OR EXISTS (SELECT 1 FROM social_features.teacher_classrooms tc WHERE tc.teacher_id = $3 AND tc.classroom_id = c.id))
+      LIMIT 1
+    `;
 
-    const hasAccess = await qb.getCount();
+    const results = await this.dataSource.query(sql, [studentId, tenantId, teacherId]);
 
-    if (hasAccess === 0) {
+    if (results.length === 0) {
       throw new ForbiddenException(
         `Teacher does not have access to student ${studentId}`,
       );

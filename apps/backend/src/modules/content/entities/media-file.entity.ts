@@ -42,13 +42,13 @@ export class MediaFile {
    * Identificador único del archivo (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del tenant (FK → auth_management.tenants)
    */
   @Column({ type: 'uuid', nullable: true })
-  tenant_id?: string;
+    tenant_id?: string;
 
   // =====================================================
   // FILE IDENTIFICATION
@@ -58,31 +58,31 @@ export class MediaFile {
    * Nombre del archivo en el sistema (único)
    */
   @Column({ type: 'text' })
-  filename!: string;
+    filename!: string;
 
   /**
    * Nombre original del archivo subido
    */
   @Column({ type: 'text' })
-  original_filename!: string;
+    original_filename!: string;
 
   /**
    * Extensión del archivo (ej: 'jpg', 'mp4', 'pdf')
    */
   @Column({ type: 'text', nullable: true })
-  file_extension?: string;
+    file_extension?: string;
 
   /**
    * Tipo MIME del archivo (ej: 'image/jpeg', 'video/mp4')
    */
   @Column({ type: 'text', nullable: true })
-  mime_type?: string;
+    mime_type?: string;
 
   /**
    * Tamaño del archivo en bytes
    */
   @Column({ type: 'bigint', nullable: true })
-  file_size_bytes?: number;
+    file_size_bytes?: number;
 
   // =====================================================
   // FILE TYPE & CATEGORIZATION
@@ -93,19 +93,19 @@ export class MediaFile {
    * ENUM: image, video, audio, document, interactive, animation
    */
   @Column({ type: 'enum', enum: MediaTypeEnum })
-  media_type!: MediaTypeEnum;
+    media_type!: MediaTypeEnum;
 
   /**
    * Categoría del archivo (ej: 'exercise', 'profile', 'achievement')
    */
   @Column({ type: 'text', nullable: true })
-  category?: string;
+    category?: string;
 
   /**
    * Subcategoría del archivo
    */
   @Column({ type: 'text', nullable: true })
-  subcategory?: string;
+    subcategory?: string;
 
   // =====================================================
   // STORAGE & URLS
@@ -115,25 +115,25 @@ export class MediaFile {
    * Ruta de almacenamiento del archivo
    */
   @Column({ type: 'text' })
-  storage_path!: string;
+    storage_path!: string;
 
   /**
    * URL pública del archivo
    */
   @Column({ type: 'text', nullable: true })
-  public_url?: string;
+    public_url?: string;
 
   /**
    * URL del archivo en CDN
    */
   @Column({ type: 'text', nullable: true })
-  cdn_url?: string;
+    cdn_url?: string;
 
   /**
    * URL de la miniatura/thumbnail
    */
   @Column({ type: 'text', nullable: true })
-  thumbnail_url?: string;
+    thumbnail_url?: string;
 
   // =====================================================
   // MEDIA PROPERTIES (Images/Videos)
@@ -143,37 +143,37 @@ export class MediaFile {
    * Ancho en píxeles (imágenes/videos)
    */
   @Column({ type: 'integer', nullable: true })
-  width?: number;
+    width?: number;
 
   /**
    * Alto en píxeles (imágenes/videos)
    */
   @Column({ type: 'integer', nullable: true })
-  height?: number;
+    height?: number;
 
   /**
    * Duración en segundos (videos/audio)
    */
   @Column({ type: 'integer', nullable: true })
-  duration_seconds?: number;
+    duration_seconds?: number;
 
   /**
    * Bitrate del archivo (videos/audio)
    */
   @Column({ type: 'integer', nullable: true })
-  bitrate?: number;
+    bitrate?: number;
 
   /**
    * Resolución del video (ej: '1920x1080', '4K')
    */
   @Column({ type: 'text', nullable: true })
-  resolution?: string;
+    resolution?: string;
 
   /**
    * Perfil de color (imágenes)
    */
   @Column({ type: 'text', nullable: true })
-  color_profile?: string;
+    color_profile?: string;
 
   // =====================================================
   // DESCRIPTIVE METADATA
@@ -183,37 +183,37 @@ export class MediaFile {
    * Texto alternativo para accesibilidad (alt text)
    */
   @Column({ type: 'text', nullable: true })
-  alt_text?: string;
+    alt_text?: string;
 
   /**
    * Leyenda/caption del archivo
    */
   @Column({ type: 'text', nullable: true })
-  caption?: string;
+    caption?: string;
 
   /**
    * Descripción detallada del archivo
    */
   @Column({ type: 'text', nullable: true })
-  description?: string;
+    description?: string;
 
   /**
    * Información de copyright
    */
   @Column({ type: 'text', nullable: true })
-  copyright_info?: string;
+    copyright_info?: string;
 
   /**
    * Licencia del archivo
    */
   @Column({ type: 'text', nullable: true })
-  license?: string;
+    license?: string;
 
   /**
    * Atribución (créditos)
    */
   @Column({ type: 'text', nullable: true })
-  attribution?: string;
+    attribution?: string;
 
   // =====================================================
   // PROCESSING STATUS
@@ -228,13 +228,13 @@ export class MediaFile {
     enum: ProcessingStatusEnum,
     default: ProcessingStatusEnum.READY,
   })
-  processing_status!: ProcessingStatusEnum;
+    processing_status!: ProcessingStatusEnum;
 
   /**
    * Información de procesamiento en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-  processing_info!: Record<string, any>;
+    processing_info!: Record<string, any>;
 
   // =====================================================
   // SEARCH & ORGANIZATION
@@ -244,19 +244,19 @@ export class MediaFile {
    * Etiquetas/tags del archivo
    */
   @Column({ type: 'text', array: true, nullable: true })
-  tags?: string[];
+    tags?: string[];
 
   /**
    * Palabras clave para búsqueda
    */
   @Column({ type: 'text', array: true, nullable: true })
-  keywords?: string[];
+    keywords?: string[];
 
   /**
    * Ruta de carpeta lógica (organización)
    */
   @Column({ type: 'text', nullable: true })
-  folder_path?: string;
+    folder_path?: string;
 
   // =====================================================
   // USAGE STATISTICS
@@ -266,19 +266,19 @@ export class MediaFile {
    * Contador de veces que se ha usado el archivo
    */
   @Column({ type: 'integer', default: 0 })
-  usage_count!: number;
+    usage_count!: number;
 
   /**
    * Contador de descargas
    */
   @Column({ type: 'integer', default: 0 })
-  download_count!: number;
+    download_count!: number;
 
   /**
    * Contador de visualizaciones
    */
   @Column({ type: 'integer', default: 0 })
-  view_count!: number;
+    view_count!: number;
 
   // =====================================================
   // STATUS FLAGS
@@ -288,19 +288,19 @@ export class MediaFile {
    * Si el archivo es público (acceso sin autenticación)
    */
   @Column({ type: 'boolean', default: false })
-  is_public!: boolean;
+    is_public!: boolean;
 
   /**
    * Si el archivo está activo
    */
   @Column({ type: 'boolean', default: true })
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Si el archivo ha sido optimizado
    */
   @Column({ type: 'boolean', default: false })
-  is_optimized!: boolean;
+    is_optimized!: boolean;
 
   // =====================================================
   // UPLOAD INFORMATION
@@ -310,13 +310,13 @@ export class MediaFile {
    * ID del usuario que subió el archivo (FK → auth_management.profiles)
    */
   @Column({ type: 'uuid', nullable: true })
-  uploaded_by?: string;
+    uploaded_by?: string;
 
   /**
    * ID de sesión de carga (para uploads multipart)
    */
   @Column({ type: 'text', nullable: true })
-  upload_session_id?: string;
+    upload_session_id?: string;
 
   // =====================================================
   // TECHNICAL METADATA
@@ -326,13 +326,13 @@ export class MediaFile {
    * Datos EXIF del archivo (imágenes)
    */
   @Column({ type: 'jsonb', default: {} })
-  exif_data!: Record<string, any>;
+    exif_data!: Record<string, any>;
 
   /**
    * Metadatos adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   // =====================================================
   // AUDIT TIMESTAMPS
@@ -342,11 +342,11 @@ export class MediaFile {
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización del registro
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 }

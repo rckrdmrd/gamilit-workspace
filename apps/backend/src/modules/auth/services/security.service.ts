@@ -24,8 +24,11 @@ import { DB_SCHEMAS } from '@/shared/constants';
 @Injectable()
 export class SecurityService {
   private readonly MAX_FAILURES_PER_EMAIL = 5;
+
   private readonly MAX_FAILURES_PER_IP = 10;
+
   private readonly RATE_LIMIT_WINDOW_MINUTES = 15;
+
   private readonly BLOCK_DURATION_MINUTES = 30;
 
   constructor(
@@ -38,7 +41,7 @@ export class SecurityService {
    */
   async logAttempt(dto: CreateAuthAttemptDto): Promise<AuthAttempt> {
     const attempt = this.attemptRepository.create(dto);
-    return await this.attemptRepository.save(attempt);
+    return this.attemptRepository.save(attempt);
   }
 
   /**
@@ -79,7 +82,7 @@ export class SecurityService {
   async getRecentFailures(email: string, minutes: number = 15): Promise<number> {
     const since = new Date(Date.now() - minutes * 60 * 1000);
 
-    return await this.attemptRepository.count({
+    return this.attemptRepository.count({
       where: {
         email,
         success: false,
@@ -94,7 +97,7 @@ export class SecurityService {
   async getRecentFailuresByIP(ip: string, minutes: number = 15): Promise<number> {
     const since = new Date(Date.now() - minutes * 60 * 1000);
 
-    return await this.attemptRepository.count({
+    return this.attemptRepository.count({
       where: {
         ip_address: ip,
         success: false,
@@ -126,7 +129,7 @@ export class SecurityService {
    * Obtener historial de intentos por email
    */
   async getAttemptHistory(email: string, limit: number = 10): Promise<AuthAttempt[]> {
-    return await this.attemptRepository.find({
+    return this.attemptRepository.find({
       where: { email },
       order: { attempted_at: 'DESC' },
       take: limit,

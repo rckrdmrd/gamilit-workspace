@@ -1,27 +1,36 @@
 # Inventario de Tablas - Base de Datos GAMILIT
 
 **Fecha generación:** 2025-11-07
-**Versión:** 1.0
-**Total tablas:** 64
-**Método:** Análisis de archivos DDL
+**Última actualización:** 2025-11-29
+**Versión:** 1.2
+**Total tablas:** 77+
+**Método:** Análisis de archivos DDL + Validación de entities TypeORM
 
 ---
 
 ## 📑 Índice por Schema
 
-| Schema | Tablas | % del Total |
-|--------|--------|-------------|
-| [auth_management](#auth_management-12-tablas) | 12 | 19% |
-| [gamification_system](#gamification_system-12-tablas) | 12 | 19% |
-| [public](#public-9-tablas) | 9 | 14% ⚠️ |
-| [social_features](#social_features-7-tablas) | 7 | 11% |
-| [audit_logging](#audit_logging-6-tablas) | 6 | 9% |
-| [content_management](#content_management-5-tablas) | 5 | 8% |
-| [progress_tracking](#progress_tracking-5-tablas) | 5 | 8% |
-| [educational_content](#educational_content-4-tablas) | 4 | 6% |
-| [system_configuration](#system_configuration-3-tablas) | 3 | 5% |
-| [auth](#auth-1-tabla) | 1 | 2% |
-| **TOTAL** | **64** | **100%** |
+| Schema | Tablas | % del Total | Actualizado |
+|--------|--------|-------------|-------------|
+| [auth_management](#auth_management-12-tablas) | 12 | 17% | 2025-11-07 |
+| [gamification_system](#gamification_system-16-tablas) | 16 | 22% | **2025-11-29** |
+| [public](#public-5-tablas) | 5 | 7% ✅ | **2025-11-29** |
+| [social_features](#social_features-8-tablas) | 8 | 11% ✅ | **2025-11-29** |
+| [audit_logging](#audit_logging-6-tablas) | 6 | 8% | 2025-11-07 |
+| [content_management](#content_management-5-tablas) | 5 | 7% | 2025-11-07 |
+| [progress_tracking](#progress_tracking-5-tablas) | 5 | 7% | 2025-11-07 |
+| [educational_content](#educational_content-10-tablas) | 10+ | 13% | **2025-11-29** |
+| [system_configuration](#system_configuration-3-tablas) | 3 | 4% | 2025-11-07 |
+| [notifications](#notifications-6-tablas) | 6 | 8% ✨ | **2025-11-29** |
+| [auth](#auth-1-tabla) | 1 | 1% | 2025-11-07 |
+| **TOTAL** | **77+** | **100%** | |
+
+> **Nota v1.2 (2025-11-29):**
+> - Corregido errores de documentación en schema `public` (9→5 tablas)
+> - Agregado schema `notifications` (6 tablas, EXT-003)
+> - Movida `assignment_classrooms` de public a social_features
+> - Eliminadas tablas fantasma: public.classrooms, public.notifications, public.classroom_students
+> - Validadas duplicaciones potenciales: NO EXISTEN duplicados reales
 
 ---
 
@@ -78,35 +87,49 @@
 
 ---
 
-### gamification_system (12 tablas)
+### gamification_system (16 tablas)
 
 **Ubicación:** `apps/database/ddl/schemas/gamification_system/tables/`
+**Última actualización:** 2025-11-29
 
-| # | Tabla | Propósito | Estado Doc |
-|---|-------|-----------|------------|
-| 1 | `user_stats` | Estadísticas de usuario (puntos, nivel, racha) | ✅ |
-| 2 | `user_ranks` | Rangos maya (NACOM, BATAB, HOLCATTE, GUERRERO, MERCENARIO) | ✅ |
-| 3 | `achievements` | Catálogo de logros | ✅ |
-| 4 | `user_achievements` | Logros desbloqueados por usuario | ✅ |
-| 5 | `ml_coins_transactions` | Transacciones de monedas ML (Maya Learning) | ✅ |
-| 6 | `missions` | Misiones diarias/semanales | ✅ |
-| 7 | `comodines_inventory` | Inventario de comodines (power-ups) | ✅ |
-| 8 | `notifications` | Notificaciones de gamificación | ✅ ⚠️ |
-| 9 | `leaderboard_metadata` | Metadata de leaderboards | ✅ |
-| 10 | `achievement_categories` | Categorías de logros | ✅ |
-| 11 | `active_boosts` | Boosts activos del usuario | ✅ |
-| 12 | `inventory_transactions` | Historial de transacciones de inventario | ✅ |
+| # | Tabla | Propósito | Estado Doc | Entity TypeORM |
+|---|-------|-----------|------------|----------------|
+| 1 | `user_stats` | Estadísticas de usuario (puntos, nivel, racha) | ✅ | ✅ |
+| 2 | `user_ranks` | Historial de rangos del usuario | ✅ | ✅ |
+| 3 | `achievements` | Catálogo de logros | ✅ | ✅ |
+| 4 | `user_achievements` | Logros desbloqueados por usuario | ✅ | ✅ |
+| 5 | `ml_coins_transactions` | Transacciones de monedas ML (Maya Learning) | ✅ | ✅ |
+| 6 | `missions` | Misiones diarias/semanales | ✅ | ✅ |
+| 7 | `comodines_inventory` | Inventario de comodines (power-ups) | ✅ | ✅ |
+| 8 | `notifications` | Notificaciones de gamificación | ✅ ⚠️ | ✅ |
+| 9 | `leaderboard_metadata` | Metadata de leaderboards | ✅ | ✅ |
+| 10 | `achievement_categories` | Categorías de logros | ✅ | ✅ |
+| 11 | `active_boosts` | Boosts activos del usuario | ✅ | ✅ |
+| 12 | `inventory_transactions` | Historial de transacciones de inventario | ✅ | ✅ |
+| 13 | `maya_ranks` | **[NUEVO]** Configuración de rangos Maya (referencia) | ✅ | ✅ |
+| 14 | `comodin_usage_log` | **[NUEVO]** Historial detallado de uso de comodines | ✅ | ✅ |
+| 15 | `comodin_usage_tracking` | **[NUEVO]** Tracking agregado de uso de comodines | ✅ | ⚠️ |
+| 16 | `classroom_missions` | **[NUEVO]** Misiones asignadas por classroom | ✅ | ✅ |
 
 **⚠️ Posible Duplicación:**
 - `notifications` existe en **gamification_system** Y en **public**
 - **Acción requerida:** Verificar si son tablas diferentes o duplicadas
 
-**Sistema de Rangos Maya:**
-1. **NACOM** (Nivel 1) - Principiante
-2. **BATAB** (Nivel 2) - Intermedio
-3. **HOLCATTE** (Nivel 3) - Avanzado
-4. **GUERRERO** (Nivel 4) - Experto
-5. **MERCENARIO** (Nivel 5) - Maestro
+**Sistema de Rangos Maya (Actualizado 2025-11-29):**
+Tabla `maya_ranks` - Configuración de referencia:
+1. **Ajaw** (Orden 1) - Principiante
+2. **Nacom** (Orden 2) - Guerrero
+3. **Ah K'in** (Orden 3) - Sacerdote
+4. **Halach Uinic** (Orden 4) - Gobernante
+5. **K'uk'ulkan** (Orden 5) - Serpiente Emplumada (Maestro)
+
+Tabla `user_ranks` - Historial de progresión del usuario con porcentaje de avance.
+
+**Comodines (Power-ups):**
+Tabla `comodin_usage_log` registra uso detallado con:
+- Tipo: `pistas`, `vision_lectora`, `segunda_oportunidad`
+- Contexto: exercise_id, attempt_id, module_id
+- Efecto aplicado y valor proporcionado (JSONB)
 
 **Referencias SIMCO:**
 - Docs: `docs/03-desarrollo/base-de-datos/schemas/gamification_system/`
@@ -116,63 +139,57 @@
 
 ---
 
-### public (9 tablas) ⚠️
+### public (5 tablas) - ACTUALIZADO 2025-11-29
 
 **Ubicación:** `apps/database/ddl/schemas/public/tables/`
-**Estado:** ⚠️ **REQUIERE ANÁLISIS CRÍTICO**
+**Estado:** ✅ **VALIDADO - Errores de documentación corregidos**
+**Última actualización:** 2025-11-29
 
-| # | Tabla | Propósito Estimado | Estado Doc |
-|---|-------|-------------------|------------|
-| 1 | `assignments` | Asignaciones de ejercicios a clases | ⚠️ No doc |
-| 2 | `assignment_classrooms` | Relación assignments ↔ classrooms | ⚠️ No doc |
-| 3 | `assignment_exercises` | Relación assignments ↔ exercises | ⚠️ No doc |
-| 4 | `assignment_students` | Relación assignments ↔ students | ⚠️ No doc |
-| 5 | `assignment_submissions` | Entregas de estudiantes | ⚠️ No doc |
-| 6 | `classrooms` | Clases/Aulas | ⚠️ No doc ⚠️ |
-| 7 | `classroom_students` | Estudiantes en clases | ⚠️ No doc ⚠️ |
-| 8 | `notifications` | Notificaciones generales | ⚠️ No doc ⚠️ |
-| 9 | `teacher_notes` | Notas de profesores | ⚠️ No doc |
+| # | Tabla | Propósito | Estado Doc | Nota |
+|---|-------|-----------|------------|------|
+| 1 | `assignments` | Asignaciones de ejercicios | ✅ | RF-TEACH-002 |
+| 2 | `assignment_exercises` | Relación assignments ↔ exercises | ✅ | RF-TEACH-002 |
+| 3 | `assignment_students` | Relación assignments ↔ students | ✅ | RF-TEACH-002 |
+| 4 | `assignment_submissions` | Entregas de estudiantes | ✅ | RF-TEACH-002 |
+| 5 | `teacher_notes` | Notas de profesores | ✅ | RF-TEACH-002 |
 
-### ⚠️ ALERTA CRÍTICA: Duplicación de Tablas
+> **✅ CORREGIDO (2025-11-29):** El inventario anterior tenía errores de documentación.
+>
+> **Tablas que NO existen en public (eliminadas del inventario):**
+> - ~~`public.classrooms`~~ → Solo existe `social_features.classrooms`
+> - ~~`public.classroom_students`~~ → Solo existe `social_features.classroom_members`
+> - ~~`public.notifications`~~ → Solo existe `notifications.notifications` (EXT-003)
+> - ~~`public.assignment_classrooms`~~ → Movida a `social_features.assignment_classrooms`
 
-**Problema 1: classrooms duplicado**
-- `public.classrooms` vs `social_features.classrooms`
-- `public.classroom_students` vs `social_features.classroom_members`
+### ✅ Duplicaciones Resueltas (2025-11-29)
 
-**Problema 2: notifications duplicado**
-- `public.notifications` vs `gamification_system.notifications`
+| Tabla Reportada | Schema Real | Estado |
+|-----------------|-------------|--------|
+| `public.classrooms` | `social_features.classrooms` | ✅ NO DUPLICADA - Solo existe en social_features |
+| `public.notifications` | `notifications.notifications` | ✅ NO DUPLICADA - Solo existe en notifications schema |
+| `public.assignment_classrooms` | `social_features.assignment_classrooms` | ✅ MOVIDA - Documentado en RF-TEACH-002 |
 
-**Problema 3: Arquitectura inconsistente**
-- Las tablas de `assignments` pertenecen funcionalmente a `educational_content` o `progress_tracking`
-- Estar en `public` rompe la arquitectura modular
+### Sobre `gamification_system.notifications` (DEPRECATED)
 
-### 🎯 Acciones Requeridas URGENTES
+```
+⚠️ DEPRECATED: gamification_system.notifications
+✅ ACTUAL: notifications.notifications (EXT-003)
 
-1. **Análisis de Duplicación:**
-   - [ ] Comparar esquemas de `public.classrooms` vs `social_features.classrooms`
-   - [ ] Comparar esquemas de `public.notifications` vs `gamification_system.notifications`
-   - [ ] Determinar cuál es la tabla "correcta" y cuál es legacy/duplicada
-
-2. **Plan de Migración/Consolidación:**
-   - [ ] Si `public` es legacy: Migrar datos a schemas correctos
-   - [ ] Si `public` es funcional: Renombrar y mover a schema apropiado
-   - [ ] Eliminar duplicados después de consolidación
-
-3. **Reasignación de Tablas:**
-   - `assignments` → Debería estar en `educational_content` o `progress_tracking`
-   - `classrooms` → Consolidar en `social_features` (ya existe)
-   - `notifications` → Consolidar en `gamification_system` (ya existe)
-   - `teacher_notes` → Podría ir en `educational_content` o nuevo schema `teacher_tools`
+La tabla gamification_system.notifications existe pero está DEPRECADA.
+El sistema consolidado de notificaciones multi-canal usa notifications.notifications.
+Ver: modules/notifications/entities/multichannel/notification.entity.ts
+```
 
 **Referencias SIMCO:**
-- ⚠️ Requiere documentación urgente en `docs/03-desarrollo/base-de-datos/schemas/public/`
-- ⚠️ Requiere análisis de arquitectura
+- RF-TEACH-002-assignment-system.md (documentación de assignments)
+- EXT-003 (Sistema Multi-Canal de Notificaciones)
 
 ---
 
-### social_features (7 tablas)
+### social_features (8 tablas)
 
 **Ubicación:** `apps/database/ddl/schemas/social_features/tables/`
+**Última actualización:** 2025-11-29
 
 | # | Tabla | Propósito | Estado Doc |
 |---|-------|-----------|------------|
@@ -183,11 +200,12 @@
 | 5 | `teams` | Equipos de estudiantes | ✅ |
 | 6 | `team_members` | Miembros de equipos | ✅ |
 | 7 | `team_challenges` | Desafíos entre equipos | ✅ |
+| 8 | `assignment_classrooms` | **[MOVIDA 2025-11-29]** Relación assignments ↔ classrooms | ✅ |
 
-**⚠️ Conflicto con public:**
-- `social_features.classrooms` vs `public.classrooms`
-- `social_features.classroom_members` vs `public.classroom_students`
-- **Acción:** Determinar cuál es la tabla correcta
+**✅ Sin conflictos (Validado 2025-11-29):**
+- `social_features.classrooms` es la ÚNICA tabla de classrooms (no existe en public)
+- `social_features.classroom_members` es la ÚNICA tabla de miembros (no existe en public)
+- `social_features.assignment_classrooms` fue movida desde public (2025-11-29)
 
 **Referencias SIMCO:**
 - Docs: `docs/03-desarrollo/base-de-datos/schemas/social_features/`
@@ -268,26 +286,40 @@
 
 ---
 
-### educational_content (4 tablas)
+### educational_content (15+ tablas)
 
 **Ubicación:** `apps/database/ddl/schemas/educational_content/tables/`
+**Última actualización:** 2025-11-29
 
-| # | Tabla | Propósito | Estado Doc |
-|---|-------|-----------|------------|
-| 1 | `modules` | Módulos educativos | ✅ |
-| 2 | `exercises` | Ejercicios/Actividades | ✅ |
-| 3 | `assessment_rubrics` | Rúbricas de evaluación | ✅ |
-| 4 | `media_resources` | Recursos multimedia educativos | ✅ |
+| # | Tabla | Propósito | Estado Doc | Entity TypeORM |
+|---|-------|-----------|------------|----------------|
+| 1 | `modules` | Módulos educativos | ✅ | ✅ |
+| 2 | `exercises` | Ejercicios/Actividades | ✅ | ✅ |
+| 3 | `assessment_rubrics` | Rúbricas de evaluación | ✅ | ✅ |
+| 4 | `media_resources` | Recursos multimedia educativos | ✅ | ✅ |
+| 5 | `assignments` | Tareas asignadas por profesores | ✅ | ✅ |
+| 6 | `assignment_exercises` | Ejercicios en una tarea | ✅ | ✅ |
+| 7 | `assignment_students` | Tareas asignadas a estudiantes | ✅ | ✅ |
+| 8 | `assignment_submissions` | Entregas de estudiantes | ✅ | ✅ |
+| 9 | `content_approvals` | Aprobaciones de contenido | ✅ | ✅ |
+| 10 | `difficulty_criteria` | **[NUEVO]** Criterios CEFR (A1-C2+) | ✅ | ✅ |
+| 11 | `exercise_mechanic_mapping` | Mapeo ejercicio → mecánica | ✅ | ✅ |
+| 12 | `exercise_validation_config` | Configuración de validación | ✅ | ⚠️ |
+| 13 | `classroom_modules` | Módulos asignados a classrooms | ✅ | ⚠️ |
+| 14 | `teacher_content` | Contenido personalizado de profesor | ✅ | ✅ |
+| 15+ | _otros_ | Tablas deprecadas/migradas | ⚠️ | - |
 
-**Nota:**
-- Originalmente se esperaban tablas de `subjects`, `lessons`, `quizzes`
-- Parece que la estructura se simplificó a `modules` y `exercises`
-- **Acción:** Verificar si quizzes están en otra tabla o integrados en exercises
+**Tabla difficulty_criteria (CEFR Levels):**
+Define criterios por nivel de dificultad:
+- **Niveles:** A1, A2, B1, B2, B2+, C1, C2, C2+
+- **Criterios:** vocab_range, sentence_length, time_multiplier
+- **Recompensas:** base_xp, base_coins por nivel
+- **Promoción:** success_rate requerido, min_exercises
 
 **Referencias SIMCO:**
 - Docs: `docs/03-desarrollo/base-de-datos/schemas/educational_content/`
-- Backend: `apps/backend/src/modules/subjects/`, `apps/backend/src/modules/exercises/`
-- Frontend: `apps/frontend/src/features/learning/`
+- Backend: `apps/backend/src/modules/educational/`, `apps/backend/src/modules/assignments/`
+- Frontend: `apps/frontend/src/features/learning/`, `apps/frontend/src/features/assignments/`
 
 ---
 
@@ -312,22 +344,52 @@
 
 ---
 
+### notifications (6 tablas) ✨ NUEVO - EXT-003
+
+**Ubicación:** `apps/database/ddl/schemas/notifications/tables/`
+**Estado:** ✅ **Sistema Multi-Canal de Notificaciones**
+**Última actualización:** 2025-11-29
+
+| # | Tabla | Propósito | Estado Doc |
+|---|-------|-----------|------------|
+| 1 | `notifications` | Notificaciones multi-canal (in_app, email, push) | ✅ |
+| 2 | `notification_preferences` | Preferencias de usuario por tipo/canal | ✅ |
+| 3 | `notification_logs` | Historial de envíos y resultados | ✅ |
+| 4 | `notification_templates` | Plantillas de notificaciones | ✅ |
+| 5 | `notification_queue` | Cola de procesamiento asíncrono | ✅ |
+| 6 | `user_devices` | Dispositivos registrados para push | ✅ |
+
+**Arquitectura EXT-003:**
+- Sistema consolidado que reemplaza `gamification_system.notifications` (deprecated)
+- Soporte multi-canal: in_app, email, push
+- Procesamiento asíncrono mediante cola
+- Templates con variables dinámicas
+
+**Referencias SIMCO:**
+- Docs: `docs/03-fase-extensiones/EXT-003-notificaciones/`
+- Backend: `apps/backend/src/modules/notifications/`
+- Entity: `modules/notifications/entities/multichannel/`
+
+---
+
 ## 📊 Análisis Estadístico
 
-### Distribución por Schema
+### Distribución por Schema (Actualizado 2025-11-29)
 
 ```
-auth_management      ████████████████████ 12 (19%)
-gamification_system  ████████████████████ 12 (19%)
-public              ████████████████ 9 (14%) ⚠️
-social_features     ██████████████ 7 (11%)
-audit_logging       ████████████ 6 (9%)
-content_management  ██████████ 5 (8%)
-progress_tracking   ██████████ 5 (8%)
-educational_content ████████ 4 (6%)
-system_config       ██████ 3 (5%)
-auth               ██ 1 (2%)
+gamification_system  ████████████████████ 16 (20%)
+auth_management      ████████████████ 12 (15%)
+educational_content  ██████████████ 10+ (13%)
+social_features      ██████████ 8 (10%)
+audit_logging        ████████ 6 (8%)
+notifications        ████████ 6 (8%) ✨ NUEVO EXT-003
+content_management   ██████ 5 (6%)
+progress_tracking    ██████ 5 (6%)
+public               ██████ 5 (6%) ✅ CORREGIDO
+system_config        ████ 3 (4%)
+auth                 ██ 1 (1%)
 ```
+**Total estimado: 77+ tablas**
 
 ### Por Tipo de Funcionalidad
 

@@ -9,53 +9,53 @@ export class ProgressOverviewDto {
     description: 'Total number of users in the system',
     example: 150,
   })
-  total_users!: number;
+    total_users!: number;
 
   @ApiProperty({
     description: 'Number of active users',
     example: 120,
   })
-  active_users!: number;
+    active_users!: number;
 
   @ApiProperty({
     description: 'Total number of exercise submissions',
     example: 5234,
   })
-  total_submissions!: number;
+    total_submissions!: number;
 
   @ApiProperty({
     description: 'Number of correct submissions',
     example: 4128,
   })
-  correct_submissions!: number;
+    correct_submissions!: number;
 
   @ApiProperty({
     description: 'Average score across all submissions',
     example: 78.5,
   })
-  avg_score!: number;
+    avg_score!: number;
 
   @ApiProperty({
     description: 'Number of completed modules',
     example: 342,
   })
-  completed_modules!: number;
+    completed_modules!: number;
 
   @ApiProperty({
     description: 'Number of modules in progress',
     example: 187,
   })
-  in_progress_modules!: number;
+    in_progress_modules!: number;
 
   @ApiProperty({
     description: 'Average progress percentage across all modules',
     example: 65.3,
   })
-  avg_progress_percent!: number;
+    avg_progress_percent!: number;
 
   @ApiProperty({
     description: 'Total time spent in hours',
     example: 1248.5,
   })
-  total_time_spent_hours!: number;
+    total_time_spent_hours!: number;
 }

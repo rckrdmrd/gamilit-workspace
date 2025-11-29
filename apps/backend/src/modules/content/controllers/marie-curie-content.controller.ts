@@ -40,7 +40,7 @@ export class MarieCurieContentController {
   @ApiQuery({ name: 'difficulty', required: false, description: 'Nivel de dificultad (beginner, intermediate, advanced, etc.)' })
   @ApiResponse({ status: 200, description: 'Lista de contenido obtenida exitosamente', type: [MarieCurieContentResponseDto] })
   async findAll(@Query('difficulty') difficulty?: string) {
-    return await this.contentService.findAll(difficulty);
+    return this.contentService.findAll(difficulty);
   }
 
   /**
@@ -56,7 +56,7 @@ export class MarieCurieContentController {
   @ApiResponse({ status: 200, description: 'Contenido obtenido exitosamente', type: MarieCurieContentResponseDto })
   @ApiResponse({ status: 404, description: 'Contenido no encontrado' })
   async findById(@Param('id') id: string) {
-    return await this.contentService.findById(id);
+    return this.contentService.findById(id);
   }
 
   /**
@@ -71,7 +71,7 @@ export class MarieCurieContentController {
   @ApiParam({ name: 'category', description: 'Categoría del contenido' })
   @ApiResponse({ status: 200, description: 'Contenido obtenido exitosamente', type: [MarieCurieContentResponseDto] })
   async findByCategory(@Param('category') category: string) {
-    return await this.contentService.findByCategory(category);
+    return this.contentService.findByCategory(category);
   }
 
   /**
@@ -86,7 +86,7 @@ export class MarieCurieContentController {
   @ApiResponse({ status: 201, description: 'Contenido creado exitosamente', type: MarieCurieContentResponseDto })
   @ApiResponse({ status: 400, description: 'Datos inválidos' })
   async create(@Body() dto: CreateMarieCurieContentDto) {
-    return await this.contentService.create(dto);
+    return this.contentService.create(dto);
   }
 
   /**
@@ -102,10 +102,10 @@ export class MarieCurieContentController {
   @ApiResponse({ status: 200, description: 'Contenido actualizado exitosamente', type: MarieCurieContentResponseDto })
   @ApiResponse({ status: 404, description: 'Contenido no encontrado' })
   async update(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() dto: Partial<CreateMarieCurieContentDto>,
   ) {
-    return await this.contentService.update(id, dto);
+    return this.contentService.update(id, dto);
   }
 
   /**
@@ -137,7 +137,7 @@ export class MarieCurieContentController {
   @ApiResponse({ status: 200, description: 'Contenido publicado exitosamente', type: MarieCurieContentResponseDto })
   @ApiResponse({ status: 404, description: 'Contenido no encontrado' })
   async publish(@Param('id') id: string) {
-    return await this.contentService.publish(id);
+    return this.contentService.publish(id);
   }
 
   /**
@@ -151,7 +151,7 @@ export class MarieCurieContentController {
   })
   @ApiResponse({ status: 200, description: 'Contenido publicado obtenido exitosamente', type: [MarieCurieContentResponseDto] })
   async getPublishedContent() {
-    return await this.contentService.getPublishedContent();
+    return this.contentService.getPublishedContent();
   }
 
   /**
@@ -165,6 +165,6 @@ export class MarieCurieContentController {
   })
   @ApiResponse({ status: 200, description: 'Contenido destacado obtenido exitosamente', type: [MarieCurieContentResponseDto] })
   async getFeaturedContent() {
-    return await this.contentService.getFeaturedContent();
+    return this.contentService.getFeaturedContent();
   }
 }

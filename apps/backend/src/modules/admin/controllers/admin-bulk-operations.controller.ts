@@ -60,10 +60,10 @@ export class AdminBulkOperationsController {
   @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   async bulkSuspendUsers(
     @Body() dto: BulkSuspendUsersDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<BulkOperationStatusDto> {
     const adminId = req.user.sub; // JWT payload contiene sub = user.id
-    return await this.bulkOpsService.bulkSuspendUsers(dto, adminId);
+    return this.bulkOpsService.bulkSuspendUsers(dto, adminId);
   }
 
   /**
@@ -82,10 +82,10 @@ export class AdminBulkOperationsController {
   })
   async bulkActivateUsers(
     @Body() dto: BulkActivateUsersDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<BulkOperationStatusDto> {
     const adminId = req.user.sub;
-    return await this.bulkOpsService.bulkActivateUsers(dto, adminId);
+    return this.bulkOpsService.bulkActivateUsers(dto, adminId);
   }
 
   /**
@@ -104,10 +104,10 @@ export class AdminBulkOperationsController {
   })
   async bulkUpdateRole(
     @Body() dto: BulkUpdateRoleDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<BulkOperationStatusDto> {
     const adminId = req.user.sub;
-    return await this.bulkOpsService.bulkUpdateRole(dto, adminId);
+    return this.bulkOpsService.bulkUpdateRole(dto, adminId);
   }
 
   /**
@@ -126,10 +126,10 @@ export class AdminBulkOperationsController {
   })
   async bulkDeleteUsers(
     @Body() dto: BulkDeleteUsersDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<BulkOperationStatusDto> {
     const adminId = req.user.sub;
-    return await this.bulkOpsService.bulkDeleteUsers(dto, adminId);
+    return this.bulkOpsService.bulkDeleteUsers(dto, adminId);
   }
 
   /**
@@ -147,7 +147,7 @@ export class AdminBulkOperationsController {
   })
   @ApiResponse({ status: 404, description: 'Bulk operation not found' })
   async getBulkOperationStatus(@Param('id') id: string): Promise<BulkOperationStatusDto> {
-    return await this.bulkOpsService.getBulkOperationStatus(id);
+    return this.bulkOpsService.getBulkOperationStatus(id);
   }
 
   /**
@@ -164,6 +164,6 @@ export class AdminBulkOperationsController {
     type: [BulkOperationStatusDto],
   })
   async listBulkOperations(): Promise<BulkOperationStatusDto[]> {
-    return await this.bulkOpsService.listBulkOperations();
+    return this.bulkOpsService.listBulkOperations();
   }
 }

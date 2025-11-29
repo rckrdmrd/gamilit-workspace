@@ -11,7 +11,7 @@ export class AssignClassroomDto {
   })
   @IsUUID()
   @IsNotEmpty()
-  teacherId!: string;
+    teacherId!: string;
 
   @ApiProperty({
     description: 'Classroom ID (UUID)',
@@ -19,7 +19,7 @@ export class AssignClassroomDto {
   })
   @IsUUID()
   @IsNotEmpty()
-  classroomId!: string;
+    classroomId!: string;
 
   @ApiPropertyOptional({
     description: 'Optional notes about the assignment',
@@ -29,5 +29,5 @@ export class AssignClassroomDto {
   @IsOptional()
   @IsString()
   @MaxLength(500)
-  notes?: string;
+    notes?: string;
 }

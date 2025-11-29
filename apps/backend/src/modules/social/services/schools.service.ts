@@ -55,7 +55,7 @@ export class SchoolsService {
       metadata: dto.metadata || {},
     });
 
-    return await this.schoolRepo.save(school);
+    return this.schoolRepo.save(school);
   }
 
   /**
@@ -66,7 +66,7 @@ export class SchoolsService {
   async findAll(tenantId?: string): Promise<School[]> {
     const whereCondition = tenantId ? { tenant_id: tenantId } : {};
 
-    return await this.schoolRepo.find({
+    return this.schoolRepo.find({
       where: whereCondition,
       order: { name: 'ASC' },
     });
@@ -131,7 +131,7 @@ export class SchoolsService {
     }
 
     Object.assign(school, dto);
-    return await this.schoolRepo.save(school);
+    return this.schoolRepo.save(school);
   }
 
   /**
@@ -148,7 +148,7 @@ export class SchoolsService {
     }
 
     school.is_active = false;
-    return await this.schoolRepo.save(school);
+    return this.schoolRepo.save(school);
   }
 
   /**
@@ -206,6 +206,6 @@ export class SchoolsService {
       ...settings,
     };
 
-    return await this.schoolRepo.save(school);
+    return this.schoolRepo.save(school);
   }
 }

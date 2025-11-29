@@ -36,20 +36,20 @@ export class ProgressSnapshot {
    * Identificador único del snapshot (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario
    */
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Fecha del snapshot
    * Un solo snapshot por usuario por día
    */
   @Column({ type: 'date', default: () => 'CURRENT_DATE' })
-  snapshot_date!: Date;
+    snapshot_date!: Date;
 
   /**
    * Datos detallados del progreso en formato JSONB
@@ -62,44 +62,44 @@ export class ProgressSnapshot {
    * }
    */
   @Column({ type: 'jsonb' })
-  snapshot_data!: Record<string, any>;
+    snapshot_data!: Record<string, any>;
 
   /**
    * Total de módulos completados hasta esta fecha
    */
   @Column({ type: 'integer', default: 0 })
-  total_modules_completed!: number;
+    total_modules_completed!: number;
 
   /**
    * Total de ejercicios completados hasta esta fecha
    */
   @Column({ type: 'integer', default: 0 })
-  total_exercises_completed!: number;
+    total_exercises_completed!: number;
 
   /**
    * Tiempo total gastado en segundos
    */
   @Column({ type: 'integer', default: 0 })
-  total_time_spent_seconds!: number;
+    total_time_spent_seconds!: number;
 
   /**
    * Total de XP acumulado hasta esta fecha
    */
   @Column({ type: 'integer', default: 0 })
-  total_xp!: number;
+    total_xp!: number;
 
   /**
    * Rango Maya actual del usuario
    * @example 'Ah Puch', 'Itzamna', etc.
    */
   @Column({ type: 'varchar', length: 100, nullable: true })
-  current_rank?: string;
+    current_rank?: string;
 
   /**
    * Fecha y hora de creación del snapshot
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   // =====================================================
   // Relaciones

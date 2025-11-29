@@ -143,7 +143,7 @@ export class AdminProgressController {
   })
   async getStudentProgress(
     @Param('id', ParseUUIDPipe) studentId: string,
-    @Query() query: StudentProgressQueryDto,
+      @Query() query: StudentProgressQueryDto,
   ): Promise<StudentProgressDto> {
     return this.progressService.getStudentProgress(studentId, query);
   }
@@ -222,7 +222,7 @@ export class AdminProgressController {
   })
   async getModuleProgress(
     @Param('id', ParseUUIDPipe) moduleId: string,
-    @Query() query: ModuleProgressQueryDto,
+      @Query() query: ModuleProgressQueryDto,
   ): Promise<ModuleProgressStatsDto> {
     return this.progressService.getModuleProgress(moduleId, query);
   }
@@ -302,7 +302,7 @@ export class AdminProgressController {
   })
   async exportProgress(
     @Query() query: ExportProgressQueryDto,
-    @Res() res: Response,
+      @Res() res: Response,
   ): Promise<void> {
     const csvData = await this.progressService.exportProgressData(
       query.type,

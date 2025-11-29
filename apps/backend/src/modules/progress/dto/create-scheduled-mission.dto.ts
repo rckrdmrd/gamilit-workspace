@@ -20,38 +20,38 @@ export class CreateScheduledMissionDto {
    * ID de la misión
    */
   @IsUUID('4')
-  mission_id!: string;
+    mission_id!: string;
 
   /**
    * ID del aula
    */
   @IsUUID('4')
-  classroom_id!: string;
+    classroom_id!: string;
 
   /**
    * ID del usuario que programa (profesor)
    */
   @IsUUID('4')
-  scheduled_by!: string;
+    scheduled_by!: string;
 
   /**
    * Fecha y hora de inicio
    */
   @IsDateString()
-  starts_at!: string;
+    starts_at!: string;
 
   /**
    * Fecha y hora de fin
    */
   @IsDateString()
-  ends_at!: string;
+    ends_at!: string;
 
   /**
    * Indica si está activa
    */
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+    is_active?: boolean;
 
   /**
    * XP bonus adicional
@@ -59,7 +59,7 @@ export class CreateScheduledMissionDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  bonus_xp?: number;
+    bonus_xp?: number;
 
   /**
    * ML Coins bonus adicionales
@@ -67,5 +67,5 @@ export class CreateScheduledMissionDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  bonus_coins?: number;
+    bonus_coins?: number;
 }

@@ -19,7 +19,7 @@ export class UserGamificationSummaryDto {
     description: 'User ID (UUID)',
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  userId!: string;
+    userId!: string;
 
   /**
    * Current user level
@@ -29,7 +29,7 @@ export class UserGamificationSummaryDto {
     example: 5,
     minimum: 1,
   })
-  level!: number;
+    level!: number;
 
   /**
    * Total experience points accumulated
@@ -39,7 +39,7 @@ export class UserGamificationSummaryDto {
     example: 2500,
     minimum: 0,
   })
-  totalXP!: number;
+    totalXP!: number;
 
   /**
    * Current ML Coins balance
@@ -49,7 +49,7 @@ export class UserGamificationSummaryDto {
     example: 150,
     minimum: 0,
   })
-  mlCoins!: number;
+    mlCoins!: number;
 
   /**
    * Current rank name (Maya rank system)
@@ -59,7 +59,7 @@ export class UserGamificationSummaryDto {
     example: 'Nacom',
     enum: ['Ajaw', 'Nacom', "Ah K'in", 'Halach Uinic', "K'uk'ulkan"],
   })
-  rank!: string;
+    rank!: string;
 
   /**
    * Current rank color (hex code for UI)
@@ -69,7 +69,7 @@ export class UserGamificationSummaryDto {
     example: '#4CAF50',
     required: false,
   })
-  rankColor?: string;
+    rankColor?: string;
 
   /**
    * Progress to next level (0-100%)
@@ -80,7 +80,7 @@ export class UserGamificationSummaryDto {
     minimum: 0,
     maximum: 100,
   })
-  progressToNextLevel!: number;
+    progressToNextLevel!: number;
 
   /**
    * XP needed to reach next level
@@ -90,7 +90,7 @@ export class UserGamificationSummaryDto {
     example: 500,
     minimum: 0,
   })
-  xpToNextLevel!: number;
+    xpToNextLevel!: number;
 
   /**
    * Array of achievement IDs unlocked by the user
@@ -100,7 +100,7 @@ export class UserGamificationSummaryDto {
     type: [String],
     example: ['achievement-1', 'achievement-2'],
   })
-  achievements!: string[];
+    achievements!: string[];
 
   /**
    * Total count of achievements unlocked
@@ -110,5 +110,5 @@ export class UserGamificationSummaryDto {
     example: 12,
     minimum: 0,
   })
-  totalAchievements!: number;
+    totalAchievements!: number;
 }

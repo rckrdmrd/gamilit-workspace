@@ -82,7 +82,7 @@ export class ClassroomMembersController {
     },
   })
   async findByClassroomId(@Param('classroomId') classroomId: string) {
-    return await this.classroomMembersService.findByClassroomId(classroomId);
+    return this.classroomMembersService.findByClassroomId(classroomId);
   }
 
   /**
@@ -113,7 +113,7 @@ export class ClassroomMembersController {
     type: [ClassroomMemberResponseDto],
   })
   async findByUserId(@Param('userId') userId: string) {
-    return await this.classroomMembersService.findByUserId(userId);
+    return this.classroomMembersService.findByUserId(userId);
   }
 
   /**
@@ -155,10 +155,10 @@ export class ClassroomMembersController {
     description: 'Membresía no encontrada',
   })
   async findByClassroomAndUser(
-    @Param('classroomId') classroomId: string,
+  @Param('classroomId') classroomId: string,
     @Param('userId') userId: string,
   ) {
-    return await this.classroomMembersService.findByClassroomAndUser(
+    return this.classroomMembersService.findByClassroomAndUser(
       classroomId,
       userId,
     );
@@ -220,7 +220,7 @@ export class ClassroomMembersController {
     },
   })
   async create(@Body() createDto: CreateClassroomMemberDto) {
-    return await this.classroomMembersService.create(createDto);
+    return this.classroomMembersService.create(createDto);
   }
 
   /**
@@ -263,10 +263,10 @@ export class ClassroomMembersController {
     description: 'Membresía no encontrada',
   })
   async updateStatus(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() updateDto: UpdateClassroomMemberStatusDto,
   ) {
-    return await this.classroomMembersService.updateStatus(id, updateDto.status);
+    return this.classroomMembersService.updateStatus(id, updateDto.status);
   }
 
   /**
@@ -311,10 +311,10 @@ export class ClassroomMembersController {
     description: 'Membresía no encontrada',
   })
   async recordGrade(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() body: { grade: number },
   ) {
-    return await this.classroomMembersService.recordGrade(id, body.grade);
+    return this.classroomMembersService.recordGrade(id, body.grade);
   }
 
   /**
@@ -359,10 +359,10 @@ export class ClassroomMembersController {
     description: 'Membresía no encontrada',
   })
   async updateAttendance(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() body: { attendance: number },
   ) {
-    return await this.classroomMembersService.updateAttendance(
+    return this.classroomMembersService.updateAttendance(
       id,
       body.attendance,
     );
@@ -410,10 +410,10 @@ export class ClassroomMembersController {
     description: 'Membresía no encontrada',
   })
   async withdraw(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() body: { reason: string },
   ) {
-    return await this.classroomMembersService.withdraw(id, body.reason);
+    return this.classroomMembersService.withdraw(id, body.reason);
   }
 
   /**
@@ -444,7 +444,7 @@ export class ClassroomMembersController {
     type: [ClassroomMemberResponseDto],
   })
   async getActiveMembers(@Param('classroomId') classroomId: string) {
-    return await this.classroomMembersService.getActiveMembers(classroomId);
+    return this.classroomMembersService.getActiveMembers(classroomId);
   }
 
   /**
@@ -495,7 +495,7 @@ export class ClassroomMembersController {
     },
   })
   async getClassroomLeaderboard(@Param('classroomId') classroomId: string) {
-    return await this.classroomMembersService.getClassroomLeaderboard(
+    return this.classroomMembersService.getClassroomLeaderboard(
       classroomId,
     );
   }

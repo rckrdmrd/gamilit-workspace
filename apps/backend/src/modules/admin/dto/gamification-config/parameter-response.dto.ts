@@ -11,135 +11,135 @@ export class ParameterResponseDto {
     description: 'Parameter unique identifier (UUID)',
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  id!: string;
+    id!: string;
 
   @ApiProperty({
     description: 'Parameter key (unique identifier in dot notation)',
     example: 'gamification.xp.base_per_exercise',
   })
-  setting_key!: string;
+    setting_key!: string;
 
   @ApiProperty({
     description: 'Parameter category',
     enum: ['gamification'],
     example: 'gamification',
   })
-  setting_category!: string;
+    setting_category!: string;
 
   @ApiPropertyOptional({
     description: 'Parameter subcategory for organization',
     example: 'xp',
   })
-  setting_subcategory?: string;
+    setting_subcategory?: string;
 
   @ApiProperty({
     description: 'Current value of the parameter (as string)',
     example: '10',
   })
-  setting_value!: string;
+    setting_value!: string;
 
   @ApiProperty({
     description: 'Value type (string, number, boolean, json, array)',
     enum: ['string', 'number', 'boolean', 'json', 'array'],
     example: 'number',
   })
-  value_type!: string;
+    value_type!: string;
 
   @ApiPropertyOptional({
     description: 'Default value for the parameter',
     example: '10',
   })
-  default_value?: string;
+    default_value?: string;
 
   @ApiPropertyOptional({
     description: 'Human-readable display name',
     example: 'Base XP per Exercise',
   })
-  display_name?: string;
+    display_name?: string;
 
   @ApiPropertyOptional({
     description: 'Parameter description',
     example: 'Base XP awarded for completing an exercise',
   })
-  description?: string;
+    description?: string;
 
   @ApiPropertyOptional({
     description: 'Help text for administrators',
     example: 'This value affects the base XP calculation for all exercises',
   })
-  help_text?: string;
+    help_text?: string;
 
   @ApiProperty({
     description: 'Whether the parameter is public (visible to users)',
     example: false,
   })
-  is_public!: boolean;
+    is_public!: boolean;
 
   @ApiProperty({
     description: 'Whether the parameter is read-only',
     example: false,
   })
-  is_readonly!: boolean;
+    is_readonly!: boolean;
 
   @ApiProperty({
     description: 'Whether the parameter is a system setting (cannot be modified)',
     example: false,
   })
-  is_system!: boolean;
+    is_system!: boolean;
 
   @ApiPropertyOptional({
     description: 'Minimum allowed value (for numeric parameters)',
     example: 1,
   })
-  min_value?: number;
+    min_value?: number;
 
   @ApiPropertyOptional({
     description: 'Maximum allowed value (for numeric parameters)',
     example: 1000,
   })
-  max_value?: number;
+    max_value?: number;
 
   @ApiPropertyOptional({
     description: 'Allowed values (for enum-like parameters)',
     example: ['low', 'medium', 'high'],
   })
-  allowed_values?: string[];
+    allowed_values?: string[];
 
   @ApiPropertyOptional({
     description: 'Validation rules in JSON format',
     example: { regex: '^[0-9]+$' },
   })
-  validation_rules?: Record<string, any>;
+    validation_rules?: Record<string, any>;
 
   @ApiPropertyOptional({
     description: 'Additional metadata',
     example: { unit: 'points', category_order: 1 },
   })
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 
   @ApiProperty({
     description: 'Timestamp when parameter was created',
     example: '2025-11-11T20:00:00.000Z',
   })
-  created_at!: string;
+    created_at!: string;
 
   @ApiProperty({
     description: 'Timestamp when parameter was last updated',
     example: '2025-11-23T10:30:00.000Z',
   })
-  updated_at!: string;
+    updated_at!: string;
 
   @ApiPropertyOptional({
     description: 'UUID of admin who created the parameter',
     example: '550e8400-e29b-41d4-a716-446655440001',
   })
-  created_by?: string;
+    created_by?: string;
 
   @ApiPropertyOptional({
     description: 'UUID of admin who last updated the parameter',
     example: '550e8400-e29b-41d4-a716-446655440002',
   })
-  updated_by?: string;
+    updated_by?: string;
 }
 
 /**
@@ -152,17 +152,17 @@ export class ParametersListResponseDto {
     description: 'List of gamification parameters',
     type: [ParameterResponseDto],
   })
-  parameters!: ParameterResponseDto[];
+    parameters!: ParameterResponseDto[];
 
   @ApiProperty({
     description: 'Total count of parameters',
     example: 15,
   })
-  total!: number;
+    total!: number;
 
   @ApiPropertyOptional({
     description: 'Applied category filter',
     example: 'xp',
   })
-  filtered_by_category?: string;
+    filtered_by_category?: string;
 }

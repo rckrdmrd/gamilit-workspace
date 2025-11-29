@@ -44,11 +44,11 @@ import { Classroom } from '@modules/social/entities/classroom.entity';
 @Index('idx_messages_created_at', ['createdAt'])
 export class Message {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   @Column('uuid', { name: 'sender_id' })
   @Index()
-  senderId!: string;
+    senderId!: string;
 
   // ❌ CROSS-DATASOURCE RELATION DISABLED
   // TypeORM no soporta @ManyToOne entre diferentes datasources
@@ -60,26 +60,26 @@ export class Message {
   // sender!: Profile;
 
   @Column('uuid', { name: 'conversation_id', nullable: true })
-  conversationId!: string | null;
+    conversationId!: string | null;
 
   @Column({
     type: 'text',
     enum: ['direct', 'classroom_announcement', 'classroom_chat', 'private_feedback', 'assignment_comment'],
   })
-  type!: 'direct' | 'classroom_announcement' | 'classroom_chat' | 'private_feedback' | 'assignment_comment';
+    type!: 'direct' | 'classroom_announcement' | 'classroom_chat' | 'private_feedback' | 'assignment_comment';
 
   @Column('text')
-  subject!: string;
+    subject!: string;
 
   @Column('text')
-  content!: string;
+    content!: string;
 
   @Column('text', { name: 'attachment_url', nullable: true })
-  attachmentUrl!: string | null;
+    attachmentUrl!: string | null;
 
   @Column('uuid', { name: 'classroom_id', nullable: true })
   @Index()
-  classroomId!: string | null;
+    classroomId!: string | null;
 
   // ❌ CROSS-DATASOURCE RELATION DISABLED
   // TypeORM no soporta @ManyToOne entre diferentes datasources
@@ -90,37 +90,37 @@ export class Message {
   // classroom!: Classroom | null;
 
   @Column('uuid', { name: 'assignment_id', nullable: true })
-  assignmentId!: string | null;
+    assignmentId!: string | null;
 
   @Column('boolean', { name: 'is_read', default: false })
-  isRead!: boolean;
+    isRead!: boolean;
 
   @Column('timestamptz', { name: 'read_at', nullable: true })
-  readAt!: Date | null;
+    readAt!: Date | null;
 
   @Column('uuid', { name: 'parent_message_id', nullable: true })
-  parentMessageId!: string | null;
+    parentMessageId!: string | null;
 
   @ManyToOne(() => Message, message => message.replies, { nullable: true })
   @JoinColumn({ name: 'parent_message_id' })
-  parentMessage!: Message | null;
+    parentMessage!: Message | null;
 
   @OneToMany(() => Message, message => message.parentMessage)
-  replies!: Message[];
+    replies!: Message[];
 
   @Column('uuid', { name: 'tenant_id' })
   @Index()
-  tenantId!: string;
+    tenantId!: string;
 
   @CreateDateColumn({ name: 'created_at' })
   @Index()
-  createdAt!: Date;
+    createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt!: Date;
+    updatedAt!: Date;
 
   @Column('timestamptz', { name: 'deleted_at', nullable: true })
-  deletedAt!: Date | null;
+    deletedAt!: Date | null;
 
   /**
    * Virtual field para recipients
@@ -153,19 +153,19 @@ export class Message {
 @Index('idx_message_participants_is_read', ['isRead'])
 export class MessageParticipant {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   @Column('uuid', { name: 'message_id' })
   @Index()
-  messageId!: string;
+    messageId!: string;
 
   @ManyToOne(() => Message, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'message_id' })
-  message!: Message;
+    message!: Message;
 
   @Column('uuid', { name: 'user_id' })
   @Index()
-  userId!: string;
+    userId!: string;
 
   // ❌ CROSS-DATASOURCE RELATION DISABLED
   // TypeORM no soporta @ManyToOne entre diferentes datasources
@@ -179,11 +179,11 @@ export class MessageParticipant {
     type: 'text',
     enum: ['sender', 'recipient', 'cc'],
   })
-  role!: 'sender' | 'recipient' | 'cc';
+    role!: 'sender' | 'recipient' | 'cc';
 
   @Column('boolean', { name: 'is_read', default: false })
-  isRead!: boolean;
+    isRead!: boolean;
 
   @Column('timestamptz', { name: 'read_at', nullable: true })
-  readAt!: Date | null;
+    readAt!: Date | null;
 }

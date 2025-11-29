@@ -52,7 +52,7 @@ export const useMissionsStore = create<MissionsState>((set, get) => ({
     try {
       const missions = await missionsAPI.getDailyMissions();
       set({ dailyMissions: missions, isLoading: false });
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ error: error.message, isLoading: false });
     }
   },
@@ -62,7 +62,7 @@ export const useMissionsStore = create<MissionsState>((set, get) => ({
     try {
       const missions = await missionsAPI.getWeeklyMissions();
       set({ weeklyMissions: missions, isLoading: false });
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ error: error.message, isLoading: false });
     }
   },
@@ -71,7 +71,7 @@ export const useMissionsStore = create<MissionsState>((set, get) => ({
     try {
       const missions = await missionsAPI.getSpecialMissions();
       set({ specialMissions: missions });
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ error: error.message });
     }
   },
@@ -92,7 +92,7 @@ export const useMissionsStore = create<MissionsState>((set, get) => ({
           m.id === missionId ? { ...m, status: 'claimed' as const } : m,
         ),
       }));
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ error: error.message });
     }
   },

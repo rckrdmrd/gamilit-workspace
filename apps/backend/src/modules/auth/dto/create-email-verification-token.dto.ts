@@ -13,14 +13,14 @@ import { IsUUID, IsString, IsEmail, IsDateString } from 'class-validator';
  */
 export class CreateEmailVerificationTokenDto {
   @IsUUID('4')
-  user_id!: string;
+    user_id!: string;
 
   @IsString()
-  token!: string; // Token YA hasheado (SHA256)
+    token!: string; // Token YA hasheado (SHA256)
 
   @IsEmail()
-  email!: string; // Email a verificar
+    email!: string; // Email a verificar
 
   @IsDateString()
-  expires_at!: string; // ISO 8601 string (típicamente +24h)
+    expires_at!: string; // ISO 8601 string (típicamente +24h)
 }

@@ -13,37 +13,37 @@ export class FriendshipResponseDto {
    * ID único del registro
    */
   @Expose()
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario que solicita/tiene la amistad
    */
   @Expose()
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del amigo
    */
   @Expose()
-  friend_id!: string;
+    friend_id!: string;
 
   /**
    * Estado de la amistad
    */
   @Expose()
-  status!: string;
+    status!: string;
 
   /**
    * Fecha de creación de la solicitud
    */
   @Expose()
   @Type(() => Date)
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de última actualización
    */
   @Expose()
   @Type(() => Date)
-  updated_at!: Date;
+    updated_at!: Date;
 }

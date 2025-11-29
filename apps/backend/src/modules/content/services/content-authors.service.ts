@@ -65,7 +65,7 @@ export class ContentAuthorsService {
       is_verified: false,
     });
 
-    return await this.authorRepo.save(author);
+    return this.authorRepo.save(author);
   }
 
   /**
@@ -92,7 +92,7 @@ export class ContentAuthorsService {
       query.andWhere(':expertise = ANY(a.expertise_areas)', { expertise: filters.expertise_area });
     }
 
-    return await query
+    return query
       .orderBy('a.average_rating', 'DESC', 'NULLS LAST')
       .addOrderBy('a.total_content_published', 'DESC')
       .getMany();
@@ -138,7 +138,7 @@ export class ContentAuthorsService {
    * @returns Lista de autores destacados
    */
   async findFeatured(limit: number = 10): Promise<ContentAuthor[]> {
-    return await this.authorRepo.find({
+    return this.authorRepo.find({
       where: { is_featured: true },
       order: { average_rating: 'DESC', total_content_published: 'DESC' },
       take: limit,
@@ -161,7 +161,7 @@ export class ContentAuthorsService {
       query.take(limit);
     }
 
-    return await query.getMany();
+    return query.getMany();
   }
 
   /**
@@ -170,7 +170,7 @@ export class ContentAuthorsService {
    * @returns Lista de autores ordenados por rating
    */
   async findTopRated(limit: number = 10): Promise<ContentAuthor[]> {
-    return await this.authorRepo.find({
+    return this.authorRepo.find({
       where: { average_rating: (await this.authorRepo.findOne({ order: { average_rating: 'DESC' } }))?.average_rating },
       order: { average_rating: 'DESC', total_content_published: 'DESC' },
       take: limit,
@@ -183,7 +183,7 @@ export class ContentAuthorsService {
    * @returns Lista de autores
    */
   async findByExpertise(area: string): Promise<ContentAuthor[]> {
-    return await this.authorRepo
+    return this.authorRepo
       .createQueryBuilder('a')
       .where(':expertise = ANY(a.expertise_areas)', { expertise: area })
       .orderBy('a.average_rating', 'DESC', 'NULLS LAST')
@@ -211,7 +211,7 @@ export class ContentAuthorsService {
       expertise_areas: data.expertise_areas ?? author.expertise_areas,
     });
 
-    return await this.authorRepo.save(author);
+    return this.authorRepo.save(author);
   }
 
   /**
@@ -222,7 +222,7 @@ export class ContentAuthorsService {
   async incrementContentCreated(userId: string): Promise<ContentAuthor> {
     const author = await this.findByUserId(userId);
     author.total_content_created += 1;
-    return await this.authorRepo.save(author);
+    return this.authorRepo.save(author);
   }
 
   /**
@@ -233,7 +233,7 @@ export class ContentAuthorsService {
   async incrementContentPublished(userId: string): Promise<ContentAuthor> {
     const author = await this.findByUserId(userId);
     author.total_content_published += 1;
-    return await this.authorRepo.save(author);
+    return this.authorRepo.save(author);
   }
 
   /**
@@ -250,7 +250,7 @@ export class ContentAuthorsService {
 
     const author = await this.findById(id);
     author.average_rating = newRating;
-    return await this.authorRepo.save(author);
+    return this.authorRepo.save(author);
   }
 
   /**
@@ -262,7 +262,7 @@ export class ContentAuthorsService {
   async setFeatured(id: string, featured: boolean): Promise<ContentAuthor> {
     const author = await this.findById(id);
     author.is_featured = featured;
-    return await this.authorRepo.save(author);
+    return this.authorRepo.save(author);
   }
 
   /**
@@ -274,7 +274,7 @@ export class ContentAuthorsService {
   async setVerified(id: string, verified: boolean): Promise<ContentAuthor> {
     const author = await this.findById(id);
     author.is_verified = verified;
-    return await this.authorRepo.save(author);
+    return this.authorRepo.save(author);
   }
 
   /**

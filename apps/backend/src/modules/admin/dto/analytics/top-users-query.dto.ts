@@ -13,7 +13,7 @@ export class TopUsersQueryDto {
   })
   @IsString()
   @IsIn(['xp', 'exercises', 'streak'])
-  metric!: string;
+    metric!: string;
 
   @ApiPropertyOptional({
     description: 'Filter by user role (e.g., "student", "admin_teacher")',
@@ -21,7 +21,7 @@ export class TopUsersQueryDto {
   })
   @IsOptional()
   @IsString()
-  role?: string;
+    role?: string;
 
   @ApiPropertyOptional({
     description: 'Number of top users to return (1-100)',
@@ -35,5 +35,5 @@ export class TopUsersQueryDto {
   @IsInt()
   @Min(1)
   @Max(100)
-  limit?: number = 10;
+    limit?: number = 10;
 }

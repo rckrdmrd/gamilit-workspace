@@ -19,7 +19,7 @@ export class CreateContentAuthorDto {
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @IsUUID('4')
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Nombre público del autor
@@ -32,7 +32,7 @@ export class CreateContentAuthorDto {
   })
   @IsString()
   @MinLength(2)
-  display_name!: string;
+    display_name!: string;
 
   /**
    * Biografía del autor
@@ -44,7 +44,7 @@ export class CreateContentAuthorDto {
   })
   @IsOptional()
   @IsString()
-  bio?: string;
+    bio?: string;
 
   /**
    * Áreas de expertise del autor
@@ -58,5 +58,5 @@ export class CreateContentAuthorDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  expertise_areas?: string[];
+    expertise_areas?: string[];
 }

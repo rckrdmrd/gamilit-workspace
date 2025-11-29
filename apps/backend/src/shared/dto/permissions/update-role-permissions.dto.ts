@@ -18,5 +18,5 @@ export class UpdateRolePermissionsDto {
   })
   @IsObject()
   @IsNotEmpty()
-  permissions!: Record<string, boolean>;
+    permissions!: Record<string, boolean>;
 }

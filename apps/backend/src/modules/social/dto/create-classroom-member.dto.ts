@@ -28,48 +28,48 @@ export class CreateClassroomMemberDto {
    * ID del aula
    */
   @IsUUID('4')
-  classroom_id!: string;
+    classroom_id!: string;
 
   /**
    * ID del estudiante
    */
   @IsUUID('4')
-  student_id!: string;
+    student_id!: string;
 
   /**
    * Fecha de inscripción
    */
   @IsOptional()
   @IsDateString()
-  enrollment_date?: string;
+    enrollment_date?: string;
 
   /**
    * Método de inscripción
    */
   @IsOptional()
   @IsEnum(EnrollmentMethodEnum)
-  enrollment_method?: string;
+    enrollment_method?: string;
 
   /**
    * ID del usuario que inscribió
    */
   @IsOptional()
   @IsUUID('4')
-  enrolled_by?: string;
+    enrolled_by?: string;
 
   /**
    * Estado de la membresía
    */
   @IsOptional()
   @IsEnum(ClassroomMemberStatusEnum)
-  status?: string;
+    status?: string;
 
   /**
    * Número de matrícula del estudiante
    */
   @IsOptional()
   @IsString()
-  student_number?: string;
+    student_number?: string;
 
   /**
    * Calificación final
@@ -78,7 +78,7 @@ export class CreateClassroomMemberDto {
   @IsNumber()
   @Min(0)
   @Max(10)
-  final_grade?: number;
+    final_grade?: number;
 
   /**
    * Porcentaje de asistencia
@@ -87,40 +87,40 @@ export class CreateClassroomMemberDto {
   @IsNumber()
   @Min(0)
   @Max(100)
-  attendance_percentage?: number;
+    attendance_percentage?: number;
 
   /**
    * Permisos especiales del estudiante
    */
   @IsOptional()
   @IsObject()
-  permissions?: Record<string, any>;
+    permissions?: Record<string, any>;
 
   /**
    * Notas del profesor
    */
   @IsOptional()
   @IsString()
-  teacher_notes?: string;
+    teacher_notes?: string;
 
   /**
    * Información de contacto de padres
    */
   @IsOptional()
   @IsObject()
-  parent_contact_info?: Record<string, any>;
+    parent_contact_info?: Record<string, any>;
 
   /**
    * Metadatos adicionales
    */
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 
   /**
    * Membresía activa
    */
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+    is_active?: boolean;
 }

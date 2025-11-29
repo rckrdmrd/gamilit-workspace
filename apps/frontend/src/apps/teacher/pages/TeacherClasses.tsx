@@ -60,7 +60,7 @@ export default function TeacherClasses() {
       await createClassroomAPI(formData);
       setIsCreateModalOpen(false);
       setFormData({ name: '', subject: '', grade_level: '' });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[TeacherClasses] Error creating classroom:', err);
       alert('Error al crear la clase. Por favor intenta nuevamente.');
     }
@@ -74,7 +74,7 @@ export default function TeacherClasses() {
       setIsEditModalOpen(false);
       setSelectedClassroom(null);
       setFormData({ name: '', subject: '', grade_level: '' });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[TeacherClasses] Error updating classroom:', err);
       alert('Error al actualizar la clase. Por favor intenta nuevamente.');
     }
@@ -87,7 +87,7 @@ export default function TeacherClasses() {
       await deleteClassroomAPI(selectedClassroom.id);
       setIsDeleteDialogOpen(false);
       setSelectedClassroom(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[TeacherClasses] Error deleting classroom:', err);
       alert('Error al eliminar la clase. Por favor intenta nuevamente.');
     }

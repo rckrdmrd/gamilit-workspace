@@ -25,7 +25,7 @@ export class CreateAchievementDto {
    */
   @IsOptional()
   @IsUUID()
-  tenant_id?: string;
+    tenant_id?: string;
 
   // =====================================================
   // BASIC INFORMATION
@@ -35,21 +35,21 @@ export class CreateAchievementDto {
    * Nombre del logro (REQUERIDO)
    */
   @IsString()
-  name!: string;
+    name!: string;
 
   /**
    * Descripción del logro
    */
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   /**
    * Icono del logro
    */
   @IsOptional()
   @IsString()
-  icon?: string;
+    icon?: string;
 
   // =====================================================
   // CATEGORIZATION
@@ -59,21 +59,21 @@ export class CreateAchievementDto {
    * Categoría del logro (REQUERIDO)
    */
   @IsEnum(AchievementCategoryEnum)
-  category!: AchievementCategoryEnum;
+    category!: AchievementCategoryEnum;
 
   /**
    * Rareza: common, rare, epic, legendary
    */
   @IsOptional()
   @IsString()
-  rarity?: string;
+    rarity?: string;
 
   /**
    * Nivel de dificultad
    */
   @IsOptional()
   @IsEnum(DifficultyLevelEnum)
-  difficulty_level?: DifficultyLevelEnum;
+    difficulty_level?: DifficultyLevelEnum;
 
   // =====================================================
   // CONDITIONS & REWARDS
@@ -83,14 +83,14 @@ export class CreateAchievementDto {
    * Condiciones JSON para desbloquear (REQUERIDO)
    */
   @IsObject()
-  conditions!: Record<string, any>;
+    conditions!: Record<string, any>;
 
   /**
    * Recompensas JSON otorgadas
    */
   @IsOptional()
   @IsObject()
-  rewards?: Record<string, any>;
+    rewards?: Record<string, any>;
 
   /**
    * Recompensa de ML Coins
@@ -98,7 +98,7 @@ export class CreateAchievementDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  ml_coins_reward?: number;
+    ml_coins_reward?: number;
 
   // =====================================================
   // VISIBILITY & STATUS
@@ -106,15 +106,15 @@ export class CreateAchievementDto {
 
   @IsOptional()
   @IsBoolean()
-  is_secret?: boolean;
+    is_secret?: boolean;
 
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+    is_active?: boolean;
 
   @IsOptional()
   @IsBoolean()
-  is_repeatable?: boolean;
+    is_repeatable?: boolean;
 
   // =====================================================
   // ORDERING & POINTS
@@ -123,12 +123,12 @@ export class CreateAchievementDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  order_index?: number;
+    order_index?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  points_value?: number;
+    points_value?: number;
 
   // =====================================================
   // MESSAGING & GUIDANCE
@@ -136,16 +136,16 @@ export class CreateAchievementDto {
 
   @IsOptional()
   @IsString()
-  unlock_message?: string;
+    unlock_message?: string;
 
   @IsOptional()
   @IsString()
-  instructions?: string;
+    instructions?: string;
 
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  tips?: string[];
+    tips?: string[];
 
   // =====================================================
   // METADATA
@@ -153,9 +153,9 @@ export class CreateAchievementDto {
 
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 
   @IsOptional()
   @IsUUID()
-  created_by?: string;
+    created_by?: string;
 }

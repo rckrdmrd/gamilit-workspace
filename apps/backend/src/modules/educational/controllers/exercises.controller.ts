@@ -11,17 +11,24 @@ import {
   Request,
   UseGuards,
   NotFoundException,
+  BadRequestException,
   Optional,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { ExercisesService } from '../services';
-import { CreateExerciseDto, ExerciseResponseDto } from '../dto';
+import {
+  CreateExerciseDto,
+  ExerciseResponseDto,
+  SubmitExerciseDto,
+  SubmitExerciseResponseDto,
+} from '../dto';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
 import { ExerciseTypeEnum } from '@/shared/constants/enums.constants';
 import { ExerciseSubmissionService, ExerciseAttemptService } from '@/modules/progress/services';
 import { ExerciseSubmissionResponseDto } from '@/modules/progress/dto';
+import { ExerciseAnswerValidator } from '@/modules/progress/dto/answers/exercise-answer.validator';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { Profile } from '@/modules/auth/entities';
 
@@ -69,6 +76,77 @@ export class ExercisesController {
   }
 
   /**
+   * Normaliza la estructura de respuestas del ejercicio
+   *
+   * @description Detecta y convierte entre formato antiguo y nuevo.
+   * Mantiene compatibilidad temporal durante la transición.
+   *
+   * @param dto - DTO de entrada (puede contener formato antiguo o nuevo)
+   * @param req - Request object (contiene JWT user)
+   * @returns Objeto normalizado con estructura estándar
+   *
+   * @throws BadRequestException si no se encuentra campo de respuestas o userId
+   *
+   * @note FE-061: Este método resuelve el workaround temporal
+   */
+  private normalizeSubmitData(dto: SubmitExerciseDto, req: any): {
+    userId: string;
+    answers: Record<string, any>;
+    timeSpentSeconds?: number;
+    hintsUsed: number;
+    powerupsUsed: string[];
+  } {
+    // 1. Determinar userId (JWT tiene prioridad)
+    const userId = req.user?.id || dto.userId;
+
+    if (!userId) {
+      throw new BadRequestException(
+        'User ID not found. Ensure JWT authentication is enabled or provide userId in body.',
+      );
+    }
+
+    // 2. Extraer respuestas (nuevo formato tiene prioridad)
+    let answers: Record<string, any>;
+
+    if (dto.answers) {
+      // Formato nuevo (estándar)
+      answers = dto.answers;
+    } else if (dto.submitted_answers) {
+      // Formato antiguo (compatibilidad)
+      answers = dto.submitted_answers;
+      // Log para detectar uso de formato antiguo
+      console.warn('[DEPRECATED] Client using old format "submitted_answers". Migrate to "answers".');
+    } else {
+      throw new BadRequestException(
+        'Missing exercise answers. Provide either "answers" or "submitted_answers".',
+      );
+    }
+
+    // 3. Calcular tiempo invertido
+    let timeSpentSeconds: number | undefined;
+
+    if (dto.startedAt) {
+      // Formato nuevo: calcular desde timestamp
+      timeSpentSeconds = Math.floor((Date.now() - dto.startedAt) / 1000);
+    } else if (dto.time_spent_seconds !== undefined) {
+      // Formato antiguo: usar valor directo
+      timeSpentSeconds = dto.time_spent_seconds;
+    }
+
+    // 4. Normalizar hints y powerups
+    const hintsUsed = dto.hintsUsed ?? dto.hints_used ?? 0;
+    const powerupsUsed = dto.powerupsUsed ?? dto.comodines_used ?? [];
+
+    return {
+      userId,
+      answers,
+      timeSpentSeconds,
+      hintsUsed,
+      powerupsUsed,
+    };
+  }
+
+  /**
    * Obtiene todos los ejercicios ordenados por módulo y índice
    *
    * @returns Array de ejercicios ordenados
@@ -91,7 +169,7 @@ export class ExercisesController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Get all exercises',
-    description: 'Obtiene todos los ejercicios ordenados por módulo e índice de secuencia, con estado de completado para el usuario autenticado',
+    description: 'Obtiene todos los ejercicios ordenados por módulo e índice de secuencia, con estado de completado para el usuario autenticado. Estudiantes solo ven ejercicios de sus classrooms asignados (RLS).',
   })
   @ApiResponse({
     status: 200,
@@ -145,9 +223,18 @@ export class ExercisesController {
   })
   async findAll(@Request() req: any) {
     const userId = req.user.id;
+    const userRole = req.user.role;
 
-    // Obtener todos los ejercicios
-    const exercises = await this.exercisesService.findAll();
+    // GAP-C06: Aplicar RLS según el rol del usuario
+    let exercises: any[];
+
+    if (userRole === 'student') {
+      // Estudiantes: Solo ejercicios de sus classrooms asignados
+      exercises = await this.exercisesService.findAllForStudent(userId);
+    } else {
+      // admin_teacher, super_admin: Todos los ejercicios
+      exercises = await this.exercisesService.findAll();
+    }
 
     // FIX 2025-11-24: Convert auth.users.id → profiles.id
     // exercise_submissions.user_id references profiles.id (not auth.users.id)
@@ -409,7 +496,7 @@ export class ExercisesController {
     description: 'Acceso denegado - Se requieren permisos de administrador',
   })
   async create(@Body() createExerciseDto: CreateExerciseDto) {
-    return await this.exercisesService.create(createExerciseDto);
+    return this.exercisesService.create(createExerciseDto);
   }
 
   /**
@@ -465,7 +552,7 @@ export class ExercisesController {
     description: 'Ejercicio no encontrado',
   })
   async update(@Param('id') id: string, @Body() updateExerciseDto: Partial<CreateExerciseDto>) {
-    return await this.exercisesService.update(id, updateExerciseDto);
+    return this.exercisesService.update(id, updateExerciseDto);
   }
 
   /**
@@ -519,7 +606,8 @@ export class ExercisesController {
    * Obtiene ejercicios por módulo
    *
    * @param moduleId - ID del módulo
-   * @returns Array de ejercicios del módulo ordenados por índice
+   * @param req - Request object (contiene JWT user)
+   * @returns Array de ejercicios del módulo ordenados por índice con estado de completado
    *
    * @example
    * GET /api/v1/educational/modules/660e8400-e29b-41d4-a716-446655440000/exercises
@@ -528,15 +616,17 @@ export class ExercisesController {
    *     "id": "550e8400-e29b-41d4-a716-446655440000",
    *     "title": "Crucigrama - Infancia de Marie",
    *     "order_index": 0,
-   *     "exercise_type": "crucigrama"
+   *     "exercise_type": "crucigrama",
+   *     "completed": true
    *   }
    * ]
    */
+  @UseGuards(JwtAuthGuard)
   @Get('modules/:moduleId/exercises')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Get exercises by module',
-    description: 'Obtiene todos los ejercicios de un módulo específico ordenados por índice',
+    description: 'Obtiene todos los ejercicios de un módulo específico ordenados por índice, con estado de completado para el usuario autenticado',
   })
   @ApiParam({
     name: 'moduleId',
@@ -561,6 +651,7 @@ export class ExercisesController {
           max_points: 100,
           xp_reward: 50,
           is_active: true,
+          completed: true,
         },
         {
           id: '550e8400-e29b-41d4-a716-446655440001',
@@ -572,6 +663,7 @@ export class ExercisesController {
           max_points: 80,
           xp_reward: 40,
           is_active: true,
+          completed: false,
         },
       ],
     },
@@ -580,8 +672,43 @@ export class ExercisesController {
     status: 404,
     description: 'Módulo no encontrado',
   })
-  async findByModule(@Param('moduleId') moduleId: string) {
-    return await this.exercisesService.findByModuleId(moduleId);
+  async findByModule(@Param('moduleId') moduleId: string, @Request() req: any) {
+    // Obtener ejercicios del módulo
+    const exercises = await this.exercisesService.findByModuleId(moduleId);
+
+    // FIX 2025-11-29: Convert auth.users.id → profiles.id
+    const userId = req.user.id;
+    const profileId = await this.getProfileId(userId);
+
+    // Obtener todas las submissions del usuario de una sola vez para eficiencia
+    const allSubmissions = await this.exerciseSubmissionService.findByUserId(profileId);
+
+    // Obtener todos los exercise_attempts para ejercicios auto-calificados
+    // Los ejercicios como Crucigrama usan exercise_attempts, no exercise_submissions
+    const allAttempts = await this.exerciseAttemptService.findByUserId(profileId);
+
+    // Crear un mapa de ejercicios completados (de submissions Y attempts)
+    const completedExercisesMap = new Map<string, boolean>();
+
+    // Marcar como completados los ejercicios con submissions calificadas
+    allSubmissions.forEach((submission) => {
+      if (submission.status === 'graded') {
+        completedExercisesMap.set(submission.exercise_id, true);
+      }
+    });
+
+    // Marcar como completados los ejercicios con intentos correctos (auto-calificados)
+    allAttempts.forEach((attempt) => {
+      if (attempt.is_correct) {
+        completedExercisesMap.set(attempt.exercise_id, true);
+      }
+    });
+
+    // Agregar campo 'completed' a cada ejercicio
+    return exercises.map((exercise) => ({
+      ...exercise,
+      completed: completedExercisesMap.get(exercise.id) || false,
+    }));
   }
 
   /**
@@ -692,7 +819,7 @@ export class ExercisesController {
     },
   })
   async validateContentByExerciseType(
-    @Body() body: { exercise_type: ExerciseTypeEnum; content: Record<string, any> },
+  @Body() body: { exercise_type: ExerciseTypeEnum; content: Record<string, any> },
   ) {
     this.exercisesService.validateContentByExerciseType(body.exercise_type, body.content);
     return {
@@ -754,14 +881,31 @@ export class ExercisesController {
    *   "user_answers": { ... }
    * }
    */
+  /**
+   * Enviar respuestas de ejercicio para validación y scoring
+   *
+   * @description Endpoint para que estudiantes envíen sus respuestas.
+   * Valida estructura, calcula score y otorga recompensas.
+   *
+   * @param exerciseId - UUID del ejercicio
+   * @param dto - Respuestas del estudiante
+   * @param req - Request object (contiene JWT user)
+   * @returns Resultado de validación con score y recompensas
+   *
+   * @throws NotFoundException si ejercicio no existe
+   * @throws BadRequestException si estructura de respuestas es inválida
+   *
+   * @note FE-061: Implementa validación robusta con ExerciseAnswerValidator
+   */
   @UseGuards(JwtAuthGuard)
   @Post('exercises/:id/submit')
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Submit exercise answers',
     description:
       'Envía las respuestas de un ejercicio para calificación automática. ' +
-      'Crea un registro de intento, calcula score, otorga XP/ML Coins y actualiza estadísticas del usuario.',
+      'Valida estructura, calcula score, otorga XP/ML Coins y actualiza estadísticas del usuario. ' +
+      'Soporta formato nuevo (recomendado) y formato antiguo (deprecated) para compatibilidad.',
   })
   @ApiParam({
     name: 'id',
@@ -771,35 +915,17 @@ export class ExercisesController {
     example: '880e8400-e29b-41d4-a716-446655440000',
   })
   @ApiResponse({
-    status: 201,
-    description: 'Ejercicio enviado y calificado exitosamente',
-    type: ExerciseSubmissionResponseDto,
-    schema: {
-      example: {
-        id: 'aa0e8400-e29b-41d4-a716-446655440000',
-        user_id: '550e8400-e29b-41d4-a716-446655440000',
-        exercise_id: '880e8400-e29b-41d4-a716-446655440000',
-        status: 'auto_graded',
-        final_score: 85,
-        submitted_at: '2025-11-11T15:00:00Z',
-        graded_at: '2025-11-11T15:00:01Z',
-        xp_earned: 170,
-        ml_coins_earned: 85,
-        user_answers: {
-          question_1: 'Marie Curie',
-          question_2: '1903',
-          question_3: 'Radiactividad',
-        },
-      },
-    },
+    status: 200,
+    description: 'Respuestas validadas exitosamente',
+    type: SubmitExerciseResponseDto,
   })
   @ApiResponse({
     status: 400,
-    description: 'Datos inválidos o respuestas incorrectas',
+    description: 'Estructura de respuestas inválida',
     schema: {
       example: {
         statusCode: 400,
-        message: 'Invalid submitted_answers format',
+        message: 'Validation failed for exercise type "crucigrama": clues must be an object',
         error: 'Bad Request',
       },
     },
@@ -810,124 +936,108 @@ export class ExercisesController {
     schema: {
       example: {
         statusCode: 404,
-        message: 'Exercise with ID 880e8400-... not found',
+        message: 'Exercise 880e8400-... not found',
         error: 'Not Found',
       },
     },
   })
   async submitExercise(
     @Param('id') exerciseId: string,
-    @Request() req: any,
-    @Body()
-    body: {
-      // Formato antiguo (esperado)
-      userId?: string;
-      submitted_answers?: Record<string, any>;
-      time_spent_seconds?: number;
-      hints_used?: number;
-      comodines_used?: string[];
-      // Formato nuevo (problemático - Issue FE-049)
-      answers?: any;
-      startedAt?: number;
-      hintsUsed?: number;
-      powerupsUsed?: string[];
-    },
-  ) {
-    // WORKAROUND TEMPORAL (Issue FE-049 + FE-061)
-    // Detectar qué formato está usando Frontend y adaptar
-    let userId: string;
-    let submittedAnswers: Record<string, any>;
+      @Body() dto: SubmitExerciseDto,
+      @Request() req: any,
+  ): Promise<SubmitExerciseResponseDto> {
+    // ========================================
+    // 1. NORMALIZACIÓN
+    // ========================================
+    const normalized = this.normalizeSubmitData(dto, req);
 
-    if (body.userId && body.submitted_answers) {
-      // Formato antiguo (correcto)
-      userId = body.userId;
-      submittedAnswers = body.submitted_answers;
-    } else {
-      // Formato nuevo problemático (workaround)
-      // Frontend no envía userId, extraerlo del token JWT autenticado
-      userId = req.user.id; // Extraído del JWT por JwtAuthGuard
-
-      // Frontend envía 'answers' en lugar de 'submitted_answers'
-      // FE-061: Frontend anida las respuestas dentro de 'answers'
-      // Por ejemplo, crucigrama envía {answers: {clues: {...}}}
-      // pero el validator espera directamente {clues: {...}}
-      submittedAnswers = body.answers || {};
-    }
-
-    // FE-061: CRITICAL - Convert auth.users.id → profiles.id
-    // Both exercise_submissions and exercise_attempts have FK to profiles.id
-    const profileId = await this.getProfileId(userId);
-
-    // FE-061: Debug log para ver estructura recibida
-    console.log('[FE-061 DEBUG] Exercise submit received:', {
-      exerciseId,
-      userId: userId,
-      profileId: profileId,
-      bodyKeys: Object.keys(body),
-      submittedAnswersKeys: Object.keys(submittedAnswers),
-      submittedAnswersStructure: JSON.stringify(submittedAnswers, null, 2).substring(0, 500)
-    });
-
-    // ✅ FIX 2025-11-24: Arquitectura dual - Obtener tipo de ejercicio
+    // ========================================
+    // 2. OBTENER EJERCICIO Y VALIDAR EXISTENCIA
+    // ========================================
     const exercise = await this.exercisesService.findById(exerciseId);
+
     if (!exercise) {
       throw new NotFoundException(`Exercise ${exerciseId} not found`);
     }
 
-    // ✅ FIX 2025-11-24: SOLO ejercicios autocorregibles en este flujo
-    // Todos los ejercicios actuales son autocorregibles (requires_manual_grading = false)
-    if (exercise.requires_manual_grading) {
-      // Ruta para ejercicios de revisión manual (futuro)
-      const submission = await this.exerciseSubmissionService.submitExercise(
-        userId,
-        exerciseId,
-        submittedAnswers,
+    // ========================================
+    // 3. VALIDACIÓN PRE-SQL (NUEVA - FE-061)
+    // ========================================
+    try {
+      await ExerciseAnswerValidator.validate(
+        exercise.exercise_type,
+        normalized.answers,
       );
+    } catch (error: any) {
+      // Log para debug
+      console.error('[VALIDATION ERROR]', {
+        exerciseId,
+        exerciseType: exercise.exercise_type,
+        error: error.message,
+      });
+
+      throw error; // Re-throw para que NestJS maneje el 400
+    }
+
+    // ========================================
+    // 4. CONVERSIÓN USUARIO → PERFIL
+    // ========================================
+    const profileId = await this.getProfileId(normalized.userId);
+
+    // ========================================
+    // 5. MANEJO DE EJERCICIOS MANUALES
+    // ========================================
+    if (exercise.requires_manual_grading) {
+      const submission = await this.exerciseSubmissionService.submitExercise(
+        normalized.userId,
+        exerciseId,
+        normalized.answers,
+      );
+
       return {
         score: submission.score || 0,
         isPerfect: false,
         rewards: {
-          xp: 0, // XP se otorga después de revisión del maestro
+          xp: 0,
           mlCoins: 0,
           bonuses: [],
         },
         rankUp: null,
-        message: 'Submission sent for teacher review',
+        feedback: 'Submission sent for teacher review',
       };
     }
 
-    // ✅ FLUJO PRINCIPAL: Ejercicios autocorregibles (práctica ilimitada)
+    // ========================================
+    // 6. FLUJO PRINCIPAL: AUTOCORREGIBLES
+    // ========================================
 
-    // 1. Obtener intentos previos para calcular attempt_number
+    // 6.1. Obtener intentos previos
     const previousAttempts = await this.exerciseAttemptService.findByUserAndExercise(
       profileId,
-      exerciseId
+      exerciseId,
     );
     const attemptNumber = previousAttempts.length + 1;
 
-    // 2. Validar respuesta con PostgreSQL
+    // 6.2. Validación y scoring en PostgreSQL
     if (!this.dataSource) {
       throw new Error('DataSource not available. Educational database connection not initialized.');
     }
 
     const validationResult = await this.dataSource.query(`
       SELECT * FROM educational_content.validate_and_audit(
-        $1::UUID,  -- exercise_id
-        $2::UUID,  -- user_id (profileId)
-        $3::JSONB, -- submitted_answer
-        $4::INTEGER -- attempt_number
+        $1::UUID,
+        $2::UUID,
+        $3::JSONB,
+        $4::INTEGER
       )
-    `, [exerciseId, profileId, JSON.stringify(submittedAnswers), attemptNumber]);
+    `, [exerciseId, profileId, JSON.stringify(normalized.answers), attemptNumber]);
 
     const validationData = validationResult[0];
     const score = validationData.score || 0;
-    // FIX: is_correct debe basarse en passing_score, no solo en la función SQL
-    // La función SQL puede retornar is_correct=false aunque score >= passing_score
     const isCorrect = score >= (exercise.passing_score || 70);
     const feedback = validationData.feedback || '';
 
-    // 3. ✅ ANTI-FARMING: XP solo en PRIMER acierto
-
+    // 6.3. Anti-farming: XP solo en primer acierto
     const hasCorrectAttemptBefore = previousAttempts.some((attempt: any) => attempt.is_correct);
     const isFirstCorrectAttempt = !hasCorrectAttemptBefore && isCorrect;
 
@@ -935,35 +1045,30 @@ export class ExercisesController {
     let mlCoinsEarned = 0;
 
     if (isFirstCorrectAttempt) {
-      // Solo otorgar XP en el primer acierto
       xpEarned = exercise.xp_reward || 0;
       mlCoinsEarned = exercise.ml_coins_reward || 0;
-
-      // Aplicar multiplicador de rango (futuro)
-      // const userRank = await this.getUserRank(profileId);
-      // xpEarned = Math.round(xpEarned * this.getRankMultiplier(userRank));
     }
 
-    // 3. Crear attempt (trigger actualiza user_stats automáticamente)
+    // 6.4. Crear attempt (trigger actualiza user_stats)
     await this.exerciseAttemptService.create({
       user_id: profileId,
       exercise_id: exerciseId,
-      submitted_answers: submittedAnswers,
+      submitted_answers: normalized.answers,
       is_correct: isCorrect,
       score: score,
       xp_earned: xpEarned,
       ml_coins_earned: mlCoinsEarned,
-      time_spent_seconds: body.startedAt
-        ? Math.floor((Date.now() - body.startedAt) / 1000)
-        : undefined,
-      hints_used: body.hintsUsed || 0,
-      comodines_used: body.powerupsUsed || [],
+      time_spent_seconds: normalized.timeSpentSeconds,
+      hints_used: normalized.hintsUsed,
+      comodines_used: normalized.powerupsUsed,
     });
 
-    // 4. Transformar respuesta a formato esperado por Frontend
-    const response = {
+    // ========================================
+    // 7. RESPUESTA
+    // ========================================
+    return {
       score: score,
-      isPerfect: score === 100 && (body.hintsUsed || 0) === 0,
+      isPerfect: score === 100 && normalized.hintsUsed === 0,
       rewards: {
         xp: xpEarned,
         mlCoins: mlCoinsEarned,
@@ -973,7 +1078,5 @@ export class ExercisesController {
       isFirstCorrectAttempt: isFirstCorrectAttempt,
       rankUp: null, // TODO: Detectar rank up desde user_stats
     };
-
-    return response;
   }
 }

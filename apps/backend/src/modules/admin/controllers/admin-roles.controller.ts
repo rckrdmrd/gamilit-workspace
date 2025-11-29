@@ -24,7 +24,7 @@ export class AdminRolesController {
       'Retrieve all available roles in the system with their permissions and user counts',
   })
   async getRoles(): Promise<RoleDto[]> {
-    return await this.adminRolesService.getRoles();
+    return this.adminRolesService.getRoles();
   }
 
   @Get('permissions')
@@ -34,7 +34,7 @@ export class AdminRolesController {
       'Retrieve all available permissions in the system organized by category',
   })
   async getAvailablePermissions(): Promise<PermissionDto[]> {
-    return await this.adminRolesService.getAvailablePermissions();
+    return this.adminRolesService.getAvailablePermissions();
   }
 
   @Get(':id/permissions')
@@ -45,7 +45,7 @@ export class AdminRolesController {
   async getRolePermissions(
     @Param('id') id: string,
   ): Promise<RolePermissionsDto> {
-    return await this.adminRolesService.getRolePermissions(id);
+    return this.adminRolesService.getRolePermissions(id);
   }
 
   @Put(':id/permissions')
@@ -56,8 +56,8 @@ export class AdminRolesController {
   })
   async updateRolePermissions(
     @Param('id') id: string,
-    @Body() updateDto: UpdatePermissionsDto,
+      @Body() updateDto: UpdatePermissionsDto,
   ): Promise<RolePermissionsDto> {
-    return await this.adminRolesService.updateRolePermissions(id, updateDto);
+    return this.adminRolesService.updateRolePermissions(id, updateDto);
   }
 }

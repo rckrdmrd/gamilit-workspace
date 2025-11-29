@@ -15,49 +15,49 @@ export class AlertDto {
     description: 'Unique identifier for the alert',
     example: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
   })
-  id!: string;
+    id!: string;
 
   @ApiProperty({
     description: 'Type of alert for UI display',
     example: 'warning',
     enum: ['error', 'warning', 'info', 'security'],
   })
-  type!: 'error' | 'warning' | 'info' | 'security';
+    type!: 'error' | 'warning' | 'info' | 'security';
 
   @ApiProperty({
     description: 'Severity level of the alert',
     example: 'medium',
     enum: ['low', 'medium', 'high', 'critical'],
   })
-  severity!: 'low' | 'medium' | 'high' | 'critical';
+    severity!: 'low' | 'medium' | 'high' | 'critical';
 
   @ApiProperty({
     description: 'Short title summarizing the alert',
     example: 'Contenido pendiente',
   })
-  title!: string;
+    title!: string;
 
   @ApiProperty({
     description: 'Main alert message',
     example: 'Hay 25 contenidos pendientes de aprobación',
   })
-  message!: string;
+    message!: string;
 
   @ApiProperty({
     description: 'Additional details about the alert',
     example: 'Revisa la sección de aprobaciones para gestionar el contenido educativo',
   })
-  details?: string;
+    details?: string;
 
   @ApiProperty({
     description: 'Timestamp when the alert was created',
     example: '2025-11-23T10:30:00Z',
   })
-  timestamp!: Date;
+    timestamp!: Date;
 
   @ApiProperty({
     description: 'Whether the alert has been dismissed by an admin',
     example: false,
   })
-  dismissed!: boolean;
+    dismissed!: boolean;
 }

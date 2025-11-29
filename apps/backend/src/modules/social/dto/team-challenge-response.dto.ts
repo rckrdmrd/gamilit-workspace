@@ -13,43 +13,43 @@ export class TeamChallengeResponseDto {
    * ID único del registro
    */
   @Expose()
-  id!: string;
+    id!: string;
 
   /**
    * ID del equipo
    */
   @Expose()
-  team_id!: string;
+    team_id!: string;
 
   /**
    * ID del desafío/challenge
    */
   @Expose()
-  challenge_id!: string;
+    challenge_id!: string;
 
   /**
    * Estado del desafío
    */
   @Expose()
-  status!: string;
+    status!: string;
 
   /**
    * Fecha de inicio del desafío
    */
   @Expose()
   @Type(() => Date)
-  started_at!: Date;
+    started_at!: Date;
 
   /**
    * Fecha de completación del desafío
    */
   @Expose()
   @Type(() => Date)
-  completed_at!: Date | null;
+    completed_at!: Date | null;
 
   /**
    * Puntuación obtenida
    */
   @Expose()
-  score!: number;
+    score!: number;
 }

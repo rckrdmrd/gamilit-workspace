@@ -76,7 +76,7 @@ export class StudentInterventionAlert {
    * Identificador único de la alerta (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   // =====================================================
   // MULTI-TENANT & RELATIONS
@@ -86,34 +86,34 @@ export class StudentInterventionAlert {
    * ID del tenant propietario (FK → auth_management.tenants)
    */
   @Column({ type: 'uuid', name: 'tenant_id' })
-  tenant_id!: string;
+    tenant_id!: string;
 
   /**
    * ID del estudiante afectado (FK → auth_management.profiles)
    */
   @Column({ type: 'uuid', name: 'student_id' })
-  student_id!: string;
+    student_id!: string;
 
   /**
    * Relación Many-to-One con Profile (estudiante)
    */
   @ManyToOne(() => Profile)
   @JoinColumn({ name: 'student_id' })
-  student?: Profile;
+    student?: Profile;
 
   /**
    * ID del classroom relacionado (FK → social_features.classrooms)
    * Nullable: algunas alertas pueden ser globales
    */
   @Column({ type: 'uuid', name: 'classroom_id', nullable: true })
-  classroom_id?: string | null;
+    classroom_id?: string | null;
 
   /**
    * Relación Many-to-One con Classroom
    */
   @ManyToOne(() => Classroom)
   @JoinColumn({ name: 'classroom_id' })
-  classroom?: Classroom | null;
+    classroom?: Classroom | null;
 
   // =====================================================
   // ALERT DETAILS
@@ -127,7 +127,7 @@ export class StudentInterventionAlert {
     type: 'text',
     name: 'alert_type',
   })
-  alert_type!: AlertType;
+    alert_type!: AlertType;
 
   /**
    * Nivel de severidad
@@ -136,19 +136,19 @@ export class StudentInterventionAlert {
   @Column({
     type: 'text',
   })
-  severity!: AlertSeverity;
+    severity!: AlertSeverity;
 
   /**
    * Título descriptivo de la alerta (generado automáticamente)
    */
   @Column({ type: 'text' })
-  title!: string;
+    title!: string;
 
   /**
    * Descripción detallada del problema (generado automáticamente)
    */
   @Column({ type: 'text', nullable: true })
-  description?: string | null;
+    description?: string | null;
 
   /**
    * Métricas específicas de la alerta en formato JSON
@@ -158,7 +158,7 @@ export class StudentInterventionAlert {
    * - declining_trend: { score_drop: 30, period: '7 days' }
    */
   @Column({ type: 'jsonb', nullable: true })
-  metrics?: Record<string, any> | null;
+    metrics?: Record<string, any> | null;
 
   // =====================================================
   // STATUS & WORKFLOW
@@ -173,57 +173,57 @@ export class StudentInterventionAlert {
     type: 'text',
     default: AlertStatus.ACTIVE,
   })
-  status!: AlertStatus;
+    status!: AlertStatus;
 
   /**
    * Fecha y hora de generación de la alerta
    */
   @Column({ type: 'timestamp with time zone', name: 'generated_at', default: () => 'NOW()' })
-  generated_at!: Date;
+    generated_at!: Date;
 
   /**
    * Fecha y hora cuando se reconoció la alerta (acknowledged)
    */
   @Column({ type: 'timestamp with time zone', name: 'acknowledged_at', nullable: true })
-  acknowledged_at?: Date | null;
+    acknowledged_at?: Date | null;
 
   /**
    * ID del teacher que reconoció la alerta
    */
   @Column({ type: 'uuid', name: 'acknowledged_by', nullable: true })
-  acknowledged_by?: string | null;
+    acknowledged_by?: string | null;
 
   /**
    * Relación con el teacher que acknowledge
    */
   @ManyToOne(() => Profile)
   @JoinColumn({ name: 'acknowledged_by' })
-  acknowledged_by_user?: Profile | null;
+    acknowledged_by_user?: Profile | null;
 
   /**
    * Fecha y hora cuando se resolvió la alerta
    */
   @Column({ type: 'timestamp with time zone', name: 'resolved_at', nullable: true })
-  resolved_at?: Date | null;
+    resolved_at?: Date | null;
 
   /**
    * ID del teacher que resolvió la alerta
    */
   @Column({ type: 'uuid', name: 'resolved_by', nullable: true })
-  resolved_by?: string | null;
+    resolved_by?: string | null;
 
   /**
    * Relación con el teacher que resolvió
    */
   @ManyToOne(() => Profile)
   @JoinColumn({ name: 'resolved_by' })
-  resolved_by_user?: Profile | null;
+    resolved_by_user?: Profile | null;
 
   /**
    * Notas de resolución (acciones tomadas)
    */
   @Column({ type: 'text', name: 'resolution_notes', nullable: true })
-  resolution_notes?: string | null;
+    resolution_notes?: string | null;
 
   // =====================================================
   // AUDIT TIMESTAMPS
@@ -233,11 +233,11 @@ export class StudentInterventionAlert {
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone', name: 'created_at' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización del registro
    */
   @UpdateDateColumn({ type: 'timestamp with time zone', name: 'updated_at' })
-  updated_at!: Date;
+    updated_at!: Date;
 }

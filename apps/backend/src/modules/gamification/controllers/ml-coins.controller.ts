@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Param, Body, UseGuards, HttpCode, HttpStatus, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { MLCoinsService } from '../services';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
 import { TransactionTypeEnum } from '@/shared/constants/enums.constants';
-// import { JwtAuthGuard } from '@/modules/auth/guards';
+import { JwtAuthGuard } from '@/modules/auth/guards';
 
 /**
  * MLCoinsController
@@ -15,7 +15,8 @@ import { TransactionTypeEnum } from '@/shared/constants/enums.constants';
  */
 @ApiTags('Gamification - ML Coins')
 @Controller(extractBasePath(API_ROUTES.GAMIFICATION.BASE))
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class MLCoinsController {
   constructor(private readonly mlCoinsService: MLCoinsService) {}
 
@@ -64,7 +65,7 @@ export class MLCoinsController {
     description: 'Usuario no encontrado',
   })
   async getMLCoinsBalance(@Param('userId') userId: string) {
-    return await this.mlCoinsService.getCoinsStats(userId);
+    return this.mlCoinsService.getCoinsStats(userId);
   }
 
   /**
@@ -142,14 +143,14 @@ export class MLCoinsController {
     description: 'Usuario no encontrado',
   })
   async getMLCoinsTransactions(
-    @Param('userId') userId: string,
+  @Param('userId') userId: string,
     @Query('limit') limit?: string,
     @Query('offset') offset?: string,
   ) {
     const limitNum = limit ? parseInt(limit, 10) : 50;
     const offsetNum = offset ? parseInt(offset, 10) : 0;
 
-    return await this.mlCoinsService.getTransactions(userId, limitNum, offsetNum);
+    return this.mlCoinsService.getTransactions(userId, limitNum, offsetNum);
   }
 
   /**
@@ -224,7 +225,7 @@ export class MLCoinsController {
     description: 'Usuario no encontrado',
   })
   async addMLCoins(
-    @Param('userId') userId: string,
+  @Param('userId') userId: string,
     @Body()
     body: {
       amount: number;
@@ -235,7 +236,7 @@ export class MLCoinsController {
       multiplier?: number;
     },
   ) {
-    return await this.mlCoinsService.addCoins(
+    return this.mlCoinsService.addCoins(
       userId,
       body.amount,
       body.transaction_type,
@@ -321,7 +322,7 @@ export class MLCoinsController {
     description: 'Usuario no encontrado',
   })
   async spendMLCoins(
-    @Param('userId') userId: string,
+  @Param('userId') userId: string,
     @Body()
     body: {
       amount: number;
@@ -331,7 +332,7 @@ export class MLCoinsController {
       reference_type?: string;
     },
   ) {
-    return await this.mlCoinsService.spendCoins(
+    return this.mlCoinsService.spendCoins(
       userId,
       body.amount,
       body.transaction_type,

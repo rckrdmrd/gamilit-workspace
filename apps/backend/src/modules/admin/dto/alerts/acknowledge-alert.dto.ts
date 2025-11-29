@@ -8,5 +8,5 @@ export class AcknowledgeAlertDto {
   @ApiPropertyOptional({ description: 'Note about the acknowledgment' })
   @IsOptional()
   @IsString()
-  acknowledgment_note?: string;
+    acknowledgment_note?: string;
 }

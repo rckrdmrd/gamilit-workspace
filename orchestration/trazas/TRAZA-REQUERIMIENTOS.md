@@ -1,7 +1,9 @@
 # TRAZA: Requerimientos
 
 **Proyecto:** GAMILIT - Sistema de Gamificación Educativa
-**Última actualización:** 2025-11-23
+**Última actualización:** 2025-11-29
+**Estado:** ⚠️ DEPRECATED - Template vacío sin contenido implementado
+**Nota:** Marcado como deprecated por Architecture-Analyst (clean-load validation)
 
 ---
 

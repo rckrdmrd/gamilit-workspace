@@ -15,5 +15,5 @@ export class ListParametersQueryDto {
   })
   @IsOptional()
   @IsString()
-  category?: 'xp' | 'ranks' | 'coins' | 'achievements';
+    category?: 'xp' | 'ranks' | 'coins' | 'achievements';
 }

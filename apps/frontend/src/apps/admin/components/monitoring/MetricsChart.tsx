@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -13,7 +14,16 @@ import {
 } from 'chart.js';
 import { MetricsHistory } from '../../hooks/useSystemMetrics';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+);
 
 interface MetricsChartProps {
   data: MetricsHistory[];
@@ -28,10 +38,12 @@ export const MetricsChart: React.FC<MetricsChartProps> = ({
   label,
   color = '#f97316',
   threshold,
-  unit = ''
+  unit = '',
 }) => {
   const chartData = {
-    labels: data.map((d) => new Date(d.timestamp).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })),
+    labels: data.map((d) =>
+      new Date(d.timestamp).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+    ),
     datasets: [
       {
         label,

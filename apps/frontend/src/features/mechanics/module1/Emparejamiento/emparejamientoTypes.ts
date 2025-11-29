@@ -1,4 +1,4 @@
-import { BaseExercise } from '@shared/components/mechanics/mechanicsTypes';
+import { BaseExercise, ExerciseProgressUpdate } from '@shared/components/mechanics/mechanicsTypes';
 
 export interface MatchingCard {
   id: string;
@@ -11,4 +11,19 @@ export interface MatchingCard {
 
 export interface EmparejamientoData extends BaseExercise {
   cards: MatchingCard[];
+}
+
+export interface EmparejamientoProgressData {
+  progress: ExerciseProgressUpdate;
+  answers: { matches: Record<string, string> };
+}
+
+export interface EmparejamientoExerciseProps {
+  exercise: EmparejamientoData;
+  onComplete?: () => void;
+  onProgressUpdate?: (data: EmparejamientoProgressData) => void;
+  actionsRef?: React.MutableRefObject<{
+    handleReset?: () => void;
+    handleCheck?: () => void;
+  }>;
 }

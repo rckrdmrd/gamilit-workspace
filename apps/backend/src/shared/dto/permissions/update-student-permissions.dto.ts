@@ -35,7 +35,7 @@ export class UpdateStudentPermissionsDto {
     each: true,
     message: 'Todos los IDs de módulos deben ser UUIDs válidos',
   })
-  allowed_modules?: string[];
+    allowed_modules?: string[];
 
   @ApiPropertyOptional({
     description:
@@ -49,7 +49,7 @@ export class UpdateStudentPermissionsDto {
     each: true,
     message: 'Todos los features deben ser strings',
   })
-  allowed_features?: string[];
+    allowed_features?: string[];
 
   @ApiPropertyOptional({
     description: 'Permitir al estudiante enviar tareas',
@@ -58,7 +58,7 @@ export class UpdateStudentPermissionsDto {
   })
   @IsOptional()
   @IsBoolean({ message: 'can_submit_assignments debe ser un boolean' })
-  can_submit_assignments?: boolean;
+    can_submit_assignments?: boolean;
 
   @ApiPropertyOptional({
     description: 'Permitir al estudiante ver el leaderboard',
@@ -67,7 +67,7 @@ export class UpdateStudentPermissionsDto {
   })
   @IsOptional()
   @IsBoolean({ message: 'can_view_leaderboard debe ser un boolean' })
-  can_view_leaderboard?: boolean;
+    can_view_leaderboard?: boolean;
 
   @ApiPropertyOptional({
     description: 'Permitir al estudiante usar el foro',
@@ -76,5 +76,5 @@ export class UpdateStudentPermissionsDto {
   })
   @IsOptional()
   @IsBoolean({ message: 'can_use_forum debe ser un boolean' })
-  can_use_forum?: boolean;
+    can_use_forum?: boolean;
 }

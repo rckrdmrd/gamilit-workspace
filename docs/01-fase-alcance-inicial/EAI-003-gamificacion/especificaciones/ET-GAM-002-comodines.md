@@ -9,9 +9,10 @@
 | **Título** | Implementación del Sistema de Comodines (Power-ups) |
 | **Prioridad** | Alta |
 | **Estado** | ✅ Implementado |
-| **Versión** | 1.1 |
+| **Versión** | 2.3.0 |
 | **Fecha Creación** | 2025-11-07 |
-| **Última Actualización** | 2025-11-11 |
+| **Última Actualización** | 2025-11-28 |
+| **Sistema Actual** | [docs/sistema-recompensas/](../../../sistema-recompensas/) v2.3.0 |
 | **Autor** | Database Team |
 | **Reviewers** | Backend Lead, Frontend Lead, QA Lead |
 

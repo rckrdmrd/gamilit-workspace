@@ -1,12 +1,18 @@
 # EXT-009: Peer Challenges
 
+> **⚠️ BACKLOG - FUERA DEL MVP**
+>
+> Esta épica está **parcialmente implementada (50%)** y **NO forma parte del MVP actual**.
+> Razón: Feature nice-to-have.
+> Ver: [Fase 4: Backlog](../../04-fase-backlog/README.md)
+
 **Versión:** 1.0
 **Fecha de creación:** 2025-11-07
 **Prioridad:** P2 (Promovida desde P3)
 **Story Points:** 25 SP
 **Presupuesto:** $3,750 USD
 **Timeline:** v1.2 (Sprints 11-16)
-**Estado:** 📋 Planificado
+**Estado:** ⏳ BACKLOG (50% implementado)
 
 ---
 

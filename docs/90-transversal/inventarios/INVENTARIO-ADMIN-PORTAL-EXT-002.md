@@ -171,7 +171,7 @@
 |---|--------|-----------|------------------|---------------------|
 | 1 | AdminDashboardService | services/admin-dashboard.service.ts | 8 | User, Tenant, Module, Exercise |
 | 2 | AdminRolesService | services/admin-roles.service.ts | 4 | Role, UserRole |
-| 3 | AdminReportsService | services/admin-reports.service.ts | 4 | Ninguno (Map en memoria) |
+| 3 | AdminReportsService | services/admin-reports.service.ts | 4 | AdminReport (TypeORM - admin_dashboard.admin_reports) |
 | 4 | AdminLogsController | controllers/admin-logs.controller.ts | 1 (delegado) | N/A |
 
 ### 3.2 Servicios Modificados (3 servicios)

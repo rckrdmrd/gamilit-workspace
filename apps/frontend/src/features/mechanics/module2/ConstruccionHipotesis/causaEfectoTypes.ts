@@ -3,7 +3,10 @@
  * Module 2 - Understanding causal relationships
  */
 
-import { BaseExercise } from '@shared/components/mechanics/mechanicsTypes';
+import {
+  BaseExercise,
+  OnProgressUpdateCallback,
+} from '@shared/components/mechanics/mechanicsTypes';
 
 /**
  * A cause (left column, fixed)
@@ -30,9 +33,9 @@ export interface Consequence {
  * Configuration for the exercise
  */
 export interface CausaEfectoConfig {
-  allowMultiple: boolean;    // Allow multiple consequences per cause
-  showFeedback: boolean;      // Show feedback after validation
-  dragAndDrop: boolean;       // Enable drag and drop
+  allowMultiple: boolean; // Allow multiple consequences per cause
+  showFeedback: boolean; // Show feedback after validation
+  dragAndDrop: boolean; // Enable drag and drop
 }
 
 /**
@@ -52,12 +55,19 @@ export interface CausaEfectoData extends BaseExercise {
 }
 
 /**
+ * Answers structure for CausaEfecto exercise
+ */
+export interface CausaEfectoAnswers {
+  matches: CauseMatches;
+}
+
+/**
  * Props for the main exercise component
  */
 export interface CausaEfectoExerciseProps {
   exercise: CausaEfectoData;
   onComplete?: (score: number, timeSpent: number) => void;
-  onProgressUpdate?: (progress: any) => void;
+  onProgressUpdate?: OnProgressUpdateCallback<CausaEfectoAnswers>;
   actionsRef?: React.MutableRefObject<{
     handleReset?: () => void;
     handleCheck?: () => void;

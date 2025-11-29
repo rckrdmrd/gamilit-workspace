@@ -25,26 +25,26 @@ export class CreateExerciseSubmissionDto {
    * ID del usuario
    */
   @IsUUID('4')
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del ejercicio
    */
   @IsUUID('4')
-  exercise_id!: string;
+    exercise_id!: string;
 
   /**
    * Respuesta del estudiante (JSONB)
    */
   @IsObject()
-  answer_data!: Record<string, any>;
+    answer_data!: Record<string, any>;
 
   /**
    * Indica si la respuesta fue correcta
    */
   @IsOptional()
   @IsBoolean()
-  is_correct?: boolean;
+    is_correct?: boolean;
 
   /**
    * Puntaje obtenido
@@ -52,7 +52,7 @@ export class CreateExerciseSubmissionDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  score?: number;
+    score?: number;
 
   /**
    * Puntaje máximo
@@ -60,21 +60,21 @@ export class CreateExerciseSubmissionDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  max_score?: number;
+    max_score?: number;
 
   /**
    * Retroalimentación
    */
   @IsOptional()
   @IsString()
-  feedback?: string;
+    feedback?: string;
 
   /**
    * Indica si usó hint
    */
   @IsOptional()
   @IsBoolean()
-  hint_used?: boolean;
+    hint_used?: boolean;
 
   /**
    * Cantidad de hints usados
@@ -82,14 +82,14 @@ export class CreateExerciseSubmissionDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  hints_count?: number;
+    hints_count?: number;
 
   /**
    * Comodines utilizados
    */
   @IsOptional()
   @IsArray()
-  comodines_used?: string[];
+    comodines_used?: string[];
 
   /**
    * ML Coins gastadas
@@ -97,7 +97,7 @@ export class CreateExerciseSubmissionDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  ml_coins_spent?: number;
+    ml_coins_spent?: number;
 
   /**
    * Tiempo invertido en segundos
@@ -105,7 +105,7 @@ export class CreateExerciseSubmissionDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  time_spent_seconds?: number;
+    time_spent_seconds?: number;
 
   /**
    * Número de intento
@@ -113,7 +113,7 @@ export class CreateExerciseSubmissionDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  attempt_number?: number;
+    attempt_number?: number;
 
   /**
    * Estado de la sumisión
@@ -121,26 +121,26 @@ export class CreateExerciseSubmissionDto {
   @IsOptional()
   @IsString()
   @IsIn(['draft', 'submitted', 'graded', 'reviewed'])
-  status?: string;
+    status?: string;
 
   /**
    * Fecha de inicio
    */
   @IsOptional()
   @IsDateString()
-  started_at?: string;
+    started_at?: string;
 
   /**
    * Fecha de envío
    */
   @IsOptional()
   @IsDateString()
-  submitted_at?: string;
+    submitted_at?: string;
 
   /**
    * Fecha de calificación
    */
   @IsOptional()
   @IsDateString()
-  graded_at?: string;
+    graded_at?: string;
 }

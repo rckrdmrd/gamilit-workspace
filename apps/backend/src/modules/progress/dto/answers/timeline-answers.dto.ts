@@ -20,5 +20,5 @@ export class TimelineAnswersDto {
   @IsArray()
   @ArrayNotEmpty({ message: 'events array cannot be empty' })
   @IsString({ each: true, message: 'Each event ID must be a string' })
-  events!: string[];
+    events!: string[];
 }

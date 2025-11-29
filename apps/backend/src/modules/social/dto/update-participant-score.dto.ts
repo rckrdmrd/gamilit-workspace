@@ -20,5 +20,5 @@ export class UpdateParticipantScoreDto {
   })
   @IsNumber()
   @Min(0)
-  score!: number;
+    score!: number;
 }

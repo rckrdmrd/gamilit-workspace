@@ -33,11 +33,20 @@ import { LeaderboardLayout } from '@/features/gamification/social/components/Lea
 
 // Hooks & Types
 import { useLeaderboards } from '@/features/gamification/social/hooks/useLeaderboards';
+import { useLeaderboardWebSocket } from '@/features/gamification/social/hooks/useLeaderboardWebSocket';
+import { useAuthStore } from '@/features/auth/store/authStore';
+import { useUserClassroom } from '../hooks/useUserClassroom';
 
 // Utils
 import { cn } from '@shared/utils/cn';
 
 export default function LeaderboardPage() {
+  // Auth Store
+  const { user } = useAuthStore();
+
+  // Get user's primary classroom (type-safe approach)
+  const { classroomId: userClassroomId } = useUserClassroom(user?.id);
+
   // Store & Hooks
   const {
     currentLeaderboard,
@@ -50,22 +59,23 @@ export default function LeaderboardPage() {
     getUserPosition,
   } = useLeaderboards();
 
+  // WebSocket connection for real-time updates
+  const { isConnected: isWebSocketConnected } = useLeaderboardWebSocket();
+
   // Local State
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [autoScrollEnabled, setAutoScrollEnabled] = useState(true);
+  const [showRealtimeIndicator, setShowRealtimeIndicator] = useState(false);
   const userEntryRef = useRef<HTMLDivElement>(null);
 
-  // WebSocket Integration for real-time updates
+  // Show real-time indicator briefly when leaderboard updates
   useEffect(() => {
-    // TODO: Implement WebSocket connection
-    // const socket = io(env.wsUrl, {
-    //   auth: { token: getToken() }
-    // });
-    // socket.on('leaderboard:update', (data) => {
-    //   leaderboardsStore.updatePosition(data);
-    // });
-    // return () => socket.disconnect();
-  }, []);
+    if (isWebSocketConnected) {
+      setShowRealtimeIndicator(true);
+      const timer = setTimeout(() => setShowRealtimeIndicator(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [currentLeaderboard.lastUpdated, isWebSocketConnected]);
 
   // Auto-scroll to current user on load
   useEffect(() => {
@@ -78,8 +88,20 @@ export default function LeaderboardPage() {
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    refreshLeaderboard();
+    refreshLeaderboard(selectedType === 'classroom' ? userClassroomId || undefined : undefined);
     setTimeout(() => setIsRefreshing(false), 1000);
+  };
+
+  // Handle leaderboard type change with classroom support
+  const handleTypeChange = (type: typeof selectedType) => {
+    if (type === 'classroom' && userClassroomId) {
+      setLeaderboardType(type, userClassroomId);
+    } else if (type === 'classroom' && !userClassroomId) {
+      // Don't switch to classroom if user has no classroom
+      console.warn('Cannot switch to classroom leaderboard: user has no classroom');
+    } else {
+      setLeaderboardType(type);
+    }
   };
 
   const userEntry = getUserEntry();
@@ -118,12 +140,35 @@ export default function LeaderboardPage() {
                 <h1 className="text-2xl font-bold text-detective-text md:text-3xl">
                   Tabla de Clasificacion
                 </h1>
-                <p className="text-sm text-detective-text-secondary">
-                  Ultima actualizacion:{' '}
-                  {new Date(currentLeaderboard.lastUpdated).toLocaleTimeString()}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm text-detective-text-secondary">
+                    Ultima actualizacion:{' '}
+                    {new Date(currentLeaderboard.lastUpdated).toLocaleTimeString()}
+                  </p>
+                  {isWebSocketConnected && (
+                    <div className="flex items-center gap-1">
+                      <div className="h-2 w-2 animate-pulse rounded-full bg-green-500"></div>
+                      <span className="text-xs text-green-600 dark:text-green-400">En vivo</span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
+
+            {/* Real-time update indicator */}
+            {showRealtimeIndicator && isWebSocketConnected && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="flex items-center gap-2 rounded-lg bg-green-100 px-3 py-2 dark:bg-green-900/30"
+              >
+                <Sparkles className="h-4 w-4 text-green-600 dark:text-green-400" />
+                <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                  Actualizado en tiempo real
+                </span>
+              </motion.div>
+            )}
 
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -139,7 +184,11 @@ export default function LeaderboardPage() {
 
           {/* Leaderboard Type Tabs */}
           <div className="mb-4">
-            <LeaderboardTabs selectedType={selectedType} onTypeChange={setLeaderboardType} />
+            <LeaderboardTabs
+              selectedType={selectedType}
+              onTypeChange={handleTypeChange}
+              hasClassroom={!!userClassroomId}
+            />
           </div>
 
           {/* Time Period Selector */}
@@ -299,7 +348,9 @@ export default function LeaderboardPage() {
                       ? 'Escuela'
                       : selectedType === 'grade'
                         ? 'Grado'
-                        : 'Amigos'}
+                        : selectedType === 'classroom'
+                          ? 'Mi Aula'
+                          : 'Amigos'}
                 </h2>
                 <button
                   onClick={() => setAutoScrollEnabled(!autoScrollEnabled)}

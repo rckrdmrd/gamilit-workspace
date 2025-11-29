@@ -45,7 +45,7 @@ export class ExerciseMechanicMapping {
    * Identificador único del mapeo (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   // =====================================================
   // CLASIFICACIÓN PEDAGÓGICA UNIVERSAL
@@ -67,7 +67,7 @@ export class ExerciseMechanicMapping {
    * @see RF-EDU-001 v2.0: Contexto Pedagógico
    */
   @Column({ type: 'varchar', length: 50 })
-  mechanic_category!: string;
+    mechanic_category!: string;
 
   /**
    * Subcategoría pedagógica específica (31 subcategorías genéricas)
@@ -85,7 +85,7 @@ export class ExerciseMechanicMapping {
    * @see ADR-008: Ejemplos de mapeos
    */
   @Column({ type: 'varchar', length: 50, nullable: true })
-  mechanic_subcategory?: string;
+    mechanic_subcategory?: string;
 
   // =====================================================
   // IMPLEMENTACIÓN GAMILIT
@@ -108,7 +108,7 @@ export class ExerciseMechanicMapping {
    * @see Enum: ExerciseTypeEnum
    */
   @Column({ type: 'enum', enum: ExerciseTypeEnum, enumName: 'educational_content.exercise_type' })
-  exercise_type!: ExerciseTypeEnum;
+    exercise_type!: ExerciseTypeEnum;
 
   // =====================================================
   // CONTEXTO EDUCATIVO
@@ -129,7 +129,7 @@ export class ExerciseMechanicMapping {
    * @see ET-EDU-001 v2.0: Sección Bloom Taxonomy
    */
   @Column({ type: 'varchar', length: 50, nullable: true })
-  bloom_level?: string;
+    bloom_level?: string;
 
   /**
    * Niveles CEFR aplicables (Common European Framework of Reference)
@@ -153,7 +153,7 @@ export class ExerciseMechanicMapping {
     array: true,
     nullable: true,
   })
-  cefr_level?: DifficultyLevelEnum[];
+    cefr_level?: DifficultyLevelEnum[];
 
   /**
    * Propósito pedagógico del mapeo
@@ -167,7 +167,7 @@ export class ExerciseMechanicMapping {
    * - "Evaluar veracidad de información digital mediante fact-checking"
    */
   @Column({ type: 'text', nullable: true })
-  pedagogical_purpose?: string;
+    pedagogical_purpose?: string;
 
   /**
    * Objetivos de aprendizaje específicos que cumple este mapeo
@@ -181,7 +181,7 @@ export class ExerciseMechanicMapping {
    * - ["Verificar información", "Identificar fake news", "Pensamiento crítico digital"]
    */
   @Column({ type: 'text', array: true, nullable: true })
-  learning_objectives?: string[];
+    learning_objectives?: string[];
 
   // =====================================================
   // CARACTERÍSTICAS DE INTERACCIÓN
@@ -202,7 +202,7 @@ export class ExerciseMechanicMapping {
    * Ayuda a filtrar ejercicios según modalidad de interacción deseada.
    */
   @Column({ type: 'varchar', length: 50, nullable: true })
-  interaction_type?: string;
+    interaction_type?: string;
 
   /**
    * Carga cognitiva aproximada del ejercicio
@@ -217,7 +217,7 @@ export class ExerciseMechanicMapping {
    * @see Teoría de Carga Cognitiva (Sweller, 1988)
    */
   @Column({ type: 'varchar', length: 20, nullable: true })
-  cognitive_load?: string;
+    cognitive_load?: string;
 
   // =====================================================
   // METADATOS Y BÚSQUEDA
@@ -235,7 +235,7 @@ export class ExerciseMechanicMapping {
    * Índice GIN permite búsquedas eficientes por tags.
    */
   @Column({ type: 'text', array: true, nullable: true })
-  tags?: string[];
+    tags?: string[];
 
   /**
    * Control de activación del mapeo
@@ -249,7 +249,7 @@ export class ExerciseMechanicMapping {
    * @default true
    */
   @Column({ type: 'boolean', default: true })
-  is_active!: boolean;
+    is_active!: boolean;
 
   // =====================================================
   // AUDIT FIELDS
@@ -259,7 +259,7 @@ export class ExerciseMechanicMapping {
    * Fecha y hora de creación del mapeo
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización del mapeo
@@ -268,5 +268,5 @@ export class ExerciseMechanicMapping {
    * Función: gamilit.update_updated_at_column()
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 }

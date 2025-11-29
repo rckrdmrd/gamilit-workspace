@@ -11,12 +11,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Assignment } from './entities/assignment.entity';
-import { AssignmentClassroom } from './entities/assignment-classroom.entity';
+import { AssignmentClassroom } from '@/modules/social/entities/assignment-classroom.entity';
 import { AssignmentExercise } from './entities/assignment-exercise.entity';
 import { AssignmentStudent } from './entities/assignment-student.entity';
 import { AssignmentSubmission } from './entities/assignment-submission.entity';
 import { AssignmentsService } from './services/assignments.service';
 import { AssignmentsController } from './controllers/assignments.controller';
+import { StudentAssignmentsController } from './controllers/student-assignments.controller';
 
 @Module({
   imports: [
@@ -31,7 +32,7 @@ import { AssignmentsController } from './controllers/assignments.controller';
       'content', // Use content_management connection
     ),
   ],
-  controllers: [AssignmentsController],
+  controllers: [AssignmentsController, StudentAssignmentsController],
   providers: [AssignmentsService],
   exports: [AssignmentsService],
 })

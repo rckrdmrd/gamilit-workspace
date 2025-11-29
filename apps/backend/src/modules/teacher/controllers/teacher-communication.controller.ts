@@ -199,8 +199,8 @@ export class TeacherCommunicationController {
   @ApiResponse({ status: 403, description: 'Acceso denegado al classroom' })
   async sendClassroomAnnouncement(
     @Param('classroomId') classroomId: string,
-    @Body() dto: SendClassroomAnnouncementDto,
-    @Req() req: Request & { user: any },
+      @Body() dto: SendClassroomAnnouncementDto,
+      @Req() req: Request & { user: any },
   ): Promise<MessageResponseDto> {
     const teacherId = req.user.sub;
     const tenantId = req.user.tenant_id;
@@ -226,8 +226,8 @@ export class TeacherCommunicationController {
   @ApiResponse({ status: 403, description: 'Acceso denegado' })
   async sendPrivateFeedback(
     @Param('studentId') studentId: string,
-    @Body() dto: SendPrivateFeedbackDto,
-    @Req() req: Request & { user: any },
+      @Body() dto: SendPrivateFeedbackDto,
+      @Req() req: Request & { user: any },
   ): Promise<MessageResponseDto> {
     const teacherId = req.user.sub;
     const tenantId = req.user.tenant_id;

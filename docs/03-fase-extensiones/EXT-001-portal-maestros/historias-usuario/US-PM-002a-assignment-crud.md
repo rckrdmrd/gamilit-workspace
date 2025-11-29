@@ -390,15 +390,73 @@ const sanitizeHTML = (html: string): string => {
 
 **Progreso Global:** 50% completado (20h de 40h)
 
+## Implementación Frontend - Hooks
+
+> **Actualizado:** 2025-11-29
+
+### Hook Principal: `useAssignments`
+
+**Ubicación:** `apps/frontend/src/apps/teacher/hooks/useAssignments.ts`
+
+```typescript
+interface UseAssignmentsReturn {
+  assignments: Assignment[];
+  exercises: Exercise[];
+  loading: boolean;
+  error: Error | null;
+  getAssignmentById: (id: string) => Promise<Assignment>;
+  createAssignment: (data: CreateAssignmentDto) => Promise<Assignment>;
+  updateAssignment: (id: string, data: UpdateAssignmentDto) => Promise<Assignment>;
+  deleteAssignment: (id: string) => Promise<void>;
+  getSubmissions: (assignmentId: string) => Promise<Submission[]>;
+  gradeSubmission: (submissionId: string, data: GradeSubmissionDto) => Promise<Submission>;
+  refresh: () => Promise<void>;
+}
+```
+
+**Uso en páginas:**
+- `TeacherAssignments.tsx` - Gestión principal de asignaciones
+- Integrado con `useClassrooms` para selección de classroom
+
+### Hook Complementario: `useGrading`
+
+**Ubicación:** `apps/frontend/src/apps/teacher/hooks/useGrading.ts`
+
+Maneja la calificación de submissions con queue de pendientes.
+
+### API Service: `assignmentsApi`
+
+**Ubicación:** `apps/frontend/src/services/api/teacher/assignmentsApi.ts`
+
+| Método | Función | Endpoint Backend |
+|--------|---------|------------------|
+| `getAssignments(filters)` | Listar asignaciones | `GET /assignments` |
+| `getAssignmentById(id)` | Detalle de asignación | `GET /assignments/:id` |
+| `createAssignment(data)` | Crear asignación | `POST /assignments` |
+| `updateAssignment(id, data)` | Actualizar asignación | `PUT /assignments/:id` |
+| `deleteAssignment(id)` | Eliminar asignación | `DELETE /assignments/:id` |
+| `getAssignmentSubmissions(id)` | Submissions de asignación | `GET /assignments/:id/submissions` |
+| `gradeSubmission(id, data)` | Calificar submission | `POST /assignments/submissions/:id/grade` |
+| `getAvailableExercises()` | Ejercicios disponibles | `GET /assignments/exercises` |
+
+### Correcciones Recientes (2025-11-29)
+
+- ✅ Corregido uso de `classroomId` hardcodeado → ahora usa `useClassrooms` hook
+- ✅ Agregado estado de "sin classrooms disponibles"
+- ✅ Cálculo dinámico de `maxScore` desde ejercicios del assignment
+
+---
+
 ## Notas
 
 - ✅ Archivo modularizado desde US-PM-002-FULL.md (2025-11-02)
 - ✅ Cumple PF-001 (<400L)
+- ✅ **Hooks documentados (2025-11-29)**
 - 📋 Enfoque: CRUD de assignments con rich text
 - 🔗 Complementa con US-PM-002b (Distribution) y US-PM-002c (Submissions)
 
 ---
 
-**Última actualización:** 2025-11-02
-**Versión:** 1.0 (Modular)
-**Estado:** READY FOR DEVELOPMENT
+**Última actualización:** 2025-11-29
+**Versión:** 1.1 (Modular + Hooks)
+**Estado:** ✅ IMPLEMENTADO

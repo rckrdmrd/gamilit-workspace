@@ -44,7 +44,7 @@ test.describe('Authentication Flow', () => {
     // Should show error message
     // Wait for error message (may take a few seconds for API response)
     await expect(
-      page.locator('text=/credenciales inválidas|invalid credentials|error/i')
+      page.locator('text=/credenciales inválidas|invalid credentials|error/i'),
     ).toBeVisible({ timeout: 5000 });
   });
 
@@ -85,9 +85,12 @@ test.describe('Authentication Flow', () => {
     await expect(passwordInput).toHaveAttribute('type', 'password');
 
     // Click toggle button (usually an eye icon)
-    const toggleButton = page.locator('button[type="button"]').filter({
-      has: page.locator('svg'), // Icon button
-    }).first();
+    const toggleButton = page
+      .locator('button[type="button"]')
+      .filter({
+        has: page.locator('svg'), // Icon button
+      })
+      .first();
 
     if (await toggleButton.isVisible()) {
       await toggleButton.click();
@@ -120,9 +123,9 @@ test.describe('Registration Flow', () => {
 
     // Should show password strength indicator or validation message
     // This depends on your implementation
-    await expect(
-      page.locator('text=/débil|weak|contraseña debe|password must/i')
-    ).toBeVisible({ timeout: 3000 });
+    await expect(page.locator('text=/débil|weak|contraseña debe|password must/i')).toBeVisible({
+      timeout: 3000,
+    });
   });
 
   test('should validate email format', async ({ page }) => {
@@ -133,9 +136,9 @@ test.describe('Registration Flow', () => {
     await emailInput.blur(); // Trigger validation
 
     // Should show validation error
-    await expect(
-      page.locator('text=/email inválido|invalid email|formato/i')
-    ).toBeVisible({ timeout: 3000 });
+    await expect(page.locator('text=/email inválido|invalid email|formato/i')).toBeVisible({
+      timeout: 3000,
+    });
   });
 });
 
@@ -153,7 +156,7 @@ test.describe('Session Management', () => {
     test.skip();
   });
 
-  test('should persist session across page reloads', async ({ page }) => {
+  test('should persist session across page reloads', async ({ page: _page }) => {
     // This test would verify that after login,
     // refreshing the page keeps the user logged in
 

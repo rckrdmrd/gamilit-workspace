@@ -262,6 +262,26 @@ BEGIN
                 v_config.allow_partial_credit
             );
 
+        WHEN 'validate_mapa_conceptual' THEN
+            SELECT * INTO v_result
+            FROM educational_content.validate_mapa_conceptual(
+                v_exercise.solution,
+                p_submitted_answer,
+                max_score,
+                v_config.case_sensitive,
+                v_config.normalize_text
+            );
+
+        WHEN 'validate_emparejamiento' THEN
+            SELECT * INTO v_result
+            FROM educational_content.validate_emparejamiento(
+                v_exercise.solution,
+                p_submitted_answer,
+                max_score,
+                v_config.case_sensitive,
+                v_config.normalize_text
+            );
+
         -- ====================================================================
         -- VALIDADOR NO IMPLEMENTADO
         -- ====================================================================

@@ -38,7 +38,7 @@ export class DiscussionThread {
    * @generated
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del aula (classroom) al que pertenece el thread
@@ -51,7 +51,7 @@ export class DiscussionThread {
    */
   @Column('uuid', { nullable: true, name: 'classroom_id' })
   @Index('idx_discussion_threads_classroom_id', { where: 'classroom_id IS NOT NULL' })
-  classroom_id!: string | null;
+    classroom_id!: string | null;
 
   /**
    * ID del equipo (team) al que pertenece el thread
@@ -64,7 +64,7 @@ export class DiscussionThread {
    */
   @Column('uuid', { nullable: true, name: 'team_id' })
   @Index('idx_discussion_threads_team_id', { where: 'team_id IS NOT NULL' })
-  team_id!: string | null;
+    team_id!: string | null;
 
   /**
    * ID del usuario que creó el thread
@@ -75,7 +75,7 @@ export class DiscussionThread {
    */
   @Column('uuid', { name: 'created_by' })
   @Index('idx_discussion_threads_created_by')
-  created_by!: string;
+    created_by!: string;
 
   /**
    * Título del hilo de discusión
@@ -85,7 +85,7 @@ export class DiscussionThread {
    * @example "Estrategias para mejorar comprensión lectora"
    */
   @Column('varchar', { length: 255 })
-  title!: string;
+    title!: string;
 
   /**
    * Contenido principal del thread (mensaje inicial)
@@ -94,7 +94,7 @@ export class DiscussionThread {
    * @example "Tengo dudas sobre el paso 3 del ejercicio..."
    */
   @Column('text')
-  content!: string;
+    content!: string;
 
   /**
    * Indica si el thread está fijado al topo de la lista
@@ -106,7 +106,7 @@ export class DiscussionThread {
    */
   @Column('boolean', { default: false, name: 'is_pinned' })
   @Index('idx_discussion_threads_is_pinned', { where: 'is_pinned = true' })
-  is_pinned!: boolean;
+    is_pinned!: boolean;
 
   /**
    * Indica si el thread está bloqueado (no permite nuevas respuestas)
@@ -117,7 +117,7 @@ export class DiscussionThread {
    * @note Solo moderadores pueden bloquear/desbloquear threads
    */
   @Column('boolean', { default: false, name: 'is_locked' })
-  is_locked!: boolean;
+    is_locked!: boolean;
 
   /**
    * Número de respuestas en este thread
@@ -128,7 +128,7 @@ export class DiscussionThread {
    * @note Se usa para ordenamiento y filtrado
    */
   @Column('integer', { default: 0, name: 'replies_count' })
-  replies_count!: number;
+    replies_count!: number;
 
   /**
    * Fecha y hora de la última respuesta
@@ -142,7 +142,7 @@ export class DiscussionThread {
    */
   @Column('timestamptz', { nullable: true, name: 'last_reply_at' })
   @Index('idx_discussion_threads_last_reply') // DESC NULLS LAST en DDL
-  last_reply_at!: Date | null;
+    last_reply_at!: Date | null;
 
   /**
    * Fecha de creación del thread
@@ -151,7 +151,7 @@ export class DiscussionThread {
    */
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   @Index('idx_discussion_threads_created_at') // DESC en DDL
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de última actualización
@@ -159,7 +159,7 @@ export class DiscussionThread {
    * @trigger update_discussion_threads_updated_at (actualizado automáticamente)
    */
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   // =============================================================================
   // RELACIONES
@@ -175,7 +175,7 @@ export class DiscussionThread {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'classroom_id' })
-  classroom?: Classroom | null;
+    classroom?: Classroom | null;
 
   /**
    * Team al que pertenece el thread
@@ -187,7 +187,7 @@ export class DiscussionThread {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'team_id' })
-  team?: Team | null;
+    team?: Team | null;
 
   /**
    * Usuario que creó el thread (autor)

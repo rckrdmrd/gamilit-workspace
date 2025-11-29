@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { useSession } from '../hooks/useSession';
@@ -25,7 +26,7 @@ export const useAuthContext = () => useContext(AuthContext);
  */
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isInitialized, setIsInitialized] = useState(false);
-  const checkSession = useAuthStore(state => state.checkSession);
+  const checkSession = useAuthStore((state) => state.checkSession);
 
   // Initialize auth on mount
   useEffect(() => {
@@ -40,18 +41,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Show loading state while initializing
   if (!isInitialized) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-purple-600"></div>
           <p className="text-gray-600">Cargando autenticación...</p>
         </div>
       </div>
     );
   }
 
-  return (
-    <AuthContext.Provider value={{ isInitialized }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ isInitialized }}>{children}</AuthContext.Provider>;
 };

@@ -1,9 +1,12 @@
 # Implementation Report: AdminSettingsPage - Configuration Tabs
 
-**Date**: 2025-11-24
+**Date**: 2025-11-24 (Actualizado: 2025-11-29)
 **Agent**: Frontend-Agent
 **Task**: Complete AdminSettingsPage with functional configuration tabs
-**Status**: ✅ COMPLETED
+**Status**: ✅ COMPLETED + EXPANDIDO
+
+> **Actualización 2025-11-29:** SecuritySettings expandido de 3 a 4 secciones completas:
+> Password Policies, Session Settings, 2FA, Login Security. Líneas: 177→524 (+197%)
 
 ---
 
@@ -177,12 +180,29 @@ cd apps/frontend && npm run build
 3. **Maintenance Message**: Textarea with character limit (min 10)
 4. **Actions**: Save Changes button (only enabled when form is dirty)
 
-### Security Settings Tab
-1. **Max Login Attempts**: Number input with validation (3-10)
-2. **Lockout Duration**: Minutes input with validation (5-1440)
-3. **Session Timeout**: Minutes input with validation (15-1440)
-4. **Best Practices Panel**: Blue info box with security tips
-5. **Actions**: Save Changes and Reset buttons
+### Security Settings Tab (EXPANDIDO - 2025-11-29)
+
+#### A. Password Policies (Políticas de Contraseñas)
+- **Minimum Password Length**: Input number (6-32 caracteres)
+- **Require Uppercase**: Toggle checkbox
+- **Require Numbers**: Toggle checkbox
+- **Require Special Characters**: Toggle checkbox
+
+#### B. Session Settings (Configuración de Sesiones)
+- **Session Timeout**: Dropdown (15min, 30min, 1h, 4h, 8h)
+- **Max Concurrent Sessions**: Input number (1-10)
+- **Force Logout on Password Change**: Toggle checkbox
+
+#### C. Two-Factor Authentication (2FA)
+- **Require 2FA for Admins**: Toggle checkbox
+- **Require 2FA for Teachers**: Toggle checkbox
+- **Available 2FA Methods**: Checkboxes (Email, Authenticator App)
+
+#### D. Login Security (Seguridad de Inicio de Sesión)
+- **Max Failed Login Attempts**: Input number (3-10)
+- **Account Lockout Duration**: Dropdown (5min, 15min, 30min, 1h)
+- **Enable Captcha After Failed Attempts**: Toggle checkbox
+- **Security Best Practices**: Info panel con recomendaciones
 
 ### UI/UX Features
 - **Tab Navigation**: Clean, accessible tabs with descriptions

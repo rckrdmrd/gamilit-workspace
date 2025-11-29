@@ -6,6 +6,27 @@ export interface Perspective {
   biases: string[];
 }
 
+// AI-generated perspective (no id yet)
+export interface PerspectiveGeneration {
+  perspective: string;
+  viewpoint: string;
+  arguments: string[];
+  counterarguments: string[];
+  biases: string[];
+  contextualFactors: string[];
+}
+
+// Feedback data structure
+export interface FeedbackData {
+  type: 'success' | 'partial' | 'error';
+  title: string;
+  message: string;
+  score?: number;
+  showConfetti?: boolean;
+  xpEarned?: number;
+  mlCoinsEarned?: number;
+}
+
 export interface MatrixExercise {
   id: string;
   topic: string;

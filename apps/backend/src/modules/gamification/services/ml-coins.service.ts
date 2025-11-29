@@ -188,7 +188,7 @@ export class MLCoinsService {
     limit: number = 50,
     offset: number = 0,
   ): Promise<MLCoinsTransaction[]> {
-    return await this.transactionRepo.find({
+    return this.transactionRepo.find({
       where: { user_id: userId },
       order: { created_at: 'DESC' },
       take: limit,
@@ -204,7 +204,7 @@ export class MLCoinsService {
     transactionType: TransactionTypeEnum,
     limit: number = 50,
   ): Promise<MLCoinsTransaction[]> {
-    return await this.transactionRepo.find({
+    return this.transactionRepo.find({
       where: {
         user_id: userId,
         transaction_type: transactionType,
@@ -222,7 +222,7 @@ export class MLCoinsService {
     startDate: Date,
     endDate: Date,
   ): Promise<MLCoinsTransaction[]> {
-    return await this.transactionRepo
+    return this.transactionRepo
       .createQueryBuilder('t')
       .where('t.user_id = :userId', { userId })
       .andWhere('t.created_at >= :startDate', { startDate })
@@ -277,7 +277,7 @@ export class MLCoinsService {
     referenceId: string,
     referenceType: string,
   ): Promise<MLCoinsTransaction[]> {
-    return await this.transactionRepo.find({
+    return this.transactionRepo.find({
       where: {
         user_id: userId,
         reference_id: referenceId,
@@ -367,14 +367,14 @@ export class MLCoinsService {
       metadata: transactionDto.metadata || {},
     });
 
-    return await this.transactionRepo.save(transaction);
+    return this.transactionRepo.save(transaction);
   }
 
   /**
    * Obtiene ranking global por ML Coins totales
    */
   async getTopEarners(limit: number = 50): Promise<UserStats[]> {
-    return await this.userStatsRepo.find({
+    return this.userStatsRepo.find({
       order: { ml_coins_earned_total: 'DESC' },
       take: limit,
     });

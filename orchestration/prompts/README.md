@@ -32,6 +32,15 @@ Responsables de tareas específicas end-to-end:
 | **Feature-Developer** | [PROMPT-FEATURE-DEVELOPER.md](./PROMPT-FEATURE-DEVELOPER.md) | Features completos (DB+BE+FE coordinados) | 6KB |
 | **Policy-Auditor** | [PROMPT-POLICY-AUDITOR.md](./PROMPT-POLICY-AUDITOR.md) | Auditoría de cumplimiento de políticas | 7KB |
 
+### 🔍 Agentes de Validación (2) - NUEVOS
+
+Responsables de validación pre y post implementación:
+
+| Agente | Archivo | Descripción | Tamaño |
+|--------|---------|-------------|--------|
+| **Documentation-Validator** | [PROMPT-DOCUMENTATION-VALIDATOR.md](./PROMPT-DOCUMENTATION-VALIDATOR.md) | Validación PRE-implementación de docs, inventarios, specs | 18KB |
+| **Database-Auditor** | [PROMPT-DATABASE-AUDITOR.md](./PROMPT-DATABASE-AUDITOR.md) | Auditoría POST-implementación BD (carga limpia, UUIDs, scripts) | 22KB |
+
 ### 🤖 Subagentes (1)
 
 Para tareas delegadas por agentes principales:
@@ -44,6 +53,26 @@ Para tareas delegadas por agentes principales:
 
 ## 🚀 GUÍA RÁPIDA DE USO
 
+### Flujo de Validación Recomendado
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    FLUJO DE 3 FASES                                      │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│   ┌─────────────────────┐      ┌────────────────────┐      ┌──────────┐ │
+│   │  1. PRE-IMPLEMENT.  │      │  2. IMPLEMENTACIÓN │      │ 3. POST  │ │
+│   │  Documentation-     │ GO   │  Database-Agent    │      │ Database-│ │
+│   │  Validator          │ ───▶ │  Backend-Agent     │ ───▶ │ Auditor  │ │
+│   │                     │      │  Frontend-Agent    │      │          │ │
+│   └─────────────────────┘      └────────────────────┘      └──────────┘ │
+│   Valida docs, specs,          Solo implementan           Valida carga  │
+│   inventarios, anti-dup        (ya validado)              limpia, UUIDs │
+│   Resultado: GO/NO-GO          Actualizan inventarios     APROBADO/RECH │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
 ### ¿Qué agente usar?
 
 ```
@@ -51,33 +80,30 @@ Para tareas delegadas por agentes principales:
 │ ¿Qué necesitas hacer?                       │
 └─────────────────────────────────────────────┘
                     │
-        ┌───────────┴───────────┐
-        │                       │
-    Solo BD               Solo Backend
-        │                       │
-        v                       v
- Database-Agent           Backend-Agent
-                                │
-                    ┌───────────┴───────────┐
-                    │                       │
-               Solo Frontend          Feature Completo
-                    │                  (DB+BE+FE)
-                    v                       v
-              Frontend-Agent         Feature-Developer
-                                            │
-                                ┌───────────┴───────────┐
-                                │                       │
-                         Bug a corregir          Revisar código
-                                │                       │
-                                v                       v
-                           Bug-Fixer               Code-Reviewer
-                                                        │
-                                            ┌───────────┴───────────┐
-                                            │                       │
-                                    Analizar req.         Auditar políticas
-                                            │                       │
-                                            v                       v
-                                  Requirements-Analyst      Policy-Auditor
+    ┌───────────────┼───────────────┐
+    │               │               │
+ Validar         Implementar      Auditar
+    │               │               │
+    v               v               v
+┌─────────┐    ┌─────────┐    ┌─────────────┐
+│ PRE:    │    │         │    │ POST:       │
+│ Documen-│    │ DB/BE/FE│    │ Database-   │
+│ tation- │    │ Agents  │    │ Auditor     │
+│ Validator│   │         │    │ Policy-     │
+└─────────┘    └─────────┘    │ Auditor     │
+                              └─────────────┘
+
+IMPLEMENTACIÓN:
+├── Solo BD ─────────────▶ Database-Agent
+├── Solo Backend ────────▶ Backend-Agent
+├── Solo Frontend ───────▶ Frontend-Agent
+├── Feature Completo ────▶ Feature-Developer
+└── Bug a corregir ──────▶ Bug-Fixer
+
+ANÁLISIS:
+├── Analizar requerimientos ─▶ Requirements-Analyst
+├── Revisar código ──────────▶ Code-Reviewer
+└── Arquitectura ────────────▶ Architecture-Analyst
 ```
 
 ### Ejemplos de Uso
@@ -129,6 +155,21 @@ cat orchestration/prompts/PROMPT-REQUIREMENTS-ANALYST.md
 ```bash
 # Usar: Policy-Auditor
 cat orchestration/prompts/PROMPT-POLICY-AUDITOR.md
+```
+
+**9. Validar documentación ANTES de implementar:**
+```bash
+# Usar: Documentation-Validator
+# Ejecutar ANTES de orquestar Database/Backend/Frontend-Agent
+cat orchestration/prompts/PROMPT-DOCUMENTATION-VALIDATOR.md
+```
+
+**10. Auditar cambios en BD DESPUÉS de implementar:**
+```bash
+# Usar: Database-Auditor
+# Ejecutar DESPUÉS de que Database-Agent complete cambios
+# Valida Política de Carga Limpia, UUIDs, scripts actualizados
+cat orchestration/prompts/PROMPT-DATABASE-AUDITOR.md
 ```
 
 ---
@@ -225,18 +266,61 @@ Todos los prompts siguen esta estructura:
 - Revisión de calidad
 - Identifica code smells y mejoras
 
+### Workspace-Manager vs Documentation-Validator (DIFERENCIA CRÍTICA)
+
+**Workspace-Manager:**
+- **Rol:** Guardián del ORDEN del workspace
+- **Qué hace:** REUBICA documentación mal ubicada
+- **Detecta:** .md en raíz, apps/, orchestration/ que va en docs/
+- **Acciones:** Mover archivos, archivar backups, limpiar temporales
+- **Después:** Notifica a Documentation-Validator para validar contenido
+
+**Documentation-Validator:**
+- **Rol:** Dueño de `docs/`
+- **Qué hace:** VALIDA contenido de documentación
+- **Valida:** Estructura, completitud, alineación de docs/
+- **Resultado:** GO (contenido OK) o NO-GO (ajustes necesarios)
+- **NO hace:** Mover archivos (eso es de Workspace-Manager)
+
+```
+FLUJO TÍPICO:
+1. Workspace-Manager: Detecta doc mal ubicada → Reubica → Notifica
+2. Documentation-Validator: Valida contenido → GO/NO-GO
+```
+
+### Database-Auditor vs Policy-Auditor
+
+**Database-Auditor:**
+- **Cuándo:** POST-implementación (DESPUÉS de cambios en BD)
+- **Qué valida:** Política de Carga Limpia, UUIDs, scripts, recreación
+- **Resultado:** APROBADO o RECHAZADO
+- **Especializado en:** Solo base de datos
+
+**Policy-Auditor:**
+- **Cuándo:** Auditoría periódica o revisión general
+- **Qué valida:** Cumplimiento general de todas las directivas
+- **Resultado:** Reporte de auditoría con hallazgos
+- **Alcance:** Todo el proyecto (DB + Backend + Frontend)
+
 ---
 
 ## 📝 NOTAS
 
 - **Fecha creación:** 2025-11-23
+- **Última actualización:** 2025-11-29
 - **Reorganización:** Nueva estructura con prompts individuales
 - **Anterior:** PROMPT-AGENTES-PRINCIPALES.md agrupaba Database/Backend/Frontend
 - **Actual:** Cada agente tiene su prompt específico
-- **Ventaja:** Más claro, mantenible y escalable
+- **Nuevos (2025-11-29):**
+  - `PROMPT-DOCUMENTATION-VALIDATOR.md` - Dueño de docs/, valida contenido
+  - `PROMPT-DATABASE-AUDITOR.md` - Auditoría post-implementación BD
+- **Actualizados (2025-11-29):**
+  - `PROMPT-WORKSPACE-MANAGER.md` - Clarificado rol de reubicación de documentación
+  - `PROMPT-ARCHITECTURE-ANALYST.md` - Agregada guía de cuándo usar cada agente
+- **Ventaja:** Separación clara entre reubicación (Workspace-Manager) y validación (Documentation-Validator)
 
 ---
 
-**Versión:** 1.0.0
+**Versión:** 1.2.0
 **Proyecto:** GAMILIT
 **Mantenido por:** Tech Lead

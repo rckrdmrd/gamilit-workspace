@@ -13,62 +13,62 @@ export class ScheduledMissionResponseDto {
    * ID único del registro
    */
   @Expose()
-  id!: string;
+    id!: string;
 
   /**
    * ID de la misión
    */
   @Expose()
-  mission_id!: string;
+    mission_id!: string;
 
   /**
    * ID del aula
    */
   @Expose()
-  classroom_id!: string;
+    classroom_id!: string;
 
   /**
    * ID del usuario que programó
    */
   @Expose()
-  scheduled_by!: string;
+    scheduled_by!: string;
 
   /**
    * Fecha y hora de inicio
    */
   @Expose()
   @Type(() => Date)
-  starts_at!: Date;
+    starts_at!: Date;
 
   /**
    * Fecha y hora de fin
    */
   @Expose()
   @Type(() => Date)
-  ends_at!: Date;
+    ends_at!: Date;
 
   /**
    * Indica si está activa
    */
   @Expose()
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * XP bonus
    */
   @Expose()
-  bonus_xp!: number;
+    bonus_xp!: number;
 
   /**
    * ML Coins bonus
    */
   @Expose()
-  bonus_coins!: number;
+    bonus_coins!: number;
 
   /**
    * Fecha de creación
    */
   @Expose()
   @Type(() => Date)
-  created_at!: Date;
+    created_at!: Date;
 }

@@ -4,8 +4,8 @@ import {
   ForbiddenException,
   Logger,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { UserStats } from '@modules/gamification/entities/user-stats.entity';
 import { ClassroomMember } from '@modules/social/entities/classroom-member.entity';
 import { Classroom } from '@modules/social/entities/classroom.entity';
@@ -35,6 +35,8 @@ export class BonusCoinsService {
     private readonly classroomRepo: Repository<Classroom>,
     @InjectRepository(Profile, 'auth')
     private readonly profileRepo: Repository<Profile>,
+    @InjectDataSource('gamification')
+    private readonly gamificationDataSource: DataSource,
   ) {}
 
   /**
@@ -75,58 +77,86 @@ export class BonusCoinsService {
     // (el estudiante debe estar en al menos una de las clases del teacher)
     await this.validateTeacherAccess(teacherId, studentId);
 
-    // 3. Obtener o crear user_stats del estudiante
-    let userStats = await this.userStatsRepo.findOne({
-      where: { user_id: studentId },
-    });
+    // 3. Usar transacción con bloqueo pesimista para evitar race conditions
+    // Esto previene que dos teachers otorguen bonus al mismo tiempo y pierdan uno
+    return this.gamificationDataSource.transaction(async (manager) => {
+      const userStatsRepo = manager.getRepository(UserStats);
 
-    if (!userStats) {
-      // Si no existe, crear registro inicial
-      this.logger.warn(
-        `UserStats not found for student ${studentId}. Creating initial record.`,
+      // Obtener user_stats con bloqueo FOR UPDATE
+      let userStats = await userStatsRepo.findOne({
+        where: { user_id: studentId },
+        lock: { mode: 'pessimistic_write' },
+      });
+
+      if (!userStats) {
+        // Si no existe, crear registro inicial (dentro de la transacción)
+        this.logger.warn(
+          `UserStats not found for student ${studentId}. Creating initial record.`,
+        );
+        userStats = userStatsRepo.create({
+          user_id: studentId,
+          level: 1,
+          total_xp: 0,
+          xp_to_next_level: 100,
+          current_rank: 'Ajaw',
+          ml_coins: 100,
+          ml_coins_earned_total: 100,
+          ml_coins_spent_total: 0,
+          ml_coins_earned_today: 0,
+          current_streak: 0,
+          max_streak: 0,
+          days_active_total: 0,
+          exercises_completed: 0,
+          modules_completed: 0,
+          total_score: 0,
+          achievements_earned: 0,
+          certificates_earned: 0,
+          sessions_count: 0,
+          metadata: {},
+        });
+        userStats = await userStatsRepo.save(userStats);
+      }
+
+      // 4. Actualizar balance de ML Coins (atómicamente dentro de la transacción)
+      const previousBalance = userStats.ml_coins;
+      userStats.ml_coins += dto.amount;
+      userStats.ml_coins_earned_total += dto.amount;
+
+      // 5. Registrar la transacción en metadata (historial)
+      if (!userStats.metadata) {
+        userStats.metadata = {};
+      }
+
+      if (!userStats.metadata.bonus_history) {
+        userStats.metadata.bonus_history = [];
+      }
+
+      userStats.metadata.bonus_history.push({
+        teacher_id: teacherId,
+        amount: dto.amount,
+        reason: dto.reason,
+        granted_at: new Date().toISOString(),
+        previous_balance: previousBalance,
+        new_balance: userStats.ml_coins,
+      });
+
+      // 6. Guardar cambios (dentro de la transacción)
+      await userStatsRepo.save(userStats);
+
+      this.logger.log(
+        `Teacher ${teacherId} granted ${dto.amount} ML Coins to student ${studentId}. ` +
+          `New balance: ${userStats.ml_coins}. Reason: ${dto.reason}`,
       );
-      userStats = await this.createInitialUserStats(studentId);
-    }
 
-    // 4. Actualizar balance de ML Coins
-    const previousBalance = userStats.ml_coins;
-    userStats.ml_coins += dto.amount;
-    userStats.ml_coins_earned_total += dto.amount;
-
-    // 5. Registrar la transacción en metadata (historial)
-    if (!userStats.metadata) {
-      userStats.metadata = {};
-    }
-
-    if (!userStats.metadata.bonus_history) {
-      userStats.metadata.bonus_history = [];
-    }
-
-    userStats.metadata.bonus_history.push({
-      teacher_id: teacherId,
-      amount: dto.amount,
-      reason: dto.reason,
-      granted_at: new Date().toISOString(),
-      previous_balance: previousBalance,
-      new_balance: userStats.ml_coins,
+      // 7. Retornar respuesta
+      return {
+        success: true,
+        newBalance: userStats.ml_coins,
+        message: `Bonus de ${dto.amount} ML Coins otorgado exitosamente`,
+        amountGranted: dto.amount,
+        reason: dto.reason,
+      };
     });
-
-    // 6. Guardar cambios
-    await this.userStatsRepo.save(userStats);
-
-    this.logger.log(
-      `Teacher ${teacherId} granted ${dto.amount} ML Coins to student ${studentId}. ` +
-        `New balance: ${userStats.ml_coins}. Reason: ${dto.reason}`,
-    );
-
-    // 7. Retornar respuesta
-    return {
-      success: true,
-      newBalance: userStats.ml_coins,
-      message: `Bonus de ${dto.amount} ML Coins otorgado exitosamente`,
-      amountGranted: dto.amount,
-      reason: dto.reason,
-    };
   }
 
   /**
@@ -165,7 +195,7 @@ export class BonusCoinsService {
 
     if (!membership) {
       throw new ForbiddenException(
-        `No tienes acceso a este estudiante. El estudiante debe estar en una de tus clases.`,
+        'No tienes acceso a este estudiante. El estudiante debe estar en una de tus clases.',
       );
     }
   }
@@ -199,6 +229,6 @@ export class BonusCoinsService {
       metadata: {},
     });
 
-    return await this.userStatsRepo.save(newStats);
+    return this.userStatsRepo.save(newStats);
   }
 }

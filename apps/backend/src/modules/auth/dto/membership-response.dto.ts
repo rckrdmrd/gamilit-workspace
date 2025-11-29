@@ -18,53 +18,53 @@ export class MembershipResponseDto {
    * ID único de la membresía (UUID)
    */
   @Expose()
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario (UUID)
    */
   @Expose()
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del tenant (UUID)
    */
   @Expose()
-  tenant_id!: string;
+    tenant_id!: string;
 
   /**
    * Rol del usuario en el tenant
    */
   @Expose()
-  role!: MembershipRoleEnum;
+    role!: MembershipRoleEnum;
 
   /**
    * Estado de la membresía
    */
   @Expose()
-  status!: MembershipStatusEnum;
+    status!: MembershipStatusEnum;
 
   /**
    * ID del usuario que invitó (nullable)
    */
   @Expose()
-  invited_by!: string | null;
+    invited_by!: string | null;
 
   /**
    * Fecha y hora en que el usuario se unió al tenant
    */
   @Expose()
-  joined_at!: Date;
+    joined_at!: Date;
 
   /**
    * Fecha de creación de la membresía
    */
   @Expose()
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de última actualización de la membresía
    */
   @Expose()
-  updated_at!: Date;
+    updated_at!: Date;
 }

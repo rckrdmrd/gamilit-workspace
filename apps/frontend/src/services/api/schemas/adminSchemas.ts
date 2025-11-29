@@ -35,12 +35,14 @@ export const OrganizationSchema = z.object({
   status: z.enum(['active', 'inactive', 'suspended']),
   userCount: z.number().int().nonnegative(),
   createdAt: z.string(),
-  features: z.array(z.string()).default([]),  // ← BUG-ADMIN-007: default([])
-  subscription: z.object({
-    startDate: z.string(),
-    endDate: z.string(),
-    autoRenew: z.boolean(),
-  }).optional(),
+  features: z.array(z.string()).default([]), // ← BUG-ADMIN-007: default([])
+  subscription: z
+    .object({
+      startDate: z.string(),
+      endDate: z.string(),
+      autoRenew: z.boolean(),
+    })
+    .optional(),
 });
 
 /**
@@ -79,16 +81,17 @@ export const PaginatedOrganizationsSchema = z.object({
  * - maxXp: número positivo o null
  * - multiplierXp: número positivo con default 1 (BUG-ADMIN-008)
  *
- * IMPORTANTE: Alineado con types/admin/gamification.types.ts MayaRank interface
+ * IMPORTANTE: Alineado con types/admin/gamification.types.ts MayaRankConfig interface
+ * NOTA: Renombrado de MayaRank a MayaRankConfig (P2-001) para evitar conflicto con enum
  */
-export const MayaRankSchema = z.object({
+export const MayaRankConfigSchema = z.object({
   id: z.string(),
   name: z.string(),
-  level: z.number().int().nonnegative(),  // ← BUG-ADMIN-008: Validación crítica
-  minXp: z.number().int().nonnegative(),  // ← BUG-ADMIN-008: Validación crítica
-  maxXp: z.number().int().positive().nullable(),  // ← BUG-ADMIN-008: Validación crítica
-  multiplierXp: z.number().positive(),  // ← BUG-ADMIN-008: Validación crítica
-  multiplierMlCoins: z.number().positive(),  // ← BUG-ADMIN-008: Validación crítica
+  level: z.number().int().nonnegative(), // ← BUG-ADMIN-008: Validación crítica
+  minXp: z.number().int().nonnegative(), // ← BUG-ADMIN-008: Validación crítica
+  maxXp: z.number().int().positive().nullable(), // ← BUG-ADMIN-008: Validación crítica
+  multiplierXp: z.number().positive(), // ← BUG-ADMIN-008: Validación crítica
+  multiplierMlCoins: z.number().positive(), // ← BUG-ADMIN-008: Validación crítica
   bonusMlCoins: z.number().nonnegative(),
   color: z.string(),
   icon: z.string().nullable(),
@@ -111,14 +114,14 @@ export const MayaRankSchema = z.object({
  */
 export const ParameterSchema = z.object({
   id: z.string(),
-  category: z.enum(['points', 'coins', 'levels', 'ranks', 'penalties', 'bonuses']),  // ← BUG-ADMIN-009: Validación crítica
-  key: z.string(),  // ← BUG-ADMIN-009: Validación crítica
-  value: z.number(),  // ← BUG-ADMIN-009: Validación crítica
+  category: z.enum(['points', 'coins', 'levels', 'ranks', 'penalties', 'bonuses']), // ← BUG-ADMIN-009: Validación crítica
+  key: z.string(), // ← BUG-ADMIN-009: Validación crítica
+  value: z.number(), // ← BUG-ADMIN-009: Validación crítica
   defaultValue: z.number(),
   minValue: z.number().nullable(),
   maxValue: z.number().nullable(),
   description: z.string(),
-  dataType: z.enum(['integer', 'decimal', 'percentage']),  // ← BUG-ADMIN-009: Validación crítica
+  dataType: z.enum(['integer', 'decimal', 'percentage']), // ← BUG-ADMIN-009: Validación crítica
   isActive: z.boolean(),
   lastModified: z.string(),
   modifiedBy: z.string().nullable(),
@@ -136,5 +139,5 @@ export const ParameterSchema = z.object({
  */
 export type Organization = z.infer<typeof OrganizationSchema>;
 export type PaginatedOrganizations = z.infer<typeof PaginatedOrganizationsSchema>;
-export type MayaRank = z.infer<typeof MayaRankSchema>;
+export type MayaRankConfig = z.infer<typeof MayaRankConfigSchema>;
 export type Parameter = z.infer<typeof ParameterSchema>;

@@ -2,13 +2,17 @@ import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { UnderConstruction, FeatureBadge } from '@shared/components/common';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { Zap, Beaker, Users, Wrench } from 'lucide-react';
 
 /**
  * AdminAdvancedPage - Administración avanzada
  *
- * Estado: EN CONSTRUCCIÓN
- * Esta página incluirá funcionalidades avanzadas para administradores:
+ * Estado: OCULTO EN MENÚ - FASE 2
+ * Esta página está oculta del menú de navegación hasta su implementación en Fase 2.
+ * La ruta sigue activa para acceso directo y muestra mensaje "Coming Soon".
+ *
+ * Funcionalidades planificadas:
  * - Gestión de tenants (multi-tenant)
  * - Feature flags
  * - A/B Testing
@@ -16,21 +20,31 @@ import { Zap, Beaker, Users, Wrench } from 'lucide-react';
  *
  * Updated: 2025-11-24 - Added Under Construction message
  * Updated: 2025-11-25 - Added SHOW_CONTENT flag to preserve code while showing Under Construction
+ * Updated: 2025-11-28 - Hidden from menu, route remains active with Coming Soon message
  */
 
 // Feature flag - set to true when ready to show actual content
+// IMPORTANTE: Esta página está oculta del menú del admin (ver GamilitSidebar.tsx)
 const SHOW_CONTENT = false;
 
 const AdminAdvancedPage = () => {
   const { user, logout } = useAuth();
 
-  const gamificationData = {
-    userId: user?.id || 'mock-admin-id',
-    level: 20,
-    totalXP: 5000,
-    mlCoins: 2500,
-    rank: 'Super Admin',
-    achievements: ['admin_master', 'advanced_admin'],
+  // Use useUserGamification hook with real API endpoint
+  const { gamificationData, isLoading: gamificationLoading } = useUserGamification(user?.id);
+
+  // Fallback gamification data while loading or if data not available
+  const displayGamificationData = gamificationData || {
+    userId: user?.id || '',
+    level: gamificationLoading ? 0 : 1,
+    totalXP: 0,
+    mlCoins: 0,
+    rank: gamificationLoading ? 'Cargando...' : 'Ajaw',
+    rankColor: '#9E9E9E',
+    progressToNextLevel: 0,
+    xpToNextLevel: 100,
+    achievements: [],
+    totalAchievements: 0,
   };
 
   const handleLogout = () => {
@@ -41,7 +55,7 @@ const AdminAdvancedPage = () => {
   return (
     <AdminLayout
       user={user || undefined}
-      gamificationData={gamificationData}
+      gamificationData={displayGamificationData}
       organizationName="GAMILIT Platform Admin"
       onLogout={handleLogout}
     >

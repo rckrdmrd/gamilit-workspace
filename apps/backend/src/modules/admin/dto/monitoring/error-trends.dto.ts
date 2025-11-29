@@ -17,7 +17,7 @@ export class ErrorTrendsQueryDto {
   @IsInt()
   @Min(1)
   @Max(168)
-  hours?: number = 24;
+    hours?: number = 24;
 
   @ApiPropertyOptional({
     description: 'Time grouping interval',
@@ -27,7 +27,7 @@ export class ErrorTrendsQueryDto {
   @IsOptional()
   @IsString()
   @IsIn(['hour', 'day'])
-  group_by?: string = 'hour';
+    group_by?: string = 'hour';
 }
 
 /**
@@ -38,31 +38,31 @@ export class ErrorTrendDataPoint {
     description: 'Time bucket timestamp',
     example: '2025-11-24T18:00:00Z',
   })
-  time_bucket!: string;
+    time_bucket!: string;
 
   @ApiProperty({
     description: 'Total error count in this bucket',
     example: 5,
   })
-  error_count!: number;
+    error_count!: number;
 
   @ApiProperty({
     description: 'Number of fatal errors',
     example: 1,
   })
-  fatal_count!: number;
+    fatal_count!: number;
 
   @ApiProperty({
     description: 'Number of error-level errors',
     example: 4,
   })
-  error_count_level!: number;
+    error_count_level!: number;
 
   @ApiProperty({
     description: 'Number of unique error sources',
     example: 3,
   })
-  unique_sources!: number;
+    unique_sources!: number;
 }
 
 /**
@@ -73,18 +73,18 @@ export class ErrorTrendsDto {
     description: 'Array of error trend data points',
     type: [ErrorTrendDataPoint],
   })
-  trends!: ErrorTrendDataPoint[];
+    trends!: ErrorTrendDataPoint[];
 
   @ApiProperty({
     description: 'Grouping interval used',
     enum: ['hour', 'day'],
     example: 'hour',
   })
-  group_by!: string;
+    group_by!: string;
 
   @ApiProperty({
     description: 'Time period analyzed in hours',
     example: 24,
   })
-  time_period_hours!: number;
+    time_period_hours!: number;
 }

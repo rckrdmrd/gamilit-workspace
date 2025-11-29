@@ -17,7 +17,7 @@ import {
   Edit,
   RotateCcw,
 } from 'lucide-react';
-import type { MayaRank, Parameter } from '@/services/api/schemas/adminSchemas';
+import type { MayaRankConfig, Parameter } from '@/services/api/schemas/adminSchemas';
 import {
   ParameterEditModal,
   MayaRankEditModal,
@@ -44,7 +44,7 @@ export default function AdminGamificationPage() {
   const [parameterModalOpen, setParameterModalOpen] = useState(false);
   const [selectedParameter, setSelectedParameter] = useState<Parameter | null>(null);
   const [rankModalOpen, setRankModalOpen] = useState(false);
-  const [selectedRank, setSelectedRank] = useState<MayaRank | null>(null);
+  const [selectedRank, setSelectedRank] = useState<MayaRankConfig | null>(null);
   const [bulkUpdateOpen, setBulkUpdateOpen] = useState(false);
   const [previewImpactOpen, setPreviewImpactOpen] = useState(false);
   const [restoreDefaultsOpen, setRestoreDefaultsOpen] = useState(false);
@@ -73,11 +73,34 @@ export default function AdminGamificationPage() {
   // BUG-ADMIN-008: Validar y transformar ranks con fallbacks
   // Backend may return snake_case fields, so we cast to any for transformation
   const validatedRanks = useMemo(() => {
-    if (!mayaRanks || !Array.isArray(mayaRanks)) return [];
+    // Defensive: Validate mayaRanks is an array
+    if (!mayaRanks || !Array.isArray(mayaRanks)) {
+      if (mayaRanks !== undefined && mayaRanks !== null) {
+        console.warn('[AdminGamificationPage] Invalid mayaRanks data:', mayaRanks);
+      }
+      return [];
+    }
 
     return mayaRanks
       .map((r) => {
+        // Defensive: Validate rank is an object
+        if (!r || typeof r !== 'object') {
+          console.warn('[AdminGamificationPage] Invalid rank object:', r);
+          return null;
+        }
+
         const rank = r as unknown as Record<string, unknown>;
+
+        // Defensive: Validate required fields exist
+        const hasId = rank.id || rank.rank_name;
+        const hasName = rank.name || rank.rank_name;
+        const hasLevel = typeof rank.level === 'number' || typeof rank.rank_order === 'number';
+
+        if (!hasId || !hasName || !hasLevel) {
+          console.warn('[AdminGamificationPage] Rank missing required fields:', rank);
+          return null;
+        }
+
         return {
           id:
             (rank.id as string) ||
@@ -99,15 +122,40 @@ export default function AdminGamificationPage() {
           order: (rank.order as number) ?? (rank.rank_order as number) ?? 0,
         };
       })
+      .filter((rank): rank is NonNullable<typeof rank> => rank !== null)
       .filter((rank) => rank.name && rank.name !== 'Sin nombre');
   }, [mayaRanks]);
 
   // BUG-ADMIN-009: Validar parámetros con fallback defensivo
   const safeParameters = useMemo(() => {
-    if (!parametersData?.data || !Array.isArray(parametersData.data)) {
+    // Defensive: Validate parametersData structure
+    if (!parametersData || typeof parametersData !== 'object') {
+      if (parametersData !== undefined) {
+        console.warn('[AdminGamificationPage] Invalid parametersData:', parametersData);
+      }
       return [];
     }
-    return parametersData.data;
+
+    // Defensive: Validate data array exists
+    if (!parametersData.data || !Array.isArray(parametersData.data)) {
+      console.warn('[AdminGamificationPage] parametersData missing data array:', parametersData);
+      return [];
+    }
+
+    // Defensive: Filter out invalid parameter objects
+    return parametersData.data.filter((param) => {
+      if (!param || typeof param !== 'object') {
+        console.warn('[AdminGamificationPage] Invalid parameter object:', param);
+        return false;
+      }
+
+      if (!param.id || !param.key) {
+        console.warn('[AdminGamificationPage] Parameter missing id or key:', param);
+        return false;
+      }
+
+      return true;
+    });
   }, [parametersData]);
 
   const handleLogout = () => {
@@ -231,53 +279,67 @@ export default function AdminGamificationPage() {
               </div>
 
               <div className="space-y-3">
-                {validatedRanks.length > 0 ? (
+                {validatedRanks && validatedRanks.length > 0 ? (
                   validatedRanks
                     .sort((a, b) => a.level - b.level)
-                    .map((rank) => (
-                      <div
-                        key={rank.id}
-                        className="flex cursor-pointer items-center justify-between rounded-lg bg-detective-bg-secondary p-4 transition-colors hover:bg-detective-bg-secondary/80"
-                        onClick={() => {
-                          setSelectedRank(rank);
-                          setRankModalOpen(true);
-                        }}
-                      >
-                        <div className="flex items-center gap-4">
-                          <Star className="h-8 w-8" style={{ color: rank.color }} />
-                          <div>
-                            <h3 className="text-lg font-bold" style={{ color: rank.color }}>
-                              {rank.name}
-                            </h3>
-                            <p className="text-sm text-detective-text-secondary">
-                              {rank.minXp.toLocaleString()} -{' '}
-                              {rank.maxXp ? rank.maxXp.toLocaleString() : '∞'} XP
-                            </p>
-                            <p className="mt-1 text-xs text-detective-text-secondary">
-                              Nivel {rank.level} • Mult. XP: {rank.multiplierXp}x • Mult. Coins:{' '}
-                              {rank.multiplierMlCoins}x
-                            </p>
+                    .map((rank) => {
+                      // Defensive: Skip invalid ranks that somehow got through
+                      if (!rank?.id || !rank?.name) {
+                        console.warn('[AdminGamificationPage] Invalid rank in render:', rank);
+                        return null;
+                      }
+
+                      return (
+                        <div
+                          key={rank.id}
+                          className="flex cursor-pointer items-center justify-between rounded-lg bg-detective-bg-secondary p-4 transition-colors hover:bg-detective-bg-secondary/80"
+                          onClick={() => {
+                            setSelectedRank(rank);
+                            setRankModalOpen(true);
+                          }}
+                        >
+                          <div className="flex items-center gap-4">
+                            <Star className="h-8 w-8" style={{ color: rank.color || '#6B7280' }} />
+                            <div>
+                              <h3
+                                className="text-lg font-bold"
+                                style={{ color: rank.color || '#6B7280' }}
+                              >
+                                {rank.name}
+                              </h3>
+                              <p className="text-sm text-detective-text-secondary">
+                                {(rank.minXp ?? 0).toLocaleString()} -{' '}
+                                {rank.maxXp ? rank.maxXp.toLocaleString() : '∞'} XP
+                              </p>
+                              <p className="mt-1 text-xs text-detective-text-secondary">
+                                Nivel {rank.level ?? 0} • Mult. XP: {rank.multiplierXp ?? 1}x •
+                                Mult. Coins: {rank.multiplierMlCoins ?? 1}x
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="text-right">
+                              {rank.isActive ? (
+                                <span className="rounded bg-green-900/30 px-2 py-1 text-xs text-green-400">
+                                  Activo
+                                </span>
+                              ) : (
+                                <span className="rounded bg-gray-900/30 px-2 py-1 text-xs text-gray-400">
+                                  Inactivo
+                                </span>
+                              )}
+                            </div>
+                            <Edit className="h-4 w-4 text-detective-orange" />
                           </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <div className="text-right">
-                            {rank.isActive ? (
-                              <span className="rounded bg-green-900/30 px-2 py-1 text-xs text-green-400">
-                                Activo
-                              </span>
-                            ) : (
-                              <span className="rounded bg-gray-900/30 px-2 py-1 text-xs text-gray-400">
-                                Inactivo
-                              </span>
-                            )}
-                          </div>
-                          <Edit className="h-4 w-4 text-detective-orange" />
-                        </div>
-                      </div>
-                    ))
+                      );
+                    })
                 ) : (
                   <div className="py-8 text-center text-detective-text-secondary">
-                    No hay rangos Maya configurados
+                    <p className="text-lg">No hay rangos Maya configurados</p>
+                    <p className="mt-2 text-sm">
+                      {ranksLoading ? 'Cargando...' : 'Contacta al administrador del sistema'}
+                    </p>
                   </div>
                 )}
               </div>
@@ -313,7 +375,9 @@ export default function AdminGamificationPage() {
                   <Coins className="mx-auto mb-2 h-12 w-12 text-green-400" />
                   <p className="mb-1 text-sm text-detective-text-secondary">Categoría Coins</p>
                   <p className="text-3xl font-bold text-green-400">
-                    {safeParameters.filter((p) => p?.category === 'coins').length}
+                    {safeParameters && Array.isArray(safeParameters)
+                      ? safeParameters.filter((p) => p?.category === 'coins').length
+                      : 0}
                   </p>
                 </div>
               </DetectiveCard>
@@ -321,43 +385,51 @@ export default function AdminGamificationPage() {
 
             <DetectiveCard>
               <h2 className="mb-4 text-xl font-bold text-detective-text">Parámetros de Economía</h2>
-              {safeParameters.length > 0 ? (
+              {safeParameters && safeParameters.length > 0 ? (
                 <div className="space-y-3">
                   {safeParameters
-                    .filter((param) => param.category === 'coins' || param.category === 'bonuses')
-                    .map((param) => (
-                      <div
-                        key={param.id}
-                        className="flex cursor-pointer items-center justify-between rounded-lg bg-detective-bg-secondary p-3 transition-colors hover:bg-detective-bg-secondary/80"
-                        onClick={() => {
-                          setSelectedParameter(param);
-                          setParameterModalOpen(true);
-                        }}
-                      >
-                        <div className="flex-1">
-                          <p className="font-semibold text-detective-text">{param.key}</p>
-                          {param.description && (
-                            <p className="text-xs text-detective-text-secondary">
-                              {param.description}
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="text-right">
-                            <p className="text-lg font-bold text-detective-gold">
-                              {param.value}
-                              {param.dataType === 'percentage' ? '%' : ''}
-                            </p>
-                            {param.defaultValue && (
+                    .filter((param) => param?.category === 'coins' || param?.category === 'bonuses')
+                    .map((param) => {
+                      // Defensive: Skip invalid parameters that somehow got through
+                      if (!param?.id || !param?.key) {
+                        console.warn('[AdminGamificationPage] Invalid parameter in render:', param);
+                        return null;
+                      }
+
+                      return (
+                        <div
+                          key={param.id}
+                          className="flex cursor-pointer items-center justify-between rounded-lg bg-detective-bg-secondary p-3 transition-colors hover:bg-detective-bg-secondary/80"
+                          onClick={() => {
+                            setSelectedParameter(param);
+                            setParameterModalOpen(true);
+                          }}
+                        >
+                          <div className="flex-1">
+                            <p className="font-semibold text-detective-text">{param.key}</p>
+                            {param.description && (
                               <p className="text-xs text-detective-text-secondary">
-                                Default: {param.defaultValue}
+                                {param.description}
                               </p>
                             )}
                           </div>
-                          <Edit className="h-4 w-4 text-detective-orange" />
+                          <div className="flex items-center gap-3">
+                            <div className="text-right">
+                              <p className="text-lg font-bold text-detective-gold">
+                                {param.value ?? 'N/A'}
+                                {param.dataType === 'percentage' ? '%' : ''}
+                              </p>
+                              {param.defaultValue !== undefined && param.defaultValue !== null && (
+                                <p className="text-xs text-detective-text-secondary">
+                                  Default: {param.defaultValue}
+                                </p>
+                              )}
+                            </div>
+                            <Edit className="h-4 w-4 text-detective-orange" />
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   <div className="mt-4 flex gap-2">
                     <DetectiveButton
                       variant="primary"
@@ -379,7 +451,12 @@ export default function AdminGamificationPage() {
                 </div>
               ) : (
                 <div className="py-8 text-center text-detective-text-secondary">
-                  No hay parámetros de economía configurados
+                  <p className="text-lg">No hay parámetros de economía configurados</p>
+                  <p className="mt-2 text-sm">
+                    {parametersLoading
+                      ? 'Cargando...'
+                      : 'Los parámetros de economía aparecerán aquí cuando estén disponibles'}
+                  </p>
                 </div>
               )}
             </DetectiveCard>
@@ -429,11 +506,14 @@ export default function AdminGamificationPage() {
               <h2 className="mb-4 text-xl font-bold text-detective-text">
                 Parámetros por Categoría
               </h2>
-              {safeParameters.length > 0 ? (
+              {safeParameters && safeParameters.length > 0 ? (
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
                   {(['points', 'coins', 'levels', 'ranks', 'penalties', 'bonuses'] as const).map(
                     (category) => {
-                      const count = safeParameters.filter((p) => p.category === category).length;
+                      // Defensive: Validate each parameter before filtering
+                      const count = safeParameters.filter(
+                        (p) => p && p.category === category,
+                      ).length;
                       return (
                         <div
                           key={category}
@@ -450,7 +530,12 @@ export default function AdminGamificationPage() {
                 </div>
               ) : (
                 <div className="py-8 text-center text-detective-text-secondary">
-                  No hay datos de parámetros disponibles
+                  <p className="text-lg">No hay datos de parámetros disponibles</p>
+                  <p className="mt-2 text-sm">
+                    {parametersLoading
+                      ? 'Cargando...'
+                      : 'Los datos aparecerán aquí cuando estén disponibles'}
+                  </p>
                 </div>
               )}
             </DetectiveCard>

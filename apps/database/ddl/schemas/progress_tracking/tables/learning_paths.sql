@@ -11,7 +11,7 @@ CREATE TABLE progress_tracking.learning_paths (
     difficulty_level VARCHAR(50) CHECK (difficulty_level IN ('facil', 'intermedio', 'dificil', 'experto')),
     estimated_hours INTEGER,
     is_active BOOLEAN NOT NULL DEFAULT true,
-    created_by UUID REFERENCES auth.users(id),
+    created_by UUID REFERENCES auth_management.profiles(id),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

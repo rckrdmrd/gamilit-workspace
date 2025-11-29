@@ -19,63 +19,63 @@ export class GetAnalyticsQueryDto {
   @ApiPropertyOptional({ enum: TimeRange, description: 'Time range filter' })
   @IsEnum(TimeRange)
   @IsOptional()
-  time_range?: TimeRange = TimeRange.THIRTY_DAYS;
+    time_range?: TimeRange = TimeRange.THIRTY_DAYS;
 
   @ApiPropertyOptional({ description: 'Filter by module ID' })
   @IsUUID()
   @IsOptional()
-  module_id?: string;
+    module_id?: string;
 }
 
 export class GetStudentProgressQueryDto {
   @ApiPropertyOptional({ enum: TimeRange, description: 'Time range for exercise history' })
   @IsEnum(TimeRange)
   @IsOptional()
-  time_range?: TimeRange = TimeRange.THIRTY_DAYS;
+    time_range?: TimeRange = TimeRange.THIRTY_DAYS;
 
   @ApiPropertyOptional({ description: 'Filter exercise history by module' })
   @IsUUID()
   @IsOptional()
-  module_id?: string;
+    module_id?: string;
 
   @ApiPropertyOptional({ enum: ['all', 'correct', 'incorrect'] })
   @IsEnum(['all', 'correct', 'incorrect'])
   @IsOptional()
-  status?: 'all' | 'correct' | 'incorrect' = 'all';
+    status?: 'all' | 'correct' | 'incorrect' = 'all';
 }
 
 export class GetEngagementMetricsDto {
   @ApiPropertyOptional({ enum: TimeRange, description: 'Time range filter', default: TimeRange.THIRTY_DAYS })
   @IsEnum(TimeRange)
   @IsOptional()
-  time_range?: TimeRange = TimeRange.THIRTY_DAYS;
+    time_range?: TimeRange = TimeRange.THIRTY_DAYS;
 
   @ApiPropertyOptional({ description: 'Filter by classroom ID' })
   @IsUUID()
   @IsOptional()
-  classroom_id?: string;
+    classroom_id?: string;
 }
 
 export class GenerateReportsDto {
   @ApiPropertyOptional({ enum: TimeRange, description: 'Time range for report', default: TimeRange.THIRTY_DAYS })
   @IsEnum(TimeRange)
   @IsOptional()
-  time_range?: TimeRange = TimeRange.THIRTY_DAYS;
+    time_range?: TimeRange = TimeRange.THIRTY_DAYS;
 
   @ApiPropertyOptional({ enum: ReportFormat, description: 'Report format', default: ReportFormat.CSV })
   @IsEnum(ReportFormat)
   @IsOptional()
-  format?: ReportFormat = ReportFormat.CSV;
+    format?: ReportFormat = ReportFormat.CSV;
 
   @ApiPropertyOptional({ description: 'Filter by classroom ID' })
   @IsUUID()
   @IsOptional()
-  classroom_id?: string;
+    classroom_id?: string;
 
   @ApiPropertyOptional({ description: 'Report type', enum: ['classroom', 'student', 'assignment', 'overall'] })
   @IsOptional()
   @IsString()
-  report_type?: string = 'overall';
+    report_type?: string = 'overall';
 }
 
 /**
@@ -84,36 +84,36 @@ export class GenerateReportsDto {
  */
 export class StudentInsightsResponseDto {
   @ApiProperty({ description: 'Overall performance score (0-100)' })
-  overall_score!: number;
+    overall_score!: number;
 
   @ApiProperty({ description: 'Number of modules completed' })
-  modules_completed!: number;
+    modules_completed!: number;
 
   @ApiProperty({ description: 'Total number of modules' })
-  modules_total!: number;
+    modules_total!: number;
 
   @ApiProperty({ description: 'Comparison to class metrics' })
-  comparison_to_class!: {
+    comparison_to_class!: {
     score_percentile: number;
   };
 
   @ApiProperty({ description: 'Risk level', enum: ['low', 'medium', 'high'] })
-  risk_level!: 'low' | 'medium' | 'high';
+    risk_level!: 'low' | 'medium' | 'high';
 
   @ApiProperty({ description: 'Student strengths', type: [String] })
-  strengths!: string[];
+    strengths!: string[];
 
   @ApiProperty({ description: 'Areas for improvement', type: [String] })
-  weaknesses!: string[];
+    weaknesses!: string[];
 
   @ApiProperty({ description: 'Performance predictions' })
-  predictions!: {
+    predictions!: {
     completion_probability: number;
     dropout_risk: number;
   };
 
   @ApiProperty({ description: 'Personalized recommendations', type: [String] })
-  recommendations!: string[];
+    recommendations!: string[];
 }
 
 // ============================================================================
@@ -125,13 +125,13 @@ export class StudentInsightsResponseDto {
  */
 export class EconomyDistributionDto {
   @ApiProperty({ description: 'Range label', example: '0-100' })
-  range!: string;
+    range!: string;
 
   @ApiProperty({ description: 'Number of students in range', example: 5 })
-  count!: number;
+    count!: number;
 
   @ApiProperty({ description: 'Percentage of total', example: 25.5 })
-  percentage!: number;
+    percentage!: number;
 }
 
 /**
@@ -139,13 +139,13 @@ export class EconomyDistributionDto {
  */
 export class TopEarnerDto {
   @ApiProperty({ description: 'Student ID' })
-  student_id!: string;
+    student_id!: string;
 
   @ApiProperty({ description: 'Student name' })
-  student_name!: string;
+    student_name!: string;
 
   @ApiProperty({ description: 'ML Coins earned this week', example: 250 })
-  earned_this_week!: number;
+    earned_this_week!: number;
 }
 
 /**
@@ -153,13 +153,13 @@ export class TopEarnerDto {
  */
 export class EconomyTrendDto {
   @ApiProperty({ description: 'Date in ISO format', example: '2024-11-24' })
-  date!: string;
+    date!: string;
 
   @ApiProperty({ description: 'Total ML Coins earned that day', example: 850 })
-  total_earned!: number;
+    total_earned!: number;
 
   @ApiProperty({ description: 'Total ML Coins spent that day', example: 620 })
-  total_spent!: number;
+    total_spent!: number;
 }
 
 /**
@@ -173,49 +173,49 @@ export class EconomyAnalyticsDto {
     description: 'Total ML Coins in circulation across all students',
     example: 12450,
   })
-  total_circulation!: number;
+    total_circulation!: number;
 
   @ApiProperty({
     description: 'Average ML Coins balance per student',
     example: 498.5,
   })
-  average_balance!: number;
+    average_balance!: number;
 
   @ApiProperty({
     description: 'Total ML Coins earned today by all students',
     example: 850,
   })
-  total_earned_today!: number;
+    total_earned_today!: number;
 
   @ApiProperty({
     description: 'Total ML Coins spent today by all students',
     example: 620,
   })
-  total_spent_today!: number;
+    total_spent_today!: number;
 
   @ApiProperty({
     description: 'Distribution of students by ML Coins balance range',
     type: [EconomyDistributionDto],
   })
-  distribution!: EconomyDistributionDto[];
+    distribution!: EconomyDistributionDto[];
 
   @ApiProperty({
     description: 'Top 5 earners this week',
     type: [TopEarnerDto],
   })
-  top_earners!: TopEarnerDto[];
+    top_earners!: TopEarnerDto[];
 
   @ApiProperty({
     description: 'Economy trends for the last 7 days',
     type: [EconomyTrendDto],
   })
-  trends!: EconomyTrendDto[];
+    trends!: EconomyTrendDto[];
 
   @ApiProperty({
     description: 'Wealth distribution metrics',
     example: { top_10_percent: 45, bottom_50_percent: 15 },
   })
-  wealth_distribution!: {
+    wealth_distribution!: {
     top_10_percent: number;
     bottom_50_percent: number;
   };
@@ -232,25 +232,25 @@ export class EconomyAnalyticsDto {
  */
 export class StudentEconomyDto {
   @ApiProperty({ description: 'Student user ID' })
-  id!: string;
+    id!: string;
 
   @ApiProperty({ description: 'Student full name', example: 'Ana García' })
-  name!: string;
+    name!: string;
 
   @ApiProperty({ description: 'Current ML Coins balance', example: 850 })
-  balance!: number;
+    balance!: number;
 
   @ApiProperty({ description: 'ML Coins earned this week', example: 250 })
-  earned_this_week!: number;
+    earned_this_week!: number;
 
   @ApiProperty({ description: 'ML Coins spent this week', example: 100 })
-  spent_this_week!: number;
+    spent_this_week!: number;
 
   @ApiProperty({ description: 'Current Maya rank', example: 'Nacom' })
-  rank!: string;
+    rank!: string;
 
   @ApiProperty({ description: 'Current level', example: 12 })
-  level!: number;
+    level!: number;
 }
 
 /**
@@ -258,10 +258,10 @@ export class StudentEconomyDto {
  */
 export class StudentsEconomyResponseDto {
   @ApiProperty({ description: 'List of students with economy data', type: [StudentEconomyDto] })
-  students!: StudentEconomyDto[];
+    students!: StudentEconomyDto[];
 
   @ApiProperty({ description: 'Total count of students', example: 25 })
-  total!: number;
+    total!: number;
 }
 
 // ============================================================================
@@ -275,19 +275,19 @@ export class StudentsEconomyResponseDto {
  */
 export class AchievementStatsDto {
   @ApiProperty({ description: 'Achievement ID' })
-  id!: string;
+    id!: string;
 
   @ApiProperty({ description: 'Achievement name', example: 'Primera Victoria' })
-  name!: string;
+    name!: string;
 
   @ApiProperty({ description: 'Achievement description', example: 'Completa tu primer ejercicio' })
-  description!: string;
+    description!: string;
 
   @ApiProperty({ description: 'ML Coins reward', example: 50 })
-  reward!: number;
+    reward!: number;
 
   @ApiProperty({ description: 'Number of students who unlocked this achievement', example: 22 })
-  unlocked_count!: number;
+    unlocked_count!: number;
 }
 
 /**
@@ -295,11 +295,11 @@ export class AchievementStatsDto {
  */
 export class AchievementsStatsResponseDto {
   @ApiProperty({ description: 'List of achievements with stats', type: [AchievementStatsDto] })
-  achievements!: AchievementStatsDto[];
+    achievements!: AchievementStatsDto[];
 
   @ApiProperty({ description: 'Total achievements available', example: 15 })
-  total_achievements!: number;
+    total_achievements!: number;
 
   @ApiProperty({ description: 'Total unlocks across all students', example: 156 })
-  total_unlocks!: number;
+    total_unlocks!: number;
 }

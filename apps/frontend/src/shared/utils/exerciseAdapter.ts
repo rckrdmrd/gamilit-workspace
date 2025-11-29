@@ -2,6 +2,7 @@
 // EXERCISE DATA ADAPTER
 // Converts ExerciseData from ExercisePage to specific mechanic formats
 // ============================================
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import {
   BaseExercise,

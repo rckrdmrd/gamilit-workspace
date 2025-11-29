@@ -11,25 +11,25 @@ import { IsString, IsEmail, IsOptional, IsBoolean, IsUUID, IsIP, MaxLength } fro
 export class CreateAuthAttemptDto {
   @IsOptional()
   @IsUUID('4')
-  user_id?: string;
+    user_id?: string;
 
   @IsEmail()
-  email!: string;
+    email!: string;
 
   @IsOptional()
   @IsIP()
-  ip_address?: string;
+    ip_address?: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(500)
-  user_agent?: string;
+    user_agent?: string;
 
   @IsBoolean()
-  success!: boolean;
+    success!: boolean;
 
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  failure_reason?: string;
+    failure_reason?: string;
 }

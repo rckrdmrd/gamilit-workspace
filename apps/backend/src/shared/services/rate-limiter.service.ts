@@ -21,6 +21,7 @@ const requestCounts = new Map<string, RateLimitRecord>();
  */
 export class TooManyRequestsError extends Error {
   public readonly statusCode: number = 429;
+
   public readonly retryAfter: number;
 
   constructor(message: string = 'Too many requests', retryAfter: number = 60) {
@@ -92,7 +93,7 @@ export function getRateLimiter(config?: RateLimitConfig): RateLimiter {
         const retryAfter = Math.ceil((record.resetAt - now) / 1000);
         throw new TooManyRequestsError(
           'Too many requests. Please try again later.',
-          retryAfter
+          retryAfter,
         );
       }
 
@@ -127,20 +128,20 @@ export type RateLimitMiddleware = (
  * Middleware to apply rate limiting
  */
 export function rateLimitMiddleware(
-  config: RateLimitConfig
+  config: RateLimitConfig,
 ): RateLimitMiddleware {
   const limiter = getRateLimiter(config);
 
   return (
     req: RateLimitRequest,
     res: RateLimitResponse,
-    next: NextFunction
+    next: NextFunction,
   ): void => {
     const key = `${req.ip}:${req.path}`;
 
     if (!limiter.check(key)) {
       throw new TooManyRequestsError(
-        'Rate limit exceeded. Please try again later.'
+        'Rate limit exceeded. Please try again later.',
       );
     }
 

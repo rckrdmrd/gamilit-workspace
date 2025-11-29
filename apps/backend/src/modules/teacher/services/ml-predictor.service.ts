@@ -33,6 +33,7 @@ import {
 @Injectable()
 export class MLPredictorService implements IMLPredictor {
   private readonly logger = new Logger(MLPredictorService.name);
+
   private readonly MODEL_VERSION = '0.0.1-heuristic';
 
   /**

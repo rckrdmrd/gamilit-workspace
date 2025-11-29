@@ -41,18 +41,18 @@ import {
 @Unique(['assignment_id', 'student_id'])
 export class AssignmentStudent {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   @Column('uuid', { name: 'assignment_id' })
   @Index()
-  assignmentId!: string;
+    assignmentId!: string;
 
   @Column('uuid', { name: 'student_id' })
   @Index()
-  studentId!: string;
+    studentId!: string;
 
   @CreateDateColumn({ name: 'assigned_at', type: 'timestamp with time zone' })
-  assignedAt!: Date;
+    assignedAt!: Date;
 
   // Relations (commented out - uncomment when Assignment entity is fully configured)
   // @ManyToOne(() => Assignment, assignment => assignment.assignmentStudents)

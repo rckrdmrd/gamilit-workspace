@@ -30,6 +30,7 @@ import { tap, finalize } from 'rxjs/operators';
 @Injectable()
 export class RlsInterceptor implements NestInterceptor {
   private readonly logger = new Logger(RlsInterceptor.name);
+
   private dataSources: Map<string, DataSource> = new Map();
 
   constructor(private readonly moduleRef: ModuleRef) {}

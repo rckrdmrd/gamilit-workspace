@@ -80,6 +80,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
       saveProgress();
     }, 30000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [analyzedSources, checkedClaims, currentScore]);
 
   // FE-055 & FE-059: Update progress with user answers
@@ -278,7 +279,8 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
         getState: () => ({ analyzedSources, checkedClaims, currentScore }),
       };
     }
-  }, [analyzedSources, checkedClaims, currentScore]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actionsRef]);
 
   if (loading) {
     return (

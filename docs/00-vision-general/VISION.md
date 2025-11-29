@@ -1,10 +1,26 @@
 # Visión del Producto - GAMILIT Platform
 
-**Versión:** 1.0 (Overview Executive Summary)
-**Fecha:** 2025-11-07
+**Versión:** 1.2 (Overview Executive Summary)
+**Fecha:** 2025-11-29
+**Última Actualización:** Clarificación alcance MVP vs Backlog
 **Audiencia:** Stakeholders, nuevos desarrolladores, business team
 
 > **Documento completo:** Ver [docs/01-requerimientos/proyecto/VISION-PRODUCTO.md](../01-requerimientos/proyecto/VISION-PRODUCTO.md) para especificaciones técnicas detalladas.
+
+---
+
+## 🎯 ALCANCE MVP DEFINIDO
+
+| Componente | MVP ✅ | Backlog ⏳ |
+|-----------|--------|-----------|
+| **Módulos Educativos** | M1-M3 (15 ejercicios) | M4-M5 (8 ejercicios) |
+| **Épicas** | EXT-001 a EXT-006 (100%) | EXT-007 a EXT-011 (30-50%) |
+| **Portal Student** | 10 páginas funcionales | - |
+| **Portal Teacher** | 10 páginas funcionales | - |
+| **Portal Admin** | 7 páginas (P0+P1) | 2 páginas (P2) |
+| **Tipos de Ejercicios** | 15 mecánicas | 10 mecánicas |
+
+> Ver documentación completa del backlog en [Fase 4: Backlog](../04-fase-backlog/README.md)
 
 ---
 
@@ -14,7 +30,7 @@ GAMILIT Platform (Gamilit) es una **plataforma educativa gamificada** que revolu
 
 - **Contenido especializado** sobre Marie Curie (vida, descubrimientos, legado científico)
 - **Gamificación cultural** con sistema de rangos inspirado en la civilización Maya
-- **33 mecánicas educativas innovadoras** que cubren 5 dimensiones de comprensión lectora
+- **23 tipos de ejercicios implementados** (Módulos 1-3), 8 adicionales en backlog (M4-M5)
 - **Arquitectura multi-tenant** preparada para escalar a 100+ escuelas
 
 **Mercado objetivo:** Estudiantes de nivel medio superior (preparatoria, 15-18 años)
@@ -59,13 +75,14 @@ GAMILIT Platform (Gamilit) es una **plataforma educativa gamificada** que revolu
 
 ### ✅ Fortalezas (85% base técnica sólida)
 
-- **33 mecánicas educativas 100% implementadas** ✅
-  - Módulo 1 (Literal): 7 mecánicas
-  - Módulo 2 (Inferencial): 5 mecánicas
-  - Módulo 3 (Crítica): 5 mecánicas
-  - Módulo 4 (Digital): 9 mecánicas
-  - Módulo 5 (Producción): 3 mecánicas
-  - Auxiliares: 4 mecánicas
+- **23 tipos de ejercicios implementados (M1-M3)** ✅
+  - Módulo 1 (Literal): 5 ejercicios ✅
+  - Módulo 2 (Inferencial): 5 ejercicios ✅
+  - Módulo 3 (Crítica): 5 ejercicios ✅
+  - Módulo 4 (Digital): 5 ejercicios ⚠️ **BACKLOG**
+  - Módulo 5 (Producción): 3 ejercicios ⚠️ **BACKLOG**
+
+  > **Nota:** M4-M5 diseñados pero no implementados. Requieren evaluación con IA o revisión manual. Ver [docs/04-fase-backlog/](../04-fase-backlog/)
 
 - **Sistema de gamificación 78% completo**
   - Rangos Maya (5 niveles) ✅
@@ -91,13 +108,15 @@ GAMILIT Platform (Gamilit) es una **plataforma educativa gamificada** que revolu
 
 ### Cinco Dimensiones de Comprensión Lectora
 
-| Módulo | Dimensión | Objetivo Pedagógico | Ejemplos de Mecánicas |
-|--------|-----------|---------------------|----------------------|
-| **M1** | Comprensión Literal | Identificar información explícita | Crucigrama, línea de tiempo, sopa de letras, mapas conceptuales |
-| **M2** | Comprensión Inferencial | Deducir información implícita | Detective textual, construcción de hipótesis, predicción narrativa |
-| **M3** | Comprensión Crítica | Evaluar y argumentar | Tribunal de opiniones, debate digital, análisis de fuentes |
-| **M4** | Lectura Digital | Navegar medios digitales, fact-checking | Verificador fake news, quiz TikTok, análisis de memes |
-| **M5** | Producción de Textos | Crear contenido multimedia propio | Diario multimedia, cómic digital, video carta |
+| Módulo | Dimensión | Objetivo Pedagógico | Estado |
+|--------|-----------|---------------------|--------|
+| **M1** | Comprensión Literal | Identificar información explícita | ✅ Implementado |
+| **M2** | Comprensión Inferencial | Deducir información implícita | ✅ Implementado |
+| **M3** | Comprensión Crítica | Evaluar y argumentar | ✅ Implementado |
+| **M4** | Lectura Digital | Navegar medios digitales, fact-checking | ⚠️ Backlog |
+| **M5** | Producción de Textos | Crear contenido multimedia propio | ⚠️ Backlog |
+
+> **M4-M5 en Backlog:** Requieren tecnologías avanzadas (IA, análisis multimedia) no disponibles actualmente. Ver [04-fase-backlog/](../04-fase-backlog/) para detalles.
 
 ### Sistema de Progresión
 

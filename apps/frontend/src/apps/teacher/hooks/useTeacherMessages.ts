@@ -135,7 +135,7 @@ export const useTeacherMessages = (
 
       setMessages(response.data);
       setTotal(response.total);
-    } catch (err: any) {
+    } catch (err: unknown) {
       const errorMessage = err.response?.data?.message || err.message || 'Error al cargar mensajes';
       setError(new Error(errorMessage));
       console.error('[useTeacherMessages] Error fetching messages:', err);
@@ -151,7 +151,7 @@ export const useTeacherMessages = (
     try {
       const convs = await teacherMessagesApi.getConversations();
       setConversations(convs);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[useTeacherMessages] Error fetching conversations:', err);
       // No bloqueamos la UI por este error
     }
@@ -164,7 +164,7 @@ export const useTeacherMessages = (
     try {
       const result = await teacherMessagesApi.getUnreadCount();
       setUnreadCount(result.count);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[useTeacherMessages] Error fetching unread count:', err);
       // No bloqueamos la UI por este error
     }
@@ -202,7 +202,7 @@ export const useTeacherMessages = (
       setTotal((prev) => prev + 1);
 
       return message;
-    } catch (err: any) {
+    } catch (err: unknown) {
       const errorMessage = err.response?.data?.message || err.message || 'Error al enviar mensaje';
       setError(new Error(errorMessage));
       throw err;
@@ -233,7 +233,7 @@ export const useTeacherMessages = (
       setTotal((prev) => prev + 1);
 
       return message;
-    } catch (err: any) {
+    } catch (err: unknown) {
       const errorMessage = err.response?.data?.message || err.message || 'Error al enviar anuncio';
       setError(new Error(errorMessage));
       throw err;
@@ -256,7 +256,7 @@ export const useTeacherMessages = (
       setTotal((prev) => prev + 1);
 
       return message;
-    } catch (err: any) {
+    } catch (err: unknown) {
       const errorMessage = err.response?.data?.message || err.message || 'Error al enviar feedback';
       setError(new Error(errorMessage));
       throw err;
@@ -281,7 +281,7 @@ export const useTeacherMessages = (
 
       // Decrementar contador de no leídos
       setUnreadCount((prev) => Math.max(0, prev - 1));
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[useTeacherMessages] Error marking as read:', err);
       // No bloqueamos la UI por este error
     }

@@ -50,7 +50,7 @@ export class NotificationFiltersDto {
   })
   @IsBoolean()
   @IsOptional()
-  isRead?: boolean;
+    isRead?: boolean;
 
   /**
    * Filtrar por tipo de notificación
@@ -69,7 +69,7 @@ export class NotificationFiltersDto {
   })
   @IsString()
   @IsOptional()
-  notificationType?: string;
+    notificationType?: string;
 
   /**
    * Fecha desde (inclusive)
@@ -84,7 +84,7 @@ export class NotificationFiltersDto {
   })
   @IsDateString()
   @IsOptional()
-  from?: string;
+    from?: string;
 
   /**
    * Fecha hasta (inclusive)
@@ -99,7 +99,7 @@ export class NotificationFiltersDto {
   })
   @IsDateString()
   @IsOptional()
-  to?: string;
+    to?: string;
 
   /**
    * Número de resultados por página
@@ -121,7 +121,7 @@ export class NotificationFiltersDto {
   @Min(1)
   @Max(100)
   @IsOptional()
-  limit?: number;
+    limit?: number;
 
   /**
    * Offset para paginación
@@ -140,5 +140,5 @@ export class NotificationFiltersDto {
   @IsInt()
   @Min(0)
   @IsOptional()
-  offset?: number;
+    offset?: number;
 }

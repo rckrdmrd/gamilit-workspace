@@ -45,6 +45,7 @@ export function StudentDetailModal({ student, onClose, classroomId }: StudentDet
 
   useEffect(() => {
     fetchStudentData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [student.id]);
 
   const fetchStudentData = async () => {

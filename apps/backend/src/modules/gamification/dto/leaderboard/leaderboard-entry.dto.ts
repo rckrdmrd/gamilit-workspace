@@ -13,65 +13,65 @@ export class LeaderboardEntryDto {
    * Posición en el ranking (1 = primero)
    */
   @Expose()
-  rank!: number;
+    rank!: number;
 
   /**
    * ID del usuario
    */
   @Expose()
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Nombre del usuario (opcional, para display)
    */
   @Expose()
-  username?: string;
+    username?: string;
 
   /**
    * URL del avatar del usuario (opcional)
    */
   @Expose()
-  avatar_url?: string | null;
+    avatar_url?: string | null;
 
   /**
    * Total de puntos XP del usuario
    */
   @Expose()
-  total_xp!: number;
+    total_xp!: number;
 
   /**
    * Nivel actual del usuario
    */
   @Expose()
-  current_level!: number;
+    current_level!: number;
 
   /**
    * Rango maya del usuario (opcional)
    */
   @Expose()
-  maya_rank?: string;
+    maya_rank?: string;
 
   /**
    * Total de ML Coins del usuario
    */
   @Expose()
-  total_ml_coins?: number;
+    total_ml_coins?: number;
 
   /**
    * Racha actual de días consecutivos
    */
   @Expose()
-  current_streak?: number;
+    current_streak?: number;
 
   /**
    * Total de achievements desbloqueados
    */
   @Expose()
-  total_achievements?: number;
+    total_achievements?: number;
 
   /**
    * Metadata adicional (escuela, aula, etc.)
    */
   @Expose()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

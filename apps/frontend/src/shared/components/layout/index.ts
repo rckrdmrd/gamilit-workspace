@@ -9,15 +9,8 @@
 export { GamifiedHeader } from './GamifiedHeader';
 // Re-export User and UserGamificationData from @shared/types for consistency
 export type { User, UserGamificationData } from '@shared/types';
-export type {
-  GamifiedHeaderProps,
-  Notification,
-} from './GamifiedHeader';
+export type { GamifiedHeaderProps } from './GamifiedHeader';
 
 // Sidebar
 export { GamilitSidebar } from './GamilitSidebar';
-export type {
-  GamilitSidebarProps,
-  NavigationItem,
-  SidebarModuleProgress,
-} from './GamilitSidebar';
+export type { GamilitSidebarProps, NavigationItem, SidebarModuleProgress } from './GamilitSidebar';

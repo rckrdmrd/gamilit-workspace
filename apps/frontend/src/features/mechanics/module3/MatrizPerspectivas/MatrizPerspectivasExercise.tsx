@@ -9,8 +9,13 @@ import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
 import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
 import { fetchMatrixExercise, getAIPerspectives } from './matrizPerspectivasAPI';
-import type { MatrixExercise } from './matrizPerspectivasTypes';
+import type {
+  MatrixExercise,
+  PerspectiveGeneration,
+  FeedbackData,
+} from './matrizPerspectivasTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
+import { matrizAnswersSchema } from './matrizPerspectivasSchemas';
 
 interface ExerciseProps {
   exerciseId: string;
@@ -22,7 +27,7 @@ interface ExerciseProps {
 }
 
 interface ExerciseState {
-  perspectives: any[];
+  perspectives: PerspectiveGeneration[];
   currentScore: number;
   perspectivesGenerated: boolean;
 }
@@ -43,7 +48,9 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
   const { fetchUserProgress } = useRanksStore();
   const { fetchBalance } = useEconomyStore();
   const [exercise, setExercise] = useState<MatrixExercise | null>(null);
-  const [perspectives, setPerspectives] = useState<any[]>(initialData?.perspectives || []);
+  const [perspectives, setPerspectives] = useState<PerspectiveGeneration[]>(
+    initialData?.perspectives || [],
+  );
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [currentScore, setCurrentScore] = useState(initialData?.currentScore || 0);
@@ -51,7 +58,8 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
   const [showFeedback, setShowFeedback] = useState(false);
   const [timeSpent, setTimeSpent] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [feedback, setFeedback] = useState<any>(null);
+  const [feedback, setFeedback] = useState<FeedbackData | null>(null);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const actionsRef = useRef<any>(null);
 
   // Analysis questions answers
@@ -63,29 +71,57 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
 
   useEffect(() => {
     loadExercise();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Auto-save progress every 30 seconds
+  // Auto-save progress every 30 seconds with visual feedback
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      saveProgress();
+    const interval = setInterval(async () => {
+      setSaveStatus('saving');
+      try {
+        saveProgress();
+        setSaveStatus('saved');
+        setTimeout(() => setSaveStatus('idle'), 2000);
+      } catch (error) {
+        console.error('[MatrizPerspectivas] Error saving progress:', error);
+        setSaveStatus('error');
+      }
     }, 30000);
     return () => clearInterval(interval);
-  }, [perspectives, currentScore]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [perspectives, currentScore, answers]);
 
-  // Update progress
+  // Update progress - Granular calculation
+
   useEffect(() => {
     if (!exercise) return;
-    const progress = perspectives.length > 0 ? 100 : 0;
-    onProgressUpdate?.(progress);
+
+    // Progreso granular basado en múltiples factores
+    let totalProgress = 0;
+
+    // 25% por tener ejercicio cargado
+    totalProgress += 25;
+
+    // 25% por generar perspectivas
+    if (perspectives.length > 0) {
+      totalProgress += 25;
+    }
+
+    // 50% distribuido entre las 3 preguntas (16.67% cada una)
+    const answeredQuestions = Object.values(answers).filter((a) => a.trim().length >= 50).length;
+    totalProgress += Math.round((answeredQuestions / 3) * 50);
+
+    onProgressUpdate?.(Math.min(totalProgress, 100));
 
     const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     setTimeSpent(elapsed);
-  }, [perspectives, exercise]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exercise, perspectives, answers, onProgressUpdate]);
 
   const loadExercise = async () => {
     try {
-      const data = await fetchMatrixExercise('matrix-1');
+      const data = await fetchMatrixExercise(exerciseId);
       setExercise(data);
     } finally {
       setLoading(false);
@@ -109,19 +145,29 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
       setPerspectives(persp);
       const newScore = 50; // Base score for generating perspectives
       setCurrentScore(newScore);
+    } catch (error) {
+      console.error('[MatrizPerspectivas] Error generating perspectives:', error);
+      setFeedback({
+        type: 'error',
+        title: 'Error al Generar',
+        message: 'No pudimos generar las perspectivas. Por favor intenta de nuevo.',
+      });
+      setShowFeedback(true);
     } finally {
       setGenerating(false);
     }
   };
 
   const handleComplete = async () => {
-    // Validate that all questions have minimum 50 characters
-    const allAnswered = Object.values(answers).every((a) => a.trim().length >= 50);
-    if (!allAnswered) {
+    // Validar con Zod
+    const validation = matrizAnswersSchema.safeParse({ questions: answers });
+
+    if (!validation.success) {
+      const errorMsg = validation.error.issues.map((e) => e.message).join('. ');
       setFeedback({
         type: 'error',
-        title: 'Preguntas Incompletas',
-        message: 'Por favor completa todas las preguntas con al menos 50 caracteres cada una.',
+        title: 'Respuestas Incompletas',
+        message: errorMsg,
       });
       setShowFeedback(true);
       return;
@@ -147,7 +193,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
       // Extraer rewards de la respuesta
       const rewards = response.rewards || { mlCoins: 0, xp: 0, bonuses: {} };
 
-      const finalFeedback = {
+      const finalFeedback: FeedbackData = {
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
         title: response.isPerfect
           ? '¡Análisis Completo Excelente!'
@@ -197,6 +243,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
   };
 
   // Attach actions ref
+
   useEffect(() => {
     if (actionsRef) {
       actionsRef.current = {
@@ -205,7 +252,8 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
         getState: () => ({ perspectives, currentScore }),
       };
     }
-  }, [perspectives, currentScore]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actionsRef]);
 
   if (loading || !exercise) {
     return (
@@ -225,9 +273,17 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
             animate={{ opacity: 1, y: 0 }}
             className="rounded-detective-lg bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-detective-lg"
           >
-            <div className="mb-2 flex items-center gap-3">
-              <Grid3x3 className="h-8 w-8" />
-              <h1 className="text-detective-3xl font-bold">Matriz de Perspectivas</h1>
+            <div className="mb-2 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Grid3x3 className="h-8 w-8" />
+                <h1 className="text-detective-3xl font-bold">Matriz de Perspectivas</h1>
+              </div>
+              {/* Auto-save status indicator */}
+              <div className="text-sm">
+                {saveStatus === 'saving' && <span className="text-white/90">Guardando...</span>}
+                {saveStatus === 'saved' && <span className="text-green-200">✓ Guardado</span>}
+                {saveStatus === 'error' && <span className="text-red-200">Error al guardar</span>}
+              </div>
             </div>
             <p className="mb-2 text-detective-lg">{exercise.topic}</p>
             <p className="text-detective-base opacity-90">{exercise.description}</p>

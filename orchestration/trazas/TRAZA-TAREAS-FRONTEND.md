@@ -1,7 +1,146 @@
 # Traza de Tareas: NEXUS-FRONTEND
 
-**Última actualización:** 2025-11-26 (FE-105: Sidebar Teacher 3 Items Agregados)
+**Última actualización:** 2025-11-29 (FE-107: Corrección Estructura Respuestas API - Shop/Achievements/Notifications)
 **Estado:** ✅ Portal Teacher COMPLETO - 14 páginas funcionales, navegación 100%
+
+---
+
+## ✅ CORRECCIÓN COMPLETADA - FE-106
+
+### [FE-106] ExercisePage - Eliminación Botón Redundante ✅
+
+**Tipo:** UI Fix - UX Improvement
+**Prioridad:** P1 (Eliminación duplicidad)
+**Estado:** ✅ COMPLETADO Y VALIDADO
+**Fecha implementación:** 2025-11-28
+**Implementado por:** Frontend-Agent (orquestado por Architecture-Analyst)
+**Análisis ID:** MODULO2-GAMIFICATION-FIX-001
+
+**Contexto:**
+Se identificó que el ejercicio 3 del Módulo 2 tenía DOS botones de envío:
+1. "Verificar" (correcto, usa mechanicActionsRef.handleCheck)
+2. "Enviar Respuestas" (redundante, llamaba handleSubmit directamente)
+
+**Problema Identificado:**
+- Duplicidad de funcionalidad en UI
+- Confusión potencial para el usuario
+- El botón "Verificar" ya ejecutaba handleCheck que internamente llama submit
+
+**Solución Implementada:**
+
+**Archivo Modificado:** `apps/frontend/src/apps/student/pages/ExercisePage.tsx`
+
+| Cambio | Líneas | Detalle |
+|--------|--------|---------|
+| Eliminado | 998-1008 | Bloque completo del botón "Enviar Respuestas" |
+| Import | 25 | Eliminado `Send` de lucide-react (ya no usado) |
+
+**Código Eliminado:**
+```tsx
+<div className="border-detective-border my-2 border-t"></div>
+{/* Submit Button */}
+<DetectiveButton
+  variant="primary"
+  icon={<Send className="h-4 w-4" />}
+  onClick={() => handleSubmit()}
+  className="w-full"
+>
+  Enviar Respuestas
+</DetectiveButton>
+```
+
+**Métricas:**
+- Botones de acción: 2 → 1
+- Imports no usados: 1 eliminado
+
+**Validación:**
+- ✅ Frontend build exitoso
+- ✅ TypeScript compila sin errores
+- ✅ Flujo de ejercicio funcional con solo "Verificar"
+
+---
+
+## ✅ CORRECCIÓN COMPLETADA - FE-105 (Detective Textual)
+
+### [FE-105] Restauración Detective Textual - Ejercicio 2.1 Módulo 2 ✅
+
+**Tipo:** Bug Fix - Restoration (Mecánica incorrecta)
+**Prioridad:** P0 (Ejercicio implementado incorrectamente)
+**Estado:** ✅ COMPLETADO Y VALIDADO
+**Fecha implementación:** 2025-11-28
+**Implementado por:** Frontend-Agent (orquestado por Architecture-Analyst)
+**Análisis ID:** DETECTIVE-TEXTUAL-RESTORATION-2025-11-28
+
+**Contexto:**
+El ejercicio 2.1 "Detective Textual" del Módulo 2 había sido modificado incorrectamente, implementando una mecánica de "conexión de evidencias" en lugar de la mecánica correcta de "selección múltiple con inferencia textual" definida en el Documento de Diseño.
+
+**Problema Identificado:**
+- Frontend implementaba mecánica INCORRECTA: EvidenceBoard con conexiones entre piezas de evidencia
+- Documento de Diseño especifica: Leer fragmento → Seleccionar 1 de 3-4 opciones → Obtener explicación
+- Backend y Seeds DB ya tenían la estructura correcta (passage + questions + options)
+
+**Fuente de Verdad:**
+- `docs/00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md`
+- `apps/database/seeds/dev/educational_content/03-exercises-module2.sql`
+
+**Corrección Implementada:**
+
+**Archivos Reescritos (4):**
+| Archivo | Cambio |
+|---------|--------|
+| `detectiveTextualTypes.ts` | Nuevas interfaces: InferenceQuestion, DetectiveTextualExercise |
+| `detectiveTextualSchemas.ts` | Schemas Zod para validación de nueva estructura |
+| `detectiveTextualMockData.ts` | Datos mock sincronizados con seeds DB (Marie Curie) |
+| `DetectiveTextualExercise.tsx` | Componente completo reescrito con QuestionCard |
+
+**Archivos Eliminados (4):**
+| Archivo | Razón |
+|---------|-------|
+| `EvidenceBoard.tsx` | Componente de mecánica incorrecta (conexiones) |
+| `MagnifyingGlass.tsx` | Herramienta de zoom obsoleta |
+| `AIHintSystem.tsx` | Sistema de pistas AI no requerido |
+| `detectiveTextualAPI.ts` | Reemplazado por progressAPI centralizado |
+
+**Estructura Correcta Implementada:**
+```typescript
+interface InferenceQuestion {
+  id: string;
+  question: string;
+  options: string[];         // 4 opciones
+  correctAnswer: number;     // índice 0-3
+  explanation: string;
+  inference_type: 'causa_efecto' | 'contexto_situacional' | 'motivacion';
+}
+
+interface DetectiveTextualExercise {
+  id: string;
+  title: string;
+  passage: string;           // Texto de lectura
+  questions: InferenceQuestion[];
+  difficulty: 'easy' | 'medium' | 'hard';
+}
+```
+
+**Formato de Respuesta al Backend:**
+```json
+{ "questions": { "q1": "1", "q2": "0", "q3": "1", "q4": "1" } }
+```
+
+**Validación:**
+- ✅ TypeScript compila sin errores en archivos DetectiveTextual
+- ✅ Coherencia con Documento de Diseño verificada
+- ✅ Formato de respuesta coincide con Backend DTO (DetectiveTextualAnswersDto)
+- ✅ Datos mock sincronizados con seeds de BD
+
+**Directiva Carga Limpia:**
+- ✅ NO se realizaron cambios en base de datos
+- ✅ Seeds ya contenían estructura correcta
+- ✅ Directiva de carga limpia NO violada
+
+**Documentación:**
+- Documento de Diseño: `docs/00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md`
+- Seeds DB: `apps/database/seeds/dev/educational_content/03-exercises-module2.sql`
+- Inventario: `docs/90-transversal/inventarios/FRONTEND_INVENTORY.yml`
 
 ---
 
@@ -3845,4 +3984,306 @@ apps/frontend/src/features/mechanics/module2/RuedaInferencias/
 - Bugs originales: orchestration/reportes/REPORTE-ANALISIS-PORTALES-ADMIN-TEACHER-2025-11-23.md
 
 ---
+
+
+## ✅ CORRECCIÓN COMPLETADA - FE-107
+
+### [FE-107] Corrección Estructura Respuestas API - Shop/Achievements/Notifications ✅
+
+**Tipo:** Bug Fix - API Integration
+**Prioridad:** P0 (Funcionalidades completamente rotas)
+**Estado:** ✅ COMPLETADO Y VALIDADO
+**Fecha implementación:** 2025-11-29
+**Implementado por:** Frontend-Agent (orquestado por Architecture-Analyst)
+**Análisis ID:** API-RESPONSE-STRUCTURE-FIX-2025-11-29
+
+**Contexto:**
+Tres páginas del portal Student no funcionaban debido a desincronización entre estructura de respuestas esperada por frontend y la que devuelve el backend NestJS:
+- **Tienda (ShopPage)**: No cargaban power-ups ni funcionaba la compra
+- **Logros (AchievementsPage)**: Página completamente rota
+- **Notificaciones**: Errores en contadores y listados
+
+**Problema Raíz Identificado:**
+El frontend esperaba respuestas con estructura `{ data: { ... } }` (envuelta):
+```typescript
+// Frontend esperaba:
+response.data.data.achievements  // INCORRECTO
+response.data.data.count         // INCORRECTO
+```
+
+Pero los controllers NestJS devuelven data directamente:
+```typescript
+// Backend devuelve:
+response.data                    // Array o objeto directo
+response.data.count              // Propiedad directa
+```
+
+**Archivos Backend Verificados:**
+- `comodines.controller.ts:getCatalog()` → Retorna array directamente
+- `achievements.controller.ts:getAllAchievements()` → Retorna `this.achievementsService.findAll(include)`
+- `notifications.controller.ts:getUnreadCount()` → Retorna `{ count: number }`
+
+---
+
+### Correcciones Implementadas
+
+#### 1. socialAPI.ts - Comodines/Power-ups
+
+**Archivo:** `apps/frontend/src/features/gamification/social/api/socialAPI.ts`
+
+| Método | Cambio | Líneas |
+|--------|--------|--------|
+| `getPowerUps()` | Tipo genérico `PowerUp[]` directo, retorna `data` en lugar de `data.data` | 212-214 |
+| `purchasePowerUp()` | Nuevo parámetro `userId`, endpoint correcto `/comodines/purchase`, payload correcto | 228-250 |
+
+**getPowerUps() - ANTES:**
+```typescript
+const { data } = await apiClient.get<ApiResponse<PowerUp[]>>(API_ENDPOINTS.powerups.list);
+return data.data;
+```
+
+**getPowerUps() - DESPUÉS:**
+```typescript
+const { data } = await apiClient.get<PowerUp[]>(API_ENDPOINTS.powerups.list);
+return data;
+```
+
+**purchasePowerUp() - ANTES:**
+```typescript
+export const purchasePowerUp = async (
+  powerUpId: string,
+  quantity: number = 1,
+): Promise<PowerUpInventory> => {
+  const { data } = await apiClient.post<ApiResponse<PowerUpInventory>>(
+    API_ENDPOINTS.powerups.purchaseSpecific(powerUpId),
+    { quantity },
+  );
+  return data.data;
+}
+```
+
+**purchasePowerUp() - DESPUÉS:**
+```typescript
+export const purchasePowerUp = async (
+  userId: string,
+  powerUpId: string,
+  quantity: number = 1,
+): Promise<PowerUpInventory> => {
+  const { data } = await apiClient.post<PowerUpInventory>(
+    API_ENDPOINTS.powerups.purchase,
+    { user_id: userId, comodin_type: powerUpId, quantity },
+  );
+  return data;
+}
+```
+
+---
+
+#### 2. ShopPage.tsx - Llamada y Error Handling
+
+**Archivo:** `apps/frontend/src/apps/student/pages/ShopPage.tsx`
+
+| Cambio | Detalle | Líneas |
+|--------|---------|--------|
+| `purchasePowerUp()` | Pasar `user.id` como primer argumento | 219 |
+| Error handling | Tipo `unknown` con instanceof check | 237-240 |
+
+**confirmPurchase() - ANTES:**
+```typescript
+await purchasePowerUp(selectedItem.id, 1);
+// ...
+} catch (error: any) {
+  toast.error(error.message || 'Purchase failed. Please try again.');
+}
+```
+
+**confirmPurchase() - DESPUÉS:**
+```typescript
+await purchasePowerUp(user.id, selectedItem.id, 1);
+// ...
+} catch (error: unknown) {
+  const errorMessage = error instanceof Error ? error.message : 'Purchase failed. Please try again.';
+  toast.error(errorMessage);
+}
+```
+
+---
+
+#### 3. notificationsAPI.ts - Múltiples Métodos
+
+**Archivo:** `apps/frontend/src/services/api/notificationsAPI.ts`
+
+| Método | Cambio | Líneas |
+|--------|--------|--------|
+| `getNotifications()` | Tipo genérico correcto, retorna `response.data` | 108-110 |
+| `getUnreadCount()` | Tipo `{ count: number }`, acceso `response.data.count ?? 0` | 116-118 |
+| `markAllAsRead()` | Tipo `{ marked: number }`, acceso `response.data.marked ?? 0` | 131-133 |
+| `clearAll()` | Tipo `{ deleted: number }`, acceso `response.data.deleted ?? 0` | 146-148 |
+
+**getUnreadCount() - ANTES:**
+```typescript
+const response = await apiClient.get('/notifications/unread-count');
+return response.data.data.count;
+```
+
+**getUnreadCount() - DESPUÉS:**
+```typescript
+const response = await apiClient.get<{ count: number }>('/notifications/unread-count');
+return response.data.count ?? 0;
+```
+
+---
+
+#### 4. achievementsAPI.ts - Listado de Logros
+
+**Archivo:** `apps/frontend/src/features/gamification/social/api/achievementsAPI.ts`
+
+| Método | Cambio | Líneas |
+|--------|--------|--------|
+| `getAllAchievements()` | Tipo genérico `BackendAchievement[]`, retorna `data` directo | 86-96 |
+
+**getAllAchievements() - ANTES:**
+```typescript
+const { data } = await apiClient.get<
+  ApiResponse<{ achievements: BackendAchievement[]; total: number }>
+>(API_ENDPOINTS.gamification.achievements);
+return data.data.achievements;
+```
+
+**getAllAchievements() - DESPUÉS:**
+```typescript
+const { data } = await apiClient.get<BackendAchievement[]>(
+  API_ENDPOINTS.gamification.achievements,
+);
+return data;
+```
+
+---
+
+#### 5. AchievementsPage.tsx - Fallback para recentlyEarned
+
+**Archivo:** `apps/frontend/src/pages/AchievementsPage.tsx`
+
+| Cambio | Detalle | Líneas |
+|--------|---------|--------|
+| `displaySummary` | Fallback `recentlyEarned: summary.recentlyEarned ?? []` | 212-219 |
+
+**displaySummary useMemo - ANTES:**
+```typescript
+const displaySummary = useMemo(() => {
+  if (summary) return summary;
+  // ...
+}
+```
+
+**displaySummary useMemo - DESPUÉS:**
+```typescript
+const displaySummary = useMemo(() => {
+  if (summary) {
+    return {
+      ...summary,
+      recentlyEarned: summary.recentlyEarned ?? [],
+    };
+  }
+  // ...
+}
+```
+
+---
+
+#### 6. api.config.ts - URL Leaderboard
+
+**Archivo:** `apps/frontend/src/config/api.config.ts`
+
+| Cambio | Detalle | Línea |
+|--------|---------|-------|
+| `leaderboard.classroom` | URL singular → plural (`classrooms`) | 467 |
+
+**ANTES:**
+```typescript
+classroom: (classroomId: string) => `/gamification/leaderboard/classroom/${classroomId}`,
+```
+
+**DESPUÉS:**
+```typescript
+classroom: (classroomId: string) => `/gamification/leaderboard/classrooms/${classroomId}`,
+```
+
+---
+
+### Errores Corregidos
+
+| Error Console | Archivo:Línea | Causa | Solución |
+|---------------|---------------|-------|----------|
+| `Cannot read properties of undefined (reading 'map')` | ShopPage.tsx:84 | `getPowerUps()` retornaba `data.data` (undefined) | Retornar `data` directo |
+| `Cannot read properties of undefined (reading 'count')` | notificationsAPI.ts:118 | Acceso `data.data.count` inexistente | Acceso `data.count ?? 0` |
+| `Cannot read properties of undefined (reading 'length')` | AchievementsPage.tsx:353 | `summary.recentlyEarned` undefined | Fallback `?? []` |
+
+---
+
+### Patrón de Corrección Aplicado
+
+**Regla General Identificada:**
+Los controllers NestJS con decoradores `@Get()`, `@Post()` devuelven data directamente.
+El frontend NO debe usar `ApiResponse<T>` wrapper si el backend no lo envuelve.
+
+**Corrección Estándar:**
+```typescript
+// INCORRECTO (asume wrapper)
+const { data } = await apiClient.get<ApiResponse<T[]>>(url);
+return data.data;
+
+// CORRECTO (backend devuelve directo)
+const { data } = await apiClient.get<T[]>(url);
+return data;
+```
+
+**Programación Defensiva Aplicada:**
+```typescript
+// Para campos opcionales
+return response.data.count ?? 0;      // Fallback numérico
+return summary.recentlyEarned ?? [];  // Fallback array
+```
+
+---
+
+### Validación
+
+- ✅ `npm run build` exitoso (0 errores)
+- ✅ `npm run lint` exitoso
+- ✅ Backend controllers verificados manualmente
+- ✅ Estructura de respuestas confirmada contra código backend
+- ✅ TypeScript tipos actualizados correctamente
+
+### Archivos Modificados
+
+```
+apps/frontend/src/
+├── features/gamification/social/api/
+│   ├── socialAPI.ts                  ← getPowerUps(), purchasePowerUp()
+│   └── achievementsAPI.ts            ← getAllAchievements()
+├── services/api/
+│   └── notificationsAPI.ts           ← 4 métodos corregidos
+├── apps/student/pages/
+│   └── ShopPage.tsx                  ← confirmPurchase()
+├── pages/
+│   └── AchievementsPage.tsx          ← displaySummary
+└── config/
+    └── api.config.ts                 ← leaderboard.classroom URL
+```
+
+### Prevención Futura
+
+Para evitar este tipo de errores en el futuro:
+
+1. **Verificar siempre el controller backend** antes de definir tipos en frontend
+2. **Usar TypeScript generics correctamente** reflejando estructura real
+3. **Aplicar nullish coalescing (`??`)** para campos opcionales
+4. **No asumir wrappers `ApiResponse<T>`** sin verificar backend
+
+---
+
+**Estado:** ✅ COMPLETADO Y VALIDADO
+**Páginas Corregidas:** Tienda, Logros, Notificaciones
+**Funcionalidades Restauradas:** 100%
 

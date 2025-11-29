@@ -28,28 +28,26 @@ INSERT INTO social_features.classroom_members (
     id,
     classroom_id,
     student_id,
-    joined_at,
-    role,
+    enrollment_date,
+    enrollment_method,
     status,
     attendance_percentage,
-    performance_notes,
     metadata,
     created_at,
     updated_at
 ) VALUES
 
 -- =====================================================
--- 5to A - Estudiante 1 (Ana García)
+-- 5to A - Estudiante 1 (Azul Valentina)
 -- =====================================================
 (
     '70000000-0000-0000-0000-000000000001'::uuid,
     '60000000-0000-0000-0000-000000000001'::uuid,  -- 5to A
-    '01ac4f00-082e-4287-b899-2e169c49b05e'::uuid,  -- Ana García
+    '2f5a9846-3393-40b2-9e87-0f29238c383f'::uuid,  -- Azul Valentina (real profile ID)
     gamilit.now_mexico(),
-    'student',
+    'admin_add',
     'active',
     0.00,  -- Sin attendance aún
-    NULL,
     jsonb_build_object(
         'enrollment_type', 'demo',
         'demo_member', true,
@@ -60,17 +58,16 @@ INSERT INTO social_features.classroom_members (
 ),
 
 -- =====================================================
--- 5to A - Estudiante 2 (Carlos Ramírez)
+-- 5to A - Estudiante 2 (Benjamin Hernandez)
 -- =====================================================
 (
     '70000000-0000-0000-0000-000000000002'::uuid,
     '60000000-0000-0000-0000-000000000001'::uuid,  -- 5to A
-    '02bc5f00-182e-5387-c899-3f269d49c06f'::uuid,  -- Carlos Ramírez
+    '7a6a973e-83f7-4374-a9fc-54258138115f'::uuid,  -- Benjamin Hernandez (real profile ID)
     gamilit.now_mexico(),
-    'student',
+    'admin_add',
     'active',
     0.00,
-    NULL,
     jsonb_build_object(
         'enrollment_type', 'demo',
         'demo_member', true,
@@ -81,17 +78,16 @@ INSERT INTO social_features.classroom_members (
 ),
 
 -- =====================================================
--- 5to B - Estudiante 3 (María Fernanda)
+-- 5to B - Estudiante 3 (Diego Colores)
 -- =====================================================
 (
     '70000000-0000-0000-0000-000000000003'::uuid,
     '60000000-0000-0000-0000-000000000002'::uuid,  -- 5to B
-    '03cd6000-282e-6487-d899-40369e49d070'::uuid,  -- María Fernanda
+    '33306a65-a3b1-41d5-a49d-47989957b822'::uuid,  -- Diego Colores (real profile ID)
     gamilit.now_mexico(),
-    'student',
+    'admin_add',
     'active',
     0.00,
-    NULL,
     jsonb_build_object(
         'enrollment_type', 'demo',
         'demo_member', true,
@@ -102,17 +98,16 @@ INSERT INTO social_features.classroom_members (
 ),
 
 -- =====================================================
--- 5to B - Estudiante 4 (Luis Miguel)
+-- 5to B - Estudiante 4 (Fernando Barragan)
 -- =====================================================
 (
     '70000000-0000-0000-0000-000000000004'::uuid,
     '60000000-0000-0000-0000-000000000002'::uuid,  -- 5to B
-    '04de7000-382e-7587-e899-51469f49e081'::uuid,  -- Luis Miguel
+    '9951ad75-e9cb-47b3-b478-6bb860ee2530'::uuid,  -- Fernando Barragan (real profile ID)
     gamilit.now_mexico(),
-    'student',
+    'admin_add',
     'active',
     0.00,
-    NULL,
     jsonb_build_object(
         'enrollment_type', 'demo',
         'demo_member', true,
@@ -123,17 +118,16 @@ INSERT INTO social_features.classroom_members (
 ),
 
 -- =====================================================
--- 6to A - Estudiante 5 (Sofía Martínez)
+-- 6to A - Estudiante 5 (Hugo Aragón)
 -- =====================================================
 (
     '70000000-0000-0000-0000-000000000005'::uuid,
     '60000000-0000-0000-0000-000000000003'::uuid,  -- 6to A
-    '05ef8000-482e-8687-f899-62569049f092'::uuid,  -- Sofía Martínez
+    'bf0d3e34-e077-43d1-9626-292f7fae2bd6'::uuid,  -- Hugo Aragón (real profile ID)
     gamilit.now_mexico(),
-    'student',
+    'admin_add',
     'active',
     0.00,
-    NULL,
     jsonb_build_object(
         'enrollment_type', 'demo',
         'demo_member', true,

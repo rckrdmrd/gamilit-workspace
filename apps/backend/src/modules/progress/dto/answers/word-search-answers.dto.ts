@@ -20,5 +20,5 @@ export class WordSearchAnswersDto {
   @IsArray()
   @ArrayNotEmpty({ message: 'words array cannot be empty' })
   @IsString({ each: true, message: 'Each found word must be a string' })
-  words!: string[];
+    words!: string[];
 }

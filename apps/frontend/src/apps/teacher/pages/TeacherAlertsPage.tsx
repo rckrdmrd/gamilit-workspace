@@ -31,7 +31,7 @@ export default function TeacherAlertsPage() {
   const [showFilters, setShowFilters] = useState(false);
 
   // Classroom ID from user context - use first classroom if available
-  const selectedClassroomId = selectedClassroom?.id ?? classrooms[0]?.id ?? 'default-classroom';
+  const selectedClassroomId = selectedClassroom?.id ?? classrooms[0]?.id ?? null;
 
   // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
   const { gamificationData } = useUserGamification(user?.id);
@@ -307,7 +307,22 @@ export default function TeacherAlertsPage() {
         )}
 
         {/* Panel principal de alertas */}
-        <InterventionAlertsPanel classroomId={selectedClassroomId} />
+        {selectedClassroomId ? (
+          <InterventionAlertsPanel classroomId={selectedClassroomId} />
+        ) : (
+          <DetectiveCard variant="warning">
+            <div className="py-16 text-center">
+              <AlertCircle className="mx-auto mb-4 h-20 w-20 text-yellow-500 opacity-50" />
+              <h3 className="mb-2 text-xl font-bold text-detective-text">
+                No hay clases disponibles
+              </h3>
+              <p className="mb-6 text-detective-text-secondary">
+                Necesitas tener al menos una clase asignada para ver las alertas de intervención.
+                Por favor, contacta con el administrador para que te asigne una clase.
+              </p>
+            </div>
+          </DetectiveCard>
+        )}
 
         {/* Información de ayuda */}
         <DetectiveCard>

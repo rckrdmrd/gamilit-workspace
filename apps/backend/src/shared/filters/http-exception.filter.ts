@@ -22,6 +22,7 @@ import { logger } from '@shared/utils/logger.util';
  */
 export class AppError extends HttpException {
   public code: string;
+
   public isOperational: boolean;
 
   constructor(message: string, statusCode: number = 500, code: string = 'INTERNAL_ERROR') {
@@ -30,6 +31,68 @@ export class AppError extends HttpException {
     this.isOperational = true;
 
     Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+/**
+ * All Exceptions Filter
+ *
+ * Catches ALL exceptions (not just HttpException) and sends appropriate response.
+ * IMPORTANT: This catches everything, including plain Errors and TypeORM errors.
+ */
+@Catch()
+export class AllExceptionsFilter implements ExceptionFilter {
+  catch(exception: unknown, host: ArgumentsHost): void {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
+
+    let status = HttpStatus.INTERNAL_SERVER_ERROR;
+    let message = 'Internal server error';
+    let code = 'INTERNAL_ERROR';
+
+    if (exception instanceof HttpException) {
+      status = exception.getStatus();
+      const exceptionResponse = exception.getResponse();
+      if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
+        const responseObj = exceptionResponse as any;
+        message = responseObj.message || exception.message;
+        code = responseObj.error || this.mapHttpStatusToCode(status);
+      } else if (typeof exceptionResponse === 'string') {
+        message = exceptionResponse;
+      }
+    } else if (exception instanceof Error) {
+      message = exception.message;
+      // In development, show full error details
+      if (process.env.NODE_ENV === 'development') {
+        message = `${exception.name}: ${exception.message}`;
+      }
+    }
+
+    // Log error
+    if (status >= 500) {
+      logger.error('Server error:', exception);
+      console.error('AllExceptionsFilter caught:', exception);
+    }
+
+    response.status(status).json({
+      statusCode: status,
+      message,
+      code,
+      ...(process.env.NODE_ENV === 'development' && exception instanceof Error && {
+        stack: exception.stack?.substring(0, 1000),
+      }),
+    });
+  }
+
+  private mapHttpStatusToCode(status: number): string {
+    switch (status) {
+      case HttpStatus.BAD_REQUEST: return 'BAD_REQUEST';
+      case HttpStatus.UNAUTHORIZED: return 'UNAUTHORIZED';
+      case HttpStatus.FORBIDDEN: return 'FORBIDDEN';
+      case HttpStatus.NOT_FOUND: return 'NOT_FOUND';
+      default: return 'INTERNAL_ERROR';
+    }
   }
 }
 
@@ -170,7 +233,7 @@ export class NotFoundException extends HttpException {
           message: `Route ${method} ${path} not found`,
         },
       },
-      HttpStatus.NOT_FOUND
+      HttpStatus.NOT_FOUND,
     );
   }
 }

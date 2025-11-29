@@ -128,14 +128,14 @@ export class LeaderboardController {
     },
   })
   async getGlobalLeaderboard(
-    @Query('limit') limit?: string,
+  @Query('limit') limit?: string,
     @Query('offset') offset?: string,
     @Query('timePeriod') timePeriod?: string,
   ) {
     const parsedLimit = limit ? parseInt(limit, 10) : 100;
     const parsedOffset = offset ? parseInt(offset, 10) : 0;
 
-    return await this.leaderboardService.getGlobalLeaderboard(
+    return this.leaderboardService.getGlobalLeaderboard(
       parsedLimit,
       parsedOffset,
       timePeriod,
@@ -227,7 +227,7 @@ export class LeaderboardController {
     description: 'Escuela no encontrada',
   })
   async getSchoolLeaderboard(
-    @Param('schoolId') schoolId: string,
+  @Param('schoolId') schoolId: string,
     @Query('limit') limit?: string,
     @Query('offset') offset?: string,
     @Query('timePeriod') timePeriod?: string,
@@ -235,7 +235,7 @@ export class LeaderboardController {
     const parsedLimit = limit ? parseInt(limit, 10) : 100;
     const parsedOffset = offset ? parseInt(offset, 10) : 0;
 
-    return await this.leaderboardService.getSchoolLeaderboard(
+    return this.leaderboardService.getSchoolLeaderboard(
       schoolId,
       parsedLimit,
       parsedOffset,
@@ -327,7 +327,7 @@ export class LeaderboardController {
     description: 'Aula no encontrada',
   })
   async getClassroomLeaderboard(
-    @Param('classroomId') classroomId: string,
+  @Param('classroomId') classroomId: string,
     @Query('limit') limit?: string,
     @Query('offset') offset?: string,
     @Query('timePeriod') timePeriod?: string,
@@ -335,7 +335,7 @@ export class LeaderboardController {
     const parsedLimit = limit ? parseInt(limit, 10) : 100;
     const parsedOffset = offset ? parseInt(offset, 10) : 0;
 
-    return await this.leaderboardService.getClassroomLeaderboard(
+    return this.leaderboardService.getClassroomLeaderboard(
       classroomId,
       parsedLimit,
       parsedOffset,
@@ -444,7 +444,7 @@ export class LeaderboardController {
     description: 'Usuario no encontrado',
   })
   async getFriendsLeaderboard(
-    @Param('userId') userId: string,
+  @Param('userId') userId: string,
     @Query('limit') limit?: string,
     @Query('offset') offset?: string,
     @Query('timePeriod') timePeriod?: string,
@@ -452,7 +452,7 @@ export class LeaderboardController {
     const parsedLimit = limit ? parseInt(limit, 10) : 100;
     const parsedOffset = offset ? parseInt(offset, 10) : 0;
 
-    return await this.leaderboardService.getFriendsLeaderboard(
+    return this.leaderboardService.getFriendsLeaderboard(
       userId,
       parsedLimit,
       parsedOffset,

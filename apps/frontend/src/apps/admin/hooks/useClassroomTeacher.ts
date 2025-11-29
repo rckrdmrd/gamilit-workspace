@@ -1,5 +1,6 @@
 // apps/frontend/src/apps/admin/hooks/useClassroomTeacher.ts
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { classroomTeacherApi } from '@/services/api/admin/classroomTeacherApi';
 import type {

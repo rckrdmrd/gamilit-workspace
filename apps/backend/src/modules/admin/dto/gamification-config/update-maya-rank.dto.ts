@@ -15,7 +15,7 @@ export class UpdateMayaRankDto {
   })
   @IsNumber()
   @Min(0)
-  min_xp!: number;
+    min_xp!: number;
 }
 
 /**
@@ -23,8 +23,11 @@ export class UpdateMayaRankDto {
  */
 class MayaRankDto {
   rank_name!: string;
+
   min_xp!: number;
+
   max_xp?: number | null;
+
   rank_order!: number;
 }
 
@@ -38,12 +41,12 @@ export class UpdateMayaRankResponseDto {
     description: 'Success message',
     example: 'Maya rank threshold updated successfully',
   })
-  message!: string;
+    message!: string;
 
   @ApiProperty({
     description: 'Updated rank details',
   })
-  rank!: {
+    rank!: {
     rank_name: string;
     old_threshold: number;
     new_threshold: number;
@@ -54,5 +57,5 @@ export class UpdateMayaRankResponseDto {
     description: 'All ranks after update (to show updated ranges)',
     type: [MayaRankDto],
   })
-  all_ranks!: MayaRankDto[];
+    all_ranks!: MayaRankDto[];
 }

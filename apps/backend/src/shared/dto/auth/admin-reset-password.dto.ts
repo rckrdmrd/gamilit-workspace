@@ -14,7 +14,7 @@ export class AdminResetPasswordDto {
   })
   @IsOptional()
   @IsBoolean()
-  sendEmail?: boolean = true;
+    sendEmail?: boolean = true;
 
   @ApiPropertyOptional({
     description: 'Custom message to include in the reset email',
@@ -22,5 +22,5 @@ export class AdminResetPasswordDto {
   })
   @IsOptional()
   @IsString()
-  customMessage?: string;
+    customMessage?: string;
 }

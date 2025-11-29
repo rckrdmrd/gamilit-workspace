@@ -14,20 +14,40 @@
  * - Queue de múltiples logros
  * - Sound effect opcional
  * - Click to dismiss
+ *
+ * @see SSOT: @shared/types/achievement.types.ts
+ * P2-001: Types consolidation - Tipo derivado para notificaciones
  */
 
 import React, { useEffect, useState } from 'react';
 import { X, Award, Star, Zap } from 'lucide-react';
+import type { Achievement as BaseAchievement } from '@shared/types/achievement.types';
 
-export interface Achievement {
-  id: string;
-  title: string;
-  description: string;
-  icon?: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+/**
+ * NotificationAchievement
+ * Tipo específico para notificaciones de logros desbloqueados.
+ * Derivado del SSOT Achievement con campos simplificados para UI.
+ *
+ * P2-001: Tipo derivado desde SSOT con campos de vista específicos
+ *
+ * Mapping desde SSOT:
+ * - title: equivale a name en SSOT
+ * - xp_reward/ml_coins_reward: vienen de rewards.xp/rewards.mlCoins en SSOT
+ *
+ * @see SSOT: @shared/types/achievement.types.ts
+ */
+export type NotificationAchievement = Pick<BaseAchievement, 'id' | 'description' | 'icon'> & {
+  title: string; // Mapped from name
+  rarity: NonNullable<BaseAchievement['rarity']>;
   xp_reward?: number;
   ml_coins_reward?: number;
-}
+};
+
+/**
+ * Achievement - Alias del tipo derivado para este componente
+ * P2-001: Ahora deriva del SSOT en lugar de definirse localmente
+ */
+export type Achievement = NotificationAchievement;
 
 interface AchievementNotificationProps {
   achievement: Achievement;
@@ -118,6 +138,7 @@ export const AchievementNotification: React.FC<AchievementNotificationProps> = (
       clearTimeout(dismissTimer);
       clearInterval(progressInterval);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoDismiss, dismissDelay, playSound]);
 
   const handleDismiss = () => {
@@ -136,7 +157,7 @@ export const AchievementNotification: React.FC<AchievementNotificationProps> = (
       <div
         className={`
           relative w-96 max-w-[calc(100vw-3rem)]
-          rounded-xl shadow-2xl overflow-hidden
+          overflow-hidden rounded-xl shadow-2xl
           ${colors.bg} border-2 ${colors.border}
         `}
       >
@@ -149,32 +170,34 @@ export const AchievementNotification: React.FC<AchievementNotificationProps> = (
             {/* Icon */}
             <div
               className={`
-                flex-shrink-0 w-16 h-16 rounded-full
+                h-16 w-16 flex-shrink-0 rounded-full
                 bg-gradient-to-br ${colors.gradient}
-                flex items-center justify-center
-                shadow-lg transform rotate-12 hover:rotate-0 transition-transform
+                flex rotate-12 transform
+                items-center justify-center shadow-lg transition-transform hover:rotate-0
               `}
             >
               {achievement.icon ? (
                 <span className="text-3xl">{achievement.icon}</span>
               ) : (
-                <Award className="w-8 h-8 text-white" />
+                <Award className="h-8 w-8 text-white" />
               )}
             </div>
 
             {/* Text */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between mb-2">
+            <div className="min-w-0 flex-1">
+              <div className="mb-2 flex items-start justify-between">
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="mb-1 flex items-center gap-2">
                     <span className={`text-xs font-bold uppercase ${colors.text}`}>
                       🏆 ¡Logro Desbloqueado!
                     </span>
-                    <span className={`px-2 py-0.5 text-xs font-bold rounded-full bg-gradient-to-r ${colors.gradient} text-white`}>
+                    <span
+                      className={`rounded-full bg-gradient-to-r px-2 py-0.5 text-xs font-bold ${colors.gradient} text-white`}
+                    >
                       {RARITY_LABELS[achievement.rarity]}
                     </span>
                   </div>
-                  <h4 className="text-lg font-bold text-gray-900 leading-tight">
+                  <h4 className="text-lg font-bold leading-tight text-gray-900">
                     {achievement.title}
                   </h4>
                 </div>
@@ -182,29 +205,25 @@ export const AchievementNotification: React.FC<AchievementNotificationProps> = (
                 {/* Close button */}
                 <button
                   onClick={handleDismiss}
-                  className="flex-shrink-0 p-1 hover:bg-gray-200 rounded-lg transition-colors"
+                  className="flex-shrink-0 rounded-lg p-1 transition-colors hover:bg-gray-200"
                 >
-                  <X className="w-5 h-5 text-gray-600" />
+                  <X className="h-5 w-5 text-gray-600" />
                 </button>
               </div>
 
-              <p className="text-sm text-gray-700 mb-3">
-                {achievement.description}
-              </p>
+              <p className="mb-3 text-sm text-gray-700">{achievement.description}</p>
 
               {/* Rewards */}
               {(achievement.xp_reward || achievement.ml_coins_reward) && (
                 <div className="flex items-center gap-3 text-sm font-semibold">
                   {achievement.xp_reward && (
                     <span className="flex items-center text-purple-600">
-                      <Zap className="w-4 h-4 mr-1" />
-                      +{achievement.xp_reward} XP
+                      <Zap className="mr-1 h-4 w-4" />+{achievement.xp_reward} XP
                     </span>
                   )}
                   {achievement.ml_coins_reward && (
                     <span className="flex items-center text-yellow-600">
-                      <Star className="w-4 h-4 mr-1" />
-                      +{achievement.ml_coins_reward} ML Coins
+                      <Star className="mr-1 h-4 w-4" />+{achievement.ml_coins_reward} ML Coins
                     </span>
                   )}
                 </div>
@@ -217,7 +236,7 @@ export const AchievementNotification: React.FC<AchievementNotificationProps> = (
         {autoDismiss && (
           <div className="h-1 bg-gray-200">
             <div
-              className={`h-full bg-gradient-to-r ${colors.gradient} transition-all duration-50 ease-linear`}
+              className={`h-full bg-gradient-to-r ${colors.gradient} duration-50 transition-all ease-linear`}
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -225,7 +244,7 @@ export const AchievementNotification: React.FC<AchievementNotificationProps> = (
 
         {/* Confetti effect */}
         {showConfetti && achievement.rarity !== 'common' && (
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
             {[...Array(15)].map((_, i) => (
               <div
                 key={i}
@@ -243,7 +262,7 @@ export const AchievementNotification: React.FC<AchievementNotificationProps> = (
         )}
 
         {/* Shine effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 transform -skew-x-12 animate-shine pointer-events-none" />
+        <div className="animate-shine pointer-events-none absolute inset-0 -skew-x-12 transform bg-gradient-to-r from-transparent via-white to-transparent opacity-20" />
       </div>
 
       {/* Confetti styles */}

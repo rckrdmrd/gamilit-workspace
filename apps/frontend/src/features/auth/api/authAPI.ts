@@ -4,6 +4,7 @@
  * API client for authentication endpoints including login, register,
  * logout, token refresh, password recovery, and email verification.
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
@@ -183,6 +184,7 @@ export const register = async (registerData: RegisterData): Promise<AuthResponse
       password: registerData.password,
       first_name: firstName,
       last_name: lastName,
+      school_id: registerData.schoolId, // Optional school ID
       // role removed - Backend assigns 'student' automatically
     };
 

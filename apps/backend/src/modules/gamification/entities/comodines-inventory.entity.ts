@@ -37,69 +37,69 @@ import { ComodinTypeEnum } from '@/shared/constants/enums.constants';
  */
 @Entity({ schema: DB_SCHEMAS.GAMIFICATION, name: DB_TABLES.GAMIFICATION.COMODINES_INVENTORY })
 @Index('comodines_inventory_user_id_key', ['user_id'], { unique: true })
-@Check(`"pistas_available" >= 0`)
-@Check(`"vision_lectora_available" >= 0`)
-@Check(`"segunda_oportunidad_available" >= 0`)
-@Check(`"pistas_purchased_total" >= 0`)
-@Check(`"vision_lectora_purchased_total" >= 0`)
-@Check(`"segunda_oportunidad_purchased_total" >= 0`)
-@Check(`"pistas_used_total" >= 0`)
-@Check(`"vision_lectora_used_total" >= 0`)
-@Check(`"segunda_oportunidad_used_total" >= 0`)
+@Check('"pistas_available" >= 0')
+@Check('"vision_lectora_available" >= 0')
+@Check('"segunda_oportunidad_available" >= 0')
+@Check('"pistas_purchased_total" >= 0')
+@Check('"vision_lectora_purchased_total" >= 0')
+@Check('"segunda_oportunidad_purchased_total" >= 0')
+@Check('"pistas_used_total" >= 0')
+@Check('"vision_lectora_used_total" >= 0')
+@Check('"segunda_oportunidad_used_total" >= 0')
 export class ComodinesInventory {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   @Column({ type: 'uuid', unique: true })
-  user_id!: string;
+    user_id!: string;
 
   // Pistas Contextuales (15 ML Coins)
   @Column({ type: 'integer', default: 0 })
-  pistas_available!: number;
+    pistas_available!: number;
 
   @Column({ type: 'integer', default: 0 })
-  pistas_purchased_total!: number;
+    pistas_purchased_total!: number;
 
   @Column({ type: 'integer', default: 0 })
-  pistas_used_total!: number;
+    pistas_used_total!: number;
 
   @Column({ type: 'integer', default: 15 })
-  pistas_cost!: number;
+    pistas_cost!: number;
 
   // Visión Lectora (25 ML Coins)
   @Column({ type: 'integer', default: 0 })
-  vision_lectora_available!: number;
+    vision_lectora_available!: number;
 
   @Column({ type: 'integer', default: 0 })
-  vision_lectora_purchased_total!: number;
+    vision_lectora_purchased_total!: number;
 
   @Column({ type: 'integer', default: 0 })
-  vision_lectora_used_total!: number;
+    vision_lectora_used_total!: number;
 
   @Column({ type: 'integer', default: 25 })
-  vision_lectora_cost!: number;
+    vision_lectora_cost!: number;
 
   // Segunda Oportunidad (40 ML Coins)
   @Column({ type: 'integer', default: 0 })
-  segunda_oportunidad_available!: number;
+    segunda_oportunidad_available!: number;
 
   @Column({ type: 'integer', default: 0 })
-  segunda_oportunidad_purchased_total!: number;
+    segunda_oportunidad_purchased_total!: number;
 
   @Column({ type: 'integer', default: 0 })
-  segunda_oportunidad_used_total!: number;
+    segunda_oportunidad_used_total!: number;
 
   @Column({ type: 'integer', default: 40 })
-  segunda_oportunidad_cost!: number;
+    segunda_oportunidad_cost!: number;
 
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   // Relación a auth_management.profiles (FK)
   // @ManyToOne(() => Profile, { onDelete: 'CASCADE' })

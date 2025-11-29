@@ -50,3 +50,7 @@ export { DistributeRewardsDto } from './distribute-rewards.dto';
 export { CreateDiscussionThreadDto } from './create-discussion-thread.dto';
 export { UpdateDiscussionThreadDto } from './update-discussion-thread.dto';
 export { DiscussionThreadResponseDto } from './discussion-thread-response.dto';
+
+// UserActivity DTOs ✨ NUEVO - P2 (Activity Feed - TASK 2.5)
+export { CreateActivityDto, ActivityTypeEnum } from './create-activity.dto';
+export { ActivityResponseDto } from './activity-response.dto';

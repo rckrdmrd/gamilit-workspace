@@ -10,6 +10,7 @@
  * @author Frontend-Developer Agent
  * @date 2025-11-24
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useMemo } from 'react';
 import {

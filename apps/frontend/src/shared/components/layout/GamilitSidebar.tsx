@@ -166,13 +166,13 @@ const getNavigationItems = (
     {
       id: 'badges',
       label: 'Insignias',
-      path: '/badges',
+      path: '/achievements',
       icon: 'Trophy',
     },
     {
       id: 'store',
       label: 'Tienda',
-      path: '/store',
+      path: '/shop',
       icon: 'ShoppingBag',
     },
     {
@@ -184,7 +184,7 @@ const getNavigationItems = (
     {
       id: 'stats',
       label: 'Estadísticas',
-      path: '/stats',
+      path: '/progress',
       icon: 'BarChart3',
     },
   ];
@@ -192,79 +192,79 @@ const getNavigationItems = (
   const teacherItems = [
     {
       id: 'classes',
-      label: 'Mis Aulas',
+      label: 'Mis Aulas *',
       path: '/teacher/classes',
       icon: 'School',
     },
     {
       id: 'students',
-      label: 'Estudiantes',
+      label: 'Estudiantes *',
       path: '/teacher/students',
       icon: 'Users',
     },
     {
       id: 'monitoring',
-      label: 'Monitoreo',
+      label: 'Monitoreo *',
       path: '/teacher/monitoring',
       icon: 'User',
     },
     {
       id: 'assignments',
-      label: 'Asignaciones',
+      label: 'Asignaciones *',
       path: '/teacher/assignments',
       icon: 'Calendar',
     },
     {
       id: 'responses',
-      label: 'Respuestas',
+      label: 'Respuestas *',
       path: '/teacher/responses',
       icon: 'ClipboardList',
     },
     {
       id: 'progress',
-      label: 'Progreso',
+      label: 'Progreso *',
       path: '/teacher/progress',
       icon: 'TrendingUp',
     },
     {
       id: 'alerts',
-      label: 'Alertas',
+      label: 'Alertas *',
       path: '/teacher/alerts',
       icon: 'AlertTriangle',
     },
     {
       id: 'analytics',
-      label: 'Analíticas',
+      label: 'Analíticas *',
       path: '/teacher/analytics',
       icon: 'BarChart3',
     },
     {
       id: 'reports',
-      label: 'Reportes',
+      label: 'Reportes *',
       path: '/teacher/reports',
       icon: 'FileText',
     },
     {
       id: 'communication',
-      label: 'Comunicación',
+      label: 'Comunicación *',
       path: '/teacher/communication',
       icon: 'MessageSquare',
     },
     {
       id: 'content',
-      label: 'Contenido',
+      label: 'Contenido *',
       path: '/teacher/content',
       icon: 'BookOpen',
     },
     {
       id: 'gamification',
-      label: 'Gamificación',
+      label: 'Gamificación *',
       path: '/teacher/gamification',
       icon: 'Trophy',
     },
     {
       id: 'resources',
-      label: 'Recursos',
+      label: 'Recursos *',
       path: '/teacher/resources',
       icon: 'Share2',
     },
@@ -273,67 +273,72 @@ const getNavigationItems = (
   const adminItems = [
     {
       id: 'institutions',
-      label: 'Instituciones',
+      label: 'Instituciones *',
       path: '/admin/institutions',
       icon: 'Building2',
     },
     {
       id: 'users',
-      label: 'Usuarios',
+      label: 'Usuarios *',
       path: '/admin/users',
       icon: 'Users',
     },
     {
       id: 'roles',
-      label: 'Roles y Permisos',
+      label: 'Roles y Permisos *',
       path: '/admin/roles',
       icon: 'ShieldCheck',
     },
     {
       id: 'content',
-      label: 'Contenido',
+      label: 'Contenido *',
       path: '/admin/content',
       icon: 'BookOpen',
     },
     {
       id: 'gamification',
-      label: 'Gamificación',
+      label: 'Gamificación *',
       path: '/admin/gamification',
       icon: 'Trophy',
     },
     {
       id: 'monitoring',
-      label: 'Monitoreo',
+      label: 'Monitoreo *',
       path: '/admin/monitoring',
       icon: 'Activity',
     },
     {
       id: 'alerts',
-      label: 'Alertas',
+      label: 'Alertas *',
       path: '/admin/alerts',
       icon: 'AlertTriangle',
     },
-    {
-      id: 'advanced',
-      label: 'Herramientas',
-      path: '/admin/advanced',
-      icon: 'Wrench',
-    },
+    // OCULTO PARA FASE 2: Herramientas Avanzadas
+    // Esta funcionalidad está programada para implementarse en Fase 2 (Q2 2026)
+    // Incluye: Multi-tenant, Feature Flags, A/B Testing, Herramientas económicas
+    // La ruta /admin/advanced sigue activa y muestra mensaje "Coming Soon"
+    // Para reactivar: descomentar las siguientes líneas
+    // {
+    //   id: 'advanced',
+    //   label: 'Herramientas',
+    //   path: '/admin/advanced',
+    //   icon: 'Wrench',
+    // },
     {
       id: 'reports',
-      label: 'Reportes',
+      label: 'Reportes *',
       path: '/admin/reports',
       icon: 'FileText',
     },
     {
       id: 'settings',
-      label: 'Configuración',
+      label: 'Configuración *',
       path: '/admin/settings',
       icon: 'Settings',
     },
     {
       id: 'classroom-teachers',
-      label: 'Classrooms-Teachers',
+      label: 'Classrooms-Teachers *',
       path: '/admin/classroom-teachers',
       icon: 'Users',
     },
@@ -417,7 +422,6 @@ const ProgressBar: React.FC<{
   size?: 'sm' | 'md' | 'lg';
   variant?: 'detective' | 'success';
   showPercentage?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 }> = ({ value, size = 'md', variant = 'detective', showPercentage: _showPercentage = true }) => {
   const sizeClasses = {
     sm: 'h-1.5',

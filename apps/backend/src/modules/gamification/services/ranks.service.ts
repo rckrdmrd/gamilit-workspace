@@ -56,10 +56,18 @@ export class RanksService {
   private readonly logger = new Logger(RanksService.name);
 
   /**
-   * Configuración de rangos maya v2.0
+   * Configuración de rangos maya v2.1
    * Define XP requerida, bonos y progresión
-   * VERSIÓN: 2.0 (2025-11-16)
-   * SINCRONIZADO CON: apps/database/seeds/prod/gamification_system/03-maya_ranks.sql
+   *
+   * FIX 2025-11-29: Actualizado a v2.1 para coincidir con DB.
+   * - Halach Uinic xp_max: 2249 → 1899
+   * - K'uk'ulkan xp_min: 2250 → 1900
+   *
+   * IMPORTANTE: Estos valores DEBEN coincidir con:
+   * - apps/database/seeds/prod/gamification_system/03-maya_ranks.sql
+   * Ver: docs/90-transversal/correcciones/CORRECCION-GAMIFICACION-RANGOS-2025-11-29.md
+   *
+   * VERSIÓN: 2.1 (2025-11-29)
    */
   private readonly RANK_CONFIG: Record<MayaRank, RankConfig> = {
     [MayaRank.AJAW]: {
@@ -91,7 +99,7 @@ export class RanksService {
     },
     [MayaRank.HALACH_UINIC]: {
       xp_min: 1500,
-      xp_max: 2249,
+      xp_max: 1899,
       ml_coins_bonus: 500,
       next_rank: MayaRank.KUKULKAN,
       name: 'Halach Uinic',
@@ -99,7 +107,7 @@ export class RanksService {
       order: 4,
     },
     [MayaRank.KUKULKAN]: {
-      xp_min: 2250,
+      xp_min: 1900,
       xp_max: Infinity,
       ml_coins_bonus: 1000,
       next_rank: null,
@@ -144,7 +152,7 @@ export class RanksService {
    * @returns Array de rangos ordenados por fecha
    */
   async getUserRankHistory(userId: string): Promise<UserRank[]> {
-    return await this.userRankRepo.find({
+    return this.userRankRepo.find({
       where: { user_id: userId },
       order: { achieved_at: 'DESC' },
     });
@@ -385,7 +393,7 @@ export class RanksService {
     }
 
     Object.assign(rank, updateDto);
-    return await this.userRankRepo.save(rank);
+    return this.userRankRepo.save(rank);
   }
 
   /**

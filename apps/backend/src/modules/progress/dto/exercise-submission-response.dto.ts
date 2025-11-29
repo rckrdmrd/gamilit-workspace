@@ -13,124 +13,152 @@ export class ExerciseSubmissionResponseDto {
    * ID único del registro
    */
   @Expose()
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario
    */
   @Expose()
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del ejercicio
    */
   @Expose()
-  exercise_id!: string;
+    exercise_id!: string;
 
   /**
    * Respuesta del estudiante
    */
   @Expose()
-  answer_data!: Record<string, any>;
+    answer_data!: Record<string, any>;
 
   /**
    * Indica si fue correcta
    */
   @Expose()
-  is_correct!: boolean | null;
+    is_correct!: boolean | null;
 
   /**
    * Puntaje obtenido
    */
   @Expose()
-  score!: number;
+    score!: number;
 
   /**
    * Puntaje máximo
    */
   @Expose()
-  max_score!: number;
+    max_score!: number;
 
   /**
    * Retroalimentación
    */
   @Expose()
-  feedback!: string | null;
+    feedback!: string | null;
 
   /**
    * Hint usado
    */
   @Expose()
-  hint_used!: boolean;
+    hint_used!: boolean;
 
   /**
    * Cantidad de hints
    */
   @Expose()
-  hints_count!: number;
+    hints_count!: number;
 
   /**
    * Comodines usados
    */
   @Expose()
-  comodines_used!: string[] | null;
+    comodines_used!: string[] | null;
 
   /**
    * ML Coins gastadas
    */
   @Expose()
-  ml_coins_spent!: number;
+    ml_coins_spent!: number;
 
   /**
    * Tiempo invertido en segundos
    */
   @Expose()
-  time_spent_seconds!: number | null;
+    time_spent_seconds!: number | null;
 
   /**
    * Número de intento
    */
   @Expose()
-  attempt_number!: number;
+    attempt_number!: number;
 
   /**
    * Estado de la sumisión
    */
   @Expose()
-  status!: string;
+    status!: string;
 
   /**
    * Fecha de inicio
    */
   @Expose()
   @Type(() => Date)
-  started_at!: Date | null;
+    started_at!: Date | null;
 
   /**
    * Fecha de envío
    */
   @Expose()
   @Type(() => Date)
-  submitted_at!: Date;
+    submitted_at!: Date;
 
   /**
    * Fecha de calificación
    */
   @Expose()
   @Type(() => Date)
-  graded_at!: Date | null;
+    graded_at!: Date | null;
 
   /**
    * Fecha de creación
    */
   @Expose()
   @Type(() => Date)
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de actualización
    */
   @Expose()
   @Type(() => Date)
-  updated_at!: Date;
+    updated_at!: Date;
+
+  // =====================================================
+  // GAMIFICATION REWARDS
+  // =====================================================
+
+  /**
+   * XP ganada en esta sumisión
+   */
+  @Expose()
+    xp_earned?: number;
+
+  /**
+   * ML Coins ganadas en esta sumisión
+   */
+  @Expose()
+    ml_coins_earned?: number;
+
+  /**
+   * Información de ascenso de rango (si aplica)
+   * Null si no hubo promoción de rango
+   */
+  @Expose()
+    rankUp?: {
+    newRank: string;
+    previousRank?: string;
+    bonusMLCoins: number;
+    newMultiplier: number;
+  } | null;
 }

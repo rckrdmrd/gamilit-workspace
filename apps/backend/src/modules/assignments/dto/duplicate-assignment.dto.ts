@@ -24,7 +24,7 @@ export class DuplicateAssignmentDto {
   @IsOptional()
   @IsString()
   @Length(1, 255)
-  newTitle?: string;
+    newTitle?: string;
 
   @ApiPropertyOptional({
     description: 'New due date for duplicated assignment (ISO date string)',
@@ -32,7 +32,7 @@ export class DuplicateAssignmentDto {
   })
   @IsOptional()
   @IsDateString()
-  newDueDate?: string;
+    newDueDate?: string;
 
   @ApiPropertyOptional({
     description: 'Copy classroom assignments (distribution)',
@@ -41,7 +41,7 @@ export class DuplicateAssignmentDto {
   })
   @IsOptional()
   @IsBoolean()
-  copyClassroomAssignments?: boolean;
+    copyClassroomAssignments?: boolean;
 
   @ApiPropertyOptional({
     description: 'Copy exercises associated with assignment',
@@ -50,7 +50,7 @@ export class DuplicateAssignmentDto {
   })
   @IsOptional()
   @IsBoolean()
-  copyExercises?: boolean;
+    copyExercises?: boolean;
 }
 
 export class DuplicateAssignmentResponseDto {
@@ -58,35 +58,35 @@ export class DuplicateAssignmentResponseDto {
     description: 'ID of the new duplicated assignment',
     example: '550e8400-e29b-41d4-a716-446655440001',
   })
-  id!: string;
+    id!: string;
 
   @ApiProperty({
     description: 'Title of the duplicated assignment',
     example: 'Copy of Original Assignment',
   })
-  title!: string;
+    title!: string;
 
   @ApiProperty({
     description: 'ID of the original assignment',
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  originalId!: string;
+    originalId!: string;
 
   @ApiProperty({
     description: 'Number of classroom assignments copied',
     example: 5,
   })
-  classroomsCopied!: number;
+    classroomsCopied!: number;
 
   @ApiProperty({
     description: 'Number of exercises copied',
     example: 10,
   })
-  exercisesCopied!: number;
+    exercisesCopied!: number;
 
   @ApiProperty({
     description: 'Published status (always false for new duplicates)',
     example: false,
   })
-  isPublished!: boolean;
+    isPublished!: boolean;
 }

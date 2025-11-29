@@ -17,6 +17,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { useReports } from '../hooks/useReports';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { ReportGenerationForm } from '../components/reports/ReportGenerationForm';
 import { ReportsList } from '../components/reports/ReportsList';
 import { BetaBanner } from '../components/reports/BetaBanner';
@@ -46,14 +47,21 @@ export default function AdminReportsPage() {
     refreshInterval: 5000,
   });
 
-  // Gamification data for layout
-  const gamificationData = {
-    userId: user?.id || 'mock-admin-id',
-    level: 20,
-    totalXP: 5000,
-    mlCoins: 2500,
-    rank: 'Super Admin',
-    achievements: ['admin_master', 'analytics_expert'],
+  // Use useUserGamification hook with real API endpoint
+  const { gamificationData, isLoading: gamificationLoading } = useUserGamification(user?.id);
+
+  // Fallback gamification data while loading or if data not available
+  const displayGamificationData = gamificationData || {
+    userId: user?.id || '',
+    level: gamificationLoading ? 0 : 1,
+    totalXP: 0,
+    mlCoins: 0,
+    rank: gamificationLoading ? 'Cargando...' : 'Ajaw',
+    rankColor: '#9E9E9E',
+    progressToNextLevel: 0,
+    xpToNextLevel: 100,
+    achievements: [],
+    totalAchievements: 0,
   };
 
   const handleLogout = () => {
@@ -74,7 +82,7 @@ export default function AdminReportsPage() {
         type: 'success',
         message: 'Reporte generado exitosamente. Se está procesando...',
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       setToast({
         type: 'error',
         message: err.message || 'Error al generar reporte',
@@ -95,7 +103,7 @@ export default function AdminReportsPage() {
         type: 'success',
         message: 'Reporte descargado exitosamente',
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       setToast({
         type: 'error',
         message: err.message || 'Error al descargar reporte',
@@ -114,7 +122,7 @@ export default function AdminReportsPage() {
         type: 'success',
         message: 'Reporte eliminado exitosamente',
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       setToast({
         type: 'error',
         message: err.message || 'Error al eliminar reporte',
@@ -137,7 +145,7 @@ export default function AdminReportsPage() {
   return (
     <AdminLayout
       user={user || undefined}
-      gamificationData={gamificationData}
+      gamificationData={displayGamificationData}
       organizationName="GAMILIT Platform Admin"
       onLogout={handleLogout}
     >

@@ -33,7 +33,7 @@ export class UpdatePeerChallengeDto {
   @IsOptional()
   @IsString()
   @MinLength(3)
-  title?: string;
+    title?: string;
 
   /**
    * Descripción del desafío
@@ -43,7 +43,7 @@ export class UpdatePeerChallengeDto {
   })
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   /**
    * Nivel de dificultad
@@ -54,7 +54,7 @@ export class UpdatePeerChallengeDto {
   })
   @IsOptional()
   @IsEnum(DifficultyLevelEnum)
-  difficulty_level?: DifficultyLevelEnum;
+    difficulty_level?: DifficultyLevelEnum;
 
   /**
    * Máximo de participantes
@@ -66,7 +66,7 @@ export class UpdatePeerChallengeDto {
   @IsOptional()
   @IsInt()
   @Min(2)
-  max_participants?: number;
+    max_participants?: number;
 
   /**
    * Fecha y hora de inicio
@@ -77,7 +77,7 @@ export class UpdatePeerChallengeDto {
   })
   @IsOptional()
   @IsDateString()
-  start_time?: string;
+    start_time?: string;
 
   /**
    * Fecha y hora de fin
@@ -88,7 +88,7 @@ export class UpdatePeerChallengeDto {
   })
   @IsOptional()
   @IsDateString()
-  end_time?: string;
+    end_time?: string;
 
   /**
    * Recompensas del desafío
@@ -98,7 +98,7 @@ export class UpdatePeerChallengeDto {
   })
   @IsOptional()
   @IsObject()
-  rewards?: Record<string, any>;
+    rewards?: Record<string, any>;
 
   /**
    * Multiplicador de bonus para el ganador
@@ -112,7 +112,7 @@ export class UpdatePeerChallengeDto {
   @IsNumber()
   @Min(1)
   @Max(5)
-  winner_bonus_multiplier?: number;
+    winner_bonus_multiplier?: number;
 
   /**
    * Reglas personalizadas
@@ -122,7 +122,7 @@ export class UpdatePeerChallengeDto {
   })
   @IsOptional()
   @IsObject()
-  custom_rules?: Record<string, any>;
+    custom_rules?: Record<string, any>;
 
   /**
    * Metadatos adicionales
@@ -132,5 +132,5 @@ export class UpdatePeerChallengeDto {
   })
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

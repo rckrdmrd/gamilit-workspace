@@ -98,7 +98,7 @@ export default function LoginPage() {
           navigate('/dashboard');
           break;
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Check for specific account status errors
       if (error instanceof AccountInactiveError) {
         setAccountStatusError({
@@ -119,7 +119,8 @@ export default function LoginPage() {
       }
 
       // Login fallido - other errors
-      const errorMessage = error?.message || authError || 'Error de autenticación';
+      const errorMessage =
+        error instanceof Error ? error.message : authError || 'Error de autenticación';
       setServerError(errorMessage);
 
       const newAttempts = failedAttempts + 1;

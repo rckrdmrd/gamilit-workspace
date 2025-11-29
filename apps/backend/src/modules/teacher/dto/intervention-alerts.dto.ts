@@ -47,12 +47,12 @@ export class GetAlertsQueryDto {
   @ApiPropertyOptional({ description: 'Filtrar por classroom específico' })
   @IsOptional()
   @IsUUID()
-  classroom_id?: string;
+    classroom_id?: string;
 
   @ApiPropertyOptional({ enum: AlertType, description: 'Filtrar por tipo de alerta' })
   @IsOptional()
   @IsEnum(AlertType)
-  alert_type?: AlertType;
+    alert_type?: AlertType;
 
   @ApiPropertyOptional({
     enum: AlertSeverity,
@@ -60,17 +60,17 @@ export class GetAlertsQueryDto {
   })
   @IsOptional()
   @IsEnum(AlertSeverity)
-  severity?: AlertSeverity;
+    severity?: AlertSeverity;
 
   @ApiPropertyOptional({ enum: AlertStatus, description: 'Filtrar por estado de la alerta' })
   @IsOptional()
   @IsEnum(AlertStatus)
-  status?: AlertStatus;
+    status?: AlertStatus;
 
   @ApiPropertyOptional({ description: 'Búsqueda por texto (título, descripción, nombre estudiante)' })
   @IsOptional()
   @IsString()
-  search?: string;
+    search?: string;
 
   @ApiPropertyOptional({
     minimum: 1,
@@ -83,7 +83,7 @@ export class GetAlertsQueryDto {
   @IsInt()
   @Min(1)
   @Max(100)
-  limit?: number = 20;
+    limit?: number = 20;
 
   @ApiPropertyOptional({
     minimum: 0,
@@ -94,7 +94,7 @@ export class GetAlertsQueryDto {
   @Type(() => Number)
   @IsInt()
   @Min(0)
-  offset?: number = 0;
+    offset?: number = 0;
 
   @ApiPropertyOptional({
     default: false,
@@ -103,7 +103,7 @@ export class GetAlertsQueryDto {
   @IsOptional()
   @IsBoolean()
   @Type(() => Boolean)
-  include_dismissed?: boolean = false;
+    include_dismissed?: boolean = false;
 }
 
 /**
@@ -117,18 +117,20 @@ export class AcknowledgeAlertDto {
 }
 
 /**
- * DTO para resolver una alerta con notas
+ * DTO para resolver una alerta de intervención con notas
  *
  * @description Body para PATCH /teacher/alerts/:id/resolve
+ * @note Renombrado de ResolveAlertDto a ResolveInterventionAlertDto para evitar
+ *       conflicto con admin/dto/alerts/resolve-alert.dto.ts
  */
-export class ResolveAlertDto {
+export class ResolveInterventionAlertDto {
   @ApiProperty({
     description: 'Notas de resolución describiendo las acciones tomadas',
     example: 'Contacté al estudiante y su representante. Se acordó tutorías dos veces por semana.',
   })
   @IsString()
   @IsNotEmpty()
-  resolution_notes!: string;
+    resolution_notes!: string;
 }
 
 /**
@@ -143,88 +145,90 @@ export class DismissAlertDto {
   })
   @IsOptional()
   @IsString()
-  reason?: string;
+    reason?: string;
 }
 
 /**
- * DTO de respuesta para una alerta individual
+ * DTO de respuesta para una alerta de intervención individual
  *
- * @description Response DTO para endpoints de alertas
+ * @description Response DTO para endpoints de alertas de intervención de estudiantes
+ * @note Renombrado de AlertResponseDto a InterventionAlertResponseDto para evitar
+ *       conflicto con admin/dto/alerts/alert-response.dto.ts (alertas de sistema)
  */
-export class AlertResponseDto {
+export class InterventionAlertResponseDto {
   @ApiProperty({ description: 'ID único de la alerta' })
-  id!: string;
+    id!: string;
 
   @ApiProperty({ description: 'ID del estudiante afectado' })
-  student_id!: string;
+    student_id!: string;
 
   @ApiProperty({ description: 'Nombre del estudiante' })
-  student_name!: string;
+    student_name!: string;
 
   @ApiProperty({ description: 'ID del classroom relacionado', required: false })
-  classroom_id?: string | null;
+    classroom_id?: string | null;
 
   @ApiProperty({ description: 'Nombre del classroom', required: false })
-  classroom_name?: string | null;
+    classroom_name?: string | null;
 
   @ApiProperty({ enum: AlertType, description: 'Tipo de alerta' })
-  alert_type!: AlertType;
+    alert_type!: AlertType;
 
   @ApiProperty({ enum: AlertSeverity, description: 'Nivel de severidad' })
-  severity!: AlertSeverity;
+    severity!: AlertSeverity;
 
   @ApiProperty({ description: 'Título de la alerta' })
-  title!: string;
+    title!: string;
 
   @ApiProperty({ description: 'Descripción detallada', required: false })
-  description?: string | null;
+    description?: string | null;
 
   @ApiProperty({
     description: 'Métricas específicas de la alerta',
     required: false,
     example: { days_inactive: 7, last_activity: '2025-11-17' },
   })
-  metrics?: Record<string, any> | null;
+    metrics?: Record<string, any> | null;
 
   @ApiProperty({ enum: AlertStatus, description: 'Estado actual de la alerta' })
-  status!: AlertStatus;
+    status!: AlertStatus;
 
   @ApiProperty({ description: 'Fecha de generación (ISO 8601)' })
-  generated_at!: string;
+    generated_at!: string;
 
   @ApiProperty({ description: 'Fecha de reconocimiento (ISO 8601)', required: false })
-  acknowledged_at?: string | null;
+    acknowledged_at?: string | null;
 
   @ApiProperty({ description: 'Nombre del teacher que reconoció', required: false })
-  acknowledged_by_name?: string | null;
+    acknowledged_by_name?: string | null;
 
   @ApiProperty({ description: 'Fecha de resolución (ISO 8601)', required: false })
-  resolved_at?: string | null;
+    resolved_at?: string | null;
 
   @ApiProperty({ description: 'Nombre del teacher que resolvió', required: false })
-  resolved_by_name?: string | null;
+    resolved_by_name?: string | null;
 
   @ApiProperty({ description: 'Notas de resolución', required: false })
-  resolution_notes?: string | null;
+    resolution_notes?: string | null;
 }
 
 /**
- * DTO de respuesta para listado paginado de alertas
+ * DTO de respuesta para listado paginado de alertas de intervención
  *
  * @description Response DTO para GET /teacher/alerts
  */
-export class AlertsListResponseDto {
-  @ApiProperty({ type: [AlertResponseDto], description: 'Array de alertas' })
-  data!: AlertResponseDto[];
+export class InterventionAlertsListResponseDto {
+  @ApiProperty({ type: [InterventionAlertResponseDto], description: 'Array de alertas de intervención' })
+    data!: InterventionAlertResponseDto[];
 
   @ApiProperty({ description: 'Total de alertas que cumplen los filtros' })
-  total!: number;
+    total!: number;
 
   @ApiProperty({ description: 'Límite de resultados por página' })
-  limit!: number;
+    limit!: number;
 
   @ApiProperty({ description: 'Desplazamiento actual' })
-  offset!: number;
+    offset!: number;
 }
 
 /**
@@ -237,5 +241,5 @@ export class GenerateAlertsResponseDto {
     description: 'Mensaje de confirmación',
     example: 'Alertas generadas exitosamente',
   })
-  message!: string;
+    message!: string;
 }

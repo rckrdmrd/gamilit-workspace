@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
+import { Repository, Between, LessThanOrEqual, MoreThanOrEqual, DataSource } from 'typeorm';
 import { AuthAttempt } from '@modules/auth/entities/auth-attempt.entity';
 import { User } from '@modules/auth/entities/user.entity';
 import { Tenant } from '@modules/auth/entities/tenant.entity';
@@ -309,7 +307,7 @@ export class AdminSystemService {
     }
 
     // Return updated config
-    return await this.getSystemConfig();
+    return this.getSystemConfig();
   }
 
   /**
@@ -417,7 +415,7 @@ export class AdminSystemService {
     }
 
     // Return updated config for this category
-    return await this.getConfigByCategory(category);
+    return this.getConfigByCategory(category);
   }
 
   /**

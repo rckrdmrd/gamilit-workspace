@@ -106,6 +106,7 @@ export default function AdminUsersPage() {
     if (debouncedSearch !== undefined) {
       setFilters({ ...filters, search: debouncedSearch });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch]);
 
   // Handle user actions
@@ -426,7 +427,7 @@ export default function AdminUsersPage() {
               <div className="relative">
                 <DetectiveButton
                   variant="primary"
-                  onClick={() => alert('Crear usuario - Próximamente')}
+                  onClick={() => showToast('Crear usuario - Próximamente', 'info')}
                 >
                   <UserPlus className="h-5 w-5" />
                   Nuevo Usuario

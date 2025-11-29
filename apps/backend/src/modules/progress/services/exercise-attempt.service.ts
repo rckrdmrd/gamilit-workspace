@@ -4,10 +4,11 @@ import { Repository, EntityManager } from 'typeorm';
 import { ExerciseAttempt } from '../entities';
 import { CreateExerciseAttemptDto } from '../dto';
 import { DB_SCHEMAS } from '@shared/constants/database.constants';
-import { TransactionTypeEnum } from '@shared/constants/enums.constants';
+import { TransactionTypeEnum, ComodinTypeEnum } from '@shared/constants/enums.constants';
 import { MLCoinsService } from '@/modules/gamification/services/ml-coins.service';
 import { UserStatsService } from '@/modules/gamification/services/user-stats.service';
 import { MissionsService } from '@/modules/gamification/services/missions.service';
+import { ComodinesService } from '@/modules/gamification/services/comodines.service';
 import { MissionTypeEnum } from '@/modules/gamification/entities/mission.entity';
 import { Exercise } from '@/modules/educational/entities';
 
@@ -34,6 +35,7 @@ export class ExerciseAttemptService {
     private readonly mlCoinsService: MLCoinsService,
     private readonly userStatsService: UserStatsService,
     private readonly missionsService: MissionsService,
+    private readonly comodinesService: ComodinesService,
     @InjectEntityManager('progress')
     private readonly entityManager: EntityManager,
   ) {}
@@ -75,7 +77,7 @@ export class ExerciseAttemptService {
       );
 
       // Actualizar progreso de misiones diarias/semanales
-      await this.updateMissionsProgress(savedAttempt.user_id, savedAttempt.is_correct);
+      await this.updateMissionsProgress(savedAttempt.user_id, savedAttempt.is_correct, savedAttempt.xp_earned);
     }
 
     return savedAttempt;
@@ -87,7 +89,7 @@ export class ExerciseAttemptService {
    * @returns Lista de intentos ordenados por fecha
    */
   async findByUserId(userId: string): Promise<ExerciseAttempt[]> {
-    return await this.attemptRepo.find({
+    return this.attemptRepo.find({
       where: { user_id: userId },
       order: { submitted_at: 'DESC' },
     });
@@ -99,7 +101,7 @@ export class ExerciseAttemptService {
    * @returns Lista de intentos del ejercicio
    */
   async findByExerciseId(exerciseId: string): Promise<ExerciseAttempt[]> {
-    return await this.attemptRepo.find({
+    return this.attemptRepo.find({
       where: { exercise_id: exerciseId },
       order: { submitted_at: 'DESC' },
     });
@@ -112,7 +114,7 @@ export class ExerciseAttemptService {
    * @returns Lista de intentos del usuario en el ejercicio
    */
   async findByUserAndExercise(userId: string, exerciseId: string): Promise<ExerciseAttempt[]> {
-    return await this.attemptRepo.find({
+    return this.attemptRepo.find({
       where: { user_id: userId, exercise_id: exerciseId },
       order: { attempt_number: 'ASC' },
     });
@@ -157,7 +159,7 @@ export class ExerciseAttemptService {
       attempt.user_id,
       attempt.exercise_id,
       answers,
-      attempt.attempt_number
+      attempt.attempt_number,
     );
 
     attempt.score = score;
@@ -169,8 +171,14 @@ export class ExerciseAttemptService {
 
     // Calcular rewards (XP y ML Coins)
     if (isCorrect) {
-      attempt.xp_earned = this.calculateXpReward(score, attempt.hints_used);
-      attempt.ml_coins_earned = this.calculateCoinsReward(score, attempt.comodines_used.length);
+      // Obtener exercise para usar sus rewards configurados
+      const exercise = await this.exerciseRepo.findOne({ where: { id: attempt.exercise_id } });
+      const exerciseXpReward = exercise?.xp_reward || 100;
+      const exerciseMlCoinsReward = exercise?.ml_coins_reward || 20;
+      const maxScore = 100; // Score máximo estándar
+
+      attempt.xp_earned = this.calculateXpReward(score, maxScore, attempt.hints_used, exerciseXpReward);
+      attempt.ml_coins_earned = this.calculateCoinsReward(score, maxScore, attempt.comodines_used.length, exerciseMlCoinsReward);
     }
 
     const savedAttempt = await this.attemptRepo.save(attempt);
@@ -201,12 +209,12 @@ export class ExerciseAttemptService {
     answers: Record<string, any>,
     attemptNumber: number,
   ): Promise<{
-    score: number;
-    isCorrect: boolean;
-    feedback: string;
-    details: any;
-    auditId: string;
-  }> {
+      score: number;
+      isCorrect: boolean;
+      feedback: string;
+      details: any;
+      auditId: string;
+    }> {
     this.logger.log(`[FE-059] Validating attempt #${attemptNumber} for exercise ${exerciseId}`);
 
     // Call PostgreSQL validate_and_audit() function
@@ -226,7 +234,7 @@ export class ExerciseAttemptService {
         userId,
         JSON.stringify(answers),
         attemptNumber,
-        JSON.stringify({})
+        JSON.stringify({}),
       ]);
 
       if (!result || result.length === 0) {
@@ -237,7 +245,7 @@ export class ExerciseAttemptService {
 
       this.logger.log(
         `[FE-059] Validation result: score=${validation.score}/${validation.max_score}, ` +
-        `correct=${validation.is_correct}, audit_id=${validation.audit_id}`
+        `correct=${validation.is_correct}, audit_id=${validation.audit_id}`,
       );
 
       return {
@@ -245,10 +253,10 @@ export class ExerciseAttemptService {
         isCorrect: validation.is_correct,
         feedback: validation.feedback || '',
         details: validation.details || {},
-        auditId: validation.audit_id
+        auditId: validation.audit_id,
       };
     } catch (error) {
-      this.logger.error(`[FE-059] Error calling validate_and_audit():`, error);
+      this.logger.error('[FE-059] Error calling validate_and_audit():', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new InternalServerErrorException(`Exercise validation failed: ${errorMessage}`);
     }
@@ -256,12 +264,16 @@ export class ExerciseAttemptService {
 
   /**
    * Calcula XP ganada basada en score y hints usados
-   * @param score - Score obtenido
+   * @param score - Score obtenido (0-100)
+   * @param maxScore - Score máximo posible (100 por defecto)
    * @param hintsUsed - Cantidad de hints usados
-   * @returns XP ganada
+   * @param exerciseXpReward - XP configurado en el ejercicio
+   * @returns XP ganada (proporcional al score y xp_reward del ejercicio)
    */
-  private calculateXpReward(score: number, hintsUsed: number): number {
-    let baseXp = score; // 1:1 ratio por defecto
+  private calculateXpReward(score: number, maxScore: number, hintsUsed: number, exerciseXpReward: number): number {
+    // Calcular XP proporcional al score y xp_reward del ejercicio
+    const scoreMultiplier = score / maxScore;
+    let baseXp = Math.floor(exerciseXpReward * scoreMultiplier);
 
     // Penalizar por hints usados
     const hintPenalty = hintsUsed * 10;
@@ -272,12 +284,16 @@ export class ExerciseAttemptService {
 
   /**
    * Calcula ML Coins ganadas basada en score y comodines usados
-   * @param score - Score obtenido
+   * @param score - Score obtenido (0-100)
+   * @param maxScore - Score máximo posible (100 por defecto)
    * @param comodinesUsed - Cantidad de comodines usados
-   * @returns ML Coins ganadas
+   * @param exerciseMlCoinsReward - ML Coins configurados en el ejercicio
+   * @returns ML Coins ganadas (proporcional al score y ml_coins_reward del ejercicio)
    */
-  private calculateCoinsReward(score: number, comodinesUsed: number): number {
-    let baseCoins = Math.floor(score / 10); // 10 coins por cada 100 puntos
+  private calculateCoinsReward(score: number, maxScore: number, comodinesUsed: number, exerciseMlCoinsReward: number): number {
+    // Calcular ML Coins proporcional al score y ml_coins_reward del ejercicio
+    const scoreMultiplier = score / maxScore;
+    let baseCoins = Math.floor(exerciseMlCoinsReward * scoreMultiplier);
 
     // Penalizar por comodines usados
     const comodinPenalty = comodinesUsed * 2;
@@ -354,9 +370,16 @@ export class ExerciseAttemptService {
 
   /**
    * Registra el uso de comodines en un intento
+   *
+   * @description ✅ FIX P1-002: Ahora deduce comodines del inventario real del usuario.
+   * Por cada comodín en el array, intenta deducirlo del inventario usando ComodinesService.
+   * Solo registra los comodines que se pudieron deducir exitosamente.
+   *
    * @param id - ID del intento
-   * @param comodines - Lista de comodines usados
+   * @param comodines - Lista de comodines usados (string array con tipos de comodín)
    * @returns Intento actualizado
+   * @throws NotFoundException - Si el intento no existe
+   * @throws BadRequestException - Si el usuario no tiene suficientes comodines (propagado desde ComodinesService)
    */
   async trackComodinesUsage(id: string, comodines: string[]): Promise<ExerciseAttempt> {
     const attempt = await this.attemptRepo.findOne({ where: { id } });
@@ -365,8 +388,62 @@ export class ExerciseAttemptService {
       throw new NotFoundException(`Exercise attempt with ID ${id} not found`);
     }
 
-    attempt.comodines_used = [...new Set([...attempt.comodines_used, ...comodines])];
-    return await this.attemptRepo.save(attempt);
+    // ✅ P1-002: Deducir cada comodín del inventario del usuario
+    const successfullyUsedComodines: string[] = [];
+
+    for (const comodinStr of comodines) {
+      try {
+        // Validar que el string corresponda a un tipo válido de comodín
+        const comodinType = this.validateComodinType(comodinStr);
+
+        // Deducir del inventario usando ComodinesService
+        await this.comodinesService.use(
+          attempt.user_id,
+          comodinType,
+          attempt.exercise_id,
+          `Used in attempt #${attempt.attempt_number}`,
+        );
+
+        // Si llegamos aquí, la deducción fue exitosa
+        successfullyUsedComodines.push(comodinStr);
+        this.logger.log(
+          `Successfully deducted ${comodinStr} from user ${attempt.user_id} inventory for attempt ${id}`,
+        );
+      } catch (error) {
+        // Si falla la deducción (stock insuficiente), registrar error y propagar
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        this.logger.error(
+          `Failed to deduct ${comodinStr} from user ${attempt.user_id} inventory: ${errorMessage}`,
+        );
+
+        // Propagar la excepción para que el frontend sepa que falló
+        throw new BadRequestException(
+          `Cannot use ${comodinStr}: ${errorMessage}`,
+        );
+      }
+    }
+
+    // Solo registrar los comodines que se pudieron usar exitosamente
+    attempt.comodines_used = [...new Set([...attempt.comodines_used, ...successfullyUsedComodines])];
+    return this.attemptRepo.save(attempt);
+  }
+
+  /**
+   * Valida que un string sea un tipo válido de comodín
+   *
+   * @param comodinStr - String a validar
+   * @returns ComodinTypeEnum validado
+   * @throws BadRequestException - Si el tipo no es válido
+   * @private
+   */
+  private validateComodinType(comodinStr: string): ComodinTypeEnum {
+    const validTypes = Object.values(ComodinTypeEnum);
+    if (!validTypes.includes(comodinStr as ComodinTypeEnum)) {
+      throw new BadRequestException(
+        `Invalid comodin type: ${comodinStr}. Valid types are: ${validTypes.join(', ')}`,
+      );
+    }
+    return comodinStr as ComodinTypeEnum;
   }
 
   /**
@@ -447,7 +524,7 @@ export class ExerciseAttemptService {
     userId: string,
     exerciseId: string,
     xpEarned: number,
-    mlCoinsEarned: number
+    mlCoinsEarned: number,
   ): Promise<void> {
     try {
       // Obtener module_id del ejercicio
@@ -466,7 +543,7 @@ export class ExerciseAttemptService {
           user_id: userId,
           exercise_id: exerciseId,
           is_correct: true,
-        }
+        },
       });
 
       // Si hay más de 1 (incluyendo el actual), no es el primero - solo actualizar timestamp
@@ -476,13 +553,13 @@ export class ExerciseAttemptService {
           SET last_accessed_at = NOW(), updated_at = NOW()
           WHERE user_id = $1 AND module_id = $2
         `, [userId, moduleId]);
-        this.logger.log(`[BUG-002 FIX] Not first correct attempt - only updated timestamps`);
+        this.logger.log('[BUG-002 FIX] Not first correct attempt - only updated timestamps');
         return;
       }
 
       // Contar total de ejercicios activos en el módulo
       const totalExercisesResult = await this.exerciseRepo.count({
-        where: { module_id: moduleId, is_active: true }
+        where: { module_id: moduleId, is_active: true },
       });
       const totalExercises = totalExercisesResult || 0;
 
@@ -548,7 +625,7 @@ export class ExerciseAttemptService {
           updated_at = NOW()
       `, [userId, moduleId, newStatus, progressPercentage, completedExercises, totalExercises, xpEarned, mlCoinsEarned]);
 
-      this.logger.log(`[BUG-002 FIX] ✅ Module progress updated successfully`);
+      this.logger.log('[BUG-002 FIX] ✅ Module progress updated successfully');
 
     } catch (error) {
       // Log error pero no bloquear el claim de rewards
@@ -562,8 +639,9 @@ export class ExerciseAttemptService {
    * Actualiza el progreso de misiones después de completar un ejercicio correctamente
    * @param userId - ID del usuario (auth.users.id - será convertido a profiles.id internamente)
    * @param isCorrect - Si el ejercicio fue completado correctamente
+   * @param xpEarned - XP ganado en el ejercicio (para actualizar misiones earn_xp)
    */
-  private async updateMissionsProgress(userId: string, isCorrect: boolean): Promise<void> {
+  private async updateMissionsProgress(userId: string, isCorrect: boolean, xpEarned: number = 0): Promise<void> {
     if (!isCorrect) return;
 
     try {
@@ -597,6 +675,28 @@ export class ExerciseAttemptService {
           } catch (missionError) {
             // Log pero no bloquear si una misión específica falla
             this.logger.warn(`Failed to update mission ${mission.id}`, missionError);
+          }
+        }
+      }
+
+      // Actualizar misiones con objetivo 'earn_xp'
+      if (xpEarned > 0) {
+        const xpMissions = allMissions.filter(mission =>
+          (mission.status === 'active' || mission.status === 'in_progress') &&
+          mission.objectives.some(obj => obj.type === 'earn_xp'),
+        );
+
+        for (const mission of xpMissions) {
+          try {
+            await this.missionsService.updateProgress(
+              mission.id,
+              userId,
+              'earn_xp',
+              xpEarned,
+            );
+            this.logger.log(`Mission ${mission.id} (earn_xp) updated with +${xpEarned} XP for user ${userId}`);
+          } catch (missionError) {
+            this.logger.warn(`Failed to update earn_xp mission ${mission.id}`, missionError);
           }
         }
       }

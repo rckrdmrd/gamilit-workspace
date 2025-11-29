@@ -1,12 +1,25 @@
 # 📖 Overview - GAMILIT Platform
 
-**Carpeta:** `docs/00-overview/`
+**Carpeta:** `docs/00-vision-general/`
 **Propósito:** Punto de entrada para todos los stakeholders (desarrolladores, PM, stakeholders, nuevos miembros)
-**Última actualización:** 2025-11-23
+**Última actualización:** 2025-11-29
 
 ---
 
-## 🎯 ¿Qué encontrarás aquí?
+## 🎯 ALCANCE MVP ACTUAL
+
+| Componente | Estado MVP |
+|-----------|------------|
+| **Módulos Educativos** | M1-M3 implementados ✅ (M4-M5 en backlog) |
+| **Épicas MVP** | EXT-001 a EXT-006 completas ✅ |
+| **Épicas Backlog** | EXT-007 a EXT-011 parciales ⏳ |
+| **Portales** | Student, Teacher, Admin funcionales ✅ |
+
+> Ver alcances detallados en [VISION.md](./VISION.md) y [Fase 4: Backlog](../04-fase-backlog/README.md)
+
+---
+
+## 📋 ¿Qué encontrarás aquí?
 
 Esta carpeta contiene documentación de **alto nivel** para entender rápidamente qué es GAMILIT Platform, su visión, arquitectura general y cómo empezar.
 
@@ -269,9 +282,8 @@ Los siguientes documentos están planeados pero aún no creados:
    - Explora codebase (`tree -L 2 apps/`)
 
 3. **Día 2 (4-6 horas):**
-   - Lee [docs/03-desarrollo/](../03-desarrollo/) (guías de desarrollo)
-   - Lee [docs/standards/CODING-STANDARDS.md](../standards/CODING-STANDARDS.md)
-   - Lee [docs/standards/GIT-WORKFLOW.md](../standards/GIT-WORKFLOW.md)
+   - Lee [docs/95-guias-desarrollo/](../95-guias-desarrollo/) (guías de desarrollo)
+   - Lee [docs/98-standards/](../98-standards/) (estándares de código)
    - Ejecuta tests (`npm test` en backend y frontend)
 
 4. **Día 3 (4-6 horas):**
@@ -284,17 +296,17 @@ Los siguientes documentos están planeados pero aún no creados:
 ### Para Stakeholders No-Técnicos
 
 1. ✅ **Entender el producto:** [VISION.md](./VISION.md)
-2. **Ver roadmap:** [docs/04-planificacion/ROADMAP.md](../04-planificacion/ROADMAP.md)
-3. **Ver métricas:** [artifacts/reports/](../../artifacts/reports/)
+2. **Ver roadmap:** [docs/90-transversal/roadmap/](../90-transversal/roadmap/)
+3. **Ver métricas:** [docs/90-transversal/metricas/](../90-transversal/metricas/)
 
 ---
 
 ### Para Tech Leads
 
 1. ✅ **Visión del producto:** [VISION.md](./VISION.md)
-2. **Arquitectura técnica:** [docs/02-especificaciones-tecnicas/arquitectura/](../02-especificaciones-tecnicas/arquitectura/)
+2. **Arquitectura técnica:** [docs/90-transversal/arquitectura/](../90-transversal/arquitectura/)
 3. **Decisiones arquitectónicas:** [docs/97-adr/](../97-adr/)
-4. **Estándares de código:** [docs/standards/](../standards/)
+4. **Estándares de código:** [docs/98-standards/](../98-standards/)
 
 ---
 
@@ -302,19 +314,26 @@ Los siguientes documentos están planeados pero aún no creados:
 
 ### Dentro de este Monorepo
 
-**Documentación técnica:**
-- [docs/01-requerimientos/](../01-requerimientos/) - Requerimientos funcionales
-- [docs/02-especificaciones-tecnicas/](../02-especificaciones-tecnicas/) - Especificaciones técnicas
-- [docs/03-desarrollo/](../03-desarrollo/) - Guías de desarrollo
-- [docs/QUICK-REFERENCE/](../QUICK-REFERENCE/) - Guías rápidas (cheatsheets)
+**Documentación por Fases:**
+- [docs/01-fase-alcance-inicial/](../01-fase-alcance-inicial/) - Fase 1: Fundamentos MVP
+- [docs/02-fase-robustecimiento/](../02-fase-robustecimiento/) - Fase 2: BD Modular
+- [docs/03-fase-extensiones/](../03-fase-extensiones/) - Fase 3: Extensions MVP
+- [docs/04-fase-backlog/](../04-fase-backlog/) - Fase 4: Backlog Futuro
+
+**Documentación Técnica:**
+- [docs/95-guias-desarrollo/](../95-guias-desarrollo/) - Guías de desarrollo
+- [docs/96-quick-reference/](../96-quick-reference/) - Referencias rápidas
+- [docs/97-adr/](../97-adr/) - Architecture Decision Records
+- [docs/98-standards/](../98-standards/) - Estándares del proyecto
 
 **Código:**
 - [apps/backend/_MAP.md](../../apps/backend/_MAP.md) - Backend (NestJS)
 - [apps/frontend/_MAP.md](../../apps/frontend/_MAP.md) - Frontend (React)
-- [apps/database/_MAP.md](../../apps/database/_MAP.md) - Database (PostgreSQL)
+- [apps/database/](../../apps/database/) - Database (PostgreSQL)
 
 **Planificación:**
-- [docs/04-planificacion/](../04-planificacion/) - Sprints, épicas, roadmap
+- [docs/90-transversal/roadmap/](../90-transversal/roadmap/) - Roadmap general
+- [docs/90-transversal/sprints/](../90-transversal/sprints/) - Sprints históricos
 
 ---
 
@@ -343,21 +362,20 @@ Los siguientes documentos están planeados pero aún no creados:
 **Soy Tech Lead y necesito entender la arquitectura:**
 - ✅ [VISION.md](./VISION.md) (contexto de negocio)
 - ⏳ ARQUITECTURA-ALTO-NIVEL.md (pendiente)
-- [docs/02-especificaciones-tecnicas/arquitectura/](../02-especificaciones-tecnicas/arquitectura/)
+- [docs/90-transversal/arquitectura/](../90-transversal/arquitectura/)
 
 **Soy PM/PO y quiero ver el roadmap:**
 - ✅ [VISION.md](./VISION.md) (contexto y métricas)
-- [docs/04-planificacion/ROADMAP.md](../04-planificacion/ROADMAP.md)
+- [docs/90-transversal/roadmap/](../90-transversal/roadmap/)
 
 **Quiero contribuir al proyecto (developer externo):**
 - ✅ [VISION.md](./VISION.md)
 - ✅ [ONBOARDING.md](./ONBOARDING.md)
-- [docs/standards/CODING-STANDARDS.md](../standards/CODING-STANDARDS.md)
-- [docs/standards/GIT-WORKFLOW.md](../standards/GIT-WORKFLOW.md)
+- [docs/98-standards/](../98-standards/)
 
 **No conozco un término técnico:**
 - ⏳ GLOSARIO.md (pendiente)
-- [docs/QUICK-REFERENCE/](../QUICK-REFERENCE/)
+- [docs/96-quick-reference/](../96-quick-reference/)
 
 **Voy a desarrollar ejercicios o gamificación:**
 - ✅ [DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md](./DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md)

@@ -55,21 +55,21 @@ export class UserRole {
    * ID único del user_role (UUID v4)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario (Profile) asignado
    * @foreignKey auth_management.profiles.id
    */
   @Column({ type: 'uuid', nullable: false })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del tenant al que pertenece la asignación
    * @foreignKey auth_management.tenants.id
    */
   @Column({ type: 'uuid', nullable: false })
-  tenant_id!: string;
+    tenant_id!: string;
 
   /**
    * Rol del sistema Gamilit asignado
@@ -80,7 +80,7 @@ export class UserRole {
     enum: GamilityRoleEnum,
     nullable: false,
   })
-  role!: GamilityRoleEnum;
+    role!: GamilityRoleEnum;
 
   /**
    * Permisos específicos asociados a este rol (JSONB)
@@ -92,14 +92,14 @@ export class UserRole {
     nullable: false,
     default: { read: true, write: false, admin: false, analytics: false },
   })
-  permissions!: Record<string, any>;
+    permissions!: Record<string, any>;
 
   /**
    * ID del usuario (Profile) que asignó este rol (nullable)
    * @foreignKey auth_management.profiles.id
    */
   @Column({ type: 'uuid', nullable: true })
-  assigned_by!: string | null;
+    assigned_by!: string | null;
 
   /**
    * Fecha y hora de asignación del rol
@@ -110,52 +110,52 @@ export class UserRole {
     nullable: false,
     default: () => 'CURRENT_TIMESTAMP',
   })
-  assigned_at!: Date;
+    assigned_at!: Date;
 
   /**
    * Fecha y hora de expiración del rol (nullable)
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  expires_at!: Date | null;
+    expires_at!: Date | null;
 
   /**
    * ID del usuario (Profile) que revocó este rol (nullable)
    * @foreignKey auth_management.profiles.id
    */
   @Column({ type: 'uuid', nullable: true })
-  revoked_by!: string | null;
+    revoked_by!: string | null;
 
   /**
    * Fecha y hora de revocación del rol (nullable)
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  revoked_at!: Date | null;
+    revoked_at!: Date | null;
 
   /**
    * Estado activo del rol
    * @default true
    */
   @Column({ type: 'boolean', nullable: false, default: true })
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Metadata adicional del user_role (JSONB)
    * @example { notes: "Rol temporal para proyecto X", reason: "..." }
    */
   @Column({ type: 'jsonb', nullable: false, default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   /**
    * Fecha de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de última actualización del registro
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   // ===========================
   // Relaciones
@@ -167,7 +167,7 @@ export class UserRole {
    */
   @ManyToOne(() => Profile, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user?: Profile;
+    user?: Profile;
 
   /**
    * Usuario (Profile) que asignó este rol
@@ -175,7 +175,7 @@ export class UserRole {
    */
   @ManyToOne(() => Profile, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'assigned_by' })
-  assigner?: Profile;
+    assigner?: Profile;
 
   /**
    * Usuario (Profile) que revocó este rol
@@ -183,7 +183,7 @@ export class UserRole {
    */
   @ManyToOne(() => Profile, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'revoked_by' })
-  revoker?: Profile;
+    revoker?: Profile;
 
   /**
    * Tenant al que pertenece esta asignación de rol
@@ -191,5 +191,5 @@ export class UserRole {
    */
   @ManyToOne(() => Tenant, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'tenant_id' })
-  tenant?: Tenant;
+    tenant?: Tenant;
 }

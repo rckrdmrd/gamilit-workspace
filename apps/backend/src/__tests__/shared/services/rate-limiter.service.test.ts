@@ -115,7 +115,7 @@ describe('getRateLimiter', () => {
       const limiter = getRateLimiter();
 
       await expect(
-        limiter.checkLimit('user-1', 'resource-1')
+        limiter.checkLimit('user-1', 'resource-1'),
       ).resolves.toBeUndefined();
     });
 
@@ -125,7 +125,7 @@ describe('getRateLimiter', () => {
       await limiter.checkLimit('user-1', 'resource-1');
 
       await expect(
-        limiter.checkLimit('user-1', 'resource-1')
+        limiter.checkLimit('user-1', 'resource-1'),
       ).rejects.toThrow(TooManyRequestsError);
     });
 
@@ -160,14 +160,14 @@ describe('getRateLimiter', () => {
       await limiter.checkLimit('user-1', 'resource-1');
 
       await expect(
-        limiter.checkLimit('user-1', 'resource-1')
+        limiter.checkLimit('user-1', 'resource-1'),
       ).rejects.toThrow(TooManyRequestsError);
 
       // Wait for window to expire
       await new Promise((resolve) => setTimeout(resolve, 60));
 
       await expect(
-        limiter.checkLimit('user-1', 'resource-1')
+        limiter.checkLimit('user-1', 'resource-1'),
       ).resolves.toBeUndefined();
     });
 
@@ -175,15 +175,15 @@ describe('getRateLimiter', () => {
       const limiter = getRateLimiter();
 
       await expect(
-        limiter.checkLimit('user-1', 'resource-1')
+        limiter.checkLimit('user-1', 'resource-1'),
       ).resolves.toBeUndefined();
 
       await expect(
-        limiter.checkLimit('user-2', 'resource-1')
+        limiter.checkLimit('user-2', 'resource-1'),
       ).resolves.toBeUndefined();
 
       await expect(
-        limiter.checkLimit('user-1', 'resource-2')
+        limiter.checkLimit('user-1', 'resource-2'),
       ).resolves.toBeUndefined();
     });
   });
@@ -294,7 +294,7 @@ describe('rateLimitMiddleware', () => {
 
     // Second request should throw
     expect(() => middleware(mockReq, mockRes, mockNext)).toThrow(
-      TooManyRequestsError
+      TooManyRequestsError,
     );
     expect(mockNext).toHaveBeenCalledTimes(1); // Should not call next again
   });
@@ -367,7 +367,7 @@ describe('rateLimitMiddleware', () => {
 
     // 4th request should throw
     expect(() => middleware(mockReq, mockRes, mockNext)).toThrow(
-      TooManyRequestsError
+      TooManyRequestsError,
     );
   });
 });

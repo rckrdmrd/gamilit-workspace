@@ -152,7 +152,7 @@ describe('Guilds Integration Tests', () => {
   // ============================================================================
 
   describe('Leave Guild Flow', () => {
-    it('should leave guild and clear user guild', () => {
+    it('should leave guild and clear user guild', async () => {
       const { joinGuild, leaveGuild } = useGuildsStore.getState();
 
       // Join first
@@ -160,7 +160,7 @@ describe('Guilds Integration Tests', () => {
       expect(useGuildsStore.getState().userGuild).not.toBeNull();
 
       // Leave
-      leaveGuild();
+      await leaveGuild('guild-1');
 
       const state = useGuildsStore.getState();
 
@@ -168,7 +168,7 @@ describe('Guilds Integration Tests', () => {
       expect(state.isInGuild).toBe(false);
     });
 
-    it('should clear guild members when leaving', () => {
+    it('should clear guild members when leaving', async () => {
       const { joinGuild, leaveGuild } = useGuildsStore.getState();
 
       // Setup: Add some members
@@ -192,7 +192,7 @@ describe('Guilds Integration Tests', () => {
       expect(useGuildsStore.getState().guildMembers).toHaveLength(1);
 
       // Leave
-      leaveGuild();
+      await leaveGuild('guild-1');
 
       const state = useGuildsStore.getState();
 
@@ -442,12 +442,12 @@ describe('Guilds Integration Tests', () => {
   // ============================================================================
 
   describe('Refresh Guild Data', () => {
-    it('should refresh guild data', () => {
+    it('should refresh guild data', async () => {
       const { refreshGuildData } = useGuildsStore.getState();
 
       const initialGuilds = useGuildsStore.getState().allGuilds;
 
-      refreshGuildData();
+      await refreshGuildData('test-user-id');
 
       const state = useGuildsStore.getState();
 
@@ -455,14 +455,14 @@ describe('Guilds Integration Tests', () => {
       expect(Array.isArray(state.allGuilds)).toBe(true);
     });
 
-    it('should maintain guild state after refresh', () => {
+    it('should maintain guild state after refresh', async () => {
       const { joinGuild, refreshGuildData } = useGuildsStore.getState();
 
       joinGuild('guild-1');
 
       const userGuildBefore = useGuildsStore.getState().userGuild;
 
-      refreshGuildData();
+      await refreshGuildData('test-user-id');
 
       const userGuildAfter = useGuildsStore.getState().userGuild;
 

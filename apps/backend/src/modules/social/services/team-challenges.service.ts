@@ -56,7 +56,7 @@ export class TeamChallengesService {
       score: 0,
     });
 
-    return await this.teamChallengeRepo.save(teamChallenge);
+    return this.teamChallengeRepo.save(teamChallenge);
   }
 
   /**
@@ -65,7 +65,7 @@ export class TeamChallengesService {
    * @returns Lista de desafíos ordenados por fecha de inicio
    */
   async findByTeamId(teamId: string): Promise<TeamChallenge[]> {
-    return await this.teamChallengeRepo.find({
+    return this.teamChallengeRepo.find({
       where: { team_id: teamId },
       order: { started_at: 'DESC' },
     });
@@ -77,7 +77,7 @@ export class TeamChallengesService {
    * @returns Lista de asignaciones ordenadas por score
    */
   async findByChallengeId(challengeId: string): Promise<TeamChallenge[]> {
-    return await this.teamChallengeRepo.find({
+    return this.teamChallengeRepo.find({
       where: { challenge_id: challengeId },
       order: { score: 'DESC' },
     });
@@ -138,7 +138,7 @@ export class TeamChallengesService {
       teamChallenge.completed_at = new Date();
     }
 
-    return await this.teamChallengeRepo.save(teamChallenge);
+    return this.teamChallengeRepo.save(teamChallenge);
   }
 
   /**
@@ -167,7 +167,7 @@ export class TeamChallengesService {
       teamChallenge.status = TeamChallengeStatusEnum.IN_PROGRESS;
     }
 
-    return await this.teamChallengeRepo.save(teamChallenge);
+    return this.teamChallengeRepo.save(teamChallenge);
   }
 
   /**
@@ -188,7 +188,7 @@ export class TeamChallengesService {
     teamChallenge.score = score;
     teamChallenge.completed_at = new Date();
 
-    return await this.teamChallengeRepo.save(teamChallenge);
+    return this.teamChallengeRepo.save(teamChallenge);
   }
 
   /**
@@ -207,7 +207,7 @@ export class TeamChallengesService {
     teamChallenge.status = TeamChallengeStatusEnum.FAILED;
     teamChallenge.completed_at = new Date();
 
-    return await this.teamChallengeRepo.save(teamChallenge);
+    return this.teamChallengeRepo.save(teamChallenge);
   }
 
   /**
@@ -216,7 +216,7 @@ export class TeamChallengesService {
    * @returns Lista de equipos ordenados por score DESC
    */
   async getLeaderboard(challengeId: string): Promise<TeamChallenge[]> {
-    return await this.teamChallengeRepo.find({
+    return this.teamChallengeRepo.find({
       where: { challenge_id: challengeId },
       order: { score: 'DESC', completed_at: 'ASC' },
     });

@@ -6,89 +6,89 @@ import { AlertSeverity, AlertStatus, AlertType } from './list-alerts.dto';
  */
 export class AlertResponseDto {
   @ApiProperty({ description: 'Alert ID' })
-  id!: string;
+    id!: string;
 
   @ApiPropertyOptional({ description: 'Tenant ID' })
-  tenant_id?: string;
+    tenant_id?: string;
 
   @ApiProperty({ enum: AlertType, description: 'Alert type' })
-  alert_type!: AlertType;
+    alert_type!: AlertType;
 
   @ApiProperty({ enum: AlertSeverity, description: 'Severity level' })
-  severity!: AlertSeverity;
+    severity!: AlertSeverity;
 
   @ApiProperty({ description: 'Alert title' })
-  title!: string;
+    title!: string;
 
   @ApiPropertyOptional({ description: 'Alert description' })
-  description?: string;
+    description?: string;
 
   @ApiPropertyOptional({ description: 'Source system' })
-  source_system?: string;
+    source_system?: string;
 
   @ApiPropertyOptional({ description: 'Source module' })
-  source_module?: string;
+    source_module?: string;
 
   @ApiPropertyOptional({ description: 'Error code' })
-  error_code?: string;
+    error_code?: string;
 
   @ApiProperty({ description: 'Number of affected users', default: 0 })
-  affected_users!: number;
+    affected_users!: number;
 
   @ApiProperty({ enum: AlertStatus, description: 'Alert status', default: 'open' })
-  status!: AlertStatus;
+    status!: AlertStatus;
 
   @ApiPropertyOptional({ description: 'Acknowledgment note' })
-  acknowledgment_note?: string;
+    acknowledgment_note?: string;
 
   @ApiPropertyOptional({ description: 'Resolution note' })
-  resolution_note?: string;
+    resolution_note?: string;
 
   @ApiPropertyOptional({ description: 'User ID who acknowledged' })
-  acknowledged_by?: string;
+    acknowledged_by?: string;
 
   @ApiPropertyOptional({ description: 'Name of user who acknowledged' })
-  acknowledged_by_name?: string;
+    acknowledged_by_name?: string;
 
   @ApiPropertyOptional({ description: 'Acknowledgment timestamp' })
-  acknowledged_at?: Date;
+    acknowledged_at?: Date;
 
   @ApiPropertyOptional({ description: 'User ID who resolved' })
-  resolved_by?: string;
+    resolved_by?: string;
 
   @ApiPropertyOptional({ description: 'Name of user who resolved' })
-  resolved_by_name?: string;
+    resolved_by_name?: string;
 
   @ApiPropertyOptional({ description: 'Resolution timestamp' })
-  resolved_at?: Date;
+    resolved_at?: Date;
 
   @ApiProperty({ description: 'Notification sent flag', default: false })
-  notification_sent!: boolean;
+    notification_sent!: boolean;
 
   @ApiProperty({ description: 'Escalation level', default: 1 })
-  escalation_level!: number;
+    escalation_level!: number;
 
   @ApiProperty({ description: 'Auto-resolve flag', default: false })
-  auto_resolve!: boolean;
+    auto_resolve!: boolean;
 
   @ApiProperty({ description: 'Suppress similar alerts flag', default: false })
-  suppress_similar!: boolean;
+    suppress_similar!: boolean;
 
   @ApiPropertyOptional({ description: 'Additional context data' })
-  context_data?: Record<string, any>;
+    context_data?: Record<string, any>;
 
   @ApiPropertyOptional({ description: 'Metrics data' })
-  metrics?: Record<string, any>;
+    metrics?: Record<string, any>;
 
   @ApiPropertyOptional({ description: 'Related alert IDs', type: [String] })
-  related_alerts?: string[];
+    related_alerts?: string[];
 
   @ApiProperty({ description: 'Alert trigger timestamp' })
-  triggered_at!: Date;
+    triggered_at!: Date;
 
   @ApiProperty({ description: 'Creation timestamp' })
-  created_at!: Date;
+    created_at!: Date;
 
   @ApiProperty({ description: 'Last update timestamp' })
-  updated_at!: Date;
+    updated_at!: Date;
 }

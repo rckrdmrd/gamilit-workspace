@@ -36,74 +36,74 @@ export class ContentAuthor {
    * Identificador único del autor (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario asociado
    */
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Nombre público del autor para mostrar
    */
   @Column({ type: 'varchar', length: 255 })
-  display_name!: string;
+    display_name!: string;
 
   /**
    * Biografía del autor
    */
   @Column({ type: 'text', nullable: true })
-  bio?: string;
+    bio?: string;
 
   /**
    * Áreas de expertise del autor
    * @example ['matemáticas', 'ciencias', 'comprensión lectora']
    */
   @Column({ type: 'text', array: true, nullable: true })
-  expertise_areas?: string[];
+    expertise_areas?: string[];
 
   /**
    * Total de contenido creado
    */
   @Column({ type: 'integer', default: 0 })
-  total_content_created!: number;
+    total_content_created!: number;
 
   /**
    * Total de contenido publicado
    */
   @Column({ type: 'integer', default: 0 })
-  total_content_published!: number;
+    total_content_published!: number;
 
   /**
    * Rating promedio del contenido (0-5)
    */
   @Column({ type: 'numeric', precision: 3, scale: 2, nullable: true })
-  average_rating?: number;
+    average_rating?: number;
 
   /**
    * Indica si el autor está destacado en la plataforma
    */
   @Column({ type: 'boolean', default: false })
-  is_featured!: boolean;
+    is_featured!: boolean;
 
   /**
    * Indica si el autor está verificado por la plataforma
    */
   @Column({ type: 'boolean', default: false })
-  is_verified!: boolean;
+    is_verified!: boolean;
 
   /**
    * Fecha y hora de creación
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   // =====================================================
   // Relaciones

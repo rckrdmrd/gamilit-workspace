@@ -3,6 +3,7 @@
  *
  * Additional request/response interceptors for logging, caching, and monitoring
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 

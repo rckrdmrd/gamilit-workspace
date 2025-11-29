@@ -15,7 +15,11 @@ import { ContentTemplate } from '@modules/content/entities/content-template.enti
 import { MediaFile } from '@modules/content/entities/media-file.entity';
 import { Classroom } from '@modules/social/entities/classroom.entity';
 import { TeacherClassroom } from '@modules/social/entities/teacher-classroom.entity';
-import { SystemSetting, FeatureFlag, NotificationSettings, BulkOperation, SystemAlert } from './entities'; // ✨ NUEVO - P1/P2 (System Configuration + Bulk Ops + Alerts)
+import { AssignmentClassroom } from '@modules/social/entities/assignment-classroom.entity';
+import { Assignment } from '@modules/assignments/entities/assignment.entity';
+import { AssignmentStudent } from '@modules/assignments/entities/assignment-student.entity';
+import { AssignmentSubmission } from '@modules/assignments/entities/assignment-submission.entity';
+import { SystemSetting, FeatureFlag, NotificationSettings, BulkOperation, SystemAlert, AdminReport } from './entities'; // ✨ NUEVO - P1/P2 (System Configuration + Bulk Ops + Alerts + Reports)
 import { AdminUsersController } from './controllers/admin-users.controller';
 import { AdminOrganizationsController } from './controllers/admin-organizations.controller';
 import { AdminContentController } from './controllers/admin-content.controller';
@@ -33,6 +37,7 @@ import { AdminAnalyticsController } from './controllers/admin-analytics.controll
 import { AdminProgressController } from './controllers/admin-progress.controller';
 import { AdminMonitoringController } from './controllers/admin-monitoring.controller';
 import { AdminInterventionsController } from './controllers/admin-interventions.controller';
+import { AdminAssignmentsController } from './controllers/admin-assignments.controller';
 import { AdminUsersService } from './services/admin-users.service';
 import { AdminOrganizationsService } from './services/admin-organizations.service';
 import { AdminContentService } from './services/admin-content.service';
@@ -48,14 +53,15 @@ import { AdminAnalyticsService } from './services/admin-analytics.service';
 import { AdminProgressService } from './services/admin-progress.service';
 import { AdminMonitoringService } from './services/admin-monitoring.service';
 import { AdminInterventionsService } from './services/admin-interventions.service';
+import { AdminAssignmentsService } from './services/admin-assignments.service';
 import { AdminGuard } from './guards/admin.guard';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Profile, Role, UserRole, Tenant, Membership, AuthAttempt, UserSuspension, SystemSetting, FeatureFlag, NotificationSettings, BulkOperation], 'auth'),
-    TypeOrmModule.forFeature([EducationalModule, Exercise, ContentApproval], 'educational'),
+    TypeOrmModule.forFeature([User, Profile, Role, UserRole, Tenant, Membership, AuthAttempt, UserSuspension, SystemSetting, FeatureFlag, NotificationSettings, BulkOperation, AdminReport], 'auth'),
+    TypeOrmModule.forFeature([EducationalModule, Exercise, ContentApproval, Assignment, AssignmentStudent, AssignmentSubmission], 'educational'),
     TypeOrmModule.forFeature([ContentTemplate, MediaFile], 'content'),
-    TypeOrmModule.forFeature([Classroom, TeacherClassroom], 'social'),
+    TypeOrmModule.forFeature([Classroom, TeacherClassroom, AssignmentClassroom], 'social'),
     TypeOrmModule.forFeature([SystemAlert], 'audit'),
     TypeOrmModule.forFeature([], 'progress'), // For AdminInterventionsService (student_intervention_alerts)
   ],
@@ -77,6 +83,7 @@ import { AdminGuard } from './guards/admin.guard';
     AdminProgressController, // NEW: Progress tracking endpoints (Plan 3)
     AdminMonitoringController, // NEW: Monitoring endpoints (Plan 4)
     AdminInterventionsController, // NEW: Student intervention alerts (BE-001)
+    AdminAssignmentsController, // NEW: Assignments management endpoints (US-AE-009)
   ],
   providers: [
     AdminUsersService,
@@ -94,6 +101,7 @@ import { AdminGuard } from './guards/admin.guard';
     AdminProgressService, // NEW: Progress tracking service (Plan 3)
     AdminMonitoringService, // NEW: Monitoring service (Plan 4)
     AdminInterventionsService, // NEW: Student intervention alerts service (BE-001)
+    AdminAssignmentsService, // NEW: Assignments management service (US-AE-009)
     AdminGuard,
   ],
   exports: [
@@ -112,6 +120,7 @@ import { AdminGuard } from './guards/admin.guard';
     AdminProgressService, // NEW: Export progress service for use in other modules
     AdminMonitoringService, // NEW: Export monitoring service for use in other modules
     AdminInterventionsService, // NEW: Export interventions service for use in other modules (BE-001)
+    AdminAssignmentsService, // NEW: Export assignments service for use in other modules (US-AE-009)
   ],
 })
 export class AdminModule {}

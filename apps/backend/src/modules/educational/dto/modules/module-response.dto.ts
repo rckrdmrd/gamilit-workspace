@@ -12,174 +12,174 @@ import {
  */
 export class ModuleResponseDto {
   @Expose()
-  id!: string;
+    id!: string;
 
   @Expose()
-  tenant_id?: string;
+    tenant_id?: string;
 
   // =====================================================
   // BASIC INFORMATION
   // =====================================================
 
   @Expose()
-  title!: string;
+    title!: string;
 
   @Expose()
-  subtitle?: string;
+    subtitle?: string;
 
   @Expose()
-  description?: string;
+    description?: string;
 
   @Expose()
-  summary?: string;
+    summary?: string;
 
   @Expose()
-  content!: Record<string, any>;
+    content!: Record<string, any>;
 
   @Expose()
-  order_index!: number;
+    order_index!: number;
 
   @Expose()
-  module_code?: string;
+    module_code?: string;
 
   // =====================================================
   // DIFFICULTY & CONTENT
   // =====================================================
 
   @Expose()
-  difficulty_level!: DifficultyLevelEnum;
+    difficulty_level!: DifficultyLevelEnum;
 
   @Expose()
-  grade_levels!: string[];
+    grade_levels!: string[];
 
   @Expose()
-  subjects!: string[];
+    subjects!: string[];
 
   // =====================================================
   // TIMING & DURATION
   // =====================================================
 
   @Expose()
-  estimated_duration_minutes!: number;
+    estimated_duration_minutes!: number;
 
   @Expose()
-  estimated_sessions!: number;
+    estimated_sessions!: number;
 
   // =====================================================
   // LEARNING OBJECTIVES & COMPETENCIES
   // =====================================================
 
   @Expose()
-  learning_objectives?: string[];
+    learning_objectives?: string[];
 
   @Expose()
-  competencies?: string[];
+    competencies?: string[];
 
   @Expose()
-  skills_developed?: string[];
+    skills_developed?: string[];
 
   // =====================================================
   // PREREQUISITES
   // =====================================================
 
   @Expose()
-  prerequisites?: string[];
+    prerequisites?: string[];
 
   @Expose()
-  prerequisite_skills?: string[];
+    prerequisite_skills?: string[];
 
   // =====================================================
   // GAMIFICATION & REWARDS
   // =====================================================
 
   @Expose()
-  maya_rank_required?: string;
+    maya_rank_required?: string;
 
   @Expose()
-  maya_rank_granted?: string;
+    maya_rank_granted?: string;
 
   @Expose()
-  xp_reward!: number;
+    xp_reward!: number;
 
   @Expose()
-  ml_coins_reward!: number;
+    ml_coins_reward!: number;
 
   // =====================================================
   // STATUS & PUBLICATION
   // =====================================================
 
   @Expose()
-  status!: ContentStatusEnum;
+    status!: ContentStatusEnum;
 
   @Expose()
-  is_published!: boolean;
+    is_published!: boolean;
 
   @Expose()
-  is_featured!: boolean;
+    is_featured!: boolean;
 
   @Expose()
-  is_free!: boolean;
+    is_free!: boolean;
 
   @Expose()
-  is_demo_module!: boolean;
+    is_demo_module!: boolean;
 
   @Expose()
-  published_at?: Date;
+    published_at?: Date;
 
   @Expose()
-  archived_at?: Date;
+    archived_at?: Date;
 
   // =====================================================
   // VERSIONING & REVISION
   // =====================================================
 
   @Expose()
-  version!: number;
+    version!: number;
 
   @Expose()
-  version_notes?: string;
+    version_notes?: string;
 
   @Expose()
-  created_by?: string;
+    created_by?: string;
 
   @Expose()
-  reviewed_by?: string;
+    reviewed_by?: string;
 
   @Expose()
-  approved_by?: string;
+    approved_by?: string;
 
   // =====================================================
   // METADATA & INDEXING
   // =====================================================
 
   @Expose()
-  keywords?: string[];
+    keywords?: string[];
 
   @Expose()
-  tags?: string[];
+    tags?: string[];
 
   @Expose()
-  thumbnail_url?: string;
+    thumbnail_url?: string;
 
   @Expose()
-  cover_image_url?: string;
+    cover_image_url?: string;
 
   @Expose()
-  settings!: Record<string, any>;
+    settings!: Record<string, any>;
 
   @Expose()
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   // =====================================================
   // AUDIT FIELDS
   // =====================================================
 
   @Expose()
-  created_at!: Date;
+    created_at!: Date;
 
   @Expose()
-  updated_at!: Date;
+    updated_at!: Date;
 
   @Expose()
-  total_exercises!: number;
+    total_exercises!: number;
 }

@@ -27,7 +27,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'ID del tenant', example: '123e4567-e89b-12d3-a456-426614174000' })
   @IsOptional()
   @IsUUID()
-  tenant_id?: string;
+    tenant_id?: string;
 
   // =====================================================
   // FILE IDENTIFICATION
@@ -38,14 +38,14 @@ export class CreateMediaFileDto {
    */
   @ApiProperty({ description: 'Nombre del archivo en el sistema', example: 'file_1234567890.jpg' })
   @IsString()
-  filename!: string;
+    filename!: string;
 
   /**
    * Nombre original del archivo (REQUERIDO)
    */
   @ApiProperty({ description: 'Nombre original del archivo', example: 'marie_curie_portrait.jpg' })
   @IsString()
-  original_filename!: string;
+    original_filename!: string;
 
   /**
    * Extensión del archivo
@@ -53,7 +53,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Extensión del archivo', example: 'jpg' })
   @IsOptional()
   @IsString()
-  file_extension?: string;
+    file_extension?: string;
 
   /**
    * Tipo MIME
@@ -61,7 +61,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Tipo MIME', example: 'image/jpeg' })
   @IsOptional()
   @IsString()
-  mime_type?: string;
+    mime_type?: string;
 
   /**
    * Tamaño en bytes
@@ -70,7 +70,7 @@ export class CreateMediaFileDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  file_size_bytes?: number;
+    file_size_bytes?: number;
 
   // =====================================================
   // FILE TYPE & CATEGORIZATION
@@ -81,7 +81,7 @@ export class CreateMediaFileDto {
    */
   @ApiProperty({ description: 'Tipo de medio', enum: MediaTypeEnum, example: MediaTypeEnum.IMAGE })
   @IsEnum(MediaTypeEnum)
-  media_type!: MediaTypeEnum;
+    media_type!: MediaTypeEnum;
 
   /**
    * Categoría del archivo
@@ -89,7 +89,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Categoría del archivo', example: 'biography' })
   @IsOptional()
   @IsString()
-  category?: string;
+    category?: string;
 
   /**
    * Subcategoría
@@ -97,7 +97,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Subcategoría', example: 'portraits' })
   @IsOptional()
   @IsString()
-  subcategory?: string;
+    subcategory?: string;
 
   // =====================================================
   // STORAGE & URLS
@@ -108,7 +108,7 @@ export class CreateMediaFileDto {
    */
   @ApiProperty({ description: 'Ruta de almacenamiento', example: '/uploads/images/2025/01/file_1234567890.jpg' })
   @IsString()
-  storage_path!: string;
+    storage_path!: string;
 
   /**
    * URL pública
@@ -116,7 +116,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'URL pública del archivo', example: 'https://storage.gamilit.com/uploads/images/2025/01/file_1234567890.jpg' })
   @IsOptional()
   @IsString()
-  public_url?: string;
+    public_url?: string;
 
   /**
    * URL del CDN
@@ -124,7 +124,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'URL del CDN', example: 'https://cdn.gamilit.com/images/file_1234567890.jpg' })
   @IsOptional()
   @IsString()
-  cdn_url?: string;
+    cdn_url?: string;
 
   /**
    * URL de thumbnail
@@ -132,7 +132,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'URL de thumbnail', example: 'https://cdn.gamilit.com/thumbnails/file_1234567890_thumb.jpg' })
   @IsOptional()
   @IsString()
-  thumbnail_url?: string;
+    thumbnail_url?: string;
 
   // =====================================================
   // MEDIA PROPERTIES
@@ -145,7 +145,7 @@ export class CreateMediaFileDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  width?: number;
+    width?: number;
 
   /**
    * Alto en píxeles
@@ -154,7 +154,7 @@ export class CreateMediaFileDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  height?: number;
+    height?: number;
 
   /**
    * Duración en segundos
@@ -163,7 +163,7 @@ export class CreateMediaFileDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  duration_seconds?: number;
+    duration_seconds?: number;
 
   /**
    * Bitrate
@@ -172,7 +172,7 @@ export class CreateMediaFileDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  bitrate?: number;
+    bitrate?: number;
 
   /**
    * Resolución
@@ -180,7 +180,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Resolución del video', example: '1920x1080' })
   @IsOptional()
   @IsString()
-  resolution?: string;
+    resolution?: string;
 
   /**
    * Perfil de color
@@ -188,7 +188,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Perfil de color', example: 'sRGB' })
   @IsOptional()
   @IsString()
-  color_profile?: string;
+    color_profile?: string;
 
   // =====================================================
   // DESCRIPTIVE METADATA
@@ -200,7 +200,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Texto alternativo (alt text)', example: 'Retrato de Marie Curie en su laboratorio' })
   @IsOptional()
   @IsString()
-  alt_text?: string;
+    alt_text?: string;
 
   /**
    * Leyenda/caption
@@ -208,7 +208,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Leyenda del archivo', example: 'Marie Curie trabajando en su laboratorio, 1920' })
   @IsOptional()
   @IsString()
-  caption?: string;
+    caption?: string;
 
   /**
    * Descripción
@@ -216,7 +216,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Descripción detallada', example: 'Fotografía histórica de Marie Curie...' })
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   /**
    * Información de copyright
@@ -224,7 +224,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Información de copyright', example: '© 1920 Institut Curie' })
   @IsOptional()
   @IsString()
-  copyright_info?: string;
+    copyright_info?: string;
 
   /**
    * Licencia
@@ -232,7 +232,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Licencia del archivo', example: 'CC BY-SA 4.0' })
   @IsOptional()
   @IsString()
-  license?: string;
+    license?: string;
 
   /**
    * Atribución
@@ -240,7 +240,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Atribución (créditos)', example: 'Institut Curie Archives' })
   @IsOptional()
   @IsString()
-  attribution?: string;
+    attribution?: string;
 
   // =====================================================
   // PROCESSING STATUS
@@ -252,7 +252,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Estado de procesamiento', enum: ProcessingStatusEnum, default: ProcessingStatusEnum.READY })
   @IsOptional()
   @IsEnum(ProcessingStatusEnum)
-  processing_status?: ProcessingStatusEnum;
+    processing_status?: ProcessingStatusEnum;
 
   /**
    * Información de procesamiento
@@ -260,7 +260,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Información de procesamiento JSON', example: {} })
   @IsOptional()
   @IsObject()
-  processing_info?: Record<string, any>;
+    processing_info?: Record<string, any>;
 
   // =====================================================
   // SEARCH & ORGANIZATION
@@ -273,7 +273,7 @@ export class CreateMediaFileDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  tags?: string[];
+    tags?: string[];
 
   /**
    * Palabras clave
@@ -282,7 +282,7 @@ export class CreateMediaFileDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  keywords?: string[];
+    keywords?: string[];
 
   /**
    * Ruta de carpeta lógica
@@ -290,7 +290,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Ruta de carpeta lógica', example: '/content/marie-curie/biography' })
   @IsOptional()
   @IsString()
-  folder_path?: string;
+    folder_path?: string;
 
   // =====================================================
   // USAGE STATISTICS
@@ -303,7 +303,7 @@ export class CreateMediaFileDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  usage_count?: number;
+    usage_count?: number;
 
   /**
    * Contador de descargas
@@ -312,7 +312,7 @@ export class CreateMediaFileDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  download_count?: number;
+    download_count?: number;
 
   /**
    * Contador de visualizaciones
@@ -321,7 +321,7 @@ export class CreateMediaFileDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  view_count?: number;
+    view_count?: number;
 
   // =====================================================
   // STATUS FLAGS
@@ -333,7 +333,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Archivo público', default: false })
   @IsOptional()
   @IsBoolean()
-  is_public?: boolean;
+    is_public?: boolean;
 
   /**
    * Si está activo
@@ -341,7 +341,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Archivo activo', default: true })
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+    is_active?: boolean;
 
   /**
    * Si está optimizado
@@ -349,7 +349,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Archivo optimizado', default: false })
   @IsOptional()
   @IsBoolean()
-  is_optimized?: boolean;
+    is_optimized?: boolean;
 
   // =====================================================
   // UPLOAD INFORMATION
@@ -361,7 +361,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'ID del usuario que subió el archivo' })
   @IsOptional()
   @IsUUID()
-  uploaded_by?: string;
+    uploaded_by?: string;
 
   /**
    * ID de sesión de carga
@@ -369,7 +369,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'ID de sesión de carga (multipart)', example: 'upload_session_abc123' })
   @IsOptional()
   @IsString()
-  upload_session_id?: string;
+    upload_session_id?: string;
 
   // =====================================================
   // TECHNICAL METADATA
@@ -381,7 +381,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Datos EXIF JSON', example: {} })
   @IsOptional()
   @IsObject()
-  exif_data?: Record<string, any>;
+    exif_data?: Record<string, any>;
 
   /**
    * Metadatos adicionales
@@ -389,5 +389,5 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Metadatos adicionales', example: {} })
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

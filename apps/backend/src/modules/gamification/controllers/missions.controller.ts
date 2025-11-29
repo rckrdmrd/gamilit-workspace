@@ -112,7 +112,7 @@ export class MissionsController {
   })
   async getDailyMissions(@Request() req: any) {
     const userId = req.user.id;
-    return await this.missionsService.findByTypeAndUser(userId, MissionTypeEnum.DAILY);
+    return this.missionsService.findByTypeAndUser(userId, MissionTypeEnum.DAILY);
   }
 
   /**
@@ -181,7 +181,7 @@ export class MissionsController {
   })
   async getWeeklyMissions(@Request() req: any) {
     const userId = req.user.id;
-    return await this.missionsService.findByTypeAndUser(userId, MissionTypeEnum.WEEKLY);
+    return this.missionsService.findByTypeAndUser(userId, MissionTypeEnum.WEEKLY);
   }
 
   /**
@@ -236,7 +236,7 @@ export class MissionsController {
   })
   async getSpecialMissions(@Request() req: any) {
     const userId = req.user.id;
-    return await this.missionsService.findByTypeAndUser(userId, MissionTypeEnum.SPECIAL);
+    return this.missionsService.findByTypeAndUser(userId, MissionTypeEnum.SPECIAL);
   }
 
   /**
@@ -303,7 +303,7 @@ export class MissionsController {
       throw new HttpException('Forbidden: Cannot access stats of another user', HttpStatus.FORBIDDEN);
     }
 
-    return await this.missionsService.getStats(userId);
+    return this.missionsService.getStats(userId);
   }
 
   /**
@@ -362,7 +362,7 @@ export class MissionsController {
   })
   async startMission(@Param('id') missionId: string, @Request() req: any) {
     const userId = req.user.id;
-    return await this.missionsService.startMission(missionId, userId);
+    return this.missionsService.startMission(missionId, userId);
   }
 
   /**
@@ -445,12 +445,12 @@ export class MissionsController {
     description: 'Misión no encontrada',
   })
   async updateProgress(
-    @Param('id') missionId: string,
+  @Param('id') missionId: string,
     @Body() dto: UpdateMissionProgressDto,
     @Request() req: any,
   ) {
     const userId = req.user.id;
-    return await this.missionsService.updateProgress(
+    return this.missionsService.updateProgress(
       missionId,
       userId,
       dto.objective_type,
@@ -568,6 +568,7 @@ export class MissionsController {
   })
   async claimRewards(@Param('id') missionId: string, @Request() req: any) {
     const userId = req.user.id;
-    return await this.missionsService.claimRewards(missionId, userId);
+    const result = await this.missionsService.claimRewards(missionId, userId);
+    return { success: true, data: result };
   }
 }

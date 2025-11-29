@@ -36,7 +36,7 @@ export class DeviceResponseDto {
     description: 'UUID del dispositivo',
     example: 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee',
   })
-  id!: string;
+    id!: string;
 
   /**
    * UUID del usuario propietario
@@ -45,7 +45,7 @@ export class DeviceResponseDto {
     description: 'UUID del usuario propietario',
     example: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
   })
-  userId!: string;
+    userId!: string;
 
   /**
    * Token del dispositivo (parcialmente oculto)
@@ -59,7 +59,7 @@ export class DeviceResponseDto {
     description: 'Token del dispositivo (parcialmente oculto)',
     example: 'dUzV1qzxTHGKj8qY9ZxY...',
   })
-  deviceToken!: string;
+    deviceToken!: string;
 
   /**
    * Tipo de dispositivo
@@ -71,7 +71,7 @@ export class DeviceResponseDto {
     example: 'android',
     enum: ['ios', 'android', 'web'],
   })
-  deviceType!: string;
+    deviceType!: string;
 
   /**
    * Nombre descriptivo del dispositivo
@@ -81,7 +81,7 @@ export class DeviceResponseDto {
     example: 'Samsung Galaxy S21',
     nullable: true,
   })
-  deviceName?: string | null;
+    deviceName?: string | null;
 
   /**
    * Indica si el dispositivo está activo
@@ -92,7 +92,7 @@ export class DeviceResponseDto {
     description: 'Indica si el dispositivo está activo',
     example: true,
   })
-  isActive!: boolean;
+    isActive!: boolean;
 
   /**
    * Última vez que se usó el dispositivo
@@ -107,7 +107,7 @@ export class DeviceResponseDto {
     example: '2025-11-13T10:30:00.000Z',
     nullable: true,
   })
-  lastUsedAt?: Date | null;
+    lastUsedAt?: Date | null;
 
   /**
    * Fecha de registro del dispositivo
@@ -116,7 +116,7 @@ export class DeviceResponseDto {
     description: 'Fecha de registro',
     example: '2025-11-01T08:00:00.000Z',
   })
-  createdAt!: Date;
+    createdAt!: Date;
 }
 
 /**
@@ -160,7 +160,7 @@ export class DevicesListResponseDto {
     description: 'Array de dispositivos del usuario',
     type: [DeviceResponseDto],
   })
-  devices!: DeviceResponseDto[];
+    devices!: DeviceResponseDto[];
 }
 
 /**
@@ -190,7 +190,7 @@ export class DeviceStatsResponseDto {
     description: 'Número total de dispositivos',
     example: 1523,
   })
-  total!: number;
+    total!: number;
 
   /**
    * Número de dispositivos activos
@@ -199,7 +199,7 @@ export class DeviceStatsResponseDto {
     description: 'Número de dispositivos activos',
     example: 1204,
   })
-  active!: number;
+    active!: number;
 
   /**
    * Número de dispositivos inactivos
@@ -208,7 +208,7 @@ export class DeviceStatsResponseDto {
     description: 'Número de dispositivos inactivos',
     example: 319,
   })
-  inactive!: number;
+    inactive!: number;
 
   /**
    * Distribución por tipo de dispositivo
@@ -217,5 +217,5 @@ export class DeviceStatsResponseDto {
     description: 'Distribución por tipo',
     example: { ios: 645, android: 823, web: 55 },
   })
-  byType!: Record<string, number>;
+    byType!: Record<string, number>;
 }

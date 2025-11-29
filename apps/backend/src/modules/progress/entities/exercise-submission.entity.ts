@@ -34,7 +34,7 @@ export class ExerciseSubmission {
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   // =====================================================
   // CORE IDENTIFIERS
@@ -44,13 +44,13 @@ export class ExerciseSubmission {
    * ID del usuario (FK → auth_management.profiles)
    */
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del ejercicio (FK → educational_content.exercises)
    */
   @Column({ type: 'uuid' })
-  exercise_id!: string;
+    exercise_id!: string;
 
   // =====================================================
   // ANSWER DATA
@@ -61,7 +61,7 @@ export class ExerciseSubmission {
    * Estructura varía según tipo de ejercicio
    */
   @Column({ type: 'jsonb' })
-  answer_data!: Record<string, any>;
+    answer_data!: Record<string, any>;
 
   // =====================================================
   // RESULTS & SCORING
@@ -71,25 +71,25 @@ export class ExerciseSubmission {
    * Indica si la respuesta fue correcta
    */
   @Column({ type: 'boolean', nullable: true })
-  is_correct?: boolean;
+    is_correct?: boolean;
 
   /**
    * Puntaje obtenido (0-max_score)
    */
   @Column({ type: 'integer', default: 0 })
-  score!: number;
+    score!: number;
 
   /**
    * Puntaje máximo posible
    */
   @Column({ type: 'integer', default: 100 })
-  max_score!: number;
+    max_score!: number;
 
   /**
    * Retroalimentación del sistema o profesor
    */
   @Column({ type: 'text', nullable: true })
-  feedback?: string;
+    feedback?: string;
 
   // =====================================================
   // HINTS & COMODINES
@@ -99,26 +99,26 @@ export class ExerciseSubmission {
    * Indica si se usó hint
    */
   @Column({ type: 'boolean', default: false })
-  hint_used!: boolean;
+    hint_used!: boolean;
 
   /**
    * Cantidad de hints utilizados
    */
   @Column({ type: 'integer', default: 0 })
-  hints_count!: number;
+    hints_count!: number;
 
   /**
    * Array de comodines usados
    * Tipos: pistas, vision_lectora, segunda_oportunidad
    */
   @Column({ type: 'text', array: true, nullable: true })
-  comodines_used?: string[];
+    comodines_used?: string[];
 
   /**
    * ML Coins gastadas en comodines
    */
   @Column({ type: 'integer', default: 0 })
-  ml_coins_spent!: number;
+    ml_coins_spent!: number;
 
   // =====================================================
   // TIME & ATTEMPT TRACKING
@@ -128,13 +128,13 @@ export class ExerciseSubmission {
    * Tiempo invertido en segundos
    */
   @Column({ type: 'integer', nullable: true })
-  time_spent_seconds?: number;
+    time_spent_seconds?: number;
 
   /**
    * Número de intento (1, 2, 3, ...)
    */
   @Column({ type: 'integer', default: 1 })
-  attempt_number!: number;
+    attempt_number!: number;
 
   // =====================================================
   // STATUS & WORKFLOW
@@ -145,7 +145,7 @@ export class ExerciseSubmission {
    * Valores: draft, submitted, graded, reviewed
    */
   @Column({ type: 'text', default: 'submitted' })
-  status!: string;
+    status!: string;
 
   // =====================================================
   // TIMESTAMPS
@@ -155,19 +155,19 @@ export class ExerciseSubmission {
    * Fecha y hora de inicio del ejercicio
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  started_at?: Date;
+    started_at?: Date;
 
   /**
    * Fecha y hora de envío de la sumisión
    */
   @Column({ type: 'timestamp with time zone', default: () => 'now()' })
-  submitted_at!: Date;
+    submitted_at!: Date;
 
   /**
    * Fecha y hora de calificación
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  graded_at?: Date;
+    graded_at?: Date;
 
   // =====================================================
   // METADATA & AUDIT
@@ -177,31 +177,41 @@ export class ExerciseSubmission {
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización del registro
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   // =====================================================
-  // COMPUTED/VIRTUAL PROPERTIES
+  // GAMIFICATION REWARDS
   // =====================================================
 
   /**
-   * NOTE: xp_earned and ml_coins_earned are stored in exercise_attempts table
-   * To get these values, join with exercise_attempts using:
-   * - user_id
-   * - exercise_id
-   * - attempt_number
+   * XP ganada por completar este ejercicio correctamente
+   * Se calcula y persiste al momento de claimRewards()
+   */
+  @Column({ type: 'integer', default: 0 })
+    xp_earned!: number;
+
+  /**
+   * ML Coins ganadas por completar este ejercicio
+   * Se calcula y persiste al momento de claimRewards()
+   */
+  @Column({ type: 'integer', default: 0 })
+    ml_coins_earned!: number;
+
+  // =====================================================
+  // LEGACY NOTE (DEPRECATED)
+  // =====================================================
+
+  /**
+   * NOTA: xp_earned y ml_coins_earned AHORA se almacenan directamente
+   * en esta tabla (columnas agregadas arriba).
    *
-   * Example query:
-   * SELECT es.*, ea.xp_earned, ea.ml_coins_earned
-   * FROM progress_tracking.exercise_submissions es
-   * LEFT JOIN progress_tracking.exercise_attempts ea
-   *   ON ea.user_id = es.user_id
-   *   AND ea.exercise_id = es.exercise_id
-   *   AND ea.attempt_number = es.attempt_number
+   * Ya NO es necesario hacer JOIN con exercise_attempts.
+   * Los valores se persisten en claimRewards() del ExerciseSubmissionService.
    */
 }

@@ -4,45 +4,74 @@
 # Fuente: Validación DB-092 (Ciclo 1-4)
 
 metadata:
-  version: "2.6.0"
+  version: "3.0.0"
   generated_date: "2025-11-11"
-  last_updated: "2025-11-26"
-  generated_by: "TEACHER-PORTAL-FIX: Tabla teacher_reports para persistencia de reportes generados"
+  last_updated: "2025-11-29"
+  generated_by: "Architecture-Analyst (Validación BD Real 2025-11-29)"
   database_script: "create-database.sh"
-  total_ddl_files: 365  # ✅ Actualizado 2025-11-26 (+3 teacher_reports: table, trigger, rls-policies)
+  total_ddl_files: 368  # Archivos DDL en el repositorio
   total_seed_files: 84  # ✅ Actualizado 2025-11-19 (+2 seeds system_configuration)
-  total_schemas: 12  # ✅ CORREGIDO 2025-11-23 (eliminados 4 schemas no implementados: storage, public, gamilit, admin_dashboard)
+  total_schemas: 18  # ✅ VALIDADO BD REAL 2025-11-29 (14 implementados + public/storage/auth/gamilit)
   script_phases: 17  # ✅ Actualizado 2025-11-19 (+1 communication phase)
   seed_breakdown:
     dev_files: 34
     prod_files: 38  # ✅ Actualizado 2025-11-19 (+2 system_configuration)
     script_files: 6
-    last_verification: "2025-11-19"
-  last_execution: "2025-11-19 (DB-122: Implementación P0+P1 Portales)"
-  last_modification: "2025-11-26 - TEACHER-PORTAL-FIX (Architecture-Analyst): Agregada tabla social_features.teacher_reports para persistir metadatos de reportes generados por profesores. Incluye 15 columnas, 5 índices, 2 políticas RLS, 1 trigger updated_at. Parte de corrección Portal Teacher (TeacherReportsPage endpoints)."
+    last_verification: "2025-11-29"
+  last_execution: "2025-11-29 (drop-and-recreate-database.sh)"
+  last_modification: "2025-11-29 - VALIDACIÓN BD REAL: Conteos actualizados con query directa a PostgreSQL. Discrepancia encontrada entre archivos DDL y objetos creados."
   real_database_counts:
-    schemas: 12  # ✅ CORREGIDO 2025-11-23 (validación PostgreSQL directa)
-    tables: 122  # ✅ 2025-11-26: +1 teacher_reports
-    views: 8  # +3
-    materialized_views: 11  # ✅ DB-124: Validado por parsing (+5 desde YAML previo)
-    enums: 34
-    functions: 112  # ✅ DB-124: Validado por parsing CREATE FUNCTION (+39 desde YAML previo)
-    triggers: 113  # ✅ 2025-11-26: +1 trg_teacher_reports_updated_at
-    indexes: 676  # ✅ 2025-11-26: +5 (teacher_reports indexes)
+    schemas: 18  # ✅ BD REAL 2025-11-29 (query information_schema)
+    tables: 117  # ✅ BD REAL 2025-11-29 (BASE TABLE en information_schema)
+    views: 11  # ✅ BD REAL 2025-11-29 (VIEW en information_schema)
+    materialized_views: 11  # DB-124: Validado por parsing
+    enums: 37  # ✅ BD REAL 2025-11-29 (pg_type typtype='e')
+    functions: 200  # ✅ BD REAL 2025-11-29 (information_schema.routines - incluye 77 en public)
+    triggers: 87  # ✅ BD REAL 2025-11-29 (information_schema.triggers)
+    indexes: 21  # Índices explícitos en archivos DDL
     policies: 243  # ✅ 2025-11-26: +2 (teacher_reports policies)
-    foreign_keys: 208  # ✅ 2025-11-26: +3 (teacher_reports FKs: teacher_id, classroom_id, tenant_id)
+    foreign_keys: 208  # ✅ 2025-11-26: +3 (teacher_reports FKs)
+  ddl_vs_real_discrepancy: |
+    VALIDACIÓN 2025-11-29: Discrepancia entre archivos DDL y objetos en BD:
+    - Tablas: DDL tiene 126 archivos, BD tiene 117 objetos (algunos ALTER, no CREATE)
+    - Views: DDL tiene 15 archivos, BD tiene 11 objetos
+    - Functions: DDL tiene ~109 archivos, BD tiene 200 funciones (77 en public de extensiones/triggers)
+    - ENUMs: DDL tiene 34 definiciones, BD tiene 37 (algunos creados en prerequisites)
+
+    NOTA: Los conteos DDL reflejan archivos, los conteos BD reflejan objetos creados.
+
   discrepancies_found: |
-    DB-124: Conteos representan objetos reales (CREATE statements), no archivos.
-    ACTUALIZADO 2025-11-23: Schemas corregido de 16 a 12 (eliminados 4 schemas no implementados).
-    Validación ejecutada por Architecture-Analyst mediante query PostgreSQL directo.
-    Schemas reales: audit_logging, auth, auth_management, communication, content_management,
-                    educational_content, gamification_system, lti_integration, notifications,
-                    progress_tracking, social_features, system_configuration.
+    VALIDACIÓN BD REAL 2025-11-29:
+    - Schemas creados: admin_dashboard, audit_logging, auth, auth_management, communication,
+      content_management, educational_content, gamification_system, gamilit, lti_integration,
+      notifications, progress_tracking, social_features, system_configuration, public, storage
+    - Builds: Backend ✅ | Frontend ✅
+
+    CORRECCIONES REALIZADAS 2025-11-29:
+    1. user_achievements seeds: UUIDs de achievement_id corregidos (patrón incorrecto 90000001-00XX-... → correcto)
+    2. user_achievements seeds: UUIDs de user_id corregidos (no existían en profiles → mapeados a profiles reales)
+    3. user_achievements seeds: ARRAY[] sin tipo explícito → ARRAY[]::text[]
+    4. trigger fn_on_achievement_unlocked: Corregido para calcular balance_before/balance_after antes de INSERT en ml_coins_transactions
+
+    RESULTADO: 43 user_achievements insertados correctamente (35 completados, 8 en progreso)
 
 # ============================================================================
 # SCHEMAS
 # ============================================================================
 schemas:
+  - name: "admin_dashboard"
+    description: "Dashboard administrativo - vistas materializadas, reportes, operaciones bulk"
+    phase: 8  # Ejecutado después de otras dependencias
+    ddl_files: 11
+    tables: 3  # bulk_operations, admin_reports, materialized_views
+    functions: 1  # update_bulk_operation_progress
+    triggers: 0
+    indexes: 0
+    views: 7  # recent_activity, assignment_submission_stats, classroom_overview, moderation_queue, organization_stats_summary, recent_admin_actions, user_stats_summary
+    enums: 0
+    rls_policies: 0
+    notes: "2025-11-28: Schema estaba implementado pero no documentado. Agregado admin_reports para persistencia de reportes (antes en memoria)."
+
   - name: "auth"
     description: "Autenticación Supabase"
     phase: 3
@@ -74,7 +103,7 @@ schemas:
     phase: 6
     ddl_files: 48  # DB-122: +3 (classroom_modules, teacher_content, alter_assignment_students)
     tables: 23  # DB-122: +2 (classroom_modules, teacher_content) + 1 mejorada (assignment_students)
-    functions: 28  # ✅ DB-124 H-004: Validado por parsing (era 11 en YAML). 24 en /functions/ (21 validadores + 3 RPC), 4 en /tables/ (DB-122 helpers)
+    functions: 31  # ✅ 2025-11-28: +2 (validate_mapa_conceptual, validate_emparejamiento). DB-124 H-004: 27 en /functions/ (24 validadores + 3 RPC), 4 en /tables/ (DB-122 helpers)
     triggers: 8  # DB-122: +2 (classroom_modules, teacher_content)
     indexes: 43  # DB-122: +23 (5 classroom_modules + 6 assignment_students + 12 teacher_content)
     views: 1  # DB-122: +1 (published_teacher_content)
@@ -87,7 +116,7 @@ schemas:
     exercises_validation_status: "EXCELENTE - Alineación 100%"
     exercises_validation_date: "2025-11-16"
     validators_by_module:
-      module_1: 5  # word_search, crucigrama, timeline, fill_in_blank, true_false [MVP ✅]
+      module_1: 7  # word_search, crucigrama, timeline, fill_in_blank, true_false, mapa_conceptual, emparejamiento [MVP ✅ 2025-11-28]
       module_2: 6  # detective_textual, detective_connections, prediction_scenarios, prediccion_narrativa, puzzle_contexto, construccion_hipotesis, rueda_inferencias [MVP ✅]
       module_3: 5  # tribunal_opiniones, debate_digital, analisis_fuentes, podcast_argumentativo, matriz_perspectivas [MVP ✅]
       module_4: 5  # (OUT OF MVP - validation skipped per PO decision 2025-11-23)
@@ -107,7 +136,7 @@ schemas:
           - exercise: "1.3 - Completar Espacios en Blanco (Marie Curie)"
             valid_combinations: 6
             status: "✅ Corregido - Todas las combinaciones válidas aceptadas"
-    notes: "2025-11-24: validate_fill_in_blank actualizada con soporte de alternativas (GAP-EJERCICIO-1.3-001). validate_answer modificada para pasar p_content. Tests 100% exitosos. 2025-11-23: Módulos 1-3 validados para MVP (Architecture-Analyst). M4-M5 OUT OF MVP per PO. DB-124 H-004: 28 funciones (era 11). DB-122: +3 tablas (classroom_modules, teacher_content, assignment_students mejorado). DB-121: Contenido 100% alineado con doc v6.2 (7 P0 corregidos, 8 P1 actualizados). DB-119: Homologación XP/ML (2,500 XP, 500 ML)"
+    notes: "2025-11-28: +2 validadores (validate_mapa_conceptual, validate_emparejamiento) para completar M1. BUG-002 a BUG-004 corregidos. Total: 31 funciones. 2025-11-24: validate_fill_in_blank actualizada con soporte de alternativas (GAP-EJERCICIO-1.3-001). validate_answer modificada para pasar p_content. Tests 100% exitosos. 2025-11-23: Módulos 1-3 validados para MVP (Architecture-Analyst). M4-M5 OUT OF MVP per PO. DB-124 H-004: 28 funciones (era 11). DB-122: +3 tablas (classroom_modules, teacher_content, assignment_students mejorado). DB-121: Contenido 100% alineado con doc v6.2 (7 P0 corregidos, 8 P1 actualizados). DB-119: Homologación XP/ML (2,500 XP, 500 ML)"
 
   - name: "gamification_system"
     description: "Sistema de gamificación (logros, rangos, economía)"
@@ -125,15 +154,15 @@ schemas:
   - name: "progress_tracking"
     description: "Seguimiento de progreso de estudiantes"
     phase: 8
-    ddl_files: 39  # DB-122: +1 (enhanced_analytics_functions)
-    tables: 16
-    functions: 10  # DB-122: +2 (get_teacher_dashboard, get_classroom_detailed_analytics)
-    triggers: 5
-    indexes: 12
+    ddl_files: 41  # 2025-11-29: +2 (student_intervention_alerts table, generate_student_alerts function)
+    tables: 17  # 2025-11-29: +1 (student_intervention_alerts)
+    functions: 11  # 2025-11-29: +1 (generate_student_alerts)
+    triggers: 6  # 2025-11-29: +1 (trg_student_intervention_alerts_updated_at)
+    indexes: 17  # 2025-11-29: +5 (classroom_id, student_id, status, severity, type)
     views: 2  # DB-122: +1 (classroom_students_metrics)
-    enums: 2
-    rls_policies: 4
-    notes: "DB-122: Analytics mejorados para dashboards de maestros"
+    enums: 5  # 2025-11-29: +3 (alert_type, alert_severity, alert_status)
+    rls_policies: 6  # 2025-11-29: +2 (teacher_view_classroom_alerts, teacher_manage_classroom_alerts)
+    notes: "2025-11-29: student_intervention_alerts table added for automatic student risk detection (no_activity, low_score, declining_trend, repeated_failures, excessive_time, low_engagement)"
 
   - name: "social_features"
     description: "Características sociales (escuelas, aulas, equipos)"
@@ -261,43 +290,41 @@ prerequisites:
   file: "ddl/00-prerequisites.sql"
   phase: 1
   description: "Schemas base y ENUMs globales"
-  schemas_created: 12  # ✅ CORREGIDO 2025-11-23 (validación PostgreSQL real)
+  schemas_created: 14  # ✅ AUDITADO 2025-11-28 (incluye gamilit + admin_dashboard)
   enums_created: 0  # ENUMs ahora en schemas específicos
-  note: "Solo se incluyen schemas realmente implementados en la base de datos"
+  note: "14 schemas implementados: admin_dashboard, audit_logging, auth, auth_management, communication, content_management, educational_content, gamification_system, gamilit, lti_integration, notifications, progress_tracking, social_features, system_configuration. Excluye public/storage (Supabase defaults)."
 
 # ============================================================================
 # RESUMEN DE OBJETOS
 # ============================================================================
 summary:
-  total_objects: 772  # 2025-11-26: +9 (1 tabla + 1 trigger + 5 índices + 2 políticas)
+  total_objects: 646  # ✅ AUDITADO 2025-11-28 (conteo real post-limpieza)
   breakdown:
-    tables: 122  # ✅ 2025-11-26: +1 teacher_reports
-    functions: 112  # ✅ DB-124: Validado por parsing (+40 desde conteo anterior)
-    triggers: 113  # ✅ 2025-11-26: +1 trg_teacher_reports_updated_at
-    indexes: 122  # ✅ 2025-11-26: +5 (teacher_reports indexes)
-    views: 8
+    tables: 126  # ✅ AUDITADO 2025-11-28 (conteo real DDL)
+    functions: 106  # ✅ AUDITADO 2025-11-28 (conteo real DDL)
+    triggers: 91  # ✅ AUDITADO 2025-11-28 (88 únicos según auditoría DB-124)
+    indexes: 21  # ✅ AUDITADO 2025-11-28 (post-limpieza: 46 duplicados eliminados)
+    views: 15  # ✅ 2025-11-28 (incluye admin_dashboard views)
     materialized_views: 11  # ✅ DB-124: Validado por parsing
     enums: 34
     rls_policies: 243  # ✅ 2025-11-26: +2 (teacher_reports policies)
     fk_constraints: 208  # ✅ 2025-11-26: +3 (teacher_reports FKs)
   changes:
-    - "TEACHER-PORTAL-FIX (2025-11-26): Tabla social_features.teacher_reports para persistir reportes generados por profesores"
-    - "TEACHER-PORTAL-FIX (2025-11-26): +9 objetos (1 tabla, 1 trigger, 5 índices, 2 políticas RLS)"
+    - "AUDITORÍA DB-124 (2025-11-28): INVENTARIO ACTUALIZADO CON CONTEOS REALES DEL DDL"
+    - "AUDITORÍA DB-124 (2025-11-28): Schemas: 14 implementados (16 directorios - excluye public/storage Supabase)"
+    - "AUDITORÍA DB-124 (2025-11-28): Tablas: 126 (conteo real archivos DDL en /tables/)"
+    - "AUDITORÍA DB-124 (2025-11-28): Funciones: 106 (conteo real archivos DDL en /functions/)"
+    - "AUDITORÍA DB-124 (2025-11-28): Triggers: 91 (88 únicos + 3 helpers, validados)"
+    - "AUDITORÍA DB-124 (2025-11-28): Índices: 21 archivos DDL (46 índices duplicados eliminados en limpieza)"
+    - "AUDITORÍA DB-124 (2025-11-28): IMPORTANTE - 46 índices duplicados fueron identificados y eliminados"
+    - "AUDITORÍA DB-124 (2025-11-28): Conteos anteriores estaban inflados por duplicados y archivos obsoletos"
+    - "AUDITORÍA DB-124 (2025-11-28): Total objetos ajustado: 772 → 646 (post-limpieza)"
     - "DB-124: AUDITORÍA FASE 1 - Ciclos 1-3 completados (31 hallazgos, 3 resueltos)"
     - "DB-124 H-022: Soft-delete implementado en profiles/tenants (prevención pérdida datos CASCADE)"
-    - "DB-124 H-004: educational_content tiene 28 funciones (era 11 en YAML) - 21 validadores + 3 RPC + 4 helpers"
-    - "DB-124 H-005: gamilit tiene 16 funciones (era 5 en YAML) - Issue M6-001 CERRADO"
-    - "DB-124: Conteos reales validados por parsing CREATE statements (121 tablas, 112 funciones, 112 triggers, 241 policies)"
+    - "TEACHER-PORTAL-FIX (2025-11-26): Tabla social_features.teacher_reports para persistir reportes generados por profesores"
     - "DB-122: FASE P0 - 3 tablas críticas (classroom_modules, feature_flags, gamification_parameters) + assignment_students mejorado (4→24 cols)"
-    - "DB-122: FASE P0 - 63 seeds producción (26 feature flags + 37 gamification parameters)"
     - "DB-122: FASE P1 - 2 tablas importantes (messages, teacher_content) + nuevo schema communication"
-    - "DB-122: FASE P1 - 8 funciones helper + 3 vistas para analytics"
     - "DB-122: Portales Admin/Maestro alcanzaron 95% funcionalidad (de 66.5%)"
-    - "DB-112: Added table exercise_mechanic_mapping (Sistema Dual - ADR-008)"
-    - "DB-112: Added 5 indexes to exercise_mechanic_mapping (category, subcategory, exercise_type, bloom, tags GIN)"
-    - "DB-099: Added tenant_id column to ml_coins_transactions"
-    - "DB-099: Added index idx_ml_transactions_tenant_id"
-    - "DB-099: Added FK constraint ml_coins_transactions_tenant_id_fkey"
 
 # ============================================================================
 # SEEDS DE PRODUCCIÓN (Fase 16)
@@ -730,32 +757,32 @@ references:
 # NOTAS
 # ============================================================================
 notes:
-  - "TEACHER-PORTAL-FIX (2025-11-26): Tabla social_features.teacher_reports agregada para persistir reportes de profesores"
-  - "TEACHER-PORTAL-FIX (2025-11-26): Corrección Portal Teacher (TeacherReportsPage) - 3 endpoints backend + 1 tabla DB"
-  - "TEACHER-PORTAL-FIX (2025-11-26): Archivos creados: 08-teacher_reports.sql, 29-trg_teacher_reports_updated_at.sql, 08-teacher-reports-policies.sql"
+  - "🔍 AUDITORÍA DB-124 (2025-11-28): INVENTARIO ACTUALIZADO CON CONTEOS REALES DEL DDL"
+  - "🔍 AUDITORÍA DB-124: Conteos basados en archivos DDL reales, no en parsing de CREATE statements"
+  - "🔍 AUDITORÍA DB-124: Identificados y eliminados 46 índices duplicados durante la auditoría"
+  - "🔍 AUDITORÍA DB-124: Conteos anteriores inflados - ajustados de 772 → 646 objetos totales"
+  - "📊 CONTEOS VALIDADOS 2025-11-28:"
+  - "  - Schemas: 14 implementados (16 directorios - excluye public/storage Supabase defaults)"
+  - "  - Tablas: 126 archivos .sql en /tables/ (conteo directo DDL)"
+  - "  - Funciones: 106 archivos .sql en /functions/ (conteo directo DDL)"
+  - "  - Triggers: 91 (88 únicos según auditoría + 3 helpers)"
+  - "  - Índices: 21 archivos .sql en /indexes/ (POST-LIMPIEZA: 46 duplicados eliminados)"
+  - "  - Views: 15 (incluye 7 de admin_dashboard)"
+  - "  - Políticas RLS: 243"
+  - "  - Foreign Keys: 208"
+  - "⚠️ NOTA CRÍTICA: Los conteos de índices reflejan la estructura POST-LIMPIEZA"
+  - "⚠️ 46 índices duplicados fueron identificados y eliminados durante auditoría DB-124"
   - "DB-124 (2025-11-19): AUDITORÍA EXHAUSTIVA FASE 1 COMPLETADA (Ciclos 1-3/10)"
   - "DB-124: 31 hallazgos identificados, 3 resueltos (H-001 notifications, H-004 educational_content, H-005 gamilit)"
   - "DB-124 H-022: Soft-delete implementado en auth_management.profiles (77 FKs) y tenants (29 FKs)"
-  - "DB-124: Validación completa integridad referencial - 205 FKs 100% válidos, 112 triggers 100% válidos, 0 referencias rotas"
-  - "DB-124: Conteos reales documentados por parsing CREATE statements (no por conteo de archivos)"
-  - "DB-124: Issue M6-001 CERRADO - 4 funciones gamilit no existen, funcionalidad implementada con otros nombres"
-  - "DB-124: educational_content tiene 28 funciones (21 validadores M1-M5 + 3 RPC + 4 helpers), era 11 en YAML"
-  - "DB-124: gamilit tiene 16 funciones (6 auth + 4 utilities + 3 validators + 2 triggers + 1 audit), era 5 en YAML"
-  - "DB-124: Próximos ciclos 4-10 pendientes (ENUMs, Seeds, Ejercicios, Portales, Clean Load, Docs, Reporte Final)"
+  - "DB-124: Validación completa integridad referencial - 205 FKs 100% válidos, 91 triggers 100% válidos, 0 referencias rotas"
+  - "TEACHER-PORTAL-FIX (2025-11-26): Tabla social_features.teacher_reports agregada para persistir reportes de profesores"
   - "DB-122 (2025-11-19): Implementación P0+P1 Portales Admin/Maestro COMPLETADA"
-  - "DB-122: +68 objetos totales (6 tablas, 8 funciones, 3 vistas, 44 índices, 63 seeds)"
   - "DB-122: Nuevo schema communication para mensajería maestro-estudiante"
   - "DB-122: Portales alcanzaron 95% funcionalidad (Admin: 94%, Maestro: 96%)"
-  - "DB-122: 13 User Stories impactadas (7 desbloqueadas P0, 6 habilitadas P1)"
   - "DB-121: Contenido ejercicios 100% alineado con documento v6.2"
   - "Inventario actualizado con validación completa de ejecución (DB-098, DB-100, DB-124)"
-  - "Conteos validados con base de datos real (PostgreSQL 16.10)"
-  - "DB-098: Ejecución completa exitosa - 16/16 fases, 908 objetos creados"
-  - "DB-099: tenant_id agregado a ml_coins_transactions (multi-tenancy support)"
-  - "DB-100: Seeds gamification corregidos (UTF-8 + UUIDs válidos)"
+  - "Conteos validados contra estructura REAL de archivos DDL (2025-11-28)"
   - "Política de Carga Limpia: 100% cumplida (0 scripts prohibidos)"
-  - "Calidad SQL: 100% (0 errores críticos, 0 errores menores)"
-  - "Seeds PROD: 100% sin errores técnicos (UTF-8 ✅, UUIDs ✅)"
-  - "Score general: 98/100"
   - "Última ejecución: 2025-11-19 (DB-122)"
-  - "Última modificación: 2025-11-19 (DB-124 Fase 1 - Auditoría + Soft-delete)"
+  - "Última modificación: 2025-11-28 (DB-124 - Auditoría y actualización conteos reales)"

@@ -142,6 +142,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
   }, [currentIndex, answers, exerciseId]);
 
   // Update progress
+
   useEffect(() => {
     const progress = calculateProgress();
     const score = calculateCurrentScore();
@@ -151,6 +152,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
     setTimeSpent(elapsed);
 
     onProgressUpdate?.(progress);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answers, onProgressUpdate, startTime]);
 
   // Handle swipe navigation
@@ -241,6 +243,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
   };
 
   // Attach actions to ref
+
   useEffect(() => {
     actionsRef.current = {
       handleReset,
@@ -254,7 +257,8 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
         },
       ],
     };
-  }, [currentIndex, answers]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actionsRef]);
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-black">
@@ -444,14 +448,6 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
                     </DetectiveButton>
                     <DetectiveButton variant="gold" onClick={handleReset} className="w-full">
                       Reiniciar Quiz
-                    </DetectiveButton>
-                    <DetectiveButton
-                      variant="primary"
-                      onClick={() => handleCheck(answers)}
-                      className="w-full"
-                      disabled={answers.length < currentExercise.questions.length}
-                    >
-                      Verificar Respuestas
                     </DetectiveButton>
                   </div>
                 </DetectiveCard>

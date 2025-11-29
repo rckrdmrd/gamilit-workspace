@@ -14,7 +14,7 @@ export class LoginDto {
   })
   @IsEmail({}, { message: 'Email inválido' })
   @IsNotEmpty({ message: 'Email es requerido' })
-  email!: string;
+    email!: string;
 
   @ApiProperty({
     description: 'Contraseña del usuario',
@@ -25,5 +25,5 @@ export class LoginDto {
   @IsString({ message: 'Password debe ser string' })
   @MinLength(8, { message: 'Password debe tener al menos 8 caracteres' })
   @IsNotEmpty({ message: 'Password es requerido' })
-  password!: string;
+    password!: string;
 }

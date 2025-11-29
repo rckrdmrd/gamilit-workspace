@@ -28,7 +28,6 @@ export interface ConfettiCelebrationProps {
 export const ConfettiCelebration: React.FC<ConfettiCelebrationProps> = ({
   isActive,
   show: showProp,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   rarity: _rarity = 'common', // Default rarity, reserved for future use
   duration = 3000,
   onComplete,

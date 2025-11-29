@@ -123,7 +123,7 @@ export const matchesPattern = (value: string, pattern: RegExp): boolean => {
  */
 export const hasRequiredFields = <T extends object>(
   obj: T,
-  requiredFields: (keyof T)[]
+  requiredFields: (keyof T)[],
 ): boolean => {
   return requiredFields.every(field => obj[field] !== undefined && obj[field] !== null);
 };

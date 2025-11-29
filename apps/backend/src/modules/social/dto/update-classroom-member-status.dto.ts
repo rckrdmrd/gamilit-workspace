@@ -15,19 +15,19 @@ export class UpdateClassroomMemberStatusDto {
    * Valores: active, inactive, withdrawn, completed
    */
   @IsEnum(ClassroomMemberStatusEnum)
-  status!: string;
+    status!: string;
 
   /**
    * Fecha de retiro (si aplica)
    */
   @IsOptional()
   @IsDateString()
-  withdrawal_date?: string;
+    withdrawal_date?: string;
 
   /**
    * Razón del retiro (si aplica)
    */
   @IsOptional()
   @IsString()
-  withdrawal_reason?: string;
+    withdrawal_reason?: string;
 }

@@ -23,6 +23,7 @@ import {
   Brain,
   Shield,
   Zap,
+  Construction,
 } from 'lucide-react';
 import { useModuleDetail } from '@shared/hooks/useModules';
 import { getColorSchemeById } from '@shared/utils/colorPalette';
@@ -54,6 +55,7 @@ interface ExerciseCardContentProps {
 
 function ExerciseCardContent({ exercise, completed = false }: ExerciseCardContentProps) {
   const colorScheme = useMemo(() => getColorSchemeById(exercise.id), [exercise.id]);
+  const isInactive = !exercise.is_active; // Check if exercise is inactive
 
   return (
     <>
@@ -64,6 +66,7 @@ function ExerciseCardContent({ exercise, completed = false }: ExerciseCardConten
             'flex h-16 w-16 items-center justify-center rounded-xl',
             'bg-gradient-to-br shadow-lg',
             colorScheme.iconGradient,
+            isInactive && 'opacity-60', // Reduce opacity for inactive exercises
           )}
           whileHover={{ scale: 1.05, rotate: 5 }}
           transition={{ type: 'spring', stiffness: 400 }}
@@ -78,6 +81,16 @@ function ExerciseCardContent({ exercise, completed = false }: ExerciseCardConten
           >
             <CheckCircle className="h-4 w-4" />
             Completado
+          </motion.span>
+        )}
+        {isInactive && (
+          <motion.span
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="flex items-center gap-1.5 rounded-lg border border-detective-orange-dark bg-gradient-to-r from-detective-orange-400 to-detective-orange px-3 py-1.5 text-xs font-bold text-white shadow-orange"
+          >
+            <Construction className="h-4 w-4" />
+            Próximamente
           </motion.span>
         )}
       </div>
@@ -98,27 +111,29 @@ function ExerciseCardContent({ exercise, completed = false }: ExerciseCardConten
           className={cn(
             'rounded-lg border-2 px-2.5 py-1 text-xs font-bold shadow-sm',
             // CEFR levels: beginner/elementary = easy, intermediate = medium, advanced+ = hard
-            exercise.difficulty === 'beginner' || exercise.difficulty === 'elementary'
+            exercise.difficulty_level === 'beginner' || exercise.difficulty_level === 'elementary'
               ? 'border-green-300 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700'
-              : exercise.difficulty === 'pre_intermediate' || exercise.difficulty === 'intermediate'
+              : exercise.difficulty_level === 'pre_intermediate' ||
+                  exercise.difficulty_level === 'intermediate'
                 ? 'border-yellow-300 bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-700'
-                : exercise.difficulty === 'upper_intermediate' || exercise.difficulty === 'advanced'
+                : exercise.difficulty_level === 'upper_intermediate' ||
+                    exercise.difficulty_level === 'advanced'
                   ? 'border-red-300 bg-gradient-to-r from-red-100 to-rose-100 text-red-700'
                   : 'border-purple-300 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700',
           )}
         >
-          {DIFFICULTY_LABELS[exercise.difficulty]?.toUpperCase() ||
-            exercise.difficulty?.toUpperCase() ||
+          {DIFFICULTY_LABELS[exercise.difficulty_level]?.toUpperCase() ||
+            exercise.difficulty_level?.toUpperCase() ||
             'DESCONOCIDO'}
         </motion.span>
 
-        {/* Points Badge */}
+        {/* XP Reward Badge */}
         <motion.div
           whileHover={{ scale: 1.05 }}
           className="flex items-center gap-1.5 rounded-lg border-2 border-amber-300 bg-gradient-to-r from-amber-100 to-orange-100 px-2.5 py-1 shadow-sm"
         >
           <Star className="h-4 w-4 text-amber-600" />
-          <span className="text-xs font-bold text-amber-700">{exercise.max_points ?? 0} pts</span>
+          <span className="text-xs font-bold text-amber-700">{exercise.xp_reward ?? 0} XP</span>
         </motion.div>
 
         {/* Time Badge */}
@@ -137,20 +152,28 @@ function ExerciseCardContent({ exercise, completed = false }: ExerciseCardConten
 
       {/* Action Button - Large and colorful */}
       <motion.button
-        whileHover={{ scale: 1.03, y: -2 }}
-        whileTap={{ scale: 0.97 }}
+        whileHover={!isInactive ? { scale: 1.03, y: -2 } : undefined}
+        whileTap={!isInactive ? { scale: 0.97 } : undefined}
         className={cn(
           'w-full rounded-xl py-3 text-sm font-bold text-white',
           'flex items-center justify-center gap-2',
-          'bg-gradient-to-r shadow-lg transition-shadow hover:shadow-xl',
-          completed ? 'from-blue-500 to-cyan-500' : colorScheme.buttonGradient,
+          'bg-gradient-to-r shadow-lg transition-shadow',
+          !isInactive && 'hover:shadow-xl',
+          completed
+            ? 'from-blue-500 to-cyan-500'
+            : isInactive
+              ? 'cursor-default from-gray-400 to-gray-500 opacity-60'
+              : colorScheme.buttonGradient,
         )}
+        disabled={isInactive}
       >
         <Target className="h-4 w-4" />
-        {completed ? 'Volver a intentar' : 'Comenzar Ejercicio'}
-        <motion.span animate={{ x: [0, 4, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
-          →
-        </motion.span>
+        {isInactive ? 'En Construcción' : completed ? 'Volver a intentar' : 'Comenzar Ejercicio'}
+        {!isInactive && (
+          <motion.span animate={{ x: [0, 4, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
+            →
+          </motion.span>
+        )}
       </motion.button>
     </>
   );

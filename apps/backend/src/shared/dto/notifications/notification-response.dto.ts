@@ -38,7 +38,7 @@ export class NotificationResponseDto {
     description: 'UUID de la notificación',
     example: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
   })
-  id!: string;
+    id!: string;
 
   /**
    * UUID del usuario destinatario
@@ -47,7 +47,7 @@ export class NotificationResponseDto {
     description: 'UUID del usuario destinatario',
     example: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
   })
-  userId!: string;
+    userId!: string;
 
   /**
    * Tipo de notificación
@@ -56,7 +56,7 @@ export class NotificationResponseDto {
     description: 'Tipo de notificación',
     example: 'achievement_unlocked',
   })
-  type!: string;
+    type!: string;
 
   /**
    * Título de la notificación
@@ -65,7 +65,7 @@ export class NotificationResponseDto {
     description: 'Título de la notificación',
     example: '¡Felicidades! Has desbloqueado un logro',
   })
-  title!: string;
+    title!: string;
 
   /**
    * Contenido/cuerpo de la notificación
@@ -74,7 +74,7 @@ export class NotificationResponseDto {
     description: 'Contenido de la notificación',
     example: "Has completado el módulo 1 y desbloqueaste el logro 'Pensador Crítico'",
   })
-  message!: string;
+    message!: string;
 
   /**
    * Datos adicionales de la notificación (JSONB)
@@ -84,7 +84,7 @@ export class NotificationResponseDto {
     example: { achievementIcon: '🏆', points: 100 },
     nullable: true,
   })
-  data?: Record<string, any> | null;
+    data?: Record<string, any> | null;
 
   /**
    * Indica si la notificación fue leída
@@ -93,7 +93,7 @@ export class NotificationResponseDto {
     description: 'Indica si la notificación fue leída',
     example: false,
   })
-  read!: boolean;
+    read!: boolean;
 
   /**
    * Fecha de creación
@@ -102,7 +102,7 @@ export class NotificationResponseDto {
     description: 'Fecha de creación',
     example: '2025-11-13T10:30:00.000Z',
   })
-  createdAt!: Date;
+    createdAt!: Date;
 
   /**
    * Fecha de última actualización
@@ -112,7 +112,7 @@ export class NotificationResponseDto {
     example: '2025-11-13T10:30:00.000Z',
     nullable: true,
   })
-  updatedAt?: Date | null;
+    updatedAt?: Date | null;
 }
 
 /**
@@ -138,7 +138,7 @@ export class PaginatedNotificationsResponseDto {
     description: 'Array de notificaciones',
     type: [NotificationResponseDto],
   })
-  data!: NotificationResponseDto[];
+    data!: NotificationResponseDto[];
 
   /**
    * Número total de notificaciones (sin paginar)
@@ -147,7 +147,7 @@ export class PaginatedNotificationsResponseDto {
     description: 'Número total de resultados',
     example: 42,
   })
-  total!: number;
+    total!: number;
 
   /**
    * Límite usado en la query
@@ -156,7 +156,7 @@ export class PaginatedNotificationsResponseDto {
     description: 'Límite de resultados',
     example: 20,
   })
-  limit!: number;
+    limit!: number;
 
   /**
    * Offset usado en la query
@@ -165,7 +165,7 @@ export class PaginatedNotificationsResponseDto {
     description: 'Offset de resultados',
     example: 0,
   })
-  offset!: number;
+    offset!: number;
 }
 
 /**
@@ -188,5 +188,5 @@ export class UnreadCountResponseDto {
     description: 'Número de notificaciones no leídas',
     example: 5,
   })
-  count!: number;
+    count!: number;
 }

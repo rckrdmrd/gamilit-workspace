@@ -9,5 +9,5 @@ export class ResolveAlertDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(10)
-  resolution_note!: string;
+    resolution_note!: string;
 }

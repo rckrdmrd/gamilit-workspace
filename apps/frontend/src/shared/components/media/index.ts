@@ -36,12 +36,8 @@ export interface ExportButtonProps {
 }
 
 // Export placeholder components
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const MediaUploader = (_props: MediaUploaderProps) => null;
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const MediaGallery = (_props: MediaGalleryProps) => null;
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const FileUploader = (_props: FileUploaderProps) => null;
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const ExportButton = (_props: ExportButtonProps) => null;
 export const VideoPlayer = () => null; // Placeholder for module5

@@ -7,16 +7,16 @@ import { Type } from 'class-transformer';
 
 export class ClassroomAssignment {
   @IsUUID()
-  classroomId!: string;
+    classroomId!: string;
 
   @IsOptional()
   @IsDateString()
-  deadlineOverride?: string;
+    deadlineOverride?: string;
 }
 
 export class AssignToClassroomsDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ClassroomAssignment)
-  classrooms!: ClassroomAssignment[];
+    classrooms!: ClassroomAssignment[];
 }

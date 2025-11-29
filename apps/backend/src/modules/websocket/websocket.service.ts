@@ -140,7 +140,7 @@ export class WebSocketService {
     this.gateway.broadcast(SocketEvent.LEADERBOARD_UPDATED, {
       leaderboard,
     });
-    this.logger.debug(`Leaderboard update broadcasted to all users`);
+    this.logger.debug('Leaderboard update broadcasted to all users');
   }
 
   /**

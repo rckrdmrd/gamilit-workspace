@@ -140,7 +140,7 @@ export default function TeacherContentManagement() {
         toast.success('Contenido actualizado exitosamente');
       }
       setShowModal(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.message || 'Error al guardar contenido');
     }
   };
@@ -152,7 +152,7 @@ export default function TeacherContentManagement() {
     try {
       await cloneContent(item.id, `Copia de ${item.title}`);
       toast.success('Contenido clonado exitosamente');
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.message || 'Error al clonar contenido');
     }
   };
@@ -176,7 +176,7 @@ export default function TeacherContentManagement() {
       toast.success('Contenido eliminado exitosamente');
       setShowDeleteConfirm(false);
       setContentToDelete(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.message || 'Error al eliminar contenido');
     }
   };
@@ -188,7 +188,7 @@ export default function TeacherContentManagement() {
     try {
       await publishContent(item.id);
       toast.success('Contenido publicado exitosamente');
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.message || 'Error al publicar contenido');
     }
   };

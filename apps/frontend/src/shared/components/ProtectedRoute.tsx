@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/app/providers/AuthContext';
+import { useAuthStore } from '@/features/auth/store/authStore';
 
 interface ProtectedRouteProps {
   children?: React.ReactNode;
@@ -58,15 +58,18 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   allowedRoles,
   redirectTo = '/login',
 }) => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  // Using Zustand store directly for HMR resilience (no Provider dependency)
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isLoading = useAuthStore((state) => state.isLoading);
   const location = useLocation();
 
   // Show loading spinner while checking authentication status
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
+          <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-orange-600"></div>
           <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
@@ -105,24 +108,24 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
  */
 export const UnauthorizedPage: React.FC = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="text-center max-w-md px-4">
-        <div className="text-6xl mb-4">403</div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Access Denied</h1>
-        <p className="text-gray-600 mb-6">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="max-w-md px-4 text-center">
+        <div className="mb-4 text-6xl">403</div>
+        <h1 className="mb-2 text-3xl font-bold text-gray-900">Access Denied</h1>
+        <p className="mb-6 text-gray-600">
           You don't have permission to access this page. Please contact your administrator if you
           believe this is an error.
         </p>
         <div className="space-x-4">
           <a
             href="/"
-            className="inline-block px-6 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors"
+            className="inline-block rounded-md bg-orange-600 px-6 py-2 text-white transition-colors hover:bg-orange-700"
           >
             Go to Home
           </a>
           <a
             href="/dashboard"
-            className="inline-block px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+            className="inline-block rounded-md border border-gray-300 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-50"
           >
             Go to Dashboard
           </a>

@@ -23,6 +23,9 @@
  * - Use User for: Login responses, session data, quick user lookups
  * - Use Profile for: Profile pages, settings, detailed user information
  */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export interface User {
   // =====================================================
   // CORE IDENTIFIERS
@@ -170,16 +173,21 @@ export interface PreferencesConfig {
 }
 
 /**
- * Profile type definition - Synchronized with backend Profile entity
- * Represents complete user profile data from auth_management.profiles table
+ * AuthProfile - Profile type for auth feature
+ *
+ * Synchronized with backend Profile entity.
+ * Represents complete user profile data from auth_management.profiles table.
  *
  * Backend source: /src/modules/auth/entities/profile.entity.ts
  * Database table: auth_management.profiles
  *
- * This interface maps 1:1 to the backend Profile entity with 25 fields.
- * Used for profile management, settings, and user data beyond basic auth.
+ * @see SSOT: @shared/types/profile.types.ts
+ * P2-001: Types consolidation - contextual auth profile type
+ *
+ * Note: This interface uses string | null for optional fields,
+ * while SSOT uses string? pattern. Both are valid for different contexts.
  */
-export interface Profile {
+export interface AuthProfile {
   /** Primary key UUID */
   id: string;
 
@@ -247,7 +255,7 @@ export interface Profile {
   last_activity_at: string | null;
 
   /** Additional custom metadata (flexible JSONB) */
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 
   /** Profile creation timestamp (ISO string) */
   created_at: string;
@@ -255,6 +263,13 @@ export interface Profile {
   /** Profile last update timestamp (ISO string) */
   updated_at: string;
 }
+
+/**
+ * @deprecated Use AuthProfile instead, or Profile from @shared/types/profile.types.ts
+ * Alias for backward compatibility.
+ * P2-001: Types consolidation
+ */
+export type Profile = AuthProfile;
 
 /**
  * Login credentials
@@ -275,6 +290,7 @@ export interface RegisterData {
   confirmPassword: string;
   acceptTerms: boolean;
   tenantId?: string;
+  schoolId?: string; // Optional school ID for student registration
 }
 
 /**

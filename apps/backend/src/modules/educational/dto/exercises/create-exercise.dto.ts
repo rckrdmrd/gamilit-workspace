@@ -28,7 +28,7 @@ export class CreateExerciseDto {
    * FK CRÍTICA: NOT NULL, ON DELETE CASCADE
    */
   @IsUUID()
-  module_id!: string;
+    module_id!: string;
 
   // =====================================================
   // BASIC INFORMATION
@@ -38,35 +38,35 @@ export class CreateExerciseDto {
    * Título del ejercicio (REQUERIDO)
    */
   @IsString()
-  title!: string;
+    title!: string;
 
   /**
    * Subtítulo del ejercicio
    */
   @IsOptional()
   @IsString()
-  subtitle?: string;
+    subtitle?: string;
 
   /**
    * Descripción del ejercicio
    */
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   /**
    * Instrucciones detalladas para el estudiante
    */
   @IsOptional()
   @IsString()
-  instructions?: string;
+    instructions?: string;
 
   /**
    * Índice de orden dentro del módulo (REQUERIDO)
    */
   @IsInt()
   @Min(0)
-  order_index!: number;
+    order_index!: number;
 
   // =====================================================
   // EXERCISE TYPE & MECHANICS
@@ -76,7 +76,7 @@ export class CreateExerciseDto {
    * Tipo de ejercicio (27+ mecánicas diferentes) (REQUERIDO)
    */
   @IsEnum(ExerciseTypeEnum)
-  exercise_type!: ExerciseTypeEnum;
+    exercise_type!: ExerciseTypeEnum;
 
   /**
    * Configuración específica del ejercicio (JSONB)
@@ -84,7 +84,7 @@ export class CreateExerciseDto {
    */
   @IsOptional()
   @IsObject()
-  config?: Record<string, any>;
+    config?: Record<string, any>;
 
   /**
    * Contenido del ejercicio (JSONB) (REQUERIDO)
@@ -92,21 +92,21 @@ export class CreateExerciseDto {
    */
   @IsOptional()
   @IsObject()
-  content?: Record<string, any>;
+    content?: Record<string, any>;
 
   /**
    * Solución del ejercicio (JSONB)
    */
   @IsOptional()
   @IsObject()
-  solution?: Record<string, any>;
+    solution?: Record<string, any>;
 
   /**
    * Rúbrica de evaluación (JSONB)
    */
   @IsOptional()
   @IsObject()
-  rubric?: Record<string, any>;
+    rubric?: Record<string, any>;
 
   // =====================================================
   // GRADING & SCORING
@@ -117,14 +117,14 @@ export class CreateExerciseDto {
    */
   @IsOptional()
   @IsBoolean()
-  auto_gradable?: boolean;
+    auto_gradable?: boolean;
 
   /**
    * Nivel de dificultad
    */
   @IsOptional()
   @IsEnum(DifficultyLevelEnum)
-  difficulty_level?: DifficultyLevelEnum;
+    difficulty_level?: DifficultyLevelEnum;
 
   /**
    * Puntuación máxima posible
@@ -132,7 +132,7 @@ export class CreateExerciseDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  max_points?: number;
+    max_points?: number;
 
   /**
    * Puntuación mínima para aprobar
@@ -140,7 +140,7 @@ export class CreateExerciseDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  passing_score?: number;
+    passing_score?: number;
 
   // =====================================================
   // TIMING
@@ -152,7 +152,7 @@ export class CreateExerciseDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  estimated_time_minutes?: number;
+    estimated_time_minutes?: number;
 
   /**
    * Límite de tiempo en minutos (NULL = sin límite)
@@ -160,7 +160,7 @@ export class CreateExerciseDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  time_limit_minutes?: number;
+    time_limit_minutes?: number;
 
   // =====================================================
   // ATTEMPTS & RETRY LOGIC
@@ -172,14 +172,14 @@ export class CreateExerciseDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  max_attempts?: number;
+    max_attempts?: number;
 
   /**
    * Si se permite reintentar el ejercicio
    */
   @IsOptional()
   @IsBoolean()
-  allow_retry?: boolean;
+    allow_retry?: boolean;
 
   /**
    * Minutos de espera entre reintentos
@@ -187,7 +187,7 @@ export class CreateExerciseDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  retry_delay_minutes?: number;
+    retry_delay_minutes?: number;
 
   // =====================================================
   // HINTS & SUPPORT
@@ -199,14 +199,14 @@ export class CreateExerciseDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  hints?: string[];
+    hints?: string[];
 
   /**
    * Si se habilitan las pistas
    */
   @IsOptional()
   @IsBoolean()
-  enable_hints?: boolean;
+    enable_hints?: boolean;
 
   /**
    * Costo en ML Coins por usar una pista
@@ -214,7 +214,7 @@ export class CreateExerciseDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  hint_cost_ml_coins?: number;
+    hint_cost_ml_coins?: number;
 
   // =====================================================
   // COMODINES (POWER-UPS)
@@ -226,14 +226,14 @@ export class CreateExerciseDto {
   @IsOptional()
   @IsArray()
   @IsEnum(ComodinTypeEnum, { each: true })
-  comodines_allowed?: ComodinTypeEnum[];
+    comodines_allowed?: ComodinTypeEnum[];
 
   /**
    * Configuración de comodines (JSONB)
    */
   @IsOptional()
   @IsObject()
-  comodines_config?: Record<string, any>;
+    comodines_config?: Record<string, any>;
 
   // =====================================================
   // GAMIFICATION & REWARDS
@@ -245,7 +245,7 @@ export class CreateExerciseDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  xp_reward?: number;
+    xp_reward?: number;
 
   /**
    * Monedas ML otorgadas
@@ -253,7 +253,7 @@ export class CreateExerciseDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  ml_coins_reward?: number;
+    ml_coins_reward?: number;
 
   /**
    * Multiplicador de bonificación para recompensas
@@ -261,7 +261,7 @@ export class CreateExerciseDto {
   @IsOptional()
   @IsNumber()
   @Min(0.1)
-  bonus_multiplier?: number;
+    bonus_multiplier?: number;
 
   // =====================================================
   // STATUS & VISIBILITY
@@ -272,21 +272,21 @@ export class CreateExerciseDto {
    */
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+    is_active?: boolean;
 
   /**
    * Si el ejercicio es opcional
    */
   @IsOptional()
   @IsBoolean()
-  is_optional?: boolean;
+    is_optional?: boolean;
 
   /**
    * Si el ejercicio otorga bonificación extra
    */
   @IsOptional()
   @IsBoolean()
-  is_bonus?: boolean;
+    is_bonus?: boolean;
 
   // =====================================================
   // VERSIONING & REVIEW
@@ -298,28 +298,28 @@ export class CreateExerciseDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  version?: number;
+    version?: number;
 
   /**
    * Notas sobre cambios en la versión
    */
   @IsOptional()
   @IsString()
-  version_notes?: string;
+    version_notes?: string;
 
   /**
    * ID del usuario que creó el ejercicio
    */
   @IsOptional()
   @IsUUID()
-  created_by?: string;
+    created_by?: string;
 
   /**
    * ID del usuario que revisó el ejercicio
    */
   @IsOptional()
   @IsUUID()
-  reviewed_by?: string;
+    reviewed_by?: string;
 
   // =====================================================
   // ADAPTIVE LEARNING
@@ -330,7 +330,7 @@ export class CreateExerciseDto {
    */
   @IsOptional()
   @IsBoolean()
-  adaptive_difficulty?: boolean;
+    adaptive_difficulty?: boolean;
 
   /**
    * Array de UUIDs de ejercicios prerequisitos
@@ -338,12 +338,12 @@ export class CreateExerciseDto {
   @IsOptional()
   @IsArray()
   @IsUUID('all', { each: true })
-  prerequisites?: string[];
+    prerequisites?: string[];
 
   /**
    * Metadatos adicionales (JSONB)
    */
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

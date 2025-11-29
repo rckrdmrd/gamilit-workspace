@@ -210,7 +210,13 @@ export const AchievementsPage: React.FC = () => {
    * Calculate summary if not provided by API
    */
   const displaySummary = useMemo(() => {
-    if (summary) return summary;
+    // If we have a summary from API, ensure it has recentlyEarned array
+    if (summary) {
+      return {
+        ...summary,
+        recentlyEarned: summary.recentlyEarned ?? [],
+      };
+    }
 
     const total = allAchievements.length;
     const earned = userAchievements.filter(

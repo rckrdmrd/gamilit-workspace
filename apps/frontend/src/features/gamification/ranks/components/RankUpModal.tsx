@@ -70,6 +70,7 @@ export const RankUpModal: React.FC<RankUpModalProps> = ({ isOpen, onClose }) => 
       }, 8000);
       return () => clearTimeout(timer);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const handleClose = () => {

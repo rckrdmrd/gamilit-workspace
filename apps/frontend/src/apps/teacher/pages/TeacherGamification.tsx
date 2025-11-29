@@ -210,8 +210,8 @@ export default function TeacherGamification() {
       );
 
       handleCloseModal();
-    } catch (error: any) {
-      toast.error(error.message || 'Error al otorgar bonus');
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : 'Error al otorgar bonus');
     }
   };
 

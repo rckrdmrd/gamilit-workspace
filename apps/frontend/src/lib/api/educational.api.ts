@@ -15,11 +15,25 @@ import type { Module, Exercise, DifficultyLevel } from '@/shared/types/education
 /**
  * Get all modules
  * @param difficulty - Optional difficulty filter
+ * @param classroomId - Optional classroom ID to filter modules assigned to a specific classroom
  * @returns Array of Module
  */
-export const getModules = async (difficulty?: DifficultyLevel): Promise<Module[]> => {
+export const getModules = async (
+  difficulty?: DifficultyLevel,
+  classroomId?: string,
+): Promise<Module[]> => {
+  const params: Record<string, string> = {};
+
+  if (difficulty) {
+    params.difficulty = difficulty;
+  }
+
+  if (classroomId) {
+    params.classroomId = classroomId;
+  }
+
   const { data } = await apiClient.get('/educational/modules', {
-    params: difficulty ? { difficulty } : undefined,
+    params: Object.keys(params).length > 0 ? params : undefined,
   });
   return data;
 };

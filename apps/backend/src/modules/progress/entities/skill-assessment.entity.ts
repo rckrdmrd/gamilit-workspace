@@ -27,8 +27,8 @@ import { DB_SCHEMAS, DB_TABLES } from '@shared/constants';
  * @see DDL: apps/database/ddl/schemas/progress_tracking/tables/skill_assessments.sql
  */
 @Entity({ schema: DB_SCHEMAS.PROGRESS, name: DB_TABLES.PROGRESS.SKILL_ASSESSMENTS })
-@Check(`"assessment_score" >= 0 AND "assessment_score" <= 100`)
-@Check(`"proficiency_level" IN ('novice', 'beginner', 'intermediate', 'advanced', 'expert')`)
+@Check('"assessment_score" >= 0 AND "assessment_score" <= 100')
+@Check('"proficiency_level" IN (\'novice\', \'beginner\', \'intermediate\', \'advanced\', \'expert\')')
 @Index('idx_skill_assessments_user_id', ['user_id'])
 @Index('idx_skill_assessments_skill', ['skill_name'])
 @Index('idx_skill_assessments_category', ['skill_category'], {
@@ -41,52 +41,52 @@ export class SkillAssessment {
    * Identificador único de la evaluación (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario evaluado
    */
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Nombre de la habilidad evaluada
    * @example 'lectura literal', 'inferencia', 'comprensión crítica'
    */
   @Column({ type: 'varchar', length: 100 })
-  skill_name!: string;
+    skill_name!: string;
 
   /**
    * Categoría de la habilidad
    * @example 'comprension_lectora', 'matematicas', 'ciencias'
    */
   @Column({ type: 'varchar', length: 50, nullable: true })
-  skill_category?: string;
+    skill_category?: string;
 
   /**
    * Puntuación numérica de la evaluación (0-100)
    */
   @Column({ type: 'numeric', precision: 5, scale: 2 })
-  assessment_score!: number;
+    assessment_score!: number;
 
   /**
    * Nivel de competencia alcanzado
    * @values 'novice', 'beginner', 'intermediate', 'advanced', 'expert'
    */
   @Column({ type: 'varchar', length: 50, nullable: true })
-  proficiency_level?: 'novice' | 'beginner' | 'intermediate' | 'advanced' | 'expert';
+    proficiency_level?: 'novice' | 'beginner' | 'intermediate' | 'advanced' | 'expert';
 
   /**
    * Fecha y hora de la evaluación
    */
   @Column({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP' })
-  assessed_at!: Date;
+    assessed_at!: Date;
 
   /**
    * ID del módulo que generó esta evaluación (opcional)
    */
   @Column({ type: 'uuid', nullable: true })
-  assessed_by_module_id?: string;
+    assessed_by_module_id?: string;
 
   /**
    * Evidencia que respalda esta evaluación (JSONB)
@@ -97,19 +97,19 @@ export class SkillAssessment {
    * }
    */
   @Column({ type: 'jsonb', nullable: true })
-  evidence?: Record<string, any>;
+    evidence?: Record<string, any>;
 
   /**
    * Fecha y hora de creación
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   // =====================================================
   // Relaciones

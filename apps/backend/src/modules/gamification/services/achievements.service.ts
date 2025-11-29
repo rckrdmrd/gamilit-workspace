@@ -35,7 +35,7 @@ export class AchievementsService {
       query.andWhere('a.is_secret = false');
     }
 
-    return await query.orderBy('a.order_index', 'ASC').addOrderBy('a.name', 'ASC').getMany();
+    return query.orderBy('a.order_index', 'ASC').addOrderBy('a.name', 'ASC').getMany();
   }
 
   /**
@@ -57,7 +57,7 @@ export class AchievementsService {
    * Busca achievements por categoría
    */
   async findByCategory(category: string): Promise<Achievement[]> {
-    return await this.achievementRepo.find({
+    return this.achievementRepo.find({
       where: { category, is_active: true } as any,
       order: { order_index: 'ASC' },
     });
@@ -67,7 +67,7 @@ export class AchievementsService {
    * Obtiene logros completados por un usuario
    */
   async getCompletedByUser(userId: string): Promise<UserAchievement[]> {
-    return await this.userAchievementRepo.find({
+    return this.userAchievementRepo.find({
       where: {
         user_id: userId,
         is_completed: true,
@@ -79,7 +79,7 @@ export class AchievementsService {
    * Obtiene logros en progreso para un usuario
    */
   async getInProgressByUser(userId: string): Promise<UserAchievement[]> {
-    return await this.userAchievementRepo.find({
+    return this.userAchievementRepo.find({
       where: {
         user_id: userId,
         is_completed: false,
@@ -145,7 +145,7 @@ export class AchievementsService {
       userAchievement.completed_at = new Date();
     }
 
-    return await this.userAchievementRepo.save(userAchievement);
+    return this.userAchievementRepo.save(userAchievement);
   }
 
   /**
@@ -191,7 +191,7 @@ export class AchievementsService {
       ((userAchievement.progress / userAchievement.max_progress) * 100).toFixed(2),
     );
 
-    return await this.userAchievementRepo.save(userAchievement);
+    return this.userAchievementRepo.save(userAchievement);
   }
 
   /**
@@ -305,7 +305,7 @@ export class AchievementsService {
 
     userAchievement.rewards_claimed = true;
 
-    return await this.userAchievementRepo.save(userAchievement);
+    return this.userAchievementRepo.save(userAchievement);
   }
 
   /**
@@ -353,6 +353,6 @@ export class AchievementsService {
 
     achievement.is_active = isActive;
 
-    return await this.achievementRepo.save(achievement);
+    return this.achievementRepo.save(achievement);
   }
 }

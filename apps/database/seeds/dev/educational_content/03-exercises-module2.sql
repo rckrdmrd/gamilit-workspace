@@ -124,7 +124,7 @@ BEGIN
             'Las motivaciones de Marie eran principalmente científicas y humanitarias'
         ]::text[],
         true, 15,
-        100, 20,
+        150, 30,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -217,7 +217,7 @@ BEGIN
             'No todas las consecuencias pertenecen a todas las causas'
         ]::text[],
         true, 15,
-        100, 20,
+        150, 30,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -301,7 +301,7 @@ BEGIN
             'Los hechos históricos no se pueden cambiar - considera qué realmente sucedió en 1911'
         ]::text[],
         true, 15,
-        100, 20,
+        150, 30,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -381,7 +381,7 @@ BEGIN
             'La inferencia debe tener coherencia gramatical y sentido completo'
         ]::text[],
         true, 15,
-        100, 20,
+        150, 30,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         title = EXCLUDED.title,
@@ -511,7 +511,7 @@ BEGIN
             'Las inferencias correctas explican hechos observables de manera lógica'
         ]::text[],
         true, 15,
-        100, 20,
+        150, 30,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,

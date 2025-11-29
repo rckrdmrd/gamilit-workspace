@@ -37,54 +37,54 @@ import { TransactionTypeEnum } from '@/shared/constants/enums.constants';
 @Index('idx_ml_transactions_user_recent', ['user_id', 'created_at'])
 @Index('idx_ml_transactions_user_type_date', ['user_id', 'transaction_type', 'created_at'])
 @Index('idx_ml_transactions_reference', ['reference_id', 'reference_type'])
-@Check(`"balance_before" >= 0`)
-@Check(`"balance_after" >= 0`)
-@Check(`"reference_type" IN ('exercise', 'module', 'achievement', 'powerup', 'admin', 'streak', 'rank')`)
+@Check('"balance_before" >= 0')
+@Check('"balance_after" >= 0')
+@Check('"reference_type" IN (\'exercise\', \'module\', \'achievement\', \'powerup\', \'admin\', \'streak\', \'rank\')')
 export class MLCoinsTransaction {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   @Column({ type: 'integer' })
-  amount!: number;
+    amount!: number;
 
   @Column({ type: 'integer' })
-  balance_before!: number;
+    balance_before!: number;
 
   @Column({ type: 'integer' })
-  balance_after!: number;
+    balance_after!: number;
 
   @Column({
     type: 'enum',
     enum: TransactionTypeEnum,
   })
-  transaction_type!: TransactionTypeEnum;
+    transaction_type!: TransactionTypeEnum;
 
   @Column({ type: 'text', nullable: true })
-  description!: string | null;
+    description!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  reason!: string | null;
+    reason!: string | null;
 
   @Column({ type: 'uuid', nullable: true })
-  reference_id!: string | null;
+    reference_id!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  reference_type!: 'exercise' | 'module' | 'achievement' | 'powerup' | 'admin' | 'streak' | 'rank' | null;
+    reference_type!: 'exercise' | 'module' | 'achievement' | 'powerup' | 'admin' | 'streak' | 'rank' | null;
 
   @Column({ type: 'numeric', precision: 3, scale: 2, default: 1.00 })
-  multiplier!: number;
+    multiplier!: number;
 
   @Column({ type: 'boolean', default: false })
-  bonus_applied!: boolean;
+    bonus_applied!: boolean;
 
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   // Relación a auth_management.profiles (FK)
   // @ManyToOne(() => Profile, { onDelete: 'CASCADE' })

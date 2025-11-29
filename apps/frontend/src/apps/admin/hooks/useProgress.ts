@@ -13,6 +13,7 @@
  * @author Frontend-Agent
  * @date 2025-11-24
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useCallback } from 'react';
 import { adminAPI } from '@/services/api/adminAPI';
@@ -70,7 +71,7 @@ export function useProgress(): UseProgressResult {
     try {
       const data = await adminAPI.progress.getOverview();
       setOverview(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching progress overview:', err);
       setError(err.message || 'Error al cargar resumen de progreso');
     } finally {
@@ -87,7 +88,7 @@ export function useProgress(): UseProgressResult {
     try {
       const data = await adminAPI.progress.getClassroomProgress(classroomId);
       setClassroomProgress(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching classroom progress:', err);
       setError(err.message || 'Error al cargar progreso de aula');
     } finally {
@@ -108,7 +109,7 @@ export function useProgress(): UseProgressResult {
       try {
         const data = await adminAPI.progress.getStudentProgress(studentId, filters);
         setStudentProgress(data);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error fetching student progress:', err);
         setError(err.message || 'Error al cargar progreso de estudiante');
       } finally {
@@ -128,7 +129,7 @@ export function useProgress(): UseProgressResult {
       try {
         const data = await adminAPI.progress.getModuleProgress(moduleId, params);
         setModuleProgress(data);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error fetching module progress:', err);
         setError(err.message || 'Error al cargar progreso de módulo');
       } finally {
@@ -147,7 +148,7 @@ export function useProgress(): UseProgressResult {
     try {
       const data = await adminAPI.progress.getExerciseStats(exerciseId);
       setExerciseStats(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching exercise stats:', err);
       setError(err.message || 'Error al cargar estadísticas de ejercicio');
     } finally {
@@ -176,7 +177,7 @@ export function useProgress(): UseProgressResult {
         link.click();
         link.remove();
         window.URL.revokeObjectURL(url);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error exporting CSV:', err);
         setError(err.message || 'Error al exportar CSV');
         throw err;

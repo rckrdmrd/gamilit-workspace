@@ -5,6 +5,7 @@ export { RankProgressWidget } from './RankProgressWidget';
 export { ModuleGridCard } from './ModuleGridCard';
 export { QuickActionsPanel } from './QuickActionsPanel';
 export { QuickActionsCard } from './QuickActionsCard';
+export { QuickActionsWidget } from './QuickActionsWidget';
 export { RecentActivityFeed } from './RecentActivityFeed';
 export { ProgressStats } from './ProgressStats';
 export { ResponsiveLayout, DashboardGrid, DashboardSection } from './ResponsiveLayout';

@@ -26,6 +26,7 @@ CREATE TABLE auth_management.user_sessions (
     last_activity_at timestamp with time zone DEFAULT gamilit.now_mexico(),
     expires_at timestamp with time zone NOT NULL,
     is_active boolean DEFAULT true,
+    revoked_at timestamp with time zone,
     metadata jsonb DEFAULT '{}'::jsonb,
 
     -- Primary Key
@@ -53,6 +54,7 @@ CREATE INDEX IF NOT EXISTS idx_user_sessions_user_id ON auth_management.user_ses
 COMMENT ON TABLE auth_management.user_sessions IS 'Sesiones activas de usuarios con información de dispositivo y ubicación';
 COMMENT ON COLUMN auth_management.user_sessions.session_token IS 'JWT token único para la sesión';
 COMMENT ON COLUMN auth_management.user_sessions.expires_at IS 'Fecha de expiración de la sesión';
+COMMENT ON COLUMN auth_management.user_sessions.revoked_at IS 'Fecha y hora de revocación de la sesión';
 
 -- Permissions
 ALTER TABLE auth_management.user_sessions OWNER TO gamilit_user;

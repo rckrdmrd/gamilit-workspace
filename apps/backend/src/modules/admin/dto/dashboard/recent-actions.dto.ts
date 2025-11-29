@@ -16,7 +16,7 @@ export class RecentActionsQueryDto {
   @IsInt()
   @Min(1)
   @Max(50)
-  limit?: number = 10;
+    limit?: number = 10;
 }
 
 /**
@@ -31,14 +31,14 @@ export class RecentActionDto {
     description: 'Unique identifier for this action',
     example: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
   })
-  id!: string;
+    id!: string;
 
   @ApiProperty({
     description: 'Generic action category (create, update, delete, approve, reject)',
     example: 'create',
     enum: ['create', 'update', 'delete', 'approve', 'reject', 'suspend', 'restore'],
   })
-  action!: string;
+    action!: string;
 
   @ApiProperty({
     description: 'Specific action type',
@@ -56,48 +56,48 @@ export class RecentActionDto {
       'permission_changed',
     ],
   })
-  actionType!: string;
+    actionType!: string;
 
   @ApiProperty({
     description: 'ID of the administrator who performed the action',
     example: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
   })
-  adminId!: string;
+    adminId!: string;
 
   @ApiProperty({
     description: 'Name of the administrator who performed the action',
     example: 'Super Admin',
   })
-  adminName!: string;
+    adminName!: string;
 
   @ApiProperty({
     description: 'Type of entity affected (user, organization, content, etc.)',
     example: 'user',
     enum: ['user', 'organization', 'content', 'exercise', 'setting', 'role', 'permission'],
   })
-  targetType!: string;
+    targetType!: string;
 
   @ApiProperty({
     description: 'ID of the entity affected',
     example: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
   })
-  targetId!: string;
+    targetId!: string;
 
   @ApiProperty({
     description: 'Detailed description of the action',
     example: 'Usuario juan.perez@example.com creado con rol student',
   })
-  details!: string;
+    details!: string;
 
   @ApiProperty({
     description: 'Timestamp when the action occurred',
     example: '2025-11-23T10:30:00Z',
   })
-  timestamp!: Date;
+    timestamp!: Date;
 
   @ApiProperty({
     description: 'Whether the action completed successfully',
     example: true,
   })
-  success!: boolean;
+    success!: boolean;
 }

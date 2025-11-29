@@ -13,5 +13,5 @@ export class RemoveAssignmentDto {
   })
   @IsOptional()
   @IsBoolean()
-  force?: boolean;
+    force?: boolean;
 }

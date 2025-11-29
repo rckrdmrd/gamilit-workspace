@@ -68,10 +68,10 @@ export function useStudentsEconomy(classroomId?: string): UseStudentsEconomyRetu
       const result = await analyticsApi.getStudentsEconomy(query);
       setStudents(result.students);
       setTotal(result.total);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[useStudentsEconomy] Error:', err);
       const errorMessage =
-        err?.response?.data?.message || err?.message || 'Error al obtener datos de estudiantes';
+        err instanceof Error ? err.message : 'Error al obtener datos de estudiantes';
       setError(new Error(errorMessage));
       setStudents([]);
       setTotal(0);

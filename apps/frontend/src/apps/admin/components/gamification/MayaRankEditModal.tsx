@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { X, AlertTriangle, AlertCircle, Star } from 'lucide-react';
-import type { MayaRank } from '@/services/api/schemas/adminSchemas';
+import type { MayaRankConfig } from '@/services/api/schemas/adminSchemas';
 
 interface MayaRankEditModalProps {
   isOpen: boolean;
   onClose: () => void;
-  rank: MayaRank | null;
-  allRanks: MayaRank[];
+  rank: MayaRankConfig | null;
+  allRanks: MayaRankConfig[];
   onSuccess?: () => void;
   onUpdate: (id: string, minXp: number, maxXp: number | null) => Promise<void>;
 }

@@ -91,6 +91,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
   }, [annotations, exerciseId]);
 
   // Update progress
+
   useEffect(() => {
     const progress = calculateProgress();
 
@@ -98,6 +99,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
     setTimeSpent(elapsed);
 
     onProgressUpdate?.(progress);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [annotations, onProgressUpdate, startTime]);
 
   // Handle add annotation
@@ -177,6 +179,7 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
   };
 
   // Attach actions to ref
+
   useEffect(() => {
     actionsRef.current = {
       handleReset,
@@ -190,7 +193,8 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
         },
       ],
     };
-  }, [annotations]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actionsRef]);
 
   return (
     <>
@@ -332,9 +336,6 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
           </DetectiveButton>
           <DetectiveButton variant="gold" onClick={handleReset}>
             Reiniciar
-          </DetectiveButton>
-          <DetectiveButton variant="primary" onClick={handleCheck}>
-            Verificar Análisis
           </DetectiveButton>
         </div>
       </DetectiveCard>

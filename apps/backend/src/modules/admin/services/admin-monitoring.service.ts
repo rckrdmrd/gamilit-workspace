@@ -159,7 +159,7 @@ export class AdminMonitoringService {
       const limit = query.limit || 20;
       const level = query.level || 'all';
 
-      let whereClause = `sl.log_level IN ('ERROR', 'FATAL')`;
+      let whereClause = 'sl.log_level IN (\'ERROR\', \'FATAL\')';
       if (level !== 'all') {
         // Convert to uppercase for comparison
         const upperLevel = level.toUpperCase();

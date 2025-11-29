@@ -20,7 +20,7 @@ export class UpdateMissionProgressDto {
     enum: ['complete_exercises', 'correct_streak', 'study_time', 'consecutive_days'],
   })
   @IsString()
-  objective_type!: string;
+    objective_type!: string;
 
   @ApiProperty({
     description: 'Cantidad a incrementar en el objetivo',
@@ -29,5 +29,5 @@ export class UpdateMissionProgressDto {
   })
   @IsNumber()
   @Min(1)
-  increment!: number;
+    increment!: number;
 }

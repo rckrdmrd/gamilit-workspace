@@ -3,7 +3,7 @@ import { Reorder } from 'framer-motion';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { TimelineEvent } from './TimelineEvent';
-import { TimelineData, TimelineEvent as TimelineEventType } from './timelineTypes';
+import { TimelineEvent as TimelineEventType, TimelineExerciseProps } from './timelineTypes';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { Shuffle } from 'lucide-react';
 import { submitExercise } from '@/features/progress/api/progressAPI';
@@ -11,21 +11,8 @@ import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
 import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
 
-export interface TimelineExerciseProps {
-  exercise: TimelineData;
-  onComplete?: () => void;
-  onProgressUpdate?: (progress: any) => void;
-  actionsRef?: React.MutableRefObject<{
-    handleReset?: () => void;
-    handleCheck?: () => void;
-    specificActions?: Array<{
-      label: string;
-      icon?: React.ReactNode;
-      onClick: () => void;
-      variant?: 'primary' | 'secondary' | 'blue' | 'gold';
-    }>;
-  }>;
-}
+// Re-export TimelineExerciseProps for use by parent components
+export type { TimelineExerciseProps };
 
 export const TimelineExercise: React.FC<TimelineExerciseProps> = ({
   exercise,
@@ -78,7 +65,6 @@ export const TimelineExercise: React.FC<TimelineExerciseProps> = ({
         isVerified: showFeedback,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [events, hintsUsed, showFeedback, onProgressUpdate, startTime]);
 
   const handleCheck = async () => {
@@ -161,7 +147,7 @@ export const TimelineExercise: React.FC<TimelineExerciseProps> = ({
         ],
       };
     }
-  }, [actionsRef, handleReset, handleCheck, handleShuffle]);
+  }, [actionsRef]);
 
   return (
     <>

@@ -21,6 +21,8 @@ import { MatrizPerspectivasAnswersDto } from './matriz-perspectivas-answers.dto'
 import { DetectiveConnectionsAnswersDto } from './detective-connections-answers.dto';
 import { PredictionScenariosAnswersDto } from './prediction-scenarios-answers.dto';
 import { CauseEffectMatchingAnswersDto } from './cause-effect-matching-answers.dto';
+import { MapaConceptualAnswersDto } from './mapa-conceptual-answers.dto';
+import { EmparejamientoAnswersDto } from './emparejamiento-answers.dto';
 
 /**
  * ExerciseAnswerValidator
@@ -67,6 +69,14 @@ export class ExerciseAnswerValidator {
       case 'fill_in_blank':
         return FillInBlankAnswersDto;
 
+      case 'mapa_conceptual':
+      case 'concept_map':
+        return MapaConceptualAnswersDto;
+
+      case 'emparejamiento':
+      case 'matching':
+        return EmparejamientoAnswersDto;
+
       // Module 2 - Inferential Comprehension
       case 'detective_textual':
         return DetectiveTextualAnswersDto;
@@ -112,10 +122,11 @@ export class ExerciseAnswerValidator {
       default:
         throw new BadRequestException(
           `Unknown exercise type: ${exerciseType}. ` +
-          `Valid types: sopa_letras, verdadero_falso, crucigrama, linea_tiempo, completar_espacios, ` +
-          `detective_textual, construccion_hipotesis, prediccion_narrativa, puzzle_contexto, rueda_inferencias, ` +
-          `tribunal_opiniones, analisis_fuentes, debate_digital, podcast_argumentativo, matriz_perspectivas, ` +
-          `detective_connections, prediction_scenarios, cause_effect_matching`
+          'Valid types: sopa_letras, verdadero_falso, crucigrama, linea_tiempo, completar_espacios, ' +
+          'mapa_conceptual, emparejamiento, ' +
+          'detective_textual, construccion_hipotesis, prediccion_narrativa, puzzle_contexto, rueda_inferencias, ' +
+          'tribunal_opiniones, analisis_fuentes, debate_digital, podcast_argumentativo, matriz_perspectivas, ' +
+          'detective_connections, prediction_scenarios, cause_effect_matching',
         );
     }
   }
@@ -132,7 +143,7 @@ export class ExerciseAnswerValidator {
     console.log('[FE-061 DEBUG] Validating answers:', {
       exerciseType,
       answersKeys: Object.keys(answers || {}),
-      answersStructure: JSON.stringify(answers, null, 2).substring(0, 500)
+      answersStructure: JSON.stringify(answers, null, 2).substring(0, 500),
     });
 
     // Get the appropriate DTO class
@@ -158,12 +169,12 @@ export class ExerciseAnswerValidator {
         errorDetails: errors.map(e => ({
           property: e.property,
           value: e.value,
-          constraints: e.constraints
-        }))
+          constraints: e.constraints,
+        })),
       });
 
       throw new BadRequestException(
-        `Validation failed for exercise type '${exerciseType}': ${messages.join('; ')}`
+        `Validation failed for exercise type '${exerciseType}': ${messages.join('; ')}`,
       );
     }
   }

@@ -13,11 +13,11 @@ import { IsUUID, IsString, IsDateString } from 'class-validator';
  */
 export class CreatePasswordResetTokenDto {
   @IsUUID('4')
-  user_id!: string;
+    user_id!: string;
 
   @IsString()
-  token!: string; // Token YA hasheado (SHA256)
+    token!: string; // Token YA hasheado (SHA256)
 
   @IsDateString()
-  expires_at!: string; // ISO 8601 string (típicamente +1h)
+    expires_at!: string; // ISO 8601 string (típicamente +1h)
 }

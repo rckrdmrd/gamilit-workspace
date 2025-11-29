@@ -13,189 +13,189 @@ import {
  */
 export class ExerciseResponseDto {
   @Expose()
-  id!: string;
+    id!: string;
 
   @Expose()
-  module_id!: string;
+    module_id!: string;
 
   // =====================================================
   // BASIC INFORMATION
   // =====================================================
 
   @Expose()
-  title!: string;
+    title!: string;
 
   @Expose()
-  subtitle?: string;
+    subtitle?: string;
 
   @Expose()
-  description?: string;
+    description?: string;
 
   @Expose()
-  instructions?: string;
+    instructions?: string;
 
   // =====================================================
   // PEDAGOGICAL CONTENT (DB-125: 2025-11-19)
   // =====================================================
 
   @Expose()
-  objective?: string;
+    objective?: string;
 
   @Expose()
-  how_to_solve?: string;
+    how_to_solve?: string;
 
   @Expose()
-  recommended_strategy?: string;
+    recommended_strategy?: string;
 
   @Expose()
-  pedagogical_notes?: string;
+    pedagogical_notes?: string;
 
   @Expose()
-  order_index!: number;
+    order_index!: number;
 
   // =====================================================
   // EXERCISE TYPE & MECHANICS
   // =====================================================
 
   @Expose()
-  exercise_type!: ExerciseTypeEnum;
+    exercise_type!: ExerciseTypeEnum;
 
   @Expose()
-  config!: Record<string, any>;
+    config!: Record<string, any>;
 
   @Expose()
-  content!: Record<string, any>;
+    content!: Record<string, any>;
 
   @Expose()
-  solution?: Record<string, any>;
+    solution?: Record<string, any>;
 
   @Expose()
-  rubric?: Record<string, any>;
+    rubric?: Record<string, any>;
 
   // =====================================================
   // GRADING & SCORING
   // =====================================================
 
   @Expose()
-  auto_gradable!: boolean;
+    auto_gradable!: boolean;
 
   @Expose()
-  difficulty_level!: DifficultyLevelEnum;
+    difficulty_level!: DifficultyLevelEnum;
 
   @Expose()
-  max_points!: number;
+    max_points!: number;
 
   @Expose()
-  passing_score!: number;
+    passing_score!: number;
 
   // =====================================================
   // TIMING
   // =====================================================
 
   @Expose()
-  estimated_time_minutes!: number;
+    estimated_time_minutes!: number;
 
   @Expose()
-  time_limit_minutes?: number;
+    time_limit_minutes?: number;
 
   // =====================================================
   // ATTEMPTS & RETRY LOGIC
   // =====================================================
 
   @Expose()
-  max_attempts!: number;
+    max_attempts!: number;
 
   @Expose()
-  allow_retry!: boolean;
+    allow_retry!: boolean;
 
   @Expose()
-  retry_delay_minutes!: number;
+    retry_delay_minutes!: number;
 
   // =====================================================
   // HINTS & SUPPORT
   // =====================================================
 
   @Expose()
-  hints?: string[];
+    hints?: string[];
 
   @Expose()
-  enable_hints!: boolean;
+    enable_hints!: boolean;
 
   @Expose()
-  hint_cost_ml_coins!: number;
+    hint_cost_ml_coins!: number;
 
   // =====================================================
   // COMODINES (POWER-UPS)
   // =====================================================
 
   @Expose()
-  comodines_allowed!: ComodinTypeEnum[];
+    comodines_allowed!: ComodinTypeEnum[];
 
   @Expose()
-  comodines_config!: Record<string, any>;
+    comodines_config!: Record<string, any>;
 
   // =====================================================
   // GAMIFICATION & REWARDS
   // =====================================================
 
   @Expose()
-  xp_reward!: number;
+    xp_reward!: number;
 
   @Expose()
-  ml_coins_reward!: number;
+    ml_coins_reward!: number;
 
   @Expose()
-  bonus_multiplier!: number;
+    bonus_multiplier!: number;
 
   // =====================================================
   // STATUS & VISIBILITY
   // =====================================================
 
   @Expose()
-  is_active!: boolean;
+    is_active!: boolean;
 
   @Expose()
-  is_optional!: boolean;
+    is_optional!: boolean;
 
   @Expose()
-  is_bonus!: boolean;
+    is_bonus!: boolean;
 
   // =====================================================
   // VERSIONING & REVIEW
   // =====================================================
 
   @Expose()
-  version!: number;
+    version!: number;
 
   @Expose()
-  version_notes?: string;
+    version_notes?: string;
 
   @Expose()
-  created_by?: string;
+    created_by?: string;
 
   @Expose()
-  reviewed_by?: string;
+    reviewed_by?: string;
 
   // =====================================================
   // ADAPTIVE LEARNING
   // =====================================================
 
   @Expose()
-  adaptive_difficulty!: boolean;
+    adaptive_difficulty!: boolean;
 
   @Expose()
-  prerequisites?: string[];
+    prerequisites?: string[];
 
   @Expose()
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   // =====================================================
   // AUDIT FIELDS
   // =====================================================
 
   @Expose()
-  created_at!: Date;
+    created_at!: Date;
 
   @Expose()
-  updated_at!: Date;
+    updated_at!: Date;
 }

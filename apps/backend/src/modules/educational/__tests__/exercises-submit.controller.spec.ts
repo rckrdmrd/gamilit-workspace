@@ -115,7 +115,7 @@ describe('ExercisesController - Submit Endpoint', () => {
       );
 
       // Act
-      const result = await controller.submitExercise(exerciseId, mockRequest, submitDto);
+      const result = await controller.submitExercise(exerciseId, submitDto, mockRequest);
 
       // Assert
       expect(exerciseSubmissionService.submitExercise).toHaveBeenCalledWith(
@@ -149,7 +149,7 @@ describe('ExercisesController - Submit Endpoint', () => {
       );
 
       // Act
-      const result = await controller.submitExercise(exerciseId, mockRequest, submitDto);
+      const result = await controller.submitExercise(exerciseId, submitDto, mockRequest);
 
       // Assert
       expect(result.score).toBe(100);
@@ -185,7 +185,7 @@ describe('ExercisesController - Submit Endpoint', () => {
       );
 
       // Act
-      await controller.submitExercise(exerciseId, mockRequest, noDtoWithoutHints);
+      await controller.submitExercise(exerciseId, noDtoWithoutHints, mockRequest);
 
       // Assert
       expect(exerciseSubmissionService.submitExercise).toHaveBeenCalledWith(
@@ -202,7 +202,7 @@ describe('ExercisesController - Submit Endpoint', () => {
 
       // Act & Assert
       await expect(
-        controller.submitExercise(exerciseId, mockRequest, submitDto),
+        controller.submitExercise(exerciseId, submitDto, mockRequest),
       ).rejects.toThrow('Exercise with ID 880e8400-... not found');
     });
 
@@ -218,7 +218,7 @@ describe('ExercisesController - Submit Endpoint', () => {
 
       // Act & Assert
       await expect(
-        controller.submitExercise(exerciseId, mockRequest, invalidDto),
+        controller.submitExercise(exerciseId, invalidDto, mockRequest),
       ).rejects.toThrow('Invalid submitted_answers format');
     });
   });

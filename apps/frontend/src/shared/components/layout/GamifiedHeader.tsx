@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { cn } from '@shared/utils';
 import {
-  Bell,
   Settings,
   LogOut,
   Crown,
@@ -11,38 +11,20 @@ import {
   Zap,
   Trophy,
   Medal,
-  Gift,
   ChevronDown,
-  Target,
   User as UserIcon,
   Building2,
   Coins,
 } from 'lucide-react';
 import type { User, UserGamificationData } from '@shared/types';
 import { getUserFullName } from '@features/auth/types/auth.types';
-
-export interface Notification {
-  id: string;
-  type: 'achievement' | 'level_up' | 'badge_unlocked' | 'quest_complete' | 'reminder' | 'other';
-  title: string;
-  message: string;
-  timestamp: string;
-  read: boolean;
-  actionUrl?: string;
-  metadata?: {
-    xp?: number;
-    ml?: number;
-  };
-}
+import { NotificationBell } from '../../../features/notifications/components/NotificationBell';
 
 export interface GamifiedHeaderProps {
   user?: User;
   onLogout?: () => void;
   gamificationData?: UserGamificationData | null;
   organizationName?: string;
-  notifications?: Notification[];
-  onNotificationClick?: (notification: Notification) => void;
-  onMarkAsRead?: (notificationId: string) => void;
 }
 
 interface UserStats {
@@ -52,7 +34,6 @@ interface UserStats {
   ml: number;
   rank: string;
   badges: string[];
-  notifications: number;
 }
 
 export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
@@ -60,20 +41,13 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
   onLogout,
   gamificationData,
   organizationName,
-  notifications = [],
-  onNotificationClick,
-  onMarkAsRead,
 }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
 
   // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      if (!target.closest('.notification-dropdown') && !target.closest('.notification-button')) {
-        setShowNotifications(false);
-      }
       if (!target.closest('.user-menu-dropdown') && !target.closest('.user-menu-button')) {
         setShowUserMenu(false);
       }
@@ -92,7 +66,6 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
     ml: (gamificationData as any)?.mlCoins || (gamificationData as any)?.ml || 0,
     rank: gamificationData?.rank || 'Detective Novato',
     badges: (gamificationData as any)?.achievements || (gamificationData as any)?.badges || [],
-    notifications: notifications.filter((n) => !n.read).length,
   };
 
   const xpProgress = (userStats.xp / userStats.xpToNext) * 100;
@@ -118,50 +91,6 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
       Oficial: 'from-orange-500 to-red-500',
     };
     return rankColors[rank] || 'from-gray-500 to-gray-600';
-  };
-
-  const getNotificationIcon = (type: Notification['type']) => {
-    switch (type) {
-      case 'achievement':
-        return Trophy;
-      case 'level_up':
-        return Star;
-      case 'badge_unlocked':
-        return Medal;
-      case 'quest_complete':
-        return Target;
-      case 'reminder':
-        return Bell;
-      default:
-        return Gift;
-    }
-  };
-
-  const getNotificationBg = (notification: Notification) => {
-    if (notification.read) return 'bg-gray-50 hover:bg-gray-100';
-    switch (notification.type) {
-      case 'achievement':
-        return 'bg-yellow-50 hover:bg-yellow-100';
-      case 'level_up':
-        return 'bg-blue-50 hover:bg-blue-100';
-      case 'badge_unlocked':
-        return 'bg-purple-50 hover:bg-purple-100';
-      case 'quest_complete':
-        return 'bg-green-50 hover:bg-green-100';
-      case 'reminder':
-        return 'bg-orange-50 hover:bg-orange-100';
-      default:
-        return 'bg-gray-50 hover:bg-gray-100';
-    }
-  };
-
-  const handleNotificationClick = (notification: Notification) => {
-    if (!notification.read && onMarkAsRead) {
-      onMarkAsRead(notification.id);
-    }
-    if (onNotificationClick) {
-      onNotificationClick(notification);
-    }
   };
 
   return (
@@ -276,125 +205,7 @@ export const GamifiedHeader: React.FC<GamifiedHeaderProps> = ({
           {/* Controles de Usuario */}
           <div className="flex items-center space-x-4">
             {/* Notificaciones */}
-            <div className="notification-dropdown relative">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setShowNotifications(!showNotifications)}
-                className="notification-button relative rounded-full bg-white/10 p-2 transition-colors hover:bg-white/20"
-                aria-label={`Notificaciones${userStats.notifications > 0 ? ` (${userStats.notifications} sin leer)` : ''}`}
-              >
-                <Bell className="h-5 w-5 text-white" />
-                {userStats.notifications > 0 && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white shadow-md"
-                  >
-                    {userStats.notifications > 9 ? '9+' : userStats.notifications}
-                  </motion.div>
-                )}
-              </motion.button>
-
-              {/* Dropdown de Notificaciones */}
-              <AnimatePresence>
-                {showNotifications && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                    className="absolute right-0 z-50 mt-2 w-80 rounded-lg border border-gray-200 bg-white shadow-xl"
-                  >
-                    <div className="p-4">
-                      <div className="mb-3 flex items-center justify-between">
-                        <h3 className="font-semibold text-gray-800">Notificaciones</h3>
-                      </div>
-
-                      {notifications.length === 0 ? (
-                        <div className="py-4 text-center">
-                          <Bell className="mx-auto mb-2 h-8 w-8 text-gray-300" />
-                          <p className="text-sm text-gray-500">No hay notificaciones</p>
-                        </div>
-                      ) : (
-                        <div className="max-h-80 space-y-2 overflow-y-auto">
-                          {notifications.map((notification) => {
-                            const IconComponent = getNotificationIcon(notification.type);
-                            return (
-                              <button
-                                key={notification.id}
-                                onClick={() => handleNotificationClick(notification)}
-                                className={cn(
-                                  'flex w-full items-start space-x-3 rounded-lg p-3 text-left transition-colors',
-                                  getNotificationBg(notification),
-                                )}
-                              >
-                                <IconComponent className="mt-0.5 h-5 w-5" aria-hidden="true" />
-                                <div className="min-w-0 flex-1">
-                                  <div className="flex items-center justify-between">
-                                    <p
-                                      className={cn(
-                                        'text-sm font-medium',
-                                        notification.read ? 'text-gray-600' : 'text-gray-800',
-                                      )}
-                                    >
-                                      {notification.title}
-                                    </p>
-                                    {!notification.read && (
-                                      <div className="h-2 w-2 rounded-full bg-orange-500"></div>
-                                    )}
-                                  </div>
-                                  <p
-                                    className={cn(
-                                      'text-xs',
-                                      notification.read ? 'text-gray-500' : 'text-gray-600',
-                                    )}
-                                  >
-                                    {notification.message}
-                                  </p>
-                                  <div className="mt-1 flex items-center justify-between">
-                                    <p className="text-xs text-gray-400">
-                                      {notification.timestamp}
-                                    </p>
-                                    {notification.metadata &&
-                                      (notification.metadata.xp || notification.metadata.ml) && (
-                                        <div className="flex items-center space-x-2">
-                                          {notification.metadata.xp && (
-                                            <span className="text-xs font-medium text-yellow-600">
-                                              +{notification.metadata.xp} XP
-                                            </span>
-                                          )}
-                                          {notification.metadata.ml && (
-                                            <span className="text-xs font-medium text-green-600">
-                                              +{notification.metadata.ml} ML
-                                            </span>
-                                          )}
-                                        </div>
-                                      )}
-                                  </div>
-                                </div>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      )}
-
-                      {notifications.length > 0 && (
-                        <div className="mt-3 border-t border-gray-200 pt-3">
-                          <Link
-                            to="/notifications"
-                            className="block w-full text-center text-sm font-medium text-orange-600 transition-colors hover:text-orange-700"
-                            onClick={() => setShowNotifications(false)}
-                          >
-                            Ver todas las notificaciones
-                          </Link>
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+            <NotificationBell />
 
             {/* Menu de Usuario */}
             <div className="user-menu-dropdown relative">

@@ -8,14 +8,14 @@ export class UpdateSystemConfigDto {
   })
   @IsOptional()
   @IsBoolean()
-  maintenance_mode?: boolean;
+    maintenance_mode?: boolean;
 
   @ApiPropertyOptional({
     description: 'Maintenance message to display',
     example: 'System maintenance in progress. We will be back soon.',
   })
   @IsOptional()
-  maintenance_message?: string;
+    maintenance_message?: string;
 
   @ApiPropertyOptional({
     description: 'Enable user registrations',
@@ -23,7 +23,7 @@ export class UpdateSystemConfigDto {
   })
   @IsOptional()
   @IsBoolean()
-  allow_registrations?: boolean;
+    allow_registrations?: boolean;
 
   @ApiPropertyOptional({
     description: 'Maximum login attempts before lockout',
@@ -33,7 +33,7 @@ export class UpdateSystemConfigDto {
   @IsInt()
   @Min(1)
   @Max(20)
-  max_login_attempts?: number;
+    max_login_attempts?: number;
 
   @ApiPropertyOptional({
     description: 'Lockout duration in minutes',
@@ -43,7 +43,7 @@ export class UpdateSystemConfigDto {
   @IsInt()
   @Min(1)
   @Max(1440)
-  lockout_duration_minutes?: number;
+    lockout_duration_minutes?: number;
 
   @ApiPropertyOptional({
     description: 'Session timeout in minutes',
@@ -53,7 +53,7 @@ export class UpdateSystemConfigDto {
   @IsInt()
   @Min(5)
   @Max(1440)
-  session_timeout_minutes?: number;
+    session_timeout_minutes?: number;
 
   @ApiPropertyOptional({
     description: 'Additional custom settings (JSONB)',
@@ -61,5 +61,5 @@ export class UpdateSystemConfigDto {
   })
   @IsOptional()
   @IsObject()
-  custom_settings?: Record<string, any>;
+    custom_settings?: Record<string, any>;
 }

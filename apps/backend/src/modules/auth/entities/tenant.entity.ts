@@ -26,35 +26,35 @@ export class Tenant {
    * ID único del tenant (UUID v4)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * Nombre completo del tenant/organización
    * @example "Universidad Nacional Autónoma de México"
    */
   @Column({ type: 'text', nullable: false })
-  name!: string;
+    name!: string;
 
   /**
    * Slug URL-friendly único para el tenant
    * @example "unam-fes-aragon"
    */
   @Column({ type: 'text', nullable: false, unique: true })
-  slug!: string;
+    slug!: string;
 
   /**
    * Dominio personalizado del tenant (opcional)
    * @example "unam.gamilit.com"
    */
   @Column({ type: 'text', nullable: true })
-  domain!: string | null;
+    domain!: string | null;
 
   /**
    * URL del logo del tenant (opcional)
    * @example "https://cdn.gamilit.com/logos/unam.png"
    */
   @Column({ type: 'text', nullable: true })
-  logo_url!: string | null;
+    logo_url!: string | null;
 
   /**
    * Nivel de suscripción del tenant
@@ -65,7 +65,7 @@ export class Tenant {
     nullable: false,
     default: SubscriptionTierEnum.FREE,
   })
-  subscription_tier!: SubscriptionTierEnum;
+    subscription_tier!: SubscriptionTierEnum;
 
   /**
    * Número máximo de usuarios permitidos
@@ -73,7 +73,7 @@ export class Tenant {
    * @constraint CHECK (max_users > 0)
    */
   @Column({ type: 'integer', nullable: false, default: 100 })
-  max_users!: number;
+    max_users!: number;
 
   /**
    * Almacenamiento máximo en GB
@@ -81,20 +81,20 @@ export class Tenant {
    * @constraint CHECK (max_storage_gb > 0)
    */
   @Column({ type: 'integer', nullable: false, default: 5 })
-  max_storage_gb!: number;
+    max_storage_gb!: number;
 
   /**
    * Estado activo del tenant
    * @default true
    */
   @Column({ type: 'boolean', nullable: false, default: true })
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Fecha de fin del período de prueba (nullable)
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  trial_ends_at!: Date | null;
+    trial_ends_at!: Date | null;
 
   /**
    * Configuraciones del tenant (JSONB)
@@ -114,26 +114,26 @@ export class Tenant {
       timezone: 'America/Mexico_City',
     },
   })
-  settings!: Record<string, any>;
+    settings!: Record<string, any>;
 
   /**
    * Metadata adicional del tenant (JSONB)
    * @example { billing_contact: "admin@example.com", notes: "..." }
    */
   @Column({ type: 'jsonb', nullable: false, default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   /**
    * Fecha de creación del tenant
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de última actualización del tenant
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   // ===========================
   // Relaciones

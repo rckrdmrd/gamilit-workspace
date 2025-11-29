@@ -19,7 +19,9 @@ type Transporter = any; // Temporal hasta instalar nodemailer
 @Injectable()
 export class MailService {
   private transporter: Transporter;
+
   private readonly logger = new Logger(MailService.name);
+
   private readonly frontendUrl: string;
 
   constructor(private readonly configService: ConfigService) {
@@ -118,7 +120,7 @@ export class MailService {
     await this.sendEmail({
       to: email,
       subject: 'Recuperación de Contraseña - GAMILIT',
-      html: htmlContent
+      html: htmlContent,
     });
 
     this.logger.log(`Password reset email sent to: ${email}`);
@@ -176,7 +178,7 @@ export class MailService {
     await this.sendEmail({
       to: email,
       subject: 'Verifica tu Email - GAMILIT',
-      html: htmlContent
+      html: htmlContent,
     });
 
     this.logger.log(`Verification email sent to: ${email}`);
@@ -245,7 +247,7 @@ export class MailService {
     await this.sendEmail({
       to: email,
       subject: '¡Bienvenido/a a GAMILIT! 🎉',
-      html: htmlContent
+      html: htmlContent,
     });
 
     this.logger.log(`Welcome email sent to: ${email}`);
@@ -274,7 +276,7 @@ export class MailService {
         from,
         to: options.to,
         subject: options.subject,
-        html: options.html
+        html: options.html,
       });
 
       this.logger.log(`Email sent successfully: ${info.messageId}`);

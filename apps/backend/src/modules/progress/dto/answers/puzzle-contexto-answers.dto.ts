@@ -29,5 +29,5 @@ export class PuzzleContextoAnswersDto {
    */
   @IsObject({ message: 'questions must be an object' })
   @IsNotEmpty({ message: 'questions object is required' })
-  questions!: Record<string, string>;
+    questions!: Record<string, string>;
 }

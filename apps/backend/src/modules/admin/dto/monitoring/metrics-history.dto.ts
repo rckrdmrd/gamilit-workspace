@@ -17,7 +17,7 @@ export class MetricsHistoryQueryDto {
   @IsInt()
   @Min(1)
   @Max(168) // max 7 days
-  hours?: number = 24;
+    hours?: number = 24;
 }
 
 /**
@@ -25,16 +25,16 @@ export class MetricsHistoryQueryDto {
  */
 export class MetricDataPoint {
   @ApiProperty({ description: 'Timestamp of the data point' })
-  timestamp!: string;
+    timestamp!: string;
 
   @ApiProperty({ description: 'Memory usage percentage' })
-  memory_usage_percent!: number;
+    memory_usage_percent!: number;
 
   @ApiProperty({ description: 'CPU usage percentage' })
-  cpu_usage_percent!: number;
+    cpu_usage_percent!: number;
 
   @ApiProperty({ description: 'Number of active requests' })
-  active_requests!: number;
+    active_requests!: number;
 }
 
 /**
@@ -45,16 +45,16 @@ export class MetricsHistoryDto {
     description: 'Whether historical tracking is enabled',
     example: false,
   })
-  historical_tracking_enabled!: boolean;
+    historical_tracking_enabled!: boolean;
 
   @ApiProperty({
     description: 'Array of metric data points',
     type: [MetricDataPoint],
   })
-  data_points!: MetricDataPoint[];
+    data_points!: MetricDataPoint[];
 
   @ApiPropertyOptional({
     description: 'Additional notes about the data',
   })
-  note?: string;
+    note?: string;
 }

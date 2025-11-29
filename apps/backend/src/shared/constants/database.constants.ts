@@ -105,6 +105,7 @@ export const DB_TABLES = {
     CONTENT_TAGS: 'content_tags',
     CONTENT_APPROVALS: 'content_approvals',
     EXERCISE_MECHANIC_MAPPING: 'exercise_mechanic_mapping', // ✨ NUEVO - DB-113 (Sistema Dual - ADR-008)
+    DIFFICULTY_CRITERIA: 'difficulty_criteria', // ✨ NUEVO - P1-001 (Criterios de dificultad CEFR)
     // REMOVED: exercise_options, exercise_answers (legacy dual model - moved to JSONB puro)
   },
 
@@ -148,6 +149,7 @@ export const DB_TABLES = {
     SOCIAL_INTERACTIONS: 'social_interactions', // ✨ NUEVO - P2
     TEACHER_CLASSROOMS: 'teacher_classrooms', // ✨ NUEVO - P2
     USER_FOLLOWS: 'user_follows', // ✨ NUEVO - P2
+    USER_ACTIVITIES: 'user_activities', // ✨ NUEVO - P2 (Activity Feed)
   },
 
   /**
@@ -198,6 +200,7 @@ export const DB_TABLES = {
    */
   ADMIN: {
     BULK_OPERATIONS: 'bulk_operations', // ✨ NUEVO - EXT-002 (Bulk Operations)
+    ADMIN_REPORTS: 'admin_reports', // ✨ NUEVO - EXT-002 (Admin Reports)
   },
 
   /**

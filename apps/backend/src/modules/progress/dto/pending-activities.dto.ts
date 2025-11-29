@@ -31,7 +31,7 @@ export class GetPendingActivitiesDto {
   })
   @IsOptional()
   @IsEnum(ActivityType)
-  type?: ActivityType;
+    type?: ActivityType;
 
   @ApiPropertyOptional({
     description: 'Filter by priority',
@@ -39,7 +39,7 @@ export class GetPendingActivitiesDto {
   })
   @IsOptional()
   @IsEnum(ActivityPriority)
-  priority?: ActivityPriority;
+    priority?: ActivityPriority;
 
   @ApiPropertyOptional({
     description: 'Maximum number of activities to return',
@@ -52,7 +52,7 @@ export class GetPendingActivitiesDto {
   @IsNumber()
   @Min(1)
   @Max(50)
-  limit?: number = 10;
+    limit?: number = 10;
 }
 
 /**

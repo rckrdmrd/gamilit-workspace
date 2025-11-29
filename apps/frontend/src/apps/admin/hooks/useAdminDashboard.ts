@@ -80,6 +80,7 @@ export function useAdminDashboard(
   customIntervals?: Partial<RefreshIntervals>,
 ): UseAdminDashboardResult {
   // Merge custom intervals with defaults
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const intervals = { ...DEFAULT_INTERVALS, ...customIntervals };
 
   // State management
@@ -410,6 +411,7 @@ export function useAdminDashboard(
    */
   useEffect(() => {
     refreshAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**

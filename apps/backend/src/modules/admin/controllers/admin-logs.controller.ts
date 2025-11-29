@@ -32,6 +32,6 @@ export class AdminLogsController {
   async getLogs(
     @Query() query: AuditLogQueryDto,
   ): Promise<PaginatedAuditLogDto> {
-    return await this.adminSystemService.getAuditLog(query);
+    return this.adminSystemService.getAuditLog(query);
   }
 }

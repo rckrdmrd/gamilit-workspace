@@ -29,7 +29,7 @@ export class PatchAssignmentDto {
   @IsOptional()
   @IsString()
   @Length(1, 255)
-  title?: string;
+    title?: string;
 
   @ApiPropertyOptional({
     description: 'Assignment description (HTML allowed, will be sanitized)',
@@ -37,7 +37,7 @@ export class PatchAssignmentDto {
   })
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   @ApiPropertyOptional({
     description: 'Assignment type (BLOCKED if submissions exist)',
@@ -46,7 +46,7 @@ export class PatchAssignmentDto {
   })
   @IsOptional()
   @IsEnum(AssignmentType)
-  assignmentType?: AssignmentType;
+    assignmentType?: AssignmentType;
 
   @ApiPropertyOptional({
     description: 'Total points (BLOCKED if submissions exist)',
@@ -58,7 +58,7 @@ export class PatchAssignmentDto {
   @IsInt()
   @Min(1)
   @Max(1000)
-  totalPoints?: number;
+    totalPoints?: number;
 
   @ApiPropertyOptional({
     description: 'Due date ISO string (BLOCKED if submissions exist)',
@@ -66,7 +66,7 @@ export class PatchAssignmentDto {
   })
   @IsOptional()
   @IsDateString()
-  dueDate?: string;
+    dueDate?: string;
 
   @ApiPropertyOptional({
     description: 'Published status',
@@ -74,7 +74,7 @@ export class PatchAssignmentDto {
   })
   @IsOptional()
   @IsBoolean()
-  isPublished?: boolean;
+    isPublished?: boolean;
 
   @ApiPropertyOptional({
     description: 'Assignment instructions',
@@ -82,5 +82,5 @@ export class PatchAssignmentDto {
   })
   @IsOptional()
   @IsString()
-  instructions?: string;
+    instructions?: string;
 }

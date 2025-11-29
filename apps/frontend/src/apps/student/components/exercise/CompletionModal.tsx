@@ -11,6 +11,7 @@ import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { useProgression } from '@/features/gamification/ranks/hooks/useProgression';
 import { useCoins } from '@/features/gamification/economy/hooks/useCoins';
 import { useAchievementsStore } from '@/features/gamification/social/store/achievementsStore';
+import type { Achievement as SSOTAchievement } from '@shared/types/achievement.types';
 import {
   Trophy,
   Star,
@@ -27,23 +28,31 @@ import {
 } from 'lucide-react';
 
 /**
- * Achievement from backend API
- * Supports both legacy and new format
+ * CompletionAchievement
+ *
+ * Achievement display info for completion modal.
+ * Derivado del SSOT Achievement con campos opcionales para compatibilidad.
+ *
+ * @see SSOT: @shared/types/achievement.types.ts
+ * P2-001: Tipo derivado - campos específicos para vista de completación
  */
-interface Achievement {
-  id: string;
-  // Legacy format
-  name?: string;
-  description?: string;
-  icon?: string;
-  rarity?: 'common' | 'rare' | 'epic' | 'legendary';
-  // New format from backend (Sprint 2)
+type CompletionAchievement = Pick<
+  SSOTAchievement,
+  'id' | 'name' | 'description' | 'icon' | 'rarity'
+> & {
+  // Campos legacy para compatibilidad con backend antiguo
   key?: string;
-  title?: string;
+  title?: string; // Alias de 'name'
   mlCoinsReward?: number;
   xpReward?: number;
-  iconUrl?: string;
-}
+  iconUrl?: string; // Alias de 'icon'
+};
+
+/**
+ * Achievement - Alias del tipo derivado para este componente
+ * P2-001: Ahora deriva del SSOT en lugar de definirse localmente
+ */
+type Achievement = CompletionAchievement;
 
 interface CompletionModalProps {
   isOpen: boolean;

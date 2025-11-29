@@ -7,6 +7,7 @@ import { ErrorTrackingTab } from '../components/monitoring/ErrorTrackingTab';
 import { AlertasTab } from '../components/monitoring/AlertasTab';
 import { useMonitoring } from '../hooks/useMonitoring';
 import { useAlerts } from '../hooks/useAlerts';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { Activity, AlertTriangle, FileText, XCircle } from 'lucide-react';
 
 /**
@@ -44,13 +45,21 @@ const AdminMonitoringPage: React.FC = () => {
     resolveAlert,
   } = useAlerts();
 
-  const gamificationData = {
-    userId: user?.id || 'mock-admin-id',
-    level: 20,
-    totalXP: 5000,
-    mlCoins: 2500,
-    rank: 'Super Admin',
-    achievements: ['admin_master', 'system_monitor'],
+  // Use useUserGamification hook with real API endpoint
+  const { gamificationData, isLoading: gamificationLoading } = useUserGamification(user?.id);
+
+  // Fallback gamification data while loading or if data not available
+  const displayGamificationData = gamificationData || {
+    userId: user?.id || '',
+    level: gamificationLoading ? 0 : 1,
+    totalXP: 0,
+    mlCoins: 0,
+    rank: gamificationLoading ? 'Cargando...' : 'Ajaw',
+    rankColor: '#9E9E9E',
+    progressToNextLevel: 0,
+    xpToNextLevel: 100,
+    achievements: [],
+    totalAchievements: 0,
   };
 
   const handleLogout = () => {
@@ -61,7 +70,7 @@ const AdminMonitoringPage: React.FC = () => {
   return (
     <AdminLayout
       user={user || undefined}
-      gamificationData={gamificationData}
+      gamificationData={displayGamificationData}
       organizationName="GAMILIT Platform Admin"
       onLogout={handleLogout}
     >

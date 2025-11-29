@@ -3,6 +3,7 @@
  *
  * Common TypeScript types and interfaces for API requests and responses
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 // ============================================================================
 // GENERIC RESPONSE TYPES
@@ -111,7 +112,7 @@ export interface ValidationResult {
 export interface FileUploadRequest {
   file: File;
   category?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 /**
@@ -134,7 +135,7 @@ export interface FileUploadResponse {
  */
 export interface SearchParams {
   query?: string;
-  filters?: Record<string, any>;
+  filters?: Record<string, unknown>;
   sort?: string;
   order?: 'asc' | 'desc';
   page?: number;

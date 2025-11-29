@@ -102,7 +102,7 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
       } as User;
 
       // Act
-      const result = await service['toUserResponse'](mockUser);
+      const result = await service.toUserResponse(mockUser);
 
       // Assert
       expect(result.emailVerified).toBe(true);
@@ -126,7 +126,7 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
       } as User;
 
       // Act
-      const result = await service['toUserResponse'](mockUser);
+      const result = await service.toUserResponse(mockUser);
 
       // Assert
       expect(result.emailVerified).toBe(false);
@@ -149,7 +149,7 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
       } as User;
 
       // Act
-      const result = await service['toUserResponse'](mockUser);
+      const result = await service.toUserResponse(mockUser);
 
       // Assert
       expect(result.emailVerified).toBe(false);
@@ -174,7 +174,7 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
       } as User;
 
       // Act
-      const result = await service['toUserResponse'](mockUser);
+      const result = await service.toUserResponse(mockUser);
 
       // Assert
       expect(result.isActive).toBe(true);
@@ -197,7 +197,7 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
       } as User;
 
       // Act
-      const result = await service['toUserResponse'](mockUser);
+      const result = await service.toUserResponse(mockUser);
 
       // Assert
       expect(result.isActive).toBe(false);
@@ -223,7 +223,7 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
       } as User;
 
       // Act
-      const result = await service['toUserResponse'](mockUser);
+      const result = await service.toUserResponse(mockUser);
 
       // Assert
       expect(result.isActive).toBe(false);
@@ -249,7 +249,7 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
       } as User;
 
       // Act
-      const result = await service['toUserResponse'](mockUser);
+      const result = await service.toUserResponse(mockUser);
 
       // Assert
       expect(result.isActive).toBe(true);
@@ -275,7 +275,7 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
       } as User;
 
       // Act
-      const result = await service['toUserResponse'](mockUser);
+      const result = await service.toUserResponse(mockUser);
 
       // Assert
       expect(result.isActive).toBe(false);
@@ -300,7 +300,7 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
       } as User;
 
       // Act
-      const result = await service['toUserResponse'](mockUser);
+      const result = await service.toUserResponse(mockUser);
 
       // Assert
       expect(result).not.toHaveProperty('encrypted_password');
@@ -328,7 +328,7 @@ describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
       } as User;
 
       // Act
-      const result = await service['toUserResponse'](mockUser);
+      const result = await service.toUserResponse(mockUser);
 
       // Assert
       expect(result.id).toBe(mockUser.id);

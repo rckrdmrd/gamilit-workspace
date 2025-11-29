@@ -19,7 +19,7 @@ export class DebateDigitalAnswersDto {
    */
   @IsString()
   @IsNotEmpty({ message: 'position is required' })
-  position!: string;
+    position!: string;
 
   /**
    * Student's argumentative response (minimum 100 characters)
@@ -27,7 +27,7 @@ export class DebateDigitalAnswersDto {
   @IsString()
   @IsNotEmpty({ message: 'response is required' })
   @MinLength(100, { message: 'response must be at least 100 characters' })
-  response!: string;
+    response!: string;
 
   /**
    * Optional array of argument points
@@ -35,5 +35,5 @@ export class DebateDigitalAnswersDto {
   @IsArray()
   @IsOptional()
   @IsString({ each: true })
-  arguments?: string[];
+    arguments?: string[];
 }

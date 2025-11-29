@@ -21,14 +21,14 @@ export class CreateUserRankDto {
    * ID del usuario (FK → auth.users)
    */
   @IsUUID()
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del tenant (FK → auth_management.tenants)
    */
   @IsOptional()
   @IsUUID()
-  tenant_id?: string;
+    tenant_id?: string;
 
   // =====================================================
   // RANK INFORMATION
@@ -38,14 +38,14 @@ export class CreateUserRankDto {
    * Rango maya actual
    */
   @IsString()
-  current_rank!: string;
+    current_rank!: string;
 
   /**
    * Rango maya anterior
    */
   @IsOptional()
   @IsString()
-  previous_rank?: string;
+    previous_rank?: string;
 
   // =====================================================
   // PROGRESS & METRICS
@@ -55,32 +55,32 @@ export class CreateUserRankDto {
   @IsInt()
   @Min(0)
   @Max(100)
-  rank_progress_percentage?: number;
+    rank_progress_percentage?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  modules_required_for_next?: number;
+    modules_required_for_next?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  modules_completed_for_rank?: number;
+    modules_completed_for_rank?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  xp_required_for_next?: number;
+    xp_required_for_next?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  xp_earned_for_rank?: number;
+    xp_earned_for_rank?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  ml_coins_bonus?: number;
+    ml_coins_bonus?: number;
 
   // =====================================================
   // CERTIFICATES & BADGES
@@ -88,11 +88,11 @@ export class CreateUserRankDto {
 
   @IsOptional()
   @IsString()
-  certificate_url?: string;
+    certificate_url?: string;
 
   @IsOptional()
   @IsString()
-  badge_url?: string;
+    badge_url?: string;
 
   // =====================================================
   // ACHIEVEMENT DATES
@@ -100,11 +100,11 @@ export class CreateUserRankDto {
 
   @IsOptional()
   @IsDate()
-  achieved_at?: Date;
+    achieved_at?: Date;
 
   @IsOptional()
   @IsDate()
-  previous_rank_achieved_at?: Date;
+    previous_rank_achieved_at?: Date;
 
   // =====================================================
   // STATUS
@@ -112,9 +112,9 @@ export class CreateUserRankDto {
 
   @IsOptional()
   @IsBoolean()
-  is_current?: boolean;
+    is_current?: boolean;
 
   @IsOptional()
   @IsObject()
-  rank_metadata?: Record<string, any>;
+    rank_metadata?: Record<string, any>;
 }

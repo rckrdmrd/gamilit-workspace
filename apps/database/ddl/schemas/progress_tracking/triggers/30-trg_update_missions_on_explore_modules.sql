@@ -1,0 +1,121 @@
+-- =====================================================
+-- Trigger: trg_update_missions_on_explore_modules
+-- Table: progress_tracking.module_progress
+-- Function: gamilit.update_missions_on_explore_modules
+-- Event: AFTER INSERT OR UPDATE
+-- Level: FOR EACH ROW
+-- Description: Actualiza progreso de misiones al explorar módulos
+-- Created: 2025-11-28
+-- =====================================================
+--
+-- PROPÓSITO:
+-- Este trigger conecta la exploración de módulos con el sistema de misiones.
+-- Cuando un estudiante interactúa con un módulo (INSERT o UPDATE en module_progress),
+-- las misiones diarias/semanales que tengan objetivo 'explore_modules' se actualizan
+-- automáticamente.
+--
+-- DIFERENCIA CON 'complete_exercises':
+-- - explore_modules: Cuenta módulos ÚNICOS visitados (no importa cuántas veces)
+-- - complete_exercises: Cuenta cada ejercicio completado (puede repetir)
+--
+-- ORDEN DE EJECUCIÓN:
+-- Los triggers en module_progress se ejecutan en orden alfabético:
+-- 1. trg_module_progress_updated_at (23-)
+-- 2. trg_update_missions_on_explore_modules (30-) <- ESTE TRIGGER
+--
+-- MISIONES AFECTADAS:
+-- - Diarias: "Explora 3 módulos diferentes" (75 XP + 30 ML Coins)
+-- - Semanales: "Explora 10 módulos esta semana" (250 XP + 100 ML Coins)
+-- - Especiales: "Tour por el mundo Maya" (500 XP + 200 ML Coins)
+--
+-- FLUJO:
+-- 1. Usuario interactúa con módulo → INSERT/UPDATE en module_progress
+-- 2. Este trigger detecta el module_id
+-- 3. Busca misiones activas del usuario con objetivo 'explore_modules'
+-- 4. Verifica si module_id ya está en modules_visited
+-- 5. Si NO está, lo agrega y actualiza current
+-- 6. Recalcula progress (%) de cada misión
+-- 7. Si progress = 100%, marca como 'completed'
+--
+-- TRACKING DE MÓDULOS ÚNICOS:
+-- La función mantiene un array JSONB llamado 'modules_visited' dentro de cada objetivo:
+-- {
+--   "type": "explore_modules",
+--   "target": 3,
+--   "current": 2,
+--   "description": "Explora 3 módulos diferentes",
+--   "modules_visited": ["uuid-module-1", "uuid-module-2"]
+-- }
+--
+-- EVENTOS QUE DISPARAN EL TRIGGER:
+-- - INSERT: Primera vez que usuario interactúa con un módulo
+-- - UPDATE: Usuario regresa a un módulo (no debe contar otra vez)
+--
+-- NOTAS:
+-- - NO bloquea si falla (errores solo se loggean)
+-- - Solo cuenta cada módulo UNA vez
+-- - Solo afecta misiones no expiradas
+-- - Compatible con otros triggers en module_progress
+-- =====================================================
+
+DROP TRIGGER IF EXISTS trg_update_missions_on_explore_modules ON progress_tracking.module_progress CASCADE;
+
+CREATE TRIGGER trg_update_missions_on_explore_modules
+    AFTER INSERT OR UPDATE ON progress_tracking.module_progress
+    FOR EACH ROW
+    EXECUTE FUNCTION gamilit.update_missions_on_explore_modules();
+
+-- =====================================================
+-- VERIFICACIÓN POST-CREACIÓN
+-- =====================================================
+-- SELECT tgname, tgtype, tgenabled, proname
+-- FROM pg_trigger t
+-- JOIN pg_proc p ON t.tgfoid = p.oid
+-- WHERE tgrelid = 'progress_tracking.module_progress'::regclass
+-- ORDER BY tgname;
+--
+-- Resultado esperado: Incluye trigger
+-- - trg_module_progress_updated_at
+-- - trg_update_missions_on_explore_modules (NUEVO)
+-- =====================================================
+
+-- =====================================================
+-- EJEMPLOS DE USO
+-- =====================================================
+--
+-- Ejemplo 1: Estudiante empieza módulo de verbos
+-- INSERT INTO progress_tracking.module_progress (user_id, module_id, status)
+-- VALUES ('abc-123', 'module-verbos-uuid', 'in_progress');
+-- → Misión "Explora 3 módulos": current = 1, progress = 33.33%
+--
+-- Ejemplo 2: Estudiante empieza módulo de números
+-- INSERT INTO progress_tracking.module_progress (user_id, module_id, status)
+-- VALUES ('abc-123', 'module-numeros-uuid', 'in_progress');
+-- → Misión "Explora 3 módulos": current = 2, progress = 66.67%
+--
+-- Ejemplo 3: Estudiante vuelve a módulo de verbos
+-- UPDATE progress_tracking.module_progress
+-- SET last_accessed_at = NOW()
+-- WHERE user_id = 'abc-123' AND module_id = 'module-verbos-uuid';
+-- → Misión "Explora 3 módulos": SIN CAMBIOS (current = 2)
+--
+-- Ejemplo 4: Estudiante completa la misión (tercer módulo)
+-- INSERT INTO progress_tracking.module_progress (user_id, module_id, status)
+-- VALUES ('abc-123', 'module-colores-uuid', 'in_progress');
+-- → Misión "Explora 3 módulos": current = 3, progress = 100%, status = 'completed'
+--
+-- =====================================================
+-- INTEGRACIÓN CON OTRAS MISIONES
+-- =====================================================
+--
+-- Este trigger es parte de un sistema de misiones multi-objetivo:
+--
+-- complete_exercises:      Completar N ejercicios
+-- explore_modules:         Explorar N módulos únicos  <- ESTE
+-- earn_xp:                 Ganar N puntos XP
+-- use_comodines:           Usar N comodines
+-- daily_streak:            Mantener racha de N días
+-- perfect_scores:          Obtener N ejercicios perfectos
+--
+-- Cada objetivo tiene su propio trigger y función dedicada.
+-- =====================================================

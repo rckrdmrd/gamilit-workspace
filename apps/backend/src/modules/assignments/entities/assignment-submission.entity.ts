@@ -40,41 +40,41 @@ export enum SubmissionStatus {
 @Unique(['assignment_id', 'student_id'])
 export class AssignmentSubmission {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   @Column('uuid', { name: 'assignment_id' })
-  assignmentId!: string;
+    assignmentId!: string;
 
   @Column('uuid', { name: 'student_id' })
-  studentId!: string;
+    studentId!: string;
 
   @Column('timestamp with time zone', { name: 'submitted_at', nullable: true })
-  submittedAt!: Date | null;
+    submittedAt!: Date | null;
 
   @Column({
     type: 'varchar',
     length: 50,
     default: SubmissionStatus.NOT_STARTED,
   })
-  status!: SubmissionStatus;
+    status!: SubmissionStatus;
 
   @Column('decimal', { precision: 5, scale: 2, nullable: true })
-  score!: number | null;
+    score!: number | null;
 
   @Column('text', { nullable: true })
-  feedback!: string | null;
+    feedback!: string | null;
 
   @Column('timestamp with time zone', { name: 'graded_at', nullable: true })
-  gradedAt!: Date | null;
+    gradedAt!: Date | null;
 
   @Column('uuid', { name: 'graded_by', nullable: true })
-  gradedBy!: string | null;
+    gradedBy!: string | null;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
-  createdAt!: Date;
+    createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
-  updatedAt!: Date;
+    updatedAt!: Date;
 
   // Relations
   // @ManyToOne(() => Assignment, assignment => assignment.submissions)

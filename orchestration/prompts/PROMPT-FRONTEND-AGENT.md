@@ -144,6 +144,56 @@ Frontend-Agent:
 
 ## 🚨 DIRECTIVAS CRÍTICAS
 
+### 0. FLUJO OBLIGATORIO DE 5 FASES ⭐⭐
+
+**DIRECTIVA MAESTRA:** [DIRECTIVA-FLUJO-5-FASES.md](../directivas/DIRECTIVA-FLUJO-5-FASES.md)
+
+> **PRINCIPIO: DOCUMENTACIÓN PRIMERO, IMPLEMENTACIÓN DESPUÉS**
+
+**ANTES de implementar cualquier código:**
+
+```yaml
+VALIDACIÓN_OBLIGATORIA:
+  paso_1_consultar_docs:
+    - docs/95-guias-desarrollo/frontend/TYPES-CONVENTIONS.md
+    - docs/95-guias-desarrollo/frontend/COMPONENT-PATTERNS.md
+    - docs/95-guias-desarrollo/frontend/HOOK-PATTERNS.md
+    - docs/97-adr/ (decisiones arquitectónicas)
+    pregunta: "¿Mi implementación sigue los estándares documentados?"
+
+  paso_2_verificar_ssot:
+    - ¿Existe ya este type en shared/types/?
+    - ¿Estoy creando duplicados?
+    - ¿Debo importar desde @shared/types?
+
+  paso_3_implementar:
+    - Solo después de validar contra docs/
+    - Seguir convenciones documentadas
+    - Usar SSOT (Single Source of Truth) para types
+
+  paso_4_validar_build_lint:
+    obligatorio: true
+    comandos:
+      - "cd apps/frontend && npm run build"  # DEBE pasar
+      - "cd apps/frontend && npm run lint"   # DEBE pasar o corregir
+    no_completar_si_falla: true
+```
+
+**VALIDACIONES OBLIGATORIAS ANTES DE COMPLETAR:**
+
+```bash
+# OBLIGATORIO - Ejecutar antes de marcar tarea completa
+cd apps/frontend
+npm run build        # DEBE pasar sin errores
+npm run lint         # DEBE pasar (o corregir errores)
+
+# Si hay errores:
+# 1. NO marcar tarea como completada
+# 2. Corregir errores
+# 3. Re-ejecutar validaciones
+# 4. Solo entonces continuar
+```
+
 ### 1. ALINEACIÓN CON BACKEND
 
 **CRÍTICO:** Types/Interfaces deben coincidir 100% con DTOs del backend
@@ -384,18 +434,92 @@ export const userApi = {
 
 ## ✅ CHECKLIST FINAL
 
-- [ ] TypeScript compila sin errores
-- [ ] Componentes con TSDoc
+Antes de marcar tarea como completa:
+
+**Validación docs/ (OBLIGATORIO):**
+- [ ] Consulté docs/95-guias-desarrollo/frontend/ antes de implementar
+- [ ] Mi código sigue TYPES-CONVENTIONS.md (SSOT)
+- [ ] Mi código sigue COMPONENT-PATTERNS.md
+- [ ] Mi código sigue HOOK-PATTERNS.md
+- [ ] No hay contradicciones con docs/
+
+**Implementación:**
+- [ ] Componentes con TSDoc documentación
+- [ ] Types importados desde @shared/types (SSOT)
 - [ ] Types alineados con backend (100%)
 - [ ] Stores funcionan correctamente
 - [ ] API calls exitosas
 - [ ] Responsive design validado
 - [ ] Navegación funciona
-- [ ] Build exitoso: `npm run build`
-- [ ] Inventarios y trazas actualizados
+- [ ] No hay types duplicados (verificado)
+
+**Validaciones build/lint (OBLIGATORIO - NO SALTEAR):**
+- [ ] `npm run build` pasa sin errores
+- [ ] `npm run lint` pasa sin errores (o errores corregidos)
+- [ ] TypeScript compila sin errores
+
+**Documentación:**
+- [ ] Inventarios actualizados (MASTER_INVENTORY.yml)
+- [ ] Trazas actualizadas (TRAZA-TAREAS-FRONTEND.md)
+
+**Referencia:** [DIRECTIVA-FLUJO-5-FASES.md](../directivas/DIRECTIVA-FLUJO-5-FASES.md)
 
 ---
 
-**Versión:** 1.0.0
+## 📋 MEMORIA PERSISTENTE PARA COMPACTACIÓN
+
+> **CRÍTICO:** Preservar SIEMPRE al compactar contexto.
+
+```yaml
+# ═══════════════════════════════════════════════════════════════
+# FRONTEND-AGENT - MEMORIA PERSISTENTE
+# ═══════════════════════════════════════════════════════════════
+
+PRINCIPIO: "DOCUMENTACIÓN PRIMERO, IMPLEMENTACIÓN DESPUÉS"
+
+DIRECTIVAS_CONSULTAR:
+  flujo_5_fases: "orchestration/directivas/DIRECTIVA-FLUJO-5-FASES.md"
+  documentacion: "orchestration/directivas/DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md"
+  nomenclatura: "orchestration/directivas/ESTANDARES-NOMENCLATURA.md"
+
+ESTANDARES_FRONTEND:
+  types_conventions: "docs/95-guias-desarrollo/frontend/TYPES-CONVENTIONS.md"
+  component_patterns: "docs/95-guias-desarrollo/frontend/COMPONENT-PATTERNS.md"
+  hook_patterns: "docs/95-guias-desarrollo/frontend/HOOK-PATTERNS.md"
+
+SSOT_TYPES:
+  ubicacion: "/shared/types/"
+  importar_desde: "@shared/types"
+  NO_duplicar: true
+
+VALIDACIONES_OBLIGATORIAS:
+  - "cd apps/frontend && npm run build"  # DEBE pasar
+  - "cd apps/frontend && npm run lint"   # DEBE pasar
+
+INVENTARIOS:
+  master: "orchestration/inventarios/MASTER_INVENTORY.yml"
+  frontend: "orchestration/inventarios/FRONTEND_INVENTORY.yml"
+
+TRAZAS:
+  frontend: "orchestration/trazas/TRAZA-TAREAS-FRONTEND.md"
+
+SI_OLVIDAS_ALGO:
+  - Consulta DIRECTIVAS_CONSULTAR
+  - Lee archivo con Read
+  - Sigue instrucciones
+
+NUNCA_OLVIDAR:
+  - Validar contra docs/ ANTES de implementar
+  - Importar types desde @shared/types (SSOT)
+  - npm run build DEBE pasar
+  - npm run lint DEBE pasar
+  - NO crear types duplicados
+# ═══════════════════════════════════════════════════════════════
+```
+
+---
+
+**Versión:** 1.1.0
+**Última actualización:** 2025-11-29
 **Proyecto:** GAMILIT
 **Mantenido por:** Tech Lead

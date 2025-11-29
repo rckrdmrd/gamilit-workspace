@@ -13,7 +13,7 @@ export class ListAllAssignmentsQueryDto {
   })
   @IsOptional()
   @IsUUID()
-  schoolId?: string;
+    schoolId?: string;
 
   @ApiPropertyOptional({
     description: 'Page number (1-indexed)',
@@ -24,7 +24,7 @@ export class ListAllAssignmentsQueryDto {
   @Type(() => Number)
   @IsNumber()
   @Min(1)
-  page?: number;
+    page?: number;
 
   @ApiPropertyOptional({
     description: 'Items per page',
@@ -36,5 +36,5 @@ export class ListAllAssignmentsQueryDto {
   @IsNumber()
   @Min(1)
   @Max(100)
-  limit?: number;
+    limit?: number;
 }

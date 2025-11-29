@@ -163,7 +163,7 @@ const mockGetUsersList = async (filters?: UserListFilters): Promise<UserListResp
 /**
  * Mock activate user for development
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 const mockActivateUser = async (userId: string, _request?: ActivateUserRequest): Promise<User> => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 

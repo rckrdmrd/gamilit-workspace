@@ -20,31 +20,31 @@ import { User } from './user.entity';
 @Index(['attempted_at'])
 export class AuthAttempt {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   @Column({ type: 'text' })
-  email!: string;
+    email!: string;
 
   @Column({ type: 'inet' })
-  ip_address!: string;
+    ip_address!: string;
 
   @Column({ type: 'text', nullable: true })
-  user_agent!: string | null;
+    user_agent!: string | null;
 
   @Column({ type: 'boolean' })
-  success!: boolean;
+    success!: boolean;
 
   @Column({ type: 'text', nullable: true })
-  failure_reason!: string | null;
+    failure_reason!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  tenant_slug!: string | null;
+    tenant_slug!: string | null;
 
   @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  attempted_at!: Date;
+    attempted_at!: Date;
 
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   // NOTA: La tabla auth_attempts NO tiene user_id
   // Es una tabla de auditoría independiente que solo registra el email

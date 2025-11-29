@@ -22,118 +22,118 @@ export class CreateSchoolDto {
    * ID del tenant propietario
    */
   @IsUUID('4')
-  tenant_id!: string;
+    tenant_id!: string;
 
   /**
    * Nombre completo de la institución
    */
   @IsString()
-  name!: string;
+    name!: string;
 
   /**
    * Código único de identificación
    */
   @IsOptional()
   @IsString()
-  code?: string;
+    code?: string;
 
   /**
    * Nombre corto o abreviatura
    */
   @IsOptional()
   @IsString()
-  short_name?: string;
+    short_name?: string;
 
   /**
    * Descripción de la institución
    */
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   /**
    * Dirección física
    */
   @IsOptional()
   @IsString()
-  address?: string;
+    address?: string;
 
   /**
    * Ciudad
    */
   @IsOptional()
   @IsString()
-  city?: string;
+    city?: string;
 
   /**
    * Región o estado
    */
   @IsOptional()
   @IsString()
-  region?: string;
+    region?: string;
 
   /**
    * País
    */
   @IsOptional()
   @IsString()
-  country?: string;
+    country?: string;
 
   /**
    * Código postal
    */
   @IsOptional()
   @IsString()
-  postal_code?: string;
+    postal_code?: string;
 
   /**
    * Teléfono de contacto
    */
   @IsOptional()
   @IsString()
-  phone?: string;
+    phone?: string;
 
   /**
    * Email de contacto
    */
   @IsOptional()
   @IsString()
-  email?: string;
+    email?: string;
 
   /**
    * Sitio web
    */
   @IsOptional()
   @IsString()
-  website?: string;
+    website?: string;
 
   /**
    * ID del director/a
    */
   @IsOptional()
   @IsUUID('4')
-  principal_id?: string;
+    principal_id?: string;
 
   /**
    * ID del contacto administrativo
    */
   @IsOptional()
   @IsUUID('4')
-  administrative_contact_id?: string;
+    administrative_contact_id?: string;
 
   /**
    * Año académico actual
    */
   @IsOptional()
   @IsString()
-  academic_year?: string;
+    academic_year?: string;
 
   /**
    * Sistema semestral
    */
   @IsOptional()
   @IsBoolean()
-  semester_system?: boolean;
+    semester_system?: boolean;
 
   /**
    * Niveles de grado que ofrece
@@ -141,14 +141,14 @@ export class CreateSchoolDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  grade_levels?: string[];
+    grade_levels?: string[];
 
   /**
    * Configuraciones adicionales
    */
   @IsOptional()
   @IsObject()
-  settings?: Record<string, any>;
+    settings?: Record<string, any>;
 
   /**
    * Capacidad máxima de estudiantes
@@ -156,7 +156,7 @@ export class CreateSchoolDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  max_students?: number;
+    max_students?: number;
 
   /**
    * Capacidad máxima de profesores
@@ -164,26 +164,26 @@ export class CreateSchoolDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  max_teachers?: number;
+    max_teachers?: number;
 
   /**
    * Escuela activa
    */
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+    is_active?: boolean;
 
   /**
    * Escuela verificada
    */
   @IsOptional()
   @IsBoolean()
-  is_verified?: boolean;
+    is_verified?: boolean;
 
   /**
    * Metadatos adicionales
    */
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

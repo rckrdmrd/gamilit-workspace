@@ -7,7 +7,7 @@
 -- =====================================================
 
 CREATE TABLE IF NOT EXISTS progress_tracking.user_current_level (
-    user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID PRIMARY KEY REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
     current_level educational_content.difficulty_level NOT NULL DEFAULT 'beginner',
     previous_level educational_content.difficulty_level,
 

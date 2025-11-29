@@ -65,7 +65,7 @@ export interface RecentActivity {
   entity_type: 'module' | 'exercise' | 'achievement' | 'level' | 'session';
   entity_id: string;
   entity_name: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   created_at: string | Date;
 }
 
@@ -87,7 +87,7 @@ export const getUserProgress = async (userId: string): Promise<ModuleProgress[]>
  */
 export const getModuleProgress = async (
   userId: string,
-  moduleId: string
+  moduleId: string,
 ): Promise<ModuleProgress> => {
   const { data } = await apiClient.get(`/progress/users/${userId}/modules/${moduleId}`);
   return data;
@@ -126,7 +126,7 @@ export const getLearningSessions = async (
     exerciseId?: string;
     limit?: number;
     offset?: number;
-  }
+  },
 ): Promise<LearningSession[]> => {
   const { data } = await apiClient.get(`/progress/sessions/users/${userId}`, { params });
   return data;
@@ -140,7 +140,7 @@ export const getLearningSessions = async (
  */
 export const getSessionStats = async (
   userId: string,
-  period: 'daily' | 'weekly' | 'monthly'
+  period: 'daily' | 'weekly' | 'monthly',
 ): Promise<SessionStats> => {
   const { data } = await apiClient.get(`/progress/sessions/users/${userId}/stats`, {
     params: { period },
@@ -156,10 +156,10 @@ export const getSessionStats = async (
  */
 export const getExerciseAttempts = async (
   userId: string,
-  exerciseId: string
+  exerciseId: string,
 ): Promise<ExerciseAttempt[]> => {
   const { data } = await apiClient.get(
-    `/progress/attempts/users/${userId}/exercises/${exerciseId}`
+    `/progress/attempts/users/${userId}/exercises/${exerciseId}`,
   );
   return data;
 };
@@ -184,7 +184,7 @@ export const getSubmissionStats = async (userId: string): Promise<SubmissionStat
 export const startLearningSession = async (
   userId: string,
   moduleId: string,
-  exerciseId?: string
+  exerciseId?: string,
 ): Promise<LearningSession> => {
   const { data } = await apiClient.post('/progress/sessions', {
     userId,
@@ -214,7 +214,7 @@ export const endLearningSession = async (sessionId: string): Promise<LearningSes
 export const submitExerciseAttempt = async (
   userId: string,
   exerciseId: string,
-  submissionData: Record<string, any>
+  submissionData: Record<string, unknown>,
 ): Promise<ExerciseAttempt> => {
   const { data } = await apiClient.post('/progress/attempts', {
     userId,
@@ -236,7 +236,7 @@ export const getPendingActivities = async (
     type?: 'exercise' | 'lesson' | 'assessment' | 'assignment';
     priority?: 'low' | 'medium' | 'high';
     limit?: number;
-  }
+  },
 ): Promise<PendingActivity[]> => {
   const { data } = await apiClient.get(`/progress/users/${userId}/pending-activities`, { params });
   return data;
@@ -253,7 +253,7 @@ export const getRecentActivities = async (
   params?: {
     limit?: number;
     offset?: number;
-  }
+  },
 ): Promise<RecentActivity[]> => {
   const { data } = await apiClient.get(`/progress/users/${userId}/recent-activities`, { params });
   return data;

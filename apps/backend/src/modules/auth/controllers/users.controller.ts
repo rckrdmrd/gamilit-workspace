@@ -89,7 +89,7 @@ export class UsersController {
   @ApiBody({ type: UpdateProfileDto })
   async updateProfile(
     @Request() req: any,
-    @Body() dto: UpdateProfileDto,
+      @Body() dto: UpdateProfileDto,
   ): Promise<UserResponseDto> {
     const userId = req.user?.id;
     const updatedUser = await this.authService.updateUserProfile(userId, dto);
@@ -152,7 +152,7 @@ export class UsersController {
   })
   async updatePreferences(
     @Request() req: any,
-    @Body('preferences') preferences: any,
+      @Body('preferences') preferences: any,
   ): Promise<{ preferences: any }> {
     const userId = req.user?.id;
     const updatedPreferences = await this.authService.updateUserPreferences(
@@ -195,7 +195,7 @@ export class UsersController {
   })
   async uploadAvatar(
     @Request() req: any,
-    @UploadedFile() file: any,
+      @UploadedFile() file: any,
   ): Promise<{ avatar_url: string }> {
     const userId = req.user?.id;
 

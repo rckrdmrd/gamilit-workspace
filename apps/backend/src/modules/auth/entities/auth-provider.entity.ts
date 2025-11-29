@@ -42,7 +42,7 @@ export class AuthProvider {
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario vinculado
@@ -50,7 +50,7 @@ export class AuthProvider {
    */
   @Column({ type: 'uuid' })
   @Index()
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Proveedor de autenticación OAuth
@@ -60,14 +60,14 @@ export class AuthProvider {
     type: 'enum',
     enum: AuthProviderEnum,
   })
-  provider!: AuthProviderEnum;
+    provider!: AuthProviderEnum;
 
   /**
    * ID del usuario en el proveedor OAuth externo
    * @example Google: "1234567890", Facebook: "fb_user_123"
    */
   @Column({ type: 'text' })
-  provider_user_id!: string;
+    provider_user_id!: string;
 
   /**
    * Access Token OAuth (SENSIBLE)
@@ -75,7 +75,7 @@ export class AuthProvider {
    */
   @Column({ type: 'text', nullable: true })
   @Exclude()
-  access_token!: string | null;
+    access_token!: string | null;
 
   /**
    * Refresh Token OAuth (SENSIBLE)
@@ -83,25 +83,25 @@ export class AuthProvider {
    */
   @Column({ type: 'text', nullable: true })
   @Exclude()
-  refresh_token!: string | null;
+    refresh_token!: string | null;
 
   /**
    * Fecha y hora de expiración del access_token
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  token_expires_at!: Date | null;
+    token_expires_at!: Date | null;
 
   /**
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización del registro
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   // =====================================================
   // Relaciones
@@ -114,5 +114,5 @@ export class AuthProvider {
    */
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user?: User;
+    user?: User;
 }

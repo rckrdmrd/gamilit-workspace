@@ -33,7 +33,7 @@ export class School {
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   // =====================================================
   // MULTI-TENANT & OWNERSHIP
@@ -43,7 +43,7 @@ export class School {
    * ID del tenant propietario (FK → auth_management.tenants)
    */
   @Column({ type: 'uuid' })
-  tenant_id!: string;
+    tenant_id!: string;
 
   // =====================================================
   // BASIC INFORMATION
@@ -53,26 +53,26 @@ export class School {
    * Nombre completo de la institución
    */
   @Column({ type: 'text' })
-  name!: string;
+    name!: string;
 
   /**
    * Código único de identificación (ej: "SEC-001", "CCT", etc.)
    * UNIQUE constraint aplicado
    */
   @Column({ type: 'text', unique: true, nullable: true })
-  code?: string;
+    code?: string;
 
   /**
    * Nombre corto o abreviatura
    */
   @Column({ type: 'text', nullable: true })
-  short_name?: string;
+    short_name?: string;
 
   /**
    * Descripción de la institución
    */
   @Column({ type: 'text', nullable: true })
-  description?: string;
+    description?: string;
 
   // =====================================================
   // LOCATION & CONTACT
@@ -82,49 +82,49 @@ export class School {
    * Dirección física de la escuela
    */
   @Column({ type: 'text', nullable: true })
-  address?: string;
+    address?: string;
 
   /**
    * Ciudad
    */
   @Column({ type: 'text', nullable: true })
-  city?: string;
+    city?: string;
 
   /**
    * Región o estado
    */
   @Column({ type: 'text', nullable: true })
-  region?: string;
+    region?: string;
 
   /**
    * País (default: México)
    */
   @Column({ type: 'text', default: 'México' })
-  country!: string;
+    country!: string;
 
   /**
    * Código postal
    */
   @Column({ type: 'text', nullable: true })
-  postal_code?: string;
+    postal_code?: string;
 
   /**
    * Teléfono de contacto
    */
   @Column({ type: 'text', nullable: true })
-  phone?: string;
+    phone?: string;
 
   /**
    * Email de contacto
    */
   @Column({ type: 'text', nullable: true })
-  email?: string;
+    email?: string;
 
   /**
    * Sitio web de la institución
    */
   @Column({ type: 'text', nullable: true })
-  website?: string;
+    website?: string;
 
   // =====================================================
   // ADMINISTRATIVE CONTACTS
@@ -134,13 +134,13 @@ export class School {
    * ID del director/a (FK → auth_management.profiles)
    */
   @Column({ type: 'uuid', nullable: true })
-  principal_id?: string;
+    principal_id?: string;
 
   /**
    * ID del contacto administrativo (FK → auth_management.profiles)
    */
   @Column({ type: 'uuid', nullable: true })
-  administrative_contact_id?: string;
+    administrative_contact_id?: string;
 
   // =====================================================
   // ACADEMIC CONFIGURATION
@@ -150,26 +150,26 @@ export class School {
    * Año académico actual (ej: "2024-2025")
    */
   @Column({ type: 'text', nullable: true })
-  academic_year?: string;
+    academic_year?: string;
 
   /**
    * Sistema semestral (true) o anual (false)
    */
   @Column({ type: 'boolean', default: true })
-  semester_system!: boolean;
+    semester_system!: boolean;
 
   /**
    * Niveles de grado que ofrece (array)
    * Default: ['6', '7', '8'] (secundaria)
    */
   @Column({ type: 'text', array: true, default: () => "ARRAY['6', '7', '8']" })
-  grade_levels!: string[];
+    grade_levels!: string[];
 
   /**
    * Configuraciones adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-  settings!: Record<string, any>;
+    settings!: Record<string, any>;
 
   // =====================================================
   // CAPACITY & STATS
@@ -179,25 +179,25 @@ export class School {
    * Capacidad máxima de estudiantes
    */
   @Column({ type: 'integer', default: 1000 })
-  max_students!: number;
+    max_students!: number;
 
   /**
    * Capacidad máxima de profesores
    */
   @Column({ type: 'integer', default: 100 })
-  max_teachers!: number;
+    max_teachers!: number;
 
   /**
    * Contador actual de estudiantes
    */
   @Column({ type: 'integer', default: 0 })
-  current_students_count!: number;
+    current_students_count!: number;
 
   /**
    * Contador actual de profesores
    */
   @Column({ type: 'integer', default: 0 })
-  current_teachers_count!: number;
+    current_teachers_count!: number;
 
   // =====================================================
   // STATUS FLAGS
@@ -207,13 +207,13 @@ export class School {
    * Escuela activa (puede aceptar nuevos estudiantes/profesores)
    */
   @Column({ type: 'boolean', default: true })
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Escuela verificada por administración
    */
   @Column({ type: 'boolean', default: false })
-  is_verified!: boolean;
+    is_verified!: boolean;
 
   // =====================================================
   // METADATA & AUDIT
@@ -223,18 +223,18 @@ export class School {
    * Metadatos adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   /**
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización del registro
    * Trigger: trg_schools_updated_at
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 }

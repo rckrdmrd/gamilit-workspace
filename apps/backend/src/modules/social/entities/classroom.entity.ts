@@ -35,7 +35,7 @@ export class Classroom {
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   // =====================================================
   // MULTI-TENANT & OWNERSHIP
@@ -46,13 +46,13 @@ export class Classroom {
    * Null = aula independiente sin vinculación a escuela
    */
   @Column({ type: 'uuid', nullable: true })
-  school_id?: string;
+    school_id?: string;
 
   /**
    * ID del tenant propietario (FK → auth_management.tenants)
    */
   @Column({ type: 'uuid' })
-  tenant_id!: string;
+    tenant_id!: string;
 
   // =====================================================
   // BASIC INFORMATION
@@ -62,20 +62,20 @@ export class Classroom {
    * Nombre del aula (ej: "Matemáticas 3A", "Lectura Avanzada")
    */
   @Column({ type: 'text' })
-  name!: string;
+    name!: string;
 
   /**
    * Código único de acceso (ej: "MAT-301-2024")
    * UNIQUE constraint aplicado
    */
   @Column({ type: 'text', unique: true, nullable: true })
-  code?: string;
+    code?: string;
 
   /**
    * Descripción del aula
    */
   @Column({ type: 'text', nullable: true })
-  description?: string;
+    description?: string;
 
   // =====================================================
   // ACADEMIC CLASSIFICATION
@@ -85,31 +85,31 @@ export class Classroom {
    * Nivel de grado (ej: "6", "7", "8")
    */
   @Column({ type: 'text', nullable: true })
-  grade_level?: string;
+    grade_level?: string;
 
   /**
    * Sección (ej: "A", "B", "C")
    */
   @Column({ type: 'text', nullable: true })
-  section?: string;
+    section?: string;
 
   /**
    * Materia o asignatura
    */
   @Column({ type: 'text', nullable: true })
-  subject?: string;
+    subject?: string;
 
   /**
    * Año académico (ej: "2024-2025")
    */
   @Column({ type: 'text', nullable: true })
-  academic_year?: string;
+    academic_year?: string;
 
   /**
    * Semestre (ej: "1", "2", "Anual")
    */
   @Column({ type: 'text', nullable: true })
-  semester?: string;
+    semester?: string;
 
   // =====================================================
   // TEACHERS
@@ -119,13 +119,13 @@ export class Classroom {
    * ID del profesor principal (FK → auth_management.profiles)
    */
   @Column({ type: 'uuid' })
-  teacher_id!: string;
+    teacher_id!: string;
 
   /**
    * IDs de co-profesores (array de UUIDs)
    */
   @Column({ type: 'uuid', array: true, nullable: true })
-  co_teachers?: string[];
+    co_teachers?: string[];
 
   // =====================================================
   // CAPACITY & STATS
@@ -135,13 +135,13 @@ export class Classroom {
    * Capacidad máxima de estudiantes
    */
   @Column({ type: 'integer', default: 40 })
-  capacity!: number;
+    capacity!: number;
 
   /**
    * Contador actual de estudiantes
    */
   @Column({ type: 'integer', default: 0 })
-  current_students_count!: number;
+    current_students_count!: number;
 
   // =====================================================
   // CONFIGURATION & SETTINGS
@@ -159,20 +159,20 @@ export class Classroom {
       allow_self_enrollment: false,
     },
   })
-  settings!: Record<string, any>;
+    settings!: Record<string, any>;
 
   /**
    * Horario de clases en formato JSON (array de objetos)
    * Estructura: [{ day: "lunes", start_time: "08:00", end_time: "10:00" }, ...]
    */
   @Column({ type: 'jsonb', default: [] })
-  schedule: any[] = [];
+    schedule: any[] = [];
 
   /**
    * URL de reunión virtual (Zoom, Meet, Teams, etc.)
    */
   @Column({ type: 'text', nullable: true })
-  meeting_url?: string;
+    meeting_url?: string;
 
   // =====================================================
   // STATUS FLAGS
@@ -182,13 +182,13 @@ export class Classroom {
    * Aula activa (puede aceptar nuevos estudiantes)
    */
   @Column({ type: 'boolean', default: true })
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Aula archivada (completada, ciclo anterior)
    */
   @Column({ type: 'boolean', default: false })
-  is_archived!: boolean;
+    is_archived!: boolean;
 
   // =====================================================
   // TIME RANGE
@@ -198,13 +198,13 @@ export class Classroom {
    * Fecha de inicio del curso
    */
   @Column({ type: 'date', nullable: true })
-  start_date?: Date;
+    start_date?: Date;
 
   /**
    * Fecha de fin del curso
    */
   @Column({ type: 'date', nullable: true })
-  end_date?: Date;
+    end_date?: Date;
 
   // =====================================================
   // METADATA & AUDIT
@@ -214,18 +214,18 @@ export class Classroom {
    * Metadatos adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   /**
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización del registro
    * Trigger: trg_classrooms_updated_at
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 }

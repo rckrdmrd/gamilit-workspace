@@ -27,7 +27,7 @@ export class XpSettingsDto {
   @IsNumber()
   @Min(1)
   @Max(1000)
-  base_per_exercise!: number;
+    base_per_exercise!: number;
 
   @ApiProperty({
     description: 'Multiplier applied when exercise is completed',
@@ -38,7 +38,7 @@ export class XpSettingsDto {
   @IsNumber()
   @Min(1)
   @Max(5)
-  completion_multiplier!: number;
+    completion_multiplier!: number;
 
   @ApiPropertyOptional({
     description: 'Bonus multiplier for perfect score',
@@ -50,7 +50,7 @@ export class XpSettingsDto {
   @IsNumber()
   @Min(1)
   @Max(5)
-  perfect_score_bonus?: number;
+    perfect_score_bonus?: number;
 }
 
 /**
@@ -66,7 +66,7 @@ export class RankThresholdsDto {
   })
   @IsNumber()
   @Min(0)
-  novice!: number;
+    novice!: number;
 
   @ApiProperty({
     description: 'XP required for Beginner rank',
@@ -74,7 +74,7 @@ export class RankThresholdsDto {
   })
   @IsNumber()
   @Min(0)
-  beginner!: number;
+    beginner!: number;
 
   @ApiProperty({
     description: 'XP required for Intermediate rank',
@@ -82,7 +82,7 @@ export class RankThresholdsDto {
   })
   @IsNumber()
   @Min(0)
-  intermediate!: number;
+    intermediate!: number;
 
   @ApiProperty({
     description: 'XP required for Advanced rank',
@@ -90,7 +90,7 @@ export class RankThresholdsDto {
   })
   @IsNumber()
   @Min(0)
-  advanced!: number;
+    advanced!: number;
 
   @ApiProperty({
     description: 'XP required for Expert rank',
@@ -98,7 +98,7 @@ export class RankThresholdsDto {
   })
   @IsNumber()
   @Min(0)
-  expert!: number;
+    expert!: number;
 }
 
 /**
@@ -116,7 +116,7 @@ export class CoinsSettingsDto {
   @IsNumber()
   @Min(0)
   @Max(10000)
-  welcome_bonus!: number;
+    welcome_bonus!: number;
 
   @ApiProperty({
     description: 'ML Coins awarded for daily login',
@@ -127,7 +127,7 @@ export class CoinsSettingsDto {
   @IsNumber()
   @Min(0)
   @Max(1000)
-  daily_login_reward!: number;
+    daily_login_reward!: number;
 
   @ApiPropertyOptional({
     description: 'ML Coins awarded per exercise completion',
@@ -139,7 +139,7 @@ export class CoinsSettingsDto {
   @IsNumber()
   @Min(0)
   @Max(1000)
-  exercise_completion_reward?: number;
+    exercise_completion_reward?: number;
 }
 
 /**
@@ -156,7 +156,7 @@ export class UpdateGamificationSettingsDto {
   @IsOptional()
   @ValidateNested()
   @Type(() => XpSettingsDto)
-  xp?: XpSettingsDto;
+    xp?: XpSettingsDto;
 
   @ApiPropertyOptional({
     description: 'Rank thresholds configuration',
@@ -165,7 +165,7 @@ export class UpdateGamificationSettingsDto {
   @IsOptional()
   @ValidateNested()
   @Type(() => RankThresholdsDto)
-  ranks?: RankThresholdsDto;
+    ranks?: RankThresholdsDto;
 
   @ApiPropertyOptional({
     description: 'ML Coins rewards configuration',
@@ -174,7 +174,7 @@ export class UpdateGamificationSettingsDto {
   @IsOptional()
   @ValidateNested()
   @Type(() => CoinsSettingsDto)
-  coins?: CoinsSettingsDto;
+    coins?: CoinsSettingsDto;
 
   @ApiPropertyOptional({
     description: 'Achievement criteria configuration (free-form object)',
@@ -182,5 +182,5 @@ export class UpdateGamificationSettingsDto {
   })
   @IsOptional()
   @IsObject()
-  achievements?: Record<string, any>;
+    achievements?: Record<string, any>;
 }

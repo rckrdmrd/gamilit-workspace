@@ -71,10 +71,10 @@ export interface NotificationData {
 @Index(['createdAt'])
 export class Notification {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   @Column('uuid', { name: 'user_id' })
-  userId!: string;
+    userId!: string;
 
   /**
    * Tipo de notificación
@@ -90,13 +90,13 @@ export class Notification {
     type: 'enum',
     enum: NotificationTypeEnum,
   })
-  type!: NotificationTypeEnum;
+    type!: NotificationTypeEnum;
 
   @Column('text')
-  title!: string;
+    title!: string;
 
   @Column('text')
-  message!: string;
+    message!: string;
 
   /**
    * Datos adicionales en formato JSONB
@@ -116,7 +116,7 @@ export class Notification {
    * @see NotificationData interface para estructura completa
    */
   @Column('jsonb', { nullable: true })
-  data!: NotificationData | null;
+    data!: NotificationData | null;
 
   /**
    * Prioridad de la notificación (urgencia de visualización)
@@ -136,19 +136,19 @@ export class Notification {
     enumName: 'notification_priority',
     default: NotificationPriorityEnum.MEDIUM,
   })
-  priority!: NotificationPriorityEnum;
+    priority!: NotificationPriorityEnum;
 
   /**
    * Indica si la notificación fue leída por el usuario
    */
   @Column('boolean', { default: false })
-  read!: boolean;
+    read!: boolean;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
-  createdAt!: Date;
+    createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
-  updatedAt!: Date;
+    updatedAt!: Date;
 
   // Relación con User (Profile)
   // TODO: Descomentar cuando Profile entity esté disponible

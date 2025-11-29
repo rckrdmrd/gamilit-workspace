@@ -12,7 +12,7 @@ export class GetOrganizationUsersDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  page?: number;
+    page?: number;
 
   @ApiPropertyOptional({
     description: 'Items per page',
@@ -24,62 +24,62 @@ export class GetOrganizationUsersDto {
   @IsInt()
   @Min(1)
   @Max(100)
-  limit?: number;
+    limit?: number;
 
   @ApiPropertyOptional({
     description: 'Filter by role',
     example: 'student',
   })
   @IsOptional()
-  role?: string;
+    role?: string;
 
   @ApiPropertyOptional({
     description: 'Filter by membership status',
     example: 'active',
   })
   @IsOptional()
-  status?: string;
+    status?: string;
 }
 
 export class OrganizationUserDto {
   @ApiProperty({ description: 'User ID' })
-  user_id!: string;
+    user_id!: string;
 
   @ApiProperty({ description: 'User email' })
-  email!: string;
+    email!: string;
 
   @ApiProperty({ description: 'Full name' })
-  full_name?: string;
+    full_name?: string;
 
   @ApiProperty({ description: 'User role' })
-  role!: string;
+    role!: string;
 
   @ApiProperty({ description: 'Membership role in organization' })
-  membership_role!: string;
+    membership_role!: string;
 
   @ApiProperty({ description: 'Membership status' })
-  membership_status!: string;
+    membership_status!: string;
 
   @ApiProperty({ description: 'Joined date' })
-  joined_at!: Date;
+    joined_at!: Date;
 
   @ApiProperty({ description: 'Last active date' })
-  last_active_at?: Date;
+    last_active_at?: Date;
 }
 
 export class PaginatedOrganizationUsersDto {
   @ApiProperty({ description: 'List of users', type: [OrganizationUserDto] })
-  data!: OrganizationUserDto[];
+    data!: OrganizationUserDto[];
 
   @ApiProperty({ description: 'Total count' })
-  total!: number;
+    total!: number;
 
   @ApiProperty({ description: 'Current page' })
-  page!: number;
+    page!: number;
 
   @ApiProperty({ description: 'Items per page' })
-  limit!: number;
+    limit!: number;
 
   @ApiProperty({ description: 'Total pages' })
-  total_pages!: number;
+    total_pages!: number;
 }

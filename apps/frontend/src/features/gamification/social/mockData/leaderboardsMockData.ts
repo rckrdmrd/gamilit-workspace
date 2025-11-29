@@ -7,16 +7,56 @@ import type { LeaderboardEntry, LeaderboardData } from '../types/leaderboardsTyp
 
 // Helper to generate random entries
 const generateLeaderboardEntry = (rank: number, isCurrentUser = false): LeaderboardEntry => {
-  const firstNames = ['Ana', 'Carlos', 'María', 'Luis', 'Sofia', 'Diego', 'Valentina', 'Miguel', 'Isabella', 'Javier', 'Camila', 'Pablo', 'Lucía', 'Andrés', 'Elena'];
-  const lastNames = ['García', 'Rodríguez', 'Martínez', 'López', 'González', 'Pérez', 'Sánchez', 'Ramírez', 'Torres', 'Flores', 'Rivera', 'Gómez', 'Díaz', 'Cruz', 'Morales'];
-  const schools = ['Colegio Nacional', 'Instituto Tecnológico', 'Escuela Secundaria Federal', 'Colegio Bilingüe', 'Preparatoria Estatal'];
+  const firstNames = [
+    'Ana',
+    'Carlos',
+    'María',
+    'Luis',
+    'Sofia',
+    'Diego',
+    'Valentina',
+    'Miguel',
+    'Isabella',
+    'Javier',
+    'Camila',
+    'Pablo',
+    'Lucía',
+    'Andrés',
+    'Elena',
+  ];
+  const lastNames = [
+    'García',
+    'Rodríguez',
+    'Martínez',
+    'López',
+    'González',
+    'Pérez',
+    'Sánchez',
+    'Ramírez',
+    'Torres',
+    'Flores',
+    'Rivera',
+    'Gómez',
+    'Díaz',
+    'Cruz',
+    'Morales',
+  ];
+  const schools = [
+    'Colegio Nacional',
+    'Instituto Tecnológico',
+    'Escuela Secundaria Federal',
+    'Colegio Bilingüe',
+    'Preparatoria Estatal',
+  ];
   const ranks = ['Nacom', 'Ajaw', "Ah K'in", 'Halach Uinic', "K'uk'ulkan"];
 
-  const firstName = isCurrentUser ? 'Tú' : firstNames[Math.floor(Math.random() * firstNames.length)];
+  const firstName = isCurrentUser
+    ? 'Tú'
+    : firstNames[Math.floor(Math.random() * firstNames.length)];
   const lastName = isCurrentUser ? '' : lastNames[Math.floor(Math.random() * lastNames.length)];
   const username = isCurrentUser ? 'Tú' : `${firstName} ${lastName}`;
 
-  const baseScore = 10000 - (rank * 50) + Math.floor(Math.random() * 100);
+  const baseScore = 10000 - rank * 50 + Math.floor(Math.random() * 100);
   const change = Math.floor(Math.random() * 21) - 10; // -10 to +10
 
   let changeType: 'up' | 'down' | 'same' | 'new';
@@ -104,11 +144,27 @@ export const friendsLeaderboardData: LeaderboardData = {
   lastUpdated: new Date(),
 };
 
+// Classroom Leaderboard (25 entries)
+export const classroomLeaderboardData: LeaderboardData = {
+  type: 'classroom',
+  timePeriod: 'all-time',
+  entries: [
+    ...Array.from({ length: 5 }, (_, i) => generateLeaderboardEntry(i + 1)),
+    generateLeaderboardEntry(6, true), // Current user at rank 6
+    ...Array.from({ length: 19 }, (_, i) => generateLeaderboardEntry(i + 7)),
+  ],
+  userRank: 6,
+  totalParticipants: 25,
+  lastUpdated: new Date(),
+};
+
 // Top 10 for quick display
 export const top10GlobalLeaderboard = globalLeaderboardData.entries.slice(0, 10);
 
 // Helper functions
-export const getLeaderboardByType = (type: 'global' | 'school' | 'grade' | 'friends'): LeaderboardData => {
+export const getLeaderboardByType = (
+  type: 'global' | 'school' | 'grade' | 'friends' | 'classroom',
+): LeaderboardData => {
   switch (type) {
     case 'global':
       return globalLeaderboardData;
@@ -118,17 +174,23 @@ export const getLeaderboardByType = (type: 'global' | 'school' | 'grade' | 'frie
       return gradeLeaderboardData;
     case 'friends':
       return friendsLeaderboardData;
+    case 'classroom':
+      return classroomLeaderboardData;
     default:
       return globalLeaderboardData;
   }
 };
 
-export const getCurrentUserRank = (type: 'global' | 'school' | 'grade' | 'friends'): number => {
+export const getCurrentUserRank = (
+  type: 'global' | 'school' | 'grade' | 'friends' | 'classroom',
+): number => {
   const leaderboard = getLeaderboardByType(type);
   return leaderboard.userRank || 0;
 };
 
-export const getTopThree = (type: 'global' | 'school' | 'grade' | 'friends'): LeaderboardEntry[] => {
+export const getTopThree = (
+  type: 'global' | 'school' | 'grade' | 'friends' | 'classroom',
+): LeaderboardEntry[] => {
   const leaderboard = getLeaderboardByType(type);
   return leaderboard.entries.slice(0, 3);
 };

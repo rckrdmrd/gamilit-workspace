@@ -14,6 +14,7 @@
  *
  * ~320 lines
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -415,7 +416,7 @@ function getStatusStyles(status: Mission['status'], colorScheme: any) {
 
   const scheme = colorScheme || defaultScheme;
 
-  const styles: Record<string, any> = {
+  const styles: Record<string, unknown> = {
     not_started: {
       border: 'border-gray-300',
       shadow: '',

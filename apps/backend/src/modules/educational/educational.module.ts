@@ -8,6 +8,9 @@ import {
   ContentApproval,
 } from './entities';
 import { Profile } from '../auth/entities/profile.entity';
+import { ClassroomMember } from '../social/entities/classroom-member.entity';
+import { AssignmentClassroom } from '../social/entities/assignment-classroom.entity';
+import { AssignmentExercise } from '../assignments/entities/assignment-exercise.entity';
 import {
   ModulesService,
   ExercisesService,
@@ -45,11 +48,13 @@ import { ProgressModule } from '../progress/progress.module';
   imports: [
     // Connection 'educational' handles schema 'educational_content'
     TypeOrmModule.forFeature(
-      [ModuleEntity, Exercise, AssessmentRubric, MediaResource, ContentApproval],
+      [ModuleEntity, Exercise, AssessmentRubric, MediaResource, ContentApproval, AssignmentExercise],
       'educational',
     ),
     // Import Profile entity from auth schema (for ExercisesController)
     TypeOrmModule.forFeature([Profile], 'auth'),
+    // GAP-C06: Import entities from social schema for RLS
+    TypeOrmModule.forFeature([ClassroomMember, AssignmentClassroom], 'social'),
     // Import ProgressModule to access ExerciseSubmissionService for submit endpoint
     ProgressModule,
   ],

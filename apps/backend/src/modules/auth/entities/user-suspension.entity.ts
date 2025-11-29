@@ -35,7 +35,7 @@ export class UserSuspension {
    * @generated
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario suspendido
@@ -46,7 +46,7 @@ export class UserSuspension {
    */
   @Column('uuid', { name: 'user_id' })
   @Index('idx_user_suspensions_user_id')
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Razón de la suspensión
@@ -57,7 +57,7 @@ export class UserSuspension {
    * @example "Intento de fraude en sistema de puntos"
    */
   @Column('text')
-  reason!: string;
+    reason!: string;
 
   /**
    * Fecha hasta la cual el usuario está suspendido
@@ -74,7 +74,7 @@ export class UserSuspension {
    */
   @Column('timestamptz', { nullable: true, name: 'suspension_until' })
   @Index('idx_user_suspensions_until', { where: 'suspension_until IS NOT NULL' })
-  suspension_until!: Date | null;
+    suspension_until!: Date | null;
 
   /**
    * ID del administrador que aplicó la suspensión
@@ -85,7 +85,7 @@ export class UserSuspension {
    */
   @Column('uuid', { name: 'suspended_by' })
   @Index('idx_user_suspensions_suspended_by')
-  suspended_by!: string;
+    suspended_by!: string;
 
   /**
    * Fecha y hora en que se aplicó la suspensión
@@ -94,21 +94,21 @@ export class UserSuspension {
    * @default CURRENT_TIMESTAMP
    */
   @Column('timestamptz', { default: () => 'CURRENT_TIMESTAMP', name: 'suspended_at' })
-  suspended_at!: Date;
+    suspended_at!: Date;
 
   /**
    * Fecha de creación del registro
    * @generated
    */
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de última actualización
    * @generated
    */
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   // =============================================================================
   // RELACIONES
@@ -123,7 +123,7 @@ export class UserSuspension {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'user_id' })
-  user!: User;
+    user!: User;
 
   /**
    * Administrador que aplicó la suspensión
@@ -132,7 +132,7 @@ export class UserSuspension {
    */
   @ManyToOne(() => User)
   @JoinColumn({ name: 'suspended_by' })
-  suspended_by_user!: User;
+    suspended_by_user!: User;
 
   // =============================================================================
   // MÉTODOS AUXILIARES

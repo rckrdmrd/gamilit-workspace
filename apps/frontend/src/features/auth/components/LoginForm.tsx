@@ -144,11 +144,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         console.log('✅ [LoginForm] Login successful - redirecting to:', targetRoute);
         navigate(targetRoute);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Error is already set in AuthContext
       // Optionally set form-level error
       setError('root', {
-        message: err.message || 'Login failed. Please try again.',
+        message: err instanceof Error ? err.message : 'Login failed. Please try again.',
       });
     }
   };

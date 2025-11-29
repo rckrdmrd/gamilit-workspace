@@ -22,7 +22,7 @@ const logFormat = winston.format.combine(
     return stack
       ? `${timestamp} [${level.toUpperCase()}]: ${message}\n${stack}`
       : `${timestamp} [${level.toUpperCase()}]: ${message}`;
-  })
+  }),
 );
 
 /**
@@ -35,7 +35,7 @@ const consoleFormat = winston.format.combine(
     return stack
       ? `${timestamp} ${level}: ${message}\n${stack}`
       : `${timestamp} ${level}: ${message}`;
-  })
+  }),
 );
 
 /**
@@ -75,7 +75,7 @@ if (nodeEnv !== 'production') {
   logger.add(
     new winston.transports.Console({
       format: consoleFormat,
-    })
+    }),
   );
 }
 

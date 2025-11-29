@@ -13,5 +13,5 @@ export class ResolveInterventionDto {
   @IsNotEmpty()
   @IsString()
   @MinLength(10, { message: 'Resolution notes must be at least 10 characters long' })
-  resolution_notes!: string;
+    resolution_notes!: string;
 }

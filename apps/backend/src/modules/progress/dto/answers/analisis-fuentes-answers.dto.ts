@@ -18,5 +18,5 @@ export class AnalisisFuentesAnswersDto {
   @IsArray()
   @ArrayNotEmpty({ message: 'ranking array cannot be empty' })
   @IsString({ each: true, message: 'Each source ID must be a string' })
-  ranking!: string[];
+    ranking!: string[];
 }

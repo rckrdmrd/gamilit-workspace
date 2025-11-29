@@ -15,9 +15,10 @@ import { UserGamificationSummaryDto } from '../dto/user-gamification-summary.dto
  */
 @Injectable()
 export class UserStatsService {
-  // Configuración de niveles: XP requerida para cada nivel
-  private readonly XP_PER_LEVEL = 100; // Base XP para el próximo nivel
-  private readonly XP_SCALING = 1.1; // Multiplicador de dificultad
+  // Configuración de niveles - Formula cuadrática (sincronizada con DB)
+  // Ver: apps/database/ddl/schemas/gamification_system/functions/calculate_level_from_xp.sql
+  // Formula DB: FLOOR(SQRT(XP / 100.0)) + 1
+  private readonly XP_BASE = 100; // Base para cálculo cuadrático
 
   // Rangos disponibles en el sistema (ordenado de menor a mayor)
   private readonly RANKS = ['Ajaw', 'Nacom', "Ah K'in", 'Halach Uinic', "K'uk'ulkan"];
@@ -59,7 +60,7 @@ export class UserStatsService {
       tenant_id: tenantId,
       level: 1,
       total_xp: 0,
-      xp_to_next_level: this.calculateXpForLevel(1),
+      xp_to_next_level: this.calculateXpForLevel(2), // XP needed to reach level 2
       current_rank: this.RANKS[0],
       ml_coins: 100,
       ml_coins_earned_total: 100,
@@ -76,7 +77,7 @@ export class UserStatsService {
       metadata: {},
     });
 
-    return await this.userStatsRepo.save(newStats);
+    return this.userStatsRepo.save(newStats);
   }
 
   /**
@@ -88,7 +89,7 @@ export class UserStatsService {
   ): Promise<UserStats> {
     const stats = await this.findByUserId(userId);
     Object.assign(stats, updates);
-    return await this.userStatsRepo.save(stats);
+    return this.userStatsRepo.save(stats);
   }
 
   /**
@@ -107,7 +108,7 @@ export class UserStatsService {
     }
 
     (stats[field] as number) = (currentValue as number) + amount;
-    return await this.userStatsRepo.save(stats);
+    return this.userStatsRepo.save(stats);
   }
 
   /**
@@ -147,7 +148,7 @@ export class UserStatsService {
     stats.total_xp += xpAmount;
 
     // Guardar (el trigger AFTER UPDATE se ejecuta automáticamente)
-    return await this.userStatsRepo.save(stats);
+    return this.userStatsRepo.save(stats);
   }
 
   /**
@@ -175,7 +176,7 @@ export class UserStatsService {
       const newCurrentRankMinLevel = correctRankIndex * 5;
       const newNextRankMinLevel = (correctRankIndex + 1) * 5;
       stats.rank_progress = Math.max(0,
-        ((stats.level - newCurrentRankMinLevel) / (newNextRankMinLevel - newCurrentRankMinLevel)) * 100
+        ((stats.level - newCurrentRankMinLevel) / (newNextRankMinLevel - newCurrentRankMinLevel)) * 100,
       );
       return;
     }
@@ -194,23 +195,45 @@ export class UserStatsService {
       // Calcular progreso hacia el siguiente rango
       // FIX: Usar Math.max para evitar valores negativos
       stats.rank_progress = Math.max(0,
-        ((stats.level - currentRankMinLevel) / (nextRankMinLevel - currentRankMinLevel)) * 100
+        ((stats.level - currentRankMinLevel) / (nextRankMinLevel - currentRankMinLevel)) * 100,
       );
     }
   }
 
   /**
    * Calcula XP necesaria para alcanzar un nivel específico
+   *
+   * Formula sincronizada con DB (ADR-016):
+   * - DB calcula nivel: FLOOR(SQRT(XP / 100)) + 1
+   * - Backend calcula XP: 100 * (nivel - 1)^2
+   *
+   * @example
+   * Nivel 1: 100 * (1-1)^2 = 0 XP
+   * Nivel 2: 100 * (2-1)^2 = 100 XP
+   * Nivel 3: 100 * (3-1)^2 = 400 XP
+   * Nivel 4: 100 * (4-1)^2 = 900 XP
+   * Nivel 5: 100 * (5-1)^2 = 1600 XP
    */
   private calculateXpForLevel(level: number): number {
-    return Math.floor(this.XP_PER_LEVEL * Math.pow(this.XP_SCALING, level - 1));
+    // Formula cuadrática: XP = BASE * (level - 1)^2
+    return this.XP_BASE * Math.pow(level - 1, 2);
+  }
+
+  /**
+   * Calcula el nivel basado en XP total
+   *
+   * Formula sincronizada con DB:
+   * Level = FLOOR(SQRT(XP / 100)) + 1
+   */
+  private calculateLevelFromXp(xp: number): number {
+    return Math.floor(Math.sqrt(xp / this.XP_BASE)) + 1;
   }
 
   /**
    * Obtiene ranking global basado en XP
    */
   async getGlobalRanking(limit: number = 100): Promise<UserStats[]> {
-    return await this.userStatsRepo.find({
+    return this.userStatsRepo.find({
       order: { total_xp: 'DESC' },
       take: limit,
     });
@@ -220,7 +243,7 @@ export class UserStatsService {
    * Obtiene ranking por tenant
    */
   async getTenantRanking(tenantId: string, limit: number = 100): Promise<UserStats[]> {
-    return await this.userStatsRepo.find({
+    return this.userStatsRepo.find({
       where: { tenant_id: tenantId },
       order: { total_xp: 'DESC' },
       take: limit,
@@ -231,7 +254,7 @@ export class UserStatsService {
    * Obtiene top usuarios por nivel
    */
   async getTopByLevel(limit: number = 50): Promise<UserStats[]> {
-    return await this.userStatsRepo.find({
+    return this.userStatsRepo.find({
       order: { level: 'DESC', total_xp: 'DESC' },
       take: limit,
     });

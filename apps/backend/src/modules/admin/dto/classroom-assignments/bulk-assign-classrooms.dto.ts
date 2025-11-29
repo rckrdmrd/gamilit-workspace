@@ -11,7 +11,7 @@ export class BulkAssignClassroomsDto {
   })
   @IsUUID()
   @IsNotEmpty()
-  teacherId!: string;
+    teacherId!: string;
 
   @ApiProperty({
     description: 'Array of classroom IDs to assign (max 50)',
@@ -26,5 +26,5 @@ export class BulkAssignClassroomsDto {
   @ArrayMinSize(1)
   @ArrayMaxSize(50)
   @IsUUID('4', { each: true })
-  classroomIds!: string[];
+    classroomIds!: string[];
 }

@@ -22,7 +22,7 @@ export class UserPreferencesResponseDto {
     format: 'uuid',
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Tema de la interfaz
@@ -33,7 +33,7 @@ export class UserPreferencesResponseDto {
     enum: ThemeEnum,
     example: ThemeEnum.LIGHT,
   })
-  theme!: ThemeEnum;
+    theme!: ThemeEnum;
 
   /**
    * Idioma preferido
@@ -44,7 +44,7 @@ export class UserPreferencesResponseDto {
     enum: LanguageEnum,
     example: LanguageEnum.ES,
   })
-  language!: LanguageEnum;
+    language!: LanguageEnum;
 
   /**
    * Notificaciones habilitadas en la aplicación
@@ -54,7 +54,7 @@ export class UserPreferencesResponseDto {
     type: Boolean,
     example: true,
   })
-  notifications_enabled!: boolean;
+    notifications_enabled!: boolean;
 
   /**
    * Notificaciones por email habilitadas
@@ -64,7 +64,7 @@ export class UserPreferencesResponseDto {
     type: Boolean,
     example: true,
   })
-  email_notifications!: boolean;
+    email_notifications!: boolean;
 
   /**
    * Efectos de sonido habilitados
@@ -74,7 +74,7 @@ export class UserPreferencesResponseDto {
     type: Boolean,
     example: true,
   })
-  sound_enabled!: boolean;
+    sound_enabled!: boolean;
 
   /**
    * Tutorial inicial completado
@@ -84,7 +84,7 @@ export class UserPreferencesResponseDto {
     type: Boolean,
     example: false,
   })
-  tutorial_completed!: boolean;
+    tutorial_completed!: boolean;
 
   /**
    * Preferencias adicionales en formato JSON
@@ -99,7 +99,7 @@ export class UserPreferencesResponseDto {
       dashboard_layout: 'grid',
     },
   })
-  preferences!: Record<string, any>;
+    preferences!: Record<string, any>;
 
   /**
    * Fecha de creación
@@ -110,7 +110,7 @@ export class UserPreferencesResponseDto {
     format: 'date-time',
     example: '2025-11-11T10:00:00.000Z',
   })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de última actualización
@@ -121,5 +121,5 @@ export class UserPreferencesResponseDto {
     format: 'date-time',
     example: '2025-11-11T15:30:00.000Z',
   })
-  updated_at!: Date;
+    updated_at!: Date;
 }

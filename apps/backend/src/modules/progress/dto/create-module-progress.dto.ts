@@ -26,20 +26,20 @@ export class CreateModuleProgressDto {
    * ID del usuario
    */
   @IsUUID('4')
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del módulo educativo
    */
   @IsUUID('4')
-  module_id!: string;
+    module_id!: string;
 
   /**
    * Estado inicial del progreso
    */
   @IsOptional()
   @IsEnum(ProgressStatusEnum)
-  status?: ProgressStatusEnum;
+    status?: ProgressStatusEnum;
 
   /**
    * Porcentaje de progreso inicial (0-100)
@@ -48,7 +48,7 @@ export class CreateModuleProgressDto {
   @IsInt()
   @Min(0)
   @Max(100)
-  progress_percentage?: number;
+    progress_percentage?: number;
 
   /**
    * Ejercicios completados inicial
@@ -56,7 +56,7 @@ export class CreateModuleProgressDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  completed_exercises?: number;
+    completed_exercises?: number;
 
   /**
    * Total de ejercicios en el módulo
@@ -64,75 +64,75 @@ export class CreateModuleProgressDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  total_exercises?: number;
+    total_exercises?: number;
 
   /**
    * ID del aula (si aplica)
    */
   @IsOptional()
   @IsUUID('4')
-  classroom_id?: string;
+    classroom_id?: string;
 
   /**
    * ID de la asignación (si aplica)
    */
   @IsOptional()
   @IsUUID('4')
-  assignment_id?: string;
+    assignment_id?: string;
 
   /**
    * Fecha límite de entrega
    */
   @IsOptional()
   @IsDateString()
-  deadline?: string;
+    deadline?: string;
 
   /**
    * Permitir reintentos
    */
   @IsOptional()
   @IsBoolean()
-  allow_retry?: boolean;
+    allow_retry?: boolean;
 
   /**
    * Requiere completar secuencialmente
    */
   @IsOptional()
   @IsBoolean()
-  sequential_completion?: boolean;
+    sequential_completion?: boolean;
 
   /**
    * Dificultad adaptativa habilitada
    */
   @IsOptional()
   @IsBoolean()
-  adaptive_difficulty?: boolean;
+    adaptive_difficulty?: boolean;
 
   /**
    * Ruta de aprendizaje personalizada
    */
   @IsOptional()
   @IsArray()
-  learning_path?: any[];
+    learning_path?: any[];
 
   /**
    * Notas del estudiante
    */
   @IsOptional()
   @IsString()
-  student_notes?: string;
+    student_notes?: string;
 
   /**
    * Notas del profesor
    */
   @IsOptional()
   @IsString()
-  teacher_notes?: string;
+    teacher_notes?: string;
 
   /**
    * Metadatos adicionales
    */
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

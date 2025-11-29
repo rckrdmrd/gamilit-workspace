@@ -21,7 +21,7 @@ export class DiscussionThreadResponseDto {
     format: 'uuid',
     example: '770e8400-e29b-41d4-a716-446655440002',
   })
-  id!: string;
+    id!: string;
 
   /**
    * ID del classroom (si aplica)
@@ -34,7 +34,7 @@ export class DiscussionThreadResponseDto {
     nullable: true,
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  classroom_id!: string | null;
+    classroom_id!: string | null;
 
   /**
    * ID del team (si aplica)
@@ -47,7 +47,7 @@ export class DiscussionThreadResponseDto {
     nullable: true,
     example: '660e8400-e29b-41d4-a716-446655440001',
   })
-  team_id!: string | null;
+    team_id!: string | null;
 
   /**
    * ID del autor del thread
@@ -58,7 +58,7 @@ export class DiscussionThreadResponseDto {
     format: 'uuid',
     example: '880e8400-e29b-41d4-a716-446655440003',
   })
-  created_by!: string;
+    created_by!: string;
 
   /**
    * Título del thread
@@ -68,7 +68,7 @@ export class DiscussionThreadResponseDto {
     type: String,
     example: '¿Cómo resolver el ejercicio de Fracciones?',
   })
-  title!: string;
+    title!: string;
 
   /**
    * Contenido principal
@@ -78,7 +78,7 @@ export class DiscussionThreadResponseDto {
     type: String,
     example: 'Tengo dudas sobre el paso 3 del ejercicio...',
   })
-  content!: string;
+    content!: string;
 
   /**
    * Thread fijado
@@ -88,7 +88,7 @@ export class DiscussionThreadResponseDto {
     type: Boolean,
     example: false,
   })
-  is_pinned!: boolean;
+    is_pinned!: boolean;
 
   /**
    * Thread bloqueado
@@ -98,7 +98,7 @@ export class DiscussionThreadResponseDto {
     type: Boolean,
     example: false,
   })
-  is_locked!: boolean;
+    is_locked!: boolean;
 
   /**
    * Número de respuestas
@@ -108,7 +108,7 @@ export class DiscussionThreadResponseDto {
     type: Number,
     example: 5,
   })
-  replies_count!: number;
+    replies_count!: number;
 
   /**
    * Última respuesta
@@ -120,7 +120,7 @@ export class DiscussionThreadResponseDto {
     nullable: true,
     example: '2025-11-11T15:30:00.000Z',
   })
-  last_reply_at!: Date | null;
+    last_reply_at!: Date | null;
 
   /**
    * Fecha de creación
@@ -131,7 +131,7 @@ export class DiscussionThreadResponseDto {
     format: 'date-time',
     example: '2025-11-11T10:00:00.000Z',
   })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de actualización
@@ -142,7 +142,7 @@ export class DiscussionThreadResponseDto {
     format: 'date-time',
     example: '2025-11-11T16:00:00.000Z',
   })
-  updated_at!: Date;
+    updated_at!: Date;
 
   /**
    * Indica si es thread de classroom
@@ -152,7 +152,7 @@ export class DiscussionThreadResponseDto {
     type: Boolean,
     example: true,
   })
-  is_classroom_thread!: boolean;
+    is_classroom_thread!: boolean;
 
   /**
    * Indica si es thread de team
@@ -162,7 +162,7 @@ export class DiscussionThreadResponseDto {
     type: Boolean,
     example: false,
   })
-  is_team_thread!: boolean;
+    is_team_thread!: boolean;
 
   /**
    * Indica si puede recibir respuestas
@@ -172,5 +172,5 @@ export class DiscussionThreadResponseDto {
     type: Boolean,
     example: true,
   })
-  can_receive_replies!: boolean;
+    can_receive_replies!: boolean;
 }

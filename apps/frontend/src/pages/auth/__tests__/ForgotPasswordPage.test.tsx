@@ -361,7 +361,7 @@ describe('ForgotPasswordPage', () => {
       const user = userEvent.setup();
 
       // Mock setTimeout to throw error
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       vi.spyOn(global, 'setTimeout').mockImplementation((_callback: any) => {
         throw new Error('Network error');
       });
@@ -387,7 +387,7 @@ describe('ForgotPasswordPage', () => {
       const user = userEvent.setup();
 
       // Mock setTimeout to throw error
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       vi.spyOn(global, 'setTimeout').mockImplementation((_callback: any) => {
         throw new Error('Network error');
       });
@@ -514,7 +514,7 @@ describe('ForgotPasswordPage', () => {
       const user = userEvent.setup();
 
       // Mock setTimeout to throw error
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       vi.spyOn(global, 'setTimeout').mockImplementation((_callback: any) => {
         throw new Error('Network error');
       });

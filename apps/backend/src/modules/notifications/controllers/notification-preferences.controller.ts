@@ -127,8 +127,8 @@ export class NotificationPreferencesController {
   })
   async updatePreference(
     @Param('notificationType') notificationType: string,
-    @Body() updateDto: UpdatePreferenceDto,
-    @Request() req: any,
+      @Body() updateDto: UpdatePreferenceDto,
+      @Request() req: any,
   ): Promise<PreferenceResponseDto> {
     const userId = req.user.sub;
 
@@ -175,7 +175,7 @@ export class NotificationPreferencesController {
   })
   async updateMultiple(
     @Body() updateDto: UpdateMultiplePreferencesDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<PreferencesListResponseDto> {
     const userId = req.user.sub;
 

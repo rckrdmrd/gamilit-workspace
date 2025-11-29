@@ -10,7 +10,7 @@ import { IsString, MinLength, MaxLength, Matches } from 'class-validator';
  */
 export class ResetPasswordDto {
   @IsString()
-  token!: string; // Token plaintext desde URL/email
+    token!: string; // Token plaintext desde URL/email
 
   @IsString()
   @MinLength(8, { message: 'Password debe tener al menos 8 caracteres' })
@@ -18,5 +18,5 @@ export class ResetPasswordDto {
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
     message: 'Password debe contener mayúsculas, minúsculas y números/símbolos',
   })
-  new_password!: string;
+    new_password!: string;
 }

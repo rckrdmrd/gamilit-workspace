@@ -5,25 +5,39 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Globe, School, Users, GraduationCap } from 'lucide-react';
+import { Globe, School, Users, GraduationCap, UsersRound } from 'lucide-react';
 import type { LeaderboardType } from '../../types/leaderboardsTypes';
 
 interface LeaderboardTabsProps {
   selectedType: LeaderboardType;
   onTypeChange: (type: LeaderboardType) => void;
+  hasClassroom?: boolean;
 }
 
 const tabs: { type: LeaderboardType; label: string; icon: React.ElementType }[] = [
   { type: 'global', label: 'Global', icon: Globe },
   { type: 'school', label: 'Escuela', icon: School },
   { type: 'grade', label: 'Grado', icon: GraduationCap },
+  { type: 'classroom', label: 'Mi Aula', icon: UsersRound },
   { type: 'friends', label: 'Amigos', icon: Users },
 ];
 
-export const LeaderboardTabs: React.FC<LeaderboardTabsProps> = ({ selectedType, onTypeChange }) => {
+export const LeaderboardTabs: React.FC<LeaderboardTabsProps> = ({
+  selectedType,
+  onTypeChange,
+  hasClassroom = true,
+}) => {
+  // Filter tabs based on classroom availability
+  const visibleTabs = tabs.filter((tab) => {
+    if (tab.type === 'classroom' && !hasClassroom) {
+      return false;
+    }
+    return true;
+  });
+
   return (
     <div className="flex gap-2 overflow-x-auto pb-2">
-      {tabs.map((tab) => {
+      {visibleTabs.map((tab) => {
         const Icon = tab.icon;
         const isActive = selectedType === tab.type;
 
@@ -33,13 +47,13 @@ export const LeaderboardTabs: React.FC<LeaderboardTabsProps> = ({ selectedType, 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => onTypeChange(tab.type)}
-            className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold whitespace-nowrap transition-all ${
+            className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-6 py-3 font-semibold transition-all ${
               isActive
                 ? 'bg-detective-orange text-white shadow-orange'
-                : 'bg-white text-detective-text hover:bg-detective-bg shadow-card'
+                : 'bg-white text-detective-text shadow-card hover:bg-detective-bg'
             }`}
           >
-            <Icon className="w-5 h-5" />
+            <Icon className="h-5 w-5" />
             <span>{tab.label}</span>
           </motion.button>
         );

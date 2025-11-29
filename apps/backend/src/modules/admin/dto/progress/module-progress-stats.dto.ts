@@ -5,25 +5,25 @@ import { ApiProperty } from '@nestjs/swagger';
  */
 export class ModuleInfoDto {
   @ApiProperty({ description: 'Module ID' })
-  id!: string;
+    id!: string;
 
   @ApiProperty({ description: 'Module title' })
-  title!: string;
+    title!: string;
 
   @ApiProperty({ description: 'Module description', nullable: true })
-  description!: string | null;
+    description!: string | null;
 
   @ApiProperty({ description: 'Difficulty level' })
-  difficulty_level!: string;
+    difficulty_level!: string;
 
   @ApiProperty({ description: 'Estimated duration in minutes', nullable: true })
-  estimated_duration!: number | null;
+    estimated_duration!: number | null;
 
   @ApiProperty({ description: 'Order number' })
-  order_number!: number;
+    order_number!: number;
 
   @ApiProperty({ description: 'Total exercises in module' })
-  total_exercises!: number;
+    total_exercises!: number;
 }
 
 /**
@@ -31,28 +31,28 @@ export class ModuleInfoDto {
  */
 export class ProgressStatsDto {
   @ApiProperty({ description: 'Total students working on this module' })
-  total_students!: number;
+    total_students!: number;
 
   @ApiProperty({ description: 'Students who have not started' })
-  not_started_count!: number;
+    not_started_count!: number;
 
   @ApiProperty({ description: 'Students in progress' })
-  in_progress_count!: number;
+    in_progress_count!: number;
 
   @ApiProperty({ description: 'Students who completed' })
-  completed_count!: number;
+    completed_count!: number;
 
   @ApiProperty({ description: 'Average progress percentage' })
-  avg_progress_percent!: number;
+    avg_progress_percent!: number;
 
   @ApiProperty({ description: 'Average score', nullable: true })
-  avg_score!: number | null;
+    avg_score!: number | null;
 
   @ApiProperty({ description: 'Average time spent in minutes' })
-  avg_time_spent_minutes!: number;
+    avg_time_spent_minutes!: number;
 
   @ApiProperty({ description: 'Total XP distributed' })
-  total_xp_distributed!: number;
+    total_xp_distributed!: number;
 }
 
 /**
@@ -64,11 +64,11 @@ export class ModuleProgressStatsDto {
     description: 'Module information',
     type: ModuleInfoDto,
   })
-  module_info!: ModuleInfoDto;
+    module_info!: ModuleInfoDto;
 
   @ApiProperty({
     description: 'Progress statistics',
     type: ProgressStatsDto,
   })
-  progress_stats!: ProgressStatsDto;
+    progress_stats!: ProgressStatsDto;
 }

@@ -14,7 +14,16 @@ import { useEconomyStore } from '@/features/gamification/economy/store/economySt
 export interface SopaLetrasExerciseProps {
   exercise: SopaLetrasData;
   onComplete?: () => void;
-  onProgressUpdate?: (progress: any) => void;
+  onProgressUpdate?: (data: {
+    progress: {
+      currentStep: number;
+      totalSteps: number;
+      score: number;
+      hintsUsed: number;
+      timeSpent: number;
+    };
+    answers: Record<string, unknown>;
+  }) => void;
   actionsRef?: React.MutableRefObject<{
     handleReset?: () => void;
     handleCheck?: () => void;
@@ -30,7 +39,6 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
   const { user } = useAuth();
   const { fetchUserProgress } = useRanksStore();
   const { fetchBalance } = useEconomyStore();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_isSubmitting, _setIsSubmitting] = useState(false);
 
   // FE-059: Initialize words from words list only (wordsPositions field is sanitized)
@@ -332,6 +340,7 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
         _setIsSubmitting(false);
       }
     }, 100);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validateSelection, words, user, exercise.id]);
 
   const handleReset = React.useCallback(() => {

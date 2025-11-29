@@ -40,7 +40,9 @@ import { StudentProgressService } from './student-progress.service';
 @Injectable()
 export class AnalyticsService {
   private readonly logger = new Logger(AnalyticsService.name);
+
   private readonly CACHE_TTL = 300; // 5 minutes in seconds
+
   private readonly INSIGHTS_CACHE_PREFIX = 'student-insights:';
 
   constructor(
@@ -86,11 +88,11 @@ export class AnalyticsService {
 
     const avgScore = submissions.length > 0
       ? Math.round(
-          submissions.reduce(
-            (sum, sub) => sum + (sub.score / sub.max_score) * 100,
-            0,
-          ) / submissions.length,
-        )
+        submissions.reduce(
+          (sum, sub) => sum + (sub.score / sub.max_score) * 100,
+          0,
+        ) / submissions.length,
+      )
       : 0;
 
     const completedSubmissions = submissions.filter(
@@ -203,11 +205,11 @@ export class AnalyticsService {
     const avgScore =
       submissions.length > 0
         ? Math.round(
-            submissions.reduce(
-              (sum, sub) => sum + (sub.score / sub.max_score) * 100,
-              0,
-            ) / submissions.length,
-          )
+          submissions.reduce(
+            (sum, sub) => sum + (sub.score / sub.max_score) * 100,
+            0,
+          ) / submissions.length,
+        )
         : 0;
 
     return {
@@ -221,10 +223,10 @@ export class AnalyticsService {
         completion_rate:
           submissions.length > 0
             ? Math.round(
-                (submissions.filter((s) => s.is_correct).length /
+              (submissions.filter((s) => s.is_correct).length /
                   submissions.length) *
                   100,
-              )
+            )
             : 0,
       },
     };
@@ -262,11 +264,11 @@ export class AnalyticsService {
     const avgScore =
       gradedSubmissions > 0
         ? Math.round(
-            submissions
-              .filter((s) => s.score !== null)
-              .reduce((sum, sub) => sum + (sub.score || 0), 0) /
+          submissions
+            .filter((s) => s.score !== null)
+            .reduce((sum, sub) => sum + (sub.score || 0), 0) /
               gradedSubmissions,
-          )
+        )
         : 0;
 
     // Score distribution
@@ -486,7 +488,7 @@ export class AnalyticsService {
     // Calculate overall score (weighted average)
     const overall_score = Math.round(
       stats.average_score * 0.7 + // 70% weight on average score
-      (stats.completed_modules / Math.max(stats.total_modules, 1)) * 100 * 0.3 // 30% on completion
+      (stats.completed_modules / Math.max(stats.total_modules, 1)) * 100 * 0.3, // 30% on completion
     );
 
     // Find score percentile from class comparison
@@ -510,7 +512,7 @@ export class AnalyticsService {
       stats,
       struggleAreas,
       overall_score,
-      risk_level
+      risk_level,
     );
 
     const insights: StudentInsightsResponseDto = {
@@ -892,7 +894,7 @@ export class AnalyticsService {
       .getRawMany();
 
     const unlockMap = new Map<string, number>(
-      unlockCounts.map((uc) => [uc.achievement_id, parseInt(uc.unlock_count, 10)])
+      unlockCounts.map((uc) => [uc.achievement_id, parseInt(uc.unlock_count, 10)]),
     );
 
     // Build response
@@ -1077,7 +1079,7 @@ export class AnalyticsService {
   private calculateRiskLevel(
     stats: any,
     overall_score: number,
-    struggleCount: number
+    struggleCount: number,
   ): 'low' | 'medium' | 'high' {
     const completionRate = stats.total_modules > 0
       ? (stats.completed_modules / stats.total_modules) * 100
@@ -1187,7 +1189,7 @@ export class AnalyticsService {
   private calculatePredictions(
     stats: any,
     overall_score: number,
-    risk_level: 'low' | 'medium' | 'high'
+    risk_level: 'low' | 'medium' | 'high',
   ): { completion_probability: number; dropout_risk: number } {
     // Simple heuristic-based predictions
     let completion_probability = 0.5; // Default 50%
@@ -1241,7 +1243,7 @@ export class AnalyticsService {
     stats: any,
     struggleAreas: any[],
     overall_score: number,
-    risk_level: 'low' | 'medium' | 'high'
+    risk_level: 'low' | 'medium' | 'high',
   ): string[] {
     const recommendations: string[] = [];
 
@@ -1255,7 +1257,7 @@ export class AnalyticsService {
     if (struggleAreas.length > 0) {
       const topStruggle = struggleAreas[0];
       recommendations.push(
-        `Dedicar tiempo extra a ${topStruggle.topic} con ejercicios de práctica adicionales`
+        `Dedicar tiempo extra a ${topStruggle.topic} con ejercicios de práctica adicionales`,
       );
     }
 

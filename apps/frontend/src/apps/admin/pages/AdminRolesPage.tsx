@@ -34,6 +34,7 @@ import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { useRoles } from '../hooks/useRoles';
 import { useRolePermissions } from '../hooks/useRolePermissions';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { Card } from '@shared/components/Card';
 import { Button } from '@shared/components/Button';
 import { LoadingSpinner } from '@shared/components/LoadingSpinner';
@@ -59,14 +60,21 @@ export default function AdminRolesPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Gamification data for header
-  const gamificationData = {
-    userId: user?.id || 'mock-admin-id',
-    level: 20,
-    totalXP: 5000,
-    mlCoins: 2500,
-    rank: 'Super Admin',
-    achievements: ['admin_master', 'permission_guardian'],
+  // Use useUserGamification hook with real API endpoint
+  const { gamificationData, isLoading: gamificationLoading } = useUserGamification(user?.id);
+
+  // Fallback gamification data while loading or if data not available
+  const displayGamificationData = gamificationData || {
+    userId: user?.id || '',
+    level: gamificationLoading ? 0 : 1,
+    totalXP: 0,
+    mlCoins: 0,
+    rank: gamificationLoading ? 'Cargando...' : 'Ajaw',
+    rankColor: '#9E9E9E',
+    progressToNextLevel: 0,
+    xpToNextLevel: 100,
+    achievements: [],
+    totalAchievements: 0,
   };
 
   const handleLogout = () => {
@@ -203,7 +211,7 @@ export default function AdminRolesPage() {
   return (
     <AdminLayout
       user={user || undefined}
-      gamificationData={gamificationData}
+      gamificationData={displayGamificationData}
       organizationName="GAMILIT Platform Admin"
       onLogout={handleLogout}
     >

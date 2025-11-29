@@ -22,13 +22,13 @@ export class CreateExerciseAttemptDto {
    * ID del usuario
    */
   @IsUUID('4')
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del ejercicio
    */
   @IsUUID('4')
-  exercise_id!: string;
+    exercise_id!: string;
 
   /**
    * Número de intento
@@ -36,20 +36,20 @@ export class CreateExerciseAttemptDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  attempt_number?: number;
+    attempt_number?: number;
 
   /**
    * Respuestas enviadas (estructura JSONB)
    */
   @IsObject()
-  submitted_answers!: Record<string, any>;
+    submitted_answers!: Record<string, any>;
 
   /**
    * Indica si la respuesta fue correcta
    */
   @IsOptional()
   @IsBoolean()
-  is_correct?: boolean;
+    is_correct?: boolean;
 
   /**
    * Puntaje obtenido
@@ -57,7 +57,7 @@ export class CreateExerciseAttemptDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  score?: number;
+    score?: number;
 
   /**
    * Tiempo invertido en segundos
@@ -65,7 +65,7 @@ export class CreateExerciseAttemptDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  time_spent_seconds?: number;
+    time_spent_seconds?: number;
 
   /**
    * Cantidad de hints utilizados
@@ -73,14 +73,14 @@ export class CreateExerciseAttemptDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  hints_used?: number;
+    hints_used?: number;
 
   /**
    * Comodines utilizados
    */
   @IsOptional()
   @IsArray()
-  comodines_used?: string[];
+    comodines_used?: string[];
 
   /**
    * XP ganada
@@ -88,7 +88,7 @@ export class CreateExerciseAttemptDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  xp_earned?: number;
+    xp_earned?: number;
 
   /**
    * ML Coins ganadas
@@ -96,19 +96,19 @@ export class CreateExerciseAttemptDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  ml_coins_earned?: number;
+    ml_coins_earned?: number;
 
   /**
    * Fecha de envío
    */
   @IsOptional()
   @IsDateString()
-  submitted_at?: string;
+    submitted_at?: string;
 
   /**
    * Metadatos adicionales (browser, device, response_pattern)
    */
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

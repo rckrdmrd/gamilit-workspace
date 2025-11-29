@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsEnum, IsBoolean, IsInt, Min, Max } from 'class-validator';
+import { IsOptional, IsEnum, IsIn, IsInt, Min, Max } from 'class-validator';
 import { Type } from 'class-transformer';
 import { NotificationTypeEnum } from '@shared/constants/enums.constants';
 
@@ -11,17 +11,17 @@ export class GetNotificationsQueryDto {
   })
   @IsOptional()
   @IsEnum(NotificationTypeEnum)
-  type?: NotificationTypeEnum;
+    type?: NotificationTypeEnum;
 
   @ApiProperty({
     description: 'Filter by read status',
     required: false,
-    example: false,
+    enum: ['read', 'unread', 'all'],
+    example: 'all',
   })
   @IsOptional()
-  @IsBoolean()
-  @Type(() => Boolean)
-  read?: boolean;
+  @IsIn(['read', 'unread', 'all'])
+    status?: 'read' | 'unread' | 'all';
 
   @ApiProperty({
     description: 'Page number (1-indexed)',
@@ -33,7 +33,7 @@ export class GetNotificationsQueryDto {
   @IsInt()
   @Min(1)
   @Type(() => Number)
-  page?: number = 1;
+    page?: number = 1;
 
   @ApiProperty({
     description: 'Number of items per page',
@@ -47,5 +47,5 @@ export class GetNotificationsQueryDto {
   @Min(1)
   @Max(100)
   @Type(() => Number)
-  limit?: number = 20;
+    limit?: number = 20;
 }

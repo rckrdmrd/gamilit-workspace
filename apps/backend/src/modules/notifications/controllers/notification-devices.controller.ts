@@ -97,7 +97,7 @@ export class NotificationDevicesController {
   })
   async registerDevice(
     @Body() registerDto: RegisterDeviceDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<DeviceResponseDto> {
     const userId = req.user.sub;
 
@@ -183,7 +183,7 @@ export class NotificationDevicesController {
   })
   async getDeviceById(
     @Param('id') deviceId: string,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<DeviceResponseDto> {
     const userId = req.user.sub;
     const device = await this.deviceService.getDeviceById(deviceId, userId);
@@ -232,8 +232,8 @@ export class NotificationDevicesController {
   })
   async updateDeviceName(
     @Param('id') deviceId: string,
-    @Body() updateDto: UpdateDeviceNameDto,
-    @Request() req: any,
+      @Body() updateDto: UpdateDeviceNameDto,
+      @Request() req: any,
   ): Promise<DeviceResponseDto> {
     const userId = req.user.sub;
 
@@ -290,7 +290,7 @@ export class NotificationDevicesController {
   })
   async deleteDevice(
     @Param('id') deviceId: string,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<void> {
     const userId = req.user.sub;
     await this.deviceService.deleteDevice(deviceId, userId);

@@ -1,12 +1,20 @@
-# Fase 3: Extensiones
+# Fase 3: Extensiones (MVP)
 
 **Periodo:** Mes 3-4 (Octubre-Noviembre 2024)
-**Presupuesto:** $441,600 MXN (incluye $15,000 USD @ $20/USD)
-**Detalle:** $141,600 MXN (épicas completas) + $300,000 MXN (épicas parciales en USD)
-**Story Points:** 404 SP
-**Épicas:** 10 (6 completas + 4 parciales)
-**Estado:** ✅ Completado 100%
-**Última actualización:** 2025-11-13
+**Presupuesto MVP:** $141,600 MXN
+**Story Points MVP:** 304 SP
+**Épicas MVP:** 6 completas ✅
+**Estado MVP:** ✅ Completado 100%
+**Última actualización:** 2025-11-29
+
+---
+
+> **⚠️ NOTA IMPORTANTE SOBRE ALCANCE MVP**
+>
+> Esta fase contiene **6 épicas MVP completas** (EXT-001 a EXT-006) y **5 épicas parciales en BACKLOG** (EXT-007 a EXT-011).
+>
+> Las épicas parciales (EXT-007 a EXT-011) están documentadas aquí pero **NO forman parte del MVP**.
+> Ver documentación completa del backlog en: [Fase 4: Backlog](../04-fase-backlog/README.md)
 
 ---
 
@@ -14,38 +22,48 @@
 
 La Fase 3 se enfocó en **extensiones funcionales** que amplían significativamente las capacidades del sistema base establecido en Fase 1 y potenciado en Fase 2.
 
-**Alcance:**
-- **6 épicas completas:** Portal Maestros, Admin Extendido, Notificaciones, Perfiles, Reportes, Gestión Contenido
-- **4 épicas parciales:** LTI Integration, White Label, Peer Challenges, Parent Notifications
+**Alcance MVP:**
+- **6 épicas MVP completas:** Portal Maestros, Admin Extendido, Notificaciones, Perfiles, Reportes, Gestión Contenido
+
+**Backlog (fuera del MVP):**
+- **5 épicas parciales:** LTI Integration, White Label, Peer Challenges, Parent Notifications, Parent Portal
 
 ---
 
-## 🎯 Épicas de Extensión
+## 🎯 Épicas MVP (100% Completas)
 
-| Épica | Nombre | Presupuesto | SP | Tipo | Estado | Archivos |
-|-------|--------|-------------|----|------|--------|----------|
-| **[EXT-001](./EXT-001-portal-maestros/)** | Portal Maestros | $26,400 MXN | 66 | Completa | ✅ | 15+ |
-| **[EXT-002](./EXT-002-admin-extendido/)** | Admin Extendido | $25,200 MXN | 63 | Completa | ✅ | 12+ |
-| **[EXT-003](./EXT-003-notificaciones/)** | Notificaciones | $25,000 MXN | 45 | Completa | ✅ | 10+ |
-| **[EXT-004](./EXT-004-perfiles/)** | Perfiles Avanzados | $20,000 MXN | 35 | Completa | ✅ | 10+ |
-| **[EXT-005](./EXT-005-reportes/)** | Reportes | $25,000 MXN | 50 | Completa | ✅ | 12+ |
-| **[EXT-006](./EXT-006-contenido/)** | Gestión Contenido | $20,000 MXN | 45 | Completa | ✅ | 10+ |
-| **[EXT-007](./EXT-007-lti-integration/)** | LTI Integration | $6,000 USD | 40 | Parcial | 🟡 | 6+ |
-| **[EXT-008](./EXT-008-white-label/)** | White Label | $3,000 USD | 20 | Parcial | 🟡 | 5+ |
-| **[EXT-009](./EXT-009-peer-challenges/)** | Peer Challenges | $3,750 USD | 25 | Parcial | 🟡 | 5+ |
-| **[EXT-010](./EXT-010-parent-notifications/)** | Parent Notifications | $2,250 USD | 15 | Parcial | 🟡 | 4+ |
+| Épica | Nombre | Presupuesto | SP | Estado | Archivos |
+|-------|--------|-------------|----|--------|----------|
+| **[EXT-001](./EXT-001-portal-maestros/)** | Portal Maestros | $26,400 MXN | 66 | ✅ 100% | 15+ |
+| **[EXT-002](./EXT-002-admin-extendido/)** | Admin Extendido | $25,200 MXN | 63 | ✅ 100% | 12+ |
+| **[EXT-003](./EXT-003-notificaciones/)** | Notificaciones | $25,000 MXN | 45 | ✅ 100% | 10+ |
+| **[EXT-004](./EXT-004-perfiles/)** | Perfiles Avanzados | $20,000 MXN | 35 | ✅ 100% | 10+ |
+| **[EXT-005](./EXT-005-reportes/)** | Reportes | $25,000 MXN | 50 | ✅ 100% | 12+ |
+| **[EXT-006](./EXT-006-contenido/)** | Gestión Contenido | $20,000 MXN | 45 | ✅ 100% | 10+ |
 
-**Totales:**
-- Presupuesto: $441,600 MXN (ver detalle abajo)
-- Story Points: 404 SP
-- Épicas completas: 6 ($141,600 MXN)
-- Épicas parciales: 4 ($15,000 USD / $300,000 MXN)
-
-**Nota:** Presupuesto calculado desde READMEs individuales. Épicas parciales (EXT-007 a EXT-010) originalmente presupuestadas en USD, convertidas a MXN @ $20.00 por dólar.
+**Totales MVP:**
+- Presupuesto MVP: $141,600 MXN
+- Story Points MVP: 304 SP
+- Épicas MVP: 6/6 completas ✅
 
 ---
 
-## 🚀 Épicas Completas (6)
+## ⏳ Épicas en BACKLOG (Fuera del MVP)
+
+> **⚠️ BACKLOG:** Las siguientes épicas están parcialmente implementadas y **NO forman parte del MVP actual**.
+> Se mantienen documentadas aquí para referencia. Ver detalles completos en [Fase 4: Backlog](../04-fase-backlog/README.md).
+
+| Épica | Nombre | Avance | Razón Backlog |
+|-------|--------|--------|---------------|
+| **[EXT-007](./EXT-007-lti-integration/)** | LTI Integration | ⏳ 40% | Depende de contratos enterprise |
+| **[EXT-008](./EXT-008-white-label/)** | White Label | ⏳ 30% | Depende de contratos enterprise |
+| **[EXT-009](./EXT-009-peer-challenges/)** | Peer Challenges | ⏳ 50% | Feature nice-to-have |
+| **[EXT-010](./EXT-010-parent-notifications/)** | Parent Notifications | ⏳ 35% | Feature nice-to-have |
+| **[EXT-011](./EXT-011-parent-portal/)** | Parent Portal | ⏳ 35% | Feature nice-to-have |
+
+---
+
+## 🚀 Épicas MVP Completas (6)
 
 ### 1. [EXT-001: Portal Maestros](./EXT-001-portal-maestros/)
 **Dashboard completo para maestros**
@@ -149,33 +167,48 @@ La Fase 3 se enfocó en **extensiones funcionales** que amplían significativame
 
 ---
 
-## 🟡 Épicas Parciales (4)
+## ⏳ Épicas en BACKLOG (5) - Fuera del MVP
 
-### 7. [EXT-007: LTI Integration](./EXT-007-lti-integration/) (Parcial)
+> **⚠️ IMPORTANTE:** Las siguientes épicas están documentadas aquí por continuidad histórica, pero **NO forman parte del MVP**.
+> Ver documentación consolidada en [Fase 4: Backlog](../04-fase-backlog/README.md).
+
+### 7. [EXT-007: LTI Integration](./EXT-007-lti-integration/) ⏳ BACKLOG
 **Integración con LMS externos (Moodle, Canvas)**
 
 **Estado:** Diseño completo, implementación parcial (40%)
+**Razón BACKLOG:** Depende de contratos enterprise
 
 ---
 
-### 8. [EXT-008: White Label](./EXT-008-white-label/) (Parcial)
+### 8. [EXT-008: White Label](./EXT-008-white-label/) ⏳ BACKLOG
 **Personalización multi-tenant**
 
 **Estado:** Diseño completo, implementación parcial (30%)
+**Razón BACKLOG:** Depende de contratos enterprise
 
 ---
 
-### 9. [EXT-009: Peer Challenges](./EXT-009-peer-challenges/) (Parcial)
+### 9. [EXT-009: Peer Challenges](./EXT-009-peer-challenges/) ⏳ BACKLOG
 **Desafíos entre estudiantes**
 
 **Estado:** Prototipo funcional (50%)
+**Razón BACKLOG:** Feature nice-to-have
 
 ---
 
-### 10. [EXT-010: Parent Notifications](./EXT-010-parent-notifications/) (Parcial)
+### 10. [EXT-010: Parent Notifications](./EXT-010-parent-notifications/) ⏳ BACKLOG
 **Notificaciones para padres**
 
 **Estado:** Diseño completo, implementación parcial (35%)
+**Razón BACKLOG:** Feature nice-to-have
+
+---
+
+### 11. [EXT-011: Parent Portal](./EXT-011-parent-portal/) ⏳ BACKLOG
+**Portal completo para padres**
+
+**Estado:** Diseño completo, implementación parcial (35%)
+**Razón BACKLOG:** Feature nice-to-have
 
 ---
 

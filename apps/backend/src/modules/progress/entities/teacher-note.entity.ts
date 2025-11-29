@@ -31,25 +31,25 @@ export class TeacherNote {
    * Identificador único de la nota (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del profesor que creó la nota
    */
   @Column({ type: 'uuid' })
-  teacher_id!: string;
+    teacher_id!: string;
 
   /**
    * ID del estudiante sobre el que se hace la nota
    */
   @Column({ type: 'uuid' })
-  student_id!: string;
+    student_id!: string;
 
   /**
    * Contenido de la nota
    */
   @Column({ type: 'text' })
-  note!: string;
+    note!: string;
 
   /**
    * Indica si la nota es privada (solo visible para el profesor)
@@ -57,13 +57,13 @@ export class TeacherNote {
    * Si es false: La nota puede ser compartida con el estudiante o padres
    */
   @Column({ type: 'boolean', default: true })
-  is_private!: boolean;
+    is_private!: boolean;
 
   /**
    * Fecha y hora de creación de la nota
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   // =====================================================
   // Relaciones

@@ -24,7 +24,6 @@ export function ExerciseSubmissionExample({
   const [result, setResult] = useState<SubmitExerciseResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_exerciseStartTime] = useState(Date.now());
   const [_hintsUsed, _setHintsUsed] = useState(0);
 
@@ -38,7 +37,7 @@ export function ExerciseSubmissionExample({
 
       setResult(submissionResult);
       onComplete?.(submissionResult);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Submission error:', err);
 
       // Handle specific error codes

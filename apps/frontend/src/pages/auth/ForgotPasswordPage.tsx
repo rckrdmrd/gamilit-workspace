@@ -24,6 +24,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, Mail, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { forgotPasswordSchema, type ForgotPasswordFormData } from '@/shared/schemas/auth.schemas';
+import { passwordAPI } from '@/services/api/passwordAPI';
 
 /**
  * ForgotPasswordPage Component
@@ -46,22 +47,23 @@ export const ForgotPasswordPage: React.FC = () => {
 
   /**
    * Handle form submission
-   * TODO: Integrate with actual API endpoint
+   * Integrates with real backend API endpoint
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onSubmit = async (_data: ForgotPasswordFormData) => {
+  const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
       setError(null);
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // TODO: Replace with actual API call
-      // await authApi.requestPasswordReset(data.email);
+      // Call real API endpoint
+      await passwordAPI.requestPasswordReset(data.email);
 
       setIsSuccess(true);
-    } catch (err: any) {
-      setError(err.message || 'Failed to send reset link. Please try again.');
+    } catch (err: unknown) {
+      // Handle API errors
+      const errorMessage =
+        err.response?.data?.message ||
+        err.message ||
+        'Failed to send reset link. Please try again.';
+      setError(errorMessage);
     }
   };
 

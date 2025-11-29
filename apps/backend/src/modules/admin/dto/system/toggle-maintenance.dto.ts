@@ -7,7 +7,7 @@ export class ToggleMaintenanceDto {
     example: true,
   })
   @IsBoolean()
-  enabled!: boolean;
+    enabled!: boolean;
 
   @ApiPropertyOptional({
     description: 'Custom maintenance message to display to users',
@@ -15,7 +15,7 @@ export class ToggleMaintenanceDto {
   })
   @IsOptional()
   @IsString()
-  message?: string;
+    message?: string;
 }
 
 export class MaintenanceStatusDto {
@@ -23,24 +23,24 @@ export class MaintenanceStatusDto {
     description: 'Current maintenance mode status',
     example: true,
   })
-  maintenance_mode!: boolean;
+    maintenance_mode!: boolean;
 
   @ApiProperty({
     description: 'Maintenance message',
     example: 'System maintenance in progress. We will be back soon.',
   })
-  maintenance_message!: string;
+    maintenance_message!: string;
 
   @ApiProperty({
     description: 'When the mode was last updated',
     example: '2025-11-07T12:00:00.000Z',
   })
-  updated_at!: string;
+    updated_at!: string;
 
   @ApiProperty({
     description: 'Admin who updated the mode',
     example: '10000000-0000-0000-0000-000000000001',
     required: false,
   })
-  updated_by?: string;
+    updated_by?: string;
 }

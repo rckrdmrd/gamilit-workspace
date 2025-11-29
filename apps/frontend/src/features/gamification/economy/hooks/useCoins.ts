@@ -37,7 +37,7 @@ export const useCoins = () => {
    */
   const formattedBalance = useCallback((): string => {
     return `${formatCoins(balance.current)} ML`;
-  }, [balance.current, formatCoins]);
+  }, [formatCoins]);
 
   /**
    * Calculate percentage of spending
@@ -45,7 +45,7 @@ export const useCoins = () => {
   const getSpendingPercentage = useCallback((): number => {
     if (balance.lifetime === 0) return 0;
     return Math.round((balance.spent / balance.lifetime) * 100);
-  }, [balance]);
+  }, []);
 
   /**
    * Calculate percentage of balance vs lifetime earnings
@@ -53,7 +53,7 @@ export const useCoins = () => {
   const getBalancePercentage = useCallback((): number => {
     if (balance.lifetime === 0) return 0;
     return Math.round((balance.current / balance.lifetime) * 100);
-  }, [balance]);
+  }, []);
 
   /**
    * Check if user is wealthy (has > 1000 ML)

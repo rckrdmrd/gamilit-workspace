@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * SettingsPage - User Settings and Preferences
  *
@@ -153,7 +154,7 @@ export default function SettingsPage() {
       });
 
       setTimeout(() => setSaveStatus('idle'), 2000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving settings:', error);
       setSaveStatus('error');
       toast.error(error.response?.data?.message || 'Error al guardar configuracion');
@@ -219,7 +220,7 @@ export default function SettingsPage() {
         setUploadProgress(0);
         setIsUploading(false);
       }, 1000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error uploading avatar:', error);
       toast.error(error.response?.data?.message || 'Error al subir avatar');
       setUploadProgress(0);
@@ -269,7 +270,7 @@ export default function SettingsPage() {
       });
 
       setTimeout(() => setSaveStatus('idle'), 2000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error changing password:', error);
       setSaveStatus('error');
       toast.error(error.response?.data?.message || 'Error al cambiar contrasena');

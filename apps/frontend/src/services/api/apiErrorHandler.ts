@@ -3,6 +3,7 @@
  *
  * Centralized error handling utilities for API requests
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { AxiosError } from 'axios';
 import type { ApiError } from './apiTypes';
@@ -376,9 +377,26 @@ export const formatErrorMessage = (error: unknown): string => {
 };
 
 /**
+ * Extract error message from unknown error type
+ * Simple helper for catch blocks
+ */
+export const getErrorMessage = (error: unknown, fallback: string = 'An error occurred'): string => {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  if (typeof error === 'object' && error !== null && 'message' in error) {
+    return String((error as { message: unknown }).message);
+  }
+  if (typeof error === 'string') {
+    return error;
+  }
+  return fallback;
+};
+
+/**
  * Get error details for debugging
  */
-export const getErrorDetails = (error: unknown): Record<string, any> => {
+export const getErrorDetails = (error: unknown): Record<string, unknown> => {
   const apiError = handleAPIError(error);
 
   return {

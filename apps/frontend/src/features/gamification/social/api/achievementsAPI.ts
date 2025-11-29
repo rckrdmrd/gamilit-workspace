@@ -38,7 +38,7 @@ export interface BackendAchievement {
   isRepeatable: boolean;
   conditions: {
     type: string;
-    requirements: Record<string, any>;
+    requirements: Record<string, unknown>;
   };
   rewards: {
     xp: number;
@@ -85,11 +85,11 @@ export interface AchievementWithProgress extends BackendAchievement {
  */
 export const getAllAchievements = async (): Promise<BackendAchievement[]> => {
   try {
-    const { data } = await apiClient.get<
-      ApiResponse<{ achievements: BackendAchievement[]; total: number }>
-    >(API_ENDPOINTS.gamification.achievements);
+    const { data } = await apiClient.get<BackendAchievement[]>(
+      API_ENDPOINTS.gamification.achievements,
+    );
 
-    return data.data.achievements;
+    return data;
   } catch (error) {
     throw handleAPIError(error);
   }

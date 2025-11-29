@@ -23,17 +23,17 @@ export class UpdateUserStatsDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  level?: number;
+    level?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  total_xp?: number;
+    total_xp?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  xp_to_next_level?: number;
+    xp_to_next_level?: number;
 
   // =====================================================
   // RANK SYSTEM
@@ -41,13 +41,13 @@ export class UpdateUserStatsDto {
 
   @IsOptional()
   @IsString()
-  current_rank?: string;
+    current_rank?: string;
 
   @IsOptional()
   @IsNumber()
   @Min(0)
   @Max(100)
-  rank_progress?: number;
+    rank_progress?: number;
 
   // =====================================================
   // ML COINS SYSTEM
@@ -56,26 +56,26 @@ export class UpdateUserStatsDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  ml_coins?: number;
+    ml_coins?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  ml_coins_earned_total?: number;
+    ml_coins_earned_total?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  ml_coins_spent_total?: number;
+    ml_coins_spent_total?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  ml_coins_earned_today?: number;
+    ml_coins_earned_today?: number;
 
   @IsOptional()
   @IsDate()
-  last_ml_coins_reset?: Date;
+    last_ml_coins_reset?: Date;
 
   // =====================================================
   // STREAK SYSTEM
@@ -84,21 +84,21 @@ export class UpdateUserStatsDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  current_streak?: number;
+    current_streak?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  max_streak?: number;
+    max_streak?: number;
 
   @IsOptional()
   @IsDate()
-  streak_started_at?: Date;
+    streak_started_at?: Date;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  days_active_total?: number;
+    days_active_total?: number;
 
   // =====================================================
   // PROGRESS & COMPLETION
@@ -107,28 +107,28 @@ export class UpdateUserStatsDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  exercises_completed?: number;
+    exercises_completed?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  modules_completed?: number;
+    modules_completed?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  total_score?: number;
+    total_score?: number;
 
   @IsOptional()
   @IsNumber()
   @Min(0)
   @Max(100)
-  average_score?: number;
+    average_score?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  perfect_scores?: number;
+    perfect_scores?: number;
 
   // =====================================================
   // ACHIEVEMENTS & REWARDS
@@ -137,12 +137,12 @@ export class UpdateUserStatsDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  achievements_earned?: number;
+    achievements_earned?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  certificates_earned?: number;
+    certificates_earned?: number;
 
   // =====================================================
   // TIME TRACKING
@@ -150,16 +150,16 @@ export class UpdateUserStatsDto {
 
   @IsOptional()
   @IsString()
-  total_time_spent?: string;
+    total_time_spent?: string;
 
   @IsOptional()
   @IsString()
-  weekly_time_spent?: string;
+    weekly_time_spent?: string;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  sessions_count?: number;
+    sessions_count?: number;
 
   // =====================================================
   // PERIODIC METRICS
@@ -168,17 +168,17 @@ export class UpdateUserStatsDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  weekly_xp?: number;
+    weekly_xp?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  monthly_xp?: number;
+    monthly_xp?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  weekly_exercises?: number;
+    weekly_exercises?: number;
 
   // =====================================================
   // RANKING POSITIONS
@@ -187,17 +187,17 @@ export class UpdateUserStatsDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  global_rank_position?: number;
+    global_rank_position?: number;
 
   @IsOptional()
   @IsInt()
   @Min(1)
-  class_rank_position?: number;
+    class_rank_position?: number;
 
   @IsOptional()
   @IsInt()
   @Min(1)
-  school_rank_position?: number;
+    school_rank_position?: number;
 
   // =====================================================
   // ACTIVITY TIMESTAMPS
@@ -205,11 +205,11 @@ export class UpdateUserStatsDto {
 
   @IsOptional()
   @IsDate()
-  last_activity_at?: Date;
+    last_activity_at?: Date;
 
   @IsOptional()
   @IsDate()
-  last_login_at?: Date;
+    last_login_at?: Date;
 
   // =====================================================
   // METADATA
@@ -217,5 +217,5 @@ export class UpdateUserStatsDto {
 
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

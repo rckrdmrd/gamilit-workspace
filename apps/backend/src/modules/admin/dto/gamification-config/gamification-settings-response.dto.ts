@@ -15,7 +15,7 @@ export class GamificationSettingsResponseDto {
       perfect_score_bonus: 2.0,
     },
   })
-  xp!: Record<string, any>;
+    xp!: Record<string, any>;
 
   @ApiProperty({
     description: 'Rank thresholds',
@@ -27,7 +27,7 @@ export class GamificationSettingsResponseDto {
       expert: 5000,
     },
   })
-  ranks!: Record<string, any>;
+    ranks!: Record<string, any>;
 
   @ApiProperty({
     description: 'ML Coins rewards',
@@ -37,13 +37,13 @@ export class GamificationSettingsResponseDto {
       exercise_completion_reward: 100,
     },
   })
-  coins!: Record<string, any>;
+    coins!: Record<string, any>;
 
   @ApiPropertyOptional({
     description: 'Achievement criteria',
     example: { criteria: [] },
   })
-  achievements?: Record<string, any>;
+    achievements?: Record<string, any>;
 
   @ApiProperty({
     description: 'Default values from system',
@@ -52,17 +52,17 @@ export class GamificationSettingsResponseDto {
       'gamification.xp.completion_multiplier': 1.5,
     },
   })
-  defaults!: Record<string, any>;
+    defaults!: Record<string, any>;
 
   @ApiProperty({
     description: 'Timestamp of last update',
     example: '2025-11-11T20:00:00.000Z',
   })
-  last_updated!: string;
+    last_updated!: string;
 
   @ApiPropertyOptional({
     description: 'Admin user ID who last updated the settings',
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  updated_by?: string;
+    updated_by?: string;
 }

@@ -33,7 +33,7 @@ BEGIN
         estimated_time_minutes, max_attempts,
         hints, enable_hints, hint_cost_ml_coins,
         xp_reward, ml_coins_reward,
-        is_active, version
+        is_active, version, requires_manual_grading
     ) VALUES (
         mod_id,
         'Análisis de Fuentes Históricas sobre Marie Curie',
@@ -140,10 +140,11 @@ BEGIN
             'Los blogs anónimos sin fuentes tienen credibilidad muy baja'
         ]::text[],
         true, 15,
-        100, 20,
-        true, 1
+        150, 30,
+        true, 1, true  -- requires_manual_grading = true (evaluación subjetiva)
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
+        requires_manual_grading = EXCLUDED.requires_manual_grading,
         updated_at = NOW();
 
     -- ========================================================================
@@ -158,7 +159,7 @@ BEGIN
         estimated_time_minutes, max_attempts,
         hints, enable_hints, hint_cost_ml_coins,
         xp_reward, ml_coins_reward,
-        is_active, version
+        is_active, version, requires_manual_grading
     ) VALUES (
         mod_id,
         'Debate Digital Estructurado',
@@ -258,17 +259,18 @@ BEGIN
             "note": "Este debate no tiene respuesta única correcta. Se evalúa la calidad de argumentación."
         }'::jsonb,
         'advanced', 100, 70,
-        100, 20,
+        150, 30,
         ARRAY[
             'No hay respuesta única correcta; lo importante es la calidad de la argumentación',
             'Usa evidencias específicas de la vida de Marie para respaldar tus argumentos',
             'Anticipa y responde a posibles contraargumentos'
         ]::text[],
         true, 15,
-        100, 20,
-        true, 1
+        150, 30,
+        true, 1, true  -- requires_manual_grading = true (evaluación subjetiva)
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
+        requires_manual_grading = EXCLUDED.requires_manual_grading,
         updated_at = NOW();
 
     -- ========================================================================
@@ -284,7 +286,7 @@ BEGIN
         estimated_time_minutes, max_attempts,
         hints, enable_hints, hint_cost_ml_coins,
         xp_reward, ml_coins_reward,
-        is_active, version
+        is_active, version, requires_manual_grading
     ) VALUES (
         mod_id,
         'Matriz de Perspectivas',
@@ -423,8 +425,8 @@ BEGIN
             'Polonia estaba bajo ocupación y buscaba símbolos de orgullo nacional'
         ]::text[],
         true, 15,
-        100, 20,
-        true, 1
+        150, 30,
+        true, 1, true  -- requires_manual_grading = true (evaluación subjetiva)
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         title = EXCLUDED.title,
         subtitle = EXCLUDED.subtitle,
@@ -439,6 +441,7 @@ BEGIN
         solution = EXCLUDED.solution,
         estimated_time_minutes = EXCLUDED.estimated_time_minutes,
         hints = EXCLUDED.hints,
+        requires_manual_grading = EXCLUDED.requires_manual_grading,
         updated_at = NOW();
 
     -- ========================================================================
@@ -453,7 +456,7 @@ BEGIN
         estimated_time_minutes, max_attempts,
         hints, enable_hints, hint_cost_ml_coins,
         xp_reward, ml_coins_reward,
-        is_active, version
+        is_active, version, requires_manual_grading
     ) VALUES (
         mod_id,
         'Creación de Podcast Argumentativo',
@@ -523,17 +526,18 @@ BEGIN
             "evaluation": "rubric_based"
         }'::jsonb,
         'advanced', 100, 70,
-        100, 20,
+        150, 30,
         ARRAY[
             'Estructura tu podcast con introducción, desarrollo y conclusión clara',
             'Usa evidencias históricas específicas para respaldar tus argumentos',
             'Reconoce la complejidad: evita juicios simplistas'
         ]::text[],
         true, 15,
-        100, 20,
-        true, 1
+        150, 30,
+        true, 1, true  -- requires_manual_grading = true (evaluación subjetiva - PODCAST)
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
+        requires_manual_grading = EXCLUDED.requires_manual_grading,
         updated_at = NOW();
 
     -- ========================================================================
@@ -548,7 +552,7 @@ BEGIN
         estimated_time_minutes, max_attempts,
         hints, enable_hints, hint_cost_ml_coins,
         xp_reward, ml_coins_reward,
-        is_active, version
+        is_active, version, requires_manual_grading
     ) VALUES (
         mod_id,
         'Tribunal de Opiniones: Evaluando Afirmaciones',
@@ -639,17 +643,18 @@ BEGIN
             "validation": {"minJustificationLength": 30, "maxJustificationLength": 200, "requireBothTypeAndVerdict": true}
         }'::jsonb,
         'advanced', 100, 70,
-        100, 20,
+        150, 30,
         ARRAY[
             'Juzga con criterios éticos de la época Y con perspectiva moderna',
             'Reconoce que muchas decisiones éticas son complejas sin respuestas simples',
             'Fundamenta tu veredicto con razonamiento claro'
         ]::text[],
         true, 15,
-        100, 20,
-        true, 1
+        150, 30,
+        true, 1, true  -- requires_manual_grading = true (evaluación subjetiva)
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
+        requires_manual_grading = EXCLUDED.requires_manual_grading,
         updated_at = NOW();
 
     -- Update module total_exercises

@@ -46,14 +46,14 @@ export class Exercise {
    * Identificador único del ejercicio (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del módulo al que pertenece este ejercicio (FK CRÍTICA)
    * IMPORTANTE: NOT NULL, ON DELETE CASCADE
    */
   @Column({ type: 'uuid' })
-  module_id!: string;
+    module_id!: string;
 
   // =====================================================
   // BASIC INFORMATION
@@ -63,25 +63,25 @@ export class Exercise {
    * Título del ejercicio
    */
   @Column({ type: 'text' })
-  title!: string;
+    title!: string;
 
   /**
    * Subtítulo del ejercicio
    */
   @Column({ type: 'text', nullable: true })
-  subtitle?: string;
+    subtitle?: string;
 
   /**
    * Descripción del ejercicio
    */
   @Column({ type: 'text', nullable: true })
-  description?: string;
+    description?: string;
 
   /**
    * Instrucciones detalladas para el estudiante
    */
   @Column({ type: 'text', nullable: true })
-  instructions?: string;
+    instructions?: string;
 
   // =====================================================
   // PEDAGOGICAL CONTENT (DB-125: 2025-11-19)
@@ -93,7 +93,7 @@ export class Exercise {
    * el modelo de comprensión lectora de Daniel Cassany.
    */
   @Column({ type: 'text', nullable: true })
-  objective?: string;
+    objective?: string;
 
   /**
    * Guía detallada de cómo resolver el ejercicio (300-800 palabras)
@@ -101,27 +101,27 @@ export class Exercise {
    * completar exitosamente el ejercicio.
    */
   @Column({ type: 'text', nullable: true })
-  how_to_solve?: string;
+    how_to_solve?: string;
 
   /**
    * Estrategias recomendadas para resolver eficientemente (100-300 palabras)
    * Tips, trucos, y mejores prácticas para estudiantes.
    */
   @Column({ type: 'text', nullable: true })
-  recommended_strategy?: string;
+    recommended_strategy?: string;
 
   /**
    * Notas metodológicas para educadores (100-400 palabras)
    * Contexto pedagógico, relación con competencias, y alineación con modelo Cassany.
    */
   @Column({ type: 'text', nullable: true })
-  pedagogical_notes?: string;
+    pedagogical_notes?: string;
 
   /**
    * Índice de orden dentro del módulo
    */
   @Column({ type: 'integer' })
-  order_index!: number;
+    order_index!: number;
 
   // =====================================================
   // EXERCISE TYPE & MECHANICS
@@ -140,7 +140,7 @@ export class Exercise {
    *       diario_interactivo, resumen_visual
    */
   @Column({ type: 'enum', enum: ExerciseTypeEnum, enumName: 'educational_content.exercise_type' })
-  exercise_type!: ExerciseTypeEnum;
+    exercise_type!: ExerciseTypeEnum;
 
   /**
    * Configuración específica del ejercicio (JSONB)
@@ -150,7 +150,7 @@ export class Exercise {
    * - etc.
    */
   @Column({ type: 'jsonb', default: {} })
-  config!: Record<string, any>;
+    config!: Record<string, any>;
 
   /**
    * Contenido del ejercicio (JSONB)
@@ -165,20 +165,20 @@ export class Exercise {
       correct_answers: [],
     },
   })
-  content!: Record<string, any>;
+    content!: Record<string, any>;
 
   /**
    * Solución del ejercicio (JSONB)
    * Información privada no visible para estudiantes durante la resolución
    */
   @Column({ type: 'jsonb', nullable: true })
-  solution?: Record<string, any>;
+    solution?: Record<string, any>;
 
   /**
    * Rúbrica de evaluación (JSONB)
    */
   @Column({ type: 'jsonb', nullable: true })
-  rubric?: Record<string, any>;
+    rubric?: Record<string, any>;
 
   // =====================================================
   // GRADING & SCORING
@@ -188,7 +188,7 @@ export class Exercise {
    * Si el ejercicio puede calificarse automáticamente
    */
   @Column({ type: 'boolean', default: true })
-  auto_gradable!: boolean;
+    auto_gradable!: boolean;
 
   /**
    * Si el ejercicio requiere revisión manual del maestro
@@ -200,7 +200,7 @@ export class Exercise {
    * @version 1.0 (2025-11-24) - Arquitectura dual attempts/submissions
    */
   @Column({ type: 'boolean', default: false })
-  requires_manual_grading!: boolean;
+    requires_manual_grading!: boolean;
 
   /**
    * Nivel de dificultad del ejercicio
@@ -217,19 +217,19 @@ export class Exercise {
     enumName: 'difficulty_level',
     default: DifficultyLevelEnum.BEGINNER,
   })
-  difficulty_level!: DifficultyLevelEnum;
+    difficulty_level!: DifficultyLevelEnum;
 
   /**
    * Puntuación máxima posible
    */
   @Column({ type: 'integer', default: 100 })
-  max_points!: number;
+    max_points!: number;
 
   /**
    * Puntuación mínima para aprobar
    */
   @Column({ type: 'integer', default: 70 })
-  passing_score!: number;
+    passing_score!: number;
 
   // =====================================================
   // TIMING
@@ -239,13 +239,13 @@ export class Exercise {
    * Tiempo estimado en minutos para completar
    */
   @Column({ type: 'integer', default: 10 })
-  estimated_time_minutes!: number;
+    estimated_time_minutes!: number;
 
   /**
    * Límite de tiempo en minutos (NULL = sin límite)
    */
   @Column({ type: 'integer', nullable: true })
-  time_limit_minutes?: number;
+    time_limit_minutes?: number;
 
   // =====================================================
   // ATTEMPTS & RETRY LOGIC
@@ -255,19 +255,19 @@ export class Exercise {
    * Número máximo de intentos permitidos
    */
   @Column({ type: 'integer', default: 3 })
-  max_attempts!: number;
+    max_attempts!: number;
 
   /**
    * Si se permite reintentar el ejercicio
    */
   @Column({ type: 'boolean', default: true })
-  allow_retry!: boolean;
+    allow_retry!: boolean;
 
   /**
    * Minutos de espera entre reintentos
    */
   @Column({ type: 'integer', default: 0 })
-  retry_delay_minutes!: number;
+    retry_delay_minutes!: number;
 
   // =====================================================
   // HINTS & SUPPORT
@@ -277,19 +277,19 @@ export class Exercise {
    * Pistas disponibles para el ejercicio
    */
   @Column({ type: 'text', array: true, nullable: true })
-  hints?: string[];
+    hints?: string[];
 
   /**
    * Si se habilitan las pistas
    */
   @Column({ type: 'boolean', default: true })
-  enable_hints!: boolean;
+    enable_hints!: boolean;
 
   /**
    * Costo en ML Coins por usar una pista
    */
   @Column({ type: 'integer', default: 5 })
-  hint_cost_ml_coins!: number;
+    hint_cost_ml_coins!: number;
 
   // =====================================================
   // COMODINES (POWER-UPS)
@@ -314,7 +314,7 @@ export class Exercise {
     array: true,
     default: ['pistas', 'vision_lectora', 'segunda_oportunidad'],
   })
-  comodines_allowed!: ComodinTypeEnum[];
+    comodines_allowed!: ComodinTypeEnum[];
 
   /**
    * Configuración de comodines (JSONB)
@@ -328,7 +328,7 @@ export class Exercise {
       segunda_oportunidad: { cost: 40, enabled: true },
     },
   })
-  comodines_config!: Record<string, any>;
+    comodines_config!: Record<string, any>;
 
   // =====================================================
   // GAMIFICATION & REWARDS
@@ -338,20 +338,20 @@ export class Exercise {
    * Puntos de experiencia (XP) otorgados al completar correctamente
    */
   @Column({ type: 'integer', default: 20 })
-  xp_reward!: number;
+    xp_reward!: number;
 
   /**
    * Monedas ML otorgadas al completar correctamente
    */
   @Column({ type: 'integer', default: 5 })
-  ml_coins_reward!: number;
+    ml_coins_reward!: number;
 
   /**
    * Multiplicador de bonificación para recompensas
    * Ejemplo: 1.5 = 50% más recompensas
    */
   @Column({ type: 'numeric', precision: 3, scale: 2, default: 1.0 })
-  bonus_multiplier!: number;
+    bonus_multiplier!: number;
 
   // =====================================================
   // STATUS & VISIBILITY
@@ -361,19 +361,19 @@ export class Exercise {
    * Si el ejercicio está activo y disponible
    */
   @Column({ type: 'boolean', default: true })
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Si el ejercicio es opcional (no afecta progreso)
    */
   @Column({ type: 'boolean', default: false })
-  is_optional!: boolean;
+    is_optional!: boolean;
 
   /**
    * Si el ejercicio otorga bonificación extra
    */
   @Column({ type: 'boolean', default: false })
-  is_bonus!: boolean;
+    is_bonus!: boolean;
 
   // =====================================================
   // VERSIONING & REVIEW
@@ -383,25 +383,25 @@ export class Exercise {
    * Número de versión del ejercicio
    */
   @Column({ type: 'integer', default: 1 })
-  version!: number;
+    version!: number;
 
   /**
    * Notas sobre cambios en la versión
    */
   @Column({ type: 'text', nullable: true })
-  version_notes?: string;
+    version_notes?: string;
 
   /**
    * ID del usuario que creó el ejercicio
    */
   @Column({ type: 'uuid', nullable: true })
-  created_by?: string;
+    created_by?: string;
 
   /**
    * ID del usuario que revisó el ejercicio
    */
   @Column({ type: 'uuid', nullable: true })
-  reviewed_by?: string;
+    reviewed_by?: string;
 
   // =====================================================
   // ADAPTIVE LEARNING
@@ -411,19 +411,19 @@ export class Exercise {
    * Si el ejercicio adapta su dificultad según desempeño
    */
   @Column({ type: 'boolean', default: false })
-  adaptive_difficulty!: boolean;
+    adaptive_difficulty!: boolean;
 
   /**
    * Array de UUIDs de ejercicios prerequisitos (auto-referencia débil sin FK)
    */
   @Column({ type: 'uuid', array: true, nullable: true })
-  prerequisites?: string[];
+    prerequisites?: string[];
 
   /**
    * Metadatos adicionales (JSONB)
    */
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   // =====================================================
   // AUDIT FIELDS
@@ -433,11 +433,11 @@ export class Exercise {
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización del registro
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import { Trophy, RefreshCw, AlertCircle, Crown } from 'lucide-react';
 import { useAuth } from '@/app/providers/AuthContext';
@@ -122,7 +123,7 @@ export const LeaderboardPage: React.FC = () => {
       }
 
       setLeaderboardData(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to load leaderboard:', err);
       setError(err.message || 'Error al cargar la clasificación. Por favor, intenta de nuevo.');
     } finally {
@@ -136,6 +137,7 @@ export const LeaderboardPage: React.FC = () => {
    */
   useEffect(() => {
     fetchLeaderboard(activeTab);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   /**

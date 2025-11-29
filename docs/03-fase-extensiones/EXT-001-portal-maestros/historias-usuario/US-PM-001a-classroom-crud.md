@@ -323,15 +323,61 @@ Response (201 Created):
 
 **Progreso Global:** 50% completado (16h de 32h)
 
+## Implementación Frontend - Hooks
+
+> **Actualizado:** 2025-11-29
+
+### Hook Principal: `useClassrooms`
+
+**Ubicación:** `apps/frontend/src/apps/teacher/hooks/useClassrooms.ts`
+
+```typescript
+interface UseClassroomsReturn {
+  classrooms: Classroom[];
+  pagination: PaginationInfo | null;
+  selectedClassroom: Classroom | null;
+  students: StudentMonitoring[];
+  loading: boolean;
+  error: Error | null;
+  selectClassroom: (id: string | null) => Promise<void>;
+  createClassroom: (data: { name: string; subject: string; grade_level: string }) => Promise<Classroom>;
+  updateClassroom: (id: string, data: Partial<...>) => Promise<Classroom>;
+  deleteClassroom: (id: string) => Promise<void>;
+  refreshStudents: () => Promise<void>;
+  refresh: () => Promise<void>;
+}
+```
+
+**Uso en páginas:**
+- `TeacherClassesPage.tsx` - Gestión de aulas
+- `TeacherAssignments.tsx` - Selección de classroom para asignaciones
+- `TeacherAlertsPage.tsx` - Filtrado por classroom
+
+### API Service: `classroomsApi`
+
+**Ubicación:** `apps/frontend/src/services/api/teacher/classroomsApi.ts`
+
+| Método | Función | Endpoint Backend |
+|--------|---------|------------------|
+| `getClassrooms(filters)` | Listar aulas | `GET /teacher/classrooms` |
+| `getClassroomById(id)` | Detalle de aula | `GET /teacher/classrooms/:id` |
+| `createClassroom(data)` | Crear aula | `POST /teacher/classrooms` |
+| `updateClassroom(id, data)` | Actualizar aula | `PUT /teacher/classrooms/:id` |
+| `deleteClassroom(id)` | Eliminar aula | `DELETE /teacher/classrooms/:id` |
+| `getClassroomStudents(id)` | Estudiantes del aula | `GET /teacher/classrooms/:id/students` |
+
+---
+
 ## Notas
 
 - ✅ Archivo modularizado desde US-PM-001-FULL.md (2025-11-02)
 - ✅ Cumple PF-001 (<400L)
+- ✅ **Hooks documentados (2025-11-29)**
 - 📋 Enfoque: Operaciones CRUD de classrooms
 - 🔗 Complementa con US-PM-001b para gestión de estudiantes
 
 ---
 
-**Última actualización:** 2025-11-02
-**Versión:** 1.0 (Modular)
-**Estado:** READY FOR DEVELOPMENT
+**Última actualización:** 2025-11-29
+**Versión:** 1.1 (Modular + Hooks)
+**Estado:** ✅ IMPLEMENTADO

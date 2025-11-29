@@ -128,7 +128,9 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
+                    onClick={() =>
+                      setActiveTab(tab.id as 'powerups' | 'hints' | 'progress' | 'stats')
+                    }
                     className={`
                       rounded-detective p-3 text-xs font-semibold transition-all
                       ${
@@ -185,36 +187,48 @@ export const ExerciseSidebar: React.FC<ExerciseSidebarProps> = ({
                   {/* Available Power-ups */}
                   {availablePowerUps.length > 0 ? (
                     <div className="space-y-2">
-                      <p className="text-xs font-semibold text-detective-text-secondary">
-                        DISPONIBLES
-                      </p>
-                      {availablePowerUps.map((powerUp) => (
-                        <motion.div
-                          key={powerUp.id}
-                          whileHover={{ scale: 1.02 }}
-                          className="rounded-detective border-2 border-detective-orange bg-white p-3 dark:bg-gray-900"
-                        >
-                          <div className="mb-2 flex items-start gap-2">
-                            <Zap className="h-5 w-5 flex-shrink-0 text-detective-orange" />
-                            <div className="flex-1">
-                              <p className="text-sm font-bold text-detective-text">
-                                {powerUp.name}
-                              </p>
-                              <p className="text-xs text-detective-text-secondary">
-                                {powerUp.description}
-                              </p>
-                            </div>
-                          </div>
-                          <DetectiveButton
-                            variant="primary"
-                            onClick={() => handleUsePowerUp(powerUp.id)}
-                            className="w-full"
-                            disabled={powerUp.status !== 'available'}
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs font-semibold text-detective-text-secondary">
+                          DISPONIBLES
+                        </p>
+                        {availablePowerUps.length > 2 && (
+                          <p className="text-xs text-detective-text-secondary">
+                            {availablePowerUps.length} items
+                          </p>
+                        )}
+                      </div>
+                      <div
+                        className="space-y-2 overflow-y-auto overscroll-contain pr-2"
+                        style={{ maxHeight: '260px' }}
+                      >
+                        {availablePowerUps.map((powerUp) => (
+                          <motion.div
+                            key={powerUp.id}
+                            whileHover={{ scale: 1.02 }}
+                            className="rounded-detective border-2 border-detective-orange bg-white p-3 dark:bg-gray-900"
                           >
-                            Usar Power-up
-                          </DetectiveButton>
-                        </motion.div>
-                      ))}
+                            <div className="mb-2 flex items-start gap-2">
+                              <Zap className="h-5 w-5 flex-shrink-0 text-detective-orange" />
+                              <div className="flex-1">
+                                <p className="text-sm font-bold text-detective-text">
+                                  {powerUp.name}
+                                </p>
+                                <p className="text-xs text-detective-text-secondary">
+                                  {powerUp.description}
+                                </p>
+                              </div>
+                            </div>
+                            <DetectiveButton
+                              variant="primary"
+                              onClick={() => handleUsePowerUp(powerUp.id)}
+                              className="w-full"
+                              disabled={powerUp.status !== 'available'}
+                            >
+                              Usar Power-up
+                            </DetectiveButton>
+                          </motion.div>
+                        ))}
+                      </div>
                     </div>
                   ) : (
                     <p className="py-4 text-center text-sm italic text-detective-text-secondary">

@@ -60,5 +60,5 @@ export class RenderTemplateDto {
   })
   @IsObject()
   @IsNotEmpty()
-  variables!: Record<string, string>;
+    variables!: Record<string, string>;
 }

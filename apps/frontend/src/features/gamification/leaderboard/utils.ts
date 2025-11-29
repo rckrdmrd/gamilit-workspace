@@ -3,6 +3,7 @@
  *
  * Helper functions and utilities for leaderboard operations
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import type { LeaderboardEntry, LeaderboardTypeVariant } from './LiveLeaderboard';
 
@@ -13,10 +14,7 @@ import type { LeaderboardEntry, LeaderboardTypeVariant } from './LiveLeaderboard
 /**
  * Calculate score based on leaderboard type
  */
-export const calculateScore = (
-  entry: LeaderboardEntry,
-  type: LeaderboardTypeVariant
-): number => {
+export const calculateScore = (entry: LeaderboardEntry, type: LeaderboardTypeVariant): number => {
   switch (type) {
     case 'xp':
       return entry.xp;
@@ -33,10 +31,7 @@ export const calculateScore = (
 /**
  * Format score for display based on type
  */
-export const formatScore = (
-  score: number,
-  type: LeaderboardTypeVariant
-): string => {
+export const formatScore = (score: number, type: LeaderboardTypeVariant): string => {
   switch (type) {
     case 'xp':
       return `${score.toLocaleString()} XP`;
@@ -57,7 +52,9 @@ export const formatScore = (
 /**
  * Get rank tier based on position
  */
-export const getRankTier = (rank: number): 'gold' | 'silver' | 'bronze' | 'top10' | 'top50' | 'standard' => {
+export const getRankTier = (
+  rank: number,
+): 'gold' | 'silver' | 'bronze' | 'top10' | 'top50' | 'standard' => {
   if (rank === 1) return 'gold';
   if (rank === 2) return 'silver';
   if (rank === 3) return 'bronze';
@@ -92,10 +89,7 @@ export const getMotivationalMessage = (rank: number, percentile: number): string
 /**
  * Calculate points needed to reach next rank
  */
-export const calculatePointsToNextRank = (
-  currentScore: number,
-  nextRankScore: number
-): number => {
+export const calculatePointsToNextRank = (currentScore: number, nextRankScore: number): number => {
   return Math.max(0, nextRankScore - currentScore);
 };
 
@@ -108,7 +102,7 @@ export const calculatePointsToNextRank = (
  */
 export const sortEntriesByType = (
   entries: LeaderboardEntry[],
-  type: LeaderboardTypeVariant
+  type: LeaderboardTypeVariant,
 ): LeaderboardEntry[] => {
   return [...entries].sort((a, b) => {
     const scoreA = calculateScore(a, type);
@@ -123,18 +117,15 @@ export const sortEntriesByType = (
 export const filterByRankRange = (
   entries: LeaderboardEntry[],
   minRank: number,
-  maxRank: number
+  maxRank: number,
 ): LeaderboardEntry[] => {
-  return entries.filter(e => e.rank >= minRank && e.rank <= maxRank);
+  return entries.filter((e) => e.rank >= minRank && e.rank <= maxRank);
 };
 
 /**
  * Get top N entries
  */
-export const getTopN = (
-  entries: LeaderboardEntry[],
-  n: number
-): LeaderboardEntry[] => {
+export const getTopN = (entries: LeaderboardEntry[], n: number): LeaderboardEntry[] => {
   return entries.slice(0, n);
 };
 
@@ -144,7 +135,7 @@ export const getTopN = (
 export const getEntriesAroundRank = (
   entries: LeaderboardEntry[],
   targetRank: number,
-  range: number = 5
+  range: number = 5,
 ): LeaderboardEntry[] => {
   const minRank = Math.max(1, targetRank - range);
   const maxRank = targetRank + range;
@@ -158,9 +149,7 @@ export const getEntriesAroundRank = (
 /**
  * Calculate rank change type
  */
-export const calculateChangeType = (
-  change: number
-): 'up' | 'down' | 'same' | 'new' => {
+export const calculateChangeType = (change: number): 'up' | 'down' | 'same' | 'new' => {
   if (change > 0) return 'up';
   if (change < 0) return 'down';
   if (change === 0) return 'same';
@@ -170,7 +159,10 @@ export const calculateChangeType = (
 /**
  * Format rank change for display
  */
-export const formatRankChange = (change: number, changeType: 'up' | 'down' | 'same' | 'new'): string => {
+export const formatRankChange = (
+  change: number,
+  changeType: 'up' | 'down' | 'same' | 'new',
+): string => {
   if (changeType === 'new') return 'NUEVO';
   if (changeType === 'same') return '-';
   const prefix = changeType === 'up' ? '+' : '';
@@ -199,17 +191,14 @@ export const formatLastUpdated = (date: Date): string => {
     day: '2-digit',
     month: '2-digit',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   });
 };
 
 /**
  * Calculate time until next refresh
  */
-export const getTimeUntilRefresh = (
-  lastUpdated: Date,
-  refreshInterval: number
-): number => {
+export const getTimeUntilRefresh = (lastUpdated: Date, refreshInterval: number): number => {
   const now = new Date();
   const nextRefresh = new Date(lastUpdated.getTime() + refreshInterval);
   return Math.max(0, nextRefresh.getTime() - now.getTime());
@@ -257,7 +246,7 @@ export const sanitizeEntries = (entries: any[]): LeaderboardEntry[] => {
  */
 export const calculateAverageScore = (
   entries: LeaderboardEntry[],
-  type: LeaderboardTypeVariant
+  type: LeaderboardTypeVariant,
 ): number => {
   if (entries.length === 0) return 0;
   const total = entries.reduce((sum, entry) => sum + calculateScore(entry, type), 0);
@@ -267,15 +256,12 @@ export const calculateAverageScore = (
 /**
  * Get score distribution (quartiles)
  */
-export const getScoreDistribution = (
-  entries: LeaderboardEntry[],
-  type: LeaderboardTypeVariant
-) => {
+export const getScoreDistribution = (entries: LeaderboardEntry[], type: LeaderboardTypeVariant) => {
   if (entries.length === 0) {
     return { min: 0, q1: 0, median: 0, q3: 0, max: 0 };
   }
 
-  const scores = entries.map(e => calculateScore(e, type)).sort((a, b) => a - b);
+  const scores = entries.map((e) => calculateScore(e, type)).sort((a, b) => a - b);
   const len = scores.length;
 
   const getQuartile = (q: number) => {
@@ -293,7 +279,7 @@ export const getScoreDistribution = (
     q1: getQuartile(0.25),
     median: getQuartile(0.5),
     q3: getQuartile(0.75),
-    max: scores[len - 1]
+    max: scores[len - 1],
   };
 };
 
@@ -302,7 +288,7 @@ export const getScoreDistribution = (
  */
 export const getUserPosition = (
   entries: LeaderboardEntry[],
-  userId: string
+  userId: string,
 ): {
   entry: LeaderboardEntry | null;
   rank: number;
@@ -310,7 +296,7 @@ export const getUserPosition = (
   aboveUser: LeaderboardEntry | null;
   belowUser: LeaderboardEntry | null;
 } => {
-  const userEntry = entries.find(e => e.userId === userId);
+  const userEntry = entries.find((e) => e.userId === userId);
 
   if (!userEntry) {
     return {
@@ -318,21 +304,21 @@ export const getUserPosition = (
       rank: 0,
       percentile: 0,
       aboveUser: null,
-      belowUser: null
+      belowUser: null,
     };
   }
 
   const rank = userEntry.rank;
   const percentile = calculatePercentile(rank, entries.length);
-  const aboveUser = entries.find(e => e.rank === rank - 1) || null;
-  const belowUser = entries.find(e => e.rank === rank + 1) || null;
+  const aboveUser = entries.find((e) => e.rank === rank - 1) || null;
+  const belowUser = entries.find((e) => e.rank === rank + 1) || null;
 
   return {
     entry: userEntry,
     rank,
     percentile,
     aboveUser,
-    belowUser
+    belowUser,
   };
 };
 
@@ -346,7 +332,7 @@ export const getUserPosition = (
 export const compareEntries = (
   a: LeaderboardEntry,
   b: LeaderboardEntry,
-  type: LeaderboardTypeVariant
+  type: LeaderboardTypeVariant,
 ) => {
   const scoreA = calculateScore(a, type);
   const scoreB = calculateScore(b, type);
@@ -357,7 +343,7 @@ export const compareEntries = (
     winner: scoreA > scoreB ? a : b,
     betterXP: a.xp > b.xp ? a : b,
     betterStreak: a.streak > b.streak ? a : b,
-    betterCompletion: a.completionPercentage > b.completionPercentage ? a : b
+    betterCompletion: a.completionPercentage > b.completionPercentage ? a : b,
   };
 };
 
@@ -368,25 +354,19 @@ export const compareEntries = (
 /**
  * Export leaderboard data as CSV
  */
-export const exportToCSV = (
-  entries: LeaderboardEntry[],
-  type: LeaderboardTypeVariant
-): string => {
+export const exportToCSV = (entries: LeaderboardEntry[], type: LeaderboardTypeVariant): string => {
   const headers = ['Rank', 'Username', 'Score', 'XP', 'Completion %', 'Streak', 'Change'];
-  const rows = entries.map(entry => [
+  const rows = entries.map((entry) => [
     entry.rank,
     entry.username,
     calculateScore(entry, type),
     entry.xp,
     entry.completionPercentage.toFixed(2),
     entry.streak,
-    entry.change
+    entry.change,
   ]);
 
-  const csvContent = [
-    headers.join(','),
-    ...rows.map(row => row.join(','))
-  ].join('\n');
+  const csvContent = [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
 
   return csvContent;
 };
@@ -397,7 +377,7 @@ export const exportToCSV = (
 export const downloadAsCSV = (
   entries: LeaderboardEntry[],
   type: LeaderboardTypeVariant,
-  filename: string = 'leaderboard.csv'
+  filename: string = 'leaderboard.csv',
 ): void => {
   const csv = exportToCSV(entries, type);
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -423,7 +403,7 @@ export const downloadAsCSV = (
  */
 export const generateShareText = (
   userEntry: LeaderboardEntry,
-  type: LeaderboardTypeVariant
+  type: LeaderboardTypeVariant,
 ): string => {
   const score = formatScore(calculateScore(userEntry, type), type);
   const emoji = userEntry.rank <= 3 ? ['🥇', '🥈', '🥉'][userEntry.rank - 1] : '🏆';

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Scale, ChevronRight, ChevronLeft, Send } from 'lucide-react';
+import { Scale, ChevronRight, ChevronLeft } from 'lucide-react';
 import { DetectiveCard } from '@/shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@/shared/components/mechanics/mechanicsTypes';
@@ -34,9 +34,9 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
   const [currentJustification, setCurrentJustification] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [_isSubmitting, setIsSubmitting] = useState(false);
   const [startTime] = useState(new Date());
-  const [hintsUsed] = useState(0);
+  const [hintsUsed, setHintsUsed] = useState(0);
 
   const statements = exercise.content?.statements || [];
   const currentStatement = statements[currentIndex];
@@ -94,6 +94,11 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
     return false;
   }, [currentStatement, currentClassification, currentVerdict, currentJustification]);
 
+  // Use hint handler (for future hint system)
+  const _useHint = useCallback(() => {
+    setHintsUsed((prev) => prev + 1);
+  }, []);
+
   // Navigation
   const handleNext = useCallback(() => {
     saveCurrentEvaluation();
@@ -114,7 +119,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
     // Save current evaluation first
     saveCurrentEvaluation();
 
-    // Validate all statements are evaluated
+    // Create updated evaluations map with current evaluation
     const currentEvaluations = new Map(evaluations);
     if (currentStatement && currentClassification && currentVerdict) {
       currentEvaluations.set(currentStatement.id, {
@@ -125,11 +130,12 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
       });
     }
 
+    // Validate all statements are evaluated
     if (currentEvaluations.size < totalStatements) {
       setFeedback({
         type: 'error',
-        title: 'Ejercicio Incompleto',
-        message: `Has evaluado ${currentEvaluations.size} de ${totalStatements} afirmaciones. Evalúa todas antes de enviar.`,
+        title: 'Evaluación Incompleta',
+        message: `Has evaluado ${currentEvaluations.size} de ${totalStatements} afirmaciones. Por favor evalúa todas antes de enviar.`,
       });
       setShowFeedback(true);
       return;
@@ -179,10 +185,12 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
       await fetchUserProgress();
       await fetchBalance();
 
-      console.log('✅ [TribunalOpiniones] Submission successful:', {
-        score: response.score,
-        rewards: response.rewards,
-      });
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ [TribunalOpiniones] Submission successful:', {
+          score: response.score,
+          rewards: response.rewards,
+        });
+      }
     } catch (error) {
       console.error('[TribunalOpiniones] Submission error:', error);
       setFeedback({
@@ -382,7 +390,7 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
             </button>
 
             <div className="flex items-center gap-3">
-              {currentIndex < totalStatements - 1 ? (
+              {currentIndex < totalStatements - 1 && (
                 <button
                   onClick={handleNext}
                   disabled={!isCurrentComplete}
@@ -391,26 +399,8 @@ export const TribunalOpinionesExercise: React.FC<TribunalOpinionesExerciseProps>
                   Siguiente
                   <ChevronRight className="h-5 w-5" />
                 </button>
-              ) : (
-                <button
-                  onClick={handleCheck}
-                  disabled={isSubmitting || evaluatedCount < totalStatements}
-                  className="flex items-center gap-2 rounded-lg bg-green-600 px-6 py-2 text-white transition-all hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isSubmitting ? 'Enviando...' : 'Enviar Evaluaciones'}
-                  <Send className="h-5 w-5" />
-                </button>
               )}
             </div>
-
-            <button
-              onClick={handleNext}
-              disabled={currentIndex === totalStatements - 1}
-              className="flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 transition-all hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Siguiente
-              <ChevronRight className="h-5 w-5" />
-            </button>
           </div>
 
           {/* Progress Dots */}

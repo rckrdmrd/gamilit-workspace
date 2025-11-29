@@ -9,7 +9,7 @@ import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS } from '@/config/api.config';
 import type {
   GamificationParameter,
-  MayaRank,
+  MayaRankConfig,
   GamificationStats,
   UpdateParameterDto,
   BulkUpdateParametersDto,
@@ -100,34 +100,35 @@ export const gamificationConfigApi = {
   // ========================================
 
   /**
-   * List all Maya ranks
+   * List all Maya ranks configuration
    *
-   * @returns Array of Maya ranks
+   * @returns Array of Maya rank configs
+   * @see MayaRankConfig - Configuration interface (not to confuse with MayaRank enum)
    */
-  async listMayaRanks(): Promise<MayaRank[]> {
+  async listMayaRanks(): Promise<MayaRankConfig[]> {
     const response = await apiClient.get(`${BASE_URL}/maya-ranks`);
     return response.data;
   },
 
   /**
-   * Get a specific Maya rank by ID
+   * Get a specific Maya rank config by ID
    *
    * @param id Rank ID
-   * @returns Maya rank details
+   * @returns Maya rank config details
    */
-  async getMayaRank(id: string): Promise<MayaRank> {
+  async getMayaRank(id: string): Promise<MayaRankConfig> {
     const response = await apiClient.get(`${BASE_URL}/maya-ranks/${id}`);
     return response.data;
   },
 
   /**
-   * Update a Maya rank
+   * Update a Maya rank config
    *
    * @param id Rank ID
    * @param data Rank updates
-   * @returns Updated rank
+   * @returns Updated rank config
    */
-  async updateMayaRank(id: string, data: UpdateMayaRankDto): Promise<MayaRank> {
+  async updateMayaRank(id: string, data: UpdateMayaRankDto): Promise<MayaRankConfig> {
     const response = await apiClient.patch(`${BASE_URL}/maya-ranks/${id}`, data);
     return response.data;
   },

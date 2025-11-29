@@ -25,6 +25,7 @@ export interface GetAttemptsQuery {
   page?: number;
   limit?: number;
   student_id?: string;
+  student_search?: string;
   exercise_id?: string;
   module_id?: string;
   classroom_id?: string;
@@ -46,7 +47,7 @@ export interface AttemptResponse {
   exercise_title: string;
   module_name: string;
   attempt_number: number;
-  submitted_answers: Record<string, any>;
+  submitted_answers: Record<string, unknown>;
   is_correct: boolean;
   score: number;
   time_spent_seconds: number;
@@ -61,7 +62,7 @@ export interface AttemptResponse {
  * Detailed attempt response (includes correct answers)
  */
 export interface AttemptDetailResponse extends AttemptResponse {
-  correct_answer: Record<string, any>;
+  correct_answer: Record<string, unknown>;
   exercise_type: string;
   max_score: number;
 }

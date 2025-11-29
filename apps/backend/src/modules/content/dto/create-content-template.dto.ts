@@ -24,7 +24,7 @@ export class CreateContentTemplateDto {
   @ApiPropertyOptional({ description: 'ID del tenant', example: '123e4567-e89b-12d3-a456-426614174000' })
   @IsOptional()
   @IsUUID()
-  tenant_id?: string;
+    tenant_id?: string;
 
   // =====================================================
   // BASIC INFORMATION
@@ -35,7 +35,7 @@ export class CreateContentTemplateDto {
    */
   @ApiProperty({ description: 'Nombre de la plantilla', example: 'Plantilla de Ejercicio de Comprensión Lectora' })
   @IsString()
-  name!: string;
+    name!: string;
 
   /**
    * Descripción de la plantilla
@@ -43,7 +43,7 @@ export class CreateContentTemplateDto {
   @ApiPropertyOptional({ description: 'Descripción de la plantilla', example: 'Plantilla para crear ejercicios de comprensión lectora con preguntas múltiples' })
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   /**
    * Tipo de plantilla: exercise, module, assessment, announcement, feedback
@@ -51,7 +51,7 @@ export class CreateContentTemplateDto {
   @ApiPropertyOptional({ description: 'Tipo de plantilla', enum: ['exercise', 'module', 'assessment', 'announcement', 'feedback'] })
   @IsOptional()
   @IsString()
-  template_type?: string;
+    template_type?: string;
 
   // =====================================================
   // TEMPLATE STRUCTURE
@@ -62,7 +62,7 @@ export class CreateContentTemplateDto {
    */
   @ApiProperty({ description: 'Estructura JSON de la plantilla', example: { sections: [], fields: [] } })
   @IsObject()
-  template_structure!: Record<string, any>;
+    template_structure!: Record<string, any>;
 
   /**
    * Valores predeterminados JSON
@@ -70,7 +70,7 @@ export class CreateContentTemplateDto {
   @ApiPropertyOptional({ description: 'Valores predeterminados', example: { difficulty: 'medium', duration: 30 } })
   @IsOptional()
   @IsObject()
-  default_values?: Record<string, any>;
+    default_values?: Record<string, any>;
 
   /**
    * Campos requeridos
@@ -79,7 +79,7 @@ export class CreateContentTemplateDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  required_fields?: string[];
+    required_fields?: string[];
 
   /**
    * Campos opcionales
@@ -88,7 +88,7 @@ export class CreateContentTemplateDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  optional_fields?: string[];
+    optional_fields?: string[];
 
   // =====================================================
   // VISIBILITY & ACCESS
@@ -100,7 +100,7 @@ export class CreateContentTemplateDto {
   @ApiPropertyOptional({ description: 'Plantilla pública', default: false })
   @IsOptional()
   @IsBoolean()
-  is_public?: boolean;
+    is_public?: boolean;
 
   /**
    * Si es plantilla del sistema
@@ -108,7 +108,7 @@ export class CreateContentTemplateDto {
   @ApiPropertyOptional({ description: 'Plantilla del sistema', default: false })
   @IsOptional()
   @IsBoolean()
-  is_system_template?: boolean;
+    is_system_template?: boolean;
 
   // =====================================================
   // DIFFICULTY & USAGE
@@ -120,7 +120,7 @@ export class CreateContentTemplateDto {
   @ApiPropertyOptional({ description: 'Nivel de dificultad', enum: DifficultyLevelEnum })
   @IsOptional()
   @IsEnum(DifficultyLevelEnum)
-  difficulty_level?: DifficultyLevelEnum;
+    difficulty_level?: DifficultyLevelEnum;
 
   /**
    * Contador de usos (opcional, normalmente se incrementa automáticamente)
@@ -129,7 +129,7 @@ export class CreateContentTemplateDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  usage_count?: number;
+    usage_count?: number;
 
   // =====================================================
   // METADATA
@@ -141,7 +141,7 @@ export class CreateContentTemplateDto {
   @ApiPropertyOptional({ description: 'Metadatos adicionales', example: {} })
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 
   /**
    * ID del creador
@@ -149,5 +149,5 @@ export class CreateContentTemplateDto {
   @ApiPropertyOptional({ description: 'ID del usuario creador' })
   @IsOptional()
   @IsUUID()
-  created_by?: string;
+    created_by?: string;
 }

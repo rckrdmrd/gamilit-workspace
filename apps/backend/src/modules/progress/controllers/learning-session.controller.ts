@@ -79,7 +79,7 @@ export class LearningSessionController {
     description: 'Datos inválidos o sesión activa ya existe',
   })
   async create(@Body() createSessionDto: CreateLearningSessionDto) {
-    return await this.sessionService.create(createSessionDto);
+    return this.sessionService.create(createSessionDto);
   }
 
   /**
@@ -130,7 +130,7 @@ export class LearningSessionController {
     description: 'Usuario no encontrado',
   })
   async findByUserId(@Param('userId') userId: string) {
-    return await this.sessionService.findByUserId(userId);
+    return this.sessionService.findByUserId(userId);
   }
 
   /**
@@ -188,7 +188,7 @@ export class LearningSessionController {
     description: 'Sesión no encontrada',
   })
   async findById(@Param('id') id: string) {
-    return await this.sessionService.findById(id);
+    return this.sessionService.findById(id);
   }
 
   /**
@@ -239,7 +239,7 @@ export class LearningSessionController {
     description: 'Sesión no encontrada',
   })
   async endSession(@Param('id') id: string) {
-    return await this.sessionService.endSession(id);
+    return this.sessionService.endSession(id);
   }
 
   /**
@@ -287,7 +287,7 @@ export class LearningSessionController {
     description: 'Sesión no encontrada',
   })
   async updateEngagement(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body()
     body: {
       clicks_count?: number;
@@ -300,7 +300,7 @@ export class LearningSessionController {
       idle_time?: string;
     },
   ) {
-    return await this.sessionService.updateEngagement(id, body);
+    return this.sessionService.updateEngagement(id, body);
   }
 
   /**
@@ -345,7 +345,7 @@ export class LearningSessionController {
     description: 'Usuario no encontrado',
   })
   async getActiveSession(@Param('userId') userId: string) {
-    return await this.sessionService.getActiveSession(userId);
+    return this.sessionService.getActiveSession(userId);
   }
 
   /**
@@ -403,11 +403,11 @@ export class LearningSessionController {
     description: 'Usuario no encontrado',
   })
   async getSessionStats(
-    @Param('userId') userId: string,
+  @Param('userId') userId: string,
     @Query('period') period?: 'daily' | 'weekly' | 'monthly',
   ) {
     const validPeriod = period || 'daily';
-    return await this.sessionService.getSessionStats(userId, validPeriod);
+    return this.sessionService.getSessionStats(userId, validPeriod);
   }
 
   /**
@@ -472,12 +472,12 @@ export class LearningSessionController {
     description: 'Usuario no encontrado',
   })
   async findByDateRange(
-    @Param('userId') userId: string,
+  @Param('userId') userId: string,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
     const start = startDate ? new Date(startDate) : new Date();
     const end = endDate ? new Date(endDate) : new Date();
-    return await this.sessionService.findByDateRange(userId, start, end);
+    return this.sessionService.findByDateRange(userId, start, end);
   }
 }

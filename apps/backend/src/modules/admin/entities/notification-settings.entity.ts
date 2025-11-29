@@ -38,47 +38,47 @@ import { Tenant } from '../../auth/entities/tenant.entity';
 @Index('idx_notification_settings_type', ['notification_type'])
 @Index('idx_notification_settings_channel', ['channel'])
 @Index('idx_notification_settings_tenant', ['tenant_id'])
-@Check(`"channel" IN ('email', 'sms', 'push', 'in_app', 'webhook')`)
-@Check(`"frequency" IN ('immediate', 'daily', 'weekly', 'never')`)
-@Check(`"max_per_day" > 0`)
+@Check('"channel" IN (\'email\', \'sms\', \'push\', \'in_app\', \'webhook\')')
+@Check('"frequency" IN (\'immediate\', \'daily\', \'weekly\', \'never\')')
+@Check('"max_per_day" > 0')
 export class NotificationSettings {
   /**
    * Identificador único del setting (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del tenant (nullable para settings globales)
    */
   @Column({ type: 'uuid', nullable: true })
-  tenant_id?: string;
+    tenant_id?: string;
 
   /**
    * ID del usuario propietario de la configuración
    */
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Tipo de notificación
    * @example 'achievement_unlocked', 'rank_up', 'friend_request', 'mission_completed'
    */
   @Column({ type: 'text' })
-  notification_type!: string;
+    notification_type!: string;
 
   /**
    * Canal de entrega de la notificación
    * Valores: email, sms, push, in_app, webhook
    */
   @Column({ type: 'text' })
-  channel!: 'email' | 'sms' | 'push' | 'in_app' | 'webhook';
+    channel!: 'email' | 'sms' | 'push' | 'in_app' | 'webhook';
 
   /**
    * Indica si las notificaciones de este tipo están habilitadas
    */
   @Column({ type: 'boolean', default: true })
-  is_enabled!: boolean;
+    is_enabled!: boolean;
 
   /**
    * Frecuencia de entrega
@@ -88,77 +88,77 @@ export class NotificationSettings {
    * - never: Deshabilitado
    */
   @Column({ type: 'text', default: 'immediate' })
-  frequency!: 'immediate' | 'daily' | 'weekly' | 'never';
+    frequency!: 'immediate' | 'daily' | 'weekly' | 'never';
 
   /**
    * Hora de inicio del período de silencio (no enviar notificaciones)
    * @example '22:00:00' (10 PM)
    */
   @Column({ type: 'time', nullable: true })
-  quiet_hours_start?: string;
+    quiet_hours_start?: string;
 
   /**
    * Hora de fin del período de silencio
    * @example '08:00:00' (8 AM)
    */
   @Column({ type: 'time', nullable: true })
-  quiet_hours_end?: string;
+    quiet_hours_end?: string;
 
   /**
    * Máximo número de notificaciones por día (rate limiting)
    */
   @Column({ type: 'integer', default: 999 })
-  max_per_day!: number;
+    max_per_day!: number;
 
   /**
    * ID de la plantilla de notificación a usar
    */
   @Column({ type: 'uuid', nullable: true })
-  template_id?: string;
+    template_id?: string;
 
   /**
    * Política de reintentos en formato JSONB
    * @example { "max_retries": 3, "backoff": "exponential" }
    */
   @Column({ type: 'jsonb', default: {} })
-  retry_policy!: Record<string, any>;
+    retry_policy!: Record<string, any>;
 
   /**
    * Configuraciones específicas del canal de entrega
    * @example { "email_format": "html", "reply_to": "support@example.com" }
    */
   @Column({ type: 'jsonb', default: {} })
-  delivery_settings!: Record<string, any>;
+    delivery_settings!: Record<string, any>;
 
   /**
    * Metadatos adicionales
    */
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   /**
    * ID del usuario que creó el setting
    */
   @Column({ type: 'uuid', nullable: true })
-  created_by?: string;
+    created_by?: string;
 
   /**
    * ID del último usuario que actualizó el setting
    */
   @Column({ type: 'uuid', nullable: true })
-  updated_by?: string;
+    updated_by?: string;
 
   /**
    * Fecha y hora de creación
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   // =====================================================
   // Relaciones
@@ -171,7 +171,7 @@ export class NotificationSettings {
    */
   @ManyToOne(() => Tenant, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'tenant_id', referencedColumnName: 'id' })
-  tenant?: Tenant;
+    tenant?: Tenant;
 
   /**
    * Usuario propietario de la configuración
@@ -182,7 +182,7 @@ export class NotificationSettings {
    */
   @ManyToOne(() => Profile, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user?: Profile;
+    user?: Profile;
 
   /**
    * Usuario que creó el setting
@@ -191,7 +191,7 @@ export class NotificationSettings {
    */
   @ManyToOne(() => Profile, { nullable: true })
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
-  creator?: Profile;
+    creator?: Profile;
 
   /**
    * Usuario que actualizó el setting
@@ -200,5 +200,5 @@ export class NotificationSettings {
    */
   @ManyToOne(() => Profile, { nullable: true })
   @JoinColumn({ name: 'updated_by', referencedColumnName: 'id' })
-  updater?: Profile;
+    updater?: Profile;
 }

@@ -10,6 +10,7 @@
  * - Filters users by is_active status
  * - Refreshes list after activate/deactivate
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor, within } from '@testing-library/react';
@@ -79,7 +80,7 @@ describe('UserManagementPage', () => {
     return render(
       <BrowserRouter>
         <UserManagementPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
   };
 
@@ -361,10 +362,11 @@ describe('UserManagementPage', () => {
       });
 
       const filterSelects = screen.getAllByRole('combobox');
-      const statusFilter = filterSelects.find(select =>
-        within(select).queryByText('Todos los estados') !== null ||
-        select.innerHTML.includes('Activos') ||
-        select.innerHTML.includes('Inactivos')
+      const statusFilter = filterSelects.find(
+        (select) =>
+          within(select).queryByText('Todos los estados') !== null ||
+          select.innerHTML.includes('Activos') ||
+          select.innerHTML.includes('Inactivos'),
       );
 
       expect(statusFilter).toBeInTheDocument();
@@ -373,7 +375,7 @@ describe('UserManagementPage', () => {
     it('should filter to show only active users', async () => {
       const user = userEvent.setup();
 
-      const activeUsers = mockUsers.filter(u => u.isActive);
+      const activeUsers = mockUsers.filter((u) => u.isActive);
       mockGetUsersList.mockResolvedValueOnce({ users: activeUsers });
 
       renderComponent();
@@ -388,16 +390,14 @@ describe('UserManagementPage', () => {
       await user.selectOptions(statusFilter, 'active');
 
       await waitFor(() => {
-        expect(mockGetUsersList).toHaveBeenCalledWith(
-          expect.objectContaining({ is_active: true })
-        );
+        expect(mockGetUsersList).toHaveBeenCalledWith(expect.objectContaining({ is_active: true }));
       });
     });
 
     it('should filter to show only inactive users', async () => {
       const user = userEvent.setup();
 
-      const inactiveUsers = mockUsers.filter(u => !u.isActive);
+      const inactiveUsers = mockUsers.filter((u) => !u.isActive);
       mockGetUsersList.mockResolvedValueOnce({ users: inactiveUsers });
 
       renderComponent();
@@ -413,7 +413,7 @@ describe('UserManagementPage', () => {
 
       await waitFor(() => {
         expect(mockGetUsersList).toHaveBeenCalledWith(
-          expect.objectContaining({ is_active: false })
+          expect.objectContaining({ is_active: false }),
         );
       });
     });
@@ -604,7 +604,7 @@ describe('UserManagementPage', () => {
 
       await waitFor(() => {
         expect(mockGetUsersList).toHaveBeenCalledWith(
-          expect.objectContaining({ search: 'Active' })
+          expect.objectContaining({ search: 'Active' }),
         );
       });
     });

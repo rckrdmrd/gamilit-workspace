@@ -44,7 +44,7 @@ export class Team {
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   // =====================================================
   // MULTI-TENANT & OWNERSHIP
@@ -55,13 +55,13 @@ export class Team {
    * Null = equipo independiente sin vinculación a aula
    */
   @Column({ type: 'uuid', nullable: true })
-  classroom_id?: string;
+    classroom_id?: string;
 
   /**
    * ID del tenant propietario (FK → auth_management.tenants)
    */
   @Column({ type: 'uuid' })
-  tenant_id!: string;
+    tenant_id!: string;
 
   // =====================================================
   // BASIC INFORMATION
@@ -71,19 +71,19 @@ export class Team {
    * Nombre del equipo
    */
   @Column({ type: 'text' })
-  name!: string;
+    name!: string;
 
   /**
    * Descripción del equipo
    */
   @Column({ type: 'text', nullable: true })
-  description?: string;
+    description?: string;
 
   /**
    * Lema o motto del equipo
    */
   @Column({ type: 'text', nullable: true })
-  motto?: string;
+    motto?: string;
 
   // =====================================================
   // VISUAL CUSTOMIZATION
@@ -93,31 +93,31 @@ export class Team {
    * Color primario del equipo (hex)
    */
   @Column({ type: 'text', default: '#3B82F6' })
-  color_primary!: string;
+    color_primary!: string;
 
   /**
    * Color secundario del equipo (hex)
    */
   @Column({ type: 'text', default: '#10B981' })
-  color_secondary!: string;
+    color_secondary!: string;
 
   /**
    * URL del avatar del equipo
    */
   @Column({ type: 'text', nullable: true })
-  avatar_url?: string;
+    avatar_url?: string;
 
   /**
    * URL del banner del equipo
    */
   @Column({ type: 'text', nullable: true })
-  banner_url?: string;
+    banner_url?: string;
 
   /**
    * Badges o insignias ganadas (JSONB array)
    */
   @Column({ type: 'jsonb', default: [] })
-  badges!: any[];
+    badges!: any[];
 
   // =====================================================
   // LEADERSHIP
@@ -127,14 +127,14 @@ export class Team {
    * ID del creador del equipo (FK → auth_management.profiles)
    */
   @Column({ type: 'uuid' })
-  creator_id!: string;
+    creator_id!: string;
 
   /**
    * ID del líder actual del equipo (FK → auth_management.profiles)
    * Puede ser diferente del creator_id
    */
   @Column({ type: 'uuid', nullable: true })
-  leader_id?: string;
+    leader_id?: string;
 
   // =====================================================
   // ACCESS & MEMBERSHIP
@@ -145,37 +145,37 @@ export class Team {
    * UNIQUE constraint aplicado
    */
   @Column({ type: 'text', unique: true, nullable: true })
-  team_code?: string;
+    team_code?: string;
 
   /**
    * Capacidad máxima de miembros
    */
   @Column({ type: 'integer', default: 5 })
-  max_members!: number;
+    max_members!: number;
 
   /**
    * Contador actual de miembros
    */
   @Column({ type: 'integer', default: 0 })
-  current_members_count!: number;
+    current_members_count!: number;
 
   /**
    * Equipo público (visible en directorio)
    */
   @Column({ type: 'boolean', default: false })
-  is_public!: boolean;
+    is_public!: boolean;
 
   /**
    * Permitir solicitudes de ingreso
    */
   @Column({ type: 'boolean', default: true })
-  allow_join_requests!: boolean;
+    allow_join_requests!: boolean;
 
   /**
    * Requiere aprobación para unirse
    */
   @Column({ type: 'boolean', default: true })
-  require_approval!: boolean;
+    require_approval!: boolean;
 
   // =====================================================
   // GAMIFICATION STATS
@@ -185,25 +185,25 @@ export class Team {
    * XP total acumulada por el equipo
    */
   @Column({ type: 'integer', default: 0 })
-  total_xp!: number;
+    total_xp!: number;
 
   /**
    * ML Coins totales acumuladas por el equipo
    */
   @Column({ type: 'integer', default: 0 })
-  total_ml_coins!: number;
+    total_ml_coins!: number;
 
   /**
    * Módulos completados por el equipo
    */
   @Column({ type: 'integer', default: 0 })
-  modules_completed!: number;
+    modules_completed!: number;
 
   /**
    * Achievements ganados por el equipo
    */
   @Column({ type: 'integer', default: 0 })
-  achievements_earned!: number;
+    achievements_earned!: number;
 
   // =====================================================
   // STATUS FLAGS
@@ -213,13 +213,13 @@ export class Team {
    * Equipo activo (puede aceptar nuevos miembros y participar en desafíos)
    */
   @Column({ type: 'boolean', default: true })
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Equipo verificado por administración
    */
   @Column({ type: 'boolean', default: false })
-  is_verified!: boolean;
+    is_verified!: boolean;
 
   // =====================================================
   // TIMESTAMPS
@@ -229,13 +229,13 @@ export class Team {
    * Fecha y hora de fundación del equipo
    */
   @Column({ type: 'timestamp with time zone' })
-  founded_at!: Date;
+    founded_at!: Date;
 
   /**
    * Fecha y hora de última actividad del equipo
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  last_activity_at?: Date;
+    last_activity_at?: Date;
 
   // =====================================================
   // METADATA & AUDIT
@@ -245,18 +245,18 @@ export class Team {
    * Metadatos adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   /**
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización del registro
    * Trigger: trg_teams_updated_at
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 }

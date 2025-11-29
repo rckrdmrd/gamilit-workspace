@@ -19,4 +19,5 @@ export { MLCoinsController } from './ml-coins.controller';
 export { RanksController } from './ranks.controller';
 export { LeaderboardController } from './leaderboard.controller';
 export { MissionsController } from './missions.controller';
+export { ClassroomMissionsController } from './classroom-missions.controller';
 export { ComodinesController } from './comodines.controller';

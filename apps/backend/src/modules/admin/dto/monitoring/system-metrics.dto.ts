@@ -5,22 +5,22 @@ import { ApiProperty } from '@nestjs/swagger';
  */
 export class MemoryMetricsDto {
   @ApiProperty({ description: 'Total system memory in MB' })
-  total_mb!: number;
+    total_mb!: number;
 
   @ApiProperty({ description: 'Used system memory in MB' })
-  used_mb!: number;
+    used_mb!: number;
 
   @ApiProperty({ description: 'Free system memory in MB' })
-  free_mb!: number;
+    free_mb!: number;
 
   @ApiProperty({ description: 'Memory usage percentage' })
-  usage_percent!: number;
+    usage_percent!: number;
 
   @ApiProperty({ description: 'Heap memory used in MB' })
-  heap_used_mb!: number;
+    heap_used_mb!: number;
 
   @ApiProperty({ description: 'Total heap memory in MB' })
-  heap_total_mb!: number;
+    heap_total_mb!: number;
 }
 
 /**
@@ -28,16 +28,16 @@ export class MemoryMetricsDto {
  */
 export class CpuMetricsDto {
   @ApiProperty({ description: 'User CPU time in milliseconds' })
-  user_ms!: number;
+    user_ms!: number;
 
   @ApiProperty({ description: 'System CPU time in milliseconds' })
-  system_ms!: number;
+    system_ms!: number;
 
   @ApiProperty({ description: 'Load average [1min, 5min, 15min]', type: [Number] })
-  load_average!: number[];
+    load_average!: number[];
 
   @ApiProperty({ description: 'Number of CPU cores' })
-  cores!: number;
+    cores!: number;
 }
 
 /**
@@ -45,19 +45,19 @@ export class CpuMetricsDto {
  */
 export class SystemInfoDto {
   @ApiProperty({ description: 'Operating system platform' })
-  platform!: string;
+    platform!: string;
 
   @ApiProperty({ description: 'System architecture' })
-  arch!: string;
+    arch!: string;
 
   @ApiProperty({ description: 'System hostname' })
-  hostname!: string;
+    hostname!: string;
 
   @ApiProperty({ description: 'System uptime in seconds' })
-  uptime_seconds!: number;
+    uptime_seconds!: number;
 
   @ApiProperty({ description: 'Node.js version' })
-  node_version!: string;
+    node_version!: string;
 }
 
 /**
@@ -65,16 +65,16 @@ export class SystemInfoDto {
  */
 export class ProcessInfoDto {
   @ApiProperty({ description: 'Process ID' })
-  pid!: number;
+    pid!: number;
 
   @ApiProperty({ description: 'Process uptime in seconds' })
-  uptime_seconds!: number;
+    uptime_seconds!: number;
 
   @ApiProperty({ description: 'Number of active handles' })
-  active_handles!: number;
+    active_handles!: number;
 
   @ApiProperty({ description: 'Number of active requests' })
-  active_requests!: number;
+    active_requests!: number;
 }
 
 /**
@@ -82,17 +82,17 @@ export class ProcessInfoDto {
  */
 export class SystemMetricsDto {
   @ApiProperty({ description: 'Timestamp of metrics collection' })
-  timestamp!: string;
+    timestamp!: string;
 
   @ApiProperty({ description: 'Memory metrics', type: MemoryMetricsDto })
-  memory!: MemoryMetricsDto;
+    memory!: MemoryMetricsDto;
 
   @ApiProperty({ description: 'CPU metrics', type: CpuMetricsDto })
-  cpu!: CpuMetricsDto;
+    cpu!: CpuMetricsDto;
 
   @ApiProperty({ description: 'System information', type: SystemInfoDto })
-  system!: SystemInfoDto;
+    system!: SystemInfoDto;
 
   @ApiProperty({ description: 'Process information', type: ProcessInfoDto })
-  process!: ProcessInfoDto;
+    process!: ProcessInfoDto;
 }

@@ -225,7 +225,7 @@ export function useSystemMonitoring(): UseSystemMonitoringResult {
       fetchAlerts();
       throw err;
     }
-  }, [activeAlerts, fetchAlerts]);
+  }, [fetchAlerts]);
 
   // ============================================================================
   // EFFECTS
@@ -245,6 +245,7 @@ export function useSystemMonitoring(): UseSystemMonitoringResult {
     };
 
     init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**
@@ -256,6 +257,7 @@ export function useSystemMonitoring(): UseSystemMonitoringResult {
     return () => {
       stopMonitoring();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ============================================================================

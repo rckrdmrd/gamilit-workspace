@@ -4,6 +4,7 @@
  * Tests for user data transformation (last_sign_in_at → lastLogin)
  * Created: 2025-11-24
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getUsers } from '../adminAPI';

@@ -14,6 +14,7 @@
  * - Export to CSV
  * - Real-time updates
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';

@@ -1,9 +1,18 @@
 /**
  * useSettings Hook
  *
+ * @deprecated This hook is not currently in use.
+ * AdminSettingsPage components (GeneralSettings, SecuritySettings) use
+ * useSystemConfig hook instead, which provides simpler category-based config management.
+ *
+ * This hook was initially designed with additional features (sendTestEmail, createBackup, etc.)
+ * but those features are not yet implemented in the backend.
+ *
  * Manages system settings and configuration.
- * Updated: 2025-11-19 - Created for AdminSettingsPage integration (FE-059)
+ * Updated: 2025-11-28 - Marked as deprecated, use useSystemConfig instead
+ * Created: 2025-11-19 - Created for AdminSettingsPage integration (FE-059)
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useCallback } from 'react';
 import { adminAPI } from '@/services/api/adminAPI';

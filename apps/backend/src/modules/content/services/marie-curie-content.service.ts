@@ -30,7 +30,7 @@ export class MarieCurieContentService {
    */
   async create(dto: CreateMarieCurieContentDto): Promise<MarieCurieContent> {
     const content = this.contentRepo.create(dto);
-    return await this.contentRepo.save(content);
+    return this.contentRepo.save(content);
   }
 
   /**
@@ -46,7 +46,7 @@ export class MarieCurieContentService {
       query.andWhere('mc.difficulty_level = :difficulty', { difficulty });
     }
 
-    return await query.orderBy('mc.created_at', 'DESC').getMany();
+    return query.orderBy('mc.created_at', 'DESC').getMany();
   }
 
   /**
@@ -76,7 +76,7 @@ export class MarieCurieContentService {
    * @returns Lista de contenido de la categoría
    */
   async findByCategory(category: string): Promise<MarieCurieContent[]> {
-    return await this.contentRepo.find({
+    return this.contentRepo.find({
       where: { category },
       order: { created_at: 'DESC' },
     });
@@ -95,7 +95,7 @@ export class MarieCurieContentService {
 
     Object.assign(content, dto);
 
-    return await this.contentRepo.save(content);
+    return this.contentRepo.save(content);
   }
 
   /**
@@ -122,7 +122,7 @@ export class MarieCurieContentService {
 
     content.status = ContentStatusEnum.PUBLISHED;
 
-    return await this.contentRepo.save(content);
+    return this.contentRepo.save(content);
   }
 
   /**
@@ -131,7 +131,7 @@ export class MarieCurieContentService {
    * @returns Lista de contenido publicado
    */
   async getPublishedContent(): Promise<MarieCurieContent[]> {
-    return await this.contentRepo.find({
+    return this.contentRepo.find({
       where: { status: ContentStatusEnum.PUBLISHED },
       order: { title: 'ASC' },
     });
@@ -143,7 +143,7 @@ export class MarieCurieContentService {
    * @returns Lista de contenido destacado publicado
    */
   async getFeaturedContent(): Promise<MarieCurieContent[]> {
-    return await this.contentRepo.find({
+    return this.contentRepo.find({
       where: {
         is_featured: true,
         status: ContentStatusEnum.PUBLISHED,

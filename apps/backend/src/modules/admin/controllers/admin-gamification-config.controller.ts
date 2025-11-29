@@ -45,6 +45,7 @@ import {
  * - PUT /settings - Actualizar configuración
  * - POST /settings/preview - Previsualizar impacto
  * - POST /settings/restore-defaults - Restaurar valores por defecto
+ * - POST /restore-defaults - Restaurar valores por defecto (ruta alternativa)
  *
  * Endpoints (US-AE-005 - Parameters):
  * - GET /parameters - Listar parámetros con filtro por categoría
@@ -62,6 +63,7 @@ import {
  * PUT /api/admin/gamification/settings
  * POST /api/admin/gamification/settings/preview
  * POST /api/admin/gamification/settings/restore-defaults
+ * POST /api/admin/gamification/restore-defaults
  * GET /api/admin/gamification/parameters?category=xp
  * GET /api/admin/gamification/parameters/:id
  * PUT /api/admin/gamification/parameters/:id
@@ -115,7 +117,7 @@ export class AdminGamificationConfigController {
     description: 'Forbidden - User is not an admin',
   })
   async getGamificationSettings(): Promise<GamificationSettingsResponseDto> {
-    return await this.gamificationConfigService.getGamificationSettings();
+    return this.gamificationConfigService.getGamificationSettings();
   }
 
   /**
@@ -173,10 +175,10 @@ export class AdminGamificationConfigController {
   })
   async updateGamificationSettings(
     @Body() dto: UpdateGamificationSettingsDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<GamificationSettingsResponseDto> {
     const adminId = req.user.sub;
-    return await this.gamificationConfigService.updateGamificationSettings(
+    return this.gamificationConfigService.updateGamificationSettings(
       dto,
       adminId,
     );
@@ -235,7 +237,7 @@ export class AdminGamificationConfigController {
   async previewImpact(
     @Body() dto: PreviewImpactDto,
   ): Promise<PreviewImpactResultDto> {
-    return await this.gamificationConfigService.previewImpact(dto);
+    return this.gamificationConfigService.previewImpact(dto);
   }
 
   /**
@@ -283,7 +285,48 @@ export class AdminGamificationConfigController {
     @Request() req: any,
   ): Promise<RestoreDefaultsResultDto> {
     const adminId = req.user.sub;
-    return await this.gamificationConfigService.restoreDefaults(adminId);
+    return this.gamificationConfigService.restoreDefaults(adminId);
+  }
+
+  /**
+   * Restore settings to defaults (alternative route)
+   *
+   * @route POST /api/admin/gamification/restore-defaults
+   * @param req Express request with authenticated user
+   * @returns List of restored settings and audit info
+   *
+   * @description Alternative endpoint for frontend compatibility.
+   * Delegates to the same service method as /settings/restore-defaults.
+   * This route exists for backward compatibility with frontend api.config.ts.
+   */
+  @Post('restore-defaults')
+  @ApiOperation({
+    summary: 'Restore default settings (alternative route)',
+    description:
+      'Restore all gamification settings to their default values. ' +
+      'This is an alternative route for frontend compatibility. ' +
+      'Only non-system settings will be restored. ' +
+      'This action cannot be undone - consider creating a backup before restoring. ' +
+      'Returns the list of setting keys that were restored.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Settings restored successfully',
+    type: RestoreDefaultsResultDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - JWT token missing or invalid',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - User is not an admin',
+  })
+  async restoreDefaultsAlternative(
+    @Request() req: any,
+  ): Promise<RestoreDefaultsResultDto> {
+    const adminId = req.user.sub;
+    return this.gamificationConfigService.restoreDefaults(adminId);
   }
 
   // =====================================================
@@ -341,7 +384,7 @@ export class AdminGamificationConfigController {
   async listParameters(
     @Query() query: ListParametersQueryDto,
   ): Promise<ParametersListResponseDto> {
-    return await this.gamificationConfigService.listParameters(query);
+    return this.gamificationConfigService.listParameters(query);
   }
 
   /**
@@ -396,7 +439,7 @@ export class AdminGamificationConfigController {
   async getParameterById(
     @Param('id') id: string,
   ): Promise<ParameterResponseDto> {
-    return await this.gamificationConfigService.getParameterById(id);
+    return this.gamificationConfigService.getParameterById(id);
   }
 
   /**
@@ -459,11 +502,11 @@ export class AdminGamificationConfigController {
   })
   async updateParameterById(
     @Param('id') id: string,
-    @Body() dto: UpdateParameterDto,
-    @Request() req: any,
+      @Body() dto: UpdateParameterDto,
+      @Request() req: any,
   ): Promise<UpdateParameterResponseDto> {
     const adminId = req.user.sub;
-    return await this.gamificationConfigService.updateParameterById(
+    return this.gamificationConfigService.updateParameterById(
       id,
       dto,
       adminId,
@@ -525,7 +568,7 @@ export class AdminGamificationConfigController {
     description: 'Not Found - Ranks configuration not found',
   })
   async getMayaRanks(): Promise<MayaRanksResponseDto> {
-    return await this.gamificationConfigService.getMayaRanks();
+    return this.gamificationConfigService.getMayaRanks();
   }
 
   /**
@@ -591,11 +634,11 @@ export class AdminGamificationConfigController {
   })
   async updateMayaRank(
     @Param('rankName') rankName: string,
-    @Body() dto: UpdateMayaRankDto,
-    @Request() req: any,
+      @Body() dto: UpdateMayaRankDto,
+      @Request() req: any,
   ): Promise<UpdateMayaRankResponseDto> {
     const adminId = req.user.sub;
-    return await this.gamificationConfigService.updateMayaRank(
+    return this.gamificationConfigService.updateMayaRank(
       rankName,
       dto,
       adminId,

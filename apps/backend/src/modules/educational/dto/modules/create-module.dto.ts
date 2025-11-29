@@ -28,7 +28,7 @@ export class CreateModuleDto {
    */
   @IsOptional()
   @IsUUID()
-  tenant_id?: string;
+    tenant_id?: string;
 
   // =====================================================
   // BASIC INFORMATION
@@ -38,28 +38,28 @@ export class CreateModuleDto {
    * Título del módulo (REQUERIDO)
    */
   @IsString()
-  title!: string;
+    title!: string;
 
   /**
    * Subtítulo del módulo
    */
   @IsOptional()
   @IsString()
-  subtitle?: string;
+    subtitle?: string;
 
   /**
    * Descripción detallada del módulo
    */
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   /**
    * Resumen breve del módulo
    */
   @IsOptional()
   @IsString()
-  summary?: string;
+    summary?: string;
 
   /**
    * Contenido estructurado del módulo (JSONB)
@@ -67,21 +67,21 @@ export class CreateModuleDto {
    */
   @IsOptional()
   @IsObject()
-  content?: Record<string, any>;
+    content?: Record<string, any>;
 
   /**
    * Índice de orden para la secuencia de módulos (REQUERIDO)
    */
   @IsInt()
   @Min(0)
-  order_index!: number;
+    order_index!: number;
 
   /**
    * Código único del módulo (ej. MC-001)
    */
   @IsOptional()
   @IsString()
-  module_code?: string;
+    module_code?: string;
 
   // =====================================================
   // DIFFICULTY & CONTENT
@@ -92,7 +92,7 @@ export class CreateModuleDto {
    */
   @IsOptional()
   @IsEnum(DifficultyLevelEnum)
-  difficulty_level?: DifficultyLevelEnum;
+    difficulty_level?: DifficultyLevelEnum;
 
   /**
    * Niveles de grado a los que va dirigido
@@ -101,7 +101,7 @@ export class CreateModuleDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  grade_levels?: string[];
+    grade_levels?: string[];
 
   /**
    * Materias relacionadas
@@ -110,7 +110,7 @@ export class CreateModuleDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  subjects?: string[];
+    subjects?: string[];
 
   // =====================================================
   // TIMING & DURATION
@@ -122,7 +122,7 @@ export class CreateModuleDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  estimated_duration_minutes?: number;
+    estimated_duration_minutes?: number;
 
   /**
    * Número estimado de sesiones para completar el módulo
@@ -130,7 +130,7 @@ export class CreateModuleDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  estimated_sessions?: number;
+    estimated_sessions?: number;
 
   // =====================================================
   // LEARNING OBJECTIVES & COMPETENCIES
@@ -142,7 +142,7 @@ export class CreateModuleDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  learning_objectives?: string[];
+    learning_objectives?: string[];
 
   /**
    * Competencias a desarrollar
@@ -150,7 +150,7 @@ export class CreateModuleDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  competencies?: string[];
+    competencies?: string[];
 
   /**
    * Habilidades desarrolladas en el módulo
@@ -158,7 +158,7 @@ export class CreateModuleDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  skills_developed?: string[];
+    skills_developed?: string[];
 
   // =====================================================
   // PREREQUISITES
@@ -170,7 +170,7 @@ export class CreateModuleDto {
   @IsOptional()
   @IsArray()
   @IsUUID('all', { each: true })
-  prerequisites?: string[];
+    prerequisites?: string[];
 
   /**
    * Habilidades prerequisitas (texto)
@@ -178,7 +178,7 @@ export class CreateModuleDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  prerequisite_skills?: string[];
+    prerequisite_skills?: string[];
 
   // =====================================================
   // GAMIFICATION & REWARDS
@@ -190,7 +190,7 @@ export class CreateModuleDto {
    */
   @IsOptional()
   @IsEnum(MayaRank)
-  maya_rank_required?: MayaRank;
+    maya_rank_required?: MayaRank;
 
   /**
    * Rango maya otorgado al completar el módulo
@@ -198,7 +198,7 @@ export class CreateModuleDto {
    */
   @IsOptional()
   @IsEnum(MayaRank)
-  maya_rank_granted?: MayaRank;
+    maya_rank_granted?: MayaRank;
 
   /**
    * Puntos de experiencia (XP) otorgados al completar
@@ -206,7 +206,7 @@ export class CreateModuleDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  xp_reward?: number;
+    xp_reward?: number;
 
   /**
    * Monedas ML otorgadas al completar
@@ -214,7 +214,7 @@ export class CreateModuleDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  ml_coins_reward?: number;
+    ml_coins_reward?: number;
 
   // =====================================================
   // STATUS & PUBLICATION
@@ -225,47 +225,47 @@ export class CreateModuleDto {
    */
   @IsOptional()
   @IsEnum(ContentStatusEnum)
-  status?: ContentStatusEnum;
+    status?: ContentStatusEnum;
 
   /**
    * Si el módulo está publicado y visible para estudiantes
    */
   @IsOptional()
   @IsBoolean()
-  is_published?: boolean;
+    is_published?: boolean;
 
   /**
    * Si el módulo está destacado en la página principal
    */
   @IsOptional()
   @IsBoolean()
-  is_featured?: boolean;
+    is_featured?: boolean;
 
   /**
    * Si el módulo es gratuito
    */
   @IsOptional()
   @IsBoolean()
-  is_free?: boolean;
+    is_free?: boolean;
 
   /**
    * Si es un módulo de demostración
    */
   @IsOptional()
   @IsBoolean()
-  is_demo_module?: boolean;
+    is_demo_module?: boolean;
 
   /**
    * Fecha de publicación
    */
   @IsOptional()
-  is_published_date?: Date;
+    is_published_date?: Date;
 
   /**
    * Fecha de archivado
    */
   @IsOptional()
-  archived_at?: Date;
+    archived_at?: Date;
 
   // =====================================================
   // VERSIONING & REVISION
@@ -277,35 +277,35 @@ export class CreateModuleDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  version?: number;
+    version?: number;
 
   /**
    * Notas sobre cambios en la versión
    */
   @IsOptional()
   @IsString()
-  version_notes?: string;
+    version_notes?: string;
 
   /**
    * ID del usuario que creó el módulo
    */
   @IsOptional()
   @IsUUID()
-  created_by?: string;
+    created_by?: string;
 
   /**
    * ID del usuario que revisó el módulo
    */
   @IsOptional()
   @IsUUID()
-  reviewed_by?: string;
+    reviewed_by?: string;
 
   /**
    * ID del usuario que aprobó el módulo
    */
   @IsOptional()
   @IsUUID()
-  approved_by?: string;
+    approved_by?: string;
 
   // =====================================================
   // METADATA & INDEXING
@@ -317,7 +317,7 @@ export class CreateModuleDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  keywords?: string[];
+    keywords?: string[];
 
   /**
    * Etiquetas para categorización
@@ -325,35 +325,35 @@ export class CreateModuleDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  tags?: string[];
+    tags?: string[];
 
   /**
    * URL de la imagen en miniatura
    */
   @IsOptional()
   @IsString()
-  thumbnail_url?: string;
+    thumbnail_url?: string;
 
   /**
    * URL de la imagen de portada
    */
   @IsOptional()
   @IsString()
-  cover_image_url?: string;
+    cover_image_url?: string;
 
   /**
    * Configuraciones del módulo (JSONB)
    */
   @IsOptional()
   @IsObject()
-  settings?: Record<string, any>;
+    settings?: Record<string, any>;
 
   /**
    * Metadatos adicionales (JSONB)
    */
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 
   /**
    * Total de ejercicios en el módulo
@@ -361,5 +361,5 @@ export class CreateModuleDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  total_exercises?: number;
+    total_exercises?: number;
 }

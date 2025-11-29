@@ -23,7 +23,7 @@ export class UploadMediaDto {
    */
   @IsOptional()
   @IsUUID()
-  tenant_id?: string;
+    tenant_id?: string;
 
   // =====================================================
   // BASIC INFORMATION
@@ -33,21 +33,21 @@ export class UploadMediaDto {
    * Título del recurso multimedia (REQUERIDO)
    */
   @IsString()
-  title!: string;
+    title!: string;
 
   /**
    * Descripción del recurso
    */
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   /**
    * Texto alternativo para accesibilidad
    */
   @IsOptional()
   @IsString()
-  alt_text?: string;
+    alt_text?: string;
 
   // =====================================================
   // MEDIA TYPE & FORMAT
@@ -58,14 +58,14 @@ export class UploadMediaDto {
    * ENUM: image, video, audio, document, interactive, animation
    */
   @IsEnum(MediaTypeEnum)
-  media_type!: MediaTypeEnum;
+    media_type!: MediaTypeEnum;
 
   /**
    * Formato del archivo (jpg, png, mp4, pdf, etc.)
    */
   @IsOptional()
   @IsString()
-  file_format?: string;
+    file_format?: string;
 
   /**
    * Tamaño del archivo en bytes
@@ -73,7 +73,7 @@ export class UploadMediaDto {
   @IsOptional()
   @IsNumber()
   @Min(0)
-  file_size_bytes?: number;
+    file_size_bytes?: number;
 
   // =====================================================
   // STORAGE & DISTRIBUTION
@@ -83,21 +83,21 @@ export class UploadMediaDto {
    * URL del archivo original (REQUERIDO)
    */
   @IsString()
-  url!: string;
+    url!: string;
 
   /**
    * URL de la miniatura/preview
    */
   @IsOptional()
   @IsString()
-  thumbnail_url?: string;
+    thumbnail_url?: string;
 
   /**
    * URL de CDN para distribución
    */
   @IsOptional()
   @IsString()
-  cdn_url?: string;
+    cdn_url?: string;
 
   // =====================================================
   // MEDIA PROPERTIES
@@ -108,14 +108,14 @@ export class UploadMediaDto {
    */
   @IsOptional()
   @IsNumber()
-  width?: number;
+    width?: number;
 
   /**
    * Alto en píxeles
    */
   @IsOptional()
   @IsNumber()
-  height?: number;
+    height?: number;
 
   /**
    * Duración en segundos
@@ -123,14 +123,14 @@ export class UploadMediaDto {
   @IsOptional()
   @IsNumber()
   @Min(0)
-  duration_seconds?: number;
+    duration_seconds?: number;
 
   /**
    * Resolución (720p, 1080p, 4k, etc.)
    */
   @IsOptional()
   @IsString()
-  resolution?: string;
+    resolution?: string;
 
   // =====================================================
   // CATEGORIZATION & TAGGING
@@ -141,7 +141,7 @@ export class UploadMediaDto {
    */
   @IsOptional()
   @IsString()
-  category?: string;
+    category?: string;
 
   /**
    * Etiquetas para búsqueda
@@ -149,7 +149,7 @@ export class UploadMediaDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  tags?: string[];
+    tags?: string[];
 
   /**
    * Palabras clave para SEO
@@ -157,7 +157,7 @@ export class UploadMediaDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  keywords?: string[];
+    keywords?: string[];
 
   // =====================================================
   // PROCESSING & STATUS
@@ -169,7 +169,7 @@ export class UploadMediaDto {
    */
   @IsOptional()
   @IsEnum(ProcessingStatusEnum)
-  processing_status?: ProcessingStatusEnum;
+    processing_status?: ProcessingStatusEnum;
 
   // =====================================================
   // VISIBILITY & USAGE
@@ -180,14 +180,14 @@ export class UploadMediaDto {
    */
   @IsOptional()
   @IsBoolean()
-  is_public?: boolean;
+    is_public?: boolean;
 
   /**
    * Si el recurso está activo
    */
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+    is_active?: boolean;
 
   /**
    * Array de UUIDs de módulos que usan este recurso
@@ -195,7 +195,7 @@ export class UploadMediaDto {
   @IsOptional()
   @IsArray()
   @IsUUID('4', { each: true })
-  used_in_modules?: string[];
+    used_in_modules?: string[];
 
   /**
    * Array de UUIDs de ejercicios que usan este recurso
@@ -203,7 +203,7 @@ export class UploadMediaDto {
   @IsOptional()
   @IsArray()
   @IsUUID('4', { each: true })
-  used_in_exercises?: string[];
+    used_in_exercises?: string[];
 
   // =====================================================
   // LICENSING & ATTRIBUTION
@@ -214,28 +214,28 @@ export class UploadMediaDto {
    */
   @IsOptional()
   @IsUUID()
-  created_by?: string;
+    created_by?: string;
 
   /**
    * Información de copyright
    */
   @IsOptional()
   @IsString()
-  copyright_info?: string;
+    copyright_info?: string;
 
   /**
    * Licencia del recurso
    */
   @IsOptional()
   @IsString()
-  license?: string;
+    license?: string;
 
   /**
    * Atribución requerida
    */
   @IsOptional()
   @IsString()
-  attribution?: string;
+    attribution?: string;
 
   // =====================================================
   // METADATA
@@ -246,5 +246,5 @@ export class UploadMediaDto {
    */
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

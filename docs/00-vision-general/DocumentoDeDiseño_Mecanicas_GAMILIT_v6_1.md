@@ -781,6 +781,11 @@ Analizar un evento desde múltiples puntos de vista diferentes.
 
 ## MÓDULO 4: LECTURA DIGITAL Y MULTIMODAL
 
+> **⚠️ BACKLOG - NO IMPLEMENTADO**
+> Este módulo está documentado pero NO implementado en la versión actual.
+> Requiere tecnologías avanzadas (verificación de fuentes, análisis multimedia).
+> Ver: [docs/04-fase-backlog/](../../04-fase-backlog/) para roadmap de implementación.
+
 **Objetivo:** Comprender y analizar textos en formatos digitales.
 **Fuente base:** https://digitalcommons.fiu.edu/led/vol1ss9/3
 
@@ -962,8 +967,13 @@ Evaluar la precisión y valor educativo de memes sobre Marie Curie o radiactivid
 
 ## MÓDULO 5: PRODUCCIÓN Y EXPRESIÓN LECTORA
 
-**Objetivo:** Crear contenido original basado en lo aprendido.  
-**Nota:** El usuario debe elegir y completar **SOLO UNO** de los 3 ejercicios disponibles.  
+> **⚠️ BACKLOG - NO IMPLEMENTADO**
+> Este módulo está documentado pero NO implementado en la versión actual.
+> Requiere evaluación creativa manual o con IA (diario, cómic, video).
+> Ver: [docs/04-fase-backlog/](../../04-fase-backlog/) para roadmap de implementación.
+
+**Objetivo:** Crear contenido original basado en lo aprendido.
+**Nota:** El usuario debe elegir y completar **SOLO UNO** de los 3 ejercicios disponibles.
 **Rango al completar:** `K´UK´ULKAN`
 
 ---

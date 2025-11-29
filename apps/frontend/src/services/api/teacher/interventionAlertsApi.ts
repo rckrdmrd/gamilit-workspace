@@ -53,7 +53,7 @@ export interface StudentInterventionAlert {
   severity: InterventionAlertSeverity;
   title: string;
   description: string | null;
-  metrics: Record<string, any> | null;
+  metrics: Record<string, unknown> | null;
   status: InterventionAlertStatus;
   generated_at: string;
   acknowledged_at: string | null;

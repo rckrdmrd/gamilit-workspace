@@ -59,9 +59,10 @@ import {
   TeacherContentService,
   BonusCoinsService,
   ExerciseResponsesService,
+  StorageService,
+  TeacherReportsService,
 } from './services';
 import { TeacherMessagesService } from './services/teacher-messages.service';
-import { TeacherReportsService } from './services/teacher-reports.service';
 
 // Guards
 import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
@@ -162,6 +163,7 @@ import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
     TeacherContentService,
     BonusCoinsService,
     ExerciseResponsesService,
+    StorageService,
     TeacherReportsService,
 
     // Guards

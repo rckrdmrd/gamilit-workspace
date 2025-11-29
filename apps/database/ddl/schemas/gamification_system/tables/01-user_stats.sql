@@ -21,7 +21,7 @@
 -- DEPENDENCIES
 -- =====================================================
 -- Requires:
---   - auth.users (user_id FK)
+--   - auth_management.profiles (user_id FK)
 --   - auth_management.tenants (tenant_id FK)
 --   - gamilit.now_mexico() function
 --   - gamilit.update_updated_at_column() function
@@ -162,7 +162,7 @@ CREATE TABLE IF NOT EXISTS gamification_system.user_stats (
 
     -- Foreign Keys
     CONSTRAINT user_stats_user_id_fkey FOREIGN KEY (user_id)
-        REFERENCES auth.users(id) ON DELETE CASCADE,
+        REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
     CONSTRAINT user_stats_tenant_id_fkey FOREIGN KEY (tenant_id)
         REFERENCES auth_management.tenants(id) ON DELETE CASCADE
 );

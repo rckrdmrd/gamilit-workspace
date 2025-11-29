@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * LiveLeaderboard Usage Examples
  *
@@ -27,10 +29,7 @@ export const BasicLeaderboardExample: React.FC = () => {
 export const CustomTypeLeaderboardExample: React.FC = () => {
   return (
     <div className="container mx-auto p-6">
-      <LiveLeaderboard
-        userId="current-user-id"
-        initialType="streak"
-      />
+      <LiveLeaderboard userId="current-user-id" initialType="streak" />
     </div>
   );
 };
@@ -66,10 +65,7 @@ export const ClickableLeaderboardExample: React.FC = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <LiveLeaderboard
-        userId="current-user-id"
-        onUserClick={handleUserClick}
-      />
+      <LiveLeaderboard userId="current-user-id" onUserClick={handleUserClick} />
     </div>
   );
 };
@@ -82,14 +78,14 @@ export const ControlledLeaderboardExample: React.FC = () => {
   const [selectedType, setSelectedType] = useState<LeaderboardTypeVariant>('xp');
 
   return (
-    <div className="container mx-auto p-6 space-y-4">
+    <div className="container mx-auto space-y-4 p-6">
       {/* External type selector */}
-      <div className="bg-white rounded-lg shadow p-4">
-        <h3 className="text-lg font-bold mb-2">Selecciona un tipo:</h3>
+      <div className="rounded-lg bg-white p-4 shadow">
+        <h3 className="mb-2 text-lg font-bold">Selecciona un tipo:</h3>
         <div className="flex gap-2">
           <button
             onClick={() => setSelectedType('xp')}
-            className={`px-4 py-2 rounded-lg ${
+            className={`rounded-lg px-4 py-2 ${
               selectedType === 'xp' ? 'bg-blue-500 text-white' : 'bg-gray-200'
             }`}
           >
@@ -97,7 +93,7 @@ export const ControlledLeaderboardExample: React.FC = () => {
           </button>
           <button
             onClick={() => setSelectedType('completion')}
-            className={`px-4 py-2 rounded-lg ${
+            className={`rounded-lg px-4 py-2 ${
               selectedType === 'completion' ? 'bg-blue-500 text-white' : 'bg-gray-200'
             }`}
           >
@@ -105,7 +101,7 @@ export const ControlledLeaderboardExample: React.FC = () => {
           </button>
           <button
             onClick={() => setSelectedType('streak')}
-            className={`px-4 py-2 rounded-lg ${
+            className={`rounded-lg px-4 py-2 ${
               selectedType === 'streak' ? 'bg-blue-500 text-white' : 'bg-gray-200'
             }`}
           >
@@ -113,7 +109,7 @@ export const ControlledLeaderboardExample: React.FC = () => {
           </button>
           <button
             onClick={() => setSelectedType('detective')}
-            className={`px-4 py-2 rounded-lg ${
+            className={`rounded-lg px-4 py-2 ${
               selectedType === 'detective' ? 'bg-blue-500 text-white' : 'bg-gray-200'
             }`}
           >
@@ -123,10 +119,7 @@ export const ControlledLeaderboardExample: React.FC = () => {
       </div>
 
       {/* Leaderboard with controlled type */}
-      <LiveLeaderboard
-        userId="current-user-id"
-        initialType={selectedType}
-      />
+      <LiveLeaderboard userId="current-user-id" initialType={selectedType} />
     </div>
   );
 };
@@ -138,9 +131,9 @@ export const ControlledLeaderboardExample: React.FC = () => {
 export const MultipleLeaderboardsExample: React.FC = () => {
   return (
     <div className="container mx-auto p-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div>
-          <h2 className="text-2xl font-bold mb-4">Clasificación XP</h2>
+          <h2 className="mb-4 text-2xl font-bold">Clasificación XP</h2>
           <LiveLeaderboard
             userId="current-user-id"
             initialType="xp"
@@ -150,7 +143,7 @@ export const MultipleLeaderboardsExample: React.FC = () => {
         </div>
 
         <div>
-          <h2 className="text-2xl font-bold mb-4">Clasificación Racha</h2>
+          <h2 className="mb-4 text-2xl font-bold">Clasificación Racha</h2>
           <LiveLeaderboard
             userId="current-user-id"
             initialType="streak"
@@ -170,14 +163,14 @@ export const MultipleLeaderboardsExample: React.FC = () => {
 export const StyledLeaderboardExample: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 to-pink-500 p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-2xl">
-          <h1 className="text-4xl font-bold text-white mb-6 text-center">
+      <div className="mx-auto max-w-4xl">
+        <div className="rounded-2xl bg-white/10 p-6 shadow-2xl backdrop-blur-lg">
+          <h1 className="mb-6 text-center text-4xl font-bold text-white">
             Tabla de Clasificación Global
           </h1>
           <LiveLeaderboard
             userId="current-user-id"
-            className="bg-white rounded-xl overflow-hidden"
+            className="overflow-hidden rounded-xl bg-white"
           />
         </div>
       </div>
@@ -192,20 +185,20 @@ export const StyledLeaderboardExample: React.FC = () => {
 export const DashboardLeaderboardExample: React.FC = () => {
   return (
     <div className="container mx-auto p-6">
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         {/* Sidebar - User Stats */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-xl font-bold mb-4">Mis Estadísticas</h3>
+        <div className="rounded-xl bg-white p-6 shadow-lg">
+          <h3 className="mb-4 text-xl font-bold">Mis Estadísticas</h3>
           <div className="space-y-4">
-            <div className="bg-blue-50 rounded-lg p-4">
+            <div className="rounded-lg bg-blue-50 p-4">
               <p className="text-sm text-gray-600">XP Total</p>
               <p className="text-2xl font-bold text-blue-600">12,450</p>
             </div>
-            <div className="bg-green-50 rounded-lg p-4">
+            <div className="rounded-lg bg-green-50 p-4">
               <p className="text-sm text-gray-600">Completado</p>
               <p className="text-2xl font-bold text-green-600">85%</p>
             </div>
-            <div className="bg-orange-50 rounded-lg p-4">
+            <div className="rounded-lg bg-orange-50 p-4">
               <p className="text-sm text-gray-600">Racha</p>
               <p className="text-2xl font-bold text-orange-600">24 días</p>
             </div>
@@ -214,11 +207,7 @@ export const DashboardLeaderboardExample: React.FC = () => {
 
         {/* Main Content - Leaderboard */}
         <div className="xl:col-span-2">
-          <LiveLeaderboard
-            userId="current-user-id"
-            initialType="detective"
-            itemsPerPage={15}
-          />
+          <LiveLeaderboard userId="current-user-id" initialType="detective" itemsPerPage={15} />
         </div>
       </div>
     </div>
@@ -231,12 +220,8 @@ export const DashboardLeaderboardExample: React.FC = () => {
 
 export const MobileLeaderboardExample: React.FC = () => {
   return (
-    <div className="max-w-md mx-auto p-4">
-      <LiveLeaderboard
-        userId="current-user-id"
-        itemsPerPage={10}
-        className="text-sm"
-      />
+    <div className="mx-auto max-w-md p-4">
+      <LiveLeaderboard userId="current-user-id" itemsPerPage={10} className="text-sm" />
     </div>
   );
 };
@@ -251,7 +236,7 @@ export const AnalyticsLeaderboardExample: React.FC = () => {
     if (typeof window !== 'undefined' && (window as any).gtag) {
       (window as any).gtag('event', 'leaderboard_user_click', {
         user_id: userId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
 
@@ -261,10 +246,7 @@ export const AnalyticsLeaderboardExample: React.FC = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <LiveLeaderboard
-        userId="current-user-id"
-        onUserClick={handleUserClick}
-      />
+      <LiveLeaderboard userId="current-user-id" onUserClick={handleUserClick} />
     </div>
   );
 };
@@ -276,16 +258,13 @@ export const AnalyticsLeaderboardExample: React.FC = () => {
 export const ManualRefreshLeaderboardExample: React.FC = () => {
   return (
     <div className="container mx-auto p-6">
-      <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+      <div className="mb-4 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
         <p className="text-sm text-yellow-800">
-          Esta tabla de clasificación solo se actualiza manualmente.
-          Haz clic en el botón "Actualizar" para ver los cambios más recientes.
+          Esta tabla de clasificación solo se actualiza manualmente. Haz clic en el botón
+          "Actualizar" para ver los cambios más recientes.
         </p>
       </div>
-      <LiveLeaderboard
-        userId="current-user-id"
-        autoRefresh={false}
-      />
+      <LiveLeaderboard userId="current-user-id" autoRefresh={false} />
     </div>
   );
 };
@@ -305,8 +284,8 @@ export const LoadingStateLeaderboardExample: React.FC = () => {
   if (!isReady) {
     return (
       <div className="container mx-auto p-6">
-        <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        <div className="rounded-xl bg-white p-12 text-center shadow-lg">
+          <div className="mx-auto mb-4 h-16 w-16 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
           <p className="text-gray-600">Cargando tu perfil...</p>
         </div>
       </div>
@@ -336,5 +315,5 @@ export const AllExamples = {
   MobileLeaderboardExample,
   AnalyticsLeaderboardExample,
   ManualRefreshLeaderboardExample,
-  LoadingStateLeaderboardExample
+  LoadingStateLeaderboardExample,
 };

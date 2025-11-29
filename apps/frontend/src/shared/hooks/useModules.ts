@@ -88,20 +88,27 @@ export function useModuleDetail(moduleId: string, userId?: string): UseModuleDet
         // apiClient extracts: {...}
         setModule(moduleResponse.data);
 
-        // Fetch all exercises (with completed field) using apiClient
-        const exercisesResponse = await apiClient.get('/educational/exercises');
+        // Fetch exercises for this specific module using the correct endpoint
+        console.log(`[useModuleDetail] Fetching exercises for module: ${moduleId}`);
+        const exercisesResponse = await apiClient.get(`/educational/modules/${moduleId}/exercises`);
 
         // apiClient unwraps the response automatically
         // Backend sends: { success: true, data: [...], ... }
         // apiClient extracts: [...]
-        const allExercises = exercisesResponse.data;
+        const moduleExercises = exercisesResponse.data;
+        console.log(`[useModuleDetail] Exercises API response:`, exercisesResponse);
+        console.log(`[useModuleDetail] Module exercises:`, moduleExercises);
 
-        // Filter exercises for this module and sort by order_index
-        const moduleExercises = allExercises
-          .filter((ex: Exercise) => ex.module_id === moduleId)
-          .sort((a: Exercise, b: Exercise) => a.order_index - b.order_index);
+        // Sort by order_index (backend should already sort, but ensure order)
+        const sortedExercises = Array.isArray(moduleExercises)
+          ? moduleExercises.sort((a: Exercise, b: Exercise) => a.order_index - b.order_index)
+          : [];
 
-        setExercises(moduleExercises);
+        console.log(
+          `[useModuleDetail] Final sorted exercises (${sortedExercises.length}):`,
+          sortedExercises,
+        );
+        setExercises(sortedExercises);
 
         // ✅ FIX: Fetch user progress for this module if userId is provided
         if (userId) {

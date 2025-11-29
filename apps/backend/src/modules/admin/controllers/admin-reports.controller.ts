@@ -37,10 +37,10 @@ export class AdminReportsController {
   })
   async generateReport(
     @Body() generateDto: GenerateReportDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<ReportDto> {
     const userId = req.user?.id || req.user?.sub;
-    return await this.adminReportsService.generateReport(generateDto, userId);
+    return this.adminReportsService.generateReport(generateDto, userId);
   }
 
   @Get()
@@ -50,7 +50,7 @@ export class AdminReportsController {
       'Retrieve a paginated list of reports with optional filters',
   })
   async getReports(@Query() query: ListReportsDto): Promise<PaginatedReportsDto> {
-    return await this.adminReportsService.getReports(query);
+    return this.adminReportsService.getReports(query);
   }
 
   @Get(':id/download')
@@ -60,7 +60,7 @@ export class AdminReportsController {
       'Download a completed report. Returns error if report is not ready.',
   })
   async downloadReport(@Param('id') id: string): Promise<ReportDto> {
-    return await this.adminReportsService.downloadReport(id);
+    return this.adminReportsService.downloadReport(id);
   }
 
   @Delete(':id')

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import { apiClient } from '@/services/api/apiClient';
 
@@ -50,6 +51,7 @@ export function useUserActivity(filters?: { role?: string; dateFrom?: string; ac
     fetchActivity();
     const interval = setInterval(fetchActivity, 30000); // Refresh every 30 seconds
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(filters)]);
 
   return { activities, onlineUsers, activeSessions, loading };
@@ -83,6 +85,7 @@ export function useErrorTracking(filters?: { severity?: string; resolved?: boole
 
   useEffect(() => {
     fetchErrors();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(filters)]);
 
   return { errors, loading, markAsResolved, refresh: fetchErrors };

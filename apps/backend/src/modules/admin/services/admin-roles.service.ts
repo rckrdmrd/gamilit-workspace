@@ -47,7 +47,7 @@ export class AdminRolesService {
           usersCount = await this.userRoleRepo.count({
             where: {
               role: enumValue as any,
-              is_active: true
+              is_active: true,
             },
           });
         } catch (error) {

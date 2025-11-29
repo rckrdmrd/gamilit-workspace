@@ -1,13 +1,10 @@
+import { PaginatedResponseDto } from '@shared/dto/common';
 import { UserDetailsDto } from './user-details.dto';
 
 /**
  * PaginatedUsersDto
- * Response paginada de lista de usuarios
+ *
+ * DTO para respuesta paginada de usuarios.
+ * Extiende del DTO genérico PaginatedResponseDto.
  */
-export class PaginatedUsersDto {
-  data!: UserDetailsDto[];
-  total!: number;
-  page!: number;
-  limit!: number;
-  total_pages!: number;
-}
+export class PaginatedUsersDto extends PaginatedResponseDto<UserDetailsDto> {}

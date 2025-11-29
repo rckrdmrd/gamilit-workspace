@@ -43,96 +43,96 @@ export enum Status {
 @Index(['createdAt'])
 export class AuditLog {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   @Column('uuid', { name: 'tenant_id', nullable: true })
-  tenantId!: string | null;
+    tenantId!: string | null;
 
   @Column('text', { name: 'event_type' })
-  eventType!: string;
+    eventType!: string;
 
   @Column('text')
-  action!: string;
+    action!: string;
 
   @Column('text', { name: 'resource_type', nullable: true })
-  resourceType!: string | null;
+    resourceType!: string | null;
 
   @Column('text', { name: 'resource_id', nullable: true })
-  resourceId!: string | null;
+    resourceId!: string | null;
 
   @Column('text', { name: 'actor_id', nullable: true })
-  actorId!: string | null;
+    actorId!: string | null;
 
   @Column({
     type: 'text',
     name: 'actor_type',
     default: ActorType.USER,
   })
-  actorType!: ActorType;
+    actorType!: ActorType;
 
   @Column('text', { name: 'actor_ip', nullable: true })
-  actorIp!: string | null;
+    actorIp!: string | null;
 
   @Column('text', { name: 'actor_user_agent', nullable: true })
-  actorUserAgent!: string | null;
+    actorUserAgent!: string | null;
 
   @Column('text', { name: 'target_id', nullable: true })
-  targetId!: string | null;
+    targetId!: string | null;
 
   @Column('text', { name: 'target_type', nullable: true })
-  targetType!: string | null;
+    targetType!: string | null;
 
   @Column('text', { name: 'session_id', nullable: true })
-  sessionId!: string | null;
+    sessionId!: string | null;
 
   @Column('text', { nullable: true })
-  description!: string | null;
+    description!: string | null;
 
   @Column('jsonb', { name: 'old_values', nullable: true })
-  oldValues!: any;
+    oldValues!: any;
 
   @Column('jsonb', { name: 'new_values', nullable: true })
-  newValues!: any;
+    newValues!: any;
 
   @Column('jsonb', { nullable: true })
-  changes!: any;
+    changes!: any;
 
   @Column({
     type: 'text',
     default: Severity.INFO,
   })
-  severity!: Severity;
+    severity!: Severity;
 
   @Column({
     type: 'text',
     default: Status.SUCCESS,
   })
-  status!: Status;
+    status!: Status;
 
   @Column('text', { name: 'error_code', nullable: true })
-  errorCode!: string | null;
+    errorCode!: string | null;
 
   @Column('text', { name: 'error_message', nullable: true })
-  errorMessage!: string | null;
+    errorMessage!: string | null;
 
   @Column('text', { name: 'stack_trace', nullable: true })
-  stackTrace!: string | null;
+    stackTrace!: string | null;
 
   @Column('text', { name: 'request_id', nullable: true })
-  requestId!: string | null;
+    requestId!: string | null;
 
   @Column('text', { name: 'correlation_id', nullable: true })
-  correlationId!: string | null;
+    correlationId!: string | null;
 
   @Column('jsonb', { name: 'additional_data', nullable: true })
-  additionalData!: any;
+    additionalData!: any;
 
   @Column('text', { array: true, nullable: true })
-  tags!: string[] | null;
+    tags!: string[] | null;
 
   @CreateDateColumn({
     name: 'created_at',
     type: 'timestamp with time zone',
   })
-  createdAt!: Date;
+    createdAt!: Date;
 }

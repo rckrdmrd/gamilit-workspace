@@ -1,45 +1,41 @@
 /**
  * Detective Textual Zod Schemas
+ * Validation schemas for multiple choice inference exercise
  */
 
 import { z } from 'zod';
 
-export const evidenceSchema = z.object({
+export const inferenceQuestionSchema = z.object({
   id: z.string(),
-  type: z.enum(['document', 'letter', 'photo', 'note', 'artifact']),
-  title: z.string().min(1),
-  content: z.string().min(1),
-  date: z.string().optional(),
-  imageUrl: z.string().url().optional(),
-  discovered: z.boolean(),
-  relevance: z.number().min(0).max(1),
+  question: z.string().min(1),
+  options: z.array(z.string()).length(4),
+  correctAnswer: z.number().min(0).max(3),
+  explanation: z.string().min(1),
+  inference_type: z.enum(['causa_efecto', 'contexto_situacional', 'motivacion']),
 });
 
-export const evidenceConnectionSchema = z.object({
-  id: z.string(),
-  fromEvidenceId: z.string(),
-  toEvidenceId: z.string(),
-  relationship: z.string().min(1),
-  userCreated: z.boolean(),
-  isCorrect: z.boolean().optional(),
-});
-
-export const investigationSchema = z.object({
+export const detectiveTextualExerciseSchema = z.object({
   id: z.string(),
   title: z.string().min(1),
   description: z.string().min(1),
-  mystery: z.string().min(1),
-  availableEvidence: z.array(evidenceSchema),
-  correctConnections: z.array(evidenceConnectionSchema),
-  difficulty: z.enum(['facil', 'medio', 'dificil', 'experto']),
+  passage: z.string().min(1),
+  questions: z.array(inferenceQuestionSchema),
+  difficulty: z.enum(['easy', 'medium', 'hard']),
 });
 
-export const detectiveProgressSchema = z.object({
-  investigationId: z.string(),
-  discoveredEvidence: z.array(z.string()),
-  connections: z.array(evidenceConnectionSchema),
-  hypotheses: z.array(z.string()),
+export const detectiveTextualProgressSchema = z.object({
+  exerciseId: z.string(),
+  answers: z.record(z.string(), z.number().min(0).max(3)),
   hintsUsed: z.number().min(0),
   timeSpent: z.number().min(0),
   score: z.number().min(0).max(100),
+  completed: z.boolean(),
+});
+
+export const detectiveTextualStateSchema = z.object({
+  answers: z.record(z.string(), z.number().min(0).max(3)),
+  hintsUsed: z.number().min(0),
+  timeSpent: z.number().min(0),
+  score: z.number().min(0).max(100),
+  currentQuestionIndex: z.number().min(0),
 });

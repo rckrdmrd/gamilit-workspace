@@ -221,7 +221,7 @@ export const EnsayoArgumentativoExercise: React.FC<ExerciseProps> = ({
         },
       ],
     };
-  }, [topic, thesis, introduction, argument1, argument2, argument3, conclusion]);
+  }, [actionsRef]);
 
   return (
     <>

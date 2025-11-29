@@ -25,26 +25,26 @@ export class LeaderboardMetadata {
    * Ejemplos: "leaderboard_global", "leaderboard_weekly", "leaderboard_school_123"
    */
   @PrimaryColumn({ type: 'text' })
-  view_name!: string;
+    view_name!: string;
 
   /**
    * Fecha y hora de la última actualización del leaderboard
    */
   @Column({ type: 'timestamptz', default: () => 'NOW()' })
-  last_refresh_at!: Date;
+    last_refresh_at!: Date;
 
   /**
    * Total de usuarios en el leaderboard
    */
   @Column({ type: 'integer', nullable: true })
-  total_users!: number | null;
+    total_users!: number | null;
 
   /**
    * Duración del refresh en milisegundos (para métricas de performance)
    */
   @Column({ type: 'integer', nullable: true })
-  refresh_duration_ms!: number | null;
+    refresh_duration_ms!: number | null;
 
   @Column({ type: 'timestamptz', default: () => 'NOW()' })
-  created_at!: Date;
+    created_at!: Date;
 }

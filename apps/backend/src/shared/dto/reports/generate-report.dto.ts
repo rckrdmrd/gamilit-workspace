@@ -35,7 +35,7 @@ export class GenerateReportDto {
     example: ReportType.USERS,
   })
   @IsEnum(ReportType)
-  type!: ReportType;
+    type!: ReportType;
 
   @ApiProperty({
     description: 'Report output format',
@@ -43,7 +43,7 @@ export class GenerateReportDto {
     example: ReportFormat.EXCEL,
   })
   @IsEnum(ReportFormat)
-  format!: ReportFormat;
+    format!: ReportFormat;
 
   @ApiPropertyOptional({
     description: 'List of student IDs to include in report (optional)',
@@ -53,7 +53,7 @@ export class GenerateReportDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  student_ids?: string[];
+    student_ids?: string[];
 
   @ApiPropertyOptional({
     description: 'Classroom ID to filter students (optional)',
@@ -61,7 +61,7 @@ export class GenerateReportDto {
   })
   @IsOptional()
   @IsString()
-  classroom_id?: string;
+    classroom_id?: string;
 
   @ApiPropertyOptional({
     description: 'Start date for data range (ISO 8601)',
@@ -69,7 +69,7 @@ export class GenerateReportDto {
   })
   @IsOptional()
   @IsDateString()
-  start_date?: string;
+    start_date?: string;
 
   @ApiPropertyOptional({
     description: 'End date for data range (ISO 8601)',
@@ -77,12 +77,12 @@ export class GenerateReportDto {
   })
   @IsOptional()
   @IsDateString()
-  end_date?: string;
+    end_date?: string;
 
   @ApiPropertyOptional({
     description: 'Report filters (generic object for additional filters)',
     example: { start_date: '2025-01-01', end_date: '2025-12-31' },
   })
   @IsOptional()
-  filters?: Record<string, any>;
+    filters?: Record<string, any>;
 }

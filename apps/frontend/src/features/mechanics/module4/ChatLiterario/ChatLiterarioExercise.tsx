@@ -70,6 +70,7 @@ export const ChatLiterarioExercise: React.FC<ExerciseProps> = ({
   const exerciseInstance = exercise || { minMessages: 5 };
 
   // Progress tracking
+
   useEffect(() => {
     const progress = calculateProgress();
     const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
@@ -82,6 +83,7 @@ export const ChatLiterarioExercise: React.FC<ExerciseProps> = ({
         timeSpent,
       ),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages, exerciseInstance.minMessages, startTime, onProgressUpdate]);
 
   // Auto-save functionality

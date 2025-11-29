@@ -11,7 +11,7 @@ export class StudentProgressQueryDto {
   })
   @IsOptional()
   @IsUUID()
-  classroom_id?: string;
+    classroom_id?: string;
 
   @ApiPropertyOptional({
     description: 'Filter by module ID',
@@ -19,5 +19,5 @@ export class StudentProgressQueryDto {
   })
   @IsOptional()
   @IsUUID()
-  module_id?: string;
+    module_id?: string;
 }

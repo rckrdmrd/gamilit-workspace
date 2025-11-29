@@ -6,6 +6,7 @@ import { ApiExtraModels, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
  */
 export class PaginatedResponse<T> {
   data!: T[];
+
   meta!: {
     total: number;
     page: number;

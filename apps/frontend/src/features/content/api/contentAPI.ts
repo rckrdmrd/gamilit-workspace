@@ -16,6 +16,7 @@
  * Note: No separate "lessons" endpoints exist in backend.
  * Backend uses modules and exercises directly.
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
@@ -166,7 +167,7 @@ export interface ExerciseContent {
   options?: any[];
   correctAnswers?: any[];
   explanations?: Record<string, string>;
-  marieCurieContext?: Record<string, any>;
+  marieCurieContext?: Record<string, unknown>;
   resources?: any[];
   [key: string]: any; // Type-specific fields
 }

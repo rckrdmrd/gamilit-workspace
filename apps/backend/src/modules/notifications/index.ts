@@ -1,14 +1,18 @@
 // Module
 export * from './notifications.module';
 
-// Entities
-export * from './entities/notification.entity';
+// Entities (Sistema Consolidado)
+export * from './entities/multichannel';
 
-// Services
-export * from './services/notifications.service';
+// Services (Sistema Consolidado)
+export * from './services/notification.service';
+export * from './services/notification-template.service';
+export * from './services/notification-preference.service';
+export * from './services/notification-queue.service';
+export * from './services/user-device.service';
 
-// Controllers
-export * from './controllers/notifications.controller';
+// Controllers (Sistema Consolidado)
+export * from './controllers';
 
 // DTOs
 export * from './dto/notification-response.dto';

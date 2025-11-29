@@ -10,7 +10,7 @@ export class UpdateSubscriptionDto {
   })
   @IsOptional()
   @IsEnum(SubscriptionTierEnum)
-  subscription_tier?: SubscriptionTierEnum;
+    subscription_tier?: SubscriptionTierEnum;
 
   @ApiPropertyOptional({
     description: 'Maximum number of users allowed',
@@ -19,7 +19,7 @@ export class UpdateSubscriptionDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  max_users?: number;
+    max_users?: number;
 
   @ApiPropertyOptional({
     description: 'Maximum storage in GB',
@@ -28,7 +28,7 @@ export class UpdateSubscriptionDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  max_storage_gb?: number;
+    max_storage_gb?: number;
 
   @ApiPropertyOptional({
     description: 'Trial end date (ISO 8601)',
@@ -36,5 +36,5 @@ export class UpdateSubscriptionDto {
   })
   @IsOptional()
   @IsDateString()
-  trial_ends_at?: string;
+    trial_ends_at?: string;
 }

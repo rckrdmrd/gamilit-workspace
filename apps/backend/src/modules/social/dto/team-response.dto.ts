@@ -13,183 +13,183 @@ export class TeamResponseDto {
    * ID único del registro
    */
   @Expose()
-  id!: string;
+    id!: string;
 
   /**
    * ID del aula
    */
   @Expose()
-  classroom_id!: string | null;
+    classroom_id!: string | null;
 
   /**
    * ID del tenant propietario
    */
   @Expose()
-  tenant_id!: string;
+    tenant_id!: string;
 
   /**
    * Nombre del equipo
    */
   @Expose()
-  name!: string;
+    name!: string;
 
   /**
    * Descripción del equipo
    */
   @Expose()
-  description!: string | null;
+    description!: string | null;
 
   /**
    * Lema o motto del equipo
    */
   @Expose()
-  motto!: string | null;
+    motto!: string | null;
 
   /**
    * Color primario del equipo
    */
   @Expose()
-  color_primary!: string;
+    color_primary!: string;
 
   /**
    * Color secundario del equipo
    */
   @Expose()
-  color_secondary!: string;
+    color_secondary!: string;
 
   /**
    * URL del avatar del equipo
    */
   @Expose()
-  avatar_url!: string | null;
+    avatar_url!: string | null;
 
   /**
    * URL del banner del equipo
    */
   @Expose()
-  banner_url!: string | null;
+    banner_url!: string | null;
 
   /**
    * Badges o insignias ganadas
    */
   @Expose()
-  badges!: any[];
+    badges!: any[];
 
   /**
    * ID del creador del equipo
    */
   @Expose()
-  creator_id!: string;
+    creator_id!: string;
 
   /**
    * ID del líder actual del equipo
    */
   @Expose()
-  leader_id!: string | null;
+    leader_id!: string | null;
 
   /**
    * Código único de invitación
    */
   @Expose()
-  team_code!: string | null;
+    team_code!: string | null;
 
   /**
    * Capacidad máxima de miembros
    */
   @Expose()
-  max_members!: number;
+    max_members!: number;
 
   /**
    * Contador actual de miembros
    */
   @Expose()
-  current_members_count!: number;
+    current_members_count!: number;
 
   /**
    * Equipo público
    */
   @Expose()
-  is_public!: boolean;
+    is_public!: boolean;
 
   /**
    * Permitir solicitudes de ingreso
    */
   @Expose()
-  allow_join_requests!: boolean;
+    allow_join_requests!: boolean;
 
   /**
    * Requiere aprobación para unirse
    */
   @Expose()
-  require_approval!: boolean;
+    require_approval!: boolean;
 
   /**
    * XP total acumulada
    */
   @Expose()
-  total_xp!: number;
+    total_xp!: number;
 
   /**
    * ML Coins totales acumuladas
    */
   @Expose()
-  total_ml_coins!: number;
+    total_ml_coins!: number;
 
   /**
    * Módulos completados
    */
   @Expose()
-  modules_completed!: number;
+    modules_completed!: number;
 
   /**
    * Achievements ganados
    */
   @Expose()
-  achievements_earned!: number;
+    achievements_earned!: number;
 
   /**
    * Equipo activo
    */
   @Expose()
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Equipo verificado
    */
   @Expose()
-  is_verified!: boolean;
+    is_verified!: boolean;
 
   /**
    * Fecha de fundación
    */
   @Expose()
   @Type(() => Date)
-  founded_at!: Date;
+    founded_at!: Date;
 
   /**
    * Fecha de última actividad
    */
   @Expose()
   @Type(() => Date)
-  last_activity_at!: Date | null;
+    last_activity_at!: Date | null;
 
   /**
    * Metadatos adicionales
    */
   @Expose()
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   /**
    * Fecha de creación
    */
   @Expose()
   @Type(() => Date)
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de actualización
    */
   @Expose()
   @Type(() => Date)
-  updated_at!: Date;
+    updated_at!: Date;
 }

@@ -28,7 +28,7 @@ import { AssignmentsService } from '../services/assignments.service';
 import { CreateAssignmentDto } from '../dto/create-assignment.dto';
 import { UpdateAssignmentDto } from '../dto/update-assignment.dto';
 import { AssignToClassroomsDto } from '../dto/assign-to-classrooms.dto';
-import { GradeSubmissionDto } from '../dto/grade-submission.dto';
+import { AssignmentGradeDto } from '../dto/grade-submission.dto';
 import { PatchAssignmentDto } from '../dto/patch-assignment.dto';
 import { DistributeAssignmentDto, DistributeAssignmentResponseDto } from '../dto/distribute-assignment.dto';
 import { DuplicateAssignmentDto, DuplicateAssignmentResponseDto } from '../dto/duplicate-assignment.dto';
@@ -48,7 +48,7 @@ export class AssignmentsController {
   @Post()
   @ApiOperation({
     summary: 'Create new assignment',
-    description: 'Crea una nueva asignación para el profesor. La asignación inicia como borrador (isPublished=false).'
+    description: 'Crea una nueva asignación para el profesor. La asignación inicia como borrador (isPublished=false).',
   })
   @ApiBody({ type: CreateAssignmentDto })
   @ApiResponse({
@@ -64,9 +64,9 @@ export class AssignmentsController {
         totalPoints: 100,
         dueDate: '2025-01-20T23:59:59Z',
         isPublished: false,
-        createdAt: '2025-01-10T10:00:00Z'
-      }
-    }
+        createdAt: '2025-01-10T10:00:00Z',
+      },
+    },
   })
   @ApiResponse({ status: 400, description: 'Datos inválidos' })
   async create(@Body() createDto: CreateAssignmentDto, @Request() req: any) {
@@ -81,26 +81,26 @@ export class AssignmentsController {
   @Get()
   @ApiOperation({
     summary: 'Get all assignments for teacher',
-    description: 'Obtiene todas las asignaciones creadas por el profesor con filtros opcionales de publicación, tipo y búsqueda'
+    description: 'Obtiene todas las asignaciones creadas por el profesor con filtros opcionales de publicación, tipo y búsqueda',
   })
   @ApiQuery({
     name: 'isPublished',
     required: false,
     type: Boolean,
     description: 'Filtrar por estado de publicación',
-    example: true
+    example: true,
   })
   @ApiQuery({
     name: 'type',
     required: false,
     enum: ['quiz', 'homework', 'project', 'exam'],
-    description: 'Filtrar por tipo de asignación'
+    description: 'Filtrar por tipo de asignación',
   })
   @ApiQuery({
     name: 'search',
     required: false,
     type: String,
-    description: 'Buscar por título o descripción'
+    description: 'Buscar por título o descripción',
   })
   @ApiResponse({
     status: 200,
@@ -112,9 +112,9 @@ export class AssignmentsController {
         assignmentType: 'homework',
         isPublished: true,
         dueDate: '2025-01-20',
-        totalPoints: 100
-      }]
-    }
+        totalPoints: 100,
+      }],
+    },
   })
   async findAll(@Query() query: any, @Request() req: any) {
     const teacherId = req.user?.userId || req.user?.sub;
@@ -132,14 +132,14 @@ export class AssignmentsController {
   @Get(':id')
   @ApiOperation({
     summary: 'Get single assignment details',
-    description: 'Obtiene los detalles completos de una asignación específica. Requiere ser el creador de la asignación.'
+    description: 'Obtiene los detalles completos de una asignación específica. Requiere ser el creador de la asignación.',
   })
   @ApiParam({
     name: 'id',
     description: 'ID de la asignación en formato UUID',
     type: String,
     required: true,
-    example: '550e8400-e29b-41d4-a716-446655440000'
+    example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @ApiResponse({
     status: 200,
@@ -156,13 +156,13 @@ export class AssignmentsController {
         isPublished: true,
         createdAt: '2025-01-10T10:00:00Z',
         classrooms: [{ classroomId: '770e8400-...', name: '5to A' }],
-        exercises: [{ exerciseId: '880e8400-...', title: 'Ejercicio 1' }]
-      }
-    }
+        exercises: [{ exerciseId: '880e8400-...', title: 'Ejercicio 1' }],
+      },
+    },
   })
   @ApiResponse({
     status: 404,
-    description: 'Asignación no encontrada o acceso denegado'
+    description: 'Asignación no encontrada o acceso denegado',
   })
   async findOne(@Param('id') id: string, @Request() req: any) {
     const teacherId = req.user?.userId || req.user?.sub;
@@ -176,28 +176,28 @@ export class AssignmentsController {
   @Put(':id')
   @ApiOperation({
     summary: 'Update assignment',
-    description: 'Actualiza una asignación completa. Solo permitido si no tiene entregas. Para actualizaciones parciales con entregas, usar PATCH.'
+    description: 'Actualiza una asignación completa. Solo permitido si no tiene entregas. Para actualizaciones parciales con entregas, usar PATCH.',
   })
   @ApiParam({
     name: 'id',
     description: 'ID de la asignación',
-    type: String
+    type: String,
   })
   @ApiBody({ type: UpdateAssignmentDto })
   @ApiResponse({
     status: 200,
-    description: 'Asignación actualizada exitosamente'
+    description: 'Asignación actualizada exitosamente',
   })
   @ApiResponse({
     status: 404,
-    description: 'Asignación no encontrada o acceso denegado'
+    description: 'Asignación no encontrada o acceso denegado',
   })
   @ApiResponse({
     status: 422,
-    description: 'No se puede actualizar porque ya tiene entregas'
+    description: 'No se puede actualizar porque ya tiene entregas',
   })
   async update(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() updateDto: UpdateAssignmentDto,
     @Request() req: any,
   ) {
@@ -213,20 +213,20 @@ export class AssignmentsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Delete assignment',
-    description: 'Elimina (soft delete) una asignación. Solo el creador puede eliminarla.'
+    description: 'Elimina (soft delete) una asignación. Solo el creador puede eliminarla.',
   })
   @ApiParam({
     name: 'id',
     description: 'ID de la asignación',
-    type: String
+    type: String,
   })
   @ApiResponse({
     status: 204,
-    description: 'Asignación eliminada exitosamente'
+    description: 'Asignación eliminada exitosamente',
   })
   @ApiResponse({
     status: 404,
-    description: 'Asignación no encontrada o acceso denegado'
+    description: 'Asignación no encontrada o acceso denegado',
   })
   async remove(@Param('id') id: string, @Request() req: any) {
     const teacherId = req.user?.userId || req.user?.sub;
@@ -240,12 +240,12 @@ export class AssignmentsController {
   @Post(':id/assign')
   @ApiOperation({
     summary: 'Assign assignment to classrooms',
-    description: 'Asigna la asignación a uno o más aulas. Los estudiantes del aula podrán ver y completar la asignación.'
+    description: 'Asigna la asignación a uno o más aulas. Los estudiantes del aula podrán ver y completar la asignación.',
   })
   @ApiParam({
     name: 'id',
     description: 'ID de la asignación',
-    type: String
+    type: String,
   })
   @ApiBody({ type: AssignToClassroomsDto })
   @ApiResponse({
@@ -255,16 +255,16 @@ export class AssignmentsController {
       example: {
         assignmentId: '550e8400-...',
         classroomsAssigned: ['770e8400-...', '880e8400-...'],
-        studentsReached: 45
-      }
-    }
+        studentsReached: 45,
+      },
+    },
   })
   @ApiResponse({
     status: 404,
-    description: 'Asignación no encontrada o acceso denegado'
+    description: 'Asignación no encontrada o acceso denegado',
   })
   async assignToClassrooms(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() dto: AssignToClassroomsDto,
     @Request() req: any,
   ) {
@@ -279,24 +279,24 @@ export class AssignmentsController {
   @Get(':id/submissions')
   @ApiOperation({
     summary: 'Get all submissions for assignment',
-    description: 'Obtiene todas las entregas de una asignación con filtros opcionales por estado y aula'
+    description: 'Obtiene todas las entregas de una asignación con filtros opcionales por estado y aula',
   })
   @ApiParam({
     name: 'id',
     description: 'ID de la asignación',
-    type: String
+    type: String,
   })
   @ApiQuery({
     name: 'status',
     required: false,
     enum: ['pending', 'submitted', 'graded'],
-    description: 'Filtrar por estado de entrega'
+    description: 'Filtrar por estado de entrega',
   })
   @ApiQuery({
     name: 'classroomId',
     required: false,
     type: String,
-    description: 'Filtrar por aula específica'
+    description: 'Filtrar por aula específica',
   })
   @ApiResponse({
     status: 200,
@@ -309,16 +309,16 @@ export class AssignmentsController {
         status: 'submitted',
         submittedAt: '2025-01-15T14:30:00Z',
         score: null,
-        feedback: null
-      }]
-    }
+        feedback: null,
+      }],
+    },
   })
   @ApiResponse({
     status: 404,
-    description: 'Asignación no encontrada o acceso denegado'
+    description: 'Asignación no encontrada o acceso denegado',
   })
   async getSubmissions(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Query() query: any,
     @Request() req: any,
   ) {
@@ -336,19 +336,19 @@ export class AssignmentsController {
   @Post(':assignmentId/submissions/:submissionId/grade')
   @ApiOperation({
     summary: 'Grade a submission',
-    description: 'Califica una entrega de estudiante asignando puntaje y retroalimentación'
+    description: 'Califica una entrega de estudiante asignando puntaje y retroalimentación',
   })
   @ApiParam({
     name: 'assignmentId',
     description: 'ID de la asignación',
-    type: String
+    type: String,
   })
   @ApiParam({
     name: 'submissionId',
     description: 'ID de la entrega',
-    type: String
+    type: String,
   })
-  @ApiBody({ type: GradeSubmissionDto })
+  @ApiBody({ type: AssignmentGradeDto })
   @ApiResponse({
     status: 200,
     description: 'Entrega calificada exitosamente',
@@ -358,21 +358,21 @@ export class AssignmentsController {
         score: 85,
         feedback: 'Buen trabajo, pero revisa el ejercicio 3',
         gradedAt: '2025-01-16T10:00:00Z',
-        status: 'graded'
-      }
-    }
+        status: 'graded',
+      },
+    },
   })
   @ApiResponse({
     status: 404,
-    description: 'Entrega no encontrada o acceso denegado'
+    description: 'Entrega no encontrada o acceso denegado',
   })
   @ApiResponse({
     status: 400,
-    description: 'Puntaje inválido (debe estar entre 0 y totalPoints)'
+    description: 'Puntaje inválido (debe estar entre 0 y totalPoints)',
   })
   async gradeSubmission(
-    @Param('submissionId') submissionId: string,
-    @Body() dto: GradeSubmissionDto,
+  @Param('submissionId') submissionId: string,
+    @Body() dto: AssignmentGradeDto,
     @Request() req: any,
   ) {
     const teacherId = req.user?.userId || req.user?.sub;
@@ -405,7 +405,7 @@ export class AssignmentsController {
     description: 'Cannot change critical fields when submissions exist',
   })
   async patch(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() patchDto: PatchAssignmentDto,
     @Request() req: any,
   ) {
@@ -439,7 +439,7 @@ export class AssignmentsController {
     description: 'Invalid deadline override (must be in future)',
   })
   async distribute(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() distributeDto: DistributeAssignmentDto,
     @Request() req: any,
   ) {
@@ -470,7 +470,7 @@ export class AssignmentsController {
     description: 'Assignment not found or access denied',
   })
   async duplicate(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() duplicateDto: DuplicateAssignmentDto,
     @Request() req: any,
   ) {
@@ -526,7 +526,7 @@ export class AssignmentsController {
     description: 'Assignment not found or access denied',
   })
   async publish(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body('notifyStudents') notifyStudents: boolean = false,
     @Request() req: any,
   ) {

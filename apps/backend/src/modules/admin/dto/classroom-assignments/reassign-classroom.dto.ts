@@ -11,7 +11,7 @@ export class ReassignClassroomDto {
   })
   @IsUUID()
   @IsNotEmpty()
-  classroomId!: string;
+    classroomId!: string;
 
   @ApiProperty({
     description: 'Current teacher ID (from)',
@@ -19,7 +19,7 @@ export class ReassignClassroomDto {
   })
   @IsUUID()
   @IsNotEmpty()
-  fromTeacherId!: string;
+    fromTeacherId!: string;
 
   @ApiProperty({
     description: 'New teacher ID (to)',
@@ -27,7 +27,7 @@ export class ReassignClassroomDto {
   })
   @IsUUID()
   @IsNotEmpty()
-  toTeacherId!: string;
+    toTeacherId!: string;
 
   @ApiPropertyOptional({
     description: 'Reason for reassignment',
@@ -37,5 +37,5 @@ export class ReassignClassroomDto {
   @IsOptional()
   @IsString()
   @MaxLength(500)
-  reason?: string;
+    reason?: string;
 }

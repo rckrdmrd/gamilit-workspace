@@ -31,45 +31,45 @@ export class AuthProviderResponseDto {
    * Identificador único del registro
    */
   @Expose()
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario vinculado
    */
   @Expose()
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Proveedor de autenticación OAuth
    * Valores: local, google, facebook, apple, microsoft, github
    */
   @Expose()
-  provider!: AuthProviderEnum;
+    provider!: AuthProviderEnum;
 
   /**
    * ID del usuario en el proveedor OAuth externo
    */
   @Expose()
-  provider_user_id!: string;
+    provider_user_id!: string;
 
   /**
    * Fecha y hora de expiración del access_token
    * @note NO exponemos el token, solo su fecha de expiración
    */
   @Expose()
-  token_expires_at!: Date | null;
+    token_expires_at!: Date | null;
 
   /**
    * Fecha y hora de creación del registro
    */
   @Expose()
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización del registro
    */
   @Expose()
-  updated_at!: Date;
+    updated_at!: Date;
 
   // =====================================================
   // Campos NO expuestos (sensibles):

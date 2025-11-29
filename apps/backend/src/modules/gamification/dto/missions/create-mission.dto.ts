@@ -12,7 +12,7 @@ export class MissionObjectiveDto {
     example: 'complete_exercises',
   })
   @IsString()
-  type!: string;
+    type!: string;
 
   @ApiProperty({
     description: 'Valor objetivo a alcanzar',
@@ -20,7 +20,7 @@ export class MissionObjectiveDto {
   })
   @IsNumber()
   @Min(1)
-  target!: number;
+    target!: number;
 
   @ApiProperty({
     description: 'Progreso actual',
@@ -29,7 +29,7 @@ export class MissionObjectiveDto {
   })
   @IsNumber()
   @Min(0)
-  current!: number;
+    current!: number;
 
   @ApiPropertyOptional({
     description: 'Descripción del objetivo',
@@ -37,7 +37,7 @@ export class MissionObjectiveDto {
   })
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 }
 
 /**
@@ -51,7 +51,7 @@ export class MissionRewardsDto {
   @IsOptional()
   @IsNumber()
   @Min(0)
-  ml_coins?: number;
+    ml_coins?: number;
 
   @ApiPropertyOptional({
     description: 'Puntos de experiencia otorgados',
@@ -60,7 +60,7 @@ export class MissionRewardsDto {
   @IsOptional()
   @IsNumber()
   @Min(0)
-  xp?: number;
+    xp?: number;
 
   @ApiPropertyOptional({
     description: 'Items adicionales',
@@ -68,7 +68,7 @@ export class MissionRewardsDto {
   })
   @IsOptional()
   @IsObject()
-  items?: Array<{
+    items?: Array<{
     type: string;
     quantity: number;
   }>;
@@ -91,21 +91,21 @@ export class CreateMissionDto {
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @IsUUID()
-  user_id!: string;
+    user_id!: string;
 
   @ApiProperty({
     description: 'ID de la plantilla de misión',
     example: 'daily_exercise_streak_3',
   })
   @IsString()
-  template_id!: string;
+    template_id!: string;
 
   @ApiProperty({
     description: 'Título de la misión',
     example: 'Racha de ejercicios',
   })
   @IsString()
-  title!: string;
+    title!: string;
 
   @ApiPropertyOptional({
     description: 'Descripción de la misión',
@@ -113,7 +113,7 @@ export class CreateMissionDto {
   })
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   @ApiProperty({
     description: 'Tipo de misión',
@@ -121,7 +121,7 @@ export class CreateMissionDto {
     example: MissionTypeEnum.DAILY,
   })
   @IsEnum(MissionTypeEnum)
-  mission_type!: MissionTypeEnum;
+    mission_type!: MissionTypeEnum;
 
   @ApiProperty({
     description: 'Objetivos de la misión',
@@ -136,7 +136,7 @@ export class CreateMissionDto {
     ],
   })
   @IsObject()
-  objectives!: MissionObjectiveDto[];
+    objectives!: MissionObjectiveDto[];
 
   @ApiProperty({
     description: 'Recompensas de la misión',
@@ -147,7 +147,7 @@ export class CreateMissionDto {
     },
   })
   @IsObject()
-  rewards!: MissionRewardsDto;
+    rewards!: MissionRewardsDto;
 
   @ApiPropertyOptional({
     description: 'Progreso inicial (0-100)',
@@ -158,7 +158,7 @@ export class CreateMissionDto {
   @IsNumber()
   @Min(0)
   @Max(100)
-  progress?: number;
+    progress?: number;
 
   @ApiPropertyOptional({
     description: 'Fecha de inicio',
@@ -167,7 +167,7 @@ export class CreateMissionDto {
   @IsOptional()
   @IsDate()
   @Type(() => Date)
-  start_date?: Date;
+    start_date?: Date;
 
   @ApiProperty({
     description: 'Fecha de expiración',
@@ -175,5 +175,5 @@ export class CreateMissionDto {
   })
   @IsDate()
   @Type(() => Date)
-  end_date!: Date;
+    end_date!: Date;
 }

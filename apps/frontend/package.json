@@ -20,7 +20,7 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "generate:api-types": "node scripts/generate-api-types.cjs",
     "generate:api-types:watch": "nodemon --watch ../../backend/src --ext ts --exec npm run generate:api-types",

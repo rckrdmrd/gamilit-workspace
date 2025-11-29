@@ -303,7 +303,7 @@ export function MLCoinsSection({ data }: MLCoinsSectionProps) {
         <motion.button
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.98 }}
-          onClick={() => navigate('/student/shop')}
+          onClick={() => navigate('/shop')}
           className="flex items-center gap-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 p-4 text-white shadow-lg transition-all hover:shadow-xl"
         >
           <ShoppingBag className="h-6 w-6" />

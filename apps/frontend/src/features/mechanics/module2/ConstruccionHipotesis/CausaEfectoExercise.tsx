@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, GripVertical } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { RankUpModal } from '@/features/gamification/ranks/components/RankUpModal';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import type { CausaEfectoExerciseProps, CauseMatches } from './causaEfectoTypes';
 import { submitExercise } from '@/features/progress/api/progressAPI';
@@ -26,8 +27,9 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
   const [startTime] = useState(new Date());
   const [draggedConsequence, setDraggedConsequence] = useState<string | null>(null);
   const [dragOverCause, setDragOverCause] = useState<string | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_isSubmitting, setIsSubmitting] = useState(false);
+  const [showRankUpModal, setShowRankUpModal] = useState(false);
+  const [rankUpData, setRankUpData] = useState<any>(null);
 
   const { causes, consequences } = exercise.content;
 
@@ -180,6 +182,11 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
 
       // Submit to backend API
       const response = await submitExercise(exercise.id, user.id, { causes: userAnswers });
+
+      // Check for rank up
+      if (response.rankUp) {
+        setRankUpData(response.rankUp);
+      }
 
       // Show backend response
       setFeedback({
@@ -435,14 +442,31 @@ export const CausaEfectoExercise: React.FC<CausaEfectoExerciseProps> = ({
           feedback={feedback}
           onClose={() => {
             setShowFeedback(false);
-            if (feedback.type === 'success' && onComplete) {
+            if (rankUpData) {
+              setTimeout(() => setShowRankUpModal(true), 300);
+            } else if (feedback?.type === 'success') {
               const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-              onComplete(feedback.score || 0, timeSpent);
+              onComplete?.(feedback.score || 0, timeSpent);
             }
           }}
           onRetry={() => {
             setShowFeedback(false);
             handleReset();
+          }}
+        />
+      )}
+
+      {/* Rank Up Modal */}
+      {showRankUpModal && rankUpData && (
+        <RankUpModal
+          isOpen={showRankUpModal}
+          onClose={() => {
+            setShowRankUpModal(false);
+            setRankUpData(null);
+            if (feedback?.type === 'success') {
+              const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+              onComplete?.(feedback.score || 0, timeSpent);
+            }
           }}
         />
       )}

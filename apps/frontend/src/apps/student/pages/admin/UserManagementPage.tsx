@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
@@ -49,6 +50,7 @@ export default function UserManagementPage() {
   // Fetch users on mount and when filters change
   useEffect(() => {
     fetchUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, filterRole, filterStatus]);
 
   const fetchUsers = async () => {
@@ -64,7 +66,7 @@ export default function UserManagementPage() {
 
       const response = await adminAPI.getUsersList(filters);
       setUsers(response.users);
-    } catch (error: any) {
+    } catch (error: unknown) {
       showToast({
         type: 'error',
         title: 'Error al cargar usuarios',
@@ -131,7 +133,7 @@ export default function UserManagementPage() {
       });
 
       setActivateModal({ isOpen: false, user: null });
-    } catch (error: any) {
+    } catch (error: unknown) {
       showToast({
         type: 'error',
         title: 'Error al activar usuario',
@@ -159,7 +161,7 @@ export default function UserManagementPage() {
       });
 
       setDeactivateModal({ isOpen: false, user: null });
-    } catch (error: any) {
+    } catch (error: unknown) {
       showToast({
         type: 'error',
         title: 'Error al desactivar usuario',

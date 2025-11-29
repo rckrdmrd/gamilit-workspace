@@ -23,14 +23,14 @@ export class UpdateUserRankDto {
    */
   @IsOptional()
   @IsEnum(MayaRank)
-  current_rank?: MayaRank;
+    current_rank?: MayaRank;
 
   /**
    * Rango maya anterior
    */
   @IsOptional()
   @IsEnum(MayaRank)
-  previous_rank?: MayaRank;
+    previous_rank?: MayaRank;
 
   /**
    * Porcentaje de progreso hacia el siguiente rango (0-100)
@@ -39,7 +39,7 @@ export class UpdateUserRankDto {
   @IsInt()
   @Min(0)
   @Max(100)
-  rank_progress_percentage?: number;
+    rank_progress_percentage?: number;
 
   /**
    * Módulos requeridos para alcanzar el siguiente rango
@@ -47,7 +47,7 @@ export class UpdateUserRankDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  modules_required_for_next?: number;
+    modules_required_for_next?: number;
 
   /**
    * Módulos completados para el rango actual
@@ -55,7 +55,7 @@ export class UpdateUserRankDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  modules_completed_for_rank?: number;
+    modules_completed_for_rank?: number;
 
   /**
    * XP requerida para alcanzar el siguiente rango
@@ -63,7 +63,7 @@ export class UpdateUserRankDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  xp_required_for_next?: number;
+    xp_required_for_next?: number;
 
   /**
    * XP ganada para el rango actual
@@ -71,7 +71,7 @@ export class UpdateUserRankDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  xp_earned_for_rank?: number;
+    xp_earned_for_rank?: number;
 
   /**
    * Bonus de ML Coins otorgado al alcanzar el rango
@@ -79,47 +79,47 @@ export class UpdateUserRankDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  ml_coins_bonus?: number;
+    ml_coins_bonus?: number;
 
   /**
    * URL del certificado obtenido al alcanzar el rango
    */
   @IsOptional()
   @IsString()
-  certificate_url?: string;
+    certificate_url?: string;
 
   /**
    * URL del badge/insignia del rango
    */
   @IsOptional()
   @IsString()
-  badge_url?: string;
+    badge_url?: string;
 
   /**
    * Fecha y hora en que se alcanzó el rango actual
    */
   @IsOptional()
   @IsDate()
-  achieved_at?: Date;
+    achieved_at?: Date;
 
   /**
    * Fecha y hora en que se alcanzó el rango anterior
    */
   @IsOptional()
   @IsDate()
-  previous_rank_achieved_at?: Date;
+    previous_rank_achieved_at?: Date;
 
   /**
    * Indica si este es el rango actual del usuario
    */
   @IsOptional()
   @IsBoolean()
-  is_current?: boolean;
+    is_current?: boolean;
 
   /**
    * Metadatos adicionales del rango en formato JSON
    */
   @IsOptional()
   @IsObject()
-  rank_metadata?: Record<string, any>;
+    rank_metadata?: Record<string, any>;
 }

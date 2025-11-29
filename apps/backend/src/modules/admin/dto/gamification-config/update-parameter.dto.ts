@@ -14,7 +14,7 @@ export class UpdateParameterDto {
   })
   @IsString()
   @IsNotEmpty()
-  value!: string;
+    value!: string;
 }
 
 /**
@@ -27,12 +27,12 @@ export class UpdateParameterResponseDto {
     description: 'Success message',
     example: 'Parameter updated successfully',
   })
-  message!: string;
+    message!: string;
 
   @ApiProperty({
     description: 'Updated parameter details',
   })
-  parameter!: {
+    parameter!: {
     id: string;
     setting_key: string;
     old_value: string;

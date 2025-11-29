@@ -14,7 +14,7 @@ export class MechanicMappingResponseDto {
     description: 'ID único del mapeo',
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
-  id!: string;
+    id!: string;
 
   // ======================================
   // CLASIFICACIÓN PEDAGÓGICA
@@ -25,14 +25,14 @@ export class MechanicMappingResponseDto {
     example: 'lectura',
     enum: ['vocabulario', 'gramatica', 'lectura', 'escritura', 'audio', 'pronunciacion', 'cultura'],
   })
-  mechanic_category!: string;
+    mechanic_category!: string;
 
   @ApiProperty({
     description: 'Subcategoría pedagógica específica',
     example: 'inference',
     required: false,
   })
-  mechanic_subcategory?: string;
+    mechanic_subcategory?: string;
 
   // ======================================
   // IMPLEMENTACIÓN GAMILIT
@@ -43,7 +43,7 @@ export class MechanicMappingResponseDto {
     example: 'detective_textual',
     enum: ExerciseTypeEnum,
   })
-  exercise_type!: ExerciseTypeEnum;
+    exercise_type!: ExerciseTypeEnum;
 
   // ======================================
   // CONTEXTO EDUCATIVO
@@ -55,7 +55,7 @@ export class MechanicMappingResponseDto {
     required: false,
     enum: ['recordar', 'comprender', 'aplicar', 'analizar', 'evaluar', 'crear'],
   })
-  bloom_level?: string;
+    bloom_level?: string;
 
   @ApiProperty({
     description: 'Niveles CEFR aplicables',
@@ -64,14 +64,14 @@ export class MechanicMappingResponseDto {
     enum: DifficultyLevelEnum,
     isArray: true,
   })
-  cefr_level?: DifficultyLevelEnum[];
+    cefr_level?: DifficultyLevelEnum[];
 
   @ApiProperty({
     description: 'Propósito pedagógico del mapeo',
     example: 'Desarrollar comprensión inferencial mediante análisis de pistas textuales',
     required: false,
   })
-  pedagogical_purpose?: string;
+    pedagogical_purpose?: string;
 
   @ApiProperty({
     description: 'Objetivos de aprendizaje específicos',
@@ -79,7 +79,7 @@ export class MechanicMappingResponseDto {
     required: false,
     type: [String],
   })
-  learning_objectives?: string[];
+    learning_objectives?: string[];
 
   // ======================================
   // CARACTERÍSTICAS
@@ -90,7 +90,7 @@ export class MechanicMappingResponseDto {
     example: 'selection',
     required: false,
   })
-  interaction_type?: string;
+    interaction_type?: string;
 
   @ApiProperty({
     description: 'Carga cognitiva aproximada',
@@ -98,7 +98,7 @@ export class MechanicMappingResponseDto {
     required: false,
     enum: ['bajo', 'medio', 'alto'],
   })
-  cognitive_load?: string;
+    cognitive_load?: string;
 
   @ApiProperty({
     description: 'Tags adicionales para búsqueda',
@@ -106,13 +106,13 @@ export class MechanicMappingResponseDto {
     required: false,
     type: [String],
   })
-  tags?: string[];
+    tags?: string[];
 
   @ApiProperty({
     description: 'Estado de activación del mapeo',
     example: true,
   })
-  is_active!: boolean;
+    is_active!: boolean;
 
   // ======================================
   // AUDIT
@@ -122,13 +122,13 @@ export class MechanicMappingResponseDto {
     description: 'Fecha de creación',
     example: '2025-11-11T12:00:00Z',
   })
-  created_at!: Date;
+    created_at!: Date;
 
   @ApiProperty({
     description: 'Fecha de última actualización',
     example: '2025-11-11T12:00:00Z',
   })
-  updated_at!: Date;
+    updated_at!: Date;
 }
 
 /**
@@ -142,19 +142,19 @@ export class GroupedMechanicMappingDto {
     description: 'Categoría pedagógica',
     example: 'lectura',
   })
-  category!: string;
+    category!: string;
 
   @ApiProperty({
     description: 'Número de mappings en esta categoría',
     example: 15,
   })
-  count!: number;
+    count!: number;
 
   @ApiProperty({
     description: 'Mappings en esta categoría',
     type: [MechanicMappingResponseDto],
   })
-  mappings!: MechanicMappingResponseDto[];
+    mappings!: MechanicMappingResponseDto[];
 }
 
 /**
@@ -168,33 +168,33 @@ export class GroupedMechanicMappingDto {
 export class ExerciseWithMechanicsDto {
   // Campos de Exercise
   @ApiProperty({ description: 'ID del ejercicio' })
-  id!: string;
+    id!: string;
 
   @ApiProperty({ description: 'Título del ejercicio' })
-  title!: string;
+    title!: string;
 
   @ApiProperty({ description: 'Tipo de ejercicio', enum: ExerciseTypeEnum })
-  exercise_type!: ExerciseTypeEnum;
+    exercise_type!: ExerciseTypeEnum;
 
   @ApiProperty({ description: 'Nivel de dificultad', enum: DifficultyLevelEnum })
-  difficulty_level!: DifficultyLevelEnum;
+    difficulty_level!: DifficultyLevelEnum;
 
   // Campos de Mechanic Mapping
   @ApiProperty({ description: 'Categoría pedagógica', required: false })
-  mechanic_category?: string;
+    mechanic_category?: string;
 
   @ApiProperty({ description: 'Subcategoría pedagógica', required: false })
-  mechanic_subcategory?: string;
+    mechanic_subcategory?: string;
 
   @ApiProperty({ description: 'Nivel de Bloom', required: false })
-  bloom_level?: string;
+    bloom_level?: string;
 
   @ApiProperty({ description: 'Propósito pedagógico', required: false })
-  pedagogical_purpose?: string;
+    pedagogical_purpose?: string;
 
   @ApiProperty({ description: 'Carga cognitiva', required: false })
-  cognitive_load?: string;
+    cognitive_load?: string;
 
   @ApiProperty({ description: 'Tags del mapping', type: [String], required: false })
-  mechanic_tags?: string[];
+    mechanic_tags?: string[];
 }

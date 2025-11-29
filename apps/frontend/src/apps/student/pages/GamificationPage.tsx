@@ -102,6 +102,7 @@ export default function GamificationPage() {
     return () => {
       clearInterval(pollingInterval);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchUserProgress, fetchBalance, fetchAchievements]);
 
   // Animation variants
@@ -131,21 +132,21 @@ export default function GamificationPage() {
       label: 'Tienda',
       description: 'Compra items',
       color: 'from-purple-500 to-pink-500',
-      onClick: () => navigate('/student/shop'),
+      onClick: () => navigate('/shop'),
     },
     {
       icon: Award,
       label: 'Logros',
       description: `${achievementStats.unlockedAchievements}/${achievementStats.totalAchievements}`,
       color: 'from-emerald-500 to-teal-500',
-      onClick: () => navigate('/student/achievements'),
+      onClick: () => navigate('/achievements'),
     },
     {
       icon: Users,
       label: 'Ranking',
       description: 'Compite',
       color: 'from-blue-500 to-cyan-500',
-      onClick: () => navigate('/student/leaderboard'),
+      onClick: () => navigate('/leaderboard'),
     },
     {
       icon: TrendingUp,

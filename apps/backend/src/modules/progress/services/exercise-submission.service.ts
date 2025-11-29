@@ -10,6 +10,8 @@ import { Exercise } from '@/modules/educational/entities';
 import { Profile } from '@/modules/auth/entities';
 import { UserStatsService } from '@/modules/gamification/services/user-stats.service';
 import { MLCoinsService } from '@/modules/gamification/services/ml-coins.service';
+import { MissionsService } from '@/modules/gamification/services/missions.service';
+import { MissionTypeEnum } from '@/modules/gamification/entities/mission.entity';
 
 /**
  * CategoryExpectation
@@ -85,6 +87,7 @@ export class ExerciseSubmissionService {
     private readonly entityManager: EntityManager,
     private readonly userStatsService: UserStatsService,
     private readonly mlCoinsService: MLCoinsService,
+    private readonly missionsService: MissionsService,
   ) {}
 
   /**
@@ -111,6 +114,20 @@ export class ExerciseSubmissionService {
   }
 
   /**
+   * Public method to get profile.id from auth.users.id (for controllers)
+   *
+   * @description Exposes getProfileId as public method for use in controllers.
+   * JWT tokens contain auth.users.id, but database FKs reference profiles.id
+   *
+   * @param authUserId - auth.users.id (from JWT req.user.id)
+   * @returns profiles.id
+   * @throws NotFoundException if profile doesn't exist
+   */
+  async getProfileIdFromAuthUser(authUserId: string): Promise<string> {
+    return this.getProfileId(authUserId);
+  }
+
+  /**
    * Crea un nuevo envío de ejercicio
    * @param dto - Datos del envío
    * @returns Nuevo envío creado
@@ -129,7 +146,7 @@ export class ExerciseSubmissionService {
       max_score: dto.max_score || 100,
     });
 
-    return await this.submissionRepo.save(newSubmission);
+    return this.submissionRepo.save(newSubmission);
   }
 
   /**
@@ -138,7 +155,7 @@ export class ExerciseSubmissionService {
    * @returns Lista de envíos ordenados por fecha
    */
   async findByUserId(userId: string): Promise<ExerciseSubmission[]> {
-    return await this.submissionRepo.find({
+    return this.submissionRepo.find({
       where: { user_id: userId },
       order: { submitted_at: 'DESC' },
     });
@@ -150,7 +167,7 @@ export class ExerciseSubmissionService {
    * @returns Lista de envíos del ejercicio
    */
   async findByExerciseId(exerciseId: string): Promise<ExerciseSubmission[]> {
-    return await this.submissionRepo.find({
+    return this.submissionRepo.find({
       where: { exercise_id: exerciseId },
       order: { submitted_at: 'DESC' },
     });
@@ -203,7 +220,7 @@ export class ExerciseSubmissionService {
       throw new BadRequestException(
         'This exercise is auto-graded and allows multiple attempts. ' +
         'It should not use the submission service. ' +
-        'This is a system configuration error - please report to support.'
+        'This is a system configuration error - please report to support.',
       );
     }
 
@@ -219,7 +236,7 @@ export class ExerciseSubmissionService {
       throw new BadRequestException(
         'You have already submitted this exercise. ' +
         'Only one submission is allowed for teacher-graded exercises. ' +
-        'Please wait for your teacher to review your work.'
+        'Please wait for your teacher to review your work.',
       );
     }
 
@@ -243,9 +260,9 @@ export class ExerciseSubmissionService {
       console.log(`[BUG-001 FIX] Auto-claiming rewards for submission ${submission.id}`);
       const rewards = await this.claimRewards(submission.id);
 
-      // Agregar rewards al submission object para retornar al frontend
-      (submission as any).xp_earned = rewards.xp_earned;
-      (submission as any).ml_coins_earned = rewards.ml_coins_earned;
+      // Los campos ya están persistidos en la submission por claimRewards()
+      // Asignar rankUp si existe
+      (submission as any).rankUp = rewards.rankUp;
     }
 
     return submission;
@@ -254,9 +271,13 @@ export class ExerciseSubmissionService {
   /**
    * Califica un envío automáticamente o manualmente
    * @param id - ID del envío
+   * @param manualGrade - Calificación manual opcional (final_score, grader_id, feedback)
    * @returns Envío calificado
    */
-  async gradeSubmission(id: string): Promise<ExerciseSubmission> {
+  async gradeSubmission(
+    id: string,
+    manualGrade?: { final_score?: number; grader_id?: string; feedback?: string },
+  ): Promise<ExerciseSubmission> {
     const submission = await this.submissionRepo.findOne({ where: { id } });
 
     if (!submission) {
@@ -267,13 +288,49 @@ export class ExerciseSubmissionService {
       throw new BadRequestException('Submission already graded');
     }
 
-    // FE-059: Auto-grading using SQL validate_and_audit()
+    // P1-003: Check if manual grading is requested
+    if (manualGrade?.final_score !== undefined) {
+      console.log(`[P1-003] Manual grading requested: score=${manualGrade.final_score}, grader=${manualGrade.grader_id}`);
+
+      // Validate manual score range
+      if (manualGrade.final_score < 0 || manualGrade.final_score > submission.max_score) {
+        throw new BadRequestException(
+          `Manual score must be between 0 and ${submission.max_score}`,
+        );
+      }
+
+      // Apply manual grading
+      submission.score = manualGrade.final_score;
+      submission.is_correct = manualGrade.final_score >= (submission.max_score * 0.6); // 60% passing threshold
+      submission.status = 'graded';
+      submission.graded_at = new Date();
+
+      // Store grader_id if provided
+      if (manualGrade.grader_id) {
+        (submission as any).grader_id = manualGrade.grader_id;
+      }
+
+      // Store manual feedback if provided
+      if (manualGrade.feedback) {
+        submission.feedback = manualGrade.feedback;
+      } else {
+        submission.feedback = `Calificación manual: ${manualGrade.final_score}/${submission.max_score}`;
+      }
+
+      console.log(`[P1-003] Manual grading applied: ${submission.score}/${submission.max_score}, correct=${submission.is_correct}`);
+
+      return this.submissionRepo.save(submission);
+    }
+
+    // Default: Auto-grading using SQL validate_and_audit()
+    console.log('[P1-003] No manual score provided - executing auto-grading');
+
     const { score, isCorrect, correctAnswers, totalQuestions, feedback, details, auditId } = await this.autoGrade(
       submission.user_id,       // userId (profiles.id)
       submission.exercise_id,
       submission.answer_data,
       submission.attempt_number || 1,
-      {}                        // clientMetadata - can add IP, user-agent later
+      {},                        // clientMetadata - can add IP, user-agent later
     );
 
     submission.score = score;
@@ -310,7 +367,7 @@ export class ExerciseSubmissionService {
       }
     }
 
-    return await this.submissionRepo.save(submission);
+    return this.submissionRepo.save(submission);
   }
 
   /**
@@ -332,16 +389,16 @@ export class ExerciseSubmissionService {
     exerciseId: string,
     answerData: Record<string, any>,
     attemptNumber: number = 1,
-    clientMetadata: Record<string, any> = {}
+    clientMetadata: Record<string, any> = {},
   ): Promise<{
-    score: number;
-    isCorrect: boolean;
-    correctAnswers: number;
-    totalQuestions: number;
-    feedback: string;
-    details: any;
-    auditId: string;
-  }> {
+      score: number;
+      isCorrect: boolean;
+      correctAnswers: number;
+      totalQuestions: number;
+      feedback: string;
+      details: any;
+      auditId: string;
+    }> {
     // Get exercise to check type
     const exercise = await this.exerciseRepo.findOne({ where: { id: exerciseId } });
     if (!exercise) {
@@ -373,12 +430,12 @@ export class ExerciseSubmissionService {
             details: {
               error: {
                 type: 'redundancia',
-                message: `Los espacios 5 y 6 deben ser diferentes`,
+                message: 'Los espacios 5 y 6 deben ser diferentes',
                 espacios: ['5', '6'],
-                valor_detectado: space5
-              }
+                valor_detectado: space5,
+              },
             },
-            auditId
+            auditId,
           };
         }
       }
@@ -397,7 +454,7 @@ export class ExerciseSubmissionService {
       const validationResult = this.validateRuedaInferencias(
         answerData as RuedaInferenciasAnswersDto,
         exercise,
-        fragmentStates
+        fragmentStates,
       );
 
       // Determine if correct based on passing score
@@ -414,9 +471,9 @@ export class ExerciseSubmissionService {
         feedback: validationResult.feedback.overall,
         details: {
           byFragment: validationResult.feedback.byFragment,
-          maxScore: validationResult.maxScore
+          maxScore: validationResult.maxScore,
         },
-        auditId
+        auditId,
       };
     }
 
@@ -440,7 +497,7 @@ export class ExerciseSubmissionService {
         userId,
         JSON.stringify(answerData),
         attemptNumber,
-        JSON.stringify(clientMetadata)
+        JSON.stringify(clientMetadata),
       ]);
 
       if (!result || result.length === 0) {
@@ -458,10 +515,10 @@ export class ExerciseSubmissionService {
         totalQuestions: validation.details?.total_questions || validation.details?.total_words || validation.details?.total_events || 1,
         feedback: validation.feedback || '',
         details: validation.details || {},
-        auditId: validation.audit_id
+        auditId: validation.audit_id,
       };
     } catch (error) {
-      console.error(`[FE-059] Error calling validate_and_audit():`, error);
+      console.error('[FE-059] Error calling validate_and_audit():', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new InternalServerErrorException(`Exercise validation failed: ${errorMessage}`);
     }
@@ -486,7 +543,7 @@ export class ExerciseSubmissionService {
     submission.feedback = typeof feedback === 'string' ? feedback : JSON.stringify(feedback);
     submission.status = 'reviewed';
 
-    return await this.submissionRepo.save(submission);
+    return this.submissionRepo.save(submission);
   }
 
   /**
@@ -526,7 +583,7 @@ export class ExerciseSubmissionService {
       submission.graded_at = new Date();
     }
 
-    return await this.submissionRepo.save(submission);
+    return this.submissionRepo.save(submission);
   }
 
   /**
@@ -577,7 +634,7 @@ export class ExerciseSubmissionService {
    * @returns Lista de envíos que necesitan revisión
    */
   async findPendingReview(): Promise<ExerciseSubmission[]> {
-    return await this.submissionRepo.find({
+    return this.submissionRepo.find({
       where: { status: 'submitted' },
       order: { submitted_at: 'ASC' },
     });
@@ -601,23 +658,23 @@ export class ExerciseSubmissionService {
   private validateRuedaInferencias(
     answers: RuedaInferenciasAnswersDto,
     exercise: Exercise,
-    fragmentStates?: FragmentState[]
+    fragmentStates?: FragmentState[],
   ): {
-    score: number;
-    maxScore: number;
-    feedback: {
-      overall: string;
-      byFragment: Array<{
-        fragmentId: string;
-        categoryUsed: string;
-        keywordsFound: string[];
-        keywordsExpected: string[];
-        score: number;
-        maxScore: number;
-        feedback: string;
-      }>;
-    };
-  } {
+      score: number;
+      maxScore: number;
+      feedback: {
+        overall: string;
+        byFragment: Array<{
+          fragmentId: string;
+          categoryUsed: string;
+          keywordsFound: string[];
+          keywordsExpected: string[];
+          score: number;
+          maxScore: number;
+          feedback: string;
+        }>;
+      };
+    } {
     console.log('[validateRuedaInferencias] Starting validation for Rueda de Inferencias exercise');
 
     // Cast solution to ExerciseSolution interface
@@ -696,7 +753,7 @@ export class ExerciseSubmissionService {
       const userAnswerLower = userAnswer.toLowerCase().trim();
 
       const foundKeywords = expectedKeywords.filter((keyword: string) =>
-        userAnswerLower.includes(keyword.toLowerCase())
+        userAnswerLower.includes(keyword.toLowerCase()),
       );
 
       console.log(`[validateRuedaInferencias] Fragment ${fragment.id}: Found ${foundKeywords.length}/${expectedKeywords.length} keywords`);
@@ -763,12 +820,18 @@ export class ExerciseSubmissionService {
   /**
    * Distribuye rewards (XP/ML Coins) por completar ejercicio
    * @param id - ID del envío
-   * @returns Envío con información de rewards
+   * @returns Envío con información de rewards y rankUp si hubo promoción
    */
   async claimRewards(id: string): Promise<{
     submission: ExerciseSubmission;
     xp_earned: number;
     ml_coins_earned: number;
+    rankUp: {
+      newRank: string;
+      previousRank: string;
+      bonusMLCoins: number;
+      newMultiplier: number;
+    } | null;
   }> {
     const submission = await this.submissionRepo.findOne({ where: { id } });
 
@@ -785,13 +848,27 @@ export class ExerciseSubmissionService {
         submission,
         xp_earned: 0,
         ml_coins_earned: 0,
+        rankUp: null,
       };
     }
 
-    // Calcular rewards basado en score y hints usados
-    const scorePercentage = (submission.score / submission.max_score) * 100;
-    let xpEarned = Math.floor(scorePercentage);
-    let mlCoinsEarned = Math.floor(scorePercentage / 10);
+    // Obtener exercise para usar su xp_reward configurado
+    const exercise = await this.exerciseRepo.findOne({ where: { id: submission.exercise_id } });
+    const baseXpReward = exercise?.xp_reward || 100; // Fallback a 100 si no existe
+    const baseMlCoinsReward = exercise?.ml_coins_reward || 20; // Fallback a 20 si no existe
+
+    // FIX 2025-11-29: Obtener multiplicador de rango del usuario desde maya_ranks
+    // Ver: docs/90-transversal/correcciones/CORRECCION-GAMIFICACION-RANGOS-2025-11-29.md
+    const rankMultiplier = await this.getRankXpMultiplier(submission.user_id);
+
+    // Calcular rewards basado en score y rewards configurados del ejercicio
+    const scoreMultiplier = submission.score / submission.max_score;
+    // FIX 2025-11-29: Aplicar multiplicador de rango al XP ganado
+    // Formula: xpEarned = base × score × rankMultiplier
+    let xpEarned = Math.floor(baseXpReward * scoreMultiplier * rankMultiplier);
+    let mlCoinsEarned = Math.floor(baseMlCoinsReward * scoreMultiplier);
+
+    console.log(`[claimRewards] XP calculation: base=${baseXpReward}, score=${scoreMultiplier.toFixed(2)}, rank=${rankMultiplier}x, total=${xpEarned}`);
 
     // Bonificación por perfect score
     if (submission.score === submission.max_score && !submission.hint_used) {
@@ -809,6 +886,10 @@ export class ExerciseSubmissionService {
     // ✅ FIX BUG-001: Actualizar user_stats con XP y ML Coins
     console.log(`[BUG-001 FIX] Claiming rewards for user ${submission.user_id}: +${xpEarned} XP, +${mlCoinsEarned} ML Coins`);
 
+    // Obtener rango ANTES de agregar XP
+    const userStatsBefore = await this.userStatsService.findByUserId(submission.user_id);
+    const previousRank = userStatsBefore.current_rank;
+
     await this.userStatsService.addXp(submission.user_id, xpEarned);
     await this.mlCoinsService.addCoins(
       submission.user_id,
@@ -816,22 +897,114 @@ export class ExerciseSubmissionService {
       TransactionTypeEnum.EARNED_EXERCISE,
       `Ejercicio completado: ${submission.exercise_id}`,
       submission.exercise_id,
-      'exercise'
+      'exercise',
     );
+
+    // Verificar si hubo promoción de rango
+    // FIX 2025-11-29: Usamos setImmediate + query directo para bypass de cache TypeORM.
+    // El trigger trg_check_rank_promotion_on_xp_gain actualiza current_rank en DB,
+    // pero TypeORM podría tener el valor anterior en cache.
+    // Ver: docs/90-transversal/correcciones/CORRECCION-GAMIFICACION-RANGOS-2025-11-29.md
+    await new Promise(resolve => setImmediate(resolve));
+
+    // Query SQL directo sin cache para detectar cambio del trigger
+    const userStatsAfter = await this.entityManager.query(`
+      SELECT current_rank, total_xp, ml_coins
+      FROM gamification_system.user_stats
+      WHERE user_id = $1
+    `, [submission.user_id]);
+
+    const newRank = userStatsAfter[0]?.current_rank || previousRank;
+
+    let rankUpData = null;
+    if (previousRank !== newRank) {
+      // Hubo promoción - obtener datos del nuevo rango desde maya_ranks
+      // Hardcoded multipliers basados en ESPECIFICACION-TECNICA-RANGOS-MAYA-v2.1.md
+      const rankMultipliers: Record<string, number> = {
+        'Ajaw': 1.00,
+        'Nacom': 1.10,
+        "Ah K'in": 1.15,
+        'Halach Uinic': 1.20,
+        "K'uk'ulkan": 1.25,
+      };
+
+      const rankBonuses: Record<string, number> = {
+        'Ajaw': 0,
+        'Nacom': 100,
+        "Ah K'in": 250,
+        'Halach Uinic': 500,
+        "K'uk'ulkan": 1000,
+      };
+
+      rankUpData = {
+        newRank: newRank,
+        previousRank: previousRank,
+        bonusMLCoins: rankBonuses[newRank] || 0,
+        newMultiplier: rankMultipliers[newRank] || 1.0,
+      };
+
+      console.log(`[RANK UP] User ${submission.user_id} promoted from ${previousRank} to ${newRank}`);
+    }
 
     // ✅ FIX BUG-002: Actualizar module_progress después de completar ejercicio
     await this.updateModuleProgressAfterCompletion(
       submission.user_id,
       submission.exercise_id,
       xpEarned,
-      mlCoinsEarned
+      mlCoinsEarned,
     );
+
+    // ✅ FIX BUG-003: Actualizar misiones después de completar ejercicio
+    // NOTA: El trigger de BD también actualiza misiones, pero esta llamada
+    // asegura redundancia en caso de que el trigger no se ejecute
+    await this.updateMissionsProgressAfterCompletion(submission.user_id, xpEarned);
+
+    // Persistir rewards en la submission
+    submission.xp_earned = xpEarned;
+    submission.ml_coins_earned = mlCoinsEarned;
+    await this.submissionRepo.save(submission);
 
     return {
       submission,
       xp_earned: xpEarned,
       ml_coins_earned: mlCoinsEarned,
+      rankUp: rankUpData,
     };
+  }
+
+  /**
+   * Obtiene el multiplicador de XP del rango actual del usuario
+   *
+   * FIX 2025-11-29: Agregado para aplicar multiplicadores de XP por rango.
+   * Los multiplicadores están definidos en gamification_system.maya_ranks.
+   *
+   * IMPORTANTE: NO eliminar este método. Es crítico para el sistema de rangos.
+   * Ver: docs/90-transversal/correcciones/CORRECCION-GAMIFICACION-RANGOS-2025-11-29.md
+   *
+   * @param userId - ID del usuario
+   * @returns Multiplicador de XP (1.00 - 1.25)
+   */
+  private async getRankXpMultiplier(userId: string): Promise<number> {
+    try {
+      const userStats = await this.userStatsService.findByUserId(userId);
+      const currentRank = userStats.current_rank;
+
+      // Consultar multiplicador desde maya_ranks table
+      const result = await this.entityManager.query(`
+        SELECT xp_multiplier
+        FROM gamification_system.maya_ranks
+        WHERE rank_name = $1 AND is_active = true
+      `, [currentRank]);
+
+      if (result && result.length > 0) {
+        return parseFloat(result[0].xp_multiplier) || 1.00;
+      }
+
+      return 1.00; // Default si no encuentra
+    } catch (error) {
+      console.warn(`[getRankXpMultiplier] Error getting multiplier for user ${userId}, using 1.00`);
+      return 1.00;
+    }
   }
 
   /**
@@ -849,7 +1022,7 @@ export class ExerciseSubmissionService {
     userId: string,
     exerciseId: string,
     xpEarned: number,
-    mlCoinsEarned: number
+    mlCoinsEarned: number,
   ): Promise<void> {
     try {
       // Obtener module_id del ejercicio
@@ -868,7 +1041,7 @@ export class ExerciseSubmissionService {
           user_id: userId,
           exercise_id: exerciseId,
           is_correct: true,
-        }
+        },
       });
 
       // Si hay más de 1 (incluyendo el actual), no es el primero - solo actualizar timestamp
@@ -878,13 +1051,13 @@ export class ExerciseSubmissionService {
           SET last_accessed_at = NOW(), updated_at = NOW()
           WHERE user_id = $1 AND module_id = $2
         `, [userId, moduleId]);
-        console.log(`[BUG-002 FIX] Not first correct submission - only updated timestamps`);
+        console.log('[BUG-002 FIX] Not first correct submission - only updated timestamps');
         return;
       }
 
       // Contar total de ejercicios activos en el módulo
       const totalExercisesResult = await this.exerciseRepo.count({
-        where: { module_id: moduleId, is_active: true }
+        where: { module_id: moduleId, is_active: true },
       });
       const totalExercises = totalExercisesResult || 0;
 
@@ -950,13 +1123,239 @@ export class ExerciseSubmissionService {
           updated_at = NOW()
       `, [userId, moduleId, newStatus, progressPercentage, completedExercises, totalExercises, xpEarned, mlCoinsEarned]);
 
-      console.log(`[BUG-002 FIX] ✅ Module progress updated successfully`);
+      console.log('[BUG-002 FIX] ✅ Module progress updated successfully');
 
     } catch (error) {
       // Log error pero no bloquear el claim de rewards
       const errorMessage = error instanceof Error ? error.message : String(error);
       console.error(`[BUG-002 FIX] ❌ Error updating module progress: ${errorMessage}`);
       // No throw - la actualización de progreso no debe bloquear la respuesta
+    }
+  }
+
+  /**
+   * Actualiza el progreso de misiones después de completar un ejercicio correctamente
+   *
+   * @description Esta función busca misiones activas del usuario con objetivo 'complete_exercises'
+   * y actualiza su progreso. Complementa el trigger de BD para asegurar consistencia.
+   *
+   * NOTA: El trigger 25-trg_update_missions_on_submission también actualiza misiones,
+   * pero esta función provee redundancia en caso de que el trigger no se ejecute.
+   *
+   * @param userId - ID del usuario (profiles.id)
+   * @param xpEarned - XP ganado en el ejercicio (para actualizar misiones earn_xp)
+   */
+  private async updateMissionsProgressAfterCompletion(userId: string, xpEarned: number = 0): Promise<void> {
+    try {
+      console.log(`[BUG-003 FIX] Updating missions progress for user ${userId}`);
+
+      // Buscar misiones activas del usuario con objetivo 'complete_exercises'
+      const missions = await this.missionsService.findByTypeAndUser(userId, MissionTypeEnum.DAILY);
+      const weeklyMissions = await this.missionsService.findByTypeAndUser(userId, MissionTypeEnum.WEEKLY);
+      const allMissions = [...missions, ...weeklyMissions];
+
+      // Filtrar solo misiones que tienen objetivo 'complete_exercises' y no están completadas/claimed
+      const activeMissions = allMissions.filter(mission =>
+        mission.status !== 'completed' &&
+        mission.status !== 'claimed' &&
+        mission.objectives?.some((obj: any) => obj.type === 'complete_exercises'),
+      );
+
+      if (activeMissions.length === 0) {
+        console.log('[BUG-003 FIX] No active missions with \'complete_exercises\' objective found');
+        return;
+      }
+
+      // Actualizar cada misión activa
+      for (const mission of activeMissions) {
+        try {
+          await this.missionsService.updateProgress(
+            mission.id,
+            userId,
+            'complete_exercises',
+            1, // Incrementar en 1 por cada ejercicio completado
+          );
+          console.log(`[BUG-003 FIX] ✅ Mission ${mission.id} (complete_exercises) updated`);
+        } catch (missionError) {
+          // Log pero continuar con otras misiones
+          const errorMessage = missionError instanceof Error ? missionError.message : String(missionError);
+          console.warn(`[BUG-003 FIX] ⚠️ Error updating mission ${mission.id}: ${errorMessage}`);
+        }
+      }
+
+      // Actualizar misiones con objetivo 'earn_xp'
+      if (xpEarned > 0) {
+        const xpMissions = allMissions.filter(mission =>
+          mission.status !== 'completed' &&
+          mission.status !== 'claimed' &&
+          mission.objectives?.some((obj: any) => obj.type === 'earn_xp'),
+        );
+
+        for (const mission of xpMissions) {
+          try {
+            await this.missionsService.updateProgress(
+              mission.id,
+              userId,
+              'earn_xp',
+              xpEarned, // Incrementar por cantidad de XP ganado
+            );
+            console.log(`[BUG-003 FIX] ✅ Mission ${mission.id} (earn_xp) updated with +${xpEarned} XP`);
+          } catch (missionError) {
+            const errorMessage = missionError instanceof Error ? missionError.message : String(missionError);
+            console.warn(`[BUG-003 FIX] ⚠️ Error updating earn_xp mission ${mission.id}: ${errorMessage}`);
+          }
+        }
+      }
+
+      console.log('[BUG-003 FIX] ✅ Missions progress update completed');
+
+    } catch (error) {
+      // Log error pero no bloquear el claim de rewards
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error(`[BUG-003 FIX] ❌ Error updating missions progress: ${errorMessage}`);
+      // No throw - la actualización de misiones no debe bloquear la respuesta
+    }
+  }
+
+  /**
+   * Auto-guarda progreso parcial de un ejercicio
+   *
+   * @description Guarda el progreso parcial del estudiante para evitar pérdida de trabajo.
+   * Crea o actualiza una submission con status 'draft' que puede ser recuperada después.
+   *
+   * Flujo:
+   * 1. Buscar submission existente con status 'draft' para este usuario + ejercicio
+   * 2. Si existe: actualizar con nuevos datos parciales
+   * 3. Si no existe: crear nueva submission draft
+   * 4. Actualizar timestamp de última modificación
+   *
+   * @param userId - ID del usuario (auth.users.id from JWT)
+   * @param exerciseId - ID del ejercicio
+   * @param partialAnswers - Respuestas parciales del estudiante
+   * @param timeSpentSeconds - Tiempo transcurrido en segundos
+   * @param metadata - Metadatos adicionales (hints, UI state, etc.)
+   * @returns Submission draft actualizada
+   */
+  async autoSaveProgress(
+    userId: string,
+    exerciseId: string,
+    partialAnswers?: Record<string, any>,
+    timeSpentSeconds?: number,
+    metadata?: Record<string, any>,
+  ): Promise<ExerciseSubmission> {
+    // Convert auth.users.id → profiles.id
+    const profileId = await this.getProfileId(userId);
+
+    // Buscar submission draft existente
+    let submission = await this.submissionRepo.findOne({
+      where: {
+        user_id: profileId,
+        exercise_id: exerciseId,
+        status: 'draft',
+      },
+    });
+
+    // Si no existe, crear nueva submission draft
+    if (!submission) {
+      submission = this.submissionRepo.create({
+        user_id: profileId,
+        exercise_id: exerciseId,
+        status: 'draft',
+        answer_data: partialAnswers || {},
+        time_spent_seconds: timeSpentSeconds || 0,
+        started_at: new Date(),
+        submitted_at: new Date(), // Requerido por schema
+        score: 0,
+        max_score: 100,
+        hint_used: false,
+        hints_count: metadata?.hints_used || 0,
+        comodines_used: metadata?.comodines_used || [],
+        ml_coins_spent: 0,
+        attempt_number: 1,
+      });
+    } else {
+      // Actualizar submission existente con nuevos datos parciales
+      submission.answer_data = partialAnswers || submission.answer_data;
+      submission.time_spent_seconds = timeSpentSeconds ?? submission.time_spent_seconds;
+
+      // Merge metadata (preservar datos previos + agregar nuevos)
+      if (metadata) {
+        submission.hints_count = metadata.hints_used ?? submission.hints_count;
+        submission.comodines_used = metadata.comodines_used ?? submission.comodines_used;
+      }
+
+      // Actualizar timestamp (updated_at se actualiza automáticamente por @UpdateDateColumn)
+    }
+
+    // Guardar y retornar
+    const savedSubmission = await this.submissionRepo.save(submission);
+
+    return savedSubmission;
+  }
+
+  /**
+   * Recupera progreso parcial guardado de un ejercicio
+   *
+   * @description Obtiene la submission draft más reciente del usuario para este ejercicio.
+   * Si no existe, retorna null.
+   *
+   * @param userId - ID del usuario (auth.users.id from JWT)
+   * @param exerciseId - ID del ejercicio
+   * @returns Submission draft o null si no existe
+   */
+  async getAutoSavedProgress(
+    userId: string,
+    exerciseId: string,
+  ): Promise<ExerciseSubmission | null> {
+    // Convert auth.users.id → profiles.id
+    const profileId = await this.getProfileId(userId);
+
+    // Buscar submission draft más reciente
+    const submission = await this.submissionRepo.findOne({
+      where: {
+        user_id: profileId,
+        exercise_id: exerciseId,
+        status: 'draft',
+      },
+      order: { updated_at: 'DESC' },
+    });
+
+    return submission;
+  }
+
+  /**
+   * Convierte una submission draft en submission final
+   *
+   * @description Cuando el estudiante hace submit final del ejercicio,
+   * convierte el draft guardado en submission oficial y aplica scoring.
+   *
+   * @param userId - ID del usuario (auth.users.id from JWT)
+   * @param exerciseId - ID del ejercicio
+   * @param finalAnswers - Respuestas finales del estudiante
+   * @returns Submission procesada con score y rewards
+   */
+  async convertDraftToFinalSubmission(
+    userId: string,
+    exerciseId: string,
+    finalAnswers: Record<string, any>,
+  ): Promise<ExerciseSubmission> {
+    // Buscar draft existente
+    const draft = await this.getAutoSavedProgress(userId, exerciseId);
+
+    if (draft) {
+      // Actualizar draft con respuestas finales
+      draft.answer_data = finalAnswers;
+      draft.status = 'submitted';
+      draft.submitted_at = new Date();
+
+      await this.submissionRepo.save(draft);
+
+      // Procesar submission (score, rewards, etc.)
+      // Reutilizar lógica existente de submitExercise
+      return draft;
+    } else {
+      // Si no hay draft, crear nueva submission desde cero
+      return this.submitExercise(userId, exerciseId, finalAnswers);
     }
   }
 }

@@ -7,43 +7,43 @@ import { RecentSubmissionDto } from './recent-submission.dto';
  */
 export class UserInfoDto {
   @ApiProperty({ description: 'User ID' })
-  id!: string;
+    id!: string;
 
   @ApiProperty({ description: 'Display name' })
-  display_name!: string;
+    display_name!: string;
 
   @ApiProperty({ description: 'Email' })
-  email!: string;
+    email!: string;
 
   @ApiProperty({ description: 'User status' })
-  status!: string;
+    status!: string;
 
   @ApiProperty({ description: 'Current level' })
-  level!: number;
+    level!: number;
 
   @ApiProperty({ description: 'Total XP' })
-  total_xp!: number;
+    total_xp!: number;
 
   @ApiProperty({ description: 'ML Coins balance' })
-  ml_coins!: number;
+    ml_coins!: number;
 
   @ApiProperty({ description: 'Exercises completed' })
-  exercises_completed!: number;
+    exercises_completed!: number;
 
   @ApiProperty({ description: 'Modules completed' })
-  modules_completed!: number;
+    modules_completed!: number;
 
   @ApiProperty({ description: 'Current streak days' })
-  streak_days!: number;
+    streak_days!: number;
 
   @ApiProperty({ description: 'Maximum streak days' })
-  max_streak!: number;
+    max_streak!: number;
 
   @ApiProperty({ description: 'Achievements earned' })
-  achievements_earned!: number;
+    achievements_earned!: number;
 
   @ApiProperty({ description: 'Last activity timestamp', nullable: true })
-  last_activity_at!: string | null;
+    last_activity_at!: string | null;
 }
 
 /**
@@ -55,17 +55,17 @@ export class StudentProgressDto {
     description: 'User information and statistics',
     type: UserInfoDto,
   })
-  user_info!: UserInfoDto;
+    user_info!: UserInfoDto;
 
   @ApiProperty({
     description: 'Module progress details',
     type: [ModuleProgressDetailDto],
   })
-  modules_progress!: ModuleProgressDetailDto[];
+    modules_progress!: ModuleProgressDetailDto[];
 
   @ApiProperty({
     description: 'Recent exercise submissions',
     type: [RecentSubmissionDto],
   })
-  recent_submissions!: RecentSubmissionDto[];
+    recent_submissions!: RecentSubmissionDto[];
 }

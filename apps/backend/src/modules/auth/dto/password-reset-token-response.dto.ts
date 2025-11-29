@@ -12,19 +12,19 @@ import { Expose } from 'class-transformer';
  */
 export class PasswordResetTokenResponseDto {
   @Expose()
-  id!: string;
+    id!: string;
 
   @Expose()
-  user_id!: string;
+    user_id!: string;
 
   // token NO expuesto (tiene @Exclude en entity)
 
   @Expose()
-  expires_at!: Date;
+    expires_at!: Date;
 
   @Expose()
-  used_at!: Date | null;
+    used_at!: Date | null;
 
   @Expose()
-  created_at!: Date;
+    created_at!: Date;
 }

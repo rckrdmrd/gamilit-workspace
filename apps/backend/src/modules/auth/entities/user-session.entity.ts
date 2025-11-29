@@ -25,63 +25,66 @@ import { Tenant } from './tenant.entity';
 @Index(['expires_at'])
 export class UserSession {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   @Column({ type: 'uuid', nullable: true })
-  tenant_id!: string | null;
+    tenant_id!: string | null;
 
   @Column({ type: 'text' })
-  session_token!: string;
+    session_token!: string;
 
   @Column({ type: 'text', nullable: true })
   @Exclude() // CRITICAL: NO serializar refresh_token en respuestas
-  refresh_token!: string | null;
+    refresh_token!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  user_agent!: string | null;
+    user_agent!: string | null;
 
   @Column({ type: 'inet', nullable: true })
-  ip_address!: string | null;
+    ip_address!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  device_type!: string | null;
+    device_type!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  browser!: string | null;
+    browser!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  os!: string | null;
+    os!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  country!: string | null;
+    country!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  city!: string | null;
+    city!: string | null;
 
   @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  created_at!: Date;
+    created_at!: Date;
 
   @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  last_activity_at!: Date;
+    last_activity_at!: Date;
 
   @Column({ type: 'timestamptz' })
-  expires_at!: Date;
+    expires_at!: Date;
 
   @Column({ type: 'boolean', default: true })
-  is_active!: boolean;
+    is_active!: boolean;
+
+  @Column({ type: 'timestamptz', nullable: true })
+    revoked_at!: Date | null;
 
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   // Relaciones
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user!: User;
+    user!: User;
 
   @ManyToOne(() => Tenant, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'tenant_id' })
-  tenant!: Tenant;
+    tenant!: Tenant;
 }

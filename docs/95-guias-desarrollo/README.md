@@ -369,6 +369,38 @@ Los siguientes archivos de base-de-datos están pendientes de modularización en
 
 ---
 
+## 🎯 Guias de Portales
+
+### Guias Especificas por Portal
+
+| Portal | Guia | Descripcion |
+|--------|------|-------------|
+| **Teacher** | [PORTAL-TEACHER-GUIDE.md](./PORTAL-TEACHER-GUIDE.md) | Arquitectura, patrones y buenas practicas |
+| **Teacher** | [PORTAL-TEACHER-API-REFERENCE.md](./PORTAL-TEACHER-API-REFERENCE.md) | Referencia completa de APIs (45+ endpoints) |
+| **Teacher** | [PORTAL-TEACHER-FLOWS.md](./PORTAL-TEACHER-FLOWS.md) | Flujos de datos e integracion |
+| **Student** | [PORTAL-STUDENT-GUIDE.md](./PORTAL-STUDENT-GUIDE.md) | Arquitectura del portal de estudiantes |
+| **Admin** | [PORTAL-ADMIN-GUIDE.md](./PORTAL-ADMIN-GUIDE.md) | Guia del portal administrativo |
+
+### Guias de Integracion (NUEVO 2025-11-29)
+
+| Guia | Descripcion |
+|------|-------------|
+| [INTEGRACION-STUDENT-TEACHER.md](./INTEGRACION-STUDENT-TEACHER.md) | **Especificacion de integracion Student→Teacher**: Flujos de datos, triggers BD, endpoints, formato de respuestas |
+| [DEPENDENCIAS-STUDENT-TEACHER.md](./DEPENDENCIAS-STUDENT-TEACHER.md) | **Matriz de dependencias**: Impacto de cambios, objetos afectados, checklist de desarrollo |
+
+### Guias Transversales
+
+| Guia | Descripcion |
+|------|-------------|
+| [frontend/COMPONENT-PATTERNS.md](./frontend/COMPONENT-PATTERNS.md) | Patrones de componentes React |
+| [frontend/HOOK-PATTERNS.md](./frontend/HOOK-PATTERNS.md) | Patrones de custom hooks |
+| [frontend/TYPES-CONVENTIONS.md](./frontend/TYPES-CONVENTIONS.md) | Convenciones de types |
+| [frontend/ESTRUCTURA-FEATURES.md](./frontend/ESTRUCTURA-FEATURES.md) | Estructura de features |
+| [backend/ESTRUCTURA-MODULOS.md](./backend/ESTRUCTURA-MODULOS.md) | Estructura de modulos NestJS |
+| [backend/DTO-CONVENTIONS.md](./backend/DTO-CONVENTIONS.md) | Convenciones de DTOs |
+
+---
+
 ## 📚 Documentación Relacionada
 
 - **Requerimientos:** `../01-requerimientos/_MAP.md`

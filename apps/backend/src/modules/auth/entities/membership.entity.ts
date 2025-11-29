@@ -34,19 +34,19 @@ export class Membership {
    * ID único de la membresía (UUID v4)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario (FK a auth.users)
    */
   @Column({ type: 'uuid', nullable: false })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del tenant (FK a auth_management.tenants)
    */
   @Column({ type: 'uuid', nullable: false })
-  tenant_id!: string;
+    tenant_id!: string;
 
   /**
    * Rol del usuario en el tenant
@@ -58,7 +58,7 @@ export class Membership {
     nullable: false,
     default: MembershipRoleEnum.MEMBER,
   })
-  role!: MembershipRoleEnum;
+    role!: MembershipRoleEnum;
 
   /**
    * Estado de la membresía
@@ -70,31 +70,31 @@ export class Membership {
     nullable: false,
     default: MembershipStatusEnum.ACTIVE,
   })
-  status!: MembershipStatusEnum;
+    status!: MembershipStatusEnum;
 
   /**
    * ID del usuario que invitó (FK a auth.users, nullable)
    */
   @Column({ type: 'uuid', nullable: true })
-  invited_by!: string | null;
+    invited_by!: string | null;
 
   /**
    * Fecha y hora en que el usuario se unió al tenant
    */
   @Column({ type: 'timestamp with time zone', nullable: false })
-  joined_at!: Date;
+    joined_at!: Date;
 
   /**
    * Fecha de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de última actualización del registro
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   // ===========================
   // Relaciones
@@ -106,7 +106,7 @@ export class Membership {
    */
   @ManyToOne(() => User, { nullable: false })
   @JoinColumn({ name: 'user_id' })
-  user!: User;
+    user!: User;
 
   /**
    * Tenant asociado a esta membresía
@@ -114,7 +114,7 @@ export class Membership {
    */
   @ManyToOne(() => Tenant, { nullable: false })
   @JoinColumn({ name: 'tenant_id' })
-  tenant!: Tenant;
+    tenant!: Tenant;
 
   /**
    * Usuario que invitó (nullable)
@@ -122,5 +122,5 @@ export class Membership {
    */
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'invited_by' })
-  inviter!: User | null;
+    inviter!: User | null;
 }

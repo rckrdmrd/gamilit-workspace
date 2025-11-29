@@ -24,7 +24,7 @@ export interface Notification {
     | 'system_announcement';
   title: string;
   message: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
   status: 'unread' | 'read';
   createdAt: string;
 }
@@ -106,16 +106,16 @@ export const notificationsAPI = {
     type?: string;
     status?: 'unread' | 'read' | 'all';
   }): Promise<NotificationsResponse> => {
-    const response = await apiClient.get('/notifications', { params });
-    return response.data.data;
+    const response = await apiClient.get<NotificationsResponse>('/notifications', { params });
+    return response.data;
   },
 
   /**
    * Get count of unread notifications
    */
   getUnreadCount: async (): Promise<number> => {
-    const response = await apiClient.get('/notifications/unread-count');
-    return response.data.data.count;
+    const response = await apiClient.get<{ count: number }>('/notifications/unread-count');
+    return response.data.count ?? 0;
   },
 
   /**
@@ -129,8 +129,8 @@ export const notificationsAPI = {
    * Mark all notifications as read
    */
   markAllAsRead: async (): Promise<number> => {
-    const response = await apiClient.post('/notifications/read-all');
-    return response.data.data.marked;
+    const response = await apiClient.post<{ marked: number }>('/notifications/read-all');
+    return response.data.marked ?? 0;
   },
 
   /**
@@ -144,8 +144,8 @@ export const notificationsAPI = {
    * Clear all notifications
    */
   clearAll: async (): Promise<number> => {
-    const response = await apiClient.delete('/notifications/clear-all');
-    return response.data.data.deleted;
+    const response = await apiClient.delete<{ deleted: number }>('/notifications/clear-all');
+    return response.data.deleted ?? 0;
   },
 
   // ========== PREFERENCES (Multi-Channel EXT-003) ==========
@@ -233,10 +233,7 @@ export const notificationsAPI = {
    * @param deviceId - UUID of the device
    * @param dto - New device name
    */
-  updateDeviceName: async (
-    deviceId: string,
-    dto: UpdateDeviceNameDto,
-  ): Promise<UserDevice> => {
+  updateDeviceName: async (deviceId: string, dto: UpdateDeviceNameDto): Promise<UserDevice> => {
     const response = await apiClient.patch(`/notifications/devices/${deviceId}`, dto);
     return response.data;
   },

@@ -77,6 +77,7 @@ export default function TeacherDashboard() {
     if (classrooms && classrooms.length > 0 && !selectedClassroomId) {
       setSelectedClassroomId(classrooms[0].id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classrooms]);
 
   // Use real data from backend via useTeacherDashboard hook

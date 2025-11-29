@@ -44,7 +44,7 @@ export class CreatePeerChallengeDto {
     example: ChallengeType.HEAD_TO_HEAD,
   })
   @IsEnum(ChallengeType)
-  challenge_type!: ChallengeType;
+    challenge_type!: ChallengeType;
 
   /**
    * ID del usuario que crea el desafío
@@ -54,7 +54,7 @@ export class CreatePeerChallengeDto {
     format: 'uuid',
   })
   @IsUUID('4')
-  created_by!: string;
+    created_by!: string;
 
   /**
    * ID del ejercicio asociado (opcional)
@@ -65,7 +65,7 @@ export class CreatePeerChallengeDto {
   })
   @IsOptional()
   @IsUUID('4')
-  exercise_id?: string;
+    exercise_id?: string;
 
   /**
    * Título del desafío
@@ -78,7 +78,7 @@ export class CreatePeerChallengeDto {
   })
   @IsString()
   @MinLength(3)
-  title!: string;
+    title!: string;
 
   /**
    * Descripción del desafío
@@ -88,7 +88,7 @@ export class CreatePeerChallengeDto {
   })
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   /**
    * Nivel de dificultad
@@ -100,7 +100,7 @@ export class CreatePeerChallengeDto {
   })
   @IsOptional()
   @IsEnum(DifficultyLevelEnum)
-  difficulty_level?: DifficultyLevelEnum;
+    difficulty_level?: DifficultyLevelEnum;
 
   /**
    * Máximo de participantes
@@ -114,7 +114,7 @@ export class CreatePeerChallengeDto {
   @IsOptional()
   @IsInt()
   @Min(2)
-  max_participants?: number;
+    max_participants?: number;
 
   /**
    * Mínimo de participantes para iniciar
@@ -128,7 +128,7 @@ export class CreatePeerChallengeDto {
   @IsOptional()
   @IsInt()
   @Min(2)
-  min_participants?: number;
+    min_participants?: number;
 
   /**
    * Fecha y hora de inicio (ISO 8601)
@@ -139,7 +139,7 @@ export class CreatePeerChallengeDto {
   })
   @IsOptional()
   @IsDateString()
-  start_time?: string;
+    start_time?: string;
 
   /**
    * Fecha y hora de fin (ISO 8601)
@@ -150,7 +150,7 @@ export class CreatePeerChallengeDto {
   })
   @IsOptional()
   @IsDateString()
-  end_time?: string;
+    end_time?: string;
 
   /**
    * Límite de tiempo en minutos por participante
@@ -162,7 +162,7 @@ export class CreatePeerChallengeDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  time_limit_minutes?: number;
+    time_limit_minutes?: number;
 
   /**
    * Recompensas del desafío (JSONB)
@@ -174,7 +174,7 @@ export class CreatePeerChallengeDto {
   })
   @IsOptional()
   @IsObject()
-  rewards?: Record<string, any>;
+    rewards?: Record<string, any>;
 
   /**
    * Multiplicador de bonus para el ganador
@@ -190,7 +190,7 @@ export class CreatePeerChallengeDto {
   @IsNumber()
   @Min(1)
   @Max(5)
-  winner_bonus_multiplier?: number;
+    winner_bonus_multiplier?: number;
 
   /**
    * Permite espectadores
@@ -202,7 +202,7 @@ export class CreatePeerChallengeDto {
   })
   @IsOptional()
   @IsBoolean()
-  allow_spectators?: boolean;
+    allow_spectators?: boolean;
 
   /**
    * Visible en lista pública
@@ -214,7 +214,7 @@ export class CreatePeerChallengeDto {
   })
   @IsOptional()
   @IsBoolean()
-  is_public?: boolean;
+    is_public?: boolean;
 
   /**
    * Requiere aprobación para unirse
@@ -226,7 +226,7 @@ export class CreatePeerChallengeDto {
   })
   @IsOptional()
   @IsBoolean()
-  requires_approval?: boolean;
+    requires_approval?: boolean;
 
   /**
    * Reglas personalizadas (JSONB)
@@ -236,7 +236,7 @@ export class CreatePeerChallengeDto {
   })
   @IsOptional()
   @IsObject()
-  custom_rules?: Record<string, any>;
+    custom_rules?: Record<string, any>;
 
   /**
    * Metadatos adicionales (JSONB)
@@ -246,5 +246,5 @@ export class CreatePeerChallengeDto {
   })
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

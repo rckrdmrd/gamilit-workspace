@@ -102,7 +102,7 @@ export class ClassroomTeachersRestController {
   async getClassroomTeachers(
     @Param('classroomId') classroomId: string,
   ): Promise<ClassroomWithTeachersDto> {
-    return await this.classroomAssignmentsService.getClassroomWithTeachers(
+    return this.classroomAssignmentsService.getClassroomWithTeachers(
       classroomId,
     );
   }
@@ -154,11 +154,11 @@ export class ClassroomTeachersRestController {
     description: 'Teacher already assigned to this classroom',
   })
   async assignTeacherToClassroom(
-    @Param('classroomId') classroomId: string,
+  @Param('classroomId') classroomId: string,
     @Body() dto: AssignTeacherToClassroomRestDto,
   ) {
     // Reuse existing service method
-    return await this.classroomAssignmentsService.assignClassroomToTeacher({
+    return this.classroomAssignmentsService.assignClassroomToTeacher({
       teacherId: dto.teacherId,
       classroomId: classroomId,
       notes: dto.notes,
@@ -215,11 +215,11 @@ export class ClassroomTeachersRestController {
   })
   async removeTeacherFromClassroom(
     @Param('classroomId') classroomId: string,
-    @Param('teacherId') teacherId: string,
-    @Query() dto: RemoveAssignmentDto,
+      @Param('teacherId') teacherId: string,
+      @Query() dto: RemoveAssignmentDto,
   ): Promise<{ message: string }> {
     // Reuse existing service method (parameter order is swapped in REST vs original)
-    return await this.classroomAssignmentsService.removeClassroomAssignment(
+    return this.classroomAssignmentsService.removeClassroomAssignment(
       teacherId,
       classroomId,
       dto,
@@ -260,7 +260,7 @@ export class ClassroomTeachersRestController {
   async getTeacherClassrooms(
     @Param('teacherId') teacherId: string,
   ): Promise<TeacherWithClassroomsDto> {
-    return await this.classroomAssignmentsService.getTeacherWithClassrooms(
+    return this.classroomAssignmentsService.getTeacherWithClassrooms(
       teacherId,
     );
   }
@@ -314,11 +314,11 @@ export class ClassroomTeachersRestController {
   })
   async assignClassroomsToTeacher(
     @Param('teacherId') teacherId: string,
-    @Body() dto: AssignClassroomsToTeacherRestDto,
+      @Body() dto: AssignClassroomsToTeacherRestDto,
   ): Promise<{
-    assigned: number;
-    classrooms: Array<{ id: string; name: string }>;
-  }> {
+        assigned: number;
+        classrooms: Array<{ id: string; name: string }>;
+      }> {
     // Reuse existing bulk assign method
     const result =
       await this.classroomAssignmentsService.bulkAssignClassrooms({
@@ -383,12 +383,12 @@ export class ClassroomTeachersRestController {
   async listAllAssignments(
     @Query() query: ListAllAssignmentsQueryDto,
   ): Promise<{
-    data: any[];
-    total: number;
-    page: number;
-    limit: number;
-  }> {
-    return await this.classroomAssignmentsService.listAllAssignmentsPaginated({
+        data: any[];
+        total: number;
+        page: number;
+        limit: number;
+      }> {
+    return this.classroomAssignmentsService.listAllAssignmentsPaginated({
       schoolId: query.schoolId,
       page: query.page || 1,
       limit: query.limit || 20,
@@ -437,11 +437,11 @@ export class ClassroomTeachersRestController {
   async bulkAssign(
     @Body() dto: BulkAssignRestDto,
   ): Promise<{
-    assigned: number;
-    successful: any[];
-    failed: any[];
-  }> {
-    return await this.classroomAssignmentsService.bulkAssignPairs(
+        assigned: number;
+        successful: any[];
+        failed: any[];
+      }> {
+    return this.classroomAssignmentsService.bulkAssignPairs(
       dto.assignments,
     );
   }
@@ -471,7 +471,7 @@ export class ClassroomTeachersRestController {
   async listClassrooms(
     @Query() query: ListClassroomsQueryDto,
   ): Promise<ClassroomListItemDto[]> {
-    return await this.classroomAssignmentsService.listClassrooms(query);
+    return this.classroomAssignmentsService.listClassrooms(query);
   }
 
   // =====================================================
@@ -499,6 +499,6 @@ export class ClassroomTeachersRestController {
   async listTeachers(
     @Query() query: ListTeachersQueryDto,
   ): Promise<TeacherListItemDto[]> {
-    return await this.classroomAssignmentsService.listTeachers(query);
+    return this.classroomAssignmentsService.listTeachers(query);
   }
 }

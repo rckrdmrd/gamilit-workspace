@@ -93,7 +93,7 @@ export function useReports(options: UseReportsOptions = {}): UseReportsReturn {
         setReports(response.items);
         setPagination(response.pagination);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (isMountedRef.current) {
         setError(err.message || 'Failed to fetch reports');
         console.error('[useReports] Error fetching reports:', err);
@@ -125,7 +125,7 @@ export function useReports(options: UseReportsOptions = {}): UseReportsReturn {
         await fetchReports(filters);
 
         return report;
-      } catch (err: any) {
+      } catch (err: unknown) {
         const errorMessage = err.message || 'Failed to generate report';
         setError(errorMessage);
         throw new Error(errorMessage);
@@ -171,7 +171,7 @@ export function useReports(options: UseReportsOptions = {}): UseReportsReturn {
         // Cleanup
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
-      } catch (err: any) {
+      } catch (err: unknown) {
         const errorMessage = err.message || 'Failed to download report';
         setError(errorMessage);
         throw new Error(errorMessage);
@@ -191,7 +191,7 @@ export function useReports(options: UseReportsOptions = {}): UseReportsReturn {
 
         // Refresh list after deletion
         await fetchReports(filters);
-      } catch (err: any) {
+      } catch (err: unknown) {
         const errorMessage = err.message || 'Failed to delete report';
         setError(errorMessage);
         throw new Error(errorMessage);

@@ -34,7 +34,7 @@ export class ScheduledMission {
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   // =====================================================
   // CORE IDENTIFIERS
@@ -44,19 +44,19 @@ export class ScheduledMission {
    * ID de la misión programada (FK → gamification_system.missions)
    */
   @Column({ type: 'uuid' })
-  mission_id!: string;
+    mission_id!: string;
 
   /**
    * ID del aula donde se programa la misión (FK → social_features.classrooms)
    */
   @Column({ type: 'uuid' })
-  classroom_id!: string;
+    classroom_id!: string;
 
   /**
    * Usuario (profesor) que programó la misión (FK → auth_management.profiles)
    */
   @Column({ type: 'uuid' })
-  scheduled_by!: string;
+    scheduled_by!: string;
 
   // =====================================================
   // SCHEDULE DATES
@@ -66,13 +66,13 @@ export class ScheduledMission {
    * Fecha y hora de inicio de la misión
    */
   @Column({ type: 'timestamp with time zone' })
-  starts_at!: Date;
+    starts_at!: Date;
 
   /**
    * Fecha y hora de finalización de la misión
    */
   @Column({ type: 'timestamp with time zone' })
-  ends_at!: Date;
+    ends_at!: Date;
 
   // =====================================================
   // STATE
@@ -82,7 +82,7 @@ export class ScheduledMission {
    * Indica si la misión programada está activa
    */
   @Column({ type: 'boolean', default: true })
-  is_active!: boolean;
+    is_active!: boolean;
 
   // =====================================================
   // BONUS REWARDS
@@ -92,13 +92,13 @@ export class ScheduledMission {
    * Puntos de experiencia adicionales otorgados al completar
    */
   @Column({ type: 'integer', default: 0 })
-  bonus_xp!: number;
+    bonus_xp!: number;
 
   /**
    * ML Coins adicionales otorgadas al completar
    */
   @Column({ type: 'integer', default: 0 })
-  bonus_coins!: number;
+    bonus_coins!: number;
 
   // =====================================================
   // AUDIT
@@ -108,5 +108,5 @@ export class ScheduledMission {
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 }

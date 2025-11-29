@@ -12,7 +12,6 @@ interface ShopItemProps {
   onPurchase?: (item: ShopItemType) => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const ShopItem: React.FC<ShopItemProps> = ({ item, onPurchase: _onPurchase }) => {
   const canAfford = useEconomyStore((state) => state.canAfford);
   const addToCart = useEconomyStore((state) => state.addToCart);

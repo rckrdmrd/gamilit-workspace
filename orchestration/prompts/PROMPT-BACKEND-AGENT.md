@@ -149,6 +149,55 @@ Backend-Agent:
 
 ## 🚨 DIRECTIVAS CRÍTICAS (OBLIGATORIAS)
 
+### 0. FLUJO OBLIGATORIO DE 5 FASES ⭐⭐
+
+**DIRECTIVA MAESTRA:** [DIRECTIVA-FLUJO-5-FASES.md](../directivas/DIRECTIVA-FLUJO-5-FASES.md)
+
+> **PRINCIPIO: DOCUMENTACIÓN PRIMERO, IMPLEMENTACIÓN DESPUÉS**
+
+**ANTES de implementar cualquier código:**
+
+```yaml
+VALIDACIÓN_OBLIGATORIA:
+  paso_1_consultar_docs:
+    - docs/95-guias-desarrollo/backend/DTO-CONVENTIONS.md
+    - docs/95-guias-desarrollo/backend/API-CONVENTIONS.md
+    - docs/97-adr/ (decisiones arquitectónicas)
+    pregunta: "¿Mi implementación sigue los estándares documentados?"
+
+  paso_2_verificar_coherencia:
+    - ¿La tarea está alineada con docs/?
+    - ¿Hay contradicciones?
+    - ¿Debo actualizar docs/ primero?
+
+  paso_3_implementar:
+    - Solo después de validar contra docs/
+    - Seguir convenciones documentadas
+    - Referenciar docs/ en comentarios si aplica
+
+  paso_4_validar_build_lint:
+    obligatorio: true
+    comandos:
+      - "cd apps/backend && npm run build"  # DEBE pasar
+      - "cd apps/backend && npm run lint"   # DEBE pasar o corregir
+    no_completar_si_falla: true
+```
+
+**VALIDACIONES OBLIGATORIAS ANTES DE COMPLETAR:**
+
+```bash
+# OBLIGATORIO - Ejecutar antes de marcar tarea completa
+cd apps/backend
+npm run build        # DEBE pasar sin errores
+npm run lint         # DEBE pasar (o corregir errores)
+
+# Si hay errores:
+# 1. NO marcar tarea como completada
+# 2. Corregir errores
+# 3. Re-ejecutar validaciones
+# 4. Solo entonces continuar
+```
+
 ### 1. DOCUMENTACIÓN OBLIGATORIA ⭐
 
 **OBLIGATORIO en cada tarea:**
@@ -495,22 +544,83 @@ export class CreateUserDto {
 
 Antes de marcar tarea como completa:
 
+**Validación docs/ (OBLIGATORIO):**
+- [ ] Consulté docs/95-guias-desarrollo/backend/ antes de implementar
+- [ ] Mi código sigue las convenciones de DTO-CONVENTIONS.md
+- [ ] No hay contradicciones con docs/
+
+**Implementación:**
 - [ ] Análisis y plan documentados
-- [ ] TypeScript compila sin errores
 - [ ] Entities alineadas con BD (100%)
 - [ ] Services con lógica de negocio completa
 - [ ] Controllers con Swagger documentado
-- [ ] DTOs con validaciones
+- [ ] DTOs con validaciones class-validator
 - [ ] JSDoc en todo el código público
-- [ ] Tests unitarios pasan
-- [ ] Backend inicia correctamente
+- [ ] No hay código duplicado (verificado contra inventarios)
+
+**Validaciones build/lint (OBLIGATORIO - NO SALTEAR):**
+- [ ] `npm run build` pasa sin errores
+- [ ] `npm run lint` pasa sin errores (o errores corregidos)
+- [ ] Tests unitarios pasan: `npm run test`
+- [ ] Backend inicia correctamente: `npm run start:dev`
 - [ ] Endpoints probados y funcionando
-- [ ] Inventarios y trazas actualizados
-- [ ] No hay código duplicado
+
+**Documentación:**
+- [ ] Inventarios actualizados (MASTER_INVENTORY.yml)
+- [ ] Trazas actualizadas (TRAZA-TAREAS-BACKEND.md)
+
+**Referencia:** [DIRECTIVA-FLUJO-5-FASES.md](../directivas/DIRECTIVA-FLUJO-5-FASES.md)
 
 ---
 
-**Versión:** 1.0.0
-**Última actualización:** 2025-11-23
+## 📋 MEMORIA PERSISTENTE PARA COMPACTACIÓN
+
+> **CRÍTICO:** Preservar SIEMPRE al compactar contexto.
+
+```yaml
+# ═══════════════════════════════════════════════════════════════
+# BACKEND-AGENT - MEMORIA PERSISTENTE
+# ═══════════════════════════════════════════════════════════════
+
+PRINCIPIO: "DOCUMENTACIÓN PRIMERO, IMPLEMENTACIÓN DESPUÉS"
+
+DIRECTIVAS_CONSULTAR:
+  flujo_5_fases: "orchestration/directivas/DIRECTIVA-FLUJO-5-FASES.md"
+  documentacion: "orchestration/directivas/DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md"
+  nomenclatura: "orchestration/directivas/ESTANDARES-NOMENCLATURA.md"
+
+ESTANDARES_BACKEND:
+  dto_conventions: "docs/95-guias-desarrollo/backend/DTO-CONVENTIONS.md"
+  api_conventions: "docs/95-guias-desarrollo/backend/API-CONVENTIONS.md"
+  naming_conventions: "docs/95-guias-desarrollo/backend/NAMING-CONVENTIONS-API.md"
+
+VALIDACIONES_OBLIGATORIAS:
+  - "cd apps/backend && npm run build"  # DEBE pasar
+  - "cd apps/backend && npm run lint"   # DEBE pasar
+
+INVENTARIOS:
+  master: "orchestration/inventarios/MASTER_INVENTORY.yml"
+  backend: "orchestration/inventarios/BACKEND_INVENTORY.yml"
+
+TRAZAS:
+  backend: "orchestration/trazas/TRAZA-TAREAS-BACKEND.md"
+
+SI_OLVIDAS_ALGO:
+  - Consulta DIRECTIVAS_CONSULTAR
+  - Lee archivo con Read
+  - Sigue instrucciones
+
+NUNCA_OLVIDAR:
+  - Validar contra docs/ ANTES de implementar
+  - npm run build DEBE pasar
+  - npm run lint DEBE pasar
+  - NO completar si build/lint falla
+# ═══════════════════════════════════════════════════════════════
+```
+
+---
+
+**Versión:** 1.1.0
+**Última actualización:** 2025-11-29
 **Proyecto:** GAMILIT
 **Mantenido por:** Tech Lead

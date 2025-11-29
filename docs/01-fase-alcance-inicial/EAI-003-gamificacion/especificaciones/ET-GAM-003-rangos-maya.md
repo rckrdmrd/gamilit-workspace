@@ -9,9 +9,10 @@
 | **Título** | Sistema de Rangos Maya - Especificación Técnica |
 | **Prioridad** | Alta |
 | **Estado** | ✅ Implementado |
-| **Versión** | 1.1 |
+| **Versión** | 2.3.0 |
 | **Fecha Creación** | 2025-11-07 |
-| **Última Actualización** | 2025-11-11 |
+| **Última Actualización** | 2025-11-28 |
+| **Sistema Actual** | [docs/sistema-recompensas/](../../../sistema-recompensas/) v2.3.0 |
 | **Autor** | Backend Team |
 | **Stakeholders** | Backend Team, Frontend Team, Database Team |
 
@@ -88,8 +89,10 @@ El **Sistema de Rangos Maya** implementa una progresión jerárquica basada en X
 1. **Ajaw** (0-499 XP) - Rango inicial
 2. **Nacom** (500-999 XP) - Capitán guerrero
 3. **Ah K'in** (1,000-1,499 XP) - Sacerdote del sol
-4. **Halach Uinic** (1,500-2,249 XP) - Hombre verdadero
-5. **K'uk'ulkan** (2,250+ XP) - Serpiente emplumada (máximo)
+4. **Halach Uinic** (1,500-1,899 XP) - Hombre verdadero
+5. **K'uk'ulkan** (1,900+ XP) - Serpiente emplumada (máximo)
+
+> **Nota v2.3.0:** Umbral K'uk'ulkan ajustado de 2,250 a 1,900 XP para ser alcanzable completando Módulos 1-3 (1,950 XP disponibles). Ver [DocumentoDeDiseño v6.5](../../../00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md).
 
 ### Características Técnicas
 
@@ -1855,6 +1858,7 @@ Promoción: Automática al alcanzar umbral de XP
 | 1.1 | 2025-11-11 | Backend Team | Actualización de triggers y funciones |
 | 1.2 | 2025-11-24 | Architecture-Analyst | **FIX CRÍTICO:** Corrección de bug en addXp() que impedía acumulación correcta de XP |
 | 1.3 | 2025-11-24 | Architecture-Analyst | **OPCIÓN C IMPLEMENTADA:** Documentación completa del sistema híbrido level vs rank |
+| 2.0 | 2025-11-29 | Architecture-Analyst | **FIX MULTIPLICADORES:** Multiplicadores XP por rango, thresholds v2.1, detección promoción |
 
 ---
 
@@ -2210,6 +2214,101 @@ CREATE TRIGGER trg_check_rank_promotion_on_xp_gain
 - ✅ Tests existentes pasan sin romper
 
 **Recomendación:** ✅ **Mantener Opción C indefinidamente**
+
+---
+
+## 🔧 FIX IMPLEMENTADO - 2025-11-29
+
+### Problemas Identificados
+
+Se detectaron 4 problemas que impedían el correcto funcionamiento del sistema de rangos:
+
+| # | Problema | Severidad | Archivo Afectado |
+|---|----------|-----------|------------------|
+| 1 | Multiplicadores XP por rango NO aplicados | CRÍTICO | exercise-submission.service.ts |
+| 2 | Thresholds de rango desactualizados (v2.0 vs v2.1) | ALTO | ranks.service.ts |
+| 3 | Promoción de rango no detectada por cache TypeORM | ALTO | exercise-submission.service.ts |
+| 4 | Tipo incorrecto en misiones (`'daily'` vs enum) | MEDIO | exercise-submission.service.ts |
+
+### Correcciones Implementadas
+
+#### 1. Multiplicadores XP
+
+Se agregó el método `getRankXpMultiplier()` que consulta el multiplicador desde la tabla `maya_ranks`:
+
+```typescript
+// exercise-submission.service.ts:976-997
+private async getRankXpMultiplier(userId: string): Promise<number> {
+  const result = await this.entityManager.query(`
+    SELECT xp_multiplier
+    FROM gamification_system.maya_ranks
+    WHERE rank_name = $1 AND is_active = true
+  `, [currentRank]);
+  return parseFloat(result[0].xp_multiplier) || 1.00;
+}
+```
+
+**Multiplicadores aplicados:**
+| Rango | Multiplicador |
+|-------|---------------|
+| Ajaw | 1.00x |
+| Nacom | 1.10x |
+| Ah K'in | 1.15x |
+| Halach Uinic | 1.20x |
+| K'uk'ulkan | 1.25x |
+
+#### 2. Thresholds v2.1
+
+Actualizado `RANK_CONFIG` en `ranks.service.ts` para coincidir con DB:
+
+```typescript
+// ranks.service.ts - ANTES (v2.0)
+'Halach Uinic': { xp_max: 2249 }
+'K\'uk\'ulkan': { xp_min: 2250 }
+
+// ranks.service.ts - DESPUÉS (v2.1)
+'Halach Uinic': { xp_max: 1899 }
+'K\'uk\'ulkan': { xp_min: 1900 }
+```
+
+**Justificación:** Umbral K'uk'ulkan bajó de 2250 a 1900 para ser alcanzable al completar Módulos 1-3 (~1,950 XP disponibles).
+
+#### 3. Detección de Promoción
+
+Se implementó `setImmediate()` + query SQL directo para bypass de cache TypeORM:
+
+```typescript
+// exercise-submission.service.ts:904-913
+await new Promise(resolve => setImmediate(resolve));
+
+const userStatsAfter = await this.entityManager.query(`
+  SELECT current_rank, total_xp, ml_coins
+  FROM gamification_system.user_stats
+  WHERE user_id = $1
+`, [submission.user_id]);
+```
+
+#### 4. MissionTypeEnum
+
+Corregido uso de strings literales a enums tipados:
+
+```typescript
+// ANTES (incorrecto)
+await this.missionsService.findByTypeAndUser(userId, 'daily' as any);
+
+// DESPUÉS (correcto)
+await this.missionsService.findByTypeAndUser(userId, MissionTypeEnum.DAILY);
+```
+
+### Validación
+
+- ✅ `npm run build` - BUILD SUCCESSFUL
+- ✅ `npm run lint` - 0 errores
+- ✅ Correcciones verificadas en código
+
+### Documentación de Referencia
+
+Ver reporte completo: `docs/90-transversal/correcciones/CORRECCION-GAMIFICACION-RANGOS-2025-11-29.md`
 
 ---
 

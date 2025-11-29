@@ -149,11 +149,11 @@ export const AchievementFilters: React.FC<AchievementFiltersProps> = ({
   };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onFilterChange({ status: e.target.value as any });
+    onFilterChange({ status: e.target.value as 'all' | 'unlocked' | 'locked' | 'in_progress' });
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onFilterChange({ sortBy: e.target.value as any });
+    onFilterChange({ sortBy: e.target.value as 'recent' | 'alphabetical' | 'rarity' | 'progress' });
   };
 
   return (

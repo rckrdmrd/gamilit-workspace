@@ -39,7 +39,7 @@ export const AcknowledgeAlertModal: React.FC<AcknowledgeAlertModalProps> = ({
       await onConfirm(note.trim() || undefined);
       setNote('');
       onClose();
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err?.message || 'Error al reconocer la alerta');
     } finally {
       setIsSubmitting(false);

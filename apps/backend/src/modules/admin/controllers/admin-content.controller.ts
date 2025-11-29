@@ -46,7 +46,7 @@ export class AdminContentController {
   async getPendingContent(
     @Query() query: ListContentDto,
   ): Promise<PaginatedContentDto> {
-    return await this.adminContentService.getPendingContent(query);
+    return this.adminContentService.getPendingContent(query);
   }
 
   @Get('exercises/pending')
@@ -58,7 +58,7 @@ export class AdminContentController {
     @Query() query: ListContentDto,
   ): Promise<PaginatedContentDto> {
     // Filter only exercises
-    return await this.adminContentService.getPendingContent({ ...query, content_type: 'exercise' });
+    return this.adminContentService.getPendingContent({ ...query, content_type: 'exercise' });
   }
 
   @Post(':id/approve')
@@ -69,11 +69,11 @@ export class AdminContentController {
   })
   async approveContent(
     @Param('id') id: string,
-    @Body() approvalDto: ApproveContentDto,
-    @Request() req: any,
+      @Body() approvalDto: ApproveContentDto,
+      @Request() req: any,
   ): Promise<ContentDto> {
     const adminId = req.user?.id || req.user?.sub;
-    return await this.adminContentService.approveContent(
+    return this.adminContentService.approveContent(
       id,
       approvalDto,
       adminId,
@@ -87,11 +87,11 @@ export class AdminContentController {
   })
   async approveExercise(
     @Param('id') id: string,
-    @Body() approvalDto: ApproveContentDto,
-    @Request() req: any,
+      @Body() approvalDto: ApproveContentDto,
+      @Request() req: any,
   ): Promise<ContentDto> {
     const adminId = req.user?.id || req.user?.sub;
-    return await this.adminContentService.approveContent(
+    return this.adminContentService.approveContent(
       id,
       approvalDto,
       adminId,
@@ -106,11 +106,11 @@ export class AdminContentController {
   })
   async rejectContent(
     @Param('id') id: string,
-    @Body() rejectionDto: RejectContentDto,
-    @Request() req: any,
+      @Body() rejectionDto: RejectContentDto,
+      @Request() req: any,
   ): Promise<ContentDto> {
     const adminId = req.user?.id || req.user?.sub;
-    return await this.adminContentService.rejectContent(
+    return this.adminContentService.rejectContent(
       id,
       rejectionDto,
       adminId,
@@ -124,11 +124,11 @@ export class AdminContentController {
   })
   async rejectExercise(
     @Param('id') id: string,
-    @Body() rejectionDto: RejectContentDto,
-    @Request() req: any,
+      @Body() rejectionDto: RejectContentDto,
+      @Request() req: any,
   ): Promise<ContentDto> {
     const adminId = req.user?.id || req.user?.sub;
-    return await this.adminContentService.rejectContent(
+    return this.adminContentService.rejectContent(
       id,
       rejectionDto,
       adminId,
@@ -158,10 +158,10 @@ export class AdminContentController {
   })
   async createVersion(
     @Body() dto: CreateVersionDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<VersionResponseDto> {
     const adminId = req.user?.id || req.user?.sub;
-    return await this.adminContentService.createVersion(dto, adminId);
+    return this.adminContentService.createVersion(dto, adminId);
   }
 
   @Get('media')
@@ -173,7 +173,7 @@ export class AdminContentController {
   async getMediaLibrary(
     @Query() query: ListMediaDto,
   ): Promise<PaginatedMediaDto> {
-    return await this.adminContentService.getMediaLibrary(query);
+    return this.adminContentService.getMediaLibrary(query);
   }
 
   @Delete('media/:id')
@@ -201,6 +201,6 @@ export class AdminContentController {
   async getApprovalHistory(
     @Query() query: ListApprovalHistoryDto,
   ): Promise<PaginatedApprovalHistoryDto> {
-    return await this.adminContentService.getApprovalHistory(query);
+    return this.adminContentService.getApprovalHistory(query);
   }
 }

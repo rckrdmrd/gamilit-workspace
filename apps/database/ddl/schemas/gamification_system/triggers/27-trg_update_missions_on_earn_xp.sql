@@ -1,0 +1,158 @@
+-- =====================================================
+-- Trigger: trg_update_missions_on_earn_xp
+-- Table: gamification_system.user_stats
+-- Function: gamilit.update_missions_on_earn_xp
+-- Event: AFTER UPDATE
+-- Level: FOR EACH ROW
+-- Description: Actualiza progreso de misiones al ganar XP
+-- Created: 2025-11-28
+-- =====================================================
+--
+-- PROPÓSITO:
+-- Este trigger conecta la ganancia de XP con el sistema de misiones.
+-- Cuando un estudiante gana XP (por cualquier motivo: completar ejercicios,
+-- logros, bonos del profesor, etc.), las misiones diarias/semanales que
+-- tengan objetivo 'earn_xp' se actualizan automáticamente.
+--
+-- ORDEN DE EJECUCIÓN:
+-- Los triggers en user_stats se ejecutan en orden alfabético:
+-- 1. trg_recalculate_level_on_xp_change (21-) <- Primero recalcula nivel
+-- 2. trg_update_missions_on_earn_xp (27-) <- ESTE TRIGGER
+-- 3. trg_user_stats_updated_at (20-) <- Actualiza updated_at
+--
+-- EVENTOS QUE DISPARAN ESTE TRIGGER:
+-- - Completar ejercicios (vía gamilit.update_user_stats_on_exercise_complete)
+-- - Ganar logros/achievements
+-- - Bonos otorgados por profesor
+-- - Completar módulos
+-- - Cualquier UPDATE que incremente total_xp
+--
+-- MISIONES AFECTADAS:
+-- - Diarias: "Gana 50 XP" (25 XP + 10 ML Coins de recompensa)
+-- - Semanales: "Gana 500 XP" (150 XP + 75 ML Coins de recompensa)
+-- - Misiones combinadas con múltiples objetivos
+--
+-- FLUJO:
+-- 1. user_stats.total_xp se actualiza (cualquier motivo)
+-- 2. WHEN clause valida que total_xp cambió
+-- 3. Función calcula XP ganado: NEW.total_xp - OLD.total_xp
+-- 4. Busca misiones activas del usuario con objetivo 'earn_xp'
+-- 5. Incrementa current en cada misión con el XP ganado
+-- 6. Recalcula progress (%) de cada misión
+-- 7. Si progress = 100%, marca como 'completed'
+--
+-- OPTIMIZACIÓN:
+-- - WHEN clause evita ejecución innecesaria cuando total_xp no cambia
+-- - IS DISTINCT FROM maneja correctamente NULLs
+-- - Solo se ejecuta en UPDATEs que modifican total_xp
+--
+-- NOTAS:
+-- - NO bloquea si falla (errores solo se loggean)
+-- - Solo afecta cuando total_xp AUMENTA
+-- - Solo afecta misiones no expiradas
+-- - Compatible con otros triggers de user_stats
+-- - Funciona con incrementos de cualquier magnitud de XP
+-- =====================================================
+
+DROP TRIGGER IF EXISTS trg_update_missions_on_earn_xp ON gamification_system.user_stats CASCADE;
+
+CREATE TRIGGER trg_update_missions_on_earn_xp
+    AFTER UPDATE ON gamification_system.user_stats
+    FOR EACH ROW
+    WHEN (OLD.total_xp IS DISTINCT FROM NEW.total_xp)
+    EXECUTE FUNCTION gamilit.update_missions_on_earn_xp();
+
+-- =====================================================
+-- VERIFICACIÓN POST-CREACIÓN
+-- =====================================================
+-- SELECT tgname, tgenabled, tgtype, proname
+-- FROM pg_trigger t
+-- JOIN pg_proc p ON t.tgfoid = p.oid
+-- WHERE tgrelid = 'gamification_system.user_stats'::regclass
+-- ORDER BY tgname;
+--
+-- Resultado esperado (triggers en user_stats):
+-- - trg_recalculate_level_on_xp_change (BEFORE UPDATE)
+-- - trg_update_missions_on_earn_xp (AFTER UPDATE) <- NUEVO
+-- - trg_user_stats_updated_at (BEFORE UPDATE)
+-- =====================================================
+
+-- =====================================================
+-- COMENTARIOS DESCRIPTIVOS
+-- =====================================================
+COMMENT ON TRIGGER trg_update_missions_on_earn_xp ON gamification_system.user_stats IS
+    'Actualiza el progreso de misiones con objetivo "earn_xp" cuando un usuario gana XP. '
+    'Se ejecuta SOLO cuando total_xp cambia (optimizado con WHEN clause). '
+    'Soporta misiones diarias, semanales y combinadas. Creado: 2025-11-28';
+
+-- =====================================================
+-- TESTING MANUAL
+-- =====================================================
+--
+-- Test 1: Verificar trigger existe y está habilitado
+-- SELECT
+--     tgname AS trigger_name,
+--     tgenabled AS enabled,
+--     tgtype AS type,
+--     proname AS function_name
+-- FROM pg_trigger t
+-- JOIN pg_proc p ON t.tgfoid = p.oid
+-- WHERE tgrelid = 'gamification_system.user_stats'::regclass
+--   AND tgname = 'trg_update_missions_on_earn_xp';
+--
+-- Resultado esperado: 1 fila con enabled='O' (origin enabled)
+--
+-- Test 2: Verificar condición WHEN
+-- SELECT
+--     pg_get_triggerdef(oid) AS trigger_definition
+-- FROM pg_trigger
+-- WHERE tgname = 'trg_update_missions_on_earn_xp';
+--
+-- Debe contener: "WHEN ((old.total_xp IS DISTINCT FROM new.total_xp))"
+--
+-- Test 3: Prueba funcional
+-- -- Crear usuario de prueba
+-- INSERT INTO gamification_system.user_stats (user_id, total_xp)
+-- VALUES ('test-user-uuid', 0);
+--
+-- -- Crear misión de prueba
+-- INSERT INTO gamification_system.missions (user_id, title, mission_type, objectives, end_date)
+-- VALUES ('test-user-uuid', 'Test XP Mission', 'daily',
+--   '[{"type": "earn_xp", "target": 100, "current": 0}]'::jsonb,
+--   NOW() + INTERVAL '1 day');
+--
+-- -- Ganar 50 XP
+-- UPDATE gamification_system.user_stats
+-- SET total_xp = 50
+-- WHERE user_id = 'test-user-uuid';
+--
+-- -- Verificar progreso de misión
+-- SELECT
+--     title,
+--     objectives->0->>'current' AS current_xp,
+--     objectives->0->>'target' AS target_xp,
+--     progress,
+--     status
+-- FROM gamification_system.missions
+-- WHERE user_id = 'test-user-uuid';
+--
+-- Resultado esperado:
+-- - current_xp = '50'
+-- - target_xp = '100'
+-- - progress = 50.00
+-- - status = 'in_progress'
+--
+-- Test 4: Completar misión
+-- UPDATE gamification_system.user_stats
+-- SET total_xp = 150  -- +50 XP más
+-- WHERE user_id = 'test-user-uuid';
+--
+-- SELECT status, progress, completed_at
+-- FROM gamification_system.missions
+-- WHERE user_id = 'test-user-uuid';
+--
+-- Resultado esperado:
+-- - status = 'completed'
+-- - progress = 100.00
+-- - completed_at IS NOT NULL
+-- =====================================================

@@ -2,6 +2,7 @@
  * Admin API DTOs and Types
  * Generated for FE-051
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 // ============================================================================
 // COMMON TYPES
@@ -257,7 +258,15 @@ export interface AvailablePermission {
 // GAMIFICATION
 // ============================================================================
 
-export interface MayaRank {
+/**
+ * MayaRankConfig - Configuration for Maya rank in admin panel
+ *
+ * NOTA: Renombrado de MayaRank a MayaRankConfig (P2-001)
+ * para evitar conflicto con enum MayaRank de @shared/constants/ranks.constants
+ *
+ * @see SSOT enum: @shared/constants/ranks.constants.ts
+ */
+export interface MayaRankConfig {
   id: string;
   name: string;
   level: number;
@@ -275,7 +284,16 @@ export interface MayaRank {
   userCount?: number; // Frontend-only field
 }
 
-export interface Achievement {
+/**
+ * AdminAchievement - Simplified achievement for admin dashboard
+ *
+ * Este es un tipo simplificado para uso en el dashboard de admin.
+ * Para el tipo completo, usar Achievement de @shared/types/achievement.types
+ *
+ * @see SSOT: @shared/types/achievement.types.ts
+ * P2-001: Renombrado de Achievement a AdminAchievement para evitar conflicto
+ */
+export interface AdminAchievement {
   id: string;
   name: string;
   description: string;
@@ -285,6 +303,9 @@ export interface Achievement {
   userCount?: number;
   isActive: boolean;
 }
+
+/** @deprecated Use AdminAchievement instead */
+export type Achievement = AdminAchievement;
 
 export interface EconomyConfig {
   mlCoinsPerExercise: number;
@@ -305,8 +326,8 @@ export interface GamificationStats {
 }
 
 export interface GamificationSettings {
-  ranks: MayaRank[];
-  achievements: Achievement[];
+  ranks: MayaRankConfig[];
+  achievements: AdminAchievement[];
   economy: EconomyConfig;
   stats: GamificationStats;
 }
@@ -530,7 +551,7 @@ export interface Report {
   format: ReportFormat;
   status: ReportStatus;
   file_url?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   created_at: string;
   completed_at?: string;
   requested_by: string;
@@ -546,7 +567,7 @@ export interface GenerateReportParams {
   classroom_id?: string;
   start_date?: string;
   end_date?: string;
-  filters?: Record<string, any>;
+  filters?: Record<string, unknown>;
 }
 
 /**
@@ -633,8 +654,8 @@ export interface SystemAlert {
   escalation_level: number;
   auto_resolve: boolean;
   suppress_similar: boolean;
-  context_data?: Record<string, any>;
-  metrics?: Record<string, any>;
+  context_data?: Record<string, unknown>;
+  metrics?: Record<string, unknown>;
   related_alerts?: string[];
   triggered_at: string;
   created_at: string;
@@ -868,7 +889,7 @@ export interface RecentError {
   id: string;
   log_level: string;
   message: string;
-  context: Record<string, any> | null;
+  context: Record<string, unknown> | null;
   source: string | null;
   timestamp: string;
   user_id: string | null;
@@ -943,7 +964,7 @@ export interface StudentProgressSummary {
   comodines_used_total?: number;
 
   // FE-002: Additional analytics fields
-  performance_analytics?: Record<string, any>;
+  performance_analytics?: Record<string, unknown>;
   learning_path?: any[];
 }
 

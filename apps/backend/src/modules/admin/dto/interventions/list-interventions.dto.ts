@@ -14,7 +14,7 @@ export class ListInterventionsDto {
   })
   @IsOptional()
   @IsEnum(InterventionSeverity)
-  severity?: InterventionSeverity;
+    severity?: InterventionSeverity;
 
   @ApiPropertyOptional({
     enum: InterventionStatus,
@@ -23,7 +23,7 @@ export class ListInterventionsDto {
   })
   @IsOptional()
   @IsEnum(InterventionStatus)
-  status?: InterventionStatus;
+    status?: InterventionStatus;
 
   @ApiPropertyOptional({
     enum: InterventionAlertType,
@@ -32,7 +32,7 @@ export class ListInterventionsDto {
   })
   @IsOptional()
   @IsEnum(InterventionAlertType)
-  alert_type?: InterventionAlertType;
+    alert_type?: InterventionAlertType;
 
   @ApiPropertyOptional({
     description: 'Filter by student ID',
@@ -40,7 +40,7 @@ export class ListInterventionsDto {
   })
   @IsOptional()
   @IsUUID()
-  student_id?: string;
+    student_id?: string;
 
   @ApiPropertyOptional({
     description: 'Filter by classroom ID',
@@ -48,7 +48,7 @@ export class ListInterventionsDto {
   })
   @IsOptional()
   @IsUUID()
-  classroom_id?: string;
+    classroom_id?: string;
 
   @ApiPropertyOptional({
     description: 'Filter by alerts generated from this date (ISO 8601)',
@@ -56,7 +56,7 @@ export class ListInterventionsDto {
   })
   @IsOptional()
   @IsDateString()
-  date_from?: string;
+    date_from?: string;
 
   @ApiPropertyOptional({
     description: 'Filter by alerts generated until this date (ISO 8601)',
@@ -64,7 +64,7 @@ export class ListInterventionsDto {
   })
   @IsOptional()
   @IsDateString()
-  date_to?: string;
+    date_to?: string;
 
   @ApiPropertyOptional({
     description: 'Page number (1-based)',
@@ -75,7 +75,7 @@ export class ListInterventionsDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  page?: number = 1;
+    page?: number = 1;
 
   @ApiPropertyOptional({
     description: 'Number of items per page',
@@ -87,5 +87,5 @@ export class ListInterventionsDto {
   @IsInt()
   @Min(1)
   @Max(100)
-  limit?: number = 20;
+    limit?: number = 20;
 }

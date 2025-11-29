@@ -1,4 +1,3 @@
-/* eslint-disable rulesdir/no-api-route-issues */
 /**
  * Teacher Content API Client
  *
@@ -8,7 +7,7 @@
  * @module services/api/teacher/teacherContentApi
  */
 
-import { apiClient } from '../apiClient';
+import { apiClient } from '@/services/api/apiClient';
 
 // ============================================================================
 // TYPES & ENUMS
@@ -58,7 +57,7 @@ export interface TeacherContent {
   title: string;
   description?: string;
   contentType: TeacherContentType;
-  contentData?: Record<string, any>;
+  contentData?: Record<string, unknown>;
   instructions?: string;
   subjectArea?: string;
   gradeLevel?: string;
@@ -104,7 +103,7 @@ export interface CreateContentData {
   title: string;
   description?: string;
   contentType: TeacherContentType;
-  contentData?: Record<string, any>;
+  contentData?: Record<string, unknown>;
   instructions?: string;
   subjectArea?: string;
   gradeLevel?: string;
@@ -121,7 +120,7 @@ export interface CreateContentData {
 export interface UpdateContentData {
   title?: string;
   description?: string;
-  contentData?: Record<string, any>;
+  contentData?: Record<string, unknown>;
   instructions?: string;
   subjectArea?: string;
   gradeLevel?: string;

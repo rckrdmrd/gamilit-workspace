@@ -24,6 +24,8 @@ import ModuleDetailPage from '@/apps/student/pages/ModuleDetailPage';
 import EnhancedProfilePage from '@/apps/student/pages/EnhancedProfilePage';
 import { NotificationPreferencesPage } from '@/apps/student/pages/NotificationPreferencesPage';
 import { DeviceManagementSection } from '@/apps/student/pages/DeviceManagementSection';
+import NotificationsPage from '@/apps/student/pages/NotificationsPage';
+import AssignmentsPage from '@/apps/student/pages/AssignmentsPage';
 
 // Teacher Portal Pages
 import TeacherDashboardPage from '@/apps/teacher/pages/TeacherDashboardPage';
@@ -40,6 +42,7 @@ import TeacherResourcesPage from '@/apps/teacher/pages/TeacherResourcesPage';
 import TeacherClassesPage from '@/apps/teacher/pages/TeacherClassesPage';
 import TeacherStudentsPage from '@/apps/teacher/pages/TeacherStudentsPage';
 import TeacherExerciseResponsesPage from '@/apps/teacher/pages/TeacherExerciseResponsesPage';
+import TeacherSettingsPage from '@/apps/teacher/pages/TeacherSettingsPage';
 
 // Admin Portal Pages
 import AdminDashboardPage from '@/apps/admin/pages/AdminDashboardPage';
@@ -56,6 +59,7 @@ import AdminAlertsPage from '@/apps/admin/pages/AdminAlertsPage';
 import AdminAnalyticsPage from '@/apps/admin/pages/AdminAnalyticsPage';
 import AdminProgressPage from '@/apps/admin/pages/AdminProgressPage';
 import AdminClassroomTeacherPage from '@/apps/admin/pages/AdminClassroomTeacherPage';
+import AdminAssignmentsPage from '@/apps/admin/pages/AdminAssignmentsPage';
 
 /**
  * App Component
@@ -240,6 +244,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/teacher/settings"
+            element={
+              <ProtectedRoute>
+                <TeacherSettingsPage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* ===== ADMIN PORTAL ===== */}
           <Route
@@ -354,6 +366,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/admin/assignments"
+            element={
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <AdminAssignmentsPage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Progress Pages (protected) */}
           <Route
@@ -413,6 +433,16 @@ function App() {
             }
           />
 
+          {/* Student Assignments Page (P1-002) */}
+          <Route
+            path="/assignments"
+            element={
+              <ProtectedRoute>
+                <AssignmentsPage />
+              </ProtectedRoute>
+            }
+          />
+
           {/* Module Detail Page */}
           <Route
             path="/modules/:moduleId"
@@ -439,6 +469,16 @@ function App() {
             element={
               <ProtectedRoute>
                 <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Notifications Center */}
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <NotificationsPage />
               </ProtectedRoute>
             }
           />

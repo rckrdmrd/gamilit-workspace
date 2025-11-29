@@ -8,100 +8,100 @@ import { ActorType, Severity, Status } from '../entities/audit-log.entity';
 export class CreateAuditLogDto {
   @IsOptional()
   @IsString()
-  tenantId?: string;
+    tenantId?: string;
 
   @IsString()
-  eventType!: string;
+    eventType!: string;
 
   @IsString()
-  action!: string;
-
-  @IsOptional()
-  @IsString()
-  resourceType?: string;
+    action!: string;
 
   @IsOptional()
   @IsString()
-  resourceId?: string;
+    resourceType?: string;
 
   @IsOptional()
   @IsString()
-  actorId?: string;
+    resourceId?: string;
+
+  @IsOptional()
+  @IsString()
+    actorId?: string;
 
   @IsOptional()
   @IsEnum(ActorType)
-  actorType?: ActorType;
+    actorType?: ActorType;
 
   @IsOptional()
   @IsString()
-  actorIp?: string;
+    actorIp?: string;
 
   @IsOptional()
   @IsString()
-  actorUserAgent?: string;
+    actorUserAgent?: string;
 
   @IsOptional()
   @IsString()
-  targetId?: string;
+    targetId?: string;
 
   @IsOptional()
   @IsString()
-  targetType?: string;
+    targetType?: string;
 
   @IsOptional()
   @IsString()
-  sessionId?: string;
+    sessionId?: string;
 
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   @IsOptional()
   @IsObject()
-  oldValues?: any;
+    oldValues?: any;
 
   @IsOptional()
   @IsObject()
-  newValues?: any;
+    newValues?: any;
 
   @IsOptional()
   @IsObject()
-  changes?: any;
+    changes?: any;
 
   @IsOptional()
   @IsEnum(Severity)
-  severity?: Severity;
+    severity?: Severity;
 
   @IsOptional()
   @IsEnum(Status)
-  status?: Status;
+    status?: Status;
 
   @IsOptional()
   @IsString()
-  errorCode?: string;
+    errorCode?: string;
 
   @IsOptional()
   @IsString()
-  errorMessage?: string;
+    errorMessage?: string;
 
   @IsOptional()
   @IsString()
-  stackTrace?: string;
+    stackTrace?: string;
 
   @IsOptional()
   @IsString()
-  requestId?: string;
+    requestId?: string;
 
   @IsOptional()
   @IsString()
-  correlationId?: string;
+    correlationId?: string;
 
   @IsOptional()
   @IsObject()
-  additionalData?: any;
+    additionalData?: any;
 
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  tags?: string[];
+    tags?: string[];
 }

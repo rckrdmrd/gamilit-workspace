@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authApi } from '@/lib/api/auth.api';
 import { useAuthStore } from '@/features/auth/store/authStore';
@@ -179,7 +180,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         email: userData.email,
         role: userData.role,
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       const errorMessage =
         err.response?.data?.message || 'Login failed. Please check your credentials.';
       setError(errorMessage);
@@ -245,7 +246,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       console.log('✅ [AuthContext] Registration successful - both systems synchronized');
-    } catch (err: any) {
+    } catch (err: unknown) {
       const errorMessage = err.response?.data?.message || 'Registration failed. Please try again.';
       setError(errorMessage);
 
@@ -309,7 +310,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       console.log('✅ [AuthContext] User profile refreshed - both systems synchronized');
-    } catch (err: any) {
+    } catch (err: unknown) {
       const errorMessage = err.response?.data?.message || 'Failed to refresh user profile.';
       setError(errorMessage);
 

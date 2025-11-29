@@ -10,6 +10,7 @@ import {
   AchievementCategory,
   MLCoinsTransaction,
   Mission,
+  ClassroomMission,
   ComodinesInventory,
   LeaderboardMetadata,
   ActiveBoost,
@@ -28,6 +29,7 @@ import {
   RanksService,
   LeaderboardService,
   MissionsService,
+  ClassroomMissionsService,
   ComodinesService,
 } from './services';
 
@@ -39,6 +41,7 @@ import {
   RanksController,
   LeaderboardController,
   MissionsController,
+  ClassroomMissionsController,
   ComodinesController,
 } from './controllers';
 
@@ -77,6 +80,7 @@ import { DB_SCHEMAS } from '@/shared/constants';
         AchievementCategory,
         MLCoinsTransaction,
         Mission,
+        ClassroomMission,
         ComodinesInventory,
         Notification,
         LeaderboardMetadata,
@@ -95,6 +99,7 @@ import { DB_SCHEMAS } from '@/shared/constants';
     RanksService,
     LeaderboardService,
     MissionsService,
+    ClassroomMissionsService,
     ComodinesService,
   ],
   controllers: [
@@ -104,6 +109,7 @@ import { DB_SCHEMAS } from '@/shared/constants';
     RanksController,
     LeaderboardController,
     MissionsController,
+    ClassroomMissionsController,
     ComodinesController,
   ],
   exports: [
@@ -113,6 +119,7 @@ import { DB_SCHEMAS } from '@/shared/constants';
     RanksService,
     LeaderboardService,
     MissionsService,
+    ClassroomMissionsService,
     ComodinesService,
   ],
 })

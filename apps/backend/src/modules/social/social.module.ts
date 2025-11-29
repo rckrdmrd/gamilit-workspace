@@ -22,6 +22,7 @@ import * as controllers from './controllers';
  * - AssignmentClassroom: Asignaciones asignadas a aulas completas
  * - PeerChallenge: Desafíos peer-to-peer entre estudiantes (Epic EXT-009)
  * - ChallengeParticipant: Participantes de peer challenges con rankings
+ * - UserActivity: Actividades de usuarios para el Activity Feed (TASK 2.5)
  *
  * @services
  * - FriendshipsService: Gestión de amistades y bloqueos
@@ -31,6 +32,7 @@ import * as controllers from './controllers';
  * - TeamsService: CRUD de equipos colaborativos
  * - TeamMembersService: Gestión de membresía en equipos
  * - TeamChallengesService: Gestión de desafíos de equipos
+ * - UserActivitiesService: Gestión de actividades de usuarios (TASK 2.5)
  *
  * @controllers
  * - FriendshipsController: 10 endpoints para amistades
@@ -42,8 +44,9 @@ import * as controllers from './controllers';
  * - TeamChallengesController: 9 endpoints para desafíos
  * - PeerChallengesController: 16 endpoints para peer challenges (Epic EXT-009)
  * - ChallengeParticipantsController: 15 endpoints para participantes (Epic EXT-009)
+ * - UserActivitiesController: 5 endpoints para actividades de usuarios (TASK 2.5)
  *
- * @totalEndpoints 101 endpoints RESTful con documentación Swagger completa
+ * @totalEndpoints 106 endpoints RESTful con documentación Swagger completa
  */
 @Module({
   imports: [
@@ -60,6 +63,7 @@ import * as controllers from './controllers';
         entities.AssignmentClassroom, // ✨ NUEVO - P2 (Assignments → Classrooms)
         entities.PeerChallenge, // ✨ NUEVO - P2 (Epic EXT-009)
         entities.ChallengeParticipant, // ✨ NUEVO - P2 (Epic EXT-009)
+        entities.UserActivity, // ✨ NUEVO - P2 (Activity Feed - TASK 2.5)
       ],
       'social',
     ),
@@ -74,6 +78,7 @@ import * as controllers from './controllers';
     services.TeamChallengesService,
     services.PeerChallengesService, // ✨ NUEVO - P2 (Epic EXT-009)
     services.ChallengeParticipantsService, // ✨ NUEVO - P2 (Epic EXT-009)
+    services.UserActivitiesService, // ✨ NUEVO - P2 (Activity Feed - TASK 2.5)
   ],
   controllers: [
     controllers.FriendshipsController,
@@ -85,6 +90,7 @@ import * as controllers from './controllers';
     controllers.TeamChallengesController,
     controllers.PeerChallengesController, // ✨ NUEVO - P2 (Epic EXT-009)
     controllers.ChallengeParticipantsController, // ✨ NUEVO - P2 (Epic EXT-009)
+    controllers.UserActivitiesController, // ✨ NUEVO - P2 (Activity Feed - TASK 2.5)
   ],
   exports: [
     services.FriendshipsService,
@@ -96,6 +102,7 @@ import * as controllers from './controllers';
     services.TeamChallengesService,
     services.PeerChallengesService, // ✨ NUEVO - P2 (Epic EXT-009)
     services.ChallengeParticipantsService, // ✨ NUEVO - P2 (Epic EXT-009)
+    services.UserActivitiesService, // ✨ NUEVO - P2 (Activity Feed - TASK 2.5)
   ],
 })
 export class SocialModule {}

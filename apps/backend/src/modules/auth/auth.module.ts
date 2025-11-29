@@ -38,6 +38,9 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 // Constants
 import { DB_SCHEMAS } from '@/shared/constants';
 
+// External modules
+import { MailModule } from '@/modules/mail/mail.module';
+
 // Gamification entities for getUserStatistics (GAP-008)
 import { UserStats } from '@/modules/gamification/entities/user-stats.entity';
 import { UserRank } from '@/modules/gamification/entities/user-rank.entity';
@@ -65,6 +68,9 @@ import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submiss
  */
 @Module({
   imports: [
+    // Mail module for sending emails
+    MailModule,
+
     // Passport configuration
     PassportModule.register({ defaultStrategy: 'jwt' }),
 

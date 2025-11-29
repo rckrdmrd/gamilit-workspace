@@ -10,9 +10,9 @@ import { Repository } from 'typeorm';
 import { StudentInterventionAlert } from '../entities/student-intervention-alert.entity';
 import {
   GetAlertsQueryDto,
-  ResolveAlertDto,
-  AlertResponseDto,
-  AlertsListResponseDto,
+  ResolveInterventionAlertDto,
+  InterventionAlertResponseDto,
+  InterventionAlertsListResponseDto,
   AlertStatus,
   GenerateAlertsResponseDto,
 } from '../dto/intervention-alerts.dto';
@@ -57,7 +57,7 @@ export class InterventionAlertsService {
     teacherId: string,
     tenantId: string,
     query: GetAlertsQueryDto,
-  ): Promise<AlertsListResponseDto> {
+  ): Promise<InterventionAlertsListResponseDto> {
     this.logger.log(`Getting alerts for teacher ${teacherId}, tenant ${tenantId}`);
 
     const qb = this.alertsRepository
@@ -150,7 +150,7 @@ export class InterventionAlertsService {
     alertId: string,
     teacherId: string,
     tenantId: string,
-  ): Promise<AlertResponseDto> {
+  ): Promise<InterventionAlertResponseDto> {
     this.logger.log(`Getting alert ${alertId} for teacher ${teacherId}`);
 
     const alert = await this.alertsRepository.findOne({
@@ -195,7 +195,7 @@ export class InterventionAlertsService {
     alertId: string,
     teacherId: string,
     tenantId: string,
-  ): Promise<AlertResponseDto> {
+  ): Promise<InterventionAlertResponseDto> {
     this.logger.log(`Acknowledging alert ${alertId} by teacher ${teacherId}`);
 
     const alert = await this.getAlertEntity(alertId, teacherId, tenantId);
@@ -229,8 +229,8 @@ export class InterventionAlertsService {
     alertId: string,
     teacherId: string,
     tenantId: string,
-    dto: ResolveAlertDto,
-  ): Promise<AlertResponseDto> {
+    dto: ResolveInterventionAlertDto,
+  ): Promise<InterventionAlertResponseDto> {
     this.logger.log(`Resolving alert ${alertId} by teacher ${teacherId}`);
 
     const alert = await this.getAlertEntity(alertId, teacherId, tenantId);
@@ -263,7 +263,7 @@ export class InterventionAlertsService {
     alertId: string,
     teacherId: string,
     tenantId: string,
-  ): Promise<AlertResponseDto> {
+  ): Promise<InterventionAlertResponseDto> {
     this.logger.log(`Dismissing alert ${alertId} by teacher ${teacherId}`);
 
     const alert = await this.getAlertEntity(alertId, teacherId, tenantId);
@@ -289,7 +289,7 @@ export class InterventionAlertsService {
     studentId: string,
     teacherId: string,
     tenantId: string,
-  ): Promise<AlertResponseDto[]> {
+  ): Promise<InterventionAlertResponseDto[]> {
     this.logger.log(`Getting alert history for student ${studentId}`);
 
     // Verificar que el teacher tiene acceso al estudiante
@@ -404,7 +404,7 @@ export class InterventionAlertsService {
    * @returns DTO de respuesta
    * @private
    */
-  private mapToResponseDto(alert: StudentInterventionAlert): AlertResponseDto {
+  private mapToResponseDto(alert: StudentInterventionAlert): InterventionAlertResponseDto {
     return {
       id: alert.id,
       student_id: alert.student_id,

@@ -21,47 +21,47 @@ import {
 @Entity({ name: 'teacher_reports', schema: 'social_features' })
 export class TeacherReport {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   @Column({ name: 'teacher_id', type: 'uuid' })
-  teacherId!: string;
+    teacherId!: string;
 
   @Column({ name: 'classroom_id', type: 'uuid', nullable: true })
-  classroomId!: string | null;
+    classroomId!: string | null;
 
   @Column({ name: 'tenant_id', type: 'uuid' })
-  tenantId!: string;
+    tenantId!: string;
 
   @Column({ name: 'report_name', length: 255 })
-  reportName!: string;
+    reportName!: string;
 
   @Column({ name: 'report_type', length: 50 })
-  reportType!: string;
+    reportType!: string;
 
   @Column({ name: 'report_format', length: 10 })
-  reportFormat!: string;
+    reportFormat!: string;
 
   @Column({ name: 'student_count', type: 'int', default: 0 })
-  studentCount!: number;
+    studentCount!: number;
 
   @Column({ name: 'period_start', type: 'date', nullable: true })
-  periodStart!: Date | null;
+    periodStart!: Date | null;
 
   @Column({ name: 'period_end', type: 'date', nullable: true })
-  periodEnd!: Date | null;
+    periodEnd!: Date | null;
 
   @Column({ name: 'file_path', type: 'text', nullable: true })
-  filePath!: string | null;
+    filePath!: string | null;
 
   @Column({ name: 'file_size_bytes', type: 'bigint', nullable: true })
-  fileSizeBytes!: number | null;
+    fileSizeBytes!: number | null;
 
   @Column({ name: 'generated_at', type: 'timestamptz', default: () => 'NOW()' })
-  generatedAt!: Date;
+    generatedAt!: Date;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
-  createdAt!: Date;
+    createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
-  updatedAt!: Date;
+    updatedAt!: Date;
 }

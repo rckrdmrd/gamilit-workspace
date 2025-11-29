@@ -74,7 +74,7 @@ export class TeamMembersController {
     },
   })
   async findByTeamId(@Param('teamId') teamId: string) {
-    return await this.teamMembersService.findByTeamId(teamId);
+    return this.teamMembersService.findByTeamId(teamId);
   }
 
   /**
@@ -104,7 +104,7 @@ export class TeamMembersController {
     type: [TeamMemberResponseDto],
   })
   async findByUserId(@Param('userId') userId: string) {
-    return await this.teamMembersService.findByUserId(userId);
+    return this.teamMembersService.findByUserId(userId);
   }
 
   /**
@@ -146,10 +146,10 @@ export class TeamMembersController {
     description: 'Membresía no encontrada',
   })
   async findByTeamAndUser(
-    @Param('teamId') teamId: string,
+  @Param('teamId') teamId: string,
     @Param('userId') userId: string,
   ) {
-    return await this.teamMembersService.findByTeamAndUser(teamId, userId);
+    return this.teamMembersService.findByTeamAndUser(teamId, userId);
   }
 
   /**
@@ -207,7 +207,7 @@ export class TeamMembersController {
     },
   })
   async create(@Body() createDto: CreateTeamMemberDto) {
-    return await this.teamMembersService.create(createDto);
+    return this.teamMembersService.create(createDto);
   }
 
   /**
@@ -252,10 +252,10 @@ export class TeamMembersController {
     description: 'Membresía no encontrada',
   })
   async updateRole(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() body: { role: string },
   ) {
-    return await this.teamMembersService.updateRole(id, body.role);
+    return this.teamMembersService.updateRole(id, body.role);
   }
 
   /**
@@ -318,7 +318,7 @@ export class TeamMembersController {
     type: [TeamMemberResponseDto],
   })
   async getActiveMembers(@Param('teamId') teamId: string) {
-    return await this.teamMembersService.getActiveMembers(teamId);
+    return this.teamMembersService.getActiveMembers(teamId);
   }
 
   /**
@@ -383,10 +383,10 @@ export class TeamMembersController {
     description: 'Equipo o usuario no encontrado',
   })
   async transferOwnership(
-    @Param('teamId') teamId: string,
+  @Param('teamId') teamId: string,
     @Body() body: { newOwnerId: string },
   ) {
-    return await this.teamMembersService.transferOwnership(
+    return this.teamMembersService.transferOwnership(
       teamId,
       body.newOwnerId,
     );

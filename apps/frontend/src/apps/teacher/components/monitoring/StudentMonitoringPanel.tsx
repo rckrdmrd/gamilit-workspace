@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useRef } from 'react';
 import { Search, RefreshCw, Users } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';

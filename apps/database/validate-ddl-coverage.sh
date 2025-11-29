@@ -111,6 +111,12 @@ check_coverage "educational_content" "indexes" "yes"
 check_coverage "educational_content" "rls-policies" "yes"
 echo ""
 
+# FASE 6.5: notifications (debe cargar ANTES de gamification por dependencia en triggers)
+echo -e "${BLUE}=== FASE 6.5: notifications ===${NC}"
+check_coverage "notifications" "tables" "yes"
+check_coverage "notifications" "functions" "yes"
+echo ""
+
 # FASE 7: gamification_system
 echo -e "${BLUE}=== FASE 7: gamification_system ===${NC}"
 check_coverage "gamification_system" "enums" "yes"
@@ -148,11 +154,7 @@ echo -e "${BLUE}=== FASE 9.5: FK Constraints ===${NC}"
 check_coverage "auth_management" "fk-constraints" "yes"
 echo ""
 
-# FASE 9.7: notifications
-echo -e "${BLUE}=== FASE 9.7: notifications ===${NC}"
-check_coverage "notifications" "tables" "yes"
-check_coverage "notifications" "functions" "yes"
-echo ""
+# NOTA: FASE 9.7 (notifications) movida a FASE 6.5 por dependencia con gamification triggers
 
 # FASE 10: content_management
 echo -e "${BLUE}=== FASE 10: content_management ===${NC}"

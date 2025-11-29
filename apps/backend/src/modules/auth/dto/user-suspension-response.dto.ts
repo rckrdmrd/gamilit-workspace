@@ -21,7 +21,7 @@ export class UserSuspensionResponseDto {
     format: 'uuid',
     example: '770e8400-e29b-41d4-a716-446655440002',
   })
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario suspendido
@@ -33,7 +33,7 @@ export class UserSuspensionResponseDto {
     format: 'uuid',
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Razón de la suspensión
@@ -43,7 +43,7 @@ export class UserSuspensionResponseDto {
     type: String,
     example: 'Violación de términos de servicio: spam en foros de discusión',
   })
-  reason!: string;
+    reason!: string;
 
   /**
    * Fecha hasta la cual el usuario está suspendido
@@ -56,7 +56,7 @@ export class UserSuspensionResponseDto {
     nullable: true,
     example: '2025-12-31T23:59:59.999Z',
   })
-  suspension_until!: Date | null;
+    suspension_until!: Date | null;
 
   /**
    * ID del administrador que aplicó la suspensión
@@ -67,7 +67,7 @@ export class UserSuspensionResponseDto {
     format: 'uuid',
     example: '660e8400-e29b-41d4-a716-446655440001',
   })
-  suspended_by!: string;
+    suspended_by!: string;
 
   /**
    * Fecha en que se aplicó la suspensión
@@ -78,7 +78,7 @@ export class UserSuspensionResponseDto {
     format: 'date-time',
     example: '2025-11-11T10:00:00.000Z',
   })
-  suspended_at!: Date;
+    suspended_at!: Date;
 
   /**
    * Fecha de creación del registro
@@ -89,7 +89,7 @@ export class UserSuspensionResponseDto {
     format: 'date-time',
     example: '2025-11-11T10:00:00.000Z',
   })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de última actualización
@@ -100,7 +100,7 @@ export class UserSuspensionResponseDto {
     format: 'date-time',
     example: '2025-11-11T15:30:00.000Z',
   })
-  updated_at!: Date;
+    updated_at!: Date;
 
   /**
    * Indica si es un ban permanente
@@ -110,7 +110,7 @@ export class UserSuspensionResponseDto {
     type: Boolean,
     example: false,
   })
-  is_permanent!: boolean;
+    is_permanent!: boolean;
 
   /**
    * Indica si la suspensión está activa
@@ -120,7 +120,7 @@ export class UserSuspensionResponseDto {
     type: Boolean,
     example: true,
   })
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Días restantes de suspensión
@@ -131,5 +131,5 @@ export class UserSuspensionResponseDto {
     nullable: true,
     example: 45,
   })
-  days_remaining!: number | null;
+    days_remaining!: number | null;
 }

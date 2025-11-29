@@ -117,10 +117,10 @@ export class TeacherClassroomsController {
   })
   async getClassrooms(
     @Query() query: GetClassroomsQueryDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<PaginatedTeacherClassroomsResponseDto> {
     const teacherId = req.user.sub;
-    return await this.classroomsCrudService.getClassrooms(teacherId, query);
+    return this.classroomsCrudService.getClassrooms(teacherId, query);
   }
 
   /**
@@ -152,10 +152,10 @@ export class TeacherClassroomsController {
   })
   async createClassroom(
     @Body() dto: CreateTeacherClassroomDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<TeacherClassroomResponseDto> {
     const teacherId = req.user.sub;
-    return await this.classroomsCrudService.createClassroom(teacherId, dto);
+    return this.classroomsCrudService.createClassroom(teacherId, dto);
   }
 
   /**
@@ -192,10 +192,10 @@ export class TeacherClassroomsController {
   })
   async getClassroomById(
     @Param('id') id: string,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<TeacherClassroomDetailResponseDto> {
     const teacherId = req.user.sub;
-    return await this.classroomsCrudService.getClassroomById(id, teacherId);
+    return this.classroomsCrudService.getClassroomById(id, teacherId);
   }
 
   /**
@@ -237,11 +237,11 @@ export class TeacherClassroomsController {
   })
   async updateClassroom(
     @Param('id') id: string,
-    @Body() dto: UpdateTeacherClassroomDto,
-    @Request() req: any,
+      @Body() dto: UpdateTeacherClassroomDto,
+      @Request() req: any,
   ): Promise<TeacherClassroomResponseDto> {
     const teacherId = req.user.sub;
-    return await this.classroomsCrudService.updateClassroom(id, teacherId, dto);
+    return this.classroomsCrudService.updateClassroom(id, teacherId, dto);
   }
 
   /**
@@ -287,10 +287,10 @@ export class TeacherClassroomsController {
   })
   async deleteClassroom(
     @Param('id') id: string,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<{ success: boolean; message: string }> {
     const teacherId = req.user.sub;
-    return await this.classroomsCrudService.deleteClassroom(id, teacherId);
+    return this.classroomsCrudService.deleteClassroom(id, teacherId);
   }
 
   /**
@@ -342,11 +342,11 @@ export class TeacherClassroomsController {
   })
   async getClassroomStudents(
     @Param('id') id: string,
-    @Query() query: GetClassroomStudentsQueryDto,
-    @Request() req: any,
+      @Query() query: GetClassroomStudentsQueryDto,
+      @Request() req: any,
   ): Promise<PaginatedStudentsResponseDto> {
     const teacherId = req.user.sub;
-    return await this.classroomsCrudService.getClassroomStudents(id, teacherId, query);
+    return this.classroomsCrudService.getClassroomStudents(id, teacherId, query);
   }
 
   /**
@@ -383,10 +383,10 @@ export class TeacherClassroomsController {
   })
   async getClassroomStats(
     @Param('id') id: string,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<ClassroomStatsDto> {
     const teacherId = req.user.sub;
-    return await this.classroomsCrudService.getClassroomStats(id, teacherId);
+    return this.classroomsCrudService.getClassroomStats(id, teacherId);
   }
 
   /**
@@ -423,10 +423,10 @@ export class TeacherClassroomsController {
   })
   async getClassroomTeachers(
     @Param('classroomId') classroomId: string,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<TeacherInClassroomDto[]> {
     const teacherId = req.user.sub;
-    return await this.classroomsCrudService.getClassroomTeachers(classroomId, teacherId);
+    return this.classroomsCrudService.getClassroomTeachers(classroomId, teacherId);
   }
 
   /**
@@ -488,10 +488,10 @@ export class TeacherClassroomsController {
   })
   async getClassroomProgress(
     @Param('id') id: string,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<any> {
     const teacherId = req.user.sub;
-    return await this.classroomsCrudService.getClassroomProgress(id, teacherId);
+    return this.classroomsCrudService.getClassroomProgress(id, teacherId);
   }
 
   // ============================================================================
@@ -542,12 +542,12 @@ export class TeacherClassroomsController {
   })
   async blockStudent(
     @Param('classroomId') classroomId: string,
-    @Param('studentId') studentId: string,
-    @Body() dto: BlockStudentDto,
-    @Request() req: any,
+      @Param('studentId') studentId: string,
+      @Body() dto: BlockStudentDto,
+      @Request() req: any,
   ): Promise<StudentPermissionsResponseDto> {
     const teacherId = req.user.sub;
-    return await this.studentBlockingService.blockStudent(
+    return this.studentBlockingService.blockStudent(
       classroomId,
       studentId,
       teacherId,
@@ -598,11 +598,11 @@ export class TeacherClassroomsController {
   })
   async unblockStudent(
     @Param('classroomId') classroomId: string,
-    @Param('studentId') studentId: string,
-    @Request() req: any,
+      @Param('studentId') studentId: string,
+      @Request() req: any,
   ): Promise<StudentPermissionsResponseDto> {
     const teacherId = req.user.sub;
-    return await this.studentBlockingService.unblockStudent(
+    return this.studentBlockingService.unblockStudent(
       classroomId,
       studentId,
       teacherId,
@@ -648,11 +648,11 @@ export class TeacherClassroomsController {
   })
   async getStudentPermissions(
     @Param('classroomId') classroomId: string,
-    @Param('studentId') studentId: string,
-    @Request() req: any,
+      @Param('studentId') studentId: string,
+      @Request() req: any,
   ): Promise<StudentPermissionsResponseDto> {
     const teacherId = req.user.sub;
-    return await this.studentBlockingService.getStudentPermissions(
+    return this.studentBlockingService.getStudentPermissions(
       classroomId,
       studentId,
       teacherId,
@@ -703,12 +703,12 @@ export class TeacherClassroomsController {
   })
   async updateStudentPermissions(
     @Param('classroomId') classroomId: string,
-    @Param('studentId') studentId: string,
-    @Body() dto: UpdatePermissionsDto,
-    @Request() req: any,
+      @Param('studentId') studentId: string,
+      @Body() dto: UpdatePermissionsDto,
+      @Request() req: any,
   ): Promise<StudentPermissionsResponseDto> {
     const teacherId = req.user.sub;
-    return await this.studentBlockingService.updateStudentPermissions(
+    return this.studentBlockingService.updateStudentPermissions(
       classroomId,
       studentId,
       teacherId,

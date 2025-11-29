@@ -7,9 +7,9 @@ import { GamilityRoleEnum } from '@/shared/constants/enums.constants';
 import { InterventionAlertsService } from '../services/intervention-alerts.service';
 import {
   GetAlertsQueryDto,
-  ResolveAlertDto,
-  AlertResponseDto,
-  AlertsListResponseDto,
+  ResolveInterventionAlertDto,
+  InterventionAlertResponseDto,
+  InterventionAlertsListResponseDto,
   GenerateAlertsResponseDto,
 } from '../dto/intervention-alerts.dto';
 
@@ -70,11 +70,11 @@ export class InterventionAlertsController {
   @ApiResponse({
     status: 200,
     description: 'Listado de alertas obtenido exitosamente',
-    type: AlertsListResponseDto,
+    type: InterventionAlertsListResponseDto,
   })
   @ApiResponse({ status: 401, description: 'No autenticado' })
   @ApiResponse({ status: 403, description: 'Sin permisos para acceder al classroom' })
-  async getAlerts(@Query() query: GetAlertsQueryDto, @Req() req: any): Promise<AlertsListResponseDto> {
+  async getAlerts(@Query() query: GetAlertsQueryDto, @Req() req: any): Promise<InterventionAlertsListResponseDto> {
     const teacherId = req.user.sub;
     const tenantId = req.user.tenant_id;
     return this.alertsService.getAlerts(teacherId, tenantId, query);
@@ -103,12 +103,12 @@ export class InterventionAlertsController {
   @ApiResponse({
     status: 200,
     description: 'Detalle de alerta obtenido exitosamente',
-    type: AlertResponseDto,
+    type: InterventionAlertResponseDto,
   })
   @ApiResponse({ status: 401, description: 'No autenticado' })
   @ApiResponse({ status: 403, description: 'Sin permisos para acceder a esta alerta' })
   @ApiResponse({ status: 404, description: 'Alerta no encontrada' })
-  async getAlertById(@Param('id') id: string, @Req() req: any): Promise<AlertResponseDto> {
+  async getAlertById(@Param('id') id: string, @Req() req: any): Promise<InterventionAlertResponseDto> {
     const teacherId = req.user.sub;
     const tenantId = req.user.tenant_id;
     return this.alertsService.getAlertById(id, teacherId, tenantId);
@@ -137,13 +137,13 @@ export class InterventionAlertsController {
   @ApiResponse({
     status: 200,
     description: 'Alerta reconocida exitosamente',
-    type: AlertResponseDto,
+    type: InterventionAlertResponseDto,
   })
   @ApiResponse({ status: 400, description: 'Solo se pueden acknowledge alertas activas' })
   @ApiResponse({ status: 401, description: 'No autenticado' })
   @ApiResponse({ status: 403, description: 'Sin permisos para acceder a esta alerta' })
   @ApiResponse({ status: 404, description: 'Alerta no encontrada' })
-  async acknowledgeAlert(@Param('id') id: string, @Req() req: any): Promise<AlertResponseDto> {
+  async acknowledgeAlert(@Param('id') id: string, @Req() req: any): Promise<InterventionAlertResponseDto> {
     const teacherId = req.user.sub;
     const tenantId = req.user.tenant_id;
     return this.alertsService.acknowledgeAlert(id, teacherId, tenantId);
@@ -174,7 +174,7 @@ export class InterventionAlertsController {
   @ApiResponse({
     status: 200,
     description: 'Alerta resuelta exitosamente',
-    type: AlertResponseDto,
+    type: InterventionAlertResponseDto,
   })
   @ApiResponse({ status: 400, description: 'Esta alerta ya está resuelta' })
   @ApiResponse({ status: 401, description: 'No autenticado' })
@@ -182,9 +182,9 @@ export class InterventionAlertsController {
   @ApiResponse({ status: 404, description: 'Alerta no encontrada' })
   async resolveAlert(
     @Param('id') id: string,
-    @Body() dto: ResolveAlertDto,
-    @Req() req: any,
-  ): Promise<AlertResponseDto> {
+      @Body() dto: ResolveInterventionAlertDto,
+      @Req() req: any,
+  ): Promise<InterventionAlertResponseDto> {
     const teacherId = req.user.sub;
     const tenantId = req.user.tenant_id;
     return this.alertsService.resolveAlert(id, teacherId, tenantId, dto);
@@ -213,12 +213,12 @@ export class InterventionAlertsController {
   @ApiResponse({
     status: 200,
     description: 'Alerta descartada exitosamente',
-    type: AlertResponseDto,
+    type: InterventionAlertResponseDto,
   })
   @ApiResponse({ status: 401, description: 'No autenticado' })
   @ApiResponse({ status: 403, description: 'Sin permisos para acceder a esta alerta' })
   @ApiResponse({ status: 404, description: 'Alerta no encontrada' })
-  async dismissAlert(@Param('id') id: string, @Req() req: any): Promise<AlertResponseDto> {
+  async dismissAlert(@Param('id') id: string, @Req() req: any): Promise<InterventionAlertResponseDto> {
     const teacherId = req.user.sub;
     const tenantId = req.user.tenant_id;
     return this.alertsService.dismissAlert(id, teacherId, tenantId);
@@ -247,14 +247,14 @@ export class InterventionAlertsController {
   @ApiResponse({
     status: 200,
     description: 'Historial de alertas obtenido exitosamente',
-    type: [AlertResponseDto],
+    type: [InterventionAlertResponseDto],
   })
   @ApiResponse({ status: 401, description: 'No autenticado' })
   @ApiResponse({ status: 403, description: 'Sin permisos para acceder al estudiante' })
   async getStudentAlertHistory(
     @Param('studentId') studentId: string,
-    @Req() req: any,
-  ): Promise<AlertResponseDto[]> {
+      @Req() req: any,
+  ): Promise<InterventionAlertResponseDto[]> {
     const teacherId = req.user.sub;
     const tenantId = req.user.tenant_id;
     return this.alertsService.getStudentAlertHistory(studentId, teacherId, tenantId);

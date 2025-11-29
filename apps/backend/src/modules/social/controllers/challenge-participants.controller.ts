@@ -70,7 +70,7 @@ export class ChallengeParticipantsController {
     description: 'Usuario ya es participante',
   })
   async addParticipant(@Body() dto: AddChallengeParticipantDto) {
-    return await this.participantsService.addParticipant(
+    return this.participantsService.addParticipant(
       dto.challenge_id,
       dto.user_id,
       dto.invited_by,
@@ -100,7 +100,7 @@ export class ChallengeParticipantsController {
     description: 'Lista de participantes',
   })
   async findByChallengeId(@Param('challengeId') challengeId: string) {
-    return await this.participantsService.findByChallengeId(challengeId);
+    return this.participantsService.findByChallengeId(challengeId);
   }
 
   /**
@@ -137,10 +137,10 @@ export class ChallengeParticipantsController {
     description: 'Participante no encontrado',
   })
   async findByUserAndChallenge(
-    @Param('challengeId') challengeId: string,
+  @Param('challengeId') challengeId: string,
     @Param('userId') userId: string,
   ) {
-    return await this.participantsService.findByUserAndChallenge(challengeId, userId);
+    return this.participantsService.findByUserAndChallenge(challengeId, userId);
   }
 
   /**
@@ -173,7 +173,7 @@ export class ChallengeParticipantsController {
     description: 'Lista de participaciones del usuario',
   })
   async findByUserId(@Param('userId') userId: string, @Query('status') status?: string) {
-    return await this.participantsService.findByUserId(userId, status);
+    return this.participantsService.findByUserId(userId, status);
   }
 
   /**
@@ -212,10 +212,10 @@ export class ChallengeParticipantsController {
     description: 'Participante no encontrado',
   })
   async acceptInvitation(
-    @Param('challengeId') challengeId: string,
+  @Param('challengeId') challengeId: string,
     @Param('userId') userId: string,
   ) {
-    return await this.participantsService.acceptInvitation(challengeId, userId);
+    return this.participantsService.acceptInvitation(challengeId, userId);
   }
 
   /**
@@ -253,11 +253,11 @@ export class ChallengeParticipantsController {
     description: 'Estado actualizado',
   })
   async updateStatus(
-    @Param('challengeId') challengeId: string,
+  @Param('challengeId') challengeId: string,
     @Param('userId') userId: string,
     @Query('status') status: 'invited' | 'accepted' | 'in_progress' | 'completed' | 'forfeit' | 'disqualified',
   ) {
-    return await this.participantsService.updateStatus(challengeId, userId, status);
+    return this.participantsService.updateStatus(challengeId, userId, status);
   }
 
   /**
@@ -290,11 +290,11 @@ export class ChallengeParticipantsController {
     description: 'Score actualizado',
   })
   async updateScore(
-    @Param('challengeId') challengeId: string,
+  @Param('challengeId') challengeId: string,
     @Param('userId') userId: string,
     @Body() dto: UpdateParticipantScoreDto,
   ) {
-    return await this.participantsService.updateScore(challengeId, userId, dto.score);
+    return this.participantsService.updateScore(challengeId, userId, dto.score);
   }
 
   /**
@@ -319,7 +319,7 @@ export class ChallengeParticipantsController {
     description: 'Rankings calculados',
   })
   async calculateRankings(@Param('challengeId') challengeId: string) {
-    return await this.participantsService.calculateRankings(challengeId);
+    return this.participantsService.calculateRankings(challengeId);
   }
 
   /**
@@ -348,7 +348,7 @@ export class ChallengeParticipantsController {
     description: 'Sin participantes o sin scores',
   })
   async determineWinner(@Param('challengeId') challengeId: string) {
-    return await this.participantsService.determineWinner(challengeId);
+    return this.participantsService.determineWinner(challengeId);
   }
 
   /**
@@ -393,12 +393,12 @@ export class ChallengeParticipantsController {
     description: 'Recompensas distribuidas',
   })
   async distributeRewards(
-    @Param('challengeId') challengeId: string,
+  @Param('challengeId') challengeId: string,
     @Param('userId') userId: string,
     @Query('xp') xp: number,
     @Query('mlCoins') mlCoins: number,
   ) {
-    return await this.participantsService.distributeRewards(challengeId, userId, xp, mlCoins);
+    return this.participantsService.distributeRewards(challengeId, userId, xp, mlCoins);
   }
 
   /**
@@ -425,10 +425,10 @@ export class ChallengeParticipantsController {
     description: 'Recompensas distribuidas a todos',
   })
   async distributeRewardsToAll(
-    @Param('challengeId') challengeId: string,
+  @Param('challengeId') challengeId: string,
     @Body() dto: DistributeRewardsDto,
   ) {
-    return await this.participantsService.distributeRewardsToAll(
+    return this.participantsService.distributeRewardsToAll(
       challengeId,
       dto.base_xp,
       dto.base_coins,
@@ -464,7 +464,7 @@ export class ChallengeParticipantsController {
     description: 'Desafío abandonado',
   })
   async forfeit(@Param('challengeId') challengeId: string, @Param('userId') userId: string) {
-    return await this.participantsService.forfeit(challengeId, userId);
+    return this.participantsService.forfeit(challengeId, userId);
   }
 
   /**
@@ -502,11 +502,11 @@ export class ChallengeParticipantsController {
     description: 'Participante descalificado',
   })
   async disqualify(
-    @Param('challengeId') challengeId: string,
+  @Param('challengeId') challengeId: string,
     @Param('userId') userId: string,
     @Query('reason') reason?: string,
   ) {
-    return await this.participantsService.disqualify(challengeId, userId, reason);
+    return this.participantsService.disqualify(challengeId, userId, reason);
   }
 
   /**
@@ -540,7 +540,7 @@ export class ChallengeParticipantsController {
     description: 'No se puede eliminar (desafío en progreso)',
   })
   async removeParticipant(
-    @Param('challengeId') challengeId: string,
+  @Param('challengeId') challengeId: string,
     @Param('userId') userId: string,
   ) {
     await this.participantsService.removeParticipant(challengeId, userId);
@@ -580,6 +580,6 @@ export class ChallengeParticipantsController {
     },
   })
   async getUserStats(@Param('userId') userId: string) {
-    return await this.participantsService.getUserStats(userId);
+    return this.participantsService.getUserStats(userId);
   }
 }

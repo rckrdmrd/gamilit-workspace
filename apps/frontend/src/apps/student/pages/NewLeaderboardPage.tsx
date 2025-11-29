@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * NewLeaderboardPage - Sprint 2 Enhanced Leaderboard Page
  *
@@ -25,6 +26,20 @@ import {
 } from 'lucide-react';
 import { useNewLeaderboardsStore } from '@/features/gamification/social/store/newLeaderboardsStore';
 import { cn } from '@shared/utils/cn';
+import type {
+  XPLeaderboardEntry,
+  CoinsLeaderboardEntry,
+  StreakLeaderboardEntry,
+  GlobalLeaderboardEntry,
+} from '@/features/gamification/social/types/leaderboardsTypes';
+
+// Type guards for leaderboard entries
+const isXPEntry = (entry: any): entry is XPLeaderboardEntry =>
+  'totalXp' in entry && 'currentLevel' in entry;
+const isCoinsEntry = (entry: any): entry is CoinsLeaderboardEntry => 'mlCoinsLifetime' in entry;
+const isStreakEntry = (entry: any): entry is StreakLeaderboardEntry =>
+  'currentStreak' in entry && 'maxStreak' in entry;
+const isGlobalEntry = (entry: any): entry is GlobalLeaderboardEntry => 'globalScore' in entry;
 
 export default function NewLeaderboardPage() {
   const {
@@ -152,7 +167,7 @@ export default function NewLeaderboardPage() {
                 key={tab.id}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id)}
                 className={cn(
                   'flex items-center gap-2 whitespace-nowrap rounded-lg px-4 py-2 font-semibold transition-all',
                   activeTab === tab.id
@@ -359,17 +374,21 @@ export default function NewLeaderboardPage() {
                           <div className="text-right">
                             <p className="text-lg font-bold text-detective-text">
                               {activeTab === 'xp' &&
-                                `${(entry as any).totalXp?.toLocaleString() || 0} XP`}
+                                isXPEntry(entry) &&
+                                `${entry.totalXp?.toLocaleString() || 0} XP`}
                               {activeTab === 'coins' &&
-                                `${(entry as any).mlCoinsLifetime?.toLocaleString() || 0} 💰`}
+                                isCoinsEntry(entry) &&
+                                `${entry.mlCoinsLifetime?.toLocaleString() || 0} 💰`}
                               {activeTab === 'streaks' &&
-                                `${(entry as any).currentStreak || 0} days 🔥`}
+                                isStreakEntry(entry) &&
+                                `${entry.currentStreak || 0} days 🔥`}
                               {activeTab === 'global' &&
-                                `${Math.round((entry as any).globalScore || entry.score)?.toLocaleString()} pts`}
+                                isGlobalEntry(entry) &&
+                                `${Math.round(entry.globalScore || entry.score)?.toLocaleString()} pts`}
                             </p>
-                            {activeTab === 'xp' && (
+                            {activeTab === 'xp' && isXPEntry(entry) && (
                               <p className="text-sm text-detective-text-secondary">
-                                Level {(entry as any).currentLevel || 0}
+                                Level {entry.currentLevel || 0}
                               </p>
                             )}
                           </div>

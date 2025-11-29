@@ -49,7 +49,7 @@ export class TeacherClassroom {
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   // =====================================================
   // RELATIONS
@@ -60,13 +60,13 @@ export class TeacherClassroom {
    * Referencia al usuario con rol teacher
    */
   @Column({ type: 'uuid' })
-  teacher_id!: string;
+    teacher_id!: string;
 
   /**
    * ID del classroom (FK → social_features.classrooms.id)
    */
   @Column({ type: 'uuid' })
-  classroom_id!: string;
+    classroom_id!: string;
 
   /**
    * Relación Many-to-One con Classroom
@@ -75,13 +75,13 @@ export class TeacherClassroom {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'classroom_id' })
-  classroom!: Classroom;
+    classroom!: Classroom;
 
   /**
    * ID del tenant propietario (FK → auth_management.tenants)
    */
   @Column({ type: 'uuid' })
-  tenant_id!: string;
+    tenant_id!: string;
 
   // =====================================================
   // ROLE & STATUS
@@ -98,7 +98,7 @@ export class TeacherClassroom {
     length: 50,
     default: TeacherClassroomRole.TEACHER,
   })
-  role!: TeacherClassroomRole;
+    role!: TeacherClassroomRole;
 
   // =====================================================
   // TIMESTAMPS
@@ -111,11 +111,11 @@ export class TeacherClassroom {
     type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  assigned_at!: Date;
+    assigned_at!: Date;
 
   /**
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 }

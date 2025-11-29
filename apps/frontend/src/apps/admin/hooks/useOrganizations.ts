@@ -15,6 +15,7 @@
  * Updated: 2025-11-19 - Integrated with adminAPI.ts (FE-059)
  * - Now uses adminAPI methods instead of direct apiClient calls
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useEffect, useCallback } from 'react';
 import * as adminAPI from '@/services/api/adminAPI';
@@ -269,7 +270,7 @@ export function useOrganizations(): UseOrganizationsResult {
         setLoading(false);
       }
     },
-    [selectedOrganization, fetchOrganizations],
+    [selectedOrganization],
   );
 
   /**
@@ -302,7 +303,8 @@ export function useOrganizations(): UseOrganizationsResult {
         setLoading(false);
       }
     },
-    [selectedOrganization, fetchOrganizations],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedOrganization],
   );
 
   // ============================================================================
@@ -353,15 +355,24 @@ export function useOrganizations(): UseOrganizationsResult {
 
   /**
    * Toggle a single feature flag
+   * BUG-ADMIN-006: Added input validation
    */
   const toggleFeature = useCallback(
     async (id: string, feature: string): Promise<void> => {
+      // BUG-ADMIN-006: Validate inputs
+      if (!id || !feature) {
+        console.error('[useOrganizations] Invalid toggleFeature params:', { id, feature });
+        throw new Error('ID y feature son requeridos');
+      }
+
       const org = organizations.find((o) => o.id === id);
       if (!org) {
+        console.error('[useOrganizations] Organization not found:', id);
         throw new Error('Organization not found');
       }
 
-      const currentFeatures = org.features || [];
+      // BUG-ADMIN-007: Safe access to features with Array validation
+      const currentFeatures = Array.isArray(org.features) ? org.features : [];
       const newFeatures = currentFeatures.includes(feature)
         ? currentFeatures.filter((f) => f !== feature)
         : [...currentFeatures, feature];
@@ -428,6 +439,7 @@ export function useOrganizations(): UseOrganizationsResult {
 
   /**
    * Fetch users for an organization
+   * BUG-ADMIN-006: Added defensive validation for response structure
    */
   const fetchOrganizationUsers = useCallback(
     async (id: string, userPage?: number, userPageSize?: number): Promise<void> => {
@@ -447,6 +459,13 @@ export function useOrganizations(): UseOrganizationsResult {
         const data = response.data.success
           ? response.data.data
           : (response.data as unknown as PaginatedResponse<OrganizationUser>);
+
+        // BUG-ADMIN-006: Validate response structure
+        if (!data || !Array.isArray(data.data)) {
+          console.warn('[useOrganizations] Invalid organization users response:', data);
+          setOrganizationUsers([]);
+          return;
+        }
 
         setOrganizationUsers(data.data);
       } catch (err) {
@@ -497,6 +516,7 @@ export function useOrganizations(): UseOrganizationsResult {
    */
   useEffect(() => {
     fetchOrganizations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ============================================================================

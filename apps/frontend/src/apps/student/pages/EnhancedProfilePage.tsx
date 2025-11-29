@@ -55,6 +55,20 @@ import { useEconomyStore } from '@/features/gamification/economy/store/economySt
 import { useAchievementsStore } from '@/features/gamification/social/store/achievementsStore';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { cn } from '@shared/utils/cn';
+import type { RankType } from '@shared/components/base/RankBadge';
+import type { MayaRank } from '@/features/gamification/ranks/types/ranksTypes';
+
+// Helper to map MayaRank to RankType for RankBadge component
+const mayaRankToRankType = (mayaRank: MayaRank): RankType => {
+  const mapping: Record<MayaRank, RankType> = {
+    Ajaw: 'batab',
+    Nacom: 'chilan',
+    "Ah K'in": 'halach_uinik',
+    'Halach Uinic': 'halach_uinik',
+    "K'uk'ulkan": 'kukulkan',
+  };
+  return mapping[mayaRank] || 'chilan';
+};
 
 interface RankHistoryEntry {
   rank: string;
@@ -179,7 +193,14 @@ export default function EnhancedProfilePage() {
                   {user?.email}
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-4 md:justify-start">
-                  <RankBadge rank={(userProgress?.currentRank as any) || 'nacom'} showIcon={true} />
+                  <RankBadge
+                    rank={
+                      userProgress?.currentRank
+                        ? mayaRankToRankType(userProgress.currentRank)
+                        : 'chilan'
+                    }
+                    showIcon={true}
+                  />
                   <StreakIndicator variant="compact" />
                 </div>
                 <p className="mt-4 flex items-center justify-center gap-2 text-sm text-white/70 md:justify-start">
@@ -229,7 +250,9 @@ export default function EnhancedProfilePage() {
                 key={tab.id}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedTab(tab.id as any)}
+                onClick={() =>
+                  setSelectedTab(tab.id as 'overview' | 'stats' | 'history' | 'achievements')
+                }
                 className={cn(
                   'flex items-center gap-2 whitespace-nowrap rounded-lg px-6 py-3 font-semibold transition-all',
                   selectedTab === tab.id
@@ -425,7 +448,7 @@ export default function EnhancedProfilePage() {
 
                         {/* Rank Badge */}
                         <div className="relative z-10">
-                          <RankBadge rank={entry.rank as any} showIcon />
+                          <RankBadge rank={entry.rank as RankType} showIcon />
                         </div>
 
                         {/* Details */}
@@ -464,18 +487,17 @@ export default function EnhancedProfilePage() {
                     </h4>
                     <div className="mb-2 flex items-center justify-between">
                       <span className="text-sm font-semibold">
-                        Progreso hacia {(userProgress?.nextRank as any) || 'Batab'}
+                        Progreso hacia {userProgress?.nextRank || 'Batab'}
                       </span>
                       <span className="text-sm font-semibold">
-                        {userProgress?.currentXP || 0} /{' '}
-                        {(userProgress?.nextRank as any)?.xpRequired || 500} XP
+                        {userProgress?.currentXP || 0} / {userProgress?.xpToNextLevel || 500} XP
                       </span>
                     </div>
                     <div className="h-4 w-full overflow-hidden rounded-full bg-white/50">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{
-                          width: `${((userProgress?.currentXP || 0) / ((userProgress?.nextRank as any)?.xpRequired || 500)) * 100}%`,
+                          width: `${((userProgress?.currentXP || 0) / (userProgress?.xpToNextLevel || 500)) * 100}%`,
                         }}
                         transition={{ duration: 1, ease: 'easeOut' }}
                         className="h-full bg-gradient-to-r from-purple-500 to-pink-500"

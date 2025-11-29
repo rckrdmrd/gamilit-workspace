@@ -24,6 +24,7 @@ declare global {
 @Injectable()
 export class PerformanceInterceptor implements NestInterceptor {
   private readonly logger = new Logger(PerformanceInterceptor.name);
+
   private readonly SLOW_REQUEST_THRESHOLD = 3000; // 3 segundos
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {

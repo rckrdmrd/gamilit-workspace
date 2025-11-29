@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CacheModule } from '@nestjs/cache-manager';
+import { ScheduleModule } from '@nestjs/schedule';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 
 // Configurations
@@ -12,6 +13,7 @@ import envConfig from './config/env.config';
 
 // Modules
 import { AuthModule } from './modules/auth/auth.module';
+import { ProfileModule } from './modules/profile/profile.module';
 import { EducationalModule } from './modules/educational/educational.module';
 import { ProgressModule } from './modules/progress/progress.module';
 import { SocialModule } from './modules/social/social.module';
@@ -49,6 +51,9 @@ import { RlsInterceptor } from './shared/interceptors/rls.interceptor';
       // host: process.env.REDIS_HOST || 'localhost',
       // port: parseInt(process.env.REDIS_PORT || '6379', 10),
     }),
+
+    // Schedule module for cron jobs (cleanup, reports, etc.)
+    ScheduleModule.forRoot(),
 
     // Database connection for 'auth_management' schema
     TypeOrmModule.forRootAsync({
@@ -101,7 +106,10 @@ import { RlsInterceptor } from './shared/interceptors/rls.interceptor';
         username: configService.get('database.username'),
         password: configService.get('database.password'),
         database: configService.get('database.database'),
-        entities: [__dirname + '/modules/gamification/entities/**/*.entity{.ts,.js}'],
+        entities: [
+          __dirname + '/modules/gamification/entities/**/*.entity{.ts,.js}',
+          __dirname + '/modules/notifications/entities/notification.entity{.ts,.js}',
+        ],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),
         ssl: configService.get('database.ssl'),
@@ -232,6 +240,7 @@ import { RlsInterceptor } from './shared/interceptors/rls.interceptor';
 
     // Application modules
     AuthModule,
+    ProfileModule, // User profile management
     EducationalModule,
     ProgressModule,
     SocialModule,

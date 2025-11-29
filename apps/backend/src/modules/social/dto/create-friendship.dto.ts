@@ -14,18 +14,18 @@ export class CreateFriendshipDto {
    * ID del usuario que solicita la amistad
    */
   @IsUUID('4')
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del usuario receptor (amigo)
    */
   @IsUUID('4')
-  friend_id!: string;
+    friend_id!: string;
 
   /**
    * Estado inicial (opcional, por defecto 'pending')
    */
   @IsOptional()
   @IsEnum(FriendshipStatusEnum)
-  status?: string;
+    status?: string;
 }

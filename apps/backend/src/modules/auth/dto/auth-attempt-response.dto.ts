@@ -8,26 +8,26 @@ import { Expose } from 'class-transformer';
  */
 export class AuthAttemptResponseDto {
   @Expose()
-  id!: string;
+    id!: string;
 
   @Expose()
-  user_id!: string | null;
+    user_id!: string | null;
 
   @Expose()
-  email!: string;
+    email!: string;
 
   @Expose()
-  ip_address!: string | null;
+    ip_address!: string | null;
 
   @Expose()
-  user_agent!: string | null;
+    user_agent!: string | null;
 
   @Expose()
-  success!: boolean;
+    success!: boolean;
 
   @Expose()
-  failure_reason!: string | null;
+    failure_reason!: string | null;
 
   @Expose()
-  attempted_at!: Date;
+    attempted_at!: Date;
 }

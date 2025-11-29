@@ -12,7 +12,7 @@ export class ExportQueryDto {
   })
   @IsString()
   @IsIn(['overview', 'users', 'engagement', 'gamification'])
-  type!: string;
+    type!: string;
 
   @ApiPropertyOptional({
     description: 'Export format',
@@ -21,5 +21,5 @@ export class ExportQueryDto {
   })
   @IsOptional()
   @IsString()
-  format?: string = 'csv';
+    format?: string = 'csv';
 }

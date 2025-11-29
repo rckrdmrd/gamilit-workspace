@@ -3,9 +3,12 @@ import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { GeneralSettings, SecuritySettings } from '../components/settings';
 import { UnderConstruction } from '@shared/components/common';
+import { DetectiveCard } from '@shared/components/base/DetectiveCard';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { AlertTriangle, Settings, Shield } from 'lucide-react';
 
 // Feature flag - set to true when ready to show actual content
-const SHOW_CONTENT = false;
+const SHOW_CONTENT = true;
 
 type TabType = 'general' | 'security';
 
@@ -13,18 +16,21 @@ interface Tab {
   id: TabType;
   label: string;
   description: string;
+  icon: React.ReactNode;
 }
 
 const TABS: Tab[] = [
   {
     id: 'general',
     label: 'General',
-    description: 'System-wide configuration and maintenance settings',
+    description: 'Configuración general del sistema y mantenimiento',
+    icon: <Settings className="h-4 w-4" />,
   },
   {
     id: 'security',
-    label: 'Security',
-    description: 'Authentication, sessions, and security policies',
+    label: 'Seguridad',
+    description: 'Autenticación, sesiones y políticas de seguridad',
+    icon: <Shield className="h-4 w-4" />,
   },
 ];
 
@@ -32,24 +38,38 @@ const TABS: Tab[] = [
  * AdminSettingsPage - System Configuration Management
  * Allows administrators to configure general system settings and security policies
  *
- * Estado: EN CONSTRUCCIÓN
- * Esta página incluirá la configuración del sistema:
- * - Configuraciones generales
- * - Configuraciones de seguridad
+ * Features:
+ * - General settings (registrations, maintenance mode, maintenance message)
+ * - Security settings (login attempts, lockout duration, session timeout)
  *
+ * Architecture:
+ * - Uses GeneralSettings and SecuritySettings components
+ * - Each component uses useSystemConfig hook for category-based config management
+ * - Connects to backend endpoints: GET/PUT /admin/system/config/:category
+ *
+ * Updated: 2025-11-29 - Fixed theme consistency (detective theme), integrated useUserGamification
+ * Updated: 2025-11-28 - Enabled feature (SHOW_CONTENT = true), documented architecture
  * Updated: 2025-11-25 - Added SHOW_CONTENT flag to preserve code while showing Under Construction
  */
 export default function AdminSettingsPage() {
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('general');
 
-  const gamificationData = {
-    userId: user?.id || 'mock-admin-id',
-    level: 20,
-    totalXP: 5000,
-    mlCoins: 2500,
-    rank: 'Super Admin',
-    achievements: ['admin_master', 'config_master'],
+  // Use useUserGamification hook with real API endpoint
+  const { gamificationData, isLoading: gamificationLoading } = useUserGamification(user?.id);
+
+  // Fallback gamification data while loading or if data not available
+  const displayGamificationData = gamificationData || {
+    userId: user?.id || '',
+    level: gamificationLoading ? 0 : 1,
+    totalXP: 0,
+    mlCoins: 0,
+    rank: gamificationLoading ? 'Cargando...' : 'Ajaw',
+    rankColor: '#9E9E9E',
+    progressToNextLevel: 0,
+    xpToNextLevel: 100,
+    achievements: [],
+    totalAchievements: 0,
   };
 
   const handleLogout = () => {
@@ -71,38 +91,41 @@ export default function AdminSettingsPage() {
   return (
     <AdminLayout
       user={user || undefined}
-      gamificationData={gamificationData}
+      gamificationData={displayGamificationData}
       organizationName="GAMILIT Platform Admin"
       onLogout={handleLogout}
     >
       {SHOW_CONTENT ? (
-        <div className="p-6">
+        <div className="space-y-6">
           {/* Header */}
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-900">System Configuration</h1>
-            <p className="mt-1 text-gray-600">Manage system-wide settings and configuration</p>
+          <div>
+            <h1 className="text-3xl font-bold text-detective-text">Configuración del Sistema</h1>
+            <p className="mt-1 text-detective-text-secondary">
+              Gestiona la configuración global y políticas de seguridad
+            </p>
           </div>
 
           {/* Tabs Navigation */}
-          <div className="mb-6 rounded-lg bg-white shadow-sm">
-            <div className="border-b border-gray-200">
+          <DetectiveCard>
+            <div className="border-detective-border border-b">
               <nav className="-mb-px flex" aria-label="Tabs">
                 {TABS.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`
-                      border-b-2 px-6 py-4 text-sm font-medium transition-colors
+                      flex items-center gap-2 border-b-2 px-6 py-4 text-sm font-medium transition-colors
                       ${
                         activeTab === tab.id
-                          ? 'border-blue-600 text-blue-600'
-                          : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                          ? 'border-detective-orange text-detective-orange'
+                          : 'border-transparent text-detective-text-secondary hover:border-detective-orange/50 hover:text-detective-text'
                       }
                     `}
                   >
+                    {tab.icon}
                     <div className="flex flex-col items-start">
                       <span>{tab.label}</span>
-                      <span className="mt-0.5 text-xs font-normal text-gray-500">
+                      <span className="mt-0.5 text-xs font-normal text-detective-text-secondary">
                         {tab.description}
                       </span>
                     </div>
@@ -110,39 +133,27 @@ export default function AdminSettingsPage() {
                 ))}
               </nav>
             </div>
-          </div>
+          </DetectiveCard>
 
           {/* Tab Content */}
           <div className="transition-all duration-200">{renderTabContent()}</div>
 
           {/* Info Footer */}
-          <div className="mt-6 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg
-                  className="h-5 w-5 text-yellow-400"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-yellow-800">Configuration Changes</h3>
-                <div className="mt-2 text-sm text-yellow-700">
-                  <p>
-                    Changes to system configuration may affect all users. Please review carefully
-                    before saving. Some changes may require users to re-login or clear their cache.
-                  </p>
-                </div>
+          <DetectiveCard className="border-detective-orange/30 bg-detective-orange/10">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 flex-shrink-0 text-detective-orange" />
+              <div>
+                <h3 className="text-sm font-medium text-detective-text">
+                  Cambios en la Configuración
+                </h3>
+                <p className="mt-1 text-sm text-detective-text-secondary">
+                  Los cambios en la configuración del sistema pueden afectar a todos los usuarios.
+                  Por favor revise cuidadosamente antes de guardar. Algunos cambios pueden requerir
+                  que los usuarios vuelvan a iniciar sesión o limpien su caché.
+                </p>
               </div>
             </div>
-          </div>
+          </DetectiveCard>
         </div>
       ) : (
         <UnderConstruction

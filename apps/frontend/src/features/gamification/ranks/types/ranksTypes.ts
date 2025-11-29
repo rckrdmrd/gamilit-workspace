@@ -3,17 +3,25 @@
  *
  * Complete type system for the GLIT Platform gamification ranks.
  * Features 5 Maya-themed ranks with prestige system and multipliers.
+ *
+ * @see SSOT: @shared/constants/ranks.constants.ts (MayaRank enum)
+ * @see SSOT: @shared/types/gamification.types.ts (UserStats, UserRank)
+ * P2-001: Types consolidation - Re-export MayaRank from SSOT
  */
 
 // ============================================================================
-// MAYA RANK TYPES
+// MAYA RANK TYPES - Import from SSOT
 // ============================================================================
 
 /**
  * The 5 Maya Ranks in order of progression
  * Official names according to /docs/01-requerimientos/gamificacion/01-RANGOS-MAYA.md
+ *
+ * @see SSOT: @shared/constants/ranks.constants.ts
+ * P2-001: Re-export from SSOT instead of local definition
  */
-export type MayaRank = 'Ajaw' | 'Nacom' | 'Ah K\'in' | 'Halach Uinic' | 'K\'uk\'ulkan';
+import { MayaRank } from '@shared/constants/ranks.constants';
+export { MayaRank };
 
 /**
  * Complete definition of a rank tier
@@ -233,14 +241,14 @@ export interface PrestigeProgress {
  * Source of a multiplier bonus
  */
 export type MultiplierSourceType =
-  | 'rank'           // Base rank multiplier
-  | 'prestige'       // Permanent prestige bonus
-  | 'streak'         // Activity streak bonus
-  | 'time'           // Time-limited event
-  | 'social'         // Social interaction bonus
-  | 'guild'          // Guild membership bonus
-  | 'achievement'    // Achievement unlock bonus
-  | 'event';         // Special event bonus
+  | 'rank' // Base rank multiplier
+  | 'prestige' // Permanent prestige bonus
+  | 'streak' // Activity streak bonus
+  | 'time' // Time-limited event
+  | 'social' // Social interaction bonus
+  | 'guild' // Guild membership bonus
+  | 'achievement' // Achievement unlock bonus
+  | 'event'; // Special event bonus
 
 /**
  * Individual multiplier source

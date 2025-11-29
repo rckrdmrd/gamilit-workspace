@@ -149,7 +149,7 @@ export class GamificationConfigService {
     this.logger.log(`Gamification settings updated by admin ${adminId}`);
 
     // Return updated settings
-    return await this.getGamificationSettings();
+    return this.getGamificationSettings();
   }
 
   /**
@@ -520,7 +520,7 @@ export class GamificationConfigService {
       for (let i = 1; i < thresholds.length; i++) {
         if (thresholds[i] <= thresholds[i - 1]) {
           throw new BadRequestException(
-            `Rank thresholds must be in ascending order. ` +
+            'Rank thresholds must be in ascending order. ' +
               `Found ${thresholds[i - 1]} >= ${thresholds[i]}`,
           );
         }
@@ -872,7 +872,7 @@ export class GamificationConfigService {
     for (let i = 1; i < orderedThresholds.length; i++) {
       if (orderedThresholds[i] <= orderedThresholds[i - 1]) {
         throw new BadRequestException(
-          `Invalid threshold. Rank thresholds must be in ascending order. ` +
+          'Invalid threshold. Rank thresholds must be in ascending order. ' +
             `${validRanks[i - 1]}: ${orderedThresholds[i - 1]}, ${validRanks[i]}: ${orderedThresholds[i]}`,
         );
       }

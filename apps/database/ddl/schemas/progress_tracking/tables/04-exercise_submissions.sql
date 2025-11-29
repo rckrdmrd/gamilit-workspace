@@ -47,6 +47,8 @@ CREATE TABLE progress_tracking.exercise_submissions (
     graded_at timestamp with time zone,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now(),
+    xp_earned integer DEFAULT 0,
+    ml_coins_earned integer DEFAULT 0,
     CONSTRAINT check_score_range CHECK (((score >= 0) AND (score <= max_score))),
     CONSTRAINT exercise_submissions_status_check CHECK ((status = ANY (ARRAY['draft'::text, 'submitted'::text, 'graded'::text, 'reviewed'::text])))
 );
@@ -73,6 +75,20 @@ COMMENT ON COLUMN progress_tracking.exercise_submissions.answer_data IS 'Student
 --
 
 COMMENT ON COLUMN progress_tracking.exercise_submissions.comodines_used IS 'Array of comodin types used (pistas, vision_lectora, etc)';
+
+
+--
+-- Name: COLUMN exercise_submissions.xp_earned; Type: COMMENT; Schema: progress_tracking; Owner: postgres
+--
+
+COMMENT ON COLUMN progress_tracking.exercise_submissions.xp_earned IS 'XP earned for completing this exercise correctly';
+
+
+--
+-- Name: COLUMN exercise_submissions.ml_coins_earned; Type: COMMENT; Schema: progress_tracking; Owner: postgres
+--
+
+COMMENT ON COLUMN progress_tracking.exercise_submissions.ml_coins_earned IS 'ML Coins earned for completing this exercise';
 
 
 --

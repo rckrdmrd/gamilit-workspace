@@ -31,7 +31,7 @@ export class NotificationsService {
     userId: string,
     query: GetNotificationsQueryDto,
   ): Promise<PaginatedNotificationsDto> {
-    const { type, read, page = 1, limit = 20 } = query;
+    const { type, status, page = 1, limit = 20 } = query;
 
     // Build where clause
     const where: any = { userId };
@@ -40,9 +40,13 @@ export class NotificationsService {
       where.type = type;
     }
 
-    if (read !== undefined) {
-      where.read = read;
+    // Convert status to read filter
+    if (status === 'read') {
+      where.read = true;
+    } else if (status === 'unread') {
+      where.read = false;
     }
+    // status === 'all' or undefined: don't filter by read status
 
     // Get total count
     const total = await this.notificationRepository.count({ where });

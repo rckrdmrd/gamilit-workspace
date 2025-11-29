@@ -84,62 +84,62 @@ export interface MissionRewards {
 @Index('idx_missions_template_id', ['template_id'])
 @Index('idx_missions_end_date', ['end_date'])
 @Index('idx_missions_user_type_status', ['user_id', 'mission_type', 'status'])
-@Check(`"progress" >= 0 AND "progress" <= 100`)
+@Check('"progress" >= 0 AND "progress" <= 100')
 export class Mission {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   @Column({ type: 'text' })
-  template_id!: string;
+    template_id!: string;
 
   @Column({ type: 'text' })
-  title!: string;
+    title!: string;
 
   @Column({ type: 'text', nullable: true })
-  description!: string | null;
+    description!: string | null;
 
   @Column({
     type: 'enum',
     enum: MissionTypeEnum,
   })
-  mission_type!: MissionTypeEnum;
+    mission_type!: MissionTypeEnum;
 
   @Column({ type: 'jsonb' })
-  objectives!: MissionObjective[];
+    objectives!: MissionObjective[];
 
   @Column({ type: 'jsonb' })
-  rewards!: MissionRewards;
+    rewards!: MissionRewards;
 
   @Column({
     type: 'enum',
     enum: MissionStatusEnum,
     default: MissionStatusEnum.ACTIVE,
   })
-  status!: MissionStatusEnum;
+    status!: MissionStatusEnum;
 
   @Column({ type: 'float', default: 0 })
-  progress!: number;
+    progress!: number;
 
   @Column({ type: 'timestamp with time zone', default: () => 'now()' })
-  start_date!: Date;
+    start_date!: Date;
 
   @Column({ type: 'timestamp with time zone' })
-  end_date!: Date;
+    end_date!: Date;
 
   @Column({ type: 'timestamp with time zone', nullable: true })
-  completed_at!: Date | null;
+    completed_at!: Date | null;
 
   @Column({ type: 'timestamp with time zone', nullable: true })
-  claimed_at!: Date | null;
+    claimed_at!: Date | null;
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   // Relación a auth_management.profiles (FK)
   // @ManyToOne(() => Profile, { onDelete: 'CASCADE' })

@@ -9,6 +9,7 @@ export {
 } from './useResponsiveLayout';
 export {
   useDashboardData,
+  dashboardKeys,
   type MLCoinsData,
   type RankData,
   type AchievementData,
@@ -16,3 +17,11 @@ export {
 } from './useDashboardData';
 export { useExerciseState } from './useExerciseState';
 export type { Exercise, ExerciseAttempt, ExerciseState } from './useExerciseState';
+export { useExerciseAutoSave } from './useExerciseAutoSave';
+export type {
+  UseExerciseAutoSaveOptions,
+  AutoSaveState,
+  UseExerciseAutoSaveReturn,
+} from './useExerciseAutoSave';
+export { useUserClassroom } from './useUserClassroom';
+export { useUserModules, userModulesKeys, type UserModuleData } from './useUserModules';

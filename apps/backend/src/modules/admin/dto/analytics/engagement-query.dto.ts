@@ -11,7 +11,7 @@ export class EngagementQueryDto {
   })
   @IsOptional()
   @IsString()
-  role?: string;
+    role?: string;
 
   @ApiPropertyOptional({
     description: 'Filter users registered from this date (ISO format)',
@@ -19,5 +19,5 @@ export class EngagementQueryDto {
   })
   @IsOptional()
   @IsDateString()
-  date_from?: string;
+    date_from?: string;
 }

@@ -81,7 +81,7 @@ export class ContentCategoriesService {
       color,
     });
 
-    return await this.categoryRepo.save(category);
+    return this.categoryRepo.save(category);
   }
 
   /**
@@ -92,7 +92,7 @@ export class ContentCategoriesService {
   async findAll(includeInactive: boolean = false): Promise<ContentCategory[]> {
     const where = includeInactive ? {} : { is_active: true };
 
-    return await this.categoryRepo.find({
+    return this.categoryRepo.find({
       where,
       order: { display_order: 'ASC', name: 'ASC' },
     });
@@ -103,7 +103,7 @@ export class ContentCategoriesService {
    * @returns Lista de categorías raíz
    */
   async findRootCategories(): Promise<ContentCategory[]> {
-    return await this.categoryRepo.find({
+    return this.categoryRepo.find({
       where: { parent_category_id: IsNull(), is_active: true },
       order: { display_order: 'ASC', name: 'ASC' },
     });
@@ -147,7 +147,7 @@ export class ContentCategoriesService {
    * @returns Lista de subcategorías
    */
   async findChildren(parentId: string): Promise<ContentCategory[]> {
-    return await this.categoryRepo.find({
+    return this.categoryRepo.find({
       where: { parent_category_id: parentId, is_active: true },
       order: { display_order: 'ASC', name: 'ASC' },
     });
@@ -255,7 +255,7 @@ export class ContentCategoriesService {
       color: data.color ?? category.color,
     });
 
-    return await this.categoryRepo.save(category);
+    return this.categoryRepo.save(category);
   }
 
   /**
@@ -267,7 +267,7 @@ export class ContentCategoriesService {
   async updateOrder(id: string, newOrder: number): Promise<ContentCategory> {
     const category = await this.findById(id);
     category.display_order = newOrder;
-    return await this.categoryRepo.save(category);
+    return this.categoryRepo.save(category);
   }
 
   /**
@@ -279,7 +279,7 @@ export class ContentCategoriesService {
   async setActive(id: string, active: boolean): Promise<ContentCategory> {
     const category = await this.findById(id);
     category.is_active = active;
-    return await this.categoryRepo.save(category);
+    return this.categoryRepo.save(category);
   }
 
   /**
@@ -301,7 +301,7 @@ export class ContentCategoriesService {
     }
 
     category.parent_category_id = newParentId ?? undefined;
-    return await this.categoryRepo.save(category);
+    return this.categoryRepo.save(category);
   }
 
   /**

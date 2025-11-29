@@ -19,7 +19,7 @@ export class UseComodinDto {
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @IsUUID()
-  user_id!: string;
+    user_id!: string;
 
   @ApiProperty({
     description: 'Tipo de comodín a usar',
@@ -27,7 +27,7 @@ export class UseComodinDto {
     example: ComodinTypeEnum.PISTAS,
   })
   @IsEnum(ComodinTypeEnum)
-  comodin_type!: ComodinTypeEnum;
+    comodin_type!: ComodinTypeEnum;
 
   @ApiProperty({
     description: 'Cantidad a usar',
@@ -37,7 +37,7 @@ export class UseComodinDto {
   })
   @IsInt()
   @Min(1)
-  quantity!: number;
+    quantity!: number;
 
   @ApiPropertyOptional({
     description: 'ID del ejercicio donde se usa',
@@ -45,7 +45,7 @@ export class UseComodinDto {
   })
   @IsOptional()
   @IsUUID()
-  exercise_id?: string;
+    exercise_id?: string;
 
   @ApiPropertyOptional({
     description: 'Contexto adicional del uso',
@@ -53,5 +53,5 @@ export class UseComodinDto {
   })
   @IsOptional()
   @IsString()
-  context?: string;
+    context?: string;
 }

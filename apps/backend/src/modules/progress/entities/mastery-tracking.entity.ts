@@ -34,33 +34,33 @@ import { DB_SCHEMAS, DB_TABLES } from '@shared/constants';
 @Index('idx_mastery_tracking_mastery_level', ['mastery_level'])
 @Index('idx_mastery_tracking_user_module', ['user_id', 'module_id'])
 @Index('idx_mastery_tracking_needs_review', ['user_id'], { where: "status = 'needs_review'" })
-@Check(`"mastery_level" >= 0 AND "mastery_level" <= 100`)
-@Check(`"status" IN ('not_started', 'learning', 'practicing', 'mastered', 'needs_review')`)
+@Check('"mastery_level" >= 0 AND "mastery_level" <= 100')
+@Check('"status" IN (\'not_started\', \'learning\', \'practicing\', \'mastered\', \'needs_review\')')
 export class MasteryTracking {
   /**
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario
    */
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del módulo educativo
    */
   @Column({ type: 'uuid' })
-  module_id!: string;
+    module_id!: string;
 
   /**
    * Tema o concepto específico siendo rastreado
    * @example 'Comprensión Literal', 'Inferencias', 'Análisis Crítico'
    */
   @Column({ type: 'varchar', length: 200 })
-  topic!: string;
+    topic!: string;
 
   /**
    * Nivel de dominio (0-100) basado en performance
@@ -70,31 +70,31 @@ export class MasteryTracking {
    * 76-100: Maestría
    */
   @Column({ type: 'numeric', precision: 5, scale: 2, default: 0 })
-  mastery_level!: number;
+    mastery_level!: number;
 
   /**
    * Número total de intentos en ejercicios de este tema
    */
   @Column({ type: 'integer', default: 0 })
-  attempts_count!: number;
+    attempts_count!: number;
 
   /**
    * Número de intentos correctos
    */
   @Column({ type: 'integer', default: 0 })
-  correct_attempts!: number;
+    correct_attempts!: number;
 
   /**
    * Fecha y hora del último intento
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  last_attempt_at?: Date;
+    last_attempt_at?: Date;
 
   /**
    * Fecha y hora en que se alcanzó maestría (mastery_level >= 75)
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  mastered_at?: Date;
+    mastered_at?: Date;
 
   /**
    * Estado actual del dominio
@@ -109,19 +109,19 @@ export class MasteryTracking {
     length: 50,
     default: 'learning',
   })
-  status!: 'not_started' | 'learning' | 'practicing' | 'mastered' | 'needs_review';
+    status!: 'not_started' | 'learning' | 'practicing' | 'mastered' | 'needs_review';
 
   /**
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   // =====================================================
   // Relaciones

@@ -1,95 +1,50 @@
 /**
  * Detective Textual Types
- * Investigation interface with evidence board and AI hints
+ * Multiple choice exercise for textual inference (Module 2.1)
  */
 
-export interface Evidence {
+export interface InferenceQuestion {
   id: string;
-  type: 'document' | 'letter' | 'photo' | 'note' | 'artifact';
-  title: string;
-  content: string;
-  date?: string;
-  imageUrl?: string;
-  discovered: boolean;
-  relevance: number;
+  question: string;
+  options: string[];
+  correctAnswer: number; // índice 0-3
+  explanation: string;
+  inference_type: 'causa_efecto' | 'contexto_situacional' | 'motivacion';
 }
 
-/**
- * ⚠️ FE-059: isCorrect is NEVER sent by backend (sanitized for security)
- */
-export interface EvidenceConnection {
-  id: string;
-  fromEvidenceId: string;
-  toEvidenceId: string;
-  relationship: string;
-  userCreated: boolean;
-  /**
-   * @deprecated Backend sanitizes this field - never present. Validation is done server-side.
-   */
-  isCorrect?: never;
-}
-
-/**
- * ⚠️ FE-059: correctConnections is NEVER sent by backend (sanitized for security)
- */
-export interface Investigation {
+export interface DetectiveTextualExercise {
   id: string;
   title: string;
   description: string;
-  mystery: string;
-  availableEvidence: Evidence[];
-  /**
-   * @deprecated Backend sanitizes this field - never present. Validation is done server-side.
-   */
-  correctConnections?: never;
-  difficulty: 'facil' | 'medio' | 'dificil' | 'experto';
+  passage: string;
+  questions: InferenceQuestion[];
+  difficulty: 'easy' | 'medium' | 'hard';
 }
 
-export interface DetectiveProgress {
-  investigationId: string;
-  discoveredEvidence: string[];
-  connections: EvidenceConnection[];
-  hypotheses: string[];
+export interface DetectiveTextualProgress {
+  exerciseId: string;
+  answers: Record<string, number>; // { "q1": 1, "q2": 2 }
   hintsUsed: number;
   timeSpent: number;
   score: number;
+  completed: boolean;
 }
 
-export interface MagnifyingGlassState {
-  active: boolean;
-  position: { x: number; y: number };
-  zoomLevel: number;
-  focusedText?: string;
-}
-
-export interface AIHint {
-  id: string;
-  type: 'connection' | 'evidence' | 'analysis';
-  message: string;
-  cost: number;
-  revealed: boolean;
-}
-
-// Exercise State for auto-save
 export interface DetectiveTextualState {
-  discoveredEvidence: string[];
-  connections: EvidenceConnection[];
-  hypotheses: string[];
+  answers: Record<string, number>;
   hintsUsed: number;
   timeSpent: number;
   score: number;
+  currentQuestionIndex: number;
 }
 
-// Exercise Actions Interface for Parent Control
 export interface DetectiveTextualActions {
   getState: () => DetectiveTextualState;
   reset: () => void;
   validate: () => Promise<void>;
-  discoverEvidence?: (evidenceId: string) => void;
-  createConnection?: (fromId: string, toId: string, relationship: string) => Promise<void>;
+  selectAnswer?: (questionId: string, optionIndex: number) => void;
 }
 
-// Exercise Progress Update Interface
 export interface ExerciseProgressUpdate {
   currentStep: number;
   totalSteps: number;
@@ -98,16 +53,47 @@ export interface ExerciseProgressUpdate {
   timeSpent: number;
 }
 
-// Standardized Exercise Props Interface (Module 1 Pattern)
+/**
+ * Exercise data from ExercisePage (passed via adapter)
+ * Contains the API response with mechanic-specific content
+ */
+export interface ExerciseFromPage {
+  id: string;
+  title: string;
+  description?: string;
+  difficulty?: string;
+  mechanicData?: {
+    content?: {
+      passage?: string;
+      questions?: InferenceQuestion[];
+    };
+    config?: Record<string, unknown>;
+  };
+  // Alternate format from adapter (adaptToLecturaInferencialData)
+  content?: {
+    passage?: string;
+    questions?: InferenceQuestion[];
+  };
+}
+
 export interface DetectiveTextualExerciseProps {
-  moduleId: number;
-  lessonId: number;
-  exerciseId: string;
-  userId: string;
+  moduleId?: number;
+  lessonId?: number;
+  exerciseId?: string;
+  userId?: string;
+  /** Exercise data from ExercisePage - primary source of exercise content */
+  exercise?: ExerciseFromPage;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
-  onProgressUpdate?: (progress: ExerciseProgressUpdate) => void;
-  initialData?: Partial<DetectiveProgress>;
+  onProgressUpdate?: (
+    progress:
+      | ExerciseProgressUpdate
+      | {
+          progress: Partial<ExerciseProgressUpdate>;
+          answers: { questions: Record<string, string> };
+        },
+  ) => void;
+  initialData?: Partial<DetectiveTextualProgress>;
   difficulty?: 'easy' | 'medium' | 'hard';
   actionsRef?: React.MutableRefObject<DetectiveTextualActions | undefined>;
 }

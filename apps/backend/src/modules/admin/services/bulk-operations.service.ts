@@ -175,7 +175,7 @@ export class BulkOperationsService {
       status: 'pending',
     });
 
-    return await this.bulkOpsRepo.save(operation);
+    return this.bulkOpsRepo.save(operation);
   }
 
   /**
@@ -383,7 +383,7 @@ export class BulkOperationsService {
     failedIncrement: number = 0,
   ): Promise<void> {
     await this.dataSource.query(
-      `SELECT admin_dashboard.update_bulk_operation_progress($1, $2, $3)`,
+      'SELECT admin_dashboard.update_bulk_operation_progress($1, $2, $3)',
       [operationId, completedIncrement, failedIncrement],
     );
   }

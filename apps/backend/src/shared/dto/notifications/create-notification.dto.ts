@@ -50,7 +50,7 @@ export class CreateNotificationDto {
   })
   @IsUUID(4)
   @IsNotEmpty()
-  userId!: string;
+    userId!: string;
 
   /**
    * Título de la notificación
@@ -69,7 +69,7 @@ export class CreateNotificationDto {
   @IsNotEmpty()
   @MinLength(1)
   @MaxLength(255)
-  title!: string;
+    title!: string;
 
   /**
    * Tipo de notificación
@@ -93,7 +93,7 @@ export class CreateNotificationDto {
   })
   @IsString()
   @IsNotEmpty()
-  type!: string;
+    type!: string;
 
   /**
    * Contenido/cuerpo de la notificación (message)
@@ -108,7 +108,7 @@ export class CreateNotificationDto {
   })
   @IsString()
   @IsNotEmpty()
-  message!: string;
+    message!: string;
 
   /**
    * Tipo de entidad relacionada (opcional)
@@ -129,7 +129,7 @@ export class CreateNotificationDto {
   })
   @IsString()
   @IsOptional()
-  relatedEntityType?: string;
+    relatedEntityType?: string;
 
   /**
    * UUID de la entidad relacionada (opcional)
@@ -145,7 +145,7 @@ export class CreateNotificationDto {
   })
   @IsUUID(4)
   @IsOptional()
-  relatedEntityId?: string;
+    relatedEntityId?: string;
 
   /**
    * Datos adicionales de la notificación (JSONB) - alias para metadata
@@ -165,7 +165,7 @@ export class CreateNotificationDto {
   })
   @IsObject()
   @IsOptional()
-  data?: Record<string, any>;
+    data?: Record<string, any>;
 
   /**
    * Metadata adicional (opcional) - alias para data
@@ -180,7 +180,25 @@ export class CreateNotificationDto {
   })
   @IsObject()
   @IsOptional()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
+
+  /**
+   * Prioridad de la notificación (opcional)
+   *
+   * Valores: low, normal, high, urgent
+   * Default: normal
+   *
+   * @example "high"
+   */
+  @ApiPropertyOptional({
+    description: 'Prioridad de la notificación',
+    example: 'normal',
+    enum: ['low', 'normal', 'high', 'urgent'],
+  })
+  @IsString()
+  @IsIn(['low', 'normal', 'high', 'urgent'])
+  @IsOptional()
+    priority?: string;
 
   /**
    * Canales por los que enviar (opcional)
@@ -208,7 +226,7 @@ export class CreateNotificationDto {
   @IsString({ each: true })
   @IsIn(['in_app', 'email', 'push'], { each: true })
   @IsOptional()
-  channels?: string[];
+    channels?: string[];
 
   /**
    * Fecha de expiración (opcional)
@@ -226,5 +244,5 @@ export class CreateNotificationDto {
   })
   @IsDateString()
   @IsOptional()
-  expiresAt?: string;
+    expiresAt?: string;
 }

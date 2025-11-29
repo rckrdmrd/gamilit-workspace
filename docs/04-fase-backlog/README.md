@@ -1,16 +1,44 @@
 # Fase 4: Backlog - Funcionalidad Futura
 
-**Última actualización:** 2025-11-19  
+**Última actualización:** 2025-11-29
 **Estado:** Planificación y Diseño
 
 ---
 
 ## 📋 CONTENIDO DE ESTA FASE
 
-Esta fase contiene funcionalidad **diseñada pero no implementada** por requerir:
-- Evaluación manual o con IA
-- Tecnologías avanzadas (visión computacional, NLP, generación multimodal)
-- Infraestructura adicional no disponible actualmente
+Esta fase contiene funcionalidad **diseñada pero NO implementada en el MVP**, incluyendo:
+
+### Categorías de Backlog
+
+| Categoría | Elementos | Razón |
+|-----------|-----------|-------|
+| **Módulos Educativos** | Módulos 4-5 (8 ejercicios) | Requieren IA/evaluación manual |
+| **Épicas Parciales** | EXT-007 a EXT-011 (30-50%) | Dependen de contratos/nice-to-have |
+| **Admin Portal P2** | RBAC dinámico, Reportes globales, Importación CSV | Complejidad técnica |
+| **Tipos de Ejercicios** | 10 mecánicas adicionales | Complejidad técnica |
+
+> **Nota:** US-AE-005 y US-AE-007 fueron **implementadas** y removidas del backlog. Ver sección "Admin Portal - Estado Actualizado".
+
+---
+
+## ⏳ ÉPICAS PARCIALES (Fuera del MVP)
+
+Las siguientes épicas fueron iniciadas pero **NO forman parte del MVP actual**.
+La documentación detallada se mantiene en [Fase 3: Extensiones](../03-fase-extensiones/).
+
+| Épica | Nombre | Avance | Razón Backlog | Documentación |
+|-------|--------|--------|---------------|---------------|
+| **EXT-007** | LTI Integration | ⏳ 40% | Depende de contratos enterprise | [📂](../03-fase-extensiones/EXT-007-lti-integration/) |
+| **EXT-008** | White Label | ⏳ 30% | Depende de contratos enterprise | [📂](../03-fase-extensiones/EXT-008-white-label/) |
+| **EXT-009** | Peer Challenges | ⏳ 50% | Feature nice-to-have | [📂](../03-fase-extensiones/EXT-009-peer-challenges/) |
+| **EXT-010** | Parent Notifications | ⏳ 35% | Feature nice-to-have | [📂](../03-fase-extensiones/EXT-010-parent-notifications/) |
+| **EXT-011** | Parent Portal | ⏳ 35% | Feature nice-to-have | [📂](../03-fase-extensiones/EXT-011-parent-portal/) |
+
+### Requisitos para Reactivación
+
+- **EXT-007, EXT-008:** Contrato enterprise firmado
+- **EXT-009, EXT-010, EXT-011:** Decisión de producto post-MVP
 
 ---
 
@@ -127,19 +155,46 @@ Esta fase contiene funcionalidad **diseñada pero no implementada** por requerir
 
 ---
 
+## ✅ ADMIN PORTAL - Estado Actualizado
+
+> **Actualización 2025-11-29:** Las user stories US-AE-005 y US-AE-007 fueron **implementadas** y ya no están en backlog.
+
+### ✅ Implementadas (Antes en Backlog)
+
+| User Story | Descripción | Estado |
+|-----------|-------------|--------|
+| **US-AE-005** | Parametrización de Gamificación | ✅ Implementado (Capítulo 7 del Manual Admin) |
+| **US-AE-007** | Asignación de Grupos a Maestros | ✅ Implementado (Capítulo 8 del Manual Admin) |
+
+### ⏳ Admin Portal P2 (Pendiente)
+
+Las siguientes funcionalidades permanecen fuera del alcance MVP:
+
+| Funcionalidad | Descripción | Razón Backlog |
+|--------------|-------------|---------------|
+| **Gestión masiva usuarios** | Importación CSV de usuarios | Complejidad de validación |
+| **RBAC dinámico** | Roles personalizables | Complejidad de permisos |
+| **Reportes globales** | Dashboard de métricas globales | Priorización |
+
+**Alcance MVP Admin Portal:** 9 páginas funcionales (P0+P1 completo incluyendo US-AE-005 y US-AE-007)
+
+---
+
 ## 📖 DOCUMENTACIÓN DISPONIBLE
 
-### Especificaciones Técnicas
-- `modulo-4-lectura-digital/especificacion-tecnica.md` - Detalle de cada ejercicio
-- `modulo-5-produccion-lectora/especificacion-tecnica.md` - Rúbricas y criterios
+### Documentos Existentes
+- [FUNCIONALIDADES-GAMIFICACION-PENDIENTES.md](./FUNCIONALIDADES-GAMIFICACION-PENDIENTES.md) - Features de gamificación pendientes
+- [TIPOS-EJERCICIOS-PENDIENTES.md](./TIPOS-EJERCICIOS-PENDIENTES.md) - Tipos de ejercicios pendientes
 
-### Justificación Técnica
-- `JUSTIFICACION-BACKLOG.md` - Razones detalladas del backlog
-- `ANALISIS-VIABILIDAD.md` - Análisis de viabilidad técnica
+### Documentos Pendientes de Crear
+> **Nota:** Los siguientes documentos están planificados pero aún no han sido creados:
 
-### Roadmap de Implementación
-- `ROADMAP-MODULO-4.md` - Plan de implementación módulo 4
-- `ROADMAP-MODULO-5.md` - Plan de implementación módulo 5
+| Documento | Propósito | Estado |
+|-----------|-----------|--------|
+| `modulo-4-lectura-digital/` | Especificaciones técnicas Módulo 4 | ⏳ Pendiente |
+| `modulo-5-produccion-lectora/` | Especificaciones técnicas Módulo 5 | ⏳ Pendiente |
+| `JUSTIFICACION-BACKLOG.md` | Razones detalladas del backlog | ⏳ Pendiente |
+| `ANALISIS-VIABILIDAD.md` | Análisis de viabilidad técnica | ⏳ Pendiente |
 
 ---
 
@@ -157,6 +212,13 @@ Esta fase contiene funcionalidad **diseñada pero no implementada** por requerir
 
 ---
 
-**Última revisión:** 2025-11-19  
-**Responsable:** Database Agent  
-**Tarea:** DB-126
+## 🎯 Navegación
+
+**⬅️ Anterior:** [Fase 3: Extensiones](../03-fase-extensiones/)
+**⬆️ Inicio:** [Documentación Principal](../README.md)
+
+---
+
+**Última revisión:** 2025-11-29
+**Responsable:** Architecture-Analyst
+**Actualizado:** Reorganización documentación MVP vs Backlog

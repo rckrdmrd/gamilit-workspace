@@ -13,37 +13,37 @@ export class TeamMemberResponseDto {
    * ID único del registro
    */
   @Expose()
-  id!: string;
+    id!: string;
 
   /**
    * ID del equipo
    */
   @Expose()
-  team_id!: string;
+    team_id!: string;
 
   /**
    * ID del usuario miembro
    */
   @Expose()
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Rol del miembro en el equipo
    */
   @Expose()
-  role!: string;
+    role!: string;
 
   /**
    * Fecha de ingreso al equipo
    */
   @Expose()
   @Type(() => Date)
-  joined_at!: Date;
+    joined_at!: Date;
 
   /**
    * Fecha de salida del equipo
    */
   @Expose()
   @Type(() => Date)
-  left_at!: Date | null;
+    left_at!: Date | null;
 }

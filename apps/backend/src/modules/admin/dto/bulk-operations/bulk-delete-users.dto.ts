@@ -15,14 +15,14 @@ export class BulkDeleteUsersDto {
   @IsArray()
   @ArrayMinSize(1, { message: 'Debe proporcionar al menos un usuario' })
   @IsUUID('4', { each: true, message: 'Cada ID debe ser un UUID válido' })
-  userIds!: string[];
+    userIds!: string[];
 
   @ApiProperty({
     description: 'Razón de la eliminación',
     example: 'Cuenta duplicada',
   })
   @IsString()
-  reason!: string;
+    reason!: string;
 
   @ApiProperty({
     description: 'Si true, elimina permanentemente. Si false, marca como deleted (soft delete)',
@@ -32,5 +32,5 @@ export class BulkDeleteUsersDto {
   })
   @IsOptional()
   @IsBoolean()
-  hardDelete?: boolean; // default false = soft delete
+    hardDelete?: boolean; // default false = soft delete
 }

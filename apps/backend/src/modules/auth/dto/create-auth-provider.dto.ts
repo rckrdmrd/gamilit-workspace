@@ -38,7 +38,7 @@ export class CreateAuthProviderDto {
    * @example "550e8400-e29b-41d4-a716-446655440000"
    */
   @IsUUID('4', { message: 'El user_id debe ser un UUID válido' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Proveedor de autenticación OAuth
@@ -50,7 +50,7 @@ export class CreateAuthProviderDto {
     message:
       'El proveedor debe ser: local, google, facebook, apple, microsoft o github',
   })
-  provider!: AuthProviderEnum;
+    provider!: AuthProviderEnum;
 
   /**
    * ID del usuario en el proveedor OAuth externo
@@ -61,7 +61,7 @@ export class CreateAuthProviderDto {
   @MaxLength(255, {
     message: 'El provider_user_id no puede exceder 255 caracteres',
   })
-  provider_user_id!: string;
+    provider_user_id!: string;
 
   /**
    * Access Token OAuth (SENSIBLE)
@@ -70,7 +70,7 @@ export class CreateAuthProviderDto {
    */
   @IsString({ message: 'El access_token debe ser un texto' })
   @IsOptional()
-  access_token?: string;
+    access_token?: string;
 
   /**
    * Refresh Token OAuth (SENSIBLE)
@@ -79,7 +79,7 @@ export class CreateAuthProviderDto {
    */
   @IsString({ message: 'El refresh_token debe ser un texto' })
   @IsOptional()
-  refresh_token?: string;
+    refresh_token?: string;
 
   /**
    * Fecha y hora de expiración del access_token
@@ -95,5 +95,5 @@ export class CreateAuthProviderDto {
     },
   )
   @IsOptional()
-  token_expires_at?: string;
+    token_expires_at?: string;
 }

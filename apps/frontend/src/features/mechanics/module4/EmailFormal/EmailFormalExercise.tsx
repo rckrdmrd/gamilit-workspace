@@ -63,6 +63,7 @@ export const EmailFormalExercise: React.FC<ExerciseProps> = ({
   useEffect(() => {
     const progress = calculateProgress();
     onProgressUpdate?.(normalizeProgressUpdate(progress, 0, 1, 0, 0));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [to, subject, body, analysis]);
 
   // Auto-save functionality

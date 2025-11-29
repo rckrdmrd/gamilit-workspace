@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { CompletarEspaciosData, BlankSpace } from './completarEspaciosTypes';
+import {
+  CompletarEspaciosData,
+  BlankSpace,
+  CompletarEspaciosProgressData,
+} from './completarEspaciosTypes';
 import { saveProgress } from '@shared/components/mechanics/mechanicsTypes';
 import { Check, X, Sparkles } from 'lucide-react';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
@@ -14,7 +18,7 @@ import { useEconomyStore } from '@/features/gamification/economy/store/economySt
 export interface CompletarEspaciosExerciseProps {
   exercise: CompletarEspaciosData;
   onComplete?: () => void;
-  onProgressUpdate?: (progress: any) => void;
+  onProgressUpdate?: (data: CompletarEspaciosProgressData) => void;
   actionsRef?: React.MutableRefObject<{
     handleReset?: () => void;
     handleCheck?: () => void;
@@ -120,7 +124,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
     );
   };
 
-  const handleCheck = async () => {
+  const handleCheck = useCallback(async () => {
     const allAnswered = blanks.every((b) => b.userAnswer && b.userAnswer.trim() !== '');
 
     if (!allAnswered) {
@@ -210,16 +214,16 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
       });
       setShowFeedback(true);
     }
-  };
+  }, [blanks, user, exercise.id, fetchUserProgress, fetchBalance, answeredCount]);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setBlanks(exercise.blanks.map((blank) => ({ ...blank, userAnswer: '' })));
     setUsedWords([]);
     setSelectedWord(null);
     setShowResults(false);
     setFeedback(null);
     setShowFeedback(false);
-  };
+  }, [exercise.blanks]);
 
   // Populate actionsRef for parent component
   useEffect(() => {

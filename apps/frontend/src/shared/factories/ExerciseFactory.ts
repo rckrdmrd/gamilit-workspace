@@ -37,7 +37,7 @@ export interface ExerciseResult {
   submittedAnswers: any;
   xpEarned: number;
   mlCoinsEarned: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface AttemptData {
@@ -440,24 +440,20 @@ export class ExerciseFactory {
   public getTypesByCategory(
     category: 'literal' | 'inferencial' | 'critica' | 'digital' | 'creativa' | 'auxiliar',
   ): ExerciseType[] {
-    return (
-      Object.entries(this.registry)
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        .filter(([_, metadata]) => metadata.category === category)
-        .map(([type]) => type as ExerciseType)
-    );
+    return Object.entries(this.registry)
+
+      .filter(([_, metadata]) => metadata.category === category)
+      .map(([type]) => type as ExerciseType);
   }
 
   /**
    * Get all implemented exercise types
    */
   public getImplementedTypes(): ExerciseType[] {
-    return (
-      Object.entries(this.registry)
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        .filter(([_, metadata]) => metadata.isImplemented)
-        .map(([type]) => type as ExerciseType)
-    );
+    return Object.entries(this.registry)
+
+      .filter(([_, metadata]) => metadata.isImplemented)
+      .map(([type]) => type as ExerciseType);
   }
 
   /**

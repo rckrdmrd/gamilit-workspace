@@ -35,21 +35,21 @@ export class SecurityEvent {
    * Identificador único del evento (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario asociado al evento
    * NOTA: Puede ser NULL para eventos sin usuario (ej: login fallido)
    */
   @Column({ type: 'uuid', nullable: true })
-  user_id?: string;
+    user_id?: string;
 
   /**
    * Tipo de evento de seguridad
    * @example 'login_attempt', 'password_change', 'failed_login', 'account_locked'
    */
   @Column({ type: 'varchar', length: 100 })
-  event_type!: string;
+    event_type!: string;
 
   /**
    * Nivel de severidad del evento
@@ -59,38 +59,38 @@ export class SecurityEvent {
     type: 'enum',
     enum: SecurityEventSeverityEnum,
   })
-  severity!: SecurityEventSeverityEnum;
+    severity!: SecurityEventSeverityEnum;
 
   /**
    * Descripción detallada del evento
    */
   @Column({ type: 'text', nullable: true })
-  description?: string;
+    description?: string;
 
   /**
    * Dirección IP desde donde se originó el evento
    */
   @Column({ type: 'inet', nullable: true })
-  ip_address?: string;
+    ip_address?: string;
 
   /**
    * User agent del navegador/cliente
    */
   @Column({ type: 'text', nullable: true })
-  user_agent?: string;
+    user_agent?: string;
 
   /**
    * Datos adicionales del evento en formato JSON
    * @example { "failed_attempts": 3, "reason": "invalid_password" }
    */
   @Column({ type: 'jsonb', nullable: true })
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 
   /**
    * Fecha y hora de creación del evento
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   // =====================================================
   // Relaciones
@@ -106,5 +106,5 @@ export class SecurityEvent {
    */
   @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user?: User;
+    user?: User;
 }

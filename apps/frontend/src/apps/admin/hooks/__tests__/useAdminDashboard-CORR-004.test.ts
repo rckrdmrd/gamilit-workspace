@@ -9,6 +9,7 @@
  * Created: 2025-11-24
  * Implements: CORR-004 from PLAN-IMPLEMENTACION-CORRECCIONES-P0.md
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';

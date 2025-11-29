@@ -16,38 +16,38 @@ export class ClassroomListItemDto {
     description: 'UUID del aula',
     example: '770e8400-e29b-41d4-a716-446655440020',
   })
-  id!: string;
+    id!: string;
 
   @ApiProperty({
     description: 'Nombre del aula',
     example: 'Matemáticas 3A',
   })
-  name!: string;
+    name!: string;
 
   @ApiProperty({
     description: 'Grado académico',
     example: '8',
     required: false,
   })
-  grade?: string;
+    grade?: string;
 
   @ApiProperty({
     description: 'Sección del aula',
     example: 'A',
     required: false,
   })
-  section?: string;
+    section?: string;
 
   @ApiProperty({
     description: 'Nombre de la escuela (si aplica)',
     example: 'Colegio San José',
     required: false,
   })
-  school_name?: string;
+    school_name?: string;
 
   @ApiProperty({
     description: 'Número actual de estudiantes',
     example: 25,
   })
-  student_count!: number;
+    student_count!: number;
 }

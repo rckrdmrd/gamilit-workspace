@@ -14,14 +14,14 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Assignment } from '../entities/assignment.entity';
-import { AssignmentClassroom } from '../entities/assignment-classroom.entity';
+import { AssignmentClassroom } from '@/modules/social/entities/assignment-classroom.entity';
 import { AssignmentExercise } from '../entities/assignment-exercise.entity';
 import { AssignmentStudent } from '../entities/assignment-student.entity';
 import { AssignmentSubmission } from '../entities/assignment-submission.entity';
 import { CreateAssignmentDto } from '../dto/create-assignment.dto';
 import { UpdateAssignmentDto } from '../dto/update-assignment.dto';
 import { AssignToClassroomsDto } from '../dto/assign-to-classrooms.dto';
-import { GradeSubmissionDto } from '../dto/grade-submission.dto';
+import { AssignmentGradeDto } from '../dto/grade-submission.dto';
 
 @Injectable()
 export class AssignmentsService {
@@ -264,8 +264,8 @@ export class AssignmentsService {
         // Check if already assigned
         const existing = await this.assignmentClassroomRepository.findOne({
           where: {
-            assignmentId,
-            classroomId: classroom.classroomId,
+            assignment_id: assignmentId,
+            classroom_id: classroom.classroomId,
           },
         });
 
@@ -277,10 +277,8 @@ export class AssignmentsService {
 
         // Create distribution
         const assignmentClassroom = this.assignmentClassroomRepository.create({
-          assignmentId,
-          classroomId: classroom.classroomId,
-          deadlineOverride: classroom.deadlineOverride ? new Date(classroom.deadlineOverride) : null,
-          studentsCount: 0, // TODO: Calculate from classroom
+          assignment_id: assignmentId,
+          classroom_id: classroom.classroomId,
         });
 
         await this.assignmentClassroomRepository.save(assignmentClassroom);
@@ -387,16 +385,14 @@ export class AssignmentsService {
     // 3. Copy classroom assignments if requested
     if (dto.copyClassroomAssignments) {
       const classrooms = await this.assignmentClassroomRepository.find({
-        where: { assignmentId: originalId },
+        where: { assignment_id: originalId },
       });
 
       for (const ac of classrooms) {
         try {
           const newAC = this.assignmentClassroomRepository.create({
-            assignmentId: saved.id,
-            classroomId: ac.classroomId,
-            deadlineOverride: ac.deadlineOverride,
-            studentsCount: 0,
+            assignment_id: saved.id,
+            classroom_id: ac.classroom_id,
           });
           await this.assignmentClassroomRepository.save(newAC);
           response.classroomsCopied++;
@@ -470,8 +466,8 @@ export class AssignmentsService {
         // Check if already assigned
         const existing = await this.assignmentClassroomRepository.findOne({
           where: {
-            assignmentId,
-            classroomId: classroom.classroomId,
+            assignment_id: assignmentId,
+            classroom_id: classroom.classroomId,
           },
         });
 
@@ -482,12 +478,8 @@ export class AssignmentsService {
 
         // Create assignment-classroom relationship
         const assignmentClassroom = this.assignmentClassroomRepository.create({
-          assignmentId,
-          classroomId: classroom.classroomId,
-          deadlineOverride: classroom.deadlineOverride
-            ? new Date(classroom.deadlineOverride)
-            : null,
-          studentsCount: 0, // TODO: Calculate from classroom
+          assignment_id: assignmentId,
+          classroom_id: classroom.classroomId,
         });
 
         await this.assignmentClassroomRepository.save(assignmentClassroom);
@@ -546,7 +538,7 @@ export class AssignmentsService {
    */
   async gradeSubmission(
     submissionId: string,
-    dto: GradeSubmissionDto,
+    dto: AssignmentGradeDto,
     teacherId: string,
   ): Promise<AssignmentSubmission> {
     const submission = await this.submissionRepository.findOne({
@@ -856,6 +848,210 @@ export class AssignmentsService {
     return closed;
   }
 
+  // =====================================================
+  // STUDENT-FACING METHODS (P1-002)
+  // =====================================================
+
+  /**
+   * Find all assignments for a student
+   * Returns assignments assigned via classroom or directly
+   * @param studentId - The student's user ID
+   * @param filters - Optional filters (status, classroomId)
+   */
+  async findStudentAssignments(
+    studentId: string,
+    filters?: { status?: string; classroomId?: string },
+  ): Promise<any[]> {
+    // Get direct student assignments (without relation join - relations commented out)
+    const studentAssignments = await this.assignmentStudentRepository.find({
+      where: { studentId },
+    });
+
+    if (studentAssignments.length === 0) {
+      return [];
+    }
+
+    // Get assignment IDs
+    const assignmentIds = studentAssignments.map((sa) => sa.assignmentId);
+
+    // Get assignments separately (since relation is not defined)
+    const assignmentsQuery = this.assignmentRepository
+      .createQueryBuilder('assignment')
+      .where('assignment.id IN (:...ids)', { ids: assignmentIds })
+      .andWhere('assignment.isPublished = true');
+
+    const assignments = await assignmentsQuery.getMany();
+    const assignmentMap = new Map(assignments.map((a) => [a.id, a]));
+
+    // Get submissions for score/feedback
+    const submissions = await this.submissionRepository.find({
+      where: { studentId },
+    });
+    const submissionMap = new Map(submissions.map((s) => [s.assignmentId, s]));
+
+    // Map to response format
+    const results = studentAssignments
+      .filter((sa) => assignmentMap.has(sa.assignmentId)) // Only published
+      .map((sa) => {
+        const assignment = assignmentMap.get(sa.assignmentId);
+        const submission = submissionMap.get(sa.assignmentId);
+        return {
+          id: sa.id,
+          assignment: {
+            id: assignment?.id,
+            title: assignment?.title,
+            description: assignment?.description,
+            assignmentType: assignment?.assignmentType,
+            dueDate: assignment?.dueDate,
+            totalPoints: assignment?.totalPoints,
+          },
+          status: submission?.status || 'assigned',
+          assignedAt: sa.assignedAt,
+          score: submission?.score || null,
+          feedback: submission?.feedback || null,
+        };
+      });
+
+    this.logger.log(`Found ${results.length} assignments for student ${studentId}`);
+
+    return results;
+  }
+
+  /**
+   * Find a specific assignment for a student by ID
+   * @param assignmentStudentId - The assignment_students.id
+   * @param studentId - The student's user ID (for authorization)
+   */
+  async findStudentAssignmentById(
+    assignmentStudentId: string,
+    studentId: string,
+  ): Promise<any> {
+    // Get student assignment record
+    const assignmentStudent = await this.assignmentStudentRepository.findOne({
+      where: { id: assignmentStudentId, studentId },
+    });
+
+    if (!assignmentStudent) {
+      throw new NotFoundException(
+        `Assignment ${assignmentStudentId} not found or not assigned to this student`,
+      );
+    }
+
+    // Get assignment details separately (relation commented out)
+    const assignment = await this.assignmentRepository.findOne({
+      where: { id: assignmentStudent.assignmentId },
+    });
+
+    if (!assignment) {
+      throw new NotFoundException('Assignment data not found');
+    }
+
+    // Get exercises for this assignment
+    const exercises = await this.assignmentExerciseRepository.find({
+      where: { assignmentId: assignmentStudent.assignmentId },
+      order: { orderIndex: 'ASC' },
+    });
+
+    // Get submission if exists
+    const submission = await this.submissionRepository.findOne({
+      where: {
+        assignmentId: assignmentStudent.assignmentId,
+        studentId,
+      },
+    });
+
+    return {
+      id: assignmentStudent.id,
+      assignment: {
+        id: assignment.id,
+        title: assignment.title,
+        description: assignment.description,
+        assignmentType: assignment.assignmentType,
+        dueDate: assignment.dueDate,
+        totalPoints: assignment.totalPoints,
+      },
+      status: submission?.status || 'assigned',
+      assignedAt: assignmentStudent.assignedAt,
+      exercises: exercises.map((e) => ({
+        id: e.id,
+        exerciseId: e.exerciseId,
+        orderIndex: e.orderIndex,
+        pointsOverride: e.pointsOverride,
+        isRequired: e.isRequired,
+      })),
+      submission: submission
+        ? {
+          id: submission.id,
+          status: submission.status,
+          submittedAt: submission.submittedAt,
+          score: submission.score,
+          feedback: submission.feedback,
+          gradedAt: submission.gradedAt,
+        }
+        : null,
+    };
+  }
+
+  /**
+   * Get grades summary for a student
+   * @param studentId - The student's user ID
+   */
+  async getStudentGradesSummary(studentId: string): Promise<any> {
+    // Get all assignments for student
+    const studentAssignments = await this.assignmentStudentRepository.find({
+      where: { studentId },
+    });
+
+    // Get all submissions for student (without relation join)
+    const submissions = await this.submissionRepository.find({
+      where: { studentId },
+    });
+
+    const gradedSubmissions = submissions.filter(
+      (s) => s.status === 'graded' && s.score !== null,
+    );
+
+    // Get assignment details for graded submissions
+    const assignmentIds = gradedSubmissions.map((s) => s.assignmentId);
+    let assignmentMap = new Map<string, Assignment>();
+
+    if (assignmentIds.length > 0) {
+      const assignments = await this.assignmentRepository
+        .createQueryBuilder('a')
+        .where('a.id IN (:...ids)', { ids: assignmentIds })
+        .getMany();
+      assignmentMap = new Map(assignments.map((a) => [a.id, a]));
+    }
+
+    const totalScore = gradedSubmissions.reduce((sum, s) => sum + (s.score || 0), 0);
+    const totalMaxScore = gradedSubmissions.reduce((sum, s) => {
+      const assignment = assignmentMap.get(s.assignmentId);
+      return sum + (assignment?.totalPoints || 0);
+    }, 0);
+
+    const averageScore =
+      gradedSubmissions.length > 0 && totalMaxScore > 0
+        ? Math.round((totalScore / totalMaxScore) * 100 * 10) / 10
+        : 0;
+
+    return {
+      totalAssignments: studentAssignments.length,
+      completed: gradedSubmissions.length,
+      pending: studentAssignments.length - gradedSubmissions.length,
+      averageScore,
+      grades: gradedSubmissions.map((s) => {
+        const assignment = assignmentMap.get(s.assignmentId);
+        return {
+          assignmentTitle: assignment?.title || 'Unknown',
+          score: s.score,
+          maxScore: assignment?.totalPoints,
+          gradedAt: s.gradedAt?.toISOString().split('T')[0],
+          feedback: s.feedback,
+        };
+      }),
+    };
+  }
+
   /**
    * Sanitize HTML to prevent XSS
    * REQ-TCH-021: HTML sanitization
@@ -865,7 +1061,7 @@ export class AssignmentsService {
 
     // Basic sanitization - in production use DOMPurify
     // For now, strip script tags and dangerous attributes
-    let sanitized = html
+    const sanitized = html
       .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
       .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
       .replace(/javascript:/gi, '');

@@ -62,7 +62,7 @@ export class ContentCategoriesController {
     description: 'Categoría padre no encontrada',
   })
   async create(@Body() dto: CreateContentCategoryDto) {
-    return await this.categoriesService.create(
+    return this.categoriesService.create(
       dto.name,
       dto.slug,
       dto.description,
@@ -97,7 +97,7 @@ export class ContentCategoriesController {
     description: 'Lista de categorías',
   })
   async findAll(@Query('includeInactive') includeInactive?: boolean) {
-    return await this.categoriesService.findAll(includeInactive === true);
+    return this.categoriesService.findAll(includeInactive === true);
   }
 
   /**
@@ -116,7 +116,7 @@ export class ContentCategoriesController {
     description: 'Lista de categorías raíz',
   })
   async findRootCategories() {
-    return await this.categoriesService.findRootCategories();
+    return this.categoriesService.findRootCategories();
   }
 
   /**
@@ -147,7 +147,7 @@ export class ContentCategoriesController {
     },
   })
   async getTree() {
-    return await this.categoriesService.getTree();
+    return this.categoriesService.getTree();
   }
 
   /**
@@ -175,7 +175,7 @@ export class ContentCategoriesController {
     },
   })
   async getStats() {
-    return await this.categoriesService.getStats();
+    return this.categoriesService.getStats();
   }
 
   /**
@@ -205,7 +205,7 @@ export class ContentCategoriesController {
     description: 'Categoría no encontrada',
   })
   async findById(@Param('id') id: string) {
-    return await this.categoriesService.findById(id);
+    return this.categoriesService.findById(id);
   }
 
   /**
@@ -235,7 +235,7 @@ export class ContentCategoriesController {
     description: 'Categoría no encontrada',
   })
   async findBySlug(@Param('slug') slug: string) {
-    return await this.categoriesService.findBySlug(slug);
+    return this.categoriesService.findBySlug(slug);
   }
 
   /**
@@ -260,7 +260,7 @@ export class ContentCategoriesController {
     description: 'Lista de subcategorías',
   })
   async findChildren(@Param('parentId') parentId: string) {
-    return await this.categoriesService.findChildren(parentId);
+    return this.categoriesService.findChildren(parentId);
   }
 
   /**
@@ -292,7 +292,7 @@ export class ContentCategoriesController {
     },
   })
   async getBreadcrumb(@Param('id') id: string) {
-    return await this.categoriesService.getBreadcrumb(id);
+    return this.categoriesService.getBreadcrumb(id);
   }
 
   /**
@@ -331,7 +331,7 @@ export class ContentCategoriesController {
     description: 'Slug ya existe',
   })
   async update(@Param('id') id: string, @Body() dto: UpdateContentCategoryDto) {
-    return await this.categoriesService.update(id, dto);
+    return this.categoriesService.update(id, dto);
   }
 
   /**
@@ -364,7 +364,7 @@ export class ContentCategoriesController {
     description: 'Orden actualizado',
   })
   async updateOrder(@Param('id') id: string, @Query('order') order: number) {
-    return await this.categoriesService.updateOrder(id, Number(order));
+    return this.categoriesService.updateOrder(id, Number(order));
   }
 
   /**
@@ -396,7 +396,7 @@ export class ContentCategoriesController {
     description: 'Estado actualizado',
   })
   async setActive(@Param('id') id: string, @Query('active') active: boolean) {
-    return await this.categoriesService.setActive(id, active === true);
+    return this.categoriesService.setActive(id, active === true);
   }
 
   /**
@@ -432,7 +432,7 @@ export class ContentCategoriesController {
     description: 'No se puede mover (crearía un ciclo)',
   })
   async moveCategory(@Param('id') id: string, @Query('newParentId') newParentId?: string) {
-    return await this.categoriesService.moveCategory(id, newParentId || null);
+    return this.categoriesService.moveCategory(id, newParentId || null);
   }
 
   /**

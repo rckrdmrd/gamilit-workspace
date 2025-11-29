@@ -110,7 +110,7 @@ export class AuthService {
   private async generateTokens(
     userId: string,
     email: string,
-    role: string
+    role: string,
   ): Promise<TokenResponse> {
     const payload = { sub: userId, email, role };
 
@@ -118,20 +118,20 @@ export class AuthService {
     const jwtExpiration = this.configService.get<string>('JWT_EXPIRATION') || '15m';
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get<string>('JWT_SECRET'),
-      expiresIn: jwtExpiration as any
+      expiresIn: jwtExpiration as any,
     });
 
     // Refresh Token (7 días)
     const jwtRefreshExpiration = this.configService.get<string>('JWT_REFRESH_EXPIRATION') || '7d';
     const refreshToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-      expiresIn: jwtRefreshExpiration as any
+      expiresIn: jwtRefreshExpiration as any,
     });
 
     return {
       accessToken,
       refreshToken,
-      expiresIn: 900 // 15 minutos en segundos
+      expiresIn: 900, // 15 minutos en segundos
     };
   }
 

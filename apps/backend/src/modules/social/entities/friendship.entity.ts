@@ -36,7 +36,7 @@ export class Friendship {
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   // =====================================================
   // CORE IDENTIFIERS
@@ -48,13 +48,13 @@ export class Friendship {
    * CHECK: user_id <> friend_id (no puede ser amigo de sí mismo)
    */
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del amigo (usuario receptor de la solicitud) (FK → auth.users)
    */
   @Column({ type: 'uuid' })
-  friend_id!: string;
+    friend_id!: string;
 
   // =====================================================
   // STATUS & STATE
@@ -69,7 +69,7 @@ export class Friendship {
     length: 20,
     default: FriendshipStatusEnum.PENDING,
   })
-  status!: string;
+    status!: string;
 
   // =====================================================
   // TIMESTAMPS
@@ -79,11 +79,11 @@ export class Friendship {
    * Fecha y hora de creación de la solicitud de amistad
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización (cambio de estado)
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 }

@@ -1,7 +1,7 @@
 # 🗄️ DATABASE SCHEMA - SISTEMA DE RECOMPENSAS
 
-**Versión:** v2.3.0
-**Fecha:** 2025-11-12
+**Versión:** v2.8.0
+**Fecha:** 2025-11-29
 
 ---
 
@@ -168,7 +168,7 @@ CREATE TRIGGER trg_update_user_stats_on_exercise
 
 ### 2. `progress_tracking.exercise_submissions`
 
-**Propósito:** Gestión del workflow de evaluación
+**Propósito:** Gestión del workflow de evaluación manual
 
 ```sql
 CREATE TABLE progress_tracking.exercise_submissions (
@@ -179,10 +179,16 @@ CREATE TABLE progress_tracking.exercise_submissions (
 
     -- WORKFLOW
     status VARCHAR(20) NOT NULL DEFAULT 'draft',
-      -- 'draft' | 'submitted' | 'graded'
+      -- 'draft' | 'submitted' | 'graded' | 'reviewed'
 
     -- ANSWERS
     answers JSONB,
+    answer_data JSONB,
+
+    -- SCORING (calculado al calificar)
+    is_correct BOOLEAN DEFAULT false,
+    xp_earned INTEGER DEFAULT 0,
+    ml_coins_earned INTEGER DEFAULT 0,
 
     -- TIMING
     started_at TIMESTAMP WITH TIME ZONE,
@@ -198,7 +204,7 @@ CREATE TABLE progress_tracking.exercise_submissions (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
 
     -- CONSTRAINTS
-    CHECK (status IN ('draft', 'submitted', 'graded'))
+    CHECK (status IN ('draft', 'submitted', 'graded', 'reviewed'))
 );
 
 -- ÍNDICES
@@ -210,9 +216,28 @@ CREATE INDEX idx_exercise_submissions_graded ON exercise_submissions(graded_at D
 
 **Estados del Workflow:**
 ```
-draft ──────▶ submitted ──────▶ graded
-  (Save)        (Submit)        (Teacher Review)
+draft ──────▶ submitted ──────▶ graded ──────▶ reviewed
+  (Save)        (Submit)        (Teacher)      (Final)
 ```
+
+**Trigger Asociado (v2.8.0):**
+```sql
+CREATE TRIGGER trg_update_user_stats_on_submission
+  AFTER UPDATE ON progress_tracking.exercise_submissions
+  FOR EACH ROW
+  WHEN (
+      NEW.status IN ('graded', 'reviewed')
+      AND NEW.is_correct = true
+      AND (OLD.status IS DISTINCT FROM NEW.status
+           OR OLD.is_correct IS DISTINCT FROM NEW.is_correct)
+  )
+  EXECUTE FUNCTION gamilit.update_user_stats_on_submission_graded();
+```
+
+**Columnas Clave para Recompensas:**
+- `is_correct`: true si el maestro califica como correcto
+- `xp_earned`: XP otorgado (calculado por servicio)
+- `ml_coins_earned`: ML Coins otorgados (calculado por servicio)
 
 ---
 
@@ -380,6 +405,109 @@ $$;
 
 ---
 
+### `gamilit.update_user_stats_on_submission_graded()` (v2.8.0)
+
+**Archivo:** `apps/database/ddl/schemas/gamilit/functions/27-update_user_stats_on_submission_graded.sql`
+
+**Propósito:** Actualiza estadísticas de usuario cuando una submission es calificada (complementa función 14 para el flujo de submissions)
+
+**Código Completo:**
+
+```sql
+CREATE OR REPLACE FUNCTION gamilit.update_user_stats_on_submission_graded()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+    -- Validar que solo procesemos calificaciones nuevas
+    IF NEW.status NOT IN ('graded', 'reviewed') THEN
+        RETURN NEW;
+    END IF;
+
+    IF NEW.is_correct IS NOT TRUE THEN
+        RETURN NEW;
+    END IF;
+
+    IF NEW.xp_earned <= 0 THEN
+        RETURN NEW;
+    END IF;
+
+    -- Evitar re-disparos cuando el status o is_correct no cambiaron
+    IF OLD.status IS NOT DISTINCT FROM NEW.status
+       AND OLD.is_correct IS NOT DISTINCT FROM NEW.is_correct THEN
+        RETURN NEW;
+    END IF;
+
+    -- Actualizar estadísticas del usuario (patrón UPSERT)
+    UPDATE gamification_system.user_stats
+    SET
+        exercises_completed = exercises_completed + 1,
+        total_xp = total_xp + NEW.xp_earned,
+        ml_coins = ml_coins + NEW.ml_coins_earned,
+        ml_coins_earned_total = ml_coins_earned_total + NEW.ml_coins_earned,
+        last_activity_at = gamilit.now_mexico(),
+        updated_at = gamilit.now_mexico()
+    WHERE user_id = NEW.user_id;
+
+    -- Si no existe el registro de estadísticas, crearlo
+    IF NOT FOUND THEN
+        INSERT INTO gamification_system.user_stats (
+            user_id, tenant_id, exercises_completed,
+            total_xp, ml_coins, ml_coins_earned_total, last_activity_at
+        ) VALUES (
+            NEW.user_id,
+            '00000000-0000-0000-0000-000000000000'::UUID,
+            1, NEW.xp_earned, 100 + NEW.ml_coins_earned,
+            NEW.ml_coins_earned, gamilit.now_mexico()
+        );
+    END IF;
+
+    RETURN NEW;
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE WARNING 'Error al actualizar estadísticas de usuario % desde submission %: %',
+            NEW.user_id, NEW.id, SQLERRM;
+        RETURN NEW;
+END;
+$$;
+```
+
+**Diferencias con Función 14 (exercise_attempts):**
+
+| Aspecto | Función 14 (attempts) | Función 27 (submissions) |
+|---------|----------------------|--------------------------|
+| Evento | AFTER INSERT | AFTER UPDATE |
+| Tabla | exercise_attempts | exercise_submissions |
+| Validación | is_correct OR score>=60 | status IN ('graded','reviewed') AND is_correct |
+| Anti-refire | No necesario (INSERT) | Valida cambio en status/is_correct |
+
+**Cadena de Triggers:**
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Teacher califica submission (UPDATE exercise_submissions)       │
+│   status = 'graded', is_correct = true, xp_earned = 200         │
+└────────────────────────────────┬────────────────────────────────┘
+                                 ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ trg_update_user_stats_on_submission (AFTER UPDATE)              │
+│   WHEN: status IN ('graded','reviewed') AND is_correct = true  │
+└────────────────────────────────┬────────────────────────────────┘
+                                 ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ update_user_stats_on_submission_graded()                        │
+│   UPDATE user_stats SET total_xp = total_xp + 200               │
+└────────────────────────────────┬────────────────────────────────┘
+                                 ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ trg_update_missions_on_earn_xp (AFTER UPDATE on user_stats)     │
+│   WHEN: NEW.total_xp != OLD.total_xp                            │
+│   → Actualiza misiones earn_xp automáticamente                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
 ## 🔍 Queries de Verificación
 
 ### Ver Attempts de un Usuario
@@ -453,6 +581,6 @@ auth.users (1)
 
 ---
 
-**Última actualización:** 2025-11-12
+**Última actualización:** 2025-11-29
 **Autor:** Sistema Gamilit
-**Versión:** 1.0
+**Versión:** 2.8.0

@@ -41,7 +41,7 @@ export class CreateDiscussionThreadDto {
   @ValidateIf((o) => !o.team_id, {
     message: 'Al menos classroom_id o team_id debe estar presente',
   })
-  classroom_id?: string | null;
+    classroom_id?: string | null;
 
   /**
    * ID del team al que pertenece el thread
@@ -60,7 +60,7 @@ export class CreateDiscussionThreadDto {
   @ValidateIf((o) => !o.classroom_id, {
     message: 'Al menos classroom_id o team_id debe estar presente',
   })
-  team_id?: string | null;
+    team_id?: string | null;
 
   /**
    * ID del usuario que crea el thread
@@ -75,7 +75,7 @@ export class CreateDiscussionThreadDto {
   })
   @IsUUID('4')
   @IsNotEmpty()
-  created_by!: string;
+    created_by!: string;
 
   /**
    * Título del hilo de discusión
@@ -98,7 +98,7 @@ export class CreateDiscussionThreadDto {
   @MaxLength(255, {
     message: 'El título no puede exceder 255 caracteres',
   })
-  title!: string;
+    title!: string;
 
   /**
    * Contenido principal del thread
@@ -116,7 +116,7 @@ export class CreateDiscussionThreadDto {
   @MinLength(10, {
     message: 'El contenido debe tener al menos 10 caracteres',
   })
-  content!: string;
+    content!: string;
 
   /**
    * Indica si el thread debe estar fijado
@@ -131,7 +131,7 @@ export class CreateDiscussionThreadDto {
   })
   @IsOptional()
   @IsBoolean()
-  is_pinned?: boolean;
+    is_pinned?: boolean;
 
   /**
    * Indica si el thread debe estar bloqueado
@@ -146,5 +146,5 @@ export class CreateDiscussionThreadDto {
   })
   @IsOptional()
   @IsBoolean()
-  is_locked?: boolean;
+    is_locked?: boolean;
 }

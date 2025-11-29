@@ -14,25 +14,25 @@ export class CreateTeamMemberDto {
    * ID del equipo
    */
   @IsUUID('4')
-  team_id!: string;
+    team_id!: string;
 
   /**
    * ID del usuario miembro
    */
   @IsUUID('4')
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Rol del miembro en el equipo
    */
   @IsOptional()
   @IsEnum(TeamMemberRoleEnum)
-  role?: string;
+    role?: string;
 
   /**
    * Fecha de ingreso al equipo
    */
   @IsOptional()
   @IsDateString()
-  joined_at?: string;
+    joined_at?: string;
 }

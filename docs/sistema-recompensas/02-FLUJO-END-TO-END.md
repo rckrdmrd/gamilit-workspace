@@ -1,7 +1,7 @@
 # 🔄 FLUJO END-TO-END - SISTEMA DE RECOMPENSAS
 
-**Versión:** v2.3.0
-**Fecha:** 2025-11-12
+**Versión:** v2.8.0
+**Fecha:** 2025-11-29
 
 ---
 
@@ -156,6 +156,120 @@
 │  🏆 Stats de perfil actualizados                                 │
 └──────────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 📊 Flujo B: Ejercicios con Revisión Manual (v2.8.0)
+
+Este flujo complementa el flujo principal para ejercicios que requieren calificación por maestro.
+
+```
+┌─────────────┐
+│   USUARIO   │
+│  (Student)  │
+└──────┬──────┘
+       │
+       │ 1. Ingresa al ejercicio (requires_manual_grading = true)
+       ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                    FRONTEND (React + TypeScript)                 │
+│  Renderiza ejercicio que requiere revisión manual                │
+└──────────────────────────────────────────────────────────────────┘
+       │
+       │ 2. Click "Enviar para Revisión"
+       ▼
+┌──────────────────────────────────────────────────────────────────┐
+│              POST /exercises/:id/submit                          │
+│              Body: { answers, startedAt }                        │
+└──────────────────────────────────────────────────────────────────┘
+       │
+       │ 3. Backend detecta requires_manual_grading = true
+       ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                    DATABASE (PostgreSQL)                         │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │  INSERT INTO exercise_submissions                          │ │
+│  │    status = 'submitted', is_correct = NULL                 │ │
+│  │    xp_earned = 0, ml_coins_earned = 0                      │ │
+│  └────────────────────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────────────────────┘
+       │
+       │ ⏳ ESPERA: Maestro revisa y califica
+       ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                    TEACHER PORTAL                                │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │  Maestro califica submission:                              │ │
+│  │    PUT /teacher/submissions/:id/grade                      │ │
+│  │    Body: { score: 90, is_correct: true, feedback: "..." }  │ │
+│  └────────────────────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────────────────────┘
+       │
+       │ 4. UPDATE dispara trigger
+       ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                    DATABASE (PostgreSQL)                         │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │  UPDATE exercise_submissions                               │ │
+│  │    SET status = 'graded',                                  │ │
+│  │        is_correct = true,                                  │ │
+│  │        xp_earned = 200,                                    │ │
+│  │        ml_coins_earned = 50                                │ │
+│  └────────────────────────┬───────────────────────────────────┘ │
+│                           │                                      │
+│                           │ 5. Trigger WHEN se activa             │
+│                           ▼                                      │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │  Trigger: trg_update_user_stats_on_submission              │ │
+│  │  AFTER UPDATE ON exercise_submissions                      │ │
+│  │  WHEN (status IN ('graded','reviewed')                     │ │
+│  │        AND is_correct = true                               │ │
+│  │        AND status/is_correct CHANGED)                      │ │
+│  └────────────────────────┬───────────────────────────────────┘ │
+│                           │                                      │
+│                           │ 6. Función se ejecuta                │
+│                           ▼                                      │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │  update_user_stats_on_submission_graded()                  │ │
+│  │    ├─▶ Leer NEW.xp_earned (200)                           │ │
+│  │    ├─▶ Leer NEW.ml_coins_earned (50)                      │ │
+│  │    │                                                        │ │
+│  │    └─▶ UPDATE gamification_system.user_stats               │ │
+│  │        SET total_xp = total_xp + 200                       │ │
+│  │        SET ml_coins = ml_coins + 50                        │ │
+│  │        SET exercises_completed += 1                        │ │
+│  └────────────────────────┬───────────────────────────────────┘ │
+│                           │                                      │
+│                           │ 7. Cascada: UPDATE en user_stats      │
+│                           ▼                                      │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │  Trigger: trg_update_missions_on_earn_xp                   │ │
+│  │  AFTER UPDATE ON user_stats                                │ │
+│  │  WHEN (NEW.total_xp != OLD.total_xp)                       │ │
+│  │    ├─▶ Busca misiones earn_xp activas                     │ │
+│  │    └─▶ Incrementa objectives[].current += 200             │ │
+│  └────────────────────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────────────────────┘
+       │
+       │ 8. Transacción COMMIT
+       ▼
+┌──────────────────────────────────────────────────────────────────┐
+│                    NOTIFICACIÓN AL ESTUDIANTE                    │
+│  ✅ "¡Tu ejercicio fue calificado! +200 XP, +50 ML Coins"       │
+│  🏆 Misión "Ganar 100 XP" actualizada automáticamente           │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### Comparación de Flujos
+
+| Aspecto | Flujo A (Autocorregibles) | Flujo B (Revisión Manual) |
+|---------|---------------------------|---------------------------|
+| Tabla principal | `exercise_attempts` | `exercise_submissions` |
+| Trigger evento | AFTER INSERT | AFTER UPDATE |
+| Cuándo se otorga XP | Inmediato al enviar | Cuando maestro califica |
+| Reintentos | Ilimitados | Solo 1 entrega |
+| Anti-farming XP | Solo primer acierto | N/A (solo 1 entrega) |
+| Actualiza misiones | Sí, vía cadena de triggers | Sí, vía cadena de triggers |
 
 ---
 
@@ -317,6 +431,6 @@ const completedMap = new Map(submissions.map(s => [s.exercise_id, true]));
 
 ---
 
-**Última actualización:** 2025-11-12
+**Última actualización:** 2025-11-29
 **Autor:** Sistema Gamilit
-**Versión:** 1.0
+**Versión:** 2.8.0

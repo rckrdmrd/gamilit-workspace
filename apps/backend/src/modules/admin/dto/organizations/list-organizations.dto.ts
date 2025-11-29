@@ -10,7 +10,7 @@ export class ListOrganizationsDto {
   })
   @IsOptional()
   @IsString()
-  search?: string;
+    search?: string;
 
   @ApiPropertyOptional({
     description: 'Filter by subscription tier',
@@ -19,7 +19,7 @@ export class ListOrganizationsDto {
   })
   @IsOptional()
   @IsEnum(SubscriptionTierEnum)
-  subscription_tier?: SubscriptionTierEnum;
+    subscription_tier?: SubscriptionTierEnum;
 
   @ApiPropertyOptional({
     description: 'Filter by active status',
@@ -28,7 +28,7 @@ export class ListOrganizationsDto {
   @IsOptional()
   @IsBoolean()
   @Type(() => Boolean)
-  is_active?: boolean;
+    is_active?: boolean;
 
   @ApiPropertyOptional({
     description: 'Page number for pagination',
@@ -39,7 +39,7 @@ export class ListOrganizationsDto {
   @IsInt()
   @Min(1)
   @Type(() => Number)
-  page?: number;
+    page?: number;
 
   @ApiPropertyOptional({
     description: 'Number of items per page',
@@ -50,5 +50,5 @@ export class ListOrganizationsDto {
   @IsInt()
   @Min(1)
   @Type(() => Number)
-  limit?: number;
+    limit?: number;
 }

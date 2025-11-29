@@ -10,19 +10,19 @@ export class RubricResponseDto {
    * Identificador único de la rúbrica
    */
   @Expose()
-  id!: string;
+    id!: string;
 
   /**
    * ID del ejercicio asociado (si es relación a ejercicio)
    */
   @Expose()
-  exercise_id?: string;
+    exercise_id?: string;
 
   /**
    * ID del módulo asociado (si es relación a módulo)
    */
   @Expose()
-  module_id?: string;
+    module_id?: string;
 
   // =====================================================
   // BASIC INFORMATION
@@ -32,20 +32,20 @@ export class RubricResponseDto {
    * Nombre de la rúbrica
    */
   @Expose()
-  name!: string;
+    name!: string;
 
   /**
    * Descripción de la rúbrica
    */
   @Expose()
-  description?: string;
+    description?: string;
 
   /**
    * Tipo de evaluación
    * Valores: automatic, manual, hybrid, peer_review
    */
   @Expose()
-  assessment_type!: string;
+    assessment_type!: string;
 
   // =====================================================
   // CRITERIA & SCORING
@@ -55,19 +55,19 @@ export class RubricResponseDto {
    * Criterios de evaluación en formato JSONB
    */
   @Expose()
-  criteria!: Record<string, any>;
+    criteria!: Record<string, any>;
 
   /**
    * Escala de puntuación
    */
   @Expose()
-  scoring_scale!: Record<string, any>;
+    scoring_scale!: Record<string, any>;
 
   /**
    * Peso porcentual de la rúbrica
    */
   @Expose()
-  weight_percentage!: number;
+    weight_percentage!: number;
 
   // =====================================================
   // VISIBILITY & OPTIONS
@@ -77,25 +77,25 @@ export class RubricResponseDto {
    * Si la rúbrica está activa
    */
   @Expose()
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Si se permite reenvío
    */
   @Expose()
-  allow_resubmission!: boolean;
+    allow_resubmission!: boolean;
 
   /**
    * Plantilla de retroalimentación
    */
   @Expose()
-  feedback_template?: string;
+    feedback_template?: string;
 
   /**
    * Si la retroalimentación automática está habilitada
    */
   @Expose()
-  auto_feedback_enabled!: boolean;
+    auto_feedback_enabled!: boolean;
 
   // =====================================================
   // METADATA & AUDIT
@@ -105,23 +105,23 @@ export class RubricResponseDto {
    * Metadatos adicionales
    */
   @Expose()
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   /**
    * ID del usuario que creó la rúbrica
    */
   @Expose()
-  created_by?: string;
+    created_by?: string;
 
   /**
    * Fecha de creación
    */
   @Expose()
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de última actualización
    */
   @Expose()
-  updated_at!: Date;
+    updated_at!: Date;
 }

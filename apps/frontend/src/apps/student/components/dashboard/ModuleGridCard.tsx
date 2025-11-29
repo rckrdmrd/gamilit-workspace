@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { BookOpen, CheckCircle, Clock, Star } from 'lucide-react';
+import { BookOpen, CheckCircle, Clock, Star, Construction } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import type { Module } from '@shared/types';
 
@@ -14,6 +14,7 @@ export function ModuleGridCard({ module, onClick, index = 0 }: ModuleGridCardPro
   const isCompleted = progress === 100;
   const isInProgress = progress > 0 && progress < 100;
   const isLocked = module.is_locked || false; // Support for locked modules
+  const isBacklog = module.status === 'backlog'; // Check if module is in backlog
   const isClickable = !isLocked && onClick;
 
   return (
@@ -66,6 +67,18 @@ export function ModuleGridCard({ module, onClick, index = 0 }: ModuleGridCardPro
           <div className="absolute -right-3 -top-3 z-20 rounded-full bg-gradient-to-r from-yellow-500 to-yellow-600 p-3 shadow-lg shadow-yellow-300/50">
             <Star className="h-5 w-5 fill-white text-white" />
           </div>
+        )}
+
+        {/* Backlog badge - Under construction */}
+        {isBacklog && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="absolute -right-2 -top-2 z-20 inline-flex items-center gap-1.5 rounded-full border border-detective-orange-dark bg-gradient-to-r from-detective-orange-400 to-detective-orange px-3 py-1.5 text-xs font-medium text-white shadow-orange"
+          >
+            <Construction size={14} className="flex-shrink-0" />
+            <span>En Construcción</span>
+          </motion.div>
         )}
 
         {/* Header */}

@@ -185,7 +185,7 @@ export class NotificationTemplatesController {
   })
   async renderTemplate(
     @Param('templateKey') templateKey: string,
-    @Body() renderDto: RenderTemplateDto,
+      @Body() renderDto: RenderTemplateDto,
   ): Promise<RenderedTemplateResponseDto> {
     const rendered = await this.templateService.renderTemplate(
       templateKey,

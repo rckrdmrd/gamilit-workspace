@@ -35,7 +35,7 @@ export function ProgressDashboardExample({ userId }: ProgressDashboardExamplePro
 
         setProgress(progressData);
         setActivities(activitiesData);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error loading progress:', err);
         _setError('Error al cargar el progreso. Por favor intenta nuevamente.');
       } finally {
@@ -57,7 +57,7 @@ export function ProgressDashboardExample({ userId }: ProgressDashboardExamplePro
       try {
         const detail = await getModuleProgress(userId, selectedModule);
         setModuleDetail(detail);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Error loading module detail:', err);
       }
     };

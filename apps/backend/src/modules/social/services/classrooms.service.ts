@@ -59,7 +59,7 @@ export class ClassroomsService {
       metadata: dto.metadata || {},
     });
 
-    return await this.classroomRepo.save(classroom);
+    return this.classroomRepo.save(classroom);
   }
 
   /**
@@ -79,7 +79,7 @@ export class ClassroomsService {
       whereCondition.teacher_id = teacherId;
     }
 
-    return await this.classroomRepo.find({
+    return this.classroomRepo.find({
       where: whereCondition,
       order: { name: 'ASC' },
     });
@@ -154,7 +154,7 @@ export class ClassroomsService {
     }
 
     Object.assign(classroom, dto);
-    return await this.classroomRepo.save(classroom);
+    return this.classroomRepo.save(classroom);
   }
 
   /**
@@ -171,7 +171,7 @@ export class ClassroomsService {
     }
 
     classroom.is_active = false;
-    return await this.classroomRepo.save(classroom);
+    return this.classroomRepo.save(classroom);
   }
 
   /**
@@ -220,7 +220,7 @@ export class ClassroomsService {
    * @returns Lista de aulas activas ordenadas por nombre
    */
   async getActiveClassrooms(teacherId: string): Promise<Classroom[]> {
-    return await this.classroomRepo.find({
+    return this.classroomRepo.find({
       where: {
         teacher_id: teacherId,
         is_active: true,
@@ -252,7 +252,7 @@ export class ClassroomsService {
 
     // Incrementar contador de estudiantes
     classroom.current_students_count += 1;
-    return await this.classroomRepo.save(classroom);
+    return this.classroomRepo.save(classroom);
   }
 
   /**
@@ -274,7 +274,7 @@ export class ClassroomsService {
       classroom.current_students_count -= 1;
     }
 
-    return await this.classroomRepo.save(classroom);
+    return this.classroomRepo.save(classroom);
   }
 
   /**
@@ -292,6 +292,6 @@ export class ClassroomsService {
     }
 
     classroom.schedule = schedule;
-    return await this.classroomRepo.save(classroom);
+    return this.classroomRepo.save(classroom);
   }
 }

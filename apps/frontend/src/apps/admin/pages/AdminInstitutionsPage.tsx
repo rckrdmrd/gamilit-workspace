@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { useUserGamification } from '@/shared/hooks/useUserGamification';
@@ -98,22 +99,40 @@ export default function AdminInstitutionsPage() {
   };
 
   const openEditModal = (org: Organization) => {
+    // BUG-ADMIN-007: Validate org data before opening modal
+    if (!org?.id || !org?.name) {
+      console.error('[AdminInstitutionsPage] Invalid org for edit:', org);
+      return;
+    }
     setSelectedOrg(org);
-    setFormData({ name: org.name, slug: '', plan: org.plan });
+    setFormData({ name: org.name, slug: '', plan: org.plan || 'free' });
     setIsEditModalOpen(true);
   };
 
   const openFeaturesModal = (org: Organization) => {
+    // BUG-ADMIN-007: Validate org data before opening modal
+    if (!org?.id) {
+      console.error('[AdminInstitutionsPage] Invalid org for features:', org);
+      return;
+    }
     setSelectedOrg(org);
     setIsFeaturesModalOpen(true);
   };
 
   const handleToggleFeature = async (feature: string) => {
-    if (!selectedOrg) return;
+    // BUG-ADMIN-007: Validate selectedOrg and feature
+    if (!selectedOrg?.id || !feature) {
+      console.error('[AdminInstitutionsPage] Invalid toggle feature call:', {
+        selectedOrg,
+        feature,
+      });
+      return;
+    }
 
     // Save previous state for rollback
     const previousOrg = { ...selectedOrg };
-    const currentFeatures = selectedOrg.features ?? [];
+    // BUG-ADMIN-007: Safe array access with validation
+    const currentFeatures = Array.isArray(selectedOrg.features) ? selectedOrg.features : [];
 
     try {
       // Optimistic update
@@ -135,18 +154,27 @@ export default function AdminInstitutionsPage() {
       key: 'name',
       label: 'Organización',
       sortable: true,
-      render: (row) => (
-        <div>
-          <p className="font-medium text-detective-text">{row.name}</p>
-          <p className="text-xs text-gray-400">ID: {row.id}</p>
-        </div>
-      ),
+      render: (row) => {
+        // BUG-ADMIN-007: Defensive validation for row data
+        if (!row?.id || !row?.name) {
+          console.warn('[AdminInstitutionsPage] Invalid organization row:', row);
+          return <div className="text-xs text-red-500">Datos inválidos</div>;
+        }
+        return (
+          <div>
+            <p className="font-medium text-detective-text">{row.name}</p>
+            <p className="text-xs text-gray-400">ID: {row.id}</p>
+          </div>
+        );
+      },
     },
     {
       key: 'plan',
       label: 'Plan',
       sortable: true,
       render: (row) => {
+        // BUG-ADMIN-007: Safe access to plan with fallback
+        const plan = row?.plan || 'free';
         const planColors: Record<string, string> = {
           free: 'bg-gray-500/20 text-gray-500',
           basic: 'bg-green-500/20 text-green-500',
@@ -154,8 +182,10 @@ export default function AdminInstitutionsPage() {
           enterprise: 'bg-purple-500/20 text-purple-500',
         };
         return (
-          <span className={`rounded-lg px-2 py-1 text-xs font-medium ${planColors[row.plan]}`}>
-            {row.plan.toUpperCase()}
+          <span
+            className={`rounded-lg px-2 py-1 text-xs font-medium ${planColors[plan] || planColors.free}`}
+          >
+            {plan.toUpperCase()}
           </span>
         );
       },
@@ -165,18 +195,20 @@ export default function AdminInstitutionsPage() {
       label: 'Estado',
       sortable: true,
       render: (row) => {
+        // BUG-ADMIN-007: Safe access to status with fallback
+        const status = row?.status || 'inactive';
         const statusColors = {
           active: 'bg-green-500/20 text-green-500',
           inactive: 'bg-gray-500/20 text-gray-500',
           suspended: 'bg-red-500/20 text-red-500',
         };
+        const statusLabel =
+          status === 'active' ? 'Activo' : status === 'inactive' ? 'Inactivo' : 'Suspendido';
         return (
-          <span className={`rounded-lg px-2 py-1 text-xs font-medium ${statusColors[row.status]}`}>
-            {row.status === 'active'
-              ? 'Activo'
-              : row.status === 'inactive'
-                ? 'Inactivo'
-                : 'Suspendido'}
+          <span
+            className={`rounded-lg px-2 py-1 text-xs font-medium ${statusColors[status] || statusColors.inactive}`}
+          >
+            {statusLabel}
           </span>
         );
       },
@@ -185,18 +217,31 @@ export default function AdminInstitutionsPage() {
       key: 'userCount',
       label: 'Usuarios',
       sortable: true,
-      render: (row) => (
-        <div className="flex items-center gap-2">
-          <Users className="h-4 w-4 text-gray-400" />
-          <span className="text-detective-text">{row.userCount}</span>
-        </div>
-      ),
+      render: (row) => {
+        // BUG-ADMIN-007: Safe access to userCount with fallback
+        const userCount = row?.userCount ?? 0;
+        return (
+          <div className="flex items-center gap-2">
+            <Users className="h-4 w-4 text-gray-400" />
+            <span className="text-detective-text">{userCount}</span>
+          </div>
+        );
+      },
     },
     {
       key: 'createdAt',
       label: 'Fecha Creación',
       sortable: true,
-      render: (row) => new Date(row.createdAt).toLocaleDateString('es-ES'),
+      render: (row) => {
+        // BUG-ADMIN-007: Safe date parsing with fallback
+        try {
+          const date = row?.createdAt ? new Date(row.createdAt) : new Date();
+          return date.toLocaleDateString('es-ES');
+        } catch (err) {
+          console.warn('[AdminInstitutionsPage] Invalid date for org:', row?.id, err);
+          return 'Fecha inválida';
+        }
+      },
     },
     {
       key: 'actions',
@@ -290,13 +335,24 @@ export default function AdminInstitutionsPage() {
             <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-detective-orange"></div>
             <p className="mt-4 text-detective-text-secondary">Cargando organizaciones...</p>
           </div>
-        ) : (
+        ) : organizations.length > 0 ? (
           /* Organizations Table */
           <DataTable
             data={organizations}
             columns={columns}
             searchPlaceholder="Buscar organizaciones..."
           />
+        ) : (
+          /* Empty State - BUG-ADMIN-007: Show friendly message when no data */
+          <div className="rounded-lg border border-gray-700 bg-detective-bg-secondary py-12 text-center">
+            <div className="mb-4 text-6xl">🏢</div>
+            <h3 className="mb-2 text-lg font-semibold text-detective-text">
+              No hay organizaciones
+            </h3>
+            <p className="text-detective-text-secondary">
+              No se encontraron organizaciones en el sistema
+            </p>
+          </div>
         )}
       </div>
 
@@ -418,12 +474,15 @@ export default function AdminInstitutionsPage() {
         <div className="space-y-4">
           <p className="text-sm text-gray-400">
             Plan actual:{' '}
-            <span className="font-bold text-detective-text">{selectedOrg?.plan.toUpperCase()}</span>
+            <span className="font-bold text-detective-text">
+              {selectedOrg?.plan?.toUpperCase() || 'FREE'}
+            </span>
           </p>
           {availableFeatures.map((feature) => {
-            // BUG-ADMIN-007: Safe access to features array with fallback
-            const isEnabled = selectedOrg?.features?.includes(feature.key) ?? false;
-            const isAvailable = selectedOrg && feature.plans.includes(selectedOrg.plan);
+            // BUG-ADMIN-007: Safe access to features array with Array.isArray validation
+            const orgFeatures = Array.isArray(selectedOrg?.features) ? selectedOrg.features : [];
+            const isEnabled = orgFeatures.includes(feature.key);
+            const isAvailable = selectedOrg?.plan && feature.plans.includes(selectedOrg.plan);
             return (
               <label
                 key={feature.key}

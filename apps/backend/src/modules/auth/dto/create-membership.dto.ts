@@ -18,14 +18,14 @@ export class CreateMembershipDto {
    * @required
    */
   @IsUUID('4', { message: 'El user_id debe ser un UUID válido' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del tenant (UUID)
    * @required
    */
   @IsUUID('4', { message: 'El tenant_id debe ser un UUID válido' })
-  tenant_id!: string;
+    tenant_id!: string;
 
   /**
    * Rol del usuario en el tenant
@@ -36,7 +36,7 @@ export class CreateMembershipDto {
     message: `El rol debe ser uno de: ${Object.values(MembershipRoleEnum).join(', ')}`,
   })
   @IsOptional()
-  role?: MembershipRoleEnum = MembershipRoleEnum.MEMBER;
+    role?: MembershipRoleEnum = MembershipRoleEnum.MEMBER;
 
   /**
    * Estado de la membresía
@@ -47,7 +47,7 @@ export class CreateMembershipDto {
     message: `El estado debe ser uno de: ${Object.values(MembershipStatusEnum).join(', ')}`,
   })
   @IsOptional()
-  status?: MembershipStatusEnum = MembershipStatusEnum.ACTIVE;
+    status?: MembershipStatusEnum = MembershipStatusEnum.ACTIVE;
 
   /**
    * ID del usuario que invitó (UUID, opcional)
@@ -55,7 +55,7 @@ export class CreateMembershipDto {
    */
   @IsUUID('4', { message: 'El invited_by debe ser un UUID válido' })
   @IsOptional()
-  invited_by?: string;
+    invited_by?: string;
 
   /**
    * Fecha y hora en que el usuario se unió al tenant
@@ -65,5 +65,5 @@ export class CreateMembershipDto {
    */
   @IsDateString({}, { message: 'La fecha joined_at debe estar en formato ISO 8601' })
   @IsOptional()
-  joined_at?: Date;
+    joined_at?: Date;
 }

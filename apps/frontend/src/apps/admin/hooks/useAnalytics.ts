@@ -69,7 +69,7 @@ export function useAnalytics(): UseAnalyticsReturn {
     try {
       const response = await adminAPI.analytics.getOverview();
       setOverview(response);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching overview:', err);
       // Don't set global error for individual fetch failures
     }
@@ -82,7 +82,7 @@ export function useAnalytics(): UseAnalyticsReturn {
     try {
       const response = await adminAPI.analytics.getEngagement({});
       setEngagement(response);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching engagement:', err);
     }
   }, []);
@@ -94,7 +94,7 @@ export function useAnalytics(): UseAnalyticsReturn {
     try {
       const response = await adminAPI.analytics.getGamification();
       setGamification(response);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching gamification:', err);
     }
   }, []);
@@ -106,7 +106,7 @@ export function useAnalytics(): UseAnalyticsReturn {
     try {
       const response = await adminAPI.analytics.getActivityTimeline({ days: 30 });
       setActivityTimeline(response.timeline || []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching activity timeline:', err);
     }
   }, []);
@@ -121,7 +121,7 @@ export function useAnalytics(): UseAnalyticsReturn {
         limit: 10,
       });
       setTopUsers(response.users || []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching top users:', err);
     }
   }, []);
@@ -133,7 +133,7 @@ export function useAnalytics(): UseAnalyticsReturn {
     try {
       const response = await adminAPI.analytics.getRetention();
       setRetention(response);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching retention:', err);
     }
   }, []);
@@ -153,7 +153,7 @@ export function useAnalytics(): UseAnalyticsReturn {
         fetchTopUsers(),
         fetchRetention(),
       ]);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err.message || 'Error al cargar analíticas');
       console.error('Error fetching analytics:', err);
     } finally {
@@ -194,7 +194,7 @@ export function useAnalytics(): UseAnalyticsReturn {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error exporting CSV:', err);
       throw err;
     }

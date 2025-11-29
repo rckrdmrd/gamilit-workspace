@@ -57,7 +57,16 @@ export interface PuzzleContextoExerciseProps {
   exercise: PuzzleContextoData;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
-  onProgressUpdate?: (progress: any) => void;
+  onProgressUpdate?: (data: {
+    progress: {
+      currentStep: number;
+      totalSteps: number;
+      score: number;
+      hintsUsed: number;
+      timeSpent: number;
+    };
+    answers: Record<string, unknown>;
+  }) => void;
   initialData?: Partial<PuzzleContextoState>;
   actionsRef?: React.MutableRefObject<PuzzleContextoActions | undefined>;
 }

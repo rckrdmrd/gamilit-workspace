@@ -35,13 +35,13 @@ export class ContentTemplate {
    * Identificador único de la plantilla (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del tenant (FK → auth_management.tenants)
    */
   @Column({ type: 'uuid', nullable: true })
-  tenant_id?: string;
+    tenant_id?: string;
 
   // =====================================================
   // BASIC INFORMATION
@@ -51,20 +51,20 @@ export class ContentTemplate {
    * Nombre de la plantilla
    */
   @Column({ type: 'text' })
-  name!: string;
+    name!: string;
 
   /**
    * Descripción de la plantilla
    */
   @Column({ type: 'text', nullable: true })
-  description?: string;
+    description?: string;
 
   /**
    * Tipo de plantilla
    * CHECK: exercise, module, assessment, announcement, feedback
    */
   @Column({ type: 'text', nullable: true })
-  template_type?: string;
+    template_type?: string;
 
   // =====================================================
   // TEMPLATE STRUCTURE
@@ -75,26 +75,26 @@ export class ContentTemplate {
    * Define cómo se estructura el contenido
    */
   @Column({ type: 'jsonb', default: {} })
-  template_structure!: Record<string, any>;
+    template_structure!: Record<string, any>;
 
   /**
    * Valores predeterminados JSON
    * Valores iniciales al crear contenido desde esta plantilla
    */
   @Column({ type: 'jsonb', nullable: true })
-  default_values?: Record<string, any>;
+    default_values?: Record<string, any>;
 
   /**
    * Campos requeridos en el contenido
    */
   @Column({ type: 'text', array: true, nullable: true })
-  required_fields?: string[];
+    required_fields?: string[];
 
   /**
    * Campos opcionales en el contenido
    */
   @Column({ type: 'text', array: true, nullable: true })
-  optional_fields?: string[];
+    optional_fields?: string[];
 
   // =====================================================
   // VISIBILITY & ACCESS
@@ -104,13 +104,13 @@ export class ContentTemplate {
    * Si la plantilla es pública (disponible para todos)
    */
   @Column({ type: 'boolean', default: false })
-  is_public!: boolean;
+    is_public!: boolean;
 
   /**
    * Si es plantilla del sistema (no editable por usuarios)
    */
   @Column({ type: 'boolean', default: false })
-  is_system_template!: boolean;
+    is_system_template!: boolean;
 
   // =====================================================
   // DIFFICULTY & USAGE
@@ -124,13 +124,13 @@ export class ContentTemplate {
     enum: DifficultyLevelEnum,
     nullable: true,
   })
-  difficulty_level?: DifficultyLevelEnum;
+    difficulty_level?: DifficultyLevelEnum;
 
   /**
    * Contador de usos de la plantilla
    */
   @Column({ type: 'integer', default: 0 })
-  usage_count!: number;
+    usage_count!: number;
 
   // =====================================================
   // METADATA & AUDIT
@@ -140,23 +140,23 @@ export class ContentTemplate {
    * ID del usuario que creó la plantilla (FK → auth_management.profiles)
    */
   @Column({ type: 'uuid', nullable: true })
-  created_by?: string;
+    created_by?: string;
 
   /**
    * Metadatos adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   /**
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización del registro
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 }

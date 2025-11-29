@@ -14,87 +14,87 @@ export class MayaRankDto {
     description: 'Unique identifier for this rank',
     example: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
   })
-  id!: string;
+    id!: string;
 
   @ApiProperty({
     description: 'Display name of the rank',
     example: 'Novato',
     enum: ['Novato', 'Guerrero', 'Sabio', 'Líder', 'Maestro'],
   })
-  name!: string;
+    name!: string;
 
   @ApiProperty({
     description: 'Numeric level of the rank (1-5)',
     example: 1,
   })
-  level!: number;
+    level!: number;
 
   @ApiProperty({
     description: 'Minimum XP required for this rank',
     example: 0,
   })
-  minXp!: number;
+    minXp!: number;
 
   @ApiPropertyOptional({
     description: 'Maximum XP for this rank (null for highest rank)',
     example: 99,
   })
-  maxXp?: number | null;
+    maxXp?: number | null;
 
   @ApiProperty({
     description: 'XP multiplier for users at this rank',
     example: 1.0,
   })
-  multiplierXp!: number;
+    multiplierXp!: number;
 
   @ApiProperty({
     description: 'ML Coins multiplier for users at this rank',
     example: 1.0,
   })
-  multiplierMlCoins!: number;
+    multiplierMlCoins!: number;
 
   @ApiProperty({
     description: 'Bonus ML Coins awarded upon reaching this rank',
     example: 0,
   })
-  bonusMlCoins!: number;
+    bonusMlCoins!: number;
 
   @ApiProperty({
     description: 'Hexadecimal color code for UI display',
     example: '#6B7280',
   })
-  color!: string;
+    color!: string;
 
   @ApiPropertyOptional({
     description: 'URL or path to rank icon/badge image',
     example: '/assets/ranks/novice.png',
   })
-  icon?: string;
+    icon?: string;
 
   @ApiProperty({
     description: 'Description of the rank and its significance',
     example: 'Rank inicial para nuevos usuarios',
   })
-  description!: string;
+    description!: string;
 
   @ApiProperty({
     description: 'Array of perks/benefits unlocked at this rank',
     type: [String],
     example: ['Acceso a ejercicios básicos', 'Perfil personalizable'],
   })
-  perks!: string[];
+    perks!: string[];
 
   @ApiProperty({
     description: 'Whether this rank is currently active in the system',
     example: true,
   })
-  isActive!: boolean;
+    isActive!: boolean;
 
   @ApiProperty({
     description: 'Display order for UI sorting (1-based)',
     example: 1,
   })
-  order!: number;
+    order!: number;
 }
 
 /**
@@ -107,35 +107,35 @@ export class MayaRanksResponseDto {
     description: 'List of Maya ranks with thresholds',
     type: [MayaRankDto],
   })
-  ranks!: MayaRankDto[];
+    ranks!: MayaRankDto[];
 
   @ApiProperty({
     description: 'Total number of ranks',
     example: 5,
   })
-  total!: number;
+    total!: number;
 
   @ApiProperty({
     description: 'Source setting key',
     example: 'gamification.ranks.thresholds',
   })
-  setting_key!: string;
+    setting_key!: string;
 
   @ApiProperty({
     description: 'Setting ID for updates',
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  setting_id!: string;
+    setting_id!: string;
 
   @ApiProperty({
     description: 'Last updated timestamp',
     example: '2025-11-23T10:30:00.000Z',
   })
-  last_updated!: string;
+    last_updated!: string;
 
   @ApiPropertyOptional({
     description: 'Admin who last updated',
     example: '550e8400-e29b-41d4-a716-446655440001',
   })
-  updated_by?: string;
+    updated_by?: string;
 }

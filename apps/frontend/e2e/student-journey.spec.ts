@@ -42,7 +42,9 @@ test.describe('Module Selection', () => {
     await page.goto('/student/modules');
 
     // Should show list of modules
-    const modules = await page.locator('[data-testid="module-card"], .module-card, article').count();
+    const modules = await page
+      .locator('[data-testid="module-card"], .module-card, article')
+      .count();
     expect(modules).toBeGreaterThan(0);
 
     // Each module should have:
@@ -83,7 +85,10 @@ test.describe('Exercise Flow', () => {
     // await navigateToModule(page);
 
     // Click start exercise button
-    await page.getByRole('button', { name: /iniciar|start|comenzar/i }).first().click();
+    await page
+      .getByRole('button', { name: /iniciar|start|comenzar/i })
+      .first()
+      .click();
 
     // Should navigate to exercise page
     await expect(page).toHaveURL(/\/exercise|\/ejercicio/);
@@ -135,7 +140,7 @@ test.describe('Exercise Flow', () => {
 
     // Should show feedback
     await expect(
-      page.locator('text=/correcto|correct|incorrecto|incorrect|bien|mal/i')
+      page.locator('text=/correcto|correct|incorrecto|incorrect|bien|mal/i'),
     ).toBeVisible({ timeout: 5000 });
 
     // Should show continue/next button
@@ -159,9 +164,7 @@ test.describe('Exercise Flow', () => {
     // await completeExercise(page);
 
     // Should show completion screen
-    await expect(
-      page.locator('text=/completado|completed|finalizado|terminado/i')
-    ).toBeVisible();
+    await expect(page.locator('text=/completado|completed|finalizado|terminado/i')).toBeVisible();
 
     // Should show score
     await expect(page.locator('text=/puntuación|score|resultado/i')).toBeVisible();
@@ -215,7 +218,9 @@ test.describe('Gamification Elements', () => {
     await page.goto('/student/leaderboard');
 
     // Current user row should be highlighted
-    const highlightedRow = page.locator('[data-testid="current-user-row"], .current-user, .highlight');
+    const highlightedRow = page.locator(
+      '[data-testid="current-user-row"], .current-user, .highlight',
+    );
 
     await expect(highlightedRow).toBeVisible();
   });
@@ -253,16 +258,19 @@ test.describe('Progress Tracking', () => {
     await expect(page.locator('text=/actividad reciente|recent activity/i')).toBeVisible();
 
     // Should list recent exercises or modules
-    const activityItems = await page.locator('[data-testid="activity-item"], .activity-item, li').count();
+    const activityItems = await page
+      .locator('[data-testid="activity-item"], .activity-item, li')
+      .count();
     expect(activityItems).toBeGreaterThan(0);
   });
 });
 
 /**
  * Helper functions (to be implemented with actual test data)
+ * Prefixed with _ to indicate they are prepared for future use
  */
 
-async function loginAsStudent(page: any) {
+async function _loginAsStudent(page: import('@playwright/test').Page) {
   await page.goto('/login');
   await page.getByLabel(/email/i).fill('student@test.com');
   await page.getByLabel(/password/i).fill('Test123!');
@@ -270,18 +278,18 @@ async function loginAsStudent(page: any) {
   await page.waitForURL(/\/student\/dashboard/);
 }
 
-async function navigateToModule(page: any) {
+async function _navigateToModule(page: import('@playwright/test').Page) {
   await page.goto('/student/modules');
   await page.locator('[data-testid="module-card"]').first().click();
 }
 
-async function startExercise(page: any) {
-  await navigateToModule(page);
+async function _startExercise(page: import('@playwright/test').Page) {
+  await _navigateToModule(page);
   await page.getByRole('button', { name: /start/i }).click();
 }
 
-async function completeExercise(page: any) {
-  await startExercise(page);
+async function _completeExercise(page: import('@playwright/test').Page) {
+  await _startExercise(page);
 
   // Answer all questions (simplified - assumes 5 questions)
   for (let i = 0; i < 5; i++) {

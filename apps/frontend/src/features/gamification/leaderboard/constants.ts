@@ -272,25 +272,21 @@ export interface MotivationalMessage {
 
 export const MOTIVATIONAL_MESSAGES: MotivationalMessage[] = [
   {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     condition: (rank, _percentile) => rank === 1,
     message: '¡Eres el número 1! ¡Increíble trabajo!',
     emoji: '👑',
   },
   {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     condition: (rank, _percentile) => rank === 2,
     message: '¡Casi en la cima! ¡Sigue así!',
     emoji: '🥈',
   },
   {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     condition: (rank, _percentile) => rank === 3,
     message: '¡En el podio! ¡Excelente trabajo!',
     emoji: '🥉',
   },
   {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     condition: (rank, _percentile) => rank <= 10,
     message: '¡En el Top 10! ¡Eres un crack!',
     emoji: '🏆',

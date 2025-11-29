@@ -43,7 +43,7 @@ import type {
   AvailablePermission,
   // Gamification
   GamificationSettings,
-  MayaRank,
+  MayaRankConfig,
   // Monitoring
   SystemHealth,
   SystemMetrics,
@@ -179,13 +179,16 @@ export async function getUserActivity(params?: {
 }
 
 /**
- * Get Maya ranks
+ * Get Maya ranks configuration
  * Backend: GET /admin/gamification-config/maya-ranks
  * Status: IMPLEMENTED (Phase 2)
+ *
+ * @returns MayaRankConfig[] - Array of rank configurations
+ * @see MayaRankConfig - Interface for rank config (not to confuse with MayaRank enum)
  */
-export async function getMayaRanks(): Promise<MayaRank[]> {
+export async function getMayaRanks(): Promise<MayaRankConfig[]> {
   try {
-    const response = await apiClient.get<MayaRank[]>(
+    const response = await apiClient.get<MayaRankConfig[]>(
       `${API_ENDPOINTS.admin.gamification}/maya-ranks`,
     );
 
@@ -529,7 +532,6 @@ export async function getUsers(filters?: UserFilters): Promise<PaginatedResponse
     // Backend expects 'limit' not 'pageSize', and doesn't support sortBy/sortOrder yet
     let transformedFilters: any = undefined;
     if (filters) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { pageSize, sortBy: _sortBy, sortOrder: _sortOrder, ...rest } = filters as any;
       transformedFilters = {
         ...rest,

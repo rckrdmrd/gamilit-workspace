@@ -59,7 +59,7 @@ export const AlertDetailsModal: React.FC<AlertDetailsModalProps> = ({ alert, isO
     });
   };
 
-  const renderJsonData = (data: Record<string, any> | undefined, title: string) => {
+  const renderJsonData = (data: Record<string, unknown> | undefined, title: string) => {
     if (!data || Object.keys(data).length === 0) return null;
 
     return (

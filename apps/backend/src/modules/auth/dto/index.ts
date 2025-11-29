@@ -51,3 +51,4 @@ export * from './create-password-reset-token.dto';
 export * from './reset-password.dto';
 export * from './request-password-reset.dto';
 export * from './password-reset-token-response.dto';
+export * from './change-password.dto';

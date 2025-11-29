@@ -24,25 +24,25 @@ export class UserResponseDto {
    * Identificador único del usuario (UUID)
    */
   @Expose()
-  id!: string;
+    id!: string;
 
   /**
    * Correo electrónico del usuario
    */
   @Expose()
-  email!: string;
+    email!: string;
 
   /**
    * Rol del usuario en el sistema
    */
   @Expose()
-  role!: GamilityRoleEnum;
+    role!: GamilityRoleEnum;
 
   /**
    * Fecha y hora de confirmación del email
    */
   @Expose()
-  email_confirmed_at?: Date;
+    email_confirmed_at?: Date;
 
   /**
    * Indica si el email ha sido verificado
@@ -50,7 +50,7 @@ export class UserResponseDto {
    * IMPORTANTE: Campo agregado para coherencia con Frontend
    */
   @Expose()
-  emailVerified?: boolean;
+    emailVerified?: boolean;
 
   /**
    * Indica si el usuario está activo
@@ -58,60 +58,60 @@ export class UserResponseDto {
    * IMPORTANTE: Campo agregado para coherencia con Frontend
    */
   @Expose()
-  isActive?: boolean;
+    isActive?: boolean;
 
   /**
    * Número de teléfono del usuario
    * IMPORTANTE: Campo agregado para alineación con DDL auth.users
    */
   @Expose()
-  phone?: string;
+    phone?: string;
 
   /**
    * Fecha y hora de confirmación del teléfono
    * IMPORTANTE: Campo agregado para alineación con DDL auth.users
    */
   @Expose()
-  phone_confirmed_at?: Date;
+    phone_confirmed_at?: Date;
 
   /**
    * Indica si el usuario es super administrador
    * IMPORTANTE: Campo agregado para alineación con DDL auth.users
    */
   @Expose()
-  is_super_admin?: boolean;
+    is_super_admin?: boolean;
 
   /**
    * Fecha y hora hasta la cual el usuario está baneado
    * IMPORTANTE: Campo agregado para alineación con DDL auth.users
    */
   @Expose()
-  banned_until?: Date;
+    banned_until?: Date;
 
   /**
    * Fecha y hora del último inicio de sesión
    */
   @Expose()
-  last_sign_in_at?: Date;
+    last_sign_in_at?: Date;
 
   /**
    * Metadatos adicionales del usuario (JSON)
    * NOTA: Filtrar campos sensibles si existen
    */
   @Expose()
-  raw_user_meta_data!: Record<string, any>;
+    raw_user_meta_data!: Record<string, any>;
 
   /**
    * Fecha y hora de creación del registro
    */
   @Expose()
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización del registro
    */
   @Expose()
-  updated_at!: Date;
+    updated_at!: Date;
 
   // =====================================================
   // Relaciones opcionales

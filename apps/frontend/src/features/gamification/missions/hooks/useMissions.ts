@@ -60,7 +60,6 @@ interface UseMissionsResult {
 /**
  * Main useMissions hook
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function useMissions(_userId?: string): UseMissionsResult {
   // State
   const [dailyMissions, setDailyMissions] = useState<Mission[]>([]);

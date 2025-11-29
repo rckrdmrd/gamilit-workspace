@@ -1,10 +1,22 @@
 # ROADMAP GENERAL - GAMILITPLATFORM
 ## Plan Estratégico de Desarrollo Reestructurado (3 Meses)
 
-**Versión:** 3.2 - Corregido tras Verificación de Database
-**Fecha:** 04 de Noviembre, 2025 (Actualizado)
-**Estado:** EN EJECUCIÓN - Implementación Core Completada (72%)
+**Versión:** 3.3 - Actualizado con alcance MVP clarificado
+**Fecha:** 29 de Noviembre, 2025
+**Estado:** MVP DEFINIDO - Implementación Core Completada
 **Basado en:** Análisis exhaustivo del código + Verificación de scripts de inicialización
+
+---
+
+> **🎯 ALCANCE MVP DEFINIDO (2025-11-29)**
+>
+> | Componente | MVP ✅ | Backlog ⏳ |
+> |-----------|--------|-----------|
+> | Módulos Educativos | M1-M3 (15 ejercicios) | M4-M5 (8 ejercicios) |
+> | Épicas | EXT-001 a EXT-006 | EXT-007 a EXT-011 |
+> | Portales | Student, Teacher, Admin P0+P1 | Admin P2 |
+>
+> Ver [Fase 4: Backlog](../../04-fase-backlog/README.md) para funcionalidad futura.
 
 ---
 

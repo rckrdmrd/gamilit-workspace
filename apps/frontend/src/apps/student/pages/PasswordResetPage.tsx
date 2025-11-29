@@ -7,7 +7,7 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { PasswordInput } from '@features/auth/components/PasswordInput';
 import { FormErrorDisplay } from '@features/auth/components/FormErrorDisplay';
 import { passwordResetSchema, PasswordResetFormData } from '@features/auth/schemas/authSchemas';
-import { mockPasswordReset } from '@features/auth/mocks/authMocks';
+import { passwordAPI } from '@/services/api/passwordAPI';
 import { Target, Lock, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -36,9 +36,22 @@ export default function PasswordResetPage() {
 
   // Verificar token al cargar
   useEffect(() => {
-    if (!token || token.length < 10) {
-      setTokenValid(false);
-    }
+    const validateToken = async () => {
+      if (!token) {
+        setTokenValid(false);
+        return;
+      }
+
+      try {
+        const result = await passwordAPI.validateResetToken(token);
+        setTokenValid(result.valid);
+      } catch (error) {
+        console.error('Error validating token:', error);
+        setTokenValid(false);
+      }
+    };
+
+    validateToken();
   }, [token]);
 
   const onSubmit = async (data: PasswordResetFormData) => {
@@ -51,19 +64,24 @@ export default function PasswordResetPage() {
     setServerError('');
 
     try {
-      const response = await mockPasswordReset(token, data.password);
+      // Call real API endpoint
+      await passwordAPI.resetPassword(token, data.password);
 
-      if (response.success) {
-        setResetSuccess(true);
-        // Redirigir al login después de 3 segundos
-        setTimeout(() => {
-          navigate('/login');
-        }, 3000);
-      } else {
-        setServerError(response.error || 'Error al restablecer la contraseña');
+      setResetSuccess(true);
+      // Redirigir al login después de 3 segundos
+      setTimeout(() => {
+        navigate('/login');
+      }, 3000);
+    } catch (error: unknown) {
+      // Handle API errors
+      let errorMessage = 'Error al restablecer la contraseña';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'object' && error !== null && 'response' in error) {
+        const axiosError = error as { response?: { data?: { message?: string } } };
+        errorMessage = axiosError.response?.data?.message || errorMessage;
       }
-    } catch (error) {
-      setServerError('Error de conexión. Intenta nuevamente.');
+      setServerError(errorMessage);
     } finally {
       setLoading(false);
     }

@@ -41,39 +41,39 @@ export class ListAlertsDto {
   @ApiPropertyOptional({ enum: AlertSeverity, description: 'Filter by severity' })
   @IsOptional()
   @IsEnum(AlertSeverity)
-  severity?: AlertSeverity;
+    severity?: AlertSeverity;
 
   @ApiPropertyOptional({ enum: AlertStatus, description: 'Filter by status' })
   @IsOptional()
   @IsEnum(AlertStatus)
-  status?: AlertStatus;
+    status?: AlertStatus;
 
   @ApiPropertyOptional({ enum: AlertType, description: 'Filter by alert type' })
   @IsOptional()
   @IsEnum(AlertType)
-  alert_type?: AlertType;
+    alert_type?: AlertType;
 
   @ApiPropertyOptional({ description: 'Filter alerts from this date' })
   @IsOptional()
   @IsDateString()
-  date_from?: string;
+    date_from?: string;
 
   @ApiPropertyOptional({ description: 'Filter alerts until this date' })
   @IsOptional()
   @IsDateString()
-  date_to?: string;
+    date_to?: string;
 
   @ApiPropertyOptional({ description: 'Page number', default: 1 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  page?: number = 1;
+    page?: number = 1;
 
   @ApiPropertyOptional({ description: 'Items per page', default: 20 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  limit?: number = 20;
+    limit?: number = 20;
 }

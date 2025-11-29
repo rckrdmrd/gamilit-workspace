@@ -14,14 +14,14 @@
  * @version 2.0 (2025-11-11) - Migrado a CEFR (A1-C2+)
  */
 export type ExerciseDifficulty =
-  | 'beginner'            // A1
-  | 'elementary'          // A2
-  | 'pre_intermediate'    // B1
-  | 'intermediate'        // B2
-  | 'upper_intermediate'  // C1
-  | 'advanced'            // C2
-  | 'proficient'          // C2+
-  | 'native';             // Nativo
+  | 'beginner' // A1
+  | 'elementary' // A2
+  | 'pre_intermediate' // B1
+  | 'intermediate' // B2
+  | 'upper_intermediate' // C1
+  | 'advanced' // C2
+  | 'proficient' // C2+
+  | 'native'; // Nativo
 
 /**
  * Exercise types/mechanics
@@ -155,7 +155,7 @@ export interface ExerciseAttempt {
    * Example: { "q1": "answer1", "q2": ["option1", "option2"] }
    * This is the primary field for storing answers
    */
-  submitted_answers: Record<string, any>;
+  submitted_answers: Record<string, unknown>;
 
   /**
    * Simple answer field (legacy/backward compatibility)
@@ -194,7 +194,7 @@ export interface ExerciseAttempt {
    * Additional metadata (browser, device_type, response_pattern, etc.)
    * Example: { browser: "Chrome", device_type: "mobile", response_pattern: [...] }
    */
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 /**

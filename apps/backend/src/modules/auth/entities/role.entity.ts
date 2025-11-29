@@ -27,45 +27,45 @@ import { User } from './user.entity';
 @Entity({ schema: DB_SCHEMAS.AUTH, name: DB_TABLES.AUTH.ROLES })
 export class Role {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * Nombre único del rol
    * @example 'student', 'teacher', 'admin'
    */
   @Column({ type: 'varchar', unique: true })
-  name!: string;
+    name!: string;
 
   /**
    * Descripción del rol
    */
   @Column({ type: 'text', nullable: true })
-  description?: string;
+    description?: string;
 
   /**
    * Permisos del rol en formato JSON
    * @example { "can_create_content": true, "can_delete_users": false }
    */
   @Column({ type: 'jsonb', default: {} })
-  permissions!: Record<string, boolean>;
+    permissions!: Record<string, boolean>;
 
   /**
    * Indica si el rol está activo
    */
   @Column({ type: 'boolean', default: true })
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Fecha de creación
    */
   @CreateDateColumn()
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de última actualización
    */
   @UpdateDateColumn()
-  updated_at!: Date;
+    updated_at!: Date;
 
   // ============================================================================
   // RELACIONES
@@ -76,5 +76,5 @@ export class Role {
    * Relación many-to-many a través de tabla intermedia user_roles
    */
   @ManyToMany(() => User, (user) => user.roles)
-  users?: User[];
+    users?: User[];
 }

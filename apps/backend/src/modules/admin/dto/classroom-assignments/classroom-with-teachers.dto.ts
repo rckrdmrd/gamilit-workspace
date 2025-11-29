@@ -8,25 +8,25 @@ export class ClassroomInfoDto {
     description: 'Classroom UUID',
     example: '770e8400-e29b-41d4-a716-446655440020',
   })
-  id!: string;
+    id!: string;
 
   @ApiProperty({
     description: 'Classroom name',
     example: 'Matemáticas 6A',
   })
-  name!: string;
+    name!: string;
 
   @ApiProperty({
     description: 'Grade level',
     example: '6',
   })
-  grade!: string;
+    grade!: string;
 
   @ApiProperty({
     description: 'Section identifier',
     example: 'A',
   })
-  section!: string;
+    section!: string;
 }
 
 /**
@@ -37,31 +37,31 @@ export class TeacherInfoDto {
     description: 'Teacher UUID',
     example: '550e8400-e29b-41d4-a716-446655440005',
   })
-  id!: string;
+    id!: string;
 
   @ApiProperty({
     description: 'Teacher full name',
     example: 'María González',
   })
-  full_name!: string;
+    full_name!: string;
 
   @ApiProperty({
     description: 'Teacher email',
     example: 'maria.gonzalez@school.com',
   })
-  email!: string;
+    email!: string;
 
   @ApiProperty({
     description: 'Teacher role in system',
     example: 'admin_teacher',
   })
-  role!: string;
+    role!: string;
 
   @ApiProperty({
     description: 'Date assigned to classroom',
     example: '2025-11-24T10:00:00Z',
   })
-  assigned_at!: Date;
+    assigned_at!: Date;
 }
 
 /**
@@ -73,11 +73,11 @@ export class ClassroomWithTeachersDto {
     description: 'Classroom information',
     type: ClassroomInfoDto,
   })
-  classroom!: ClassroomInfoDto;
+    classroom!: ClassroomInfoDto;
 
   @ApiProperty({
     description: 'List of teachers assigned to this classroom',
     type: [TeacherInfoDto],
   })
-  teachers!: TeacherInfoDto[];
+    teachers!: TeacherInfoDto[];
 }

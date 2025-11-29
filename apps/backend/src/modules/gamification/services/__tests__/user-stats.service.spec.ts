@@ -386,7 +386,7 @@ describe('UserStatsService', () => {
         total_xp: 80,
         xp_to_next_level: 100,
         current_rank: 'Ajaw',
-        rank_progress: 0
+        rank_progress: 0,
       });
       mockUserStatsRepo.findOne.mockResolvedValue(mockStats);
       mockUserStatsRepo.save.mockImplementation((stats) => {
@@ -410,7 +410,7 @@ describe('UserStatsService', () => {
         total_xp: 0,
         xp_to_next_level: 100,
         current_rank: 'Ajaw',
-        rank_progress: 0
+        rank_progress: 0,
       });
       mockUserStatsRepo.findOne.mockResolvedValue(mockStats);
       mockUserStatsRepo.save.mockImplementation((stats) => {
@@ -433,7 +433,7 @@ describe('UserStatsService', () => {
         total_xp: 90,
         xp_to_next_level: 100,
         current_rank: 'Ajaw',
-        rank_progress: 80
+        rank_progress: 80,
       });
       mockUserStatsRepo.findOne.mockResolvedValue(mockStats);
       mockUserStatsRepo.save.mockImplementation((stats) => {
@@ -481,7 +481,7 @@ describe('UserStatsService', () => {
         total_xp: 50,
         xp_to_next_level: 100,
         current_rank: 'Ajaw',
-        rank_progress: 0
+        rank_progress: 0,
       });
       mockUserStatsRepo.findOne.mockResolvedValue(mockStats);
       mockUserStatsRepo.save.mockImplementation((stats) => {
@@ -505,7 +505,7 @@ describe('UserStatsService', () => {
         total_xp: 0,
         xp_to_next_level: 600,
         current_rank: "K'uk'ulkan", // Max rank
-        rank_progress: 100
+        rank_progress: 100,
       });
       mockUserStatsRepo.findOne.mockResolvedValue(mockStats);
       mockUserStatsRepo.save.mockImplementation((stats) => {
@@ -625,7 +625,7 @@ describe('UserStatsService', () => {
       const tenant1Stats = createMockStats({
         user_id: 'user-1',
         tenant_id: 'tenant-1',
-        total_xp: 1000
+        total_xp: 1000,
       });
       mockUserStatsRepo.find.mockResolvedValue([tenant1Stats]);
 

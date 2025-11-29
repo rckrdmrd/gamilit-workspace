@@ -105,7 +105,7 @@ export class ModuleProgressController {
     description: 'Error interno del servidor',
   })
   async getUserProgress(@Param('userId') userId: string) {
-    return await this.progressService.findByUserId(userId);
+    return this.progressService.findByUserId(userId);
   }
 
   /**
@@ -180,10 +180,10 @@ export class ModuleProgressController {
     description: 'Progreso no encontrado para el usuario y módulo especificados',
   })
   async getModuleProgress(
-    @Param('userId') userId: string,
+  @Param('userId') userId: string,
     @Param('moduleId') moduleId: string,
   ) {
-    return await this.progressService.findByUserAndModule(userId, moduleId);
+    return this.progressService.findByUserAndModule(userId, moduleId);
   }
 
   /**
@@ -239,7 +239,7 @@ export class ModuleProgressController {
     },
   })
   async create(@Body() createProgressDto: CreateModuleProgressDto) {
-    return await this.progressService.create(createProgressDto);
+    return this.progressService.create(createProgressDto);
   }
 
   /**
@@ -284,10 +284,10 @@ export class ModuleProgressController {
     description: 'Registro de progreso no encontrado',
   })
   async update(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() updateData: Partial<CreateModuleProgressDto>,
   ) {
-    return await this.progressService.update(id, updateData);
+    return this.progressService.update(id, updateData);
   }
 
   /**
@@ -336,10 +336,10 @@ export class ModuleProgressController {
     description: 'Registro de progreso no encontrado',
   })
   async updateProgressPercentage(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() body: { percentage: number },
   ) {
-    return await this.progressService.updateProgressPercentage(
+    return this.progressService.updateProgressPercentage(
       id,
       body.percentage,
     );
@@ -386,7 +386,7 @@ export class ModuleProgressController {
     description: 'Registro de progreso no encontrado',
   })
   async completeModule(@Param('id') id: string) {
-    return await this.progressService.completeModule(id);
+    return this.progressService.completeModule(id);
   }
 
   /**
@@ -434,7 +434,7 @@ export class ModuleProgressController {
     description: 'Módulo no encontrado',
   })
   async getModuleStats(@Param('moduleId') moduleId: string) {
-    return await this.progressService.getModuleStats(moduleId);
+    return this.progressService.getModuleStats(moduleId);
   }
 
   /**
@@ -464,16 +464,18 @@ export class ModuleProgressController {
     description: 'Resumen de progreso obtenido exitosamente',
     schema: {
       example: {
-        user_id: '550e8400-e29b-41d4-a716-446655440000',
         total_modules: 8,
         completed_modules: 3,
         in_progress_modules: 4,
-        not_started_modules: 1,
-        overall_progress: 45.5,
+        completion_rate: 37.5,
         total_xp_earned: 1250,
         total_ml_coins_earned: 625,
         total_time_spent: '12:30:45',
+        total_exercises: 120,
+        completed_exercises: 85,
         average_score: 85.3,
+        current_streak: 0,
+        longest_streak: 0,
       },
     },
   })
@@ -482,7 +484,7 @@ export class ModuleProgressController {
     description: 'Usuario no encontrado',
   })
   async getUserProgressSummary(@Param('userId') userId: string) {
-    return await this.progressService.getUserProgressSummary(userId);
+    return this.progressService.getUserProgressSummary(userId);
   }
 
   /**
@@ -528,7 +530,7 @@ export class ModuleProgressController {
     description: 'Usuario no encontrado',
   })
   async findInProgress(@Param('userId') userId: string) {
-    return await this.progressService.findInProgress(userId);
+    return this.progressService.findInProgress(userId);
   }
 
   /**
@@ -581,7 +583,7 @@ export class ModuleProgressController {
     description: 'Usuario no encontrado',
   })
   async calculateLearningPath(@Param('userId') userId: string) {
-    return await this.progressService.calculateLearningPath(userId);
+    return this.progressService.calculateLearningPath(userId);
   }
 
   /**
@@ -655,9 +657,9 @@ export class ModuleProgressController {
   })
   async getPendingActivities(
     @Param('userId') userId: string,
-    @Query() query: GetPendingActivitiesDto,
+      @Query() query: GetPendingActivitiesDto,
   ): Promise<PendingActivityDto[]> {
-    return await this.pendingActivitiesService.getPendingActivities(
+    return this.pendingActivitiesService.getPendingActivities(
       userId,
       query,
     );
@@ -730,9 +732,9 @@ export class ModuleProgressController {
   })
   async getRecentActivities(
     @Param('userId') userId: string,
-    @Query() query: GetRecentActivitiesDto,
+      @Query() query: GetRecentActivitiesDto,
   ): Promise<RecentActivityDto[]> {
-    return await this.recentActivityService.getRecentActivities(
+    return this.recentActivityService.getRecentActivities(
       userId,
       query,
     );

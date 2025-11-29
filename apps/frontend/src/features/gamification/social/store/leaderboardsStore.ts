@@ -3,11 +3,12 @@
  *
  * Now connects to real API instead of mock data
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { create } from 'zustand';
 import type { LeaderboardData, LeaderboardType, TimePeriod } from '../types/leaderboardsTypes';
 import { getLeaderboardByType as getMockLeaderboardByType } from '../mockData/leaderboardsMockData';
-import { getLeaderboard, getUserLeaderboardRank } from '../api/socialAPI';
+import { getLeaderboard, getUserLeaderboardRank, getClassroomLeaderboard } from '../api/socialAPI';
 import { FEATURE_FLAGS } from '@/config/api.config';
 
 interface LeaderboardsStore {
@@ -17,9 +18,10 @@ interface LeaderboardsStore {
   loading: boolean;
   error: string | null;
 
-  setLeaderboardType: (type: LeaderboardType) => Promise<void>;
+  setLeaderboardType: (type: LeaderboardType, classroomId?: string) => Promise<void>;
   setTimePeriod: (period: TimePeriod) => Promise<void>;
-  refreshLeaderboard: () => Promise<void>;
+  refreshLeaderboard: (classroomId?: string) => Promise<void>;
+  updateFromWebSocket: (entries: any[]) => void;
 }
 
 export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
@@ -29,7 +31,7 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
   loading: false,
   error: null,
 
-  setLeaderboardType: async (type: LeaderboardType) => {
+  setLeaderboardType: async (type: LeaderboardType, classroomId?: string) => {
     set({ loading: true, error: null, selectedType: type });
 
     try {
@@ -41,16 +43,28 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
 
       const { selectedPeriod } = get();
 
-      // Fetch leaderboard data from API
-      const entries = await getLeaderboard(type, selectedPeriod);
+      let entries;
 
-      // Try to get user's rank
+      // Special handling for classroom leaderboard
+      if (type === 'classroom') {
+        if (!classroomId) {
+          throw new Error('Classroom ID is required for classroom leaderboard');
+        }
+        entries = await getClassroomLeaderboard(classroomId);
+      } else {
+        // Fetch leaderboard data from API for other types
+        entries = await getLeaderboard(type, selectedPeriod);
+      }
+
+      // Try to get user's rank (skip for classroom as it's already included)
       let userRank: number | undefined = undefined;
-      try {
-        const userEntry = await getUserLeaderboardRank(type, selectedPeriod);
-        userRank = userEntry.rank;
-      } catch (err) {
-        console.warn('Could not fetch user rank:', err);
+      if (type !== 'classroom') {
+        try {
+          const userEntry = await getUserLeaderboardRank(type, selectedPeriod);
+          userRank = userEntry.rank;
+        } catch (err) {
+          console.warn('Could not fetch user rank:', err);
+        }
       }
 
       const leaderboard: LeaderboardData = {
@@ -118,7 +132,7 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
     }
   },
 
-  refreshLeaderboard: async () => {
+  refreshLeaderboard: async (classroomId?: string) => {
     const { selectedType, selectedPeriod } = get();
     set({ loading: true, error: null });
 
@@ -129,16 +143,28 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
         return;
       }
 
-      // Fetch fresh data from API
-      const entries = await getLeaderboard(selectedType, selectedPeriod);
+      let entries;
 
-      // Try to get user's rank
+      // Special handling for classroom leaderboard
+      if (selectedType === 'classroom') {
+        if (!classroomId) {
+          throw new Error('Classroom ID is required for classroom leaderboard');
+        }
+        entries = await getClassroomLeaderboard(classroomId);
+      } else {
+        // Fetch fresh data from API
+        entries = await getLeaderboard(selectedType, selectedPeriod);
+      }
+
+      // Try to get user's rank (skip for classroom as it's already included)
       let userRank: number | undefined = undefined;
-      try {
-        const userEntry = await getUserLeaderboardRank(selectedType, selectedPeriod);
-        userRank = userEntry.rank;
-      } catch (err) {
-        console.warn('Could not fetch user rank:', err);
+      if (selectedType !== 'classroom') {
+        try {
+          const userEntry = await getUserLeaderboardRank(selectedType, selectedPeriod);
+          userRank = userEntry.rank;
+        } catch (err) {
+          console.warn('Could not fetch user rank:', err);
+        }
       }
 
       const leaderboard: LeaderboardData = {
@@ -162,5 +188,29 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
       const mockLeaderboard = getMockLeaderboardByType(selectedType);
       set({ currentLeaderboard: { ...mockLeaderboard, lastUpdated: new Date() } });
     }
+  },
+
+  updateFromWebSocket: (entries: any[]) => {
+    const { currentLeaderboard } = get();
+
+    // Only update if we have entries
+    if (!entries || entries.length === 0) {
+      console.warn('⚠️ Received empty leaderboard update from WebSocket');
+      return;
+    }
+
+    console.log('🔄 Updating leaderboard from WebSocket:', entries.length, 'entries');
+
+    // Create updated leaderboard data
+    const updatedLeaderboard: LeaderboardData = {
+      ...currentLeaderboard,
+      entries,
+      totalParticipants: entries.length,
+      lastUpdated: new Date(),
+      // Try to find user rank from the updated entries
+      userRank: entries.find((e) => e.isCurrentUser)?.rank || currentLeaderboard.userRank,
+    };
+
+    set({ currentLeaderboard: updatedLeaderboard });
   },
 }));

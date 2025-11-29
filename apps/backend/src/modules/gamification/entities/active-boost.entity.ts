@@ -31,16 +31,16 @@ import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants';
 @Index('idx_active_boosts_active', ['is_active', 'expires_at'], { where: 'is_active = true' })
 export class ActiveBoost {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Tipo de bonificador: XP, COINS, LUCK, DROP_RATE
    */
   @Column({ type: 'varchar', length: 50 })
-  boost_type!: 'XP' | 'COINS' | 'LUCK' | 'DROP_RATE';
+    boost_type!: 'XP' | 'COINS' | 'LUCK' | 'DROP_RATE';
 
   /**
    * Multiplicador del boost (debe ser > 1.0)
@@ -50,34 +50,34 @@ export class ActiveBoost {
    * - 1.25 = +25%
    */
   @Column({ type: 'numeric', precision: 4, scale: 2, default: 1.0 })
-  multiplier!: number;
+    multiplier!: number;
 
   /**
    * Origen del boost
    * Ejemplos: PREMIUM, EVENT, ITEM, ACHIEVEMENT, MISSION_REWARD
    */
   @Column({ type: 'varchar', length: 100, nullable: true })
-  source!: string | null;
+    source!: string | null;
 
   /**
    * Fecha y hora de activación del boost
    */
   @Column({ type: 'timestamptz', default: () => 'NOW()' })
-  activated_at!: Date;
+    activated_at!: Date;
 
   /**
    * Fecha y hora de expiración del boost
    * Se debe verificar automáticamente para desactivar boosts expirados
    */
   @Column({ type: 'timestamptz' })
-  expires_at!: Date;
+    expires_at!: Date;
 
   /**
    * Indica si el boost está activo o ya expiró
    * Se debe actualizar mediante cron job o query automática
    */
   @Column({ type: 'boolean', default: true })
-  is_active!: boolean;
+    is_active!: boolean;
 
   // Relación con Profile (se puede agregar después cuando se cree Profile entity)
   // @ManyToOne(() => Profile, { onDelete: 'CASCADE' })

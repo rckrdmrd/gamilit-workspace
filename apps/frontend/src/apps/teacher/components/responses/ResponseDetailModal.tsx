@@ -103,8 +103,8 @@ const MetricBadge: React.FC<{
 };
 
 const AnswerComparison: React.FC<{
-  studentAnswer: Record<string, any>;
-  correctAnswer: Record<string, any>;
+  studentAnswer: Record<string, unknown>;
+  correctAnswer: Record<string, unknown>;
 }> = ({ studentAnswer, correctAnswer }) => {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

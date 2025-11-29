@@ -14,6 +14,8 @@ export { TrueFalseAnswersDto } from './true-false-answers.dto';
 export { CrucigramaAnswersDto } from './crucigrama-answers.dto';
 export { TimelineAnswersDto } from './timeline-answers.dto';
 export { FillInBlankAnswersDto } from './fill-in-blank-answers.dto';
+export { MapaConceptualAnswersDto } from './mapa-conceptual-answers.dto';
+export { EmparejamientoAnswersDto } from './emparejamiento-answers.dto';
 
 // Module 2 - Inferential Comprehension
 export { DetectiveTextualAnswersDto } from './detective-textual-answers.dto';

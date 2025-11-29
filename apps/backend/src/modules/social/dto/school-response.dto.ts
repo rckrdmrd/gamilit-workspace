@@ -13,175 +13,175 @@ export class SchoolResponseDto {
    * ID único del registro
    */
   @Expose()
-  id!: string;
+    id!: string;
 
   /**
    * ID del tenant propietario
    */
   @Expose()
-  tenant_id!: string;
+    tenant_id!: string;
 
   /**
    * Nombre completo de la institución
    */
   @Expose()
-  name!: string;
+    name!: string;
 
   /**
    * Código único de identificación
    */
   @Expose()
-  code!: string | null;
+    code!: string | null;
 
   /**
    * Nombre corto o abreviatura
    */
   @Expose()
-  short_name!: string | null;
+    short_name!: string | null;
 
   /**
    * Descripción de la institución
    */
   @Expose()
-  description!: string | null;
+    description!: string | null;
 
   /**
    * Dirección física
    */
   @Expose()
-  address!: string | null;
+    address!: string | null;
 
   /**
    * Ciudad
    */
   @Expose()
-  city!: string | null;
+    city!: string | null;
 
   /**
    * Región o estado
    */
   @Expose()
-  region!: string | null;
+    region!: string | null;
 
   /**
    * País
    */
   @Expose()
-  country!: string;
+    country!: string;
 
   /**
    * Código postal
    */
   @Expose()
-  postal_code!: string | null;
+    postal_code!: string | null;
 
   /**
    * Teléfono de contacto
    */
   @Expose()
-  phone!: string | null;
+    phone!: string | null;
 
   /**
    * Email de contacto
    */
   @Expose()
-  email!: string | null;
+    email!: string | null;
 
   /**
    * Sitio web
    */
   @Expose()
-  website!: string | null;
+    website!: string | null;
 
   /**
    * ID del director/a
    */
   @Expose()
-  principal_id!: string | null;
+    principal_id!: string | null;
 
   /**
    * ID del contacto administrativo
    */
   @Expose()
-  administrative_contact_id!: string | null;
+    administrative_contact_id!: string | null;
 
   /**
    * Año académico actual
    */
   @Expose()
-  academic_year!: string | null;
+    academic_year!: string | null;
 
   /**
    * Sistema semestral
    */
   @Expose()
-  semester_system!: boolean;
+    semester_system!: boolean;
 
   /**
    * Niveles de grado que ofrece
    */
   @Expose()
-  grade_levels!: string[];
+    grade_levels!: string[];
 
   /**
    * Configuraciones adicionales
    */
   @Expose()
-  settings!: Record<string, any>;
+    settings!: Record<string, any>;
 
   /**
    * Capacidad máxima de estudiantes
    */
   @Expose()
-  max_students!: number;
+    max_students!: number;
 
   /**
    * Capacidad máxima de profesores
    */
   @Expose()
-  max_teachers!: number;
+    max_teachers!: number;
 
   /**
    * Contador actual de estudiantes
    */
   @Expose()
-  current_students_count!: number;
+    current_students_count!: number;
 
   /**
    * Contador actual de profesores
    */
   @Expose()
-  current_teachers_count!: number;
+    current_teachers_count!: number;
 
   /**
    * Escuela activa
    */
   @Expose()
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Escuela verificada
    */
   @Expose()
-  is_verified!: boolean;
+    is_verified!: boolean;
 
   /**
    * Metadatos adicionales
    */
   @Expose()
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   /**
    * Fecha de creación
    */
   @Expose()
   @Type(() => Date)
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de actualización
    */
   @Expose()
   @Type(() => Date)
-  updated_at!: Date;
+    updated_at!: Date;
 }

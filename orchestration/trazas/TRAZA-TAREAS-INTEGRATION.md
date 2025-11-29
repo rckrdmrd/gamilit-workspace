@@ -1,7 +1,8 @@
 # Traza de Tareas: NEXUS-INTEGRATION
 
-**Última actualización:** 2025-11-02
-**Estado:** ✅ Inicializado
+**Última actualización:** 2025-11-29
+**Estado:** ⚠️ DEPRECATED - Template vacío sin uso (27 días inactivo)
+**Nota:** Marcado como deprecated por Architecture-Analyst (clean-load validation)
 
 ---
 

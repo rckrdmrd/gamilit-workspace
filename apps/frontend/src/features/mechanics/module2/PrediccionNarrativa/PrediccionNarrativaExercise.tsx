@@ -4,6 +4,7 @@ import { BookOpen, AlertCircle, Lightbulb } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { RankUpModal } from '@/features/gamification/ranks/components/RankUpModal';
 import { saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import type {
   PrediccionNarrativaExerciseProps,
@@ -27,7 +28,6 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
   const { user } = useAuth();
   const { fetchUserProgress } = useRanksStore();
   const { fetchBalance } = useEconomyStore();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize answers for all scenarios
@@ -41,7 +41,6 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
   );
   const [showResults, setShowResults] = useState(initialData?.showResults || false);
   const [hintsUsed, setHintsUsed] = useState(initialData?.hintsUsed || 0);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_startTime] = useState(new Date());
   const [timeSpent, setTimeSpent] = useState(initialData?.timeSpent || 0);
   const [score, setScore] = useState(initialData?.score || 0);
@@ -49,6 +48,8 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
   const [showHint, setShowHint] = useState(false);
+  const [showRankUpModal, setShowRankUpModal] = useState(false);
+  const [rankUpData, setRankUpData] = useState<any>(null);
 
   const currentScenario = exercise.scenarios[currentScenarioIndex];
   const currentAnswer = answers.find((a) => a.scenarioId === currentScenario.id);
@@ -163,6 +164,10 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
       // Submit to backend API
       const response = await submitExercise(exercise.id, user.id, { scenarios: userAnswers });
 
+      if (response.rankUp) {
+        setRankUpData(response.rankUp);
+      }
+
       // Show backend response
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
@@ -247,7 +252,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
         validate: async () => handleCheck(),
       };
     }
-  }, [answers, score, timeSpent, hintsUsed, showResults, actionsRef]);
+  }, [actionsRef]);
 
   // FE-059: Removed validation styling - isCorrect field no longer available
   const getOptionStyle = (prediction: PredictionOption) => {
@@ -260,7 +265,6 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
   };
 
   // FE-059: Removed validation icons - isCorrect field no longer available
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getOptionIcon = (_prediction: PredictionOption) => {
     // No correctness feedback until backend integration
     return null;
@@ -439,16 +443,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
                   Salir
                 </DetectiveButton>
               )}
-              {!showResults ? (
-                <DetectiveButton
-                  variant="gold"
-                  size="md"
-                  onClick={handleCheck}
-                  disabled={answers.some((a) => a.selectedPredictionId === null)}
-                >
-                  Verificar Respuestas
-                </DetectiveButton>
-              ) : (
+              {showResults && (
                 <DetectiveButton variant="blue" size="md" onClick={handleReset}>
                   Intentar de Nuevo
                 </DetectiveButton>
@@ -465,13 +460,28 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
           feedback={feedback}
           onClose={() => {
             setShowFeedback(false);
-            if (feedback.type === 'success' && onComplete) {
-              onComplete(score, timeSpent);
+            if (rankUpData) {
+              setTimeout(() => setShowRankUpModal(true), 300);
+            } else if (feedback?.type === 'success') {
+              onComplete?.(score, timeSpent);
             }
           }}
           onRetry={() => {
             setShowFeedback(false);
             handleReset();
+          }}
+        />
+      )}
+
+      {showRankUpModal && rankUpData && (
+        <RankUpModal
+          isOpen={showRankUpModal}
+          onClose={() => {
+            setShowRankUpModal(false);
+            setRankUpData(null);
+            if (feedback?.type === 'success') {
+              onComplete?.(score, timeSpent);
+            }
           }}
         />
       )}

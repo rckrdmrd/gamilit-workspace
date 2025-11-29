@@ -30,7 +30,7 @@ export class RuedaInferenciasAnswersDto {
    */
   @IsObject({ message: 'fragments must be an object' })
   @IsNotEmpty({ message: 'fragments object is required' })
-  fragments!: Record<string, string>;
+    fragments!: Record<string, string>;
 
   /**
    * ID of the category selected (optional, for analytics)
@@ -38,7 +38,7 @@ export class RuedaInferenciasAnswersDto {
    */
   @IsString({ message: 'categoryId must be a string' })
   @IsOptional()
-  categoryId?: string;
+    categoryId?: string;
 
   /**
    * Total time spent on all fragments in seconds (optional)
@@ -46,7 +46,7 @@ export class RuedaInferenciasAnswersDto {
    */
   @IsNumber({}, { message: 'timeSpent must be a number' })
   @IsOptional()
-  timeSpent?: number;
+    timeSpent?: number;
 
   constructor() {
     this.fragments = {};

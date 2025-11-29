@@ -27,7 +27,12 @@ export { ExerciseAttemptResponseDto } from './exercise-attempt-response.dto';
 // ExerciseSubmission DTOs
 export { CreateExerciseSubmissionDto } from './create-exercise-submission.dto';
 export { ExerciseSubmissionResponseDto } from './exercise-submission-response.dto';
+export { GradeSubmissionDto } from './grade-submission.dto';
 
 // ScheduledMission DTOs
 export { CreateScheduledMissionDto } from './create-scheduled-mission.dto';
 export { ScheduledMissionResponseDto } from './scheduled-mission-response.dto';
+
+// AutoSave DTOs
+export { AutoSaveProgressDto } from './autosave-progress.dto';
+export { AutoSaveResponseDto } from './autosave-response.dto';

@@ -16,3 +16,5 @@ export * from './teacher-messages.service';
 export * from './teacher-content.service';
 export * from './bonus-coins.service';
 export * from './exercise-responses.service';
+export * from './storage.service';
+export * from './teacher-reports.service';

@@ -79,7 +79,7 @@ export class TeamChallengesController {
     },
   })
   async findByTeamId(@Param('teamId') teamId: string) {
-    return await this.teamChallengesService.findByTeamId(teamId);
+    return this.teamChallengesService.findByTeamId(teamId);
   }
 
   /**
@@ -110,7 +110,7 @@ export class TeamChallengesController {
     type: [TeamChallengeResponseDto],
   })
   async findByChallengeId(@Param('challengeId') challengeId: string) {
-    return await this.teamChallengesService.findByChallengeId(challengeId);
+    return this.teamChallengesService.findByChallengeId(challengeId);
   }
 
   /**
@@ -152,10 +152,10 @@ export class TeamChallengesController {
     description: 'Registro no encontrado',
   })
   async findByTeamAndChallenge(
-    @Param('teamId') teamId: string,
+  @Param('teamId') teamId: string,
     @Param('challengeId') challengeId: string,
   ) {
-    return await this.teamChallengesService.findByTeamAndChallenge(
+    return this.teamChallengesService.findByTeamAndChallenge(
       teamId,
       challengeId,
     );
@@ -217,7 +217,7 @@ export class TeamChallengesController {
     },
   })
   async create(@Body() createDto: CreateTeamChallengeDto) {
-    return await this.teamChallengesService.create(createDto);
+    return this.teamChallengesService.create(createDto);
   }
 
   /**
@@ -262,10 +262,10 @@ export class TeamChallengesController {
     description: 'Desafío no encontrado',
   })
   async updateStatus(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() body: { status: string },
   ) {
-    return await this.teamChallengesService.updateStatus(id, body.status);
+    return this.teamChallengesService.updateStatus(id, body.status);
   }
 
   /**
@@ -310,10 +310,10 @@ export class TeamChallengesController {
     description: 'Desafío no encontrado',
   })
   async recordScore(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() body: { score: number },
   ) {
-    return await this.teamChallengesService.recordScore(id, body.score);
+    return this.teamChallengesService.recordScore(id, body.score);
   }
 
   /**
@@ -371,10 +371,10 @@ export class TeamChallengesController {
     description: 'Desafío no encontrado',
   })
   async complete(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() body: { score?: number },
   ) {
-    return await this.teamChallengesService.complete(id, body.score ?? 0);
+    return this.teamChallengesService.complete(id, body.score ?? 0);
   }
 
   /**
@@ -417,7 +417,7 @@ export class TeamChallengesController {
     description: 'Desafío no encontrado',
   })
   async fail(@Param('id') id: string) {
-    return await this.teamChallengesService.fail(id);
+    return this.teamChallengesService.fail(id);
   }
 
   /**
@@ -468,6 +468,6 @@ export class TeamChallengesController {
     },
   })
   async getLeaderboard(@Param('challengeId') challengeId: string) {
-    return await this.teamChallengesService.getLeaderboard(challengeId);
+    return this.teamChallengesService.getLeaderboard(challengeId);
   }
 }

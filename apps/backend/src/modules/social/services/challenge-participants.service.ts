@@ -111,7 +111,7 @@ export class ChallengeParticipantsService {
    * @returns Lista de participantes ordenados por rank
    */
   async findByChallengeId(challengeId: string): Promise<ChallengeParticipant[]> {
-    return await this.participantRepo.find({
+    return this.participantRepo.find({
       where: { challenge_id: challengeId },
       order: { rank: 'ASC', score: 'DESC' },
     });
@@ -152,7 +152,7 @@ export class ChallengeParticipantsService {
       where.participation_status = status;
     }
 
-    return await this.participantRepo.find({
+    return this.participantRepo.find({
       where,
       order: { created_at: 'DESC' },
     });
@@ -174,7 +174,7 @@ export class ChallengeParticipantsService {
     }
 
     participant.participation_status = 'accepted';
-    return await this.participantRepo.save(participant);
+    return this.participantRepo.save(participant);
   }
 
   /**
@@ -197,7 +197,7 @@ export class ChallengeParticipantsService {
       participant.completed_at = new Date();
     }
 
-    return await this.participantRepo.save(participant);
+    return this.participantRepo.save(participant);
   }
 
   /**
@@ -217,7 +217,7 @@ export class ChallengeParticipantsService {
     participant.score = score;
     participant.updated_at = new Date();
 
-    return await this.participantRepo.save(participant);
+    return this.participantRepo.save(participant);
   }
 
   /**
@@ -237,7 +237,7 @@ export class ChallengeParticipantsService {
       rank++;
     }
 
-    return await this.participantRepo.save(participants);
+    return this.participantRepo.save(participants);
   }
 
   /**
@@ -291,7 +291,7 @@ export class ChallengeParticipantsService {
       rewards_distributed_at: new Date().toISOString(),
     };
 
-    return await this.participantRepo.save(participant);
+    return this.participantRepo.save(participant);
   }
 
   /**
@@ -329,7 +329,7 @@ export class ChallengeParticipantsService {
       };
     }
 
-    return await this.participantRepo.save(participants);
+    return this.participantRepo.save(participants);
   }
 
   /**
@@ -339,7 +339,7 @@ export class ChallengeParticipantsService {
    * @returns Participante actualizado
    */
   async forfeit(challengeId: string, userId: string): Promise<ChallengeParticipant> {
-    return await this.updateStatus(challengeId, userId, 'forfeit');
+    return this.updateStatus(challengeId, userId, 'forfeit');
   }
 
   /**

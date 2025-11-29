@@ -86,7 +86,7 @@ export class FriendshipsController {
     description: 'Error interno del servidor',
   })
   async getUserFriends(@Param('userId') userId: string) {
-    return await this.friendshipsService.findByUserId(userId);
+    return this.friendshipsService.findByUserId(userId);
   }
 
   /**
@@ -133,7 +133,7 @@ export class FriendshipsController {
     description: 'Usuario no encontrado',
   })
   async getPendingRequests(@Param('userId') userId: string) {
-    return await this.friendshipsService.getPendingRequests(userId);
+    return this.friendshipsService.getPendingRequests(userId);
   }
 
   /**
@@ -167,7 +167,7 @@ export class FriendshipsController {
     description: 'Usuario no encontrado',
   })
   async getSentRequests(@Param('userId') userId: string) {
-    return await this.friendshipsService.getSentRequests(userId);
+    return this.friendshipsService.getSentRequests(userId);
   }
 
   /**
@@ -239,7 +239,7 @@ export class FriendshipsController {
     },
   })
   async sendFriendRequest(@Body() createDto: CreateFriendshipDto) {
-    return await this.friendshipsService.sendFriendRequest(
+    return this.friendshipsService.sendFriendRequest(
       createDto.user_id,
       createDto.friend_id,
     );
@@ -299,7 +299,7 @@ export class FriendshipsController {
     description: 'Solicitud de amistad no encontrada',
   })
   async acceptFriendRequest(@Param('id') id: string) {
-    return await this.friendshipsService.acceptFriendRequest(id);
+    return this.friendshipsService.acceptFriendRequest(id);
   }
 
   /**
@@ -338,7 +338,7 @@ export class FriendshipsController {
     description: 'Solicitud de amistad no encontrada',
   })
   async rejectFriendRequest(@Param('id') id: string) {
-    return await this.friendshipsService.rejectFriendRequest(id);
+    return this.friendshipsService.rejectFriendRequest(id);
   }
 
   /**
@@ -397,10 +397,10 @@ export class FriendshipsController {
     },
   })
   async blockUser(
-    @Param('userId') userId: string,
+  @Param('userId') userId: string,
     @Param('friendId') friendId: string,
   ) {
-    return await this.friendshipsService.blockUser(userId, friendId);
+    return this.friendshipsService.blockUser(userId, friendId);
   }
 
   /**
@@ -441,7 +441,7 @@ export class FriendshipsController {
     description: 'No existe relación de bloqueo',
   })
   async unblockUser(
-    @Param('userId') userId: string,
+  @Param('userId') userId: string,
     @Param('friendId') friendId: string,
   ) {
     await this.friendshipsService.unblockUser(userId, friendId);
@@ -484,7 +484,7 @@ export class FriendshipsController {
     description: 'Amistad no encontrada',
   })
   async removeFriend(
-    @Param('userId') userId: string,
+  @Param('userId') userId: string,
     @Param('friendId') friendId: string,
   ) {
     await this.friendshipsService.removeFriend(userId, friendId);
@@ -539,9 +539,9 @@ export class FriendshipsController {
     description: 'No existe relación de amistad entre los usuarios',
   })
   async findByUserPair(
-    @Param('userId1') userId1: string,
+  @Param('userId1') userId1: string,
     @Param('userId2') userId2: string,
   ) {
-    return await this.friendshipsService.findByUserPair(userId1, userId2);
+    return this.friendshipsService.findByUserPair(userId1, userId2);
   }
 }

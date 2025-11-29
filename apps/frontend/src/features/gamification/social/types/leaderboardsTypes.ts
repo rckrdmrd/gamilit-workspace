@@ -4,7 +4,7 @@
  */
 
 // Legacy types
-export type LeaderboardType = 'global' | 'school' | 'grade' | 'friends';
+export type LeaderboardType = 'global' | 'school' | 'grade' | 'friends' | 'classroom';
 export type TimePeriod = 'daily' | 'weekly' | 'monthly' | 'all-time';
 export type RankChange = 'up' | 'down' | 'same' | 'new';
 

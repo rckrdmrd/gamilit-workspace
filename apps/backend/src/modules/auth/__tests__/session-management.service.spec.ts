@@ -239,23 +239,40 @@ describe('SessionManagementService', () => {
   });
 
   describe('revokeSession', () => {
+    const mockSession = {
+      id: 'session-1',
+      user_id: 'user-1',
+      session_token: 'session-token-123',
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      last_activity_at: new Date(),
+      is_active: true,
+      revoked_at: null,
+    };
+
     it('should revoke session successfully', async () => {
       // Arrange
-      mockSessionRepository.delete.mockResolvedValue({ affected: 1 });
+      mockSessionRepository.findOne.mockResolvedValue(mockSession);
+      mockSessionRepository.save.mockResolvedValue({ ...mockSession, is_active: false, revoked_at: new Date() });
 
       // Act
-      await service.revokeSession('session-1', 'user-1');
+      const result = await service.revokeSession('session-1', 'user-1');
 
-      // Assert - revokeSession uses delete, not update
-      expect(mockSessionRepository.delete).toHaveBeenCalledWith({
-        id: 'session-1',
-        user_id: 'user-1',
+      // Assert
+      expect(result).toEqual({ message: 'Sesión cerrada correctamente' });
+      expect(mockSessionRepository.findOne).toHaveBeenCalledWith({
+        where: { id: 'session-1', user_id: 'user-1' },
       });
+      expect(mockSessionRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          is_active: false,
+          revoked_at: expect.any(Date),
+        }),
+      );
     });
 
     it('should throw NotFoundException if session does not exist', async () => {
-      // Arrange - delete returns affected: 0 when no session matches
-      mockSessionRepository.delete.mockResolvedValue({ affected: 0 });
+      // Arrange
+      mockSessionRepository.findOne.mockResolvedValue(null);
 
       // Act & Assert
       await expect(service.revokeSession('non-existent-session', 'user-1')).rejects.toThrow(
@@ -263,48 +280,99 @@ describe('SessionManagementService', () => {
       );
     });
 
-    it('should validate session ownership by including user_id in delete query', async () => {
-      // Arrange - session belongs to different user, so delete won't match
-      mockSessionRepository.delete.mockResolvedValue({ affected: 0 });
+    it('should validate session ownership', async () => {
+      // Arrange
+      mockSessionRepository.findOne.mockResolvedValue(null);
 
-      // Act & Assert - if session doesn't belong to user, affected = 0, throws NotFoundException
+      // Act & Assert
       await expect(service.revokeSession('session-1', 'different-user')).rejects.toThrow(
         NotFoundException,
       );
     });
-
-    it('should handle already revoked session', async () => {
-      // Arrange - if session was already deleted, delete returns affected: 0
-      // The service throws NotFoundException in this case (not idempotent)
-      mockSessionRepository.delete.mockResolvedValue({ affected: 0 });
-
-      // Act & Assert - service throws when no session found to delete
-      await expect(service.revokeSession('session-1', 'user-1')).rejects.toThrow(NotFoundException);
-    });
   });
 
   describe('revokeAllSessions', () => {
-    it('should revoke all sessions for user', async () => {
+    const mockSessions = [
+      {
+        id: 'session-1',
+        user_id: 'user-1',
+        is_active: true,
+        revoked_at: null,
+      },
+      {
+        id: 'session-2',
+        user_id: 'user-1',
+        is_active: true,
+        revoked_at: null,
+      },
+      {
+        id: 'current-session',
+        user_id: 'user-1',
+        is_active: true,
+        revoked_at: null,
+      },
+    ];
+
+    it('should revoke all sessions except current one', async () => {
       // Arrange
-      mockSessionRepository.delete.mockResolvedValue({ affected: 3 }); // 3 sessions deleted
+      mockSessionRepository.find.mockResolvedValue(mockSessions);
+      mockSessionRepository.save.mockResolvedValue([]);
 
       // Act
-      await service.revokeAllSessions('user-1');
+      const result = await service.revokeAllSessions('user-1', 'current-session');
 
-      // Assert - revokeAllSessions uses delete, not update
-      expect(mockSessionRepository.delete).toHaveBeenCalledWith({ user_id: 'user-1' });
+      // Assert
+      expect(result).toEqual({
+        message: 'Sesiones cerradas correctamente',
+        count: 2,
+      });
+      expect(mockSessionRepository.find).toHaveBeenCalledWith({
+        where: {
+          user_id: 'user-1',
+          is_active: true,
+        },
+      });
+      expect(mockSessionRepository.save).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({ id: 'session-1', is_active: false }),
+          expect.objectContaining({ id: 'session-2', is_active: false }),
+        ]),
+      );
     });
 
     it('should handle user with no sessions', async () => {
       // Arrange
-      mockSessionRepository.delete.mockResolvedValue({ affected: 0 });
+      mockSessionRepository.find.mockResolvedValue([]);
+      mockSessionRepository.save.mockResolvedValue([]);
 
-      // Act & Assert
-      await expect(service.revokeAllSessions('user-1')).resolves.not.toThrow();
+      // Act
+      const result = await service.revokeAllSessions('user-1', 'current-session');
+
+      // Assert
+      expect(result).toEqual({
+        message: 'Sesiones cerradas correctamente',
+        count: 0,
+      });
+    });
+
+    it('should not revoke current session', async () => {
+      // Arrange
+      mockSessionRepository.find.mockResolvedValue(mockSessions);
+      mockSessionRepository.save.mockImplementation((sessions) => Promise.resolve(sessions));
+
+      // Act
+      await service.revokeAllSessions('user-1', 'current-session');
+
+      // Assert
+      expect(mockSessionRepository.save).toHaveBeenCalledWith(
+        expect.not.arrayContaining([
+          expect.objectContaining({ id: 'current-session' }),
+        ]),
+      );
     });
   });
 
-  describe('getUserActiveSessions', () => {
+  describe('getSessions', () => {
     const mockSessions = [
       {
         id: 'session-1',
@@ -312,8 +380,11 @@ describe('SessionManagementService', () => {
         browser: 'Chrome',
         os: 'Windows',
         ip_address: '127.0.0.1',
+        user_agent: 'Mozilla/5.0',
         last_activity_at: new Date(),
         created_at: new Date(),
+        country: 'US',
+        city: 'New York',
       },
       {
         id: 'session-2',
@@ -321,23 +392,30 @@ describe('SessionManagementService', () => {
         browser: 'Safari',
         os: 'iOS',
         ip_address: '192.168.1.1',
+        user_agent: 'Safari/15.0',
         last_activity_at: new Date(),
         created_at: new Date(),
+        country: 'US',
+        city: 'Los Angeles',
       },
     ];
 
-    it('should return all sessions for user', async () => {
+    it('should return only active sessions for user', async () => {
       // Arrange
       mockSessionRepository.find.mockResolvedValue(mockSessions);
 
       // Act
-      const result = await service.getUserActiveSessions('user-1');
+      const result = await service.getSessions('user-1');
 
       // Assert
       expect(result).toHaveLength(2);
       expect(mockSessionRepository.find).toHaveBeenCalledWith({
-        where: { user_id: 'user-1' },
+        where: {
+          user_id: 'user-1',
+          is_active: true,
+        },
         order: { last_activity_at: 'DESC' },
+        select: ['id', 'device_type', 'browser', 'os', 'ip_address', 'user_agent', 'created_at', 'last_activity_at', 'country', 'city'],
       });
     });
 
@@ -346,7 +424,7 @@ describe('SessionManagementService', () => {
       mockSessionRepository.find.mockResolvedValue([]);
 
       // Act
-      const result = await service.getUserActiveSessions('user-1');
+      const result = await service.getSessions('user-1');
 
       // Assert
       expect(result).toHaveLength(0);
@@ -357,7 +435,7 @@ describe('SessionManagementService', () => {
       mockSessionRepository.find.mockResolvedValue(mockSessions);
 
       // Act
-      await service.getUserActiveSessions('user-1');
+      await service.getSessions('user-1');
 
       // Assert
       expect(mockSessionRepository.find).toHaveBeenCalledWith(
@@ -365,6 +443,21 @@ describe('SessionManagementService', () => {
           order: { last_activity_at: 'DESC' },
         }),
       );
+    });
+
+    it('should include device information in response', async () => {
+      // Arrange
+      mockSessionRepository.find.mockResolvedValue(mockSessions);
+
+      // Act
+      const result = await service.getSessions('user-1');
+
+      // Assert
+      expect(result[0]).toHaveProperty('device_type');
+      expect(result[0]).toHaveProperty('browser');
+      expect(result[0]).toHaveProperty('os');
+      expect(result[0]).toHaveProperty('ip_address');
+      expect(result[0]).toHaveProperty('user_agent');
     });
   });
 

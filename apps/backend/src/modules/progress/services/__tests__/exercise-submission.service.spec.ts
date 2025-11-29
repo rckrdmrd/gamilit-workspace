@@ -630,7 +630,7 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
           '4': 'premio',
           '5': 'ciencias',
           '6': 'ciencias', // REDUNDANT
-        }
+        },
       };
 
       exerciseRepo.findOne.mockResolvedValue(mockExerciseCompletarEspacios as Exercise);
@@ -682,7 +682,7 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
           '4': 'premio',
           '5': 'matemáticas',
           '6': 'matemáticas', // REDUNDANT
-        }
+        },
       };
 
       exerciseRepo.findOne.mockResolvedValue(mockExerciseCompletarEspacios as Exercise);
@@ -720,7 +720,7 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
           '4': 'premio',
           '5': 'física',
           '6': 'física', // REDUNDANT
-        }
+        },
       };
 
       exerciseRepo.findOne.mockResolvedValue(mockExerciseCompletarEspacios as Exercise);
@@ -758,7 +758,7 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
           '4': 'premio',
           '5': 'Ciencias', // Different case
           '6': 'ciencias', // REDUNDANT (case-insensitive)
-        }
+        },
       };
 
       exerciseRepo.findOne.mockResolvedValue(mockExerciseCompletarEspacios as Exercise);
@@ -808,7 +808,7 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
             '4': 'premio',
             '5': space5,
             '6': space6,
-          }
+          },
         };
 
         exerciseRepo.findOne.mockResolvedValue(mockExerciseCompletarEspacios as Exercise);
@@ -860,7 +860,7 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
           '4': 'premio',
           // '5' is missing
           '6': 'matemáticas',
-        }
+        },
       };
 
       exerciseRepo.findOne.mockResolvedValue(mockExerciseCompletarEspacios as Exercise);
@@ -910,7 +910,7 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
           '4': 'premio',
           '5': 'ciencias',
           // '6' is missing
-        }
+        },
       };
 
       exerciseRepo.findOne.mockResolvedValue(mockExerciseCompletarEspacios as Exercise);
@@ -960,7 +960,7 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
           '4': 'premio',
           '5': '  ciencias  ', // With whitespace
           '6': 'ciencias', // REDUNDANT after trim
-        }
+        },
       };
 
       exerciseRepo.findOne.mockResolvedValue(mockExerciseCompletarEspacios as Exercise);

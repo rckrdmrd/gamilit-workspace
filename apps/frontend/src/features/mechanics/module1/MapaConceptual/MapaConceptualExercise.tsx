@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ExerciseContainer } from '@shared/components/mechanics/ExerciseContainer';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { ConceptNode } from './ConceptNode';
 import { ConnectionLine } from './ConnectionLine';
 import { MapaConceptualData } from './mapaConceptualTypes';
-import { Check } from 'lucide-react';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { submitExercise } from '@/features/progress/api/progressAPI';
@@ -16,7 +14,16 @@ import { useEconomyStore } from '@/features/gamification/economy/store/economySt
 export interface MapaConceptualExerciseProps {
   exercise: MapaConceptualData;
   onComplete?: () => void;
-  onProgressUpdate?: (progress: any) => void;
+  onProgressUpdate?: (data: {
+    progress: {
+      currentStep: number;
+      totalSteps: number;
+      score: number;
+      hintsUsed: number;
+      timeSpent: number;
+    };
+    answers: Record<string, unknown>;
+  }) => void;
   actionsRef?: React.MutableRefObject<{
     handleReset?: () => void;
     handleCheck?: () => void;
@@ -44,6 +51,7 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
 
   // Ensure nodes array exists with fallback
   const nodes = exercise?.nodes || [];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const correctConnections = exercise?.correctConnections || [];
 
   // FE-055: Notify parent of progress updates WITH user answers
@@ -166,7 +174,8 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
         handleCheck,
       };
     }
-  }, [actionsRef, handleReset, handleCheck]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actionsRef]);
 
   // If no nodes, show message
   if (nodes.length === 0) {
@@ -202,15 +211,6 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
             />
           ))}
         </div>
-        <DetectiveButton
-          variant="gold"
-          icon={<Check />}
-          className="mt-4"
-          onClick={handleCheck}
-          disabled={isSubmitting || validated}
-        >
-          {isSubmitting ? 'Enviando...' : validated ? 'Verificado' : 'Verificar'}
-        </DetectiveButton>
       </DetectiveCard>
 
       {/* Feedback Modal */}

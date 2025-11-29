@@ -631,6 +631,166 @@ export const getUserDashboard = async (userId: string): Promise<UserDashboard> =
 };
 
 // ============================================================================
+// AUTO-SAVE API FUNCTIONS
+// ============================================================================
+
+/**
+ * Auto-save progress data for exercise recovery
+ */
+export interface AutoSaveProgressData {
+  partialAnswers: unknown;
+  timeSpentSeconds: number;
+  metadata?: {
+    hintsUsed?: number;
+    comodinesUsed?: string[];
+    lastQuestionIndex?: number;
+    [key: string]: unknown;
+  };
+}
+
+/**
+ * Auto-saved progress response
+ */
+export interface AutoSavedProgress {
+  exerciseId: string;
+  userId: string;
+  data: AutoSaveProgressData;
+  savedAt: Date;
+}
+
+/**
+ * Auto-save exercise progress (for recovery if browser closes)
+ *
+ * @param exerciseId - Exercise ID
+ * @param data - Progress data to save
+ * @returns Confirmation of saved data
+ */
+export const autoSaveProgress = async (
+  exerciseId: string,
+  data: AutoSaveProgressData,
+): Promise<{ success: boolean; savedAt: Date }> => {
+  try {
+    if (FEATURE_FLAGS.USE_MOCK_DATA) {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      // Save to localStorage as fallback in mock mode
+      try {
+        localStorage.setItem(
+          `autosave_exercise_${exerciseId}`,
+          JSON.stringify({
+            data,
+            savedAt: new Date().toISOString(),
+          }),
+        );
+      } catch (e) {
+        console.warn('Failed to save to localStorage:', e);
+      }
+
+      return {
+        success: true,
+        savedAt: new Date(),
+      };
+    }
+
+    // Backend endpoint: POST /api/v1/progress/exercises/:exerciseId/autosave
+    const response = await apiClient.post<ApiResponse<{ success: boolean; savedAt: string }>>(
+      `/progress/exercises/${exerciseId}/autosave`,
+      data,
+    );
+
+    return {
+      success: response.data.data.success,
+      savedAt: new Date(response.data.data.savedAt),
+    };
+  } catch (error) {
+    // Fallback to localStorage on error
+    try {
+      localStorage.setItem(
+        `autosave_exercise_${exerciseId}`,
+        JSON.stringify({
+          data,
+          savedAt: new Date().toISOString(),
+        }),
+      );
+      return {
+        success: true,
+        savedAt: new Date(),
+      };
+    } catch (localError) {
+      throw handleAPIError(error);
+    }
+  }
+};
+
+/**
+ * Get auto-saved progress for an exercise
+ *
+ * @param exerciseId - Exercise ID
+ * @returns Auto-saved progress data or null if none exists
+ */
+export const getAutoSavedProgress = async (
+  exerciseId: string,
+): Promise<AutoSaveProgressData | null> => {
+  try {
+    if (FEATURE_FLAGS.USE_MOCK_DATA) {
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
+      // Try to get from localStorage in mock mode
+      try {
+        const saved = localStorage.getItem(`autosave_exercise_${exerciseId}`);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          return parsed.data;
+        }
+      } catch (e) {
+        console.warn('Failed to load from localStorage:', e);
+      }
+
+      return null;
+    }
+
+    // Backend endpoint: GET /api/v1/progress/exercises/:exerciseId/autosave
+    const { data } = await apiClient.get<ApiResponse<AutoSavedProgress | null>>(
+      `/progress/exercises/${exerciseId}/autosave`,
+    );
+
+    return data.data?.data || null;
+  } catch (error) {
+    // Fallback to localStorage on error
+    try {
+      const saved = localStorage.getItem(`autosave_exercise_${exerciseId}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed.data;
+      }
+    } catch (localError) {
+      console.warn('Failed to load auto-saved progress:', localError);
+    }
+
+    return null;
+  }
+};
+
+/**
+ * Clear auto-saved progress for an exercise
+ *
+ * @param exerciseId - Exercise ID
+ */
+export const clearAutoSavedProgress = async (exerciseId: string): Promise<void> => {
+  try {
+    // Clear from localStorage
+    localStorage.removeItem(`autosave_exercise_${exerciseId}`);
+
+    if (!FEATURE_FLAGS.USE_MOCK_DATA) {
+      // Backend endpoint: DELETE /api/v1/progress/exercises/:exerciseId/autosave
+      await apiClient.delete(`/progress/exercises/${exerciseId}/autosave`);
+    }
+  } catch (error) {
+    console.warn('Failed to clear auto-saved progress:', error);
+  }
+};
+
+// ============================================================================
 // EXPORTS
 // ============================================================================
 
@@ -643,4 +803,7 @@ export default {
   getActivityStats,
   getUserActivitiesByType,
   getUserDashboard,
+  autoSaveProgress,
+  getAutoSavedProgress,
+  clearAutoSavedProgress,
 };

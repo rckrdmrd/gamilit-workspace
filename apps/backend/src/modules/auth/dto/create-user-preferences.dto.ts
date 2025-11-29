@@ -25,7 +25,7 @@ export class CreateUserPreferencesDto {
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @IsUUID('4')
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Tema de la interfaz
@@ -43,7 +43,7 @@ export class CreateUserPreferencesDto {
   @IsEnum(ThemeEnum, {
     message: 'Theme must be one of: light, dark, auto',
   })
-  theme?: ThemeEnum;
+    theme?: ThemeEnum;
 
   /**
    * Idioma preferido
@@ -61,7 +61,7 @@ export class CreateUserPreferencesDto {
   @IsEnum(LanguageEnum, {
     message: 'Language must be one of: es, en',
   })
-  language?: LanguageEnum;
+    language?: LanguageEnum;
 
   /**
    * Habilitar notificaciones en la aplicación
@@ -76,7 +76,7 @@ export class CreateUserPreferencesDto {
   })
   @IsOptional()
   @IsBoolean()
-  notifications_enabled?: boolean;
+    notifications_enabled?: boolean;
 
   /**
    * Habilitar notificaciones por correo electrónico
@@ -91,7 +91,7 @@ export class CreateUserPreferencesDto {
   })
   @IsOptional()
   @IsBoolean()
-  email_notifications?: boolean;
+    email_notifications?: boolean;
 
   /**
    * Habilitar efectos de sonido en la aplicación
@@ -106,7 +106,7 @@ export class CreateUserPreferencesDto {
   })
   @IsOptional()
   @IsBoolean()
-  sound_enabled?: boolean;
+    sound_enabled?: boolean;
 
   /**
    * Indica si el usuario completó el tutorial inicial
@@ -121,7 +121,7 @@ export class CreateUserPreferencesDto {
   })
   @IsOptional()
   @IsBoolean()
-  tutorial_completed?: boolean;
+    tutorial_completed?: boolean;
 
   /**
    * Preferencias adicionales en formato JSON
@@ -141,5 +141,5 @@ export class CreateUserPreferencesDto {
   })
   @IsOptional()
   @IsObject()
-  preferences?: Record<string, any>;
+    preferences?: Record<string, any>;
 }

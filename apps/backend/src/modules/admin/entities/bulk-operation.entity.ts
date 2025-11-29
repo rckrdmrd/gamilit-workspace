@@ -33,15 +33,15 @@ import { User } from '../../auth/entities/user.entity';
 @Index('idx_bulk_ops_started_by', ['started_by'])
 @Index('idx_bulk_ops_type', ['operation_type'])
 @Index('idx_bulk_ops_started_at', ['started_at'])
-@Check(`"status" IN ('pending', 'running', 'completed', 'failed', 'cancelled')`)
-@Check(`"completed_count" >= 0 AND "failed_count" >= 0`)
-@Check(`"target_count" > 0`)
+@Check('"status" IN (\'pending\', \'running\', \'completed\', \'failed\', \'cancelled\')')
+@Check('"completed_count" >= 0 AND "failed_count" >= 0')
+@Check('"target_count" > 0')
 export class BulkOperation {
   /**
    * Identificador único de la operación bulk (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * Tipo de operación bulk ejecutada
@@ -49,7 +49,7 @@ export class BulkOperation {
    * @example 'suspend_users'
    */
   @Column({ type: 'varchar', length: 50 })
-  operation_type!: string;
+    operation_type!: string;
 
   /**
    * Entidad objetivo de la operación
@@ -57,75 +57,75 @@ export class BulkOperation {
    * @example 'users'
    */
   @Column({ type: 'varchar', length: 50 })
-  target_entity!: string;
+    target_entity!: string;
 
   /**
    * Array de UUIDs de recursos a procesar
    */
   @Column({ type: 'uuid', array: true })
-  target_ids!: string[];
+    target_ids!: string[];
 
   /**
    * Cantidad total de recursos a procesar
    */
   @Column({ type: 'integer' })
-  target_count!: number;
+    target_count!: number;
 
   /**
    * Cantidad de recursos procesados exitosamente
    */
   @Column({ type: 'integer', default: 0 })
-  completed_count!: number;
+    completed_count!: number;
 
   /**
    * Cantidad de recursos que fallaron durante el procesamiento
    */
   @Column({ type: 'integer', default: 0 })
-  failed_count!: number;
+    failed_count!: number;
 
   /**
    * Estado actual de la operación
    * Estados: 'pending', 'running', 'completed', 'failed', 'cancelled'
    */
   @Column({ type: 'varchar', length: 20, default: 'pending' })
-  status!: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
+    status!: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
 
   /**
    * Detalles de errores individuales durante el procesamiento
    * Formato: [{ userId: 'abc', error: 'User not found' }, ...]
    */
   @Column({ type: 'jsonb', default: [] })
-  error_details!: any[];
+    error_details!: any[];
 
   /**
    * UUID del administrador que inició la operación
    */
   @Column({ type: 'uuid' })
-  started_by!: string;
+    started_by!: string;
 
   /**
    * Relación con el usuario que inició la operación
    */
   @ManyToOne(() => User)
   @JoinColumn({ name: 'started_by' })
-  admin!: User;
+    admin!: User;
 
   /**
    * Timestamp de inicio de la operación (Mexico timezone)
    */
   @CreateDateColumn({ type: 'timestamp' })
-  started_at!: Date;
+    started_at!: Date;
 
   /**
    * Timestamp de completitud de la operación
    */
   @Column({ type: 'timestamp', nullable: true })
-  completed_at?: Date;
+    completed_at?: Date;
 
   /**
    * Resultado consolidado de la operación (opcional)
    * Puede contener un resumen, estadísticas adicionales, etc.
    */
   @Column({ type: 'jsonb', nullable: true })
-  result?: any;
+    result?: any;
 }

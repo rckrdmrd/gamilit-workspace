@@ -2,24 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { VerdaderoFalsoData, VerdaderoFalsoStatement } from './verdaderoFalsoTypes';
-import { saveProgress } from '@shared/components/mechanics/mechanicsTypes';
+import { VerdaderoFalsoStatement, VerdaderoFalsoExerciseProps } from './verdaderoFalsoTypes';
+import { saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { CheckCircle, XCircle } from 'lucide-react';
-import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
-import { submitExercise } from '@/features/progress/api/progressAPI';
+import { submitExercise } from '@/services/api/educationalAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
 import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
-
-export interface VerdaderoFalsoExerciseProps {
-  exercise: VerdaderoFalsoData;
-  onComplete?: () => void;
-  onProgressUpdate?: (progress: any) => void;
-  actionsRef?: React.MutableRefObject<{
-    handleReset?: () => void;
-    handleCheck?: () => void;
-  }>;
-}
 
 export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
   exercise,
@@ -140,10 +129,16 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
         payload: answersObj,
       });
 
-      // Submit to backend API
-      const response = await submitExercise(exercise.id, user.id, answersObj);
+      // Submit to backend API - using educationalAPI which handles auto-graded exercises
+      const response = await submitExercise(exercise.id, {
+        answers: answersObj,
+        startedAt: startTime.getTime(),
+        hintsUsed: hintsUsed,
+      });
 
       // Show backend response
+      // Note: educationalAPI returns 'correctAnswers' (number), not 'correctAnswersCount'
+      const correctCount = response.correctAnswers ?? 0;
       setFeedback({
         type: response.isPerfect ? 'success' : response.score >= 70 ? 'partial' : 'error',
         title: response.isPerfect
@@ -152,8 +147,10 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
             ? '¡Buen trabajo!'
             : 'Intenta de nuevo',
         message:
-          response.feedback?.overall ||
-          `Has obtenido ${response.correctAnswersCount} de ${response.totalQuestions} respuestas correctas.`,
+          (typeof response.feedback === 'object'
+            ? response.feedback?.overall
+            : response.feedback) ||
+          `Has obtenido ${correctCount} de ${response.totalQuestions} respuestas correctas.`,
         score: response.score,
         showConfetti: response.isPerfect,
       });
@@ -194,7 +191,7 @@ export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
         handleCheck,
       };
     }
-  }, [actionsRef, handleReset, handleCheck]);
+  }, [actionsRef]);
 
   return (
     <>

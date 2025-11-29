@@ -7,6 +7,7 @@
  * - No verification logic executes
  * - Displays proper deprecated status
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
@@ -41,7 +42,7 @@ describe('EmailVerificationPage', () => {
     return render(
       <BrowserRouter>
         <EmailVerificationPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
   };
 
@@ -56,16 +57,14 @@ describe('EmailVerificationPage', () => {
     it('should show deprecation message', () => {
       renderComponent();
 
-      expect(
-        screen.getByText(/la verificación de email ya no es necesaria/i)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/la verificación de email ya no es necesaria/i)).toBeInTheDocument();
     });
 
     it('should display informational message', () => {
       renderComponent();
 
       expect(
-        screen.getByText(/todas las cuentas están automáticamente verificadas/i)
+        screen.getByText(/todas las cuentas están automáticamente verificadas/i),
       ).toBeInTheDocument();
     });
 
@@ -82,9 +81,7 @@ describe('EmailVerificationPage', () => {
     it('should display blue info notice box', () => {
       renderComponent();
 
-      const infoText = screen.getByText(
-        /puedes iniciar sesión directamente con tu cuenta/i
-      );
+      const infoText = screen.getByText(/puedes iniciar sesión directamente con tu cuenta/i);
       expect(infoText).toBeInTheDocument();
 
       // Check for info box styling (bg-blue-50, border-blue-200)
@@ -95,9 +92,7 @@ describe('EmailVerificationPage', () => {
     it('should explain no email verification needed', () => {
       renderComponent();
 
-      expect(
-        screen.getByText(/ya no es necesario verificar tu email/i)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/ya no es necesario verificar tu email/i)).toBeInTheDocument();
     });
 
     it('should have info icon in notice', () => {
@@ -239,11 +234,9 @@ describe('EmailVerificationPage', () => {
       renderComponent();
 
       const buttons = screen.getAllByRole('button');
-      const loginButtonIndex = buttons.findIndex(
-        (btn) => btn.textContent?.includes('Login')
-      );
-      const dashboardButtonIndex = buttons.findIndex(
-        (btn) => btn.textContent?.includes('Dashboard')
+      const loginButtonIndex = buttons.findIndex((btn) => btn.textContent?.includes('Login'));
+      const dashboardButtonIndex = buttons.findIndex((btn) =>
+        btn.textContent?.includes('Dashboard'),
       );
 
       // Login button should appear before dashboard button
@@ -274,11 +267,9 @@ describe('EmailVerificationPage', () => {
       renderComponent();
 
       // All key information should be present as text
+      expect(screen.getByText(/la verificación de email ya no es necesaria/i)).toBeInTheDocument();
       expect(
-        screen.getByText(/la verificación de email ya no es necesaria/i)
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText(/todas las cuentas están automáticamente verificadas/i)
+        screen.getByText(/todas las cuentas están automáticamente verificadas/i),
       ).toBeInTheDocument();
     });
   });

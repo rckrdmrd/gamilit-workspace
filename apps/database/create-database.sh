@@ -52,6 +52,34 @@ DDL_DIR="$SCRIPT_DIR/ddl"
 LOG_FILE="$SCRIPT_DIR/create-database-$(date +%Y%m%d_%H%M%S).log"
 
 # ============================================================================
+# PURGA DE LOGS ANTIGUOS - Mantener solo los últimos 5
+# ============================================================================
+purge_old_logs() {
+    local logs_to_keep=5
+    local log_pattern="create-database-*.log"
+
+    # Contar logs existentes
+    local log_count=$(find "$SCRIPT_DIR" -maxdepth 1 -name "$log_pattern" -type f 2>/dev/null | wc -l)
+
+    if [ "$log_count" -gt "$logs_to_keep" ]; then
+        local logs_to_delete=$((log_count - logs_to_keep))
+        echo -e "${YELLOW}[PURGA] Eliminando $logs_to_delete logs antiguos (manteniendo últimos $logs_to_keep)${NC}"
+
+        # Eliminar los más antiguos, mantener los últimos 5
+        find "$SCRIPT_DIR" -maxdepth 1 -name "$log_pattern" -type f -printf '%T@ %p\n' 2>/dev/null | \
+            sort -n | \
+            head -n "$logs_to_delete" | \
+            cut -d' ' -f2- | \
+            xargs -r rm -f
+
+        echo -e "${GREEN}[PURGA] ✅ Logs antiguos eliminados${NC}"
+    fi
+}
+
+# Ejecutar purga antes de iniciar
+purge_old_logs
+
+# ============================================================================
 # FUNCIONES
 # ============================================================================
 
@@ -260,6 +288,26 @@ log_success "FASE 6 completada"
 log ""
 
 # ============================================================================
+# FASE 6.5: NOTIFICATIONS SCHEMA (Debe cargar ANTES de gamification_system)
+# ============================================================================
+# IMPORTANTE: gamification_system tiene triggers que insertan en
+# notifications.notifications, por lo que este schema debe existir primero.
+# Movido desde FASE 9.7 por dependencia cruzada (2025-11-28).
+
+log "============================================================================"
+log "FASE 6.5: NOTIFICATIONS SCHEMA"
+log "============================================================================"
+
+execute_sql_files "$DDL_DIR/schemas/notifications/tables" "*.sql" "Tablas de notificaciones"
+execute_sql_files "$DDL_DIR/schemas/notifications/functions" "*.sql" "Funciones de notificaciones"
+execute_sql_files "$DDL_DIR/schemas/notifications/triggers" "*.sql" "Triggers de notificaciones (si existen)"
+execute_sql_files "$DDL_DIR/schemas/notifications/indexes" "*.sql" "Índices de notificaciones (si existen)"
+execute_sql_files "$DDL_DIR/schemas/notifications/rls-policies" "*.sql" "RLS Policies de notificaciones (si existen)"
+
+log_success "FASE 6.5 completada - Notifications schema creado"
+log ""
+
+# ============================================================================
 # FASE 7: GAMIFICATION_SYSTEM SCHEMA
 # ============================================================================
 
@@ -328,22 +376,7 @@ execute_sql_files "$DDL_DIR/schemas/auth_management/fk-constraints" "*.sql" "FK 
 log_success "FASE 9.5 completada - Dependencias circulares resueltas"
 log ""
 
-# ============================================================================
-# FASE 9.7: NOTIFICATIONS SCHEMA (Sistema de Notificaciones Multi-Canal)
-# ============================================================================
-
-log "============================================================================"
-log "FASE 9.7: NOTIFICATIONS SCHEMA"
-log "============================================================================"
-
-execute_sql_files "$DDL_DIR/schemas/notifications/tables" "*.sql" "Tablas de notificaciones"
-execute_sql_files "$DDL_DIR/schemas/notifications/functions" "*.sql" "Funciones de notificaciones"
-execute_sql_files "$DDL_DIR/schemas/notifications/triggers" "*.sql" "Triggers de notificaciones (si existen)"
-execute_sql_files "$DDL_DIR/schemas/notifications/indexes" "*.sql" "Índices de notificaciones (si existen)"
-execute_sql_files "$DDL_DIR/schemas/notifications/rls-policies" "*.sql" "RLS Policies de notificaciones (si existen)"
-
-log_success "FASE 9.7 completada - Notifications schema creado"
-log ""
+# NOTA: FASE 9.7 (notifications) movida a FASE 6.5 por dependencia con gamification triggers
 
 # ============================================================================
 # FASE 10: CONTENT_MANAGEMENT SCHEMA
@@ -526,8 +559,8 @@ execute_sql "$SEEDS_DIR/educational_content/02-exercises-module1.sql" "Seeds: Mo
 execute_sql "$SEEDS_DIR/educational_content/03-exercises-module2.sql" "Seeds: Module 2 - Inferencial (5 exercises)"
 execute_sql "$SEEDS_DIR/educational_content/04-exercises-module3.sql" "Seeds: Module 3 - Crítica (5 exercises)"
 execute_sql "$SEEDS_DIR/educational_content/05-assignments.sql" "Seeds: assignments (9 demo for Teacher Portal - CORR-006)"
-# execute_sql "$SEEDS_DIR/educational_content/05-exercises-module4.sql" "Seeds: Module 4 - Digital (9 exercises)"
-# execute_sql "$SEEDS_DIR/educational_content/06-exercises-module5.sql" "Seeds: Module 5 - Creativo (3 exercises)"
+execute_sql "$SEEDS_DIR/educational_content/05-exercises-module4.sql" "Seeds: Module 4 - Digital (5 exercises)"
+execute_sql "$SEEDS_DIR/educational_content/06-exercises-module5.sql" "Seeds: Module 5 - Producción (3 exercises)"
 execute_sql "$SEEDS_DIR/educational_content/07-assessment-rubrics.sql" "Seeds: assessment_rubrics"
 execute_sql "$SEEDS_DIR/educational_content/08-difficulty_criteria.sql" "Seeds: difficulty_criteria"
 execute_sql "$SEEDS_DIR/educational_content/09-exercise_mechanic_mapping.sql" "Seeds: exercise_mechanic_mapping"

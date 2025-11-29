@@ -44,67 +44,67 @@ import { UserPreferencesSchema } from '../dto/user-preferences.schema';
 @Index('idx_profiles_school_id', ['school_id'])
 export class Profile {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   @Column({ type: 'uuid' })
   @Index()
-  tenant_id!: string;
+    tenant_id!: string;
 
   @Column({ type: 'text', nullable: true })
-  display_name!: string | null;
+    display_name!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  full_name!: string | null;
+    full_name!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  first_name!: string | null;
+    first_name!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  last_name!: string | null;
+    last_name!: string | null;
 
   @Column({ type: 'text', unique: true })
-  email!: string;
+    email!: string;
 
   @Column({ type: 'text', nullable: true })
-  avatar_url!: string | null;
+    avatar_url!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  bio!: string | null;
+    bio!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  phone!: string | null;
+    phone!: string | null;
 
   @Column({ type: 'date', nullable: true })
-  date_of_birth!: Date | null;
+    date_of_birth!: Date | null;
 
   @Column({ type: 'text', nullable: true })
-  grade_level!: string | null;
+    grade_level!: string | null;
 
   @Column({ type: 'text', nullable: true })
-  student_id!: string | null;
+    student_id!: string | null;
 
   @Column({ type: 'uuid', nullable: true })
-  school_id!: string | null;
+    school_id!: string | null;
 
   @Column({
     type: 'enum',
     enum: GamilityRoleEnum,
     default: GamilityRoleEnum.STUDENT,
   })
-  role!: GamilityRoleEnum;
+    role!: GamilityRoleEnum;
 
   @Column({
     type: 'enum',
     enum: UserStatusEnum,
     default: UserStatusEnum.ACTIVE,
   })
-  status!: UserStatusEnum;
+    status!: UserStatusEnum;
 
   @Column({ type: 'boolean', default: false })
-  email_verified!: boolean;
+    email_verified!: boolean;
 
   @Column({ type: 'boolean', default: false })
-  phone_verified!: boolean;
+    phone_verified!: boolean;
 
   @Column({
     type: 'jsonb',
@@ -116,25 +116,25 @@ export class Profile {
       notifications_enabled: true,
     },
   })
-  preferences!: UserPreferencesSchema;
+    preferences!: UserPreferencesSchema;
 
   @Column({ type: 'timestamp with time zone', nullable: true })
-  last_sign_in_at!: Date | null;
+    last_sign_in_at!: Date | null;
 
   @Column({ type: 'timestamp with time zone', nullable: true })
-  last_activity_at!: Date | null;
+    last_activity_at!: Date | null;
 
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   @Column({ type: 'uuid', nullable: true })
-  user_id!: string | null;
+    user_id!: string | null;
 
   // Relación a auth.users (schema diferente, se maneja manualmente)
   // @ManyToOne(() => User, (user) => user.profile, { onDelete: 'CASCADE' })

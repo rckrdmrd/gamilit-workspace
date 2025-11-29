@@ -20,7 +20,7 @@ export class PreviewImpactDto extends UpdateGamificationSettingsDto {
   @IsNumber()
   @Min(100)
   @Max(10000)
-  sample_size?: number;
+    sample_size?: number;
 }
 
 /**
@@ -33,13 +33,13 @@ export class RankChangesDto {
     description: 'Number of users who would be promoted to higher rank',
     example: 45,
   })
-  promotions!: number;
+    promotions!: number;
 
   @ApiProperty({
     description: 'Number of users who would be demoted to lower rank',
     example: 12,
   })
-  demotions!: number;
+    demotions!: number;
 }
 
 /**
@@ -52,13 +52,13 @@ export class XpImpactDto {
     description: 'Average XP change per user',
     example: 15.5,
   })
-  avg_xp_change!: number;
+    avg_xp_change!: number;
 
   @ApiProperty({
     description: 'Total XP change across all affected users',
     example: 19000,
   })
-  total_xp_change!: number;
+    total_xp_change!: number;
 }
 
 /**
@@ -71,13 +71,13 @@ export class CoinsImpactDto {
     description: 'Average coins change per user',
     example: 50,
   })
-  avg_coins_change!: number;
+    avg_coins_change!: number;
 
   @ApiProperty({
     description: 'Total coins change across all affected users',
     example: 61700,
   })
-  total_coins_change!: number;
+    total_coins_change!: number;
 }
 
 /**
@@ -90,31 +90,31 @@ export class PreviewImpactResultDto {
     description: 'Total number of users affected by the changes',
     example: 1234,
   })
-  users_affected!: number;
+    users_affected!: number;
 
   @ApiProperty({
     description: 'Estimated rank changes',
     type: RankChangesDto,
   })
-  rank_changes!: RankChangesDto;
+    rank_changes!: RankChangesDto;
 
   @ApiProperty({
     description: 'Estimated XP impact',
     type: XpImpactDto,
   })
-  xp_impact!: XpImpactDto;
+    xp_impact!: XpImpactDto;
 
   @ApiProperty({
     description: 'Estimated ML Coins impact',
     type: CoinsImpactDto,
   })
-  coins_impact!: CoinsImpactDto;
+    coins_impact!: CoinsImpactDto;
 
   @ApiProperty({
     description: 'Timestamp when preview was calculated',
     example: '2025-11-11T20:00:00.000Z',
   })
-  preview_timestamp!: string;
+    preview_timestamp!: string;
 }
 
 /**
@@ -131,17 +131,17 @@ export class RestoreDefaultsResultDto {
       'gamification.coins.welcome_bonus',
     ],
   })
-  settings_restored!: string[];
+    settings_restored!: string[];
 
   @ApiProperty({
     description: 'Timestamp when settings were restored',
     example: '2025-11-11T20:00:00.000Z',
   })
-  restored_at!: string;
+    restored_at!: string;
 
   @ApiProperty({
     description: 'Admin user ID who performed the restore',
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  restored_by!: string;
+    restored_by!: string;
 }

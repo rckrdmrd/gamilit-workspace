@@ -27,7 +27,7 @@ export class CreateUserDto {
    * @example "estudiante@gamilit.com"
    */
   @IsEmail({}, { message: 'El email debe ser válido' })
-  email!: string;
+    email!: string;
 
   /**
    * Contraseña del usuario (será hasheada)
@@ -36,7 +36,7 @@ export class CreateUserDto {
    */
   @IsString({ message: 'La contraseña debe ser un texto' })
   @MinLength(8, { message: 'La contraseña debe tener al menos 8 caracteres' })
-  password!: string;
+    password!: string;
 
   /**
    * Rol del usuario en el sistema
@@ -47,7 +47,7 @@ export class CreateUserDto {
     message: 'El rol debe ser: student, admin_teacher o super_admin',
   })
   @IsOptional()
-  role?: GamilityRoleEnum = GamilityRoleEnum.STUDENT;
+    role?: GamilityRoleEnum = GamilityRoleEnum.STUDENT;
 
   /**
    * Metadatos adicionales del usuario (JSON)
@@ -55,5 +55,5 @@ export class CreateUserDto {
    */
   @IsObject({ message: 'Los metadatos deben ser un objeto JSON' })
   @IsOptional()
-  raw_user_meta_data?: Record<string, any>;
+    raw_user_meta_data?: Record<string, any>;
 }

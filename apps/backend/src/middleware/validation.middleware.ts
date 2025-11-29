@@ -40,7 +40,7 @@ const defaultValidationOptions: Joi.ValidationOptions = {
 export const validate = (
   schema: Joi.ObjectSchema,
   property: 'body' | 'params' | 'query' = 'body',
-  options?: Joi.ValidationOptions
+  options?: Joi.ValidationOptions,
 ) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     const validationOptions = { ...defaultValidationOptions, ...options };

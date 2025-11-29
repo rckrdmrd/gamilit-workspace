@@ -15,7 +15,7 @@ export class BulkUpdateRoleDto {
   @IsArray()
   @ArrayMinSize(1, { message: 'Debe proporcionar al menos un usuario' })
   @IsUUID('4', { each: true, message: 'Cada ID debe ser un UUID válido' })
-  userIds!: string[];
+    userIds!: string[];
 
   @ApiProperty({
     description: 'Nuevo rol a asignar',
@@ -25,5 +25,5 @@ export class BulkUpdateRoleDto {
   @IsEnum(['student', 'teacher', 'admin', 'super_admin'], {
     message: 'Rol inválido. Debe ser: student, teacher, admin o super_admin',
   })
-  newRole!: 'student' | 'teacher' | 'admin' | 'super_admin';
+    newRole!: 'student' | 'teacher' | 'admin' | 'super_admin';
 }

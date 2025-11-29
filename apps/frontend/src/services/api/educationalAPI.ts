@@ -4,6 +4,7 @@
  * API client for educational content including modules, exercises,
  * progress tracking, and analytics.
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
@@ -85,7 +86,7 @@ export interface ExerciseSubmissionResult {
     icon: string;
   }>;
   rankUp?: {
-    oldRank: string;
+    previousRank: string;
     newRank: string;
     unlockedFeatures: string[];
   } | null;
@@ -341,12 +342,14 @@ export const checkModuleAccess = async (moduleId: string): Promise<boolean> => {
  * Get modules for a specific user with their progress
  *
  * @param userId - User ID
+ * @param classroomId - Optional classroom ID to filter modules assigned to a specific classroom
  * @returns List of modules with user-specific progress data
  */
-export const getUserModules = async (userId: string): Promise<Module[]> => {
+export const getUserModules = async (userId: string, classroomId?: string): Promise<Module[]> => {
   try {
     console.log('📡 [educationalAPI] getUserModules called', {
       userId,
+      classroomId,
       useMockData: FEATURE_FLAGS.USE_MOCK_DATA,
       endpoint: API_ENDPOINTS.educational.userModules(userId),
     });
@@ -358,13 +361,22 @@ export const getUserModules = async (userId: string): Promise<Module[]> => {
     }
 
     console.log('📡 [educationalAPI] Making HTTP GET request to backend...');
-    const { data } = await apiClient.get<Module[]>(API_ENDPOINTS.educational.userModules(userId));
+    const params: Record<string, string> = {};
+
+    if (classroomId) {
+      params.classroomId = classroomId;
+    }
+
+    const { data } = await apiClient.get<Module[]>(API_ENDPOINTS.educational.userModules(userId), {
+      params: Object.keys(params).length > 0 ? params : undefined,
+    });
 
     console.log('✅ [educationalAPI] Backend response received:', {
       isArray: Array.isArray(data),
       modulesCount: Array.isArray(data) ? data.length : 0,
       firstModule: Array.isArray(data) && data.length > 0 ? data[0] : null,
       responseStatus: 'success',
+      filteredByClassroom: !!classroomId,
     });
 
     // Backend returns array directly, not wrapped in { data: {...} }

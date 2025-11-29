@@ -13,182 +13,182 @@ export class LearningSessionResponseDto {
    * ID único del registro
    */
   @Expose()
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario
    */
   @Expose()
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del tenant
    */
   @Expose()
-  tenant_id!: string | null;
+    tenant_id!: string | null;
 
   /**
    * Token de sesión
    */
   @Expose()
-  session_token!: string | null;
+    session_token!: string | null;
 
   /**
    * Tipo de sesión
    */
   @Expose()
-  session_type!: string;
+    session_type!: string;
 
   /**
    * ID del módulo
    */
   @Expose()
-  module_id!: string | null;
+    module_id!: string | null;
 
   /**
    * ID del ejercicio
    */
   @Expose()
-  exercise_id!: string | null;
+    exercise_id!: string | null;
 
   /**
    * ID del aula
    */
   @Expose()
-  classroom_id!: string | null;
+    classroom_id!: string | null;
 
   /**
    * Fecha de inicio
    */
   @Expose()
   @Type(() => Date)
-  started_at!: Date;
+    started_at!: Date;
 
   /**
    * Fecha de fin
    */
   @Expose()
   @Type(() => Date)
-  ended_at!: Date | null;
+    ended_at!: Date | null;
 
   /**
    * Duración total
    */
   @Expose()
-  duration!: string | null;
+    duration!: string | null;
 
   /**
    * Tiempo activo
    */
   @Expose()
-  active_time!: string | null;
+    active_time!: string | null;
 
   /**
    * Tiempo inactivo
    */
   @Expose()
-  idle_time!: string | null;
+    idle_time!: string | null;
 
   /**
    * Ejercicios intentados
    */
   @Expose()
-  exercises_attempted!: number;
+    exercises_attempted!: number;
 
   /**
    * Ejercicios completados
    */
   @Expose()
-  exercises_completed!: number;
+    exercises_completed!: number;
 
   /**
    * Contenido visualizado
    */
   @Expose()
-  content_viewed!: number;
+    content_viewed!: number;
 
   /**
    * Score total
    */
   @Expose()
-  total_score!: number;
+    total_score!: number;
 
   /**
    * XP total ganada
    */
   @Expose()
-  total_xp_earned!: number;
+    total_xp_earned!: number;
 
   /**
    * ML Coins totales ganadas
    */
   @Expose()
-  total_ml_coins_earned!: number;
+    total_ml_coins_earned!: number;
 
   /**
    * Cantidad de clicks
    */
   @Expose()
-  clicks_count!: number;
+    clicks_count!: number;
 
   /**
    * Vistas de página
    */
   @Expose()
-  page_views!: number;
+    page_views!: number;
 
   /**
    * Descargas de recursos
    */
   @Expose()
-  resource_downloads!: number;
+    resource_downloads!: number;
 
   /**
    * Información del dispositivo
    */
   @Expose()
-  device_info!: Record<string, any>;
+    device_info!: Record<string, any>;
 
   /**
    * Información del navegador
    */
   @Expose()
-  browser_info!: Record<string, any>;
+    browser_info!: Record<string, any>;
 
   /**
    * Calidad de conexión
    */
   @Expose()
-  connection_quality!: string | null;
+    connection_quality!: string | null;
 
   /**
    * Errores encontrados
    */
   @Expose()
-  errors_encountered!: number;
+    errors_encountered!: number;
 
   /**
    * Sesión activa
    */
   @Expose()
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Estado de completitud
    */
   @Expose()
-  completion_status!: string;
+    completion_status!: string;
 
   /**
    * Metadatos
    */
   @Expose()
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   /**
    * Fecha de creación
    */
   @Expose()
   @Type(() => Date)
-  created_at!: Date;
+    created_at!: Date;
 }

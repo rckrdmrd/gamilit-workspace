@@ -12,6 +12,7 @@
  * - Consumes adminAPI.getRolePermissions(), updateRolePermissions()
  * - Integrates with backend endpoints GET/PUT /admin/roles/:id/permissions
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useCallback } from 'react';
 import * as adminAPI from '@/services/api/adminAPI';

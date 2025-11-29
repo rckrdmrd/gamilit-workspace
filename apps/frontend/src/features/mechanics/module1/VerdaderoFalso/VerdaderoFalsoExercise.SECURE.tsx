@@ -54,7 +54,16 @@ interface VerdaderoFalsoData {
 export interface VerdaderoFalsoExerciseProps {
   exercise: VerdaderoFalsoData;
   onComplete?: () => void;
-  onProgressUpdate?: (progress: any) => void;
+  onProgressUpdate?: (data: {
+    progress: {
+      currentStep: number;
+      totalSteps: number;
+      score: number;
+      hintsUsed: number;
+      timeSpent: number;
+    };
+    answers: Record<string, unknown>;
+  }) => void;
 }
 
 // ============================================================================
@@ -64,7 +73,6 @@ export interface VerdaderoFalsoExerciseProps {
 export const VerdaderoFalsoExercise: React.FC<VerdaderoFalsoExerciseProps> = ({
   exercise,
   onComplete,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onProgressUpdate: _onProgressUpdate,
 }) => {
   // State for user answers (NO correctAnswer validation locally)

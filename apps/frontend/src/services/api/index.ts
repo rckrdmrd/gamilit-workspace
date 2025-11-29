@@ -114,6 +114,34 @@ export type {
 } from './profileAPI';
 
 // ============================================================================
+// PASSWORD API
+// ============================================================================
+
+export { passwordAPI, default as passwordAPIDefault } from './passwordAPI';
+export type {
+  RequestPasswordResetDto,
+  ResetPasswordDto,
+  PasswordResetRequestResponse,
+  PasswordResetResponse,
+  ValidateTokenResponse,
+} from './passwordAPI';
+
+// ============================================================================
+// STUDENT ASSIGNMENTS API (P1-002)
+// ============================================================================
+
+export {
+  studentAssignmentsAPI,
+  default as studentAssignmentsAPIDefault,
+} from './studentAssignmentsAPI';
+export type {
+  StudentAssignment,
+  StudentAssignmentDetail,
+  GradesSummary,
+  AssignmentFilters,
+} from './studentAssignmentsAPI';
+
+// ============================================================================
 // DEFAULT EXPORT
 // ============================================================================
 

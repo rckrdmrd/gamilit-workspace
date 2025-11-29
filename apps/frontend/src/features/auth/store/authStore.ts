@@ -80,7 +80,7 @@ export const useAuthStore = create<AuthState>()(
               isLoading: false,
               error: null,
             });
-          } catch (error: any) {
+          } catch (error: unknown) {
             set({
               error: error.message || 'Error al iniciar sesión',
               isLoading: false,
@@ -114,7 +114,7 @@ export const useAuthStore = create<AuthState>()(
               isLoading: false,
               error: null,
             });
-          } catch (error: any) {
+          } catch (error: unknown) {
             set({
               error: error.message || 'Error al registrar usuario',
               isLoading: false,
@@ -195,7 +195,7 @@ export const useAuthStore = create<AuthState>()(
             // Call real API to request password reset
             await authAPI.requestPasswordReset({ email });
             set({ isLoading: false, error: null });
-          } catch (error: any) {
+          } catch (error: unknown) {
             set({
               error: error.message || 'Error al solicitar recuperación',
               isLoading: false,
@@ -211,7 +211,7 @@ export const useAuthStore = create<AuthState>()(
             // Call real API to reset password
             await authAPI.resetPassword({ token, newPassword });
             set({ isLoading: false, error: null });
-          } catch (error: any) {
+          } catch (error: unknown) {
             set({
               error: error.message || 'Error al restablecer contraseña',
               isLoading: false,

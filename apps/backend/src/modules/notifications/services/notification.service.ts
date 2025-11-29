@@ -49,36 +49,37 @@ export class NotificationService {
   async create(data: {
     userId: string;
     title: string;
-    content: string;
-    notificationType: string;
-    relatedEntityType?: string;
-    relatedEntityId?: string;
+    message: string;
+    type: string;
+    data?: Record<string, any>;
     metadata?: Record<string, any>;
+    priority?: string;
     channels?: string[];
     expiresAt?: Date;
   }): Promise<Notification> {
-    // Crear notificación
+    // Crear notificación con campos DDL reales
+    const channels = data.channels || ['in_app'];
     const notification = this.notificationRepository.create({
       userId: data.userId,
       title: data.title,
-      content: data.content,
-      notificationType: data.notificationType,
-      relatedEntityType: data.relatedEntityType,
-      relatedEntityId: data.relatedEntityId,
+      message: data.message,
+      type: data.type,
+      data: data.data,
       metadata: data.metadata,
+      priority: data.priority || 'normal',
+      channels: channels,
+      status: 'sent',
       expiresAt: data.expiresAt,
-      isRead: false,
     });
 
     const saved = await this.notificationRepository.save(notification);
 
     // Enviar por función SQL (respeta preferencias y encola)
-    const channels = data.channels || ['in_app', 'email'];
     await this.callSendNotificationFunction(
       data.userId,
       data.title,
-      data.content,
-      data.notificationType,
+      data.message,
+      data.type,
       channels,
     );
 
@@ -95,9 +96,8 @@ export class NotificationService {
     templateKey: string;
     userId: string;
     variables: Record<string, string>;
+    type?: string;
     channels?: string[];
-    relatedEntityType?: string;
-    relatedEntityId?: string;
     metadata?: Record<string, any>;
   }): Promise<Notification> {
     // 1. Renderizar template
@@ -110,17 +110,20 @@ export class NotificationService {
     const template = await this.templateService.findByKey(data.templateKey);
     const channels = data.channels || template.defaultChannels;
 
-    // 3. Crear notificación
+    // 3. Crear notificación con campos DDL reales
     const notification = this.notificationRepository.create({
       userId: data.userId,
       title: rendered.subject,
-      content: rendered.body,
-      notificationType: data.templateKey, // usar templateKey como tipo
-      templateKey: data.templateKey,
-      relatedEntityType: data.relatedEntityType,
-      relatedEntityId: data.relatedEntityId,
-      metadata: data.metadata,
-      isRead: false,
+      message: rendered.body,
+      type: data.type || 'system', // tipo por defecto si no se especifica
+      data: data.variables,
+      metadata: {
+        ...data.metadata,
+        template_key: data.templateKey,
+      },
+      priority: 'normal',
+      channels: channels,
+      status: 'sent',
     });
 
     const saved = await this.notificationRepository.save(notification);
@@ -130,7 +133,7 @@ export class NotificationService {
       data.userId,
       rendered.subject,
       rendered.body,
-      data.templateKey,
+      data.type || 'system',
       channels,
     );
 
@@ -147,8 +150,8 @@ export class NotificationService {
   async findAllByUser(
     userId: string,
     filters?: {
-      isRead?: boolean;
-      notificationType?: string;
+      status?: string; // pending, sent, read, failed
+      type?: string;
       from?: Date;
       to?: Date;
       limit?: number;
@@ -159,14 +162,14 @@ export class NotificationService {
 
     query.where('n.user_id = :userId', { userId });
 
-    // Filtro por isRead
-    if (filters?.isRead !== undefined) {
-      query.andWhere('n.is_read = :isRead', { isRead: filters.isRead });
+    // Filtro por status
+    if (filters?.status) {
+      query.andWhere('n.status = :status', { status: filters.status });
     }
 
     // Filtro por tipo
-    if (filters?.notificationType) {
-      query.andWhere('n.notification_type = :type', { type: filters.notificationType });
+    if (filters?.type) {
+      query.andWhere('n.type = :type', { type: filters.type });
     }
 
     // Filtro por rango de fechas
@@ -202,7 +205,6 @@ export class NotificationService {
   async findOne(notificationId: string, userId: string): Promise<Notification> {
     const notification = await this.notificationRepository.findOne({
       where: { id: notificationId },
-      relations: ['template'],
     });
 
     if (!notification) {
@@ -225,11 +227,11 @@ export class NotificationService {
   async markAsRead(notificationId: string, userId: string): Promise<void> {
     const notification = await this.findOne(notificationId, userId);
 
-    if (notification.isRead) {
+    if (notification.status === 'read') {
       return; // Ya estaba leída
     }
 
-    notification.isRead = true;
+    notification.status = 'read';
     notification.readAt = new Date();
 
     await this.notificationRepository.save(notification);
@@ -245,9 +247,9 @@ export class NotificationService {
     const result = await this.notificationRepository
       .createQueryBuilder()
       .update(Notification)
-      .set({ isRead: true, readAt: new Date() })
+      .set({ status: 'read', readAt: new Date() })
       .where('user_id = :userId', { userId })
-      .andWhere('is_read = false')
+      .andWhere('status != :status', { status: 'read' })
       .execute();
 
     return result.affected || 0;
@@ -257,12 +259,14 @@ export class NotificationService {
    * Obtener contador de notificaciones no leídas
    *
    * @param userId - UUID del usuario
-   * @returns Número de notificaciones no leídas
+   * @returns Número de notificaciones no leídas (status != 'read')
    */
   async getUnreadCount(userId: string): Promise<number> {
-    return this.notificationRepository.count({
-      where: { userId, isRead: false },
-    });
+    return this.notificationRepository
+      .createQueryBuilder('n')
+      .where('n.user_id = :userId', { userId })
+      .andWhere('n.status IN (:...statuses)', { statuses: ['pending', 'sent'] })
+      .getCount();
   }
 
   /**

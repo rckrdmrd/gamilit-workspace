@@ -51,7 +51,7 @@ import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
 @Index(['isActive'])
 export class NotificationTemplate {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * Identificador único del template
@@ -61,19 +61,19 @@ export class NotificationTemplate {
    * @unique
    */
   @Column({ name: 'template_key', type: 'varchar', length: 100, unique: true })
-  templateKey!: string;
+    templateKey!: string;
 
   /**
    * Nombre descriptivo del template
    */
   @Column({ type: 'varchar', length: 255 })
-  name!: string;
+    name!: string;
 
   /**
    * Descripción del propósito del template
    */
   @Column({ type: 'text', nullable: true })
-  description?: string;
+    description?: string;
 
   /**
    * Plantilla del asunto (para email)
@@ -83,7 +83,7 @@ export class NotificationTemplate {
    * Ejemplo: "¡Felicidades {{user_name}}! Has desbloqueado {{achievement_name}}"
    */
   @Column({ name: 'subject_template', type: 'text' })
-  subjectTemplate!: string;
+    subjectTemplate!: string;
 
   /**
    * Plantilla del cuerpo (texto plano)
@@ -93,7 +93,7 @@ export class NotificationTemplate {
    * Ejemplo: "Hola {{user_name}}, has completado la misión {{mission_name}}..."
    */
   @Column({ name: 'body_template', type: 'text' })
-  bodyTemplate!: string;
+    bodyTemplate!: string;
 
   /**
    * Plantilla del cuerpo HTML (para email)
@@ -104,7 +104,7 @@ export class NotificationTemplate {
    * @optional Si no se proporciona, se usa bodyTemplate
    */
   @Column({ name: 'html_template', type: 'text', nullable: true })
-  htmlTemplate?: string;
+    htmlTemplate?: string;
 
   /**
    * Variables requeridas para renderizar el template
@@ -117,7 +117,7 @@ export class NotificationTemplate {
    * antes de renderizar el template.
    */
   @Column({ type: 'jsonb', nullable: true })
-  variables?: string[];
+    variables?: string[];
 
   /**
    * Canales por defecto para este template
@@ -130,7 +130,7 @@ export class NotificationTemplate {
    * Este campo solo define los canales sugeridos
    */
   @Column({ name: 'default_channels', type: 'varchar', array: true })
-  defaultChannels!: string[];
+    defaultChannels!: string[];
 
   /**
    * Indica si el template está activo
@@ -139,11 +139,11 @@ export class NotificationTemplate {
    * Útil para deshabilitar temporalmente sin eliminar
    */
   @Column({ name: 'is_active', type: 'boolean', default: true })
-  isActive!: boolean;
+    isActive!: boolean;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
-  createdAt!: Date;
+    createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
-  updatedAt!: Date;
+    updatedAt!: Date;
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, Suspense } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/app/providers/AuthContext';
@@ -23,6 +24,7 @@ import {
   Loader2,
   RotateCcw,
   Check,
+  CloudOff,
 } from 'lucide-react';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { DifficultyLevel } from '@shared/types/educational.types';
@@ -35,6 +37,9 @@ import {
 import { adaptExerciseData } from '@shared/utils/exerciseAdapter';
 import { ExerciseGuide } from '@/features/exercises/components/ExerciseGuide';
 import { UnderConstructionExercise } from '@/features/exercises/components/UnderConstructionExercise';
+import { useExerciseAutoSave } from '../hooks/useExerciseAutoSave';
+import { PowerUpBar } from '../components/PowerUpBar';
+import { useExercisePowerUps } from '../hooks/useExercisePowerUps';
 
 // ============================================================================
 // TYPES
@@ -100,7 +105,7 @@ const loadMechanic = (mechanicType: string) => {
 
     // Module 2 - Comprensión Inferencial
     detective_textual: () =>
-      import('@/features/mechanics/module2/LecturaInferencial/LecturaInferencialExercise'),
+      import('@/features/mechanics/module2/DetectiveTextual/DetectiveTextualExercise'),
     lectura_inferencial: () =>
       import('@/features/mechanics/module2/LecturaInferencial/LecturaInferencialExercise'),
     construccion_hipotesis: () =>
@@ -196,6 +201,49 @@ export default function ExercisePage() {
 
   // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
   const { gamificationData } = useUserGamification(user?.id);
+
+  // Power-ups hook
+  const {
+    availablePowerUps,
+    activePowerUps,
+    activatePowerUp,
+    getUsedPowerUps,
+    isLoading: powerUpLoading,
+    error: powerUpError,
+  } = useExercisePowerUps({
+    exerciseId: exerciseId || '',
+    userId: user?.id,
+    onHintReveal: (count) => {
+      console.log(`Power-up revealed ${count} hints`);
+      // Hints will be automatically available through the effects.hintsRevealed
+    },
+    onTimeExtension: (seconds) => {
+      console.log(`Power-up added ${seconds} seconds`);
+      // Time extension effect is tracked in powerUpEffects.timeExtension
+    },
+    onSecondChance: () => {
+      console.log('Second chance activated');
+      // Second chance effect tracked in powerUpEffects.hasSecondChance
+    },
+    onVisionActivate: () => {
+      console.log('Vision power-up activated');
+      // Vision effect tracked in powerUpEffects.visionActive
+    },
+  });
+
+  // Auto-save hook integration
+  const {
+    status: autoSaveStatus,
+    lastSavedAt,
+    recoveredData,
+    saveProgress: autoSaveProgress,
+    clearRecoveredData,
+  } = useExerciseAutoSave({
+    exerciseId: exerciseId || '',
+    enabled: !!exerciseId,
+    intervalMs: 30000, // 30 seconds
+    debounceMs: 2000, // 2 seconds debounce
+  });
 
   // ============================================================================
   // DATA FETCHING
@@ -315,18 +363,68 @@ export default function ExercisePage() {
   }, [exerciseId, moduleId]);
 
   // ============================================================================
-  // AUTO-SAVE
+  // AUTO-SAVE - RECOVERY
   // ============================================================================
 
+  // Recover saved progress on mount
   useEffect(() => {
-    if (!exercise || !hasUnsavedChanges) return;
+    if (recoveredData?.partialAnswers && !userAnswers) {
+      console.log('Recovering saved progress:', recoveredData);
 
-    const autoSaveInterval = setInterval(() => {
-      handleSaveProgress();
-    }, 30000); // 30 seconds
+      // Restore answers
+      setUserAnswers(recoveredData.partialAnswers);
 
-    return () => clearInterval(autoSaveInterval);
-  }, [exercise, hasUnsavedChanges, progress]);
+      // Restore time spent if available
+      if (recoveredData.timeSpentSeconds) {
+        setProgress((prev) => ({
+          ...prev,
+          timeSpent: recoveredData.timeSpentSeconds,
+        }));
+      }
+
+      // Restore metadata
+      if (recoveredData.metadata) {
+        setProgress((prev) => ({
+          ...prev,
+          hintsUsed: recoveredData.metadata?.hintsUsed || prev.hintsUsed,
+          powerupsUsed: recoveredData.metadata?.comodinesUsed || prev.powerupsUsed,
+        }));
+      }
+
+      // Clear recovered data to avoid re-applying
+      clearRecoveredData();
+
+      // Show notification
+      setFeedback({
+        type: 'info',
+        title: 'Progreso Recuperado',
+        message: 'Se ha recuperado tu progreso anterior. Puedes continuar donde lo dejaste.',
+      });
+      setShowFeedback(true);
+    }
+  }, [recoveredData, userAnswers, clearRecoveredData]);
+
+  // ============================================================================
+  // AUTO-SAVE - PERIODIC SAVE
+  // ============================================================================
+
+  // Auto-save when answers or progress changes
+  useEffect(() => {
+    if (!exerciseId || !userAnswers) return;
+
+    const currentTime = Math.floor((Date.now() - startTime.getTime()) / 1000);
+
+    autoSaveProgress({
+      partialAnswers: userAnswers,
+      timeSpentSeconds: currentTime,
+      metadata: {
+        hintsUsed: progress.hintsUsed,
+        comodinesUsed: progress.powerupsUsed,
+        currentStep: progress.currentStep,
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userAnswers, progress.hintsUsed, progress.powerupsUsed, progress.currentStep]);
 
   // ============================================================================
   // HANDLERS
@@ -385,13 +483,16 @@ export default function ExercisePage() {
     }
 
     try {
+      // Get used power-ups from hook
+      const usedPowerUpsList = getUsedPowerUps();
+
       console.log('📤 [ExercisePage] Submitting exercise:', {
         exerciseId,
         payload: {
           answers: userAnswers, // ✅ FE-055: Send REAL user answers
           startedAt: startTime.getTime(),
           hintsUsed: progress.hintsUsed || 0,
-          powerupsUsed: progress.powerupsUsed || [],
+          powerupsUsed: usedPowerUpsList || [],
         },
       });
 
@@ -400,7 +501,7 @@ export default function ExercisePage() {
         answers: userAnswers, // ✅ FIXED: Send actual user answers
         startedAt: startTime.getTime(),
         hintsUsed: progress.hintsUsed || 0,
-        powerupsUsed: progress.powerupsUsed || [],
+        powerupsUsed: usedPowerUpsList || [],
       });
 
       console.log('✅ [ExercisePage] Submission result:', result);
@@ -416,7 +517,7 @@ export default function ExercisePage() {
 
       // Add rank up celebration if present
       if (result.rankUp) {
-        feedbackMessage += `\n\n¡Felicidades! Has subido de rango: ${result.rankUp.oldRank} → ${result.rankUp.newRank}`;
+        feedbackMessage += `\n\n¡Felicidades! Has subido de rango: ${result.rankUp.previousRank} → ${result.rankUp.newRank}`;
         if (result.rankUp.unlockedFeatures.length > 0) {
           feedbackMessage += `\nNuevas funciones desbloqueadas: ${result.rankUp.unlockedFeatures.join(', ')}`;
         }
@@ -705,10 +806,36 @@ export default function ExercisePage() {
             </div>
           </div>
 
-          {/* Unsaved Changes Indicator */}
-          {hasUnsavedChanges && (
-            <p className="mt-3 text-xs italic text-orange-600">⚠️ Tienes cambios sin guardar</p>
-          )}
+          {/* Auto-Save Status Indicator */}
+          <div className="mt-3 flex items-center gap-2 text-xs">
+            {autoSaveStatus === 'saving' && (
+              <>
+                <Loader2 className="h-3 w-3 animate-spin text-blue-500" />
+                <span className="text-blue-600">Guardando progreso...</span>
+              </>
+            )}
+            {autoSaveStatus === 'saved' && lastSavedAt && (
+              <>
+                <Check className="h-3 w-3 text-green-500" />
+                <span className="text-green-600">
+                  Guardado automáticamente{' '}
+                  {new Date(lastSavedAt).toLocaleTimeString('es-ES', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </span>
+              </>
+            )}
+            {autoSaveStatus === 'error' && (
+              <>
+                <CloudOff className="h-3 w-3 text-red-500" />
+                <span className="text-red-600">Error al guardar (guardado local activo)</span>
+              </>
+            )}
+            {hasUnsavedChanges && autoSaveStatus === 'idle' && (
+              <span className="italic text-orange-600">⚠️ Tienes cambios sin guardar</span>
+            )}
+          </div>
         </DetectiveCard>
 
         {/* Pedagogical Guide (FE-060: 2025-11-19) */}
@@ -765,6 +892,21 @@ export default function ExercisePage() {
           {/* Sidebar - Compact */}
           <div className="lg:col-span-1">
             <div className="space-y-4">
+              {/* Power-ups Bar */}
+              <PowerUpBar
+                availablePowerUps={availablePowerUps}
+                activePowerUps={activePowerUps}
+                onActivatePowerUp={activatePowerUp}
+                disabled={powerUpLoading}
+              />
+
+              {/* Show power-up error if any */}
+              {powerUpError && (
+                <div className="rounded-lg border-2 border-red-300 bg-red-50 p-2 text-xs text-red-700">
+                  {powerUpError}
+                </div>
+              )}
+
               {/* Actions Card */}
               <DetectiveCard hoverable={false}>
                 <h3 className="mb-3 text-sm font-bold text-detective-text">Acciones</h3>
@@ -819,6 +961,16 @@ export default function ExercisePage() {
                     Verificar
                   </DetectiveButton>
 
+                  {/* Submit Button */}
+                  <DetectiveButton
+                    variant="primary"
+                    icon={<Send className="h-4 w-4" />}
+                    onClick={() => handleSubmit()}
+                    className="w-full"
+                  >
+                    Enviar Respuestas
+                  </DetectiveButton>
+
                   {/* Specific Mechanic Actions */}
                   {mechanicActionsRef.current.specificActions &&
                     mechanicActionsRef.current.specificActions.length > 0 && (
@@ -852,18 +1004,6 @@ export default function ExercisePage() {
                       }}
                     />
                   )}
-
-                  <div className="border-detective-border my-2 border-t"></div>
-
-                  {/* Submit Button */}
-                  <DetectiveButton
-                    variant="primary"
-                    icon={<Send className="h-4 w-4" />}
-                    onClick={() => handleSubmit()}
-                    className="w-full"
-                  >
-                    Enviar Respuestas
-                  </DetectiveButton>
                 </div>
               </DetectiveCard>
 

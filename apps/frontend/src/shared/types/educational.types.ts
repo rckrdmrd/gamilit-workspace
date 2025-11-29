@@ -2,6 +2,7 @@
  * Educational Types
  * Type definitions for Educational Module API responses
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 /**
  * Difficulty Level Enum
@@ -121,7 +122,7 @@ export interface Module {
   /**
    * Module content (JSONB)
    */
-  content?: Record<string, any>;
+  content?: Record<string, unknown>;
 
   order_index: number;
   module_code?: string;
@@ -212,8 +213,8 @@ export interface Module {
   icon?: string;
 
   cover_image_url?: string;
-  settings?: Record<string, any>;
-  metadata?: Record<string, any>;
+  settings?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
 
   // =====================================================
   // COMPUTED FIELDS
@@ -388,7 +389,7 @@ export interface Exercise {
    * Exercise-specific configuration (JSONB)
    * Structure varies by exercise type
    */
-  config?: Record<string, any>;
+  config?: Record<string, unknown>;
 
   /**
    * Exercise content (JSONB)
@@ -406,7 +407,7 @@ export interface Exercise {
   /**
    * Evaluation rubric (JSONB)
    */
-  rubric?: Record<string, any>;
+  rubric?: Record<string, unknown>;
 
   // =====================================================
   // GRADING & SCORING
@@ -497,7 +498,7 @@ export interface Exercise {
    * Power-ups configuration (JSONB)
    * Structure: {pistas: {cost: 15, enabled: true}, ...}
    */
-  comodines_config: Record<string, any>;
+  comodines_config: Record<string, unknown>;
 
   // =====================================================
   // GAMIFICATION & REWARDS
@@ -584,7 +585,7 @@ export interface Exercise {
   /**
    * Additional metadata (JSONB)
    */
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 
   // =====================================================
   // AUDIT FIELDS
@@ -663,7 +664,7 @@ export interface TestCase {
  * Exercise Config
  * Generic configuration object for exercise-specific settings
  */
-export type ExerciseConfig = Record<string, any>;
+export type ExerciseConfig = Record<string, unknown>;
 
 /**
  * Module with Progress

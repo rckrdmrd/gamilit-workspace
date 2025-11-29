@@ -31,28 +31,28 @@ import { User } from './user.entity';
 @Index(['expires_at'])
 export class PasswordResetToken {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
-  @Column({ type: 'text', unique: true })
+  @Column({ type: 'varchar', length: 255, unique: true, name: 'token_hash' })
   @Exclude() // CRITICAL: NO exponer token hasheado en respuestas
-  token!: string;
+    token!: string;
 
   @Column({ type: 'timestamptz' })
-  expires_at!: Date;
+    expires_at!: Date;
 
   @Column({ type: 'timestamptz', nullable: true })
-  used_at!: Date | null;
+    used_at!: Date | null;
 
   @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-  created_at!: Date;
+    created_at!: Date;
 
   // Relaciones
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user!: User;
+    user!: User;
 
   // Helpers
   /**

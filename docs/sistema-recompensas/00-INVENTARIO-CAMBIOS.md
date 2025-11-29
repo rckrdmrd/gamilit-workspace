@@ -1,7 +1,7 @@
 # 📋 INVENTARIO DE CAMBIOS - SISTEMA DE RECOMPENSAS Y PROGRESO
 
-**Versión:** v2.3.0
-**Fecha:** 2025-11-12
+**Versión:** v2.8.0
+**Fecha:** 2025-11-29
 **Estado:** ✅ COMPLETO Y VERIFICADO
 
 ---
@@ -10,11 +10,64 @@
 
 | Categoría | Archivos Modificados | Archivos Creados | Total |
 |-----------|---------------------|------------------|-------|
-| **Base de Datos** | 1 función | 0 | 1 |
-| **Backend** | 2 controllers | 1 service | 3 |
+| **Base de Datos** | 1 función | 2 (función + trigger) | 3 |
+| **Backend** | 3 controllers + 1 service | 0 | 4 |
 | **Frontend** | 1 page | 2 hooks | 3 |
-| **Documentación** | 2 _MAP.md | 6 archivos nuevos | 8 |
-| **TOTAL** | **6** | **9** | **15** |
+| **Documentación** | 6 archivos | 8 archivos nuevos | 14 |
+| **TOTAL** | **11** | **12** | **23** |
+
+---
+
+## 🆕 CAMBIOS v2.8.0 - Sistema de Misiones earn_xp (2025-11-29)
+
+### Problema Resuelto
+Las misiones de tipo `earn_xp` no se actualizaban cuando los ejercicios eran calificados vía `exercise_submissions`. Solo se actualizaban desde `exercise_attempts`.
+
+### Nuevos Objetos de Base de Datos
+
+#### ✅ `gamilit.update_user_stats_on_submission_graded()` (NUEVA)
+**Archivo:** `apps/database/ddl/schemas/gamilit/functions/27-update_user_stats_on_submission_graded.sql`
+
+**Propósito:** Actualiza user_stats cuando una submission es calificada correctamente.
+
+**Cambios:**
+- ✅ Valida status IN ('graded', 'reviewed')
+- ✅ Valida is_correct = true
+- ✅ Valida xp_earned > 0
+- ✅ Evita re-disparos con IS DISTINCT FROM
+- ✅ Patrón UPSERT para crear user_stats si no existe
+- ✅ SECURITY DEFINER para permisos cross-schema
+
+#### ✅ `trg_update_user_stats_on_submission` (NUEVO)
+**Archivo:** `apps/database/ddl/schemas/progress_tracking/triggers/31-trg_update_user_stats_on_submission.sql`
+
+**Evento:** AFTER UPDATE ON exercise_submissions
+**Condición WHEN:** status IN ('graded','reviewed') AND is_correct = true AND estado cambió
+
+### Cambios en Backend
+
+#### ✅ `ExerciseAttemptService.updateMissionsProgress()`
+**Archivo:** `apps/backend/src/modules/progress/services/exercise-attempt.service.ts`
+
+**Cambios:**
+- ✅ **Línea 80:** Agregado parámetro `savedAttempt.xp_earned`
+- ✅ **Línea 644:** Nueva firma con `xpEarned: number = 0`
+- ✅ **Líneas 682-702:** Nueva lógica para actualizar misiones `earn_xp`
+
+### Cadena de Triggers Completada
+
+```
+FLUJO A (Autocorregibles):
+exercise_attempts INSERT → trigger 21 → user_stats → trigger 27 → misiones earn_xp ✅
+
+FLUJO B (Revisión Manual - NUEVO):
+exercise_submissions UPDATE → trigger 31 → user_stats → trigger 27 → misiones earn_xp ✅
+```
+
+### Arquitectura BD-First
+- ✅ Triggers como fuente de verdad
+- ✅ Backend como capa de redundancia
+- ✅ Modificaciones directas en BD disparan triggers
 
 ---
 
@@ -369,6 +422,6 @@ docs/sistema-recompensas/
 
 ---
 
-**Última actualización:** 2025-11-12 00:30 GMT-6
+**Última actualización:** 2025-11-29 09:30 GMT-6
 **Responsable:** Claude Code (Sistema Automatizado)
-**Versión del documento:** 1.0
+**Versión del documento:** 2.8.0

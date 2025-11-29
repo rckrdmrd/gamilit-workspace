@@ -181,7 +181,7 @@ CREATE TRIGGER trg_student_intervention_alerts_updated_at BEFORE UPDATE ON progr
 --
 
 ALTER TABLE ONLY progress_tracking.student_intervention_alerts
-    ADD CONSTRAINT student_intervention_alerts_acknowledged_by_fkey FOREIGN KEY (acknowledged_by) REFERENCES auth.users(id) ON DELETE SET NULL;
+    ADD CONSTRAINT student_intervention_alerts_acknowledged_by_fkey FOREIGN KEY (acknowledged_by) REFERENCES auth_management.profiles(id) ON DELETE SET NULL;
 
 
 --
@@ -197,7 +197,7 @@ ALTER TABLE ONLY progress_tracking.student_intervention_alerts
 --
 
 ALTER TABLE ONLY progress_tracking.student_intervention_alerts
-    ADD CONSTRAINT student_intervention_alerts_resolved_by_fkey FOREIGN KEY (resolved_by) REFERENCES auth.users(id) ON DELETE SET NULL;
+    ADD CONSTRAINT student_intervention_alerts_resolved_by_fkey FOREIGN KEY (resolved_by) REFERENCES auth_management.profiles(id) ON DELETE SET NULL;
 
 
 --
@@ -205,7 +205,7 @@ ALTER TABLE ONLY progress_tracking.student_intervention_alerts
 --
 
 ALTER TABLE ONLY progress_tracking.student_intervention_alerts
-    ADD CONSTRAINT student_intervention_alerts_student_id_fkey FOREIGN KEY (student_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+    ADD CONSTRAINT student_intervention_alerts_student_id_fkey FOREIGN KEY (student_id) REFERENCES auth_management.profiles(id) ON DELETE CASCADE;
 
 
 --

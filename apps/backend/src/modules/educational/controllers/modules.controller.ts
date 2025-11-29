@@ -12,9 +12,9 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { ModulesService } from '../services';
-import { CreateModuleDto, ModuleResponseDto } from '../dto';
+import { CreateModuleDto, ModuleResponseDto, GetModulesQueryDto } from '../dto';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
 import { DifficultyLevelEnum } from '@/shared/constants/enums.constants';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
@@ -42,10 +42,12 @@ export class ModulesController {
   /**
    * Obtiene todos los módulos educativos ordenados por índice
    *
+   * @param query - Query params para filtrado (classroomId opcional)
    * @returns Array de módulos ordenados por order_index
    *
    * @example
    * GET /api/v1/educational/modules
+   * GET /api/v1/educational/modules?classroomId=550e8400-e29b-41d4-a716-446655440000
    * Response: [
    *   {
    *     "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -65,7 +67,14 @@ export class ModulesController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Get all modules',
-    description: 'Obtiene todos los módulos educativos ordenados por índice de secuencia, con progreso del usuario autenticado',
+    description: 'Obtiene todos los módulos educativos ordenados por índice de secuencia, con progreso del usuario autenticado. Opcionalmente filtra por classroom_id.',
+  })
+  @ApiQuery({
+    name: 'classroomId',
+    description: 'ID del classroom para filtrar módulos asignados (opcional)',
+    required: false,
+    type: String,
+    example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @ApiResponse({
     status: 200,
@@ -101,10 +110,11 @@ export class ModulesController {
     status: 500,
     description: 'Error interno del servidor',
   })
-  async findAll(@Request() req: any) {
+  async findAll(@Request() req: any, @Query() query: GetModulesQueryDto) {
     const userId = req.user.id;
     // Reutilizar getUserModules que ya tiene la lógica correcta para ambas tablas
-    return await this.modulesService.getUserModules(userId);
+    // Ahora acepta classroomId opcional para filtrar
+    return this.modulesService.getUserModules(userId, query.classroomId);
   }
 
   /**
@@ -152,7 +162,7 @@ export class ModulesController {
     description: 'Nivel de dificultad inválido',
   })
   async findByDifficulty(@Param('difficulty') difficulty: DifficultyLevelEnum) {
-    return await this.modulesService.findByDifficulty(difficulty);
+    return this.modulesService.findByDifficulty(difficulty);
   }
 
   /**
@@ -204,7 +214,7 @@ export class ModulesController {
     description: 'Parámetro de búsqueda inválido',
   })
   async searchModules(@Query('q') keyword: string) {
-    return await this.modulesService.search(keyword || '');
+    return this.modulesService.search(keyword || '');
   }
 
   /**
@@ -273,7 +283,7 @@ export class ModulesController {
     description: 'Usuario no encontrado',
   })
   async getUserModules(@Param('userId') userId: string) {
-    return await this.modulesService.getUserModules(userId);
+    return this.modulesService.getUserModules(userId);
   }
 
   /**
@@ -365,7 +375,7 @@ export class ModulesController {
     },
   })
   async findOne(@Param('id') id: string) {
-    return await this.modulesService.findById(id);
+    return this.modulesService.findById(id);
   }
 
   /**
@@ -421,7 +431,7 @@ export class ModulesController {
     description: 'Acceso denegado - Se requieren permisos de administrador',
   })
   async create(@Body() createModuleDto: CreateModuleDto) {
-    return await this.modulesService.create(createModuleDto);
+    return this.modulesService.create(createModuleDto);
   }
 
   /**
@@ -476,7 +486,7 @@ export class ModulesController {
     description: 'Módulo no encontrado',
   })
   async update(@Param('id') id: string, @Body() updateModuleDto: Partial<CreateModuleDto>) {
-    return await this.modulesService.update(id, updateModuleDto);
+    return this.modulesService.update(id, updateModuleDto);
   }
 
   /**
@@ -578,6 +588,6 @@ export class ModulesController {
     description: 'Módulo no encontrado',
   })
   async getPrerequisites(@Param('id') id: string) {
-    return await this.modulesService.getPrerequisites(id);
+    return this.modulesService.getPrerequisites(id);
   }
 }

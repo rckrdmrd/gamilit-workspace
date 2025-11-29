@@ -16,23 +16,23 @@ export class TeacherListItemDto {
     description: 'UUID del usuario/profesor',
     example: '550e8400-e29b-41d4-a716-446655440005',
   })
-  id!: string;
+    id!: string;
 
   @ApiProperty({
     description: 'Nombre completo del profesor',
     example: 'Juan Pérez González',
   })
-  display_name!: string;
+    display_name!: string;
 
   @ApiProperty({
     description: 'Email del profesor',
     example: 'juan.perez@escuela.edu',
   })
-  email!: string;
+    email!: string;
 
   @ApiProperty({
     description: 'Rol en la plataforma',
     example: 'admin_teacher',
   })
-  role!: string;
+    role!: string;
 }

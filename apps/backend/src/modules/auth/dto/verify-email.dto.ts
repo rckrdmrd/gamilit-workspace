@@ -10,5 +10,5 @@ import { IsString } from 'class-validator';
  */
 export class VerifyEmailDto {
   @IsString()
-  token!: string; // Token plaintext desde URL/email
+    token!: string; // Token plaintext desde URL/email
 }

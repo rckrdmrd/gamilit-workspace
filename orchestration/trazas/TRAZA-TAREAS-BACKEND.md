@@ -1,6 +1,93 @@
 # Trazas de Tareas - Backend
 
-**Última actualización:** 2025-11-24 (BE-133: Exercise Responses Service COMPLETADO)
+**Última actualización:** 2025-11-28 (BE-134/BE-135: XP Reward Calculations Updated)
+
+---
+
+## BE-135: Uso de xp_reward configurado en exercise-attempt.service.ts ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P1 ALTA
+**Asignado:** Backend-Agent (orquestado por Architecture-Analyst)
+**Fecha:** 2025-11-28
+**Análisis ID:** MODULO2-GAMIFICATION-FIX-001
+
+### Resumen
+
+Modificación de `calculateXpReward()` y `calculateCoinsReward()` para usar los valores configurados en el ejercicio (`xp_reward`, `ml_coins_reward`) en lugar de calcular solo basado en porcentaje de score.
+
+### Archivos Modificados
+
+| Archivo | Descripción |
+|---------|-------------|
+| `modules/progress/services/exercise-attempt.service.ts` | Líneas 174-181, 273-303 modificadas |
+
+### Cambios Implementados
+
+**1. Método `submitAttempt()` (líneas 174-181):**
+- Agregado: Obtención del ejercicio con `exerciseRepo.findOne()`
+- Modificado: Paso de `exerciseXpReward` y `exerciseMlCoinsReward` a funciones de cálculo
+
+**2. Método `calculateXpReward()` (líneas 273-283):**
+- Antes: `Math.floor(scorePercentage)`
+- Después: `Math.floor(exerciseXpReward * scoreMultiplier)` con penalización por hints
+
+**3. Método `calculateCoinsReward()` (líneas 293-303):**
+- Antes: `Math.floor(scorePercentage / 5)`
+- Después: `Math.floor(exerciseMlCoinsReward * scoreMultiplier)` con penalización por comodines
+
+### Validación
+
+- ✅ TypeScript compila sin errores
+- ✅ Backend build exitoso
+- ✅ Lógica de fallback implementada (100 XP / 20 ML Coins si ejercicio no encontrado)
+
+---
+
+## BE-134: Uso de xp_reward configurado en exercise-submission.service.ts ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P1 ALTA
+**Asignado:** Backend-Agent (orquestado por Architecture-Analyst)
+**Fecha:** 2025-11-28
+**Análisis ID:** MODULO2-GAMIFICATION-FIX-001
+
+### Resumen
+
+Modificación del método `claimRewards()` para usar los valores `xp_reward` y `ml_coins_reward` configurados en el ejercicio en lugar de calcular basado solo en porcentaje de score.
+
+### Archivos Modificados
+
+| Archivo | Descripción |
+|---------|-------------|
+| `modules/progress/services/exercise-submission.service.ts` | Líneas 854-862 modificadas |
+
+### Cambios Implementados
+
+**Método `claimRewards()` (líneas 854-862):**
+```typescript
+// Obtener exercise para usar su xp_reward configurado
+const exercise = await this.exerciseRepo.findOne({ where: { id: submission.exercise_id } });
+const baseXpReward = exercise?.xp_reward || 100;
+const baseMlCoinsReward = exercise?.ml_coins_reward || 20;
+
+// Calcular rewards basado en score y rewards configurados del ejercicio
+const scoreMultiplier = submission.score / submission.max_score;
+let xpEarned = Math.floor(baseXpReward * scoreMultiplier);
+let mlCoinsEarned = Math.floor(baseMlCoinsReward * scoreMultiplier);
+```
+
+### Impacto
+
+- Módulo 1: Sigue usando 100 XP / 20 ML Coins (sin cambio)
+- Módulo 2: Ahora usa 150 XP / 30 ML Coins (nuevo)
+- Módulo 3+: Usa valores configurados en cada ejercicio
+
+### Validación
+
+- ✅ TypeScript compila sin errores
+- ✅ Backend build exitoso
+- ✅ Lógica proporcional al score implementada
 
 ---
 

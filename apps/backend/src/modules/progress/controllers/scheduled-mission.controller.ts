@@ -86,7 +86,7 @@ export class ScheduledMissionController {
     description: 'Acceso denegado - Se requieren permisos de profesor',
   })
   async create(@Body() createMissionDto: CreateScheduledMissionDto) {
-    return await this.missionService.create(createMissionDto);
+    return this.missionService.create(createMissionDto);
   }
 
   /**
@@ -135,7 +135,7 @@ export class ScheduledMissionController {
     description: 'Aula no encontrada',
   })
   async findByClassroomId(@Param('classroomId') classroomId: string) {
-    return await this.missionService.findByClassroomId(classroomId);
+    return this.missionService.findByClassroomId(classroomId);
   }
 
   /**
@@ -184,7 +184,7 @@ export class ScheduledMissionController {
     description: 'Usuario no encontrado',
   })
   async findByUserId(@Param('userId') userId: string) {
-    return await this.missionService.findByUserId(userId);
+    return this.missionService.findByUserId(userId);
   }
 
   /**
@@ -225,7 +225,7 @@ export class ScheduledMissionController {
     description: 'Error interno del servidor',
   })
   async findActive() {
-    return await this.missionService.findActive();
+    return this.missionService.findActive();
   }
 
   /**
@@ -273,7 +273,7 @@ export class ScheduledMissionController {
     description: 'Usuario no encontrado',
   })
   async findUpcoming(@Param('userId') userId: string) {
-    return await this.missionService.findUpcoming(userId);
+    return this.missionService.findUpcoming(userId);
   }
 
   /**
@@ -321,7 +321,7 @@ export class ScheduledMissionController {
     description: 'Misión programada no encontrada',
   })
   async startMission(@Param('id') id: string) {
-    return await this.missionService.startMission(id);
+    return this.missionService.startMission(id);
   }
 
   /**
@@ -373,7 +373,7 @@ export class ScheduledMissionController {
     description: 'Misión programada no encontrada',
   })
   async completeMission(@Param('id') id: string) {
-    return await this.missionService.completeMission(id);
+    return this.missionService.completeMission(id);
   }
 
   /**
@@ -423,10 +423,10 @@ export class ScheduledMissionController {
     description: 'Misión programada no encontrada',
   })
   async updateProgress(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() body: { progress: number },
   ) {
-    return await this.missionService.updateProgress(id, body.progress);
+    return this.missionService.updateProgress(id, body.progress);
   }
 
   /**
@@ -475,6 +475,6 @@ export class ScheduledMissionController {
     description: 'Misión programada no encontrada',
   })
   async claimBonusRewards(@Param('id') id: string) {
-    return await this.missionService.claimBonusRewards(id);
+    return this.missionService.claimBonusRewards(id);
   }
 }

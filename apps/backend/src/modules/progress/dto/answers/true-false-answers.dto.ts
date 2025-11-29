@@ -25,5 +25,5 @@ export class TrueFalseAnswersDto {
    */
   @IsObject({ message: 'statements must be an object' })
   @IsNotEmpty({ message: 'statements object is required' })
-  statements!: Record<string, boolean>;
+    statements!: Record<string, boolean>;
 }

@@ -9,6 +9,7 @@
  * - ML Coins balance display
  * - Transaction history
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -215,7 +216,7 @@ export default function ShopPage() {
       setIsPurchasing(true);
 
       // Call real API to purchase power-up
-      await purchasePowerUp(selectedItem.id, 1);
+      await purchasePowerUp(user.id, selectedItem.id, 1);
 
       // Refresh balance after successful purchase
       await fetchBalance();
@@ -233,9 +234,11 @@ export default function ShopPage() {
         icon: '🎉',
         duration: 4000,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Purchase failed:', error);
-      toast.error(error.message || 'Purchase failed. Please try again.');
+      const errorMessage =
+        error instanceof Error ? error.message : 'Purchase failed. Please try again.';
+      toast.error(errorMessage);
     } finally {
       setIsPurchasing(false);
     }
@@ -335,7 +338,7 @@ export default function ShopPage() {
             </div>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
+              onChange={(e) => setSortBy(e.target.value as 'price_asc' | 'price_desc' | 'rarity')}
               className="rounded-lg border-2 border-detective-orange/30 px-4 py-2 focus:border-detective-orange focus:outline-none"
             >
               <option value="rarity">Sort by Rarity</option>

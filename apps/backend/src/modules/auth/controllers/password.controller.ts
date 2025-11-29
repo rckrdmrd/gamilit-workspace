@@ -2,6 +2,7 @@ import {
   Controller,
   Post,
   Get,
+  Put,
   Body,
   UseGuards,
   Request,
@@ -20,9 +21,11 @@ import {
   RequestPasswordResetDto,
   ResetPasswordDto,
   VerifyEmailDto,
+  ChangePasswordDto,
 } from '../dto';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { AuthService } from '../services/auth.service';
 
 /**
  * PasswordController
@@ -32,6 +35,7 @@ import { JwtAuthGuard } from '../guards/jwt-auth.guard';
  * @endpoints
  * - POST /auth/reset-password/request - Solicitar reset de password
  * - POST /auth/reset-password - Resetear password con token
+ * - PUT /auth/change-password - Cambiar contraseña (usuario autenticado)
  * - POST /auth/verify-email - Verificar email con token
  * - POST /auth/verify-email/resend - Reenviar email de verificación
  * - GET /auth/verify-email/status - Consultar estado de verificación
@@ -42,6 +46,7 @@ export class PasswordController {
   constructor(
     private readonly passwordRecoveryService: PasswordRecoveryService,
     private readonly emailVerificationService: EmailVerificationService,
+    private readonly authService: AuthService,
   ) {}
 
   /**
@@ -66,7 +71,7 @@ export class PasswordController {
   async requestPasswordReset(
     @Body() dto: RequestPasswordResetDto,
   ): Promise<{ message: string }> {
-    return await this.passwordRecoveryService.requestReset(dto);
+    return this.passwordRecoveryService.requestReset(dto);
   }
 
   /**
@@ -92,7 +97,59 @@ export class PasswordController {
   async resetPassword(
     @Body() dto: ResetPasswordDto,
   ): Promise<{ message: string }> {
-    return await this.passwordRecoveryService.resetPassword(dto);
+    return this.passwordRecoveryService.resetPassword(dto);
+  }
+
+  /**
+   * Cambiar contraseña (usuario autenticado)
+   *
+   * @description
+   * Permite a un usuario autenticado cambiar su contraseña.
+   * Requiere JWT válido y proporcionar contraseña actual.
+   *
+   * @requires JwtAuthGuard - Usuario debe estar autenticado
+   *
+   * @param req - Request object con user.id del JWT
+   * @param dto - ChangePasswordDto con current_password y new_password
+   *
+   * @returns Mensaje de confirmación
+   *
+   * @throws UnauthorizedException - No autenticado o usuario no encontrado
+   * @throws BadRequestException - Contraseña actual incorrecta
+   * @throws BadRequestException - Nueva contraseña inválida
+   */
+  @Put('change-password')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Cambiar contraseña (usuario autenticado)',
+    description: 'Cambia la contraseña del usuario actual. Requiere autenticación JWT y contraseña actual.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Contraseña actualizada correctamente',
+    schema: {
+      properties: {
+        message: { type: 'string', example: 'Contraseña actualizada correctamente' },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Contraseña actual incorrecta o nueva contraseña inválida' })
+  @ApiResponse({ status: 401, description: 'No autenticado' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  @ApiBody({ type: ChangePasswordDto })
+  async changePassword(
+    @Request() req: any,
+      @Body() dto: ChangePasswordDto,
+  ): Promise<{ message: string }> {
+    // Extraer userId del token JWT
+    const userId = req.user?.id;
+    return this.authService.changePassword(
+      userId,
+      dto.current_password,
+      dto.new_password,
+    );
   }
 
   /**
@@ -119,7 +176,7 @@ export class PasswordController {
   async verifyEmail(
     @Body() dto: VerifyEmailDto,
   ): Promise<{ message: string; verified: boolean }> {
-    return await this.emailVerificationService.verifyEmail(dto);
+    return this.emailVerificationService.verifyEmail(dto);
   }
 
   /**
@@ -147,7 +204,7 @@ export class PasswordController {
   async resendVerification(@Request() req: any): Promise<{ message: string }> {
     // Extraer userId del token JWT
     const userId = req.user?.id;
-    return await this.emailVerificationService.resendVerification(userId);
+    return this.emailVerificationService.resendVerification(userId);
   }
 
   /**
@@ -172,6 +229,6 @@ export class PasswordController {
   async checkVerificationStatus(@Request() req: any): Promise<{ verified: boolean }> {
     // Extraer userId del token JWT
     const userId = req.user?.id;
-    return await this.emailVerificationService.checkVerificationStatus(userId);
+    return this.emailVerificationService.checkVerificationStatus(userId);
   }
 }

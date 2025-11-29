@@ -10,6 +10,7 @@
  * - Loading states
  * - localStorage integration
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { useAuthStore } from '../store/authStore';

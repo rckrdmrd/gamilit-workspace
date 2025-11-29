@@ -50,6 +50,66 @@ export class ComodinesService {
   ) {}
 
   /**
+   * Obtiene el catálogo de comodines disponibles
+   *
+   * @description Retorna lista estática de tipos de comodines con precios,
+   * descripciones e iconos. Usado por la tienda (ShopPage) en frontend.
+   *
+   * @returns Array con catálogo de comodines
+   *
+   * @example
+   * const catalog = service.getCatalog();
+   * // [
+   * //   { id: 'pistas', name: 'Pistas', cost: 15, ... },
+   * //   { id: 'vision_lectora', name: 'Visión Lectora', cost: 25, ... },
+   * //   { id: 'segunda_oportunidad', name: 'Segunda Oportunidad', cost: 40, ... }
+   * // ]
+   */
+  getCatalog(): any[] {
+    return [
+      {
+        id: 'pistas',
+        name: 'Pistas',
+        description: 'Revela pistas contextuales para ayudarte en ejercicios difíciles',
+        cost: 15,
+        icon: '💡',
+        rarity: 'common',
+        category: 'premium',
+        effect: {
+          type: 'hint',
+          description: 'Muestra una pista contextual',
+        },
+      },
+      {
+        id: 'vision_lectora',
+        name: 'Visión Lectora',
+        description: 'Resalta palabras clave y conceptos importantes en el texto',
+        cost: 25,
+        icon: '👁️',
+        rarity: 'rare',
+        category: 'premium',
+        effect: {
+          type: 'highlight',
+          description: 'Resalta palabras clave',
+        },
+      },
+      {
+        id: 'segunda_oportunidad',
+        name: 'Segunda Oportunidad',
+        description: 'Permite reintentar un ejercicio sin perder puntos',
+        cost: 40,
+        icon: '🔄',
+        rarity: 'epic',
+        category: 'premium',
+        effect: {
+          type: 'retry',
+          description: 'Reintenta sin penalización',
+        },
+      },
+    ];
+  }
+
+  /**
    * Obtiene el inventario de comodines del usuario
    *
    * @description Retorna el registro completo del inventario.

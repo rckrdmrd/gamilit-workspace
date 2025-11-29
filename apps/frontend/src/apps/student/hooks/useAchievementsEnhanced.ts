@@ -3,6 +3,7 @@
  * Enhanced hook with comprehensive filtering, search, and statistics
  * ~300 lines
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAchievementsStore } from '@/features/gamification/social/store/achievementsStore';
@@ -308,6 +309,7 @@ export const useAchievementsEnhanced = (): UseAchievementsEnhancedResult => {
     if (achievements.length === 0) {
       refresh();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Save filter preferences to localStorage

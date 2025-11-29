@@ -29,7 +29,7 @@ export class CreateContentCategoryDto {
   })
   @IsString()
   @MinLength(2)
-  name!: string;
+    name!: string;
 
   /**
    * Slug único para URLs
@@ -44,7 +44,7 @@ export class CreateContentCategoryDto {
   @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
     message: 'Slug must contain only lowercase letters, numbers, and hyphens',
   })
-  slug!: string;
+    slug!: string;
 
   /**
    * Descripción de la categoría
@@ -54,7 +54,7 @@ export class CreateContentCategoryDto {
   })
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   /**
    * ID de la categoría padre (para jerarquías)
@@ -65,7 +65,7 @@ export class CreateContentCategoryDto {
   })
   @IsOptional()
   @IsUUID('4')
-  parent_category_id?: string;
+    parent_category_id?: string;
 
   /**
    * Orden de visualización
@@ -79,7 +79,7 @@ export class CreateContentCategoryDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  display_order?: number;
+    display_order?: number;
 
   /**
    * Ícono de la categoría
@@ -91,7 +91,7 @@ export class CreateContentCategoryDto {
   })
   @IsOptional()
   @IsString()
-  icon?: string;
+    icon?: string;
 
   /**
    * Color de la categoría (hex)
@@ -107,5 +107,5 @@ export class CreateContentCategoryDto {
   @Matches(/^#[0-9A-Fa-f]{6}$/, {
     message: 'Color must be a valid hex color (e.g., #3B82F6)',
   })
-  color?: string;
+    color?: string;
 }

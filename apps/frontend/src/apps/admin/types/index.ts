@@ -105,7 +105,7 @@ export interface SystemLog {
   message: string;
   source: string;
   timestamp: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
 }
 
 export interface SystemSettings {

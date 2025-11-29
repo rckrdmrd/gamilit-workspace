@@ -75,7 +75,7 @@ export class PeerChallengesService {
       created_at: new Date(),
     });
 
-    return await this.challengeRepo.save(challenge);
+    return this.challengeRepo.save(challenge);
   }
 
   /**
@@ -102,7 +102,7 @@ export class PeerChallengesService {
       where.created_by = filters.created_by;
     }
 
-    return await this.challengeRepo.find({
+    return this.challengeRepo.find({
       where,
       order: { created_at: 'DESC' },
     });
@@ -113,7 +113,7 @@ export class PeerChallengesService {
    * @returns Lista de desafíos abiertos
    */
   async findOpen(): Promise<PeerChallenge[]> {
-    return await this.challengeRepo.find({
+    return this.challengeRepo.find({
       where: { status: 'open' },
       order: { created_at: 'DESC' },
     });
@@ -124,7 +124,7 @@ export class PeerChallengesService {
    * @returns Lista de desafíos activos
    */
   async findActive(): Promise<PeerChallenge[]> {
-    return await this.challengeRepo.find({
+    return this.challengeRepo.find({
       where: { status: 'in_progress' },
       order: { start_time: 'ASC' },
     });
@@ -152,7 +152,7 @@ export class PeerChallengesService {
    * @returns Lista de desafíos
    */
   async findByCreator(userId: string): Promise<PeerChallenge[]> {
-    return await this.challengeRepo.find({
+    return this.challengeRepo.find({
       where: { created_by: userId },
       order: { created_at: 'DESC' },
     });
@@ -194,7 +194,7 @@ export class PeerChallengesService {
       metadata: data.metadata ?? challenge.metadata,
     });
 
-    return await this.challengeRepo.save(challenge);
+    return this.challengeRepo.save(challenge);
   }
 
   /**
@@ -239,7 +239,7 @@ export class PeerChallengesService {
       challenge.completed_at = new Date();
     }
 
-    return await this.challengeRepo.save(challenge);
+    return this.challengeRepo.save(challenge);
   }
 
   /**
@@ -248,7 +248,7 @@ export class PeerChallengesService {
    * @returns Desafío actualizado
    */
   async markAsFull(id: string): Promise<PeerChallenge> {
-    return await this.updateStatus(id, 'full');
+    return this.updateStatus(id, 'full');
   }
 
   /**
@@ -257,7 +257,7 @@ export class PeerChallengesService {
    * @returns Desafío actualizado
    */
   async start(id: string): Promise<PeerChallenge> {
-    return await this.updateStatus(id, 'in_progress');
+    return this.updateStatus(id, 'in_progress');
   }
 
   /**
@@ -266,7 +266,7 @@ export class PeerChallengesService {
    * @returns Desafío actualizado
    */
   async complete(id: string): Promise<PeerChallenge> {
-    return await this.updateStatus(id, 'completed');
+    return this.updateStatus(id, 'completed');
   }
 
   /**
@@ -283,7 +283,7 @@ export class PeerChallengesService {
       throw new ForbiddenException('Only the creator can cancel this challenge');
     }
 
-    return await this.updateStatus(id, 'cancelled');
+    return this.updateStatus(id, 'cancelled');
   }
 
   /**
@@ -341,7 +341,7 @@ export class PeerChallengesService {
    * @returns Conteo por tipo de desafío
    */
   async getStatsByType(): Promise<
-    Record<'head_to_head' | 'multiplayer' | 'tournament' | 'leaderboard', number>
+  Record<'head_to_head' | 'multiplayer' | 'tournament' | 'leaderboard', number>
   > {
     const challenges = await this.challengeRepo.find();
 
@@ -364,7 +364,7 @@ export class PeerChallengesService {
    * @returns Conteo por estado
    */
   async getStatsByStatus(): Promise<
-    Record<'open' | 'full' | 'in_progress' | 'completed' | 'cancelled' | 'expired', number>
+  Record<'open' | 'full' | 'in_progress' | 'completed' | 'cancelled' | 'expired', number>
   > {
     const challenges = await this.challengeRepo.find();
 

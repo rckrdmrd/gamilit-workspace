@@ -74,7 +74,7 @@ export class SendFromTemplateDto {
   })
   @IsString()
   @IsNotEmpty()
-  templateKey!: string;
+    templateKey!: string;
 
   /**
    * UUID del usuario destinatario
@@ -87,7 +87,7 @@ export class SendFromTemplateDto {
   })
   @IsUUID(4)
   @IsNotEmpty()
-  userId!: string;
+    userId!: string;
 
   /**
    * Variables para interpolar en el template
@@ -120,7 +120,25 @@ export class SendFromTemplateDto {
   })
   @IsObject()
   @IsNotEmpty()
-  variables!: Record<string, string>;
+    variables!: Record<string, string>;
+
+  /**
+   * Tipo de notificación (opcional)
+   *
+   * Valores permitidos: achievement, mission, assignment, social, system, gamification
+   * Si no se especifica, se usa 'system'
+   *
+   * @example "achievement"
+   */
+  @ApiPropertyOptional({
+    description: 'Tipo de notificación',
+    example: 'achievement',
+    enum: ['achievement', 'mission', 'assignment', 'social', 'system', 'gamification'],
+  })
+  @IsString()
+  @IsIn(['achievement', 'mission', 'assignment', 'social', 'system', 'gamification'])
+  @IsOptional()
+    type?: string;
 
   /**
    * Canales por los que enviar (opcional)
@@ -143,7 +161,7 @@ export class SendFromTemplateDto {
   @IsString({ each: true })
   @IsIn(['in_app', 'email', 'push'], { each: true })
   @IsOptional()
-  channels?: string[];
+    channels?: string[];
 
   /**
    * Tipo de entidad relacionada (opcional)
@@ -156,7 +174,7 @@ export class SendFromTemplateDto {
   })
   @IsString()
   @IsOptional()
-  relatedEntityType?: string;
+    relatedEntityType?: string;
 
   /**
    * UUID de la entidad relacionada (opcional)
@@ -169,7 +187,7 @@ export class SendFromTemplateDto {
   })
   @IsUUID(4)
   @IsOptional()
-  relatedEntityId?: string;
+    relatedEntityId?: string;
 
   /**
    * Metadata adicional (opcional)
@@ -184,5 +202,5 @@ export class SendFromTemplateDto {
   })
   @IsObject()
   @IsOptional()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

@@ -39,10 +39,7 @@ interface NotificationsState {
 
   // Preferences Actions (Multi-Channel)
   fetchPreferences: () => Promise<void>;
-  updatePreference: (
-    notificationType: string,
-    updates: UpdatePreferenceDto,
-  ) => Promise<void>;
+  updatePreference: (notificationType: string, updates: UpdatePreferenceDto) => Promise<void>;
   updateMultiplePreferences: (dto: UpdateMultiplePreferencesDto) => Promise<void>;
 
   // Devices Actions (Push Notifications)
@@ -77,7 +74,7 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
         status: unreadOnly ? 'unread' : 'all',
       });
       set({ notifications: data.notifications, isLoading: false });
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ error: error.message, isLoading: false });
     }
   },
@@ -86,7 +83,7 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
     try {
       const count = await notificationsAPI.getUnreadCount();
       set({ unreadCount: count });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to fetch unread count:', error);
     }
   },
@@ -96,11 +93,11 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
       await notificationsAPI.markAsRead(notificationId);
       set((state) => ({
         notifications: state.notifications.map((n) =>
-          n.id === notificationId ? { ...n, status: 'read' as const } : n
+          n.id === notificationId ? { ...n, status: 'read' as const } : n,
         ),
         unreadCount: Math.max(0, state.unreadCount - 1),
       }));
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ error: error.message });
     }
   },
@@ -112,7 +109,7 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
         notifications: state.notifications.map((n) => ({ ...n, status: 'read' as const })),
         unreadCount: 0,
       }));
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ error: error.message });
     }
   },
@@ -128,7 +125,7 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
           unreadCount: wasUnread ? Math.max(0, state.unreadCount - 1) : state.unreadCount,
         };
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ error: error.message });
     }
   },
@@ -137,7 +134,7 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
     try {
       await notificationsAPI.clearAll();
       set({ notifications: [], unreadCount: 0 });
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ error: error.message });
     }
   },
@@ -155,7 +152,7 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
     try {
       const data = await notificationsAPI.getPreferences();
       set({ preferences: data.preferences, preferencesLoading: false });
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ error: error.message, preferencesLoading: false });
       console.error('Failed to fetch preferences:', error);
     }
@@ -167,16 +164,10 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
    * @param notificationType - Type (e.g., 'achievement', 'friend_request')
    * @param updates - Channels to enable/disable
    */
-  updatePreference: async (
-    notificationType: string,
-    updates: UpdatePreferenceDto,
-  ) => {
+  updatePreference: async (notificationType: string, updates: UpdatePreferenceDto) => {
     set({ preferencesLoading: true, error: null });
     try {
-      const updatedPref = await notificationsAPI.updatePreference(
-        notificationType,
-        updates,
-      );
+      const updatedPref = await notificationsAPI.updatePreference(notificationType, updates);
 
       // Update local state
       set((state) => {
@@ -197,7 +188,7 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
           };
         }
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ error: error.message, preferencesLoading: false });
       console.error('Failed to update preference:', error);
     }
@@ -213,7 +204,7 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
     try {
       const data = await notificationsAPI.updateMultiplePreferences(dto);
       set({ preferences: data.preferences, preferencesLoading: false });
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ error: error.message, preferencesLoading: false });
       console.error('Failed to update multiple preferences:', error);
     }
@@ -229,7 +220,7 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
     try {
       const data = await notificationsAPI.getDevices();
       set({ devices: data.devices, devicesLoading: false });
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ error: error.message, devicesLoading: false });
       console.error('Failed to fetch devices:', error);
     }
@@ -250,7 +241,7 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
         devices: [newDevice, ...state.devices],
         devicesLoading: false,
       }));
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ error: error.message, devicesLoading: false });
       console.error('Failed to register device:', error);
       throw error; // Re-throw so UI can handle it
@@ -272,12 +263,10 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
 
       // Update local state
       set((state) => ({
-        devices: state.devices.map((d) =>
-          d.id === deviceId ? updatedDevice : d,
-        ),
+        devices: state.devices.map((d) => (d.id === deviceId ? updatedDevice : d)),
         devicesLoading: false,
       }));
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ error: error.message, devicesLoading: false });
       console.error('Failed to update device name:', error);
       throw error;
@@ -299,7 +288,7 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
         devices: state.devices.filter((d) => d.id !== deviceId),
         devicesLoading: false,
       }));
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ error: error.message, devicesLoading: false });
       console.error('Failed to delete device:', error);
       throw error;
@@ -317,9 +306,7 @@ export const useNotificationsStore = create<NotificationsState>((set) => ({
 
   updateNotification: (id: string, updates: Partial<Notification>) => {
     set((state) => ({
-      notifications: state.notifications.map((n) =>
-        n.id === id ? { ...n, ...updates } : n
-      ),
+      notifications: state.notifications.map((n) => (n.id === id ? { ...n, ...updates } : n)),
     }));
   },
 }));

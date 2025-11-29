@@ -87,7 +87,7 @@ export class TeamsController {
     description: 'Error interno del servidor',
   })
   async findAll(@Query('classroomId') classroomId?: string) {
-    return await this.teamsService.findAll(classroomId);
+    return this.teamsService.findAll(classroomId);
   }
 
   /**
@@ -122,7 +122,7 @@ export class TeamsController {
     description: 'Equipo no encontrado',
   })
   async findById(@Param('id') id: string) {
-    return await this.teamsService.findById(id);
+    return this.teamsService.findById(id);
   }
 
   /**
@@ -158,7 +158,7 @@ export class TeamsController {
     description: 'Equipo con el código especificado no encontrado',
   })
   async findByCode(@Param('code') code: string) {
-    return await this.teamsService.findByCode(code);
+    return this.teamsService.findByCode(code);
   }
 
   /**
@@ -218,7 +218,7 @@ export class TeamsController {
     },
   })
   async create(@Body() createDto: CreateTeamDto) {
-    return await this.teamsService.create(createDto);
+    return this.teamsService.create(createDto);
   }
 
   /**
@@ -266,10 +266,10 @@ export class TeamsController {
     description: 'El nuevo código ya existe en otro equipo',
   })
   async update(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() updateDto: Partial<CreateTeamDto>,
   ) {
-    return await this.teamsService.update(id, updateDto);
+    return this.teamsService.update(id, updateDto);
   }
 
   /**
@@ -348,10 +348,10 @@ export class TeamsController {
     description: 'Equipo o usuario no encontrado',
   })
   async addMember(
-    @Param('teamId') teamId: string,
+  @Param('teamId') teamId: string,
     @Param('userId') userId: string,
   ) {
-    return await this.teamsService.addMember(teamId, userId);
+    return this.teamsService.addMember(teamId, userId);
   }
 
   /**
@@ -392,10 +392,10 @@ export class TeamsController {
     description: 'Equipo o membresía no encontrada',
   })
   async removeMember(
-    @Param('teamId') teamId: string,
+  @Param('teamId') teamId: string,
     @Param('userId') userId: string,
   ) {
-    return await this.teamsService.removeMember(teamId, userId);
+    return this.teamsService.removeMember(teamId, userId);
   }
 
   /**
@@ -439,10 +439,10 @@ export class TeamsController {
     description: 'Equipo no encontrado',
   })
   async updateScore(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() body: { score: number },
   ) {
-    return await this.teamsService.updateScore(id, body.score);
+    return this.teamsService.updateScore(id, body.score);
   }
 
   /**
@@ -486,7 +486,7 @@ export class TeamsController {
     description: 'Equipo no encontrado',
   })
   async addXP(@Param('id') id: string, @Body() body: { xp: number }) {
-    return await this.teamsService.addXP(id, body.xp);
+    return this.teamsService.addXP(id, body.xp);
   }
 
   /**
@@ -535,7 +535,7 @@ export class TeamsController {
     },
   })
   async getLeaderboard(@Param('classroomId') classroomId: string) {
-    return await this.teamsService.getLeaderboard(classroomId);
+    return this.teamsService.getLeaderboard(classroomId);
   }
 
   /**
@@ -579,7 +579,7 @@ export class TeamsController {
     description: 'Equipo no encontrado',
   })
   async getTeamStats(@Param('id') id: string) {
-    return await this.teamsService.getTeamStats(id);
+    return this.teamsService.getTeamStats(id);
   }
 
   /**
@@ -620,6 +620,6 @@ export class TeamsController {
     },
   })
   async getMembers(@Param('teamId') teamId: string) {
-    return await this.teamMembersService.findByTeamId(teamId);
+    return this.teamMembersService.findByTeamId(teamId);
   }
 }

@@ -36,92 +36,92 @@ export class EngagementMetrics {
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario
    */
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Fecha de las métricas (una fila por día)
    */
   @Column({ type: 'date', default: () => 'CURRENT_DATE' })
-  metric_date!: Date;
+    metric_date!: Date;
 
   /**
    * Indica si el usuario estuvo activo en esta fecha
    */
   @Column({ type: 'boolean', default: false })
-  daily_active!: boolean;
+    daily_active!: boolean;
 
   /**
    * Número de sesiones de aprendizaje en esta fecha
    */
   @Column({ type: 'integer', default: 0 })
-  sessions_count!: number;
+    sessions_count!: number;
 
   /**
    * Tiempo total en la plataforma (segundos)
    */
   @Column({ type: 'integer', default: 0 })
-  total_time_seconds!: number;
+    total_time_seconds!: number;
 
   /**
    * Ejercicios intentados en esta fecha
    */
   @Column({ type: 'integer', default: 0 })
-  exercises_attempted!: number;
+    exercises_attempted!: number;
 
   /**
    * Ejercicios completados en esta fecha
    */
   @Column({ type: 'integer', default: 0 })
-  exercises_completed!: number;
+    exercises_completed!: number;
 
   /**
    * Módulos iniciados en esta fecha
    */
   @Column({ type: 'integer', default: 0 })
-  modules_started!: number;
+    modules_started!: number;
 
   /**
    * Módulos completados en esta fecha
    */
   @Column({ type: 'integer', default: 0 })
-  modules_completed!: number;
+    modules_completed!: number;
 
   /**
    * Logros desbloqueados en esta fecha
    */
   @Column({ type: 'integer', default: 0 })
-  achievements_unlocked!: number;
+    achievements_unlocked!: number;
 
   /**
    * Interacciones sociales (mensajes, likes, etc.)
    */
   @Column({ type: 'integer', default: 0 })
-  social_interactions!: number;
+    social_interactions!: number;
 
   /**
    * Score de engagement calculado (0-100)
    * Basado en actividad, tiempo, completitud, etc.
    */
   @Column({ type: 'numeric', precision: 5, scale: 2, default: 0 })
-  engagement_score!: number;
+    engagement_score!: number;
 
   /**
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   // =====================================================
   // Relaciones

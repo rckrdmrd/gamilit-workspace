@@ -10,7 +10,7 @@ export class ApproveContentDto {
   @IsOptional()
   @IsString()
   @MaxLength(500)
-  approval_notes?: string;
+    approval_notes?: string;
 
   @ApiPropertyOptional({
     description: 'Whether to publish immediately after approval',
@@ -18,5 +18,5 @@ export class ApproveContentDto {
     default: true,
   })
   @IsOptional()
-  publish_immediately?: boolean;
+    publish_immediately?: boolean;
 }

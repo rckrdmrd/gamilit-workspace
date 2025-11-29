@@ -26,6 +26,7 @@ import {
   LoginDto,
   RefreshTokenDto,
   UpdateProfileDto,
+  UserSessionResponseDto,
 } from '../dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
@@ -71,11 +72,11 @@ export class AuthController {
   @ApiBody({ type: RegisterUserDto })
   async register(
     @Body() dto: RegisterUserDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<{ user: UserResponseDto; accessToken: string; refreshToken: string }> {
     const ip = req.ip;
     const userAgent = req.headers['user-agent'];
-    return await this.authService.register(dto, ip, userAgent);
+    return this.authService.register(dto, ip, userAgent);
   }
 
   /**
@@ -103,7 +104,7 @@ export class AuthController {
   @ApiBody({ type: LoginDto })
   async login(
     @Body() dto: LoginDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<{ user: UserResponseDto; accessToken: string; refreshToken: string }> {
     const ip = req.ip;
     const userAgent = req.headers['user-agent'];
@@ -115,7 +116,7 @@ export class AuthController {
     }
 
     // 2. Autenticar
-    return await this.authService.login(dto.email, dto.password, ip, userAgent);
+    return this.authService.login(dto.email, dto.password, ip, userAgent);
   }
 
   /**
@@ -158,7 +159,7 @@ export class AuthController {
   async refresh(
     @Body() dto: RefreshTokenDto,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    return await this.authService.refreshToken(dto.refreshToken);
+    return this.authService.refreshToken(dto.refreshToken);
   }
 
   /**
@@ -206,7 +207,7 @@ export class AuthController {
   @ApiBody({ type: UpdateProfileDto })
   async updateProfile(
     @Request() req: any,
-    @Body() dto: UpdateProfileDto,
+      @Body() dto: UpdateProfileDto,
   ): Promise<UserResponseDto> {
     // Extraer userId del token JWT
     const userId = req.user?.id;
@@ -305,7 +306,7 @@ export class AuthController {
   })
   async resetPassword(
     @Body('token') token: string,
-    @Body('newPassword') newPassword: string,
+      @Body('newPassword') newPassword: string,
   ): Promise<{ message: string }> {
     // TODO: Implementar lógica de reset password
     return { message: 'Contraseña reseteada exitosamente' };
@@ -340,8 +341,8 @@ export class AuthController {
   })
   async changePassword(
     @Request() req: any,
-    @Body('currentPassword') currentPassword: string,
-    @Body('newPassword') newPassword: string,
+      @Body('currentPassword') currentPassword: string,
+      @Body('newPassword') newPassword: string,
   ): Promise<{ message: string }> {
     const userId = req.user?.id;
     // TODO: Implementar lógica de cambio de contraseña
@@ -357,32 +358,14 @@ export class AuthController {
   @ApiOperation({ summary: 'Obtener sesiones activas del usuario autenticado' })
   @ApiResponse({
     status: 200,
-    description: 'Lista de sesiones activas',
-    schema: {
-      properties: {
-        sessions: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              id: { type: 'string' },
-              device_type: { type: 'string' },
-              browser: { type: 'string' },
-              os: { type: 'string' },
-              ip_address: { type: 'string' },
-              last_activity_at: { type: 'string' },
-              created_at: { type: 'string' },
-            },
-          },
-        },
-      },
-    },
+    description: 'Lista de sesiones activas con información de dispositivo',
+    type: UserSessionResponseDto,
+    isArray: true,
   })
   @ApiResponse({ status: 401, description: 'No autenticado' })
-  async getSessions(@Request() req: any): Promise<{ sessions: any[] }> {
+  async getSessions(@Request() req: any): Promise<UserSessionResponseDto[]> {
     const userId = req.user?.id;
-    // TODO: Implementar getUserSessions en SessionManagementService
-    return { sessions: [] };
+    return this.sessionService.getSessions(userId);
   }
 
   /**
@@ -392,24 +375,54 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Revocar sesión específica' })
+  @ApiOperation({
+    summary: 'Revocar sesión específica',
+    description: 'Cierra una sesión activa del usuario autenticado. Solo puede cerrar sus propias sesiones.',
+  })
   @ApiResponse({
     status: 200,
-    description: 'Sesión revocada exitosamente',
+    description: 'Sesión cerrada correctamente',
     schema: {
       properties: {
-        message: { type: 'string' },
+        message: { type: 'string', example: 'Sesión cerrada correctamente' },
       },
     },
   })
   @ApiResponse({ status: 401, description: 'No autenticado' })
-  @ApiResponse({ status: 404, description: 'Sesión no encontrada' })
+  @ApiResponse({ status: 404, description: 'Sesión no encontrada o no pertenece al usuario' })
   async revokeSession(
     @Request() req: any,
-    @Param('sessionId') sessionId: string,
+      @Param('sessionId') sessionId: string,
   ): Promise<{ message: string }> {
     const userId = req.user?.id;
-    // TODO: Implementar revokeSession en SessionManagementService
-    return { message: 'Sesión revocada exitosamente' };
+    return this.sessionService.revokeSession(sessionId, userId);
+  }
+
+  /**
+   * Revocar todas las sesiones excepto la actual
+   */
+  @Delete('sessions')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Revocar todas las sesiones excepto la actual',
+    description: 'Cierra todas las sesiones activas del usuario excepto la sesión desde la que se hace la solicitud.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Sesiones cerradas correctamente',
+    schema: {
+      properties: {
+        message: { type: 'string', example: 'Sesiones cerradas correctamente' },
+        count: { type: 'number', example: 3, description: 'Cantidad de sesiones cerradas' },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'No autenticado' })
+  async revokeAllSessions(@Request() req: any): Promise<{ message: string; count: number }> {
+    const userId = req.user?.id;
+    const currentSessionId = req.user?.sessionId || 'unknown';
+    return this.sessionService.revokeAllSessions(userId, currentSessionId);
   }
 }

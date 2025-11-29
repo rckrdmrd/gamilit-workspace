@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Gamification API
  *
@@ -18,15 +19,24 @@ import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS } from '@/config/api.config';
 import { handleAPIError } from '@/services/api/apiErrorHandler';
 import type { ApiResponse } from '@/services/api/apiTypes';
+import type { Achievement as SSOTAchievement } from '@shared/types/achievement.types';
 
 // ============================================================================
 // TYPE DEFINITIONS
+// P2-001: API response types (simplified views for frontend use)
+// @see SSOT: @shared/types/gamification.types.ts (complete UserStats/UserRank)
 // ============================================================================
 
 /**
- * User gamification statistics
+ * ApiUserStats - Simplified user stats for API responses
+ *
+ * This is a view model with common fields for frontend display.
+ * For the complete 37-field UserStats, use @shared/types/gamification.types.ts
+ *
+ * @see SSOT: @shared/types/gamification.types.ts#UserStats
+ * P2-001: Types consolidation - contextual API type
  */
-export interface UserStats {
+export interface ApiUserStats {
   userId: string;
   totalXP: number;
   currentLevel: number;
@@ -42,9 +52,21 @@ export interface UserStats {
 }
 
 /**
- * User rank information (Maya ranks system)
+ * @deprecated Use ApiUserStats instead.
+ * Alias for backward compatibility.
  */
-export interface UserRank {
+export type UserStats = ApiUserStats;
+
+/**
+ * ApiUserRank - Simplified user rank for API responses
+ *
+ * This is a view model with progression display fields.
+ * For the complete 20-field UserRank, use @shared/types/gamification.types.ts
+ *
+ * @see SSOT: @shared/types/gamification.types.ts#UserRank
+ * P2-001: Types consolidation - contextual API type
+ */
+export interface ApiUserRank {
   userId: string;
   currentRank: string;
   currentLevel: number;
@@ -56,6 +78,12 @@ export interface UserRank {
   canPromote: boolean;
   benefits: string[];
 }
+
+/**
+ * @deprecated Use ApiUserRank instead.
+ * Alias for backward compatibility.
+ */
+export type UserRank = ApiUserRank;
 
 /**
  * Rank history entry
@@ -71,9 +99,15 @@ export interface RankHistoryEntry {
 }
 
 /**
- * User mission
+ * ApiUserMission - Simplified mission for API responses
+ *
+ * This is a view model for API calls.
+ * For the complete Mission type, use @features/gamification/missions/types/missionsTypes.ts
+ *
+ * @see SSOT: @features/gamification/missions/types/missionsTypes.ts#Mission
+ * P2-001: Types consolidation - contextual API type
  */
-export interface UserMission {
+export interface ApiUserMission {
   id: string;
   userId: string;
   type: 'daily' | 'weekly' | 'special';
@@ -107,6 +141,12 @@ export interface UserMission {
 }
 
 /**
+ * @deprecated Use ApiUserMission instead.
+ * Alias for backward compatibility.
+ */
+export type UserMission = ApiUserMission;
+
+/**
  * Mission statistics
  */
 export interface MissionStats {
@@ -124,19 +164,27 @@ export interface MissionStats {
 }
 
 /**
- * Achievement
+ * Achievement - Ahora importado desde SSOT
+ *
+ * @see SSOT: @shared/types/achievement.types.ts
+ * P2-001: Consolidación de types - ELIMINADO duplicado, usar SSOT
  */
-export interface Achievement {
+export type Achievement = SSOTAchievement;
+
+/**
+ * LegacyAchievementResponse - Para respuestas de API que usan 'title' en lugar de 'name'
+ * Solo usar si el backend retorna 'title'. Transformar a SSOT Achievement.
+ */
+export interface LegacyAchievementResponse {
   id: string;
-  title: string;
+  title: string; // Backend legacy usa 'title'
   description: string;
   category: 'progress' | 'mastery' | 'social' | 'hidden';
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
   icon: string;
   mlCoinsReward: number;
   xpReward: number;
-  requirements?: Record<string, any>;
-  // Optional rewards object (may vary by context)
+  requirements?: Record<string, unknown>;
   rewards?: {
     mlCoins?: number;
     xp?: number;

@@ -12,7 +12,7 @@ export class CreateUserStatsDto {
    * REQUERIDO: Cada registro de stats pertenece a un usuario
    */
   @IsUUID()
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del tenant (FK → auth_management.tenants)
@@ -20,7 +20,7 @@ export class CreateUserStatsDto {
    */
   @IsOptional()
   @IsUUID()
-  tenant_id?: string;
+    tenant_id?: string;
 
   // Los demás campos tienen valores por defecto en la BD
   // y se actualizarán a través del UpdateUserStatsDto

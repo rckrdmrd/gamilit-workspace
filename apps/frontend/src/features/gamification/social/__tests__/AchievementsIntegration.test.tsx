@@ -19,6 +19,7 @@
  *
  * Total: 20 tests
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -166,7 +167,10 @@ describe('Achievements Integration Tests', () => {
         },
       ];
 
-      useAchievementsStore.setState({ achievements: mockAchievements, unlockedAchievements: mockAchievements.filter(a => a.isUnlocked) });
+      useAchievementsStore.setState({
+        achievements: mockAchievements,
+        unlockedAchievements: mockAchievements.filter((a) => a.isUnlocked),
+      });
 
       render(<AchievementsList />);
 
@@ -191,7 +195,10 @@ describe('Achievements Integration Tests', () => {
         isHidden: false,
       };
 
-      useAchievementsStore.setState({ achievements: [mockAchievement], unlockedAchievements: [mockAchievement].filter(a => a.isUnlocked) });
+      useAchievementsStore.setState({
+        achievements: [mockAchievement],
+        unlockedAchievements: [mockAchievement].filter((a) => a.isUnlocked),
+      });
 
       const { rerender } = render(<AchievementsList />);
 
@@ -229,7 +236,10 @@ describe('Achievements Integration Tests', () => {
         },
       };
 
-      useAchievementsStore.setState({ achievements: [mockAchievement], unlockedAchievements: [mockAchievement].filter(a => a.isUnlocked) });
+      useAchievementsStore.setState({
+        achievements: [mockAchievement],
+        unlockedAchievements: [mockAchievement].filter((a) => a.isUnlocked),
+      });
 
       const { rerender } = render(<AchievementsList />);
 
@@ -307,7 +317,10 @@ describe('Achievements Integration Tests', () => {
         },
       ];
 
-      useAchievementsStore.setState({ achievements: achievements, unlockedAchievements: achievements.filter(a => a.isUnlocked) });
+      useAchievementsStore.setState({
+        achievements: achievements,
+        unlockedAchievements: achievements.filter((a) => a.isUnlocked),
+      });
 
       // Unlock multiple achievements
       unlockAchievement('ach-1');
@@ -326,8 +339,7 @@ describe('Achievements Integration Tests', () => {
 
   describe('Unlock Achievement Flow', () => {
     it('should complete full unlock flow: locked → unlock → notification → unlocked', () => {
-      const { unlockAchievement, dismissNotification } =
-        useAchievementsStore.getState();
+      const { unlockAchievement, dismissNotification } = useAchievementsStore.getState();
 
       const mockAchievement: Achievement = {
         id: 'ach-1',
@@ -342,7 +354,10 @@ describe('Achievements Integration Tests', () => {
         isHidden: false,
       };
 
-      useAchievementsStore.setState({ achievements: [mockAchievement], unlockedAchievements: [mockAchievement].filter(a => a.isUnlocked) });
+      useAchievementsStore.setState({
+        achievements: [mockAchievement],
+        unlockedAchievements: [mockAchievement].filter((a) => a.isUnlocked),
+      });
 
       // Step 1: Achievement is locked
       let state = useAchievementsStore.getState();
@@ -384,7 +399,10 @@ describe('Achievements Integration Tests', () => {
         isHidden: false,
       };
 
-      useAchievementsStore.setState({ achievements: [mockAchievement], unlockedAchievements: [mockAchievement].filter(a => a.isUnlocked) });
+      useAchievementsStore.setState({
+        achievements: [mockAchievement],
+        unlockedAchievements: [mockAchievement].filter((a) => a.isUnlocked),
+      });
 
       // Try to unlock again
       unlockAchievement('ach-1');
@@ -424,7 +442,10 @@ describe('Achievements Integration Tests', () => {
         },
       ];
 
-      useAchievementsStore.setState({ achievements: achievements, unlockedAchievements: achievements.filter(a => a.isUnlocked) });
+      useAchievementsStore.setState({
+        achievements: achievements,
+        unlockedAchievements: achievements.filter((a) => a.isUnlocked),
+      });
 
       // Check initial stats
       let state = useAchievementsStore.getState();
@@ -440,7 +461,8 @@ describe('Achievements Integration Tests', () => {
       expect(state.stats.totalMlCoinsEarned).toBe(10);
       expect(state.stats.totalXpEarned).toBe(50);
       // Completion rate: 1/2 = 50%
-      const completionRate = (state.stats.unlockedAchievements / state.stats.totalAchievements) * 100;
+      const completionRate =
+        (state.stats.unlockedAchievements / state.stats.totalAchievements) * 100;
       expect(completionRate).toBe(50);
 
       // Unlock second achievement
@@ -451,7 +473,8 @@ describe('Achievements Integration Tests', () => {
       expect(state.stats.totalMlCoinsEarned).toBe(40);
       expect(state.stats.totalXpEarned).toBe(200);
       // Completion rate: 2/2 = 100%
-      const completionRate2 = (state.stats.unlockedAchievements / state.stats.totalAchievements) * 100;
+      const completionRate2 =
+        (state.stats.unlockedAchievements / state.stats.totalAchievements) * 100;
       expect(completionRate2).toBe(100);
     });
 
@@ -471,7 +494,10 @@ describe('Achievements Integration Tests', () => {
         isHidden: false,
       };
 
-      useAchievementsStore.setState({ achievements: [mockAchievement], unlockedAchievements: [mockAchievement].filter(a => a.isUnlocked) });
+      useAchievementsStore.setState({
+        achievements: [mockAchievement],
+        unlockedAchievements: [mockAchievement].filter((a) => a.isUnlocked),
+      });
 
       render(<AchievementsWithNotifications />);
 
@@ -513,7 +539,10 @@ describe('Achievements Integration Tests', () => {
         },
       };
 
-      useAchievementsStore.setState({ achievements: [mockAchievement], unlockedAchievements: [mockAchievement].filter(a => a.isUnlocked) });
+      useAchievementsStore.setState({
+        achievements: [mockAchievement],
+        unlockedAchievements: [mockAchievement].filter((a) => a.isUnlocked),
+      });
 
       // Update progress
       updateProgress('ach-1', 25);
@@ -542,7 +571,10 @@ describe('Achievements Integration Tests', () => {
         },
       };
 
-      useAchievementsStore.setState({ achievements: [mockAchievement], unlockedAchievements: [mockAchievement].filter(a => a.isUnlocked) });
+      useAchievementsStore.setState({
+        achievements: [mockAchievement],
+        unlockedAchievements: [mockAchievement].filter((a) => a.isUnlocked),
+      });
 
       // Update to exactly the requirement
       updateProgress('ach-1', 100);
@@ -573,7 +605,10 @@ describe('Achievements Integration Tests', () => {
         },
       };
 
-      useAchievementsStore.setState({ achievements: [mockAchievement], unlockedAchievements: [mockAchievement].filter(a => a.isUnlocked) });
+      useAchievementsStore.setState({
+        achievements: [mockAchievement],
+        unlockedAchievements: [mockAchievement].filter((a) => a.isUnlocked),
+      });
 
       // Multiple incremental updates
       updateProgress('ach-1', 3);
@@ -609,7 +644,10 @@ describe('Achievements Integration Tests', () => {
         },
       };
 
-      useAchievementsStore.setState({ achievements: [mockAchievement], unlockedAchievements: [mockAchievement].filter(a => a.isUnlocked) });
+      useAchievementsStore.setState({
+        achievements: [mockAchievement],
+        unlockedAchievements: [mockAchievement].filter((a) => a.isUnlocked),
+      });
 
       // Update progress beyond requirement
       updateProgress('ach-1', 150);
@@ -641,7 +679,10 @@ describe('Achievements Integration Tests', () => {
         isHidden: false,
       };
 
-      useAchievementsStore.setState({ achievements: [mockAchievement], unlockedAchievements: [mockAchievement].filter(a => a.isUnlocked) });
+      useAchievementsStore.setState({
+        achievements: [mockAchievement],
+        unlockedAchievements: [mockAchievement].filter((a) => a.isUnlocked),
+      });
 
       render(<AchievementsWithNotifications />);
 
@@ -671,7 +712,10 @@ describe('Achievements Integration Tests', () => {
         isHidden: false,
       };
 
-      useAchievementsStore.setState({ achievements: [mockAchievement], unlockedAchievements: [mockAchievement].filter(a => a.isUnlocked) });
+      useAchievementsStore.setState({
+        achievements: [mockAchievement],
+        unlockedAchievements: [mockAchievement].filter((a) => a.isUnlocked),
+      });
       unlockAchievement('ach-1');
 
       const { rerender } = render(<AchievementsWithNotifications />);
@@ -733,7 +777,10 @@ describe('Achievements Integration Tests', () => {
         },
       ];
 
-      useAchievementsStore.setState({ achievements: achievements, unlockedAchievements: achievements.filter(a => a.isUnlocked) });
+      useAchievementsStore.setState({
+        achievements: achievements,
+        unlockedAchievements: achievements.filter((a) => a.isUnlocked),
+      });
 
       // Unlock all three
       unlockAchievement('ach-1');
@@ -786,7 +833,7 @@ describe('Achievements Integration Tests', () => {
 
       useAchievementsStore.setState({
         achievements: achievements,
-        unlockedAchievements: achievements.filter(a => a.isUnlocked),
+        unlockedAchievements: achievements.filter((a) => a.isUnlocked),
         stats: {
           totalAchievements: 2,
           unlockedAchievements: 0,
@@ -816,7 +863,8 @@ describe('Achievements Integration Tests', () => {
       // Stats should update after rerender
       const state = useAchievementsStore.getState();
       expect(state.stats.unlockedAchievements).toBe(1);
-      const completionRate = (state.stats.unlockedAchievements / state.stats.totalAchievements) * 100;
+      const completionRate =
+        (state.stats.unlockedAchievements / state.stats.totalAchievements) * 100;
       expect(completionRate).toBe(50);
       expect(state.stats.totalMlCoinsEarned).toBe(15);
       expect(state.stats.totalXpEarned).toBe(75);
@@ -838,7 +886,10 @@ describe('Achievements Integration Tests', () => {
         isHidden: false,
       }));
 
-      useAchievementsStore.setState({ achievements: achievements, unlockedAchievements: achievements.filter(a => a.isUnlocked) });
+      useAchievementsStore.setState({
+        achievements: achievements,
+        unlockedAchievements: achievements.filter((a) => a.isUnlocked),
+      });
 
       // Unlock achievements one by one
       unlockAchievement('ach-1');
@@ -896,7 +947,10 @@ describe('Achievements Integration Tests', () => {
         },
       ];
 
-      useAchievementsStore.setState({ achievements: achievements, unlockedAchievements: achievements.filter(a => a.isUnlocked) });
+      useAchievementsStore.setState({
+        achievements: achievements,
+        unlockedAchievements: achievements.filter((a) => a.isUnlocked),
+      });
 
       // Unlock both simultaneously
       unlockAchievement('ach-1');
@@ -952,13 +1006,16 @@ describe('Achievements Integration Tests', () => {
         },
       ];
 
-      useAchievementsStore.setState({ achievements: achievements, unlockedAchievements: achievements.filter(a => a.isUnlocked) });
+      useAchievementsStore.setState({
+        achievements: achievements,
+        unlockedAchievements: achievements.filter((a) => a.isUnlocked),
+      });
 
       // Filter by progress
       filterByCategory('progress');
       let state = useAchievementsStore.getState();
       expect(state.selectedCategory).toBe('progress');
-      const progressAchievements = state.achievements.filter(a => a.category === 'progress');
+      const progressAchievements = state.achievements.filter((a) => a.category === 'progress');
       expect(progressAchievements.length).toBe(1);
       expect(progressAchievements[0].category).toBe('progress');
 
@@ -966,7 +1023,7 @@ describe('Achievements Integration Tests', () => {
       filterByCategory('social');
       state = useAchievementsStore.getState();
       expect(state.selectedCategory).toBe('social');
-      const socialAchievements = state.achievements.filter(a => a.category === 'social');
+      const socialAchievements = state.achievements.filter((a) => a.category === 'social');
       expect(socialAchievements.length).toBe(1);
       expect(socialAchievements[0].category).toBe('social');
 

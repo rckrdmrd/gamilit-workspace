@@ -10,56 +10,56 @@ import { Expose, Type } from 'class-transformer';
  */
 export class UserAchievementResponseDto {
   @Expose()
-  id!: string;
+    id!: string;
 
   @Expose()
-  user_id!: string;
+    user_id!: string;
 
   @Expose()
-  achievement_id!: string;
+    achievement_id!: string;
 
   @Expose()
-  progress!: number;
+    progress!: number;
 
   @Expose()
-  max_progress!: number;
+    max_progress!: number;
 
   @Expose()
-  is_completed!: boolean;
+    is_completed!: boolean;
 
   @Expose()
-  completion_percentage!: number;
-
-  @Expose()
-  @Type(() => Date)
-  completed_at!: Date | null;
-
-  @Expose()
-  notified!: boolean;
-
-  @Expose()
-  viewed!: boolean;
-
-  @Expose()
-  rewards_claimed!: boolean;
-
-  @Expose()
-  rewards_received!: Record<string, any>;
-
-  @Expose()
-  progress_data!: Record<string, any>;
-
-  @Expose()
-  milestones_reached!: string[] | null;
-
-  @Expose()
-  metadata!: Record<string, any>;
+    completion_percentage!: number;
 
   @Expose()
   @Type(() => Date)
-  started_at!: Date;
+    completed_at!: Date | null;
+
+  @Expose()
+    notified!: boolean;
+
+  @Expose()
+    viewed!: boolean;
+
+  @Expose()
+    rewards_claimed!: boolean;
+
+  @Expose()
+    rewards_received!: Record<string, any>;
+
+  @Expose()
+    progress_data!: Record<string, any>;
+
+  @Expose()
+    milestones_reached!: string[] | null;
+
+  @Expose()
+    metadata!: Record<string, any>;
 
   @Expose()
   @Type(() => Date)
-  created_at!: Date;
+    started_at!: Date;
+
+  @Expose()
+  @Type(() => Date)
+    created_at!: Date;
 }

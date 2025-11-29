@@ -13,7 +13,7 @@ export class UpdateFeaturesDto {
     },
   })
   @IsObject()
-  features!: Record<string, boolean>;
+    features!: Record<string, boolean>;
 }
 
 export class FeatureFlagsDto {
@@ -21,31 +21,31 @@ export class FeatureFlagsDto {
     description: 'Enable analytics features',
     example: true,
   })
-  analytics_enabled?: boolean;
+    analytics_enabled?: boolean;
 
   @ApiProperty({
     description: 'Enable gamification features',
     example: true,
   })
-  gamification_enabled?: boolean;
+    gamification_enabled?: boolean;
 
   @ApiProperty({
     description: 'Enable social features',
     example: true,
   })
-  social_features_enabled?: boolean;
+    social_features_enabled?: boolean;
 
   @ApiProperty({
     description: 'Enable AI-powered suggestions',
     example: false,
   })
-  ai_suggestions_enabled?: boolean;
+    ai_suggestions_enabled?: boolean;
 
   @ApiProperty({
     description: 'Enable advanced reporting',
     example: false,
   })
-  advanced_reporting?: boolean;
+    advanced_reporting?: boolean;
 
   // Index signature for additional custom features
   // Note: Decorators not allowed on index signatures

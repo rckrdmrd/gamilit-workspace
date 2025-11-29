@@ -48,7 +48,7 @@ export class LearningSessionService {
       metadata: {},
     });
 
-    return await this.sessionRepo.save(newSession);
+    return this.sessionRepo.save(newSession);
   }
 
   /**
@@ -57,7 +57,7 @@ export class LearningSessionService {
    * @returns Lista de sesiones ordenadas por fecha de inicio
    */
   async findByUserId(userId: string): Promise<LearningSession[]> {
-    return await this.sessionRepo.find({
+    return this.sessionRepo.find({
       where: { user_id: userId },
       order: { started_at: 'DESC' },
     });
@@ -112,7 +112,7 @@ export class LearningSessionService {
       session.idle_time = '00:00:00';
     }
 
-    return await this.sessionRepo.save(session);
+    return this.sessionRepo.save(session);
   }
 
   /**
@@ -137,7 +137,7 @@ export class LearningSessionService {
     const session = await this.findById(id);
 
     Object.assign(session, metrics);
-    return await this.sessionRepo.save(session);
+    return this.sessionRepo.save(session);
   }
 
   /**
@@ -167,13 +167,13 @@ export class LearningSessionService {
     userId: string,
     period: 'daily' | 'weekly' | 'monthly',
   ): Promise<{
-    total_sessions: number;
-    total_time_spent: string;
-    average_session_duration: string;
-    exercises_completed: number;
-    total_xp_earned: number;
-    total_ml_coins_earned: number;
-  }> {
+      total_sessions: number;
+      total_time_spent: string;
+      average_session_duration: string;
+      exercises_completed: number;
+      total_xp_earned: number;
+      total_ml_coins_earned: number;
+    }> {
     const now = new Date();
     let startDate: Date;
 
@@ -242,7 +242,7 @@ export class LearningSessionService {
     startDate: Date,
     endDate: Date,
   ): Promise<LearningSession[]> {
-    return await this.sessionRepo.find({
+    return this.sessionRepo.find({
       where: {
         user_id: userId,
         started_at: Between(startDate, endDate),

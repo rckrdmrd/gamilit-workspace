@@ -33,7 +33,7 @@ export interface Activity {
   student_name?: string;
   description: string;
   timestamp: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 // ============================================================================

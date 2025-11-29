@@ -11,3 +11,4 @@ export * from './assessment-rubric.entity';
 export * from './media-resource.entity';
 export * from './exercise-mechanic-mapping.entity';
 export * from './content-approval.entity';
+export * from './difficulty-criteria.entity';

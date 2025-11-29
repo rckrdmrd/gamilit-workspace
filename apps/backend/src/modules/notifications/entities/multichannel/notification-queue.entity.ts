@@ -65,7 +65,7 @@ import { Notification } from './notification.entity';
 @Index(['status', 'scheduledFor']) // Índice compuesto para worker query
 export class NotificationQueue {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID de la notificación a enviar
@@ -75,7 +75,7 @@ export class NotificationQueue {
    * FK en DB: → notifications.notifications(id) ON DELETE CASCADE
    */
   @Column({ name: 'notification_id', type: 'uuid' })
-  notificationId!: string;
+    notificationId!: string;
 
   /**
    * Relación con la notificación
@@ -85,7 +85,7 @@ export class NotificationQueue {
    */
   @ManyToOne(() => Notification, { onDelete: 'CASCADE', eager: false })
   @JoinColumn({ name: 'notification_id' })
-  notification!: Notification;
+    notification!: Notification;
 
   /**
    * Canal por el que se debe enviar
@@ -100,7 +100,7 @@ export class NotificationQueue {
    * - in_app es instantáneo (crear notificación = enviar)
    */
   @Column({ type: 'varchar', length: 50 })
-  channel!: string;
+    channel!: string;
 
   /**
    * Estado del item en la cola
@@ -118,7 +118,7 @@ export class NotificationQueue {
    * Si fallo y retry_count >= max_retries: 'failed'
    */
   @Column({ type: 'varchar', length: 50, default: 'pending' })
-  status!: string;
+    status!: string;
 
   /**
    * Número de intentos realizados
@@ -129,7 +129,7 @@ export class NotificationQueue {
    * Default: 0 (primer intento)
    */
   @Column({ name: 'attempts', type: 'integer', default: 0 })
-  attempts!: number;
+    attempts!: number;
 
   /**
    * Número máximo de intentos permitidos
@@ -144,7 +144,7 @@ export class NotificationQueue {
    * - Informativas (friend_request): 1 reintento
    */
   @Column({ name: 'max_attempts', type: 'integer', default: 3 })
-  maxAttempts!: number;
+    maxAttempts!: number;
 
   /**
    * Prioridad de procesamiento
@@ -162,7 +162,7 @@ export class NotificationQueue {
    * Default: 0 (normal)
    */
   @Column({ type: 'integer', default: 0 })
-  priority!: number;
+    priority!: number;
 
   /**
    * Fecha y hora programada para envío
@@ -179,7 +179,7 @@ export class NotificationQueue {
    * @optional Si NULL, se procesa inmediatamente
    */
   @Column({ name: 'scheduled_for', type: 'timestamp with time zone', nullable: true })
-  scheduledFor?: Date;
+    scheduledFor?: Date;
 
   /**
    * Fecha y hora del último intento de procesamiento
@@ -195,7 +195,7 @@ export class NotificationQueue {
    * @optional Solo después del primer intento
    */
   @Column({ name: 'last_attempt_at', type: 'timestamp with time zone', nullable: true })
-  lastAttemptAt?: Date;
+    lastAttemptAt?: Date;
 
   /**
    * Mensaje de error del último intento fallido
@@ -211,8 +211,8 @@ export class NotificationQueue {
    * @optional Solo si hay error
    */
   @Column({ name: 'error_message', type: 'text', nullable: true })
-  errorMessage?: string;
+    errorMessage?: string;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
-  createdAt!: Date;
+    createdAt!: Date;
 }

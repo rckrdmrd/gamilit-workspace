@@ -29,7 +29,7 @@ export class ContentTemplatesService {
    */
   async create(dto: CreateContentTemplateDto): Promise<ContentTemplate> {
     const template = this.templateRepo.create(dto);
-    return await this.templateRepo.save(template);
+    return this.templateRepo.save(template);
   }
 
   /**
@@ -51,7 +51,7 @@ export class ContentTemplatesService {
     //   query.andWhere('t.category = :category', { category });
     // }
 
-    return await query.orderBy('t.usage_count', 'DESC').addOrderBy('t.name', 'ASC').getMany();
+    return query.orderBy('t.usage_count', 'DESC').addOrderBy('t.name', 'ASC').getMany();
   }
 
   /**
@@ -86,7 +86,7 @@ export class ContentTemplatesService {
 
     Object.assign(template, dto);
 
-    return await this.templateRepo.save(template);
+    return this.templateRepo.save(template);
   }
 
   /**
@@ -103,7 +103,7 @@ export class ContentTemplatesService {
     // Soft delete: marcamos como no pública (equivalente a desactivar)
     template.is_public = false;
 
-    return await this.templateRepo.save(template);
+    return this.templateRepo.save(template);
   }
 
   /**
@@ -118,7 +118,7 @@ export class ContentTemplatesService {
 
     template.usage_count += 1;
 
-    return await this.templateRepo.save(template);
+    return this.templateRepo.save(template);
   }
 
   /**
@@ -128,7 +128,7 @@ export class ContentTemplatesService {
    * @returns Lista de plantillas del tipo especificado
    */
   async findByType(templateType: string): Promise<ContentTemplate[]> {
-    return await this.templateRepo.find({
+    return this.templateRepo.find({
       where: { template_type: templateType },
       order: { usage_count: 'DESC', name: 'ASC' },
     });
@@ -144,7 +144,7 @@ export class ContentTemplatesService {
   async findByCategory(category: string): Promise<ContentTemplate[]> {
     // Actualmente retorna todas ya que no existe el campo category en DDL
     // Se puede extender con metadata o agregando el campo en una migración futura
-    return await this.templateRepo.find({
+    return this.templateRepo.find({
       order: { usage_count: 'DESC', name: 'ASC' },
     });
   }
@@ -156,7 +156,7 @@ export class ContentTemplatesService {
    * @returns Lista de plantillas más usadas
    */
   async getPopularTemplates(limit: number = 10): Promise<ContentTemplate[]> {
-    return await this.templateRepo
+    return this.templateRepo
       .createQueryBuilder('t')
       .where('t.usage_count > 0')
       .orderBy('t.usage_count', 'DESC')

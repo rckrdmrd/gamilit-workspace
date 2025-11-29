@@ -104,11 +104,15 @@ CREATE TABLE public.assignment_exercises (
 
 ### Tabla: `assignment_classrooms`
 
-**Schema:** `public`
+**Schema:** `social_features`
 **Descripción:** Asignación de assignments a classrooms completos
 
+> ⚠️ **NOTA (2025-11-29):** Esta tabla fue movida del schema `public` al schema `social_features`
+> para mantener coherencia arquitectónica con las entidades de classrooms.
+> Ver: `apps/backend/src/modules/social/entities/assignment-classroom.entity.ts`
+
 ```sql
-CREATE TABLE public.assignment_classrooms (
+CREATE TABLE social_features.assignment_classrooms (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     assignment_id UUID NOT NULL REFERENCES public.assignments(id) ON DELETE CASCADE,
     classroom_id UUID NOT NULL REFERENCES social_features.classrooms(id) ON DELETE CASCADE,
@@ -473,7 +477,8 @@ El diseño inicial documentado en `TRACEABILITY.yml` especificaba:
 - Columna `content_refs JSONB` en assignments
 
 **Implementación real:**
-- Todas las tablas en schema `public`
+- Tablas principales en schema `public` (assignments, assignment_exercises, assignment_students, assignment_submissions, teacher_notes)
+- Tabla `assignment_classrooms` en schema `social_features` (movida 2025-11-29)
 - 6 tablas total (assignments + 4 M2M + submissions + notes)
 - M2M table `assignment_exercises` en vez de JSONB (mejor normalización)
 
@@ -497,5 +502,6 @@ El diseño inicial documentado en `TRACEABILITY.yml` especificaba:
 ---
 
 **Creado:** 2025-11-08
+**Actualizado:** 2025-11-29 (schema assignment_classrooms → social_features)
 **Tipo:** Documentación retroactiva (implementación ya existente)
 **Estado:** ✅ Documentación completa de implementación real

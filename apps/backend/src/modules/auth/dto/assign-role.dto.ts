@@ -24,7 +24,7 @@ export class AssignRoleDto {
    * @format UUID v4
    */
   @IsUUID('4', { message: 'user_id debe ser un UUID válido' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del tenant al que pertenece la asignación
@@ -32,7 +32,7 @@ export class AssignRoleDto {
    * @format UUID v4
    */
   @IsUUID('4', { message: 'tenant_id debe ser un UUID válido' })
-  tenant_id!: string;
+    tenant_id!: string;
 
   /**
    * Rol del sistema Gamilit a asignar
@@ -42,7 +42,7 @@ export class AssignRoleDto {
   @IsEnum(GamilityRoleEnum, {
     message: `El rol debe ser uno de: ${Object.values(GamilityRoleEnum).join(', ')}`,
   })
-  role!: GamilityRoleEnum;
+    role!: GamilityRoleEnum;
 
   /**
    * Permisos específicos asociados a este rol (opcional)
@@ -52,7 +52,7 @@ export class AssignRoleDto {
    */
   @IsObject({ message: 'permissions debe ser un objeto JSON válido' })
   @IsOptional()
-  permissions?: Record<string, any>;
+    permissions?: Record<string, any>;
 
   /**
    * Fecha y hora de expiración del rol (opcional)
@@ -62,7 +62,7 @@ export class AssignRoleDto {
    */
   @IsDateString({}, { message: 'expires_at debe estar en formato ISO 8601' })
   @IsOptional()
-  expires_at?: Date;
+    expires_at?: Date;
 
   /**
    * Estado activo del rol (opcional)
@@ -71,7 +71,7 @@ export class AssignRoleDto {
    */
   @IsBoolean({ message: 'is_active debe ser un valor booleano' })
   @IsOptional()
-  is_active?: boolean;
+    is_active?: boolean;
 
   /**
    * Metadata adicional del user_role (opcional)
@@ -81,5 +81,5 @@ export class AssignRoleDto {
    */
   @IsObject({ message: 'metadata debe ser un objeto JSON válido' })
   @IsOptional()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

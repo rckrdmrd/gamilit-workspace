@@ -99,7 +99,7 @@ export class MediaController {
     description: 'Error interno del servidor',
   })
   async findAll() {
-    return await this.mediaService.findAll();
+    return this.mediaService.findAll();
   }
 
   /**
@@ -176,7 +176,7 @@ export class MediaController {
     },
   })
   async findOne(@Param('id') id: string) {
-    return await this.mediaService.findById(id);
+    return this.mediaService.findById(id);
   }
 
   /**
@@ -234,7 +234,7 @@ export class MediaController {
     description: 'Acceso denegado - Se requieren permisos de administrador',
   })
   async create(@Body() uploadMediaDto: UploadMediaDto) {
-    return await this.mediaService.create(uploadMediaDto);
+    return this.mediaService.create(uploadMediaDto);
   }
 
   /**
@@ -348,10 +348,10 @@ export class MediaController {
     description: 'Recurso multimedia no encontrado',
   })
   async updateProcessingStatus(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() body: { status: ProcessingStatusEnum; metadata?: Record<string, any> },
   ) {
-    return await this.mediaService.updateProcessingStatus(id, body.status, body.metadata);
+    return this.mediaService.updateProcessingStatus(id, body.status, body.metadata);
   }
 
   /**
@@ -412,6 +412,6 @@ export class MediaController {
     },
   })
   async findByCategory(@Param('category') category: string) {
-    return await this.mediaService.findByCategory(category);
+    return this.mediaService.findByCategory(category);
   }
 }

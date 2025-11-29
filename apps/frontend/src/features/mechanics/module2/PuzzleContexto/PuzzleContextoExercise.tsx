@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, Reorder } from 'framer-motion';
-import { Puzzle, Check, GripVertical, RotateCcw } from 'lucide-react';
+import { Puzzle, GripVertical, RotateCcw } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { RankUpModal } from '@/features/gamification/ranks/components/RankUpModal';
 import type { PuzzleContextoExerciseProps, Fragment } from './puzzleContextoTypes';
 import { saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { mockPuzzleData } from './puzzleContextoMockData';
@@ -23,7 +24,6 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
   const { user } = useAuth();
   const { fetchUserProgress } = useRanksStore();
   const { fetchBalance } = useEconomyStore();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_isSubmitting, setIsSubmitting] = useState(false);
 
   // Shuffle fragments initially
@@ -45,12 +45,13 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
   );
   const [showResults, setShowResults] = useState(false);
   const [hintsUsed] = useState(initialData?.hintsUsed || 0);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_startTime] = useState(new Date());
   const [timeSpent, setTimeSpent] = useState(initialData?.timeSpent || 0);
   const [score, setScore] = useState(initialData?.score || 0);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
+  const [showRankUpModal, setShowRankUpModal] = useState(false);
+  const [rankUpData, setRankUpData] = useState<any>(null);
 
   // Timer
   useEffect(() => {
@@ -133,6 +134,10 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
       // Submit to backend API
       const response = await submitExercise(exercise.id, user.id, { questions: userAnswers });
 
+      if (response.rankUp) {
+        setRankUpData(response.rankUp);
+      }
+
       setShowResults(true);
       setScore(response.score);
 
@@ -197,16 +202,14 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
         validate: async () => handleCheck(),
       };
     }
-  }, [fragments, showResults, score, timeSpent, hintsUsed, actionsRef]);
+  }, [actionsRef]);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getFragmentStyle = (_fragment: Fragment, _index: number) => {
     // FE-059: Removed visual validation - correctOrder field no longer available
     // Visual feedback disabled until backend integration
     return 'border-detective-orange/30 bg-white hover:border-detective-orange hover:shadow-lg';
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getFragmentIcon = (_fragment: Fragment, _index: number) => {
     // FE-059: Removed visual validation - correctOrder field no longer available
     // Icon feedback disabled until backend integration
@@ -330,30 +333,14 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
                 Salir
               </DetectiveButton>
             )}
-            {!showResults ? (
-              <>
-                <DetectiveButton
-                  variant="secondary"
-                  size="md"
-                  icon={<RotateCcw className="h-5 w-5" />}
-                  onClick={handleReset}
-                >
-                  Mezclar de Nuevo
-                </DetectiveButton>
-                <DetectiveButton
-                  variant="gold"
-                  size="md"
-                  icon={<Check className="h-5 w-5" />}
-                  onClick={handleCheck}
-                >
-                  Verificar Orden
-                </DetectiveButton>
-              </>
-            ) : (
-              <DetectiveButton variant="blue" size="md" onClick={handleReset}>
-                Intentar de Nuevo
-              </DetectiveButton>
-            )}
+            <DetectiveButton
+              variant="secondary"
+              size="md"
+              icon={<RotateCcw className="h-5 w-5" />}
+              onClick={handleReset}
+            >
+              {showResults ? 'Intentar de Nuevo' : 'Mezclar de Nuevo'}
+            </DetectiveButton>
           </div>
         </motion.div>
       </DetectiveCard>
@@ -365,13 +352,28 @@ export const PuzzleContextoExercise: React.FC<PuzzleContextoExerciseProps> = ({
           feedback={feedback}
           onClose={() => {
             setShowFeedback(false);
-            if (feedback.type === 'success' && onComplete) {
-              onComplete(score, timeSpent);
+            if (rankUpData) {
+              setTimeout(() => setShowRankUpModal(true), 300);
+            } else if (feedback?.type === 'success') {
+              onComplete?.(score, timeSpent);
             }
           }}
           onRetry={() => {
             setShowFeedback(false);
             handleReset();
+          }}
+        />
+      )}
+
+      {showRankUpModal && rankUpData && (
+        <RankUpModal
+          isOpen={showRankUpModal}
+          onClose={() => {
+            setShowRankUpModal(false);
+            setRankUpData(null);
+            if (feedback?.type === 'success') {
+              onComplete?.(score, timeSpent);
+            }
           }}
         />
       )}

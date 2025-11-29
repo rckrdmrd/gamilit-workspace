@@ -5,7 +5,7 @@
 
 CREATE TABLE progress_tracking.module_completion_tracking (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
     module_id UUID NOT NULL REFERENCES educational_content.modules(id) ON DELETE CASCADE,
     completion_percentage NUMERIC(5,2) NOT NULL DEFAULT 0 CHECK (completion_percentage >= 0 AND completion_percentage <= 100),
     exercises_completed INTEGER NOT NULL DEFAULT 0,

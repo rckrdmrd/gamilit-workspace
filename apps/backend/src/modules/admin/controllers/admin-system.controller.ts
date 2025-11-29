@@ -34,7 +34,7 @@ export class AdminSystemController {
       'Retrieve detailed health information including database, memory, CPU, and uptime metrics',
   })
   async getSystemHealth(): Promise<SystemHealthDto> {
-    return await this.adminSystemService.getSystemHealth();
+    return this.adminSystemService.getSystemHealth();
   }
 
   @Get('metrics')
@@ -44,7 +44,7 @@ export class AdminSystemController {
       'Retrieve system performance metrics including user activity, request counts, error rates, and resource usage',
   })
   async getSystemMetrics(): Promise<SystemMetricsDto> {
-    return await this.adminSystemService.getSystemMetrics();
+    return this.adminSystemService.getSystemMetrics();
   }
 
   @Get('audit-log')
@@ -56,7 +56,7 @@ export class AdminSystemController {
   async getAuditLog(
     @Query() query: AuditLogQueryDto,
   ): Promise<PaginatedAuditLogDto> {
-    return await this.adminSystemService.getAuditLog(query);
+    return this.adminSystemService.getAuditLog(query);
   }
 
   @Post('config')
@@ -67,10 +67,10 @@ export class AdminSystemController {
   })
   async updateSystemConfig(
     @Body() configDto: UpdateSystemConfigDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<SystemConfigDto> {
     const adminId = req.user?.id || req.user?.sub;
-    return await this.adminSystemService.updateSystemConfig(configDto, adminId);
+    return this.adminSystemService.updateSystemConfig(configDto, adminId);
   }
 
   @Get('config')
@@ -79,7 +79,7 @@ export class AdminSystemController {
     description: 'Retrieve the current system configuration settings',
   })
   async getSystemConfig(): Promise<SystemConfigDto> {
-    return await this.adminSystemService.getSystemConfig();
+    return this.adminSystemService.getSystemConfig();
   }
 
   @Get('config/:category')
@@ -91,7 +91,7 @@ export class AdminSystemController {
   async getConfigByCategory(
     @Param('category') category: string,
   ): Promise<Record<string, any>> {
-    return await this.adminSystemService.getConfigByCategory(category);
+    return this.adminSystemService.getConfigByCategory(category);
   }
 
   @Put('config/:category')
@@ -102,11 +102,11 @@ export class AdminSystemController {
   })
   async updateConfigByCategory(
     @Param('category') category: string,
-    @Body() configDto: Record<string, any>,
-    @Request() req: any,
+      @Body() configDto: Record<string, any>,
+      @Request() req: any,
   ): Promise<Record<string, any>> {
     const adminId = req.user?.id || req.user?.sub;
-    return await this.adminSystemService.updateConfigByCategory(
+    return this.adminSystemService.updateConfigByCategory(
       category,
       configDto,
       adminId,
@@ -121,10 +121,10 @@ export class AdminSystemController {
   })
   async toggleMaintenance(
     @Body() toggleDto: ToggleMaintenanceDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<MaintenanceStatusDto> {
     const adminId = req.user?.id || req.user?.sub;
-    return await this.adminSystemService.toggleMaintenance(
+    return this.adminSystemService.toggleMaintenance(
       toggleDto,
       adminId,
     );
@@ -139,7 +139,7 @@ export class AdminSystemController {
   async cleanupSystemLogs(
     @Body() dto: CleanupLogsDto,
   ): Promise<MaintenanceOperationResultDto> {
-    return await this.adminSystemService.cleanupSystemLogs(dto);
+    return this.adminSystemService.cleanupSystemLogs(dto);
   }
 
   @Post('maintenance/cleanup-activity')
@@ -151,7 +151,7 @@ export class AdminSystemController {
   async cleanupUserActivity(
     @Body() dto: CleanupUserActivityDto,
   ): Promise<MaintenanceOperationResultDto> {
-    return await this.adminSystemService.cleanupUserActivity(dto);
+    return this.adminSystemService.cleanupUserActivity(dto);
   }
 
   @Post('maintenance/optimize-database')
@@ -161,7 +161,7 @@ export class AdminSystemController {
       'Run VACUUM ANALYZE on critical tables to optimize database performance and reclaim disk space.',
   })
   async optimizeDatabase(): Promise<DatabaseOptimizationResultDto> {
-    return await this.adminSystemService.optimizeDatabase();
+    return this.adminSystemService.optimizeDatabase();
   }
 
   @Post('maintenance/clear-cache')
@@ -171,7 +171,7 @@ export class AdminSystemController {
       'Clear all application-level caches (Redis, in-memory, etc.).',
   })
   async clearCache(): Promise<CacheClearResultDto> {
-    return await this.adminSystemService.clearCache();
+    return this.adminSystemService.clearCache();
   }
 
   @Post('maintenance/cleanup-sessions')
@@ -181,6 +181,6 @@ export class AdminSystemController {
       'Remove expired user sessions from the system to free up resources.',
   })
   async cleanupSessions(): Promise<SessionCleanupResultDto> {
-    return await this.adminSystemService.cleanupExpiredSessions();
+    return this.adminSystemService.cleanupExpiredSessions();
   }
 }

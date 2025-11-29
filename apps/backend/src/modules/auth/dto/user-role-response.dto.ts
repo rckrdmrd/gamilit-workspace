@@ -14,83 +14,83 @@ export class UserRoleResponseDto {
    * ID único del user_role (UUID)
    */
   @Expose()
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario (Profile) asignado
    */
   @Expose()
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del tenant al que pertenece la asignación
    */
   @Expose()
-  tenant_id!: string;
+    tenant_id!: string;
 
   /**
    * Rol del sistema Gamilit asignado
    */
   @Expose()
-  role!: GamilityRoleEnum;
+    role!: GamilityRoleEnum;
 
   /**
    * Permisos específicos asociados a este rol
    */
   @Expose()
-  permissions!: Record<string, any>;
+    permissions!: Record<string, any>;
 
   /**
    * ID del usuario (Profile) que asignó este rol (nullable)
    */
   @Expose()
-  assigned_by!: string | null;
+    assigned_by!: string | null;
 
   /**
    * Fecha y hora de asignación del rol
    */
   @Expose()
-  assigned_at!: Date;
+    assigned_at!: Date;
 
   /**
    * Fecha y hora de expiración del rol (nullable)
    */
   @Expose()
-  expires_at!: Date | null;
+    expires_at!: Date | null;
 
   /**
    * ID del usuario (Profile) que revocó este rol (nullable)
    */
   @Expose()
-  revoked_by!: string | null;
+    revoked_by!: string | null;
 
   /**
    * Fecha y hora de revocación del rol (nullable)
    */
   @Expose()
-  revoked_at!: Date | null;
+    revoked_at!: Date | null;
 
   /**
    * Estado activo del rol
    */
   @Expose()
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Metadata adicional del user_role
    */
   @Expose()
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   /**
    * Fecha de creación del registro
    */
   @Expose()
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de última actualización del registro
    */
   @Expose()
-  updated_at!: Date;
+    updated_at!: Date;
 }

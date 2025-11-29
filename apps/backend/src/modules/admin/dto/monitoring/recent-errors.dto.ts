@@ -17,7 +17,7 @@ export class RecentErrorsQueryDto {
   @IsInt()
   @Min(1)
   @Max(100)
-  limit?: number = 20;
+    limit?: number = 20;
 
   @ApiPropertyOptional({
     description: 'Filter by log level',
@@ -27,7 +27,7 @@ export class RecentErrorsQueryDto {
   @IsOptional()
   @IsString()
   @IsIn(['error', 'fatal', 'all'])
-  level?: string = 'all';
+    level?: string = 'all';
 }
 
 /**
@@ -38,54 +38,54 @@ export class RecentErrorDto {
     description: 'Error log ID',
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
-  id!: string;
+    id!: string;
 
   @ApiProperty({
     description: 'Log level',
     enum: ['error', 'fatal'],
     example: 'error',
   })
-  log_level!: string;
+    log_level!: string;
 
   @ApiProperty({
     description: 'Error message',
     example: 'Database connection failed',
   })
-  message!: string;
+    message!: string;
 
   @ApiProperty({
     description: 'Additional context as JSON',
     nullable: true,
     example: { stack: '...', code: 'ECONNREFUSED' },
   })
-  context!: Record<string, any> | null;
+    context!: Record<string, any> | null;
 
   @ApiProperty({
     description: 'Source of the error',
     nullable: true,
     example: 'DatabaseService',
   })
-  source!: string | null;
+    source!: string | null;
 
   @ApiProperty({
     description: 'Timestamp of the error',
     example: '2025-11-24T18:30:00Z',
   })
-  timestamp!: string;
+    timestamp!: string;
 
   @ApiProperty({
     description: 'User ID associated with the error',
     nullable: true,
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
-  user_id!: string | null;
+    user_id!: string | null;
 
   @ApiProperty({
     description: 'User display name',
     nullable: true,
     example: 'John Doe',
   })
-  user_name!: string | null;
+    user_name!: string | null;
 }
 
 /**
@@ -96,11 +96,11 @@ export class RecentErrorsDto {
     description: 'Array of recent errors',
     type: [RecentErrorDto],
   })
-  errors!: RecentErrorDto[];
+    errors!: RecentErrorDto[];
 
   @ApiProperty({
     description: 'Total count of errors returned',
     example: 20,
   })
-  total_count!: number;
+    total_count!: number;
 }

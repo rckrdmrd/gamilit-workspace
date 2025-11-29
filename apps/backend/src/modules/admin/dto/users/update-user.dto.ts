@@ -8,21 +8,21 @@ import { GamilityRoleEnum, UserStatusEnum } from '@shared/constants';
 export class UpdateUserDto {
   @IsOptional()
   @IsEmail()
-  email?: string;
+    email?: string;
 
   @IsOptional()
   @IsEnum(GamilityRoleEnum)
-  role?: GamilityRoleEnum;
+    role?: GamilityRoleEnum;
 
   @IsOptional()
   @IsEnum(UserStatusEnum)
-  status?: UserStatusEnum;
+    status?: UserStatusEnum;
 
   @IsOptional()
   @IsBoolean()
-  email_verified?: boolean;
+    email_verified?: boolean;
 
   @IsOptional()
   @IsObject()
-  raw_user_meta_data?: Record<string, any>;
+    raw_user_meta_data?: Record<string, any>;
 }

@@ -20,14 +20,14 @@ export class CreateTransactionDto {
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @IsUUID()
-  user_id!: string;
+    user_id!: string;
 
   @ApiProperty({
     description: 'Monto de la transacción (puede ser negativo para gastos)',
     example: 50,
   })
   @IsInt()
-  amount!: number;
+    amount!: number;
 
   @ApiProperty({
     description: 'Balance antes de la transacción',
@@ -36,7 +36,7 @@ export class CreateTransactionDto {
   })
   @IsInt()
   @Min(0)
-  balance_before!: number;
+    balance_before!: number;
 
   @ApiProperty({
     description: 'Balance después de la transacción',
@@ -45,7 +45,7 @@ export class CreateTransactionDto {
   })
   @IsInt()
   @Min(0)
-  balance_after!: number;
+    balance_after!: number;
 
   @ApiProperty({
     description: 'Tipo de transacción',
@@ -53,7 +53,7 @@ export class CreateTransactionDto {
     example: TransactionTypeEnum.EARNED_EXERCISE,
   })
   @IsEnum(TransactionTypeEnum)
-  transaction_type!: TransactionTypeEnum;
+    transaction_type!: TransactionTypeEnum;
 
   @ApiPropertyOptional({
     description: 'Descripción legible de la transacción',
@@ -61,7 +61,7 @@ export class CreateTransactionDto {
   })
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   @ApiPropertyOptional({
     description: 'Razón técnica de la transacción',
@@ -69,7 +69,7 @@ export class CreateTransactionDto {
   })
   @IsOptional()
   @IsString()
-  reason?: string;
+    reason?: string;
 
   @ApiPropertyOptional({
     description: 'ID de la entidad relacionada',
@@ -77,7 +77,7 @@ export class CreateTransactionDto {
   })
   @IsOptional()
   @IsUUID()
-  reference_id?: string;
+    reference_id?: string;
 
   @ApiPropertyOptional({
     description: 'Tipo de entidad relacionada',
@@ -86,7 +86,7 @@ export class CreateTransactionDto {
   })
   @IsOptional()
   @IsString()
-  reference_type?: 'exercise' | 'module' | 'achievement' | 'powerup' | 'admin' | 'streak' | 'rank';
+    reference_type?: 'exercise' | 'module' | 'achievement' | 'powerup' | 'admin' | 'streak' | 'rank';
 
   @ApiPropertyOptional({
     description: 'Multiplicador aplicado (ej: 1.5x por racha)',
@@ -96,7 +96,7 @@ export class CreateTransactionDto {
   @IsOptional()
   @IsNumber()
   @Min(0)
-  multiplier?: number;
+    multiplier?: number;
 
   @ApiPropertyOptional({
     description: 'Indica si se aplicó un bono',
@@ -105,7 +105,7 @@ export class CreateTransactionDto {
   })
   @IsOptional()
   @IsBoolean()
-  bonus_applied?: boolean;
+    bonus_applied?: boolean;
 
   @ApiPropertyOptional({
     description: 'Metadatos adicionales',
@@ -113,5 +113,5 @@ export class CreateTransactionDto {
   })
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

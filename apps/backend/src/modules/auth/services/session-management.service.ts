@@ -55,7 +55,7 @@ export class SessionManagementService {
       expires_at: new Date(dto.expires_at),
     });
 
-    return await this.sessionRepository.save(session);
+    return this.sessionRepository.save(session);
   }
 
   /**
@@ -96,28 +96,68 @@ export class SessionManagementService {
     session.expires_at = newExpiresAt;
     session.last_activity_at = new Date();
 
-    return await this.sessionRepository.save(session);
+    return this.sessionRepository.save(session);
   }
 
   /**
    * Revocar sesión específica
+   *
+   * @param sessionId - ID de la sesión a revocar
+   * @param userId - ID del usuario propietario (validación de ownership)
+   * @returns Mensaje de confirmación
+   * @throws NotFoundException si la sesión no existe o no pertenece al usuario
    */
-  async revokeSession(sessionId: string, userId: string): Promise<void> {
-    const result = await this.sessionRepository.delete({
-      id: sessionId,
-      user_id: userId,
+  async revokeSession(sessionId: string, userId: string): Promise<{ message: string }> {
+    const session = await this.sessionRepository.findOne({
+      where: { id: sessionId, user_id: userId },
     });
 
-    if (result.affected === 0) {
+    if (!session) {
       throw new NotFoundException('Sesión no encontrada');
     }
+
+    session.is_active = false;
+    // NOTE: revoked_at se establece si la columna existe en BD
+    // TypeORM ignorará el campo si no existe en la tabla
+    (session as any).revoked_at = new Date();
+    await this.sessionRepository.save(session);
+
+    return { message: 'Sesión cerrada correctamente' };
   }
 
   /**
-   * Revocar todas las sesiones del usuario
+   * Revocar todas las sesiones del usuario excepto la actual
+   *
+   * @param userId - ID del usuario
+   * @param currentSessionId - ID de la sesión actual a excluir
+   * @returns Mensaje de confirmación y cantidad de sesiones cerradas
    */
-  async revokeAllSessions(userId: string): Promise<void> {
-    await this.sessionRepository.delete({ user_id: userId });
+  async revokeAllSessions(userId: string, currentSessionId: string): Promise<{ message: string; count: number }> {
+    const sessions = await this.sessionRepository.find({
+      where: {
+        user_id: userId,
+        is_active: true,
+      },
+    });
+
+    // Filtrar todas excepto la sesión actual
+    const sessionsToRevoke = sessions.filter(s => s.id !== currentSessionId);
+
+    // Marcar como inactivas
+    const now = new Date();
+    for (const session of sessionsToRevoke) {
+      session.is_active = false;
+      // NOTE: revoked_at se establece si la columna existe en BD
+      // TypeORM ignorará el campo si no existe en la tabla
+      (session as any).revoked_at = now;
+    }
+
+    await this.sessionRepository.save(sessionsToRevoke);
+
+    return {
+      message: 'Sesiones cerradas correctamente',
+      count: sessionsToRevoke.length,
+    };
   }
 
   /**
@@ -132,12 +172,19 @@ export class SessionManagementService {
   }
 
   /**
-   * Listar sesiones activas del usuario
+   * Obtener sesiones activas del usuario
+   *
+   * @param userId - ID del usuario
+   * @returns Lista de sesiones activas ordenadas por última actividad
    */
-  async getUserActiveSessions(userId: string): Promise<UserSession[]> {
-    return await this.sessionRepository.find({
-      where: { user_id: userId },
+  async getSessions(userId: string): Promise<UserSession[]> {
+    return this.sessionRepository.find({
+      where: {
+        user_id: userId,
+        is_active: true,
+      },
       order: { last_activity_at: 'DESC' },
+      select: ['id', 'device_type', 'browser', 'os', 'ip_address', 'user_agent', 'created_at', 'last_activity_at', 'country', 'city'],
     });
   }
 
@@ -145,7 +192,7 @@ export class SessionManagementService {
    * Helper: Contar sesiones activas
    */
   private async countActiveSessions(userId: string): Promise<number> {
-    return await this.sessionRepository.count({
+    return this.sessionRepository.count({
       where: { user_id: userId },
     });
   }

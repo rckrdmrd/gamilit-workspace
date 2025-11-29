@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, BadRequestException, ConflictException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -139,6 +139,7 @@ export class AuthService {
       email: user.email,
       first_name: dto.first_name || null,
       last_name: dto.last_name || null,
+      school_id: dto.school_id || null, // ✅ Asignar escuela si se proporciona
       role: GamilityRoleEnum.STUDENT,
       status: UserStatusEnum.ACTIVE,
       email_verified: false,
@@ -349,6 +350,76 @@ export class AuthService {
       // Error de JWT (token inválido, expirado, malformado, etc.)
       throw new UnauthorizedException('Refresh token inválido o expirado');
     }
+  }
+
+  /**
+   * Cambiar contraseña de usuario autenticado
+   *
+   * @description
+   * Permite a un usuario autenticado cambiar su contraseña.
+   * Requiere proporcionar la contraseña actual para validación de seguridad.
+   *
+   * @param userId - UUID del usuario (extraído del JWT)
+   * @param currentPassword - Contraseña actual del usuario
+   * @param newPassword - Nueva contraseña (mínimo 8 caracteres)
+   *
+   * @returns Mensaje de confirmación
+   *
+   * @throws NotFoundException - Usuario no encontrado
+   * @throws BadRequestException - Contraseña actual incorrecta
+   * @throws BadRequestException - Nueva contraseña muy corta
+   * @throws BadRequestException - Nueva contraseña igual a la actual
+   *
+   * @security
+   * - Valida contraseña actual con bcrypt.compare
+   * - Hash nueva contraseña con bcrypt cost 10
+   * - No invalida sesiones existentes (mejora futura)
+   *
+   * @see PasswordController.changePassword
+   * @see ChangePasswordDto
+   */
+  async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<{ message: string }> {
+    // 1. Obtener usuario
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    // 2. Verificar contraseña actual
+    const isCurrentPasswordValid = await bcrypt.compare(
+      currentPassword,
+      user.encrypted_password,
+    );
+    if (!isCurrentPasswordValid) {
+      throw new BadRequestException('La contraseña actual es incorrecta');
+    }
+
+    // 3. Validar nueva contraseña
+    if (newPassword.length < 8) {
+      throw new BadRequestException('La nueva contraseña debe tener al menos 8 caracteres');
+    }
+    if (currentPassword === newPassword) {
+      throw new BadRequestException('La nueva contraseña debe ser diferente a la actual');
+    }
+
+    // 4. Hash nueva contraseña
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // 5. Actualizar contraseña
+    await this.userRepository.update(
+      { id: userId },
+      { encrypted_password: hashedPassword },
+    );
+
+    // 6. Opcional: Invalidar otras sesiones
+    // await this.sessionService.revokeAllExceptCurrent(userId, currentSessionId);
+    // TODO: Implementar en mejora futura para mayor seguridad
+
+    return { message: 'Contraseña actualizada correctamente' };
   }
 
   /**
@@ -588,7 +659,7 @@ export class AuthService {
    * @param user - User entity de la base de datos
    * @returns UserResponseDto con campos derivados calculados
    */
-  private toUserResponse(user: User): UserResponseDto {
+  public toUserResponse(user: User): UserResponseDto {
     const { encrypted_password, ...userWithoutPassword } = user;
 
     // Calcular campos derivados para coherencia Frontend-Backend

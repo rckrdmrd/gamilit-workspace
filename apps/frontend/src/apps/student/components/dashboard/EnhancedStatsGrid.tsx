@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Target, Flame, Clock, Trophy, TrendingUp, Award, Zap, Star } from 'lucide-react';

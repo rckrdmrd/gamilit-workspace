@@ -30,7 +30,7 @@ export class GetRecentActivitiesDto {
   @IsNumber()
   @Min(1)
   @Max(100)
-  limit?: number = 20;
+    limit?: number = 20;
 
   @ApiPropertyOptional({
     description: 'Offset for pagination',
@@ -41,7 +41,7 @@ export class GetRecentActivitiesDto {
   @Type(() => Number)
   @IsNumber()
   @Min(0)
-  offset?: number = 0;
+    offset?: number = 0;
 }
 
 /**

@@ -5,7 +5,7 @@
 
 CREATE TABLE progress_tracking.skill_assessments (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
     skill_name VARCHAR(100) NOT NULL,
     skill_category VARCHAR(50),
     assessment_score NUMERIC(5,2) NOT NULL CHECK (assessment_score >= 0 AND assessment_score <= 100),

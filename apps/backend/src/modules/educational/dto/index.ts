@@ -8,10 +8,13 @@
 // Module DTOs
 export * from './modules/create-module.dto';
 export * from './modules/module-response.dto';
+export * from './modules/get-modules-query.dto';
 
 // Exercise DTOs
 export * from './exercises/create-exercise.dto';
 export * from './exercises/exercise-response.dto';
+export * from './exercises/submit-exercise.dto';
+export * from './exercises/submit-exercise-response.dto';
 
 // Assessment Rubric DTOs
 export * from './rubrics/create-rubric.dto';

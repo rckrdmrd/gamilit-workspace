@@ -11,7 +11,7 @@ import { Injectable, Logger, NotFoundException, ForbiddenException } from '@nest
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TeacherReport } from '../entities/teacher-report.entity';
-import { ReportMetadataDto, ReportStatsDto } from '../dto/teacher-reports.dto';
+import { ReportMetadataDto, ReportStatsDto, CreateTeacherReportDto } from '../dto/teacher-reports.dto';
 
 /**
  * Service for teacher reports metadata management
@@ -133,6 +133,48 @@ export class TeacherReportsService {
     }
 
     return report;
+  }
+
+  /**
+   * Create a new report record in the database
+   *
+   * @param dto - CreateTeacherReportDto with report details
+   * @returns Created TeacherReport entity
+   */
+  async createReport(dto: CreateTeacherReportDto): Promise<TeacherReport> {
+    this.logger.log(`Creating report "${dto.reportName}" for teacher ${dto.teacherId}`);
+
+    const report = this.teacherReportRepo.create({
+      teacherId: dto.teacherId,
+      tenantId: dto.tenantId,
+      reportName: dto.reportName,
+      reportType: dto.reportType,
+      reportFormat: dto.reportFormat,
+      classroomId: dto.classroomId || null,
+      studentCount: dto.studentCount,
+      periodStart: dto.periodStart ? new Date(dto.periodStart) : null,
+      periodEnd: dto.periodEnd ? new Date(dto.periodEnd) : null,
+      filePath: dto.filePath,
+      fileSizeBytes: dto.fileSizeBytes,
+      generatedAt: new Date(),
+    });
+
+    const savedReport = await this.teacherReportRepo.save(report);
+    this.logger.log(`Report created successfully with ID: ${savedReport.id}`);
+
+    return savedReport;
+  }
+
+  /**
+   * Delete a report by ID (with ownership validation)
+   *
+   * @param reportId - UUID of the report to delete
+   * @param teacherId - ID of the teacher (for ownership validation)
+   */
+  async deleteReport(reportId: string, teacherId: string): Promise<void> {
+    const report = await this.getReportById(reportId, teacherId);
+    await this.teacherReportRepo.remove(report);
+    this.logger.log(`Report ${reportId} deleted by teacher ${teacherId}`);
   }
 
   /**

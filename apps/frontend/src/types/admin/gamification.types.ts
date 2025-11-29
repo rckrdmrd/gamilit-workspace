@@ -20,7 +20,15 @@ export interface GamificationParameter {
   modifiedBy: string | null;
 }
 
-export interface MayaRank {
+/**
+ * MayaRankConfig - Configuration for Maya rank in admin panel
+ *
+ * NOTA: Renombrado de MayaRank a MayaRankConfig (P2-001)
+ * para evitar conflicto con enum MayaRank de @shared/constants/ranks.constants
+ *
+ * @see SSOT enum: @shared/constants/ranks.constants.ts
+ */
+export interface MayaRankConfig {
   id: string;
   name: string;
   level: number;

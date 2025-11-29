@@ -72,10 +72,10 @@ export function useAchievementsStats(classroomId?: string): UseAchievementsStats
       setAchievements(result.achievements);
       setTotalAchievements(result.total_achievements);
       setTotalUnlocks(result.total_unlocks);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[useAchievementsStats] Error:', err);
       const errorMessage =
-        err?.response?.data?.message || err?.message || 'Error al obtener estadísticas de logros';
+        err instanceof Error ? err.message : 'Error al obtener estadísticas de logros';
       setError(new Error(errorMessage));
       setAchievements([]);
       setTotalAchievements(0);

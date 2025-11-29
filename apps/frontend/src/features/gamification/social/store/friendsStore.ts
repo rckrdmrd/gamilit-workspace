@@ -1,8 +1,10 @@
 /**
  * Friends Store
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 import type {
   Friend,
   FriendRequest,
@@ -10,12 +12,11 @@ import type {
   FriendActivity,
 } from '../types/friendsTypes';
 import {
-  friendsMockData,
-  friendRequestsMockData,
   friendRecommendationsMockData,
   friendActivitiesMockData,
-  getOnlineFriends,
 } from '../mockData/friendsMockData';
+import { friendsAPI } from '@/services/api/friendsAPI';
+import { useAuthStore } from '@/features/auth/store/authStore';
 
 interface FriendsStore {
   friends: Friend[];
@@ -23,120 +24,220 @@ interface FriendsStore {
   recommendations: FriendRecommendation[];
   activities: FriendActivity[];
   onlineFriends: Friend[];
+  loading: boolean;
+  error: string | null;
 
+  fetchFriends: (userId: string) => Promise<void>;
+  fetchPendingRequests: (userId: string) => Promise<void>;
   addFriend: (userId: string) => void;
-  removeFriend: (userId: string) => void;
-  sendFriendRequest: (userId: string, message?: string) => void;
-  acceptFriendRequest: (requestId: string) => void;
-  declineFriendRequest: (requestId: string) => void;
+  removeFriend: (friendId: string) => Promise<void>;
+  sendFriendRequest: (friendId: string, message?: string) => Promise<void>;
+  acceptFriendRequest: (requestId: string) => Promise<void>;
+  declineFriendRequest: (requestId: string) => Promise<void>;
   praiseActivity: (activityId: string) => void;
-  refreshFriends: () => void;
+  refreshFriends: (userId: string) => Promise<void>;
+  clearError: () => void;
 }
 
-export const useFriendsStore = create<FriendsStore>((set) => ({
-  friends: friendsMockData,
-  friendRequests: friendRequestsMockData,
-  recommendations: friendRecommendationsMockData,
-  activities: friendActivitiesMockData,
-  onlineFriends: getOnlineFriends(),
+export const useFriendsStore = create<FriendsStore>()(
+  devtools(
+    (set, get) => ({
+      friends: [],
+      friendRequests: [],
+      recommendations: friendRecommendationsMockData,
+      activities: friendActivitiesMockData,
+      onlineFriends: [],
+      loading: false,
+      error: null,
 
-  addFriend: (userId: string) => {
-    set((state) => {
-      const recommendation = state.recommendations.find((r) => r.userId === userId);
-      if (!recommendation) return state;
+      fetchFriends: async (userId: string) => {
+        set({ loading: true, error: null });
+        try {
+          const friendships = await friendsAPI.getUserFriends(userId);
 
-      const newFriend: Friend = {
-        userId: recommendation.userId,
-        username: recommendation.username,
-        avatar: recommendation.avatar,
-        rank: recommendation.rank,
-        level: recommendation.level,
-        xp: 0,
-        mlCoins: 0,
-        lastActive: new Date(),
-        friendsSince: new Date(),
-        isOnline: false,
-        commonInterests: recommendation.commonInterests,
-        mutualFriends: recommendation.mutualFriends,
-      };
+          // Convert friendships to Friend objects
+          // Note: This requires fetching user details for each friend
+          // For now, we'll create basic Friend objects
+          const friends: Friend[] = friendships
+            .filter((f) => f.status === 'accepted')
+            .map((f) => ({
+              userId: f.friend_id === userId ? f.user_id : f.friend_id,
+              username: 'Friend User', // TODO: Fetch user details
+              avatar: '/avatars/default.png',
+              rank: 'al_mehen' as const,
+              level: 1,
+              xp: 0,
+              mlCoins: 0,
+              lastActive: new Date(f.updated_at),
+              friendsSince: new Date(f.created_at),
+              isOnline: false,
+              commonInterests: [],
+              mutualFriends: 0,
+            }));
 
-      return {
-        friends: [...state.friends, newFriend],
-        recommendations: state.recommendations.filter((r) => r.userId !== userId),
-      };
-    });
-  },
+          set({ friends, loading: false });
+        } catch (error: unknown) {
+          set({ error: error.message || 'Failed to fetch friends', loading: false });
+        }
+      },
 
-  removeFriend: (userId: string) => {
-    set((state) => ({
-      friends: state.friends.filter((f) => f.userId !== userId),
-    }));
-  },
+      fetchPendingRequests: async (userId: string) => {
+        set({ loading: true, error: null });
+        try {
+          const pendingFriendships = await friendsAPI.getPendingRequests(userId);
 
-  sendFriendRequest: (userId: string, message?: string) => {
-    const newRequest: FriendRequest = {
-      id: `request-${Date.now()}`,
-      senderId: 'current-user',
-      senderName: 'Tú',
-      senderAvatar: '/avatars/avatar-you.png',
-      senderRank: 'chilan',
-      senderLevel: 18,
-      receiverId: userId,
-      sentAt: new Date(),
-      status: 'pending',
-      message,
-    };
+          // Convert to FriendRequest objects
+          const friendRequests: FriendRequest[] = pendingFriendships.map((f) => ({
+            id: f.id,
+            senderId: f.user_id,
+            senderName: 'Friend User', // TODO: Fetch user details
+            senderAvatar: '/avatars/default.png',
+            senderRank: 'al_mehen' as const,
+            senderLevel: 1,
+            receiverId: f.friend_id,
+            sentAt: new Date(f.created_at),
+            status: f.status as any,
+            message: undefined,
+          }));
 
-    set((state) => ({
-      friendRequests: [...state.friendRequests, newRequest],
-    }));
-  },
+          set({ friendRequests, loading: false });
+        } catch (error: unknown) {
+          set({ error: error.message || 'Failed to fetch pending requests', loading: false });
+        }
+      },
 
-  acceptFriendRequest: (requestId: string) => {
-    set((state) => {
-      const request = state.friendRequests.find((r) => r.id === requestId);
-      if (!request) return state;
+      addFriend: (userId: string) => {
+        set((state) => {
+          const recommendation = state.recommendations.find((r) => r.userId === userId);
+          if (!recommendation) return state;
 
-      const newFriend: Friend = {
-        userId: request.senderId,
-        username: request.senderName,
-        avatar: request.senderAvatar,
-        rank: request.senderRank,
-        level: request.senderLevel,
-        xp: 0,
-        mlCoins: 0,
-        lastActive: new Date(),
-        friendsSince: new Date(),
-        isOnline: false,
-        commonInterests: [],
-        mutualFriends: 0,
-      };
+          const newFriend: Friend = {
+            userId: recommendation.userId,
+            username: recommendation.username,
+            avatar: recommendation.avatar,
+            rank: recommendation.rank,
+            level: recommendation.level,
+            xp: 0,
+            mlCoins: 0,
+            lastActive: new Date(),
+            friendsSince: new Date(),
+            isOnline: false,
+            commonInterests: recommendation.commonInterests,
+            mutualFriends: recommendation.mutualFriends,
+          };
 
-      return {
-        friends: [...state.friends, newFriend],
-        friendRequests: state.friendRequests.filter((r) => r.id !== requestId),
-      };
-    });
-  },
+          return {
+            friends: [...state.friends, newFriend],
+            recommendations: state.recommendations.filter((r) => r.userId !== userId),
+          };
+        });
+      },
 
-  declineFriendRequest: (requestId: string) => {
-    set((state) => ({
-      friendRequests: state.friendRequests.filter((r) => r.id !== requestId),
-    }));
-  },
+      removeFriend: async (friendId: string) => {
+        set({ loading: true, error: null });
+        try {
+          const currentUserId = useAuthStore.getState().user?.id;
+          if (!currentUserId) {
+            throw new Error('User not authenticated');
+          }
 
-  praiseActivity: (activityId: string) => {
-    set((state) => ({
-      activities: state.activities.map((a) =>
-        a.id === activityId ? { ...a, praised: !a.praised } : a,
-      ),
-    }));
-  },
+          await friendsAPI.removeFriend(currentUserId, friendId);
 
-  refreshFriends: () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    set((_state) => ({
-      onlineFriends: getOnlineFriends(),
-    }));
-  },
-}));
+          set((state) => ({
+            friends: state.friends.filter((f) => f.userId !== friendId),
+            loading: false,
+          }));
+        } catch (error: unknown) {
+          set({ error: error.message || 'Failed to remove friend', loading: false });
+        }
+      },
+
+      sendFriendRequest: async (friendId: string, _message?: string) => {
+        set({ loading: true, error: null });
+        try {
+          const currentUserId = useAuthStore.getState().user?.id;
+          if (!currentUserId) {
+            throw new Error('User not authenticated');
+          }
+
+          await friendsAPI.sendFriendRequest({
+            user_id: currentUserId,
+            friend_id: friendId,
+          });
+
+          set({ loading: false });
+        } catch (error: unknown) {
+          set({ error: error.message || 'Failed to send friend request', loading: false });
+        }
+      },
+
+      acceptFriendRequest: async (requestId: string) => {
+        set({ loading: true, error: null });
+        try {
+          const friendship = await friendsAPI.acceptFriendRequest(requestId);
+
+          // Remove from pending requests and add to friends
+          set((state) => {
+            const request = state.friendRequests.find((r) => r.id === requestId);
+            if (!request) return { loading: false };
+
+            const newFriend: Friend = {
+              userId: request.senderId,
+              username: request.senderName,
+              avatar: request.senderAvatar,
+              rank: request.senderRank,
+              level: request.senderLevel,
+              xp: 0,
+              mlCoins: 0,
+              lastActive: new Date(),
+              friendsSince: new Date(friendship.updated_at),
+              isOnline: false,
+              commonInterests: [],
+              mutualFriends: 0,
+            };
+
+            return {
+              friends: [...state.friends, newFriend],
+              friendRequests: state.friendRequests.filter((r) => r.id !== requestId),
+              loading: false,
+            };
+          });
+        } catch (error: unknown) {
+          set({ error: error.message || 'Failed to accept friend request', loading: false });
+        }
+      },
+
+      declineFriendRequest: async (requestId: string) => {
+        set({ loading: true, error: null });
+        try {
+          await friendsAPI.rejectFriendRequest(requestId);
+
+          set((state) => ({
+            friendRequests: state.friendRequests.filter((r) => r.id !== requestId),
+            loading: false,
+          }));
+        } catch (error: unknown) {
+          set({ error: error.message || 'Failed to decline friend request', loading: false });
+        }
+      },
+
+      praiseActivity: (activityId: string) => {
+        set((state) => ({
+          activities: state.activities.map((a) =>
+            a.id === activityId ? { ...a, praised: !a.praised } : a,
+          ),
+        }));
+      },
+
+      refreshFriends: async (userId: string) => {
+        const { fetchFriends, fetchPendingRequests } = get();
+        await Promise.all([fetchFriends(userId), fetchPendingRequests(userId)]);
+      },
+
+      clearError: () => {
+        set({ error: null });
+      },
+    }),
+    { name: 'FriendsStore' },
+  ),
+);

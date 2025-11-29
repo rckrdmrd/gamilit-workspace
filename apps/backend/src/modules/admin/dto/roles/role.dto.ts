@@ -5,25 +5,25 @@ export class PermissionDto {
     description: 'Permission key',
     example: 'can_create_content',
   })
-  key!: string;
+    key!: string;
 
   @ApiProperty({
     description: 'Permission display name',
     example: 'Can Create Content',
   })
-  displayName!: string;
+    displayName!: string;
 
   @ApiProperty({
     description: 'Permission description',
     example: 'Allows user to create new content in the platform',
   })
-  description!: string;
+    description!: string;
 
   @ApiProperty({
     description: 'Permission category',
     example: 'content',
   })
-  category!: string;
+    category!: string;
 }
 
 export class RoleDto {
@@ -31,47 +31,47 @@ export class RoleDto {
     description: 'Role unique identifier',
     example: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
   })
-  id!: string;
+    id!: string;
 
   @ApiProperty({
     description: 'Role name',
     example: 'teacher',
   })
-  name!: string;
+    name!: string;
 
   @ApiPropertyOptional({
     description: 'Role description',
     example: 'Teacher role with content creation permissions',
   })
-  description?: string;
+    description?: string;
 
   @ApiProperty({
     description: 'Role permissions in JSON format',
     example: { can_create_content: true, can_delete_users: false },
   })
-  permissions!: Record<string, boolean>;
+    permissions!: Record<string, boolean>;
 
   @ApiProperty({
     description: 'Indicates if the role is active',
     example: true,
   })
-  is_active!: boolean;
+    is_active!: boolean;
 
   @ApiProperty({
     description: 'Number of users with this role',
     example: 45,
   })
-  users_count?: number;
+    users_count?: number;
 
   @ApiProperty({
     description: 'Creation timestamp',
     example: '2025-11-19T10:30:00Z',
   })
-  created_at!: string;
+    created_at!: string;
 
   @ApiProperty({
     description: 'Last update timestamp',
     example: '2025-11-19T10:30:00Z',
   })
-  updated_at!: string;
+    updated_at!: string;
 }

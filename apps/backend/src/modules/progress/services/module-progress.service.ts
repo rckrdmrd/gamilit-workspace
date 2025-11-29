@@ -29,7 +29,7 @@ export class ModuleProgressService {
    * @returns Lista de progreso de módulos ordenados por última actualización
    */
   async findByUserId(userId: string): Promise<ModuleProgress[]> {
-    return await this.moduleProgressRepo.find({
+    return this.moduleProgressRepo.find({
       where: { user_id: userId },
       order: { updated_at: 'DESC' },
     });
@@ -95,7 +95,7 @@ export class ModuleProgressService {
       metadata: {},
     });
 
-    return await this.moduleProgressRepo.save(newProgress);
+    return this.moduleProgressRepo.save(newProgress);
   }
 
   /**
@@ -115,7 +115,7 @@ export class ModuleProgressService {
     }
 
     Object.assign(progress, dto);
-    return await this.moduleProgressRepo.save(progress);
+    return this.moduleProgressRepo.save(progress);
   }
 
   /**
@@ -149,7 +149,7 @@ export class ModuleProgressService {
       progress.completed_at = new Date();
     }
 
-    return await this.moduleProgressRepo.save(progress);
+    return this.moduleProgressRepo.save(progress);
   }
 
   /**
@@ -176,7 +176,7 @@ export class ModuleProgressService {
       );
     }
 
-    return await this.moduleProgressRepo.save(progress);
+    return this.moduleProgressRepo.save(progress);
   }
 
   /**
@@ -245,6 +245,11 @@ export class ModuleProgressService {
     total_xp_earned: number;
     total_ml_coins_earned: number;
     total_time_spent: string;
+    total_exercises: number;
+    completed_exercises: number;
+    average_score: number;
+    current_streak: number;
+    longest_streak: number;
   }> {
     const allProgress = await this.moduleProgressRepo.find({
       where: { user_id: userId },
@@ -264,6 +269,16 @@ export class ModuleProgressService {
     const totalXp = allProgress.reduce((sum, p) => sum + p.total_xp_earned, 0);
     const totalCoins = allProgress.reduce((sum, p) => sum + p.total_ml_coins_earned, 0);
 
+    // Calcular total de ejercicios y ejercicios completados
+    const totalExercises = allProgress.reduce((sum, p) => sum + (p.total_exercises || 0), 0);
+    const completedExercises = allProgress.reduce((sum, p) => sum + (p.completed_exercises || 0), 0);
+
+    // Calcular promedio de score (solo módulos con score > 0)
+    const modulesWithScore = allProgress.filter(p => p.total_score > 0);
+    const averageScore = modulesWithScore.length > 0
+      ? modulesWithScore.reduce((sum, p) => sum + p.total_score, 0) / modulesWithScore.length
+      : 0;
+
     return {
       total_modules: allProgress.length,
       completed_modules: completedModules,
@@ -272,6 +287,11 @@ export class ModuleProgressService {
       total_xp_earned: totalXp,
       total_ml_coins_earned: totalCoins,
       total_time_spent: '00:00:00', // TODO: Sumar intervalos
+      total_exercises: totalExercises,
+      completed_exercises: completedExercises,
+      average_score: Number(averageScore.toFixed(2)),
+      current_streak: 0, // TODO: Obtener de user_stats
+      longest_streak: 0, // TODO: Obtener de user_stats
     };
   }
 
@@ -281,7 +301,7 @@ export class ModuleProgressService {
    * @returns Lista de módulos actualmente en progreso
    */
   async findInProgress(userId: string): Promise<ModuleProgress[]> {
-    return await this.moduleProgressRepo.find({
+    return this.moduleProgressRepo.find({
       where: {
         user_id: userId,
         status: ProgressStatusEnum.IN_PROGRESS,

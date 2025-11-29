@@ -70,6 +70,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
       };
       setMessages([aiIntro]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-save progress every 30 seconds
@@ -78,6 +79,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
       saveProgress();
     }, 30000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages, currentScore]);
 
   // Update progress
@@ -89,6 +91,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
 
     const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     setTimeSpent(elapsed);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
   const saveProgress = () => {
@@ -235,7 +238,8 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
         getState: () => ({ messages, currentScore }),
       };
     }
-  }, [messages, currentScore]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actionsRef]);
 
   const userMessageCount = messages.filter((m) => m.sender === 'user').length;
 

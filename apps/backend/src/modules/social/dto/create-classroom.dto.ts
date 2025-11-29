@@ -24,74 +24,74 @@ export class CreateClassroomDto {
    */
   @IsOptional()
   @IsUUID('4')
-  school_id?: string;
+    school_id?: string;
 
   /**
    * ID del tenant propietario
    */
   @IsUUID('4')
-  tenant_id!: string;
+    tenant_id!: string;
 
   /**
    * Nombre del aula
    */
   @IsString()
-  name!: string;
+    name!: string;
 
   /**
    * Código único de acceso
    */
   @IsOptional()
   @IsString()
-  code?: string;
+    code?: string;
 
   /**
    * Descripción del aula
    */
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   /**
    * Nivel de grado
    */
   @IsOptional()
   @IsString()
-  grade_level?: string;
+    grade_level?: string;
 
   /**
    * Sección
    */
   @IsOptional()
   @IsString()
-  section?: string;
+    section?: string;
 
   /**
    * Materia o asignatura
    */
   @IsOptional()
   @IsString()
-  subject?: string;
+    subject?: string;
 
   /**
    * Año académico
    */
   @IsOptional()
   @IsString()
-  academic_year?: string;
+    academic_year?: string;
 
   /**
    * Semestre
    */
   @IsOptional()
   @IsString()
-  semester?: string;
+    semester?: string;
 
   /**
    * ID del profesor principal
    */
   @IsUUID('4')
-  teacher_id!: string;
+    teacher_id!: string;
 
   /**
    * IDs de co-profesores
@@ -99,7 +99,7 @@ export class CreateClassroomDto {
   @IsOptional()
   @IsArray()
   @IsUUID('4', { each: true })
-  co_teachers?: string[];
+    co_teachers?: string[];
 
   /**
    * Capacidad máxima de estudiantes
@@ -107,61 +107,61 @@ export class CreateClassroomDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  capacity?: number;
+    capacity?: number;
 
   /**
    * Configuraciones del aula
    */
   @IsOptional()
   @IsObject()
-  settings?: Record<string, any>;
+    settings?: Record<string, any>;
 
   /**
    * Horario de clases
    */
   @IsOptional()
   @IsArray()
-  schedule?: any[];
+    schedule?: any[];
 
   /**
    * URL de reunión virtual
    */
   @IsOptional()
   @IsString()
-  meeting_url?: string;
+    meeting_url?: string;
 
   /**
    * Aula activa
    */
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+    is_active?: boolean;
 
   /**
    * Aula archivada
    */
   @IsOptional()
   @IsBoolean()
-  is_archived?: boolean;
+    is_archived?: boolean;
 
   /**
    * Fecha de inicio del curso
    */
   @IsOptional()
   @IsDateString()
-  start_date?: string;
+    start_date?: string;
 
   /**
    * Fecha de fin del curso
    */
   @IsOptional()
   @IsDateString()
-  end_date?: string;
+    end_date?: string;
 
   /**
    * Metadatos adicionales
    */
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

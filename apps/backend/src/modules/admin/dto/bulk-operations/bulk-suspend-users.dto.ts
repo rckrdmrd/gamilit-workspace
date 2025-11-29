@@ -15,14 +15,14 @@ export class BulkSuspendUsersDto {
   @IsArray()
   @ArrayMinSize(1, { message: 'Debe proporcionar al menos un usuario' })
   @IsUUID('4', { each: true, message: 'Cada ID debe ser un UUID válido' })
-  userIds!: string[];
+    userIds!: string[];
 
   @ApiProperty({
     description: 'Razón de la suspensión',
     example: 'Violación de términos de servicio',
   })
   @IsString()
-  reason!: string;
+    reason!: string;
 
   @ApiProperty({
     description: 'Duración de la suspensión en días (null = permanente)',
@@ -32,5 +32,5 @@ export class BulkSuspendUsersDto {
   @IsOptional()
   @IsInt()
   @Min(1, { message: 'La duración debe ser al menos 1 día' })
-  durationDays?: number; // null = permanente
+    durationDays?: number; // null = permanente
 }

@@ -343,11 +343,7 @@ export const perspectiveGenerations: Record<string, PerspectiveGeneration> = {
 };
 
 // General AI Analysis Mock Response
-export function generateMockAnalysis(
-  text: string,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _context: string,
-): AIAnalysisResponse {
+export function generateMockAnalysis(text: string, _context: string): AIAnalysisResponse {
   const wordCount = text.split(' ').length;
   const complexity = wordCount > 100 ? 'high' : wordCount > 50 ? 'medium' : 'low';
 

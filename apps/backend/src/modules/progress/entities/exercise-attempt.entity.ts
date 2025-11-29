@@ -32,7 +32,7 @@ export class ExerciseAttempt {
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   // =====================================================
   // CORE IDENTIFIERS
@@ -42,19 +42,19 @@ export class ExerciseAttempt {
    * ID del usuario (FK → auth_management.profiles)
    */
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del ejercicio (FK → educational_content.exercises)
    */
   @Column({ type: 'uuid' })
-  exercise_id!: string;
+    exercise_id!: string;
 
   /**
    * Número de intento (1, 2, 3, ...)
    */
   @Column({ type: 'integer', default: 1 })
-  attempt_number!: number;
+    attempt_number!: number;
 
   // =====================================================
   // ANSWER DATA
@@ -65,7 +65,7 @@ export class ExerciseAttempt {
    * Estructura varía según tipo de ejercicio
    */
   @Column({ type: 'jsonb' })
-  submitted_answers!: Record<string, any>;
+    submitted_answers!: Record<string, any>;
 
   // =====================================================
   // RESULTS & SCORING
@@ -75,19 +75,19 @@ export class ExerciseAttempt {
    * Indica si la respuesta fue correcta
    */
   @Column({ type: 'boolean', nullable: true })
-  is_correct?: boolean;
+    is_correct?: boolean;
 
   /**
    * Puntaje obtenido en el intento
    */
   @Column({ type: 'integer', nullable: true })
-  score?: number;
+    score?: number;
 
   /**
    * Tiempo invertido en el intento (segundos)
    */
   @Column({ type: 'integer', nullable: true })
-  time_spent_seconds?: number;
+    time_spent_seconds?: number;
 
   // =====================================================
   // HINTS & COMODINES
@@ -97,14 +97,14 @@ export class ExerciseAttempt {
    * Cantidad de hints/pistas utilizadas
    */
   @Column({ type: 'integer', default: 0 })
-  hints_used!: number;
+    hints_used!: number;
 
   /**
    * Comodines utilizados en el intento (JSONB array)
    * Ejemplo: ["pistas", "vision_lectora", "segunda_oportunidad"]
    */
   @Column({ type: 'jsonb', default: [] })
-  comodines_used!: string[];
+    comodines_used!: string[];
 
   // =====================================================
   // REWARDS
@@ -114,13 +114,13 @@ export class ExerciseAttempt {
    * XP ganada en este intento
    */
   @Column({ type: 'integer', default: 0 })
-  xp_earned!: number;
+    xp_earned!: number;
 
   /**
    * ML Coins ganadas en este intento
    */
   @Column({ type: 'integer', default: 0 })
-  ml_coins_earned!: number;
+    ml_coins_earned!: number;
 
   // =====================================================
   // TIMESTAMPS
@@ -130,7 +130,7 @@ export class ExerciseAttempt {
    * Fecha y hora de envío del intento
    */
   @Column({ type: 'timestamp with time zone' })
-  submitted_at!: Date;
+    submitted_at!: Date;
 
   // =====================================================
   // METADATA
@@ -144,5 +144,5 @@ export class ExerciseAttempt {
     type: 'jsonb',
     default: { browser: null, device_type: null, response_pattern: [] },
   })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 }

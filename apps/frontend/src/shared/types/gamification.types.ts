@@ -7,16 +7,15 @@
  */
 
 /**
- * Maya Rank Enum
- * Matches database enum: gamification_system.maya_rank
+ * Maya Rank Enum - Import from SSOT and re-export
+ *
+ * IMPORTANTE: NO definir MayaRank aquí. Importar desde SSOT.
+ * @see SSOT: @shared/constants/ranks.constants.ts
+ *
+ * P2-001: Consolidación de types - eliminado enum duplicado
  */
-export enum MayaRank {
-  AJAW = 'Ajaw',
-  NACOM = 'Nacom',
-  AH_KIN = "Ah K'in",
-  HALACH_UINIC = 'Halach Uinic',
-  KUKULKAN = "K'uk'ulkan"
-}
+import { MayaRank } from '../constants/ranks.constants';
+export { MayaRank };
 
 /**
  * User Statistics
@@ -177,7 +176,7 @@ export interface UserStats {
   // =====================================================
 
   /** Additional metadata (flexible JSONB) */
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 
   /** Timestamp of record creation */
   created_at?: string;
@@ -264,7 +263,7 @@ export interface UserRank {
   is_current: boolean;
 
   /** Additional rank metadata (flexible JSONB) */
-  rank_metadata: Record<string, any>;
+  rank_metadata: Record<string, unknown>;
 
   // =====================================================
   // AUDIT
@@ -362,5 +361,5 @@ export interface UpdateUserStatsDto {
   last_login_at?: string;
 
   // Metadata
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }

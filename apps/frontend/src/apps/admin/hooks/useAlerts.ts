@@ -96,7 +96,7 @@ export function useAlerts(): UseAlertsReturn {
       const response: PaginatedResponse<Alert> = await adminAPI.alerts.list(filters);
       setAlerts(response.items);
       setPagination(response.pagination);
-    } catch (err: any) {
+    } catch (err: unknown) {
       const errorMessage = err?.message || 'Error al cargar alertas';
       setError(errorMessage);
       console.error('[useAlerts] Error fetching alerts:', err);
@@ -123,7 +123,7 @@ export function useAlerts(): UseAlertsReturn {
     try {
       const statsData = await adminAPI.alerts.getStats();
       setStats(statsData);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[useAlerts] Error fetching stats:', err);
       // Don't show error for stats - keep UI working
       setStats(null);
@@ -158,7 +158,7 @@ export function useAlerts(): UseAlertsReturn {
 
         // Refresh stats
         await fetchStats();
-      } catch (err: any) {
+      } catch (err: unknown) {
         const errorMessage = err?.message || 'Error al reconocer alerta';
         setError(errorMessage);
         throw err;
@@ -190,7 +190,7 @@ export function useAlerts(): UseAlertsReturn {
 
         // Refresh stats
         await fetchStats();
-      } catch (err: any) {
+      } catch (err: unknown) {
         const errorMessage = err?.message || 'Error al resolver alerta';
         setError(errorMessage);
         throw err;
@@ -216,7 +216,7 @@ export function useAlerts(): UseAlertsReturn {
 
         // Refresh stats
         await fetchStats();
-      } catch (err: any) {
+      } catch (err: unknown) {
         const errorMessage = err?.message || 'Error al suprimir alerta';
         setError(errorMessage);
         throw err;

@@ -4,10 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Exercise } from '../entities';
 import { DB_SCHEMAS } from '@shared/constants';
 import { ExerciseTypeEnum } from '@shared/constants/enums.constants';
+import { ClassroomMember } from '@/modules/social/entities/classroom-member.entity';
+import { AssignmentClassroom } from '@/modules/social/entities/assignment-classroom.entity';
+import { AssignmentExercise } from '@/modules/assignments/entities/assignment-exercise.entity';
 
 /**
  * ExercisesService
@@ -20,6 +23,12 @@ export class ExercisesService {
   constructor(
     @InjectRepository(Exercise, 'educational')
     private readonly exerciseRepo: Repository<Exercise>,
+    @InjectRepository(ClassroomMember, 'social')
+    private readonly classroomMemberRepo: Repository<ClassroomMember>,
+    @InjectRepository(AssignmentClassroom, 'social')
+    private readonly assignmentClassroomRepo: Repository<AssignmentClassroom>,
+    @InjectRepository(AssignmentExercise, 'educational')
+    private readonly assignmentExerciseRepo: Repository<AssignmentExercise>,
   ) {}
 
   /**
@@ -29,6 +38,85 @@ export class ExercisesService {
    */
   async findAll(): Promise<Exercise[]> {
     const exercises = await this.exerciseRepo.find({
+      order: { module_id: 'ASC', order_index: 'ASC' },
+    });
+
+    // FE-059: Sanitize all exercises
+    return exercises.map(ex => this.sanitizeExercise(ex));
+  }
+
+  /**
+   * Obtener ejercicios asignados al estudiante (RLS - Row Level Security)
+   *
+   * GAP-C06: Implementa filtrado por classroom para estudiantes
+   *
+   * @description
+   * Filtra ejercicios para que el estudiante solo vea aquellos que pertenecen a:
+   * 1. Classrooms donde el estudiante está inscrito (status='active')
+   * 2. Assignments asignados a esos classrooms
+   * 3. Exercises incluidos en esos assignments
+   *
+   * @param userId - ID del usuario (auth.users.id)
+   * @returns Array de ejercicios asignados al estudiante
+   *
+   * @see ET-GAPS-CRITICOS-STUDENTS-ADMIN-2025-11-29.md (GAP-C06)
+   * @see ClassroomMember entity - social_features.classroom_members
+   * @see AssignmentClassroom entity - social_features.assignment_classrooms
+   * @see AssignmentExercise entity - educational_content.assignment_exercises
+   */
+  async findAllForStudent(userId: string): Promise<Exercise[]> {
+    // PASO 1: Obtener classrooms activos del estudiante
+    const studentClassrooms = await this.classroomMemberRepo.find({
+      where: {
+        student_id: userId,
+        status: 'active',
+      },
+      select: ['classroom_id'],
+    });
+
+    // Si el estudiante no pertenece a ningún classroom, retornar vacío
+    if (studentClassrooms.length === 0) {
+      return [];
+    }
+
+    const classroomIds = studentClassrooms.map(cm => cm.classroom_id);
+
+    // PASO 2: Obtener assignments asignados a esos classrooms
+    const assignedClassrooms = await this.assignmentClassroomRepo.find({
+      where: {
+        classroom_id: In(classroomIds),
+      },
+      select: ['assignment_id'],
+    });
+
+    // Si no hay assignments asignados, retornar vacío
+    if (assignedClassrooms.length === 0) {
+      return [];
+    }
+
+    const assignmentIds = [...new Set(assignedClassrooms.map(ac => ac.assignment_id))];
+
+    // PASO 3: Obtener exercises de esos assignments
+    const assignedExercises = await this.assignmentExerciseRepo.find({
+      where: {
+        assignmentId: In(assignmentIds),
+      },
+      select: ['exerciseId'],
+    });
+
+    // Si no hay exercises asignados, retornar vacío
+    if (assignedExercises.length === 0) {
+      return [];
+    }
+
+    const exerciseIds = [...new Set(assignedExercises.map(ae => ae.exerciseId))];
+
+    // PASO 4: Obtener los ejercicios completos y sanitizarlos
+    const exercises = await this.exerciseRepo.find({
+      where: {
+        id: In(exerciseIds),
+        is_active: true,
+      },
       order: { module_id: 'ASC', order_index: 'ASC' },
     });
 
@@ -66,7 +154,7 @@ export class ExercisesService {
     }
 
     const exercise = this.exerciseRepo.create(exerciseData);
-    return await this.exerciseRepo.save(exercise);
+    return this.exerciseRepo.save(exercise);
   }
 
   /**
@@ -378,7 +466,7 @@ export class ExercisesService {
         sanitized.grid = this.generateEmptyGrid(
           gridSize.rows || 15,
           gridSize.cols || 15,
-          sanitized.clues || []
+          sanitized.clues || [],
         );
         sanitized.gridConfig = gridSize;
 
@@ -391,7 +479,7 @@ export class ExercisesService {
           hasGrid: !!sanitized.grid,
           gridIsArray: Array.isArray(sanitized.grid),
           gridDimensions: sanitized.grid?.length ? `${sanitized.grid.length}x${sanitized.grid[0]?.length}` : 'N/A',
-          cluesCount: sanitized.clues?.length
+          cluesCount: sanitized.clues?.length,
         });
         break;
 
@@ -413,9 +501,9 @@ export class ExercisesService {
         }
         break;
 
-      // ================================================
-      // MODULE 2 - INFERENTIAL COMPREHENSION
-      // ================================================
+        // ================================================
+        // MODULE 2 - INFERENTIAL COMPREHENSION
+        // ================================================
 
       case ExerciseTypeEnum.DETECTIVE_TEXTUAL:
         // Remove correctAnswer from each question
@@ -458,9 +546,9 @@ export class ExercisesService {
         // correctInferences/incorrectInferences are in solution - no changes needed
         break;
 
-      // ================================================
-      // MODULE 3 - CRITICAL THINKING
-      // ================================================
+        // ================================================
+        // MODULE 3 - CRITICAL THINKING
+        // ================================================
 
       case 'tribunal_opiniones':
         // Remove correctAnswer from questions in each case
@@ -534,7 +622,7 @@ export class ExercisesService {
   private generateEmptyGrid(
     rows: number,
     cols: number,
-    clues: Array<{ startRow: number; startCol: number; direction: string; length: number; number?: number }>
+    clues: Array<{ startRow: number; startCol: number; direction: string; length: number; number?: number }>,
   ): any[][] {
     // Initialize all cells as black
     const grid: any[][] = [];

@@ -40,13 +40,13 @@ export class MediaResource {
    * Identificador único del recurso multimedia (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del tenant (FK → auth_management.tenants)
    */
   @Column({ type: 'uuid', nullable: true })
-  tenant_id?: string;
+    tenant_id?: string;
 
   // =====================================================
   // BASIC INFORMATION
@@ -56,19 +56,19 @@ export class MediaResource {
    * Título o nombre del recurso multimedia
    */
   @Column({ type: 'text' })
-  title!: string;
+    title!: string;
 
   /**
    * Descripción detallada del recurso
    */
   @Column({ type: 'text', nullable: true })
-  description?: string;
+    description?: string;
 
   /**
    * Texto alternativo para accesibilidad (alt text)
    */
   @Column({ type: 'text', nullable: true })
-  alt_text?: string;
+    alt_text?: string;
 
   // =====================================================
   // MEDIA TYPE & FORMAT
@@ -79,19 +79,19 @@ export class MediaResource {
    * ENUM: image, video, audio, document, interactive, animation
    */
   @Column({ type: 'enum', enum: MediaTypeEnum })
-  media_type!: MediaTypeEnum;
+    media_type!: MediaTypeEnum;
 
   /**
    * Formato del archivo (jpg, png, mp4, pdf, etc.)
    */
   @Column({ type: 'text', nullable: true })
-  file_format?: string;
+    file_format?: string;
 
   /**
    * Tamaño del archivo en bytes
    */
   @Column({ type: 'bigint', nullable: true })
-  file_size_bytes?: number;
+    file_size_bytes?: number;
 
   // =====================================================
   // STORAGE & DISTRIBUTION
@@ -101,19 +101,19 @@ export class MediaResource {
    * URL del archivo original o del servidor local
    */
   @Column({ type: 'text' })
-  url!: string;
+    url!: string;
 
   /**
    * URL de la miniatura/preview
    */
   @Column({ type: 'text', nullable: true })
-  thumbnail_url?: string;
+    thumbnail_url?: string;
 
   /**
    * URL de CDN para distribución optimizada
    */
   @Column({ type: 'text', nullable: true })
-  cdn_url?: string;
+    cdn_url?: string;
 
   // =====================================================
   // MEDIA PROPERTIES
@@ -123,25 +123,25 @@ export class MediaResource {
    * Ancho en píxeles (para imágenes y videos)
    */
   @Column({ type: 'integer', nullable: true })
-  width?: number;
+    width?: number;
 
   /**
    * Alto en píxeles (para imágenes y videos)
    */
   @Column({ type: 'integer', nullable: true })
-  height?: number;
+    height?: number;
 
   /**
    * Duración en segundos (para audio y video)
    */
   @Column({ type: 'integer', nullable: true })
-  duration_seconds?: number;
+    duration_seconds?: number;
 
   /**
    * Resolución (720p, 1080p, 4k, etc.)
    */
   @Column({ type: 'text', nullable: true })
-  resolution?: string;
+    resolution?: string;
 
   // =====================================================
   // CATEGORIZATION & TAGGING
@@ -151,19 +151,19 @@ export class MediaResource {
    * Categoría del recurso (ej: "Módulo 1", "Lectura Inicial", etc.)
    */
   @Column({ type: 'text', nullable: true })
-  category?: string;
+    category?: string;
 
   /**
    * Etiquetas para búsqueda y clasificación
    */
   @Column({ type: 'text', array: true, nullable: true })
-  tags?: string[];
+    tags?: string[];
 
   /**
    * Palabras clave para SEO y búsqueda
    */
   @Column({ type: 'text', array: true, nullable: true })
-  keywords?: string[];
+    keywords?: string[];
 
   // =====================================================
   // PROCESSING & STATUS
@@ -174,7 +174,7 @@ export class MediaResource {
    * ENUM: uploading, processing, ready, error, optimizing
    */
   @Column({ type: 'enum', enum: ProcessingStatusEnum, default: ProcessingStatusEnum.READY })
-  processing_status!: ProcessingStatusEnum;
+    processing_status!: ProcessingStatusEnum;
 
   // =====================================================
   // VISIBILITY & USAGE
@@ -184,25 +184,25 @@ export class MediaResource {
    * Si el recurso es público (visible para estudiantes)
    */
   @Column({ type: 'boolean', default: false })
-  is_public!: boolean;
+    is_public!: boolean;
 
   /**
    * Si el recurso está activo y disponible
    */
   @Column({ type: 'boolean', default: true })
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Array de UUIDs de módulos que usan este recurso (referencia débil, sin FK)
    */
   @Column({ type: 'uuid', array: true, nullable: true })
-  used_in_modules?: string[];
+    used_in_modules?: string[];
 
   /**
    * Array de UUIDs de ejercicios que usan este recurso (referencia débil, sin FK)
    */
   @Column({ type: 'uuid', array: true, nullable: true })
-  used_in_exercises?: string[];
+    used_in_exercises?: string[];
 
   // =====================================================
   // LICENSING & ATTRIBUTION
@@ -212,25 +212,25 @@ export class MediaResource {
    * ID del usuario que subió el recurso
    */
   @Column({ type: 'uuid', nullable: true })
-  created_by?: string;
+    created_by?: string;
 
   /**
    * Información de copyright
    */
   @Column({ type: 'text', nullable: true })
-  copyright_info?: string;
+    copyright_info?: string;
 
   /**
    * Licencia del recurso (CC-BY, CC-BY-SA, etc.)
    */
   @Column({ type: 'text', nullable: true })
-  license?: string;
+    license?: string;
 
   /**
    * Atribución requerida para el recurso
    */
   @Column({ type: 'text', nullable: true })
-  attribution?: string;
+    attribution?: string;
 
   // =====================================================
   // METADATA & AUDIT
@@ -241,17 +241,17 @@ export class MediaResource {
    * Puede incluir información técnica, codec, bitrate, etc.
    */
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   /**
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización del registro
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 }

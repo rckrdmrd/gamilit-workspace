@@ -47,7 +47,7 @@ export class AdminOrganizationsController {
   async listOrganizations(
     @Query() query: ListOrganizationsDto,
   ): Promise<PaginatedOrganizationsDto> {
-    return await this.adminOrganizationsService.listOrganizations(query);
+    return this.adminOrganizationsService.listOrganizations(query);
   }
 
   @Get(':id')
@@ -56,7 +56,7 @@ export class AdminOrganizationsController {
     description: 'Retrieve details of a specific organization by its ID',
   })
   async getOrganization(@Param('id') id: string): Promise<OrganizationDto> {
-    return await this.adminOrganizationsService.getOrganization(id);
+    return this.adminOrganizationsService.getOrganization(id);
   }
 
   @Post()
@@ -67,7 +67,7 @@ export class AdminOrganizationsController {
   async createOrganization(
     @Body() createDto: CreateOrganizationDto,
   ): Promise<OrganizationDto> {
-    return await this.adminOrganizationsService.createOrganization(createDto);
+    return this.adminOrganizationsService.createOrganization(createDto);
   }
 
   @Put(':id')
@@ -77,9 +77,9 @@ export class AdminOrganizationsController {
   })
   async updateOrganization(
     @Param('id') id: string,
-    @Body() updateDto: UpdateOrganizationDto,
+      @Body() updateDto: UpdateOrganizationDto,
   ): Promise<OrganizationDto> {
-    return await this.adminOrganizationsService.updateOrganization(
+    return this.adminOrganizationsService.updateOrganization(
       id,
       updateDto,
     );
@@ -105,7 +105,7 @@ export class AdminOrganizationsController {
   async getOrganizationStats(
     @Param('id') id: string,
   ): Promise<OrganizationStatsDto> {
-    return await this.adminOrganizationsService.getOrganizationStats(id);
+    return this.adminOrganizationsService.getOrganizationStats(id);
   }
 
   @Get(':id/users')
@@ -116,9 +116,9 @@ export class AdminOrganizationsController {
   })
   async getOrganizationUsers(
     @Param('id') id: string,
-    @Query() query: GetOrganizationUsersDto,
+      @Query() query: GetOrganizationUsersDto,
   ): Promise<PaginatedOrganizationUsersDto> {
-    return await this.adminOrganizationsService.getOrganizationUsers(id, query);
+    return this.adminOrganizationsService.getOrganizationUsers(id, query);
   }
 
   @Patch(':id/subscription')
@@ -129,9 +129,9 @@ export class AdminOrganizationsController {
   })
   async updateSubscription(
     @Param('id') id: string,
-    @Body() updateDto: UpdateSubscriptionDto,
+      @Body() updateDto: UpdateSubscriptionDto,
   ): Promise<OrganizationDto> {
-    return await this.adminOrganizationsService.updateSubscription(id, updateDto);
+    return this.adminOrganizationsService.updateSubscription(id, updateDto);
   }
 
   @Patch(':id/features')
@@ -142,8 +142,8 @@ export class AdminOrganizationsController {
   })
   async updateFeatures(
     @Param('id') id: string,
-    @Body() updateDto: UpdateFeaturesDto,
+      @Body() updateDto: UpdateFeaturesDto,
   ): Promise<OrganizationDto> {
-    return await this.adminOrganizationsService.updateFeatures(id, updateDto);
+    return this.adminOrganizationsService.updateFeatures(id, updateDto);
   }
 }

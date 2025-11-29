@@ -114,7 +114,7 @@ class BonusCoinsAPI {
       );
 
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('[BonusCoinsAPI] Error granting bonus:', error);
 
       // Provide user-friendly error messages

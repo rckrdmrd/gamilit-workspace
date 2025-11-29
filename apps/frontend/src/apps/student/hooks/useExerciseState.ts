@@ -2,6 +2,7 @@
  * useExerciseState Hook
  * Manages all exercise state including submissions, time tracking, and localStorage persistence
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 
@@ -16,7 +17,7 @@ export interface Exercise {
   ml_coins_reward: number;
   time_limit?: number;
   max_attempts: number;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
 }
 
 export interface ExerciseAttempt {
@@ -125,6 +126,7 @@ export const useExerciseState = ({
     }, 30000); // Save every 30 seconds
 
     return () => clearInterval(autoSaveInterval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSave, hasUnsavedChanges, state]);
 
   // Save to localStorage
@@ -135,7 +137,7 @@ export const useExerciseState = ({
         JSON.stringify({
           ...state,
           lastSavedAt: new Date().toISOString(),
-        })
+        }),
       );
       setHasUnsavedChanges(false);
     } catch (error) {
@@ -251,7 +253,7 @@ export const useExerciseState = ({
         setIsSubmitting(false);
       }
     },
-    [state, onSubmit, onComplete, saveToLocalStorage]
+    [state, onSubmit, onComplete, saveToLocalStorage],
   );
 
   // Reset exercise

@@ -257,6 +257,58 @@ cd apps/database
 
 ## 🚨 DIRECTIVAS CRÍTICAS (OBLIGATORIAS)
 
+### 0. FLUJO OBLIGATORIO DE 5 FASES ⭐⭐
+
+**DIRECTIVA MAESTRA:** [DIRECTIVA-FLUJO-5-FASES.md](../directivas/DIRECTIVA-FLUJO-5-FASES.md)
+
+> **PRINCIPIO: DOCUMENTACIÓN PRIMERO, IMPLEMENTACIÓN DESPUÉS**
+
+**ANTES de crear cualquier objeto DDL:**
+
+```yaml
+VALIDACIÓN_OBLIGATORIA:
+  paso_1_consultar_docs:
+    - docs/95-guias-desarrollo/ (si existe sección database)
+    - docs/97-adr/ (decisiones arquitectónicas)
+    - orchestration/inventarios/DATABASE_INVENTORY.yml
+    pregunta: "¿Mi DDL sigue los estándares documentados?"
+
+  paso_2_verificar_duplicados:
+    - ¿Existe ya esta tabla/schema?
+    - ¿Estoy creando objetos duplicados?
+    - Consultar MASTER_INVENTORY.yml
+
+  paso_3_implementar:
+    - Solo después de validar contra inventarios
+    - Seguir convenciones de nomenclatura
+    - Documentar con COMMENT ON
+
+  paso_4_validar_carga_limpia:
+    obligatorio: true
+    comandos:
+      - "./create-database.sh"  # DEBE completar sin errores
+      - "Verificar integridad referencial"
+    no_completar_si_falla: true
+```
+
+**VALIDACIONES OBLIGATORIAS ANTES DE COMPLETAR:**
+
+```bash
+# OBLIGATORIO - Ejecutar antes de marcar tarea completa
+cd apps/database
+./create-database.sh      # DEBE completar sin errores (carga limpia)
+
+# Si hay errores:
+# 1. NO marcar tarea como completada
+# 2. Corregir DDL (NO ejecutar fixes manuales)
+# 3. Re-ejecutar carga limpia
+# 4. Solo entonces continuar
+
+# Validaciones adicionales
+psql -d gamilit_platform -c "\dt {schema}.*"  # Verificar tablas creadas
+psql -d gamilit_platform -c "\di {schema}.*"  # Verificar índices
+```
+
 ### 1. DOCUMENTACIÓN OBLIGATORIA ⭐
 
 **📋 DIRECTIVA:** [DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md](../directivas/DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md)
@@ -357,6 +409,40 @@ apps/database/
 - Crear archivos DDL fuera de `apps/database/ddl/`
 - Crear carpeta `migrations/` o archivos de migration
 - Crear archivos `fix-*.sql` o `patch-*.sql`
+
+### 6. GESTIÓN DE ARCHIVOS .LOG
+
+**POLÍTICA DE RETENCIÓN DE LOGS:**
+
+El script `create-database.sh` genera archivos `.log` en cada ejecución. Para evitar acumulación excesiva:
+
+```yaml
+POLÍTICA_LOGS:
+  retener: 5  # Últimos 5 logs solamente
+  purgar: automático  # Se ejecuta al inicio de create-database.sh
+  patrón: "create-database-*.log"
+  ubicación: "apps/database/"
+```
+
+**PURGA AUTOMÁTICA:**
+- El script `create-database.sh` purga automáticamente los logs antiguos
+- Mantiene SOLO los últimos 5 logs más recientes
+- Se ejecuta al inicio de cada recreación de BD
+
+**PURGA MANUAL (si es necesario):**
+```bash
+# Ver cuántos logs hay
+ls -la apps/database/create-database-*.log | wc -l
+
+# Purgar manualmente (mantener últimos 5)
+cd apps/database
+ls -t create-database-*.log | tail -n +6 | xargs -r rm -f
+
+# Verificar resultado
+ls -la create-database-*.log
+```
+
+**IMPORTANTE:** Los archivos `.log` están en `.gitignore` - NO deben ser commiteados.
 
 ### 5. VALIDACIÓN ANTI-DUPLICACIÓN
 
@@ -673,21 +759,109 @@ cat orchestration/inventarios/MASTER_INVENTORY.yml | grep -A 5 "database:"
 
 Antes de marcar tarea como completa:
 
+**Validación docs/inventarios (OBLIGATORIO):**
+- [ ] Consulté MASTER_INVENTORY.yml antes de crear objetos
+- [ ] No existen objetos duplicados (verificado con grep)
+- [ ] Mi DDL sigue convenciones de ESTANDARES-NOMENCLATURA.md
+
+**Implementación:**
 - [ ] Análisis documentado (01-ANALISIS.md)
 - [ ] Plan definido (02-PLAN.md)
 - [ ] DDL ejecutado exitosamente (03-EJECUCION.md)
 - [ ] Validación completa (04-VALIDACION.md)
 - [ ] Documentación actualizada (05-DOCUMENTACION.md)
-- [ ] Comentarios SQL en todas las tablas y columnas
+- [ ] Comentarios SQL en todas las tablas y columnas (COMMENT ON)
+
+**Validaciones carga limpia (OBLIGATORIO - NO SALTEAR):**
+- [ ] `./create-database.sh` ejecuta sin errores
+- [ ] Integridad referencial validada
+- [ ] Índices creados correctamente
+- [ ] Seeds cargados correctamente
+
+**Documentación:**
 - [ ] Inventarios actualizados (MASTER_INVENTORY.yml)
 - [ ] Trazas actualizadas (TRAZA-TAREAS-DATABASE.md)
-- [ ] No hay objetos duplicados
-- [ ] create-database.sh ejecuta sin errores
-- [ ] Seeds cargados correctamente
+
+**Referencia:** [DIRECTIVA-FLUJO-5-FASES.md](../directivas/DIRECTIVA-FLUJO-5-FASES.md)
 
 ---
 
-**Versión:** 1.0.0
-**Última actualización:** 2025-11-23
+## 🧠 MEMORIA PERSISTENTE PARA COMPACTACIÓN
+
+> **IMPORTANTE:** Esta sección DEBE preservarse durante compactación de contexto.
+> Contiene rutas críticas para consultar cuando se pierda contexto.
+
+```yaml
+# ============================================================
+# MEMORIA PERSISTENTE - DATABASE-AGENT v1.1.0
+# NO ELIMINAR DURANTE COMPACTACIÓN DE CONTEXTO
+# ============================================================
+
+PRINCIPIO: "DOCUMENTACIÓN PRIMERO, IMPLEMENTACIÓN DESPUÉS"
+PRINCIPIO_DDL: "LOS ARCHIVOS DDL SON LA FUENTE DE VERDAD"
+
+DIRECTIVAS_CONSULTAR:
+  flujo_5_fases: "orchestration/directivas/DIRECTIVA-FLUJO-5-FASES.md"
+  documentacion: "orchestration/directivas/DIRECTIVA-DOCUMENTACION-OBLIGATORIA.md"
+  nomenclatura: "orchestration/directivas/ESTANDARES-NOMENCLATURA.md"
+  carga_limpia: "orchestration/directivas/DIRECTIVA-POLITICA-CARGA-LIMPIA.md"
+  diseno_bd: "orchestration/directivas/DIRECTIVA-DISENO-BASE-DATOS.md"
+
+INVENTARIOS:
+  master: "orchestration/inventarios/MASTER_INVENTORY.yml"
+  database: "orchestration/inventarios/DATABASE_INVENTORY.yml"
+
+TRAZAS:
+  database: "orchestration/trazas/TRAZA-TAREAS-DATABASE.md"
+
+ESTRUCTURA_DDL:
+  raiz: "apps/database/"
+  ddl: "apps/database/ddl/"
+  schemas: "apps/database/ddl/schemas/"
+  seeds_dev: "apps/database/seeds/dev/"
+  seeds_prod: "apps/database/seeds/prod/"
+  scripts: "apps/database/scripts/"
+
+SCHEMAS_EXISTENTES:
+  - auth_management
+  - educational_content
+  - gamification_system
+  - student_management
+  - social_features
+  - analytics
+  - audit_logging
+  - admin_dashboard
+
+VALIDACIONES_OBLIGATORIAS:
+  carga_limpia:
+    - "cd apps/database && ./create-database.sh"
+  verificacion:
+    - "psql -d gamilit_platform -c '\\dt {schema}.*'"
+    - "psql -d gamilit_platform -c '\\di {schema}.*'"
+
+PROHIBICIONES_DDL:
+  - NO crear carpeta migrations/
+  - NO crear archivos fix-*.sql o patch-*.sql
+  - NO ejecutar ALTER TABLE directo sin actualizar DDL
+  - NO modificar BD sin recreación completa
+
+POLÍTICA_LOGS:
+  retener: 5  # Últimos 5 logs
+  purga: automática  # En create-database.sh
+  patrón: "create-database-*.log"
+  ubicación: "apps/database/"
+
+FASES_OBLIGATORIAS:
+  fase_1: "ANÁLISIS - Consultar inventarios, validar no duplicados"
+  fase_2: "PLANEACIÓN - Diseñar DDL, documentar estructura"
+  fase_3: "VALIDACIÓN PLAN - Verificar convenciones, dependencias"
+  fase_4: "EJECUCIÓN - Crear DDL, ejecutar, actualizar inventarios"
+  fase_5: "VALIDACIÓN - Carga limpia OBLIGATORIA, integridad referencial"
+```
+
+---
+
+**Versión:** 1.1.0
+**Última actualización:** 2025-11-29
 **Proyecto:** GAMILIT
 **Mantenido por:** Tech Lead

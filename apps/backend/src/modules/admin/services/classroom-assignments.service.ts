@@ -378,7 +378,7 @@ export class ClassroomAssignmentsService {
     // Ordenar por nombre
     queryBuilder.orderBy('classroom.name', 'ASC');
 
-    return await queryBuilder.getMany();
+    return queryBuilder.getMany();
   }
 
   /**
@@ -520,8 +520,8 @@ export class ClassroomAssignmentsService {
     const teachers =
       teacherIds.length > 0
         ? await this.profileRepo.find({
-            where: { id: In(teacherIds) },
-          })
+          where: { id: In(teacherIds) },
+        })
         : [];
 
     // 4. Map to response format
@@ -584,8 +584,8 @@ export class ClassroomAssignmentsService {
     const classrooms =
       classroomIds.length > 0
         ? await this.classroomRepo.find({
-            where: { id: In(classroomIds) },
-          })
+          where: { id: In(classroomIds) },
+        })
         : [];
 
     // 4. Map to response format
@@ -624,19 +624,19 @@ export class ClassroomAssignmentsService {
     page?: number;
     limit?: number;
   }): Promise<{
-    data: Array<{
-      id: string;
-      classroom_id: string;
-      classroom_name: string;
-      teacher_id: string;
-      teacher_name: string;
-      role: string;
-      assigned_at: Date;
-    }>;
-    total: number;
-    page: number;
-    limit: number;
-  }> {
+      data: Array<{
+        id: string;
+        classroom_id: string;
+        classroom_name: string;
+        teacher_id: string;
+        teacher_name: string;
+        role: string;
+        assigned_at: Date;
+      }>;
+      total: number;
+      page: number;
+      limit: number;
+    }> {
     const page = query.page || 1;
     const limit = query.limit || 20;
     const skip = (page - 1) * limit;
@@ -666,15 +666,15 @@ export class ClassroomAssignmentsService {
     const classrooms =
       classroomIds.length > 0
         ? await this.classroomRepo.find({
-            where: { id: In(classroomIds) },
-          })
+          where: { id: In(classroomIds) },
+        })
         : [];
 
     const teachers =
       teacherIds.length > 0
         ? await this.profileRepo.find({
-            where: { id: In(teacherIds) },
-          })
+          where: { id: In(teacherIds) },
+        })
         : [];
 
     // Map to response format
@@ -711,10 +711,10 @@ export class ClassroomAssignmentsService {
   async bulkAssignPairs(
     assignments: Array<{ teacherId: string; classroomId: string }>,
   ): Promise<{
-    assigned: number;
-    successful: any[];
-    failed: Array<{ teacherId: string; classroomId: string; reason: string }>;
-  }> {
+      assigned: number;
+      successful: any[];
+      failed: Array<{ teacherId: string; classroomId: string; reason: string }>;
+    }> {
     const successful: any[] = [];
     const failed: Array<{
       teacherId: string;

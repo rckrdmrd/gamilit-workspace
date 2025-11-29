@@ -69,7 +69,7 @@ export class RegisterDeviceDto {
   @IsNotEmpty()
   @MinLength(10)
   @MaxLength(500)
-  deviceToken!: string;
+    deviceToken!: string;
 
   /**
    * Tipo de dispositivo/plataforma
@@ -94,7 +94,7 @@ export class RegisterDeviceDto {
   @IsString()
   @IsNotEmpty()
   @IsIn(['ios', 'android', 'web'])
-  deviceType!: string;
+    deviceType!: string;
 
   /**
    * Nombre descriptivo del dispositivo (opcional)
@@ -125,7 +125,7 @@ export class RegisterDeviceDto {
   @IsString()
   @IsOptional()
   @MaxLength(255)
-  deviceName?: string;
+    deviceName?: string;
 }
 
 /**
@@ -154,5 +154,5 @@ export class UpdateDeviceNameDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(255)
-  deviceName!: string;
+    deviceName!: string;
 }

@@ -1,106 +1,74 @@
 /**
  * Detective Textual Mock Data - Marie Curie Investigation
+ * Multiple choice exercise for textual inference
  */
 
-import type { Investigation, Evidence } from './detectiveTextualTypes';
+import type { DetectiveTextualExercise } from './detectiveTextualTypes';
 
-export const mockEvidence: Evidence[] = [
-  {
-    id: 'evidence-1',
-    type: 'letter',
-    title: 'Carta a Bronia (1891)',
-    content:
-      'Querida hermana, he sido aceptada en la Sorbonne. Estudiaré física y matemáticas. París es fascinante, aunque vivo con muy poco dinero. Pero nada me detendrá en mi búsqueda del conocimiento.',
-    date: '1891-11-03',
-    discovered: true,
-    relevance: 0.85,
-  },
-  {
-    id: 'evidence-2',
-    type: 'document',
-    title: 'Notas de Laboratorio (1898)',
-    content:
-      'Observo que el tono de pechblenda emite radiación más intensa que el uranio puro. Esto sugiere la presencia de un elemento desconocido. Pierre y yo hemos decidido aislar este elemento. El proceso es arduo.',
-    date: '1898-07-18',
-    discovered: false,
-    relevance: 0.95,
-  },
-  {
-    id: 'evidence-3',
-    type: 'photo',
-    title: 'Fotografía del Laboratorio',
-    content:
-      'Imagen del laboratorio improvisado donde Marie y Pierre trabajaban. Equipamiento básico, sin ventilación adecuada.',
-    imageUrl: '/images/curie-lab.jpg',
-    discovered: false,
-    relevance: 0.75,
-  },
-  {
-    id: 'evidence-4',
-    type: 'document',
-    title: 'Registro Médico (1903)',
-    content:
-      'La paciente Marie Curie presenta quemaduras en las manos y fatiga crónica. Atribuye los síntomas a largas jornadas de trabajo. Se recomienda descanso.',
-    date: '1903-12-10',
-    discovered: false,
-    relevance: 0.90,
-  },
-  {
-    id: 'evidence-5',
-    type: 'note',
-    title: 'Nota Personal',
-    content:
-      'El material brilla en la oscuridad con una luz verde-azulada. Es hermoso y terrible a la vez. No puedo dejar de preguntarme sobre su naturaleza.',
-    date: '1898-12-21',
-    discovered: false,
-    relevance: 0.80,
-  },
-  {
-    id: 'evidence-6',
-    type: 'letter',
-    title: 'Carta de Pierre a Marie (1894)',
-    content:
-      'Estimada Mademoiselle Sklodowska, sería un honor trabajar con usted en mi laboratorio. Su trabajo en magnetismo es excepcional. Adjunto las especificaciones del equipamiento disponible.',
-    date: '1894-03-15',
-    discovered: false,
-    relevance: 0.70,
-  },
-];
-
-export const mockInvestigation: Investigation = {
-  id: 'investigation-marie-curie-1',
-  title: 'El Misterio de los Elementos Radiactivos',
-  description:
-    'Investiga cómo Marie Curie descubrió el radio y el polonio, y las consecuencias de trabajar con materiales radiactivos sin protección.',
-  mystery:
-    '¿Cómo logró Marie Curie descubrir nuevos elementos, y qué precio pagó por su dedicación a la ciencia?',
-  availableEvidence: mockEvidence,
-  // FE-059: correctConnections field removed - sanitized for security
-  /* correctConnections: [
+export const mockExercise: DetectiveTextualExercise = {
+  id: 'detective-textual-1',
+  title: 'Detective Textual: El Misterio de la Radiación',
+  description: 'Analiza el texto sobre Marie Curie para encontrar información implícita.',
+  passage:
+    'Marie Curie trabajaba largas horas en un laboratorio mal ventilado, rodeada de materiales radiactivos. A menudo llevaba tubos de ensayo con radio en los bolsillos de su bata de trabajo. Sus cuadernos de investigación brillaban misteriosamente en la oscuridad de la noche. A pesar de sentirse frecuentemente fatigada y con dolores, Marie continuaba su investigación sin descanso, convencida de que su trabajo beneficiaría a la humanidad.',
+  questions: [
     {
-      id: 'conn-1',
-      fromEvidenceId: 'evidence-2',
-      toEvidenceId: 'evidence-5',
-      relationship: 'Ambos documentos describen las propiedades luminiscentes del radio',
-      userCreated: false,
-      isCorrect: true,
+      id: 'q1',
+      question: '¿Por qué los cuadernos de Marie brillaban en la oscuridad?',
+      options: [
+        'Usaba tinta especial fluorescente para escribir',
+        'Estaban contaminados con material radiactivo',
+        'Los escribía con lápiz luminoso importado',
+        'Era un efecto óptico de la luz de la luna',
+      ],
+      correctAnswer: 1,
+      explanation:
+        'La radiación del radio con el que trabajaba constantemente contaminó sus cuadernos, haciéndolos radioactivos y, por tanto, luminiscentes.',
+      inference_type: 'causa_efecto',
     },
     {
-      id: 'conn-2',
-      fromEvidenceId: 'evidence-3',
-      toEvidenceId: 'evidence-4',
-      relationship: 'Las condiciones del laboratorio causaron problemas de salud',
-      userCreated: false,
-      isCorrect: true,
+      id: 'q2',
+      question: '¿Qué podemos inferir sobre las condiciones de seguridad en su laboratorio?',
+      options: [
+        'Eran excelentes y seguían protocolos estrictos',
+        'Eran inadecuadas y peligrosas para la salud',
+        'Cumplían con los estándares modernos de seguridad',
+        'No trabajaba con materiales peligrosos realmente',
+      ],
+      correctAnswer: 1,
+      explanation:
+        'Llevar material radiactivo en los bolsillos y trabajar en un lugar mal ventilado indica una total falta de protocolos de seguridad adecuados.',
+      inference_type: 'contexto_situacional',
     },
     {
-      id: 'conn-3',
-      fromEvidenceId: 'evidence-6',
-      toEvidenceId: 'evidence-2',
-      relationship: 'Pierre invitó a Marie, iniciando su colaboración científica',
-      userCreated: false,
-      isCorrect: true,
+      id: 'q3',
+      question: '¿Qué sugiere el texto sobre la relación entre sus síntomas físicos y su trabajo?',
+      options: [
+        'Sus síntomas no tenían relación con su investigación',
+        'La fatiga y dolores probablemente eran causados por la exposición a radiación',
+        'Sufría de enfermedades comunes no relacionadas',
+        'Los síntomas eran psicosomáticos por estrés',
+      ],
+      correctAnswer: 1,
+      explanation:
+        'La conexión entre trabajar con materiales radiactivos sin protección y experimentar fatiga y dolores sugiere fuertemente que la radiación estaba afectando su salud.',
+      inference_type: 'causa_efecto',
     },
-  ], */
-  difficulty: 'medio',
+    {
+      id: 'q4',
+      question:
+        '¿Qué motivación impulsaba a Marie a continuar trabajando a pesar de sus malestares?',
+      options: [
+        'El deseo de ganar fama y reconocimiento personal',
+        'La convicción de que su trabajo ayudaría a la humanidad',
+        'La presión de su esposo Pierre',
+        'La necesidad económica de su familia',
+      ],
+      correctAnswer: 1,
+      explanation:
+        'El texto menciona explícitamente que Marie continuaba su trabajo convencida de que beneficiaría a la humanidad, mostrando su motivación altruista.',
+      inference_type: 'motivacion',
+    },
+  ],
+  difficulty: 'medium',
 };

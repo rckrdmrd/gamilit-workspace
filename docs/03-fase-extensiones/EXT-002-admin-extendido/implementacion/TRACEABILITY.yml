@@ -4,10 +4,19 @@ epic_code: EXT-002
 epic_name: Gestión Avanzada Admin
 phase: 3
 phase_name: Extensiones (Alcance v2 CORE)
-budget_mxn: 25200
-story_points: 63
-status: completed
-sprint: "9-10"
+budget_mxn: 35600  # Actualizado 2025-11-29
+story_points: 148  # Actualizado 2025-11-29 (89 facturados + 59 nuevos)
+status: in_progress  # 8/12 US implementadas
+sprint: "9-10+"
+last_updated: 2025-11-29
+
+# CAMBIOS 2025-11-29:
+# - Añadida US-AE-009 (Visualización Assignments Admin, 13 SP) - ✅ COMPLETADO
+# - Añadida US-AE-010 (Crear Usuarios desde Admin, 13 SP) - 📝 Especificado
+# - Añadida US-AE-011 (Visor de Audit Logs, 8 SP) - 📝 Especificado
+# - Implementado GAP-C06 (RLS en Exercises, 5 SP) - ✅ COMPLETADO
+# - Total nuevo: 39 SP
+# - Código nuevo: 2,463 LOC (265 RLS + 940 backend + 1,258 frontend)
 
 # CAMBIOS 2025-11-08:
 # - Añadida US-AE-005 (Parametrización Dinámica de Gamificación, 12 SP)
@@ -41,6 +50,48 @@ documentation:
       origin: new_v2_core_feature
       note: "Gestión de asignación de classrooms a maestros (individual y masiva)"
       spec_file: /tmp/US-AE-007-asignar-grupos-maestros.md
+
+    # NUEVAS funcionalidades 2025-11-29 (3 US, 34 SP + GAP-C06 5 SP)
+    - id: US-AE-009
+      file: historias-usuario/US-AE-009-admin-assignments-view.md
+      title: Visualización Assignments Admin
+      sp: 13
+      status: completed
+      completion_date: 2025-11-29
+      origin: gap_analysis_students_admin
+      note: "Super admin puede ver todas las tareas/assignments del sistema con filtros"
+      implementation:
+        backend_loc: 940
+        frontend_loc: 1258
+        endpoints: 5
+        components: 6
+
+    - id: US-AE-010
+      file: historias-usuario/US-AE-010-create-users.md
+      title: Crear Usuarios desde Admin
+      sp: 13
+      status: specified
+      origin: gap_analysis_students_admin
+      note: "Admin puede crear usuarios individuales y masivos (bulk import CSV)"
+
+    - id: US-AE-011
+      file: historias-usuario/US-AE-011-audit-logs-viewer.md
+      title: Visor de Audit Logs
+      sp: 8
+      status: specified
+      origin: gap_analysis_students_admin
+      note: "Super admin puede visualizar audit logs con filtros y exportación"
+
+    - id: GAP-C06
+      title: RLS Incompleto en Ejercicios
+      sp: 5
+      status: completed
+      completion_date: 2025-11-29
+      origin: security_gap
+      note: "Implementación de Row Level Security en exercises para multi-tenant"
+      implementation:
+        backend_loc: 265
+        files_modified: 3
 
 # ============================================================================
 # IMPLEMENTACIÓN
@@ -84,6 +135,24 @@ implementation:
       - GET /api/v1/admin/moderation/queue
       - PATCH /api/v1/admin/config/feature-flags
       - PATCH /api/v1/admin/config/system-settings
+      # US-AE-009 endpoints (2025-11-29)
+      - GET /api/admin/assignments
+      - GET /api/admin/assignments/:id
+      - GET /api/admin/assignments/stats
+      - GET /api/admin/assignments/classrooms/:classroomId
+      - GET /api/admin/assignments/students/:studentId
+
+    # Nuevos archivos backend 2025-11-29
+    new_files_2025_11_29:
+      - apps/backend/src/modules/admin/controllers/admin-assignments.controller.ts
+      - apps/backend/src/modules/admin/services/admin-assignments.service.ts
+      - apps/backend/src/modules/admin/dto/assignments/admin-assignment.dto.ts
+      - apps/backend/src/modules/admin/dto/assignments/admin-assignment-filters.dto.ts
+      - apps/backend/src/modules/admin/dto/assignments/admin-assignment-stats.dto.ts
+      - apps/backend/src/modules/admin/dto/assignments/index.ts
+      # RLS GAP-C06
+      - apps/backend/src/modules/educational/services/exercises.service.ts  # Modificado
+      - apps/backend/src/modules/educational/controllers/exercises.controller.ts  # Modificado
 
   frontend:
     feature: admin-tools
@@ -95,6 +164,26 @@ implementation:
       - AnalyticsDashboard.tsx
       - ModerationQueue.tsx
       - FeatureFlagsManager.tsx
+      # US-AE-009 components (2025-11-29)
+      - AdminAssignmentsPage.tsx
+      - AssignmentsTable.tsx
+      - AssignmentDetailModal.tsx
+      - AssignmentFilters.tsx
+
+    # Nuevos archivos frontend 2025-11-29
+    new_files_2025_11_29:
+      - apps/frontend/src/apps/admin/pages/AdminAssignmentsPage.tsx
+      - apps/frontend/src/apps/admin/hooks/useAdminAssignments.ts
+      - apps/frontend/src/apps/admin/components/assignments/AssignmentsTable.tsx
+      - apps/frontend/src/apps/admin/components/assignments/AssignmentDetailModal.tsx
+      - apps/frontend/src/apps/admin/components/assignments/AssignmentFilters.tsx
+      - apps/frontend/src/apps/admin/components/assignments/index.ts
+
+    routes:
+      - path: /admin/assignments
+        component: AdminAssignmentsPage
+        role: super_admin
+        added: 2025-11-29
 
 # ============================================================================
 # MÉTRICAS

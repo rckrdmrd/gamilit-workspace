@@ -5,7 +5,7 @@
 
 CREATE TABLE progress_tracking.engagement_metrics (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
     metric_date DATE NOT NULL DEFAULT CURRENT_DATE,
     daily_active BOOLEAN NOT NULL DEFAULT false,
     sessions_count INTEGER NOT NULL DEFAULT 0,

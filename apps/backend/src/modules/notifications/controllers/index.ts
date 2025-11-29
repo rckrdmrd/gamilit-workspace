@@ -20,3 +20,4 @@ export { NotificationMultiChannelController } from './notification-multichannel.
 export { NotificationPreferencesController } from './notification-preferences.controller';
 export { NotificationDevicesController } from './notification-devices.controller';
 export { NotificationTemplatesController } from './notification-templates.controller';
+export { NotificationsController } from './notifications.controller';

@@ -61,6 +61,79 @@ export class ComodinesController {
   constructor(private readonly comodinesService: ComodinesService) {}
 
   /**
+   * Obtiene el catálogo de comodines disponibles para comprar
+   *
+   * @description Retorna la lista de tipos de comodines con sus precios y descripciones.
+   * Este endpoint es usado por la tienda (ShopPage) para mostrar items disponibles.
+   *
+   * @returns Lista de comodines disponibles
+   *
+   * @example
+   * GET /api/v1/gamification/comodines
+   * Authorization: Bearer <token>
+   *
+   * Response 200:
+   * [
+   *   {
+   *     "id": "pistas",
+   *     "name": "Pistas",
+   *     "description": "Revela pistas contextuales para ayudarte en ejercicios difíciles",
+   *     "cost": 15,
+   *     "icon": "💡",
+   *     "rarity": "common",
+   *     "category": "premium",
+   *     "effect": {
+   *       "type": "hint",
+   *       "description": "Muestra una pista contextual"
+   *     }
+   *   },
+   *   ...
+   * ]
+   */
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Get available comodines catalog',
+    description: 'Retorna lista de comodines disponibles para comprar con precios',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Catálogo obtenido exitosamente',
+    schema: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', example: 'pistas' },
+          name: { type: 'string', example: 'Pistas' },
+          description: {
+            type: 'string',
+            example: 'Revela pistas contextuales para ayudarte en ejercicios difíciles',
+          },
+          cost: { type: 'number', example: 15 },
+          icon: { type: 'string', example: '💡' },
+          rarity: { type: 'string', example: 'common' },
+          category: { type: 'string', example: 'premium' },
+          effect: {
+            type: 'object',
+            properties: {
+              type: { type: 'string', example: 'hint' },
+              description: { type: 'string', example: 'Muestra una pista contextual' },
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Token inválido o expirado',
+  })
+  async getCatalog(): Promise<any[]> {
+    return this.comodinesService.getCatalog();
+  }
+
+  /**
    * Compra comodines con ML Coins
    *
    * @description Permite al usuario comprar comodines usando ML Coins.
@@ -375,7 +448,7 @@ export class ComodinesController {
   })
   async getHistory(
     @Param('userId') userId: string,
-    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number,
+      @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number,
   ): Promise<any[]> {
     // Cap limit at 200
     const cappedLimit = Math.min(limit, 200);

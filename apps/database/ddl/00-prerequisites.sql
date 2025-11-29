@@ -148,17 +148,17 @@ EXCEPTION WHEN duplicate_object THEN null; END $$;
 DO $$ BEGIN
     CREATE TYPE educational_content.exercise_type AS ENUM (
         -- ====================================================================
-        -- MÓDULOS IMPLEMENTADOS (15 mecánicas) - AUTO-EVALUABLES
+        -- MÓDULOS IMPLEMENTADOS (17 mecánicas) - AUTO-EVALUABLES
         -- ====================================================================
 
-        -- Module 1: Comprensión Literal (5 mecánicas) ✅ IMPLEMENTADO
-        'crucigrama', 'linea_tiempo', 'sopa_letras', 'completar_espacios', 'verdadero_falso',
+        -- Module 1: Comprensión Literal (7 mecánicas) ✅ IMPLEMENTADO
+        'completar_espacios', 'crucigrama', 'emparejamiento', 'linea_tiempo', 'mapa_conceptual', 'sopa_letras', 'verdadero_falso',
 
         -- Module 2: Comprensión Inferencial (5 mecánicas) ✅ IMPLEMENTADO
-        'detective_textual', 'construccion_hipotesis', 'prediccion_narrativa', 'puzzle_contexto', 'rueda_inferencias',
+        'construccion_hipotesis', 'detective_textual', 'prediccion_narrativa', 'puzzle_contexto', 'rueda_inferencias',
 
         -- Module 3: Comprensión Crítica (5 mecánicas) ✅ IMPLEMENTADO
-        'tribunal_opiniones', 'debate_digital', 'analisis_fuentes', 'podcast_argumentativo', 'matriz_perspectivas',
+        'analisis_fuentes', 'debate_digital', 'matriz_perspectivas', 'podcast_argumentativo', 'tribunal_opiniones',
 
         -- ====================================================================
         -- ⚠️ BACKLOG: FASE 4 (8 mecánicas) - EVALUACIÓN MANUAL/IA REQUERIDA
@@ -170,16 +170,15 @@ DO $$ BEGIN
 
         -- Module 4: Lectura Digital (5 mecánicas) ⚠️ BACKLOG
         -- Requieren: Validación de fuentes, análisis de imágenes, IA multimodal
-        'verificador_fake_news', 'infografia_interactiva', 'quiz_tiktok', 'navegacion_hipertextual', 'analisis_memes',
+        'analisis_memes', 'infografia_interactiva', 'navegacion_hipertextual', 'quiz_tiktok', 'verificador_fake_news',
 
         -- Module 5: Producción Lectora (3 mecánicas) ⚠️ BACKLOG
         -- Requieren: Rúbricas de evaluación creativa, revisión humana/IA
-        'diario_multimedia', 'comic_digital', 'video_carta'
+        'comic_digital', 'diario_multimedia', 'video_carta'
 
         -- ====================================================================
         -- REMOVIDO 2025-11-17: Mecánicas no implementadas movidas a comentarios
         -- ====================================================================
-        -- Futuros Módulo 1: 'mapa_conceptual', 'emparejamiento'
         -- Futuros Módulo 4: 'resena_critica', 'chat_literario', 'email_formal', 'ensayo_argumentativo'
         -- Auxiliares potenciales: 'comprension_auditiva', 'collage_prensa', 'texto_movimiento', 'call_to_action'
     );
@@ -457,7 +456,7 @@ COMMENT ON TYPE gamification_system.comodin_type IS 'Tipos de comodines/power-up
 -- COMMENT ON TYPE gamification_system.notification_priority IS 'Niveles de prioridad de notificaciones (v1.1 - 2025-11-08 - migrado de public)';
 
 -- 3. Contenido Educativo
-COMMENT ON TYPE educational_content.exercise_type IS '23 mecánicas de ejercicios interactivos Gamilit implementadas (5 módulos) (v2.0 - 2025-11-17 - sincronizado con seeds)';
+COMMENT ON TYPE educational_content.exercise_type IS '25 mecánicas de ejercicios interactivos Gamilit (17 implementadas + 8 backlog) (v2.1 - 2025-11-28 - agregados mapa_conceptual y emparejamiento)';
 -- NOTA (2025-11-11): El siguiente comentario está en el archivo de ENUM correspondiente
 -- difficulty_level se crea en FASE 6: educational_content/enums/difficulty_level.sql
 -- COMMENT ON TYPE educational_content.difficulty_level IS 'Niveles de dificultad CEFR - 8 niveles A1→C2+ (v2.0 - 2025-11-11 - migrado a estándar CEFR)';

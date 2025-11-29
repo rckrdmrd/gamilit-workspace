@@ -32,7 +32,7 @@ export class LearningSession {
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   // =====================================================
   // CORE IDENTIFIERS
@@ -42,19 +42,19 @@ export class LearningSession {
    * ID del usuario (FK → auth_management.profiles)
    */
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del tenant (FK → auth_management.tenants) - Nullable
    */
   @Column({ type: 'uuid', nullable: true })
-  tenant_id?: string;
+    tenant_id?: string;
 
   /**
    * Token único de sesión
    */
   @Column({ type: 'text', unique: true, nullable: true })
-  session_token?: string;
+    session_token?: string;
 
   // =====================================================
   // SESSION TYPE & CONTEXT
@@ -65,25 +65,25 @@ export class LearningSession {
    * Valores: learning, practice, assessment, review
    */
   @Column({ type: 'text', default: 'learning' })
-  session_type!: string;
+    session_type!: string;
 
   /**
    * ID del módulo (FK → educational_content.modules) - Nullable
    */
   @Column({ type: 'uuid', nullable: true })
-  module_id?: string;
+    module_id?: string;
 
   /**
    * ID del ejercicio (FK → educational_content.exercises) - Nullable
    */
   @Column({ type: 'uuid', nullable: true })
-  exercise_id?: string;
+    exercise_id?: string;
 
   /**
    * ID del aula (FK → social_features.classrooms) - Nullable
    */
   @Column({ type: 'uuid', nullable: true })
-  classroom_id?: string;
+    classroom_id?: string;
 
   // =====================================================
   // TIME TRACKING
@@ -93,31 +93,31 @@ export class LearningSession {
    * Fecha y hora de inicio de la sesión
    */
   @Column({ type: 'timestamp with time zone' })
-  started_at!: Date;
+    started_at!: Date;
 
   /**
    * Fecha y hora de fin de la sesión
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  ended_at?: Date;
+    ended_at?: Date;
 
   /**
    * Duración total de la sesión
    */
   @Column({ type: 'interval', nullable: true })
-  duration?: string;
+    duration?: string;
 
   /**
    * Tiempo activo (usuario interactuando)
    */
   @Column({ type: 'interval', nullable: true })
-  active_time?: string;
+    active_time?: string;
 
   /**
    * Tiempo inactivo/idle
    */
   @Column({ type: 'interval', nullable: true })
-  idle_time?: string;
+    idle_time?: string;
 
   // =====================================================
   // ACTIVITY METRICS
@@ -127,19 +127,19 @@ export class LearningSession {
    * Cantidad de ejercicios intentados en la sesión
    */
   @Column({ type: 'integer', default: 0 })
-  exercises_attempted!: number;
+    exercises_attempted!: number;
 
   /**
    * Cantidad de ejercicios completados en la sesión
    */
   @Column({ type: 'integer', default: 0 })
-  exercises_completed!: number;
+    exercises_completed!: number;
 
   /**
    * Cantidad de contenido visualizado
    */
   @Column({ type: 'integer', default: 0 })
-  content_viewed!: number;
+    content_viewed!: number;
 
   // =====================================================
   // PERFORMANCE METRICS
@@ -149,19 +149,19 @@ export class LearningSession {
    * Suma total de puntos en la sesión
    */
   @Column({ type: 'integer', default: 0 })
-  total_score!: number;
+    total_score!: number;
 
   /**
    * Total de XP ganada en la sesión
    */
   @Column({ type: 'integer', default: 0 })
-  total_xp_earned!: number;
+    total_xp_earned!: number;
 
   /**
    * Total de ML Coins ganadas en la sesión
    */
   @Column({ type: 'integer', default: 0 })
-  total_ml_coins_earned!: number;
+    total_ml_coins_earned!: number;
 
   // =====================================================
   // INTERACTION METRICS
@@ -171,19 +171,19 @@ export class LearningSession {
    * Cantidad de clicks/interacciones
    */
   @Column({ type: 'integer', default: 0 })
-  clicks_count!: number;
+    clicks_count!: number;
 
   /**
    * Cantidad de vistas de página
    */
   @Column({ type: 'integer', default: 0 })
-  page_views!: number;
+    page_views!: number;
 
   /**
    * Cantidad de recursos descargados
    */
   @Column({ type: 'integer', default: 0 })
-  resource_downloads!: number;
+    resource_downloads!: number;
 
   // =====================================================
   // DEVICE & BROWSER INFO
@@ -194,21 +194,21 @@ export class LearningSession {
    * Ejemplo: { type: 'mobile', os: 'iOS', model: 'iPhone 12' }
    */
   @Column({ type: 'jsonb', default: {} })
-  device_info: Record<string, any> = {};
+    device_info: Record<string, any> = {};
 
   /**
    * Información del navegador (JSONB)
    * Ejemplo: { name: 'Chrome', version: '96.0.4664.110' }
    */
   @Column({ type: 'jsonb', default: {} })
-  browser_info!: Record<string, any>;
+    browser_info!: Record<string, any>;
 
   /**
    * Calidad de conexión
    * Valores: excellent, good, fair, poor
    */
   @Column({ type: 'text', nullable: true })
-  connection_quality?: string;
+    connection_quality?: string;
 
   // =====================================================
   // ERROR TRACKING
@@ -218,7 +218,7 @@ export class LearningSession {
    * Cantidad de errores encontrados en la sesión
    */
   @Column({ type: 'integer', default: 0 })
-  errors_encountered: number = 0;
+    errors_encountered: number = 0;
 
   // =====================================================
   // SESSION STATE
@@ -228,14 +228,14 @@ export class LearningSession {
    * Indica si la sesión está activa
    */
   @Column({ type: 'boolean', default: true })
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Estado de completitud de la sesión
    * Valores: ongoing, completed, abandoned, timed_out
    */
   @Column({ type: 'text', default: 'ongoing' })
-  completion_status: string = 'ongoing';
+    completion_status: string = 'ongoing';
 
   // =====================================================
   // METADATA & AUDIT
@@ -245,11 +245,11 @@ export class LearningSession {
    * Metadatos adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   /**
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 }

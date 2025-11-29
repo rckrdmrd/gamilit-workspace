@@ -1,7 +1,13 @@
 /**
- * Mission Types for GLIT Platform
+ * Mission Types for GLIT Platform (SSOT)
  *
- * Comprehensive type definitions for the missions system
+ * Comprehensive type definitions for the missions system.
+ *
+ * THIS IS THE SINGLE SOURCE OF TRUTH for Mission types.
+ * Other modules should import from here.
+ *
+ * @see Backend: /src/modules/gamification/entities/mission.entity.ts
+ * P2-001: Types consolidation - SSOT for Mission
  */
 
 export type MissionType = 'daily' | 'weekly' | 'special';

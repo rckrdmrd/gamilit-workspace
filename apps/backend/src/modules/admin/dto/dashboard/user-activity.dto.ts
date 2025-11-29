@@ -20,7 +20,7 @@ export class UserActivityQueryDto {
   })
   @IsOptional()
   @IsDateString()
-  startDate?: string;
+    startDate?: string;
 
   @ApiPropertyOptional({
     description: 'End date for the analytics period (ISO 8601)',
@@ -28,7 +28,7 @@ export class UserActivityQueryDto {
   })
   @IsOptional()
   @IsDateString()
-  endDate?: string;
+    endDate?: string;
 
   @ApiPropertyOptional({
     description: 'How to group the activity data',
@@ -38,7 +38,7 @@ export class UserActivityQueryDto {
   })
   @IsOptional()
   @IsEnum(GroupByEnum)
-  groupBy?: GroupByEnum = GroupByEnum.DAY;
+    groupBy?: GroupByEnum = GroupByEnum.DAY;
 }
 
 /**
@@ -52,31 +52,31 @@ export class UserActivityDataPointDto {
     description: 'Date for this data point',
     example: '2025-11-01',
   })
-  date!: string;
+    date!: string;
 
   @ApiProperty({
     description: 'Number of active users on this date',
     example: 45,
   })
-  activeUsers!: number;
+    activeUsers!: number;
 
   @ApiProperty({
     description: 'Number of new user registrations on this date',
     example: 5,
   })
-  newRegistrations!: number;
+    newRegistrations!: number;
 
   @ApiProperty({
     description: 'Total number of sessions on this date',
     example: 120,
   })
-  totalSessions!: number;
+    totalSessions!: number;
 
   @ApiProperty({
     description: 'Average session duration in minutes',
     example: 24.5,
   })
-  avgSessionDuration!: number;
+    avgSessionDuration!: number;
 }
 
 /**
@@ -91,18 +91,18 @@ export class UserActivityDto {
     example: ['2025-11-01', '2025-11-02', '2025-11-03'],
     type: [String],
   })
-  labels!: string[];
+    labels!: string[];
 
   @ApiProperty({
     description: 'Array of active user counts corresponding to each label',
     example: [45, 52, 48],
     type: [Number],
   })
-  data!: number[];
+    data!: number[];
 
   @ApiProperty({
     description: 'Detailed activity data for table display',
     type: [UserActivityDataPointDto],
   })
-  tableData!: UserActivityDataPointDto[];
+    tableData!: UserActivityDataPointDto[];
 }

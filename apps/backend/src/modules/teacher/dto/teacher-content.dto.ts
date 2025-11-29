@@ -90,7 +90,7 @@ export class CreateTeacherContentDto {
   @IsString()
   @IsNotEmpty()
   @Length(3, 255)
-  title!: string;
+    title!: string;
 
   @ApiPropertyOptional({
     description: 'Descripción del contenido',
@@ -98,7 +98,7 @@ export class CreateTeacherContentDto {
   })
   @IsString()
   @IsOptional()
-  description?: string;
+    description?: string;
 
   @ApiProperty({
     description: 'Tipo de contenido',
@@ -107,7 +107,7 @@ export class CreateTeacherContentDto {
   })
   @IsEnum(TeacherContentType)
   @IsNotEmpty()
-  content_type!: TeacherContentType;
+    content_type!: TeacherContentType;
 
   @ApiProperty({
     description: 'Datos del contenido (estructura varía según content_type)',
@@ -119,7 +119,7 @@ export class CreateTeacherContentDto {
   })
   @IsObject()
   @IsNotEmpty()
-  content_data!: Record<string, any>;
+    content_data!: Record<string, any>;
 
   @ApiPropertyOptional({
     description: 'Instrucciones para el estudiante',
@@ -127,7 +127,7 @@ export class CreateTeacherContentDto {
   })
   @IsString()
   @IsOptional()
-  instructions?: string;
+    instructions?: string;
 
   @ApiPropertyOptional({
     description: 'Objetivos de aprendizaje',
@@ -135,7 +135,7 @@ export class CreateTeacherContentDto {
   })
   @IsArray()
   @IsOptional()
-  learning_objectives?: string[];
+    learning_objectives?: string[];
 
   @ApiPropertyOptional({
     description: 'Prerrequisitos necesarios',
@@ -143,7 +143,7 @@ export class CreateTeacherContentDto {
   })
   @IsArray()
   @IsOptional()
-  prerequisites?: string[];
+    prerequisites?: string[];
 
   @ApiPropertyOptional({
     description: 'Área de asignatura',
@@ -151,7 +151,7 @@ export class CreateTeacherContentDto {
   })
   @IsString()
   @IsOptional()
-  subject_area?: string;
+    subject_area?: string;
 
   @ApiPropertyOptional({
     description: 'Nivel de grado',
@@ -159,7 +159,7 @@ export class CreateTeacherContentDto {
   })
   @IsString()
   @IsOptional()
-  grade_level?: string;
+    grade_level?: string;
 
   @ApiPropertyOptional({
     description: 'Nivel de dificultad',
@@ -168,7 +168,7 @@ export class CreateTeacherContentDto {
   })
   @IsEnum(TeacherContentDifficulty)
   @IsOptional()
-  difficulty_level?: TeacherContentDifficulty;
+    difficulty_level?: TeacherContentDifficulty;
 
   @ApiPropertyOptional({
     description: 'Duración estimada en minutos',
@@ -178,7 +178,7 @@ export class CreateTeacherContentDto {
   @IsInt()
   @IsOptional()
   @Min(1)
-  estimated_duration_minutes?: number;
+    estimated_duration_minutes?: number;
 
   @ApiPropertyOptional({
     description: 'Recursos multimedia (array de UUIDs o URLs)',
@@ -186,7 +186,7 @@ export class CreateTeacherContentDto {
   })
   @IsArray()
   @IsOptional()
-  media_resources?: any[];
+    media_resources?: any[];
 
   @ApiPropertyOptional({
     description: 'Archivos adjuntos',
@@ -194,7 +194,7 @@ export class CreateTeacherContentDto {
   })
   @IsArray()
   @IsOptional()
-  attachments?: any[];
+    attachments?: any[];
 
   @ApiPropertyOptional({
     description: 'IDs de aulas objetivo',
@@ -203,7 +203,7 @@ export class CreateTeacherContentDto {
   @IsArray()
   @IsOptional()
   @IsUUID('4', { each: true })
-  target_classrooms?: string[];
+    target_classrooms?: string[];
 
   @ApiPropertyOptional({
     description: 'Visibilidad del contenido',
@@ -213,7 +213,7 @@ export class CreateTeacherContentDto {
   })
   @IsEnum(TeacherContentVisibility)
   @IsOptional()
-  visibility?: TeacherContentVisibility;
+    visibility?: TeacherContentVisibility;
 
   @ApiPropertyOptional({
     description: 'Compartir con otros teachers',
@@ -222,7 +222,7 @@ export class CreateTeacherContentDto {
   })
   @IsBoolean()
   @IsOptional()
-  is_shared?: boolean;
+    is_shared?: boolean;
 
   @ApiPropertyOptional({
     description: 'IDs de teachers con acceso compartido',
@@ -231,7 +231,7 @@ export class CreateTeacherContentDto {
   @IsArray()
   @IsOptional()
   @IsUUID('4', { each: true })
-  shared_with_teachers?: string[];
+    shared_with_teachers?: string[];
 
   @ApiPropertyOptional({
     description: 'Permitir modificaciones por otros teachers',
@@ -240,7 +240,7 @@ export class CreateTeacherContentDto {
   })
   @IsBoolean()
   @IsOptional()
-  allow_modifications?: boolean;
+    allow_modifications?: boolean;
 
   @ApiPropertyOptional({
     description: 'Estado del contenido',
@@ -250,7 +250,7 @@ export class CreateTeacherContentDto {
   })
   @IsEnum(TeacherContentStatus)
   @IsOptional()
-  status?: TeacherContentStatus;
+    status?: TeacherContentStatus;
 
   @ApiPropertyOptional({
     description: 'Etiquetas para categorización',
@@ -258,7 +258,7 @@ export class CreateTeacherContentDto {
   })
   @IsArray()
   @IsOptional()
-  tags?: string[];
+    tags?: string[];
 
   @ApiPropertyOptional({
     description: 'Palabras clave para búsqueda',
@@ -266,7 +266,7 @@ export class CreateTeacherContentDto {
   })
   @IsArray()
   @IsOptional()
-  keywords?: string[];
+    keywords?: string[];
 
   @ApiPropertyOptional({
     description: 'Puntos que otorga al completar',
@@ -277,7 +277,7 @@ export class CreateTeacherContentDto {
   @IsInt()
   @IsOptional()
   @Min(0)
-  points_value?: number;
+    points_value?: number;
 
   @ApiPropertyOptional({
     description: 'ML coins que otorga al completar',
@@ -288,7 +288,7 @@ export class CreateTeacherContentDto {
   @IsInt()
   @IsOptional()
   @Min(0)
-  ml_coins_reward?: number;
+    ml_coins_reward?: number;
 
   @ApiPropertyOptional({
     description: 'Usar como plantilla',
@@ -297,7 +297,7 @@ export class CreateTeacherContentDto {
   })
   @IsBoolean()
   @IsOptional()
-  is_template?: boolean;
+    is_template?: boolean;
 
   @ApiPropertyOptional({
     description: 'Metadatos adicionales',
@@ -305,7 +305,7 @@ export class CreateTeacherContentDto {
   })
   @IsObject()
   @IsOptional()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }
 
 // ============================================================================
@@ -322,7 +322,7 @@ export class UpdateTeacherContentDto extends PartialType(CreateTeacherContentDto
   })
   @IsBoolean()
   @IsOptional()
-  is_active?: boolean;
+    is_active?: boolean;
 
   @ApiPropertyOptional({
     description: 'Marcar como destacado',
@@ -330,7 +330,7 @@ export class UpdateTeacherContentDto extends PartialType(CreateTeacherContentDto
   })
   @IsBoolean()
   @IsOptional()
-  is_featured?: boolean;
+    is_featured?: boolean;
 }
 
 // ============================================================================
@@ -351,7 +351,7 @@ export class GetTeacherContentQueryDto {
   @IsOptional()
   @Min(1)
   @Type(() => Number)
-  page?: number = 1;
+    page?: number = 1;
 
   @ApiPropertyOptional({
     description: 'Cantidad de resultados por página',
@@ -365,7 +365,7 @@ export class GetTeacherContentQueryDto {
   @Min(1)
   @Max(100)
   @Type(() => Number)
-  limit?: number = 10;
+    limit?: number = 10;
 
   @ApiPropertyOptional({
     description: 'Búsqueda por título, descripción o palabras clave',
@@ -373,7 +373,7 @@ export class GetTeacherContentQueryDto {
   })
   @IsString()
   @IsOptional()
-  search?: string;
+    search?: string;
 
   @ApiPropertyOptional({
     description: 'Filtrar por tipo de contenido',
@@ -382,7 +382,7 @@ export class GetTeacherContentQueryDto {
   })
   @IsEnum(TeacherContentType)
   @IsOptional()
-  content_type?: TeacherContentType;
+    content_type?: TeacherContentType;
 
   @ApiPropertyOptional({
     description: 'Filtrar por estado',
@@ -391,7 +391,7 @@ export class GetTeacherContentQueryDto {
   })
   @IsEnum(TeacherContentStatus)
   @IsOptional()
-  status?: TeacherContentStatus;
+    status?: TeacherContentStatus;
 
   @ApiPropertyOptional({
     description: 'Filtrar por visibilidad',
@@ -400,7 +400,7 @@ export class GetTeacherContentQueryDto {
   })
   @IsEnum(TeacherContentVisibility)
   @IsOptional()
-  visibility?: TeacherContentVisibility;
+    visibility?: TeacherContentVisibility;
 
   @ApiPropertyOptional({
     description: 'Filtrar por área de asignatura',
@@ -408,7 +408,7 @@ export class GetTeacherContentQueryDto {
   })
   @IsString()
   @IsOptional()
-  subject_area?: string;
+    subject_area?: string;
 
   @ApiPropertyOptional({
     description: 'Filtrar por nivel de grado',
@@ -416,7 +416,7 @@ export class GetTeacherContentQueryDto {
   })
   @IsString()
   @IsOptional()
-  grade_level?: string;
+    grade_level?: string;
 
   @ApiPropertyOptional({
     description: 'Filtrar por dificultad',
@@ -425,7 +425,7 @@ export class GetTeacherContentQueryDto {
   })
   @IsEnum(TeacherContentDifficulty)
   @IsOptional()
-  difficulty_level?: TeacherContentDifficulty;
+    difficulty_level?: TeacherContentDifficulty;
 
   @ApiPropertyOptional({
     description: 'Filtrar solo plantillas',
@@ -434,7 +434,7 @@ export class GetTeacherContentQueryDto {
   @IsBoolean()
   @IsOptional()
   @Type(() => Boolean)
-  is_template?: boolean;
+    is_template?: boolean;
 
   @ApiPropertyOptional({
     description: 'Filtrar solo activos',
@@ -444,7 +444,7 @@ export class GetTeacherContentQueryDto {
   @IsBoolean()
   @IsOptional()
   @Type(() => Boolean)
-  is_active?: boolean = true;
+    is_active?: boolean = true;
 }
 
 // ============================================================================
@@ -459,161 +459,161 @@ export class TeacherContentResponseDto {
     description: 'ID del contenido',
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
-  id!: string;
+    id!: string;
 
   @ApiProperty({
     description: 'ID del teacher creador',
     example: '123e4567-e89b-12d3-a456-426614174001',
   })
-  teacher_id!: string;
+    teacher_id!: string;
 
   @ApiProperty({
     description: 'ID del tenant',
     example: '123e4567-e89b-12d3-a456-426614174002',
   })
-  tenant_id!: string;
+    tenant_id!: string;
 
   @ApiProperty({
     description: 'Título del contenido',
     example: 'Ejercicio de Fracciones Interactivo',
   })
-  title!: string;
+    title!: string;
 
   @ApiPropertyOptional({
     description: 'Descripción del contenido',
     example: 'Ejercicios interactivos para practicar operaciones con fracciones',
   })
-  description?: string;
+    description?: string;
 
   @ApiProperty({
     description: 'Tipo de contenido',
     enum: TeacherContentType,
     example: TeacherContentType.CUSTOM_EXERCISE,
   })
-  content_type!: TeacherContentType;
+    content_type!: TeacherContentType;
 
   @ApiProperty({
     description: 'Datos del contenido',
   })
-  content_data!: Record<string, any>;
+    content_data!: Record<string, any>;
 
   @ApiPropertyOptional({
     description: 'Instrucciones',
   })
-  instructions?: string;
+    instructions?: string;
 
   @ApiPropertyOptional({
     description: 'Objetivos de aprendizaje',
   })
-  learning_objectives?: string[];
+    learning_objectives?: string[];
 
   @ApiPropertyOptional({
     description: 'Prerrequisitos',
   })
-  prerequisites?: string[];
+    prerequisites?: string[];
 
   @ApiPropertyOptional({
     description: 'Área de asignatura',
     example: 'Matemáticas',
   })
-  subject_area?: string;
+    subject_area?: string;
 
   @ApiPropertyOptional({
     description: 'Nivel de grado',
     example: '5',
   })
-  grade_level?: string;
+    grade_level?: string;
 
   @ApiPropertyOptional({
     description: 'Nivel de dificultad',
     enum: TeacherContentDifficulty,
   })
-  difficulty_level?: TeacherContentDifficulty;
+    difficulty_level?: TeacherContentDifficulty;
 
   @ApiPropertyOptional({
     description: 'Duración estimada en minutos',
     example: 30,
   })
-  estimated_duration_minutes?: number;
+    estimated_duration_minutes?: number;
 
   @ApiPropertyOptional({
     description: 'Aulas objetivo',
   })
-  target_classrooms?: string[];
+    target_classrooms?: string[];
 
   @ApiProperty({
     description: 'Visibilidad',
     enum: TeacherContentVisibility,
     example: TeacherContentVisibility.PRIVATE,
   })
-  visibility!: TeacherContentVisibility;
+    visibility!: TeacherContentVisibility;
 
   @ApiProperty({
     description: 'Estado',
     enum: TeacherContentStatus,
     example: TeacherContentStatus.DRAFT,
   })
-  status!: TeacherContentStatus;
+    status!: TeacherContentStatus;
 
   @ApiProperty({
     description: 'Activo',
     example: true,
   })
-  is_active!: boolean;
+    is_active!: boolean;
 
   @ApiProperty({
     description: 'Es plantilla',
     example: false,
   })
-  is_template!: boolean;
+    is_template!: boolean;
 
   @ApiProperty({
     description: 'Compartido',
     example: false,
   })
-  is_shared!: boolean;
+    is_shared!: boolean;
 
   @ApiPropertyOptional({
     description: 'Puntos que otorga',
     example: 100,
   })
-  points_value?: number;
+    points_value?: number;
 
   @ApiPropertyOptional({
     description: 'ML coins que otorga',
     example: 50,
   })
-  ml_coins_reward?: number;
+    ml_coins_reward?: number;
 
   @ApiPropertyOptional({
     description: 'Veces asignado',
     example: 5,
   })
-  times_assigned?: number;
+    times_assigned?: number;
 
   @ApiPropertyOptional({
     description: 'Veces completado',
     example: 3,
   })
-  times_completed?: number;
+    times_completed?: number;
 
   @ApiProperty({
     description: 'Fecha de creación',
     example: '2024-01-15T10:30:00Z',
   })
-  created_at!: Date;
+    created_at!: Date;
 
   @ApiProperty({
     description: 'Fecha de actualización',
     example: '2024-01-15T10:30:00Z',
   })
-  updated_at!: Date;
+    updated_at!: Date;
 
   @ApiPropertyOptional({
     description: 'Fecha de publicación',
     example: '2024-01-15T10:30:00Z',
   })
-  published_at?: Date;
+    published_at?: Date;
 }
 
 /**
@@ -624,7 +624,7 @@ export class PaginatedTeacherContentResponseDto {
     description: 'Lista de contenidos',
     type: [TeacherContentResponseDto],
   })
-  data!: TeacherContentResponseDto[];
+    data!: TeacherContentResponseDto[];
 
   @ApiProperty({
     description: 'Información de paginación',
@@ -637,7 +637,7 @@ export class PaginatedTeacherContentResponseDto {
       hasPreviousPage: false,
     },
   })
-  pagination!: {
+    pagination!: {
     page: number;
     limit: number;
     total: number;
@@ -658,7 +658,7 @@ export class CloneTeacherContentDto {
   @IsString()
   @IsOptional()
   @Length(3, 255)
-  new_title?: string;
+    new_title?: string;
 
   @ApiPropertyOptional({
     description: 'Modificar el contenido al clonar',
@@ -667,5 +667,5 @@ export class CloneTeacherContentDto {
   })
   @IsBoolean()
   @IsOptional()
-  modify_content?: boolean;
+    modify_content?: boolean;
 }

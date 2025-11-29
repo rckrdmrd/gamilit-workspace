@@ -23,8 +23,8 @@ import { Profile } from '@/modules/auth/entities/profile.entity';
  * - Expiración automática de misiones vencidas
  *
  * Tipos de misiones:
- * - Daily: 3 misiones renovadas cada día (ejercicios, rachas, tiempo de estudio)
- * - Weekly: 2 misiones renovadas cada semana (maratón, racha semanal)
+ * - Daily: 3 misiones renovadas cada día (completar ejercicios, ganar XP, usar comodines)
+ * - Weekly: 2 misiones renovadas cada semana (maratón de ejercicios, racha diaria)
  * - Special: Misiones creadas manualmente para eventos especiales
  *
  * @see Entity: Mission (@/modules/gamification/entities/mission.entity)
@@ -104,9 +104,9 @@ export class MissionsService {
     // Si no existen misiones, generar automáticamente
     if (missions.length === 0 && type !== MissionTypeEnum.SPECIAL) {
       if (type === MissionTypeEnum.DAILY) {
-        return await this.generateDailyMissions(profileId);  // FIXED: pasar profileId
+        return this.generateDailyMissions(profileId);  // FIXED: pasar profileId
       } else if (type === MissionTypeEnum.WEEKLY) {
-        return await this.generateWeeklyMissions(profileId);  // FIXED: pasar profileId
+        return this.generateWeeklyMissions(profileId);  // FIXED: pasar profileId
       }
     }
 
@@ -121,8 +121,8 @@ export class MissionsService {
    *
    * Misiones generadas:
    * 1. Completar 3 ejercicios → 50 XP + 25 ML Coins
-   * 2. Racha de 2 aciertos → 30 XP + 15 ML Coins
-   * 3. Estudiar 15 minutos → 40 XP + 20 ML Coins
+   * 2. Ganar 100 XP → 30 XP + 15 ML Coins
+   * 3. Usar 1 comodín → 40 XP + 20 ML Coins
    *
    * @param userId - profiles.id (UUID) - NOT auth.users.id!
    * @returns Array de 3 misiones diarias creadas
@@ -162,19 +162,19 @@ export class MissionsService {
       end_date: endOfDay,
     });
 
-    // Misión 2: Racha de aciertos
+    // Misión 2: Ganar XP
     const mission2 = this.missionsRepo.create({
       user_id: userId,
-      template_id: 'daily_correct_streak',
-      title: 'Racha de aciertos',
-      description: 'Obtén una racha de 2 ejercicios correctos seguidos',
+      template_id: 'daily_earn_xp',
+      title: 'Ganar 100 XP',
+      description: 'Acumula 100 puntos de experiencia hoy',
       mission_type: MissionTypeEnum.DAILY,
       objectives: [
         {
-          type: 'correct_streak',
-          target: 2,
+          type: 'earn_xp',
+          target: 100,
           current: 0,
-          description: '2 ejercicios correctos seguidos',
+          description: 'Gana 100 XP',
         },
       ],
       rewards: {
@@ -187,19 +187,19 @@ export class MissionsService {
       end_date: endOfDay,
     });
 
-    // Misión 3: Tiempo de estudio
+    // Misión 3: Usar comodín
     const mission3 = this.missionsRepo.create({
       user_id: userId,
-      template_id: 'daily_study_time',
-      title: 'Tiempo de estudio',
-      description: 'Estudia durante 15 minutos hoy',
+      template_id: 'daily_use_comodin',
+      title: 'Usar un comodín',
+      description: 'Usa al menos un comodín en un ejercicio',
       mission_type: MissionTypeEnum.DAILY,
       objectives: [
         {
-          type: 'study_time',
-          target: 15,
+          type: 'use_comodines',
+          target: 1,
           current: 0,
-          description: 'Estudia 15 minutos',
+          description: 'Usa 1 comodín',
         },
       ],
       rewards: {
@@ -226,7 +226,7 @@ export class MissionsService {
    *
    * Misiones generadas:
    * 1. Completar 15 ejercicios → 200 XP + 100 ML Coins
-   * 2. Racha de 5 días consecutivos → 300 XP + 150 ML Coins
+   * 2. Racha de 5 días (daily_streak) → 300 XP + 150 ML Coins
    *
    * @param userId - profiles.id (UUID) - NOT auth.users.id!
    * @returns Array de 2 misiones semanales creadas
@@ -280,10 +280,10 @@ export class MissionsService {
       mission_type: MissionTypeEnum.WEEKLY,
       objectives: [
         {
-          type: 'consecutive_days',
+          type: 'daily_streak',
           target: 5,
           current: 0,
-          description: '5 días consecutivos de estudio',
+          description: 'Racha de 5 días',
         },
       ],
       rewards: {
@@ -346,7 +346,7 @@ export class MissionsService {
     // Cambiar status a in_progress
     mission.status = MissionStatusEnum.IN_PROGRESS;
 
-    return await this.missionsRepo.save(mission);
+    return this.missionsRepo.save(mission);
   }
 
   /**
@@ -442,7 +442,7 @@ export class MissionsService {
       mission.status = MissionStatusEnum.IN_PROGRESS;
     }
 
-    return await this.missionsRepo.save(mission);
+    return this.missionsRepo.save(mission);
   }
 
   /**
@@ -468,16 +468,16 @@ export class MissionsService {
     missionId: string,
     userId: string,
   ): Promise<{
-    mission: Mission;
-    rewards: MissionRewards;
-    rewards_granted: {
-      xp_awarded: number;
-      ml_coins_awarded: number;
-      rank_promotion: boolean;
-      new_rank: string | null;
-      previous_rank: string | null;
-    };
-  }> {
+      mission: Mission;
+      rewards: MissionRewards;
+      rewards_granted: {
+        xp_awarded: number;
+        ml_coins_awarded: number;
+        rank_promotion: boolean;
+        new_rank: string | null;
+        previous_rank: string | null;
+      };
+    }> {
     // CRITICAL FIX: Convert auth.users.id → profiles.id
     const profileId = await this.getProfileId(userId);
 

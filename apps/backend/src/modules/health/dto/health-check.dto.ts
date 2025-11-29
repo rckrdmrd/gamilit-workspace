@@ -33,26 +33,26 @@ export class HealthCheckDetailSchema {
     enum: HealthStatus,
     example: HealthStatus.HEALTHY,
   })
-  status!: HealthStatus;
+    status!: HealthStatus;
 
   @ApiProperty({
     description: 'Response time in milliseconds',
     example: 15,
   })
-  responseTime!: number;
+    responseTime!: number;
 
   @ApiProperty({
     description: 'Descriptive message about the check',
     example: 'PostgreSQL connected',
   })
-  message!: string;
+    message!: string;
 
   @ApiProperty({
     description: 'Additional details about the check',
     required: false,
     example: { tables: 122 },
   })
-  details?: Record<string, any>;
+    details?: Record<string, any>;
 }
 
 export class HealthCheckSchema {
@@ -61,25 +61,25 @@ export class HealthCheckSchema {
     enum: HealthStatus,
     example: HealthStatus.HEALTHY,
   })
-  status!: HealthStatus;
+    status!: HealthStatus;
 
   @ApiProperty({
     description: 'Current server timestamp',
     example: '2025-11-23T19:00:00.000Z',
   })
-  timestamp!: string;
+    timestamp!: string;
 
   @ApiProperty({
     description: 'Server uptime in seconds',
     example: 3600,
   })
-  uptime!: number;
+    uptime!: number;
 
   @ApiProperty({
     description: 'Environment (dev, staging, production)',
     example: 'production',
   })
-  environment!: string;
+    environment!: string;
 
   @ApiProperty({
     description: 'Individual health checks',
@@ -96,11 +96,11 @@ export class HealthCheckSchema {
       },
     },
   })
-  checks!: Record<string, any>;
+    checks!: Record<string, any>;
 
   @ApiProperty({
     description: 'Application version',
     example: '1.0.0',
   })
-  version!: string;
+    version!: string;
 }

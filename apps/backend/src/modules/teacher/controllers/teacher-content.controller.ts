@@ -113,10 +113,10 @@ export class TeacherContentController {
   })
   async findAll(
     @Query() query: GetTeacherContentQueryDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<PaginatedTeacherContentResponseDto> {
     const teacherId = req.user.sub;
-    return await this.contentService.findAll(teacherId, query);
+    return this.contentService.findAll(teacherId, query);
   }
 
   /**
@@ -153,7 +153,7 @@ export class TeacherContentController {
   })
   async findOne(@Param('id') id: string, @Request() req: any): Promise<TeacherContentResponseDto> {
     const teacherId = req.user.sub;
-    return await this.contentService.findOne(id, teacherId);
+    return this.contentService.findOne(id, teacherId);
   }
 
   // ============================================================================
@@ -193,10 +193,10 @@ export class TeacherContentController {
   })
   async create(
     @Body() dto: CreateTeacherContentDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<TeacherContentResponseDto> {
     const teacherId = req.user.sub;
-    return await this.contentService.create(teacherId, dto);
+    return this.contentService.create(teacherId, dto);
   }
 
   // ============================================================================
@@ -242,11 +242,11 @@ export class TeacherContentController {
   })
   async update(
     @Param('id') id: string,
-    @Body() dto: UpdateTeacherContentDto,
-    @Request() req: any,
+      @Body() dto: UpdateTeacherContentDto,
+      @Request() req: any,
   ): Promise<TeacherContentResponseDto> {
     const teacherId = req.user.sub;
-    return await this.contentService.update(id, teacherId, dto);
+    return this.contentService.update(id, teacherId, dto);
   }
 
   // ============================================================================
@@ -292,10 +292,10 @@ export class TeacherContentController {
   })
   async delete(
     @Param('id') id: string,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<{ success: boolean; message: string }> {
     const teacherId = req.user.sub;
-    return await this.contentService.delete(id, teacherId);
+    return this.contentService.delete(id, teacherId);
   }
 
   // ============================================================================
@@ -337,11 +337,11 @@ export class TeacherContentController {
   })
   async clone(
     @Param('id') id: string,
-    @Body() dto: CloneTeacherContentDto,
-    @Request() req: any,
+      @Body() dto: CloneTeacherContentDto,
+      @Request() req: any,
   ): Promise<TeacherContentResponseDto> {
     const teacherId = req.user.sub;
-    return await this.contentService.clone(id, teacherId, dto);
+    return this.contentService.clone(id, teacherId, dto);
   }
 
   // ============================================================================
@@ -386,9 +386,9 @@ export class TeacherContentController {
   })
   async publish(
     @Param('id') id: string,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<TeacherContentResponseDto> {
     const teacherId = req.user.sub;
-    return await this.contentService.publish(id, teacherId);
+    return this.contentService.publish(id, teacherId);
   }
 }

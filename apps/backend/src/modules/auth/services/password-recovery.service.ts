@@ -10,6 +10,7 @@ import {
   CreatePasswordResetTokenDto,
 } from '../dto';
 import { DB_SCHEMAS } from '@/shared/constants';
+import { MailService } from '@/modules/mail/mail.service';
 
 /**
  * PasswordRecoveryService
@@ -35,6 +36,7 @@ import { DB_SCHEMAS } from '@/shared/constants';
 @Injectable()
 export class PasswordRecoveryService {
   private readonly TOKEN_LENGTH_BYTES = 32;
+
   private readonly TOKEN_EXPIRATION_HOURS = 1;
 
   constructor(
@@ -44,8 +46,7 @@ export class PasswordRecoveryService {
     @InjectRepository(PasswordResetToken, 'auth')
     private readonly tokenRepository: Repository<PasswordResetToken>,
 
-    // TODO: Inject MailerService
-    // private readonly mailerService: MailerService,
+    private readonly mailService: MailService,
 
     // TODO: Inject SessionManagementService for logout
     // private readonly sessionService: SessionManagementService,
@@ -89,8 +90,14 @@ export class PasswordRecoveryService {
     await this.tokenRepository.save(resetToken);
 
     // 7. Enviar email con token plaintext
-    // TODO: Implementar envío de email
-    // await this.mailerService.sendPasswordReset(user.email, plainToken);
+    try {
+      await this.mailService.sendPasswordResetEmail(user.email, plainToken);
+    } catch (error) {
+      // Log error pero NO fallar (por seguridad, no revelar errores)
+      console.error(`Failed to send password reset email to ${user.email}:`, error);
+    }
+
+    // Fallback para desarrollo (si SMTP no configurado)
     console.log(`[DEV] Password reset token for ${user.email}: ${plainToken}`);
 
     return { message: genericMessage };

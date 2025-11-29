@@ -360,10 +360,10 @@ describe('Friends Integration Tests', () => {
       expect(state.onlineFriends).toBeDefined();
     });
 
-    it('should refresh online friends', () => {
+    it('should refresh online friends', async () => {
       const { refreshFriends } = useFriendsStore.getState();
 
-      refreshFriends();
+      await refreshFriends('test-user-id');
 
       const state = useFriendsStore.getState();
 

@@ -1,12 +1,18 @@
 # EXT-007: LTI Integration
 
+> **⚠️ BACKLOG - FUERA DEL MVP**
+>
+> Esta épica está **parcialmente implementada (40%)** y **NO forma parte del MVP actual**.
+> Razón: Depende de contratos enterprise.
+> Ver: [Fase 4: Backlog](../../04-fase-backlog/README.md)
+
 **Versión:** 1.0
 **Fecha de creación:** 2025-11-07
 **Prioridad:** P2 (Promovida desde P3)
 **Story Points:** 40 SP
 **Presupuesto:** $6,000 USD
 **Timeline:** v1.3 (Sprints 17-24)
-**Estado:** 📋 Planificado
+**Estado:** ⏳ BACKLOG (40% implementado)
 
 ---
 

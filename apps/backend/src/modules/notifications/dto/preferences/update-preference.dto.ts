@@ -47,7 +47,7 @@ export class UpdatePreferenceDto {
   })
   @IsBoolean()
   @IsOptional()
-  inAppEnabled?: boolean;
+    inAppEnabled?: boolean;
 
   /**
    * Habilitar notificaciones por email
@@ -60,7 +60,7 @@ export class UpdatePreferenceDto {
   })
   @IsBoolean()
   @IsOptional()
-  emailEnabled?: boolean;
+    emailEnabled?: boolean;
 
   /**
    * Habilitar push notifications
@@ -75,7 +75,7 @@ export class UpdatePreferenceDto {
   })
   @IsBoolean()
   @IsOptional()
-  pushEnabled?: boolean;
+    pushEnabled?: boolean;
 }
 
 /**
@@ -97,7 +97,7 @@ export class UpdateMultiplePreferencesItemDto {
   })
   @IsString()
   @IsNotEmpty()
-  notificationType!: string;
+    notificationType!: string;
 
   /**
    * Habilitar in-app
@@ -108,7 +108,7 @@ export class UpdateMultiplePreferencesItemDto {
   })
   @IsBoolean()
   @IsOptional()
-  inAppEnabled?: boolean;
+    inAppEnabled?: boolean;
 
   /**
    * Habilitar email
@@ -119,7 +119,7 @@ export class UpdateMultiplePreferencesItemDto {
   })
   @IsBoolean()
   @IsOptional()
-  emailEnabled?: boolean;
+    emailEnabled?: boolean;
 
   /**
    * Habilitar push
@@ -130,7 +130,7 @@ export class UpdateMultiplePreferencesItemDto {
   })
   @IsBoolean()
   @IsOptional()
-  pushEnabled?: boolean;
+    pushEnabled?: boolean;
 }
 
 /**
@@ -178,5 +178,5 @@ export class UpdateMultiplePreferencesDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateMultiplePreferencesItemDto)
-  preferences!: UpdateMultiplePreferencesItemDto[];
+    preferences!: UpdateMultiplePreferencesItemDto[];
 }

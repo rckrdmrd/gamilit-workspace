@@ -8,49 +8,49 @@ import { Expose } from 'class-transformer';
  */
 export class UserSessionResponseDto {
   @Expose()
-  id!: string;
+    id!: string;
 
   @Expose()
-  user_id!: string;
+    user_id!: string;
 
   @Expose()
-  tenant_id!: string | null;
+    tenant_id!: string | null;
 
   @Expose()
-  session_token!: string;
+    session_token!: string;
 
   @Expose()
-  user_agent!: string | null;
+    user_agent!: string | null;
 
   @Expose()
-  ip_address!: string | null;
+    ip_address!: string | null;
 
   @Expose()
-  device_type!: string | null;
+    device_type!: string | null;
 
   @Expose()
-  browser!: string | null;
+    browser!: string | null;
 
   @Expose()
-  os!: string | null;
+    os!: string | null;
 
   @Expose()
-  country!: string | null;
+    country!: string | null;
 
   @Expose()
-  city!: string | null;
+    city!: string | null;
 
   @Expose()
-  created_at!: Date;
+    created_at!: Date;
 
   @Expose()
-  last_activity_at!: Date;
+    last_activity_at!: Date;
 
   @Expose()
-  expires_at!: Date;
+    expires_at!: Date;
 
   @Expose()
-  is_active!: boolean;
+    is_active!: boolean;
 
   // refresh_token NO expuesto (tiene @Exclude en entity)
   // metadata NO expuesto (interno)

@@ -1,32 +1,40 @@
 /**
- * Achievement Types
- * Defines all types for the achievement system
+ * Achievement Types for Social Feature
+ *
+ * NOTA: Este módulo define tipos específicos para el feature social.
+ * Para los tipos canónicos, usar @shared/types/achievement.types
  *
  * NOTE: Backend uses different category names. Mapping:
  * - Frontend 'progress' -> Backend 'educational', 'progress'
  * - Frontend 'mastery' -> Backend 'mastery', 'skill'
  * - Frontend 'social' -> Backend 'social'
  * - Frontend 'hidden' -> Backend 'hidden', 'special'
+ *
+ * @see SSOT: @shared/types/achievement.types.ts
+ * P2-001: Consolidación de types - re-export desde SSOT
  */
 
-export type AchievementCategory =
-  | 'progress'
-  | 'streak'
-  | 'completion'
-  | 'social'
-  | 'special'
-  | 'mastery'
-  | 'exploration'
-  | 'collection'
-  | 'hidden';
+// Re-export canonical types from SSOT
+export type { AchievementCategory } from '@shared/types/achievement.types';
+export type { Achievement as BaseAchievement } from '@shared/types/achievement.types';
+export type { AchievementReward } from '@shared/types/achievement.types';
+
+// Local alias for rarity (matches SSOT NonNullable<Achievement['rarity']>)
 export type AchievementRarity = 'common' | 'rare' | 'epic' | 'legendary';
 
+/**
+ * Progress tracking for a single achievement
+ */
 export interface AchievementProgress {
   current: number;
   required: number;
   percentage?: number;
 }
 
+/**
+ * Requirements to unlock an achievement (UI-specific structure)
+ * Note: SSOT uses AchievementCondition[] for conditions
+ */
 export interface AchievementRequirements {
   prerequisiteAchievements?: string[];
   rank?: string;
@@ -37,29 +45,38 @@ export interface AchievementRequirements {
   guildMembership?: boolean;
 }
 
-export interface AchievementReward {
-  xp: number;
-  mlCoins: number;
-  items?: string[];
-}
-
-export interface Achievement {
+/**
+ * AchievementWithProgress
+ *
+ * View model que combina datos del logro con estado del usuario.
+ * Usado en componentes que muestran logros con su progreso.
+ *
+ * P2-001: Tipo derivado - combina BaseAchievement + UserProgress
+ */
+export interface AchievementWithProgress {
   id: string;
   title: string;
-  name?: string;  // Alternative to title (legacy)
+  name?: string; // Alternative to title (aligned with SSOT 'name')
   description: string;
   category: AchievementCategory;
   rarity: AchievementRarity;
   icon: string;
   mlCoinsReward: number;
   xpReward: number;
-  rewards?: AchievementReward;  // Opcional: consolidación de rewards
+  rewards?: AchievementReward; // Alternativa estructurada (alineada con SSOT)
+  // User progress fields
   isUnlocked: boolean;
   unlockedAt?: Date;
   progress?: AchievementProgress;
   requirements?: AchievementRequirements;
   isHidden?: boolean;
 }
+
+/**
+ * @deprecated Use AchievementWithProgress for clarity.
+ * Alias mantenido para compatibilidad.
+ */
+export type Achievement = AchievementWithProgress;
 
 export interface AchievementUnlockNotification {
   achievement: Achievement;

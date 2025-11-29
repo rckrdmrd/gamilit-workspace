@@ -7,16 +7,22 @@
  * @module types/admin/achievements
  * @author Frontend-Agent
  * @date 2025-11-24
+ *
+ * @see SSOT: @shared/types/achievement.types.ts
+ * P2-001: AdminAchievement es un tipo contextual para el portal admin.
+ * Contiene campos adicionales del backend que no están en el SSOT público.
  */
 
 import { AchievementCategoryEnum, DifficultyLevelEnum } from '@/shared/constants/enums.constants';
 
 /**
- * Achievement (Admin View)
+ * AdminAchievement
  *
- * Represents a single achievement definition with all fields visible to admin
+ * Represents a single achievement definition with all fields visible to admin.
+ * This is a contextual type with additional backend fields not in the public SSOT.
  *
  * @see Backend: apps/backend/src/modules/gamification/entities/achievement.entity.ts
+ * @see SSOT: @shared/types/achievement.types.ts (public Achievement type)
  */
 export interface AdminAchievement {
   id: string;
@@ -27,7 +33,7 @@ export interface AdminAchievement {
   category: AchievementCategoryEnum;
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
   difficulty_level: DifficultyLevelEnum;
-  conditions: Record<string, any>; // JSON - read-only in admin
+  conditions: Record<string, unknown>; // JSON - read-only in admin
   rewards: {
     xp: number;
     ml_coins: number;
@@ -42,7 +48,7 @@ export interface AdminAchievement {
   unlock_message?: string;
   instructions?: string;
   tips?: string[];
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   created_by?: string;
   created_at: Date | string;
   updated_at: Date | string;

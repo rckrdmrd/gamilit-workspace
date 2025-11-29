@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -83,7 +84,7 @@ const AlertCard: React.FC<{
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -100 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
-      className={`relative ${config.bgColor} ${config.borderColor} border-l-4 border border-gray-200 rounded-lg p-5 hover:shadow-lg transition-all duration-300`}
+      className={`relative ${config.bgColor} ${config.borderColor} rounded-lg border border-l-4 border-gray-200 p-5 transition-all duration-300 hover:shadow-lg`}
     >
       {/* Pulse animation for high priority */}
       {alert.severity === 'high' && (
@@ -95,28 +96,30 @@ const AlertCard: React.FC<{
           transition={{
             duration: 2,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: 'easeInOut',
           }}
-          className={`absolute top-4 right-4 w-3 h-3 rounded-full ${severityInfo.pulseColor}`}
+          className={`absolute right-4 top-4 h-3 w-3 rounded-full ${severityInfo.pulseColor}`}
         />
       )}
 
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-start gap-3 flex-1">
+      <div className="mb-4 flex items-start justify-between">
+        <div className="flex flex-1 items-start gap-3">
           {/* Alert Icon */}
           <div className={`p-3 ${config.iconBg} rounded-lg`}>
-            <Icon className={`w-5 h-5 ${config.iconColor}`} />
+            <Icon className={`h-5 w-5 ${config.iconColor}`} />
           </div>
 
           {/* Alert Content */}
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
+            <div className="mb-1 flex items-center gap-2">
               <h3 className="font-bold text-gray-800">{alert.studentName}</h3>
-              <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${severityInfo.badge}`}>
+              <span
+                className={`rounded-full px-2 py-0.5 text-xs font-semibold ${severityInfo.badge}`}
+              >
                 {severityInfo.label}
               </span>
             </div>
-            <p className="text-sm text-gray-600 mb-1">{config.label}</p>
+            <p className="mb-1 text-sm text-gray-600">{config.label}</p>
             <p className="text-sm text-gray-500">{alert.classroomName}</p>
           </div>
         </div>
@@ -124,44 +127,46 @@ const AlertCard: React.FC<{
         {/* Dismiss Button */}
         <button
           onClick={() => onDismiss(alert.id)}
-          className="p-1.5 hover:bg-white/50 rounded-lg transition-colors"
+          className="rounded-lg p-1.5 transition-colors hover:bg-white/50"
           title="Dismiss alert"
         >
-          <X className="w-4 h-4 text-gray-500" />
+          <X className="h-4 w-4 text-gray-500" />
         </button>
       </div>
 
       {/* Alert Message */}
-      <div className="bg-white/60 rounded-lg p-3 mb-4">
-        <p className="text-sm text-gray-800 font-medium mb-1">{alert.message}</p>
+      <div className="mb-4 rounded-lg bg-white/60 p-3">
+        <p className="mb-1 text-sm font-medium text-gray-800">{alert.message}</p>
         <p className="text-xs text-gray-600">{alert.details}</p>
       </div>
 
       {/* Metadata */}
-      <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
-        <Clock className="w-3 h-3" />
-        <span>{new Date(alert.createdAt).toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        })}</span>
+      <div className="mb-4 flex items-center gap-2 text-xs text-gray-500">
+        <Clock className="h-3 w-3" />
+        <span>
+          {new Date(alert.createdAt).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          })}
+        </span>
       </div>
 
       {/* Actions */}
       <div className="flex items-center gap-2">
         <button
           onClick={() => onViewStudent(alert.studentId)}
-          className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-semibold"
+          className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-500 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-600"
         >
-          <Eye className="w-4 h-4" />
+          <Eye className="h-4 w-4" />
           View Student
         </button>
         <button
           onClick={() => onContactStudent(alert.studentId)}
-          className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-semibold"
+          className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
         >
-          <MessageSquare className="w-4 h-4" />
+          <MessageSquare className="h-4 w-4" />
           Contact
         </button>
       </div>
@@ -174,41 +179,37 @@ const EmptyState: React.FC = () => {
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="text-center py-12 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl"
+      className="rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 py-12 text-center"
     >
-      <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <CheckCircle className="w-10 h-10 text-green-600" />
+      <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
+        <CheckCircle className="h-10 w-10 text-green-600" />
       </div>
-      <h3 className="text-xl font-bold text-gray-800 mb-2">
-        All Students Are Doing Great!
-      </h3>
-      <p className="text-gray-600 text-sm">
-        No alerts requiring attention at this time
-      </p>
+      <h3 className="mb-2 text-xl font-bold text-gray-800">All Students Are Doing Great!</h3>
+      <p className="text-sm text-gray-600">No alerts requiring attention at this time</p>
     </motion.div>
   );
 };
 
 const SkeletonCard: React.FC = () => {
   return (
-    <div className="bg-white border-l-4 border-l-gray-300 border border-gray-200 rounded-lg p-5 animate-pulse">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-start gap-3 flex-1">
-          <div className="w-11 h-11 bg-gray-200 rounded-lg" />
+    <div className="animate-pulse rounded-lg border border-l-4 border-gray-200 border-l-gray-300 bg-white p-5">
+      <div className="mb-4 flex items-start justify-between">
+        <div className="flex flex-1 items-start gap-3">
+          <div className="h-11 w-11 rounded-lg bg-gray-200" />
           <div className="flex-1">
-            <div className="h-4 w-32 bg-gray-200 rounded mb-2" />
-            <div className="h-3 w-24 bg-gray-200 rounded mb-1" />
-            <div className="h-3 w-28 bg-gray-200 rounded" />
+            <div className="mb-2 h-4 w-32 rounded bg-gray-200" />
+            <div className="mb-1 h-3 w-24 rounded bg-gray-200" />
+            <div className="h-3 w-28 rounded bg-gray-200" />
           </div>
         </div>
       </div>
-      <div className="bg-gray-100 rounded-lg p-3 mb-4">
-        <div className="h-4 w-full bg-gray-200 rounded mb-1" />
-        <div className="h-3 w-3/4 bg-gray-200 rounded" />
+      <div className="mb-4 rounded-lg bg-gray-100 p-3">
+        <div className="mb-1 h-4 w-full rounded bg-gray-200" />
+        <div className="h-3 w-3/4 rounded bg-gray-200" />
       </div>
       <div className="flex gap-2">
-        <div className="flex-1 h-9 bg-gray-200 rounded-lg" />
-        <div className="flex-1 h-9 bg-gray-200 rounded-lg" />
+        <div className="h-9 flex-1 rounded-lg bg-gray-200" />
+        <div className="h-9 flex-1 rounded-lg bg-gray-200" />
       </div>
     </div>
   );
@@ -221,7 +222,9 @@ export const StudentAlerts: React.FC<StudentAlertsProps> = ({
   onContactStudent,
   onDismissAlert,
 }) => {
-  const [filterType, setFilterType] = useState<'all' | 'struggling' | 'inactive' | 'at_risk'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'struggling' | 'inactive' | 'at_risk'>(
+    'all',
+  );
   const [filterSeverity, setFilterSeverity] = useState<'all' | 'high' | 'medium' | 'low'>('all');
   const [showFilters, setShowFilters] = useState(false);
 
@@ -259,22 +262,22 @@ export const StudentAlerts: React.FC<StudentAlertsProps> = ({
     <div>
       {/* Header with Filters */}
       <div className="mb-4">
-        <div className="flex items-center justify-between mb-3">
+        <div className="mb-3 flex items-center justify-between">
           <h3 className="text-lg font-bold text-gray-800">
             Student Alerts ({sortedAlerts.length})
           </h3>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
               showFilters || filterType !== 'all' || filterSeverity !== 'all'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            <Filter className="w-4 h-4" />
+            <Filter className="h-4 w-4" />
             Filters
             {(filterType !== 'all' || filterSeverity !== 'all') && (
-              <span className="ml-1 px-1.5 py-0.5 bg-white/20 rounded-full text-xs">
+              <span className="ml-1 rounded-full bg-white/20 px-1.5 py-0.5 text-xs">
                 {(filterType !== 'all' ? 1 : 0) + (filterSeverity !== 'all' ? 1 : 0)}
               </span>
             )}
@@ -288,35 +291,37 @@ export const StudentAlerts: React.FC<StudentAlertsProps> = ({
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="bg-gray-50 rounded-lg p-4 space-y-3 overflow-hidden"
+              className="space-y-3 overflow-hidden rounded-lg bg-gray-50 p-4"
             >
               <div>
-                <p className="text-xs font-semibold text-gray-600 mb-2">Alert Type</p>
+                <p className="mb-2 text-xs font-semibold text-gray-600">Alert Type</p>
                 <div className="flex flex-wrap gap-2">
                   {['all', 'struggling', 'inactive', 'at_risk'].map((type) => (
                     <button
                       key={type}
                       onClick={() => setFilterType(type as any)}
-                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                      className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                         filterType === type
                           ? 'bg-blue-500 text-white'
                           : 'bg-white text-gray-700 hover:bg-gray-100'
                       }`}
                     >
-                      {type === 'at_risk' ? 'At-Risk' : type.charAt(0).toUpperCase() + type.slice(1)}
+                      {type === 'at_risk'
+                        ? 'At-Risk'
+                        : type.charAt(0).toUpperCase() + type.slice(1)}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <p className="text-xs font-semibold text-gray-600 mb-2">Severity</p>
+                <p className="mb-2 text-xs font-semibold text-gray-600">Severity</p>
                 <div className="flex flex-wrap gap-2">
                   {['all', 'high', 'medium', 'low'].map((severity) => (
                     <button
                       key={severity}
                       onClick={() => setFilterSeverity(severity as any)}
-                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                      className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                         filterSeverity === severity
                           ? 'bg-blue-500 text-white'
                           : 'bg-white text-gray-700 hover:bg-gray-100'
@@ -334,7 +339,7 @@ export const StudentAlerts: React.FC<StudentAlertsProps> = ({
 
       {/* Alerts List */}
       {sortedAlerts.length === 0 ? (
-        <div className="text-center py-8 bg-gray-50 rounded-lg">
+        <div className="rounded-lg bg-gray-50 py-8 text-center">
           <p className="text-gray-600">No alerts match your filters</p>
         </div>
       ) : (

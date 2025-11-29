@@ -5,6 +5,7 @@
  * @see GAP-005 - Implementar versionamiento consistente /v1/ en todas las rutas API
  * @see orchestration/agentes/architecture-analyst/analisis-rutas-api-2025-11-24/02-REPORTE-ANALISIS-COMPLETO.md
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { API_ENDPOINTS } from '@/config/api.config';
 

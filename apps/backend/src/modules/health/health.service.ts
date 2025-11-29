@@ -7,6 +7,7 @@ import { HealthCheckDto, HealthCheckDetailDto, HealthStatus } from './dto/health
 @Injectable()
 export class HealthService {
   private readonly logger = new Logger(HealthService.name);
+
   private readonly startTime: number;
 
   constructor(

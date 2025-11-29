@@ -9,25 +9,25 @@ import { GamilityRoleEnum, UserStatusEnum } from '@shared/constants';
 export class ListUsersDto {
   @IsOptional()
   @IsString()
-  search?: string;
+    search?: string;
 
   @IsOptional()
   @IsEnum(GamilityRoleEnum)
-  role?: GamilityRoleEnum;
+    role?: GamilityRoleEnum;
 
   @IsOptional()
   @IsEnum(UserStatusEnum)
-  status?: UserStatusEnum;
+    status?: UserStatusEnum;
 
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  page?: number = 1;
+    page?: number = 1;
 
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  limit?: number = 20;
+    limit?: number = 20;
 }

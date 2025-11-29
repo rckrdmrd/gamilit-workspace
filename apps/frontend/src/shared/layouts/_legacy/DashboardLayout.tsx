@@ -159,7 +159,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
           onLogout={handleLogout}
           gamificationData={gamificationData}
           organizationName="GAMILIT"
-          notifications={[]} // TODO: Fetch notifications
         />
 
         {/* Page content */}

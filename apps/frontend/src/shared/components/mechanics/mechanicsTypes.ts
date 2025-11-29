@@ -22,7 +22,7 @@ export interface ExerciseFeedback {
   // Legacy compatibility
   isCorrect?: boolean;
   // Feedback detallado por fragmento (Rueda de Inferencias, etc.)
-  details?: any;
+  details?: Record<string, unknown>;
 }
 
 export interface ExerciseAttempt {
@@ -114,21 +114,37 @@ export interface HintObject {
 export type FeedbackData = ExerciseFeedback;
 
 /**
+ * Match item for pairing exercises
+ */
+export interface MatchItem {
+  left: string;
+  right: string;
+}
+
+/**
+ * Blank answer for fill-in-the-blank exercises
+ */
+export interface BlankAnswer {
+  id: string;
+  userAnswer: string;
+}
+
+/**
  * Progress data for exercise tracking
  * Supports both simple score tracking and detailed progress data
  */
 export interface ProgressData {
   score?: number;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
   hintsUsed?: number;
   timeSpent?: number;
   // Mechanic-specific fields
-  blanks?: any[];
+  blanks?: BlankAnswer[];
   usedWords?: string[];
-  matches?: any[];
-  answers?: Record<string, any>;
+  matches?: MatchItem[];
+  answers?: Record<string, string | boolean | number>;
   // Allow additional fields for future mechanics
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // Utility functions (stubs)
@@ -164,12 +180,10 @@ export const calculateScore = (correct: number, total: number): number => {
  */
 export const saveProgress = async (
   exerciseId: string,
-  progress: number | ProgressData
+  progress: number | ProgressData,
 ): Promise<void> => {
   // Normalize progress data
-  const progressData: ProgressData = typeof progress === 'number'
-    ? { score: progress }
-    : progress;
+  const progressData: ProgressData = typeof progress === 'number' ? { score: progress } : progress;
 
   // TODO: Implement progress saving to backend
   console.log('Saving progress:', exerciseId, progressData);
@@ -216,7 +230,7 @@ export function normalizeProgressUpdate(
   currentStep: number = 0,
   totalSteps: number = 1,
   hintsUsed: number = 0,
-  timeSpent: number = 0
+  timeSpent: number = 0,
 ): ExerciseProgressUpdate {
   return {
     currentStep,
@@ -226,3 +240,19 @@ export function normalizeProgressUpdate(
     timeSpent,
   };
 }
+
+/**
+ * Generic progress callback data structure
+ * Used by exercise mechanics to report progress to parent components
+ */
+export interface GenericProgressData<T = Record<string, unknown>> {
+  progress: ExerciseProgressUpdate;
+  answers: T;
+}
+
+/**
+ * Type alias for onProgressUpdate callback
+ */
+export type OnProgressUpdateCallback<T = Record<string, unknown>> = (
+  data: GenericProgressData<T>,
+) => void;

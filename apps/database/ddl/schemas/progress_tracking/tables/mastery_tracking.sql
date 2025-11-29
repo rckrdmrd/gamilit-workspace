@@ -5,7 +5,7 @@
 
 CREATE TABLE progress_tracking.mastery_tracking (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
     module_id UUID NOT NULL REFERENCES educational_content.modules(id) ON DELETE CASCADE,
     topic VARCHAR(200) NOT NULL,
     mastery_level NUMERIC(5,2) NOT NULL DEFAULT 0 CHECK (mastery_level >= 0 AND mastery_level <= 100),

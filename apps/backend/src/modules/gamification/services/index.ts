@@ -11,4 +11,5 @@ export * from './ml-coins.service';
 export * from './ranks.service';
 export * from './leaderboard.service';
 export * from './missions.service';
+export * from './classroom-missions.service';
 export * from './comodines.service';

@@ -10,9 +10,9 @@ import { IsDateString, IsOptional } from 'class-validator';
 export class UpdateUserSessionDto {
   @IsOptional()
   @IsDateString()
-  last_activity_at?: string;
+    last_activity_at?: string;
 
   @IsOptional()
   @IsDateString()
-  expires_at?: string;
+    expires_at?: string;
 }

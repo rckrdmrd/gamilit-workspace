@@ -84,7 +84,7 @@ export class ClassroomAssignmentsController {
   async assignClassroom(
     @Body() dto: AssignClassroomDto,
   ): Promise<ClassroomAssignmentResponseDto> {
-    return await this.classroomAssignmentsService.assignClassroomToTeacher(dto);
+    return this.classroomAssignmentsService.assignClassroomToTeacher(dto);
   }
 
   /**
@@ -131,7 +131,7 @@ export class ClassroomAssignmentsController {
     successful: ClassroomAssignmentResponseDto[];
     failed: Array<{ classroom_id: string; reason: string }>;
   }> {
-    return await this.classroomAssignmentsService.bulkAssignClassrooms(dto);
+    return this.classroomAssignmentsService.bulkAssignClassrooms(dto);
   }
 
   /**
@@ -180,10 +180,10 @@ export class ClassroomAssignmentsController {
   })
   async removeClassroomAssignment(
     @Param('teacherId') teacherId: string,
-    @Param('classroomId') classroomId: string,
-    @Query() dto: RemoveAssignmentDto,
+      @Param('classroomId') classroomId: string,
+      @Query() dto: RemoveAssignmentDto,
   ): Promise<{ message: string }> {
-    return await this.classroomAssignmentsService.removeClassroomAssignment(
+    return this.classroomAssignmentsService.removeClassroomAssignment(
       teacherId,
       classroomId,
       dto,
@@ -219,7 +219,7 @@ export class ClassroomAssignmentsController {
   async reassignClassroom(
     @Body() dto: ReassignClassroomDto,
   ): Promise<ClassroomAssignmentResponseDto> {
-    return await this.classroomAssignmentsService.reassignClassroom(dto);
+    return this.classroomAssignmentsService.reassignClassroom(dto);
   }
 
   /**
@@ -251,7 +251,7 @@ export class ClassroomAssignmentsController {
   async getTeacherClassrooms(
     @Param('teacherId') teacherId: string,
   ): Promise<ClassroomAssignmentResponseDto[]> {
-    return await this.classroomAssignmentsService.getTeacherClassrooms(
+    return this.classroomAssignmentsService.getTeacherClassrooms(
       teacherId,
     );
   }
@@ -277,7 +277,7 @@ export class ClassroomAssignmentsController {
   async getAvailableClassrooms(
     @Query() filters: AvailableClassroomsFiltersDto,
   ): Promise<Classroom[]> {
-    return await this.classroomAssignmentsService.getAvailableClassrooms(
+    return this.classroomAssignmentsService.getAvailableClassrooms(
       filters,
     );
   }
@@ -312,7 +312,7 @@ export class ClassroomAssignmentsController {
   async getAssignmentHistory(
     @Param('classroomId') classroomId: string,
   ): Promise<AssignmentHistoryResponseDto[]> {
-    return await this.classroomAssignmentsService.getAssignmentHistory(
+    return this.classroomAssignmentsService.getAssignmentHistory(
       classroomId,
     );
   }

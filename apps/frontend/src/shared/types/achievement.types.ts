@@ -117,7 +117,7 @@ export interface Achievement {
   is_repeatable: boolean; // Whether achievement can be earned multiple times
   order_index: number; // Display order in lists
   points_value: number; // Point value for this achievement
-  metadata?: Record<string, any>; // Additional flexible metadata
+  metadata?: Record<string, unknown>; // Additional flexible metadata
   created_by?: string; // User ID who created the achievement
 }
 

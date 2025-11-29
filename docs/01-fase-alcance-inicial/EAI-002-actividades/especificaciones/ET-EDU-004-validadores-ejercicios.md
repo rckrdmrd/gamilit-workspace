@@ -9,9 +9,9 @@
 | **Título** | Sistema de Validadores de Ejercicios |
 | **Prioridad** | Alta |
 | **Estado** | ✅ Implementado |
-| **Versión** | 1.0 |
+| **Versión** | 1.1 |
 | **Fecha Creación** | 2025-11-19 |
-| **Última Actualización** | 2025-11-19 |
+| **Última Actualización** | 2025-11-28 |
 | **Autor** | Database Agent - DB-123 |
 | **Reviewers** | Backend Team, Frontend Team |
 | **Relacionado** | ET-EDU-001, RF-EDU-001, DB-117, DB-123, FE-059 |
@@ -123,18 +123,22 @@ El **Sistema de Validadores de Ejercicios** es el componente responsable de veri
 | 3 | sopa_letras | `validate_word_search()` | M1 - Literal | ✅ | DB-116 |
 | 4 | completar_espacios | `validate_fill_in_blank()` | M1 - Literal | ✅ | DB-116 |
 | 5 | verdadero_falso | `validate_true_false()` | M1 - Literal | ✅ | DB-116 |
-| 6 | detective_textual | `validate_detective_connections()` | M2 - Inferencial | ✨ **NUEVO** | DB-117 |
-| 7 | prediccion_narrativa | `validate_prediction_scenarios()` | M2 - Inferencial | ✨ **NUEVO** | DB-117 |
-| 8 | construccion_hipotesis | `validate_cause_effect_matching()` | M2 - Inferencial | ✨ **NUEVO** | DB-117 |
-| 9 | puzzle_contexto | `validate_puzzle_contexto()` | M2 - Inferencial | ✅ | DB-116 |
-| 10 | rueda_inferencias | `validate_rueda_inferencias()` | M2 - Inferencial | ✅ | DB-116 |
-| 11 | tribunal_opiniones | `validate_tribunal_opiniones()` | M3 - Crítica | ✅ | DB-116 |
-| 12 | debate_digital | `validate_debate_digital()` | M3 - Crítica | ✅ | DB-116 |
-| 13 | analisis_fuentes | `validate_analisis_fuentes()` | M3 - Crítica | ✅ | DB-116 |
-| 14 | podcast_argumentativo | `validate_podcast_argumentativo()` | M3 - Crítica | ✅ | DB-116 |
-| 15 | matriz_perspectivas | `validate_matriz_perspectivas()` | M3 - Crítica | ✅ | DB-116 |
+| 6 | mapa_conceptual | `validate_mapa_conceptual()` | M1 - Literal | ✨ **NUEVO** | BUG-004 |
+| 7 | emparejamiento | `validate_emparejamiento()` | M1 - Literal | ✨ **NUEVO** | BUG-004 |
+| 8 | detective_textual | `validate_detective_connections()` | M2 - Inferencial | ✅ | DB-117 |
+| 9 | prediccion_narrativa | `validate_prediction_scenarios()` | M2 - Inferencial | ✅ | DB-117 |
+| 10 | construccion_hipotesis | `validate_cause_effect_matching()` | M2 - Inferencial | ✅ | DB-117 |
+| 11 | puzzle_contexto | `validate_puzzle_contexto()` | M2 - Inferencial | ✅ | DB-116 |
+| 12 | rueda_inferencias | `validate_rueda_inferencias()` | M2 - Inferencial | ✅ | DB-116 |
+| 13 | tribunal_opiniones | `validate_tribunal_opiniones()` | M3 - Crítica | ✅ | DB-116 |
+| 14 | debate_digital | `validate_debate_digital()` | M3 - Crítica | ✅ | DB-116 |
+| 15 | analisis_fuentes | `validate_analisis_fuentes()` | M3 - Crítica | ✅ | DB-116 |
+| 16 | podcast_argumentativo | `validate_podcast_argumentativo()` | M3 - Crítica | ✅ | DB-116 |
+| 17 | matriz_perspectivas | `validate_matriz_perspectivas()` | M3 - Crítica | ✅ | DB-116 |
 
-✨ **3 validadores nuevos agregados en DB-117/FE-059** (2025-11-19) para resolver discrepancias identificadas durante integración frontend-backend.
+✨ **2 validadores nuevos agregados en BUG-004** (2025-11-28) para completar ejercicios Módulo 1: `mapa_conceptual` y `emparejamiento`.
+
+✨ **3 validadores agregados en DB-117/FE-059** (2025-11-19) para resolver discrepancias identificadas durante integración frontend-backend.
 
 ---
 

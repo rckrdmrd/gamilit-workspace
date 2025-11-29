@@ -3,6 +3,7 @@
  * Module 1 - Exercise 4
  * ⚠️ FE-059: correctAnswer and alternatives are NEVER sent by backend (sanitized for security)
  */
+import type { ExerciseProgressUpdate } from '@shared/components/mechanics/mechanicsTypes';
 
 export interface BlankSpace {
   id: string;
@@ -36,8 +37,13 @@ export interface CompletarEspaciosData {
   scenarioText?: string;
 }
 
+export interface CompletarEspaciosProgressData {
+  progress: ExerciseProgressUpdate;
+  answers: { blanks: Record<string, string> };
+}
+
 export interface CompletarEspaciosExerciseProps {
   exercise: CompletarEspaciosData;
   onComplete?: () => void;
-  onProgressUpdate?: (progress: any) => void;
+  onProgressUpdate?: (data: CompletarEspaciosProgressData) => void;
 }

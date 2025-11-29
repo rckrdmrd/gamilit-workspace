@@ -36,6 +36,7 @@ import { DB_SCHEMAS } from '@/shared/constants';
 @Injectable()
 export class EmailVerificationService {
   private readonly TOKEN_LENGTH_BYTES = 32;
+
   private readonly TOKEN_EXPIRATION_HOURS = 24;
 
   constructor(
@@ -166,7 +167,7 @@ export class EmailVerificationService {
     }
 
     // 3. Enviar nuevo email
-    return await this.sendVerification(userId, user.email);
+    return this.sendVerification(userId, user.email);
   }
 
   /**

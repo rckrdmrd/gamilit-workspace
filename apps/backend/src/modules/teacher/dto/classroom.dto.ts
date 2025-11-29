@@ -19,9 +19,102 @@ import {
   IsArray,
   ValidateNested,
   IsObject,
+  Matches,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
+
+// ============================================================================
+// SCHEDULE ITEM DTO
+// ============================================================================
+
+/**
+ * DTO para un elemento de horario de clase
+ */
+export class ScheduleItemDto {
+  @ApiProperty({
+    description: 'Día de la semana',
+    example: 'lunes',
+    enum: ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'],
+  })
+  @IsString()
+  @IsNotEmpty()
+    day!: string;
+
+  @ApiProperty({
+    description: 'Hora de inicio (formato HH:MM)',
+    example: '08:00',
+  })
+  @IsString()
+  @Matches(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, {
+    message: 'start_time debe tener formato HH:MM (ej: 08:00)',
+  })
+    start_time!: string;
+
+  @ApiProperty({
+    description: 'Hora de fin (formato HH:MM)',
+    example: '10:00',
+  })
+  @IsString()
+  @Matches(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, {
+    message: 'end_time debe tener formato HH:MM (ej: 10:00)',
+  })
+    end_time!: string;
+}
+
+// ============================================================================
+// CLASSROOM SETTINGS DTO
+// ============================================================================
+
+/**
+ * DTO para configuraciones del aula
+ */
+export class ClassroomSettingsDto {
+  @ApiPropertyOptional({
+    description: 'Requiere aprobación para unirse',
+    example: true,
+    default: true,
+  })
+  @IsBoolean()
+  @IsOptional()
+    require_approval?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Visible en el directorio de aulas',
+    example: true,
+    default: true,
+  })
+  @IsBoolean()
+  @IsOptional()
+    visible_in_directory?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Permite auto-inscripción',
+    example: false,
+    default: false,
+  })
+  @IsBoolean()
+  @IsOptional()
+    allow_self_enrollment?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Notificar a estudiantes de nuevas actividades',
+    example: true,
+    default: true,
+  })
+  @IsBoolean()
+  @IsOptional()
+    notify_new_activities?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Mostrar leaderboard en el aula',
+    example: true,
+    default: true,
+  })
+  @IsBoolean()
+  @IsOptional()
+    show_leaderboard?: boolean;
+}
 
 // ============================================================================
 // CREATE CLASSROOM DTO
@@ -43,7 +136,7 @@ export class CreateTeacherClassroomDto {
   @IsString()
   @IsNotEmpty()
   @Length(3, 100)
-  name!: string;
+    name!: string;
 
   @ApiPropertyOptional({
     description: 'Código único de acceso al aula',
@@ -54,7 +147,7 @@ export class CreateTeacherClassroomDto {
   @IsString()
   @IsOptional()
   @Length(3, 50)
-  code?: string;
+    code?: string;
 
   @ApiPropertyOptional({
     description: 'Descripción del aula',
@@ -64,7 +157,7 @@ export class CreateTeacherClassroomDto {
   @IsString()
   @IsOptional()
   @Length(0, 500)
-  description?: string;
+    description?: string;
 
   @ApiPropertyOptional({
     description: 'Nivel de grado',
@@ -72,7 +165,7 @@ export class CreateTeacherClassroomDto {
   })
   @IsString()
   @IsOptional()
-  grade_level?: string;
+    grade_level?: string;
 
   @ApiPropertyOptional({
     description: 'Sección',
@@ -80,7 +173,7 @@ export class CreateTeacherClassroomDto {
   })
   @IsString()
   @IsOptional()
-  section?: string;
+    section?: string;
 
   @ApiPropertyOptional({
     description: 'Materia o asignatura',
@@ -88,7 +181,7 @@ export class CreateTeacherClassroomDto {
   })
   @IsString()
   @IsOptional()
-  subject?: string;
+    subject?: string;
 
   @ApiPropertyOptional({
     description: 'Año académico',
@@ -96,7 +189,7 @@ export class CreateTeacherClassroomDto {
   })
   @IsString()
   @IsOptional()
-  academic_year?: string;
+    academic_year?: string;
 
   @ApiPropertyOptional({
     description: 'Semestre',
@@ -104,7 +197,7 @@ export class CreateTeacherClassroomDto {
   })
   @IsString()
   @IsOptional()
-  semester?: string;
+    semester?: string;
 
   @ApiPropertyOptional({
     description: 'Capacidad máxima de estudiantes',
@@ -117,10 +210,10 @@ export class CreateTeacherClassroomDto {
   @IsOptional()
   @Min(1)
   @Max(200)
-  capacity?: number;
+    capacity?: number;
 
   @ApiPropertyOptional({
-    description: 'Horario de clases (JSON)',
+    description: 'Horario de clases',
     example: [
       {
         day: 'lunes',
@@ -128,10 +221,13 @@ export class CreateTeacherClassroomDto {
         end_time: '10:00',
       },
     ],
+    type: [ScheduleItemDto],
   })
   @IsArray()
   @IsOptional()
-  schedule?: any[];
+  @ValidateNested({ each: true })
+  @Type(() => ScheduleItemDto)
+    schedule?: ScheduleItemDto[];
 
   @ApiPropertyOptional({
     description: 'URL de reunión virtual',
@@ -139,7 +235,7 @@ export class CreateTeacherClassroomDto {
   })
   @IsString()
   @IsOptional()
-  meeting_url?: string;
+    meeting_url?: string;
 
   @ApiPropertyOptional({
     description: 'Fecha de inicio del curso',
@@ -147,7 +243,7 @@ export class CreateTeacherClassroomDto {
   })
   @IsDateString()
   @IsOptional()
-  start_date?: string;
+    start_date?: string;
 
   @ApiPropertyOptional({
     description: 'Fecha de fin del curso',
@@ -155,7 +251,7 @@ export class CreateTeacherClassroomDto {
   })
   @IsDateString()
   @IsOptional()
-  end_date?: string;
+    end_date?: string;
 
   @ApiPropertyOptional({
     description: 'Configuraciones adicionales del aula',
@@ -164,10 +260,12 @@ export class CreateTeacherClassroomDto {
       visible_in_directory: true,
       allow_self_enrollment: false,
     },
+    type: ClassroomSettingsDto,
   })
-  @IsObject()
   @IsOptional()
-  settings?: Record<string, any>;
+  @ValidateNested()
+  @Type(() => ClassroomSettingsDto)
+    settings?: ClassroomSettingsDto;
 
   @ApiPropertyOptional({
     description: 'ID de la escuela (si aplica)',
@@ -175,7 +273,7 @@ export class CreateTeacherClassroomDto {
   })
   @IsUUID()
   @IsOptional()
-  school_id?: string;
+    school_id?: string;
 }
 
 // ============================================================================
@@ -195,7 +293,7 @@ export class UpdateTeacherClassroomDto extends PartialType(CreateTeacherClassroo
   })
   @IsBoolean()
   @IsOptional()
-  is_active?: boolean;
+    is_active?: boolean;
 
   @ApiPropertyOptional({
     description: 'Marcar aula como archivada',
@@ -203,7 +301,7 @@ export class UpdateTeacherClassroomDto extends PartialType(CreateTeacherClassroo
   })
   @IsBoolean()
   @IsOptional()
-  is_archived?: boolean;
+    is_archived?: boolean;
 }
 
 // ============================================================================
@@ -224,7 +322,7 @@ export class GetClassroomsQueryDto {
   @IsOptional()
   @Min(1)
   @Type(() => Number)
-  page?: number = 1;
+    page?: number = 1;
 
   @ApiPropertyOptional({
     description: 'Cantidad de resultados por página',
@@ -238,7 +336,7 @@ export class GetClassroomsQueryDto {
   @Min(1)
   @Max(100)
   @Type(() => Number)
-  limit?: number = 10;
+    limit?: number = 10;
 
   @ApiPropertyOptional({
     description: 'Búsqueda por nombre o código',
@@ -246,7 +344,7 @@ export class GetClassroomsQueryDto {
   })
   @IsString()
   @IsOptional()
-  search?: string;
+    search?: string;
 
   @ApiPropertyOptional({
     description: 'Filtrar por estado',
@@ -255,7 +353,7 @@ export class GetClassroomsQueryDto {
   })
   @IsString()
   @IsOptional()
-  status?: 'active' | 'inactive' | 'archived' | 'all';
+    status?: 'active' | 'inactive' | 'archived' | 'all';
 
   @ApiPropertyOptional({
     description: 'Filtrar por nivel de grado',
@@ -263,7 +361,7 @@ export class GetClassroomsQueryDto {
   })
   @IsString()
   @IsOptional()
-  grade_level?: string;
+    grade_level?: string;
 
   @ApiPropertyOptional({
     description: 'Filtrar por materia',
@@ -271,7 +369,7 @@ export class GetClassroomsQueryDto {
   })
   @IsString()
   @IsOptional()
-  subject?: string;
+    subject?: string;
 }
 
 /**
@@ -288,7 +386,7 @@ export class GetClassroomStudentsQueryDto {
   @IsOptional()
   @Min(1)
   @Type(() => Number)
-  page?: number = 1;
+    page?: number = 1;
 
   @ApiPropertyOptional({
     description: 'Cantidad de resultados por página',
@@ -302,7 +400,7 @@ export class GetClassroomStudentsQueryDto {
   @Min(1)
   @Max(100)
   @Type(() => Number)
-  limit?: number = 20;
+    limit?: number = 20;
 
   @ApiPropertyOptional({
     description: 'Búsqueda por nombre o email',
@@ -310,7 +408,7 @@ export class GetClassroomStudentsQueryDto {
   })
   @IsString()
   @IsOptional()
-  search?: string;
+    search?: string;
 
   @ApiPropertyOptional({
     description: 'Filtrar por estado de membresía',
@@ -319,7 +417,7 @@ export class GetClassroomStudentsQueryDto {
   })
   @IsString()
   @IsOptional()
-  status?: 'active' | 'inactive' | 'withdrawn' | 'completed' | 'all';
+    status?: 'active' | 'inactive' | 'withdrawn' | 'completed' | 'all';
 
   @ApiPropertyOptional({
     description: 'Ordenar por campo',
@@ -328,7 +426,7 @@ export class GetClassroomStudentsQueryDto {
   })
   @IsString()
   @IsOptional()
-  sort_by?: 'name' | 'progress' | 'score' | 'last_activity';
+    sort_by?: 'name' | 'progress' | 'score' | 'last_activity';
 
   @ApiPropertyOptional({
     description: 'Orden de clasificación',
@@ -337,5 +435,5 @@ export class GetClassroomStudentsQueryDto {
   })
   @IsString()
   @IsOptional()
-  sort_order?: 'asc' | 'desc';
+    sort_order?: 'asc' | 'desc';
 }

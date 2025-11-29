@@ -121,9 +121,21 @@ EXT-002-admin-extendido/
 
 ## 🔗 Referencias
 
+### 📚 Documentación de Desarrollo (⭐ NUEVO)
+
+| Documento | Descripción | Link |
+|-----------|-------------|------|
+| **Directivas y Patrones** | Guía completa de directivas obligatorias, patrones de diseño y buenas prácticas | [ADMIN-PORTAL-BEST-PRACTICES.md](./guias/ADMIN-PORTAL-BEST-PRACTICES.md) |
+| **Troubleshooting** | Errores comunes y soluciones | [Sección 8](./guias/ADMIN-PORTAL-BEST-PRACTICES.md#8-troubleshooting) |
+| **FAQ** | Preguntas frecuentes | [Sección 9](./guias/ADMIN-PORTAL-BEST-PRACTICES.md#9-faq) |
+| **Inconsistencias** | Problemas conocidos y plan de migración | [Sección 10](./guias/ADMIN-PORTAL-BEST-PRACTICES.md#10-inconsistencias-conocidas) |
+| **Inventario Backend** | Controllers, Services, DTOs | [Sección 6](./guias/ADMIN-PORTAL-BEST-PRACTICES.md#6-inventario-backend) |
+| **Inventario Frontend** | Páginas, Hooks, Componentes | [Sección 7](./guias/ADMIN-PORTAL-BEST-PRACTICES.md#7-inventario-frontend) |
+
 ### Documentación de Épica
 - **Mapa de Épica:** Ver `_MAP.md`
 - **User Stories:** Ver `/historias-usuario/`
+- **Arquitectura Técnica:** Ver `especificaciones/ET-EXT-002-ARQUITECTURA-TECNICA.md`
 - **Análisis de Alcance y Costos:** Ver `/docs-analysis/.../ANALISIS-ALCANCE-Y-COSTOS.md`
 - **Roadmap General:** Ver `../../../roadmap/ROADMAP-GENERAL.md`
 - **Relación con Portal de Maestros (EXT-001):** Ver `../EXT-001-portal-maestros/`

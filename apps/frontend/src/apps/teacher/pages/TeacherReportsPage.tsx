@@ -40,6 +40,54 @@ interface ReportStats {
   averageStudentsPerReport: number;
 }
 
+// API response interfaces (snake_case from backend)
+interface ApiReportMetadata {
+  id: string;
+  report_name: string;
+  report_type: string;
+  report_format: string;
+  student_count: number;
+  period_start: string | null;
+  period_end: string | null;
+  generated_at: string;
+}
+
+interface ApiReportStats {
+  total_reports_generated: number;
+  last_generated_date: string | null;
+  most_used_format: string | null;
+  avg_students_per_report: number;
+}
+
+// Transform API response to frontend format
+const transformReportMetadata = (data: ApiReportMetadata): RecentReport => {
+  // Format period from dates
+  let period = '';
+  if (data.period_start && data.period_end) {
+    const startDate = new Date(data.period_start);
+    const endDate = new Date(data.period_end);
+    period = `${startDate.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })} - ${endDate.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}`;
+  }
+
+  return {
+    id: data.id,
+    name: data.report_name,
+    type: data.report_type as ReportType,
+    format: data.report_format as ReportFormat,
+    generatedAt: data.generated_at,
+    studentCount: data.student_count,
+    period: period || 'Sin período definido',
+    size: 'N/A', // Size not available in metadata response
+  };
+};
+
+const transformReportStats = (data: ApiReportStats): ReportStats => ({
+  totalReportsGenerated: data.total_reports_generated,
+  lastGeneratedDate: data.last_generated_date || new Date().toISOString(),
+  mostUsedFormat: (data.most_used_format || 'pdf') as ReportFormat,
+  averageStudentsPerReport: data.avg_students_per_report,
+});
+
 /**
  * TeacherReportsPage - Página de reportes y estadísticas
  *
@@ -79,6 +127,7 @@ export default function TeacherReportsPage() {
   // Cargar aulas y datos iniciales
   useEffect(() => {
     loadInitialData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Cargar estudiantes cuando se selecciona un aula
@@ -139,8 +188,12 @@ export default function TeacherReportsPage() {
 
   const loadRecentReports = async () => {
     try {
-      const response = await axiosInstance.get(API_ENDPOINTS.teacher.reports.recent);
-      setRecentReports(response.data);
+      const response = await axiosInstance.get<ApiReportMetadata[]>(
+        API_ENDPOINTS.teacher.reports.recent,
+      );
+      // Transform snake_case API response to camelCase frontend format
+      const transformedReports = response.data.map(transformReportMetadata);
+      setRecentReports(transformedReports);
     } catch (error) {
       console.error('Error loading recent reports:', error);
       // Fallback con datos mock
@@ -181,8 +234,10 @@ export default function TeacherReportsPage() {
 
   const loadReportStats = async () => {
     try {
-      const response = await axiosInstance.get(API_ENDPOINTS.teacher.reports.stats);
-      setReportStats(response.data);
+      const response = await axiosInstance.get<ApiReportStats>(API_ENDPOINTS.teacher.reports.stats);
+      // Transform snake_case API response to camelCase frontend format
+      const transformedStats = transformReportStats(response.data);
+      setReportStats(transformedStats);
     } catch (error) {
       console.error('Error loading report stats:', error);
       // Fallback con datos mock

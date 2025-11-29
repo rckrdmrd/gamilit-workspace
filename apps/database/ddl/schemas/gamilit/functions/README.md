@@ -2,7 +2,8 @@
 
 **Schema:** `gamilit`
 **Propósito:** Funciones y utilidades compartidas del sistema GAMILIT
-**Total Funciones:** 16
+**Total Funciones:** 26
+**Última actualización:** 2025-11-28
 
 ---
 
@@ -212,6 +213,116 @@ Funciones de validación de datos de entrada.
 
 ---
 
+### 7. Funciones de Actualización de Misiones (v2.5.0)
+
+Funciones trigger que actualizan automáticamente el progreso de misiones basándose en eventos del sistema.
+
+**Documentación:** [`docs/sistema-recompensas/07-CORRECCION-SISTEMA-MISIONES.md`](../../../../../../docs/sistema-recompensas/07-CORRECCION-SISTEMA-MISIONES.md)
+
+#### `update_missions_on_exercise_complete()`
+
+**Archivo:** `17-update_missions_on_exercise_complete.sql`
+**Tipo:** TRIGGER FUNCTION
+**Tabla origen:** `progress_tracking.exercise_attempts`
+**Objetivo:** `complete_exercises`
+**Descripción:** Incrementa contador de ejercicios completados al insertar nuevo attempt correcto
+
+---
+
+#### `initialize_user_missions()`
+
+**Archivo:** `18-initialize_user_missions.sql`
+**Tipo:** FUNCTION
+**Propósito:** Inicializa misiones diarias/semanales para nuevos usuarios
+
+---
+
+#### `update_missions_on_correct_streak()`
+
+**Archivo:** `19-update_missions_on_correct_streak.sql`
+**Tipo:** TRIGGER FUNCTION
+**Tabla origen:** `progress_tracking.exercise_attempts`
+**Objetivo:** `correct_streak`
+**Descripción:** Calcula y actualiza racha de ejercicios correctos consecutivos
+
+---
+
+#### `update_module_progress_on_submission_graded()`
+
+**Archivo:** `20-update_module_progress_on_submission_graded.sql`
+**Tipo:** TRIGGER FUNCTION
+**Tabla origen:** `progress_tracking.exercise_submissions`
+**Descripción:** Actualiza progreso de módulo cuando una submission es calificada
+
+---
+
+#### `update_missions_on_use_comodines()` ✅ v2.5.0
+
+**Archivo:** `21-update_missions_on_use_comodines.sql`
+**Tipo:** TRIGGER FUNCTION
+**Tabla origen:** `gamification_system.comodin_usage_log`
+**Objetivo:** `use_comodines`
+**Descripción:** Incrementa contador de comodines usados (+1 por uso)
+
+---
+
+#### `update_missions_on_earn_xp()` ✅ v2.5.0
+
+**Archivo:** `22-update_missions_on_earn_xp.sql`
+**Tipo:** TRIGGER FUNCTION
+**Tabla origen:** `gamification_system.user_stats`
+**Evento:** AFTER UPDATE (cuando total_xp aumenta)
+**Objetivo:** `earn_xp`
+**Descripción:** Incrementa contador de XP ganado con la cantidad de XP nueva
+
+---
+
+#### `update_missions_on_daily_streak()` ✅ v2.5.0
+
+**Archivo:** `23-update_missions_on_daily_streak.sql`
+**Tipo:** TRIGGER FUNCTION
+**Tabla origen:** `gamification_system.user_stats`
+**Evento:** AFTER UPDATE (cuando current_streak cambia)
+**Objetivo:** `daily_streak`
+**Descripción:** Establece current = current_streak (valor absoluto, no incrementa)
+**Nota:** Protege misiones completadas de "descompletarse"
+
+---
+
+#### `update_missions_on_perfect_scores()` ✅ v2.5.0
+
+**Archivo:** `24-update_missions_on_perfect_scores.sql`
+**Tipo:** TRIGGER FUNCTION
+**Tabla origen:** `progress_tracking.exercise_attempts`
+**Evento:** AFTER INSERT (cuando is_correct=true AND score=100)
+**Objetivo:** `perfect_scores`
+**Descripción:** Incrementa contador de scores perfectos (+1 por score 100)
+
+---
+
+#### `update_missions_on_complete_modules()` ✅ v2.5.0
+
+**Archivo:** `25-update_missions_on_complete_modules.sql`
+**Tipo:** TRIGGER FUNCTION
+**Tabla origen:** `progress_tracking.module_progress`
+**Evento:** AFTER UPDATE (cuando status cambia a 'completed')
+**Objetivo:** `complete_modules`
+**Descripción:** Incrementa contador de módulos completados (+1 por módulo)
+
+---
+
+#### `update_missions_on_explore_modules()` ✅ v2.5.0
+
+**Archivo:** `26-update_missions_on_explore_modules.sql`
+**Tipo:** TRIGGER FUNCTION
+**Tabla origen:** `progress_tracking.module_progress`
+**Evento:** AFTER INSERT OR UPDATE
+**Objetivo:** `explore_modules`
+**Descripción:** Tracking de módulos únicos visitados (usa array modules_visited)
+**Nota:** Solo cuenta cada módulo UNA vez, incluso si se visita múltiples veces
+
+---
+
 ## Convenciones de Nomenclatura
 
 - **Funciones de inicialización:** `initialize_*`
@@ -219,6 +330,7 @@ Funciones de validación de datos de entrada.
 - **Funciones de validación:** `validate_*`
 - **Funciones de contexto:** `get_*`, `is_*`
 - **Funciones de configuración:** `set_*`
+- **Funciones de misiones:** `update_missions_on_*`
 
 ---
 
@@ -246,5 +358,5 @@ Funciones de validación de datos de entrada.
 
 ---
 
-**Última actualización:** 2025-11-24
-**Mantenido por:** Database-Agent
+**Última actualización:** 2025-11-28
+**Mantenido por:** Architecture-Analyst

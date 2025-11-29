@@ -90,7 +90,7 @@ export class ExerciseResponsesController {
   })
   async getAttempts(
     @Query() query: GetAttemptsQueryDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<AttemptsListResponseDto> {
     const userId = req.user.id;
 
@@ -133,7 +133,7 @@ export class ExerciseResponsesController {
   })
   async getAttemptDetail(
     @Param('id') id: string,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<AttemptDetailDto> {
     const userId = req.user.id;
 
@@ -175,7 +175,7 @@ export class ExerciseResponsesController {
   })
   async getAttemptsByStudent(
     @Param('studentId') studentId: string,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<AttemptResponseDto[]> {
     const userId = req.user.id;
 
@@ -213,7 +213,7 @@ export class ExerciseResponsesController {
   })
   async getExerciseResponses(
     @Param('exerciseId') exerciseId: string,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<AttemptsListResponseDto> {
     const userId = req.user.id;
 

@@ -20,7 +20,7 @@ export class UpdateContentAuthorDto {
   @IsOptional()
   @IsString()
   @MinLength(2)
-  display_name?: string;
+    display_name?: string;
 
   /**
    * Biografía del autor
@@ -30,7 +30,7 @@ export class UpdateContentAuthorDto {
   })
   @IsOptional()
   @IsString()
-  bio?: string;
+    bio?: string;
 
   /**
    * Áreas de expertise del autor
@@ -42,5 +42,5 @@ export class UpdateContentAuthorDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  expertise_areas?: string[];
+    expertise_areas?: string[];
 }

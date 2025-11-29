@@ -11,13 +11,13 @@ export class MediaResponseDto {
    * Identificador único del recurso
    */
   @Expose()
-  id!: string;
+    id!: string;
 
   /**
    * ID del tenant
    */
   @Expose()
-  tenant_id?: string;
+    tenant_id?: string;
 
   // =====================================================
   // BASIC INFORMATION
@@ -27,19 +27,19 @@ export class MediaResponseDto {
    * Título del recurso
    */
   @Expose()
-  title!: string;
+    title!: string;
 
   /**
    * Descripción del recurso
    */
   @Expose()
-  description?: string;
+    description?: string;
 
   /**
    * Texto alternativo para accesibilidad
    */
   @Expose()
-  alt_text?: string;
+    alt_text?: string;
 
   // =====================================================
   // MEDIA TYPE & FORMAT
@@ -50,19 +50,19 @@ export class MediaResponseDto {
    * ENUM: image, video, audio, document, interactive, animation
    */
   @Expose()
-  media_type!: MediaTypeEnum;
+    media_type!: MediaTypeEnum;
 
   /**
    * Formato del archivo
    */
   @Expose()
-  file_format?: string;
+    file_format?: string;
 
   /**
    * Tamaño del archivo en bytes
    */
   @Expose()
-  file_size_bytes?: number;
+    file_size_bytes?: number;
 
   // =====================================================
   // STORAGE & DISTRIBUTION
@@ -72,19 +72,19 @@ export class MediaResponseDto {
    * URL del archivo
    */
   @Expose()
-  url!: string;
+    url!: string;
 
   /**
    * URL de la miniatura
    */
   @Expose()
-  thumbnail_url?: string;
+    thumbnail_url?: string;
 
   /**
    * URL de CDN
    */
   @Expose()
-  cdn_url?: string;
+    cdn_url?: string;
 
   // =====================================================
   // MEDIA PROPERTIES
@@ -94,25 +94,25 @@ export class MediaResponseDto {
    * Ancho en píxeles
    */
   @Expose()
-  width?: number;
+    width?: number;
 
   /**
    * Alto en píxeles
    */
   @Expose()
-  height?: number;
+    height?: number;
 
   /**
    * Duración en segundos
    */
   @Expose()
-  duration_seconds?: number;
+    duration_seconds?: number;
 
   /**
    * Resolución del archivo
    */
   @Expose()
-  resolution?: string;
+    resolution?: string;
 
   // =====================================================
   // CATEGORIZATION & TAGGING
@@ -122,19 +122,19 @@ export class MediaResponseDto {
    * Categoría del recurso
    */
   @Expose()
-  category?: string;
+    category?: string;
 
   /**
    * Etiquetas de búsqueda
    */
   @Expose()
-  tags?: string[];
+    tags?: string[];
 
   /**
    * Palabras clave
    */
   @Expose()
-  keywords?: string[];
+    keywords?: string[];
 
   // =====================================================
   // PROCESSING & STATUS
@@ -145,7 +145,7 @@ export class MediaResponseDto {
    * ENUM: uploading, processing, ready, error, optimizing
    */
   @Expose()
-  processing_status!: ProcessingStatusEnum;
+    processing_status!: ProcessingStatusEnum;
 
   // =====================================================
   // VISIBILITY & USAGE
@@ -155,25 +155,25 @@ export class MediaResponseDto {
    * Si el recurso es público
    */
   @Expose()
-  is_public!: boolean;
+    is_public!: boolean;
 
   /**
    * Si el recurso está activo
    */
   @Expose()
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Módulos que usan este recurso (referencias débiles)
    */
   @Expose()
-  used_in_modules?: string[];
+    used_in_modules?: string[];
 
   /**
    * Ejercicios que usan este recurso (referencias débiles)
    */
   @Expose()
-  used_in_exercises?: string[];
+    used_in_exercises?: string[];
 
   // =====================================================
   // LICENSING & ATTRIBUTION
@@ -183,25 +183,25 @@ export class MediaResponseDto {
    * Usuario que creó el recurso
    */
   @Expose()
-  created_by?: string;
+    created_by?: string;
 
   /**
    * Información de copyright
    */
   @Expose()
-  copyright_info?: string;
+    copyright_info?: string;
 
   /**
    * Licencia del recurso
    */
   @Expose()
-  license?: string;
+    license?: string;
 
   /**
    * Atribución requerida
    */
   @Expose()
-  attribution?: string;
+    attribution?: string;
 
   // =====================================================
   // METADATA & AUDIT
@@ -211,17 +211,17 @@ export class MediaResponseDto {
    * Metadatos adicionales
    */
   @Expose()
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   /**
    * Fecha de creación
    */
   @Expose()
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de última actualización
    */
   @Expose()
-  updated_at!: Date;
+    updated_at!: Date;
 }

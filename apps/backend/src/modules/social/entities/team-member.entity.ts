@@ -36,7 +36,7 @@ export class TeamMember {
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   // =====================================================
   // CORE IDENTIFIERS
@@ -47,13 +47,13 @@ export class TeamMember {
    * UNIQUE con user_id: Cada usuario aparece una vez por equipo
    */
   @Column({ type: 'uuid' })
-  team_id!: string;
+    team_id!: string;
 
   /**
    * ID del usuario miembro (FK → auth.users)
    */
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   // =====================================================
   // ROLE & PERMISSIONS
@@ -68,7 +68,7 @@ export class TeamMember {
     length: 20,
     default: TeamMemberRoleEnum.MEMBER,
   })
-  role!: string;
+    role!: string;
 
   // =====================================================
   // TIMESTAMPS
@@ -78,7 +78,7 @@ export class TeamMember {
    * Fecha y hora de ingreso al equipo
    */
   @Column({ type: 'timestamp with time zone' })
-  joined_at!: Date;
+    joined_at!: Date;
 
   /**
    * Fecha y hora de salida del equipo
@@ -86,5 +86,5 @@ export class TeamMember {
    * NOT NULL = miembro retirado
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  left_at?: Date;
+    left_at?: Date;
 }

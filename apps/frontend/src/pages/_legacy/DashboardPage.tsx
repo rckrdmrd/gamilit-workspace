@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// Legacy Dashboard - unused vars are intentional in error handling patterns
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Zap, Coins, TrendingUp, AlertCircle } from 'lucide-react';

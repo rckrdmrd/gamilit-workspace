@@ -11,7 +11,7 @@ export class ListContentDto {
   })
   @IsOptional()
   @IsEnum(['module', 'exercise', 'template'])
-  content_type?: 'module' | 'exercise' | 'template';
+    content_type?: 'module' | 'exercise' | 'template';
 
   @ApiPropertyOptional({
     description: 'Filter by content status',
@@ -20,7 +20,7 @@ export class ListContentDto {
   })
   @IsOptional()
   @IsEnum(ContentStatusEnum)
-  status?: ContentStatusEnum;
+    status?: ContentStatusEnum;
 
   @ApiPropertyOptional({
     description: 'Search by title or description',
@@ -28,7 +28,7 @@ export class ListContentDto {
   })
   @IsOptional()
   @IsString()
-  search?: string;
+    search?: string;
 
   @ApiPropertyOptional({
     description: 'Filter by creator user ID',
@@ -36,7 +36,7 @@ export class ListContentDto {
   })
   @IsOptional()
   @IsString()
-  created_by?: string;
+    created_by?: string;
 
   @ApiPropertyOptional({
     description: 'Page number for pagination',
@@ -47,7 +47,7 @@ export class ListContentDto {
   @IsInt()
   @Min(1)
   @Type(() => Number)
-  page?: number;
+    page?: number;
 
   @ApiPropertyOptional({
     description: 'Number of items per page',
@@ -58,5 +58,5 @@ export class ListContentDto {
   @IsInt()
   @Min(1)
   @Type(() => Number)
-  limit?: number;
+    limit?: number;
 }

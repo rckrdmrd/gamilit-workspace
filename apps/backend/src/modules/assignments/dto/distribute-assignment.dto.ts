@@ -23,7 +23,7 @@ export class ClassroomDistributionDto {
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @IsString()
-  classroomId!: string;
+    classroomId!: string;
 
   @ApiPropertyOptional({
     description: 'Override deadline for this specific classroom (ISO date string)',
@@ -31,7 +31,7 @@ export class ClassroomDistributionDto {
   })
   @IsOptional()
   @IsDateString()
-  deadlineOverride?: string;
+    deadlineOverride?: string;
 }
 
 export class DistributeAssignmentDto {
@@ -50,7 +50,7 @@ export class DistributeAssignmentDto {
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => ClassroomDistributionDto)
-  classrooms!: ClassroomDistributionDto[];
+    classrooms!: ClassroomDistributionDto[];
 
   @ApiPropertyOptional({
     description: 'Optional: Array of individual student IDs to assign directly',
@@ -59,7 +59,7 @@ export class DistributeAssignmentDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  studentIds?: string[];
+    studentIds?: string[];
 
   @ApiPropertyOptional({
     description: 'Publish assignment after distributing',
@@ -68,7 +68,7 @@ export class DistributeAssignmentDto {
   })
   @IsOptional()
   @IsBoolean()
-  publishOnDistribute?: boolean;
+    publishOnDistribute?: boolean;
 
   @ApiPropertyOptional({
     description: 'Send notifications to students (mock implementation)',
@@ -77,7 +77,7 @@ export class DistributeAssignmentDto {
   })
   @IsOptional()
   @IsBoolean()
-  sendNotifications?: boolean;
+    sendNotifications?: boolean;
 }
 
 export class DistributeAssignmentResponseDto {
@@ -85,41 +85,41 @@ export class DistributeAssignmentResponseDto {
     description: 'Number of classrooms successfully distributed to',
     example: 5,
   })
-  classroomsSuccess!: number;
+    classroomsSuccess!: number;
 
   @ApiProperty({
     description: 'Number of classrooms that failed',
     example: 0,
   })
-  classroomsFailed!: number;
+    classroomsFailed!: number;
 
   @ApiProperty({
     description: 'Number of students successfully assigned',
     example: 10,
   })
-  studentsSuccess!: number;
+    studentsSuccess!: number;
 
   @ApiProperty({
     description: 'Number of students that failed',
     example: 0,
   })
-  studentsFailed!: number;
+    studentsFailed!: number;
 
   @ApiProperty({
     description: 'Whether assignment is published',
     example: true,
   })
-  published!: boolean;
+    published!: boolean;
 
   @ApiPropertyOptional({
     description: 'Timestamp when assignment was published (if published)',
     example: '2025-11-12T10:00:00.000Z',
   })
-  publishedAt?: string;
+    publishedAt?: string;
 
   @ApiProperty({
     description: 'Whether notifications were sent',
     example: false,
   })
-  notificationsSent!: boolean;
+    notificationsSent!: boolean;
 }

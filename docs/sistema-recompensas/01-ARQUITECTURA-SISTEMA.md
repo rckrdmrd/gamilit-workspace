@@ -1,7 +1,7 @@
 # 🏗️ ARQUITECTURA DEL SISTEMA DE RECOMPENSAS Y PROGRESO
 
-**Versión:** v2.3.0
-**Fecha:** 2025-11-12
+**Versión:** v2.8.0
+**Fecha:** 2025-11-29
 **Estado:** ✅ IMPLEMENTADO Y VERIFICADO
 
 ---
@@ -117,17 +117,21 @@ Implementar un sistema completo de **gamificación educativa** que:
 
 ### Solución: Dos Tablas Complementarias
 
-#### 📝 `exercise_submissions` - Tabla de Workflow
+#### 📝 `exercise_submissions` - Tabla de Workflow y Revisión Manual
 
-**Propósito:** Gestión del ciclo de vida de una submission
+**Propósito:** Gestión del ciclo de vida de submissions que requieren calificación manual
 
 ```sql
 CREATE TABLE progress_tracking.exercise_submissions (
     id UUID PRIMARY KEY,
     user_id UUID NOT NULL,
     exercise_id UUID NOT NULL,
-    status VARCHAR(20), -- 'draft', 'submitted', 'graded'
+    status VARCHAR(20), -- 'draft', 'submitted', 'graded', 'reviewed'
     answers JSONB,
+    answer_data JSONB,
+    is_correct BOOLEAN DEFAULT false,
+    xp_earned INTEGER DEFAULT 0,
+    ml_coins_earned INTEGER DEFAULT 0,
     graded_at TIMESTAMP,
     feedback TEXT,
     created_at TIMESTAMP,
@@ -137,9 +141,18 @@ CREATE TABLE progress_tracking.exercise_submissions (
 
 **Flujo:**
 ```
-DRAFT → SUBMITTED → GRADED
-  ↓         ↓          ↓
-Save     Submit    Teacher Review
+DRAFT → SUBMITTED → GRADED → REVIEWED
+  ↓         ↓          ↓          ↓
+Save     Submit    Teacher    Final
+```
+
+**Trigger Asociado (v2.8.0):**
+```sql
+CREATE TRIGGER trg_update_user_stats_on_submission
+  AFTER UPDATE ON exercise_submissions
+  FOR EACH ROW
+  WHEN (status IN ('graded','reviewed') AND is_correct = true)
+  EXECUTE FUNCTION gamilit.update_user_stats_on_submission_graded();
 ```
 
 ---
@@ -183,28 +196,58 @@ CREATE TRIGGER trg_update_user_stats_on_exercise
 
 ---
 
-### Relación Entre Tablas
+### Relación Entre Tablas (v2.8.0 - Dual Trigger)
 
 ```
+┌──────────────────────────────────────────────────────────────────┐
+│              ARQUITECTURA BD-FIRST (Triggers = Verdad)           │
+└──────────────────────────────────────────────────────────────────┘
+
 ┌──────────────────────┐
 │ exercise_submissions │
-│ (1 submission)       │
+│ (Revisión manual)    │
 └──────────┬───────────┘
-           │
-           │ 1:N (un submission puede tener múltiples attempts)
+           │ UPDATE (status='graded', is_correct=true)
            │
            ▼
-┌──────────────────────┐       TRIGGER        ┌──────────────┐
-│ exercise_attempts    │──────────────────────▶│ user_stats   │
-│ (N attempts)         │  update_user_stats   │ (1 record)   │
-└──────────────────────┘                      └──────────────┘
+     TRIGGER 31 ─────────────────────────────────────────┐
+     trg_update_user_stats_on_submission                  │
+           │                                              │
+           ▼                                              ▼
+     ┌─────────────────────────────────────────────────────┐
+     │              update_user_stats_on_                  │
+     │              submission_graded()                    │
+     └─────────────────────┬───────────────────────────────┘
+                           │
+                           ▼
+┌──────────────────────┐       ┌──────────────────────────────────┐
+│ exercise_attempts    │       │         user_stats               │
+│ (Autocorregibles)    │       │   total_xp, ml_coins, ...        │
+└──────────┬───────────┘       └──────────────┬───────────────────┘
+           │ INSERT                           │
+           │                                  │ UPDATE total_xp
+           ▼                                  ▼
+     TRIGGER 21 ────────────┐           TRIGGER 27
+     trg_update_user_stats_ │           trg_update_missions_on_earn_xp
+     on_exercise            │                 │
+           │                │                 ▼
+           ▼                │           ┌────────────────────────┐
+     ┌─────────────────┐    │           │ update_missions_on_    │
+     │ update_user_    │────┘           │ earn_xp()              │
+     │ stats_on_       │                │ → Actualiza misiones   │
+     │ exercise_       │                │   de tipo earn_xp      │
+     │ complete()      │                └────────────────────────┘
+     └─────────────────┘
 ```
 
 **Ventajas:**
+- ✅ **BD-first Architecture**: Triggers como fuente de verdad
+- ✅ **Dual Path**: Ambos flujos actualizan user_stats y misiones
 - ✅ **Separation of Concerns**: Cada tabla tiene una responsabilidad clara
-- ✅ **Atomic Rewards**: Un INSERT en attempts = recompensas otorgadas
-- ✅ **History Tracking**: Se mantiene historial completo de attempts
-- ✅ **No Duplicate Rewards**: Un attempt = una actualización de stats
+- ✅ **Atomic Rewards**: Inserción/Actualización = recompensas otorgadas automáticamente
+- ✅ **History Tracking**: Se mantiene historial completo de attempts/submissions
+- ✅ **No Duplicate Rewards**: Anti-refire en triggers previene duplicados
+- ✅ **Cascade to Missions**: Actualización de XP dispara automáticamente misiones earn_xp
 
 ---
 
@@ -444,6 +487,6 @@ async findByUserId(userId: string) { ... }
 
 ---
 
-**Última actualización:** 2025-11-12
+**Última actualización:** 2025-11-29
 **Autor:** Sistema Gamilit
-**Versión:** 1.0
+**Versión:** 2.8.0

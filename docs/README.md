@@ -4,7 +4,33 @@
 **Período:** Agosto 2024 - Noviembre 2025
 **Presupuesto Total:** $601,600 MXN (incluye $15,000 USD @ $20/USD)
 **Story Points:** 714 SP
-**Estado:** ✅ 87.5% Completado (14/16 épicas completas)
+**Estado:** ✅ 75% Completado (12/16 épicas completas MVP)
+**Última actualización:** 2025-11-29
+
+---
+
+## 🎯 ALCANCE MVP DEFINIDO
+
+### ✅ EN ALCANCE MVP
+
+| Componente | Alcance | Estado |
+|-----------|---------|--------|
+| **Módulos Educativos** | Módulos 1-3 (15 ejercicios) | ✅ Implementados |
+| **Portal Student** | 10 páginas funcionales | ✅ Core completo |
+| **Portal Teacher** | 10 páginas funcionales (US-PM-000 a US-PM-006) | ✅ Funcional |
+| **Portal Admin** | 7 páginas funcionales (P0+P1: AE-000 a AE-008) | ✅ Funcional |
+| **Épicas MVP** | EXT-001 a EXT-006 (100%) | ✅ Completas |
+| **Sistema Gamificación** | Rangos Maya, ML Coins, Achievements | ✅ v2.3.0 |
+| **Base de Datos** | 14 schemas modulares | ✅ Migrada |
+
+### ⏳ EN BACKLOG (Fuera del MVP)
+
+| Componente | Descripción | Estado |
+|-----------|-------------|--------|
+| **Módulos 4-5** | Lectura Digital + Producción (8 ejercicios) | ⏳ Diseñados |
+| **Épicas Parciales** | EXT-007 a EXT-011 (30-50%) | ⏳ Parciales |
+| **Admin P2** | US-AE-005, US-AE-007 | ⏳ Pendientes |
+| **10 tipos ejercicios** | Mecánicas avanzadas | ⏳ Documentados |
 
 ---
 
@@ -12,14 +38,23 @@
 
 ### Documentación Organizada por Fases
 
-El proyecto está documentado en **3 fases consecutivas** más una carpeta de **implementación específica**:
+El proyecto está documentado en **4 fases consecutivas** más carpetas de **implementación específica** y **referencia**:
 
 ```
 docs/
-├── 01-fase-alcance-inicial/     (Fase 1 - Fundamentos)
-├── 02-fase-robustecimiento/     (Fase 2 - BD Modular)
-├── 03-fase-extensiones/         (Fase 3 - Features Enterprise)
-└── sistema-recompensas/         (Implementación v2.3.0)
+├── 00-vision-general/           (Referencia - Visión y Arquitectura)
+├── 01-fase-alcance-inicial/     (Fase 1 - Fundamentos MVP)
+├── 02-fase-robustecimiento/     (Fase 2 - BD Modular MVP)
+├── 03-fase-extensiones/         (Fase 3 - Features Enterprise MVP)
+├── 04-fase-backlog/             (Fase 4 - ⏳ Backlog Futuro)
+├── sistema-recompensas/         (Implementación v2.3.0)
+├── student-portal/              (Portal Estudiante)
+├── database/                    (Documentación BD)
+├── 90-transversal/              (Documentación Transversal)
+├── 95-guias-desarrollo/         (Guías de Desarrollo)
+├── 96-quick-reference/          (Referencias Rápidas)
+├── 97-adr/                      (Architecture Decision Records)
+└── 98-standards/                (Estándares del Proyecto)
 ```
 
 ---
@@ -88,16 +123,18 @@ docs/
 
 ---
 
-## 📂 Fase 3: Extensiones
+## 📂 Fase 3: Extensiones (MVP)
 
 **Duración:** Mes 3-4 (Octubre-Noviembre 2024)
-**Presupuesto:** $441,600 MXN ($141,600 MXN + $15,000 USD @ $20/USD)
-**Story Points:** 404 SP
-**Épicas:** 10 (6 completas ✅, 4 parciales 🟡)
+**Presupuesto:** $141,600 MXN
+**Story Points:** 304 SP
+**Épicas MVP:** 6 completas ✅
 
 ### 📁 [03-fase-extensiones/](./03-fase-extensiones/)
 
-**Objetivo:** Features enterprise-ready
+**Objetivo:** Features enterprise-ready para MVP
+
+#### ✅ Épicas MVP (100% Completas)
 
 | Épica | Descripción | Estado | Documentación |
 |-------|-------------|--------|---------------|
@@ -107,19 +144,52 @@ docs/
 | **EXT-004** | Perfiles Avanzados | ✅ 100% | [📂](./03-fase-extensiones/EXT-004-perfiles/) |
 | **EXT-005** | Reportería (PDF/Excel) | ✅ 100% | [📂](./03-fase-extensiones/EXT-005-reportes/) |
 | **EXT-006** | CMS de Contenido | ✅ 100% | [📂](./03-fase-extensiones/EXT-006-contenido/) |
-| **EXT-007** | LTI Integration | 🟡 40% | [📂](./03-fase-extensiones/EXT-007-lti-integration/) |
-| **EXT-008** | White Label | 🟡 30% | [📂](./03-fase-extensiones/EXT-008-white-label/) |
-| **EXT-009** | Peer Challenges | 🟡 50% | [📂](./03-fase-extensiones/EXT-009-peer-challenges/) |
-| **EXT-010** | Parent Notifications | 🟡 35% | [📂](./03-fase-extensiones/EXT-010-parent-notifications/) |
 
-**Resultados Fase 3:**
+**Resultados Fase 3 MVP:**
 - ✅ Portal maestros funcional (crítico para adopción institucional)
 - ✅ Admin tools enterprise
 - ✅ Sistema de notificaciones multi-canal
-- ✅ Test coverage: 92% (vs 18% en Fase 1)
-- 🟡 4 épicas enterprise al 30-50% (por priorización)
+- ✅ 6/6 épicas MVP completadas
 
 **📄 Ver detalles completos:** [Fase 3 README](./03-fase-extensiones/README.md)
+
+---
+
+## 📂 Fase 4: Backlog (Fuera del MVP)
+
+**Estado:** ⏳ Planificación y Diseño
+**Épicas:** 5 parciales (30-50%)
+**Módulos:** 2 pendientes (Módulos 4-5)
+
+### 📁 [04-fase-backlog/](./04-fase-backlog/)
+
+**Objetivo:** Funcionalidad futura diseñada pero no implementada en MVP
+
+#### ⏳ Épicas Parciales (Backlog)
+
+| Épica | Descripción | Avance | Documentación |
+|-------|-------------|--------|---------------|
+| **EXT-007** | LTI Integration | ⏳ 40% | [📂](./03-fase-extensiones/EXT-007-lti-integration/) |
+| **EXT-008** | White Label | ⏳ 30% | [📂](./03-fase-extensiones/EXT-008-white-label/) |
+| **EXT-009** | Peer Challenges | ⏳ 50% | [📂](./03-fase-extensiones/EXT-009-peer-challenges/) |
+| **EXT-010** | Parent Notifications | ⏳ 35% | [📂](./03-fase-extensiones/EXT-010-parent-notifications/) |
+| **EXT-011** | Parent Portal | ⏳ 35% | [📂](./03-fase-extensiones/EXT-011-parent-portal/) |
+
+#### ⏳ Módulos Educativos Pendientes
+
+| Módulo | Descripción | Ejercicios | Razón Backlog |
+|--------|-------------|------------|---------------|
+| **Módulo 4** | Lectura Digital y Multimodal | 5 | Requiere IA/visión computacional |
+| **Módulo 5** | Producción y Expresión | 3 | Requiere evaluación manual |
+
+#### ⏳ Admin Portal P2
+
+| User Story | Descripción | Estado |
+|-----------|-------------|--------|
+| US-AE-005 | Parametrización Gamificación | ⏳ Pendiente |
+| US-AE-007 | Asignación de Grupos a Maestros | ⏳ Pendiente |
+
+**📄 Ver detalles completos:** [Fase 4 README](./04-fase-backlog/README.md)
 
 ---
 
@@ -174,23 +244,28 @@ Ver: [EVOLUCION-SISTEMA-RECOMPENSAS.md](./01-fase-alcance-inicial/EAI-003-gamifi
 
 ## 📊 Resumen Consolidado del Proyecto
 
-### Cifras Globales
+### Cifras Globales MVP
 
-| Métrica | Valor |
-|---------|-------|
-| **Archivos Markdown** | 145+ documentos |
-| **Épicas Completadas** | 12/16 (75%) |
-| **Épicas Parciales** | 4/16 (25%) al 30-50% |
-| **Story Points Totales** | 714 SP |
-| **Presupuesto Planificado** | $265,000 MXN (estimado inicial) |
-| **Presupuesto Real** | $601,600 MXN (según individuales) |
-| **Duración** | 4 meses (Ago-Nov 2024) |
-| **Schemas BD** | 14 schemas modulares |
-| **Tablas BD** | 101 tablas |
-| **Índices BD** | 67 índices |
-| **Políticas RLS** | 24 políticas |
-| **Endpoints API** | 125+ endpoints |
-| **Componentes Frontend** | 200+ componentes |
+| Métrica | MVP | Backlog | Total |
+|---------|-----|---------|-------|
+| **Archivos Markdown** | 145+ | 20+ | 165+ |
+| **Épicas Completadas** | 12 (100%) | - | 12 |
+| **Épicas Parciales (Backlog)** | - | 5 (30-50%) | 5 |
+| **Módulos Educativos** | 3 | 2 | 5 |
+| **Story Points MVP** | 614 SP | 100 SP | 714 SP |
+| **Schemas BD** | 14 | - | 14 |
+| **Tablas BD** | 101 | - | 101 |
+| **Endpoints API MVP** | 125+ | 20+ | 145+ |
+| **Componentes Frontend** | 200+ | 30+ | 230+ |
+
+### Alcance MVP Claro
+
+| Componente | MVP ✅ | Backlog ⏳ |
+|-----------|--------|-----------|
+| **Módulos Educativos** | M1-M3 (15 ejercicios) | M4-M5 (8 ejercicios) |
+| **Épicas** | EXT-001 a EXT-006 | EXT-007 a EXT-011 |
+| **Portal Admin** | P0+P1 (7 páginas) | P2 (2 páginas) |
+| **Tipos de Ejercicios** | 15 mecánicas | 10 mecánicas |
 
 ### Estado de Test Coverage
 
@@ -391,7 +466,7 @@ Ver: [EVOLUCION-SISTEMA-RECOMPENSAS.md](./01-fase-alcance-inicial/EAI-003-gamifi
 - 62 funciones
 - 34 triggers
 
-**Fuente de métricas BD:** [DATABASE_INVENTORY.yml](./90-transversal/inventarios/DATABASE_INVENTORY.yml) (validación física 2025-11-11)
+**Fuente de métricas BD:** Ver inventarios en `orchestration/inventarios/` (validación física 2025-11-11)
 
 **Testing:**
 - Jest (unit tests)

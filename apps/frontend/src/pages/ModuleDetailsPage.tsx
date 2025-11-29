@@ -43,7 +43,6 @@ export const ModuleDetailsPage: React.FC = () => {
 
   // Loading states
   const [isLoadingModule, setIsLoadingModule] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_isLoadingProgress, setIsLoadingProgress] = useState(true);
   const [isLoadingExercises, setIsLoadingExercises] = useState(true);
 

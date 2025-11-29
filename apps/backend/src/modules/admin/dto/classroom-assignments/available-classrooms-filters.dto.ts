@@ -12,7 +12,7 @@ export class AvailableClassroomsFiltersDto {
   })
   @IsOptional()
   @IsString()
-  search?: string;
+    search?: string;
 
   @ApiPropertyOptional({
     description: 'Filter by education level',
@@ -21,7 +21,7 @@ export class AvailableClassroomsFiltersDto {
   })
   @IsOptional()
   @IsEnum(['primaria', 'secundaria', 'preparatoria'])
-  level?: string;
+    level?: string;
 
   @ApiPropertyOptional({
     description: 'Only return active classrooms',
@@ -31,5 +31,5 @@ export class AvailableClassroomsFiltersDto {
   @IsOptional()
   @IsBoolean()
   @Transform(({ value }) => value === 'true' || value === true)
-  activeOnly?: boolean;
+    activeOnly?: boolean;
 }

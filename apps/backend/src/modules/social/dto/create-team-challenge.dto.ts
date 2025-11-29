@@ -14,34 +14,34 @@ export class CreateTeamChallengeDto {
    * ID del equipo
    */
   @IsUUID('4')
-  team_id!: string;
+    team_id!: string;
 
   /**
    * ID del desafío/challenge
    */
   @IsUUID('4')
-  challenge_id!: string;
+    challenge_id!: string;
 
   /**
    * Estado del desafío
    */
   @IsOptional()
   @IsEnum(TeamChallengeStatusEnum)
-  status?: string;
+    status?: string;
 
   /**
    * Fecha de inicio del desafío
    */
   @IsOptional()
   @IsDateString()
-  started_at?: string;
+    started_at?: string;
 
   /**
    * Fecha de completación del desafío
    */
   @IsOptional()
   @IsDateString()
-  completed_at?: string;
+    completed_at?: string;
 
   /**
    * Puntuación obtenida
@@ -49,5 +49,5 @@ export class CreateTeamChallengeDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  score?: number;
+    score?: number;
 }

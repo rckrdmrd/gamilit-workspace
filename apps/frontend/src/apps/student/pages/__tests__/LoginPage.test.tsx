@@ -8,6 +8,7 @@
  * - Shows suspension reason if provided
  * - Inactive/suspended errors don't trigger CAPTCHA
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -67,7 +68,7 @@ describe('LoginPage', () => {
     return render(
       <BrowserRouter>
         <LoginPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
   };
 
@@ -130,7 +131,7 @@ describe('LoginPage', () => {
       const user = userEvent.setup();
 
       const inactiveError = new AccountInactiveError(
-        'Tu cuenta ha sido desactivada. Por favor, contacta a tu maestro.'
+        'Tu cuenta ha sido desactivada. Por favor, contacta a tu maestro.',
       );
       mockLogin.mockRejectedValueOnce(inactiveError);
 
@@ -157,9 +158,7 @@ describe('LoginPage', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/si crees que esto es un error/i)
-        ).toBeInTheDocument();
+        expect(screen.getByText(/si crees que esto es un error/i)).toBeInTheDocument();
       });
     });
 
@@ -297,7 +296,7 @@ describe('LoginPage', () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(/podrás acceder a tu cuenta una vez que finalice/i)
+          screen.getByText(/podrás acceder a tu cuenta una vez que finalice/i),
         ).toBeInTheDocument();
       });
     });

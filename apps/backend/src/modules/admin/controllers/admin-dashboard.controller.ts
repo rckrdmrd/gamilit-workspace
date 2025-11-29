@@ -36,7 +36,7 @@ export class AdminDashboardController {
       'Retrieve complete dashboard data including statistics and recent activity for the admin portal home page',
   })
   async getDashboard(): Promise<DashboardDataDto> {
-    return await this.adminDashboardService.getDashboard();
+    return this.adminDashboardService.getDashboard();
   }
 
   @Get('stats')
@@ -46,7 +46,7 @@ export class AdminDashboardController {
       'Retrieve only the dashboard statistics (users, organizations, exercises, etc.)',
   })
   async getDashboardStats(): Promise<DashboardStatsDto> {
-    return await this.adminDashboardService.getDashboardStats();
+    return this.adminDashboardService.getDashboardStats();
   }
 
   @Get('recent-activity')
@@ -58,7 +58,7 @@ export class AdminDashboardController {
   async getRecentActivity(
     @Query() query: RecentActivityQueryDto,
   ): Promise<PaginatedActivityDto> {
-    return await this.adminDashboardService.getRecentActivity(query);
+    return this.adminDashboardService.getRecentActivity(query);
   }
 
   @Get('user-stats')
@@ -68,7 +68,7 @@ export class AdminDashboardController {
       'Retrieve aggregated user statistics from admin_dashboard.user_stats_summary view including total users, active users, role breakdowns, etc.',
   })
   async getUserStatsSummary(): Promise<UserStatsSummaryDto> {
-    return await this.adminDashboardService.getUserStatsSummary();
+    return this.adminDashboardService.getUserStatsSummary();
   }
 
   @Get('organization-stats')
@@ -78,7 +78,7 @@ export class AdminDashboardController {
       'Retrieve aggregated organization/tenant statistics from admin_dashboard.organization_stats_summary view',
   })
   async getOrganizationStatsSummary(): Promise<OrganizationStatsSummaryDto> {
-    return await this.adminDashboardService.getOrganizationStatsSummary();
+    return this.adminDashboardService.getOrganizationStatsSummary();
   }
 
   @Get('moderation-queue')
@@ -88,7 +88,7 @@ export class AdminDashboardController {
       'Retrieve pending content moderation items from admin_dashboard.moderation_queue view, prioritized by severity',
   })
   async getModerationQueue(): Promise<PaginatedModerationQueueDto> {
-    return await this.adminDashboardService.getModerationQueue(50);
+    return this.adminDashboardService.getModerationQueue(50);
   }
 
   @Get('classroom-overview')
@@ -98,7 +98,7 @@ export class AdminDashboardController {
       'Retrieve comprehensive classroom statistics from admin_dashboard.classroom_overview view including student counts, assignments, and progress',
   })
   async getClassroomOverview(): Promise<PaginatedClassroomOverviewDto> {
-    return await this.adminDashboardService.getClassroomOverview(100);
+    return this.adminDashboardService.getClassroomOverview(100);
   }
 
   @Get('assignment-stats')
@@ -108,7 +108,7 @@ export class AdminDashboardController {
       'Retrieve assignment submission statistics from admin_dashboard.assignment_submission_stats view including submission rates and scores',
   })
   async getAssignmentSubmissionStats(): Promise<PaginatedAssignmentSubmissionStatsDto> {
-    return await this.adminDashboardService.getAssignmentSubmissionStats(100);
+    return this.adminDashboardService.getAssignmentSubmissionStats(100);
   }
 
   // =====================================================
@@ -133,7 +133,7 @@ export class AdminDashboardController {
   async getRecentActions(
     @Query() query: RecentActionsQueryDto,
   ): Promise<RecentActionDto[]> {
-    return await this.adminDashboardService.getRecentActions(query.limit);
+    return this.adminDashboardService.getRecentActions(query.limit);
   }
 
   /**
@@ -152,7 +152,7 @@ export class AdminDashboardController {
       'Alerts are sorted by severity (critical > high > medium > low).',
   })
   async getAlerts(): Promise<AlertDto[]> {
-    return await this.adminDashboardService.getAlerts();
+    return this.adminDashboardService.getAlerts();
   }
 
   /**
@@ -173,6 +173,6 @@ export class AdminDashboardController {
   async getUserActivity(
     @Query() query: UserActivityQueryDto,
   ): Promise<UserActivityDto> {
-    return await this.adminDashboardService.getUserActivity(query);
+    return this.adminDashboardService.getUserActivity(query);
   }
 }

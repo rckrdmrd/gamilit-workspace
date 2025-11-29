@@ -99,336 +99,191 @@ Usamos el formato [Michael Nygard ADR template](https://github.com/joelparkerhen
 
 ### ✅ ADR-0001: Adopción de Arquitectura Monorepo
 
-**Date:** 2025-11-01
-**Status:** ✅ Accepted and Implemented
-**Deciders:** Tech Lead, Backend Team, Frontend Team
+**Date:** 2025-11-01 | **Status:** ✅ Implemented | **Category:** Architecture
 
-**Decisión:** Consolidar 4 repositorios separados en un monorepo unificado.
+Consolidar 4 repositorios separados en un monorepo unificado.
 
-**Context:**
-- Antes: gamilit-docs, gamilit-platform-backend, gamilit-platform-web, gamilit-deployment-scripts (4 repos)
-- Problemas: Sincronización manual, duplicación de configuración, onboarding complejo
-
-**Key Points:**
-- ✅ Cambios cross-app atómicos (1 PR vs 2-4 PRs)
-- ✅ Búsqueda global con `grep -r`
-- ✅ Configuración compartida (ESLint, Prettier, TS)
-- ✅ Onboarding simplificado (2-3h vs 4-6h)
-- ⚠️ Repo más grande (~130 MB)
-- ⚠️ CI/CD potencialmente más lento
-
-**Alternatives Considered:**
-- Repos separados (rechazado)
-- Monorepo con Nx/Lerna (pospuesto para Fase 2)
-- **✅ Monorepo simple RFC-0001** (elegido)
-
-**[Leer ADR completo →](./ADR-0001-monorepo-architecture.md)**
+**[→ Leer ADR completo](./ADR-0001-monorepo-architecture.md)**
 
 ---
 
 ### ✅ ADR-0002: Implementación del Sistema SIMCO
 
-**Date:** 2025-11-05
-**Status:** ✅ Accepted and In Progress
-**Deciders:** Tech Lead, AI Engineering Team
+**Date:** 2025-11-05 | **Status:** ✅ Implemented | **Category:** Documentation
 
-**Decisión:** Implementar sistema SIMCO (Sistema Indexado Modular por Contexto) usando archivos `_MAP.md` en directorios para proveer contexto a AI agents y developers.
+Sistema Indexado Modular por Contexto usando `_MAP.md` para AI agents y developers.
 
-**Context:**
-- Workspace complejo: 2,269 archivos, 578 directorios, ~130k LOC
-- AI agents sin contexto → 50k tokens/búsqueda, 30 segundos
-- Developers sin contexto → 30 min explorando carpetas
-
-**Key Points:**
-- ✅ AI agents 25x más rápidos (2s vs 30s)
-- ✅ 96% menos tokens (2k vs 50k)
-- ✅ Onboarding 5x más rápido (15 min vs 75 min)
-- ✅ Conocimiento explícito vs implícito
-- ⚠️ Mantenimiento manual requerido
-- ⚠️ Riesgo de desincronización
-
-**Progress:**
-- Fase 0-3: ✅ Completadas (109 _MAP.md, 18.9% coverage)
-- Fase 4: Planeada Q1 2025 (150 maps, 26%)
-- Fase 5: Planeada Q2 2025 (300 maps, 52%)
-
-**Alternatives Considered:**
-- Auto-generated README (rechazado - sin contexto)
-- Wiki externo Confluence (rechazado - desconectado del código)
-- Código auto-documentado JSDoc (complementario)
-- **✅ _MAP.md manuales con template RFC-0001** (elegido)
-
-**[Leer ADR completo →](./ADR-0002-simco-system.md)**
+**[→ Leer ADR completo](./ADR-0002-simco-system.md)**
 
 ---
 
 ### ✅ ADR-0003: Team vs Guild en Social Features
 
-**Date:** 2025-11-08
-**Status:** ✅ Accepted and Implemented
-**Deciders:** Tech Lead, Product Owner, Backend Team
+**Date:** 2025-11-08 | **Status:** ✅ Implemented | **Category:** Social Features
 
-**Decisión:** Usar el término "Guild" en lugar de "Team" para las funcionalidades sociales de GAMILIT.
+Usar "Guild" en lugar de "Team" para funcionalidades sociales (coherente con temática Maya).
 
-**Context:**
-- Sistema de gamificación requiere grupos sociales competitivos
-- "Team" es genérico y poco gamificado
-- "Guild" evoca cultura gaming y contexto Maya
-
-**Key Points:**
-- ✅ Mayor engagement (término gamificado)
-- ✅ Coherente con temática Maya/cultura
-- ✅ Diferenciación de "classroom" (contexto académico)
-- ✅ Nomenclatura consistente en BD, backend, frontend
-
-**[Leer ADR completo →](./ADR-0003-team-vs-guild.md)**
+**[→ Leer ADR completo](./ADR-0003-team-vs-guild.md)**
 
 ---
 
 ### ✅ ADR-007: Schemas sin Tablas en PostgreSQL
 
-**Date:** 2025-11-11
-**Status:** ✅ Accepted
-**Deciders:** Database Team, Tech Lead
+**Date:** 2025-11-11 | **Status:** ✅ Accepted | **Category:** Database
 
-**Decisión:** Permitir schemas vacíos (sin tablas) en PostgreSQL para reserva futura.
+Permitir schemas vacíos en PostgreSQL para reserva futura.
 
-**Context:**
-- Base de datos multi-schema requiere planificación
-- Algunos schemas se implementarán en fases futuras
-- Necesidad de estructura clara desde el inicio
-
-**Key Points:**
-- ✅ Planificación clara de estructura futura
-- ✅ Evita cambios arquitectónicos posteriores
-- ✅ Documentación de intenciones
-- ⚠️ Requiere documentación de propósito
-
-**[Leer ADR completo →](./ADR-007-schemas-sin-tablas.md)**
+**[→ Leer ADR completo](./ADR-007-schemas-sin-tablas.md)**
 
 ---
 
 ### ✅ ADR-008: Sistema Dual exercise_type + Categorías Pedagógicas
 
-**Date:** 2025-11-11
-**Status:** ✅ Accepted and Implemented
-**Deciders:** Database Team, Tech Lead, Product Owner
+**Date:** 2025-11-11 | **Status:** ✅ Implemented | **Category:** Database
 
-**Decisión:** Implementar sistema dual con `exercise_type` (35 tipos específicos GAMILIT) + mapeo a categorías pedagógicas universales.
+Sistema dual con `exercise_type` (35 tipos) + mapeo a categorías pedagógicas.
 
-**Context:**
-- Documentación define categorías pedagógicas genéricas
-- Implementación usa tipos específicos de GAMILIT
-- Necesidad de coherencia entre docs y código
-
-**Key Points:**
-- ✅ Mantiene granularidad de implementación
-- ✅ Provee categorización pedagógica
-- ✅ Evita refactoring masivo
-- ✅ Documenta mapeo explícito
-
-**[Leer ADR completo →](./ADR-008-sistema-dual-exercise-mechanics.md)**
+**[→ Leer ADR completo](./ADR-008-sistema-dual-exercise-mechanics.md)**
 
 ---
 
 ### ✅ ADR-009: Duración del Ejercicio 3.4 - Podcast Argumentativo
 
-**Date:** 2025-11-23
-**Status:** ✅ Accepted and Implemented
-**Deciders:** Architecture-Analyst, Product Owner
+**Date:** 2025-11-23 | **Status:** ✅ Implemented | **Category:** Content Design
 
-**Decisión:** Mantener duración de 2 minutos (vs 3 minutos) para el ejercicio de podcast argumentativo.
+Mantener duración de 2 minutos (vs 3) para podcast argumentativo.
 
-**Context:**
-- Contradicción en documento de diseño de mecánicas v6.4
-- Título indicaba 2 minutos, descripción mencionaba 3 minutos
-- Necesidad de decisión definitiva
-
-**Key Points:**
-- ✅ Coherente con v6.4 ya implementado
-- ✅ Más manejable para estudiantes
-- ✅ Facilita evaluación y retroalimentación
-- ✅ Alineado con formatos digitales modernos
-- ⚠️ Menos tiempo para argumentación profunda
-
-**Estructura:** Introducción (30s) + Desarrollo (60s) + Conclusión (30s) = 120s
-
-**[Leer ADR completo →](./ADR-009-duracion-podcast-ejercicio-3-4.md)**
+**[→ Leer ADR completo](./ADR-009-duracion-podcast-ejercicio-3-4.md)**
 
 ---
 
-### ✅ ADR-026: SIMCO v2 - Estructura Modular
+### ✅ ADR-010: DocumentoDeDiseño como Fuente de Verdad
 
-**Date:** 2025-11-08
-**Status:** ✅ Accepted
-**Deciders:** Tech Lead, AI Engineering Team
+**Date:** 2025-11-23 | **Status:** ✅ Accepted | **Category:** Architecture
 
-**Decisión:** Evolucionar SIMCO a v2 con estructura modular y templates estandarizados.
+El `DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md` es la fuente de verdad para módulos y ejercicios.
 
-**Context:**
-- SIMCO v1 exitoso pero sin estructura consistente
-- Necesidad de templates para diferentes tipos de carpetas
-- Escalabilidad a 300+ _MAP.md
+**[→ Leer ADR completo](./ADR-010-documento-diseno-fuente-verdad.md)**
 
-**Key Points:**
-- ✅ Templates por tipo (código, docs, tests, etc.)
-- ✅ Secciones estándar reutilizables
-- ✅ Más fácil de mantener
-- ✅ AI agents procesan estructura predecible
+---
 
-**[Leer ADR completo →](./ADR-026-simco-v2-estructura-modular.md)**
+### ✅ ADR-011: Estructura de API Clients en Frontend
+
+**Date:** 2025-11-23 | **Status:** ✅ Accepted | **Category:** Frontend
+
+Estructura estándar para API clients con módulos por dominio.
+
+**[→ Leer ADR completo](./ADR-011-frontend-api-client-structure.md)**
 
 ---
 
 ### ✅ ADR-012: Inicialización Automática de Usuarios mediante Trigger
 
-**Date:** 2025-11-24
-**Status:** ✅ Accepted and Implemented
-**Deciders:** Architecture-Analyst, Database-Agent, Backend-Agent, Frontend-Agent
+**Date:** 2025-11-24 | **Status:** ✅ Implemented | **Category:** Database
 
-**Decisión:** Implementar trigger de base de datos que inicializa automáticamente todos los registros necesarios al registrar un usuario nuevo.
+Trigger que inicializa automáticamente registros de gamificación al registrar usuarios.
 
-**Context:**
-- Bug crítico: Usuarios nuevos veían "No modules available"
-- Causa raíz: Trigger incompleto, no creaba `module_progress`
-- Gamificación rota para nuevos usuarios
-
-**Key Points:**
-- ✅ Trigger crea 4 tablas automáticamente (user_stats, comodines_inventory, user_ranks, module_progress)
-- ✅ 100% usuarios inicializados correctamente
-- ✅ 0% errores "no modules available"
-- ✅ UX mejorada: 5 módulos disponibles inmediatamente
-- ✅ Backend/Frontend compatible sin cambios
-- ✅ 5 bugs críticos corregidos (FK references, ON CONFLICT, etc.)
-
-**Bugs Fixed:**
-1. module_progress NUNCA se creaba (CRÍTICO)
-2. user_ranks sin protección contra duplicados
-3. FK reference incorrecta (profiles.id vs auth.users.id)
-4. Referencia a columna inexistente (deleted_at)
-5. Migration con FK incorrecta
-
-**Validation:**
-- ✅ Database-Agent: APROBADO para carga limpia
-- ✅ Backend-Agent: APROBADO sin cambios necesarios (riesgo BAJO)
-- ✅ Frontend-Agent: APROBADO para producción (confianza 95%+)
-
-**[Leer ADR completo →](./ADR-012-automatic-user-initialization-trigger.md)**
+**[→ Leer ADR completo](./ADR-012-automatic-user-initialization-trigger.md)**
 
 ---
 
-## ⏳ ADRs Planeados
+### ✅ ADR-013: Adopción de React Query (TanStack Query v5)
 
-### ADR-010: Selección de Stack Tecnológico
+**Date:** 2025-11-23 | **Status:** ✅ Implemented | **Category:** Frontend
 
-**Status:** ⏳ Planeado
-**Priority:** P1 (Alta)
-**Target Date:** 2025-12-10
+TanStack Query v5 como solución estándar para manejo de estado asíncrono.
 
-**Decisión a documentar:**
-- Por qué NestJS para backend (vs Express, Fastify, Koa)
-- Por qué React 19 para frontend (vs Vue, Angular, Svelte)
-- Por qué PostgreSQL para database (vs MySQL, MongoDB, etc.)
-- Por qué TypeScript (vs JavaScript puro)
-
-**Context:**
-- Decisiones ya tomadas e implementadas
-- Falta documentación formal del "por qué"
-
-**Esfuerzo estimado:** 3-4 horas
+**[→ Leer ADR completo](./ADR-013-react-query-adoption.md)**
 
 ---
 
-### ADR-011: Arquitectura Multi-Schema en PostgreSQL
+### ✅ ADR-014: Nil-Safety Patterns
 
-**Status:** ⏳ Planeado
-**Priority:** P1 (Alta)
-**Target Date:** 2025-12-15
+**Date:** 2025-11-23 | **Status:** ✅ Accepted | **Category:** Frontend
 
-**Decisión a documentar:**
-- Por qué 9 schemas separados (vs 1 schema público)
-- Ventajas de separación lógica
-- Trade-offs de mantenimiento
-- Esquema de naming conventions
+Optional Chaining (`?.`) y Nullish Coalescing (`??`) como patrón estándar.
 
-**Schemas:**
-- auth_management
-- educational_content
-- gamification_system
-- progress_tracking
-- social_features
-- content_management
-- audit_logging
-- system_configuration
-- public
-
-**Context:**
-- Arquitectura DB ya implementada
-- Falta documentación de decisión
-
-**Esfuerzo estimado:** 2-3 horas
+**[→ Leer ADR completo](./ADR-014-nil-safety-patterns.md)**
 
 ---
 
-### ADR-015: Estrategia de Autenticación JWT
+### ✅ ADR-015: Centralización de Rutas API en apiConfig.ts
 
-**Status:** ⏳ Planeado
-**Priority:** P2 (Media)
-**Target Date:** 2025-12-20
+**Date:** 2025-11-24 | **Status:** ✅ Implemented | **Category:** Frontend
 
-**Decisión a documentar:**
-- Por qué JWT (vs session-based, OAuth only)
-- Access token + Refresh token strategy
-- Token expiration times (7 days refresh, 1h access)
-- Storage strategy (httpOnly cookies vs localStorage)
+Single Source of Truth para rutas API en `apiConfig.ts` (241 rutas).
 
-**Context:**
-- Sistema de autenticación implementado
-- Necesita documentación formal
-
-**Esfuerzo estimado:** 2-3 horas
-
-**Nota:** Renumerado de ADR-012 a ADR-015 (ADR-012 usado para User Initialization Trigger)
+**[→ Leer ADR completo](./ADR-015-centralized-api-routes-configuration.md)**
 
 ---
 
-### ADR-013: Constants SSOT System
+### ✅ ADR-016: Simplificar Backend XP Acumulación
 
-**Status:** ⏳ Planeado
-**Priority:** P2 (Media)
-**Target Date:** 2025-12-25
+**Date:** 2025-11-24 | **Status:** ✅ Implemented | **Category:** Backend
 
-**Decisión a documentar:**
-- Por qué Constants SSOT (vs hardcoding)
-- Arquitectura de sincronización Backend ↔ Frontend
-- Trade-offs de type-safety vs flexibilidad
-- Enforcement en CI/CD
+Delegar promoción de rangos completamente a triggers de base de datos.
 
-**Context:**
-- Sistema implementado en Fase 0 - Ciclo 5
-- Documentación técnica existe pero falta ADR
-
-**Esfuerzo estimado:** 2-3 horas
+**[→ Leer ADR completo](./ADR-016-simplificar-backend-xp-acumulacion.md)**
 
 ---
 
-### ADR-014: Feature-Sliced Design en Frontend
+### ✅ ADR-017: Admin Portal Avanzado vs Alcance Inicial
 
-**Status:** ⏳ Planeado
-**Priority:** P2 (Media)
-**Target Date:** 2025-12-30
+**Date:** 2025-11-24 | **Status:** ✅ Accepted | **Category:** Architecture
 
-**Decisión a documentar:**
-- Por qué Feature-Sliced Design (vs Atomic Design, etc.)
-- Estructura de carpetas features/
-- Bounded contexts
-- Shared components strategy
+Documentar discrepancia entre alcance inicial EAI-005 y portal admin implementado (~75 endpoints).
 
-**Context:**
-- Frontend ya estructurado con FSD
-- Falta documentación de decisión
+**[→ Leer ADR completo](./ADR-017-admin-portal-avanzado-vs-alcance-inicial.md)**
 
-**Esfuerzo estimado:** 2-3 horas
+---
+
+### ✅ ADR-018: Eliminación de Carpetas Migrations
+
+**Date:** 2025-11-24 | **Status:** ✅ Accepted | **Category:** Database
+
+Eliminar carpetas `migrations/` para cumplir Política de Carga Limpia.
+
+**[→ Leer ADR completo](./ADR-018-removal-migrations-folders.md)**
+
+---
+
+### ✅ ADR-019: Adopción de Zod v3 para Runtime Validation
+
+**Date:** 2025-11-23 | **Status:** ✅ Accepted | **Category:** Frontend
+
+Zod v3 como solución estándar para validación de runtime en frontend.
+
+**[→ Leer ADR completo](./ADR-019-runtime-validation-zod.md)**
+
+---
+
+### ✅ ADR-020: Soporte de Múltiples Alternativas en Completar Espacios
+
+**Date:** 2025-11-24 | **Status:** ✅ Implemented | **Category:** Database
+
+Función `validate_fill_in_blank` soporta múltiples respuestas válidas.
+
+**[→ Leer ADR completo](./ADR-020-validacion-alternativas-ejercicio-completar-espacios.md)**
+
+---
+
+### ✅ ADR-021: Estandarización de Recompensas XP en Ejercicios
+
+**Date:** 2025-11-24 | **Status:** ✅ Implemented | **Category:** Gamification
+
+Estandarizar 100 XP / 20 ML Coins por ejercicio para progresión consistente.
+
+**[→ Leer ADR completo](./ADR-021-estandarizacion-recompensas-xp-ejercicios.md)**
+
+---
+
+### ✅ ADR-026: SIMCO v2 - Estructura Modular
+
+**Date:** 2025-11-08 | **Status:** ✅ Accepted | **Category:** Documentation
+
+Evolucionar SIMCO a v2 con estructura modular y templates estandarizados.
+
+**[→ Leer ADR completo](./ADR-026-simco-v2-estructura-modular.md)**
 
 ---
 
@@ -436,45 +291,58 @@ Usamos el formato [Michael Nygard ADR template](https://github.com/joelparkerhen
 
 ### Por Estado
 
-**Implemented (8):**
+**Implemented/Accepted (19):**
 - [ADR-0001: Monorepo Architecture](./ADR-0001-monorepo-architecture.md)
 - [ADR-0002: SIMCO System](./ADR-0002-simco-system.md)
 - [ADR-0003: Team vs Guild](./ADR-0003-team-vs-guild.md)
 - [ADR-007: Schemas sin Tablas](./ADR-007-schemas-sin-tablas.md)
 - [ADR-008: Sistema Dual exercise_type](./ADR-008-sistema-dual-exercise-mechanics.md)
 - [ADR-009: Duración Podcast Ejercicio 3.4](./ADR-009-duracion-podcast-ejercicio-3-4.md)
+- [ADR-010: Documento Diseño Fuente Verdad](./ADR-010-documento-diseno-fuente-verdad.md)
+- [ADR-011: Frontend API Client Structure](./ADR-011-frontend-api-client-structure.md)
 - [ADR-012: Automatic User Initialization Trigger](./ADR-012-automatic-user-initialization-trigger.md)
+- [ADR-013: React Query Adoption](./ADR-013-react-query-adoption.md)
+- [ADR-014: Nil-Safety Patterns](./ADR-014-nil-safety-patterns.md)
+- [ADR-015: Centralized API Routes](./ADR-015-centralized-api-routes-configuration.md)
+- [ADR-016: Simplificar Backend XP](./ADR-016-simplificar-backend-xp-acumulacion.md)
+- [ADR-017: Admin Portal Avanzado](./ADR-017-admin-portal-avanzado-vs-alcance-inicial.md)
+- [ADR-018: Removal Migrations Folders](./ADR-018-removal-migrations-folders.md)
+- [ADR-019: Runtime Validation Zod](./ADR-019-runtime-validation-zod.md)
+- [ADR-020: Validación Alternativas Fill-in-Blank](./ADR-020-validacion-alternativas-ejercicio-completar-espacios.md)
+- [ADR-021: Estandarización Recompensas XP](./ADR-021-estandarizacion-recompensas-xp-ejercicios.md)
 - [ADR-026: SIMCO v2 Estructura Modular](./ADR-026-simco-v2-estructura-modular.md)
-
-**Planned (5):**
-- ADR-010: Stack tecnológico
-- ADR-011: Multi-schema DB
-- ADR-013: Constants SSOT
-- ADR-014: Feature-Sliced Design
-- ADR-015: JWT authentication
 
 ### Por Categoría
 
-**Architecture (3):**
-- ADR-0001: Monorepo
-- ADR-0002: SIMCO
-- ADR-026: SIMCO v2
+**Architecture (4):**
+- ADR-0001: Monorepo Architecture
+- ADR-0002: SIMCO System
+- ADR-010: Documento Diseño Fuente Verdad
+- ADR-017: Admin Portal Avanzado
 
-**Database (3 + 1 planned):**
+**Database (5):**
 - ADR-007: Schemas sin Tablas
 - ADR-008: Sistema Dual exercise_type
 - ADR-012: Automatic User Initialization Trigger
-- ADR-011: Multi-schema (planned)
+- ADR-018: Removal Migrations Folders
+- ADR-020: Validación Alternativas Fill-in-Blank
 
-**Technology Stack (1 planned):**
-- ADR-010: Stack selection (planned)
+**Frontend (5):**
+- ADR-011: Frontend API Client Structure
+- ADR-013: React Query Adoption
+- ADR-014: Nil-Safety Patterns
+- ADR-015: Centralized API Routes
+- ADR-019: Runtime Validation Zod
 
-**Security (1 planned):**
-- ADR-015: JWT (planned)
+**Backend (1):**
+- ADR-016: Simplificar Backend XP
 
-**Code Organization (2 planned):**
-- ADR-013: Constants SSOT (planned)
-- ADR-014: Feature-Sliced Design (planned)
+**Gamification (1):**
+- ADR-021: Estandarización Recompensas XP
+
+**Documentation (2):**
+- ADR-0002: SIMCO
+- ADR-026: SIMCO v2
 
 **Social Features (1):**
 - ADR-0003: Team vs Guild
@@ -490,18 +358,16 @@ Usamos el formato [Michael Nygard ADR template](https://github.com/joelparkerhen
 
 ```bash
 # Ver último ADR
-ls docs/97-adr/ | grep ADR | sort | tail -1
-# Output: ADR-009-duracion-podcast-ejercicio-3-4.md
+ls docs/97-adr/ | grep ADR | sort -V | tail -1
+# Output: ADR-026-simco-v2-estructura-modular.md
 
-# Siguiente es ADR-010
+# Siguiente número disponible: ADR-022, ADR-023, ADR-024, ADR-025, ADR-027...
 ```
 
 **Convención de Numeración:**
-- **Formato estándar:** ADR-00XX (padding a 4 dígitos con ceros)
-- **Ejemplos:** ADR-0001, ADR-0002, ADR-0003, ..., ADR-0010, ADR-0011
-- **Próximo ADR:** ADR-010 (después de ADR-009)
-
-**Nota:** ADRs históricos mantienen su numeración original (ADR-007, ADR-008, ADR-026). Nuevos ADRs deben usar formato de 4 dígitos (ADR-00XX o ADR-0XXX según corresponda).
+- **Formato estándar:** ADR-XXX o ADR-0XXX (consistente por rango)
+- **Próximos disponibles:** ADR-022, ADR-023, ADR-024, ADR-025, ADR-027+
+- **Nota:** ADR-026 ya existe, continuar desde ADR-022 o ADR-027+
 
 ### Paso 2: Crear Archivo
 
@@ -648,6 +514,6 @@ grep "Status.*Deprecated" docs/97-adr/ADR-*.md
 
 ---
 
-**Última actualización:** 2025-11-24
-**Total ADRs:** 8 (Accepted: 8, Planned: 5)
-**Coverage:** Architecture, Documentation, Database, Technology Stack, Social Features, Content Design, User Initialization
+**Última actualización:** 2025-11-29
+**Total ADRs:** 19 (Accepted/Implemented: 19)
+**Coverage:** Architecture, Documentation, Database, Frontend, Backend, Gamification, Social Features, Content Design

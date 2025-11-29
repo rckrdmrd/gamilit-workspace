@@ -25,14 +25,22 @@ import { CreateNotificationDto } from '../dto/create-notification.dto';
 import { GetNotificationsQueryDto } from '../dto/get-notifications-query.dto';
 import { PaginatedNotificationsDto } from '../dto/paginated-notifications.dto';
 import { CurrentUser } from '../../../shared/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../../../modules/auth/guards';
 import { AccountStatusGuard } from '../../../shared/guards/account-status.guard';
 import { Permissions } from '../../../shared/decorators/permissions.decorator';
 import { PermissionsGuard } from '../../../shared/guards/permissions.guard';
 
+/**
+ * NotificationsController
+ *
+ * Controller para gestión de notificaciones del usuario.
+ * Todos los usuarios autenticados pueden gestionar sus propias notificaciones.
+ * Solo el endpoint POST requiere permisos especiales (system:webhook).
+ */
 @ApiTags('Notifications')
 @Controller('notifications')
 @ApiBearerAuth()
-@UseGuards(AccountStatusGuard, PermissionsGuard)
+@UseGuards(JwtAuthGuard, AccountStatusGuard)
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
@@ -50,10 +58,9 @@ export class NotificationsController {
     description: 'Notifications retrieved successfully',
     type: PaginatedNotificationsDto,
   })
-  @Permissions('gamification:read')
   async getNotifications(
     @CurrentUser('sub') userId: string,
-    @Query() query: GetNotificationsQueryDto,
+      @Query() query: GetNotificationsQueryDto,
   ): Promise<PaginatedNotificationsDto> {
     return this.notificationsService.getNotifications(userId, query);
   }
@@ -77,7 +84,6 @@ export class NotificationsController {
       },
     },
   })
-  @Permissions('gamification:read')
   async getUnreadCount(
     @CurrentUser('sub') userId: string,
   ): Promise<{ count: number }> {
@@ -116,7 +122,6 @@ export class NotificationsController {
       },
     },
   })
-  @Permissions('gamification:read')
   async getStats(@CurrentUser('sub') userId: string) {
     return this.notificationsService.getUserNotificationStats(userId);
   }
@@ -143,10 +148,9 @@ export class NotificationsController {
     status: 404,
     description: 'Notification not found',
   })
-  @Permissions('gamification:write')
   async markAsRead(
     @Param('id', ParseUUIDPipe) notificationId: string,
-    @CurrentUser('sub') userId: string,
+      @CurrentUser('sub') userId: string,
   ): Promise<NotificationResponseDto> {
     return this.notificationsService.markAsRead(notificationId, userId);
   }
@@ -171,7 +175,6 @@ export class NotificationsController {
       },
     },
   })
-  @Permissions('gamification:write')
   async markAllAsRead(
     @CurrentUser('sub') userId: string,
   ): Promise<{ updated: number }> {
@@ -206,10 +209,9 @@ export class NotificationsController {
     status: 404,
     description: 'Notification not found',
   })
-  @Permissions('gamification:write')
   async deleteNotification(
     @Param('id', ParseUUIDPipe) notificationId: string,
-    @CurrentUser('sub') userId: string,
+      @CurrentUser('sub') userId: string,
   ): Promise<{ deleted: boolean }> {
     return this.notificationsService.deleteNotification(notificationId, userId);
   }
@@ -234,7 +236,6 @@ export class NotificationsController {
       },
     },
   })
-  @Permissions('gamification:write')
   async clearAll(
     @CurrentUser('sub') userId: string,
   ): Promise<{ deleted: number }> {
@@ -246,6 +247,7 @@ export class NotificationsController {
    * Envía una nueva notificación (solo sistema)
    */
   @Post()
+  @UseGuards(PermissionsGuard)
   @ApiOperation({
     summary: 'Send notification (System only)',
     description: 'Internal endpoint to send notifications to users',

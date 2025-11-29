@@ -13,6 +13,7 @@
  *
  * Total: 26 tests
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';

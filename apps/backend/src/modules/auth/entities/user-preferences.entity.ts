@@ -35,7 +35,7 @@ export class UserPreferences {
    * @relation Profile (1:1)
    */
   @PrimaryColumn('uuid', { name: 'user_id' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Tema de la interfaz
@@ -50,7 +50,7 @@ export class UserPreferences {
     default: ThemeEnum.LIGHT,
   })
   @Index('idx_user_preferences_theme')
-  theme!: ThemeEnum;
+    theme!: ThemeEnum;
 
   /**
    * Idioma preferido
@@ -65,7 +65,7 @@ export class UserPreferences {
     default: LanguageEnum.ES,
   })
   @Index('idx_user_preferences_language')
-  language!: LanguageEnum;
+    language!: LanguageEnum;
 
   /**
    * Habilitar notificaciones en la aplicación
@@ -73,7 +73,7 @@ export class UserPreferences {
    * @default true
    */
   @Column({ type: 'boolean', default: true })
-  notifications_enabled!: boolean;
+    notifications_enabled!: boolean;
 
   /**
    * Habilitar notificaciones por correo electrónico
@@ -81,7 +81,7 @@ export class UserPreferences {
    * @default true
    */
   @Column({ type: 'boolean', default: true })
-  email_notifications!: boolean;
+    email_notifications!: boolean;
 
   /**
    * Habilitar efectos de sonido en la aplicación
@@ -89,7 +89,7 @@ export class UserPreferences {
    * @default true
    */
   @Column({ type: 'boolean', default: true })
-  sound_enabled!: boolean;
+    sound_enabled!: boolean;
 
   /**
    * Indica si el usuario completó el tutorial inicial
@@ -99,7 +99,7 @@ export class UserPreferences {
    */
   @Column({ type: 'boolean', default: false })
   @Index('idx_user_preferences_tutorial', { where: 'tutorial_completed = false' })
-  tutorial_completed!: boolean;
+    tutorial_completed!: boolean;
 
   /**
    * Preferencias adicionales en formato JSON
@@ -117,14 +117,14 @@ export class UserPreferences {
    */
   @Column({ type: 'jsonb', default: {} })
   @Index('idx_user_preferences_preferences', { synchronize: false }) // GIN index creado en DDL
-  preferences!: Record<string, any>;
+    preferences!: Record<string, any>;
 
   /**
    * Fecha de creación
    * @generated
    */
   @CreateDateColumn({ type: 'timestamptz', default: () => 'NOW()' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha de última actualización
@@ -132,7 +132,7 @@ export class UserPreferences {
    * @trigger trg_user_preferences_updated_at (actualizado automáticamente por trigger)
    */
   @UpdateDateColumn({ type: 'timestamptz', default: () => 'NOW()' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   // =============================================================================
   // RELACIONES
@@ -147,5 +147,5 @@ export class UserPreferences {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'user_id' })
-  profile!: Profile;
+    profile!: Profile;
 }

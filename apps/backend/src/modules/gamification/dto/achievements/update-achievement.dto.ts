@@ -26,15 +26,15 @@ export class UpdateAchievementDto {
 
   @IsOptional()
   @IsString()
-  name?: string;
+    name?: string;
 
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   @IsOptional()
   @IsString()
-  icon?: string;
+    icon?: string;
 
   // =====================================================
   // CATEGORIZATION
@@ -42,15 +42,15 @@ export class UpdateAchievementDto {
 
   @IsOptional()
   @IsEnum(AchievementCategoryEnum)
-  category?: AchievementCategoryEnum;
+    category?: AchievementCategoryEnum;
 
   @IsOptional()
   @IsString()
-  rarity?: string;
+    rarity?: string;
 
   @IsOptional()
   @IsEnum(DifficultyLevelEnum)
-  difficulty_level?: DifficultyLevelEnum;
+    difficulty_level?: DifficultyLevelEnum;
 
   // =====================================================
   // CONDITIONS & REWARDS
@@ -58,16 +58,16 @@ export class UpdateAchievementDto {
 
   @IsOptional()
   @IsObject()
-  conditions?: Record<string, any>;
+    conditions?: Record<string, any>;
 
   @IsOptional()
   @IsObject()
-  rewards?: Record<string, any>;
+    rewards?: Record<string, any>;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  ml_coins_reward?: number;
+    ml_coins_reward?: number;
 
   // =====================================================
   // VISIBILITY & STATUS
@@ -75,15 +75,15 @@ export class UpdateAchievementDto {
 
   @IsOptional()
   @IsBoolean()
-  is_secret?: boolean;
+    is_secret?: boolean;
 
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+    is_active?: boolean;
 
   @IsOptional()
   @IsBoolean()
-  is_repeatable?: boolean;
+    is_repeatable?: boolean;
 
   // =====================================================
   // ORDERING & POINTS
@@ -92,12 +92,12 @@ export class UpdateAchievementDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  order_index?: number;
+    order_index?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  points_value?: number;
+    points_value?: number;
 
   // =====================================================
   // MESSAGING & GUIDANCE
@@ -105,16 +105,16 @@ export class UpdateAchievementDto {
 
   @IsOptional()
   @IsString()
-  unlock_message?: string;
+    unlock_message?: string;
 
   @IsOptional()
   @IsString()
-  instructions?: string;
+    instructions?: string;
 
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  tips?: string[];
+    tips?: string[];
 
   // =====================================================
   // METADATA
@@ -122,5 +122,5 @@ export class UpdateAchievementDto {
 
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

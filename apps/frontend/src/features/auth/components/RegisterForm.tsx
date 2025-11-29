@@ -14,6 +14,7 @@
  *
  * @requires react-hook-form, zod, @hookform/resolvers
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -146,7 +147,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
       // Navigate to redirect path
       navigate(redirectTo);
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Error is already set in AuthContext
       setError('root', {
         message: err.message || 'El registro falló. Por favor, intenta nuevamente.',

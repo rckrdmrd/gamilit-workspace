@@ -100,7 +100,7 @@ export const useInterventionAlerts = (
         await interventionAlertsApi.getAlerts(params);
       setAlerts(response.data);
       setTotal(response.total);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err instanceof Error ? err : new Error(err.message || 'Error al cargar alertas'));
       console.error('Error fetching alerts:', err);
     } finally {
@@ -134,7 +134,7 @@ export const useInterventionAlerts = (
             : alert,
         ),
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err instanceof Error ? err : new Error(err.message || 'Error al reconocer alerta'));
       throw err;
     }
@@ -164,7 +164,7 @@ export const useInterventionAlerts = (
             : alert,
         ),
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err instanceof Error ? err : new Error(err.message || 'Error al resolver alerta'));
       throw err;
     }
@@ -182,7 +182,7 @@ export const useInterventionAlerts = (
       // Remove from local state (dismissed alerts are filtered out)
       setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
       setTotal((prev) => prev - 1);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err instanceof Error ? err : new Error(err.message || 'Error al descartar alerta'));
       throw err;
     }

@@ -31,7 +31,7 @@ export class PreferenceResponseDto {
     description: 'UUID de la preferencia',
     example: 'dddddddd-dddd-dddd-dddd-dddddddddddd',
   })
-  id!: string;
+    id!: string;
 
   /**
    * UUID del usuario
@@ -40,7 +40,7 @@ export class PreferenceResponseDto {
     description: 'UUID del usuario',
     example: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
   })
-  userId!: string;
+    userId!: string;
 
   /**
    * Tipo de notificación
@@ -55,7 +55,7 @@ export class PreferenceResponseDto {
     description: 'Tipo de notificación',
     example: 'achievement',
   })
-  notificationType!: string;
+    notificationType!: string;
 
   /**
    * Indica si las notificaciones in-app están habilitadas
@@ -64,7 +64,7 @@ export class PreferenceResponseDto {
     description: 'In-app habilitado',
     example: true,
   })
-  inAppEnabled!: boolean;
+    inAppEnabled!: boolean;
 
   /**
    * Indica si las notificaciones por email están habilitadas
@@ -73,7 +73,7 @@ export class PreferenceResponseDto {
     description: 'Email habilitado',
     example: false,
   })
-  emailEnabled!: boolean;
+    emailEnabled!: boolean;
 
   /**
    * Indica si las push notifications están habilitadas
@@ -82,7 +82,7 @@ export class PreferenceResponseDto {
     description: 'Push habilitado',
     example: true,
   })
-  pushEnabled!: boolean;
+    pushEnabled!: boolean;
 
   /**
    * Fecha de creación
@@ -91,7 +91,7 @@ export class PreferenceResponseDto {
     description: 'Fecha de creación',
     example: '2025-11-13T10:00:00.000Z',
   })
-  createdAt!: Date;
+    createdAt!: Date;
 
   /**
    * Fecha de última actualización
@@ -100,7 +100,7 @@ export class PreferenceResponseDto {
     description: 'Fecha de última actualización',
     example: '2025-11-13T15:30:00.000Z',
   })
-  updatedAt!: Date;
+    updatedAt!: Date;
 }
 
 /**
@@ -142,5 +142,5 @@ export class PreferencesListResponseDto {
     description: 'Array de preferencias del usuario',
     type: [PreferenceResponseDto],
   })
-  preferences!: PreferenceResponseDto[];
+    preferences!: PreferenceResponseDto[];
 }

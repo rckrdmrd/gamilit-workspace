@@ -1,4 +1,4 @@
-import { IsNumber, IsString, Min, Max, MinLength } from 'class-validator';
+import { IsNumber, IsString, IsNotEmpty, Min, Max, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 /**
@@ -18,10 +18,11 @@ export class GrantBonusDto {
     minimum: 1,
     maximum: 1000,
   })
-  @IsNumber()
+  @IsNotEmpty({ message: 'La cantidad de ML Coins es requerida' })
+  @IsNumber({}, { message: 'La cantidad debe ser un número' })
   @Min(1, { message: 'El bonus debe ser al menos 1 ML Coin' })
   @Max(1000, { message: 'El bonus no puede exceder 1000 ML Coins' })
-  amount!: number;
+    amount!: number;
 
   /**
    * Razón o motivo del bonus (mínimo 10 caracteres)
@@ -31,9 +32,10 @@ export class GrantBonusDto {
     example: 'Excelente participación en clase y ayuda a compañeros',
     minLength: 10,
   })
-  @IsString()
+  @IsNotEmpty({ message: 'La razón del bonus es requerida' })
+  @IsString({ message: 'La razón debe ser un texto' })
   @MinLength(10, { message: 'La razón debe tener al menos 10 caracteres' })
-  reason!: string;
+    reason!: string;
 }
 
 /**
@@ -41,17 +43,17 @@ export class GrantBonusDto {
  */
 export class GrantBonusResponseDto {
   @ApiProperty({ description: 'Confirmación de éxito', example: true })
-  success!: boolean;
+    success!: boolean;
 
   @ApiProperty({ description: 'Nuevo balance de ML Coins', example: 250 })
-  newBalance!: number;
+    newBalance!: number;
 
   @ApiProperty({ description: 'Mensaje descriptivo', example: 'Bonus otorgado exitosamente' })
-  message!: string;
+    message!: string;
 
   @ApiProperty({ description: 'Cantidad de ML Coins otorgadas', example: 50 })
-  amountGranted!: number;
+    amountGranted!: number;
 
   @ApiProperty({ description: 'Razón del bonus', example: 'Excelente participación en clase' })
-  reason!: string;
+    reason!: string;
 }

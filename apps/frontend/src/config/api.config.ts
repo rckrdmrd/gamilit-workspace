@@ -8,6 +8,7 @@
  * @date 2025-11-24
  * @version 1.0.0
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 // ============================================================================
 // ENVIRONMENT VARIABLES
@@ -230,7 +231,7 @@ export const API_ENDPOINTS = {
       get: (id: string) => `/admin/content/${id}`,
 
       // Media library
-      mediaLibrary: '/admin/content/media-library',
+      mediaLibrary: '/admin/content/media',
       deleteMedia: (id: string) => `/admin/content/media/${id}`,
       createVersion: '/admin/content/versions',
     },
@@ -439,16 +440,16 @@ export const API_ENDPOINTS = {
   },
 
   /**
-   * Powerups API endpoints
+   * Powerups (Comodines) API endpoints
+   * ARCH-015: Aligned with backend comodines.controller.ts routes
    */
   powerups: {
-    list: '/gamification/powerups',
-    purchase: '/gamification/powerups/purchase',
-    purchaseSpecific: (powerupId: string) => `/gamification/powerups/${powerupId}/purchase`,
-    use: '/gamification/powerups/use',
-    useSpecific: (powerupId: string) => `/gamification/powerups/${powerupId}/use`,
-    inventory: '/gamification/powerups/inventory',
-    active: '/gamification/powerups/active',
+    list: '/gamification/comodines',
+    purchase: '/gamification/comodines/purchase',
+    use: '/gamification/comodines/use',
+    inventory: (userId: string) => `/gamification/comodines/users/${userId}/inventory`,
+    history: (userId: string) => `/gamification/comodines/users/${userId}/history`,
+    stats: (userId: string) => `/gamification/comodines/users/${userId}/stats`,
   },
 
   /**
@@ -463,6 +464,7 @@ export const API_ENDPOINTS = {
     streaks: '/gamification/leaderboards/streaks',
     globalView: '/gamification/leaderboards/global',
     myRank: (type: string) => `/gamification/leaderboards/${type}/my-rank`,
+    classroom: (classroomId: string) => `/gamification/leaderboard/classrooms/${classroomId}`,
   },
 
   /**

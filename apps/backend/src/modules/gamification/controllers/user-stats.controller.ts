@@ -89,7 +89,7 @@ export class UserStatsController {
     schema: { example: { statusCode: 404, message: 'No stats found for user 550e8400-e29b-41d4-a716-446655440000' } },
   })
   async getUserStats(@Param('userId') userId: string) {
-    return await this.userStatsService.findByUserId(userId);
+    return this.userStatsService.findByUserId(userId);
   }
 
   /**
@@ -155,7 +155,7 @@ export class UserStatsController {
   async getUserGamificationSummary(
     @Param('userId') userId: string,
   ): Promise<UserGamificationSummaryDto> {
-    return await this.userStatsService.getUserGamificationSummary(userId);
+    return this.userStatsService.getUserGamificationSummary(userId);
   }
 
   /**
@@ -280,7 +280,7 @@ export class UserStatsController {
     description: 'Usuario no encontrado',
   })
   async updateUserStats(
-    @Param('userId') userId: string,
+  @Param('userId') userId: string,
     @Body() updateData: Record<string, any>,
   ) {
     // Support increment operations for convenience

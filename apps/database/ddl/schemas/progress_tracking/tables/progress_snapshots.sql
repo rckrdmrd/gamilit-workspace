@@ -5,7 +5,7 @@
 
 CREATE TABLE progress_tracking.progress_snapshots (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE,
     snapshot_date DATE NOT NULL DEFAULT CURRENT_DATE,
     snapshot_data JSONB NOT NULL,
     total_modules_completed INTEGER DEFAULT 0,

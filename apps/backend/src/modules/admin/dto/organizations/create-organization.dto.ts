@@ -21,7 +21,7 @@ export class CreateOrganizationDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(255)
-  name!: string;
+    name!: string;
 
   @ApiProperty({
     description: 'URL-friendly slug (lowercase, alphanumeric with hyphens)',
@@ -33,7 +33,7 @@ export class CreateOrganizationDto {
     message: 'Slug must be lowercase alphanumeric with hyphens only',
   })
   @MaxLength(100)
-  slug!: string;
+    slug!: string;
 
   @ApiPropertyOptional({
     description: 'Custom domain for the organization',
@@ -41,7 +41,7 @@ export class CreateOrganizationDto {
   })
   @IsOptional()
   @IsString()
-  domain?: string;
+    domain?: string;
 
   @ApiPropertyOptional({
     description: 'Logo URL for the organization',
@@ -49,7 +49,7 @@ export class CreateOrganizationDto {
   })
   @IsOptional()
   @IsUrl()
-  logo_url?: string;
+    logo_url?: string;
 
   @ApiProperty({
     description: 'Subscription tier',
@@ -59,7 +59,7 @@ export class CreateOrganizationDto {
   })
   @IsOptional()
   @IsEnum(SubscriptionTierEnum)
-  subscription_tier?: SubscriptionTierEnum;
+    subscription_tier?: SubscriptionTierEnum;
 
   @ApiPropertyOptional({
     description: 'Maximum number of users allowed',
@@ -69,7 +69,7 @@ export class CreateOrganizationDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  max_users?: number;
+    max_users?: number;
 
   @ApiPropertyOptional({
     description: 'Maximum storage in GB',
@@ -79,7 +79,7 @@ export class CreateOrganizationDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  max_storage_gb?: number;
+    max_storage_gb?: number;
 
   @ApiPropertyOptional({
     description: 'Organization settings (JSONB)',
@@ -91,7 +91,7 @@ export class CreateOrganizationDto {
   })
   @IsOptional()
   @IsObject()
-  settings?: Record<string, any>;
+    settings?: Record<string, any>;
 
   @ApiPropertyOptional({
     description: 'Organization metadata (JSONB)',
@@ -99,5 +99,5 @@ export class CreateOrganizationDto {
   })
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

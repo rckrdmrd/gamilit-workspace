@@ -113,7 +113,7 @@ export class RanksController {
   @ApiResponse({ status: 404, description: 'Usuario sin rango inicializado' })
   async getCurrentRank(@Request() req: any): Promise<UserRank> {
     const userId = req.user.sub;
-    return await this.ranksService.getCurrentRank(userId);
+    return this.ranksService.getCurrentRank(userId);
   }
 
   /**
@@ -140,7 +140,7 @@ export class RanksController {
   })
   @ApiResponse({ status: 404, description: 'Registro de rango no encontrado' })
   async getRankDetails(@Param('id') id: string): Promise<UserRank> {
-    return await this.ranksService.findById(id);
+    return this.ranksService.findById(id);
   }
 
   /**
@@ -173,7 +173,7 @@ export class RanksController {
   async getUserRankProgress(
     @Param('userId') userId: string,
   ): Promise<RankProgressDto> {
-    return await this.ranksService.calculateRankProgress(userId);
+    return this.ranksService.calculateRankProgress(userId);
   }
 
   /**
@@ -202,7 +202,7 @@ export class RanksController {
   })
   @ApiResponse({ status: 401, description: 'No autenticado' })
   async getUserRankHistory(@Param('userId') userId: string): Promise<UserRank[]> {
-    return await this.ranksService.getUserRankHistory(userId);
+    return this.ranksService.getUserRankHistory(userId);
   }
 
   /**
@@ -271,7 +271,7 @@ export class RanksController {
   @ApiResponse({ status: 400, description: 'Usuario no elegible para promoción' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   async promoteUser(@Param('userId') userId: string): Promise<UserRank> {
-    return await this.ranksService.promoteToNextRank(userId);
+    return this.ranksService.promoteToNextRank(userId);
   }
 
   // =========================================================================
@@ -301,7 +301,7 @@ export class RanksController {
   @ApiResponse({ status: 401, description: 'No autenticado' })
   @ApiResponse({ status: 403, description: 'Permisos insuficientes' })
   async createRank(@Body() createDto: CreateUserRankDto): Promise<UserRank> {
-    return await this.ranksService.createRank(createDto);
+    return this.ranksService.createRank(createDto);
   }
 
   /**
@@ -335,9 +335,9 @@ export class RanksController {
   @ApiResponse({ status: 404, description: 'Registro de rango no encontrado' })
   async updateRank(
     @Param('id') id: string,
-    @Body() updateDto: UpdateUserRankDto,
+      @Body() updateDto: UpdateUserRankDto,
   ): Promise<UserRank> {
-    return await this.ranksService.updateRank(id, updateDto);
+    return this.ranksService.updateRank(id, updateDto);
   }
 
   /**

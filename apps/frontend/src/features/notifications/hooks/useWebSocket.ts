@@ -37,7 +37,7 @@ export interface WebSocketNotification {
     type: 'achievement_unlocked' | 'rank_up' | 'streak_milestone' | 'coins_earned' | 'xp_earned';
     title: string;
     message: string;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
     isRead: boolean;
     createdAt: string;
   };
@@ -127,7 +127,6 @@ export function useWebSocket(): UseWebSocketReturn {
       isConnectedRef.current = true;
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     socket.on('authenticated', (_data: any) => {
       console.log('✅ WebSocket authenticated');
     });
@@ -189,19 +188,19 @@ export function useWebSocket(): UseWebSocketReturn {
     });
 
     // Listen for notification read events
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     socket.on('notification_read', (_data: { notificationId: string; timestamp: string }) => {
       console.log('✅ Notification marked as read');
     });
 
     // Listen for notification deleted events
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     socket.on('notification_deleted', (_data: { notificationId: string; timestamp: string }) => {
       console.log('🗑️ Notification deleted');
     });
 
     // Listen for unread count updates
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     socket.on('unread_count_updated', (_data: { count: number; timestamp: string }) => {
       console.log('🔢 Unread count updated');
       // The store will be updated via fetchUnreadCount

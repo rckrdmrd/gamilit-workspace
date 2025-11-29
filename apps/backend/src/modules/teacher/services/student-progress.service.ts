@@ -6,7 +6,7 @@
 
 import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
+import { Repository, LessThanOrEqual, MoreThanOrEqual, In } from 'typeorm';
 import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import { ModuleProgress } from '@/modules/progress/entities/module-progress.entity';
@@ -204,7 +204,11 @@ export class StudentProgressService {
     const completedExercises = submissions.filter((s) => s.is_correct).length;
 
     const totalScore = submissions.reduce(
-      (sum, sub) => sum + (sub.score / sub.max_score) * 100,
+      (sum, sub) => {
+        // Protect against division by zero
+        const maxScore = sub.max_score || 1;
+        return sum + (sub.score / maxScore) * 100;
+      },
       0,
     );
     const averageScore =
@@ -315,7 +319,8 @@ export class StudentProgressService {
       module_name: 'Módulo', // TODO: Get from modules table
       exercise_type: 'multiple_choice', // TODO: Get from exercises table
       is_correct: sub.is_correct || false,
-      score_percentage: Math.round((sub.score / sub.max_score) * 100),
+      // Protect against division by zero
+      score_percentage: Math.round((sub.score / (sub.max_score || 1)) * 100),
       time_spent_seconds: sub.time_spent_seconds || 0,
       hints_used: sub.hints_count || 0,
       submitted_at: sub.submitted_at,
@@ -359,8 +364,9 @@ export class StudentProgressService {
 
       // Consider it a struggle if success rate < 70% and multiple attempts
       if (successRate < 70 && attempts >= 2) {
+        // Protect against division by zero in score calculation
         const avgScore =
-          subs.reduce((sum, s) => sum + (s.score / s.max_score) * 100, 0) /
+          subs.reduce((sum, s) => sum + (s.score / (s.max_score || 1)) * 100, 0) /
           attempts;
 
         struggles.push({
@@ -387,17 +393,24 @@ export class StudentProgressService {
     const allProfiles = await this.profileRepository.find();
     const allSubmissions = await this.submissionRepository.find();
 
-    // Calculate class averages
+    // Calculate class averages (with division by zero protection)
     const classAvgScore = allSubmissions.length > 0
       ? Math.round(
-          allSubmissions.reduce(
-            (sum, sub) => sum + (sub.score / sub.max_score) * 100,
-            0,
-          ) / allSubmissions.length,
-        )
+        allSubmissions.reduce(
+          (sum, sub) => {
+            // Protect against division by zero in score calculation
+            const maxScore = sub.max_score || 1;
+            return sum + (sub.score / maxScore) * 100;
+          },
+          0,
+        ) / allSubmissions.length,
+      )
       : 0;
 
-    const submissionsPerStudent = allSubmissions.length / allProfiles.length;
+    // Protect against division by zero when no profiles exist
+    const submissionsPerStudent = allProfiles.length > 0
+      ? allSubmissions.length / allProfiles.length
+      : 0;
 
     return [
       {
@@ -509,8 +522,12 @@ export class StudentProgressService {
       .andWhere('member.classroom_id IN (:...classroomIds)', { classroomIds })
       .getMany();
 
-    // Get classroom details
-    const classrooms = await this.classroomRepository.findByIds(classroomIds);
+    // Get classroom details (using In operator instead of deprecated findByIds)
+    const classrooms = classroomIds.length > 0
+      ? await this.classroomRepository.find({
+        where: { id: In(classroomIds) },
+      })
+      : [];
     const classroomMap = new Map(classrooms.map((c) => [c.id, c]));
 
     // Map to response DTOs

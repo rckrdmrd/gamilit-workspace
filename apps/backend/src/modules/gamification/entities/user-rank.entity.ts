@@ -35,19 +35,19 @@ export class UserRank {
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario (FK → auth.users)
    */
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del tenant (FK → auth_management.tenants)
    */
   @Column({ type: 'uuid', nullable: true })
-  tenant_id?: string;
+    tenant_id?: string;
 
   // =====================================================
   // RANK INFORMATION
@@ -63,7 +63,7 @@ export class UserRank {
     default: MayaRank.AJAW,
     enum: MayaRank,
   })
-  current_rank!: MayaRank;
+    current_rank!: MayaRank;
 
   /**
    * Rango maya anterior
@@ -73,7 +73,7 @@ export class UserRank {
     nullable: true,
     enum: MayaRank,
   })
-  previous_rank?: MayaRank;
+    previous_rank?: MayaRank;
 
   // =====================================================
   // PROGRESS & METRICS
@@ -83,37 +83,37 @@ export class UserRank {
    * Porcentaje de progreso hacia el siguiente rango (0-100)
    */
   @Column({ type: 'integer', default: 0 })
-  rank_progress_percentage!: number;
+    rank_progress_percentage!: number;
 
   /**
    * Módulos requeridos para alcanzar el siguiente rango
    */
   @Column({ type: 'integer', nullable: true })
-  modules_required_for_next?: number;
+    modules_required_for_next?: number;
 
   /**
    * Módulos completados para el rango actual
    */
   @Column({ type: 'integer', default: 0 })
-  modules_completed_for_rank!: number;
+    modules_completed_for_rank!: number;
 
   /**
    * XP requerida para alcanzar el siguiente rango
    */
   @Column({ type: 'integer', nullable: true })
-  xp_required_for_next?: number;
+    xp_required_for_next?: number;
 
   /**
    * XP ganada para el rango actual
    */
   @Column({ type: 'integer', default: 0 })
-  xp_earned_for_rank!: number;
+    xp_earned_for_rank!: number;
 
   /**
    * Bonus de ML Coins otorgado al alcanzar el rango
    */
   @Column({ type: 'integer', default: 0 })
-  ml_coins_bonus!: number;
+    ml_coins_bonus!: number;
 
   // =====================================================
   // CERTIFICATES & BADGES
@@ -123,13 +123,13 @@ export class UserRank {
    * URL del certificado obtenido al alcanzar el rango
    */
   @Column({ type: 'text', nullable: true })
-  certificate_url?: string;
+    certificate_url?: string;
 
   /**
    * URL del badge/insignia del rango
    */
   @Column({ type: 'text', nullable: true })
-  badge_url?: string;
+    badge_url?: string;
 
   // =====================================================
   // ACHIEVEMENT DATES
@@ -139,13 +139,13 @@ export class UserRank {
    * Fecha y hora en que se alcanzó el rango actual
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  achieved_at?: Date;
+    achieved_at?: Date;
 
   /**
    * Fecha y hora en que se alcanzó el rango anterior
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  previous_rank_achieved_at?: Date;
+    previous_rank_achieved_at?: Date;
 
   // =====================================================
   // STATUS CONTROL
@@ -156,13 +156,13 @@ export class UserRank {
    * Solo un registro por usuario debe tener is_current = true
    */
   @Column({ type: 'boolean', default: true })
-  is_current!: boolean;
+    is_current!: boolean;
 
   /**
    * Metadatos adicionales del rango en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-  rank_metadata!: Record<string, any>;
+    rank_metadata!: Record<string, any>;
 
   // =====================================================
   // AUDIT
@@ -172,11 +172,11 @@ export class UserRank {
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización del registro
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 }

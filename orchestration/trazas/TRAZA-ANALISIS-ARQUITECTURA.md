@@ -1836,9 +1836,9 @@ GET http://localhost:3006/api/v1/teacher/classrooms 404 (Not Found)
 
 **GAPS CRÍTICOS (P0 - Bloqueantes):**
 
-**GAP-TEACHER-001: Classrooms CRUD Endpoints FALTANTES** 🔴
+**GAP-TEACHER-001: Classrooms CRUD Endpoints FALTANTES** ✅
 - **Severidad:** CRÍTICA
-- **Endpoints faltantes:** 8 endpoints (GET/POST/PUT/DELETE)
+- **Endpoints implementados:** 8 endpoints (GET/POST/PUT/DELETE)
   - GET /teacher/classrooms
   - GET /teacher/classrooms/:id
   - POST /teacher/classrooms
@@ -1849,10 +1849,10 @@ GET http://localhost:3006/api/v1/teacher/classrooms 404 (Not Found)
   - GET /teacher/classrooms/:classroomId/teachers
 - **Evidencia:**
   - Frontend: classroomsApi.ts líneas 82-305
-  - Backend: NO EXISTE ninguno de estos endpoints
-  - Backend solo tiene: block/unblock students, permissions
-- **Impacto:** Dashboard teacher NO puede cargar classrooms
-- **Estado:** 🔴 ABIERTO
+  - Backend: teacher-classrooms.controller.ts (IMPLEMENTADO)
+  - Resuelto: 2025-11-24 por Backend-Agent
+- **Impacto:** Dashboard teacher FUNCIONAL
+- **Estado:** ✅ RESUELTO (2025-11-24)
 
 **GAP-TEACHER-002: Assignments CRUD Endpoints FALTANTES** 🔴
 - **Severidad:** CRÍTICA
@@ -2986,5 +2986,579 @@ Análisis exhaustivo de coherencia entre las tres capas del sistema (Database, B
 2. **RLS Policies:** `USING(true)` es una vulnerabilidad crítica que debe evitarse siempre
 3. **Prefijos de Archivos:** Usar prefijos numéricos únicos para garantizar orden de carga
 4. **Integración por Fases:** Analizar coherencia en capas (DB→BE→FE) permite identificar issues sistemáticamente
+
+---
+
+---
+
+## 🔗 ANÁLISIS CROSS-LAYER: FE-107 ↔ Backend ↔ BD
+
+**Fecha:** 2025-11-29
+**Análisis por:** Architecture-Analyst
+
+### Contexto
+
+La corrección FE-107 (Estructura Respuestas API) reveló desincronización entre:
+- Frontend esperaba: `response.data.data.X` (wrapper ApiResponse)
+- Backend devuelve: `response.data.X` (directo desde controller)
+
+### Análisis de Capas Afectadas
+
+#### Capa 1: Base de Datos
+**Estado:** ✅ Sin cambios requeridos
+- Los datos en BD son correctos
+- Las queries funcionan correctamente
+- No hay impacto en estructura de tablas
+
+#### Capa 2: Backend (NestJS Controllers)
+**Estado:** ✅ Verificado funcionando correctamente
+
+| Controller | Método | Retorno | Validado |
+|-----------|--------|---------|----------|
+| `comodines.controller.ts` | `getCatalog()` | Array directo | ✅ |
+| `achievements.controller.ts` | `getAllAchievements()` | Array directo | ✅ |
+| `notifications.controller.ts` | `getUnreadCount()` | `{ count }` directo | ✅ |
+
+**Patrón identificado:** Controllers NestJS retornan data directamente sin wrapper.
+
+#### Capa 3: Frontend (API Clients)
+**Estado:** ✅ Corregido en FE-107
+
+| Archivo | Cambio | Estado |
+|---------|--------|--------|
+| `socialAPI.ts` | `getPowerUps()`, `purchasePowerUp()` | ✅ Corregido |
+| `notificationsAPI.ts` | 4 métodos | ✅ Corregido |
+| `achievementsAPI.ts` | `getAllAchievements()` | ✅ Corregido |
+| `AchievementsPage.tsx` | Fallback `recentlyEarned` | ✅ Corregido |
+| `api.config.ts` | URL classroom | ✅ Corregido |
+
+### Lección Aprendida
+
+**Patrón API a seguir:**
+```typescript
+// ❌ INCORRECTO (asume wrapper)
+const { data } = await apiClient.get<ApiResponse<T>>(url);
+return data.data;
+
+// ✅ CORRECTO (backend devuelve directo)
+const { data } = await apiClient.get<T>(url);
+return data;
+```
+
+### Relación con Objetos BD
+
+| Objeto BD | Tabla Backend | Controller | API Client Frontend |
+|-----------|---------------|------------|---------------------|
+| Comodines | `comodines_inventory` | `comodines.controller` | `socialAPI.ts` |
+| Achievements | `user_achievements` | `achievements.controller` | `achievementsAPI.ts` |
+| Notifications | `notifications` | `notifications.controller` | `notificationsAPI.ts` |
+
+### Documentación Relacionada
+
+- **FE-107:** `orchestration/trazas/TRAZA-TAREAS-FRONTEND.md`
+- **Controllers:** `apps/backend/src/modules/gamification/controllers/`
+- **Entities:** `apps/backend/src/modules/gamification/entities/`
+
+---
+
+## [ARCH-015] Validación Cross-Layer BD ↔ Backend ↔ Frontend
+
+**Tipo:** Validación de Coherencia
+**Fecha inicio:** 2025-11-29
+**Fecha fin:** 2025-11-29
+**Estado:** ✅ Completado
+**Prioridad:** P0
+**Agente:** Architecture-Analyst
+**Relacionado con:** FE-107, DB-REFACTOR-001, REFACTOR-002
+
+### Descripción
+
+Validación exhaustiva de sincronización entre las tres capas del sistema:
+1. Base de Datos (DDL) ↔ Backend (TypeORM Entities)
+2. Backend (Controllers) ↔ Frontend (API Clients)
+3. Dependencias entre módulos NestJS
+
+### Alcance
+
+- 7 pares tabla-entidad analizados (DDL vs Entity)
+- 8 módulos de API analizados (Controller vs Frontend)
+- 16 módulos NestJS analizados para dependencias
+
+---
+
+### 🔴 HALLAZGOS CRÍTICOS
+
+#### 1. BD ↔ Backend: assignment_exercises
+
+**Archivo Entity:** `apps/backend/src/modules/assignments/entities/assignment-exercise.entity.ts`
+**Tabla DDL:** `educational_content.assignment_exercises`
+
+| Columna | En Entity | En DDL | Estado |
+|---------|-----------|--------|--------|
+| `points_override` | ✅ SÍ | ❌ NO | **CRÍTICO** |
+| `is_required` | ✅ SÍ | ❌ NO | **CRÍTICO** |
+
+```typescript
+// Entity define columnas que NO EXISTEN en DDL:
+@Column('decimal', { name: 'points_override', precision: 5, scale: 2, nullable: true })
+pointsOverride?: number | null;
+
+@Column('boolean', { name: 'is_required', default: true })
+isRequired!: boolean;
+```
+
+**Acción requerida:** Agregar columnas al DDL o remover del Entity
+
+---
+
+#### 2. Backend ↔ Frontend: Rutas Comodines
+
+**Backend:** `apps/backend/src/modules/gamification/controllers/comodines.controller.ts`
+**Frontend:** `apps/frontend/src/services/api/socialAPI.ts`
+
+| Operación | Backend | Frontend | Estado |
+|-----------|---------|----------|--------|
+| Usar comodín | `POST /gamification/comodines/use` | `POST /gamification/comodines/{id}/use` | **CRÍTICO** |
+
+```typescript
+// Backend (línea ~95):
+@Post('use')
+async useComodin(@Body() dto: UseComodinDto) { ... }
+
+// Frontend (línea ~45):
+usePowerUp: async (powerupId: string) =>
+  apiClient.post(`/gamification/comodines/${powerupId}/use`)
+```
+
+**Acción requerida:** Alinear rutas (preferir patrón REST `/{id}/use`)
+
+---
+
+#### 3. Backend ↔ Frontend: Rutas Achievements
+
+**Backend:** `apps/backend/src/modules/gamification/controllers/achievements.controller.ts`
+**Frontend:** `apps/frontend/src/lib/api/gamification.api.ts`
+
+| Operación | Backend | Frontend | Estado |
+|-----------|---------|----------|--------|
+| Get user achievements | `GET /gamification/users/:userId/achievements` | `GET /gamification/achievements/user/:userId` | **CRÍTICO** |
+| Claim achievement | `POST /gamification/users/:userId/achievements/:achievementId` | `POST /gamification/achievements/claim` | **CRÍTICO** |
+
+**Acción requerida:** Unificar estructura de rutas
+
+---
+
+### 🟡 HALLAZGOS MEDIOS
+
+#### 4. Endpoints Frontend sin Backend
+
+| Endpoint Frontend | Archivo | Estado Backend |
+|-------------------|---------|----------------|
+| `GET /notifications/preferences` | `notificationsAPI.ts` | ❌ No implementado |
+| `PATCH /notifications/preferences` | `notificationsAPI.ts` | ❌ No implementado |
+| `GET /notifications/devices` | `notificationsAPI.ts` | ❌ No implementado |
+| `POST /notifications/devices` | `notificationsAPI.ts` | ❌ No implementado |
+
+**Nota:** Estos endpoints están documentados para EXT-003 (Multi-Channel) pero aún no implementados.
+
+---
+
+#### 5. FK Inconsistencias en Assignments
+
+| Tabla | Campo | Referencia Actual | Debería Ser |
+|-------|-------|-------------------|-------------|
+| `assignment_students` | `student_id` | `auth.users` | `auth_management.profiles` |
+| `assignment_submissions` | `student_id` | `auth.users` | `auth_management.profiles` |
+
+**Contexto:** Migración de auth.users a profiles no completada en todos los casos.
+
+---
+
+### 🟢 HALLAZGOS POSITIVOS
+
+#### Tablas en SYNC Perfecto (BD ↔ Backend)
+
+| Tabla | Entity | Estado |
+|-------|--------|--------|
+| `user_stats` | `UserStats` | ✅ SYNC |
+| `comodines_inventory` | `ComodinesInventory` | ✅ SYNC |
+| `exercise_submissions` | `ExerciseSubmission` | ✅ SYNC |
+| `assignment_classrooms` | `AssignmentClassroom` | ✅ SYNC |
+| `assignment_students` | `AssignmentStudent` | ✅ SYNC |
+| `assignment_submissions` | `AssignmentSubmission` | ✅ SYNC |
+
+#### Dependencias Módulos: Sin Circular
+
+```
+auth (base) → educational/social/content → progress/gamification → teacher → admin
+```
+
+**Resultado:** Arquitectura limpia, flujo unidireccional de dependencias.
+
+---
+
+### Acciones Derivadas
+
+#### P0 - Críticas
+- [ ] **DDL:** Agregar `points_override` y `is_required` a `assignment_exercises`
+- [ ] **Backend:** Corregir ruta comodines `POST /use` → `POST /{id}/use`
+- [ ] **Unificar:** Rutas achievements entre backend y frontend
+
+#### P1 - Importantes
+- [ ] Corregir FK `assignment_students.student_id` → profiles
+- [ ] Corregir FK `assignment_submissions.student_id` → profiles
+- [ ] Implementar endpoints multi-channel (EXT-003) o remover del frontend
+
+#### P2 - Mejoras
+- [ ] Documentar patrón de rutas REST estándar
+- [ ] Crear validador automático de sync DDL ↔ Entity
+
+---
+
+### Métricas de Validación
+
+```
+╔═══════════════════════════════════════════════════════════╗
+║  VALIDACIÓN CROSS-LAYER 2025-11-29                        ║
+╠═══════════════════════════════════════════════════════════╣
+║  Pares BD↔Backend analizados:        7                    ║
+║  - En SYNC:                          6 (85.7%)            ║
+║  - Con discrepancias:                1 (14.3%)            ║
+╠═══════════════════════════════════════════════════════════╣
+║  Módulos API analizados:             8                    ║
+║  - Rutas alineadas:                  5 (62.5%)            ║
+║  - Rutas desalineadas:               3 (37.5%)            ║
+╠═══════════════════════════════════════════════════════════╣
+║  Módulos NestJS analizados:         16                    ║
+║  - Sin dependencias circulares:     16 (100%)             ║
+╠═══════════════════════════════════════════════════════════╣
+║  Issues CRÍTICOS identificados:       3                   ║
+║  Issues MEDIOS identificados:         2                   ║
+║  ESTADO:            ⚠️ REQUIERE CORRECCIONES P0           ║
+╚═══════════════════════════════════════════════════════════╝
+```
+
+---
+
+### Lecciones Aprendidas
+
+1. **Entity-First Problem:** Definir columnas en Entity sin agregarlas al DDL rompe la Política de Carga Limpia
+2. **Rutas REST:** Sin estándar definido, backend y frontend divergen en patrones de URL
+3. **Endpoints Futuros:** Documentar como "EXT-XXX pendiente" para evitar confusión con endpoints no implementados
+4. **Validación Continua:** Implementar CI/CD check para sync DDL ↔ Entity
+
+---
+
+## [ARCH-015-FIX] Correcciones Implementadas
+
+**Tipo:** Corrección de Issues
+**Fecha:** 2025-11-29
+**Estado:** ✅ Completado
+**Relacionado con:** ARCH-015
+
+### Correcciones Realizadas
+
+#### 1. DDL assignment_exercises - Columnas Faltantes ✅
+
+**Archivo:** `apps/database/ddl/schemas/educational_content/tables/06-assignment_exercises.sql`
+
+**Cambios:**
+```sql
+-- Columnas agregadas:
+points_override DECIMAL(5,2),
+is_required BOOLEAN DEFAULT true,
+
+-- Comentarios agregados:
+COMMENT ON COLUMN educational_content.assignment_exercises.points_override
+  IS 'Custom points for this exercise in this assignment (overrides exercise default)';
+COMMENT ON COLUMN educational_content.assignment_exercises.is_required
+  IS 'Whether this exercise is required or optional in the assignment';
+```
+
+**Estado:** DDL ahora en SYNC con Entity `AssignmentExercise`
+
+---
+
+#### 2. Ruta Comodines - socialAPI.ts ✅
+
+**Archivo:** `apps/frontend/src/features/gamification/social/api/socialAPI.ts`
+
+**Problema:** Función `activatePowerUp` usaba ruta incorrecta `/{powerUpId}/use`
+
+**Corrección:**
+- Ruta cambiada a `POST /gamification/comodines/use`
+- Firma actualizada: `activatePowerUp(userId, comodinType, exerciseId?, context?)`
+- Body ahora envía: `{ user_id, comodin_type, quantity, exercise_id, context }`
+- Response extraction corregida (sin wrapper extra)
+
+---
+
+#### 3. InventoryPage.tsx - Actualización de Llamada ✅
+
+**Archivo:** `apps/frontend/src/apps/student/pages/InventoryPage.tsx`
+
+**Cambios:**
+- Agregado mapeo de power-up IDs a comodin_types
+- Llamada actualizada: `activatePowerUp(user.id, comodinType)`
+- Validación de `user?.id` agregada
+
+---
+
+#### 4. api.config.ts - Limpieza de Rutas Muertas ✅
+
+**Archivo:** `apps/frontend/src/config/api.config.ts`
+
+**Removidas (no existen en backend):**
+- `purchaseSpecific: (powerupId) => /comodines/${powerupId}/purchase`
+- `useSpecific: (powerupId) => /comodines/${powerupId}/use`
+- `active: /gamification/comodines/active`
+
+**Agregadas (existen en backend):**
+- `history: (userId) => /comodines/users/${userId}/history`
+- `stats: (userId) => /comodines/users/${userId}/stats`
+
+---
+
+### Verificación Post-Corrección
+
+#### Rutas Achievements - Verificadas ✅
+
+| Operación | Frontend | Backend | Estado |
+|-----------|----------|---------|--------|
+| Get all | `/achievements` | `GET achievements` | ✅ SYNC |
+| Get by ID | `/achievements/${id}` | `GET achievements/:id` | ✅ SYNC |
+| User achievements | `/users/${userId}/achievements` | `GET users/:userId/achievements` | ✅ SYNC |
+| Summary | `/users/${userId}/achievements/summary` | `GET users/:userId/achievements/summary` | ✅ SYNC |
+| Claim | `/users/${userId}/achievements/${id}/claim` | `POST users/:userId/achievements/:id/claim` | ✅ SYNC |
+
+**Nota:** El análisis previo del agente indicaba desalineación, pero la verificación manual confirmó que las rutas ya estaban alineadas correctamente.
+
+---
+
+### Acciones Pendientes Actualizadas
+
+#### P0 - Críticas
+- [x] **DDL:** Agregar `points_override` y `is_required` a `assignment_exercises`
+- [x] **Frontend:** Corregir `activatePowerUp` en socialAPI.ts
+- [x] **Verificar:** Rutas achievements (ya estaban alineadas)
+
+#### P1 - Importantes (Sin cambios)
+- [ ] Corregir FK `assignment_students.student_id` → profiles
+- [ ] Corregir FK `assignment_submissions.student_id` → profiles
+- [ ] Implementar endpoints multi-channel (EXT-003) o remover del frontend
+
+---
+
+### Métricas Post-Corrección
+
+```
+╔═══════════════════════════════════════════════════════════╗
+║  CORRECCIONES ARCH-015-FIX 2025-11-29                     ║
+╠═══════════════════════════════════════════════════════════╣
+║  Archivos DDL modificados:           1                    ║
+║  Archivos Frontend modificados:      3                    ║
+║  Rutas muertas eliminadas:           3                    ║
+║  Rutas faltantes agregadas:          2                    ║
+╠═══════════════════════════════════════════════════════════╣
+║  Issues P0 resueltos:                3/3 (100%)           ║
+║  Issues P1 pendientes:               3                    ║
+║  ESTADO:                  ✅ P0 COMPLETADO                ║
+╚═══════════════════════════════════════════════════════════╝
+```
+
+---
+
+## [ARCH-015-FIX-P1] Correcciones P1 Implementadas
+
+**Tipo:** Corrección de Issues P1
+**Fecha:** 2025-11-29
+**Estado:** ✅ Completado
+**Relacionado con:** ARCH-015
+
+### Correcciones FK Legacy
+
+#### 1. `assignment_students.student_id` → profiles ✅
+
+**Archivo:** `apps/database/ddl/schemas/educational_content/tables/07-assignment_students.sql`
+
+**Cambio:**
+```sql
+-- ANTES:
+student_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE
+
+-- DESPUÉS:
+student_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE
+```
+
+**Justificación:** Entity `AssignmentStudent` define relación comentada a `Profile`, no `User`.
+
+---
+
+#### 2. `assignment_submissions.student_id` y `graded_by` → profiles ✅
+
+**Archivo:** `apps/database/ddl/schemas/educational_content/tables/08-assignment_submissions.sql`
+
+**Cambios:**
+```sql
+-- student_id: auth.users → auth_management.profiles
+student_id UUID NOT NULL REFERENCES auth_management.profiles(id) ON DELETE CASCADE
+
+-- graded_by: auth.users → auth_management.profiles
+graded_by UUID REFERENCES auth_management.profiles(id)
+```
+
+**Justificación:** Entity `AssignmentSubmission` define relaciones comentadas a `Profile`.
+
+---
+
+### Verificación EXT-003 Multi-Channel
+
+**Estado:** ✅ Endpoints EXISTEN (análisis previo era incorrecto)
+
+| Endpoint | Controller Backend | Estado |
+|----------|-------------------|--------|
+| `GET /notifications/preferences` | `notification-preferences.controller.ts` | ✅ |
+| `PATCH /notifications/preferences/:type` | `notification-preferences.controller.ts` | ✅ |
+| `PATCH /notifications/preferences` (batch) | `notification-preferences.controller.ts` | ✅ |
+| `GET /notifications/devices` | `notification-devices.controller.ts` | ✅ |
+| `POST /notifications/devices` | `notification-devices.controller.ts` | ✅ |
+| `PATCH /notifications/devices/:id` | `notification-devices.controller.ts` | ✅ |
+| `DELETE /notifications/devices/:id` | `notification-devices.controller.ts` | ✅ |
+
+**Conclusión:** No hay acción requerida para EXT-003.
+
+---
+
+### Métricas P1
+
+```
+╔═══════════════════════════════════════════════════════════╗
+║  CORRECCIONES ARCH-015-FIX-P1 2025-11-29                  ║
+╠═══════════════════════════════════════════════════════════╣
+║  Archivos DDL modificados:           2                    ║
+║  FKs legacy corregidas:              3                    ║
+║  - assignment_students.student_id    1                    ║
+║  - assignment_submissions.student_id 1                    ║
+║  - assignment_submissions.graded_by  1                    ║
+╠═══════════════════════════════════════════════════════════╣
+║  EXT-003 verificado:                 ✅ (7/7 endpoints)   ║
+║  Issues P1 resueltos:                3/3 (100%)           ║
+║  ESTADO:                  ✅ P1 COMPLETADO                ║
+╚═══════════════════════════════════════════════════════════╝
+```
+
+---
+
+### [ARCH-GAP-TEACHER-REPORTS] Análisis Cadena teacher_reports - GAPs Críticos
+
+**Tipo:** Gap Analysis End-to-End (DB ↔ Backend ↔ Frontend)
+**Fecha:** 2025-11-29
+**Estado:** 🔴 GAPS CRÍTICOS IDENTIFICADOS
+**Prioridad:** P0 (Bloquea funcionalidad de reportes)
+**Agente:** Architecture-Analyst
+**Relacionado con:** Portal Teacher, Página Reportes
+
+### Descripción
+
+Validación profunda de la cadena completa de implementación de `teacher_reports` identificó que el flujo de generación y descarga de reportes está **incompleto y no funcional**.
+
+### GAPs Críticos Identificados
+
+#### 🔴 GAP-REPORTS-001: CREATE no persiste en BD
+
+**Severidad:** CRÍTICA
+**Ubicación:** `ReportsService.generateReport()` → `TeacherReportsService`
+**Problema:**
+- `POST /teacher/reports/generate` genera el reporte en memoria
+- Retorna el buffer directamente al cliente
+- **NUNCA crea registro en `social_features.teacher_reports`**
+- Reporte no es reutilizable ni aparece en historial
+
+**Archivos afectados:**
+- `apps/backend/src/modules/teacher/services/reports.service.ts:61-94`
+- `apps/backend/src/modules/teacher/services/teacher-reports.service.ts` (falta método `createReport`)
+
+**Corrección requerida:**
+1. Agregar método `createReport()` en `TeacherReportsService`
+2. Llamar a `createReport()` desde `ReportsService.generateReport()` después de generar el buffer
+3. Implementar guardado de archivo en storage (S3/local)
+
+---
+
+#### 🔴 GAP-REPORTS-002: Download retorna 501 NOT_IMPLEMENTED
+
+**Severidad:** CRÍTICA
+**Ubicación:** `teacher.controller.ts:485-546`
+**Problema:**
+- `GET /teacher/reports/:id/download` retorna HTTP 501
+- Código tiene TODO para implementar storage
+- `report.filePath` siempre es NULL (GAP-001)
+
+**Evidencia:**
+```typescript
+// Línea 534-536
+res.status(HttpStatus.NOT_IMPLEMENTED).json({
+  message: 'File download not yet implemented. Storage integration required.'
+});
+```
+
+**Corrección requerida:**
+1. Implementar integración con storage (S3, local filesystem)
+2. Guardar `filePath` en BD al crear reporte
+3. Reemplazar líneas 534-545 con stream de archivo real
+
+---
+
+#### 🟡 GAP-REPORTS-003: Mismatch snake_case/camelCase Frontend
+
+**Severidad:** ALTA
+**Ubicación:** `TeacherReportsPage.tsx` ↔ `ReportMetadataDto`
+**Problema:**
+- API retorna: `{ report_name, report_type, student_count, generated_at }`
+- Frontend espera: `{ name, type, studentCount, generatedAt }`
+- Frontend usa datos mock como fallback
+
+**Archivos afectados:**
+- `apps/frontend/src/apps/teacher/pages/TeacherReportsPage.tsx:143-180`
+- `apps/backend/src/modules/teacher/dto/teacher-reports.dto.ts`
+
+**Corrección requerida:**
+1. Agregar transformación en frontend (snake_case → camelCase)
+2. O modificar DTO backend para usar `@Expose()` con nombres camelCase
+
+---
+
+### Matriz de Estado por Capa
+
+| Capa | Estado | Problema Principal |
+|------|--------|-------------------|
+| **Base de Datos** | ✅ 95% | Tabla bien diseñada, RLS correcto |
+| **Backend Entity** | ✅ 100% | Perfectamente mapeada |
+| **Backend Service** | ❌ 35% | Solo READ, falta CREATE |
+| **Backend Controller** | ⚠️ 50% | Download 501 |
+| **Frontend** | ⚠️ 75% | Usa datos mock por mismatch |
+
+### Impacto en Usuario
+
+| Operación | Funciona | Impacto |
+|-----------|----------|---------|
+| Ver reportes recientes | ⚠️ Mock | Usuario ve datos falsos |
+| Generar nuevo reporte | ❌ NO | Archivo no persiste |
+| Descargar reporte | ❌ NO | Error 501 |
+
+### Plan de Corrección Propuesto
+
+**Fase 1 - Backend (4-6 horas):**
+1. Crear método `createReport()` en TeacherReportsService
+2. Modificar `generateReport()` para persistir metadata
+3. Implementar storage integration (S3 o local)
+4. Implementar download real de archivos
+
+**Fase 2 - Frontend (2-3 horas):**
+1. Agregar transformación snake_case → camelCase
+2. Remover datos mock fallback
+3. Agregar manejo de errores apropiado
+
+**ESTADO:** Análisis completado ✅, Implementación pendiente ⏳, Requiere decisión de storage (S3 vs local)
 
 ---

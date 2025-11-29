@@ -8,25 +8,25 @@ export class CohortRetentionDto {
     description: 'Cohort month (first day of month, ISO format)',
     example: '2025-01-01T00:00:00Z',
   })
-  cohort_month!: string;
+    cohort_month!: string;
 
   @ApiProperty({
     description: 'Number of users who registered in this cohort',
     example: 150,
   })
-  cohort_size!: number;
+    cohort_size!: number;
 
   @ApiProperty({
     description: 'Number of users who are still active',
     example: 125,
   })
-  retained_users!: number;
+    retained_users!: number;
 
   @ApiProperty({
     description: 'Retention rate as percentage',
     example: 83.33,
   })
-  retention_rate!: number;
+    retention_rate!: number;
 }
 
 /**
@@ -37,5 +37,5 @@ export class RetentionAnalyticsDto {
     description: 'Retention metrics by monthly cohort (most recent first)',
     type: [CohortRetentionDto],
   })
-  cohorts!: CohortRetentionDto[];
+    cohorts!: CohortRetentionDto[];
 }

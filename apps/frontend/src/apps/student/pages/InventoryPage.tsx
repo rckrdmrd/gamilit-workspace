@@ -8,6 +8,7 @@
  * - Item categories
  * - Rarity/stats display
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -75,7 +76,11 @@ export default function InventoryPage() {
     const fetchInventory = async () => {
       try {
         setIsLoadingInventory(true);
-        const inventory = await getPowerUpInventory();
+        if (!user?.id) {
+          setIsLoadingInventory(false);
+          return;
+        }
+        const inventory = await getPowerUpInventory(user.id);
 
         // Transform owned power-ups to display format
         const owned = inventory.owned || [];
@@ -123,7 +128,7 @@ export default function InventoryPage() {
 
     fetchInventory();
     fetchActivePowerUps();
-  }, []);
+  }, [user?.id]);
 
   // Combine all items
   const allItems = [...inventoryItems, ...powerUps];
@@ -168,14 +173,25 @@ export default function InventoryPage() {
   };
 
   const confirmUsePowerUp = async () => {
-    if (!selectedItem || !isPowerUp(selectedItem)) return;
+    if (!selectedItem || !isPowerUp(selectedItem) || !user?.id) return;
 
     try {
-      // Call real API to use power-up
-      const activePowerUp = await activatePowerUp(selectedItem.id);
+      // Map power-up id to comodin_type (ARCH-015)
+      const comodinTypeMap: Record<string, string> = {
+        pistas: 'pistas',
+        hints: 'pistas',
+        vision_lectora: 'vision_lectora',
+        'reading-vision': 'vision_lectora',
+        segunda_oportunidad: 'segunda_oportunidad',
+        'second-chance': 'segunda_oportunidad',
+      };
+      const comodinType = comodinTypeMap[selectedItem.id] || selectedItem.id;
+
+      // Call real API to use power-up (ARCH-015: now passes userId and comodinType)
+      const activePowerUpResult = await activatePowerUp(user.id, comodinType);
 
       // Add to active power-ups list
-      setActivePowerUps((prev) => [...prev, activePowerUp]);
+      setActivePowerUps((prev) => [...prev, activePowerUpResult]);
 
       // Decrement quantity in inventory
       setPowerUps((prev) =>
@@ -192,9 +208,11 @@ export default function InventoryPage() {
         icon: '⚡',
         duration: 4000,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to use power-up:', error);
-      toast.error(error.message || 'Failed to activate power-up. Please try again.');
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to activate power-up. Please try again.';
+      toast.error(errorMessage);
     }
   };
 

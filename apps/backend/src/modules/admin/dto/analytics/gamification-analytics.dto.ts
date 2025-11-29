@@ -8,13 +8,13 @@ export class XpDistributionDto {
     description: 'XP range bucket',
     example: '101-500 XP',
   })
-  xp_range!: string;
+    xp_range!: string;
 
   @ApiProperty({
     description: 'Number of users in this XP range',
     example: 450,
   })
-  users_count!: number;
+    users_count!: number;
 }
 
 /**
@@ -25,25 +25,25 @@ export class RankDistributionDto {
     description: 'Maya rank name',
     example: 'halach_uinik',
   })
-  current_rank!: string;
+    current_rank!: string;
 
   @ApiProperty({
     description: 'Number of users with this rank',
     example: 120,
   })
-  users_count!: number;
+    users_count!: number;
 
   @ApiProperty({
     description: 'Average XP for users with this rank',
     example: 2850.5,
   })
-  avg_xp!: number;
+    avg_xp!: number;
 
   @ApiProperty({
     description: 'Average exercises completed by users with this rank',
     example: 18.7,
   })
-  avg_exercises!: number;
+    avg_exercises!: number;
 }
 
 /**
@@ -54,13 +54,13 @@ export class LevelDistributionDto {
     description: 'User level',
     example: 5,
   })
-  current_level!: number;
+    current_level!: number;
 
   @ApiProperty({
     description: 'Number of users at this level',
     example: 230,
   })
-  users_count!: number;
+    users_count!: number;
 }
 
 /**
@@ -71,17 +71,17 @@ export class GamificationAnalyticsDto {
     description: 'Distribution of users across XP ranges',
     type: [XpDistributionDto],
   })
-  xp_distribution!: XpDistributionDto[];
+    xp_distribution!: XpDistributionDto[];
 
   @ApiProperty({
     description: 'Distribution of users across Maya ranks',
     type: [RankDistributionDto],
   })
-  ranks_distribution!: RankDistributionDto[];
+    ranks_distribution!: RankDistributionDto[];
 
   @ApiProperty({
     description: 'Distribution of users across levels',
     type: [LevelDistributionDto],
   })
-  levels_distribution!: LevelDistributionDto[];
+    levels_distribution!: LevelDistributionDto[];
 }

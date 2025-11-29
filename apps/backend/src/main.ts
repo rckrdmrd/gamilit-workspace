@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { API_PREFIX, API_VERSION } from './shared/constants/routes.constants';
 import { TransformResponseInterceptor } from './shared/interceptors/transform-response.interceptor';
+import { AllExceptionsFilter } from './shared/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -61,6 +62,9 @@ async function bootstrap() {
       },
     }),
   );
+
+  // Global exception filter - captures ALL exceptions with detailed error info
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   // Global response transformation interceptor
   app.useGlobalInterceptors(new TransformResponseInterceptor());

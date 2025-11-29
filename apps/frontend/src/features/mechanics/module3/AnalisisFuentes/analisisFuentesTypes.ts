@@ -60,4 +60,5 @@ export interface AnalisisFuentesExerciseProps {
 // Answers format for backend submission (matches AnalisisFuentesAnswersDto)
 export interface AnalisisFuentesAnswers {
   ranking: string[]; // Array of source IDs ordered by credibility (most credible first)
+  startedAt?: string; // ISO 8601 timestamp when exercise was started
 }

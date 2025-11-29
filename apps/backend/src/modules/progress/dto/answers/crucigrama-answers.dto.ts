@@ -25,5 +25,5 @@ export class CrucigramaAnswersDto {
    */
   @IsObject({ message: 'clues must be an object' })
   @IsNotEmpty({ message: 'clues object is required' })
-  clues!: Record<string, string>;
+    clues!: Record<string, string>;
 }

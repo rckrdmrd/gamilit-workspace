@@ -1,12 +1,18 @@
 # EXT-010: Parent Notifications
 
+> **⚠️ BACKLOG - FUERA DEL MVP**
+>
+> Esta épica está **parcialmente implementada (35%)** y **NO forma parte del MVP actual**.
+> Razón: Feature nice-to-have.
+> Ver: [Fase 4: Backlog](../../04-fase-backlog/README.md)
+
 **Versión:** 1.0
 **Fecha de creación:** 2025-11-07
 **Prioridad:** P2 (Promovida desde P3)
 **Story Points:** 15 SP
 **Presupuesto:** $2,250 USD
 **Timeline:** v1.3 (Sprints 17-24)
-**Estado:** 📋 Planificado
+**Estado:** ⏳ BACKLOG (35% implementado)
 
 ---
 

@@ -1,12 +1,18 @@
 # EXT-008: White-label System (Tier 1)
 
+> **⚠️ BACKLOG - FUERA DEL MVP**
+>
+> Esta épica está **parcialmente implementada (30%)** y **NO forma parte del MVP actual**.
+> Razón: Depende de contratos enterprise.
+> Ver: [Fase 4: Backlog](../../04-fase-backlog/README.md)
+
 **Versión:** 1.0
 **Fecha de creación:** 2025-11-07
 **Prioridad:** P2 (Promovida desde P3)
 **Story Points:** 20 SP
 **Presupuesto:** $3,000 USD
 **Timeline:** v1.5 (Semanas 25-32)
-**Estado:** 📋 Planificado
+**Estado:** ⏳ BACKLOG (30% implementado)
 
 ---
 

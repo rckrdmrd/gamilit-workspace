@@ -38,17 +38,17 @@ import { DB_SCHEMAS, DB_TABLES, DifficultyLevelEnum } from '@shared/constants';
 @Index('idx_peer_challenges_timing', ['start_time', 'end_time'])
 @Index('idx_peer_challenges_created_at', ['created_at'])
 @Check(
-  `"challenge_type" IN ('head_to_head', 'multiplayer', 'tournament', 'leaderboard')`,
+  '"challenge_type" IN (\'head_to_head\', \'multiplayer\', \'tournament\', \'leaderboard\')',
 )
 @Check(
-  `"status" IN ('open', 'full', 'in_progress', 'completed', 'cancelled', 'expired')`,
+  '"status" IN (\'open\', \'full\', \'in_progress\', \'completed\', \'cancelled\', \'expired\')',
 )
 export class PeerChallenge {
   /**
    * Identificador único del desafío (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * Tipo de desafío
@@ -58,79 +58,79 @@ export class PeerChallenge {
    * - leaderboard: Competencia por ranking
    */
   @Column({ type: 'text' })
-  challenge_type!: 'head_to_head' | 'multiplayer' | 'tournament' | 'leaderboard';
+    challenge_type!: 'head_to_head' | 'multiplayer' | 'tournament' | 'leaderboard';
 
   /**
    * ID del creador del desafío
    */
   @Column({ type: 'uuid' })
-  created_by!: string;
+    created_by!: string;
 
   /**
    * ID del módulo (opcional)
    */
   @Column({ type: 'uuid', nullable: true })
-  module_id?: string;
+    module_id?: string;
 
   /**
    * ID del ejercicio (opcional)
    */
   @Column({ type: 'uuid', nullable: true })
-  exercise_id?: string;
+    exercise_id?: string;
 
   /**
    * Título del desafío
    */
   @Column({ type: 'text' })
-  title!: string;
+    title!: string;
 
   /**
    * Descripción del desafío
    */
   @Column({ type: 'text', nullable: true })
-  description?: string;
+    description?: string;
 
   /**
    * Nivel de dificultad
    */
   @Column({ type: 'enum', enum: DifficultyLevelEnum, nullable: true })
-  difficulty_level?: DifficultyLevelEnum;
+    difficulty_level?: DifficultyLevelEnum;
 
   /**
    * Máximo de participantes permitidos
    */
   @Column({ type: 'integer', default: 2 })
-  max_participants!: number;
+    max_participants!: number;
 
   /**
    * Mínimo de participantes para iniciar
    */
   @Column({ type: 'integer', default: 2 })
-  min_participants!: number;
+    min_participants!: number;
 
   /**
    * Contador de participantes actuales
    */
   @Column({ type: 'integer', default: 1 })
-  current_participants!: number;
+    current_participants!: number;
 
   /**
    * Fecha y hora de inicio del desafío
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  start_time?: Date;
+    start_time?: Date;
 
   /**
    * Fecha y hora de fin del desafío
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  end_time?: Date;
+    end_time?: Date;
 
   /**
    * Límite de tiempo en minutos por participante
    */
   @Column({ type: 'integer', nullable: true })
-  time_limit_minutes?: number;
+    time_limit_minutes?: number;
 
   /**
    * Estado del desafío
@@ -142,75 +142,75 @@ export class PeerChallenge {
    * - expired: Expirado sin completarse
    */
   @Column({ type: 'text', default: 'open' })
-  status!: 'open' | 'full' | 'in_progress' | 'completed' | 'cancelled' | 'expired';
+    status!: 'open' | 'full' | 'in_progress' | 'completed' | 'cancelled' | 'expired';
 
   /**
    * Recompensas del desafío en formato JSONB
    * @example { "xp": 100, "ml_coins": 50, "achievement_id": "uuid" }
    */
   @Column({ type: 'jsonb', default: {} })
-  rewards!: Record<string, any>;
+    rewards!: Record<string, any>;
 
   /**
    * Multiplicador de bonus para el ganador
    * @default 1.5 (150% de las recompensas)
    */
   @Column({ type: 'numeric', precision: 3, scale: 2, default: 1.5 })
-  winner_bonus_multiplier!: number;
+    winner_bonus_multiplier!: number;
 
   /**
    * Permite espectadores
    */
   @Column({ type: 'boolean', default: true })
-  allow_spectators!: boolean;
+    allow_spectators!: boolean;
 
   /**
    * Visible en lista pública de desafíos
    */
   @Column({ type: 'boolean', default: true })
-  is_public!: boolean;
+    is_public!: boolean;
 
   /**
    * Requiere aprobación del creador para unirse
    */
   @Column({ type: 'boolean', default: false })
-  requires_approval!: boolean;
+    requires_approval!: boolean;
 
   /**
    * Reglas personalizadas en formato JSONB
    */
   @Column({ type: 'jsonb', default: {} })
-  custom_rules!: Record<string, any>;
+    custom_rules!: Record<string, any>;
 
   /**
    * Fecha y hora de creación
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   /**
    * Fecha y hora de inicio real (cuando comenzó)
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  started_at?: Date;
+    started_at?: Date;
 
   /**
    * Fecha y hora de finalización
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  completed_at?: Date;
+    completed_at?: Date;
 
   /**
    * Metadatos adicionales en formato JSONB
    */
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   // =====================================================
   // Relaciones

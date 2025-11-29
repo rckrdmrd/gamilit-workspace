@@ -8,37 +8,37 @@ export class DailyActivityDto {
     description: 'Activity date (ISO format)',
     example: '2025-11-24',
   })
-  activity_date!: string;
+    activity_date!: string;
 
   @ApiProperty({
     description: 'Number of unique active users on this date',
     example: 245,
   })
-  unique_users!: number;
+    unique_users!: number;
 
   @ApiProperty({
     description: 'Total number of activities recorded',
     example: 1230,
   })
-  total_activities!: number;
+    total_activities!: number;
 
   @ApiProperty({
     description: 'Number of exercises completed',
     example: 580,
   })
-  exercises_completed!: number;
+    exercises_completed!: number;
 
   @ApiProperty({
     description: 'Number of modules completed',
     example: 45,
   })
-  modules_completed!: number;
+    modules_completed!: number;
 
   @ApiProperty({
     description: 'Number of login events',
     example: 320,
   })
-  logins!: number;
+    logins!: number;
 }
 
 /**
@@ -49,5 +49,5 @@ export class ActivityTimelineDto {
     description: 'Daily activity data ordered by date (most recent first)',
     type: [DailyActivityDto],
   })
-  timeline!: DailyActivityDto[];
+    timeline!: DailyActivityDto[];
 }

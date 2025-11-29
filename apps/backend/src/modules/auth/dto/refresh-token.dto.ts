@@ -14,5 +14,5 @@ export class RefreshTokenDto {
   })
   @IsString({ message: 'Refresh token debe ser string' })
   @IsNotEmpty({ message: 'Refresh token es requerido' })
-  refreshToken!: string;
+    refreshToken!: string;
 }

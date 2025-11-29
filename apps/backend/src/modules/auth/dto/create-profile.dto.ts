@@ -42,7 +42,7 @@ export class CreateProfileDto {
    * @required
    */
   @IsUUID()
-  tenant_id!: string;
+    tenant_id!: string;
 
   /**
    * Nombre para mostrar
@@ -51,7 +51,7 @@ export class CreateProfileDto {
   @IsString()
   @IsOptional()
   @MaxLength(255)
-  display_name?: string;
+    display_name?: string;
 
   /**
    * Nombre completo
@@ -60,7 +60,7 @@ export class CreateProfileDto {
   @IsString()
   @IsOptional()
   @MaxLength(255)
-  full_name?: string;
+    full_name?: string;
 
   /**
    * Primer nombre
@@ -69,7 +69,7 @@ export class CreateProfileDto {
   @IsString()
   @IsOptional()
   @MaxLength(100)
-  first_name?: string;
+    first_name?: string;
 
   /**
    * Apellido(s)
@@ -78,7 +78,7 @@ export class CreateProfileDto {
   @IsString()
   @IsOptional()
   @MaxLength(100)
-  last_name?: string;
+    last_name?: string;
 
   /**
    * Email del usuario
@@ -86,7 +86,7 @@ export class CreateProfileDto {
    * @unique
    */
   @IsEmail()
-  email!: string;
+    email!: string;
 
   /**
    * URL del avatar
@@ -94,7 +94,7 @@ export class CreateProfileDto {
    */
   @IsUrl()
   @IsOptional()
-  avatar_url?: string;
+    avatar_url?: string;
 
   /**
    * Biografía o descripción del usuario
@@ -106,7 +106,7 @@ export class CreateProfileDto {
   @MaxLength(500, {
     message: 'La biografía no puede exceder 500 caracteres',
   })
-  bio?: string;
+    bio?: string;
 
   /**
    * Teléfono
@@ -118,7 +118,7 @@ export class CreateProfileDto {
   @Matches(/^\+?[1-9]\d{1,14}$/, {
     message: 'El teléfono debe ser un número válido en formato internacional',
   })
-  phone?: string;
+    phone?: string;
 
   /**
    * Fecha de nacimiento
@@ -127,7 +127,7 @@ export class CreateProfileDto {
    */
   @IsDateString()
   @IsOptional()
-  date_of_birth?: string;
+    date_of_birth?: string;
 
   /**
    * Grado escolar del estudiante
@@ -137,7 +137,7 @@ export class CreateProfileDto {
   @IsString()
   @IsOptional()
   @MaxLength(10)
-  grade_level?: string;
+    grade_level?: string;
 
   /**
    * ID de estudiante (matrícula)
@@ -146,7 +146,7 @@ export class CreateProfileDto {
   @IsString()
   @IsOptional()
   @MaxLength(50)
-  student_id?: string;
+    student_id?: string;
 
   /**
    * ID de la escuela del estudiante
@@ -155,7 +155,7 @@ export class CreateProfileDto {
    */
   @IsUUID()
   @IsOptional()
-  school_id?: string;
+    school_id?: string;
 
   /**
    * Rol del usuario en el sistema
@@ -164,7 +164,7 @@ export class CreateProfileDto {
    */
   @IsEnum(GamilityRoleEnum)
   @IsOptional()
-  role?: GamilityRoleEnum;
+    role?: GamilityRoleEnum;
 
   /**
    * Estado de la cuenta
@@ -173,7 +173,7 @@ export class CreateProfileDto {
    */
   @IsEnum(UserStatusEnum)
   @IsOptional()
-  status?: UserStatusEnum;
+    status?: UserStatusEnum;
 
   /**
    * Email verificado
@@ -181,7 +181,7 @@ export class CreateProfileDto {
    */
   @IsBoolean()
   @IsOptional()
-  email_verified?: boolean;
+    email_verified?: boolean;
 
   /**
    * Teléfono verificado
@@ -189,7 +189,7 @@ export class CreateProfileDto {
    */
   @IsBoolean()
   @IsOptional()
-  phone_verified?: boolean;
+    phone_verified?: boolean;
 
   /**
    * Preferencias del usuario (JSONB)
@@ -198,7 +198,7 @@ export class CreateProfileDto {
    */
   @IsObject()
   @IsOptional()
-  preferences?: UserPreferencesSchema;
+    preferences?: UserPreferencesSchema;
 
   /**
    * Metadata adicional (JSONB)
@@ -206,7 +206,7 @@ export class CreateProfileDto {
    */
   @IsObject()
   @IsOptional()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 
   /**
    * ID del usuario en auth.users
@@ -215,5 +215,5 @@ export class CreateProfileDto {
    */
   @IsUUID()
   @IsOptional()
-  user_id?: string;
+    user_id?: string;
 }

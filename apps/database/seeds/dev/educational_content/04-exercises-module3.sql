@@ -140,7 +140,7 @@ BEGIN
             'Los blogs anónimos sin fuentes tienen credibilidad muy baja'
         ]::text[],
         true, 15,
-        100, 20,
+        150, 30,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -258,14 +258,14 @@ BEGIN
             "note": "Este debate no tiene respuesta única correcta. Se evalúa la calidad de argumentación."
         }'::jsonb,
         'advanced', 100, 70,
-        100, 20,
+        150, 30,
         ARRAY[
             'No hay respuesta única correcta; lo importante es la calidad de la argumentación',
             'Usa evidencias específicas de la vida de Marie para respaldar tus argumentos',
             'Anticipa y responde a posibles contraargumentos'
         ]::text[],
         true, 15,
-        100, 20,
+        150, 30,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -368,14 +368,14 @@ BEGIN
             "evaluation": "comprehensive_understanding"
         }'::jsonb,
         'advanced', 100, 70,
-        100, 20,
+        150, 30,
         ARRAY[
             'Las perspectivas históricas cambian con el tiempo y contexto',
             'Ninguna perspectiva es completamente objetiva',
             'Comprender múltiples puntos de vista enriquece nuestra comprensión'
         ]::text[],
         true, 15,
-        100, 20,
+        150, 30,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -463,14 +463,14 @@ BEGIN
             "evaluation": "rubric_based"
         }'::jsonb,
         'advanced', 100, 70,
-        100, 20,
+        150, 30,
         ARRAY[
             'Estructura tu podcast con introducción, desarrollo y conclusión clara',
             'Usa evidencias históricas específicas para respaldar tus argumentos',
             'Reconoce la complejidad: evita juicios simplistas'
         ]::text[],
         true, 15,
-        100, 20,
+        150, 30,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
@@ -579,14 +579,14 @@ BEGIN
             "validation": {"minJustificationLength": 30, "maxJustificationLength": 200, "requireBothTypeAndVerdict": true}
         }'::jsonb,
         'advanced', 100, 70,
-        100, 20,
+        150, 30,
         ARRAY[
             'Juzga con criterios éticos de la época Y con perspectiva moderna',
             'Reconoce que muchas decisiones éticas son complejas sin respuestas simples',
             'Fundamenta tu veredicto con razonamiento claro'
         ]::text[],
         true, 15,
-        100, 20,
+        150, 30,
         true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,

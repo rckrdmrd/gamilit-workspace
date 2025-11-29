@@ -13,7 +13,7 @@ export class ListMediaDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  page?: number;
+    page?: number;
 
   @ApiPropertyOptional({
     description: 'Items per page',
@@ -25,7 +25,7 @@ export class ListMediaDto {
   @IsInt()
   @Min(1)
   @Max(100)
-  limit?: number;
+    limit?: number;
 
   @ApiPropertyOptional({
     description: 'Search term to filter files by filename or description',
@@ -33,7 +33,7 @@ export class ListMediaDto {
   })
   @IsOptional()
   @IsString()
-  search?: string;
+    search?: string;
 
   @ApiPropertyOptional({
     description: 'Filter by media type',
@@ -42,7 +42,7 @@ export class ListMediaDto {
   })
   @IsOptional()
   @IsEnum(MediaTypeEnum)
-  media_type?: MediaTypeEnum;
+    media_type?: MediaTypeEnum;
 
   @ApiPropertyOptional({
     description: 'Filter by category',
@@ -50,7 +50,7 @@ export class ListMediaDto {
   })
   @IsOptional()
   @IsString()
-  category?: string;
+    category?: string;
 
   @ApiPropertyOptional({
     description: 'Filter by uploader ID',
@@ -58,5 +58,5 @@ export class ListMediaDto {
   })
   @IsOptional()
   @IsString()
-  uploaded_by?: string;
+    uploaded_by?: string;
 }

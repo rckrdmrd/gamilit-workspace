@@ -23,7 +23,7 @@ export class GrantAchievementDto {
    * @format UUID v4
    */
   @IsUUID('4', { message: 'user_id debe ser un UUID válido' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del achievement a otorgar
@@ -31,7 +31,7 @@ export class GrantAchievementDto {
    * @format UUID v4
    */
   @IsUUID('4', { message: 'achievement_id debe ser un UUID válido' })
-  achievement_id!: string;
+    achievement_id!: string;
 
   /**
    * Progreso actual hacia el achievement (numérico)
@@ -42,7 +42,7 @@ export class GrantAchievementDto {
   @IsInt({ message: 'progress debe ser un número entero' })
   @Min(0, { message: 'progress debe ser mayor o igual a 0' })
   @IsOptional()
-  progress?: number;
+    progress?: number;
 
   /**
    * Progreso máximo requerido para completar el achievement
@@ -53,7 +53,7 @@ export class GrantAchievementDto {
   @IsInt({ message: 'max_progress debe ser un número entero' })
   @Min(1, { message: 'max_progress debe ser al menos 1' })
   @IsOptional()
-  max_progress?: number;
+    max_progress?: number;
 
   /**
    * Indica si el achievement está completado
@@ -62,7 +62,7 @@ export class GrantAchievementDto {
    */
   @IsBoolean({ message: 'is_completed debe ser un valor booleano' })
   @IsOptional()
-  is_completed?: boolean;
+    is_completed?: boolean;
 
   /**
    * Datos de progreso específicos (JSONB)
@@ -71,7 +71,7 @@ export class GrantAchievementDto {
    */
   @IsObject({ message: 'progress_data debe ser un objeto JSON válido' })
   @IsOptional()
-  progress_data?: Record<string, any>;
+    progress_data?: Record<string, any>;
 
   /**
    * Metadata adicional
@@ -80,5 +80,5 @@ export class GrantAchievementDto {
    */
   @IsObject({ message: 'metadata debe ser un objeto JSON válido' })
   @IsOptional()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

@@ -44,13 +44,13 @@ export class Module {
    * Identificador único del módulo (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del tenant (FK → auth_management.tenants)
    */
   @Column({ type: 'uuid', nullable: true })
-  tenant_id?: string;
+    tenant_id?: string;
 
   // =====================================================
   // BASIC INFORMATION
@@ -60,25 +60,25 @@ export class Module {
    * Título del módulo
    */
   @Column({ type: 'text' })
-  title!: string;
+    title!: string;
 
   /**
    * Subtítulo del módulo
    */
   @Column({ type: 'text', nullable: true })
-  subtitle?: string;
+    subtitle?: string;
 
   /**
    * Descripción detallada del módulo
    */
   @Column({ type: 'text', nullable: true })
-  description?: string;
+    description?: string;
 
   /**
    * Resumen breve del módulo
    */
   @Column({ type: 'text', nullable: true })
-  summary?: string;
+    summary?: string;
 
   /**
    * Contenido estructurado del módulo (JSONB)
@@ -94,19 +94,19 @@ export class Module {
       multimedia_resources: [],
     },
   })
-  content!: Record<string, any>;
+    content!: Record<string, any>;
 
   /**
    * Índice de orden para la secuencia de módulos
    */
   @Column({ type: 'integer' })
-  order_index!: number;
+    order_index!: number;
 
   /**
    * Código único del módulo (ej. MC-001)
    */
   @Column({ type: 'text', nullable: true })
-  module_code?: string;
+    module_code?: string;
 
   // =====================================================
   // DIFFICULTY & CONTENT
@@ -128,21 +128,21 @@ export class Module {
     enumName: 'difficulty_level',
     default: DifficultyLevelEnum.BEGINNER,
   })
-  difficulty_level!: DifficultyLevelEnum;
+    difficulty_level!: DifficultyLevelEnum;
 
   /**
    * Niveles de grado a los que va dirigido
    * Array: ['6', '7', '8', ...]
    */
   @Column({ type: 'text', array: true, default: ['6', '7', '8'] })
-  grade_levels!: string[];
+    grade_levels!: string[];
 
   /**
    * Materias relacionadas
    * Array: ['Literatura', 'Ciencias', ...]
    */
   @Column({ type: 'text', array: true, default: ['Literatura', 'Ciencias'] })
-  subjects!: string[];
+    subjects!: string[];
 
   // =====================================================
   // TIMING & DURATION
@@ -152,13 +152,13 @@ export class Module {
    * Duración estimada en minutos
    */
   @Column({ type: 'integer', default: 120 })
-  estimated_duration_minutes!: number;
+    estimated_duration_minutes!: number;
 
   /**
    * Número estimado de sesiones para completar el módulo
    */
   @Column({ type: 'integer', default: 4 })
-  estimated_sessions!: number;
+    estimated_sessions!: number;
 
   // =====================================================
   // LEARNING OBJECTIVES & COMPETENCIES
@@ -169,19 +169,19 @@ export class Module {
    * Array de textos describiendo lo que el estudiante aprenderá
    */
   @Column({ type: 'text', array: true, nullable: true })
-  learning_objectives?: string[];
+    learning_objectives?: string[];
 
   /**
    * Competencias a desarrollar
    */
   @Column({ type: 'text', array: true, nullable: true })
-  competencies?: string[];
+    competencies?: string[];
 
   /**
    * Habilidades desarrolladas en el módulo
    */
   @Column({ type: 'text', array: true, nullable: true })
-  skills_developed?: string[];
+    skills_developed?: string[];
 
   // =====================================================
   // PREREQUISITES
@@ -192,13 +192,13 @@ export class Module {
    * Módulos que deben completarse antes de este
    */
   @Column({ type: 'uuid', array: true, nullable: true })
-  prerequisites?: string[];
+    prerequisites?: string[];
 
   /**
    * Habilidades prerequisitas (texto)
    */
   @Column({ type: 'text', array: true, nullable: true })
-  prerequisite_skills?: string[];
+    prerequisite_skills?: string[];
 
   // =====================================================
   // GAMIFICATION & REWARDS
@@ -210,7 +210,7 @@ export class Module {
    * @version 1.1 (2025-11-08) - Cambiado a type-safe ENUM
    */
   @Column({ type: 'enum', enum: MayaRank, nullable: true })
-  maya_rank_required?: MayaRank;
+    maya_rank_required?: MayaRank;
 
   /**
    * Rango maya otorgado al completar el módulo
@@ -218,19 +218,19 @@ export class Module {
    * @version 1.1 (2025-11-08) - Cambiado a type-safe ENUM
    */
   @Column({ type: 'enum', enum: MayaRank, nullable: true })
-  maya_rank_granted?: MayaRank;
+    maya_rank_granted?: MayaRank;
 
   /**
    * Puntos de experiencia (XP) otorgados al completar
    */
   @Column({ type: 'integer', default: 100 })
-  xp_reward!: number;
+    xp_reward!: number;
 
   /**
    * Monedas ML otorgadas al completar
    */
   @Column({ type: 'integer', default: 50 })
-  ml_coins_reward!: number;
+    ml_coins_reward!: number;
 
   // =====================================================
   // STATUS & PUBLICATION
@@ -246,43 +246,43 @@ export class Module {
     enumName: 'educational_content.module_status',
     default: ContentStatusEnum.DRAFT,
   })
-  status!: ContentStatusEnum;
+    status!: ContentStatusEnum;
 
   /**
    * Si el módulo está publicado y visible para estudiantes
    */
   @Column({ type: 'boolean', default: false })
-  is_published!: boolean;
+    is_published!: boolean;
 
   /**
    * Si el módulo está destacado en la página principal
    */
   @Column({ type: 'boolean', default: false })
-  is_featured!: boolean;
+    is_featured!: boolean;
 
   /**
    * Si el módulo es gratuito (sin restricción de suscripción)
    */
   @Column({ type: 'boolean', default: true })
-  is_free!: boolean;
+    is_free!: boolean;
 
   /**
    * Si es un módulo de demostración
    */
   @Column({ type: 'boolean', default: false })
-  is_demo_module!: boolean;
+    is_demo_module!: boolean;
 
   /**
    * Fecha de publicación
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  published_at?: Date;
+    published_at?: Date;
 
   /**
    * Fecha de archivado
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  archived_at?: Date;
+    archived_at?: Date;
 
   // =====================================================
   // VERSIONING & REVISION
@@ -292,31 +292,31 @@ export class Module {
    * Número de versión del módulo
    */
   @Column({ type: 'integer', default: 1 })
-  version!: number;
+    version!: number;
 
   /**
    * Notas sobre cambios en la versión
    */
   @Column({ type: 'text', nullable: true })
-  version_notes?: string;
+    version_notes?: string;
 
   /**
    * ID del usuario que creó el módulo
    */
   @Column({ type: 'uuid', nullable: true })
-  created_by?: string;
+    created_by?: string;
 
   /**
    * ID del usuario que revisó el módulo
    */
   @Column({ type: 'uuid', nullable: true })
-  reviewed_by?: string;
+    reviewed_by?: string;
 
   /**
    * ID del usuario que aprobó el módulo
    */
   @Column({ type: 'uuid', nullable: true })
-  approved_by?: string;
+    approved_by?: string;
 
   // =====================================================
   // METADATA & INDEXING
@@ -326,37 +326,37 @@ export class Module {
    * Palabras clave para búsqueda
    */
   @Column({ type: 'text', array: true, nullable: true })
-  keywords?: string[];
+    keywords?: string[];
 
   /**
    * Etiquetas para categorización
    */
   @Column({ type: 'text', array: true, nullable: true })
-  tags?: string[];
+    tags?: string[];
 
   /**
    * URL de la imagen en miniatura
    */
   @Column({ type: 'text', nullable: true })
-  thumbnail_url?: string;
+    thumbnail_url?: string;
 
   /**
    * URL de la imagen de portada
    */
   @Column({ type: 'text', nullable: true })
-  cover_image_url?: string;
+    cover_image_url?: string;
 
   /**
    * Configuraciones del módulo (JSONB)
    */
   @Column({ type: 'jsonb', default: {} })
-  settings!: Record<string, any>;
+    settings!: Record<string, any>;
 
   /**
    * Metadatos adicionales (JSONB)
    */
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   // =====================================================
   // AUDIT FIELDS
@@ -366,17 +366,17 @@ export class Module {
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización del registro
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   /**
    * Total de ejercicios en el módulo (campo desnormalizado para queries rápidas)
    */
   @Column({ type: 'integer', default: 0 })
-  total_exercises!: number;
+    total_exercises!: number;
 }

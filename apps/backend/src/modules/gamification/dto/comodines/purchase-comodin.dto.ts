@@ -19,7 +19,7 @@ export class PurchaseComodinDto {
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
   @IsUUID()
-  user_id!: string;
+    user_id!: string;
 
   @ApiProperty({
     description: 'Tipo de comodín a comprar',
@@ -27,7 +27,7 @@ export class PurchaseComodinDto {
     example: ComodinTypeEnum.PISTAS,
   })
   @IsEnum(ComodinTypeEnum)
-  comodin_type!: ComodinTypeEnum;
+    comodin_type!: ComodinTypeEnum;
 
   @ApiProperty({
     description: 'Cantidad a comprar',
@@ -36,5 +36,5 @@ export class PurchaseComodinDto {
   })
   @IsInt()
   @Min(1)
-  quantity!: number;
+    quantity!: number;
 }

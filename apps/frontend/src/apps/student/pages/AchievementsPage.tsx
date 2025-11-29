@@ -35,6 +35,7 @@ import { ProgressTreeVisualizer } from '@/features/gamification/social/component
 // Hooks & Store
 import { useAchievements } from '@/features/gamification/social/hooks/useAchievements';
 import { useAuthStore } from '@/features/auth/store/authStore';
+import { usePersistedFilters } from '@/shared/hooks/usePersistedFilters';
 import type {
   Achievement,
   AchievementCategory,
@@ -45,6 +46,20 @@ import { cn } from '@shared/utils/cn';
 
 type FilterOption = 'all' | 'locked' | 'unlocked';
 type SortOption = 'date' | 'rarity' | 'category' | 'name';
+
+interface AchievementFilters {
+  category: AchievementCategory | 'all';
+  lockedFilter: FilterOption;
+  sortBy: SortOption;
+}
+
+const DEFAULT_FILTERS: AchievementFilters = {
+  category: 'all',
+  lockedFilter: 'all',
+  sortBy: 'date',
+};
+
+const FILTERS_VERSION = '1.0.0';
 
 const categories: {
   value: AchievementCategory | 'all';
@@ -75,11 +90,16 @@ export default function AchievementsPage() {
     fetchAchievements,
   } = useAchievements({ userId: user?.id, autoFetch: true });
 
+  // Persisted Filters
+  const { filters, updateFilter } = usePersistedFilters<AchievementFilters>({
+    storageKey: 'achievements-filters',
+    defaultFilters: DEFAULT_FILTERS,
+    version: FILTERS_VERSION,
+    debug: false,
+  });
+
   // Local State
-  const [selectedCategory, setSelectedCategory] = useState<AchievementCategory | 'all'>('all');
-  const [lockedFilter, setLockedFilter] = useState<FilterOption>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState<SortOption>('date');
   const [showUnlockModal, setShowUnlockModal] = useState(false);
   const [selectedAchievement, setSelectedAchievement] = useState<Achievement | null>(null);
   const [showFilters, setShowFilters] = useState(false);
@@ -109,14 +129,14 @@ export default function AchievementsPage() {
     let filtered = achievements;
 
     // Category filter
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter((a) => a.category === selectedCategory);
+    if (filters.category !== 'all') {
+      filtered = filtered.filter((a) => a.category === filters.category);
     }
 
     // Locked/Unlocked filter
-    if (lockedFilter === 'locked') {
+    if (filters.lockedFilter === 'locked') {
       filtered = filtered.filter((a) => !a.isUnlocked);
-    } else if (lockedFilter === 'unlocked') {
+    } else if (filters.lockedFilter === 'unlocked') {
       filtered = filtered.filter((a) => a.isUnlocked);
     }
 
@@ -130,7 +150,7 @@ export default function AchievementsPage() {
 
     // Sort
     const sorted = [...filtered];
-    switch (sortBy) {
+    switch (filters.sortBy) {
       case 'date':
         sorted.sort((a, b) => {
           if (!a.unlockedAt) return 1;
@@ -152,7 +172,7 @@ export default function AchievementsPage() {
     }
 
     return sorted;
-  }, [achievements, selectedCategory, lockedFilter, searchQuery, sortBy]);
+  }, [achievements, filters.category, filters.lockedFilter, filters.sortBy, searchQuery]);
 
   // Featured achievement (most recent legendary/epic unlock)
   const featuredAchievement = useMemo(() => {
@@ -181,32 +201,9 @@ export default function AchievementsPage() {
     }
   };
 
-  // Save filter preferences to localStorage
-  useEffect(() => {
-    localStorage.setItem(
-      'achievements_filters',
-      JSON.stringify({
-        category: selectedCategory,
-        lockedFilter,
-        sortBy,
-      }),
-    );
-  }, [selectedCategory, lockedFilter, sortBy]);
-
-  // Load filter preferences from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem('achievements_filters');
-    if (saved) {
-      try {
-        const { category, lockedFilter: lf, sortBy: sb } = JSON.parse(saved);
-        if (category) setSelectedCategory(category);
-        if (lf) setLockedFilter(lf);
-        if (sb) setSortBy(sb);
-      } catch (e) {
-        // Ignore parse errors
-      }
-    }
-  }, []);
+  // Note: Filter persistence is now handled by usePersistedFilters hook
+  // Old localStorage key 'achievements_filters' is deprecated in favor of 'achievements-filters'
+  // with versioning support. Old data will be ignored on next filter change.
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 dark:from-gray-900 dark:to-indigo-900">
@@ -347,14 +344,14 @@ export default function AchievementsPage() {
               <div className="flex flex-wrap gap-2">
                 {categories.map((cat) => {
                   const Icon = cat.icon;
-                  const isActive = selectedCategory === cat.value;
+                  const isActive = filters.category === cat.value;
 
                   return (
                     <motion.button
                       key={cat.value}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => setSelectedCategory(cat.value)}
+                      onClick={() => updateFilter('category', cat.value)}
                       className={cn(
                         'flex items-center gap-2 rounded-lg px-4 py-2 font-semibold transition-all',
                         isActive
@@ -386,8 +383,8 @@ export default function AchievementsPage() {
 
               {/* Locked/Unlocked Filter */}
               <select
-                value={lockedFilter}
-                onChange={(e) => setLockedFilter(e.target.value as FilterOption)}
+                value={filters.lockedFilter}
+                onChange={(e) => updateFilter('lockedFilter', e.target.value as FilterOption)}
                 className="rounded-lg border-2 border-gray-200 px-4 py-2 focus:border-detective-orange focus:outline-none"
               >
                 <option value="all">Todos los logros</option>
@@ -397,8 +394,8 @@ export default function AchievementsPage() {
 
               {/* Sort By */}
               <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortOption)}
+                value={filters.sortBy}
+                onChange={(e) => updateFilter('sortBy', e.target.value as SortOption)}
                 className="rounded-lg border-2 border-gray-200 px-4 py-2 focus:border-detective-orange focus:outline-none"
               >
                 <option value="date">Ordenar por fecha</option>

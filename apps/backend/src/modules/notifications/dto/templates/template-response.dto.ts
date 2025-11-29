@@ -34,7 +34,7 @@ export class TemplateResponseDto {
     description: 'UUID del template',
     example: 'ffffffff-ffff-ffff-ffff-ffffffffffff',
   })
-  id!: string;
+    id!: string;
 
   /**
    * Clave única del template
@@ -45,7 +45,7 @@ export class TemplateResponseDto {
     description: 'Clave única del template',
     example: 'achievement_unlocked',
   })
-  templateKey!: string;
+    templateKey!: string;
 
   /**
    * Nombre descriptivo del template
@@ -54,7 +54,7 @@ export class TemplateResponseDto {
     description: 'Nombre descriptivo',
     example: 'Logro Desbloqueado',
   })
-  name!: string;
+    name!: string;
 
   /**
    * Descripción del propósito del template
@@ -64,7 +64,7 @@ export class TemplateResponseDto {
     example: 'Notificación cuando un usuario desbloquea un logro',
     nullable: true,
   })
-  description?: string | null;
+    description?: string | null;
 
   /**
    * Template del asunto/título
@@ -75,7 +75,7 @@ export class TemplateResponseDto {
     description: 'Template del asunto/título',
     example: '¡Felicidades {{user_name}}! Has desbloqueado {{achievement_icon}}',
   })
-  subjectTemplate!: string;
+    subjectTemplate!: string;
 
   /**
    * Template del cuerpo (texto plano)
@@ -86,7 +86,7 @@ export class TemplateResponseDto {
     description: 'Template del cuerpo',
     example: "Has desbloqueado el logro '{{achievement_name}}' y ganaste {{points}} puntos.",
   })
-  bodyTemplate!: string;
+    bodyTemplate!: string;
 
   /**
    * Template HTML (para emails)
@@ -98,7 +98,7 @@ export class TemplateResponseDto {
     example: '<html><body>...</body></html>',
     nullable: true,
   })
-  htmlTemplate?: string | null;
+    htmlTemplate?: string | null;
 
   /**
    * Variables requeridas para este template
@@ -112,7 +112,7 @@ export class TemplateResponseDto {
     type: [String],
     nullable: true,
   })
-  variables?: string[] | null;
+    variables?: string[] | null;
 
   /**
    * Canales por defecto para este template
@@ -124,7 +124,7 @@ export class TemplateResponseDto {
     example: ['in_app', 'email'],
     type: [String],
   })
-  defaultChannels!: string[];
+    defaultChannels!: string[];
 
   /**
    * Indica si el template está activo
@@ -135,7 +135,7 @@ export class TemplateResponseDto {
     description: 'Indica si el template está activo',
     example: true,
   })
-  isActive!: boolean;
+    isActive!: boolean;
 
   /**
    * Fecha de creación
@@ -144,7 +144,7 @@ export class TemplateResponseDto {
     description: 'Fecha de creación',
     example: '2025-11-01T00:00:00.000Z',
   })
-  createdAt!: Date;
+    createdAt!: Date;
 
   /**
    * Fecha de última actualización
@@ -153,7 +153,7 @@ export class TemplateResponseDto {
     description: 'Fecha de última actualización',
     example: '2025-11-01T00:00:00.000Z',
   })
-  updatedAt!: Date;
+    updatedAt!: Date;
 }
 
 /**
@@ -179,7 +179,7 @@ export class TemplatesListResponseDto {
     description: 'Array de templates',
     type: [TemplateResponseDto],
   })
-  templates!: TemplateResponseDto[];
+    templates!: TemplateResponseDto[];
 }
 
 /**
@@ -207,7 +207,7 @@ export class RenderedTemplateResponseDto {
     description: 'Asunto renderizado',
     example: '¡Felicidades Juan! Has desbloqueado 🏆',
   })
-  subject!: string;
+    subject!: string;
 
   /**
    * Cuerpo renderizado (texto plano)
@@ -216,7 +216,7 @@ export class RenderedTemplateResponseDto {
     description: 'Cuerpo renderizado',
     example: "Has desbloqueado el logro 'Maestro del Pensamiento' y ganaste 100 puntos.",
   })
-  body!: string;
+    body!: string;
 
   /**
    * HTML renderizado
@@ -225,5 +225,5 @@ export class RenderedTemplateResponseDto {
     description: 'HTML renderizado',
     example: '<html><body>...</body></html>',
   })
-  html!: string;
+    html!: string;
 }

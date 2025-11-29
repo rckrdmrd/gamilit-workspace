@@ -25,5 +25,5 @@ export class FillInBlankAnswersDto {
    */
   @IsObject({ message: 'blanks must be an object' })
   @IsNotEmpty({ message: 'blanks object is required' })
-  blanks!: Record<string, string>;
+    blanks!: Record<string, string>;
 }

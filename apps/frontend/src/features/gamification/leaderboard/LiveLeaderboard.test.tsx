@@ -13,16 +13,11 @@ import { vi } from 'vitest';
 // Mock framer-motion to avoid animation issues in tests
 vi.mock('framer-motion', () => ({
   motion: {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     button: ({ children: _children, ...props }: any) => <button {...props}>{_children}</button>,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     img: ({ children: _imgChildren, ...props }: any) => <img {...props} />,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     tr: ({ children: _trChildren, ...props }: any) => <tr {...props}>{_trChildren}</tr>,
   },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   AnimatePresence: ({ children: _apChildren }: any) => _apChildren,
 }));
 

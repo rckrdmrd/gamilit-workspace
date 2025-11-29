@@ -77,7 +77,7 @@ export class StudentRiskAlertService {
         const batch = students.slice(i, i + batchSize);
 
         const batchAlerts = await Promise.all(
-          batch.map(student => this.checkStudentRisk(student.id))
+          batch.map(student => this.checkStudentRisk(student.id)),
         );
 
         alerts.push(...batchAlerts.filter(alert => alert !== null) as RiskAlert[]);
@@ -158,7 +158,7 @@ export class StudentRiskAlertService {
       };
 
       this.logger.log(
-        `ALERT: ${alert.risk_level.toUpperCase()} risk detected for student ${student.full_name} (${studentId})`
+        `ALERT: ${alert.risk_level.toUpperCase()} risk detected for student ${student.full_name} (${studentId})`,
       );
 
       return alert;
@@ -212,7 +212,7 @@ export class StudentRiskAlertService {
     const mediumRiskCount = alerts.filter(a => a.risk_level === 'medium').length;
 
     this.logger.log(
-      `[NOTIFICATION] Teacher ${teacherId}: ${highRiskCount} high-risk, ${mediumRiskCount} medium-risk students`
+      `[NOTIFICATION] Teacher ${teacherId}: ${highRiskCount} high-risk, ${mediumRiskCount} medium-risk students`,
     );
 
     // TODO: Integrate with NotificationService
@@ -230,7 +230,7 @@ export class StudentRiskAlertService {
     // For now, just log detailed info
     for (const alert of alerts) {
       this.logger.debug(
-        `  - ${alert.student_name}: ${alert.risk_level} risk, ${alert.overall_score}% score, ${alert.dropout_risk * 100}% dropout risk`
+        `  - ${alert.student_name}: ${alert.risk_level} risk, ${alert.overall_score}% score, ${alert.dropout_risk * 100}% dropout risk`,
       );
     }
   }
@@ -240,7 +240,7 @@ export class StudentRiskAlertService {
    */
   private async sendAdminSummary(highRiskAlerts: RiskAlert[]): Promise<void> {
     this.logger.log(
-      `[ADMIN SUMMARY] ${highRiskAlerts.length} high-risk students detected across platform`
+      `[ADMIN SUMMARY] ${highRiskAlerts.length} high-risk students detected across platform`,
     );
 
     // TODO: Integrate with NotificationService for admins
@@ -313,7 +313,7 @@ export class StudentRiskAlertService {
 
     // Check each student for risk
     const alerts = await Promise.all(
-      students.map(s => this.checkStudentRisk(s.id))
+      students.map(s => this.checkStudentRisk(s.id)),
     );
 
     return alerts.filter(a => a !== null) as RiskAlert[];

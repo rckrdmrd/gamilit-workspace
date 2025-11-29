@@ -90,7 +90,7 @@ export class AdminInterventionsController {
   @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing JWT token' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
   async listInterventions(@Query() query: ListInterventionsDto): Promise<PaginatedInterventionsDto> {
-    return await this.interventionsService.listInterventions(query);
+    return this.interventionsService.listInterventions(query);
   }
 
   /**
@@ -123,7 +123,7 @@ export class AdminInterventionsController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
   async getInterventionById(@Param('id') id: string): Promise<InterventionAlertDto> {
-    return await this.interventionsService.getInterventionById(id);
+    return this.interventionsService.getInterventionById(id);
   }
 
   /**
@@ -162,11 +162,11 @@ export class AdminInterventionsController {
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
   async acknowledgeIntervention(
     @Param('id') id: string,
-    @Body() dto: AcknowledgeInterventionDto,
-    @Request() req: any,
+      @Body() dto: AcknowledgeInterventionDto,
+      @Request() req: any,
   ): Promise<InterventionAlertDto> {
     const userId = req.user?.id || req.user?.sub;
-    return await this.interventionsService.acknowledgeIntervention(id, dto.acknowledgment_note, userId);
+    return this.interventionsService.acknowledgeIntervention(id, dto.acknowledgment_note, userId);
   }
 
   /**
@@ -210,11 +210,11 @@ export class AdminInterventionsController {
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
   async resolveIntervention(
     @Param('id') id: string,
-    @Body() dto: ResolveInterventionDto,
-    @Request() req: any,
+      @Body() dto: ResolveInterventionDto,
+      @Request() req: any,
   ): Promise<InterventionAlertDto> {
     const userId = req.user?.id || req.user?.sub;
-    return await this.interventionsService.resolveIntervention(id, dto.resolution_notes, userId);
+    return this.interventionsService.resolveIntervention(id, dto.resolution_notes, userId);
   }
 
   /**
@@ -250,6 +250,6 @@ export class AdminInterventionsController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
   async dismissIntervention(@Param('id') id: string): Promise<InterventionAlertDto> {
-    return await this.interventionsService.dismissIntervention(id);
+    return this.interventionsService.dismissIntervention(id);
   }
 }

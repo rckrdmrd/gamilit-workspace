@@ -11,14 +11,14 @@ export class AssignmentPairDto {
     example: '550e8400-e29b-41d4-a716-446655440005',
   })
   @IsUUID()
-  teacherId!: string;
+    teacherId!: string;
 
   @ApiProperty({
     description: 'Classroom UUID',
     example: '770e8400-e29b-41d4-a716-446655440020',
   })
   @IsUUID()
-  classroomId!: string;
+    classroomId!: string;
 }
 
 /**
@@ -45,5 +45,5 @@ export class BulkAssignRestDto {
   @ArrayMaxSize(100)
   @ValidateNested({ each: true })
   @Type(() => AssignmentPairDto)
-  assignments!: AssignmentPairDto[];
+    assignments!: AssignmentPairDto[];
 }

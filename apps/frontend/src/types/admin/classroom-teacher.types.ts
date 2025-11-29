@@ -25,12 +25,12 @@ export interface ClassroomTeacherAssignment {
 
 export interface AssignTeacherToClassroomDto {
   teacherId: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface AssignClassroomsToTeacherDto {
   classroomIds: string[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface BulkAssignDto {

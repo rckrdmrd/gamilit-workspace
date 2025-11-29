@@ -28,7 +28,7 @@ export class CreateUserSuspensionDto {
   })
   @IsUUID('4')
   @IsNotEmpty()
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Razón de la suspensión
@@ -47,7 +47,7 @@ export class CreateUserSuspensionDto {
   @MinLength(10, {
     message: 'La razón de suspensión debe tener al menos 10 caracteres',
   })
-  reason!: string;
+    reason!: string;
 
   /**
    * Fecha hasta la cual el usuario está suspendido
@@ -70,7 +70,7 @@ export class CreateUserSuspensionDto {
   @IsDateString({}, {
     message: 'suspension_until debe ser una fecha válida en formato ISO 8601',
   })
-  suspension_until?: string | null;
+    suspension_until?: string | null;
 
   /**
    * ID del administrador que aplica la suspensión
@@ -85,5 +85,5 @@ export class CreateUserSuspensionDto {
   })
   @IsUUID('4')
   @IsNotEmpty()
-  suspended_by!: string;
+    suspended_by!: string;
 }

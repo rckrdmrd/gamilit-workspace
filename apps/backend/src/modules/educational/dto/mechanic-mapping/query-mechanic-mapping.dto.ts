@@ -29,7 +29,7 @@ export class QueryMechanicMappingDto {
   })
   @IsOptional()
   @IsString()
-  mechanic_category?: string;
+    mechanic_category?: string;
 
   /**
    * Filtrar por subcategoría pedagógica específica
@@ -42,7 +42,7 @@ export class QueryMechanicMappingDto {
   })
   @IsOptional()
   @IsString()
-  mechanic_subcategory?: string;
+    mechanic_subcategory?: string;
 
   /**
    * Filtrar por tipo de ejercicio GAMILIT
@@ -55,7 +55,7 @@ export class QueryMechanicMappingDto {
   })
   @IsOptional()
   @IsEnum(ExerciseTypeEnum)
-  exercise_type?: ExerciseTypeEnum;
+    exercise_type?: ExerciseTypeEnum;
 
   /**
    * Filtrar por nivel de Bloom
@@ -69,7 +69,7 @@ export class QueryMechanicMappingDto {
   })
   @IsOptional()
   @IsString()
-  bloom_level?: string;
+    bloom_level?: string;
 
   /**
    * Filtrar por nivel CEFR
@@ -82,7 +82,7 @@ export class QueryMechanicMappingDto {
   })
   @IsOptional()
   @IsEnum(DifficultyLevelEnum)
-  cefr_level?: DifficultyLevelEnum;
+    cefr_level?: DifficultyLevelEnum;
 
   /**
    * Filtrar por tipo de interacción
@@ -95,7 +95,7 @@ export class QueryMechanicMappingDto {
   })
   @IsOptional()
   @IsString()
-  interaction_type?: string;
+    interaction_type?: string;
 
   /**
    * Filtrar por carga cognitiva
@@ -109,7 +109,7 @@ export class QueryMechanicMappingDto {
   })
   @IsOptional()
   @IsString()
-  cognitive_load?: string;
+    cognitive_load?: string;
 
   /**
    * Filtrar por tags (búsqueda flexible)
@@ -124,7 +124,7 @@ export class QueryMechanicMappingDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  tags?: string[];
+    tags?: string[];
 
   /**
    * Solo mappings activos
@@ -138,5 +138,5 @@ export class QueryMechanicMappingDto {
   @IsOptional()
   @IsBoolean()
   @Type(() => Boolean)
-  is_active?: boolean = true;
+    is_active?: boolean = true;
 }

@@ -107,7 +107,7 @@ export class NotificationMultiChannelController {
   })
   async createMultiChannel(
     @Body() createDto: CreateNotificationDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<NotificationResponseDto> {
     // Validar que el usuario solo crea notificaciones para sí mismo
     // (a menos que sea admin - validación futura)
@@ -119,11 +119,15 @@ export class NotificationMultiChannelController {
     const notification = await this.notificationService.create({
       userId: createDto.userId,
       title: createDto.title,
-      content: createDto.message,
-      notificationType: createDto.type,
-      relatedEntityType: createDto.relatedEntityType,
-      relatedEntityId: createDto.relatedEntityId,
-      metadata: createDto.metadata,
+      message: createDto.message,
+      type: createDto.type,
+      data: createDto.data,
+      metadata: {
+        ...createDto.metadata,
+        related_entity_type: createDto.relatedEntityType,
+        related_entity_id: createDto.relatedEntityId,
+      },
+      priority: createDto.priority,
       channels: createDto.channels,
       expiresAt: createDto.expiresAt ? new Date(createDto.expiresAt) : undefined,
     });
@@ -188,7 +192,7 @@ export class NotificationMultiChannelController {
   })
   async sendFromTemplate(
     @Body() sendDto: SendFromTemplateDto,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<NotificationResponseDto> {
     // Validar ownership
     if (sendDto.userId !== req.user.sub) {
@@ -200,10 +204,13 @@ export class NotificationMultiChannelController {
       templateKey: sendDto.templateKey,
       userId: sendDto.userId,
       variables: sendDto.variables,
+      type: sendDto.type,
       channels: sendDto.channels,
-      relatedEntityType: sendDto.relatedEntityType,
-      relatedEntityId: sendDto.relatedEntityId,
-      metadata: sendDto.metadata,
+      metadata: {
+        ...sendDto.metadata,
+        related_entity_type: sendDto.relatedEntityType,
+        related_entity_id: sendDto.relatedEntityId,
+      },
     });
 
     return this.mapToResponseDto(notification);
@@ -216,11 +223,11 @@ export class NotificationMultiChannelController {
     return {
       id: notification.id,
       userId: notification.userId,
-      type: notification.notificationType,
+      type: notification.type,
       title: notification.title,
-      message: notification.content,
-      data: notification.metadata,
-      read: notification.isRead,
+      message: notification.message,
+      data: notification.data,
+      read: notification.status === 'read',
       createdAt: notification.createdAt,
       updatedAt: notification.createdAt, // Entity doesn't have updatedAt, use createdAt
     };

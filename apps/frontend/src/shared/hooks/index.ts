@@ -8,3 +8,11 @@ export { useUserStatistics } from './useUserStatistics';
 export type { UserStatistics } from './useUserStatistics';
 export { useModuleAccess } from './useModuleAccess';
 export type { UseModuleAccessParams, UseModuleAccessReturn } from './useModuleAccess';
+export { usePersistedFilters, clearAllPersistedFilters } from './usePersistedFilters';
+export { useAudioRecorder } from './useAudioRecorder';
+export type {
+  UseAudioRecorderReturn,
+  AudioRecorderError,
+  RecordingState,
+  PermissionState,
+} from './useAudioRecorder';

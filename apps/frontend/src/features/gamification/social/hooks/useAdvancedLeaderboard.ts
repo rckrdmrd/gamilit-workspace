@@ -158,6 +158,7 @@ export const useAdvancedLeaderboard = (
   // Initial fetch and tab/filter changes
   useEffect(() => {
     fetchLeaderboard(currentTab, timePeriod, metric);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTab, timePeriod, metric]);
 
   // Auto-refresh

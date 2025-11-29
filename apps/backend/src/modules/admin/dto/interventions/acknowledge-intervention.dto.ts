@@ -11,5 +11,5 @@ export class AcknowledgeInterventionDto {
   })
   @IsOptional()
   @IsString()
-  acknowledgment_note?: string;
+    acknowledgment_note?: string;
 }

@@ -8,6 +8,7 @@
  * - Guilds
  * - Friends
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { apiClient } from '@/services/api/apiClient';
 import { API_ENDPOINTS, FEATURE_FLAGS } from '@/config/api.config';
@@ -207,9 +208,9 @@ export const getPowerUps = async (): Promise<PowerUp[]> => {
       return [];
     }
 
-    const { data } = await apiClient.get<ApiResponse<PowerUp[]>>(API_ENDPOINTS.powerups.list);
+    const { data } = await apiClient.get<PowerUp[]>(API_ENDPOINTS.powerups.list);
 
-    return data.data;
+    return data;
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -218,11 +219,13 @@ export const getPowerUps = async (): Promise<PowerUp[]> => {
 /**
  * Purchase power-up
  *
+ * @param userId - User ID making the purchase
  * @param powerUpId - Power-up ID to purchase
  * @param quantity - Quantity to purchase
  * @returns Purchase result
  */
 export const purchasePowerUp = async (
+  userId: string,
   powerUpId: string,
   quantity: number = 1,
 ): Promise<PowerUpInventory> => {
@@ -237,29 +240,40 @@ export const purchasePowerUp = async (
       };
     }
 
-    const { data } = await apiClient.post<ApiResponse<PowerUpInventory>>(
-      API_ENDPOINTS.powerups.purchaseSpecific(powerUpId),
-      { quantity },
-    );
+    const { data } = await apiClient.post<PowerUpInventory>(API_ENDPOINTS.powerups.purchase, {
+      user_id: userId,
+      comodin_type: powerUpId,
+      quantity,
+    });
 
-    return data.data;
+    return data;
   } catch (error) {
     throw handleAPIError(error);
   }
 };
 
 /**
- * Use power-up
+ * Use power-up (comodin)
  *
- * @param powerUpId - Power-up ID to use
- * @returns Active power-up data
+ * @param userId - User ID
+ * @param comodinType - Type of comodin to use (pistas, vision_lectora, segunda_oportunidad)
+ * @param exerciseId - Optional exercise ID where comodin is used
+ * @param context - Optional context description
+ * @returns Use result with remaining quantity
+ *
+ * ARCH-015: Fixed route alignment - uses POST /gamification/comodines/use with body
  */
-export const activatePowerUp = async (powerUpId: string): Promise<ActivePowerUp> => {
+export const activatePowerUp = async (
+  userId: string,
+  comodinType: string,
+  exerciseId?: string,
+  context?: string,
+): Promise<ActivePowerUp> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 600));
       return {
-        powerUpId,
+        powerUpId: comodinType,
         name: 'Power-Up',
         icon: 'Icon',
         expiresAt: new Date(Date.now() + 30 * 60 * 1000),
@@ -272,11 +286,32 @@ export const activatePowerUp = async (powerUpId: string): Promise<ActivePowerUp>
       };
     }
 
-    const { data } = await apiClient.post<ApiResponse<ActivePowerUp>>(
-      API_ENDPOINTS.powerups.useSpecific(powerUpId),
-    );
+    // ARCH-015: Correct endpoint is /gamification/comodines/use with body params
+    const { data } = await apiClient.post<{
+      success: boolean;
+      used: { comodin_type: string; quantity: number; exercise_id: string | null };
+      remaining_quantity: number;
+    }>(API_ENDPOINTS.powerups.use, {
+      user_id: userId,
+      comodin_type: comodinType,
+      quantity: 1,
+      exercise_id: exerciseId,
+      context: context || `Used ${comodinType}`,
+    });
 
-    return data.data;
+    // Transform backend response to ActivePowerUp format
+    return {
+      powerUpId: data.used.comodin_type,
+      name: comodinType,
+      icon: comodinType === 'pistas' ? '💡' : comodinType === 'vision_lectora' ? '👁️' : '🔄',
+      expiresAt: new Date(Date.now() + 30 * 60 * 1000), // Immediate effect, no duration
+      remainingTime: 0,
+      effect: {
+        type: 'immediate',
+        value: data.remaining_quantity,
+        description: `Remaining: ${data.remaining_quantity}`,
+      },
+    };
   } catch (error) {
     throw handleAPIError(error);
   }
@@ -285,9 +320,10 @@ export const activatePowerUp = async (powerUpId: string): Promise<ActivePowerUp>
 /**
  * Get power-up inventory
  *
+ * @param userId - User ID to fetch inventory for
  * @returns User's power-up inventory
  */
-export const getPowerUpInventory = async (): Promise<PowerUpInventory> => {
+export const getPowerUpInventory = async (userId: string): Promise<PowerUpInventory> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       await new Promise((resolve) => setTimeout(resolve, 400));
@@ -300,7 +336,7 @@ export const getPowerUpInventory = async (): Promise<PowerUpInventory> => {
     }
 
     const { data } = await apiClient.get<ApiResponse<PowerUpInventory>>(
-      API_ENDPOINTS.powerups.inventory,
+      API_ENDPOINTS.powerups.inventory(userId),
     );
 
     return data.data;
@@ -397,6 +433,29 @@ export const getUserLeaderboardRank = async (
     const { data } = await apiClient.get<ApiResponse<LeaderboardEntry>>(
       API_ENDPOINTS.leaderboards.userRank,
       { params: { type, period } },
+    );
+
+    return data.data;
+  } catch (error) {
+    throw handleAPIError(error);
+  }
+};
+
+/**
+ * Get classroom leaderboard
+ *
+ * @param classroomId - Classroom ID
+ * @returns Leaderboard entries for the classroom
+ */
+export const getClassroomLeaderboard = async (classroomId: string): Promise<LeaderboardEntry[]> => {
+  try {
+    if (FEATURE_FLAGS.USE_MOCK_DATA) {
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      return [];
+    }
+
+    const { data } = await apiClient.get<ApiResponse<LeaderboardEntry[]>>(
+      API_ENDPOINTS.leaderboards.classroom(classroomId),
     );
 
     return data.data;
@@ -1006,6 +1065,7 @@ export default {
   // Leaderboards (Legacy)
   getLeaderboard,
   getUserLeaderboardRank,
+  getClassroomLeaderboard,
 
   // Leaderboards (Sprint 2 - New Materialized Views)
   getXPLeaderboard,

@@ -42,26 +42,26 @@ import { PeerChallenge } from './peer-challenge.entity';
 })
 @Index('idx_challenge_participants_user_challenges', ['user_id', 'created_at'])
 @Check(
-  `"participation_status" IN ('invited', 'accepted', 'in_progress', 'completed', 'forfeit', 'disqualified')`,
+  '"participation_status" IN (\'invited\', \'accepted\', \'in_progress\', \'completed\', \'forfeit\', \'disqualified\')',
 )
 export class ChallengeParticipant {
   /**
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del desafío
    */
   @Column({ type: 'uuid' })
-  challenge_id!: string;
+    challenge_id!: string;
 
   /**
    * ID del usuario participante
    */
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * Estado de participación
@@ -73,115 +73,115 @@ export class ChallengeParticipant {
    * - disqualified: Descalificado
    */
   @Column({ type: 'text', default: 'invited' })
-  participation_status!: 'invited' | 'accepted' | 'in_progress' | 'completed' | 'forfeit' | 'disqualified';
+    participation_status!: 'invited' | 'accepted' | 'in_progress' | 'completed' | 'forfeit' | 'disqualified';
 
   /**
    * Puntuación obtenida en el desafío
    */
   @Column({ type: 'numeric', precision: 10, scale: 2, default: 0 })
-  score!: number;
+    score!: number;
 
   /**
    * Porcentaje de precisión (0-100)
    */
   @Column({ type: 'numeric', precision: 5, scale: 2, nullable: true })
-  accuracy_percentage?: number;
+    accuracy_percentage?: number;
 
   /**
    * Porcentaje de completitud (0-100)
    */
   @Column({ type: 'numeric', precision: 5, scale: 2, default: 0 })
-  completion_percentage!: number;
+    completion_percentage!: number;
 
   /**
    * Número de ejercicios completados
    */
   @Column({ type: 'integer', default: 0 })
-  exercises_completed!: number;
+    exercises_completed!: number;
 
   /**
    * Fecha y hora de inicio
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  started_at?: Date;
+    started_at?: Date;
 
   /**
    * Fecha y hora de finalización
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  completed_at?: Date;
+    completed_at?: Date;
 
   /**
    * Tiempo total invertido en segundos
    */
   @Column({ type: 'integer', nullable: true })
-  time_spent_seconds?: number;
+    time_spent_seconds?: number;
 
   /**
    * Posición final en el ranking (1 = ganador)
    */
   @Column({ type: 'integer', nullable: true })
-  rank?: number;
+    rank?: number;
 
   /**
    * Indica si es el ganador del desafío
    */
   @Column({ type: 'boolean', default: false })
-  is_winner!: boolean;
+    is_winner!: boolean;
 
   /**
    * XP ganado en el desafío
    */
   @Column({ type: 'integer', default: 0 })
-  xp_earned!: number;
+    xp_earned!: number;
 
   /**
    * ML Coins ganados en el desafío
    */
   @Column({ type: 'integer', default: 0 })
-  ml_coins_earned!: number;
+    ml_coins_earned!: number;
 
   /**
    * Indica si las recompensas fueron reclamadas
    */
   @Column({ type: 'boolean', default: false })
-  rewards_claimed!: boolean;
+    rewards_claimed!: boolean;
 
   /**
    * ID del intento de ejercicio asociado (si aplica)
    */
   @Column({ type: 'uuid', nullable: true })
-  attempt_id?: string;
+    attempt_id?: string;
 
   /**
    * Fecha y hora de invitación
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  invited_at?: Date;
+    invited_at?: Date;
 
   /**
    * Fecha y hora de aceptación
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  accepted_at?: Date;
+    accepted_at?: Date;
 
   /**
    * Fecha y hora de creación
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   /**
    * Metadatos adicionales en formato JSONB
    */
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   // =====================================================
   // Relaciones
@@ -206,7 +206,7 @@ export class ChallengeParticipant {
    */
   @ManyToOne(() => PeerChallenge, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'challenge_id', referencedColumnName: 'id' })
-  challenge?: PeerChallenge;
+    challenge?: PeerChallenge;
 
   /**
    * Usuario participante (relación cross-database, NO usar @ManyToOne)

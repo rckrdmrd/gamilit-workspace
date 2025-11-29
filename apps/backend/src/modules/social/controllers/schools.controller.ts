@@ -88,7 +88,7 @@ export class SchoolsController {
     description: 'Error interno del servidor',
   })
   async findAll(@Query('tenantId') tenantId?: string) {
-    return await this.schoolsService.findAll(tenantId);
+    return this.schoolsService.findAll(tenantId);
   }
 
   /**
@@ -148,7 +148,7 @@ export class SchoolsController {
     description: 'Escuela no encontrada',
   })
   async findById(@Param('id') id: string) {
-    return await this.schoolsService.findById(id);
+    return this.schoolsService.findById(id);
   }
 
   /**
@@ -184,7 +184,7 @@ export class SchoolsController {
     description: 'Escuela con el código especificado no encontrada',
   })
   async findByCode(@Param('code') code: string) {
-    return await this.schoolsService.findByCode(code);
+    return this.schoolsService.findByCode(code);
   }
 
   /**
@@ -267,7 +267,7 @@ export class SchoolsController {
     },
   })
   async create(@Body() createDto: CreateSchoolDto) {
-    return await this.schoolsService.create(createDto);
+    return this.schoolsService.create(createDto);
   }
 
   /**
@@ -315,10 +315,10 @@ export class SchoolsController {
     description: 'El nuevo código ya existe en otra escuela',
   })
   async update(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() updateDto: Partial<CreateSchoolDto>,
   ) {
-    return await this.schoolsService.update(id, updateDto);
+    return this.schoolsService.update(id, updateDto);
   }
 
   /**
@@ -361,7 +361,7 @@ export class SchoolsController {
     description: 'Escuela no encontrada',
   })
   async delete(@Param('id') id: string) {
-    return await this.schoolsService.delete(id);
+    return this.schoolsService.delete(id);
   }
 
   /**
@@ -404,7 +404,7 @@ export class SchoolsController {
     description: 'Escuela no encontrada',
   })
   async getSchoolStats(@Param('id') id: string) {
-    return await this.schoolsService.getSchoolStats(id);
+    return this.schoolsService.getSchoolStats(id);
   }
 
   /**
@@ -468,9 +468,9 @@ export class SchoolsController {
     description: 'Escuela no encontrada',
   })
   async updateSettings(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() settings: Record<string, any>,
   ) {
-    return await this.schoolsService.updateSettings(id, settings);
+    return this.schoolsService.updateSettings(id, settings);
   }
 }

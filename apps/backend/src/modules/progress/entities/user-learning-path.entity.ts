@@ -31,8 +31,8 @@ import { LearningPath } from './learning-path.entity';
  */
 @Entity({ schema: DB_SCHEMAS.PROGRESS, name: DB_TABLES.PROGRESS.USER_LEARNING_PATHS })
 @Unique(['user_id', 'learning_path_id'])
-@Check(`"completion_percentage" >= 0 AND "completion_percentage" <= 100`)
-@Check(`"status" IN ('enrolled', 'in_progress', 'completed', 'abandoned')`)
+@Check('"completion_percentage" >= 0 AND "completion_percentage" <= 100')
+@Check('"status" IN (\'enrolled\', \'in_progress\', \'completed\', \'abandoned\')')
 @Index('idx_user_learning_paths_user_id', ['user_id'])
 @Index('idx_user_learning_paths_path_id', ['learning_path_id'])
 @Index('idx_user_learning_paths_status', ['status'])
@@ -43,66 +43,66 @@ export class UserLearningPath {
    * Identificador único de la asignación (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del usuario asignado
    */
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID de la ruta de aprendizaje
    */
   @Column({ type: 'uuid' })
-  learning_path_id!: string;
+    learning_path_id!: string;
 
   /**
    * Fecha y hora de inscripción en la ruta
    */
   @CreateDateColumn({ type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP' })
-  enrolled_at!: Date;
+    enrolled_at!: Date;
 
   /**
    * Fecha y hora de inicio (primer módulo)
    * NULL si aún no ha comenzado
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  started_at?: Date;
+    started_at?: Date;
 
   /**
    * Fecha y hora de finalización
    * NULL si aún no ha completado
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  completed_at?: Date;
+    completed_at?: Date;
 
   /**
    * Porcentaje de completitud de la ruta (0-100)
    * @example 0, 25.50, 100
    */
   @Column({ type: 'numeric', precision: 5, scale: 2, default: 0 })
-  completion_percentage!: number;
+    completion_percentage!: number;
 
   /**
    * Índice del módulo actual en la secuencia
    * @example 0 (primer módulo), 1, 2, etc.
    */
   @Column({ type: 'integer', default: 0 })
-  current_module_index!: number;
+    current_module_index!: number;
 
   /**
    * Estado de la ruta de aprendizaje
    * @values 'enrolled', 'in_progress', 'completed', 'abandoned'
    */
   @Column({ type: 'varchar', length: 50, default: 'enrolled' })
-  status!: 'enrolled' | 'in_progress' | 'completed' | 'abandoned';
+    status!: 'enrolled' | 'in_progress' | 'completed' | 'abandoned';
 
   /**
    * Fecha y hora de última actualización
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   // =====================================================
   // Relaciones
@@ -123,5 +123,5 @@ export class UserLearningPath {
    */
   @ManyToOne(() => LearningPath, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'learning_path_id', referencedColumnName: 'id' })
-  learning_path?: LearningPath;
+    learning_path?: LearningPath;
 }

@@ -18,5 +18,5 @@ export class MarkReadDto {
   @IsArray({ message: 'notification_ids debe ser un array' })
   @ArrayMinSize(1, { message: 'Debe proporcionar al menos un notification_id' })
   @IsUUID('4', { each: true, message: 'Todos los notification_ids deben ser UUIDs válidos' })
-  notification_ids!: string[];
+    notification_ids!: string[];
 }

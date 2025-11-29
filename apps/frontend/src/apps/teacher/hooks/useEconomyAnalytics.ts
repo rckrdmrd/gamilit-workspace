@@ -63,10 +63,10 @@ export function useEconomyAnalytics(classroomId?: string): UseEconomyAnalyticsRe
 
       const result = await analyticsApi.getEconomyAnalytics(query);
       setData(result);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[useEconomyAnalytics] Error:', err);
       const errorMessage =
-        err?.response?.data?.message || err?.message || 'Error al obtener analytics de economía';
+        err instanceof Error ? err.message : 'Error al obtener analytics de economía';
       setError(new Error(errorMessage));
       setData(null);
     } finally {

@@ -23,7 +23,7 @@
  * @component
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
@@ -59,16 +59,21 @@ export default function AdminAnalyticsPage() {
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [isExporting, setIsExporting] = useState(false);
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   // Gamification data
-  const { gamificationData } = useUserGamification(user?.id);
+  const { gamificationData, isLoading: gamificationLoading } = useUserGamification(user?.id);
   const displayGamificationData = gamificationData || {
-    userId: user?.id || 'mock-admin-id',
-    level: 1,
+    userId: user?.id || '',
+    level: gamificationLoading ? 0 : 1,
     totalXP: 0,
     mlCoins: 0,
-    rank: 'Novato',
+    rank: gamificationLoading ? 'Cargando...' : 'Ajaw',
+    rankColor: '#9E9E9E',
+    progressToNextLevel: 0,
+    xpToNextLevel: 100,
     achievements: [],
+    totalAchievements: 0,
   };
 
   // Analytics hook
@@ -93,15 +98,25 @@ export default function AdminAnalyticsPage() {
 
   const handleExport = async () => {
     setIsExporting(true);
+    setToast(null);
     try {
       await exportToCSV();
+      setToast({ type: 'success', message: 'CSV exportado exitosamente' });
     } catch (err) {
       console.error('Error exporting CSV:', err);
-      alert('Error al exportar CSV. Por favor, intenta nuevamente.');
+      setToast({ type: 'error', message: 'Error al exportar CSV. Por favor, intenta nuevamente.' });
     } finally {
       setIsExporting(false);
     }
   };
+
+  // Auto-dismiss toast after 5 seconds
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   // Tab configuration
   const tabs: TabConfig[] = [
@@ -180,6 +195,24 @@ export default function AdminAnalyticsPage() {
           <div className="rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-500">
             <p className="font-semibold">Error al cargar analíticas:</p>
             <p>{error}</p>
+          </div>
+        )}
+
+        {/* Toast Notification */}
+        {toast && (
+          <div
+            className={`rounded-lg border p-4 ${
+              toast.type === 'success'
+                ? 'border-green-500/50 bg-green-500/20 text-green-400'
+                : 'border-red-500/50 bg-red-500/20 text-red-400'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span>{toast.message}</span>
+              <button onClick={() => setToast(null)} className="ml-4 hover:opacity-70">
+                ✕
+              </button>
+            </div>
           </div>
         )}
 

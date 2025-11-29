@@ -41,6 +41,7 @@ CREATE TABLE gamification_system.user_ranks (
 
     -- Constraints
     CONSTRAINT user_ranks_pkey PRIMARY KEY (id),
+    CONSTRAINT user_ranks_user_id_key UNIQUE (user_id),
     CONSTRAINT user_ranks_rank_progress_percentage_check
         CHECK ((rank_progress_percentage >= 0) AND (rank_progress_percentage <= 100))
 );
@@ -78,7 +79,7 @@ CREATE INDEX idx_user_ranks_is_current
 
 ALTER TABLE ONLY gamification_system.user_ranks
     ADD CONSTRAINT user_ranks_user_id_fkey
-    FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+    FOREIGN KEY (user_id) REFERENCES auth_management.profiles(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY gamification_system.user_ranks
     ADD CONSTRAINT user_ranks_tenant_id_fkey

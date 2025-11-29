@@ -315,7 +315,7 @@ export function LeaderboardPreview({ position }: LeaderboardPreviewProps) {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => navigate('/student/leaderboard')}
+          onClick={() => navigate('/leaderboard')}
           className="flex items-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 px-8 py-4 font-semibold text-white shadow-lg transition-all hover:shadow-xl"
         >
           <Trophy className="h-5 w-5" />

@@ -155,7 +155,7 @@ export interface Classroom {
   is_archived: boolean;
   start_date: string | null;
   end_date: string | null;
-  metadata: Record<string, any> | null;
+  metadata: Record<string, unknown> | null;
 }
 
 export interface ClassroomMember {

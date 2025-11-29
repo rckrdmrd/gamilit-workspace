@@ -8,53 +8,53 @@ export class UserStatsSummaryDto {
     description: 'Total number of users (excluding deleted)',
     example: 1250,
   })
-  total_users!: number;
+    total_users!: number;
 
   @ApiProperty({
     description: 'New users registered today',
     example: 15,
   })
-  users_today!: number;
+    users_today!: number;
 
   @ApiProperty({
     description: 'Users registered in the last 7 days',
     example: 87,
   })
-  users_this_week!: number;
+    users_this_week!: number;
 
   @ApiProperty({
     description: 'Users registered in the last 30 days',
     example: 342,
   })
-  users_this_month!: number;
+    users_this_month!: number;
 
   @ApiProperty({
     description: 'Users who logged in today',
     example: 450,
   })
-  active_users_today!: number;
+    active_users_today!: number;
 
   @ApiProperty({
     description: 'Users who logged in within the last 7 days',
     example: 780,
   })
-  active_users_week!: number;
+    active_users_week!: number;
 
   @ApiProperty({
     description: 'Total number of students',
     example: 1000,
   })
-  total_students!: number;
+    total_students!: number;
 
   @ApiProperty({
     description: 'Total number of teachers',
     example: 45,
   })
-  total_teachers!: number;
+    total_teachers!: number;
 
   @ApiProperty({
     description: 'Total number of admins',
     example: 5,
   })
-  total_admins!: number;
+    total_admins!: number;
 }

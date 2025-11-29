@@ -1,18 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
-import { DataTable, Column, FeatureBadge } from '@shared/components/common';
+import { DataTable, Column } from '@shared/components/common';
 import { Modal } from '@shared/components/common/Modal';
 import { FormField } from '@shared/components/common/FormField';
-import { UnderConstruction } from '@shared/components/UnderConstruction';
 import { CheckCircle, XCircle, Image, FileText, History } from 'lucide-react';
 import { usePendingExercises } from '../hooks/useContentManagement';
+import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { adminAPI } from '@/services/api/adminAPI';
 import type { PendingExercise } from '../types';
+import type { MediaFile, ApprovalHistory } from '@/services/api/adminTypes';
 
 /**
  * AdminContentPage - Gestión y moderación de contenido
- * Updated: 2025-11-19 - Migrated to use AdminLayout with sidebar
+ * Updated: 2025-11-28 - Integrated with useUserGamification hook for real gamification data
  */
 export default function AdminContentPage() {
   const { user, logout } = useAuth();
@@ -23,6 +25,16 @@ export default function AdminContentPage() {
   const [selectedExercise, setSelectedExercise] = useState<PendingExercise | null>(null);
   const [rejectReason, setRejectReason] = useState('');
 
+  // Media tab state
+  const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
+  const [loadingMedia, setLoadingMedia] = useState(false);
+  const [errorMedia, setErrorMedia] = useState<string | null>(null);
+
+  // Versions tab state
+  const [approvalHistory, setApprovalHistory] = useState<ApprovalHistory[]>([]);
+  const [loadingVersions, setLoadingVersions] = useState(false);
+  const [errorVersions, setErrorVersions] = useState<string | null>(null);
+
   // Hooks for data management
   const {
     pendingExercises,
@@ -32,15 +44,62 @@ export default function AdminContentPage() {
     rejectExercise,
   } = usePendingExercises();
 
-  // TODO: Replace with useUserGamification hook when backend endpoint is ready
-  const gamificationData = {
-    userId: user?.id || 'mock-admin-id',
-    level: 20,
-    totalXP: 5000,
-    mlCoins: 2500,
-    rank: 'Super Admin',
-    achievements: ['admin_master', 'content_moderator'],
+  // Use useUserGamification hook with real API endpoint
+  const { gamificationData, isLoading: gamificationLoading } = useUserGamification(user?.id);
+
+  // Fallback gamification data while loading or if data not available
+  const displayGamificationData = gamificationData || {
+    userId: user?.id || '',
+    level: gamificationLoading ? 0 : 1,
+    totalXP: 0,
+    mlCoins: 0,
+    rank: gamificationLoading ? 'Cargando...' : 'Ajaw',
+    rankColor: '#9E9E9E',
+    progressToNextLevel: 0,
+    xpToNextLevel: 100,
+    achievements: [],
+    totalAchievements: 0,
   };
+
+  // Load media files when media tab is activated
+  useEffect(() => {
+    if (activeTab === 'media') {
+      const loadMediaFiles = async () => {
+        setLoadingMedia(true);
+        setErrorMedia(null);
+        try {
+          const response = await adminAPI.content.getMediaLibrary();
+          setMediaFiles(response.items);
+        } catch (err) {
+          setErrorMedia(err instanceof Error ? err.message : 'Error al cargar archivos multimedia');
+        } finally {
+          setLoadingMedia(false);
+        }
+      };
+      loadMediaFiles();
+    }
+  }, [activeTab]);
+
+  // Load approval history when versions tab is activated
+  useEffect(() => {
+    if (activeTab === 'versions') {
+      const loadApprovalHistory = async () => {
+        setLoadingVersions(true);
+        setErrorVersions(null);
+        try {
+          const response = await adminAPI.content.getApprovalHistory();
+          setApprovalHistory(response.items);
+        } catch (err) {
+          setErrorVersions(
+            err instanceof Error ? err.message : 'Error al cargar historial de aprobaciones',
+          );
+        } finally {
+          setLoadingVersions(false);
+        }
+      };
+      loadApprovalHistory();
+    }
+  }, [activeTab]);
 
   const handleLogout = () => {
     logout();
@@ -142,10 +201,86 @@ export default function AdminContentPage() {
     },
   ];
 
+  // Columns for Media Library table
+  const mediaColumns: Column<MediaFile>[] = [
+    {
+      key: 'filename',
+      label: 'Nombre',
+      sortable: true,
+      render: (row) => (
+        <div>
+          <p className="font-medium text-detective-text">{row.filename}</p>
+          <p className="text-xs text-gray-400">{row.type}</p>
+        </div>
+      ),
+    },
+    {
+      key: 'uploaderName',
+      label: 'Subido por',
+      sortable: true,
+    },
+    {
+      key: 'size',
+      label: 'Tamaño',
+      sortable: true,
+      render: (row) => {
+        const sizeInMB = (row.size / (1024 * 1024)).toFixed(2);
+        return `${sizeInMB} MB`;
+      },
+    },
+    {
+      key: 'uploadedAt',
+      label: 'Fecha',
+      sortable: true,
+      render: (row) => new Date(row.uploadedAt).toLocaleDateString('es-ES'),
+    },
+  ];
+
+  // Columns for Approval History table
+  const versionsColumns: Column<ApprovalHistory>[] = [
+    {
+      key: 'contentType',
+      label: 'Tipo',
+      sortable: true,
+    },
+    {
+      key: 'action',
+      label: 'Acción',
+      sortable: true,
+      render: (row) => (
+        <span
+          className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
+            row.action === 'approved'
+              ? 'bg-green-500/20 text-green-500'
+              : 'bg-red-500/20 text-red-500'
+          }`}
+        >
+          {row.action === 'approved' ? 'Aprobado' : 'Rechazado'}
+        </span>
+      ),
+    },
+    {
+      key: 'approvedByName',
+      label: 'Revisor',
+      sortable: true,
+    },
+    {
+      key: 'approvedAt',
+      label: 'Fecha',
+      sortable: true,
+      render: (row) => new Date(row.approvedAt).toLocaleDateString('es-ES'),
+    },
+    {
+      key: 'reason',
+      label: 'Razón',
+      render: (row) => row.reason || '-',
+    },
+  ];
+
   return (
     <AdminLayout
       user={user || undefined}
-      gamificationData={gamificationData}
+      gamificationData={displayGamificationData}
       organizationName="GAMILIT Platform Admin"
       onLogout={handleLogout}
     >
@@ -173,7 +308,7 @@ export default function AdminContentPage() {
           </button>
           <button
             onClick={() => setActiveTab('media')}
-            className={`relative flex items-center gap-2 rounded-lg px-4 py-2 font-semibold transition-colors ${
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 font-semibold transition-colors ${
               activeTab === 'media'
                 ? 'bg-detective-orange text-white'
                 : 'bg-detective-bg-secondary text-detective-text hover:bg-opacity-80'
@@ -181,15 +316,10 @@ export default function AdminContentPage() {
           >
             <Image className="h-5 w-5" />
             Multimedia
-            <FeatureBadge
-              variant="coming-soon"
-              size="sm"
-              tooltip="Biblioteca de medios avanzada en desarrollo"
-            />
           </button>
           <button
             onClick={() => setActiveTab('versions')}
-            className={`relative flex items-center gap-2 rounded-lg px-4 py-2 font-semibold transition-colors ${
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 font-semibold transition-colors ${
               activeTab === 'versions'
                 ? 'bg-detective-orange text-white'
                 : 'bg-detective-bg-secondary text-detective-text hover:bg-opacity-80'
@@ -197,11 +327,6 @@ export default function AdminContentPage() {
           >
             <History className="h-5 w-5" />
             Versiones
-            <FeatureBadge
-              variant="coming-soon"
-              size="sm"
-              tooltip="Sistema de control de versiones en desarrollo"
-            />
           </button>
         </div>
 
@@ -235,19 +360,59 @@ export default function AdminContentPage() {
         )}
 
         {activeTab === 'media' && (
-          <UnderConstruction
-            title="Biblioteca Multimedia"
-            description="La gestión de archivos multimedia estará disponible próximamente."
-            variant="section"
-          />
+          <div>
+            {/* Error Message */}
+            {errorMedia && (
+              <div className="mb-6 rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-500">
+                <p className="font-semibold">Error:</p>
+                <p>{errorMedia}</p>
+              </div>
+            )}
+
+            {/* Loading State */}
+            {loadingMedia && !mediaFiles.length ? (
+              <div className="py-12 text-center">
+                <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-detective-orange"></div>
+                <p className="mt-4 text-detective-text-secondary">
+                  Cargando archivos multimedia...
+                </p>
+              </div>
+            ) : (
+              <DataTable
+                data={mediaFiles}
+                columns={mediaColumns}
+                searchPlaceholder="Buscar archivos..."
+              />
+            )}
+          </div>
         )}
 
         {activeTab === 'versions' && (
-          <UnderConstruction
-            title="Control de Versiones"
-            description="El control de versiones de contenido estará disponible próximamente."
-            variant="section"
-          />
+          <div>
+            {/* Error Message */}
+            {errorVersions && (
+              <div className="mb-6 rounded-lg border border-red-500/50 bg-red-500/20 p-4 text-red-500">
+                <p className="font-semibold">Error:</p>
+                <p>{errorVersions}</p>
+              </div>
+            )}
+
+            {/* Loading State */}
+            {loadingVersions && !approvalHistory.length ? (
+              <div className="py-12 text-center">
+                <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-detective-orange"></div>
+                <p className="mt-4 text-detective-text-secondary">
+                  Cargando historial de aprobaciones...
+                </p>
+              </div>
+            ) : (
+              <DataTable
+                data={approvalHistory}
+                columns={versionsColumns}
+                searchPlaceholder="Buscar en historial..."
+              />
+            )}
+          </div>
         )}
       </div>
 

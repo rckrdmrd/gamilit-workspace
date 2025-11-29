@@ -33,7 +33,7 @@ export class FriendshipsService {
    * @returns Lista de amistades ordenadas por última actualización
    */
   async findByUserId(userId: string): Promise<Friendship[]> {
-    return await this.friendshipRepo.find({
+    return this.friendshipRepo.find({
       where: [{ user_id: userId }, { friend_id: userId }],
       order: { updated_at: 'DESC' },
     });
@@ -86,7 +86,7 @@ export class FriendshipsService {
       status: FriendshipStatusEnum.PENDING,
     });
 
-    return await this.friendshipRepo.save(friendship);
+    return this.friendshipRepo.save(friendship);
   }
 
   /**
@@ -110,7 +110,7 @@ export class FriendshipsService {
     }
 
     friendship.status = FriendshipStatusEnum.ACCEPTED;
-    return await this.friendshipRepo.save(friendship);
+    return this.friendshipRepo.save(friendship);
   }
 
   /**
@@ -134,7 +134,7 @@ export class FriendshipsService {
     }
 
     friendship.status = FriendshipStatusEnum.REJECTED;
-    return await this.friendshipRepo.save(friendship);
+    return this.friendshipRepo.save(friendship);
   }
 
   /**
@@ -155,7 +155,7 @@ export class FriendshipsService {
     if (friendship) {
       // Si existe, actualizar a blocked
       friendship.status = FriendshipStatusEnum.BLOCKED;
-      return await this.friendshipRepo.save(friendship);
+      return this.friendshipRepo.save(friendship);
     } else {
       // Si no existe, crear nueva relación con status blocked
       friendship = this.friendshipRepo.create({
@@ -163,7 +163,7 @@ export class FriendshipsService {
         friend_id: friendId,
         status: FriendshipStatusEnum.BLOCKED,
       });
-      return await this.friendshipRepo.save(friendship);
+      return this.friendshipRepo.save(friendship);
     }
   }
 
@@ -208,7 +208,7 @@ export class FriendshipsService {
    * @returns Lista de solicitudes pendientes recibidas
    */
   async getPendingRequests(userId: string): Promise<Friendship[]> {
-    return await this.friendshipRepo.find({
+    return this.friendshipRepo.find({
       where: {
         friend_id: userId,
         status: FriendshipStatusEnum.PENDING,
@@ -223,7 +223,7 @@ export class FriendshipsService {
    * @returns Lista de solicitudes enviadas
    */
   async getSentRequests(userId: string): Promise<Friendship[]> {
-    return await this.friendshipRepo.find({
+    return this.friendshipRepo.find({
       where: {
         user_id: userId,
         status: FriendshipStatusEnum.PENDING,

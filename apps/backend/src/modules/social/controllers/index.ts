@@ -16,3 +16,4 @@ export { TeamMembersController } from './team-members.controller';
 export { TeamChallengesController } from './team-challenges.controller';
 export { PeerChallengesController } from './peer-challenges.controller'; // ✨ NUEVO - P2 (Epic EXT-009)
 export { ChallengeParticipantsController } from './challenge-participants.controller'; // ✨ NUEVO - P2 (Epic EXT-009)
+export { UserActivitiesController } from './user-activities.controller'; // ✨ NUEVO - P2 (Activity Feed - TASK 2.5)

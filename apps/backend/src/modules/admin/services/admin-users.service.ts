@@ -1,8 +1,10 @@
 import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, IsNull, Not, MoreThan } from 'typeorm';
+import { Repository, IsNull, Not, MoreThan } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import { User } from '@modules/auth/entities/user.entity';
+import { Profile } from '@modules/auth/entities/profile.entity';
+import { Tenant } from '@modules/auth/entities/tenant.entity';
 import {
   ListUsersDto,
   UpdateUserDto,
@@ -21,69 +23,138 @@ export class AdminUsersService {
   constructor(
     @InjectRepository(User, 'auth')
     private readonly userRepo: Repository<User>,
+    @InjectRepository(Profile, 'auth')
+    private readonly profileRepo: Repository<Profile>,
+    @InjectRepository(Tenant, 'auth')
+    private readonly tenantRepo: Repository<Tenant>,
   ) {}
 
   async listUsers(query: ListUsersDto): Promise<PaginatedUsersDto> {
     const { search, role, status, page = 1, limit = 20 } = query;
     const skip = (page - 1) * limit;
 
-    const where: any = {};
-    if (search) {
-      where.email = Like(`%${search}%`);
-    }
-    if (role) where.role = role;
+    // Build WHERE conditions for cross-schema query
+    const conditions: string[] = [];
+    const params: any[] = [];
+    let paramIndex = 1;
 
-    // Fix: Usar deleted_at para determinar status (activo/suspendido)
-    // active = deleted_at IS NULL, suspended/inactive = deleted_at IS NOT NULL
+    if (search) {
+      conditions.push(`u.email ILIKE $${paramIndex}`);
+      params.push(`%${search}%`);
+      paramIndex++;
+    }
+
+    if (role) {
+      conditions.push(`u.gamilit_role = $${paramIndex}`);
+      params.push(role);
+      paramIndex++;
+    }
+
+    // Use deleted_at to determine status (active/suspended)
     if (status) {
       if (status === UserStatusEnum.ACTIVE) {
-        where.deleted_at = null;
+        conditions.push('u.deleted_at IS NULL');
       } else if (status === UserStatusEnum.SUSPENDED || status === UserStatusEnum.INACTIVE) {
-        // Para suspended: usar IsNotNull() en el query builder
-        // Esta es una aproximación simple, mejor usar QueryBuilder
+        conditions.push('u.deleted_at IS NOT NULL');
       }
     }
 
-    const [data, total] = await this.userRepo.findAndCount({
-      where,
-      skip,
-      take: limit,
-      order: { created_at: 'DESC' },
-    });
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
-    // Transform User entities to UserDetailsDto
-    const transformedUsers = data.map((user) => {
-      // Derive status: use deleted_at if set, otherwise use entity status field
-      const computedStatus = user.deleted_at ? 'suspended' : (user.status || 'active');
+    // Use raw SQL for cross-schema JOINs (auth + auth_management)
+    const dataQuery = `
+      SELECT
+        u.id,
+        u.email,
+        u.gamilit_role AS role,
+        u.status,
+        u.email_confirmed_at,
+        u.last_sign_in_at,
+        u.raw_user_meta_data,
+        u.deleted_at,
+        u.created_at,
+        u.updated_at,
+        p.tenant_id,
+        p.full_name AS profile_full_name,
+        p.first_name AS profile_first_name,
+        p.last_name AS profile_last_name,
+        t.id AS organization_id,
+        t.name AS organization_name
+      FROM auth.users u
+      LEFT JOIN auth_management.profiles p ON p.user_id = u.id
+      LEFT JOIN auth_management.tenants t ON t.id = p.tenant_id
+      ${whereClause}
+      ORDER BY u.created_at DESC
+      LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
+    `;
 
-      const transformed = plainToInstance(
-        UserDetailsDto,
-        {
-          id: user.id,
-          email: user.email,
-          role: user.role,
-          tenant_id: undefined, // tenant_id is not in User entity (managed via profiles)
-          status: computedStatus,
-          email_verified: !!user.email_confirmed_at,
-          email_confirmed_at: user.email_confirmed_at,
-          last_sign_in_at: user.last_sign_in_at,
-          raw_user_meta_data: user.raw_user_meta_data || {},
-          created_at: user.created_at,
-          updated_at: user.updated_at,
-        },
-        { excludeExtraneousValues: true },
-      );
+    const countQuery = `
+      SELECT COUNT(*) as count
+      FROM auth.users u
+      LEFT JOIN auth_management.profiles p ON p.user_id = u.id
+      LEFT JOIN auth_management.tenants t ON t.id = p.tenant_id
+      ${whereClause}
+    `;
 
-      return transformed;
-    });
+    // Execute queries with parameters
+    const dataParams = [...params, limit, skip];
+    const countParams = [...params];
 
-    return {
-      data: transformedUsers,
-      total,
-      page,
-      limit,
-      total_pages: Math.ceil(total / limit),
-    };
+    try {
+      const [rawResults, countResult] = await Promise.all([
+        this.userRepo.query(dataQuery, dataParams),
+        this.userRepo.query(countQuery, countParams),
+      ]);
+
+      const total = parseInt(countResult[0]?.count || '0', 10);
+
+      // Transform raw results to UserDetailsDto
+      const transformedUsers = rawResults.map((row: any) => {
+        // Derive status: use deleted_at if set, otherwise use entity status field
+        const computedStatus = row.deleted_at ? 'suspended' : (row.status || 'active');
+
+        // Compute full_name from profile data
+        const fullName = row.profile_full_name ||
+          (row.profile_first_name && row.profile_last_name
+            ? `${row.profile_first_name} ${row.profile_last_name}`.trim()
+            : undefined);
+
+        const transformed = plainToInstance(
+          UserDetailsDto,
+          {
+            id: row.id,
+            email: row.email,
+            role: row.role,
+            tenant_id: row.tenant_id,
+            organization_id: row.organization_id,
+            organization_name: row.organization_name,
+            full_name: fullName,
+            status: computedStatus,
+            email_verified: !!row.email_confirmed_at,
+            email_confirmed_at: row.email_confirmed_at,
+            last_sign_in_at: row.last_sign_in_at,
+            raw_user_meta_data: row.raw_user_meta_data || {},
+            created_at: row.created_at,
+            updated_at: row.updated_at,
+          },
+          { excludeExtraneousValues: true },
+        );
+
+        return transformed;
+      });
+
+      return {
+        data: transformedUsers,
+        total,
+        page,
+        limit,
+        total_pages: Math.ceil(total / limit),
+      };
+    } catch (error: unknown) {
+      const err = error as Error;
+      this.logger.error(`Error listing users: ${err.message}`, err.stack);
+      throw error;
+    }
   }
 
   async getUserDetails(id: string): Promise<User> {
@@ -97,7 +168,7 @@ export class AdminUsersService {
   async updateUser(id: string, updateDto: UpdateUserDto): Promise<User> {
     const user = await this.getUserDetails(id);
     Object.assign(user, updateDto);
-    return await this.userRepo.save(user);
+    return this.userRepo.save(user);
   }
 
   async deleteUser(id: string): Promise<void> {
@@ -126,7 +197,7 @@ export class AdminUsersService {
       suspended_at: new Date().toISOString(),
       status: 'suspended', // Guardar status en metadata para referencia
     };
-    return await this.userRepo.save(user);
+    return this.userRepo.save(user);
   }
 
   async activateUser(id: string): Promise<User> {
@@ -139,7 +210,7 @@ export class AdminUsersService {
       activated_at: new Date().toISOString(),
       status: 'active', // Guardar status en metadata para referencia
     };
-    return await this.userRepo.save(user);
+    return this.userRepo.save(user);
   }
 
   async unsuspendUser(id: string): Promise<User> {
@@ -158,7 +229,7 @@ export class AdminUsersService {
       suspension_reason: undefined, // Limpiar razón de suspensión
     };
 
-    return await this.userRepo.save(user);
+    return this.userRepo.save(user);
   }
 
   async deactivateUser(id: string, deactivateDto: SuspendUserDto): Promise<User> {
@@ -177,7 +248,7 @@ export class AdminUsersService {
       status: 'inactive',
     };
 
-    return await this.userRepo.save(user);
+    return this.userRepo.save(user);
   }
 
   async resetPassword(

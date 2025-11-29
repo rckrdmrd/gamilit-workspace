@@ -41,10 +41,10 @@ export class ContentTemplatesController {
   @ApiQuery({ name: 'category', required: false, description: 'Categoría de plantilla' })
   @ApiResponse({ status: 200, description: 'Lista de plantillas obtenida exitosamente', type: [ContentTemplateResponseDto] })
   async findAll(
-    @Query('type') type?: string,
+  @Query('type') type?: string,
     @Query('category') category?: string,
   ) {
-    return await this.templatesService.findAll(type, category);
+    return this.templatesService.findAll(type, category);
   }
 
   /**
@@ -60,7 +60,7 @@ export class ContentTemplatesController {
   @ApiResponse({ status: 200, description: 'Plantilla obtenida exitosamente', type: ContentTemplateResponseDto })
   @ApiResponse({ status: 404, description: 'Plantilla no encontrada' })
   async findById(@Param('id') id: string) {
-    return await this.templatesService.findById(id);
+    return this.templatesService.findById(id);
   }
 
   /**
@@ -75,7 +75,7 @@ export class ContentTemplatesController {
   @ApiResponse({ status: 201, description: 'Plantilla creada exitosamente', type: ContentTemplateResponseDto })
   @ApiResponse({ status: 400, description: 'Datos inválidos' })
   async create(@Body() dto: CreateContentTemplateDto) {
-    return await this.templatesService.create(dto);
+    return this.templatesService.create(dto);
   }
 
   /**
@@ -91,10 +91,10 @@ export class ContentTemplatesController {
   @ApiResponse({ status: 200, description: 'Plantilla actualizada exitosamente', type: ContentTemplateResponseDto })
   @ApiResponse({ status: 404, description: 'Plantilla no encontrada' })
   async update(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() dto: Partial<CreateContentTemplateDto>,
   ) {
-    return await this.templatesService.update(id, dto);
+    return this.templatesService.update(id, dto);
   }
 
   /**
@@ -110,7 +110,7 @@ export class ContentTemplatesController {
   @ApiResponse({ status: 200, description: 'Plantilla desactivada exitosamente', type: ContentTemplateResponseDto })
   @ApiResponse({ status: 404, description: 'Plantilla no encontrada' })
   async delete(@Param('id') id: string) {
-    return await this.templatesService.delete(id);
+    return this.templatesService.delete(id);
   }
 
   /**
@@ -126,7 +126,7 @@ export class ContentTemplatesController {
   @ApiResponse({ status: 200, description: 'Contador incrementado exitosamente', type: ContentTemplateResponseDto })
   @ApiResponse({ status: 404, description: 'Plantilla no encontrada' })
   async incrementUsage(@Param('id') id: string) {
-    return await this.templatesService.incrementUsage(id);
+    return this.templatesService.incrementUsage(id);
   }
 
   /**
@@ -141,7 +141,7 @@ export class ContentTemplatesController {
   @ApiParam({ name: 'type', description: 'Tipo de plantilla (exercise, module, assessment, announcement, feedback)' })
   @ApiResponse({ status: 200, description: 'Plantillas obtenidas exitosamente', type: [ContentTemplateResponseDto] })
   async findByType(@Param('type') type: string) {
-    return await this.templatesService.findByType(type);
+    return this.templatesService.findByType(type);
   }
 
   /**
@@ -156,7 +156,7 @@ export class ContentTemplatesController {
   @ApiParam({ name: 'category', description: 'Categoría de plantilla' })
   @ApiResponse({ status: 200, description: 'Plantillas obtenidas exitosamente', type: [ContentTemplateResponseDto] })
   async findByCategory(@Param('category') category: string) {
-    return await this.templatesService.findByCategory(category);
+    return this.templatesService.findByCategory(category);
   }
 
   /**
@@ -172,6 +172,6 @@ export class ContentTemplatesController {
   @ApiResponse({ status: 200, description: 'Plantillas populares obtenidas exitosamente', type: [ContentTemplateResponseDto] })
   async getPopularTemplates(@Query('limit') limit?: string) {
     const limitNum = limit ? parseInt(limit, 10) : 10;
-    return await this.templatesService.getPopularTemplates(limitNum);
+    return this.templatesService.getPopularTemplates(limitNum);
   }
 }

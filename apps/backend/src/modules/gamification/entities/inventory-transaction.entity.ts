@@ -34,17 +34,17 @@ import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants';
 @Index('idx_inventory_transactions_metadata', ['metadata'])
 export class InventoryTransaction {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   @Column({ type: 'uuid' })
-  user_id!: string;
+    user_id!: string;
 
   /**
    * ID del item involucrado en la transacción
    * (puede ser comodín, boost, avatar, etc.)
    */
   @Column({ type: 'uuid' })
-  item_id!: string;
+    item_id!: string;
 
   /**
    * Tipo de transacción
@@ -56,7 +56,7 @@ export class InventoryTransaction {
    * ADMIN_GRANT: Otorgado por administrador
    */
   @Column({ type: 'varchar', length: 50 })
-  transaction_type!: 'PURCHASE' | 'USE' | 'GIFT_SENT' | 'GIFT_RECEIVED' | 'EXPIRED' | 'ADMIN_GRANT';
+    transaction_type!: 'PURCHASE' | 'USE' | 'GIFT_SENT' | 'GIFT_RECEIVED' | 'EXPIRED' | 'ADMIN_GRANT';
 
   /**
    * Cantidad de items en la transacción
@@ -65,7 +65,7 @@ export class InventoryTransaction {
    * - NO puede ser 0
    */
   @Column({ type: 'integer' })
-  quantity!: number;
+    quantity!: number;
 
   /**
    * Metadata adicional en formato JSONB
@@ -76,10 +76,10 @@ export class InventoryTransaction {
    * - { "exercise_id": "uuid-...", "success": true } para USE
    */
   @Column({ type: 'jsonb', nullable: true })
-  metadata!: Record<string, any> | null;
+    metadata!: Record<string, any> | null;
 
   @Column({ type: 'timestamptz', default: () => 'NOW()' })
-  created_at!: Date;
+    created_at!: Date;
 
   // Relación con Profile (se puede agregar después cuando se cree Profile entity)
   // @ManyToOne(() => Profile, { onDelete: 'CASCADE' })

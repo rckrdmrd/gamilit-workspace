@@ -18,29 +18,29 @@ import { AssignmentType } from '../entities/assignment.entity';
 export class CreateAssignmentDto {
   @IsString()
   @Length(1, 255)
-  title!: string;
+    title!: string;
 
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   @IsEnum(AssignmentType)
-  assignmentType!: AssignmentType;
+    assignmentType!: AssignmentType;
 
   @IsInt()
   @Min(1)
   @Max(1000)
-  maxPoints!: number;
+    maxPoints!: number;
 
   @IsOptional()
   @IsDateString()
-  deadline?: string;
+    deadline?: string;
 
   @IsOptional()
   @IsString()
-  instructions?: string;
+    instructions?: string;
 
   @IsOptional()
   @IsObject()
-  attachments?: any;
+    attachments?: any;
 }

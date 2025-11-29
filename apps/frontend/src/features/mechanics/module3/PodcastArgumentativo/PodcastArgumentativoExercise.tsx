@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Mic, Square, FileAudio } from 'lucide-react';
+import { Mic, Square, FileAudio, AlertCircle } from 'lucide-react';
 import { DetectiveCard } from '@/shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@/shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
@@ -12,12 +12,28 @@ import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
 import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
+import { useAudioRecorder } from '@/shared/hooks/useAudioRecorder';
+
+interface ExerciseProgressData {
+  progress: {
+    currentStep: number;
+    totalSteps: number;
+    score: number;
+    hintsUsed: number;
+    timeSpent: number;
+  };
+  answers: {
+    topicId: string;
+    script: string;
+    audioUrl?: string;
+  };
+}
 
 interface ExerciseProps {
   exerciseId: string;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
-  onProgressUpdate?: (progress: number) => void;
+  onProgressUpdate?: (data: ExerciseProgressData) => void;
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
 }
@@ -39,6 +55,24 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
   const { user } = useAuth();
   const { fetchUserProgress } = useRanksStore();
   const { fetchBalance } = useEconomyStore();
+
+  // Audio Recorder Hook
+  const {
+    permissionState,
+    recordingState,
+    error: recorderError,
+    audioBlob,
+    audioUrl: hookAudioUrl,
+    duration: recordingDuration,
+    checkPermission,
+    requestPermission,
+    startRecording: startRecordingHook,
+    stopRecording: stopRecordingHook,
+    resetRecording: resetRecordingHook,
+    isSupported,
+    isRecording,
+  } = useAudioRecorder();
+
   const [exercise, setExercise] = useState<PodcastExercise | null>(null);
   const [recording, setRecording] = useState<Recording>({
     id: '',
@@ -47,10 +81,8 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
     analysis: null,
     duration: 0,
   });
-  const [isRecording, setIsRecording] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [timer, setTimer] = useState(0);
   const [analysis, setAnalysis] = useState<ArgumentAnalysis | null>(null);
   const [currentScore, setCurrentScore] = useState(initialData?.currentScore || 0);
   const [startTime] = useState(new Date());
@@ -58,25 +90,24 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
   const [timeSpent, setTimeSpent] = useState(0);
   const [scriptText, setScriptText] = useState('');
   const [selectedTopic, setSelectedTopic] = useState<{ id: string; text: string } | null>(null);
-  const [audioUrl, setAudioUrl] = useState<string | undefined>(undefined);
   const [feedback, setFeedback] = useState<any>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const actionsRef = useRef<any>(null);
 
   useEffect(() => {
     loadExercise();
-  }, []);
+    checkPermission(); // Check permission on mount
+  }, [checkPermission]);
 
-  // Recording timer
+  // Sync audioBlob from hook to recording state
   useEffect(() => {
-    let interval: ReturnType<typeof setInterval> | undefined;
-    if (isRecording) {
-      interval = setInterval(() => setTimer((t) => t + 1), 1000);
+    if (audioBlob && recordingState === 'stopped') {
+      setRecording((prev) => ({
+        ...prev,
+        audioBlob,
+        duration: recordingDuration,
+      }));
     }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isRecording]);
+  }, [audioBlob, recordingState, recordingDuration]);
 
   // Auto-save progress every 30 seconds
   useEffect(() => {
@@ -84,18 +115,44 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
       saveProgress();
     }, 30000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recording, currentScore]);
 
-  // Update progress
+  // Update progress and answers
   useEffect(() => {
-    const progress = calculateProgress();
-    onProgressUpdate?.(progress);
-
     const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     setTimeSpent(elapsed);
-  }, [recording, analysis]);
 
-  const calculateProgress = () => {
+    // Determine current script (manual text or transcription)
+    const currentScript = scriptText || recording.transcription || '';
+
+    // Calculate progress steps
+    const hasScript = currentScript.length >= 200;
+    const hasAnalysis = analysis !== null;
+    const currentStep = (hasScript ? 1 : 0) + (hasAnalysis ? 1 : 0);
+    const totalSteps = 2; // Script + Analysis
+
+    // Send progress with answers in the new format
+    if (onProgressUpdate) {
+      onProgressUpdate({
+        progress: {
+          currentStep,
+          totalSteps,
+          score: currentScore,
+          hintsUsed: 0,
+          timeSpent: elapsed,
+        },
+        answers: {
+          topicId: selectedTopic?.id || 'topic-1',
+          script: currentScript,
+          audioUrl: hookAudioUrl || undefined,
+        },
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recording, analysis, scriptText, currentScore, selectedTopic, hookAudioUrl]);
+
+  const _calculateProgress = () => {
     let progress = 0;
     if (recording.audioBlob) progress += 50;
     if (analysis) progress += 50;
@@ -122,40 +179,11 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
   };
 
   const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      const chunks: BlobPart[] = [];
-
-      mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
-        setRecording((prev) => ({ ...prev, audioBlob: blob, duration: timer }));
-      };
-
-      mediaRecorder.start();
-      setIsRecording(true);
-      setTimer(0);
-    } catch (error) {
-      console.error('Error accessing microphone:', error);
-      alert('No se pudo acceder al micrófono. Por favor verifica los permisos.');
-    }
+    await startRecordingHook();
   };
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.stream.getTracks().forEach((track) => track.stop());
-      setIsRecording(false);
-
-      // Generar URL del audio grabado (simulado en este caso)
-      // En producción, aquí subirías el blob a un servidor y obtendrías la URL real
-      if (recording.audioBlob) {
-        const url = URL.createObjectURL(recording.audioBlob);
-        setAudioUrl(url);
-      }
-    }
+    stopRecordingHook();
   };
 
   const handleAnalyze = async () => {
@@ -207,7 +235,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
       const answers = {
         topicId: selectedTopic?.id || 'topic-1',
         script: finalScript,
-        audioUrl: audioUrl || undefined,
+        audioUrl: hookAudioUrl || undefined,
       };
 
       // Enviar al backend
@@ -259,10 +287,10 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
   };
 
   const handleReset = () => {
+    resetRecordingHook(); // Reset hook state
     setRecording({ id: '', audioBlob: null, transcription: '', analysis: null, duration: 0 });
     setAnalysis(null);
     setCurrentScore(0);
-    setTimer(0);
   };
 
   // Attach actions ref
@@ -274,6 +302,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
         getState: () => ({ recording, currentScore, analysis }),
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recording, currentScore, analysis]);
 
   const formatTime = (seconds: number) => {
@@ -314,35 +343,108 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
           <div className="mt-6 rounded-detective border-2 border-detective-border-light bg-white p-6">
             <div className="mb-6 text-center">
               <div className="mb-2 text-6xl font-bold text-detective-orange">
-                {formatTime(timer)}
+                {formatTime(recordingDuration)}
               </div>
               <div className="text-detective-sm text-detective-text-secondary">
                 Tiempo límite: {formatTime(exercise.timeLimit)}
               </div>
             </div>
 
-            <div className="mb-6 flex justify-center gap-4">
-              {!isRecording && !recording.audioBlob && (
+            {/* Unsupported Browser */}
+            {!isSupported && (
+              <div className="mb-6 rounded-lg border-2 border-red-200 bg-red-50 p-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-6 w-6 flex-shrink-0 text-red-600" />
+                  <div>
+                    <h4 className="mb-1 font-semibold text-red-900">Navegador No Soportado</h4>
+                    <p className="text-sm text-red-700">
+                      Tu navegador no soporta grabación de audio. Por favor usa Chrome, Firefox o
+                      Edge actualizado.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Permission Denied */}
+            {permissionState === 'denied' && (
+              <div className="mb-6 rounded-lg border-2 border-amber-200 bg-amber-50 p-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-6 w-6 flex-shrink-0 text-amber-600" />
+                  <div>
+                    <h4 className="mb-1 font-semibold text-amber-900">Permisos Requeridos</h4>
+                    <p className="mb-3 text-sm text-amber-700">
+                      Necesitas habilitar el acceso al micrófono para grabar tu podcast.
+                    </p>
+                    <p className="text-xs text-amber-600">
+                      <strong>Cómo habilitar:</strong>
+                      <br />
+                      1. Haz clic en el ícono de candado o información (i) en la barra de
+                      direcciones
+                      <br />
+                      2. Busca la opción de &quot;Micrófono&quot;
+                      <br />
+                      3. Selecciona &quot;Permitir&quot;
+                      <br />
+                      4. Recarga la página
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Recorder Error */}
+            {recorderError && (
+              <div className="mb-6 rounded-lg border-2 border-red-200 bg-red-50 p-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-6 w-6 flex-shrink-0 text-red-600" />
+                  <div>
+                    <h4 className="mb-1 font-semibold text-red-900">{recorderError.message}</h4>
+                    <p className="text-sm text-red-700">{recorderError.userAction}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Permission Prompt */}
+            {permissionState === 'prompt' && isSupported && !recording.audioBlob && (
+              <div className="mb-6 flex justify-center">
                 <DetectiveButton
                   variant="primary"
-                  onClick={startRecording}
+                  onClick={requestPermission}
                   icon={<Mic className="h-6 w-6" />}
-                  className="bg-red-500 hover:bg-red-600"
+                  className="bg-detective-blue hover:bg-detective-blue/90"
                 >
-                  Iniciar Grabación
+                  Permitir Acceso al Micrófono
                 </DetectiveButton>
-              )}
-              {isRecording && (
-                <DetectiveButton
-                  variant="secondary"
-                  onClick={stopRecording}
-                  icon={<Square className="h-6 w-6" />}
-                  className="animate-pulse bg-gray-800 hover:bg-gray-900"
-                >
-                  Detener Grabación
-                </DetectiveButton>
-              )}
-            </div>
+              </div>
+            )}
+
+            {/* Recording Buttons */}
+            {permissionState === 'granted' && (
+              <div className="mb-6 flex justify-center gap-4">
+                {!isRecording && !recording.audioBlob && (
+                  <DetectiveButton
+                    variant="primary"
+                    onClick={startRecording}
+                    icon={<Mic className="h-6 w-6" />}
+                    className="bg-red-500 hover:bg-red-600"
+                  >
+                    Iniciar Grabación
+                  </DetectiveButton>
+                )}
+                {isRecording && (
+                  <DetectiveButton
+                    variant="secondary"
+                    onClick={stopRecording}
+                    icon={<Square className="h-6 w-6" />}
+                    className="animate-pulse bg-gray-800 hover:bg-gray-900"
+                  >
+                    Detener Grabación
+                  </DetectiveButton>
+                )}
+              </div>
+            )}
 
             {recording.audioBlob && (
               <div className="space-y-4">

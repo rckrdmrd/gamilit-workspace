@@ -76,10 +76,10 @@ export class AchievementsController {
     },
   })
   async getAllAchievements(
-    @Query('includeSecret') includeSecret?: string,
+  @Query('includeSecret') includeSecret?: string,
   ) {
     const include = includeSecret === 'true';
-    return await this.achievementsService.findAll(include);
+    return this.achievementsService.findAll(include);
   }
 
   /**
@@ -134,7 +134,7 @@ export class AchievementsController {
     description: 'Achievement no encontrado',
   })
   async getAchievementById(@Param('id') id: string) {
-    return await this.achievementsService.findById(id);
+    return this.achievementsService.findById(id);
   }
 
   /**
@@ -194,7 +194,7 @@ export class AchievementsController {
     description: 'Usuario no encontrado',
   })
   async getUserAchievements(@Param('userId') userId: string) {
-    return await this.achievementsService.getCompletedByUser(userId);
+    return this.achievementsService.getCompletedByUser(userId);
   }
 
   /**
@@ -271,7 +271,7 @@ export class AchievementsController {
     description: 'Usuario o achievement no encontrado',
   })
   async grantAchievement(
-    @Param('userId') userId: string,
+  @Param('userId') userId: string,
     @Param('achievementId') achievementId: string,
     @Body() grantDto: GrantAchievementDto,
   ) {
@@ -279,7 +279,7 @@ export class AchievementsController {
     grantDto.user_id = userId;
     grantDto.achievement_id = achievementId;
 
-    return await this.achievementsService.grantAchievement(userId, grantDto);
+    return this.achievementsService.grantAchievement(userId, grantDto);
   }
 
   /**
@@ -326,7 +326,7 @@ export class AchievementsController {
     description: 'Usuario no encontrado',
   })
   async getAchievementSummary(@Param('userId') userId: string) {
-    return await this.achievementsService.getUserAchievementStats(userId);
+    return this.achievementsService.getUserAchievementStats(userId);
   }
 
   /**
@@ -388,10 +388,10 @@ export class AchievementsController {
     description: 'Achievement no encontrado para el usuario',
   })
   async claimAchievement(
-    @Param('userId') userId: string,
+  @Param('userId') userId: string,
     @Param('achievementId') achievementId: string,
   ) {
-    return await this.achievementsService.claimRewards(userId, achievementId);
+    return this.achievementsService.claimRewards(userId, achievementId);
   }
 
   /**
@@ -465,7 +465,7 @@ export class AchievementsController {
   })
   async updateAchievementStatus(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: UpdateAchievementStatusDto,
+      @Body() dto: UpdateAchievementStatusDto,
   ): Promise<{ success: boolean; achievement: any }> {
     const achievement = await this.achievementsService.updateAchievementStatus(
       id,

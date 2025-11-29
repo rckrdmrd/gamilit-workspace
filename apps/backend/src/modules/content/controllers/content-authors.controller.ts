@@ -58,7 +58,7 @@ export class ContentAuthorsController {
     description: 'Usuario ya tiene un perfil de autor',
   })
   async create(@Body() dto: CreateContentAuthorDto) {
-    return await this.authorsService.create(
+    return this.authorsService.create(
       dto.user_id,
       dto.display_name,
       dto.bio,
@@ -103,11 +103,11 @@ export class ContentAuthorsController {
     description: 'Lista de autores',
   })
   async findAll(
-    @Query('is_featured') is_featured?: boolean,
+  @Query('is_featured') is_featured?: boolean,
     @Query('is_verified') is_verified?: boolean,
     @Query('expertise_area') expertise_area?: string,
   ) {
-    return await this.authorsService.findAll({
+    return this.authorsService.findAll({
       is_featured: is_featured !== undefined ? is_featured : undefined,
       is_verified: is_verified !== undefined ? is_verified : undefined,
       expertise_area,
@@ -138,7 +138,7 @@ export class ContentAuthorsController {
     description: 'Lista de autores destacados',
   })
   async findFeatured(@Query('limit') limit?: number) {
-    return await this.authorsService.findFeatured(limit ? Number(limit) : 10);
+    return this.authorsService.findFeatured(limit ? Number(limit) : 10);
   }
 
   /**
@@ -164,7 +164,7 @@ export class ContentAuthorsController {
     description: 'Lista de autores verificados',
   })
   async findVerified(@Query('limit') limit?: number) {
-    return await this.authorsService.findVerified(limit ? Number(limit) : undefined);
+    return this.authorsService.findVerified(limit ? Number(limit) : undefined);
   }
 
   /**
@@ -191,7 +191,7 @@ export class ContentAuthorsController {
     description: 'Lista de top autores',
   })
   async findTopRated(@Query('limit') limit?: number) {
-    return await this.authorsService.findTopRated(limit ? Number(limit) : 10);
+    return this.authorsService.findTopRated(limit ? Number(limit) : 10);
   }
 
   /**
@@ -219,7 +219,7 @@ export class ContentAuthorsController {
     },
   })
   async getStats() {
-    return await this.authorsService.getStats();
+    return this.authorsService.getStats();
   }
 
   /**
@@ -245,7 +245,7 @@ export class ContentAuthorsController {
     description: 'Lista de autores con esa expertise',
   })
   async findByExpertise(@Param('area') area: string) {
-    return await this.authorsService.findByExpertise(area);
+    return this.authorsService.findByExpertise(area);
   }
 
   /**
@@ -275,7 +275,7 @@ export class ContentAuthorsController {
     description: 'Autor no encontrado',
   })
   async findById(@Param('id') id: string) {
-    return await this.authorsService.findById(id);
+    return this.authorsService.findById(id);
   }
 
   /**
@@ -305,7 +305,7 @@ export class ContentAuthorsController {
     description: 'Perfil de autor no encontrado',
   })
   async findByUserId(@Param('userId') userId: string) {
-    return await this.authorsService.findByUserId(userId);
+    return this.authorsService.findByUserId(userId);
   }
 
   /**
@@ -336,7 +336,7 @@ export class ContentAuthorsController {
     description: 'Autor no encontrado',
   })
   async update(@Param('id') id: string, @Body() dto: UpdateContentAuthorDto) {
-    return await this.authorsService.update(id, dto);
+    return this.authorsService.update(id, dto);
   }
 
   /**
@@ -361,7 +361,7 @@ export class ContentAuthorsController {
     description: 'Contador incrementado',
   })
   async incrementContentCreated(@Param('userId') userId: string) {
-    return await this.authorsService.incrementContentCreated(userId);
+    return this.authorsService.incrementContentCreated(userId);
   }
 
   /**
@@ -386,7 +386,7 @@ export class ContentAuthorsController {
     description: 'Contador incrementado',
   })
   async incrementContentPublished(@Param('userId') userId: string) {
-    return await this.authorsService.incrementContentPublished(userId);
+    return this.authorsService.incrementContentPublished(userId);
   }
 
   /**
@@ -423,7 +423,7 @@ export class ContentAuthorsController {
     description: 'Rating inválido (debe estar entre 0 y 5)',
   })
   async updateRating(@Param('id') id: string, @Query('rating') rating: number) {
-    return await this.authorsService.updateRating(id, Number(rating));
+    return this.authorsService.updateRating(id, Number(rating));
   }
 
   /**
@@ -455,7 +455,7 @@ export class ContentAuthorsController {
     description: 'Estado actualizado',
   })
   async setFeatured(@Param('id') id: string, @Query('featured') featured: boolean) {
-    return await this.authorsService.setFeatured(id, featured === true);
+    return this.authorsService.setFeatured(id, featured === true);
   }
 
   /**
@@ -487,7 +487,7 @@ export class ContentAuthorsController {
     description: 'Estado actualizado',
   })
   async setVerified(@Param('id') id: string, @Query('verified') verified: boolean) {
-    return await this.authorsService.setVerified(id, verified === true);
+    return this.authorsService.setVerified(id, verified === true);
   }
 
   /**

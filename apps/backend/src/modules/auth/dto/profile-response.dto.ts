@@ -24,79 +24,79 @@ import { UserPreferencesSchema } from './user-preferences.schema';
  */
 export class ProfileResponseDto {
   @Expose()
-  id!: string;
+    id!: string;
 
   @Expose()
-  tenant_id!: string;
+    tenant_id!: string;
 
   @Expose()
-  display_name!: string | null;
+    display_name!: string | null;
 
   @Expose()
-  full_name!: string | null;
+    full_name!: string | null;
 
   @Expose()
-  first_name!: string | null;
+    first_name!: string | null;
 
   @Expose()
-  last_name!: string | null;
+    last_name!: string | null;
 
   @Expose()
-  email!: string;
+    email!: string;
 
   @Expose()
-  avatar_url!: string | null;
+    avatar_url!: string | null;
 
   @Expose()
-  bio!: string | null;
+    bio!: string | null;
 
   @Expose()
-  phone!: string | null;
+    phone!: string | null;
 
   @Expose()
-  date_of_birth!: Date | null;
+    date_of_birth!: Date | null;
 
   @Expose()
-  grade_level!: string | null;
+    grade_level!: string | null;
 
   @Expose()
-  student_id!: string | null;
+    student_id!: string | null;
 
   @Expose()
-  school_id!: string | null;
+    school_id!: string | null;
 
   @Expose()
-  role!: GamilityRoleEnum;
+    role!: GamilityRoleEnum;
 
   @Expose()
-  status!: UserStatusEnum;
+    status!: UserStatusEnum;
 
   @Expose()
-  email_verified!: boolean;
+    email_verified!: boolean;
 
   @Expose()
-  phone_verified!: boolean;
+    phone_verified!: boolean;
 
   @Expose()
-  preferences!: UserPreferencesSchema;
+    preferences!: UserPreferencesSchema;
 
   @Expose()
-  last_sign_in_at!: Date | null;
+    last_sign_in_at!: Date | null;
 
   @Expose()
-  last_activity_at!: Date | null;
+    last_activity_at!: Date | null;
 
   @Expose()
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   @Expose()
-  created_at!: Date;
+    created_at!: Date;
 
   @Expose()
-  updated_at!: Date;
+    updated_at!: Date;
 
   @Expose()
-  user_id!: string | null;
+    user_id!: string | null;
 
   // Relación opcional a User (si se incluye en la query)
   // @Expose()

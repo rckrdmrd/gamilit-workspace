@@ -78,7 +78,7 @@ export class ExerciseAttemptController {
     description: 'Datos inválidos en la solicitud',
   })
   async create(@Body() createAttemptDto: CreateExerciseAttemptDto) {
-    return await this.attemptService.create(createAttemptDto);
+    return this.attemptService.create(createAttemptDto);
   }
 
   /**
@@ -129,7 +129,7 @@ export class ExerciseAttemptController {
     description: 'Usuario no encontrado',
   })
   async findByUserId(@Param('userId') userId: string) {
-    return await this.attemptService.findByUserId(userId);
+    return this.attemptService.findByUserId(userId);
   }
 
   /**
@@ -176,7 +176,7 @@ export class ExerciseAttemptController {
     description: 'Ejercicio no encontrado',
   })
   async findByExerciseId(@Param('exerciseId') exerciseId: string) {
-    return await this.attemptService.findByExerciseId(exerciseId);
+    return this.attemptService.findByExerciseId(exerciseId);
   }
 
   /**
@@ -241,10 +241,10 @@ export class ExerciseAttemptController {
     description: 'Usuario o ejercicio no encontrado',
   })
   async findByUserAndExercise(
-    @Param('userId') userId: string,
+  @Param('userId') userId: string,
     @Param('exerciseId') exerciseId: string,
   ) {
-    return await this.attemptService.findByUserAndExercise(userId, exerciseId);
+    return this.attemptService.findByUserAndExercise(userId, exerciseId);
   }
 
   /**
@@ -290,10 +290,10 @@ export class ExerciseAttemptController {
     },
   })
   async getNextAttemptNumber(
-    @Param('userId') userId: string,
+  @Param('userId') userId: string,
     @Param('exerciseId') exerciseId: string,
   ) {
-    return await this.attemptService.getNextAttemptNumber(userId, exerciseId);
+    return this.attemptService.getNextAttemptNumber(userId, exerciseId);
   }
 
   /**
@@ -355,10 +355,10 @@ export class ExerciseAttemptController {
     description: 'Intento no encontrado',
   })
   async submitAttempt(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() body: { answers: object },
   ) {
-    return await this.attemptService.submitAttempt(id, body.answers);
+    return this.attemptService.submitAttempt(id, body.answers);
   }
 
   /**
@@ -406,7 +406,7 @@ export class ExerciseAttemptController {
     description: 'Usuario no encontrado',
   })
   async getAttemptStats(@Param('userId') userId: string) {
-    return await this.attemptService.getAttemptStats(userId);
+    return this.attemptService.getAttemptStats(userId);
   }
 
   /**
@@ -461,10 +461,10 @@ export class ExerciseAttemptController {
     description: 'No se encontraron intentos para el usuario y ejercicio especificados',
   })
   async getBestAttempt(
-    @Param('userId') userId: string,
+  @Param('userId') userId: string,
     @Param('exerciseId') exerciseId: string,
   ) {
-    return await this.attemptService.getBestAttempt(userId, exerciseId);
+    return this.attemptService.getBestAttempt(userId, exerciseId);
   }
 
   /**
@@ -485,7 +485,8 @@ export class ExerciseAttemptController {
   @ApiOperation({
     summary: 'Track comodines usage',
     description:
-      'Registra los comodines (power-ups) utilizados durante un intento de ejercicio',
+      '✅ FIX P1-002: Registra los comodines (power-ups) utilizados durante un intento de ejercicio. ' +
+      'Ahora DEDUCE correctamente del inventario del usuario. Si el usuario no tiene suficientes comodines, retorna error 400.',
   })
   @ApiParam({
     name: 'id',
@@ -495,7 +496,7 @@ export class ExerciseAttemptController {
   })
   @ApiResponse({
     status: 200,
-    description: 'Uso de comodines registrado exitosamente',
+    description: 'Uso de comodines registrado exitosamente y deducido del inventario',
     type: ExerciseAttemptResponseDto,
     schema: {
       example: {
@@ -508,16 +509,16 @@ export class ExerciseAttemptController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Comodines inválidos o intento ya completado',
+    description: 'Comodines inválidos, inventario insuficiente, o intento ya completado',
   })
   @ApiResponse({
     status: 404,
     description: 'Intento no encontrado',
   })
   async trackComodinesUsage(
-    @Param('id') id: string,
+  @Param('id') id: string,
     @Body() body: { comodines: string[] },
   ) {
-    return await this.attemptService.trackComodinesUsage(id, body.comodines);
+    return this.attemptService.trackComodinesUsage(id, body.comodines);
   }
 }

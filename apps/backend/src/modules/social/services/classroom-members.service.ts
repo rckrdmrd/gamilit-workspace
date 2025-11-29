@@ -59,7 +59,7 @@ export class ClassroomMembersService {
       metadata: dto.metadata || {},
     });
 
-    return await this.classroomMemberRepo.save(member);
+    return this.classroomMemberRepo.save(member);
   }
 
   /**
@@ -68,7 +68,7 @@ export class ClassroomMembersService {
    * @returns Lista de miembros ordenados por fecha de inscripción
    */
   async findByClassroomId(classroomId: string): Promise<ClassroomMember[]> {
-    return await this.classroomMemberRepo.find({
+    return this.classroomMemberRepo.find({
       where: { classroom_id: classroomId },
       order: { enrollment_date: 'ASC' },
     });
@@ -80,7 +80,7 @@ export class ClassroomMembersService {
    * @returns Lista de membresías ordenadas por fecha de inscripción
    */
   async findByUserId(userId: string): Promise<ClassroomMember[]> {
-    return await this.classroomMemberRepo.find({
+    return this.classroomMemberRepo.find({
       where: { student_id: userId },
       order: { enrollment_date: 'DESC' },
     });
@@ -135,7 +135,7 @@ export class ClassroomMembersService {
       member.is_active = false;
     }
 
-    return await this.classroomMemberRepo.save(member);
+    return this.classroomMemberRepo.save(member);
   }
 
   /**
@@ -159,7 +159,7 @@ export class ClassroomMembersService {
     }
 
     member.final_grade = grade;
-    return await this.classroomMemberRepo.save(member);
+    return this.classroomMemberRepo.save(member);
   }
 
   /**
@@ -183,7 +183,7 @@ export class ClassroomMembersService {
     }
 
     member.attendance_percentage = attendance;
-    return await this.classroomMemberRepo.save(member);
+    return this.classroomMemberRepo.save(member);
   }
 
   /**
@@ -205,7 +205,7 @@ export class ClassroomMembersService {
     member.withdrawal_reason = reason;
     member.is_active = false;
 
-    return await this.classroomMemberRepo.save(member);
+    return this.classroomMemberRepo.save(member);
   }
 
   /**
@@ -214,7 +214,7 @@ export class ClassroomMembersService {
    * @returns Lista de miembros activos ordenados por nombre
    */
   async getActiveMembers(classroomId: string): Promise<ClassroomMember[]> {
-    return await this.classroomMemberRepo.find({
+    return this.classroomMemberRepo.find({
       where: {
         classroom_id: classroomId,
         status: ClassroomMemberStatusEnum.ACTIVE,
@@ -230,7 +230,7 @@ export class ClassroomMembersService {
    * @returns Lista de miembros ordenados por final_grade DESC
    */
   async getClassroomLeaderboard(classroomId: string): Promise<ClassroomMember[]> {
-    return await this.classroomMemberRepo.find({
+    return this.classroomMemberRepo.find({
       where: {
         classroom_id: classroomId,
         status: ClassroomMemberStatusEnum.ACTIVE,

@@ -18,5 +18,5 @@ export class AssignClassroomsToTeacherRestDto {
   @ArrayMinSize(1)
   @ArrayMaxSize(50)
   @IsUUID('4', { each: true })
-  classroomIds!: string[];
+    classroomIds!: string[];
 }

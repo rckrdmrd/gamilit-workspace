@@ -36,7 +36,7 @@ export const adminAchievementsApi = {
     data: AdminAchievement[];
     total: number;
   }> {
-    const params: Record<string, any> = {};
+    const params: Record<string, unknown> = {};
 
     if (query?.category) params.category = query.category;
     if (query?.isActive !== undefined) params.isActive = query.isActive;

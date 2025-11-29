@@ -32,19 +32,25 @@ export interface EmparejamientoDragDropData {
 export interface EmparejamientoDragDropProps {
   exercise: EmparejamientoDragDropData;
   onComplete?: () => void;
-  onProgressUpdate?: (progress: any) => void;
+  onProgressUpdate?: (data: {
+    progress: {
+      currentStep: number;
+      totalSteps: number;
+      score: number;
+      hintsUsed: number;
+      timeSpent: number;
+    };
+    answers: Record<string, unknown>;
+  }) => void;
 }
 
 export const EmparejamientoExerciseDragDrop: React.FC<EmparejamientoDragDropProps> = ({
   exercise,
   onComplete,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onProgressUpdate: _onProgressUpdate,
 }) => {
   const [connections, setConnections] = useState<Map<string, string>>(new Map());
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_hintsUsed, setHintsUsed] = useState(0);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_availableCoins, setAvailableCoins] = useState(100);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);

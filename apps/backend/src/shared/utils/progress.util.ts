@@ -95,10 +95,10 @@ export function calculateModuleProgress(
   totalExercises: number,
   requiredPercentage: number = 100, // % requerido para considerar completo
 ): {
-  progress: ProgressData;
-  isComplete: boolean;
-  remainingExercises: number;
-} {
+    progress: ProgressData;
+    isComplete: boolean;
+    remainingExercises: number;
+  } {
   const progress = createProgressData(completedExercises, totalExercises);
   const isComplete = progress.percentage >= requiredPercentage;
   const remainingExercises = Math.max(0, totalExercises - completedExercises);

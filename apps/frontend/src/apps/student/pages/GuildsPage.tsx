@@ -33,7 +33,7 @@ import {
 // Components
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
-import { RankBadge } from '@shared/components/base/RankBadge';
+import { RankBadge, type RankType } from '@shared/components/base/RankBadge';
 import { Modal } from '@shared/components/common/Modal';
 
 // Hooks & Store
@@ -481,7 +481,7 @@ export default function GuildsPage() {
                         <div>
                           <h3 className="font-bold text-detective-text">{member.username}</h3>
                           <div className="flex items-center gap-2">
-                            <RankBadge rank={member.rank as any} showIcon={false} />
+                            <RankBadge rank={member.rank as RankType} showIcon={false} />
                             {member.role === 'leader' && (
                               <Crown className="h-4 w-4 text-detective-gold" />
                             )}

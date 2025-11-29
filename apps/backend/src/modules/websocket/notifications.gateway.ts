@@ -29,12 +29,12 @@ import { SocketEvent } from './types/websocket.types';
   transports: ['websocket', 'polling'],
 })
 export class NotificationsGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
-{
+implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server!: Server;
+    server!: Server;
 
   private readonly logger = new Logger(NotificationsGateway.name);
+
   private userSockets = new Map<string, Set<string>>(); // userId -> Set of socketIds
 
   afterInit(server: Server) {
@@ -47,7 +47,7 @@ export class NotificationsGateway
     const userEmail = client.userData?.email;
 
     if (!userId) {
-      this.logger.warn(`Connection rejected: no user data`);
+      this.logger.warn('Connection rejected: no user data');
       client.disconnect();
       return;
     }
@@ -96,7 +96,7 @@ export class NotificationsGateway
   @UseGuards(WsJwtGuard)
   @SubscribeMessage(SocketEvent.MARK_AS_READ)
   async handleMarkAsRead(
-    @ConnectedSocket() client: AuthenticatedSocket,
+  @ConnectedSocket() client: AuthenticatedSocket,
     @MessageBody() data: { notificationId: string },
   ) {
     try {

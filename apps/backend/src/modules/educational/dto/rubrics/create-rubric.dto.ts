@@ -22,7 +22,7 @@ export class CreateRubricDto {
    */
   @IsOptional()
   @IsUUID()
-  exercise_id?: string;
+    exercise_id?: string;
 
   /**
    * ID del módulo (FK → educational_content.modules)
@@ -30,7 +30,7 @@ export class CreateRubricDto {
    */
   @IsOptional()
   @IsUUID()
-  module_id?: string;
+    module_id?: string;
 
   // =====================================================
   // BASIC INFORMATION
@@ -40,21 +40,21 @@ export class CreateRubricDto {
    * Nombre de la rúbrica (REQUERIDO)
    */
   @IsString()
-  name!: string;
+    name!: string;
 
   /**
    * Descripción de la rúbrica
    */
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   /**
    * Tipo de evaluación (REQUERIDO)
    * Valores válidos: automatic, manual, hybrid, peer_review
    */
   @IsString()
-  assessment_type!: string;
+    assessment_type!: string;
 
   // =====================================================
   // CRITERIA & SCORING
@@ -65,7 +65,7 @@ export class CreateRubricDto {
    * Estructura: {"criteria_1": {"name": string, "levels": {}, "weight": number}}
    */
   @IsObject()
-  criteria!: Record<string, any>;
+    criteria!: Record<string, any>;
 
   /**
    * Escala de puntuación en formato JSONB
@@ -73,7 +73,7 @@ export class CreateRubricDto {
    */
   @IsOptional()
   @IsObject()
-  scoring_scale?: Record<string, any>;
+    scoring_scale?: Record<string, any>;
 
   /**
    * Peso porcentual de esta rúbrica (1-100%)
@@ -82,7 +82,7 @@ export class CreateRubricDto {
   @IsNumber()
   @Min(1)
   @Max(100)
-  weight_percentage?: number;
+    weight_percentage?: number;
 
   // =====================================================
   // VISIBILITY & OPTIONS
@@ -93,28 +93,28 @@ export class CreateRubricDto {
    */
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+    is_active?: boolean;
 
   /**
    * Si se permite reenvío de ejercicios evaluados por esta rúbrica
    */
   @IsOptional()
   @IsBoolean()
-  allow_resubmission?: boolean;
+    allow_resubmission?: boolean;
 
   /**
    * Plantilla de retroalimentación para estudiantes
    */
   @IsOptional()
   @IsString()
-  feedback_template?: string;
+    feedback_template?: string;
 
   /**
    * Si la retroalimentación automática está habilitada
    */
   @IsOptional()
   @IsBoolean()
-  auto_feedback_enabled?: boolean;
+    auto_feedback_enabled?: boolean;
 
   // =====================================================
   // METADATA & AUDIT
@@ -125,12 +125,12 @@ export class CreateRubricDto {
    */
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 
   /**
    * ID del usuario que crea la rúbrica
    */
   @IsOptional()
   @IsUUID()
-  created_by?: string;
+    created_by?: string;
 }

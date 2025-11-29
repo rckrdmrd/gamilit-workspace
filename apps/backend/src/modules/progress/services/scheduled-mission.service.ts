@@ -41,7 +41,7 @@ export class ScheduledMissionService {
       bonus_coins: dto.bonus_coins || 0,
     });
 
-    return await this.scheduledMissionRepo.save(newMission);
+    return this.scheduledMissionRepo.save(newMission);
   }
 
   /**
@@ -50,7 +50,7 @@ export class ScheduledMissionService {
    * @returns Lista de misiones del aula
    */
   async findByClassroomId(classroomId: string): Promise<ScheduledMission[]> {
-    return await this.scheduledMissionRepo.find({
+    return this.scheduledMissionRepo.find({
       where: { classroom_id: classroomId },
       order: { starts_at: 'DESC' },
     });
@@ -65,7 +65,7 @@ export class ScheduledMissionService {
   async findByUserId(userId: string): Promise<ScheduledMission[]> {
     // TODO: Integrar con ClassroomService para obtener classrooms del usuario
     // Por ahora, retornar todas las misiones activas como placeholder
-    return await this.scheduledMissionRepo.find({
+    return this.scheduledMissionRepo.find({
       where: { is_active: true },
       order: { starts_at: 'DESC' },
     });
@@ -78,7 +78,7 @@ export class ScheduledMissionService {
   async findActive(): Promise<ScheduledMission[]> {
     const now = new Date();
 
-    return await this.scheduledMissionRepo.find({
+    return this.scheduledMissionRepo.find({
       where: {
         is_active: true,
         starts_at: LessThan(now),
@@ -97,7 +97,7 @@ export class ScheduledMissionService {
     const now = new Date();
 
     // TODO: Filtrar por classrooms del usuario
-    return await this.scheduledMissionRepo.find({
+    return this.scheduledMissionRepo.find({
       where: {
         is_active: true,
         starts_at: MoreThan(now),
@@ -272,7 +272,7 @@ export class ScheduledMissionService {
     const mission = await this.findById(id);
 
     mission.is_active = false;
-    return await this.scheduledMissionRepo.save(mission);
+    return this.scheduledMissionRepo.save(mission);
   }
 
   /**
@@ -291,6 +291,6 @@ export class ScheduledMissionService {
     }
 
     mission.is_active = true;
-    return await this.scheduledMissionRepo.save(mission);
+    return this.scheduledMissionRepo.save(mission);
   }
 }

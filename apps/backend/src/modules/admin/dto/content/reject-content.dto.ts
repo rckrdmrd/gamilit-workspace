@@ -10,5 +10,5 @@ export class RejectContentDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(1000)
-  rejection_reason!: string;
+    rejection_reason!: string;
 }

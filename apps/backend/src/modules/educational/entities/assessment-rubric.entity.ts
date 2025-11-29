@@ -35,40 +35,40 @@ export class AssessmentRubric {
    * Identificador único de la rúbrica (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID del ejercicio (FK → educational_content.exercises)
    * Parte de relación polimórfica con module_id (SOLO uno puede ser NOT NULL)
    */
   @Column({ type: 'uuid', nullable: true })
-  exercise_id?: string;
+    exercise_id?: string;
 
   /**
    * ID del módulo (FK → educational_content.modules)
    * Parte de relación polimórfica con exercise_id (SOLO uno puede ser NOT NULL)
    */
   @Column({ type: 'uuid', nullable: true })
-  module_id?: string;
+    module_id?: string;
 
   /**
    * Nombre de la rúbrica
    */
   @Column({ type: 'text' })
-  name!: string;
+    name!: string;
 
   /**
    * Descripción de la rúbrica
    */
   @Column({ type: 'text', nullable: true })
-  description?: string;
+    description?: string;
 
   /**
    * Tipo de evaluación
    * ENUM: automatic, manual, hybrid, peer_review
    */
   @Column({ type: 'text' })
-  assessment_type!: string;
+    assessment_type!: string;
 
   /**
    * Criterios de evaluación en formato JSONB
@@ -76,67 +76,67 @@ export class AssessmentRubric {
    * Incluye niveles de logro con puntos y descripciones
    */
   @Column({ type: 'jsonb', default: {} })
-  criteria: Record<string, any> = {};
+    criteria: Record<string, any> = {};
 
   /**
    * Escala de puntuación en formato JSONB
    * Estructura: {"min": number, "max": number, "passing": number}
    */
   @Column({ type: 'jsonb', default: { min: 0, max: 100, passing: 70 } })
-  scoring_scale!: Record<string, any>;
+    scoring_scale!: Record<string, any>;
 
   /**
    * Peso porcentual de esta rúbrica en la evaluación total (1-100%)
    */
   @Column({ type: 'numeric', precision: 5, scale: 2, default: 100 })
-  weight_percentage!: number;
+    weight_percentage!: number;
 
   /**
    * Si la rúbrica está activa y disponible
    */
   @Column({ type: 'boolean', default: true })
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Si se permite reenvío de ejercicios evaluados por esta rúbrica
    */
   @Column({ type: 'boolean', default: true })
-  allow_resubmission!: boolean;
+    allow_resubmission!: boolean;
 
   /**
    * Plantilla de retroalimentación para estudiantes
    */
   @Column({ type: 'text', nullable: true })
-  feedback_template?: string;
+    feedback_template?: string;
 
   /**
    * Si la retroalimentación automática está habilitada
    */
   @Column({ type: 'boolean', default: true })
-  auto_feedback_enabled!: boolean;
+    auto_feedback_enabled!: boolean;
 
   /**
    * Metadatos adicionales en formato JSON
    * Puede incluir configuraciones específicas de evaluación
    */
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   /**
    * ID del usuario que creó la rúbrica
    */
   @Column({ type: 'uuid', nullable: true })
-  created_by?: string;
+    created_by?: string;
 
   /**
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización del registro
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 }

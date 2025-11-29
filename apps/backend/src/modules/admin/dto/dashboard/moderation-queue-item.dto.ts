@@ -8,64 +8,64 @@ export class ModerationQueueItemDto {
     description: 'Unique identifier of the flagged content item',
     example: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
   })
-  id!: string;
+    id!: string;
 
   @ApiProperty({
     description: 'Type of content flagged (exercise, module, comment, etc.)',
     example: 'exercise',
   })
-  content_type!: string;
+    content_type!: string;
 
   @ApiProperty({
     description: 'ID of the flagged content',
     example: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
   })
-  content_id!: string;
+    content_id!: string;
 
   @ApiProperty({
     description: 'Preview of the flagged content',
     example: 'Exercise title: Introduction to...',
     nullable: true,
   })
-  content_preview?: string;
+    content_preview?: string;
 
   @ApiProperty({
     description: 'Reason for flagging',
     example: 'Inappropriate language detected',
   })
-  reason!: string;
+    reason!: string;
 
   @ApiProperty({
     description: 'Priority level (high, medium, low)',
     example: 'high',
   })
-  priority!: string;
+    priority!: string;
 
   @ApiProperty({
     description: 'Current status (pending, reviewed, resolved)',
     example: 'pending',
   })
-  status!: string;
+    status!: string;
 
   @ApiProperty({
     description: 'When the content was flagged',
     example: '2025-11-19T10:30:00Z',
   })
-  created_at!: string;
+    created_at!: string;
 
   @ApiProperty({
     description: 'Email of the user who reported this content',
     example: 'reporter@example.com',
     nullable: true,
   })
-  reporter_email?: string;
+    reporter_email?: string;
 
   @ApiProperty({
     description: 'Full name of the reporter',
     example: 'John Doe',
     nullable: true,
   })
-  reporter_name?: string;
+    reporter_name?: string;
 }
 
 /**
@@ -76,17 +76,17 @@ export class PaginatedModerationQueueDto {
     description: 'Array of moderation queue items',
     type: [ModerationQueueItemDto],
   })
-  data!: ModerationQueueItemDto[];
+    data!: ModerationQueueItemDto[];
 
   @ApiProperty({
     description: 'Total number of items in queue',
     example: 15,
   })
-  total!: number;
+    total!: number;
 
   @ApiProperty({
     description: 'Number of items returned',
     example: 10,
   })
-  limit!: number;
+    limit!: number;
 }

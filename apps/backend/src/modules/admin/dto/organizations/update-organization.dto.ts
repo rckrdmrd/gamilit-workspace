@@ -20,7 +20,7 @@ export class UpdateOrganizationDto {
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  name?: string;
+    name?: string;
 
   @ApiPropertyOptional({
     description: 'Custom domain for the organization',
@@ -28,7 +28,7 @@ export class UpdateOrganizationDto {
   })
   @IsOptional()
   @IsString()
-  domain?: string;
+    domain?: string;
 
   @ApiPropertyOptional({
     description: 'Logo URL for the organization',
@@ -36,7 +36,7 @@ export class UpdateOrganizationDto {
   })
   @IsOptional()
   @IsUrl()
-  logo_url?: string;
+    logo_url?: string;
 
   @ApiPropertyOptional({
     description: 'Subscription tier',
@@ -45,7 +45,7 @@ export class UpdateOrganizationDto {
   })
   @IsOptional()
   @IsEnum(SubscriptionTierEnum)
-  subscription_tier?: SubscriptionTierEnum;
+    subscription_tier?: SubscriptionTierEnum;
 
   @ApiPropertyOptional({
     description: 'Maximum number of users allowed',
@@ -54,7 +54,7 @@ export class UpdateOrganizationDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  max_users?: number;
+    max_users?: number;
 
   @ApiPropertyOptional({
     description: 'Maximum storage in GB',
@@ -63,7 +63,7 @@ export class UpdateOrganizationDto {
   @IsOptional()
   @IsInt()
   @Min(1)
-  max_storage_gb?: number;
+    max_storage_gb?: number;
 
   @ApiPropertyOptional({
     description: 'Is organization active',
@@ -71,7 +71,7 @@ export class UpdateOrganizationDto {
   })
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+    is_active?: boolean;
 
   @ApiPropertyOptional({
     description: 'Organization settings (JSONB)',
@@ -83,7 +83,7 @@ export class UpdateOrganizationDto {
   })
   @IsOptional()
   @IsObject()
-  settings?: Record<string, any>;
+    settings?: Record<string, any>;
 
   @ApiPropertyOptional({
     description: 'Organization metadata (JSONB)',
@@ -91,5 +91,5 @@ export class UpdateOrganizationDto {
   })
   @IsOptional()
   @IsObject()
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 }

@@ -1,11 +1,173 @@
 # Traza de Tareas: ATLAS-DATABASE
 
-**Última actualización:** 2025-11-26 20:00:00
-**Estado:** ✅ PRODUCTION READY - Validación de integración completa (82.75%)
+**Última actualización:** 2025-11-29 (DB-REFACTOR-001: Consolidación de Índices)
+**Estado:** ✅ PRODUCTION READY - Validación de integración completa + Índices consolidados
 
 ---
 
 ## 📋 Tareas Actuales
+
+### ✅ MODULO2-XP-UPDATE-001: Actualización XP Módulo 2 (100→150) - COMPLETADO
+
+**Fecha:** 2025-11-28 (Orquestación)
+**Agente:** Architecture-Analyst (Database-Agent orquestado)
+**Prioridad:** P1 ALTA
+**Duración:** 15 minutos
+**Estimación:** 0.5 SP
+
+**Objetivo:**
+Actualizar los valores de recompensa de los ejercicios del Módulo 2 de 100 XP / 20 ML Coins a 150 XP / 30 ML Coins para reconocer la mayor complejidad cognitiva de los ejercicios de comprensión inferencial.
+
+**Contexto:**
+- Módulo 2 contiene ejercicios de inferencia (Detective Textual, Rueda de Inferencias, etc.)
+- Estos ejercicios requieren habilidades cognitivas de nivel superior
+- El valor estándar de 100 XP no reflejaba esta mayor dificultad
+
+**Solución Implementada:**
+
+#### 1. Seeds Actualizados (5 ejercicios)
+- **Archivos:**
+  - `apps/database/seeds/prod/educational_content/03-exercises-module2.sql`
+  - `apps/database/seeds/dev/educational_content/03-exercises-module2.sql`
+
+| Ejercicio | Línea | Antes | Después |
+|-----------|-------|-------|---------|
+| 2.1 Detective Textual | 127 | 100, 20 | 150, 30 |
+| 2.2 Causa-Efecto | 220 | 100, 20 | 150, 30 |
+| 2.3 Predicción Narrativa | 304 | 100, 20 | 150, 30 |
+| 2.4 Puzzle Contexto | 384 | 100, 20 | 150, 30 |
+| 2.5 Rueda Inferencias | 589 | 100, 20 | 150, 30 |
+
+**Validación Política Carga Limpia:**
+- ✅ Solo modificación de SEEDS (datos), NO DDL (estructura)
+- ✅ NO se crearon archivos de migración
+- ✅ Cumple con DIRECTIVA-POLITICA-CARGA-LIMPIA.md
+- ✅ Base de datos recreable desde seeds actualizados
+
+**Impacto en Gamificación:**
+- XP total Módulo 2: 500 XP → 750 XP (+50%)
+- ML Coins total Módulo 2: 100 → 150 (+50%)
+- Progresión de rangos: Más rápida para usuarios que completan Módulo 2
+
+**Criterios de Aceptación:**
+- ✅ Seeds actualizados en prod y dev
+- ✅ Política de carga limpia respetada
+- ✅ Backend modificado para usar xp_reward (BE-134/BE-135)
+- ✅ Documentación ADR-017 actualizada
+
+---
+
+### ✅ AUTH-FIX-001: Agregar columna revoked_at a user_sessions - COMPLETADO
+
+**Fecha:** 2025-11-28 19:50:00 - 20:00:00
+**Agente:** Architecture-Analyst (Database-Agent orquestado)
+**Prioridad:** P0 CRÍTICO
+**Duración:** 10 minutos
+**Estimación:** 0.5 SP
+
+**Objetivo:**
+Corregir error `"column 'revoked_at' of relation 'user_sessions' does not exist"` que impedía el registro de usuarios.
+
+**Problema Detectado:**
+- El DDL de `user_sessions` no tenía la columna `revoked_at`
+- La entidad TypeORM `UserSession` sí definía esta columna
+- El servicio `session-management.service.ts` usaba `revoked_at` (líneas 120-152)
+- Al intentar crear sesión en registro/login, TypeORM intentaba insertar en columna inexistente
+
+**Causa Raíz:**
+- Discrepancia entre Entity (backend) y DDL (database)
+- La tabla `user_roles` sí tenía `revoked_at` (patrón correcto)
+- La tabla `user_sessions` no seguía el mismo patrón
+
+**Solución Implementada:**
+
+#### 1. DDL Modificado
+- **Archivo:** `apps/database/ddl/schemas/auth_management/tables/11-user_sessions.sql`
+- **Cambio:** Agregada columna `revoked_at timestamp with time zone,` después de `is_active`
+- **Comentario SQL:** Agregado `COMMENT ON COLUMN auth_management.user_sessions.revoked_at`
+
+**Archivos Modificados:**
+```
+apps/database/ddl/schemas/auth_management/tables/
+└── 11-user_sessions.sql (MODIFICADO - +2 líneas)
+```
+
+**Validación:**
+- ✅ Columna existe en BD (`\d auth_management.user_sessions`)
+- ✅ Sincronización Entity-DDL 100% completa (18 columnas)
+- ✅ Tipo correcto: `timestamp with time zone` (nullable)
+- ✅ Patrón idéntico a `user_roles.revoked_at`
+- ✅ Base de datos recreada exitosamente
+
+**Criterios de Aceptación:**
+- ✅ Error de registro resuelto
+- ✅ Columna `revoked_at` presente en tabla
+- ✅ Funcionalidad de revocación de sesiones habilitada
+
+---
+
+### ✅ BUG-002-004: Validadores mapa_conceptual y emparejamiento - COMPLETADO
+
+**Fecha:** 2025-11-28 17:00:00 - 18:00:00
+**Agente:** Architecture-Analyst (Database-Agent orquestado)
+**Prioridad:** P1 ALTA
+**Duración:** 60 minutos
+**Estimación:** 2.0 SP
+
+**Objetivo:**
+Agregar soporte completo para ejercicios `mapa_conceptual` y `emparejamiento` del Módulo 1 (Comprensión Literal), incluyendo enum, configuración de validación y funciones SQL.
+
+**Problema Detectado:**
+- El enum `exercise_type` no incluía `mapa_conceptual` ni `emparejamiento`
+- Sin valores en enum, ejercicios no podían ser validados
+- Frontend tenía componentes pero backend/DB no los soportaban
+
+**Solución Implementada:**
+
+#### 1. Enum Actualizado (BUG-002)
+- **Archivo:** `apps/database/ddl/00-prerequisites.sql`
+- **Cambio:** Agregados `'mapa_conceptual'` y `'emparejamiento'` al enum `educational_content.exercise_type`
+- **Total mecánicas:** 17 implementadas + 8 backlog = 25
+
+#### 2. Configuración de Validación (BUG-003)
+- **Archivo:** `apps/database/seeds/prod/educational_content/10-exercise_validation_config.sql`
+- **Cambio:** Agregadas 2 entradas INSERT para nuevos tipos
+
+#### 3. Funciones SQL Creadas (BUG-004)
+| Archivo | Función | Descripción |
+|---------|---------|-------------|
+| `08-validate_mapa_conceptual.sql` | `validate_mapa_conceptual()` | Valida conexiones entre conceptos (soporte bidireccional) |
+| `09-validate_emparejamiento.sql` | `validate_emparejamiento()` | Valida pares término-definición |
+
+**Archivos Creados/Modificados:**
+```
+apps/database/ddl/
+├── 00-prerequisites.sql (MODIFICADO - enum)
+└── schemas/educational_content/functions/
+    ├── 08-validate_mapa_conceptual.sql (NUEVO)
+    └── 09-validate_emparejamiento.sql (NUEVO)
+
+apps/database/seeds/prod/educational_content/
+└── 10-exercise_validation_config.sql (MODIFICADO)
+```
+
+**Validación:**
+- ✅ No duplicidad de funciones
+- ✅ Sintaxis SQL válida
+- ✅ Patrón consistente con validadores existentes
+- ✅ Documentación ET-EDU-004 actualizada
+- ⚠️ Requiere recreación de base de datos
+
+**Documentación Actualizada:**
+- `docs/01-fase-alcance-inicial/EAI-002-actividades/especificaciones/ET-EDU-004-validadores-ejercicios.md` - v1.0 → v1.1
+
+**Criterios de Aceptación:**
+- ✅ Enum contiene ambos valores nuevos
+- ✅ Configuración de validación existe para ambos
+- ✅ Funciones SQL creadas y documentadas
+- ✅ Sin duplicidades detectadas
+
+---
 
 ### ✅ TEACHER-PORTAL-FIX-001: Tabla teacher_reports para Portal Teacher - COMPLETADO
 
@@ -7385,5 +7547,110 @@ ORDER BY created_at DESC;
 Los 3 gaps de coherencia Database↔Backend han sido resueltos mediante actualización de DDL base siguiendo estrictamente la DIRECTIVA-POLITICA-CARGA-LIMPIA.md. No se crearon migrations ni fixes temporales. La validación completa requiere recreación de base de datos.
 
 **Estado:** LISTO PARA RECREACIÓN Y VALIDACIÓN
+
+---
+
+---
+
+### ✅ DB-REFACTOR-001: Consolidación de Índices en Archivos de Tablas - COMPLETADO
+
+**Fecha:** 2025-11-29 (Documentación retrospectiva)
+**Agente:** Architecture-Analyst
+**Prioridad:** P2 MEDIA (Reorganización estructural)
+**Tipo:** Refactorización de estructura DDL
+
+**Objetivo:**
+Consolidar los archivos de índices individuales dentro de los archivos de definición de tablas, siguiendo el patrón DDL-First para mejor mantenibilidad.
+
+**Contexto:**
+Los índices estaban en archivos separados (`schemas/*/indexes/*.sql`) lo cual:
+- Dificultaba ver la tabla completa con sus índices
+- Requería mantener ~50 archivos adicionales
+- Creaba dependencias de orden de ejecución
+
+**Cambio Implementado:**
+
+#### Archivos de Índices Eliminados (~50 archivos)
+```
+audit_logging/indexes/       - 9 archivos → Consolidados
+auth_management/indexes/     - 7 archivos → Consolidados  
+educational_content/indexes/ - 12 archivos → Consolidados
+gamification_system/indexes/ - 18 archivos → Parcialmente consolidados (4 complejos mantienen archivo)
+```
+
+#### Índices Consolidados en Tablas (ejemplo: user_stats)
+```sql
+-- Dentro de ddl/schemas/gamification_system/tables/01-user_stats.sql
+CREATE INDEX IF NOT EXISTS idx_user_stats_user_id ON gamification_system.user_stats(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_stats_tenant_id ON gamification_system.user_stats(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_user_stats_level ON gamification_system.user_stats(level);
+-- ... 9 índices total
+```
+
+#### Índices que Mantienen Archivo Separado (4)
+```
+gamification_system/indexes/
+├── 01-idx_achievement_categories_active.sql  (índice compuesto con WHERE)
+├── 02-idx_active_boosts_user.sql             (índice parcial)
+├── 03-idx_achievements_metadata_gin.sql      (índice GIN para JSONB)
+└── 04-idx_inventory_transactions_user.sql    (índice compuesto)
+```
+
+**Validación Política Carga Limpia:**
+- ✅ NO se crearon archivos de migración
+- ✅ Cambios solo en estructura de archivos DDL
+- ✅ Base de datos recreable sin errores
+- ✅ Recreación 2025-11-29 08:46 exitosa
+
+**Impacto:**
+- Archivos DDL: Reducción de ~50 archivos
+- Mantenibilidad: ⬆️ Mejorada (tabla + índices en un archivo)
+- Orden ejecución: Simplificado (menos dependencias)
+
+**Criterios de Aceptación:**
+- ✅ Recreación BD funciona sin errores de índices
+- ✅ Todos los índices existen en BD recreada
+- ✅ Política de carga limpia respetada
+
+---
+
+---
+
+### ✅ REFACTOR-002: Mover Entity assignment-classroom a Social Module - COMPLETADO
+
+**Fecha:** 2025-11-29 (Documentación retrospectiva)
+**Agente:** Architecture-Analyst  
+**Prioridad:** P2 MEDIA (Reorganización de módulos)
+**Tipo:** Refactorización de estructura backend
+
+**Objetivo:**
+Mover la entidad `AssignmentClassroom` del módulo `assignments` al módulo `social` para mejor cohesión arquitectónica.
+
+**Contexto:**
+La relación entre assignments y classrooms pertenece lógicamente al dominio social, no al dominio de assignments. Los classrooms son entidades sociales que agrupan estudiantes y profesores.
+
+**Cambio Implementado:**
+
+#### Archivo Movido
+```
+ANTES:  apps/backend/src/modules/assignments/entities/assignment-classroom.entity.ts
+DESPUÉS: apps/backend/src/modules/social/entities/assignment-classroom.entity.ts
+```
+
+#### Impacto en Módulos
+| Módulo | Cambio |
+|--------|--------|
+| `assignments` | Eliminada entity, actualizado index.ts |
+| `social` | Agregada entity, actualizado index.ts |
+
+**Validación Política Carga Limpia:**
+- ✅ NO afecta base de datos (tabla `assignment_classrooms` sin cambios)
+- ✅ Solo reorganización de código TypeScript
+- ✅ Imports actualizados en módulos dependientes
+
+**Criterios de Aceptación:**
+- ✅ Build backend compila sin errores
+- ✅ Entity accesible desde social module
+- ✅ Relaciones TypeORM funcionando
 
 ---

@@ -1,13 +1,30 @@
 /**
  * useUserModules Hook
  *
- * Custom hook for fetching user-specific modules data with progress
- * from the educational API.
+ * @description Fetches user-specific modules data with progress using React Query.
+ * Replaces useState + useEffect pattern with proper server state management.
+ *
+ * @endpoint GET /api/v1/educational/users/:userId/modules
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getUserModules } from '@/services/api/educationalAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+
+// ============================================================================
+// Query Keys Factory
+// ============================================================================
+
+export const userModulesKeys = {
+  all: ['userModules'] as const,
+  user: (userId: string) => [...userModulesKeys.all, userId] as const,
+  byClassroom: (userId: string, classroomId?: string) =>
+    [...userModulesKeys.user(userId), 'classroom', classroomId ?? 'all'] as const,
+};
+
+// ============================================================================
+// Types
+// ============================================================================
 
 export interface UserModuleData {
   id: string;
@@ -25,6 +42,10 @@ export interface UserModuleData {
   mlCoinsReward?: number;
 }
 
+interface UseUserModulesParams {
+  classroomId?: string;
+}
+
 interface UseUserModulesReturn {
   modules: UserModuleData[];
   loading: boolean;
@@ -33,114 +54,114 @@ interface UseUserModulesReturn {
   isRefreshing: boolean;
 }
 
-/**
- * Hook to fetch user-specific modules with progress
- */
-export function useUserModules(): UseUserModulesReturn {
-  const { user, isAuthenticated } = useAuth();
-  const [modules, setModules] = useState<UserModuleData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+// ============================================================================
+// Helper Functions
+// ============================================================================
 
-  const fetchUserModules = useCallback(
-    async (isRefresh = false) => {
-      console.log('🔍 [useUserModules] fetchUserModules called', {
-        isRefresh,
-        isAuthenticated,
-        userId: user?.id,
-        userEmail: user?.email,
-      });
+function mapDifficulty(backendDifficulty: string): 'easy' | 'medium' | 'hard' {
+  const difficultyMap: Record<string, 'easy' | 'medium' | 'hard'> = {
+    beginner: 'easy',
+    intermediate: 'medium',
+    advanced: 'hard',
+    easy: 'easy',
+    medium: 'medium',
+    hard: 'hard',
+  };
+  return difficultyMap[backendDifficulty] || 'medium';
+}
 
-      // Don't fetch if no user is authenticated
-      if (!isAuthenticated || !user?.id) {
-        console.warn('⚠️ [useUserModules] No user authenticated, skipping fetch');
-        setLoading(false);
-        return;
-      }
+function transformModuleData(module: any): UserModuleData {
+  return {
+    id: module.id,
+    title: module.title,
+    description: module.description,
+    difficulty: mapDifficulty(module.difficulty || 'medium'),
+    status: module.status || 'available',
+    progress: module.progress || 0,
+    totalExercises: module.totalExercises || 0,
+    completedExercises: module.completedExercises || 0,
+    estimatedTime: module.estimatedTime || 60,
+    xpReward: module.xpReward || 100,
+    icon: module.icon || '📚',
+    category: Array.isArray(module.category)
+      ? module.category.join(', ')
+      : module.category || 'science',
+    mlCoinsReward: module.mlCoinsReward || 50,
+  };
+}
 
-      console.log('✅ [useUserModules] User authenticated, fetching modules for userId:', user.id);
+// ============================================================================
+// API Fetch Function
+// ============================================================================
 
-      if (isRefresh) {
-        setIsRefreshing(true);
-      } else {
-        setLoading(true);
-      }
-
-      setError(null);
-
-      try {
-        console.log('📡 [useUserModules] Calling getUserModules API...');
-        const data = await getUserModules(user.id);
-        console.log('✅ [useUserModules] API response received:', {
-          modulesCount: data.length,
-          firstModule: data[0],
-        });
-
-        // Helper function to map backend difficulty to frontend difficulty
-        const mapDifficulty = (backendDifficulty: string): 'easy' | 'medium' | 'hard' => {
-          const difficultyMap: Record<string, 'easy' | 'medium' | 'hard'> = {
-            beginner: 'easy',
-            intermediate: 'medium',
-            advanced: 'hard',
-            easy: 'easy',
-            medium: 'medium',
-            hard: 'hard',
-          };
-          return difficultyMap[backendDifficulty] || 'medium';
-        };
-
-        // Transform the data to match the expected UserModuleData interface
-        const transformedData: UserModuleData[] = data.map((module: any) => ({
-          id: module.id,
-          title: module.title,
-          description: module.description,
-          difficulty: mapDifficulty(module.difficulty || 'medium'),
-          status: module.status || 'available',
-          progress: module.progress || 0,
-          totalExercises: module.totalExercises || 0,
-          completedExercises: module.completedExercises || 0,
-          estimatedTime: module.estimatedTime || 60,
-          xpReward: module.xpReward || 100,
-          icon: module.icon || '📚',
-          category: Array.isArray(module.category)
-            ? module.category.join(', ')
-            : module.category || 'science',
-          mlCoinsReward: module.mlCoinsReward || 50,
-        }));
-
-        console.log(
-          '✅ [useUserModules] Data transformed, setting modules:',
-          transformedData.length,
-        );
-        setModules(transformedData);
-      } catch (err) {
-        console.error('❌ [useUserModules] Error fetching user modules:', err);
-        setError(err instanceof Error ? err : new Error('Failed to fetch user modules'));
-        // Set empty array on error instead of using mock data
-        setModules([]);
-      } finally {
-        setLoading(false);
-        setIsRefreshing(false);
-        console.log('🏁 [useUserModules] Fetch completed');
-      }
-    },
-    [user, isAuthenticated],
+async function fetchUserModules(userId: string, classroomId?: string): Promise<UserModuleData[]> {
+  console.log(
+    '🔍 [useUserModules] Fetching modules for userId:',
+    userId,
+    'classroomId:',
+    classroomId,
   );
 
-  useEffect(() => {
-    fetchUserModules();
-  }, [fetchUserModules]);
+  const data = await getUserModules(userId, classroomId);
 
-  const refresh = useCallback(() => {
-    return fetchUserModules(true);
-  }, [fetchUserModules]);
+  console.log('✅ [useUserModules] API response received:', {
+    modulesCount: data.length,
+    firstModule: data[0],
+  });
+
+  const transformedData = data.map(transformModuleData);
+
+  console.log('✅ [useUserModules] Data transformed:', transformedData.length, 'modules');
+
+  return transformedData;
+}
+
+// ============================================================================
+// Hook
+// ============================================================================
+
+/**
+ * Hook to fetch user-specific modules with progress
+ * @param params - Optional parameters including classroomId to filter modules
+ */
+export function useUserModules(params?: UseUserModulesParams): UseUserModulesReturn {
+  const { user, isAuthenticated } = useAuth();
+  const _queryClient = useQueryClient();
+  const userId = user?.id;
+
+  const {
+    data: modules = [],
+    isLoading: loading,
+    error,
+    isFetching,
+    refetch,
+  } = useQuery<UserModuleData[], Error>({
+    queryKey: userModulesKeys.byClassroom(userId || '', params?.classroomId),
+    queryFn: () => {
+      if (!userId) {
+        throw new Error('User ID is required');
+      }
+      return fetchUserModules(userId, params?.classroomId);
+    },
+    enabled: isAuthenticated && !!userId,
+    staleTime: 5 * 60 * 1000, // 5 minutes - data considered fresh
+    gcTime: 10 * 60 * 1000, // 10 minutes - cache garbage collection
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  });
+
+  // Maintain backward compatibility with existing API
+  const refresh = async () => {
+    await refetch();
+  };
 
   return {
     modules,
     loading,
-    error,
+    error: error ?? null,
     refresh,
-    isRefreshing,
+    isRefreshing: isFetching && !loading,
   };
 }

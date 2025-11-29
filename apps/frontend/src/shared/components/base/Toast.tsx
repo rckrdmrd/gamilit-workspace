@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, XCircle, AlertCircle, Info, X } from 'lucide-react';
@@ -72,10 +73,10 @@ export const Toast: React.FC<ToastProps> = ({
       exit={{ opacity: 0, y: -20, scale: 0.9 }}
       transition={{ type: 'spring', stiffness: 300, damping: 25 }}
       className={cn(
-        'flex items-start gap-3 p-4 rounded-lg shadow-xl border-2',
+        'flex items-start gap-3 rounded-lg border-2 p-4 shadow-xl',
         style.bg,
         style.border,
-        'min-w-[320px] max-w-md'
+        'min-w-[320px] max-w-md',
       )}
       role="alert"
       aria-live="assertive"
@@ -83,22 +84,22 @@ export const Toast: React.FC<ToastProps> = ({
     >
       {/* Icon */}
       <div className={cn('flex-shrink-0', style.iconColor)}>
-        <Icon className="w-5 h-5" aria-hidden="true" />
+        <Icon className="h-5 w-5" aria-hidden="true" />
       </div>
 
       {/* Content */}
-      <div className="flex-1 min-w-0">
-        <h4 className="text-detective-base font-bold text-detective-text mb-1">{title}</h4>
+      <div className="min-w-0 flex-1">
+        <h4 className="mb-1 text-detective-base font-bold text-detective-text">{title}</h4>
         {message && <p className="text-detective-sm text-detective-text-secondary">{message}</p>}
       </div>
 
       {/* Close button */}
       <button
         onClick={() => onClose?.(id)}
-        className="flex-shrink-0 text-detective-text-secondary hover:text-detective-text transition-colors"
+        className="flex-shrink-0 text-detective-text-secondary transition-colors hover:text-detective-text"
         aria-label="Cerrar notificación"
       >
-        <X className="w-4 h-4" />
+        <X className="h-4 w-4" />
       </button>
     </motion.div>
   );

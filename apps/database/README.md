@@ -19,7 +19,7 @@ apps/database/
 │   ├── dev/                 # Datos de desarrollo
 │   ├── staging/             # Datos de staging
 │   └── prod/                # Datos de producción
-├── migrations/              # Migraciones SQL para actualizar BD
+├── _deprecated/             # Archivos obsoletos (histórico)
 └── create-database.sh       # Script maestro de creación
 ```
 
@@ -203,14 +203,17 @@ Para cargar usuarios de prueba en ambientes de desarrollo/staging:
 
 Ver más detalles en [scripts/README.md](scripts/README.md)
 
-## Migraciones
+## Política de Carga Limpia
 
-Las migraciones en `migrations/` se aplican a bases de datos existentes:
+Este proyecto utiliza **Política de Carga Limpia** (Clean Load Policy):
 
-```bash
-# Aplicar migración específica
-psql "$DATABASE_URL" -f migrations/2025-11-08-migrate-auth-provider-enum.sql
-```
+- ✅ **DDL es la fuente de verdad** - Todos los cambios se realizan en archivos DDL
+- ✅ **Sin migrations** - No se utilizan scripts de migración incremental
+- ✅ **Recreación completa** - La BD se puede recrear desde cero en cualquier momento
+
+Para más detalles, consultar: `orchestration/directivas/DIRECTIVA-POLITICA-CARGA-LIMPIA.md`
+
+**Referencia:** [ADR-018 - Eliminación de Carpetas Migrations](docs/97-adr/ADR-018-removal-migrations-folders.md)
 
 ## Seeds ⭐ VALIDADO Y COMPLETADO DB-111
 

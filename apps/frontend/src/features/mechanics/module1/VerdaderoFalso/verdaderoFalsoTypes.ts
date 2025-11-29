@@ -3,6 +3,7 @@
  * Module 1 - Exercise 2
  * ⚠️ FE-059: correctAnswer is NEVER sent by backend (sanitized for security)
  */
+import type { ExerciseProgressUpdate } from '@shared/components/mechanics/mechanicsTypes';
 
 export interface VerdaderoFalsoStatement {
   id: string;
@@ -31,8 +32,17 @@ export interface VerdaderoFalsoData {
   contextText?: string;
 }
 
+export interface VerdaderoFalsoProgressData {
+  progress: ExerciseProgressUpdate;
+  answers: { statements: Record<string, boolean> };
+}
+
 export interface VerdaderoFalsoExerciseProps {
   exercise: VerdaderoFalsoData;
   onComplete?: () => void;
-  onProgressUpdate?: (progress: any) => void;
+  onProgressUpdate?: (data: VerdaderoFalsoProgressData) => void;
+  actionsRef?: React.MutableRefObject<{
+    handleReset?: () => void;
+    handleCheck?: () => void;
+  }>;
 }

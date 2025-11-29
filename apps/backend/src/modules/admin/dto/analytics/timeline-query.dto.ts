@@ -18,5 +18,5 @@ export class TimelineQueryDto {
   @IsInt()
   @Min(1)
   @Max(90)
-  days?: number = 30;
+    days?: number = 30;
 }

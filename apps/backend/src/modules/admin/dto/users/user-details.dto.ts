@@ -6,35 +6,44 @@ import { Expose } from 'class-transformer';
  */
 export class UserDetailsDto {
   @Expose()
-  id!: string;
+    id!: string;
 
   @Expose()
-  email!: string;
+    email!: string;
 
   @Expose()
-  role!: string;
+    role!: string;
 
   @Expose()
-  tenant_id?: string;
+    tenant_id?: string;
 
   @Expose()
-  status!: string;
+    organization_id?: string;
 
   @Expose()
-  email_verified!: boolean;
+    organization_name?: string;
 
   @Expose()
-  email_confirmed_at?: Date;
+    full_name?: string;
 
   @Expose()
-  last_sign_in_at?: Date;
+    status!: string;
 
   @Expose()
-  raw_user_meta_data!: Record<string, any>;
+    email_verified!: boolean;
 
   @Expose()
-  created_at!: Date;
+    email_confirmed_at?: Date;
 
   @Expose()
-  updated_at!: Date;
+    last_sign_in_at?: Date;
+
+  @Expose()
+    raw_user_meta_data!: Record<string, any>;
+
+  @Expose()
+    created_at!: Date;
+
+  @Expose()
+    updated_at!: Date;
 }

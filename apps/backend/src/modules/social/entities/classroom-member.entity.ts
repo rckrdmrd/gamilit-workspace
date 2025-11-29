@@ -46,7 +46,7 @@ export class ClassroomMember {
    * Identificador único del registro (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   // =====================================================
   // CORE IDENTIFIERS
@@ -57,13 +57,13 @@ export class ClassroomMember {
    * UNIQUE con student_id: Cada estudiante aparece una vez por aula
    */
   @Column({ type: 'uuid' })
-  classroom_id!: string;
+    classroom_id!: string;
 
   /**
    * ID del estudiante (FK → auth_management.profiles)
    */
   @Column({ type: 'uuid' })
-  student_id!: string;
+    student_id!: string;
 
   // =====================================================
   // ENROLLMENT TRACKING
@@ -73,7 +73,7 @@ export class ClassroomMember {
    * Fecha y hora de inscripción al aula
    */
   @Column({ type: 'timestamp with time zone' })
-  enrollment_date!: Date;
+    enrollment_date!: Date;
 
   /**
    * Método de inscripción
@@ -83,14 +83,14 @@ export class ClassroomMember {
     type: 'text',
     default: EnrollmentMethodEnum.TEACHER_INVITE,
   })
-  enrollment_method!: string;
+    enrollment_method!: string;
 
   /**
    * ID del usuario que inscribió al estudiante (FK → auth_management.profiles)
    * Puede ser profesor, admin, o el mismo estudiante (self_enroll)
    */
   @Column({ type: 'uuid', nullable: true })
-  enrolled_by?: string;
+    enrolled_by?: string;
 
   // =====================================================
   // STATUS & STATE
@@ -104,19 +104,19 @@ export class ClassroomMember {
     type: 'text',
     default: ClassroomMemberStatusEnum.ACTIVE,
   })
-  status!: string;
+    status!: string;
 
   /**
    * Fecha y hora de retiro del aula
    */
   @Column({ type: 'timestamp with time zone', nullable: true })
-  withdrawal_date?: Date;
+    withdrawal_date?: Date;
 
   /**
    * Razón del retiro (si aplica)
    */
   @Column({ type: 'text', nullable: true })
-  withdrawal_reason?: string;
+    withdrawal_reason?: string;
 
   // =====================================================
   // STUDENT IDENTIFICATION
@@ -126,7 +126,7 @@ export class ClassroomMember {
    * Número de matrícula del estudiante (identificador institucional)
    */
   @Column({ type: 'text', nullable: true })
-  student_number?: string;
+    student_number?: string;
 
   // =====================================================
   // ACADEMIC PERFORMANCE
@@ -136,13 +136,13 @@ export class ClassroomMember {
    * Calificación final (0.0 - 10.0)
    */
   @Column({ type: 'numeric', precision: 3, scale: 1, nullable: true })
-  final_grade?: number;
+    final_grade?: number;
 
   /**
    * Porcentaje de asistencia (0.00 - 100.00)
    */
   @Column({ type: 'numeric', precision: 5, scale: 2, nullable: true })
-  attendance_percentage?: number;
+    attendance_percentage?: number;
 
   // =====================================================
   // PERMISSIONS & CONFIGURATION
@@ -153,7 +153,7 @@ export class ClassroomMember {
    * Ejemplo: { can_post: true, can_comment: true, can_view_others: true }
    */
   @Column({ type: 'jsonb', default: {} })
-  permissions: Record<string, any> = {};
+    permissions: Record<string, any> = {};
 
   // =====================================================
   // NOTES & COMMENTS
@@ -163,14 +163,14 @@ export class ClassroomMember {
    * Notas del profesor sobre el estudiante
    */
   @Column({ type: 'text', nullable: true })
-  teacher_notes?: string;
+    teacher_notes?: string;
 
   /**
    * Información de contacto de padres/tutores (JSONB)
    * Ejemplo: { parent_name: "...", phone: "...", email: "..." }
    */
   @Column({ type: 'jsonb', default: {} })
-  parent_contact_info!: Record<string, any>;
+    parent_contact_info!: Record<string, any>;
 
   // =====================================================
   // METADATA & FLAGS
@@ -180,13 +180,13 @@ export class ClassroomMember {
    * Metadatos adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   /**
    * Flag de membresía activa
    */
   @Column({ type: 'boolean', default: true })
-  is_active!: boolean;
+    is_active!: boolean;
 
   // =====================================================
   // TIMESTAMPS
@@ -196,12 +196,12 @@ export class ClassroomMember {
    * Fecha y hora de creación del registro
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización del registro
    * Trigger: trg_classroom_members_updated_at
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 }

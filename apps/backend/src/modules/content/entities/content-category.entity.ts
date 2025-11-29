@@ -39,73 +39,73 @@ export class ContentCategory {
    * Identificador único de la categoría (UUID)
    */
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * Nombre de la categoría
    * @example 'Comprensión Lectora', 'Matemáticas', 'Ciencias'
    */
   @Column({ type: 'varchar', length: 100 })
-  name!: string;
+    name!: string;
 
   /**
    * Slug único para URLs amigables
    * @example 'comprension-lectora', 'matematicas-basicas'
    */
   @Column({ type: 'varchar', length: 100, unique: true })
-  slug!: string;
+    slug!: string;
 
   /**
    * Descripción de la categoría
    */
   @Column({ type: 'text', nullable: true })
-  description?: string;
+    description?: string;
 
   /**
    * ID de la categoría padre (para jerarquías)
    * NULL para categorías de nivel raíz
    */
   @Column({ type: 'uuid', nullable: true })
-  parent_category_id?: string;
+    parent_category_id?: string;
 
   /**
    * Orden de visualización
    * Usado para ordenar categorías en UI
    */
   @Column({ type: 'integer', default: 0 })
-  display_order!: number;
+    display_order!: number;
 
   /**
    * Indica si la categoría está activa
    */
   @Column({ type: 'boolean', default: true })
-  is_active!: boolean;
+    is_active!: boolean;
 
   /**
    * Icono de la categoría (nombre o emoji)
    * @example 'book', 'calculator', '📚', '🔢'
    */
   @Column({ type: 'varchar', length: 50, nullable: true })
-  icon?: string;
+    icon?: string;
 
   /**
    * Color de la categoría (hex, rgb, o nombre)
    * @example '#3498db', 'rgb(52, 152, 219)', 'blue'
    */
   @Column({ type: 'varchar', length: 20, nullable: true })
-  color?: string;
+    color?: string;
 
   /**
    * Fecha y hora de creación
    */
   @CreateDateColumn({ type: 'timestamp with time zone' })
-  created_at!: Date;
+    created_at!: Date;
 
   /**
    * Fecha y hora de última actualización
    */
   @UpdateDateColumn({ type: 'timestamp with time zone' })
-  updated_at!: Date;
+    updated_at!: Date;
 
   // =====================================================
   // Relaciones
@@ -123,12 +123,12 @@ export class ContentCategory {
     onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'parent_category_id', referencedColumnName: 'id' })
-  parent?: ContentCategory;
+    parent?: ContentCategory;
 
   /**
    * Subcategorías (hijos)
    * Relación OneToMany: Una categoría puede tener múltiples subcategorías
    */
   @OneToMany(() => ContentCategory, (category) => category.parent)
-  children?: ContentCategory[];
+    children?: ContentCategory[];
 }

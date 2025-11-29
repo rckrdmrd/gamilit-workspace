@@ -29,7 +29,7 @@ export class UpdateContentCategoryDto {
   @IsOptional()
   @IsString()
   @MinLength(2)
-  name?: string;
+    name?: string;
 
   /**
    * Slug único para URLs
@@ -43,7 +43,7 @@ export class UpdateContentCategoryDto {
   @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
     message: 'Slug must contain only lowercase letters, numbers, and hyphens',
   })
-  slug?: string;
+    slug?: string;
 
   /**
    * Descripción de la categoría
@@ -53,7 +53,7 @@ export class UpdateContentCategoryDto {
   })
   @IsOptional()
   @IsString()
-  description?: string;
+    description?: string;
 
   /**
    * ID de la categoría padre
@@ -65,7 +65,7 @@ export class UpdateContentCategoryDto {
   })
   @IsOptional()
   @IsUUID('4')
-  parent_category_id?: string;
+    parent_category_id?: string;
 
   /**
    * Orden de visualización
@@ -77,7 +77,7 @@ export class UpdateContentCategoryDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  display_order?: number;
+    display_order?: number;
 
   /**
    * Estado activo/inactivo
@@ -87,7 +87,7 @@ export class UpdateContentCategoryDto {
   })
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+    is_active?: boolean;
 
   /**
    * Ícono de la categoría
@@ -97,7 +97,7 @@ export class UpdateContentCategoryDto {
   })
   @IsOptional()
   @IsString()
-  icon?: string;
+    icon?: string;
 
   /**
    * Color de la categoría (hex)
@@ -111,5 +111,5 @@ export class UpdateContentCategoryDto {
   @Matches(/^#[0-9A-Fa-f]{6}$/, {
     message: 'Color must be a valid hex color (e.g., #3B82F6)',
   })
-  color?: string;
+    color?: string;
 }

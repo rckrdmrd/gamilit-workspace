@@ -12,7 +12,7 @@ export class ExportProgressQueryDto {
   })
   @IsString()
   @IsIn(['students', 'classrooms', 'modules'])
-  type!: string;
+    type!: string;
 
   @ApiPropertyOptional({
     description: 'Filter by classroom ID',
@@ -20,7 +20,7 @@ export class ExportProgressQueryDto {
   })
   @IsOptional()
   @IsUUID()
-  classroom_id?: string;
+    classroom_id?: string;
 
   @ApiPropertyOptional({
     description: 'Export format',
@@ -30,5 +30,5 @@ export class ExportProgressQueryDto {
   })
   @IsOptional()
   @IsString()
-  format?: string = 'csv';
+    format?: string = 'csv';
 }

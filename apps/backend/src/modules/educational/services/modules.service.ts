@@ -20,23 +20,30 @@ export class ModulesService {
 
   /**
    * Obtener todos los módulos ordenados por índice
-   * FILTRO EXPLÍCITO: Solo módulos publicados (workaround para RLS)
+   * FILTRO: Módulos publicados O módulos en backlog (en construcción)
+   * - Módulos publicados: is_published = true AND status = 'published'
+   * - Módulos backlog: status = 'backlog' (para mostrar "En Construcción")
    */
   async findAll(): Promise<Module[]> {
-    return await this.moduleRepo.find({
-      where: {
-        is_published: true,
-        status: 'published' as any,
-      },
-      order: { order_index: 'ASC' },
-    });
+    return this.moduleRepo
+      .createQueryBuilder('module')
+      .where(
+        '(module.is_published = :published AND module.status = :publishedStatus) OR module.status = :backlogStatus',
+        {
+          published: true,
+          publishedStatus: 'published',
+          backlogStatus: 'backlog',
+        },
+      )
+      .orderBy('module.order_index', 'ASC')
+      .getMany();
   }
 
   /**
    * Obtener un módulo por ID
    */
   async findById(id: string): Promise<Module | null> {
-    return await this.moduleRepo.findOne({ where: { id } });
+    return this.moduleRepo.findOne({ where: { id } });
   }
 
   /**
@@ -44,7 +51,7 @@ export class ModulesService {
    */
   async create(moduleData: Partial<Module>): Promise<Module> {
     const module = this.moduleRepo.create(moduleData);
-    return await this.moduleRepo.save(module);
+    return this.moduleRepo.save(module);
   }
 
   /**
@@ -52,7 +59,7 @@ export class ModulesService {
    */
   async update(id: string, moduleData: Partial<Module>): Promise<Module | null> {
     await this.moduleRepo.update(id, moduleData);
-    return await this.findById(id);
+    return this.findById(id);
   }
 
   /**
@@ -69,7 +76,7 @@ export class ModulesService {
   async findByDifficulty(
     difficulty: DifficultyLevelEnum,
   ): Promise<Module[]> {
-    return await this.moduleRepo.find({
+    return this.moduleRepo.find({
       where: { difficulty_level: difficulty },
       order: { order_index: 'ASC' },
     });
@@ -85,7 +92,7 @@ export class ModulesService {
       return [];
     }
 
-    return await this.moduleRepo
+    return this.moduleRepo
       .createQueryBuilder('module')
       .where('module.id IN (:...ids)', { ids: module.prerequisites })
       .orderBy('module.order_index', 'ASC')
@@ -101,12 +108,12 @@ export class ModulesService {
    */
   async search(keyword: string): Promise<Module[]> {
     if (!keyword || keyword.trim().length === 0) {
-      return await this.findAll();
+      return this.findAll();
     }
 
     const searchTerm = `%${keyword.toLowerCase()}%`;
 
-    return await this.moduleRepo
+    return this.moduleRepo
       .createQueryBuilder('module')
       .where('LOWER(module.title) LIKE :searchTerm', { searchTerm })
       .orWhere('LOWER(module.subtitle) LIKE :searchTerm', { searchTerm })
@@ -126,9 +133,20 @@ export class ModulesService {
    * Preferimos usar module_progress.completed_exercises que es actualizado por triggers.
    *
    * @param userId - ID del usuario
+   * @param classroomId - ID del classroom para filtrar módulos (opcional)
    * @returns Módulos con información de progreso incluida
    */
-  async getUserModules(userId: string): Promise<any[]> {
+  async getUserModules(userId: string, classroomId?: string): Promise<any[]> {
+    // Si se proporciona classroomId, filtrar por módulos asignados a ese classroom
+    const classroomFilter = classroomId
+      ? `AND EXISTS (
+          SELECT 1 FROM educational_content.classroom_modules cm
+          WHERE cm.module_id = m.id
+            AND cm.classroom_id = $2
+            AND cm.is_active = true
+        )`
+      : '';
+
     const query = `
       SELECT
         m.id,
@@ -141,6 +159,7 @@ export class ModulesService {
         m.order_index,
         m.thumbnail_url as icon,
         m.subjects as category,
+        m.status as module_status,
         -- Usar module_progress si existe, sino calcular de ambas tablas
         COALESCE(mp.progress_percentage,
           CASE
@@ -188,10 +207,12 @@ export class ModulesService {
             AND es.status = 'graded'
         ) all_completed
       ) completed_ex ON true
-      WHERE m.is_published = true
+      WHERE (m.is_published = true OR m.status = 'backlog')
+        ${classroomFilter}
       ORDER BY m.order_index ASC
     `;
 
-    return await this.moduleRepo.query(query, [userId]);
+    const params = classroomId ? [userId, classroomId] : [userId];
+    return this.moduleRepo.query(query, params);
   }
 }

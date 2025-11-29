@@ -31,7 +31,7 @@ export class MediaFilesService {
    */
   async create(dto: CreateMediaFileDto): Promise<MediaFile> {
     const mediaFile = this.mediaRepo.create(dto);
-    return await this.mediaRepo.save(mediaFile);
+    return this.mediaRepo.save(mediaFile);
   }
 
   /**
@@ -52,7 +52,7 @@ export class MediaFilesService {
       query.andWhere('mf.processing_status = :status', { status });
     }
 
-    return await query.orderBy('mf.created_at', 'DESC').getMany();
+    return query.orderBy('mf.created_at', 'DESC').getMany();
   }
 
   /**
@@ -87,7 +87,7 @@ export class MediaFilesService {
 
     Object.assign(mediaFile, dto);
 
-    return await this.mediaRepo.save(mediaFile);
+    return this.mediaRepo.save(mediaFile);
   }
 
   /**
@@ -114,7 +114,7 @@ export class MediaFilesService {
    * @returns Lista de archivos del tipo especificado
    */
   async findByType(fileType: string): Promise<MediaFile[]> {
-    return await this.mediaRepo.find({
+    return this.mediaRepo.find({
       where: { media_type: fileType as any },
       order: { created_at: 'DESC' },
     });
@@ -131,7 +131,7 @@ export class MediaFilesService {
       .createQueryBuilder('mf')
       .where('mf.tags && :tags', { tags });
 
-    return await query.orderBy('mf.created_at', 'DESC').getMany();
+    return query.orderBy('mf.created_at', 'DESC').getMany();
   }
 
   /**
@@ -147,7 +147,7 @@ export class MediaFilesService {
 
     mediaFile.processing_status = status;
 
-    return await this.mediaRepo.save(mediaFile);
+    return this.mediaRepo.save(mediaFile);
   }
 
   /**
@@ -202,7 +202,7 @@ export class MediaFilesService {
    * @returns Lista de archivos subidos por el usuario
    */
   async findByUploader(uploaderId: string): Promise<MediaFile[]> {
-    return await this.mediaRepo.find({
+    return this.mediaRepo.find({
       where: { uploaded_by: uploaderId },
       order: { created_at: 'DESC' },
     });
@@ -227,7 +227,7 @@ export class MediaFilesService {
     // Placeholder: marcar como procesado
     mediaFile.processing_status = ProcessingStatusEnum.READY;
 
-    return await this.mediaRepo.save(mediaFile);
+    return this.mediaRepo.save(mediaFile);
   }
 
   /**
@@ -256,6 +256,6 @@ export class MediaFilesService {
         break;
     }
 
-    return await this.mediaRepo.save(mediaFile);
+    return this.mediaRepo.save(mediaFile);
   }
 }

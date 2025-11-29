@@ -46,6 +46,9 @@ Total: 40 SP
 - **v1.0** (Agosto 2024): Especificación inicial - 40 SP
 - **v2.0** (Octubre 2024): Optimización performance (+65%)
 - **v2.3.0** (Noviembre 2025): Sistema de recompensas automatizado ✅
+- **v2.4.0** (2025-11-26): Triggers para misiones + integración backend ✅
+- **v2.4.1** (2025-11-28): Corrección BUG-004 claim rewards ✅
+- **v2.5.0** (2025-11-28): Triggers multi-objetivo (6 nuevos triggers) ✅
 
 ---
 
@@ -68,6 +71,28 @@ El sistema de recompensas ha sido optimizado y documentado en profundidad.
 - ✅ Test Coverage: 95% backend, 88% frontend
 - ✅ Bugs: 0 críticos, 9 totales
 - ✅ NPS: 85 (Excelente)
+
+### Correcciones Sistema de Misiones (v2.4.0 - v2.5.0)
+
+**📁 Documentación:** [`07-CORRECCION-SISTEMA-MISIONES.md`](../../sistema-recompensas/07-CORRECCION-SISTEMA-MISIONES.md)
+
+**Resultados v2.5.0:**
+- ✅ 8 tipos de objetivos soportados (100% cobertura)
+- ✅ 6 nuevas funciones trigger implementadas
+- ✅ 6 nuevos triggers creados
+- ✅ Recreación limpia: 100% cumplimiento
+
+**Tipos de Objetivo Implementados:**
+| Objetivo | Función | Trigger | Estado |
+|----------|---------|---------|--------|
+| `complete_exercises` | update_missions_on_exercise_complete | trg_update_missions_on_exercise | ✅ |
+| `correct_streak` | update_missions_on_correct_streak | trg_update_missions_on_streak | ✅ |
+| `earn_xp` | update_missions_on_earn_xp | trg_update_missions_on_earn_xp | ✅ v2.5 |
+| `use_comodines` | update_missions_on_use_comodines | trg_update_missions_on_use_comodines | ✅ v2.5 |
+| `daily_streak` | update_missions_on_daily_streak | trg_update_missions_on_daily_streak | ✅ v2.5 |
+| `perfect_scores` | update_missions_on_perfect_scores | trg_update_missions_on_perfect_scores | ✅ v2.5 |
+| `complete_modules` | update_missions_on_complete_modules | trg_update_missions_on_complete_modules | ✅ v2.5 |
+| `explore_modules` | update_missions_on_explore_modules | trg_update_missions_on_explore_modules | ✅ v2.5 |
 
 ---
 

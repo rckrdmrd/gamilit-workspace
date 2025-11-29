@@ -1,11 +1,15 @@
 /**
- * Profile Types
+ * Profile Types (SSOT)
  *
  * Type definitions for user profiles with complete information including
  * gamification stats, academic context, and user preferences.
  *
+ * THIS IS THE SINGLE SOURCE OF TRUTH for Profile types.
+ * Other modules should import from here.
+ *
  * @see Database: auth_management.profiles
- * @see Backend: Backend does not have Profile entity (uses auth User)
+ * @see Backend: /src/modules/auth/entities/profile.entity.ts
+ * P2-001: Types consolidation - SSOT for Profile
  */
 
 import { GamilityRoleEnum, UserStatusEnum } from '../constants/enums.constants';
@@ -181,7 +185,7 @@ export interface Profile {
    * Additional metadata (JSONB)
    * Flexible field for storing extra information
    */
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 
   /**
    * Profile creation timestamp
@@ -266,5 +270,5 @@ export interface UpdateProfileDto {
   date_of_birth?: string;
   grade_level?: string;
   preferences?: Partial<UserPreferences>;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }

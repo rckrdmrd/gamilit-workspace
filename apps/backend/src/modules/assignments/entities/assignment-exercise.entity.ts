@@ -37,19 +37,19 @@ import {
 @Unique(['assignment_id', 'exercise_id'])
 export class AssignmentExercise {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   @Column('uuid', { name: 'assignment_id' })
   @Index()
-  assignmentId!: string;
+    assignmentId!: string;
 
   @Column('uuid', { name: 'exercise_id' })
   @Index()
-  exerciseId!: string;
+    exerciseId!: string;
 
   @Column('integer', { name: 'order_index' })
   @Index()
-  orderIndex!: number;
+    orderIndex!: number;
 
   @Column('decimal', {
     name: 'points_override',
@@ -57,13 +57,13 @@ export class AssignmentExercise {
     scale: 2,
     nullable: true,
   })
-  pointsOverride?: number | null;
+    pointsOverride?: number | null;
 
   @Column('boolean', { name: 'is_required', default: true })
-  isRequired!: boolean;
+    isRequired!: boolean;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
-  createdAt!: Date;
+    createdAt!: Date;
 
   // Relations (commented out - uncomment when Assignment and Exercise entities are fully configured)
   // @ManyToOne(() => Assignment, assignment => assignment.assignmentExercises)

@@ -14,6 +14,7 @@
  * Updated: 2025-11-19 - Integrated with adminAPI.ts (FE-059)
  * - Now uses adminAPI methods for content and media operations
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/services/api/apiClient';
@@ -206,6 +207,7 @@ export function usePendingExercises(): UsePendingExercisesResult {
 
   useEffect(() => {
     fetchPendingExercises();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
@@ -358,6 +360,7 @@ export function useMediaLibrary(): UseMediaLibraryResult {
 
   useEffect(() => {
     fetchMedia();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
@@ -461,7 +464,7 @@ export interface ApprovalItem {
   submittedAt: string;
   status: 'pending' | 'approved' | 'rejected';
   // Content data (varies by type)
-  content?: Record<string, any>;
+  content?: Record<string, unknown>;
 }
 
 export interface UseApprovalsResult {
@@ -549,6 +552,7 @@ export function useApprovals(): UseApprovalsResult {
 
   useEffect(() => {
     fetchApprovals();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {

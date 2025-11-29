@@ -8,14 +8,15 @@
 -- Version: 2.0 (Actualizado para alineación con DDL)
 -- =====================================================
 --
--- AULAS DEMO INCLUIDAS:
+-- AULAS INCLUIDAS:
+-- - Sin Asignar (DEFAULT - Sistema) ← NUEVO: Para asignación automática
 -- - 5to A (Escuela Marie Curie, Profesor 1)
 -- - 5to B (Escuela Marie Curie, Profesor 2)
 -- - 6to A (Escuela Marie Curie, Profesor 1)
 -- - Aula de Pruebas (IEI, Director)
 -- - Aula Demo Parent Portal (IEI, Profesor 2)
 --
--- TOTAL: 5 aulas demo
+-- TOTAL: 6 aulas (1 sistema + 5 demo)
 --
 -- IMPORTANTE: Estas aulas están asociadas a las escuelas y profesores demo.
 --
@@ -94,6 +95,51 @@ INSERT INTO social_features.classrooms (
     created_at,
     updated_at
 ) VALUES
+
+-- =====================================================
+-- Aula 0: CLASSROOM DEFAULT (Sistema - Sin Asignar)
+-- IMPORTANTE: Este classroom es usado automáticamente para
+-- asignar estudiantes nuevos que aún no tienen aula.
+-- =====================================================
+(
+    '00000000-0000-0000-0000-000000000001'::uuid,  -- UUID predecible para default
+    '50000000-0000-0000-0000-000000000001'::uuid,  -- Escuela Marie Curie (default)
+    v_tenant_id,
+    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,  -- Teacher default (teacher@gamilit.com)
+    'Sin Asignar - Aula Default',
+    'DEFAULT',
+    'todos',  -- Todos los niveles
+    'DEFAULT',
+    'General',
+    'Aula de sistema para estudiantes pendientes de asignación. Los administradores y profesores pueden reasignar estudiantes a aulas específicas.',
+    999,  -- Capacidad alta para no limitar
+    0,
+    '2025-01-01'::date,
+    '2099-12-31'::date,  -- Sin fecha de fin
+    jsonb_build_object(
+        'days', jsonb_build_array('Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'),
+        'time', 'flexible',
+        'room', 'Virtual',
+        'weekly_hours', 0
+    ),
+    true,
+    jsonb_build_object(
+        'allow_student_self_enrollment', false,
+        'enable_gamification', true,
+        'require_parental_consent', false,
+        'grading_system', 'none',
+        'attendance_required', false,
+        'is_system_classroom', true
+    ),
+    jsonb_build_object(
+        'is_default', true,
+        'system_classroom', true,
+        'auto_assignment', true,
+        'description', 'Classroom para asignación automática de estudiantes nuevos'
+    ),
+    gamilit.now_mexico(),
+    gamilit.now_mexico()
+),
 
 -- =====================================================
 -- Aula 1: 5to A - Escuela Marie Curie (Profesor 1)
@@ -361,10 +407,10 @@ BEGIN
     RAISE NOTICE '  - IEI: %', iei_count;
     RAISE NOTICE '========================================';
 
-    IF classroom_count = 5 THEN
-        RAISE NOTICE '✓ Todas las aulas demo fueron creadas correctamente';
+    IF classroom_count >= 5 THEN
+        RAISE NOTICE '✓ Todas las aulas fueron creadas correctamente (incluyendo DEFAULT)';
     ELSE
-        RAISE WARNING '⚠ Se esperaban 5 aulas, se crearon %', classroom_count;
+        RAISE WARNING '⚠ Se esperaban al menos 5 aulas, se crearon %', classroom_count;
     END IF;
 END $$;
 

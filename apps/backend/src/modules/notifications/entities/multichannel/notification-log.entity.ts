@@ -58,7 +58,7 @@ import { Notification } from './notification.entity';
 @Index(['sentAt'])
 export class NotificationLog {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+    id!: string;
 
   /**
    * ID de la notificación
@@ -68,7 +68,7 @@ export class NotificationLog {
    * FK en DB: → notifications.notifications(id) ON DELETE CASCADE
    */
   @Column({ name: 'notification_id', type: 'uuid' })
-  notificationId!: string;
+    notificationId!: string;
 
   /**
    * Relación con la notificación
@@ -78,7 +78,7 @@ export class NotificationLog {
    */
   @ManyToOne(() => Notification, { onDelete: 'CASCADE', eager: false })
   @JoinColumn({ name: 'notification_id' })
-  notification!: Notification;
+    notification!: Notification;
 
   /**
    * Canal por el que se intentó enviar
@@ -91,7 +91,7 @@ export class NotificationLog {
    * IMPORTANTE: Un log por canal
    */
   @Column({ type: 'varchar', length: 50 })
-  channel!: string;
+    channel!: string;
 
   /**
    * Estado del envío
@@ -107,7 +107,7 @@ export class NotificationLog {
    * - Para push: 'sent' = aceptado por FCM/APNS, pero puede fallar en dispositivo
    */
   @Column({ type: 'varchar', length: 50 })
-  status!: string;
+    status!: string;
 
   /**
    * Fecha y hora en que se envió exitosamente
@@ -117,7 +117,7 @@ export class NotificationLog {
    * @optional
    */
   @Column({ name: 'sent_at', type: 'timestamp with time zone', nullable: true })
-  sentAt?: Date;
+    sentAt?: Date;
 
   /**
    * Mensaje de error si el envío falló
@@ -133,7 +133,7 @@ export class NotificationLog {
    * @optional Solo si status='failed'
    */
   @Column({ name: 'error_message', type: 'text', nullable: true })
-  errorMessage?: string;
+    errorMessage?: string;
 
   /**
    * ID externo del proveedor
@@ -153,7 +153,7 @@ export class NotificationLog {
    * @optional No siempre disponible (ej: in_app no tiene)
    */
   @Column({ name: 'external_id', type: 'varchar', length: 255, nullable: true })
-  externalId?: string;
+    externalId?: string;
 
   /**
    * Metadata adicional del proveedor en JSONB
@@ -169,8 +169,8 @@ export class NotificationLog {
    * @optional
    */
   @Column({ type: 'jsonb', nullable: true })
-  metadata?: Record<string, any>;
+    metadata?: Record<string, any>;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
-  createdAt!: Date;
+    createdAt!: Date;
 }

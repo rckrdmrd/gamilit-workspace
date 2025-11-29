@@ -1,4 +1,4 @@
-import { BaseExercise } from '@shared/components/mechanics/mechanicsTypes';
+import { BaseExercise, ExerciseProgressUpdate } from '@shared/components/mechanics/mechanicsTypes';
 
 export interface TimelineEvent {
   id: string;
@@ -22,4 +22,25 @@ export interface TimelineData extends BaseExercise {
 
 export interface DraggedEvent extends TimelineEvent {
   position: number;
+}
+
+export interface TimelineProgressData {
+  progress: ExerciseProgressUpdate;
+  answers: { order: string[] };
+}
+
+export interface TimelineExerciseProps {
+  exercise: TimelineData;
+  onComplete?: () => void;
+  onProgressUpdate?: (data: TimelineProgressData) => void;
+  actionsRef?: React.MutableRefObject<{
+    handleReset?: () => void;
+    handleCheck?: () => void;
+    specificActions?: Array<{
+      label: string;
+      icon?: React.ReactNode;
+      onClick: () => void;
+      variant?: 'primary' | 'secondary' | 'blue' | 'gold';
+    }>;
+  }>;
 }

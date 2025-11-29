@@ -30,8 +30,9 @@ import {
   AnalyticsService,
   ReportsService,
   BonusCoinsService,
+  StorageService,
+  TeacherReportsService,
 } from '../services';
-import { TeacherReportsService } from '../services/teacher-reports.service';
 import {
   SubmitFeedbackDto,
   GetSubmissionsQueryDto,
@@ -70,6 +71,7 @@ export class TeacherController {
     private readonly analyticsService: AnalyticsService,
     private readonly reportsService: ReportsService,
     private readonly bonusCoinsService: BonusCoinsService,
+    private readonly storageService: StorageService,
     private readonly teacherReportsService: TeacherReportsService,
   ) {}
 
@@ -125,7 +127,7 @@ export class TeacherController {
   @Get('students/:studentId/progress')
   @ApiOperation({ summary: 'Get complete student progress' })
   async getStudentProgress(
-    @Param('studentId') studentId: string,
+  @Param('studentId') studentId: string,
     @Query() query: GetStudentProgressQueryDto,
   ) {
     return this.studentProgressService.getStudentProgress(studentId, query);
@@ -150,7 +152,7 @@ export class TeacherController {
   })
   async getStudentNotes(
     @Param('studentId') studentId: string,
-    @Request() req: any,
+      @Request() req: any,
   ): Promise<StudentNoteResponseDto[]> {
     const teacherId = req.user.profile.id;
     return this.studentProgressService.getStudentNotes(studentId, teacherId);
@@ -163,8 +165,8 @@ export class TeacherController {
   })
   async addStudentNote(
     @Param('studentId') studentId: string,
-    @Body() noteDto: AddTeacherNoteDto,
-    @Request() req: any,
+      @Body() noteDto: AddTeacherNoteDto,
+      @Request() req: any,
   ): Promise<StudentNoteResponseDto> {
     const teacherId = req.user.profile.id;
     return this.studentProgressService.addStudentNote(
@@ -190,7 +192,7 @@ export class TeacherController {
   @Get('submissions')
   @ApiOperation({
     summary: 'Get submissions with filters',
-    description: 'Retrieve exercise submissions with optional filters for assignment, classroom, student, status, and module. Supports pagination and sorting.'
+    description: 'Retrieve exercise submissions with optional filters for assignment, classroom, student, status, and module. Supports pagination and sorting.',
   })
   async getSubmissions(@Query() query: GetSubmissionsQueryDto) {
     return this.gradingService.getSubmissions(query);
@@ -208,7 +210,7 @@ export class TeacherController {
   @Post('submissions/:submissionId/feedback')
   @ApiOperation({ summary: 'Submit feedback for a submission' })
   async submitFeedback(
-    @Param('submissionId') submissionId: string,
+  @Param('submissionId') submissionId: string,
     @Body() feedbackDto: SubmitFeedbackDto,
   ) {
     return this.gradingService.submitFeedback(submissionId, feedbackDto);
@@ -237,7 +239,7 @@ export class TeacherController {
       'Retrieve detailed analytics for a specific classroom including student performance, completion rates, and score distribution',
   })
   async getClassroomAnalyticsByClassroomId(
-    @Param('id') classroomId: string,
+  @Param('id') classroomId: string,
     @Query() query: GetAnalyticsQueryDto,
   ) {
     return this.analyticsService.getClassroomAnalyticsByClassroomId(
@@ -263,7 +265,7 @@ export class TeacherController {
       'Retrieve engagement metrics including active students, submission rates, and classroom activity',
   })
   async getEngagementMetrics(
-    @Request() req: any,
+  @Request() req: any,
     @Query() query: GetEngagementMetricsDto,
   ) {
     const teacherId = req.user.profile.id;
@@ -277,7 +279,7 @@ export class TeacherController {
       'Generate comprehensive reports with analytics across classrooms, assignments, and student performance',
   })
   async generateReports(
-    @Request() req: any,
+  @Request() req: any,
     @Query() query: GenerateReportsDto,
   ) {
     const teacherId = req.user.profile.id;
@@ -299,7 +301,7 @@ export class TeacherController {
   })
   async getEconomyAnalytics(
     @Request() req: any,
-    @Query('classroom_id') classroomId?: string,
+      @Query('classroom_id') classroomId?: string,
   ): Promise<EconomyAnalyticsDto> {
     const teacherId = req.user.profile.id;
     return this.analyticsService.getEconomyAnalytics(teacherId, classroomId);
@@ -320,7 +322,7 @@ export class TeacherController {
   })
   async getStudentsEconomy(
     @Request() req: any,
-    @Query('classroom_id') classroomId?: string,
+      @Query('classroom_id') classroomId?: string,
   ): Promise<StudentsEconomyResponseDto> {
     const teacherId = req.user.profile.id;
     return this.analyticsService.getStudentsEconomy(teacherId, classroomId);
@@ -341,7 +343,7 @@ export class TeacherController {
   })
   async getAchievementsStats(
     @Request() req: any,
-    @Query('classroom_id') classroomId?: string,
+      @Query('classroom_id') classroomId?: string,
   ): Promise<AchievementsStatsResponseDto> {
     const teacherId = req.user.profile.id;
     return this.analyticsService.getAchievementsStats(teacherId, classroomId);
@@ -356,21 +358,23 @@ export class TeacherController {
     summary: 'Generate student insights report',
     description:
       'Generate a comprehensive report with student insights in PDF or Excel format. ' +
-      'Reports include risk analysis, recommendations, strengths/weaknesses, and predictions.',
+      'Reports include risk analysis, recommendations, strengths/weaknesses, and predictions. ' +
+      'The report is persisted to storage and metadata is saved to the database.',
   })
   @ApiProduces('application/pdf', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
   async generateInsightsReport(
-    @Request() req: any,
+  @Request() req: any,
     @Body() dto: GenerateReportDto,
     @Res() res: Response,
   ) {
     const userId = req.user.profile.id;
+    const tenantId = req.user.tenantId || req.user.tenant_id || 'default';
 
-    // Generate report
-    const { buffer, metadata } = await this.reportsService.generateReport(dto, userId);
+    // Generate report (now persists to storage and database)
+    const { buffer, metadata, reportId } = await this.reportsService.generateReport(dto, userId, tenantId);
 
     // Set appropriate headers
-    const filename = `student-insights-${metadata.report_id}.${dto.format === ReportFormat.PDF ? 'pdf' : 'xlsx'}`;
+    const filename = `student-insights-${reportId}.${dto.format === ReportFormat.PDF ? 'pdf' : 'xlsx'}`;
     const contentType =
       dto.format === ReportFormat.PDF
         ? 'application/pdf'
@@ -380,7 +384,7 @@ export class TeacherController {
       'Content-Type': contentType,
       'Content-Disposition': `attachment; filename="${filename}"`,
       'Content-Length': buffer.length,
-      'X-Report-ID': metadata.report_id,
+      'X-Report-ID': reportId,
       'X-Student-Count': metadata.student_count,
       'X-Generated-At': metadata.generated_at.toISOString(),
     });
@@ -419,8 +423,8 @@ export class TeacherController {
   })
   async grantBonus(
     @Param('studentId') studentId: string,
-    @Body() dto: GrantBonusDto,
-    @Request() req: any,
+      @Body() dto: GrantBonusDto,
+      @Request() req: any,
   ): Promise<GrantBonusResponseDto> {
     const teacherId = req.user.profile.id;
     return this.bonusCoinsService.grantBonus(teacherId, studentId, dto);
@@ -442,7 +446,7 @@ export class TeacherController {
   })
   async getRecentReports(
     @Request() req: any,
-    @Query() query: GetRecentReportsQueryDto,
+      @Query() query: GetRecentReportsQueryDto,
   ): Promise<ReportMetadataDto[]> {
     const teacherId = req.user.profile.id;
     const limit = query.limit || 10;
@@ -483,7 +487,7 @@ export class TeacherController {
     description: 'Teacher does not have access to this report',
   })
   async downloadReport(
-    @Param('id') reportId: string,
+  @Param('id') reportId: string,
     @Request() req: any,
     @Res() res: Response,
   ) {
@@ -502,14 +506,11 @@ export class TeacherController {
       return;
     }
 
-    // TODO: In production, implement actual file retrieval from storage
-    // For now, return a placeholder response with metadata
-    const contentType =
-      report.reportFormat === 'pdf'
-        ? 'application/pdf'
-        : report.reportFormat === 'excel'
-          ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-          : 'text/csv';
+    // Get file from storage
+    const buffer = await this.storageService.getFile(report.filePath);
+
+    // Determine content type
+    const contentType = this.storageService.getMimeType(report.filePath);
 
     const fileExtension =
       report.reportFormat === 'pdf' ? 'pdf' : report.reportFormat === 'excel' ? 'xlsx' : 'csv';
@@ -517,31 +518,12 @@ export class TeacherController {
     res.set({
       'Content-Type': contentType,
       'Content-Disposition': `attachment; filename="${report.reportName}.${fileExtension}"`,
+      'Content-Length': buffer.length,
       'X-Report-ID': report.id,
       'X-Teacher-ID': report.teacherId,
       'X-Generated-At': report.generatedAt.toISOString(),
     });
 
-    // TODO: Replace with actual file retrieval from storage system (S3, local filesystem, etc.)
-    // Example with local filesystem:
-    // const fileStream = fs.createReadStream(report.filePath);
-    // fileStream.pipe(res);
-    //
-    // Example with S3:
-    // const s3Stream = s3.getObject({ Bucket: 'bucket', Key: report.filePath }).createReadStream();
-    // s3Stream.pipe(res);
-
-    res.status(HttpStatus.NOT_IMPLEMENTED).json({
-      statusCode: HttpStatus.NOT_IMPLEMENTED,
-      message: 'File download not yet implemented. Storage integration required.',
-      report_metadata: {
-        id: report.id,
-        name: report.reportName,
-        format: report.reportFormat,
-        file_path: report.filePath,
-        file_size: report.fileSizeBytes,
-        generated_at: report.generatedAt,
-      },
-    });
+    res.status(HttpStatus.OK).send(buffer);
   }
 }

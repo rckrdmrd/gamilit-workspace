@@ -9,6 +9,7 @@
  *
  * SECURITY: Never validate answers locally. Always submit to server.
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useRef, useCallback } from 'react';
 import { useMutation } from '@tanstack/react-query';
@@ -24,15 +25,14 @@ import { toast } from 'react-hot-toast';
  * Submission payload schema (matches backend DTO)
  */
 export const SubmitExerciseSchema = z.object({
-  answers: z.record(z.string(), z.any()).refine(
-    (answers) => Object.keys(answers).length > 0,
-    { message: 'At least one answer is required' }
-  ),
+  answers: z
+    .record(z.string(), z.any())
+    .refine((answers) => Object.keys(answers).length > 0, {
+      message: 'At least one answer is required',
+    }),
   startedAt: z.number().int().positive(),
   hintsUsed: z.number().int().min(0).max(10).default(0),
-  powerupsUsed: z.array(
-    z.enum(['pistas', 'vision_lectora', 'segunda_oportunidad'])
-  ).default([]),
+  powerupsUsed: z.array(z.enum(['pistas', 'vision_lectora', 'segunda_oportunidad'])).default([]),
   sessionId: z.string().uuid().optional(),
 });
 
@@ -74,7 +74,7 @@ export interface SubmissionResult {
     rarity: string;
   }>;
   // SECURITY: These are ONLY available after submission
-  correctAnswers: Record<string, any>;
+  correctAnswers: Record<string, unknown>;
   explanations: Record<string, string>;
   createdAt: string;
 }
@@ -104,7 +104,7 @@ export interface UseExerciseSubmissionOptions {
  */
 export function useExerciseSubmission(
   exerciseId: string,
-  options: UseExerciseSubmissionOptions = {}
+  options: UseExerciseSubmissionOptions = {},
 ) {
   // Track when user started the exercise
   const [startTime] = useState(() => Date.now());
@@ -120,14 +120,14 @@ export function useExerciseSubmission(
    * Submit exercise mutation
    */
   const mutation = useMutation({
-    mutationFn: async (answers: Record<string, any>) => {
+    mutationFn: async (answers: Record<string, unknown>) => {
       // 1. CLIENT-SIDE VALIDATION with Zod
       const payload: SubmitExercisePayload = {
         answers,
         startedAt: startTime,
         hintsUsed: options.trackHints ? hintsUsedRef.current : 0,
         powerupsUsed: options.trackPowerups ? powerupsUsedRef.current : [],
-        sessionId
+        sessionId,
       };
 
       // Validate payload before sending
@@ -175,10 +175,9 @@ export function useExerciseSubmission(
         if (options.onRateLimitError) {
           options.onRateLimitError(retryAfter);
         } else {
-          toast.error(
-            `Too many attempts. Please wait ${retryAfter} seconds.`,
-            { duration: retryAfter * 1000 }
-          );
+          toast.error(`Too many attempts. Please wait ${retryAfter} seconds.`, {
+            duration: retryAfter * 1000,
+          });
         }
         return;
       }
@@ -232,7 +231,7 @@ export function useExerciseSubmission(
         powerupsUsedRef.current.push(powerup);
       }
     },
-    [options.trackPowerups]
+    [options.trackPowerups],
   );
 
   /**

@@ -71,6 +71,7 @@ export default function MissionsPage() {
     if (tabFromUrl !== currentTab) {
       setCurrentTab(tabFromUrl);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabFromUrl]);
 
   // Update URL when tab changes

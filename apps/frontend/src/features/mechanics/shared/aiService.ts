@@ -343,7 +343,6 @@ export const validateContextAssembly = async (
  */
 export const generateHint = async (
   mechanicType: string,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _currentProgress: number,
 ): Promise<string> => {
   await simulateDelay(getRandomDelay(500, 1000));

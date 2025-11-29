@@ -11,99 +11,99 @@ import {
  */
 export class AchievementResponseDto {
   @Expose()
-  id!: string;
+    id!: string;
 
   @Expose()
-  tenant_id?: string;
+    tenant_id?: string;
 
   // =====================================================
   // BASIC INFORMATION
   // =====================================================
 
   @Expose()
-  name!: string;
+    name!: string;
 
   @Expose()
-  description?: string;
+    description?: string;
 
   @Expose()
-  icon!: string;
+    icon!: string;
 
   // =====================================================
   // CATEGORIZATION
   // =====================================================
 
   @Expose()
-  category!: AchievementCategoryEnum;
+    category!: AchievementCategoryEnum;
 
   @Expose()
-  rarity!: string;
+    rarity!: string;
 
   @Expose()
-  difficulty_level!: DifficultyLevelEnum;
+    difficulty_level!: DifficultyLevelEnum;
 
   // =====================================================
   // CONDITIONS & REWARDS
   // =====================================================
 
   @Expose()
-  conditions!: Record<string, any>;
+    conditions!: Record<string, any>;
 
   @Expose()
-  rewards!: Record<string, any>;
+    rewards!: Record<string, any>;
 
   @Expose()
-  ml_coins_reward!: number;
+    ml_coins_reward!: number;
 
   // =====================================================
   // VISIBILITY & STATUS
   // =====================================================
 
   @Expose()
-  is_secret!: boolean;
+    is_secret!: boolean;
 
   @Expose()
-  is_active!: boolean;
+    is_active!: boolean;
 
   @Expose()
-  is_repeatable!: boolean;
+    is_repeatable!: boolean;
 
   // =====================================================
   // ORDERING & POINTS
   // =====================================================
 
   @Expose()
-  order_index!: number;
+    order_index!: number;
 
   @Expose()
-  points_value!: number;
+    points_value!: number;
 
   // =====================================================
   // MESSAGING & GUIDANCE
   // =====================================================
 
   @Expose()
-  unlock_message?: string;
+    unlock_message?: string;
 
   @Expose()
-  instructions?: string;
+    instructions?: string;
 
   @Expose()
-  tips?: string[];
+    tips?: string[];
 
   // =====================================================
   // METADATA & AUDIT
   // =====================================================
 
   @Expose()
-  metadata!: Record<string, any>;
+    metadata!: Record<string, any>;
 
   @Expose()
-  created_by?: string;
+    created_by?: string;
 
   @Expose()
-  created_at!: Date;
+    created_at!: Date;
 
   @Expose()
-  updated_at!: Date;
+    updated_at!: Date;
 }
