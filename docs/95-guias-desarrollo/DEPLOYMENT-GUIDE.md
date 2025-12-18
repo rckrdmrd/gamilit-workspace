@@ -473,16 +473,245 @@ Para problemas o preguntas sobre el despliegue:
 
 ---
 
+## 🔐 Configuración HTTPS/SSL
+
+### Estado Actual
+
+| Protocolo | Estado | Notas |
+|-----------|--------|-------|
+| HTTP | ✅ Activo | Puertos 3005 (frontend), 3006 (backend) |
+| HTTPS | ⚠️ Pendiente | Requiere certificado SSL |
+
+### Requisitos para HTTPS
+
+1. **Dominio configurado** (opcional pero recomendado)
+2. **Certificado SSL** (Let's Encrypt gratuito o comercial)
+3. **Nginx como reverse proxy**
+
+### Paso 1: Instalar Nginx y Certbot
+
+```bash
+# Instalar Nginx
+sudo apt update
+sudo apt install nginx
+
+# Instalar Certbot para Let's Encrypt
+sudo apt install certbot python3-certbot-nginx
+```
+
+### Paso 2: Configurar Nginx
+
+Crear archivo `/etc/nginx/sites-available/gamilit`:
+
+```nginx
+# Configuración HTTP (redirecciona a HTTPS cuando SSL esté activo)
+server {
+    listen 80;
+    server_name 74.208.126.102;  # Cambiar a dominio si existe
+
+    # Frontend - React App
+    location / {
+        proxy_pass http://127.0.0.1:3005;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Backend API
+    location /api {
+        proxy_pass http://127.0.0.1:3006;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # WebSocket
+    location /socket.io {
+        proxy_pass http://127.0.0.1:3006;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+Habilitar el sitio:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/gamilit /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+### Paso 3: Obtener Certificado SSL (Con Dominio)
+
+```bash
+# Si tienes un dominio configurado
+sudo certbot --nginx -d tu-dominio.com -d www.tu-dominio.com
+
+# Verificar renovación automática
+sudo certbot renew --dry-run
+```
+
+### Paso 4: SSL con IP (Sin Dominio)
+
+Si solo tienes IP sin dominio, necesitas un certificado autofirmado:
+
+```bash
+# Generar certificado autofirmado (solo para desarrollo/testing)
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout /etc/ssl/private/gamilit-selfsigned.key \
+  -out /etc/ssl/certs/gamilit-selfsigned.crt
+
+# Configurar en Nginx (agregar al server block)
+listen 443 ssl;
+ssl_certificate /etc/ssl/certs/gamilit-selfsigned.crt;
+ssl_certificate_key /etc/ssl/private/gamilit-selfsigned.key;
+```
+
+### Paso 5: Actualizar Variables de Entorno
+
+**Backend** (`apps/backend/.env.production`):
+
+```bash
+# Cambiar CORS_ORIGIN de http a https
+CORS_ORIGIN=https://74.208.126.102,https://tu-dominio.com
+
+# Cambiar FRONTEND_URL
+FRONTEND_URL=https://74.208.126.102
+```
+
+**Frontend** (`apps/frontend/.env.production`):
+
+```bash
+# Cambiar protocolos
+VITE_API_PROTOCOL=https
+VITE_WS_PROTOCOL=wss
+```
+
+### Paso 6: Reiniciar Servicios
+
+```bash
+# Reiniciar Nginx
+sudo systemctl restart nginx
+
+# Reiniciar aplicación
+pm2 reload all
+```
+
+### Verificación HTTPS
+
+```bash
+# Verificar certificado SSL
+curl -vI https://74.208.126.102 2>&1 | grep -E "SSL|certificate"
+
+# Verificar API sobre HTTPS
+curl https://74.208.126.102/api/v1/health
+
+# Verificar WebSocket
+# Usar herramienta como wscat o el navegador
+```
+
+### Configuración Nginx Completa (HTTPS)
+
+```nginx
+# Redirección HTTP → HTTPS
+server {
+    listen 80;
+    server_name 74.208.126.102;
+    return 301 https://$server_name$request_uri;
+}
+
+# Servidor HTTPS
+server {
+    listen 443 ssl http2;
+    server_name 74.208.126.102;
+
+    # Certificados SSL
+    ssl_certificate /etc/ssl/certs/gamilit.crt;
+    ssl_certificate_key /etc/ssl/private/gamilit.key;
+
+    # Configuración SSL segura
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256;
+
+    # Headers de seguridad
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Strict-Transport-Security "max-age=31536000" always;
+
+    # Frontend
+    location / {
+        proxy_pass http://127.0.0.1:3005;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Backend API
+    location /api {
+        proxy_pass http://127.0.0.1:3006;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # WebSocket (wss://)
+    location /socket.io {
+        proxy_pass http://127.0.0.1:3006;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
+```
+
+### Troubleshooting HTTPS
+
+| Problema | Solución |
+|----------|----------|
+| ERR_SSL_PROTOCOL_ERROR | Verificar que Nginx escucha en 443 |
+| Mixed Content | Cambiar todas las URLs a https:// |
+| CORS con HTTPS | Agregar origen https:// a CORS_ORIGIN |
+| WebSocket falla | Cambiar ws:// a wss:// |
+| Certificado no válido | Verificar rutas de certificados |
+
+---
+
 ## 📚 Referencias
 
 - [PM2 Documentation](https://pm2.keymetrics.io/docs/usage/quick-start/)
 - [NestJS Deployment](https://docs.nestjs.com/fundamentals/deployment)
 - [Vite Production Build](https://vitejs.dev/guide/build.html)
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+- [Nginx SSL Configuration](https://nginx.org/en/docs/http/configuring_https_servers.html)
+- [Let's Encrypt / Certbot](https://certbot.eff.org/)
 
 ---
 
-**Última actualización**: 2025-11-09
-**Versión**: 1.0.0
+**Última actualización**: 2025-12-18
+**Versión**: 1.1.0
 **Servidor**: 74.208.126.102
 **Responsable**: DevOps Team
