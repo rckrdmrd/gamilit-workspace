@@ -1,0 +1,132 @@
+# CODEOWNERS - GAMILIT Monorepo
+# Documentación: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# Sintaxis:
+# pattern  @owner1 @owner2
+#
+# Los owners son responsables de:
+# 1. Revisar y aprobar PRs en sus áreas
+# 2. Mantener la calidad y coherencia del código/docs
+# 3. Actualizar documentación cuando haya cambios
+
+# === ROOT ===
+# Archivos de configuración global
+*                           @tech-lead
+README.md                   @tech-lead @product-owner
+CODEOWNERS                  @tech-lead
+
+# === APPS ===
+# Backend (NestJS + TypeScript)
+/apps/backend/              @backend-team @tech-lead
+/apps/backend/src/auth/     @backend-team @security-team
+/apps/backend/src/quiz/     @backend-team @quiz-owner
+/apps/backend/src/gamification/ @backend-team @gamification-owner
+
+# Frontend (Angular Nx)
+/apps/web/                  @frontend-team @tech-lead
+/apps/web/apps/admin/       @frontend-team @admin-ux-owner
+/apps/web/apps/teacher/     @frontend-team @teacher-ux-owner
+/apps/web/apps/student/     @frontend-team @student-ux-owner
+/apps/web/libs/shared/      @frontend-team @tech-lead
+
+# === PLATFORM ===
+# Base de datos
+/platform/db/               @database-team @tech-lead
+/platform/db/ddl/           @database-team @backend-team
+/platform/db/migrations/    @database-team @backend-team
+/platform/db/seeds/         @database-team @qa-team
+
+# === DEVOPS ===
+# CI/CD y deployment
+/devops/                    @devops-team @tech-lead
+/devops/docker/             @devops-team
+/devops/github-actions/     @devops-team @tech-lead
+/devops/scripts/            @devops-team
+
+# === DOCS ===
+# Documentación general
+/docs/                      @tech-writer @product-owner
+/docs/00-overview/          @tech-writer @product-owner @tech-lead
+/docs/QUICK-REFERENCE/      @tech-writer @tech-lead
+
+# Requerimientos
+/docs/01-requerimientos/                    @product-owner @tech-writer
+/docs/01-requerimientos/vision-producto/    @product-owner
+/docs/01-requerimientos/user-stories/       @product-owner @ux-team
+/docs/01-requerimientos/features/           @product-owner @tech-lead
+/docs/01-requerimientos/gamificacion/       @product-owner @gamification-owner
+
+# Especificaciones Técnicas
+/docs/02-especificaciones-tecnicas/         @tech-lead @backend-team @frontend-team
+/docs/02-especificaciones-tecnicas/api/     @backend-team @tech-lead
+/docs/02-especificaciones-tecnicas/frontend/ @frontend-team @tech-lead
+/docs/02-especificaciones-tecnicas/database/ @database-team @backend-team
+
+# Desarrollo
+/docs/03-desarrollo/                @tech-lead @tech-writer
+/docs/03-desarrollo/backend/        @backend-team @tech-lead
+/docs/03-desarrollo/frontend/       @frontend-team @tech-lead
+/docs/03-desarrollo/testing/        @qa-team @tech-lead
+/docs/03-desarrollo/guidelines/     @tech-lead @tech-writer
+
+# Planificación
+/docs/04-planificacion/             @product-owner @tech-lead
+/docs/04-planificacion/sprints/     @product-owner @scrum-master
+/docs/04-planificacion/epicas/      @product-owner @tech-lead
+/docs/04-planificacion/roadmap/     @product-owner
+
+# ADRs (Architecture Decision Records)
+/docs/adr/                  @tech-lead @architecture-team
+
+# Estándares
+/docs/standards/            @tech-lead @tech-writer
+
+# === ORCHESTRATION ===
+# Agentes y subagentes
+/orchestration/             @tech-lead @automation-team
+
+# === CLAUDE CODE ===
+# Configuración de Claude Code
+/.claude/                   @tech-lead
+
+# === ARTIFACTS ===
+# Reportes y validaciones
+/artifacts/                 @tech-lead @qa-team
+
+# === ARCHIVOS ESPECÍFICOS CRÍTICOS ===
+# Gamificación (Issue P0-001 resuelto)
+**/SISTEMA-GAMIFICACION.md  @product-owner @gamification-owner @tech-lead
+
+# Componentes UI grandes
+**/COMPONENTES-UI.md        @frontend-team @ux-team
+
+# Testing E2E
+**/E2E-TESTING-GUIDE.md     @qa-team @tech-lead
+
+# API Endpoints
+**/API-ENDPOINTS.md         @backend-team @tech-lead
+
+# Database Schema
+**/DATABASE-SCHEMA.md       @database-team @backend-team
+
+# === EQUIPOS Y ROLES ===
+# Actualizar según organización real:
+#
+# @tech-lead              - Líder técnico general
+# @product-owner          - Product Owner
+# @backend-team           - Equipo backend
+# @frontend-team          - Equipo frontend
+# @database-team          - DBAs y arquitectos de datos
+# @devops-team            - DevOps y SRE
+# @qa-team                - Quality Assurance
+# @ux-team                - UX/UI Designers
+# @tech-writer            - Technical Writer
+# @security-team          - Seguridad
+# @architecture-team      - Arquitectura
+# @automation-team        - Automatización y agentes
+# @scrum-master           - Scrum Master
+# @gamification-owner     - Owner del sistema de gamificación
+# @quiz-owner             - Owner del sistema de quizzes
+# @admin-ux-owner         - Owner de UX para admin
+# @teacher-ux-owner       - Owner de UX para teachers
+# @student-ux-owner       - Owner de UX para students

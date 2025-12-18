@@ -1,5 +1,5 @@
 -- =====================================================
--- Seed Data: Exercises Module 4 - Lectura Digital y Multimodal (PRODUCTION)
+-- Seed Data: Exercises Module 4 - Lectura Digital y Multimodal (DEV)
 -- =====================================================
 -- Description: 5 ejercicios oficiales del Módulo 4 (según DocumentoDeDiseño v6.4)
 -- Module: MOD-04-DIGITAL
@@ -11,7 +11,6 @@
 --   4.5 Análisis Memes
 -- Reference: DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md líneas 782-965
 -- Date: 2025-12-18 (Limpieza: eliminados 4 ejercicios no oficiales)
--- Status: PRODUCTION (ACTIVOS - is_active = true)
 -- NOTA: Ejercicios 4.6-4.9 (resena_critica, chat_literario, email_formal,
 --       ensayo_argumentativo) fueron eliminados por no estar en el documento de diseño
 -- =====================================================
@@ -28,10 +27,7 @@ BEGIN
         RAISE EXCEPTION 'Módulo MOD-04-DIGITAL no encontrado. Ejecutar 01-modules.sql primero';
     END IF;
 
-    -- ========================================================================
-    -- EXERCISE 4.1: VERIFICADOR DE FAKE NEWS
-    -- Referencia: DocumentoDeDiseño v6.4 líneas 778-818
-    -- ========================================================================
+    -- Exercise 4.1: Verificador de Fake News
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
         exercise_type, order_index,
@@ -96,102 +92,9 @@ BEGIN
         ],
         100, 20,
         true
-    ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
-        title = EXCLUDED.title,
-        subtitle = EXCLUDED.subtitle,
-        description = EXCLUDED.description,
-        instructions = EXCLUDED.instructions,
-        config = EXCLUDED.config,
-        content = EXCLUDED.content,
-        solution = EXCLUDED.solution,
-        hints = EXCLUDED.hints,
-        is_active = EXCLUDED.is_active,
-        updated_at = gamilit.now_mexico();
+    );
 
-    -- ========================================================================
-    -- EXERCISE 4.2: INFOGRAFÍA INTERACTIVA
-    -- Referencia: DocumentoDeDiseño v6.4 líneas 820-867
-    -- ========================================================================
-    INSERT INTO educational_content.exercises (
-        module_id, title, subtitle, description, instructions,
-        exercise_type, order_index,
-        config, content, solution,
-        difficulty_level, max_points, passing_score,
-        estimated_time_minutes, max_attempts,
-        hints, xp_reward, ml_coins_reward,
-        is_active
-    ) VALUES (
-        mod_id,
-        'Infografía Interactiva: Descubrimientos de Marie Curie',
-        'Extrae Información Visual',
-        'Explora una infografía interactiva sobre los descubrimientos de Marie Curie. Responde preguntas basándote en la información visual',
-        'Haz clic en las diferentes secciones de la infografía. Examina gráficos, iconos y datos. Responde las preguntas de comprensión.',
-        'infografia_interactiva', 2,
-        '{
-            "interactiveElements": true,
-            "dataVisualization": true,
-            "clickableRegions": true
-        }'::jsonb,
-        '{
-            "infographic": {
-                "title": "Marie Curie: 150 Años de Legado Científico",
-                "sections": [
-                    {
-                        "id": "timeline",
-                        "type": "visual timeline",
-                        "data": "1867-1934: Principales hitos de su vida"
-                    },
-                    {
-                        "id": "discoveries",
-                        "type": "icon grid",
-                        "data": "Radio, Polonio, Radioactividad"
-                    },
-                    {
-                        "id": "impact",
-                        "type": "flowchart",
-                        "data": "Sus descubrimientos → Medicina nuclear → Tratamientos de cáncer"
-                    }
-                ],
-                "questions": [
-                    {
-                        "q": "¿Cuántos años vivió Marie Curie?",
-                        "location": "timeline",
-                        "answer": "67 años"
-                    },
-                    {
-                        "q": "¿Qué aplicación médica surgió de sus descubrimientos?",
-                        "location": "impact",
-                        "answer": "Tratamientos de cáncer / Radioterapia"
-                    }
-                ]
-            }
-        }'::jsonb,
-        '{"questionsAnswered": 2, "sectionsExplored": 3}'::jsonb,
-        'intermediate', 100, 70,
-        15, 3,
-        ARRAY[
-            'Explora cada sección de la infografía antes de responder',
-            'Los íconos y colores tienen significado',
-            'Lee las leyendas y etiquetas cuidadosamente'
-        ],
-        100, 20,
-        true
-    ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
-        title = EXCLUDED.title,
-        subtitle = EXCLUDED.subtitle,
-        description = EXCLUDED.description,
-        instructions = EXCLUDED.instructions,
-        config = EXCLUDED.config,
-        content = EXCLUDED.content,
-        solution = EXCLUDED.solution,
-        hints = EXCLUDED.hints,
-        is_active = EXCLUDED.is_active,
-        updated_at = gamilit.now_mexico();
-
-    -- ========================================================================
-    -- EXERCISE 4.3: QUIZ ESTILO TIKTOK
-    -- Referencia: DocumentoDeDiseño v6.4 líneas 869-892
-    -- ========================================================================
+    -- Exercise 4.2: Quiz TikTok Style
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
         exercise_type, order_index,
@@ -251,23 +154,10 @@ BEGIN
         ],
         100, 20,
         true
-    ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
-        title = EXCLUDED.title,
-        subtitle = EXCLUDED.subtitle,
-        description = EXCLUDED.description,
-        instructions = EXCLUDED.instructions,
-        config = EXCLUDED.config,
-        content = EXCLUDED.content,
-        solution = EXCLUDED.solution,
-        hints = EXCLUDED.hints,
-        is_active = EXCLUDED.is_active,
-        updated_at = gamilit.now_mexico();
+    );
 
-    -- ========================================================================
-    -- EXERCISE 4.4: NAVEGACIÓN HIPERTEXTUAL
-    -- Referencia: DocumentoDeDiseño v6.4 líneas 894-917
+    -- Exercise 4.3: Navegación Hipertextual
     -- Estructura: nodes[] con id, title, content, links[{targetId, label}]
-    -- ========================================================================
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
         exercise_type, order_index,
@@ -353,22 +243,9 @@ BEGIN
         ],
         100, 20,
         true
-    ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
-        title = EXCLUDED.title,
-        subtitle = EXCLUDED.subtitle,
-        description = EXCLUDED.description,
-        instructions = EXCLUDED.instructions,
-        config = EXCLUDED.config,
-        content = EXCLUDED.content,
-        solution = EXCLUDED.solution,
-        hints = EXCLUDED.hints,
-        is_active = EXCLUDED.is_active,
-        updated_at = gamilit.now_mexico();
+    );
 
-    -- ========================================================================
-    -- EXERCISE 4.5: ANÁLISIS DE MEMES EDUCATIVOS
-    -- Referencia: DocumentoDeDiseño v6.4 líneas 919-947
-    -- ========================================================================
+    -- Exercise 4.4: Análisis de Memes
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
         exercise_type, order_index,
@@ -423,17 +300,74 @@ BEGIN
         ],
         100, 20,
         true
-    ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
-        title = EXCLUDED.title,
-        subtitle = EXCLUDED.subtitle,
-        description = EXCLUDED.description,
-        instructions = EXCLUDED.instructions,
-        config = EXCLUDED.config,
-        content = EXCLUDED.content,
-        solution = EXCLUDED.solution,
-        hints = EXCLUDED.hints,
-        is_active = EXCLUDED.is_active,
-        updated_at = gamilit.now_mexico();
+    );
 
-    RAISE NOTICE '✓ 5 ejercicios del Módulo 4 insertados (según DocumentoDeDiseño v6.4)';
+    -- Exercise 4.5: Infografía Interactiva
+    INSERT INTO educational_content.exercises (
+        module_id, title, subtitle, description, instructions,
+        exercise_type, order_index,
+        config, content, solution,
+        difficulty_level, max_points, passing_score,
+        estimated_time_minutes, max_attempts,
+        hints, xp_reward, ml_coins_reward,
+        is_active
+    ) VALUES (
+        mod_id,
+        'Infografía Interactiva: Descubrimientos de Marie Curie',
+        'Extrae Información Visual',
+        'Explora una infografía interactiva sobre los descubrimientos de Marie Curie. Responde preguntas basándote en la información visual',
+        'Haz clic en las diferentes secciones de la infografía. Examina gráficos, iconos y datos. Responde las preguntas de comprensión.',
+        'infografia_interactiva', 2,
+        '{
+            "interactiveElements": true,
+            "dataVisualization": true,
+            "clickableRegions": true
+        }'::jsonb,
+        '{
+            "infographic": {
+                "title": "Marie Curie: 150 Años de Legado Científico",
+                "sections": [
+                    {
+                        "id": "timeline",
+                        "type": "visual timeline",
+                        "data": "1867-1934: Principales hitos de su vida"
+                    },
+                    {
+                        "id": "discoveries",
+                        "type": "icon grid",
+                        "data": "Radio, Polonio, Radioactividad"
+                    },
+                    {
+                        "id": "impact",
+                        "type": "flowchart",
+                        "data": "Sus descubrimientos → Medicina nuclear → Tratamientos de cáncer"
+                    }
+                ],
+                "questions": [
+                    {
+                        "q": "¿Cuántos años vivió Marie Curie?",
+                        "location": "timeline",
+                        "answer": "67 años"
+                    },
+                    {
+                        "q": "¿Qué aplicación médica surgió de sus descubrimientos?",
+                        "location": "impact",
+                        "answer": "Tratamientos de cáncer / Radioterapia"
+                    }
+                ]
+            }
+        }'::jsonb,
+        '{"questionsAnswered": 2, "sectionsExplored": 3}'::jsonb,
+        'intermediate', 100, 70,
+        15, 3,
+        ARRAY[
+            'Explora cada sección de la infografía antes de responder',
+            'Los íconos y colores tienen significado',
+            'Lee las leyendas y etiquetas cuidadosamente'
+        ],
+        100, 20,
+        true
+    );
+
+    RAISE NOTICE '✓ Module 4 (Lectura Digital y Multimodal) created with 5 exercises';
 END $$;

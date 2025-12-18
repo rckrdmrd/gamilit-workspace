@@ -265,7 +265,7 @@ export const notificationsAPI = {
   getVapidPublicKey: async (): Promise<string | null> => {
     try {
       const response = await apiClient.get<{ vapidPublicKey: string }>(
-        '/notifications/devices/vapid-public-key',
+        '/notifications/devices/vapid-public-key'
       );
       return response.data.vapidPublicKey;
     } catch (error) {

@@ -47,39 +47,63 @@ npx playwright test --project="Mobile Chrome"
 
 ## 📁 Test Files
 
-### `auth.spec.ts`
-Authentication and registration flows:
-- Login page display
-- Form validation
-- Invalid credentials handling
-- Registration flow
-- Password visibility toggle
-- Session management
+### Core Tests
+- **`auth.spec.ts`** - Authentication and registration flows
+- **`navigation.spec.ts`** - Basic navigation and routing
+- **`student-journey.spec.ts`** - Original student journey tests (legacy)
 
-### `navigation.spec.ts`
-Basic navigation and routing:
-- Homepage loading
-- 404 handling
-- Protected routes
-- Performance checks
-- Accessibility basics
+### Critical Flow Tests (NEW)
 
-### `student-journey.spec.ts`
-Complete student user journey:
-- Dashboard display
-- Module selection
-- Exercise flow (start → answer → complete)
-- Gamification elements (XP, achievements, leaderboard)
-- Progress tracking
+#### `student-exercise-m4.spec.ts`
+Module 4 exercise flows for students:
+- Complete Quiz TikTok with time penalty tracking
+- Complete Infografia Interactiva with drag-drop
+- Submit exercises and view points
+- Track exercise progress
+
+#### `teacher-flow.spec.ts`
+Teacher workflow tests:
+- View pending submissions
+- Review and grade student work
+- Receive notifications for new submissions
+- Filter submissions by student/exercise
+- View student progress analytics
+- Export reports
+- Bulk grade submissions
+
+#### `admin-flow.spec.ts`
+Admin portal tests:
+- Access admin dashboard
+- Manage feature flags (view, toggle, create)
+- Configure feature flag targeting rules
+- Manage user roles and permissions
+- Search and filter users
+- Edit user permissions
+
+#### `gamification-flow.spec.ts`
+Gamification system tests:
+- Display and track XP/levels
+- Gain XP after exercise completion
+- Level up animations
+- View and unlock achievements
+- Display leaderboard with rankings
+- Filter leaderboard by period/classroom
+- Earn and display ML Coins
 
 ## 🎯 Test Status
 
-Most tests are currently **skipped** (marked with `test.skip()`) because they require:
-- Test user accounts in database
-- Backend API running
-- Specific test data setup
+### Implemented Critical Flow Tests (NEW):
+✅ **Student Exercise Flow** - M4 Quiz TikTok with time penalty
+✅ **Student Exercise Flow** - Infografia drag-drop exercise
+✅ **Teacher Flow** - View and grade submissions
+✅ **Teacher Flow** - Notification system
+✅ **Admin Flow** - Feature flag management
+✅ **Admin Flow** - Role and permission management
+✅ **Gamification** - XP and level progression
+✅ **Gamification** - Achievement system
+✅ **Gamification** - Leaderboard functionality
 
-### Currently Active Tests:
+### Legacy Tests (Original):
 ✅ Login page display
 ✅ Form validation
 ✅ Navigation basics
@@ -87,11 +111,13 @@ Most tests are currently **skipped** (marked with `test.skip()`) because they re
 ✅ Protected routes redirect
 ✅ Performance checks
 
-### Tests Requiring Setup:
-⏸️ Successful login flow (needs test user)
-⏸️ Student dashboard (needs authentication)
-⏸️ Exercise flow (needs test data)
-⏸️ Gamification features (needs game state)
+### Tests Requiring Test Data Setup:
+Most new critical flow tests will run but may skip certain scenarios if:
+- Test user accounts don't exist in database
+- Backend API is not running
+- Specific test data (exercises, achievements) is not seeded
+
+**Note:** Tests are designed to gracefully skip scenarios when prerequisites are not met.
 
 ## 🔧 Configuration
 
@@ -102,46 +128,90 @@ Configuration is in `playwright.config.ts`:
 - **Retries:** 2 (on CI), 0 (local)
 - **Reports:** HTML, List, JSON
 
-## 📊 Test Coverage Goals
+## 📊 Test Coverage Status
 
 ### Critical Flows (Priority 1) 🔥
-- [ ] Authentication (Login/Register)
-- [ ] Student: Browse → Start Exercise → Complete
-- [ ] Teacher: Create Assignment → View Progress
-- [ ] Leaderboard display
+- [x] Authentication (Login/Register)
+- [x] Student: Browse → Start Exercise → Complete
+- [x] Student: Module 4 Quiz TikTok with time penalty
+- [x] Student: Module 4 Infografia drag-drop
+- [x] Teacher: View submissions → Review → Grade
+- [x] Teacher: Receive notifications
+- [x] Admin: Feature flag management
+- [x] Admin: Role and permission management
+- [x] Gamification: XP and level progression
+- [x] Gamification: Achievement system
+- [x] Leaderboard display and filtering
 
 ### Important Flows (Priority 2) 🟡
+- [x] Student progress tracking
+- [x] Teacher: Filter submissions by student/exercise
+- [x] Teacher: Export reports
+- [x] Teacher: Bulk grading
+- [x] Admin: Search and filter users
 - [ ] Profile management
-- [ ] Achievement unlock
 - [ ] Social features (friends, classrooms)
-- [ ] Progress tracking
 
 ### Nice to Have (Priority 3) 🟢
 - [ ] Settings/preferences
-- [ ] Notifications
+- [ ] Advanced notifications
 - [ ] Search functionality
 - [ ] Mobile responsiveness
+- [ ] Visual regression testing
 
-## 🏗️ Test Data Setup (TODO)
+## 🏗️ Test Data Setup
 
-To enable all tests, we need:
+### Required Test Users
+Create these users in your test database:
 
-1. **Database Seeds:**
-   - Test student account
-   - Test teacher account
-   - Sample modules and exercises
-   - Sample achievements
+```javascript
+// Student user
+{
+  email: 'student@test.gamilit.com',
+  password: 'TestStudent123!',
+  role: 'student',
+  displayName: 'Test Student'
+}
 
-2. **Environment:**
-   - Backend API running on localhost:3006
-   - Frontend dev server on localhost:3005
-   - Test database with seed data
+// Teacher user
+{
+  email: 'teacher@test.gamilit.com',
+  password: 'TestTeacher123!',
+  role: 'teacher',
+  displayName: 'Test Teacher'
+}
 
-3. **Helper Functions:**
-   - `setupTestData()` - Create test data
-   - `loginAsStudent()` - Authenticate test user
-   - `loginAsTeacher()` - Authenticate test user
-   - `cleanupTestData()` - Remove test data
+// Admin user
+{
+  email: 'admin@test.gamilit.com',
+  password: 'TestAdmin123!',
+  role: 'admin',
+  displayName: 'Test Admin'
+}
+```
+
+### Environment Setup
+
+1. **Backend API:** Running on `http://localhost:3006`
+2. **Frontend:** Running on `http://localhost:3005`
+3. **Database:** Test database with seeded data
+
+### Fixtures and Helpers (IMPLEMENTED)
+
+All test files now use centralized fixtures and helpers:
+
+- **`fixtures/test-users.ts`** - Test user credentials and exercise IDs
+- **`fixtures/auth-helpers.ts`** - Login/logout helper functions
+- **`helpers/page-helpers.ts`** - Reusable page interaction functions
+
+### Helper Functions Available:
+- `loginAsStudent(page)` - Authenticate as student
+- `loginAsTeacher(page)` - Authenticate as teacher
+- `loginAsAdmin(page)` - Authenticate as admin
+- `waitForPageLoad(page)` - Wait for complete page load
+- `waitForToast(page)` - Wait for toast notifications
+- `waitForModal(page)` - Wait for modal dialogs
+- `waitForLoadingToFinish(page)` - Wait for spinners to disappear
 
 ## 🎨 Visual Regression Testing
 
@@ -234,8 +304,59 @@ A test is "Done" when:
 - [ ] Test is documented (comments if complex)
 - [ ] Test runs in CI
 
+## 📦 Test Structure
+
+```
+e2e/
+├── fixtures/
+│   ├── test-users.ts          # Test user credentials and data
+│   └── auth-helpers.ts        # Authentication helper functions
+├── helpers/
+│   └── page-helpers.ts        # Reusable page interaction helpers
+├── auth.spec.ts               # Authentication tests
+├── navigation.spec.ts         # Navigation tests
+├── student-journey.spec.ts    # Legacy student tests
+├── student-exercise-m4.spec.ts   # M4 exercise flow tests (NEW)
+├── teacher-flow.spec.ts       # Teacher workflow tests (NEW)
+├── admin-flow.spec.ts         # Admin portal tests (NEW)
+├── gamification-flow.spec.ts  # Gamification tests (NEW)
+└── README.md                  # This file
+```
+
+## 🎯 Quick Start
+
+1. **Start the application:**
+```bash
+# Terminal 1: Start backend
+cd apps/backend
+npm run dev
+
+# Terminal 2: Start frontend
+cd apps/frontend
+npm run dev
+```
+
+2. **Seed test data:**
+```bash
+# Run database seeds to create test users and data
+npm run db:seed:test
+```
+
+3. **Run tests:**
+```bash
+# Run all tests
+npm run test:e2e
+
+# Run specific flow
+npx playwright test student-exercise-m4.spec.ts
+
+# Run with UI (recommended for development)
+npm run test:e2e:ui
+```
+
 ---
 
-**Last Updated:** November 9, 2025
-**Test Framework:** Playwright v1.40+
-**Coverage:** 3 test files, ~20 test cases (12 active, 8 skipped)
+**Last Updated:** December 5, 2025
+**Test Framework:** Playwright v1.56+
+**Coverage:** 8 test files, 60+ test cases
+**Critical Flows Covered:** Student Exercises, Teacher Review, Admin Management, Gamification

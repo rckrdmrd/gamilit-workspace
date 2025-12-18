@@ -48,7 +48,7 @@ jest.mock('framer-motion', () => ({
 const createMockFile = (
   name: string,
   type: string,
-  size: number = 1024 * 1024, // 1MB default
+  size: number = 1024 * 1024 // 1MB default
 ): File => {
   const blob = new Blob(['x'.repeat(size)], { type });
   return new File([blob], name, { type });
@@ -197,7 +197,7 @@ describe('AvatarUpload', () => {
       await waitFor(() => {
         expect(toast.error).toHaveBeenCalledWith(
           expect.stringContaining('Solo se permiten archivos de imagen'),
-          expect.any(Object),
+          expect.any(Object)
         );
         expect(onError).toHaveBeenCalled();
         expect(profileAPI.uploadAvatar).not.toHaveBeenCalled();
@@ -216,7 +216,7 @@ describe('AvatarUpload', () => {
       await waitFor(() => {
         expect(toast.error).toHaveBeenCalledWith(
           expect.stringContaining('demasiado grande'),
-          expect.any(Object),
+          expect.any(Object)
         );
         expect(onError).toHaveBeenCalled();
         expect(profileAPI.uploadAvatar).not.toHaveBeenCalled();
@@ -235,7 +235,7 @@ describe('AvatarUpload', () => {
       await waitFor(() => {
         expect(toast.error).toHaveBeenCalledWith(
           expect.stringContaining('máximo: 2MB'),
-          expect.any(Object),
+          expect.any(Object)
         );
         expect(onError).toHaveBeenCalled();
         expect(profileAPI.uploadAvatar).not.toHaveBeenCalled();
@@ -268,7 +268,7 @@ describe('AvatarUpload', () => {
         expect(onComplete).toHaveBeenCalledWith(newAvatarUrl);
         expect(toast.success).toHaveBeenCalledWith(
           expect.stringContaining('Avatar actualizado'),
-          expect.any(Object),
+          expect.any(Object)
         );
       });
     });
@@ -310,7 +310,10 @@ describe('AvatarUpload', () => {
       fireEvent.change(input, { target: { files: [file] } });
 
       await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith('File too large for storage', expect.any(Object));
+        expect(toast.error).toHaveBeenCalledWith(
+          'File too large for storage',
+          expect.any(Object)
+        );
       });
     });
   });
@@ -354,7 +357,9 @@ describe('AvatarUpload', () => {
 
   describe('Custom Styling', () => {
     it('applies custom className', () => {
-      const { container } = render(<AvatarUpload {...defaultProps} className="custom-class" />);
+      const { container } = render(
+        <AvatarUpload {...defaultProps} className="custom-class" />
+      );
 
       expect(container.querySelector('.custom-class')).toBeInTheDocument();
     });

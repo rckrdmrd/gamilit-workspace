@@ -1,16 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  ChevronUp,
-  ChevronDown,
-  Menu,
-  X,
-  Save,
-  Award,
-  Send,
-  Loader2,
-  CheckCircle,
-} from 'lucide-react';
+import { ChevronUp, ChevronDown, Menu, X, Save, Award, Send, Loader2, CheckCircle } from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
@@ -19,7 +9,11 @@ import { ProgressTracker } from '@shared/components/mechanics/ProgressTracker';
 import { ScoreDisplay } from '@shared/components/mechanics/ScoreDisplay';
 import { TikTokCard } from './TikTokCard';
 import { QuizTikTokData } from './quizTikTokTypes';
-import { saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import {
+  calculateScore,
+  saveProgress,
+  FeedbackData,
+} from '@shared/components/mechanics/mechanicsTypes';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 
 interface ProgressData {
@@ -133,7 +127,10 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
 
   const TIME_LIMIT_PER_QUESTION = 30; // 30 seconds per question
 
-  const { submit, isSubmitting } = useExerciseSubmission(exerciseId || '', {
+  const {
+    submit,
+    isSubmitting,
+  } = useExerciseSubmission(exerciseId || '', {
     onSuccess: (result) => {
       setIsSubmitted(true);
       const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
@@ -171,11 +168,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
   }>({});
 
   // Calculate score with time penalty
-  const calculateScoreWithTimePenalty = (
-    baseScore: number,
-    timeElapsed: number,
-    totalTime: number,
-  ) => {
+  const calculateScoreWithTimePenalty = (baseScore: number, timeElapsed: number, totalTime: number) => {
     const timePenalty = (timeElapsed / totalTime) * 0.5; // Maximum 50% penalty
     return Math.max(50, Math.round(baseScore * (1 - timePenalty))); // Minimum 50 points
   };
@@ -210,7 +203,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
   // Update progress
 
   useEffect(() => {
-    const _progress = calculateProgress(); // Prefixed: calculated for future use
+    const progress = calculateProgress();
     const score = calculateCurrentScore();
     setCurrentScore(score);
 
@@ -277,10 +270,9 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
       setFeedback({
         type: 'success',
         title: '¡Correcto!',
-        message:
-          timePenalty > 0
-            ? `+${scoreWithPenalty} puntos (-${timePenalty} por tiempo)`
-            : `+${scoreWithPenalty} puntos`,
+        message: timePenalty > 0
+          ? `+${scoreWithPenalty} puntos (-${timePenalty} por tiempo)`
+          : `+${scoreWithPenalty} puntos`,
         showConfetti: false,
       });
     } else {
@@ -310,19 +302,14 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
     const correctAnswer = currentExercise.questions[currentIndex].correctAnswer;
     let randomWrongAnswer = 0;
     do {
-      randomWrongAnswer = Math.floor(
-        Math.random() * currentExercise.questions[currentIndex].options.length,
-      );
+      randomWrongAnswer = Math.floor(Math.random() * currentExercise.questions[currentIndex].options.length);
     } while (randomWrongAnswer === correctAnswer);
 
     handleAnswer(randomWrongAnswer);
   };
 
   // Handle check/verification
-  const handleCheck = async (
-    finalAnswers: number[] = answers,
-    finalScores: number[] = questionScores,
-  ) => {
+  const handleCheck = async (finalAnswers: number[] = answers, finalScores: number[] = questionScores) => {
     const correct = finalAnswers.filter(
       (ans, idx) => ans === currentExercise.questions[idx].correctAnswer,
     ).length;
@@ -345,7 +332,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
     // Calculate total time penalty
     const totalTimePenalty = finalScores.reduce((sum, score, idx) => {
       const isCorrect = finalAnswers[idx] === currentExercise.questions[idx].correctAnswer;
-      return sum + (isCorrect ? 100 - score : 0);
+      return sum + (isCorrect ? (100 - score) : 0);
     }, 0);
 
     setFeedback({
@@ -595,10 +582,8 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
                           <div className="flex-1">
                             <span className="font-medium">Pregunta {idx + 1}</span>
                             {isAnswered && (
-                              <div className="mt-1 text-xs">
-                                <div>
-                                  {score} pts ({time.toFixed(1)}s)
-                                </div>
+                              <div className="text-xs mt-1">
+                                <div>{score} pts ({time.toFixed(1)}s)</div>
                               </div>
                             )}
                           </div>
@@ -606,9 +591,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
                             {idx === currentIndex
                               ? 'Actual'
                               : isAnswered
-                                ? score > 0
-                                  ? '✓'
-                                  : '✗'
+                                ? score > 0 ? '✓' : '✗'
                                 : 'Pendiente'}
                           </span>
                         </div>
@@ -640,11 +623,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
                     <DetectiveButton
                       variant="primary"
                       onClick={handleSubmit}
-                      disabled={
-                        answers.length < currentExercise.questions.length ||
-                        isSubmitting ||
-                        isSubmitted
-                      }
+                      disabled={answers.length < currentExercise.questions.length || isSubmitting || isSubmitted}
                       className="w-full"
                     >
                       {isSubmitting ? (

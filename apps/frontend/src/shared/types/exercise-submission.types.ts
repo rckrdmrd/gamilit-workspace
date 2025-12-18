@@ -21,10 +21,10 @@ import { ExerciseType } from './educational.types';
  * Status values for exercise submissions
  */
 export type SubmissionStatus =
-  | 'draft' // Submission in progress (not yet submitted)
-  | 'submitted' // Submission completed and sent
-  | 'graded' // Submission has been graded
-  | 'reviewed'; // Submission has been manually reviewed
+  | 'draft'      // Submission in progress (not yet submitted)
+  | 'submitted'  // Submission completed and sent
+  | 'graded'     // Submission has been graded
+  | 'reviewed';  // Submission has been manually reviewed
 
 /**
  * Rank Up Info

@@ -167,9 +167,7 @@ export const FeatureFlagEditor: React.FC<FeatureFlagEditorProps> = ({ flag, onSa
               rows={3}
               placeholder="Describe what this feature does and when to enable it..."
             />
-            {errors.description && (
-              <p className="mt-1 text-xs text-red-500">{errors.description}</p>
-            )}
+            {errors.description && <p className="mt-1 text-xs text-red-500">{errors.description}</p>}
           </div>
 
           {/* Enabled Toggle */}
@@ -182,9 +180,7 @@ export const FeatureFlagEditor: React.FC<FeatureFlagEditorProps> = ({ flag, onSa
                 className="h-5 w-5 cursor-pointer rounded border-2 border-gray-500 bg-transparent text-detective-orange focus:ring-2 focus:ring-detective-orange"
               />
               <div>
-                <span className="text-sm font-semibold text-detective-text">
-                  Enable Feature Flag
-                </span>
+                <span className="text-sm font-semibold text-detective-text">Enable Feature Flag</span>
                 <p className="text-xs text-gray-400">
                   When enabled, feature will be available based on rollout percentage and targeting
                 </p>

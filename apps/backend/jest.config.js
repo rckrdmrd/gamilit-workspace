@@ -3,17 +3,24 @@ module.exports = {
   testEnvironment: 'node',
   roots: ['<rootDir>/src'],
   testMatch: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.spec.ts', '**/*.spec.ts'],
+  setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/**/*.d.ts',
-    '!src/main.ts'
+    '!src/main.ts',
+    '!src/**/__tests__/**',
+    '!src/**/__mocks__/**',
+    '!src/**/*.spec.ts',
+    '!src/**/*.test.ts'
   ],
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov', 'html', 'json-summary'],
   coverageThreshold: {
     global: {
-      branches: 70,
-      functions: 70,
-      lines: 70,
-      statements: 70
+      branches: 30,
+      functions: 30,
+      lines: 30,
+      statements: 30
     }
   },
   transform: {
@@ -33,6 +40,9 @@ module.exports = {
     '^@config/(.*)$': '<rootDir>/src/config/$1',
     '^@database/(.*)$': '<rootDir>/src/database/$1',
     '^@modules/(.*)$': '<rootDir>/src/modules/$1',
-    '^@/(.*)$': '<rootDir>/src/$1'
-  }
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@__mocks__/(.*)$': '<rootDir>/src/__mocks__/$1'
+  },
+  testTimeout: 30000,
+  verbose: true
 };

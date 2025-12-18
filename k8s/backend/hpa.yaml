@@ -1,0 +1,66 @@
+# =============================================================================
+# GAMILIT Backend - Horizontal Pod Autoscaler
+# =============================================================================
+# Purpose: Automatically scale backend pods based on CPU/Memory usage
+# Min Replicas: 3
+# Max Replicas: 10
+# Target CPU: 70%
+# Target Memory: 80%
+# =============================================================================
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: gamilit-backend-hpa
+  namespace: gamilit-production
+  labels:
+    app: gamilit
+    component: backend
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: gamilit-backend
+
+  minReplicas: 3
+  maxReplicas: 10
+
+  metrics:
+    # CPU-based scaling
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+
+    # Memory-based scaling
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300  # Wait 5 minutes before scaling down
+      policies:
+        - type: Percent
+          value: 50                     # Scale down max 50% of pods at a time
+          periodSeconds: 60
+        - type: Pods
+          value: 1                      # Or scale down max 1 pod at a time
+          periodSeconds: 60
+      selectPolicy: Min
+
+    scaleUp:
+      stabilizationWindowSeconds: 0    # Scale up immediately
+      policies:
+        - type: Percent
+          value: 100                    # Scale up max 100% of pods at a time
+          periodSeconds: 30
+        - type: Pods
+          value: 2                      # Or scale up max 2 pods at a time
+          periodSeconds: 30
+      selectPolicy: Max

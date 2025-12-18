@@ -26,9 +26,11 @@ import { useAuth } from '@/features/auth/hooks/useAuth';
  * Submission payload schema (matches backend DTO)
  */
 export const SubmitExerciseSchema = z.object({
-  answers: z.record(z.string(), z.any()).refine((answers) => Object.keys(answers).length > 0, {
-    message: 'At least one answer is required',
-  }),
+  answers: z
+    .record(z.string(), z.any())
+    .refine((answers) => Object.keys(answers).length > 0, {
+      message: 'At least one answer is required',
+    }),
   startedAt: z.number().int().positive(),
   hintsUsed: z.number().int().min(0).max(10).default(0),
   powerupsUsed: z.array(z.enum(['pistas', 'vision_lectora', 'segunda_oportunidad'])).default([]),

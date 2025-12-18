@@ -163,7 +163,7 @@ export const getReviewById = async (reviewId: string): Promise<ManualReview> => 
 export const startReview = async (submissionId: string): Promise<ManualReview> => {
   const { data } = await apiClient.post<ManualReview>(
     API_ENDPOINTS.teacher.reviews.start(submissionId),
-    {},
+    {}
   );
   return data;
 };
@@ -177,11 +177,11 @@ export const startReview = async (submissionId: string): Promise<ManualReview> =
  */
 export const updateReview = async (
   reviewId: string,
-  updates: UpdateReviewRequest,
+  updates: UpdateReviewRequest
 ): Promise<ManualReview> => {
   const { data } = await apiClient.put<ManualReview>(
     API_ENDPOINTS.teacher.reviews.update(reviewId),
-    updates,
+    updates
   );
   return data;
 };
@@ -195,11 +195,11 @@ export const updateReview = async (
  */
 export const completeReview = async (
   reviewId: string,
-  completion: CompleteReviewRequest,
+  completion: CompleteReviewRequest
 ): Promise<CompleteReviewResponse> => {
   const { data } = await apiClient.post<CompleteReviewResponse>(
     API_ENDPOINTS.teacher.reviews.complete(reviewId),
-    completion,
+    completion
   );
   return data;
 };
@@ -213,7 +213,7 @@ export const completeReview = async (
  */
 export const calculateTotalScore = (
   rubric: RubricCriterion[],
-  evaluations: RubricEvaluation[],
+  evaluations: RubricEvaluation[]
 ): number => {
   if (rubric.length === 0 || evaluations.length === 0) {
     return 0;
@@ -246,7 +246,7 @@ export const calculateTotalScore = (
  */
 export const validateEvaluations = (
   rubric: RubricCriterion[],
-  evaluations: RubricEvaluation[],
+  evaluations: RubricEvaluation[]
 ): { valid: boolean; errors: string[] } => {
   const errors: string[] = [];
 
@@ -261,7 +261,7 @@ export const validateEvaluations = (
     // Check that score is within range
     if (evaluation.score < 0 || evaluation.score > criterion.maxPoints) {
       errors.push(
-        `Puntaje inválido para ${criterion.name}: debe estar entre 0 y ${criterion.maxPoints}`,
+        `Puntaje inválido para ${criterion.name}: debe estar entre 0 y ${criterion.maxPoints}`
       );
     }
   }

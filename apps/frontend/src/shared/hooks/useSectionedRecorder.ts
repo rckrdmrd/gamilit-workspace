@@ -58,9 +58,7 @@ export function useSectionedRecorder(sections: VideoSection[]): UseSectionedReco
 
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const [sectionTimeRemaining, setSectionTimeRemaining] = useState(sections[0]?.duration || 0);
-  const [sectionRecordings, setSectionRecordings] = useState<Map<string, SectionRecording>>(
-    new Map(),
-  );
+  const [sectionRecordings, setSectionRecordings] = useState<Map<string, SectionRecording>>(new Map());
 
   const sectionTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const currentRecordingStartTime = useRef<number>(0);
@@ -78,12 +76,14 @@ export function useSectionedRecorder(sections: VideoSection[]): UseSectionedReco
   const completedDuration = sections
     .slice(0, currentSectionIndex)
     .reduce((sum, s) => sum + s.duration, 0);
-  const currentSectionElapsed = currentSection ? currentSection.duration - sectionTimeRemaining : 0;
+  const currentSectionElapsed = currentSection
+    ? currentSection.duration - sectionTimeRemaining
+    : 0;
   const totalProgress = ((completedDuration + currentSectionElapsed) / totalDuration) * 100;
 
   // Check if all sections are completed
-  const allSectionsCompleted = sections.every(
-    (section) => sectionRecordings.get(section.id)?.completed,
+  const allSectionsCompleted = sections.every(section =>
+    sectionRecordings.get(section.id)?.completed
   );
 
   /**
@@ -101,7 +101,7 @@ export function useSectionedRecorder(sections: VideoSection[]): UseSectionedReco
     currentRecordingStartTime.current = Date.now();
 
     sectionTimerRef.current = setInterval(() => {
-      setSectionTimeRemaining((prev) => {
+      setSectionTimeRemaining(prev => {
         const newTime = prev - 1;
 
         // Auto-advance to next section when time runs out
@@ -112,10 +112,8 @@ export function useSectionedRecorder(sections: VideoSection[]): UseSectionedReco
           }
 
           // Mark current section as completed
-          const recordingDuration = Math.floor(
-            (Date.now() - currentRecordingStartTime.current) / 1000,
-          );
-          setSectionRecordings((prev) => {
+          const recordingDuration = Math.floor((Date.now() - currentRecordingStartTime.current) / 1000);
+          setSectionRecordings(prev => {
             const newMap = new Map(prev);
             newMap.set(section.id, {
               sectionId: section.id,
@@ -128,7 +126,7 @@ export function useSectionedRecorder(sections: VideoSection[]): UseSectionedReco
 
           // Auto-advance or stop
           if (currentSectionIndex < sections.length - 1) {
-            setCurrentSectionIndex((prev) => prev + 1);
+            setCurrentSectionIndex(prev => prev + 1);
           } else {
             // All sections completed, stop recording
             baseRecorder.stopRecording();
@@ -171,7 +169,7 @@ export function useSectionedRecorder(sections: VideoSection[]): UseSectionedReco
     const section = sections[currentSectionIndex];
     if (section && baseRecorder.videoBlob) {
       const recordingDuration = Math.floor((Date.now() - currentRecordingStartTime.current) / 1000);
-      setSectionRecordings((prev) => {
+      setSectionRecordings(prev => {
         const newMap = new Map(prev);
         newMap.set(section.id, {
           sectionId: section.id,
@@ -194,7 +192,7 @@ export function useSectionedRecorder(sections: VideoSection[]): UseSectionedReco
       // Mark current section as completed
       const section = sections[currentSectionIndex];
       const recordingDuration = Math.floor((Date.now() - currentRecordingStartTime.current) / 1000);
-      setSectionRecordings((prev) => {
+      setSectionRecordings(prev => {
         const newMap = new Map(prev);
         newMap.set(section.id, {
           sectionId: section.id,
@@ -205,7 +203,7 @@ export function useSectionedRecorder(sections: VideoSection[]): UseSectionedReco
         return newMap;
       });
 
-      setCurrentSectionIndex((prev) => prev + 1);
+      setCurrentSectionIndex(prev => prev + 1);
 
       // Reset timer for new section
       if (baseRecorder.isRecording || wasPaused) {
@@ -213,21 +211,14 @@ export function useSectionedRecorder(sections: VideoSection[]): UseSectionedReco
         startSectionTimer();
       }
     }
-  }, [
-    currentSectionIndex,
-    sections,
-    baseRecorder.isRecording,
-    baseRecorder.isPaused,
-    startSectionTimer,
-    stopSectionTimer,
-  ]);
+  }, [currentSectionIndex, sections, baseRecorder.isRecording, baseRecorder.isPaused, startSectionTimer, stopSectionTimer]);
 
   /**
    * Go to previous section
    */
   const goToPreviousSection = useCallback(() => {
     if (currentSectionIndex > 0) {
-      setCurrentSectionIndex((prev) => prev - 1);
+      setCurrentSectionIndex(prev => prev - 1);
 
       // Reset timer for new section
       if (baseRecorder.isRecording) {
@@ -240,46 +231,40 @@ export function useSectionedRecorder(sections: VideoSection[]): UseSectionedReco
   /**
    * Go to specific section
    */
-  const goToSection = useCallback(
-    (index: number) => {
-      if (index >= 0 && index < sections.length) {
-        setCurrentSectionIndex(index);
+  const goToSection = useCallback((index: number) => {
+    if (index >= 0 && index < sections.length) {
+      setCurrentSectionIndex(index);
 
-        // Reset timer for new section
-        if (baseRecorder.isRecording) {
-          stopSectionTimer();
-          startSectionTimer();
-        }
+      // Reset timer for new section
+      if (baseRecorder.isRecording) {
+        stopSectionTimer();
+        startSectionTimer();
       }
-    },
-    [sections.length, baseRecorder.isRecording, startSectionTimer, stopSectionTimer],
-  );
+    }
+  }, [sections.length, baseRecorder.isRecording, startSectionTimer, stopSectionTimer]);
 
   /**
    * Re-record a specific section
    */
-  const reRecordSection = useCallback(
-    (sectionId: string) => {
-      const sectionIndex = sections.findIndex((s) => s.id === sectionId);
-      if (sectionIndex !== -1) {
-        // Remove the recording for this section
-        setSectionRecordings((prev) => {
-          const newMap = new Map(prev);
-          newMap.delete(sectionId);
-          return newMap;
-        });
+  const reRecordSection = useCallback((sectionId: string) => {
+    const sectionIndex = sections.findIndex(s => s.id === sectionId);
+    if (sectionIndex !== -1) {
+      // Remove the recording for this section
+      setSectionRecordings(prev => {
+        const newMap = new Map(prev);
+        newMap.delete(sectionId);
+        return newMap;
+      });
 
-        // Navigate to that section
-        goToSection(sectionIndex);
+      // Navigate to that section
+      goToSection(sectionIndex);
 
-        // Reset the recording if needed
-        if (baseRecorder.videoUrl) {
-          baseRecorder.resetRecording();
-        }
+      // Reset the recording if needed
+      if (baseRecorder.videoUrl) {
+        baseRecorder.resetRecording();
       }
-    },
-    [sections, goToSection, baseRecorder],
-  );
+    }
+  }, [sections, goToSection, baseRecorder]);
 
   /**
    * Update section time when section changes

@@ -12,7 +12,10 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/services/api/apiClient';
-import type { ExerciseSubmission, ExerciseSubmissionResult } from '../types/exercise.types';
+import type {
+  ExerciseSubmission,
+  ExerciseSubmissionResult,
+} from '../types/exercise.types';
 import { dashboardKeys } from '@/apps/student/hooks/useDashboardData';
 import { userModulesKeys } from '@/apps/student/hooks/useUserModules';
 
@@ -27,9 +30,7 @@ export const useExerciseSubmission = (options?: UseExerciseSubmissionOptions) =>
   const [error, setError] = useState<Error | null>(null);
   const [result, setResult] = useState<ExerciseSubmissionResult | null>(null);
 
-  const submitExercise = async (
-    submission: ExerciseSubmission,
-  ): Promise<ExerciseSubmissionResult | null> => {
+  const submitExercise = async (submission: ExerciseSubmission): Promise<ExerciseSubmissionResult | null> => {
     try {
       setIsSubmitting(true);
       setError(null);
@@ -38,7 +39,7 @@ export const useExerciseSubmission = (options?: UseExerciseSubmissionOptions) =>
       // Expects: { userId, exerciseId, answers }
       const { data } = await apiClient.post<ExerciseSubmissionResult>(
         '/progress/submissions/submit',
-        submission,
+        submission
       );
 
       setResult(data);

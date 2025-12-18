@@ -43,7 +43,7 @@ export default function AdminProgressPage() {
   const { user, logout } = useAuth();
 
   // Fetch classrooms from API (replaces classrooms)
-  const { classrooms, isLoading: _classroomsLoading } = useClassroomsList();
+  const { classrooms, isLoading: classroomsLoading } = useClassroomsList();
 
   // Gamification data
   const { gamificationData } = useUserGamification(user?.id);

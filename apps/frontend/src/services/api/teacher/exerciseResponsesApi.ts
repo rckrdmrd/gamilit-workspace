@@ -11,7 +11,7 @@
  * @module services/api/teacher/exerciseResponsesApi
  */
 
-import { apiClient } from '@/services/api/apiClient';
+import { apiClient } from '../apiClient';
 
 // ============================================================================
 // TYPES & INTERFACES

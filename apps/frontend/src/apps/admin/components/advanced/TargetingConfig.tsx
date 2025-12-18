@@ -22,11 +22,7 @@ interface TargetingConfigProps {
 const AVAILABLE_ROLES = [
   { value: 'student', label: 'Students', description: 'All student users' },
   { value: 'teacher', label: 'Teachers', description: 'Regular teacher users' },
-  {
-    value: 'admin_teacher',
-    label: 'Admin Teachers',
-    description: 'Teachers with admin privileges',
-  },
+  { value: 'admin_teacher', label: 'Admin Teachers', description: 'Teachers with admin privileges' },
   { value: 'super_admin', label: 'Super Admins', description: 'System administrators' },
 ];
 

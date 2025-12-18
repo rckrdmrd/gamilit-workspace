@@ -135,7 +135,7 @@ module.exports = {
       host: '74.208.126.102',
       ref: 'origin/main',
       repo: 'git@github.com:your-org/gamilit.git', // ACTUALIZAR CON TU REPO
-      path: '/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit',
+      path: '/home/isem/workspace/projects/gamilit',
       'pre-setup': 'echo "Setting up production environment"',
       'post-deploy': 'npm install && npm run build:all && pm2 reload ecosystem.config.js --env production && pm2 save',
       env: {

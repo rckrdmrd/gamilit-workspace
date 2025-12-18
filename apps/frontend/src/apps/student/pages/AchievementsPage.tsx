@@ -149,7 +149,9 @@ export default function AchievementsPage() {
       if (result.success) {
         // Update local state to mark as claimed
         setLocalAchievements((prev) =>
-          prev.map((a) => (a.id === achievementId ? { ...a, rewardsClaimed: true } : a)),
+          prev.map((a) =>
+            a.id === achievementId ? { ...a, rewardsClaimed: true } : a
+          )
         );
 
         // Refresh balance to show new ML Coins

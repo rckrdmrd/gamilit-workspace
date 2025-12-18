@@ -29,9 +29,9 @@ export const DroppableZone: React.FC<DroppableZoneProps> = ({
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className={`relative flex min-h-[140px] flex-col items-center justify-center rounded-detective border-2 border-dashed p-4 transition-all ${
+        className={`relative rounded-detective border-2 border-dashed p-4 min-h-[140px] flex flex-col items-center justify-center transition-all ${
           isOver
-            ? 'scale-105 border-detective-orange bg-detective-orange/10'
+            ? 'border-detective-orange bg-detective-orange/10 scale-105'
             : isCorrect
               ? 'border-green-500 bg-green-50'
               : isOccupied
@@ -40,28 +40,26 @@ export const DroppableZone: React.FC<DroppableZoneProps> = ({
         }`}
       >
         {/* Status Icon */}
-        <div className="absolute right-2 top-2">
+        <div className="absolute top-2 right-2">
           {isCorrect ? (
-            <CheckCircle className="h-6 w-6 text-green-500" />
+            <CheckCircle className="w-6 h-6 text-green-500" />
           ) : (
-            <Circle className="h-6 w-6 text-gray-400" />
+            <Circle className="w-6 h-6 text-gray-400" />
           )}
         </div>
 
         {/* Zone Title */}
-        <h4 className="mb-2 text-center text-detective-sm font-bold text-detective-text">
-          {title}
-        </h4>
+        <h4 className="text-detective-sm font-bold text-detective-text mb-2 text-center">{title}</h4>
 
         {/* Dropped Card Preview or Placeholder */}
         {droppedCard ? (
           <div className="text-center">
-            <p className="text-detective-xs font-medium text-detective-text-secondary">
+            <p className="text-detective-xs text-detective-text-secondary font-medium">
               {droppedCard.title}
             </p>
           </div>
         ) : (
-          <div className="text-center text-detective-xs text-gray-400">
+          <div className="text-center text-gray-400 text-detective-xs">
             <p>Arrastra aquí</p>
           </div>
         )}

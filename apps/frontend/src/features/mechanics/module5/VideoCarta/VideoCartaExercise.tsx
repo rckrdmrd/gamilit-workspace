@@ -1,19 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {
-  Video,
-  Camera,
-  Download,
-  Send,
-  Loader2,
-  CheckCircle,
-  Pause,
-  Play,
-  RotateCcw,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  AlertCircle,
-} from 'lucide-react';
+import { Video, Camera, Download, Send, Loader2, CheckCircle, Pause, Play, RotateCcw, ChevronLeft, ChevronRight, Clock, AlertCircle } from 'lucide-react';
 import { useSectionedRecorder, VideoSection } from '@/shared/hooks/useSectionedRecorder';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
@@ -41,12 +27,7 @@ interface ExerciseProps {
 // Definición de las secciones del video
 const VIDEO_SECTIONS: VideoSection[] = [
   { id: 'intro', name: 'Introducción', duration: 30, prompt: '¿Quién eres y por qué escribes?' },
-  {
-    id: 'main',
-    name: 'Mensaje Principal',
-    duration: 90,
-    prompt: '¿Qué quieres decirle a Marie Curie?',
-  },
+  { id: 'main', name: 'Mensaje Principal', duration: 90, prompt: '¿Qué quieres decirle a Marie Curie?' },
   { id: 'reflection', name: 'Reflexiones', duration: 45, prompt: '¿Qué aprendiste de ella?' },
   { id: 'closing', name: 'Cierre', duration: 15, prompt: 'Despedida y agradecimiento' },
 ];
@@ -55,7 +36,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
   exerciseId = 'video-carta-default',
   onComplete,
   onProgressUpdate,
-  onExit,
+  onExit
 }) => {
   const [filter, setFilter] = useState('none');
   const [startTime] = useState(new Date());
@@ -92,7 +73,10 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
     reRecordSection,
   } = useSectionedRecorder(VIDEO_SECTIONS);
 
-  const { submit, isSubmitting } = useExerciseSubmission(exerciseId || '', {
+  const {
+    submit,
+    isSubmitting,
+  } = useExerciseSubmission(exerciseId || '', {
     onSuccess: (result) => {
       setIsSubmitted(true);
       const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
@@ -129,9 +113,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
   useEffect(() => {
     const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     const totalSections = sections.length;
-    const completedSections = Array.from(sectionRecordings.values()).filter(
-      (r) => r.completed,
-    ).length;
+    const completedSections = Array.from(sectionRecordings.values()).filter(r => r.completed).length;
     const score = Math.min(100, Math.round((completedSections / totalSections) * 100));
 
     onProgressUpdate?.({
@@ -157,26 +139,18 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    sectionRecordings,
-    currentSectionIndex,
-    duration,
-    allSectionsCompleted,
-    videoBlob,
-    startTime,
-  ]);
+  }, [sectionRecordings, currentSectionIndex, duration, allSectionsCompleted, videoBlob, startTime]);
 
   // Update video preview source when previewUrl changes
   useEffect(() => {
     if (videoRef.current && previewUrl && isRecording) {
       // For live preview during recording
       const video = videoRef.current;
-      navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
-        .then((stream) => {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(stream => {
           video.srcObject = stream;
         })
-        .catch((err) => {
+        .catch(err => {
           console.error('Error setting preview:', err);
         });
     } else if (videoRef.current && videoUrl && !isRecording) {
@@ -213,7 +187,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
             <Video className="h-8 w-8" />
             <h2 className="text-2xl font-bold">Video Carta a Marie Curie</h2>
           </div>
-          <p className="mb-4 opacity-90">
+          <p className="opacity-90 mb-4">
             Graba un video mensaje dividido en 4 secciones cronometradas. Duración total: 3 minutos.
           </p>
 
@@ -221,9 +195,11 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="font-medium text-white">Progreso Total</span>
-              <span className="text-white/80">{Math.round(totalProgress)}%</span>
+              <span className="text-white/80">
+                {Math.round(totalProgress)}%
+              </span>
             </div>
-            <div className="h-3 w-full overflow-hidden rounded-full bg-white/30">
+            <div className="h-3 w-full rounded-full bg-white/30 overflow-hidden">
               <div
                 className="h-full bg-white transition-all duration-300"
                 style={{ width: `${totalProgress}%` }}
@@ -243,17 +219,19 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                   key={section.id}
                   onClick={() => !isRecording && reRecordSection(section.id)}
                   disabled={isRecording}
-                  className={`rounded-xl border-2 p-3 text-center transition-all ${
+                  className={`p-3 rounded-xl border-2 text-center transition-all ${
                     isCurrent
                       ? 'border-white bg-white text-blue-800'
                       : isCompleted
-                        ? 'border-green-300 bg-green-100 text-green-700'
-                        : 'border-white/30 bg-white/10 text-white hover:bg-white/20'
+                      ? 'border-green-300 bg-green-100 text-green-700'
+                      : 'border-white/30 bg-white/10 text-white hover:bg-white/20'
                   } ${isRecording ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                 >
-                  <div className="mb-1 text-xs font-bold">{section.name}</div>
+                  <div className="text-xs font-bold mb-1">{section.name}</div>
                   <div className="text-xs">{section.duration}s</div>
-                  {isCompleted && !isCurrent && <CheckCircle className="mx-auto mt-1 h-4 w-4" />}
+                  {isCompleted && !isCurrent && (
+                    <CheckCircle className="h-4 w-4 mx-auto mt-1" />
+                  )}
                 </button>
               );
             })}
@@ -263,18 +241,17 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2">
             {!isSupported && (
-              <div className="rounded-detective border-2 border-red-300 bg-red-50 p-6 shadow-card">
-                <p className="font-medium text-red-600">
-                  Tu navegador no soporta grabación de video. Por favor usa Chrome, Firefox, Edge o
-                  Safari actualizado.
+              <div className="rounded-detective bg-red-50 border-2 border-red-300 p-6 shadow-card">
+                <p className="text-red-600 font-medium">
+                  Tu navegador no soporta grabación de video. Por favor usa Chrome, Firefox, Edge o Safari actualizado.
                 </p>
               </div>
             )}
 
             {recorderError && (
-              <div className="rounded-detective border-2 border-red-300 bg-red-50 p-6 shadow-card">
-                <h3 className="mb-2 font-bold text-red-600">{recorderError.message}</h3>
-                <p className="text-sm text-red-600">{recorderError.userAction}</p>
+              <div className="rounded-detective bg-red-50 border-2 border-red-300 p-6 shadow-card">
+                <h3 className="font-bold text-red-600 mb-2">{recorderError.message}</h3>
+                <p className="text-red-600 text-sm">{recorderError.userAction}</p>
               </div>
             )}
 
@@ -283,26 +260,23 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                 {/* Current Section Info */}
                 {currentSection && (
                   <div className="mb-4 rounded-xl border-2 border-orange-200 bg-gradient-to-r from-orange-50 to-blue-50 p-4">
-                    <div className="mb-2 flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 animate-pulse rounded-full bg-detective-orange" />
+                        <div className="h-2 w-2 rounded-full bg-detective-orange animate-pulse" />
                         <span className="font-bold text-detective-text">
-                          Sección {currentSectionIndex + 1} de {sections.length}:{' '}
-                          {currentSection.name}
+                          Sección {currentSectionIndex + 1} de {sections.length}: {currentSection.name}
                         </span>
                       </div>
-                      <div
-                        className={`flex items-center gap-2 font-mono text-xl font-bold transition-colors ${
-                          isTimerWarning ? 'animate-pulse text-red-600' : 'text-detective-text'
-                        }`}
-                      >
+                      <div className={`flex items-center gap-2 font-mono text-xl font-bold transition-colors ${
+                        isTimerWarning ? 'text-red-600 animate-pulse' : 'text-detective-text'
+                      }`}>
                         <Clock className="h-5 w-5" />
                         {formatDuration(sectionTimeRemaining)}
                       </div>
                     </div>
 
                     {/* Section Progress Bar */}
-                    <div className="mb-2 h-2 w-full overflow-hidden rounded-full bg-gray-200">
+                    <div className="h-2 w-full rounded-full bg-gray-200 overflow-hidden mb-2">
                       <div
                         className={`h-full transition-all duration-300 ${
                           isTimerWarning ? 'bg-red-500' : 'bg-detective-orange'
@@ -311,7 +285,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                       />
                     </div>
 
-                    <p className="text-sm italic text-detective-text-secondary">
+                    <p className="text-sm text-detective-text-secondary italic">
                       {currentSection.prompt}
                     </p>
                   </div>
@@ -334,7 +308,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                     </div>
                   )}
                   {isRecording && currentSection && (
-                    <div className="absolute left-4 top-4 rounded-detective bg-black/70 px-4 py-2 text-white backdrop-blur-sm">
+                    <div className="absolute left-4 top-4 rounded-detective bg-black/70 backdrop-blur-sm px-4 py-2 text-white">
                       <div className="text-xs opacity-75">Grabando</div>
                       <div className="font-bold">{currentSection.name}</div>
                     </div>
@@ -347,7 +321,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                     </div>
                   )}
                   {isTimerWarning && isRecording && (
-                    <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 transform animate-pulse items-center gap-2 rounded-full bg-red-600 px-4 py-2 text-white shadow-lg">
+                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-2 rounded-full bg-red-600 px-4 py-2 text-white shadow-lg animate-pulse">
                       <AlertCircle className="h-5 w-5" />
                       <span className="font-bold">Últimos {sectionTimeRemaining} segundos</span>
                     </div>
@@ -361,7 +335,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                       <button
                         onClick={() => startRecording()}
                         disabled={!isSupported}
-                        className="flex items-center gap-2 rounded-detective bg-red-600 px-8 py-4 text-lg font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+                        className="flex items-center gap-2 rounded-detective bg-red-600 px-8 py-4 text-lg font-medium text-white transition-colors hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
                       >
                         <Camera className="h-6 w-6" />
                         Iniciar Grabación
@@ -407,18 +381,18 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                       <button
                         onClick={goToPreviousSection}
                         disabled={currentSectionIndex === 0}
-                        className="flex items-center gap-2 rounded-detective bg-detective-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-detective-blue/90 disabled:cursor-not-allowed disabled:bg-gray-300"
+                        className="flex items-center gap-2 rounded-detective bg-detective-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-detective-blue/90 disabled:bg-gray-300 disabled:cursor-not-allowed"
                       >
                         <ChevronLeft className="h-4 w-4" />
                         Anterior
                       </button>
-                      <span className="text-sm font-medium text-detective-text-secondary">
+                      <span className="text-sm text-detective-text-secondary font-medium">
                         Sección {currentSectionIndex + 1} / {sections.length}
                       </span>
                       <button
                         onClick={goToNextSection}
                         disabled={currentSectionIndex === sections.length - 1}
-                        className="flex items-center gap-2 rounded-detective bg-detective-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-detective-blue/90 disabled:cursor-not-allowed disabled:bg-gray-300"
+                        className="flex items-center gap-2 rounded-detective bg-detective-blue px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-detective-blue/90 disabled:bg-gray-300 disabled:cursor-not-allowed"
                       >
                         Siguiente
                         <ChevronRight className="h-4 w-4" />
@@ -432,10 +406,10 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                 <video src={videoUrl} controls className="w-full rounded-detective" />
 
                 {/* Recording Summary */}
-                <div className="space-y-3 rounded-detective bg-detective-bg-secondary p-4">
+                <div className="bg-detective-bg-secondary rounded-detective p-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-detective-text">Resumen de Grabación</span>
-                    <span className="text-sm text-detective-text-secondary">
+                    <span className="text-detective-text-secondary text-sm">
                       Duración Total: {formatDuration(duration)}
                     </span>
                   </div>
@@ -447,7 +421,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                       return (
                         <div
                           key={section.id}
-                          className="flex items-center justify-between rounded border border-gray-200 bg-white p-2"
+                          className="flex items-center justify-between p-2 bg-white rounded border border-gray-200"
                         >
                           <div className="flex items-center gap-2">
                             {recording?.completed ? (
@@ -460,8 +434,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                             </span>
                           </div>
                           <div className="text-xs text-detective-text-secondary">
-                            {recording?.duration ? formatDuration(recording.duration) : '--:--'} /{' '}
-                            {formatDuration(section.duration)}
+                            {recording?.duration ? formatDuration(recording.duration) : '--:--'} / {formatDuration(section.duration)}
                           </div>
                         </div>
                       );
@@ -471,7 +444,7 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                 <div className="flex gap-3">
                   <button
                     onClick={resetRecording}
-                    className="flex flex-1 items-center justify-center gap-2 rounded-detective bg-detective-orange px-4 py-3 font-medium text-white transition-colors hover:bg-detective-orange-dark"
+                    className="flex-1 flex items-center justify-center gap-2 rounded-detective bg-detective-orange px-4 py-3 font-medium text-white transition-colors hover:bg-detective-orange-dark"
                   >
                     <RotateCcw className="h-5 w-5" />
                     Grabar Nuevo Video
@@ -546,15 +519,15 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                   return (
                     <div
                       key={section.id}
-                      className={`rounded-detective border-2 p-3 transition-all ${
+                      className={`p-3 rounded-detective border-2 transition-all ${
                         isCurrent
                           ? 'border-detective-orange bg-detective-orange/10'
                           : recording?.completed
-                            ? 'border-green-500/30 bg-green-50/50'
-                            : 'border-gray-200 bg-white'
+                          ? 'border-green-500/30 bg-green-50/50'
+                          : 'border-gray-200 bg-white'
                       }`}
                     >
-                      <div className="mb-1 flex items-center justify-between">
+                      <div className="flex items-center justify-between mb-1">
                         <span className="text-sm font-bold text-detective-text">
                           {index + 1}. {section.name}
                         </span>
@@ -562,15 +535,15 @@ export const VideoCartaExercise: React.FC<ExerciseProps> = ({
                           {section.duration}s
                         </span>
                       </div>
-                      <p className="text-xs italic text-detective-text-secondary">
+                      <p className="text-xs text-detective-text-secondary italic">
                         {section.prompt}
                       </p>
                     </div>
                   );
                 })}
               </div>
-              <div className="mt-4 border-t border-gray-300 pt-4">
-                <h4 className="mb-2 text-sm font-bold text-detective-text">Consejos Generales:</h4>
+              <div className="mt-4 pt-4 border-t border-gray-300">
+                <h4 className="text-sm font-bold text-detective-text mb-2">Consejos Generales:</h4>
                 <ul className="space-y-1 text-xs text-detective-text-secondary">
                   <li>• Habla claramente y con entusiasmo</li>
                   <li>• Sigue el tiempo de cada sección</li>

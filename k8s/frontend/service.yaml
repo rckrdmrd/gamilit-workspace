@@ -1,0 +1,24 @@
+# =============================================================================
+# GAMILIT Frontend - Kubernetes Service
+# =============================================================================
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: gamilit-frontend
+  namespace: gamilit-production
+  labels:
+    app: gamilit
+    component: frontend
+    tier: web
+spec:
+  type: ClusterIP
+  selector:
+    app: gamilit
+    component: frontend
+    tier: web
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: http

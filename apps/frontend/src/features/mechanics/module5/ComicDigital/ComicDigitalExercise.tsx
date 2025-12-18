@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Plus,
-  Image,
-  Type,
-  MessageSquare,
-  Download,
-  Send,
-  Loader2,
-  CheckCircle,
-} from 'lucide-react';
+import { Plus, Image, Type, MessageSquare, Download, Send, Loader2, CheckCircle } from 'lucide-react';
 import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
@@ -52,7 +43,7 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
   exerciseId = 'comic-digital-default',
   onComplete,
   onProgressUpdate,
-  onExit,
+  onExit
 }) => {
   const [panels, setPanels] = useState<ComicPanel[]>([]);
   const [selectedPanel, setSelectedPanel] = useState<string | null>(null);
@@ -62,7 +53,10 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const { submit, isSubmitting } = useExerciseSubmission(exerciseId || '', {
+  const {
+    submit,
+    isSubmitting,
+  } = useExerciseSubmission(exerciseId || '', {
     onSuccess: (result) => {
       setIsSubmitted(true);
       const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
@@ -142,25 +136,25 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
   };
 
   const addSpeechBubble = (panelId: string, type: SpeechBubble['type']) => {
-    setPanels(
-      panels.map((panel) => {
-        if (panel.id === panelId) {
-          const newBubble: SpeechBubble = {
-            id: Date.now().toString(),
-            text: 'Escribe aquí...',
-            x: 50,
-            y: 30,
-            type,
-          };
-          return { ...panel, speechBubbles: [...panel.speechBubbles, newBubble] };
-        }
-        return panel;
-      }),
-    );
+    setPanels(panels.map(panel => {
+      if (panel.id === panelId) {
+        const newBubble: SpeechBubble = {
+          id: Date.now().toString(),
+          text: 'Escribe aquí...',
+          x: 50,
+          y: 30,
+          type,
+        };
+        return { ...panel, speechBubbles: [...panel.speechBubbles, newBubble] };
+      }
+      return panel;
+    }));
   };
 
   const updatePanelText = (panelId: string, text: string) => {
-    setPanels(panels.map((panel) => (panel.id === panelId ? { ...panel, text } : panel)));
+    setPanels(panels.map(panel =>
+      panel.id === panelId ? { ...panel, text } : panel
+    ));
   };
 
   const handleSubmit = () => {
@@ -168,12 +162,12 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
 
     submit({
       title,
-      panels: panels.map((panel) => ({
+      panels: panels.map(panel => ({
         id: panel.id,
         layout: panel.layout,
         text: panel.text,
         speechBubblesCount: panel.speechBubbles.length,
-        speechBubbles: panel.speechBubbles.map((bubble) => ({
+        speechBubbles: panel.speechBubbles.map(bubble => ({
           text: bubble.text,
           type: bubble.type,
         })),
@@ -185,50 +179,47 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
 
   return (
     <div className="min-h-screen bg-detective-bg p-6">
-      <div className="mx-auto max-w-7xl space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6">
         <div className="rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
           <div className="mb-2 flex items-center gap-3">
             <h2 className="text-2xl font-bold">Creador de Cómics Digitales</h2>
           </div>
-          <p className="mb-4 opacity-90">
-            Crea tu propio cómic digital sobre Marie Curie con paneles, diálogos y elementos
-            visuales.
+          <p className="opacity-90 mb-4">
+            Crea tu propio cómic digital sobre Marie Curie con paneles, diálogos y elementos visuales.
           </p>
           <div className="flex items-center gap-4">
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="flex-1 rounded-xl border-2 border-white/30 bg-white/10 px-4 py-2 text-white placeholder-white/70 focus:border-white focus:outline-none"
+              className="flex-1 px-4 py-2 border-2 border-white/30 bg-white/10 rounded-xl text-white placeholder-white/70 focus:border-white focus:outline-none"
               placeholder="Título del cómic..."
             />
             <button
-              onClick={() => {
-                /* Export logic */
-              }}
-              className="flex items-center gap-2 rounded-xl bg-white/20 px-4 py-2 font-medium text-white transition-colors hover:bg-white/30"
+              onClick={() => {/* Export logic */}}
+              className="flex items-center gap-2 px-4 py-2 bg-white/20 text-white rounded-xl hover:bg-white/30 transition-colors font-medium"
             >
-              <Download className="h-5 w-5" />
+              <Download className="w-5 h-5" />
               Exportar
             </button>
             <button
               onClick={handleSubmit}
               disabled={panels.length === 0 || isSubmitting || isSubmitted}
-              className="flex items-center gap-2 rounded-xl bg-white px-6 py-2 font-medium text-blue-800 transition-colors hover:bg-white/90 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500"
+              className="flex items-center gap-2 px-6 py-2 bg-white text-blue-800 rounded-xl hover:bg-white/90 transition-colors font-medium disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <Loader2 className="w-5 h-5 animate-spin" />
                   Enviando...
                 </>
               ) : isSubmitted ? (
                 <>
-                  <CheckCircle className="h-5 w-5" />
+                  <CheckCircle className="w-5 h-5" />
                   Enviado
                 </>
               ) : (
                 <>
-                  <Send className="h-5 w-5" />
+                  <Send className="w-5 h-5" />
                   Enviar Cómic
                 </>
               )}
@@ -236,20 +227,20 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
-          <div className="space-y-4 rounded-detective bg-white p-6 shadow-card">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="bg-white rounded-detective shadow-card p-6 space-y-4">
             <h3 className="font-bold text-detective-text">Herramientas</h3>
 
             <div>
-              <p className="mb-2 text-sm text-detective-text-secondary">Agregar Panel:</p>
+              <p className="text-detective-text-secondary text-sm mb-2">Agregar Panel:</p>
               <div className="space-y-2">
-                {layouts.map((layout) => (
+                {layouts.map(layout => (
                   <button
                     key={layout.id}
                     onClick={() => addPanel(layout.id)}
-                    className="w-full rounded-detective border-2 border-gray-300 bg-detective-bg px-4 py-2 text-left transition-colors hover:border-detective-orange"
+                    className="w-full py-2 px-4 bg-detective-bg border-2 border-gray-300 rounded-detective hover:border-detective-orange transition-colors text-left"
                   >
-                    <Plus className="mr-2 inline h-4 w-4" />
+                    <Plus className="w-4 h-4 inline mr-2" />
                     {layout.name}
                   </button>
                 ))}
@@ -259,38 +250,38 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
             {selectedPanel && (
               <>
                 <div>
-                  <p className="mb-2 text-sm text-detective-text-secondary">Agregar Globo:</p>
+                  <p className="text-detective-text-secondary text-sm mb-2">Agregar Globo:</p>
                   <div className="space-y-2">
                     <button
                       onClick={() => addSpeechBubble(selectedPanel, 'speech')}
-                      className="w-full rounded-detective border-2 border-blue-300 bg-blue-50 px-4 py-2 text-left transition-colors hover:bg-blue-100"
+                      className="w-full py-2 px-4 bg-blue-50 border-2 border-blue-300 rounded-detective hover:bg-blue-100 transition-colors text-left"
                     >
-                      <MessageSquare className="mr-2 inline h-4 w-4" />
+                      <MessageSquare className="w-4 h-4 inline mr-2" />
                       Diálogo
                     </button>
                     <button
                       onClick={() => addSpeechBubble(selectedPanel, 'thought')}
-                      className="w-full rounded-detective border-2 border-purple-300 bg-purple-50 px-4 py-2 text-left transition-colors hover:bg-purple-100"
+                      className="w-full py-2 px-4 bg-purple-50 border-2 border-purple-300 rounded-detective hover:bg-purple-100 transition-colors text-left"
                     >
                       💭 Pensamiento
                     </button>
                     <button
                       onClick={() => addSpeechBubble(selectedPanel, 'caption')}
-                      className="w-full rounded-detective border-2 border-yellow-300 bg-yellow-50 px-4 py-2 text-left transition-colors hover:bg-yellow-100"
+                      className="w-full py-2 px-4 bg-yellow-50 border-2 border-yellow-300 rounded-detective hover:bg-yellow-100 transition-colors text-left"
                     >
-                      <Type className="mr-2 inline h-4 w-4" />
+                      <Type className="w-4 h-4 inline mr-2" />
                       Narración
                     </button>
                   </div>
                 </div>
 
                 <div>
-                  <p className="mb-2 text-sm text-detective-text-secondary">Fondos:</p>
+                  <p className="text-detective-text-secondary text-sm mb-2">Fondos:</p>
                   <div className="grid grid-cols-2 gap-2">
-                    {backgrounds.map((bg) => (
+                    {backgrounds.map(bg => (
                       <button
                         key={bg.id}
-                        className={`px-3 py-2 ${bg.color} rounded border-2 border-gray-300 text-xs transition-colors hover:border-detective-orange`}
+                        className={`py-2 px-3 ${bg.color} border-2 border-gray-300 rounded hover:border-detective-orange transition-colors text-xs`}
                       >
                         {bg.name}
                       </button>
@@ -301,41 +292,39 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
             )}
           </div>
 
-          <div className="rounded-detective bg-white p-6 shadow-card lg:col-span-3">
+          <div className="lg:col-span-3 bg-white rounded-detective shadow-card p-6">
             <div className="mb-4 text-center">
               <h2 className="text-2xl font-bold text-detective-text">{title}</h2>
             </div>
 
-            <div className="min-h-[600px] space-y-4 rounded-detective border-4 border-detective-text bg-white p-4">
+            <div className="space-y-4 border-4 border-detective-text p-4 rounded-detective bg-white min-h-[600px]">
               {panels.map((panel, index) => (
                 <div
                   key={panel.id}
                   onClick={() => setSelectedPanel(panel.id)}
-                  className={`relative cursor-pointer border-4 border-detective-text bg-gray-50 p-4 ${
+                  className={`border-4 border-detective-text p-4 cursor-pointer relative bg-gray-50 ${
                     selectedPanel === panel.id ? 'ring-4 ring-detective-orange' : ''
                   }`}
                   style={{ minHeight: '200px' }}
                 >
-                  <div className="absolute left-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-detective-text font-bold text-white">
+                  <div className="absolute top-2 left-2 bg-detective-text text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">
                     {index + 1}
                   </div>
 
-                  {panel.speechBubbles.map((bubble) => (
+                  {panel.speechBubbles.map(bubble => (
                     <div
                       key={bubble.id}
                       className={`absolute ${
-                        bubble.type === 'speech'
-                          ? 'rounded-xl border-2 border-detective-text bg-white'
-                          : bubble.type === 'thought'
-                            ? 'rounded-full border-2 border-detective-text bg-white'
-                            : 'border-2 border-yellow-400 bg-yellow-100'
-                      } max-w-xs px-4 py-2`}
+                        bubble.type === 'speech' ? 'bg-white border-2 border-detective-text rounded-xl' :
+                        bubble.type === 'thought' ? 'bg-white border-2 border-detective-text rounded-full' :
+                        'bg-yellow-100 border-2 border-yellow-400'
+                      } px-4 py-2 max-w-xs`}
                       style={{
                         left: `${bubble.x}%`,
                         top: `${bubble.y}%`,
                       }}
                     >
-                      <p className="text-sm font-medium text-detective-text">{bubble.text}</p>
+                      <p className="text-sm text-detective-text font-medium">{bubble.text}</p>
                     </div>
                   ))}
 
@@ -345,7 +334,7 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
                         value={panel.text}
                         onChange={(e) => updatePanelText(panel.id, e.target.value)}
                         placeholder="Descripción de la escena o narración..."
-                        className="w-full resize-none rounded border-2 border-gray-300 px-3 py-2 focus:border-detective-orange focus:outline-none"
+                        className="w-full px-3 py-2 border-2 border-gray-300 rounded focus:border-detective-orange focus:outline-none resize-none"
                         rows={3}
                       />
                     </div>
@@ -354,8 +343,8 @@ export const ComicDigitalExercise: React.FC<ExerciseProps> = ({
               ))}
 
               {panels.length === 0 && (
-                <div className="py-20 text-center text-detective-text-secondary">
-                  <Image className="mx-auto mb-4 h-16 w-16 opacity-50" />
+                <div className="text-center py-20 text-detective-text-secondary">
+                  <Image className="w-16 h-16 mx-auto mb-4 opacity-50" />
                   <p>Agrega paneles para comenzar tu cómic</p>
                   <p className="text-sm">sobre la vida de Marie Curie</p>
                 </div>

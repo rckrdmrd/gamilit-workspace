@@ -168,6 +168,7 @@ export const DeviceManagementSection: React.FC = () => {
         </div>
       )}
 
+
       {pushError && (
         <div
           style={{
@@ -192,8 +193,8 @@ export const DeviceManagementSection: React.FC = () => {
             color: '#e65100',
           }}
         >
-          ⚠️ Has bloqueado las notificaciones. Para activarlas, ve a la configuración de tu
-          navegador y permite las notificaciones para este sitio.
+          ⚠️ Has bloqueado las notificaciones. Para activarlas, ve a la configuración de tu navegador
+          y permite las notificaciones para este sitio.
         </div>
       )}
 
@@ -279,13 +280,14 @@ export const DeviceManagementSection: React.FC = () => {
                 • Solicitudes de amistad
                 <br />
                 • Tareas asignadas por profesores
-                <br />• Y más...
+                <br />
+                • Y más...
               </p>
               <p style={{ marginTop: '1rem', color: '#666' }}>
                 <strong>¿Es seguro?</strong>
                 <br />
-                Sí, usamos Web Push API nativo del navegador, un estándar seguro y confiable. Puedes
-                desactivar las notificaciones en cualquier momento.
+                Sí, usamos Web Push API nativo del navegador, un estándar seguro y confiable.
+                Puedes desactivar las notificaciones en cualquier momento.
               </p>
             </div>
           )}
@@ -308,23 +310,10 @@ export const DeviceManagementSection: React.FC = () => {
                   opacity: isBeingDeleted ? 0.5 : 1,
                 }}
               >
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                  }}
-                >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   {/* Device Info */}
                   <div style={{ flex: 1 }}>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '1rem',
-                        marginBottom: '0.75rem',
-                      }}
-                    >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem' }}>
                       <span style={{ fontSize: '2rem' }}>
                         {DEVICE_TYPE_ICONS[device.deviceType] || '📱'}
                       </span>
@@ -397,9 +386,7 @@ export const DeviceManagementSection: React.FC = () => {
                                 </span>
                               )}
                             </div>
-                            <div
-                              style={{ fontSize: '0.875rem', color: '#666', marginTop: '0.25rem' }}
-                            >
+                            <div style={{ fontSize: '0.875rem', color: '#666', marginTop: '0.25rem' }}>
                               {DEVICE_TYPE_LABELS[device.deviceType] || device.deviceType}
                             </div>
                           </div>
@@ -480,16 +467,8 @@ export const DeviceManagementSection: React.FC = () => {
           }}
         >
           <h4>📱 Registrar Nuevo Dispositivo</h4>
-          <p
-            style={{
-              marginTop: '0.5rem',
-              color: '#666',
-              fontSize: '0.875rem',
-              marginBottom: '1rem',
-            }}
-          >
-            ¿Usas varios dispositivos? Registra este navegador o dispositivo para recibir
-            notificaciones push.
+          <p style={{ marginTop: '0.5rem', color: '#666', fontSize: '0.875rem', marginBottom: '1rem' }}>
+            ¿Usas varios dispositivos? Registra este navegador o dispositivo para recibir notificaciones push.
           </p>
 
           {isSupported && permissionStatus !== 'denied' ? (
@@ -512,8 +491,7 @@ export const DeviceManagementSection: React.FC = () => {
           ) : (
             <p style={{ marginTop: '0.75rem', color: '#666', fontSize: '0.875rem' }}>
               {!isSupported && '⚠️ Tu navegador no soporta notificaciones push.'}
-              {permissionStatus === 'denied' &&
-                '⚠️ Has bloqueado las notificaciones en este navegador.'}
+              {permissionStatus === 'denied' && '⚠️ Has bloqueado las notificaciones en este navegador.'}
             </p>
           )}
         </div>

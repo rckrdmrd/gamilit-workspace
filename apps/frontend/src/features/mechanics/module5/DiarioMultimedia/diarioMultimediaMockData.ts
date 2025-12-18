@@ -52,8 +52,7 @@ export const mockSampleEntry: DiaryEntry = {
   id: 'sample-entry-1',
   date: new Date(),
   title: 'Mi primera reflexión sobre Marie Curie',
-  content:
-    'Hoy aprendí que Marie Curie tuvo que superar muchos obstáculos para convertirse en científica. Me impresiona su determinación y cómo nunca se rindió ante las dificultades. Esto me hace pensar en mis propios desafíos y cómo puedo enfrentarlos con la misma actitud.',
+  content: 'Hoy aprendí que Marie Curie tuvo que superar muchos obstáculos para convertirse en científica. Me impresiona su determinación y cómo nunca se rindió ante las dificultades. Esto me hace pensar en mis propios desafíos y cómo puedo enfrentarlos con la misma actitud.',
   media: [],
   isPrivate: false,
 };

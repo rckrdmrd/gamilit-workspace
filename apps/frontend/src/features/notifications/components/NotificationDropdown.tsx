@@ -13,7 +13,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onCl
     fetchNotifications,
     markAsRead,
     markAllAsRead,
-    deleteNotification,
+    deleteNotification
   } = useNotificationsStore();
 
   // Ensure notifications is always an array
@@ -25,26 +25,16 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onCl
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'achievement_unlocked':
-        return '🏆';
-      case 'rank_up':
-        return '🎉';
-      case 'streak_milestone':
-        return '🔥';
-      case 'friend_request':
-        return '👥';
-      case 'friend_accepted':
-        return '✅';
-      case 'level_up':
-        return '⬆️';
-      case 'ml_coins_earned':
-        return '💰';
-      case 'mission_completed':
-        return '✨';
-      case 'system_announcement':
-        return '📢';
-      default:
-        return '📬';
+      case 'achievement_unlocked': return '🏆';
+      case 'rank_up': return '🎉';
+      case 'streak_milestone': return '🔥';
+      case 'friend_request': return '👥';
+      case 'friend_accepted': return '✅';
+      case 'level_up': return '⬆️';
+      case 'ml_coins_earned': return '💰';
+      case 'mission_completed': return '✨';
+      case 'system_announcement': return '📢';
+      default: return '📬';
     }
   };
 
@@ -89,42 +79,43 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onCl
           </div>
         )}
 
-        {!isLoading &&
-          safeNotifications.map((notification) => (
-            <div
-              key={notification.id}
-              className={`notification-item ${notification.status === 'read' ? 'read' : 'unread'}`}
-              onClick={() => {
-                if (notification.status === 'unread') {
-                  markAsRead(notification.id);
-                }
-              }}
-            >
-              <div className="notification-icon">{getNotificationIcon(notification.type)}</div>
-              <div className="notification-content">
-                <h4>{notification.title}</h4>
-                <p>{notification.message}</p>
-                <span className="notification-time">{formatTimestamp(notification.createdAt)}</span>
-              </div>
-              <button
-                className="delete-button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteNotification(notification.id);
-                }}
-                aria-label="Eliminar notificación"
-              >
-                ×
-              </button>
+        {!isLoading && safeNotifications.map(notification => (
+          <div
+            key={notification.id}
+            className={`notification-item ${notification.status === 'read' ? 'read' : 'unread'}`}
+            onClick={() => {
+              if (notification.status === 'unread') {
+                markAsRead(notification.id);
+              }
+            }}
+          >
+            <div className="notification-icon">
+              {getNotificationIcon(notification.type)}
             </div>
-          ))}
+            <div className="notification-content">
+              <h4>{notification.title}</h4>
+              <p>{notification.message}</p>
+              <span className="notification-time">
+                {formatTimestamp(notification.createdAt)}
+              </span>
+            </div>
+            <button
+              className="delete-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteNotification(notification.id);
+              }}
+              aria-label="Eliminar notificación"
+            >
+              ×
+            </button>
+          </div>
+        ))}
       </div>
 
       {safeNotifications.length > 0 && (
         <div className="notification-footer">
-          <button onClick={onClose} className="close-button">
-            Cerrar
-          </button>
+          <button onClick={onClose} className="close-button">Cerrar</button>
         </div>
       )}
     </div>

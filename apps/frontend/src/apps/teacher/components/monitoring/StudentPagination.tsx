@@ -98,7 +98,8 @@ export function StudentPagination({
       {/* Info y Selector de Limite */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
         <span className="text-sm text-detective-text-secondary">
-          Mostrando <span className="font-semibold text-detective-text">{startItem}</span> -{' '}
+          Mostrando{' '}
+          <span className="font-semibold text-detective-text">{startItem}</span> -{' '}
           <span className="font-semibold text-detective-text">{endItem}</span> de{' '}
           <span className="font-semibold text-detective-text">{total}</span> estudiantes
         </span>
@@ -137,7 +138,10 @@ export function StudentPagination({
         <div className="flex items-center gap-1">
           {generatePageNumbers(page, totalPages).map((pageNum, idx) =>
             pageNum === '...' ? (
-              <span key={`ellipsis-${idx}`} className="px-2 text-detective-text-secondary">
+              <span
+                key={`ellipsis-${idx}`}
+                className="px-2 text-detective-text-secondary"
+              >
                 ...
               </span>
             ) : (
@@ -151,7 +155,7 @@ export function StudentPagination({
               >
                 {pageNum}
               </DetectiveButton>
-            ),
+            )
           )}
         </div>
 

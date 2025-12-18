@@ -1,21 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
-import {
-  Upload,
-  X,
-  FileImage,
-  FileAudio,
-  FileVideo,
-  File as FileIcon,
-  CheckCircle,
-  AlertCircle,
-} from 'lucide-react';
-import {
-  mediaApi,
-  MediaType,
-  MediaAttachmentResponse,
-  formatFileSize,
-  detectMediaType,
-} from '@/shared/api/mediaApi';
+import { Upload, X, FileImage, FileAudio, FileVideo, File as FileIcon, CheckCircle, AlertCircle } from 'lucide-react';
+import { mediaApi, MediaType, MediaAttachmentResponse, formatFileSize, detectMediaType } from '@/shared/api/mediaApi';
 
 /**
  * MediaUploader Props
@@ -92,137 +77,133 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
   /**
    * Handle file selection
    */
-  const handleFiles = useCallback(
-    (selectedFiles: FileList | null) => {
-      if (!selectedFiles || selectedFiles.length === 0) return;
+  const handleFiles = useCallback((selectedFiles: FileList | null) => {
+    if (!selectedFiles || selectedFiles.length === 0) return;
 
-      const newFiles: FileWithStatus[] = [];
+    const newFiles: FileWithStatus[] = [];
 
-      // Convert FileList to array and validate
-      Array.from(selectedFiles).forEach((file) => {
-        // Check max files limit
-        if (files.length + newFiles.length >= maxFiles) {
-          onError?.(`Máximo ${maxFiles} archivos permitidos`);
-          return;
-        }
-
-        // Detect media type
-        const detectedType = detectMediaType(file);
-        if (!detectedType || !acceptedTypes.includes(detectedType)) {
-          onError?.(`Tipo de archivo no permitido: ${file.name}`);
-          return;
-        }
-
-        // Validate file
-        const validation = mediaApi.validateFile(file, detectedType, maxSize);
-        if (!validation.valid) {
-          onError?.(validation.errors?.join(', ') || 'Validación fallida');
-          return;
-        }
-
-        // Add to upload queue
-        newFiles.push({
-          file,
-          id: `${Date.now()}-${Math.random()}`,
-          progress: 0,
-          status: 'pending',
-        });
-      });
-
-      if (newFiles.length > 0) {
-        setFiles((prev) => [...prev, ...newFiles]);
-        // Start uploads
-        newFiles.forEach((fileWithStatus) => uploadFile(fileWithStatus));
+    // Convert FileList to array and validate
+    Array.from(selectedFiles).forEach((file) => {
+      // Check max files limit
+      if (files.length + newFiles.length >= maxFiles) {
+        onError?.(`Máximo ${maxFiles} archivos permitidos`);
+        return;
       }
-    },
-    [files.length, maxFiles, acceptedTypes, maxSize, onError],
-  );
+
+      // Detect media type
+      const detectedType = detectMediaType(file);
+      if (!detectedType || !acceptedTypes.includes(detectedType)) {
+        onError?.(`Tipo de archivo no permitido: ${file.name}`);
+        return;
+      }
+
+      // Validate file
+      const validation = mediaApi.validateFile(file, detectedType, maxSize);
+      if (!validation.valid) {
+        onError?.(validation.errors?.join(', ') || 'Validación fallida');
+        return;
+      }
+
+      // Add to upload queue
+      newFiles.push({
+        file,
+        id: `${Date.now()}-${Math.random()}`,
+        progress: 0,
+        status: 'pending',
+      });
+    });
+
+    if (newFiles.length > 0) {
+      setFiles((prev) => [...prev, ...newFiles]);
+      // Start uploads
+      newFiles.forEach((fileWithStatus) => uploadFile(fileWithStatus));
+    }
+  }, [files.length, maxFiles, acceptedTypes, maxSize, onError]);
 
   /**
    * Upload a single file
    */
-  const uploadFile = useCallback(
-    async (fileWithStatus: FileWithStatus) => {
-      const detectedType = detectMediaType(fileWithStatus.file);
-      if (!detectedType) return;
+  const uploadFile = useCallback(async (fileWithStatus: FileWithStatus) => {
+    const detectedType = detectMediaType(fileWithStatus.file);
+    if (!detectedType) return;
 
-      // Update status to uploading
+    // Update status to uploading
+    setFiles((prev) =>
+      prev.map((f) =>
+        f.id === fileWithStatus.id ? { ...f, status: 'uploading' } : f
+      )
+    );
+
+    try {
+      const response = await mediaApi.uploadMedia(fileWithStatus.file, {
+        type: detectedType,
+        exerciseId,
+        submissionId,
+        maxSize,
+        onProgress: (progress) => {
+          setFiles((prev) =>
+            prev.map((f) =>
+              f.id === fileWithStatus.id ? { ...f, progress } : f
+            )
+          );
+        },
+      });
+
+      // Update status to success
       setFiles((prev) =>
-        prev.map((f) => (f.id === fileWithStatus.id ? { ...f, status: 'uploading' } : f)),
+        prev.map((f) =>
+          f.id === fileWithStatus.id
+            ? { ...f, status: 'success', progress: 100, response }
+            : f
+        )
       );
 
-      try {
-        const response = await mediaApi.uploadMedia(fileWithStatus.file, {
-          type: detectedType,
-          exerciseId,
-          submissionId,
-          maxSize,
-          onProgress: (progress) => {
-            setFiles((prev) =>
-              prev.map((f) => (f.id === fileWithStatus.id ? { ...f, progress } : f)),
-            );
-          },
-        });
+      // Notify parent of successful uploads
+      const successfulUploads = files
+        .filter((f) => f.status === 'success' && f.response)
+        .map((f) => f.response!);
+      successfulUploads.push(response);
+      onUpload(successfulUploads);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Error al subir archivo';
 
-        // Update status to success
-        setFiles((prev) =>
-          prev.map((f) =>
-            f.id === fileWithStatus.id ? { ...f, status: 'success', progress: 100, response } : f,
-          ),
-        );
+      setFiles((prev) =>
+        prev.map((f) =>
+          f.id === fileWithStatus.id
+            ? { ...f, status: 'error', error: errorMessage }
+            : f
+        )
+      );
 
-        // Notify parent of successful uploads
-        const successfulUploads = files
-          .filter((f) => f.status === 'success' && f.response)
-          .map((f) => f.response!);
-        successfulUploads.push(response);
-        onUpload(successfulUploads);
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Error al subir archivo';
-
-        setFiles((prev) =>
-          prev.map((f) =>
-            f.id === fileWithStatus.id ? { ...f, status: 'error', error: errorMessage } : f,
-          ),
-        );
-
-        onError?.(errorMessage);
-      }
-    },
-    [exerciseId, submissionId, maxSize, files, onUpload, onError],
-  );
+      onError?.(errorMessage);
+    }
+  }, [exerciseId, submissionId, maxSize, files, onUpload, onError]);
 
   /**
    * Remove a file
    */
-  const removeFile = useCallback(
-    (fileId: string) => {
-      setFiles((prev) => {
-        const updated = prev.filter((f) => f.id !== fileId);
+  const removeFile = useCallback((fileId: string) => {
+    setFiles((prev) => {
+      const updated = prev.filter((f) => f.id !== fileId);
 
-        // Update parent with remaining successful uploads
-        const successfulUploads = updated
-          .filter((f) => f.status === 'success' && f.response)
-          .map((f) => f.response!);
-        onUpload(successfulUploads);
+      // Update parent with remaining successful uploads
+      const successfulUploads = updated
+        .filter((f) => f.status === 'success' && f.response)
+        .map((f) => f.response!);
+      onUpload(successfulUploads);
 
-        return updated;
-      });
-    },
-    [onUpload],
-  );
+      return updated;
+    });
+  }, [onUpload]);
 
   /**
    * Handle drag events
    */
-  const handleDragEnter = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (!disabled) setIsDragging(true);
-    },
-    [disabled],
-  );
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!disabled) setIsDragging(true);
+  }, [disabled]);
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -235,30 +216,24 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
     e.stopPropagation();
   }, []);
 
-  const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setIsDragging(false);
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
 
-      if (!disabled) {
-        handleFiles(e.dataTransfer.files);
-      }
-    },
-    [disabled, handleFiles],
-  );
+    if (!disabled) {
+      handleFiles(e.dataTransfer.files);
+    }
+  }, [disabled, handleFiles]);
 
   /**
    * Handle file input change
    */
-  const handleFileInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleFiles(e.target.files);
-      // Reset input so same file can be selected again
-      e.target.value = '';
-    },
-    [handleFiles],
-  );
+  const handleFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFiles(e.target.files);
+    // Reset input so same file can be selected again
+    e.target.value = '';
+  }, [handleFiles]);
 
   /**
    * Open file picker
@@ -278,9 +253,9 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
       case 'image':
         return <FileImage className="h-8 w-8 text-detective-blue" />;
       case 'audio':
-        return <FileAudio className="text-detective-purple h-8 w-8" />;
+        return <FileAudio className="h-8 w-8 text-detective-purple" />;
       case 'video':
-        return <FileVideo className="text-detective-red h-8 w-8" />;
+        return <FileVideo className="h-8 w-8 text-detective-red" />;
       case 'document':
         return <FileIcon className="h-8 w-8 text-detective-yellow" />;
       default:
@@ -346,15 +321,13 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
 
         <Upload className="mx-auto mb-4 h-12 w-12 text-detective-orange" />
         <p className="mb-2 text-lg font-medium text-gray-700">
-          {isDragging
-            ? 'Suelta los archivos aquí'
-            : 'Arrastra archivos o haz clic para seleccionar'}
+          {isDragging ? 'Suelta los archivos aquí' : 'Arrastra archivos o haz clic para seleccionar'}
         </p>
         <p className="text-sm text-gray-500">
           Tipos permitidos: {acceptedTypes.join(', ')}
           {maxSize && ` • Tamaño máximo: ${formatFileSize(maxSize)}`}
         </p>
-        <p className="mt-1 text-xs text-gray-400">
+        <p className="text-xs text-gray-400 mt-1">
           Máximo {maxFiles} {maxFiles === 1 ? 'archivo' : 'archivos'}
         </p>
       </div>
@@ -365,7 +338,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
           {files.map((fileWithStatus) => (
             <div
               key={fileWithStatus.id}
-              className="rounded-detective border border-gray-200 bg-white p-4 shadow-sm"
+              className="rounded-detective bg-white p-4 shadow-sm border border-gray-200"
             >
               <div className="flex items-center gap-4">
                 {/* Preview */}
@@ -374,8 +347,10 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
                 </div>
 
                 {/* Info */}
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium text-gray-900">{fileWithStatus.file.name}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="truncate font-medium text-gray-900">
+                    {fileWithStatus.file.name}
+                  </p>
                   <p className="text-sm text-gray-500">
                     {formatFileSize(fileWithStatus.file.size)}
                   </p>
@@ -389,7 +364,9 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
                           style={{ width: `${fileWithStatus.progress}%` }}
                         />
                       </div>
-                      <p className="mt-1 text-xs text-gray-500">{fileWithStatus.progress}%</p>
+                      <p className="mt-1 text-xs text-gray-500">
+                        {fileWithStatus.progress}%
+                      </p>
                     </div>
                   )}
 

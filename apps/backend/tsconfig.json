@@ -6,6 +6,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
+    "strictPropertyInitialization": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -28,5 +29,5 @@
     "emitDecoratorMetadata": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "__tests__"]
+  "exclude": ["node_modules", "dist", "__tests__", "**/*.spec.ts", "**/*.test.ts", "src/**/__tests__/**"]
 }

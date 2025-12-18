@@ -19,12 +19,12 @@
  * Available roles in the GAMILIT system
  */
 export type UserRole =
-  | 'student' // Regular student user
-  | 'teacher' // Teacher/instructor (admin_teacher in DB)
-  | 'admin' // Institution administrator
+  | 'student'           // Regular student user
+  | 'teacher'           // Teacher/instructor (admin_teacher in DB)
+  | 'admin'             // Institution administrator
   | 'institution_admin' // Institution admin (alias)
-  | 'super_admin' // Platform super administrator
-  | 'content_creator'; // Content creator role
+  | 'super_admin'       // Platform super administrator
+  | 'content_creator';  // Content creator role
 
 /**
  * User Preferences

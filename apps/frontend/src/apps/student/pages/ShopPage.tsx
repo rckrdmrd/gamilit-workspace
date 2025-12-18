@@ -73,20 +73,20 @@ import { cn } from '@shared/utils/cn';
 
 // Map icon names from backend to Lucide components
 const shopIconMap: Record<string, LucideIcon> = {
-  award: Award,
+  'award': Award,
   'book-open': BookOpen,
-  coins: Coins,
-  compass: Compass,
-  flag: Flag,
-  image: Image,
-  shield: Shield,
+  'coins': Coins,
+  'compass': Compass,
+  'flag': Flag,
+  'image': Image,
+  'shield': Shield,
   'shield-check': ShieldCheck,
-  smile: Smile,
-  sparkles: Sparkles,
-  square: Square,
-  sticker: Sticker,
+  'smile': Smile,
+  'sparkles': Sparkles,
+  'square': Square,
+  'sticker': Sticker,
   'user-circle': UserCircle,
-  zap: Zap,
+  'zap': Zap,
 };
 
 // Get icon component from name
@@ -141,9 +141,7 @@ export default function ShopPage() {
 
         // Fetch items based on selected category
         const filters =
-          selectedCategory !== 'all'
-            ? { category: selectedCategory as ShopItemCategory }
-            : undefined;
+          selectedCategory !== 'all' ? { category: selectedCategory as ShopItemCategory } : undefined;
 
         const items = await getShopItems(filters);
 
@@ -153,7 +151,9 @@ export default function ShopPage() {
           try {
             const purchases = await getUserPurchases(user.id);
             ownedItemIds = new Set(
-              purchases.filter((p) => p.status === 'completed').map((p) => p.item_id),
+              purchases
+                .filter((p) => p.status === 'completed')
+                .map((p) => p.item_id)
             );
           } catch (purchaseError) {
             console.warn('Could not fetch purchases for ownership check:', purchaseError);
@@ -490,7 +490,7 @@ export default function ShopPage() {
                       </div>
 
                       {item.isOwned ? (
-                        <span className="flex items-center gap-1 rounded-lg border border-green-200 bg-green-100 px-3 py-2 text-sm font-semibold text-green-700">
+                        <span className="flex items-center gap-1 rounded-lg bg-green-100 px-3 py-2 text-sm font-semibold text-green-700 border border-green-200">
                           <Check className="h-4 w-4" />
                           Owned
                         </span>
@@ -505,11 +505,7 @@ export default function ShopPage() {
                               : 'cursor-not-allowed bg-gray-200 text-gray-400 opacity-60',
                           )}
                         >
-                          {!item.isPurchasable
-                            ? 'Not Available'
-                            : balance.current < item.price
-                              ? 'Not Enough Coins'
-                              : 'Buy Now'}
+                          {!item.isPurchasable ? 'Not Available' : balance.current < item.price ? 'Not Enough Coins' : 'Buy Now'}
                         </button>
                       )}
                     </div>

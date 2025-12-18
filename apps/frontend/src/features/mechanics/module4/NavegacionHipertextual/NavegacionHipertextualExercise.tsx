@@ -31,7 +31,10 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
   const [timePerDocument, setTimePerDocument] = useState<Record<string, number>>({});
   const [nodeStartTime, setNodeStartTime] = useState<Date>(new Date());
 
-  const { submit, isSubmitting } = useExerciseSubmission(exerciseId || '', {
+  const {
+    submit,
+    isSubmitting,
+  } = useExerciseSubmission(exerciseId || '', {
     onSuccess: (result) => {
       setIsSubmitted(true);
       const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
@@ -173,9 +176,7 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
     return (
       <DetectiveCard variant="default" padding="lg">
         <p className="text-detective-text">
-          {!exercise
-            ? 'Cargando ejercicio...'
-            : 'No hay contenido de navegación disponible para este ejercicio.'}
+          {!exercise ? 'Cargando ejercicio...' : 'No hay contenido de navegación disponible para este ejercicio.'}
         </p>
       </DetectiveCard>
     );
@@ -233,9 +234,7 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
             <DetectiveButton
               variant="primary"
               onClick={handleSubmit}
-              disabled={
-                !visitedNodes.includes(exercise.targetNodeId) || isSubmitting || isSubmitted
-              }
+              disabled={!visitedNodes.includes(exercise.targetNodeId) || isSubmitting || isSubmitted}
               className="w-full"
             >
               {isSubmitting ? (

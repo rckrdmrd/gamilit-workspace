@@ -60,7 +60,9 @@ export const InstitutionStats: React.FC<InstitutionStatsProps> = ({ stats, loadi
   if (!stats) {
     return (
       <div className="rounded-lg border border-gray-700 bg-detective-bg-secondary p-6 text-center">
-        <p className="text-detective-text-secondary">No hay estadísticas disponibles</p>
+        <p className="text-detective-text-secondary">
+          No hay estadísticas disponibles
+        </p>
       </div>
     );
   }
@@ -117,10 +119,14 @@ export const InstitutionStats: React.FC<InstitutionStatsProps> = ({ stats, loadi
     {
       icon: Activity,
       label: 'Almacenamiento',
-      value: stats.storageUsed ? `${(stats.storageUsed / 1024).toFixed(1)} GB` : '0 GB',
+      value: stats.storageUsed
+        ? `${(stats.storageUsed / 1024).toFixed(1)} GB`
+        : '0 GB',
       color: 'text-cyan-500',
       bgColor: 'bg-cyan-500/20',
-      subValue: stats.storageLimit ? `de ${(stats.storageLimit / 1024).toFixed(0)} GB` : undefined,
+      subValue: stats.storageLimit
+        ? `de ${(stats.storageLimit / 1024).toFixed(0)} GB`
+        : undefined,
     },
     {
       icon: Calendar,

@@ -214,12 +214,8 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
   const offlineCount = students.filter((s) => getStudentStatus(s) === 'offline').length;
 
   // Performance stats
-  const highPerformanceCount = students.filter(
-    (s) => calculatePerformanceLevel(s) === 'high',
-  ).length;
-  const mediumPerformanceCount = students.filter(
-    (s) => calculatePerformanceLevel(s) === 'medium',
-  ).length;
+  const highPerformanceCount = students.filter((s) => calculatePerformanceLevel(s) === 'high').length;
+  const mediumPerformanceCount = students.filter((s) => calculatePerformanceLevel(s) === 'medium').length;
   const lowPerformanceCount = students.filter((s) => calculatePerformanceLevel(s) === 'low').length;
 
   if (error) {
@@ -422,27 +418,21 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
 
               {/* Performance Filters */}
               <DetectiveButton
-                variant={
-                  (filters as any).performanceLevel?.includes('high') ? 'primary' : 'secondary'
-                }
+                variant={(filters as any).performanceLevel?.includes('high') ? 'primary' : 'secondary'}
                 onClick={() => handlePerformanceFilter('high')}
                 size="sm"
               >
                 Alto
               </DetectiveButton>
               <DetectiveButton
-                variant={
-                  (filters as any).performanceLevel?.includes('medium') ? 'primary' : 'secondary'
-                }
+                variant={(filters as any).performanceLevel?.includes('medium') ? 'primary' : 'secondary'}
                 onClick={() => handlePerformanceFilter('medium')}
                 size="sm"
               >
                 Medio
               </DetectiveButton>
               <DetectiveButton
-                variant={
-                  (filters as any).performanceLevel?.includes('low') ? 'primary' : 'secondary'
-                }
+                variant={(filters as any).performanceLevel?.includes('low') ? 'primary' : 'secondary'}
                 onClick={() => handlePerformanceFilter('low')}
                 size="sm"
               >
@@ -492,8 +482,7 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
                     className="cursor-pointer px-4 py-3 text-left text-sm font-semibold text-gray-400 hover:text-detective-orange"
                     onClick={() => handleSort('completion')}
                   >
-                    Completitud{' '}
-                    {sortField === 'completion' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    Completitud {sortField === 'completion' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-400">
                     Rendimiento
@@ -502,8 +491,7 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
                     className="cursor-pointer px-4 py-3 text-left text-sm font-semibold text-gray-400 hover:text-detective-orange"
                     onClick={() => handleSort('activity')}
                   >
-                    Ultima Actividad{' '}
-                    {sortField === 'activity' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    Ultima Actividad {sortField === 'activity' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                 </tr>
               </thead>
@@ -565,9 +553,7 @@ export function StudentMonitoringPanel({ classroomId }: StudentMonitoringPanelPr
                             style={{ width: `${student.progress_percentage || 0}%` }}
                           />
                         </div>
-                        <span className="text-sm">
-                          {(student.progress_percentage || 0).toFixed(0)}%
-                        </span>
+                        <span className="text-sm">{(student.progress_percentage || 0).toFixed(0)}%</span>
                       </div>
                     </td>
                     <td className="px-4 py-3">

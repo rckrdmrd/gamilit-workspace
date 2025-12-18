@@ -34,8 +34,7 @@ export const mockVideoSections: VideoSection[] = [
 
 export const mockRecipient: VideoRecipient = {
   name: 'Marie Curie',
-  description:
-    'Científica polaco-francesa, pionera en la investigación de la radioactividad, dos veces ganadora del Premio Nobel',
+  description: 'Científica polaco-francesa, pionera en la investigación de la radioactividad, dos veces ganadora del Premio Nobel',
   imageUrl: '/images/marie-curie-portrait.jpg',
 };
 

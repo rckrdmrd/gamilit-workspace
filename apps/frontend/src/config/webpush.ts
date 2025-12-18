@@ -17,7 +17,11 @@ import { apiClient } from '@/services/api/apiClient';
  * Check if Web Push is supported
  */
 export const isWebPushSupported = (): boolean => {
-  return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+  return (
+    'serviceWorker' in navigator &&
+    'PushManager' in window &&
+    'Notification' in window
+  );
 };
 
 /**
@@ -26,7 +30,7 @@ export const isWebPushSupported = (): boolean => {
 export const getVapidPublicKey = async (): Promise<string | null> => {
   try {
     const response = await apiClient.get<{ vapidPublicKey: string }>(
-      '/notifications/devices/vapid-public-key',
+      '/notifications/devices/vapid-public-key'
     );
     return response.data.vapidPublicKey;
   } catch (error) {
@@ -40,7 +44,9 @@ export const getVapidPublicKey = async (): Promise<string | null> => {
  */
 export const urlBase64ToUint8Array = (base64String: string): Uint8Array => {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const base64 = (base64String + padding)
+    .replace(/-/g, '+')
+    .replace(/_/g, '/');
 
   const rawData = window.atob(base64);
   const outputArray = new Uint8Array(rawData.length);

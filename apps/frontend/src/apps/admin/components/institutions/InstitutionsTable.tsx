@@ -74,7 +74,9 @@ export const InstitutionsTable: React.FC<InstitutionsTableProps> = ({
     return (
       <div className="rounded-lg border border-gray-700 bg-detective-bg-secondary p-12 text-center">
         <div className="mb-4 text-6xl">🏢</div>
-        <h3 className="mb-2 text-lg font-semibold text-detective-text">No hay instituciones</h3>
+        <h3 className="mb-2 text-lg font-semibold text-detective-text">
+          No hay instituciones
+        </h3>
         <p className="text-detective-text-secondary">
           No se encontraron instituciones que coincidan con los filtros aplicados
         </p>
@@ -110,7 +112,10 @@ export const InstitutionsTable: React.FC<InstitutionsTableProps> = ({
           </thead>
           <tbody className="divide-y divide-gray-700">
             {institutions.map((institution) => (
-              <tr key={institution.id} className="transition-colors hover:bg-detective-bg/50">
+              <tr
+                key={institution.id}
+                className="transition-colors hover:bg-detective-bg/50"
+              >
                 {/* Institución */}
                 <td className="px-6 py-4">
                   <div>

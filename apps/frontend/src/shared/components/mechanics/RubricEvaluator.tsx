@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Star, MessageSquare, CheckCircle } from 'lucide-react';
-import {
-  RubricCriterion,
-  RubricEvaluation,
-  calculateTotalScore,
-  validateEvaluations,
-} from '@/shared/api/manualReviewApi';
+import { RubricCriterion, RubricEvaluation, calculateTotalScore, validateEvaluations } from '@/shared/api/manualReviewApi';
 
 /**
  * RubricEvaluator Props
@@ -49,13 +44,11 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
   useEffect(() => {
     const initializedEvaluations = rubric.map((criterion) => {
       const existing = evaluations.find((e) => e.criterionId === criterion.id);
-      return (
-        existing || {
-          criterionId: criterion.id,
-          score: 0,
-          feedback: '',
-        }
-      );
+      return existing || {
+        criterionId: criterion.id,
+        score: 0,
+        feedback: '',
+      };
     });
 
     setEvaluations(initializedEvaluations);
@@ -84,8 +77,10 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
   const updateScore = useCallback((criterionId: string, score: number) => {
     setEvaluations((prev) =>
       prev.map((evaluation) =>
-        evaluation.criterionId === criterionId ? { ...evaluation, score } : evaluation,
-      ),
+        evaluation.criterionId === criterionId
+          ? { ...evaluation, score }
+          : evaluation
+      )
     );
   }, []);
 
@@ -95,26 +90,23 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
   const updateFeedback = useCallback((criterionId: string, feedback: string) => {
     setEvaluations((prev) =>
       prev.map((evaluation) =>
-        evaluation.criterionId === criterionId ? { ...evaluation, feedback } : evaluation,
-      ),
+        evaluation.criterionId === criterionId
+          ? { ...evaluation, feedback }
+          : evaluation
+      )
     );
   }, []);
 
   /**
    * Get evaluation for a criterion
    */
-  const getEvaluation = useCallback(
-    (criterionId: string): RubricEvaluation => {
-      return (
-        evaluations.find((e) => e.criterionId === criterionId) || {
-          criterionId,
-          score: 0,
-          feedback: '',
-        }
-      );
-    },
-    [evaluations],
-  );
+  const getEvaluation = useCallback((criterionId: string): RubricEvaluation => {
+    return evaluations.find((e) => e.criterionId === criterionId) || {
+      criterionId,
+      score: 0,
+      feedback: '',
+    };
+  }, [evaluations]);
 
   /**
    * Get score percentage
@@ -136,7 +128,7 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Total Score Display */}
-      <div className="to-detective-red rounded-detective bg-gradient-to-r from-detective-orange p-6 text-white shadow-lg">
+      <div className="rounded-detective bg-gradient-to-r from-detective-orange to-detective-red p-6 text-white shadow-lg">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-medium opacity-90">Calificación Total</h3>
@@ -197,7 +189,7 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
                     value={evaluation.score}
                     onChange={(e) => updateScore(criterion.id, parseFloat(e.target.value))}
                     disabled={readOnly}
-                    className="h-2 flex-1 cursor-pointer appearance-none rounded-lg bg-gray-200 accent-detective-orange disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-detective-orange disabled:cursor-not-allowed disabled:opacity-50"
                   />
                   <input
                     type="number"
@@ -223,10 +215,10 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
                       percentage >= 90
                         ? 'bg-green-500'
                         : percentage >= 70
-                          ? 'bg-blue-500'
-                          : percentage >= 50
-                            ? 'bg-yellow-500'
-                            : 'bg-red-500'
+                        ? 'bg-blue-500'
+                        : percentage >= 50
+                        ? 'bg-yellow-500'
+                        : 'bg-red-500'
                     }`}
                     style={{ width: `${percentage}%` }}
                   />
@@ -272,7 +264,7 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
       {/* Summary */}
       <div className="rounded-detective bg-blue-50 p-4">
         <div className="flex items-start gap-3">
-          <CheckCircle className="mt-0.5 h-5 w-5 text-blue-600" />
+          <CheckCircle className="h-5 w-5 text-blue-600 mt-0.5" />
           <div className="flex-1">
             <h4 className="font-semibold text-blue-900">Resumen de Evaluación</h4>
             <div className="mt-2 space-y-1 text-sm text-blue-800">
@@ -282,8 +274,7 @@ export const RubricEvaluator: React.FC<RubricEvaluatorProps> = ({
               </p>
               <p>
                 <span className="font-medium">Criterios con feedback:</span>{' '}
-                {evaluations.filter((e) => e.feedback && e.feedback.trim().length > 0).length} de{' '}
-                {rubric.length}
+                {evaluations.filter((e) => e.feedback && e.feedback.trim().length > 0).length} de {rubric.length}
               </p>
               <p>
                 <span className="font-medium">Calificación final:</span> {totalScore}/100

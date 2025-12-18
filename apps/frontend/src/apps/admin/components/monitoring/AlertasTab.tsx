@@ -27,11 +27,7 @@ import {
   getStatusLabel,
   formatAlertTimestamp,
 } from '../alerts/alertUtils';
-import type {
-  SystemAlert,
-  AlertsStats as AlertsStatsType,
-  SystemAlertSeverity,
-} from '@/services/api/adminTypes';
+import type { SystemAlert, AlertsStats as AlertsStatsType, SystemAlertSeverity } from '@/services/api/adminTypes';
 
 interface AlertasTabProps {
   alerts: SystemAlert[];

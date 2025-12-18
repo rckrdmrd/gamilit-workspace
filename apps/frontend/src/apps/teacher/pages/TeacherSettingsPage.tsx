@@ -11,7 +11,7 @@
  * @route /teacher/settings
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/app/providers/AuthContext';
@@ -67,9 +67,9 @@ export default function TeacherSettingsPage() {
 
   // Load user preferences from backend
   const {
-    preferences: _backendPreferences,
-    loading: _preferencesLoading,
-    error: _preferencesError,
+    preferences: backendPreferences,
+    loading: preferencesLoading,
+    error: preferencesError,
   } = useUserPreferences();
 
   // State

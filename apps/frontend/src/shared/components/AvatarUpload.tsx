@@ -83,28 +83,28 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
       button: 'h-5 w-5',
       icon: 'h-3 w-3',
       text: 'text-sm',
-      initials: 'text-lg',
+      initials: 'text-lg'
     },
     md: {
       avatar: 'h-20 w-20',
       button: 'h-6 w-6',
       icon: 'h-4 w-4',
       text: 'text-base',
-      initials: 'text-2xl',
+      initials: 'text-2xl'
     },
     lg: {
       avatar: 'h-24 w-24',
       button: 'h-7 w-7',
       icon: 'h-4 w-4',
       text: 'text-base',
-      initials: 'text-2xl',
+      initials: 'text-2xl'
     },
     xl: {
       avatar: 'h-32 w-32',
       button: 'h-8 w-8',
       icon: 'h-5 w-5',
       text: 'text-lg',
-      initials: 'text-3xl',
+      initials: 'text-3xl'
     },
   };
 
@@ -212,8 +212,9 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
       const error = err as Error;
       console.error('Error uploading avatar:', error);
 
-      const errorMessage =
-        (error as any).response?.data?.message || error.message || 'Error al subir el avatar';
+      const errorMessage = (error as any).response?.data?.message ||
+                          error.message ||
+                          'Error al subir el avatar';
 
       setError(errorMessage);
       setPreview(null);
@@ -249,7 +250,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
           className={cn(
             'flex items-center justify-center overflow-hidden rounded-full border-2 border-detective-orange/40 bg-gradient-to-br from-detective-orange to-detective-gold transition-all',
             config.avatar,
-            uploading && 'opacity-70',
+            uploading && 'opacity-70'
           )}
         >
           {avatarSrc ? (
@@ -276,7 +277,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
               ? 'cursor-not-allowed bg-gray-400'
               : disabled
                 ? 'cursor-not-allowed bg-gray-300'
-                : 'cursor-pointer bg-detective-orange shadow-md hover:scale-110 hover:bg-detective-orange-dark',
+                : 'cursor-pointer bg-detective-orange hover:scale-110 hover:bg-detective-orange-dark shadow-md'
           )}
           aria-label="Cambiar avatar"
         >
@@ -327,12 +328,16 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
               {uploadProgress < 100 ? (
                 <>
                   <Loader2 className="h-3 w-3 animate-spin text-detective-text-secondary" />
-                  <p className="text-xs text-detective-text-secondary">Subiendo avatar...</p>
+                  <p className="text-xs text-detective-text-secondary">
+                    Subiendo avatar...
+                  </p>
                 </>
               ) : (
                 <>
                   <Check className="h-3 w-3 text-green-500" />
-                  <p className="text-xs text-green-600">¡Completado!</p>
+                  <p className="text-xs text-green-600">
+                    ¡Completado!
+                  </p>
                 </>
               )}
             </div>
@@ -359,9 +364,9 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="flex max-w-xs items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3"
+            className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 max-w-xs"
           >
-            <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-600" />
+            <AlertCircle className="h-4 w-4 flex-shrink-0 text-red-600 mt-0.5" />
             <p className="text-sm text-red-700">{error}</p>
           </motion.div>
         )}

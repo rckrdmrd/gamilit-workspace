@@ -1,16 +1,5 @@
 import React, { useState } from 'react';
-import {
-  X,
-  Save,
-  Send,
-  User,
-  BookOpen,
-  Calendar,
-  FileText,
-  Image as ImageIcon,
-  Video,
-  Music,
-} from 'lucide-react';
+import { X, Save, Send, User, BookOpen, Calendar, FileText, Image as ImageIcon, Video, Music } from 'lucide-react';
 import { ManualReview, RubricEvaluation, manualReviewApi } from '@/shared/api/manualReviewApi';
 import { RubricEvaluator } from '@/shared/components/mechanics/RubricEvaluator';
 import { ExerciseContentRenderer } from '@/shared/components/mechanics/ExerciseContentRenderer';
@@ -52,7 +41,7 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
   const handleEvaluationChange = (
     newEvaluations: RubricEvaluation[],
     newGeneralFeedback: string,
-    newTotalScore: number,
+    newTotalScore: number
   ) => {
     setEvaluations(newEvaluations);
     setGeneralFeedback(newGeneralFeedback);
@@ -187,13 +176,13 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
 
       {/* Messages */}
       {error && (
-        <div className="rounded-detective border border-red-200 bg-red-50 p-4">
+        <div className="rounded-detective bg-red-50 border border-red-200 p-4">
           <p className="text-red-800">{error}</p>
         </div>
       )}
 
       {success && (
-        <div className="rounded-detective border border-green-200 bg-green-50 p-4">
+        <div className="rounded-detective bg-green-50 border border-green-200 p-4">
           <p className="text-green-800">{success}</p>
         </div>
       )}
@@ -217,7 +206,10 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
             <h4 className="mb-3 font-medium text-gray-700">Archivos Adjuntos</h4>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {review.mediaAttachments.map((media) => (
-                <div key={media.id} className="rounded-detective border border-gray-200 p-3">
+                <div
+                  key={media.id}
+                  className="rounded-detective border border-gray-200 p-3"
+                >
                   <div className="mb-2 flex items-center gap-2 text-gray-700">
                     {getMediaIcon(media.mimeType)}
                     <span className="truncate text-sm font-medium">{media.filename}</span>
@@ -232,7 +224,11 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
                     />
                   )}
                   {media.mimeType.startsWith('video/') && (
-                    <video src={media.url} controls className="mb-2 h-32 w-full rounded" />
+                    <video
+                      src={media.url}
+                      controls
+                      className="mb-2 h-32 w-full rounded"
+                    />
                   )}
                   {media.mimeType.startsWith('audio/') && (
                     <audio src={media.url} controls className="mb-2 w-full" />
@@ -269,9 +265,11 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
 
       {/* Validation Errors */}
       {!isValid && validationErrors.length > 0 && (
-        <div className="rounded-detective border border-yellow-200 bg-yellow-50 p-4">
-          <h4 className="mb-2 font-semibold text-yellow-900">Completa los siguientes campos:</h4>
-          <ul className="list-inside list-disc space-y-1 text-sm text-yellow-800">
+        <div className="rounded-detective bg-yellow-50 border border-yellow-200 p-4">
+          <h4 className="font-semibold text-yellow-900 mb-2">
+            Completa los siguientes campos:
+          </h4>
+          <ul className="list-disc list-inside space-y-1 text-sm text-yellow-800">
             {validationErrors.map((error, index) => (
               <li key={index}>{error}</li>
             ))}
@@ -292,7 +290,7 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
           <button
             onClick={handleSaveProgress}
             disabled={saving}
-            className="flex items-center gap-2 rounded-detective border border-detective-orange bg-white px-6 py-2 text-detective-orange hover:bg-orange-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex items-center gap-2 rounded-detective border border-detective-orange bg-white px-6 py-2 text-detective-orange hover:bg-orange-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Save className="h-4 w-4" />
             {saving ? 'Guardando...' : 'Guardar Progreso'}
@@ -301,7 +299,7 @@ export const ReviewDetail: React.FC<ReviewDetailProps> = ({ review, onClose }) =
           <button
             onClick={handleCompleteReview}
             disabled={!isValid || completing}
-            className="flex items-center gap-2 rounded-detective bg-detective-orange px-6 py-2 text-white hover:bg-detective-orange/90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex items-center gap-2 rounded-detective bg-detective-orange px-6 py-2 text-white hover:bg-detective-orange/90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send className="h-4 w-4" />
             {completing ? 'Enviando...' : 'Completar y Enviar'}

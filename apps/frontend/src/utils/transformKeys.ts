@@ -45,15 +45,12 @@ export function snakeToCamel(obj: any): any {
 
   // Handle objects: transform keys
   if (obj !== null && typeof obj === 'object') {
-    return Object.keys(obj).reduce(
-      (acc, key) => {
-        // Convert snake_case to camelCase
-        const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
-        acc[camelKey] = snakeToCamel(obj[key]);
-        return acc;
-      },
-      {} as Record<string, any>,
-    );
+    return Object.keys(obj).reduce((acc, key) => {
+      // Convert snake_case to camelCase
+      const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+      acc[camelKey] = snakeToCamel(obj[key]);
+      return acc;
+    }, {} as Record<string, any>);
   }
 
   // Return primitives unchanged
@@ -83,15 +80,12 @@ export function camelToSnake(obj: any): any {
 
   // Handle objects: transform keys
   if (obj !== null && typeof obj === 'object') {
-    return Object.keys(obj).reduce(
-      (acc, key) => {
-        // Convert camelCase to snake_case
-        const snakeKey = key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
-        acc[snakeKey] = camelToSnake(obj[key]);
-        return acc;
-      },
-      {} as Record<string, any>,
-    );
+    return Object.keys(obj).reduce((acc, key) => {
+      // Convert camelCase to snake_case
+      const snakeKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+      acc[snakeKey] = camelToSnake(obj[key]);
+      return acc;
+    }, {} as Record<string, any>);
   }
 
   // Return primitives unchanged

@@ -7,7 +7,7 @@
  * @module services/api/teacher/teacherMessagesApi
  */
 
-import { apiClient } from '@/services/api/apiClient';
+import { apiClient } from '../apiClient';
 
 // ============================================================================
 // TYPES & ENUMS

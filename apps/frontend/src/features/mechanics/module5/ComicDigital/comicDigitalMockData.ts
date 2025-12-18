@@ -3,12 +3,7 @@
  * Sample data for development and testing
  */
 
-import type {
-  ComicPanel,
-  ComicTemplate,
-  LayoutOption,
-  BackgroundOption,
-} from './comicDigitalTypes';
+import type { ComicPanel, ComicTemplate, LayoutOption, BackgroundOption } from './comicDigitalTypes';
 
 export const mockLayouts: LayoutOption[] = [
   { id: 'full', name: 'Panel Completo', cols: 1 },

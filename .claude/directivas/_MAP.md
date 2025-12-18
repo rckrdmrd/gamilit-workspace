@@ -2,7 +2,12 @@
 
 **Propósito:** Define directivas, políticas y procesos compartidos para todos los agentes NEXUS
 **Archivos totales:** 11
-**Última actualización:** 2025-11-02
+**Última actualización:** 2025-12-18
+
+> **IMPORTANTE:** Las directivas fundamentales ahora están en niveles superiores:
+> - `@CARGA-CONTEXTO` → workspace/orchestration/directivas/
+> - `@DOC-DEFINITIVA` → core/orchestration/directivas/
+> - `@CAPVED` → core/orchestration/directivas/principios/
 
 ---
 
@@ -141,11 +146,19 @@ directivas/
 
 Estas directivas son **OBLIGATORIAS** y su violación puede causar problemas graves:
 
-1. **🚨 DV-MASTER:** [DIRECTIVA-VALIDACION-DOCUMENTACION.md](./DIRECTIVA-VALIDACION-DOCUMENTACION.md) - Validación obligatoria contra `/docs/` para evitar alucinaciones
-2. **DE-002:** Orquestación de subagentes (no exceder 15 slots)
-3. **DE-003:** Modularización (archivos <400L)
-4. **DE-008:** Actualización post-tarea (mantener documentación actualizada)
-5. **DG-003:** No commitear secrets
+### Directivas de Niveles Superiores (heredadas)
+
+1. **🚨 @CARGA-CONTEXTO:** `workspace/orchestration/directivas/DIRECTIVA-CARGA-CONTEXTO.md` - Como cargar contexto según nivel
+2. **🚨 @CAPVED:** `core/orchestration/directivas/principios/PRINCIPIO-CAPVED.md` - Ciclo de 6 fases obligatorio
+3. **🚨 @DOC-DEFINITIVA:** `core/orchestration/directivas/DIRECTIVA-DOCUMENTACION-DEFINITIVA.md` - Docs como estado final
+
+### Directivas Locales
+
+4. **🚨 DV-MASTER:** [DIRECTIVA-VALIDACION-DOCUMENTACION.md](./DIRECTIVA-VALIDACION-DOCUMENTACION.md) - Validación obligatoria contra `/docs/`
+5. **DE-002:** Orquestación de subagentes (no exceder 15 slots)
+6. **DE-003:** Modularización (archivos <400L)
+7. **DE-008:** Actualización post-tarea (mantener documentación actualizada)
+8. **DG-003:** No commitear secrets
 
 ### Detalle DV-MASTER (Más Crítica)
 

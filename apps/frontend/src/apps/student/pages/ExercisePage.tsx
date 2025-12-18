@@ -716,7 +716,11 @@ export default function ExercisePage() {
             className="mb-6 rounded-lg border-2 border-red-300 bg-red-50 p-4 text-red-800"
           >
             <p className="font-semibold">No se pudo cargar el ejercicio</p>
-            <DetectiveButton variant="blue" onClick={() => navigate('/dashboard')} className="mt-4">
+            <DetectiveButton
+              variant="blue"
+              onClick={() => navigate('/dashboard')}
+              className="mt-4"
+            >
               Volver al Dashboard
             </DetectiveButton>
           </motion.div>
@@ -1057,14 +1061,11 @@ export default function ExercisePage() {
               setShowFeedback(false);
               if (feedback.type === 'success') {
                 // Priorizar module_id del ejercicio, luego moduleId del URL, luego dashboard
-                const targetModuleId =
-                  exercise?.module_id || (exercise as any)?.moduleId || moduleId;
+                const targetModuleId = exercise?.module_id || (exercise as any)?.moduleId || moduleId;
                 if (targetModuleId && targetModuleId !== 'undefined') {
                   navigate(`/modules/${targetModuleId}`);
                 } else {
-                  console.warn(
-                    '[ExercisePage] No valid moduleId found after completion, navigating to dashboard',
-                  );
+                  console.warn('[ExercisePage] No valid moduleId found after completion, navigating to dashboard');
                   navigate('/dashboard');
                 }
               }

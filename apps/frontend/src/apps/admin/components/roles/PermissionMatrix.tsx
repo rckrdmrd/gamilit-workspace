@@ -27,6 +27,7 @@ export function PermissionMatrix({
   onTogglePermission,
   disabled = false,
 }: PermissionMatrixProps): React.ReactElement {
+
   // ============================================================================
   // HELPERS
   // ============================================================================
@@ -107,7 +108,7 @@ export function PermissionMatrix({
   if (permissions.length === 0) {
     return (
       <div className="p-8 text-center text-gray-500">
-        <div className="mb-3 text-4xl">🔐</div>
+        <div className="text-4xl mb-3">🔐</div>
         <p className="text-sm">No hay permisos disponibles para este rol</p>
       </div>
     );
@@ -118,13 +119,13 @@ export function PermissionMatrix({
       {Object.entries(groupedPermissions).map(([module, perms]) => (
         <div key={module} className="space-y-3">
           {/* Module Header */}
-          <h3 className="flex items-center border-b border-gray-200 pb-2 text-lg font-semibold text-gray-800">
+          <h3 className="flex items-center text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">
             <span className="mr-2 text-xl">{getModuleIcon(module)}</span>
             {getModuleName(module)}
           </h3>
 
           {/* Permissions Grid */}
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {perms.map((perm) => {
               if (!perm?.module || !perm?.action) {
                 console.error('[PermissionMatrix] Invalid perm in render:', perm);
@@ -136,35 +137,27 @@ export function PermissionMatrix({
               return (
                 <label
                   key={permId}
-                  className={`flex cursor-pointer items-center rounded-lg border-2 p-3 transition-all duration-200 ${
+                  className={`flex items-center p-3 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
                     perm.granted
                       ? 'border-green-400 bg-green-50'
                       : 'border-gray-300 bg-gray-50 hover:border-gray-400'
-                  } ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
+                  } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <input
                     type="checkbox"
                     checked={perm.granted}
                     onChange={() => !disabled && onTogglePermission(perm.module, perm.action)}
                     disabled={disabled}
-                    className="h-4 w-4 cursor-pointer rounded text-green-600 focus:ring-green-500 focus:ring-offset-0 disabled:cursor-not-allowed"
+                    className="h-4 w-4 rounded text-green-600 focus:ring-green-500 focus:ring-offset-0 cursor-pointer disabled:cursor-not-allowed"
                   />
-                  <span className="ml-3 select-none text-sm font-medium text-gray-900">
+                  <span className="ml-3 text-sm font-medium text-gray-900 select-none">
                     {getActionLabel(perm.action)}
                   </span>
 
                   {/* Granted Indicator */}
                   {perm.granted && (
-                    <svg
-                      className="ml-auto h-5 w-5 text-green-600"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
+                    <svg className="ml-auto w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   )}
                 </label>

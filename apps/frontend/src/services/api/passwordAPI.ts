@@ -7,7 +7,7 @@
  * - Resetting password with token
  */
 
-import { apiClient } from '@/services/api/apiClient';
+import { apiClient } from './apiClient';
 
 // ============================================================================
 // TYPES

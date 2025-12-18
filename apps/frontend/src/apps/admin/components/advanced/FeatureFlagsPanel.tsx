@@ -304,7 +304,9 @@ export const FeatureFlagsPanel: React.FC = () => {
 
                     {/* Metadata */}
                     <div className="flex items-center gap-4 text-xs text-gray-500">
-                      <span>Updated: {new Date(flag.updatedAt).toLocaleDateString('es-ES')}</span>
+                      <span>
+                        Updated: {new Date(flag.updatedAt).toLocaleDateString('es-ES')}
+                      </span>
                       {flag.lastModifiedBy && <span>By: {flag.lastModifiedBy}</span>}
                     </div>
                   </div>

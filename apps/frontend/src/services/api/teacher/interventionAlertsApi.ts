@@ -7,7 +7,7 @@
  * @module interventionAlertsApi
  */
 
-import { apiClient } from '@/services/api/apiClient';
+import { apiClient } from '../apiClient';
 
 // ============================================================================
 // TYPES & INTERFACES

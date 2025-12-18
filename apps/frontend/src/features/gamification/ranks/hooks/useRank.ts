@@ -51,21 +51,38 @@ export function useRank(): UseRankReturn {
   const currentRankId = useRanksStore(selectCurrentRank);
 
   // P0-004: Use useRanksConfig instead of mockData
-  const { getRankById, getNextRank, getPreviousRank, getRankThresholds } = useRanksConfig();
+  const {
+    getRankById,
+    getNextRank,
+    getPreviousRank,
+    getRankThresholds,
+  } = useRanksConfig();
 
-  const currentRank = useMemo(() => getRankById(currentRankId), [currentRankId, getRankById]);
+  const currentRank = useMemo(
+    () => getRankById(currentRankId),
+    [currentRankId, getRankById]
+  );
 
-  const nextRank = useMemo(() => getNextRank(currentRankId), [currentRankId, getNextRank]);
+  const nextRank = useMemo(
+    () => getNextRank(currentRankId),
+    [currentRankId, getNextRank]
+  );
 
   const previousRank = useMemo(
     () => getPreviousRank(currentRankId),
-    [currentRankId, getPreviousRank],
+    [currentRankId, getPreviousRank]
   );
 
-  const isMaxRank = useMemo(() => currentRankId === "K'uk'ulkan", [currentRankId]);
+  const isMaxRank = useMemo(
+    () => currentRankId === "K'uk'ulkan",
+    [currentRankId]
+  );
 
   // P0-002 FIX: Ajaw is the minimum rank, not Nacom
-  const isMinRank = useMemo(() => currentRankId === 'Ajaw', [currentRankId]);
+  const isMinRank = useMemo(
+    () => currentRankId === 'Ajaw',
+    [currentRankId]
+  );
 
   // P0-003 & P0-004: Calculate progress using thresholds from backend
   const progress = useMemo(() => {
@@ -97,7 +114,7 @@ export function useRank(): UseRankReturn {
 
     // Find new benefits (not in current rank)
     const newBenefits = nextRank.benefits.filter(
-      (benefit) => !currentRank.benefits.includes(benefit),
+      benefit => !currentRank.benefits.includes(benefit)
     );
 
     return {
@@ -117,7 +134,7 @@ export function useRank(): UseRankReturn {
   const compareToRank = (targetRankId: string): RankComparison | null => {
     try {
       const targetRank = getRankById(targetRankId);
-      if (!targetRank || (targetRank.id === 'Ajaw' && targetRankId !== 'Ajaw')) {
+      if (!targetRank || targetRank.id === 'Ajaw' && targetRankId !== 'Ajaw') {
         return null; // getRankById returns default if not found
       }
 
@@ -126,7 +143,7 @@ export function useRank(): UseRankReturn {
 
       // Find new benefits
       const newBenefits = targetRank.benefits.filter(
-        (benefit) => !currentRank.benefits.includes(benefit),
+        benefit => !currentRank.benefits.includes(benefit)
       );
 
       return {

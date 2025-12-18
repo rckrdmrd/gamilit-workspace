@@ -121,117 +121,126 @@ export function useFeatureFlags(): UseFeatureFlagsResult {
   /**
    * Create a new feature flag
    */
-  const createFlag = useCallback(async (data: CreateFlagDto) => {
-    setLoading(true);
-    setError(null);
+  const createFlag = useCallback(
+    async (data: CreateFlagDto) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      if (USE_MOCK_DATA) {
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 500));
+      try {
+        if (USE_MOCK_DATA) {
+          // Simulate API delay
+          await new Promise((resolve) => setTimeout(resolve, 500));
 
-        const newFlag: FeatureFlag = {
-          id: Date.now().toString(),
-          key: data.key,
-          name: data.name,
-          description: data.description,
-          isEnabled: data.isEnabled ?? false,
-          rolloutPercentage: data.rolloutPercentage ?? 0,
-          targetRoles: data.targetRoles ?? [],
-          targetUsers: data.targetUsers ?? [],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          createdBy: 'admin@gamilit.com',
-          lastModifiedBy: 'admin@gamilit.com',
-        };
+          const newFlag: FeatureFlag = {
+            id: Date.now().toString(),
+            key: data.key,
+            name: data.name,
+            description: data.description,
+            isEnabled: data.isEnabled ?? false,
+            rolloutPercentage: data.rolloutPercentage ?? 0,
+            targetRoles: data.targetRoles ?? [],
+            targetUsers: data.targetUsers ?? [],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            createdBy: 'admin@gamilit.com',
+            lastModifiedBy: 'admin@gamilit.com',
+          };
 
-        setFlags((prev) => [...prev, newFlag]);
-        return;
+          setFlags((prev) => [...prev, newFlag]);
+          return;
+        }
+
+        const response = await apiClient.post<FeatureFlag>(
+          `${API_ENDPOINTS.admin.base}/feature-flags`,
+          data,
+        );
+        setFlags((prev) => [...prev, response.data]);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to create feature flag';
+        setError(message);
+        console.error('[useFeatureFlags] createFlag error:', err);
+        throw err;
+      } finally {
+        setLoading(false);
       }
-
-      const response = await apiClient.post<FeatureFlag>(
-        `${API_ENDPOINTS.admin.base}/feature-flags`,
-        data,
-      );
-      setFlags((prev) => [...prev, response.data]);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to create feature flag';
-      setError(message);
-      console.error('[useFeatureFlags] createFlag error:', err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [],
+  );
 
   /**
    * Update an existing feature flag
    */
-  const updateFlag = useCallback(async (key: string, data: UpdateFlagDto) => {
-    setLoading(true);
-    setError(null);
+  const updateFlag = useCallback(
+    async (key: string, data: UpdateFlagDto) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      if (USE_MOCK_DATA) {
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 500));
+      try {
+        if (USE_MOCK_DATA) {
+          // Simulate API delay
+          await new Promise((resolve) => setTimeout(resolve, 500));
 
-        setFlags((prev) =>
-          prev.map((flag) =>
-            flag.key === key
-              ? {
-                  ...flag,
-                  ...data,
-                  updatedAt: new Date().toISOString(),
-                  lastModifiedBy: 'admin@gamilit.com',
-                }
-              : flag,
-          ),
+          setFlags((prev) =>
+            prev.map((flag) =>
+              flag.key === key
+                ? {
+                    ...flag,
+                    ...data,
+                    updatedAt: new Date().toISOString(),
+                    lastModifiedBy: 'admin@gamilit.com',
+                  }
+                : flag,
+            ),
+          );
+          return;
+        }
+
+        const response = await apiClient.put<FeatureFlag>(
+          `${API_ENDPOINTS.admin.base}/feature-flags/${key}`,
+          data,
         );
-        return;
+        setFlags((prev) => prev.map((flag) => (flag.key === key ? response.data : flag)));
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to update feature flag';
+        setError(message);
+        console.error('[useFeatureFlags] updateFlag error:', err);
+        throw err;
+      } finally {
+        setLoading(false);
       }
-
-      const response = await apiClient.put<FeatureFlag>(
-        `${API_ENDPOINTS.admin.base}/feature-flags/${key}`,
-        data,
-      );
-      setFlags((prev) => prev.map((flag) => (flag.key === key ? response.data : flag)));
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to update feature flag';
-      setError(message);
-      console.error('[useFeatureFlags] updateFlag error:', err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [],
+  );
 
   /**
    * Delete a feature flag
    */
-  const deleteFlag = useCallback(async (key: string) => {
-    setLoading(true);
-    setError(null);
+  const deleteFlag = useCallback(
+    async (key: string) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      if (USE_MOCK_DATA) {
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 500));
+      try {
+        if (USE_MOCK_DATA) {
+          // Simulate API delay
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          setFlags((prev) => prev.filter((flag) => flag.key !== key));
+          return;
+        }
+
+        await apiClient.delete(`${API_ENDPOINTS.admin.base}/feature-flags/${key}`);
         setFlags((prev) => prev.filter((flag) => flag.key !== key));
-        return;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to delete feature flag';
+        setError(message);
+        console.error('[useFeatureFlags] deleteFlag error:', err);
+        throw err;
+      } finally {
+        setLoading(false);
       }
-
-      await apiClient.delete(`${API_ENDPOINTS.admin.base}/feature-flags/${key}`);
-      setFlags((prev) => prev.filter((flag) => flag.key !== key));
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to delete feature flag';
-      setError(message);
-      console.error('[useFeatureFlags] deleteFlag error:', err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [],
+  );
 
   /**
    * Toggle a feature flag on/off

@@ -104,11 +104,15 @@ export const ReviewList: React.FC<ReviewListProps> = ({
     return (
       <div className="rounded-detective bg-white p-12 text-center shadow-card">
         <ClipboardList className="mx-auto h-16 w-16 text-gray-400" />
-        <h3 className="mt-4 text-xl font-semibold text-gray-900">No hay revisiones pendientes</h3>
-        <p className="mt-2 text-gray-600">Excelente trabajo! Todas las revisiones están al día.</p>
+        <h3 className="mt-4 text-xl font-semibold text-gray-900">
+          No hay revisiones pendientes
+        </h3>
+        <p className="mt-2 text-gray-600">
+          Excelente trabajo! Todas las revisiones están al día.
+        </p>
         <button
           onClick={onRefresh}
-          className="mx-auto mt-6 flex items-center gap-2 rounded-detective bg-detective-orange px-6 py-2 text-white hover:bg-detective-orange/90"
+          className="mt-6 flex items-center gap-2 mx-auto rounded-detective bg-detective-orange px-6 py-2 text-white hover:bg-detective-orange/90"
         >
           <RefreshCw className="h-4 w-4" />
           Actualizar
@@ -136,7 +140,7 @@ export const ReviewList: React.FC<ReviewListProps> = ({
           <div
             key={review.id}
             onClick={() => onSelectReview(review)}
-            className="group cursor-pointer rounded-detective border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-detective-orange hover:shadow-md"
+            className="group cursor-pointer rounded-detective border border-gray-200 bg-white p-4 shadow-sm transition-all hover:shadow-md hover:border-detective-orange"
           >
             {/* Header */}
             <div className="mb-3 flex items-start justify-between">
@@ -171,7 +175,7 @@ export const ReviewList: React.FC<ReviewListProps> = ({
 
             {/* Progress Indicator */}
             {review.status === 'in_progress' && review.evaluations && (
-              <div className="mt-3 border-t border-gray-100 pt-3">
+              <div className="mt-3 pt-3 border-t border-gray-100">
                 <div className="flex items-center justify-between text-xs text-gray-600">
                   <span>Progreso</span>
                   <span>

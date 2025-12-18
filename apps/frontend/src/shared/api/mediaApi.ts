@@ -78,12 +78,7 @@ export const ALLOWED_MIME_TYPES: Record<MediaType, string[]> = {
   image: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'],
   audio: ['audio/mpeg', 'audio/mp4', 'audio/wav', 'audio/webm', 'audio/ogg'],
   video: ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'],
-  document: [
-    'application/pdf',
-    'text/plain',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  ],
+  document: ['application/pdf', 'text/plain', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
 };
 
 // ============================================================================
@@ -101,7 +96,7 @@ export const ALLOWED_MIME_TYPES: Record<MediaType, string[]> = {
 export const validateFile = (
   file: File,
   type: MediaType,
-  maxSize?: number,
+  maxSize?: number
 ): MediaValidationResult => {
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -109,14 +104,16 @@ export const validateFile = (
   // Check file size
   const maxSizeLimit = maxSize || DEFAULT_MAX_SIZES[type];
   if (file.size > maxSizeLimit) {
-    errors.push(`El archivo es demasiado grande. Tamaño máximo: ${formatFileSize(maxSizeLimit)}`);
+    errors.push(
+      `El archivo es demasiado grande. Tamaño máximo: ${formatFileSize(maxSizeLimit)}`
+    );
   }
 
   // Check MIME type
   const allowedTypes = ALLOWED_MIME_TYPES[type];
   if (!allowedTypes.includes(file.type)) {
     errors.push(
-      `Tipo de archivo no permitido. Tipos aceptados: ${allowedTypes.map((t) => t.split('/')[1]).join(', ')}`,
+      `Tipo de archivo no permitido. Tipos aceptados: ${allowedTypes.map(t => t.split('/')[1]).join(', ')}`
     );
   }
 
@@ -145,7 +142,7 @@ export const formatFileSize = (bytes: number): string => {
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
 };
 
 /**
@@ -178,7 +175,7 @@ export const detectMediaType = (file: File): MediaType | null => {
  */
 export const uploadMedia = async (
   file: File,
-  options: MediaUploadOptions,
+  options: MediaUploadOptions
 ): Promise<MediaAttachmentResponse> => {
   // Validate file
   const validation = validateFile(file, options.type, options.maxSize);
@@ -213,7 +210,7 @@ export const uploadMedia = async (
           options.onProgress(progress);
         }
       },
-    },
+    }
   );
 
   return data;
@@ -230,7 +227,7 @@ export const uploadMultipleMedia = async (
   files: File[],
   options: Omit<MediaUploadOptions, 'onProgress'> & {
     onProgress?: (fileIndex: number, progress: number) => void;
-  },
+  }
 ): Promise<MediaAttachmentResponse[]> => {
   const results: MediaAttachmentResponse[] = [];
 
@@ -257,7 +254,9 @@ export const uploadMultipleMedia = async (
  * @returns Media details
  */
 export const getMedia = async (mediaId: string): Promise<MediaAttachmentResponse> => {
-  const { data } = await apiClient.get<MediaAttachmentResponse>(API_ENDPOINTS.media.get(mediaId));
+  const { data } = await apiClient.get<MediaAttachmentResponse>(
+    API_ENDPOINTS.media.get(mediaId)
+  );
   return data;
 };
 
@@ -269,7 +268,7 @@ export const getMedia = async (mediaId: string): Promise<MediaAttachmentResponse
  */
 export const deleteMedia = async (mediaId: string): Promise<{ success: boolean }> => {
   const { data } = await apiClient.delete<{ success: boolean }>(
-    API_ENDPOINTS.media.delete(mediaId),
+    API_ENDPOINTS.media.delete(mediaId)
   );
   return data;
 };
@@ -283,7 +282,7 @@ export const deleteMedia = async (mediaId: string): Promise<{ success: boolean }
  */
 export const validateMediaServer = async (
   file: File,
-  type: MediaType,
+  type: MediaType
 ): Promise<MediaValidationResult> => {
   const formData = new FormData();
   formData.append('file', file);
@@ -296,7 +295,7 @@ export const validateMediaServer = async (
       headers: {
         'Content-Type': 'multipart/form-data',
       },
-    },
+    }
   );
 
   return data;

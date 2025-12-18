@@ -33,7 +33,7 @@ BEGIN
         estimated_time_minutes, max_attempts,
         hints, enable_hints, hint_cost_ml_coins,
         xp_reward, ml_coins_reward,
-        is_active, version, requires_manual_grading
+        is_active, version
     ) VALUES (
         mod_id,
         'Análisis de Fuentes Históricas sobre Marie Curie',
@@ -141,10 +141,9 @@ BEGIN
         ]::text[],
         true, 15,
         150, 30,
-        true, 1, true  -- requires_manual_grading = true (evaluación subjetiva)
+        true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
-        requires_manual_grading = EXCLUDED.requires_manual_grading,
         updated_at = NOW();
 
     -- ========================================================================
@@ -159,7 +158,7 @@ BEGIN
         estimated_time_minutes, max_attempts,
         hints, enable_hints, hint_cost_ml_coins,
         xp_reward, ml_coins_reward,
-        is_active, version, requires_manual_grading
+        is_active, version
     ) VALUES (
         mod_id,
         'Debate Digital Estructurado',
@@ -267,15 +266,13 @@ BEGIN
         ]::text[],
         true, 15,
         150, 30,
-        true, 1, true  -- requires_manual_grading = true (evaluación subjetiva)
+        true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
-        requires_manual_grading = EXCLUDED.requires_manual_grading,
         updated_at = NOW();
 
     -- ========================================================================
-    -- EXERCISE 3.5: MATRIZ DE PERSPECTIVAS
-    -- Referencia: DocumentoDeDiseño v6.4 líneas 729-766
+    -- EXERCISE 3.3: MATRIZ DE PERSPECTIVAS
     -- ========================================================================
     INSERT INTO educational_content.exercises (
         module_id, title, subtitle, description, instructions,
@@ -286,162 +283,102 @@ BEGIN
         estimated_time_minutes, max_attempts,
         hints, enable_hints, hint_cost_ml_coins,
         xp_reward, ml_coins_reward,
-        is_active, version, requires_manual_grading
+        is_active, version
     ) VALUES (
         mod_id,
-        'Matriz de Perspectivas',
-        'Análisis Multi-Perspectiva de Eventos Históricos',
-        'Analiza un evento histórico desde múltiples puntos de vista diferentes, considerando las reacciones emocionales, opiniones y consecuencias percibidas por cada actor involucrado.',
-        E'1. Lee el evento central presentado.\n2. Completa la matriz analizando el evento desde 6 perspectivas diferentes.\n3. Para cada perspectiva, incluye:\n   - Reacción emocional del actor\n   - Opinión sobre el evento\n   - Consecuencias que percibe\n4. Basa tus respuestas en el contexto histórico proporcionado.\n5. Considera factores como prejuicios de la época, contexto político, roles de género y nacionalismo.',
-        E'Desarrollar pensamiento crítico multi-perspectiva mediante el análisis de un evento histórico (Marie Curie ganando el Nobel de Química en 1911) desde seis puntos de vista diferentes, identificando sesgos, intereses y reacciones emocionales de cada actor en su contexto histórico.',
-        E'Estrategia de resolución paso a paso:\n\n1. Leer el evento central: Familiarízate con "Marie gana el Nobel de Química en 1911 en medio de escándalo personal".\n\n2. Identificar a cada actor: Marie Curie, Pierre Curie (póstumamente), científicos contemporáneos, la prensa, mujeres de la época, y la sociedad polaca.\n\n3. Para cada perspectiva, pregúntate:\n   - ¿Cómo se habría sentido esta persona/grupo?\n   - ¿Qué habría opinado del evento?\n   - ¿Qué consecuencias habría percibido?\n\n4. Considerar el contexto histórico:\n   - Prejuicios de género de 1911\n   - Escándalo personal vs logro científico\n   - Prensa sensacionalista de la época\n   - Nacionalismo (Polonia vs Francia)\n\n5. Completar la matriz: Escribe respuestas coherentes basadas en evidencia histórica.',
-        E'Tips para analizar eficientemente:\n- Usa el contexto histórico: 1911 era una época de fuertes prejuicios de género.\n- Separa emoción de razón: Algunas perspectivas son emocionales (Marie), otras pragmáticas (prensa).\n- Identifica sesgos: Cada actor tiene intereses propios (prensa vende periódicos, científicos protegen reputación).\n- Usa empatía histórica: Ponte en el lugar de cada actor considerando su época, no la actual.\n- Evidencia del texto: Basa tus respuestas en hechos conocidos de la biografía de Marie.',
-        E'Este ejercicio desarrolla pensamiento crítico de nivel 3 (comprensión crítica y valorativa) según Daniel Cassany. Los estudiantes practican:\n- Análisis multi-perspectiva de eventos históricos\n- Identificación de sesgos, intereses y prejuicios de época\n- Empatía histórica y contextualización\n- Separación entre logro objetivo y percepción subjetiva\n\nCompetencias trabajadas:\n- Pensamiento crítico avanzado\n- Análisis contextual\n- Identificación de sesgos y prejuicios\n- Argumentación basada en evidencia histórica\n\nAlineación curricular: Apropiado para estudiantes de nivel advanced (B2-C1 CEFR) en análisis crítico de textos históricos.',
-        'matriz_perspectivas', 5,
+        'Matriz de Perspectivas: Múltiples Visiones sobre Marie Curie',
+        'Analiza Diferentes Puntos de Vista',
+        'Examina cómo diferentes grupos y épocas han visto a Marie Curie y sus logros.',
+        'Completa la matriz identificando cómo cada grupo/época percibió a Marie Curie.',
+        E'Desarrollar pensamiento multiperspectivista y comprensión crítica mediante el análisis de cómo diferentes grupos sociales, culturales y temporales interpretan un mismo evento histórico. Este ejercicio entrena una competencia esencial del Nivel 3 de Cassany: reconocer que los textos y eventos pueden interpretarse de múltiples maneras legítimas según la posición social, cultural y temporal del observador.\n\nLos estudiantes aprenderán a:\n- Analizar un evento histórico (Nobel de Química 1911) desde 6 perspectivas diferentes: Marie Curie, Pierre Curie, científicos contemporáneos, prensa de época, mujeres de la época, sociedad polaca\n- Identificar factores que influyen en la interpretación: prejuicios de género, contexto político, roles sociales, nacionalismo, intereses económicos (vender periódicos)\n- Diferenciar entre "hechos objetivos" (Marie ganó el Nobel) y "interpretaciones subjetivas" (cómo cada grupo valora ese hecho)\n- Reconocer que intereses y sesgos de cada grupo afectan su interpretación del evento\n- Comprender que múltiples perspectivas pueden coexistir legítimamente sobre el mismo evento\n- Desarrollar empatía histórica: comprender por qué diferentes grupos vieron el evento de maneras aparentemente contradictorias\n- Evaluar cómo el contexto temporal (1911 vs. actualidad) afecta la interpretación de eventos\n\nEsta habilidad es fundamental para pensamiento crítico sofisticado, donde reconocemos que la "verdad" sobre eventos complejos involucra múltiples perspectivas válidas, no una sola narrativa monolítica.',
+        E'Metodología para analizar eventos desde múltiples perspectivas:\n\n1. COMPRENSIÓN DEL EVENTO CENTRAL (2 min):\n   - Leer el evento objetivo: "Marie gana Nobel de Química 1911 en medio de escándalo personal"\n   - Identificar componentes:\n     * Hecho científico: Premio Nobel por aislar radio puro\n     * Contexto personal: Relación con Paul Langevin tras muerte de Pierre\n     * Contexto social: Escándalo mediático, acoso periodístico\n     * Contexto temporal: 1911, época de rigidez moral y discriminación de género\n\n2. IDENTIFICACIÓN DE PERSPECTIVAS Y SUS INTERESES (3 min):\n   Para cada grupo, identificar:\n   \n   MARIE CURIE:\n   - Interés: Reconocimiento científico, privacidad personal\n   - Sesgo: Separar vida personal de logros profesionales\n   - Emoción probable: Orgullo científico + frustración por invasión de privacidad\n   \n   PRENSA DE ÉPOCA:\n   - Interés: Vender periódicos, generar escándalo\n   - Sesgo: Sensacionalismo > objetividad científica\n   - Enfoque: "Escándalo" es más importante que Nobel\n   \n   CIENTÍFICOS CONTEMPORÁNEOS:\n   - Interés: Mantener "respetabilidad" de la ciencia\n   - Sesgo: División entre apoyar colega brillante vs. distanciarse de "escándalo"\n   - Conflicto: Mérito científico vs. presión social\n   \n   MUJERES DE LA ÉPOCA:\n   - Interés: Romper barreras de género\n   - Sesgo: Ver a Marie como símbolo de posibilidades antes vedadas\n   - Emoción: Inspiración, esperanza\n   \n   SOCIEDAD POLACA:\n   - Interés: Orgullo nacionalista (Marie era polaca)\n   - Sesgo: Reivindicar a "hija de Polonia" como genio\n   - Emoción: Patriotismo\n   \n   PIERRE CURIE (perspectiva hipotética póstuma):\n   - Interés: Validación de trabajo conjunto\n   - Sesgo: Orgullo por logros de su esposa\n   - Nota: Pierre murió en 1906, pero podemos inferir su perspectiva\n\n3. COMPLETAR LA MATRIZ (10 min):\n   Para cada perspectiva, completar:\n   - Visión del evento: ¿Cómo lo interpretaron?\n   - Reacción emocional: ¿Cómo se sintieron?\n   - Opinión: ¿Positiva, negativa, mixta?\n   - Consecuencias percibidas: ¿Qué impacto anticiparon?\n   - Intereses/Sesgos: ¿Qué factores influyen en su interpretación?\n\n4. ANÁLISIS COMPARATIVO (5 min):\n   - Comparar perspectivas: ¿Dónde coinciden? ¿Dónde difieren radicalmente?\n   - Identificar por qué difieren (intereses, contexto social, valores)\n   - Reconocer que todas las perspectivas son "válidas" dentro de su contexto\n   - Reflexionar: ¿Cómo veríamos el evento HOY? (perspectiva contemporánea)',
+        E'Estrategias para analizar perspectivas múltiples efectivamente:\n\n- IDENTIFICAR INTERESES PRIMERO: Preguntarse "¿Qué le importa a este grupo?" antes de inferir su perspectiva (ej: prensa quiere vender → enfoca escándalo)\n- CONSIDERAR CONTEXTO TEMPORAL: Normas de 1911 (rigidez moral, discriminación de género) ≠ normas actuales\n- RECONOCER SESGOS LEGÍTIMOS: Todos los grupos tienen sesgos, no solo los "negativos" (mujeres de época tienen sesgo pro-Marie legítimamente)\n- EVITAR JUICIO MORAL: No clasificar perspectivas en "correctas" vs. "incorrectas", sino comprenderlas en su contexto\n- BUSCAR CONTRADICCIONES PRODUCTIVAS: Que Marie sea vista como "heroína" (mujeres) y "escandalosa" (prensa conservadora) simultáneamente es NORMAL en eventos complejos\n- DIFERENCIAR HECHO DE INTERPRETACIÓN: Nobel de Química = hecho; "merece Nobel a pesar de escándalo" = interpretación\n- USAR EVIDENCIA HISTÓRICA: Basar perspectivas en documentos de época cuando sea posible\n\nEl comodín "Visión Lectora" (25 ML Coins) puede resaltar documentos históricos que muestran cada perspectiva (artículos de prensa, cartas, testimonios).',
+        E'Este ejercicio desarrolla pensamiento relativista cultural e histórico, una competencia avanzada del Nivel 3 de Cassany (Comprensión Crítica y Valorativa). A diferencia del relativismo nihilista ("todo es opinión"), este ejercicio entrena relativismo contextualizado ("las interpretaciones dependen de contextos legítimos").\n\nHabilidades metacognitivas desarrolladas:\n- Descentración perspectivista: Capacidad de salir de la propia perspectiva y adoptar otras genuinamente\n- Reconocimiento de sesgos: Identificar cómo intereses y contextos moldean interpretaciones (propias y ajenas)\n- Pensamiento dialéctico: Mantener tensión productiva entre perspectivas aparentemente contradictorias\n- Empatía histórica: Comprender decisiones y valores de épocas pasadas sin juzgarlos anacrónicamente\n\nAlineación con Cassany (Nivel 3):\n- Identifica intenciones del autor (cada grupo tiene propósitos específicos al narrar el evento)\n- Reconoce que los textos no son neutros (reflejan posiciones sociales y políticas)\n- Desarrolla juicio crítico sobre representaciones históricas\n- Practica pensamiento complejo que tolera ambigüedad y contradicción\n\nDificultad: Avanzada (CEFR: B2-C1). Requiere:\n- Comprensión profunda del contexto histórico de 1911\n- Capacidad de adoptar perspectivas radicalmente diferentes a la propia\n- Conocimiento de dinámicas sociales (género, clase, nacionalismo)\n- Tolerancia a la ambigüedad (aceptar que múltiples interpretaciones son válidas)\n\nRelevancia contemporánea:\nEn una época de "guerras culturales" y polarización, esta habilidad es crítica. Estudiantes que dominan análisis multiperspectivista pueden:\n- Comprender debates contemporáneos desde múltiples ángulos\n- Evitar pensamiento binario simplista (bueno/malo, correcto/incorrecto)\n- Participar en discusiones complejas con matiz y empatía\n- Reconocer sesgos en medios de comunicación y fuentes de información\n\nEl formato de matriz visual facilita comparación sistemática, evitando que perspectivas se mezclen confusamente.',
+        'matriz_perspectivas', 5,  -- CHANGED: order_index 3→5 per doc v6.2 (DB-121)
         '{
-            "requireAllPerspectives": true,
-            "minWordsPerCell": 30,
-            "showExamplePerspective": true,
-            "allowMultipleAttempts": true
+            "interactiveMatrix": true,
+            "allowComparisons": true,
+            "showTimeline": true
         }'::jsonb,
         '{
-            "event": {
-                "title": "Marie gana el Nobel de Química en 1911 en medio de escándalo personal",
-                "context": "En 1911, Marie Curie recibió su segundo Premio Nobel (en Química) por el aislamiento del radio puro. Sin embargo, este logro científico sin precedentes coincidió con un escándalo en su vida personal que generó gran controversia en la prensa francesa. Marie fue la primera persona en ganar dos Nobel y la primera mujer en ganar el Nobel de Química, pero estos logros fueron opacados por el sensacionalismo de la época.",
-                "historicalContext": "Europa de principios del siglo XX, fuerte machismo institucional, prensa sensacionalista, nacionalismo, rol limitado de la mujer en la ciencia."
-            },
             "perspectives": [
                 {
-                    "id": "marie_curie",
-                    "name": "Marie Curie misma",
-                    "description": "La propia Marie Curie, científica galardonada",
-                    "guideQuestions": [
-                        "¿Cómo se habría sentido Marie al recibir el segundo Nobel?",
-                        "¿Qué opinaba de mezclar su vida personal con sus logros científicos?",
-                        "¿Qué consecuencias temía o esperaba?"
-                    ]
+                    "id": "persp-1",
+                    "group": "Comunidad científica (1903)",
+                    "perspective": "Inicial escepticismo hacia mujer científica",
+                    "evidence": "Casi no fue nominada al Nobel; tuvieron que insistir en incluirla",
+                    "evolution": "Reconocimiento gradual tras evidencia irrefutable"
                 },
                 {
-                    "id": "pierre_curie",
-                    "name": "Pierre Curie (póstumamente)",
-                    "description": "El difunto esposo de Marie, también científico Nobel",
-                    "guideQuestions": [
-                        "¿Cómo habría reaccionado Pierre al segundo Nobel de Marie?",
-                        "¿Qué habría opinado del escándalo?",
-                        "¿Qué habría deseado para Marie?"
-                    ]
+                    "id": "persp-2",
+                    "group": "Prensa francesa (1911)",
+                    "perspective": "Sensacionalismo sobre su vida personal",
+                    "evidence": "Escándalo amoroso eclipsó su segundo Nobel temporalmente",
+                    "evolution": "Enfoque en chismes antes que en logros científicos"
                 },
                 {
-                    "id": "cientificos",
-                    "name": "Científicos contemporáneos",
-                    "description": "La comunidad científica europea de 1911",
-                    "guideQuestions": [
-                        "¿Cómo vieron el segundo Nobel de Marie?",
-                        "¿Qué opinaban del escándalo vs el logro?",
-                        "¿Qué consecuencias temían para la ciencia?"
-                    ]
+                    "id": "persp-3",
+                    "group": "Movimiento feminista (1920s-presente)",
+                    "perspective": "Símbolo de empoderamiento femenino",
+                    "evidence": "Primera mujer en logros múltiples sin precedentes",
+                    "evolution": "Icono inspiracional para mujeres en STEM"
                 },
                 {
-                    "id": "prensa",
-                    "name": "La prensa de la época",
-                    "description": "Periódicos y medios franceses de 1911",
-                    "guideQuestions": [
-                        "¿Qué vendía más: el Nobel o el escándalo?",
-                        "¿Qué enfoque dieron a la noticia?",
-                        "¿Qué consecuencias buscaban (ventas, influencia)?"
-                    ]
+                    "id": "persp-4",
+                    "group": "Polonia (toda época)",
+                    "perspective": "Heroína nacional y orgullo patrio",
+                    "evidence": "Nombró elemento polonio por su país ocupado",
+                    "evolution": "Símbolo de resistencia y excelencia polaca"
                 },
                 {
-                    "id": "mujeres",
-                    "name": "Mujeres de la época",
-                    "description": "Mujeres educadas y aspirantes a la ciencia en Europa",
-                    "guideQuestions": [
-                        "¿Cómo inspiró el logro de Marie?",
-                        "¿Qué esperanzas generó?",
-                        "¿Qué barreras seguían viendo?"
-                    ]
+                    "id": "persp-5",
+                    "group": "Marie Curie (perspectiva personal)",
+                    "perspective": "Reconocimiento científico merecido, pero invasión de privacidad dolorosa",
+                    "evidence": "Cartas personales donde expresa frustración por el escándalo eclipsando su segundo Nobel",
+                    "evolution": "Separar vida personal de logros profesionales; orgullo científico mezclado con dolor personal"
                 },
                 {
-                    "id": "polonia",
-                    "name": "La sociedad polaca",
-                    "description": "Polonia, país natal de Marie (bajo ocupación rusa)",
-                    "guideQuestions": [
-                        "¿Qué orgullo nacional sintieron?",
-                        "¿Qué opinaban de que Marie representara a Francia?",
-                        "¿Qué significaba para Polonia ocupada?"
-                    ]
+                    "id": "persp-6",
+                    "group": "Pierre Curie (perspectiva póstuma hipotética)",
+                    "perspective": "Orgullo por los logros continuados de Marie tras su muerte",
+                    "evidence": "Basado en cartas donde expresaba admiración por el talento de Marie y apoyo incondicional",
+                    "evolution": "Validación del trabajo conjunto; satisfacción de que Marie continuara el legado científico"
                 }
             ],
-            "matrixTemplate": {
-                "columns": ["Perspectiva", "Reacción Emocional", "Opinión sobre el Evento", "Consecuencias Percibidas"],
-                "rows": 6
-            }
-        }'::jsonb,
-        '{
-            "modelAnswers": [
+            "analysisQuestions": [
                 {
-                    "perspectiveId": "marie_curie",
-                    "emotionalReaction": "Orgullo por el reconocimiento científico mezclado con dolor por la invasión de su privacidad y el juicio público",
-                    "opinion": "El Nobel es un reconocimiento merecido a años de trabajo científico riguroso. La vida personal no debería mezclarse con los logros profesionales",
-                    "perceivedConsequences": "Validación científica internacional pero también mayor escrutinio público y posible rechazo social"
+                    "id": "q1",
+                    "question": "¿Qué perspectiva fue más injusta con Marie?",
+                    "expectedAnswer": "La prensa sensacionalista de 1911 que enfocó en su vida personal ignorando su segundo Nobel"
                 },
                 {
-                    "perspectiveId": "prensa",
-                    "emotionalReaction": "Excitación por la oportunidad de vender más periódicos con el escándalo",
-                    "opinion": "El escándalo personal es más interesante para los lectores que un premio científico abstracto",
-                    "perceivedConsequences": "Mayor circulación de periódicos, aumento en ventas, influencia pública"
+                    "id": "q2",
+                    "question": "¿Cómo ha evolucionado la percepción de Marie con el tiempo?",
+                    "expectedAnswer": "De escepticismo inicial a reconocimiento universal como pionera científica y feminista"
                 },
                 {
-                    "perspectiveId": "mujeres",
-                    "emotionalReaction": "Inspiración y esperanza de que las barreras de género puedan superarse",
-                    "opinion": "Marie demuestra que las mujeres pueden alcanzar la excelencia científica al más alto nivel",
-                    "perceivedConsequences": "Nuevas posibilidades para mujeres en campos científicos, aunque las barreras siguen siendo enormes"
-                },
-                {
-                    "perspectiveId": "cientificos",
-                    "emotionalReaction": "División entre admiración por el logro y preocupación por la reputación de la ciencia",
-                    "opinion": "El logro científico es indiscutible, pero el escándalo amenaza la imagen de seriedad de la academia",
-                    "perceivedConsequences": "Dilema entre defender a una colega talentosa y proteger la reputación institucional"
-                },
-                {
-                    "perspectiveId": "pierre_curie",
-                    "emotionalReaction": "Orgullo por el segundo Nobel de Marie y tristeza por no estar presente para apoyarla",
-                    "opinion": "Marie merece todo reconocimiento por su brillantez científica independiente",
-                    "perceivedConsequences": "Habría deseado protegerla del escándalo y apoyarla públicamente"
-                },
-                {
-                    "perspectiveId": "polonia",
-                    "emotionalReaction": "Orgullo nacionalista de que una polaca alcance la cima científica mundial",
-                    "opinion": "Marie representa la inteligencia y resiliencia polacas a pesar de la ocupación",
-                    "perceivedConsequences": "Símbolo de esperanza para Polonia ocupada, aunque represente oficialmente a Francia"
+                    "id": "q3",
+                    "question": "¿Qué grupo tuvo la perspectiva más equilibrada?",
+                    "expectedAnswer": "Historiadores modernos que contextualizan sus logros y limitaciones"
                 }
             ]
         }'::jsonb,
-        'advanced', 100, 70, 30, 3,
+        '{
+            "analysis_type": "multi_perspective",
+            "evaluation": "comprehensive_understanding"
+        }'::jsonb,
+        'advanced', 100, 70,
+        150, 30,
         ARRAY[
-            'Recuerda que en 1911 existían fuertes prejuicios de género en la ciencia',
-            'La prensa de la época priorizaba el sensacionalismo sobre la precisión',
-            'Marie fue rechazada de la Academia de Ciencias Francesa a pesar de sus Nobel',
-            'Polonia estaba bajo ocupación y buscaba símbolos de orgullo nacional'
+            'Las perspectivas históricas cambian con el tiempo y contexto',
+            'Ninguna perspectiva es completamente objetiva',
+            'Comprender múltiples puntos de vista enriquece nuestra comprensión'
         ]::text[],
         true, 15,
         150, 30,
-        true, 1, true  -- requires_manual_grading = true (evaluación subjetiva)
+        true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
-        title = EXCLUDED.title,
-        subtitle = EXCLUDED.subtitle,
-        description = EXCLUDED.description,
-        instructions = EXCLUDED.instructions,
-        objective = EXCLUDED.objective,
-        how_to_solve = EXCLUDED.how_to_solve,
-        recommended_strategy = EXCLUDED.recommended_strategy,
-        pedagogical_notes = EXCLUDED.pedagogical_notes,
-        config = EXCLUDED.config,
         content = EXCLUDED.content,
-        solution = EXCLUDED.solution,
-        estimated_time_minutes = EXCLUDED.estimated_time_minutes,
-        hints = EXCLUDED.hints,
-        requires_manual_grading = EXCLUDED.requires_manual_grading,
         updated_at = NOW();
 
     -- ========================================================================
@@ -456,7 +393,7 @@ BEGIN
         estimated_time_minutes, max_attempts,
         hints, enable_hints, hint_cost_ml_coins,
         xp_reward, ml_coins_reward,
-        is_active, version, requires_manual_grading
+        is_active, version
     ) VALUES (
         mod_id,
         'Creación de Podcast Argumentativo',
@@ -534,10 +471,9 @@ BEGIN
         ]::text[],
         true, 15,
         150, 30,
-        true, 1, true  -- requires_manual_grading = true (evaluación subjetiva - PODCAST)
+        true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
-        requires_manual_grading = EXCLUDED.requires_manual_grading,
         updated_at = NOW();
 
     -- ========================================================================
@@ -552,7 +488,7 @@ BEGIN
         estimated_time_minutes, max_attempts,
         hints, enable_hints, hint_cost_ml_coins,
         xp_reward, ml_coins_reward,
-        is_active, version, requires_manual_grading
+        is_active, version
     ) VALUES (
         mod_id,
         'Tribunal de Opiniones: Evaluando Afirmaciones',
@@ -651,10 +587,9 @@ BEGIN
         ]::text[],
         true, 15,
         150, 30,
-        true, 1, true  -- requires_manual_grading = true (evaluación subjetiva)
+        true, 1
     ) ON CONFLICT (module_id, exercise_type, order_index) DO UPDATE SET
         content = EXCLUDED.content,
-        requires_manual_grading = EXCLUDED.requires_manual_grading,
         updated_at = NOW();
 
     -- Update module total_exercises

@@ -127,7 +127,9 @@ export const DisabledAvatarExample: React.FC = () => {
 
   return (
     <div className="space-y-2">
-      <p className="text-sm text-gray-600">Upload disabled (e.g., during profile update)</p>
+      <p className="text-sm text-gray-600">
+        Upload disabled (e.g., during profile update)
+      </p>
 
       <AvatarUpload
         userId={user.id}
@@ -176,10 +178,12 @@ export const ProfileFormExample: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
       {/* Avatar Upload */}
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-700">Profile Picture</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Profile Picture
+        </label>
         <AvatarUpload
           userId={user.id}
           currentAvatarUrl={formData.avatarUrl}
@@ -193,7 +197,9 @@ export const ProfileFormExample: React.FC = () => {
 
       {/* Display Name */}
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-700">Display Name</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Display Name
+        </label>
         <input
           type="text"
           value={formData.displayName}
@@ -205,7 +211,9 @@ export const ProfileFormExample: React.FC = () => {
 
       {/* Bio */}
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-700">Bio</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Bio
+        </label>
         <textarea
           value={formData.bio}
           onChange={(e) => setFormData({ ...formData, bio: e.target.value })}

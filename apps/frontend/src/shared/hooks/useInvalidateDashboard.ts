@@ -63,7 +63,10 @@ export function useInvalidateDashboard(): UseInvalidateDashboardReturn {
     try {
       // 1. Update Zustand stores in parallel
       console.log('📦 [useInvalidateDashboard] Fetching Zustand stores...');
-      await Promise.all([fetchUserProgress(), fetchBalance()]);
+      await Promise.all([
+        fetchUserProgress(),
+        fetchBalance(),
+      ]);
       console.log('✅ [useInvalidateDashboard] Zustand stores updated');
 
       // 2. Invalidate React Query cache

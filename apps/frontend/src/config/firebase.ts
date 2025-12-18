@@ -115,9 +115,7 @@ export const requestPushPermission = async (): Promise<string | null> => {
 /**
  * Subscribe to foreground messages
  */
-export const onForegroundMessage = (
-  callback: (payload: MessagePayload) => void,
-): (() => void) | null => {
+export const onForegroundMessage = (callback: (payload: MessagePayload) => void): (() => void) | null => {
   const messagingInstance = getFirebaseMessaging();
   if (!messagingInstance) {
     return null;

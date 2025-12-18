@@ -384,7 +384,7 @@ export const getLeaderboard = async (
   type: LeaderboardType,
   period: TimePeriod = 'all-time',
   limit: number = 100,
-  options?: { schoolId?: string; userId?: string },
+  options?: { schoolId?: string; userId?: string }
 ): Promise<LeaderboardEntry[]> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -427,10 +427,7 @@ export const getLeaderboard = async (
       rank: entry.rank || index + 1,
       userId: entry.userId || entry.user_id,
       username: entry.username || entry.display_name || 'Unknown',
-      avatar:
-        entry.avatar ||
-        entry.avatar_url ||
-        `https://ui-avatars.com/api/?name=${encodeURIComponent(entry.username || entry.display_name || 'U')}`,
+      avatar: entry.avatar || entry.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(entry.username || entry.display_name || 'U')}`,
       rankBadge: entry.currentRank || entry.current_rank || entry.rankBadge || 'Nacom',
       score: entry.totalXP || entry.total_xp || entry.score || 0,
       xp: entry.totalXP || entry.total_xp || 0,

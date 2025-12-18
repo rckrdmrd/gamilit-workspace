@@ -28,20 +28,20 @@ import { useEconomyStore } from '../../store/economyStore';
 
 // Map icon names from backend to Lucide components
 const iconMap: Record<string, LucideIcon> = {
-  award: Award,
+  'award': Award,
   'book-open': BookOpen,
-  coins: Coins,
-  compass: Compass,
-  flag: Flag,
-  image: Image,
-  shield: Shield,
+  'coins': Coins,
+  'compass': Compass,
+  'flag': Flag,
+  'image': Image,
+  'shield': Shield,
   'shield-check': ShieldCheck,
-  smile: Smile,
-  sparkles: Sparkles,
-  square: Square,
-  sticker: Sticker,
+  'smile': Smile,
+  'sparkles': Sparkles,
+  'square': Square,
+  'sticker': Sticker,
   'user-circle': UserCircle,
-  zap: Zap,
+  'zap': Zap,
 };
 
 // Get icon component from name

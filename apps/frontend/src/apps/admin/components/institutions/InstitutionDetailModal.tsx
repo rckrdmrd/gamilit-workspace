@@ -108,8 +108,12 @@ export const InstitutionDetailModal: React.FC<InstitutionDetailModalProps> = ({
               <Building2 className="h-8 w-8 text-detective-orange" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-detective-text">{institution.name}</h2>
-              <p className="mt-1 text-sm text-detective-text-secondary">ID: {institution.id}</p>
+              <h2 className="text-2xl font-bold text-detective-text">
+                {institution.name}
+              </h2>
+              <p className="mt-1 text-sm text-detective-text-secondary">
+                ID: {institution.id}
+              </p>
               <div className="mt-2 flex flex-wrap gap-2">
                 <span
                   className={`rounded-lg px-3 py-1 text-xs font-semibold ${
@@ -143,7 +147,9 @@ export const InstitutionDetailModal: React.FC<InstitutionDetailModalProps> = ({
 
         {/* Estadísticas */}
         <div>
-          <h3 className="mb-4 text-lg font-semibold text-detective-text">Estadísticas de Uso</h3>
+          <h3 className="mb-4 text-lg font-semibold text-detective-text">
+            Estadísticas de Uso
+          </h3>
           <InstitutionStats stats={stats} loading={loadingStats || loading} />
         </div>
 
@@ -176,7 +182,9 @@ export const InstitutionDetailModal: React.FC<InstitutionDetailModalProps> = ({
                     <Phone className="h-4 w-4 text-gray-400" />
                     <div>
                       <p className="text-xs text-detective-text-secondary">Teléfono</p>
-                      <p className="text-sm text-detective-text">{institution.contact.phone}</p>
+                      <p className="text-sm text-detective-text">
+                        {institution.contact.phone}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -185,7 +193,9 @@ export const InstitutionDetailModal: React.FC<InstitutionDetailModalProps> = ({
                     <MapPin className="h-4 w-4 text-gray-400" />
                     <div>
                       <p className="text-xs text-detective-text-secondary">Dirección</p>
-                      <p className="text-sm text-detective-text">{institution.contact.address}</p>
+                      <p className="text-sm text-detective-text">
+                        {institution.contact.address}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -224,7 +234,9 @@ export const InstitutionDetailModal: React.FC<InstitutionDetailModalProps> = ({
               )}
               <div className="flex items-center gap-3">
                 <div>
-                  <p className="text-xs text-detective-text-secondary">Renovación Automática</p>
+                  <p className="text-xs text-detective-text-secondary">
+                    Renovación Automática
+                  </p>
                   <p className="text-sm text-detective-text">
                     {institution.subscription?.autoRenew ? 'Sí' : 'No'}
                   </p>

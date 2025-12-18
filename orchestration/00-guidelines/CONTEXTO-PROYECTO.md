@@ -95,6 +95,49 @@ Cuando una directiva global usa `{DB_DDL_PATH}/schemas/{schema}/tables/`:
 └── orchestration/        → Sistema de orquestación local
 ```
 
+---
+
+## WORKSPACES DUALES
+
+**IMPORTANTE:** GAMILIT tiene dos workspaces con propositos diferentes.
+
+### Workspace NUEVO (Este - Prioridad Desarrollo)
+
+| Aspecto | Valor |
+|---------|-------|
+| **Path** | `~/workspace/projects/gamilit` |
+| **Remote** | `http://72.60.226.4:3000/rckrdmrd/workspace.git` |
+| **Proposito** | Desarrollo activo, agentes, directivas |
+| **Prioridad** | ALTA - Todo desarrollo nuevo aqui |
+
+### Workspace VIEJO (Produccion Cliente)
+
+| Aspecto | Valor |
+|---------|-------|
+| **Path** | `~/workspace-old/wsl-ubuntu/workspace/workspace-gamilit/gamilit/projects/gamilit` |
+| **Remote** | `git@github.com:rckrdmrd/gamilit-workspace.git` |
+| **Proposito** | Deployment a servidor produccion |
+| **Contenido especial** | Scripts produccion, guias HTTPS/PM2/Certbot |
+
+### Reglas de Sincronizacion
+
+Ver directiva completa: `orchestration/directivas/DIRECTIVA-SINCRONIZACION-WORKSPACES.md`
+
+**Resumen:**
+- Desarrollo → NUEVO primero, luego sincronizar a VIEJO
+- Configuraciones (.env.production, ecosystem.config.js) → AMBOS
+- Scripts de produccion → Solo VIEJO
+- DDL y Seeds → IDENTICOS en ambos
+
+### Servidor de Produccion
+
+| Aspecto | Valor |
+|---------|-------|
+| IP | 74.208.126.102 |
+| Backend | Puerto 3006 (PM2 cluster) |
+| Frontend | Puerto 3005 (PM2 fork) |
+| Database | PostgreSQL :5432, `gamilit_platform` |
+
 ## Convenciones Específicas
 
 ### Nomenclatura de Archivos

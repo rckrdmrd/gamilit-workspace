@@ -223,7 +223,10 @@ function App() {
             }
           />
           {/* FASE 6A: /teacher/resources redirige a dashboard (placeholder sin funcionalidad) */}
-          <Route path="/teacher/resources" element={<Navigate to="/teacher/dashboard" replace />} />
+          <Route
+            path="/teacher/resources"
+            element={<Navigate to="/teacher/dashboard" replace />}
+          />
           <Route
             path="/teacher/classes"
             element={

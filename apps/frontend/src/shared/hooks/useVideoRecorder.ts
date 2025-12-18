@@ -239,12 +239,8 @@ export function useVideoRecorder(): UseVideoRecorderReturn {
       // Try to use Permissions API if available
       if (navigator.permissions && navigator.permissions.query) {
         // Check both camera and microphone permissions
-        const cameraResult = await navigator.permissions.query({
-          name: 'camera' as PermissionName,
-        });
-        const micResult = await navigator.permissions.query({
-          name: 'microphone' as PermissionName,
-        });
+        const cameraResult = await navigator.permissions.query({ name: 'camera' as PermissionName });
+        const micResult = await navigator.permissions.query({ name: 'microphone' as PermissionName });
 
         // Return the most restrictive permission state
         if (cameraResult.state === 'denied' || micResult.state === 'denied') {
@@ -286,7 +282,7 @@ export function useVideoRecorder(): UseVideoRecorderReturn {
       setError(null);
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
-        audio: true,
+        audio: true
       });
 
       // Create preview URL
@@ -312,137 +308,131 @@ export function useVideoRecorder(): UseVideoRecorderReturn {
   /**
    * Start recording video
    */
-  const startRecording = useCallback(
-    async (constraints?: VideoConstraints): Promise<void> => {
-      if (!isSupported) {
-        setError({
-          type: 'not_supported',
-          message: 'Tu navegador no soporta grabación de video',
-          userAction: 'Por favor usa Chrome, Firefox, Edge o Safari actualizado.',
-        });
-        return;
+  const startRecording = useCallback(async (constraints?: VideoConstraints): Promise<void> => {
+    if (!isSupported) {
+      setError({
+        type: 'not_supported',
+        message: 'Tu navegador no soporta grabación de video',
+        userAction: 'Por favor usa Chrome, Firefox, Edge o Safari actualizado.',
+      });
+      return;
+    }
+
+    try {
+      setError(null);
+
+      // Build video constraints
+      const videoConstraints: MediaTrackConstraints = {
+        width: constraints?.width || 1280,
+        height: constraints?.height || 720,
+        frameRate: constraints?.frameRate || 30,
+      };
+
+      if (constraints?.facingMode) {
+        videoConstraints.facingMode = constraints.facingMode;
       }
 
-      try {
-        setError(null);
+      // Get media stream
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: videoConstraints,
+        audio: true
+      });
+      streamRef.current = stream;
 
-        // Build video constraints
-        const videoConstraints: MediaTrackConstraints = {
-          width: constraints?.width || 1280,
-          height: constraints?.height || 720,
-          frameRate: constraints?.frameRate || 30,
-        };
+      // Create preview URL from stream
+      const streamUrl = URL.createObjectURL(stream);
+      setPreviewUrl(streamUrl);
 
-        if (constraints?.facingMode) {
-          videoConstraints.facingMode = constraints.facingMode;
+      // Get supported MIME type
+      const mimeType = _getSupportedMimeType();
+
+      // Create MediaRecorder
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: mimeType || 'video/webm',
+      });
+      mediaRecorderRef.current = mediaRecorder;
+      chunksRef.current = [];
+
+      // Event handlers
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: mimeType || 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        setVideoBlob(blob);
+        setVideoUrl(url);
+        setRecordingState('stopped');
+
+        // Stop timer
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
         }
 
-        // Get media stream
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: videoConstraints,
-          audio: true,
-        });
-        streamRef.current = stream;
+        // Clean up preview
+        if (previewUrl) {
+          URL.revokeObjectURL(previewUrl);
+          setPreviewUrl(null);
+        }
+      };
 
-        // Create preview URL from stream
-        const streamUrl = URL.createObjectURL(stream);
-        setPreviewUrl(streamUrl);
+      mediaRecorder.onpause = () => {
+        setRecordingState('paused');
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+      };
 
-        // Get supported MIME type
-        const mimeType = _getSupportedMimeType();
-
-        // Create MediaRecorder
-        const mediaRecorder = new MediaRecorder(stream, {
-          mimeType: mimeType || 'video/webm',
-        });
-        mediaRecorderRef.current = mediaRecorder;
-        chunksRef.current = [];
-
-        // Event handlers
-        mediaRecorder.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-            chunksRef.current.push(event.data);
-          }
-        };
-
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(chunksRef.current, { type: mimeType || 'video/webm' });
-          const url = URL.createObjectURL(blob);
-          setVideoBlob(blob);
-          setVideoUrl(url);
-          setRecordingState('stopped');
-
-          // Stop timer
-          if (timerRef.current) {
-            clearInterval(timerRef.current);
-            timerRef.current = null;
-          }
-
-          // Clean up preview
-          if (previewUrl) {
-            URL.revokeObjectURL(previewUrl);
-            setPreviewUrl(null);
-          }
-        };
-
-        mediaRecorder.onpause = () => {
-          setRecordingState('paused');
-          if (timerRef.current) {
-            clearInterval(timerRef.current);
-            timerRef.current = null;
-          }
-        };
-
-        mediaRecorder.onresume = () => {
-          setRecordingState('recording');
-          // Resume timer
-          timerRef.current = setInterval(() => {
-            setDuration((prev) => prev + 1);
-          }, 1000);
-        };
-
-        mediaRecorder.onerror = (event) => {
-          console.error('MediaRecorder error:', event);
-          setError({
-            type: 'unknown',
-            message: 'Error durante la grabación',
-            userAction: 'Intenta nuevamente. Si el problema persiste, recarga la página.',
-          });
-          setRecordingState('idle');
-        };
-
-        // Start recording
-        mediaRecorder.start();
+      mediaRecorder.onresume = () => {
         setRecordingState('recording');
-        setPermissionState('granted');
-
-        // Start duration timer
-        setDuration(0);
+        // Resume timer
         timerRef.current = setInterval(() => {
           setDuration((prev) => prev + 1);
         }, 1000);
-      } catch (err) {
-        const errorMessage = createErrorMessage(err);
-        setError(errorMessage);
+      };
 
-        if (errorMessage.type === 'permission_denied') {
-          setPermissionState('denied');
-        }
-
+      mediaRecorder.onerror = (event) => {
+        console.error('MediaRecorder error:', event);
+        setError({
+          type: 'unknown',
+          message: 'Error durante la grabación',
+          userAction: 'Intenta nuevamente. Si el problema persiste, recarga la página.',
+        });
         setRecordingState('idle');
+      };
+
+      // Start recording
+      mediaRecorder.start();
+      setRecordingState('recording');
+      setPermissionState('granted');
+
+      // Start duration timer
+      setDuration(0);
+      timerRef.current = setInterval(() => {
+        setDuration((prev) => prev + 1);
+      }, 1000);
+    } catch (err) {
+      const errorMessage = createErrorMessage(err);
+      setError(errorMessage);
+
+      if (errorMessage.type === 'permission_denied') {
+        setPermissionState('denied');
       }
-    },
-    [isSupported, previewUrl],
-  );
+
+      setRecordingState('idle');
+    }
+  }, [isSupported, previewUrl]);
 
   /**
    * Stop recording video
    */
   const stopRecording = useCallback(() => {
-    if (
-      mediaRecorderRef.current &&
-      (recordingState === 'recording' || recordingState === 'paused')
-    ) {
+    if (mediaRecorderRef.current && (recordingState === 'recording' || recordingState === 'paused')) {
       mediaRecorderRef.current.stop();
       // Note: cleanup of stream will happen in useEffect cleanup
     }

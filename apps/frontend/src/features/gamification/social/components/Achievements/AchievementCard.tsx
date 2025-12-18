@@ -59,43 +59,43 @@ interface AchievementCardProps {
 
 // Icon mapping for achievement icons
 const achievementIconMap: Record<string, LucideIcon> = {
-  footprints: Footprints,
-  target: Target,
+  'footprints': Footprints,
+  'target': Target,
   'book-open': BookOpen,
   'graduation-cap': GraduationCap,
-  compass: Compass,
-  trophy: Trophy,
-  zap: Zap,
-  star: Star,
-  flame: Flame,
-  award: Award,
-  sunrise: Sunrise,
-  moon: Moon,
-  calendar: Calendar,
+  'compass': Compass,
+  'trophy': Trophy,
+  'zap': Zap,
+  'star': Star,
+  'flame': Flame,
+  'award': Award,
+  'sunrise': Sunrise,
+  'moon': Moon,
+  'calendar': Calendar,
   'trending-up': TrendingUp,
-  shield: Shield,
+  'shield': Shield,
   'check-circle': CheckCircle,
-  sparkles: Sparkles,
-  search: Search,
-  timer: Timer,
-  link: Link,
-  check: Check,
-  crown: Crown,
-  brain: Brain,
-  layers: Layers,
-  focus: Target, // Using Target as fallback for focus
+  'sparkles': Sparkles,
+  'search': Search,
+  'timer': Timer,
+  'link': Link,
+  'check': Check,
+  'crown': Crown,
+  'brain': Brain,
+  'layers': Layers,
+  'focus': Target, // Using Target as fallback for focus
   'user-plus': UserPlus,
-  users: Users,
-  flag: Flag,
+  'users': Users,
+  'flag': Flag,
   'heart-handshake': HeartHandshake,
   'users-round': UsersRound,
   'thumbs-up': ThumbsUp,
-  handshake: Handshake,
-  egg: Egg,
-  clock: Clock,
-  key: Key,
-  puzzle: Puzzle,
-  gem: Gem,
+  'handshake': Handshake,
+  'egg': Egg,
+  'clock': Clock,
+  'key': Key,
+  'puzzle': Puzzle,
+  'gem': Gem,
 };
 
 const rarityColors = {
@@ -134,79 +134,70 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
       whileHover={{ scale: 1.05, y: -5 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className={`relative cursor-pointer rounded-detective border-2 p-4 transition-all ${
+      className={`relative p-4 rounded-detective border-2 cursor-pointer transition-all ${
         rarityColors[achievement.rarity]
-      } ${rarityGlow[achievement.rarity]} ${isLocked ? 'opacity-60 grayscale' : ''}`}
+      } ${rarityGlow[achievement.rarity]} ${
+        isLocked ? 'opacity-60 grayscale' : ''
+      }`}
     >
       {/* Rarity Badge */}
-      <div className="absolute right-2 top-2">
-        <span
-          className={`rounded-full px-2 py-1 text-xs font-semibold ${
-            achievement.rarity === 'legendary'
-              ? 'bg-detective-gold text-white'
-              : achievement.rarity === 'epic'
-                ? 'bg-detective-orange text-white'
-                : achievement.rarity === 'rare'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-400 text-white'
-          }`}
-        >
+      <div className="absolute top-2 right-2">
+        <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
+          achievement.rarity === 'legendary' ? 'bg-detective-gold text-white' :
+          achievement.rarity === 'epic' ? 'bg-detective-orange text-white' :
+          achievement.rarity === 'rare' ? 'bg-blue-500 text-white' :
+          'bg-gray-400 text-white'
+        }`}>
           {achievement.rarity.toUpperCase()}
         </span>
       </div>
 
       {/* Icon */}
-      <div className="mb-3 flex justify-center">
-        <div
-          className={`rounded-full p-4 ${
-            isLocked ? 'bg-gray-300' : 'bg-gradient-to-br from-orange-500 to-orange-600'
-          }`}
-        >
-          <IconComponent className="h-8 w-8 text-white" />
+      <div className="flex justify-center mb-3">
+        <div className={`p-4 rounded-full ${
+          isLocked ? 'bg-gray-300' : 'bg-gradient-to-br from-orange-500 to-orange-600'
+        }`}>
+          <IconComponent className="w-8 h-8 text-white" />
         </div>
       </div>
 
       {/* Title */}
-      <h3 className="mb-2 text-center text-detective-lg font-bold text-detective-text">
+      <h3 className="text-detective-lg font-bold text-center text-detective-text mb-2">
         {achievement.title}
       </h3>
 
       {/* Description */}
-      <p className="mb-3 min-h-[40px] text-center text-detective-sm text-detective-text-secondary">
+      <p className="text-detective-sm text-detective-text-secondary text-center mb-3 min-h-[40px]">
         {achievement.isHidden && isLocked ? '???' : achievement.description}
       </p>
 
       {/* Progress Bar (if applicable) */}
       {achievement.progress && (
         <div className="mb-3">
-          <div className="mb-1 flex justify-between text-xs text-detective-text-secondary">
+          <div className="flex justify-between text-xs text-detective-text-secondary mb-1">
             <span>Progreso</span>
-            <span>
-              {achievement.progress.current}/{achievement.progress.required}
-            </span>
+            <span>{achievement.progress.current}/{achievement.progress.required}</span>
           </div>
-          <div className="h-2 w-full rounded-full bg-gray-200">
+          <div className="w-full bg-gray-200 rounded-full h-2">
             <motion.div
               initial={{ width: 0 }}
-              animate={{
-                width: `${(achievement.progress.current / achievement.progress.required) * 100}%`,
-              }}
-              className="h-2 rounded-full bg-gradient-to-r from-detective-orange to-detective-gold"
+              animate={{ width: `${(achievement.progress.current / achievement.progress.required) * 100}%` }}
+              className="bg-gradient-to-r from-detective-orange to-detective-gold h-2 rounded-full"
             />
           </div>
         </div>
       )}
 
       {/* Rewards */}
-      <div className="flex items-center justify-around border-t border-gray-200 pt-3">
+      <div className="flex justify-around items-center pt-3 border-t border-gray-200">
         <div className="flex items-center gap-1">
-          <Coins className="h-4 w-4 text-detective-gold" />
+          <Coins className="w-4 h-4 text-detective-gold" />
           <span className="text-detective-sm font-semibold text-detective-text">
             {achievement.mlCoinsReward} ML
           </span>
         </div>
         <div className="flex items-center gap-1">
-          <Zap className="h-4 w-4 text-detective-orange" />
+          <Zap className="w-4 h-4 text-detective-orange" />
           <span className="text-detective-sm font-semibold text-detective-text">
             {achievement.xpReward} XP
           </span>
@@ -220,19 +211,19 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
           animate={{ opacity: 1, y: 0 }}
           onClick={handleClaimClick}
           disabled={isClaiming}
-          className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg
-                     bg-gradient-to-r from-detective-gold to-yellow-500 px-4 py-2
-                     font-semibold text-white shadow-md transition-all duration-200 hover:shadow-lg
-                     disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full mt-3 py-2 px-4 bg-gradient-to-r from-detective-gold to-yellow-500
+                     text-white font-semibold rounded-lg shadow-md hover:shadow-lg
+                     transition-all duration-200 flex items-center justify-center gap-2
+                     disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isClaiming ? (
             <>
-              <Loader className="h-4 w-4 animate-spin" />
+              <Loader className="w-4 h-4 animate-spin" />
               Reclamando...
             </>
           ) : (
             <>
-              <Gift className="h-4 w-4" />
+              <Gift className="w-4 h-4" />
               Reclamar Recompensas
             </>
           )}
@@ -241,22 +232,22 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({
 
       {/* Rewards Claimed Badge */}
       {achievement.isUnlocked && achievement.rewardsClaimed && (
-        <div className="mt-3 rounded-full bg-green-100 px-3 py-1 text-center text-xs font-medium text-green-700">
+        <div className="mt-3 py-1 px-3 bg-green-100 text-green-700 text-xs font-medium rounded-full text-center">
           Recompensas reclamadas
         </div>
       )}
 
       {/* Unlocked Badge */}
       {achievement.isUnlocked && (
-        <div className="absolute left-2 top-2">
-          <CheckCircle className="h-6 w-6 text-detective-success" />
+        <div className="absolute top-2 left-2">
+          <CheckCircle className="w-6 h-6 text-detective-success" />
         </div>
       )}
 
       {/* Locked Icon */}
       {isLocked && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <Lock className="h-12 w-12 text-gray-400 opacity-20" />
+          <Lock className="w-12 h-12 text-gray-400 opacity-20" />
         </div>
       )}
     </motion.div>

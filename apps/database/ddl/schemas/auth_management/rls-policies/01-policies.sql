@@ -16,7 +16,7 @@
 -- =====================================================
 -- TABLE: auth_management.profiles
 -- Description: User profiles with role-based and tenant-based access
--- Policies: 6 (SELECT: 3, INSERT: 1, UPDATE: 2)
+-- Policies: 5 (SELECT: 3, UPDATE: 2)
 -- =====================================================
 
 -- Drop existing policies
@@ -29,7 +29,6 @@ DROP POLICY IF EXISTS profiles_read_teacher ON auth_management.profiles;
 DROP POLICY IF EXISTS profiles_read_admin ON auth_management.profiles;
 DROP POLICY IF EXISTS profiles_update_own ON auth_management.profiles;
 DROP POLICY IF EXISTS profiles_update_admin ON auth_management.profiles;
-DROP POLICY IF EXISTS profiles_insert_self ON auth_management.profiles;
 
 -- Policy: profiles_read_own
 -- Purpose: Users can read their own profile
@@ -118,19 +117,6 @@ CREATE POLICY profiles_update_admin
 
 COMMENT ON POLICY profiles_update_admin ON auth_management.profiles IS
     'Permite a los administradores actualizar cualquier perfil de su tenant';
-
--- Policy: profiles_insert_self
--- Purpose: Allow inserting profiles during registration
--- Added: 2025-12-18 (FIX: Registration requires INSERT permission)
-CREATE POLICY profiles_insert_self
-    ON auth_management.profiles
-    AS PERMISSIVE
-    FOR INSERT
-    TO public
-    WITH CHECK (true);
-
-COMMENT ON POLICY profiles_insert_self ON auth_management.profiles IS
-    'Permite insertar perfiles durante el registro público';
 
 -- =====================================================
 -- TABLE: auth_management.user_sessions
@@ -264,11 +250,10 @@ COMMENT ON POLICY memberships_read_tenant ON auth_management.memberships IS
 -- =====================================================
 -- TABLE: auth_management.tenants
 -- Description: Tenant information - own tenant access only
--- Policies: 2 (SELECT: 2)
+-- Policies: 1 (SELECT: 1)
 -- =====================================================
 
 DROP POLICY IF EXISTS tenants_read_own ON auth_management.tenants;
-DROP POLICY IF EXISTS tenants_read_active ON auth_management.tenants;
 
 -- Policy: tenants_read_own
 -- Purpose: Users can read their own tenant information
@@ -281,19 +266,6 @@ CREATE POLICY tenants_read_own
 
 COMMENT ON POLICY tenants_read_own ON auth_management.tenants IS
     'Permite a los usuarios ver solo la información de su propio tenant';
-
--- Policy: tenants_read_active
--- Purpose: Allow reading active tenants for public registration
--- Added: 2025-12-18 (FIX: Registration requires tenant list)
-CREATE POLICY tenants_read_active
-    ON auth_management.tenants
-    AS PERMISSIVE
-    FOR SELECT
-    TO public
-    USING (is_active = true);
-
-COMMENT ON POLICY tenants_read_active ON auth_management.tenants IS
-    'Permite leer tenants activos para registro público';
 
 -- =====================================================
 -- TABLE: auth_management.user_roles

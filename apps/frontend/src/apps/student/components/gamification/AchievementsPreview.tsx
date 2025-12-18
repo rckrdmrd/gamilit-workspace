@@ -143,7 +143,9 @@ export function AchievementsPreview({ achievements }: AchievementsPreviewProps) 
               <div className="mb-3 mt-2 flex justify-center">
                 <div
                   className={`relative flex h-16 w-16 items-center justify-center rounded-full text-3xl shadow-md ${
-                    isLocked ? 'bg-gray-300' : 'bg-gradient-to-br from-orange-500 to-orange-600'
+                    isLocked
+                      ? 'bg-gray-300'
+                      : 'bg-gradient-to-br from-orange-500 to-orange-600'
                   }`}
                 >
                   {isLocked ? (

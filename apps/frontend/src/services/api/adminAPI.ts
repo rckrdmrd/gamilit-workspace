@@ -1758,9 +1758,7 @@ export const adminAPI = {
      * Get all classrooms for admin selectors
      * Uses social classrooms endpoint
      */
-    getAll: async (params?: {
-      schoolId?: string;
-    }): Promise<import('./adminTypes').ClassroomBasic[]> => {
+    getAll: async (params?: { schoolId?: string }): Promise<import('./adminTypes').ClassroomBasic[]> => {
       try {
         const response = await apiClient.get<import('./adminTypes').ClassroomBasic[]>(
           '/social/classrooms',

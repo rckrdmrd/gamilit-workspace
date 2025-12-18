@@ -1,16 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { BarChart3, Eye, Save, Download, Send, Loader2, CheckCircle, Sparkles } from 'lucide-react';
-import {
-  DndContext,
-  DragEndEvent,
-  DragOverlay,
-  DragStartEvent,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
@@ -118,9 +109,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
   const defaultExercise = getDefaultExercise(exerciseId, difficulty);
   const currentExercise = exercise || defaultExercise;
   const [cards, setCards] = useState<InfoCard[]>(initialData?.cards || currentExercise.cards);
-  const [droppedCards, setDroppedCards] = useState<Record<string, string>>(
-    initialData?.droppedCards || {},
-  );
+  const [droppedCards, setDroppedCards] = useState<Record<string, string>>(initialData?.droppedCards || {});
   const [activeId, setActiveId] = useState<string | null>(null);
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
@@ -141,10 +130,13 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
         delay: 250, // 250ms hold before drag starts (better for touch)
         tolerance: 5,
       },
-    }),
+    })
   );
 
-  const { submit, isSubmitting } = useExerciseSubmission(exerciseId || '', {
+  const {
+    submit,
+    isSubmitting,
+  } = useExerciseSubmission(exerciseId || '', {
     onSuccess: (result) => {
       setIsSubmitted(true);
       const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
@@ -209,12 +201,16 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
 
     if (isCorrectDrop) {
       // Correct placement
-      setDroppedCards((prev) => ({
+      setDroppedCards(prev => ({
         ...prev,
         [dropZoneId]: draggedCardId,
       }));
-      setCards((prev) =>
-        prev.map((card) => (card.id === draggedCardId ? { ...card, revealed: true } : card)),
+      setCards(prev =>
+        prev.map(card =>
+          card.id === draggedCardId
+            ? { ...card, revealed: true }
+            : card
+        )
       );
 
       // Show success feedback with animation
@@ -271,13 +267,10 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
       answers: {
         elementsExplored: cards.filter((c) => c.revealed).map((c) => c.id),
         droppedCards,
-        interactions: cards.reduce(
-          (acc, card) => ({
-            ...acc,
-            [card.id]: card.revealed,
-          }),
-          {},
-        ),
+        interactions: cards.reduce((acc, card) => ({
+          ...acc,
+          [card.id]: card.revealed,
+        }), {}),
       },
     });
 
@@ -384,18 +377,15 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
   const handleSubmit = () => {
     if (!exerciseId || isSubmitting || isSubmitted) return;
 
-    const revealedCount = cards.filter((c) => c.revealed).length;
+    const revealedCount = cards.filter(c => c.revealed).length;
     const completionPercentage = (revealedCount / cards.length) * 100;
 
     submit({
-      interactedElements: cards.filter((c) => c.revealed).map((c) => c.id),
-      answers: cards.reduce(
-        (acc, card) => ({
-          ...acc,
-          [card.id]: card.revealed,
-        }),
-        {},
-      ),
+      interactedElements: cards.filter(c => c.revealed).map(c => c.id),
+      answers: cards.reduce((acc, card) => ({
+        ...acc,
+        [card.id]: card.revealed
+      }), {}),
       completionPercentage,
     });
   };
@@ -425,8 +415,8 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
   }, [actionsRef]);
 
   // Get available cards (not yet dropped)
-  const availableCards = cards.filter((card) => !Object.values(droppedCards).includes(card.id));
-  const activeCard = cards.find((card) => card.id === activeId);
+  const availableCards = cards.filter(card => !Object.values(droppedCards).includes(card.id));
+  const activeCard = cards.find(card => card.id === activeId);
 
   return (
     <>
@@ -435,7 +425,9 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
         <div className="mb-6 rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
           <div className="mb-4 flex items-center gap-3">
             <BarChart3 className="h-8 w-8" />
-            <h2 className="text-detective-2xl font-bold">{currentExercise.title}</h2>
+            <h2 className="text-detective-2xl font-bold">
+              {currentExercise.title}
+            </h2>
           </div>
           <p className="mb-4 opacity-90">{currentExercise.description}</p>
           <div className="flex flex-wrap gap-3">
@@ -490,7 +482,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
                       position={card.position}
                       isCorrect={droppedCards[card.id] === card.id}
                       isOccupied={!!droppedCards[card.id]}
-                      droppedCard={cards.find((c) => c.id === droppedCards[card.id])}
+                      droppedCard={cards.find(c => c.id === droppedCards[card.id])}
                     />
                   </motion.div>
                 ))}
@@ -509,7 +501,11 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: idx * 0.1 }}
                   >
-                    <DraggableCard id={card.id} title={card.title} content={card.content} />
+                    <DraggableCard
+                      id={card.id}
+                      title={card.title}
+                      content={card.content}
+                    />
                   </motion.div>
                 ))}
               </div>
@@ -565,7 +561,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
             disabled={
               (useDragDrop
                 ? Object.keys(droppedCards).length < cards.length
-                : !cards.every((c) => c.revealed)) ||
+                : !cards.every(c => c.revealed)) ||
               isSubmitting ||
               isSubmitted
             }

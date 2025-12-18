@@ -26,7 +26,7 @@ export const TikTokCard: React.FC<TikTokCardProps> = ({
     if (selectedAnswer !== undefined) return; // Stop timer if answered
 
     const interval = setInterval(() => {
-      setTimeElapsed((prev) => {
+      setTimeElapsed(prev => {
         const newTime = prev + 0.1;
         if (newTime >= timeLimit && onTimeUp) {
           onTimeUp();
@@ -70,7 +70,7 @@ export const TikTokCard: React.FC<TikTokCardProps> = ({
       style={{ backgroundColor: question.backgroundColor || '#1f2937' }}
     >
       {/* Timer Bar - Top */}
-      <div className="absolute left-0 right-0 top-0 h-2 bg-black/30">
+      <div className="absolute top-0 left-0 right-0 h-2 bg-black/30">
         <motion.div
           className={`h-full ${getTimerColor()} transition-colors duration-300`}
           initial={{ width: '0%' }}
@@ -84,10 +84,10 @@ export const TikTokCard: React.FC<TikTokCardProps> = ({
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="absolute right-6 top-6 rounded-detective bg-black/50 p-3 text-white backdrop-blur-md"
+          className="absolute top-6 right-6 bg-black/50 backdrop-blur-md rounded-detective p-3 text-white"
         >
           <div className="flex items-center gap-2">
-            <Clock className="h-5 w-5" />
+            <Clock className="w-5 h-5" />
             <div className="text-right">
               <div className={`text-2xl font-bold ${getScoreColor()}`}>{potentialScore}</div>
               <div className="text-xs opacity-75">puntos</div>
@@ -97,9 +97,9 @@ export const TikTokCard: React.FC<TikTokCardProps> = ({
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="mt-1 flex items-center gap-1 text-xs text-yellow-300"
+              className="flex items-center gap-1 mt-1 text-xs text-yellow-300"
             >
-              <TrendingDown className="h-3 w-3" />
+              <TrendingDown className="w-3 h-3" />
               <span>Penalización por tiempo</span>
             </motion.div>
           )}
@@ -107,10 +107,10 @@ export const TikTokCard: React.FC<TikTokCardProps> = ({
       )}
 
       {/* Question */}
-      <h2 className="mb-8 text-center text-2xl font-bold text-white">{question.question}</h2>
+      <h2 className="text-2xl font-bold text-white text-center mb-8">{question.question}</h2>
 
       {/* Options */}
-      <div className="w-full space-y-4">
+      <div className="space-y-4 w-full">
         {question.options.map((option, idx) => (
           <DetectiveButton
             key={idx}
@@ -129,7 +129,7 @@ export const TikTokCard: React.FC<TikTokCardProps> = ({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="absolute bottom-32 left-0 right-0 text-center text-sm text-white/70"
+          className="absolute bottom-32 left-0 right-0 text-center text-white/70 text-sm"
         >
           Tiempo: {Math.max(0, Math.ceil(timeLimit - timeElapsed))}s
         </motion.div>

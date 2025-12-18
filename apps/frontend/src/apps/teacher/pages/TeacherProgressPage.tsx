@@ -413,9 +413,7 @@ export default function TeacherProgressPage() {
                   <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-detective-orange bg-opacity-10">
                     <BarChart3 className="h-8 w-8 text-detective-orange" />
                   </div>
-                  <h3 className="mb-2 text-xl font-bold text-detective-text">
-                    Selecciona una clase
-                  </h3>
+                  <h3 className="mb-2 text-xl font-bold text-detective-text">Selecciona una clase</h3>
                   <p className="mx-auto max-w-md text-detective-text-secondary">
                     Para ver el progreso detallado, analisis por modulos y estudiantes rezagados,
                     selecciona una clase especifica del menu desplegable superior.
@@ -447,29 +445,25 @@ export default function TeacherProgressPage() {
                     <li className="flex items-start gap-2">
                       <span className="mt-0.5 font-bold text-detective-orange">•</span>
                       <span>
-                        Revisa las alertas de estudiantes rezagados semanalmente para intervenir a
-                        tiempo
+                        Revisa las alertas de estudiantes rezagados semanalmente para intervenir a tiempo
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="mt-0.5 font-bold text-detective-orange">•</span>
                       <span>
-                        Los graficos de progreso por modulo te ayudan a identificar temas que
-                        necesitan refuerzo
+                        Los graficos de progreso por modulo te ayudan a identificar temas que necesitan refuerzo
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="mt-0.5 font-bold text-detective-orange">•</span>
                       <span>
-                        Exporta reportes en PDF o Excel para compartir con directivos o padres de
-                        familia
+                        Exporta reportes en PDF o Excel para compartir con directivos o padres de familia
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="mt-0.5 font-bold text-detective-orange">•</span>
                       <span>
-                        Compara el rendimiento entre clases para adaptar tus estrategias de
-                        ensenanza
+                        Compara el rendimiento entre clases para adaptar tus estrategias de ensenanza
                       </span>
                     </li>
                   </ul>
@@ -567,12 +561,8 @@ export default function TeacherProgressPage() {
                         <UsersIcon className="h-8 w-8 text-blue-500" />
                       </div>
                       <div>
-                        <p className="text-sm text-detective-text-secondary">
-                          Usuarios Activos Diarios
-                        </p>
-                        <p className="text-3xl font-bold text-detective-text">
-                          {engagementData.dau}
-                        </p>
+                        <p className="text-sm text-detective-text-secondary">Usuarios Activos Diarios</p>
+                        <p className="text-3xl font-bold text-detective-text">{engagementData.dau}</p>
                       </div>
                     </div>
                   </DetectiveCard>
@@ -583,12 +573,8 @@ export default function TeacherProgressPage() {
                         <Activity className="h-8 w-8 text-green-500" />
                       </div>
                       <div>
-                        <p className="text-sm text-detective-text-secondary">
-                          Usuarios Activos Semanales
-                        </p>
-                        <p className="text-3xl font-bold text-detective-text">
-                          {engagementData.wau}
-                        </p>
+                        <p className="text-sm text-detective-text-secondary">Usuarios Activos Semanales</p>
+                        <p className="text-3xl font-bold text-detective-text">{engagementData.wau}</p>
                       </div>
                     </div>
                   </DetectiveCard>
@@ -599,9 +585,7 @@ export default function TeacherProgressPage() {
                         <Clock className="h-8 w-8 text-orange-500" />
                       </div>
                       <div>
-                        <p className="text-sm text-detective-text-secondary">
-                          Duracion Promedio (min)
-                        </p>
+                        <p className="text-sm text-detective-text-secondary">Duracion Promedio (min)</p>
                         <p className="text-3xl font-bold text-detective-text">
                           {safeFormat(engagementData?.session_duration_avg, 0, '', '0')}
                         </p>
@@ -615,9 +599,7 @@ export default function TeacherProgressPage() {
                         <TrendingUp className="h-8 w-8 text-purple-500" />
                       </div>
                       <div>
-                        <p className="text-sm text-detective-text-secondary">
-                          Sesiones por Usuario
-                        </p>
+                        <p className="text-sm text-detective-text-secondary">Sesiones por Usuario</p>
                         <p className="text-3xl font-bold text-detective-text">
                           {safeFormat(engagementData?.sessions_per_user, 1, '', '0.0')}
                         </p>
@@ -647,15 +629,8 @@ export default function TeacherProgressPage() {
                               : 'text-red-500'
                           }`}
                         >
-                          {(engagementData?.comparison_previous_period?.dau_change ?? 0) >= 0
-                            ? '+'
-                            : ''}
-                          {safeFormat(
-                            engagementData?.comparison_previous_period?.dau_change,
-                            1,
-                            '%',
-                            '0.0%',
-                          )}
+                          {(engagementData?.comparison_previous_period?.dau_change ?? 0) >= 0 ? '+' : ''}
+                          {safeFormat(engagementData?.comparison_previous_period?.dau_change, 1, '%', '0.0%')}
                         </p>
                       </div>
                     </div>
@@ -675,15 +650,8 @@ export default function TeacherProgressPage() {
                               : 'text-red-500'
                           }`}
                         >
-                          {(engagementData?.comparison_previous_period?.wau_change ?? 0) >= 0
-                            ? '+'
-                            : ''}
-                          {safeFormat(
-                            engagementData?.comparison_previous_period?.wau_change,
-                            1,
-                            '%',
-                            '0.0%',
-                          )}
+                          {(engagementData?.comparison_previous_period?.wau_change ?? 0) >= 0 ? '+' : ''}
+                          {safeFormat(engagementData?.comparison_previous_period?.wau_change, 1, '%', '0.0%')}
                         </p>
                       </div>
                     </div>
@@ -695,26 +663,16 @@ export default function TeacherProgressPage() {
                         <ArrowDown className="h-6 w-6 text-red-500" />
                       )}
                       <div>
-                        <p className="text-sm text-detective-text-secondary">
-                          Cambio en Engagement
-                        </p>
+                        <p className="text-sm text-detective-text-secondary">Cambio en Engagement</p>
                         <p
                           className={`text-2xl font-bold ${
-                            (engagementData?.comparison_previous_period?.engagement_change ?? 0) >=
-                            0
+                            (engagementData?.comparison_previous_period?.engagement_change ?? 0) >= 0
                               ? 'text-green-500'
                               : 'text-red-500'
                           }`}
                         >
-                          {(engagementData?.comparison_previous_period?.engagement_change ?? 0) >= 0
-                            ? '+'
-                            : ''}
-                          {safeFormat(
-                            engagementData?.comparison_previous_period?.engagement_change,
-                            1,
-                            '%',
-                            '0.0%',
-                          )}
+                          {(engagementData?.comparison_previous_period?.engagement_change ?? 0) >= 0 ? '+' : ''}
+                          {safeFormat(engagementData?.comparison_previous_period?.engagement_change, 1, '%', '0.0%')}
                         </p>
                       </div>
                     </div>
@@ -730,7 +688,7 @@ export default function TeacherProgressPage() {
                     <div className="overflow-x-auto">
                       <table className="w-full">
                         <thead>
-                          <tr className="border-detective-border border-b">
+                          <tr className="border-b border-detective-border">
                             <th className="px-4 py-3 text-left text-sm font-semibold text-detective-text-secondary">
                               Funcionalidad
                             </th>
@@ -753,7 +711,7 @@ export default function TeacherProgressPage() {
                             .map((feature, index) => (
                               <tr
                                 key={feature.feature_name || index}
-                                className="border-detective-border border-b transition-colors hover:bg-detective-bg-secondary"
+                                className="border-b border-detective-border transition-colors hover:bg-detective-bg-secondary"
                               >
                                 <td className="px-4 py-3 font-medium text-detective-text">
                                   {feature.feature_name}

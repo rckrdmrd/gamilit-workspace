@@ -64,11 +64,11 @@ const DEFAULT_RANK: RankDefinition = {
 /**
  * Convierte RankMetadata del API a RankDefinition del frontend
  */
-function metadataToDefinition(metadata: RankMetadata, _index: number): RankDefinition {
+function metadataToDefinition(metadata: RankMetadata, index: number): RankDefinition {
   // Mapeo de colores por rango
   const colorMap: Record<string, string> = {
-    Ajaw: 'from-amber-400 to-yellow-500',
-    Nacom: 'from-green-400 to-emerald-500',
+    'Ajaw': 'from-amber-400 to-yellow-500',
+    'Nacom': 'from-green-400 to-emerald-500',
     "Ah K'in": 'from-blue-400 to-cyan-500',
     'Halach Uinic': 'from-purple-400 to-violet-500',
     "K'uk'ulkan": 'from-red-400 to-orange-500',
@@ -76,8 +76,8 @@ function metadataToDefinition(metadata: RankMetadata, _index: number): RankDefin
 
   // Mapeo de iconos por rango
   const iconMap: Record<string, string> = {
-    Ajaw: 'ajaw',
-    Nacom: 'nacom',
+    'Ajaw': 'ajaw',
+    'Nacom': 'nacom',
     "Ah K'in": 'ahkin',
     'Halach Uinic': 'halachuinic',
     "K'uk'ulkan": 'kukulkan',
@@ -85,8 +85,8 @@ function metadataToDefinition(metadata: RankMetadata, _index: number): RankDefin
 
   // Mapeo de nombres en español
   const spanishNameMap: Record<string, string> = {
-    Ajaw: 'Señor',
-    Nacom: 'Capitán de Guerra',
+    'Ajaw': 'Señor',
+    'Nacom': 'Capitán de Guerra',
     "Ah K'in": 'Sacerdote del Sol',
     'Halach Uinic': 'Hombre Verdadero',
     "K'uk'ulkan": 'Serpiente Emplumada',
@@ -94,33 +94,17 @@ function metadataToDefinition(metadata: RankMetadata, _index: number): RankDefin
 
   // Beneficios por rango
   const benefitsMap: Record<string, string[]> = {
-    Ajaw: ['Acceso a ejercicios básicos', 'Tutorial interactivo'],
-    Nacom: ['Ejercicios intermedios', 'Pistas nivel 1', 'Multiplicador 1.1x'],
-    "Ah K'in": [
-      'Ejercicios avanzados',
-      'Pistas nivel 2',
-      'Multiplicador 1.25x',
-      'Misiones especiales',
-    ],
-    'Halach Uinic': [
-      'Ejercicios expertos',
-      'Pistas nivel 3',
-      'Multiplicador 1.5x',
-      'Acceso a torneos',
-    ],
-    "K'uk'ulkan": [
-      'Todos los ejercicios',
-      'Pistas ilimitadas',
-      'Multiplicador 2x',
-      'Sistema de prestigio',
-      'Badge exclusivo',
-    ],
+    'Ajaw': ['Acceso a ejercicios básicos', 'Tutorial interactivo'],
+    'Nacom': ['Ejercicios intermedios', 'Pistas nivel 1', 'Multiplicador 1.1x'],
+    "Ah K'in": ['Ejercicios avanzados', 'Pistas nivel 2', 'Multiplicador 1.25x', 'Misiones especiales'],
+    'Halach Uinic': ['Ejercicios expertos', 'Pistas nivel 3', 'Multiplicador 1.5x', 'Acceso a torneos'],
+    "K'uk'ulkan": ['Todos los ejercicios', 'Pistas ilimitadas', 'Multiplicador 2x', 'Sistema de prestigio', 'Badge exclusivo'],
   };
 
   // Multiplicador por rango
   const multiplierMap: Record<string, number> = {
-    Ajaw: 1.0,
-    Nacom: 1.1,
+    'Ajaw': 1.0,
+    'Nacom': 1.1,
     "Ah K'in": 1.25,
     'Halach Uinic': 1.5,
     "K'uk'ulkan": 2.0,
@@ -187,51 +171,11 @@ export function useRanksConfig(): UseRanksConfigReturn {
       setError(err instanceof Error ? err.message : 'Error loading ranks config');
       // Usar fallback en caso de error
       const fallbackConfig: RankMetadata[] = [
-        {
-          rank: 'Ajaw',
-          name: 'Ajaw',
-          description: 'Señor',
-          xp_min: 0,
-          xp_max: 499,
-          ml_coins_bonus: 0,
-          order: 1,
-        },
-        {
-          rank: 'Nacom',
-          name: 'Nacom',
-          description: 'Capitán de Guerra',
-          xp_min: 500,
-          xp_max: 999,
-          ml_coins_bonus: 100,
-          order: 2,
-        },
-        {
-          rank: "Ah K'in",
-          name: "Ah K'in",
-          description: 'Sacerdote del Sol',
-          xp_min: 1000,
-          xp_max: 1499,
-          ml_coins_bonus: 250,
-          order: 3,
-        },
-        {
-          rank: 'Halach Uinic',
-          name: 'Halach Uinic',
-          description: 'Hombre Verdadero',
-          xp_min: 1500,
-          xp_max: 1899,
-          ml_coins_bonus: 500,
-          order: 4,
-        },
-        {
-          rank: "K'uk'ulkan",
-          name: "K'uk'ulkan",
-          description: 'Serpiente Emplumada',
-          xp_min: 1900,
-          xp_max: -1,
-          ml_coins_bonus: 1000,
-          order: 5,
-        },
+        { rank: 'Ajaw', name: 'Ajaw', description: 'Señor', xp_min: 0, xp_max: 499, ml_coins_bonus: 0, order: 1 },
+        { rank: 'Nacom', name: 'Nacom', description: 'Capitán de Guerra', xp_min: 500, xp_max: 999, ml_coins_bonus: 100, order: 2 },
+        { rank: "Ah K'in", name: "Ah K'in", description: 'Sacerdote del Sol', xp_min: 1000, xp_max: 1499, ml_coins_bonus: 250, order: 3 },
+        { rank: 'Halach Uinic', name: 'Halach Uinic', description: 'Hombre Verdadero', xp_min: 1500, xp_max: 1899, ml_coins_bonus: 500, order: 4 },
+        { rank: "K'uk'ulkan", name: "K'uk'ulkan", description: 'Serpiente Emplumada', xp_min: 1900, xp_max: -1, ml_coins_bonus: 1000, order: 5 },
       ];
       globalRanksConfig = fallbackConfig;
       setRanksConfig(fallbackConfig);
@@ -270,7 +214,7 @@ export function useRanksConfig(): UseRanksConfigReturn {
       const index = ranksConfig.findIndex((r) => r.rank === rankId);
       return metadataToDefinition(metadata, index);
     },
-    [ranksMap, ranksConfig],
+    [ranksMap, ranksConfig]
   );
 
   /**
@@ -285,7 +229,7 @@ export function useRanksConfig(): UseRanksConfigReturn {
       const nextMetadata = ranksConfig[currentIndex + 1];
       return metadataToDefinition(nextMetadata, currentIndex + 1);
     },
-    [ranksConfig],
+    [ranksConfig]
   );
 
   /**
@@ -300,7 +244,7 @@ export function useRanksConfig(): UseRanksConfigReturn {
       const prevMetadata = ranksConfig[currentIndex - 1];
       return metadataToDefinition(prevMetadata, currentIndex - 1);
     },
-    [ranksConfig],
+    [ranksConfig]
   );
 
   /**
@@ -317,7 +261,7 @@ export function useRanksConfig(): UseRanksConfigReturn {
         max: metadata.xp_max === -1 ? Infinity : metadata.xp_max,
       };
     },
-    [ranksMap],
+    [ranksMap]
   );
 
   /**

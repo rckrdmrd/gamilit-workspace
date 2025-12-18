@@ -395,7 +395,7 @@ export const mapToFrontendAchievement = (
     isHidden:
       backendAchievement.is_secret ??
       (backendAchievement.category.toLowerCase() === 'hidden' ||
-        backendAchievement.category.toLowerCase() === 'special'),
+       backendAchievement.category.toLowerCase() === 'special'),
     rewardsClaimed: userProgress?.rewards_claimed ?? false,
   };
 };

@@ -17,6 +17,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { RolePermissions, Permission } from '@/services/api/adminTypes';
 import { Button } from '@shared/components/Button';
+import { Card } from '@shared/components/Card';
 import { LoadingSpinner } from '@shared/components/LoadingSpinner';
 import { PermissionMatrix } from './PermissionMatrix';
 
@@ -41,6 +42,7 @@ export function RoleEditor({
   onSave,
   onClose,
 }: RoleEditorProps): React.ReactElement | null {
+
   // Don't render if not open
   if (!isOpen) return null;
 
@@ -70,9 +72,7 @@ export function RoleEditor({
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <h2 className="text-xl font-bold text-white">
-                      {loading
-                        ? 'Cargando...'
-                        : `Permisos: ${rolePermissions?.role?.roleName || 'Rol'}`}
+                      {loading ? 'Cargando...' : `Permisos: ${rolePermissions?.role?.roleName || 'Rol'}`}
                     </h2>
                     {!loading && rolePermissions?.role?.description && (
                       <p className="mt-1 text-sm text-blue-100">
@@ -85,16 +85,11 @@ export function RoleEditor({
                   <button
                     onClick={onClose}
                     disabled={saving}
-                    className="ml-3 text-white transition-colors hover:text-blue-100 disabled:opacity-50"
+                    className="ml-3 text-white hover:text-blue-100 transition-colors disabled:opacity-50"
                     aria-label="Cerrar editor"
                   >
-                    <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
                 </div>
@@ -123,9 +118,7 @@ export function RoleEditor({
                 {!loading && !rolePermissions && (
                   <div className="p-12 text-center text-gray-500">
                     <div className="mb-4 text-6xl">🔐</div>
-                    <h3 className="mb-2 text-lg font-semibold text-gray-700">
-                      No hay datos disponibles
-                    </h3>
+                    <h3 className="mb-2 text-lg font-semibold text-gray-700">No hay datos disponibles</h3>
                     <p>No se pudieron cargar los permisos del rol</p>
                   </div>
                 )}
@@ -133,7 +126,11 @@ export function RoleEditor({
 
               {/* Footer - Action Buttons */}
               <div className="flex items-center justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
-                <Button onClick={onClose} variant="secondary" disabled={saving}>
+                <Button
+                  onClick={onClose}
+                  variant="secondary"
+                  disabled={saving}
+                >
                   Cancelar
                 </Button>
 

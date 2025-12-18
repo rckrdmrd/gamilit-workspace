@@ -95,55 +95,17 @@ export const getRanksConfig = async (): Promise<RankMetadata[]> => {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
       // Mock data with v2.1 thresholds
       return [
-        {
-          rank: 'Ajaw',
-          name: 'Ajaw',
-          description: 'Señor',
-          xp_min: 0,
-          xp_max: 499,
-          ml_coins_bonus: 0,
-          order: 1,
-        },
-        {
-          rank: 'Nacom',
-          name: 'Nacom',
-          description: 'Capitán de Guerra',
-          xp_min: 500,
-          xp_max: 999,
-          ml_coins_bonus: 100,
-          order: 2,
-        },
-        {
-          rank: "Ah K'in",
-          name: "Ah K'in",
-          description: 'Sacerdote del Sol',
-          xp_min: 1000,
-          xp_max: 1499,
-          ml_coins_bonus: 250,
-          order: 3,
-        },
-        {
-          rank: 'Halach Uinic',
-          name: 'Halach Uinic',
-          description: 'Hombre Verdadero',
-          xp_min: 1500,
-          xp_max: 1899,
-          ml_coins_bonus: 500,
-          order: 4,
-        },
-        {
-          rank: "K'uk'ulkan",
-          name: "K'uk'ulkan",
-          description: 'Serpiente Emplumada',
-          xp_min: 1900,
-          xp_max: -1,
-          ml_coins_bonus: 1000,
-          order: 5,
-        },
+        { rank: 'Ajaw', name: 'Ajaw', description: 'Señor', xp_min: 0, xp_max: 499, ml_coins_bonus: 0, order: 1 },
+        { rank: 'Nacom', name: 'Nacom', description: 'Capitán de Guerra', xp_min: 500, xp_max: 999, ml_coins_bonus: 100, order: 2 },
+        { rank: "Ah K'in", name: "Ah K'in", description: 'Sacerdote del Sol', xp_min: 1000, xp_max: 1499, ml_coins_bonus: 250, order: 3 },
+        { rank: 'Halach Uinic', name: 'Halach Uinic', description: 'Hombre Verdadero', xp_min: 1500, xp_max: 1899, ml_coins_bonus: 500, order: 4 },
+        { rank: "K'uk'ulkan", name: "K'uk'ulkan", description: 'Serpiente Emplumada', xp_min: 1900, xp_max: -1, ml_coins_bonus: 1000, order: 5 },
       ];
     }
 
-    const { data } = await apiClient.get<RankMetadata[]>('/gamification/ranks');
+    const { data } = await apiClient.get<RankMetadata[]>(
+      '/gamification/ranks',
+    );
 
     // Handle both direct array response and wrapped response
     return Array.isArray(data) ? data : (data as any).data || [];

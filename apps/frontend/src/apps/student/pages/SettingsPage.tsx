@@ -59,7 +59,7 @@ export default function SettingsPage() {
   const {
     preferences: backendPreferences,
     loading: preferencesLoading,
-    error: _preferencesError,
+    error: preferencesError,
   } = useUserPreferences();
 
   // State
@@ -114,7 +114,8 @@ export default function SettingsPage() {
         language: backendPreferences.language || 'es',
         emailNotifications: backendPreferences.email_notifications ?? true,
         pushNotifications: backendPreferences.notifications_enabled ?? true,
-        achievementAlerts: (backendPreferences.preferences?.achievementAlerts as boolean) ?? true,
+        achievementAlerts:
+          (backendPreferences.preferences?.achievementAlerts as boolean) ?? true,
         friendRequests: (backendPreferences.preferences?.friendRequests as boolean) ?? true,
         guildInvites: (backendPreferences.preferences?.guildInvites as boolean) ?? true,
       });

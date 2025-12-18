@@ -43,7 +43,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
   exerciseId = 'diario-multimedia-default',
   onComplete,
   onProgressUpdate,
-  onExit,
+  onExit
 }) => {
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
   const [currentTitle, setCurrentTitle] = useState('');
@@ -56,7 +56,10 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const { submit, isSubmitting } = useExerciseSubmission(exerciseId || '', {
+  const {
+    submit,
+    isSubmitting,
+  } = useExerciseSubmission(exerciseId || '', {
     onSuccess: (result) => {
       setIsSubmitted(true);
       const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
@@ -160,7 +163,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
     if (!exerciseId || isSubmitting || isSubmitted || entries.length === 0) return;
 
     submit({
-      entries: entries.map((entry) => ({
+      entries: entries.map(entry => ({
         title: entry.title,
         content: entry.content,
         date: entry.date.toISOString(),
@@ -391,7 +394,7 @@ export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
               <button
                 onClick={handleSubmit}
                 disabled={entries.length === 0 || isSubmitting || isSubmitted}
-                className="flex w-full items-center justify-center gap-2 rounded-detective bg-detective-orange px-6 py-4 font-medium text-white transition-colors hover:bg-detective-orange-dark disabled:cursor-not-allowed disabled:bg-gray-300"
+                className="w-full flex items-center justify-center gap-2 rounded-detective bg-detective-orange px-6 py-4 font-medium text-white transition-colors hover:bg-detective-orange-dark disabled:cursor-not-allowed disabled:bg-gray-300"
               >
                 {isSubmitting ? (
                   <>

@@ -35,7 +35,10 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   // API submission hook
-  const { submit, isSubmitting } = useExerciseSubmission(exerciseId || '', {
+  const {
+    submit,
+    isSubmitting,
+  } = useExerciseSubmission(exerciseId || '', {
     onSuccess: (result) => {
       setIsSubmitted(true);
       const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
@@ -91,7 +94,7 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
 
   // Progress tracking
   useEffect(() => {
-    const _progress = calculateProgress(); // Prefixed: calculated for future use
+    const progress = calculateProgress();
     const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     const score = calculateScore();
     onProgressUpdate?.({
@@ -155,10 +158,7 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
 
     // Guard against empty array to prevent division by zero
     if (articleResults.length === 0) {
-      console.warn(
-        '[VerificadorFakeNews] No mock results available for article:',
-        selectedArticleId,
-      );
+      console.warn('[VerificadorFakeNews] No mock results available for article:', selectedArticleId);
       return;
     }
 

@@ -12,7 +12,7 @@
 
 set -e
 
-DDL_PATH="/home/isem/workspace/workspace-gamilit/gamilit/projects/gamilit/apps/database/ddl/schemas"
+DDL_PATH="/home/isem/workspace/projects/gamilit/apps/database/ddl/schemas"
 LOG_FILE="/tmp/fix-duplicate-triggers-$(date +%Y%m%d_%H%M%S).log"
 
 echo "=========================================="

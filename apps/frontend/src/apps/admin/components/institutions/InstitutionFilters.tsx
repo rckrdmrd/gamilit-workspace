@@ -24,7 +24,10 @@ export interface FilterValues {
  *
  * @component
  */
-export const InstitutionFilters: React.FC<InstitutionFiltersProps> = ({ onFilter, onReset }) => {
+export const InstitutionFilters: React.FC<InstitutionFiltersProps> = ({
+  onFilter,
+  onReset,
+}) => {
   const [filters, setFilters] = useState<FilterValues>({
     search: '',
     status: [],
@@ -114,7 +117,9 @@ export const InstitutionFilters: React.FC<InstitutionFiltersProps> = ({ onFilter
         <div className="space-y-4 border-t border-gray-700 pt-4">
           {/* Status Filters */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-detective-text">Estado</label>
+            <label className="mb-2 block text-sm font-medium text-detective-text">
+              Estado
+            </label>
             <div className="flex flex-wrap gap-2">
               {statusOptions.map((option) => (
                 <button
@@ -134,7 +139,9 @@ export const InstitutionFilters: React.FC<InstitutionFiltersProps> = ({ onFilter
 
           {/* Plan Filters */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-detective-text">Plan</label>
+            <label className="mb-2 block text-sm font-medium text-detective-text">
+              Plan
+            </label>
             <div className="flex flex-wrap gap-2">
               {planOptions.map((option) => (
                 <button

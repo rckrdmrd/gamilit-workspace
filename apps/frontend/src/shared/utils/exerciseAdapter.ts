@@ -611,22 +611,14 @@ export const adaptToQuizTikTokData = (exercise: ExerciseData): any => {
   const content = exercise.mechanicData?.content || {};
 
   // Default colors for TikTok-style backgrounds
-  const defaultColors = [
-    '#1f2937',
-    '#7c3aed',
-    '#ea580c',
-    '#2563eb',
-    '#059669',
-    '#dc2626',
-    '#0891b2',
-  ];
+  const defaultColors = ['#1f2937', '#7c3aed', '#ea580c', '#2563eb', '#059669', '#dc2626', '#0891b2'];
 
   // Transform questions from DB format to component format
   const questions = (content.questions || []).map((q: any, index: number) => ({
     id: q.id || `q${index + 1}`,
-    question: q.text || q.question || '', // DB uses 'text', component uses 'question'
+    question: q.text || q.question || '',  // DB uses 'text', component uses 'question'
     options: q.options || [],
-    correctAnswer: q.correct ?? q.correctAnswer ?? 0, // DB uses 'correct', component uses 'correctAnswer'
+    correctAnswer: q.correct ?? q.correctAnswer ?? 0,  // DB uses 'correct', component uses 'correctAnswer'
     backgroundColor: q.backgroundColor || defaultColors[index % defaultColors.length],
     backgroundVideo: q.visual,
   }));
@@ -653,13 +645,13 @@ export const adaptToInfografiaInteractivaData = (exercise: ExerciseData): any =>
 
   // Icon mapping based on section type
   const iconMap: Record<string, string> = {
-    timeline: 'calendar',
+    'timeline': 'calendar',
     'visual timeline': 'calendar',
     'icon grid': 'grid',
-    discoveries: 'atom',
-    flowchart: 'workflow',
-    impact: 'heart',
-    default: 'info',
+    'discoveries': 'atom',
+    'flowchart': 'workflow',
+    'impact': 'heart',
+    'default': 'info'
   };
 
   // Transform sections to cards format
@@ -674,8 +666,8 @@ export const adaptToInfografiaInteractivaData = (exercise: ExerciseData): any =>
       title: section.type || `Sección ${index + 1}`,
       content: section.data || '',
       position: {
-        x: 20 + col * 30, // 20%, 50%, 80%
-        y: 30 + row * 40, // 30%, 70%
+        x: 20 + (col * 30),  // 20%, 50%, 80%
+        y: 30 + (row * 40)   // 30%, 70%
       },
       icon: iconMap[section.type?.toLowerCase()] || iconMap['default'],
       revealed: false,
@@ -745,9 +737,8 @@ export const adaptToNavegacionHipertextualData = (exercise: ExerciseData): any =
     hints: exercise.mechanicData?.hints || [],
     // Required fields for NavegacionHipertextualExercise component
     nodes: nodes,
-    startNodeId: content.startNodeId || content.start_node_id || nodes[0]?.id || '',
-    targetNodeId:
-      content.targetNodeId || content.target_node_id || nodes[nodes.length - 1]?.id || '',
+    startNodeId: content.startNodeId || content.start_node_id || (nodes[0]?.id || ''),
+    targetNodeId: content.targetNodeId || content.target_node_id || (nodes[nodes.length - 1]?.id || ''),
     // Legacy fields (kept for compatibility)
     researchQuestion: content.researchQuestion || '',
     mainArticle: content.mainArticle || {},
@@ -887,11 +878,7 @@ export const adaptExerciseData = (exercise: ExerciseData): any => {
     return adaptToQuizTikTokData(exercise);
   } else if (type.includes('infografia_interactiva') || type.includes('infografia')) {
     return adaptToInfografiaInteractivaData(exercise);
-  } else if (
-    type.includes('verificador_fake_news') ||
-    type.includes('fake_news') ||
-    type.includes('fakenews')
-  ) {
+  } else if (type.includes('verificador_fake_news') || type.includes('fake_news') || type.includes('fakenews')) {
     return adaptToVerificadorFakeNewsData(exercise);
   } else if (type.includes('navegacion_hipertextual') || type.includes('hipertextual')) {
     return adaptToNavegacionHipertextualData(exercise);

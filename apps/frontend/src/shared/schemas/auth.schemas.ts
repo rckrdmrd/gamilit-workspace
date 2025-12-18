@@ -86,15 +86,26 @@ export const registerSchema = z
       .string()
       .min(1, 'La contraseña es requerida')
       .min(8, 'La contraseña debe tener al menos 8 caracteres')
-      .regex(PASSWORD_REGEX.uppercase, 'La contraseña debe contener al menos una letra mayúscula')
-      .regex(PASSWORD_REGEX.lowercase, 'La contraseña debe contener al menos una letra minúscula')
-      .regex(PASSWORD_REGEX.number, 'La contraseña debe contener al menos un número')
+      .regex(
+        PASSWORD_REGEX.uppercase,
+        'La contraseña debe contener al menos una letra mayúscula'
+      )
+      .regex(
+        PASSWORD_REGEX.lowercase,
+        'La contraseña debe contener al menos una letra minúscula'
+      )
+      .regex(
+        PASSWORD_REGEX.number,
+        'La contraseña debe contener al menos un número'
+      )
       .regex(
         PASSWORD_REGEX.special,
-        'La contraseña debe contener al menos un carácter especial (!@#$%^&*...)',
+        'La contraseña debe contener al menos un carácter especial (!@#$%^&*...)'
       ),
 
-    confirmPassword: z.string().min(1, 'Por favor confirma tu contraseña'),
+    confirmPassword: z
+      .string()
+      .min(1, 'Por favor confirma tu contraseña'),
 
     full_name: z
       .string()
@@ -108,9 +119,11 @@ export const registerSchema = z
       })
       .optional(),
 
-    terms_accepted: z.boolean().refine((val) => val === true, {
-      message: 'Debes aceptar los términos y condiciones',
-    }),
+    terms_accepted: z
+      .boolean()
+      .refine((val) => val === true, {
+        message: 'Debes aceptar los términos y condiciones',
+      }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Las contraseñas no coinciden',
@@ -153,12 +166,26 @@ export const resetPasswordSchema = z
       .string()
       .min(1, 'La contraseña es requerida')
       .min(8, 'La contraseña debe tener al menos 8 caracteres')
-      .regex(PASSWORD_REGEX.uppercase, 'La contraseña debe contener al menos una letra mayúscula')
-      .regex(PASSWORD_REGEX.lowercase, 'La contraseña debe contener al menos una letra minúscula')
-      .regex(PASSWORD_REGEX.number, 'La contraseña debe contener al menos un número')
-      .regex(PASSWORD_REGEX.special, 'La contraseña debe contener al menos un carácter especial'),
+      .regex(
+        PASSWORD_REGEX.uppercase,
+        'La contraseña debe contener al menos una letra mayúscula'
+      )
+      .regex(
+        PASSWORD_REGEX.lowercase,
+        'La contraseña debe contener al menos una letra minúscula'
+      )
+      .regex(
+        PASSWORD_REGEX.number,
+        'La contraseña debe contener al menos un número'
+      )
+      .regex(
+        PASSWORD_REGEX.special,
+        'La contraseña debe contener al menos un carácter especial'
+      ),
 
-    confirmPassword: z.string().min(1, 'Por favor confirma tu contraseña'),
+    confirmPassword: z
+      .string()
+      .min(1, 'Por favor confirma tu contraseña'),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Las contraseñas no coinciden',
@@ -188,7 +215,7 @@ export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
  * ```
  */
 export const calculatePasswordStrength = (
-  password: string,
+  password: string
 ): { strength: 'weak' | 'medium' | 'strong'; score: number } => {
   let score = 0;
 

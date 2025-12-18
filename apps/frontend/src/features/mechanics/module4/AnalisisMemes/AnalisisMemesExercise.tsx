@@ -69,7 +69,10 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
   const [timeSpent, setTimeSpent] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const { submit, isSubmitting } = useExerciseSubmission(exerciseId || '', {
+  const {
+    submit,
+    isSubmitting,
+  } = useExerciseSubmission(exerciseId || '', {
     onSuccess: (result) => {
       setIsSubmitted(true);
       const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
@@ -240,8 +243,8 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
     submit({
       memeId: exercise.id,
       annotations,
-      analysisText: annotations.map((a) => `${a.category}: ${a.text}`).join('\n'),
-      selectedElements: annotations.map((a) => a.category),
+      analysisText: annotations.map(a => `${a.category}: ${a.text}`).join('\n'),
+      selectedElements: annotations.map(a => a.category),
     });
   };
 

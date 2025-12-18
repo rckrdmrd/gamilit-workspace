@@ -31,11 +31,7 @@ export interface ExerciseProgressUpdate {
 
 // Exercise Actions Interface for Parent Control
 export interface NavegacionHipertextualActions {
-  getState: () => NavegacionHipertextualState & {
-    score: number;
-    timeSpent: number;
-    hintsUsed: number;
-  };
+  getState: () => NavegacionHipertextualState & { score: number; timeSpent: number; hintsUsed: number };
   reset: () => void;
   validate: () => Promise<void>;
   navigateToNode?: (nodeId: string) => void;
