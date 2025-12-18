@@ -8,11 +8,9 @@ import { User, Profile, UserSession, AuthAttempt, Tenant } from '../entities';
 import {
   RegisterUserDto,
   UserResponseDto,
-  CreateUserSessionDto,
-  CreateAuthAttemptDto,
-  UpdateProfileDto,
+      UpdateProfileDto,
 } from '../dto';
-import { DB_SCHEMAS, DB_TABLES, GamilityRoleEnum, UserStatusEnum } from '@shared/constants';
+import { GamilityRoleEnum, UserStatusEnum } from '@shared/constants';
 
 // Gamification entities
 import { UserStats } from '@/modules/gamification/entities/user-stats.entity';
@@ -660,7 +658,7 @@ export class AuthService {
    * @returns UserResponseDto con campos derivados calculados
    */
   public toUserResponse(user: User): UserResponseDto {
-    const { encrypted_password, ...userWithoutPassword } = user;
+    const { encrypted_password: _encrypted_password, ...userWithoutPassword } = user;
 
     // Calcular campos derivados para coherencia Frontend-Backend
     const emailVerified = !!user.email_confirmed_at;

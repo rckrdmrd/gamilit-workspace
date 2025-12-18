@@ -281,29 +281,31 @@ export class UserStatsController {
   })
   async updateUserStats(
   @Param('userId') userId: string,
-    @Body() updateData: Record<string, any>,
+    @Body() updateData: Record<string, unknown>,
   ) {
     // Support increment operations for convenience
     const stats = await this.userStatsService.findByUserId(userId);
 
     // Handle total_xp_increment
-    if (updateData.total_xp_increment !== undefined) {
-      const newXP = stats.total_xp + updateData.total_xp_increment;
-      updateData.total_xp = newXP;
+    if (updateData.total_xp_increment !== undefined && updateData.total_xp_increment !== null) {
+      const increment = Number(updateData.total_xp_increment) || 0;
+      updateData.total_xp = stats.total_xp + increment;
       delete updateData.total_xp_increment;
     }
 
     // Handle ml_coins_increment
-    if (updateData.ml_coins_increment !== undefined) {
-      updateData.ml_coins = stats.ml_coins + updateData.ml_coins_increment;
-      updateData.ml_coins_earned_total = stats.ml_coins_earned_total + updateData.ml_coins_increment;
+    if (updateData.ml_coins_increment !== undefined && updateData.ml_coins_increment !== null) {
+      const increment = Number(updateData.ml_coins_increment) || 0;
+      updateData.ml_coins = stats.ml_coins + increment;
+      updateData.ml_coins_earned_total = stats.ml_coins_earned_total + increment;
       delete updateData.ml_coins_increment;
     }
 
     // Handle ml_coins_decrement
-    if (updateData.ml_coins_decrement !== undefined) {
-      updateData.ml_coins = stats.ml_coins - updateData.ml_coins_decrement;
-      updateData.ml_coins_spent_total = stats.ml_coins_spent_total + updateData.ml_coins_decrement;
+    if (updateData.ml_coins_decrement !== undefined && updateData.ml_coins_decrement !== null) {
+      const decrement = Number(updateData.ml_coins_decrement) || 0;
+      updateData.ml_coins = stats.ml_coins - decrement;
+      updateData.ml_coins_spent_total = stats.ml_coins_spent_total + decrement;
       delete updateData.ml_coins_decrement;
     }
 

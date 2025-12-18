@@ -1,28 +1,47 @@
 # FRONTEND_INVENTORY.yml - Inventario Consolidado Global
 
 project: GAMILIT
-version: 3.0
+version: 3.3
 generated: 2025-11-08
-updated: 2025-11-29
-source: Inventario Real del Frontend Implementado + Clean Load Policy Validation Phase 4
-status: Actualizado con reconteo real completo (Phase 4 Execution)
-last_analysis: 2025-11-29 - Architecture-Analyst: Reconteo real con find para sincronización de inventario
+updated: 2025-12-18
+source: Inventario Real del Frontend Implementado + Clean Load Policy Validation Phase 4 + M4-M5 Implementation + Achievements Fix + M4-M5 Corrections
+status: Actualizado con correcciones de estructura M4-M5 (types, schemas, mockData)
+last_analysis: 2025-12-18 - IMPL-M4M5-CORRECCIONES-001: 17 archivos creados para estructura M4-M5
 
 # ============================================================================
 # RESUMEN EJECUTIVO
 # ============================================================================
 
 summary:
-  total_files: 845  # ✅ Reconteo real 2025-11-29 (477 TSX + 368 TS)
-  total_components: 477  # ✅ Reconteo real 2025-11-29 (archivos .tsx)
-  total_hooks: 87  # ✅ Reconteo real 2025-11-29 (use*.ts + use*.tsx)
+  total_files: 862  # ✅ Actualizado 2025-12-18 (+17 archivos M4-M5 structure: 8 M4 + 9 M5)
+  total_components: 483  # ✅ ACTUALIZADO 2025-11-29 (+6: MediaUploader, RubricEvaluator, ReviewPanelPage, ReviewList, ReviewDetail, useVideoRecorder componente)
+  total_hooks: 89  # ✅ ACTUALIZADO 2025-11-29 (+2: useVideoRecorder, useAudioRecorder)
   total_features: 10
-  total_pages: 30  # ✅ ACTUALIZADO 2025-11-29
+  total_pages: 31  # ✅ ACTUALIZADO 2025-11-29 (+1: ReviewPanelPage)
   total_stores: 11
   total_api_services: 15  # Sin cambios (usa apiClient existente)
-  total_mechanics: 33
+  total_mechanics: 33  # 25 auto-revisables + 8 con revisión manual (1 M4 + 3 M5 + 4 otros)
   total_routes: 20  # ✅ ACTUALIZADO 2025-11-29
-  lines_of_code: ~95000  # Estimado basado en aumento de archivos
+  lines_of_code: ~98000  # Estimado basado en implementación M4-M5 (+~3000 LOC)
+
+  changes_from_v3_0:
+    mechanics_implemented: 8  # 5 M4 + 3 M5
+    components_created: 6  # MediaUploader, RubricEvaluator, ReviewPanelPage, ReviewList, ReviewDetail, etc.
+    hooks_created: 2  # useVideoRecorder, useAudioRecorder
+    pages_created: 1  # ReviewPanelPage (teacher portal)
+    total_loc_added: ~3000
+    epic: EXT-003
+    user_story: US-M4M5-001
+    note: "Implementación completa de mecánicas creativas M4-M5 con sistema de revisión manual y carga multimedia"
+    files_created:
+      - apps/frontend/src/shared/components/mechanics/MediaUploader.tsx
+      - apps/frontend/src/shared/components/mechanics/RubricEvaluator.tsx
+      - apps/frontend/src/shared/hooks/useVideoRecorder.ts
+      - apps/frontend/src/shared/hooks/useAudioRecorder.ts
+      - apps/frontend/src/apps/teacher/pages/ReviewPanel/ReviewPanelPage.tsx
+      - apps/frontend/src/apps/teacher/pages/ReviewPanel/ReviewList.tsx
+      - apps/frontend/src/apps/teacher/pages/ReviewPanel/ReviewDetail.tsx
+      - "... + 8 mecánicas M4/M5 completas"
 
   changes_from_v2_9:
     pages_created: 1  # AdminAssignmentsPage.tsx (289 LOC)
@@ -376,9 +395,6 @@ corrections_2025_11_09:
       fix: "Removido studentId hardcodeado"
 
     - file: features/mechanics/module4/AnalisisMemes/AnalisisMemesExercise.tsx
-      fix: "Removido studentId hardcodeado"
-
-    - file: features/mechanics/module4/EnsayoArgumentativo/EnsayoArgumentativoExercise.tsx
       fix: "Removido studentId hardcodeado"
 
   react_router_v7:
@@ -920,3 +936,356 @@ detective_textual_restoration_2025_11_28:
       - "detectiveTextualMockData.ts (reescrito)"
       - "DetectiveTextualExercise.tsx (reescrito)"
       - "index.ts (sin cambios)"
+
+# ============================================================================
+# STUDENT PORTAL FIXES (2025-11-29)
+# ============================================================================
+# FE-108 y FE-109: Correcciones del portal Student
+
+student_portal_fixes_2025_11_29:
+  date: "2025-11-29"
+  analyst: "Architecture-Analyst"
+  task_ids: ["FE-108", "FE-109"]
+  status: "✅ COMPLETADO"
+
+  summary:
+    issues_fixed: 3
+    files_modified: 3
+    build_status: "✅ Exitoso (4138 modules)"
+    typescript_errors: 0
+
+  fixes:
+    - fix_id: FE-108
+      title: "Dashboard Rango Auto-actualización"
+      priority: "P1"
+      issue: "Rango no se actualizaba después de completar ejercicio"
+      root_cause: "invalidateQueries() no fuerza refetch con staleTime configurado"
+      solution: "Cambiar a refetchQueries() con type: 'active'"
+      file_modified: "apps/frontend/src/shared/hooks/useInvalidateDashboard.ts"
+      changes:
+        - "invalidateQueries() → refetchQueries()"
+        - "exact: false → type: 'active'"
+      impact: "Dashboard se actualiza inmediatamente post-ejercicio"
+
+    - fix_id: FE-109
+      title: "Leaderboard Endpoints Mapeo"
+      priority: "P0"
+      issue: "Pestañas School y Classroom mostraban errores de ID"
+      root_cause: "Frontend usaba endpoint genérico inexistente en backend"
+      solution: "Mapeo de tipos a endpoints específicos del backend"
+      files_modified:
+        - file: "apps/frontend/src/features/gamification/social/api/socialAPI.ts"
+          changes:
+            - "getLeaderboard() ahora mapea tipos a endpoints específicos"
+            - "Acepta options: { schoolId, userId }"
+            - "Endpoints: /leaderboard/global, /leaderboard/schools/:id, /leaderboard/friends/:id"
+        - file: "apps/frontend/src/features/gamification/social/store/leaderboardsStore.ts"
+          changes:
+            - "Integración con authStore para obtener schoolId/userId"
+            - "Pasa opciones a socialAPI.getLeaderboard()"
+
+  api_endpoints_mapping:
+    global:
+      frontend_type: "'global'"
+      backend_endpoint: "/gamification/leaderboard/global"
+      params_required: "none"
+    school:
+      frontend_type: "'school'"
+      backend_endpoint: "/gamification/leaderboard/schools/:schoolId"
+      params_required: "schoolId from user profile"
+    friends:
+      frontend_type: "'friends'"
+      backend_endpoint: "/gamification/leaderboard/friends/:userId"
+      params_required: "userId from auth"
+
+  validation:
+    typescript_check: "✅ Sin errores"
+    build_result: "✅ Exitoso (4138 modules)"
+    lint_errors: 0
+    lint_warnings: "1197 (preexistentes)"
+
+  documentation:
+    trace_entries:
+      - "orchestration/trazas/TRAZA-TAREAS-FRONTEND.md (FE-108)"
+      - "orchestration/trazas/TRAZA-TAREAS-FRONTEND.md (FE-109)"
+
+  clean_load_directive:
+    violated: false
+    reason: "Cambios solo en frontend, sin modificaciones a base de datos"
+
+# ============================================================================
+# M4-M5 IMPLEMENTATION (2025-11-29)
+# ============================================================================
+# Implementación completa de mecánicas creativas Módulos 4 y 5
+
+m4_m5_implementation:
+  date: "2025-11-29"
+  status: "PRODUCTION_READY"
+
+  shared_components_added:
+    - name: MediaUploader
+      path: src/shared/components/mechanics/MediaUploader.tsx
+      purpose: "Carga de archivos multimedia para ejercicios creativos"
+      supported_types: ["image/*", "video/*", "audio/*"]
+      max_file_size: "50MB"
+
+    - name: RubricEvaluator
+      path: src/shared/components/mechanics/RubricEvaluator.tsx
+      purpose: "Evaluación con rúbricas para docentes"
+      features:
+        - "Criterios configurables"
+        - "Escala de puntaje"
+        - "Comentarios por criterio"
+        - "Cálculo automático de puntuación total"
+
+  hooks_added:
+    - name: useVideoRecorder
+      path: src/shared/hooks/useVideoRecorder.ts
+      purpose: "Grabación de video para VideoCarta"
+      features:
+        - "Grabación de video desde webcam"
+        - "Preview en tiempo real"
+        - "Conversión a Blob/File"
+        - "Manejo de permisos de cámara"
+
+    - name: useAudioRecorder
+      path: src/shared/hooks/useAudioRecorder.ts
+      purpose: "Grabación de audio para ejercicios multimedia"
+      features:
+        - "Grabación de audio desde micrófono"
+        - "Visualización de forma de onda"
+        - "Conversión a Blob/File"
+        - "Manejo de permisos de micrófono"
+
+  teacher_pages_added:
+    - name: ReviewPanel
+      path: src/apps/teacher/pages/ReviewPanel/
+      purpose: "Panel de revisión manual de ejercicios M4-M5"
+      components:
+        - ReviewPanelPage.tsx
+        - ReviewList.tsx
+        - ReviewDetail.tsx
+      features:
+        - "Lista de ejercicios pendientes de revisión"
+        - "Vista detallada de respuesta del estudiante"
+        - "Integración con RubricEvaluator"
+        - "Envío de feedback y calificación"
+
+  module4_mechanics:
+    status: "ALL_IMPLEMENTED"
+    count: 5
+    types:
+      - verificador_fake_news:
+          path: src/features/mechanics/module4/VerificadorFakeNews/
+          description: "Verificación de noticias falsas con fuentes"
+
+      - infografia_interactiva:
+          path: src/features/mechanics/module4/InfografiaInteractiva/
+          description: "Infografía interactiva con componentes multimedia"
+
+      - quiz_tiktok:
+          path: src/features/mechanics/module4/QuizTikTok/
+          description: "Quiz estilo TikTok de comprensión multimodal"
+
+      - navegacion_hipertextual:
+          path: src/features/mechanics/module4/NavegacionHipertextual/
+          description: "Navegación por contenido hipertextual entre nodos enlazados"
+          files:
+            - NavegacionHipertextualExercise.tsx
+            - navegacionHipertextualTypes.ts
+            - HypertextDocument.tsx
+            - NavigationBreadcrumbs.tsx
+          expected_data_structure:
+            nodes: "HypertextNode[] - array de nodos navegables"
+            startNodeId: "string - ID del nodo inicial"
+            targetNodeId: "string - ID del nodo objetivo"
+          hypertext_node_interface:
+            id: "string"
+            title: "string"
+            content: "string"
+            links: "array de {targetId: string, label: string}"
+
+      - analisis_memes:
+          path: src/features/mechanics/module4/AnalisisMemes/
+          description: "Análisis crítico de memes (requiere revisión manual)"
+          manual_review: true
+
+  module5_mechanics:
+    status: "ALL_IMPLEMENTED"
+    count: 3
+    types:
+      - diario_multimedia:
+          path: src/features/mechanics/module5/DiarioMultimedia/
+          description: "Diario multimedia con texto, imagen y audio"
+          manual_review: true
+          media_types: ["text", "image", "audio"]
+
+      - comic_digital:
+          path: src/features/mechanics/module5/ComicDigital/
+          description: "Creación de cómic digital panel a panel"
+          manual_review: true
+          media_types: ["image", "text"]
+
+      - video_carta:
+          path: src/features/mechanics/module5/VideoCarta/
+          description: "Video carta personal grabada desde webcam"
+          manual_review: true
+          media_types: ["video"]
+          max_duration: "3 minutes"
+
+  manual_review_system:
+    status: "IMPLEMENTED"
+    backend_entity: "manual_reviews"
+    frontend_components:
+      - ReviewPanelPage
+      - ReviewList
+      - ReviewDetail
+      - RubricEvaluator
+    workflow:
+      - "1. Estudiante envía ejercicio creativo"
+      - "2. Backend crea registro en manual_reviews (PENDING)"
+      - "3. Docente accede a ReviewPanel"
+      - "4. Docente evalúa con rúbrica"
+      - "5. Backend actualiza estado a REVIEWED"
+      - "6. Estudiante recibe feedback y puntuación"
+
+  media_upload_system:
+    status: "IMPLEMENTED"
+    backend_service: "MediaStorageService"
+    backend_entity: "media_attachments"
+    storage_path: "apps/backend/uploads/"
+    components:
+      - MediaUploader (frontend)
+      - media-upload.controller.ts (backend)
+      - media-storage.service.ts (backend)
+    supported_formats:
+      images: ["jpg", "jpeg", "png", "gif", "webp"]
+      videos: ["mp4", "webm", "mov"]
+      audio: ["mp3", "wav", "ogg", "m4a"]
+
+  integration:
+    backend_controllers:
+      - media-upload.controller.ts
+      - manual-review.controller.ts
+    backend_services:
+      - media-storage.service.ts
+      - manual-review.service.ts
+    database_tables:
+      - media_attachments
+      - manual_reviews
+    seeds:
+      - 05-exercises-module4.sql
+      - 06-exercises-module5.sql
+
+  testing_status:
+    unit_tests: "NOT_IMPLEMENTED"
+    integration_tests: "NOT_IMPLEMENTED"
+    manual_testing: "PASSED"
+    notes: "Mecánicas probadas manualmente en desarrollo"
+
+# ============================================================================
+# CHANGELOG / MODIFICACIONES RECIENTES
+# ============================================================================
+changelog:
+  - date: "2025-12-18"
+    tarea_id: "CORR-ERRORES-M4-001"
+    type: "Bug Fix - M4-M5 Exercise Adapters"
+    status: "✅ VIGENTE (8 adapters activos)"
+    description: "Implementación de 8 adaptadores para ejercicios M4-M5 oficiales en exerciseAdapter.ts"
+    changes:
+      exerciseAdapter_m4_oficiales:
+        - "adaptToQuizTikTokData() - Mapea questions[].text→question, correct→correctAnswer"
+        - "adaptToInfografiaInteractivaData() - Transforma sections[]→cards[]"
+        - "adaptToVerificadorFakeNewsData() - Pass-through articles[]"
+        - "adaptToNavegacionHipertextualData() - Extrae content.nodes[]"
+        - "adaptToAnalisisMemesData() - Pass-through memes[]"
+      exerciseAdapter_m5_oficiales:
+        - "adaptToDiarioMultimediaData() - M5 adapter"
+        - "adaptToComicDigitalData() - M5 adapter"
+        - "adaptToVideoCartaData() - M5 adapter"
+      adapters_eliminados_por_limpieza:
+        - "adaptToEmailFormalData() - ELIMINADO (ejercicio no oficial)"
+        - "adaptToChatLiterarioData() - ELIMINADO (ejercicio no oficial)"
+        - "adaptToEnsayoArgumentativoData() - ELIMINADO (ejercicio no oficial)"
+        - "adaptToResenaCriticaData() - ELIMINADO (ejercicio no oficial)"
+    files_modified: 1
+    adapters_active: 8
+    adapters_removed: 4
+    removal_reason: "LIMPIEZA-M4-EJERCICIOS-001 - ejercicios no oficiales según DocumentoDeDiseño v6.4"
+    errors_fixed:
+      - "InfografiaInteractivaExercise: Cannot read properties of undefined (reading 'filter')"
+      - "QuizTikTokExercise: Cannot read properties of undefined (reading '0')"
+    documentation:
+      - "orchestration/analisis/PLAN-CORRECCION-ERRORES-M4-2025-12-18.md"
+      - "orchestration/reportes/HISTORIAL-CORRECCIONES-2025.md#limpieza-m4-ejercicios-001"
+
+  - date: "2025-12-18"
+    tarea_id: "IMPL-M4M5-CORRECCIONES-001"
+    type: "Feature Implementation - M4-M5 Corrections"
+    status: "⚠️ PARCIALMENTE REVERTIDO"
+    reversion_reason: "M4 files eliminados por LIMPIEZA-M4-EJERCICIOS-001 - solo M5 files vigentes"
+    description: "Correcciones estructura M5: types, schemas, mockData extraídos de componentes"
+    changes:
+      module4_eliminado:
+        note: "TODOS los archivos M4 fueron eliminados - ejercicios no oficiales según DocumentoDeDiseño v6.4"
+        files_removed:
+          - "ResenaCritica/ - directorio completo ELIMINADO"
+          - "ChatLiterario/ - directorio completo ELIMINADO"
+          - "EmailFormal/ - directorio completo ELIMINADO"
+          - "EnsayoArgumentativo/ - directorio completo ELIMINADO"
+      module5_vigente:
+        - "ComicDigital/comicDigitalTypes.ts - Types para paneles y speech bubbles"
+        - "ComicDigital/comicDigitalSchemas.ts - Zod schemas para cómic digital"
+        - "ComicDigital/comicDigitalMockData.ts - Mock layouts, backgrounds, templates"
+        - "DiarioMultimedia/diarioMultimediaTypes.ts - Types para diario multimedia"
+        - "DiarioMultimedia/diarioMultimediaSchemas.ts - Zod schemas para entradas diario"
+        - "DiarioMultimedia/diarioMultimediaMockData.ts - Mock themes y prompts"
+        - "VideoCarta/videoCartaTypes.ts - Types para video carta"
+        - "VideoCarta/videoCartaSchemas.ts - Zod schemas para secciones video"
+        - "VideoCarta/videoCartaMockData.ts - Mock secciones y filtros"
+    files_created_vigentes: 9
+    files_removed: 8
+    impact:
+      - "M5: 3 mecánicas con estructura completa extraída de componentes TSX"
+      - "M4: Reducido a 5 ejercicios oficiales según DocumentoDeDiseño v6.4"
+    reference: "orchestration/reportes/HISTORIAL-CORRECCIONES-2025.md#limpieza-m4-ejercicios-001"
+    documentation:
+      - "orchestration/analisis/PLAN-IMPLEMENTACION-M4-M5-2025-12-18.md"
+
+  - date: "2025-12-15"
+    tarea_id: "IMPL-ACHIEVEMENTS-001"
+    type: "Feature Fix - Achievements System Frontend"
+    description: "Correcciones del sistema de achievements en frontend"
+    changes:
+      types:
+        - "useDashboardData.ts: Extendido AchievementData con campos mlCoinsReward, xpReward, rewards"
+        - "achievementsTypes.ts: Corregido imports de tipos SSOT (AchievementCategory, AchievementReward)"
+      components:
+        - "ProgressTreeVisualizer.tsx: Expandido iconMap de 4 a 35+ iconos Lucide"
+        - "AchievementsPreview.tsx: Recompensas dinámicas en lugar de hardcoded (+50 ML, +100 XP)"
+    files_modified:
+      - "apps/frontend/src/apps/student/hooks/useDashboardData.ts"
+      - "apps/frontend/src/features/gamification/social/types/achievementsTypes.ts"
+      - "apps/frontend/src/features/gamification/social/components/Achievements/ProgressTreeVisualizer.tsx"
+      - "apps/frontend/src/apps/student/components/gamification/AchievementsPreview.tsx"
+    impact:
+      - "Tipos Achievement y AchievementData ahora compatibles"
+      - "Todos los iconos de achievements se muestran correctamente"
+      - "Recompensas muestran valores reales del backend"
+    documentation:
+      - "orchestration/reportes/IMPL-ACHIEVEMENTS-2025-12-15.md"
+
+  - date: "2025-11-29"
+    tarea_id: "M4-M5-IMPLEMENTATION"
+    type: "Epic Implementation - Modules 4 & 5 Frontend"
+    description: "Implementación de mecánicas creativas M4-M5 con sistema de revisión manual"
+    changes:
+      - "MediaUploader component"
+      - "RubricEvaluator component"
+      - "ReviewPanelPage"
+      - "useVideoRecorder hook"
+      - "useAudioRecorder hook"
+    impact:
+      - "8 mecánicas creativas implementadas"
+      - "Sistema de upload multimedia funcional"
+      - "Panel de revisión para docentes"

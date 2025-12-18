@@ -1,10 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan } from 'typeorm';
 import * as crypto from 'crypto';
 import { UserSession } from '../entities';
-import { CreateUserSessionDto, UpdateUserSessionDto, UserSessionResponseDto } from '../dto';
-import { DB_SCHEMAS, DeviceTypeEnum } from '@/shared/constants';
+import { CreateUserSessionDto } from '../dto';
 
 /**
  * SessionManagementService

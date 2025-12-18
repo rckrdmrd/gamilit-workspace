@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DB_SCHEMAS } from '@/shared/constants';
 import * as entities from './entities';
 import * as services from './services';
 import * as controllers from './controllers';

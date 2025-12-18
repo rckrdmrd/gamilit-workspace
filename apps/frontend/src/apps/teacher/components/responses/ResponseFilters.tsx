@@ -131,7 +131,7 @@ export const ResponseFilters: React.FC<ResponseFiltersProps> = ({ filters, onCha
     >
       {/* Header */}
       <div
-        className="to-detective-yellow flex cursor-pointer items-center justify-between bg-gradient-to-r from-detective-orange px-6 py-4"
+        className="flex cursor-pointer items-center justify-between bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-3">

@@ -18,7 +18,7 @@ export interface User {
   email: string;
   encrypted_password: string;
   role: 'student' | 'admin_teacher' | 'super_admin';
-  raw_user_meta_data?: any;
+  raw_user_meta_data?: Record<string, unknown>;
   created_at: Date;
   updated_at: Date;
   last_sign_in_at?: Date;
@@ -59,8 +59,8 @@ export interface UserProfile {
   grade_level?: string;
   school_id?: string;
   is_active: boolean;
-  preferences?: any;
-  metadata?: any;
+  preferences?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
   created_at: Date;
   updated_at: Date;
 }
@@ -70,10 +70,17 @@ export interface UserProfile {
  */
 export interface AuthUser {
   id: string;
+  sub?: string; // JWT subject (user ID)
   email: string;
   role: string;
   rank?: string;
   tenant_id?: string;
+  tenantId?: string; // Alternative naming
+  sessionId?: string; // Session ID from JWT payload
+  profile?: {
+    id: string;
+    tenant_id?: string;
+  };
 }
 
 /**
@@ -88,13 +95,13 @@ export interface AuthRequest extends Request {
 /**
  * API Response Interface
  */
-export interface APIResponse<T = any> {
+export interface APIResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: {
     code: string;
     message: string;
-    details?: any;
+    details?: unknown;
   };
   meta?: {
     timestamp: string;
@@ -160,7 +167,7 @@ export interface Achievement {
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
   ml_coins_reward: number;
   xp_reward: number;
-  conditions?: any;
+  conditions?: Record<string, unknown>;
   is_secret: boolean;
   created_at: Date;
 }

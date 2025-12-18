@@ -77,7 +77,7 @@ export class UserSession {
     revoked_at!: Date | null;
 
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   // Relaciones
   @ManyToOne(() => User, { onDelete: 'CASCADE' })

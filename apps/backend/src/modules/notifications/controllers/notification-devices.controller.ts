@@ -10,6 +10,7 @@ import {
   Request,
   HttpCode,
   HttpStatus,
+  BadRequestException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -19,6 +20,7 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 import { UserDeviceService } from '../services/user-device.service';
+import { PushNotificationService } from '../services/push-notification.service';
 import { JwtAuthGuard } from '@/modules/auth/guards';
 import {
   RegisterDeviceDto,
@@ -26,6 +28,7 @@ import {
   DeviceResponseDto,
   DevicesListResponseDto,
 } from '../dto/devices';
+import { AuthRequest } from '@shared/types';
 
 /**
  * NotificationDevicesController
@@ -53,10 +56,53 @@ import {
  */
 @ApiTags('notifications-devices')
 @Controller('notifications/devices')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 export class NotificationDevicesController {
-  constructor(private readonly deviceService: UserDeviceService) {}
+  constructor(
+    private readonly deviceService: UserDeviceService,
+    private readonly pushNotificationService: PushNotificationService,
+  ) {}
+
+  /**
+   * GET /notifications/devices/vapid-public-key
+   *
+   * Obtener clave pública VAPID para subscripciones de push
+   *
+   * Este endpoint NO requiere autenticación ya que la clave pública
+   * es necesaria ANTES de que el usuario pueda autenticarse
+   *
+   * El frontend usa esta clave para crear PushSubscriptions
+   */
+  @Get('vapid-public-key')
+  @ApiOperation({
+    summary: 'Get VAPID public key',
+    description:
+      'Returns the VAPID public key needed for creating push subscriptions in the browser',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns VAPID public key',
+    schema: {
+      type: 'object',
+      properties: {
+        vapidPublicKey: {
+          type: 'string',
+          example:
+            'BN4GvZtEZiZuqaaObWga7lEP-S1WCv7L1c_qfPPaZ6M7V...',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Push notifications not configured',
+  })
+  getVapidPublicKey() {
+    const key = this.pushNotificationService.getVapidPublicKey();
+    if (!key) {
+      throw new BadRequestException('Push notifications not configured');
+    }
+    return { vapidPublicKey: key };
+  }
 
   /**
    * POST /notifications/devices
@@ -64,17 +110,19 @@ export class NotificationDevicesController {
    * Registrar dispositivo para push notifications
    *
    * Flujo:
-   * 1. App obtiene device token de Firebase Cloud Messaging (FCM)
-   * 2. App envía token + metadata a este endpoint
+   * 1. App obtiene PushSubscription del navegador
+   * 2. App convierte subscription a JSON y lo envía a este endpoint
    * 3. Backend registra con upsert (actualiza si existe)
    * 4. Usuario queda habilitado para recibir push
    *
    * IMPORTANTE:
    * - Usa patrón upsert: actualiza last_used_at si ya existe
-   * - Device tokens pueden cambiar (app reinstalada, permisos revocados)
-   * - Cliente debe re-registrar cuando obtiene nuevo token
+   * - Device tokens ahora son JSON strings de PushSubscription
+   * - Cliente debe re-registrar cuando obtiene nueva subscription
    */
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Registrar dispositivo',
@@ -97,9 +145,9 @@ export class NotificationDevicesController {
   })
   async registerDevice(
     @Body() registerDto: RegisterDeviceDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<DeviceResponseDto> {
-    const userId = req.user.sub;
+    const userId = req.user!.id;
 
     const device = await this.deviceService.registerDevice({
       userId,
@@ -123,6 +171,8 @@ export class NotificationDevicesController {
    * Por defecto, solo retorna dispositivos activos
    */
   @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Obtener dispositivos del usuario',
     description: 'Retorna lista de dispositivos registrados (solo activos)',
@@ -136,8 +186,8 @@ export class NotificationDevicesController {
     status: 401,
     description: 'No autenticado',
   })
-  async getUserDevices(@Request() req: any): Promise<DevicesListResponseDto> {
-    const userId = req.user.sub;
+  async getUserDevices(@Request() req: AuthRequest): Promise<DevicesListResponseDto> {
+    const userId = req.user!.id;
     const devices = await this.deviceService.getUserDevices(userId, false);
 
     // Ocultar parcialmente los tokens
@@ -159,6 +209,8 @@ export class NotificationDevicesController {
    * Valida ownership automáticamente
    */
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Obtener dispositivo por ID',
     description: 'Retorna dispositivo específico si pertenece al usuario',
@@ -183,9 +235,9 @@ export class NotificationDevicesController {
   })
   async getDeviceById(
     @Param('id') deviceId: string,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<DeviceResponseDto> {
-    const userId = req.user.sub;
+    const userId = req.user!.id;
     const device = await this.deviceService.getDeviceById(deviceId, userId);
 
     return {
@@ -203,6 +255,8 @@ export class NotificationDevicesController {
    * para identificarlo más fácilmente en settings
    */
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Actualizar nombre del dispositivo',
@@ -233,9 +287,9 @@ export class NotificationDevicesController {
   async updateDeviceName(
     @Param('id') deviceId: string,
       @Body() updateDto: UpdateDeviceNameDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<DeviceResponseDto> {
-    const userId = req.user.sub;
+    const userId = req.user!.id;
 
     const device = await this.deviceService.updateDeviceName(
       deviceId,
@@ -264,6 +318,8 @@ export class NotificationDevicesController {
    * - Usuario debe re-registrar si quiere recibir push nuevamente
    */
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Eliminar dispositivo',
@@ -290,9 +346,9 @@ export class NotificationDevicesController {
   })
   async deleteDevice(
     @Param('id') deviceId: string,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<void> {
-    const userId = req.user.sub;
+    const userId = req.user!.id;
     await this.deviceService.deleteDevice(deviceId, userId);
   }
 

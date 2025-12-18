@@ -25,7 +25,7 @@ import {
  */
 describe('GamificationConfigService - US-AE-005', () => {
   let service: GamificationConfigService;
-  let systemSettingRepository: Repository<SystemSetting>;
+  let _systemSettingRepository: Repository<SystemSetting>;
 
   const mockSystemSettingRepository = {
     find: jest.fn(),

@@ -1,7 +1,7 @@
 # Flujo Completo: Inicialización de Usuario
 
-**Última actualización:** 2025-11-24
-**Relacionado con:** ADR-012, GAP-003 Bug Fix
+**Última actualización:** 2025-12-18
+**Relacionado con:** ADR-012
 **Propósito:** Documentar el flujo end-to-end desde registro de usuario hasta plataforma lista para usar
 
 ---
@@ -57,8 +57,8 @@ Content-Type: application/json
 **Código simplificado:**
 ```typescript
 async register(dto: RegisterDto) {
-  // Paso 1: Crear usuario en auth.users (Supabase Auth)
-  const { data: authUser, error } = await this.supabase.auth.signUp({
+  // Paso 1: Crear usuario en auth.users (autenticación estándar)
+  const { data: authUser, error } = await this.dbClient.auth.signUp({
     email: dto.email,
     password: dto.password,
   });
@@ -66,7 +66,7 @@ async register(dto: RegisterDto) {
   if (error) throw new UnauthorizedException(error.message);
 
   // Paso 2: Crear perfil en auth_management.profiles
-  const { data: profile, error: profileError } = await this.supabase
+  const { data: profile, error: profileError } = await this.dbClient
     .from('profiles')
     .insert({
       user_id: authUser.user.id,     // FK a auth.users
@@ -95,7 +95,44 @@ async register(dto: RegisterDto) {
 
 ---
 
-### 3. Trigger de Base de Datos se Dispara
+### 3. Triggers de Base de Datos se Disparan
+
+#### 3.1. Trigger: Aseguramiento de Nombre (BEFORE INSERT)
+
+**Trigger:** `trg_ensure_profile_name`
+**Ubicación:** `apps/database/ddl/schemas/auth_management/triggers/03b-trg_ensure_profile_name.sql`
+
+**Definición:**
+```sql
+CREATE TRIGGER trg_ensure_profile_name
+  BEFORE INSERT ON auth_management.profiles
+  FOR EACH ROW
+  EXECUTE FUNCTION auth_management.ensure_profile_name();
+```
+
+**Propósito:**
+- Asegura que `first_name`, `last_name` y `full_name` tengan valores válidos
+- Si están vacíos, extrae el nombre del email automáticamente
+- Computa `full_name` como concatenación de `first_name + last_name`
+- Previene usuarios con "Unknown Student" en la UI
+
+**Lógica:**
+```sql
+-- Si first_name está vacío, extraer del email
+IF NEW.first_name IS NULL OR TRIM(NEW.first_name) = '' THEN
+  NEW.first_name := INITCAP(SPLIT_PART(NEW.email, '@', 1));
+END IF;
+
+-- Si last_name está vacío, poner valor por defecto
+IF NEW.last_name IS NULL OR TRIM(NEW.last_name) = '' THEN
+  NEW.last_name := 'Usuario';
+END IF;
+
+-- Siempre computar full_name como concatenación
+NEW.full_name := TRIM(COALESCE(NEW.first_name, '') || ' ' || COALESCE(NEW.last_name, ''));
+```
+
+#### 3.2. Trigger: Inicialización de Estadísticas (AFTER INSERT)
 
 **Trigger:** `trg_initialize_user_stats`
 **Ubicación:** `apps/database/ddl/schemas/auth_management/triggers/04-trg_initialize_user_stats.sql`
@@ -108,10 +145,10 @@ CREATE TRIGGER trg_initialize_user_stats
   EXECUTE FUNCTION gamilit.initialize_user_stats();
 ```
 
-**Momento de ejecución:**
-- Inmediatamente DESPUÉS de INSERT en `profiles`
-- Antes de que el backend retorne la respuesta
-- Dentro de la misma transacción (atómico)
+**Orden de ejecución:**
+1. `trg_ensure_profile_name` (BEFORE INSERT) - Asegura datos del perfil
+2. INSERT en `profiles` se completa
+3. `trg_initialize_user_stats` (AFTER INSERT) - Inicializa gamificación
 
 ---
 
@@ -629,9 +666,10 @@ WHERE id IN (
 - Dependencias: `docs/90-transversal/DIAGRAMA-DEPENDENCIAS-INITIALIZE-USER-STATS.md`
 
 **Código fuente:**
-- Trigger: `apps/database/ddl/schemas/auth_management/triggers/04-trg_initialize_user_stats.sql`
-- Función: `apps/database/ddl/schemas/gamilit/functions/04-initialize_user_stats.sql`
-- Backend: `apps/backend/src/auth/auth.service.ts`
+- Trigger aseguramiento nombre: `apps/database/ddl/schemas/auth_management/triggers/03b-trg_ensure_profile_name.sql`
+- Trigger inicialización: `apps/database/ddl/schemas/auth_management/triggers/04-trg_initialize_user_stats.sql`
+- Función inicialización: `apps/database/ddl/schemas/gamilit/functions/04-initialize_user_stats.sql`
+- Backend: `apps/backend/src/modules/auth/services/auth.service.ts`
 - Frontend: `apps/frontend/src/apps/student/pages/DashboardPage.tsx`
 
 **Inventarios:**
@@ -642,6 +680,6 @@ WHERE id IN (
 
 **FIN DEL DOCUMENTO**
 
-**Última actualización:** 2025-11-24
+**Última actualización:** 2025-12-18
 **Mantenedores:** Architecture-Analyst, Database-Agent
 **Revisión necesaria:** Sí, al agregar nuevos módulos o cambiar proceso de registro

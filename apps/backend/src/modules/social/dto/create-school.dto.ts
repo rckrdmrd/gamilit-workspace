@@ -148,7 +148,7 @@ export class CreateSchoolDto {
    */
   @IsOptional()
   @IsObject()
-    settings?: Record<string, any>;
+    settings?: Record<string, unknown>;
 
   /**
    * Capacidad máxima de estudiantes
@@ -185,5 +185,5 @@ export class CreateSchoolDto {
    */
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

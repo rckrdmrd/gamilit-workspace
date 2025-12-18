@@ -24,5 +24,5 @@ export class UpdateUserDto {
 
   @IsOptional()
   @IsObject()
-    raw_user_meta_data?: Record<string, any>;
+    raw_user_meta_data?: Record<string, unknown>;
 }

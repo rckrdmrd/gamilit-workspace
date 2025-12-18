@@ -1,9 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository } from 'typeorm';
 import { MediaFile } from '../entities';
 import { CreateMediaFileDto } from '../dto';
-import { DB_SCHEMAS } from '@shared/constants';
 import { ProcessingStatusEnum } from '@shared/constants/enums.constants';
 
 /**

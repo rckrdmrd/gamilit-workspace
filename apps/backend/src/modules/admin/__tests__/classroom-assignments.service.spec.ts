@@ -15,17 +15,16 @@ import { GamilityRoleEnum } from '@shared/constants/enums.constants';
 import {
   AssignClassroomDto,
   BulkAssignClassroomsDto,
-  RemoveAssignmentDto,
-  ReassignClassroomDto,
+    ReassignClassroomDto,
   AvailableClassroomsFiltersDto,
 } from '../dto/classroom-assignments';
 
 describe('ClassroomAssignmentsService', () => {
   let service: ClassroomAssignmentsService;
-  let classroomRepository: Repository<Classroom>;
-  let teacherClassroomRepository: Repository<TeacherClassroom>;
-  let profileRepository: Repository<Profile>;
-  let userRoleRepository: Repository<UserRole>;
+  let _classroomRepository: Repository<Classroom>;
+  let _teacherClassroomRepository: Repository<TeacherClassroom>;
+  let _profileRepository: Repository<Profile>;
+  let _userRoleRepository: Repository<UserRole>;
 
   const mockClassroomRepository = {
     findOne: jest.fn(),

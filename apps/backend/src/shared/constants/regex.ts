@@ -31,7 +31,7 @@ export const PHONE_REGEX = /^\+?[1-9]\d{1,14}$/;
  * URL pattern
  */
 export const URL_REGEX =
-  /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
+  /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/;
 
 /**
  * IPv4 pattern

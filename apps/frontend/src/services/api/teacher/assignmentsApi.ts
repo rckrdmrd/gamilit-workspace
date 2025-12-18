@@ -66,6 +66,20 @@ export interface GetSubmissionsQueryDto {
   status?: 'pending' | 'graded' | 'late';
 }
 
+/**
+ * Upcoming assignment with deadline stats
+ * BAJO-008: Used for Teacher Dashboard
+ */
+export interface UpcomingAssignment {
+  id: string;
+  title: string;
+  dueDate: string | null;
+  daysRemaining: number;
+  totalStudents: number;
+  submittedCount: number;
+  classroomName?: string;
+}
+
 // ============================================================================
 // ASSIGNMENTS API CLASS
 // ============================================================================
@@ -327,6 +341,66 @@ class AssignmentsAPI {
       return responseData;
     } catch (error) {
       console.error('[AssignmentsAPI] Error grading submission:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Send reminder to students who haven't submitted
+   *
+   * Sends a reminder notification to students who haven't submitted
+   * their work for the specified assignment.
+   *
+   * @param assignmentId - ID of the assignment
+   * @returns Promise with notification results
+   * @throws Error if request fails
+   *
+   * @example
+   * ```typescript
+   * const result = await assignmentsApi.sendReminder('assignment-123');
+   * console.log(`${result.notified} students notified`);
+   * ```
+   */
+  async sendReminder(
+    assignmentId: string,
+  ): Promise<{ notified: number; alreadySubmitted: number; message: string }> {
+    try {
+      const { data } = await axiosInstance.post<{
+        notified: number;
+        alreadySubmitted: number;
+        message: string;
+      }>(API_ENDPOINTS.teacher.sendReminder(assignmentId));
+      return data;
+    } catch (error) {
+      console.error('[AssignmentsAPI] Error sending reminder:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get upcoming assignments with deadlines within specified days
+   *
+   * Returns assignments that have deadlines approaching.
+   * Used for Teacher Dashboard "Próximas Fechas Límite" section.
+   *
+   * @param days - Number of days to look ahead (default: 7)
+   * @returns Promise with upcoming assignments and stats
+   * @throws Error if request fails
+   *
+   * @example
+   * ```typescript
+   * const upcoming = await assignmentsApi.getUpcomingAssignments(7);
+   * ```
+   */
+  async getUpcomingAssignments(days: number = 7): Promise<UpcomingAssignment[]> {
+    try {
+      const { data } = await axiosInstance.get<UpcomingAssignment[]>(
+        API_ENDPOINTS.teacher.upcomingAssignments,
+        { params: { days } },
+      );
+      return data;
+    } catch (error) {
+      console.error('[AssignmentsAPI] Error fetching upcoming assignments:', error);
       throw error;
     }
   }

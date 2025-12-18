@@ -4,23 +4,23 @@
 # Fuente: Validación VAL-001
 
 metadata:
-  version: "2.6.0"
+  version: "2.9.0"
   generated_date: "2025-11-11"
-  last_updated: "2025-11-29"
-  generated_by: "Architecture-Analyst - Fase 4 Ejecución Clean Load Validation"
+  last_updated: "2025-12-18"
+  generated_by: "Architecture-Analyst - Corrección Routing Teacher Assignments + Documentación Orden Rutas"
   framework: "NestJS 11.1.8 + TypeScript 5.x + TypeORM 0.3.x"
   database: "PostgreSQL 16"
   package_manager: "npm"
   total_modules: 13  # ✅ Verificado 2025-11-15
-  total_entities: 87  # ✅ Validado 2025-11-29
-  total_dtos: 321  # ✅ Actualizado 2025-11-29 (reconteo real: +3 nuevos DTOs admin/teacher)
-  total_services: 85  # ✅ Actualizado 2025-11-29 (reconteo real: +1 servicio)
-  total_controllers: 68  # ✅ Actualizado 2025-11-29 (reconteo real: +1 controlador)
-  total_endpoints: 406  # ✅ Actualizado 2025-11-29 (+50 endpoints admin/teacher)
+  total_entities: 92  # ✅ Actualizado 2025-11-29 M4-M5 (+5 nuevas entities)
+  total_dtos: 327  # ✅ Verificado 2025-12-18 (sin 4 DTOs M4 no oficiales)
+  total_services: 88  # ✅ Actualizado 2025-11-29 M4-M5 (+3 servicios)
+  total_controllers: 71  # ✅ Actualizado 2025-11-29 M4-M5 (+3 controladores)
+  total_endpoints: 417  # ✅ Actualizado 2025-11-29 M4-M5 (+11 endpoints)
   typescript_errors: 0  # ⚠️ 2025-11-28: Backend tiene errores PREEXISTENTES en tests auth (no en admin)
   build_status: "⚠️ PREEXISTING TEST ERRORS"  # 2025-11-28: auth-derived-fields.service.spec.ts (no admin)
   coherencia_bd: "97%"  # ✅ Validado 2025-11-11 (87/117 tablas con entity, resto auxiliares)
-  discrepancies_found: "2025-11-29: Reconteo Fase 4 - dtos 318→321, services 84→85, controllers 67→68, endpoints 356→406"
+  discrepancies_found: "ninguna - M4 tiene 5 ejercicios oficiales según DocumentoDeDiseño v6.4"
 
 # ============================================================================
 # MÓDULOS (Modules)
@@ -85,15 +85,16 @@ modules:
     description: "Contenido educativo"
     path: "apps/backend/src/modules/educational"
     schema_db: "educational_content"
-    entities: 4
-    services: 3
-    controllers: 3
-    dtos: 0
+    entities: 5
+    services: 4
+    controllers: 4
+    dtos: 1
     main_features:
       - "Módulos educativos"
       - "Ejercicios interactivos"
       - "Recursos multimedia"
       - "Rúbricas de evaluación"
+      - "Media uploads (M4-M5)"
     status: "✅ Active"
 
   - name: "assignments"
@@ -115,10 +116,10 @@ modules:
     description: "Sistema de gamificación"
     path: "apps/backend/src/modules/gamification"
     schema_db: "gamification_system"
-    entities: 13
-    services: 7
-    controllers: 8
-    dtos: 0
+    entities: 16
+    services: 8
+    controllers: 9
+    dtos: 5
     main_features:
       - "Estadísticas de usuario"
       - "Rangos Maya"
@@ -127,6 +128,7 @@ modules:
       - "Leaderboards"
       - "Misiones diarias/semanales"
       - "Comodines/Power-ups"
+      - "Shop system (M4-M5)"
     status: "✅ Active"
 
   - name: "progress"
@@ -200,16 +202,17 @@ modules:
     description: "Funcionalidades para profesores"
     path: "apps/backend/src/modules/teacher"
     schema_db: "multiple"
-    entities: 0
-    services: 4
-    controllers: 1
-    dtos: 4
+    entities: 1
+    services: 5
+    controllers: 2
+    dtos: 5
     main_features:
       - "Dashboard del profesor"
       - "Calificación de tareas"
       - "Análisis de estudiantes"
       - "Seguimiento de progreso"
       - "Notas de profesor"
+      - "Manual review (M4-M5)"
     status: "✅ Active"
 
   - name: "audit"
@@ -244,24 +247,25 @@ modules:
 # ENTITIES (TypeORM Entities)
 # ============================================================================
 entities:
-  count: 64
+  count: 69
   by_module:
     auth: 12
-    gamification: 13
-    educational: 4
-    progress: 13
+    gamification: 16
+    educational: 5
+    progress: 14
     social: 10
     content: 5
     assignments: 5
     notifications: 1
     admin: 3
     audit: 1
+    teacher: 1
 
   auth_management:
     - name: "User"
       file: "user.entity.ts"
       table: "auth_management.users"
-      description: "Usuario del sistema (Supabase Auth)"
+      description: "Usuario del sistema (autenticación estándar)"
       relations:
         - "Profile (1:1)"
         - "UserRole (1:N)"
@@ -447,6 +451,35 @@ entities:
       relations: []
       status: "✅ Active"
 
+    - name: "ShopCategory"
+      file: "shop-category.entity.ts"
+      table: "gamification_system.shop_categories"
+      description: "Categorías de la tienda (M4-M5)"
+      relations:
+        - "ShopItem (1:N)"
+      status: "✅ Active"
+      notes: "Implementado en M4-M5 para sistema de tienda"
+
+    - name: "ShopItem"
+      file: "shop-item.entity.ts"
+      table: "gamification_system.shop_items"
+      description: "Items de la tienda (M4-M5)"
+      relations:
+        - "ShopCategory (N:1)"
+        - "UserPurchase (1:N)"
+      status: "✅ Active"
+      notes: "Implementado en M4-M5 para sistema de tienda"
+
+    - name: "UserPurchase"
+      file: "user-purchase.entity.ts"
+      table: "gamification_system.user_purchases"
+      description: "Compras de usuarios en la tienda (M4-M5)"
+      relations:
+        - "User (N:1)"
+        - "ShopItem (N:1)"
+      status: "✅ Active"
+      notes: "Implementado en M4-M5 para sistema de tienda"
+
     - name: "Notification"
       file: "notification.entity.ts"
       path: "modules/notifications/entities"
@@ -491,6 +524,16 @@ entities:
         - "Exercise (N:1)"
         - "Module (N:1)"
       status: "✅ Active"
+
+    - name: "MediaAttachment"
+      file: "media-attachment.entity.ts"
+      table: "educational_content.media_attachments"
+      description: "Adjuntos multimedia para ejercicios (M4-M5)"
+      relations:
+        - "ExerciseSubmission (N:1)"
+        - "User (N:1)"
+      status: "✅ Active"
+      notes: "Implementado en M4-M5 para soportar audio/video uploads"
 
     - name: "Assignment"
       file: "assignment.entity.ts"
@@ -637,6 +680,17 @@ entities:
       relations:
         - "User (N:1)"
       status: "✅ Active"
+
+    - name: "ManualReview"
+      file: "manual-review.entity.ts"
+      table: "progress_tracking.manual_reviews"
+      description: "Revisiones manuales de ejercicios por profesores (M4-M5)"
+      relations:
+        - "ExerciseSubmission (N:1)"
+        - "Teacher (N:1)"
+        - "Student (N:1)"
+      status: "✅ Active"
+      notes: "Implementado en M4-M5 para evaluación manual de contenido creativo"
 
   social_features:
     - name: "Friendship"
@@ -807,17 +861,19 @@ entities:
 # DTOS (Data Transfer Objects)
 # ============================================================================
 dtos:
-  count: 268
+  count: 274
   by_module:
     admin: 118
     auth: 37
     assignments: 4
     audit: 1
     content: 11
+    educational: 1
+    gamification: 5
     notifications: 4
     progress: 12
     social: 20
-    teacher: 4
+    teacher: 5
 
   categories:
     create:
@@ -853,18 +909,18 @@ dtos:
 # SERVICES (Business Logic)
 # ============================================================================
 services:
-  count: 52
+  count: 55
   by_module:
     auth: 5
     admin: 4
-    educational: 3
+    educational: 4
     assignments: 1
-    gamification: 7
+    gamification: 8
     progress: 7
     social: 9
     content: 5
     notifications: 1
-    teacher: 4
+    teacher: 5
     audit: 1
     tasks: 2
 
@@ -951,22 +1007,71 @@ services:
         - "useComodin()"
         - "purchaseComodin()"
 
+    - name: "ShopService"
+      description: "Sistema de tienda ML Coins (M4-M5)"
+      main_methods:
+        - "getCategories()"
+        - "getItems()"
+        - "purchaseItem()"
+        - "getUserPurchases()"
+      notes: "Implementado en M4-M5 para tienda de recompensas"
+
+  educational_services:
+    - name: "ModulesService"
+      description: "Gestión de módulos educativos"
+
+    - name: "ExercisesService"
+      description: "Gestión de ejercicios"
+
+    - name: "MediaResourcesService"
+      description: "Gestión de recursos multimedia"
+
+    - name: "MediaStorageService"
+      description: "Almacenamiento de archivos multimedia (M4-M5)"
+      main_methods:
+        - "uploadMedia()"
+        - "deleteMedia()"
+        - "getMediaUrl()"
+      notes: "Implementado en M4-M5 para uploads de audio/video"
+
+  teacher_services:
+    - name: "TeacherDashboardService"
+      description: "Dashboard del profesor"
+
+    - name: "GradingService"
+      description: "Calificación de tareas"
+
+    - name: "StudentAnalysisService"
+      description: "Análisis de estudiantes"
+
+    - name: "ProgressTrackingService"
+      description: "Seguimiento de progreso"
+
+    - name: "ManualReviewService"
+      description: "Revisión manual de ejercicios (M4-M5)"
+      main_methods:
+        - "createReview()"
+        - "updateReview()"
+        - "getPendingReviews()"
+        - "getReviewById()"
+      notes: "Implementado en M4-M5 para evaluación de contenido creativo"
+
 # ============================================================================
 # CONTROLLERS (API Endpoints)
 # ============================================================================
 controllers:
-  count: 38
+  count: 41
   by_module:
     admin: 4
     assignments: 1
     auth: 2
     content: 5
-    educational: 3
-    gamification: 8
+    educational: 4
+    gamification: 9
     notifications: 1
     progress: 5
     social: 9
-    teacher: 1
+    teacher: 2
 
   base_path: "/api"
   swagger_path: "/api/docs"
@@ -986,6 +1091,8 @@ controllers:
       - "GET /api/educational/exercises"
       - "GET /api/educational/exercises/:id"
       - "POST /api/educational/exercises/:id/submit"
+      - "POST /api/educational/media/upload (M4-M5)"
+      - "DELETE /api/educational/media/:id (M4-M5)"
 
     gamification:
       - "GET /api/gamification/stats"
@@ -995,6 +1102,10 @@ controllers:
       - "GET /api/gamification/ml-coins/balance"
       - "GET /api/gamification/missions"
       - "POST /api/gamification/missions/:id/claim"
+      - "GET /api/gamification/shop/categories (M4-M5)"
+      - "GET /api/gamification/shop/items (M4-M5)"
+      - "POST /api/gamification/shop/purchase (M4-M5)"
+      - "GET /api/gamification/shop/purchases (M4-M5)"
 
     progress:
       - "GET /api/progress/modules/:id"
@@ -1009,6 +1120,43 @@ controllers:
       - "GET /api/social/classrooms"
       - "GET /api/social/teams"
       - "POST /api/social/challenges"
+
+    teacher:
+      - "GET /api/teacher/dashboard"
+      - "GET /api/teacher/students/:id/analysis"
+      - "POST /api/teacher/grading"
+      - "POST /api/teacher/notes"
+      - "GET /api/teacher/reviews/pending (M4-M5)"
+      - "POST /api/teacher/reviews (M4-M5)"
+      - "PUT /api/teacher/reviews/:id (M4-M5)"
+      - "GET /api/teacher/reviews/:id (M4-M5)"
+
+    # Teacher Assignments Controller
+    # IMPORTANTE: El orden de rutas es crítico en NestJS - rutas estáticas ANTES de rutas con parámetros
+    teacher_assignments:
+      prefix: "/api/v1/teacher/assignments"
+      controller: "AssignmentsController"
+      routes_order:  # Orden de declaración en el controlador (determina prioridad de matching)
+        - "POST /                                    # create()"
+        - "GET /                                     # findAll()"
+        - "GET /upcoming                             # getUpcoming() - DEBE ir antes de /:id"
+        - "GET /:id                                  # findOne()"
+        - "PUT /:id                                  # update()"
+        - "DELETE /:id                               # remove()"
+        - "POST /:id/assign                          # assignToClassrooms()"
+        - "GET /:id/submissions                      # getSubmissions()"
+        - "POST /:assignmentId/submissions/:submissionId/grade  # gradeSubmission()"
+        - "PATCH /:id                                # patch()"
+        - "POST /:id/distribute                      # distribute()"
+        - "POST /:id/duplicate                       # duplicate()"
+        - "POST /:id/publish                         # publish()"
+        - "POST /:id/close                           # close()"
+        - "POST /:id/send-reminder                   # sendReminder()"
+      routing_notes: |
+        En NestJS, las rutas se evalúan en orden de declaración.
+        Las rutas estáticas (como /upcoming) DEBEN declararse ANTES de rutas
+        parametrizadas (como /:id) para evitar que el parámetro capture valores literales.
+        Ejemplo: GET /upcoming debe ir antes de GET /:id, o "upcoming" será interpretado como un UUID.
 
 # ============================================================================
 # CONSTANTS (Shared Constants)
@@ -1044,53 +1192,79 @@ constants:
 
 # ============================================================================
 # DATABASE DATASOURCES (TypeORM)
+# UPDATED (2025-12-18): Corregido conteo de 6 a 9 datasources reales
 # ============================================================================
 datasources:
-  count: 6
-  path: "shared/database"
+  count: 9
+  path: "app.module.ts (TypeOrmModule.forRootAsync)"
   files:
-    - name: "auth-management.datasource.ts"
+    - name: "auth"
       schema: "auth_management"
+      entities_path: "/modules/auth/entities/**/*.entity"
       entities: 12
 
-    - name: "educational-content.datasource.ts"
+    - name: "educational"
       schema: "educational_content"
-      entities: 9
+      entities_path: "/modules/educational/entities/**/*.entity + /modules/assignments/entities/**/*.entity + /modules/teacher/entities/teacher-content.entity"
+      entities: 14
+      note: "CORRECTED 2025-12-18: Agregados paths de assignments y teacher-content"
 
-    - name: "gamification-system.datasource.ts"
+    - name: "gamification"
       schema: "gamification_system"
-      entities: 13
+      entities_path: "/modules/gamification/entities/**/*.entity + /modules/notifications/notification.entity"
+      entities: 14
 
-    - name: "progress-tracking.datasource.ts"
+    - name: "progress"
       schema: "progress_tracking"
+      entities_path: "/modules/progress/entities/**/*.entity"
       entities: 13
 
-    - name: "social-features.datasource.ts"
+    - name: "social"
       schema: "social_features"
+      entities_path: "/modules/social/entities/**/*.entity"
       entities: 10
 
-    - name: "content-management.datasource.ts"
+    - name: "content"
       schema: "content_management"
+      entities_path: "/modules/content/entities/**/*.entity"
       entities: 5
+
+    - name: "audit"
+      schema: "audit_logging"
+      entities_path: "/modules/audit/entities/**/*.entity"
+      entities: 3
+      note: "ADDED 2025-12-18"
+
+    - name: "notifications"
+      schema: "notifications"
+      entities_path: "/modules/notifications/entities/multichannel/**/*.entity"
+      entities: 4
+      note: "ADDED 2025-12-18"
+
+    - name: "communication"
+      schema: "communication"
+      entities_path: "/modules/teacher/entities/message*.entity"
+      entities: 2
+      note: "ADDED 2025-12-18"
 
 # ============================================================================
 # ESTADÍSTICAS
 # ============================================================================
 statistics:
-  total_files: 518
+  total_files: 532
   breakdown:
-    entities: 64
-    dtos: 268
-    services: 52
-    controllers: 38
+    entities: 69
+    dtos: 274
+    services: 55
+    controllers: 41
     modules: 14
-    datasources: 6
+    datasources: 9
     guards: 8
     interceptors: 5
     decorators: 10
     pipes: 4
     filters: 3
-    other: 46
+    other: 43
 
   code_quality:
     typescript_coverage: "100%"
@@ -1180,6 +1354,169 @@ notes:
 # CHANGELOG / MODIFICACIONES RECIENTES
 # ============================================================================
 changelog:
+  - date: "2025-12-18"
+    tarea_id: "IMPL-M4M5-CORRECCIONES-001"
+    type: "Feature Implementation - M4-M5 DTOs"
+    status: "⚠️ REVERTIDO"
+    reversion_reason: "DTOs eliminados por LIMPIEZA-M4-EJERCICIOS-001 - ejercicios no oficiales según DocumentoDeDiseño v6.4"
+    reversion_date: "2025-12-18"
+    modules_affected:
+      - "educational"
+      - "progress"
+    description: "[REVERTIDO] Implementación de 4 DTOs para validación de ejercicios M4 que NO están en DocumentoDeDiseño"
+    original_changes:
+      educational:
+        - "DTO: resena-critica-answer.dto.ts - ELIMINADO"
+        - "DTO: chat-literario-answer.dto.ts - ELIMINADO"
+        - "DTO: email-formal-answer.dto.ts - ELIMINADO"
+        - "DTO: ensayo-argumentativo-answer.dto.ts - ELIMINADO"
+      progress:
+        - "Validator: exercise-answer.validator.ts - cases M4 no oficiales removidos"
+    dtos_added: 0
+    dtos_removed: 4
+    reference: "orchestration/reportes/HISTORIAL-CORRECCIONES-2025.md#limpieza-m4-ejercicios-001"
+    documentation:
+      - "orchestration/analisis/PLAN-IMPLEMENTACION-M4-M5-2025-12-18.md"
+    clean_load_policy:
+      violated: false
+      reason: "DTOs fueron revertidos para alinear con DocumentoDeDiseño oficial"
+
+  - date: "2025-12-15"
+    tarea_id: "IMPL-ACHIEVEMENTS-001"
+    type: "Feature Fix - Achievements System"
+    modules_affected:
+      - "gamification"
+      - "progress"
+    description: "Corrección completa del sistema de achievements para portal Students"
+    changes:
+      gamification:
+        - "Service: achievements.service.ts - Reescrito meetsConditions() para soportar 9 tipos de condición"
+        - "Nuevos tipos: exercise_completion, streak, module_completion, all_modules_completion, perfect_score, social, special"
+        - "Agregado DataSource injection para queries complejas"
+        - "Agregado Logger para debugging"
+      progress:
+        - "Service: exercise-attempt.service.ts - Agregado increment modules_completed"
+        - "Service: exercise-attempt.service.ts - Agregada llamada a update_leaderboard_streaks()"
+        - "Service: exercise-submission.service.ts - Integrado AchievementsService"
+        - "Service: exercise-submission.service.ts - Detección achievements post-grading (manual y auto)"
+    impact:
+      - "Sistema de achievements ahora 100% funcional"
+      - "modules_completed se incrementa al completar módulos"
+      - "current_streak se calcula automáticamente"
+      - "Achievements se detectan en ejercicios auto-calificables Y con revisión manual"
+    new_dependencies:
+      exercise_submission_service:
+        depends_on:
+          - "AchievementsService (gamification module)"
+    database_functions_used:
+      - "gamification_system.update_leaderboard_streaks(uuid)"
+    database_tables_affected:
+      - "gamification_system.user_stats (UPDATE)"
+      - "gamification_system.user_achievements (INSERT via service)"
+      - "progress_tracking.module_progress (SELECT)"
+      - "social_features.classroom_members (SELECT)"
+    files_modified:
+      - "apps/backend/src/modules/gamification/services/achievements.service.ts"
+      - "apps/backend/src/modules/progress/services/exercise-attempt.service.ts"
+      - "apps/backend/src/modules/progress/services/exercise-submission.service.ts"
+    documentation:
+      - "orchestration/reportes/IMPL-ACHIEVEMENTS-2025-12-15.md"
+      - "orchestration/inventarios/BACKEND_INVENTORY.yml"
+    clean_load_policy:
+      violated: false
+      reason: "Sin cambios DDL, solo código backend usando funciones existentes"
+    seeds_homologated:
+      - "gamification_system/04-achievements.sql (dev = prod)"
+      - "gamification_system/05-user_stats.sql (copiado a dev)"
+      - "gamification_system/06-user_ranks.sql (copiado a dev)"
+      - "gamification_system/07-ml_coins_transactions.sql (copiado a dev)"
+      - "gamification_system/08-user_achievements.sql (copiado a dev)"
+      - "gamification_system/09-comodines_inventory.sql (copiado a dev)"
+      - "gamification_system/11-missions-production-users.sql (copiado a dev)"
+
+  - date: "2025-11-29"
+    tarea_id: "M4-M5-IMPLEMENTATION"
+    type: "Epic Implementation - Modules 4 & 5"
+    modules_affected:
+      - "educational"
+      - "gamification"
+      - "teacher"
+      - "progress"
+    description: "Implementación completa de módulos 4 y 5 con revisión manual y sistema de tienda"
+    changes:
+      educational:
+        - "Entity: MediaAttachment (media-attachment.entity.ts)"
+        - "Service: MediaStorageService (media-storage.service.ts)"
+        - "Controller: MediaUploadController (media-upload.controller.ts)"
+        - "DTO: UploadMediaDto (upload-media.dto.ts)"
+      gamification:
+        - "Entity: ShopCategory (shop-category.entity.ts)"
+        - "Entity: ShopItem (shop-item.entity.ts)"
+        - "Entity: UserPurchase (user-purchase.entity.ts)"
+        - "Service: ShopService (shop.service.ts)"
+        - "Controller: ShopController (shop.controller.ts)"
+        - "DTOs: shop/ (5 archivos: CreateCategoryDto, CreateItemDto, PurchaseItemDto, CategoryResponseDto, ItemResponseDto)"
+      teacher:
+        - "Entity: ManualReview (manual-review.entity.ts en progress/entities)"
+        - "Service: ManualReviewService (manual-review.service.ts)"
+        - "Controller: ManualReviewController (manual-review.controller.ts)"
+        - "DTO: CreateReviewDto (create-review.dto.ts)"
+      progress:
+        - "Entity: ManualReview integrada con progress_tracking schema"
+    objects_added: 14
+    impact:
+      - "M4: Ejercicios digitales con soporte multimedia completo"
+      - "M5: Ejercicios creativos con revisión manual del profesor"
+      - "Sistema de tienda ML Coins completamente funcional"
+      - "Upload de audio/video para ejercicios creativos"
+      - "Workflow de evaluación manual teacher → student"
+    database_changes:
+      - "Schema educational_content: tabla media_attachments"
+      - "Schema gamification_system: tablas shop_categories, shop_items, user_purchases"
+      - "Schema progress_tracking: tabla manual_reviews"
+    files_modified:
+      - "apps/backend/src/modules/educational/educational.module.ts"
+      - "apps/backend/src/modules/gamification/gamification.module.ts"
+      - "apps/backend/src/modules/teacher/teacher.module.ts"
+      - "apps/backend/src/modules/educational/entities/index.ts"
+      - "apps/backend/src/modules/gamification/entities/index.ts"
+      - "apps/backend/src/modules/gamification/controllers/index.ts"
+      - "apps/backend/src/modules/gamification/services/index.ts"
+    documentation:
+      - "orchestration/inventarios/BACKEND_INVENTORY.yml"
+    clean_load_policy:
+      violated: false
+      reason: "Cambios en BD planificados y ejecutados mediante migrations DDL"
+
+  - date: "2025-11-29"
+    tarea_id: "BE-136"
+    type: "Feature Integration - Gamification"
+    module: "progress"
+    component: "ExerciseAttemptService"
+    description: "Integración de detección automática de logros post-ejercicio"
+    changes:
+      - "Inyectado AchievementsService en ExerciseAttemptService"
+      - "Agregada llamada a detectAndGrantEarned() después de awardRewards()"
+      - "Implementado error handling para no bloquear flujo principal"
+      - "Agregado logging de logros otorgados"
+    impact:
+      - "Sistema de logros ahora funcional en portal Student"
+      - "Logros se otorgan automáticamente al cumplir condiciones"
+      - "Gamificación completamente integrada"
+    new_dependencies:
+      service: "ExerciseAttemptService"
+      depends_on:
+        - "AchievementsService (gamification module)"
+        - "UserStatsService (gamification module)"
+        - "RanksService (gamification module)"
+    files_modified:
+      - "apps/backend/src/modules/progress/services/exercise-attempt.service.ts"
+    documentation:
+      - "orchestration/trazas/TRAZA-TAREAS-BACKEND.md (BE-136)"
+    clean_load_policy:
+      violated: false
+      reason: "Sin cambios en base de datos, solo código backend"
+
   - date: "2025-11-26"
     tarea_id: "INVENTORY-UPDATE-001"
     type: "Documentation Update"
@@ -1217,6 +1554,41 @@ changelog:
       - "orchestration/inventarios/BACKEND_INVENTORY.yml"
     documentation:
       - "orchestration/inventarios/BACKEND_INVENTORY.yml"
+
+  - date: "2025-12-14"
+    tarea_id: "AUDIT-DB-001-P0"
+    type: "Database Audit Corrections - P0 Critical"
+    module: "shared"
+    component: "database.constants.ts"
+    description: "Correcciones P0 de auditoría AUDIT-DB-001: eliminación de referencias Supabase"
+    changes:
+      - "Renombrado AUTH_SUPABASE → AUTH_BASE (claridad arquitectónica)"
+      - "Eliminadas ~75 referencias a Supabase en documentación y código"
+      - "Corregidas 2 funciones de timestamp: NOW() → gamilit.now_mexico()"
+      - "Creados 5 seeds P0 críticos (user_roles, mission_templates, module_dependencies, taxonomies, marie_curie_content)"
+    impact:
+      - "Documentación técnica sin referencias erróneas a Supabase"
+      - "Consistencia de timezone en todas las funciones de updated_at"
+      - "Seeds coverage P0: 100% (35 registros iniciales)"
+      - "Claridad arquitectónica: auth.users es patrón estándar, no Supabase"
+    files_modified:
+      - "apps/backend/src/shared/constants/database.constants.ts"
+      - "apps/backend/README.md"
+      - "apps/database/ddl/00-prerequisites.sql"
+      - "apps/database/ddl/schemas/gamification_system/functions/06-update_missions_updated_at.sql"
+      - "apps/database/ddl/schemas/gamification_system/functions/07-update_notifications_updated_at.sql"
+    seeds_created:
+      - "auth_management/07-user_roles.sql (8 registros)"
+      - "gamification_system/10-mission_templates.sql (11 registros)"
+      - "educational_content/11-module_dependencies.sql (6 registros)"
+      - "educational_content/12-taxonomies.sql (4 registros)"
+      - "content_management/02-marie_curie_content.sql (6 registros)"
+    documentation:
+      - "orchestration/agentes/database-auditor/audit-2025-12-14/07-REPORTE-CORRECCIONES-P0.md"
+      - "orchestration/inventarios/SEEDS_INVENTORY.yml"
+    clean_load_policy:
+      violated: false
+      reason: "Correcciones de arquitectura y datos iniciales - sin cambios estructurales en tablas"
 
   - date: "2025-11-17"
     tarea_id: "BE-091"

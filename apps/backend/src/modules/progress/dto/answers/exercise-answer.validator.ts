@@ -2,7 +2,7 @@ import { BadRequestException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
 
-// Import all 15 DTOs
+// Import all 15 DTOs - Module 1, 2, 3
 import { WordSearchAnswersDto } from './word-search-answers.dto';
 import { TrueFalseAnswersDto } from './true-false-answers.dto';
 import { CrucigramaAnswersDto } from './crucigrama-answers.dto';
@@ -23,6 +23,24 @@ import { PredictionScenariosAnswersDto } from './prediction-scenarios-answers.dt
 import { CauseEffectMatchingAnswersDto } from './cause-effect-matching-answers.dto';
 import { MapaConceptualAnswersDto } from './mapa-conceptual-answers.dto';
 import { EmparejamientoAnswersDto } from './emparejamiento-answers.dto';
+
+// Import Module 4 DTOs - Lectura Digital y Multimodal (5 ejercicios oficiales)
+// @updated 2025-12-18 - LIMPIEZA-M4: Solo ejercicios oficiales según DocumentoDeDiseño v6.1
+import {
+  VerificadorFakeNewsAnswerDto,
+  InfografiaInteractivaAnswerDto,
+  QuizTikTokAnswerDto,
+  NavegacionHipertextualAnswerDto,
+  AnalisisMemesAnswerDto,
+} from '../../../educational/dto/module4';
+
+// Import Module 5 DTOs - Producción y Expresión Lectora (3 ejercicios oficiales)
+// @updated 2025-12-18 - CORR-M5: Alineación con DocumentoDeDiseño v6.1
+import {
+  DiarioMultimediaAnswerDto,
+  VideoCartaAnswerDto,
+  ComicDigitalAnswerDto,
+} from '../../../educational/dto/module5';
 
 /**
  * ExerciseAnswerValidator
@@ -119,14 +137,51 @@ export class ExerciseAnswerValidator {
       case 'cause_effect_matching':
         return CauseEffectMatchingAnswersDto;
 
+      // Module 4 - Lectura Digital y Multimodal
+      case 'verificador_fake_news':
+        return VerificadorFakeNewsAnswerDto;
+
+      case 'infografia_interactiva':
+        return InfografiaInteractivaAnswerDto;
+
+      case 'quiz_tiktok':
+        return QuizTikTokAnswerDto;
+
+      case 'navegacion_hipertextual':
+        return NavegacionHipertextualAnswerDto;
+
+      case 'analisis_memes':
+        return AnalisisMemesAnswerDto;
+
+      // Module 5 - Producción y Expresión Lectora (3 ejercicios oficiales)
+      // @updated 2025-12-18 - CORR-M5: Alineación con DocumentoDeDiseño v6.1
+      case 'diario_multimedia':
+        return DiarioMultimediaAnswerDto;
+
+      case 'comic_digital':
+        return ComicDigitalAnswerDto;
+
+      case 'video_carta':
+        return VideoCartaAnswerDto;
+
       default:
+        // @updated 2025-12-18 - Alineación con DocumentoDeDiseño v6.1
+        // Removidos: podcast, diario_reflexivo (M5), resena_critica, chat_literario, email_formal, ensayo_argumentativo (M4)
         throw new BadRequestException(
           `Unknown exercise type: ${exerciseType}. ` +
-          'Valid types: sopa_letras, verdadero_falso, crucigrama, linea_tiempo, completar_espacios, ' +
-          'mapa_conceptual, emparejamiento, ' +
+          'Valid types: ' +
+          // Module 1 - Comprensión Literal
+          'sopa_letras, verdadero_falso, crucigrama, linea_tiempo, completar_espacios, mapa_conceptual, emparejamiento, ' +
+          // Module 2 - Comprensión Inferencial
           'detective_textual, construccion_hipotesis, prediccion_narrativa, puzzle_contexto, rueda_inferencias, ' +
+          // Module 3 - Comprensión Crítica
           'tribunal_opiniones, analisis_fuentes, debate_digital, podcast_argumentativo, matriz_perspectivas, ' +
-          'detective_connections, prediction_scenarios, cause_effect_matching',
+          // Auxiliary types
+          'detective_connections, prediction_scenarios, cause_effect_matching, ' +
+          // Module 4 - Lectura Digital (5 oficiales)
+          'verificador_fake_news, infografia_interactiva, quiz_tiktok, navegacion_hipertextual, analisis_memes, ' +
+          // Module 5 - Producción Creativa (3 oficiales)
+          'diario_multimedia, comic_digital, video_carta',
         );
     }
   }

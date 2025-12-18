@@ -1,0 +1,49 @@
+# =============================================================================
+# PROJECT-ENV-CONFIG.yml - GAMILIT
+# =============================================================================
+# Proyecto: GAMILIT - Sistema de Gamificación Educativa
+# Actualizado: 2025-12-05
+# Referencia: ~/workspace/core/devtools/environment/DEV-ENVIRONMENT-REGISTRY.yml
+# =============================================================================
+
+project:
+  name: "GAMILIT"
+  slug: "gamilit"
+  description: "Sistema de Gamificación Educativa"
+  status: "active"
+  port_block: 3000
+
+ports:
+  frontend: 3005      # Vite dev server
+  backend: 3006       # NestJS API
+  websocket: 3006     # WebSocket (mismo puerto que backend)
+
+database:
+  host: "localhost"
+  port: 5432
+  name: "gamilit_platform"
+  user: "gamilit_user"
+  # password: Ver archivo .env local
+
+urls:
+  frontend: "http://localhost:3005"
+  backend_api: "http://localhost:3006/api"
+  swagger: "http://localhost:3006/api/docs"
+
+env_files:
+  backend: "apps/backend/.env"
+  frontend: "apps/frontend/.env"
+
+stack:
+  backend: "NestJS + TypeScript"
+  frontend: "React + TypeScript + Vite"
+  database: "PostgreSQL 15"
+
+# Estado: Configuración actual correcta, no requiere migración
+migration:
+  required: false
+
+notes: |
+  - Proyecto principal del workspace
+  - Configuración de puertos ya establecida y correcta
+  - Frontend: 3005, Backend: 3006

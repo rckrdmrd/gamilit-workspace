@@ -1,13 +1,14 @@
 # DEPENDENCY GRAPH - GAMILIT
-# Grafo de dependencias entre módulos, schemas y componentes
-# Versión: 1.0.0
-# Fecha: 2025-11-23
-# Fuente: Migrado desde orchestration_old/
+# Grafo de dependencias entre modulos, schemas y componentes
+# Version: 2.0.0
+# Fecha: 2025-12-05 (Post-Sprint P1)
+# Fuente: Requirements-Analyst
 
-version: "1.0.0"
-proyecto: "GAMILIT - Sistema de Gamificación Educativa"
-fecha_actualizacion: "2025-11-23"
-descripcion: "Grafo de dependencias entre capas (Database → Backend → Frontend)"
+version: "2.0.0"
+proyecto: "GAMILIT - Sistema de Gamificacion Educativa"
+fecha_actualizacion: "2025-12-05"
+descripcion: "Grafo de dependencias entre capas (Database -> Backend -> Frontend)"
+estado_proyecto: "75% completado"
 
 # ========================================
 # SCHEMAS DE DATABASE (Base de la pirámide)
@@ -234,34 +235,133 @@ frontend_components:
       - "AdminApp"
 
 # ========================================
-# BLOQUEADORES Y DEPENDENCIAS CRÍTICAS
+# SPRINT P2 - DEPENDENCIAS
+# ========================================
+
+sprint_p2_dependencies:
+  # Sprint P2-A
+  p2_a_tareas:
+    - id: "P2-DTO-001"
+      descripcion: "Tipos canonicos frontend"
+      dependencias: []
+      bloquea: ["P2-DTO-002"]
+
+    - id: "P2-DTO-002"
+      descripcion: "Transformacion snake/camel"
+      dependencias: ["P2-DTO-001"]
+      bloquea: []
+
+    - id: "P2-TEACHER-001"
+      descripcion: "Eliminar mock-teacher-id"
+      dependencias: []
+      bloquea: ["P2-TEACHER-002", "P2-TEACHER-003"]
+
+    - id: "P2-ADMIN-001"
+      descripcion: "AdminRolesPage"
+      dependencias: []
+      bloquea: []
+
+    - id: "P2-ADMIN-002"
+      descripcion: "AdminInstitutionsPage"
+      dependencias: []
+      bloquea: []
+
+  # Sprint P2-B
+  p2_b_tareas:
+    - id: "P2-TEACHER-002"
+      descripcion: "TeacherCommunicationPage"
+      dependencias: ["P2-TEACHER-001"]
+      bloquea: []
+
+    - id: "P2-TEACHER-003"
+      descripcion: "TeacherContentPage"
+      dependencias: ["P2-TEACHER-001"]
+      bloquea: []
+
+    - id: "P2-TEACHER-004"
+      descripcion: "TeacherResourcesPage"
+      dependencias: ["P2-TEACHER-001"]
+      bloquea: []
+
+    - id: "P2-ADMIN-003"
+      descripcion: "AdminAdvancedPage (Feature Flags)"
+      dependencias: ["P2-ADMIN-001", "P2-ADMIN-002"]
+      bloquea: ["P2-QUALITY"]
+
+  # Sprint P2-C
+  p2_c_tareas:
+    - id: "P2-TEST-001"
+      descripcion: "Backend test coverage 50%"
+      dependencias: []
+      bloquea: []
+
+    - id: "P2-TEST-002"
+      descripcion: "E2E tests"
+      dependencias: ["P2-TEACHER-004", "P2-ADMIN-003"]
+      bloquea: []
+
+    - id: "P2-GAM-002"
+      descripcion: "Misiones grupales gremios"
+      dependencias: []
+      bloquea: []
+
+# ========================================
+# BLOQUEADORES Y DEPENDENCIAS CRITICAS
 # ========================================
 
 bloqueadores_conocidos:
   - id: "BLOCK-001"
-    descripcion: "Endpoint POST /exercises/:id/submit no implementado"
+    descripcion: "Endpoint POST /exercises/:id/submit"
     afecta:
       - backend: ["exercises"]
       - frontend: ["ExercisePage"]
     prioridad: "P0"
-    estado: "Pendiente"
+    estado: "RESUELTO (Sprint P1)"
 
   - id: "BLOCK-002"
-    descripcion: "Módulo Admin Portal incompleto en backend"
+    descripcion: "Modulo Admin Portal incompleto"
     afecta:
       - backend: ["admin"]
       - frontend: ["AdminPortal"]
     prioridad: "P1"
-    estado: "Pendiente"
+    estado: "EN PROGRESO (80%)"
+
+  - id: "BLOCK-003"
+    descripcion: "Mock-teacher-id en 10 paginas"
+    afecta:
+      - frontend: ["TeacherPortal"]
+    prioridad: "P0"
+    estado: "PENDIENTE P2-A"
+
+  - id: "BLOCK-004"
+    descripcion: "Test coverage 18% vs 50% objetivo"
+    afecta:
+      - backend: ["*"]
+      - frontend: ["*"]
+    prioridad: "P2"
+    estado: "PENDIENTE P2-C"
 
 # ========================================
 # NOTAS
 # ========================================
 
 notas:
-  - "Grafo creado durante migración orchestration_old → orchestration"
-  - "Database: 98% completitud (PRODUCTION READY)"
-  - "Backend: 28-40% completitud (análisis completado)"
-  - "Frontend: Funcional (coherencia 75% con backend)"
-  - "Actualizar este grafo cuando se implementen nuevos módulos"
-  - "Ver ESTADO-GENERAL.json para métricas detalladas"
+  - "Actualizado post-Sprint P1 (2025-12-05)"
+  - "Database: 95% completitud"
+  - "Backend: 88% completitud"
+  - "Frontend: 75% completitud"
+  - "Test Coverage: 18% (objetivo 50%)"
+  - "Ver ANALISIS-ALCANCES-P2-POST-SPRINT-P1-2025-12-05.md para detalles"
+
+# ========================================
+# HISTORIAL
+# ========================================
+
+historial:
+  - fecha: "2025-11-23"
+    version: "1.0.0"
+    cambios: "Creacion inicial"
+
+  - fecha: "2025-12-05"
+    version: "2.0.0"
+    cambios: "Actualizacion post-Sprint P1, agregado Sprint P2 dependencies"

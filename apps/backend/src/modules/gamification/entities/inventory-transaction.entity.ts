@@ -2,9 +2,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
-  JoinColumn,
-  Index,
+      Index,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants';
 
@@ -76,7 +74,7 @@ export class InventoryTransaction {
    * - { "exercise_id": "uuid-...", "success": true } para USE
    */
   @Column({ type: 'jsonb', nullable: true })
-    metadata!: Record<string, any> | null;
+    metadata!: Record<string, unknown> | null;
 
   @Column({ type: 'timestamptz', default: () => 'NOW()' })
     created_at!: Date;

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between } from 'typeorm';
+import { Repository } from 'typeorm';
 import { SystemAlert } from '../entities/system-alert.entity';
 import {
   ListAlertsDto,
@@ -8,8 +8,7 @@ import {
   AlertResponseDto,
   AlertsStatsDto,
   PaginatedAlertsDto,
-  AlertStatus,
-} from '../dto/alerts';
+  } from '../dto/alerts';
 
 /**
  * AdminAlertsService
@@ -195,7 +194,7 @@ export class AdminAlertsService {
    * @param userId - ID del usuario que crea la alerta (para auditoría)
    * @returns Alerta creada
    */
-  async createAlert(createDto: CreateAlertDto, userId: string): Promise<AlertResponseDto> {
+  async createAlert(createDto: CreateAlertDto, _userId: string): Promise<AlertResponseDto> {
     const alert = this.alertRepo.create({
       alert_type: createDto.alert_type,
       severity: createDto.severity,

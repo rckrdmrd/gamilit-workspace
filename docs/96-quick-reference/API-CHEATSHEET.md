@@ -1,7 +1,7 @@
 # API Cheatsheet - GAMILIT Platform
 
 **Versión:** 1.0
-**Última actualización:** 2025-11-07
+**Última actualización:** 2025-12-18
 **Base URL:** `http://localhost:3000/api/v1`
 **Formato:** JSON
 
@@ -757,6 +757,6 @@ curl http://localhost:3000/api/v1/gamification/achievements/me \
 
 ---
 
-**Última actualización:** 2025-11-07
+**Última actualización:** 2025-12-18
 **Versión:** 1.0
 **Método:** Extracted from API-ENDPOINTS.md

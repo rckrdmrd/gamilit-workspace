@@ -1,6 +1,5 @@
 import { Module as NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DB_SCHEMAS } from '@/shared/constants';
 import * as entities from './entities';
 import * as services from './services';
 import * as controllers from './controllers';
@@ -10,6 +9,8 @@ import { Module as EducationalModule } from '../educational/entities/module.enti
 import { Exercise } from '../educational/entities/exercise.entity';
 import { Profile } from '../auth/entities/profile.entity';
 import { GamificationModule } from '../gamification/gamification.module';
+import { NotificationsModule } from '../notifications/notifications.module';
+import { MailModule } from '../mail/mail.module';
 
 /**
  * ProgressModule
@@ -78,6 +79,10 @@ import { GamificationModule } from '../gamification/gamification.module';
     TypeOrmModule.forFeature([Profile], 'auth'),
     // Import GamificationModule for MLCoinsService and UserStatsService
     GamificationModule,
+    // Import NotificationsModule for teacher notifications (BE-P2-008)
+    NotificationsModule,
+    // Import MailModule for email notifications (BE-P2-008)
+    MailModule,
   ],
   providers: [
     services.ModuleProgressService,

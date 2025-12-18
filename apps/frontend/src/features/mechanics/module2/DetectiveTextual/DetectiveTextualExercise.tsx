@@ -19,8 +19,7 @@ import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { mockExercise } from './detectiveTextualMockData';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
-import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
+import { useInvalidateDashboard } from '@/shared/hooks';
 
 /**
  * Question Card Component
@@ -51,9 +50,11 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
         </div>
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-gray-900">{question.question}</h3>
-          <span className="mt-1 inline-block rounded-full bg-detective-orange/10 px-3 py-1 text-xs text-detective-orange">
-            {question.inference_type.replace('_', ' ')}
-          </span>
+          {question.inference_type && (
+            <span className="mt-1 inline-block rounded-full bg-detective-orange/10 px-3 py-1 text-xs text-detective-orange">
+              {question.inference_type.replace('_', ' ')}
+            </span>
+          )}
         </div>
       </div>
 
@@ -135,8 +136,7 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
   actionsRef,
 }) => {
   const { user } = useAuth();
-  const { fetchUserProgress } = useRanksStore();
-  const { fetchBalance } = useEconomyStore();
+  const { syncAndInvalidate } = useInvalidateDashboard();
 
   /**
    * FIX 2024-11-29: Transform exercise data from API to component format
@@ -303,8 +303,7 @@ export const DetectiveTextualExercise: React.FC<DetectiveTextualExerciseProps> =
       setShowFeedback(true);
 
       // Sync stores with backend (rewards already calculated and saved by backend)
-      await fetchUserProgress();
-      await fetchBalance();
+      await syncAndInvalidate();
 
       console.log('✅ [DetectiveTextual] Submission successful:', {
         attemptId: response.attemptId,

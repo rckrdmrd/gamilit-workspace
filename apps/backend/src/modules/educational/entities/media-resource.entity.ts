@@ -241,7 +241,7 @@ export class MediaResource {
    * Puede incluir información técnica, codec, bitrate, etc.
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Fecha y hora de creación del registro

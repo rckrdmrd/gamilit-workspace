@@ -4,14 +4,17 @@ import { Repository, EntityManager } from 'typeorm';
 import { ExerciseSubmission } from '../entities';
 import { CreateExerciseSubmissionDto } from '../dto';
 import { ExerciseAnswerValidator, RuedaInferenciasAnswersDto } from '../dto/answers';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
 import { Exercise } from '@/modules/educational/entities';
 import { Profile } from '@/modules/auth/entities';
 import { UserStatsService } from '@/modules/gamification/services/user-stats.service';
 import { MLCoinsService } from '@/modules/gamification/services/ml-coins.service';
 import { MissionsService } from '@/modules/gamification/services/missions.service';
+import { AchievementsService } from '@/modules/gamification/services/achievements.service';
 import { MissionTypeEnum } from '@/modules/gamification/entities/mission.entity';
+import { NotificationsService } from '@/modules/notifications/services/notifications.service';
+import { MailService } from '@/modules/mail/mail.service';
+import { NotificationTypeEnum } from '@shared/constants/enums.constants';
 
 /**
  * CategoryExpectation
@@ -88,6 +91,9 @@ export class ExerciseSubmissionService {
     private readonly userStatsService: UserStatsService,
     private readonly mlCoinsService: MLCoinsService,
     private readonly missionsService: MissionsService,
+    private readonly achievementsService: AchievementsService,
+    private readonly notificationsService: NotificationsService,
+    private readonly mailService: MailService,
   ) {}
 
   /**
@@ -201,7 +207,7 @@ export class ExerciseSubmissionService {
   async submitExercise(
     userId: string,
     exerciseId: string,
-    answers: Record<string, any>,
+    answers: Record<string, unknown>,
   ): Promise<ExerciseSubmission> {
     // CRITICAL FIX: Convert auth.users.id → profiles.id
     // exercise_submissions.user_id FK references profiles.id (NOT auth.users.id)
@@ -222,6 +228,69 @@ export class ExerciseSubmissionService {
         'It should not use the submission service. ' +
         'This is a system configuration error - please report to support.',
       );
+    }
+
+    // BE-P2-009: Validación de requisitos mínimos para ejercicios Módulo 5
+    if (exercise.exercise_type === 'diario_multimedia') {
+      // Validar 150 palabras mínimas en el diario
+      const content = String(answers.content || answers.text || '');
+      const wordCount = this.countWords(content);
+
+      if (wordCount < 150) {
+        throw new BadRequestException(
+          `El diario debe tener al menos 150 palabras. Actualmente tienes ${wordCount} palabras.`
+        );
+      }
+
+      console.log(`[BE-P2-009] Diario multimedia validation passed: ${wordCount} palabras`);
+    }
+
+    if (exercise.exercise_type === 'comic_digital') {
+      // Validar mínimo de paneles en el cómic
+      const panels = (answers.panels || []) as Array<{ text?: string; image?: string; imageUrl?: string }>;
+      const minPanels = 4; // Mínimo 4 paneles para contar una historia
+
+      if (panels.length < minPanels) {
+        throw new BadRequestException(
+          `El cómic debe tener al menos ${minPanels} paneles. Actualmente tienes ${panels.length} paneles.`
+        );
+      }
+
+      // Validar que cada panel tenga contenido (texto o imagen)
+      const emptyPanels = panels.filter((panel) => {
+        const hasText = panel.text && panel.text.trim().length > 0;
+        const hasImage = panel.image || panel.imageUrl;
+        return !hasText && !hasImage;
+      });
+
+      if (emptyPanels.length > 0) {
+        throw new BadRequestException(
+          `Todos los paneles deben tener contenido (texto o imagen). Tienes ${emptyPanels.length} panel(es) vacío(s).`
+        );
+      }
+
+      console.log(`[BE-P2-009] Comic digital validation passed: ${panels.length} paneles`);
+    }
+
+    if (exercise.exercise_type === 'video_carta') {
+      // Validar que haya URL de video o metadata
+      const videoUrl = answers.videoUrl || answers.url || answers.video;
+      const metadata = (answers.metadata || {}) as { duration?: number };
+
+      if (!videoUrl) {
+        throw new BadRequestException(
+          `Debes subir o proporcionar la URL de tu video carta.`
+        );
+      }
+
+      // Validar duración mínima si hay metadata (30 segundos mínimo)
+      if (metadata.duration !== undefined && metadata.duration < 30) {
+        throw new BadRequestException(
+          `La video carta debe tener al menos 30 segundos de duración. Tu video tiene ${metadata.duration} segundos.`
+        );
+      }
+
+      console.log(`[BE-P2-009] Video carta validation passed: ${videoUrl}`);
     }
 
     // FE-059: Validate answer structure BEFORE saving to database
@@ -263,6 +332,18 @@ export class ExerciseSubmissionService {
       // Los campos ya están persistidos en la submission por claimRewards()
       // Asignar rankUp si existe
       (submission as any).rankUp = rewards.rankUp;
+    }
+
+    // BE-P2-008: Notificar al docente si el ejercicio requiere revisión manual
+    if (exercise.requires_manual_grading) {
+      console.log(`[BE-P2-008] Exercise ${exerciseId} requires manual grading - notifying teacher`);
+      try {
+        await this.notifyTeacherOfSubmission(submission, exercise, profileId);
+      } catch (error) {
+        // Log error but don't fail submission
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        console.error(`[BE-P2-008] Failed to notify teacher: ${errorMessage}`);
+      }
     }
 
     return submission;
@@ -319,7 +400,19 @@ export class ExerciseSubmissionService {
 
       console.log(`[P1-003] Manual grading applied: ${submission.score}/${submission.max_score}, correct=${submission.is_correct}`);
 
-      return this.submissionRepo.save(submission);
+      const savedSubmission = await this.submissionRepo.save(submission);
+
+      // IMPL-004: Detectar y otorgar achievements después de calificación manual
+      try {
+        const earned = await this.achievementsService.detectAndGrantEarned(submission.user_id);
+        if (earned.length > 0) {
+          console.log(`[IMPL-004] ✅ Granted ${earned.length} achievements to user ${submission.user_id} after manual grading`);
+        }
+      } catch (achievementError) {
+        console.error(`[IMPL-004] ❌ Error detecting achievements: ${achievementError instanceof Error ? achievementError.message : String(achievementError)}`);
+      }
+
+      return savedSubmission;
     }
 
     // Default: Auto-grading using SQL validate_and_audit()
@@ -367,7 +460,19 @@ export class ExerciseSubmissionService {
       }
     }
 
-    return this.submissionRepo.save(submission);
+    const savedSubmission = await this.submissionRepo.save(submission);
+
+    // IMPL-004: Detectar y otorgar achievements después de auto-grading
+    try {
+      const earned = await this.achievementsService.detectAndGrantEarned(submission.user_id);
+      if (earned.length > 0) {
+        console.log(`[IMPL-004] ✅ Granted ${earned.length} achievements to user ${submission.user_id} after auto-grading`);
+      }
+    } catch (achievementError) {
+      console.error(`[IMPL-004] ❌ Error detecting achievements: ${achievementError instanceof Error ? achievementError.message : String(achievementError)}`);
+    }
+
+    return savedSubmission;
   }
 
   /**
@@ -387,9 +492,9 @@ export class ExerciseSubmissionService {
   private async autoGrade(
     userId: string,
     exerciseId: string,
-    answerData: Record<string, any>,
+    answerData: Record<string, unknown>,
     attemptNumber: number = 1,
-    clientMetadata: Record<string, any> = {},
+    clientMetadata: Record<string, unknown> = {},
   ): Promise<{
       score: number;
       isCorrect: boolean;
@@ -410,7 +515,7 @@ export class ExerciseSubmissionService {
       console.log('[autoGrade] Checking anti-redundancy for Completar Espacios (Exercise 1.3)');
 
       // Check if blanks.5 and blanks.6 exist and are identical (case-insensitive)
-      const blanks = answerData.blanks || {};
+      const blanks = (answerData.blanks || {}) as Record<string, unknown>;
       if (blanks['5'] && blanks['6']) {
         const space5 = String(blanks['5']).toLowerCase().trim();
         const space6 = String(blanks['6']).toLowerCase().trim();
@@ -452,7 +557,7 @@ export class ExerciseSubmissionService {
 
       // Validate using custom function
       const validationResult = this.validateRuedaInferencias(
-        answerData as RuedaInferenciasAnswersDto,
+        answerData as unknown as RuedaInferenciasAnswersDto,
         exercise,
         fragmentStates,
       );
@@ -532,7 +637,7 @@ export class ExerciseSubmissionService {
    */
   async provideFeedback(
     id: string,
-    feedback: Record<string, any>,
+    feedback: Record<string, unknown>,
   ): Promise<ExerciseSubmission> {
     const submission = await this.submissionRepo.findOne({ where: { id } });
 
@@ -678,7 +783,7 @@ export class ExerciseSubmissionService {
     console.log('[validateRuedaInferencias] Starting validation for Rueda de Inferencias exercise');
 
     // Cast solution to ExerciseSolution interface
-    const solution = exercise.solution as ExerciseSolution;
+    const solution = exercise.solution as unknown as ExerciseSolution;
 
     // Validate solution structure
     if (!solution || !solution.fragments || !Array.isArray(solution.fragments)) {
@@ -1001,7 +1106,7 @@ export class ExerciseSubmissionService {
       }
 
       return 1.00; // Default si no encuentra
-    } catch (error) {
+    } catch {
       console.warn(`[getRankXpMultiplier] Error getting multiplier for user ${userId}, using 1.00`);
       return 1.00;
     }
@@ -1239,9 +1344,9 @@ export class ExerciseSubmissionService {
   async autoSaveProgress(
     userId: string,
     exerciseId: string,
-    partialAnswers?: Record<string, any>,
+    partialAnswers?: Record<string, unknown>,
     timeSpentSeconds?: number,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): Promise<ExerciseSubmission> {
     // Convert auth.users.id → profiles.id
     const profileId = await this.getProfileId(userId);
@@ -1257,7 +1362,8 @@ export class ExerciseSubmissionService {
 
     // Si no existe, crear nueva submission draft
     if (!submission) {
-      submission = this.submissionRepo.create({
+      const metadataTyped = metadata as { hints_used?: number; comodines_used?: string[] } | undefined;
+      const newSubmission = this.submissionRepo.create({
         user_id: profileId,
         exercise_id: exerciseId,
         status: 'draft',
@@ -1268,29 +1374,29 @@ export class ExerciseSubmissionService {
         score: 0,
         max_score: 100,
         hint_used: false,
-        hints_count: metadata?.hints_used || 0,
-        comodines_used: metadata?.comodines_used || [],
+        hints_count: metadataTyped?.hints_used || 0,
+        comodines_used: metadataTyped?.comodines_used || [],
         ml_coins_spent: 0,
         attempt_number: 1,
-      });
-    } else {
-      // Actualizar submission existente con nuevos datos parciales
-      submission.answer_data = partialAnswers || submission.answer_data;
-      submission.time_spent_seconds = timeSpentSeconds ?? submission.time_spent_seconds;
-
-      // Merge metadata (preservar datos previos + agregar nuevos)
-      if (metadata) {
-        submission.hints_count = metadata.hints_used ?? submission.hints_count;
-        submission.comodines_used = metadata.comodines_used ?? submission.comodines_used;
-      }
-
-      // Actualizar timestamp (updated_at se actualiza automáticamente por @UpdateDateColumn)
+      } as any) as unknown as ExerciseSubmission;
+      return this.submissionRepo.save(newSubmission);
     }
 
-    // Guardar y retornar
-    const savedSubmission = await this.submissionRepo.save(submission);
+    // Actualizar submission existente con nuevos datos parciales
+    submission.answer_data = partialAnswers || submission.answer_data;
+    submission.time_spent_seconds = timeSpentSeconds ?? submission.time_spent_seconds;
 
-    return savedSubmission;
+    // Merge metadata (preservar datos previos + agregar nuevos)
+    if (metadata) {
+      const metadataTyped = metadata as { hints_used?: number; comodines_used?: string[] };
+      submission.hints_count = metadataTyped.hints_used ?? submission.hints_count;
+      submission.comodines_used = metadataTyped.comodines_used ?? submission.comodines_used;
+    }
+
+    // Actualizar timestamp (updated_at se actualiza automáticamente por @UpdateDateColumn)
+
+    // Guardar y retornar
+    return this.submissionRepo.save(submission);
   }
 
   /**
@@ -1337,7 +1443,7 @@ export class ExerciseSubmissionService {
   async convertDraftToFinalSubmission(
     userId: string,
     exerciseId: string,
-    finalAnswers: Record<string, any>,
+    finalAnswers: Record<string, unknown>,
   ): Promise<ExerciseSubmission> {
     // Buscar draft existente
     const draft = await this.getAutoSavedProgress(userId, exerciseId);
@@ -1357,5 +1463,186 @@ export class ExerciseSubmissionService {
       // Si no hay draft, crear nueva submission desde cero
       return this.submitExercise(userId, exerciseId, finalAnswers);
     }
+  }
+
+  /**
+   * Notifica al docente cuando un estudiante envía un ejercicio M4-M5
+   *
+   * @description BE-P2-008: Notificaciones Push/Email para Docentes
+   *
+   * Flujo:
+   * 1. Obtener datos del estudiante (nombre, email)
+   * 2. Obtener docente asignado desde classroom_members + teacher_classrooms
+   * 3. Verificar preferencias del docente para email
+   * 4. Enviar notificación in-app (siempre)
+   * 5. Enviar email si está habilitado en preferencias
+   *
+   * @param submission - Submission recién creada
+   * @param exercise - Ejercicio que requiere revisión manual
+   * @param studentProfileId - ID del perfil del estudiante
+   */
+  private async notifyTeacherOfSubmission(
+    submission: ExerciseSubmission,
+    exercise: Exercise,
+    studentProfileId: string,
+  ): Promise<void> {
+    console.log(`[BE-P2-008] Notifying teacher about submission ${submission.id}`);
+
+    // 1. Obtener datos del estudiante
+    const studentProfile = await this.profileRepo.findOne({
+      where: { id: studentProfileId },
+      select: ['id', 'display_name', 'full_name', 'email'],
+    });
+
+    if (!studentProfile) {
+      console.warn(`[BE-P2-008] Student profile ${studentProfileId} not found - skipping notification`);
+      return;
+    }
+
+    const studentName = studentProfile.display_name || studentProfile.full_name || 'Un estudiante';
+
+    // 2. Obtener docente asignado desde classroom_members + teacher_classrooms
+    // Query: Buscar classroom del estudiante y luego su teacher (role='owner' tiene prioridad)
+    const teacherQuery = `
+      SELECT DISTINCT ON (tc.teacher_id)
+        p.id as teacher_id,
+        p.display_name as teacher_name,
+        p.email as teacher_email,
+        p.preferences as teacher_preferences,
+        c.name as classroom_name
+      FROM social_features.classroom_members cm
+      JOIN social_features.teacher_classrooms tc ON tc.classroom_id = cm.classroom_id
+      JOIN auth_management.profiles p ON p.id = tc.teacher_id
+      JOIN social_features.classrooms c ON c.id = cm.classroom_id
+      WHERE cm.student_id = $1
+        AND cm.status = 'active'
+        AND cm.is_active = true
+      ORDER BY tc.teacher_id, tc.role = 'owner' DESC, tc.assigned_at ASC
+      LIMIT 1
+    `;
+
+    const teacherResult = await this.entityManager.query(teacherQuery, [studentProfileId]);
+
+    if (!teacherResult || teacherResult.length === 0) {
+      console.warn(`[BE-P2-008] No active teacher found for student ${studentProfileId} - skipping notification`);
+      return;
+    }
+
+    const teacher = teacherResult[0];
+    const teacherId = teacher.teacher_id;
+    const teacherEmail = teacher.teacher_email;
+    const teacherName = teacher.teacher_name || 'Profesor';
+    const classroomName = teacher.classroom_name || 'tu aula';
+    const teacherPreferences = teacher.teacher_preferences || {};
+
+    console.log(`[BE-P2-008] Found teacher ${teacherId} (${teacherEmail}) for student ${studentProfileId}`);
+
+    // 3. Construir URL de revisión
+    const reviewUrl = `/teacher/reviews/${submission.id}`;
+
+    // 4. Enviar notificación in-app (siempre)
+    const notificationTitle = `Nuevo ejercicio para revisar`;
+    const notificationMessage = `${studentName} ha enviado el ejercicio "${exercise.title}" (${exercise.exercise_type}) y está esperando tu revisión.`;
+
+    try {
+      await this.notificationsService.sendNotification({
+        userId: teacherId,
+        type: NotificationTypeEnum.EXERCISE_FEEDBACK,
+        title: notificationTitle,
+        message: notificationMessage,
+        data: {
+          submissionId: submission.id,
+          exerciseId: exercise.id,
+          exerciseTitle: exercise.title,
+          exerciseType: exercise.exercise_type,
+          studentId: studentProfileId,
+          studentName: studentName,
+          reviewUrl: reviewUrl,
+          classroomName: classroomName,
+        },
+        relatedEntityType: 'exercise_submission',
+        relatedEntityId: submission.id,
+        priority: 'high',
+      });
+
+      console.log(`[BE-P2-008] ✅ In-app notification sent to teacher ${teacherId}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error(`[BE-P2-008] ❌ Failed to send in-app notification: ${errorMessage}`);
+    }
+
+    // 5. Enviar email si está habilitado en preferencias
+    const emailNotificationsEnabled = teacherPreferences?.notifications_enabled !== false;
+    const exerciseFeedbackEmailEnabled = teacherPreferences?.email_notifications?.exercise_feedback !== false;
+
+    if (emailNotificationsEnabled && exerciseFeedbackEmailEnabled && teacherEmail) {
+      console.log(`[BE-P2-008] Email notifications enabled for teacher ${teacherId} - sending email to ${teacherEmail}`);
+
+      const emailSubject = `Nuevo ejercicio para revisar: ${exercise.title}`;
+      const emailMessage = `
+        <p>Hola <strong>${teacherName}</strong>,</p>
+        <p><strong>${studentName}</strong> ha enviado el ejercicio <strong>"${exercise.title}"</strong> en ${classroomName}.</p>
+        <p><strong>Tipo de ejercicio:</strong> ${this.getExerciseTypeDisplayName(exercise.exercise_type)}</p>
+        <p>Este ejercicio requiere revisión manual. Por favor, revisa el trabajo del estudiante cuando tengas oportunidad.</p>
+        <p>Puedes acceder a la revisión desde tu panel de docente.</p>
+      `;
+
+      try {
+        const emailSent = await this.mailService.sendNotificationEmail(
+          teacherEmail,
+          emailSubject,
+          emailMessage,
+          reviewUrl,
+          'Revisar ejercicio',
+        );
+
+        if (emailSent) {
+          console.log(`[BE-P2-008] ✅ Email notification sent to teacher ${teacherEmail}`);
+        } else {
+          console.warn(`[BE-P2-008] ⚠️ Email notification logged but not sent (SMTP not configured)`);
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        console.error(`[BE-P2-008] ❌ Failed to send email notification: ${errorMessage}`);
+      }
+    } else {
+      console.log(`[BE-P2-008] Email notifications disabled for teacher ${teacherId} - skipping email`);
+    }
+
+    console.log(`[BE-P2-008] ✅ Teacher notification process completed for submission ${submission.id}`);
+  }
+
+  /**
+   * Helper: Obtiene el nombre descriptivo del tipo de ejercicio
+   *
+   * @param exerciseType - Tipo de ejercicio (enum)
+   * @returns Nombre legible en español
+   */
+  private getExerciseTypeDisplayName(exerciseType: string): string {
+    const displayNames: Record<string, string> = {
+      video_carta_curie: 'Video Carta Curie',
+      diario_multimedia: 'Diario Multimedia',
+      comic_digital: 'Cómic Digital',
+      podcast_argumentativo: 'Podcast Argumentativo',
+      debate_digital: 'Debate Digital',
+      infografia_interactiva: 'Infografía Interactiva',
+      // Agregar más según sea necesario
+    };
+
+    return displayNames[exerciseType] || exerciseType;
+  }
+
+  /**
+   * BE-P2-009: Cuenta el número de palabras en un texto
+   *
+   * @description Utilizado para validar requisitos de longitud mínima en ejercicios M5
+   * (diario_multimedia, comic_digital, video_carta_curie)
+   *
+   * @param text - Texto a contar
+   * @returns Número de palabras (excluyendo espacios en blanco)
+   */
+  private countWords(text: string): number {
+    if (!text) return 0;
+    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
   }
 }

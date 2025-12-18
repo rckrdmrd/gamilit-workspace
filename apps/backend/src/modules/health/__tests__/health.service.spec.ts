@@ -17,7 +17,7 @@ describe('HealthService', () => {
   let configService: jest.Mocked<ConfigService>;
 
   const createMockDataSource = (isHealthy = true): jest.Mocked<DataSource> => ({
-    query: jest.fn().mockImplementation((sql: string, params?: any[]) => {
+    query: jest.fn().mockImplementation((sql: string, _params?: any[]) => {
       if (isHealthy) {
         if (sql.includes('SELECT 1')) {
           return Promise.resolve([{ '?column?': 1 }]);
@@ -45,7 +45,7 @@ describe('HealthService', () => {
 
     configService = {
       get: jest.fn().mockImplementation((key: string, defaultValue?: any) => {
-        const config: Record<string, any> = {
+        const config: Record<string, unknown> = {
           NODE_ENV: 'test',
           npm_package_version: '1.0.0',
         };

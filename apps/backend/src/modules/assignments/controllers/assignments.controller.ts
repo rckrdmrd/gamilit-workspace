@@ -32,6 +32,7 @@ import { AssignmentGradeDto } from '../dto/grade-submission.dto';
 import { PatchAssignmentDto } from '../dto/patch-assignment.dto';
 import { DistributeAssignmentDto, DistributeAssignmentResponseDto } from '../dto/distribute-assignment.dto';
 import { DuplicateAssignmentDto, DuplicateAssignmentResponseDto } from '../dto/duplicate-assignment.dto';
+import { AuthRequest } from '@shared/types';
 
 @Controller('teacher/assignments')
 @ApiTags('Assignments')
@@ -69,8 +70,8 @@ export class AssignmentsController {
     },
   })
   @ApiResponse({ status: 400, description: 'Datos inválidos' })
-  async create(@Body() createDto: CreateAssignmentDto, @Request() req: any) {
-    const teacherId = req.user?.userId || req.user?.sub;
+  async create(@Body() createDto: CreateAssignmentDto, @Request() req: AuthRequest) {
+    const teacherId = req.user!.id;
     return this.assignmentsService.create(createDto, teacherId);
   }
 
@@ -116,13 +117,61 @@ export class AssignmentsController {
       }],
     },
   })
-  async findAll(@Query() query: any, @Request() req: any) {
-    const teacherId = req.user?.userId || req.user?.sub;
+  async findAll(@Query() query: any, @Request() req: AuthRequest) {
+    const teacherId = req.user!.id;
     return this.assignmentsService.findAll(teacherId, {
       isPublished: query.isPublished !== undefined ? query.isPublished === 'true' : undefined,
       assignmentType: query.type,
       search: query.search,
     });
+  }
+
+  /**
+   * GET /api/teacher/assignments/upcoming
+   * Get assignments with upcoming deadlines
+   * BAJO-008: Upcoming assignments for Teacher Dashboard
+   *
+   * NOTE: This route MUST be declared BEFORE @Get(':id') to prevent
+   * NestJS from interpreting 'upcoming' as an ID parameter.
+   */
+  @Get('upcoming')
+  @ApiOperation({
+    summary: 'Get upcoming assignments',
+    description: `
+      Returns assignments with deadlines within the next X days (default: 7).
+      Includes submission statistics for each assignment.
+    `,
+  })
+  @ApiQuery({
+    name: 'days',
+    required: false,
+    type: Number,
+    description: 'Number of days to look ahead (default: 7)',
+    example: 7,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Upcoming assignments retrieved successfully',
+    schema: {
+      example: [
+        {
+          id: '550e8400-e29b-41d4-a716-446655440000',
+          title: 'Práctica Semanal: Marie Curie',
+          dueDate: '2025-01-20T23:59:59Z',
+          daysRemaining: 2,
+          totalStudents: 25,
+          submittedCount: 15,
+        },
+      ],
+    },
+  })
+  async getUpcoming(
+    @Query('days') days: string = '7',
+    @Request() req: AuthRequest,
+  ) {
+    const teacherId = req.user!.id;
+    const daysAhead = parseInt(days, 10) || 7;
+    return this.assignmentsService.getUpcomingAssignments(teacherId, daysAhead);
   }
 
   /**
@@ -164,8 +213,8 @@ export class AssignmentsController {
     status: 404,
     description: 'Asignación no encontrada o acceso denegado',
   })
-  async findOne(@Param('id') id: string, @Request() req: any) {
-    const teacherId = req.user?.userId || req.user?.sub;
+  async findOne(@Param('id') id: string, @Request() req: AuthRequest) {
+    const teacherId = req.user!.id;
     return this.assignmentsService.findOne(id, teacherId);
   }
 
@@ -199,9 +248,9 @@ export class AssignmentsController {
   async update(
   @Param('id') id: string,
     @Body() updateDto: UpdateAssignmentDto,
-    @Request() req: any,
+    @Request() req: AuthRequest,
   ) {
-    const teacherId = req.user?.userId || req.user?.sub;
+    const teacherId = req.user!.id;
     return this.assignmentsService.update(id, updateDto, teacherId);
   }
 
@@ -228,8 +277,8 @@ export class AssignmentsController {
     status: 404,
     description: 'Asignación no encontrada o acceso denegado',
   })
-  async remove(@Param('id') id: string, @Request() req: any) {
-    const teacherId = req.user?.userId || req.user?.sub;
+  async remove(@Param('id') id: string, @Request() req: AuthRequest) {
+    const teacherId = req.user!.id;
     await this.assignmentsService.remove(id, teacherId);
   }
 
@@ -266,9 +315,9 @@ export class AssignmentsController {
   async assignToClassrooms(
   @Param('id') id: string,
     @Body() dto: AssignToClassroomsDto,
-    @Request() req: any,
+    @Request() req: AuthRequest,
   ) {
-    const teacherId = req.user?.userId || req.user?.sub;
+    const teacherId = req.user!.id;
     return this.assignmentsService.assignToClassrooms(id, dto, teacherId);
   }
 
@@ -320,9 +369,9 @@ export class AssignmentsController {
   async getSubmissions(
   @Param('id') id: string,
     @Query() query: any,
-    @Request() req: any,
+    @Request() req: AuthRequest,
   ) {
-    const teacherId = req.user?.userId || req.user?.sub;
+    const teacherId = req.user!.id;
     return this.assignmentsService.getSubmissions(id, teacherId, {
       status: query.status,
       classroomId: query.classroomId,
@@ -373,9 +422,9 @@ export class AssignmentsController {
   async gradeSubmission(
   @Param('submissionId') submissionId: string,
     @Body() dto: AssignmentGradeDto,
-    @Request() req: any,
+    @Request() req: AuthRequest,
   ) {
-    const teacherId = req.user?.userId || req.user?.sub;
+    const teacherId = req.user!.id;
     return this.assignmentsService.gradeSubmission(submissionId, dto, teacherId);
   }
 
@@ -407,9 +456,9 @@ export class AssignmentsController {
   async patch(
   @Param('id') id: string,
     @Body() patchDto: PatchAssignmentDto,
-    @Request() req: any,
+    @Request() req: AuthRequest,
   ) {
-    const teacherId = req.user?.userId || req.user?.sub;
+    const teacherId = req.user!.id;
     return this.assignmentsService.patchAssignment(id, patchDto, teacherId);
   }
 
@@ -441,9 +490,9 @@ export class AssignmentsController {
   async distribute(
   @Param('id') id: string,
     @Body() distributeDto: DistributeAssignmentDto,
-    @Request() req: any,
+    @Request() req: AuthRequest,
   ) {
-    const teacherId = req.user?.userId || req.user?.sub;
+    const teacherId = req.user!.id;
     return this.assignmentsService.distributeAssignment(id, distributeDto, teacherId);
   }
 
@@ -472,9 +521,9 @@ export class AssignmentsController {
   async duplicate(
   @Param('id') id: string,
     @Body() duplicateDto: DuplicateAssignmentDto,
-    @Request() req: any,
+    @Request() req: AuthRequest,
   ) {
-    const teacherId = req.user?.userId || req.user?.sub;
+    const teacherId = req.user!.id;
     return this.assignmentsService.duplicateAssignment(id, duplicateDto, teacherId);
   }
 
@@ -528,9 +577,9 @@ export class AssignmentsController {
   async publish(
   @Param('id') id: string,
     @Body('notifyStudents') notifyStudents: boolean = false,
-    @Request() req: any,
+    @Request() req: AuthRequest,
   ) {
-    const teacherId = req.user?.userId || req.user?.sub;
+    const teacherId = req.user!.id;
     return this.assignmentsService.publishAssignment(id, teacherId, notifyStudents);
   }
 
@@ -569,8 +618,48 @@ export class AssignmentsController {
     status: 404,
     description: 'Assignment not found or access denied',
   })
-  async close(@Param('id') id: string, @Request() req: any) {
-    const teacherId = req.user?.userId || req.user?.sub;
+  async close(@Param('id') id: string, @Request() req: AuthRequest) {
+    const teacherId = req.user!.id;
     return this.assignmentsService.closeAssignment(id, teacherId);
+  }
+
+  /**
+   * POST /api/teacher/assignments/:id/send-reminder
+   * Send reminder to students who haven't submitted
+   * MEDIO-005: Assignment reminder functionality
+   */
+  @Post(':id/send-reminder')
+  @ApiOperation({
+    summary: 'Send reminder to students',
+    description: `
+      Sends a reminder notification to all students who haven't submitted
+      their work for this assignment. Students who have already submitted
+      will not receive the reminder.
+    `,
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID of the assignment',
+    type: String,
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Reminders sent successfully',
+    schema: {
+      example: {
+        notified: 5,
+        alreadySubmitted: 10,
+        message: 'Recordatorio enviado a 5 estudiante(s). Tarea: "Ejercicio 1" - Fecha límite: 20/01/2025',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Assignment not found or access denied',
+  })
+  async sendReminder(@Param('id') id: string, @Request() req: AuthRequest) {
+    const teacherId = req.user!.id;
+    return this.assignmentsService.sendReminder(id, teacherId);
   }
 }

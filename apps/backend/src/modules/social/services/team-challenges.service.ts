@@ -8,7 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TeamChallenge } from '../entities';
 import { CreateTeamChallengeDto } from '../dto';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
 import { TeamChallengeStatusEnum } from '@shared/constants/enums.constants';
 
 /**

@@ -30,7 +30,7 @@ export const DB_SCHEMAS = {
   SYSTEM_CONFIGURATION: 'system_configuration',
   LTI_INTEGRATION: 'lti_integration',
   STORAGE: 'storage',
-  AUTH_SUPABASE: 'auth', // Schema de Supabase Auth (diferente de auth_management)
+  AUTH_BASE: 'auth', // Schema base de autenticación (diferente de auth_management)
 } as const;
 
 /**
@@ -75,6 +75,7 @@ export const DB_TABLES = {
     USER_ACHIEVEMENTS: 'user_achievements',
     ML_COINS_TRANSACTIONS: 'ml_coins_transactions',
     MISSIONS: 'missions',
+    MISSION_TEMPLATES: 'mission_templates', // ✨ NUEVO - MISSION-003/004 (Sistema de Templates)
     COMODINES_INVENTORY: 'comodines_inventory',
     NOTIFICATIONS: 'notifications',
     LEADERBOARD_METADATA: 'leaderboard_metadata',
@@ -84,6 +85,9 @@ export const DB_TABLES = {
     MAYA_RANKS: 'maya_ranks', // ✨ NUEVO - P1 (Rankings Maya)
     COMODIN_USAGE_LOG: 'comodin_usage_log', // ✨ NUEVO - P1 (Tracking comodines)
     COMODIN_USAGE_TRACKING: 'comodin_usage_tracking', // ✨ NUEVO - P1 (Tracking comodines)
+    SHOP_CATEGORIES: 'shop_categories', // ✨ NUEVO - P1 (Sistema de Shop)
+    SHOP_ITEMS: 'shop_items', // ✨ NUEVO - P1 (Sistema de Shop)
+    USER_PURCHASES: 'user_purchases', // ✨ NUEVO - P1 (Sistema de Shop)
   },
 
   /**
@@ -95,6 +99,7 @@ export const DB_TABLES = {
     EXERCISES: 'exercises',
     ASSESSMENT_RUBRICS: 'assessment_rubrics',
     MEDIA_RESOURCES: 'media_resources',
+    MEDIA_ATTACHMENTS: 'media_attachments', // ✨ NUEVO - MOD-04/05 (Archivos multimedia de ejercicios creativos)
     ASSIGNMENTS: 'assignments',
     ASSIGNMENT_EXERCISES: 'assignment_exercises',
     ASSIGNMENT_STUDENTS: 'assignment_students',
@@ -120,6 +125,7 @@ export const DB_TABLES = {
     EXERCISE_SUBMISSIONS: 'exercise_submissions',
     SCHEDULED_MISSIONS: 'scheduled_missions',
     TEACHER_NOTES: 'teacher_notes', // ✨ NUEVO - P0 (Notas del profesor)
+    MANUAL_REVIEWS: 'manual_reviews', // ✨ NUEVO - MOD-04/05 (Evaluaciones manuales)
     ENGAGEMENT_METRICS: 'engagement_metrics', // ✨ NUEVO - P2
     LEARNING_PATHS: 'learning_paths', // ✨ NUEVO - P2
     MASTERY_TRACKING: 'mastery_tracking', // ✨ NUEVO - P2
@@ -227,11 +233,11 @@ export const DB_TABLES = {
   },
 
   /**
-   * Auth Base Schema (Supabase)
-   * Tabla base de usuarios de Supabase (diferente de auth_management)
+   * Auth Base Schema
+   * Tabla base de usuarios para autenticación (diferente de auth_management)
    */
   AUTH_BASE: {
-    USERS: 'users', // ✨ NUEVO - P0 (nota: puede no necesitar entidad si usamos Supabase directamente)
+    USERS: 'users', // ✨ NUEVO - P0
   },
 
   /**

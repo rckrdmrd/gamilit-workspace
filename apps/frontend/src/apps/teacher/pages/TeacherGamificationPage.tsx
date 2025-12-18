@@ -9,12 +9,12 @@ import TeacherGamification from './TeacherGamification';
 export default function TeacherGamificationPage() {
   const { user, logout } = useAuth();
 
-  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
+  // Use useUserGamification hook for real-time gamification data
   const { gamificationData } = useUserGamification(user?.id);
 
   // Fallback gamification data in case hook fails or user is not loaded
   const displayGamificationData = gamificationData || {
-    userId: user?.id || 'mock-teacher-id',
+    userId: user?.id || '',
     level: 1,
     totalXP: 0,
     mlCoins: 0,
@@ -31,7 +31,7 @@ export default function TeacherGamificationPage() {
     <TeacherLayout
       user={user ?? undefined}
       gamificationData={displayGamificationData}
-      organizationName="Escuela Primaria Miguel Hidalgo"
+      organizationName={user?.organization?.name || 'Mi Institución'}
       onLogout={handleLogout}
     >
       <TeacherGamification />

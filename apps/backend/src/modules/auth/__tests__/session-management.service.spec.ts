@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { SessionManagementService } from '../services/session-management.service';
 import { UserSession } from '../entities';
 import { CreateUserSessionDto } from '../dto';
@@ -9,7 +9,7 @@ import { DeviceTypeEnum } from '@/shared/constants';
 
 describe('SessionManagementService', () => {
   let service: SessionManagementService;
-  let sessionRepository: Repository<UserSession>;
+  let _sessionRepository: Repository<UserSession>;
 
   const mockSessionRepository = {
     findOne: jest.fn(),

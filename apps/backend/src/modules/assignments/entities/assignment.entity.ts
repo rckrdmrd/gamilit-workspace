@@ -14,10 +14,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
-  OneToMany,
-  JoinColumn,
-  Index,
+        Index,
 } from 'typeorm';
 import {
   DB_SCHEMAS,
@@ -32,16 +29,16 @@ export enum AssignmentType {
 }
 
 @Entity({ schema: DB_SCHEMAS.EDUCATIONAL, name: DB_TABLES.EDUCATIONAL.ASSIGNMENTS })
-@Index(['teacher_id'])
-@Index(['is_published'])
-@Index(['assignment_type'])
-@Index(['due_date'])
+// CORRECTED (2025-12-18): Usar nombres de propiedades en lugar de nombres de columnas
+@Index(['teacherId'])
+@Index(['isPublished'])
+@Index(['assignmentType'])
+@Index(['dueDate'])
 export class Assignment {
   @PrimaryGeneratedColumn('uuid')
     id!: string;
 
   @Column('uuid', { name: 'teacher_id' })
-  @Index()
     teacherId!: string;
 
   @Column('varchar', { length: 255 })

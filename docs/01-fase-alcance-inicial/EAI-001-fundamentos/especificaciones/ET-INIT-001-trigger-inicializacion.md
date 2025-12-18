@@ -136,7 +136,7 @@ CREATE TRIGGER trg_initialize_user_stats
    - AFTER permite que la inicialización sea asíncrona/eventual
 
 2. **¿Por qué en profiles y no en auth.users?**
-   - `auth.users` es tabla de Supabase (auth externo)
+   - `auth.users` es tabla auth (auth externo)
    - `profiles` es nuestra tabla local con tenant_id
    - Necesitamos tenant_id para multi-tenancy
 
@@ -220,7 +220,7 @@ ON CONFLICT (user_id) DO NOTHING;  -- Idempotencia
 
 | Campo | Valor | Tipo | Constraint | Razón |
 |-------|-------|------|------------|-------|
-| `user_id` | `NEW.user_id` | UUID | FK → auth.users.id, PK | Identificador de Supabase |
+| `user_id` | `NEW.user_id` | UUID | FK → auth.users.id, PK | Identificador auth |
 | `tenant_id` | `NEW.tenant_id` | UUID | FK → tenants.id | Multi-tenancy |
 | `ml_coins` | `100` | INTEGER | CHECK >= 0 | Monedas iniciales |
 | `ml_coins_earned_total` | `100` | INTEGER | CHECK >= 0 | Historial acumulado |
@@ -229,10 +229,10 @@ ON CONFLICT (user_id) DO NOTHING;  -- Idempotencia
 
 **FK Reference:** ⚠️ **CRÍTICO**
 
-- ✅ `user_id` → `auth.users.id` (tabla de Supabase)
+- ✅ `user_id` → `auth.users.id` (tabla auth)
 - ❌ **NO** usar `NEW.id` (profiles.id)
 
-**Razón:** Gamificación necesita vincular con user_id de Supabase para autenticación y permisos.
+**Razón:** Gamificación necesita vincular con user_id de auth para autenticación y permisos.
 
 **Estrategia de Idempotencia:**
 
@@ -309,7 +309,7 @@ WHERE NOT EXISTS (
 
 | Campo | Valor | Tipo | Constraint | Razón |
 |-------|-------|------|------------|-------|
-| `user_id` | `NEW.user_id` | UUID | FK → auth.users.id | Identificador Supabase |
+| `user_id` | `NEW.user_id` | UUID | FK → auth.users.id | Identificador auth |
 | `tenant_id` | `NEW.tenant_id` | UUID | FK → tenants.id | Multi-tenancy |
 | `current_rank` | `'Ajaw'` | maya_rank | ENUM | Rango más bajo |
 
@@ -468,15 +468,15 @@ RETURN NEW;
 
 | Tabla | Campo | FK Apunta a | NEW.field | Razón |
 |-------|-------|-------------|-----------|-------|
-| `user_stats` | `user_id` | `auth.users.id` | `NEW.user_id` | Gamificación usa auth de Supabase |
+| `user_stats` | `user_id` | `auth.users.id` | `NEW.user_id` | Gamificación usa auth del sistema |
 | `comodines_inventory` | `user_id` | `profiles.id` | `NEW.id` | Necesita tenant_id local |
-| `user_ranks` | `user_id` | `auth.users.id` | `NEW.user_id` | Gamificación usa auth de Supabase |
+| `user_ranks` | `user_id` | `auth.users.id` | `NEW.user_id` | Gamificación usa auth del sistema |
 | `module_progress` | `user_id` | `profiles.id` | `NEW.id` | Necesita tenant_id local |
 
 ### Regla Mnemotécnica
 
 **Schema gamification_system:**
-- ✅ Usa `auth.users.id` (Supabase)
+- ✅ Usa `auth.users.id` (sistema)
 - ❌ EXCEPTO `comodines_inventory` → usa `profiles.id`
 
 **Otros schemas (progress_tracking, etc.):**
@@ -484,7 +484,7 @@ RETURN NEW;
 
 **¿Por qué la excepción?**
 - `comodines_inventory` necesita tenant_id para multi-tenancy
-- No necesita vincular directamente con Supabase auth
+- No necesita vincular directamente con sistema auth
 - Prioriza consistencia de tenant sobre auth global
 
 ---

@@ -52,7 +52,7 @@ export class AssignRoleDto {
    */
   @IsObject({ message: 'permissions debe ser un objeto JSON válido' })
   @IsOptional()
-    permissions?: Record<string, any>;
+    permissions?: Record<string, unknown>;
 
   /**
    * Fecha y hora de expiración del rol (opcional)
@@ -81,5 +81,5 @@ export class AssignRoleDto {
    */
   @IsObject({ message: 'metadata debe ser un objeto JSON válido' })
   @IsOptional()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

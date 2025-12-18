@@ -169,7 +169,7 @@ export class School {
    * Configuraciones adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-    settings!: Record<string, any>;
+    settings!: Record<string, unknown>;
 
   // =====================================================
   // CAPACITY & STATS
@@ -223,7 +223,7 @@ export class School {
    * Metadatos adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Fecha y hora de creación del registro

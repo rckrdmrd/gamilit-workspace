@@ -7,9 +7,7 @@ import { User, PasswordResetToken } from '../entities';
 import {
   RequestPasswordResetDto,
   ResetPasswordDto,
-  CreatePasswordResetTokenDto,
-} from '../dto';
-import { DB_SCHEMAS } from '@/shared/constants';
+  } from '../dto';
 import { MailService } from '@/modules/mail/mail.service';
 
 /**

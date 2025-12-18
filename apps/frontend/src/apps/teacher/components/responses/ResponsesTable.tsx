@@ -90,7 +90,7 @@ const TableHeader: React.FC<{
   };
 
   return (
-    <thead className="to-detective-yellow bg-gradient-to-r from-detective-orange text-white">
+    <thead className="bg-gradient-to-r from-orange-500 to-amber-500 text-white">
       <tr>
         <th className="px-4 py-3 text-left text-sm font-bold">Estudiante</th>
         <th className="px-4 py-3 text-left text-sm font-bold">Ejercicio</th>
@@ -208,7 +208,7 @@ const TableRow: React.FC<{
       <td className="px-4 py-3 text-center">
         <button
           onClick={() => onView(attempt.id)}
-          className="inline-flex items-center gap-1 rounded-lg bg-detective-orange px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-detective-orange/90"
+          className="btn-detective inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-semibold"
         >
           <Eye className="h-4 w-4" />
           Ver
@@ -319,7 +319,7 @@ const Pagination: React.FC<{
                 onClick={() => onPageChange(pageNum)}
                 className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                   page === pageNum
-                    ? 'bg-detective-orange text-white'
+                    ? 'btn-detective'
                     : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
                 }`}
               >
@@ -372,6 +372,9 @@ export const ResponsesTable: React.FC<ResponsesTableProps> = ({
       onSortChange(field, newOrder);
     }
   };
+
+  // Debug: Log data received
+  console.log('[ResponsesTable] Props:', { dataLength: data.length, total, page, limit, loading });
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">

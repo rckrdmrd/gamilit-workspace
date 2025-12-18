@@ -1,7 +1,7 @@
 # Database Cheatsheet - GAMILIT Platform
 
 **Versión:** 1.0
-**Última actualización:** 2025-11-07
+**Última actualización:** 2025-12-18
 **Database:** PostgreSQL 15+
 **Timezone:** America/Mexico_City
 
@@ -40,12 +40,12 @@ psql
 
 ### Resumen
 
-- **Schemas:** 9
-- **Tablas:** 44
-- **Funciones:** 50+
-- **Triggers:** 35+
+- **Schemas:** 16
+- **Tablas:** 123
+- **Funciones:** 213
+- **Triggers:** 90
 - **Índices:** 279+
-- **RLS Policies:** 159 (41 activas)
+- **RLS Policies:** 185
 
 ### Schemas Principales
 
@@ -710,6 +710,6 @@ COMMIT;
 
 ---
 
-**Última actualización:** 2025-11-07
+**Última actualización:** 2025-12-18
 **Versión:** 1.0
 **Método:** Extracted from ESQUEMA-COMPLETO.md

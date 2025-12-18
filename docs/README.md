@@ -5,7 +5,7 @@
 **Presupuesto Total:** $601,600 MXN (incluye $15,000 USD @ $20/USD)
 **Story Points:** 714 SP
 **Estado:** ✅ 75% Completado (12/16 épicas completas MVP)
-**Última actualización:** 2025-11-29
+**Última actualización:** 2025-12-18
 
 ---
 
@@ -21,15 +21,20 @@
 | **Portal Admin** | 7 páginas funcionales (P0+P1: AE-000 a AE-008) | ✅ Funcional |
 | **Épicas MVP** | EXT-001 a EXT-006 (100%) | ✅ Completas |
 | **Sistema Gamificación** | Rangos Maya, ML Coins, Achievements | ✅ v2.3.0 |
-| **Base de Datos** | 14 schemas modulares | ✅ Migrada |
+| **Base de Datos** | 16 schemas modulares | ✅ Migrada |
+
+### ✅ RECIENTEMENTE IMPLEMENTADO (2025-11-29)
+
+| Componente | Descripción | Estado |
+|-----------|-------------|--------|
+| **Módulos 4-5** | Lectura Digital + Producción (8 ejercicios) | ✅ Implementados (revisión manual) |
+| **Admin P2** | US-AE-005, US-AE-007 | ✅ Implementados |
 
 ### ⏳ EN BACKLOG (Fuera del MVP)
 
 | Componente | Descripción | Estado |
 |-----------|-------------|--------|
-| **Módulos 4-5** | Lectura Digital + Producción (8 ejercicios) | ⏳ Diseñados |
 | **Épicas Parciales** | EXT-007 a EXT-011 (30-50%) | ⏳ Parciales |
-| **Admin P2** | US-AE-005, US-AE-007 | ⏳ Pendientes |
 | **10 tipos ejercicios** | Mecánicas avanzadas | ⏳ Documentados |
 
 ---
@@ -106,12 +111,12 @@ docs/
 
 **Transformación realizada:**
 - **Antes:** 1 schema, 44 tablas, estructura plana
-- **Después:** 14 schemas, 101 tablas, arquitectura modular
+- **Después:** 16 schemas, 123 tablas, arquitectura modular
 
 **Logros destacados:**
 - ✅ **Zero downtime migration** (blue-green deployment)
 - ✅ Performance +65% mejora
-- ✅ 45 políticas RLS implementadas
+- ✅ 185 políticas RLS implementadas
 - ✅ 127 índices estratégicos
 
 **Métricas de Performance:**
@@ -175,19 +180,23 @@ docs/
 | **EXT-010** | Parent Notifications | ⏳ 35% | [📂](./03-fase-extensiones/EXT-010-parent-notifications/) |
 | **EXT-011** | Parent Portal | ⏳ 35% | [📂](./03-fase-extensiones/EXT-011-parent-portal/) |
 
-#### ⏳ Módulos Educativos Pendientes
+#### ✅ Módulos Educativos M4-M5 (Implementados 2025-11-29)
 
-| Módulo | Descripción | Ejercicios | Razón Backlog |
-|--------|-------------|------------|---------------|
-| **Módulo 4** | Lectura Digital y Multimodal | 5 | Requiere IA/visión computacional |
-| **Módulo 5** | Producción y Expresión | 3 | Requiere evaluación manual |
+| Módulo | Descripción | Ejercicios | Estado |
+|--------|-------------|------------|--------|
+| **Módulo 4** | Lectura Digital y Multimodal | 5 | ✅ Implementado (revisión manual por docentes) |
+| **Módulo 5** | Producción y Expresión | 3 | ✅ Implementado (revisión manual por docentes) |
 
-#### ⏳ Admin Portal P2
+> **Nota:** M4-M5 requieren evaluación manual por docentes. Ver [ReviewPanel](../apps/frontend/src/apps/teacher/pages/ReviewPanel/) para el panel de revisión.
+
+#### ✅ Admin Portal P2 (Implementado 2025-11-28)
 
 | User Story | Descripción | Estado |
 |-----------|-------------|--------|
-| US-AE-005 | Parametrización Gamificación | ⏳ Pendiente |
-| US-AE-007 | Asignación de Grupos a Maestros | ⏳ Pendiente |
+| US-AE-005 | Parametrización Gamificación | ✅ Implementado |
+| US-AE-007 | Asignación de Grupos a Maestros | ✅ Implementado |
+
+> **Nota:** Ver [Manual Portal Admin](./99-finiquito/Manual_Portal_Administrador_ACTUALIZADO.md) para documentación completa.
 
 **📄 Ver detalles completos:** [Fase 4 README](./04-fase-backlog/README.md)
 
@@ -253,9 +262,9 @@ Ver: [EVOLUCION-SISTEMA-RECOMPENSAS.md](./01-fase-alcance-inicial/EAI-003-gamifi
 | **Épicas Parciales (Backlog)** | - | 5 (30-50%) | 5 |
 | **Módulos Educativos** | 3 | 2 | 5 |
 | **Story Points MVP** | 614 SP | 100 SP | 714 SP |
-| **Schemas BD** | 14 | - | 14 |
-| **Tablas BD** | 101 | - | 101 |
-| **Endpoints API MVP** | 125+ | 20+ | 145+ |
+| **Schemas BD** | 16 | - | 16 |
+| **Tablas BD** | 123 | - | 123 |
+| **Endpoints API MVP** | 417 | 20+ | 437+ |
 | **Componentes Frontend** | 200+ | 30+ | 230+ |
 
 ### Alcance MVP Claro
@@ -349,7 +358,7 @@ Ver: [EVOLUCION-SISTEMA-RECOMPENSAS.md](./01-fase-alcance-inicial/EAI-003-gamifi
 
 #### 4. 🟡 MEDIO: Políticas RLS No Documentadas
 
-**Problema:** 45 políticas sin detalle específico por tabla
+**Problema:** 185 políticas sin detalle específico por tabla
 
 **Recomendación:** Matriz de permisos por rol y tabla
 
@@ -446,8 +455,8 @@ Ver: [EVOLUCION-SISTEMA-RECOMPENSAS.md](./01-fase-alcance-inicial/EAI-003-gamifi
 
 **Backend:**
 - NestJS (Node.js + TypeScript)
-- 20 módulos
-- 125+ endpoints REST
+- 13 módulos
+- 417 endpoints REST
 - JWT Authentication
 - OAuth (5 proveedores)
 
@@ -458,13 +467,14 @@ Ver: [EVOLUCION-SISTEMA-RECOMPENSAS.md](./01-fase-alcance-inicial/EAI-003-gamifi
 - Vite (build tool)
 
 **Base de Datos:**
-- PostgreSQL (Supabase)
-- 14 schemas modulares
-- 101 tablas
-- 67 índices
-- 24 políticas RLS
-- 62 funciones
-- 34 triggers
+- PostgreSQL
+- 16 schemas modulares
+- 123 tablas
+- 127 índices
+- 185 políticas RLS
+- 213 funciones
+- 90 triggers
+- 208 foreign keys
 
 **Fuente de métricas BD:** Ver inventarios en `orchestration/inventarios/` (validación física 2025-11-11)
 
@@ -477,7 +487,7 @@ Ver: [EVOLUCION-SISTEMA-RECOMPENSAS.md](./01-fase-alcance-inicial/EAI-003-gamifi
 
 | Schema | Tablas | Propósito |
 |--------|--------|----------|
-| `auth` | 1 | Supabase Auth (sistema) |
+| `auth` | 1 | autenticación estándar (sistema) |
 | `auth_management` | 11 | Gestión autenticación |
 | `educational_content` | 8 | Contenido educativo |
 | `gamification_system` | 12 | Gamificación |
@@ -508,6 +518,7 @@ Ver: [EVOLUCION-SISTEMA-RECOMPENSAS.md](./01-fase-alcance-inicial/EAI-003-gamifi
 
 ---
 
-**Última actualización:** 2025-11-13
-**Versión del índice:** 1.0
+**Última actualización:** 2025-12-18
+**Versión del índice:** 1.1
 **Generado por:** Equipo GAMILIT + Claude Code
+**Actualización:** Módulos M4-M5 implementados, Admin Portal P2 completado

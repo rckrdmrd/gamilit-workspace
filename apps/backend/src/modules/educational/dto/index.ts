@@ -27,3 +27,9 @@ export * from './media/media-response.dto';
 // Exercise Mechanic Mapping DTOs (Sistema Dual - ADR-008)
 export * from './mechanic-mapping/query-mechanic-mapping.dto';
 export * from './mechanic-mapping/mechanic-mapping-response.dto';
+
+// Module 4 Exercise Answer DTOs
+export * from './module4';
+
+// Module 5 Exercise Answer DTOs
+export * from './module5';

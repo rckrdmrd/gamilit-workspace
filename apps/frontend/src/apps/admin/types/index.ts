@@ -224,3 +224,44 @@ export interface BulkActionResult {
   failed: number;
   errors: Array<{ id: string; error: string }>;
 }
+
+// Feature Flags
+export interface FeatureFlag {
+  id: string;
+  key: string;
+  name: string;
+  description: string;
+  isEnabled: boolean;
+  rolloutPercentage: number;
+  targetRoles: string[];
+  targetUsers?: string[];
+  createdAt: string;
+  updatedAt: string;
+  createdBy?: string;
+  lastModifiedBy?: string;
+}
+
+export interface CreateFlagDto {
+  key: string;
+  name: string;
+  description: string;
+  isEnabled?: boolean;
+  rolloutPercentage?: number;
+  targetRoles?: string[];
+  targetUsers?: string[];
+}
+
+export interface UpdateFlagDto {
+  name?: string;
+  description?: string;
+  isEnabled?: boolean;
+  rolloutPercentage?: number;
+  targetRoles?: string[];
+  targetUsers?: string[];
+}
+
+export interface FeatureFlagFilters {
+  search?: string;
+  enabled?: boolean;
+  targetRole?: string;
+}

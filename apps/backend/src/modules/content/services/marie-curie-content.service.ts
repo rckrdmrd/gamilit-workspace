@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MarieCurieContent } from '../entities';
 import { CreateMarieCurieContentDto } from '../dto';
-import { DB_SCHEMAS } from '@shared/constants';
 import { ContentStatusEnum } from '@shared/constants/enums.constants';
 
 /**

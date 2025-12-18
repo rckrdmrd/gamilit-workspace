@@ -9,8 +9,7 @@ import { saveProgress } from '@shared/components/mechanics/mechanicsTypes';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
-import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
+import { useInvalidateDashboard } from '@/shared/hooks';
 
 export interface CrucigramaExerciseProps {
   exercise: CrucigramaData;
@@ -39,8 +38,7 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
   actionsRef,
 }) => {
   const { user } = useAuth();
-  const { fetchUserProgress } = useRanksStore();
-  const { fetchBalance } = useEconomyStore();
+  const { syncAndInvalidate } = useInvalidateDashboard();
   const [grid, setGrid] = useState<CrucigramaCell[][]>(
     exercise.grid.map((row) => row.map((cell) => ({ ...cell, userInput: cell.userInput || '' }))),
   );
@@ -53,16 +51,23 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
 
   // FE-059: Calculate clue length from grid instead of using answer field
   const getClueLength = (clue: (typeof exercise.clues)[0]): number => {
+    // Guard against empty grid
+    if (!grid || grid.length === 0 || !grid[0]) return 0;
+
     let length = 0;
     if (clue.direction === 'horizontal') {
       for (let i = 0; i < grid[0].length; i++) {
-        const cell = grid[clue.startRow]?.[clue.startCol + i];
+        const row = grid[clue.startRow];
+        if (!row) break;
+        const cell = row[clue.startCol + i];
         if (!cell || cell.isBlack) break;
         length++;
       }
     } else {
       for (let i = 0; i < grid.length; i++) {
-        const cell = grid[clue.startRow + i]?.[clue.startCol];
+        const row = grid[clue.startRow + i];
+        if (!row) break;
+        const cell = row[clue.startCol];
         if (!cell || cell.isBlack) break;
         length++;
       }
@@ -76,17 +81,21 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
     if (!clue) return false;
 
     const length = getClueLength(clue);
+    if (length === 0) return false;
+
     let userAnswer = '';
 
     if (clue.direction === 'horizontal') {
       for (let i = 0; i < length; i++) {
-        const cell = grid[clue.startRow][clue.startCol + i];
-        userAnswer += cell.userInput || '';
+        const row = grid[clue.startRow];
+        const cell = row?.[clue.startCol + i];
+        userAnswer += cell?.userInput || '';
       }
     } else {
       for (let i = 0; i < length; i++) {
-        const cell = grid[clue.startRow + i][clue.startCol];
-        userAnswer += cell.userInput || '';
+        const row = grid[clue.startRow + i];
+        const cell = row?.[clue.startCol];
+        userAnswer += cell?.userInput || '';
       }
     }
 
@@ -224,8 +233,7 @@ export const CrucigramaExercise: React.FC<CrucigramaExerciseProps> = ({
       setShowFeedback(true);
 
       // Sync stores with backend (rewards already calculated and saved by backend)
-      await fetchUserProgress();
-      await fetchBalance();
+      await syncAndInvalidate();
 
       console.log('✅ [Crucigrama] Submission successful:', {
         attemptId: response.attemptId,

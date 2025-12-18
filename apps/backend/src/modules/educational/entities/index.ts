@@ -9,6 +9,7 @@ export * from './module.entity';
 export * from './exercise.entity';
 export * from './assessment-rubric.entity';
 export * from './media-resource.entity';
+export * from './media-attachment.entity';
 export * from './exercise-mechanic-mapping.entity';
 export * from './content-approval.entity';
 export * from './difficulty-criteria.entity';

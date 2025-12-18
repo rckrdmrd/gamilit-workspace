@@ -12,6 +12,12 @@ import type {
   GradeSubmissionDto,
 } from '@services/api/teacher';
 
+export interface SendReminderResult {
+  notified: number;
+  alreadySubmitted: number;
+  message: string;
+}
+
 export interface UseAssignmentsReturn {
   assignments: Assignment[];
   exercises: Exercise[];
@@ -23,6 +29,7 @@ export interface UseAssignmentsReturn {
   deleteAssignment: (id: string) => Promise<void>;
   getSubmissions: (assignmentId: string) => Promise<Submission[]>;
   gradeSubmission: (submissionId: string, data: GradeSubmissionDto) => Promise<Submission>;
+  sendReminder: (assignmentId: string) => Promise<SendReminderResult>;
   refresh: () => Promise<void>;
 }
 
@@ -71,7 +78,7 @@ export function useAssignments(filters?: GetAssignmentsQueryDto): UseAssignments
         throw err;
       }
     },
-    [fetchAssignments]
+    [fetchAssignments],
   );
 
   const updateAssignment = useCallback(
@@ -85,7 +92,7 @@ export function useAssignments(filters?: GetAssignmentsQueryDto): UseAssignments
         throw err;
       }
     },
-    [fetchAssignments]
+    [fetchAssignments],
   );
 
   const deleteAssignment = useCallback(
@@ -98,7 +105,7 @@ export function useAssignments(filters?: GetAssignmentsQueryDto): UseAssignments
         throw err;
       }
     },
-    [fetchAssignments]
+    [fetchAssignments],
   );
 
   const getSubmissions = useCallback(async (assignmentId: string) => {
@@ -110,17 +117,23 @@ export function useAssignments(filters?: GetAssignmentsQueryDto): UseAssignments
     }
   }, []);
 
-  const gradeSubmission = useCallback(
-    async (submissionId: string, data: GradeSubmissionDto) => {
-      try {
-        return await assignmentsApi.gradeSubmission(submissionId, data);
-      } catch (err) {
-        console.error('[useAssignments] Error grading submission:', err);
-        throw err;
-      }
-    },
-    []
-  );
+  const gradeSubmission = useCallback(async (submissionId: string, data: GradeSubmissionDto) => {
+    try {
+      return await assignmentsApi.gradeSubmission(submissionId, data);
+    } catch (err) {
+      console.error('[useAssignments] Error grading submission:', err);
+      throw err;
+    }
+  }, []);
+
+  const sendReminder = useCallback(async (assignmentId: string) => {
+    try {
+      return await assignmentsApi.sendReminder(assignmentId);
+    } catch (err) {
+      console.error('[useAssignments] Error sending reminder:', err);
+      throw err;
+    }
+  }, []);
 
   return {
     assignments,
@@ -133,6 +146,7 @@ export function useAssignments(filters?: GetAssignmentsQueryDto): UseAssignments
     deleteAssignment,
     getSubmissions,
     gradeSubmission,
+    sendReminder,
     refresh: fetchAssignments,
   };
 }

@@ -2,9 +2,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
-  JoinColumn,
-  Index,
+      Index,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants';
 

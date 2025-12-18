@@ -157,7 +157,7 @@ export class UserStatsResponseDto {
   // =====================================================
 
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   @Expose()
     created_at!: Date;

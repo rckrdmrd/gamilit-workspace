@@ -25,6 +25,8 @@ export type AchievementCategory =
 /**
  * Achievement Category Enum (Legacy)
  * @deprecated Use AchievementCategory string union instead for better type inference
+ *
+ * CORR-P1-008: Agregado HIDDEN para alinear con DDL y Backend
  */
 export const AchievementCategoryEnum = {
   PROGRESS: 'progress' as const,
@@ -35,6 +37,7 @@ export const AchievementCategoryEnum = {
   MASTERY: 'mastery' as const,
   EXPLORATION: 'exploration' as const,
   COLLECTION: 'collection' as const,
+  HIDDEN: 'hidden' as const, // CORR-P1-008: Agregado para alinear con Backend/DDL
 } as const;
 
 /**
@@ -68,7 +71,7 @@ export const AchievementStatusEnum = {
 } as const;
 
 /**
- * Achievement Condition
+ * Achievement Condition (Frontend format)
  * Defines what needs to be accomplished to unlock an achievement
  */
 export interface AchievementCondition {
@@ -77,6 +80,24 @@ export interface AchievementCondition {
   current?: number;
   description: string;
 }
+
+/**
+ * Achievement Conditions (Backend format)
+ * CORR-P0-004: Backend envía conditions como objeto JSONB, no array
+ *
+ * Estructura del backend:
+ * { type: string, requirements: Record<string, unknown> }
+ */
+export interface AchievementConditions {
+  type: string;
+  requirements: Record<string, unknown>;
+}
+
+/**
+ * Type union para manejar ambos formatos de conditions
+ * CORR-P0-004: Alineación con estructura de Backend
+ */
+export type AchievementConditionsType = AchievementConditions | AchievementCondition[];
 
 /**
  * Achievement Rewards
@@ -102,7 +123,8 @@ export interface Achievement {
   icon: string;
   category: AchievementCategory;
   type: AchievementType;
-  conditions: AchievementCondition[];
+  // CORR-P0-004: Acepta ambos formatos (array frontend / objeto backend)
+  conditions: AchievementConditionsType;
   rewards: AchievementReward;
   isHidden: boolean;
   rarity?: 'common' | 'rare' | 'epic' | 'legendary';
@@ -132,6 +154,7 @@ export interface UserAchievement {
   progress: number; // 0-100 percentage
   earnedAt?: string; // ISO date string when earned
   claimedAt?: string; // ISO date string when rewards claimed
+  unlockedAt?: string; // ISO date string when unlocked (canonical field name)
   achievement: Achievement; // Full achievement details
   status: AchievementStatus;
 }

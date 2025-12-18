@@ -104,14 +104,14 @@ export class Achievement {
    * Ejemplo: {"type": "progress", "requirements": {"exercises_completed": 10}}
    */
   @Column({ type: 'jsonb' })
-    conditions!: Record<string, any>;
+    conditions!: Record<string, unknown>;
 
   /**
    * Recompensas JSON otorgadas al desbloquear
    * Ejemplo: {"xp": 100, "badge": null, "ml_coins": 50}
    */
   @Column({ type: 'jsonb', default: { xp: 100, badge: null, ml_coins: 50 } })
-    rewards!: Record<string, any>;
+    rewards!: Record<string, unknown>;
 
   /**
    * Recompensa de ML Coins (campo adicional para queries rápidas)
@@ -187,7 +187,7 @@ export class Achievement {
    * Metadatos adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * ID del usuario que creó el achievement

@@ -27,6 +27,11 @@
  * - ✅ Added input validation in togglePermission function
  * - ✅ Added defensive validation in groupPermissionsByModule helper
  * - ✅ Added permission object validation in permissions render map
+ *
+ * US-ADMIN-P2-001 Refactor (2025-12-05):
+ * - ✅ Modularized into components: RolesTable, PermissionMatrix, RoleEditor
+ * - ✅ Improved code organization and maintainability
+ * - ✅ Better separation of concerns
  */
 
 import { useState, useEffect } from 'react';
@@ -38,6 +43,7 @@ import { useUserGamification } from '@shared/hooks/useUserGamification';
 import { Card } from '@shared/components/Card';
 import { Button } from '@shared/components/Button';
 import { LoadingSpinner } from '@shared/components/LoadingSpinner';
+import { RolesTable, RoleEditor } from '../components/roles';
 import type { Permission } from '@/services/api/adminTypes';
 
 export default function AdminRolesPage() {
@@ -149,62 +155,6 @@ export default function AdminRolesPage() {
   };
 
   // ============================================================================
-  // RENDER HELPERS
-  // ============================================================================
-
-  const groupPermissionsByModule = (permissions: Permission[]) => {
-    const grouped: Record<string, Permission[]> = {};
-
-    // Defensive: Validate input
-    if (!Array.isArray(permissions)) {
-      console.error('[AdminRolesPage] Invalid permissions array:', permissions);
-      return grouped;
-    }
-
-    permissions.forEach((perm) => {
-      // Defensive: Validate permission object structure
-      if (!perm?.module || !perm?.action) {
-        console.error('[AdminRolesPage] Invalid permission object:', perm);
-        return;
-      }
-
-      if (!grouped[perm.module]) {
-        grouped[perm.module] = [];
-      }
-      grouped[perm.module].push(perm);
-    });
-    return grouped;
-  };
-
-  const getModuleIcon = (module: string): string => {
-    const icons: Record<string, string> = {
-      users: '👥',
-      content: '📚',
-      gamification: '🎮',
-      monitoring: '📊',
-      system: '⚙️',
-      organizations: '🏢',
-      reports: '📄',
-      analytics: '📈',
-      admin: '🔧',
-      roles: '🎭',
-    };
-    return icons[module] || '📋';
-  };
-
-  const getActionLabel = (action: string): string => {
-    const labels: Record<string, string> = {
-      view: 'Ver',
-      create: 'Crear',
-      edit: 'Editar',
-      delete: 'Eliminar',
-      manage: 'Administrar',
-      export: 'Exportar',
-    };
-    return labels[action] || action;
-  };
-
-  // ============================================================================
   // RENDER
   // ============================================================================
 
@@ -273,53 +223,18 @@ export default function AdminRolesPage() {
                   <h2 className="text-xl font-semibold text-gray-900">Roles del Sistema</h2>
                   <p className="mt-1 text-sm text-gray-600">{roles.length} roles totales</p>
                 </div>
-                <div className="divide-y divide-gray-200">
-                  {roles.map((role) => {
-                    // Defensive: Ensure roleId exists (from adminTypes.Role interface)
-                    if (!role.roleId) {
-                      console.error('[AdminRolesPage] Role missing roleId:', role);
-                      return null;
-                    }
-
-                    return (
-                      <button
-                        key={role.roleId}
-                        onClick={() => handleSelectRole(role.roleId)}
-                        className={`w-full p-4 text-left transition-colors hover:bg-gray-50 ${
-                          selectedRoleId === role.roleId
-                            ? 'border-l-4 border-blue-500 bg-blue-50'
-                            : ''
-                        }`}
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-gray-900">
-                              {role.roleName || 'Sin nombre'}
-                              {role.isSystem && (
-                                <span className="ml-2 rounded bg-gray-200 px-2 py-0.5 text-xs text-gray-700">
-                                  Sistema
-                                </span>
-                              )}
-                            </h3>
-                            <p className="mt-1 text-sm text-gray-600">
-                              {role.description || 'Sin descripción'}
-                            </p>
-                            <p className="mt-2 text-xs text-gray-500">
-                              👥 {role.userCount ?? 0} usuario{role.userCount !== 1 ? 's' : ''}
-                            </p>
-                          </div>
-                          {selectedRoleId === role.roleId && (
-                            <span className="text-blue-500">▶</span>
-                          )}
-                        </div>
-                      </button>
-                    );
-                  })}
+                <div className="p-4">
+                  <RolesTable
+                    roles={roles}
+                    selectedRoleId={selectedRoleId}
+                    onSelectRole={handleSelectRole}
+                    loading={false}
+                  />
                 </div>
               </Card>
             </div>
 
-            {/* Right Column - Permissions Editor */}
+            {/* Right Column - Empty State */}
             <div className="lg:col-span-2">
               {!selectedRoleId && (
                 <Card>
@@ -339,96 +254,21 @@ export default function AdminRolesPage() {
                   </div>
                 </Card>
               )}
-
-              {selectedRoleId && rolePermissions && !permissionsLoading && (
-                <Card>
-                  <div className="border-b border-gray-200 p-4">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h2 className="text-xl font-semibold text-gray-900">
-                          Permisos: {rolePermissions?.role?.roleName || 'Rol'}
-                        </h2>
-                        <p className="mt-1 text-sm text-gray-600">
-                          {rolePermissions?.role?.description || 'Sin descripción'}
-                        </p>
-                      </div>
-                      <Button onClick={handleCancelEdit} variant="secondary" size="sm">
-                        ✕ Cerrar
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6 p-6">
-                    {/* Permissions by Module */}
-                    {editingPermissions.length > 0 ? (
-                      Object.entries(groupPermissionsByModule(editingPermissions)).map(
-                        ([module, perms]) => (
-                          <div key={module} className="space-y-3">
-                            <h3 className="flex items-center text-lg font-semibold text-gray-800">
-                              <span className="mr-2">{getModuleIcon(module)}</span>
-                              {module.charAt(0).toUpperCase() + module.slice(1)}
-                            </h3>
-                            <div className="grid grid-cols-2 gap-3">
-                              {perms.map((perm) => {
-                                // Defensive: Validate permission object
-                                if (!perm?.module || !perm?.action) {
-                                  console.error('[AdminRolesPage] Invalid perm in render:', perm);
-                                  return null;
-                                }
-
-                                return (
-                                  <label
-                                    key={`${perm.module}-${perm.action}`}
-                                    className={`flex cursor-pointer items-center rounded-lg border p-3 transition-colors ${
-                                      perm.granted
-                                        ? 'border-green-300 bg-green-50'
-                                        : 'border-gray-300 bg-gray-50 hover:border-gray-400'
-                                    }`}
-                                  >
-                                    <input
-                                      type="checkbox"
-                                      checked={perm.granted}
-                                      onChange={() => togglePermission(perm.module, perm.action)}
-                                      className="h-4 w-4 rounded text-green-600 focus:ring-green-500"
-                                    />
-                                    <span className="ml-3 text-sm font-medium text-gray-900">
-                                      {getActionLabel(perm.action)}
-                                    </span>
-                                  </label>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        ),
-                      )
-                    ) : (
-                      <div className="p-8 text-center text-gray-500">
-                        <p>No hay permisos disponibles para este rol</p>
-                      </div>
-                    )}
-
-                    {/* Action Buttons */}
-                    <div className="flex items-center justify-end space-x-3 border-t border-gray-200 pt-4">
-                      <Button onClick={handleCancelEdit} variant="secondary" disabled={isSaving}>
-                        Cancelar
-                      </Button>
-                      <Button onClick={handleSavePermissions} disabled={isSaving}>
-                        {isSaving ? (
-                          <>
-                            <LoadingSpinner className="mr-2 h-4 w-4" />
-                            Guardando...
-                          </>
-                        ) : (
-                          '💾 Guardar Permisos'
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              )}
             </div>
           </div>
         )}
+
+        {/* Role Editor Modal */}
+        <RoleEditor
+          isOpen={!!selectedRoleId && !permissionsLoading}
+          rolePermissions={rolePermissions}
+          editingPermissions={editingPermissions}
+          loading={permissionsLoading}
+          saving={isSaving}
+          onTogglePermission={togglePermission}
+          onSave={handleSavePermissions}
+          onClose={handleCancelEdit}
+        />
 
         {/* Empty State */}
         {!rolesLoading && roles.length === 0 && !rolesError && (

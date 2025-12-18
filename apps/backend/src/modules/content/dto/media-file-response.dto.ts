@@ -145,7 +145,7 @@ export class MediaFileResponseDto {
 
   @ApiProperty({ description: 'Información de procesamiento' })
   @Expose()
-    processing_info!: Record<string, any>;
+    processing_info!: Record<string, unknown>;
 
   // =====================================================
   // SEARCH & ORGANIZATION
@@ -213,11 +213,11 @@ export class MediaFileResponseDto {
 
   @ApiProperty({ description: 'Datos EXIF' })
   @Expose()
-    exif_data!: Record<string, any>;
+    exif_data!: Record<string, unknown>;
 
   @ApiProperty({ description: 'Metadatos adicionales' })
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   // =====================================================
   // AUDIT TIMESTAMPS

@@ -48,7 +48,7 @@ export class ReportDto {
   @ApiPropertyOptional({
     description: 'Report metadata',
   })
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 
   @ApiProperty({
     description: 'Report creation timestamp',

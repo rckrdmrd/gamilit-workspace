@@ -18,8 +18,7 @@ import {
   Min,
   Max,
   Length,
-  IsNumber,
-} from 'class-validator';
+  } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 
@@ -119,7 +118,7 @@ export class CreateTeacherContentDto {
   })
   @IsObject()
   @IsNotEmpty()
-    content_data!: Record<string, any>;
+    content_data!: Record<string, unknown>;
 
   @ApiPropertyOptional({
     description: 'Instrucciones para el estudiante',
@@ -305,7 +304,7 @@ export class CreateTeacherContentDto {
   })
   @IsObject()
   @IsOptional()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }
 
 // ============================================================================
@@ -495,7 +494,7 @@ export class TeacherContentResponseDto {
   @ApiProperty({
     description: 'Datos del contenido',
   })
-    content_data!: Record<string, any>;
+    content_data!: Record<string, unknown>;
 
   @ApiPropertyOptional({
     description: 'Instrucciones',

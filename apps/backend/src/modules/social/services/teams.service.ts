@@ -8,7 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Team } from '../entities';
 import { CreateTeamDto } from '../dto';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
 
 /**
  * TeamsService
@@ -165,7 +164,7 @@ export class TeamsService {
    * @throws NotFoundException si el equipo no existe
    * @throws BadRequestException si el equipo está lleno
    */
-  async addMember(teamId: string, userId: string): Promise<Team> {
+  async addMember(teamId: string, _userId: string): Promise<Team> {
     const team = await this.teamRepo.findOne({ where: { id: teamId } });
 
     if (!team) {
@@ -190,7 +189,7 @@ export class TeamsService {
    * @returns Equipo actualizado
    * @throws NotFoundException si el equipo no existe
    */
-  async removeMember(teamId: string, userId: string): Promise<Team> {
+  async removeMember(teamId: string, _userId: string): Promise<Team> {
     const team = await this.teamRepo.findOne({ where: { id: teamId } });
 
     if (!team) {

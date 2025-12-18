@@ -7,7 +7,7 @@ import { UserStats } from '../../entities';
 
 describe('UserStatsService', () => {
   let service: UserStatsService;
-  let userStatsRepo: Repository<UserStats>;
+  let _userStatsRepo: Repository<UserStats>;
 
   const mockUserStatsRepo = {
     findOne: jest.fn(),

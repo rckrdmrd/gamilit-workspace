@@ -3,13 +3,11 @@ import {
   NotFoundException,
   BadRequestException,
   ConflictException,
-  ForbiddenException,
-} from '@nestjs/common';
+  } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull } from 'typeorm';
 import { TeamMember } from '../entities';
 import { CreateTeamMemberDto } from '../dto';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
 import { TeamMemberRoleEnum } from '@shared/constants/enums.constants';
 
 /**

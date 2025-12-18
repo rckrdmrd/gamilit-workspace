@@ -27,6 +27,7 @@ import {
   UserResponseDto,
 } from '../dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { AuthRequest } from '@shared/types';
 
 /**
  * UsersController
@@ -59,15 +60,15 @@ export class UsersController {
     type: UserResponseDto,
   })
   @ApiResponse({ status: 401, description: 'No autenticado' })
-  async getProfile(@Request() req: any): Promise<UserResponseDto> {
-    const userId = req.user?.id;
+  async getProfile(@Request() req: AuthRequest): Promise<UserResponseDto> {
+    const userId = req.user!.id;
     const user = await this.authService.validateUser(userId);
 
     if (!user) {
       throw new UnauthorizedException('Usuario no encontrado');
     }
 
-    const { encrypted_password, ...userResponse } = user;
+    const { encrypted_password: _encrypted_password, ...userResponse } = user;
     return userResponse as UserResponseDto;
   }
 
@@ -88,17 +89,17 @@ export class UsersController {
   @ApiResponse({ status: 400, description: 'Datos inválidos' })
   @ApiBody({ type: UpdateProfileDto })
   async updateProfile(
-    @Request() req: any,
+    @Request() req: AuthRequest,
       @Body() dto: UpdateProfileDto,
   ): Promise<UserResponseDto> {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const updatedUser = await this.authService.updateUserProfile(userId, dto);
 
     if (!updatedUser) {
       throw new UnauthorizedException('Usuario no encontrado');
     }
 
-    const { encrypted_password, ...userResponse } = updatedUser;
+    const { encrypted_password: _encrypted_password, ...userResponse } = updatedUser;
     return userResponse as UserResponseDto;
   }
 
@@ -119,8 +120,8 @@ export class UsersController {
     },
   })
   @ApiResponse({ status: 401, description: 'No autenticado' })
-  async getPreferences(@Request() req: any): Promise<{ preferences: any }> {
-    const userId = req.user?.id;
+  async getPreferences(@Request() req: AuthRequest): Promise<{ preferences: any }> {
+    const userId = req.user!.id;
     const preferences = await this.authService.getUserPreferences(userId);
     return { preferences };
   }
@@ -151,10 +152,10 @@ export class UsersController {
     },
   })
   async updatePreferences(
-    @Request() req: any,
+    @Request() req: AuthRequest,
       @Body('preferences') preferences: any,
   ): Promise<{ preferences: any }> {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const updatedPreferences = await this.authService.updateUserPreferences(
       userId,
       preferences,
@@ -194,10 +195,10 @@ export class UsersController {
     },
   })
   async uploadAvatar(
-    @Request() req: any,
+    @Request() req: AuthRequest,
       @UploadedFile() file: any,
   ): Promise<{ avatar_url: string }> {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
 
     if (!file) {
       throw new UnauthorizedException('No se proporcionó archivo');
@@ -230,8 +231,8 @@ export class UsersController {
     },
   })
   @ApiResponse({ status: 401, description: 'No autenticado' })
-  async getStatistics(@Request() req: any): Promise<any> {
-    const userId = req.user?.id;
+  async getStatistics(@Request() req: AuthRequest): Promise<any> {
+    const userId = req.user!.id;
     const statistics = await this.authService.getUserStatistics(userId);
     return statistics;
   }

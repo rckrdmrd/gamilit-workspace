@@ -29,6 +29,7 @@ import {
   UserSessionResponseDto,
 } from '../dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { AuthRequest } from '@shared/types';
 
 /**
  * AuthController
@@ -72,7 +73,7 @@ export class AuthController {
   @ApiBody({ type: RegisterUserDto })
   async register(
     @Body() dto: RegisterUserDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<{ user: UserResponseDto; accessToken: string; refreshToken: string }> {
     const ip = req.ip;
     const userAgent = req.headers['user-agent'];
@@ -104,7 +105,7 @@ export class AuthController {
   @ApiBody({ type: LoginDto })
   async login(
     @Body() dto: LoginDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<{ user: UserResponseDto; accessToken: string; refreshToken: string }> {
     const ip = req.ip;
     const userAgent = req.headers['user-agent'];
@@ -129,10 +130,10 @@ export class AuthController {
   @ApiOperation({ summary: 'Cerrar sesión de usuario' })
   @ApiResponse({ status: 200, description: 'Sesión cerrada exitosamente' })
   @ApiResponse({ status: 401, description: 'No autenticado' })
-  async logout(@Request() req: any): Promise<{ message: string }> {
+  async logout(@Request() req: AuthRequest): Promise<{ message: string }> {
     // Extraer userId y sessionId del token JWT
-    const userId = req.user?.id;
-    const sessionId = req.user?.sessionId || 'current-session';
+    const userId = req.user!.id;
+    const sessionId = req.user!.sessionId || 'current-session';
 
     await this.authService.logout(userId, sessionId);
     return { message: 'Sesión cerrada exitosamente' };
@@ -175,9 +176,9 @@ export class AuthController {
     type: UserResponseDto,
   })
   @ApiResponse({ status: 401, description: 'No autenticado' })
-  async getProfile(@Request() req: any): Promise<UserResponseDto> {
+  async getProfile(@Request() req: AuthRequest): Promise<UserResponseDto> {
     // Extraer userId del token JWT
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const user = await this.authService.validateUser(userId);
 
     if (!user) {
@@ -185,7 +186,7 @@ export class AuthController {
     }
 
     // Convertir a UserResponseDto (sin password)
-    const { encrypted_password, ...userResponse } = user;
+    const { encrypted_password: _encrypted_password, ...userResponse } = user;
     return userResponse as UserResponseDto;
   }
 
@@ -206,11 +207,11 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Datos inválidos' })
   @ApiBody({ type: UpdateProfileDto })
   async updateProfile(
-    @Request() req: any,
+    @Request() req: AuthRequest,
       @Body() dto: UpdateProfileDto,
   ): Promise<UserResponseDto> {
     // Extraer userId del token JWT
-    const userId = req.user?.id;
+    const userId = req.user!.id;
 
     // Actualizar perfil usando el servicio de auth
     const updatedUser = await this.authService.updateUserProfile(userId, dto);
@@ -220,7 +221,7 @@ export class AuthController {
     }
 
     // Convertir a UserResponseDto (sin password)
-    const { encrypted_password, ...userResponse } = updatedUser;
+    const { encrypted_password: _encrypted_password, ...userResponse } = updatedUser;
     return userResponse as UserResponseDto;
   }
 
@@ -247,7 +248,7 @@ export class AuthController {
       },
     },
   })
-  async verifyEmail(@Body('token') token: string): Promise<{ message: string }> {
+  async verifyEmail(@Body('token') _token: string): Promise<{ message: string }> {
     // TODO: Implementar lógica de verificación de email
     // Por ahora retornamos éxito
     return { message: 'Email verificado exitosamente' };
@@ -275,7 +276,7 @@ export class AuthController {
       },
     },
   })
-  async forgotPassword(@Body('email') email: string): Promise<{ message: string }> {
+  async forgotPassword(@Body('email') _email: string): Promise<{ message: string }> {
     // TODO: Implementar lógica de forgot password
     return { message: 'Si el email existe, recibirás instrucciones para resetear tu contraseña' };
   }
@@ -305,8 +306,8 @@ export class AuthController {
     },
   })
   async resetPassword(
-    @Body('token') token: string,
-      @Body('newPassword') newPassword: string,
+    @Body('token') _token: string,
+      @Body('newPassword') _newPassword: string,
   ): Promise<{ message: string }> {
     // TODO: Implementar lógica de reset password
     return { message: 'Contraseña reseteada exitosamente' };
@@ -340,11 +341,11 @@ export class AuthController {
     },
   })
   async changePassword(
-    @Request() req: any,
-      @Body('currentPassword') currentPassword: string,
-      @Body('newPassword') newPassword: string,
+    @Request() req: AuthRequest,
+      @Body('currentPassword') _currentPassword: string,
+      @Body('newPassword') _newPassword: string,
   ): Promise<{ message: string }> {
-    const userId = req.user?.id;
+    const _userId = req.user!.id;
     // TODO: Implementar lógica de cambio de contraseña
     return { message: 'Contraseña cambiada exitosamente' };
   }
@@ -363,8 +364,8 @@ export class AuthController {
     isArray: true,
   })
   @ApiResponse({ status: 401, description: 'No autenticado' })
-  async getSessions(@Request() req: any): Promise<UserSessionResponseDto[]> {
-    const userId = req.user?.id;
+  async getSessions(@Request() req: AuthRequest): Promise<UserSessionResponseDto[]> {
+    const userId = req.user!.id;
     return this.sessionService.getSessions(userId);
   }
 
@@ -391,10 +392,10 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'No autenticado' })
   @ApiResponse({ status: 404, description: 'Sesión no encontrada o no pertenece al usuario' })
   async revokeSession(
-    @Request() req: any,
+    @Request() req: AuthRequest,
       @Param('sessionId') sessionId: string,
   ): Promise<{ message: string }> {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     return this.sessionService.revokeSession(sessionId, userId);
   }
 
@@ -420,9 +421,9 @@ export class AuthController {
     },
   })
   @ApiResponse({ status: 401, description: 'No autenticado' })
-  async revokeAllSessions(@Request() req: any): Promise<{ message: string; count: number }> {
-    const userId = req.user?.id;
-    const currentSessionId = req.user?.sessionId || 'unknown';
+  async revokeAllSessions(@Request() req: AuthRequest): Promise<{ message: string; count: number }> {
+    const userId = req.user!.id;
+    const currentSessionId = req.user!.sessionId || 'unknown';
     return this.sessionService.revokeAllSessions(userId, currentSessionId);
   }
 }

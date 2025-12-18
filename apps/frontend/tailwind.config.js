@@ -28,6 +28,7 @@ export default {
         'detective-orange-dark': '#ea580c',
         'detective-orange-700': '#c2410c',
 
+        'detective-yellow': '#fbbf24',
         'detective-blue': '#1e3a8a',
         'detective-gold': '#f59e0b',
 

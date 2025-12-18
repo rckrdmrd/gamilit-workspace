@@ -42,7 +42,7 @@ export class AccountStatusGuard implements CanActivate {
           'Your account has been deactivated. Please contact support.',
         );
 
-      case 'suspended':
+      case 'suspended': {
         const suspensionDetails = user.suspensionDetails || {};
         const { isPermanent, suspendedUntil, reason } = suspensionDetails;
 
@@ -69,6 +69,7 @@ export class AccountStatusGuard implements CanActivate {
           );
         }
         break;
+      }
 
       case 'deleted':
       case 'banned':

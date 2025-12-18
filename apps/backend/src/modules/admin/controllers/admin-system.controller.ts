@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Put, Body, Query, UseGuards, Request, Param } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Query, UseGuards, Request, Param, Optional } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { AdminGuard } from '../guards/admin.guard';
 import { AdminSystemService } from '../services/admin-system.service';
+import { MissionsCronService, CronJobStatus } from '../../tasks/services/missions-cron.service';
 import {
   SystemHealthDto,
   SystemMetricsDto,
@@ -19,13 +20,17 @@ import {
   CacheClearResultDto,
   SessionCleanupResultDto,
 } from '../dto/system';
+import { AuthRequest } from '@shared/types';
 
 @ApiTags('Admin - System')
 @Controller('admin/system')
 @UseGuards(JwtAuthGuard, AdminGuard)
 @ApiBearerAuth()
 export class AdminSystemController {
-  constructor(private readonly adminSystemService: AdminSystemService) {}
+  constructor(
+    private readonly adminSystemService: AdminSystemService,
+    @Optional() private readonly missionsCronService?: MissionsCronService,
+  ) {}
 
   @Get('health')
   @ApiOperation({
@@ -67,9 +72,9 @@ export class AdminSystemController {
   })
   async updateSystemConfig(
     @Body() configDto: UpdateSystemConfigDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<SystemConfigDto> {
-    const adminId = req.user?.id || req.user?.sub;
+    const adminId = req.user!.id;
     return this.adminSystemService.updateSystemConfig(configDto, adminId);
   }
 
@@ -90,7 +95,7 @@ export class AdminSystemController {
   })
   async getConfigByCategory(
     @Param('category') category: string,
-  ): Promise<Record<string, any>> {
+  ): Promise<Record<string, unknown>> {
     return this.adminSystemService.getConfigByCategory(category);
   }
 
@@ -102,10 +107,10 @@ export class AdminSystemController {
   })
   async updateConfigByCategory(
     @Param('category') category: string,
-      @Body() configDto: Record<string, any>,
-      @Request() req: any,
-  ): Promise<Record<string, any>> {
-    const adminId = req.user?.id || req.user?.sub;
+      @Body() configDto: Record<string, unknown>,
+      @Request() req: AuthRequest,
+  ): Promise<Record<string, unknown>> {
+    const adminId = req.user!.id;
     return this.adminSystemService.updateConfigByCategory(
       category,
       configDto,
@@ -121,9 +126,9 @@ export class AdminSystemController {
   })
   async toggleMaintenance(
     @Body() toggleDto: ToggleMaintenanceDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<MaintenanceStatusDto> {
-    const adminId = req.user?.id || req.user?.sub;
+    const adminId = req.user!.id;
     return this.adminSystemService.toggleMaintenance(
       toggleDto,
       adminId,
@@ -182,5 +187,18 @@ export class AdminSystemController {
   })
   async cleanupSessions(): Promise<SessionCleanupResultDto> {
     return this.adminSystemService.cleanupExpiredSessions();
+  }
+
+  @Get('cron/status')
+  @ApiOperation({
+    summary: 'Get CRON jobs status',
+    description:
+      'Retrieve the status of all registered CRON jobs for missions, including schedule, next run time, and current running state.',
+  })
+  async getCronJobsStatus(): Promise<CronJobStatus[]> {
+    if (!this.missionsCronService) {
+      return [];
+    }
+    return this.missionsCronService.getCronJobsStatus();
   }
 }

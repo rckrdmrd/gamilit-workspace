@@ -246,5 +246,5 @@ export class UploadMediaDto {
    */
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

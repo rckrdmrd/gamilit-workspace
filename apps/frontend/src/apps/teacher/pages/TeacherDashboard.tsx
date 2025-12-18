@@ -30,7 +30,8 @@ import { ParentCommunicationHub } from '../components/collaboration/ParentCommun
 import { ResourceSharingPanel } from '../components/collaboration/ResourceSharingPanel';
 import { useTeacherDashboard } from '../hooks/useTeacherDashboard';
 import { useClassrooms } from '../hooks/useClassrooms';
-import { classroomsApi } from '@services/api/teacher';
+import { classroomsApi, assignmentsApi } from '@services/api/teacher';
+import type { UpcomingAssignment } from '@services/api/teacher/assignmentsApi';
 import type { StudentMonitoring } from '../types';
 
 type TabType =
@@ -68,6 +69,8 @@ export default function TeacherDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [allStudents, setAllStudents] = useState<StudentMonitoring[]>([]);
   const [selectedClassroomId, setSelectedClassroomId] = useState<string>('');
+  const [upcomingDeadlines, setUpcomingDeadlines] = useState<UpcomingAssignment[]>([]);
+  const [upcomingLoading, setUpcomingLoading] = useState(false);
 
   // Fetch real classrooms from backend
   const { classrooms, loading: classroomsLoading } = useClassrooms();
@@ -118,6 +121,36 @@ export default function TeacherDashboard() {
       isMounted = false;
     };
   }, [classrooms]);
+
+  // BAJO-008: Fetch upcoming assignments with deadlines
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchUpcomingDeadlines = async () => {
+      setUpcomingLoading(true);
+      try {
+        const upcoming = await assignmentsApi.getUpcomingAssignments(7);
+        if (isMounted) {
+          setUpcomingDeadlines(upcoming);
+        }
+      } catch (error) {
+        console.error('[TeacherDashboard] Error fetching upcoming deadlines:', error);
+        if (isMounted) {
+          setUpcomingDeadlines([]);
+        }
+      } finally {
+        if (isMounted) {
+          setUpcomingLoading(false);
+        }
+      }
+    };
+
+    fetchUpcomingDeadlines();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const tabs = [
     { id: 'overview', label: 'Vista General', icon: Target },
@@ -405,32 +438,46 @@ export default function TeacherDashboard() {
                     <h3 className="mb-4 text-lg font-bold text-detective-text">
                       Próximas Fechas Límite
                     </h3>
-                    <div className="space-y-3">
-                      <div className="flex items-start gap-3 rounded-lg bg-detective-bg-secondary p-3">
-                        <Calendar className="mt-1 h-5 w-5 text-detective-orange" />
-                        <div className="flex-1">
-                          <p className="text-sm font-semibold text-detective-text">
-                            Práctica Semanal: Marie Curie
-                          </p>
-                          <p className="text-xs text-detective-text-secondary">Vence en 2 días</p>
-                          <p className="text-xs text-detective-text-secondary">
-                            15/25 estudiantes completaron
-                          </p>
-                        </div>
+                    {upcomingLoading ? (
+                      <div className="space-y-3">
+                        <SkeletonCard lines={2} />
+                        <SkeletonCard lines={2} />
                       </div>
-                      <div className="flex items-start gap-3 rounded-lg bg-detective-bg-secondary p-3">
-                        <Calendar className="mt-1 h-5 w-5 text-detective-orange" />
-                        <div className="flex-1">
-                          <p className="text-sm font-semibold text-detective-text">
-                            Evaluación: Descubrimientos
-                          </p>
-                          <p className="text-xs text-detective-text-secondary">Vence en 5 días</p>
-                          <p className="text-xs text-detective-text-secondary">
-                            8/25 estudiantes completaron
-                          </p>
-                        </div>
+                    ) : upcomingDeadlines.length > 0 ? (
+                      <div className="space-y-3">
+                        {upcomingDeadlines.map((assignment) => (
+                          <div
+                            key={assignment.id}
+                            className="flex items-start gap-3 rounded-lg bg-detective-bg-secondary p-3"
+                          >
+                            <Calendar className="mt-1 h-5 w-5 text-detective-orange" />
+                            <div className="flex-1">
+                              <p className="text-sm font-semibold text-detective-text">
+                                {assignment.title}
+                              </p>
+                              <p className="text-xs text-detective-text-secondary">
+                                {assignment.daysRemaining === 0
+                                  ? 'Vence hoy'
+                                  : assignment.daysRemaining === 1
+                                    ? 'Vence mañana'
+                                    : `Vence en ${assignment.daysRemaining} días`}
+                              </p>
+                              <p className="text-xs text-detective-text-secondary">
+                                {assignment.submittedCount}/{assignment.totalStudents} estudiantes
+                                completaron
+                              </p>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    </div>
+                    ) : (
+                      <div className="py-8 text-center">
+                        <Calendar className="mx-auto mb-2 h-12 w-12 text-detective-text-secondary opacity-50" />
+                        <p className="text-detective-text-secondary">
+                          No hay fechas límite próximas
+                        </p>
+                      </div>
+                    )}
                   </DetectiveCard>
                 </div>
               </div>

@@ -11,6 +11,7 @@ import {
   HttpStatus,
   Request,
   UseGuards,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { ModulesService } from '../services';
@@ -18,6 +19,7 @@ import { CreateModuleDto, ModuleResponseDto, GetModulesQueryDto } from '../dto';
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
 import { DifficultyLevelEnum } from '@/shared/constants/enums.constants';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
+import { AuthRequest } from '@shared/types';
 
 /**
  * ModulesController
@@ -110,8 +112,8 @@ export class ModulesController {
     status: 500,
     description: 'Error interno del servidor',
   })
-  async findAll(@Request() req: any, @Query() query: GetModulesQueryDto) {
-    const userId = req.user.id;
+  async findAll(@Request() req: AuthRequest, @Query() query: GetModulesQueryDto) {
+    const userId = req.user!.id;
     // Reutilizar getUserModules que ya tiene la lógica correcta para ambas tablas
     // Ahora acepta classroomId opcional para filtrar
     return this.modulesService.getUserModules(userId, query.classroomId);
@@ -282,7 +284,7 @@ export class ModulesController {
     status: 404,
     description: 'Usuario no encontrado',
   })
-  async getUserModules(@Param('userId') userId: string) {
+  async getUserModules(@Param('userId', ParseUUIDPipe) userId: string) {
     return this.modulesService.getUserModules(userId);
   }
 
@@ -374,7 +376,7 @@ export class ModulesController {
       },
     },
   })
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.modulesService.findById(id);
   }
 
@@ -485,7 +487,7 @@ export class ModulesController {
     status: 404,
     description: 'Módulo no encontrado',
   })
-  async update(@Param('id') id: string, @Body() updateModuleDto: Partial<CreateModuleDto>) {
+  async update(@Param('id', ParseUUIDPipe) id: string, @Body() updateModuleDto: Partial<CreateModuleDto>) {
     return this.modulesService.update(id, updateModuleDto);
   }
 
@@ -529,7 +531,7 @@ export class ModulesController {
     status: 404,
     description: 'Módulo no encontrado',
   })
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
     const deleted = await this.modulesService.delete(id);
     return {
       success: deleted,
@@ -587,7 +589,7 @@ export class ModulesController {
     status: 404,
     description: 'Módulo no encontrado',
   })
-  async getPrerequisites(@Param('id') id: string) {
+  async getPrerequisites(@Param('id', ParseUUIDPipe) id: string) {
     return this.modulesService.getPrerequisites(id);
   }
 }

@@ -92,7 +92,7 @@ export class UserRole {
     nullable: false,
     default: { read: true, write: false, admin: false, analytics: false },
   })
-    permissions!: Record<string, any>;
+    permissions!: Record<string, unknown>;
 
   /**
    * ID del usuario (Profile) que asignó este rol (nullable)
@@ -143,7 +143,7 @@ export class UserRole {
    * @example { notes: "Rol temporal para proyecto X", reason: "..." }
    */
   @Column({ type: 'jsonb', nullable: false, default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Fecha de creación del registro

@@ -76,14 +76,14 @@ export class AssessmentRubric {
    * Incluye niveles de logro con puntos y descripciones
    */
   @Column({ type: 'jsonb', default: {} })
-    criteria: Record<string, any> = {};
+    criteria: Record<string, unknown> = {};
 
   /**
    * Escala de puntuación en formato JSONB
    * Estructura: {"min": number, "max": number, "passing": number}
    */
   @Column({ type: 'jsonb', default: { min: 0, max: 100, passing: 70 } })
-    scoring_scale!: Record<string, any>;
+    scoring_scale!: Record<string, unknown>;
 
   /**
    * Peso porcentual de esta rúbrica en la evaluación total (1-100%)
@@ -120,7 +120,7 @@ export class AssessmentRubric {
    * Puede incluir configuraciones específicas de evaluación
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * ID del usuario que creó la rúbrica

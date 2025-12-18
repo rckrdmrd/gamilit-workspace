@@ -94,7 +94,7 @@ export class Module {
       multimedia_resources: [],
     },
   })
-    content!: Record<string, any>;
+    content!: Record<string, unknown>;
 
   /**
    * Índice de orden para la secuencia de módulos
@@ -350,13 +350,13 @@ export class Module {
    * Configuraciones del módulo (JSONB)
    */
   @Column({ type: 'jsonb', default: {} })
-    settings!: Record<string, any>;
+    settings!: Record<string, unknown>;
 
   /**
    * Metadatos adicionales (JSONB)
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   // =====================================================
   // AUDIT FIELDS

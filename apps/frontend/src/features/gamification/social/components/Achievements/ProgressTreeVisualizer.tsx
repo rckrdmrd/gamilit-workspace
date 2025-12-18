@@ -1,19 +1,99 @@
 /**
  * ProgressTreeVisualizer Component
  * Tree view of interconnected achievements
+ *
+ * IMPL-006: Updated icon map to include all achievement icons
  */
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, Award, Users, EyeOff, type LucideIcon } from 'lucide-react';
+import {
+  Award,
+  BookOpen,
+  Brain,
+  Calendar,
+  Check,
+  CheckCircle,
+  Clock,
+  Compass,
+  Crown,
+  Egg,
+  EyeOff,
+  Flag,
+  Flame,
+  Footprints,
+  Gem,
+  GraduationCap,
+  Handshake,
+  HeartHandshake,
+  Key,
+  Layers,
+  Link,
+  Moon,
+  Puzzle,
+  Search,
+  Shield,
+  Sparkles,
+  Star,
+  Sunrise,
+  Target,
+  ThumbsUp,
+  Timer,
+  TrendingUp,
+  Trophy,
+  UserPlus,
+  Users,
+  UsersRound,
+  Zap,
+  type LucideIcon,
+} from 'lucide-react';
 import { useAchievements } from '../../hooks/useAchievements';
 
-// Icon mapping helper
+// IMPL-006: Complete icon mapping (aligned with AchievementCard.tsx)
 const iconMap: Record<string, LucideIcon> = {
+  // Category icons
   TrendingUp,
   Award,
   Users,
   EyeOff,
+  // Achievement icons (kebab-case from DB)
+  footprints: Footprints,
+  target: Target,
+  'book-open': BookOpen,
+  'graduation-cap': GraduationCap,
+  compass: Compass,
+  trophy: Trophy,
+  zap: Zap,
+  star: Star,
+  flame: Flame,
+  award: Award,
+  sunrise: Sunrise,
+  moon: Moon,
+  calendar: Calendar,
+  'trending-up': TrendingUp,
+  shield: Shield,
+  'check-circle': CheckCircle,
+  sparkles: Sparkles,
+  search: Search,
+  timer: Timer,
+  link: Link,
+  check: Check,
+  crown: Crown,
+  brain: Brain,
+  layers: Layers,
+  focus: Target,
+  'user-plus': UserPlus,
+  users: Users,
+  flag: Flag,
+  'heart-handshake': HeartHandshake,
+  'users-round': UsersRound,
+  'thumbs-up': ThumbsUp,
+  handshake: Handshake,
+  egg: Egg,
+  clock: Clock,
+  key: Key,
+  puzzle: Puzzle,
+  gem: Gem,
 };
 
 export const ProgressTreeVisualizer: React.FC = () => {

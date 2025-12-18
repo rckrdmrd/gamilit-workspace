@@ -96,7 +96,7 @@ export class MarieCurieContent {
       main_content: '',
     },
   })
-    content!: Record<string, any>;
+    content!: Record<string, unknown>;
 
   // =====================================================
   // EDUCATIONAL METADATA
@@ -190,7 +190,7 @@ export class MarieCurieContent {
    * Contexto cultural en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-    cultural_context!: Record<string, any>;
+    cultural_context!: Record<string, unknown>;
 
   // =====================================================
   // PUBLICATION STATUS
@@ -265,7 +265,7 @@ export class MarieCurieContent {
    * Metadatos adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Fecha y hora de creación del registro

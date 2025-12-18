@@ -199,7 +199,7 @@ describe('HealthController (e2e)', () => {
       const startTime = Date.now();
       return request(app.getHttpServer())
         .get('/health')
-        .expect((res: any) => {
+        .expect((_res: any) => {
           const duration = Date.now() - startTime;
           expect(duration).toBeLessThan(5000); // 5 seconds max
         });

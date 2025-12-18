@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository } from 'typeorm';
 import {
   NotFoundException,
   BadRequestException,
@@ -23,10 +23,10 @@ import { MembershipStatusEnum, GamilityRoleEnum, SubscriptionTierEnum } from '@s
 
 describe('AdminOrganizationsService', () => {
   let service: AdminOrganizationsService;
-  let tenantRepo: Repository<Tenant>;
-  let membershipRepo: Repository<Membership>;
-  let userRepo: Repository<User>;
-  let profileRepo: Repository<Profile>;
+  let _tenantRepo: Repository<Tenant>;
+  let _membershipRepo: Repository<Membership>;
+  let _userRepo: Repository<User>;
+  let _profileRepo: Repository<Profile>;
 
   const mockQueryBuilder = {
     where: jest.fn().mockReturnThis(),

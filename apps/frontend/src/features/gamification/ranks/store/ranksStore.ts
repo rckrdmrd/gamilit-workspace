@@ -573,6 +573,9 @@ export const useRanksStore = create<RanksState>()(
        * Fetch user progress from backend
        */
       fetchUserProgress: async () => {
+        // 1. Guardar rango anterior ANTES de fetch
+        const previousRank = get().userProgress.currentRank;
+
         set({ isLoading: true, error: null });
         try {
           const userId = useAuthStore.getState().user?.id;
@@ -605,6 +608,27 @@ export const useRanksStore = create<RanksState>()(
             isLoading: false,
             error: null,
           });
+
+          // 2. NUEVO: Detectar cambio de rango
+          if (previousRank && previousRank !== userProgress.currentRank) {
+            const historyEntry: ProgressionHistoryEntry = {
+              id: crypto.randomUUID(),
+              type: 'rank_up',
+              timestamp: new Date(),
+              title: `Ascendido a ${userProgress.currentRank}`,
+              description: `¡Has alcanzado un nuevo rango!`,
+              rank: userProgress.currentRank,
+              xpSnapshot: userProgress.totalXP,
+              levelSnapshot: userProgress.currentLevel,
+              multiplierSnapshot: userProgress.multiplier,
+            };
+
+            set((state) => ({
+              progressionHistory: [...state.progressionHistory, historyEntry],
+              showRankUpModal: true,
+              isRankingUp: true,
+            }));
+          }
 
           // Update multipliers after fetching progress
           get().updateMultipliers();

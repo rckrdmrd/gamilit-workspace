@@ -24,6 +24,7 @@ import {
   AlertsStatsDto,
   PaginatedAlertsDto,
 } from '../dto/alerts';
+import { AuthRequest } from '@shared/types';
 
 /**
  * AdminAlertsController
@@ -152,9 +153,9 @@ export class AdminAlertsController {
   @ApiResponse({ status: 403, description: 'Forbidden - Admin role required' })
   async createAlert(
     @Body() createDto: CreateAlertDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<AlertResponseDto> {
-    const userId = req.user?.id || req.user?.sub;
+    const userId = req.user!.id;
     return this.alertsService.createAlert(createDto, userId);
   }
 
@@ -184,9 +185,9 @@ export class AdminAlertsController {
   async acknowledgeAlert(
     @Param('id') id: string,
       @Body() dto: AcknowledgeAlertDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<AlertResponseDto> {
-    const userId = req.user?.id || req.user?.sub;
+    const userId = req.user!.id;
     return this.alertsService.acknowledgeAlert(id, dto.acknowledgment_note, userId);
   }
 
@@ -216,9 +217,9 @@ export class AdminAlertsController {
   async resolveAlert(
     @Param('id') id: string,
       @Body() dto: ResolveAlertDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<AlertResponseDto> {
-    const userId = req.user?.id || req.user?.sub;
+    const userId = req.user!.id;
     return this.alertsService.resolveAlert(id, dto.resolution_note, userId);
   }
 

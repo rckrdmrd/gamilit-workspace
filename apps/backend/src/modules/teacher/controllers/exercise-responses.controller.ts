@@ -31,6 +31,7 @@ import {
   AttemptDetailDto,
   AttemptsListResponseDto,
 } from '../dto/exercise-responses.dto';
+import { AuthRequest } from '@shared/types';
 
 /**
  * Controller for Teacher Exercise Responses
@@ -90,9 +91,9 @@ export class ExerciseResponsesController {
   })
   async getAttempts(
     @Query() query: GetAttemptsQueryDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<AttemptsListResponseDto> {
-    const userId = req.user.id;
+    const userId = req.user!.id;
 
     return this.exerciseResponsesService.getAttempts(userId, query);
   }
@@ -133,9 +134,9 @@ export class ExerciseResponsesController {
   })
   async getAttemptDetail(
     @Param('id') id: string,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<AttemptDetailDto> {
-    const userId = req.user.id;
+    const userId = req.user!.id;
 
     return this.exerciseResponsesService.getAttemptDetail(userId, id);
   }
@@ -175,9 +176,9 @@ export class ExerciseResponsesController {
   })
   async getAttemptsByStudent(
     @Param('studentId') studentId: string,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<AttemptResponseDto[]> {
-    const userId = req.user.id;
+    const userId = req.user!.id;
 
     return this.exerciseResponsesService.getAttemptsByStudent(userId, studentId);
   }
@@ -213,9 +214,9 @@ export class ExerciseResponsesController {
   })
   async getExerciseResponses(
     @Param('exerciseId') exerciseId: string,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<AttemptsListResponseDto> {
-    const userId = req.user.id;
+    const userId = req.user!.id;
 
     return this.exerciseResponsesService.getExerciseResponses(userId, exerciseId);
   }

@@ -20,3 +20,7 @@ export * from './active-boost.entity';
 export * from './inventory-transaction.entity';
 export * from './maya-rank.entity';
 export * from './comodin-usage-log.entity';
+export * from './shop-category.entity';
+export * from './shop-item.entity';
+export * from './user-purchase.entity';
+export * from './mission-template.entity';

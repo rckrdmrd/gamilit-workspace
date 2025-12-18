@@ -9,7 +9,7 @@ Backend para la plataforma educativa gamificada GAMILIT.
 - **Language:** TypeScript 5.x (strict mode)
 - **ORM:** TypeORM 0.3.x (multi-datasource architecture)
 - **Database:** PostgreSQL 14+ (multi-schema: 11 schemas)
-- **Auth:** Supabase Auth + JWT
+- **Auth:** Custom Auth (patrón compatible con estándares de la industria) + JWT
 - **Validation:** class-validator + class-transformer
 - **Testing:** Jest
 - **Linting:** ESLint + Prettier

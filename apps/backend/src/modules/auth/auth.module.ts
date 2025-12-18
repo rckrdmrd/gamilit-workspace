@@ -36,7 +36,6 @@ import { AuthController, PasswordController, UsersController } from './controlle
 import { JwtStrategy } from './strategies/jwt.strategy';
 
 // Constants
-import { DB_SCHEMAS } from '@/shared/constants';
 
 // External modules
 import { MailModule } from '@/modules/mail/mail.module';

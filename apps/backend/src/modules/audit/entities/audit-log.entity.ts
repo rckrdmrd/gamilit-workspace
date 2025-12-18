@@ -13,6 +13,7 @@ import {
   CreateDateColumn,
   Index,
 } from 'typeorm';
+import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
 
 export enum ActorType {
   USER = 'user',
@@ -35,7 +36,7 @@ export enum Status {
   PARTIAL = 'partial',
 }
 
-@Entity({ schema: 'audit_logging', name: 'audit_logs' })
+@Entity({ schema: DB_SCHEMAS.AUDIT, name: DB_TABLES.AUDIT.AUDIT_LOGS })
 @Index(['tenantId'])
 @Index(['eventType'])
 @Index(['resourceType'])

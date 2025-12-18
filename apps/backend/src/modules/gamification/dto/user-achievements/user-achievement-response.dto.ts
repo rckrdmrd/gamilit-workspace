@@ -44,16 +44,16 @@ export class UserAchievementResponseDto {
     rewards_claimed!: boolean;
 
   @Expose()
-    rewards_received!: Record<string, any>;
+    rewards_received!: Record<string, unknown>;
 
   @Expose()
-    progress_data!: Record<string, any>;
+    progress_data!: Record<string, unknown>;
 
   @Expose()
     milestones_reached!: string[] | null;
 
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   @Expose()
   @Type(() => Date)

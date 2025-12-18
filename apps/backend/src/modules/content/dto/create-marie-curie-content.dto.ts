@@ -72,7 +72,7 @@ export class CreateMarieCurieContentDto {
    */
   @ApiProperty({ description: 'Contenido estructurado JSON', example: { introduction: 'Texto introductorio...', main_content: 'Contenido principal...', key_points: [], timeline: [], quotes: [] } })
   @IsObject()
-    content!: Record<string, any>;
+    content!: Record<string, unknown>;
 
   // =====================================================
   // EDUCATIONAL METADATA
@@ -196,7 +196,7 @@ export class CreateMarieCurieContentDto {
   @ApiPropertyOptional({ description: 'Contexto cultural JSON', example: {} })
   @IsOptional()
   @IsObject()
-    cultural_context?: Record<string, any>;
+    cultural_context?: Record<string, unknown>;
 
   // =====================================================
   // PUBLICATION STATUS
@@ -286,5 +286,5 @@ export class CreateMarieCurieContentDto {
   @ApiPropertyOptional({ description: 'Metadatos adicionales', example: {} })
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

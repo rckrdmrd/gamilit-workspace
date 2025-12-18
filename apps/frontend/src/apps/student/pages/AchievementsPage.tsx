@@ -36,10 +36,13 @@ import { ProgressTreeVisualizer } from '@/features/gamification/social/component
 import { useAchievements } from '@/features/gamification/social/hooks/useAchievements';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { usePersistedFilters } from '@/shared/hooks/usePersistedFilters';
+import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
+import { claimAchievementRewards } from '@/features/gamification/social/api/achievementsAPI';
 import type {
   Achievement,
   AchievementCategory,
 } from '@/features/gamification/social/types/achievementsTypes';
+import toast from 'react-hot-toast';
 
 // Utils
 import { cn } from '@shared/utils/cn';
@@ -103,6 +106,16 @@ export default function AchievementsPage() {
   const [showUnlockModal, setShowUnlockModal] = useState(false);
   const [selectedAchievement, setSelectedAchievement] = useState<Achievement | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [claimingAchievementId, setClaimingAchievementId] = useState<string | null>(null);
+  const [localAchievements, setLocalAchievements] = useState<Achievement[]>([]);
+
+  // Economy store for balance refresh
+  const fetchBalance = useEconomyStore((state) => state.fetchBalance);
+
+  // Sync achievements to local state for claim status updates
+  useEffect(() => {
+    setLocalAchievements(achievements);
+  }, [achievements]);
 
   // WebSocket Integration for real-time updates is handled globally via App.tsx
   // The useAchievements hook will automatically update when new achievements are unlocked
@@ -124,9 +137,46 @@ export default function AchievementsPage() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
+  // Handle claim rewards
+  const handleClaimRewards = async (achievementId: string) => {
+    if (!user?.id || claimingAchievementId) return;
+
+    try {
+      setClaimingAchievementId(achievementId);
+
+      const result = await claimAchievementRewards(user.id, achievementId);
+
+      if (result.success) {
+        // Update local state to mark as claimed
+        setLocalAchievements((prev) =>
+          prev.map((a) => (a.id === achievementId ? { ...a, rewardsClaimed: true } : a)),
+        );
+
+        // Refresh balance to show new ML Coins
+        await fetchBalance();
+
+        // Find the achievement for the toast message
+        const achievement = localAchievements.find((a) => a.id === achievementId);
+        const rewardText = achievement
+          ? `+${achievement.mlCoinsReward} ML Coins, +${achievement.xpReward} XP`
+          : 'Recompensas';
+
+        toast.success(`${rewardText} reclamadas!`, {
+          icon: '🎁',
+          duration: 4000,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to claim rewards:', error);
+      toast.error('Error al reclamar recompensas. Intenta de nuevo.');
+    } finally {
+      setClaimingAchievementId(null);
+    }
+  };
+
   // Filter and sort achievements
   const filteredAchievements = useMemo(() => {
-    let filtered = achievements;
+    let filtered = localAchievements;
 
     // Category filter
     if (filters.category !== 'all') {
@@ -464,6 +514,8 @@ export default function AchievementsPage() {
                 <AchievementCard
                   achievement={achievement}
                   onClick={() => handleAchievementClick(achievement)}
+                  onClaimRewards={handleClaimRewards}
+                  isClaiming={claimingAchievementId === achievement.id}
                 />
               </motion.div>
             ))}

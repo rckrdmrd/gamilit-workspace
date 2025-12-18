@@ -2,8 +2,9 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserStats } from '../entities';
-import { DB_SCHEMAS } from '@shared/constants';
 import { UserGamificationSummaryDto } from '../dto/user-gamification-summary.dto';
+// CORR-CASCADA-001: Import MayaRank para alinear con entity corregida
+import { MayaRank } from '@shared/constants/enums.constants';
 
 /**
  * UserStatsService
@@ -21,7 +22,14 @@ export class UserStatsService {
   private readonly XP_BASE = 100; // Base para cálculo cuadrático
 
   // Rangos disponibles en el sistema (ordenado de menor a mayor)
-  private readonly RANKS = ['Ajaw', 'Nacom', "Ah K'in", 'Halach Uinic', "K'uk'ulkan"];
+  // CORR-CASCADA-001: Usar valores de MayaRank enum
+  private readonly RANKS: MayaRank[] = [
+    MayaRank.AJAW,
+    MayaRank.NACOM,
+    MayaRank.AH_KIN,
+    MayaRank.HALACH_UINIC,
+    MayaRank.KUKULKAN,
+  ];
 
   constructor(
     @InjectRepository(UserStats, 'gamification')

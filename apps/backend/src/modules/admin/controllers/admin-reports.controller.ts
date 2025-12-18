@@ -21,6 +21,7 @@ import {
   ListReportsDto,
   PaginatedReportsDto,
 } from '../dto/reports';
+import { AuthRequest } from '@shared/types';
 
 @ApiTags('Admin - Reports')
 @Controller('admin/reports')
@@ -37,9 +38,9 @@ export class AdminReportsController {
   })
   async generateReport(
     @Body() generateDto: GenerateReportDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<ReportDto> {
-    const userId = req.user?.id || req.user?.sub;
+    const userId = req.user!.id;
     return this.adminReportsService.generateReport(generateDto, userId);
   }
 

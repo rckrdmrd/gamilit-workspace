@@ -92,14 +92,14 @@ export class ComodinUsageLog {
    * Ejemplo: hint text, highlighted text
    */
   @Column({ type: 'jsonb', nullable: true })
-    value_provided?: Record<string, any>;
+    value_provided?: Record<string, unknown>;
 
   /**
    * Contexto adicional del uso (JSONB)
    * Ejemplo: tiempo restante, intentos previos
    */
   @Column({ type: 'jsonb', default: {} })
-    usage_context!: Record<string, any>;
+    usage_context!: Record<string, unknown>;
 
   // =====================================================
   // TIMESTAMP

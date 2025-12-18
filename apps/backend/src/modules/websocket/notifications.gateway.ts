@@ -37,7 +37,7 @@ implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
   private userSockets = new Map<string, Set<string>>(); // userId -> Set of socketIds
 
-  afterInit(server: Server) {
+  afterInit(_server: Server) {
     this.logger.log('WebSocket Gateway initialized');
   }
 

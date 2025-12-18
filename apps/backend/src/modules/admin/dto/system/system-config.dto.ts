@@ -20,7 +20,7 @@ export class SystemConfigDto {
     session_timeout_minutes!: number;
 
   @ApiPropertyOptional({ description: 'Custom settings' })
-    custom_settings?: Record<string, any>;
+    custom_settings?: Record<string, unknown>;
 
   @ApiProperty({ description: 'Last updated timestamp', example: '2025-11-02T18:00:00Z' })
     updated_at!: string;

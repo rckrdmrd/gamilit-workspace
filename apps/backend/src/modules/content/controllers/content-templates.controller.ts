@@ -42,9 +42,9 @@ export class ContentTemplatesController {
   @ApiResponse({ status: 200, description: 'Lista de plantillas obtenida exitosamente', type: [ContentTemplateResponseDto] })
   async findAll(
   @Query('type') type?: string,
-    @Query('category') category?: string,
+    @Query('category') _category?: string,
   ) {
-    return this.templatesService.findAll(type, category);
+    return this.templatesService.findAll(type);
   }
 
   /**

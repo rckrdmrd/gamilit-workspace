@@ -113,5 +113,5 @@ export class CreateTransactionDto {
   })
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

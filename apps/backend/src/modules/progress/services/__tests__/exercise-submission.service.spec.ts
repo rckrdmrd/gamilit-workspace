@@ -20,9 +20,9 @@ describe('ExerciseSubmissionService - Rueda de Inferencias Validation', () => {
   let submissionRepo: jest.Mocked<Repository<ExerciseSubmission>>;
   let exerciseRepo: jest.Mocked<Repository<Exercise>>;
   let profileRepo: jest.Mocked<Repository<Profile>>;
-  let entityManager: jest.Mocked<EntityManager>;
-  let userStatsService: jest.Mocked<UserStatsService>;
-  let mlCoinsService: jest.Mocked<MLCoinsService>;
+  let _entityManager: jest.Mocked<EntityManager>;
+  let _userStatsService: jest.Mocked<UserStatsService>;
+  let _mlCoinsService: jest.Mocked<MLCoinsService>;
 
   // Mock exercise data
   const mockExercise: Partial<Exercise> = {
@@ -554,8 +554,8 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
   let exerciseRepo: jest.Mocked<Repository<Exercise>>;
   let profileRepo: jest.Mocked<Repository<Profile>>;
   let entityManager: jest.Mocked<EntityManager>;
-  let userStatsService: jest.Mocked<UserStatsService>;
-  let mlCoinsService: jest.Mocked<MLCoinsService>;
+  let _userStatsService: jest.Mocked<UserStatsService>;
+  let _mlCoinsService: jest.Mocked<MLCoinsService>;
 
   // Mock exercise data for Completar Espacios
   const mockExerciseCompletarEspacios: Partial<Exercise> = {
@@ -987,6 +987,733 @@ describe('ExerciseSubmissionService - Completar Espacios Anti-redundancy', () =>
       expect(result.score).toBe(33);
       expect(result.is_correct).toBe(false);
       expect(result.feedback).toContain('no pueden tener la misma palabra');
+    });
+  });
+});
+
+/**
+ * Test suite for ExerciseSubmissionService - General Functionality
+ *
+ * @description Tests for core submission service functionality including:
+ * - submitExercise() flow
+ * - M5 validation (150 words minimum for diario_multimedia)
+ * - Exercise already completed (one submission only)
+ * - countWords() helper
+ * - gradeSubmission()
+ * - claimRewards()
+ *
+ * Target: 50%+ test coverage for module progress
+ */
+describe('ExerciseSubmissionService - General Functionality', () => {
+  let service: ExerciseSubmissionService;
+  let _submissionRepo: Repository<ExerciseSubmission>;
+  let _exerciseRepo: Repository<Exercise>;
+  let _profileRepo: Repository<Profile>;
+  let _entityManager: EntityManager;
+  let _userStatsService: UserStatsService;
+  let _mlCoinsService: MLCoinsService;
+  let _missionsService: any;
+  let _notificationsService: any;
+  let _mailService: any;
+
+  // Mock repositories
+  const mockSubmissionRepo = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+    count: jest.fn(),
+  };
+
+  const mockExerciseRepo = {
+    findOne: jest.fn(),
+    count: jest.fn(),
+  };
+
+  const mockProfileRepo = {
+    findOne: jest.fn(),
+  };
+
+  const mockEntityManager = {
+    query: jest.fn(),
+  };
+
+  const mockUserStatsService = {
+    findByUserId: jest.fn(),
+    addXp: jest.fn(),
+  };
+
+  const mockMLCoinsService = {
+    addCoins: jest.fn(),
+  };
+
+  const mockMissionsService = {
+    findByTypeAndUser: jest.fn(),
+    updateProgress: jest.fn(),
+  };
+
+  const mockNotificationsService = {
+    sendNotification: jest.fn(),
+  };
+
+  const mockMailService = {
+    sendNotificationEmail: jest.fn(),
+  };
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        ExerciseSubmissionService,
+        {
+          provide: getRepositoryToken(ExerciseSubmission, 'progress'),
+          useValue: mockSubmissionRepo,
+        },
+        {
+          provide: getRepositoryToken(Exercise, 'educational'),
+          useValue: mockExerciseRepo,
+        },
+        {
+          provide: getRepositoryToken(Profile, 'auth'),
+          useValue: mockProfileRepo,
+        },
+        {
+          provide: getEntityManagerToken('progress'),
+          useValue: mockEntityManager,
+        },
+        {
+          provide: UserStatsService,
+          useValue: mockUserStatsService,
+        },
+        {
+          provide: MLCoinsService,
+          useValue: mockMLCoinsService,
+        },
+        {
+          provide: 'MissionsService',
+          useValue: mockMissionsService,
+        },
+        {
+          provide: 'NotificationsService',
+          useValue: mockNotificationsService,
+        },
+        {
+          provide: 'MailService',
+          useValue: mockMailService,
+        },
+      ],
+    }).compile();
+
+    service = module.get<ExerciseSubmissionService>(ExerciseSubmissionService);
+    submissionRepo = module.get(getRepositoryToken(ExerciseSubmission, 'progress'));
+    exerciseRepo = module.get(getRepositoryToken(Exercise, 'educational'));
+    profileRepo = module.get(getRepositoryToken(Profile, 'auth'));
+    entityManager = module.get(getEntityManagerToken('progress'));
+    userStatsService = module.get<UserStatsService>(UserStatsService);
+    mlCoinsService = module.get<MLCoinsService>(MLCoinsService);
+
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  describe('create', () => {
+    const createDto: any = {
+      user_id: 'profile-123',
+      exercise_id: 'exercise-456',
+      answer_data: { answer: 'test answer' },
+      max_score: 100,
+    };
+
+    it('should create new submission successfully', async () => {
+      // Arrange
+      const mockCreatedSubmission = {
+        id: 'submission-new',
+        ...createDto,
+        status: 'submitted',
+        submitted_at: new Date(),
+        hint_used: false,
+        hints_count: 0,
+        comodines_used: [],
+        ml_coins_spent: 0,
+        attempt_number: 1,
+        score: 0,
+      };
+
+      mockSubmissionRepo.create.mockReturnValue(mockCreatedSubmission);
+      mockSubmissionRepo.save.mockResolvedValue(mockCreatedSubmission);
+
+      // Act
+      const result = await service.create(createDto);
+
+      // Assert
+      expect(result).toBeDefined();
+      expect(result.status).toBe('submitted');
+      expect(result.score).toBe(0);
+      expect(result.max_score).toBe(100);
+      expect(mockSubmissionRepo.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          user_id: 'profile-123',
+          exercise_id: 'exercise-456',
+          status: 'submitted',
+          hint_used: false,
+          hints_count: 0,
+          score: 0,
+          max_score: 100,
+        }),
+      );
+      expect(mockSubmissionRepo.save).toHaveBeenCalled();
+    });
+
+    it('should use default values for optional fields', async () => {
+      // Arrange
+      const mockSubmission = {
+        id: 'submission-1',
+        ...createDto,
+        status: 'submitted',
+      };
+
+      mockSubmissionRepo.create.mockReturnValue(mockSubmission);
+      mockSubmissionRepo.save.mockResolvedValue(mockSubmission);
+
+      // Act
+      await service.create(createDto);
+
+      // Assert
+      expect(mockSubmissionRepo.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          hint_used: false,
+          hints_count: 0,
+          comodines_used: [],
+          ml_coins_spent: 0,
+          attempt_number: 1,
+        }),
+      );
+    });
+  });
+
+  describe('submitExercise - M5 Validation (diario_multimedia)', () => {
+    const userId = 'auth-user-123';
+    const profileId = 'profile-456';
+    const exerciseId = 'exercise-789';
+
+    const mockProfile = {
+      id: profileId,
+      user_id: userId,
+    };
+
+    const mockExercise = {
+      id: exerciseId,
+      title: 'Diario Multimedia',
+      exercise_type: 'diario_multimedia',
+      requires_manual_grading: true,
+      module_id: 'module-5',
+      xp_reward: 100,
+      ml_coins_reward: 20,
+      passing_score: 60,
+    };
+
+    beforeEach(() => {
+      mockProfileRepo.findOne.mockResolvedValue(mockProfile);
+      mockExerciseRepo.findOne.mockResolvedValue(mockExercise);
+      mockSubmissionRepo.findOne.mockResolvedValue(null); // No existing submission
+      mockNotificationsService.sendNotification.mockResolvedValue(true);
+      mockMailService.sendNotificationEmail.mockResolvedValue(true);
+      mockEntityManager.query.mockResolvedValue([
+        {
+          teacher_id: 'teacher-1',
+          teacher_email: 'teacher@example.com',
+          teacher_name: 'Test Teacher',
+          classroom_name: 'Test Classroom',
+        },
+      ]);
+    });
+
+    it('should reject diario_multimedia with less than 150 words', async () => {
+      // Arrange
+      const contentWith100Words = 'word '.repeat(100).trim();
+      const invalidAnswers = { content: contentWith100Words };
+
+      // Act & Assert
+      await expect(
+        service.submitExercise(userId, exerciseId, invalidAnswers),
+      ).rejects.toThrow(BadRequestException);
+
+      await expect(
+        service.submitExercise(userId, exerciseId, invalidAnswers),
+      ).rejects.toThrow('El diario debe tener al menos 150 palabras');
+    });
+
+    it('should accept diario_multimedia with exactly 150 words', async () => {
+      // Arrange
+      const contentWith150Words = 'word '.repeat(150).trim();
+      const validAnswers = { content: contentWith150Words };
+
+      const mockSubmission = {
+        id: 'submission-new',
+        user_id: profileId,
+        exercise_id: exerciseId,
+        answer_data: validAnswers,
+        status: 'graded',
+        score: 80,
+        max_score: 100,
+        is_correct: true,
+      };
+
+      mockSubmissionRepo.create.mockReturnValue(mockSubmission);
+      mockSubmissionRepo.save.mockResolvedValue(mockSubmission);
+
+      mockEntityManager.query.mockResolvedValue([
+        {
+          score: 80,
+          is_correct: true,
+          details: { correct_answers: 8, total_questions: 10 },
+          feedback: 'Good!',
+          audit_id: 'audit-123',
+          max_score: 100,
+        },
+      ]);
+
+      // Act
+      const result = await service.submitExercise(userId, exerciseId, validAnswers);
+
+      // Assert
+      expect(result).toBeDefined();
+      expect(mockSubmissionRepo.create).toHaveBeenCalled();
+    });
+
+    it('should accept diario_multimedia with more than 150 words', async () => {
+      // Arrange
+      const contentWith200Words = 'word '.repeat(200).trim();
+      const validAnswers = { content: contentWith200Words };
+
+      const mockSubmission = {
+        id: 'submission-new',
+        user_id: profileId,
+        exercise_id: exerciseId,
+        answer_data: validAnswers,
+        status: 'graded',
+        score: 90,
+        max_score: 100,
+        is_correct: true,
+      };
+
+      mockSubmissionRepo.create.mockReturnValue(mockSubmission);
+      mockSubmissionRepo.save.mockResolvedValue(mockSubmission);
+
+      mockEntityManager.query.mockResolvedValue([
+        {
+          score: 90,
+          is_correct: true,
+          details: {},
+          feedback: 'Excellent!',
+          audit_id: 'audit-123',
+          max_score: 100,
+        },
+      ]);
+
+      // Act
+      const result = await service.submitExercise(userId, exerciseId, validAnswers);
+
+      // Assert
+      expect(result).toBeDefined();
+      expect(mockSubmissionRepo.create).toHaveBeenCalled();
+    });
+  });
+
+  describe('submitExercise - Exercise Already Completed', () => {
+    const userId = 'auth-user-123';
+    const profileId = 'profile-456';
+    const exerciseId = 'exercise-789';
+
+    const mockProfile = {
+      id: profileId,
+      user_id: userId,
+    };
+
+    const mockExercise = {
+      id: exerciseId,
+      title: 'Test Exercise',
+      exercise_type: 'multiple_choice',
+      requires_manual_grading: true,
+      module_id: 'module-1',
+    };
+
+    beforeEach(() => {
+      mockProfileRepo.findOne.mockResolvedValue(mockProfile);
+      mockExerciseRepo.findOne.mockResolvedValue(mockExercise);
+    });
+
+    it('should throw error if exercise already completed (one submission only)', async () => {
+      // Arrange
+      const existingSubmission = {
+        id: 'submission-existing',
+        user_id: profileId,
+        exercise_id: exerciseId,
+        status: 'graded',
+      };
+
+      mockSubmissionRepo.findOne.mockResolvedValue(existingSubmission);
+
+      // Act & Assert
+      await expect(
+        service.submitExercise(userId, exerciseId, { answer: 'test' }),
+      ).rejects.toThrow(BadRequestException);
+
+      await expect(
+        service.submitExercise(userId, exerciseId, { answer: 'test' }),
+      ).rejects.toThrow('You have already submitted this exercise');
+    });
+
+    it('should throw error if draft submission exists', async () => {
+      // Arrange
+      const draftSubmission = {
+        id: 'submission-draft',
+        user_id: profileId,
+        exercise_id: exerciseId,
+        status: 'draft',
+      };
+
+      mockSubmissionRepo.findOne.mockResolvedValue(draftSubmission);
+
+      // Act & Assert
+      await expect(
+        service.submitExercise(userId, exerciseId, { answer: 'test' }),
+      ).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('countWords helper', () => {
+    it('should return 0 for empty string', () => {
+      // Arrange - Access private method via type casting
+      const privateService = service as any;
+
+      // Act
+      const result = privateService.countWords('');
+
+      // Assert
+      expect(result).toBe(0);
+    });
+
+    it('should return 0 for null/undefined', () => {
+      // Arrange
+      const privateService = service as any;
+
+      // Act & Assert
+      expect(privateService.countWords(null)).toBe(0);
+      expect(privateService.countWords(undefined)).toBe(0);
+    });
+
+    it('should count words correctly', () => {
+      // Arrange
+      const privateService = service as any;
+      const text = 'Este es un texto de prueba con siete palabras extra';
+
+      // Act
+      const result = privateService.countWords(text);
+
+      // Assert
+      expect(result).toBe(9);
+    });
+
+    it('should handle multiple spaces between words', () => {
+      // Arrange
+      const privateService = service as any;
+      const text = 'palabra1    palabra2     palabra3';
+
+      // Act
+      const result = privateService.countWords(text);
+
+      // Assert
+      expect(result).toBe(3);
+    });
+
+    it('should handle leading and trailing spaces', () => {
+      // Arrange
+      const privateService = service as any;
+      const text = '   palabra1 palabra2 palabra3   ';
+
+      // Act
+      const result = privateService.countWords(text);
+
+      // Assert
+      expect(result).toBe(3);
+    });
+
+    it('should handle newlines and tabs', () => {
+      // Arrange
+      const privateService = service as any;
+      const text = 'palabra1\npalabra2\tpalabra3';
+
+      // Act
+      const result = privateService.countWords(text);
+
+      // Assert
+      expect(result).toBe(3);
+    });
+
+    it('should count exactly 150 words', () => {
+      // Arrange
+      const privateService = service as any;
+      const text = 'word '.repeat(150).trim();
+
+      // Act
+      const result = privateService.countWords(text);
+
+      // Assert
+      expect(result).toBe(150);
+    });
+  });
+
+  describe('gradeSubmission', () => {
+    const submissionId = 'submission-123';
+
+    const mockSubmission = {
+      id: submissionId,
+      user_id: 'profile-456',
+      exercise_id: 'exercise-789',
+      answer_data: { answer: 'test' },
+      status: 'submitted',
+      score: 0,
+      max_score: 100,
+      attempt_number: 1,
+    };
+
+    it('should auto-grade submission using SQL validate_and_audit', async () => {
+      // Arrange
+      mockSubmissionRepo.findOne.mockResolvedValue(mockSubmission);
+
+      mockEntityManager.query.mockResolvedValue([
+        {
+          score: 85,
+          is_correct: true,
+          details: { correct_answers: 8, total_questions: 10 },
+          feedback: 'Good job!',
+          audit_id: 'audit-123',
+          max_score: 100,
+        },
+      ]);
+
+      mockSubmissionRepo.save.mockResolvedValue({
+        ...mockSubmission,
+        score: 85,
+        is_correct: true,
+        status: 'graded',
+        graded_at: new Date(),
+        feedback: 'Good job!',
+      });
+
+      mockExerciseRepo.findOne.mockResolvedValue({
+        id: 'exercise-789',
+        exercise_type: 'multiple_choice',
+      });
+
+      // Act
+      const result = await service.gradeSubmission(submissionId);
+
+      // Assert
+      expect(result.score).toBe(85);
+      expect(result.is_correct).toBe(true);
+      expect(result.status).toBe('graded');
+      expect(result.graded_at).toBeDefined();
+      expect(mockSubmissionRepo.save).toHaveBeenCalled();
+    });
+
+    it('should apply manual grading when score provided', async () => {
+      // Arrange
+      mockSubmissionRepo.findOne.mockResolvedValue(mockSubmission);
+      mockSubmissionRepo.save.mockResolvedValue({
+        ...mockSubmission,
+        score: 90,
+        is_correct: true,
+        status: 'graded',
+        feedback: 'Excellent work!',
+      });
+
+      // Act
+      const result = await service.gradeSubmission(submissionId, {
+        final_score: 90,
+        grader_id: 'teacher-123',
+        feedback: 'Excellent work!',
+      });
+
+      // Assert
+      expect(result.score).toBe(90);
+      expect(result.is_correct).toBe(true);
+      expect(result.feedback).toBe('Excellent work!');
+      expect(mockSubmissionRepo.save).toHaveBeenCalled();
+    });
+
+    it('should throw error if submission already graded', async () => {
+      // Arrange
+      const gradedSubmission = {
+        ...mockSubmission,
+        status: 'graded',
+      };
+
+      mockSubmissionRepo.findOne.mockResolvedValue(gradedSubmission);
+
+      // Act & Assert
+      await expect(service.gradeSubmission(submissionId)).rejects.toThrow(
+        BadRequestException,
+      );
+      await expect(service.gradeSubmission(submissionId)).rejects.toThrow(
+        'Submission already graded',
+      );
+    });
+
+    it('should throw error if submission not found', async () => {
+      // Arrange
+      mockSubmissionRepo.findOne.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.gradeSubmission('non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('should validate manual score range', async () => {
+      // Arrange
+      mockSubmissionRepo.findOne.mockResolvedValue(mockSubmission);
+
+      // Act & Assert - Score too high
+      await expect(
+        service.gradeSubmission(submissionId, { final_score: 150 }),
+      ).rejects.toThrow(BadRequestException);
+
+      // Act & Assert - Score negative
+      await expect(
+        service.gradeSubmission(submissionId, { final_score: -10 }),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should set is_correct to false if score < 60% (passing threshold)', async () => {
+      // Arrange
+      mockSubmissionRepo.findOne.mockResolvedValue(mockSubmission);
+      mockSubmissionRepo.save.mockResolvedValue({
+        ...mockSubmission,
+        score: 50,
+        is_correct: false,
+        status: 'graded',
+      });
+
+      // Act
+      const result = await service.gradeSubmission(submissionId, {
+        final_score: 50,
+      });
+
+      // Assert
+      expect(result.is_correct).toBe(false);
+    });
+  });
+
+  describe('findByUserId', () => {
+    const userId = 'profile-123';
+
+    it('should return all submissions for user ordered by date', async () => {
+      // Arrange
+      const mockSubmissions = [
+        {
+          id: 'sub-1',
+          user_id: userId,
+          submitted_at: new Date('2024-01-02'),
+        },
+        {
+          id: 'sub-2',
+          user_id: userId,
+          submitted_at: new Date('2024-01-01'),
+        },
+      ];
+
+      mockSubmissionRepo.find.mockResolvedValue(mockSubmissions);
+
+      // Act
+      const result = await service.findByUserId(userId);
+
+      // Assert
+      expect(result).toHaveLength(2);
+      expect(mockSubmissionRepo.find).toHaveBeenCalledWith({
+        where: { user_id: userId },
+        order: { submitted_at: 'DESC' },
+      });
+    });
+
+    it('should return empty array if no submissions found', async () => {
+      // Arrange
+      mockSubmissionRepo.find.mockResolvedValue([]);
+
+      // Act
+      const result = await service.findByUserId(userId);
+
+      // Assert
+      expect(result).toHaveLength(0);
+    });
+  });
+
+  describe('getSubmissionStats', () => {
+    const userId = 'profile-123';
+
+    it('should calculate submission statistics', async () => {
+      // Arrange
+      const mockSubmissions = [
+        {
+          id: 'sub-1',
+          user_id: userId,
+          status: 'graded',
+          score: 90,
+          max_score: 100,
+          hint_used: false,
+          time_spent_seconds: 300,
+        },
+        {
+          id: 'sub-2',
+          user_id: userId,
+          status: 'graded',
+          score: 100,
+          max_score: 100,
+          hint_used: false,
+          time_spent_seconds: 250,
+        },
+        {
+          id: 'sub-3',
+          user_id: userId,
+          status: 'submitted',
+          score: 0,
+          max_score: 100,
+          hint_used: true,
+          time_spent_seconds: 400,
+        },
+      ];
+
+      mockSubmissionRepo.find.mockResolvedValue(mockSubmissions);
+
+      // Act
+      const result = await service.getSubmissionStats(userId);
+
+      // Assert
+      expect(result.total_submissions).toBe(3);
+      expect(result.graded_submissions).toBe(2);
+      expect(result.completion_rate).toBe(66.67);
+      expect(result.average_score).toBe(95);
+      expect(result.perfect_scores_count).toBe(1);
+      expect(result.total_time_spent).toBe(950);
+    });
+
+    it('should return zeros for user with no submissions', async () => {
+      // Arrange
+      mockSubmissionRepo.find.mockResolvedValue([]);
+
+      // Act
+      const result = await service.getSubmissionStats(userId);
+
+      // Assert
+      expect(result.total_submissions).toBe(0);
+      expect(result.graded_submissions).toBe(0);
+      expect(result.completion_rate).toBe(0);
+      expect(result.average_score).toBe(0);
+      expect(result.perfect_scores_count).toBe(0);
+      expect(result.total_time_spent).toBe(0);
     });
   });
 });

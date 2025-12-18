@@ -233,7 +233,7 @@ export const RankUpModal: React.FC<RankUpModalProps> = ({ isOpen, onClose }) => 
                   transition={{ delay: 1.2 }}
                   className="text-center"
                 >
-                  <div className="inline-block rounded-full bg-gradient-to-r from-detective-orange to-detective-orange-dark px-6 py-3 text-lg font-bold text-white">
+                  <div className="inline-block rounded-full bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-3 text-lg font-bold text-white">
                     {currentRank.multiplier.toFixed(2)}x Multiplicador
                   </div>
                 </motion.div>

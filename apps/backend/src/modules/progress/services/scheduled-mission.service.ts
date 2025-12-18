@@ -1,9 +1,8 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThan, MoreThan, Between } from 'typeorm';
+import { Repository, LessThan, MoreThan } from 'typeorm';
 import { ScheduledMission } from '../entities';
 import { CreateScheduledMissionDto } from '../dto';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
 
 /**
  * ScheduledMissionService
@@ -62,7 +61,7 @@ export class ScheduledMissionService {
    * @returns Lista de misiones del estudiante
    * @note Este método requiere conocer las aulas del usuario, se debe integrar con ClassroomService
    */
-  async findByUserId(userId: string): Promise<ScheduledMission[]> {
+  async findByUserId(_userId: string): Promise<ScheduledMission[]> {
     // TODO: Integrar con ClassroomService para obtener classrooms del usuario
     // Por ahora, retornar todas las misiones activas como placeholder
     return this.scheduledMissionRepo.find({
@@ -93,7 +92,7 @@ export class ScheduledMissionService {
    * @param userId - ID del usuario
    * @returns Lista de misiones próximas
    */
-  async findUpcoming(userId: string): Promise<ScheduledMission[]> {
+  async findUpcoming(_userId: string): Promise<ScheduledMission[]> {
     const now = new Date();
 
     // TODO: Filtrar por classrooms del usuario

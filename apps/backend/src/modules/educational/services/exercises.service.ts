@@ -6,7 +6,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Exercise } from '../entities';
-import { DB_SCHEMAS } from '@shared/constants';
 import { ExerciseTypeEnum } from '@shared/constants/enums.constants';
 import { ClassroomMember } from '@/modules/social/entities/classroom-member.entity';
 import { AssignmentClassroom } from '@/modules/social/entities/assignment-classroom.entity';
@@ -174,7 +173,7 @@ export class ExercisesService {
       this.validateContentByExerciseType(exerciseType, content, config);
     }
 
-    await this.exerciseRepo.update(id, exerciseData);
+    await this.exerciseRepo.update(id, exerciseData as any);
     const updated = await this.findById(id);
     if (!updated) {
       throw new NotFoundException(`Exercise with ID ${id} not found after update`);
@@ -196,8 +195,8 @@ export class ExercisesService {
    */
   validateContentByExerciseType(
     exerciseType: ExerciseTypeEnum,
-    content: Record<string, any>,
-    config?: Record<string, any>,
+    content: Record<string, unknown>,
+    config?: Record<string, unknown>,
   ): void {
     if (!content) {
       throw new BadRequestException('Content is required');
@@ -231,8 +230,9 @@ export class ExercisesService {
           }
 
           // Validar que grid tenga dimensiones correctas
-          const rows = config?.gridSize?.rows || 0;
-          const cols = config?.gridSize?.cols || 0;
+          const gridSize = config?.gridSize as { rows?: number; cols?: number } | undefined;
+          const rows = gridSize?.rows || 0;
+          const cols = gridSize?.cols || 0;
 
           if (content.grid.length !== rows) {
             throw new BadRequestException(
@@ -314,6 +314,71 @@ export class ExercisesService {
         if (!content.topics || !content.arguments) {
           throw new BadRequestException(
             'Debate must have topics and arguments',
+          );
+        }
+        break;
+
+      // Module 4: Lectura Digital (requires_manual_grading = true)
+      case ExerciseTypeEnum.VERIFICADOR_FAKE_NEWS:
+        // Verificador fake news requiere texto/artículo a analizar
+        if (!content.article && !content.text && !content.newsItem) {
+          throw new BadRequestException(
+            'Verificador fake news must have article, text, or newsItem',
+          );
+        }
+        break;
+
+      case ExerciseTypeEnum.INFOGRAFIA_INTERACTIVA:
+        // Infografía requiere imagen o elementos visuales
+        if (!content.imageUrl && !content.elements && !content.sections) {
+          throw new BadRequestException(
+            'Infografía interactiva must have imageUrl, elements, or sections',
+          );
+        }
+        break;
+
+      case ExerciseTypeEnum.NAVEGACION_HIPERTEXTUAL:
+        // Navegación hipertextual requiere nodos/páginas conectadas
+        if (!content.nodes && !content.pages && !content.links) {
+          throw new BadRequestException(
+            'Navegación hipertextual must have nodes, pages, or links',
+          );
+        }
+        break;
+
+      case ExerciseTypeEnum.ANALISIS_MEMES:
+        // Análisis de memes requiere imagen del meme
+        if (!content.memeUrl && !content.imageUrl && !content.meme) {
+          throw new BadRequestException(
+            'Análisis de memes must have memeUrl, imageUrl, or meme',
+          );
+        }
+        break;
+
+      // Module 5: Producción Lectora (requires_manual_grading = true)
+      case ExerciseTypeEnum.DIARIO_MULTIMEDIA:
+        // Diario multimedia requiere prompts o temas
+        if (!content.prompts && !content.topics && !content.instructions) {
+          throw new BadRequestException(
+            'Diario multimedia must have prompts, topics, or instructions',
+          );
+        }
+        break;
+
+      case ExerciseTypeEnum.COMIC_DIGITAL:
+        // Comic digital requiere estructura de paneles o guía
+        if (!content.panels && !content.template && !content.instructions) {
+          throw new BadRequestException(
+            'Comic digital must have panels, template, or instructions',
+          );
+        }
+        break;
+
+      case ExerciseTypeEnum.VIDEO_CARTA:
+        // Video carta requiere destinatario y contexto
+        if (!content.recipient && !content.context && !content.instructions) {
+          throw new BadRequestException(
+            'Video carta must have recipient, context, or instructions',
           );
         }
         break;
@@ -410,10 +475,10 @@ export class ExercisesService {
    * @returns Sanitized content without correct answers
    */
   private sanitizeContent(
-    content: Record<string, any>,
-    config: Record<string, any>,
+    content: Record<string, unknown>,
+    config: Record<string, unknown>,
     exerciseType: ExerciseTypeEnum,
-  ): Record<string, any> {
+  ): Record<string, unknown> {
     if (!content) {
       return content;
     }
@@ -445,7 +510,7 @@ export class ExercisesService {
         break;
 
       case ExerciseTypeEnum.CRUCIGRAMA:
-      case 'crossword':
+      case 'crossword': {
         // ✅ FIX BUG-002: Generate empty grid and sanitize clues
         // Remove answer from each clue and add length
         if (sanitized.clues && Array.isArray(sanitized.clues)) {
@@ -462,11 +527,13 @@ export class ExercisesService {
         }
 
         // ✅ FE-060: Use config.gridSize directly (passed as parameter)
-        const gridSize = config?.gridSize || { rows: 15, cols: 15 };
+        const gridSizeRaw = config?.gridSize as { rows?: number; cols?: number } | undefined;
+        const gridSize = gridSizeRaw || { rows: 15, cols: 15 };
+        const cluesArray = (sanitized.clues || []) as Array<{ startRow: number; startCol: number; direction: string; length: number; number?: number }>;
         sanitized.grid = this.generateEmptyGrid(
           gridSize.rows || 15,
           gridSize.cols || 15,
-          sanitized.clues || [],
+          cluesArray,
         );
         sanitized.gridConfig = gridSize;
 
@@ -475,13 +542,14 @@ export class ExercisesService {
           hasConfig: !!config,
           gridSizeFromConfig: config?.gridSize,
           gridSizeUsed: gridSize,
-          gridGenerated: `${gridSize.rows}x${gridSize.cols}`,
+          gridGenerated: `${gridSize.rows || 15}x${gridSize.cols || 15}`,
           hasGrid: !!sanitized.grid,
           gridIsArray: Array.isArray(sanitized.grid),
-          gridDimensions: sanitized.grid?.length ? `${sanitized.grid.length}x${sanitized.grid[0]?.length}` : 'N/A',
-          cluesCount: sanitized.clues?.length,
+          gridDimensions: (sanitized.grid as unknown[] | undefined)?.length ? `${(sanitized.grid as unknown[]).length}x${((sanitized.grid as unknown[])[0] as unknown[] | undefined)?.length || 0}` : 'N/A',
+          cluesCount: cluesArray.length,
         });
         break;
+      }
 
       case ExerciseTypeEnum.LINEA_TIEMPO:
       case 'timeline':

@@ -93,7 +93,7 @@ export class ComodinesInventory {
     segunda_oportunidad_cost!: number;
 
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
     created_at!: Date;

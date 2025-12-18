@@ -80,7 +80,7 @@ export class InterventionAlertDto {
     description: 'Additional metrics and context data',
     example: { average_score: 45, exercises_failed: 3 },
   })
-    metrics?: Record<string, any>;
+    metrics?: Record<string, unknown>;
 
   @ApiProperty({
     enum: InterventionStatus,

@@ -260,7 +260,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Información de procesamiento JSON', example: {} })
   @IsOptional()
   @IsObject()
-    processing_info?: Record<string, any>;
+    processing_info?: Record<string, unknown>;
 
   // =====================================================
   // SEARCH & ORGANIZATION
@@ -381,7 +381,7 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Datos EXIF JSON', example: {} })
   @IsOptional()
   @IsObject()
-    exif_data?: Record<string, any>;
+    exif_data?: Record<string, unknown>;
 
   /**
    * Metadatos adicionales
@@ -389,5 +389,5 @@ export class CreateMediaFileDto {
   @ApiPropertyOptional({ description: 'Metadatos adicionales', example: {} })
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

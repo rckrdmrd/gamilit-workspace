@@ -55,5 +55,5 @@ export class CreateUserDto {
    */
   @IsObject({ message: 'Los metadatos deben ser un objeto JSON' })
   @IsOptional()
-    raw_user_meta_data?: Record<string, any>;
+    raw_user_meta_data?: Record<string, unknown>;
 }

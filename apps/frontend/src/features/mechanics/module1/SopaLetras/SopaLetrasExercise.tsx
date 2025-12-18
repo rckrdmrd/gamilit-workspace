@@ -8,8 +8,7 @@ import { SopaLetrasData, WordPosition } from './sopaLetrasTypes';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
-import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
+import { useInvalidateDashboard } from '@/shared/hooks';
 
 export interface SopaLetrasExerciseProps {
   exercise: SopaLetrasData;
@@ -37,8 +36,7 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
   actionsRef,
 }) => {
   const { user } = useAuth();
-  const { fetchUserProgress } = useRanksStore();
-  const { fetchBalance } = useEconomyStore();
+  const { syncAndInvalidate } = useInvalidateDashboard();
   const [_isSubmitting, _setIsSubmitting] = useState(false);
 
   // FE-059: Initialize words from words list only (wordsPositions field is sanitized)
@@ -320,8 +318,7 @@ export const SopaLetrasExercise: React.FC<SopaLetrasExerciseProps> = ({
         setShowFeedback(true);
 
         // Sync stores with backend (rewards already calculated and saved by backend)
-        await fetchUserProgress();
-        await fetchBalance();
+        await syncAndInvalidate();
 
         console.log('✅ [SopaLetras] Submission successful:', {
           attemptId: response.attemptId,

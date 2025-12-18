@@ -47,7 +47,7 @@ export class AutoSaveResponseDto {
       question_2: { option: 'A' },
     },
   })
-    partial_answers!: Record<string, any>;
+    partial_answers!: Record<string, unknown>;
 
   /**
    * Tiempo transcurrido guardado
@@ -69,7 +69,7 @@ export class AutoSaveResponseDto {
     },
     required: false,
   })
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 
   /**
    * Fecha de inicio del ejercicio

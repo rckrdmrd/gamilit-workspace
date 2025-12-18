@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, CheckCircle, XCircle } from 'lucide-react';
+import { Shield, CheckCircle, XCircle, Send, Loader2 } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { ArticleParser } from './ArticleParser';
@@ -12,8 +12,9 @@ import {
   VerificadorState,
   NewsArticle,
 } from './verificadorFakeNewsTypes';
-import { FeedbackData, normalizeProgressUpdate } from '@shared/components/mechanics/mechanicsTypes';
+import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
 
 export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
   exerciseId,
@@ -31,6 +32,34 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  // API submission hook
+  const { submit, isSubmitting } = useExerciseSubmission(exerciseId || '', {
+    onSuccess: (result) => {
+      setIsSubmitted(true);
+      const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+      setFeedback({
+        type: 'success',
+        title: '¡Verificación Enviada!',
+        message: 'Tu análisis ha sido enviado para revisión por el docente.',
+        score: result.score,
+        xpEarned: result.rewards?.xp || 0,
+        mlCoinsEarned: result.rewards?.mlCoins || 0,
+      });
+      setShowFeedback(true);
+      onComplete?.(result.score, timeSpent);
+    },
+    onError: (err) => {
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: err?.message || 'Hubo un problema al enviar tu verificación. Intenta de nuevo.',
+        score: 0,
+      });
+      setShowFeedback(true);
+    },
+  });
 
   const selectedArticle =
     exercise?.articles?.find((a: NewsArticle) => a.id === selectedArticleId) ||
@@ -62,12 +91,29 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
 
   // Progress tracking
   useEffect(() => {
-    const progress = calculateProgress();
+    const _progress = calculateProgress(); // Prefixed: calculated for future use
     const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
-    onProgressUpdate?.(
-      normalizeProgressUpdate(progress, results.length, Math.max(claims.length, 1), 0, timeSpent),
-    );
-  }, [claims, results]);
+    const score = calculateScore();
+    onProgressUpdate?.({
+      progress: {
+        currentStep: results.length,
+        totalSteps: Math.max(claims.length, 1),
+        score,
+        hintsUsed: 0,
+        timeSpent,
+      },
+      answers: {
+        selectedArticleId,
+        claims: claims.map((c) => ({ id: c.id, text: c.text })),
+        verificationResults: results.map((r) => ({
+          claimId: r.claimId,
+          verdict: r.verdict,
+          confidence: r.confidence,
+        })),
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [claims, results, selectedArticleId]);
 
   // Auto-save functionality
   useEffect(() => {
@@ -85,13 +131,14 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
 
   // Handle claim extraction
   const handleClaimExtraction = (text: string, start: number, end: number) => {
+    const contentLength = selectedArticle?.content?.length ?? 0;
     const newClaim: Claim = {
       id: `claim-${Date.now()}`,
       text,
       context:
-        selectedArticle?.content.slice(
+        selectedArticle?.content?.slice(
           Math.max(0, start - 50),
-          Math.min(selectedArticle.content.length, end + 50),
+          Math.min(contentLength, end + 50),
         ) || '',
       position: { start, end },
     };
@@ -105,6 +152,16 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
 
     // Get mock results for this article
     const articleResults = mockFactCheckResults[selectedArticleId] || [];
+
+    // Guard against empty array to prevent division by zero
+    if (articleResults.length === 0) {
+      console.warn(
+        '[VerificadorFakeNews] No mock results available for article:',
+        selectedArticleId,
+      );
+      return;
+    }
+
     const mockResult = articleResults[results.length % articleResults.length];
 
     if (mockResult) {
@@ -127,14 +184,49 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
     setResults([]);
     setFeedback(null);
     setShowFeedback(false);
+    setIsSubmitted(false);
   };
+
+  // Submit handler - sends to API for manual review
+  const handleSubmit = () => {
+    if (!exerciseId || results.length === 0 || isSubmitting || isSubmitted) return;
+
+    const submissionData = {
+      selectedArticleId,
+      articleTitle: selectedArticle?.title || '',
+      claims: claims.map((c) => ({
+        id: c.id,
+        text: c.text,
+        context: c.context,
+        position: c.position,
+      })),
+      verificationResults: results.map((r) => ({
+        claimId: r.claimId,
+        verdict: r.verdict,
+        confidence: r.confidence,
+        sources: r.sources,
+        explanation: r.explanation,
+      })),
+      summary: {
+        totalClaims: claims.length,
+        verifiedClaims: results.length,
+        trueClaims: results.filter((r) => r.verdict === 'true').length,
+        falseClaims: results.filter((r) => r.verdict === 'false').length,
+        averageConfidence: results.reduce((sum, r) => sum + r.confidence, 0) / results.length,
+      },
+    };
+
+    submit(submissionData);
+  };
+
+  const canSubmit = results.length >= 3 && !isSubmitting && !isSubmitted;
 
   return (
     <>
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Exercise Description */}
-          <div className="rounded-detective bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-detective-lg">
+          <div className="rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
             <div className="mb-2 flex items-center gap-3">
               <Shield className="h-8 w-8" />
               <h2 className="text-detective-2xl font-bold">Verificador de Noticias Falsas</h2>
@@ -216,6 +308,43 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
                   <p className="text-sm text-detective-text">Confianza Promedio</p>
                 </div>
               </div>
+
+              {/* Submit Button */}
+              <div className="mt-6 flex items-center justify-between">
+                <p className="text-sm text-detective-text-secondary">
+                  {results.length < 3
+                    ? `Verifica al menos 3 afirmaciones para enviar (${results.length}/3)`
+                    : isSubmitted
+                      ? '✓ Enviado para revisión'
+                      : 'Listo para enviar'}
+                </p>
+                <button
+                  onClick={handleSubmit}
+                  disabled={!canSubmit}
+                  className={`flex items-center gap-2 rounded-detective px-6 py-3 font-semibold transition-all ${
+                    canSubmit
+                      ? 'bg-gradient-to-r from-detective-blue to-detective-orange text-white shadow-detective hover:shadow-detective-lg'
+                      : 'cursor-not-allowed bg-gray-300 text-gray-500'
+                  }`}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      Enviando...
+                    </>
+                  ) : isSubmitted ? (
+                    <>
+                      <CheckCircle className="h-5 w-5" />
+                      Enviado
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-5 w-5" />
+                      Enviar Verificación
+                    </>
+                  )}
+                </button>
+              </div>
             </DetectiveCard>
           )}
         </div>
@@ -241,3 +370,5 @@ export const VerificadorFakeNewsExercise: React.FC<ExerciseProps> = ({
     </>
   );
 };
+
+export default VerificadorFakeNewsExercise;

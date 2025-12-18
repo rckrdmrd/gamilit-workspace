@@ -27,8 +27,11 @@ import {
   Coins,
   TrendingUp,
   BookOpen,
+  ClipboardCheck,
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useAttemptDetail } from '@apps/teacher/hooks/useExerciseResponses';
+import { ExerciseContentRenderer } from '@/shared/components/mechanics/ExerciseContentRenderer';
 
 // ============================================================================
 // TYPES
@@ -59,6 +62,28 @@ const formatDate = (dateString: string): string => {
     hour: '2-digit',
     minute: '2-digit',
   });
+};
+
+/**
+ * Determines if an exercise requires manual grading
+ * Modules 3, 4, 5 (creative exercises) require manual review
+ */
+const requiresManualGrading = (exerciseType: string): boolean => {
+  const manualGradingTypes = [
+    // Módulo 3
+    'podcast_argumentativo',
+    // Módulo 4
+    'verificador_fake_news',
+    'quiz_tiktok',
+    'analisis_memes',
+    'infografia_interactiva',
+    'navegacion_hipertextual',
+    // Módulo 5
+    'diario_multimedia',
+    'comic_digital',
+    'video_carta',
+  ];
+  return manualGradingTypes.includes(exerciseType);
 };
 
 // ============================================================================
@@ -105,7 +130,8 @@ const MetricBadge: React.FC<{
 const AnswerComparison: React.FC<{
   studentAnswer: Record<string, unknown>;
   correctAnswer: Record<string, unknown>;
-}> = ({ studentAnswer, correctAnswer }) => {
+  exerciseType?: string;
+}> = ({ studentAnswer, correctAnswer, exerciseType }) => {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       {/* Respuesta del Estudiante */}
@@ -115,9 +141,12 @@ const AnswerComparison: React.FC<{
           <h4 className="font-bold text-gray-800">Respuesta del Estudiante</h4>
         </div>
         <div className="rounded-lg bg-orange-50 p-4">
-          <pre className="overflow-x-auto whitespace-pre-wrap font-mono text-sm text-gray-800">
-            {JSON.stringify(studentAnswer, null, 2)}
-          </pre>
+          <ExerciseContentRenderer
+            exerciseType={exerciseType || 'unknown'}
+            answerData={studentAnswer}
+            correctAnswer={correctAnswer}
+            showComparison={true}
+          />
         </div>
       </div>
 
@@ -128,9 +157,10 @@ const AnswerComparison: React.FC<{
           <h4 className="font-bold text-gray-800">Respuesta Correcta</h4>
         </div>
         <div className="rounded-lg bg-green-50 p-4">
-          <pre className="overflow-x-auto whitespace-pre-wrap font-mono text-sm text-gray-800">
-            {JSON.stringify(correctAnswer, null, 2)}
-          </pre>
+          <ExerciseContentRenderer
+            exerciseType={exerciseType || 'unknown'}
+            answerData={correctAnswer}
+          />
         </div>
       </div>
     </div>
@@ -167,7 +197,18 @@ export const ResponseDetailModal: React.FC<ResponseDetailModalProps> = ({
   open,
   onClose,
 }) => {
+  const navigate = useNavigate();
   const { data: attempt, isLoading, error } = useAttemptDetail(attemptId, open);
+
+  /**
+   * Navigate to ReviewPanel with submissionId parameter
+   */
+  const handleGoToReview = () => {
+    if (attempt) {
+      onClose(); // Close modal first
+      navigate(`/teacher/reviews?submissionId=${attempt.id}`);
+    }
+  };
 
   if (!open) return null;
 
@@ -192,7 +233,7 @@ export const ResponseDetailModal: React.FC<ResponseDetailModalProps> = ({
             className="relative my-8 w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-2xl"
           >
             {/* Header */}
-            <div className="to-detective-yellow flex items-center justify-between bg-gradient-to-r from-detective-orange px-6 py-4">
+            <div className="flex items-center justify-between bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
               <h2 className="flex items-center gap-2 text-2xl font-bold text-white">
                 <FileText className="h-6 w-6" />
                 Detalle de Respuesta
@@ -343,6 +384,7 @@ export const ResponseDetailModal: React.FC<ResponseDetailModalProps> = ({
                     <AnswerComparison
                       studentAnswer={attempt.submitted_answers}
                       correctAnswer={attempt.correct_answer}
+                      exerciseType={attempt.exercise_type}
                     />
                   </div>
 
@@ -365,6 +407,16 @@ export const ResponseDetailModal: React.FC<ResponseDetailModalProps> = ({
 
             {/* Footer */}
             <div className="flex justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
+              {/* Botón Calificar - Solo para ejercicios que requieren revisión manual */}
+              {attempt && requiresManualGrading(attempt.exercise_type) && (
+                <button
+                  onClick={handleGoToReview}
+                  className="btn-detective flex items-center gap-2 rounded-lg px-6 py-2 font-semibold"
+                >
+                  <ClipboardCheck className="h-5 w-5" />
+                  Calificar
+                </button>
+              )}
               <button
                 onClick={onClose}
                 className="rounded-lg bg-gray-200 px-6 py-2 font-semibold text-gray-700 transition-colors hover:bg-gray-300"

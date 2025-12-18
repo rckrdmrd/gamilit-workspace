@@ -41,7 +41,7 @@ La Fase 2 se enfocó en **robustecimiento técnico** mediante una migración com
 
 | Schema | Tablas | Propósito |
 |--------|--------|-----------|
-| **auth** | 1 | Supabase Auth (sistema) |
+| **auth** | 1 | autenticación estándar (sistema) |
 | **auth_management** | 11 | Gestión de autenticación |
 | **educational_content** | 8 | Contenido educativo |
 | **gamification_system** | 12 | Sistema de gamificación |

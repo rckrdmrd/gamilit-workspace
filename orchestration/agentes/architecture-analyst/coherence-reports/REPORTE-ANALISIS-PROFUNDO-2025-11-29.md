@@ -43,7 +43,7 @@ Este reporte consolida el analisis profundo del proyecto GAMILIT, incluyendo bas
 |--------|--------|-----------|----------|---------|-----------|
 | admin_dashboard | 3 | 1 | 0 | 0 | Panel administrativo |
 | audit_logging | 7 | 4 | 1 | 5 | Auditoria y logs |
-| auth | 1 | 0 | 0 | 0 | Compatibilidad Supabase |
+| auth | 1 | 0 | 0 | 0 | Patrón estándar auth |
 | auth_management | 16 | 6 | 7 | 4 | Gestion usuarios |
 | communication | 1 | 0 | 0 | 0 | Mensajeria |
 | content_management | 9 | 4 | 4 | 2 | Gestion contenido |
@@ -55,7 +55,7 @@ Este reporte consolida el analisis profundo del proyecto GAMILIT, incluyendo bas
 | progress_tracking | 16 | 11 | 11 | 2 | Seguimiento progreso |
 | public | 0 | 0 | 0 | 0 | Vacio (legacy) |
 | social_features | 17 | 1 | 6 | 0 | Aulas, equipos |
-| storage | 0 | 0 | 0 | 0 | Delegado Supabase |
+| storage | 0 | 0 | 0 | 0 | Schema auxiliar |
 | system_configuration | 9 | 2 | 2 | 0 | Configuracion |
 
 ### 1.2 ENUMs Globales (00-prerequisites.sql)
@@ -81,7 +81,7 @@ NIVEL 0 (Base):
   └─ auth_management (usuarios, perfiles, tenants)
 
 NIVEL 1 (Dependientes directos):
-  ├─ auth (compatibilidad Supabase)
+  ├─ auth (patrón estándar auth)
   ├─ system_configuration
   ├─ audit_logging
   └─ notifications

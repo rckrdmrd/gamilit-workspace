@@ -8,7 +8,7 @@ import { GamilityRoleEnum } from '@shared/constants';
 
 describe('AuthService - Derived Fields (emailVerified & isActive)', () => {
   let service: AuthService;
-  let userRepository: Repository<User>;
+  let _userRepository: Repository<User>;
 
   const mockUserRepository = {
     findOne: jest.fn(),

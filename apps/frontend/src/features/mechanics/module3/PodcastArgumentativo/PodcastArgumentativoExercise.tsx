@@ -10,8 +10,7 @@ import type { ArgumentAnalysis } from '../../shared/aiTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
-import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
+import { useInvalidateDashboard } from '@/shared/hooks';
 import { useAudioRecorder } from '@/shared/hooks/useAudioRecorder';
 
 interface ExerciseProgressData {
@@ -53,8 +52,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
   initialData,
 }) => {
   const { user } = useAuth();
-  const { fetchUserProgress } = useRanksStore();
-  const { fetchBalance } = useEconomyStore();
+  const { syncAndInvalidate } = useInvalidateDashboard();
 
   // Audio Recorder Hook
   const {
@@ -71,6 +69,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
     resetRecording: resetRecordingHook,
     isSupported,
     isRecording,
+    isSecureContext,
   } = useAudioRecorder();
 
   const [exercise, setExercise] = useState<PodcastExercise | null>(null);
@@ -266,8 +265,7 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
       setCurrentScore(response.score);
 
       // Sync stores with backend (rewards already calculated and saved by backend)
-      await fetchUserProgress();
-      await fetchBalance();
+      await syncAndInvalidate();
 
       console.log('✅ [PodcastArgumentativo] Submission successful:', {
         score: response.score,
@@ -350,8 +348,24 @@ export const PodcastArgumentativoExercise: React.FC<ExerciseProps> = ({
               </div>
             </div>
 
+            {/* HTTPS Required */}
+            {!isSecureContext && (
+              <div className="mb-6 rounded-lg border-2 border-amber-200 bg-amber-50 p-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-6 w-6 flex-shrink-0 text-amber-600" />
+                  <div>
+                    <h4 className="mb-1 font-semibold text-amber-900">Conexión Segura Requerida</h4>
+                    <p className="text-sm text-amber-700">
+                      La grabación de audio requiere una conexión segura (HTTPS). Contacta al
+                      administrador del sistema para habilitar HTTPS en el servidor.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Unsupported Browser */}
-            {!isSupported && (
+            {isSecureContext && !isSupported && (
               <div className="mb-6 rounded-lg border-2 border-red-200 bg-red-50 p-4">
                 <div className="flex items-start gap-3">
                   <AlertCircle className="h-6 w-6 flex-shrink-0 text-red-600" />

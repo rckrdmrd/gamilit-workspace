@@ -20,7 +20,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
-import { TeacherGuard, ClassroomOwnershipGuard } from '../guards';
+import { TeacherGuard } from '../guards';
 import { StudentBlockingService } from '../services/student-blocking.service';
 import { TeacherClassroomsCrudService } from '../services/teacher-classrooms-crud.service';
 import {
@@ -28,6 +28,7 @@ import {
   UpdatePermissionsDto,
   StudentPermissionsResponseDto,
 } from '../dto/student-blocking';
+import { AuthRequest } from '@shared/types';
 import {
   CreateTeacherClassroomDto,
   UpdateTeacherClassroomDto,
@@ -117,9 +118,9 @@ export class TeacherClassroomsController {
   })
   async getClassrooms(
     @Query() query: GetClassroomsQueryDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<PaginatedTeacherClassroomsResponseDto> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.classroomsCrudService.getClassrooms(teacherId, query);
   }
 
@@ -152,9 +153,9 @@ export class TeacherClassroomsController {
   })
   async createClassroom(
     @Body() dto: CreateTeacherClassroomDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<TeacherClassroomResponseDto> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.classroomsCrudService.createClassroom(teacherId, dto);
   }
 
@@ -192,9 +193,9 @@ export class TeacherClassroomsController {
   })
   async getClassroomById(
     @Param('id') id: string,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<TeacherClassroomDetailResponseDto> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.classroomsCrudService.getClassroomById(id, teacherId);
   }
 
@@ -238,9 +239,9 @@ export class TeacherClassroomsController {
   async updateClassroom(
     @Param('id') id: string,
       @Body() dto: UpdateTeacherClassroomDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<TeacherClassroomResponseDto> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.classroomsCrudService.updateClassroom(id, teacherId, dto);
   }
 
@@ -287,9 +288,9 @@ export class TeacherClassroomsController {
   })
   async deleteClassroom(
     @Param('id') id: string,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<{ success: boolean; message: string }> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.classroomsCrudService.deleteClassroom(id, teacherId);
   }
 
@@ -343,9 +344,9 @@ export class TeacherClassroomsController {
   async getClassroomStudents(
     @Param('id') id: string,
       @Query() query: GetClassroomStudentsQueryDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<PaginatedStudentsResponseDto> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.classroomsCrudService.getClassroomStudents(id, teacherId, query);
   }
 
@@ -383,9 +384,9 @@ export class TeacherClassroomsController {
   })
   async getClassroomStats(
     @Param('id') id: string,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<ClassroomStatsDto> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.classroomsCrudService.getClassroomStats(id, teacherId);
   }
 
@@ -423,9 +424,9 @@ export class TeacherClassroomsController {
   })
   async getClassroomTeachers(
     @Param('classroomId') classroomId: string,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<TeacherInClassroomDto[]> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.classroomsCrudService.getClassroomTeachers(classroomId, teacherId);
   }
 
@@ -488,9 +489,9 @@ export class TeacherClassroomsController {
   })
   async getClassroomProgress(
     @Param('id') id: string,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<any> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.classroomsCrudService.getClassroomProgress(id, teacherId);
   }
 
@@ -544,9 +545,9 @@ export class TeacherClassroomsController {
     @Param('classroomId') classroomId: string,
       @Param('studentId') studentId: string,
       @Body() dto: BlockStudentDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<StudentPermissionsResponseDto> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.studentBlockingService.blockStudent(
       classroomId,
       studentId,
@@ -599,9 +600,9 @@ export class TeacherClassroomsController {
   async unblockStudent(
     @Param('classroomId') classroomId: string,
       @Param('studentId') studentId: string,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<StudentPermissionsResponseDto> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.studentBlockingService.unblockStudent(
       classroomId,
       studentId,
@@ -649,9 +650,9 @@ export class TeacherClassroomsController {
   async getStudentPermissions(
     @Param('classroomId') classroomId: string,
       @Param('studentId') studentId: string,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<StudentPermissionsResponseDto> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.studentBlockingService.getStudentPermissions(
       classroomId,
       studentId,
@@ -705,9 +706,9 @@ export class TeacherClassroomsController {
     @Param('classroomId') classroomId: string,
       @Param('studentId') studentId: string,
       @Body() dto: UpdatePermissionsDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<StudentPermissionsResponseDto> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.studentBlockingService.updateStudentPermissions(
       classroomId,
       studentId,

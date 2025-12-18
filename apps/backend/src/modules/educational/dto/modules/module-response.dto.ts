@@ -34,7 +34,7 @@ export class ModuleResponseDto {
     summary?: string;
 
   @Expose()
-    content!: Record<string, any>;
+    content!: Record<string, unknown>;
 
   @Expose()
     order_index!: number;
@@ -165,10 +165,10 @@ export class ModuleResponseDto {
     cover_image_url?: string;
 
   @Expose()
-    settings!: Record<string, any>;
+    settings!: Record<string, unknown>;
 
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   // =====================================================
   // AUDIT FIELDS

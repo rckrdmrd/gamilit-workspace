@@ -292,6 +292,7 @@ export default function ModuleDetailPage() {
   }
 
   // Calculate progress percentage based on actual completed exercises from progress data
+  // NOTE: apiClient does NOT transform snake_case -> camelCase, data comes in snake_case
   const completedExercises = progress?.completed_exercises || 0;
   const totalExercises = progress?.total_exercises || exercises.length;
   const progressPercentage =
@@ -320,15 +321,16 @@ export default function ModuleDetailPage() {
         </DetectiveButton>
 
         {/* Header Section - Compact */}
+        {/* NOTE: apiClient does NOT transform, data comes in snake_case */}
         <div className="mb-6">
           <div className="mb-2 flex items-center gap-2">
-            {module.difficulty && (
+            {module.difficulty_level && (
               <span
-                className={`rounded-md px-2 py-0.5 text-xs font-bold ${difficultyBgColors[module.difficulty] || 'bg-gray-100'} ${difficultyColors[module.difficulty] || 'text-gray-600'}`}
+                className={`rounded-md px-2 py-0.5 text-xs font-bold ${difficultyBgColors[module.difficulty_level] || 'bg-gray-100'} ${difficultyColors[module.difficulty_level] || 'text-gray-600'}`}
               >
                 {(
-                  difficultyLabels[module.difficulty] ||
-                  module.difficulty ||
+                  difficultyLabels[module.difficulty_level] ||
+                  module.difficulty_level ||
                   'DESCONOCIDO'
                 ).toUpperCase()}
               </span>
@@ -378,6 +380,7 @@ export default function ModuleDetailPage() {
         </EnhancedCard>
 
         {/* Statistics Section with colorful cards - Compact */}
+        {/* NOTE: apiClient does NOT transform, data comes in snake_case */}
         <div className="mb-6 grid grid-cols-3 gap-3 md:grid-cols-5">
           {/* Duration */}
           {module.estimated_duration_minutes && (
@@ -391,11 +394,11 @@ export default function ModuleDetailPage() {
           )}
 
           {/* Difficulty */}
-          {module.difficulty && (
+          {module.difficulty_level && (
             <ColorfulCard index={1} hover={false} padding="sm" className="text-center">
               <TrendingUp className="mx-auto mb-1 h-6 w-6 rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 p-1 text-white" />
               <p className="text-lg font-bold text-gray-900">
-                {difficultyLabels[module.difficulty] || module.difficulty}
+                {difficultyLabels[module.difficulty_level] || module.difficulty_level}
               </p>
               <p className="text-xs text-gray-600">Dificultad</p>
             </ColorfulCard>
@@ -428,6 +431,7 @@ export default function ModuleDetailPage() {
         </div>
 
         {/* Learning Objectives Section - Compact */}
+        {/* NOTE: apiClient does NOT transform, data comes in snake_case */}
         {module.learning_objectives && module.learning_objectives.length > 0 && (
           <EnhancedCard variant="info" padding="sm" hover={false} className="mb-6">
             <h2 className="mb-3 flex items-center gap-2 text-base font-bold text-detective-text">
@@ -446,6 +450,7 @@ export default function ModuleDetailPage() {
         )}
 
         {/* Competencies and Skills Section - Compact */}
+        {/* NOTE: apiClient does NOT transform, data comes in snake_case */}
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {/* Competencies */}
           {module.competencies && module.competencies.length > 0 && (

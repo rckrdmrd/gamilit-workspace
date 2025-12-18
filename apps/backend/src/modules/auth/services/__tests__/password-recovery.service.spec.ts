@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { PasswordRecoveryService } from '../password-recovery.service';
 import { User, PasswordResetToken } from '../../entities';
 import { MailService } from '@/modules/mail/mail.service';
@@ -18,9 +18,9 @@ import { MailService } from '@/modules/mail/mail.service';
  */
 describe('PasswordRecoveryService', () => {
   let service: PasswordRecoveryService;
-  let userRepository: Repository<User>;
-  let tokenRepository: Repository<PasswordResetToken>;
-  let mailService: MailService;
+  let _userRepository: Repository<User>;
+  let _tokenRepository: Repository<PasswordResetToken>;
+  let _mailService: MailService;
 
   // Mock repositories
   const mockUserRepository = {

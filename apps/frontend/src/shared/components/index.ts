@@ -19,6 +19,7 @@ export * from './Sidebar';
 
 // User Components
 export * from './Avatar';
+export * from './AvatarUpload';
 
 // Route Protection
 export * from './ProtectedRoute';

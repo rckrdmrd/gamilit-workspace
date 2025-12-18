@@ -141,5 +141,5 @@ export class CreateUserPreferencesDto {
   })
   @IsOptional()
   @IsObject()
-    preferences?: Record<string, any>;
+    preferences?: Record<string, unknown>;
 }

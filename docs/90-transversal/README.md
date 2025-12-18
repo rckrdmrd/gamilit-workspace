@@ -1,110 +1,109 @@
-# Documentación Transversal
+# Documentacion Transversal
 
-**Versión:** 2.0.0
-**Última Actualización:** 2025-11-28
-**Estado:** Consolidado
+**Version:** 3.0.0
+**Ultima Actualizacion:** 2025-12-18
+**Estado:** Consolidado - Solo documentacion definitiva
 
 ---
 
-## Propósito
+## Proposito
 
-Documentación cross-cutting del proyecto que no pertenece a una épica específica. Incluye inventarios, arquitectura, roadmap, métricas, y archivos históricos.
+Documentacion cross-cutting del proyecto que contiene **solo el estado actual** del sistema. Los archivos historicos, reportes de correcciones y logs han sido movidos a `orchestration/reportes/`.
+
+> **Principio:** Esta carpeta solo contiene documentacion definitiva y vigente.
 
 ---
 
 ## Estructura de Carpetas
 
-| Carpeta | Descripción | Archivos |
-|---------|-------------|----------|
-| **[inventarios/](./inventarios/)** | Referencias a inventarios (ver `orchestration/inventarios/`) | 2 |
-| **[arquitectura/](./arquitectura/)** | Diagramas, flujos, funciones utilitarias | 5 |
-| **[features/](./features/)** | Documentación de features completadas | 8 |
-| **[gaps/](./gaps/)** | Análisis de GAPs identificados | 6 |
-| **[roadmap/](./roadmap/)** | Roadmap general y por fase | 2 |
-| **[sprints/](./sprints/)** | Sprints históricos | 2 |
-| **[metricas/](./metricas/)** | Métricas del proyecto | 1 |
-| **[correcciones/](./correcciones/)** | Issues y correcciones | 5 |
-| **[restructuracion-v2/](./restructuracion-v2/)** | Reestructuración e implementaciones | 6 |
-| **[archivos-historicos/](./archivos-historicos/)** | Logs y reportes fechados (archivo) | ~20 |
+| Carpeta | Descripcion | Archivos | Estado |
+|---------|-------------|----------|--------|
+| **[arquitectura/](./arquitectura/)** | Diagramas, flujos, funciones utilitarias | 5 | Definitivo |
+| **[arquitectura-database/](./arquitectura-database/)** | Arquitectura de BD | 2 | Definitivo |
+| **[features/](./features/)** | Documentacion de features completadas | 7 | Definitivo |
+| **[inventarios-database/](./inventarios-database/)** | Inventarios detallados de BD | 7 | Definitivo |
+| **[roadmap/](./roadmap/)** | Roadmap general | 1 | Definitivo |
+| **[deuda-tecnica/](./deuda-tecnica/)** | Deuda tecnica documentada | 1 | Definitivo |
+| **[correcciones/](./correcciones/)** | Solo ISSUES-CRITICOS.md (backlog activo) | 1 | Vigente |
+| **[restructuracion-v2/](./restructuracion-v2/)** | Reestructuracion e implementaciones | 5 | Definitivo |
 
 ---
 
 ## Inventarios Consolidados
 
-> **Nota:** Los inventarios YAML están ubicados en `orchestration/inventarios/`, no en esta carpeta.
-> Ver [inventarios/README.md](./inventarios/README.md) para referencias.
+> **SSOT:** Los inventarios maestros estan en `orchestration/inventarios/`
 
-Los 4 inventarios más importantes del proyecto:
-
-| Inventario | Ubicación | Contenido |
+| Inventario | Ubicacion | Contenido |
 |------------|-----------|-----------|
-| **DATABASE_INVENTORY.yml** | `orchestration/inventarios/` | 13 schemas, 104 tablas, 162 índices |
-| **BACKEND_INVENTORY.yml** | `orchestration/inventarios/` | 20 módulos NestJS, 145 endpoints |
-| **FRONTEND_INVENTORY.yml** | `orchestration/inventarios/` | 15 features React, 200+ componentes |
-| **TRACEABILITY_MATRIX.yml** | `orchestration/inventarios/` | 16 épicas, 120+ User Stories |
+| **MASTER_INVENTORY.yml** | `orchestration/inventarios/` | Resumen consolidado |
+| **DATABASE_INVENTORY.yml** | `orchestration/inventarios/` | 16 schemas, 123 tablas, 185 RLS |
+| **BACKEND_INVENTORY.yml** | `orchestration/inventarios/` | 13 modulos, 417 endpoints |
+| **FRONTEND_INVENTORY.yml** | `orchestration/inventarios/` | 483 componentes, 89 hooks |
 
 ---
 
 ## Arquitectura
 
-| Archivo | Descripción |
+| Archivo | Descripcion |
 |---------|-------------|
 | [FLUJO-INICIALIZACION-USUARIO.md](./arquitectura/FLUJO-INICIALIZACION-USUARIO.md) | Flujo de registro y onboarding |
-| [DIAGRAMA-DEPENDENCIAS-INITIALIZE-USER-STATS.md](./arquitectura/DIAGRAMA-DEPENDENCIAS-INITIALIZE-USER-STATS.md) | Dependencias de inicialización |
-| [FUNCIONES-UTILITARIAS-GAMILIT.md](./arquitectura/FUNCIONES-UTILITARIAS-GAMILIT.md) | Funciones SQL específicas |
-| [FUNCIONES-UTILITARIAS-PUBLIC.md](./arquitectura/FUNCIONES-UTILITARIAS-PUBLIC.md) | Funciones SQL públicas |
+| [DIAGRAMA-DEPENDENCIAS-INITIALIZE-USER-STATS.md](./arquitectura/DIAGRAMA-DEPENDENCIAS-INITIALIZE-USER-STATS.md) | Dependencias de inicializacion |
+| [FUNCIONES-UTILITARIAS-GAMILIT.md](./arquitectura/FUNCIONES-UTILITARIAS-GAMILIT.md) | Funciones SQL especificas |
+| [FUNCIONES-UTILITARIAS-PUBLIC.md](./arquitectura/FUNCIONES-UTILITARIAS-PUBLIC.md) | Funciones SQL publicas |
 | [STORAGE-SYSTEM.md](./arquitectura/STORAGE-SYSTEM.md) | Sistema de almacenamiento |
 
 ---
 
-## Features Completadas
+## Features
 
-| Archivo | Descripción |
+| Archivo | Descripcion |
 |---------|-------------|
-| [FEATURES-IMPLEMENTADAS.md](./features/FEATURES-IMPLEMENTADAS.md) | Lista de features implementadas |
+| [FEATURES-IMPLEMENTADAS.md](./features/FEATURES-IMPLEMENTADAS.md) | Lista de features implementadas (86%) |
 | [FEATURES-PENDIENTES.md](./features/FEATURES-PENDIENTES.md) | Features pendientes |
 | [ADMIN-DASHBOARD-COMPLETO.md](./features/ADMIN-DASHBOARD-COMPLETO.md) | Dashboard admin |
-| [AUDIT-LOGGING-COMPLETO.md](./features/AUDIT-LOGGING-COMPLETO.md) | Sistema de auditoría |
+| [AUDIT-LOGGING-COMPLETO.md](./features/AUDIT-LOGGING-COMPLETO.md) | Sistema de auditoria |
 | [SOCIAL-FEATURES-COMPLETO.md](./features/SOCIAL-FEATURES-COMPLETO.md) | Features sociales |
+| [CONTENT-MANAGEMENT-COMPLETO.md](./features/CONTENT-MANAGEMENT-COMPLETO.md) | Gestion de contenido |
 
 ---
 
-## Archivos Históricos
+## Documentacion Historica
 
-Los archivos con fechas específicas (logs, reportes, validaciones) se encuentran en:
+Los archivos historicos han sido movidos a `orchestration/reportes/`:
 
-```
-archivos-historicos/
-└── 2025-11/
-    ├── VALIDACION-PRODUCCION-2025-11-24.md
-    ├── CHECKLIST-PRODUCCION-2025-11-24.md
-    ├── DESARROLLO-TEACHER-PORTAL-COMPLETO-2025-11-24.md
-    └── ... (20 archivos)
-```
+| Tipo | Nueva Ubicacion |
+|------|-----------------|
+| Reportes por fecha | `orchestration/reportes/historicos/2025-11/` |
+| Correcciones aplicadas | `orchestration/reportes/correcciones/` |
+| Reportes de implementacion | `orchestration/reportes/implementacion/` |
+| Gaps cerrados | `orchestration/reportes/gaps/` |
+| Database changelog | `orchestration/reportes/database/` |
 
-Estos archivos son referencias históricas del desarrollo. Para documentación actual, ver las carpetas principales.
-
----
-
-## Navegación Rápida
-
-- **¿Buscas un componente?** → [inventarios/](./inventarios/)
-- **¿Cómo funciona algo?** → [arquitectura/](./arquitectura/)
-- **¿Qué está implementado?** → [features/](./features/)
-- **¿Qué falta por hacer?** → [gaps/](./gaps/)
-- **¿Cuál es el plan?** → [roadmap/](./roadmap/)
-- **¿Qué se hizo antes?** → [archivos-historicos/](./archivos-historicos/)
+**Ver traza completa:** `orchestration/trazas/TRAZA-DOCUMENTACION-DEPRECADA.md`
 
 ---
 
-## Ver También
+## Navegacion Rapida
 
-- [docs/00-vision-general/](../00-vision-general/) - Visión del producto
-- [docs/95-guias-desarrollo/](../95-guias-desarrollo/) - Guías de desarrollo
+- **Buscar un componente?** → `orchestration/inventarios/`
+- **Como funciona algo?** → [arquitectura/](./arquitectura/)
+- **Que esta implementado?** → [features/](./features/)
+- **Issues pendientes?** → [correcciones/ISSUES-CRITICOS.md](./correcciones/ISSUES-CRITICOS.md)
+- **Cual es el plan?** → [roadmap/](./roadmap/)
+- **Historico de cambios?** → `orchestration/reportes/`
+
+---
+
+## Ver Tambien
+
+- [docs/00-vision-general/](../00-vision-general/) - Vision del producto
+- [docs/95-guias-desarrollo/](../95-guias-desarrollo/) - Guias de desarrollo
+- [docs/96-quick-reference/](../96-quick-reference/) - Referencias rapidas
 - [docs/97-adr/](../97-adr/) - Decisiones de arquitectura
+- [orchestration/reportes/](../../orchestration/reportes/) - Documentacion historica
 
 ---
 
-**Consolidado:** 2025-11-28
-**Archivos antes:** ~50 en raíz
-**Archivos después:** 2 en raíz, resto organizado en subcarpetas
+**Actualizado:** 2025-12-18
+**Por:** Requirements-Analyst
+**Nota:** Archivos historicos movidos a orchestration/reportes/ para mantener solo documentacion definitiva

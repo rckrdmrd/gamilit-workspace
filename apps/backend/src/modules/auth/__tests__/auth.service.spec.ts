@@ -17,12 +17,12 @@ jest.mock('bcrypt', () => ({
 
 describe('AuthService', () => {
   let service: AuthService;
-  let userRepository: Repository<User>;
-  let profileRepository: Repository<Profile>;
-  let tenantRepository: Repository<Tenant>;
-  let sessionRepository: Repository<UserSession>;
-  let attemptRepository: Repository<AuthAttempt>;
-  let jwtService: JwtService;
+  let _userRepository: Repository<User>;
+  let _profileRepository: Repository<Profile>;
+  let _tenantRepository: Repository<Tenant>;
+  let _sessionRepository: Repository<UserSession>;
+  let _attemptRepository: Repository<AuthAttempt>;
+  let _jwtService: JwtService;
 
   // Mock repositories
   const mockUserRepository = {

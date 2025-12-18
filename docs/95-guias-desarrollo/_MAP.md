@@ -1,6 +1,6 @@
 # _MAP: docs/03-desarrollo/
 
-**Última actualización:** 2025-11-07
+**Última actualización:** 2025-12-18
 **Estado:** 🟡 En desarrollo (estructura creada, contenido pendiente)
 **Versión:** 2.0 (RFC-0001)
 **Propósito:** Guías de desarrollo que mapean la estructura del código
@@ -57,7 +57,7 @@ apps/backend/src/modules/_MAP.md
 
 **Descripción:** Guías de desarrollo para el backend NestJS
 
-**Código que mapea:** `apps/backend/` (108 MB, ~45k LOC, 11 módulos)
+**Código que mapea:** `apps/backend/` (108 MB, ~45k LOC, 13 módulos)
 
 **Contenido actual:**
 - ✅ `GUARDS-Y-SEGURIDAD.md` - Guards y seguridad
@@ -87,7 +87,7 @@ apps/backend/src/modules/_MAP.md
 
 **Descripción:** Guías de desarrollo para el frontend React
 
-**Código que mapea:** `apps/frontend/` (15 MB, ~85k LOC, 180+ componentes)
+**Código que mapea:** `apps/frontend/` (15 MB, ~98k LOC, 483 componentes)
 
 **Contenido actual:**
 - ⚪ Ningún documento útil creado
@@ -117,7 +117,7 @@ apps/backend/src/modules/_MAP.md
 
 **Descripción:** Guías de PostgreSQL, migrations, y DDL
 
-**Código que mapea:** `apps/database/` (3.8 MB, 9 schemas, 44 tablas)
+**Código que mapea:** `apps/database/` (3.8 MB, 16 schemas, 123 tablas)
 
 **Contenido:**
 - Guías de schemas
@@ -533,7 +533,7 @@ Solo `docs/` contiene _MAP.md y referencias al código.
 
 ---
 
-**Generado:** 2025-11-07
+**Generado:** 2025-12-18
 **Método:** Sistema SIMCO - Fase 1 (Mapas P0)
 **Próxima actualización:** Tras crear 14 guías críticas
 **Versión:** 1.0.0

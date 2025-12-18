@@ -1,20 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { useUserGamification } from '@/shared/hooks/useUserGamification';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
-import { DataTable, Column } from '@shared/components/common/DataTable';
 import { Modal } from '@shared/components/common/Modal';
 import { FormField } from '@shared/components/common/FormField';
 import { ConfirmDialog } from '@shared/components/common/ConfirmDialog';
-import { Plus, Users, Settings, Trash2, Edit } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useOrganizations } from '../hooks/useOrganizations';
+import { getOrganizationStats } from '@/services/api/adminAPI';
 import type { Organization } from '../types';
+import {
+  InstitutionFilters,
+  InstitutionsTable,
+  InstitutionDetailModal,
+  type FilterValues,
+  type InstitutionStatsData,
+} from '../components/institutions';
 
 /**
  * AdminInstitutionsPage - Gestión de organizaciones/instituciones
- * Updated: 2025-11-19 - Migrated to use AdminLayout with sidebar
+ * Updated: 2025-12-05 - Refactored to use modular components (US-ADMIN-P2-002)
+ * Previous: 2025-11-19 - Migrated to use AdminLayout with sidebar
  */
 export default function AdminInstitutionsPage() {
   const { user, logout } = useAuth();
@@ -30,16 +38,55 @@ export default function AdminInstitutionsPage() {
     toggleFeature,
   } = useOrganizations();
 
+  // Modal states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isFeaturesModalOpen, setIsFeaturesModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  // Selected organization and form data
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
     plan: 'free' as 'free' | 'basic' | 'professional' | 'enterprise',
   });
+
+  // Filters state
+  const [filters, setFilters] = useState<FilterValues>({
+    search: '',
+    status: [],
+    plan: [],
+  });
+
+  // Stats data loaded from API (MEDIO-001 fix: replaced mock with real API call)
+  const [institutionStats, setInstitutionStats] = useState<InstitutionStatsData | null>(null);
+  const [statsLoading, setStatsLoading] = useState(false);
+
+  // Load organization stats when viewing detail
+  const loadOrganizationStats = useCallback(async (orgId: string) => {
+    setStatsLoading(true);
+    try {
+      const stats = await getOrganizationStats(orgId);
+      // Map API response to InstitutionStatsData format
+      setInstitutionStats({
+        totalStudents: stats.totalStudents,
+        activeStudents: stats.activeStudents,
+        totalTeachers: stats.totalTeachers,
+        totalClassrooms: stats.totalClassrooms,
+        averageProgress: stats.averageProgress,
+        storageUsed: stats.storageUsed,
+        lastActivity: stats.lastActivity,
+        trialEndsAt: stats.trialEndsAt,
+      });
+    } catch (err) {
+      console.error('Failed to load organization stats:', err);
+      setInstitutionStats(null);
+    } finally {
+      setStatsLoading(false);
+    }
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -98,7 +145,20 @@ export default function AdminInstitutionsPage() {
     }
   };
 
-  const openEditModal = (org: Organization) => {
+  // Handler para ver detalle (MEDIO-001: Now loads stats from API)
+  const handleViewInstitution = (org: Organization) => {
+    if (!org?.id) {
+      console.error('[AdminInstitutionsPage] Invalid org for view:', org);
+      return;
+    }
+    setSelectedOrg(org);
+    setIsDetailModalOpen(true);
+    // Load stats from API
+    loadOrganizationStats(org.id);
+  };
+
+  // Handler para editar
+  const handleEditInstitution = (org: Organization) => {
     // BUG-ADMIN-007: Validate org data before opening modal
     if (!org?.id || !org?.name) {
       console.error('[AdminInstitutionsPage] Invalid org for edit:', org);
@@ -109,7 +169,8 @@ export default function AdminInstitutionsPage() {
     setIsEditModalOpen(true);
   };
 
-  const openFeaturesModal = (org: Organization) => {
+  // Handler para gestionar features
+  const handleManageFeatures = (org: Organization) => {
     // BUG-ADMIN-007: Validate org data before opening modal
     if (!org?.id) {
       console.error('[AdminInstitutionsPage] Invalid org for features:', org);
@@ -117,6 +178,16 @@ export default function AdminInstitutionsPage() {
     }
     setSelectedOrg(org);
     setIsFeaturesModalOpen(true);
+  };
+
+  // Handler para filtros
+  const handleFilterChange = (newFilters: FilterValues) => {
+    setFilters(newFilters);
+  };
+
+  // Handler para reset de filtros
+  const handleResetFilters = () => {
+    setFilters({ search: '', status: [], plan: [] });
   };
 
   const handleToggleFeature = async (feature: string) => {
@@ -149,140 +220,28 @@ export default function AdminInstitutionsPage() {
     }
   };
 
-  const columns: Column<Organization>[] = [
-    {
-      key: 'name',
-      label: 'Organización',
-      sortable: true,
-      render: (row) => {
-        // BUG-ADMIN-007: Defensive validation for row data
-        if (!row?.id || !row?.name) {
-          console.warn('[AdminInstitutionsPage] Invalid organization row:', row);
-          return <div className="text-xs text-red-500">Datos inválidos</div>;
-        }
-        return (
-          <div>
-            <p className="font-medium text-detective-text">{row.name}</p>
-            <p className="text-xs text-gray-400">ID: {row.id}</p>
-          </div>
-        );
-      },
-    },
-    {
-      key: 'plan',
-      label: 'Plan',
-      sortable: true,
-      render: (row) => {
-        // BUG-ADMIN-007: Safe access to plan with fallback
-        const plan = row?.plan || 'free';
-        const planColors: Record<string, string> = {
-          free: 'bg-gray-500/20 text-gray-500',
-          basic: 'bg-green-500/20 text-green-500',
-          professional: 'bg-blue-500/20 text-blue-500',
-          enterprise: 'bg-purple-500/20 text-purple-500',
-        };
-        return (
-          <span
-            className={`rounded-lg px-2 py-1 text-xs font-medium ${planColors[plan] || planColors.free}`}
-          >
-            {plan.toUpperCase()}
-          </span>
-        );
-      },
-    },
-    {
-      key: 'status',
-      label: 'Estado',
-      sortable: true,
-      render: (row) => {
-        // BUG-ADMIN-007: Safe access to status with fallback
-        const status = row?.status || 'inactive';
-        const statusColors = {
-          active: 'bg-green-500/20 text-green-500',
-          inactive: 'bg-gray-500/20 text-gray-500',
-          suspended: 'bg-red-500/20 text-red-500',
-        };
-        const statusLabel =
-          status === 'active' ? 'Activo' : status === 'inactive' ? 'Inactivo' : 'Suspendido';
-        return (
-          <span
-            className={`rounded-lg px-2 py-1 text-xs font-medium ${statusColors[status] || statusColors.inactive}`}
-          >
-            {statusLabel}
-          </span>
-        );
-      },
-    },
-    {
-      key: 'userCount',
-      label: 'Usuarios',
-      sortable: true,
-      render: (row) => {
-        // BUG-ADMIN-007: Safe access to userCount with fallback
-        const userCount = row?.userCount ?? 0;
-        return (
-          <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-gray-400" />
-            <span className="text-detective-text">{userCount}</span>
-          </div>
-        );
-      },
-    },
-    {
-      key: 'createdAt',
-      label: 'Fecha Creación',
-      sortable: true,
-      render: (row) => {
-        // BUG-ADMIN-007: Safe date parsing with fallback
-        try {
-          const date = row?.createdAt ? new Date(row.createdAt) : new Date();
-          return date.toLocaleDateString('es-ES');
-        } catch (err) {
-          console.warn('[AdminInstitutionsPage] Invalid date for org:', row?.id, err);
-          return 'Fecha inválida';
-        }
-      },
-    },
-    {
-      key: 'actions',
-      label: 'Acciones',
-      render: (row) => (
-        <div className="flex gap-2">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              openEditModal(row);
-            }}
-            className="rounded-lg bg-blue-500/20 p-2 text-blue-500 transition-colors hover:bg-blue-500/30"
-            title="Editar"
-          >
-            <Edit className="h-4 w-4" />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              openFeaturesModal(row);
-            }}
-            className="rounded-lg bg-purple-500/20 p-2 text-purple-500 transition-colors hover:bg-purple-500/30"
-            title="Feature Flags"
-          >
-            <Settings className="h-4 w-4" />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setSelectedOrg(row);
-              setIsDeleteDialogOpen(true);
-            }}
-            className="rounded-lg bg-red-500/20 p-2 text-red-500 transition-colors hover:bg-red-500/30"
-            title="Eliminar"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
-        </div>
-      ),
-    },
-  ];
+  // Filtrar organizaciones según filtros activos
+  const filteredOrganizations = useMemo(() => {
+    let result = [...organizations];
+
+    // Filtro de búsqueda por nombre
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      result = result.filter((org) => org.name.toLowerCase().includes(searchLower));
+    }
+
+    // Filtro por estado
+    if (filters.status.length > 0) {
+      result = result.filter((org) => filters.status.includes(org.status));
+    }
+
+    // Filtro por plan
+    if (filters.plan.length > 0) {
+      result = result.filter((org) => filters.plan.includes(org.plan));
+    }
+
+    return result;
+  }, [organizations, filters]);
 
   const availableFeatures = [
     { key: 'analytics', label: 'Analytics Avanzado', plans: ['professional', 'enterprise'] },
@@ -329,32 +288,33 @@ export default function AdminInstitutionsPage() {
           </div>
         )}
 
-        {/* Loading State */}
-        {loading && !organizations.length ? (
-          <div className="py-12 text-center">
-            <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-detective-orange"></div>
-            <p className="mt-4 text-detective-text-secondary">Cargando organizaciones...</p>
-          </div>
-        ) : organizations.length > 0 ? (
-          /* Organizations Table */
-          <DataTable
-            data={organizations}
-            columns={columns}
-            searchPlaceholder="Buscar organizaciones..."
-          />
-        ) : (
-          /* Empty State - BUG-ADMIN-007: Show friendly message when no data */
-          <div className="rounded-lg border border-gray-700 bg-detective-bg-secondary py-12 text-center">
-            <div className="mb-4 text-6xl">🏢</div>
-            <h3 className="mb-2 text-lg font-semibold text-detective-text">
-              No hay organizaciones
-            </h3>
-            <p className="text-detective-text-secondary">
-              No se encontraron organizaciones en el sistema
-            </p>
-          </div>
-        )}
+        {/* Filters */}
+        <InstitutionFilters onFilter={handleFilterChange} onReset={handleResetFilters} />
+
+        {/* Institutions Table */}
+        <InstitutionsTable
+          institutions={filteredOrganizations}
+          loading={loading && !organizations.length}
+          onView={handleViewInstitution}
+          onEdit={handleEditInstitution}
+          onManageFeatures={handleManageFeatures}
+        />
       </div>
+
+      {/* Institution Detail Modal (MEDIO-001: Now uses real stats from API) */}
+      <InstitutionDetailModal
+        isOpen={isDetailModalOpen}
+        institution={selectedOrg}
+        stats={institutionStats}
+        loading={statsLoading}
+        onClose={() => {
+          setIsDetailModalOpen(false);
+          setSelectedOrg(null);
+          setInstitutionStats(null);
+        }}
+        onEdit={handleEditInstitution}
+        onManageFeatures={handleManageFeatures}
+      />
 
       {/* Create Modal */}
       <Modal

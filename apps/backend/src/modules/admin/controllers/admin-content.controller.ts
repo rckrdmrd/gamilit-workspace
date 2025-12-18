@@ -28,7 +28,7 @@ import {
   ListApprovalHistoryDto,
   PaginatedApprovalHistoryDto,
 } from '../dto/content';
-import { MediaFileResponseDto } from '@modules/content/dto/media-file-response.dto';
+import { AuthRequest } from '@shared/types';
 
 @ApiTags('Admin - Content')
 @Controller('admin/content')
@@ -70,9 +70,9 @@ export class AdminContentController {
   async approveContent(
     @Param('id') id: string,
       @Body() approvalDto: ApproveContentDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<ContentDto> {
-    const adminId = req.user?.id || req.user?.sub;
+    const adminId = req.user!.id;
     return this.adminContentService.approveContent(
       id,
       approvalDto,
@@ -88,9 +88,9 @@ export class AdminContentController {
   async approveExercise(
     @Param('id') id: string,
       @Body() approvalDto: ApproveContentDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<ContentDto> {
-    const adminId = req.user?.id || req.user?.sub;
+    const adminId = req.user!.id;
     return this.adminContentService.approveContent(
       id,
       approvalDto,
@@ -107,9 +107,9 @@ export class AdminContentController {
   async rejectContent(
     @Param('id') id: string,
       @Body() rejectionDto: RejectContentDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<ContentDto> {
-    const adminId = req.user?.id || req.user?.sub;
+    const adminId = req.user!.id;
     return this.adminContentService.rejectContent(
       id,
       rejectionDto,
@@ -125,9 +125,9 @@ export class AdminContentController {
   async rejectExercise(
     @Param('id') id: string,
       @Body() rejectionDto: RejectContentDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<ContentDto> {
-    const adminId = req.user?.id || req.user?.sub;
+    const adminId = req.user!.id;
     return this.adminContentService.rejectContent(
       id,
       rejectionDto,
@@ -158,9 +158,9 @@ export class AdminContentController {
   })
   async createVersion(
     @Body() dto: CreateVersionDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<VersionResponseDto> {
-    const adminId = req.user?.id || req.user?.sub;
+    const adminId = req.user!.id;
     return this.adminContentService.createVersion(dto, adminId);
   }
 

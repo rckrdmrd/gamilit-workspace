@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional, IsInt, Min, IsDateString } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { SubscriptionTierEnum } from '@shared/constants';
 
 export class UpdateSubscriptionDto {

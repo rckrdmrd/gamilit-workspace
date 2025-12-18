@@ -2,34 +2,33 @@
 -- GLIT Platform - Prerequisites (ENUMs y Funciones Base)
 -- Descripción: Todos los tipos y funciones que deben existir ANTES de crear tablas
 -- Creado: 2025-11-02
--- Actualizado: 2025-11-11 (DB-111 - Agregados roles Supabase)
+-- Actualizado: 2025-11-11 (DB-111 - Agregados roles estándar RLS)
 -- ============================================================================
 
 -- ============================================================================
--- ROLES DE SUPABASE (para compatibilidad local)
+-- ROLES ESTÁNDAR PARA RLS (Row Level Security)
 -- ============================================================================
--- Nota: Estos roles existen por defecto en Supabase Cloud pero no en PostgreSQL local.
--- Se crean condicionalmente para que RLS policies funcionen en ambos ambientes.
--- Refs: https://supabase.com/docs/guides/database/postgres/roles
+-- Nota: Estos roles son patrón estándar de la industria para RLS en PostgreSQL.
+-- Se crean condicionalmente para que RLS policies funcionen correctamente.
 
 DO $$ BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'authenticated') THEN
         CREATE ROLE authenticated;
-        COMMENT ON ROLE authenticated IS 'Supabase role: usuarios autenticados (cualquier rol GAMILIT)';
+        COMMENT ON ROLE authenticated IS 'Rol RLS: usuarios autenticados (cualquier rol GAMILIT)';
     END IF;
 END $$;
 
 DO $$ BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'anon') THEN
         CREATE ROLE anon;
-        COMMENT ON ROLE anon IS 'Supabase role: usuarios anónimos (sin autenticar)';
+        COMMENT ON ROLE anon IS 'Rol RLS: usuarios anónimos (sin autenticar)';
     END IF;
 END $$;
 
 DO $$ BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'service_role') THEN
         CREATE ROLE service_role;
-        COMMENT ON ROLE service_role IS 'Supabase role: servicio backend con privilegios elevados';
+        COMMENT ON ROLE service_role IS 'Rol RLS: servicio backend con privilegios elevados';
     END IF;
 END $$;
 
@@ -111,8 +110,19 @@ EXCEPTION WHEN duplicate_object THEN null; END $$;
 -- 📚 Documentación: gamification_system.achievement_category
 -- Requerimiento: docs/01-requerimientos/02-gamificacion/RF-GAM-001-achievements.md
 -- Especificación: docs/02-especificaciones-tecnicas/02-gamificacion/ET-GAM-001-achievements.md
+-- VERSIÓN: 1.1 (2025-12-15) - Agregados 'collection' y 'hidden' para alineación con Frontend
 DO $$ BEGIN
-    CREATE TYPE gamification_system.achievement_category AS ENUM ('progress', 'streak', 'completion', 'social', 'special', 'mastery', 'exploration');
+    CREATE TYPE gamification_system.achievement_category AS ENUM (
+        'progress',     -- Logros de progreso general
+        'streak',       -- Logros de rachas consecutivas
+        'completion',   -- Logros de completar contenido
+        'social',       -- Logros sociales (amigos, grupos)
+        'special',      -- Logros especiales/eventos
+        'mastery',      -- Logros de maestría/dominio
+        'exploration',  -- Logros de exploración
+        'collection',   -- Logros de colección (V1.1)
+        'hidden'        -- Logros ocultos/secretos (V1.1)
+    );
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 📚 Documentación: gamification_system.achievement_type
@@ -138,6 +148,20 @@ EXCEPTION WHEN duplicate_object THEN null; END $$;
 -- REMOVIDO (2025-11-11): Migrado a ddl/schemas/gamification_system/enums/notification_priority.sql
 -- Razón: Evitar duplicación (Política de Carga Limpia)
 -- El ENUM se define en el schema específico con documentación completa
+
+-- 📚 Documentación: gamification_system.shop_item_category
+-- Requerimiento: Sistema de tienda virtual con múltiples categorías de items
+-- Especificación: Categorías: cosmetics, profile, guild, social, consumable
+-- VERSIÓN: 1.0 (2025-11-29)
+DO $$ BEGIN
+    CREATE TYPE gamification_system.shop_item_category AS ENUM (
+        'cosmetics',     -- Cosméticos visuales (avatares, marcos, fondos)
+        'profile',       -- Items de perfil (títulos, badges visuales)
+        'guild',         -- Items de gremio (banderas, emblemas)
+        'social',        -- Items sociales (emojis, stickers)
+        'consumable'     -- Consumibles (boosts temporales, etc.)
+    );
+EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 -- 3. ENUMs de Contenido Educativo
 
@@ -168,18 +192,19 @@ DO $$ BEGIN
         -- Roadmap: docs/04-fase-backlog/
         -- Fecha: Movido a backlog 2025-11-19 (DB-126)
 
-        -- Module 4: Lectura Digital (5 mecánicas) ⚠️ BACKLOG
+        -- Module 4: Lectura Digital (9 mecánicas) ⚠️ BACKLOG
         -- Requieren: Validación de fuentes, análisis de imágenes, IA multimodal
         'analisis_memes', 'infografia_interactiva', 'navegacion_hipertextual', 'quiz_tiktok', 'verificador_fake_news',
+        -- Module 4: Producción Textual Digital (4 mecánicas adicionales) - AGREGADO 2025-12-18
+        'chat_literario', 'email_formal', 'ensayo_argumentativo', 'resena_critica',
 
         -- Module 5: Producción Lectora (3 mecánicas) ⚠️ BACKLOG
         -- Requieren: Rúbricas de evaluación creativa, revisión humana/IA
         'comic_digital', 'diario_multimedia', 'video_carta'
 
         -- ====================================================================
-        -- REMOVIDO 2025-11-17: Mecánicas no implementadas movidas a comentarios
+        -- ACTUALIZADO 2025-12-18: Agregados 4 tipos M4 previamente comentados
         -- ====================================================================
-        -- Futuros Módulo 4: 'resena_critica', 'chat_literario', 'email_formal', 'ensayo_argumentativo'
         -- Auxiliares potenciales: 'comprension_auditiva', 'collage_prensa', 'texto_movimiento', 'call_to_action'
     );
 EXCEPTION WHEN duplicate_object THEN null; END $$;
@@ -449,6 +474,7 @@ COMMENT ON TYPE auth_management.auth_provider IS 'Proveedores de autenticación 
 COMMENT ON TYPE gamification_system.achievement_category IS 'Categorías de logros para gamificación (v1.0)';
 COMMENT ON TYPE gamification_system.achievement_type IS 'Tipos de logros disponibles (badge, milestone, special, rank_promotion) (v1.0)';
 COMMENT ON TYPE gamification_system.comodin_type IS 'Tipos de comodines/power-ups (pistas, vision_lectora, segunda_oportunidad) (v1.0)';
+COMMENT ON TYPE gamification_system.shop_item_category IS 'Categorías de items de la tienda: cosmetics, profile, guild, social, consumable (v1.0 - 2025-11-29)';
 -- NOTA (2025-11-11): Los siguientes comentarios están en los archivos de ENUM correspondientes
 -- notification_type se crea en FASE 7: gamification_system/enums/notification_type.sql
 -- notification_priority se crea en FASE 7: gamification_system/enums/notification_priority.sql

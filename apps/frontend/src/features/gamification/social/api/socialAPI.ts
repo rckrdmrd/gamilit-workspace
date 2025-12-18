@@ -377,12 +377,14 @@ export const getActivePowerUps = async (): Promise<ActivePowerUp[]> => {
  * @param type - Leaderboard type
  * @param period - Time period
  * @param limit - Number of entries
+ * @param options - Additional options (schoolId, userId)
  * @returns Leaderboard entries
  */
 export const getLeaderboard = async (
   type: LeaderboardType,
   period: TimePeriod = 'all-time',
   limit: number = 100,
+  options?: { schoolId?: string; userId?: string },
 ): Promise<LeaderboardEntry[]> => {
   try {
     if (FEATURE_FLAGS.USE_MOCK_DATA) {
@@ -390,12 +392,53 @@ export const getLeaderboard = async (
       return [];
     }
 
-    const { data } = await apiClient.get<ApiResponse<LeaderboardEntry[]>>(
-      API_ENDPOINTS.leaderboards.byTypeAndPeriod(type, period),
-      { params: { limit } },
-    );
+    let endpoint: string;
 
-    return data.data;
+    switch (type) {
+      case 'global':
+        endpoint = '/gamification/leaderboard/global';
+        break;
+      case 'school':
+        if (!options?.schoolId) {
+          throw new Error('No school ID available');
+        }
+        endpoint = `/gamification/leaderboard/schools/${options.schoolId}`;
+        break;
+      case 'friends':
+        if (!options?.userId) {
+          throw new Error('No user ID available');
+        }
+        endpoint = `/gamification/leaderboard/friends/${options.userId}`;
+        break;
+      case 'classroom':
+        // Classroom is handled separately by getClassroomLeaderboard
+        throw new Error('Use getClassroomLeaderboard for classroom type');
+      default:
+        endpoint = '/gamification/leaderboard/global';
+    }
+
+    const { data } = await apiClient.get<ApiResponse<any>>(endpoint, {
+      params: { limit, timePeriod: period },
+    });
+
+    // Transform backend response to LeaderboardEntry format
+    const entries = data.data?.entries || data.data || [];
+    return entries.map((entry: any, index: number) => ({
+      rank: entry.rank || index + 1,
+      userId: entry.userId || entry.user_id,
+      username: entry.username || entry.display_name || 'Unknown',
+      avatar:
+        entry.avatar ||
+        entry.avatar_url ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(entry.username || entry.display_name || 'U')}`,
+      rankBadge: entry.currentRank || entry.current_rank || entry.rankBadge || 'Nacom',
+      score: entry.totalXP || entry.total_xp || entry.score || 0,
+      xp: entry.totalXP || entry.total_xp || 0,
+      mlCoins: entry.ml_coins || 0,
+      change: 0,
+      changeType: 'same' as const,
+      isCurrentUser: false,
+    }));
   } catch (error) {
     throw handleAPIError(error);
   }

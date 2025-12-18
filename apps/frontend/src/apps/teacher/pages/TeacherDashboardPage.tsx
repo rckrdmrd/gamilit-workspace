@@ -38,7 +38,7 @@ export default function TeacherDashboardPage() {
     <TeacherLayout
       user={user ?? undefined}
       gamificationData={displayGamificationData}
-      organizationName="Escuela Primaria Miguel Hidalgo"
+      organizationName={user?.organization?.name || 'Mi Institución'}
       onLogout={handleLogout}
     >
       <TeacherDashboard />

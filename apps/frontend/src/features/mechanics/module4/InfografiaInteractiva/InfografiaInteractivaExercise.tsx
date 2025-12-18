@@ -1,23 +1,47 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { BarChart3, Eye, Save, Download } from 'lucide-react';
+import { BarChart3, Eye, Save, Download, Send, Loader2, CheckCircle, Sparkles } from 'lucide-react';
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { InteractiveCard } from './InteractiveCard';
 import { DataVisualization } from './DataVisualization';
+import { DraggableCard } from './DraggableCard';
+import { DroppableZone } from './DroppableZone';
 import { InfografiaInteractivaData, InfoCard } from './infografiaInteractivaTypes';
 import {
   calculateScore,
   saveProgress,
   FeedbackData,
 } from '@shared/components/mechanics/mechanicsTypes';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
+interface ProgressData {
+  progress: {
+    currentStep: number;
+    totalSteps: number;
+    score: number;
+    hintsUsed: number;
+    timeSpent: number;
+  };
+  answers: Record<string, unknown>;
+}
 
 interface ExerciseProps {
   exerciseId: string;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
-  onProgressUpdate?: (progress: number) => void;
+  onProgressUpdate?: (data: ProgressData) => void;
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
   exercise?: InfografiaInteractivaData;
@@ -25,6 +49,7 @@ interface ExerciseProps {
 
 interface ExerciseState {
   cards: InfoCard[];
+  droppedCards: Record<string, string>; // zoneId -> cardId
 }
 
 const getDefaultExercise = (exerciseId: string, difficulty: string): InfografiaInteractivaData => ({
@@ -93,10 +118,57 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
   const defaultExercise = getDefaultExercise(exerciseId, difficulty);
   const currentExercise = exercise || defaultExercise;
   const [cards, setCards] = useState<InfoCard[]>(initialData?.cards || currentExercise.cards);
+  const [droppedCards, setDroppedCards] = useState<Record<string, string>>(
+    initialData?.droppedCards || {},
+  );
+  const [activeId, setActiveId] = useState<string | null>(null);
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [timeSpent, setTimeSpent] = useState(0);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [useDragDrop, setUseDragDrop] = useState(true); // Toggle between modes
+
+  // Drag and Drop sensors with support for touch devices
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // 8px movement required before drag starts
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250, // 250ms hold before drag starts (better for touch)
+        tolerance: 5,
+      },
+    }),
+  );
+
+  const { submit, isSubmitting } = useExerciseSubmission(exerciseId || '', {
+    onSuccess: (result) => {
+      setIsSubmitted(true);
+      const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+      setFeedback({
+        type: 'success',
+        title: '¡Ejercicio Enviado!',
+        message: 'Tu trabajo ha sido enviado para revisión por el docente.',
+        score: result.score,
+        xpEarned: result.rewards?.xp || 0,
+        mlCoinsEarned: result.rewards?.mlCoins || 0,
+      });
+      setShowFeedback(true);
+      onComplete?.(result.score, timeSpent);
+    },
+    onError: (err) => {
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: err?.message || 'Hubo un problema. Intenta de nuevo.',
+        score: 0,
+      });
+      setShowFeedback(true);
+    },
+  });
 
   const actionsRef = useRef<{
     handleReset?: () => void;
@@ -111,37 +183,113 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
 
   // Calculate progress
   const calculateProgress = () => {
+    if (useDragDrop) {
+      return (Object.keys(droppedCards).length / cards.length) * 100;
+    }
     const revealedCount = cards.filter((c) => c.revealed).length;
     return (revealedCount / cards.length) * 100;
+  };
+
+  // Drag and Drop handlers
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveId(null);
+
+    if (!over) return;
+
+    const draggedCardId = active.id as string;
+    const dropZoneId = over.id as string;
+
+    // Check if the card is being dropped in its correct zone
+    const isCorrectDrop = draggedCardId === dropZoneId;
+
+    if (isCorrectDrop) {
+      // Correct placement
+      setDroppedCards((prev) => ({
+        ...prev,
+        [dropZoneId]: draggedCardId,
+      }));
+      setCards((prev) =>
+        prev.map((card) => (card.id === draggedCardId ? { ...card, revealed: true } : card)),
+      );
+
+      // Show success feedback with animation
+      setFeedback({
+        type: 'success',
+        title: '¡Correcto!',
+        message: 'Has colocado el elemento en el lugar correcto.',
+        showConfetti: false,
+      });
+      setTimeout(() => setFeedback(null), 2000);
+    } else {
+      // Incorrect placement
+      setFeedback({
+        type: 'error',
+        title: 'Intenta de nuevo',
+        message: 'Este elemento no corresponde a esa posición.',
+        showConfetti: false,
+      });
+      setTimeout(() => setFeedback(null), 2000);
+    }
+  };
+
+  const handleDragCancel = () => {
+    setActiveId(null);
   };
 
   // Auto-save every 30 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      const currentState: ExerciseState = { cards };
+      const currentState: ExerciseState = { cards, droppedCards };
       saveProgress(exerciseId, currentState);
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [cards, exerciseId]);
+  }, [cards, droppedCards, exerciseId]);
 
   // Update progress
 
   useEffect(() => {
     const progress = calculateProgress();
+    const revealedCount = cards.filter((c) => c.revealed).length;
 
     const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     setTimeSpent(elapsed);
 
-    onProgressUpdate?.(progress);
+    onProgressUpdate?.({
+      progress: {
+        currentStep: useDragDrop ? Object.keys(droppedCards).length : revealedCount,
+        totalSteps: cards.length,
+        score: Math.round(progress),
+        hintsUsed: 0,
+        timeSpent: elapsed,
+      },
+      answers: {
+        elementsExplored: cards.filter((c) => c.revealed).map((c) => c.id),
+        droppedCards,
+        interactions: cards.reduce(
+          (acc, card) => ({
+            ...acc,
+            [card.id]: card.revealed,
+          }),
+          {},
+        ),
+      },
+    });
 
-    // Auto-complete when all cards are revealed
-    const allRevealed = cards.every((c) => c.revealed);
+    // Auto-complete when all cards are revealed or dropped correctly
+    const allRevealed = useDragDrop
+      ? Object.keys(droppedCards).length === cards.length
+      : cards.every((c) => c.revealed);
     if (allRevealed && !showFeedback) {
       setTimeout(() => handleCheck(), 1000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cards, onProgressUpdate, startTime]);
+  }, [cards, droppedCards, useDragDrop, onProgressUpdate, startTime]);
 
   // Handle card click
   const handleCardClick = (cardId: string) => {
@@ -189,7 +337,7 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
 
   // Handle save
   const handleSave = () => {
-    const currentState: ExerciseState = { cards };
+    const currentState: ExerciseState = { cards, droppedCards };
     saveProgress(exerciseId, currentState);
 
     setFeedback({
@@ -232,6 +380,26 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
     setShowFeedback(true);
   };
 
+  // Handle submit
+  const handleSubmit = () => {
+    if (!exerciseId || isSubmitting || isSubmitted) return;
+
+    const revealedCount = cards.filter((c) => c.revealed).length;
+    const completionPercentage = (revealedCount / cards.length) * 100;
+
+    submit({
+      interactedElements: cards.filter((c) => c.revealed).map((c) => c.id),
+      answers: cards.reduce(
+        (acc, card) => ({
+          ...acc,
+          [card.id]: card.revealed,
+        }),
+        {},
+      ),
+      completionPercentage,
+    });
+  };
+
   // Attach actions to ref
 
   useEffect(() => {
@@ -256,48 +424,129 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actionsRef]);
 
+  // Get available cards (not yet dropped)
+  const availableCards = cards.filter((card) => !Object.values(droppedCards).includes(card.id));
+  const activeCard = cards.find((card) => card.id === activeId);
+
   return (
     <>
       <DetectiveCard variant="default" padding="lg" className="mb-6">
         {/* Header */}
-        <div className="mb-6 rounded-detective bg-gradient-to-r from-detective-orange/10 to-detective-blue/10 p-6">
+        <div className="mb-6 rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
           <div className="mb-4 flex items-center gap-3">
-            <BarChart3 className="h-8 w-8 text-detective-orange" />
-            <h1 className="text-detective-3xl font-bold text-detective-text">
-              {currentExercise.title}
-            </h1>
+            <BarChart3 className="h-8 w-8" />
+            <h2 className="text-detective-2xl font-bold">{currentExercise.title}</h2>
           </div>
-          <p className="mb-4 text-detective-text-secondary">{currentExercise.description}</p>
+          <p className="mb-4 opacity-90">{currentExercise.description}</p>
           <div className="flex flex-wrap gap-3">
-            <DetectiveButton variant="gold" icon={<Eye />} onClick={handleRevealAll}>
-              Revelar Todos
+            <DetectiveButton
+              variant={useDragDrop ? 'gold' : 'secondary'}
+              icon={<Sparkles />}
+              onClick={() => setUseDragDrop(!useDragDrop)}
+            >
+              {useDragDrop ? 'Modo Drag & Drop' : 'Modo Click'}
             </DetectiveButton>
+            {!useDragDrop && (
+              <DetectiveButton variant="gold" icon={<Eye />} onClick={handleRevealAll}>
+                Revelar Todos
+              </DetectiveButton>
+            )}
           </div>
         </div>
 
         {/* Data Visualization */}
-        <div className="mb-6">
-          <DataVisualization cards={cards} onCardClick={handleCardClick} />
-        </div>
-
-        {/* Interactive Cards Grid */}
-        <div className="mb-6">
-          <h2 className="mb-4 text-detective-lg font-bold text-detective-text">
-            Elementos de la Infografía
-          </h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {cards.map((card, idx) => (
-              <motion.div
-                key={card.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: idx * 0.1 }}
-              >
-                <InteractiveCard card={card} onClick={() => handleCardClick(card.id)} />
-              </motion.div>
-            ))}
+        {!useDragDrop && (
+          <div className="mb-6">
+            <DataVisualization cards={cards} onCardClick={handleCardClick} />
           </div>
-        </div>
+        )}
+
+        {/* Drag and Drop Mode */}
+        {useDragDrop ? (
+          <DndContext
+            sensors={sensors}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            onDragCancel={handleDragCancel}
+          >
+            <div className="mb-6">
+              <h2 className="mb-4 text-detective-lg font-bold text-detective-text">
+                Zonas de Colocación
+              </h2>
+              <p className="mb-4 text-detective-sm text-detective-text-secondary">
+                Arrastra cada concepto a su zona correspondiente
+              </p>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {cards.map((card, idx) => (
+                  <motion.div
+                    key={card.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: idx * 0.1 }}
+                  >
+                    <DroppableZone
+                      id={card.id}
+                      title={card.title}
+                      position={card.position}
+                      isCorrect={droppedCards[card.id] === card.id}
+                      isOccupied={!!droppedCards[card.id]}
+                      droppedCard={cards.find((c) => c.id === droppedCards[card.id])}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <h2 className="mb-4 text-detective-lg font-bold text-detective-text">
+                Elementos Disponibles ({availableCards.length})
+              </h2>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {availableCards.map((card, idx) => (
+                  <motion.div
+                    key={card.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: idx * 0.1 }}
+                  >
+                    <DraggableCard id={card.id} title={card.title} content={card.content} />
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* Drag Overlay */}
+            <DragOverlay>
+              {activeCard ? (
+                <DraggableCard
+                  id={activeCard.id}
+                  title={activeCard.title}
+                  content={activeCard.content}
+                  isDragging
+                />
+              ) : null}
+            </DragOverlay>
+          </DndContext>
+        ) : (
+          /* Click Mode - Interactive Cards Grid */
+          <div className="mb-6">
+            <h2 className="mb-4 text-detective-lg font-bold text-detective-text">
+              Elementos de la Infografía
+            </h2>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {cards.map((card, idx) => (
+                <motion.div
+                  key={card.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: idx * 0.1 }}
+                >
+                  <InteractiveCard card={card} onClick={() => handleCardClick(card.id)} />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-3">
@@ -309,6 +558,34 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
           </DetectiveButton>
           <DetectiveButton variant="gold" icon={<Download />} onClick={handleExport}>
             Exportar
+          </DetectiveButton>
+          <DetectiveButton
+            variant="primary"
+            onClick={handleSubmit}
+            disabled={
+              (useDragDrop
+                ? Object.keys(droppedCards).length < cards.length
+                : !cards.every((c) => c.revealed)) ||
+              isSubmitting ||
+              isSubmitted
+            }
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Enviando...
+              </>
+            ) : isSubmitted ? (
+              <>
+                <CheckCircle className="h-5 w-5" />
+                Enviado
+              </>
+            ) : (
+              <>
+                <Send className="h-5 w-5" />
+                Enviar Respuestas
+              </>
+            )}
           </DetectiveButton>
         </div>
       </DetectiveCard>
@@ -330,3 +607,5 @@ export const InfografiaInteractivaExercise: React.FC<ExerciseProps> = ({
     </>
   );
 };
+
+export default InfografiaInteractivaExercise;

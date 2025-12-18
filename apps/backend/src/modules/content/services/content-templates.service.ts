@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ContentTemplate } from '../entities';
 import { CreateContentTemplateDto } from '../dto';
-import { DB_SCHEMAS } from '@shared/constants';
 
 /**
  * ContentTemplatesService
@@ -39,7 +38,7 @@ export class ContentTemplatesService {
    * @param category - Categoría (opcional, no usado en DDL pero útil para filtros futuros)
    * @returns Lista de plantillas
    */
-  async findAll(type?: string, category?: string): Promise<ContentTemplate[]> {
+  async findAll(type?: string): Promise<ContentTemplate[]> {
     const query = this.templateRepo.createQueryBuilder('t');
 
     if (type) {
@@ -141,7 +140,7 @@ export class ContentTemplatesService {
    * @param category - Categoría de plantilla
    * @returns Lista de plantillas de la categoría
    */
-  async findByCategory(category: string): Promise<ContentTemplate[]> {
+  async findByCategory(_category: string): Promise<ContentTemplate[]> {
     // Actualmente retorna todas ya que no existe el campo category en DDL
     // Se puede extender con metadata o agregando el campo en una migración futura
     return this.templateRepo.find({

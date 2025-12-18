@@ -5,6 +5,7 @@
 -- Schema: gamification_system
 -- Type: FUNCTION (IMMUTABLE - can be inlined and optimized)
 -- Created: 2025-11-29
+-- Updated: 2025-12-14 (v2.1 - Sync with 03-maya_ranks.sql seeds)
 -- Origin: Integrated from P0-001-migrate-maya-rank-values.sql
 -- =============================================================================
 
@@ -16,24 +17,25 @@
 -- Returns: TEXT - The Maya rank name
 -- Note: This is a pure function with no database dependencies
 --
--- Rank Thresholds:
---   - Ajaw: 0-999 XP (Level 1)
---   - Nacom: 1,000-2,999 XP (Level 2)
---   - Ah K'in: 3,000-5,999 XP (Level 3)
---   - Halach Uinic: 6,000-9,999 XP (Level 4)
---   - K'uk'ulkan: 10,000+ XP (Level 5, Maximum)
+-- Rank Thresholds v2.1 (synced with 03-maya_ranks.sql):
+--   - Ajaw: 0-499 XP (Level 1)
+--   - Nacom: 500-999 XP (Level 2)
+--   - Ah K'in: 1,000-1,499 XP (Level 3)
+--   - Halach Uinic: 1,500-1,899 XP (Level 4)
+--   - K'uk'ulkan: 1,900+ XP (Level 5, Maximum)
 -- =============================================================================
 
 CREATE OR REPLACE FUNCTION gamification_system.calculate_maya_rank_from_xp(xp INTEGER)
 RETURNS TEXT AS $$
 BEGIN
-    IF xp < 1000 THEN
+    -- v2.1 thresholds (synced with 03-maya_ranks.sql seeds)
+    IF xp < 500 THEN
         RETURN 'Ajaw';
-    ELSIF xp < 3000 THEN
+    ELSIF xp < 1000 THEN
         RETURN 'Nacom';
-    ELSIF xp < 6000 THEN
+    ELSIF xp < 1500 THEN
         RETURN 'Ah K''in';
-    ELSIF xp < 10000 THEN
+    ELSIF xp < 1900 THEN
         RETURN 'Halach Uinic';
     ELSE
         RETURN 'K''uk''ulkan';
@@ -43,8 +45,8 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 
 COMMENT ON FUNCTION gamification_system.calculate_maya_rank_from_xp(INTEGER) IS
     'Pure function: Calculates Maya rank from XP value without database queries.
-     IMMUTABLE for query optimization. Thresholds: Ajaw(0), Nacom(1000), Ah K''in(3000),
-     Halach Uinic(6000), K''uk''ulkan(10000+).';
+     IMMUTABLE for query optimization. v2.1 Thresholds: Ajaw(0-499), Nacom(500-999),
+     Ah K''in(1000-1499), Halach Uinic(1500-1899), K''uk''ulkan(1900+).';
 
 
 -- =============================================================================
@@ -56,6 +58,7 @@ COMMENT ON FUNCTION gamification_system.calculate_maya_rank_from_xp(INTEGER) IS
 --   rank TEXT - Current rank name
 -- Returns: NUMERIC(5,2) - Progress percentage (0.00 to 100.00)
 -- Note: This is a pure function with no database dependencies
+-- Updated: 2025-12-14 (v2.1 - Sync with 03-maya_ranks.sql seeds)
 -- =============================================================================
 
 CREATE OR REPLACE FUNCTION gamification_system.calculate_rank_progress_percentage(
@@ -67,20 +70,20 @@ DECLARE
     xp_in_rank INTEGER;
     rank_size INTEGER;
 BEGIN
-    -- Calculate XP earned within the current rank
+    -- Calculate XP earned within the current rank (v2.1 thresholds)
     CASE rank
         WHEN 'Ajaw' THEN
-            xp_in_rank := xp;
-            rank_size := 1000;
+            xp_in_rank := xp;           -- 0-499 XP
+            rank_size := 500;
         WHEN 'Nacom' THEN
-            xp_in_rank := xp - 1000;
-            rank_size := 2000;
+            xp_in_rank := xp - 500;     -- 500-999 XP
+            rank_size := 500;
         WHEN 'Ah K''in' THEN
-            xp_in_rank := xp - 3000;
-            rank_size := 3000;
+            xp_in_rank := xp - 1000;    -- 1000-1499 XP
+            rank_size := 500;
         WHEN 'Halach Uinic' THEN
-            xp_in_rank := xp - 6000;
-            rank_size := 4000;
+            xp_in_rank := xp - 1500;    -- 1500-1899 XP
+            rank_size := 400;
         WHEN 'K''uk''ulkan' THEN
             -- Maximum rank always shows 100%
             RETURN 100.00;
@@ -101,6 +104,7 @@ $$ LANGUAGE plpgsql IMMUTABLE;
 COMMENT ON FUNCTION gamification_system.calculate_rank_progress_percentage(INTEGER, TEXT) IS
     'Pure function: Calculates percentage progress within a Maya rank.
      Returns 0-100 based on XP earned within the rank. Maximum rank returns 100%.
+     v2.1 thresholds: Ajaw(500), Nacom(500), Ah K''in(500), Halach Uinic(400).
      IMMUTABLE for query optimization.';
 
 

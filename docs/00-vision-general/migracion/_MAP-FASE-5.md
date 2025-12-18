@@ -96,7 +96,7 @@ Contenido:
 - **ADR-001:** Selección de stack tecnológico
   - React 18 + TypeScript (frontend)
   - NestJS + TypeScript (backend)
-  - PostgreSQL/Supabase (database)
+  - PostgreSQL (database)
   - TailwindCSS + Shadcn/ui (UI)
 
 - **ADR-002:** Arquitectura de base de datos
@@ -105,7 +105,7 @@ Contenido:
   - Política de índices para performance
 
 - **ADR-003:** Estrategia de autenticación
-  - Supabase Auth como base
+  - autenticación estándar como base
   - RBAC con 6 roles (super_admin, admin, teacher, student, parent, moderator)
   - JWT tokens con refresh
 

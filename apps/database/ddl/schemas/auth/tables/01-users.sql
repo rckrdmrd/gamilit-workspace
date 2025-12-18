@@ -15,7 +15,7 @@ SET search_path TO auth, public;
 DROP TABLE IF EXISTS auth.users CASCADE;
 
 CREATE TABLE auth.users (
-    -- Core Supabase-compatible columns
+    -- Core authentication columns (patrón estándar de la industria)
     instance_id uuid,
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     aud varchar(255) DEFAULT 'authenticated',

@@ -20,7 +20,7 @@ export class UpdateUserDto extends PartialType(
 ) {
   // Hereda de CreateUserDto excepto password y email:
   // - role?: GamilityRoleEnum
-  // - raw_user_meta_data?: Record<string, any>
+  // - raw_user_meta_data?: Record<string, unknown>
 
   // Campos opcionales adicionales para actualización:
   // (actualmente solo role y raw_user_meta_data son editables)

@@ -3,8 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
   ConflictException,
-  ForbiddenException,
-} from '@nestjs/common';
+  } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ChallengeParticipant, PeerChallenge } from '../entities';

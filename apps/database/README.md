@@ -79,8 +79,8 @@ El script `create-database.sh` ejecuta los archivos DDL en este orden:
 
 1. **Prerequisites** - Schemas y ENUMs base
 2. **Gamilit Schema** - Funciones y vistas compartidas (utilities)
-3. **Auth Schema** - Autenticación Supabase
-4. **Storage Schema** - Storage Supabase
+3. **Auth Schema** - Autenticación base
+4. **Storage Schema** - Almacenamiento
 5. **Auth Management** - Gestión de usuarios
 6. **Educational Content** - Contenido educativo
 7. **Gamification System** - Sistema de gamificación

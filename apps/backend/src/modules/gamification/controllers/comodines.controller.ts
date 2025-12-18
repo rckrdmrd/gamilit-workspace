@@ -26,7 +26,6 @@ import { PurchaseComodinDto } from '../dto/comodines/purchase-comodin.dto';
 import { UseComodinDto } from '../dto/comodines/use-comodin.dto';
 import { InventoryResponseDto } from '../dto/comodines/inventory-response.dto';
 import { JwtAuthGuard } from '@/modules/auth/guards';
-import { ComodinTypeEnum } from '@/shared/constants/enums.constants';
 
 /**
  * ComodinesController

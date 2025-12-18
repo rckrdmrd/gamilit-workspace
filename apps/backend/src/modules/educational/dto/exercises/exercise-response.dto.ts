@@ -61,16 +61,16 @@ export class ExerciseResponseDto {
     exercise_type!: ExerciseTypeEnum;
 
   @Expose()
-    config!: Record<string, any>;
+    config!: Record<string, unknown>;
 
   @Expose()
-    content!: Record<string, any>;
+    content!: Record<string, unknown>;
 
   @Expose()
-    solution?: Record<string, any>;
+    solution?: Record<string, unknown>;
 
   @Expose()
-    rubric?: Record<string, any>;
+    rubric?: Record<string, unknown>;
 
   // =====================================================
   // GRADING & SCORING
@@ -132,7 +132,7 @@ export class ExerciseResponseDto {
     comodines_allowed!: ComodinTypeEnum[];
 
   @Expose()
-    comodines_config!: Record<string, any>;
+    comodines_config!: Record<string, unknown>;
 
   // =====================================================
   // GAMIFICATION & REWARDS
@@ -187,7 +187,7 @@ export class ExerciseResponseDto {
     prerequisites?: string[];
 
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   // =====================================================
   // AUDIT FIELDS

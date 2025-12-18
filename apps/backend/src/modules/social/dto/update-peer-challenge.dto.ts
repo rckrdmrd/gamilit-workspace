@@ -98,7 +98,7 @@ export class UpdatePeerChallengeDto {
   })
   @IsOptional()
   @IsObject()
-    rewards?: Record<string, any>;
+    rewards?: Record<string, unknown>;
 
   /**
    * Multiplicador de bonus para el ganador
@@ -122,7 +122,7 @@ export class UpdatePeerChallengeDto {
   })
   @IsOptional()
   @IsObject()
-    custom_rules?: Record<string, any>;
+    custom_rules?: Record<string, unknown>;
 
   /**
    * Metadatos adicionales
@@ -132,5 +132,5 @@ export class UpdatePeerChallengeDto {
   })
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

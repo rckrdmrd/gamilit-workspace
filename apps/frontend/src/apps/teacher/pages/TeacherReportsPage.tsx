@@ -106,12 +106,12 @@ export default function TeacherReportsPage() {
   const [filterType, setFilterType] = useState<ReportType | 'all'>('all');
   const [loading, setLoading] = useState(true);
 
-  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
+  // Use useUserGamification hook for real-time gamification data
   const { gamificationData } = useUserGamification(user?.id);
 
   // Fallback gamification data in case hook fails or user is not loaded
   const displayGamificationData = gamificationData || {
-    userId: user?.id || 'mock-teacher-id',
+    userId: user?.id || '',
     level: 1,
     totalXP: 0,
     mlCoins: 0,

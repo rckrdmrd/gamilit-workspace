@@ -272,13 +272,13 @@ export class ModuleProgress {
    * Analíticas de rendimiento (JSONB)
    */
   @Column({ type: 'jsonb', default: {} })
-    performance_analytics!: Record<string, any>;
+    performance_analytics!: Record<string, unknown>;
 
   /**
    * Observaciones del sistema (JSONB)
    */
   @Column({ type: 'jsonb', default: {} })
-    system_observations: Record<string, any> = {};
+    system_observations: Record<string, unknown> = {};
 
   // =====================================================
   // NOTES & FEEDBACK
@@ -304,7 +304,7 @@ export class ModuleProgress {
    * Metadatos adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Fecha y hora de creación del registro

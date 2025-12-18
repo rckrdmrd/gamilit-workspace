@@ -22,6 +22,7 @@ import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { GamilityRoleEnum } from '@/shared/constants';
 import { AssignmentsService } from '../services/assignments.service';
+import { AuthRequest } from '@shared/types';
 
 @Controller('student/assignments')
 @ApiTags('Student Assignments')
@@ -73,8 +74,8 @@ export class StudentAssignmentsController {
       }],
     },
   })
-  async getMyAssignments(@Query() query: any, @Request() req: any) {
-    const studentId = req.user?.userId || req.user?.sub;
+  async getMyAssignments(@Query() query: any, @Request() req: AuthRequest) {
+    const studentId = req.user!.id;
     return this.assignmentsService.findStudentAssignments(studentId, {
       status: query.status,
       classroomId: query.classroomId,
@@ -104,8 +105,8 @@ export class StudentAssignmentsController {
     status: 404,
     description: 'Tarea no encontrada o no asignada a este estudiante',
   })
-  async getAssignmentDetails(@Param('id') id: string, @Request() req: any) {
-    const studentId = req.user?.userId || req.user?.sub;
+  async getAssignmentDetails(@Param('id') id: string, @Request() req: AuthRequest) {
+    const studentId = req.user!.id;
     return this.assignmentsService.findStudentAssignmentById(id, studentId);
   }
 
@@ -137,8 +138,8 @@ export class StudentAssignmentsController {
       },
     },
   })
-  async getGradesSummary(@Request() req: any) {
-    const studentId = req.user?.userId || req.user?.sub;
+  async getGradesSummary(@Request() req: AuthRequest) {
+    const studentId = req.user!.id;
     return this.assignmentsService.getStudentGradesSummary(studentId);
   }
 }

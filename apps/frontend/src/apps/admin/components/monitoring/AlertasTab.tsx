@@ -19,72 +19,30 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
-import { AlertTriangle, CheckCircle, ExternalLink, Clock, Shield } from 'lucide-react';
-import type { SystemAlert, AlertsStats, SystemAlertSeverity } from '@/services/api/adminTypes';
+import { AlertTriangle, CheckCircle, ExternalLink, Shield } from 'lucide-react';
+import { AlertsStats } from '../alerts/AlertsStats';
+import {
+  getSeverityColorWithBorder,
+  getStatusTextColor,
+  getStatusLabel,
+  formatAlertTimestamp,
+} from '../alerts/alertUtils';
+import type {
+  SystemAlert,
+  AlertsStats as AlertsStatsType,
+  SystemAlertSeverity,
+} from '@/services/api/adminTypes';
 
 interface AlertasTabProps {
   alerts: SystemAlert[];
-  stats: AlertsStats | null;
+  stats: AlertsStatsType | null;
   isLoading: boolean;
   onRefresh: () => Promise<void>;
   onAcknowledge: (id: string, note?: string) => Promise<void>;
   onResolve: (id: string, note: string) => Promise<void>;
 }
 
-/**
- * Get severity color
- */
-function getSeverityColor(severity: SystemAlertSeverity): string {
-  switch (severity) {
-    case 'critical':
-      return 'bg-red-500/20 text-red-400 border-red-500/50';
-    case 'high':
-      return 'bg-orange-500/20 text-orange-400 border-orange-500/50';
-    case 'medium':
-      return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50';
-    case 'low':
-      return 'bg-blue-500/20 text-blue-400 border-blue-500/50';
-    default:
-      return 'bg-gray-500/20 text-gray-400 border-gray-500/50';
-  }
-}
-
-/**
- * Get status color
- */
-function getStatusColor(status: string): string {
-  switch (status) {
-    case 'open':
-      return 'text-red-400';
-    case 'acknowledged':
-      return 'text-yellow-400';
-    case 'resolved':
-      return 'text-green-400';
-    case 'suppressed':
-      return 'text-gray-400';
-    default:
-      return 'text-gray-400';
-  }
-}
-
-/**
- * Format timestamp
- */
-function formatTimestamp(timestamp: string): string {
-  const date = new Date(timestamp);
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  const minutes = Math.floor(diff / (1000 * 60));
-
-  if (minutes < 60) {
-    return `Hace ${minutes}m`;
-  } else if (hours < 24) {
-    return `Hace ${hours}h`;
-  } else {
-    return date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
-  }
-}
+// Utility functions imported from alertUtils.ts
 
 /**
  * Alertas Tab Component
@@ -92,6 +50,7 @@ function formatTimestamp(timestamp: string): string {
 export const AlertasTab: React.FC<AlertasTabProps> = ({
   alerts,
   stats,
+  isLoading,
   onAcknowledge,
   onResolve,
 }) => {
@@ -151,62 +110,8 @@ export const AlertasTab: React.FC<AlertasTabProps> = ({
         </DetectiveButton>
       </div>
 
-      {/* Statistics Cards */}
-      {stats && (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {/* Open Alerts */}
-          <DetectiveCard className="p-6">
-            <div className="mb-2 flex items-start justify-between">
-              <div>
-                <div className="mb-1 text-sm text-gray-400">Alertas Abiertas</div>
-                <div className="text-3xl font-bold text-red-400">{stats.open_alerts}</div>
-              </div>
-              <AlertTriangle className="h-5 w-5 text-red-400" />
-            </div>
-            <div className="text-xs text-gray-400">Requieren atención</div>
-          </DetectiveCard>
-
-          {/* Acknowledged Alerts */}
-          <DetectiveCard className="p-6">
-            <div className="mb-2 flex items-start justify-between">
-              <div>
-                <div className="mb-1 text-sm text-gray-400">Reconocidas</div>
-                <div className="text-3xl font-bold text-yellow-400">
-                  {stats.acknowledged_alerts}
-                </div>
-              </div>
-              <Clock className="h-5 w-5 text-yellow-400" />
-            </div>
-            <div className="text-xs text-gray-400">En proceso</div>
-          </DetectiveCard>
-
-          {/* Resolved Alerts */}
-          <DetectiveCard className="p-6">
-            <div className="mb-2 flex items-start justify-between">
-              <div>
-                <div className="mb-1 text-sm text-gray-400">Resueltas</div>
-                <div className="text-3xl font-bold text-green-400">{stats.resolved_alerts}</div>
-              </div>
-              <CheckCircle className="h-5 w-5 text-green-400" />
-            </div>
-            <div className="text-xs text-gray-400">Completadas</div>
-          </DetectiveCard>
-
-          {/* Average Resolution Time */}
-          <DetectiveCard className="p-6">
-            <div className="mb-2 flex items-start justify-between">
-              <div>
-                <div className="mb-1 text-sm text-gray-400">Tiempo Promedio</div>
-                <div className="text-2xl font-bold text-purple-400">
-                  {stats.avg_resolution_time_hours.toFixed(1)}h
-                </div>
-              </div>
-              <Clock className="h-5 w-5 text-purple-400" />
-            </div>
-            <div className="text-xs text-gray-400">De resolución</div>
-          </DetectiveCard>
-        </div>
-      )}
+      {/* Statistics Cards - Reutilizando AlertsStats component */}
+      <AlertsStats stats={stats} isLoading={isLoading} />
 
       {/* Recent Alerts */}
       <DetectiveCard className="p-6">
@@ -248,22 +153,19 @@ export const AlertasTab: React.FC<AlertasTabProps> = ({
                   <div className="min-w-0 flex-1">
                     <div className="mb-2 flex flex-wrap items-center gap-2">
                       <span
-                        className={`rounded border px-2 py-1 text-xs font-semibold ${getSeverityColor(
+                        className={`rounded border px-2 py-1 text-xs font-semibold ${getSeverityColorWithBorder(
                           alert.severity,
                         )}`}
                       >
                         {alert.severity.toUpperCase()}
                       </span>
 
-                      <span className={`text-sm font-semibold ${getStatusColor(alert.status)}`}>
-                        {alert.status === 'open' && 'ABIERTA'}
-                        {alert.status === 'acknowledged' && 'RECONOCIDA'}
-                        {alert.status === 'resolved' && 'RESUELTA'}
-                        {alert.status === 'suppressed' && 'SUPRIMIDA'}
+                      <span className={`text-sm font-semibold ${getStatusTextColor(alert.status)}`}>
+                        {getStatusLabel(alert.status).toUpperCase()}
                       </span>
 
                       <span className="text-xs text-gray-500">
-                        {formatTimestamp(alert.triggered_at)}
+                        {formatAlertTimestamp(alert.triggered_at)}
                       </span>
 
                       {alert.alert_type && (

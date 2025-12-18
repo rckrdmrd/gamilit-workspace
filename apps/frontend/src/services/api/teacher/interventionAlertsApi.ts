@@ -1,4 +1,3 @@
-/* eslint-disable rulesdir/no-api-route-issues */
 /**
  * Intervention Alerts API Client
  *
@@ -8,7 +7,7 @@
  * @module interventionAlertsApi
  */
 
-import { apiClient } from '../apiClient';
+import { apiClient } from '@/services/api/apiClient';
 
 // ============================================================================
 // TYPES & INTERFACES

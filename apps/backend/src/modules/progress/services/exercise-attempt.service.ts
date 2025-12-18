@@ -3,12 +3,12 @@ import { InjectRepository, InjectEntityManager } from '@nestjs/typeorm';
 import { Repository, EntityManager } from 'typeorm';
 import { ExerciseAttempt } from '../entities';
 import { CreateExerciseAttemptDto } from '../dto';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
 import { TransactionTypeEnum, ComodinTypeEnum } from '@shared/constants/enums.constants';
 import { MLCoinsService } from '@/modules/gamification/services/ml-coins.service';
 import { UserStatsService } from '@/modules/gamification/services/user-stats.service';
 import { MissionsService } from '@/modules/gamification/services/missions.service';
 import { ComodinesService } from '@/modules/gamification/services/comodines.service';
+import { AchievementsService } from '@/modules/gamification/services/achievements.service';
 import { MissionTypeEnum } from '@/modules/gamification/entities/mission.entity';
 import { Exercise } from '@/modules/educational/entities';
 
@@ -36,6 +36,7 @@ export class ExerciseAttemptService {
     private readonly userStatsService: UserStatsService,
     private readonly missionsService: MissionsService,
     private readonly comodinesService: ComodinesService,
+    private readonly achievementsService: AchievementsService,
     @InjectEntityManager('progress')
     private readonly entityManager: EntityManager,
   ) {}
@@ -143,7 +144,7 @@ export class ExerciseAttemptService {
    */
   async submitAttempt(
     id: string,
-    answers: Record<string, any>,
+    answers: Record<string, unknown>,
   ): Promise<ExerciseAttempt> {
     const attempt = await this.attemptRepo.findOne({ where: { id } });
 
@@ -155,7 +156,7 @@ export class ExerciseAttemptService {
     attempt.submitted_at = new Date();
 
     // FE-059: Use SQL validate_and_audit() for scoring (replaces placeholder)
-    const { score, isCorrect, feedback, details, auditId } = await this.calculateScore(
+    const { score, isCorrect, feedback: _feedback, details: _details, auditId } = await this.calculateScore(
       attempt.user_id,
       attempt.exercise_id,
       answers,
@@ -186,6 +187,21 @@ export class ExerciseAttemptService {
     // Otorgar recompensas automáticamente si el intento fue correcto
     if (isCorrect && (attempt.xp_earned > 0 || attempt.ml_coins_earned > 0)) {
       await this.awardRewards(attempt.user_id, attempt.exercise_id, attempt.xp_earned, attempt.ml_coins_earned);
+
+      // Detectar y otorgar logros automáticamente después de rewards
+      try {
+        const earnedAchievements = await this.achievementsService.detectAndGrantEarned(attempt.user_id);
+        if (earnedAchievements.length > 0) {
+          this.logger.log(
+            `Granted ${earnedAchievements.length} achievement(s) to user ${attempt.user_id}`,
+          );
+        }
+      } catch (error) {
+        // Log pero no bloquear - los achievements no deben romper el flujo de rewards
+        this.logger.error(
+          `Error detecting achievements for user ${attempt.user_id}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
     }
 
     return savedAttempt;
@@ -206,7 +222,7 @@ export class ExerciseAttemptService {
   private async calculateScore(
     userId: string,
     exerciseId: string,
-    answers: Record<string, any>,
+    answers: Record<string, unknown>,
     attemptNumber: number,
   ): Promise<{
       score: number;
@@ -626,6 +642,39 @@ export class ExerciseAttemptService {
       `, [userId, moduleId, newStatus, progressPercentage, completedExercises, totalExercises, xpEarned, mlCoinsEarned]);
 
       this.logger.log('[BUG-002 FIX] ✅ Module progress updated successfully');
+
+      // IMPL-002: Si el módulo acaba de completarse por primera vez, incrementar modules_completed en user_stats
+      if (newStatus === 'completed') {
+        // Solo incrementar si el módulo no estaba previamente completado
+        const updateResult = await this.entityManager.query(`
+          UPDATE gamification_system.user_stats
+          SET modules_completed = modules_completed + 1,
+              updated_at = NOW()
+          WHERE user_id = $1
+            AND NOT EXISTS (
+              SELECT 1 FROM progress_tracking.module_progress mp
+              WHERE mp.user_id = $1 AND mp.module_id = $2
+                AND mp.status = 'completed'
+                AND mp.completed_at < NOW() - INTERVAL '5 seconds'
+            )
+        `, [userId, moduleId]);
+
+        if (updateResult?.[1] > 0) {
+          this.logger.log(`[IMPL-002] ✅ Incremented modules_completed for user ${userId}`);
+        }
+      }
+
+      // IMPL-003: Actualizar streak del usuario después de completar ejercicio
+      try {
+        await this.entityManager.query(
+          `SELECT * FROM gamification_system.update_leaderboard_streaks($1)`,
+          [userId]
+        );
+        this.logger.log(`[IMPL-003] ✅ Updated streak for user ${userId}`);
+      } catch (streakError) {
+        const streakMsg = streakError instanceof Error ? streakError.message : String(streakError);
+        this.logger.warn(`[IMPL-003] ⚠️ Could not update streak: ${streakMsg}`);
+      }
 
     } catch (error) {
       // Log error pero no bloquear el claim de rewards

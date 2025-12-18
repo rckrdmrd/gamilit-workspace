@@ -13,8 +13,7 @@ import {
   IsBoolean,
   IsUUID,
   Min,
-  Max,
-} from 'class-validator';
+  } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 

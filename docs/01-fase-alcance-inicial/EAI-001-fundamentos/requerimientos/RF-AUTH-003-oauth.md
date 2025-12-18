@@ -99,7 +99,7 @@ El sistema **DEBE** soportar 6 proveedores de autenticación:
 **Descripción:** Autenticación tradicional con email y contraseña
 
 **Características:**
-- Email + contraseña almacenados en Supabase Auth
+- Email + contraseña almacenados en autenticación estándar
 - Contraseña hasheada con bcrypt
 - Verificación de email obligatoria
 - Recuperación de contraseña vía email
@@ -108,7 +108,7 @@ El sistema **DEBE** soportar 6 proveedores de autenticación:
 ```
 1. Usuario ingresa email + contraseña
 2. Sistema valida formato y fortaleza de contraseña
-3. Sistema crea cuenta en auth.users (Supabase)
+3. Sistema crea cuenta en auth.users (sistema)
 4. Sistema envía email de verificación
 5. Estado inicial: pending
 6. Usuario verifica email → estado: active

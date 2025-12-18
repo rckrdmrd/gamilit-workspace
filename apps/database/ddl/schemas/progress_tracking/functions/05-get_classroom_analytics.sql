@@ -10,6 +10,7 @@
 -- Dependencies: social_features.classroom_members, gamification_system.user_stats, progress_tracking.module_progress, auth.profiles
 -- Created: 2025-10-28
 -- Modified: 2025-10-28
+-- CORRECTED (2025-12-18): missions_completed -> modules_completed, last_activity_date -> last_activity_at
 
 CREATE OR REPLACE FUNCTION progress_tracking.get_classroom_analytics(
     p_classroom_id UUID,
@@ -39,22 +40,22 @@ BEGIN
         SELECT
             cs.user_id,
             us.total_xp,
-            us.missions_completed,
+            us.modules_completed,
             us.current_streak,
-            us.last_activity_date
+            us.last_activity_at
         FROM classroom_students cs
         JOIN gamification_system.user_stats us ON us.user_id = cs.user_id
     )
     SELECT
         COUNT(*)::INTEGER as total_students,
-        COUNT(*) FILTER (WHERE last_activity_date >= CURRENT_DATE - 7)::INTEGER as active_students,
+        COUNT(*) FILTER (WHERE last_activity_at >= CURRENT_DATE - 7)::INTEGER as active_students,
         AVG(
             (SELECT completion_percentage
              FROM progress_tracking.module_progress mp
              WHERE mp.user_id = ss.user_id
              LIMIT 1)
         )::NUMERIC(5,2) as avg_completion_rate,
-        SUM(missions_completed)::INTEGER as total_missions_completed,
+        SUM(modules_completed)::INTEGER as total_missions_completed,
         SUM(total_xp)::BIGINT as total_xp_earned,
         AVG(current_streak)::NUMERIC(5,2) as avg_current_streak,
         (SELECT user_id FROM student_stats ORDER BY total_xp DESC LIMIT 1) as top_performer_id,

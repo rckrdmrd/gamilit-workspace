@@ -88,7 +88,7 @@ export class AdminReport {
    * Formato: { startDate: '2025-01-01', endDate: '2025-12-31', classroomId: 'abc', ... }
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Mensaje de error si la generación falla

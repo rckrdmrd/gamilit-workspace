@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { LeaderboardService } from '../leaderboard.service';
 import { UserStats } from '../../entities';
@@ -8,9 +8,9 @@ import { Profile } from '@modules/auth/entities';
 
 describe('LeaderboardService', () => {
   let service: LeaderboardService;
-  let userStatsRepo: Repository<UserStats>;
-  let profileRepo: Repository<Profile>;
-  let cacheManager: any;
+  let _userStatsRepo: Repository<UserStats>;
+  let _profileRepo: Repository<Profile>;
+  let _cacheManager: any;
 
   const mockQueryBuilder = {
     select: jest.fn().mockReturnThis(),

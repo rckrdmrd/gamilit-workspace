@@ -138,7 +138,7 @@ export class MLPredictorService implements IMLPredictor {
    *
    * TODO: Get from trained model's feature importance
    */
-  async getFeatureImportance(input: StudentMLInput): Promise<FeatureImportance[]> {
+  async getFeatureImportance(_input: StudentMLInput): Promise<FeatureImportance[]> {
     // Heurística de importancia (pesos usados en predicción)
     const features: FeatureImportance[] = [
       {

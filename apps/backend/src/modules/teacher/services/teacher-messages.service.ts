@@ -324,7 +324,7 @@ export class TeacherMessagesService {
    * @param tenantId - ID del tenant
    * @throws ForbiddenException si no tiene acceso
    */
-  async markAsRead(messageId: string, teacherId: string, tenantId: string): Promise<void> {
+  async markAsRead(messageId: string, teacherId: string, _recipientId: string): Promise<void> {
     // Verificar acceso
     const hasAccess = await this.verifyMessageAccess(messageId, teacherId);
     if (!hasAccess) {

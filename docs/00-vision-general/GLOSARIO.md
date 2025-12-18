@@ -180,7 +180,7 @@
 
 | Schema | Propósito |
 |--------|-----------|
-| **auth** | Autenticación Supabase (users base) |
+| **auth** | Autenticación base (users base) |
 | **auth_management** | Perfiles, roles, membresías, tenants |
 | **educational_content** | Módulos, ejercicios, assignments |
 | **gamification_system** | Achievements, rangos, ML coins, comodines |

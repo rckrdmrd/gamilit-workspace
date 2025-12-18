@@ -162,7 +162,7 @@ export class UserRank {
    * Metadatos adicionales del rango en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-    rank_metadata!: Record<string, any>;
+    rank_metadata!: Record<string, unknown>;
 
   // =====================================================
   // AUDIT

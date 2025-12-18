@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Module } from '../entities';
-import { DB_SCHEMAS } from '@shared/constants';
 import { DifficultyLevelEnum } from '@shared/constants/enums.constants';
 
 /**
@@ -58,7 +57,7 @@ export class ModulesService {
    * Actualizar un módulo existente
    */
   async update(id: string, moduleData: Partial<Module>): Promise<Module | null> {
-    await this.moduleRepo.update(id, moduleData);
+    await this.moduleRepo.update(id, moduleData as any);
     return this.findById(id);
   }
 

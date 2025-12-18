@@ -18,8 +18,7 @@ import type { SourceCredibility, FactCheckResult } from '../../shared/aiTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
-import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
+import { useInvalidateDashboard } from '@/shared/hooks';
 import type { FeedbackData } from '@/shared/components/mechanics/mechanicsTypes';
 
 interface ExerciseProps {
@@ -48,8 +47,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
   initialData,
 }) => {
   const { user } = useAuth();
-  const { fetchUserProgress } = useRanksStore();
-  const { fetchBalance } = useEconomyStore();
+  const { syncAndInvalidate } = useInvalidateDashboard();
   const [sources, setSources] = useState<Source[]>([]);
   const [selectedSource, setSelectedSource] = useState<Source | null>(null);
   const [analysis, setAnalysis] = useState<SourceCredibility | null>(null);
@@ -238,8 +236,7 @@ export const AnalisisFuentesExercise: React.FC<ExerciseProps> = ({
       setShowFeedback(true);
 
       // Sync stores with backend (rewards already calculated and saved by backend)
-      await fetchUserProgress();
-      await fetchBalance();
+      await syncAndInvalidate();
 
       console.log('✅ [AnalisisFuentes] Submission successful:', {
         score: response.score,

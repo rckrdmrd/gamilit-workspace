@@ -2,7 +2,6 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserStats, MLCoinsTransaction } from '../entities';
-import { DB_SCHEMAS } from '@shared/constants';
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
 import { CreateTransactionDto } from '../dto';
 

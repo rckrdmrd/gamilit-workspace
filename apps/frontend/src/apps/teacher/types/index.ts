@@ -3,7 +3,10 @@
 export type StudentStatus = 'active' | 'inactive' | 'offline';
 
 export interface StudentMonitoring {
+  /** Student ID - used internally */
   id: string;
+  /** User ID - as returned by API (StudentInClassroomDto.user_id) */
+  user_id?: string;
   full_name: string;
   email: string;
   status: StudentStatus;

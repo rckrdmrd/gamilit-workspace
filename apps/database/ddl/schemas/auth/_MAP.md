@@ -1,6 +1,6 @@
 # Schema: auth
 
-Extensión del sistema de autenticación de Supabase
+Schema base de autenticación (patrón estándar de la industria)
 
 ## Estructura
 

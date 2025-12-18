@@ -62,7 +62,7 @@ export class ProgressSnapshot {
    * }
    */
   @Column({ type: 'jsonb' })
-    snapshot_data!: Record<string, any>;
+    snapshot_data!: Record<string, unknown>;
 
   /**
    * Total de módulos completados hasta esta fecha

@@ -16,6 +16,7 @@ import { Classroom } from '@modules/social/entities/classroom.entity';
 import { ExerciseSubmission } from '@modules/progress/entities/exercise-submission.entity';
 import { ExerciseAttempt } from '@modules/progress/entities/exercise-attempt.entity';
 import { ModuleProgress } from '@modules/progress/entities/module-progress.entity';
+import { ManualReview } from '@modules/progress/entities/manual-review.entity';
 
 // Educational entities
 import { Module as EducationalModule } from '@modules/educational/entities/module.entity';
@@ -44,6 +45,7 @@ import { InterventionAlertsController } from './controllers/intervention-alerts.
 import { TeacherCommunicationController } from './controllers/teacher-communication.controller';
 import { TeacherContentController } from './controllers/teacher-content.controller';
 import { ExerciseResponsesController } from './controllers/exercise-responses.controller';
+import { ManualReviewController } from './controllers/manual-review.controller';
 
 // Services
 import {
@@ -63,9 +65,13 @@ import {
   TeacherReportsService,
 } from './services';
 import { TeacherMessagesService } from './services/teacher-messages.service';
+import { ManualReviewService } from './services/manual-review.service';
 
 // Guards
 import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
+
+// External modules
+import { ProgressModule } from '@modules/progress/progress.module';
 
 /**
  * TeacherModule
@@ -115,6 +121,9 @@ import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
     // Schedule module for StudentRiskAlertService CRON jobs
     ScheduleModule.forRoot(),
 
+    // Import ProgressModule for ExerciseSubmissionService (needed for reward distribution)
+    ProgressModule,
+
     // Entities from 'auth' datasource
     TypeOrmModule.forFeature([Profile, User], 'auth'),
 
@@ -122,7 +131,10 @@ import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
     TypeOrmModule.forFeature([ClassroomMember, TeacherClassroom, Classroom, TeacherReport], 'social'),
 
     // Entities from 'progress' datasource
-    TypeOrmModule.forFeature([ExerciseSubmission, ExerciseAttempt, ModuleProgress], 'progress'),
+    TypeOrmModule.forFeature(
+      [ExerciseSubmission, ExerciseAttempt, ModuleProgress, ManualReview],
+      'progress',
+    ),
 
     // Entities from 'educational' datasource
     TypeOrmModule.forFeature([EducationalModule, Exercise], 'educational'),
@@ -130,8 +142,10 @@ import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
     // Entities from 'gamification' datasource
     TypeOrmModule.forFeature([UserStats, Achievement, UserAchievement], 'gamification'),
 
-    // Entities from 'content' datasource
-    TypeOrmModule.forFeature([Assignment, AssignmentSubmission, TeacherContent], 'content'),
+    // Entities from 'educational' datasource (schema: educational_content)
+    // CORRECTED (2025-12-18): Cambiado de 'content' a 'educational'
+    // Assignment, AssignmentSubmission y TeacherContent pertenecen a educational_content schema
+    TypeOrmModule.forFeature([Assignment, AssignmentSubmission, TeacherContent], 'educational'),
 
     // Entities from 'progress' datasource (teacher entities)
     TypeOrmModule.forFeature([StudentInterventionAlert], 'progress'),
@@ -147,6 +161,7 @@ import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
     TeacherCommunicationController,
     TeacherContentController,
     ExerciseResponsesController,
+    ManualReviewController,
   ],
   providers: [
     // Core services
@@ -165,6 +180,7 @@ import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
     ExerciseResponsesService,
     StorageService,
     TeacherReportsService,
+    ManualReviewService,
 
     // Guards
     TeacherGuard,
@@ -181,6 +197,7 @@ import { TeacherGuard, ClassroomOwnershipGuard } from './guards';
     TeacherMessagesService,
     TeacherContentService,
     ExerciseResponsesService,
+    ManualReviewService,
   ],
 })
 export class TeacherModule {}

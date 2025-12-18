@@ -1,4 +1,4 @@
-import { IsUUID, IsOptional, IsInt, IsNumber, Min, Max } from 'class-validator';
+import { IsUUID, IsOptional } from 'class-validator';
 
 /**
  * CreateUserStatsDto

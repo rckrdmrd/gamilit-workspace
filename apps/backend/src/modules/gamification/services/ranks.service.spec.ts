@@ -7,13 +7,12 @@ import { UserRank } from '../entities';
 import { UserStatsService } from './user-stats.service';
 import { MLCoinsService } from './ml-coins.service';
 import { MayaRank, TransactionTypeEnum } from '@shared/constants/enums.constants';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
 
 describe('RanksService', () => {
   let service: RanksService;
-  let userRankRepo: Repository<UserRank>;
-  let userStatsService: UserStatsService;
-  let mlCoinsService: MLCoinsService;
+  let _userRankRepo: Repository<UserRank>;
+  let _userStatsService: UserStatsService;
+  let _mlCoinsService: MLCoinsService;
 
   const mockUserRankRepository = {
     findOne: jest.fn(),
@@ -440,7 +439,7 @@ describe('RanksService', () => {
     });
 
     it('should create a new rank record', async () => {
-      const result = await service.createRank(createDto as any);
+      const _result = await service.createRank(createDto as any);
 
       expect(mockUserRankRepository.create).toHaveBeenCalledWith(createDto);
       expect(mockUserRankRepository.save).toHaveBeenCalled();
@@ -476,7 +475,7 @@ describe('RanksService', () => {
     });
 
     it('should update an existing rank record', async () => {
-      const result = await service.updateRank('rank-id-1', updateDto);
+      const _result = await service.updateRank('rank-id-1', updateDto);
 
       expect(mockUserRankRepository.findOne).toHaveBeenCalledWith({
         where: { id: 'rank-id-1' },

@@ -5,7 +5,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, MoreThan } from 'typeorm';
+import { Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import { Tenant } from '@modules/auth/entities/tenant.entity';
 import { Membership } from '@modules/auth/entities/membership.entity';

@@ -44,7 +44,7 @@ import {
 @Injectable()
 export class TeacherContentService {
   constructor(
-    @InjectRepository(TeacherContent, 'content')
+    @InjectRepository(TeacherContent, 'educational')
     private readonly contentRepo: Repository<TeacherContent>,
 
     @InjectRepository(Profile, 'auth')

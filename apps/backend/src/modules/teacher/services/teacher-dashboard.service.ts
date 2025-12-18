@@ -4,7 +4,7 @@
  * Provides dashboard statistics and overview data for teachers
  */
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
@@ -72,7 +72,7 @@ export class TeacherDashboardService {
    *
    * Fixed: Removed 'as any' casts, now uses In() operator properly
    */
-  async getClassroomStats(teacherId: string): Promise<ClassroomStats> {
+  async getClassroomStats(_teacherId: string): Promise<ClassroomStats> {
     // Get all students from teacher's classrooms
     // TODO: Implement classroom-teacher relationship
     // For now, we'll get all students
@@ -216,7 +216,7 @@ export class TeacherDashboardService {
    *
    * Fixed: Eliminated N+1 query problem, now uses bulk query + grouping in code
    */
-  async getStudentAlerts(teacherId: string): Promise<StudentAlert[]> {
+  async getStudentAlerts(_teacherId: string): Promise<StudentAlert[]> {
     // 1. Get all students
     const students = await this.profileRepository.find({
       where: { role: GamilityRoleEnum.STUDENT },
@@ -372,7 +372,7 @@ export class TeacherDashboardService {
    * Note: Module name will be fetched separately or shown as ID
    */
   async getModuleProgressSummary(
-    teacherId: string,
+    _teacherId: string,
   ): Promise<ModuleProgressSummary[]> {
     // 1. Get all module progress records
     const moduleProgresses = await this.moduleProgressRepository.find();

@@ -9,8 +9,7 @@ import {
   IsDateString,
   IsIn,
   Min,
-  Max,
-} from 'class-validator';
+  } from 'class-validator';
 
 /**
  * CreateExerciseSubmissionDto - DTO para crear envío de ejercicio
@@ -37,7 +36,7 @@ export class CreateExerciseSubmissionDto {
    * Respuesta del estudiante (JSONB)
    */
   @IsObject()
-    answer_data!: Record<string, any>;
+    answer_data!: Record<string, unknown>;
 
   /**
    * Indica si la respuesta fue correcta

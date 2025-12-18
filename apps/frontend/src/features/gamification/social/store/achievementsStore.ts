@@ -10,7 +10,7 @@ import type {
   AchievementStats,
 } from '../types/achievementsTypes';
 import { allAchievements } from '../mockData/achievementsMockData';
-import { getUserAchievements, mapAchievementsToFrontend } from '../api/achievementsAPI';
+import { getUserAchievements } from '../api/achievementsAPI';
 
 interface AchievementsStore {
   achievements: Achievement[];
@@ -146,8 +146,23 @@ export const useAchievementsStore = create<AchievementsStore>((set) => ({
       // Fetch user achievements with progress from backend
       const achievementsWithProgress = await getUserAchievements(userId);
 
-      // Map to frontend Achievement type
-      const achievements = mapAchievementsToFrontend(achievementsWithProgress);
+      // Map backend response to frontend Achievement type
+      const achievements: Achievement[] = achievementsWithProgress.map((ach) => ({
+        id: ach.id,
+        title: ach.name,
+        description: ach.description,
+        category: ach.category as Achievement['category'],
+        rarity: ach.rarity,
+        icon: ach.icon,
+        mlCoinsReward: ach.rewards?.ml_coins || ach.ml_coins_reward || 0,
+        xpReward: ach.rewards?.xp || 0,
+        isUnlocked: ach.isUnlocked || false,
+        unlockedAt: ach.unlockedAt,
+        progress: ach.progress,
+        requirements: ach.conditions?.requirements,
+        isHidden: ach.is_secret || ach.category === 'hidden' || ach.category === 'special',
+        rewardsClaimed: ach.rewardsClaimed || false,
+      }));
 
       set({
         achievements,

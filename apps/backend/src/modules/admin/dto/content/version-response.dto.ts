@@ -65,5 +65,5 @@ export class VersionResponseDto {
       is_published: true,
     },
   })
-    snapshot!: Record<string, any>;
+    snapshot!: Record<string, unknown>;
 }

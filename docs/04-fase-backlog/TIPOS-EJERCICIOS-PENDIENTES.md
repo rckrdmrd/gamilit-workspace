@@ -1,14 +1,29 @@
 # Tipos de Ejercicios Pendientes - Backlog
 
-**Fecha:** 2025-11-19
-**Versión:** 1.0
+**Fecha:** 2025-12-18 (actualizado)
+**Versión:** 2.0
 **Estado:** Documentado, no implementado
+
+---
+
+## ⚠️ NOTA IMPORTANTE (2025-12-18)
+
+Los ejercicios `resena_critica`, `chat_literario`, `email_formal` y `ensayo_argumentativo` fueron **ELIMINADOS** de este backlog por no estar definidos en el **DocumentoDeDiseño_Mecanicas_GAMILIT_v6.4**.
+
+El Módulo 4 solo tiene **5 ejercicios oficiales**:
+1. Verificador de Fake News (4.1)
+2. Infografía Interactiva (4.2)
+3. Quiz TikTok (4.3)
+4. Navegación Hipertextual (4.4)
+5. Análisis de Memes (4.5)
+
+**Referencia:** `docs/00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md` líneas 782-965
 
 ---
 
 ## 📋 Resumen Ejecutivo
 
-**Total de tipos pendientes:** 10
+**Total de tipos pendientes:** 6
 
 Estos tipos de ejercicios estaban incluidos en versiones anteriores del ENUM `educational_content.exercise_type` pero fueron removidos el **2025-11-17** durante la sincronización con seeds reales.
 
@@ -81,158 +96,9 @@ Sorbona          →    Universidad donde enseñó
 
 ---
 
-### Módulo 4: Lectura Digital y Multimodal (4 tipos pendientes)
-
-#### 3. `resena_critica`
-
-**Nombre completo:** Reseña Crítica
-
-**Descripción:**
-El estudiante escribe una reseña crítica de 300-500 palabras sobre un artículo digital relacionado con el texto base.
-
-**Mecánica propuesta:**
-- Editor de texto enriquecido (formato, negritas, listas)
-- Plantilla guiada con secciones:
-  1. Resumen (¿De qué trata?)
-  2. Puntos fuertes
-  3. Puntos débiles
-  4. Opinión personal fundamentada
-  5. Recomendación (sí/no y por qué)
-- Contador de palabras
-- Análisis automático de estructura
-- Revisión por pares opcional
-
-**Ejemplo aplicado a Marie Curie:**
-Reseñar artículo: "El legado de Marie Curie en la ciencia moderna"
-
-**XP estimado:** 150 XP (ejercicio más complejo)
-**ML estimado:** 30 ML
-**Dificultad técnica:** Media
-**Prioridad:** Media
-
----
-
-#### 4. `chat_literario`
-
-**Nombre completo:** Chat Literario Simulado
-
-**Descripción:**
-Conversación simulada con un personaje del texto (ej: Marie Curie) usando IA o respuestas predefinidas.
-
-**Mecánica propuesta:**
-- Interfaz de chat estilo WhatsApp/Telegram
-- 5-10 preguntas predefinidas que el estudiante puede hacer
-- Respuestas basadas en el texto (históricamente precisas)
-- Opción de pregunta libre (si se integra IA generativa)
-- Registro de conversación descargable
-
-**Ejemplo aplicado a Marie Curie:**
-```
-Estudiante: ¿Cuál fue tu mayor desafío como mujer científica?
-Marie: En mi época, las mujeres no éramos tomadas en serio en la ciencia. Me rechazaron de la Academia de Ciencias francesa incluso después de ganar un Nobel. Pero seguí trabajando porque creía en la importancia de la investigación.
-
-Estudiante: ¿Por qué no patentaste el proceso del radio?
-Marie: La ciencia debe beneficiar a toda la humanidad, no solo enriquecerme a mí. Si hubiera patentado el proceso, la medicina no habría avanzado tan rápido.
-```
-
-**XP estimado:** 100 XP
-**ML estimado:** 20 ML
-**Dificultad técnica:** Alta (requiere IA o árbol de decisiones complejo)
-**Prioridad:** Baja (funcionalidad "nice to have")
-
----
-
-#### 5. `email_formal`
-
-**Nombre completo:** Redacción de Email Formal
-
-**Descripción:**
-El estudiante redacta un email formal basado en una situación relacionada con el texto.
-
-**Mecánica propuesta:**
-- Editor de email con campos: Para, Asunto, Cuerpo, Firma
-- Plantilla de estructura formal:
-  1. Saludo
-  2. Introducción (contexto)
-  3. Cuerpo (solicitud/información)
-  4. Cierre (despedida formal)
-- Validación de:
-  - Tono formal (sin contracciones, lenguaje apropiado)
-  - Estructura completa
-  - Ortografía
-- Rubrica de evaluación (5 criterios)
-
-**Ejemplo aplicado a Marie Curie:**
-```
-Situación: Eres periodista y quieres entrevistar a Marie Curie.
-Escribe el email solicitando la entrevista.
-
-Para: marie.curie@sorbonne.fr
-Asunto: Solicitud de entrevista para Le Figaro
-
-Estimada Profesora Curie,
-
-Mi nombre es [nombre] y soy periodista de Le Figaro...
-[cuerpo del email]
-
-Quedo a la espera de su amable respuesta.
-
-Atentamente,
-[firma]
-```
-
-**XP estimado:** 100 XP
-**ML estimado:** 20 ML
-**Dificultad técnica:** Media
-**Prioridad:** Media
-
----
-
-#### 6. `ensayo_argumentativo`
-
-**Nombre completo:** Ensayo Argumentativo
-
-**Descripción:**
-Redacción de un ensayo argumentativo de 500-800 palabras sobre un tema relacionado con el texto.
-
-**Mecánica propuesta:**
-- Editor de texto avanzado
-- Plantilla de estructura:
-  1. Introducción (tesis)
-  2. Argumento 1 (con evidencia)
-  3. Argumento 2 (con evidencia)
-  4. Contra-argumento y refutación
-  5. Conclusión
-- Validación de:
-  - Longitud (500-800 palabras)
-  - Presencia de tesis clara
-  - Al menos 2 citas del texto
-  - Estructura completa
-- Análisis de coherencia y cohesión
-- Revisión por pares
-
-**Ejemplo aplicado a Marie Curie:**
-```
-Tema: "¿La fama afectó negativamente la investigación de Marie Curie?"
-
-Tesis propuesta: Aunque la fama trajo presión mediática, también proporcionó recursos que aceleraron su investigación.
-
-Argumento 1: Mayor financiación
-Argumento 2: Colaboraciones internacionales
-Contra-argumento: Invasión de privacidad
-Conclusión: Balance neto positivo
-```
-
-**XP estimado:** 200 XP (ejercicio más complejo)
-**ML estimado:** 40 ML
-**Dificultad técnica:** Alta (requiere análisis de texto avanzado)
-**Prioridad:** Baja (muy complejo para MVP)
-
----
-
 ### Tipos Auxiliares/Transversales (4 tipos pendientes)
 
-#### 7. `comprension_auditiva`
+#### 3. `comprension_auditiva`
 
 **Nombre completo:** Comprensión Auditiva
 
@@ -263,7 +129,7 @@ Preguntas:
 
 ---
 
-#### 8. `collage_prensa`
+#### 4. `collage_prensa`
 
 **Nombre completo:** Collage de Prensa
 
@@ -292,7 +158,7 @@ Cuerpo: [Noticia inventada basada en hechos reales]
 
 ---
 
-#### 9. `texto_movimiento`
+#### 5. `texto_movimiento`
 
 **Nombre completo:** Texto en Movimiento
 
@@ -320,7 +186,7 @@ Tarea: Arrastrar en orden cronológico para formar:
 
 ---
 
-#### 10. `call_to_action`
+#### 6. `call_to_action`
 
 **Nombre completo:** Llamado a la Acción
 
@@ -353,12 +219,8 @@ Hashtag: #MujeresEnCiencia #InspiraciónCurie
 | Tipo | Dificultad | Prioridad | XP | Recomendación |
 |------|------------|-----------|-----|---------------|
 | emparejamiento | Baja | Alta | 100 | ✅ Implementar primero |
-| comprension_auditiva | Media | Media | 100 | ⚠️ Si hay recursos de audio |
-| email_formal | Media | Media | 100 | ⚠️ Útil para habilidades de escritura |
-| resena_critica | Media | Media | 150 | ⚠️ Buen complemento crítico |
 | mapa_conceptual | Alta | Media | 100 | ⏳ Requiere librería compleja |
-| chat_literario | Alta | Baja | 100 | ⏸️ Requiere IA o mucho contenido |
-| ensayo_argumentativo | Alta | Baja | 200 | ⏸️ Muy complejo para MVP |
+| comprension_auditiva | Media | Media | 100 | ⚠️ Si hay recursos de audio |
 | collage_prensa | Alta | Baja | 150 | ⏸️ Muy especializado |
 | texto_movimiento | Alta | Baja | 100 | ⏸️ Gamificación avanzada |
 | call_to_action | Media | Baja | 100 | ⏸️ Marketing/motivacional |
@@ -403,4 +265,4 @@ Hashtag: #MujeresEnCiencia #InspiraciónCurie
 
 **Responsable:** Product Owner + Equipo de Contenido
 **Próxima revisión:** Sprint Planning (cada 2 semanas)
-**Última actualización:** 2025-11-19
+**Última actualización:** 2025-12-18 (limpieza de ejercicios no oficiales del M4)

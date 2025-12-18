@@ -143,9 +143,7 @@ export function AchievementsPreview({ achievements }: AchievementsPreviewProps) 
               <div className="mb-3 mt-2 flex justify-center">
                 <div
                   className={`relative flex h-16 w-16 items-center justify-center rounded-full text-3xl shadow-md ${
-                    isLocked
-                      ? 'bg-gray-300'
-                      : 'bg-gradient-to-br from-detective-orange to-detective-orange-dark'
+                    isLocked ? 'bg-gray-300' : 'bg-gradient-to-br from-orange-500 to-orange-600'
                   }`}
                 >
                   {isLocked ? (
@@ -219,15 +217,19 @@ export function AchievementsPreview({ achievements }: AchievementsPreviewProps) 
                 </p>
               )}
 
-              {/* Rewards (if available - mock data) */}
+              {/* Rewards (IMPL-007: dynamic values from achievement data) */}
               <div className="flex items-center justify-around border-t border-gray-200 pt-3">
                 <div className="flex items-center gap-1">
                   <Coins className="h-4 w-4 text-detective-gold" />
-                  <span className="text-sm font-semibold text-detective-text">+50 ML</span>
+                  <span className="text-sm font-semibold text-detective-text">
+                    +{achievement.mlCoinsReward ?? achievement.rewards?.ml_coins ?? 50} ML
+                  </span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Zap className="h-4 w-4 text-detective-orange" />
-                  <span className="text-sm font-semibold text-detective-text">+100 XP</span>
+                  <span className="text-sm font-semibold text-detective-text">
+                    +{achievement.xpReward ?? achievement.rewards?.xp ?? 100} XP
+                  </span>
                 </div>
               </div>
 

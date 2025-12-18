@@ -176,14 +176,14 @@ export class SystemAlert {
    * @example { "endpoint": "/api/users", "statusCode": 500, "requestId": "abc123" }
    */
   @Column({ type: 'jsonb', default: {} })
-    context_data!: Record<string, any>;
+    context_data!: Record<string, unknown>;
 
   /**
    * Métricas asociadas en formato JSONB
    * @example { "responseTime": 5000, "errorRate": 0.15, "cpuUsage": 0.95 }
    */
   @Column({ type: 'jsonb', default: {} })
-    metrics!: Record<string, any>;
+    metrics!: Record<string, unknown>;
 
   /**
    * Array de IDs de alertas relacionadas

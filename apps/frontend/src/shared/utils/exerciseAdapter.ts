@@ -595,6 +595,247 @@ export const adaptToTribunalOpinionesData = (exercise: ExerciseData): any => {
   };
 };
 
+// ============================================================================
+// MODULE 4 ADAPTERS - Textos Digitales y Multimediales
+// ============================================================================
+
+/**
+ * Adapts ExerciseData to QuizTikTokData format
+ * Module 4 - Quick quiz with TikTok-style interface
+ *
+ * DB format: { questions: [{ id, text, options, correct, timeLimit, visual }] }
+ * Component expects: { questions: [{ id, question, options, correctAnswer, backgroundColor }] }
+ */
+export const adaptToQuizTikTokData = (exercise: ExerciseData): any => {
+  const base = adaptToBaseExercise(exercise);
+  const content = exercise.mechanicData?.content || {};
+
+  // Default colors for TikTok-style backgrounds
+  const defaultColors = [
+    '#1f2937',
+    '#7c3aed',
+    '#ea580c',
+    '#2563eb',
+    '#059669',
+    '#dc2626',
+    '#0891b2',
+  ];
+
+  // Transform questions from DB format to component format
+  const questions = (content.questions || []).map((q: any, index: number) => ({
+    id: q.id || `q${index + 1}`,
+    question: q.text || q.question || '', // DB uses 'text', component uses 'question'
+    options: q.options || [],
+    correctAnswer: q.correct ?? q.correctAnswer ?? 0, // DB uses 'correct', component uses 'correctAnswer'
+    backgroundColor: q.backgroundColor || defaultColors[index % defaultColors.length],
+    backgroundVideo: q.visual,
+  }));
+
+  return {
+    ...base,
+    description: exercise.description || '',
+    hints: exercise.mechanicData?.hints || [],
+    questions,
+  };
+};
+
+/**
+ * Adapts ExerciseData to InfografiaInteractivaData format
+ * Module 4 - Interactive infographic exploration
+ *
+ * DB format: { infographic: { title, sections: [{ id, type, data }], questions: [...] } }
+ * Component expects: { cards: [{ id, title, content, position, icon, revealed }] }
+ */
+export const adaptToInfografiaInteractivaData = (exercise: ExerciseData): any => {
+  const base = adaptToBaseExercise(exercise);
+  const content = exercise.mechanicData?.content || {};
+  const infographic = content.infographic || {};
+
+  // Icon mapping based on section type
+  const iconMap: Record<string, string> = {
+    timeline: 'calendar',
+    'visual timeline': 'calendar',
+    'icon grid': 'grid',
+    discoveries: 'atom',
+    flowchart: 'workflow',
+    impact: 'heart',
+    default: 'info',
+  };
+
+  // Transform sections to cards format
+  const sections = infographic.sections || [];
+  const cards = sections.map((section: any, index: number) => {
+    // Calculate grid position (3 columns)
+    const col = index % 3;
+    const row = Math.floor(index / 3);
+
+    return {
+      id: section.id || `card-${index + 1}`,
+      title: section.type || `Sección ${index + 1}`,
+      content: section.data || '',
+      position: {
+        x: 20 + col * 30, // 20%, 50%, 80%
+        y: 30 + row * 40, // 30%, 70%
+      },
+      icon: iconMap[section.type?.toLowerCase()] || iconMap['default'],
+      revealed: false,
+    };
+  });
+
+  // If no sections, create default cards
+  if (cards.length === 0) {
+    cards.push({
+      id: 'card-default',
+      title: infographic.title || 'Información',
+      content: 'Explora esta sección para descubrir más información.',
+      position: { x: 50, y: 50 },
+      icon: 'info',
+      revealed: false,
+    });
+  }
+
+  return {
+    ...base,
+    description: exercise.description || '',
+    hints: exercise.mechanicData?.hints || [],
+    cards,
+    backgroundImage: infographic.backgroundImage,
+    questions: infographic.questions || [],
+  };
+};
+
+/**
+ * Adapts ExerciseData to VerificadorFakeNewsData format
+ * Module 4 - Fact-checking articles
+ */
+export const adaptToVerificadorFakeNewsData = (exercise: ExerciseData): any => {
+  const base = adaptToBaseExercise(exercise);
+  const content = exercise.mechanicData?.content || {};
+  const config = exercise.mechanicData?.config || {};
+
+  return {
+    ...base,
+    description: exercise.description || '',
+    hints: exercise.mechanicData?.hints || [],
+    articles: content.articles || [],
+    verificationTools: content.verificationTools || [],
+    config: {
+      factCheckTools: config.factCheckTools ?? true,
+      sourceVerification: config.sourceVerification ?? true,
+      claimExtraction: config.claimExtraction ?? true,
+      confidenceScoring: config.confidenceScoring ?? true,
+    },
+  };
+};
+
+/**
+ * Adapts ExerciseData to NavegacionHipertextualData format
+ * Module 4 - Hyperlink navigation
+ */
+export const adaptToNavegacionHipertextualData = (exercise: ExerciseData): any => {
+  const base = adaptToBaseExercise(exercise);
+  const content = exercise.mechanicData?.content || {};
+
+  // Map nodes from content.nodes or content.articles
+  const nodes = content.nodes || content.articles || [];
+
+  return {
+    ...base,
+    description: exercise.description || '',
+    hints: exercise.mechanicData?.hints || [],
+    // Required fields for NavegacionHipertextualExercise component
+    nodes: nodes,
+    startNodeId: content.startNodeId || content.start_node_id || nodes[0]?.id || '',
+    targetNodeId:
+      content.targetNodeId || content.target_node_id || nodes[nodes.length - 1]?.id || '',
+    // Legacy fields (kept for compatibility)
+    researchQuestion: content.researchQuestion || '',
+    mainArticle: content.mainArticle || {},
+    optimalPath: content.optimalPath || [],
+  };
+};
+
+/**
+ * Adapts ExerciseData to AnalisisMemesData format
+ * Module 4 - Meme analysis
+ */
+export const adaptToAnalisisMemesData = (exercise: ExerciseData): any => {
+  const base = adaptToBaseExercise(exercise);
+  const content = exercise.mechanicData?.content || {};
+
+  return {
+    ...base,
+    description: exercise.description || '',
+    hints: exercise.mechanicData?.hints || [],
+    memes: content.memes || [],
+    analysisQuestions: content.questions || [],
+  };
+};
+
+// ============================================================================
+// MODULE 5 ADAPTERS - Producción Creativa
+// ============================================================================
+
+/**
+ * Adapts ExerciseData to DiarioMultimediaData format
+ * Module 5 - Multimedia diary
+ */
+export const adaptToDiarioMultimediaData = (exercise: ExerciseData): any => {
+  const base = adaptToBaseExercise(exercise);
+  const content = exercise.mechanicData?.content || {};
+
+  return {
+    ...base,
+    description: exercise.description || '',
+    hints: exercise.mechanicData?.hints || [],
+    themes: content.themes || [],
+    prompts: content.prompts || [],
+    config: exercise.mechanicData?.config || {},
+  };
+};
+
+/**
+ * Adapts ExerciseData to ComicDigitalData format
+ * Module 5 - Digital comic creation
+ */
+export const adaptToComicDigitalData = (exercise: ExerciseData): any => {
+  const base = adaptToBaseExercise(exercise);
+  const content = exercise.mechanicData?.content || {};
+
+  return {
+    ...base,
+    description: exercise.description || '',
+    hints: exercise.mechanicData?.hints || [],
+    layouts: content.layouts || [],
+    backgrounds: content.backgrounds || [],
+    templates: content.templates || [],
+    config: exercise.mechanicData?.config || {},
+  };
+};
+
+/**
+ * Adapts ExerciseData to VideoCartaData format
+ * Module 5 - Video letter creation
+ */
+export const adaptToVideoCartaData = (exercise: ExerciseData): any => {
+  const base = adaptToBaseExercise(exercise);
+  const content = exercise.mechanicData?.content || {};
+
+  return {
+    ...base,
+    description: exercise.description || '',
+    hints: exercise.mechanicData?.hints || [],
+    sections: content.sections || [],
+    recipient: content.recipient || {},
+    filters: content.filters || [],
+    config: exercise.mechanicData?.config || {},
+  };
+};
+
+// ============================================================================
+// MAIN ADAPTER ROUTER
+// ============================================================================
+
 /**
  * Generic adapter that routes to the correct specific adapter based on exercise type
  */
@@ -639,6 +880,37 @@ export const adaptExerciseData = (exercise: ExerciseData): any => {
     return adaptToTribunalOpinionesData(exercise);
   }
 
+  // ========================================
+  // MODULE 4 - Textos Digitales y Multimediales
+  // ========================================
+  else if (type.includes('quiz_tiktok') || type.includes('tiktok')) {
+    return adaptToQuizTikTokData(exercise);
+  } else if (type.includes('infografia_interactiva') || type.includes('infografia')) {
+    return adaptToInfografiaInteractivaData(exercise);
+  } else if (
+    type.includes('verificador_fake_news') ||
+    type.includes('fake_news') ||
+    type.includes('fakenews')
+  ) {
+    return adaptToVerificadorFakeNewsData(exercise);
+  } else if (type.includes('navegacion_hipertextual') || type.includes('hipertextual')) {
+    return adaptToNavegacionHipertextualData(exercise);
+  } else if (type.includes('analisis_memes') || type.includes('memes')) {
+    return adaptToAnalisisMemesData(exercise);
+  }
+
+  // ========================================
+  // MODULE 5 - Producción Creativa
+  // ========================================
+  else if (type.includes('diario_multimedia')) {
+    return adaptToDiarioMultimediaData(exercise);
+  } else if (type.includes('comic_digital')) {
+    return adaptToComicDigitalData(exercise);
+  } else if (type.includes('video_carta')) {
+    return adaptToVideoCartaData(exercise);
+  }
+
   // Default: return base exercise data
+  console.warn(`[exerciseAdapter] No specific adapter for type: ${type}. Using base adapter.`);
   return adaptToBaseExercise(exercise);
 };

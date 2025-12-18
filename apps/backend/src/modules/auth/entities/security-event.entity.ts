@@ -84,7 +84,7 @@ export class SecurityEvent {
    * @example { "failed_attempts": 3, "reason": "invalid_password" }
    */
   @Column({ type: 'jsonb', nullable: true })
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 
   /**
    * Fecha y hora de creación del evento

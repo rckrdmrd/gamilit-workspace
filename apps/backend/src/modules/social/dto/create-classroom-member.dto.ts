@@ -94,7 +94,7 @@ export class CreateClassroomMemberDto {
    */
   @IsOptional()
   @IsObject()
-    permissions?: Record<string, any>;
+    permissions?: Record<string, unknown>;
 
   /**
    * Notas del profesor
@@ -108,14 +108,14 @@ export class CreateClassroomMemberDto {
    */
   @IsOptional()
   @IsObject()
-    parent_contact_info?: Record<string, any>;
+    parent_contact_info?: Record<string, unknown>;
 
   /**
    * Metadatos adicionales
    */
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 
   /**
    * Membresía activa

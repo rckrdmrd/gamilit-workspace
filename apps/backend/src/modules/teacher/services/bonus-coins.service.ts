@@ -11,6 +11,8 @@ import { ClassroomMember } from '@modules/social/entities/classroom-member.entit
 import { Classroom } from '@modules/social/entities/classroom.entity';
 import { Profile } from '@modules/auth/entities/profile.entity';
 import { GrantBonusDto, GrantBonusResponseDto } from '../dto/grant-bonus.dto';
+// CORR-CASCADA-001: Import MayaRank para alinear con entity corregida
+import { MayaRank } from '@shared/constants/enums.constants';
 
 /**
  * BonusCoinsService
@@ -93,12 +95,13 @@ export class BonusCoinsService {
         this.logger.warn(
           `UserStats not found for student ${studentId}. Creating initial record.`,
         );
+        // CORR-CASCADA-001: Usar MayaRank enum en lugar de string
         userStats = userStatsRepo.create({
           user_id: studentId,
           level: 1,
           total_xp: 0,
           xp_to_next_level: 100,
-          current_rank: 'Ajaw',
+          current_rank: MayaRank.AJAW,
           ml_coins: 100,
           ml_coins_earned_total: 100,
           ml_coins_spent_total: 0,
@@ -123,15 +126,26 @@ export class BonusCoinsService {
       userStats.ml_coins_earned_total += dto.amount;
 
       // 5. Registrar la transacción en metadata (historial)
+      interface BonusHistoryEntry {
+        teacher_id: string;
+        amount: number;
+        reason?: string;
+        granted_at: string;
+        previous_balance: number;
+        new_balance: number;
+      }
+      type MetadataWithHistory = { bonus_history?: BonusHistoryEntry[] };
+
       if (!userStats.metadata) {
         userStats.metadata = {};
       }
 
-      if (!userStats.metadata.bonus_history) {
-        userStats.metadata.bonus_history = [];
+      const metadataTyped = userStats.metadata as MetadataWithHistory;
+      if (!metadataTyped.bonus_history) {
+        metadataTyped.bonus_history = [];
       }
 
-      userStats.metadata.bonus_history.push({
+      metadataTyped.bonus_history.push({
         teacher_id: teacherId,
         amount: dto.amount,
         reason: dto.reason,
@@ -206,13 +220,14 @@ export class BonusCoinsService {
    * @param userId - ID del usuario (profile.id)
    * @returns UserStats creado
    */
+  // CORR-CASCADA-001: Usar MayaRank enum en lugar de string
   private async createInitialUserStats(userId: string): Promise<UserStats> {
     const newStats = this.userStatsRepo.create({
       user_id: userId,
       level: 1,
       total_xp: 0,
       xp_to_next_level: 100,
-      current_rank: 'Ajaw',
+      current_rank: MayaRank.AJAW,
       ml_coins: 100, // Balance inicial
       ml_coins_earned_total: 100,
       ml_coins_spent_total: 0,

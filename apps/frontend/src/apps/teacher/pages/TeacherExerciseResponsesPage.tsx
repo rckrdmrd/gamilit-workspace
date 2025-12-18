@@ -35,7 +35,7 @@ const PageHeader: React.FC = () => {
   return (
     <div className="mb-8">
       <div className="mb-2 flex items-center gap-3">
-        <div className="to-detective-yellow flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-detective-orange">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-amber-500">
           <FileText className="h-6 w-6 text-white" />
         </div>
         <div>
@@ -183,7 +183,7 @@ export default function TeacherExerciseResponsesPage() {
 
   // Fallback gamification data
   const displayGamificationData = gamificationData || {
-    userId: user?.id || 'mock-teacher-id',
+    userId: user?.id || '',
     level: 1,
     totalXP: 0,
     mlCoins: 0,

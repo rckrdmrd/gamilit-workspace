@@ -38,7 +38,7 @@ const heightConfig = {
 const colorConfig = {
   detective: {
     bg: 'bg-detective-bg-secondary',
-    fill: 'bg-gradient-to-r from-detective-orange to-detective-orange-dark',
+    fill: 'bg-gradient-to-r from-orange-500 to-orange-600',
     text: 'text-detective-orange',
   },
   rank: {
@@ -81,10 +81,7 @@ export const RankProgressBar: React.FC<RankProgressBarProps> = ({
   const xpRemaining = Math.max(0, xpToNextLevel - currentXP);
 
   // Sort milestones by XP
-  const sortedMilestones = useMemo(
-    () => [...milestones].sort((a, b) => a.xp - b.xp),
-    [milestones]
-  );
+  const sortedMilestones = useMemo(() => [...milestones].sort((a, b) => a.xp - b.xp), [milestones]);
 
   return (
     <div className={cn('w-full space-y-2', className)}>
@@ -92,7 +89,7 @@ export const RankProgressBar: React.FC<RankProgressBarProps> = ({
       {showStats && (
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-2">
-            <TrendingUp className={cn('w-4 h-4', colors.text)} />
+            <TrendingUp className={cn('h-4 w-4', colors.text)} />
             <span className="font-medium text-detective-text">
               Nivel {currentLevel}
               {nextLevel && ` → ${nextLevel}`}
@@ -102,9 +99,7 @@ export const RankProgressBar: React.FC<RankProgressBarProps> = ({
             <span className="text-detective-text-secondary">
               {currentXP.toLocaleString()} / {xpToNextLevel.toLocaleString()} XP
             </span>
-            <span className={cn('font-semibold', colors.text)}>
-              {progress.toFixed(0)}%
-            </span>
+            <span className={cn('font-semibold', colors.text)}>{progress.toFixed(0)}%</span>
           </div>
         </div>
       )}
@@ -112,7 +107,7 @@ export const RankProgressBar: React.FC<RankProgressBarProps> = ({
       {/* Progress Bar Container */}
       <div className="relative">
         {/* Background */}
-        <div className={cn('w-full rounded-full overflow-hidden', colors.bg, heightClass)}>
+        <div className={cn('w-full overflow-hidden rounded-full', colors.bg, heightClass)}>
           {/* Animated Progress Fill */}
           <motion.div
             className={cn('h-full rounded-full', colors.fill, 'shadow-sm')}
@@ -141,26 +136,24 @@ export const RankProgressBar: React.FC<RankProgressBarProps> = ({
 
         {/* Milestones */}
         {showMilestones && sortedMilestones.length > 0 && (
-          <div className="absolute inset-0 pointer-events-none">
+          <div className="pointer-events-none absolute inset-0">
             {sortedMilestones.map((milestone, index) => {
               const milestoneProgress = (milestone.xp / xpToNextLevel) * 100;
               return (
                 <motion.div
                   key={index}
-                  className="absolute top-0 bottom-0 flex items-center"
+                  className="absolute bottom-0 top-0 flex items-center"
                   style={{ left: `${milestoneProgress}%` }}
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.5 + index * 0.1 }}
                 >
-                  <div className="relative group">
+                  <div className="group relative">
                     {/* Milestone marker */}
                     <div
                       className={cn(
-                        'w-1 h-6 rounded-full',
-                        milestone.completed
-                          ? 'bg-green-500'
-                          : 'bg-gray-400 opacity-50'
+                        'h-6 w-1 rounded-full',
+                        milestone.completed ? 'bg-green-500' : 'bg-gray-400 opacity-50',
                       )}
                     />
 
@@ -170,15 +163,15 @@ export const RankProgressBar: React.FC<RankProgressBarProps> = ({
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ delay: 0.8 + index * 0.1 }}
-                        className="absolute -top-6 left-1/2 transform -translate-x-1/2"
+                        className="absolute -top-6 left-1/2 -translate-x-1/2 transform"
                       >
-                        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                        <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
                       </motion.div>
                     )}
 
                     {/* Tooltip */}
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-auto">
-                      <div className="bg-gray-900 text-white text-xs rounded px-2 py-1 whitespace-nowrap">
+                    <div className="pointer-events-auto absolute bottom-full left-1/2 mb-2 -translate-x-1/2 transform opacity-0 transition-opacity group-hover:opacity-100">
+                      <div className="whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white">
                         {milestone.label}
                       </div>
                     </div>
@@ -198,10 +191,8 @@ export const RankProgressBar: React.FC<RankProgressBarProps> = ({
           transition={{ delay: 0.5 }}
           className="flex items-center gap-2 text-xs text-detective-text-secondary"
         >
-          <Target className="w-3 h-3" />
-          <span>
-            {xpRemaining.toLocaleString()} XP restante para el siguiente nivel
-          </span>
+          <Target className="h-3 w-3" />
+          <span>{xpRemaining.toLocaleString()} XP restante para el siguiente nivel</span>
         </motion.div>
       )}
     </div>

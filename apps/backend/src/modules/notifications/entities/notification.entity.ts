@@ -4,11 +4,10 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
-  JoinColumn,
   Index,
 } from 'typeorm';
 import { NotificationTypeEnum, NotificationPriorityEnum } from '@/shared/constants/enums.constants';
+import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
 
 /**
  * Interface para data JSONB
@@ -64,7 +63,7 @@ export interface NotificationData {
  * - Agregados índices para optimizar consultas
  * - Documentación completa con referencias cruzadas
  */
-@Entity({ schema: 'gamification_system', name: 'notifications' })
+@Entity({ schema: DB_SCHEMAS.GAMIFICATION, name: DB_TABLES.GAMIFICATION.NOTIFICATIONS })
 @Index(['userId'])
 @Index(['type'])
 @Index(['userId', 'read'])

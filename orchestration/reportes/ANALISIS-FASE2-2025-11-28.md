@@ -392,7 +392,7 @@ actual_state:
 - 🟡 LTI Integration (schema vacío, solo estructura)
 - 🟡 Vistas Materializadas (4/12 completadas)
 - 🟡 RLS Policies (24 implementadas pero 39% cobertura)
-- 🟡 Storage (schema con enum pero sin tablas, usa Supabase Storage API)
+- 🟡 Storage (schema con enum pero sin tablas, usa Storage compatible API)
 
 ---
 

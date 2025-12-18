@@ -116,15 +116,15 @@ export class HealthService {
 
     try {
       // Critical tables to check across all schemas
+      // NOTE: auth.users is the correct location (not auth_management.users)
       const criticalTables = [
-        { schema: 'auth_management', table: 'users', connection: this.authDataSource },
+        { schema: 'auth', table: 'users', connection: this.authDataSource },
         { schema: 'auth_management', table: 'profiles', connection: this.authDataSource },
         { schema: 'educational_content', table: 'modules', connection: this.educationalDataSource },
         { schema: 'educational_content', table: 'exercises', connection: this.educationalDataSource },
         { schema: 'gamification_system', table: 'achievements', connection: this.gamificationDataSource },
         { schema: 'progress_tracking', table: 'module_progress', connection: this.progressDataSource },
         { schema: 'social_features', table: 'friendships', connection: this.socialDataSource },
-        { schema: 'content_management', table: 'user_content', connection: this.contentDataSource },
         { schema: 'audit_logging', table: 'audit_logs', connection: this.auditDataSource },
       ];
 

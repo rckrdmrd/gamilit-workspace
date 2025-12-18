@@ -83,14 +83,14 @@ export class CreateAchievementDto {
    * Condiciones JSON para desbloquear (REQUERIDO)
    */
   @IsObject()
-    conditions!: Record<string, any>;
+    conditions!: Record<string, unknown>;
 
   /**
    * Recompensas JSON otorgadas
    */
   @IsOptional()
   @IsObject()
-    rewards?: Record<string, any>;
+    rewards?: Record<string, unknown>;
 
   /**
    * Recompensa de ML Coins
@@ -153,7 +153,7 @@ export class CreateAchievementDto {
 
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 
   @IsOptional()
   @IsUUID()

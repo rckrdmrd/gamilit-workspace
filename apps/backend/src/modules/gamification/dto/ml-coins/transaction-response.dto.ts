@@ -85,7 +85,7 @@ export class TransactionResponseDto {
     description: 'Metadatos adicionales',
     example: { exercise_difficulty: 'hard', perfect_score: true },
   })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   @ApiProperty({
     description: 'Fecha de creación',

@@ -370,6 +370,35 @@ export async function updateOrganizationFeatures(
   }
 }
 
+/**
+ * Get organization statistics
+ * Returns detailed stats including member counts, storage, and activity
+ *
+ * Status: Backend IMPLEMENTED ✅ (admin-organizations.controller.ts:99)
+ * Added: 2025-12-15 (MEDIO-001 fix)
+ */
+export interface OrganizationStats {
+  totalStudents: number;
+  activeStudents: number;
+  totalTeachers: number;
+  totalClassrooms: number;
+  averageProgress: number;
+  storageUsed: string;
+  lastActivity: string;
+  trialEndsAt?: string;
+}
+
+export async function getOrganizationStats(id: string): Promise<OrganizationStats> {
+  try {
+    const response = await apiClient.get<OrganizationStats>(
+      API_ENDPOINTS.admin.organizations.stats(id),
+    );
+    return response.data;
+  } catch (error) {
+    throw handleAPIError(error, `Failed to fetch stats for organization ${id}`);
+  }
+}
+
 // ============================================================================
 // CONTENT & APPROVALS
 // ============================================================================
@@ -1564,6 +1593,7 @@ export const adminAPI = {
     create: createOrganization,
     update: updateOrganization,
     delete: deleteOrganization,
+    getStats: getOrganizationStats,
     getUsers: getOrganizationUsers,
     updateSubscription: updateOrganizationSubscription,
     updateFeatures: updateOrganizationFeatures,
@@ -1720,6 +1750,27 @@ export const adminAPI = {
     getModuleProgress,
     getExerciseStats,
     exportCSV: exportProgressCSV,
+  },
+
+  // Classrooms (for admin progress page)
+  classrooms: {
+    /**
+     * Get all classrooms for admin selectors
+     * Uses social classrooms endpoint
+     */
+    getAll: async (params?: {
+      schoolId?: string;
+    }): Promise<import('./adminTypes').ClassroomBasic[]> => {
+      try {
+        const response = await apiClient.get<import('./adminTypes').ClassroomBasic[]>(
+          '/social/classrooms',
+          { params },
+        );
+        return response.data;
+      } catch (error) {
+        throw handleAPIError(error, 'Failed to fetch classrooms');
+      }
+    },
   },
 };
 

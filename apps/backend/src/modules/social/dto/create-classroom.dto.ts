@@ -114,7 +114,7 @@ export class CreateClassroomDto {
    */
   @IsOptional()
   @IsObject()
-    settings?: Record<string, any>;
+    settings?: Record<string, unknown>;
 
   /**
    * Horario de clases
@@ -163,5 +163,5 @@ export class CreateClassroomDto {
    */
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

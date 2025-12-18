@@ -121,20 +121,20 @@ export class NotificationSettings {
    * @example { "max_retries": 3, "backoff": "exponential" }
    */
   @Column({ type: 'jsonb', default: {} })
-    retry_policy!: Record<string, any>;
+    retry_policy!: Record<string, unknown>;
 
   /**
    * Configuraciones específicas del canal de entrega
    * @example { "email_format": "html", "reply_to": "support@example.com" }
    */
   @Column({ type: 'jsonb', default: {} })
-    delivery_settings!: Record<string, any>;
+    delivery_settings!: Record<string, unknown>;
 
   /**
    * Metadatos adicionales
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * ID del usuario que creó el setting

@@ -7,8 +7,7 @@ import { calculateScore, FeedbackData } from '@shared/components/mechanics/mecha
 import type { LecturaInferencialExerciseProps, QuestionAnswer } from './lecturaInferencialTypes';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
-import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
+import { useInvalidateDashboard } from '@/shared/hooks';
 
 export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProps> = ({
   exercise,
@@ -24,8 +23,7 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
   const [startTime] = useState(new Date());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
-  const { fetchUserProgress } = useRanksStore();
-  const { fetchBalance } = useEconomyStore();
+  const { syncAndInvalidate } = useInvalidateDashboard();
 
   const questions = exercise.content.questions;
 
@@ -161,8 +159,7 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
       setShowFeedback(true);
 
       // Sync stores with backend (rewards already calculated and saved by backend)
-      await fetchUserProgress();
-      await fetchBalance();
+      await syncAndInvalidate();
 
       console.log('✅ [LecturaInferencial] Submission successful:', {
         attemptId: response.attemptId,
@@ -189,8 +186,7 @@ export const LecturaInferencialExercise: React.FC<LecturaInferencialExerciseProp
     user,
     exercise.id,
     isSubmitting,
-    fetchUserProgress,
-    fetchBalance,
+    syncAndInvalidate,
   ]);
 
   const handleReset = useCallback(() => {

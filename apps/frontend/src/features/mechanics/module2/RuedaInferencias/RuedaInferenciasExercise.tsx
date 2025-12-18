@@ -15,8 +15,7 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { RankUpModal } from '@/features/gamification/ranks/components/RankUpModal';
 import { submitExercise } from '@features/progress/api/progressAPI';
-import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
-import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
+import { useInvalidateDashboard } from '@/shared/hooks';
 import type {
   RuedaInferenciasExerciseProps,
   RuedaInferenciasExercise as RuedaInferenciasExerciseType,
@@ -116,8 +115,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
   actionsRef,
 }) => {
   // Store hooks for syncing rewards
-  const { fetchUserProgress } = useRanksStore();
-  const { fetchBalance } = useEconomyStore();
+  const { syncAndInvalidate } = useInvalidateDashboard();
 
   // Exercise data
   const [exercise] = useState<RuedaInferenciasExerciseType>(mockExercise);
@@ -367,8 +365,7 @@ export const RuedaInferenciasExercise: React.FC<RuedaInferenciasExerciseProps> =
       setShowFeedback(true);
 
       // Sync stores with backend (rewards already calculated and saved by backend)
-      await fetchUserProgress();
-      await fetchBalance();
+      await syncAndInvalidate();
 
       console.log('✅ [RuedaInferencias] Submission successful:', {
         score: response.score,

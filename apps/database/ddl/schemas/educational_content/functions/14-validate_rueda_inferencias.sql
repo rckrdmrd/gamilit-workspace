@@ -176,6 +176,7 @@ COMMENT ON FUNCTION educational_content.validate_rueda_inferencias_text IS
 -- ============================================================================
 -- FUNCIÓN: validate_rueda_inferencias (WRAPPER ESTÁNDAR)
 -- Descripción: Wrapper con firma estándar para integración con el sistema
+-- FIX 2025-12-15: Soporte para estructura categoryExpectations del seed
 -- ============================================================================
 
 CREATE OR REPLACE FUNCTION educational_content.validate_rueda_inferencias(
@@ -200,11 +201,14 @@ DECLARE
     v_max_length INTEGER;
     v_fragments_solution JSONB;
     v_fragments_submitted JSONB;
+    v_fragment_states JSONB;
     v_fragment_id TEXT;
     v_user_text TEXT;
     v_fragment_solution JSONB;
     v_keywords JSONB;
     v_fragment_points INTEGER;
+    v_category_id TEXT;
+    v_fragment_state JSONB;
     v_validation_result JSONB;
     v_total_fragments INTEGER := 0;
     v_valid_fragments INTEGER := 0;
@@ -219,6 +223,7 @@ BEGIN
     END IF;
 
     v_fragments_submitted := p_submitted_answer->'fragments';
+    v_fragment_states := p_submitted_answer->'fragmentStates';
 
     IF v_fragments_submitted IS NULL THEN
         RAISE EXCEPTION 'Invalid submitted_answer format: missing "fragments" object';
@@ -259,10 +264,65 @@ BEGIN
             CONTINUE;
         END IF;
 
-        -- Extraer keywords y puntos del fragmento
-        v_keywords := v_fragment_solution->'keywords';
-        v_fragment_points := COALESCE((v_fragment_solution->>'points')::INTEGER, 20);
+        -- ====================================================================
+        -- FIX 2025-12-15: Soporte para estructura categoryExpectations
+        -- El seed tiene: { categoryExpectations: { "cat-literal": { keywords, points }, ... } }
+        -- En lugar de: { keywords, points } directamente en el fragment
+        -- ====================================================================
+        IF v_fragment_solution ? 'categoryExpectations' THEN
+            -- Nueva estructura con categorías
+            -- Buscar categoryId en fragmentStates para este fragment
+            v_category_id := 'cat-literal'; -- default fallback
+
+            IF v_fragment_states IS NOT NULL THEN
+                SELECT state INTO v_fragment_state
+                FROM jsonb_array_elements(v_fragment_states) AS state
+                WHERE state->>'fragmentId' = v_fragment_id;
+
+                IF v_fragment_state IS NOT NULL THEN
+                    v_category_id := COALESCE(v_fragment_state->>'categoryId', 'cat-literal');
+                END IF;
+            END IF;
+
+            -- Extraer keywords y points de categoryExpectations[categoryId]
+            v_keywords := v_fragment_solution->'categoryExpectations'->v_category_id->'keywords';
+            v_fragment_points := COALESCE(
+                (v_fragment_solution->'categoryExpectations'->v_category_id->>'points')::INTEGER,
+                20
+            );
+
+            -- Si la categoría no existe, usar fallback a cat-literal
+            IF v_keywords IS NULL THEN
+                v_keywords := v_fragment_solution->'categoryExpectations'->'cat-literal'->'keywords';
+                v_fragment_points := COALESCE(
+                    (v_fragment_solution->'categoryExpectations'->'cat-literal'->>'points')::INTEGER,
+                    20
+                );
+                v_category_id := 'cat-literal (fallback)';
+            END IF;
+        ELSE
+            -- Estructura flat legacy
+            v_keywords := v_fragment_solution->'keywords';
+            v_fragment_points := COALESCE((v_fragment_solution->>'points')::INTEGER, 20);
+            v_category_id := 'flat';
+        END IF;
+        -- ====================================================================
+        -- END FIX 2025-12-15
+        -- ====================================================================
+
         v_total_points := v_total_points + v_fragment_points;
+
+        -- Validar que v_keywords no sea NULL
+        IF v_keywords IS NULL THEN
+            v_results := v_results || jsonb_build_object(
+                'fragment_id', v_fragment_id,
+                'is_valid', false,
+                'error', format('Keywords not found for fragment %s (category: %s)', v_fragment_id, v_category_id),
+                'points', 0,
+                'category_used', v_category_id
+            );
+            CONTINUE;
+        END IF;
 
         -- Validar el fragmento usando la función auxiliar
         v_validation_result := educational_content._validate_single_fragment(
@@ -284,10 +344,12 @@ BEGIN
         -- Agregar resultado del fragmento al detalle
         v_results := v_results || jsonb_build_object(
             'fragment_id', v_fragment_id,
+            'category_used', v_category_id,
             'is_valid', v_validation_result->'is_valid',
             'matched_keywords', v_validation_result->'matched_keywords',
             'keyword_count', v_validation_result->'keyword_count',
             'points', v_validation_result->'points',
+            'max_points', v_fragment_points,
             'feedback', v_validation_result->'feedback'
         );
     END LOOP;
@@ -307,16 +369,16 @@ BEGIN
         END;
     END IF;
 
-    -- 5. Determinar si es correcto
-    is_correct := (v_valid_fragments = v_total_fragments);
+    -- 5. Determinar si es correcto (al menos passing_score, normalmente 70%)
+    is_correct := (score >= 70);
 
     -- 6. Generar feedback
-    IF is_correct THEN
+    IF v_valid_fragments = v_total_fragments THEN
         feedback := format('¡Excelente! Todas las %s inferencias son válidas. Has demostrado comprensión profunda del texto.',
             v_total_fragments);
     ELSIF v_valid_fragments > 0 THEN
-        feedback := format('%s de %s inferencias válidas. Revisa los fragmentos marcados para mejorar tu respuesta.',
-            v_valid_fragments, v_total_fragments);
+        feedback := format('%s de %s inferencias válidas (Puntuación: %s%%). Revisa los fragmentos marcados para mejorar tu respuesta.',
+            v_valid_fragments, v_total_fragments, score);
     ELSE
         feedback := format('Ninguna inferencia válida. Asegúrate de incluir conceptos clave del texto y cumplir con la longitud requerida (%s-%s caracteres).',
             v_min_length, v_max_length);
@@ -328,11 +390,7 @@ BEGIN
         'valid_fragments', v_valid_fragments,
         'total_points_possible', v_total_points,
         'points_earned', v_accumulated_score,
-        'percentage', CASE
-            WHEN v_total_fragments > 0
-            THEN ROUND((v_valid_fragments::NUMERIC / v_total_fragments) * 100)
-            ELSE 0
-        END,
+        'percentage', score,
         'validation_criteria', jsonb_build_object(
             'min_keywords', v_min_keywords,
             'min_length', v_min_length,
@@ -344,4 +402,9 @@ END;
 $$;
 
 COMMENT ON FUNCTION educational_content.validate_rueda_inferencias IS
-'Wrapper estándar para validación de rueda de inferencias. Recibe formato { fragments: { "frag-1": "texto...", ... } } y valida cada fragmento acumulando puntos.';
+'Wrapper estándar para validación de rueda de inferencias.
+Soporta DOS estructuras de solución:
+1. NUEVA (categoryExpectations): { fragments: [{ id, categoryExpectations: { cat-xxx: { keywords, points } } }] }
+2. LEGACY (flat): { fragments: [{ id, keywords, points }] }
+El frontend envía fragmentStates con categoryId para indicar qué categoría usó el usuario.
+FIX 2025-12-15: Corregido para manejar estructura categoryExpectations del seed.';

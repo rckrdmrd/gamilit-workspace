@@ -37,24 +37,65 @@ export const swaggerConfig = new DocumentBuilder()
     'api-key',
   )
 
-  // Tags
-  .addTag('auth', 'Authentication endpoints')
-  .addTag('users', 'User management')
-  .addTag('modules', 'Educational modules')
-  .addTag('gamification', 'Gamification features')
-  .addTag('social', 'Social features')
-  .addTag('admin', 'Administrative endpoints')
+  // Tags - Organized by functional area
+  // Public & Auth
+  .addTag('Auth', 'Autenticación y autorización - Registro, login, refresh tokens')
+
+  // Educational
+  .addTag('Educational', 'Contenido educativo - Módulos y ejercicios de comprensión lectora')
+
+  // Progress
+  .addTag('Progress', 'Seguimiento de progreso - Sesiones, intentos y envíos de ejercicios')
+
+  // Social
+  .addTag('Social', 'Funcionalidades sociales - Escuelas, aulas, equipos y amistades')
+
+  // Content
+  .addTag('Content', 'Gestión de contenido - Biblioteca Marie Curie, plantillas y categorías')
+
+  // Gamification
+  .addTag('Gamification', 'Sistema de gamificación - XP, ML Coins, rangos, logros y tienda')
+
+  // Assignments
+  .addTag('Assignments', 'Asignaciones - Tareas y actividades asignadas por profesores')
+
+  // Notifications
+  .addTag('Notifications', 'Notificaciones - Sistema multicanal (email, push, in-app)')
+
+  // Teacher
+  .addTag('Teacher', 'Herramientas de profesor - Calificaciones, revisión manual y comunicación')
+
+  // Profile
+  .addTag('Profile', 'Perfil de usuario - Información personal y preferencias')
+
+  // Admin
+  .addTag('Admin - Users', 'Administración de usuarios - CRUD y gestión de roles')
+  .addTag('Admin - Organizations', 'Administración de organizaciones - Tenants y multi-tenant')
+  .addTag('Admin - Content', 'Administración de contenido - Aprobación y moderación')
+  .addTag('Admin - System', 'Administración de sistema - Monitoreo, logs, alertas')
+  .addTag('Admin - Analytics', 'Administración de analíticas - Reportes y métricas')
+  .addTag('Admin - Gamification', 'Administración de gamificación - Configuración de misiones')
+
+  // Health
+  .addTag('Health', 'Health checks - Estado del sistema y dependencias')
 
   .build();
 
 // Swagger UI options
 export const swaggerUiOptions = {
-  customSiteTitle: 'GAMILIT API Docs',
-  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'GAMILIT API Documentation',
+  customCss: `
+    .swagger-ui .topbar { display: none }
+    .swagger-ui .info { margin: 50px 0; }
+    .swagger-ui .info .title { font-size: 36px; }
+  `,
   swaggerOptions: {
     persistAuthorization: true,
     docExpansion: 'none',
     filter: true,
     showRequestDuration: true,
+    displayRequestDuration: true,
+    tagsSorter: 'alpha',
+    operationsSorter: 'alpha',
   },
 };

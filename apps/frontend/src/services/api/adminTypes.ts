@@ -1105,3 +1105,24 @@ export interface ExerciseStats {
     avg_attempts: number;
   };
 }
+
+// ============================================================================
+// CLASSROOMS (for Admin Progress Page)
+// ============================================================================
+
+/**
+ * Basic classroom information for selectors and lists
+ */
+export interface ClassroomBasic {
+  id: string;
+  name: string;
+  school_id?: string;
+  teacher_id?: string;
+  code?: string;
+  grade_level?: string;
+  section?: string;
+  capacity?: number;
+  current_students_count?: number;
+  is_active: boolean;
+  created_at?: string;
+}

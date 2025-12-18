@@ -153,6 +153,7 @@ export const ModuleDetailsPage: React.FC = () => {
   };
 
   // Calculate stats
+  // NOTE: apiClient does NOT transform, data comes in snake_case
   const progressPercentage = progress?.progress_percentage || 0;
   const status = progress?.status || 'not_started';
   const exercisesCompleted = progress?.completed_exercises || 0;

@@ -535,7 +535,7 @@ admin_dashboard/
 **Prioridad:** P2 - Medio
 
 #### Descripción
-Schema de soporte para integración con sistema de almacenamiento Supabase Storage.
+Schema de soporte para integración con sistema de almacenamiento Storage compatible.
 
 #### Estructura de Objetos
 ```
@@ -547,8 +547,8 @@ storage/
 #### Objetos Contenidos
 - **ENUMs:** 1
   - buckettype.sql - Tipos de bucket de almacenamiento
-- **Tablas:** 0 (usa sistema de Supabase Storage)
-- **Functions:** 0 (funcionalidad delegada a Supabase)
+- **Tablas:** 0 (usa sistema de Storage compatible)
+- **Functions:** 0 (funcionalidad delegada al sistema)
 
 #### Dependencias
 - **Depende de:** Ninguno (Nivel 0)

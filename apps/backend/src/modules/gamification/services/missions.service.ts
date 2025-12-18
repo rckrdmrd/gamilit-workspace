@@ -6,8 +6,11 @@ import { MissionStatsDto } from '../dto/missions/mission-stats.dto';
 import { MLCoinsService } from './ml-coins.service';
 import { UserStatsService } from './user-stats.service';
 import { RanksService } from './ranks.service';
+import { MissionTemplatesService } from './mission-templates.service';
+import { MissionTemplate } from '../entities/mission-template.entity';
 import { TransactionTypeEnum } from '@shared/constants/enums.constants';
 import { Profile } from '@/modules/auth/entities/profile.entity';
+import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
 
 /**
  * MissionsService
@@ -39,9 +42,12 @@ export class MissionsService {
     private readonly missionsRepo: Repository<Mission>,
     @InjectRepository(Profile, 'auth')
     private readonly profileRepo: Repository<Profile>,
+    @InjectRepository(ExerciseSubmission, 'progress')
+    private readonly exerciseSubmissionRepo: Repository<ExerciseSubmission>,
     private readonly mlCoinsService: MLCoinsService,
     private readonly userStatsService: UserStatsService,
     private readonly ranksService: RanksService,
+    private readonly templatesService: MissionTemplatesService,
   ) {}
 
   /**
@@ -65,6 +71,63 @@ export class MissionsService {
     }
 
     return profile.id;
+  }
+
+  /**
+   * Helper method to get user level from user stats
+   *
+   * @param userId - auth.users.id (from JWT token)
+   * @returns User level (defaults to 1 if not found)
+   */
+  private async getUserLevel(userId: string): Promise<number> {
+    try {
+      const stats = await this.userStatsService.findByUserId(userId);
+      return stats.level || 1;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
+      this.logger.warn(`Could not fetch user level for ${userId}, defaulting to 1`);
+      return 1;
+    }
+  }
+
+  /**
+   * Helper method to create mission from template
+   *
+   * @param userId - profiles.id (NOT auth.users.id!)
+   * @param template - Mission template to use
+   * @param endDate - Mission end date
+   * @returns Created mission
+   */
+  private async createMissionFromTemplate(
+    userId: string,
+    template: MissionTemplate,
+    endDate: Date,
+  ): Promise<Mission> {
+    const mission = this.missionsRepo.create({
+      user_id: userId,
+      template_id: template.id,
+      title: template.name,
+      description: template.description,
+      mission_type: template.type as unknown as MissionTypeEnum,
+      objectives: [
+        {
+          type: template.target_type,
+          target: template.target_value,
+          current: 0,
+          description: template.description,
+        },
+      ] as MissionObjective[],
+      rewards: {
+        ml_coins: template.ml_coins_reward,
+        xp: template.xp_reward,
+      } as MissionRewards,
+      status: MissionStatusEnum.ACTIVE,
+      progress: 0,
+      start_date: new Date(),
+      end_date: endDate,
+    });
+
+    return this.missionsRepo.save(mission);
   }
 
   /**
@@ -114,17 +177,13 @@ export class MissionsService {
   }
 
   /**
-   * Genera 3 misiones diarias automáticamente
+   * Genera 3 misiones diarias automáticamente usando templates
    *
-   * @description Crea 3 misiones diarias estándar con objetivos y recompensas predefinidos.
+   * @description Obtiene templates activos de tipo 'daily', filtra por nivel de usuario,
+   * y selecciona 3 misiones aleatorias basadas en prioridad.
    * Las misiones expiran al final del día (23:59:59).
    *
-   * Misiones generadas:
-   * 1. Completar 3 ejercicios → 50 XP + 25 ML Coins
-   * 2. Ganar 100 XP → 30 XP + 15 ML Coins
-   * 3. Usar 1 comodín → 40 XP + 20 ML Coins
-   *
-   * @param userId - profiles.id (UUID) - NOT auth.users.id!
+   * @param profileId - profiles.id (UUID) - NOT auth.users.id!
    * @returns Array de 3 misiones diarias creadas
    *
    * @example
@@ -132,103 +191,67 @@ export class MissionsService {
    * const missions = await service.generateDailyMissions(profileId);
    * // Retorna: [Mission, Mission, Mission]
    */
-  async generateDailyMissions(userId: string): Promise<Mission[]> {
+  async generateDailyMissions(profileId: string): Promise<Mission[]> {
     const now = new Date();
     const endOfDay = new Date(now);
     endOfDay.setHours(23, 59, 59, 999);
 
-    // Misión 1: Completar ejercicios
-    const mission1 = this.missionsRepo.create({
-      user_id: userId,
-      template_id: 'daily_complete_exercises',
-      title: 'Completar ejercicios',
-      description: 'Completa 3 ejercicios hoy',
-      mission_type: MissionTypeEnum.DAILY,
-      objectives: [
-        {
-          type: 'complete_exercises',
-          target: 3,
-          current: 0,
-          description: 'Completa 3 ejercicios',
-        },
-      ],
-      rewards: {
-        ml_coins: 25,
-        xp: 50,
-      },
-      status: MissionStatusEnum.ACTIVE,
-      progress: 0,
-      start_date: now,
-      end_date: endOfDay,
+    // Obtener nivel del usuario usando el profileId
+    // Necesitamos convertir profileId -> userId para getUserLevel
+    const profile = await this.profileRepo.findOne({
+      where: { id: profileId },
+      select: ['user_id'],
     });
 
-    // Misión 2: Ganar XP
-    const mission2 = this.missionsRepo.create({
-      user_id: userId,
-      template_id: 'daily_earn_xp',
-      title: 'Ganar 100 XP',
-      description: 'Acumula 100 puntos de experiencia hoy',
-      mission_type: MissionTypeEnum.DAILY,
-      objectives: [
-        {
-          type: 'earn_xp',
-          target: 100,
-          current: 0,
-          description: 'Gana 100 XP',
-        },
-      ],
-      rewards: {
-        ml_coins: 15,
-        xp: 30,
-      },
-      status: MissionStatusEnum.ACTIVE,
-      progress: 0,
-      start_date: now,
-      end_date: endOfDay,
-    });
+    const userLevel = profile?.user_id ? await this.getUserLevel(profile.user_id) : 1;
 
-    // Misión 3: Usar comodín
-    const mission3 = this.missionsRepo.create({
-      user_id: userId,
-      template_id: 'daily_use_comodin',
-      title: 'Usar un comodín',
-      description: 'Usa al menos un comodín en un ejercicio',
-      mission_type: MissionTypeEnum.DAILY,
-      objectives: [
-        {
-          type: 'use_comodines',
-          target: 1,
-          current: 0,
-          description: 'Usa 1 comodín',
-        },
-      ],
-      rewards: {
-        ml_coins: 20,
-        xp: 40,
-      },
-      status: MissionStatusEnum.ACTIVE,
-      progress: 0,
-      start_date: now,
-      end_date: endOfDay,
-    });
+    // Obtener templates activos de tipo 'daily' filtrados por nivel
+    const templates = await this.templatesService.getActiveByType(
+      MissionTypeEnum.DAILY as any,
+      userLevel,
+    );
 
-    // Guardar todas las misiones
-    const missions = await this.missionsRepo.save([mission1, mission2, mission3]);
+    if (templates.length === 0) {
+      this.logger.warn(
+        `No active daily templates found for user level ${userLevel}. Using fallback.`,
+      );
+      // Fallback: intentar obtener templates sin filtro de nivel
+      const fallbackTemplates = await this.templatesService.getActiveByType(
+        MissionTypeEnum.DAILY as any,
+      );
+      if (fallbackTemplates.length === 0) {
+        throw new BadRequestException(
+          'No daily mission templates available. Please seed templates first.',
+        );
+      }
+      templates.push(...fallbackTemplates);
+    }
+
+    // Seleccionar 3 templates aleatorios basados en prioridad
+    const selectedTemplates = this.templatesService.selectRandom(templates, 3);
+
+    // Crear misiones desde los templates seleccionados
+    const missions: Mission[] = [];
+    for (const template of selectedTemplates) {
+      const mission = await this.createMissionFromTemplate(profileId, template, endOfDay);
+      missions.push(mission);
+    }
+
+    this.logger.log(
+      `Generated ${missions.length} daily missions for user ${profileId} (level ${userLevel})`,
+    );
 
     return missions;
   }
 
   /**
-   * Genera 2 misiones semanales automáticamente
+   * Genera 2 misiones semanales automáticamente usando templates
    *
-   * @description Crea 2 misiones semanales estándar con objetivos y recompensas predefinidos.
+   * @description Obtiene templates activos de tipo 'weekly', filtra por nivel de usuario,
+   * y selecciona 2 misiones aleatorias basadas en prioridad.
    * Las misiones expiran al final de la semana (domingo 23:59:59).
    *
-   * Misiones generadas:
-   * 1. Completar 15 ejercicios → 200 XP + 100 ML Coins
-   * 2. Racha de 5 días (daily_streak) → 300 XP + 150 ML Coins
-   *
-   * @param userId - profiles.id (UUID) - NOT auth.users.id!
+   * @param profileId - profiles.id (UUID) - NOT auth.users.id!
    * @returns Array de 2 misiones semanales creadas
    *
    * @example
@@ -236,7 +259,7 @@ export class MissionsService {
    * const missions = await service.generateWeeklyMissions(profileId);
    * // Retorna: [Mission, Mission]
    */
-  async generateWeeklyMissions(userId: string): Promise<Mission[]> {
+  async generateWeeklyMissions(profileId: string): Promise<Mission[]> {
     const now = new Date();
 
     // Calcular fin de semana (domingo)
@@ -246,58 +269,49 @@ export class MissionsService {
     endOfWeek.setDate(endOfWeek.getDate() + daysUntilSunday);
     endOfWeek.setHours(23, 59, 59, 999);
 
-    // Misión 1: Maratón de ejercicios
-    const mission1 = this.missionsRepo.create({
-      user_id: userId,
-      template_id: 'weekly_exercise_marathon',
-      title: 'Maratón de ejercicios',
-      description: 'Completa 15 ejercicios esta semana',
-      mission_type: MissionTypeEnum.WEEKLY,
-      objectives: [
-        {
-          type: 'complete_exercises',
-          target: 15,
-          current: 0,
-          description: 'Completa 15 ejercicios',
-        },
-      ],
-      rewards: {
-        ml_coins: 100,
-        xp: 200,
-      },
-      status: MissionStatusEnum.ACTIVE,
-      progress: 0,
-      start_date: now,
-      end_date: endOfWeek,
+    // Obtener nivel del usuario usando el profileId
+    const profile = await this.profileRepo.findOne({
+      where: { id: profileId },
+      select: ['user_id'],
     });
 
-    // Misión 2: Racha semanal
-    const mission2 = this.missionsRepo.create({
-      user_id: userId,
-      template_id: 'weekly_consecutive_days',
-      title: 'Racha semanal',
-      description: 'Estudia 5 días consecutivos esta semana',
-      mission_type: MissionTypeEnum.WEEKLY,
-      objectives: [
-        {
-          type: 'daily_streak',
-          target: 5,
-          current: 0,
-          description: 'Racha de 5 días',
-        },
-      ],
-      rewards: {
-        ml_coins: 150,
-        xp: 300,
-      },
-      status: MissionStatusEnum.ACTIVE,
-      progress: 0,
-      start_date: now,
-      end_date: endOfWeek,
-    });
+    const userLevel = profile?.user_id ? await this.getUserLevel(profile.user_id) : 1;
 
-    // Guardar misiones
-    const missions = await this.missionsRepo.save([mission1, mission2]);
+    // Obtener templates activos de tipo 'weekly' filtrados por nivel
+    const templates = await this.templatesService.getActiveByType(
+      MissionTypeEnum.WEEKLY as any,
+      userLevel,
+    );
+
+    if (templates.length === 0) {
+      this.logger.warn(
+        `No active weekly templates found for user level ${userLevel}. Using fallback.`,
+      );
+      // Fallback: intentar obtener templates sin filtro de nivel
+      const fallbackTemplates = await this.templatesService.getActiveByType(
+        MissionTypeEnum.WEEKLY as any,
+      );
+      if (fallbackTemplates.length === 0) {
+        throw new BadRequestException(
+          'No weekly mission templates available. Please seed templates first.',
+        );
+      }
+      templates.push(...fallbackTemplates);
+    }
+
+    // Seleccionar 2 templates aleatorios basados en prioridad
+    const selectedTemplates = this.templatesService.selectRandom(templates, 2);
+
+    // Crear misiones desde los templates seleccionados
+    const missions: Mission[] = [];
+    for (const template of selectedTemplates) {
+      const mission = await this.createMissionFromTemplate(profileId, template, endOfWeek);
+      missions.push(mission);
+    }
+
+    this.logger.log(
+      `Generated ${missions.length} weekly missions for user ${profileId} (level ${userLevel})`,
+    );
 
     return missions;
   }
@@ -690,10 +704,29 @@ export class MissionsService {
       return sum + (mission.rewards.ml_coins || 0);
     }, 0);
 
-    // TODO: Implementar cálculo de rachas
-    // Requiere lógica adicional basada en fechas de completado
-    const currentStreak = 0;
-    const longestStreak = 0;
+    // Calcular rachas basadas en actividad diaria
+    const streakData = await this.calculateStreaks(profileId);
+
+    // Actualizar user_stats con los valores calculados de racha
+    // IMPORTANT: Esto sincroniza las rachas calculadas desde misiones con user_stats
+    try {
+      await this.userStatsService.updateStats(userId, {
+        current_streak: streakData.currentStreak,
+        max_streak: Math.max(
+          streakData.longestStreak,
+          (await this.userStatsService.findByUserId(userId)).max_streak || 0,
+        ),
+        days_active_total: streakData.totalDaysActive,
+      });
+      this.logger.log(
+        `Updated user_stats for user ${userId}: current_streak=${streakData.currentStreak}, max_streak=${streakData.longestStreak}, days_active=${streakData.totalDaysActive}`,
+      );
+    } catch (error: unknown) {
+      this.logger.warn(
+        `Could not update streak stats for user ${userId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      // No fallar la operación si falla la actualización de stats
+    }
 
     return {
       todayCompleted,
@@ -703,8 +736,122 @@ export class MissionsService {
       totalCompleted,
       totalXPEarned,
       totalMLCoinsEarned,
+      currentStreak: streakData.currentStreak,
+      longestStreak: streakData.longestStreak,
+    };
+  }
+
+  /**
+   * Calcula rachas de actividad del usuario
+   *
+   * @description Calcula días consecutivos con actividad basándose en exercise_submissions.
+   * Una racha se define como días consecutivos con al menos un ejercicio enviado.
+   *
+   * Algoritmo implementado (BE-P2-007):
+   * 1. Obtiene todas las fechas únicas con ejercicios enviados (agrupadas por día)
+   * 2. Calcula currentStreak:
+   *    - Verifica si la última actividad fue hoy o ayer (para mantener racha activa)
+   *    - Cuenta días consecutivos hacia atrás desde la última actividad
+   *    - Se resetea a 0 si no hay actividad en los últimos 2 días
+   * 3. Calcula longestStreak:
+   *    - Recorre todas las fechas históricas
+   *    - Detecta secuencias de días consecutivos
+   *    - Guarda el máximo encontrado (incluye currentStreak)
+   * 4. Actualiza user_stats.max_streak automáticamente (ver getStats() línea 709-716)
+   *
+   * @param profileId - profiles.id (UUID) - NOT auth.users.id!
+   * @returns Objeto con currentStreak (días consecutivos hasta hoy), longestStreak (máximo histórico), totalDaysActive
+   *
+   * @example
+   * const streaks = await service.calculateStreaks(profileId);
+   * // { currentStreak: 5, longestStreak: 12, totalDaysActive: 45 }
+   */
+  private async calculateStreaks(
+    profileId: string,
+  ): Promise<{
+      currentStreak: number;
+      longestStreak: number;
+      totalDaysActive: number;
+    }> {
+    // Obtener todas las fechas con actividad (exercise_submissions) ordenadas por fecha
+    const activityDates = await this.exerciseSubmissionRepo
+      .createQueryBuilder('submission')
+      .select('DATE(submission.submitted_at)', 'activity_date')
+      .where('submission.user_id = :profileId', { profileId })
+      .andWhere('submission.submitted_at IS NOT NULL')
+      .groupBy('DATE(submission.submitted_at)')
+      .orderBy('DATE(submission.submitted_at)', 'DESC')
+      .getRawMany();
+
+    if (activityDates.length === 0) {
+      return { currentStreak: 0, longestStreak: 0, totalDaysActive: 0 };
+    }
+
+    // Total de días con actividad
+    const totalDaysActive = activityDates.length;
+
+    // Calcular racha actual
+    let currentStreak = 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    // Verificar si hay actividad hoy o ayer (para mantener racha)
+    const lastActivityDate = new Date(activityDates[0].activity_date);
+    lastActivityDate.setHours(0, 0, 0, 0);
+
+    // Solo contar racha actual si la última actividad fue hoy o ayer
+    if (lastActivityDate.getTime() === today.getTime() ||
+        lastActivityDate.getTime() === yesterday.getTime()) {
+      const checkDate = new Date(lastActivityDate);
+
+      for (const activity of activityDates) {
+        const activityDate = new Date(activity.activity_date);
+        activityDate.setHours(0, 0, 0, 0);
+
+        if (activityDate.getTime() === checkDate.getTime()) {
+          currentStreak++;
+          checkDate.setDate(checkDate.getDate() - 1);
+        } else if (activityDate.getTime() < checkDate.getTime()) {
+          // Hay un día faltante, la racha se rompe
+          break;
+        }
+      }
+    }
+
+    // Calcular racha más larga histórica
+    let longestStreak = 0;
+    let tempStreak = 1;
+    let prevDate = new Date(activityDates[0].activity_date);
+    prevDate.setHours(0, 0, 0, 0);
+
+    for (let i = 1; i < activityDates.length; i++) {
+      const currentDate = new Date(activityDates[i].activity_date);
+      currentDate.setHours(0, 0, 0, 0);
+
+      const expectedPrevDate = new Date(currentDate);
+      expectedPrevDate.setDate(expectedPrevDate.getDate() + 1);
+
+      if (prevDate.getTime() === expectedPrevDate.getTime()) {
+        // Días consecutivos
+        tempStreak++;
+      } else {
+        // Racha rota, guardar si es la más larga
+        longestStreak = Math.max(longestStreak, tempStreak);
+        tempStreak = 1;
+      }
+
+      prevDate = currentDate;
+    }
+
+    // Verificar la última racha calculada
+    longestStreak = Math.max(longestStreak, tempStreak, currentStreak);
+
+    return {
       currentStreak,
       longestStreak,
+      totalDaysActive,
     };
   }
 

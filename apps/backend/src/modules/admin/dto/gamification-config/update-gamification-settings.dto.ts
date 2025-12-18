@@ -182,5 +182,5 @@ export class UpdateGamificationSettingsDto {
   })
   @IsOptional()
   @IsObject()
-    achievements?: Record<string, any>;
+    achievements?: Record<string, unknown>;
 }

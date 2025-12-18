@@ -181,7 +181,7 @@ export class ChallengeParticipant {
    * Metadatos adicionales en formato JSONB
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   // =====================================================
   // Relaciones

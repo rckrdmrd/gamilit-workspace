@@ -15,9 +15,9 @@ import { BlockStudentDto, BlockType, UpdatePermissionsDto } from '../dto/student
 
 describe('StudentBlockingService', () => {
   let service: StudentBlockingService;
-  let classroomMemberRepository: Repository<ClassroomMember>;
-  let teacherClassroomRepository: Repository<TeacherClassroom>;
-  let profileRepository: Repository<Profile>;
+  let _classroomMemberRepository: Repository<ClassroomMember>;
+  let _teacherClassroomRepository: Repository<TeacherClassroom>;
+  let _profileRepository: Repository<Profile>;
 
   const mockClassroomMemberRepository = {
     findOne: jest.fn(),

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder, Brackets } from 'typeorm';
+import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { AdminContentService } from '../services/admin-content.service';
 import { Module } from '@modules/educational/entities/module.entity';
@@ -18,11 +18,11 @@ import { ContentStatusEnum, MediaTypeEnum } from '@shared/constants';
 
 describe('AdminContentService', () => {
   let service: AdminContentService;
-  let moduleRepo: Repository<Module>;
-  let exerciseRepo: Repository<Exercise>;
-  let templateRepo: Repository<ContentTemplate>;
-  let mediaFileRepo: Repository<MediaFile>;
-  let contentApprovalRepo: Repository<ContentApproval>;
+  let _moduleRepo: Repository<Module>;
+  let _exerciseRepo: Repository<Exercise>;
+  let _templateRepo: Repository<ContentTemplate>;
+  let _mediaFileRepo: Repository<MediaFile>;
+  let _contentApprovalRepo: Repository<ContentApproval>;
 
   const mockQueryBuilder = {
     where: jest.fn().mockReturnThis(),
@@ -93,11 +93,11 @@ describe('AdminContentService', () => {
     }).compile();
 
     service = module.get<AdminContentService>(AdminContentService);
-    moduleRepo = module.get(getRepositoryToken(Module, 'educational'));
-    exerciseRepo = module.get(getRepositoryToken(Exercise, 'educational'));
-    templateRepo = module.get(getRepositoryToken(ContentTemplate, 'content'));
-    mediaFileRepo = module.get(getRepositoryToken(MediaFile, 'content'));
-    contentApprovalRepo = module.get(getRepositoryToken(ContentApproval, 'educational'));
+    _moduleRepo = module.get(getRepositoryToken(Module, 'educational'));
+    _exerciseRepo = module.get(getRepositoryToken(Exercise, 'educational'));
+    _templateRepo = module.get(getRepositoryToken(ContentTemplate, 'content'));
+    _mediaFileRepo = module.get(getRepositoryToken(MediaFile, 'content'));
+    _contentApprovalRepo = module.get(getRepositoryToken(ContentApproval, 'educational'));
 
     jest.clearAllMocks();
   });

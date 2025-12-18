@@ -1,4 +1,3 @@
-/* eslint-disable rulesdir/no-api-route-issues */
 /**
  * Password API - Password Reset and Recovery Management
  *
@@ -8,7 +7,7 @@
  * - Resetting password with token
  */
 
-import { apiClient } from './apiClient';
+import { apiClient } from '@/services/api/apiClient';
 
 // ============================================================================
 // TYPES

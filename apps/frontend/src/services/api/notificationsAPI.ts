@@ -253,4 +253,24 @@ export const notificationsAPI = {
   deleteDevice: async (deviceId: string): Promise<void> => {
     await apiClient.delete(`/notifications/devices/${deviceId}`);
   },
+
+  /**
+   * Get VAPID public key for Web Push subscription
+   *
+   * Required for native Web Push API (non-Firebase implementation)
+   * The VAPID key authenticates the server with the browser's push service
+   *
+   * @returns VAPID public key in base64url format
+   */
+  getVapidPublicKey: async (): Promise<string | null> => {
+    try {
+      const response = await apiClient.get<{ vapidPublicKey: string }>(
+        '/notifications/devices/vapid-public-key',
+      );
+      return response.data.vapidPublicKey;
+    } catch (error) {
+      console.error('Failed to get VAPID key:', error);
+      return null;
+    }
+  },
 };

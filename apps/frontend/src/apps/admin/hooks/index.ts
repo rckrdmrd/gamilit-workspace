@@ -15,3 +15,5 @@ export { useRolePermissions } from './useRolePermissions';
 export { useAlerts } from './useAlerts';
 export { useProgress } from './useProgress';
 export { useMonitoring } from './useMonitoring';
+export { useFeatureFlags } from './useFeatureFlags';
+export { useClassroomsList } from './useClassroomsList';

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository } from 'typeorm';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { AchievementsService } from '../achievements.service';
 import { Achievement, UserAchievement, UserStats } from '../../entities';
@@ -9,9 +9,9 @@ import { AchievementCategoryEnum, DifficultyLevelEnum } from '@shared/constants'
 
 describe('AchievementsService', () => {
   let service: AchievementsService;
-  let achievementRepo: Repository<Achievement>;
-  let userAchievementRepo: Repository<UserAchievement>;
-  let userStatsRepo: Repository<UserStats>;
+  let _achievementRepo: Repository<Achievement>;
+  let _userAchievementRepo: Repository<UserAchievement>;
+  let _userStatsRepo: Repository<UserStats>;
 
   const mockQueryBuilder = {
     where: jest.fn().mockReturnThis(),
@@ -543,7 +543,7 @@ describe('AchievementsService', () => {
       mockUserAchievementRepo.save.mockResolvedValue(newUserAchievement);
 
       // Act
-      const result = await service.grantAchievement(mockUserId, grantDto);
+      const _result = await service.grantAchievement(mockUserId, grantDto);
 
       // Assert
       expect(mockUserAchievementRepo.create).toHaveBeenCalledWith(

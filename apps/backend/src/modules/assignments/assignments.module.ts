@@ -6,6 +6,11 @@
  * UPDATED (2025-11-08):
  * - Agregada entidad AssignmentExercise
  * - Agregada entidad AssignmentStudent
+ *
+ * CORRECTED (2025-12-18):
+ * - Datasource cambiado de 'content' a 'educational' para entidades Assignment
+ * - AssignmentClassroom usa datasource 'social' (pertenece a schema social_features)
+ * - Fixes EntityMetadataNotFoundError en /teacher/assignments
  */
 
 import { Module } from '@nestjs/common';
@@ -21,15 +26,23 @@ import { StudentAssignmentsController } from './controllers/student-assignments.
 
 @Module({
   imports: [
+    // Entidades educational_content → datasource 'educational'
+    // Assignment, AssignmentExercise, AssignmentStudent, AssignmentSubmission pertenecen a schema educational_content
     TypeOrmModule.forFeature(
       [
         Assignment,
-        AssignmentClassroom,
         AssignmentExercise,
         AssignmentStudent,
         AssignmentSubmission,
       ],
-      'content', // Use content_management connection
+      'educational',
+    ),
+    // AssignmentClassroom → datasource 'social' (pertenece a schema social_features)
+    TypeOrmModule.forFeature(
+      [
+        AssignmentClassroom,
+      ],
+      'social',
     ),
   ],
   controllers: [AssignmentsController, StudentAssignmentsController],

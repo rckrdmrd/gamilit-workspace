@@ -84,5 +84,5 @@ export class GenerateReportDto {
     example: { start_date: '2025-01-01', end_date: '2025-12-31' },
   })
   @IsOptional()
-    filters?: Record<string, any>;
+    filters?: Record<string, unknown>;
 }

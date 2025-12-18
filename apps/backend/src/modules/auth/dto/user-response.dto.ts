@@ -1,4 +1,4 @@
-import { Exclude, Expose, Type } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 import { GamilityRoleEnum } from '@shared/constants';
 
 /**
@@ -99,7 +99,7 @@ export class UserResponseDto {
    * NOTA: Filtrar campos sensibles si existen
    */
   @Expose()
-    raw_user_meta_data!: Record<string, any>;
+    raw_user_meta_data!: Record<string, unknown>;
 
   /**
    * Fecha y hora de creación del registro

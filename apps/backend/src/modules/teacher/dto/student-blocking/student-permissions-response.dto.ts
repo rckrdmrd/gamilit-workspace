@@ -47,7 +47,7 @@ export class StudentPermissionsResponseDto {
       can_view_leaderboard: false,
     },
   })
-    permissions!: Record<string, any>;
+    permissions!: Record<string, unknown>;
 
   @ApiPropertyOptional({
     description: 'Fecha y hora del bloqueo (si aplica)',

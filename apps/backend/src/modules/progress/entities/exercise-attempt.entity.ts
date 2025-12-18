@@ -65,7 +65,7 @@ export class ExerciseAttempt {
    * Estructura varía según tipo de ejercicio
    */
   @Column({ type: 'jsonb' })
-    submitted_answers!: Record<string, any>;
+    submitted_answers!: Record<string, unknown>;
 
   // =====================================================
   // RESULTS & SCORING
@@ -144,5 +144,5 @@ export class ExerciseAttempt {
     type: 'jsonb',
     default: { browser: null, device_type: null, response_pattern: [] },
   })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 }

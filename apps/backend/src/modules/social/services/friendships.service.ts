@@ -7,8 +7,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Friendship } from '../entities';
-import { CreateFriendshipDto, UpdateFriendshipStatusDto } from '../dto';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
 import { FriendshipStatusEnum } from '@shared/constants/enums.constants';
 
 /**

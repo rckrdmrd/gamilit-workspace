@@ -1,6 +1,264 @@
 # Trazas de Tareas - Backend
 
-**Última actualización:** 2025-11-28 (BE-134/BE-135: XP Reward Calculations Updated)
+**Última actualización:** 2025-11-29 (BE-137: Implementación M4-M5 - Sistema de Revisión Manual)
+
+---
+
+## BE-137: Implementación M4-M5 - Sistema de Revisión Manual ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P0 CRÍTICO
+**Asignado:** Backend-Agent
+**Fecha:** 2025-11-29
+**Módulos:** Educational, Progress, Teacher
+
+### Resumen
+
+Implementación completa de los módulos 4 (Lectura Digital) y 5 (Producción Lectora) con sistema de carga de medios (audio/video) y revisión manual por docentes.
+
+### Problema Resuelto
+
+Los módulos M4 y M5 requieren ejercicios creativos donde los estudiantes generan contenido multimedia (videos, audios, textos) que debe ser evaluado manualmente por docentes. No existía infraestructura para:
+- Subir archivos multimedia desde ejercicios
+- Almacenar y gestionar archivos adjuntos
+- Sistema de revisión manual con rúbricas
+- Workflow de envío → revisión → calificación
+
+### Archivos Creados
+
+#### Entities (3 archivos)
+| Archivo | Descripción |
+|---------|-------------|
+| `modules/educational/entities/media-attachment.entity.ts` | Entity para archivos multimedia adjuntos |
+| `modules/progress/entities/manual-review.entity.ts` | Entity para revisiones manuales con rúbricas |
+
+#### Services (3 archivos)
+| Archivo | Descripción |
+|---------|-------------|
+| `modules/educational/services/media-storage.service.ts` | Gestión de subida y almacenamiento de archivos |
+| `modules/teacher/services/manual-review.service.ts` | Lógica de revisión manual con rúbricas |
+
+#### Controllers (2 archivos)
+| Archivo | Descripción |
+|---------|-------------|
+| `modules/educational/controllers/media-upload.controller.ts` | Endpoint POST /educational/media/upload |
+| `modules/teacher/controllers/manual-review.controller.ts` | CRUD de revisiones manuales |
+
+#### DTOs (3 archivos)
+| Archivo | Descripción |
+|---------|-------------|
+| `modules/educational/dto/upload-media.dto.ts` | Validación de subida de archivos |
+| `modules/teacher/dto/create-review.dto.ts` | Validación de creación de revisiones |
+| `modules/teacher/dto/shop/` | DTOs para sistema de tienda |
+
+### Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| `modules/educational/educational.module.ts` | Agregado MediaStorageService y MediaUploadController |
+| `modules/educational/entities/index.ts` | Export de MediaAttachment |
+| `modules/teacher/teacher.module.ts` | Agregado ManualReviewService y Controller |
+
+### Endpoints Implementados
+
+#### 1. POST /api/v1/educational/media/upload
+- **Descripción:** Subir archivo multimedia para ejercicio
+- **Body:** `multipart/form-data` con file, exerciseId, userId
+- **Response:** MediaAttachmentDto con URL del archivo
+- **Validaciones:**
+  - Tipos permitidos: audio/*, video/*, image/*
+  - Tamaño máximo: 50MB para video, 10MB para audio/imagen
+  - Ejercicio debe existir
+
+#### 2. GET /api/v1/teacher/manual-reviews
+- **Descripción:** Lista de envíos pendientes de revisión
+- **Query:** classroomId, moduleId, status
+- **Response:** ManualReviewDto[] con datos del estudiante y ejercicio
+
+#### 3. POST /api/v1/teacher/manual-reviews
+- **Descripción:** Crear revisión manual para un envío
+- **Body:** CreateReviewDto (submissionId, score, feedback, rubricScores)
+- **Response:** ManualReviewDto
+
+#### 4. PUT /api/v1/teacher/manual-reviews/:id
+- **Descripción:** Actualizar revisión existente
+- **Body:** UpdateReviewDto
+- **Response:** ManualReviewDto
+
+### Ejercicios Activados
+
+#### Módulo 4 - Lectura Digital (5 ejercicios)
+1. `verificador_fake_news` - Verificación de noticias falsas
+2. `infografia_interactiva` - Creación de infografías
+3. `quiz_tiktok` - Quiz estilo TikTok
+4. `navegacion_hipertextual` - Navegación en hipertextos
+5. `analisis_memes` - Análisis crítico de memes
+
+#### Módulo 5 - Producción Lectora (3 ejercicios)
+1. `diario_multimedia` - Diario con texto/audio/video
+2. `comic_digital` - Creación de cómics digitales
+3. `video_carta` - Carta en formato video
+
+### Características Técnicas
+
+**Almacenamiento de Archivos:**
+- ✅ Directorio: `apps/backend/uploads/media/`
+- ✅ Nomenclatura: `{timestamp}-{userId}-{originalName}`
+- ✅ Validación de tipos MIME
+- ✅ Límites de tamaño por tipo
+
+**Sistema de Revisión:**
+- ✅ Estados: pending, in_review, approved, rejected, needs_revision
+- ✅ Rúbricas con criterios y puntajes
+- ✅ Feedback textual del docente
+- ✅ Historial de revisiones
+
+**Seguridad:**
+- ✅ JWT Auth requerido
+- ✅ RLS: Docente solo ve sus classrooms
+- ✅ Validación de ownership en archivos
+- ✅ Sanitización de nombres de archivo
+
+### Validación
+
+- ✅ TypeScript Build: Sin errores
+- ✅ Lint: 0 errores
+- ✅ Directiva Recreación Limpia: CUMPLE (solo nuevas tablas)
+- ✅ Backend compila: `npm run build` exitoso
+
+### Base de Datos
+
+Tablas creadas (ver DB-137):
+- `educational_content.media_attachments`
+- `progress_tracking.manual_reviews`
+
+### Impacto
+
+**Antes:**
+- M4 y M5: NO disponibles
+- 0 ejercicios creativos funcionales
+- Sin sistema de revisión manual
+
+**Después:**
+- M4 y M5: Totalmente funcionales
+- 8 ejercicios creativos activos
+- Sistema completo de revisión manual con rúbricas
+
+### Próximos Pasos
+
+**Recomendaciones:**
+1. Implementar notificaciones push para docentes (envío pendiente)
+2. Agregar analytics de tiempos de revisión
+3. Implementar sistema de apelaciones
+4. Agregar soporte para más formatos (PDF, documentos)
+5. Implementar compresión automática de videos
+
+### Referencias
+
+- Database: DB-137 (tablas media_attachments, manual_reviews)
+- Frontend: FE-137 (componentes MediaUploader, RubricEvaluator)
+- Script VAPID: `apps/backend/scripts/generate-vapid-keys.js`
+
+---
+
+## BE-136: Achievement Auto-Detection after Exercise Completion ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P1 ALTA
+**Asignado:** Backend-Agent (orquestado por Architecture-Analyst)
+**Fecha:** 2025-11-29
+**Análisis ID:** STUDENT-PORTAL-FIX-004
+
+---
+
+## BE-136: Achievement Auto-Detection en ExerciseAttemptService ✅
+
+**Estado:** COMPLETADA
+**Prioridad:** P1 ALTA
+**Asignado:** Backend-Agent (orquestado por Architecture-Analyst)
+**Fecha:** 2025-11-29
+**Análisis ID:** STUDENT-PORTAL-FIX-004
+
+### Resumen
+
+Integración del sistema de logros (achievements) al flujo de completación de ejercicios. Después de otorgar recompensas (XP/ML Coins), el sistema ahora detecta y otorga automáticamente los logros que el usuario haya desbloqueado.
+
+### Problema Identificado
+
+Los logros en el portal Student no tenían funcionalidad porque:
+- AchievementsService existía con método `detectAndGrantEarned()`
+- ExerciseAttemptService NO llamaba a AchievementsService después de otorgar recompensas
+- Los logros se definían en BD pero nunca se otorgaban automáticamente
+
+### Archivos Modificados
+
+| Archivo | Descripción |
+|---------|-------------|
+| `modules/progress/services/exercise-attempt.service.ts` | Inyección de AchievementsService y llamada post-rewards |
+
+### Cambios Implementados
+
+**1. Import agregado (línea superior):**
+```typescript
+import { AchievementsService } from '../../gamification/services/achievements.service';
+```
+
+**2. Constructor - Inyección de dependencia:**
+```typescript
+constructor(
+  // ... otros servicios
+  private readonly achievementsService: AchievementsService,
+) {}
+```
+
+**3. Método submitAttempt() - Detección de logros post-rewards:**
+```typescript
+// After awardRewards() call
+if (isCorrect && (attempt.xp_earned > 0 || attempt.ml_coins_earned > 0)) {
+  try {
+    const earnedAchievements = await this.achievementsService.detectAndGrantEarned(attempt.user_id);
+    if (earnedAchievements.length > 0) {
+      this.logger.log(
+        `Granted ${earnedAchievements.length} achievement(s) to user ${attempt.user_id}`,
+      );
+    }
+  } catch (error) {
+    this.logger.error(
+      `Error detecting achievements for user ${attempt.user_id}: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+}
+```
+
+### Flujo de Ejecución
+
+1. Estudiante completa ejercicio
+2. `submitAttempt()` valida respuestas
+3. Si es correcto: `awardRewards()` otorga XP y ML Coins
+4. **NUEVO:** `detectAndGrantEarned()` verifica condiciones de logros
+5. Logros desbloqueados se insertan en `user_achievements`
+6. Log de confirmación en consola
+
+### Dependencias
+
+| Servicio | Rol |
+|----------|-----|
+| `AchievementsService` | Detecta y otorga logros basado en condiciones |
+| `UserStatsService` | Provee estadísticas actuales del usuario |
+| `RanksService` | Verificación de rangos para logros de rango |
+
+### Validación
+
+- ✅ TypeScript compila sin errores
+- ✅ Backend build exitoso
+- ✅ AchievementsService ya exportado en gamification.module.ts
+- ✅ Error handling implementado (no bloquea flujo principal)
+
+### Impacto
+
+- Portal Student: Logros ahora funcionales
+- Gamificación: Sistema de achievements completamente integrado
+- UX: Usuarios reciben logros automáticamente al cumplir condiciones
 
 ---
 

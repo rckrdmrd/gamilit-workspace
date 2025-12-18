@@ -84,7 +84,7 @@ export class CreateExerciseDto {
    */
   @IsOptional()
   @IsObject()
-    config?: Record<string, any>;
+    config?: Record<string, unknown>;
 
   /**
    * Contenido del ejercicio (JSONB) (REQUERIDO)
@@ -92,21 +92,21 @@ export class CreateExerciseDto {
    */
   @IsOptional()
   @IsObject()
-    content?: Record<string, any>;
+    content?: Record<string, unknown>;
 
   /**
    * Solución del ejercicio (JSONB)
    */
   @IsOptional()
   @IsObject()
-    solution?: Record<string, any>;
+    solution?: Record<string, unknown>;
 
   /**
    * Rúbrica de evaluación (JSONB)
    */
   @IsOptional()
   @IsObject()
-    rubric?: Record<string, any>;
+    rubric?: Record<string, unknown>;
 
   // =====================================================
   // GRADING & SCORING
@@ -233,7 +233,7 @@ export class CreateExerciseDto {
    */
   @IsOptional()
   @IsObject()
-    comodines_config?: Record<string, any>;
+    comodines_config?: Record<string, unknown>;
 
   // =====================================================
   // GAMIFICATION & REWARDS
@@ -345,5 +345,5 @@ export class CreateExerciseDto {
    */
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

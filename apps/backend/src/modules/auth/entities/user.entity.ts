@@ -5,13 +5,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-  OneToOne,
-  OneToMany,
-  ManyToMany,
+      ManyToMany,
   JoinTable,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { DB_TABLES, GamilityRoleEnum, UserStatusEnum } from '@shared/constants';
+import { DB_TABLES, GamilityRoleEnum } from '@shared/constants';
 import { Role } from './role.entity';
 
 /**
@@ -56,7 +54,7 @@ export class User {
    * Rol del usuario en el sistema (student, admin_teacher, super_admin)
    *
    * @note GAMILIT usa la columna 'gamilit_role' (ENUM auth_management.gamilit_role)
-   * @note La columna 'role' (varchar) es legacy de Supabase, no se usa
+   * @note La columna 'role' (varchar) es legacy del patrón auth estándar, no se usa en GAMILIT
    */
   @Column({
     type: 'enum',
@@ -139,7 +137,7 @@ export class User {
    * Metadatos adicionales del usuario en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-    raw_user_meta_data!: Record<string, any>;
+    raw_user_meta_data!: Record<string, unknown>;
 
   /**
    * Fecha y hora de eliminación lógica (soft delete)

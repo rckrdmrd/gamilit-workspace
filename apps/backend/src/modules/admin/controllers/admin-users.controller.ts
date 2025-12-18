@@ -32,6 +32,7 @@ import {
   BulkOperationStatusDto,
 } from '../dto/bulk-operations';
 import { User } from '@modules/auth/entities/user.entity';
+import { AuthRequest } from '@shared/types';
 
 @ApiTags('Admin - Users')
 @Controller('admin/users')
@@ -137,9 +138,9 @@ export class AdminUsersController {
   })
   async bulkSuspend(
     @Body() dto: BulkSuspendUsersDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<BulkOperationStatusDto> {
-    const adminId = req.user?.id || req.user?.sub;
+    const adminId = req.user!.id;
     return this.bulkOpsService.bulkSuspendUsers(dto, adminId);
   }
 
@@ -151,9 +152,9 @@ export class AdminUsersController {
   })
   async bulkDelete(
     @Body() dto: BulkDeleteUsersDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<BulkOperationStatusDto> {
-    const adminId = req.user?.id || req.user?.sub;
+    const adminId = req.user!.id;
     return this.bulkOpsService.bulkDeleteUsers(dto, adminId);
   }
 
@@ -165,9 +166,9 @@ export class AdminUsersController {
   })
   async bulkUpdateRole(
     @Body() dto: BulkUpdateRoleDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<BulkOperationStatusDto> {
-    const adminId = req.user?.id || req.user?.sub;
+    const adminId = req.user!.id;
     return this.bulkOpsService.bulkUpdateRole(dto, adminId);
   }
 }

@@ -5,18 +5,35 @@
 
 ---
 
+## ✅ MÓDULOS 4 Y 5 - IMPLEMENTADOS
+
+> **ACTUALIZACIÓN 2025-11-29:** Los módulos 4 y 5 han sido **completamente implementados**.
+> - Decisión: Revisión manual por docentes con rúbricas (sin IA)
+> - Almacenamiento: Sistema de archivos local (`apps/backend/uploads/`)
+> - Estado: **100% funcional** - Frontend, Backend, Database, Validadores
+>
+> **Cambios realizados:**
+> - 8 ejercicios activados en base de datos (`is_active = true`)
+> - Validadores de estructura en backend (`ExercisesService.validateContentByExerciseType`)
+> - Función SQL de validación (`validate_module4_module5_submission`)
+> - Exports completos en frontend barrel files
+
+Ver [Resumen de Implementación](#resumen-de-implementación-módulos-4-5) para detalles.
+
+---
+
 ## 📋 CONTENIDO DE ESTA FASE
 
 Esta fase contiene funcionalidad **diseñada pero NO implementada en el MVP**, incluyendo:
 
 ### Categorías de Backlog
 
-| Categoría | Elementos | Razón |
-|-----------|-----------|-------|
-| **Módulos Educativos** | Módulos 4-5 (8 ejercicios) | Requieren IA/evaluación manual |
-| **Épicas Parciales** | EXT-007 a EXT-011 (30-50%) | Dependen de contratos/nice-to-have |
-| **Admin Portal P2** | RBAC dinámico, Reportes globales, Importación CSV | Complejidad técnica |
-| **Tipos de Ejercicios** | 10 mecánicas adicionales | Complejidad técnica |
+| Categoría | Elementos | Razón | Estado |
+|-----------|-----------|-------|--------|
+| **Módulos Educativos** | Módulos 4-5 (8 ejercicios) | Requieren evaluación manual | ✅ **IMPLEMENTADO** |
+| **Épicas Parciales** | EXT-007 a EXT-011 (30-50%) | Dependen de contratos/nice-to-have | ⏳ Backlog |
+| **Admin Portal P2** | RBAC dinámico, Reportes globales, Importación CSV | Complejidad técnica | ⏳ Backlog |
+| **Tipos de Ejercicios** | 10 mecánicas adicionales | Complejidad técnica | ⏳ Backlog |
 
 > **Nota:** US-AE-005 y US-AE-007 fueron **implementadas** y removidas del backlog. Ver sección "Admin Portal - Estado Actualizado".
 
@@ -42,37 +59,61 @@ La documentación detallada se mantiene en [Fase 3: Extensiones](../03-fase-exte
 
 ---
 
-## 🎓 MÓDULOS EN BACKLOG
+## ✅ MÓDULOS IMPLEMENTADOS
 
 ### Módulo 4: Lectura Digital y Multimodal (5 ejercicios)
 
-**Estado:** ⚠️ BACKLOG  
-**Razón:** Requieren validación con IA o análisis de medios
+**Estado:** ✅ **IMPLEMENTADO**
+**Evaluación:** Revisión manual por docentes con rúbricas
 
-| Ejercicio | exercise_type | Razón de Backlog |
-|-----------|---------------|------------------|
-| 4.1 Verificador de Fake News | `verificador_fake_news` | Requiere verificación de fuentes externas, fact-checking con APIs |
-| 4.2 Infografía Interactiva | `infografia_interactiva` | Requiere análisis de imágenes con visión computacional |
-| 4.3 Quiz Estilo TikTok | `quiz_tiktok` | Requiere análisis de video y audio |
-| 4.4 Navegación Hipertextual | `navegacion_hipertextual` | Requiere seguimiento de rutas de navegación complejas |
-| 4.5 Análisis de Memes | `analisis_memes` | Requiere comprensión multimodal (imagen + texto + contexto cultural) |
+| Ejercicio | exercise_type | Estado |
+|-----------|---------------|--------|
+| 4.1 Verificador de Fake News | `verificador_fake_news` | ✅ Completo |
+| 4.2 Infografía Interactiva | `infografia_interactiva` | ✅ Completo |
+| 4.3 Quiz Estilo TikTok | `quiz_tiktok` | ✅ Completo |
+| 4.4 Navegación Hipertextual | `navegacion_hipertextual` | ✅ Completo |
+| 4.5 Análisis de Memes | `analisis_memes` | ✅ Completo |
 
-**Documentación completa:** `docs/04-fase-backlog/modulo-4-lectura-digital/`
+**Seeds:** `apps/database/seeds/dev/educational_content/05-exercises-module4.sql`
 
 ---
 
 ### Módulo 5: Producción y Expresión Lectora (3 ejercicios)
 
-**Estado:** ⚠️ BACKLOG  
-**Razón:** Requieren rúbricas de evaluación creativa y revisión humana
+**Estado:** ✅ **IMPLEMENTADO**
+**Evaluación:** Revisión manual por docentes con rúbricas detalladas
 
-| Ejercicio | exercise_type | Razón de Backlog |
-|-----------|---------------|------------------|
-| 5.1 Diario Interactivo de Marie | `diario_multimedia` | Requiere evaluación de creatividad narrativa y multimedia |
-| 5.2 Resumen Visual (Cómic Digital) | `comic_digital` | Requiere evaluación artística y de coherencia narrativa visual |
-| 5.3 Cápsula del Tiempo (Video Carta) | `video_carta` | Requiere análisis de video, audio, guion y producción |
+| Ejercicio | exercise_type | Estado |
+|-----------|---------------|--------|
+| 5.1 Diario Interactivo de Marie | `diario_multimedia` | ✅ Completo |
+| 5.2 Resumen Visual (Cómic Digital) | `comic_digital` | ✅ Completo |
+| 5.3 Cápsula del Tiempo (Video Carta) | `video_carta` | ✅ Completo |
 
-**Documentación completa:** `docs/04-fase-backlog/modulo-5-produccion-lectora/`
+**Seeds:** `apps/database/seeds/dev/educational_content/06-exercises-module5.sql`
+
+---
+
+## Resumen de Implementación Módulos 4-5
+
+### Decisiones Arquitectónicas
+- **Almacenamiento multimedia:** Sistema de archivos local (`apps/backend/uploads/`)
+- **Evaluación:** Revisión manual por docentes con rúbricas
+- **Validación:** Estructura JSONB validada en backend y SQL
+
+### Tareas Completadas
+1. ✅ Seeds definidos y cargados en BD principal
+2. ✅ Ejercicios activados (`is_active = true`)
+3. ✅ Tabla `manual_reviews` creada
+4. ✅ Tabla `media_attachments` creada
+5. ✅ Backend: ManualReviewService, MediaStorageService implementados
+6. ✅ Backend: Validadores de estructura en ExercisesService (+65 líneas)
+7. ✅ Database: Función `validate_module4_module5_submission()` creada
+8. ✅ Frontend: 19 componentes M4 + 3 componentes M5 implementados
+9. ✅ Frontend: Exports completos en barrel files
+
+---
+
+## 🎓 MÓDULOS EN BACKLOG (ANTERIORMENTE)
 
 ---
 
@@ -81,58 +122,48 @@ La documentación detallada se mantiene en [Fase 3: Extensiones](../03-fase-exte
 ### En Base de Datos
 
 ✅ **Tipos definidos** en ENUM `exercise_type`
-- Razón: Mantener compatibilidad futura
-- Ubicación: `apps/database/ddl/00-prerequisites.sql` (líneas 159-165)
-- Marcados como: `⚠️ BACKLOG`
+- Ubicación: `apps/database/ddl/00-prerequisites.sql`
+- Estado: Activos y funcionales
 
-✅ **Seeds disponibles** pero NO cargados por defecto
-- Ubicación DEV: `apps/database/seeds/dev/educational_content/_backlog/`
-- Ubicación PROD: `apps/database/seeds/prod/educational_content/_backlog/`
+✅ **Seeds cargados** en directorio principal
+- Ubicación DEV: `apps/database/seeds/dev/educational_content/`
 - Archivos: `05-exercises-module4.sql`, `06-exercises-module5.sql`
+- Estado: `is_active = true` para los 8 ejercicios
 
-❌ **Validadores SQL:** NO implementados
-- Razón: Imposible auto-evaluar con solo SQL
-- Alternativa: Marcar `auto_gradable = false` en tabla exercises
+✅ **Validadores SQL:** Implementados
+- Función: `validate_module4_module5_submission(exercise_type, submission)`
+- Ubicación: `apps/database/ddl/schemas/educational_content/functions/23-validate_module4_module5.sql`
+- Comportamiento: Valida estructura JSONB, siempre retorna `requires_manual_review = true`
 
 ---
 
 ## 📅 ROADMAP DE IMPLEMENTACIÓN
 
-### Fase P1: Validadores Parciales (Corto Plazo)
+### Fase P1: Validadores Parciales ✅ COMPLETADA
 
 **Objetivo:** Validar estructura y completitud básica
 
-**Implementación:**
-- Validar formato JSONB correcto
-- Validar campos requeridos presentes
-- Validar tamaño/duración de archivos multimedia
-- Validar formatos de archivo permitidos
+**Implementado:**
+- ✅ Validar formato JSONB correcto
+- ✅ Validar campos requeridos presentes
+- ✅ Validar estructura por tipo de ejercicio
 
-**Funciones SQL a crear:**
-- `validate_multimedia_structure()` - Valida estructura de archivos
-- `validate_submission_completeness()` - Valida completitud
-- `validate_file_formats()` - Valida formatos permitidos
-
-**Tiempo estimado:** 2-3 semanas
+**Funciones implementadas:**
+- `validate_module4_module5_submission()` - Valida estructura completa
+- `ExercisesService.validateContentByExerciseType()` - Validación backend
 
 ---
 
-### Fase P2: Sistema de Revisión Manual (Medio Plazo)
+### Fase P2: Sistema de Revisión Manual ✅ COMPLETADA
 
 **Objetivo:** Permitir evaluación por profesores
 
-**Implementación:**
-- Tabla `progress_tracking.manual_reviews`
-- Workflow de asignación profesor → ejercicio
-- Interfaz frontend para revisión
-- Sistema de rúbricas configurables
-
-**Componentes:**
-- Backend: Endpoints de revisión manual
-- Frontend: Panel de revisión para profesores
-- Database: Tabla de reviews + rúbricas
-
-**Tiempo estimado:** 1-2 meses
+**Implementado:**
+- ✅ Tabla `progress_tracking.manual_reviews`
+- ✅ Tabla `educational_content.media_attachments`
+- ✅ Backend: ManualReviewService, MediaStorageService
+- ✅ Frontend: Panel de revisión para docentes (`apps/frontend/src/apps/teacher/pages/ReviewPanel/`)
+- ✅ Sistema de rúbricas en seeds de ejercicios
 
 ---
 
@@ -200,15 +231,21 @@ Las siguientes funcionalidades permanecen fuera del alcance MVP:
 
 ## ⚠️ IMPORTANTE
 
-**NO eliminar tipos del ENUM:**
-- Mantienen compatibilidad con código existente
-- Permiten migración futura sin breaking changes
-- Seeds en `_backlog/` disponibles para testing
+**Módulos 4-5 ahora están ACTIVOS:**
+- Seeds cargados en directorio principal (no en `_backlog/`)
+- 8 ejercicios con `is_active = true`
+- Requieren revisión manual por docentes
+- Validación de estructura implementada en backend y SQL
 
-**NO cargar seeds por defecto:**
-- Ejercicios NO tienen validación automática
-- Evita confusión en producción
-- Se pueden cargar manualmente si se requiere
+**Para desactivar temporalmente:**
+```sql
+UPDATE educational_content.exercises
+SET is_active = false
+WHERE module_id IN (
+  SELECT id FROM educational_content.modules
+  WHERE module_code IN ('MOD-04-DIGITAL', 'MOD-05-PRODUCCION')
+);
+```
 
 ---
 
@@ -221,4 +258,4 @@ Las siguientes funcionalidades permanecen fuera del alcance MVP:
 
 **Última revisión:** 2025-11-29
 **Responsable:** Architecture-Analyst
-**Actualizado:** Reorganización documentación MVP vs Backlog
+**Actualizado:** Módulos 4-5 completamente implementados - Frontend, Backend, Database, Validadores

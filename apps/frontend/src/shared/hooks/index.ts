@@ -16,3 +16,7 @@ export type {
   RecordingState,
   PermissionState,
 } from './useAudioRecorder';
+export { useInvalidateDashboard } from './useInvalidateDashboard';
+export type { UseInvalidateDashboardReturn } from './useInvalidateDashboard';
+export { useUserPreferences } from './useUserPreferences';
+export type { UserPreferences, UseUserPreferencesReturn } from './useUserPreferences';

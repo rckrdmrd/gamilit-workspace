@@ -5,6 +5,7 @@ import {
   Exercise,
   AssessmentRubric,
   MediaResource,
+  MediaAttachment,
   ContentApproval,
 } from './entities';
 import { Profile } from '../auth/entities/profile.entity';
@@ -16,12 +17,13 @@ import {
   ExercisesService,
   MediaService,
 } from './services';
+import { MediaStorageService } from './services/media-storage.service';
 import {
   ModulesController,
   ExercisesController,
   MediaController,
 } from './controllers';
-import { DB_SCHEMAS } from '@shared/constants';
+import { MediaUploadController } from './controllers/media-upload.controller';
 import { ProgressModule } from '../progress/progress.module';
 
 /**
@@ -48,7 +50,15 @@ import { ProgressModule } from '../progress/progress.module';
   imports: [
     // Connection 'educational' handles schema 'educational_content'
     TypeOrmModule.forFeature(
-      [ModuleEntity, Exercise, AssessmentRubric, MediaResource, ContentApproval, AssignmentExercise],
+      [
+        ModuleEntity,
+        Exercise,
+        AssessmentRubric,
+        MediaResource,
+        MediaAttachment,
+        ContentApproval,
+        AssignmentExercise,
+      ],
       'educational',
     ),
     // Import Profile entity from auth schema (for ExercisesController)
@@ -58,8 +68,8 @@ import { ProgressModule } from '../progress/progress.module';
     // Import ProgressModule to access ExerciseSubmissionService for submit endpoint
     ProgressModule,
   ],
-  controllers: [ModulesController, ExercisesController, MediaController],
-  providers: [ModulesService, ExercisesService, MediaService],
-  exports: [ModulesService, ExercisesService, MediaService],
+  controllers: [ModulesController, ExercisesController, MediaController, MediaUploadController],
+  providers: [ModulesService, ExercisesService, MediaService, MediaStorageService],
+  exports: [ModulesService, ExercisesService, MediaService, MediaStorageService],
 })
 export class EducationalModule {}

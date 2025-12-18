@@ -149,7 +149,7 @@ apps/database/
 FASE 0:  Extensions (pgcrypto, uuid-ossp)
 FASE 1:  Prerequisites (schemas, ENUMs)
 FASE 2:  Funciones compartidas (gamilit)
-FASE 3:  Auth schema (Supabase)
+FASE 3:  Auth schema (sistema)
 FASE 4:  Storage schema
 FASE 5:  Auth management schema
 FASE 6:  Educational content schema

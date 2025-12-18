@@ -84,13 +84,23 @@ export interface RankData {
 export interface AchievementData {
   id: string;
   name: string;
+  title?: string; // Alias for compatibility with Achievement type
   description: string;
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  category?: string;
   icon: string;
   unlocked: boolean;
+  isUnlocked?: boolean; // Alias for compatibility with Achievement type
   unlockedAt?: string;
   progress?: number;
   required?: number;
+  // Reward fields (IMPL-005: added for dynamic rewards display)
+  mlCoinsReward?: number;
+  xpReward?: number;
+  rewards?: {
+    ml_coins?: number;
+    xp?: number;
+  };
 }
 
 export interface ProgressData {
@@ -156,45 +166,69 @@ async function fetchDashboardData(userId: string): Promise<DashboardData> {
     : [];
 
   // Transform rank data from API format to component format
+  // NOTE: apiClient does NOT transform snake_case -> camelCase, we use snake_case
   const rankCurrent = rankCurrentRes.data;
   const rankProgress = rankProgressRes.data;
 
-  const currentRankName = rankCurrent?.current_rank || rankProgress?.current_rank || 'Ajaw';
+  console.log('🔍 [useDashboardData] rankCurrent:', rankCurrent);
+  console.log('🔍 [useDashboardData] rankProgress:', rankProgress);
+
+  // Backend returns snake_case: current_rank, xp_current, xp_required, progress_percentage
+  const currentRankName =
+    rankCurrent?.current_rank ||
+    rankProgress?.current_rank ||
+    rankCurrent?.currentRank ||
+    rankProgress?.currentRank ||
+    'Ajaw';
+
   const transformedRankData: RankData | null =
-    rankCurrent && rankProgress
+    rankCurrent || rankProgress
       ? {
           currentRank: currentRankName,
-          currentXP: rankProgress.xp_current || 0,
-          nextRankXP: rankProgress.xp_required || (rankProgress.xp_current || 0) + 1000,
+          currentXP: rankProgress?.xp_current || rankProgress?.xpCurrent || 0,
+          nextRankXP:
+            rankProgress?.xp_required ||
+            rankProgress?.xpRequired ||
+            (rankProgress?.xp_current || rankProgress?.xpCurrent || 0) + 1000,
           multiplier: getRankMultiplier(currentRankName),
           rankIcon: getRankIcon(currentRankName),
-          progress: rankProgress.progress_percentage || 0,
+          progress: rankProgress?.progress_percentage || rankProgress?.progressPercentage || 0,
         }
       : null;
 
-  // Process coins data
+  // Process coins data (backend uses snake_case)
   const coinsData: MLCoinsData = {
-    balance: coinsRes.data?.current_balance || 0,
-    todayEarned: coinsRes.data?.earned_today || 0,
-    todaySpent: 0,
+    balance:
+      coinsRes.data?.current_balance ||
+      coinsRes.data?.currentBalance ||
+      coinsRes.data?.ml_coins ||
+      coinsRes.data?.mlCoins ||
+      0,
+    todayEarned:
+      coinsRes.data?.earned_today ||
+      coinsRes.data?.earnedToday ||
+      coinsRes.data?.ml_coins_earned_today ||
+      coinsRes.data?.mlCoinsEarnedToday ||
+      0,
+    todaySpent: coinsRes.data?.spent_today || coinsRes.data?.spentToday || 0,
     recentTransactions: [],
   };
 
-  // Transform progress data from snake_case to camelCase
+  // Transform progress data (backend uses snake_case)
   const progressRaw = progressRes.data?.data || progressRes.data || null;
   const transformedProgress: ProgressData | null = progressRaw
     ? {
-        totalModules: progressRaw.total_modules || 0,
-        completedModules: progressRaw.completed_modules || 0,
-        totalExercises: progressRaw.total_exercises || 0,
-        completedExercises: progressRaw.completed_exercises || 0,
-        averageScore: progressRaw.average_score || 0,
+        totalModules: progressRaw.total_modules || progressRaw.totalModules || 0,
+        completedModules: progressRaw.completed_modules || progressRaw.completedModules || 0,
+        totalExercises: progressRaw.total_exercises || progressRaw.totalExercises || 0,
+        completedExercises: progressRaw.completed_exercises || progressRaw.completedExercises || 0,
+        averageScore: progressRaw.average_score || progressRaw.averageScore || 0,
         totalTimeSpent:
-          typeof progressRaw.total_time_spent === 'string'
-            ? parseTimeToSeconds(progressRaw.total_time_spent)
-            : progressRaw.total_time_spent || 0,
-        currentStreak: progressRaw.current_streak || 0,
-        longestStreak: progressRaw.longest_streak || 0,
+          typeof (progressRaw.total_time_spent || progressRaw.totalTimeSpent) === 'string'
+            ? parseTimeToSeconds(progressRaw.total_time_spent || progressRaw.totalTimeSpent)
+            : progressRaw.total_time_spent || progressRaw.totalTimeSpent || 0,
+        currentStreak: progressRaw.current_streak || progressRaw.currentStreak || 0,
+        longestStreak: progressRaw.longest_streak || progressRaw.longestStreak || 0,
       }
     : null;
 

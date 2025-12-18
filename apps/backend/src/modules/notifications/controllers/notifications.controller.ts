@@ -17,8 +17,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
-  ApiQuery,
-} from '@nestjs/swagger';
+  } from '@nestjs/swagger';
 import { NotificationsService } from '../services/notifications.service';
 import { NotificationResponseDto } from '../dto/notification-response.dto';
 import { CreateNotificationDto } from '../dto/create-notification.dto';

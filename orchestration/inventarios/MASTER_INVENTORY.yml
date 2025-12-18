@@ -1,60 +1,115 @@
 # INVENTARIO MAESTRO - GAMILIT
 # Resumen consolidado de todos los inventarios
+# Contiene SOLO definiciones actuales/definitivas del sistema
 
-version: "2.0.0"
-proyecto: "GAMILIT - Sistema de Gamificación Educativa"
-fecha_actualizacion: "2025-11-29"
-ultima_tarea: "PLAN-VALIDACION-CLEAN-CREATION-2025-11-29"
-actualizado_por: "Architecture-Analyst"
+version: "3.0.0"
+proyecto: "GAMILIT - Sistema de Gamificacion Educativa"
+fecha_actualizacion: "2025-12-18"
+actualizado_por: "Claude Opus 4.5"
 
 # =============================================================================
 # RESUMEN EJECUTIVO
 # =============================================================================
 
 resumen:
-  estado_general: "✅ OPERATIVO"
+  estado_general: "OPERATIVO"
 
   database:
-    schemas: 18
-    tables: 117
+    schemas: 16
+    tables: 123
     views: 11
     materialized_views: 11
-    enums: 37
-    functions: 200
-    triggers: 87
-    policies_rls: 243
+    enums: 42
+    functions: 213
+    triggers: 90
+    policies_rls: 185
     foreign_keys: 208
-    seed_files: 84
-    ddl_files: 368
-    status: "✅ Clean creation compliant"
-    last_verified: "2025-11-29"
-    source: "DATABASE_INVENTORY.yml v3.0.0"
+    seed_files: 99
+    ddl_files: 394
+    status: "Clean creation compliant"
+    last_verified: "2025-12-18"
+    source: "DATABASE_INVENTORY.yml"
 
   backend:
     modules: 13
-    entities: 87
-    dtos: 318
-    services: 84
-    controllers: 67
-    endpoints: 356
-    build_status: "✅ Builds successfully"
+    entities: 92
+    dtos: 327
+    services: 88
+    controllers: 71
+    endpoints: 417
+    build_status: "Builds successfully"
     coherencia_bd: "97%"
-    last_verified: "2025-11-29"
-    source: "BACKEND_INVENTORY.yml v2.5.0"
+    last_verified: "2025-12-18"
+    source: "BACKEND_INVENTORY.yml"
 
   frontend:
-    files: 721
-    components: 399
-    hooks: 73
-    pages: 29
+    files: 862
+    components: 483
+    hooks: 89
+    pages: 31
     stores: 11
     api_services: 15
     mechanics: 33
-    routes: 19
-    lines_of_code: 90500
-    status: "✅ Builds successfully"
-    last_verified: "2025-11-28"
-    source: "FRONTEND_INVENTORY.yml v2.8"
+    routes: 20
+    lines_of_code: ~98000
+    status: "Builds successfully"
+    last_verified: "2025-12-18"
+    source: "FRONTEND_INVENTORY.yml"
+
+# =============================================================================
+# EJERCICIOS POR MODULO (Definiciones Oficiales)
+# =============================================================================
+# Referencia: docs/00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md
+
+ejercicios:
+  modulo_1:
+    nombre: "Comprension Literal"
+    total: 5
+    tipos:
+      - crucigrama
+      - linea_tiempo
+      - completar_espacios
+      - verdadero_falso
+      - sopa_letras
+
+  modulo_2:
+    nombre: "Comprension Inferencial"
+    total: 5
+    tipos:
+      - detective_textual
+      - construccion_hipotesis
+      - prediccion_narrativa
+      - puzzle_contexto
+      - rueda_inferencias
+
+  modulo_3:
+    nombre: "Comprension Critica y Valorativa"
+    total: 5
+    tipos:
+      - tribunal_opiniones
+      - debate_digital
+      - analisis_fuentes
+      - podcast_argumentativo
+      - matriz_perspectivas
+
+  modulo_4:
+    nombre: "Lectura Digital y Multimodal"
+    total: 5
+    tipos:
+      - verificador_fake_news
+      - infografia_interactiva
+      - quiz_tiktok
+      - navegacion_hipertextual
+      - analisis_memes
+
+  modulo_5:
+    nombre: "Produccion y Expresion Lectora"
+    total: 3
+    nota: "El estudiante elige 1 de 3 opciones"
+    tipos:
+      - diario_multimedia
+      - comic_digital
+      - video_carta
 
 # =============================================================================
 # ESTADO DE CUMPLIMIENTO
@@ -62,41 +117,22 @@ resumen:
 
 cumplimiento:
   clean_creation_policy:
-    status: "✅ COMPLIANT"
+    status: "COMPLIANT"
     ddl_recreatable: true
     migrations_active: false
     migrations_deprecated: 5
-    last_validation: "2025-11-29"
+    last_validation: "2025-12-18"
     validation_report: "PLAN-VALIDACION-CLEAN-CREATION-2025-11-29.md"
 
   documentacion:
     coverage: "85%"
-    docs_folder: "✅ Updated"
-    trazas: "✅ Updated (85% coverage)"
-    inventarios: "✅ Updated"
+    docs_folder: "Updated"
+    trazas: "Updated (85% coverage)"
+    inventarios: "Updated"
     gaps:
       - "Error handling documentation (60%)"
       - "E2E testing documentation (50%)"
       - "Deployment validation (40%)"
-
-# =============================================================================
-# CORRECCIONES RECIENTES (2025-11-29)
-# =============================================================================
-
-correcciones_recientes:
-  - id: "CORR-CLEAN-002"
-    descripcion: "Integrar funciones P0-001 al DDL permanente"
-    archivo_creado: "apps/database/ddl/schemas/gamification_system/functions/calculate_maya_rank_helpers.sql"
-    funciones_integradas:
-      - "calculate_maya_rank_from_xp(INTEGER)"
-      - "calculate_rank_progress_percentage(INTEGER, TEXT)"
-    status: "✅ COMPLETADO"
-
-  - id: "P0-001-DEPRECATION"
-    descripcion: "Mover migración P0-001 a _deprecated"
-    origen: "apps/backend/migrations/P0-001-migrate-maya-rank-values.sql"
-    destino: "apps/backend/_deprecated/migrations-maya-rank-2025-11-29/"
-    status: "✅ COMPLETADO"
 
 # =============================================================================
 # INTEGRACIONES DOCUMENTADAS
@@ -104,7 +140,7 @@ correcciones_recientes:
 
 integraciones:
   student_teacher:
-    status: "✅ DOCUMENTADO"
+    status: "DOCUMENTADO"
     documentos:
       - "docs/95-guias-desarrollo/INTEGRACION-STUDENT-TEACHER.md"
       - "docs/95-guias-desarrollo/DEPENDENCIAS-STUDENT-TEACHER.md"
@@ -112,13 +148,13 @@ integraciones:
     coverage: "85%"
 
   db_backend:
-    status: "✅ 97% coherencia"
+    status: "97% coherencia"
     entities_mapped: 85
-    tables_total: 117
+    tables_total: 123
 
   backend_frontend:
-    status: "✅ OPERATIVO"
-    endpoints: 356
+    status: "OPERATIVO"
+    endpoints: 417
     api_services: 15
 
 # =============================================================================
@@ -138,15 +174,17 @@ referencias:
     - "orchestration/trazas/TRAZA-TAREAS-DATABASE.md"
     - "orchestration/trazas/TRAZA-TAREAS-BACKEND.md"
 
-  reportes_agentes:
-    - "orchestration/agentes/architecture-analyst/PLAN-VALIDACION-CLEAN-CREATION-2025-11-29.md"
-    - "orchestration/agentes/architecture-analyst/REPORTE-ANALISIS-STUDENTS-TEACHER-2025-11-29.md"
+  reportes:
+    - "orchestration/reportes/HISTORIAL-CORRECCIONES-2025.md"
+
+  documento_diseno:
+    - "docs/00-vision-general/DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md"
 
 # =============================================================================
 # NOTAS
 # =============================================================================
 
 notas:
-  - "Este archivo es un RESUMEN de inventarios detallados. Ver archivos individuales para detalles."
-  - "Actualizado automáticamente durante validación de clean creation policy."
-  - "Próxima actualización recomendada: Después de cada tarea de agente mayor."
+  - "Este archivo contiene SOLO definiciones actuales/definitivas del sistema."
+  - "Para historial de correcciones ver: orchestration/reportes/HISTORIAL-CORRECCIONES-2025.md"
+  - "Ver archivos individuales de inventario para detalles de cada capa."

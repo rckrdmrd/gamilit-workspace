@@ -109,13 +109,13 @@ export class ParameterResponseDto {
     description: 'Validation rules in JSON format',
     example: { regex: '^[0-9]+$' },
   })
-    validation_rules?: Record<string, any>;
+    validation_rules?: Record<string, unknown>;
 
   @ApiPropertyOptional({
     description: 'Additional metadata',
     example: { unit: 'points', category_order: 1 },
   })
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 
   @ApiProperty({
     description: 'Timestamp when parameter was created',

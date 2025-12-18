@@ -1,29 +1,31 @@
 -- =====================================================
 -- Seed: social_features.classrooms (PROD)
--- Description: Aulas demo para testing y demostraciones
+-- Description: SOLO classroom default para asignación automática
 -- Environment: PRODUCTION
--- Dependencies: social_features.schools, auth_management.profiles
+-- Dependencies: social_features.schools (00-schools-default.sql), auth_management.profiles
 -- Order: 02
 -- Created: 2025-01-11
--- Version: 2.0 (Actualizado para alineación con DDL)
+-- Updated: 2025-12-15 - Simplificado a solo DEFAULT
+-- Version: 3.0
 -- =====================================================
 --
 -- AULAS INCLUIDAS:
--- - Sin Asignar (DEFAULT - Sistema) ← NUEVO: Para asignación automática
--- - 5to A (Escuela Marie Curie, Profesor 1)
--- - 5to B (Escuela Marie Curie, Profesor 2)
--- - 6to A (Escuela Marie Curie, Profesor 1)
--- - Aula de Pruebas (IEI, Director)
--- - Aula Demo Parent Portal (IEI, Profesor 2)
+-- - Sin Asignar (DEFAULT - Sistema) - Única aula del sistema
 --
--- TOTAL: 6 aulas (1 sistema + 5 demo)
+-- TOTAL: 1 aula (sistema)
 --
--- IMPORTANTE: Estas aulas están asociadas a las escuelas y profesores demo.
+-- DECISIÓN DE DISEÑO:
+-- - Solo existe el classroom default para asignación automática
+-- - Todas las aulas adicionales serán creadas por el admin desde la UI
+-- - Los estudiantes nuevos se asignan automáticamente aquí
 --
--- CAMBIOS v2.0:
--- - Agregado tenant_id (requerido)
--- - Removido status (columna legacy)
--- - Actualizada estructura de bloques DO $$
+-- AULAS DEMO REMOVIDAS (v3.0):
+-- - 5to A (Marie Curie) - REMOVIDA
+-- - 5to B (Marie Curie) - REMOVIDA
+-- - 6to A (Marie Curie) - REMOVIDA
+-- - Aula de Pruebas (IEI) - REMOVIDA
+-- - Demo Parent Portal (IEI) - REMOVIDA
+--
 -- =====================================================
 
 SET search_path TO social_features, auth_management, public;
@@ -35,8 +37,8 @@ SET search_path TO social_features, auth_management, public;
 DO $$
 DECLARE
     v_tenant_id UUID;
-    v_school_count INTEGER;
-    v_teacher_count INTEGER;
+    v_default_school_id UUID;
+    v_teacher_id UUID;
 BEGIN
     -- Obtener el tenant principal
     SELECT id INTO v_tenant_id
@@ -48,29 +50,34 @@ BEGIN
         RAISE EXCEPTION 'Tenant "GAMILIT Platform" no encontrado. Ejecutar primero seed de tenants.';
     END IF;
 
-    -- Validar que existan escuelas
-    SELECT COUNT(*) INTO v_school_count
-    FROM social_features.schools;
+    -- Obtener la escuela default
+    SELECT id INTO v_default_school_id
+    FROM social_features.schools
+    WHERE code = 'SYSTEM-UNASSIGNED' AND is_active = true
+    LIMIT 1;
 
-    IF v_school_count = 0 THEN
-        RAISE EXCEPTION 'No hay escuelas. Ejecutar primero seed de schools.';
+    IF v_default_school_id IS NULL THEN
+        RAISE EXCEPTION 'Escuela default (SYSTEM-UNASSIGNED) no encontrada. Ejecutar primero 00-schools-default.sql';
     END IF;
 
-    -- Validar que existan profesores
-    SELECT COUNT(*) INTO v_teacher_count
+    -- Obtener el teacher default (teacher@gamilit.com)
+    SELECT id INTO v_teacher_id
     FROM auth_management.profiles
-    WHERE email IN ('teacher@gamilit.com', 'teacher2@gamilit.com', 'director@gamilit.com');
+    WHERE email = 'teacher@gamilit.com'
+    LIMIT 1;
 
-    IF v_teacher_count = 0 THEN
-        RAISE WARNING 'No se encontraron profesores demo. Las aulas se crearán pero pueden tener profesores inválidos.';
+    IF v_teacher_id IS NULL THEN
+        -- Usar el UUID conocido como fallback
+        v_teacher_id := 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid;
+        RAISE WARNING 'Teacher default no encontrado, usando UUID: %', v_teacher_id;
     END IF;
 
     RAISE NOTICE 'Usando tenant_id: %', v_tenant_id;
-    RAISE NOTICE 'Escuelas disponibles: %', v_school_count;
-    RAISE NOTICE 'Profesores demo disponibles: %', v_teacher_count;
+    RAISE NOTICE 'Usando school_id (default): %', v_default_school_id;
+    RAISE NOTICE 'Usando teacher_id: %', v_teacher_id;
 
 -- =====================================================
--- INSERT: Aulas Demo
+-- INSERT: SOLO Classroom DEFAULT
 -- =====================================================
 
 INSERT INTO social_features.classrooms (
@@ -95,17 +102,16 @@ INSERT INTO social_features.classrooms (
     created_at,
     updated_at
 ) VALUES
-
 -- =====================================================
--- Aula 0: CLASSROOM DEFAULT (Sistema - Sin Asignar)
+-- CLASSROOM DEFAULT (Sistema - Sin Asignar)
 -- IMPORTANTE: Este classroom es usado automáticamente para
 -- asignar estudiantes nuevos que aún no tienen aula.
 -- =====================================================
 (
     '00000000-0000-0000-0000-000000000001'::uuid,  -- UUID predecible para default
-    '50000000-0000-0000-0000-000000000001'::uuid,  -- Escuela Marie Curie (default)
+    v_default_school_id,                            -- Escuela Sistema - Por Asignar (default)
     v_tenant_id,
-    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,  -- Teacher default (teacher@gamilit.com)
+    v_teacher_id,                                   -- Teacher default (teacher@gamilit.com)
     'Sin Asignar - Aula Default',
     'DEFAULT',
     'todos',  -- Todos los niveles
@@ -139,235 +145,12 @@ INSERT INTO social_features.classrooms (
     ),
     gamilit.now_mexico(),
     gamilit.now_mexico()
-),
-
--- =====================================================
--- Aula 1: 5to A - Escuela Marie Curie (Profesor 1)
--- =====================================================
-(
-    '60000000-0000-0000-0000-000000000001'::uuid,
-    '50000000-0000-0000-0000-000000000001'::uuid,  -- Escuela Marie Curie
-    v_tenant_id,
-    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,  -- Profesor 1 (teacher@gamilit.com)
-    '5to A - Comprensión Lectora',
-    '5A-COMP-2025',
-    '5',
-    'A',
-    'Comprensión Lectora',
-    'Grupo de 5to grado, sección A. Enfoque en comprensión literal e inferencial.',
-    35,
-    2,  -- 2 estudiantes inicialmente
-    '2025-08-15'::date,
-    '2026-07-15'::date,
-    jsonb_build_object(
-        'days', jsonb_build_array('Lunes', 'Miércoles', 'Viernes'),
-        'time', '08:00-09:30',
-        'room', 'Aula 501',
-        'weekly_hours', 4.5
-    ),
-    true,
-    jsonb_build_object(
-        'allow_student_self_enrollment', false,
-        'enable_gamification', true,
-        'require_parental_consent', true,
-        'grading_system', 'numerical',
-        'attendance_required', true,
-        'homework_policy', jsonb_build_object(
-            'frequency', 'weekly',
-            'submission_platform', 'gamilit',
-            'late_penalty', 10
-        )
-    ),
-    jsonb_build_object(
-        'academic_year', '2025-2026',
-        'demo_classroom', true
-    ),
-    gamilit.now_mexico(),
-    gamilit.now_mexico()
-),
-
--- =====================================================
--- Aula 2: 5to B - Escuela Marie Curie (Profesor 2)
--- =====================================================
-(
-    '60000000-0000-0000-0000-000000000002'::uuid,
-    '50000000-0000-0000-0000-000000000001'::uuid,  -- Escuela Marie Curie
-    v_tenant_id,
-    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,  -- Profesor 2 (teacher2@gamilit.com)
-    '5to B - Lectura Digital',
-    '5B-DIGI-2025',
-    '5',
-    'B',
-    'Lectura Digital',
-    'Grupo de 5to grado, sección B. Enfoque en competencias digitales y multimedia.',
-    35,
-    1,
-    '2025-08-15'::date,
-    '2026-07-15'::date,
-    jsonb_build_object(
-        'days', jsonb_build_array('Martes', 'Jueves'),
-        'time', '10:00-11:30',
-        'room', 'Lab Cómputo 1',
-        'weekly_hours', 3
-    ),
-    true,
-    jsonb_build_object(
-        'allow_student_self_enrollment', false,
-        'enable_gamification', true,
-        'require_parental_consent', true,
-        'grading_system', 'numerical',
-        'attendance_required', true,
-        'technology_requirements', jsonb_build_object(
-            'devices', 'tablets',
-            'software', jsonb_build_array('GAMILIT Platform', 'Browser')
-        )
-    ),
-    jsonb_build_object(
-        'academic_year', '2025-2026',
-        'demo_classroom', true
-    ),
-    gamilit.now_mexico(),
-    gamilit.now_mexico()
-),
-
--- =====================================================
--- Aula 3: 6to A - Escuela Marie Curie (Profesor 1)
--- =====================================================
-(
-    '60000000-0000-0000-0000-000000000003'::uuid,
-    '50000000-0000-0000-0000-000000000001'::uuid,  -- Escuela Marie Curie
-    v_tenant_id,
-    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,  -- Profesor 1
-    '6to A - Producción de Textos',
-    '6A-PROD-2025',
-    '6',
-    'A',
-    'Producción de Textos',
-    'Grupo de 6to grado, sección A. Enfoque en escritura creativa y argumentativa.',
-    35,
-    1,
-    '2025-08-15'::date,
-    '2026-07-15'::date,
-    jsonb_build_object(
-        'days', jsonb_build_array('Lunes', 'Miércoles', 'Viernes'),
-        'time', '09:45-11:15',
-        'room', 'Aula 601',
-        'weekly_hours', 4.5
-    ),
-    true,
-    jsonb_build_object(
-        'allow_student_self_enrollment', false,
-        'enable_gamification', true,
-        'require_parental_consent', true,
-        'grading_system', 'numerical',
-        'attendance_required', true,
-        'writing_portfolio', true
-    ),
-    jsonb_build_object(
-        'academic_year', '2025-2026',
-        'demo_classroom', true
-    ),
-    gamilit.now_mexico(),
-    gamilit.now_mexico()
-),
-
--- =====================================================
--- Aula 4: Aula de Pruebas - IEI (Director)
--- =====================================================
-(
-    '60000000-0000-0000-0000-000000000004'::uuid,
-    '50000000-0000-0000-0000-000000000002'::uuid,  -- Instituto IEI
-    v_tenant_id,
-    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,  -- Director (director@gamilit.com)
-    'Aula de Pruebas - Todos los Niveles',
-    'TEST-ALL-2025',
-    'variable',
-    'TEST',
-    'Testing y Demos',
-    'Aula para pruebas técnicas y demostraciones del sistema GAMILIT.',
-    50,
-    0,
-    '2025-01-01'::date,
-    '2025-12-31'::date,
-    jsonb_build_object(
-        'days', jsonb_build_array('Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'),
-        'time', 'flexible',
-        'room', 'Virtual',
-        'weekly_hours', 10
-    ),
-    true,
-    jsonb_build_object(
-        'allow_student_self_enrollment', true,
-        'enable_gamification', true,
-        'require_parental_consent', false,
-        'grading_system', 'pass_fail',
-        'attendance_required', false,
-        'testing_environment', true
-    ),
-    jsonb_build_object(
-        'academic_year', '2025',
-        'demo_classroom', true,
-        'environment', 'testing'
-    ),
-    gamilit.now_mexico(),
-    gamilit.now_mexico()
-),
-
--- =====================================================
--- Aula 5: Parent Portal Demo - IEI (Profesor 2)
--- =====================================================
-(
-    '60000000-0000-0000-0000-000000000005'::uuid,
-    '50000000-0000-0000-0000-000000000002'::uuid,  -- Instituto IEI
-    v_tenant_id,
-    'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,  -- Profesor 2
-    'Demo Parent Portal - 4to A',
-    '4A-PARENT-2025',
-    '4',
-    'A',
-    'Comprensión General',
-    'Aula demo para mostrar funcionalidad de Parent Portal con comunicación padre-maestro.',
-    30,
-    0,
-    '2025-08-15'::date,
-    '2026-06-30'::date,
-    jsonb_build_object(
-        'days', jsonb_build_array('Lunes', 'Miércoles', 'Viernes'),
-        'time', '08:00-09:30',
-        'room', 'Aula 401',
-        'weekly_hours', 4.5
-    ),
-    true,
-    jsonb_build_object(
-        'allow_student_self_enrollment', false,
-        'enable_gamification', true,
-        'require_parental_consent', true,
-        'grading_system', 'numerical',
-        'attendance_required', true,
-        'parent_portal_features', jsonb_build_object(
-            'notifications', true,
-            'progress_reports', true,
-            'messaging', true,
-            'calendar', true
-        )
-    ),
-    jsonb_build_object(
-        'academic_year', '2025-2026',
-        'demo_classroom', true,
-        'parent_portal_demo', true
-    ),
-    gamilit.now_mexico(),
-    gamilit.now_mexico()
 )
-
 ON CONFLICT (code) DO UPDATE SET
+    school_id = EXCLUDED.school_id,
     name = EXCLUDED.name,
     description = EXCLUDED.description,
     capacity = EXCLUDED.capacity,
-    current_students_count = EXCLUDED.current_students_count,
-    start_date = EXCLUDED.start_date,
-    end_date = EXCLUDED.end_date,
-    schedule = EXCLUDED.schedule,
     is_active = EXCLUDED.is_active,
     settings = EXCLUDED.settings,
     metadata = EXCLUDED.metadata,
@@ -382,44 +165,48 @@ END $$;
 DO $$
 DECLARE
     classroom_count INTEGER;
-    marie_curie_count INTEGER;
-    iei_count INTEGER;
+    default_classroom_exists BOOLEAN;
+    default_classroom RECORD;
 BEGIN
     SELECT COUNT(*) INTO classroom_count
-    FROM social_features.classrooms
-    WHERE metadata->>'demo_classroom' = 'true';
+    FROM social_features.classrooms;
 
-    SELECT COUNT(*) INTO marie_curie_count
+    SELECT EXISTS(
+        SELECT 1 FROM social_features.classrooms
+        WHERE code = 'DEFAULT' AND is_active = true
+    ) INTO default_classroom_exists;
+
+    SELECT c.id, c.name, c.code, s.name as school_name
+    INTO default_classroom
     FROM social_features.classrooms c
     JOIN social_features.schools s ON c.school_id = s.id
-    WHERE s.code = 'EP-MC-CDMX' AND c.metadata->>'demo_classroom' = 'true';
-
-    SELECT COUNT(*) INTO iei_count
-    FROM social_features.classrooms c
-    JOIN social_features.schools s ON c.school_id = s.id
-    WHERE s.code = 'IEI-GDL' AND c.metadata->>'demo_classroom' = 'true';
+    WHERE c.code = 'DEFAULT';
 
     RAISE NOTICE '========================================';
-    RAISE NOTICE 'AULAS DEMO CREADAS EXITOSAMENTE';
+    RAISE NOTICE 'VERIFICACIÓN DE CLASSROOMS';
     RAISE NOTICE '========================================';
-    RAISE NOTICE 'Total aulas: %', classroom_count;
-    RAISE NOTICE '  - Marie Curie: %', marie_curie_count;
-    RAISE NOTICE '  - IEI: %', iei_count;
-    RAISE NOTICE '========================================';
+    RAISE NOTICE 'Total classrooms: %', classroom_count;
+    RAISE NOTICE 'Classroom default existe: %', default_classroom_exists;
 
-    IF classroom_count >= 5 THEN
-        RAISE NOTICE '✓ Todas las aulas fueron creadas correctamente (incluyendo DEFAULT)';
+    IF default_classroom_exists THEN
+        RAISE NOTICE '========================================';
+        RAISE NOTICE 'CLASSROOM DEFAULT:';
+        RAISE NOTICE '  ID: %', default_classroom.id;
+        RAISE NOTICE '  Nombre: %', default_classroom.name;
+        RAISE NOTICE '  Código: %', default_classroom.code;
+        RAISE NOTICE '  Escuela: %', default_classroom.school_name;
+        RAISE NOTICE '========================================';
+        RAISE NOTICE '✓ Classroom default configurado correctamente';
+        RAISE NOTICE '  Las demás aulas serán creadas por el admin desde la UI';
     ELSE
-        RAISE WARNING '⚠ Se esperaban al menos 5 aulas, se crearon %', classroom_count;
+        RAISE WARNING '⚠ Classroom default NO encontrado';
     END IF;
 END $$;
 
 -- =====================================================
 -- SYNC teacher_classrooms (many-to-many)
 -- =====================================================
--- Asegurar que todos los classrooms tienen su entrada en teacher_classrooms
--- Esto es necesario porque algunos servicios usan classrooms.teacher_id
--- y otros usan la tabla teacher_classrooms
+-- Asegurar que el classroom default tiene su entrada en teacher_classrooms
 -- =====================================================
 
 INSERT INTO social_features.teacher_classrooms (id, teacher_id, classroom_id, tenant_id, role, assigned_at, created_at)
@@ -433,39 +220,20 @@ SELECT
     NOW()
 FROM social_features.classrooms c
 WHERE c.teacher_id IS NOT NULL
+  AND c.code = 'DEFAULT'
 ON CONFLICT DO NOTHING;
 
--- =====================================================
--- Listado de aulas
--- =====================================================
-
+-- Verificar sync
 DO $$
 DECLARE
-    classroom_record RECORD;
     tc_count INTEGER;
 BEGIN
-    -- Contar teacher_classrooms sincronizados
-    SELECT COUNT(*) INTO tc_count FROM social_features.teacher_classrooms;
+    SELECT COUNT(*) INTO tc_count
+    FROM social_features.teacher_classrooms tc
+    JOIN social_features.classrooms c ON tc.classroom_id = c.id
+    WHERE c.code = 'DEFAULT';
 
     RAISE NOTICE '';
-    RAISE NOTICE 'Listado de aulas demo:';
+    RAISE NOTICE 'teacher_classrooms sincronizados para DEFAULT: %', tc_count;
     RAISE NOTICE '========================================';
-
-    FOR classroom_record IN
-        SELECT c.name, c.code, s.name as school_name, c.grade_level, c.section
-        FROM social_features.classrooms c
-        JOIN social_features.schools s ON c.school_id = s.id
-        WHERE c.metadata->>'demo_classroom' = 'true'
-        ORDER BY s.name, c.grade_level, c.section
-    LOOP
-        RAISE NOTICE '  - % (%) - % %° %',
-            classroom_record.name,
-            classroom_record.code,
-            classroom_record.school_name,
-            classroom_record.grade_level,
-            classroom_record.section;
-    END LOOP;
-
-    RAISE NOTICE '========================================';
-    RAISE NOTICE 'teacher_classrooms sincronizados: %', tc_count;
 END $$;

@@ -1,4 +1,4 @@
-import { Expose, Type } from 'class-transformer';
+import { Expose } from 'class-transformer';
 
 /**
  * LeaderboardEntryDto
@@ -73,5 +73,5 @@ export class LeaderboardEntryDto {
    * Metadata adicional (escuela, aula, etc.)
    */
   @Expose()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

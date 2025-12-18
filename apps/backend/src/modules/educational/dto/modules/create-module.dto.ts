@@ -8,8 +8,7 @@ import {
   IsObject,
   IsArray,
   Min,
-  Max,
-} from 'class-validator';
+  } from 'class-validator';
 import {
   DifficultyLevelEnum,
   ContentStatusEnum,
@@ -67,7 +66,7 @@ export class CreateModuleDto {
    */
   @IsOptional()
   @IsObject()
-    content?: Record<string, any>;
+    content?: Record<string, unknown>;
 
   /**
    * Índice de orden para la secuencia de módulos (REQUERIDO)
@@ -346,14 +345,14 @@ export class CreateModuleDto {
    */
   @IsOptional()
   @IsObject()
-    settings?: Record<string, any>;
+    settings?: Record<string, unknown>;
 
   /**
    * Metadatos adicionales (JSONB)
    */
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 
   /**
    * Total de ejercicios en el módulo

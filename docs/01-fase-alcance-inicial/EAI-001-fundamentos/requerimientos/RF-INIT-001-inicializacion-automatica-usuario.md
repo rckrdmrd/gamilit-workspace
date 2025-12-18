@@ -204,7 +204,7 @@ Esta funcionalidad fue el objetivo del fix GAP-003. Antes de 2025-11-24, los usu
 
 | Objeto | Tipo | Descripción |
 |--------|------|-------------|
-| `auth.users` | Tabla | Usuario debe existir en auth (Supabase) |
+| `auth.users` | Tabla | Usuario debe existir en auth (sistema) |
 | `auth_management.profiles` | Tabla | Perfil debe ser creado ANTES de inicialización |
 | `auth_management.tenants` | Tabla | Tenant debe existir para multi-tenancy |
 | `educational_content.modules` | Tabla | Módulos publicados deben existir |
@@ -370,7 +370,7 @@ SELECT * FROM user_initialization_check;
 
 | Schema | FK Reference | Razón |
 |--------|--------------|-------|
-| `gamification_system` | → `auth.users.id` | Gamificación es multi-tenant, necesita user_id de Supabase |
+| `gamification_system` | → `auth.users.id` | Gamificación es multi-tenant, necesita user_id de auth |
 | Otros schemas | → `profiles.id` | Necesitan profile_id local con tenant_id |
 
 **Excepción:** `comodines_inventory` y `module_progress` usan `profiles.id` porque necesitan el contexto de tenant local.

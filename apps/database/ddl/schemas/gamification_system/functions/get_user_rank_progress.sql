@@ -2,7 +2,8 @@
 -- Description: Calcula el progreso del usuario hacia el siguiente rango Maya
 -- Parameters:
 --   - p_user_id: UUID - ID del usuario
--- Returns: TABLE (current_rank, current_xp, next_rank, next_rank_xp, xp_needed, progress_percentage, missions_completed, missions_required)
+-- Returns: TABLE (current_rank, current_xp, next_rank, next_rank_xp, xp_needed, progress_percentage, modules_completed, missions_required)
+-- CORRECTED (2025-12-18): missions_completed -> modules_completed (alineado con user_stats entity)
 -- Example:
 --   SELECT * FROM gamification_system.get_user_rank_progress('123e4567-e89b-12d3-a456-426614174000');
 -- Dependencies: gamification_system.user_stats, user_ranks, maya_ranks
@@ -19,7 +20,7 @@ RETURNS TABLE (
     next_rank_xp BIGINT,
     xp_needed BIGINT,
     progress_percentage NUMERIC(5,2),
-    missions_completed INTEGER,
+    modules_completed INTEGER,
     missions_required INTEGER
 ) AS $$
 DECLARE
@@ -60,7 +61,7 @@ BEGIN
             v_user_stats.total_xp,
             0::BIGINT,
             100.00::NUMERIC,
-            v_user_stats.missions_completed,
+            v_user_stats.modules_completed,
             0::INTEGER;
     ELSE
         RETURN QUERY SELECT
@@ -71,7 +72,7 @@ BEGIN
             GREATEST(0, v_next_rank.min_xp_required - v_user_stats.total_xp),
             LEAST(100, (v_user_stats.total_xp - v_current_rank_xp)::NUMERIC /
                   NULLIF(v_next_rank.min_xp_required - v_current_rank_xp, 0) * 100),
-            v_user_stats.missions_completed,
+            v_user_stats.modules_completed,
             v_next_rank.missions_required;
     END IF;
 END;

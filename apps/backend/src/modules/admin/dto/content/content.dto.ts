@@ -61,5 +61,5 @@ export class ContentDto {
 
   @ApiPropertyOptional({ description: 'Additional metadata' })
   @Expose()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

@@ -84,7 +84,7 @@ export class NotificationResponseDto {
     example: { achievementIcon: '🏆', points: 100 },
     nullable: true,
   })
-    data?: Record<string, any> | null;
+    data?: Record<string, unknown> | null;
 
   /**
    * Indica si la notificación fue leída

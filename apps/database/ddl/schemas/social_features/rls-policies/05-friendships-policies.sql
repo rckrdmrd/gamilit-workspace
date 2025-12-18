@@ -1,23 +1,35 @@
 -- =====================================================
 -- RLS Policies for: social_features.friendships
--- Description: User friendship management with self-service access
+-- Description: Accepted friendships management with bidirectional access
 -- Created: 2025-10-28
--- Policies: 3 (SELECT: 1, INSERT: 1, DELETE: 1)
+-- Updated: 2025-12-05 (DB-GAM-005 - Simplified for accepted friendships only)
+-- Policies: 2 (SELECT: 1, DELETE: 1)
 -- =====================================================
 --
 -- Security Strategy:
--- - Self-managed: Users can only manage their own friendships
+-- - Read-only via app: Friendships are created by triggers/functions, not direct INSERT
 -- - Bidirectional visibility: Both users in a friendship can see it
 -- - Privacy: Users cannot see other people's friendships
+-- - Deletion: Either user can end the friendship
+-- =====================================================
+-- IMPORTANTE: Esta tabla solo contiene amistades ACEPTADAS.
+-- Las solicitudes se gestionan en social_features.friend_requests
 -- =====================================================
 
+-- Habilitar RLS
+ALTER TABLE social_features.friendships ENABLE ROW LEVEL SECURITY;
+
+-- Limpiar políticas existentes
 DROP POLICY IF EXISTS friendships_read_own ON social_features.friendships;
 DROP POLICY IF EXISTS friendships_insert_own ON social_features.friendships;
 DROP POLICY IF EXISTS friendships_delete_own ON social_features.friendships;
+DROP POLICY IF EXISTS friendships_select_own ON social_features.friendships;
 
--- Policy: friendships_read_own
--- Purpose: Users can see their own friendships (both as user and friend)
-CREATE POLICY friendships_read_own
+-- =====================================================
+-- Policy: friendships_select_own
+-- Purpose: Users can see accepted friendships where they participate
+-- =====================================================
+CREATE POLICY friendships_select_own
     ON social_features.friendships
     AS PERMISSIVE
     FOR SELECT
@@ -27,23 +39,13 @@ CREATE POLICY friendships_read_own
         OR friend_id = current_setting('app.current_user_id', true)::uuid
     );
 
-COMMENT ON POLICY friendships_read_own ON social_features.friendships IS
-    'Users can see friendships where they are either the user or the friend';
+COMMENT ON POLICY friendships_select_own ON social_features.friendships IS
+    'Users can see accepted friendships where they are either the user or the friend';
 
--- Policy: friendships_insert_own
--- Purpose: Users can create friendships where they are the user
-CREATE POLICY friendships_insert_own
-    ON social_features.friendships
-    AS PERMISSIVE
-    FOR INSERT
-    TO public
-    WITH CHECK (user_id = current_setting('app.current_user_id', true)::uuid);
-
-COMMENT ON POLICY friendships_insert_own ON social_features.friendships IS
-    'Users can only create friendship requests from themselves';
-
+-- =====================================================
 -- Policy: friendships_delete_own
--- Purpose: Users can delete friendships where they are involved
+-- Purpose: Either user can end the friendship
+-- =====================================================
 CREATE POLICY friendships_delete_own
     ON social_features.friendships
     AS PERMISSIVE
@@ -55,4 +57,10 @@ CREATE POLICY friendships_delete_own
     );
 
 COMMENT ON POLICY friendships_delete_own ON social_features.friendships IS
-    'Users can delete friendships they are part of (either as user or friend)';
+    'Users can delete (end) friendships they are part of (either as user or friend)';
+
+-- =====================================================
+-- NOTA: No hay política INSERT
+-- Las amistades se crean mediante funciones/triggers cuando
+-- una solicitud de amistad es aceptada.
+-- =====================================================

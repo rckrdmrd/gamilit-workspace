@@ -165,7 +165,7 @@ export class CreateNotificationDto {
   })
   @IsObject()
   @IsOptional()
-    data?: Record<string, any>;
+    data?: Record<string, unknown>;
 
   /**
    * Metadata adicional (opcional) - alias para data
@@ -180,7 +180,7 @@ export class CreateNotificationDto {
   })
   @IsObject()
   @IsOptional()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 
   /**
    * Prioridad de la notificación (opcional)

@@ -6,7 +6,7 @@
 
 import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThanOrEqual, MoreThanOrEqual, In } from 'typeorm';
+import { Repository, MoreThanOrEqual, In } from 'typeorm';
 import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
 import { Profile } from '@/modules/auth/entities/profile.entity';
 import { ModuleProgress } from '@/modules/progress/entities/module-progress.entity';
@@ -131,8 +131,9 @@ export class StudentProgressService {
    * Get student overview information
    */
   async getStudentOverview(studentId: string): Promise<StudentOverview> {
+    // studentId is actually user_id from frontend (StudentInClassroomDto.user_id)
     const profile = await this.profileRepository.findOne({
-      where: { id: studentId },
+      where: { user_id: studentId },
     });
 
     if (!profile) {
@@ -171,8 +172,9 @@ export class StudentProgressService {
    * Get student statistics
    */
   async getStudentStats(studentId: string): Promise<StudentStats> {
+    // studentId is actually user_id from frontend
     const profile = await this.profileRepository.findOne({
-      where: { id: studentId },
+      where: { user_id: studentId },
     });
 
     if (!profile) {
@@ -239,8 +241,9 @@ export class StudentProgressService {
   async getModuleProgress(
     studentId: string,
   ): Promise<ModuleProgressDetail[]> {
+    // studentId is actually user_id from frontend
     const profile = await this.profileRepository.findOne({
-      where: { id: studentId },
+      where: { user_id: studentId },
     });
 
     if (!profile) {
@@ -275,8 +278,9 @@ export class StudentProgressService {
     studentId: string,
     query: GetStudentProgressQueryDto,
   ): Promise<ExerciseAttempt[]> {
+    // studentId is actually user_id from frontend
     const profile = await this.profileRepository.findOne({
-      where: { id: studentId },
+      where: { user_id: studentId },
     });
 
     if (!profile) {
@@ -331,8 +335,9 @@ export class StudentProgressService {
    * Identify struggle areas for student
    */
   async getStruggleAreas(studentId: string): Promise<StruggleArea[]> {
+    // studentId is actually user_id from frontend
     const profile = await this.profileRepository.findOne({
-      where: { id: studentId },
+      where: { user_id: studentId },
     });
 
     if (!profile) {
@@ -357,7 +362,7 @@ export class StudentProgressService {
 
     const struggles: StruggleArea[] = [];
 
-    exerciseMap.forEach((subs, exerciseId) => {
+    exerciseMap.forEach((subs) => {
       const attempts = subs.length;
       const correctAttempts = subs.filter((s) => s.is_correct).length;
       const successRate = (correctAttempts / attempts) * 100;
@@ -486,18 +491,18 @@ export class StudentProgressService {
     studentId: string,
     teacherId: string,
   ): Promise<StudentNoteResponseDto[]> {
-    // Get student profile
+    // Get student profile - studentId is actually user_id from frontend
     const student = await this.profileRepository.findOne({
-      where: { id: studentId },
+      where: { user_id: studentId },
     });
 
     if (!student) {
       throw new NotFoundException(`Student ${studentId} not found`);
     }
 
-    // Get student user
+    // Get student user - studentId is the user_id
     const studentUser = await this.userRepository.findOne({
-      where: { id: student.user_id || undefined },
+      where: { id: studentId },
     });
 
     if (!studentUser) {
@@ -553,18 +558,18 @@ export class StudentProgressService {
     teacherId: string,
     noteDto: AddTeacherNoteDto,
   ): Promise<StudentNoteResponseDto> {
-    // Get student profile
+    // Get student profile - studentId is actually user_id from frontend
     const student = await this.profileRepository.findOne({
-      where: { id: studentId },
+      where: { user_id: studentId },
     });
 
     if (!student) {
       throw new NotFoundException(`Student ${studentId} not found`);
     }
 
-    // Get student user
+    // Get student user - studentId is the user_id
     const studentUser = await this.userRepository.findOne({
-      where: { id: student.user_id || undefined },
+      where: { id: studentId },
     });
 
     if (!studentUser) {

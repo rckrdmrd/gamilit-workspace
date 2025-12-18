@@ -45,10 +45,10 @@ export class CreateAlertDto {
   @ApiPropertyOptional({ description: 'Additional context data (JSON)' })
   @IsOptional()
   @IsObject()
-    context_data?: Record<string, any>;
+    context_data?: Record<string, unknown>;
 
   @ApiPropertyOptional({ description: 'Metrics data (JSON)' })
   @IsOptional()
   @IsObject()
-    metrics?: Record<string, any>;
+    metrics?: Record<string, unknown>;
 }

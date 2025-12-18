@@ -351,7 +351,7 @@ export class ClassroomAssignmentsService {
   constructor(
     @InjectRepository(Classroom)
     private classroomRepo: Repository<Classroom>,
-    private supabaseService: SupabaseService,
+    private dbService: DatabaseService,
     private auditService: AuditService,
   ) {}
 
@@ -377,7 +377,7 @@ export class ClassroomAssignmentsService {
     }
 
     // 4. Actualizar classroom con teacher_id
-    const { data, error } = await this.supabaseService.client
+    const { data, error } = await this.dbClientService.client
       .from('social_features.classrooms')
       .update({
         teacher_id: dto.teacherId,
@@ -447,7 +447,7 @@ export class ClassroomAssignmentsService {
     adminId: string,
   ): Promise<void> {
     // 1. Verificar si hay estudiantes activos
-    const { count } = await this.supabaseService.client
+    const { count } = await this.dbClientService.client
       .from('social_features.classroom_enrollments')
       .select('*', { count: 'exact', head: true })
       .eq('classroom_id', classroomId)
@@ -461,7 +461,7 @@ export class ClassroomAssignmentsService {
     }
 
     // 2. Remover teacher_id del classroom
-    const { error } = await this.supabaseService.client
+    const { error } = await this.dbClientService.client
       .from('social_features.classrooms')
       .update({
         teacher_id: null,
@@ -507,7 +507,7 @@ export class ClassroomAssignmentsService {
     }
 
     // 3. Actualizar asignación
-    const { error } = await this.supabaseService.client
+    const { error } = await this.dbClientService.client
       .from('social_features.classrooms')
       .update({
         teacher_id: dto.toTeacherId,
@@ -535,7 +535,7 @@ export class ClassroomAssignmentsService {
    * Validaciones auxiliares
    */
   private async validateTeacher(userId: string): Promise<any> {
-    const { data, error } = await this.supabaseService.client
+    const { data, error } = await this.dbClientService.client
       .from('auth_management.profiles')
       .select('user_id, full_name, gamilit_role')
       .eq('user_id', userId)
@@ -555,7 +555,7 @@ export class ClassroomAssignmentsService {
   }
 
   private async validateClassroom(classroomId: string): Promise<any> {
-    const { data, error } = await this.supabaseService.client
+    const { data, error } = await this.dbClientService.client
       .from('social_features.classrooms')
       .select('*')
       .eq('classroom_id', classroomId)

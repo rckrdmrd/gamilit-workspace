@@ -13,3 +13,5 @@ export * from './leaderboard.service';
 export * from './missions.service';
 export * from './classroom-missions.service';
 export * from './comodines.service';
+export * from './shop.service';
+export * from './mission-templates.service';

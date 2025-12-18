@@ -12,8 +12,7 @@ import { Check, X, Sparkles } from 'lucide-react';
 import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
-import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
+import { useInvalidateDashboard } from '@/shared/hooks';
 
 export interface CompletarEspaciosExerciseProps {
   exercise: CompletarEspaciosData;
@@ -32,8 +31,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
   actionsRef,
 }) => {
   const { user } = useAuth();
-  const { fetchUserProgress } = useRanksStore();
-  const { fetchBalance } = useEconomyStore();
+  const { syncAndInvalidate } = useInvalidateDashboard();
   const [blanks, setBlanks] = useState<BlankSpace[]>(
     exercise.blanks.map((blank) => ({ ...blank, userAnswer: '' })),
   );
@@ -197,8 +195,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
       setShowFeedback(true);
 
       // Sync stores with backend (rewards already calculated and saved by backend)
-      await fetchUserProgress();
-      await fetchBalance();
+      await syncAndInvalidate();
 
       console.log('✅ [CompletarEspacios] Submission successful:', {
         attemptId: response.attemptId,
@@ -214,7 +211,7 @@ export const CompletarEspaciosExercise: React.FC<CompletarEspaciosExerciseProps>
       });
       setShowFeedback(true);
     }
-  }, [blanks, user, exercise.id, fetchUserProgress, fetchBalance, answeredCount]);
+  }, [blanks, user, exercise.id, syncAndInvalidate, answeredCount]);
 
   const handleReset = useCallback(() => {
     setBlanks(exercise.blanks.map((blank) => ({ ...blank, userAnswer: '' })));

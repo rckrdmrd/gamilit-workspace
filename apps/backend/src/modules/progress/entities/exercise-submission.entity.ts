@@ -61,7 +61,7 @@ export class ExerciseSubmission {
    * Estructura varía según tipo de ejercicio
    */
   @Column({ type: 'jsonb' })
-    answer_data!: Record<string, any>;
+    answer_data!: Record<string, unknown>;
 
   // =====================================================
   // RESULTS & SCORING

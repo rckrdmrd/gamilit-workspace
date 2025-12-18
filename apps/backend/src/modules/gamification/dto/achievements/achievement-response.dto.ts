@@ -47,10 +47,10 @@ export class AchievementResponseDto {
   // =====================================================
 
   @Expose()
-    conditions!: Record<string, any>;
+    conditions!: Record<string, unknown>;
 
   @Expose()
-    rewards!: Record<string, any>;
+    rewards!: Record<string, unknown>;
 
   @Expose()
     ml_coins_reward!: number;
@@ -96,7 +96,7 @@ export class AchievementResponseDto {
   // =====================================================
 
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   @Expose()
     created_by?: string;

@@ -171,7 +171,7 @@ export const RankComparison: React.FC<RankComparisonProps> = ({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="rounded-xl bg-gradient-to-r from-detective-orange to-detective-orange-dark p-6 text-center text-white"
+        className="rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 p-6 text-center text-white"
       >
         <p className="mb-1 text-lg font-semibold">¡Sigue así, Detective!</p>
         <p className="text-sm opacity-90">

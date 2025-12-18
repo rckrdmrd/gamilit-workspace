@@ -55,7 +55,7 @@ El schema `content_management` proporciona un sistema CMS completo con:
 - PDFs y documentos
 - Audio
 
-**Integración:** Storage de Supabase (ver schema `storage`)
+**Integración:** Sistema de Storage (ver schema `storage`)
 
 ---
 

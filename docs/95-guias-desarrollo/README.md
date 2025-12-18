@@ -2,7 +2,7 @@
 
 **Proyecto:** GAMILIT - Plataforma Gamificada de Machine Learning
 **Versión:** 2.0 (RFC-0001)
-**Última actualización:** 2025-11-01
+**Última actualización:** 2025-12-18
 **Estado:** ✅ Migrado y modularizado (Microciclo 1-4)
 
 ---
@@ -232,7 +232,7 @@ integraciones/
 - Triggers notifican servicios via eventos
 
 ### Backend ↔ Frontend
-- APIs REST (470+ endpoints)
+- APIs REST (417 endpoints)
 - WebSocket (25+ eventos en tiempo real)
 - Tipos compartidos (70+ tipos TypeScript)
 
@@ -410,6 +410,6 @@ Los siguientes archivos de base-de-datos están pendientes de modularización en
 
 ---
 
-**Última actualización:** 2025-11-02 00:15 CST
+**Última actualización:** 2025-12-18
 **Mantenedores:** @tech-lead @backend-team @frontend-team @qa-team
 **Estado:** ✅ Microciclo 1-4 completado (93% modularizado)

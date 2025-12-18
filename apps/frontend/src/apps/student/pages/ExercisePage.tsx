@@ -130,6 +130,8 @@ const loadMechanic = (mechanicType: string) => {
       import('@/features/mechanics/module3/TribunalOpiniones/TribunalOpinionesExercise'),
 
     // Module 4 - Textos Digitales y Multimediales
+    verificador_fake_news: () =>
+      import('@/features/mechanics/module4/VerificadorFakeNews/VerificadorFakeNewsExercise'),
     verificador_fakenews: () =>
       import('@/features/mechanics/module4/VerificadorFakeNews/VerificadorFakeNewsExercise'),
     fake_news: () =>
@@ -141,13 +143,7 @@ const loadMechanic = (mechanicType: string) => {
       import('@/features/mechanics/module4/AnalisisMemes/AnalisisMemesExercise'),
     infografia_interactiva: () =>
       import('@/features/mechanics/module4/InfografiaInteractiva/InfografiaInteractivaExercise'),
-    email_formal: () => import('@/features/mechanics/module4/EmailFormal/EmailFormalExercise'),
-    chat_literario: () =>
-      import('@/features/mechanics/module4/ChatLiterario/ChatLiterarioExercise'),
-    ensayo_argumentativo: () =>
-      import('@/features/mechanics/module4/EnsayoArgumentativo/EnsayoArgumentativoExercise'),
-    resena_critica: () =>
-      import('@/features/mechanics/module4/ResenaCritica/ResenaCriticaExercise'),
+    // Removed: email_formal, chat_literario, ensayo_argumentativo, resena_critica (exercises deleted)
 
     // Module 5 - Producción Creativa
     diario_multimedia: () =>
@@ -267,7 +263,8 @@ export default function ExercisePage() {
 
         const mappedExercise: ExerciseData = {
           id: exerciseData.id,
-          module_id: exerciseData.module_id,
+          // API returns camelCase after apiClient transformation (snake_case → camelCase)
+          module_id: exerciseData.moduleId || exerciseData.module_id,
           title: exerciseData.title,
           type: exerciseType,
           description: exerciseData.description || '',
@@ -557,7 +554,14 @@ export default function ExercisePage() {
 
   const handleSkip = () => {
     if (window.confirm('¿Estás seguro de que deseas omitir este ejercicio?')) {
-      navigate(`/modules/${exercise?.module_id || moduleId}`);
+      // Priorizar module_id del ejercicio, luego moduleId del URL, luego dashboard
+      const targetModuleId = exercise?.module_id || (exercise as any)?.moduleId || moduleId;
+      if (targetModuleId && targetModuleId !== 'undefined') {
+        navigate(`/modules/${targetModuleId}`);
+      } else {
+        console.warn('[ExercisePage] No valid moduleId found, navigating to dashboard');
+        navigate('/dashboard');
+      }
     }
   };
 
@@ -712,12 +716,8 @@ export default function ExercisePage() {
             className="mb-6 rounded-lg border-2 border-red-300 bg-red-50 p-4 text-red-800"
           >
             <p className="font-semibold">No se pudo cargar el ejercicio</p>
-            <DetectiveButton
-              variant="blue"
-              onClick={() => navigate(`/modules/${moduleId || 'dashboard'}`)}
-              className="mt-4"
-            >
-              Volver al módulo
+            <DetectiveButton variant="blue" onClick={() => navigate('/dashboard')} className="mt-4">
+              Volver al Dashboard
             </DetectiveButton>
           </motion.div>
         </div>
@@ -880,6 +880,7 @@ export default function ExercisePage() {
                 >
                   <MechanicComponent
                     exercise={adaptedExercise || exercise}
+                    exerciseId={exercise?.id}
                     onComplete={handleComplete}
                     onProgressUpdate={handleProgressUpdate}
                     actionsRef={mechanicActionsRef}
@@ -1055,7 +1056,17 @@ export default function ExercisePage() {
             onClose={() => {
               setShowFeedback(false);
               if (feedback.type === 'success') {
-                navigate(`/modules/${exercise?.module_id || moduleId}`);
+                // Priorizar module_id del ejercicio, luego moduleId del URL, luego dashboard
+                const targetModuleId =
+                  exercise?.module_id || (exercise as any)?.moduleId || moduleId;
+                if (targetModuleId && targetModuleId !== 'undefined') {
+                  navigate(`/modules/${targetModuleId}`);
+                } else {
+                  console.warn(
+                    '[ExercisePage] No valid moduleId found after completion, navigating to dashboard',
+                  );
+                  navigate('/dashboard');
+                }
               }
             }}
             onRetry={() => {

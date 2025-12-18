@@ -153,7 +153,7 @@ export class ClassroomMember {
    * Ejemplo: { can_post: true, can_comment: true, can_view_others: true }
    */
   @Column({ type: 'jsonb', default: {} })
-    permissions: Record<string, any> = {};
+    permissions: Record<string, unknown> = {};
 
   // =====================================================
   // NOTES & COMMENTS
@@ -170,7 +170,7 @@ export class ClassroomMember {
    * Ejemplo: { parent_name: "...", phone: "...", email: "..." }
    */
   @Column({ type: 'jsonb', default: {} })
-    parent_contact_info!: Record<string, any>;
+    parent_contact_info!: Record<string, unknown>;
 
   // =====================================================
   // METADATA & FLAGS
@@ -180,7 +180,7 @@ export class ClassroomMember {
    * Metadatos adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Flag de membresía activa

@@ -58,7 +58,7 @@ export class RecentErrorDto {
     nullable: true,
     example: { stack: '...', code: 'ECONNREFUSED' },
   })
-    context!: Record<string, any> | null;
+    context!: Record<string, unknown> | null;
 
   @ApiProperty({
     description: 'Source of the error',

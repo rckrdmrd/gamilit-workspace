@@ -129,7 +129,7 @@ export class ReportsService {
   /**
    * Generate a descriptive report name
    */
-  private generateReportName(type: ReportType, format: ReportFormat): string {
+  private generateReportName(type: ReportType, _format: ReportFormat): string {
     const typeLabels: Record<ReportType, string> = {
       [ReportType.USERS]: 'Reporte-Usuarios',
       [ReportType.PROGRESS]: 'Reporte-Progreso',

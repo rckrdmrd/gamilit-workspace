@@ -204,7 +204,7 @@ BEGIN
     WHERE user_id = p_user_id;
 
     -- Cerrar todas las sesiones activas del usuario
-    -- (Supabase Auth maneja esto automáticamente)
+    -- (autenticación estándar maneja esto automáticamente)
 
     -- Trigger automático auditará el cambio
 

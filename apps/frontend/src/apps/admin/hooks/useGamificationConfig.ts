@@ -303,6 +303,23 @@ export function useGamificationConfig() {
     },
   });
 
+  /**
+   * Mutation for restoring all settings to defaults (MEDIO-002 fix)
+   * Invalidates all gamification queries on success
+   * @added 2025-12-15
+   */
+  const restoreDefaults = useMutation({
+    mutationFn: () => gamificationConfigApi.restoreDefaults(),
+    onSuccess: (data) => {
+      toast.success(`${data.restored_count} parámetros restaurados a valores por defecto`);
+      // Invalidate all gamification queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['gamification'] });
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || 'Error al restaurar valores por defecto');
+    },
+  });
+
   return {
     // Queries
     useParameters,
@@ -316,5 +333,6 @@ export function useGamificationConfig() {
     bulkUpdateParameters,
     updateMayaRank,
     previewImpact,
+    restoreDefaults,
   };
 }

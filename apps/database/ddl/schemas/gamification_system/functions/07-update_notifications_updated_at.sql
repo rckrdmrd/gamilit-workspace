@@ -1,9 +1,17 @@
 -- =====================================================
 -- Function: gamification_system.update_notifications_updated_at
--- Description: No description available
+-- Description: DEPRECATED - Usar gamilit.update_updated_at_column()
 -- Parameters: None
 -- Returns: trigger
 -- Created: 2025-10-27
+-- Modified: 2025-12-14 (P0-DUP Auditoría AUDIT-DB-001)
+-- =====================================================
+--
+-- DEPRECATED: Esta función es redundante.
+-- Todos los triggers deben usar gamilit.update_updated_at_column()
+-- para garantizar consistencia de timezone (gamilit.now_mexico())
+--
+-- Cambio: NOW() → gamilit.now_mexico() para consistencia de timezone
 -- =====================================================
 
 CREATE OR REPLACE FUNCTION gamification_system.update_notifications_updated_at()
@@ -11,7 +19,11 @@ CREATE OR REPLACE FUNCTION gamification_system.update_notifications_updated_at()
  LANGUAGE plpgsql
 AS $function$
 BEGIN
-  NEW.updated_at = NOW();
+  -- P0-DUP: Corregido para usar timezone México (antes usaba NOW())
+  NEW.updated_at = gamilit.now_mexico();
   RETURN NEW;
 END;
 $function$;
+
+COMMENT ON FUNCTION gamification_system.update_notifications_updated_at() IS
+  'DEPRECATED: Usar gamilit.update_updated_at_column(). Corregido 2025-12-14 para usar gamilit.now_mexico()';

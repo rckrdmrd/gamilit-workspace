@@ -72,18 +72,18 @@ Se decide **mantener los 3 schemas sin tablas** por las siguientes razones estra
 
 ### 3. storage
 
-**Estrategia:** **Delegar completamente a Supabase Storage API**.
+**Estrategia:** **Delegar completamente a Storage compatible API**.
 
 **Justificación:**
-- Supabase Storage maneja buckets, objetos y metadatos internamente
+- Storage compatible maneja buckets, objetos y metadatos internamente
 - No necesitamos tablas custom para storage
 - Reduce complejidad de mantenimiento
-- Aprovecha features optimizadas de Supabase (CDN, transformaciones, etc.)
+- Aprovecha features del storage provider (CDN, transformaciones, etc.)
 
 **Implementación:**
-- API: `supabase.storage.from('bucket').upload()`
+- API: `storageClient.from('bucket').upload()`
 - Sin tablas custom
-- Metadata en `storage.objects` (tabla managed de Supabase)
+- Metadata en `storage.objects` (tabla del sistema)
 
 **Beneficio:** Menor superficie de mantenimiento, features enterprise incluidas.
 
@@ -104,7 +104,7 @@ Se decide **mantener los 3 schemas sin tablas** por las siguientes razones estra
 ### Alternativa 3: Implementar Custom Storage en storage schema
 **Pros:** Control total sobre storage
 **Cons:** Reinventar la rueda, 100+ horas de desarrollo, bugs potenciales
-**Decisión:** ❌ Rechazado - Supabase Storage es superior
+**Decisión:** ❌ Rechazado - Storage compatible es superior
 
 ---
 
@@ -122,14 +122,14 @@ Se decide **mantener los 3 schemas sin tablas** por las siguientes razones estra
 
 ⚠️ **Confusión Inicial:** Desarrolladores nuevos pueden pensar que están "incompletos"
 ⚠️ **Documentación Crítica:** Requiere ADR (este documento) para explicar estrategia
-⚠️ **Dependencia de Supabase:** Storage depende 100% de servicio externo
+⚠️ **Dependencia de Storage externo:** Storage depende 100% de servicio externo
 
 ### Mitigación
 
 - ✅ Este ADR documenta la estrategia claramente
 - ✅ Comentarios en DDL explican el propósito de cada schema
 - ✅ Inventario de base de datos (DATABASE_INVENTORY.yml) documenta el estado
-- ✅ Backups de Supabase Storage configurados
+- ✅ Backups de Storage compatible configurados
 
 ---
 

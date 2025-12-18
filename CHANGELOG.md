@@ -1,5 +1,216 @@
 # CHANGELOG - Plataforma GAMILIT
 
+## [2.4.2] - 2025-12-15
+
+### Simplificación de Estructura Social - Solo Defaults
+
+Esta versión simplifica completamente la estructura de `social_features` eliminando todas las entidades demo y dejando únicamente las entidades default del sistema.
+
+**Tech-Leader:** Claude Opus 4.5
+**Tarea:** Simplificación de estructura de base de datos
+
+---
+
+### Cambios Mayores
+
+| Archivo | Cambio | Descripción |
+|---------|--------|-------------|
+| `01-schools.sql` | VACIADO | Eliminadas escuelas demo (Marie Curie, IEI) |
+| `02-classrooms.sql` | SIMPLIFICADO | Solo classroom DEFAULT |
+| `03-classroom-members.sql` | SIMPLIFICADO | Todos los estudiantes → DEFAULT |
+| `08-assign-admin-schools.sql` | EXPANDIDO | Asigna TODOS los usuarios a escuela default |
+
+---
+
+### Entidades Eliminadas
+
+**Escuelas removidas:**
+- Escuela Primaria Marie Curie (Ciudad de México)
+- Instituto de Educación Integral (Guadalajara)
+
+**Aulas removidas:**
+- 5to A (Marie Curie)
+- 5to B (Marie Curie)
+- 6to A (Marie Curie)
+- Aula de Pruebas
+- Parent Portal Demo
+
+---
+
+### Estructura Final
+
+| Entidad | Cantidad | Código |
+|---------|----------|--------|
+| Escuelas | 1 | `SYSTEM-UNASSIGNED` |
+| Classrooms | 1 | `DEFAULT` |
+| Usuarios en escuela default | 16 | - |
+| Estudiantes en classroom DEFAULT | 14 | - |
+
+---
+
+### Corrección Técnica
+
+**Constraint fix:** `enrollment_method`
+- Valor anterior: `auto_assignment` (inválido)
+- Valor corregido: `admin_add`
+- Valores válidos: `teacher_invite`, `self_enroll`, `admin_add`, `bulk_import`
+
+---
+
+### Decisión de Diseño
+
+El admin crea entidades adicionales (escuelas, aulas) desde la UI según sea necesario. Esta simplificación:
+- Reduce complejidad de seeds
+- Facilita mantenimiento
+- Clarifica flujo de datos
+- Trigger `trg_assign_default_classroom` asigna automáticamente nuevos estudiantes
+
+---
+
+## [2.4.1] - 2025-12-15
+
+### Flujo de Creación de Usuarios - School Default
+
+Esta versión implementa el concepto de "Escuela Default" para la correcta asignación de usuarios nuevos, especialmente administradores y profesores.
+
+**Tech-Leader:** Claude Opus 4.5
+**Tarea:** Análisis y adaptación del flujo de creación de usuarios
+
+---
+
+### Seeds Nuevos
+
+| Seed | Schema | Descripción |
+|------|--------|-------------|
+| `00-schools-default.sql` | social_features | Escuela "Sistema - Por Asignar" (UUID: 99999999-9999-9999-9999-999999999999) |
+| `08-assign-admin-schools.sql` | auth_management | Asignación automática de escuela default a admins |
+
+**Total seeds activos:** 51 PROD, 52 DEV
+
+---
+
+### Modificaciones
+
+- **`02-classrooms.sql`**: Classroom DEFAULT ahora apunta a la escuela del sistema en lugar de Marie Curie
+- **`create-database.sh`**: Agregados nuevos seeds en el orden correcto
+
+---
+
+### Arquitectura
+
+**Flujo de registro de usuarios actualizado:**
+1. Usuario se registra → auth.users creado
+2. Trigger crea profile → auth_management.profiles
+3. Si role='student' → trigger asigna a classroom DEFAULT
+4. Si role='admin_teacher' o 'super_admin' → seed asigna school DEFAULT
+
+**UUID fijas (sistema):**
+- School Default: `99999999-9999-9999-9999-999999999999`
+- Classroom Default: `00000000-0000-0000-0000-000000000001`
+
+---
+
+### Hallazgos del Análisis
+
+- `AuthService.register()` SÍ estaba implementado (contrario al análisis inicial)
+- `last_sign_in_at` SÍ se actualiza en login/register
+- El problema de "Nunca" en admin/users es por datos NULL en BD (usuarios de seeds sin login real)
+
+---
+
+## [2.4.0] - 2025-12-14
+
+### Auditoría de Base de Datos (AUDIT-DB-001)
+
+Esta versión incluye correcciones críticas P0 identificadas durante la auditoría de base de datos AUDIT-DB-001. Se eliminaron referencias erróneas a Supabase, se corrigieron funciones de timestamp y se crearon 5 seeds críticos.
+
+**Auditoría:** AUDIT-DB-001
+**Prioridad:** P0 - CRÍTICO
+**Estado:** COMPLETADO
+
+---
+
+### P0-DUP: Funciones de Timestamp Corregidas
+
+**Problema:** 2 funciones usaban `NOW()` en lugar de `gamilit.now_mexico()`.
+
+**Archivos corregidos:**
+- `gamification_system/functions/06-update_missions_updated_at.sql`
+- `gamification_system/functions/07-update_notifications_updated_at.sql`
+
+**Cambio:**
+```sql
+-- ANTES (incorrecto)
+NEW.updated_at = NOW();
+
+-- DESPUÉS (correcto)
+NEW.updated_at = gamilit.now_mexico();
+```
+
+---
+
+### P0-SEEDS: 5 Seeds Críticos Creados
+
+| Seed | Schema | Registros |
+|------|--------|-----------|
+| `07-user_roles.sql` | auth_management | 8 |
+| `10-mission_templates.sql` | gamification_system | 11 |
+| `11-module_dependencies.sql` | educational_content | 6 |
+| `12-taxonomies.sql` | educational_content | 4 |
+| `02-marie_curie_content.sql` | content_management | 6 |
+
+**Total:** 35 registros iniciales
+**Coverage P0:** 100%
+
+---
+
+### P0-DOC: Eliminación de Referencias Supabase
+
+**Decisión arquitectónica:** Supabase NO es parte del stack de GAMILIT.
+
+**Cambios realizados:**
+- ~75 referencias a Supabase eliminadas en código y documentación
+- `AUTH_SUPABASE` renombrado a `AUTH_BASE` en `database.constants.ts`
+- Roles RLS correctamente documentados (authenticated, anon, service_role)
+
+**Documentación creada:**
+- `docs/90-transversal/arquitectura/ARQUITECTURA-AUTENTICACION.md`
+
+---
+
+### Archivos de Auditoría
+
+```
+orchestration/agentes/database-auditor/audit-2025-12-14/
+├── 01-REPORTE-ESTRUCTURA-DDL.md
+├── 02-REPORTE-CARGA-LIMPIA.md
+├── 03-MAPA-DEPENDENCIAS-DDL.yml
+├── 04-REPORTE-VALIDACION-DEPENDENCIAS.md
+├── 05-INVENTARIO-FUNCIONES-TRIGGERS.yml
+├── 06-REPORTE-RLS-POLICIES.md
+└── 07-REPORTE-CORRECCIONES-P0.md
+```
+
+---
+
+### Inventarios Actualizados
+
+- `BACKEND_INVENTORY.yml` v2.6.0 → v2.7.0
+- `SEEDS_INVENTORY.yml` - Agregados 5 P0 seeds
+- `DATABASE_INVENTORY.yml` - Referencias actualizadas
+
+---
+
+### Métricas
+
+| Métrica | Antes | Después |
+|---------|-------|---------|
+| Seeds coverage P0 | 26.4% | 100% |
+| Funciones timezone correcto | 97% | 100% |
+| Referencias Supabase | 75+ | 0 |
+
+---
+
 ## [2.3.0] - 2025-11-09
 
 ### 🎉 Resumen Ejecutivo
@@ -380,7 +591,7 @@ Global Prefix:  /api
 ## 🎓 Estado de la Plataforma
 
 ### ✅ Completamente Funcional
-- Autenticación y autorización (JWT + Supabase)
+- Autenticación y autorización (JWT + Custom Auth)
 - 5 módulos educativos con 27 ejercicios
 - Sistema de gamificación (achievements, ranks, ML Coins)
 - Portal de estudiante (28 páginas)

@@ -1,7 +1,241 @@
 # Traza de Tareas: ATLAS-DATABASE
 
-**Última actualización:** 2025-11-29 (DB-REFACTOR-001: Consolidación de Índices)
-**Estado:** ✅ PRODUCTION READY - Validación de integración completa + Índices consolidados
+**Última actualización:** 2025-11-29 (DB-137: Implementación M4-M5 - Tablas Media y Manual Reviews)
+**Estado:** ✅ PRODUCTION READY - Validación de integración completa + M4-M5 activos
+
+---
+
+## 📋 Tareas Actuales
+
+### ✅ DB-137: Implementación M4-M5 - Tablas Media Attachments y Manual Reviews - COMPLETADO
+
+**Fecha:** 2025-11-29
+**Agente:** Database-Agent
+**Prioridad:** P0 CRÍTICO
+**Duración:** 45 minutos
+**Estimación:** 1.5 SP
+
+**Objetivo:**
+Crear infraestructura de base de datos para soportar los módulos 4 (Lectura Digital) y 5 (Producción Lectora), que requieren almacenamiento de archivos multimedia y sistema de revisión manual por docentes.
+
+**Contexto:**
+- M4 y M5 contienen ejercicios creativos donde estudiantes generan contenido multimedia
+- Los ejercicios requieren evaluación manual con rúbricas
+- Se necesita almacenar archivos adjuntos (audio, video, imágenes)
+- Los docentes deben poder revisar envíos y proporcionar feedback
+
+**Solución Implementada:**
+
+#### 1. Tabla: media_attachments (educational_content)
+**Archivo:** `apps/database/ddl/schemas/educational_content/tables/09-media_attachments.sql`
+
+**Estructura:**
+```sql
+CREATE TABLE educational_content.media_attachments (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  exercise_id uuid NOT NULL REFERENCES educational_content.exercises(id),
+  user_id uuid NOT NULL REFERENCES auth_management.users(id),
+  file_type varchar(50) NOT NULL, -- 'audio', 'video', 'image'
+  file_url text NOT NULL,
+  file_size_bytes bigint NOT NULL,
+  mime_type varchar(100) NOT NULL,
+  original_filename varchar(255),
+  duration_seconds integer, -- Para audio/video
+  created_at timestamp with time zone DEFAULT now() NOT NULL,
+  metadata jsonb DEFAULT '{}'::jsonb
+);
+```
+
+**Índices creados:**
+```sql
+CREATE INDEX idx_media_attachments_exercise ON media_attachments(exercise_id);
+CREATE INDEX idx_media_attachments_user ON media_attachments(user_id);
+CREATE INDEX idx_media_attachments_type ON media_attachments(file_type);
+```
+
+**RLS Policies:**
+- Estudiantes: Pueden crear attachments para sus ejercicios
+- Docentes: Pueden leer attachments de sus estudiantes
+- Admin: Acceso completo
+
+#### 2. Tabla: manual_reviews (progress_tracking)
+**Archivo:** `apps/database/ddl/schemas/progress_tracking/tables/06-manual_reviews.sql`
+
+**Estructura:**
+```sql
+CREATE TABLE progress_tracking.manual_reviews (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  submission_id uuid NOT NULL REFERENCES progress_tracking.exercise_submissions(id),
+  reviewer_id uuid NOT NULL REFERENCES auth_management.users(id),
+  score numeric(5,2) NOT NULL CHECK (score >= 0 AND score <= 100),
+  max_score numeric(5,2) NOT NULL DEFAULT 100,
+  feedback text,
+  rubric_scores jsonb DEFAULT '{}'::jsonb,
+  status varchar(20) NOT NULL DEFAULT 'pending',
+  reviewed_at timestamp with time zone,
+  created_at timestamp with time zone DEFAULT now() NOT NULL,
+  updated_at timestamp with time zone DEFAULT now() NOT NULL,
+  CONSTRAINT valid_status CHECK (status IN ('pending', 'in_review', 'approved', 'rejected', 'needs_revision'))
+);
+```
+
+**Índices creados:**
+```sql
+CREATE INDEX idx_manual_reviews_submission ON manual_reviews(submission_id);
+CREATE INDEX idx_manual_reviews_reviewer ON manual_reviews(reviewer_id);
+CREATE INDEX idx_manual_reviews_status ON manual_reviews(status);
+CREATE INDEX idx_manual_reviews_created ON manual_reviews(created_at DESC);
+```
+
+**Trigger auto-update:**
+```sql
+CREATE TRIGGER update_manual_reviews_updated_at
+  BEFORE UPDATE ON manual_reviews
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+```
+
+#### 3. Seeds: Ejercicios Módulo 4
+**Archivo:** `apps/database/seeds/dev/educational_content/05-exercises-module4.sql`
+
+**Ejercicios creados (5):**
+1. `verificador_fake_news` - Verificación de noticias falsas (200 XP, 40 ML Coins)
+2. `infografia_interactiva` - Creación de infografías (180 XP, 36 ML Coins)
+3. `quiz_tiktok` - Quiz estilo TikTok (150 XP, 30 ML Coins)
+4. `navegacion_hipertextual` - Navegación en hipertextos (170 XP, 34 ML Coins)
+5. `analisis_memes` - Análisis crítico de memes (160 XP, 32 ML Coins)
+
+#### 4. Seeds: Ejercicios Módulo 5
+**Archivo:** `apps/database/seeds/dev/educational_content/06-exercises-module5.sql`
+
+**Ejercicios creados (3):**
+1. `diario_multimedia` - Diario con texto/audio/video (220 XP, 44 ML Coins)
+2. `comic_digital` - Creación de cómics digitales (200 XP, 40 ML Coins)
+3. `video_carta` - Carta en formato video (250 XP, 50 ML Coins)
+
+**Características de los ejercicios M4-M5:**
+- ✅ Todos tienen `requires_manual_review: true`
+- ✅ XP más alto que M1-M3 (reconoce creatividad)
+- ✅ Rúbricas definidas en campo `rubric` (JSONB)
+- ✅ Metadatos de contenido multimedia en `content`
+
+#### 5. Función de Validación
+**Archivo:** `apps/database/ddl/00-prerequisites.sql` (agregado)
+
+**Función creada:**
+```sql
+CREATE OR REPLACE FUNCTION validate_module4_module5_submission(
+  p_exercise_id uuid,
+  p_user_id uuid
+) RETURNS boolean AS $$
+DECLARE
+  v_has_media boolean;
+  v_requires_review boolean;
+BEGIN
+  -- Verificar si el ejercicio requiere revisión manual
+  SELECT requires_manual_review INTO v_requires_review
+  FROM educational_content.exercises
+  WHERE id = p_exercise_id;
+
+  IF NOT v_requires_review THEN
+    RETURN true; -- No requiere validación especial
+  END IF;
+
+  -- Verificar que tenga al menos un archivo adjunto
+  SELECT EXISTS (
+    SELECT 1 FROM educational_content.media_attachments
+    WHERE exercise_id = p_exercise_id AND user_id = p_user_id
+  ) INTO v_has_media;
+
+  RETURN v_has_media;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### Archivos Creados
+
+**DDL (2 tablas nuevas):**
+- `apps/database/ddl/schemas/educational_content/tables/09-media_attachments.sql`
+- `apps/database/ddl/schemas/progress_tracking/tables/06-manual_reviews.sql`
+
+**Seeds (2 archivos nuevos):**
+- `apps/database/seeds/dev/educational_content/05-exercises-module4.sql`
+- `apps/database/seeds/dev/educational_content/06-exercises-module5.sql`
+
+**Seeds Prod (1 archivo):**
+- `apps/database/seeds/prod/gamification_system/12-shop_categories.sql` (Shop System)
+- `apps/database/seeds/prod/gamification_system/13-shop_items.sql` (Shop Items)
+
+### Validación Política Carga Limpia
+
+- ✅ Solo creación de NUEVAS tablas (DDL estructural permitido)
+- ✅ NO se modificaron tablas existentes
+- ✅ Seeds en archivos separados por módulo
+- ✅ Cumple con DIRECTIVA-POLITICA-CARGA-LIMPIA.md
+- ✅ Base de datos recreable desde cero con todos los módulos
+
+### Validación Técnica
+
+**DDL Compilation:**
+```bash
+psql -U postgres -d gamilit_dev -f apps/database/ddl/schemas/educational_content/tables/09-media_attachments.sql
+psql -U postgres -d gamilit_dev -f apps/database/ddl/schemas/progress_tracking/tables/06-manual_reviews.sql
+```
+✅ Sin errores de sintaxis SQL
+
+**Seeds Insertion:**
+```bash
+psql -U postgres -d gamilit_dev -f apps/database/seeds/dev/educational_content/05-exercises-module4.sql
+psql -U postgres -d gamilit_dev -f apps/database/seeds/dev/educational_content/06-exercises-module5.sql
+```
+✅ 8 ejercicios insertados correctamente
+
+**Recreación Completa BD:**
+```bash
+./apps/database/create-database.sh
+```
+✅ Base de datos creada con todos los módulos (M1-M5)
+
+### Impacto en Gamificación
+
+**XP total agregado:**
+- Módulo 4: 860 XP (5 ejercicios)
+- Módulo 5: 670 XP (3 ejercicios)
+- **Total M4+M5: 1530 XP**
+
+**ML Coins total agregado:**
+- Módulo 4: 172 ML Coins
+- Módulo 5: 134 ML Coins
+- **Total M4+M5: 306 ML Coins**
+
+**Progresión completa M1-M5:**
+- Total XP disponible: ~5000 XP
+- Total ML Coins disponible: ~1000 ML Coins
+- Permite llegar a rango: Escriba Maya (~3000 XP requerido)
+
+### Integración Backend-Database
+
+| Componente Backend | Tabla DB | Estado |
+|-------------------|----------|--------|
+| MediaAttachment Entity | media_attachments | ✅ INTEGRADO |
+| ManualReview Entity | manual_reviews | ✅ INTEGRADO |
+| MediaStorageService | media_attachments | ✅ FUNCIONAL |
+| ManualReviewService | manual_reviews | ✅ FUNCIONAL |
+
+### Próximos Pasos
+
+**Recomendaciones:**
+1. Implementar cleanup automático de archivos huérfanos (media_attachments sin submission)
+2. Agregar tabla `review_history` para auditoría de cambios en revisiones
+3. Implementar particionamiento por fecha para media_attachments (performance)
+4. Agregar métricas de tiempo de revisión (SLA para docentes)
+5. Implementar soft delete en media_attachments
+
+### Referencias
+
+- Backend: BE-137 (MediaStorageService, ManualReviewService)
+- Frontend: FE-137 (MediaUploader, RubricEvaluator)
+- Inventario: `DATABASE_INVENTORY.yml` (actualizado con M4-M5)
 
 ---
 

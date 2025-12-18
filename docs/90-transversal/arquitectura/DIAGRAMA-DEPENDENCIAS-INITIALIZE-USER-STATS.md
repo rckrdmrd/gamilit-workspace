@@ -78,14 +78,14 @@ La función `gamilit.initialize_user_stats()` tiene dependencias con múltiples 
 
 ## 🗃️ Tablas Involucradas
 
-### Tabla 1: auth.users (Supabase)
+### Tabla 1: auth.users (sistema)
 
 **Rol:** Proveedor de user_id para tablas de gamificación
 
-**Schema:** `auth` (Supabase built-in)
+**Schema:** `auth` (sistema auth)
 
 **Columnas relevantes:**
-- `id` (uuid, PK) - UUID del usuario de Supabase Auth
+- `id` (uuid, PK) - UUID del usuario de autenticación estándar
 
 **Usado por:**
 - `gamification_system.user_stats.user_id` (FK)

@@ -1,117 +1,44 @@
---
--- PostgreSQL database dump
---
-
-\restrict osJUvm0AzJPenTlRRivBE9S1J1JMuLiwfvOr9pjcbYRe0UXUcZb4MtyDLjwc52u
-
--- Dumped from database version 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)
--- Dumped by pg_dump version 16.10 (Ubuntu 16.10-0ubuntu0.24.04.1)
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
-
---
--- Name: friendships; Type: TABLE; Schema: social_features; Owner: postgres
---
+-- =====================================================
+-- Table: social_features.friendships
+-- Description: Relaciones de amistad ACEPTADAS entre usuarios
+-- Ticket: DB-GAM-003
+-- Created: 2025-12-05
+-- =====================================================
+-- IMPORTANTE: Esta tabla solo contiene amistades confirmadas.
+-- Las solicitudes pendientes están en social_features.friend_requests
+-- =====================================================
 
 CREATE TABLE social_features.friendships (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    user_id uuid NOT NULL,
-    friend_id uuid NOT NULL,
-    status character varying(20) DEFAULT 'pending'::character varying NOT NULL,
-    created_at timestamp with time zone DEFAULT gamilit.now_mexico(),
-    updated_at timestamp with time zone DEFAULT gamilit.now_mexico(),
-    CONSTRAINT friendships_check CHECK ((user_id <> friend_id)),
-    CONSTRAINT friendships_status_check CHECK (((status)::text = ANY ((ARRAY['pending'::character varying, 'accepted'::character varying, 'rejected'::character varying, 'blocked'::character varying])::text[])))
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL,
+    friend_id UUID NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT gamilit.now_mexico(),
+
+    -- Evitar duplicados y auto-amistad
+    CONSTRAINT friendships_unique UNIQUE (user_id, friend_id),
+    CONSTRAINT friendships_no_self CHECK (user_id != friend_id)
 );
 
+-- Comentarios
+COMMENT ON TABLE social_features.friendships IS 'Relaciones de amistad aceptadas entre usuarios. Solo amistades confirmadas.';
+COMMENT ON COLUMN social_features.friendships.user_id IS 'ID del usuario que inició la amistad';
+COMMENT ON COLUMN social_features.friendships.friend_id IS 'ID del usuario amigo';
+COMMENT ON COLUMN social_features.friendships.created_at IS 'Fecha en que se aceptó la solicitud de amistad';
 
+-- Índices para búsquedas eficientes
+CREATE INDEX idx_friendships_user_id ON social_features.friendships(user_id);
+CREATE INDEX idx_friendships_friend_id ON social_features.friendships(friend_id);
+
+-- Foreign Keys
+ALTER TABLE social_features.friendships
+    ADD CONSTRAINT friendships_user_id_fkey
+    FOREIGN KEY (user_id) REFERENCES auth_management.profiles(id) ON DELETE CASCADE;
+
+ALTER TABLE social_features.friendships
+    ADD CONSTRAINT friendships_friend_id_fkey
+    FOREIGN KEY (friend_id) REFERENCES auth_management.profiles(id) ON DELETE CASCADE;
+
+-- Permisos
 ALTER TABLE social_features.friendships OWNER TO gamilit_user;
-
---
--- Name: TABLE friendships; Type: COMMENT; Schema: social_features; Owner: postgres
---
-
-COMMENT ON TABLE social_features.friendships IS 'Relaciones de amistad entre usuarios';
-
-
---
--- Name: friendships friendships_pkey; Type: CONSTRAINT; Schema: social_features; Owner: postgres
---
-
-ALTER TABLE ONLY social_features.friendships
-    ADD CONSTRAINT friendships_pkey PRIMARY KEY (id);
-
-
---
--- Name: friendships friendships_user_id_friend_id_key; Type: CONSTRAINT; Schema: social_features; Owner: postgres
---
-
-ALTER TABLE ONLY social_features.friendships
-    ADD CONSTRAINT friendships_user_id_friend_id_key UNIQUE (user_id, friend_id);
-
-
---
--- Name: idx_friendships_friend_id; Type: INDEX; Schema: social_features; Owner: postgres
---
-
-CREATE INDEX idx_friendships_friend_id ON social_features.friendships USING btree (friend_id);
-
-
---
--- Name: idx_friendships_status; Type: INDEX; Schema: social_features; Owner: postgres
---
-
-CREATE INDEX idx_friendships_status ON social_features.friendships USING btree (status);
-
-
---
--- Name: idx_friendships_user_id; Type: INDEX; Schema: social_features; Owner: postgres
---
-
-CREATE INDEX idx_friendships_user_id ON social_features.friendships USING btree (user_id);
-
-
---
--- Name: friendships friendships_friend_id_fkey; Type: FK CONSTRAINT; Schema: social_features; Owner: postgres
---
-
--- FK corregida: auth.users -> auth_management.profiles (2025-11-26)
-ALTER TABLE ONLY social_features.friendships
-    ADD CONSTRAINT friendships_friend_id_fkey FOREIGN KEY (friend_id) REFERENCES auth_management.profiles(id) ON DELETE CASCADE;
-
-
---
--- Name: friendships friendships_user_id_fkey; Type: FK CONSTRAINT; Schema: social_features; Owner: postgres
---
-
--- FK corregida: auth.users -> auth_management.profiles (2025-11-26)
-ALTER TABLE ONLY social_features.friendships
-    ADD CONSTRAINT friendships_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth_management.profiles(id) ON DELETE CASCADE;
-
-
---
--- Name: TABLE friendships; Type: ACL; Schema: social_features; Owner: postgres
---
-
 GRANT ALL ON TABLE social_features.friendships TO gamilit_user;
-
-
---
--- PostgreSQL database dump complete
---
-
-\unrestrict osJUvm0AzJPenTlRRivBE9S1J1JMuLiwfvOr9pjcbYRe0UXUcZb4MtyDLjwc52u
 

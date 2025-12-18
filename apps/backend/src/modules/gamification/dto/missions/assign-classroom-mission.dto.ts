@@ -1,4 +1,4 @@
-import { IsUUID, IsString, IsOptional, IsBoolean, IsInt, Min, IsDateString, IsArray, IsObject, ValidateNested } from 'class-validator';
+import { IsString, IsOptional, IsBoolean, IsInt, Min, IsDateString, IsArray, IsObject, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -177,5 +177,5 @@ export class AssignClassroomMissionDto {
   })
   @IsObject()
   @IsOptional()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

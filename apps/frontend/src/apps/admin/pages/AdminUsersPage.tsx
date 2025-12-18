@@ -75,7 +75,7 @@ export default function AdminUsersPage() {
 
   // Fallback gamification data in case hook fails or user is not loaded
   const displayGamificationData = gamificationData || {
-    userId: user?.id || 'mock-admin-id',
+    userId: user?.id || '',
     level: 1,
     totalXP: 0,
     mlCoins: 0,

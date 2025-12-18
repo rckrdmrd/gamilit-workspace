@@ -126,7 +126,7 @@ export class CreateTenantDto {
    */
   @IsObject({ message: 'Las configuraciones deben ser un objeto JSON válido' })
   @IsOptional()
-    settings?: Record<string, any>;
+    settings?: Record<string, unknown>;
 
   /**
    * Metadata adicional del tenant (JSONB)
@@ -135,5 +135,5 @@ export class CreateTenantDto {
    */
   @IsObject({ message: 'La metadata debe ser un objeto JSON válido' })
   @IsOptional()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

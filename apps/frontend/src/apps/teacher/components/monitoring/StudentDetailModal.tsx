@@ -146,7 +146,7 @@ export function StudentDetailModal({ student, onClose, classroomId }: StudentDet
                   <span className="text-sm text-detective-text-secondary">Progreso</span>
                 </div>
                 <p className="text-2xl font-bold text-detective-text">
-                  {student.progress_percentage.toFixed(0)}%
+                  {(student.progress_percentage ?? 0).toFixed(0)}%
                 </p>
               </div>
 
@@ -156,7 +156,7 @@ export function StudentDetailModal({ student, onClose, classroomId }: StudentDet
                   <span className="text-sm text-detective-text-secondary">Score Promedio</span>
                 </div>
                 <p className="text-2xl font-bold text-detective-text">
-                  {student.score_average.toFixed(0)}%
+                  {(student.score_average ?? 0).toFixed(0)}%
                 </p>
               </div>
 
@@ -220,7 +220,7 @@ export function StudentDetailModal({ student, onClose, classroomId }: StudentDet
                         Tasa Primer Intento
                       </p>
                       <p className="text-xl font-bold text-detective-text">
-                        {statsData.first_attempt_success_rate.toFixed(0)}%
+                        {(statsData.first_attempt_success_rate ?? 0).toFixed(0)}%
                       </p>
                     </div>
                     <div className="rounded-lg bg-detective-bg p-3">
@@ -268,7 +268,7 @@ export function StudentDetailModal({ student, onClose, classroomId }: StudentDet
                         <div className="mb-2 flex items-center justify-between">
                           <p className="font-medium text-detective-text">{module.module_name}</p>
                           <span className="text-sm font-bold text-detective-text">
-                            {module.score.toFixed(0)}%
+                            {(module.score ?? 0).toFixed(0)}%
                           </span>
                         </div>
                         <div className="flex items-center gap-2">

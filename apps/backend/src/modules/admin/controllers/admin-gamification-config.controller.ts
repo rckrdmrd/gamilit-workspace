@@ -33,6 +33,7 @@ import {
   UpdateMayaRankDto,
   UpdateMayaRankResponseDto,
 } from '../dto/gamification-config';
+import { AuthRequest } from '@shared/types';
 
 /**
  * AdminGamificationConfigController
@@ -175,9 +176,9 @@ export class AdminGamificationConfigController {
   })
   async updateGamificationSettings(
     @Body() dto: UpdateGamificationSettingsDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<GamificationSettingsResponseDto> {
-    const adminId = req.user.sub;
+    const adminId = req.user!.id;
     return this.gamificationConfigService.updateGamificationSettings(
       dto,
       adminId,
@@ -282,9 +283,9 @@ export class AdminGamificationConfigController {
     description: 'Forbidden - User is not an admin',
   })
   async restoreDefaults(
-    @Request() req: any,
+    @Request() req: AuthRequest,
   ): Promise<RestoreDefaultsResultDto> {
-    const adminId = req.user.sub;
+    const adminId = req.user!.id;
     return this.gamificationConfigService.restoreDefaults(adminId);
   }
 
@@ -323,9 +324,9 @@ export class AdminGamificationConfigController {
     description: 'Forbidden - User is not an admin',
   })
   async restoreDefaultsAlternative(
-    @Request() req: any,
+    @Request() req: AuthRequest,
   ): Promise<RestoreDefaultsResultDto> {
-    const adminId = req.user.sub;
+    const adminId = req.user!.id;
     return this.gamificationConfigService.restoreDefaults(adminId);
   }
 
@@ -503,9 +504,9 @@ export class AdminGamificationConfigController {
   async updateParameterById(
     @Param('id') id: string,
       @Body() dto: UpdateParameterDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<UpdateParameterResponseDto> {
-    const adminId = req.user.sub;
+    const adminId = req.user!.id;
     return this.gamificationConfigService.updateParameterById(
       id,
       dto,
@@ -635,9 +636,9 @@ export class AdminGamificationConfigController {
   async updateMayaRank(
     @Param('rankName') rankName: string,
       @Body() dto: UpdateMayaRankDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<UpdateMayaRankResponseDto> {
-    const adminId = req.user.sub;
+    const adminId = req.user!.id;
     return this.gamificationConfigService.updateMayaRank(
       rankName,
       dto,

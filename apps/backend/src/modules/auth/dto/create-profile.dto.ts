@@ -10,8 +10,7 @@ import {
   IsEnum,
   IsBoolean,
   Matches,
-  IsPhoneNumber,
-} from 'class-validator';
+  } from 'class-validator';
 import { GamilityRoleEnum, UserStatusEnum } from '@/shared/constants/enums.constants';
 import { UserPreferencesSchema } from './user-preferences.schema';
 
@@ -206,7 +205,7 @@ export class CreateProfileDto {
    */
   @IsObject()
   @IsOptional()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 
   /**
    * ID del usuario en auth.users

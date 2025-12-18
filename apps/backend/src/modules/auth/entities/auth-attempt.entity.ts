@@ -1,6 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Index } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants';
-import { User } from './user.entity';
 
 /**
  * AuthAttempt Entity
@@ -44,7 +43,7 @@ export class AuthAttempt {
     attempted_at!: Date;
 
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   // NOTA: La tabla auth_attempts NO tiene user_id
   // Es una tabla de auditoría independiente que solo registra el email

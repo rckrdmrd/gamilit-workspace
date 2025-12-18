@@ -69,8 +69,9 @@ export default function TeacherStudents() {
             const classroomStudents = response.data;
 
             // Enrich student data with classroom information
+            // API returns user_id (not id) per StudentInClassroomDto
             return classroomStudents.map((student) => ({
-              student_id: student.id,
+              student_id: student.user_id || student.id,
               student_name: student.full_name,
               email: student.email || 'N/A',
               average_score: student.score_average,
@@ -182,8 +183,12 @@ export default function TeacherStudents() {
           bValue = b.completion_rate;
           break;
         case 'last_active':
-          aValue = new Date(a.last_active).getTime();
-          bValue = new Date(b.last_active).getTime();
+          // Manejar fechas inválidas o nulas
+          aValue = a.last_active ? new Date(a.last_active).getTime() : 0;
+          bValue = b.last_active ? new Date(b.last_active).getTime() : 0;
+          // Validar que sean números válidos
+          if (isNaN(aValue as number)) aValue = 0;
+          if (isNaN(bValue as number)) bValue = 0;
           break;
         default:
           return 0;
@@ -328,7 +333,17 @@ export default function TeacherStudents() {
         </button>
       ),
       sortable: false,
-      render: (row) => new Date(row.last_active).toLocaleDateString('es-ES'),
+      render: (row) => {
+        // Validar que last_active sea una fecha válida
+        if (!row.last_active) {
+          return <span className="text-gray-400">Sin actividad</span>;
+        }
+        const date = new Date(row.last_active);
+        if (isNaN(date.getTime())) {
+          return <span className="text-gray-400">Sin actividad</span>;
+        }
+        return date.toLocaleDateString('es-ES');
+      },
     },
   ];
 

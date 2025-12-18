@@ -3,9 +3,51 @@
  */
 
 import { motion } from 'framer-motion';
-import { ShoppingCart, Lock, Check, Sparkles } from 'lucide-react';
+import {
+  ShoppingCart,
+  Lock,
+  Check,
+  Sparkles,
+  Award,
+  BookOpen,
+  Coins,
+  Compass,
+  Flag,
+  Image,
+  Shield,
+  ShieldCheck,
+  Smile,
+  Square,
+  Sticker,
+  UserCircle,
+  Zap,
+  type LucideIcon,
+} from 'lucide-react';
 import type { ShopItem as ShopItemType } from '../../types/economyTypes';
 import { useEconomyStore } from '../../store/economyStore';
+
+// Map icon names from backend to Lucide components
+const iconMap: Record<string, LucideIcon> = {
+  award: Award,
+  'book-open': BookOpen,
+  coins: Coins,
+  compass: Compass,
+  flag: Flag,
+  image: Image,
+  shield: Shield,
+  'shield-check': ShieldCheck,
+  smile: Smile,
+  sparkles: Sparkles,
+  square: Square,
+  sticker: Sticker,
+  'user-circle': UserCircle,
+  zap: Zap,
+};
+
+// Get icon component from name
+const getIconComponent = (iconName: string): LucideIcon => {
+  return iconMap[iconName.toLowerCase()] || Award;
+};
 
 interface ShopItemProps {
   item: ShopItemType;
@@ -68,7 +110,10 @@ export const ShopItem: React.FC<ShopItemProps> = ({ item, onPurchase: _onPurchas
 
       {/* Item Icon */}
       <div className="flex items-center justify-center bg-gradient-to-br from-detective-bg to-white p-6">
-        <div className="text-6xl">{item.icon}</div>
+        {(() => {
+          const IconComponent = getIconComponent(item.icon || 'award');
+          return <IconComponent className="h-16 w-16 text-detective-orange" />;
+        })()}
       </div>
 
       {/* Item Info */}

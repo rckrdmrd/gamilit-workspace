@@ -44,7 +44,7 @@ orchestration/directivas/ESTANDARES-NOMENCLATURA.md  # infonavit_management
 orchestration/README.md  # Menciona fuente de reorganización (OK)
 orchestration/trazas/TRAZA-ANALISIS-ARQUITECTURA.md  # Análisis heredado (OK)
 orchestration/agentes/workspace-manager/reorganization-analysis/  # Documentación histórica (OK)
-orchestration/agentes/workspace-manager/gitignore-analysis-20251123/REPORTE-VALIDACION-WORKSPACE-INMOBILIARIA.md  # ⚠️ Revisar
+# ELIMINADO: REPORTE-VALIDACION-WORKSPACE-INMOBILIARIA.md (archivo de otro proyecto, removido 2025-12-12)
 
 # =============================================================================
 # RESUMEN

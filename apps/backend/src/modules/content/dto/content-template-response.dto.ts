@@ -38,11 +38,11 @@ export class ContentTemplateResponseDto {
 
   @ApiProperty({ description: 'Estructura JSON de la plantilla' })
   @Expose()
-    template_structure!: Record<string, any>;
+    template_structure!: Record<string, unknown>;
 
   @ApiPropertyOptional({ description: 'Valores predeterminados' })
   @Expose()
-    default_values?: Record<string, any>;
+    default_values?: Record<string, unknown>;
 
   @ApiPropertyOptional({ description: 'Campos requeridos' })
   @Expose()
@@ -82,7 +82,7 @@ export class ContentTemplateResponseDto {
 
   @ApiProperty({ description: 'Metadatos adicionales' })
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   @ApiPropertyOptional({ description: 'ID del usuario creador' })
   @Expose()

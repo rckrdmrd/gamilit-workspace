@@ -1,4 +1,4 @@
-import { ThemeEnum, LanguageEnum } from '@/shared/constants/enums.constants';
+import { LanguageEnum } from '@/shared/constants/enums.constants';
 
 /**
  * UserPreferencesSchema

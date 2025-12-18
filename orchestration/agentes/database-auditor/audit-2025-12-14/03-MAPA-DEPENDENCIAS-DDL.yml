@@ -1,0 +1,387 @@
+# ============================================================
+# MAPA DE DEPENDENCIAS DDL - GAMILIT
+# Generado: 2025-12-14
+# Auditor: Database-Auditor
+# ============================================================
+
+metadata:
+  fecha_auditoria: "2025-12-14"
+  total_foreign_keys: 229
+  total_tablas_referenciadas: 27
+  total_enums_definidos: 41
+  total_schemas: 16
+  dependencias_circulares: 1
+
+# ============================================================
+# FOREIGN KEYS - TABLAS MÁS REFERENCIADAS
+# ============================================================
+
+foreign_keys_summary:
+  top_referenced_tables:
+    - tabla: "auth_management.profiles"
+      referencias: 109
+      descripcion: "Tabla central de perfiles de usuario"
+      schemas_que_referencian:
+        - audit_logging
+        - auth_management
+        - educational_content
+        - gamification_system
+        - progress_tracking
+        - social_features
+        - content_management
+        - lti_integration
+        - notifications
+      
+    - tabla: "auth_management.tenants"
+      referencias: 33
+      descripcion: "Multi-tenancy - organizaciones"
+      schemas_que_referencian:
+        - audit_logging
+        - auth_management
+        - gamification_system
+        - progress_tracking
+      
+    - tabla: "auth.users"
+      referencias: 24
+      descripcion: "Usuarios autenticación estándar"
+      schemas_que_referencian:
+        - admin_dashboard
+        - auth_management
+        - gamification_system
+      
+    - tabla: "educational_content.modules"
+      referencias: 11
+      descripcion: "Módulos educativos"
+      schemas_que_referencian:
+        - educational_content
+        - progress_tracking
+        - gamification_system
+      
+    - tabla: "social_features.classrooms"
+      referencias: 10
+      descripcion: "Aulas virtuales"
+      schemas_que_referencian:
+        - social_features
+        - educational_content
+        - progress_tracking
+      
+    - tabla: "educational_content.exercises"
+      referencias: 8
+      descripcion: "Ejercicios educativos"
+      schemas_que_referencian:
+        - educational_content
+        - progress_tracking
+        - gamification_system
+
+# ============================================================
+# DEPENDENCIAS CIRCULARES DETECTADAS
+# ============================================================
+
+dependencias_circulares:
+  - id: "DEP-001"
+    descripcion: "Dependencia circular entre profiles y schools"
+    tipo: "FK circular"
+    severidad: "P1"
+    estado: "RESUELTO"
+    
+    ciclo:
+      - paso: 1
+        accion: "auth_management.profiles necesita social_features.schools"
+        tabla_origen: "auth_management.profiles"
+        columna: "school_id"
+        tabla_destino: "social_features.schools"
+        
+      - paso: 2
+        accion: "social_features.schools necesita auth_management.profiles"
+        tabla_origen: "social_features.schools"
+        columna: "principal_id, administrative_contact_id"
+        tabla_destino: "auth_management.profiles"
+    
+    solucion:
+      metodo: "FK diferido (deferred constraint)"
+      fase_creacion_profiles: "FASE 5"
+      fase_creacion_schools: "FASE 9"
+      fase_fk_diferido: "FASE 9.5"
+      archivo_fk_diferido: "ddl/schemas/auth_management/fk-constraints/01-profiles-school-fk.sql"
+      
+    validacion:
+      estado: "IMPLEMENTADO"
+      comentario: "FK agregado en Fase 9.5 después de crear schools"
+      referencias:
+        - "REPORTE-ANALISIS-DEPENDENCIAS-DDL-2025-11-10.md"
+        - "ddl/schemas/auth_management/fk-constraints/01-profiles-school-fk.sql"
+
+# ============================================================
+# ENUMS DEFINIDOS POR SCHEMA
+# ============================================================
+
+enums:
+  definidos_en_prerequisites:
+    archivo: "ddl/00-prerequisites.sql"
+    total: 22
+    enums:
+      - "auth_management.gamilit_role"
+      - "auth_management.user_status"
+      - "auth_management.auth_provider"
+      - "gamification_system.maya_rank"
+      - "gamification_system.achievement_category"
+      - "gamification_system.achievement_type"
+      - "gamification_system.comodin_type"
+      - "gamification_system.shop_item_category"
+      - "educational_content.exercise_type"
+      - "educational_content.module_status"
+      - "educational_content.cognitive_level"
+      - "content_management.media_type"
+      - "content_management.processing_status"
+      - "progress_tracking.attempt_status"
+      - "social_features.classroom_role"
+      - "social_features.team_role"
+      - "social_features.friendship_status"
+      - "system_configuration.setting_type"
+      - "audit_logging.log_level"
+      - "audit_logging.audit_action"
+      - "audit_logging.alert_severity"
+      - "audit_logging.alert_status"
+  
+  definidos_por_schema:
+    audit_logging:
+      - "audit_logging.aggregation_period"
+      - "audit_logging.metric_type"
+    
+    auth:
+      - "auth.aal_level"
+      - "auth.code_challenge_method"
+    
+    content_management:
+      - "content_management.content_status"
+      - "content_management.content_type"
+      - "content_management.media_type"
+      - "content_management.processing_status"
+    
+    educational_content:
+      - "educational_content.bloom_taxonomy"
+      - "educational_content.difficulty_level"
+      - "educational_content.exercise_mechanic"
+    
+    gamification_system:
+      - "gamification_system.maya_rank"
+      - "gamification_system.notification_priority"
+      - "gamification_system.notification_type"
+      - "gamification_system.transaction_type"
+    
+    progress_tracking:
+      - "progress_tracking.attempt_result"
+      - "progress_tracking.progress_status"
+    
+    social_features:
+      - "social_features.social_event_type"
+    
+    storage:
+      - "storage.buckettype"
+
+# ============================================================
+# FK REFERENCES FALTANTES (ERRORES)
+# ============================================================
+
+fk_references_faltantes:
+  - tabla_referenciada: "auth_management.users"
+    ubicacion_fk: "gamification_system/tables/20-mission_templates.sql:151"
+    columna: "created_by"
+    severidad: "P1"
+    estado: "ERROR"
+    descripcion: "La tabla auth_management.users NO existe. Debería ser auth.users o auth_management.profiles"
+    archivo_origen: "gamification_system/tables/20-mission_templates.sql"
+    linea: 151
+    
+    codigo:
+      sql: "ADD CONSTRAINT mission_templates_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth_management.users(id)"
+    
+    recomendacion:
+      accion: "Cambiar a auth_management.profiles(id) o auth.users(id)"
+      prioridad: "P1"
+      impacto: "El script create-database.sh fallará al crear esta FK"
+  
+  - tabla_referenciada: "gamification_system.badges"
+    ubicacion_fk: "gamification_system/tables/20-mission_templates.sql:155"
+    columna: "badge_id"
+    severidad: "P2"
+    estado: "COMENTADO"
+    descripcion: "FK comentado - tabla badges no existe actualmente"
+    archivo_origen: "gamification_system/tables/20-mission_templates.sql"
+    linea: 155
+    
+    codigo:
+      sql: "-- ADD CONSTRAINT mission_templates_badge_id_fkey FOREIGN KEY (badge_id) REFERENCES gamification_system.badges(id)"
+    
+    recomendacion:
+      accion: "Si se implementa tabla badges, descomentar FK. Si no, eliminar columna badge_id"
+      prioridad: "P2"
+      impacto: "Ninguno (FK comentado)"
+
+# ============================================================
+# ORDEN DE CREACIÓN DE SCHEMAS (por dependencias)
+# ============================================================
+
+orden_creacion:
+  fase_0:
+    nombre: "EXTENSIONS"
+    schemas: []
+    descripcion: "Extensiones PostgreSQL (pgcrypto, uuid-ossp)"
+  
+  fase_1:
+    nombre: "PREREQUISITES"
+    schemas: ["public", "gamilit", "auth", "storage"]
+    descripcion: "Schemas base y ENUMs globales"
+    archivo_principal: "ddl/00-prerequisites.sql"
+  
+  fase_2:
+    nombre: "FUNCIONES COMPARTIDAS"
+    schemas: ["gamilit"]
+    descripcion: "Funciones utilitarias compartidas (update_updated_at, etc.)"
+  
+  fase_3:
+    nombre: "AUTH SCHEMA"
+    schemas: ["auth"]
+    descripcion: "Autenticación base"
+    dependencias: []
+  
+  fase_4:
+    nombre: "STORAGE SCHEMA"
+    schemas: ["storage"]
+    descripcion: "Storage del sistema"
+    dependencias: []
+  
+  fase_5:
+    nombre: "AUTH_MANAGEMENT"
+    schemas: ["auth_management"]
+    descripcion: "Gestión de usuarios, perfiles, tenants"
+    dependencias:
+      - "auth.users"
+      - "gamilit.* (funciones compartidas)"
+  
+  fase_6:
+    nombre: "EDUCATIONAL_CONTENT"
+    schemas: ["educational_content"]
+    descripcion: "Módulos, ejercicios, asignaciones"
+    dependencias:
+      - "auth_management.profiles"
+      - "auth_management.tenants"
+  
+  fase_6_5:
+    nombre: "NOTIFICATIONS"
+    schemas: ["notifications"]
+    descripcion: "Sistema de notificaciones (antes de gamification)"
+    dependencias:
+      - "auth_management.profiles"
+  
+  fase_7:
+    nombre: "GAMIFICATION_SYSTEM"
+    schemas: ["gamification_system"]
+    descripcion: "Achievements, ranks, missions, shop"
+    dependencias:
+      - "auth_management.profiles"
+      - "educational_content.modules"
+      - "educational_content.exercises"
+      - "notifications.notifications"
+  
+  fase_8:
+    nombre: "PROGRESS_TRACKING"
+    schemas: ["progress_tracking"]
+    descripcion: "Submissions, attempts, progress"
+    dependencias:
+      - "auth_management.profiles"
+      - "educational_content.modules"
+      - "educational_content.exercises"
+      - "gamification_system.user_stats"
+  
+  fase_9:
+    nombre: "SOCIAL_FEATURES"
+    schemas: ["social_features"]
+    descripcion: "Classrooms, teams, friendships"
+    dependencias:
+      - "auth_management.profiles"
+  
+  fase_9_5:
+    nombre: "FK CONSTRAINTS DIFERIDOS"
+    schemas: ["auth_management"]
+    descripcion: "Resolución de dependencias circulares"
+    dependencias:
+      - "social_features.schools (creado en Fase 9)"
+    archivos:
+      - "auth_management/fk-constraints/01-profiles-school-fk.sql"
+  
+  fase_10:
+    nombre: "CONTENT_MANAGEMENT"
+    schemas: ["content_management"]
+    descripcion: "Media, templates, moderación"
+    dependencias:
+      - "auth_management.profiles"
+  
+  fase_10_5:
+    nombre: "COMMUNICATION"
+    schemas: ["communication"]
+    descripcion: "Sistema de mensajería"
+    dependencias:
+      - "auth_management.profiles"
+  
+  fase_11:
+    nombre: "AUDIT_LOGGING"
+    schemas: ["audit_logging"]
+    descripcion: "Logs, métricas, alertas"
+    dependencias:
+      - "auth_management.profiles"
+      - "auth_management.tenants"
+  
+  fase_12:
+    nombre: "SYSTEM_CONFIGURATION"
+    schemas: ["system_configuration"]
+    descripcion: "Feature flags, settings"
+    dependencias: []
+  
+  fase_13:
+    nombre: "ADMIN_DASHBOARD"
+    schemas: ["admin_dashboard"]
+    descripcion: "Vistas administrativas"
+    dependencias:
+      - "auth.users"
+      - "educational_content.*"
+      - "gamification_system.*"
+  
+  fase_14:
+    nombre: "LTI_INTEGRATION"
+    schemas: ["lti_integration"]
+    descripcion: "Learning Tools Interoperability"
+    dependencias:
+      - "auth_management.profiles"
+  
+  fase_15:
+    nombre: "PUBLIC SCHEMA"
+    schemas: ["public"]
+    descripcion: "Legacy (vacío)"
+    dependencias: []
+
+# ============================================================
+# VALIDACIÓN DE INTEGRIDAD
+# ============================================================
+
+validacion:
+  total_fks_validadas: 229
+  fks_validas: 227
+  fks_invalidas: 2
+  
+  fks_por_schema:
+    admin_dashboard: 2
+    audit_logging: 13
+    auth_management: 16
+    educational_content: 45
+    gamification_system: 38
+    progress_tracking: 32
+    social_features: 47
+    content_management: 12
+    communication: 2
+    lti_integration: 4
+    notifications: 3
+    system_configuration: 0
+  
+  estado_general: "FUNCIONAL con 2 warnings (1 error P1, 1 comentado P2)"
+

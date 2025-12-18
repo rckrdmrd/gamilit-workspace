@@ -2,9 +2,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
-  JoinColumn,
-  Index,
+      Index,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants';
 
@@ -94,14 +92,14 @@ export class UserAchievement {
    * Ejemplo: { "ml_coins": 50, "items": [{"type": "boost_xp", "quantity": 1}] }
    */
   @Column({ type: 'jsonb', default: {} })
-    rewards_received!: Record<string, any>;
+    rewards_received!: Record<string, unknown>;
 
   /**
    * Datos de progreso específicos por achievement (JSONB)
    * Ejemplo: { "levels_completed": [1, 2, 5], "current_streak": 3 }
    */
   @Column({ type: 'jsonb', default: {} })
-    progress_data!: Record<string, any>;
+    progress_data!: Record<string, unknown>;
 
   /**
    * Milestones alcanzados (array de strings)
@@ -114,7 +112,7 @@ export class UserAchievement {
    * Metadata adicional en JSONB
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Fecha en que el usuario comenzó a trabajar en el achievement

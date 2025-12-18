@@ -37,11 +37,14 @@ Proporcionar a los maestros herramientas para:
 
 ### Tabla: `assignments`
 
-**Schema:** `public`
+**Schema:** `educational_content`
 **Descripción:** Tabla principal de asignaciones creadas por maestros
 
+> **NOTA (2025-12-18):** Migrado de schema `public` a `educational_content` en 2025-11-08.
+> Backend usa datasource 'educational' para esta entidad.
+
 ```sql
-CREATE TABLE public.assignments (
+CREATE TABLE educational_content.assignments (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     teacher_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     title VARCHAR(255) NOT NULL,
@@ -76,13 +79,13 @@ CREATE TABLE public.assignments (
 
 ### Tabla: `assignment_exercises`
 
-**Schema:** `public`
+**Schema:** `educational_content`
 **Descripción:** Relación M2M entre assignments y ejercicios del sistema
 
 ```sql
-CREATE TABLE public.assignment_exercises (
+CREATE TABLE educational_content.assignment_exercises (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    assignment_id UUID NOT NULL REFERENCES public.assignments(id) ON DELETE CASCADE,
+    assignment_id UUID NOT NULL REFERENCES educational_content.assignments(id) ON DELETE CASCADE,
     exercise_id UUID NOT NULL REFERENCES educational_content.exercises(id) ON DELETE CASCADE,
     order_index INTEGER,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -114,7 +117,7 @@ CREATE TABLE public.assignment_exercises (
 ```sql
 CREATE TABLE social_features.assignment_classrooms (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    assignment_id UUID NOT NULL REFERENCES public.assignments(id) ON DELETE CASCADE,
+    assignment_id UUID NOT NULL REFERENCES educational_content.assignments(id) ON DELETE CASCADE,
     classroom_id UUID NOT NULL REFERENCES social_features.classrooms(id) ON DELETE CASCADE,
     assigned_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(assignment_id, classroom_id)
@@ -134,13 +137,13 @@ CREATE TABLE social_features.assignment_classrooms (
 
 ### Tabla: `assignment_students`
 
-**Schema:** `public`
+**Schema:** `educational_content`
 **Descripción:** Asignación de assignments a estudiantes individuales
 
 ```sql
-CREATE TABLE public.assignment_students (
+CREATE TABLE educational_content.assignment_students (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    assignment_id UUID NOT NULL REFERENCES public.assignments(id) ON DELETE CASCADE,
+    assignment_id UUID NOT NULL REFERENCES educational_content.assignments(id) ON DELETE CASCADE,
     student_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     assigned_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(assignment_id, student_id)
@@ -160,13 +163,13 @@ CREATE TABLE public.assignment_students (
 
 ### Tabla: `assignment_submissions`
 
-**Schema:** `public`
+**Schema:** `educational_content`
 **Descripción:** Entregas y calificaciones de estudiantes
 
 ```sql
-CREATE TABLE public.assignment_submissions (
+CREATE TABLE educational_content.assignment_submissions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    assignment_id UUID NOT NULL REFERENCES public.assignments(id) ON DELETE CASCADE,
+    assignment_id UUID NOT NULL REFERENCES educational_content.assignments(id) ON DELETE CASCADE,
     student_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     submitted_at TIMESTAMP WITH TIME ZONE,
     status VARCHAR(50) NOT NULL DEFAULT 'not_started' CHECK (status IN ('not_started', 'in_progress', 'submitted', 'graded')),
@@ -208,11 +211,11 @@ CREATE TABLE public.assignment_submissions (
 
 ### Tabla: `teacher_notes`
 
-**Schema:** `public`
+**Schema:** `educational_content`
 **Descripción:** Notas privadas de maestros sobre estudiantes
 
 ```sql
-CREATE TABLE public.teacher_notes (
+CREATE TABLE educational_content.teacher_notes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     teacher_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     student_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,

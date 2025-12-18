@@ -29,7 +29,6 @@ import {
 } from './controllers';
 
 // Constants
-import { DB_SCHEMAS } from '@/shared/constants';
 
 /**
  * ContentModule

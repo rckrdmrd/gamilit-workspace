@@ -78,7 +78,7 @@ Corregir los **2 gaps críticos (P0)** identificados en el REPORTE-COHERENCIA-DO
 - ✅ `real_database_counts.schemas: 16` → `schemas: 12`
 - ✅ Actualizada nota `discrepancies_found` con validación 2025-11-23
 - ✅ **Eliminados 4 schemas no implementados:**
-  - `storage` (Supabase Storage)
+  - `storage` (Storage compatible)
   - `gamilit` (Funciones compartidas)
   - `admin_dashboard` (Dashboard administrativo)
   - `public` (Schema público PostgreSQL)

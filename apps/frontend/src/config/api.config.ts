@@ -209,6 +209,7 @@ export const API_ENDPOINTS = {
       create: '/admin/organizations',
       update: (id: string) => `/admin/organizations/${id}`,
       delete: (id: string) => `/admin/organizations/${id}`,
+      stats: (id: string) => `/admin/organizations/${id}/stats`,
       users: (id: string) => `/admin/organizations/${id}/users`,
       updateSubscription: (id: string) => `/admin/organizations/${id}/subscription`,
       updateFeatures: (id: string) => `/admin/organizations/${id}/features`,
@@ -370,6 +371,8 @@ export const API_ENDPOINTS = {
       `/teacher/assignments/${assignmentId}/submissions`,
     submission: (submissionId: string) => `/teacher/submissions/${submissionId}`,
     gradeSubmission: (submissionId: string) => `/teacher/submissions/${submissionId}/feedback`,
+    sendReminder: (assignmentId: string) => `/teacher/assignments/${assignmentId}/send-reminder`,
+    upcomingAssignments: '/teacher/assignments/upcoming',
 
     // Analytics
     analytics: '/teacher/analytics',
@@ -414,6 +417,25 @@ export const API_ENDPOINTS = {
       clone: (contentId: string) => `/teacher/content/${contentId}/clone`,
       publish: (contentId: string) => `/teacher/content/${contentId}/publish`,
     },
+
+    // Manual Review (for modules 4 and 5)
+    reviews: {
+      pending: '/teacher/reviews/pending',
+      get: (id: string) => `/teacher/reviews/${id}`,
+      start: (submissionId: string) => `/teacher/reviews/${submissionId}/start`,
+      update: (id: string) => `/teacher/reviews/${id}`,
+      complete: (id: string) => `/teacher/reviews/${id}/complete`,
+    },
+  },
+
+  /**
+   * Educational Media endpoints
+   */
+  media: {
+    upload: '/educational/media/upload',
+    get: (id: string) => `/educational/media/${id}`,
+    delete: (id: string) => `/educational/media/${id}`,
+    validate: '/educational/media/validate',
   },
 
   /**

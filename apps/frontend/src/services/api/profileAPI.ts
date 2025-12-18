@@ -1,4 +1,3 @@
-/* eslint-disable rulesdir/no-api-route-issues */
 /**
  * Profile API - User Profile and Preferences Management
  *
@@ -9,7 +8,7 @@
  * - Changing passwords
  */
 
-import { apiClient } from './apiClient';
+import { apiClient } from '@/services/api/apiClient';
 
 // ============================================================================
 // TYPES
@@ -103,6 +102,16 @@ export const profileAPI = {
    */
   updateProfile: async (userId: string, data: UpdateProfileDto): Promise<ProfileUpdateResponse> => {
     const response = await apiClient.put(`/users/${userId}/profile`, data);
+    return response.data;
+  },
+
+  /**
+   * Get user preferences
+   *
+   * @returns User preferences data
+   */
+  getPreferences: async (): Promise<{ preferences: Record<string, unknown> }> => {
+    const response = await apiClient.get('/users/preferences');
     return response.data;
   },
 

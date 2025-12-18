@@ -99,7 +99,7 @@ export class UserPreferencesResponseDto {
       dashboard_layout: 'grid',
     },
   })
-    preferences!: Record<string, any>;
+    preferences!: Record<string, unknown>;
 
   /**
    * Fecha de creación

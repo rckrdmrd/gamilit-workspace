@@ -176,13 +176,13 @@ export class TeacherClassroomDetailResponseDto extends TeacherClassroomResponseD
       allow_self_enrollment: false,
     },
   })
-    settings!: Record<string, any>;
+    settings!: Record<string, unknown>;
 
   @ApiProperty({
     description: 'Metadatos adicionales',
     example: {},
   })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 }
 
 // ============================================================================

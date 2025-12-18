@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BookOpen, Navigation, CheckCircle } from 'lucide-react';
+import { BookOpen, Navigation, CheckCircle, Send, Loader2 } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import { HypertextDocument } from './HypertextDocument';
@@ -7,11 +7,13 @@ import { NavigationBreadcrumbs } from './NavigationBreadcrumbs';
 import type { ExerciseProps, HypertextNode } from './navegacionHipertextualTypes';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 
 export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
   exerciseId,
   onComplete,
-  onProgressUpdate: _onProgressUpdate,
+  onProgressUpdate,
   initialData,
   exercise,
 }) => {
@@ -25,12 +27,41 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
   const [startTime] = useState(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [timePerDocument, setTimePerDocument] = useState<Record<string, number>>({});
+  const [nodeStartTime, setNodeStartTime] = useState<Date>(new Date());
 
-  const currentNode = exercise?.nodes.find((n: HypertextNode) => n.id === currentNodeId);
+  const { submit, isSubmitting } = useExerciseSubmission(exerciseId || '', {
+    onSuccess: (result) => {
+      setIsSubmitted(true);
+      const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+      setFeedback({
+        type: 'success',
+        title: '¡Ejercicio Enviado!',
+        message: 'Tu trabajo ha sido enviado para revisión por el docente.',
+        score: result.score,
+        xpEarned: result.rewards?.xp || 0,
+        mlCoinsEarned: result.rewards?.mlCoins || 0,
+      });
+      setShowFeedback(true);
+      onComplete?.(result.score, timeSpent);
+    },
+    onError: (err) => {
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: err?.message || 'Hubo un problema. Intenta de nuevo.',
+        score: 0,
+      });
+      setShowFeedback(true);
+    },
+  });
+
+  const currentNode = exercise?.nodes?.find((n: HypertextNode) => n.id === currentNodeId);
 
   // Calculate score
   const calculateScore = () => {
-    if (!exercise) return 0;
+    if (!exercise || !exercise.nodes || exercise.nodes.length === 0) return 0;
     const uniqueVisited = new Set(visitedNodes).size;
     const totalNodes = exercise.nodes.length;
     const targetReached = visitedNodes.includes(exercise.targetNodeId);
@@ -38,6 +69,31 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
     const targetScore = targetReached ? 40 : 0;
     return Math.round(explorationScore + targetScore);
   };
+
+  // Progress tracking
+  useEffect(() => {
+    if (!exercise || !exercise.nodes || exercise.nodes.length === 0) return;
+    const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+    const score = calculateScore();
+    const uniqueVisited = new Set(visitedNodes).size;
+
+    onProgressUpdate?.({
+      progress: {
+        currentStep: uniqueVisited,
+        totalSteps: exercise.nodes.length,
+        score,
+        hintsUsed: 0,
+        timeSpent,
+      },
+      answers: {
+        visitedNodes,
+        currentNodeId,
+        targetReached: visitedNodes.includes(exercise.targetNodeId || ''),
+        navigationPath: visitedNodes,
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visitedNodes, currentNodeId, exercise]);
 
   // Auto-save functionality
   useEffect(() => {
@@ -54,8 +110,16 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
 
   // Handle link navigation
   const handleLinkClick = (targetId: string) => {
+    // Track time spent on previous node
+    const timeOnNode = Math.floor((new Date().getTime() - nodeStartTime.getTime()) / 1000);
+    setTimePerDocument((prev) => ({
+      ...prev,
+      [currentNodeId]: (prev[currentNodeId] || 0) + timeOnNode,
+    }));
+
     setCurrentNodeId(targetId);
     setVisitedNodes((prev) => [...prev, targetId]);
+    setNodeStartTime(new Date());
 
     if (targetId === exercise?.targetNodeId) {
       // Target reached, show success after delay
@@ -65,9 +129,21 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
     }
   };
 
+  // Handle submit
+  const handleSubmit = () => {
+    if (!exerciseId || isSubmitting || isSubmitted) return;
+
+    submit({
+      navigationPath: visitedNodes,
+      documentsVisited: Array.from(new Set(visitedNodes)),
+      timePerDocument,
+      answers: { targetReached: visitedNodes.includes(exercise?.targetNodeId || '') },
+    });
+  };
+
   // Check/Verify handler
   const handleCheck = () => {
-    if (!exercise) return;
+    if (!exercise || !exercise.nodes || exercise.nodes.length === 0) return;
 
     const score = calculateScore();
     const uniqueVisited = new Set(visitedNodes).size;
@@ -93,10 +169,14 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
     setShowFeedback(true);
   };
 
-  if (!exercise) {
+  if (!exercise || !exercise.nodes || exercise.nodes.length === 0) {
     return (
       <DetectiveCard variant="default" padding="lg">
-        <p className="text-detective-text">Cargando ejercicio...</p>
+        <p className="text-detective-text">
+          {!exercise
+            ? 'Cargando ejercicio...'
+            : 'No hay contenido de navegación disponible para este ejercicio.'}
+        </p>
       </DetectiveCard>
     );
   }
@@ -106,7 +186,7 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
       <DetectiveCard variant="default" padding="lg">
         <div className="space-y-6">
           {/* Exercise Description */}
-          <div className="rounded-detective bg-gradient-to-r from-detective-blue to-detective-orange p-6 text-white shadow-detective-lg">
+          <div className="rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
             <div className="mb-2 flex items-center gap-3">
               <BookOpen className="h-8 w-8" />
               <h2 className="text-detective-2xl font-bold">Navegación Hipertextual</h2>
@@ -147,6 +227,35 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
               )}
             </div>
           </DetectiveCard>
+
+          {/* Submit Button */}
+          <DetectiveCard variant="default" padding="md">
+            <DetectiveButton
+              variant="primary"
+              onClick={handleSubmit}
+              disabled={
+                !visitedNodes.includes(exercise.targetNodeId) || isSubmitting || isSubmitted
+              }
+              className="w-full"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Enviando...
+                </>
+              ) : isSubmitted ? (
+                <>
+                  <CheckCircle className="h-5 w-5" />
+                  Enviado
+                </>
+              ) : (
+                <>
+                  <Send className="h-5 w-5" />
+                  Enviar Respuestas
+                </>
+              )}
+            </DetectiveButton>
+          </DetectiveCard>
         </div>
       </DetectiveCard>
 
@@ -170,3 +279,5 @@ export const NavegacionHipertextualExercise: React.FC<ExerciseProps> = ({
     </>
   );
 };
+
+export default NavegacionHipertextualExercise;

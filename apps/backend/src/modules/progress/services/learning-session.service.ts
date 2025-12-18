@@ -1,9 +1,8 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between, IsNull, Not } from 'typeorm';
+import { Repository, Between } from 'typeorm';
 import { LearningSession } from '../entities';
 import { CreateLearningSessionDto } from '../dto';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
 
 /**
  * LearningSessionService

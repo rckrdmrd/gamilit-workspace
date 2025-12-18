@@ -410,6 +410,7 @@ execute_sql_files "$DDL_DIR/schemas/communication/functions" "*.sql" "Funciones 
 execute_sql_files "$DDL_DIR/schemas/communication/triggers" "*.sql" "Triggers de comunicación (si existen)"
 execute_sql_files "$DDL_DIR/schemas/communication/indexes" "*.sql" "Índices de comunicación (si existen)"
 execute_sql_files "$DDL_DIR/schemas/communication/views" "*.sql" "Vistas de comunicación (si existen)"
+execute_sql_files "$DDL_DIR/schemas/communication/rls-policies" "*.sql" "RLS Policies de comunicación (P0-002 AUDIT-DB-001)"
 
 log_success "FASE 10.5 completada - Communication schema creado (DB-122)"
 log ""
@@ -531,6 +532,7 @@ execute_sql "$SEEDS_DIR/notifications/01-notification_templates.sql" "Seeds: not
 
 # 16.2: Auth Management (tenants y auth_providers)
 execute_sql "$SEEDS_DIR/auth_management/01-tenants.sql" "Seeds: tenants"
+execute_sql "$SEEDS_DIR/auth_management/02-tenants-production.sql" "Seeds: tenants-production (13 tenants usuarios reales)"
 execute_sql "$SEEDS_DIR/auth_management/02-auth_providers.sql" "Seeds: auth_providers"
 
 # 16.3: Auth (usuarios de testing y demo)
@@ -541,18 +543,36 @@ execute_sql "$SEEDS_DIR/auth/02-production-users.sql" "Seeds: users (production 
 # REASON: initialize_user_stats() trigger needs modules to exist when creating module_progress
 execute_sql "$SEEDS_DIR/educational_content/01-modules.sql" "Seeds: modules (5)"
 
+# 16.4.1: Educational Content (dependencias y taxonomías) - P0-SEEDS AUDIT-DB-001
+execute_sql "$SEEDS_DIR/educational_content/11-module_dependencies.sql" "Seeds: module_dependencies (6 dependencias - P0 AUDIT-DB-001)"
+execute_sql "$SEEDS_DIR/educational_content/12-taxonomies.sql" "Seeds: taxonomies (4 taxonomías - P0 AUDIT-DB-001)"
+
 # 16.5: Auth Management (profiles para usuarios)
 # NOTE: Trigger initialize_user_stats() fires here and creates module_progress automatically
 execute_sql "$SEEDS_DIR/auth_management/04-profiles-complete.sql" "Seeds: profiles (testing + demo - 22)"
+# DEPRECATED: 05-profiles-demo.sql movido a _deprecated/ - requiere auth.users que no existen
 execute_sql "$SEEDS_DIR/auth_management/06-profiles-production.sql" "Seeds: profiles (production - 13 usuarios)"
+
+# 16.5.0.1: Auth Management (roles de usuarios) - P0-SEEDS AUDIT-DB-001
+# MUST BE AFTER profiles (FK user_id references profiles)
+execute_sql "$SEEDS_DIR/auth_management/07-user_roles.sql" "Seeds: user_roles (8 roles - P0 AUDIT-DB-001)"
 
 # 16.5.1: Content Management (templates de contenido)
 execute_sql "$SEEDS_DIR/content_management/01-default-templates.sql" "Seeds: content_templates"
 
+# 16.5.1.1: Content Management (contenido Marie Curie) - P0-SEEDS AUDIT-DB-001
+execute_sql "$SEEDS_DIR/content_management/02-marie_curie_content.sql" "Seeds: marie_curie_content (6 artículos - P0 AUDIT-DB-001)"
+
 # 16.5.2: Social Features (escuelas, aulas y miembros)
+execute_sql "$SEEDS_DIR/social_features/00-schools-default.sql" "Seeds: schools (sistema - default)"
 execute_sql "$SEEDS_DIR/social_features/01-schools.sql" "Seeds: schools (demo)"
 execute_sql "$SEEDS_DIR/social_features/02-classrooms.sql" "Seeds: classrooms (demo)"
 execute_sql "$SEEDS_DIR/social_features/03-classroom-members.sql" "Seeds: classroom_members (demo)"
+execute_sql "$SEEDS_DIR/social_features/04-friendships.sql" "Seeds: friendships (10 amistades + 3 pending)"
+
+# 16.5.3: Auth Management (asignación de escuela a admins) - 2025-12-15
+# MUST BE AFTER profiles AND schools
+execute_sql "$SEEDS_DIR/auth_management/08-assign-admin-schools.sql" "Seeds: assign admin schools (2025-12-15)"
 
 # 16.6: Educational Content (ejercicios)
 execute_sql "$SEEDS_DIR/educational_content/02-exercises-module1.sql" "Seeds: Module 1 - Literal (5 exercises)"
@@ -582,7 +602,13 @@ execute_sql "$SEEDS_DIR/lti_integration/01-lti_consumers.sql" "Seeds: lti_consum
 execute_sql "$SEEDS_DIR/gamification_system/01-achievement_categories.sql" "Seeds: achievement_categories"
 execute_sql "$SEEDS_DIR/gamification_system/02-leaderboard_metadata.sql" "Seeds: leaderboard_metadata"
 execute_sql "$SEEDS_DIR/gamification_system/03-maya_ranks.sql" "Seeds: maya_ranks"
-execute_sql "$SEEDS_DIR/gamification_system/04-achievements.sql" "Seeds: achievements (20 logros demo)"
+execute_sql "$SEEDS_DIR/gamification_system/04-achievements.sql" "Seeds: achievements (30 logros demo - 2025-11-29 updated)"
+
+# 16.6.0.1: Mission Templates - P0-SEEDS AUDIT-DB-001
+execute_sql "$SEEDS_DIR/gamification_system/10-mission_templates.sql" "Seeds: mission_templates (11 templates - P0 AUDIT-DB-001)"
+execute_sql "$SEEDS_DIR/gamification_system/11-missions-production-users.sql" "Seeds: missions-production (8 misiones por usuario prod)"
+execute_sql "$SEEDS_DIR/gamification_system/12-shop_categories.sql" "Seeds: shop_categories (5 categorías - 2025-11-29 NEW)"
+execute_sql "$SEEDS_DIR/gamification_system/13-shop_items.sql" "Seeds: shop_items (20 items - 2025-11-29 NEW)"
 execute_sql "$SEEDS_DIR/gamification_system/05-user_stats.sql" "Seeds: user_stats"
 execute_sql "$SEEDS_DIR/gamification_system/06-user_ranks.sql" "Seeds: user_ranks"
 execute_sql "$SEEDS_DIR/gamification_system/07-ml_coins_transactions.sql" "Seeds: ml_coins_transactions"

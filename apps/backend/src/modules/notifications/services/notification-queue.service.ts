@@ -5,8 +5,11 @@ import {
   Logger,
 } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
-import { Repository, DataSource, In, LessThan } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { NotificationQueue } from '../entities/multichannel/notification-queue.entity';
+import { PushNotificationService } from './push-notification.service';
+import { NotificationService } from './notification.service';
+import { MailService } from '../../mail/mail.service';
 
 /**
  * NotificationQueueService
@@ -27,7 +30,7 @@ import { NotificationQueue } from '../entities/multichannel/notification-queue.e
  * 3. Se procesan items pendientes o a reintentar
  * 4. Si falla, se incrementa retry_count y se agenda retry
  * 5. Si alcanza max retries (3), status → 'failed'
- * 6. Si éxito, status → 'sent'
+ * 6. Si éxito, status → 'completed'
  * 7. Limpieza periódica de items procesados antiguos
  *
  * Tipos de canales procesados por la cola:
@@ -55,6 +58,9 @@ export class NotificationQueueService {
     private readonly queueRepository: Repository<NotificationQueue>,
     @InjectDataSource('notifications')
     private readonly dataSource: DataSource,
+    private readonly pushNotificationService: PushNotificationService,
+    private readonly notificationService: NotificationService,
+    private readonly mailService: MailService,
   ) {}
 
   /**
@@ -87,7 +93,7 @@ export class NotificationQueueService {
       channel: data.channel,
       scheduledFor: data.scheduledFor || new Date(),
       priority: data.priority || 0,
-      status: 'queued',
+      status: 'pending',
       attempts: 0,
       maxAttempts: 3,
     });
@@ -123,7 +129,7 @@ export class NotificationQueueService {
         channel: item.channel,
         scheduledFor: item.scheduledFor || new Date(),
         priority: item.priority || 0,
-        status: 'queued',
+        status: 'pending',
         attempts: 0,
         maxAttempts: 3,
       }),
@@ -253,14 +259,16 @@ export class NotificationQueueService {
    */
   private async processQueueItem(item: NotificationQueue): Promise<void> {
     try {
-      // TODO: Integrar con EmailService o PushService según channel
-      // Por ahora, simular procesamiento exitoso
-      // Nota: Los datos del mensaje están en item.notification (relación)
-      const success = await this.sendToChannel(item.channel);
+      // Marcar como procesando (lock)
+      item.status = 'processing';
+      await this.queueRepository.save(item);
+
+      // Integrar con servicios reales según channel
+      const success = await this.sendToChannel(item.channel, item.notificationId);
 
       if (success) {
-        // Éxito: marcar como sent
-        item.status = 'sent';
+        // Éxito: marcar como completado
+        item.status = 'completed';
         item.lastAttemptAt = new Date();
       } else {
         // Fallo: aplicar estrategia de reintentos
@@ -306,25 +314,87 @@ export class NotificationQueueService {
   /**
    * Enviar a canal específico
    *
-   * Placeholder: integración con EmailService/PushService
+   * Integración con EmailService/PushService
    *
    * @private
    * @param channel - Canal (email, push)
+   * @param notificationId - UUID de la notificación
    * @returns true si éxito, false si fallo
    */
-  private async sendToChannel(channel: string): Promise<boolean> {
-    // TODO: Integrar con servicios reales
-    // Los datos del mensaje están en item.notification (relación)
-    // if (channel === 'email') {
-    //   return this.emailService.send(item.notification);
-    // }
-    // if (channel === 'push') {
-    //   return this.pushService.send(item.notification);
-    // }
+  private async sendToChannel(
+    channel: string,
+    notificationId: string,
+  ): Promise<boolean> {
+    try {
+      // Obtener notificación completa con datos
+      const notification = await this.notificationService.findById(notificationId);
 
-    // Por ahora, simular éxito
-    this.logger.log(`Sending to ${channel}`);
-    return true;
+      if (!notification) {
+        this.logger.error(`Notification ${notificationId} not found`);
+        return false;
+      }
+
+      if (channel === 'push') {
+        // Integración con PushNotificationService
+        if (!this.pushNotificationService.isAvailable()) {
+          this.logger.warn('Push service not available, skipping push notification');
+          return false;
+        }
+
+        const result = await this.pushNotificationService.sendToUser(
+          notification.userId,
+          {
+            title: notification.title,
+            body: notification.message,
+            icon: notification.data?.icon as string | undefined,
+            data: notification.data as Record<string, unknown> | undefined,
+          },
+        );
+
+        // Considerar éxito si se envió a al menos un dispositivo
+        return result.successCount > 0;
+      }
+
+      if (channel === 'email') {
+        // Integración con MailService
+        if (!this.mailService.isAvailable()) {
+          this.logger.warn('Email service not available, skipping email notification');
+          return false;
+        }
+
+        // Obtener email del usuario desde notification.data
+        const userEmail = notification.data?.userEmail as string;
+        if (!userEmail) {
+          this.logger.error(`User email not found in notification ${notificationId}`);
+          return false;
+        }
+
+        // Extraer datos opcionales
+        const actionUrl = notification.data?.actionUrl as string | undefined;
+        const actionText = notification.data?.actionText as string | undefined;
+
+        try {
+          await this.mailService.sendNotificationEmail(
+            userEmail,
+            notification.title,
+            notification.message,
+            actionUrl,
+            actionText,
+          );
+          return true;
+        } catch (error) {
+          this.logger.error(`Failed to send email for ${notificationId}:`, error);
+          return false;
+        }
+      }
+
+      // Canal no soportado
+      this.logger.warn(`Unsupported channel: ${channel}`);
+      return false;
+    } catch (error) {
+      this.logger.error(`Error sending to ${channel}:`, error);
+      throw error;
+    }
   }
 
   /**
@@ -334,7 +404,7 @@ export class NotificationQueueService {
    *
    * @example
    * const stats = await this.queueService.getQueueStats();
-   * // { pending: 42, processing: 3, sent: 1205, failed: 8, retry: 2 }
+   * // { pending: 42, processing: 3, completed: 1205, failed: 8, retry: 2 }
    */
   async getQueueStats(): Promise<Record<string, number>> {
     const counts = await this.queueRepository
@@ -347,7 +417,7 @@ export class NotificationQueueService {
     const stats: Record<string, number> = {
       pending: 0,
       processing: 0,
-      sent: 0,
+      completed: 0,
       failed: 0,
       retry: 0,
     };
@@ -439,7 +509,7 @@ export class NotificationQueueService {
   /**
    * Limpiar items procesados antiguos
    *
-   * Elimina items con status 'sent' o 'failed' más antiguos que X días
+   * Elimina items con status 'completed' o 'failed' más antiguos que X días
    * Mantiene la cola limpia para performance
    *
    * @param olderThanDays - Eliminar items más antiguos que X días (default: 30)
@@ -457,8 +527,8 @@ export class NotificationQueueService {
     const result = await this.queueRepository
       .createQueryBuilder()
       .delete()
-      .where('processed_at < :threshold', { threshold })
-      .andWhere('status IN (:...statuses)', { statuses: ['sent', 'failed'] })
+      .where('created_at < :threshold', { threshold })
+      .andWhere('status IN (:...statuses)', { statuses: ['completed', 'failed'] })
       .execute();
 
     return result.affected || 0;

@@ -44,6 +44,7 @@ export default function TeacherAssignments() {
     createAssignment: createAssignmentAPI,
     getSubmissions: getSubmissionsAPI,
     gradeSubmission: gradeSubmissionAPI,
+    sendReminder: sendReminderAPI,
     refresh,
   } = useAssignments();
 
@@ -158,12 +159,17 @@ export default function TeacherAssignments() {
   };
 
   /**
-   * Send reminder to students
+   * Send reminder to students who haven't submitted
+   * MEDIO-005: Connected to backend API
    */
-  const handleSendReminder = (assignmentId: string) => {
-    // TODO: Implement send reminder functionality
-    console.log('[TeacherAssignments] Send reminder for assignment:', assignmentId);
-    alert('Recordatorio enviado a los estudiantes (funcionalidad en desarrollo)');
+  const handleSendReminder = async (assignmentId: string) => {
+    try {
+      const result = await sendReminderAPI(assignmentId);
+      alert(result.message);
+    } catch (err: unknown) {
+      console.error('[TeacherAssignments] Error sending reminder:', err);
+      alert('Error al enviar recordatorio. Por favor intenta nuevamente.');
+    }
   };
 
   // Calculate stats

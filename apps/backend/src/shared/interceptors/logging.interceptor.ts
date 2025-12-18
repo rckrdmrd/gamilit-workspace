@@ -22,7 +22,7 @@ export class LoggingInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest();
     const response = context.switchToHttp().getResponse();
     const { method, url, ip, body, query, params } = request;
-    const userAgent = request.get('user-agent') || 'Unknown';
+    const _userAgent = request.get('user-agent') || 'Unknown';
     const requestId = request.id || 'N/A';
     const user = request.user;
     const startTime = Date.now();

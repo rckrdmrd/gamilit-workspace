@@ -149,7 +149,7 @@ export class PeerChallenge {
    * @example { "xp": 100, "ml_coins": 50, "achievement_id": "uuid" }
    */
   @Column({ type: 'jsonb', default: {} })
-    rewards!: Record<string, any>;
+    rewards!: Record<string, unknown>;
 
   /**
    * Multiplicador de bonus para el ganador
@@ -180,7 +180,7 @@ export class PeerChallenge {
    * Reglas personalizadas en formato JSONB
    */
   @Column({ type: 'jsonb', default: {} })
-    custom_rules!: Record<string, any>;
+    custom_rules!: Record<string, unknown>;
 
   /**
    * Fecha y hora de creación
@@ -210,7 +210,7 @@ export class PeerChallenge {
    * Metadatos adicionales en formato JSONB
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   // =====================================================
   // Relaciones

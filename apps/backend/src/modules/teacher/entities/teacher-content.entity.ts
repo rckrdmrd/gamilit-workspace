@@ -46,7 +46,7 @@ export class TeacherContent {
 
   // Content body
   @Column({ type: 'jsonb', name: 'content_data', default: {} })
-    content_data!: Record<string, any>;
+    content_data!: Record<string, unknown>;
 
   @Column({ type: 'text', nullable: true })
     instructions?: string | null;
@@ -179,7 +179,7 @@ export class TeacherContent {
 
   // Metadata
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   // Flags
   @Column({ type: 'boolean', name: 'is_active', default: true })

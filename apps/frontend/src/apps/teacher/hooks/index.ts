@@ -8,6 +8,7 @@ export { useStudentProgress } from './useStudentProgress';
 export { useAnalytics, useStudentInsights } from './useAnalytics';
 export { useGrading } from './useGrading';
 export { useClassrooms } from './useClassrooms';
+export { useClassroomsStats } from './useClassroomsStats'; // TEACHER-003
 export { useAssignments } from './useAssignments';
 export { useInterventionAlerts } from './useInterventionAlerts';
 export { useTeacherMessages } from './useTeacherMessages';
@@ -26,6 +27,11 @@ export type { UseStudentProgressReturn } from './useStudentProgress';
 export type { UseAnalyticsReturn, UseStudentInsightsReturn, StudentInsights } from './useAnalytics';
 export type { UseGradingReturn } from './useGrading';
 export type { UseClassroomsReturn } from './useClassrooms';
+export type {
+  UseClassroomsStatsReturn,
+  ClassroomStats,
+  AggregateStats,
+} from './useClassroomsStats'; // TEACHER-003
 export type { UseAssignmentsReturn } from './useAssignments';
 export type { UseInterventionAlertsReturn, AlertFilters } from './useInterventionAlerts';
 export type { UseTeacherMessagesReturn, MessageFilters } from './useTeacherMessages';

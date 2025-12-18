@@ -8,7 +8,7 @@ import {
 import { ModuleRef } from '@nestjs/core';
 import { DataSource } from 'typeorm';
 import { Observable } from 'rxjs';
-import { tap, finalize } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 
 /**
  * RLS (Row Level Security) Interceptor
@@ -44,7 +44,7 @@ export class RlsInterceptor implements NestInterceptor {
     }
 
     try {
-      const dataSource = this.moduleRef.get<DataSource>(
+      const _dataSource = this.moduleRef.get<DataSource>(
         DataSource,
         { strict: false },
       );
@@ -53,7 +53,8 @@ export class RlsInterceptor implements NestInterceptor {
       // Por ahora, simplemente retornamos null y logueamos
       this.logger.debug(`Attempting to get DataSource for connection: ${connectionName}`);
       return null;
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
       this.logger.warn(`DataSource '${connectionName}' not found, skipping RLS setup`);
       return null;
     }

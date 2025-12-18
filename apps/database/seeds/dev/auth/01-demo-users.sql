@@ -2,7 +2,7 @@
 -- Seed: auth.users - Test Users (PRODUCTION CLEAN)
 -- Description: Solo usuarios de testing con dominio @gamilit.com
 -- Environment: PRODUCTION
--- Dependencies: None (auth schema managed by Supabase)
+-- Dependencies: None (auth schema base)
 -- Order: 01
 -- Created: 2025-11-17
 -- Version: 2.0 (CLEAN - Solo 3 usuarios @gamilit.com)

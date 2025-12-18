@@ -2,10 +2,9 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
-  BadRequestException,
-} from '@nestjs/common';
+  } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
-import { Repository, DataSource, FindOptionsWhere, Between } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { Notification } from '../entities/multichannel/notification.entity';
 import { NotificationTemplateService } from './notification-template.service';
 
@@ -51,8 +50,8 @@ export class NotificationService {
     title: string;
     message: string;
     type: string;
-    data?: Record<string, any>;
-    metadata?: Record<string, any>;
+    data?: Record<string, unknown>;
+    metadata?: Record<string, unknown>;
     priority?: string;
     channels?: string[];
     expiresAt?: Date;
@@ -98,7 +97,7 @@ export class NotificationService {
     variables: Record<string, string>;
     type?: string;
     channels?: string[];
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
   }): Promise<Notification> {
     // 1. Renderizar template
     const rendered = await this.templateService.renderTemplate(
@@ -216,6 +215,20 @@ export class NotificationService {
     }
 
     return notification;
+  }
+
+  /**
+   * Obtener notificación por ID sin validación de ownership
+   *
+   * Método interno para uso de servicios (ej: NotificationQueueService)
+   *
+   * @param notificationId - UUID de la notificación
+   * @returns Notificación o null si no existe
+   */
+  async findById(notificationId: string): Promise<Notification | null> {
+    return this.notificationRepository.findOne({
+      where: { id: notificationId },
+    });
   }
 
   /**

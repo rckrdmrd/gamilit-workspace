@@ -157,4 +157,34 @@ export const gamificationConfigApi = {
     const response = await apiClient.get(`${BASE_URL}/stats`);
     return response.data;
   },
+
+  // ========================================
+  // RESTORE DEFAULTS (MEDIO-002 fix)
+  // ========================================
+
+  /**
+   * Restore all gamification settings to default values
+   *
+   * @returns Restore result with list of restored parameters
+   * @see Backend: POST /api/admin/gamification/restore-defaults
+   * @added 2025-12-15 (MEDIO-002)
+   */
+  async restoreDefaults(): Promise<RestoreDefaultsResult> {
+    const response = await apiClient.post(`${BASE_URL}/restore-defaults`);
+    return response.data;
+  },
 };
+
+/**
+ * Result type for restore defaults operation
+ */
+export interface RestoreDefaultsResult {
+  restored_count: number;
+  restored_settings: Array<{
+    key: string;
+    previous_value: number;
+    default_value: number;
+  }>;
+  restored_at: string;
+  restored_by: string;
+}

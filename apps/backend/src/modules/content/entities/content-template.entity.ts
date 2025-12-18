@@ -75,14 +75,14 @@ export class ContentTemplate {
    * Define cómo se estructura el contenido
    */
   @Column({ type: 'jsonb', default: {} })
-    template_structure!: Record<string, any>;
+    template_structure!: Record<string, unknown>;
 
   /**
    * Valores predeterminados JSON
    * Valores iniciales al crear contenido desde esta plantilla
    */
   @Column({ type: 'jsonb', nullable: true })
-    default_values?: Record<string, any>;
+    default_values?: Record<string, unknown>;
 
   /**
    * Campos requeridos en el contenido
@@ -146,7 +146,7 @@ export class ContentTemplate {
    * Metadatos adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Fecha y hora de creación del registro

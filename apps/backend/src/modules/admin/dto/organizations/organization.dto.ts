@@ -49,11 +49,11 @@ export class OrganizationDto {
 
   @ApiProperty({ description: 'Organization settings', example: { theme: 'detective' } })
   @Expose()
-    settings!: Record<string, any>;
+    settings!: Record<string, unknown>;
 
   @ApiProperty({ description: 'Organization metadata', example: { notes: '...' } })
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   @ApiProperty({ description: 'Creation date', example: '2025-01-15T10:00:00Z' })
   @Expose()

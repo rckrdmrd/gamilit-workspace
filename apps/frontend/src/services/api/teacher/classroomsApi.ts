@@ -31,8 +31,12 @@ export interface GetClassroomsQueryDto {
 
 /**
  * Query parameters for fetching classroom students
+ * CORR-2025-12-18: Agregados page, limit y search para paginacion completa
  */
 export interface GetClassroomStudentsQueryDto {
+  page?: number;
+  limit?: number;
+  search?: string;
   status?: 'active' | 'inactive';
   sort_by?: 'name' | 'progress' | 'score' | 'last_activity';
   sort_order?: 'asc' | 'desc';

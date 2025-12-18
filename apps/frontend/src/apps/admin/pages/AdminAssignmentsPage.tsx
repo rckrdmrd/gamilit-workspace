@@ -65,7 +65,7 @@ export default function AdminAssignmentsPage() {
   // Gamification data
   const { gamificationData } = useUserGamification(user?.id);
   const displayGamificationData = gamificationData || {
-    userId: user?.id || 'mock-admin-id',
+    userId: user?.id || '',
     level: 1,
     totalXP: 0,
     mlCoins: 0,

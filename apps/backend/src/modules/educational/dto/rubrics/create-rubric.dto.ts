@@ -65,7 +65,7 @@ export class CreateRubricDto {
    * Estructura: {"criteria_1": {"name": string, "levels": {}, "weight": number}}
    */
   @IsObject()
-    criteria!: Record<string, any>;
+    criteria!: Record<string, unknown>;
 
   /**
    * Escala de puntuación en formato JSONB
@@ -73,7 +73,7 @@ export class CreateRubricDto {
    */
   @IsOptional()
   @IsObject()
-    scoring_scale?: Record<string, any>;
+    scoring_scale?: Record<string, unknown>;
 
   /**
    * Peso porcentual de esta rúbrica (1-100%)
@@ -125,7 +125,7 @@ export class CreateRubricDto {
    */
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 
   /**
    * ID del usuario que crea la rúbrica

@@ -197,7 +197,7 @@ export class AttemptResponseDto {
     description: 'Submitted answers (JSONB)',
     example: { answers: ['A', 'B', 'C'] },
   })
-    submitted_answers!: Record<string, any>;
+    submitted_answers!: Record<string, unknown>;
 
   @ApiProperty({
     description: 'Is the answer correct?',
@@ -257,7 +257,7 @@ export class AttemptDetailDto extends AttemptResponseDto {
     description: 'Correct answer (from exercise)',
     example: { correct_answers: ['A', 'C', 'D'] },
   })
-    correct_answer!: Record<string, any>;
+    correct_answer!: Record<string, unknown>;
 
   @ApiProperty({
     description: 'Exercise type',

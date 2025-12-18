@@ -1,0 +1,823 @@
+{
+  "analysis_metadata": {
+    "agent": "AGENTE 2",
+    "task": "Validación de Coherencia Backend → Frontend",
+    "timestamp": "2025-11-04T08:30:00Z",
+    "backend_source": "/apps/backend/src/modules/*/dto/",
+    "frontend_source": "/apps/frontend/src/shared/types/ y /apps/frontend/src/lib/api/",
+    "methodology": "Backend como Fuente de Verdad"
+  },
+  "modules_analyzed": [
+    "auth",
+    "educational",
+    "gamification",
+    "progress",
+    "social",
+    "admin",
+    "content",
+    "missions",
+    "notifications",
+    "powerups"
+  ],
+  "summary_stats": {
+    "total_backend_dtos": 124,
+    "total_frontend_types": 8,
+    "dtos_with_frontend_representation": 35,
+    "missing_frontend_types": 89,
+    "type_mismatches_found": 12,
+    "critical_discrepancies": 8,
+    "coverage_percentage": 28.2
+  },
+  "discrepancies": [
+    {
+      "module": "auth",
+      "dto": "UserResponseDto",
+      "issue": "Frontend usa interfaz simplificada que falta múltiples propiedades del backend",
+      "severity": "high",
+      "backend_definition": {
+        "file": "/modules/auth/dto/user-response.dto.ts",
+        "properties": [
+          "id: string",
+          "email: string",
+          "role: GamilityRoleEnum",
+          "email_confirmed_at?: Date",
+          "last_sign_in_at?: Date",
+          "raw_user_meta_data: Record<string, any>",
+          "created_at: Date",
+          "updated_at: Date"
+        ]
+      },
+      "frontend_definition": {
+        "file": "/shared/types/auth.types.ts",
+        "interface": "User",
+        "properties": [
+          "id: string",
+          "email: string",
+          "role: string",
+          "status: string",
+          "email_verified: boolean"
+        ]
+      },
+      "missing_properties": [
+        "email_confirmed_at",
+        "last_sign_in_at",
+        "raw_user_meta_data",
+        "created_at",
+        "updated_at"
+      ],
+      "recommendation": "Actualizar interfaz User en frontend para incluir todas las propiedades de UserResponseDto"
+    },
+    {
+      "module": "auth",
+      "dto": "ProfileResponseDto",
+      "issue": "Frontend tiene Profile interface bien sincronizada",
+      "severity": "low",
+      "status": "OK",
+      "backend_definition": {
+        "file": "/modules/auth/dto/profile-response.dto.ts",
+        "properties_count": 25
+      },
+      "frontend_definition": {
+        "file": "/shared/types/profile.types.ts",
+        "interface": "Profile",
+        "properties_count": 25
+      },
+      "recommendation": "Mantener sincronización actual"
+    },
+    {
+      "module": "auth",
+      "dto": "RegisterUserDto",
+      "issue": "Frontend RegisterData falta campo raw_user_meta_data",
+      "severity": "medium",
+      "backend_definition": {
+        "file": "/modules/auth/dto/register-user.dto.ts",
+        "required_fields": ["email", "password"],
+        "optional_fields": ["raw_user_meta_data", "first_name", "last_name"]
+      },
+      "frontend_definition": {
+        "file": "/lib/api/auth.api.ts",
+        "interface": "RegisterData",
+        "fields": ["email", "password", "first_name?", "last_name?"]
+      },
+      "missing_properties": ["raw_user_meta_data"],
+      "recommendation": "Agregar raw_user_meta_data opcional en RegisterData"
+    },
+    {
+      "module": "educational",
+      "dto": "ExerciseResponseDto",
+      "issue": "Frontend Exercise interface BIEN SINCRONIZADA (actualizada en Sprint 0)",
+      "severity": "low",
+      "status": "OK",
+      "backend_definition": {
+        "file": "/modules/educational/dto/exercises/exercise-response.dto.ts",
+        "properties_count": 44
+      },
+      "frontend_definition": {
+        "file": "/shared/types/educational.types.ts",
+        "interface": "Exercise",
+        "properties_count": 44
+      },
+      "recommendation": "Mantener sincronización actual. Excelente trabajo en Sprint 0"
+    },
+    {
+      "module": "educational",
+      "dto": "ModuleResponseDto",
+      "issue": "Frontend Module falta múltiples propiedades del backend",
+      "severity": "high",
+      "backend_definition": {
+        "file": "/modules/educational/dto/modules/module-response.dto.ts",
+        "properties": [
+          "id", "tenant_id", "title", "subtitle", "description", "summary",
+          "content", "order_index", "module_code", "difficulty_level",
+          "grade_levels", "subjects", "estimated_duration_minutes",
+          "estimated_sessions", "learning_objectives", "competencies",
+          "skills_developed", "prerequisites", "prerequisite_skills",
+          "maya_rank_required", "maya_rank_granted", "xp_reward",
+          "ml_coins_reward", "status", "is_published", "is_featured",
+          "is_free", "is_demo_module", "published_at", "archived_at",
+          "version", "version_notes", "created_by", "reviewed_by",
+          "approved_by", "keywords", "tags", "thumbnail_url",
+          "cover_image_url", "settings", "metadata", "created_at",
+          "updated_at", "total_exercises"
+        ],
+        "properties_count": 45
+      },
+      "frontend_definition": {
+        "file": "/shared/types/educational.types.ts",
+        "interface": "Module",
+        "properties": [
+          "id", "title", "description", "difficulty", "thumbnail_url",
+          "icon", "order_index", "estimated_time_minutes",
+          "learning_objectives", "prerequisites", "tags",
+          "is_published", "created_at", "updated_at"
+        ],
+        "properties_count": 14
+      },
+      "missing_properties": [
+        "tenant_id", "subtitle", "summary", "content", "module_code",
+        "grade_levels", "subjects", "estimated_sessions", "competencies",
+        "skills_developed", "prerequisite_skills", "maya_rank_required",
+        "maya_rank_granted", "xp_reward", "ml_coins_reward", "status",
+        "is_featured", "is_free", "is_demo_module", "published_at",
+        "archived_at", "version", "version_notes", "created_by",
+        "reviewed_by", "approved_by", "keywords", "cover_image_url",
+        "settings", "metadata", "total_exercises"
+      ],
+      "recommendation": "CRÍTICO: Expandir interfaz Module en frontend para incluir todas las propiedades de ModuleResponseDto, especialmente gamification (xp_reward, ml_coins_reward) y metadata"
+    },
+    {
+      "module": "gamification",
+      "dto": "UserStatsResponseDto",
+      "issue": "Frontend usa interfaz UserStats simplificada en auth.api.ts que NO coincide con backend",
+      "severity": "critical",
+      "backend_definition": {
+        "file": "/modules/gamification/dto/user-stats/user-stats-response.dto.ts",
+        "properties_count": 40,
+        "key_properties": [
+          "id", "user_id", "tenant_id", "level", "total_xp",
+          "xp_to_next_level", "current_rank", "rank_progress",
+          "ml_coins", "ml_coins_earned_total", "ml_coins_spent_total",
+          "ml_coins_earned_today", "last_ml_coins_reset", "current_streak",
+          "max_streak", "streak_started_at", "days_active_total",
+          "exercises_completed", "modules_completed", "total_score",
+          "average_score", "perfect_scores", "achievements_earned",
+          "certificates_earned", "total_time_spent", "weekly_time_spent",
+          "sessions_count", "weekly_xp", "monthly_xp", "weekly_exercises",
+          "global_rank_position", "class_rank_position",
+          "school_rank_position", "last_activity_at", "last_login_at",
+          "metadata", "created_at", "updated_at"
+        ]
+      },
+      "frontend_definition": {
+        "file": "/lib/api/gamification.api.ts",
+        "interface": "UserStats",
+        "properties": [
+          "userId", "totalPoints", "level", "experienceProgress",
+          "tasksCompleted", "currentStreak"
+        ],
+        "properties_count": 6
+      },
+      "type_mismatches": [
+        {
+          "property": "userId",
+          "backend_type": "user_id (snake_case)",
+          "frontend_type": "userId (camelCase)",
+          "issue": "Naming convention inconsistency"
+        }
+      ],
+      "missing_properties": [
+        "total_xp", "xp_to_next_level", "current_rank", "rank_progress",
+        "ml_coins", "ml_coins_earned_total", "ml_coins_spent_total",
+        "exercises_completed", "modules_completed", "total_score",
+        "achievements_earned", "total_time_spent", "sessions_count",
+        "y 20+ propiedades más"
+      ],
+      "recommendation": "CRÍTICO: Reemplazar interfaz UserStats simplificada con una versión completa basada en UserStatsResponseDto del backend. Considerar usar ProfileWithStats de profile.types.ts que tiene mejor cobertura"
+    },
+    {
+      "module": "gamification",
+      "dto": "AchievementResponseDto",
+      "issue": "Frontend Achievement interface tiene nombres de propiedades diferentes (camelCase vs snake_case)",
+      "severity": "medium",
+      "backend_definition": {
+        "file": "/modules/gamification/dto/achievements/achievement-response.dto.ts",
+        "naming_convention": "snake_case",
+        "key_properties": [
+          "id", "tenant_id", "name", "description", "icon", "category",
+          "rarity", "difficulty_level", "conditions", "rewards",
+          "ml_coins_reward", "is_secret", "is_active", "is_repeatable",
+          "order_index", "points_value", "unlock_message", "instructions",
+          "tips", "metadata", "created_by", "created_at", "updated_at"
+        ]
+      },
+      "frontend_definition": {
+        "file": "/shared/types/achievement.types.ts",
+        "interface": "Achievement",
+        "naming_convention": "camelCase",
+        "properties": [
+          "id", "name", "description", "detailedDescription", "icon",
+          "category", "type", "conditions", "rewards", "isHidden",
+          "rarity", "createdAt", "updatedAt"
+        ]
+      },
+      "type_mismatches": [
+        {
+          "property": "is_secret (backend) vs isHidden (frontend)",
+          "issue": "Property name mismatch"
+        },
+        {
+          "property": "is_active, is_repeatable (backend) vs FALTA en frontend",
+          "issue": "Missing properties"
+        },
+        {
+          "property": "detailedDescription (frontend) vs NO EXISTE en backend",
+          "issue": "Extra property in frontend"
+        }
+      ],
+      "missing_properties": [
+        "tenant_id", "difficulty_level", "ml_coins_reward", "is_active",
+        "is_repeatable", "order_index", "points_value", "unlock_message",
+        "instructions", "tips", "metadata", "created_by"
+      ],
+      "recommendation": "Sincronizar nombres de propiedades y agregar campos faltantes. Decidir convención: ¿snake_case del backend o camelCase transformado en frontend?"
+    },
+    {
+      "module": "progress",
+      "dto": "ModuleProgressResponseDto",
+      "issue": "Frontend ModuleProgress interface BIEN SINCRONIZADA (actualizada en Sprint 0)",
+      "severity": "low",
+      "status": "OK",
+      "backend_definition": {
+        "file": "/modules/progress/dto/module-progress-response.dto.ts",
+        "properties_count": 38
+      },
+      "frontend_definition": {
+        "file": "/shared/types/progress.types.ts",
+        "interface": "ModuleProgress",
+        "properties_count": 38
+      },
+      "recommendation": "Mantener sincronización actual. Excelente trabajo en Sprint 0"
+    },
+    {
+      "module": "progress",
+      "dto": "ExerciseSubmissionResponseDto",
+      "issue": "Frontend ExerciseSubmission falta propiedades críticas del backend",
+      "severity": "high",
+      "backend_definition": {
+        "file": "/modules/progress/dto/exercise-submission-response.dto.ts",
+        "properties": [
+          "id", "user_id", "exercise_id", "answer_data", "is_correct",
+          "score", "max_score", "feedback", "hint_used", "hints_count",
+          "comodines_used", "ml_coins_spent", "time_spent_seconds",
+          "attempt_number", "status", "started_at", "submitted_at",
+          "graded_at", "created_at", "updated_at"
+        ],
+        "properties_count": 20
+      },
+      "frontend_definition": {
+        "file": "/shared/types/progress.types.ts",
+        "interface": "ExerciseSubmission",
+        "properties": [
+          "id", "attempt_id", "user_id", "exercise_id",
+          "submission_data", "score", "max_score", "is_correct",
+          "feedback", "submitted_at", "created_at", "updated_at"
+        ],
+        "properties_count": 12
+      },
+      "missing_properties": [
+        "hint_used", "hints_count", "comodines_used", "ml_coins_spent",
+        "time_spent_seconds", "attempt_number", "status", "started_at",
+        "graded_at"
+      ],
+      "type_mismatches": [
+        {
+          "property": "answer_data (backend) vs submission_data (frontend)",
+          "issue": "Different property names for same data"
+        }
+      ],
+      "recommendation": "Agregar propiedades faltantes relacionadas con hints, comodines, y timing. Sincronizar nombre de answer_data/submission_data"
+    },
+    {
+      "module": "social",
+      "dto": "ClassroomResponseDto",
+      "issue": "Frontend Classroom falta múltiples propiedades del backend",
+      "severity": "high",
+      "backend_definition": {
+        "file": "/modules/social/dto/classroom-response.dto.ts",
+        "properties": [
+          "id", "school_id", "tenant_id", "name", "code", "description",
+          "grade_level", "section", "subject", "academic_year",
+          "semester", "teacher_id", "co_teachers", "capacity",
+          "current_students_count", "settings", "schedule",
+          "meeting_url", "is_active", "is_archived", "start_date",
+          "end_date", "metadata", "created_at", "updated_at"
+        ],
+        "properties_count": 25
+      },
+      "frontend_definition": {
+        "file": "/shared/types/social.types.ts",
+        "interface": "Classroom",
+        "properties": [
+          "id", "name", "description", "code", "teacher_id",
+          "school_id", "is_active", "created_at", "updated_at"
+        ],
+        "properties_count": 9
+      },
+      "missing_properties": [
+        "tenant_id", "grade_level", "section", "subject",
+        "academic_year", "semester", "co_teachers", "capacity",
+        "current_students_count", "settings", "schedule",
+        "meeting_url", "is_archived", "start_date", "end_date",
+        "metadata"
+      ],
+      "recommendation": "Expandir interfaz Classroom para incluir campos académicos (grade_level, section, subject), configuración (settings, schedule), y capacidad"
+    },
+    {
+      "module": "gamification",
+      "dto": "LeaderboardEntryDto",
+      "issue": "Frontend LeaderboardEntry usa camelCase y falta propiedades del backend",
+      "severity": "medium",
+      "backend_definition": {
+        "file": "/modules/gamification/dto/leaderboard/leaderboard-entry.dto.ts",
+        "properties": [
+          "rank", "user_id", "display_name", "avatar_url", "total_xp",
+          "level", "current_rank", "streak_days", "achievements_count",
+          "ml_coins", "modules_completed", "exercises_completed"
+        ]
+      },
+      "frontend_definition": {
+        "file": "/shared/types/leaderboard.types.ts",
+        "interface": "LeaderboardEntry",
+        "properties": [
+          "rank", "userId", "username", "firstName", "lastName",
+          "avatar", "totalXP", "level", "currentRank", "streak",
+          "achievementCount", "tasksCompleted", "isCurrentUser"
+        ]
+      },
+      "type_mismatches": [
+        {
+          "property": "user_id (backend) vs userId (frontend)",
+          "issue": "Naming convention"
+        },
+        {
+          "property": "display_name (backend) vs username, firstName, lastName (frontend)",
+          "issue": "Backend usa display_name único, frontend divide en campos"
+        },
+        {
+          "property": "avatar_url (backend) vs avatar (frontend)",
+          "issue": "Property name mismatch"
+        }
+      ],
+      "missing_properties": ["ml_coins", "modules_completed", "exercises_completed"],
+      "recommendation": "Agregar propiedades faltantes y decidir estrategia para display_name vs firstName/lastName"
+    },
+    {
+      "module": "admin",
+      "dto": "UserDetailsDto",
+      "issue": "Frontend NO tiene tipos para Admin module",
+      "severity": "critical",
+      "backend_definition": {
+        "file": "/modules/admin/dto/users/user-details.dto.ts",
+        "exists": true
+      },
+      "frontend_definition": {
+        "file": "N/A",
+        "exists": false
+      },
+      "recommendation": "CRÍTICO: Crear /shared/types/admin.types.ts con interfaces para gestión administrativa (users, organizations, system)"
+    },
+    {
+      "module": "content",
+      "dto": "ContentTemplateResponseDto",
+      "issue": "Frontend NO tiene tipos para Content module",
+      "severity": "high",
+      "backend_definition": {
+        "file": "/modules/content/dto/content-template-response.dto.ts",
+        "exists": true
+      },
+      "frontend_definition": {
+        "file": "N/A",
+        "exists": false
+      },
+      "recommendation": "Crear /shared/types/content.types.ts con interfaces para templates y media files"
+    }
+  ],
+  "missing_frontend_types": [
+    {
+      "module": "auth",
+      "dtos": [
+        "AuthProviderResponseDto",
+        "EmailVerificationTokenResponseDto",
+        "PasswordResetTokenResponseDto",
+        "MembershipResponseDto",
+        "TenantResponseDto",
+        "UserSessionResponseDto",
+        "UserRoleResponseDto"
+      ],
+      "recommendation": "Crear interfaces TypeScript correspondientes en /shared/types/auth.types.ts"
+    },
+    {
+      "module": "gamification",
+      "dtos": [
+        "UserRankResponseDto",
+        "MissionResponseDto",
+        "TransactionResponseDto",
+        "NotificationResponseDto",
+        "UserAchievementResponseDto",
+        "InventoryResponseDto"
+      ],
+      "recommendation": "Crear interfaces para ranks, missions, ML coins transactions, y comodines inventory"
+    },
+    {
+      "module": "progress",
+      "dtos": [
+        "ExerciseAttemptResponseDto",
+        "LearningSessionResponseDto",
+        "ScheduledMissionResponseDto"
+      ],
+      "recommendation": "Interfaces ExerciseAttempt y LearningSession existen pero verificar completitud"
+    },
+    {
+      "module": "social",
+      "dtos": [
+        "SchoolResponseDto",
+        "TeamResponseDto",
+        "TeamMemberResponseDto",
+        "ClassroomMemberResponseDto",
+        "TeamChallengeResponseDto"
+      ],
+      "recommendation": "Expandir social.types.ts con detalles completos de estas entidades"
+    },
+    {
+      "module": "admin",
+      "dtos": [
+        "OrganizationDto",
+        "OrganizationStatsDto",
+        "SystemHealthDto",
+        "SystemMetricsDto",
+        "SystemConfigDto",
+        "AuditLogDto",
+        "ContentDto"
+      ],
+      "recommendation": "CRÍTICO: Crear módulo completo admin.types.ts para panel administrativo"
+    },
+    {
+      "module": "missions",
+      "dtos": [
+        "MissionResponseDto",
+        "ClaimMissionRewardsDto",
+        "UpdateMissionProgressDto"
+      ],
+      "recommendation": "Crear missions.types.ts separado de gamification"
+    },
+    {
+      "module": "notifications",
+      "dtos": [
+        "NotificationResponseDto",
+        "PaginatedNotificationsDto",
+        "GetNotificationsQueryDto"
+      ],
+      "recommendation": "Crear notifications.types.ts con soporte para paginación"
+    },
+    {
+      "module": "powerups",
+      "dtos": [
+        "PowerupsCatalogDto",
+        "PowerupsInventoryDto",
+        "PurchasePowerupDto",
+        "UsePowerupDto"
+      ],
+      "recommendation": "Crear powerups.types.ts (actualmente llamados 'comodines' en frontend)"
+    }
+  ],
+  "type_mismatches": [
+    {
+      "category": "Naming Convention",
+      "issue": "Backend usa snake_case, frontend usa camelCase",
+      "affected_modules": ["gamification", "progress", "social", "educational"],
+      "examples": [
+        "user_id (backend) → userId (frontend)",
+        "created_at (backend) → createdAt (frontend)",
+        "is_active (backend) → isActive (frontend)"
+      ],
+      "severity": "medium",
+      "recommendation": "Decidir estrategia: (1) Transformar en API client o (2) Mantener snake_case en frontend. Backend NestJS estándar usa snake_case para DB"
+    },
+    {
+      "category": "Date Types",
+      "issue": "Backend usa Date objects, frontend usa string (ISO format)",
+      "affected_modules": ["all"],
+      "backend_type": "Date",
+      "frontend_type": "string",
+      "severity": "low",
+      "recommendation": "Mantener strings en frontend (JSON serialization), documentar formato ISO 8601"
+    },
+    {
+      "category": "Enum Values",
+      "issue": "Algunos enums tienen valores diferentes entre backend y frontend",
+      "examples": [
+        {
+          "enum": "DifficultyLevel",
+          "backend": "DifficultyLevelEnum (BEGINNER, INTERMEDIATE, ADVANCED)",
+          "frontend": "DifficultyLevel (beginner, intermediate, advanced)",
+          "issue": "Backend usa UPPERCASE, frontend lowercase"
+        }
+      ],
+      "severity": "low",
+      "recommendation": "Normalizar valores de enums a lowercase en todo el sistema"
+    }
+  ],
+  "api_validation": {
+    "auth_api": {
+      "file": "/lib/api/auth.api.ts",
+      "endpoints_covered": 5,
+      "issues": [
+        "UserResponse interface local diverge de UserResponseDto del backend",
+        "Falta endpoint /auth/profile que retorna ProfileResponseDto completo"
+      ],
+      "status": "NEEDS_UPDATE"
+    },
+    "educational_api": {
+      "file": "/lib/api/educational.api.ts",
+      "endpoints_covered": 5,
+      "issues": [
+        "Usa tipos correctos de educational.types.ts",
+        "Module interface necesita actualización para incluir 31 propiedades faltantes"
+      ],
+      "status": "PARTIAL_COVERAGE"
+    },
+    "gamification_api": {
+      "file": "/lib/api/gamification.api.ts",
+      "endpoints_covered": 10,
+      "issues": [
+        "UserStats local interface CRÍTICO: solo 6 propiedades vs 40 en backend",
+        "MLCoinsBalance local interface falta propiedades detalladas",
+        "Achievement types OK pero falta sincronización de nombres"
+      ],
+      "status": "CRITICAL_NEEDS_UPDATE"
+    },
+    "progress_api": {
+      "file": "/lib/api/progress.api.ts",
+      "endpoints_covered": 11,
+      "issues": [
+        "Usa tipos correctos de progress.types.ts",
+        "ExerciseSubmission falta 8 propiedades",
+        "ExerciseAttempt interface existe pero validar completitud"
+      ],
+      "status": "GOOD_PARTIAL_COVERAGE"
+    },
+    "social_api": {
+      "file": "N/A",
+      "exists": false,
+      "recommendation": "CRÍTICO: Crear /lib/api/social.api.ts para classroom, teams, friendships"
+    },
+    "admin_api": {
+      "file": "N/A",
+      "exists": false,
+      "recommendation": "CRÍTICO: Crear /lib/api/admin.api.ts para panel administrativo"
+    }
+  },
+  "critical_cases": {
+    "auth": {
+      "login_register": {
+        "status": "OK",
+        "note": "LoginDto y RegisterUserDto correctamente implementados, solo falta raw_user_meta_data opcional"
+      },
+      "profile": {
+        "status": "EXCELLENT",
+        "note": "ProfileResponseDto perfectamente sincronizado con Profile interface (25 propiedades)"
+      }
+    },
+    "gamification": {
+      "user_stats": {
+        "status": "CRITICAL",
+        "note": "UserStats interface simplificada (6 props) vs UserStatsResponseDto (40 props). Usar ProfileWithStats como referencia"
+      },
+      "achievements": {
+        "status": "NEEDS_SYNC",
+        "note": "Achievement interface falta 13 propiedades del backend AchievementResponseDto"
+      },
+      "ml_coins": {
+        "status": "INCOMPLETE",
+        "note": "MLCoinsBalance simplificado, falta TransactionResponseDto completo"
+      }
+    },
+    "educational": {
+      "exercises": {
+        "status": "EXCELLENT",
+        "note": "Exercise interface completamente sincronizada con 44 propiedades. Sprint 0 exitoso"
+      },
+      "modules": {
+        "status": "CRITICAL",
+        "note": "Module interface FALTA 31 propiedades críticas (gamification, metadata, versioning)"
+      }
+    },
+    "progress": {
+      "module_progress": {
+        "status": "EXCELLENT",
+        "note": "ModuleProgress completamente sincronizada con 38 propiedades. Sprint 0 exitoso"
+      },
+      "submissions": {
+        "status": "NEEDS_UPDATE",
+        "note": "ExerciseSubmission falta hints, comodines, timing fields"
+      }
+    },
+    "social": {
+      "classrooms": {
+        "status": "INCOMPLETE",
+        "note": "Classroom falta 16 propiedades (académicas, configuración, capacidad)"
+      },
+      "teams_friends": {
+        "status": "BASIC",
+        "note": "Estructuras básicas presentes pero faltan DTOs detallados"
+      }
+    }
+  },
+  "recommendations": {
+    "immediate_actions": [
+      {
+        "priority": "P0 - CRITICAL",
+        "action": "Actualizar UserStats en gamification.api.ts para incluir las 40 propiedades de UserStatsResponseDto",
+        "impact": "Gamification features broken/incomplete",
+        "effort": "2 horas"
+      },
+      {
+        "priority": "P0 - CRITICAL",
+        "action": "Expandir Module interface en educational.types.ts con 31 propiedades faltantes",
+        "impact": "Módulos educativos sin metadata ni gamification",
+        "effort": "1.5 horas"
+      },
+      {
+        "priority": "P0 - CRITICAL",
+        "action": "Crear admin.types.ts completo para panel administrativo",
+        "impact": "Admin features no implementables",
+        "effort": "3 horas"
+      },
+      {
+        "priority": "P1 - HIGH",
+        "action": "Sincronizar Achievement interface con AchievementResponseDto (agregar 13 propiedades)",
+        "impact": "Logros incompletos en UI",
+        "effort": "1 hora"
+      },
+      {
+        "priority": "P1 - HIGH",
+        "action": "Actualizar Classroom interface con 16 propiedades faltantes",
+        "impact": "Gestión de aulas limitada",
+        "effort": "1 hora"
+      },
+      {
+        "priority": "P1 - HIGH",
+        "action": "Completar ExerciseSubmission con hints, comodines, timing",
+        "impact": "Tracking de power-ups incompleto",
+        "effort": "45 minutos"
+      },
+      {
+        "priority": "P2 - MEDIUM",
+        "action": "Crear social.api.ts para endpoints de classrooms, teams, friendships",
+        "impact": "Features sociales no utilizables",
+        "effort": "2 horas"
+      },
+      {
+        "priority": "P2 - MEDIUM",
+        "action": "Crear types completos para missions, notifications, powerups",
+        "impact": "Módulos adicionales sin soporte frontend",
+        "effort": "2 horas"
+      },
+      {
+        "priority": "P3 - LOW",
+        "action": "Decidir y aplicar convención de nombres: snake_case vs camelCase",
+        "impact": "Inconsistencia en codebase",
+        "effort": "4 horas (refactor)"
+      }
+    ],
+    "architectural": [
+      {
+        "recommendation": "Implementar transformers automáticos en API clients",
+        "description": "Crear utilities para transformar snake_case del backend a camelCase en frontend automáticamente",
+        "benefit": "Mantener convenciones nativas de cada stack",
+        "effort": "6 horas"
+      },
+      {
+        "recommendation": "Generar tipos TypeScript desde DTOs NestJS",
+        "description": "Usar herramientas como ts-morph o scripts para auto-generar interfaces frontend desde DTOs backend",
+        "benefit": "Sincronización automática, reducir errores humanos",
+        "effort": "8 horas setup inicial"
+      },
+      {
+        "recommendation": "Implementar validación en runtime con zod",
+        "description": "Agregar schemas zod basados en DTOs para validar responses en frontend",
+        "benefit": "Detectar discrepancias en desarrollo, type-safety mejorado",
+        "effort": "12 horas"
+      }
+    ]
+  },
+  "coverage_by_module": {
+    "auth": {
+      "total_dtos": 25,
+      "covered": 4,
+      "coverage_percentage": 16,
+      "status": "LOW_COVERAGE"
+    },
+    "educational": {
+      "total_dtos": 8,
+      "covered": 4,
+      "coverage_percentage": 50,
+      "status": "MEDIUM_COVERAGE"
+    },
+    "gamification": {
+      "total_dtos": 17,
+      "covered": 8,
+      "coverage_percentage": 47,
+      "status": "MEDIUM_COVERAGE"
+    },
+    "progress": {
+      "total_dtos": 10,
+      "covered": 6,
+      "coverage_percentage": 60,
+      "status": "GOOD_COVERAGE"
+    },
+    "social": {
+      "total_dtos": 15,
+      "covered": 8,
+      "coverage_percentage": 53,
+      "status": "MEDIUM_COVERAGE"
+    },
+    "admin": {
+      "total_dtos": 24,
+      "covered": 0,
+      "coverage_percentage": 0,
+      "status": "NO_COVERAGE"
+    },
+    "content": {
+      "total_dtos": 6,
+      "covered": 0,
+      "coverage_percentage": 0,
+      "status": "NO_COVERAGE"
+    },
+    "missions": {
+      "total_dtos": 3,
+      "covered": 0,
+      "coverage_percentage": 0,
+      "status": "NO_COVERAGE"
+    },
+    "notifications": {
+      "total_dtos": 4,
+      "covered": 0,
+      "coverage_percentage": 0,
+      "status": "NO_COVERAGE"
+    },
+    "powerups": {
+      "total_dtos": 4,
+      "covered": 0,
+      "coverage_percentage": 0,
+      "status": "NO_COVERAGE"
+    }
+  },
+  "next_steps": [
+    "1. Implementar correcciones P0 (UserStats, Module, Admin types) - Estimado: 6.5 horas",
+    "2. Implementar correcciones P1 (Achievement, Classroom, ExerciseSubmission) - Estimado: 2.75 horas",
+    "3. Crear API clients faltantes (social.api.ts, admin.api.ts) - Estimado: 5 horas",
+    "4. Crear types files faltantes (missions, notifications, powerups) - Estimado: 2 horas",
+    "5. Establecer proceso de sincronización continua backend ↔ frontend",
+    "6. Considerar implementar generación automática de tipos TypeScript desde DTOs NestJS"
+  ],
+  "conclusion": {
+    "overall_status": "MODERATE_COVERAGE_WITH_CRITICAL_GAPS",
+    "positive_aspects": [
+      "Exercise interface (educational) perfectamente sincronizada - 44 propiedades",
+      "ModuleProgress interface (progress) completamente actualizada - 38 propiedades",
+      "Profile interface (auth) excelente sincronización - 25 propiedades",
+      "Social features tienen estructura básica sólida",
+      "Progress tracking bien implementado"
+    ],
+    "critical_gaps": [
+      "UserStats interface simplificada crítica - solo 15% del backend (6/40 props)",
+      "Module interface incompleta - falta 69% de propiedades (31/45)",
+      "Admin module completamente ausente en frontend (0% coverage)",
+      "Missions, Notifications, Powerups modules sin tipos (0% coverage)",
+      "Naming convention inconsistent (snake_case vs camelCase)"
+    ],
+    "risk_assessment": "MEDIUM-HIGH: Módulos core (educational, progress) bien sincronizados pero gamification y admin tienen gaps críticos que limitarán funcionalidad",
+    "estimated_effort_to_full_sync": "30-40 horas de desarrollo para alcanzar 90%+ coverage y sincronización completa"
+  }
+}

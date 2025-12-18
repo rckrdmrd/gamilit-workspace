@@ -29,6 +29,7 @@ import {
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { TeacherGuard } from '../guards';
 import { TeacherContentService } from '../services/teacher-content.service';
+import { AuthRequest } from '@shared/types';
 import {
   CreateTeacherContentDto,
   UpdateTeacherContentDto,
@@ -113,9 +114,9 @@ export class TeacherContentController {
   })
   async findAll(
     @Query() query: GetTeacherContentQueryDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<PaginatedTeacherContentResponseDto> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.contentService.findAll(teacherId, query);
   }
 
@@ -151,8 +152,8 @@ export class TeacherContentController {
     status: 403,
     description: 'Forbidden - Teacher is not the owner of this content',
   })
-  async findOne(@Param('id') id: string, @Request() req: any): Promise<TeacherContentResponseDto> {
-    const teacherId = req.user.sub;
+  async findOne(@Param('id') id: string, @Request() req: AuthRequest): Promise<TeacherContentResponseDto> {
+    const teacherId = req.user!.id;
     return this.contentService.findOne(id, teacherId);
   }
 
@@ -193,9 +194,9 @@ export class TeacherContentController {
   })
   async create(
     @Body() dto: CreateTeacherContentDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<TeacherContentResponseDto> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.contentService.create(teacherId, dto);
   }
 
@@ -243,9 +244,9 @@ export class TeacherContentController {
   async update(
     @Param('id') id: string,
       @Body() dto: UpdateTeacherContentDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<TeacherContentResponseDto> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.contentService.update(id, teacherId, dto);
   }
 
@@ -292,9 +293,9 @@ export class TeacherContentController {
   })
   async delete(
     @Param('id') id: string,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<{ success: boolean; message: string }> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.contentService.delete(id, teacherId);
   }
 
@@ -338,9 +339,9 @@ export class TeacherContentController {
   async clone(
     @Param('id') id: string,
       @Body() dto: CloneTeacherContentDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<TeacherContentResponseDto> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.contentService.clone(id, teacherId, dto);
   }
 
@@ -386,9 +387,9 @@ export class TeacherContentController {
   })
   async publish(
     @Param('id') id: string,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<TeacherContentResponseDto> {
-    const teacherId = req.user.sub;
+    const teacherId = req.user!.id;
     return this.contentService.publish(id, teacherId);
   }
 }

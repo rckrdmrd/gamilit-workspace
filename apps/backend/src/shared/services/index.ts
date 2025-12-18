@@ -16,3 +16,5 @@ export {
   type NextFunction,
   type RateLimitMiddleware,
 } from './rate-limiter.service';
+
+export { UserIdConversionService } from './user-id-conversion.service';

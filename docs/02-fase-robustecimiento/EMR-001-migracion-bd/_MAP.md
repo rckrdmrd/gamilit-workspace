@@ -91,7 +91,7 @@ public/
 
 ### Después (Fase 2)
 ```
-auth/                      # Supabase Auth (tablas sistema)
+auth/                      # autenticación estándar (tablas sistema)
 auth_management/          # Gestión de autenticación (11 tablas)
 educational_content/      # Contenido educativo (8 tablas)
 gamification_system/      # Gamificación (12 tablas)

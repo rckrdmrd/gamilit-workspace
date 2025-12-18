@@ -70,7 +70,8 @@ export function useModuleDetail(moduleId: string, userId?: string): UseModuleDet
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!moduleId) {
+    // Guard against undefined, empty string, or literal "undefined" string
+    if (!moduleId || moduleId === 'undefined') {
       setLoading(false);
       return;
     }

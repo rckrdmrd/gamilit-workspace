@@ -1,36 +1,95 @@
 seeds_inventory:
-  version: 1.0.0
-  fecha: '2025-11-11'
+  version: 1.3.0
+  fecha: '2025-12-18'
   metadata:
     proyecto: GAMILIT - Plataforma de Aprendizaje Gamificada
     proposito: Inventario completo de seeds (datos iniciales) DEV y PROD
     ubicacion_base: apps/database/seeds/
-    ultima_migracion: '2025-11-11 (Fase 1 - Seeds DEV→PROD)'
+    ultima_migracion: '2025-12-18 (Carga usuarios producción desde backup)'
     modelo_datos: JSONB puro (consistente)
 
   resumen_ejecutivo:
-    total_seeds_prod: 33
-    total_seeds_dev: 34
+    total_seeds_prod: 53  # ✅ Actualizado 2025-12-18 (+2 seeds usuarios producción)
+    total_seeds_dev: 54   # ✅ Actualizado 2025-12-18
     ejercicios_prod: 23
     ejercicios_dev: 24
     estado_prod: production-ready
     completitud_prod: 100%
-    alineacion_dev_prod: 100%
+    alineacion_dev_prod: 99%  # ✅ Mejorado: Seeds principales idénticos
+    p0_seeds_coverage: 100%
     notas_actualizacion: |
+      2025-12-18 (Carga Usuarios Producción desde Backup):
+      ========================================================
+      NUEVOS SEEDS:
+      - auth/02-production-users.sql: 44 usuarios de producción
+      - auth_management/06-profiles-production.sql: 44 perfiles corregidos
+
+      FUENTE DE DATOS:
+      - backup-prod/auth_users_2025-12-18.csv
+      - backup-prod/profiles_2025-12-18.csv
+
+      USUARIOS EXCLUIDOS:
+      - rckrdmrd@gmail.com (usuario de pruebas del owner)
+      - ju188an@gmail.com (registro incompleto)
+
+      CORRECCIONES APLICADAS:
+      - profiles.id = user_id (corregido para consistencia)
+      - tenant_id = GAMILIT Platform principal
+      - Preservación de UUIDs y hashes bcrypt originales
+
+      INICIALIZACIÓN AUTOMÁTICA:
+      - Trigger trg_initialize_user_stats se ejecuta al insertar profiles
+      - Crea automáticamente: user_stats, user_ranks, comodines_inventory, module_progress
+
+      2025-12-15 (Simplificación Estructura - SOLO DEFAULTS):
+      ========================================================
+      CAMBIOS MAYORES:
+      - 01-schools.sql: VACIADO - No más escuelas demo (Marie Curie, IEI removidas)
+      - 02-classrooms.sql: SIMPLIFICADO - Solo classroom DEFAULT
+      - 03-classroom-members.sql: SIMPLIFICADO - Todos los estudiantes → DEFAULT
+      - 08-assign-admin-schools.sql: EXPANDIDO - Asigna TODOS los usuarios a escuela default
+
+      DECISIÓN DE DISEÑO:
+      - Solo 1 escuela (Sistema - Por Asignar)
+      - Solo 1 classroom (Sin Asignar - Aula Default)
+      - Trigger trg_assign_default_classroom asigna automáticamente
+      - Admin crea entidades adicionales desde UI
+
+      ENTIDADES ELIMINADAS:
+      - Escuela Primaria Marie Curie (CDMX)
+      - Instituto de Educación Integral (Guadalajara)
+      - Aulas demo: 5to A, 5to B, 6to A, Aula Pruebas, Parent Portal Demo
+
+      CORRECCIÓN MENOR:
+      - enrollment_method: 'auto_assignment' → 'admin_add' (constraint fix)
+
+      2025-12-15 (Flujo Usuarios - Tech-Leader):
+      - Agregado 00-schools-default.sql (Escuela Sistema - Por Asignar)
+      - Agregado 08-assign-admin-schools.sql (Asignar escuela a usuarios)
+      - Modificado 02-classrooms.sql (classroom default → escuela sistema)
+
+      2025-12-14 (Validación Automatizada):
+      - Corregido 04-friendships.sql (v1.2 - ajustado a DDL actual)
+      - Movido 05-profiles-demo.sql a _deprecated/ (requiere auth.users)
+      - Total seeds activos: 49 PROD, 50 DEV
+      - Paridad script vs filesystem: 100%
+
+      2025-12-14: AUDIT-DB-001 - P0 Seeds críticos agregados:
+      - 07-user_roles.sql (8 roles)
+      - 10-mission_templates.sql (11 templates)
+      - 11-module_dependencies.sql (6 dependencias)
+      - 12-taxonomies.sql (4 taxonomías)
+      - 02-marie_curie_content.sql (6 artículos)
+
       2025-11-23: Actualizado tras corrección ADR-010.
-      Módulo 1: 5 ejercicios (validado correcto)
-      Módulo 2: 5 ejercicios (validado correcto)
-      Módulo 3: 5 ejercicios (ejercicio 3.5 agregado)
-      Módulo 4: 5 ejercicios (validado correcto)
-      Módulo 5: 3 ejercicios (corrección según DocumentoDeDiseño v6.4)
       Total ejercicios: 23 según DocumentoDeDiseño v6.4
 
   produccion:
     ubicacion: apps/database/seeds/prod/
-    total_archivos: 33
+    total_archivos: 49  # ✅ Actualizado 2025-12-14
     estado: production-ready
     completitud: 100%
-    ultima_actualizacion: '2025-11-11'
+    ultima_actualizacion: '2025-12-14'
 
     schemas:
       # ===========================================================================
@@ -48,16 +107,16 @@ seeds_inventory:
             estado: activo
 
       # ===========================================================================
-      # AUTH (Base Supabase)
+      # AUTH (Base auth)
       # ===========================================================================
       auth:
-        archivos: 1
+        archivos: 2
         seeds:
           - nombre: 01-demo-users.sql
             descripcion: Usuarios de demostración y testing
             tablas:
               - users
-            registros_estimados: 5-10
+            registros_estimados: 3
             perfiles:
               - admin@gamilit.com
               - teacher@gamilit.com
@@ -65,11 +124,36 @@ seeds_inventory:
             dependencias: []
             estado: activo
 
+          - nombre: 02-production-users.sql
+            descripcion: Usuarios estudiantes registrados en producción
+            tablas:
+              - users
+            registros_estimados: 45
+            version: 3.0.0
+            fecha_actualizacion: '2025-12-18'
+            fuente: backup-prod/auth_users_2025-12-18.csv
+            notas: |
+              - 45 estudiantes reales de producción
+              - Excluido: rckrdmrd@gmail.com (usuario pruebas owner)
+              - Preserva UUIDs originales para integridad FK
+              - Preserva hashes bcrypt originales
+            lotes:
+              - fecha: 2025-11-18
+                cantidad: 13
+              - fecha: 2025-11-24
+                cantidad: 23
+              - fecha: 2025-11-25
+                cantidad: 6
+              - fecha: 2025-12-08/17
+                cantidad: 2
+            dependencias: []
+            estado: activo
+
       # ===========================================================================
       # AUTH MANAGEMENT
       # ===========================================================================
       auth_management:
-        archivos: 4
+        archivos: 7
         seeds:
           - nombre: 01-tenants.sql
             descripcion: Tenants (organizaciones)
@@ -106,26 +190,94 @@ seeds_inventory:
             estado: activo
 
           - nombre: 04-profiles-complete.sql
-            descripcion: Perfiles completos con relaciones
+            descripcion: Perfiles completos para usuarios de testing
             tablas:
               - profiles
-            registros_estimados: 22
+            registros_estimados: 3
             incluye:
-              - Estudiantes completos
-              - Profesores completos
-              - Administradores
-            alcance: teacher, student, admin SOLO (v2.3.x)
-            nota: NO incluye padres - Portal Padres = Extension EXT-010 (fuera de alcance)
+              - admin@gamilit.com
+              - teacher@gamilit.com
+              - student@gamilit.com
+            alcance: Usuarios de testing SOLO
             dependencias:
               - auth.users
               - auth_management.tenants
             estado: activo
 
+          - nombre: 06-profiles-production.sql
+            descripcion: Perfiles para usuarios de producción
+            tablas:
+              - profiles
+            registros_estimados: 45
+            version: 3.0.0
+            fecha_actualizacion: '2025-12-18'
+            fuente: backup-prod/profiles_2025-12-18.csv
+            notas: |
+              - 45 perfiles de estudiantes de producción
+              - Excluido: rckrdmrd@gmail.com (usuario pruebas owner)
+              - profiles.id = user_id para TODOS (corregido)
+              - tenant_id = GAMILIT Platform principal
+              - Trigger trg_initialize_user_stats crea user_stats, user_ranks, etc.
+            lotes:
+              - fecha: 2025-11-18
+                cantidad: 13
+              - fecha: 2025-11-24
+                cantidad: 23
+              - fecha: 2025-11-25
+                cantidad: 6
+              - fecha: 2025-12-08/17
+                cantidad: 3
+            dependencias:
+              - auth/02-production-users.sql
+              - auth_management.tenants
+            estado: activo
+
+          - nombre: 07-user_roles.sql
+            descripcion: Asignación de roles a usuarios (P0 AUDIT-DB-001)
+            tablas:
+              - user_roles
+            registros_estimados: 8
+            roles:
+              - 1 super_admin (admin@gamilit.com)
+              - 2 admin_teacher (teacher@gamilit.com, Laura Martínez)
+              - 5 student (estudiantes demo)
+            uuids: '10000001-0000-0000-0000-00000000000N'
+            dependencias:
+              - auth_management.profiles
+              - auth_management.tenants
+            estado: activo
+            audit: AUDIT-DB-001-P0
+            fecha_creacion: '2025-12-14'
+
+          - nombre: 08-assign-admin-schools.sql
+            descripcion: Asignación de escuela default a TODOS los usuarios
+            tablas:
+              - profiles (UPDATE)
+            registros_estimados: todos los usuarios sin school_id
+            version: 2.0.0
+            usuarios_afectados:
+              - TODOS los roles (super_admin, admin_teacher, student, parent)
+              - Cualquier usuario nuevo sin school_id
+            logica: |
+              UPDATE auth_management.profiles
+              SET school_id = (escuela SYSTEM-UNASSIGNED)
+              WHERE school_id IS NULL
+            dependencias:
+              - auth_management.profiles
+              - social_features.schools (00-schools-default.sql)
+            estado: activo
+            fecha_creacion: '2025-12-15'
+            fecha_actualizacion: '2025-12-15'
+            notas: |
+              v2.0 (2025-12-15): Expandido para asignar TODOS los usuarios.
+              Garantiza integridad referencial school_id.
+              Admin puede reasignar usuarios desde UI.
+
       # ===========================================================================
       # CONTENT MANAGEMENT
       # ===========================================================================
       content_management:
-        archivos: 1
+        archivos: 2
         seeds:
           - nombre: 01-default-templates.sql
             descripcion: Templates de contenido predeterminados
@@ -139,11 +291,30 @@ seeds_inventory:
             dependencias: []
             estado: activo
 
+          - nombre: 02-marie_curie_content.sql
+            descripcion: Contenido biográfico de Marie Curie (P0 AUDIT-DB-001)
+            tablas:
+              - marie_curie_content
+            registros_estimados: 6
+            articulos:
+              - Primeros Años en Polonia
+              - Llegada a París y la Sorbona
+              - Descubrimiento de la Radiactividad
+              - Premios Nobel
+              - Mujeres en la Ciencia
+              - Legado Científico
+            uuids: '50000001-0000-0000-0000-00000000000N'
+            dependencias:
+              - content_management.content_templates
+            estado: activo
+            audit: AUDIT-DB-001-P0
+            fecha_creacion: '2025-12-14'
+
       # ===========================================================================
       # EDUCATIONAL CONTENT ⭐ PRINCIPAL
       # ===========================================================================
       educational_content:
-        archivos: 8
+        archivos: 10
         total_ejercicios: 23
         modelo_datos: JSONB puro
         descripcion: Seeds completos de módulos y ejercicios (production-ready)
@@ -256,31 +427,36 @@ seeds_inventory:
               - referencia: commit 6962423 (2025-11-23)
 
           - nombre: 05-exercises-module4.sql
-            descripcion: Módulo 4 - Textos Digitales
+            descripcion: Módulo 4 - Lectura Digital y Multimodal (5 ejercicios oficiales)
             tablas:
               - exercises
-            registros: 9
-            lineas_codigo: 574
+            registros: 5
+            lineas_codigo: 407
+            referencia: DocumentoDeDiseño_Mecanicas_GAMILIT_v6_1.md líneas 782-965
             ejercicios:
-              - 4.1: Verificador de Fake News
-              - 4.2: Quiz TikTok
-              - 4.3: Navegación Hipertextual
-              - 4.4: Análisis de Memes
-              - 4.5: Infografía Interactiva
-              - 4.6: Email Formal
-              - 4.7: Chat Literario
-              - 4.8: Ensayo Argumentativo
-              - 4.9: Reseña Crítica
+              - 4.1: Verificador de Fake News (verificador_fake_news)
+              - 4.2: Infografía Interactiva (infografia_interactiva)
+              - 4.3: Quiz TikTok (quiz_tiktok)
+              - 4.4: Navegación Hipertextual (navegacion_hipertextual)
+              - 4.5: Análisis de Memes (analisis_memes)
             mecanicas:
               - verificador_fake_news
+              - infografia_interactiva
               - quiz_tiktok
               - navegacion_hipertextual
               - analisis_memes
-              - infografia_interactiva
-              - call_to_action
-              - debate_digital
-              - podcast_argumentativo
-              - analisis_fuentes
+            estructura_jsonb_navegacion_hipertextual:
+              nodes:
+                descripcion: "Array de nodos hipertextuales navegables"
+                estructura_nodo:
+                  id: "string - identificador único del nodo"
+                  title: "string - título del documento/sección"
+                  content: "string - contenido del nodo (texto con formato)"
+                  links: "array de {targetId, label} - enlaces a otros nodos"
+              startNodeId: "string - ID del nodo donde inicia el estudiante"
+              targetNodeId: "string - ID del nodo objetivo a alcanzar"
+              optimalPath: "array de strings - ruta óptima recomendada"
+              researchQuestion: "string - pregunta de investigación guía"
             dependencias:
               - educational_content.modules (MOD-04-DIGITAL)
             estado: activo
@@ -349,6 +525,49 @@ seeds_inventory:
             dependencias: []
             estado: activo
 
+          - nombre: 11-module_dependencies.sql
+            descripcion: Dependencias y prerrequisitos entre módulos (P0 AUDIT-DB-001)
+            tablas:
+              - module_dependencies
+            registros_estimados: 6
+            dependencias_modulo:
+              - MOD-02 requires MOD-01 (80%)
+              - MOD-03 requires MOD-02 (80%)
+              - MOD-04 requires MOD-01 (50%)
+              - MOD-04 recommends MOD-02 (60%)
+              - MOD-05 requires MOD-03 (80%)
+              - MOD-05 recommends MOD-04 (50%)
+            tipos_dependencia:
+              - required (4)
+              - recommended (2)
+            uuids: '30000001-0000-0000-0000-00000000000N'
+            dependencias:
+              - educational_content.modules
+            estado: activo
+            audit: AUDIT-DB-001-P0
+            fecha_creacion: '2025-12-14'
+
+          - nombre: 12-taxonomies.sql
+            descripcion: Taxonomías educativas para clasificación (P0 AUDIT-DB-001)
+            tablas:
+              - taxonomies
+            registros_estimados: 4
+            taxonomias:
+              - Bloom (cognitiva, 6 niveles)
+              - SOLO (estructural, 5 niveles)
+              - Webb DOK (profundidad, 4 niveles)
+              - GAMILIT (personalizada, 5 niveles)
+            tipos:
+              - bloom
+              - solo
+              - webb
+              - custom
+            uuids: '40000001-0000-0000-0000-00000000000N'
+            dependencias: []
+            estado: activo
+            audit: AUDIT-DB-001-P0
+            fecha_creacion: '2025-12-14'
+
         archivos_deprecated:
           - nombre: _deprecated/02-exercises-demo.sql
             razon: Migrado a 02-06 (2025-11-11)
@@ -367,7 +586,7 @@ seeds_inventory:
       # GAMIFICATION SYSTEM
       # ===========================================================================
       gamification_system:
-        archivos: 9
+        archivos: 10
         seeds:
           - nombre: 01-achievement_categories.sql
             descripcion: Categorías de logros
@@ -476,6 +695,41 @@ seeds_inventory:
               - auth.users
             estado: activo
 
+          - nombre: 10-mission_templates.sql
+            descripcion: Templates de misiones diarias/semanales/especiales (P0 AUDIT-DB-001)
+            tablas:
+              - mission_templates
+            registros_estimados: 11
+            templates:
+              daily:
+                - Calentamiento Científico (3 ejercicios)
+                - Mente Brillante (5 racha)
+                - Acumulador de Sabiduría (100 XP)
+                - Perfeccionista del Día (1 perfect)
+              weekly:
+                - Maratón de Conocimiento (15 ejercicios)
+                - Constancia Científica (5 días racha)
+                - Ascenso Semanal (500 XP)
+                - Explorador Curioso (3 módulos)
+                - Semana de Excelencia (5 perfectos)
+              special:
+                - Dominio del Módulo (completar módulo 80%)
+                - Estratega Sabio (3 comodines)
+            target_types:
+              - complete_exercises
+              - correct_streak
+              - earn_xp
+              - perfect_scores
+              - daily_streak
+              - explore_modules
+              - complete_modules
+              - use_comodines
+            uuids: '20000001-0000-0000-0000-00000000000N'
+            dependencias: []
+            estado: activo
+            audit: AUDIT-DB-001-P0
+            fecha_creacion: '2025-12-14'
+
       # ===========================================================================
       # LTI INTEGRATION
       # ===========================================================================
@@ -510,40 +764,102 @@ seeds_inventory:
             estado: activo
 
       # ===========================================================================
-      # SOCIAL FEATURES
+      # SOCIAL FEATURES (SIMPLIFICADO 2025-12-15)
       # ===========================================================================
       social_features:
-        archivos: 3
+        archivos: 4
+        version: 3.0.0
+        fecha_simplificacion: '2025-12-15'
+        nota_arquitectura: |
+          DECISIÓN DE DISEÑO (2025-12-15):
+          Solo entidades DEFAULT del sistema. El admin crea otras desde UI.
+          - 1 escuela (SYSTEM-UNASSIGNED)
+          - 1 classroom (DEFAULT)
+          - Trigger automático asigna estudiantes nuevos al DEFAULT
         seeds:
-          - nombre: 01-schools.sql
-            descripcion: Escuelas de demostración
+          - nombre: 00-schools-default.sql
+            descripcion: Escuela del sistema para usuarios pendientes de asignación
             tablas:
               - schools
-            registros: 2-3
+            registros: 1
+            version: 1.0.0
             escuelas:
-              - Colegio Demo
-              - Universidad Demo
-            dependencias: []
+              - name: Sistema - Por Asignar
+                code: SYSTEM-UNASSIGNED
+                uuid: '99999999-9999-9999-9999-999999999999'
+                is_default: true
+            dependencias:
+              - auth_management.tenants
             estado: activo
+            created: '2025-12-15'
+            notas: |
+              Escuela default ÚNICA del sistema.
+              Todos los usuarios se asignan aquí automáticamente.
+
+          - nombre: 01-schools.sql
+            descripcion: NO-OP - Solo verificación (escuelas demo removidas)
+            tablas:
+              - schools (solo verificación, sin INSERTs)
+            registros: 0
+            version: 3.0.0
+            escuelas_removidas:
+              - Escuela Primaria Marie Curie (CDMX)
+              - Instituto de Educación Integral (Guadalajara)
+            dependencias:
+              - 00-schools-default.sql
+            estado: activo
+            notas: |
+              Archivo sin INSERTs desde v3.0.
+              Las escuelas adicionales se crean desde UI por el admin.
 
           - nombre: 02-classrooms.sql
-            descripcion: Aulas de demostración
+            descripcion: SOLO classroom DEFAULT para asignación automática
             tablas:
               - classrooms
-            registros: 3-5
+            registros: 1
+            version: 3.0.0
+            classrooms:
+              - name: Sin Asignar - Aula Default
+                code: DEFAULT
+                uuid: '00000000-0000-0000-0000-000000000001'
+                school_code: SYSTEM-UNASSIGNED
+                is_default: true
+                metadata:
+                  is_default: true
+                  system_classroom: true
+                  auto_assignment: true
+            classrooms_removidos:
+              - 5to A - Comprensión Lectora (Marie Curie)
+              - 5to B - Lectura Digital (Marie Curie)
+              - 6to A - Producción de Textos (Marie Curie)
+              - Aula de Pruebas - Todos los Niveles (IEI)
+              - Demo Parent Portal - 4to A (IEI)
             dependencias:
-              - social_features.schools
+              - social_features.schools (SYSTEM-UNASSIGNED)
+              - auth_management.profiles (teacher default)
             estado: activo
+            notas: |
+              Solo classroom DEFAULT desde v3.0.
+              Los classrooms adicionales se crean desde UI por el admin.
 
           - nombre: 03-classroom-members.sql
-            descripcion: Miembros de aulas
+            descripcion: Asignar TODOS los estudiantes al classroom DEFAULT
             tablas:
               - classroom_members
-            registros: 10-20
+            registros: dinamico (todos los estudiantes)
+            version: 3.0.0
+            enrollment_method: admin_add
+            logica: |
+              INSERT SELECT de auth_management.profiles WHERE role='student'
+              Asigna automáticamente a classroom DEFAULT.
+              ON CONFLICT: actualiza metadata y updated_at.
             dependencias:
-              - social_features.classrooms
-              - auth.users
+              - social_features.classrooms (DEFAULT)
+              - auth_management.profiles (role='student')
             estado: activo
+            notas: |
+              Todos los estudiantes van al DEFAULT automáticamente.
+              El admin/teacher puede reasignarlos desde la UI.
 
       # ===========================================================================
       # SYSTEM CONFIGURATION
@@ -757,6 +1073,29 @@ seeds_inventory:
   # CHANGELOG
   # =============================================================================
   changelog:
+    - fecha: '2025-12-15'
+      version: 3.0.0
+      fase: Simplificación Estructura - Solo Defaults
+      cambios:
+        - social_features/01-schools.sql vaciado (escuelas demo removidas)
+        - social_features/02-classrooms.sql simplificado (solo DEFAULT)
+        - social_features/03-classroom-members.sql simplificado (todos → DEFAULT)
+        - auth_management/08-assign-admin-schools.sql expandido (TODOS usuarios)
+      entidades_eliminadas:
+        - Escuela Primaria Marie Curie (CDMX)
+        - Instituto de Educación Integral (Guadalajara)
+        - 5 aulas demo (5to A, 5to B, 6to A, Pruebas, Parent Portal)
+      decision_arquitectonica: |
+        Solo entidades DEFAULT del sistema. El admin crea otras desde UI.
+        Trigger trg_assign_default_classroom asigna automáticamente.
+      impacto: |
+        - 1 escuela (SYSTEM-UNASSIGNED) en lugar de 3
+        - 1 classroom (DEFAULT) en lugar de 6
+        - Todos los usuarios con school_id garantizado
+        - Integridad referencial mejorada
+      correcciones_menores:
+        - enrollment_method cambiado de 'auto_assignment' a 'admin_add'
+
     - fecha: '2025-11-21'
       version: 2.1.0
       fase: Alineación Módulo 3 con Doc v6.3

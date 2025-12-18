@@ -2,7 +2,7 @@
 
 **Carpeta:** `docs/QUICK-REFERENCE/`
 **Propósito:** Cheatsheets y guías rápidas para desarrolladores
-**Última actualización:** 2025-11-07
+**Última actualización:** 2025-12-18
 
 ---
 
@@ -29,7 +29,7 @@ Esta carpeta contiene **guías de referencia rápida** (cheatsheets) para tareas
 #### [API-CHEATSHEET.md](./API-CHEATSHEET.md)
 **Audiencia:** Backend y Frontend developers
 **Tiempo de lectura:** 10-15 minutos
-**Última actualización:** 2025-11-07
+**Última actualización:** 2025-12-18
 
 **Qué contiene:**
 - **177+ endpoints** organizados por módulo
@@ -59,7 +59,7 @@ Esta carpeta contiene **guías de referencia rápida** (cheatsheets) para tareas
 #### [DB-CHEATSHEET.md](./DB-CHEATSHEET.md)
 **Audiencia:** Backend developers, DBAs, Tech Leads
 **Tiempo de lectura:** 10-15 minutos
-**Última actualización:** 2025-11-07
+**Última actualización:** 2025-12-18
 
 **Qué contiene:**
 - **11 schemas, 44 tablas** con propósito de cada uno
@@ -92,7 +92,7 @@ Esta carpeta contiene **guías de referencia rápida** (cheatsheets) para tareas
 #### [_MAP.md](./_MAP.md)
 **Audiencia:** Agentes IA, Tech Leads
 **Tiempo de lectura:** 3 minutos
-**Última actualización:** 2025-11-07
+**Última actualización:** 2025-12-18
 
 **Qué contiene:**
 - Mapa de navegación de esta carpeta
@@ -457,6 +457,6 @@ Ejemplos prácticos con comandos/code
 
 ---
 
-**Última actualización:** 2025-11-07
+**Última actualización:** 2025-12-18
 **Versión:** 1.0
 **Método:** Sistema SIMCO - Fase 3 (Option A - Complete Content)

@@ -121,5 +121,5 @@ export class UpdateUserRankDto {
    */
   @IsOptional()
   @IsObject()
-    rank_metadata?: Record<string, any>;
+    rank_metadata?: Record<string, unknown>;
 }

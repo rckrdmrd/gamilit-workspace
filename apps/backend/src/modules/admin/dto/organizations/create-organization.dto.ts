@@ -91,7 +91,7 @@ export class CreateOrganizationDto {
   })
   @IsOptional()
   @IsObject()
-    settings?: Record<string, any>;
+    settings?: Record<string, unknown>;
 
   @ApiPropertyOptional({
     description: 'Organization metadata (JSONB)',
@@ -99,5 +99,5 @@ export class CreateOrganizationDto {
   })
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

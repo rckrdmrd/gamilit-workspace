@@ -84,14 +84,14 @@
 - Solo funciones utilitarias (`now_mexico()`, `update_updated_at()`)
 
 ### 1.10 Schema: auth (1 tabla)
-- `users` - Tabla de Supabase Auth (referenciada)
+- `users` - Tabla de autenticación estándar (referenciada)
 
 ---
 
 ## 2. Tablas Críticas por Funcionalidad
 
 ### Autenticación y Usuarios
-- `auth.users` (Supabase)
+- `auth.users` (sistema)
 - `auth_management.profiles`
 - `auth_management.user_sessions`
 

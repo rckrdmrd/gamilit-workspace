@@ -32,6 +32,7 @@ import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from '@/shared/guards/roles.guard';
 import { Roles } from '@/shared/decorators/roles.decorator';
 import { GamilityRoleEnum } from '@/shared/constants/enums.constants';
+import { AuthRequest } from '@shared/types';
 
 /**
  * ExerciseSubmissionController
@@ -298,7 +299,7 @@ export class ExerciseSubmissionController {
     description: 'Datos inválidos o respuestas incorrectas',
   })
   async submitExercise(
-  @Body() body: { userId: string; exerciseId: string; answers: object },
+  @Body() body: { userId: string; exerciseId: string; answers: Record<string, unknown> },
   ) {
     return this.submissionService.submitExercise(
       body.userId,
@@ -394,7 +395,7 @@ export class ExerciseSubmissionController {
   async gradeSubmission(
   @Param('id') id: string,
     @Body() gradeDto: GradeSubmissionDto,
-    @Request() req: any,
+    @Request() req: AuthRequest,
   ) {
     // P1-003 FIX: Pass manual grading data to service
     // If final_score is provided, use manual grading. Otherwise, use auto-grading.
@@ -478,8 +479,8 @@ export class ExerciseSubmissionController {
   })
   async provideFeedback(
   @Param('id') id: string,
-    @Body() body: { feedback: object },
-    @Request() req: any,
+    @Body() body: { feedback: Record<string, unknown> },
+    @Request() _req: any,
   ) {
     // req.user contains the authenticated teacher's data from JWT
     return this.submissionService.provideFeedback(id, body.feedback);
@@ -625,7 +626,7 @@ export class ExerciseSubmissionController {
     status: 403,
     description: 'Acceso denegado - Se requieren permisos de profesor',
   })
-  async findPendingReview(@Request() req: any) {
+  async findPendingReview(@Request() _req: any) {
     // req.user contains the authenticated teacher's data from JWT
     return this.submissionService.findPendingReview();
   }
@@ -749,7 +750,7 @@ export class ExerciseSubmissionController {
     description: 'Usuario o ejercicio no encontrado',
   })
   async autoSaveProgress(
-  @Request() req: any,
+  @Request() req: AuthRequest,
     @Param('exerciseId') exerciseId: string,
     @Body() dto: AutoSaveProgressDto,
   ) {
@@ -841,7 +842,7 @@ export class ExerciseSubmissionController {
     description: 'Usuario o ejercicio no existe en el sistema',
   })
   async getAutoSavedProgress(
-  @Request() req: any,
+  @Request() req: AuthRequest,
     @Param('exerciseId') exerciseId: string,
   ) {
     // Extraer userId del JWT

@@ -39,7 +39,7 @@ export class UserDetailsDto {
     last_sign_in_at?: Date;
 
   @Expose()
-    raw_user_meta_data!: Record<string, any>;
+    raw_user_meta_data!: Record<string, unknown>;
 
   @Expose()
     created_at!: Date;

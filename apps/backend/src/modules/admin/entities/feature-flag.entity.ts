@@ -101,7 +101,7 @@ export class FeatureFlag {
    * @example { "min_level": 5, "schools": ["uuid1", "uuid2"] }
    */
   @Column({ type: 'jsonb', default: {} })
-    target_conditions!: Record<string, any>;
+    target_conditions!: Record<string, unknown>;
 
   /**
    * Fecha y hora de inicio de la feature
@@ -122,7 +122,7 @@ export class FeatureFlag {
    * @example { "ab_test_group": "A", "tracking_id": "GA-123" }
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * ID del usuario que creó la feature flag

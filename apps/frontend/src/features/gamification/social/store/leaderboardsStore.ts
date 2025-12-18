@@ -42,17 +42,31 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
       }
 
       const { selectedPeriod } = get();
-
       let entries;
 
-      // Special handling for classroom leaderboard
+      // Get user info for school/friends leaderboards
+      const authStore = (await import('@/features/auth/store/authStore')).useAuthStore.getState();
+      const user = authStore.user;
+
       if (type === 'classroom') {
         if (!classroomId) {
           throw new Error('Classroom ID is required for classroom leaderboard');
         }
         entries = await getClassroomLeaderboard(classroomId);
+      } else if (type === 'school') {
+        // Get school ID from user profile
+        const schoolId = user?.schoolId;
+        if (!schoolId) {
+          throw new Error('No school ID available for this user');
+        }
+        entries = await getLeaderboard(type, selectedPeriod, 100, { schoolId });
+      } else if (type === 'friends') {
+        if (!user?.id) {
+          throw new Error('User ID required for friends leaderboard');
+        }
+        entries = await getLeaderboard(type, selectedPeriod, 100, { userId: user.id });
       } else {
-        // Fetch leaderboard data from API for other types
+        // Global leaderboard
         entries = await getLeaderboard(type, selectedPeriod);
       }
 
@@ -145,14 +159,29 @@ export const useLeaderboardsStore = create<LeaderboardsStore>((set, get) => ({
 
       let entries;
 
-      // Special handling for classroom leaderboard
+      // Get user info for school/friends leaderboards
+      const authStore = (await import('@/features/auth/store/authStore')).useAuthStore.getState();
+      const user = authStore.user;
+
       if (selectedType === 'classroom') {
         if (!classroomId) {
           throw new Error('Classroom ID is required for classroom leaderboard');
         }
         entries = await getClassroomLeaderboard(classroomId);
+      } else if (selectedType === 'school') {
+        // Get school ID from user profile
+        const schoolId = user?.schoolId;
+        if (!schoolId) {
+          throw new Error('No school ID available for this user');
+        }
+        entries = await getLeaderboard(selectedType, selectedPeriod, 100, { schoolId });
+      } else if (selectedType === 'friends') {
+        if (!user?.id) {
+          throw new Error('User ID required for friends leaderboard');
+        }
+        entries = await getLeaderboard(selectedType, selectedPeriod, 100, { userId: user.id });
       } else {
-        // Fetch fresh data from API
+        // Global leaderboard
         entries = await getLeaderboard(selectedType, selectedPeriod);
       }
 

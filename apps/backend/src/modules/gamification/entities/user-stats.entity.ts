@@ -7,6 +7,8 @@ import {
   Index,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@shared/constants/database.constants';
+// CORR-P1-006: Import MayaRank para alinear tipo con DDL
+import { MayaRank } from '@shared/constants/enums.constants';
 
 /**
  * UserStats Entity (gamification_system.user_stats)
@@ -80,9 +82,17 @@ export class UserStats {
   /**
    * Rango Maya actual del usuario
    * Valores: 'Ajaw', 'Nacom', 'Ah K'in', 'Halach Uinic', 'K'uk'ulkan'
+   *
+   * CORR-P1-006: Cambiado de 'text' a 'enum' para alinear con DDL
+   * DDL define como: gamification_system.maya_rank ENUM
    */
-  @Column({ type: 'text', default: 'Ajaw' })
-    current_rank!: string;
+  @Column({
+    type: 'enum',
+    enum: MayaRank,
+    enumName: 'maya_rank',
+    default: MayaRank.AJAW,
+  })
+    current_rank!: MayaRank;
 
   /**
    * Progreso hacia el siguiente rango (0-100%)
@@ -292,7 +302,7 @@ export class UserStats {
    * Metadatos adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Fecha y hora de creación del registro

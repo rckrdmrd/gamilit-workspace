@@ -9,6 +9,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNotificationsStore } from '@/features/notifications/store/notificationsStore';
+import { usePushNotifications } from '@/features/notifications/hooks/usePushNotifications';
 
 // Device type icons
 const DEVICE_TYPE_ICONS: Record<string, string> = {
@@ -28,6 +29,14 @@ export const DeviceManagementSection: React.FC = () => {
   const { devices, devicesLoading, fetchDevices, updateDeviceName, deleteDevice } =
     useNotificationsStore();
 
+  const {
+    isSupported,
+    permissionStatus,
+    isRegistering,
+    error: pushError,
+    enablePushNotifications,
+  } = usePushNotifications();
+
   const [editingDeviceId, setEditingDeviceId] = useState<string | null>(null);
   const [editedName, setEditedName] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
@@ -39,6 +48,15 @@ export const DeviceManagementSection: React.FC = () => {
   useEffect(() => {
     fetchDevices();
   }, [fetchDevices]);
+
+  // Handle register device
+  const handleRegisterDevice = async () => {
+    const success = await enablePushNotifications();
+    if (success) {
+      // Reload devices to show the new one
+      await fetchDevices();
+    }
+  };
 
   // Start editing device name
   const handleStartEdit = (deviceId: string, currentName: string) => {
@@ -135,6 +153,50 @@ export const DeviceManagementSection: React.FC = () => {
         </p>
       </div>
 
+      {/* Push Status Info */}
+      {!isSupported && (
+        <div
+          style={{
+            padding: '1rem',
+            backgroundColor: '#ffebee',
+            borderRadius: '8px',
+            marginBottom: '1rem',
+            color: '#c62828',
+          }}
+        >
+          ⚠️ Tu navegador no soporta notificaciones push
+        </div>
+      )}
+
+      {pushError && (
+        <div
+          style={{
+            padding: '1rem',
+            backgroundColor: '#ffebee',
+            borderRadius: '8px',
+            marginBottom: '1rem',
+            color: '#c62828',
+          }}
+        >
+          ❌ {pushError}
+        </div>
+      )}
+
+      {permissionStatus === 'denied' && (
+        <div
+          style={{
+            padding: '1rem',
+            backgroundColor: '#fff3e0',
+            borderRadius: '8px',
+            marginBottom: '1rem',
+            color: '#e65100',
+          }}
+        >
+          ⚠️ Has bloqueado las notificaciones. Para activarlas, ve a la configuración de tu
+          navegador y permite las notificaciones para este sitio.
+        </div>
+      )}
+
       {/* Devices List */}
       {devices.length === 0 ? (
         <div
@@ -148,8 +210,29 @@ export const DeviceManagementSection: React.FC = () => {
           <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📱</div>
           <h3>No tienes dispositivos registrados</h3>
           <p style={{ color: '#666', marginTop: '0.5rem', marginBottom: '1.5rem' }}>
-            Registra un dispositivo para recibir notificaciones push en tu móvil o navegador
+            Registra este dispositivo para recibir notificaciones push en tu navegador
           </p>
+
+          {isSupported && permissionStatus !== 'denied' && (
+            <button
+              onClick={handleRegisterDevice}
+              disabled={isRegistering}
+              style={{
+                padding: '0.75rem 1.5rem',
+                backgroundColor: isRegistering ? '#9e9e9e' : '#4caf50',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: isRegistering ? 'not-allowed' : 'pointer',
+                fontSize: '1rem',
+                fontWeight: 'bold',
+                marginBottom: '1rem',
+              }}
+            >
+              {isRegistering ? '⏳ Registrando...' : '🔔 Activar Notificaciones Push'}
+            </button>
+          )}
+
           <button
             onClick={() => setShowRegisterInfo(!showRegisterInfo)}
             style={{
@@ -161,9 +244,10 @@ export const DeviceManagementSection: React.FC = () => {
               cursor: 'pointer',
               fontSize: '1rem',
               fontWeight: 'bold',
+              marginLeft: isSupported ? '0.5rem' : '0',
             }}
           >
-            ¿Cómo registro un dispositivo?
+            ℹ️ ¿Qué son las notificaciones push?
           </button>
 
           {showRegisterInfo && (
@@ -176,16 +260,32 @@ export const DeviceManagementSection: React.FC = () => {
                 textAlign: 'left',
               }}
             >
-              <h4>📱 Registro de Dispositivos Push</h4>
-              <p style={{ marginTop: '1rem', color: '#666' }}>
-                El registro de dispositivos para notificaciones push está en desarrollo. Esta
-                funcionalidad estará disponible próximamente.
-              </p>
+              <h4>📱 Notificaciones Push</h4>
               <p style={{ marginTop: '1rem', color: '#666' }}>
                 <strong>¿Qué son las notificaciones push?</strong>
                 <br />
-                Son notificaciones que recibes en tu dispositivo móvil o navegador, incluso cuando
-                no estás usando la aplicación.
+                Son notificaciones que recibes en tu navegador o dispositivo móvil, incluso cuando
+                no estás usando la aplicación activamente.
+              </p>
+              <p style={{ marginTop: '1rem', color: '#666' }}>
+                <strong>¿Qué recibirás?</strong>
+                <br />
+                • Nuevos logros desbloqueados
+                <br />
+                • Promociones de rango
+                <br />
+                • Misiones completadas
+                <br />
+                • Solicitudes de amistad
+                <br />
+                • Tareas asignadas por profesores
+                <br />• Y más...
+              </p>
+              <p style={{ marginTop: '1rem', color: '#666' }}>
+                <strong>¿Es seguro?</strong>
+                <br />
+                Sí, usamos Web Push API nativo del navegador, un estándar seguro y confiable. Puedes
+                desactivar las notificaciones en cualquier momento.
               </p>
             </div>
           )}
@@ -208,10 +308,23 @@ export const DeviceManagementSection: React.FC = () => {
                   opacity: isBeingDeleted ? 0.5 : 1,
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                  }}
+                >
                   {/* Device Info */}
                   <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '1rem',
+                        marginBottom: '0.75rem',
+                      }}
+                    >
                       <span style={{ fontSize: '2rem' }}>
                         {DEVICE_TYPE_ICONS[device.deviceType] || '📱'}
                       </span>
@@ -284,7 +397,9 @@ export const DeviceManagementSection: React.FC = () => {
                                 </span>
                               )}
                             </div>
-                            <div style={{ fontSize: '0.875rem', color: '#666', marginTop: '0.25rem' }}>
+                            <div
+                              style={{ fontSize: '0.875rem', color: '#666', marginTop: '0.25rem' }}
+                            >
                               {DEVICE_TYPE_LABELS[device.deviceType] || device.deviceType}
                             </div>
                           </div>
@@ -365,15 +480,42 @@ export const DeviceManagementSection: React.FC = () => {
           }}
         >
           <h4>📱 Registrar Nuevo Dispositivo</h4>
-          <p style={{ marginTop: '0.5rem', color: '#666', fontSize: '0.875rem' }}>
-            El registro de dispositivos adicionales para notificaciones push está en desarrollo.
-            Esta funcionalidad estará disponible próximamente.
+          <p
+            style={{
+              marginTop: '0.5rem',
+              color: '#666',
+              fontSize: '0.875rem',
+              marginBottom: '1rem',
+            }}
+          >
+            ¿Usas varios dispositivos? Registra este navegador o dispositivo para recibir
+            notificaciones push.
           </p>
-          <p style={{ marginTop: '0.75rem', color: '#666', fontSize: '0.875rem' }}>
-            <strong>Nota:</strong> Las notificaciones push requieren que el servidor tenga
-            configurado Firebase Cloud Messaging (FCM). Esta funcionalidad se completará en una fase
-            posterior.
-          </p>
+
+          {isSupported && permissionStatus !== 'denied' ? (
+            <button
+              onClick={handleRegisterDevice}
+              disabled={isRegistering}
+              style={{
+                padding: '0.75rem 1.5rem',
+                backgroundColor: isRegistering ? '#9e9e9e' : '#2196f3',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: isRegistering ? 'not-allowed' : 'pointer',
+                fontSize: '0.875rem',
+                fontWeight: 'bold',
+              }}
+            >
+              {isRegistering ? '⏳ Registrando...' : '➕ Registrar Este Dispositivo'}
+            </button>
+          ) : (
+            <p style={{ marginTop: '0.75rem', color: '#666', fontSize: '0.875rem' }}>
+              {!isSupported && '⚠️ Tu navegador no soporta notificaciones push.'}
+              {permissionStatus === 'denied' &&
+                '⚠️ Has bloqueado las notificaciones en este navegador.'}
+            </p>
+          )}
         </div>
       )}
 

@@ -6,7 +6,7 @@
 
 import { Injectable, NotFoundException, Inject, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, MoreThan, Between } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
@@ -54,9 +54,9 @@ export class AnalyticsService {
     private readonly classroomRepository: Repository<Classroom>,
     @InjectRepository(ClassroomMember, 'social')
     private readonly classroomMemberRepository: Repository<ClassroomMember>,
-    @InjectRepository(Assignment, 'content')
+    @InjectRepository(Assignment, 'educational')
     private readonly assignmentRepository: Repository<Assignment>,
-    @InjectRepository(AssignmentSubmission, 'content')
+    @InjectRepository(AssignmentSubmission, 'educational')
     private readonly assignmentSubmissionRepository: Repository<AssignmentSubmission>,
     @InjectRepository(UserStats, 'gamification')
     private readonly userStatsRepository: Repository<UserStats>,
@@ -71,7 +71,7 @@ export class AnalyticsService {
   /**
    * Get comprehensive classroom analytics
    */
-  async getClassroomAnalytics(query: GetAnalyticsQueryDto) {
+  async getClassroomAnalytics(_query: GetAnalyticsQueryDto) {
     const students = await this.profileRepository.find({
       where: { role: GamilityRoleEnum.STUDENT },
     });
@@ -195,7 +195,7 @@ export class AnalyticsService {
 
     // Calculate metrics
     const totalStudents = members.length;
-    const activeStudents = members.filter((m) => {
+    const activeStudents = members.filter((_m) => {
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       // Would need last_activity_at field on ClassroomMember
@@ -1189,7 +1189,7 @@ export class AnalyticsService {
   private calculatePredictions(
     stats: any,
     overall_score: number,
-    risk_level: 'low' | 'medium' | 'high',
+    _risk_level: 'low' | 'medium' | 'high',
   ): { completion_probability: number; dropout_risk: number } {
     // Simple heuristic-based predictions
     let completion_probability = 0.5; // Default 50%

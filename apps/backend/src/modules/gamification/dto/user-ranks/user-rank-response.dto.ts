@@ -75,7 +75,7 @@ export class UserRankResponseDto {
     is_current!: boolean;
 
   @Expose()
-    rank_metadata!: Record<string, any>;
+    rank_metadata!: Record<string, unknown>;
 
   // =====================================================
   // AUDIT

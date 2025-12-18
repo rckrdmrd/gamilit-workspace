@@ -5,7 +5,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In, IsNull, Not } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Classroom } from '@modules/social/entities/classroom.entity';
 import { TeacherClassroom, TeacherClassroomRole } from '@modules/social/entities/teacher-classroom.entity';
 import { Profile } from '@modules/auth/entities/profile.entity';

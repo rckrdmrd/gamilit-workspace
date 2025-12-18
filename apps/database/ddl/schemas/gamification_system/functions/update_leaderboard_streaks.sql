@@ -5,6 +5,11 @@
 --   - p_user_id: UUID - ID del usuario
 -- Returns: TABLE (current_streak, longest_streak, streak_maintained, bonus_xp)
 -- Created: 2025-11-02
+-- Updated: 2025-12-15 (CORR-001: Alineación con columnas reales de user_stats DDL)
+-- =====================================================
+-- CORRECCIONES 2025-12-15:
+-- - last_activity_date → last_activity_at::DATE (columna real es timestamp)
+-- - longest_streak → max_streak (columna real es max_streak)
 -- =====================================================
 
 CREATE OR REPLACE FUNCTION gamification_system.update_leaderboard_streaks(
@@ -24,10 +29,11 @@ DECLARE
     v_bonus_xp INTEGER := 0;
 BEGIN
     -- Obtener información de racha actual
+    -- NOTA: last_activity_at es TIMESTAMP WITH TIME ZONE, se castea a DATE
     SELECT
-        COALESCE(last_activity_date, CURRENT_DATE),
+        COALESCE(us.last_activity_at::DATE, CURRENT_DATE),
         COALESCE(us.current_streak, 0),
-        COALESCE(us.longest_streak, 0)
+        COALESCE(us.max_streak, 0)
     INTO v_last_activity, v_current_streak, v_longest_streak
     FROM gamification_system.user_stats us
     WHERE us.user_id = p_user_id;
@@ -52,8 +58,8 @@ BEGIN
         UPDATE gamification_system.user_stats
         SET
             current_streak = v_current_streak,
-            longest_streak = GREATEST(longest_streak, v_current_streak),
-            last_activity_date = CURRENT_DATE,
+            max_streak = GREATEST(max_streak, v_current_streak),
+            last_activity_at = NOW(),
             total_xp = total_xp + v_bonus_xp,
             updated_at = NOW()
         WHERE user_id = p_user_id;
@@ -67,7 +73,7 @@ BEGIN
         UPDATE gamification_system.user_stats
         SET
             current_streak = 1,
-            last_activity_date = CURRENT_DATE,
+            last_activity_at = NOW(),
             updated_at = NOW()
         WHERE user_id = p_user_id;
     END IF;

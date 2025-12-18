@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Image, Plus, Trash2, Save } from 'lucide-react';
+import { Image, Plus, Trash2, Save, Send, Loader2, CheckCircle } from 'lucide-react';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
@@ -11,13 +11,25 @@ import {
   saveProgress,
   FeedbackData,
 } from '@shared/components/mechanics/mechanicsTypes';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
+interface ProgressData {
+  progress: {
+    currentStep: number;
+    totalSteps: number;
+    score: number;
+    hintsUsed: number;
+    timeSpent: number;
+  };
+  answers: Record<string, unknown>;
+}
 
 interface ExerciseProps {
   exerciseId: string;
-  userId: string;
+  userId?: string;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
-  onProgressUpdate?: (progress: number) => void;
+  onProgressUpdate?: (data: ProgressData) => void;
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
   exercise?: AnalisisMemesData;
@@ -55,6 +67,33 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [timeSpent, setTimeSpent] = useState(0);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const { submit, isSubmitting } = useExerciseSubmission(exerciseId || '', {
+    onSuccess: (result) => {
+      setIsSubmitted(true);
+      const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+      setFeedback({
+        type: 'success',
+        title: '¡Ejercicio Enviado!',
+        message: 'Tu trabajo ha sido enviado para revisión por el docente.',
+        score: result.score,
+        xpEarned: result.rewards?.xp || 0,
+        mlCoinsEarned: result.rewards?.mlCoins || 0,
+      });
+      setShowFeedback(true);
+      onComplete?.(result.score, timeSpent);
+    },
+    onError: (err) => {
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: err?.message || 'Hubo un problema. Intenta de nuevo.',
+        score: 0,
+      });
+      setShowFeedback(true);
+    },
+  });
 
   const actionsRef = useRef<{
     handleReset?: () => void;
@@ -94,11 +133,27 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
 
   useEffect(() => {
     const progress = calculateProgress();
+    const minAnnotations = 3;
 
     const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     setTimeSpent(elapsed);
 
-    onProgressUpdate?.(progress);
+    onProgressUpdate?.({
+      progress: {
+        currentStep: annotations.length,
+        totalSteps: minAnnotations,
+        score: Math.round(progress),
+        hintsUsed: 0,
+        timeSpent: elapsed,
+      },
+      answers: {
+        annotations: annotations.map((a) => ({
+          memeId: exercise.id,
+          category: a.category,
+          text: a.text,
+        })),
+      },
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [annotations, onProgressUpdate, startTime]);
 
@@ -178,6 +233,18 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
     setShowFeedback(true);
   };
 
+  // Handle submit
+  const handleSubmit = () => {
+    if (!exerciseId || isSubmitting || isSubmitted) return;
+
+    submit({
+      memeId: exercise.id,
+      annotations,
+      analysisText: annotations.map((a) => `${a.category}: ${a.text}`).join('\n'),
+      selectedElements: annotations.map((a) => a.category),
+    });
+  };
+
   // Attach actions to ref
 
   useEffect(() => {
@@ -199,12 +266,12 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
   return (
     <>
       <DetectiveCard variant="default" padding="lg" className="mb-6">
-        <div className="mb-6 rounded-detective bg-gradient-to-r from-detective-orange/10 to-detective-blue/10 p-6">
+        <div className="mb-6 rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
           <div className="mb-4 flex items-center gap-3">
-            <Image className="h-8 w-8 text-detective-orange" />
-            <h1 className="text-detective-3xl font-bold text-detective-text">{exercise.title}</h1>
+            <Image className="h-8 w-8" />
+            <h2 className="text-detective-2xl font-bold">{exercise.title}</h2>
           </div>
-          <p className="mb-4 text-detective-text-secondary">{exercise.description}</p>
+          <p className="mb-4 opacity-90">{exercise.description}</p>
           <div className="flex flex-wrap gap-3">
             <DetectiveButton
               variant={isAdding ? 'secondary' : 'gold'}
@@ -337,6 +404,28 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
           <DetectiveButton variant="gold" onClick={handleReset}>
             Reiniciar
           </DetectiveButton>
+          <DetectiveButton
+            variant="primary"
+            onClick={handleSubmit}
+            disabled={annotations.length < 3 || isSubmitting || isSubmitted}
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Enviando...
+              </>
+            ) : isSubmitted ? (
+              <>
+                <CheckCircle className="h-5 w-5" />
+                Enviado
+              </>
+            ) : (
+              <>
+                <Send className="h-5 w-5" />
+                Enviar Respuestas
+              </>
+            )}
+          </DetectiveButton>
         </div>
       </DetectiveCard>
 
@@ -357,3 +446,5 @@ export const AnalisisMemesExercise: React.FC<ExerciseProps> = ({
     </>
   );
 };
+
+export default AnalisisMemesExercise;

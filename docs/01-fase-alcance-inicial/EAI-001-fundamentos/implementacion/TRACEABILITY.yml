@@ -117,7 +117,7 @@ implementation:
     schemas:
       - name: auth
         path: apps/database/ddl/schemas/auth/
-        description: Schema de autenticación Supabase
+        description: Schema de autenticación base
 
       - name: auth_management
         path: apps/database/ddl/schemas/auth_management/
@@ -145,7 +145,7 @@ implementation:
         schema: auth
         file: apps/database/ddl/schemas/auth/tables/01-users.sql
         lines: 72
-        description: Tabla principal de usuarios (Supabase Auth)
+        description: Tabla principal de usuarios (autenticación estándar)
         rf: RF-AUTH-001
         key_columns:
           - name: id

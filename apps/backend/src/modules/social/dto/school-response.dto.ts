@@ -127,7 +127,7 @@ export class SchoolResponseDto {
    * Configuraciones adicionales
    */
   @Expose()
-    settings!: Record<string, any>;
+    settings!: Record<string, unknown>;
 
   /**
    * Capacidad máxima de estudiantes
@@ -169,7 +169,7 @@ export class SchoolResponseDto {
    * Metadatos adicionales
    */
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Fecha de creación

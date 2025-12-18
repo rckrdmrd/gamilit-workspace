@@ -315,8 +315,8 @@ limpieza:
   archivos_fuera_lugar: 0
   archivos_temporales: 0
   backups_sin_archivar: 0
-  espacio_liberado_mb: 21.6
-  ultima_limpieza: "2025-11-23"
+  espacio_liberado_mb: 617.6  # 21.6 + 596 (limpieza global 2025-12-08)
+  ultima_limpieza: "2025-12-08"
   estado: "✅ LIMPIO"
 
 alineacion:
@@ -377,6 +377,7 @@ _Ninguno actualmente_
 
 | Fecha | Actividad | Tipo | Estado | Impacto |
 |-------|-----------|------|--------|---------|
+| 2025-12-08 | WS-002 | Limpieza Global | ✅ Completado | Alto (~596 MB liberados) |
 | 2025-11-23 | WS-001 | Limpieza | ✅ Completado | Alto (21.6 MB liberados) |
 
 ---
@@ -441,6 +442,6 @@ _Nota: Scripts pendientes de creación_
 
 ---
 
-**Última actualización:** 2025-11-23 21:30 (WS-001 completado)
+**Última actualización:** 2025-12-08 (WS-002 completado - Limpieza Global del Workspace)
 **Próxima revisión:** 2025-11-30
 **Cadencia de actualización:** Después de cada actividad de gobernanza

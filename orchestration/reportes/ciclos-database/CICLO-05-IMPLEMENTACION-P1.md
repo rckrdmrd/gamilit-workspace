@@ -429,7 +429,7 @@ El Microciclo 5 implementó **278 índices** (100%) utilizando 10 subagentes esp
 
 - ✅ PostgreSQL 12+
 - ✅ PostgreSQL 14+ (recomendado para mejor performance de GIN)
-- ✅ Supabase compatible
+- ✅ patrón estándar
 - ✅ IF NOT EXISTS (idempotente)
 - ✅ COMMENT ON INDEX (documentación)
 

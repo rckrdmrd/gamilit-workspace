@@ -440,7 +440,7 @@ async createUser(dto: CreateUserDto): Promise<UserResponseDto> {
   const password = dto.password || this.generateRandomPassword();
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // 3. Crear usuario en auth.users (Supabase table)
+  // 3. Crear usuario en auth.users (tabla auth)
   const user = this.usersRepo.create({
     email: dto.email,
     encrypted_password: hashedPassword,

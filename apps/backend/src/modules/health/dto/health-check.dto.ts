@@ -10,7 +10,7 @@ export interface HealthCheckDetailDto {
   status: HealthStatus;
   responseTime: number;
   message: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
 }
 
 export interface HealthCheckDto {
@@ -52,7 +52,7 @@ export class HealthCheckDetailSchema {
     required: false,
     example: { tables: 122 },
   })
-    details?: Record<string, any>;
+    details?: Record<string, unknown>;
 }
 
 export class HealthCheckSchema {
@@ -96,7 +96,7 @@ export class HealthCheckSchema {
       },
     },
   })
-    checks!: Record<string, any>;
+    checks!: Record<string, unknown>;
 
   @ApiProperty({
     description: 'Application version',

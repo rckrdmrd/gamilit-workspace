@@ -10,16 +10,21 @@ import {
   AchievementCategory,
   MLCoinsTransaction,
   Mission,
+  MissionTemplate,
   ClassroomMission,
   ComodinesInventory,
   LeaderboardMetadata,
   ActiveBoost,
   InventoryTransaction,
+  ShopCategory,
+  ShopItem,
+  UserPurchase,
 } from './entities';
 
 // External entities
 import { Profile } from '@/modules/auth/entities';
 import { Notification } from '@/modules/notifications/entities/notification.entity';
+import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
 
 // Services
 import {
@@ -29,8 +34,10 @@ import {
   RanksService,
   LeaderboardService,
   MissionsService,
+  MissionTemplatesService,
   ClassroomMissionsService,
   ComodinesService,
+  ShopService,
 } from './services';
 
 // Controllers
@@ -41,12 +48,13 @@ import {
   RanksController,
   LeaderboardController,
   MissionsController,
+  MissionTemplatesController,
   ClassroomMissionsController,
   ComodinesController,
+  ShopController,
 } from './controllers';
 
 // Constants
-import { DB_SCHEMAS } from '@/shared/constants';
 
 /**
  * GamificationModule
@@ -80,17 +88,23 @@ import { DB_SCHEMAS } from '@/shared/constants';
         AchievementCategory,
         MLCoinsTransaction,
         Mission,
+        MissionTemplate,
         ClassroomMission,
         ComodinesInventory,
         Notification,
         LeaderboardMetadata,
         ActiveBoost,
         InventoryTransaction,
+        ShopCategory,
+        ShopItem,
+        UserPurchase,
       ],
       'gamification',
     ),
     // Connection 'auth' for Profile entity (needed by LeaderboardService)
     TypeOrmModule.forFeature([Profile], 'auth'),
+    // Connection 'progress' for ExerciseSubmission entity (needed by MissionsService for streak calculation)
+    TypeOrmModule.forFeature([ExerciseSubmission], 'progress'),
   ],
   providers: [
     UserStatsService,
@@ -99,8 +113,10 @@ import { DB_SCHEMAS } from '@/shared/constants';
     RanksService,
     LeaderboardService,
     MissionsService,
+    MissionTemplatesService,
     ClassroomMissionsService,
     ComodinesService,
+    ShopService,
   ],
   controllers: [
     UserStatsController,
@@ -109,8 +125,10 @@ import { DB_SCHEMAS } from '@/shared/constants';
     RanksController,
     LeaderboardController,
     MissionsController,
+    MissionTemplatesController,
     ClassroomMissionsController,
     ComodinesController,
+    ShopController,
   ],
   exports: [
     UserStatsService,
@@ -119,8 +137,10 @@ import { DB_SCHEMAS } from '@/shared/constants';
     RanksService,
     LeaderboardService,
     MissionsService,
+    MissionTemplatesService,
     ClassroomMissionsService,
     ComodinesService,
+    ShopService,
   ],
 })
 export class GamificationModule {}

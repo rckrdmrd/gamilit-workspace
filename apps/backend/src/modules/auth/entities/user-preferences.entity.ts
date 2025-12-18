@@ -117,7 +117,7 @@ export class UserPreferences {
    */
   @Column({ type: 'jsonb', default: {} })
   @Index('idx_user_preferences_preferences', { synchronize: false }) // GIN index creado en DDL
-    preferences!: Record<string, any>;
+    preferences!: Record<string, unknown>;
 
   /**
    * Fecha de creación

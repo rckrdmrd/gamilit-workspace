@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThan, LessThan } from 'typeorm';
 import { AuthAttempt } from '../entities';
 import { CreateAuthAttemptDto } from '../dto';
-import { DB_SCHEMAS } from '@/shared/constants';
 
 /**
  * SecurityService

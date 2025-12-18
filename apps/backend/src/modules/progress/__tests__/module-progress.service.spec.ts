@@ -9,7 +9,7 @@ import { ProgressStatusEnum } from '@shared/constants/enums.constants';
 
 describe('ModuleProgressService', () => {
   let service: ModuleProgressService;
-  let repository: Repository<ModuleProgress>;
+  let _repository: Repository<ModuleProgress>;
 
   const mockRepository = {
     find: jest.fn(),

@@ -896,7 +896,7 @@ gaps:
     severidad: alta  # alta/media/baja
     area: autenticacion
     descripcion: "Documentación no especifica estrategia multi-tenant"
-    evidencia_referencia: "references/proyecto-erp/docs/architecture/multi-tenancy.md"
+    evidencia_referencia: "docs/97-adr/ADR-XXX-multi-tenancy.md (crear basado en análisis)"
     evidencia_actual: "docs/architecture/auth.md (incompleta)"
     impacto: "Implementaciones futuras pueden ser inconsistentes"
     recomendacion: "Agregar ADR sobre estrategia multi-tenant basada en referencias"
@@ -911,7 +911,7 @@ gaps:
     severidad: media
     area: nomenclatura
     descripcion: "Nomenclatura de DTOs difiere de referencia validada"
-    evidencia_referencia: "references/proyecto-erp/backend/dtos/"
+    evidencia_referencia: "apps/backend/src/modules/*/dto/ (patrones existentes)"
     evidencia_actual: "orchestration/directivas/ESTANDARES-NOMENCLATURA.md"
     impacto: "Inconsistencia con mejores prácticas del ecosistema"
     recomendacion: "Actualizar estándares para alinear con convenciones de referencia"

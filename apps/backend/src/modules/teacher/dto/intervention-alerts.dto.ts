@@ -188,7 +188,7 @@ export class InterventionAlertResponseDto {
     required: false,
     example: { days_inactive: 7, last_activity: '2025-11-17' },
   })
-    metrics?: Record<string, any> | null;
+    metrics?: Record<string, unknown> | null;
 
   @ApiProperty({ enum: AlertStatus, description: 'Estado actual de la alerta' })
     status!: AlertStatus;

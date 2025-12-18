@@ -3,7 +3,7 @@
 ## 1. Visión General del Proyecto
 GAMILIT es una plataforma educativa gamificada.
 - **Estado:** 87.5% completado (Fase 3/Extensiones).
-- **Stack:** NestJS (Backend), React+Vite (Frontend), PostgreSQL/Supabase (DB).
+- **Stack:** NestJS (Backend), React+Vite (Frontend), PostgreSQL (DB).
 - **Documentación:** Altamente estructurada en `docs/` y `orchestration/`.
 
 ## 2. Estructura de Directorios Clave

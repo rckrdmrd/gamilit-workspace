@@ -1,4 +1,4 @@
-import { Expose, Type } from 'class-transformer';
+import { Expose } from 'class-transformer';
 import { GamilityRoleEnum, UserStatusEnum } from '@/shared/constants/enums.constants';
 import { UserPreferencesSchema } from './user-preferences.schema';
 
@@ -87,7 +87,7 @@ export class ProfileResponseDto {
     last_activity_at!: Date | null;
 
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   @Expose()
     created_at!: Date;

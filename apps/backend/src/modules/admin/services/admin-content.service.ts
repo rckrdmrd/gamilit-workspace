@@ -577,7 +577,7 @@ export class AdminContentService {
   private createSnapshot(
     content: any,
     content_type: string,
-  ): Record<string, any> {
+  ): Record<string, unknown> {
     switch (content_type) {
       case 'module':
         return {
@@ -804,7 +804,7 @@ export class AdminContentService {
             });
             content_title = template?.name;
           }
-        } catch (error) {
+        } catch {
           // Content might have been deleted, just leave title as undefined
           content_title = undefined;
         }

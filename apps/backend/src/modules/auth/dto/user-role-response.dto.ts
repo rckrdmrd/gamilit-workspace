@@ -38,7 +38,7 @@ export class UserRoleResponseDto {
    * Permisos específicos asociados a este rol
    */
   @Expose()
-    permissions!: Record<string, any>;
+    permissions!: Record<string, unknown>;
 
   /**
    * ID del usuario (Profile) que asignó este rol (nullable)
@@ -80,7 +80,7 @@ export class UserRoleResponseDto {
    * Metadata adicional del user_role
    */
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Fecha de creación del registro

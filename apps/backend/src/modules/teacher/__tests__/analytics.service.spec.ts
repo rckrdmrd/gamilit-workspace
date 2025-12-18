@@ -7,7 +7,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Repository } from 'typeorm';
 import { AnalyticsService } from '../services/analytics.service';
 import { StudentProgressService } from '../services/student-progress.service';
 import { ExerciseSubmission } from '@/modules/progress/entities/exercise-submission.entity';
@@ -19,7 +18,7 @@ import { AssignmentSubmission } from '@/modules/assignments/entities/assignment-
 
 describe('AnalyticsService', () => {
   let service: AnalyticsService;
-  let studentProgressService: StudentProgressService;
+  let _studentProgressService: StudentProgressService;
 
   // Mock repositories
   const mockSubmissionRepository = {

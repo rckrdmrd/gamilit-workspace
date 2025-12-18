@@ -60,7 +60,7 @@ export class MaintenanceOperationResultDto {
     description: 'Additional metadata about the operation',
     example: { execution_time_ms: 1523 },
   })
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }
 
 /**

@@ -1,7 +1,7 @@
 # Sistema de Almacenamiento (Storage)
 
 **Schema:** `storage`
-**Propósito:** Integración con sistema de almacenamiento de archivos (Supabase Storage)
+**Propósito:** Integración con sistema de almacenamiento de archivos (Storage compatible)
 **Estado:** ✅ Implementado
 **Última actualización:** 2025-11-08
 
@@ -9,7 +9,7 @@
 
 ## 📋 Descripción
 
-El schema `storage` proporciona tipos y estructuras para la integración con el sistema de almacenamiento de archivos de Supabase Storage, utilizado para gestionar archivos multimedia de la plataforma (imágenes, videos, documentos, etc.).
+El schema `storage` proporciona tipos y estructuras para la integración con el sistema de almacenamiento de archivos de Storage compatible, utilizado para gestionar archivos multimedia de la plataforma (imágenes, videos, documentos, etc.).
 
 ---
 
@@ -32,9 +32,9 @@ Este enum probablemente se utiliza en el backend para categorizar y gestionar di
 
 ## 🔗 Integración
 
-### Supabase Storage
+### Storage compatible
 
-El schema `storage` está diseñado para integrarse con [Supabase Storage](https://supabase.com/docs/guides/storage), que proporciona:
+El schema `storage` está diseñado para integrarse con un sistema de almacenamiento S3-compatible, que proporciona:
 
 - Almacenamiento de archivos con CDN global
 - Transformaciones de imágenes automáticas
@@ -102,7 +102,7 @@ enum BucketType {
 class StorageService {
   async uploadFile(file: File, bucketType: BucketType) {
     const bucket = this.getBucketName(bucketType);
-    // Upload to Supabase Storage
+    // Upload to Storage compatible
   }
 }
 ```
@@ -176,7 +176,7 @@ Para el bucket ANALYTICS:
 
 - **Schema:** `apps/database/ddl/schemas/storage/`
 - **Enum:** `apps/database/ddl/schemas/storage/enums/buckettype.sql`
-- **Supabase Storage Docs:** https://supabase.com/docs/guides/storage
+- **Storage compatible Docs:** S3/Storage compatible
 - **Backend (estimado):** `apps/backend/src/modules/storage/`
 
 ---

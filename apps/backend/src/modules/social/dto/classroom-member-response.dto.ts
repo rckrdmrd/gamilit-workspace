@@ -87,7 +87,7 @@ export class ClassroomMemberResponseDto {
    * Permisos especiales del estudiante
    */
   @Expose()
-    permissions!: Record<string, any>;
+    permissions!: Record<string, unknown>;
 
   /**
    * Notas del profesor
@@ -99,13 +99,13 @@ export class ClassroomMemberResponseDto {
    * Información de contacto de padres
    */
   @Expose()
-    parent_contact_info!: Record<string, any>;
+    parent_contact_info!: Record<string, unknown>;
 
   /**
    * Metadatos adicionales
    */
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Membresía activa

@@ -5,9 +5,7 @@ import * as crypto from 'crypto';
 import { User, EmailVerificationToken } from '../entities';
 import {
   VerifyEmailDto,
-  CreateEmailVerificationTokenDto,
-} from '../dto';
-import { DB_SCHEMAS } from '@/shared/constants';
+  } from '../dto';
 
 /**
  * EmailVerificationService

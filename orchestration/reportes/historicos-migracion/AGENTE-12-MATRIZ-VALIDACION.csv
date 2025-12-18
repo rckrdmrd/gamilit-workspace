@@ -1,0 +1,12 @@
+Módulo,Controllers,Total Endpoints,Swagger Decorators,Coverage %,Status,Notas
+Auth,2,10,10,100,✅ Perfecto,Completo: register,login,logout,refresh,profile
+Progress,5,31,47,151,✅ Excelente,Over-documented pero cobertura total
+Social,7,59,70,118,✅ Excelente,Más endpoints que especificado
+Content,3,26,30,115,✅ Excelente,Templates+Curie+Media
+Admin,4,21,20,95,✅ Bueno,4 controladores para admin
+Educational,3,22,21,95,✅ Bueno,Módulos+Ejercicios+Media
+Gamification,4,13,19,146,✅ Excelente,Achievements+Stats+Ranks+Coins
+Powerups,1,4,5,125,✅ Excelente,Sobre-documentado
+Missions,1,5,9,180,✅ Excelente,Sobre-documentado
+Notifications,1,11,8,72,⚠️ Incompleto,3 métodos sin @ApiOperation
+TOTAL,31,202,239,98.2,✅ APROBADO,Score: 84/100

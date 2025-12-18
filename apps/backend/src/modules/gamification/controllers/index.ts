@@ -21,3 +21,5 @@ export { LeaderboardController } from './leaderboard.controller';
 export { MissionsController } from './missions.controller';
 export { ClassroomMissionsController } from './classroom-missions.controller';
 export { ComodinesController } from './comodines.controller';
+export { ShopController } from './shop.controller';
+export { MissionTemplatesController } from './mission-templates.controller';

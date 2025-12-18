@@ -86,7 +86,7 @@ Generación de reporte consolidado con:
 ### Schemas Principales
 
 ```
-auth                          # Supabase-compatible authentication
+auth                          # patrón estándar authentication
 auth_management               # GAMILIT custom profiles, tenants, roles
 educational_content           # Modules, lessons, exercises, assignments
 progress_tracking             # Submissions, completions, mastery
@@ -102,9 +102,9 @@ admin_dashboard               # Bulk operations, feature flags, settings
 
 **Patrón identificado:** El sistema utiliza 2 schemas de autenticación:
 
-1. **`auth` schema** (Supabase-compatible)
+1. **`auth` schema** (patrón estándar)
    - Tabla principal: `auth.users` (18 columnas)
-   - Propósito: Autenticación Supabase estándar
+   - Propósito: Autenticación estándar del sistema
    - FK references: 48 tablas referencian `auth.users(id)`
 
 2. **`auth_management` schema** (GAMILIT custom)
@@ -812,7 +812,7 @@ COMMENT ON TABLE audit_logging.user_activity IS
 **Patrón Dual Schema Validado:**
 
 ```
-✅ auth.users (Supabase-compatible)
+✅ auth.users (patrón estándar)
    ↑
    └── 48 FK references (user_stats, friendships, bulk_operations, ...)
 

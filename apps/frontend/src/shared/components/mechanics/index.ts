@@ -21,4 +21,6 @@ export type { HintSystemProps } from './HintSystem';
 export { ExerciseContainer } from './ExerciseContainer';
 export type { ExerciseContainerProps } from './ExerciseContainer';
 
+export { default as ExerciseContentRenderer } from './ExerciseContentRenderer';
+
 export * from './mechanicsTypes';

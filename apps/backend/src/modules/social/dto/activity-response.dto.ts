@@ -43,7 +43,7 @@ export class ActivityResponseDto {
    * Metadatos adicionales
    */
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Visibilidad de la actividad

@@ -55,13 +55,13 @@ export class RubricResponseDto {
    * Criterios de evaluación en formato JSONB
    */
   @Expose()
-    criteria!: Record<string, any>;
+    criteria!: Record<string, unknown>;
 
   /**
    * Escala de puntuación
    */
   @Expose()
-    scoring_scale!: Record<string, any>;
+    scoring_scale!: Record<string, unknown>;
 
   /**
    * Peso porcentual de la rúbrica
@@ -105,7 +105,7 @@ export class RubricResponseDto {
    * Metadatos adicionales
    */
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * ID del usuario que creó la rúbrica

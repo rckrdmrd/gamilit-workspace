@@ -65,7 +65,7 @@ PRIORIDAD P2 (Media):    2/4   → 50%  🟡
 **Última actualización:** 2025-11-11 (Corrección P0)
 
 **Database:**
-- ✅ Schema `auth` (Supabase compatible)
+- ✅ Schema `auth` (patrón estándar)
 - ✅ Schema `auth_management` (15 tablas)
 - ✅ ENUM `user_role`: {student, teacher, admin_teacher, admin_school, super_admin}
 - ✅ Funciones: assign_role_to_user(), get_user_role(), verify_user_permission()

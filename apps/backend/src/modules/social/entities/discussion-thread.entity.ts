@@ -10,7 +10,6 @@ import {
   Check,
 } from 'typeorm';
 import { DB_TABLES } from '@/shared/constants/database.constants';
-import { User } from '@/modules/auth/entities/user.entity';
 import { Classroom } from './classroom.entity';
 import { Team } from './team.entity';
 

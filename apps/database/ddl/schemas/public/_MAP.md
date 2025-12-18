@@ -19,7 +19,7 @@ El schema `public` está reservado para objetos del core de PostgreSQL y extensi
 
 Todos los objetos propios de Gamilit deben ubicarse en schemas específicos según su responsabilidad:
 
-- **Supabase Core**: `auth`, `storage`
+- **Auth Core**: `auth`, `storage`
 - **Application**: `auth_management`, `system_configuration`
 - **Domain**: `educational_content`, `gamification_system`, `progress_tracking`, `social_features`, `content_management`
 - **Integration/Admin**: `audit_logging`, `admin_dashboard`, `lti_integration`

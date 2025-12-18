@@ -7,7 +7,7 @@ import { CreateAuthAttemptDto } from '../dto';
 
 describe('SecurityService', () => {
   let service: SecurityService;
-  let attemptRepository: Repository<AuthAttempt>;
+  let _attemptRepository: Repository<AuthAttempt>;
 
   const mockAttemptRepository = {
     create: jest.fn(),
@@ -229,7 +229,7 @@ describe('SecurityService', () => {
     it('should calculate correct time window', async () => {
       // Arrange
       const minutes = 15;
-      const expectedTime = new Date(Date.now() - minutes * 60 * 1000);
+      const _expectedTime = new Date(Date.now() - minutes * 60 * 1000);
       mockAttemptRepository.count.mockResolvedValue(1);
 
       // Act

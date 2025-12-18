@@ -8,8 +8,7 @@ import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { Shuffle } from 'lucide-react';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
-import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
+import { useInvalidateDashboard } from '@/shared/hooks';
 
 // Re-export TimelineExerciseProps for use by parent components
 export type { TimelineExerciseProps };
@@ -21,8 +20,7 @@ export const TimelineExercise: React.FC<TimelineExerciseProps> = ({
   actionsRef,
 }) => {
   const { user } = useAuth();
-  const { fetchUserProgress } = useRanksStore();
-  const { fetchBalance } = useEconomyStore();
+  const { syncAndInvalidate } = useInvalidateDashboard();
   const [events, setEvents] = useState<TimelineEventType[]>(
     [...exercise.events].sort(() => Math.random() - 0.5),
   );
@@ -102,8 +100,7 @@ export const TimelineExercise: React.FC<TimelineExerciseProps> = ({
       setShowFeedback(true);
 
       // Sync stores with backend (rewards already calculated and saved by backend)
-      await fetchUserProgress();
-      await fetchBalance();
+      await syncAndInvalidate();
 
       console.log('✅ [Timeline] Submission successful:', {
         attemptId: response.attemptId,

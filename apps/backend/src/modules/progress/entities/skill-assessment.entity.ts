@@ -97,7 +97,7 @@ export class SkillAssessment {
    * }
    */
   @Column({ type: 'jsonb', nullable: true })
-    evidence?: Record<string, any>;
+    evidence?: Record<string, unknown>;
 
   /**
    * Fecha y hora de creación

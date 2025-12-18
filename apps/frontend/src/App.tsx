@@ -38,11 +38,13 @@ import TeacherGamificationPage from '@/apps/teacher/pages/TeacherGamificationPag
 import TeacherMonitoringPage from '@/apps/teacher/pages/TeacherMonitoringPage';
 import TeacherProgressPage from '@/apps/teacher/pages/TeacherProgressPage';
 import TeacherReportsPage from '@/apps/teacher/pages/TeacherReportsPage';
-import TeacherResourcesPage from '@/apps/teacher/pages/TeacherResourcesPage';
+// FASE 6A: TeacherResourcesPage removido - ruta redirigida a dashboard
+// import TeacherResourcesPage from '@/apps/teacher/pages/TeacherResourcesPage';
 import TeacherClassesPage from '@/apps/teacher/pages/TeacherClassesPage';
 import TeacherStudentsPage from '@/apps/teacher/pages/TeacherStudentsPage';
 import TeacherExerciseResponsesPage from '@/apps/teacher/pages/TeacherExerciseResponsesPage';
 import TeacherSettingsPage from '@/apps/teacher/pages/TeacherSettingsPage';
+import { ReviewPanelPage } from '@/apps/teacher/pages/ReviewPanel';
 
 // Admin Portal Pages
 import AdminDashboardPage from '@/apps/admin/pages/AdminDashboardPage';
@@ -220,14 +222,8 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/teacher/resources"
-            element={
-              <ProtectedRoute>
-                <TeacherResourcesPage />
-              </ProtectedRoute>
-            }
-          />
+          {/* FASE 6A: /teacher/resources redirige a dashboard (placeholder sin funcionalidad) */}
+          <Route path="/teacher/resources" element={<Navigate to="/teacher/dashboard" replace />} />
           <Route
             path="/teacher/classes"
             element={
@@ -249,6 +245,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <TeacherSettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          {/* Manual Review Panel for Modules 4 & 5 */}
+          <Route
+            path="/teacher/reviews"
+            element={
+              <ProtectedRoute>
+                <ReviewPanelPage />
               </ProtectedRoute>
             }
           />

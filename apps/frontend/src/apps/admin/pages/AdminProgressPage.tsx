@@ -19,7 +19,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@features/auth/hooks/useAuth';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
-import { useProgress } from '../hooks/useProgress';
+import { useProgress, useClassroomsList } from '../hooks';
 
 // Components
 import { OverviewView } from '../components/progress/OverviewView';
@@ -36,27 +36,23 @@ import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 // Types
 type ViewType = 'overview' | 'classrooms' | 'students';
 
-// Mock data for classrooms - in production, this would come from an API
-const MOCK_CLASSROOMS = [
-  { id: '550e8400-e29b-41d4-a716-446655440001', name: 'Matemáticas 1A' },
-  { id: '550e8400-e29b-41d4-a716-446655440002', name: 'Matemáticas 1B' },
-  { id: '550e8400-e29b-41d4-a716-446655440003', name: 'Matemáticas 2A' },
-];
-
 /**
  * AdminProgressPage Component
  */
 export default function AdminProgressPage() {
   const { user, logout } = useAuth();
 
+  // Fetch classrooms from API (replaces classrooms)
+  const { classrooms, isLoading: _classroomsLoading } = useClassroomsList();
+
   // Gamification data
   const { gamificationData } = useUserGamification(user?.id);
   const displayGamificationData = gamificationData || {
-    userId: user?.id || 'mock-admin-id',
+    userId: user?.id || '',
     level: 1,
     totalXP: 0,
     mlCoins: 0,
-    rank: 'Novato',
+    rank: 'Admin',
     achievements: [],
   };
 
@@ -162,7 +158,7 @@ export default function AdminProgressPage() {
     const crumbs = ['Progreso'];
 
     if (activeView === 'classrooms' && selectedClassroomId) {
-      const classroom = MOCK_CLASSROOMS.find((c) => c.id === selectedClassroomId);
+      const classroom = classrooms.find((c) => c.id === selectedClassroomId);
       if (classroom) {
         crumbs.push(classroom.name);
       }
@@ -256,7 +252,7 @@ export default function AdminProgressPage() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {activeView === 'classrooms' && (
               <ClassroomSelector
-                classrooms={MOCK_CLASSROOMS}
+                classrooms={classrooms}
                 selectedClassroomId={selectedClassroomId}
                 onSelect={handleClassroomSelect}
                 isLoading={isLoading}
@@ -266,7 +262,7 @@ export default function AdminProgressPage() {
             {activeView === 'students' && (
               <>
                 <ClassroomSelector
-                  classrooms={MOCK_CLASSROOMS}
+                  classrooms={classrooms}
                   selectedClassroomId={selectedClassroomId}
                   onSelect={handleClassroomSelect}
                   isLoading={isLoading}

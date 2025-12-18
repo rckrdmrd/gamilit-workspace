@@ -60,7 +60,7 @@ export class CreateActivityDto {
    */
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 
   /**
    * Visibilidad de la actividad (opcional, por defecto true)

@@ -7,6 +7,7 @@
 --   - p_scope: VARCHAR(20) - Alcance del leaderboard (GLOBAL, CLASSROOM) default 'GLOBAL'
 -- Returns: TABLE (user_position, total_participants, user_score, top_score, percentile)
 -- Created: 2025-11-02
+-- CORRECTED (2025-12-18): missions_completed -> modules_completed (alineado con user_stats entity)
 -- =====================================================
 
 CREATE OR REPLACE FUNCTION gamification_system.update_leaderboard_global(
@@ -43,17 +44,18 @@ BEGIN
         FROM gamification_system.user_stats;
 
     ELSIF p_leaderboard_type = 'MISSIONS' THEN
+        -- NOTA: Usando modules_completed ya que missions_completed no existe en user_stats
         SELECT COUNT(*) + 1 INTO v_position
         FROM gamification_system.user_stats
-        WHERE missions_completed > (
-            SELECT COALESCE(missions_completed, 0) FROM gamification_system.user_stats WHERE user_id = p_user_id
+        WHERE modules_completed > (
+            SELECT COALESCE(modules_completed, 0) FROM gamification_system.user_stats WHERE user_id = p_user_id
         );
 
-        SELECT COALESCE(missions_completed, 0) INTO v_user_score
+        SELECT COALESCE(modules_completed, 0) INTO v_user_score
         FROM gamification_system.user_stats
         WHERE user_id = p_user_id;
 
-        SELECT COALESCE(MAX(missions_completed), 0) INTO v_top_score
+        SELECT COALESCE(MAX(modules_completed), 0) INTO v_top_score
         FROM gamification_system.user_stats;
     END IF;
 

@@ -251,5 +251,5 @@ export interface MLPredictionResponse {
   /**
    * Metadata adicional
    */
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }

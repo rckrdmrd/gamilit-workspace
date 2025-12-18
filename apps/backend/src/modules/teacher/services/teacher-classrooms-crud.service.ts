@@ -12,8 +12,8 @@ import {
   BadRequestException,
   ConflictException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, In } from 'typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
+import { Repository, In, DataSource } from 'typeorm';
 import { Classroom } from '@modules/social/entities/classroom.entity';
 import {
   TeacherClassroom,
@@ -26,6 +26,7 @@ import { ModuleProgress } from '@modules/progress/entities/module-progress.entit
 import { ExerciseSubmission } from '@modules/progress/entities/exercise-submission.entity';
 import { Module } from '@modules/educational/entities/module.entity';
 import { Exercise } from '@modules/educational/entities/exercise.entity';
+import { UserStats } from '@modules/gamification/entities/user-stats.entity';
 import {
   CreateTeacherClassroomDto,
   UpdateTeacherClassroomDto,
@@ -86,6 +87,14 @@ export class TeacherClassroomsCrudService {
 
     @InjectRepository(Exercise, 'educational')
     private readonly exerciseRepo: Repository<Exercise>,
+
+    @InjectRepository(UserStats, 'gamification')
+    private readonly userStatsRepo: Repository<UserStats>,
+
+    // FIX-2025-12-18: Inyectar DataSource para raw SQL en cross-schema joins
+    // Ver: orchestration/reportes/ANALISIS-ROOT-CAUSE-TYPEORM-CROSSSCHEMA-2025-12-18.md
+    @InjectDataSource('progress')
+    private readonly dataSource: DataSource,
   ) {}
 
   // ============================================================================
@@ -234,6 +243,12 @@ export class TeacherClassroomsCrudService {
   /**
    * Obtiene estudiantes de un classroom
    *
+   * FIX-2025-12-18: Corregido para que búsqueda se aplique ANTES de paginación
+   * PROBLEMA ANTERIOR: La búsqueda se aplicaba en memoria DESPUÉS de paginar,
+   * causando que usuarios en página 2 no aparezcan al buscar desde página 1
+   * SOLUCIÓN: Usar raw SQL para aplicar filtros ANTES de paginar, luego calcular total correcto
+   * Ver: orchestration/reportes/PLAN-CORRECCION-TEACHER-MONITORING-2025-12-18.md
+   *
    * @param classroomId - ID del classroom
    * @param teacherId - ID del teacher (para validación)
    * @param query - Parámetros de búsqueda y filtrado
@@ -250,39 +265,20 @@ export class TeacherClassroomsCrudService {
     // Validar acceso
     await this.validateTeacherAccess(teacherId, classroomId);
 
-    const { page = 1, limit = 20, search, status, sort_by = 'name', sort_order = 'asc' } = query;
+    const { page = 1, limit = 100, search, status, sort_by = 'name', sort_order = 'asc' } = query;
 
-    // Query base de miembros del classroom
-    const queryBuilder = this.classroomMemberRepo
-      .createQueryBuilder('cm')
-      .where('cm.classroom_id = :classroomId', { classroomId });
-
-    // Filtro de estado
-    if (status && status !== 'all') {
-      queryBuilder.andWhere('cm.status = :status', { status });
-    }
-
-    // Total de registros (antes de aplicar paginación)
-    const total = await queryBuilder.getCount();
-
-    // Paginación
+    // FIX: Obtener estudiantes con búsqueda aplicada ANTES de paginación usando raw SQL
     const skip = (page - 1) * limit;
-    queryBuilder.skip(skip).take(limit);
+    const { students: members, total } = await this.getStudentsWithSearch(
+      classroomId,
+      search,
+      status,
+      skip,
+      limit,
+    );
 
-    // Ordenamiento
-    const orderDirection = sort_order.toUpperCase() as 'ASC' | 'DESC';
-    if (sort_by === 'last_activity') {
-      queryBuilder.orderBy('cm.updated_at', orderDirection);
-    }
-
-    // Ejecutar query
-    const members = await queryBuilder.getMany();
-
-    // Obtener IDs de estudiantes
-    const studentIds = members.map((m) => m.student_id);
-
-    if (studentIds.length === 0) {
-      // No hay estudiantes en el classroom
+    if (members.length === 0) {
+      // No hay estudiantes que coincidan con los filtros
       const totalPages = Math.ceil(total / limit);
       return {
         data: [],
@@ -297,40 +293,58 @@ export class TeacherClassroomsCrudService {
       };
     }
 
-    // Obtener información de profiles
-    const profiles = await this.profileRepo.find({
-      where: { user_id: In(studentIds) },
-    });
+    // Obtener IDs de estudiantes
+    const studentIds = members.map((m) => m.student_id);
 
-    // Obtener información de users
-    const users = await this.userRepo.find({
-      where: { id: In(studentIds) },
-    });
+    // Obtener datos en paralelo: progreso, gamificacion y actividad actual
+    const [progressData, userStatsData, currentActivityData] = await Promise.all([
+      this.getStudentsProgress(studentIds),
+      this.getStudentsUserStats(studentIds),
+      this.getStudentsCurrentActivity(studentIds),
+    ]);
 
-    // Obtener progreso de estudiantes (si aplica)
-    const progressData = await this.getStudentsProgress(studentIds);
-
-    // Mapear a DTO
+    // Mapear a DTO con todos los datos (members ya incluye profile y user info)
     let data = members.map((member) => {
-      const profile = profiles.find((p) => p.user_id === member.student_id);
-      const user = users.find((u) => u.id === member.student_id);
       const progress = progressData.get(member.student_id);
+      const userStats = userStatsData.get(member.student_id);
+      const currentActivity = currentActivityData.get(member.student_id);
 
-      return this.mapToStudentInClassroomDto(member, profile, user, progress);
+      // Reconstruir Profile y User desde los datos del raw SQL
+      // FIX: Convertir null a undefined para compatibilidad con TypeScript
+      const profile: Partial<Profile> = {
+        user_id: member.student_id,
+        first_name: member.first_name ?? undefined,
+        last_name: member.last_name ?? undefined,
+        avatar_url: member.avatar_url ?? undefined,
+      };
+
+      const user: Partial<User> = {
+        id: member.student_id,
+        email: member.email ?? undefined,
+      };
+
+      // Reconstruir ClassroomMember desde los datos del raw SQL
+      const classroomMember: Partial<ClassroomMember> = {
+        student_id: member.student_id,
+        classroom_id: classroomId,
+        status: member.status,
+        enrollment_date: member.enrollment_date,
+        attendance_percentage: member.attendance_percentage ?? undefined,
+        teacher_notes: member.teacher_notes ?? undefined,
+        updated_at: member.updated_at,
+      };
+
+      return this.mapToStudentInClassroomDto(
+        classroomMember as ClassroomMember,
+        profile as Profile,
+        user as User,
+        progress,
+        userStats,
+        currentActivity,
+      );
     });
 
-    // Aplicar filtro de búsqueda en memoria (después de mapear los datos)
-    if (search) {
-      const searchLower = search.toLowerCase();
-      data = data.filter((student) => {
-        return (
-          student.full_name.toLowerCase().includes(searchLower) ||
-          (student.email && student.email.toLowerCase().includes(searchLower))
-        );
-      });
-    }
-
-    // Aplicar ordenamiento en memoria si es por nombre o progreso
+    // Aplicar ordenamiento en memoria (después de tener todos los datos calculados)
     if (sort_by === 'name') {
       data.sort((a, b) => {
         const comparison = a.full_name.localeCompare(b.full_name);
@@ -350,9 +364,16 @@ export class TeacherClassroomsCrudService {
         const comparison = aScore - bScore;
         return sort_order === 'asc' ? comparison : -comparison;
       });
+    } else if (sort_by === 'last_activity') {
+      data.sort((a, b) => {
+        const aDate = a.last_activity ? new Date(a.last_activity).getTime() : 0;
+        const bDate = b.last_activity ? new Date(b.last_activity).getTime() : 0;
+        const comparison = aDate - bDate;
+        return sort_order === 'asc' ? comparison : -comparison;
+      });
     }
 
-    // Calcular paginación
+    // Calcular paginación con el total correcto (después de aplicar búsqueda)
     const totalPages = Math.ceil(total / limit);
 
     return {
@@ -610,9 +631,9 @@ export class TeacherClassroomsCrudService {
         .setParameter('completed', 'completed')
         .getRawOne();
 
-      const totalStudentsInModule = parseInt(moduleProgressData?.total_students || '0');
+      const _totalStudentsInModule = parseInt(moduleProgressData?.total_students || '0');
       const completedCount = parseInt(moduleProgressData?.completed_count || '0');
-      const avgProgress = parseFloat(moduleProgressData?.avg_progress || '0');
+      const _avgProgress = parseFloat(moduleProgressData?.avg_progress || '0');
       const avgScore = parseFloat(moduleProgressData?.avg_score || '0');
       const avgTimeMinutes = parseFloat(moduleProgressData?.avg_time_minutes || '0');
 
@@ -681,9 +702,14 @@ export class TeacherClassroomsCrudService {
       throw new BadRequestException('Teacher profile or tenant_id not found');
     }
 
-    // Crear classroom
+    // Desestructurar DTO para manejar settings separadamente
+    // settings en DTO es ClassroomSettingsDto, pero Entity espera Record<string, unknown>
+    const { settings, ...classroomData } = dto;
+
+    // Crear classroom con conversión de tipos correcta
     const classroom = this.classroomRepo.create({
-      ...dto,
+      ...classroomData,
+      settings: (settings as Record<string, unknown>) ?? {},
       teacher_id: teacherId,
       tenant_id: teacherProfile.tenant_id,
       current_students_count: 0,
@@ -822,6 +848,98 @@ export class TeacherClassroomsCrudService {
   // ============================================================================
 
   /**
+   * Obtiene estudiantes con búsqueda aplicada ANTES de paginación (raw SQL)
+   *
+   * FIX-2025-12-18: Nuevo método que usa raw SQL para cross-schema joins eficientes
+   * TypeORM QueryBuilder NO soporta cross-schema joins correctamente
+   * Ver: orchestration/reportes/ANALISIS-ROOT-CAUSE-TYPEORM-CROSSSCHEMA-2025-12-18.md
+   *
+   * @private
+   * @param classroomId - ID del classroom
+   * @param search - Término de búsqueda (nombre o email)
+   * @param status - Filtro de estado (active, inactive, suspended, all)
+   * @param skip - Número de registros a omitir (paginación)
+   * @param limit - Número de registros a retornar
+   * @returns Estudiantes filtrados y total de registros (después de aplicar búsqueda)
+   */
+  private async getStudentsWithSearch(
+    classroomId: string,
+    search: string | undefined,
+    status: string | undefined,
+    skip: number,
+    limit: number,
+  ): Promise<{
+    students: Array<{
+      student_id: string;
+      status: string;
+      enrollment_date: Date;
+      attendance_percentage: number | null;
+      teacher_notes: string | null;
+      updated_at: Date;
+      first_name: string | null;
+      last_name: string | null;
+      avatar_url: string | null;
+      email: string | null;
+    }>;
+    total: number;
+  }> {
+    // Query para contar total (con filtros aplicados)
+    const countSql = `
+      SELECT COUNT(*) as total
+      FROM social_features.classroom_members cm
+      LEFT JOIN auth_management.profiles p ON p.user_id = cm.student_id
+      LEFT JOIN auth.users u ON u.id = cm.student_id
+      WHERE cm.classroom_id = $1
+        AND ($2::text IS NULL OR $2 = ''
+             OR LOWER(COALESCE(p.first_name, '') || ' ' || COALESCE(p.last_name, '')) LIKE LOWER('%' || $2 || '%')
+             OR LOWER(COALESCE(u.email, '')) LIKE LOWER('%' || $2 || '%'))
+        AND ($3::text IS NULL OR $3 = 'all' OR cm.status = $3)
+    `;
+
+    // Query para obtener estudiantes (con filtros y paginación)
+    const studentsSql = `
+      SELECT
+        cm.student_id,
+        cm.status,
+        cm.enrollment_date,
+        cm.attendance_percentage,
+        cm.teacher_notes,
+        cm.updated_at,
+        p.first_name,
+        p.last_name,
+        p.avatar_url,
+        u.email
+      FROM social_features.classroom_members cm
+      LEFT JOIN auth_management.profiles p ON p.user_id = cm.student_id
+      LEFT JOIN auth.users u ON u.id = cm.student_id
+      WHERE cm.classroom_id = $1
+        AND ($2::text IS NULL OR $2 = ''
+             OR LOWER(COALESCE(p.first_name, '') || ' ' || COALESCE(p.last_name, '')) LIKE LOWER('%' || $2 || '%')
+             OR LOWER(COALESCE(u.email, '')) LIKE LOWER('%' || $2 || '%'))
+        AND ($3::text IS NULL OR $3 = 'all' OR cm.status = $3)
+      ORDER BY COALESCE(p.first_name, '') || ' ' || COALESCE(p.last_name, '')
+      LIMIT $4 OFFSET $5
+    `;
+
+    // Preparar parámetros (manejar undefined como null)
+    const searchParam = search || null;
+    const statusParam = status || 'all';
+
+    // Ejecutar queries en paralelo
+    const [countResult, studentsResult] = await Promise.all([
+      this.dataSource.query(countSql, [classroomId, searchParam, statusParam]),
+      this.dataSource.query(studentsSql, [classroomId, searchParam, statusParam, limit, skip]),
+    ]);
+
+    const total = parseInt(countResult[0]?.total || '0');
+
+    return {
+      students: studentsResult,
+      total,
+    };
+  }
+
+  /**
    * Valida que un teacher tenga acceso a un classroom
    *
    * @private
@@ -870,6 +988,130 @@ export class TeacherClassroomsCrudService {
   }
 
   /**
+   * Obtiene datos de gamificación de UserStats para estudiantes
+   * CORR-2025-12-18: Nueva función para obtener datos de gamificación
+   *
+   * @private
+   */
+  private async getStudentsUserStats(
+    studentIds: string[],
+  ): Promise<Map<string, {
+    ml_coins: number;
+    current_rank: string;
+    achievements_count: number;
+    exercises_completed: number;
+    time_spent_minutes: number;
+    last_activity_at: Date | null;
+  }>> {
+    if (studentIds.length === 0) {
+      return new Map();
+    }
+
+    const statsData = await this.userStatsRepo.find({
+      where: { user_id: In(studentIds) },
+      select: [
+        'user_id',
+        'ml_coins',
+        'current_rank',
+        'achievements_earned',
+        'exercises_completed',
+        'total_time_spent',
+        'last_activity_at',
+      ],
+    });
+
+    const resultMap = new Map<string, {
+      ml_coins: number;
+      current_rank: string;
+      achievements_count: number;
+      exercises_completed: number;
+      time_spent_minutes: number;
+      last_activity_at: Date | null;
+    }>();
+
+    statsData.forEach((stats) => {
+      // Convertir interval total_time_spent a minutos
+      // El formato es "HH:MM:SS" o "X days HH:MM:SS"
+      let timeMinutes = 0;
+      if (stats.total_time_spent) {
+        const timeStr = String(stats.total_time_spent);
+        // Parsear formato de interval PostgreSQL
+        if (timeStr.includes('day')) {
+          const dayMatch = timeStr.match(/(\d+)\s*day/);
+          const days = dayMatch ? parseInt(dayMatch[1]) : 0;
+          timeMinutes += days * 24 * 60;
+        }
+        const timeMatch = timeStr.match(/(\d+):(\d+):(\d+)/);
+        if (timeMatch) {
+          timeMinutes += parseInt(timeMatch[1]) * 60 + parseInt(timeMatch[2]);
+        }
+      }
+
+      resultMap.set(stats.user_id, {
+        ml_coins: stats.ml_coins || 0,
+        current_rank: stats.current_rank || 'Ajaw',
+        achievements_count: stats.achievements_earned || 0,
+        exercises_completed: stats.exercises_completed || 0,
+        time_spent_minutes: timeMinutes,
+        last_activity_at: stats.last_activity_at || null,
+      });
+    });
+
+    return resultMap;
+  }
+
+  /**
+   * Obtiene la actividad actual (módulo y ejercicio) de los estudiantes
+   *
+   * FIX-2025-12-18: Corregido para usar raw SQL en lugar de TypeORM QueryBuilder
+   * PROBLEMA ANTERIOR: .innerJoin('schema.table', ...) NO funciona en TypeORM QueryBuilder
+   * SOLUCION: Usar raw SQL con this.dataSource.query() para cross-schema joins
+   * Ver: orchestration/reportes/ANALISIS-ROOT-CAUSE-TYPEORM-CROSSSCHEMA-2025-12-18.md
+   *
+   * @private
+   */
+  private async getStudentsCurrentActivity(
+    studentIds: string[],
+  ): Promise<Map<string, { current_module: string | null; current_exercise: string | null }>> {
+    if (studentIds.length === 0) {
+      return new Map();
+    }
+
+    // FIX: Usar raw SQL para cross-schema joins (progress_tracking -> educational_content)
+    // TypeORM QueryBuilder NO soporta .innerJoin('schema.table', ...) directamente
+    const sql = `
+      SELECT DISTINCT ON (es.user_id)
+        es.user_id,
+        e.title as exercise_title,
+        m.title as module_title
+      FROM progress_tracking.exercise_submissions es
+      LEFT JOIN educational_content.exercises e ON e.id = es.exercise_id
+      LEFT JOIN educational_content.modules m ON m.id = e.module_id
+      WHERE es.user_id = ANY($1)
+      ORDER BY es.user_id, es.submitted_at DESC
+    `;
+
+    const latestSubmissions = await this.dataSource.query(sql, [studentIds]);
+
+    const resultMap = new Map<string, { current_module: string | null; current_exercise: string | null }>();
+
+    // Inicializar todos los estudiantes con valores null
+    studentIds.forEach(id => {
+      resultMap.set(id, { current_module: null, current_exercise: null });
+    });
+
+    // Actualizar con los datos obtenidos
+    latestSubmissions.forEach((row: { user_id: string; module_title: string | null; exercise_title: string | null }) => {
+      resultMap.set(row.user_id, {
+        current_module: row.module_title || null,
+        current_exercise: row.exercise_title || null,
+      });
+    });
+
+    return resultMap;
+  }
+
+  /**
    * Calcula estadísticas de progreso
    *
    * @private
@@ -882,7 +1124,7 @@ export class TeacherClassroomsCrudService {
       .select('AVG(mp.progress_percentage)', 'avg_progress')
       .addSelect('AVG(mp.average_score)', 'avg_score')  // Fixed: score_percentage → average_score (GAP-ST-001)
       .addSelect(
-        'SUM(CASE WHEN mp.completion_status = :completed THEN 1 ELSE 0 END)',
+        'SUM(CASE WHEN mp.status = :completed THEN 1 ELSE 0 END)',
         'completed_count',
       )
       .addSelect('COUNT(*)', 'total_count')
@@ -952,6 +1194,7 @@ export class TeacherClassroomsCrudService {
 
   /**
    * Mapea ClassroomMember a StudentInClassroomDto
+   * CORR-2025-12-18: Agregados campos de gamificación y actividad actual
    *
    * @private
    */
@@ -960,10 +1203,23 @@ export class TeacherClassroomsCrudService {
     profile?: Profile,
     user?: User,
     progress?: { progress: number; score: number },
+    userStats?: {
+      ml_coins: number;
+      current_rank: string;
+      achievements_count: number;
+      exercises_completed: number;
+      time_spent_minutes: number;
+      last_activity_at: Date | null;
+    },
+    currentActivity?: { current_module: string | null; current_exercise: string | null },
   ): StudentInClassroomDto {
     const fullName = profile
       ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim()
       : 'Unknown Student';
+
+    // Obtener total de ejercicios (valor fijo por ahora, se puede calcular dinámicamente)
+    // TODO: Calcular dinámicamente basado en módulos asignados al classroom
+    const totalExercises = 50; // Valor aproximado de ejercicios totales
 
     return {
       user_id: member.student_id,
@@ -972,11 +1228,21 @@ export class TeacherClassroomsCrudService {
       avatar: profile?.avatar_url || undefined,
       enrollment_date: member.enrollment_date,
       status: member.status,
-      progress_percentage: progress?.progress,
-      score_average: progress?.score,
-      last_activity: member.updated_at,
+      progress_percentage: progress?.progress ?? 0,
+      score_average: progress?.score ?? 0,
+      // Usar last_activity_at de UserStats si está disponible, sino usar updated_at del member
+      last_activity: userStats?.last_activity_at ?? member.updated_at,
       attendance_percentage: member.attendance_percentage || undefined,
       teacher_notes: member.teacher_notes || undefined,
+      // CORR-2025-12-18: Nuevos campos de gamificación y actividad
+      current_module: currentActivity?.current_module ?? null,
+      current_exercise: currentActivity?.current_exercise ?? null,
+      time_spent_minutes: userStats?.time_spent_minutes ?? 0,
+      exercises_completed: userStats?.exercises_completed ?? 0,
+      exercises_total: totalExercises,
+      total_ml_coins: userStats?.ml_coins ?? 0,
+      current_rank: userStats?.current_rank ?? null,
+      achievements_count: userStats?.achievements_count ?? 0,
     };
   }
 

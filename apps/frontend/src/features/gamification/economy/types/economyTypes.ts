@@ -6,9 +6,10 @@
  */
 
 /**
- * Shop Categories - 5 main categories for the virtual economy
+ * Shop Categories - 6 main categories for the virtual economy
+ * NOTE: 'premium' is legacy for power-ups, 'consumable' is new unified category
  */
-export type ShopCategory = 'cosmetics' | 'profile' | 'guild' | 'premium' | 'social';
+export type ShopCategory = 'cosmetics' | 'profile' | 'guild' | 'premium' | 'social' | 'consumable';
 
 /**
  * Item Rarity Levels - Affects pricing and visual appearance
@@ -43,10 +44,10 @@ export type EconomicHealthStatus = 'healthy' | 'warning' | 'critical';
  * ML Coins Balance Information
  */
 export interface MLCoinsBalance {
-  current: number;          // Current available balance
-  lifetime: number;         // Total coins earned lifetime
-  spent: number;            // Total coins spent
-  pending: number;          // Coins pending from ongoing activities
+  current: number; // Current available balance
+  lifetime: number; // Total coins earned lifetime
+  spent: number; // Total coins spent
+  pending: number; // Coins pending from ongoing activities
 }
 
 /**
@@ -56,14 +57,14 @@ export interface MLCoinsBalance {
 export interface Transaction {
   id: string;
   type: TransactionType;
-  amount: number;           // Positive for earn, negative for spend
-  source: EarningSource | string;  // Source of earn or item purchased
-  description: string;      // Human-readable description
+  amount: number; // Positive for earn, negative for spend
+  source: EarningSource | string; // Source of earn or item purchased
+  description: string; // Human-readable description
   timestamp: Date;
-  balanceAfter: number;     // Balance after this transaction
+  balanceAfter: number; // Balance after this transaction
   metadata?: {
-    itemId?: string;        // If purchased item
-    exerciseId?: string;    // If from exercise
+    itemId?: string; // If purchased item
+    exerciseId?: string; // If from exercise
     achievementId?: string; // If from achievement
   };
 }
@@ -73,10 +74,10 @@ export interface Transaction {
  * Optional requirements to unlock purchase
  */
 export interface ShopItemRequirements {
-  rank?: string;            // Minimum rank required (e.g., "Ajaw", "Halach Uinic")
-  level?: number;           // Minimum level required
-  achievement?: string;     // Specific achievement required
-  guildMember?: boolean;    // Must be in a guild
+  rank?: string; // Minimum rank required (e.g., "Ajaw", "Halach Uinic")
+  level?: number; // Minimum level required
+  achievement?: string; // Specific achievement required
+  guildMember?: boolean; // Must be in a guild
 }
 
 /**
@@ -88,23 +89,23 @@ export interface ShopItem {
   name: string;
   description: string;
   category: ShopCategory;
-  price: number;            // Price in ML Coins
-  icon: string;             // Lucide icon name or emoji
-  image?: string;           // Optional image URL
+  price: number; // Price in ML Coins
+  icon: string; // Lucide icon name or emoji
+  image?: string; // Optional image URL
   rarity: ItemRarity;
-  tags?: string[];           // For search and filtering
-  isOwned?: boolean;         // Whether user owns this item
-  isPurchasable?: boolean;   // Whether can be purchased (not sold out, etc.)
+  tags?: string[]; // For search and filtering
+  isOwned?: boolean; // Whether user owns this item
+  isPurchasable?: boolean; // Whether can be purchased (not sold out, etc.)
   requirements?: ShopItemRequirements;
-  previewData?: unknown;    // Category-specific preview data
+  previewData?: unknown; // Category-specific preview data
   metadata?: {
-    effectDescription?: string;  // What this item does
-    duration?: number;            // If temporary effect (days)
-    stackable?: boolean;          // Can own multiple
-    tradeable?: boolean;          // Can trade with others
+    effectDescription?: string; // What this item does
+    duration?: number; // If temporary effect (days)
+    stackable?: boolean; // Can own multiple
+    tradeable?: boolean; // Can trade with others
   };
-  stock?: number;        // Remaining stock (for limited items)
-  available?: boolean;   // Whether item is currently available
+  stock?: number; // Remaining stock (for limited items)
+  available?: boolean; // Whether item is currently available
 }
 
 /**
@@ -115,8 +116,8 @@ export interface EarningSourceData {
   source: string;
   amount: number;
   percentage: number;
-  color: string;            // For chart visualization
-  icon: string;             // Lucide icon name
+  color: string; // For chart visualization
+  icon: string; // Lucide icon name
 }
 
 /**
@@ -127,7 +128,7 @@ export interface SpendingCategoryData {
   category: ShopCategory;
   amount: number;
   percentage: number;
-  itemCount: number;        // Number of items purchased
+  itemCount: number; // Number of items purchased
   color: string;
 }
 
@@ -136,12 +137,12 @@ export interface SpendingCategoryData {
  * For admin dashboard to monitor economy health
  */
 export interface EconomicMetrics {
-  inflationRate: number;    // Monthly inflation rate (%)
-  mlVelocity: number;       // Circulation speed (0.8-1.2 healthy)
-  totalSupply: number;      // Total ML Coins in circulation
-  totalDemand: number;      // Total ML Coins spent in period
-  activeUsers: number;      // Users transacting in period
-  averageBalance: number;   // Average user balance
+  inflationRate: number; // Monthly inflation rate (%)
+  mlVelocity: number; // Circulation speed (0.8-1.2 healthy)
+  totalSupply: number; // Total ML Coins in circulation
+  totalDemand: number; // Total ML Coins spent in period
+  activeUsers: number; // Users transacting in period
+  averageBalance: number; // Average user balance
   healthStatus: EconomicHealthStatus;
   lastUpdated: Date;
 }
@@ -150,7 +151,7 @@ export interface EconomicMetrics {
  * Shopping Cart Item
  */
 export interface CartItem extends ShopItem {
-  quantity: number;         // For stackable items
+  quantity: number; // For stackable items
   addedAt: Date;
 }
 
@@ -170,7 +171,7 @@ export interface PurchaseResult {
  */
 export interface UserInventory {
   items: ShopItem[];
-  totalValue: number;       // Total ML Coins value
+  totalValue: number; // Total ML Coins value
   lastUpdated: Date;
 }
 
@@ -214,7 +215,7 @@ export interface ShopFilters {
   priceMin?: number;
   priceMax?: number;
   owned?: boolean;
-  available?: boolean;      // Can purchase
+  available?: boolean; // Can purchase
   searchQuery?: string;
   tags?: string[];
 }
@@ -222,7 +223,13 @@ export interface ShopFilters {
 /**
  * Shop Sort Options
  */
-export type ShopSortBy = 'price_asc' | 'price_desc' | 'name_asc' | 'name_desc' | 'rarity' | 'newest';
+export type ShopSortBy =
+  | 'price_asc'
+  | 'price_desc'
+  | 'name_asc'
+  | 'name_desc'
+  | 'rarity'
+  | 'newest';
 
 /**
  * Notification for economy events
@@ -244,7 +251,7 @@ export interface EconomyStats {
   totalEarned: number;
   totalSpent: number;
   currentBalance: number;
-  netWorth: number;         // Balance + inventory value
+  netWorth: number; // Balance + inventory value
   transactionCount: number;
   favoriteCategory: ShopCategory;
   biggestPurchase: {

@@ -5,8 +5,7 @@ import {
   IsBoolean,
   IsObject,
   Min,
-  Max,
-} from 'class-validator';
+  } from 'class-validator';
 
 /**
  * GrantAchievementDto
@@ -71,7 +70,7 @@ export class GrantAchievementDto {
    */
   @IsObject({ message: 'progress_data debe ser un objeto JSON válido' })
   @IsOptional()
-    progress_data?: Record<string, any>;
+    progress_data?: Record<string, unknown>;
 
   /**
    * Metadata adicional
@@ -80,5 +79,5 @@ export class GrantAchievementDto {
    */
   @IsObject({ message: 'metadata debe ser un objeto JSON válido' })
   @IsOptional()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

@@ -356,7 +356,7 @@ export class ExerciseAttemptController {
   })
   async submitAttempt(
   @Param('id') id: string,
-    @Body() body: { answers: object },
+    @Body() body: { answers: Record<string, unknown> },
   ) {
     return this.attemptService.submitAttempt(id, body.answers);
   }

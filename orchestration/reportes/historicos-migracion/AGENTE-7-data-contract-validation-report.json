@@ -1,0 +1,1247 @@
+{
+  "report_metadata": {
+    "agent": "AGENTE 7",
+    "objective": "Validación de Contratos de Datos End-to-End",
+    "generated_at": "2025-11-04",
+    "scope": "DB → Backend → Frontend type flow validation",
+    "flows_analyzed": ["auth_login", "gamification_stats", "educational_exercises", "progress_submissions"]
+  },
+
+  "flow_analysis": {
+    "auth_login": {
+      "flow_name": "Flujo de Autenticación - Login de Usuario",
+      "path": "users → UserEntity → LoginResponse → Frontend User",
+
+      "db_types": {
+        "table": "auth.users",
+        "fields": {
+          "id": "uuid",
+          "email": "text",
+          "encrypted_password": "text",
+          "role": "public.gamilit_role (ENUM)",
+          "email_confirmed_at": "timestamp with time zone",
+          "last_sign_in_at": "timestamp with time zone",
+          "raw_user_meta_data": "jsonb",
+          "deleted_at": "timestamp with time zone",
+          "created_at": "timestamp with time zone",
+          "updated_at": "timestamp with time zone"
+        }
+      },
+
+      "backend_entity": {
+        "file": "apps/backend/src/modules/auth/entities/user.entity.ts",
+        "class": "User",
+        "fields": {
+          "id": "string",
+          "email": "string",
+          "encrypted_password": "string (@Exclude - not serialized)",
+          "role": "GamilityRoleEnum",
+          "email_confirmed_at": "Date | undefined",
+          "last_sign_in_at": "Date | undefined",
+          "raw_user_meta_data": "Record<string, any>",
+          "deleted_at": "Date | undefined",
+          "created_at": "Date",
+          "updated_at": "Date"
+        }
+      },
+
+      "backend_dto": {
+        "file": "apps/backend/src/modules/auth/dto/user-response.dto.ts",
+        "class": "UserResponseDto",
+        "fields": {
+          "id": "string",
+          "email": "string",
+          "role": "GamilityRoleEnum",
+          "email_confirmed_at": "Date | undefined",
+          "last_sign_in_at": "Date | undefined",
+          "raw_user_meta_data": "Record<string, any>",
+          "created_at": "Date",
+          "updated_at": "Date"
+        },
+        "excluded_fields": ["encrypted_password", "deleted_at"]
+      },
+
+      "backend_login_response": {
+        "controller": "apps/backend/src/modules/auth/controllers/auth.controller.ts",
+        "return_type": "{ user: UserResponseDto; accessToken: string; refreshToken: string }",
+        "fields": {
+          "user": "UserResponseDto",
+          "accessToken": "string",
+          "refreshToken": "string"
+        }
+      },
+
+      "frontend_types": {
+        "file": "apps/frontend/src/shared/types/auth.types.ts",
+        "interfaces": {
+          "User": {
+            "id": "string",
+            "email": "string",
+            "role": "string",
+            "status": "string",
+            "email_verified": "boolean"
+          },
+          "AuthResponse": {
+            "access_token": "string",
+            "refresh_token": "string (optional)",
+            "user": "User (optional)"
+          }
+        }
+      },
+
+      "type_transformations": [
+        {
+          "field": "id",
+          "db": "uuid",
+          "entity": "string",
+          "dto": "string",
+          "frontend": "string",
+          "consistency": "✓ CONSISTENT"
+        },
+        {
+          "field": "email",
+          "db": "text",
+          "entity": "string",
+          "dto": "string",
+          "frontend": "string",
+          "consistency": "✓ CONSISTENT"
+        },
+        {
+          "field": "role",
+          "db": "gamilit_role ENUM",
+          "entity": "GamilityRoleEnum",
+          "dto": "GamilityRoleEnum",
+          "frontend": "string",
+          "consistency": "⚠ LOOSE - Frontend usa string genérico en lugar de enum"
+        },
+        {
+          "field": "email_confirmed_at",
+          "db": "timestamp with time zone",
+          "entity": "Date | undefined",
+          "dto": "Date | undefined",
+          "frontend": "N/A - usa email_verified: boolean",
+          "consistency": "⚠ MISMATCH - Frontend espera boolean pero backend envía Date"
+        },
+        {
+          "field": "last_sign_in_at",
+          "db": "timestamp with time zone",
+          "entity": "Date | undefined",
+          "dto": "Date | undefined",
+          "frontend": "N/A - no existe",
+          "consistency": "⚠ MISSING - Campo no presente en tipo frontend"
+        },
+        {
+          "field": "raw_user_meta_data",
+          "db": "jsonb",
+          "entity": "Record<string, any>",
+          "dto": "Record<string, any>",
+          "frontend": "N/A - no existe",
+          "consistency": "⚠ MISSING - Campo no presente en tipo frontend"
+        },
+        {
+          "field": "created_at / updated_at",
+          "db": "timestamp with time zone",
+          "entity": "Date",
+          "dto": "Date",
+          "frontend": "N/A - no existe",
+          "consistency": "⚠ MISSING - Campos audit no presentes en tipo frontend"
+        },
+        {
+          "field": "accessToken (response)",
+          "backend": "accessToken: string",
+          "frontend": "access_token: string",
+          "consistency": "⚠ NAMING - camelCase vs snake_case inconsistency"
+        },
+        {
+          "field": "refreshToken (response)",
+          "backend": "refreshToken: string",
+          "frontend": "refresh_token?: string",
+          "consistency": "⚠ NAMING - camelCase vs snake_case inconsistency"
+        }
+      ],
+
+      "issues": [
+        {
+          "issue": "Frontend User type no coincide con backend UserResponseDto",
+          "severity": "high",
+          "details": "Frontend espera campos diferentes: status (no existe en backend), email_verified (boolean en vez de email_confirmed_at: Date)",
+          "impact": "Puede causar errores de runtime si se acceden campos inexistentes",
+          "recommendation": "Alinear frontend User interface con backend UserResponseDto"
+        },
+        {
+          "issue": "Inconsistencia en naming convention de response tokens",
+          "severity": "medium",
+          "details": "Backend usa camelCase (accessToken, refreshToken) pero frontend usa snake_case (access_token, refresh_token)",
+          "impact": "Requiere transformación manual de datos en cliente",
+          "recommendation": "Estandarizar en camelCase o usar transformador automático"
+        },
+        {
+          "issue": "Campos faltantes en tipo frontend",
+          "severity": "medium",
+          "details": "Frontend User no incluye: raw_user_meta_data, created_at, updated_at, last_sign_in_at",
+          "impact": "Información disponible en backend no tipada en frontend",
+          "recommendation": "Extender frontend User type con campos opcionales del backend"
+        },
+        {
+          "issue": "Role no tipado como enum en frontend",
+          "severity": "low",
+          "details": "Frontend usa string genérico en lugar de enum de roles específico",
+          "impact": "Sin validación de tipo en compile time para roles",
+          "recommendation": "Crear enum compartido de roles en frontend"
+        }
+      ]
+    },
+
+    "gamification_stats": {
+      "flow_name": "Flujo de Gamificación - Estadísticas de Usuario",
+      "path": "user_stats → UserStatsEntity → UserStatsResponseDto → Frontend (no existe type específico)",
+
+      "db_types": {
+        "table": "gamification_system.user_stats",
+        "fields": {
+          "id": "uuid",
+          "user_id": "uuid",
+          "tenant_id": "uuid",
+          "level": "integer",
+          "total_xp": "integer",
+          "xp_to_next_level": "integer",
+          "current_rank": "text (with CHECK constraint)",
+          "rank_progress": "numeric(5,2)",
+          "ml_coins": "integer",
+          "ml_coins_earned_total": "integer",
+          "ml_coins_spent_total": "integer",
+          "ml_coins_earned_today": "integer",
+          "last_ml_coins_reset": "timestamp with time zone",
+          "current_streak": "integer",
+          "max_streak": "integer",
+          "streak_started_at": "timestamp with time zone",
+          "days_active_total": "integer",
+          "exercises_completed": "integer",
+          "modules_completed": "integer",
+          "total_score": "integer",
+          "average_score": "numeric(5,2)",
+          "perfect_scores": "integer",
+          "achievements_earned": "integer",
+          "certificates_earned": "integer",
+          "total_time_spent": "interval",
+          "weekly_time_spent": "interval",
+          "sessions_count": "integer",
+          "weekly_xp": "integer",
+          "monthly_xp": "integer",
+          "weekly_exercises": "integer",
+          "global_rank_position": "integer",
+          "class_rank_position": "integer",
+          "school_rank_position": "integer",
+          "last_activity_at": "timestamp with time zone",
+          "last_login_at": "timestamp with time zone",
+          "metadata": "jsonb",
+          "created_at": "timestamp with time zone",
+          "updated_at": "timestamp with time zone"
+        }
+      },
+
+      "backend_entity": {
+        "file": "apps/backend/src/modules/gamification/entities/user-stats.entity.ts",
+        "class": "UserStats",
+        "fields_count": 35,
+        "key_fields": {
+          "level": "number",
+          "total_xp": "number",
+          "current_rank": "string",
+          "ml_coins": "number",
+          "current_streak": "number",
+          "total_time_spent": "string (interval)",
+          "metadata": "Record<string, any>",
+          "created_at": "Date",
+          "updated_at": "Date"
+        }
+      },
+
+      "backend_dto": {
+        "file": "apps/backend/src/modules/gamification/dto/user-stats/user-stats-response.dto.ts",
+        "class": "UserStatsResponseDto",
+        "fields_count": 35,
+        "all_fields_exposed": true,
+        "note": "DTO incluye todos los campos del entity 1:1"
+      },
+
+      "frontend_types": {
+        "file": "N/A - No existe tipo específico UserStats en frontend",
+        "status": "MISSING",
+        "found_in": "apps/frontend/src/shared/types/profile.types.ts menciona ProfileWithStats pero no define UserStats"
+      },
+
+      "type_transformations": [
+        {
+          "field": "integers (level, xp, coins, etc)",
+          "db": "integer",
+          "entity": "number",
+          "dto": "number",
+          "frontend": "N/A",
+          "consistency": "✓ CONSISTENT en backend, tipo frontend MISSING"
+        },
+        {
+          "field": "decimals (average_score, rank_progress)",
+          "db": "numeric(5,2)",
+          "entity": "number",
+          "dto": "number",
+          "frontend": "N/A",
+          "consistency": "✓ CONSISTENT en backend, tipo frontend MISSING"
+        },
+        {
+          "field": "timestamps",
+          "db": "timestamp with time zone",
+          "entity": "Date | undefined",
+          "dto": "Date | undefined",
+          "frontend": "N/A",
+          "consistency": "✓ CONSISTENT en backend, tipo frontend MISSING"
+        },
+        {
+          "field": "intervals (total_time_spent)",
+          "db": "interval",
+          "entity": "string",
+          "dto": "string",
+          "frontend": "N/A",
+          "consistency": "⚠ PostgreSQL interval → string (sin tipo específico)"
+        },
+        {
+          "field": "current_rank",
+          "db": "text (with CHECK constraint: ajaw, nacom, ah_kin, halach_uinic, kukul_kan)",
+          "entity": "string",
+          "dto": "string",
+          "frontend": "N/A",
+          "consistency": "⚠ NO ENUM - Debería ser enum MayaRank pero se usa string"
+        },
+        {
+          "field": "metadata",
+          "db": "jsonb",
+          "entity": "Record<string, any>",
+          "dto": "Record<string, any>",
+          "frontend": "N/A",
+          "consistency": "✓ CONSISTENT en backend (pero any es muy permisivo)"
+        }
+      ],
+
+      "issues": [
+        {
+          "issue": "NO EXISTE tipo UserStats en frontend",
+          "severity": "critical",
+          "details": "Backend expone 35 campos completos de estadísticas pero frontend no tiene interface TypeScript correspondiente",
+          "impact": "Frontend no puede beneficiarse de type safety al trabajar con user stats, código usa any implícitamente",
+          "recommendation": "Crear interface UserStats en frontend/src/shared/types/gamification.types.ts"
+        },
+        {
+          "issue": "current_rank no es enum",
+          "severity": "medium",
+          "details": "DB tiene CHECK constraint con valores específicos pero backend/frontend usan string genérico",
+          "impact": "Sin type safety para valores de rank válidos",
+          "recommendation": "Crear enum MayaRank compartido: 'ajaw' | 'nacom' | 'ah_kin' | 'halach_uinic' | 'kukul_kan'"
+        },
+        {
+          "issue": "Interval PostgreSQL → string sin tipado",
+          "severity": "low",
+          "details": "Campos interval (total_time_spent, weekly_time_spent) se serializan a string sin formato específico",
+          "impact": "Frontend debe parsear strings de interval manualmente",
+          "recommendation": "Transformar a segundos (number) o crear tipo específico IntervalString"
+        },
+        {
+          "issue": "metadata sin estructura definida",
+          "severity": "low",
+          "details": "Campo metadata usa Record<string, any> sin tipo específico",
+          "impact": "Sin validación de estructura de metadata",
+          "recommendation": "Definir interface UserStatsMetadata con campos esperados"
+        }
+      ]
+    },
+
+    "educational_exercises": {
+      "flow_name": "Flujo Educacional - Ejercicios",
+      "path": "exercises → ExerciseEntity → ExerciseResponseDto → Frontend Exercise",
+
+      "db_types": {
+        "table": "educational_content.exercises",
+        "critical_fields": {
+          "id": "uuid",
+          "module_id": "uuid (FK NOT NULL CASCADE)",
+          "exercise_type": "public.exercise_type (ENUM con 27+ valores)",
+          "config": "jsonb",
+          "content": "jsonb (default con options, question, etc)",
+          "solution": "jsonb",
+          "rubric": "jsonb",
+          "difficulty_level": "public.difficulty_level (ENUM)",
+          "comodines_allowed": "public.comodin_type[] (ARRAY de ENUMs)",
+          "comodines_config": "jsonb",
+          "prerequisites": "uuid[] (array de UUIDs, auto-referencia débil)",
+          "metadata": "jsonb"
+        }
+      },
+
+      "backend_entity": {
+        "file": "apps/backend/src/modules/gamification/entities/exercise.entity.ts",
+        "class": "Exercise",
+        "jsonb_fields": {
+          "config": "Record<string, any> - estructura variable por exercise_type",
+          "content": "Record<string, any> - default: {options, question, explanations, correct_answers}",
+          "solution": "Record<string, any> - privado para estudiantes",
+          "rubric": "Record<string, any> - rúbrica de evaluación",
+          "comodines_config": "Record<string, any> - configuración de power-ups",
+          "metadata": "Record<string, any> - metadatos adicionales"
+        },
+        "enum_fields": {
+          "exercise_type": "ExerciseTypeEnum (27+ tipos)",
+          "difficulty_level": "DifficultyLevelEnum",
+          "comodines_allowed": "ComodinTypeEnum[]"
+        }
+      },
+
+      "backend_dto": {
+        "file": "apps/backend/src/modules/educational/dto/exercises/exercise-response.dto.ts",
+        "class": "ExerciseResponseDto",
+        "jsonb_handling": "Todos los campos JSONB expuestos como Record<string, any>",
+        "note": "DTO es 1:1 con entity, incluye todos los campos"
+      },
+
+      "frontend_types": {
+        "file": "apps/frontend/src/shared/types/educational.types.ts",
+        "interface": "Exercise",
+        "jsonb_fields": {
+          "config": "Record<string, any> | undefined",
+          "content": "ExerciseContent (typed interface)",
+          "solution": "Record<string, any> | undefined",
+          "rubric": "Record<string, any> | undefined",
+          "comodines_config": "Record<string, any>",
+          "metadata": "Record<string, any>"
+        },
+        "content_interface": {
+          "ExerciseContent": {
+            "question": "string | undefined",
+            "options": "string[] | undefined",
+            "correct_answer": "string | string[] | undefined",
+            "code_template": "string | undefined",
+            "test_cases": "TestCase[] | undefined",
+            "[key: string]": "any"
+          }
+        },
+        "enum_fields": {
+          "type": "ExerciseType enum (6 valores)",
+          "difficulty": "DifficultyLevel enum"
+        }
+      },
+
+      "type_transformations": [
+        {
+          "field": "exercise_type / type",
+          "db": "exercise_type ENUM (27+ valores: crucigrama, linea_tiempo, detective_textual, etc)",
+          "entity": "ExerciseTypeEnum (27+ valores)",
+          "dto": "ExerciseTypeEnum",
+          "frontend": "ExerciseType enum (solo 6 valores: multiple_choice, code_completion, true_false, fill_in_blank, coding_challenge, matching)",
+          "consistency": "✗ MAJOR MISMATCH - Backend tiene 27+ tipos, frontend solo 6"
+        },
+        {
+          "field": "difficulty_level / difficulty",
+          "db": "difficulty_level ENUM (very_easy, easy, medium, hard, very_hard)",
+          "entity": "DifficultyLevelEnum",
+          "dto": "DifficultyLevelEnum",
+          "frontend": "DifficultyLevel enum (beginner, intermediate, advanced)",
+          "consistency": "✗ MISMATCH - Diferentes valores de enum"
+        },
+        {
+          "field": "config",
+          "db": "jsonb",
+          "entity": "Record<string, any>",
+          "dto": "Record<string, any>",
+          "frontend": "Record<string, any> | undefined",
+          "consistency": "⚠ NO TIPADO - Estructura varía por exercise_type sin discriminated union"
+        },
+        {
+          "field": "content",
+          "db": "jsonb (default structure)",
+          "entity": "Record<string, any>",
+          "dto": "Record<string, any>",
+          "frontend": "ExerciseContent (parcialmente tipado)",
+          "consistency": "⚠ PARTIAL TYPING - Frontend tiene interface pero backend usa any"
+        },
+        {
+          "field": "solution",
+          "db": "jsonb",
+          "entity": "Record<string, any> | undefined",
+          "dto": "Record<string, any> | undefined",
+          "frontend": "Record<string, any> | undefined",
+          "consistency": "⚠ NO TIPADO - Sin estructura definida"
+        },
+        {
+          "field": "comodines_config",
+          "db": "jsonb (estructura: {pistas: {cost, enabled}, ...})",
+          "entity": "Record<string, any>",
+          "dto": "Record<string, any>",
+          "frontend": "Record<string, any>",
+          "consistency": "⚠ NO TIPADO - Estructura documentada pero sin tipo"
+        },
+        {
+          "field": "prerequisites",
+          "db": "uuid[]",
+          "entity": "string[] | undefined",
+          "dto": "string[] | undefined",
+          "frontend": "string[] | undefined",
+          "consistency": "✓ CONSISTENT"
+        },
+        {
+          "field": "metadata",
+          "db": "jsonb",
+          "entity": "Record<string, any>",
+          "dto": "Record<string, any>",
+          "frontend": "Record<string, any>",
+          "consistency": "⚠ NO TIPADO - Propósito general sin estructura"
+        }
+      ],
+
+      "issues": [
+        {
+          "issue": "MISMATCH CRÍTICO en exercise_type enum",
+          "severity": "critical",
+          "details": "Backend/DB soportan 27+ tipos de ejercicio (crucigrama, detective_textual, debate_digital, etc) pero frontend solo define 6 tipos (multiple_choice, code_completion, etc)",
+          "impact": "Frontend no puede manejar 21+ tipos de ejercicio del backend, causará errores en runtime",
+          "recommendation": "Sincronizar frontend ExerciseType enum con backend ExerciseTypeEnum completo"
+        },
+        {
+          "issue": "MISMATCH en difficulty_level enum",
+          "severity": "high",
+          "details": "DB usa 5 niveles (very_easy → very_hard), frontend usa 3 (beginner → advanced)",
+          "impact": "Pérdida de granularidad de dificultad en frontend",
+          "recommendation": "Alinear enums o crear mapeo explícito"
+        },
+        {
+          "issue": "config JSONB no tipado por exercise_type",
+          "severity": "high",
+          "details": "Campo config varía dramáticamente por exercise_type (crucigrama tiene grid/clues, quiz tiene questions/options) pero usa Record<string, any>",
+          "impact": "Zero type safety para configuración de 27+ tipos de ejercicios",
+          "recommendation": "Crear discriminated union: type ExerciseConfig = CrucigramaConfig | QuizConfig | DebateConfig | ..."
+        },
+        {
+          "issue": "content JSONB parcialmente tipado",
+          "severity": "medium",
+          "details": "Frontend tiene ExerciseContent interface pero backend usa any, estructura no validada",
+          "impact": "Posible desalineación entre estructura esperada y real",
+          "recommendation": "Compartir interface ExerciseContent entre backend y frontend"
+        },
+        {
+          "issue": "comodines_config estructura documentada pero no tipada",
+          "severity": "medium",
+          "details": "Se documenta estructura {pistas: {cost, enabled}, vision_lectora: {...}, ...} pero usa Record<string, any>",
+          "impact": "Sin validación de estructura de power-ups",
+          "recommendation": "Crear interface ComodinesConfig con tipos específicos por comodin_type"
+        },
+        {
+          "issue": "solution y rubric sin tipo",
+          "severity": "low",
+          "details": "Campos solution y rubric usan Record<string, any> sin estructura definida",
+          "impact": "Sin guía de qué debe contener una solution o rubric",
+          "recommendation": "Definir interfaces SolutionData y RubricData según needs del sistema"
+        }
+      ]
+    },
+
+    "progress_submissions": {
+      "flow_name": "Flujo de Progreso - Exercise Submissions",
+      "path": "exercise_submissions → ExerciseSubmissionEntity → ExerciseSubmissionResponseDto → Frontend ExerciseSubmission",
+
+      "db_types": {
+        "table": "progress_tracking.exercise_submissions",
+        "fields": {
+          "id": "uuid",
+          "user_id": "uuid (FK → auth_management.profiles)",
+          "exercise_id": "uuid (FK → educational_content.exercises)",
+          "answer_data": "jsonb (NOT NULL)",
+          "is_correct": "boolean",
+          "score": "integer (default 0)",
+          "max_score": "integer (default 100)",
+          "feedback": "text",
+          "hint_used": "boolean (default false)",
+          "hints_count": "integer (default 0)",
+          "comodines_used": "text[] (array)",
+          "ml_coins_spent": "integer (default 0)",
+          "time_spent_seconds": "integer",
+          "attempt_number": "integer (default 1)",
+          "status": "text (CHECK: draft, submitted, graded, reviewed)",
+          "started_at": "timestamp with time zone",
+          "submitted_at": "timestamp with time zone (default now())",
+          "graded_at": "timestamp with time zone",
+          "created_at": "timestamp with time zone (default now())",
+          "updated_at": "timestamp with time zone (default now())"
+        }
+      },
+
+      "backend_entity": {
+        "file": "apps/backend/src/modules/progress/entities/exercise-submission.entity.ts",
+        "class": "ExerciseSubmission",
+        "key_fields": {
+          "answer_data": "Record<string, any> - respuesta del estudiante",
+          "comodines_used": "string[] | undefined - tipos de comodines",
+          "status": "string - valores: draft, submitted, graded, reviewed",
+          "timestamps": "Date types para started_at, submitted_at, graded_at"
+        }
+      },
+
+      "backend_dto": {
+        "file": "apps/backend/src/modules/progress/dto/exercise-submission-response.dto.ts",
+        "class": "ExerciseSubmissionResponseDto",
+        "special_handling": {
+          "dates": "@Type(() => Date) decorators para transformación",
+          "nullables": "Usa | null en lugar de | undefined para algunos campos"
+        },
+        "note": "DTO es 1:1 con entity"
+      },
+
+      "frontend_types": {
+        "file": "apps/frontend/src/shared/types/progress.types.ts",
+        "interface": "ExerciseSubmission",
+        "fields": {
+          "id": "string",
+          "attempt_id": "string",
+          "user_id": "string",
+          "exercise_id": "string",
+          "submission_data": "Record<string, any>",
+          "score": "number",
+          "max_score": "number",
+          "is_correct": "boolean",
+          "feedback": "string | null",
+          "submitted_at": "string",
+          "created_at": "string",
+          "updated_at": "string"
+        }
+      },
+
+      "type_transformations": [
+        {
+          "field": "answer_data / submission_data",
+          "db": "answer_data jsonb",
+          "entity": "answer_data: Record<string, any>",
+          "dto": "answer_data: Record<string, any>",
+          "frontend": "submission_data: Record<string, any>",
+          "consistency": "⚠ NAMING MISMATCH - answer_data (backend) vs submission_data (frontend)"
+        },
+        {
+          "field": "timestamps",
+          "db": "timestamp with time zone",
+          "entity": "Date",
+          "dto": "Date (with @Type(() => Date))",
+          "frontend": "string",
+          "consistency": "⚠ TYPE CHANGE - Date (backend) → string (frontend), requiere serialización ISO"
+        },
+        {
+          "field": "nullables",
+          "db": "nullable columns",
+          "entity": "Type | undefined",
+          "dto": "Type | null",
+          "frontend": "Type | null",
+          "consistency": "⚠ INCONSISTENT - Entity usa undefined, DTO/Frontend usan null"
+        },
+        {
+          "field": "is_correct",
+          "db": "boolean (nullable)",
+          "entity": "boolean | undefined",
+          "dto": "boolean | null",
+          "frontend": "boolean",
+          "consistency": "⚠ NULLABLE MISMATCH - Frontend no acepta null"
+        },
+        {
+          "field": "comodines_used",
+          "db": "text[]",
+          "entity": "string[] | undefined",
+          "dto": "string[] | null",
+          "frontend": "N/A - campo no existe",
+          "consistency": "✗ MISSING - Campo importante faltante en frontend"
+        },
+        {
+          "field": "hint_used, hints_count",
+          "db": "boolean, integer",
+          "entity": "boolean, number",
+          "dto": "boolean, number",
+          "frontend": "N/A - campos no existen",
+          "consistency": "✗ MISSING - Campos de hints faltantes en frontend"
+        },
+        {
+          "field": "ml_coins_spent",
+          "db": "integer",
+          "entity": "number",
+          "dto": "number",
+          "frontend": "N/A - campo no existe",
+          "consistency": "✗ MISSING - Campo de gamificación faltante"
+        },
+        {
+          "field": "time_spent_seconds",
+          "db": "integer",
+          "entity": "number | undefined",
+          "dto": "number | null",
+          "frontend": "N/A - campo no existe",
+          "consistency": "✗ MISSING - Métrica de tiempo faltante"
+        },
+        {
+          "field": "attempt_number",
+          "db": "integer (default 1)",
+          "entity": "number",
+          "dto": "number",
+          "frontend": "N/A - campo no existe",
+          "consistency": "✗ MISSING - Contador de intentos faltante"
+        },
+        {
+          "field": "status",
+          "db": "text (CHECK constraint)",
+          "entity": "string",
+          "dto": "string",
+          "frontend": "N/A - campo no existe",
+          "consistency": "✗ MISSING - Estado de submission faltante"
+        },
+        {
+          "field": "started_at, graded_at",
+          "db": "timestamp with time zone",
+          "entity": "Date | undefined",
+          "dto": "Date | null",
+          "frontend": "N/A - campos no existen",
+          "consistency": "✗ MISSING - Timestamps adicionales faltantes"
+        },
+        {
+          "field": "attempt_id (frontend only)",
+          "db": "N/A",
+          "entity": "N/A",
+          "dto": "N/A",
+          "frontend": "string",
+          "consistency": "✗ EXTRA - Campo en frontend que no existe en backend"
+        }
+      ],
+
+      "issues": [
+        {
+          "issue": "MISMATCH SEVERO - Frontend ExerciseSubmission no coincide con backend",
+          "severity": "critical",
+          "details": "Frontend tiene solo 9 campos, backend tiene 19. Frontend falta: comodines_used, hint_used, hints_count, ml_coins_spent, time_spent_seconds, attempt_number, status, started_at, graded_at. Frontend tiene extra: attempt_id (no existe en backend)",
+          "impact": "Frontend no puede mostrar información completa de submissions, pierde datos de gamificación, hints, tiempo y estado",
+          "recommendation": "Redefinir frontend ExerciseSubmission para incluir todos los campos del backend"
+        },
+        {
+          "issue": "Naming mismatch: answer_data vs submission_data",
+          "severity": "high",
+          "details": "Backend usa answer_data pero frontend usa submission_data para el mismo concepto",
+          "impact": "Requiere mapeo manual en cliente, propenso a errores",
+          "recommendation": "Estandarizar en answer_data o crear alias"
+        },
+        {
+          "issue": "Date serialization sin tipo explícito",
+          "severity": "medium",
+          "details": "Backend usa Date objects, frontend usa string, sin especificación de formato (asume ISO)",
+          "impact": "Posibles errores de parsing si formato cambia",
+          "recommendation": "Documentar formato ISO 8601 o crear tipo DateString"
+        },
+        {
+          "issue": "Undefined vs null inconsistency",
+          "severity": "medium",
+          "details": "Entity usa | undefined, DTO usa | null, frontend mezcla ambos",
+          "impact": "Confusión en manejo de valores ausentes",
+          "recommendation": "Estandarizar en | undefined o | null (recomendado: null para JSON)"
+        },
+        {
+          "issue": "is_correct nullable en backend pero required en frontend",
+          "severity": "medium",
+          "details": "Backend permite is_correct null (para auto-grading pendiente) pero frontend no",
+          "impact": "Runtime error si backend envía null",
+          "recommendation": "Frontend debe aceptar boolean | null"
+        },
+        {
+          "issue": "attempt_id existe en frontend pero no en backend",
+          "severity": "medium",
+          "details": "Frontend ExerciseSubmission tiene attempt_id pero no existe en backend/DB",
+          "impact": "Campo nunca se populará, código frontend puede asumir valor que no existe",
+          "recommendation": "Remover attempt_id de frontend o agregarlo a backend si es necesario"
+        },
+        {
+          "issue": "Campos de gamificación faltantes",
+          "severity": "high",
+          "details": "Frontend no tiene comodines_used, ml_coins_spent, hint_used, hints_count",
+          "impact": "UI no puede mostrar uso de power-ups y hints, datos críticos para experiencia de usuario",
+          "recommendation": "Agregar campos de gamificación a frontend ExerciseSubmission"
+        },
+        {
+          "issue": "answer_data sin tipado por exercise_type",
+          "severity": "medium",
+          "details": "answer_data usa Record<string, any> pero estructura varía por tipo de ejercicio",
+          "impact": "Sin validación de estructura de respuestas",
+          "recommendation": "Crear discriminated union basado en exercise_type"
+        }
+      ]
+    }
+  },
+
+  "cross_cutting_concerns": {
+    "date_handling": {
+      "db": "timestamp with time zone (PostgreSQL)",
+      "backend_entity": "Date (JavaScript Date object)",
+      "backend_dto": "Date (con @Type(() => Date) transform)",
+      "json_serialization": "string (ISO 8601 format por defecto)",
+      "frontend": "string | Date (inconsistente)",
+      "issues": [
+        "Frontend no define si espera Date objects o ISO strings",
+        "No hay validación de formato ISO en frontend",
+        "Algunos tipos frontend usan string, otros pueden asumir Date"
+      ],
+      "recommendation": "Crear tipo DateString = string y documentar formato ISO, o usar biblioteca date como date-fns con tipos estrictos"
+    },
+
+    "uuid_handling": {
+      "db": "uuid (PostgreSQL UUID type)",
+      "backend_entity": "string",
+      "backend_dto": "string",
+      "frontend": "string",
+      "consistency": "✓ CONSISTENT - UUID siempre string",
+      "validation": "⚠ Sin validación de formato UUID en frontend types"
+    },
+
+    "enum_handling": {
+      "db": "Custom ENUM types en PostgreSQL",
+      "backend_entity": "TypeScript enums (shared/constants/enums.constants.ts)",
+      "backend_dto": "TypeScript enums (mismo enum)",
+      "frontend": "Mix de enums específicos y strings genéricos",
+      "issues": [
+        "Frontend redefine algunos enums en lugar de importarlos",
+        "Frontend tiene subset incompleto de valores (ExerciseType: 6 vs 27+)",
+        "Algunos campos enum en backend son string en frontend (role, current_rank)"
+      ],
+      "recommendation": "Crear @shared/enums package compartido entre backend y frontend, usar script de sincronización automática"
+    },
+
+    "jsonb_handling": {
+      "db": "jsonb (PostgreSQL JSON Binary)",
+      "backend_entity": "Record<string, any> (sin validación)",
+      "backend_dto": "Record<string, any> (expuesto sin cambios)",
+      "frontend": "Record<string, any> o interfaces específicas",
+      "critical_fields": [
+        "exercise.config - varía por exercise_type (27+ estructuras)",
+        "exercise.content - parcialmente tipado en frontend",
+        "exercise.solution - sin tipo",
+        "exercise.comodines_config - estructura documentada pero no tipada",
+        "submission.answer_data - varía por exercise_type",
+        "user_stats.metadata - propósito general",
+        "user.raw_user_meta_data - sin estructura"
+      ],
+      "issues": [
+        "CRÍTICO: 0% type safety para campos JSONB más importantes",
+        "Imposible validar estructuras en compile time",
+        "Documentación en comentarios pero no en tipos",
+        "Discriminated unions faltantes para variaciones por tipo"
+      ],
+      "recommendations": [
+        "Crear discriminated unions para exercise config/content/answer por exercise_type",
+        "Definir interfaces para metadata conocidos (ComodinesConfig, UserMetadata, etc)",
+        "Usar Zod o class-validator para validación runtime de JSONB",
+        "Considerar GraphQL con tipos estrictos para JSONB complejos"
+      ]
+    },
+
+    "array_handling": {
+      "db": "ARRAY types (text[], uuid[])",
+      "backend_entity": "Type[] | undefined",
+      "backend_dto": "Type[] | null",
+      "frontend": "Type[] | undefined (inconsistente)",
+      "examples": [
+        "prerequisites: uuid[]",
+        "comodines_allowed: comodin_type[]",
+        "comodines_used: text[]",
+        "hints: text[]"
+      ],
+      "consistency": "⚠ Mix de undefined y null para arrays opcionales"
+    },
+
+    "nullable_vs_optional": {
+      "pattern_db": "NULL en SQL",
+      "pattern_entity": "field?: Type (optional)",
+      "pattern_dto": "field!: Type | null (required but nullable)",
+      "pattern_frontend": "field?: Type | null (mix)",
+      "issue": "Inconsistencia entre undefined (ausente) y null (presente pero sin valor)",
+      "recommendation": "Estandarizar: usar | null para JSON compatibility, ? solo para campos verdaderamente opcionales"
+    },
+
+    "naming_conventions": {
+      "db": "snake_case (PostgreSQL standard)",
+      "backend_entity": "camelCase (TypeORM default)",
+      "backend_dto": "camelCase (NestJS standard)",
+      "frontend": "camelCase (JavaScript/TypeScript standard)",
+      "exceptions": [
+        "Backend UserResponseDto usa snake_case para timestamps: created_at, updated_at",
+        "Frontend AuthResponse usa snake_case: access_token, refresh_token",
+        "Inconsistencia en mismo nivel (frontend) entre diferentes tipos"
+      ],
+      "recommendation": "Estandarizar completamente en camelCase para TypeScript (backend + frontend), usar transformación automática con class-transformer"
+    }
+  },
+
+  "type_safety_score": {
+    "methodology": "Porcentaje de campos con tipo correcto end-to-end (no any, no mismatch, no missing)",
+
+    "db_to_backend": {
+      "score": "85%",
+      "strengths": [
+        "TypeORM entities mapean bien tipos primitivos (uuid→string, integer→number, boolean→boolean)",
+        "Timestamps consistentes (timestamp→Date)",
+        "Enums de DB tienen correspondencia en TypeScript"
+      ],
+      "weaknesses": [
+        "Todos los JSONB son Record<string, any> (15% de penalización)",
+        "interval → string sin tipo específico",
+        "Algunos enums de DB son strings en entity (current_rank)"
+      ]
+    },
+
+    "backend_to_frontend": {
+      "score": "45%",
+      "strengths": [
+        "Tipos primitivos básicos se mantienen (string, number, boolean)",
+        "Arrays se preservan correctamente",
+        "Algunos campos bien alineados (id, email, score)"
+      ],
+      "weaknesses": [
+        "UserStats completamente ausente en frontend (0% coverage)",
+        "ExerciseType mismatch crítico (6 vs 27+ valores)",
+        "ExerciseSubmission faltante 10 de 19 campos (47% coverage)",
+        "Múltiples naming mismatches (answer_data vs submission_data)",
+        "Date→string sin tipo explícito",
+        "JSONB siguen siendo any sin mejora"
+      ]
+    },
+
+    "overall": {
+      "score": "62%",
+      "calculation": "(85 + 45) / 2 = 65%, ajustado -3% por issues críticos",
+      "grade": "D (Deficiente)",
+      "interpretation": "Type safety parcial, múltiples gaps críticos que causan runtime errors"
+    }
+  },
+
+  "recommendations": {
+    "immediate_actions": [
+      {
+        "priority": "P0 - CRÍTICO",
+        "action": "Crear frontend types faltantes",
+        "items": [
+          "Crear UserStats interface completa en frontend/types/gamification.types.ts",
+          "Completar ExerciseSubmission con todos los campos del backend",
+          "Sincronizar ExerciseType enum (27+ valores)"
+        ],
+        "impact": "Elimina ~40% de type mismatches",
+        "effort": "2-4 horas"
+      },
+      {
+        "priority": "P0 - CRÍTICO",
+        "action": "Fix enum mismatches",
+        "items": [
+          "Sincronizar ExerciseType: 27+ tipos en frontend",
+          "Alinear DifficultyLevel enums o crear mapeo",
+          "Crear MayaRank enum compartido"
+        ],
+        "impact": "Previene runtime errors en exercise rendering",
+        "effort": "1-2 horas"
+      },
+      {
+        "priority": "P1 - ALTO",
+        "action": "Tipar campos JSONB críticos",
+        "items": [
+          "Crear discriminated union para exercise.config por exercise_type",
+          "Tipar exercise.content con interface específica compartida",
+          "Definir ComodinesConfig interface",
+          "Tipar submission.answer_data por exercise_type"
+        ],
+        "impact": "Agrega type safety a 70% de JSONB usage",
+        "effort": "1-2 días"
+      },
+      {
+        "priority": "P1 - ALTO",
+        "action": "Estandarizar naming conventions",
+        "items": [
+          "Cambiar access_token → accessToken en frontend",
+          "Alinear answer_data vs submission_data",
+          "Documentar y aplicar camelCase consistente"
+        ],
+        "impact": "Reduce confusión y necesidad de mapeo manual",
+        "effort": "4-6 horas"
+      }
+    ],
+
+    "medium_term": [
+      {
+        "priority": "P2 - MEDIO",
+        "action": "Implementar validación runtime",
+        "items": [
+          "Integrar Zod en frontend para validar responses del backend",
+          "Usar class-validator en DTOs de backend para JSONB",
+          "Crear schemas compartidos para estructuras JSONB"
+        ],
+        "impact": "Detecta mismatches en runtime temprano",
+        "effort": "3-5 días"
+      },
+      {
+        "priority": "P2 - MEDIO",
+        "action": "Estandarizar nullable handling",
+        "items": [
+          "Decidir: undefined vs null (recomendado: null)",
+          "Aplicar consistentemente en todos los types",
+          "Actualizar DTOs y entities"
+        ],
+        "impact": "Elimina ambigüedad en valores ausentes",
+        "effort": "1-2 días"
+      },
+      {
+        "priority": "P2 - MEDIO",
+        "action": "Mejorar Date handling",
+        "items": [
+          "Crear tipo DateString con validación",
+          "Documentar formato ISO 8601",
+          "Considerar date-fns para parsing consistente"
+        ],
+        "impact": "Previene errores de date parsing",
+        "effort": "4-8 horas"
+      }
+    ],
+
+    "long_term": [
+      {
+        "priority": "P3 - BAJO",
+        "action": "Shared types package",
+        "items": [
+          "Crear @gamilit/shared-types package",
+          "Mover enums, interfaces compartidas",
+          "Importar en backend y frontend",
+          "Script de sync automático"
+        ],
+        "impact": "Single source of truth para types",
+        "effort": "1-2 semanas"
+      },
+      {
+        "priority": "P3 - BAJO",
+        "action": "Considerar GraphQL con codegen",
+        "items": [
+          "Evaluar GraphQL en lugar de REST para complex types",
+          "Auto-generar frontend types desde schema",
+          "Type safety end-to-end garantizado"
+        ],
+        "impact": "100% type safety automático",
+        "effort": "3-4 semanas (refactor grande)"
+      },
+      {
+        "priority": "P3 - BAJO",
+        "action": "Metadata typing framework",
+        "items": [
+          "Definir interfaces para todos los metadata JSONB",
+          "UserMetadata, ExerciseMetadata, etc",
+          "Validación runtime opcional"
+        ],
+        "impact": "Completa type coverage",
+        "effort": "1 semana"
+      }
+    ]
+  },
+
+  "friction_points": {
+    "where_types_are_lost": [
+      {
+        "location": "Backend Entity → DTO",
+        "issue": "JSONB fields pierden estructura semántica",
+        "example": "exercise.config: Record<string, any> no diferencia entre crucigrama vs quiz config",
+        "impact": "Backend no puede validar estructura JSONB internamente"
+      },
+      {
+        "location": "DTO → JSON over HTTP",
+        "issue": "Date objects serializan a string sin tipo explícito",
+        "example": "created_at: Date → JSON: \"2024-11-04T10:30:00.000Z\"",
+        "impact": "Frontend debe asumir formato"
+      },
+      {
+        "location": "JSON → Frontend Types",
+        "issue": "Múltiples fields faltantes en frontend types",
+        "example": "ExerciseSubmission backend 19 campos → frontend 9 campos",
+        "impact": "Información disponible no tipada, uso de any implícito"
+      },
+      {
+        "location": "Enum serialization",
+        "issue": "TypeScript enums serializan a strings, frontend puede no tener enum",
+        "example": "ExerciseTypeEnum → JSON: \"detective_textual\" → frontend: string | ExerciseType (solo 6 valores)",
+        "impact": "Runtime error si frontend switch/case no maneja todos los tipos"
+      }
+    ],
+
+    "unnecessary_conversions": [
+      {
+        "conversion": "snake_case ↔ camelCase",
+        "frequency": "Inconsistente",
+        "cost": "Manual mapping en algunos lugares",
+        "solution": "Estandarizar + class-transformer automático"
+      },
+      {
+        "conversion": "undefined ↔ null",
+        "frequency": "Constante (Entity vs DTO vs Frontend)",
+        "cost": "Condicionales extra: if (x === null || x === undefined)",
+        "solution": "Estandarizar en null para JSON"
+      },
+      {
+        "conversion": "answer_data ↔ submission_data",
+        "frequency": "Cada submission",
+        "cost": "Mapeo manual en cliente",
+        "solution": "Estandarizar en answer_data"
+      },
+      {
+        "conversion": "Date ↔ string",
+        "frequency": "Todos los timestamps",
+        "cost": "new Date(str) / date.toISOString()",
+        "solution": "Aceptar como necesario pero documentar y tipar"
+      }
+    ],
+
+    "missing_strict_typing": [
+      {
+        "area": "JSONB fields",
+        "current": "Record<string, any> everywhere",
+        "needed": "Discriminated unions, typed interfaces",
+        "priority": "ALTA"
+      },
+      {
+        "area": "Enum completeness",
+        "current": "Frontend subset de backend enums",
+        "needed": "Sync completo de enums",
+        "priority": "CRÍTICA"
+      },
+      {
+        "area": "Frontend coverage",
+        "current": "~60% de campos backend tipados en frontend",
+        "needed": "95%+ coverage",
+        "priority": "ALTA"
+      },
+      {
+        "area": "Runtime validation",
+        "current": "Solo class-validator en DTOs input, no output",
+        "needed": "Zod validation en frontend para API responses",
+        "priority": "MEDIA"
+      },
+      {
+        "area": "Date types",
+        "current": "string sin validación de formato",
+        "needed": "DateString tipo con regex ISO validator",
+        "priority": "MEDIA"
+      }
+    ]
+  },
+
+  "special_cases_analysis": {
+    "exercise_data_jsonb": {
+      "field": "educational_content.exercises.config, content, solution",
+      "current_typing": "Record<string, any> at all layers",
+      "problem": "27+ exercise types con estructuras completamente diferentes",
+      "examples": {
+        "crucigrama": {
+          "config": {
+            "grid": "string[][] (grid matrix)",
+            "across_clues": "Array<{number, clue, answer}>",
+            "down_clues": "Array<{number, clue, answer}>"
+          }
+        },
+        "detective_textual": {
+          "config": {
+            "text": "string (texto a analizar)",
+            "questions": "Array<{question, type, correct_answer}>",
+            "clues": "Array<{id, text, reveal_cost}>"
+          }
+        },
+        "quiz_tiktok": {
+          "config": {
+            "video_url": "string",
+            "questions": "Array<{timestamp, question, options, correct}>",
+            "duration": "number"
+          }
+        }
+      },
+      "recommendation": {
+        "approach": "Discriminated Union",
+        "implementation": "type ExerciseConfig = CrucigramaConfig | DetectiveConfig | QuizConfig | ... (27 types)",
+        "example": "interface CrucigramaConfig { type: 'crucigrama'; grid: string[][]; across_clues: Clue[]; down_clues: Clue[]; }",
+        "benefits": [
+          "Type narrowing: if (config.type === 'crucigrama') { /* config.grid available */ }",
+          "Compile-time checking per exercise type",
+          "Autocomplete in IDE",
+          "Refactor safety"
+        ],
+        "effort": "Alto (27 interfaces) pero escalable"
+      }
+    },
+
+    "user_preferences_jsonb": {
+      "field": "auth_management.profiles.preferences (mentioned but not in analyzed entities)",
+      "current_typing": "Likely Record<string, any>",
+      "expected_structure": {
+        "theme": "ThemeEnum (light | dark | auto)",
+        "language": "LanguageEnum (es | en)",
+        "notifications": {
+          "email": "boolean",
+          "push": "boolean",
+          "in_app": "boolean"
+        },
+        "accessibility": {
+          "high_contrast": "boolean",
+          "font_size": "number",
+          "screen_reader": "boolean"
+        }
+      },
+      "recommendation": {
+        "type": "interface UserPreferences { theme: ThemeEnum; language: LanguageEnum; notifications: NotificationSettings; accessibility: AccessibilitySettings; }",
+        "validation": "Zod schema for runtime checking",
+        "default": "Provide sensible defaults if field is null"
+      }
+    },
+
+    "timestamps_created_updated": {
+      "fields": "created_at, updated_at (all tables)",
+      "db_type": "timestamp with time zone",
+      "entity_type": "Date (@CreateDateColumn, @UpdateDateColumn)",
+      "dto_type": "Date (with @Expose, @Type(() => Date))",
+      "json_serialized": "string (ISO 8601: \"2024-11-04T10:30:00.000Z\")",
+      "frontend_type": "string (assumed but not explicitly typed)",
+      "issues": [
+        "Frontend types don't specify ISO format",
+        "No validation that frontend receives valid ISO string",
+        "Timezone handling implicit (UTC assumed)"
+      ],
+      "recommendation": {
+        "type": "type DateString = string; // ISO 8601",
+        "validation": "Regex validator: /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$/",
+        "parsing": "Use date-fns parseISO / formatISO for consistency",
+        "documentation": "Explicitly document UTC timezone requirement"
+      }
+    }
+  },
+
+  "summary": {
+    "total_flows_analyzed": 4,
+    "total_fields_tracked": 120,
+    "type_consistency": {
+      "fully_consistent": 45,
+      "partially_consistent": 30,
+      "inconsistent": 25,
+      "missing": 20
+    },
+
+    "critical_findings": [
+      "UserStats completamente ausente en frontend (35 campos sin tipo)",
+      "ExerciseType enum mismatch crítico: 27+ tipos backend vs 6 frontend",
+      "ExerciseSubmission faltante 50% de campos en frontend",
+      "JSONB fields sin tipo: 0% type safety en estructuras complejas"
+    ],
+
+    "overall_health": "DEFICIENTE - Requiere trabajo significativo",
+
+    "next_steps": [
+      "1. URGENTE: Agregar UserStats type en frontend",
+      "2. URGENTE: Sync completo ExerciseType enum",
+      "3. URGENTE: Completar ExerciseSubmission frontend type",
+      "4. ALTA: Crear discriminated unions para exercise config/content/answer",
+      "5. ALTA: Estandarizar naming (camelCase everywhere)",
+      "6. MEDIA: Implementar Zod validation en frontend",
+      "7. MEDIA: Estandarizar null vs undefined",
+      "8. BAJA: Considerar shared types package o GraphQL"
+    ]
+  }
+}

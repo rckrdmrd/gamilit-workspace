@@ -531,7 +531,7 @@ Ya existe la funcion `educational_content.validate_and_audit()` que:
 4. Registra intento
 5. Retorna resultado
 
-**Ver:** `docs/90-transversal/archivos-historicos/2025-11/DIAGRAMA-FLUJO-SUBMISSIONS-2025-11-19.md`
+**Ver:** `orchestration/reportes/historicos/2025-11/DIAGRAMA-FLUJO-SUBMISSIONS-2025-11-19.md` (Archivo historico)
 
 ---
 
@@ -724,7 +724,7 @@ Para cada estudiante de su aula:
 - [PORTAL-TEACHER-FLOWS.md](./PORTAL-TEACHER-FLOWS.md) - Flujos de datos Teacher
 - [PORTAL-STUDENT-GUIDE.md](./PORTAL-STUDENT-GUIDE.md) - Guia del Student Portal
 - [../student-portal/README.md](../student-portal/README.md) - Documentacion de gaps Student
-- [DIAGRAMA-FLUJO-SUBMISSIONS](../90-transversal/archivos-historicos/2025-11/DIAGRAMA-FLUJO-SUBMISSIONS-2025-11-19.md) - Flujo detallado de submissions
+- [DIAGRAMA-FLUJO-SUBMISSIONS](../../orchestration/reportes/historicos/2025-11/DIAGRAMA-FLUJO-SUBMISSIONS-2025-11-19.md) - Flujo detallado de submissions (Archivo historico)
 
 ### Inventarios
 

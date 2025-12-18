@@ -1,4 +1,3 @@
-/* eslint-disable rulesdir/no-api-route-issues */
 /**
  * Exercise Responses API Service
  *
@@ -12,7 +11,7 @@
  * @module services/api/teacher/exerciseResponsesApi
  */
 
-import { apiClient } from '../apiClient';
+import { apiClient } from '@/services/api/apiClient';
 
 // ============================================================================
 // TYPES & INTERFACES

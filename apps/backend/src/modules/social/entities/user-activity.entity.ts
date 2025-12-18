@@ -76,7 +76,7 @@ export class UserActivity {
    * - { challengeId: 'uuid' }
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Indica si la actividad es visible para amigos

@@ -20,6 +20,7 @@ import {
   SendFromTemplateDto,
   NotificationResponseDto,
 } from '../dto/notifications';
+import { AuthRequest } from '@shared/types';
 
 /**
  * NotificationMultiChannelController
@@ -107,11 +108,11 @@ export class NotificationMultiChannelController {
   })
   async createMultiChannel(
     @Body() createDto: CreateNotificationDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<NotificationResponseDto> {
     // Validar que el usuario solo crea notificaciones para sí mismo
     // (a menos que sea admin - validación futura)
-    if (createDto.userId !== req.user.sub) {
+    if (createDto.userId !== req.user!.id) {
       // TODO: Permitir si es admin
       throw new Error('Cannot create notifications for other users');
     }
@@ -192,10 +193,10 @@ export class NotificationMultiChannelController {
   })
   async sendFromTemplate(
     @Body() sendDto: SendFromTemplateDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<NotificationResponseDto> {
     // Validar ownership
-    if (sendDto.userId !== req.user.sub) {
+    if (sendDto.userId !== req.user!.id) {
       // TODO: Permitir si es admin
       throw new Error('Cannot create notifications for other users');
     }

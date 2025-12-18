@@ -159,7 +159,7 @@ export class Classroom {
       allow_self_enrollment: false,
     },
   })
-    settings!: Record<string, any>;
+    settings!: Record<string, unknown>;
 
   /**
    * Horario de clases en formato JSON (array de objetos)
@@ -214,7 +214,7 @@ export class Classroom {
    * Metadatos adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Fecha y hora de creación del registro

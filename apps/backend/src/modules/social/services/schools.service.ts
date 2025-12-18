@@ -1,14 +1,12 @@
 import {
   Injectable,
   NotFoundException,
-  BadRequestException,
-  ConflictException,
+    ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { School } from '../entities';
 import { CreateSchoolDto } from '../dto';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
 
 /**
  * SchoolsService
@@ -193,7 +191,7 @@ export class SchoolsService {
    */
   async updateSettings(
     id: string,
-    settings: Record<string, any>,
+    settings: Record<string, unknown>,
   ): Promise<School> {
     const school = await this.schoolRepo.findOne({ where: { id } });
 

@@ -76,6 +76,7 @@ import { RlsInterceptor } from './shared/interceptors/rls.interceptor';
     }),
 
     // Database connection for 'educational_content' schema
+    // CORRECTED (2025-12-18): Agregado path de assignments y teacher entities
     TypeOrmModule.forRootAsync({
       name: 'educational',  // Connection name for @InjectRepository(Entity, 'educational')
       imports: [ConfigModule],
@@ -86,7 +87,11 @@ import { RlsInterceptor } from './shared/interceptors/rls.interceptor';
         username: configService.get('database.username'),
         password: configService.get('database.password'),
         database: configService.get('database.database'),
-        entities: [__dirname + '/modules/educational/entities/**/*.entity{.ts,.js}'],
+        entities: [
+          __dirname + '/modules/educational/entities/**/*.entity{.ts,.js}',
+          __dirname + '/modules/assignments/entities/**/*.entity{.ts,.js}',
+          __dirname + '/modules/teacher/entities/teacher-content.entity{.ts,.js}',
+        ],
         synchronize: configService.get('database.synchronize', false),
         logging: configService.get('database.logging'),
         ssl: configService.get('database.ssl'),

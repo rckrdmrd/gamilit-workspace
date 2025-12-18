@@ -1,14 +1,11 @@
 import {
   IsUUID,
   IsString,
-  IsInt,
-  IsBoolean,
-  IsOptional,
+      IsOptional,
   IsDateString,
   IsObject,
   IsIn,
-  Min,
-} from 'class-validator';
+  } from 'class-validator';
 
 /**
  * CreateLearningSessionDto - DTO para crear sesión de aprendizaje
@@ -80,14 +77,14 @@ export class CreateLearningSessionDto {
    */
   @IsOptional()
   @IsObject()
-    device_info?: Record<string, any>;
+    device_info?: Record<string, unknown>;
 
   /**
    * Información del navegador
    */
   @IsOptional()
   @IsObject()
-    browser_info?: Record<string, any>;
+    browser_info?: Record<string, unknown>;
 
   /**
    * Calidad de conexión
@@ -102,5 +99,5 @@ export class CreateLearningSessionDto {
    */
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

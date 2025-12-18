@@ -234,7 +234,7 @@ export class MediaFile {
    * Información de procesamiento en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-    processing_info!: Record<string, any>;
+    processing_info!: Record<string, unknown>;
 
   // =====================================================
   // SEARCH & ORGANIZATION
@@ -326,13 +326,13 @@ export class MediaFile {
    * Datos EXIF del archivo (imágenes)
    */
   @Column({ type: 'jsonb', default: {} })
-    exif_data!: Record<string, any>;
+    exif_data!: Record<string, unknown>;
 
   /**
    * Metadatos adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   // =====================================================
   // AUDIT TIMESTAMPS

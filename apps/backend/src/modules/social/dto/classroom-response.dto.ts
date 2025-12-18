@@ -103,7 +103,7 @@ export class ClassroomResponseDto {
    * Configuraciones del aula
    */
   @Expose()
-    settings!: Record<string, any>;
+    settings!: Record<string, unknown>;
 
   /**
    * Horario de clases
@@ -147,7 +147,7 @@ export class ClassroomResponseDto {
    * Metadatos adicionales
    */
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Fecha de creación

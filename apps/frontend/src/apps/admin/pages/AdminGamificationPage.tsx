@@ -61,6 +61,7 @@ export default function AdminGamificationPage() {
     resetParameter,
     updateMayaRank,
     bulkUpdateParameters,
+    restoreDefaults,
     // previewImpact is available but not used yet
   } = useGamificationConfig();
 
@@ -610,10 +611,7 @@ export default function AdminGamificationPage() {
         parameters={safeParameters}
         totalUsers={1250}
         onConfirm={async () => {
-          // TODO: Implement restore defaults endpoint in backend
-          // This endpoint is not yet available in the API
-          // await restoreDefaults.mutateAsync();
-          console.warn('Restore defaults endpoint not yet implemented in backend');
+          await restoreDefaults.mutateAsync();
           setRestoreDefaultsOpen(false);
         }}
       />

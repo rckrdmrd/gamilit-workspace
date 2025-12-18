@@ -1,0 +1,244 @@
+{
+  "version": "2.0",
+  "proyecto": "gamilit",
+  "fecha_creacion": "2025-11-04",
+  "ultima_actualizacion": "2025-12-05T00:00:00Z",
+  "limite_maximo": 15,
+  "slots_disponibles": 15,
+  "subagentes": {
+    "NEXUS-DATABASE": {
+      "nombre": "NEXUS-DATABASE",
+      "tipo": "especializado",
+      "estado": "disponible",
+      "responsabilidades": [
+        "Gestión de esquemas SQL (PostgreSQL 15+)",
+        "DDL: tablas, índices, constraints, triggers",
+        "Seeds para desarrollo y producción",
+        "Row Level Security (RLS) policies",
+        "Optimización de queries",
+        "Validación de integridad referencial"
+      ],
+      "areas": [
+        "apps/database/ddl/",
+        "apps/database/seeds/",
+        "apps/database/scripts/"
+      ],
+      "prompt": "core/orchestration/agents/PROMPT-DATABASE-AGENT.md",
+      "init_nexus": "core/orchestration/agents/INIT-NEXUS-DATABASE.md",
+      "ultima_interaccion": null,
+      "validaciones_pendientes": [],
+      "salud": {
+        "status": "ready",
+        "ultimo_chequeo": "2025-12-05T00:00:00Z"
+      }
+    },
+    "NEXUS-BACKEND": {
+      "nombre": "NEXUS-BACKEND",
+      "tipo": "especializado",
+      "estado": "disponible",
+      "responsabilidades": [
+        "API REST endpoints (NestJS)",
+        "Services y DTOs",
+        "Autenticación y autorización (JWT, OAuth)",
+        "Lógica de negocio",
+        "Entities y repositorios",
+        "Testing backend (coverage >= 60%)"
+      ],
+      "areas": [
+        "apps/backend/src/",
+        "apps/backend/test/"
+      ],
+      "prompt": "core/orchestration/agents/PROMPT-BACKEND-AGENT.md",
+      "init_nexus": "core/orchestration/agents/INIT-NEXUS-BACKEND.md",
+      "ultima_interaccion": null,
+      "validaciones_pendientes": [],
+      "salud": {
+        "status": "ready",
+        "ultimo_chequeo": "2025-12-05T00:00:00Z"
+      }
+    },
+    "NEXUS-FRONTEND": {
+      "nombre": "NEXUS-FRONTEND",
+      "tipo": "especializado",
+      "estado": "disponible",
+      "responsabilidades": [
+        "Componentes React (TypeScript)",
+        "Estado y Context API / Zustand",
+        "Routing y navegación",
+        "UI/UX implementation",
+        "Tailwind CSS styling",
+        "Testing frontend (coverage >= 60%)"
+      ],
+      "areas": [
+        "apps/frontend/src/",
+        "apps/frontend/tests/"
+      ],
+      "prompt": "core/orchestration/agents/PROMPT-FRONTEND-AGENT.md",
+      "init_nexus": "core/orchestration/agents/INIT-NEXUS-FRONTEND.md",
+      "ultima_interaccion": null,
+      "validaciones_pendientes": [],
+      "salud": {
+        "status": "ready",
+        "ultimo_chequeo": "2025-12-05T00:00:00Z"
+      }
+    },
+    "NEXUS-TESTING": {
+      "nombre": "NEXUS-TESTING",
+      "tipo": "especializado",
+      "estado": "disponible",
+      "responsabilidades": [
+        "Tests unitarios",
+        "Tests de integración",
+        "Tests E2E",
+        "Coverage reporting",
+        "Test fixtures y mocks"
+      ],
+      "areas": [
+        "**/*.spec.ts",
+        "**/*.test.ts",
+        "**/*.e2e-spec.ts"
+      ],
+      "prompt": null,
+      "init_nexus": "core/orchestration/agents/INIT-NEXUS-TESTING.md",
+      "ultima_interaccion": null,
+      "validaciones_pendientes": [],
+      "salud": {
+        "status": "ready",
+        "ultimo_chequeo": "2025-12-05T00:00:00Z"
+      }
+    },
+    "NEXUS-DEVOPS": {
+      "nombre": "NEXUS-DEVOPS",
+      "tipo": "especializado",
+      "estado": "disponible",
+      "responsabilidades": [
+        "Docker y Docker Compose",
+        "CI/CD pipelines (GitHub Actions)",
+        "Scripts de deployment",
+        "Backup y restore automatizado",
+        "Configuración de entornos"
+      ],
+      "areas": [
+        "apps/devops/",
+        ".github/workflows/"
+      ],
+      "prompt": null,
+      "init_nexus": "core/orchestration/agents/INIT-NEXUS-DEVOPS.md",
+      "ultima_interaccion": null,
+      "validaciones_pendientes": [],
+      "salud": {
+        "status": "ready",
+        "ultimo_chequeo": "2025-12-05T00:00:00Z"
+      }
+    },
+    "NEXUS-INTEGRATION": {
+      "nombre": "NEXUS-INTEGRATION",
+      "tipo": "validador",
+      "estado": "disponible",
+      "responsabilidades": [
+        "Validación de coherencia 3 capas (Database <-> Backend <-> Frontend)",
+        "Validación contra documentación del proyecto",
+        "Code review automático",
+        "Detección de discrepancias",
+        "Testing E2E de integración"
+      ],
+      "areas": [
+        "Lectura de todas las capas",
+        "orchestration/05-validaciones/"
+      ],
+      "prompt": null,
+      "init_nexus": "core/orchestration/agents/INIT-NEXUS-INTEGRATION.md",
+      "ultima_interaccion": null,
+      "validaciones_pendientes": [],
+      "salud": {
+        "status": "ready",
+        "ultimo_chequeo": "2025-12-05T00:00:00Z"
+      }
+    },
+    "NEXUS-DOCS": {
+      "nombre": "NEXUS-DOCS",
+      "tipo": "especializado",
+      "estado": "disponible",
+      "responsabilidades": [
+        "Documentación técnica",
+        "Casos de uso y especificaciones",
+        "Diagramas y arquitectura",
+        "ADRs (Architecture Decision Records)",
+        "README y guías de desarrollo"
+      ],
+      "areas": [
+        "docs/"
+      ],
+      "prompt": "core/orchestration/agents/PROMPT-DOCUMENTATION-VALIDATOR.md",
+      "init_nexus": null,
+      "ultima_interaccion": null,
+      "validaciones_pendientes": [],
+      "salud": {
+        "status": "ready",
+        "ultimo_chequeo": "2025-12-05T00:00:00Z"
+      }
+    }
+  },
+  "matriz_comunicacion": {
+    "NEXUS-DATABASE": {
+      "comunica_con": ["NEXUS-BACKEND", "NEXUS-INTEGRATION"],
+      "frecuencia": "alta",
+      "tipo_comunicacion": "Notificar cambios de schema, validar tipos"
+    },
+    "NEXUS-BACKEND": {
+      "comunica_con": ["NEXUS-DATABASE", "NEXUS-FRONTEND", "NEXUS-INTEGRATION"],
+      "frecuencia": "alta",
+      "tipo_comunicacion": "Consumir schemas, exponer APIs, validar contratos"
+    },
+    "NEXUS-FRONTEND": {
+      "comunica_con": ["NEXUS-BACKEND", "NEXUS-INTEGRATION"],
+      "frecuencia": "alta",
+      "tipo_comunicacion": "Consumir APIs, validar UI/UX"
+    },
+    "NEXUS-TESTING": {
+      "comunica_con": ["NEXUS-INTEGRATION", "NEXUS-BACKEND", "NEXUS-FRONTEND"],
+      "frecuencia": "media",
+      "tipo_comunicacion": "Ejecutar tests, reportar coverage"
+    },
+    "NEXUS-DEVOPS": {
+      "comunica_con": ["NEXUS-INTEGRATION"],
+      "frecuencia": "baja",
+      "tipo_comunicacion": "Configurar pipelines, validar deployments"
+    },
+    "NEXUS-INTEGRATION": {
+      "comunica_con": ["NEXUS-DATABASE", "NEXUS-BACKEND", "NEXUS-FRONTEND", "NEXUS-TESTING"],
+      "frecuencia": "alta",
+      "tipo_comunicacion": "Validar coherencia entre capas"
+    },
+    "NEXUS-DOCS": {
+      "comunica_con": ["NEXUS-INTEGRATION"],
+      "frecuencia": "baja",
+      "tipo_comunicacion": "Validar documentación actualizada"
+    }
+  },
+  "activos": [],
+  "completados": [],
+  "fallidos": [],
+  "estadisticas": {
+    "total_subagentes": 7,
+    "subagentes_activos": 0,
+    "subagentes_disponibles": 7,
+    "total_validaciones_pendientes": 0,
+    "tareas_completadas_hoy": 0,
+    "tareas_fallidas_hoy": 0
+  },
+  "politicas": {
+    "limite_paralelo": 15,
+    "timeout_tarea_minutos": 30,
+    "reintentos_maximos": 2,
+    "validacion_obligatoria": true,
+    "documentacion_obligatoria": true
+  },
+  "referencias": {
+    "prompts_base": "core/orchestration/agents/",
+    "prompts_proyecto": "orchestration/prompts/",
+    "directivas_globales": "core/orchestration/directivas/",
+    "directivas_proyecto": "orchestration/directivas/",
+    "contexto_proyecto": "orchestration/00-guidelines/CONTEXTO-PROYECTO.md"
+  }
+}

@@ -17,9 +17,7 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  ManyToOne,
-  JoinColumn,
-  Index,
+      Index,
   Unique,
 } from 'typeorm';
 import {
@@ -31,24 +29,22 @@ import {
   schema: DB_SCHEMAS.EDUCATIONAL,
   name: DB_TABLES.EDUCATIONAL.ASSIGNMENT_EXERCISES,
 })
-@Index(['assignment_id'])
-@Index(['exercise_id'])
-@Index(['order_index'])
-@Unique(['assignment_id', 'exercise_id'])
+// CORRECTED (2025-12-18): Usar nombres de propiedades en lugar de nombres de columnas
+@Index(['assignmentId'])
+@Index(['exerciseId'])
+@Index(['orderIndex'])
+@Unique(['assignmentId', 'exerciseId'])
 export class AssignmentExercise {
   @PrimaryGeneratedColumn('uuid')
     id!: string;
 
   @Column('uuid', { name: 'assignment_id' })
-  @Index()
     assignmentId!: string;
 
   @Column('uuid', { name: 'exercise_id' })
-  @Index()
     exerciseId!: string;
 
   @Column('integer', { name: 'order_index' })
-  @Index()
     orderIndex!: number;
 
   @Column('decimal', {

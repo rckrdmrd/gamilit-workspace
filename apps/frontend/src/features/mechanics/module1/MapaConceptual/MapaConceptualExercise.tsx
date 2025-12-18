@@ -8,8 +8,7 @@ import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
 import type { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
-import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
+import { useInvalidateDashboard } from '@/shared/hooks';
 
 export interface MapaConceptualExerciseProps {
   exercise: MapaConceptualData;
@@ -37,8 +36,7 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
   actionsRef,
 }) => {
   const { user } = useAuth();
-  const { fetchUserProgress } = useRanksStore();
-  const { fetchBalance } = useEconomyStore();
+  const { syncAndInvalidate } = useInvalidateDashboard();
 
   const [connections, setConnections] = useState<string[]>([]);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
@@ -137,8 +135,7 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
       setShowFeedback(true);
 
       // Sync stores with backend (rewards already calculated and saved by backend)
-      await fetchUserProgress();
-      await fetchBalance();
+      await syncAndInvalidate();
 
       console.log('✅ [MapaConceptual] Submission successful:', {
         attemptId: response.attemptId,
@@ -156,7 +153,7 @@ export const MapaConceptualExercise: React.FC<MapaConceptualExerciseProps> = ({
     } finally {
       setIsSubmitting(false);
     }
-  }, [connections, validated, isSubmitting, user, exercise.id, fetchUserProgress, fetchBalance]);
+  }, [connections, validated, isSubmitting, user, exercise.id, syncAndInvalidate]);
 
   const handleReset = useCallback(() => {
     setConnections([]);

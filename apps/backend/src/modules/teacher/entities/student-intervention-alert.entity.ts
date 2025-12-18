@@ -158,7 +158,7 @@ export class StudentInterventionAlert {
    * - declining_trend: { score_drop: 30, period: '7 days' }
    */
   @Column({ type: 'jsonb', nullable: true })
-    metrics?: Record<string, any> | null;
+    metrics?: Record<string, unknown> | null;
 
   // =====================================================
   // STATUS & WORKFLOW

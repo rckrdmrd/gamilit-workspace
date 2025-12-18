@@ -45,7 +45,7 @@ export class MarieCurieContentResponseDto {
 
   @ApiProperty({ description: 'Contenido estructurado JSON' })
   @Expose()
-    content!: Record<string, any>;
+    content!: Record<string, unknown>;
 
   // =====================================================
   // EDUCATIONAL METADATA
@@ -109,7 +109,7 @@ export class MarieCurieContentResponseDto {
 
   @ApiProperty({ description: 'Contexto cultural JSON' })
   @Expose()
-    cultural_context!: Record<string, any>;
+    cultural_context!: Record<string, unknown>;
 
   // =====================================================
   // PUBLICATION STATUS
@@ -161,7 +161,7 @@ export class MarieCurieContentResponseDto {
 
   @ApiProperty({ description: 'Metadatos adicionales' })
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   @ApiProperty({ description: 'Fecha de creación' })
   @Expose()

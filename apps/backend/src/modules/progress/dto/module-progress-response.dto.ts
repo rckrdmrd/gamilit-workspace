@@ -198,13 +198,13 @@ export class ModuleProgressResponseDto {
    * Analíticas de rendimiento
    */
   @Expose()
-    performance_analytics!: Record<string, any>;
+    performance_analytics!: Record<string, unknown>;
 
   /**
    * Observaciones del sistema
    */
   @Expose()
-    system_observations!: Record<string, any>;
+    system_observations!: Record<string, unknown>;
 
   /**
    * Notas del estudiante
@@ -222,7 +222,7 @@ export class ModuleProgressResponseDto {
    * Metadatos
    */
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Fecha de creación

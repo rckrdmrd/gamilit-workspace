@@ -217,5 +217,5 @@ export class UpdateUserStatsDto {
 
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

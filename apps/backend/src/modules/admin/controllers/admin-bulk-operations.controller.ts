@@ -20,6 +20,7 @@ import {
   BulkDeleteUsersDto,
   BulkOperationStatusDto,
 } from '../dto/bulk-operations';
+import { AuthRequest } from '@shared/types';
 
 /**
  * AdminBulkOperationsController
@@ -60,9 +61,9 @@ export class AdminBulkOperationsController {
   @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   async bulkSuspendUsers(
     @Body() dto: BulkSuspendUsersDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<BulkOperationStatusDto> {
-    const adminId = req.user.sub; // JWT payload contiene sub = user.id
+    const adminId = req.user!.id; // JWT payload contiene sub = user.id
     return this.bulkOpsService.bulkSuspendUsers(dto, adminId);
   }
 
@@ -82,9 +83,9 @@ export class AdminBulkOperationsController {
   })
   async bulkActivateUsers(
     @Body() dto: BulkActivateUsersDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<BulkOperationStatusDto> {
-    const adminId = req.user.sub;
+    const adminId = req.user!.id;
     return this.bulkOpsService.bulkActivateUsers(dto, adminId);
   }
 
@@ -104,9 +105,9 @@ export class AdminBulkOperationsController {
   })
   async bulkUpdateRole(
     @Body() dto: BulkUpdateRoleDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<BulkOperationStatusDto> {
-    const adminId = req.user.sub;
+    const adminId = req.user!.id;
     return this.bulkOpsService.bulkUpdateRole(dto, adminId);
   }
 
@@ -126,9 +127,9 @@ export class AdminBulkOperationsController {
   })
   async bulkDeleteUsers(
     @Body() dto: BulkDeleteUsersDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<BulkOperationStatusDto> {
-    const adminId = req.user.sub;
+    const adminId = req.user!.id;
     return this.bulkOpsService.bulkDeleteUsers(dto, adminId);
   }
 

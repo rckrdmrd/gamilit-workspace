@@ -349,7 +349,7 @@ export class MediaController {
   })
   async updateProcessingStatus(
   @Param('id') id: string,
-    @Body() body: { status: ProcessingStatusEnum; metadata?: Record<string, any> },
+    @Body() body: { status: ProcessingStatusEnum; metadata?: Record<string, unknown> },
   ) {
     return this.mediaService.updateProcessingStatus(id, body.status, body.metadata);
   }

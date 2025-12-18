@@ -15,7 +15,7 @@ import { TeacherClassroomRole } from '@modules/social/entities/teacher-classroom
 
 describe('ClassroomAssignmentsController', () => {
   let controller: ClassroomAssignmentsController;
-  let service: ClassroomAssignmentsService;
+  let _service: ClassroomAssignmentsService;
 
   const mockClassroomAssignmentsService = {
     assignClassroomToTeacher: jest.fn(),

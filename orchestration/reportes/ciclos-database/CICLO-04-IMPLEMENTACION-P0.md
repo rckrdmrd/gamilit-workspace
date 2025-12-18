@@ -279,7 +279,7 @@ El Microciclo 4 implementó **43 de 44 objetos P0 críticos** (97.7%) en dos fas
 **Severidad:** MEDIA
 **Descripción:** Tablas creadas referencian tablas que deben existir
 **Tablas requeridas:**
-- `auth.users` (Supabase Auth)
+- `auth.users` (autenticación estándar)
 - `public.exercises` (educational_content)
 
 **Acción requerida:** Validar existencia antes de ejecutar DDL
@@ -378,7 +378,7 @@ El Microciclo 4 implementó **43 de 44 objetos P0 críticos** (97.7%) en dos fas
 ### Compatibilidad
 
 - ✅ PostgreSQL 14+
-- ✅ Supabase compatible
+- ✅ patrón estándar
 - ✅ Sintaxis SQL estándar
 - ✅ Índices optimizados
 - ⏳ RLS pendiente (M7)

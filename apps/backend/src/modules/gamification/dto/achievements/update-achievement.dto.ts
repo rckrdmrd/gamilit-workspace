@@ -58,11 +58,11 @@ export class UpdateAchievementDto {
 
   @IsOptional()
   @IsObject()
-    conditions?: Record<string, any>;
+    conditions?: Record<string, unknown>;
 
   @IsOptional()
   @IsObject()
-    rewards?: Record<string, any>;
+    rewards?: Record<string, unknown>;
 
   @IsOptional()
   @IsInt()
@@ -122,5 +122,5 @@ export class UpdateAchievementDto {
 
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

@@ -194,7 +194,7 @@ export interface AuthProfile {
   /** Multi-tenancy: Links to auth_management.tenants */
   tenant_id: string;
 
-  /** Links to auth.users (Supabase auth) - may be null for profiles without auth */
+  /** Links to auth.users - may be null for profiles without auth */
   user_id: string | null;
 
   /** Public display name - shown in UI, leaderboards */

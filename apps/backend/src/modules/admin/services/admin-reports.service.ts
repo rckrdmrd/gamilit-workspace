@@ -1,7 +1,9 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, MoreThanOrEqual, LessThan } from 'typeorm';
+import { Repository, LessThan } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { promises as fs } from 'fs';
+import { join } from 'path';
 import { User } from '@modules/auth/entities/user.entity';
 import { Tenant } from '@modules/auth/entities/tenant.entity';
 import { AdminReport } from '../entities/admin-report.entity';
@@ -35,6 +37,7 @@ import {
 @Injectable()
 export class AdminReportsService {
   private readonly logger = new Logger(AdminReportsService.name);
+  private readonly REPORTS_DIR = join(process.cwd(), 'apps', 'backend', 'uploads', 'reports');
 
   constructor(
     @InjectRepository(AdminReport, 'auth')
@@ -43,7 +46,28 @@ export class AdminReportsService {
     private readonly userRepo: Repository<User>,
     @InjectRepository(Tenant, 'auth')
     private readonly tenantRepo: Repository<Tenant>,
-  ) {}
+  ) {
+    this.ensureReportsDirectory();
+  }
+
+  /**
+   * Asegura que el directorio de reportes exista
+   *
+   * IMPORTANTE:
+   * - Se ejecuta al inicializar el servicio
+   * - Crea el directorio si no existe (mkdir -p)
+   */
+  private async ensureReportsDirectory(): Promise<void> {
+    try {
+      await fs.mkdir(this.REPORTS_DIR, { recursive: true });
+      this.logger.log(`Reports directory ensured: ${this.REPORTS_DIR}`);
+    } catch (error: any) {
+      this.logger.error(
+        `Error creating reports directory: ${error.message}`,
+        error.stack,
+      );
+    }
+  }
 
   /**
    * Genera un nuevo reporte
@@ -159,8 +183,8 @@ export class AdminReportsService {
    * @throws NotFoundException si el reporte no existe
    *
    * IMPORTANTE:
-   * - Soft delete: no elimina físicamente, solo marca como eliminado
-   * - En producción: también eliminar archivo físico de storage
+   * - Elimina registro de BD y archivo físico de storage
+   * - Si el archivo no existe, solo elimina el registro
    */
   async deleteReport(reportId: string): Promise<void> {
     const report = await this.reportRepo.findOne({
@@ -171,11 +195,53 @@ export class AdminReportsService {
       throw new NotFoundException(`Report with ID ${reportId} not found`);
     }
 
-    // En producción: eliminar archivo físico aquí
-    // await this.storageService.deleteFile(report.file_url);
+    // Eliminar archivo físico de storage si existe
+    if (report.file_url) {
+      await this.deleteReportFile(report.file_url);
+    }
 
     await this.reportRepo.delete(reportId);
     this.logger.log(`Report ${reportId} deleted`);
+  }
+
+  /**
+   * Elimina archivo físico del reporte
+   *
+   * @param fileUrl - URL relativa del archivo (e.g., "/reports/filename.pdf")
+   *
+   * IMPORTANTE:
+   * - Si el archivo no existe, solo registra advertencia (no falla)
+   * - Extrae nombre de archivo de la URL
+   */
+  private async deleteReportFile(fileUrl: string): Promise<void> {
+    try {
+      // Extraer nombre de archivo de la URL (/reports/filename.pdf → filename.pdf)
+      const fileName = fileUrl.split('/').pop();
+      if (!fileName) {
+        this.logger.warn(`Invalid file URL: ${fileUrl}`);
+        return;
+      }
+
+      const filePath = join(this.REPORTS_DIR, fileName);
+
+      // Verificar si el archivo existe antes de eliminar
+      try {
+        await fs.access(filePath);
+        await fs.unlink(filePath);
+        this.logger.log(`Report file deleted: ${fileName}`);
+      } catch (error: any) {
+        if (error.code === 'ENOENT') {
+          this.logger.warn(`Report file not found (already deleted?): ${fileName}`);
+        } else {
+          throw error;
+        }
+      }
+    } catch (error: any) {
+      this.logger.error(
+        `Error deleting report file ${fileUrl}: ${error.message}`,
+        error.stack,
+      );
+    }
   }
 
   // =====================================================
@@ -187,6 +253,7 @@ export class AdminReportsService {
    *
    * CRON JOB: Se ejecuta diariamente a las 2:00 AM
    * - Elimina reportes con expires_at < now()
+   * - Elimina archivos físicos asociados
    * - Limita a 100 reportes por ejecución (para evitar sobrecarga)
    *
    * @cron Todos los días a las 2:00 AM (Mexico timezone)
@@ -207,12 +274,23 @@ export class AdminReportsService {
         return;
       }
 
-      // Eliminar reportes vencidos
+      // Contador de archivos eliminados
+      let filesDeleted = 0;
+
+      // Eliminar archivos físicos de storage
+      for (const report of expiredReports) {
+        if (report.file_url) {
+          await this.deleteReportFile(report.file_url);
+          filesDeleted++;
+        }
+      }
+
+      // Eliminar registros de BD
       const reportIds = expiredReports.map((r) => r.id);
       await this.reportRepo.delete(reportIds);
 
       this.logger.log(
-        `Cleanup completed: ${expiredReports.length} expired reports deleted`,
+        `Cleanup completed: ${expiredReports.length} expired reports deleted (${filesDeleted} files removed from storage)`,
       );
     } catch (error: any) {
       this.logger.error(
@@ -233,6 +311,7 @@ export class AdminReportsService {
    *
    * IMPORTANTE:
    * - Simula generación con setTimeout (2 segundos)
+   * - Almacena archivo físico en uploads/reports/
    * - En producción: integrar con BullMQ para procesamiento real
    * - Actualiza estado a 'generating' → 'completed' o 'failed'
    */
@@ -251,20 +330,32 @@ export class AdminReportsService {
         return;
       }
 
-      // Simular generación de archivo
-      const fileName = `${report.report_type}-${new Date().toISOString().split('T')[0]}.${report.report_format}`;
+      // Generar nombre de archivo único con timestamp
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const fileName = `${report.report_type}-${timestamp}.${report.report_format}`;
+      const filePath = join(this.REPORTS_DIR, fileName);
+
+      // Generar contenido simulado del reporte
+      const reportContent = this.generateMockReportContent(report);
+
+      // Guardar archivo físicamente en storage
+      await fs.writeFile(filePath, reportContent, 'utf-8');
+      const stats = await fs.stat(filePath);
+
+      // URL relativa del archivo (para servir vía endpoint)
       const fileUrl = `/reports/${fileName}`;
-      const fileSize = Math.floor(Math.random() * 1000000) + 10000; // Simular tamaño aleatorio
 
       // Actualizar reporte como completado
       await this.reportRepo.update(reportId, {
         status: 'completed',
         file_url: fileUrl,
-        file_size: fileSize,
+        file_size: stats.size,
         completed_at: new Date(),
       });
 
-      this.logger.log(`Report ${reportId} generated successfully`);
+      this.logger.log(
+        `Report ${reportId} generated successfully - File: ${fileName} (${stats.size} bytes)`,
+      );
     } catch (error: any) {
       this.logger.error(
         `Error generating report ${reportId}: ${error.message}`,
@@ -278,6 +369,50 @@ export class AdminReportsService {
         completed_at: new Date(),
       });
     }
+  }
+
+  /**
+   * Genera contenido simulado para el reporte
+   *
+   * @param report - Entity del reporte
+   * @returns Contenido del reporte en formato texto
+   *
+   * IMPORTANTE:
+   * - En producción: reemplazar con generación real de PDF/Excel/CSV
+   * - Por ahora genera contenido mock para testing
+   */
+  private generateMockReportContent(report: AdminReport): string {
+    const header = `
+========================================
+GAMILIT - REPORTE ADMINISTRATIVO
+========================================
+Tipo: ${report.report_type}
+Formato: ${report.report_format}
+Generado: ${new Date().toISOString()}
+Solicitado por: ${report.requested_by}
+========================================
+
+`;
+
+    const body = `
+METADATA:
+${JSON.stringify(report.metadata, null, 2)}
+
+CONTENIDO DEL REPORTE:
+Este es un reporte simulado de tipo "${report.report_type}".
+En producción, aquí se generaría el contenido real del reporte
+basado en los filtros y parámetros especificados en metadata.
+
+Para formato PDF: usar librería como pdfkit o puppeteer
+Para formato Excel: usar librería como exceljs
+Para formato CSV: usar librería nativa de Node.js
+
+========================================
+Fin del Reporte
+========================================
+`;
+
+    return header + body;
   }
 
   /**

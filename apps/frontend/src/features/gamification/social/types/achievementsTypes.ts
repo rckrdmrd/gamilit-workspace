@@ -14,10 +14,16 @@
  * P2-001: Consolidación de types - re-export desde SSOT
  */
 
+// Import for local use
+import type {
+  AchievementCategory,
+  Achievement as BaseAchievement,
+  AchievementReward,
+} from '@shared/types/achievement.types';
+
 // Re-export canonical types from SSOT
-export type { AchievementCategory } from '@shared/types/achievement.types';
-export type { Achievement as BaseAchievement } from '@shared/types/achievement.types';
-export type { AchievementReward } from '@shared/types/achievement.types';
+export type { AchievementCategory, AchievementReward };
+export type { BaseAchievement };
 
 // Local alias for rarity (matches SSOT NonNullable<Achievement['rarity']>)
 export type AchievementRarity = 'common' | 'rare' | 'epic' | 'legendary';
@@ -70,6 +76,7 @@ export interface AchievementWithProgress {
   progress?: AchievementProgress;
   requirements?: AchievementRequirements;
   isHidden?: boolean;
+  rewardsClaimed?: boolean; // True if user has claimed rewards for this achievement
 }
 
 /**

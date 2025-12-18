@@ -11,8 +11,7 @@ import { calculateTimeBonus } from '@/shared/utils/scoring';
 import { saveProgress as saveProgressUtil } from '@/shared/utils/storage';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
-import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
+import { useInvalidateDashboard } from '@/shared/hooks';
 
 interface ExerciseProps {
   exerciseId: string;
@@ -37,8 +36,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
   initialData,
 }) => {
   const { user } = useAuth();
-  const { fetchUserProgress } = useRanksStore();
-  const { fetchBalance } = useEconomyStore();
+  const { syncAndInvalidate } = useInvalidateDashboard();
   const [messages, setMessages] = useState<DebateMessage[]>(initialData?.messages || []);
   const [input, setInput] = useState('');
   const [aiTyping, setAiTyping] = useState(false);
@@ -180,8 +178,7 @@ export const DebateDigitalExercise: React.FC<ExerciseProps> = ({
       setBackendRewards({ xp: rewards.xp, mlCoins: rewards.mlCoins });
 
       // Sync stores with backend (rewards already calculated and saved by backend)
-      await fetchUserProgress();
-      await fetchBalance();
+      await syncAndInvalidate();
 
       console.log('✅ [DebateDigital] Submission successful:', {
         score: response.score,

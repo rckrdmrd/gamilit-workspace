@@ -62,7 +62,7 @@ export class CreateContentTemplateDto {
    */
   @ApiProperty({ description: 'Estructura JSON de la plantilla', example: { sections: [], fields: [] } })
   @IsObject()
-    template_structure!: Record<string, any>;
+    template_structure!: Record<string, unknown>;
 
   /**
    * Valores predeterminados JSON
@@ -70,7 +70,7 @@ export class CreateContentTemplateDto {
   @ApiPropertyOptional({ description: 'Valores predeterminados', example: { difficulty: 'medium', duration: 30 } })
   @IsOptional()
   @IsObject()
-    default_values?: Record<string, any>;
+    default_values?: Record<string, unknown>;
 
   /**
    * Campos requeridos
@@ -141,7 +141,7 @@ export class CreateContentTemplateDto {
   @ApiPropertyOptional({ description: 'Metadatos adicionales', example: {} })
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 
   /**
    * ID del creador

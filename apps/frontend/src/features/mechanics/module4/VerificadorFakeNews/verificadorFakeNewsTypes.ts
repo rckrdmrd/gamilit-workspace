@@ -56,11 +56,14 @@ export interface VerificadorState {
 }
 
 export interface ExerciseProgressUpdate {
-  currentStep: number;
-  totalSteps: number;
-  score: number;
-  hintsUsed: number;
-  timeSpent: number;
+  progress: {
+    currentStep: number;
+    totalSteps: number;
+    score: number;
+    hintsUsed: number;
+    timeSpent: number;
+  };
+  answers: Record<string, unknown>;
 }
 
 // Exercise Actions Interface for Parent Control

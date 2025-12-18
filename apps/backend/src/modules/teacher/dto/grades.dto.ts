@@ -7,8 +7,7 @@
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsString,
-  IsNumber,
+    IsNumber,
   IsUUID,
   IsOptional,
   IsEnum,
@@ -74,7 +73,7 @@ export class GradeDetailResponseDto extends GradeResponseDto {
     exercise_type!: string;
 
   @ApiProperty({ description: 'Answer data (JSON)' })
-    answer_data!: Record<string, any>;
+    answer_data!: Record<string, unknown>;
 
   @ApiProperty({ description: 'Indicates if answer is correct' })
     is_correct!: boolean;

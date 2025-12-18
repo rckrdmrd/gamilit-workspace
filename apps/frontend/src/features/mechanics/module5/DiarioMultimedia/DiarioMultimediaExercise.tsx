@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { BookOpen, Image as ImageIcon, Save, Eye } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { BookOpen, Image as ImageIcon, Save, Eye, Send, Loader2, CheckCircle } from 'lucide-react';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
+import { FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
 
 interface UploadedFile {
   id: string;
@@ -17,13 +20,94 @@ interface DiaryEntry {
   isPrivate: boolean;
 }
 
-export const DiarioMultimediaExercise: React.FC = () => {
+interface ProgressData {
+  progress: {
+    currentStep: number;
+    totalSteps: number;
+    score: number;
+    hintsUsed: number;
+    timeSpent: number;
+  };
+  answers: Record<string, unknown>;
+}
+
+interface ExerciseProps {
+  exerciseId?: string;
+  exercise?: unknown;
+  onComplete?: (score: number, timeSpent: number) => void;
+  onProgressUpdate?: (data: ProgressData) => void;
+  onExit?: () => void;
+}
+
+export const DiarioMultimediaExercise: React.FC<ExerciseProps> = ({
+  exerciseId = 'diario-multimedia-default',
+  onComplete,
+  onProgressUpdate,
+  onExit,
+}) => {
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
   const [currentTitle, setCurrentTitle] = useState('');
   const [currentContent, setCurrentContent] = useState('');
   const [currentMedia, setCurrentMedia] = useState<UploadedFile[]>([]);
   const [isPrivate, setIsPrivate] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [startTime] = useState(new Date());
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [feedback, setFeedback] = useState<FeedbackData | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const { submit, isSubmitting } = useExerciseSubmission(exerciseId || '', {
+    onSuccess: (result) => {
+      setIsSubmitted(true);
+      const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+      setFeedback({
+        type: 'success',
+        title: '¡Ejercicio Enviado!',
+        message: 'Tu diario multimedia ha sido enviado para revisión por el docente.',
+        score: result.score,
+        xpEarned: result.rewards?.xp || 0,
+        mlCoinsEarned: result.rewards?.mlCoins || 0,
+      });
+      setShowFeedback(true);
+      onComplete?.(result.score, timeSpent);
+    },
+    onError: (err) => {
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: err?.message || 'Hubo un problema. Intenta de nuevo.',
+        score: 0,
+      });
+      setShowFeedback(true);
+    },
+  });
+
+  // Progress tracking
+  useEffect(() => {
+    const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+    const minEntries = 5;
+    const score = Math.min(100, Math.round((entries.length / minEntries) * 100));
+
+    onProgressUpdate?.({
+      progress: {
+        currentStep: entries.length,
+        totalSteps: minEntries,
+        score,
+        hintsUsed: 0,
+        timeSpent,
+      },
+      answers: {
+        entries: entries.map((e) => ({
+          id: e.id,
+          title: e.title,
+          contentLength: e.content.length,
+          mediaCount: e.media.length,
+        })),
+        totalEntries: entries.length,
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entries, startTime]);
 
   const handleSaveEntry = () => {
     if (!currentTitle || !currentContent) return;
@@ -72,15 +156,31 @@ export const DiarioMultimediaExercise: React.FC = () => {
     setCurrentContent(newText);
   };
 
+  const handleSubmit = () => {
+    if (!exerciseId || isSubmitting || isSubmitted || entries.length === 0) return;
+
+    submit({
+      entries: entries.map((entry) => ({
+        title: entry.title,
+        content: entry.content,
+        date: entry.date.toISOString(),
+        isPrivate: entry.isPrivate,
+        mediaCount: entry.media.length,
+      })),
+      totalEntries: entries.length,
+      totalMediaFiles: entries.reduce((acc, entry) => acc + entry.media.length, 0),
+    });
+  };
+
   return (
     <div className="min-h-screen bg-detective-bg p-6">
       <div className="mx-auto max-w-6xl space-y-6">
-        <div className="rounded-detective bg-white p-6 shadow-card">
-          <div className="mb-4 flex items-center gap-3">
-            <BookOpen className="h-8 w-8 text-detective-orange" />
-            <h1 className="text-3xl font-bold text-detective-text">Diario Multimedia</h1>
+        <div className="rounded-xl bg-gradient-to-r from-blue-800 to-orange-500 p-6 text-white shadow-lg">
+          <div className="mb-2 flex items-center gap-3">
+            <BookOpen className="h-8 w-8" />
+            <h2 className="text-2xl font-bold">Diario Multimedia</h2>
           </div>
-          <p className="text-detective-text-secondary">
+          <p className="opacity-90">
             Documenta tu aprendizaje sobre Marie Curie con texto, imágenes, videos y audio.
           </p>
         </div>
@@ -266,7 +366,7 @@ export const DiarioMultimediaExercise: React.FC = () => {
               </div>
             </div>
 
-            <div className="rounded-detective bg-gradient-to-r from-detective-orange to-detective-gold p-6 text-white shadow-lg">
+            <div className="rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 p-6 text-white shadow-lg">
               <h3 className="mb-2 text-xl font-bold">Estadísticas</h3>
               <div className="space-y-2">
                 <div className="flex justify-between">
@@ -285,9 +385,56 @@ export const DiarioMultimediaExercise: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {/* Submit Button */}
+            <div className="rounded-detective bg-white p-6 shadow-card">
+              <button
+                onClick={handleSubmit}
+                disabled={entries.length === 0 || isSubmitting || isSubmitted}
+                className="flex w-full items-center justify-center gap-2 rounded-detective bg-detective-orange px-6 py-4 font-medium text-white transition-colors hover:bg-detective-orange-dark disabled:cursor-not-allowed disabled:bg-gray-300"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Enviando...
+                  </>
+                ) : isSubmitted ? (
+                  <>
+                    <CheckCircle className="h-5 w-5" />
+                    Enviado
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-5 w-5" />
+                    Enviar Diario
+                  </>
+                )}
+              </button>
+              {entries.length === 0 && (
+                <p className="mt-2 text-center text-sm text-detective-text-secondary">
+                  Crea al menos una entrada para enviar el ejercicio
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Feedback Modal */}
+      {feedback && (
+        <FeedbackModal
+          isOpen={showFeedback}
+          onClose={() => {
+            setShowFeedback(false);
+            if (feedback.type === 'success') {
+              onExit?.();
+            }
+          }}
+          feedback={feedback}
+        />
+      )}
     </div>
   );
 };
+
+export default DiarioMultimediaExercise;

@@ -1,9 +1,12 @@
 // Module 4: Additional Reading Mechanics
+// NOTA: Ejercicios eliminados según DocumentoDeDiseño v6.1:
+//   - EmailFormal, ChatLiterario, EnsayoArgumentativo, ResenaCritica
+// Solo se mantienen los 5 ejercicios oficiales del M4
 export { VerificadorFakeNewsExercise } from './module4/VerificadorFakeNews/VerificadorFakeNewsExercise';
-export { EmailFormalExercise } from './module4/EmailFormal/EmailFormalExercise';
-export { ChatLiterarioExercise } from './module4/ChatLiterario/ChatLiterarioExercise';
-export { EnsayoArgumentativoExercise } from './module4/EnsayoArgumentativo/EnsayoArgumentativoExercise';
-export { ResenaCriticaExercise } from './module4/ResenaCritica/ResenaCriticaExercise';
+export { QuizTikTokExercise } from './module4/QuizTikTok/QuizTikTokExercise';
+export { AnalisisMemesExercise } from './module4/AnalisisMemes/AnalisisMemesExercise';
+export { InfografiaInteractivaExercise } from './module4/InfografiaInteractiva/InfografiaInteractivaExercise';
+export { NavegacionHipertextualExercise } from './module4/NavegacionHipertextual/NavegacionHipertextualExercise';
 
 // Module 5: Production Mechanics
 export { DiarioMultimediaExercise } from './module5/DiarioMultimedia/DiarioMultimediaExercise';

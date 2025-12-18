@@ -80,7 +80,7 @@ export class Notification {
    * - assignment: { assignment_id, due_date }
    */
   @Column({ type: 'jsonb', nullable: true, default: {} })
-    data?: Record<string, any>;
+    data?: Record<string, unknown>;
 
   /**
    * Prioridad de la notificación
@@ -129,5 +129,5 @@ export class Notification {
    * Para datos que no encajan en 'data': icon, action_url, related_entity_type/id
    */
   @Column({ type: 'jsonb', nullable: true, default: {} })
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

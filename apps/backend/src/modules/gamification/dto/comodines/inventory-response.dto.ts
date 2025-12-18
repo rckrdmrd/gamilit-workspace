@@ -78,7 +78,7 @@ export class InventoryResponseDto {
     description: 'Metadatos adicionales',
     example: { last_purchase_date: '2025-11-01T10:00:00Z' },
   })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   @ApiProperty({
     description: 'Fecha de creación',

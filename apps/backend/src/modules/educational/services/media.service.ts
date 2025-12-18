@@ -6,7 +6,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MediaResource } from '../entities';
-import { DB_SCHEMAS } from '@shared/constants';
 import { ProcessingStatusEnum } from '@shared/constants/enums.constants';
 
 /**
@@ -63,7 +62,7 @@ export class MediaService {
       throw new NotFoundException(`Media resource with ID ${id} not found`);
     }
 
-    await this.mediaRepo.update(id, mediaData);
+    await this.mediaRepo.update(id, mediaData as any);
     const updated = await this.findById(id);
     if (!updated) {
       throw new NotFoundException(`Media resource with ID ${id} not found after update`);
@@ -86,7 +85,7 @@ export class MediaService {
   async updateProcessingStatus(
     id: string,
     status: ProcessingStatusEnum,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): Promise<MediaResource> {
     const media = await this.findById(id);
     if (!media) {
@@ -108,7 +107,7 @@ export class MediaService {
       };
     }
 
-    await this.mediaRepo.update(id, updateData);
+    await this.mediaRepo.update(id, updateData as any);
     const updated = await this.findById(id);
     if (!updated) {
       throw new NotFoundException(`Media resource with ID ${id} not found after update`);

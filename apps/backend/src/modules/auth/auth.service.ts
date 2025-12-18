@@ -1,7 +1,6 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
 // import { UsersService } from '../users/users.service'; // TODO: Implementar UsersService
 import { LoginDto, RefreshTokenDto } from './dto';
 // import { RegisterDto } from './dto'; // TODO: RegisterDto no exportado
@@ -46,7 +45,7 @@ export class AuthService {
    * 4. Generate JWT tokens
    * 5. Return sanitized user + tokens
    */
-  async register(dto: any): Promise<AuthResponse> {
+  async register(_dto: any): Promise<AuthResponse> {
     throw new Error('Register method not implemented - UsersService required');
   }
 
@@ -60,7 +59,7 @@ export class AuthService {
    * 4. Generate JWT tokens
    * 5. Return sanitized user + tokens
    */
-  async login(dto: LoginDto): Promise<AuthResponse> {
+  async login(_dto: LoginDto): Promise<AuthResponse> {
     throw new Error('Login method not implemented - UsersService required');
   }
 
@@ -77,14 +76,14 @@ export class AuthService {
    * 3. Validate user is active
    * 4. Generate new access + refresh tokens
    */
-  async refreshToken(dto: RefreshTokenDto): Promise<TokenResponse> {
+  async refreshToken(_dto: RefreshTokenDto): Promise<TokenResponse> {
     throw new Error('RefreshToken method not implemented - UsersService required');
   }
 
   /**
    * Logout - Invalida tokens (client-side)
    */
-  async logout(userId: string): Promise<{ message: string }> {
+  async logout(_userId: string): Promise<{ message: string }> {
     // TODO: Implementar blacklist de tokens en Redis (opcional)
     // Por ahora, el logout es client-side (eliminar tokens de localStorage)
 
@@ -100,7 +99,7 @@ export class AuthService {
    * 2. Check if user exists and is active
    * 3. Return sanitized user (without password)
    */
-  async validateUser(userId: string) {
+  async validateUser(_userId: string) {
     throw new Error('ValidateUser method not implemented - UsersService required');
   }
 
@@ -139,7 +138,7 @@ export class AuthService {
    * Remover campos sensibles del usuario
    */
   private sanitizeUser(user: any) {
-    const { password, ...sanitized } = user;
+    const { _password, ...sanitized } = user;
     return sanitized;
   }
 }

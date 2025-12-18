@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronUp, ChevronDown, Menu, X, Save, Award } from 'lucide-react';
+import {
+  ChevronUp,
+  ChevronDown,
+  Menu,
+  X,
+  Save,
+  Award,
+  Send,
+  Loader2,
+  CheckCircle,
+} from 'lucide-react';
 import { DetectiveButton } from '@shared/components/base/DetectiveButton';
 import { DetectiveCard } from '@shared/components/base/DetectiveCard';
 import { FeedbackModal } from '@shared/components/mechanics/FeedbackModal';
@@ -9,17 +19,25 @@ import { ProgressTracker } from '@shared/components/mechanics/ProgressTracker';
 import { ScoreDisplay } from '@shared/components/mechanics/ScoreDisplay';
 import { TikTokCard } from './TikTokCard';
 import { QuizTikTokData } from './quizTikTokTypes';
-import {
-  calculateScore,
-  saveProgress,
-  FeedbackData,
-} from '@shared/components/mechanics/mechanicsTypes';
+import { saveProgress, FeedbackData } from '@shared/components/mechanics/mechanicsTypes';
+import { useExerciseSubmission } from '@/features/mechanics/shared/hooks/useExerciseSubmission';
+
+interface ProgressData {
+  progress: {
+    currentStep: number;
+    totalSteps: number;
+    score: number;
+    hintsUsed: number;
+    timeSpent: number;
+  };
+  answers: Record<string, unknown>;
+}
 
 interface ExerciseProps {
   exerciseId: string;
   onComplete?: (score: number, timeSpent: number) => void;
   onExit?: () => void;
-  onProgressUpdate?: (progress: number) => void;
+  onProgressUpdate?: (data: ProgressData) => void;
   initialData?: ExerciseState;
   difficulty?: 'easy' | 'medium' | 'hard';
   exercise?: QuizTikTokData;
@@ -28,6 +46,8 @@ interface ExerciseProps {
 interface ExerciseState {
   currentIndex: number;
   answers: number[];
+  questionTimes: number[]; // Time taken for each question in seconds
+  questionScores: number[]; // Score for each question (with time penalty)
 }
 
 const getDefaultExercise = (exerciseId: string, difficulty: string): QuizTikTokData => ({
@@ -100,12 +120,44 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
   const currentExercise = exercise || defaultExercise;
   const [currentIndex, setCurrentIndex] = useState(initialData?.currentIndex || 0);
   const [answers, setAnswers] = useState<number[]>(initialData?.answers || []);
+  const [questionTimes, setQuestionTimes] = useState<number[]>(initialData?.questionTimes || []);
+  const [questionScores, setQuestionScores] = useState<number[]>(initialData?.questionScores || []);
+  const [questionStartTime, setQuestionStartTime] = useState<Date>(new Date());
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackData | null>(null);
   const [startTime] = useState(new Date());
   const [currentScore, setCurrentScore] = useState(0);
   const [timeSpent, setTimeSpent] = useState(0);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const TIME_LIMIT_PER_QUESTION = 30; // 30 seconds per question
+
+  const { submit, isSubmitting } = useExerciseSubmission(exerciseId || '', {
+    onSuccess: (result) => {
+      setIsSubmitted(true);
+      const timeSpent = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
+      setFeedback({
+        type: 'success',
+        title: '¡Ejercicio Enviado!',
+        message: 'Tu trabajo ha sido enviado para revisión por el docente.',
+        score: result.score,
+        xpEarned: result.rewards?.xp || 0,
+        mlCoinsEarned: result.rewards?.mlCoins || 0,
+      });
+      setShowFeedback(true);
+      onComplete?.(result.score, timeSpent);
+    },
+    onError: (err) => {
+      setFeedback({
+        type: 'error',
+        title: 'Error al Enviar',
+        message: err?.message || 'Hubo un problema. Intenta de nuevo.',
+        score: 0,
+      });
+      setShowFeedback(true);
+    },
+  });
 
   const actionsRef = useRef<{
     handleReset?: () => void;
@@ -118,42 +170,70 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
     }>;
   }>({});
 
+  // Calculate score with time penalty
+  const calculateScoreWithTimePenalty = (
+    baseScore: number,
+    timeElapsed: number,
+    totalTime: number,
+  ) => {
+    const timePenalty = (timeElapsed / totalTime) * 0.5; // Maximum 50% penalty
+    return Math.max(50, Math.round(baseScore * (1 - timePenalty))); // Minimum 50 points
+  };
+
   // Calculate progress
   const calculateProgress = () => {
     return (answers.length / currentExercise.questions.length) * 100;
   };
 
-  // Calculate current score
+  // Calculate current score (with time penalties)
   const calculateCurrentScore = () => {
-    const correct = answers.filter(
-      (ans, idx) => ans === currentExercise.questions[idx].correctAnswer,
-    ).length;
-    return Math.floor((correct / currentExercise.questions.length) * 100);
+    if (questionScores.length === 0) return 0;
+    const totalScore = questionScores.reduce((sum, score) => sum + score, 0);
+    return Math.floor(totalScore / currentExercise.questions.length);
   };
 
   // Auto-save every 30 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      const currentState: ExerciseState = { currentIndex, answers };
+      const currentState: ExerciseState = { currentIndex, answers, questionTimes, questionScores };
       saveProgress(exerciseId, currentState);
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [currentIndex, answers, exerciseId]);
+  }, [currentIndex, answers, questionTimes, questionScores, exerciseId]);
+
+  // Reset question timer when changing questions
+  useEffect(() => {
+    setQuestionStartTime(new Date());
+  }, [currentIndex]);
 
   // Update progress
 
   useEffect(() => {
-    const progress = calculateProgress();
+    const _progress = calculateProgress(); // Prefixed: calculated for future use
     const score = calculateCurrentScore();
     setCurrentScore(score);
 
     const elapsed = Math.floor((new Date().getTime() - startTime.getTime()) / 1000);
     setTimeSpent(elapsed);
 
-    onProgressUpdate?.(progress);
+    onProgressUpdate?.({
+      progress: {
+        currentStep: answers.length,
+        totalSteps: currentExercise.questions.length,
+        score,
+        hintsUsed: 0,
+        timeSpent: elapsed,
+      },
+      answers: {
+        selectedAnswers: answers,
+        questionScores,
+        questionTimes,
+        currentQuestion: currentIndex,
+      },
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [answers, onProgressUpdate, startTime]);
+  }, [answers, onProgressUpdate, startTime, currentIndex, questionScores, questionTimes]);
 
   // Handle swipe navigation
   const handleSwipe = (direction: 'up' | 'down') => {
@@ -166,23 +246,83 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
 
   // Handle answer selection
   const handleAnswer = (optionIndex: number) => {
+    // Calculate time taken for this question
+    const timeElapsed = (new Date().getTime() - questionStartTime.getTime()) / 1000;
+
+    // Determine if answer is correct
+    const isCorrect = optionIndex === currentExercise.questions[currentIndex].correctAnswer;
+    const baseScore = isCorrect ? 100 : 0;
+
+    // Calculate score with time penalty (only if correct)
+    const scoreWithPenalty = isCorrect
+      ? calculateScoreWithTimePenalty(baseScore, timeElapsed, TIME_LIMIT_PER_QUESTION)
+      : 0;
+
+    // Update state
     const newAnswers = [...answers];
     newAnswers[currentIndex] = optionIndex;
     setAnswers(newAnswers);
 
-    // Auto-advance to next question after a short delay
+    const newQuestionTimes = [...questionTimes];
+    newQuestionTimes[currentIndex] = timeElapsed;
+    setQuestionTimes(newQuestionTimes);
+
+    const newQuestionScores = [...questionScores];
+    newQuestionScores[currentIndex] = scoreWithPenalty;
+    setQuestionScores(newQuestionScores);
+
+    // Show feedback with time penalty info
+    if (isCorrect) {
+      const timePenalty = 100 - scoreWithPenalty;
+      setFeedback({
+        type: 'success',
+        title: '¡Correcto!',
+        message:
+          timePenalty > 0
+            ? `+${scoreWithPenalty} puntos (-${timePenalty} por tiempo)`
+            : `+${scoreWithPenalty} puntos`,
+        showConfetti: false,
+      });
+    } else {
+      setFeedback({
+        type: 'error',
+        title: 'Incorrecto',
+        message: 'Intenta con la siguiente pregunta.',
+        showConfetti: false,
+      });
+    }
+
+    // Auto-advance to next question after a delay
     setTimeout(() => {
+      setFeedback(null);
       if (currentIndex < currentExercise.questions.length - 1) {
         handleSwipe('down');
       } else {
         // Last question answered, trigger check
-        handleCheck(newAnswers);
+        handleCheck(newAnswers, newQuestionScores);
       }
-    }, 500);
+    }, 1500);
+  };
+
+  // Handle time up for a question
+  const handleTimeUp = () => {
+    // Auto-select a random wrong answer or skip
+    const correctAnswer = currentExercise.questions[currentIndex].correctAnswer;
+    let randomWrongAnswer = 0;
+    do {
+      randomWrongAnswer = Math.floor(
+        Math.random() * currentExercise.questions[currentIndex].options.length,
+      );
+    } while (randomWrongAnswer === correctAnswer);
+
+    handleAnswer(randomWrongAnswer);
   };
 
   // Handle check/verification
-  const handleCheck = async (finalAnswers: number[] = answers) => {
+  const handleCheck = async (
+    finalAnswers: number[] = answers,
+    finalScores: number[] = questionScores,
+  ) => {
     const correct = finalAnswers.filter(
       (ans, idx) => ans === currentExercise.questions[idx].correctAnswer,
     ).length;
@@ -198,7 +338,15 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
       return;
     }
 
-    const score = calculateScore(correct, currentExercise.questions.length);
+    // Calculate average score with time penalties
+    const totalScore = finalScores.reduce((sum, score) => sum + score, 0);
+    const avgScore = Math.floor(totalScore / currentExercise.questions.length);
+
+    // Calculate total time penalty
+    const totalTimePenalty = finalScores.reduce((sum, score, idx) => {
+      const isCorrect = finalAnswers[idx] === currentExercise.questions[idx].correctAnswer;
+      return sum + (isCorrect ? 100 - score : 0);
+    }, 0);
 
     setFeedback({
       type:
@@ -213,9 +361,9 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
           : correct >= currentExercise.questions.length / 2
             ? 'Buen intento'
             : 'Sigue practicando',
-      message: `Respondiste correctamente ${correct} de ${currentExercise.questions.length} preguntas (${Math.round((correct / currentExercise.questions.length) * 100)}%).`,
-      score: correct >= currentExercise.questions.length / 2 ? score : undefined,
-      showConfetti: correct === currentExercise.questions.length,
+      message: `Respondiste correctamente ${correct} de ${currentExercise.questions.length} preguntas.\nPuntuación: ${avgScore}/100 (${totalTimePenalty > 0 ? `-${Math.round(totalTimePenalty / correct)} pts por tiempo` : 'sin penalización'})`,
+      score: correct >= currentExercise.questions.length / 2 ? avgScore : undefined,
+      showConfetti: correct === currentExercise.questions.length && avgScore >= 90,
     });
     setShowFeedback(true);
   };
@@ -224,13 +372,16 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
   const handleReset = () => {
     setCurrentIndex(0);
     setAnswers([]);
+    setQuestionTimes([]);
+    setQuestionScores([]);
+    setQuestionStartTime(new Date());
     setFeedback(null);
     setShowFeedback(false);
   };
 
   // Handle save
   const handleSave = () => {
-    const currentState: ExerciseState = { currentIndex, answers };
+    const currentState: ExerciseState = { currentIndex, answers, questionTimes, questionScores };
     saveProgress(exerciseId, currentState);
 
     setFeedback({
@@ -240,6 +391,23 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
       showConfetti: false,
     });
     setShowFeedback(true);
+  };
+
+  // Track visited questions (nodes) for swipe history
+  const [visitedNodes] = useState<number[]>([]);
+
+  // Handle submit
+  const handleSubmit = () => {
+    if (!exerciseId || isSubmitting || isSubmitted) return;
+
+    const swipeHistory = visitedNodes || [];
+    const score = calculateCurrentScore();
+
+    submit({
+      answers,
+      swipeHistory,
+      score,
+    });
   };
 
   // Attach actions to ref
@@ -270,6 +438,8 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
             question={currentExercise.questions[currentIndex]}
             onAnswer={handleAnswer}
             selectedAnswer={answers[currentIndex]}
+            timeLimit={TIME_LIMIT_PER_QUESTION}
+            onTimeUp={handleTimeUp}
           />
         </AnimatePresence>
 
@@ -345,7 +515,7 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="from-detective-orange-50 to-detective-blue-50 absolute right-0 top-0 z-40 h-full w-80 overflow-y-auto bg-gradient-to-br shadow-detective-lg"
+            className="absolute right-0 top-0 z-40 h-full w-80 overflow-y-auto bg-gradient-to-br from-orange-50 to-blue-50 shadow-lg"
           >
             <div className="space-y-4 p-6">
               {/* Close Button */}
@@ -405,27 +575,45 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
                     Estado de Preguntas
                   </h3>
                   <div className="space-y-2">
-                    {currentExercise.questions.map((_, idx) => (
-                      <div
-                        key={idx}
-                        className={`flex items-center justify-between rounded-detective p-2 transition-colors ${
-                          idx === currentIndex
-                            ? 'bg-detective-orange text-white'
-                            : answers[idx] !== undefined
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-gray-100 text-gray-600'
-                        }`}
-                      >
-                        <span className="font-medium">Pregunta {idx + 1}</span>
-                        <span className="text-xs">
-                          {idx === currentIndex
-                            ? 'Actual'
-                            : answers[idx] !== undefined
-                              ? 'Respondida'
-                              : 'Pendiente'}
-                        </span>
-                      </div>
-                    ))}
+                    {currentExercise.questions.map((_, idx) => {
+                      const isAnswered = answers[idx] !== undefined;
+                      const score = questionScores[idx] || 0;
+                      const time = questionTimes[idx] || 0;
+                      return (
+                        <div
+                          key={idx}
+                          className={`flex items-center justify-between rounded-detective p-2 transition-colors ${
+                            idx === currentIndex
+                              ? 'bg-detective-orange text-white'
+                              : isAnswered
+                                ? score > 0
+                                  ? 'bg-green-100 text-green-800'
+                                  : 'bg-red-100 text-red-800'
+                                : 'bg-gray-100 text-gray-600'
+                          }`}
+                        >
+                          <div className="flex-1">
+                            <span className="font-medium">Pregunta {idx + 1}</span>
+                            {isAnswered && (
+                              <div className="mt-1 text-xs">
+                                <div>
+                                  {score} pts ({time.toFixed(1)}s)
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          <span className="text-xs">
+                            {idx === currentIndex
+                              ? 'Actual'
+                              : isAnswered
+                                ? score > 0
+                                  ? '✓'
+                                  : '✗'
+                                : 'Pendiente'}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </DetectiveCard>
               </motion.div>
@@ -449,6 +637,33 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
                     <DetectiveButton variant="gold" onClick={handleReset} className="w-full">
                       Reiniciar Quiz
                     </DetectiveButton>
+                    <DetectiveButton
+                      variant="primary"
+                      onClick={handleSubmit}
+                      disabled={
+                        answers.length < currentExercise.questions.length ||
+                        isSubmitting ||
+                        isSubmitted
+                      }
+                      className="w-full"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                          Enviando...
+                        </>
+                      ) : isSubmitted ? (
+                        <>
+                          <CheckCircle className="h-5 w-5" />
+                          Enviado
+                        </>
+                      ) : (
+                        <>
+                          <Send className="h-5 w-5" />
+                          Enviar Respuestas
+                        </>
+                      )}
+                    </DetectiveButton>
                   </div>
                 </DetectiveCard>
               </motion.div>
@@ -465,7 +680,9 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
                     <p>• Selecciona una respuesta para cada pregunta</p>
                     <p>• Usa los botones para navegar entre preguntas</p>
                     <p>• Responde todas las preguntas para verificar</p>
-                    <p>• ¡Intenta obtener el 100%!</p>
+                    <p>• ¡Responde rápido para obtener más puntos!</p>
+                    <p>• Tiempo límite: {TIME_LIMIT_PER_QUESTION}s por pregunta</p>
+                    <p>• Penalización máxima: 50% por tiempo</p>
                   </div>
                 </DetectiveCard>
               </motion.div>
@@ -491,3 +708,5 @@ export const QuizTikTokExercise: React.FC<ExerciseProps> = ({
     </div>
   );
 };
+
+export default QuizTikTokExercise;

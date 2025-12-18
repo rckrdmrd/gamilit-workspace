@@ -42,7 +42,7 @@ export class CreateExerciseAttemptDto {
    * Respuestas enviadas (estructura JSONB)
    */
   @IsObject()
-    submitted_answers!: Record<string, any>;
+    submitted_answers!: Record<string, unknown>;
 
   /**
    * Indica si la respuesta fue correcta
@@ -110,5 +110,5 @@ export class CreateExerciseAttemptDto {
    */
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

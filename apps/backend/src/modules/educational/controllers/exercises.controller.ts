@@ -27,10 +27,10 @@ import {
 import { API_ROUTES, extractBasePath } from '@/shared/constants';
 import { ExerciseTypeEnum } from '@/shared/constants/enums.constants';
 import { ExerciseSubmissionService, ExerciseAttemptService } from '@/modules/progress/services';
-import { ExerciseSubmissionResponseDto } from '@/modules/progress/dto';
 import { ExerciseAnswerValidator } from '@/modules/progress/dto/answers/exercise-answer.validator';
 import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth.guard';
 import { Profile } from '@/modules/auth/entities';
+import { AuthRequest } from '@shared/types';
 
 /**
  * ExercisesController
@@ -91,7 +91,7 @@ export class ExercisesController {
    */
   private normalizeSubmitData(dto: SubmitExerciseDto, req: any): {
     userId: string;
-    answers: Record<string, any>;
+    answers: Record<string, unknown>;
     timeSpentSeconds?: number;
     hintsUsed: number;
     powerupsUsed: string[];
@@ -106,7 +106,7 @@ export class ExercisesController {
     }
 
     // 2. Extraer respuestas (nuevo formato tiene prioridad)
-    let answers: Record<string, any>;
+    let answers: Record<string, unknown>;
 
     if (dto.answers) {
       // Formato nuevo (estándar)
@@ -126,16 +126,19 @@ export class ExercisesController {
     let timeSpentSeconds: number | undefined;
 
     if (dto.startedAt) {
-      // Formato nuevo: calcular desde timestamp
+      // Formato nuevo (camelCase): calcular desde timestamp
       timeSpentSeconds = Math.floor((Date.now() - dto.startedAt) / 1000);
+    } else if (dto.started_at) {
+      // Formato snake_case: calcular desde timestamp
+      timeSpentSeconds = Math.floor((Date.now() - dto.started_at) / 1000);
     } else if (dto.time_spent_seconds !== undefined) {
       // Formato antiguo: usar valor directo
       timeSpentSeconds = dto.time_spent_seconds;
     }
 
-    // 4. Normalizar hints y powerups
+    // 4. Normalizar hints y powerups (prioridad: camelCase > snake_case > legacy)
     const hintsUsed = dto.hintsUsed ?? dto.hints_used ?? 0;
-    const powerupsUsed = dto.powerupsUsed ?? dto.comodines_used ?? [];
+    const powerupsUsed = dto.powerupsUsed ?? dto.powerups_used ?? dto.comodines_used ?? [];
 
     return {
       userId,
@@ -221,9 +224,9 @@ export class ExercisesController {
     status: 500,
     description: 'Error interno del servidor',
   })
-  async findAll(@Request() req: any) {
-    const userId = req.user.id;
-    const userRole = req.user.role;
+  async findAll(@Request() req: AuthRequest) {
+    const userId = req.user!.id;
+    const userRole = req.user!.role;
 
     // GAP-C06: Aplicar RLS según el rol del usuario
     let exercises: any[];
@@ -373,8 +376,8 @@ export class ExercisesController {
       },
     },
   })
-  async findOne(@Param('id') id: string, @Request() req: any) {
-    const userId = req.user.id;
+  async findOne(@Param('id') id: string, @Request() req: AuthRequest) {
+    const userId = req.user!.id;
 
     // Obtener ejercicio
     const exercise = await this.exercisesService.findById(id);
@@ -672,12 +675,12 @@ export class ExercisesController {
     status: 404,
     description: 'Módulo no encontrado',
   })
-  async findByModule(@Param('moduleId') moduleId: string, @Request() req: any) {
+  async findByModule(@Param('moduleId') moduleId: string, @Request() req: AuthRequest) {
     // Obtener ejercicios del módulo
     const exercises = await this.exercisesService.findByModuleId(moduleId);
 
     // FIX 2025-11-29: Convert auth.users.id → profiles.id
-    const userId = req.user.id;
+    const userId = req.user!.id;
     const profileId = await this.getProfileId(userId);
 
     // Obtener todas las submissions del usuario de una sola vez para eficiencia
@@ -819,7 +822,7 @@ export class ExercisesController {
     },
   })
   async validateContentByExerciseType(
-  @Body() body: { exercise_type: ExerciseTypeEnum; content: Record<string, any> },
+  @Body() body: { exercise_type: ExerciseTypeEnum; content: Record<string, unknown> },
   ) {
     this.exercisesService.validateContentByExerciseType(body.exercise_type, body.content);
     return {
@@ -944,7 +947,7 @@ export class ExercisesController {
   async submitExercise(
     @Param('id') exerciseId: string,
       @Body() dto: SubmitExerciseDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<SubmitExerciseResponseDto> {
     // ========================================
     // 1. NORMALIZACIÓN

@@ -144,7 +144,7 @@ export class ClassroomMissionResponseDto {
       custom_instructions: 'Complete before Friday',
     },
   })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   @ApiProperty({
     description: 'Creation timestamp',

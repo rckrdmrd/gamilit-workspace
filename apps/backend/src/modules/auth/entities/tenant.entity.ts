@@ -4,8 +4,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
-  Index,
+    Index,
 } from 'typeorm';
 import { DB_SCHEMAS, DB_TABLES } from '@/shared/constants/database.constants';
 import { SubscriptionTierEnum } from '@/shared/constants/enums.constants';
@@ -114,14 +113,14 @@ export class Tenant {
       timezone: 'America/Mexico_City',
     },
   })
-    settings!: Record<string, any>;
+    settings!: Record<string, unknown>;
 
   /**
    * Metadata adicional del tenant (JSONB)
    * @example { billing_contact: "admin@example.com", notes: "..." }
    */
   @Column({ type: 'jsonb', nullable: false, default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Fecha de creación del tenant

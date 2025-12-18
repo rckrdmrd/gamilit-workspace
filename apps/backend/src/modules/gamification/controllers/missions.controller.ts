@@ -18,6 +18,7 @@ import { MissionResponseDto } from '../dto/missions/mission-response.dto';
 import { MissionStatsDto } from '../dto/missions/mission-stats.dto';
 import { UpdateMissionProgressDto } from '../dto/missions/update-mission-progress.dto';
 import { JwtAuthGuard } from '@/modules/auth/guards';
+import { AuthRequest } from '@shared/types';
 
 /**
  * MissionsController
@@ -110,8 +111,8 @@ export class MissionsController {
     status: 401,
     description: 'No autenticado - Token JWT inválido o ausente',
   })
-  async getDailyMissions(@Request() req: any) {
-    const userId = req.user.id;
+  async getDailyMissions(@Request() req: AuthRequest) {
+    const userId = req.user!.id;
     return this.missionsService.findByTypeAndUser(userId, MissionTypeEnum.DAILY);
   }
 
@@ -179,8 +180,8 @@ export class MissionsController {
     status: 401,
     description: 'No autenticado - Token JWT inválido o ausente',
   })
-  async getWeeklyMissions(@Request() req: any) {
-    const userId = req.user.id;
+  async getWeeklyMissions(@Request() req: AuthRequest) {
+    const userId = req.user!.id;
     return this.missionsService.findByTypeAndUser(userId, MissionTypeEnum.WEEKLY);
   }
 
@@ -234,8 +235,8 @@ export class MissionsController {
     status: 401,
     description: 'No autenticado - Token JWT inválido o ausente',
   })
-  async getSpecialMissions(@Request() req: any) {
-    const userId = req.user.id;
+  async getSpecialMissions(@Request() req: AuthRequest) {
+    const userId = req.user!.id;
     return this.missionsService.findByTypeAndUser(userId, MissionTypeEnum.SPECIAL);
   }
 
@@ -297,9 +298,9 @@ export class MissionsController {
     status: 403,
     description: 'Acceso denegado - El userId no coincide con el usuario autenticado',
   })
-  async getStats(@Param('userId') userId: string, @Request() req: any) {
+  async getStats(@Param('userId') userId: string, @Request() req: AuthRequest) {
     // Validar que el userId coincide con el usuario autenticado
-    if (userId !== req.user.id) {
+    if (userId !== req.user!.id) {
       throw new HttpException('Forbidden: Cannot access stats of another user', HttpStatus.FORBIDDEN);
     }
 
@@ -360,8 +361,8 @@ export class MissionsController {
     status: 404,
     description: 'Misión no encontrada',
   })
-  async startMission(@Param('id') missionId: string, @Request() req: any) {
-    const userId = req.user.id;
+  async startMission(@Param('id') missionId: string, @Request() req: AuthRequest) {
+    const userId = req.user!.id;
     return this.missionsService.startMission(missionId, userId);
   }
 
@@ -447,9 +448,9 @@ export class MissionsController {
   async updateProgress(
   @Param('id') missionId: string,
     @Body() dto: UpdateMissionProgressDto,
-    @Request() req: any,
+    @Request() req: AuthRequest,
   ) {
-    const userId = req.user.id;
+    const userId = req.user!.id;
     return this.missionsService.updateProgress(
       missionId,
       userId,
@@ -566,8 +567,8 @@ export class MissionsController {
     status: 404,
     description: 'Misión no encontrada',
   })
-  async claimRewards(@Param('id') missionId: string, @Request() req: any) {
-    const userId = req.user.id;
+  async claimRewards(@Param('id') missionId: string, @Request() req: AuthRequest) {
+    const userId = req.user!.id;
     const result = await this.missionsService.claimRewards(missionId, userId);
     return { success: true, data: result };
   }

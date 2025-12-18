@@ -6,8 +6,7 @@ import { DetectiveButton } from '@/shared/components/base/DetectiveButton';
 import { FeedbackModal } from '@/shared/components/mechanics/FeedbackModal';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
-import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
+import { useInvalidateDashboard } from '@/shared/hooks';
 import { fetchMatrixExercise, getAIPerspectives } from './matrizPerspectivasAPI';
 import type {
   MatrixExercise,
@@ -45,8 +44,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
   initialData,
 }) => {
   const { user } = useAuth();
-  const { fetchUserProgress } = useRanksStore();
-  const { fetchBalance } = useEconomyStore();
+  const { syncAndInvalidate } = useInvalidateDashboard();
   const [exercise, setExercise] = useState<MatrixExercise | null>(null);
   const [perspectives, setPerspectives] = useState<PerspectiveGeneration[]>(
     initialData?.perspectives || [],
@@ -215,8 +213,7 @@ export const MatrizPerspectivasExercise: React.FC<ExerciseProps> = ({
       setShowFeedback(true);
 
       // Sync stores with backend (rewards already calculated and saved by backend)
-      await fetchUserProgress();
-      await fetchBalance();
+      await syncAndInvalidate();
 
       console.log('✅ [MatrizPerspectivas] Submission successful:', {
         score: response.score,

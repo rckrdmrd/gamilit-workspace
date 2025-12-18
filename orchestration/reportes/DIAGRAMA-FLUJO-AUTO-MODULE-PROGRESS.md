@@ -318,7 +318,7 @@ locked           →  "Bloqueado 🔒"        (disabled)            Gray
 │              MODULE_PROGRESS DEPENDENCIES                     │
 └──────────────────────────────────────────────────────────────┘
 
-auth.users (Supabase Auth)
+auth.users (autenticación estándar)
       │
       │ CASCADE to...
       ▼

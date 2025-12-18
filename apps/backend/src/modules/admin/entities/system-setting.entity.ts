@@ -133,7 +133,7 @@ export class SystemSetting {
    * @example { "regex": "^[a-z]+$", "minLength": 3 }
    */
   @Column({ type: 'jsonb', default: {} })
-    validation_rules!: Record<string, any>;
+    validation_rules!: Record<string, unknown>;
 
   /**
    * Valores permitidos para el setting (array de strings)
@@ -158,7 +158,7 @@ export class SystemSetting {
    * Metadatos adicionales en formato JSONB
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * ID del usuario que creó el setting

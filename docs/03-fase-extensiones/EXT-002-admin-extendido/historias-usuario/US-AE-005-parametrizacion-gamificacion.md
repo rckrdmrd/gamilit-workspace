@@ -264,7 +264,7 @@ CREATE TABLE system_configuration.system_settings (
 // apps/backend/src/modules/admin/services/gamification-config.service.ts
 
 import { Injectable } from '@nestjs/common';
-import { SupabaseService } from '@/shared/services/supabase.service';
+import { DatabaseService } from '@/shared/services/database.service';
 import { CacheService } from '@/shared/services/cache.service';
 import { AuditService } from '@/modules/audit/audit.service';
 
@@ -274,7 +274,7 @@ const CACHE_TTL = 300; // 5 minutos
 @Injectable()
 export class GamificationConfigService {
   constructor(
-    private supabase: SupabaseService,
+    private dbClient: DatabaseService,
     private cache: CacheService,
     private audit: AuditService,
   ) {}
@@ -285,7 +285,7 @@ export class GamificationConfigService {
     if (cached) return cached;
 
     // 2. Cargar desde DB
-    const { data, error } = await this.supabase
+    const { data, error } = await this.dbClient
       .from('system_settings')
       .select('*')
       .eq('category', 'gamification');
@@ -315,7 +315,7 @@ export class GamificationConfigService {
     const settingsArray = this.transformToArray(updates);
 
     for (const setting of settingsArray) {
-      await this.supabase
+      await this.dbClient
         .from('system_settings')
         .upsert({
           category: 'gamification',
@@ -383,7 +383,7 @@ export class GamificationConfigService {
 
   async calculateImpact(updates: Partial<GamificationSettings>) {
     // Consultar datos actuales de alumnos
-    const { data: students } = await this.supabase
+    const { data: students } = await this.dbClient
       .from('profiles')
       .select('user_id, current_xp, current_rank')
       .eq('role', 'student');

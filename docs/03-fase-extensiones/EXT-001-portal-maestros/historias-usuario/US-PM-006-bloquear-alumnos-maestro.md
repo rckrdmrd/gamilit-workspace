@@ -221,7 +221,7 @@ async updateStudentStatus(
   dto: UpdateStudentStatusDto,
 ): Promise<{ success: boolean; message: string }> {
   // 1. Verificar que el alumno pertenece a classroom del maestro
-  const enrollment = await this.supabase
+  const enrollment = await this.dbClient
     .from('classroom_enrollments')
     .select('*, classroom:classrooms(teacher_id)')
     .eq('student_id', studentId)
@@ -235,7 +235,7 @@ async updateStudentStatus(
   }
 
   // 2. Actualizar status del perfil
-  const { error } = await this.supabase
+  const { error } = await this.dbClient
     .from('profiles')
     .update({
       status: dto.status,
@@ -494,7 +494,7 @@ describe('updateStudentStatus - suspend', () => {
 
     expect(result.success).toBe(true);
 
-    const profile = await supabase
+    const profile = await dbClient
       .from('profiles')
       .select('status, status_reason')
       .eq('user_id', studentId)
@@ -527,7 +527,7 @@ it('should respect RLS policy', async () => {
   const studentIdOtherClassroom = 'student-99';
 
   // Intento directo de update (bypass service)
-  const { error } = await supabase
+  const { error } = await dbClient
     .from('profiles')
     .update({ status: 'suspended' })
     .eq('user_id', studentIdOtherClassroom);

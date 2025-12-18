@@ -8,7 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Classroom } from '../entities';
 import { CreateClassroomDto } from '../dto';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
 
 /**
  * ClassroomsService
@@ -238,7 +237,7 @@ export class ClassroomsService {
    * @throws NotFoundException si el aula no existe
    * @throws BadRequestException si el aula está llena
    */
-  async enrollStudent(classroomId: string, studentId: string): Promise<Classroom> {
+  async enrollStudent(classroomId: string, _studentId: string): Promise<Classroom> {
     const classroom = await this.classroomRepo.findOne({ where: { id: classroomId } });
 
     if (!classroom) {
@@ -262,7 +261,7 @@ export class ClassroomsService {
    * @returns Aula actualizada
    * @throws NotFoundException si el aula no existe
    */
-  async removeStudent(classroomId: string, studentId: string): Promise<Classroom> {
+  async removeStudent(classroomId: string, _studentId: string): Promise<Classroom> {
     const classroom = await this.classroomRepo.findOne({ where: { id: classroomId } });
 
     if (!classroom) {

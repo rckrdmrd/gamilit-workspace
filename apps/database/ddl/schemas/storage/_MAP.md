@@ -1,6 +1,6 @@
 # Schema: storage
 
-Configuración de almacenamiento de Supabase
+Schema de configuración de almacenamiento (S3/Storage compatible)
 
 ## Estructura
 

@@ -20,7 +20,7 @@ apps/database/
 ├── 00-prerequisites.sql        ← Schemas y ENUMs base
 ├── ddl/
 │   └── schemas/
-│       ├── auth/               ← Autenticación Supabase
+│       ├── auth/               ← Autenticación base
 │       ├── auth_management/    ← Gestión de usuarios
 │       ├── educational_content/← Contenido educativo
 │       ├── gamification_system/← Sistema de gamificación
@@ -31,7 +31,7 @@ apps/database/
 │       ├── system_configuration/← Configuración
 │       ├── admin_dashboard/    ← Dashboard administrativo
 │       ├── gamilit/            ← Funciones compartidas
-│       └── storage/            ← Storage Supabase
+│       └── storage/            ← Storage del sistema
 └── migrations/                 ← Migraciones de BD
 ```
 
@@ -49,11 +49,8 @@ psql --version
 ### 2. Base de datos creada
 
 ```bash
-# Opción A: Crear base de datos local
+# Crear base de datos local
 createdb gamilit
-
-# Opción B: Usar Supabase
-# (crear proyecto en https://supabase.com)
 ```
 
 ### 3. Variable DATABASE_URL configurada
@@ -61,9 +58,6 @@ createdb gamilit
 ```bash
 # Formato para PostgreSQL local
 export DATABASE_URL="postgresql://usuario:password@localhost:5432/gamilit"
-
-# Formato para Supabase
-export DATABASE_URL="postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase.co:5432/postgres"
 ```
 
 ---
@@ -146,7 +140,7 @@ psql "$DATABASE_URL" -f ddl/00-prerequisites.sql
 # Funciones compartidas
 psql "$DATABASE_URL" -f ddl/schemas/gamilit/functions/*.sql
 
-# Auth (Supabase)
+# Auth (sistema)
 psql "$DATABASE_URL" -f ddl/schemas/auth/enums/*.sql
 psql "$DATABASE_URL" -f ddl/schemas/auth/tables/*.sql
 

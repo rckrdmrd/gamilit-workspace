@@ -1,0 +1,557 @@
+================================================================================
+AGENTE 4: LISTA COMPLETA DE ARCHIVOS ENCONTRADOS
+================================================================================
+Generado: 2025-11-04
+
+================================================================================
+COMPONENTES (4 archivos)
+================================================================================
+
+1. ModulesSection.tsx
+   Ruta: /projects/gamilit-platform-web/src/apps/student/components/dashboard/
+   Tamaño: ~14.5 KB
+   Líneas: ~440
+   Descripción: Sección principal que renderiza grid de módulos
+   Características:
+     - Grid: md:grid-cols-2 (responsive)
+     - Estados: loading, error, empty, normal
+     - Componente interno: ModuleCard (definido en el mismo archivo)
+     - Props: modules[], loading, error, onModuleClick callback
+   Dependencias:
+     - framer-motion
+     - lucide-react
+     - @shared/components/base/EnhancedCard
+     - @shared/utils/colorPalette
+   Exporta:
+     - ModulesSection component
+     - ModuleCard component (interno)
+
+2. ModuleGridCard.tsx
+   Ruta: /projects/gamilit-platform-web/src/apps/student/components/dashboard/
+   Tamaño: ~6.5 KB
+   Líneas: ~164
+   Descripción: Tarjeta individual de módulo con progreso
+   Características:
+     - Icono con animación hover
+     - Progress bar animada
+     - Badges: Status + Dificultad
+     - Stats grid: ejercicios, tiempo, puntos
+     - Lock overlay para módulos bloqueados
+   Props:
+     - module: Module
+     - onClick?: () => void
+     - index?: number
+   Estados:
+     - isCompleted (progress === 100)
+     - isInProgress (0 < progress < 100)
+     - isLocked (is_locked flag)
+   Exporta:
+     - function ModuleGridCard
+
+3. ModuleGridCardEnhanced.tsx
+   Ruta: /projects/gamilit-platform-web/src/apps/student/components/dashboard/
+   Tamaño: ~11.9 KB
+   Líneas: ~318
+   Descripción: Versión mejorada con control de acceso dinámico
+   Características:
+     - Integración con useModuleAccess hook
+     - Lock overlay con razón del bloqueo
+     - Mostrar progreso de prerequisites
+     - Info de rango requerido
+     - Badge de rango si es requerido
+   Props:
+     - module: Module
+     - userId: string
+     - userRango?: string
+     - completedModuleIds?: string[]
+     - onClick?: () => void
+     - index?: number
+     - showAccessDetails?: boolean
+   Lógica:
+     - useModuleAccess para validación
+     - isLocked, canAccess, lockReason
+     - getAccessMessage() para descripciones
+   Exporta:
+     - function ModuleGridCardEnhanced
+
+4. ModuleCompletionCard.tsx
+   Ruta: /projects/gamilit-platform-web/src/apps/teacher/components/progress/
+   Tamaño: ~2.3 KB
+   Líneas: ~82 (parcial)
+   Descripción: Tarjeta de completitud de módulo para docentes
+   Características:
+     - Mostrar: Nombre, ID, Completitud %
+     - Progress bar del módulo
+     - Stats grid: Score promedio, Estudiantes, Tiempo
+     - Color coding por score (rojo < amarillo < verde)
+   Props:
+     - module: ModuleProgress
+     - onClick?: () => void
+   Importa:
+     - DetectiveCard (base component)
+     - Lucide icons
+   Exporta:
+     - function ModuleCompletionCard
+
+================================================================================
+PAGINAS (2 archivos)
+================================================================================
+
+5. DashboardComplete.tsx
+   Ruta: /projects/gamilit-platform-web/src/apps/student/pages/
+   Tamaño: ~6.5 KB
+   Líneas: ~210
+   Descripción: Panel principal del estudiante (PUNTO DE ENTRADA)
+   Características:
+     - Layout grid 12 columnas
+     - Integra múltiples secciones
+     - Manejo de autenticación
+     - Carga de datos de múltiples hooks
+   Secciones:
+     1. Header gamificado
+     2. Stats grid (casos resueltos, streak, tiempo, XP, posición)
+     3. Rango progress widget
+     4. Módulos section (ModulesSection component)
+     5. Misiones panel
+     6. Actividad reciente
+   Hooks utilizados:
+     - useAuth() - usuario actual
+     - useDashboardData() - stats y logros
+     - useMissions() - misiones activas
+     - useUserModules() - módulos del usuario ← CLAVE
+     - useRecentActivities() - actividades recientes
+   Transformaciones de datos:
+     - Modules: difficulty enum conversion (easy→facil, medium→medio, etc)
+     - Status: enum conversion (in_progress, available, locked)
+   Exporta:
+     - default function DashboardComplete
+
+6. ModuleDetailPage.tsx
+   Ruta: /projects/gamilit-platform-web/src/apps/student/pages/
+   Tamaño: ~16+ KB
+   Líneas: ~80 parcial (ver límite)
+   Descripción: Página de detalle de un módulo específico
+   Características:
+     - Carga módulo por ID (useParams)
+     - Mostrar ejercicios del módulo
+     - Ejercicio cards con tipo específico
+     - Información detallada del módulo
+   Hooks:
+     - useParams() para moduleId
+     - useNavigate() para volver atrás
+     - useModuleDetail(moduleId) carga módulo + ejercicios
+   Exporta:
+     - default function ModuleDetailPage
+
+================================================================================
+HOOKS (3 archivos)
+================================================================================
+
+7. useUserModules.ts
+   Ruta: /projects/gamilit-platform-web/src/apps/student/hooks/
+   Tamaño: ~3.3 KB
+   Líneas: ~110
+   Descripción: Hook para cargar módulos específicos del usuario
+   Interface de retorno:
+     {
+       modules: UserModuleData[],
+       loading: boolean,
+       error: Error | null,
+       refresh: () => Promise<void>,
+       isRefreshing: boolean
+     }
+   Datos transformados:
+     - id, title, description, difficulty, status, progress
+     - totalExercises, completedExercises, estimatedTime
+     - xpReward, icon, category, mlCoinsReward
+   Lógica:
+     - Verifica autenticación (useAuth)
+     - Consulta educationalAPI.getUserModules(userId)
+     - Transforma datos a UserModuleData interface
+     - Manejo de errores (retorna [] en error)
+   Dependencias:
+     - useAuth() hook
+     - educationalAPI.getUserModules()
+   Exporta:
+     - function useUserModules
+
+8. useModules.ts
+   Ruta: /projects/gamilit-platform-web/src/shared/hooks/
+   Tamaño: ~3.5 KB
+   Líneas: ~117
+   Descripción: Hook genérico para cargar módulos (todos o detalle)
+   Variantes:
+     a) useModules() - Carga todos los módulos
+     b) useModuleDetail(moduleId) - Carga módulo + ejercicios
+   Interface de retorno (ambos):
+     {
+       modules: Module[],        // o module: Module | null para detail
+       exercises?: Exercise[],    // solo en detail
+       loading: boolean,
+       error: Error | null,
+       refresh: () => Promise<void>
+     }
+   Lógica:
+     - Llama educationalAPI.getModules() o getModule()
+     - Paralelo: educationalAPI.getModuleExercises()
+     - Manejo de errores estándar
+   Dependencias:
+     - educationalAPI (getModule, getModuleExercises)
+   Exporta:
+     - function useModules
+     - function useModuleDetail
+
+9. useModuleAccess.ts
+   Ruta: /projects/gamilit-platform-web/src/shared/hooks/
+   Tamaño: ~8 KB
+   Líneas: ~239
+   Descripción: Control de acceso dinámico a módulos
+   Interface de retorno (UseModuleAccessReturn):
+     {
+       isLocked: boolean,
+       canAccess: boolean,
+       lockReason: 'prerequisites' | 'rango' | 'not_published' | null,
+       missingPrerequisites: string[],
+       requiredRango: string | null,
+       currentRango: string | null,
+       hasRangoAccess: boolean,
+       completedPrerequisites: string[],
+       prerequisitesProgress: number (0-100%),
+       checkAccess: () => boolean,
+       getAccessMessage: () => string,
+       isLoading: boolean,
+       error: string | null,
+       refresh: () => Promise<void>
+     }
+   Lógica de validación:
+     1. ¿Módulo publicado? (is_published flag)
+     2. ¿Todos los prerequisites completados?
+     3. ¿Tiene rango suficiente?
+     4. ¿Es módulo gratuito?
+   Rango Maya hierarchy:
+     mercenario (1) < guerrero (2) < holcatte (3) < batab (4) < nacom (5)
+   Props de entrada:
+     {
+       module: Module,
+       userId: string,
+       userRango?: string,
+       completedModuleIds?: string[],
+       onAccessDenied?: (reason: string) => void
+     }
+   Características:
+     - SIN lógica hardcoded
+     - TODO: Cargar progreso real desde API
+     - Actualizable con refresh()
+   Exporta:
+     - interface ModuleAccessState
+     - interface UseModuleAccessOptions
+     - interface UseModuleAccessReturn
+     - function useModuleAccess
+
+================================================================================
+API CLIENT (3 archivos)
+================================================================================
+
+10. educationalAPI.ts
+    Ruta: /projects/gamilit-platform-web/src/services/api/
+    Tamaño: ~30 KB
+    Líneas: ~860
+    Descripción: Cliente API para todo lo educativo
+    
+    FUNCIONES DE MODULOS:
+    - getModules() → Module[]
+    - getModule(id) → Module
+    - checkModuleAccess(id) → boolean
+    - getUserModules(userId) → Module[] (CON PROGRESO)
+    
+    FUNCIONES DE EJERCICIOS:
+    - getExercises(filters?) → Exercise[]
+    - getModuleExercises(moduleId) → Exercise[]
+    - getExercise(id) → Exercise
+    - submitExercise(id, submission) → ExerciseSubmissionResult
+    - saveExerciseProgress(id, data) → {success: boolean}
+    - getExerciseHints(id) → Hint[]
+    
+    FUNCIONES DE PROGRESO:
+    - getUserProgress(userId) → UserDashboardData
+    - getModuleProgress(userId, moduleId) → ModuleProgress
+    - getUserDashboard(userId) → UserDashboardData
+    - getExerciseAttempts(userId, exerciseId?) → ExerciseProgress[]
+    
+    FUNCIONES DE ANALYTICS:
+    - getUserAnalytics(userId, timeframe?) → UserAnalytics
+    
+    FUNCIONES DE ACTIVIDADES:
+    - getUserActivities(userId, limit?) → UserActivity[]
+    - getActivityStats(userId) → ActivityStats
+    - getUserActivitiesByType(userId, type, limit?) → UserActivity[]
+    
+    MOCK DATA:
+    - 4 módulos de ejemplo (Marie Curie)
+    - 3 ejercicios de ejemplo (crucigrama, línea tiempo, sopa letras)
+    - Feature flag: VITE_USE_MOCK_DATA
+    
+    Interfaces principales:
+    - ModuleProgress
+    - ExerciseProgress
+    - ExerciseSubmission
+    - ExerciseSubmissionResult
+    - UserDashboardData
+    - UserAnalytics
+    - UserActivity
+    - ActivityStats
+    
+    Dependencias:
+    - apiClient (axios instance)
+    - apiConfig (endpoints + feature flags)
+    - apiErrorHandler (error handling)
+
+11. apiClient.ts
+    Ruta: /projects/gamilit-platform-web/src/services/api/
+    Tamaño: ~5 KB
+    Líneas: ~217
+    Descripción: Cliente Axios base con interceptores
+    
+    CONFIGURACIÓN:
+    - Base URL: http://localhost:3006/api
+    - Timeout: 30 segundos
+    - Headers default: Content-Type: application/json
+    
+    INTERCEPTOR REQUEST:
+    - Agrega JWT token desde localStorage
+    - Agrega X-Tenant-Id header para multi-tenant
+    - Log en debug mode
+    
+    INTERCEPTOR RESPONSE:
+    - Log en debug mode
+    - Manejo de 401: Intenta refresh token
+    - Manejo de errores (403, 404, 500)
+    - Redirige a /login si refresh falla
+    
+    FUNCIONES UTILITARIAS:
+    - setAuthToken(token)
+    - setRefreshToken(token)
+    - clearAuthTokens()
+    - getAuthToken() → string | null
+    - isAuthenticated() → boolean
+    
+    Exporta:
+    - apiClient: AxiosInstance (instancia)
+    - Funciones de auth
+
+12. apiConfig.ts
+    Ruta: /projects/gamilit-platform-web/src/services/api/
+    Tamaño: ~15 KB
+    Líneas: ~472
+    Descripción: Configuración centralizada de endpoints
+    
+    API_ENDPOINTS objeto con subobjetos:
+    - auth (login, register, logout, etc)
+    - users (profile, preferences, avatar, statistics)
+    - ranks (current, checkPromotion, history, etc)
+    - economy (coins, transactions, earn, spend)
+    - achievements (list, get, unlock, progress)
+    - powerups (list, get, purchase, use, inventory)
+    - leaderboards (global, school, grade, friends)
+    - guilds (list, create, get, join, members, challenges)
+    - friends (list, request, accept, decline)
+    - mechanics (list, get, byType, submit, progress, hints)
+    - ai (analyze, generate, checkFact, etc)
+    - educational ← CLAVE PARA MODULOS (15+ endpoints)
+    - teacher (classrooms, assignments, grading, analytics)
+    - notifications (list, unread, mark read, delete)
+    - missions (daily, weekly, special, userMissions)
+    - admin (dashboard, users, organizations, content, system)
+    
+    EDUCATIONAL ENDPOINTS:
+    - /educational/modules
+    - /educational/modules/:id
+    - /educational/modules/:id/access
+    - /educational/modules/user/:userId
+    - /educational/modules/:id/exercises
+    - /educational/exercises
+    - /educational/exercises/:id
+    - /educational/exercises/:id/submit
+    - /educational/progress/user/:userId
+    - /educational/progress/user/:userId/module/:moduleId
+    - /educational/progress/user/:userId/dashboard
+    - /educational/progress/attempts/:userId
+    - /educational/progress/activities/:userId
+    - /educational/progress/activities/:userId/stats
+    - /educational/analytics/:userId
+    
+    FEATURE FLAGS:
+    - USE_MOCK_DATA (VITE_USE_MOCK_DATA=true)
+    - ENABLE_WEBSOCKET
+    - DEBUG_API
+    - ENABLE_AI
+    - ENABLE_ANALYTICS
+    
+    API_CONFIG:
+    - BASE_URL: http://localhost:3006/api (o env var VITE_API_URL)
+    - WS_URL: ws://localhost:3006 (o env var VITE_WS_URL)
+    - TIMEOUT: 30000 ms
+    - RETRY: {MAX_RETRIES: 3, RETRY_DELAY: 1000, BACKOFF_MULTIPLIER: 2}
+    - PAGINATION: {DEFAULT_PAGE: 1, DEFAULT_LIMIT: 20, MAX_LIMIT: 100}
+    
+    HTTP_STATUS codes definidos
+
+================================================================================
+TIPOS Y INTERFACES (Ubicación: shared/types)
+================================================================================
+
+Module Interface:
+  {
+    id: string,
+    title: string,
+    description: string,
+    progress: number (0-100),
+    exercises_count: number,
+    completed_exercises: number,
+    difficulty?: 'easy' | 'medium' | 'hard',
+    status?: 'in_progress' | 'available' | 'locked',
+    category?: string,
+    prerequisites?: string[],
+    is_locked?: boolean,
+    is_published?: boolean,
+    is_free?: boolean,
+    rango_maya_required?: string,
+    xp_reward?: number,
+    ml_coins_reward?: number,
+    subtitle?: string
+  }
+
+Exercise Interface:
+  {
+    id: string,
+    module_id: string,
+    title: string,
+    type: string,
+    difficulty: 'facil' | 'medio' | 'dificil' | 'experto',
+    points: number,
+    completed: boolean,
+    description: string,
+    estimatedTime: number
+  }
+
+ModuleProgress Interface:
+  {
+    moduleId: string,
+    progress: number,
+    completedExercises: number,
+    totalExercises: number,
+    lastActivityAt?: Date
+  }
+
+================================================================================
+ARCHIVOS RELACIONADOS (Utilidades)
+================================================================================
+
+colorPalette.ts (Ubicación: @shared/utils/)
+  - getColorSchemeById(id) → genera colores consistentes por ID
+  - getColorSchemeByIndex(index) → colores por índice
+  - Retorna: {border, shadow, background, badge, iconGradient, etc}
+
+cn.ts (Ubicación: @shared/utils/)
+  - Utilidad para clase names (como clsx)
+  - Uso: cn('class1', condition && 'class2')
+
+================================================================================
+IMPORTACIONES Y DEPENDENCIAS PRINCIPALES
+================================================================================
+
+React & TypeScript:
+  - import React, { useState, useEffect, useCallback, useMemo }
+  - import { useNavigate, useParams } from 'react-router-dom'
+  - import type { FC, ReactNode }
+
+Framer Motion:
+  - import { motion } from 'framer-motion'
+  - Animations: initial, animate, exit, whileHover, whileTap
+
+Lucide React (Icons):
+  - BookOpen, CheckCircle, Lock, Play, Star, Clock, Target
+  - ArrowRight, Award, Zap, Coins, Gift, Trophy, Shield
+  - TrendingUp, Lightbulb, Brain, Tag, etc
+
+API & Axios:
+  - import axios from 'axios'
+  - import { apiClient } from '@services/api/apiClient'
+  - import { API_ENDPOINTS, FEATURE_FLAGS } from '@services/api/apiConfig'
+
+Componentes Base:
+  - DetectiveCard, EnhancedCard, ColorfulCard
+  - DetectiveButton, ProgressBar
+  - GamifiedHeader
+
+Utils:
+  - cn (className utility)
+  - getColorSchemeById, getColorSchemeByIndex
+
+================================================================================
+RESUMEN ESTADISTICO
+================================================================================
+
+Total de archivos analizados: 12
+  - Componentes React: 4
+  - Páginas: 2
+  - Hooks: 3
+  - API Client: 3
+
+Líneas de código (aproximado):
+  - Componentes: ~1,100 líneas
+  - Páginas: ~300 líneas
+  - Hooks: ~460 líneas
+  - API: ~1,310 líneas
+  - Total: ~3,170 líneas
+
+Endpoints educativos documentados: 15+
+
+Interfaces/Types principales: 10+
+
+Características implementadas:
+  - Grid de módulos: ✓
+  - Progress tracking: ✓
+  - Control de acceso: ✓
+  - Prerequisitos: ✓
+  - Sistema de rango: ✓
+  - Animaciones: ✓
+  - Mock data: ✓
+  - Error handling: ✓
+  - Loading states: ✓
+  - API integration: ✓
+
+Características pendientes:
+  - Filtros UI: ⚠ (estructura lista)
+
+================================================================================
+DIAGRAMA DE FLUJO
+================================================================================
+
+Usuario entra a Dashboard
+    ↓
+DashboardComplete carga
+    ↓
+useUserModules() hook activa
+    ↓
+educationalAPI.getUserModules(userId) llamado
+    ↓
+API: GET /educational/modules/user/:userId responde
+    ↓
+Datos transformados a ModulesSection interface
+    ↓
+<ModulesSection modules={data} /> renderiza grid
+    ↓
+Cada módulo → <ModuleGridCard /> o <ModuleGridCardEnhanced />
+    ↓
+Si click en módulo:
+  - Callback onModuleClick dispara
+  - navigate(/module/{id})
+  - ModuleDetailPage carga con useModuleDetail(id)
+    ↓
+Si useModuleAccess:
+  - useModuleAccess valida acceso
+  - Determina isLocked, lockReason
+  - Muestra overlay si está bloqueado
+
+================================================================================

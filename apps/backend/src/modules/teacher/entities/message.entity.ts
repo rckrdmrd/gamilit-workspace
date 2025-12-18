@@ -9,8 +9,6 @@ import {
   UpdateDateColumn,
   Index,
 } from 'typeorm';
-import { Profile } from '@modules/auth/entities/profile.entity';
-import { Classroom } from '@modules/social/entities/classroom.entity';
 
 /**
  * Message Entity

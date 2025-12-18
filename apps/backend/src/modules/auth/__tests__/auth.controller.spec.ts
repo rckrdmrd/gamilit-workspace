@@ -7,9 +7,9 @@ import { GamilityRoleEnum } from '@shared/constants';
 
 describe('AuthController', () => {
   let controller: AuthController;
-  let authService: AuthService;
-  let sessionService: SessionManagementService;
-  let securityService: SecurityService;
+  let _authService: AuthService;
+  let _sessionService: SessionManagementService;
+  let _securityService: SecurityService;
 
   const mockAuthService = {
     register: jest.fn(),

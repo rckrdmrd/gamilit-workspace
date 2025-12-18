@@ -10,7 +10,6 @@ import { UserRank } from '../entities';
 import { UserStatsService } from './user-stats.service';
 import { MLCoinsService } from './ml-coins.service';
 import { CreateUserRankDto, UpdateUserRankDto } from '../dto/user-ranks';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
 import { MayaRank, TransactionTypeEnum } from '@shared/constants/enums.constants';
 
 /**

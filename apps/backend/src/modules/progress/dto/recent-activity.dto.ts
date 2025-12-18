@@ -55,6 +55,6 @@ export interface RecentActivityDto {
   entity_type: 'module' | 'exercise' | 'achievement' | 'level' | 'session';
   entity_id: string;
   entity_name: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   created_at: Date;
 }

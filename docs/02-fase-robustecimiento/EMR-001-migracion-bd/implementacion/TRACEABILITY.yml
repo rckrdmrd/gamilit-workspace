@@ -84,9 +84,9 @@ implementation:
 
     schemas_created:
       - name: auth
-        description: Supabase Auth system tables
+        description: autenticación estándar system tables
         tables: 1
-        source: Supabase built-in
+        source: sistema auth
 
       - name: auth_management
         description: Authentication and user management

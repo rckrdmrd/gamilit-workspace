@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, getConnectionToken } from '@nestjs/typeorm';
-import { Repository, Connection, SelectQueryBuilder } from 'typeorm';
+import { Repository, Connection } from 'typeorm';
 import { AdminSystemService } from '../services/admin-system.service';
 import { AuthAttempt } from '@modules/auth/entities/auth-attempt.entity';
 import { User } from '@modules/auth/entities/user.entity';
@@ -16,14 +16,14 @@ import {
 
 describe('AdminSystemService', () => {
   let service: AdminSystemService;
-  let authAttemptRepo: Repository<AuthAttempt>;
-  let userRepo: Repository<User>;
-  let tenantRepo: Repository<Tenant>;
-  let moduleRepo: Repository<Module>;
-  let exerciseRepo: Repository<Exercise>;
-  let systemSettingRepo: Repository<SystemSetting>;
-  let authConnection: Connection;
-  let educationalConnection: Connection;
+  let _authAttemptRepo: Repository<AuthAttempt>;
+  let _userRepo: Repository<User>;
+  let _tenantRepo: Repository<Tenant>;
+  let _moduleRepo: Repository<Module>;
+  let _exerciseRepo: Repository<Exercise>;
+  let _systemSettingRepo: Repository<SystemSetting>;
+  let _authConnection: Connection;
+  let _educationalConnection: Connection;
   let settingsStore: any[];
 
   const mockQueryBuilder = {

@@ -75,13 +75,13 @@ export class TenantResponseDto {
    * Configuraciones del tenant (JSONB)
    */
   @Expose()
-    settings!: Record<string, any>;
+    settings!: Record<string, unknown>;
 
   /**
    * Metadata adicional del tenant (JSONB)
    */
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Fecha de creación del tenant

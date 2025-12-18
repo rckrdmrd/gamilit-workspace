@@ -21,6 +21,7 @@ export { ExerciseAttempt } from './exercise-attempt.entity';
 export { ExerciseSubmission } from './exercise-submission.entity';
 export { ScheduledMission } from './scheduled-mission.entity';
 export { TeacherNote } from './teacher-note.entity'; // ✨ NUEVO - P0 (Notas del profesor)
+export { ManualReview } from './manual-review.entity'; // ✨ NUEVO - P0 (Evaluaciones manuales)
 export { EngagementMetrics } from './engagement-metrics.entity'; // ✨ NUEVO - P2 (Analytics)
 export { MasteryTracking } from './mastery-tracking.entity'; // ✨ NUEVO - P2 (Adaptive Learning)
 export { LearningPath } from './learning-path.entity'; // ✨ NUEVO - P2 (Rutas de aprendizaje)

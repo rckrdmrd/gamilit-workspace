@@ -24,6 +24,7 @@ import {
   PreferenceResponseDto,
   PreferencesListResponseDto,
 } from '../dto/preferences';
+import { AuthRequest } from '@shared/types';
 
 /**
  * NotificationPreferencesController
@@ -82,9 +83,9 @@ export class NotificationPreferencesController {
     description: 'No autenticado',
   })
   async getUserPreferences(
-    @Request() req: any,
+    @Request() req: AuthRequest,
   ): Promise<PreferencesListResponseDto> {
-    const userId = req.user.sub;
+    const userId = req.user!.id;
     const preferences = await this.preferenceService.getUserPreferences(userId);
 
     return {
@@ -128,9 +129,9 @@ export class NotificationPreferencesController {
   async updatePreference(
     @Param('notificationType') notificationType: string,
       @Body() updateDto: UpdatePreferenceDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<PreferenceResponseDto> {
-    const userId = req.user.sub;
+    const userId = req.user!.id;
 
     const preference = await this.preferenceService.updatePreference(
       userId,
@@ -175,9 +176,9 @@ export class NotificationPreferencesController {
   })
   async updateMultiple(
     @Body() updateDto: UpdateMultiplePreferencesDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<PreferencesListResponseDto> {
-    const userId = req.user.sub;
+    const userId = req.user!.id;
 
     const preferences = await this.preferenceService.updateMultiple(
       userId,

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
-import { Repository, Between, LessThanOrEqual, MoreThanOrEqual, DataSource } from 'typeorm';
+import { Repository, MoreThanOrEqual, DataSource } from 'typeorm';
 import { AuthAttempt } from '@modules/auth/entities/auth-attempt.entity';
 import { User } from '@modules/auth/entities/user.entity';
 import { Tenant } from '@modules/auth/entities/tenant.entity';
@@ -51,7 +51,7 @@ export class AdminSystemService {
    * Get system health status
    */
   async getSystemHealth(): Promise<SystemHealthDto> {
-    const startTime = Date.now();
+    const _startTime = Date.now();
 
     // Check database health
     const databaseHealth = await this.checkDatabaseHealth();
@@ -279,7 +279,7 @@ export class AdminSystemService {
     adminId: string,
   ): Promise<SystemConfigDto> {
     // Update settings in database
-    const settingsToUpdate: Record<string, any> = {
+    const settingsToUpdate: Record<string, unknown> = {
       maintenance_mode: updateDto.maintenance_mode,
       maintenance_message: updateDto.maintenance_message,
       allow_registrations: updateDto.allow_registrations,
@@ -360,7 +360,7 @@ export class AdminSystemService {
   /**
    * Get system configuration by category
    */
-  async getConfigByCategory(category: string): Promise<Record<string, any>> {
+  async getConfigByCategory(category: string): Promise<Record<string, unknown>> {
     // Validate category
     const validCategories = ['general', 'email', 'notifications', 'security', 'maintenance'];
     if (!validCategories.includes(category)) {
@@ -387,7 +387,7 @@ export class AdminSystemService {
     });
 
     // Build config object for this category
-    const config: Record<string, any> = {};
+    const config: Record<string, unknown> = {};
     settings.forEach((setting) => {
       config[setting.setting_key] = this.parseValue(setting);
     });
@@ -400,9 +400,9 @@ export class AdminSystemService {
    */
   async updateConfigByCategory(
     category: string,
-    configDto: Record<string, any>,
+    configDto: Record<string, unknown>,
     adminId: string,
-  ): Promise<Record<string, any>> {
+  ): Promise<Record<string, unknown>> {
     // Validate category
     const validCategories = ['general', 'email', 'notifications', 'security', 'maintenance'];
     if (!validCategories.includes(category)) {
@@ -744,7 +744,8 @@ export class AdminSystemService {
         pool_size: poolSize,
         active_connections: activeConnections,
       };
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
       return {
         status: 'down',
         response_time_ms: -1,

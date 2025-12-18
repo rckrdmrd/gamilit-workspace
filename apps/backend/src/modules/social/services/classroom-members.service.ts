@@ -7,8 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ClassroomMember } from '../entities';
-import { CreateClassroomMemberDto, UpdateClassroomMemberStatusDto } from '../dto';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
+import { CreateClassroomMemberDto } from '../dto';
 import { ClassroomMemberStatusEnum } from '@shared/constants/enums.constants';
 
 /**

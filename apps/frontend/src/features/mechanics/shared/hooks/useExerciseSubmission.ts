@@ -12,10 +12,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useRef, useCallback } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import { apiClient } from '@/services/api/apiClient';
 import { toast } from 'react-hot-toast';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 // ============================================================================
 // ZOD SCHEMAS (match backend validation)
@@ -25,11 +26,9 @@ import { toast } from 'react-hot-toast';
  * Submission payload schema (matches backend DTO)
  */
 export const SubmitExerciseSchema = z.object({
-  answers: z
-    .record(z.string(), z.any())
-    .refine((answers) => Object.keys(answers).length > 0, {
-      message: 'At least one answer is required',
-    }),
+  answers: z.record(z.string(), z.any()).refine((answers) => Object.keys(answers).length > 0, {
+    message: 'At least one answer is required',
+  }),
   startedAt: z.number().int().positive(),
   hintsUsed: z.number().int().min(0).max(10).default(0),
   powerupsUsed: z.array(z.enum(['pistas', 'vision_lectora', 'segunda_oportunidad'])).default([]),
@@ -106,6 +105,10 @@ export function useExerciseSubmission(
   exerciseId: string,
   options: UseExerciseSubmissionOptions = {},
 ) {
+  // Get query client and user for cache invalidation
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
   // Track when user started the exercise
   const [startTime] = useState(() => Date.now());
 
@@ -154,7 +157,20 @@ export function useExerciseSubmission(
       return response.data.data;
     },
 
-    onSuccess: (result) => {
+    onSuccess: async (result) => {
+      // Invalidate React Query cache to refresh dashboard and modules
+      // This ensures progress updates immediately after exercise completion
+      if (user?.id) {
+        console.log('🔄 [useExerciseSubmission] Invalidating dashboard and modules cache...');
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ['dashboard'] }),
+          queryClient.invalidateQueries({ queryKey: ['dashboard', user.id] }),
+          queryClient.invalidateQueries({ queryKey: ['userModules'] }),
+          queryClient.invalidateQueries({ queryKey: ['userModules', user.id] }),
+        ]);
+        console.log('✅ [useExerciseSubmission] Cache invalidated successfully');
+      }
+
       // Call custom success handler
       if (options.onSuccess) {
         options.onSuccess(result);

@@ -469,7 +469,7 @@ export class SchoolsController {
   })
   async updateSettings(
   @Param('id') id: string,
-    @Body() settings: Record<string, any>,
+    @Body() settings: Record<string, unknown>,
   ) {
     return this.schoolsService.updateSettings(id, settings);
   }

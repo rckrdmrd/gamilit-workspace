@@ -9,9 +9,8 @@
  * - ML Coins balance display
  * - Transaction history
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/app/providers/AuthContext';
 import toast from 'react-hot-toast';
@@ -28,6 +27,19 @@ import {
   Check,
   ShoppingBag,
   Loader,
+  Award,
+  BookOpen,
+  Compass,
+  Flag,
+  Image,
+  Shield,
+  ShieldCheck,
+  Smile,
+  Square,
+  Sticker,
+  UserCircle,
+  Zap,
+  type LucideIcon,
 } from 'lucide-react';
 
 // Components
@@ -47,10 +59,46 @@ import type {
 } from '@/features/gamification/economy/types/economyTypes';
 
 // API
-import { getPowerUps, purchasePowerUp } from '@/features/gamification/social/api/socialAPI';
+import {
+  getShopCategories,
+  getShopItems,
+  purchaseShopItem,
+  getUserPurchases,
+  type ShopCategory as ApiShopCategory,
+  type ShopItemCategory,
+} from '@/features/gamification/economy/api/shopAPI';
 
 // Utils
 import { cn } from '@shared/utils/cn';
+
+// Map icon names from backend to Lucide components
+const shopIconMap: Record<string, LucideIcon> = {
+  award: Award,
+  'book-open': BookOpen,
+  coins: Coins,
+  compass: Compass,
+  flag: Flag,
+  image: Image,
+  shield: Shield,
+  'shield-check': ShieldCheck,
+  smile: Smile,
+  sparkles: Sparkles,
+  square: Square,
+  sticker: Sticker,
+  'user-circle': UserCircle,
+  zap: Zap,
+};
+
+// Get icon component from name
+const getShopIcon = (iconName: string): LucideIcon => {
+  return shopIconMap[iconName?.toLowerCase()] || Package;
+};
+
+// Render icon component
+const ShopIcon: React.FC<{ name: string; className?: string }> = ({ name, className }) => {
+  const IconComponent = getShopIcon(name);
+  return <IconComponent className={className} />;
+};
 
 export default function ShopPage() {
   const { user, logout } = useAuth();
@@ -72,108 +120,123 @@ export default function ShopPage() {
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [cart] = useState<ShopItem[]>([]);
+  const [apiCategories, setApiCategories] = useState<ApiShopCategory[]>([]);
 
-  // Fetch shop items on mount
+  // Fetch balance when user is available
   useEffect(() => {
-    const fetchShopItems = async () => {
+    if (user?.id) {
+      fetchBalance();
+    }
+  }, [user?.id, fetchBalance]);
+
+  // Fetch shop items and categories
+  useEffect(() => {
+    const fetchData = async () => {
       try {
         setIsLoadingItems(true);
-        const powerUps = await getPowerUps();
 
-        // Transform power-ups to shop items format
-        const items: ShopItem[] = powerUps.map((powerUp: any) => ({
-          id: powerUp.id,
-          name: powerUp.name || powerUp.title,
-          description: powerUp.description,
-          category: powerUp.category || 'premium',
-          price: powerUp.cost || powerUp.price,
-          icon: powerUp.icon || '⚡',
-          rarity: powerUp.rarity || 'common',
-          tags: powerUp.tags || [],
-          isOwned: powerUp.isOwned || false,
-          isPurchasable: powerUp.isPurchasable !== false,
-          metadata: {
-            effectDescription: powerUp.effect?.description || powerUp.description,
-            duration: powerUp.duration,
-            stackable: powerUp.stackable !== false,
-            tradeable: powerUp.tradeable || false,
-          },
-        }));
+        // Fetch categories from new Shop API
+        const categoriesData = await getShopCategories();
+        setApiCategories(categoriesData);
 
-        setShopItems(items);
+        // Fetch items based on selected category
+        const filters =
+          selectedCategory !== 'all'
+            ? { category: selectedCategory as ShopItemCategory }
+            : undefined;
+
+        const items = await getShopItems(filters);
+
+        // Fetch user purchases to determine ownership
+        let ownedItemIds = new Set<string>();
+        if (user?.id) {
+          try {
+            const purchases = await getUserPurchases(user.id);
+            ownedItemIds = new Set(
+              purchases.filter((p) => p.status === 'completed').map((p) => p.item_id),
+            );
+          } catch (purchaseError) {
+            console.warn('Could not fetch purchases for ownership check:', purchaseError);
+          }
+        }
+
+        // Transform API items to ShopItem format with ownership check
+        const transformedItems: ShopItem[] = items.map((item) => {
+          const isOwned = ownedItemIds.has(item.id);
+          // is_available defaults to true if not specified
+          const isAvailable = item.is_available !== false;
+          // Stock check: null/undefined means unlimited
+          const hasStock = item.stock === null || item.stock === undefined || item.stock > 0;
+          // Item is purchasable if: available, has stock, and NOT already owned
+          const isPurchasable = isAvailable && hasStock && !isOwned;
+
+          return {
+            id: item.id,
+            name: item.name,
+            description: item.description || '',
+            category: item.category as ShopCategory,
+            price: item.discount_price || item.price,
+            icon: item.icon,
+            rarity: item.rarity as ItemRarity,
+            tags: item.tags || [],
+            isOwned,
+            isPurchasable,
+            metadata: {
+              effectDescription: item.effect_data?.description,
+              duration: item.duration_days,
+              stackable: !item.is_consumable,
+              tradeable: false,
+            },
+          };
+        });
+
+        setShopItems(transformedItems);
       } catch (error) {
-        console.error('Failed to load shop items:', error);
-        toast.error('Error loading shop items. Please try again later.');
-        setShopItems([]);
+        console.error('Failed to load shop data:', error);
+        toast.error('Error loading shop. Please try again later.');
       } finally {
         setIsLoadingItems(false);
       }
     };
 
-    fetchShopItems();
-  }, []);
+    fetchData();
+  }, [selectedCategory, user?.id]);
 
-  // Categories
-  const categories: {
-    value: ShopCategory | 'all';
-    label: string;
-    icon: React.ElementType;
-    color: string;
-    disabled: boolean;
-  }[] = [
-    {
-      value: 'all',
+  // Categories - Dynamic from API with icon mapping
+  const categories = useMemo(() => {
+    const iconMap: Record<string, React.ElementType> = {
+      cosmetics: Palette,
+      profile: Users,
+      guild: Crown,
+      social: Star,
+      consumable: Sparkles,
+      premium: Sparkles, // Legacy support
+    };
+
+    const allCategory = {
+      value: 'all' as const,
       label: 'All Items',
       icon: Package,
       color: 'from-gray-500 to-gray-600',
       disabled: false,
-    },
-    {
-      value: 'premium',
-      label: 'Power-ups',
-      icon: Sparkles,
-      color: 'from-orange-500 to-amber-500',
-      disabled: false,
-    }, // ✅ Funcional
-    {
-      value: 'cosmetics',
-      label: 'Cosmetics',
-      icon: Palette,
-      color: 'from-pink-500 to-purple-500',
-      disabled: true,
-    }, // ❌ No implementado
-    {
-      value: 'profile',
-      label: 'Profile',
-      icon: Users,
-      color: 'from-blue-500 to-cyan-500',
-      disabled: true,
-    }, // ❌ No implementado
-    {
-      value: 'guild',
-      label: 'Guild',
-      icon: Crown,
-      color: 'from-yellow-500 to-orange-500',
-      disabled: true,
-    }, // ❌ No implementado
-    {
-      value: 'social',
-      label: 'Social',
-      icon: Star,
-      color: 'from-green-500 to-emerald-500',
-      disabled: true,
-    }, // ❌ No implementado
-  ];
+    };
+
+    const dynamicCategories = apiCategories.map((cat) => ({
+      value: cat.name as ShopCategory | 'all',
+      label: cat.display_name,
+      icon: iconMap[cat.name] || Package,
+      color: cat.color || 'from-gray-500 to-gray-600',
+      disabled: !cat.is_active,
+    }));
+
+    return [allCategory, ...dynamicCategories];
+  }, [apiCategories]);
 
   // Filter items
   const filteredItems = shopItems
     .filter((item) => {
-      // Only show items from implemented categories
-      // 'all' shows only premium (power-ups), and premium category shows premium items
-      const matchesCategory =
-        selectedCategory === 'all'
-          ? item.category === 'premium' // Only show implemented categories in 'all'
-          : item.category === selectedCategory;
+      // Show all items or items matching selected category
+      const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
       const matchesSearch =
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -205,7 +268,7 @@ export default function ShopPage() {
   };
 
   const confirmPurchase = async () => {
-    if (!selectedItem) return;
+    if (!selectedItem || !user?.id) return;
 
     if (balance.current < selectedItem.price) {
       toast.error('Insufficient ML Coins! Complete more exercises to earn coins.');
@@ -215,25 +278,30 @@ export default function ShopPage() {
     try {
       setIsPurchasing(true);
 
-      // Call real API to purchase power-up
-      await purchasePowerUp(user.id, selectedItem.id, 1);
-
-      // Refresh balance after successful purchase
-      await fetchBalance();
-
-      // Update local state - mark item as owned
-      setShopItems((prev) =>
-        prev.map((item) => (item.id === selectedItem.id ? { ...item, isOwned: true } : item)),
-      );
-
-      setShowPurchaseModal(false);
-      setSelectedItem(null);
-
-      // Show success message
-      toast.success(`Successfully purchased ${selectedItem.name}!`, {
-        icon: '🎉',
-        duration: 4000,
+      // Call new Shop API
+      const response = await purchaseShopItem({
+        user_id: user.id,
+        item_id: selectedItem.id,
+        quantity: 1,
       });
+
+      if (response.success) {
+        // Refresh balance (new balance comes from response)
+        await fetchBalance();
+
+        // Update local state - mark item as owned
+        setShopItems((prev) =>
+          prev.map((item) => (item.id === selectedItem.id ? { ...item, isOwned: true } : item)),
+        );
+
+        setShowPurchaseModal(false);
+        setSelectedItem(null);
+
+        toast.success(`${response.message}`, {
+          icon: '🎉',
+          duration: 4000,
+        });
+      }
     } catch (error: unknown) {
       console.error('Purchase failed:', error);
       const errorMessage =
@@ -368,12 +436,10 @@ export default function ShopPage() {
               </p>
             </div>
           </DetectiveCard>
-        ) : selectedCategory !== 'all' &&
-          selectedCategory !== 'premium' &&
-          categories.find((c) => c.value === selectedCategory)?.disabled ? (
+        ) : categories.find((c) => c.value === selectedCategory)?.disabled ? (
           <UnderConstruction
             feature={`${categories.find((c) => c.value === selectedCategory)?.label} Shop`}
-            description="Esta categoría de la tienda estará disponible próximamente. Por ahora, puedes explorar los power-ups disponibles."
+            description="Esta categoría de la tienda estará disponible próximamente. Por ahora, puedes explorar otras categorías disponibles."
             variant="section"
             className="col-span-full"
           />
@@ -392,11 +458,11 @@ export default function ShopPage() {
                     <div className="flex items-start justify-between">
                       <div
                         className={cn(
-                          'flex h-16 w-16 items-center justify-center rounded-lg bg-gradient-to-br text-3xl',
+                          'flex h-16 w-16 items-center justify-center rounded-lg bg-gradient-to-br',
                           getRarityColor(item.rarity),
                         )}
                       >
-                        {item.icon}
+                        <ShopIcon name={item.icon} className="h-8 w-8 text-white" />
                       </div>
                       <span
                         className={cn(
@@ -424,7 +490,7 @@ export default function ShopPage() {
                       </div>
 
                       {item.isOwned ? (
-                        <span className="flex items-center gap-1 rounded-lg bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
+                        <span className="flex items-center gap-1 rounded-lg border border-green-200 bg-green-100 px-3 py-2 text-sm font-semibold text-green-700">
                           <Check className="h-4 w-4" />
                           Owned
                         </span>
@@ -433,13 +499,17 @@ export default function ShopPage() {
                           onClick={() => handlePurchase(item)}
                           disabled={!item.isPurchasable || balance.current < item.price}
                           className={cn(
-                            'rounded-lg px-4 py-2 font-medium transition-colors',
+                            'rounded-lg px-4 py-2 font-medium transition-all',
                             item.isPurchasable && balance.current >= item.price
-                              ? 'bg-detective-orange text-white hover:bg-detective-orange-dark'
-                              : 'cursor-not-allowed bg-gray-200 text-gray-400',
+                              ? 'btn-detective'
+                              : 'cursor-not-allowed bg-gray-200 text-gray-400 opacity-60',
                           )}
                         >
-                          Buy Now
+                          {!item.isPurchasable
+                            ? 'Not Available'
+                            : balance.current < item.price
+                              ? 'Not Enough Coins'
+                              : 'Buy Now'}
                         </button>
                       )}
                     </div>
@@ -469,11 +539,11 @@ export default function ShopPage() {
               <div className="flex items-center gap-4 rounded-lg bg-detective-bg p-4">
                 <div
                   className={cn(
-                    'flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-3xl',
+                    'flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br',
                     getRarityColor(selectedItem.rarity),
                   )}
                 >
-                  {selectedItem.icon}
+                  <ShopIcon name={selectedItem.icon} className="h-8 w-8 text-white" />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-bold text-detective-text">{selectedItem.name}</h3>
@@ -532,9 +602,9 @@ export default function ShopPage() {
                   onClick={confirmPurchase}
                   disabled={balance.current < selectedItem.price || isPurchasing}
                   className={cn(
-                    'flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 font-medium transition-colors',
+                    'flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 font-medium transition-all',
                     balance.current >= selectedItem.price && !isPurchasing
-                      ? 'bg-detective-orange text-white hover:bg-detective-orange-dark'
+                      ? 'btn-detective'
                       : 'cursor-not-allowed bg-gray-300 text-gray-500',
                   )}
                 >

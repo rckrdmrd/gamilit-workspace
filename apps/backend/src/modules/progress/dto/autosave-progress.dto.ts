@@ -64,7 +64,7 @@ export class AutoSaveProgressDto {
   @IsObject()
   @Expose({ name: 'partialAnswers' })
   @Transform(({ obj }) => obj.partial_answers || obj.partialAnswers)
-    partial_answers?: Record<string, any>;
+    partial_answers?: Record<string, unknown>;
 
   /**
    * Tiempo transcurrido en el ejercicio (segundos)
@@ -115,5 +115,5 @@ export class AutoSaveProgressDto {
   })
   @IsOptional()
   @IsObject()
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }

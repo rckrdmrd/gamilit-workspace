@@ -1,335 +1,196 @@
--- =====================================================================
--- Archivo: 03-classroom-members.sql
--- Schema: social_features
--- Descripción: Seeds de membresías de estudiantes a aulas
--- Dependencias: 02-classrooms.sql, auth.users (estudiantes)
--- Autor: SA-SEEDS-SOCIAL
--- Fecha: 2025-11-02
--- =====================================================================
+-- =====================================================
+-- Seed: social_features.classroom_members (DEV)
+-- Description: Asignar TODOS los estudiantes al classroom DEFAULT
+-- Environment: DEVELOPMENT
+-- Dependencies: social_features.classrooms (02-classrooms.sql), auth_management.profiles
+-- Order: 03
+-- Created: 2025-01-11
+-- Updated: 2025-12-15 - Simplificado a solo DEFAULT
+-- Version: 3.0
+-- =====================================================
+--
+-- DECISIÓN DE DISEÑO:
+-- - Todos los estudiantes se asignan automáticamente al classroom DEFAULT
+-- - El admin/teacher puede reasignarlos a otros classrooms desde la UI
+-- - Esto facilita la gestión inicial de usuarios nuevos
+--
+-- ASOCIACIONES DEMO REMOVIDAS (v3.0):
+-- - Todas las asociaciones específicas - REMOVIDAS
+--
+-- =====================================================
 
-SET search_path TO social_features, auth, public;
+SET search_path TO social_features, auth_management, public;
 
--- =====================================================================
--- CLASSROOM MEMBERS: Asignar estudiantes demo a aulas
--- =====================================================================
+-- =====================================================
+-- Asignar TODOS los estudiantes al classroom DEFAULT
+-- =====================================================
 
 DO $$
 DECLARE
-    classroom_2a UUID;
-    classroom_3b UUID;
-    classroom_1c UUID;
-    classroom_1a UUID;
-    classroom_2b UUID;
-    classroom_2st UUID;
-    classroom_3adv UUID;
-    student1_id UUID;
-    student2_id UUID;
-    student3_id UUID;
-    enrolled_count INTEGER;
+    v_default_classroom_id UUID;
+    v_student_count INTEGER;
+    v_assigned_count INTEGER;
+    rec RECORD;
 BEGIN
-    -- =====================================================================
-    -- Obtener classroom IDs dinámicamente
-    -- =====================================================================
-    SELECT classroom_id INTO classroom_2a
+    -- Obtener el classroom DEFAULT
+    SELECT id INTO v_default_classroom_id
     FROM social_features.classrooms
-    WHERE classroom_code = '2A-LECT-2025';
+    WHERE code = 'DEFAULT' AND is_active = true
+    LIMIT 1;
 
-    SELECT classroom_id INTO classroom_3b
-    FROM social_features.classrooms
-    WHERE classroom_code = '3B-DIGI-2025';
-
-    SELECT classroom_id INTO classroom_1c
-    FROM social_features.classrooms
-    WHERE classroom_code = '1C-BASIC-2025';
-
-    SELECT classroom_id INTO classroom_1a
-    FROM social_features.classrooms
-    WHERE classroom_code = '1A-INTRO-2025';
-
-    SELECT classroom_id INTO classroom_2b
-    FROM social_features.classrooms
-    WHERE classroom_code = '2B-TECH-2025';
-
-    SELECT classroom_id INTO classroom_2st
-    FROM social_features.classrooms
-    WHERE classroom_code = '2ST-LITC-2025';
-
-    SELECT classroom_id INTO classroom_3adv
-    FROM social_features.classrooms
-    WHERE classroom_code = '3ADV-CRIT-2025';
-
-    -- =====================================================================
-    -- Obtener student IDs
-    -- =====================================================================
-    SELECT user_id INTO student1_id
-    FROM auth.users
-    WHERE email = 'estudiante1@demo.glit.edu.mx';
-
-    SELECT user_id INTO student2_id
-    FROM auth.users
-    WHERE email = 'estudiante2@demo.glit.edu.mx';
-
-    SELECT user_id INTO student3_id
-    FROM auth.users
-    WHERE email = 'estudiante3@demo.glit.edu.mx';
-
-    -- Validar que existan los estudiantes
-    IF student1_id IS NULL OR student2_id IS NULL OR student3_id IS NULL THEN
-        RAISE EXCEPTION 'No se encontraron todos los estudiantes demo. Ejecutar seeds de auth primero.';
+    IF v_default_classroom_id IS NULL THEN
+        RAISE EXCEPTION 'Classroom DEFAULT no encontrado. Ejecutar primero 02-classrooms.sql';
     END IF;
 
-    -- =====================================================================
-    -- MEMBRESÍAS PARA ESTUDIANTE 1
-    -- Perfil: Estudiante activo, inscrito en múltiples aulas
-    -- =====================================================================
+    RAISE NOTICE 'Usando classroom DEFAULT: %', v_default_classroom_id;
 
-    -- Estudiante 1 → Aula 2° A (Secundaria Federal 15)
+    -- Contar estudiantes existentes
+    SELECT COUNT(*) INTO v_student_count
+    FROM auth_management.profiles
+    WHERE role = 'student';
+
+    RAISE NOTICE 'Estudiantes encontrados: %', v_student_count;
+
+    -- Asignar cada estudiante al classroom DEFAULT
     INSERT INTO social_features.classroom_members (
-        classroom_id, user_id, role,
-        joined_at, is_active, is_active,
-        settings, metadata, created_at, updated_at
-    ) VALUES
-    (
-        classroom_2a,
-        student1_id,
-        'student',
-        '2025-08-15',
-        'active',
-        true,
-        '{
-            "attendance_tracking": true,
-            "grade_visibility": true,
-            "notifications_enabled": true,
-            "preferred_communication": "email"
-        }'::jsonb,
-        '{
-            "enrollment_type": "regular",
-            "previous_performance": "excellent",
-            "special_needs": false
-        }'::jsonb,
-        NOW(),
-        NOW()
-    ),
-
-    -- Estudiante 1 → Aula 3° B (Multi-enrollment)
-    (
-        classroom_3b,
-        student1_id,
-        'student',
-        '2025-08-20',
-        'active',
-        true,
-        '{
-            "attendance_tracking": true,
-            "grade_visibility": true,
-            "notifications_enabled": true,
-            "preferred_communication": "email"
-        }'::jsonb,
-        '{
-            "enrollment_type": "advanced_placement",
-            "reason": "Alto desempeño en lectura digital"
-        }'::jsonb,
-        NOW(),
-        NOW()
-    ),
-
-    -- =====================================================================
-    -- MEMBRESÍAS PARA ESTUDIANTE 2
-    -- Perfil: Estudiante de secundaria técnica
-    -- =====================================================================
-
-    -- Estudiante 2 → Aula 3° B (Secundaria Federal 15)
-    (
-        classroom_3b,
-        student2_id,
-        'student',
-        '2025-08-15',
-        'active',
-        true,
-        '{
-            "attendance_tracking": true,
-            "grade_visibility": true,
-            "notifications_enabled": true,
-            "preferred_communication": "sms"
-        }'::jsonb,
-        '{
-            "enrollment_type": "regular",
-            "previous_performance": "good",
-            "special_needs": false
-        }'::jsonb,
-        NOW(),
-        NOW()
-    ),
-
-    -- Estudiante 2 → Aula 2° B Técnica (Secundaria Técnica 42)
-    (
-        classroom_2b,
-        student2_id,
-        'student',
-        '2025-08-15',
-        'active',
-        true,
-        '{
-            "attendance_tracking": true,
-            "grade_visibility": true,
-            "notifications_enabled": true,
-            "workshop_access": true
-        }'::jsonb,
-        '{
-            "enrollment_type": "technical_specialty",
-            "specialty": "Computación",
-            "workshop_schedule": "Lunes y Miércoles 16:00-18:00"
-        }'::jsonb,
-        NOW(),
-        NOW()
-    ),
-
-    -- =====================================================================
-    -- MEMBRESÍAS PARA ESTUDIANTE 3
-    -- Perfil: Estudiante de primer año
-    -- =====================================================================
-
-    -- Estudiante 3 → Aula 1° A (Secundaria Técnica 42)
-    (
-        classroom_1a,
-        student3_id,
-        'student',
-        '2025-08-15',
-        'active',
-        true,
-        '{
-            "attendance_tracking": true,
-            "grade_visibility": true,
-            "notifications_enabled": true,
-            "parental_monitoring": true
-        }'::jsonb,
-        '{
-            "enrollment_type": "regular",
-            "is_first_year": true,
-            "orientation_completed": true,
-            "parent_contact": "padre3@demo.glit.edu.mx"
-        }'::jsonb,
-        NOW(),
-        NOW()
-    ),
-
-    -- Estudiante 3 → Aula 1° C Básica (Secundaria Federal 15)
-    (
-        classroom_1c,
-        student3_id,
-        'student',
-        '2025-08-18',
-        'active',
-        true,
-        '{
-            "attendance_tracking": true,
-            "grade_visibility": true,
-            "notifications_enabled": true,
-            "parental_monitoring": true
-        }'::jsonb,
-        '{
-            "enrollment_type": "regular",
-            "is_first_year": true,
-            "foundational_support": true
-        }'::jsonb,
-        NOW(),
-        NOW()
-    ),
-
-    -- =====================================================================
-    -- MEMBRESÍAS ADICIONALES PARA VARIEDAD
-    -- =====================================================================
-
-    -- Estudiante 1 → Aula STEAM (Colegio Einstein)
-    (
-        classroom_2st,
-        student1_id,
-        'student',
-        '2025-08-15',
-        'active',
-        true,
-        '{
-            "attendance_tracking": true,
-            "grade_visibility": true,
-            "notifications_enabled": true,
-            "bilingual_mode": true
-        }'::jsonb,
-        '{
-            "enrollment_type": "steam_program",
-            "scholarship": true,
-            "stem_projects_enrolled": ["Biografías Científicas", "Science Fair"]
-        }'::jsonb,
-        NOW(),
-        NOW()
-    ),
-
-    -- Estudiante 2 → Aula Advanced (Colegio Einstein)
-    (
-        classroom_3adv,
-        student2_id,
-        'student',
-        '2025-08-15',
-        'active',
-        true,
-        '{
-            "attendance_tracking": true,
-            "grade_visibility": true,
-            "notifications_enabled": true,
-            "bilingual_mode": true,
-            "advanced_resources": true
-        }'::jsonb,
-        '{
-            "enrollment_type": "advanced_placement",
-            "cambridge_candidate": true,
-            "debate_team": true
-        }'::jsonb,
-        NOW(),
-        NOW()
+        id,
+        classroom_id,
+        student_id,
+        enrollment_date,
+        enrollment_method,
+        status,
+        attendance_percentage,
+        metadata,
+        created_at,
+        updated_at
     )
-    ON CONFLICT (classroom_id, user_id) DO UPDATE SET
-        status = EXCLUDED.is_active,
-        settings = EXCLUDED.settings,
-        metadata = EXCLUDED.metadata,
-        updated_at = NOW();
+    SELECT
+        gen_random_uuid(),
+        v_default_classroom_id,
+        p.id,
+        gamilit.now_mexico(),
+        'admin_add',  -- Valid values: teacher_invite, self_enroll, admin_add, bulk_import
+        'active',
+        0.00,
+        jsonb_build_object(
+            'enrollment_type', 'auto',
+            'auto_assigned', true,
+            'enrolled_by', 'seed_script',
+            'assigned_to_default', true,
+            'pending_reassignment', true
+        ),
+        gamilit.now_mexico(),
+        gamilit.now_mexico()
+    FROM auth_management.profiles p
+    WHERE p.role = 'student'
+    ON CONFLICT (classroom_id, student_id) DO UPDATE SET
+        status = 'active',
+        metadata = EXCLUDED.metadata || jsonb_build_object('updated_by_seed', true),
+        updated_at = gamilit.now_mexico();
 
-    -- =====================================================================
-    -- Actualizar enrollment counts en classrooms
-    -- =====================================================================
-    UPDATE social_features.classrooms
-    SET current_enrollment = (
-        SELECT COUNT(*)
-        FROM social_features.classroom_members
-        WHERE classroom_members.classroom_id = classrooms.classroom_id
-          AND status = 'active'
-    )
-    WHERE classroom_id IN (
-        classroom_2a, classroom_3b, classroom_1c,
-        classroom_1a, classroom_2b,
-        classroom_2st, classroom_3adv
-    );
+    GET DIAGNOSTICS v_assigned_count = ROW_COUNT;
 
-    -- =====================================================================
-    -- Verificación de inserción
-    -- =====================================================================
-    SELECT COUNT(*) INTO enrolled_count
+    RAISE NOTICE '========================================';
+    RAISE NOTICE 'ASIGNACIÓN DE ESTUDIANTES A DEFAULT';
+    RAISE NOTICE '========================================';
+    RAISE NOTICE 'Classroom DEFAULT ID: %', v_default_classroom_id;
+    RAISE NOTICE 'Estudiantes asignados: %', v_assigned_count;
+    RAISE NOTICE '========================================';
+
+END $$;
+
+-- =====================================================
+-- Actualizar current_students_count en classroom DEFAULT
+-- =====================================================
+
+UPDATE social_features.classrooms
+SET current_students_count = (
+    SELECT COUNT(*)
     FROM social_features.classroom_members
-    WHERE status = 'active';
+    WHERE classroom_id = classrooms.id
+      AND status = 'active'
+)
+WHERE code = 'DEFAULT';
 
-    RAISE NOTICE 'Total de membresías activas creadas: %', enrolled_count;
-    RAISE NOTICE 'Estudiante 1: % aulas', (
-        SELECT COUNT(*)
-        FROM social_features.classroom_members
-        WHERE user_id = student1_id AND status = 'active'
-    );
-    RAISE NOTICE 'Estudiante 2: % aulas', (
-        SELECT COUNT(*)
-        FROM social_features.classroom_members
-        WHERE user_id = student2_id AND status = 'active'
-    );
-    RAISE NOTICE 'Estudiante 3: % aulas', (
-        SELECT COUNT(*)
-        FROM social_features.classroom_members
-        WHERE user_id = student3_id AND status = 'active'
-    );
+-- =====================================================
+-- Verification Query
+-- =====================================================
 
+DO $$
+DECLARE
+    member_count INTEGER;
+    default_count INTEGER;
+    classroom_students INTEGER;
+BEGIN
+    -- Total membresías
+    SELECT COUNT(*) INTO member_count
+    FROM social_features.classroom_members;
+
+    -- Membresías en classroom DEFAULT
+    SELECT COUNT(*) INTO default_count
+    FROM social_features.classroom_members cm
+    JOIN social_features.classrooms c ON c.id = cm.classroom_id
+    WHERE c.code = 'DEFAULT';
+
+    -- Count en el classroom
+    SELECT current_students_count INTO classroom_students
+    FROM social_features.classrooms
+    WHERE code = 'DEFAULT';
+
+    RAISE NOTICE '========================================';
+    RAISE NOTICE 'VERIFICACIÓN DE CLASSROOM_MEMBERS';
+    RAISE NOTICE '========================================';
+    RAISE NOTICE 'Total membresías: %', member_count;
+    RAISE NOTICE 'Estudiantes en DEFAULT: %', default_count;
+    RAISE NOTICE 'current_students_count: %', classroom_students;
+    RAISE NOTICE '========================================';
+
+    IF default_count = member_count THEN
+        RAISE NOTICE '✓ Todos los estudiantes están en el classroom DEFAULT';
+        RAISE NOTICE '  El admin puede reasignarlos desde la UI';
+    ELSE
+        RAISE WARNING '⚠ Hay membresías en otros classrooms';
+    END IF;
+END $$;
+
+-- =====================================================
+-- Listado de estudiantes asignados
+-- =====================================================
+
+DO $$
+DECLARE
+    member_record RECORD;
+    total_students INTEGER := 0;
+BEGIN
+    RAISE NOTICE '';
+    RAISE NOTICE 'Estudiantes asignados al classroom DEFAULT:';
+    RAISE NOTICE '========================================';
+
+    FOR member_record IN
+        SELECT
+            p.display_name,
+            p.email,
+            cm.enrollment_date,
+            cm.status
+        FROM social_features.classroom_members cm
+        JOIN auth_management.profiles p ON p.id = cm.student_id
+        JOIN social_features.classrooms c ON c.id = cm.classroom_id
+        WHERE c.code = 'DEFAULT'
+        ORDER BY p.display_name
+        LIMIT 20  -- Limitar output para no saturar
+    LOOP
+        RAISE NOTICE '  - % <%> [%]',
+            member_record.display_name,
+            member_record.email,
+            member_record.status;
+        total_students := total_students + 1;
+    END LOOP;
+
+    IF total_students = 0 THEN
+        RAISE NOTICE '  (No hay estudiantes asignados aún)';
+    ELSIF total_students = 20 THEN
+        RAISE NOTICE '  ... (mostrando primeros 20)';
+    END IF;
+
+    RAISE NOTICE '========================================';
 END $$;

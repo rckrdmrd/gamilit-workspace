@@ -61,5 +61,5 @@ export class UpdateSystemConfigDto {
   })
   @IsOptional()
   @IsObject()
-    custom_settings?: Record<string, any>;
+    custom_settings?: Record<string, unknown>;
 }

@@ -31,7 +31,7 @@ export class ExerciseSubmissionResponseDto {
    * Respuesta del estudiante
    */
   @Expose()
-    answer_data!: Record<string, any>;
+    answer_data!: Record<string, unknown>;
 
   /**
    * Indica si fue correcta

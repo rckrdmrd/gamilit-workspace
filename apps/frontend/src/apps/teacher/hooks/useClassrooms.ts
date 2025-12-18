@@ -54,9 +54,10 @@ export function useClassrooms(filters?: GetClassroomsQueryDto): UseClassroomsRet
     }
   }, [filters]);
 
+  // CORR-2025-12-18: Agregado limit: 100 para obtener todos los estudiantes
   const fetchClassroomStudents = useCallback(async (classroomId: string) => {
     try {
-      const response = await classroomsApi.getClassroomStudents(classroomId);
+      const response = await classroomsApi.getClassroomStudents(classroomId, { limit: 100 });
       setStudents(response.data);
     } catch (err) {
       console.error('[useClassrooms] Error fetching students:', err);

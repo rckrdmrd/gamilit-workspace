@@ -107,7 +107,7 @@ Se realizó una auditoría exhaustiva de la base de datos del proyecto GAMILIT, 
 
 #### H-012: 2 Schemas sin implementación SQL
 - **Estado:** ✅ DOCUMENTADO
-- **Nota:** `public` y `storage` son defaults de Supabase
+- **Nota:** `public` y `storage` son defaults del sistema
 
 #### H-013: Documentación de Triggers al 0%
 - **Estado:** 📋 DEUDA TÉCNICA

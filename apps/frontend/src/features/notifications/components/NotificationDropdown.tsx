@@ -8,13 +8,16 @@ interface NotificationDropdownProps {
 
 export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose }) => {
   const {
-    notifications,
+    notifications = [],
     isLoading,
     fetchNotifications,
     markAsRead,
     markAllAsRead,
-    deleteNotification
+    deleteNotification,
   } = useNotificationsStore();
+
+  // Ensure notifications is always an array
+  const safeNotifications = notifications ?? [];
 
   useEffect(() => {
     fetchNotifications();
@@ -22,16 +25,26 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onCl
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'achievement_unlocked': return '🏆';
-      case 'rank_up': return '🎉';
-      case 'streak_milestone': return '🔥';
-      case 'friend_request': return '👥';
-      case 'friend_accepted': return '✅';
-      case 'level_up': return '⬆️';
-      case 'ml_coins_earned': return '💰';
-      case 'mission_completed': return '✨';
-      case 'system_announcement': return '📢';
-      default: return '📬';
+      case 'achievement_unlocked':
+        return '🏆';
+      case 'rank_up':
+        return '🎉';
+      case 'streak_milestone':
+        return '🔥';
+      case 'friend_request':
+        return '👥';
+      case 'friend_accepted':
+        return '✅';
+      case 'level_up':
+        return '⬆️';
+      case 'ml_coins_earned':
+        return '💰';
+      case 'mission_completed':
+        return '✨';
+      case 'system_announcement':
+        return '📢';
+      default:
+        return '📬';
     }
   };
 
@@ -54,7 +67,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onCl
     <div className="notification-dropdown">
       <div className="notification-header">
         <h3>Notificaciones</h3>
-        {notifications.length > 0 && (
+        {safeNotifications.length > 0 && (
           <button onClick={markAllAsRead} className="mark-all-read">
             Marcar todas como leídas
           </button>
@@ -69,50 +82,49 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onCl
           </div>
         )}
 
-        {!isLoading && notifications.length === 0 && (
+        {!isLoading && safeNotifications.length === 0 && (
           <div className="empty-state">
             <span className="empty-icon">📭</span>
             <p>No tienes notificaciones</p>
           </div>
         )}
 
-        {!isLoading && notifications.map(notification => (
-          <div
-            key={notification.id}
-            className={`notification-item ${notification.status === 'read' ? 'read' : 'unread'}`}
-            onClick={() => {
-              if (notification.status === 'unread') {
-                markAsRead(notification.id);
-              }
-            }}
-          >
-            <div className="notification-icon">
-              {getNotificationIcon(notification.type)}
-            </div>
-            <div className="notification-content">
-              <h4>{notification.title}</h4>
-              <p>{notification.message}</p>
-              <span className="notification-time">
-                {formatTimestamp(notification.createdAt)}
-              </span>
-            </div>
-            <button
-              className="delete-button"
-              onClick={(e) => {
-                e.stopPropagation();
-                deleteNotification(notification.id);
+        {!isLoading &&
+          safeNotifications.map((notification) => (
+            <div
+              key={notification.id}
+              className={`notification-item ${notification.status === 'read' ? 'read' : 'unread'}`}
+              onClick={() => {
+                if (notification.status === 'unread') {
+                  markAsRead(notification.id);
+                }
               }}
-              aria-label="Eliminar notificación"
             >
-              ×
-            </button>
-          </div>
-        ))}
+              <div className="notification-icon">{getNotificationIcon(notification.type)}</div>
+              <div className="notification-content">
+                <h4>{notification.title}</h4>
+                <p>{notification.message}</p>
+                <span className="notification-time">{formatTimestamp(notification.createdAt)}</span>
+              </div>
+              <button
+                className="delete-button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteNotification(notification.id);
+                }}
+                aria-label="Eliminar notificación"
+              >
+                ×
+              </button>
+            </div>
+          ))}
       </div>
 
-      {notifications.length > 0 && (
+      {safeNotifications.length > 0 && (
         <div className="notification-footer">
-          <button onClick={onClose} className="close-button">Cerrar</button>
+          <button onClick={onClose} className="close-button">
+            Cerrar
+          </button>
         </div>
       )}
     </div>

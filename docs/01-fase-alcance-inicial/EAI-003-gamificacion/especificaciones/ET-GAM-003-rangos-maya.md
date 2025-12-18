@@ -2308,7 +2308,7 @@ await this.missionsService.findByTypeAndUser(userId, MissionTypeEnum.DAILY);
 
 ### Documentación de Referencia
 
-Ver reporte completo: `docs/90-transversal/correcciones/CORRECCION-GAMIFICACION-RANGOS-2025-11-29.md`
+Ver reporte historico: `orchestration/reportes/correcciones/CORRECCION-GAMIFICACION-RANGOS-2025-11-29.md`
 
 ---
 

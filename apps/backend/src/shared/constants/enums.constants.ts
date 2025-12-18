@@ -189,6 +189,31 @@ export enum ComodinTypeEnum {
 }
 
 /**
+ * Categorías de items de la tienda (Shop)
+ * @see DDL: gamification_system.shop_items.category ENUM
+ * @version 1.0 (2025-11-29) - Sistema de Shop
+ *
+ * IMPORTANTE:
+ * - Este enum está sincronizado con el ENUM de PostgreSQL en gamification_system schema
+ * - Total: 5 categorías de items disponibles en la tienda
+ * - Usado en shop_items.category
+ *
+ * CATEGORÍAS:
+ * - cosmetics: Items cosméticos (avatares, marcos, efectos visuales)
+ * - profile: Items para personalización de perfil
+ * - guild: Items relacionados con guilds/equipos
+ * - social: Items sociales (emotes, stickers)
+ * - consumable: Items consumibles (boosts temporales, comodines)
+ */
+export enum ShopItemCategoryEnum {
+  COSMETICS = 'cosmetics',
+  PROFILE = 'profile',
+  GUILD = 'guild',
+  SOCIAL = 'social',
+  CONSUMABLE = 'consumable',
+}
+
+/**
  * Tipos de transacciones de ML Coins
  * @see DDL: gamification_system.transaction_type ENUM
  * @see Docs: docs/02-especificaciones-tecnicas/tipos-compartidos/TYPES-GAMIFICATION.md:216-230
@@ -228,7 +253,8 @@ export enum TransactionTypeEnum {
 
 /**
  * Categorías de logros (achievements)
- * @see DDL: achievement_category ENUM
+ * @see DDL: gamification_system.achievement_category ENUM
+ * @version 1.1 (2025-12-15) - Agregados 'collection' y 'hidden' para alineación con Frontend
  */
 export enum AchievementCategoryEnum {
   PROGRESS = 'progress',
@@ -238,6 +264,8 @@ export enum AchievementCategoryEnum {
   SPECIAL = 'special',
   MASTERY = 'mastery',
   EXPLORATION = 'exploration',
+  COLLECTION = 'collection',  // v1.1: Logros de colección
+  HIDDEN = 'hidden',          // v1.1: Logros ocultos/secretos
 }
 
 /**

@@ -33,12 +33,12 @@ export default function TeacherAlertsPage() {
   // Classroom ID from user context - use first classroom if available
   const selectedClassroomId = selectedClassroom?.id ?? classrooms[0]?.id ?? null;
 
-  // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
+  // Use useUserGamification hook for real-time gamification data
   const { gamificationData } = useUserGamification(user?.id);
 
   // Fallback gamification data in case hook fails or user is not loaded
   const displayGamificationData = gamificationData || {
-    userId: user?.id || 'mock-teacher-id',
+    userId: user?.id || '',
     level: 1,
     totalXP: 0,
     mlCoins: 0,

@@ -1,4 +1,3 @@
-/* eslint-disable rulesdir/no-api-route-issues */
 /**
  * Teacher Messages API Client
  *
@@ -8,7 +7,7 @@
  * @module services/api/teacher/teacherMessagesApi
  */
 
-import { apiClient } from '../apiClient';
+import { apiClient } from '@/services/api/apiClient';
 
 // ============================================================================
 // TYPES & ENUMS

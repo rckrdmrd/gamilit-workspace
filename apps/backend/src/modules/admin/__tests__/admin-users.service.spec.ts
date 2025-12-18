@@ -9,7 +9,7 @@ import { GamilityRoleEnum, UserStatusEnum } from '@shared/constants';
 
 describe('AdminUsersService', () => {
   let service: AdminUsersService;
-  let userRepository: Repository<User>;
+  let _userRepository: Repository<User>;
 
   const mockUserRepository = {
     findAndCount: jest.fn(),
@@ -400,7 +400,7 @@ describe('AdminUsersService', () => {
   describe('getUserStats', () => {
     it('should return user statistics', async () => {
       // Arrange
-      const userId = 'user-1';
+      const _userId = 'user-1';
       // Mock would need to query related data (exercises completed, achievements, etc.)
       // This is a placeholder for when the method is implemented
 

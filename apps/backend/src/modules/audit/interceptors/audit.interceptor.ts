@@ -25,7 +25,7 @@ export class AuditInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest<Request>();
-    const { method, url, body, user } = request;
+    const { method, url, body: _body, user: _user} = request;
 
     // Skip audit logging for certain endpoints
     if (this.shouldSkipAudit(url)) {

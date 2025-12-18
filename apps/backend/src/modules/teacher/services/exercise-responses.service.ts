@@ -372,6 +372,10 @@ export class ExerciseResponsesService {
       }
     }
 
+    // Extract correct answers based on exercise type
+    // Different exercise types store correct answers in different fields
+    const correctAnswer = this.extractCorrectAnswers(exerciseContent, row.exercise_type);
+
     return {
       id: row.attempt_id,
       student_id: row.attempt_user_id,
@@ -390,10 +394,115 @@ export class ExerciseResponsesService {
       ml_coins_earned: row.attempt_ml_coins_earned,
       submitted_at: row.attempt_submitted_at ? new Date(row.attempt_submitted_at).toISOString() : new Date().toISOString(),
       // Additional detail fields
-      correct_answer: exerciseContent?.correct_answers || [],
+      correct_answer: correctAnswer,
       exercise_type: row.exercise_type || 'unknown',
       max_score: row.exercise_max_points || 100,
     };
+  }
+
+  /**
+   * Extract correct answers from exercise content based on exercise type
+   * Different exercise types store correct answers in different fields
+   */
+  private extractCorrectAnswers(content: any, exerciseType: string): Record<string, unknown> {
+    if (!content) return {};
+
+    // Try common correct answer fields first
+    if (content.correct_answers) {
+      return { answers: content.correct_answers };
+    }
+
+    // Handle specific exercise types
+    switch (exerciseType) {
+      case 'verdadero_falso':
+        // Extract correct answer from statements
+        // Return with 'statements' key to match frontend format
+        // DB stores: stmt.answer (boolean), not correctAnswer or isTrue
+        if (content.statements && Array.isArray(content.statements)) {
+          const statements: Record<string, boolean> = {};
+          content.statements.forEach((stmt: any, idx: number) => {
+            // Use stmt.id if available, otherwise use index+1
+            const key = stmt.id ? String(stmt.id) : String(idx + 1);
+            // Priority: answer (DB field) > correctAnswer > isTrue > false
+            statements[key] = stmt.answer ?? stmt.correctAnswer ?? stmt.isTrue ?? false;
+          });
+          return { statements };
+        }
+        break;
+
+      case 'completar_espacios':
+        // Extract correctAnswer from blanks
+        if (content.blanks && Array.isArray(content.blanks)) {
+          const blanks: Record<string, string> = {};
+          content.blanks.forEach((blank: any, idx: number) => {
+            blanks[String(idx + 1)] = blank.correctAnswer || blank.answer || '';
+          });
+          return { blanks };
+        }
+        break;
+
+      case 'crucigrama':
+        // Return words/answers for crossword
+        if (content.words) {
+          return { words: content.words };
+        }
+        if (content.across_clues || content.down_clues) {
+          const words: Record<string, string> = {};
+          (content.across_clues || []).forEach((clue: any) => {
+            if (clue.answer) words[`H${clue.number}`] = clue.answer;
+          });
+          (content.down_clues || []).forEach((clue: any) => {
+            if (clue.answer) words[`V${clue.number}`] = clue.answer;
+          });
+          return { words };
+        }
+        break;
+
+      case 'sopa_letras':
+        // Return words to find
+        if (content.words) {
+          return { foundWords: content.words };
+        }
+        break;
+
+      case 'lectura_inferencial':
+      case 'prediccion_narrativa':
+      case 'puzzle_contexto':
+      case 'detective_textual':
+      case 'rueda_inferencias':
+      case 'causa_efecto':
+        // Multiple choice - extract from questions
+        if (content.questions && Array.isArray(content.questions)) {
+          const answers: Record<string, string | number> = {};
+          content.questions.forEach((q: any, idx: number) => {
+            answers[`question_${idx + 1}`] = q.correctAnswer ?? q.correct_answer ?? '';
+          });
+          return answers;
+        }
+        break;
+
+      case 'mapa_conceptual':
+        // Return expected connections
+        if (content.connections || content.expectedConnections) {
+          return { connections: content.connections || content.expectedConnections };
+        }
+        break;
+
+      case 'timeline':
+        // Return correct order
+        if (content.events || content.correctOrder) {
+          return { events: content.correctOrder || content.events };
+        }
+        break;
+
+      default:
+        // Return full content for creative/multimedia exercises (modules 4, 5)
+        // These don't have "correct" answers, just submitted content
+        return content;
+    }
+
+    // Fallback: return the full content
+    return content;
   }
 
   /**

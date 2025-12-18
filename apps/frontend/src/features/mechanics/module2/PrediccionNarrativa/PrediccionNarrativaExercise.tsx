@@ -14,8 +14,7 @@ import type {
 import { mockExerciseData } from './prediccionNarrativaMockData';
 import { submitExercise } from '@/features/progress/api/progressAPI';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useRanksStore } from '@/features/gamification/ranks/store/ranksStore';
-import { useEconomyStore } from '@/features/gamification/economy/store/economyStore';
+import { useInvalidateDashboard } from '@/shared/hooks';
 
 export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExerciseProps> = ({
   exercise = mockExerciseData,
@@ -26,8 +25,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
   actionsRef,
 }) => {
   const { user } = useAuth();
-  const { fetchUserProgress } = useRanksStore();
-  const { fetchBalance } = useEconomyStore();
+  const { syncAndInvalidate } = useInvalidateDashboard();
   const [_isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize answers for all scenarios
@@ -185,8 +183,7 @@ export const PrediccionNarrativaExercise: React.FC<PrediccionNarrativaExercisePr
       setShowFeedback(true);
 
       // Sync stores with backend (rewards already calculated and saved by backend)
-      await fetchUserProgress();
-      await fetchBalance();
+      await syncAndInvalidate();
 
       console.log('✅ [PrediccionNarrativa] Submission successful:', {
         attemptId: response.attemptId,

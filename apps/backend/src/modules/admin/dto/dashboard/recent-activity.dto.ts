@@ -48,7 +48,7 @@ export class AdminActionDto {
   @ApiPropertyOptional({
     description: 'Additional metadata in JSON format',
   })
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 
   @ApiProperty({
     description: 'Timestamp when the action occurred',

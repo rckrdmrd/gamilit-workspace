@@ -12,7 +12,7 @@ import { ClassroomMemberStatusEnum } from '@shared/constants/enums.constants';
 
 describe('TeacherClassroomsController', () => {
   let controller: TeacherClassroomsController;
-  let service: StudentBlockingService;
+  let _service: StudentBlockingService;
 
   const mockStudentBlockingService = {
     blockStudent: jest.fn(),

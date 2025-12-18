@@ -150,7 +150,7 @@ export class Exercise {
    * - etc.
    */
   @Column({ type: 'jsonb', default: {} })
-    config!: Record<string, any>;
+    config!: Record<string, unknown>;
 
   /**
    * Contenido del ejercicio (JSONB)
@@ -165,20 +165,20 @@ export class Exercise {
       correct_answers: [],
     },
   })
-    content!: Record<string, any>;
+    content!: Record<string, unknown>;
 
   /**
    * Solución del ejercicio (JSONB)
    * Información privada no visible para estudiantes durante la resolución
    */
   @Column({ type: 'jsonb', nullable: true })
-    solution?: Record<string, any>;
+    solution?: Record<string, unknown>;
 
   /**
    * Rúbrica de evaluación (JSONB)
    */
   @Column({ type: 'jsonb', nullable: true })
-    rubric?: Record<string, any>;
+    rubric?: Record<string, unknown>;
 
   // =====================================================
   // GRADING & SCORING
@@ -328,7 +328,7 @@ export class Exercise {
       segunda_oportunidad: { cost: 40, enabled: true },
     },
   })
-    comodines_config!: Record<string, any>;
+    comodines_config!: Record<string, unknown>;
 
   // =====================================================
   // GAMIFICATION & REWARDS
@@ -423,7 +423,7 @@ export class Exercise {
    * Metadatos adicionales (JSONB)
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   // =====================================================
   // AUDIT FIELDS

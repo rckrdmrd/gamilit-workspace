@@ -38,6 +38,7 @@ import { AdminProgressController } from './controllers/admin-progress.controller
 import { AdminMonitoringController } from './controllers/admin-monitoring.controller';
 import { AdminInterventionsController } from './controllers/admin-interventions.controller';
 import { AdminAssignmentsController } from './controllers/admin-assignments.controller';
+import { FeatureFlagsController } from './controllers/feature-flags.controller';
 import { AdminUsersService } from './services/admin-users.service';
 import { AdminOrganizationsService } from './services/admin-organizations.service';
 import { AdminContentService } from './services/admin-content.service';
@@ -54,7 +55,14 @@ import { AdminProgressService } from './services/admin-progress.service';
 import { AdminMonitoringService } from './services/admin-monitoring.service';
 import { AdminInterventionsService } from './services/admin-interventions.service';
 import { AdminAssignmentsService } from './services/admin-assignments.service';
+import { FeatureFlagsService } from './services/feature-flags.service';
+import { DashboardStatsService } from './services/statistics/dashboard-stats.service';
+import { UserStatsService } from './services/statistics/user-stats.service';
+import { ContentStatsService } from './services/statistics/content-stats.service';
+import { RecentActivityService } from './services/activity/recent-activity.service';
+import { AdminQueryBuilder } from './services/query-builders/admin.query-builder';
 import { AdminGuard } from './guards/admin.guard';
+import { TasksModule } from '../tasks/tasks.module';
 
 @Module({
   imports: [
@@ -64,6 +72,7 @@ import { AdminGuard } from './guards/admin.guard';
     TypeOrmModule.forFeature([Classroom, TeacherClassroom, AssignmentClassroom], 'social'),
     TypeOrmModule.forFeature([SystemAlert], 'audit'),
     TypeOrmModule.forFeature([], 'progress'), // For AdminInterventionsService (student_intervention_alerts)
+    TasksModule, // Import TasksModule to access MissionsCronService
   ],
   controllers: [
     AdminUsersController,
@@ -84,6 +93,7 @@ import { AdminGuard } from './guards/admin.guard';
     AdminMonitoringController, // NEW: Monitoring endpoints (Plan 4)
     AdminInterventionsController, // NEW: Student intervention alerts (BE-001)
     AdminAssignmentsController, // NEW: Assignments management endpoints (US-AE-009)
+    FeatureFlagsController, // NEW: Feature flags management (BE-ADMIN-001-003)
   ],
   providers: [
     AdminUsersService,
@@ -102,6 +112,13 @@ import { AdminGuard } from './guards/admin.guard';
     AdminMonitoringService, // NEW: Monitoring service (Plan 4)
     AdminInterventionsService, // NEW: Student intervention alerts service (BE-001)
     AdminAssignmentsService, // NEW: Assignments management service (US-AE-009)
+    FeatureFlagsService, // NEW: Feature flags service (BE-ADMIN-001-003)
+    // Dashboard sub-services (dependencies for AdminDashboardService)
+    DashboardStatsService,
+    UserStatsService,
+    ContentStatsService,
+    RecentActivityService,
+    AdminQueryBuilder,
     AdminGuard,
   ],
   exports: [
@@ -121,6 +138,7 @@ import { AdminGuard } from './guards/admin.guard';
     AdminMonitoringService, // NEW: Export monitoring service for use in other modules
     AdminInterventionsService, // NEW: Export interventions service for use in other modules (BE-001)
     AdminAssignmentsService, // NEW: Export assignments service for use in other modules (US-AE-009)
+    FeatureFlagsService, // NEW: Export feature flags service for use in other modules (BE-ADMIN-001-003)
   ],
 })
 export class AdminModule {}

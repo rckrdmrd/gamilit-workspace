@@ -38,6 +38,7 @@ import { profileAPI } from '@/services/api/profileAPI';
 // Components
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { useUserPreferences } from '@shared/hooks/useUserPreferences';
 import { EnhancedCard } from '@shared/components/base/EnhancedCard';
 import { ColorfulCard } from '@shared/components/base/ColorfulCard';
 
@@ -63,6 +64,13 @@ export default function TeacherSettingsPage() {
 
   // Use useUserGamification hook
   const { gamificationData } = useUserGamification(user?.id);
+
+  // Load user preferences from backend
+  const {
+    preferences: _backendPreferences,
+    loading: _preferencesLoading,
+    error: _preferencesError,
+  } = useUserPreferences();
 
   // State
   const [activeSection, setActiveSection] = useState<SettingsSection>('profile');
@@ -162,33 +170,60 @@ export default function TeacherSettingsPage() {
       }
 
       if (activeSection === 'teaching') {
+        // Map teaching preferences to backend structure
         await profileAPI.updatePreferences(user.id, {
-          notifications: {
-            email: teachingPreferences.newSubmissions,
-            push: teachingPreferences.lateSubmissions,
-            in_app: teachingPreferences.studentQuestions,
+          preferences: {
+            teaching: {
+              newSubmissions: teachingPreferences.newSubmissions,
+              lateSubmissions: teachingPreferences.lateSubmissions,
+              studentQuestions: teachingPreferences.studentQuestions,
+              classroomActivity: teachingPreferences.classroomActivity,
+              defaultGradingScale: teachingPreferences.defaultGradingScale,
+              autoReturnGraded: teachingPreferences.autoReturnGraded,
+              allowLateSubmissions: teachingPreferences.allowLateSubmissions,
+              lateSubmissionPenalty: teachingPreferences.lateSubmissionPenalty,
+              allowStudentMessages: teachingPreferences.allowStudentMessages,
+              allowParentMessages: teachingPreferences.allowParentMessages,
+              autoResponseEnabled: teachingPreferences.autoResponseEnabled,
+              preferredContactMethod: teachingPreferences.preferredContactMethod,
+            },
           },
         } as any);
       }
 
       if (activeSection === 'notifications') {
+        // Map notification preferences to backend structure
         await profileAPI.updatePreferences(user.id, {
-          notifications: {
-            email: notifications.emailNotifications,
-            push: notifications.pushNotifications,
-            in_app: notifications.inAppNotifications,
+          email_notifications: notifications.emailNotifications,
+          notifications_enabled: notifications.pushNotifications,
+          preferences: {
+            notifications: {
+              studentRiskAlerts: notifications.studentRiskAlerts,
+              inactivityAlerts: notifications.inactivityAlerts,
+              performanceDropAlerts: notifications.performanceDropAlerts,
+              newSubmissions: notifications.newSubmissions,
+              gradingReminders: notifications.gradingReminders,
+              dueDateReminders: notifications.dueDateReminders,
+              studentMessages: notifications.studentMessages,
+              parentMessages: notifications.parentMessages,
+              adminAnnouncements: notifications.adminAnnouncements,
+              inAppNotifications: notifications.inAppNotifications,
+            },
           },
-        });
+        } as any);
       }
 
       if (activeSection === 'privacy') {
+        // Map privacy settings to backend structure
         await profileAPI.updatePreferences(user.id, {
-          theme: 'light',
-          language: 'es',
-          notifications: {
-            email: privacy.allowStudentContact,
-            push: privacy.allowParentContact,
-            in_app: privacy.showActivity,
+          preferences: {
+            privacy: {
+              profileVisibility: privacy.profileVisibility,
+              showContactInfo: privacy.showContactInfo,
+              allowStudentContact: privacy.allowStudentContact,
+              allowParentContact: privacy.allowParentContact,
+              showActivity: privacy.showActivity,
+            },
           },
         } as any);
       }

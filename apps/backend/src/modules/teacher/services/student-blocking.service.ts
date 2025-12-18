@@ -18,6 +18,24 @@ import {
 } from '../dto/student-blocking';
 
 /**
+ * Interface para tipar el campo JSONB permissions de ClassroomMember
+ * cuando se usa para bloqueo de estudiantes
+ */
+interface StudentBlockPermissions {
+  block_type?: BlockType;
+  blocked_at?: string;
+  blocked_by?: string;
+  block_reason?: string;
+  blocked_modules?: string[];
+  blocked_exercises?: string[];
+  unblocked_at?: string;
+  unblocked_by?: string;
+  updated_at?: string;
+  updated_by?: string;
+  [key: string]: unknown;
+}
+
+/**
  * StudentBlockingService
  *
  * @description Service para gestionar bloqueo y permisos de estudiantes en aulas
@@ -211,11 +229,15 @@ export class StudentBlockingService {
 
     // 3. Validar que no hay conflictos
     // Si existe blocked_modules y se intenta setear allowed_modules, advertir
-    const hasBlockedModules = member.permissions?.blocked_modules?.length > 0;
+    const permissions = member.permissions as StudentBlockPermissions | undefined;
+    const hasBlockedModules = (permissions?.blocked_modules?.length ?? 0) > 0;
     if (hasBlockedModules && dto.allowed_modules) {
       // Limpiar blocked_modules si se especifica allowed_modules
-      member.permissions.blocked_modules = [];
-      member.permissions.block_type = undefined;
+      member.permissions = {
+        ...member.permissions,
+        blocked_modules: [],
+        block_type: undefined,
+      };
     }
 
     // 4. Merge de permisos (mantener existentes, actualizar solo los provistos)
@@ -301,24 +323,27 @@ export class StudentBlockingService {
   private formatPermissionsResponse(
     member: ClassroomMember,
   ): StudentPermissionsResponseDto {
+    // Type assertion para acceder a propiedades tipadas del JSONB permissions
+    const permissions = member.permissions as StudentBlockPermissions | undefined;
+
     // Determinar si está bloqueado
     const isBlocked =
       member.status === ClassroomMemberStatusEnum.INACTIVE ||
       !member.is_active ||
-      !!member.permissions?.block_type;
+      !!permissions?.block_type;
 
     return {
       student_id: member.student_id,
       classroom_id: member.classroom_id,
       status: member.status,
       is_blocked: isBlocked,
-      block_type: member.permissions?.block_type,
+      block_type: permissions?.block_type,
       permissions: member.permissions || {},
-      blocked_at: member.permissions?.blocked_at
-        ? new Date(member.permissions.blocked_at)
+      blocked_at: permissions?.blocked_at
+        ? new Date(permissions.blocked_at)
         : undefined,
-      blocked_by: member.permissions?.blocked_by,
-      block_reason: member.permissions?.block_reason || member.withdrawal_reason,
+      blocked_by: permissions?.blocked_by,
+      block_reason: permissions?.block_reason || member.withdrawal_reason,
     };
   }
 }

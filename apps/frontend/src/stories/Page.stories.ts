@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 // @ts-expect-error - Storybook test addon not installed
 import { expect, userEvent, within } from '@storybook/test';
 

@@ -68,6 +68,7 @@ export interface UseAudioRecorderReturn {
   // Info
   isSupported: boolean;
   isRecording: boolean;
+  isSecureContext: boolean; // True if running on HTTPS or localhost
 }
 
 /**
@@ -169,12 +170,22 @@ function createErrorMessage(error: unknown): AudioRecorderError {
  * ```
  */
 export function useAudioRecorder(): UseAudioRecorderReturn {
+  // Check if we're in a secure context (HTTPS or localhost)
+  const isSecureContext =
+    typeof window !== 'undefined' &&
+    (window.isSecureContext ||
+      window.location.protocol === 'https:' ||
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1');
+
   // Check if MediaRecorder API is supported
+  // Note: navigator.mediaDevices is only available in secure contexts (HTTPS)
   const isSupported =
     typeof navigator !== 'undefined' &&
+    isSecureContext &&
     !!navigator.mediaDevices &&
     !!navigator.mediaDevices.getUserMedia &&
-    !!window.MediaRecorder;
+    typeof window.MediaRecorder !== 'undefined';
 
   // State
   const [permissionState, setPermissionState] = useState<PermissionState>(
@@ -404,5 +415,6 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
     // Info
     isSupported,
     isRecording: recordingState === 'recording',
+    isSecureContext,
   };
 }

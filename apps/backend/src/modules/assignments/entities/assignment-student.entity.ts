@@ -22,9 +22,7 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  ManyToOne,
-  JoinColumn,
-  Index,
+      Index,
   Unique,
 } from 'typeorm';
 import {
@@ -36,19 +34,18 @@ import {
   schema: DB_SCHEMAS.EDUCATIONAL,
   name: DB_TABLES.EDUCATIONAL.ASSIGNMENT_STUDENTS,
 })
-@Index(['assignment_id'])
-@Index(['student_id'])
-@Unique(['assignment_id', 'student_id'])
+// CORRECTED (2025-12-18): Usar nombres de propiedades en lugar de nombres de columnas
+@Index(['assignmentId'])
+@Index(['studentId'])
+@Unique(['assignmentId', 'studentId'])
 export class AssignmentStudent {
   @PrimaryGeneratedColumn('uuid')
     id!: string;
 
   @Column('uuid', { name: 'assignment_id' })
-  @Index()
     assignmentId!: string;
 
   @Column('uuid', { name: 'student_id' })
-  @Index()
     studentId!: string;
 
   @CreateDateColumn({ name: 'assigned_at', type: 'timestamp with time zone' })

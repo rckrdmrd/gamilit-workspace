@@ -22,6 +22,7 @@ import {
   InterventionAlertDto,
   PaginatedInterventionsDto,
 } from '../dto/interventions';
+import { AuthRequest } from '@shared/types';
 
 /**
  * AdminInterventionsController
@@ -163,9 +164,9 @@ export class AdminInterventionsController {
   async acknowledgeIntervention(
     @Param('id') id: string,
       @Body() dto: AcknowledgeInterventionDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<InterventionAlertDto> {
-    const userId = req.user?.id || req.user?.sub;
+    const userId = req.user!.id;
     return this.interventionsService.acknowledgeIntervention(id, dto.acknowledgment_note, userId);
   }
 
@@ -211,9 +212,9 @@ export class AdminInterventionsController {
   async resolveIntervention(
     @Param('id') id: string,
       @Body() dto: ResolveInterventionDto,
-      @Request() req: any,
+      @Request() req: AuthRequest,
   ): Promise<InterventionAlertDto> {
-    const userId = req.user?.id || req.user?.sub;
+    const userId = req.user!.id;
     return this.interventionsService.resolveIntervention(id, dto.resolution_notes, userId);
   }
 

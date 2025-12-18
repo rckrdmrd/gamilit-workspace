@@ -151,7 +151,7 @@ export function StudentStatusCard({ student, onClick }: StudentStatusCardProps) 
               <Target className="h-4 w-4 text-detective-orange" />
             </div>
             <p className="text-lg font-bold text-detective-text">
-              {student.exercises_completed}/{student.exercises_total}
+              {student.exercises_completed ?? 0}/{student.exercises_total ?? 0}
             </p>
             <p className="text-xs text-detective-text-secondary">Ejercicios</p>
           </div>
@@ -161,7 +161,7 @@ export function StudentStatusCard({ student, onClick }: StudentStatusCardProps) 
               <TrendingUp className="h-4 w-4 text-detective-gold" />
             </div>
             <p className="text-lg font-bold text-detective-text">
-              {student.score_average.toFixed(0)}%
+              {(student.score_average ?? 0).toFixed(0)}%
             </p>
             <p className="text-xs text-detective-text-secondary">Score Prom.</p>
           </div>
@@ -171,7 +171,7 @@ export function StudentStatusCard({ student, onClick }: StudentStatusCardProps) 
               <Clock className="text-detective-accent h-4 w-4" />
             </div>
             <p className="text-lg font-bold text-detective-text">
-              {Math.floor(student.time_spent_minutes / 60)}h
+              {Math.floor((student.time_spent_minutes ?? 0) / 60)}h
             </p>
             <p className="text-xs text-detective-text-secondary">Tiempo</p>
           </div>
@@ -182,13 +182,13 @@ export function StudentStatusCard({ student, onClick }: StudentStatusCardProps) 
           <div className="mb-2 flex items-center justify-between">
             <span className="text-xs text-detective-text-secondary">Progreso General</span>
             <span className="text-xs font-semibold text-detective-text">
-              {student.progress_percentage.toFixed(0)}%
+              {(student.progress_percentage ?? 0).toFixed(0)}%
             </span>
           </div>
           <div className="h-2 w-full rounded-full bg-detective-bg-secondary">
             <div
               className="h-2 rounded-full bg-gradient-to-r from-detective-orange to-detective-gold transition-all duration-300"
-              style={{ width: `${student.progress_percentage}%` }}
+              style={{ width: `${student.progress_percentage ?? 0}%` }}
             />
           </div>
         </div>

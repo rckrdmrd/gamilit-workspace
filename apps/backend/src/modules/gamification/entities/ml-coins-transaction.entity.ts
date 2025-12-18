@@ -81,7 +81,7 @@ export class MLCoinsTransaction {
     bonus_applied!: boolean;
 
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   @CreateDateColumn({ type: 'timestamp with time zone' })
     created_at!: Date;

@@ -37,7 +37,7 @@ export class ExerciseAttemptResponseDto {
    * Respuestas enviadas
    */
   @Expose()
-    submitted_answers!: Record<string, any>;
+    submitted_answers!: Record<string, unknown>;
 
   /**
    * Indica si fue correcta
@@ -92,5 +92,5 @@ export class ExerciseAttemptResponseDto {
    * Metadatos
    */
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 }

@@ -67,9 +67,9 @@ export class TransformResponseInterceptor implements NestInterceptor {
 
     // Si es un objeto, transformar cada propiedad
     if (typeof obj === 'object') {
-      const transformed: Record<string, any> = {};
+      const transformed: Record<string, unknown> = {};
       for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
           transformed[key] = this.transformDates(obj[key]);
         }
       }

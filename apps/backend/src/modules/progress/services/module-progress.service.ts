@@ -1,9 +1,8 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between } from 'typeorm';
+import { Repository } from 'typeorm';
 import { ModuleProgress } from '../entities';
 import { CreateModuleProgressDto } from '../dto';
-import { DB_SCHEMAS } from '@shared/constants/database.constants';
 import { ProgressStatusEnum } from '@shared/constants/enums.constants';
 
 /**
@@ -326,7 +325,7 @@ export class ModuleProgressService {
     });
 
     // Lógica simple de recomendación
-    const completedCount = allProgress.filter(
+    const _completedCount = allProgress.filter(
       (p) => p.status === ProgressStatusEnum.COMPLETED,
     ).length;
 

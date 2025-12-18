@@ -10,7 +10,7 @@
  * - Connected accounts
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/app/providers/AuthContext';
@@ -39,6 +39,7 @@ import { profileAPI } from '@/services/api/profileAPI';
 // Components
 import { GamifiedHeader } from '@shared/components/layout/GamifiedHeader';
 import { useUserGamification } from '@shared/hooks/useUserGamification';
+import { useUserPreferences } from '@shared/hooks/useUserPreferences';
 import { EnhancedCard } from '@shared/components/base/EnhancedCard';
 import { ColorfulCard } from '@shared/components/base/ColorfulCard';
 
@@ -53,6 +54,13 @@ export default function SettingsPage() {
 
   // Use useUserGamification hook (currently with mock data until backend endpoint is ready)
   const { gamificationData } = useUserGamification(user?.id);
+
+  // Load user preferences from backend
+  const {
+    preferences: backendPreferences,
+    loading: preferencesLoading,
+    error: _preferencesError,
+  } = useUserPreferences();
 
   // State
   const [activeSection, setActiveSection] = useState<SettingsSection>('profile');
@@ -79,15 +87,15 @@ export default function SettingsPage() {
     confirmPassword: '',
   });
 
-  // Preferences
+  // Preferences - Initialize from backend preferences
   const [preferences, setPreferences] = useState({
-    theme: 'light',
-    language: 'es',
-    emailNotifications: true,
-    pushNotifications: true,
-    achievementAlerts: true,
-    friendRequests: true,
-    guildInvites: true,
+    theme: backendPreferences.theme || 'light',
+    language: backendPreferences.language || 'es',
+    emailNotifications: backendPreferences.email_notifications ?? true,
+    pushNotifications: backendPreferences.notifications_enabled ?? true,
+    achievementAlerts: backendPreferences.preferences?.achievementAlerts ?? true,
+    friendRequests: backendPreferences.preferences?.friendRequests ?? true,
+    guildInvites: backendPreferences.preferences?.guildInvites ?? true,
   });
 
   // Privacy Settings
@@ -97,6 +105,21 @@ export default function SettingsPage() {
     allowFriendRequests: true,
     showActivity: true,
   });
+
+  // Update preferences when backend data loads
+  useEffect(() => {
+    if (!preferencesLoading && backendPreferences) {
+      setPreferences({
+        theme: backendPreferences.theme || 'light',
+        language: backendPreferences.language || 'es',
+        emailNotifications: backendPreferences.email_notifications ?? true,
+        pushNotifications: backendPreferences.notifications_enabled ?? true,
+        achievementAlerts: (backendPreferences.preferences?.achievementAlerts as boolean) ?? true,
+        friendRequests: (backendPreferences.preferences?.friendRequests as boolean) ?? true,
+        guildInvites: (backendPreferences.preferences?.guildInvites as boolean) ?? true,
+      });
+    }
+  }, [backendPreferences, preferencesLoading]);
 
   // Handle Save
   const handleSave = async () => {
@@ -120,15 +143,18 @@ export default function SettingsPage() {
       }
 
       if (activeSection === 'preferences') {
+        // Map frontend preferences to backend structure
         await profileAPI.updatePreferences(user.id, {
           theme: preferences.theme,
           language: preferences.language,
-          notifications: {
-            email: preferences.emailNotifications,
-            push: preferences.pushNotifications,
-            in_app: preferences.achievementAlerts,
+          email_notifications: preferences.emailNotifications,
+          notifications_enabled: preferences.pushNotifications,
+          preferences: {
+            achievementAlerts: preferences.achievementAlerts,
+            friendRequests: preferences.friendRequests,
+            guildInvites: preferences.guildInvites,
           },
-        });
+        } as any);
       }
 
       if (activeSection === 'privacy') {

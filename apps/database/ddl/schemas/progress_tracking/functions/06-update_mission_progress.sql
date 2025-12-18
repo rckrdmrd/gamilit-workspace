@@ -9,6 +9,7 @@
 -- Dependencies: gamification_system.missions, gamification_system.calculate_mission_reward, user_stats, ml_coins_transactions, update_user_level, check_and_grant_achievements
 -- Created: 2025-10-28
 -- Modified: 2025-10-28
+-- CORRECTED (2025-12-18): missions_completed -> modules_completed (columna no existe en user_stats)
 
 CREATE OR REPLACE FUNCTION progress_tracking.grant_mission_completion_rewards(
     p_user_id UUID,
@@ -47,11 +48,12 @@ BEGIN
     WHERE user_id = p_user_id;
 
     -- Otorgar XP y Coins
+    -- NOTA: Usando modules_completed ya que missions_completed no existe en user_stats
     UPDATE gamification_system.user_stats
     SET
         total_xp = total_xp + v_boosted_xp,
         ml_coins = ml_coins + v_boosted_coins,
-        missions_completed = missions_completed + 1,
+        modules_completed = modules_completed + 1,
         updated_at = NOW()
     WHERE user_id = p_user_id;
 

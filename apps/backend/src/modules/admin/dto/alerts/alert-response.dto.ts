@@ -75,10 +75,10 @@ export class AlertResponseDto {
     suppress_similar!: boolean;
 
   @ApiPropertyOptional({ description: 'Additional context data' })
-    context_data?: Record<string, any>;
+    context_data?: Record<string, unknown>;
 
   @ApiPropertyOptional({ description: 'Metrics data' })
-    metrics?: Record<string, any>;
+    metrics?: Record<string, unknown>;
 
   @ApiPropertyOptional({ description: 'Related alert IDs', type: [String] })
     related_alerts?: string[];

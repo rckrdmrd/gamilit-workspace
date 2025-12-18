@@ -194,14 +194,14 @@ export class LearningSession {
    * Ejemplo: { type: 'mobile', os: 'iOS', model: 'iPhone 12' }
    */
   @Column({ type: 'jsonb', default: {} })
-    device_info: Record<string, any> = {};
+    device_info: Record<string, unknown> = {};
 
   /**
    * Información del navegador (JSONB)
    * Ejemplo: { name: 'Chrome', version: '96.0.4664.110' }
    */
   @Column({ type: 'jsonb', default: {} })
-    browser_info!: Record<string, any>;
+    browser_info!: Record<string, unknown>;
 
   /**
    * Calidad de conexión
@@ -245,7 +245,7 @@ export class LearningSession {
    * Metadatos adicionales en formato JSON
    */
   @Column({ type: 'jsonb', default: {} })
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Fecha y hora de creación del registro

@@ -2,10 +2,9 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
-  ConflictException,
-} from '@nestjs/common';
+  } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThan } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserDevice } from '../entities/multichannel/user-device.entity';
 
 /**

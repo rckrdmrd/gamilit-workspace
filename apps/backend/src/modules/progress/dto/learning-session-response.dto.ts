@@ -147,13 +147,13 @@ export class LearningSessionResponseDto {
    * Información del dispositivo
    */
   @Expose()
-    device_info!: Record<string, any>;
+    device_info!: Record<string, unknown>;
 
   /**
    * Información del navegador
    */
   @Expose()
-    browser_info!: Record<string, any>;
+    browser_info!: Record<string, unknown>;
 
   /**
    * Calidad de conexión
@@ -183,7 +183,7 @@ export class LearningSessionResponseDto {
    * Metadatos
    */
   @Expose()
-    metadata!: Record<string, any>;
+    metadata!: Record<string, unknown>;
 
   /**
    * Fecha de creación

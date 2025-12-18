@@ -22,12 +22,12 @@ import { RanksService, RankProgressDto } from '../services/ranks.service';
 import {
   CreateUserRankDto,
   UpdateUserRankDto,
-  UserRankResponseDto,
-} from '../dto/user-ranks';
+  } from '../dto/user-ranks';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { RolesGuard } from '@shared/guards/roles.guard';
 import { Roles } from '@shared/decorators/roles.decorator';
 import { UserRank } from '../entities';
+import { AuthRequest } from '@shared/types';
 
 /**
  * RankMetadataDto
@@ -111,8 +111,8 @@ export class RanksController {
   })
   @ApiResponse({ status: 401, description: 'No autenticado' })
   @ApiResponse({ status: 404, description: 'Usuario sin rango inicializado' })
-  async getCurrentRank(@Request() req: any): Promise<UserRank> {
-    const userId = req.user.sub;
+  async getCurrentRank(@Request() req: AuthRequest): Promise<UserRank> {
+    const userId = req.user!.id;
     return this.ranksService.getCurrentRank(userId);
   }
 

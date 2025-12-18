@@ -16,6 +16,7 @@ import { ClassroomMissionsService } from '../services/classroom-missions.service
 import { AssignClassroomMissionDto } from '../dto/missions/assign-classroom-mission.dto';
 import { ClassroomMissionResponseDto } from '../dto/missions/classroom-mission-response.dto';
 import { JwtAuthGuard } from '@/modules/auth/guards';
+import { AuthRequest } from '@shared/types';
 
 /**
  * ClassroomMissionsController
@@ -141,9 +142,9 @@ export class ClassroomMissionsController {
   async assignMissionToClassroom(
   @Param('classroomId') classroomId: string,
     @Body() dto: AssignClassroomMissionDto,
-    @Request() req: any,
+    @Request() req: AuthRequest,
   ) {
-    const teacherId = req.user.id;
+    const teacherId = req.user!.id;
     return this.classroomMissionsService.assignMissionToClassroom(classroomId, teacherId, dto);
   }
 

@@ -103,11 +103,11 @@ export class GamificationConfigService {
     )?.updated_by;
 
     return {
-      xp: config.xp || DEFAULT_GAMIFICATION_CONFIG.xp,
-      ranks: config.ranks || DEFAULT_GAMIFICATION_CONFIG.ranks,
-      coins: config.coins || DEFAULT_GAMIFICATION_CONFIG.coins,
+      xp: (config.xp as Record<string, unknown>) || (DEFAULT_GAMIFICATION_CONFIG.xp as Record<string, unknown>),
+      ranks: (config.ranks as Record<string, unknown>) || (DEFAULT_GAMIFICATION_CONFIG.ranks as Record<string, unknown>),
+      coins: (config.coins as Record<string, unknown>) || (DEFAULT_GAMIFICATION_CONFIG.coins as Record<string, unknown>),
       achievements:
-        config.achievements || DEFAULT_GAMIFICATION_CONFIG.achievements,
+        (config.achievements as Record<string, unknown>) || (DEFAULT_GAMIFICATION_CONFIG.achievements as Record<string, unknown>),
       defaults: defaults,
       last_updated: lastUpdated.toISOString(),
       updated_by: updatedBy,
@@ -131,15 +131,15 @@ export class GamificationConfigService {
 
     // Update each category
     if (dto.xp) {
-      await this.updateXpSettings(dto.xp, adminId);
+      await this.updateXpSettings(dto.xp as unknown as Record<string, unknown>, adminId);
     }
 
     if (dto.ranks) {
-      await this.updateRankSettings(dto.ranks, adminId);
+      await this.updateRankSettings(dto.ranks as unknown as Record<string, unknown>, adminId);
     }
 
     if (dto.coins) {
-      await this.updateCoinsSettings(dto.coins, adminId);
+      await this.updateCoinsSettings(dto.coins as unknown as Record<string, unknown>, adminId);
     }
 
     if (dto.achievements) {
@@ -425,8 +425,8 @@ export class GamificationConfigService {
    * Parse settings array into structured config
    * @private
    */
-  private parseSettings(settings: SystemSetting[]): Record<string, any> {
-    const config: Record<string, any> = {
+  private parseSettings(settings: SystemSetting[]): Record<string, unknown> {
+    const config: Record<string, unknown> = {
       xp: {},
       ranks: {},
       coins: {},
@@ -446,7 +446,7 @@ export class GamificationConfigService {
       } else if (setting.value_type === 'json') {
         try {
           value = JSON.parse(value);
-        } catch (error) {
+        } catch {
           this.logger.warn(`Failed to parse JSON for ${setting.setting_key}`);
           value = {};
         }
@@ -456,7 +456,7 @@ export class GamificationConfigService {
 
       // Assign to config structure
       if (category === 'xp' || category === 'coins') {
-        config[category][key] = value;
+        (config[category] as Record<string, unknown>)[key] = value;
       } else if (category === 'ranks' && key === 'thresholds') {
         config.ranks = value;
       } else if (category === 'achievements' && key === 'criteria') {
@@ -471,8 +471,8 @@ export class GamificationConfigService {
    * Parse default values from settings
    * @private
    */
-  private parseDefaults(settings: SystemSetting[]): Record<string, any> {
-    const defaults: Record<string, any> = {};
+  private parseDefaults(settings: SystemSetting[]): Record<string, unknown> {
+    const defaults: Record<string, unknown> = {};
 
     for (const setting of settings) {
       if (setting.default_value) {
@@ -484,7 +484,7 @@ export class GamificationConfigService {
         } else if (setting.value_type === 'json') {
           try {
             value = JSON.parse(value);
-          } catch (error) {
+          } catch {
             this.logger.warn(
               `Failed to parse default JSON for ${setting.setting_key}`,
             );
@@ -542,7 +542,7 @@ export class GamificationConfigService {
    * @private
    */
   private async updateXpSettings(
-    xp: Record<string, any>,
+    xp: Record<string, unknown>,
     adminId: string,
   ): Promise<void> {
     for (const [key, value] of Object.entries(xp)) {
@@ -556,7 +556,7 @@ export class GamificationConfigService {
    * @private
    */
   private async updateRankSettings(
-    ranks: Record<string, any>,
+    ranks: Record<string, unknown>,
     adminId: string,
   ): Promise<void> {
     const settingKey = 'gamification.ranks.thresholds';
@@ -568,7 +568,7 @@ export class GamificationConfigService {
    * @private
    */
   private async updateCoinsSettings(
-    coins: Record<string, any>,
+    coins: Record<string, unknown>,
     adminId: string,
   ): Promise<void> {
     for (const [key, value] of Object.entries(coins)) {
@@ -582,7 +582,7 @@ export class GamificationConfigService {
    * @private
    */
   private async updateAchievementSettings(
-    achievements: Record<string, any>,
+    achievements: Record<string, unknown>,
     adminId: string,
   ): Promise<void> {
     const settingKey = 'gamification.achievements.criteria';
@@ -992,7 +992,7 @@ export class GamificationConfigService {
     if (parameter.value_type === 'json') {
       try {
         JSON.parse(value);
-      } catch (error) {
+      } catch {
         throw new BadRequestException(
           `Invalid JSON value for ${parameter.setting_key}`,
         );

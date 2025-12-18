@@ -60,7 +60,7 @@ export class SubmitExerciseDto {
   @IsOptional()
   @IsObject({ message: 'answers must be an object' })
   @IsNotEmpty({ message: 'answers cannot be empty' })
-    answers?: Record<string, any>;
+    answers?: Record<string, unknown>;
 
   /**
    * Timestamp de inicio del ejercicio (milisegundos desde epoch)
@@ -133,7 +133,7 @@ export class SubmitExerciseDto {
   })
   @IsOptional()
   @IsObject()
-    submitted_answers?: Record<string, any>;
+    submitted_answers?: Record<string, unknown>;
 
   /**
    * @deprecated Usar 'startedAt' para calcular tiempo
@@ -175,4 +175,34 @@ export class SubmitExerciseDto {
   @IsOptional()
   @IsArray()
     comodines_used?: string[];
+
+  /**
+   * @deprecated Usar 'startedAt' (camelCase)
+   * Se mantiene para compatibilidad con frontends que envían snake_case
+   */
+  @ApiProperty({
+    description: '[DEPRECATED] Usar "startedAt"',
+    example: 1638392400000,
+    required: false,
+    deprecated: true,
+  })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+    started_at?: number;
+
+  /**
+   * @deprecated Usar 'powerupsUsed' (camelCase)
+   * Se mantiene para compatibilidad con frontends que envían snake_case
+   */
+  @ApiProperty({
+    description: '[DEPRECATED] Usar "powerupsUsed"',
+    example: ['hint_50_50', 'extra_time'],
+    required: false,
+    deprecated: true,
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+    powerups_used?: string[];
 }

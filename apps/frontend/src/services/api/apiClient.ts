@@ -8,6 +8,7 @@
 import axios from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 import { API_CONFIG, FEATURE_FLAGS } from '@/config/api.config';
+import { camelToSnake } from '@/utils/transformKeys';
 
 // ============================================================================
 // CONFIGURATION
@@ -48,6 +49,16 @@ apiClient.interceptors.request.use(
     const tenantId = localStorage.getItem('tenant-id');
     if (tenantId && config.headers) {
       config.headers['X-Tenant-Id'] = tenantId;
+    }
+
+    // Transform request data from camelCase to snake_case
+    if (config.data && typeof config.data === 'object') {
+      config.data = camelToSnake(config.data);
+    }
+
+    // Transform query params from camelCase to snake_case
+    if (config.params && typeof config.params === 'object') {
+      config.params = camelToSnake(config.params);
     }
 
     // Log request in debug mode
@@ -95,6 +106,11 @@ apiClient.interceptors.response.use(
     ) {
       response.data = response.data.data;
     }
+
+    // NOTE: Do NOT transform response data from snake_case to camelCase
+    // All frontend types (StudentMonitoring, Classroom, etc.) are defined in snake_case
+    // Transformation would cause undefined values when accessing properties
+    // See: orchestration/agentes/architecture-analyst/ANALISIS-TEACHER-PORTAL-2025-12-14/01-GAPS-TEACHER-PORTAL.md
 
     return response;
   },

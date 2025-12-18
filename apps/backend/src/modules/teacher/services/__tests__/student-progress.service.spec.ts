@@ -23,9 +23,9 @@ describe('StudentProgressService - CORR-001 Fix', () => {
   let submissionRepository: Repository<ExerciseSubmission>;
   let profileRepository: Repository<Profile>;
   let moduleProgressRepository: Repository<ModuleProgress>;
-  let classroomMemberRepository: Repository<ClassroomMember>;
-  let classroomRepository: Repository<Classroom>;
-  let userRepository: Repository<User>;
+  let _classroomMemberRepository: Repository<ClassroomMember>;
+  let _classroomRepository: Repository<Classroom>;
+  let _userRepository: Repository<User>;
   let userStatsRepository: Repository<UserStats>;
 
   // Mock repositories
