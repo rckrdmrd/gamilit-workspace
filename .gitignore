@@ -44,6 +44,9 @@ build/
 .env.production
 .env.development
 .env.test
+# Permitir archivos de ejemplo (sin secrets)
+!.env.*.example
+!.env.example
 
 # Archivos de configuración con secrets
 config/secrets.json

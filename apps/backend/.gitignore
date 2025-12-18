@@ -37,5 +37,7 @@ logs/
 .flaskenv*
 !.env.project
 !.env.vault
+!.env.*.example
+!.env.example
 # Backups de scripts automáticos
 **/*.backup-*
