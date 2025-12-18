@@ -77,5 +77,15 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA gamilit GRANT EXECUTE ON FUNCTIONS TO gamilit
 ALTER DEFAULT PRIVILEGES IN SCHEMA auth GRANT EXECUTE ON FUNCTIONS TO gamilit_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO gamilit_user;
 
+-- =====================================================
+-- BYPASS RLS for gamilit_user
+-- =====================================================
+-- Added: 2025-12-18 (FIX: Application user needs to bypass RLS)
+-- Reason: The application manages RLS context via app.current_user_id
+--         but needs BYPASSRLS to perform operations on behalf of users
+-- =====================================================
+
+ALTER ROLE gamilit_user BYPASSRLS;
+
 -- Verification
-SELECT 'Permisos otorgados exitosamente a gamilit_user' as status;
+SELECT 'Permisos otorgados exitosamente a gamilit_user (incluyendo BYPASSRLS)' as status;
