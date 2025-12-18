@@ -114,14 +114,34 @@ case $ENV in
     log_info "Cargando seeds de DEVELOPMENT (todos los datos)..."
     echo ""
 
+    # Base config
     execute_seed "$SEED_DIR/01-achievement_categories.sql" || exit 1
     execute_seed "$SEED_DIR/02-achievements.sql" || exit 1
     execute_seed "$SEED_DIR/03-leaderboard_metadata.sql" || exit 1
-    execute_seed "$SEED_DIR/04-initialize_user_gamification.sql" || exit 1
+
+    # Maya ranks (si existe)
+    if [ -f "$SEED_DIR/03-maya_ranks.sql" ]; then
+        execute_seed "$SEED_DIR/03-maya_ranks.sql" || exit 1
+    fi
+
+    execute_seed "$SEED_DIR/04-achievements.sql" 2>/dev/null || true
+
+    # Shop system
+    if [ -f "$SEED_DIR/12-shop_categories.sql" ]; then
+        execute_seed "$SEED_DIR/12-shop_categories.sql" || exit 1
+    fi
+    if [ -f "$SEED_DIR/13-shop_items.sql" ]; then
+        execute_seed "$SEED_DIR/13-shop_items.sql" || exit 1
+    fi
+
+    # User gamification (si existen)
+    if [ -f "$SEED_DIR/05-user_stats.sql" ]; then
+        execute_seed "$SEED_DIR/05-user_stats.sql" || exit 1
+    fi
 
     echo ""
     log_success "Seeds de DEV cargados exitosamente"
-    log_info "Total de archivos: 4"
+    log_info "Total de archivos: 8+ (todos disponibles)"
     ;;
 
   staging)
@@ -138,16 +158,43 @@ case $ENV in
     ;;
 
   production)
-    log_info "Cargando seeds de PRODUCTION (solo configuración esencial)..."
+    log_info "Cargando seeds de PRODUCTION (configuración completa)..."
     echo ""
 
+    # Base config
     execute_seed "$SEED_DIR/01-achievement_categories.sql" || exit 1
     execute_seed "$SEED_DIR/02-leaderboard_metadata.sql" || exit 1
+    execute_seed "$SEED_DIR/03-maya_ranks.sql" || exit 1
+    execute_seed "$SEED_DIR/04-achievements.sql" || exit 1
+
+    # Mission templates (antes de missions de usuarios)
+    execute_seed "$SEED_DIR/10-mission_templates.sql" || exit 1
+    execute_seed "$SEED_DIR/11-missions-production-users.sql" || exit 1
+
+    # Shop system (categorías e items)
+    execute_seed "$SEED_DIR/12-shop_categories.sql" || exit 1
+    execute_seed "$SEED_DIR/13-shop_items.sql" || exit 1
+
+    # User gamification data (si existen usuarios)
+    if [ -f "$SEED_DIR/05-user_stats.sql" ]; then
+        execute_seed "$SEED_DIR/05-user_stats.sql" || exit 1
+    fi
+    if [ -f "$SEED_DIR/06-user_ranks.sql" ]; then
+        execute_seed "$SEED_DIR/06-user_ranks.sql" || exit 1
+    fi
+    if [ -f "$SEED_DIR/07-ml_coins_transactions.sql" ]; then
+        execute_seed "$SEED_DIR/07-ml_coins_transactions.sql" || exit 1
+    fi
+    if [ -f "$SEED_DIR/08-user_achievements.sql" ]; then
+        execute_seed "$SEED_DIR/08-user_achievements.sql" || exit 1
+    fi
+    if [ -f "$SEED_DIR/09-comodines_inventory.sql" ]; then
+        execute_seed "$SEED_DIR/09-comodines_inventory.sql" || exit 1
+    fi
 
     echo ""
     log_success "Seeds de PRODUCTION cargados exitosamente"
-    log_info "Total de archivos: 2"
-    log_warning "NOTA: No se cargaron achievements demo ni datos de prueba"
+    log_info "Total de archivos: 13 (base + shop + user data)"
     ;;
 esac
 
