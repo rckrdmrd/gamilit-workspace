@@ -100,19 +100,19 @@ echo "✓ Servicios iniciados"
 sleep 5
 
 # Health check backend (interno)
-echo "=== Health Check Backend ==="
-curl -s http://localhost:4006/api/v1/health | head -10
+echo "=== Health Check Backend (interno) ==="
+curl -s http://localhost:3006/api/v1/health | head -10
 
 # Health check frontend (interno)
-echo "=== Health Check Frontend ==="
-curl -s -o /dev/null -w "HTTP Status: %{http_code}\n" http://localhost:4005
+echo "=== Health Check Frontend (interno) ==="
+curl -s -o /dev/null -w "HTTP Status: %{http_code}\n" http://localhost:3005
 
 # Health check via Nginx (HTTPS)
-echo "=== Health Check HTTPS Backend ==="
-curl -sk https://74.208.126.102:3006/api/v1/health | head -10
+echo "=== Health Check HTTPS ==="
+curl -sk https://74.208.126.102/api/v1/health | head -10
 
-echo "=== Health Check HTTPS Frontend ==="
-curl -sk -o /dev/null -w "HTTP Status: %{http_code}\n" https://74.208.126.102:3005
+echo "=== Frontend HTTPS ==="
+curl -sk -o /dev/null -w "HTTP Status: %{http_code}\n" https://74.208.126.102
 
 # PM2 status
 echo "=== PM2 Status ==="
@@ -129,18 +129,19 @@ pm2 logs --lines 10 --nostream
 
 ### Puertos
 
-| Servicio | Puerto Interno | Puerto Externo (Nginx) | Protocolo |
-|----------|---------------|------------------------|-----------|
-| Backend | 4006 | 3006 | HTTPS |
-| Frontend | 4005 | 3005 | HTTPS |
+| Servicio | Puerto | Protocolo |
+|----------|--------|-----------|
+| Backend | 3006 | HTTP (interno) |
+| Frontend | 3005 | HTTP (interno) |
+| Nginx | 443 | HTTPS (externo) |
 
 ### URLs de Acceso
 
 | Servicio | URL |
 |----------|-----|
-| Frontend | https://74.208.126.102:3005 |
-| Backend API | https://74.208.126.102:3006/api/v1 |
-| Health Check | https://74.208.126.102:3006/api/v1/health |
+| Frontend | https://74.208.126.102 |
+| Backend API | https://74.208.126.102/api/v1 |
+| Health Check | https://74.208.126.102/api/v1/health |
 
 ---
 
