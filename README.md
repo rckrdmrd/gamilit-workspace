@@ -106,8 +106,28 @@ cat artifacts/reports/METRICAS-ACTUALES.md
 - **Backend:** Puerto 3006 (2 instancias cluster)
 - **Frontend:** Puerto 3005 (1 instancia)
 - **Gestor:** PM2
+- **Base de datos:** PostgreSQL puerto 5432, database `gamilit_platform`
 
-### Despliegue Rápido
+### ACTUALIZACION DESDE REMOTO (IMPORTANTE)
+
+**Si acabas de hacer `git pull`, lee primero:** [PRODUCTION-UPDATE.md](./PRODUCTION-UPDATE.md)
+
+```bash
+# Actualizacion completa automatizada
+export DB_PASSWORD="tu_password"
+chmod +x scripts/*.sh
+./scripts/update-production.sh
+```
+
+Este script automatiza:
+1. Backup de configuraciones y BD
+2. Pull con preferencia a remoto
+3. Restauracion de configuraciones
+4. Recreacion limpia de BD
+5. Build e inicio de servicios
+6. Validacion del deployment
+
+### Despliegue Inicial
 
 ```bash
 # 1. Verificar que todo está listo

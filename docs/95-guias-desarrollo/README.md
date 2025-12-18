@@ -401,6 +401,75 @@ Los siguientes archivos de base-de-datos están pendientes de modularización en
 
 ---
 
+## 🚀 Guias de Despliegue y Produccion (NUEVO 2025-12-18)
+
+### Guias de Despliegue
+
+| Guia | Descripcion | Prioridad |
+|------|-------------|-----------|
+| [GUIA-ACTUALIZACION-PRODUCCION.md](./GUIA-ACTUALIZACION-PRODUCCION.md) | **Guia de actualizacion desde remoto**: Backup, pull, recrear BD, restaurar config | 🔴 **LEER PRIMERO** |
+| [GUIA-DESPLIEGUE-PRODUCCION-COMPLETA.md](./GUIA-DESPLIEGUE-PRODUCCION-COMPLETA.md) | **Guia maestra de despliegue**: PM2, BD, configuracion, HTTPS | 🔴 CRITICA |
+| [GUIA-VALIDACION-PRODUCCION.md](./GUIA-VALIDACION-PRODUCCION.md) | **Validacion y troubleshooting**: Scripts diagnostico, errores comunes, recuperacion | 🔴 CRITICA |
+| [DEPLOYMENT-GUIDE.md](./DEPLOYMENT-GUIDE.md) | Guia original de deployment | 🟡 REFERENCIA |
+
+### Scripts de Produccion (carpeta `/scripts`)
+
+| Script | Descripcion | Cuando usar |
+|--------|-------------|-------------|
+| `update-production.sh` | **Actualizacion completa automatizada** | Despues de `git pull` |
+| `diagnose-production.sh` | Diagnostico del sistema | Verificar estado |
+| `repair-missing-data.sh` | Reparar datos faltantes | Si faltan seeds |
+
+### Contenido de las Guias de Produccion
+
+#### GUIA-ACTUALIZACION-PRODUCCION.md (LEER PRIMERO)
+- **Flujo completo de actualizacion** desde repositorio remoto
+- Detener PM2, respaldar configs y BD
+- `git reset --hard origin/main` (preferencia a remoto)
+- Restaurar configuraciones (.env files)
+- Recrear BD limpia con `create-database.sh`
+- npm install + npm run build
+- Iniciar PM2 y validar
+- **Script automatizado**: `./scripts/update-production.sh`
+
+#### GUIA-DESPLIEGUE-PRODUCCION-COMPLETA.md
+- Arquitectura de produccion (Backend/Frontend/PostgreSQL)
+- Configuracion de base de datos (17 schemas, 57 seeds)
+- Variables de entorno (.env.production)
+- Proceso PM2 paso a paso
+- **Configuracion HTTPS con Certbot** (Seccion 7)
+- Comandos de referencia rapida
+
+#### GUIA-VALIDACION-PRODUCCION.md
+- **Checklist de validacion rapida** (5 minutos)
+- Validacion completa de BD (queries)
+- **Errores comunes y soluciones**:
+  - "No hay tenants activos" → Seeds faltantes
+  - "relation does not exist" → DDL no ejecutado
+  - CORS blocked → Configuracion incorrecta
+- Scripts de diagnostico (`diagnose-production.sh`)
+- Scripts de reparacion (`repair-missing-data.sh`)
+- Procedimiento de recuperacion (parcial/completa)
+
+### Quick Commands para Produccion
+
+```bash
+# Diagnostico rapido
+export DATABASE_URL="postgresql://gamilit_user:PASSWORD@localhost:5432/gamilit_platform"
+psql "$DATABASE_URL" -c "SELECT id, name, slug, is_active FROM auth_management.tenants WHERE slug = 'gamilit-prod';"
+
+# Health check
+curl http://localhost:3006/api/health
+
+# Estado PM2
+pm2 status
+
+# Logs
+pm2 logs --lines 50
+```
+
+---
+
 ## 📚 Documentación Relacionada
 
 - **Requerimientos:** `../01-requerimientos/_MAP.md`
