@@ -8,11 +8,15 @@
 -- Version: 2.1 (módulos 4-5 en backlog)
 -- =====================================================
 --
+-- CAMBIOS v2.2 (2025-11-23):
+-- - Módulos 4 y 5 cambiados a status 'published' y is_published = true
+-- - Ejercicios de módulos 4-5 creados con is_active = false (muestran "En Construcción")
+-- - GAP-003 RESUELTO: Módulos visibles en UI, ejercicios inactivos muestran página "En Construcción"
+--
 -- CAMBIOS v2.1 (2025-11-23):
 -- - Módulos 4 y 5 cambiados a status 'backlog'
 -- - Módulos 4 y 5 marcados como is_published = false
 -- - Actualizados títulos y descripciones de módulos 4-5 según DocumentoDeDiseño v6.4
--- - GAP-003 RESUELTO: Módulos visibles en UI con mensaje "En Construcción"
 --
 -- CAMBIOS v2.0:
 -- - Convertido de STRING a UUID
@@ -100,7 +104,7 @@ INSERT INTO educational_content.modules (
     gamilit.now_mexico(),
     gamilit.now_mexico()
 ),
--- Módulo 4: Lectura Digital (BACKLOG - Fuera de alcance de entrega actual)
+-- Módulo 4: Lectura Digital (VISIBLE - Ejercicios inactivos muestran "En Construcción")
 (
     NULL,
     'Módulo 4: Lectura Digital y Multimodal',
@@ -112,12 +116,12 @@ INSERT INTO educational_content.modules (
     ARRAY['Navegar contenido hipertextual', 'Evaluar fuentes digitales', 'Sintetizar información multimedia', 'Analizar memes y contenido visual'],
     175,
     85,
-    'backlog',  -- ← Módulo en backlog, visible con mensaje "En Construcción"
-    false,      -- ← No publicado para evitar acceso a ejercicios
+    'published',    -- ← Módulo publicado (visible en UI)
+    true,           -- ← Publicado, ejercicios con is_active=false muestran "En Construcción"
     gamilit.now_mexico(),
     gamilit.now_mexico()
 ),
--- Módulo 5: Producción y Expresión Lectora (BACKLOG - Fuera de alcance de entrega actual)
+-- Módulo 5: Producción y Expresión Lectora (VISIBLE - Ejercicios inactivos muestran "En Construcción")
 (
     NULL,
     'Módulo 5: Producción y Expresión Lectora',
@@ -129,8 +133,8 @@ INSERT INTO educational_content.modules (
     ARRAY['Producir textos argumentativos', 'Crear contenido multimedia', 'Expresar ideas con claridad', 'Desarrollar presentaciones creativas'],
     250,
     125,
-    'backlog',  -- ← Módulo en backlog, visible con mensaje "En Construcción"
-    false,      -- ← No publicado para evitar acceso a ejercicios
+    'published',    -- ← Módulo publicado (visible en UI)
+    true,           -- ← Publicado, ejercicios con is_active=false muestran "En Construcción"
     gamilit.now_mexico(),
     gamilit.now_mexico()
 )

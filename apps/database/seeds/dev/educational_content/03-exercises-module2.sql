@@ -488,18 +488,93 @@ BEGIN
             "fragments": [
                 {
                     "id": "frag-1",
-                    "keywords": ["pionera", "radiactividad", "nobel", "primera", "mujer", "cientifico", "premio", "campos", "unica"],
-                    "points": 20
+                    "text": "Marie Curie fue pionera en el estudio de la radiactividad, convirtiéndose en la primera mujer en ganar un Premio Nobel y la única persona en ganar en dos campos científicos diferentes.",
+                    "categoryExpectations": {
+                        "cat-literal": {
+                            "keywords": ["pionera", "radiactividad", "nobel", "primera", "mujer", "cientifico", "premio", "campos", "unica"],
+                            "description": "Identifica hechos explícitos del texto",
+                            "example": "Marie fue la primera mujer en ganar un Nobel y ganó en dos campos científicos diferentes.",
+                            "points": 20
+                        },
+                        "cat-inferencial": {
+                            "keywords": ["impacto", "importancia", "consecuencia", "implica", "deducir", "sugiere", "interdisciplinario", "excepcional", "destacada"],
+                            "description": "Deduce información no explícita basándose en pistas",
+                            "example": "El hecho de ganar en dos campos sugiere que Marie tenía conocimientos interdisciplinarios excepcionales.",
+                            "points": 25
+                        },
+                        "cat-critico": {
+                            "keywords": ["evaluar", "analizar", "considerar", "perspectiva", "contexto", "significa", "barreras", "historico", "estructural"],
+                            "description": "Analiza y evalúa críticamente el contenido",
+                            "example": "Ganar dos Nobeles en una época de discriminación demuestra que Marie superó barreras estructurales significativas.",
+                            "points": 30
+                        },
+                        "cat-creativo": {
+                            "keywords": ["imaginar", "si", "podría", "nuevo", "relacionar", "aplicar", "innovar", "futuro", "actual", "inspirar"],
+                            "description": "Genera ideas originales relacionadas con el texto",
+                            "example": "Si Marie hubiera tenido acceso a tecnología moderna, podría haber descubierto aplicaciones médicas de la radiactividad décadas antes.",
+                            "points": 25
+                        }
+                    }
                 },
                 {
                     "id": "frag-2",
-                    "keywords": ["discriminacion", "mujer", "persistio", "investigacion", "laboratorio", "condiciones", "dificiles", "hombres", "campo"],
-                    "points": 20
+                    "text": "A pesar de enfrentar discriminación por ser mujer en un campo dominado por hombres, Marie persistió en su investigación, trabajando en condiciones difíciles en un laboratorio improvisado.",
+                    "categoryExpectations": {
+                        "cat-literal": {
+                            "keywords": ["discriminacion", "mujer", "persistio", "investigacion", "laboratorio", "condiciones", "dificiles", "hombres", "campo"],
+                            "description": "Identifica hechos explícitos del texto",
+                            "example": "Marie enfrentó discriminación por ser mujer y trabajó en condiciones difíciles.",
+                            "points": 20
+                        },
+                        "cat-inferencial": {
+                            "keywords": ["determinacion", "resiliencia", "obstaculos", "motivacion", "supero", "fortaleza", "compromiso", "vocacion"],
+                            "description": "Deduce información no explícita basándose en pistas",
+                            "example": "Su persistencia a pesar de la discriminación muestra una determinación extraordinaria.",
+                            "points": 25
+                        },
+                        "cat-critico": {
+                            "keywords": ["injusticia", "desigualdad", "sistema", "cambio", "evaluar", "significado", "estructural", "social", "genero"],
+                            "description": "Analiza y evalúa críticamente el contenido",
+                            "example": "La discriminación que enfrentó evidencia las barreras sistemáticas contra mujeres en ciencia del siglo XX.",
+                            "points": 30
+                        },
+                        "cat-creativo": {
+                            "keywords": ["inspirar", "lecciones", "paralelo", "actual", "aplicar", "futuro", "relacionar", "si", "modelo", "ejemplo"],
+                            "description": "Genera ideas originales relacionadas con el texto",
+                            "example": "Marie inspira a científicas actuales a persistir frente a obstáculos similares que aún existen.",
+                            "points": 25
+                        }
+                    }
                 },
                 {
                     "id": "frag-3",
-                    "keywords": ["cuadernos", "radiactivos", "plomo", "cajas", "peligroso", "descargo", "responsabilidad", "anos", "consultar"],
-                    "points": 20
+                    "text": "Los cuadernos de Marie Curie todavía son radiactivos y se guardan en cajas especiales de plomo. Las personas que quieren consultarlos deben firmar un descargo de responsabilidad.",
+                    "categoryExpectations": {
+                        "cat-literal": {
+                            "keywords": ["cuadernos", "radiactivos", "plomo", "cajas", "descargo", "responsabilidad", "guardan", "consultar", "personas"],
+                            "description": "Identifica hechos explícitos del texto",
+                            "example": "Los cuadernos están en cajas de plomo y requieren un descargo de responsabilidad.",
+                            "points": 20
+                        },
+                        "cat-inferencial": {
+                            "keywords": ["peligro", "duracion", "exposicion", "consecuencias", "vida", "media", "decadas", "riesgo", "salud"],
+                            "description": "Deduce información no explícita basándose en pistas",
+                            "example": "Que los cuadernos sigan radiactivos décadas después indica la vida media prolongada del radio.",
+                            "points": 25
+                        },
+                        "cat-critico": {
+                            "keywords": ["riesgo", "seguridad", "conocimiento", "epoca", "precio", "ciencia", "evaluar", "significa", "evidencia"],
+                            "description": "Analiza y evalúa críticamente el contenido",
+                            "example": "Los cuadernos radiactivos son evidencia del precio que Marie pagó por avanzar la ciencia sin conocer los riesgos.",
+                            "points": 30
+                        },
+                        "cat-creativo": {
+                            "keywords": ["simbolo", "legado", "presente", "futuro", "representa", "reflexion", "si", "imaginar", "relacionar", "metafora"],
+                            "description": "Genera ideas originales relacionadas con el texto",
+                            "example": "Los cuadernos radiactivos son un símbolo tangible de cómo los descubrimientos científicos pueden tener consecuencias duraderas imprevistas.",
+                            "points": 25
+                        }
+                    }
                 }
             ]
         }'::jsonb,
