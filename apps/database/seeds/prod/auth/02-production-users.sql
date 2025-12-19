@@ -15,7 +15,6 @@
 -- - Lote 3 (2025-12-08 y 2025-12-17): 2 usuarios
 --
 -- TOTAL: 44 usuarios estudiantes
--- EXCLUIDO: rckrdmrd@gmail.com (usuario de pruebas del owner)
 --
 -- POLÍTICA DE CARGA LIMPIA:
 -- ✅ UUIDs originales del servidor preservados
@@ -833,9 +832,6 @@ BEGIN
     END IF;
 
     RAISE NOTICE '========================================';
-    RAISE NOTICE 'NOTA: Usuario rckrdmrd@gmail.com EXCLUIDO';
-    RAISE NOTICE '(Usuario de pruebas del owner)';
-    RAISE NOTICE '========================================';
 END $$;
 
 -- =====================================================
@@ -855,7 +851,7 @@ END $$;
 -- CHANGELOG
 -- =====================================================
 -- v2.0 (2025-12-18): Actualización completa desde backup producción
---   - 44 usuarios totales (excluyendo rckrdmrd@gmail.com)
+--   - 44 usuarios totales
 --   - Lote 1: 13 usuarios (2025-11-18)
 --   - Lote 2: 23 usuarios (2025-11-24)
 --   - Lote 3: 6 usuarios (2025-11-25)

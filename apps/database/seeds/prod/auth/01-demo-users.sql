@@ -31,7 +31,7 @@ SET search_path TO auth, public;
 -- PASSWORDS ENCRYPTED WITH BCRYPT
 -- =====================================================
 -- Password: "Test1234" (todos los usuarios)
--- Hash estático (bcrypt cost=10): $2b$10$pkqX0/v7H3F5TBTuDTaoYeBjH581pXpjlcNcYmMtXofd/2HjfTuga
+-- Se genera dinámicamente con: crypt('Test1234', gen_salt('bf', 10))
 -- =====================================================
 
 -- =====================================================
@@ -62,7 +62,7 @@ INSERT INTO auth.users (
     'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid,
     '00000000-0000-0000-0000-000000000000'::uuid,
     'admin@gamilit.com',
-    '$2b$10$pkqX0/v7H3F5TBTuDTaoYeBjH581pXpjlcNcYmMtXofd/2HjfTuga',
+    crypt('Test1234', gen_salt('bf', 10)),
     gamilit.now_mexico(),
     jsonb_build_object(
         'provider', 'email',
@@ -90,7 +90,7 @@ INSERT INTO auth.users (
     'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid,
     '00000000-0000-0000-0000-000000000000'::uuid,
     'teacher@gamilit.com',
-    '$2b$10$pkqX0/v7H3F5TBTuDTaoYeBjH581pXpjlcNcYmMtXofd/2HjfTuga',
+    crypt('Test1234', gen_salt('bf', 10)),
     gamilit.now_mexico(),
     jsonb_build_object(
         'provider', 'email',
@@ -118,7 +118,7 @@ INSERT INTO auth.users (
     'cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid,
     '00000000-0000-0000-0000-000000000000'::uuid,
     'student@gamilit.com',
-    '$2b$10$pkqX0/v7H3F5TBTuDTaoYeBjH581pXpjlcNcYmMtXofd/2HjfTuga',
+    crypt('Test1234', gen_salt('bf', 10)),
     gamilit.now_mexico(),
     jsonb_build_object(
         'provider', 'email',

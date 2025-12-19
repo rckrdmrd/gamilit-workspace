@@ -1,34 +1,17 @@
 -- =====================================================
--- Seed: auth_management.auth_providers (PROD)
--- Description: Configuración de proveedores de autenticación para producción
--- Environment: PRODUCTION
+-- Seed: auth_management.auth_providers (DEV)
+-- Description: Configuración de proveedores de autenticación
+-- Environment: DEVELOPMENT
 -- Dependencies: None
 -- Order: 02
--- Created: 2025-11-11
--- Version: 2.0 (reescrito para carga limpia)
--- =====================================================
---
--- CAMBIOS v2.0:
--- - Convertido de STRING a ENUM auth_provider
--- - Estructura alineada 100% con DDL
--- - Cambiado NOW() → gamilit.now_mexico()
--- - Configuración de producción (credentials pendientes)
---
--- VALIDADO CONTRA:
--- - DDL: ddl/schemas/auth_management/tables/05-auth_providers.sql
--- - Template: seeds/dev/auth_management/02-auth_providers.sql
---
--- IMPORTANTE:
--- - Los client_id y client_secret deben ser configurados con valores reales
--- - Los valores actuales son PLACEHOLDERS que deben ser reemplazados
--- - En producción, considerar usar variables de entorno o secretos encriptados
---
+-- Validated: 2025-11-02
+-- Score: 100/100
 -- =====================================================
 
 SET search_path TO auth_management, public;
 
 -- =====================================================
--- INSERT: Auth Providers Configuration (PRODUCTION)
+-- INSERT: Auth Providers Configuration
 -- =====================================================
 
 INSERT INTO auth_management.auth_providers (
@@ -48,9 +31,9 @@ INSERT INTO auth_management.auth_providers (
     config,
     metadata
 ) VALUES
--- Local Auth (email/password) - ENABLED
+-- Local Auth (email/password)
 (
-    'local'::auth_management.auth_provider,
+    'local',
     'Email y Contraseña',
     true,
     NULL,
@@ -63,53 +46,47 @@ INSERT INTO auth_management.auth_providers (
     NULL,
     '#4F46E5',
     1,
-    jsonb_build_object(
-        'requires_email_verification', true,  -- PROD: email verification required
-        'password_min_length', 12,            -- PROD: stronger password (12 vs 8)
-        'password_requires_uppercase', true,
-        'password_requires_number', true,
-        'password_requires_special', true,
-        'password_max_age_days', 90,          -- PROD: password expiration
-        'failed_login_attempts_max', 5,       -- PROD: rate limiting
-        'account_lockout_duration_minutes', 30
-    ),
-    jsonb_build_object(
-        'description', 'Local authentication using email and password',
-        'environment', 'production',
-        'security_level', 'high'
-    )
+    '{
+        "requires_email_verification": false,
+        "password_min_length": 8,
+        "password_requires_uppercase": true,
+        "password_requires_number": true,
+        "password_requires_special": true
+    }'::jsonb,
+    '{
+        "description": "Local authentication using email and password",
+        "environment": "development"
+    }'::jsonb
 ),
--- Google OAuth - ENABLED
+-- Google OAuth (ENABLED for dev)
 (
-    'google'::auth_management.auth_provider,
+    'google',
     'Continuar con Google',
     true,
-    'GOOGLE_CLIENT_ID_PLACEHOLDER',  -- ⚠️ REEMPLAZAR con valor real
-    'GOOGLE_CLIENT_SECRET_PLACEHOLDER',  -- ⚠️ REEMPLAZAR con valor real
+    'dev-google-client-id.apps.googleusercontent.com',
+    'dev-google-client-secret',
     'https://accounts.google.com/o/oauth2/v2/auth',
     'https://oauth2.googleapis.com/token',
     'https://www.googleapis.com/oauth2/v2/userinfo',
     ARRAY['openid', 'profile', 'email'],
-    'https://gamilit.com/auth/callback/google',
+    'http://localhost:3000/auth/callback/google',
     'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg',
     '#4285F4',
     10,
-    jsonb_build_object(
-        'prompt', 'select_account',
-        'access_type', 'offline',
-        'include_granted_scopes', true
-    ),
-    jsonb_build_object(
-        'description', 'Google OAuth authentication for production',
-        'environment', 'production',
-        'status', 'credentials_pending'
-    )
+    '{
+        "prompt": "select_account",
+        "access_type": "offline"
+    }'::jsonb,
+    '{
+        "description": "Google OAuth authentication for development",
+        "environment": "development"
+    }'::jsonb
 ),
--- Facebook OAuth - DISABLED (pending configuration)
+-- Facebook OAuth (DISABLED for dev)
 (
-    'facebook'::auth_management.auth_provider,
+    'facebook',
     'Continuar con Facebook',
-    false,  -- DISABLED hasta configurar credentials
+    false,
     NULL,
     NULL,
     'https://www.facebook.com/v12.0/dialog/oauth',
@@ -120,20 +97,19 @@ INSERT INTO auth_management.auth_providers (
     'https://www.facebook.com/images/fb_icon_325x325.png',
     '#1877F2',
     20,
-    jsonb_build_object(
-        'fields', 'id,name,email,picture'
-    ),
-    jsonb_build_object(
-        'description', 'Facebook OAuth authentication (disabled - pending configuration)',
-        'environment', 'production',
-        'status', 'pending_configuration'
-    )
+    '{
+        "fields": "id,name,email,picture"
+    }'::jsonb,
+    '{
+        "description": "Facebook OAuth authentication (disabled in development)",
+        "environment": "development"
+    }'::jsonb
 ),
--- Apple Sign In - DISABLED (pending configuration)
+-- Apple Sign In (DISABLED for dev)
 (
-    'apple'::auth_management.auth_provider,
+    'apple',
     'Continuar con Apple',
-    false,  -- DISABLED hasta configurar credentials
+    false,
     NULL,
     NULL,
     'https://appleid.apple.com/auth/authorize',
@@ -144,21 +120,20 @@ INSERT INTO auth_management.auth_providers (
     'https://appleid.cdn-apple.com/appleid/button',
     '#000000',
     15,
-    jsonb_build_object(
-        'response_mode', 'form_post',
-        'response_type', 'code id_token'
-    ),
-    jsonb_build_object(
-        'description', 'Apple Sign In (disabled - pending configuration)',
-        'environment', 'production',
-        'status', 'pending_configuration'
-    )
+    '{
+        "response_mode": "form_post",
+        "response_type": "code id_token"
+    }'::jsonb,
+    '{
+        "description": "Apple Sign In (disabled in development)",
+        "environment": "development"
+    }'::jsonb
 ),
--- Microsoft OAuth - DISABLED (pending configuration)
+-- Microsoft OAuth (DISABLED for dev)
 (
-    'microsoft'::auth_management.auth_provider,
+    'microsoft',
     'Continuar con Microsoft',
-    false,  -- DISABLED hasta configurar credentials
+    false,
     NULL,
     NULL,
     'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
@@ -169,38 +144,36 @@ INSERT INTO auth_management.auth_providers (
     'https://docs.microsoft.com/en-us/azure/active-directory/develop/media/howto-add-branding-in-azure-ad-apps/ms-symbollockup_mssymbol_19.png',
     '#00A4EF',
     30,
-    jsonb_build_object(
-        'tenant', 'common'
-    ),
-    jsonb_build_object(
-        'description', 'Microsoft OAuth authentication (disabled - pending configuration)',
-        'environment', 'production',
-        'status', 'pending_configuration'
-    )
+    '{
+        "tenant": "common"
+    }'::jsonb,
+    '{
+        "description": "Microsoft OAuth authentication (disabled in development)",
+        "environment": "development"
+    }'::jsonb
 ),
--- GitHub OAuth - DISABLED (not needed in production)
+-- GitHub OAuth (ENABLED for dev)
 (
-    'github'::auth_management.auth_provider,
+    'github',
     'Continuar con GitHub',
-    false,  -- DISABLED in production (developer-focused)
-    NULL,
-    NULL,
+    true,
+    'dev-github-client-id',
+    'dev-github-client-secret',
     'https://github.com/login/oauth/authorize',
     'https://github.com/login/oauth/access_token',
     'https://api.github.com/user',
     ARRAY['user:email', 'read:user'],
-    NULL,
+    'http://localhost:3000/auth/callback/github',
     'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
     '#24292e',
     40,
-    jsonb_build_object(
-        'allow_signup', 'true'
-    ),
-    jsonb_build_object(
-        'description', 'GitHub OAuth authentication (disabled in production - developer use only)',
-        'environment', 'production',
-        'status', 'not_needed'
-    )
+    '{
+        "allow_signup": "true"
+    }'::jsonb,
+    '{
+        "description": "GitHub OAuth authentication for development",
+        "environment": "development"
+    }'::jsonb
 )
 ON CONFLICT (provider_name) DO UPDATE SET
     display_name = EXCLUDED.display_name,
@@ -227,53 +200,8 @@ DO $$
 DECLARE
     provider_count INTEGER;
     enabled_count INTEGER;
-    pending_credentials_count INTEGER;
 BEGIN
     SELECT COUNT(*) INTO provider_count FROM auth_management.auth_providers;
     SELECT COUNT(*) INTO enabled_count FROM auth_management.auth_providers WHERE is_enabled = true;
-    SELECT COUNT(*) INTO pending_credentials_count
-    FROM auth_management.auth_providers
-    WHERE metadata->>'status' = 'credentials_pending';
-
-    RAISE NOTICE '✓ Auth providers insertados: % total', provider_count;
-    RAISE NOTICE '  - Habilitados: %', enabled_count;
-    RAISE NOTICE '  - Pendientes de credenciales: %', pending_credentials_count;
-
-    IF pending_credentials_count > 0 THEN
-        RAISE WARNING '⚠ IMPORTANTE: % proveedores tienen credenciales PLACEHOLDER que deben ser configuradas', pending_credentials_count;
-        RAISE WARNING '  Actualizar client_id y client_secret para Google OAuth antes de habilitar en producción';
-    END IF;
-END $$;
-
--- =====================================================
--- Validación de Estructura
--- =====================================================
-
--- Verificar que todas las columnas existan
-DO $$
-DECLARE
-    missing_columns TEXT[];
-BEGIN
-    SELECT ARRAY_AGG(column_name) INTO missing_columns
-    FROM (
-        SELECT unnest(ARRAY[
-            'id', 'provider_name', 'display_name', 'is_enabled',
-            'client_id', 'client_secret', 'authorization_url', 'token_url',
-            'user_info_url', 'scope', 'redirect_uri', 'icon_url',
-            'button_color', 'priority', 'config', 'metadata',
-            'created_at', 'updated_at'
-        ]) AS column_name
-    ) expected
-    WHERE column_name NOT IN (
-        SELECT column_name
-        FROM information_schema.columns
-        WHERE table_schema = 'auth_management'
-          AND table_name = 'auth_providers'
-    );
-
-    IF missing_columns IS NOT NULL THEN
-        RAISE WARNING '⚠ Columnas faltantes en tabla auth_providers: %', missing_columns;
-    ELSE
-        RAISE NOTICE '✓ Todas las columnas del seed están presentes en la tabla';
-    END IF;
+    RAISE NOTICE '✓ Auth providers insertados: % total (% habilitados)', provider_count, enabled_count;
 END $$;
